@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <cstdint>
+#include "Class/Base/MyString.h"
 
 // ウィンドウプロージャー
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg,
