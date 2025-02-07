@@ -34,6 +34,9 @@ public:
 	/// </summary>
 	void CreateGameWindow(int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);
 
+public:
+	HWND GetHWND();
+
 private:
 	WinApp() = default;
 	~WinApp() = default;
@@ -42,6 +45,6 @@ private:
 
 private:
 	WNDCLASS wc{};
-	
+	HWND hwnd;
 };
 
