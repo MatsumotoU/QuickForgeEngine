@@ -19,6 +19,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	winApp->CreateGameWindow(windowWidth, windowHeight);
 	MSG msg{};
 
+	// デバッグレイヤー
+#ifdef _DEBUG
+	ID3D12Debug1* debugContoroller = nullptr;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugContoroller)))) {
+
+		// デバッグレイヤー有効化
+		debugContoroller->EnableDebugLayer();
+		// GPU側からもチェックを行えるようにする
+		debugContoroller->SetEnableGPUBasedValidation(TRUE);
+	}
+#endif // _DEBUG
+
 	// DXGIファクトリーの生成
 	IDXGIFactory7* dxgiFactory = nullptr;
 	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
@@ -70,6 +82,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// デバイス生成が上手くいかなかったので起動できない
 	assert(device != nullptr);
 	Log("Complete create D3D12Device!!\n");
+
+	// エラー落ち処理
+#ifdef _DEBUG
+	ID3D12InfoQueue* infoQueue = nullptr;
+	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+
+		// ヤバエラー落ち
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+		// エラー落ち
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		// 警告
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+
+		// エラー抑制
+		D3D12_MESSAGE_ID denyIds[] = {
+			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+		};
+		// 抑制レベル
+		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+		D3D12_INFO_QUEUE_FILTER filter{};
+		filter.DenyList.NumIDs = _countof(denyIds);
+		filter.DenyList.pIDList = denyIds;
+		filter.DenyList.NumSeverities = _countof(severities);
+		filter.DenyList.pSeverityList = severities;
+		// 指定メッセージを抑制
+		infoQueue->PushStorageFilter(&filter);
+
+		// 解放
+		infoQueue->Release();
+	}
+#endif // _DEBUG
 
 	// * コマンドクエリの生成 * //
 	ID3D12CommandQueue* commandQueue = nullptr;
