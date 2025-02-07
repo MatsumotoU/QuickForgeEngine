@@ -35,13 +35,13 @@ void WinApp::CreateGameWindow(int32_t clientWidth, int32_t clientHeight) {
 	RegisterClass(&wc);
 
 	// ウィンドウサイズを表す構造体にクライアント領域を入れる
-	RECT wrc = { 0,0,clientHeight,clientWidth };
+	RECT wrc = { 0,0,clientWidth,clientHeight };
 
 	// クライアント領域を元に実際のサイズにwrcを更新してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
 	// ウィンドウの生成
-	HWND hwnd = CreateWindow(
+	hwnd = CreateWindow(
 		wc.lpszClassName,
 		L"CG2",
 		WS_OVERLAPPEDWINDOW,
@@ -56,4 +56,8 @@ void WinApp::CreateGameWindow(int32_t clientWidth, int32_t clientHeight) {
 	);
 
 	ShowWindow(hwnd, SW_SHOW);
+}
+
+HWND WinApp::GetHWND() {
+	return hwnd;
 }

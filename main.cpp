@@ -8,12 +8,15 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
+int windowWidth = 1280;
+int windowHeight = 720;
+
 // windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ウィンドウ生成
 	WinApp* winApp = WinApp::GetInstance();
-	winApp->CreateGameWindow(1280, 720);
+	winApp->CreateGameWindow(windowWidth, windowHeight);
 	MSG msg{};
 
 	// DXGIファクトリーの生成
@@ -67,6 +70,94 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// デバイス生成が上手くいかなかったので起動できない
 	assert(device != nullptr);
 	Log("Complete create D3D12Device!!\n");
+
+	// * コマンドクエリの生成 * //
+	ID3D12CommandQueue* commandQueue = nullptr;
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	hr = device->CreateCommandQueue(&commandQueueDesc,
+		IID_PPV_ARGS(&commandQueue));
+	assert(SUCCEEDED(hr));
+
+	// * コマンドリストの生成 * //
+	// コマンドアロケータを生成する
+	ID3D12CommandAllocator* commandAllocator = nullptr;
+	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	// コマンドアロケータの生成例外
+	assert(SUCCEEDED(hr));
+
+	// コマンドリスト生成
+	ID3D12GraphicsCommandList* commandList = nullptr;
+	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr,
+		IID_PPV_ARGS(&commandList));
+	// コマンドリスト生成例外
+	assert(SUCCEEDED(hr));
+
+	// * SwapChainを生成する * //
+	IDXGISwapChain4* swapChain = nullptr;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.Width = windowWidth;
+	swapChainDesc.Height = windowHeight;
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferCount = 2;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	// コマンドキュー、ウィンドウハンドル、設定を渡して生成
+	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue, winApp->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
+	assert(SUCCEEDED(hr));
+
+	// * descriptorHeapを生成 * //
+	ID3D12DescriptorHeap* rtvDescriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
+	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	rtvDescriptorHeapDesc.NumDescriptors = 2;
+	hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
+	assert(SUCCEEDED(hr));
+
+	// * スワップチェインからリソースを引っ張ってくる * //
+	ID3D12Resource* swapChainResource[2] = { nullptr };
+	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResource[0]));
+	assert(SUCCEEDED(hr));
+	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResource[1]));
+	assert(SUCCEEDED(hr));
+
+	// * RTVを作る * //
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+	rtvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	// ディスクリプタの先頭を取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	// RTVを2つ作るのでディスクリプタを二つ用意
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	// まず1つ目を作る。
+	rtvHandles[0] = rtvStartHandle;
+	device->CreateRenderTargetView(swapChainResource[0], &rtvDesc, rtvHandles[0]);
+	// 二つ目
+	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device->CreateRenderTargetView(swapChainResource[1], &rtvDesc, rtvHandles[1]);
+
+	// * コマンドを積み込む * //
+	// バックバッファのインデックス取得
+	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	// 描画先のRTVを設定する
+	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
+	// 指定した色で画面全体をクリアする
+	float clearColor[] = { 1.0f,0.25f,0.5f,1.0f };
+	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+	// コマンドリストの内容を確定
+	hr = commandList->Close();
+	assert(SUCCEEDED(hr));
+
+	// * コマンドをキックする * //
+	ID3D12CommandList* commandLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(1, commandLists);
+	// GPUとOSに画面の交換を行うように通知
+	swapChain->Present(1, 0);
+	// 次のフレーム用のコマンドリストを準備
+	hr = commandAllocator->Reset();
+	assert(SUCCEEDED(hr));
+	hr = commandList->Reset(commandAllocator, nullptr);
+	assert(SUCCEEDED(hr));
 
 	// ウィンドウのXボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
