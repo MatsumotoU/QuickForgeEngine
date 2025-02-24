@@ -27,6 +27,9 @@
     <ClCompile Include="Engine\Class\Base\Windows\WinApp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Class\Math\Vector4.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Class\Base\MyString.h">
@@ -35,5 +38,12 @@
     <ClInclude Include="Engine\Class\Base\Windows\WinApp.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Class\Math\Vector4.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Object3d.VS.hlsl" />
+    <FxCompile Include="Object3d.PS.hlsl" />
   </ItemGroup>
 </Project>
