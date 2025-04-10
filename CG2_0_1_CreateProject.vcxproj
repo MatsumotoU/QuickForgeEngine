@@ -148,15 +148,44 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Class\Base\DirectX\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Class\Base\MyString.cpp" />
+    <ClCompile Include="Engine\Class\Math\Matrix\Matrix2x2.cpp" />
+    <ClCompile Include="Engine\Class\Math\Matrix\Matrix3x3.cpp" />
+    <ClCompile Include="Engine\Class\Math\Matrix\Matrix4x4.cpp" />
+    <ClCompile Include="Engine\Class\Math\Vector\Vector2.cpp" />
+    <ClCompile Include="Engine\Class\Math\Vector\Vector3.cpp" />
+    <ClCompile Include="Engine\Class\Math\Vector\Vector4.cpp" />
+    <ClCompile Include="externals\imgui\imgui.cpp" />
+    <ClCompile Include="externals\imgui\imgui_demo.cpp" />
+    <ClCompile Include="externals\imgui\imgui_draw.cpp" />
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="externals\imgui\imgui_tables.cpp" />
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Class\Base\Windows\WinApp.cpp" />
-    <ClCompile Include="Engine\Class\Math\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Class\Base\DirectX\DirectXCommon.h" />
     <ClInclude Include="Engine\Class\Base\MyString.h" />
     <ClInclude Include="Engine\Class\Base\Windows\WinApp.h" />
-    <ClInclude Include="Engine\Class\Math\Vector4.h" />
+    <ClInclude Include="Engine\Class\Math\MathInclude.h" />
+    <ClInclude Include="Engine\Class\Math\Matrix\Matrix2x2.h" />
+    <ClInclude Include="Engine\Class\Math\Matrix\Matrix3x3.h" />
+    <ClInclude Include="Engine\Class\Math\Matrix\Matrix4x4.h" />
+    <ClInclude Include="Engine\Class\Math\Transform.h" />
+    <ClInclude Include="Engine\Class\Math\Vector\Vector2.h" />
+    <ClInclude Include="Engine\Class\Math\Vector\Vector3.h" />
+    <ClInclude Include="Engine\Class\Math\Vector\Vector4.h" />
+    <ClInclude Include="externals\imgui\imconfig.h" />
+    <ClInclude Include="externals\imgui\imgui.h" />
+    <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="externals\imgui\imgui_internal.h" />
+    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
+    <ClInclude Include="externals\imgui\imstb_textedit.h" />
+    <ClInclude Include="externals\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.PS.hlsl">
