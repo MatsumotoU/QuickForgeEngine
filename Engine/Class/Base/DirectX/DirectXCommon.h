@@ -48,6 +48,8 @@ public:
 public:
 	ID3D12Device* GetDevice();
 	ID3D12GraphicsCommandList* GetCommandList();
+	DXGI_SWAP_CHAIN_DESC1* GetSwapChainDesc();
+	D3D12_RENDER_TARGET_VIEW_DESC* GetRtvDesc();
 
 private: // メンバ変数
 	// windowsアプリケーション管理
@@ -61,6 +63,7 @@ private: // メンバ変数
 	ID3D12CommandQueue* commandQueue_;
 	ID3D12CommandAllocator* commandAllocator_;
 	ID3D12GraphicsCommandList* commandList_;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 	IDXGISwapChain4* swapChain_;
 	ID3D12Resource* swapChainResource_[2];
 	ID3D12DescriptorHeap* rtvDescriptorHeap_;

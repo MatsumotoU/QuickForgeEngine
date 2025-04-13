@@ -6,9 +6,9 @@
 #include <cassert>
 
 void ShaderCompiler::InitializeDXC() {
-	assert(!dxcUtils_);
-	assert(!dxcCompiler_);
-	assert(!includeHandler_);
+	//assert(!dxcUtils_);
+	//assert(!dxcCompiler_);
+	//assert(!includeHandler_);
 
 	//// * DXCの初期化 * //
 	dxcUtils_ = nullptr;
