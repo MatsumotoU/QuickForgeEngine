@@ -33,9 +33,17 @@ public:
 	/// </summary>
 	void PostDraw();
 
-	void InitializeBackGround(float red, float green, float blue, float alpha);
-
+	/// <summary>
+	/// リソースを作成
+	/// </summary>
+	/// <param name="device">device</param>
+	/// <param name="sizeInBytes">サイズ</param>
+	/// <returns>リソース</returns>
 	static ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
+	/// <summary>
+	/// ディスクリプタヒープを作成する
+	/// </summary>
+	static ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 public:
 	ID3D12Device* GetDevice();
@@ -97,10 +105,6 @@ private: // 外部から触れてほしくない関数たち
 	/// </summary>
 	void CreateSwapChain();
 	/// <summary>
-	/// ディスクリプタヒープを作成する
-	/// </summary>
-	ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-	/// <summary>
 	/// スワップチェインからリソースを引っ張ってくる
 	/// </summary>
 	void InitializeSwapChainResource();
@@ -116,6 +120,15 @@ private: // 外部から触れてほしくない関数たち
 	/// フェンスイベントを生成
 	/// </summary>
 	void CreateFenceEvent();
+
+	/// <summary>
+	/// 背景の色を指定の色で初期化します
+	/// </summary>
+	/// <param name="red">赤(0.0~1.0)</param>
+	/// <param name="green">緑(0.0~1.0)</param>
+	/// <param name="blue">青(0.0~1.0)</param>
+	/// <param name="alpha">透明度(0.0~1.0)</param>
+	void InitializeBackGround(float red, float green, float blue, float alpha);
 
 private: // シングルトン用
 	DirectXCommon() = default;
