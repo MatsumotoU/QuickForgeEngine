@@ -1,6 +1,7 @@
 #include "Engine/Class/Base/Windows/WinApp.h"
 #include "Engine/Class/Base/DirectX/DirectXCommon.h"
 #include "Engine/Class/Base/DirectX/shaderCompiler.h"
+#include "Engine/Class/Base/DirectX/ImGuiManager.h"
 
 #include "Engine/Class/Base/MyString.h"
 
@@ -69,24 +70,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	MSG msg{};
 
 	// DirectXの初期化
-	DirectXCommon* directXCommon = DirectXCommon::GetInstatnce();
-	directXCommon->Initialize();
+	DirectXCommon* dxCommon = DirectXCommon::GetInstatnce();
+	dxCommon->Initialize();
 
 	ShaderCompiler shaderCompiler;
 	shaderCompiler.InitializeDXC();
 
-	////// * DXCの初期化 * //
-	//IDxcUtils* dxcUtils = nullptr;
-	//IDxcCompiler3* dxcCompiler = nullptr;
-	//HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
-	//assert(SUCCEEDED(hr));
-	//hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
-	//assert(SUCCEEDED(hr));
-
-	//// 現時点でincludeはしないが、includeに対応するための設定を行っておく
-	//IDxcIncludeHandler* includeHandler = nullptr;
-	//hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
-	//assert(SUCCEEDED(hr));
+	// ImGuiの初期化
+	ImGuiManager* imGuiManager = ImGuiManager::GetInstatnce();
+	imGuiManager->Initialize(winApp,dxCommon);
 
 	HRESULT hr;
 
@@ -107,7 +99,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptionRootSignature.NumParameters = _countof(rootParameters);
 
 	// マテリアル用のリソースを作る
-	ID3D12Resource* materialResource = DirectXCommon::CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4));
+	ID3D12Resource* materialResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Vector4));
 	// マテリアルにデータを書き込む
 	Vector4* materialData = nullptr;
 	// 書き込むためのアドレス取得
@@ -116,7 +108,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
-	ID3D12Resource* wvpResource = DirectXCommon::CreateBufferResource(directXCommon->GetDevice(), sizeof(Matrix4x4));
+	ID3D12Resource* wvpResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Matrix4x4));
 	// データを書き込む
 	Matrix4x4* wvpData = nullptr;
 	// 書き込むためのアドレスを取得
@@ -134,7 +126,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	// バイナリをもとに生成
 	ID3D12RootSignature* rootSignature = nullptr;
-	hr = directXCommon->GetDevice()->CreateRootSignature(0,
+	hr = dxCommon->GetDevice()->CreateRootSignature(0,
 		signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
@@ -191,12 +183,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
 	ID3D12PipelineState* graphicsPipelineState = nullptr;
-	hr = directXCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+	hr = dxCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 
 	// * VertexResourceを生成する * //
-	ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3);
+	ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Vector4) * 3);
 
 	// * VertexBufferViewを作成する * //
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
@@ -226,18 +218,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scissorRect.top = 0;
 	scissorRect.bottom = 720;
 
-	// ImGuiの初期化
-	/*IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApp->GetHWND());
-	ImGui_ImplDX12_Init(device,
-		swapChainDesc.BufferCount,
-		rtvDesc.Format,
-		srvDescriptorHeap,
-		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());*/
-
 	// ウィンドウのXボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
 		// windowにメッセージが基底たら最優先で処理される
@@ -245,14 +225,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {
-
-			// ゲーム内処理
-			// ImGuiにフレーム開始を伝える
-			/*ImGui_ImplDX12_NewFrame();
-			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();*/
-
-			//ImGui::ShowDemoWindow();
 
 			transform.rotate.y += 0.03f;
 
@@ -264,11 +236,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			*wvpData = worldViewProjectionMatrix;
 
-			//ImGui::Render();
+			
 
-			directXCommon->PreDraw();
+			dxCommon->PreDraw();
+			imGuiManager->BeginFrame();
 
-			ID3D12GraphicsCommandList* commandList = directXCommon->GetCommandList();
+			ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandList();
 			commandList->RSSetViewports(1, &viewport);
 			commandList->RSSetScissorRects(1, &scissorRect);
 			commandList->SetGraphicsRootSignature(rootSignature);
@@ -279,19 +252,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 			commandList->DrawInstanced(3, 1, 0, 0);
 
-			//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+			ImGui::ShowDemoWindow();
 
-			directXCommon->PostDraw();
+			imGuiManager->EndFrame();
+			dxCommon->PostDraw();
 		}
 	}
 
-	// ImGui解放処理
-	/*ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();*/
-
 	// * 解放処理 * //
-	directXCommon->ReleaseDirectXObject();
 	materialResource->Release();
 	wvpResource->Release();
 
@@ -305,6 +273,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	pixelShaderBlob->Release();
 	vertexShaderBlob->Release();
 
+	imGuiManager->EndImGui();
+	dxCommon->ReleaseDirectXObject();
 	CloseWindow(winApp->GetHWND());
 
 	// * 終了時のエラー処理 * //

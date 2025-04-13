@@ -179,6 +179,14 @@ ID3D12GraphicsCommandList* DirectXCommon::GetCommandList() {
 	return commandList_;
 }
 
+DXGI_SWAP_CHAIN_DESC1* DirectXCommon::GetSwapChainDesc() {
+	return &swapChainDesc_;
+}
+
+D3D12_RENDER_TARGET_VIEW_DESC* DirectXCommon::GetRtvDesc() {
+	return &rtvDesc_;
+}
+
 void DirectXCommon::CreateDxgiFactory() {
 	assert(!dxgiFactory_);
 	// DXGIファクトリーの生成
@@ -305,16 +313,16 @@ void DirectXCommon::CreateCommandList() {
 
 void DirectXCommon::CreateSwapChain() {
 	// * SwapChainを生成する * //
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	swapChainDesc.Width = winApp_->kWindowWidth;
-	swapChainDesc.Height = winApp_->kWindowHeight;
-	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 2;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	swapChainDesc_ = {};
+	swapChainDesc_.Width = winApp_->kWindowWidth;
+	swapChainDesc_.Height = winApp_->kWindowHeight;
+	swapChainDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc_.SampleDesc.Count = 1;
+	swapChainDesc_.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc_.BufferCount = 2;
+	swapChainDesc_.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成
-	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, winApp_->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain_));
+	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain_));
 	assert(SUCCEEDED(hr));
 	Log(ConvertString(std::format(L"DirectXCommon:CreateSwapChain!\n")));
 }
