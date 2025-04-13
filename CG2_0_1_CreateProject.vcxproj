@@ -149,6 +149,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Class\Base\DirectX\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Class\Base\DirectX\ImGuiManager.cpp" />
+    <ClCompile Include="Engine\Class\Base\DirectX\shaderCompiler.cpp" />
     <ClCompile Include="Engine\Class\Base\MyString.cpp" />
     <ClCompile Include="Engine\Class\Math\Matrix\Matrix2x2.cpp" />
     <ClCompile Include="Engine\Class\Math\Matrix\Matrix3x3.cpp" />
@@ -168,6 +170,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Class\Base\DirectX\DirectXCommon.h" />
+    <ClInclude Include="Engine\Class\Base\DirectX\ImGuiManager.h" />
+    <ClInclude Include="Engine\Class\Base\DirectX\shaderCompiler.h" />
     <ClInclude Include="Engine\Class\Base\MyString.h" />
     <ClInclude Include="Engine\Class\Base\Windows\WinApp.h" />
     <ClInclude Include="Engine\Class\Math\MathInclude.h" />

@@ -142,9 +142,6 @@ void DirectXCommon::InitializeBackGround(float red, float green, float blue, flo
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { red,green,blue,alpha };
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
-
-	/*ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_ };
-	commandList_->SetDescriptorHeaps(1, descriptorHeaps);*/
 }
 
 ID3D12Resource* DirectXCommon::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
