@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../../externals/imgui/imgui.h"
-#include "../../../../externals/imgui/imgui_impl_dx12.h"
-#include "../../../../externals/imgui/imgui_impl_win32.h"
+#include "../../../externals/imgui/imgui.h"
+#include "../../../externals/imgui/imgui_impl_dx12.h"
+#include "../../../externals/imgui/imgui_impl_win32.h"
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -35,6 +35,9 @@ public:
 	/// ImGuiここまでこの関数はシールドを表示用に切り替える前にする
 	/// </summary>
 	void EndFrame();
+
+public:
+	ID3D12DescriptorHeap* GetSrvDescriptorHeap();
 
 private:
 	ID3D12DescriptorHeap* srvDescriptorHeap_;

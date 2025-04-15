@@ -45,3 +45,7 @@ void ImGuiManager::EndFrame() {
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
 }
+
+ID3D12DescriptorHeap* ImGuiManager::GetSrvDescriptorHeap() {
+	return srvDescriptorHeap_;
+}
