@@ -146,18 +146,23 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="Object3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Class\Base\DirectX\DirectXCommon.cpp" />
-    <ClCompile Include="Engine\Class\Base\DirectX\ImGuiManager.cpp" />
-    <ClCompile Include="Engine\Class\Base\DirectX\shaderCompiler.cpp" />
-    <ClCompile Include="Engine\Class\Base\MyString.cpp" />
-    <ClCompile Include="Engine\Class\Math\Matrix\Matrix2x2.cpp" />
-    <ClCompile Include="Engine\Class\Math\Matrix\Matrix3x3.cpp" />
-    <ClCompile Include="Engine\Class\Math\Matrix\Matrix4x4.cpp" />
-    <ClCompile Include="Engine\Class\Math\Vector\Vector2.cpp" />
-    <ClCompile Include="Engine\Class\Math\Vector\Vector3.cpp" />
-    <ClCompile Include="Engine\Class\Math\Vector\Vector4.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\CBufferManager.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\ShaderCompiler.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\TextureManager.cpp" />
+    <ClCompile Include="Engine\Base\MyString.cpp" />
+    <ClCompile Include="Engine\Math\Matrix\Matrix2x2.cpp" />
+    <ClCompile Include="Engine\Math\Matrix\Matrix3x3.cpp" />
+    <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp" />
+    <ClCompile Include="Engine\Math\Vector\Vector2.cpp" />
+    <ClCompile Include="Engine\Math\Vector\Vector3.cpp" />
+    <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -166,22 +171,27 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Engine\Class\Base\Windows\WinApp.cpp" />
+    <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Class\Base\DirectX\DirectXCommon.h" />
-    <ClInclude Include="Engine\Class\Base\DirectX\ImGuiManager.h" />
-    <ClInclude Include="Engine\Class\Base\DirectX\shaderCompiler.h" />
-    <ClInclude Include="Engine\Class\Base\MyString.h" />
-    <ClInclude Include="Engine\Class\Base\Windows\WinApp.h" />
-    <ClInclude Include="Engine\Class\Math\MathInclude.h" />
-    <ClInclude Include="Engine\Class\Math\Matrix\Matrix2x2.h" />
-    <ClInclude Include="Engine\Class\Math\Matrix\Matrix3x3.h" />
-    <ClInclude Include="Engine\Class\Math\Matrix\Matrix4x4.h" />
-    <ClInclude Include="Engine\Class\Math\Transform.h" />
-    <ClInclude Include="Engine\Class\Math\Vector\Vector2.h" />
-    <ClInclude Include="Engine\Class\Math\Vector\Vector3.h" />
-    <ClInclude Include="Engine\Class\Math\Vector\Vector4.h" />
+    <ClInclude Include="Engine\Base\DirectX\CBufferManager.h" />
+    <ClInclude Include="Engine\Base\DirectX\DirectXCommon.h" />
+    <ClInclude Include="Engine\Base\DirectX\ImGuiManager.h" />
+    <ClInclude Include="Engine\Base\DirectX\InputLayout.h" />
+    <ClInclude Include="Engine\Base\DirectX\PipelineStateObject.h" />
+    <ClInclude Include="Engine\Base\DirectX\ShaderCompiler.h" />
+    <ClInclude Include="Engine\Base\DirectX\TextureManager.h" />
+    <ClInclude Include="Engine\Base\MyString.h" />
+    <ClInclude Include="Engine\Base\Windows\WinApp.h" />
+    <ClInclude Include="Engine\Math\MathInclude.h" />
+    <ClInclude Include="Engine\Math\Matrix\Matrix2x2.h" />
+    <ClInclude Include="Engine\Math\Matrix\Matrix3x3.h" />
+    <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h" />
+    <ClInclude Include="Engine\Math\Transform.h" />
+    <ClInclude Include="Engine\Math\Vector\Vector2.h" />
+    <ClInclude Include="Engine\Math\Vector\Vector3.h" />
+    <ClInclude Include="Engine\Math\Vector\Vector4.h" />
+    <ClInclude Include="Engine\Math\VerTexData.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -208,6 +218,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
+      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
