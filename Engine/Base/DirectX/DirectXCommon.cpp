@@ -183,8 +183,16 @@ DXGI_SWAP_CHAIN_DESC1* DirectXCommon::GetSwapChainDesc() {
 	return &swapChainDesc_;
 }
 
+IDXGISwapChain4* DirectXCommon::GetSwapChain() {
+	return swapChain_;
+}
+
 D3D12_RENDER_TARGET_VIEW_DESC* DirectXCommon::GetRtvDesc() {
 	return &rtvDesc_;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE* DirectXCommon::GetRtvHandles() {
+	return &rtvHandles_[swapChain_->GetCurrentBackBufferIndex()];
 }
 
 void DirectXCommon::CreateDxgiFactory() {

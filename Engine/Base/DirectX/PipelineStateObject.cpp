@@ -1,10 +1,12 @@
 #include "PipelineStateObject.h"
 #include "DirectXCommon.h"
+#include "../Windows/WinApp.h"
 #include <cassert>
 #include <d3d12.h>
 
 void PipelineStateObject::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstatnce();
+	winApp_ = WinApp::GetInstance();
 
 	// * PSOを作成 * //
 	// RootSignatureを作成します
@@ -77,8 +79,14 @@ void PipelineStateObject::Initialize() {
 	IDxcBlob* pixelShaderBlob = shaderCompiler_.CompileShader(L"Object3d.PS.hlsl",L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
+	// DepthStencilState
+	depthStencil_.Initialize(winApp_,dxCommon_);
+
 	// PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+	graphicsPipelineStateDesc.DepthStencilState = *depthStencil_.GetDepthStencilDesc();
+	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_;
 	graphicsPipelineStateDesc.InputLayout = *inputLayout.GetInputLayoutDesc();
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
@@ -109,4 +117,8 @@ ID3D12PipelineState* PipelineStateObject::GetPipelineState() {
 
 ID3D12RootSignature* PipelineStateObject::GetRootSignature() {
 	return rootSignature_;
+}
+
+DepthStencil* PipelineStateObject::GetDepthStencil() {
+	return &depthStencil_;
 }

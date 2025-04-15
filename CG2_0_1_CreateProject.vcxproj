@@ -150,6 +150,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Base\DirectX\CBufferManager.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
@@ -175,6 +176,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectX\CBufferManager.h" />
+    <ClInclude Include="Engine\Base\DirectX\DepthStencil.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXCommon.h" />
     <ClInclude Include="Engine\Base\DirectX\ImGuiManager.h" />
     <ClInclude Include="Engine\Base\DirectX\InputLayout.h" />
