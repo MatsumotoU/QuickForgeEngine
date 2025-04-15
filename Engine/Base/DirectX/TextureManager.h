@@ -1,7 +1,11 @@
 #pragma once
 #include <string>
+#include <vector>
+
+#include "../../../externals/DirectXTex/d3dx12.h"
 #include "../../../externals/DirectXTex/DirectXTex.h"
-#include <d3d12.h>
+
+class DirectXCommon;
 
 class TextureManager {
 public:
@@ -31,12 +35,10 @@ public:
 	/// <param name="metadata"></param>
 	/// <returns>テクスチャリソース</returns>
 	ID3D12Resource* CreateTextureResource(const DirectX::TexMetadata& metadata);
-	/// <summary>
-	/// TextureResourceにデータを転送する
-	/// </summary>
-	/// <param name="texture"></param>
-	/// <param name="mipImages"></param>
-	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+
+	ID3D12Resource* CreateTextureResource();
+	
+	[[nodiscard]] ID3D12Resource* UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList);
 
 	void CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource);
 
@@ -48,8 +50,11 @@ private:// メンバ変数
 	ID3D12Device* device_;
 	D3D12_HEAP_PROPERTIES heapProperties_;
 
+	D3D12_RESOURCE_DESC resourceDesc_;
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
+
+	DirectXCommon* dxCommon_;
 
 private: // シングルトン用
 	TextureManager() = default;

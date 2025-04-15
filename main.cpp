@@ -96,7 +96,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectX::ScratchImage mipImages = textureManager->LoadTexture("Resources/uvChecker.png");
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	ID3D12Resource* textureResource = textureManager->CreateTextureResource(metadata);
-	textureManager->UploadTextureData(textureResource, mipImages);
 	textureManager->CreateShaderResourceView(metadata, imGuiManager->GetSrvDescriptorHeap(), textureResource);
 
 	// マテリアル用のリソースを作る
@@ -118,12 +117,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	*wvpData = Matrix4x4::MakeIndentity4x4();
 
 	// * VertexResourceを生成する * //
-	ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(VetrtexData) * 3);
+	ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(VetrtexData) * 6);
 
 	// * VertexBufferViewを作成する * //
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = sizeof(VetrtexData) * 3;
+	vertexBufferView.SizeInBytes = sizeof(VetrtexData) * 6;
 	vertexBufferView.StrideInBytes = sizeof(VetrtexData);
 
 	// * リソースにデータを書き込む * //
@@ -135,6 +134,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexData[1].texcoord = { 0.5f,0.0f };
 	vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
 	vertexData[2].texcoord = { 1.0f,1.0f };
+
+	vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
+	vertexData[3].texcoord = { 0.0f,1.0f };
+	vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexData[4].texcoord = { 0.5f,0.0f };
+	vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
+	vertexData[5].texcoord = { 1.0f,1.0f };
 
 	// * ビューポートとシザー * //
 	D3D12_VIEWPORT viewport{};
@@ -159,7 +165,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DispatchMessage(&msg);
 		} else {
 
-			transform.rotate.y += 0.03f;
+			transform.rotate.y += 0.01f;
 
 			Matrix4x4 cameraMatrix = Matrix4x4::MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
@@ -172,7 +178,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			dxCommon->PreDraw();
 			imGuiManager->BeginFrame();
 
+			// テクスチャ用のリソース
+			ID3D12Resource* intermediateResource = textureManager->UploadTextureData(textureResource, mipImages, dxCommon->GetCommandList());
+
 			ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandList();
+
+			// Depthの設定
+			D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = pso.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+			commandList->OMSetRenderTargets(1, dxCommon->GetRtvHandles(), false, &dsvHandl);
+			commandList->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
 			commandList->RSSetViewports(1, &viewport);
 			commandList->RSSetScissorRects(1, &scissorRect);
 			commandList->SetGraphicsRootSignature(pso.GetRootSignature());
@@ -182,12 +197,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU());
-			commandList->DrawInstanced(3, 1, 0, 0);
+			commandList->DrawInstanced(6, 1, 0, 0);
 
 			ImGui::ShowDemoWindow();
 
 			imGuiManager->EndFrame();
 			dxCommon->PostDraw();
+
+			intermediateResource->Release();
 		}
 	}
 

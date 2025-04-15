@@ -49,7 +49,9 @@ public:
 	ID3D12Device* GetDevice();
 	ID3D12GraphicsCommandList* GetCommandList();
 	DXGI_SWAP_CHAIN_DESC1* GetSwapChainDesc();
+	IDXGISwapChain4* GetSwapChain();
 	D3D12_RENDER_TARGET_VIEW_DESC* GetRtvDesc();
+	D3D12_CPU_DESCRIPTOR_HANDLE* GetRtvHandles();
 
 private: // メンバ変数
 	// windowsアプリケーション管理

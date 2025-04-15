@@ -2,8 +2,10 @@
 #include "CBufferManager.h"
 #include "InputLayout.h"
 #include "ShaderCompiler.h"
+#include "DepthStencil.h"
 
 class DirectXCommon;
+class WinApp;
 
 class PipelineStateObject {
 public:
@@ -16,11 +18,16 @@ public:
 	ID3D12PipelineState* GetPipelineState();
 	ID3D12RootSignature* GetRootSignature();
 
+public:
+	DepthStencil* GetDepthStencil();
+
 private:
 	DirectXCommon* dxCommon_;
+	WinApp* winApp_;
 	CBufferManager cBufferManager_;
 	InputLayout inputLayout_;
 	ShaderCompiler shaderCompiler_;
+	DepthStencil depthStencil_;
 	ID3D12PipelineState* graphicsPipelineState_;
 
 	ID3D10Blob* signatureBlob_;
