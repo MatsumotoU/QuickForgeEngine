@@ -34,6 +34,11 @@ void DirectXCommon::Initialize() {
 	Log(ConvertString(std::format(L"DirectXCommon:EndDirectInitialize!\n")));
 	debugLog_->Log("DirectXCommon:EndDirectInitialize");
 
+	// descriptorHeapSizeの代入
+	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	descriptorSizeDSV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
 	// 描画前の設定
 	CreateCommandAllocator();
 	CreateCommandList();
@@ -199,6 +204,18 @@ D3D12_RENDER_TARGET_VIEW_DESC* DirectXCommon::GetRtvDesc() {
 
 D3D12_CPU_DESCRIPTOR_HANDLE* DirectXCommon::GetRtvHandles() {
 	return &rtvHandles_[swapChain_->GetCurrentBackBufferIndex()];
+}
+
+uint32_t DirectXCommon::GetDescriptorSizeSRV() {
+	return descriptorSizeSRV_;
+}
+
+uint32_t DirectXCommon::GetDescriptorSizeRTV() {
+	return descriptorSizeRTV_;
+}
+
+uint32_t DirectXCommon::GetDescriptorSizeDSV() {
+	return descriptorSizeDSV_;
 }
 
 void DirectXCommon::CreateDxgiFactory() {
@@ -398,4 +415,16 @@ void DirectXCommon::CreateFenceEvent() {
 	// FenceのSignalを待つためのイベントを作成する
 	fenceEvent_ = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent_ != nullptr);
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDecriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index) {
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDecriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index) {
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
 }

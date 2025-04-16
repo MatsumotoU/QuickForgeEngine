@@ -55,6 +55,10 @@ public:
 	D3D12_RENDER_TARGET_VIEW_DESC* GetRtvDesc();
 	D3D12_CPU_DESCRIPTOR_HANDLE* GetRtvHandles();
 
+	uint32_t GetDescriptorSizeSRV();
+	uint32_t GetDescriptorSizeRTV();
+	uint32_t GetDescriptorSizeDSV();
+
 private: // メンバ変数
 	// windowsアプリケーション管理
 	WinApp* winApp_;
@@ -83,6 +87,11 @@ private: // メンバ変数
 
 	// リソース解放用ポインタ
 	std::vector<ID3D12Resource*> resources_;
+
+	// 一回決めたら値が変わることがないやつら
+	uint32_t descriptorSizeSRV_;
+	uint32_t descriptorSizeRTV_;
+	uint32_t descriptorSizeDSV_;
 
 private: // 外部から触れてほしくない関数たち
 	/// <summary>
@@ -147,3 +156,6 @@ private: // シングルトン用
 	DirectXCommon& operator=(const DirectXCommon&) = delete;
 
 };
+
+D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDecriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
+D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDecriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);

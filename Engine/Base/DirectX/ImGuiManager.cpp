@@ -17,6 +17,7 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(winApp->GetHWND());
+	// ここでsrvDescriptorHeapの先頭にviewを作ってる
 	ImGui_ImplDX12_Init(device_,
 		dxCommon->GetSwapChainDesc()->BufferCount,
 		dxCommon->GetRtvDesc()->Format,

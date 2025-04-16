@@ -42,6 +42,8 @@
 int windowWidth = 1280;
 int windowHeight = 720;
 
+//srv,rtv,dsvはimGuiManager,dxCommon,textureManagerが持っているので要分離(こいつらは増えない)
+
 static LONG WINAPI ExportDump(EXCEPTION_POINTERS* exception) {
 	SYSTEMTIME time;
 	GetLocalTime(&time);
@@ -99,11 +101,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
+	int32_t ballTextureIndex = 0;
+
 	// テクスチャを読み込む
 	DirectX::ScratchImage mipImages = textureManager->LoadTexture("Resources/uvChecker.png");
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	ID3D12Resource* textureResource = textureManager->CreateTextureResource(metadata);
-	textureManager->CreateShaderResourceView(metadata, imGuiManager->GetSrvDescriptorHeap(), textureResource);
+	textureManager->CreateShaderResourceView(metadata, imGuiManager->GetSrvDescriptorHeap(), textureResource,1);
+	// 2米
+	DirectX::ScratchImage mipImages2 = textureManager->LoadTexture("Resources/monsterBall.png");
+	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
+	ID3D12Resource* textureResource2 = textureManager->CreateTextureResource(metadata2);
+	textureManager->CreateShaderResourceView(metadata2, imGuiManager->GetSrvDescriptorHeap(), textureResource2,2);
 
 	// マテリアル用のリソースを作る
 	ID3D12Resource* materialResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Vector4));
@@ -268,8 +277,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			dxCommon->PreDraw();
 			imGuiManager->BeginFrame();
 
-			// テクスチャ用のリソース
+			// テクスチャをvramにアップロード
 			ID3D12Resource* intermediateResource = textureManager->UploadTextureData(textureResource, mipImages, dxCommon->GetCommandList());
+			ID3D12Resource* intermediateResource2 = textureManager->UploadTextureData(textureResource2, mipImages2, dxCommon->GetCommandList());
 
 			ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandList();
 
@@ -286,19 +296,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU());
+			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU(ballTextureIndex));
 			commandList->DrawInstanced(sphereVertexMax, 1, 0, 0);
+
+			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU(0));
 
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
 			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 			commandList->DrawInstanced(6, 1, 0, 0);
 
-			ImGui::ShowDemoWindow();
+			ImGui::InputInt("textureIndex", &ballTextureIndex, 1);
+			if (ballTextureIndex < 0) {
+				ballTextureIndex = 0;
+			}
+			if (ballTextureIndex > 1) {
+				ballTextureIndex = 1;
+			}
 
 			imGuiManager->EndFrame();
 			dxCommon->PostDraw();
 
 			intermediateResource->Release();
+			intermediateResource2->Release();
 		}
 	}
 
