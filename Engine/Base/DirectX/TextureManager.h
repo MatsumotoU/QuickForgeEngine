@@ -35,24 +35,26 @@ public:
 	/// <param name="metadata"></param>
 	/// <returns>テクスチャリソース</returns>
 	ID3D12Resource* CreateTextureResource(const DirectX::TexMetadata& metadata);
-
-	ID3D12Resource* CreateTextureResource();
 	
+	void BeginUploadTextureData();
 	[[nodiscard]] ID3D12Resource* UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList);
+	void EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList);
 
-	void CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource);
+	void CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource, uint32_t index);
 
 public:
-	D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU();
-	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU();
+	D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index);
 
 private:// メンバ変数
 	ID3D12Device* device_;
 	D3D12_HEAP_PROPERTIES heapProperties_;
 
 	D3D12_RESOURCE_DESC resourceDesc_;
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
+
+	uint32_t srvHandleIndex_;
+	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> textureSrvHandleCPU_;
+	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPU_;
 
 	DirectXCommon* dxCommon_;
 

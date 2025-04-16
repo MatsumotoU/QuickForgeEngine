@@ -23,6 +23,9 @@ void TextureManager::Initialize(ID3D12Device* device) {
 	// 利用するHeapの設定
 	heapProperties_ = {};
 	heapProperties_.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	textureSrvHandleCPU_.clear();
+	textureSrvHandleGPU_.clear();
 }
 
 void TextureManager::Finalize() {
@@ -69,6 +72,9 @@ ID3D12Resource* TextureManager::CreateTextureResource(const DirectX::TexMetadata
 	return resource;
 }
 
+void TextureManager::BeginUploadTextureData() {
+}
+
 ID3D12Resource* TextureManager::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList) {
 	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 	subresources.clear();
@@ -76,6 +82,12 @@ ID3D12Resource* TextureManager::UploadTextureData(ID3D12Resource* texture, const
 	uint64_t intermediatSize = GetRequiredIntermediateSize(texture, 0, static_cast<UINT>(subresources.size()));
 	ID3D12Resource* intermediateResource = dxCommon_->CreateBufferResource(device_, intermediatSize);
 	UpdateSubresources(commandList, texture, intermediateResource, 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
+
+	EndUploadTextureData(texture, commandList);
+	return intermediateResource;
+}
+
+void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList) {
 	// Textureへの転送後は利用できるようにD3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResouceStateを変更する
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -85,8 +97,6 @@ ID3D12Resource* TextureManager::UploadTextureData(ID3D12Resource* texture, const
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
 	commandList->ResourceBarrier(1, &barrier);
-
-	return intermediateResource;
 }
 
 //void TextureManager::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
@@ -107,7 +117,7 @@ ID3D12Resource* TextureManager::UploadTextureData(ID3D12Resource* texture, const
 //	}
 //}
 
-void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource) {
+void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource,uint32_t index) {
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
@@ -116,20 +126,24 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 	srvDesc.Texture2D.MipLevels = static_cast<UINT>(metadata.mipLevels);
 
 	// SRVを作成するDescriptorHeapの場所を決める
-	textureSrvHandleCPU_ = srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	textureSrvHandleGPU_ = srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU{};
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU{};
+	textureSrvHandleCPU_.push_back(textureSrvHandleCPU);
+	textureSrvHandleGPU_.push_back(textureSrvHandleGPU);
+	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1] = GetCPUDecriptorHandle(srvDescriptorHeap, dxCommon_->GetDescriptorSizeSRV(), index);
+	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1] = GetGPUDecriptorHandle(srvDescriptorHeap, dxCommon_->GetDescriptorSizeSRV(), index);
 	// ImGuiの次のDescriptorを使う
 	UINT discriptorHeapSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleCPU_.ptr += discriptorHeapSize;
-	textureSrvHandleGPU_.ptr += discriptorHeapSize;
+	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
+	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
 	// SRVの作成
-	device_->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU_);
+	device_->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU() {
-	return textureSrvHandleCPU_;
+D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t index) {
+	return textureSrvHandleCPU_[index];
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleGPU() {
-	return textureSrvHandleGPU_;
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleGPU(uint32_t index) {
+	return textureSrvHandleGPU_[index];
 }
