@@ -36,6 +36,9 @@
 #include <strsafe.h>
 #pragma comment(lib,"Dbghelp.lib")
 
+// DebugLog
+#include "Engine/Base/MyDebugLog.h"
+
 int windowWidth = 1280;
 int windowHeight = 720;
 
@@ -65,6 +68,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// * ゲーム以前の設定 * //
 	// ダンプ渡し
 	SetUnhandledExceptionFilter(ExportDump);
+	// デバッグログ用
+	MyDebugLog* myDebugLog = MyDebugLog::GetInstatnce();
+	myDebugLog->Initialize();
 
 	// ウィンドウ生成
 	WinApp* winApp = WinApp::GetInstance();
@@ -219,6 +225,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	CloseWindow(winApp->GetHWND());
 
 	textureManager->Finalize();
+	myDebugLog->Finalize();
 
 	// * 終了時のエラー処理 * //
 	IDXGIDebug1* debug;

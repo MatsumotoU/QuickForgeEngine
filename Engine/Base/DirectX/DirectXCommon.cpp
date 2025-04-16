@@ -21,12 +21,18 @@ void DirectXCommon::Initialize() {
 	// windowsの管理クラスのインスタンス取得
 	winApp_ = WinApp::GetInstance();
 
+	// デバッグログ
+	debugLog_ = MyDebugLog::GetInstatnce();
+	debugLog_->Log("DirectXCommon:StartInitialize");
+
 	// DirectXの初期化
 	Log(ConvertString(std::format(L"DirectXCommon:StartDirectInitialize!\n")));
+	debugLog_->Log("DirectXCommon:StartDirectInitialize");
 	CreateDxgiFactory();
 	FindAdapter();
 	CreateDevice();
 	Log(ConvertString(std::format(L"DirectXCommon:EndDirectInitialize!\n")));
+	debugLog_->Log("DirectXCommon:EndDirectInitialize");
 
 	// 描画前の設定
 	CreateCommandAllocator();
@@ -221,6 +227,7 @@ void DirectXCommon::FindAdapter() {
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 			// 採用したアダプタの情報をログに出力。
 			Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+			debugLog_->Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
 			break;
 		}
 		useAdapter_ = nullptr;
@@ -249,12 +256,14 @@ void DirectXCommon::CreateDevice() {
 		if (SUCCEEDED(hr)) {
 			// 生成できたのでログ出力してループ脱出
 			Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
+			debugLog_->Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
 			break;
 		}
 	}
 	// デバイス生成が上手くいかなかったので起動できない
 	assert(device_ != nullptr);
 	Log("Complete create D3D12Device!!\n");
+	debugLog_->Log("Complete create D3D12Device");
 
 	// エラー落ち処理
 #ifdef _DEBUG
@@ -298,6 +307,7 @@ void DirectXCommon::CreateCommandQueue() {
 		IID_PPV_ARGS(&commandQueue_));
 	assert(SUCCEEDED(hr));
 	Log(ConvertString(std::format(L"DirectXCommon:CreateCommandQueue!\n")));
+	debugLog_->Log("DirectXCommon:CreateCommandQueue");
 }
 
 void DirectXCommon::CreateCommandAllocator() {
@@ -308,6 +318,7 @@ void DirectXCommon::CreateCommandAllocator() {
 	// コマンドアロケータの生成例外
 	assert(SUCCEEDED(hr));
 	Log(ConvertString(std::format(L"DirectXCommon:CreateCommandAllocator!\n")));
+	debugLog_->Log("DirectXCommon:CreateCommandAllocator");
 }
 
 void DirectXCommon::CreateCommandList() {
@@ -317,6 +328,7 @@ void DirectXCommon::CreateCommandList() {
 	// コマンドリスト生成例外
 	assert(SUCCEEDED(hr));
 	Log(ConvertString(std::format(L"DirectXCommon:CreateCommandList!\n")));
+	debugLog_->Log("DirectXCommon:CreateCommandList");
 }
 
 void DirectXCommon::CreateSwapChain() {
@@ -333,6 +345,7 @@ void DirectXCommon::CreateSwapChain() {
 	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain_));
 	assert(SUCCEEDED(hr));
 	Log(ConvertString(std::format(L"DirectXCommon:CreateSwapChain!\n")));
+	debugLog_->Log("DirectXCommon:CreateSwapChain");
 }
 
 ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
