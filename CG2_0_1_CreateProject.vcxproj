@@ -157,6 +157,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ShaderCompiler.cpp" />
     <ClCompile Include="Engine\Base\DirectX\TextureManager.cpp" />
+    <ClCompile Include="Engine\Base\MyDebugLog.cpp" />
     <ClCompile Include="Engine\Base\MyString.cpp" />
     <ClCompile Include="Engine\Math\Matrix\Matrix2x2.cpp" />
     <ClCompile Include="Engine\Math\Matrix\Matrix3x3.cpp" />
@@ -175,6 +176,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Base\MyDebugLog.h" />
     <ClInclude Include="Engine\Base\DirectX\CBufferManager.h" />
     <ClInclude Include="Engine\Base\DirectX\DepthStencil.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXCommon.h" />

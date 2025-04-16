@@ -8,6 +8,8 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 
+#include "../MyDebugLog.h"
+
 class DirectXCommon {
 public:
 	// シングルトン
@@ -56,6 +58,9 @@ public:
 private: // メンバ変数
 	// windowsアプリケーション管理
 	WinApp* winApp_;
+
+	// DebugLog用
+	MyDebugLog* debugLog_;
 
 	// DirectXの管理
 	IDXGIFactory7* dxgiFactory_;
