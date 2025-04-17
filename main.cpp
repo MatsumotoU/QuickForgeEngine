@@ -10,6 +10,7 @@
 
 // Math
 #include "Engine/Math/Matrix/Matrix4x4.h"
+#include "Engine/Math/Matrix/Matrix3x3.h"
 #include "Engine/Math/Vector/Vector4.h"
 #include "Engine/Math/Transform.h"
 #include "Engine/Math/VerTexData.h"
@@ -51,6 +52,8 @@ struct TransformationMatrix {
 struct Material {
 	Vector4 color;
 	int32_t enableLighting;
+	float padding[3];
+	Matrix4x4 uvTransform;
 };
 
 struct DirectionalLight
@@ -118,6 +121,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	Transform uvTransformSprite{
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f}
+	};
 
 	int32_t ballTextureIndex = 0;
 
@@ -151,6 +159,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 今回は赤を書き込んでみる
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData->enableLighting = true;
+	materialData->uvTransform = Matrix4x4::MakeIndentity4x4();
 
 	// 光源用のリソースを作る。DirectionnalLight一つ分のサイズを用意する
 	ID3D12Resource* directionnalLightResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(DirectionalLight));
@@ -163,20 +172,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	directionnalLightData->direction = { 0.0f,-1.0f,0.0f };
 	directionnalLightData->intensity = 1.0f;
 
-	// * VertexResourceを生成する * //
-	const int32_t kSubdivision = 16;
-	const int32_t sphereVertexMax = kSubdivision * kSubdivision * 6;
-	ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * sphereVertexMax);
-
-	// * VertexBufferViewを作成する * //
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * sphereVertexMax;
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
-
-	// * リソースにデータを書き込む * //
-	VertexData* vertexData = nullptr;
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	/*vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
 	vertexData[0].texcoord = { 0.0f,1.0f};
 	vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
@@ -192,10 +187,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexData[5].texcoord = { 1.0f,1.0f };*/
 
 	// Spriteを作る
-	ID3D12Resource* vertexResourceSprite = dxCommon->CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * 6);
+	ID3D12Resource* vertexResourceSprite = dxCommon->CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * 4);
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
 	vertexBufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
-	vertexBufferViewSprite.SizeInBytes = sizeof(VertexData) * 6;
+	vertexBufferViewSprite.SizeInBytes = sizeof(VertexData) * 4;
 	vertexBufferViewSprite.StrideInBytes = sizeof(VertexData);
 
 	VertexData* vertexDataSprite = nullptr;
@@ -209,16 +204,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
 	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
 	vertexDataSprite[2].normal = { 0.0f,0.0f,-1.0f };
-
-	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
-	vertexDataSprite[3].normal = { 0.0f,0.0f,-1.0f };
-	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
-	vertexDataSprite[4].normal = { 0.0f,0.0f,-1.0f };
-	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
-	vertexDataSprite[5].normal = { 0.0f,0.0f,-1.0f };
+	vertexDataSprite[3].position = { 640.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[3].texcoord = { 1.0f,0.0f };
 
 	// マテリアル用のリソースを作る
 	ID3D12Resource* materialResourceSprite = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Material));
@@ -229,6 +216,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 今回は赤を書き込んでみる
 	materialDataSprite->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialDataSprite->enableLighting = false;
+	materialDataSprite->uvTransform = Matrix4x4::MakeIndentity4x4();
 
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
 	ID3D12Resource* transformationMatrixResourceSprite = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(TransformationMatrix));
@@ -240,6 +228,47 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	transformationMatrixDataSprite->WVP = Matrix4x4::MakeIndentity4x4();
 	transformationMatrixDataSprite->World = Matrix4x4::MakeIndentity4x4();
 
+	// indexBuffer
+	ID3D12Resource* indexResourceSprite = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * 6);
+	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+	indexBufferViewSprite.BufferLocation = indexResourceSprite->GetGPUVirtualAddress();
+	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
+	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
+
+	uint32_t* indexDataSprite = nullptr;
+	indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+	indexDataSprite[0] = 0;
+	indexDataSprite[1] = 1;
+	indexDataSprite[2] = 2;
+	indexDataSprite[3] = 1;
+	indexDataSprite[4] = 3;
+	indexDataSprite[5] = 2;
+
+	// * VertexResourceを生成する * //
+	const int32_t kSubdivision = 16;
+	const int32_t sphereVertexMax = kSubdivision * kSubdivision * 4;
+	ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * sphereVertexMax);
+
+	// * VertexBufferViewを作成する * //
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * sphereVertexMax;
+	vertexBufferView.StrideInBytes = sizeof(VertexData);
+
+	// * リソースにデータを書き込む * //
+	VertexData* vertexData = nullptr;
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+	// indexBuffer
+	ID3D12Resource* indexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * kSubdivision * kSubdivision * 6);
+	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
+	indexBufferView.SizeInBytes = sizeof(uint32_t) * kSubdivision * kSubdivision * 6;
+	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+
+	uint32_t* indexData = nullptr;
+	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+
 	// 球
 	const float pi = DirectX::XM_PI;
 	
@@ -248,7 +277,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	for (int32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
 		float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);
 		for (int32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-			uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
+			uint32_t start = (latIndex * kSubdivision + lonIndex) * 4;
+			uint32_t startIndex = (latIndex * kSubdivision + lonIndex) * 6;
 			float lon = static_cast<float>(lonIndex) * kLonEvery;
 
 			Vector4 a = { cos(lat) * cos(lon),sin(lat),cos(lat) * sin(lon),1.0f };
@@ -276,13 +306,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
 			vertexData[start+2].normal = cNormal;
-
-			vertexData[start + 3].position = b;
+			vertexData[start + 3].position = d;
 			vertexData[start + 3].texcoord = {
-				static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
+				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
-			vertexData[start + 3].normal = bNormal;
-			vertexData[start + 4].position = d;
+			vertexData[start + 3].normal = dNormal;
+
+			indexData[startIndex] = start;
+			indexData[startIndex+1] = start+1;
+			indexData[startIndex+2] = start+2;
+			indexData[startIndex+3] = start+1;
+			indexData[startIndex+4] = start+3;
+			indexData[startIndex+5] = start+2;
+
+			/*vertexData[start + 4].position = d;
 			vertexData[start + 4].texcoord = {
 				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
@@ -291,7 +328,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			vertexData[start + 5].texcoord = {
 				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
-			vertexData[start + 5].normal = cNormal;
+			vertexData[start + 5].normal = cNormal;*/
 		}
 	}
 
@@ -356,6 +393,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->RSSetScissorRects(1, &scissorRect);
 			commandList->SetGraphicsRootSignature(pso.GetRootSignature());
 			commandList->SetPipelineState(pso.GetPipelineState());
+			commandList->IASetIndexBuffer(&indexBufferView);
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
@@ -363,15 +401,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(3, directionnalLightResource->GetGPUVirtualAddress());
 			
 			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU(ballTextureIndex));
-			commandList->DrawInstanced(sphereVertexMax, 1, 0, 0);
+			commandList->DrawIndexedInstanced(kSubdivision* kSubdivision * 6, 1, 0, 0, 0);// 描画処理をする頂点の数
 
 			// sprite
-			commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
-			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU(0));
+			Matrix4x4 uvTransformMatrix = Matrix4x4::MakeScaleMatrix(uvTransformSprite.scale);
+			uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeRotateZMatrix(uvTransformSprite.rotate.z));
+			uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeTranslateMatrix(uvTransformSprite.translate));
+			materialDataSprite->uvTransform = uvTransformMatrix;
 
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+			commandList->IASetIndexBuffer(&indexBufferViewSprite);
+			commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU(0));
+			
 			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-			commandList->DrawInstanced(6, 1, 0, 0);
+			commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 			ImGui::InputInt("textureIndex", &ballTextureIndex, 1);
 			if (ballTextureIndex < 0) {
@@ -386,6 +430,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Checkbox("isLighting", &Lighting);
 			materialData->enableLighting = Lighting;
 			directionnalLightData->direction = directionnalLightData->direction.Normalize();
+
+			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f,-10.0f,10.0f);
+			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
 			imGuiManager->EndFrame();
 			dxCommon->PostDraw();
