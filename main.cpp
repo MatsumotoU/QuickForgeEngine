@@ -3,6 +3,7 @@
 #include "Engine/Base/DirectX/shaderCompiler.h"
 #include "Engine/Base/DirectX/ImGuiManager.h"
 #include "Engine/Base/DirectX/TextureManager.h"
+#include "Engine/Base/DirectX/ModelManager.h"
 // PSO
 #include "Engine/Base/DirectX/PipelineStateObject.h"
 
@@ -129,17 +130,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	int32_t ballTextureIndex = 0;
 
-	// テクスチャを読み込む
-	DirectX::ScratchImage mipImages = textureManager->LoadTexture("Resources/uvChecker.png");
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	ID3D12Resource* textureResource = textureManager->CreateTextureResource(metadata);
-	textureManager->CreateShaderResourceView(metadata, imGuiManager->GetSrvDescriptorHeap(), textureResource,1);
-	// 2米
-	DirectX::ScratchImage mipImages2 = textureManager->LoadTexture("Resources/monsterBall.png");
-	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
-	ID3D12Resource* textureResource2 = textureManager->CreateTextureResource(metadata2);
-	textureManager->CreateShaderResourceView(metadata2, imGuiManager->GetSrvDescriptorHeap(), textureResource2,2);
-
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
 	ID3D12Resource* wvpResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(TransformationMatrix));
 	// データを書き込む
@@ -235,102 +225,125 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
 	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
 
-	uint32_t* indexDataSprite = nullptr;
-	indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
-	indexDataSprite[0] = 0;
-	indexDataSprite[1] = 1;
-	indexDataSprite[2] = 2;
-	indexDataSprite[3] = 1;
-	indexDataSprite[4] = 3;
-	indexDataSprite[5] = 2;
+	//uint32_t* indexDataSprite = nullptr;
+	//indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+	//indexDataSprite[0] = 0;
+	//indexDataSprite[1] = 1;
+	//indexDataSprite[2] = 2;
+	//indexDataSprite[3] = 1;
+	//indexDataSprite[4] = 3;
+	//indexDataSprite[5] = 2;
 
-	// * VertexResourceを生成する * //
-	const int32_t kSubdivision = 16;
-	const int32_t sphereVertexMax = kSubdivision * kSubdivision * 4;
-	ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * sphereVertexMax);
+	//// * VertexResourceを生成する * //
+	//const int32_t kSubdivision = 16;
+	//const int32_t sphereVertexMax = kSubdivision * kSubdivision * 4;
+	//ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * sphereVertexMax);
 
-	// * VertexBufferViewを作成する * //
+	//// * VertexBufferViewを作成する * //
+	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	//vertexBufferView.SizeInBytes = sizeof(VertexData) * sphereVertexMax;
+	//vertexBufferView.StrideInBytes = sizeof(VertexData);
+
+	//// * リソースにデータを書き込む * //
+	//VertexData* vertexData = nullptr;
+	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+	//// indexBuffer
+	//ID3D12Resource* indexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * kSubdivision * kSubdivision * 6);
+	//D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+	//indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
+	//indexBufferView.SizeInBytes = sizeof(uint32_t) * kSubdivision * kSubdivision * 6;
+	//indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+
+	//uint32_t* indexData = nullptr;
+	//indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+
+	//// 球
+	//const float pi = DirectX::XM_PI;
+	//
+	//const float kLonEvery = pi * 2.0f / static_cast<float>(kSubdivision);
+	//const float kLatEvery = pi / static_cast<float>(kSubdivision);
+	//for (int32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+	//	float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);
+	//	for (int32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
+	//		uint32_t start = (latIndex * kSubdivision + lonIndex) * 4;
+	//		uint32_t startIndex = (latIndex * kSubdivision + lonIndex) * 6;
+	//		float lon = static_cast<float>(lonIndex) * kLonEvery;
+
+	//		Vector4 a = { cos(lat) * cos(lon),sin(lat),cos(lat) * sin(lon),1.0f };
+	//		Vector4 b = { cos(lat + kLatEvery) * cos(lon),sin(lat+ kLatEvery),cos(lat+ kLatEvery) * sin(lon),1.0f };
+	//		Vector4 c = { cos(lat) * cos(lon+ kLonEvery),sin(lat),cos(lat) * sin(lon+ kLonEvery),1.0f };
+	//		Vector4 d = { cos(lat + kLatEvery) * cos(lon + kLonEvery),sin(lat + kLatEvery),cos(lat + kLatEvery) * sin(lon + kLonEvery),1.0f };
+
+	//		Vector3 aNormal = { a.x,a.y,a.z };
+	//		Vector3 bNormal = {	b.x,b.y,b.z };
+	//		Vector3 cNormal = { c.x,c.y,c.z };
+	//		Vector3 dNormal = { d.x,d.y,d.z };
+
+	//		vertexData[start].position = a;
+	//		vertexData[start].texcoord = { 
+	//			static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
+	//			1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
+	//		vertexData[start].normal = aNormal;
+	//		vertexData[start + 1].position = b;
+	//		vertexData[start + 1].texcoord = { 
+	//			static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
+	//			1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
+	//		vertexData[start+1].normal = bNormal;
+	//		vertexData[start + 2].position = c;
+	//		vertexData[start + 2].texcoord = { 
+	//			static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
+	//			1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
+	//		vertexData[start+2].normal = cNormal;
+	//		vertexData[start + 3].position = d;
+	//		vertexData[start + 3].texcoord = {
+	//			static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
+	//			1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
+	//		vertexData[start + 3].normal = dNormal;
+
+	//		indexData[startIndex] = start;
+	//		indexData[startIndex+1] = start+1;
+	//		indexData[startIndex+2] = start+2;
+	//		indexData[startIndex+3] = start+1;
+	//		indexData[startIndex+4] = start+3;
+	//		indexData[startIndex+5] = start+2;
+
+	//		/*vertexData[start + 4].position = d;
+	//		vertexData[start + 4].texcoord = {
+	//			static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
+	//			1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
+	//		vertexData[start + 4].normal = dNormal;
+	//		vertexData[start + 5].position = c;
+	//		vertexData[start + 5].texcoord = {
+	//			static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
+	//			1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
+	//		vertexData[start + 5].normal = cNormal;*/
+	//	}
+	//}
+
+	// ModelDataを使う
+	ModelData modelData = ModelManager::LoadObjFile("Resources", "plane.obj");
+	ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * sphereVertexMax;
+	vertexBufferView.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * modelData.vertices.size());
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
-	// * リソースにデータを書き込む * //
 	VertexData* vertexData = nullptr;
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
-	// indexBuffer
-	ID3D12Resource* indexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * kSubdivision * kSubdivision * 6);
-	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
-	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
-	indexBufferView.SizeInBytes = sizeof(uint32_t) * kSubdivision * kSubdivision * 6;
-	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-
-	uint32_t* indexData = nullptr;
-	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
-
-	// 球
-	const float pi = DirectX::XM_PI;
-	
-	const float kLonEvery = pi * 2.0f / static_cast<float>(kSubdivision);
-	const float kLatEvery = pi / static_cast<float>(kSubdivision);
-	for (int32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-		float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);
-		for (int32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-			uint32_t start = (latIndex * kSubdivision + lonIndex) * 4;
-			uint32_t startIndex = (latIndex * kSubdivision + lonIndex) * 6;
-			float lon = static_cast<float>(lonIndex) * kLonEvery;
-
-			Vector4 a = { cos(lat) * cos(lon),sin(lat),cos(lat) * sin(lon),1.0f };
-			Vector4 b = { cos(lat + kLatEvery) * cos(lon),sin(lat+ kLatEvery),cos(lat+ kLatEvery) * sin(lon),1.0f };
-			Vector4 c = { cos(lat) * cos(lon+ kLonEvery),sin(lat),cos(lat) * sin(lon+ kLonEvery),1.0f };
-			Vector4 d = { cos(lat + kLatEvery) * cos(lon + kLonEvery),sin(lat + kLatEvery),cos(lat + kLatEvery) * sin(lon + kLonEvery),1.0f };
-
-			Vector3 aNormal = { a.x,a.y,a.z };
-			Vector3 bNormal = {	b.x,b.y,b.z };
-			Vector3 cNormal = { c.x,c.y,c.z };
-			Vector3 dNormal = { d.x,d.y,d.z };
-
-			vertexData[start].position = a;
-			vertexData[start].texcoord = { 
-				static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
-				1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
-			vertexData[start].normal = aNormal;
-			vertexData[start + 1].position = b;
-			vertexData[start + 1].texcoord = { 
-				static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
-				1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
-			vertexData[start+1].normal = bNormal;
-			vertexData[start + 2].position = c;
-			vertexData[start + 2].texcoord = { 
-				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
-				1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
-			vertexData[start+2].normal = cNormal;
-			vertexData[start + 3].position = d;
-			vertexData[start + 3].texcoord = {
-				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
-				1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
-			vertexData[start + 3].normal = dNormal;
-
-			indexData[startIndex] = start;
-			indexData[startIndex+1] = start+1;
-			indexData[startIndex+2] = start+2;
-			indexData[startIndex+3] = start+1;
-			indexData[startIndex+4] = start+3;
-			indexData[startIndex+5] = start+2;
-
-			/*vertexData[start + 4].position = d;
-			vertexData[start + 4].texcoord = {
-				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
-				1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
-			vertexData[start + 4].normal = dNormal;
-			vertexData[start + 5].position = c;
-			vertexData[start + 5].texcoord = {
-				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
-				1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
-			vertexData[start + 5].normal = cNormal;*/
-		}
-	}
+	// テクスチャを読み込む
+	DirectX::ScratchImage mipImages = textureManager->LoadTexture("Resources/uvChecker.png");
+	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+	ID3D12Resource* textureResource = textureManager->CreateTextureResource(metadata);
+	textureManager->CreateShaderResourceView(metadata, imGuiManager->GetSrvDescriptorHeap(), textureResource, 1);
+	// 2米
+	DirectX::ScratchImage mipImages2 = textureManager->LoadTexture(modelData.material.textureFilePath);
+	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
+	ID3D12Resource* textureResource2 = textureManager->CreateTextureResource(metadata2);
+	textureManager->CreateShaderResourceView(metadata2, imGuiManager->GetSrvDescriptorHeap(), textureResource2, 2);
 
 	// * ビューポートとシザー * //
 	D3D12_VIEWPORT viewport{};
@@ -357,7 +370,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DispatchMessage(&msg);
 		} else {
 
-			transform.rotate.y += 0.01f;
+			//transform.rotate.y += 0.01f;
 
 			Matrix4x4 cameraMatrix = Matrix4x4::MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
@@ -393,7 +406,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->RSSetScissorRects(1, &scissorRect);
 			commandList->SetGraphicsRootSignature(pso.GetRootSignature());
 			commandList->SetPipelineState(pso.GetPipelineState());
-			commandList->IASetIndexBuffer(&indexBufferView);
+			//commandList->IASetIndexBuffer(&indexBufferView);
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
@@ -401,7 +414,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(3, directionnalLightResource->GetGPUVirtualAddress());
 			
 			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU(ballTextureIndex));
-			commandList->DrawIndexedInstanced(kSubdivision* kSubdivision * 6, 1, 0, 0, 0);// 描画処理をする頂点の数
+			commandList->DrawInstanced(static_cast<UINT>(modelData.vertices.size()), 1, 0, 0);
+			//commandList->DrawIndexedInstanced(kSubdivision* kSubdivision * 6, 1, 0, 0, 0);// 描画処理をする頂点の数
 
 			// sprite
 			Matrix4x4 uvTransformMatrix = Matrix4x4::MakeScaleMatrix(uvTransformSprite.scale);
@@ -426,6 +440,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			ImGui::DragFloat3("cametaTransition", &cameraTransform.translate.x,0.1f);
 			ImGui::DragFloat3("cametaRotate", &cameraTransform.rotate.x, 0.1f);
+			ImGui::DragFloat3("ObjRotate", &transform.rotate.x, 0.1f);
 			ImGui::DragFloat3("directionnalLight.direction", &directionnalLightData->direction.x, 0.1f);
 			ImGui::Checkbox("isLighting", &Lighting);
 			materialData->enableLighting = Lighting;

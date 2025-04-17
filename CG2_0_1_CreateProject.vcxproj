@@ -154,6 +154,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\ModelManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ShaderCompiler.cpp" />
     <ClCompile Include="Engine\Base\DirectX\TextureManager.cpp" />
@@ -176,6 +177,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Base\DirectX\ModelManager.h" />
     <ClInclude Include="Engine\Base\MyDebugLog.h" />
     <ClInclude Include="Engine\Base\DirectX\CBufferManager.h" />
     <ClInclude Include="Engine\Base\DirectX\DepthStencil.h" />
@@ -187,10 +189,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\TextureManager.h" />
     <ClInclude Include="Engine\Base\MyString.h" />
     <ClInclude Include="Engine\Base\Windows\WinApp.h" />
+    <ClInclude Include="Engine\Math\MaterialData.h" />
     <ClInclude Include="Engine\Math\MathInclude.h" />
     <ClInclude Include="Engine\Math\Matrix\Matrix2x2.h" />
     <ClInclude Include="Engine\Math\Matrix\Matrix3x3.h" />
     <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h" />
+    <ClInclude Include="Engine\Math\ModelData.h" />
     <ClInclude Include="Engine\Math\Transform.h" />
     <ClInclude Include="Engine\Math\Vector\Vector2.h" />
     <ClInclude Include="Engine\Math\Vector\Vector3.h" />

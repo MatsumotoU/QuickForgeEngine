@@ -1,6 +1,7 @@
 #pragma once
 #include "../Windows/WinApp.h"
 
+#include <wrl.h>
 #include <vector>
 
 #include <d3d12.h>
@@ -41,14 +42,14 @@ public:
 	/// <param name="device">device</param>
 	/// <param name="sizeInBytes">サイズ</param>
 	/// <returns>リソース</returns>
-	static ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
+	static ID3D12Resource* CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes);
 	/// <summary>
 	/// ディスクリプタヒープを作成する
 	/// </summary>
-	static ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+	static ID3D12DescriptorHeap* CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 public:
-	ID3D12Device* GetDevice();
+	ID3D12Device*  GetDevice();
 	ID3D12GraphicsCommandList* GetCommandList();
 	DXGI_SWAP_CHAIN_DESC1* GetSwapChainDesc();
 	IDXGISwapChain4* GetSwapChain();
@@ -67,15 +68,15 @@ private: // メンバ変数
 	MyDebugLog* debugLog_;
 
 	// DirectXの管理
-	IDXGIFactory7* dxgiFactory_;
-	ID3D12Device* device_;
-	IDXGIAdapter4* useAdapter_;
+	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
+	Microsoft::WRL::ComPtr<ID3D12Device> device_;
+	Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter_;
 
-	ID3D12CommandQueue* commandQueue_;
-	ID3D12CommandAllocator* commandAllocator_;
-	ID3D12GraphicsCommandList* commandList_;
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_;
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_;
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
-	IDXGISwapChain4* swapChain_;
+	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
 	ID3D12Resource* swapChainResource_[2];
 	ID3D12DescriptorHeap* rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
