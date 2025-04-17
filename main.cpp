@@ -42,6 +42,24 @@
 int windowWidth = 1280;
 int windowHeight = 720;
 
+// CPU側の設定？シェーダーはGPU？
+struct TransformationMatrix {
+	Matrix4x4 WVP;
+	Matrix4x4 World;
+};
+
+struct Material {
+	Vector4 color;
+	int32_t enableLighting;
+};
+
+struct DirectionalLight
+{
+	Vector4 color;// ライトの色
+	Vector3 direction;// ライトの向き
+	float intensity;// 輝度
+};
+
 //srv,rtv,dsvはimGuiManager,dxCommon,textureManagerが持っているので要分離(こいつらは増えない)
 
 static LONG WINAPI ExportDump(EXCEPTION_POINTERS* exception) {
@@ -114,23 +132,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ID3D12Resource* textureResource2 = textureManager->CreateTextureResource(metadata2);
 	textureManager->CreateShaderResourceView(metadata2, imGuiManager->GetSrvDescriptorHeap(), textureResource2,2);
 
-	// マテリアル用のリソースを作る
-	ID3D12Resource* materialResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Vector4));
-	// マテリアルにデータを書き込む
-	Vector4* materialData = nullptr;
-	// 書き込むためのアドレス取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	// 今回は赤を書き込んでみる
-	*materialData = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
-	ID3D12Resource* wvpResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Matrix4x4));
+	ID3D12Resource* wvpResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(TransformationMatrix));
 	// データを書き込む
-	Matrix4x4* wvpData = nullptr;
+	TransformationMatrix* wvpData = nullptr;
 	// 書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	// 単位行列を書き込んでおく
-	*wvpData = Matrix4x4::MakeIndentity4x4();
+	wvpData->WVP = Matrix4x4::MakeIndentity4x4();
+	wvpData->World = Matrix4x4::MakeIndentity4x4();
+
+	// マテリアル用のリソースを作る
+	ID3D12Resource* materialResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Material));
+	// マテリアルにデータを書き込む
+	Material* materialData = nullptr;
+	// 書き込むためのアドレス取得
+	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	// 今回は赤を書き込んでみる
+	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData->enableLighting = true;
+
+	// 光源用のリソースを作る。DirectionnalLight一つ分のサイズを用意する
+	ID3D12Resource* directionnalLightResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(DirectionalLight));
+	// データを書き込む
+	DirectionalLight* directionnalLightData = nullptr;
+	// 書き込むためのアドレスを取得
+	directionnalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionnalLightData));
+	// 情報を書き込んでおく
+	directionnalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
+	directionnalLightData->direction = { 0.0f,-1.0f,0.0f };
+	directionnalLightData->intensity = 1.0f;
 
 	// * VertexResourceを生成する * //
 	const int32_t kSubdivision = 16;
@@ -171,26 +202,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
 	vertexDataSprite[0].position = { 0.0f,360.0f,0.0f,1.0f };
 	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
+	vertexDataSprite[0].normal = { 0.0f,0.0f,-1.0f };
 	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
 	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
+	vertexDataSprite[1].normal = { 0.0f,0.0f,-1.0f };
 	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
 	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
+	vertexDataSprite[2].normal = { 0.0f,0.0f,-1.0f };
 
 	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
 	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
+	vertexDataSprite[3].normal = { 0.0f,0.0f,-1.0f };
 	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
 	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
+	vertexDataSprite[4].normal = { 0.0f,0.0f,-1.0f };
 	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
 	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+	vertexDataSprite[5].normal = { 0.0f,0.0f,-1.0f };
+
+	// マテリアル用のリソースを作る
+	ID3D12Resource* materialResourceSprite = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Material));
+	// マテリアルにデータを書き込む
+	Material* materialDataSprite = nullptr;
+	// 書き込むためのアドレス取得
+	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprite));
+	// 今回は赤を書き込んでみる
+	materialDataSprite->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialDataSprite->enableLighting = false;
 
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
-	ID3D12Resource* transformationMatrixResourceSprite = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(Matrix4x4));
+	ID3D12Resource* transformationMatrixResourceSprite = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(TransformationMatrix));
 	// データを書き込む
-	Matrix4x4* transformationMatrixDataSprite = nullptr;
+	TransformationMatrix* transformationMatrixDataSprite = nullptr;
 	// 書き込むためのアドレスを取得
 	transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
 	// 単位行列を書き込んでおく
-	*transformationMatrixDataSprite = Matrix4x4::MakeIndentity4x4();
+	transformationMatrixDataSprite->WVP = Matrix4x4::MakeIndentity4x4();
+	transformationMatrixDataSprite->World = Matrix4x4::MakeIndentity4x4();
 
 	// 球
 	const float pi = DirectX::XM_PI;
@@ -208,31 +256,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Vector4 c = { cos(lat) * cos(lon+ kLonEvery),sin(lat),cos(lat) * sin(lon+ kLonEvery),1.0f };
 			Vector4 d = { cos(lat + kLatEvery) * cos(lon + kLonEvery),sin(lat + kLatEvery),cos(lat + kLatEvery) * sin(lon + kLonEvery),1.0f };
 
+			Vector3 aNormal = { a.x,a.y,a.z };
+			Vector3 bNormal = {	b.x,b.y,b.z };
+			Vector3 cNormal = { c.x,c.y,c.z };
+			Vector3 dNormal = { d.x,d.y,d.z };
+
 			vertexData[start].position = a;
 			vertexData[start].texcoord = { 
 				static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
+			vertexData[start].normal = aNormal;
 			vertexData[start + 1].position = b;
 			vertexData[start + 1].texcoord = { 
 				static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
+			vertexData[start+1].normal = bNormal;
 			vertexData[start + 2].position = c;
 			vertexData[start + 2].texcoord = { 
 				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
+			vertexData[start+2].normal = cNormal;
 
 			vertexData[start + 3].position = b;
 			vertexData[start + 3].texcoord = {
 				static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
+			vertexData[start + 3].normal = bNormal;
 			vertexData[start + 4].position = d;
 			vertexData[start + 4].texcoord = {
 				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
+			vertexData[start + 4].normal = dNormal;
 			vertexData[start + 5].position = c;
 			vertexData[start + 5].texcoord = {
 				static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
 				1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
+			vertexData[start + 5].normal = cNormal;
 		}
 	}
 
@@ -250,6 +309,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scissorRect.right = 1280;
 	scissorRect.top = 0;
 	scissorRect.bottom = 720;
+
+	bool Lighting = true;
 
 	// ウィンドウのXボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
@@ -271,8 +332,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix4x4 worldViewProjectionMatrix = Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix, projectionMatrix));
 			Matrix4x4 worldViewProjectionMatrixSprite = Matrix4x4::Multiply(worldMatrixSprite, Matrix4x4::Multiply(viewMatrixSprite, projectionMatrixSprite));
 
-			*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
-			*wvpData = worldViewProjectionMatrix;
+			transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
+			transformationMatrixDataSprite->World = worldMatrixSprite;
+			wvpData->WVP = worldViewProjectionMatrix;
+			wvpData->World = worldMatrix;
 
 			dxCommon->PreDraw();
 			imGuiManager->BeginFrame();
@@ -288,6 +351,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->OMSetRenderTargets(1, dxCommon->GetRtvHandles(), false, &dsvHandl);
 			commandList->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
+			// 球体
 			commandList->RSSetViewports(1, &viewport);
 			commandList->RSSetScissorRects(1, &scissorRect);
 			commandList->SetGraphicsRootSignature(pso.GetRootSignature());
@@ -296,9 +360,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView(3, directionnalLightResource->GetGPUVirtualAddress());
+			
 			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU(ballTextureIndex));
 			commandList->DrawInstanced(sphereVertexMax, 1, 0, 0);
 
+			// sprite
+			commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
 			commandList->SetGraphicsRootDescriptorTable(2, textureManager->GetTextureSrvHandleGPU(0));
 
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
@@ -312,6 +380,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (ballTextureIndex > 1) {
 				ballTextureIndex = 1;
 			}
+			ImGui::DragFloat3("cametaTransition", &cameraTransform.translate.x,0.1f);
+			ImGui::DragFloat3("cametaRotate", &cameraTransform.rotate.x, 0.1f);
+			ImGui::DragFloat3("directionnalLight.direction", &directionnalLightData->direction.x, 0.1f);
+			ImGui::Checkbox("isLighting", &Lighting);
+			materialData->enableLighting = Lighting;
+			directionnalLightData->direction = directionnalLightData->direction.Normalize();
 
 			imGuiManager->EndFrame();
 			dxCommon->PostDraw();

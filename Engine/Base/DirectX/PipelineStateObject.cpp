@@ -14,6 +14,7 @@ void PipelineStateObject::Initialize() {
 	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
 	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
 
 	// DescriptiorRange
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
@@ -59,6 +60,7 @@ void PipelineStateObject::Initialize() {
 	inputLayout.Initialize();
 	inputLayout.CreateInputElementDesc("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
 	inputLayout.CreateInputElementDesc("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
+	inputLayout.CreateInputElementDesc("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
 
 	// BlendState
 	D3D12_BLEND_DESC blendDesc{};
