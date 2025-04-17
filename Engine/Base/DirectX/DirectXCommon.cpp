@@ -58,22 +58,12 @@ void DirectXCommon::ReleaseDirectXObject() {
 	}
 
 	CloseHandle(fenceEvent_);
-	// コマンドリストとスワップチェインの解放
-	commandQueue_->Release();
-	commandAllocator_->Release();
-	commandList_->Release();
-	swapChain_->Release();
-
-	// DirectXの元締め
-	device_->Release();
-	useAdapter_->Release();
-	device_->Release();
 }
 
 void DirectXCommon::PreDraw() {
 	// * コマンドを積み込む * //
 	// バックバッファのインデックス取得
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();
 
 	// バリア
 	D3D12_RESOURCE_BARRIER barrier{};
@@ -88,7 +78,7 @@ void DirectXCommon::PreDraw() {
 	// 遷移後のResourceState
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	// バリア張る
-	commandList_->ResourceBarrier(1, &barrier);
+	commandList_.Get()->ResourceBarrier(1, &barrier);
 
 	// 画面を青っぽい色で初期化
 	InitializeBackGround(0.1f, 0.25f, 0.5f, 1.0f);
@@ -96,7 +86,7 @@ void DirectXCommon::PreDraw() {
 
 void DirectXCommon::PostDraw() {
 	// バックバッファのインデックス取得
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();
 
 	// バリア
 	D3D12_RESOURCE_BARRIER barrier{};
@@ -114,19 +104,19 @@ void DirectXCommon::PostDraw() {
 	commandList_->ResourceBarrier(1, &barrier);
 
 	// コマンドリストの内容を確定
-	HRESULT hr = commandList_->Close();
+	HRESULT hr = commandList_.Get()->Close();
 	assert(SUCCEEDED(hr));
 
 	// * コマンドをキックする * //
-	ID3D12CommandList* commandLists[] = { commandList_ };
-	commandQueue_->ExecuteCommandLists(1, commandLists);
+	ID3D12CommandList* commandLists[] = { commandList_.Get() };
+	commandQueue_.Get()->ExecuteCommandLists(1, commandLists);
 	// GPUとOSに画面の交換を行うように通知
-	swapChain_->Present(1, 0);
+	swapChain_.Get()->Present(1, 0);
 
 	// FenceValueの値を更新
 	fenceValue_++;
 	// GPUがここまでたどり着いたときに、Fenceのあたいを指定したあたいに代入するようにSignalを送る
-	commandQueue_->Signal(fence_, fenceValue_);
+	commandQueue_.Get()->Signal(fence_, fenceValue_);
 
 	// Fenceの値が指定したSignal値にたどり着いてるか確認
 	// GetCompletedValueの初期値はFencesakuseijini 渡した初期値
@@ -138,24 +128,24 @@ void DirectXCommon::PostDraw() {
 	}
 
 	// 次のフレーム用のコマンドリストを準備
-	hr = commandAllocator_->Reset();
+	hr = commandAllocator_.Get()->Reset();
 	assert(SUCCEEDED(hr));
-	hr = commandList_->Reset(commandAllocator_, nullptr);
+	hr = commandList_.Get()->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(hr));
 }
 
 void DirectXCommon::InitializeBackGround(float red, float green, float blue, float alpha) {
 
 	// バックバッファのインデックス取得
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();
 	// 描画先のRTVを設定する
-	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, nullptr);
+	commandList_.Get()->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, nullptr);
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { red,green,blue,alpha };
-	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
+	commandList_.Get()->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
 }
 
-ID3D12Resource* DirectXCommon::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
+ID3D12Resource* DirectXCommon::CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes) {
 	// * VertexResourceを生成する * //
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
 	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -183,11 +173,11 @@ ID3D12Resource* DirectXCommon::CreateBufferResource(ID3D12Device* device, size_t
 }
 
 ID3D12Device* DirectXCommon::GetDevice() {
-	return device_;
+	return device_.Get();
 }
 
 ID3D12GraphicsCommandList* DirectXCommon::GetCommandList() {
-	return commandList_;
+	return commandList_.Get();
 }
 
 DXGI_SWAP_CHAIN_DESC1* DirectXCommon::GetSwapChainDesc() {
@@ -195,7 +185,7 @@ DXGI_SWAP_CHAIN_DESC1* DirectXCommon::GetSwapChainDesc() {
 }
 
 IDXGISwapChain4* DirectXCommon::GetSwapChain() {
-	return swapChain_;
+	return swapChain_.Get();
 }
 
 D3D12_RENDER_TARGET_VIEW_DESC* DirectXCommon::GetRtvDesc() {
@@ -203,7 +193,7 @@ D3D12_RENDER_TARGET_VIEW_DESC* DirectXCommon::GetRtvDesc() {
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE* DirectXCommon::GetRtvHandles() {
-	return &rtvHandles_[swapChain_->GetCurrentBackBufferIndex()];
+	return &rtvHandles_[swapChain_.Get()->GetCurrentBackBufferIndex()];
 }
 
 uint32_t DirectXCommon::GetDescriptorSizeSRV() {
@@ -231,13 +221,13 @@ void DirectXCommon::FindAdapter() {
 	assert(dxgiFactory_);
 
 	// * アダプタの選定 * //
-	for (UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i,
+	for (UINT i = 0; dxgiFactory_.Get()->EnumAdapterByGpuPreference(i,
 		DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_)) !=
 		DXGI_ERROR_NOT_FOUND; ++i) {
 
 		// アダプターの情報を取得する
 		DXGI_ADAPTER_DESC3 adapterDesc{};
-		HRESULT hr = useAdapter_->GetDesc3(&adapterDesc);
+		HRESULT hr = useAdapter_.Get()->GetDesc3(&adapterDesc);
 		assert(SUCCEEDED(hr));
 
 		// ソフトウェアアダプタでなければ採用
@@ -268,7 +258,7 @@ void DirectXCommon::CreateDevice() {
 	// 高い順に生成できるか試す
 	for (size_t i = 0; i < _countof(featureLevels); ++i) {
 		// 採用したアダプターでデバイスを作成
-		HRESULT hr = D3D12CreateDevice(useAdapter_, featureLevels[i], IID_PPV_ARGS(&device_));
+		HRESULT hr = D3D12CreateDevice(useAdapter_.Get(), featureLevels[i], IID_PPV_ARGS(&device_));
 		// 指定した機能レベルでデバイスが生成できたかを確認
 		if (SUCCEEDED(hr)) {
 			// 生成できたのでログ出力してループ脱出
@@ -340,7 +330,7 @@ void DirectXCommon::CreateCommandAllocator() {
 
 void DirectXCommon::CreateCommandList() {
 	// コマンドリスト生成
-	HRESULT hr = device_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator_, nullptr,
+	HRESULT hr = device_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator_.Get(), nullptr,
 		IID_PPV_ARGS(&commandList_));
 	// コマンドリスト生成例外
 	assert(SUCCEEDED(hr));
@@ -359,13 +349,13 @@ void DirectXCommon::CreateSwapChain() {
 	swapChainDesc_.BufferCount = 2;
 	swapChainDesc_.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成
-	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain_));
+	HRESULT hr = dxgiFactory_.Get()->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 	Log(ConvertString(std::format(L"DirectXCommon:CreateSwapChain!\n")));
 	debugLog_->Log("DirectXCommon:CreateSwapChain");
 }
 
-ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
+ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
 	ID3D12DescriptorHeap* descriptorHeap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = heapType;
@@ -380,9 +370,9 @@ ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, 
 void DirectXCommon::InitializeSwapChainResource() {
 	swapChainResource_[0] = nullptr;
 	swapChainResource_[1] = nullptr;
-	HRESULT hr = swapChain_->GetBuffer(0, IID_PPV_ARGS(&swapChainResource_[0]));
+	HRESULT hr = swapChain_.Get()->GetBuffer(0, IID_PPV_ARGS(&swapChainResource_[0]));
 	assert(SUCCEEDED(hr));
-	hr = swapChain_->GetBuffer(1, IID_PPV_ARGS(&swapChainResource_[1]));
+	hr = swapChain_.Get()->GetBuffer(1, IID_PPV_ARGS(&swapChainResource_[1]));
 	assert(SUCCEEDED(hr));
 	Log(ConvertString(std::format(L"DirectXCommon:InitializeSwapChainResource!\n")));
 }
