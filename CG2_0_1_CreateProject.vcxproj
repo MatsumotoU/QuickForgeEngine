@@ -188,6 +188,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\ShaderCompiler.h" />
     <ClInclude Include="Engine\Base\DirectX\TextureManager.h" />
     <ClInclude Include="Engine\Base\MyString.h" />
+    <ClInclude Include="Engine\Base\Windows\CrashHandler.h" />
     <ClInclude Include="Engine\Base\Windows\WinApp.h" />
     <ClInclude Include="Engine\Math\MaterialData.h" />
     <ClInclude Include="Engine\Math\MathInclude.h" />

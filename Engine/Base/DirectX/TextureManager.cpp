@@ -48,7 +48,7 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath) {
 	return mipImages;
 }
 
-ID3D12Resource* TextureManager::CreateTextureResource(const DirectX::TexMetadata& metadata) {
+Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(const DirectX::TexMetadata& metadata) {
 	// metadataを基にResourceの設定
 	resourceDesc_ = {};
 	resourceDesc_.Width = static_cast<UINT>(metadata.width); // テクスチャの幅
@@ -60,39 +60,47 @@ ID3D12Resource* TextureManager::CreateTextureResource(const DirectX::TexMetadata
 	resourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
 
 	// リソースの生成
-	ID3D12Resource* resource = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 	HRESULT hr = device_->CreateCommittedResource(
 		&heapProperties_,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc_,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(hr));
 	return resource;
 }
 
-void TextureManager::BeginUploadTextureData() {
+void TextureManager::TransitionResourceBarrier(Microsoft::WRL::ComPtr<ID3D12Resource> texture, ID3D12GraphicsCommandList* commandList) {
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = texture.Get();
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+	commandList->ResourceBarrier(1, &barrier);
 }
 
-ID3D12Resource* TextureManager::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList) {
+Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList) {
 	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 	subresources.clear();
 	DirectX::PrepareUpload(device_, mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
-	uint64_t intermediatSize = GetRequiredIntermediateSize(texture, 0, static_cast<UINT>(subresources.size()));
-	ID3D12Resource* intermediateResource = dxCommon_->CreateBufferResource(device_, intermediatSize);
-	UpdateSubresources(commandList, texture, intermediateResource, 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
+	uint64_t intermediatSize = GetRequiredIntermediateSize(texture.Get(), 0, static_cast<UINT>(subresources.size()));
+	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(device_, intermediatSize);
+	UpdateSubresources(commandList, texture.Get(), intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
 
-	EndUploadTextureData(texture, commandList);
+	EndUploadTextureData(texture.Get(), commandList);
 	return intermediateResource;
 }
 
-void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList) {
+void TextureManager::EndUploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, ID3D12GraphicsCommandList* commandList) {
 	// Textureへの転送後は利用できるようにD3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResouceStateを変更する
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = texture;
+	barrier.Transition.pResource = texture.Get();
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
@@ -117,7 +125,7 @@ void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12Graphic
 //	}
 //}
 
-void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource,uint32_t index) {
+void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap, Microsoft::WRL::ComPtr<ID3D12Resource> textureResource,uint32_t index) {
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
@@ -137,7 +145,7 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
 	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
 	// SRVの作成
-	device_->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
+	device_->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t index) {

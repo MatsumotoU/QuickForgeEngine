@@ -42,7 +42,7 @@ public:
 private:
 	ID3D12DescriptorHeap* srvDescriptorHeap_;
 	ID3D12Device* device_;
-	ID3D12GraphicsCommandList* commandList_;
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
 
 private: // シングルトン用
 	ImGuiManager() = default;

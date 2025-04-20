@@ -25,6 +25,14 @@ void DirectXCommon::Initialize() {
 	debugLog_ = MyDebugLog::GetInstatnce();
 	debugLog_->Log("DirectXCommon:StartInitialize");
 
+#ifdef _DEBUG
+	ID3D12Debug1* debugController = nullptr;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+		debugController->EnableDebugLayer();
+		debugController->SetEnableGPUBasedValidation(TRUE);
+	}
+#endif // _DEBUG
+
 	// DirectXの初期化
 	Log(ConvertString(std::format(L"DirectXCommon:StartDirectInitialize!\n")));
 	debugLog_->Log("DirectXCommon:StartDirectInitialize");
@@ -72,7 +80,7 @@ void DirectXCommon::PreDraw() {
 	// Noneにする
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	// バリアを貼る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResource_[backBufferIndex];
+	barrier.Transition.pResource = swapChainResource_[backBufferIndex].Get();
 	// 遷移前（現在）のリソースステート
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	// 遷移後のResourceState
@@ -95,20 +103,20 @@ void DirectXCommon::PostDraw() {
 	// Noneにする
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	// バリアを貼る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResource_[backBufferIndex];
+	barrier.Transition.pResource = swapChainResource_[backBufferIndex].Get();
 	// 遷移前（現在）のリソースステート
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	// 遷移後のResourceState
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	// バリア張る
-	commandList_->ResourceBarrier(1, &barrier);
+	commandList_.Get()->ResourceBarrier(1, &barrier);
 
 	// コマンドリストの内容を確定
 	HRESULT hr = commandList_.Get()->Close();
 	assert(SUCCEEDED(hr));
 
 	// * コマンドをキックする * //
-	ID3D12CommandList* commandLists[] = { commandList_.Get() };
+	ID3D12CommandList* commandLists[] = { commandList_.Get()};
 	commandQueue_.Get()->ExecuteCommandLists(1, commandLists);
 	// GPUとOSに画面の交換を行うように通知
 	swapChain_.Get()->Present(1, 0);
@@ -145,39 +153,12 @@ void DirectXCommon::InitializeBackGround(float red, float green, float blue, flo
 	commandList_.Get()->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
 }
 
-ID3D12Resource* DirectXCommon::CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes) {
-	// * VertexResourceを生成する * //
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	D3D12_RESOURCE_DESC vertexResourceDesc{};
-	// バッファリソース。テクスチャの場合はまた別の設定をする
-	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc.Width = sizeInBytes;
-	vertexResourceDesc.Height = 1;
-	vertexResourceDesc.DepthOrArraySize = 1;
-	vertexResourceDesc.MipLevels = 1;
-	vertexResourceDesc.SampleDesc.Count = 1;
-	// バッファの場合はこれにする決まり
-	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	// 実際に頂点リソースを作る
-	ID3D12Resource* vertexResource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
-		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-		IID_PPV_ARGS(&vertexResource));
-	assert(SUCCEEDED(hr));
-
-	// 解放用のポインタを保持
-	
-
-	return vertexResource;
-}
-
 ID3D12Device* DirectXCommon::GetDevice() {
 	return device_.Get();
 }
 
-ID3D12GraphicsCommandList* DirectXCommon::GetCommandList() {
-	return commandList_.Get();
+Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> DirectXCommon::GetCommandList() {
+	return commandList_;
 }
 
 DXGI_SWAP_CHAIN_DESC1* DirectXCommon::GetSwapChainDesc() {
@@ -331,7 +312,7 @@ void DirectXCommon::CreateCommandAllocator() {
 void DirectXCommon::CreateCommandList() {
 	// コマンドリスト生成
 	HRESULT hr = device_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator_.Get(), nullptr,
-		IID_PPV_ARGS(&commandList_));
+		IID_PPV_ARGS(commandList_.GetAddressOf()));
 	// コマンドリスト生成例外
 	assert(SUCCEEDED(hr));
 	Log(ConvertString(std::format(L"DirectXCommon:CreateCommandList!\n")));
@@ -355,18 +336,6 @@ void DirectXCommon::CreateSwapChain() {
 	debugLog_->Log("DirectXCommon:CreateSwapChain");
 }
 
-ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
-	ID3D12DescriptorHeap* descriptorHeap = nullptr;
-	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
-	descriptorHeapDesc.Type = heapType;
-	descriptorHeapDesc.NumDescriptors = numDescriptors;
-	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
-	assert(SUCCEEDED(hr));
-	Log(ConvertString(std::format(L"DirectXCommon:CreateDescriptorHeap!\n")));
-	return descriptorHeap;
-}
-
 void DirectXCommon::InitializeSwapChainResource() {
 	swapChainResource_[0] = nullptr;
 	swapChainResource_[1] = nullptr;
@@ -385,10 +354,10 @@ void DirectXCommon::CreateRTV() {
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	// まず1つ目を作る。
 	rtvHandles_[0] = rtvStartHandle;
-	device_->CreateRenderTargetView(swapChainResource_[0], &rtvDesc_, rtvHandles_[0]);
+	device_->CreateRenderTargetView(swapChainResource_[0].Get(), &rtvDesc_, rtvHandles_[0]);
 	// 二つ目
 	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	device_->CreateRenderTargetView(swapChainResource_[1], &rtvDesc_, rtvHandles_[1]);
+	device_->CreateRenderTargetView(swapChainResource_[1].Get(), &rtvDesc_, rtvHandles_[1]);
 	Log(ConvertString(std::format(L"DirectXCommon:CreateRTV!\n")));
 }
 
@@ -417,4 +386,40 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDecriptorHandle(ID3D12DescriptorHeap* descript
 	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;
+}
+
+Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes) {
+	// * VertexResourceを生成する * //
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	D3D12_RESOURCE_DESC vertexResourceDesc{};
+	// バッファリソース。テクスチャの場合はまた別の設定をする
+	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	vertexResourceDesc.Width = sizeInBytes;
+	vertexResourceDesc.Height = 1;
+	vertexResourceDesc.DepthOrArraySize = 1;
+	vertexResourceDesc.MipLevels = 1;
+	vertexResourceDesc.SampleDesc.Count = 1;
+	// バッファの場合はこれにする決まり
+	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	// 実際に頂点リソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;
+	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+		IID_PPV_ARGS(&vertexResource));
+	assert(SUCCEEDED(hr));
+
+	return vertexResource;
+}
+
+ID3D12DescriptorHeap* CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
+	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.Type = heapType;
+	descriptorHeapDesc.NumDescriptors = numDescriptors;
+	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	assert(SUCCEEDED(hr));
+	Log(ConvertString(std::format(L"DirectXCommon:CreateDescriptorHeap!\n")));
+	return descriptorHeap;
 }

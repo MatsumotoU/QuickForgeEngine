@@ -9,7 +9,7 @@ ImGuiManager* ImGuiManager::GetInstatnce() {
 
 void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 	device_ = dxCommon->GetDevice();
-	srvDescriptorHeap_ = dxCommon->CreateDescriptorHeap(device_,D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,128,true);
+	srvDescriptorHeap_ = CreateDescriptorHeap(device_,D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,128,true);
 	commandList_ = dxCommon->GetCommandList();
 
 	// ImGuiの初期化
@@ -39,12 +39,12 @@ void ImGuiManager::BeginFrame() {
 
 	// DescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_ };
-	commandList_->SetDescriptorHeaps(1, descriptorHeaps);
+	commandList_.Get()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
 void ImGuiManager::EndFrame() {
 	ImGui::Render();
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_.Get());
 }
 
 ID3D12DescriptorHeap* ImGuiManager::GetSrvDescriptorHeap() {
