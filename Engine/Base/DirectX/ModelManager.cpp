@@ -22,11 +22,11 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
         if (identifier == "v") {
             Vector4 position;
             s >> position.x >> position.y >> position.z;
-            position.x *= -1.0f;
+            
             position.w = 1.0f;
             positions.push_back(position);
         } else if (identifier == "vt") {
-            Vector2 texcoord;
+            Vector2 texcoord{};
             s >> texcoord.x >> texcoord.y;
             texcoord.y = 1.0f - texcoord.y;
             texcoord.x = 1.0f - texcoord.x;
@@ -34,7 +34,6 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
         } else if (identifier == "vn") {
             Vector3 normal;
             s >> normal.x >> normal.y >> normal.z;
-            normal.x *= -1.0f;
             normals.push_back(normal);
         } else if (identifier == "f") {
             for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
@@ -50,6 +49,8 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
                 Vector4 position = positions[elementIndices[0] - 1];
                 Vector2 texcoord = texcoords[elementIndices[1] - 1];
                 Vector3 normal = normals[elementIndices[2] - 1];
+                position.x *= -1.0f;
+                normal.x *= -1.0f;
                 VertexData vertex = { position,texcoord,normal };
                 modelData.vertices.push_back(vertex);
             }

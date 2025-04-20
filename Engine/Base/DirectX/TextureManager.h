@@ -34,13 +34,13 @@ public:
 	/// </summary>
 	/// <param name="metadata"></param>
 	/// <returns>テクスチャリソース</returns>
-	ID3D12Resource* CreateTextureResource(const DirectX::TexMetadata& metadata);
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 	
-	void BeginUploadTextureData();
-	[[nodiscard]] ID3D12Resource* UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList);
-	void EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList);
+	void TransitionResourceBarrier(Microsoft::WRL::ComPtr<ID3D12Resource> texture, ID3D12GraphicsCommandList* commandList);
+	[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList);
+	void EndUploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, ID3D12GraphicsCommandList* commandList);
 
-	void CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource, uint32_t index);
+	void CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap, Microsoft::WRL::ComPtr<ID3D12Resource> textureResource, uint32_t index);
 
 public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index);

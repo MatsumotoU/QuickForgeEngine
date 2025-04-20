@@ -6,7 +6,7 @@
 
 void DepthStencil::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
     dxCommon_ =dxCommon;
-    dsvDescriptorHeap_ = dxCommon->CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+    dsvDescriptorHeap_ = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
     depthStencilResource_ = CreateDepthStencilTextureResource(dxCommon->GetDevice(), winApp->kWindowWidth, winApp->kWindowHeight);
 
     dsvDesc_ = {};

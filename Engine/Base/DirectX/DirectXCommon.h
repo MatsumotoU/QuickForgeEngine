@@ -36,21 +36,9 @@ public:
 	/// </summary>
 	void PostDraw();
 
-	/// <summary>
-	/// リソースを作成
-	/// </summary>
-	/// <param name="device">device</param>
-	/// <param name="sizeInBytes">サイズ</param>
-	/// <returns>リソース</returns>
-	static ID3D12Resource* CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes);
-	/// <summary>
-	/// ディスクリプタヒープを作成する
-	/// </summary>
-	static ID3D12DescriptorHeap* CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-
 public:
 	ID3D12Device*  GetDevice();
-	ID3D12GraphicsCommandList* GetCommandList();
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList();
 	DXGI_SWAP_CHAIN_DESC1* GetSwapChainDesc();
 	IDXGISwapChain4* GetSwapChain();
 	D3D12_RENDER_TARGET_VIEW_DESC* GetRtvDesc();
@@ -77,7 +65,7 @@ private: // メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
-	ID3D12Resource* swapChainResource_[2];
+	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource_[2];
 	ID3D12DescriptorHeap* rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
@@ -160,3 +148,15 @@ private: // シングルトン用
 
 D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDecriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
 D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDecriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+/// <summary>
+/// リソースを作成
+/// </summary>
+/// <param name="device">device</param>
+/// <param name="sizeInBytes">サイズ</param>
+/// <returns>リソース</returns>
+Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes);
+/// <summary>
+/// ディスクリプタヒープを作成する
+/// </summary>
+ID3D12DescriptorHeap* CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
