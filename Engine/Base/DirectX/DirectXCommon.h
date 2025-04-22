@@ -1,6 +1,4 @@
 #pragma once
-#include "../Windows/WinApp.h"
-
 #include <wrl.h>
 #include <vector>
 
@@ -11,16 +9,14 @@
 
 #include "../MyDebugLog.h"
 
-class DirectXCommon {
-public:
-	// シングルトン
-	static DirectXCommon* GetInstatnce();
+class WinApp;
 
+class DirectXCommon {
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(WinApp* winApp);
 	/// <summary>
 	/// これまで生成してきたオブジェクトを解放する
 	/// </summary>
@@ -38,7 +34,7 @@ public:
 
 public:
 	ID3D12Device*  GetDevice();
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList();
+	ID3D12GraphicsCommandList* GetCommandList();
 	DXGI_SWAP_CHAIN_DESC1* GetSwapChainDesc();
 	IDXGISwapChain4* GetSwapChain();
 	D3D12_RENDER_TARGET_VIEW_DESC* GetRtvDesc();
@@ -47,6 +43,14 @@ public:
 	uint32_t GetDescriptorSizeSRV();
 	uint32_t GetDescriptorSizeRTV();
 	uint32_t GetDescriptorSizeDSV();
+
+#ifdef _DEBUG
+	/// <summary>
+	/// 初期化より前に置くこと
+	/// </summary>
+	/// <param name="lpCmdLine"></param>
+	void SetCommandLine(LPSTR* lpCmdLine);
+#endif // _DEBUG
 
 private: // メンバ変数
 	// windowsアプリケーション管理
@@ -66,21 +70,24 @@ private: // メンバ変数
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource_[2];
-	ID3D12DescriptorHeap* rtvDescriptorHeap_;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
-	ID3D12Fence* fence_;
+	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
 	HANDLE fenceEvent_;
 	uint64_t fenceValue_;
-
-	// リソース解放用ポインタ
-	std::vector<ID3D12Resource*> resources_;
 
 	// 一回決めたら値が変わることがないやつら
 	uint32_t descriptorSizeSRV_;
 	uint32_t descriptorSizeRTV_;
 	uint32_t descriptorSizeDSV_;
+
+#ifdef _DEBUG
+	Microsoft::WRL::ComPtr<ID3D12Debug1> debugController_;
+	LPSTR* lpCmdLine_;
+#endif // _DEBUG
+
 
 private: // 外部から触れてほしくない関数たち
 	/// <summary>
@@ -137,13 +144,6 @@ private: // 外部から触れてほしくない関数たち
 	/// <param name="blue">青(0.0~1.0)</param>
 	/// <param name="alpha">透明度(0.0~1.0)</param>
 	void InitializeBackGround(float red, float green, float blue, float alpha);
-
-private: // シングルトン用
-	DirectXCommon() = default;
-	~DirectXCommon() = default;
-	DirectXCommon(const DirectXCommon&) = delete;
-	DirectXCommon& operator=(const DirectXCommon&) = delete;
-
 };
 
 D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDecriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
@@ -159,4 +159,4 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComP
 /// <summary>
 /// ディスクリプタヒープを作成する
 /// </summary>
-ID3D12DescriptorHeap* CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);

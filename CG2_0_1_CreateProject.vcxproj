@@ -156,8 +156,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ModelManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\ScissorRect.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ShaderCompiler.cpp" />
     <ClCompile Include="Engine\Base\DirectX\TextureManager.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\Viewport.cpp" />
     <ClCompile Include="Engine\Base\MyDebugLog.cpp" />
     <ClCompile Include="Engine\Base\MyString.cpp" />
     <ClCompile Include="Engine\Math\Matrix\Matrix2x2.cpp" />
@@ -178,6 +180,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectX\ModelManager.h" />
+    <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
+    <ClInclude Include="Engine\Base\DirectX\Viewport.h" />
     <ClInclude Include="Engine\Base\MyDebugLog.h" />
     <ClInclude Include="Engine\Base\DirectX\CBufferManager.h" />
     <ClInclude Include="Engine\Base\DirectX\DepthStencil.h" />

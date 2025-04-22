@@ -4,21 +4,16 @@
 #include "../MyString.h"
 #include "DirectXCommon.h"
 
-TextureManager* TextureManager::GetInstatnce() {
-	static TextureManager instance;
-	return &instance;
-}
-
-void TextureManager::Initialize(ID3D12Device* device) {
-	dxCommon_ = DirectXCommon::GetInstatnce();
+void TextureManager::Initialize(DirectXCommon* dxCommon) {
+	dxCommon_ = dxCommon;
 
 	// Comの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
 	// デバイスを取得
-	assert(device);
-	device_ = device;
+	assert(dxCommon_);
+	device_ = dxCommon_->GetDevice();
 
 	// 利用するHeapの設定
 	heapProperties_ = {};

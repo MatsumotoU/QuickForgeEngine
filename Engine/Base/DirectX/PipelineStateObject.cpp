@@ -4,9 +4,9 @@
 #include <cassert>
 #include <d3d12.h>
 
-void PipelineStateObject::Initialize() {
-	dxCommon_ = DirectXCommon::GetInstatnce();
-	winApp_ = WinApp::GetInstance();
+void PipelineStateObject::Initialize(DirectXCommon* dxCommon,WinApp* winApp) {
+	dxCommon_ = dxCommon;
+	winApp_ = winApp;
 
 	// * PSOを作成 * //
 	// RootSignatureを作成します
@@ -43,7 +43,7 @@ void PipelineStateObject::Initialize() {
 	signatureBlob_ = nullptr;
 	errorBlob_ = nullptr;
 	HRESULT hr = D3D12SerializeRootSignature(cBufferManager_.GetDescriptionRootSignature(),
-		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob_);
+		D3D_ROOT_SIGNATURE_VERSION_1, signatureBlob_.GetAddressOf(), errorBlob_.GetAddressOf());
 	if (FAILED(hr)) {
 		Log(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
 		assert(false);
@@ -51,7 +51,7 @@ void PipelineStateObject::Initialize() {
 	// バイナリをもとに生成
 	rootSignature_ = nullptr;
 	hr = dxCommon_->GetDevice()->CreateRootSignature(0,
-		signatureBlob_->GetBufferPointer(), signatureBlob_->GetBufferSize(),
+		signatureBlob_.Get()->GetBufferPointer(), signatureBlob_.Get()->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr));
 
@@ -89,7 +89,7 @@ void PipelineStateObject::Initialize() {
 	graphicsPipelineStateDesc.DepthStencilState = *depthStencil_.GetDepthStencilDesc();
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-	graphicsPipelineStateDesc.pRootSignature = rootSignature_;
+	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();
 	graphicsPipelineStateDesc.InputLayout = *inputLayout.GetInputLayoutDesc();
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
 	vertexShaderBlob->GetBufferSize() };
@@ -109,15 +109,16 @@ void PipelineStateObject::Initialize() {
 	// 実際に生成
 	graphicsPipelineState_ = nullptr;
 	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&graphicsPipelineState_));
+		IID_PPV_ARGS(graphicsPipelineState_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
+
 }
 
-ID3D12PipelineState* PipelineStateObject::GetPipelineState() {
+Microsoft::WRL::ComPtr<ID3D12PipelineState> PipelineStateObject::GetPipelineState() {
 	return graphicsPipelineState_;
 }
 
-ID3D12RootSignature* PipelineStateObject::GetRootSignature() {
+Microsoft::WRL::ComPtr<ID3D12RootSignature> PipelineStateObject::GetRootSignature() {
 	return rootSignature_;
 }
 

@@ -12,8 +12,6 @@ public:
 	static const wchar_t kWindowClassName[];
 
 public:
-	static WinApp* GetInstance();
-
 	/// <summary>
 	/// ウィンドウプロシージャ
 	/// </summary>
@@ -36,12 +34,6 @@ public:
 
 public:
 	HWND GetHWND();
-
-private:
-	WinApp() = default;
-	~WinApp() = default;
-	WinApp(const WinApp&) = delete;
-	WinApp& operator=(const WinApp&) = delete;
 
 private:
 	WNDCLASS wc{};

@@ -8,15 +8,11 @@
 class DirectXCommon;
 
 class TextureManager {
-public:
-	// シングルトン
-	static TextureManager* GetInstatnce();
-
 public:// 一回は絶対に呼び出さないとバグるやつ
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(ID3D12Device* device);
+	void Initialize(DirectXCommon* dxCommon);
 	/// <summary>
 	/// 終了処理
 	/// </summary>
@@ -57,11 +53,4 @@ private:// メンバ変数
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPU_;
 
 	DirectXCommon* dxCommon_;
-
-private: // シングルトン用
-	TextureManager() = default;
-	~TextureManager() = default;
-	TextureManager(const TextureManager&) = delete;
-	TextureManager& operator=(const TextureManager&) = delete;
-
 };
