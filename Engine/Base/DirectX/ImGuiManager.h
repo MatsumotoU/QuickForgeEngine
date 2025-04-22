@@ -9,12 +9,14 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 class WinApp;
 class DirectXCommon;
+#ifdef _DEBUG
+class MyDebugLog;
+#endif // _DEBUG
 
 class ImGuiManager {
 public:
-	// シングルトン
-	static ImGuiManager* GetInstatnce();
-
+	ImGuiManager();
+	~ImGuiManager();
 public:
 	/// <summary>
 	/// ImGuiを初期化します
@@ -40,13 +42,14 @@ public:
 	ID3D12DescriptorHeap* GetSrvDescriptorHeap();
 
 private:
-	ID3D12DescriptorHeap* srvDescriptorHeap_;
-	ID3D12Device* device_;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
+	Microsoft::WRL::ComPtr<ID3D12Device> device_;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
 
-private: // シングルトン用
-	ImGuiManager() = default;
-	~ImGuiManager() = default;
-	ImGuiManager(const ImGuiManager&) = delete;
-	ImGuiManager& operator=(const ImGuiManager&) = delete;
+private:
+#ifdef _DEBUG
+	int stateCheck_;
+	MyDebugLog* debugLog_;
+#endif // _DEBUG
+
 };

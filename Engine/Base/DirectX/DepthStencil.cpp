@@ -12,7 +12,7 @@ void DepthStencil::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
     dsvDesc_ = {};
     dsvDesc_.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsvDesc_.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-    dxCommon->GetDevice()->CreateDepthStencilView(depthStencilResource_, &dsvDesc_, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
+    dxCommon->GetDevice()->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc_, dsvDescriptorHeap_.Get()->GetCPUDescriptorHandleForHeapStart());
 
     depthStencilDesc_ = {};
     depthStencilDesc_.DepthEnable = true;
@@ -20,7 +20,7 @@ void DepthStencil::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
     depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }
 
-ID3D12Resource* DepthStencil::CreateDepthStencilTextureResource(ID3D12Device* device, int32_t width, int32_t height) {
+Microsoft::WRL::ComPtr<ID3D12Resource> DepthStencil::CreateDepthStencilTextureResource(const Microsoft::WRL::ComPtr<ID3D12Device>& device, int32_t width, int32_t height) {
     resourceDesc_ = {};
     resourceDesc_.Width = width;
     resourceDesc_.Height = height;
@@ -39,8 +39,8 @@ ID3D12Resource* DepthStencil::CreateDepthStencilTextureResource(ID3D12Device* de
     depthClearValue.DepthStencil.Depth = 1.0f;
     depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-    ID3D12Resource* resource = nullptr;
-    HRESULT hr = device->CreateCommittedResource(
+    Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
+    HRESULT hr = device.Get()->CreateCommittedResource(
         &heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &resourceDesc_,
@@ -55,6 +55,6 @@ D3D12_DEPTH_STENCIL_DESC* DepthStencil::GetDepthStencilDesc() {
     return &depthStencilDesc_;
 }
 
-ID3D12DescriptorHeap* DepthStencil::GetDsvDescriptorHeap() {
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DepthStencil::GetDsvDescriptorHeap() {
     return dsvDescriptorHeap_;
 }

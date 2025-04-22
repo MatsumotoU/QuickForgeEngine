@@ -23,6 +23,7 @@ public:
 	void CreateEmptyRootParameter();
 
 public:
+	
 	std::vector<D3D12_ROOT_PARAMETER>* GetRootParameters();
 	D3D12_ROOT_SIGNATURE_DESC* GetDescriptionRootSignature();
 

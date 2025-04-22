@@ -7,39 +7,29 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
-DirectXCommon* DirectXCommon::GetInstatnce() {
-	static DirectXCommon instance;
-	return &instance;
-}
+#include "../Windows/WinApp.h"
 
-void DirectXCommon::Initialize() {
-	Log(ConvertString(std::format(L"DirectXCommon:StartInitialize!\n")));
-
-	// オブジェクト解放用ポインタの初期化
-	resources_.clear();
-
-	// windowsの管理クラスのインスタンス取得
-	winApp_ = WinApp::GetInstance();
+void DirectXCommon::Initialize(WinApp* winApp) {
+	// windowsの管理クラス取得
+	winApp_ = winApp;
 
 	// デバッグログ
 	debugLog_ = MyDebugLog::GetInstatnce();
-	debugLog_->Log("DirectXCommon:StartInitialize");
+	debugLog_->Log("-----DirectXCommon:StartInitialize-----\n");
 
 #ifdef _DEBUG
-	ID3D12Debug1* debugController = nullptr;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
-		debugController->EnableDebugLayer();
-		debugController->SetEnableGPUBasedValidation(TRUE);
+	debugController_ = nullptr;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController_.GetAddressOf())))) {
+		debugController_->EnableDebugLayer();
+		debugController_->SetEnableGPUBasedValidation(TRUE);
 	}
 #endif // _DEBUG
 
 	// DirectXの初期化
-	Log(ConvertString(std::format(L"DirectXCommon:StartDirectInitialize!\n")));
 	debugLog_->Log("DirectXCommon:StartDirectInitialize");
 	CreateDxgiFactory();
 	FindAdapter();
 	CreateDevice();
-	Log(ConvertString(std::format(L"DirectXCommon:EndDirectInitialize!\n")));
 	debugLog_->Log("DirectXCommon:EndDirectInitialize");
 
 	// descriptorHeapSizeの代入
@@ -60,11 +50,6 @@ void DirectXCommon::Initialize() {
 }
 
 void DirectXCommon::ReleaseDirectXObject() {
-	// ID3D12Resourceで生成されたリソース解放
-	for (int32_t index = 0; index < static_cast<int32_t>(resources_.size()); ++index) {
-		resources_[index]->Release();
-	}
-
 	CloseHandle(fenceEvent_);
 }
 
@@ -124,26 +109,25 @@ void DirectXCommon::PostDraw() {
 	// FenceValueの値を更新
 	fenceValue_++;
 	// GPUがここまでたどり着いたときに、Fenceのあたいを指定したあたいに代入するようにSignalを送る
-	commandQueue_.Get()->Signal(fence_, fenceValue_);
+	commandQueue_.Get()->Signal(fence_.Get(), fenceValue_);
 
 	// Fenceの値が指定したSignal値にたどり着いてるか確認
 	// GetCompletedValueの初期値はFencesakuseijini 渡した初期値
-	if (fence_->GetCompletedValue() < fenceValue_) {
+	if (fence_.Get()->GetCompletedValue() < fenceValue_) {
 		// 指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
-		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
+		fence_.Get()->SetEventOnCompletion(fenceValue_, fenceEvent_);
 		// イベントを待つ
 		WaitForSingleObject(fenceEvent_, INFINITE);
 	}
 
 	// 次のフレーム用のコマンドリストを準備
-	hr = commandAllocator_.Get()->Reset();
+	hr = commandAllocator_->Reset();
 	assert(SUCCEEDED(hr));
 	hr = commandList_.Get()->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(hr));
 }
 
 void DirectXCommon::InitializeBackGround(float red, float green, float blue, float alpha) {
-
 	// バックバッファのインデックス取得
 	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();
 	// 描画先のRTVを設定する
@@ -157,8 +141,8 @@ ID3D12Device* DirectXCommon::GetDevice() {
 	return device_.Get();
 }
 
-Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> DirectXCommon::GetCommandList() {
-	return commandList_;
+ID3D12GraphicsCommandList* DirectXCommon::GetCommandList() {
+	return commandList_.Get();
 }
 
 DXGI_SWAP_CHAIN_DESC1* DirectXCommon::GetSwapChainDesc() {
@@ -189,6 +173,10 @@ uint32_t DirectXCommon::GetDescriptorSizeDSV() {
 	return descriptorSizeDSV_;
 }
 
+void DirectXCommon::SetCommandLine(LPSTR* lpCmdLine) {
+	lpCmdLine_ = lpCmdLine;
+}
+
 void DirectXCommon::CreateDxgiFactory() {
 	assert(!dxgiFactory_);
 	// DXGIファクトリーの生成
@@ -214,8 +202,9 @@ void DirectXCommon::FindAdapter() {
 		// ソフトウェアアダプタでなければ採用
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 			// 採用したアダプタの情報をログに出力。
-			Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+#ifdef _DEBUG
 			debugLog_->Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+#endif // _DEBUG
 			break;
 		}
 		useAdapter_ = nullptr;
@@ -243,27 +232,38 @@ void DirectXCommon::CreateDevice() {
 		// 指定した機能レベルでデバイスが生成できたかを確認
 		if (SUCCEEDED(hr)) {
 			// 生成できたのでログ出力してループ脱出
-			Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
+#ifdef _DEBUG
 			debugLog_->Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
+#endif // _DEBUG
 			break;
 		}
 	}
 	// デバイス生成が上手くいかなかったので起動できない
 	assert(device_ != nullptr);
-	Log("Complete create D3D12Device!!\n");
+	
+#ifdef _DEBUG
 	debugLog_->Log("Complete create D3D12Device");
+#endif // _DEBUG
 
 	// エラー落ち処理
 #ifdef _DEBUG
+	debugLog_->Log("EnebleBreakOnSeverity");
 	ID3D12InfoQueue* infoQueue = nullptr;
 	if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 
 		// ヤバエラー落ち
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+		debugLog_->Log("EnebleBreakOnSeverity_CORRUPTION");
 		// エラー落ち
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		debugLog_->Log("EnebleBreakOnSeverity_ERROR");
 		// 警告
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		if (lpCmdLine_ == nullptr || std::strcmp(*lpCmdLine_, "/DISABLE_D3D12_DEBUG_WARNING")  != 0) {
+			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+			debugLog_->Log("EnebleBreakOnSeverity_WARNING");
+		} else {
+			debugLog_->Log("!!! DisableBreakOnSeverity_WARNING !!!");
+		}
 
 		// エラー抑制
 		D3D12_MESSAGE_ID denyIds[] = {
@@ -294,19 +294,23 @@ void DirectXCommon::CreateCommandQueue() {
 	HRESULT hr = device_->CreateCommandQueue(&commandQueueDesc,
 		IID_PPV_ARGS(&commandQueue_));
 	assert(SUCCEEDED(hr));
-	Log(ConvertString(std::format(L"DirectXCommon:CreateCommandQueue!\n")));
+	
+#ifdef _DEBUG
 	debugLog_->Log("DirectXCommon:CreateCommandQueue");
+#endif // _DEBUG
 }
 
 void DirectXCommon::CreateCommandAllocator() {
 	assert(!commandAllocator_);
 
 	// コマンドアロケータを生成する
-	HRESULT hr = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator_));
+	HRESULT hr = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(commandAllocator_.GetAddressOf()));
 	// コマンドアロケータの生成例外
 	assert(SUCCEEDED(hr));
-	Log(ConvertString(std::format(L"DirectXCommon:CreateCommandAllocator!\n")));
+	
+#ifdef _DEBUG
 	debugLog_->Log("DirectXCommon:CreateCommandAllocator");
+#endif // _DEBUG
 }
 
 void DirectXCommon::CreateCommandList() {
@@ -315,8 +319,10 @@ void DirectXCommon::CreateCommandList() {
 		IID_PPV_ARGS(commandList_.GetAddressOf()));
 	// コマンドリスト生成例外
 	assert(SUCCEEDED(hr));
-	Log(ConvertString(std::format(L"DirectXCommon:CreateCommandList!\n")));
+	
+#ifdef _DEBUG
 	debugLog_->Log("DirectXCommon:CreateCommandList");
+#endif // _DEBUG
 }
 
 void DirectXCommon::CreateSwapChain() {
@@ -332,8 +338,10 @@ void DirectXCommon::CreateSwapChain() {
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成
 	HRESULT hr = dxgiFactory_.Get()->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
-	Log(ConvertString(std::format(L"DirectXCommon:CreateSwapChain!\n")));
+	
+#ifdef _DEBUG
 	debugLog_->Log("DirectXCommon:CreateSwapChain");
+#endif // _DEBUG
 }
 
 void DirectXCommon::InitializeSwapChainResource() {
@@ -343,7 +351,10 @@ void DirectXCommon::InitializeSwapChainResource() {
 	assert(SUCCEEDED(hr));
 	hr = swapChain_.Get()->GetBuffer(1, IID_PPV_ARGS(&swapChainResource_[1]));
 	assert(SUCCEEDED(hr));
-	Log(ConvertString(std::format(L"DirectXCommon:InitializeSwapChainResource!\n")));
+
+#ifdef _DEBUG
+	debugLog_->Log("DirectXCommon:InitializeSwapChainResource");
+#endif // _DEBUG
 }
 
 void DirectXCommon::CreateRTV() {
@@ -358,7 +369,6 @@ void DirectXCommon::CreateRTV() {
 	// 二つ目
 	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	device_->CreateRenderTargetView(swapChainResource_[1].Get(), &rtvDesc_, rtvHandles_[1]);
-	Log(ConvertString(std::format(L"DirectXCommon:CreateRTV!\n")));
 }
 
 void DirectXCommon::CreateFence() {
@@ -389,7 +399,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDecriptorHandle(ID3D12DescriptorHeap* descript
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes) {
-	// * VertexResourceを生成する * //
+	// * Resourceを生成する * //
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
 	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
 	D3D12_RESOURCE_DESC vertexResourceDesc{};
@@ -409,17 +419,23 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComP
 		IID_PPV_ARGS(&vertexResource));
 	assert(SUCCEEDED(hr));
 
+#ifdef _DEBUG
+	MyDebugLog::GetInstatnce()->Log(ConvertString(std::format(L"CreateBufferResource Bytes = {}", sizeInBytes)));
+#endif // _DEBUG
 	return vertexResource;
 }
 
-ID3D12DescriptorHeap* CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
-	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = heapType;
 	descriptorHeapDesc.NumDescriptors = numDescriptors;
 	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(descriptorHeap.GetAddressOf()));
 	assert(SUCCEEDED(hr));
-	Log(ConvertString(std::format(L"DirectXCommon:CreateDescriptorHeap!\n")));
+
+#ifdef _DEBUG
+	MyDebugLog::GetInstatnce()->Log("DirectXCommon:CreateDescriptorHeap");
+#endif // _DEBUG
 	return descriptorHeap;
 }

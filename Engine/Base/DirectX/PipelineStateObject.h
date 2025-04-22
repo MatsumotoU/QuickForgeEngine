@@ -12,11 +12,11 @@ public:
 	/// <summary>
 	/// 初期化します
 	/// </summary>
-	void Initialize();
+	void Initialize(DirectXCommon* dxCommon, WinApp* winApp);
 
 public:
-	ID3D12PipelineState* GetPipelineState();
-	ID3D12RootSignature* GetRootSignature();
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> GetPipelineState();
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> GetRootSignature();
 
 public:
 	DepthStencil* GetDepthStencil();
@@ -28,10 +28,9 @@ private:
 	InputLayout inputLayout_;
 	ShaderCompiler shaderCompiler_;
 	DepthStencil depthStencil_;
-	ID3D12PipelineState* graphicsPipelineState_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
-	ID3D10Blob* signatureBlob_;
-	ID3D10Blob* errorBlob_;
-	ID3D12RootSignature* rootSignature_;
-
+	Microsoft::WRL::ComPtr<ID3D10Blob> signatureBlob_;
+	Microsoft::WRL::ComPtr<ID3D10Blob> errorBlob_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
 };

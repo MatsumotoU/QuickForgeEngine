@@ -2,12 +2,31 @@
 #include "../Windows/WinApp.h"
 #include "DirectXCommon.h"
 
-ImGuiManager* ImGuiManager::GetInstatnce() {
-	static ImGuiManager instance;
-	return &instance;
+#ifdef DEBUG
+#include "../MyDebugLog.h"
+#endif // DEBUG
+
+ImGuiManager::ImGuiManager() {
+	stateCheck_ = 0;
+#ifdef _DEBUG
+	debugLog_ = MyDebugLog::GetInstatnce();
+	debugLog_->Log("ImGuiManager : Generate Instance");
+#endif // DEBUG
+}
+
+ImGuiManager::~ImGuiManager() {
+#ifdef _DEBUG
+	if (stateCheck_ != 0) {
+		debugLog_->Log("ImGuiManager : Error");
+	}
+#endif // _DEBUG
 }
 
 void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
+#ifdef _DEBUG
+	stateCheck_++;
+#endif // _DEBUG
+
 	device_ = dxCommon->GetDevice();
 	srvDescriptorHeap_ = CreateDescriptorHeap(device_,D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,128,true);
 	commandList_ = dxCommon->GetCommandList();
@@ -18,10 +37,10 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(winApp->GetHWND());
 	// ここでsrvDescriptorHeapの先頭にviewを作ってる
-	ImGui_ImplDX12_Init(device_,
+	ImGui_ImplDX12_Init(device_.Get(),
 		dxCommon->GetSwapChainDesc()->BufferCount,
 		dxCommon->GetRtvDesc()->Format,
-		srvDescriptorHeap_,
+		srvDescriptorHeap_.Get(),
 		srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart());
 }
@@ -38,15 +57,19 @@ void ImGuiManager::BeginFrame() {
 	ImGui::NewFrame();
 
 	// DescriptorHeapの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_ };
-	commandList_.Get()->SetDescriptorHeaps(1, descriptorHeaps);
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap_.Get()};
+	commandList_.Get()->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 }
 
 void ImGuiManager::EndFrame() {
+#ifdef _DEBUG
+	stateCheck_--;
+#endif // _DEBUG
+
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_.Get());
 }
 
 ID3D12DescriptorHeap* ImGuiManager::GetSrvDescriptorHeap() {
-	return srvDescriptorHeap_;
+	return srvDescriptorHeap_.Get();
 }

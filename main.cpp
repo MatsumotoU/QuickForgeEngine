@@ -38,6 +38,9 @@
 // DebugLog
 #include "Engine/Base/MyDebugLog.h"
 
+// Command
+/// /DISABLE_D3D12_DEBUG_WARNING
+
 int windowWidth = 1280;
 int windowHeight = 720;
 
@@ -62,10 +65,12 @@ struct DirectionalLight
 };
 
 //srv,rtv,dsvはimGuiManager,dxCommon,textureManagerが持っているので要分離(こいつらは増えない)
+// miniEngine Cocos2D Ogre3D ら辺が参考
 
 struct D3DResourceLeakChecker {
 	~D3DResourceLeakChecker() {
 		// * 終了時のエラー処理 * //
+		Log("=====D3DResourceLeakCheck=====\n");
 		IDXGIDebug1* debug;
 		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
 			debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
@@ -76,37 +81,43 @@ struct D3DResourceLeakChecker {
 	}
 };
 
-// windowsアプリでのエントリーポイント(main関数) quick=コマンドライン引数
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+// windowsアプリでのエントリーポイント(main関数) 
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
+	
 	// * ゲーム以前の設定 * //
 	// ダンプ渡し
 	SetUnhandledExceptionFilter(ExportDump);
+
+	D3DResourceLeakChecker leakChek;
 	// デバッグログ用
 	MyDebugLog* myDebugLog = MyDebugLog::GetInstatnce();
 	myDebugLog->Initialize();
-
-	D3DResourceLeakChecker leakChek;
+	if (lpCmdLine) {
+		myDebugLog->Log("!!! EnebleCommandLineArguments !!!");
+		myDebugLog->Log(std::format("EnebleCommand : {}\n", lpCmdLine));
+	}
 
 	// ウィンドウ生成
-	WinApp* winApp = WinApp::GetInstance();
-	winApp->CreateGameWindow(windowWidth, windowHeight);
+	WinApp winApp;
+	winApp.CreateGameWindow(windowWidth, windowHeight);
 	MSG msg{};
 
 	// DirectXの初期化																				
-	DirectXCommon* dxCommon = DirectXCommon::GetInstatnce();
-	dxCommon->Initialize();
+	DirectXCommon dxCommon;
+	dxCommon.SetCommandLine(&lpCmdLine);
+	dxCommon.Initialize(&winApp);
 
 	// ImGuiの初期化
-	ImGuiManager* imGuiManager = ImGuiManager::GetInstatnce();
-	imGuiManager->Initialize(winApp,dxCommon);
+	ImGuiManager imGuiManager;
+	imGuiManager.Initialize(&winApp,&dxCommon);
 
 	// TextManagerの初期化
-	TextureManager* textureManager = TextureManager::GetInstatnce();
-	textureManager->Initialize(dxCommon->GetDevice());
+	TextureManager textureManager;
+	textureManager.Initialize(&dxCommon);
 
 	// * PSOを作成 * //
 	PipelineStateObject pso;
-	pso.Initialize();
+	pso.Initialize(&dxCommon,&winApp);
 
 	// * ゲーム内の設定 * //
 	// 変数定義
@@ -337,19 +348,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//textureManager->CreateShaderResourceView(metadata2, imGuiManager->GetSrvDescriptorHeap(), textureResource2, 2);
 
 	// * ビューポートとシザー * //
-	D3D12_VIEWPORT viewport{};
+	/*D3D12_VIEWPORT viewport{};
 	viewport.Width = 1280;
 	viewport.Height = 720;
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
+	viewport.MaxDepth = 1.0f;*/
 
-	D3D12_RECT scissorRect{};
+	/*D3D12_RECT scissorRect{};
 	scissorRect.left = 0;
 	scissorRect.right = 1280;
 	scissorRect.top = 0;
-	scissorRect.bottom = 720;
+	scissorRect.bottom = 720;*/
 
 	//bool Lighting = true;
 
@@ -380,8 +391,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			wvpData->WVP = worldViewProjectionMatrix;
 			wvpData->World = worldMatrix;*/
 
-			dxCommon->PreDraw();
-			imGuiManager->BeginFrame();
+			dxCommon.PreDraw();
+			imGuiManager.BeginFrame();
 
 			ImGui::ColorPicker4("color", &color.x);
 
@@ -401,7 +412,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//commandList->RSSetScissorRects(1, &scissorRect);
 			//commandList->SetGraphicsRootSignature(pso.GetRootSignature());
 			//commandList->SetPipelineState(pso.GetPipelineState());
-			////commandList->IASetIndexBuffer(&indexBufferView);
+			//commandList->IASetIndexBuffer(&indexBufferView);
 			//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 			//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			//commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
@@ -448,8 +459,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//textureManager->TransitionResourceBarrier(textureResource, dxCommon->GetCommandList().Get());
 			//textureManager->TransitionResourceBarrier(textureResource2,dxCommon->GetCommandList().Get());
 
-			imGuiManager->EndFrame();
-			dxCommon->PostDraw();
+			imGuiManager.EndFrame();
+			dxCommon.PostDraw();
 
 			/*intermediateResource->Release();
 			intermediateResource2->Release();*/
@@ -457,18 +468,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// * 解放処理 * //
-	/*materialResource->Release();
-	wvpResource->Release();
-	vertexResource->Release();*/
-
-	imGuiManager->EndImGui();
-	dxCommon->ReleaseDirectXObject();
-	CloseWindow(winApp->GetHWND());
-
-	textureManager->Finalize();
+	textureManager.Finalize();
 	myDebugLog->Finalize();
 
-	
-
+	imGuiManager.EndImGui();
+	dxCommon.ReleaseDirectXObject();
+	CloseWindow(winApp.GetHWND());
 	return 0;
 }
