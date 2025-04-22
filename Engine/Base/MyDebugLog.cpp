@@ -33,3 +33,8 @@ void MyDebugLog::Log(const std::string& message) {
 	logStream_ << "[" +  timeStamp + "] " + message << std::endl;
 	OutputDebugStringA(message.c_str());
 }
+
+void DebugLog(const std::string& message) {
+	MyDebugLog* myDebugLog = MyDebugLog::GetInstatnce();
+	myDebugLog->Log(message);
+}

@@ -151,6 +151,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Engine\Base\DirectX\CBufferManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\DirectX12DebugCore.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
@@ -162,6 +163,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\Viewport.cpp" />
     <ClCompile Include="Engine\Base\MyDebugLog.cpp" />
     <ClCompile Include="Engine\Base\MyString.cpp" />
+    <ClCompile Include="Engine\Base\Windows\WinAppDebugCore.cpp" />
     <ClCompile Include="Engine\Math\Matrix\Matrix2x2.cpp" />
     <ClCompile Include="Engine\Math\Matrix\Matrix3x3.cpp" />
     <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp" />
@@ -179,6 +181,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Base\DirectX\D3DResourceLeakChecker.h" />
+    <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h" />
     <ClInclude Include="Engine\Base\DirectX\ModelManager.h" />
     <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
     <ClInclude Include="Engine\Base\DirectX\Viewport.h" />
@@ -194,6 +198,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\MyString.h" />
     <ClInclude Include="Engine\Base\Windows\CrashHandler.h" />
     <ClInclude Include="Engine\Base\Windows\WinApp.h" />
+    <ClInclude Include="Engine\Base\Windows\WinAppDebugCore.h" />
     <ClInclude Include="Engine\Math\MaterialData.h" />
     <ClInclude Include="Engine\Math\MathInclude.h" />
     <ClInclude Include="Engine\Math\Matrix\Matrix2x2.h" />
@@ -201,10 +206,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h" />
     <ClInclude Include="Engine\Math\ModelData.h" />
     <ClInclude Include="Engine\Math\Transform.h" />
+    <ClInclude Include="Engine\Math\TransformationMatrix.h" />
     <ClInclude Include="Engine\Math\Vector\Vector2.h" />
     <ClInclude Include="Engine\Math\Vector\Vector3.h" />
     <ClInclude Include="Engine\Math\Vector\Vector4.h" />
     <ClInclude Include="Engine\Math\VerTexData.h" />
+    <ClInclude Include="Engine\Object\DirectionalLight.h" />
+    <ClInclude Include="Engine\Object\Material.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />

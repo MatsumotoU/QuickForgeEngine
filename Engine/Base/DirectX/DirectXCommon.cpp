@@ -255,8 +255,12 @@ void DirectXCommon::CreateDevice() {
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
 		debugLog_->Log("EnebleBreakOnSeverity_CORRUPTION");
 		// エラー落ち
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
-		debugLog_->Log("EnebleBreakOnSeverity_ERROR");
+		if (lpCmdLine_ == nullptr || std::strcmp(*lpCmdLine_, "/DISABLE_D3D12_DEBUG_ERROR") != 0) {
+			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+			debugLog_->Log("EnebleBreakOnSeverity_ERROR");
+		} else {
+			debugLog_->Log("!!! DisableBreakOnSeverity_ERROR !!!");
+		}
 		// 警告
 		if (lpCmdLine_ == nullptr || std::strcmp(*lpCmdLine_, "/DISABLE_D3D12_DEBUG_WARNING")  != 0) {
 			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);

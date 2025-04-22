@@ -17,7 +17,7 @@ ImGuiManager::ImGuiManager() {
 ImGuiManager::~ImGuiManager() {
 #ifdef _DEBUG
 	if (stateCheck_ != 0) {
-		debugLog_->Log("ImGuiManager : Error");
+		debugLog_->Log(std::format("!!! ImGuiManager : Error{} !!!\n", stateCheck_));
 	}
 #endif // _DEBUG
 }
@@ -49,6 +49,10 @@ void ImGuiManager::EndImGui() {
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+#ifdef _DEBUG
+	stateCheck_--;
+#endif // _DEBUG
 }
 
 void ImGuiManager::BeginFrame() {
@@ -62,9 +66,6 @@ void ImGuiManager::BeginFrame() {
 }
 
 void ImGuiManager::EndFrame() {
-#ifdef _DEBUG
-	stateCheck_--;
-#endif // _DEBUG
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_.Get());
