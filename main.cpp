@@ -1,3 +1,4 @@
+// 現状ないと動かないコアたち
 #include "Engine/Base/Windows/WinApp.h"
 #include "Engine/Base/DirectX/DirectXCommon.h"
 #include "Engine/Base/DirectX/shaderCompiler.h"
@@ -7,99 +8,38 @@
 // PSO
 #include "Engine/Base/DirectX/PipelineStateObject.h"
 
-#include "Engine/Base/MyString.h"
-
-#include "Engine/Base/Windows/CrashHandler.h"
-
 // Math
-#include "Engine/Math/Matrix/Matrix4x4.h"
 #include "Engine/Math/Matrix/Matrix3x3.h"
-#include "Engine/Math/Vector/Vector4.h"
 #include "Engine/Math/Transform.h"
 #include "Engine/Math/VerTexData.h"
+#include "Engine/Math/TransformationMatrix.h"
 
-#include <d3d12.h>
-#include <dxgi1_6.h>
-#include <cassert>
+// Object
+#include "Engine/Object/DirectionalLight.h"
+#include "Engine/Object/Material.h"
 
-#pragma comment(lib,"d3d12.lib")
-#pragma comment(lib,"dxgi.lib")
+// Debug
+#include "Engine/Base/Windows/WinAppDebugCore.h"
+#include "Engine/Base/DirectX/DirectX12DebugCore.h"
+#include "Engine/Base/MyString.h"
 
-#include <dxgidebug.h>
-#pragma comment(lib,"dxguid.lib")
 
-#include <dxcapi.h>
-#pragma comment(lib,"dxcompiler.lib")
-
-#include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
-
-// DebugLog
-#include "Engine/Base/MyDebugLog.h"
-
-// Command
-/// /DISABLE_D3D12_DEBUG_WARNING
-
-int windowWidth = 1280;
-int windowHeight = 720;
-
-// CPU側の設定？シェーダーはGPU？
-struct TransformationMatrix {
-	Matrix4x4 WVP;
-	Matrix4x4 World;
-};
-
-struct Material {
-	Vector4 color;
-	int32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
-};
-
-struct DirectionalLight
-{
-	Vector4 color;// ライトの色
-	Vector3 direction;// ライトの向き
-	float intensity;// 輝度
-};
 
 //srv,rtv,dsvはimGuiManager,dxCommon,textureManagerが持っているので要分離(こいつらは増えない)
 // miniEngine Cocos2D Ogre3D ら辺が参考
 
-struct D3DResourceLeakChecker {
-	~D3DResourceLeakChecker() {
-		// * 終了時のエラー処理 * //
-		Log("=====D3DResourceLeakCheck=====\n");
-		IDXGIDebug1* debug;
-		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
-			debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-			debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-			debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-			debug->Release();
-		}
-	}
-};
+//miniEngineのdevice管理は安全なのか？(extern)
 
 // windowsアプリでのエントリーポイント(main関数) 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 	
 	// * ゲーム以前の設定 * //
-	// ダンプ渡し
-	SetUnhandledExceptionFilter(ExportDump);
-
-	D3DResourceLeakChecker leakChek;
-	// デバッグログ用
-	MyDebugLog* myDebugLog = MyDebugLog::GetInstatnce();
-	myDebugLog->Initialize();
-	if (lpCmdLine) {
-		myDebugLog->Log("!!! EnebleCommandLineArguments !!!");
-		myDebugLog->Log(std::format("EnebleCommand : {}\n", lpCmdLine));
-	}
+	WinAppDebugCore winAppDbgCore(lpCmdLine);
+	DirectX12DebugCore directXDbgCore;
 
 	// ウィンドウ生成
 	WinApp winApp;
-	winApp.CreateGameWindow(windowWidth, windowHeight);
+	winApp.CreateGameWindow();
 	MSG msg{};
 
 	// DirectXの初期化																				
@@ -469,8 +409,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 
 	// * 解放処理 * //
 	textureManager.Finalize();
-	myDebugLog->Finalize();
-
 	imGuiManager.EndImGui();
 	dxCommon.ReleaseDirectXObject();
 	CloseWindow(winApp.GetHWND());

@@ -24,5 +24,10 @@ private: // シングルトン用
 	~MyDebugLog() = default;
 	MyDebugLog(const MyDebugLog&) = delete;
 	MyDebugLog& operator=(const MyDebugLog&) = delete;
-
 };
+
+/// <summary>
+/// このヘッダーを読み込んでいれば使えるやつ
+/// </summary>
+/// <param name="message"></param>
+void DebugLog(const std::string& message);
