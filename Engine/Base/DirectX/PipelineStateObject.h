@@ -15,8 +15,8 @@ public:
 	void Initialize(DirectXCommon* dxCommon, WinApp* winApp);
 
 public:
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> GetPipelineState();
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> GetRootSignature();
+	ID3D12PipelineState* GetPipelineState();
+	ID3D12RootSignature* GetRootSignature();
 
 public:
 	DepthStencil* GetDepthStencil();
