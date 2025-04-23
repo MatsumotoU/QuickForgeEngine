@@ -114,12 +114,12 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon,WinApp* winApp) {
 
 }
 
-Microsoft::WRL::ComPtr<ID3D12PipelineState> PipelineStateObject::GetPipelineState() {
-	return graphicsPipelineState_;
+ID3D12PipelineState* PipelineStateObject::GetPipelineState() {
+	return graphicsPipelineState_.Get();
 }
 
-Microsoft::WRL::ComPtr<ID3D12RootSignature> PipelineStateObject::GetRootSignature() {
-	return rootSignature_;
+ID3D12RootSignature* PipelineStateObject::GetRootSignature() {
+	return rootSignature_.Get();
 }
 
 DepthStencil* PipelineStateObject::GetDepthStencil() {
