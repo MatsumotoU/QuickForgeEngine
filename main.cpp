@@ -399,7 +399,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
-			if (input.key_[DIK_0]) {
+			if (input.mouse_.GetPress(0)) {
 				ImGui::ShowDemoWindow();
 			}
 
