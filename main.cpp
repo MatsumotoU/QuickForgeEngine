@@ -36,13 +36,16 @@
 // Audio
 #include "Engine/Audio/AudioManager.h"
 
+// Input
+#include "Engine/Input/DirectInput/DirectInputManager.h"
+
 //srv,rtv,dsvはimGuiManager,dxCommon,textureManagerが持っているので要分離(こいつらは増えない)
 // miniEngine Cocos2D Ogre3D ら辺が参考
 
 //miniEngineのdevice管理は安全なのか？(extern)
 
 // windowsアプリでのエントリーポイント(main関数) 
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	
 	// * ゲーム以前の設定 * //
 	WinAppDebugCore winAppDbgCore(lpCmdLine);
@@ -57,6 +60,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 	DirectXCommon dxCommon;
 	dxCommon.SetCommandLine(&lpCmdLine);
 	dxCommon.Initialize(&winApp);
+
+	//se
+	AudioManager audioManager;
+	audioManager.Initialize();
+
+	// Input
+	DirectInputManager input;
+	input.Initialize(&winApp, hInstance);
 
 	// ImGuiの初期化
 	ImGuiManager imGuiManager;
@@ -84,10 +95,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 	int32_t ballTextureIndex = 0;
 
 	Sprite sprite(&dxCommon, &textureManager, &imGuiManager, 640, 360,&pso);
-
-	//se
-	AudioManager audioManager;
-	audioManager.Initialize();
 
 	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
 
@@ -322,6 +329,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {
+			input.Update();
 
 			//transform.rotate.y += 0.01f;
 			material.materialData_->color = color;
@@ -390,6 +398,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 			//
 			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+
+			if (input.key_[DIK_0]) {
+				ImGui::ShowDemoWindow();
+			}
 
 			if (ImGui::Button("SEStart")) {
 				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData1);
