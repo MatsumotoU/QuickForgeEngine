@@ -2,7 +2,7 @@
 #include "DirectXCommon.h"
 #include "../../Math/TransformationMatrix.h"
 
-WVPResource::WVPResource(DirectXCommon* dxCommon) {
+void WVPResource::Initialize(DirectXCommon* dxCommon) {
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
 	wvpResource_ = CreateBufferResource(dxCommon->GetDevice(), sizeof(TransformationMatrix));
 	// データを書き込む

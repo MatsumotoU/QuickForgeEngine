@@ -7,18 +7,28 @@
 class DirectXCommon;
 class TextureManager;
 class ImGuiManager;// 削除予定
-class MaterialResource;
-class WVPResource;
-class DirectionnalLightResource;
+
+class PipelineStateObject;
+
+#include "../Base/DirectX/MaterialResource.h"
+#include "../Base/DirectX/WVPResource.h"
+#include "../Base/DirectX/DirectionalLightResource.h"
+
+#include "../Base/DirectX/Viewport.h"
+#include "../Base/DirectX/ScissorRect.h"
 
 class Sprite {
 public:
-	Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager,float width,float hight);
+	Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager,float width,float hight,PipelineStateObject* pso);
 	~Sprite();
 
 public:
-	void LoadTexture(const std::string& filePath);
-	void DrawSprite();
+	void DrawSprite(int32_t textureHandle, ViewPort* viewport, ScissorRect* scissor);
+
+public:
+	MaterialResource material_;
+	WVPResource wvp_;
+	DirectionalLightResource directionalLight_;
 
 private:
 	DirectXCommon* dxCommon_;
@@ -31,10 +41,5 @@ private:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 	uint32_t* indexData_;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource_;
-
-private:
-	MaterialResource* material_;
-	WVPResource* wvp_;
-	DirectionnalLightResource* directionalLight_;
+	PipelineStateObject* pso_;
 };

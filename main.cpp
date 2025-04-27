@@ -7,6 +7,14 @@
 #include "Engine/Base/DirectX/ModelManager.h"
 // PSO
 #include "Engine/Base/DirectX/PipelineStateObject.h"
+// シザーとビューポート
+#include "Engine/Base/DirectX/Viewport.h"
+#include "Engine/Base/DirectX/ScissorRect.h"
+
+// Resorce
+#include "Engine/Base/DirectX/MaterialResource.h"
+#include "Engine/Base/DirectX/WVPResource.h"
+#include "Engine/Base/DirectX/DirectionalLightResource.h"
 
 // Math
 #include "Engine/Math/Matrix/Matrix3x3.h"
@@ -23,7 +31,10 @@
 #include "Engine/Base/DirectX/DirectX12DebugCore.h"
 #include "Engine/Base/MyString.h"
 
+#include "Engine/Sprite/Sprite.h"
 
+// Audio
+#include "Engine/Audio/AudioManager.h"
 
 //srv,rtv,dsvはimGuiManager,dxCommon,textureManagerが持っているので要分離(こいつらは増えない)
 // miniEngine Cocos2D Ogre3D ら辺が参考
@@ -51,9 +62,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 	ImGuiManager imGuiManager;
 	imGuiManager.Initialize(&winApp,&dxCommon);
 
-	// TextManagerの初期化
+	// TextuerManagerの初期化
 	TextureManager textureManager;
-	textureManager.Initialize(&dxCommon);
+	textureManager.Initialize(&dxCommon,&imGuiManager);
 
 	// * PSOを作成 * //
 	PipelineStateObject pso;
@@ -72,37 +83,51 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 
 	int32_t ballTextureIndex = 0;
 
+	Sprite sprite(&dxCommon, &textureManager, &imGuiManager, 640, 360,&pso);
+
+	//se
+	AudioManager audioManager;
+	audioManager.Initialize();
+
+	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
+
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = CreateBufferResource(dxCommon.GetDevice(), sizeof(TransformationMatrix));
-	// データを書き込む
-	TransformationMatrix* wvpData = nullptr;
-	// 書き込むためのアドレスを取得
-	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	// 単位行列を書き込んでおく
-	wvpData->WVP = Matrix4x4::MakeIndentity4x4();
-	wvpData->World = Matrix4x4::MakeIndentity4x4();
+	WVPResource wvp;
+	wvp.Initialize(&dxCommon);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = CreateBufferResource(dxCommon.GetDevice(), sizeof(TransformationMatrix));
+	//// データを書き込む
+	//TransformationMatrix* wvpData = nullptr;
+	//// 書き込むためのアドレスを取得
+	//wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	//// 単位行列を書き込んでおく
+	//wvpData->WVP = Matrix4x4::MakeIndentity4x4();
+	//wvpData->World = Matrix4x4::MakeIndentity4x4();
 
 	// マテリアル用のリソースを作る
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxCommon.GetDevice(), sizeof(Material));
-	// マテリアルにデータを書き込む
-	Material* materialData = nullptr;
-	// 書き込むためのアドレス取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	// 今回は赤を書き込んでみる
-	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData->enableLighting = true;
-	materialData->uvTransform = Matrix4x4::MakeIndentity4x4();
+	MaterialResource material;
+	material.Initialize(&dxCommon);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxCommon.GetDevice(), sizeof(Material));
+	//// マテリアルにデータを書き込む
+	//Material* materialData = nullptr;
+	//// 書き込むためのアドレス取得
+	//materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	//// 今回は赤を書き込んでみる
+	//materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	//materialData->enableLighting = true;
+	//materialData->uvTransform = Matrix4x4::MakeIndentity4x4();
 
 	// 光源用のリソースを作る。DirectionnalLight一つ分のサイズを用意する
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionnalLightResource = CreateBufferResource(dxCommon.GetDevice(), sizeof(DirectionalLight));
-	// データを書き込む
-	DirectionalLight* directionnalLightData = nullptr;
-	// 書き込むためのアドレスを取得
-	directionnalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionnalLightData));
-	// 情報を書き込んでおく
-	directionnalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionnalLightData->direction = { 0.0f,-1.0f,0.0f };
-	directionnalLightData->intensity = 1.0f;
+	DirectionalLightResource directionalLight;
+	directionalLight.Initialize(&dxCommon);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> directionnalLightResource = CreateBufferResource(dxCommon.GetDevice(), sizeof(DirectionalLight));
+	//// データを書き込む
+	//DirectionalLight* directionnalLightData = nullptr;
+	//// 書き込むためのアドレスを取得
+	//directionnalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionnalLightData));
+	//// 情報を書き込んでおく
+	//directionnalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
+	//directionnalLightData->direction = { 0.0f,-1.0f,0.0f };
+	//directionnalLightData->intensity = 1.0f;
 
 	/*vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
 	vertexData[0].texcoord = { 0.0f,1.0f};
@@ -277,30 +302,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
 	// テクスチャを読み込む
-	DirectX::ScratchImage mipImages = textureManager.LoadTexture("Resources/monsterBall.png");
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = textureManager.CreateTextureResource(metadata);
-	textureManager.CreateShaderResourceView(metadata, imGuiManager.GetSrvDescriptorHeap(), textureResource, 1);
-	// 2米
-	DirectX::ScratchImage mipImages2 = textureManager.LoadTexture(modelData.material.textureFilePath);
-	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
-	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = textureManager.CreateTextureResource(metadata2);
-	textureManager.CreateShaderResourceView(metadata2, imGuiManager.GetSrvDescriptorHeap(), textureResource2, 2);
+	//int32_t monsterBallHandle = textureManager.LoadTexture("Resources/monsterBall.png");
+	int32_t modelHandle = textureManager.LoadTexture(modelData.material.textureFilePath);
 
 	// * ビューポートとシザー * //
-	D3D12_VIEWPORT viewport{};
-	viewport.Width = 1280;
-	viewport.Height = 720;
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
+	ViewPort viewport;
+	viewport.Inititalize(&winApp);
 
-	D3D12_RECT scissorRect{};
-	scissorRect.left = 0;
-	scissorRect.right = 1280;
-	scissorRect.top = 0;
-	scissorRect.bottom = 720;
+	ScissorRect scissor;
+	scissor.Initialize(&winApp);
 
 	bool Lighting = true;
 	Vector4 color{1.0f,1.0f,1.0f,1.0f};
@@ -314,12 +324,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 		} else {
 
 			//transform.rotate.y += 0.01f;
-			materialData->color = color;
+			material.materialData_->color = color;
+			sprite.material_.materialData_->color = color;
 
 			Matrix4x4 uvTransformMatrix = Matrix4x4::MakeScaleMatrix(uvTransformSprite.scale);
 			uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeRotateZMatrix(uvTransformSprite.rotate.z));
 			uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeTranslateMatrix(uvTransformSprite.translate));
-			materialData->uvTransform = uvTransformMatrix;
+			material.materialData_->uvTransform = uvTransformMatrix;
 
 			Matrix4x4 cameraMatrix = Matrix4x4::MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
@@ -331,8 +342,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 			Matrix4x4 worldViewProjectionMatrix = Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix, projectionMatrix));
 			Matrix4x4 worldViewProjectionMatrixSprite = Matrix4x4::Multiply(worldMatrixSprite, Matrix4x4::Multiply(viewMatrixSprite, projectionMatrixSprite));
 
-			wvpData->WVP = worldViewProjectionMatrix;
-			wvpData->World = worldMatrix;
+			wvp.wvpData_->WVP = worldViewProjectionMatrix;
+			wvp.wvpData_->World = worldMatrix;
 
 			dxCommon.PreDraw();
 			imGuiManager.BeginFrame();
@@ -340,8 +351,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 			ImGui::ColorPicker4("color", &color.x);
 
 			// テクスチャをvramにアップロード
-			Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = textureManager.UploadTextureData(textureResource, mipImages, dxCommon.GetCommandList());
-			Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource2 = textureManager.UploadTextureData(textureResource2, mipImages2, dxCommon.GetCommandList());
+			textureManager.PreDraw();
 
 			ID3D12GraphicsCommandList* commandList = dxCommon.GetCommandList();
 
@@ -351,22 +361,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 			commandList->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 			// 球体
-			commandList->RSSetViewports(1, &viewport);
-			commandList->RSSetScissorRects(1, &scissorRect);
+			commandList->RSSetViewports(1, viewport.GetViewport());
+			commandList->RSSetScissorRects(1, scissor.GetScissorRect());
 			commandList->SetGraphicsRootSignature(pso.GetRootSignature());
 			commandList->SetPipelineState(pso.GetPipelineState());
 			//commandList->IASetIndexBuffer(&indexBufferView);
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-			commandList->SetGraphicsRootConstantBufferView(3, directionnalLightResource->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView(0, material.GetMaterial()->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView(1, wvp.GetWVPResource()->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView(3, directionalLight.GetDirectionalLightResource()->GetGPUVirtualAddress());
 			
-			commandList->SetGraphicsRootDescriptorTable(2, textureManager.GetTextureSrvHandleGPU(ballTextureIndex));
+			commandList->SetGraphicsRootDescriptorTable(2, textureManager.GetTextureSrvHandleGPU(modelHandle));
 			commandList->DrawInstanced(static_cast<UINT>(modelData.vertices.size()), 1, 0, 0);
-			////commandList->DrawIndexedInstanced(kSubdivision* kSubdivision * 6, 1, 0, 0, 0);// 描画処理をする頂点の数
+			//commandList->DrawIndexedInstanced(kSubdivision* kSubdivision * 6, 1, 0, 0, 0);// 描画処理をする頂点の数
 
-			//// sprite
+			// sprite
+			//sprite.DrawSprite(monsterBallHandle,&viewport,&scissor);
 			//Matrix4x4 uvTransformMatrix = Matrix4x4::MakeScaleMatrix(uvTransformSprite.scale);
 			//uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeRotateZMatrix(uvTransformSprite.rotate.z));
 			//uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeTranslateMatrix(uvTransformSprite.translate));
@@ -380,6 +391,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
+			if (ImGui::Button("SEStart")) {
+				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData1);
+			}
 			ImGui::InputInt("textureIndex", &ballTextureIndex, 1);
 			if (ballTextureIndex < 0) {
 				ballTextureIndex = 0;
@@ -390,28 +404,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 			ImGui::DragFloat3("cametaTransition", &cameraTransform.translate.x,0.1f);
 			ImGui::DragFloat3("cametaRotate", &cameraTransform.rotate.x, 0.1f);
 			ImGui::DragFloat3("ObjRotate", &transform.rotate.x, 0.1f);
-			ImGui::DragFloat3("directionnalLight.direction", &directionnalLightData->direction.x, 0.1f);
+			ImGui::DragFloat3("directionnalLight.direction", &directionalLight.directionalLightData_->direction.x, 0.1f);
 			ImGui::Checkbox("isLighting", &Lighting);
-			materialData->enableLighting = Lighting;
-			directionnalLightData->direction = directionnalLightData->direction.Normalize();
+			material.materialData_->enableLighting = Lighting;
+			directionalLight.directionalLightData_->direction = directionalLight.directionalLightData_->direction.Normalize();
 
 			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f,-10.0f,10.0f);
 			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
-			textureManager.TransitionResourceBarrier(textureResource, dxCommon.GetCommandList());
-			textureManager.TransitionResourceBarrier(textureResource2,dxCommon.GetCommandList());
-
+			textureManager.PostDraw();
 			imGuiManager.EndFrame();
 			dxCommon.PostDraw();
-
-			/*intermediateResource->Release();
-			intermediateResource2->Release();*/
+			textureManager.ReleaseIntermediateResources();
 		}
 	}
 
+	Audiomanager::SoundUnload(&soundData1);
+
 	// * 解放処理 * //
-	textureManager.Finalize();
+	//textureManager.Finalize();
 	imGuiManager.EndImGui();
 	dxCommon.ReleaseDirectXObject();
 	CloseWindow(winApp.GetHWND());

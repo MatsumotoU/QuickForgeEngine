@@ -2,21 +2,23 @@
 #include "../Base/DirectX/DirectXCommon.h"
 #include "../Base/DirectX/TextureManager.h"
 #include "../Math/VerTexData.h"
+#include "../Base/DirectX/PipelineStateObject.h"
 
 #include "../Base/DirectX/MaterialResource.h"
 #include "../Base/DirectX/WVPResource.h"
-#include "../Base/DirectX/DirectionnalLightResource.h"
+#include "../Base/DirectX/DirectionalLightResource.h"
 
 #include "../Base/DirectX/ImGuiManager.h"
 
-Sprite::Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager, float width, float hight) {
+Sprite::Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager, float width, float hight, PipelineStateObject* pso) {
 	dxCommon_ = dxCommon;
 	textureManager_ = textureManager;
 	imGuiManager_ = imguiManager;
+	pso_ = pso;
 
-	material_ = new MaterialResource(dxCommon);
-	wvp_ = new WVPResource(dxCommon);
-	directionalLight_ = new DirectionnalLightResource(dxCommon);
+	material_.Initialize(dxCommon);
+	wvp_.Initialize(dxCommon);
+	directionalLight_.Initialize(dxCommon);
 
 	// Spriteを作る
 	vertexResource_ = CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * 4);
@@ -57,29 +59,21 @@ Sprite::Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiMan
 }
 
 Sprite::~Sprite() {
-	delete material_;
-	delete wvp_;
-	delete directionalLight_;
-	material_ = nullptr;
-	wvp_ = nullptr;
-	directionalLight_ = nullptr;
 }
 
-void Sprite::LoadTexture(const std::string& filePath) {
-	// テクスチャを読み込む
-	DirectX::ScratchImage mipImages = textureManager_->LoadTexture(filePath);
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	textureResource_ = textureManager_->CreateTextureResource(metadata);
-	textureManager_->CreateShaderResourceView(metadata, imGuiManager_->GetSrvDescriptorHeap(), textureResource_, 1);
-}
-
-void Sprite::DrawSprite() {
+void Sprite::DrawSprite(int32_t textureHandle,ViewPort* viewport,ScissorRect* scissor) {
 	// sprite
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+	commandList->RSSetViewports(1, viewport->GetViewport());
+	commandList->RSSetScissorRects(1, scissor->GetScissorRect());
+	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
+	commandList->SetPipelineState(pso_->GetPipelineState());
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList->IASetIndexBuffer(&indexBufferView_);
-	commandList->SetGraphicsRootConstantBufferView(0, material_->GetMaterial()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvp_->GetWVPResource()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(0));
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(textureHandle));
+	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }

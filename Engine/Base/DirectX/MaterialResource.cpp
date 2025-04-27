@@ -6,7 +6,7 @@
 #include "../MyDebugLog.h"
 #endif // _DEBUG
 
-MaterialResource::MaterialResource(DirectXCommon* dxCommon, const Vector4& color, bool enebleLighting) {
+void MaterialResource::Initialize(DirectXCommon* dxCommon, const Vector4& color, bool enebleLighting) {
 	// マテリアル用のリソースを作る
 	materialResource_ = CreateBufferResource(dxCommon->GetDevice(), sizeof(Material));
 	// マテリアルにデータを書き込む
