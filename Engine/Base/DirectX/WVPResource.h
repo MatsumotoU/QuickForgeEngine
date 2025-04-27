@@ -7,7 +7,7 @@ struct TransformationMatrix;
 
 class WVPResource {
 public:
-	WVPResource(DirectXCommon* dxCommon);
+	void Initialize(DirectXCommon* dxCommon);
 
 public:
 	ID3D12Resource* GetWVPResource();

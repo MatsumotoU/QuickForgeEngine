@@ -3,9 +3,11 @@
 
 #include "../MyString.h"
 #include "DirectXCommon.h"
+#include "ImGuiManager.h"
 
-void TextureManager::Initialize(DirectXCommon* dxCommon) {
+void TextureManager::Initialize(DirectXCommon* dxCommon, ImGuiManager* imguiManager) {
 	dxCommon_ = dxCommon;
+	imGuimanager_ = imguiManager;
 
 	// Comの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -21,13 +23,18 @@ void TextureManager::Initialize(DirectXCommon* dxCommon) {
 
 	textureSrvHandleCPU_.clear();
 	textureSrvHandleGPU_.clear();
+	textureResources_.clear();
+	scratchImages_.clear();
+	intermediateResource_.clear();
+
+	textureHandle_ = 0;
 }
 
 void TextureManager::Finalize() {
 	CoUninitialize();
 }
 
-DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath) {
+DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
 	// テクスチャファイルを読み込んでプログラムで使えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
@@ -41,6 +48,19 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath) {
 
 	// ミップ付きのデータを返す
 	return mipImages;
+}
+
+void TextureManager::LoadScratchImage(const std::string& filePath) {
+	scratchImages_.push_back(DirectX::ScratchImage());
+	// テクスチャファイルを読み込んでプログラムで使えるようにする
+	DirectX::ScratchImage image{};
+	std::wstring filePathW = ConvertString(filePath);
+	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	assert(SUCCEEDED(hr));
+
+	// ミップマップの作成
+	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, scratchImages_.back());
+	assert(SUCCEEDED(hr));
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(const DirectX::TexMetadata& metadata) {
@@ -62,40 +82,40 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 		&resourceDesc_,
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
-		IID_PPV_ARGS(&resource));
+		IID_PPV_ARGS(resource.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 	return resource;
 }
 
-void TextureManager::TransitionResourceBarrier(Microsoft::WRL::ComPtr<ID3D12Resource> texture, ID3D12GraphicsCommandList* commandList) {
+void TextureManager::TransitionResourceBarrier(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList) {
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = texture.Get();
+	barrier.Transition.pResource = texture;
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
 	commandList->ResourceBarrier(1, &barrier);
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList) {
+Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList) {
 	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 	subresources.clear();
 	DirectX::PrepareUpload(device_, mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
-	uint64_t intermediatSize = GetRequiredIntermediateSize(texture.Get(), 0, static_cast<UINT>(subresources.size()));
+	uint64_t intermediatSize = GetRequiredIntermediateSize(texture, 0, static_cast<UINT>(subresources.size()));
 	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(device_, intermediatSize);
-	UpdateSubresources(commandList, texture.Get(), intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
+	UpdateSubresources(commandList, texture, intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
 
-	EndUploadTextureData(texture.Get(), commandList);
+	EndUploadTextureData(texture, commandList);
 	return intermediateResource;
 }
 
-void TextureManager::EndUploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, ID3D12GraphicsCommandList* commandList) {
+void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList) {
 	// Textureへの転送後は利用できるようにD3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResouceStateを変更する
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = texture.Get();
+	barrier.Transition.pResource = texture;
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
@@ -120,7 +140,7 @@ void TextureManager::EndUploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource>
 //	}
 //}
 
-void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap, Microsoft::WRL::ComPtr<ID3D12Resource> textureResource,uint32_t index) {
+void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource,uint32_t index) {
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
@@ -140,7 +160,38 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
 	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
 	// SRVの作成
-	device_->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
+	device_->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
+}
+
+void TextureManager::PreDraw() {
+	for (int32_t i = 0; i < textureResources_.size(); i++) {
+		intermediateResource_.push_back(UploadTextureData(textureResources_[i].Get(), scratchImages_[i], dxCommon_->GetCommandList()));
+	}
+}
+
+void TextureManager::PostDraw() {
+	for (int32_t i = 0; i < textureResources_.size(); i++) {
+		TransitionResourceBarrier(textureResources_[i].Get(), dxCommon_->GetCommandList());
+	}
+}
+
+void TextureManager::ReleaseIntermediateResources() {
+	for (int32_t i = 0; i < intermediateResource_.size(); i++) {
+		intermediateResource_[i].Reset();
+	}
+	intermediateResource_.clear();
+}
+
+int32_t TextureManager::LoadTexture(const std::string& filePath) {
+	//scratchImages_.push_back(DirectX::ScratchImage());
+	//scratchImages_[scratchImages_.size() - 1] = Load(filePath);
+	LoadScratchImage(filePath);
+	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
+	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(metadata);
+	CreateShaderResourceView(metadata, imGuimanager_->GetSrvDescriptorHeap(), textureResource.Get(), 1 + textureHandle_);
+	textureHandle_++;
+	textureResources_.push_back(textureResource);
+	return textureHandle_-1;
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t index) {

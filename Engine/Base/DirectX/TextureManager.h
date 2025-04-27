@@ -6,13 +6,14 @@
 #include "../../../externals/DirectXTex/DirectXTex.h"
 
 class DirectXCommon;
+class ImGuiManager;
 
 class TextureManager {
 public:// 一回は絶対に呼び出さないとバグるやつ
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(DirectXCommon* dxCommon, ImGuiManager* imguiManager);
 	/// <summary>
 	/// 終了処理
 	/// </summary>
@@ -24,7 +25,8 @@ public:
 	/// </summary>
 	/// <param name="filePath"></param>
 	/// <returns>ミップ付きマップ</returns>
-	DirectX::ScratchImage LoadTexture(const std::string& filePath);
+	DirectX::ScratchImage Load(const std::string& filePath);
+	void LoadScratchImage(const std::string& filePath);
 	/// <summary>
 	/// テクスチャリソースを作成します
 	/// </summary>
@@ -32,11 +34,19 @@ public:
 	/// <returns>テクスチャリソース</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 	
-	void TransitionResourceBarrier(Microsoft::WRL::ComPtr<ID3D12Resource> texture, ID3D12GraphicsCommandList* commandList);
-	[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList);
-	void EndUploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, ID3D12GraphicsCommandList* commandList);
+	void TransitionResourceBarrier(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList);
+	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList);
+	void EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList);
 
-	void CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap, Microsoft::WRL::ComPtr<ID3D12Resource> textureResource, uint32_t index);
+	void CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap, ID3D12Resource* textureResource, uint32_t index);
+
+public:
+	void PreDraw();
+	void PostDraw();
+	void ReleaseIntermediateResources();
+
+public:
+	int32_t LoadTexture(const std::string& filePath);
 
 public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index);
@@ -45,12 +55,15 @@ public:
 private:// メンバ変数
 	ID3D12Device* device_;
 	D3D12_HEAP_PROPERTIES heapProperties_;
-
 	D3D12_RESOURCE_DESC resourceDesc_;
-
 	uint32_t srvHandleIndex_;
 	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> textureSrvHandleCPU_;
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPU_;
-
 	DirectXCommon* dxCommon_;
+	ImGuiManager* imGuimanager_;
+
+	int32_t textureHandle_;
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResources_;
+	std::vector<DirectX::ScratchImage> scratchImages_;
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
 };

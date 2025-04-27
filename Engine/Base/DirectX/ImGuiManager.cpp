@@ -28,7 +28,7 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 #endif // _DEBUG
 
 	device_ = dxCommon->GetDevice();
-	srvDescriptorHeap_ = CreateDescriptorHeap(device_,D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,128,true);
+	srvDescriptorHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 	commandList_ = dxCommon->GetCommandList();
 
 	// ImGuiの初期化
