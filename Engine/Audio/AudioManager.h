@@ -16,7 +16,17 @@ public:
 	void Initialize();
 
 public:
+	/// <summary>
+	/// 全体の音量を調節します(1.0が標準)
+	/// </summary>
+	/// <param name="volume"></param>
+	void SetMasterVolume(float volume);
+
+public:
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
+
+private:
+	IXAudio2MasteringVoice* masterVoice_;
 };
 
 namespace Audiomanager {
@@ -36,5 +46,7 @@ namespace Audiomanager {
 	/// </summary>
 	/// <param name="xAudio2">xAudio2</param>
 	/// <param name="soundData">soundData</param>
-	void SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData);
+	/// <param name="volume">音量(基準:1.0)</param>
+	/// <param name="pitch">ピッチというよりかは再生速度(基準:1.0)</param>
+	void SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData, float volume,float pitch);
 }

@@ -322,6 +322,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	bool Lighting = true;
 	Vector4 color{1.0f,1.0f,1.0f,1.0f};
 
+	float vol = 1.0f;
+	float pit = 1.0f;
+
 	// ウィンドウのXボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
 		// windowにメッセージが基底たら最優先で処理される
@@ -403,8 +406,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 				ImGui::ShowDemoWindow();
 			}
 
+			ImGui::InputFloat("Volume", &vol);
+			ImGui::InputFloat("Pitch", &pit);
+
 			if (ImGui::Button("SEStart")) {
-				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData1);
+				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData1,vol,pit);
 			}
 			ImGui::InputInt("textureIndex", &ballTextureIndex, 1);
 			if (ballTextureIndex < 0) {

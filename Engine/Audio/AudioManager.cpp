@@ -11,11 +11,17 @@ AudioManager::~AudioManager() {
 }
 
 void AudioManager::Initialize() {
-	IXAudio2MasteringVoice* masterVoice;
+	masterVoice_ = nullptr;
 	HRESULT hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(hr));
-	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice);
+	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_);
 	assert(SUCCEEDED(hr));
+
+	
+}
+
+void AudioManager::SetMasterVolume(float volume) {
+	masterVoice_->SetVolume(volume);
 }
 
 SoundData Audiomanager::SoundLoadWave(const char* filename) {
@@ -68,10 +74,16 @@ void Audiomanager::SoundUnload(SoundData* soundData) {
 	soundData->wfex = {};
 }
 
-void Audiomanager::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData) {
+void Audiomanager::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData,float volume, float pitch) {
 	HRESULT hr;
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
 	hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	assert(SUCCEEDED(hr));
+
+	hr = pSourceVoice->SetVolume(volume);
+	assert(SUCCEEDED(hr));
+
+	hr = pSourceVoice->SetFrequencyRatio(pitch);
 	assert(SUCCEEDED(hr));
 
 	XAUDIO2_BUFFER buf{};
