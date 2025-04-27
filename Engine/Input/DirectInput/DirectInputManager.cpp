@@ -11,27 +11,12 @@ void DirectInputManager::Initialize(WinApp* winApp, const HINSTANCE& hInstance) 
 	assert(SUCCEEDED(hr));
 
 	// Deviceの生成
-	keybord_ = CreateKeyboardDivice();
+	keyboard_.Initialize(winApp, directInput_);
+	mouse_.Initialize(winApp, directInput_);
 }
 
 void DirectInputManager::Update() {
 	// キーボードの処理
-	memcpy(prekey_, key_, sizeof(prekey_));
-	keybord_->Acquire();
-	keybord_->GetDeviceState(sizeof(key_), key_);
-}
-
-IDirectInputDevice8* DirectInputManager::CreateKeyboardDivice() {
-	IDirectInputDevice8* keyboard = nullptr;
-	HRESULT hr = directInput_->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-	assert(SUCCEEDED(hr));
-
-	hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
-	assert(SUCCEEDED(hr));
-
-	hr = keyboard->SetCooperativeLevel(
-		winApp_->GetHWND(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-	assert(SUCCEEDED(hr));
-
-	return keyboard;
+	keyboard_.Update();
+	mouse_.Update();
 }
