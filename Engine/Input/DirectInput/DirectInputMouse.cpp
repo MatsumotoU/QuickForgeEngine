@@ -10,6 +10,7 @@ DirectInputMouse::DirectInputMouse() {
 	mouseState_ = {};
 	preMouseState_ = {};
 	mousePos_ = {};
+	wheelDir_ = 0.0f;
 }
 
 DirectInputMouse::~DirectInputMouse() {
@@ -37,6 +38,7 @@ void DirectInputMouse::Update() {
 
 	mouseMoveDir_.x = static_cast<float>(mouseState_.lX);
 	mouseMoveDir_.y = static_cast<float>(mouseState_.lY);
+	wheelDir_ = static_cast<float>(mouseState_.lZ);
 	mouseMoveDir_ = mouseMoveDir_.Normalize();
 }
 

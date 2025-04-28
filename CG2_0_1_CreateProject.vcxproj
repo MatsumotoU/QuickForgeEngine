@@ -169,6 +169,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\MyDebugLog.cpp" />
     <ClCompile Include="Engine\Base\MyString.cpp" />
     <ClCompile Include="Engine\Base\Windows\WinAppDebugCore.cpp" />
+    <ClCompile Include="Engine\Camera\Camera.cpp" />
+    <ClCompile Include="Engine\Camera\DebugCamera.cpp" />
     <ClCompile Include="Engine\Input\DirectInput\DirectInputKeyboard.cpp" />
     <ClCompile Include="Engine\Input\DirectInput\DirectInputManager.cpp" />
     <ClCompile Include="Engine\Input\DirectInput\DirectInputMouse.cpp" />
@@ -218,6 +220,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\Windows\CrashHandler.h" />
     <ClInclude Include="Engine\Base\Windows\WinApp.h" />
     <ClInclude Include="Engine\Base\Windows\WinAppDebugCore.h" />
+    <ClInclude Include="Engine\Camera\Camera.h" />
+    <ClInclude Include="Engine\Camera\DebugCamera.h" />
     <ClInclude Include="Engine\Input\DirectInput\DirectInputKeyboard.h" />
     <ClInclude Include="Engine\Input\DirectInput\DirectInputManager.h" />
     <ClInclude Include="Engine\Input\DirectInput\DirectInputMouse.h" />

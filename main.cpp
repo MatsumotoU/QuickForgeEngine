@@ -40,6 +40,10 @@
 // Input
 #include "Engine/Input/DirectInput/DirectInputManager.h"
 
+// Camera
+#include "Engine/Camera/Camera.h"
+#include "Engine/Camera/DebugCamera.h"
+
 //srv,rtv,dsvはimGuiManager,dxCommon,textureManagerが持っているので要分離(こいつらは増えない)
 // miniEngine Cocos2D Ogre3D ら辺が参考
 
@@ -102,6 +106,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 
 	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
 	SoundData soundData2 = Audiomanager::SoundLoadMp3("Resources/Enter.mp3");
+
+	Camera camera;
+	camera.Initialize(&winApp);
+
+	DebugCamera debugCamera;
+	debugCamera.Initialize(&winApp, &input);
 
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
 	WVPResource wvp;
@@ -338,6 +348,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			DispatchMessage(&msg);
 		} else {
 			input.Update();
+			debugCamera.Update();
 
 			//transform.rotate.y += 0.01f;
 			material.materialData_->color = color;
@@ -348,21 +359,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeTranslateMatrix(uvTransformSprite.translate));
 			material.materialData_->uvTransform = uvTransformMatrix;
 
-			Matrix4x4 cameraMatrix = Matrix4x4::MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 worldMatrixSprite = Matrix4x4::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-			Matrix4x4 viewMatrix = Matrix4x4::Inverse(cameraMatrix);
-			Matrix4x4 viewMatrixSprite = Matrix4x4::MakeIndentity4x4();
-			Matrix4x4 projectionMatrix = Matrix4x4::MakePerspectiveFovMatrix(0.45f, static_cast<float>(winApp.kWindowWidth) / static_cast<float>(winApp.kWindowHeight), 0.1f, 100.0f);
-			Matrix4x4 projectionMatrixSprite = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(winApp.kWindowWidth), static_cast<float>(winApp.kWindowHeight), 0.0f, 100.0f);
-			Matrix4x4 worldViewProjectionMatrix = Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix, projectionMatrix));
-			Matrix4x4 worldViewProjectionMatrixSprite = Matrix4x4::Multiply(worldMatrixSprite, Matrix4x4::Multiply(viewMatrixSprite, projectionMatrixSprite));
+			Matrix4x4 worldViewProjectionMatrix = debugCamera.camera_.MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE);
+			Matrix4x4 worldViewProjectionMatrixSprite = debugCamera.camera_.MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
 
 			wvp.wvpData_->WVP = worldViewProjectionMatrix;
 			wvp.wvpData_->World = worldMatrix;
 
 			dxCommon.PreDraw();
 			imGuiManager.BeginFrame();
+
+			debugCamera.DrawImGui();
 
 			ImGui::ColorPicker4("color", &color.x);
 
@@ -407,9 +415,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
-			if (input.mouse_.GetPress(0)) {
+			ImGui::InputFloat2("mouseDir", &input.mouse_.mouseMoveDir_.x);
+			ImGui::InputFloat3("debugCameraTranslate", &debugCamera.camera_.transform_.translate.x);
+
+			/*if (input.mouse_.GetPress(0)) {
 				ImGui::ShowDemoWindow();
-			}
+			}*/
 
 			ImGui::InputFloat("Volume", &vol);
 			ImGui::InputFloat("Pitch", &pit);
@@ -427,8 +438,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			if (ballTextureIndex > 1) {
 				ballTextureIndex = 1;
 			}
-			ImGui::DragFloat3("cametaTransition", &cameraTransform.translate.x,0.1f);
-			ImGui::DragFloat3("cametaRotate", &cameraTransform.rotate.x, 0.1f);
+			ImGui::DragFloat3("cametaTransition", &camera.transform_.translate.x,0.1f);
+			ImGui::DragFloat3("cametaRotate", &camera.transform_.rotate.x, 0.1f);
 			ImGui::DragFloat3("ObjRotate", &transform.rotate.x, 0.1f);
 			ImGui::DragFloat3("directionnalLight.direction", &directionalLight.directionalLightData_->direction.x, 0.1f);
 			ImGui::Checkbox("isLighting", &Lighting);
