@@ -45,6 +45,7 @@ public:// マウス操作変数
 	DIMOUSESTATE preMouseState_;
 	Vector2 mouseScreenPos_;
 	Vector2 mouseMoveDir_;
+	float wheelDir_;
 
 private:
 	IDirectInputDevice8* CreateMouse();
