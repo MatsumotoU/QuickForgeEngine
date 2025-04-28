@@ -3,6 +3,7 @@
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")
 
+#include "MultiAudioLoader.h"
 #include "SoundData.h"
 
 class AudioManager {
@@ -27,15 +28,22 @@ public:
 
 private:
 	IXAudio2MasteringVoice* masterVoice_;
+	MultiAudioLoader multiAudioLoader_;
 };
 
 namespace Audiomanager {
 	/// <summary>
-	/// サウンドデータを読み込みます
+	/// wavサウンドデータを読み込みます
 	/// </summary>
 	/// <param name="filename">filePath</param>
 	/// <returns></returns>
 	SoundData SoundLoadWave(const char* filename);
+	/// <summary>
+	/// mp3サウンドデータを読み込みます
+	/// </summary>
+	/// <param name="filename">filePath</param>
+	/// <returns></returns>
+	SoundData SoundLoadMp3(const char* filename);
 	/// <summary>
 	/// サウンドデータを削除します
 	/// </summary>

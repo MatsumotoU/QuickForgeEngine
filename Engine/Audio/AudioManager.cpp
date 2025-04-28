@@ -17,7 +17,7 @@ void AudioManager::Initialize() {
 	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_);
 	assert(SUCCEEDED(hr));
 
-	
+	multiAudioLoader_.Initialize();
 }
 
 void AudioManager::SetMasterVolume(float volume) {
@@ -65,6 +65,12 @@ SoundData Audiomanager::SoundLoadWave(const char* filename) {
 	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
 	soundData.bufferSize = data.size;
 	return soundData;
+}
+
+SoundData Audiomanager::SoundLoadMp3(const char* filename) {
+	SoundData mp3Sound{};
+	mp3Sound = Multiaudioloader::LoadSoundData(filename);
+	return mp3Sound;
 }
 
 void Audiomanager::SoundUnload(SoundData* soundData) {
