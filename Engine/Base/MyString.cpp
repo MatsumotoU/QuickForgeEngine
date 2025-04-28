@@ -1,4 +1,5 @@
 #include "MyString.h"
+#include <winrt/base.h>
 
 // ログ描画関数
 void Log(const std::string& message) {
@@ -33,4 +34,11 @@ std::string ConvertString(const std::wstring& str) {
     std::string result(sizeNeeded, 0);
     WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), result.data(), sizeNeeded, NULL, NULL);
     return result;
+}
+
+LPCWSTR StringToLPCWSTR(const std::string& str) {
+    LPCWSTR lpcwstr{};
+    std::wstring wstr = ConvertString(str);
+    lpcwstr = wstr.c_str();
+    return lpcwstr;
 }

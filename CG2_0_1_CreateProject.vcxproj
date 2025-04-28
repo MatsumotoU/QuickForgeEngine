@@ -150,6 +150,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
+    <ClCompile Include="Engine\Audio\MultiAudioLoader.cpp" />
     <ClCompile Include="Engine\Base\DirectX\CBufferManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectionalLightResource.cpp" />
@@ -192,6 +193,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Audio\ChunkHeader.h" />
     <ClInclude Include="Engine\Audio\FormatChunk.h" />
+    <ClInclude Include="Engine\Audio\MultiAudioLoader.h" />
     <ClInclude Include="Engine\Audio\RiffHeader.h" />
     <ClInclude Include="Engine\Audio\SoundData.h" />
     <ClInclude Include="Engine\Base\DirectX\D3DResourceLeakChecker.h" />

@@ -22,3 +22,10 @@ std::wstring ConvertString(const std::string& str);
 /// <param name="str">変換元</param>
 /// <returns>変換先</returns>
 std::string ConvertString(const std::wstring& str);
+
+/// <summary>
+/// std::stringからLPCWSTRへ変換
+/// </summary>
+/// <param name="str">変換元</param>
+/// <returns>変換先</returns>
+LPCWSTR StringToLPCWSTR(const std::string& str);

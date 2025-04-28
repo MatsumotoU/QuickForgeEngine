@@ -35,6 +35,7 @@
 
 // Audio
 #include "Engine/Audio/AudioManager.h"
+#include "Engine/Audio/MultiAudioLoader.h"
 
 // Input
 #include "Engine/Input/DirectInput/DirectInputManager.h"
@@ -64,6 +65,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	//se
 	AudioManager audioManager;
 	audioManager.Initialize();
+
+	MultiAudioLoader multiAudioLoader;
+	multiAudioLoader.Initialize();
 
 	// Input
 	DirectInputManager input;
@@ -97,6 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	Sprite sprite(&dxCommon, &textureManager, &imGuiManager, 640, 360,&pso);
 
 	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
+	SoundData soundData2 = Multiaudioloader::LoadSoundData("Resources/Enter.mp3");
 
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
 	WVPResource wvp;
@@ -409,8 +414,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			ImGui::InputFloat("Volume", &vol);
 			ImGui::InputFloat("Pitch", &pit);
 
-			if (ImGui::Button("SEStart")) {
+			if (ImGui::Button("SE1Start")) {
 				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData1,vol,pit);
+			}
+			if (ImGui::Button("SE2Start")) {
+				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData2, vol, pit);
 			}
 			ImGui::InputInt("textureIndex", &ballTextureIndex, 1);
 			if (ballTextureIndex < 0) {
