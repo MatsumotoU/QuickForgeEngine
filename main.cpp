@@ -101,7 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	Sprite sprite(&dxCommon, &textureManager, &imGuiManager, 640, 360,&pso);
 
 	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
-	SoundData soundData2 = Multiaudioloader::LoadSoundData("Resources/Enter.mp3");
+	SoundData soundData2 = Audiomanager::SoundLoadMp3("Resources/Enter.mp3");
 
 	// WVP用のリソースを作る。Matrix4x4一つ分のサイズを用意する
 	WVPResource wvp;
