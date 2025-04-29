@@ -17,3 +17,11 @@ void WVPResource::Initialize(DirectXCommon* dxCommon) {
 ID3D12Resource* WVPResource::GetWVPResource() {
     return wvpResource_.Get();
 }
+
+void WVPResource::SetWorldMatrix(const Matrix4x4& worldMatrix) {
+	wvpData_->World = worldMatrix;
+}
+
+void WVPResource::SetWVPMatrix(const Matrix4x4& wvpMatrix) {
+	wvpData_->WVP = wvpMatrix;
+}

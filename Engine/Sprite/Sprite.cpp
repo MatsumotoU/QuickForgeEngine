@@ -10,6 +10,10 @@
 
 #include "../Base/DirectX/ImGuiManager.h"
 
+#include "../Camera/Camera.h"
+#include "../Base/DirectX/Viewport.h"
+#include "../Base/DirectX/ScissorRect.h"
+
 Sprite::Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager, float width, float hight, PipelineStateObject* pso) {
 	dxCommon_ = dxCommon;
 	textureManager_ = textureManager;
@@ -41,6 +45,7 @@ Sprite::Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiMan
 	vertexData_[2].normal = { 0.0f,0.0f,-1.0f };
 	vertexData_[3].position = { width,0.0f,0.0f,1.0f };
 	vertexData_[3].texcoord = { 1.0f,0.0f };
+	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
 
 	// indexBufferの作成
 	indexResource_ = CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * 6);
@@ -61,11 +66,45 @@ Sprite::Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiMan
 Sprite::~Sprite() {
 }
 
-void Sprite::DrawSprite(int32_t textureHandle,ViewPort* viewport,ScissorRect* scissor) {
+void Sprite::DrawSprite(const Transform& transform, int32_t textureHandle, Camera* camera) {
+	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
+	wvp_.SetWorldMatrix(worldMatrix);
+	wvp_.SetWVPMatrix(wvpMatrix);
+
 	// sprite
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	commandList->RSSetViewports(1, viewport->GetViewport());
-	commandList->RSSetScissorRects(1, scissor->GetScissorRect());
+	commandList->RSSetViewports(1, camera->viewport_.GetViewport());
+	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
+	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
+	commandList->SetPipelineState(pso_->GetPipelineState());
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetIndexBuffer(&indexBufferView_);
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(textureHandle));
+	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
+	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform, int32_t textureHandle, Camera* camera) {
+	// uv
+	Matrix4x4 uvTransformMatrix = Matrix4x4::MakeScaleMatrix(uvTransform.scale);
+	uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeRotateZMatrix(uvTransform.rotate.z));
+	uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeTranslateMatrix(uvTransform.translate));
+	material_.SetUvTransformMatrix(uvTransformMatrix);
+
+	// wvp
+	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
+	wvp_.SetWorldMatrix(worldMatrix);
+	wvp_.SetWVPMatrix(wvpMatrix);
+
+	// sprite
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+	commandList->RSSetViewports(1, camera->viewport_.GetViewport());
+	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
 	commandList->SetPipelineState(pso_->GetPipelineState());
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);

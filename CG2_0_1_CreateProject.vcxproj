@@ -159,7 +159,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
     <ClCompile Include="Engine\Base\DirectX\MaterialResource.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\ModelManager.cpp" />
+    <ClCompile Include="Engine\Model\Model.cpp" />
+    <ClCompile Include="Engine\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ScissorRect.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ShaderCompiler.cpp" />
@@ -202,7 +203,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\DirectionalLightResource.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h" />
     <ClInclude Include="Engine\Base\DirectX\MaterialResource.h" />
-    <ClInclude Include="Engine\Base\DirectX\ModelManager.h" />
+    <ClInclude Include="Engine\Model\ModelManager.h" />
     <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
     <ClInclude Include="Engine\Base\DirectX\Texture.h" />
     <ClInclude Include="Engine\Base\DirectX\Viewport.h" />
@@ -230,13 +231,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Matrix\Matrix2x2.h" />
     <ClInclude Include="Engine\Math\Matrix\Matrix3x3.h" />
     <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h" />
-    <ClInclude Include="Engine\Math\ModelData.h" />
+    <ClInclude Include="Engine\Model\ModelData.h" />
     <ClInclude Include="Engine\Math\Transform.h" />
     <ClInclude Include="Engine\Math\TransformationMatrix.h" />
     <ClInclude Include="Engine\Math\Vector\Vector2.h" />
     <ClInclude Include="Engine\Math\Vector\Vector3.h" />
     <ClInclude Include="Engine\Math\Vector\Vector4.h" />
     <ClInclude Include="Engine\Math\VerTexData.h" />
+    <ClInclude Include="Engine\Model\Model.h" />
     <ClInclude Include="Engine\Object\DirectionalLight.h" />
     <ClInclude Include="Engine\Object\Material.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />

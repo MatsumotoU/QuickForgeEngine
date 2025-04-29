@@ -2,6 +2,9 @@
 #include "../Math/Transform.h"
 #include "../Math/Matrix/Matrix4x4.h"
 
+#include "../Base/DirectX/ScissorRect.h"
+#include "../Base/DirectX/Viewport.h"
+
 class WinApp;
 
 enum ViewState
@@ -31,6 +34,8 @@ public:
 public:
 	Transform transform_;
 	Matrix4x4 affineMatrix_;
+	ViewPort viewport_;
+	ScissorRect scissorrect_;
 
 private:
 	Matrix4x4 viewMatrix_;

@@ -23,3 +23,7 @@ void MaterialResource::Initialize(DirectXCommon* dxCommon, const Vector4& color,
 ID3D12Resource* MaterialResource::GetMaterial() {
 	return materialResource_.Get();
 }
+
+void MaterialResource::SetUvTransformMatrix(const Matrix4x4& uvTransformMatrix) {
+	materialData_->uvTransform = uvTransformMatrix;
+}
