@@ -3,7 +3,7 @@
 #include <sstream>
 #include <cassert>
 
-ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+ModelData Modelmanager::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
     ModelData modelData;
     std::vector<Vector4> positions;
     std::vector<Vector3> normals;
@@ -13,7 +13,7 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
     std::ifstream file(directoryPath + "/" + filename);
     assert(file.is_open());
 
-    while (std::getline(file,line))
+    while (std::getline(file, line))
     {
         std::string identifier;
         std::istringstream s(line);
@@ -22,7 +22,7 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
         if (identifier == "v") {
             Vector4 position;
             s >> position.x >> position.y >> position.z;
-            
+
             position.w = 1.0f;
             positions.push_back(position);
         } else if (identifier == "vt") {
@@ -64,13 +64,13 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
     return modelData;
 }
 
-MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+MaterialData Modelmanager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
     MaterialData materialData;
     std::string line;
     std::ifstream file(directoryPath + "/" + filename);
     assert(file.is_open());
 
-    while (std::getline(file,line))
+    while (std::getline(file, line))
     {
         std::string identifier;
         std::istringstream s(line);
@@ -80,7 +80,7 @@ MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directory
             std::string textureFilename;
             s >> textureFilename;
             materialData.textureFilePath = directoryPath + "/" + textureFilename;
-        } 
+        }
     }
 
     return materialData;

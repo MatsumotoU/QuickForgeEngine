@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 
+#include "../../Math/Matrix/Matrix4x4.h"
 class DirectXCommon;
 struct TransformationMatrix;
 
@@ -11,6 +12,12 @@ public:
 
 public:
 	ID3D12Resource* GetWVPResource();
+
+public:
+	void SetWorldMatrix(const Matrix4x4& worldMatrix);
+	void SetWVPMatrix(const Matrix4x4& wvpMatrix);
+
+public:
 	TransformationMatrix* wvpData_;
 
 private:

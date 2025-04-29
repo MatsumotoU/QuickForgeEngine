@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "../../Math/Vector/Vector4.h"
+#include "../../Math/Matrix/Matrix4x4.h"
 
 class DirectXCommon;
 struct Material;
@@ -12,6 +13,9 @@ public:
 
 public:
 	ID3D12Resource* GetMaterial();
+
+public:
+	void SetUvTransformMatrix(const Matrix4x4& uvTransformMatrix);
 
 public:
 	Material* materialData_;

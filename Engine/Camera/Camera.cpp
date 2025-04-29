@@ -10,8 +10,6 @@ Camera::Camera() {
 	viewMatrix_ = Matrix4x4::MakeIndentity4x4();
 	perspectiveMatrix_ = Matrix4x4::MakeIndentity4x4();
 	orthographicMatrix_ = Matrix4x4::MakeIndentity4x4();
-
-	
 }
 
 Camera::~Camera() {
@@ -20,6 +18,9 @@ Camera::~Camera() {
 void Camera::Initialize(WinApp* win) {
 	perspectiveMatrix_ = Matrix4x4::MakePerspectiveFovMatrix(0.45f, static_cast<float>(win->kWindowWidth) / static_cast<float>(win->kWindowHeight), 0.1f, 100.0f);
 	orthographicMatrix_ = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(win->kWindowWidth), static_cast<float>(win->kWindowHeight), 0.0f, 100.0f);
+
+	viewport_.Inititalize(win);
+	scissorrect_.Initialize(win);
 }
 
 void Camera::Update() {

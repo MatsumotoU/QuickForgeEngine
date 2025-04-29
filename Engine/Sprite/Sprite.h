@@ -3,6 +3,7 @@
 #include <wrl.h>
 #include <string>
 #include "../Math/VerTexData.h"
+#include "../Math/Transform.h"
 
 class DirectXCommon;
 class TextureManager;
@@ -14,8 +15,7 @@ class PipelineStateObject;
 #include "../Base/DirectX/WVPResource.h"
 #include "../Base/DirectX/DirectionalLightResource.h"
 
-#include "../Base/DirectX/Viewport.h"
-#include "../Base/DirectX/ScissorRect.h"
+class Camera;
 
 class Sprite {
 public:
@@ -23,12 +23,13 @@ public:
 	~Sprite();
 
 public:
-	void DrawSprite(int32_t textureHandle, ViewPort* viewport, ScissorRect* scissor);
+	void DrawSprite(const Transform& transform, int32_t textureHandle,Camera* camera);
+	void DrawSprite(const Transform& transform, const Transform& uvTransform, int32_t textureHandle, Camera* camera);
 
 public:
 	MaterialResource material_;
-	WVPResource wvp_;
 	DirectionalLightResource directionalLight_;
+	WVPResource wvp_;	
 
 private:
 	DirectXCommon* dxCommon_;
