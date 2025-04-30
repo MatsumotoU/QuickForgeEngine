@@ -125,10 +125,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	model.Initialize(&dxCommon, &textureManager, &pso);
 	model.LoadModel("Resources", "skyDome.obj", COORDINATESYSTEM_HAND_RIGHT);
 
-	Model model2;
-	model2.Initialize(&dxCommon, &textureManager, &pso);
-	model2.LoadModel("Resources", "axis.obj",COORDINATESYSTEM_HAND_RIGHT);
-
 	// テクスチャを読み込む
 	//int32_t monsterBallHandle = textureManager.LoadTexture("Resources/monsterBall.png");
 
@@ -172,7 +168,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 
 			// モデルの描画
 			model.Draw(transform, &debugCamera.camera_);
-			model2.Draw(transform2, &debugCamera.camera_);
 
 			// sprite
 			//sprite.DrawSprite(transform2,monsterBallHandle,&debugCamera.camera_);
@@ -187,7 +182,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			ImGui::DragFloat3("directionnalLight.direction", &directionalLight.directionalLightData_->direction.x, 0.1f);
 			ImGui::Checkbox("isLighting", &Lighting);
-			model2.material_.materialData_->enableLighting = Lighting;
 			directionalLight.directionalLightData_->direction = directionalLight.directionalLightData_->direction.Normalize();
 
 			// 描画終了処理
