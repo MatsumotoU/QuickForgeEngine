@@ -31,7 +31,8 @@ void MyDebugLog::Log(const std::string& message) {
 	std::string timeStamp = std::format("{:%Y-%m-%d_%H-%M-%S}", localTime);
 
 	logStream_ << "[" +  timeStamp + "] " + message << std::endl;
-	OutputDebugStringA(message.c_str());
+	std::string logMessage = message + "\n";
+	OutputDebugStringA(logMessage.c_str());
 }
 
 void DebugLog(const std::string& message) {

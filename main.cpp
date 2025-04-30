@@ -123,14 +123,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	// Modelを使う
 	Model model;
 	model.Initialize(&dxCommon, &textureManager, &pso);
-	model.LoadModel("Resources", "plane.obj");
+	model.LoadModel("Resources", "skyDome.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 	Model model2;
 	model2.Initialize(&dxCommon, &textureManager, &pso);
-	model2.LoadModel("Resources", "axis.obj");
+	model2.LoadModel("Resources", "axis.obj",COORDINATESYSTEM_HAND_RIGHT);
 
 	// テクスチャを読み込む
-	int32_t monsterBallHandle = textureManager.LoadTexture("Resources/monsterBall.png");
+	//int32_t monsterBallHandle = textureManager.LoadTexture("Resources/monsterBall.png");
 
 	// * ビューポートとシザー * //
 	ViewPort viewport;
@@ -152,7 +152,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			// Update
 			input.Update();
 			debugCamera.Update();
-			transform.rotate.y += 0.05f;
+			//transform.rotate.y += 0.05f;
 			sprite.material_.materialData_->color = color;
 
 			// draw
@@ -175,7 +175,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			model2.Draw(transform2, &debugCamera.camera_);
 
 			// sprite
-			sprite.DrawSprite(transform2,monsterBallHandle,&debugCamera.camera_);
+			//sprite.DrawSprite(transform2,monsterBallHandle,&debugCamera.camera_);
 
 			// ImGui
 			ImGui::ColorPicker4("color", &color.x);

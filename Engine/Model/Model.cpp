@@ -15,8 +15,8 @@ void Model::Initialize(DirectXCommon* dxCommon, TextureManager* textureManager, 
 	directionalLight_.Initialize(dxCommon);
 }
 
-void Model::LoadModel(const std::string& directoryPath, const std::string& filename) {
-	modelData_ = Modelmanager::LoadObjFile(directoryPath, filename);
+void Model::LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem) {
+	modelData_ = Modelmanager::LoadObjFile(directoryPath, filename, coordinateSystem);
 	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * modelData_.vertices.size());
 	vertexBufferView_ = {};
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();

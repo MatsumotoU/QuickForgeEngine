@@ -16,7 +16,13 @@ class Camera;
 class Model {
 public:
 	void Initialize(DirectXCommon* dxCommon, TextureManager* textureManager, PipelineStateObject* pso);
-	void LoadModel(const std::string& directoryPath, const std::string& filename);
+	/// <summary>
+	/// モデルを読み込みます
+	/// </summary>
+	/// <param name="directoryPath">directoryPath</param>
+	/// <param name="filename">filename</param>
+	/// <param name="coordinateSystem">読み込むモデルの座標系</param>
+	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
 	void Draw(const Transform& transform, Camera* camera);
 
 public:
