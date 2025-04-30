@@ -3,12 +3,13 @@
 #include <sstream>
 #include <cassert>
 
-ModelData Modelmanager::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+ModelData Modelmanager::LoadObjFile(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem) {
     ModelData modelData;
     std::vector<Vector4> positions;
     std::vector<Vector3> normals;
     std::vector<Vector2> texcoords;
     std::string line;
+    VertexData triangle[3]{};
 
     std::ifstream file(directoryPath + "/" + filename);
     assert(file.is_open());
@@ -27,8 +28,6 @@ ModelData Modelmanager::LoadObjFile(const std::string& directoryPath, const std:
         } else if (identifier == "vt") {
             Vector2 texcoord{};
             s >> texcoord.x >> texcoord.y;
-            texcoord.y = 1.0f - texcoord.y;
-            texcoord.x = 1.0f - texcoord.x;
             texcoords.push_back(texcoord);
         } else if (identifier == "vn") {
             Vector3 normal;
@@ -48,12 +47,25 @@ ModelData Modelmanager::LoadObjFile(const std::string& directoryPath, const std:
                 Vector4 position = positions[elementIndices[0] - 1];
                 Vector2 texcoord = texcoords[elementIndices[1] - 1];
                 Vector3 normal = normals[elementIndices[2] - 1];
-                //position.x *= -1.0f;
-                //normal.x *= -1.0f;
-                //texcoord.y = 1.0f - texcoord.y;
-                VertexData vertex = { position,texcoord,normal };
-                modelData.vertices.push_back(vertex);
+
+                if (coordinateSystem == COORDINATESYSTEM_HAND_RIGHT) {
+                    position.x *= -1.0f;
+                    normal.x *= -1.0f;
+                    texcoord.y = 1.0f - texcoord.y;
+                }
+                triangle[faceVertex] = { position,texcoord,normal };
             }
+
+            if (coordinateSystem == COORDINATESYSTEM_HAND_RIGHT) {
+                modelData.vertices.push_back(triangle[2]);
+                modelData.vertices.push_back(triangle[1]);
+                modelData.vertices.push_back(triangle[0]);
+            } else {
+                modelData.vertices.push_back(triangle[0]);
+                modelData.vertices.push_back(triangle[1]);
+                modelData.vertices.push_back(triangle[2]);
+            }
+
         } else if (identifier == "mtllib") {
             std::string materialFilename;
             s >> materialFilename;
