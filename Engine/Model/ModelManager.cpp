@@ -22,7 +22,6 @@ ModelData Modelmanager::LoadObjFile(const std::string& directoryPath, const std:
         if (identifier == "v") {
             Vector4 position;
             s >> position.x >> position.y >> position.z;
-
             position.w = 1.0f;
             positions.push_back(position);
         } else if (identifier == "vt") {
@@ -49,8 +48,9 @@ ModelData Modelmanager::LoadObjFile(const std::string& directoryPath, const std:
                 Vector4 position = positions[elementIndices[0] - 1];
                 Vector2 texcoord = texcoords[elementIndices[1] - 1];
                 Vector3 normal = normals[elementIndices[2] - 1];
-                position.x *= -1.0f;
-                normal.x *= -1.0f;
+                //position.x *= -1.0f;
+                //normal.x *= -1.0f;
+                //texcoord.y = 1.0f - texcoord.y;
                 VertexData vertex = { position,texcoord,normal };
                 modelData.vertices.push_back(vertex);
             }
@@ -60,7 +60,6 @@ ModelData Modelmanager::LoadObjFile(const std::string& directoryPath, const std:
             modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
         }
     }
-
     return modelData;
 }
 

@@ -120,94 +120,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	DirectionalLightResource directionalLight;
 	directionalLight.Initialize(&dxCommon);
 
-	//// * VertexResourceを生成する * //
-	//const int32_t kSubdivision = 16;
-	//const int32_t sphereVertexMax = kSubdivision * kSubdivision * 4;
-	//ID3D12Resource* vertexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * sphereVertexMax);
-
-	//// * VertexBufferViewを作成する * //
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	//vertexBufferView.SizeInBytes = sizeof(VertexData) * sphereVertexMax;
-	//vertexBufferView.StrideInBytes = sizeof(VertexData);
-
-	//// * リソースにデータを書き込む * //
-	//VertexData* vertexData = nullptr;
-	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-	//// indexBuffer
-	//ID3D12Resource* indexResource = DirectXCommon::CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * kSubdivision * kSubdivision * 6);
-	//D3D12_INDEX_BUFFER_VIEW indexBufferView{};
-	//indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
-	//indexBufferView.SizeInBytes = sizeof(uint32_t) * kSubdivision * kSubdivision * 6;
-	//indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-
-	//uint32_t* indexData = nullptr;
-	//indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
-
-	//// 球
-	//const float pi = DirectX::XM_PI;
-	//
-	//const float kLonEvery = pi * 2.0f / static_cast<float>(kSubdivision);
-	//const float kLatEvery = pi / static_cast<float>(kSubdivision);
-	//for (int32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-	//	float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);
-	//	for (int32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-	//		uint32_t start = (latIndex * kSubdivision + lonIndex) * 4;
-	//		uint32_t startIndex = (latIndex * kSubdivision + lonIndex) * 6;
-	//		float lon = static_cast<float>(lonIndex) * kLonEvery;
-
-	//		Vector4 a = { cos(lat) * cos(lon),sin(lat),cos(lat) * sin(lon),1.0f };
-	//		Vector4 b = { cos(lat + kLatEvery) * cos(lon),sin(lat+ kLatEvery),cos(lat+ kLatEvery) * sin(lon),1.0f };
-	//		Vector4 c = { cos(lat) * cos(lon+ kLonEvery),sin(lat),cos(lat) * sin(lon+ kLonEvery),1.0f };
-	//		Vector4 d = { cos(lat + kLatEvery) * cos(lon + kLonEvery),sin(lat + kLatEvery),cos(lat + kLatEvery) * sin(lon + kLonEvery),1.0f };
-
-	//		Vector3 aNormal = { a.x,a.y,a.z };
-	//		Vector3 bNormal = {	b.x,b.y,b.z };
-	//		Vector3 cNormal = { c.x,c.y,c.z };
-	//		Vector3 dNormal = { d.x,d.y,d.z };
-
-	//		vertexData[start].position = a;
-	//		vertexData[start].texcoord = { 
-	//			static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
-	//			1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
-	//		vertexData[start].normal = aNormal;
-	//		vertexData[start + 1].position = b;
-	//		vertexData[start + 1].texcoord = { 
-	//			static_cast<float>(lonIndex) / static_cast<float>(kSubdivision),
-	//			1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
-	//		vertexData[start+1].normal = bNormal;
-	//		vertexData[start + 2].position = c;
-	//		vertexData[start + 2].texcoord = { 
-	//			static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
-	//			1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
-	//		vertexData[start+2].normal = cNormal;
-	//		vertexData[start + 3].position = d;
-	//		vertexData[start + 3].texcoord = {
-	//			static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
-	//			1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
-	//		vertexData[start + 3].normal = dNormal;
-
-	//		indexData[startIndex] = start;
-	//		indexData[startIndex+1] = start+1;
-	//		indexData[startIndex+2] = start+2;
-	//		indexData[startIndex+3] = start+1;
-	//		indexData[startIndex+4] = start+3;
-	//		indexData[startIndex+5] = start+2;
-
-	//		/*vertexData[start + 4].position = d;
-	//		vertexData[start + 4].texcoord = {
-	//			static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
-	//			1.0f - static_cast<float>(latIndex + 1) / static_cast<float>(kSubdivision) };
-	//		vertexData[start + 4].normal = dNormal;
-	//		vertexData[start + 5].position = c;
-	//		vertexData[start + 5].texcoord = {
-	//			static_cast<float>(lonIndex + 1) / static_cast<float>(kSubdivision),
-	//			1.0f - static_cast<float>(latIndex) / static_cast<float>(kSubdivision) };
-	//		vertexData[start + 5].normal = cNormal;*/
-	//	}
-	//}
-
 	// Modelを使う
 	Model model;
 	model.Initialize(&dxCommon, &textureManager, &pso);
@@ -215,19 +127,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 
 	Model model2;
 	model2.Initialize(&dxCommon, &textureManager, &pso);
-	model2.LoadModel("Resources", "plane.obj");
-
-	// ModelDataを使う
-	/*ModelData modelData = Modelmanager::LoadObjFile("Resources", "plane.obj");
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(dxCommon.GetDevice(), sizeof(VertexData) * modelData.vertices.size());
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * modelData.vertices.size());
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
-
-	VertexData* vertexData = nullptr;
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());*/
+	model2.LoadModel("Resources", "axis.obj");
 
 	// テクスチャを読み込む
 	int32_t monsterBallHandle = textureManager.LoadTexture("Resources/monsterBall.png");
@@ -287,7 +187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			ImGui::DragFloat3("directionnalLight.direction", &directionalLight.directionalLightData_->direction.x, 0.1f);
 			ImGui::Checkbox("isLighting", &Lighting);
-			material.materialData_->enableLighting = Lighting;
+			model2.material_.materialData_->enableLighting = Lighting;
 			directionalLight.directionalLightData_->direction = directionalLight.directionalLightData_->direction.Normalize();
 
 			// 描画終了処理
