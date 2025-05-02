@@ -103,6 +103,11 @@ void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform
 
 	// sprite
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = pso_->GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+	commandList->OMSetRenderTargets(1, dxCommon_->GetRtvHandles(), false, &dsvHandl);
+	commandList->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
 	commandList->RSSetViewports(1, camera->viewport_.GetViewport());
 	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());

@@ -28,7 +28,7 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 }
 
-void WinApp::CreateGameWindow(int32_t clientWidth, int32_t clientHeight) {
+void WinApp::CreateGameWindow(const LPCWSTR& windowName,int32_t clientWidth, int32_t clientHeight) {
 
 	// ウィンドウプロージャー
 	wc.lpfnWndProc = WindowProc;
@@ -51,7 +51,7 @@ void WinApp::CreateGameWindow(int32_t clientWidth, int32_t clientHeight) {
 	// ウィンドウの生成
 	hwnd = CreateWindow(
 		wc.lpszClassName,
-		L"CG2",
+		windowName,
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -64,6 +64,26 @@ void WinApp::CreateGameWindow(int32_t clientWidth, int32_t clientHeight) {
 	);
 
 	ShowWindow(hwnd, SW_SHOW);
+}
+
+void WinApp::SetMSG(MSG* msg) {
+	msg_ = msg;
+}
+
+bool WinApp::GetCanLoop() {
+	if (PeekMessage(msg_, NULL, 0, 0, PM_REMOVE)) {
+		TranslateMessage(msg_);
+		DispatchMessage(msg_);
+		return false;
+	}
+	return true;
+}
+
+bool WinApp::GetIsWindowQuit() {
+	if (msg_->message != WM_QUIT) {
+		return true;
+	}
+	return false;
 }
 
 HWND WinApp::GetHWND() {
