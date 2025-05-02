@@ -30,13 +30,19 @@ public:
 	/// <param name="clientWidth">ウィンドウのクライアント領域の初期幅</param>
 	/// <param name="clientHeight">ウィンドウのクライアント領域の初期高さ</param>
 	/// </summary>
-	void CreateGameWindow(int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);
+	void CreateGameWindow(const LPCWSTR& windowName, int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);
 
 public:
+	void SetMSG(MSG* msg);
+
+public:
+	bool GetCanLoop();
+	bool GetIsWindowQuit();
 	HWND GetHWND();
 
 private:
 	WNDCLASS wc{};
 	HWND hwnd;
+	MSG* msg_;
 };
 

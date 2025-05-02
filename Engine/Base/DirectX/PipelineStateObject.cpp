@@ -63,9 +63,29 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon,WinApp* winApp) {
 	inputLayout.CreateInputElementDesc("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
 
 	// BlendState
-	D3D12_BLEND_DESC blendDesc{};
+	/*D3D12_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
-		D3D12_COLOR_WRITE_ENABLE_ALL;
+		D3D12_COLOR_WRITE_ENABLE_ALL;*/
+	
+	D3D12_BLEND_DESC blendDesc{};
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.IndependentBlendEnable = FALSE;
+
+	D3D12_RENDER_TARGET_BLEND_DESC& rtbd = blendDesc.RenderTarget[0];
+	rtbd.BlendEnable = TRUE; // ブレンドを有効にする
+	rtbd.LogicOpEnable = FALSE; // 論理演算は通常 FALSE
+
+	// RGB ブレンドの設定 (一般的なアルファブレンド)
+	rtbd.SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値を使用
+	rtbd.DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デスティネーションの (1 - ソースアルファ) を使用
+	rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 加算
+
+	// アルファ ブレンドの設定 (通常はソースのアルファ値をそのまま使用)
+	rtbd.SrcBlendAlpha = D3D12_BLEND_ONE; // ソースのアルファ値をそのまま使用
+	rtbd.DestBlendAlpha = D3D12_BLEND_ZERO; // デスティネーションのアルファ値に 0 を掛ける
+	rtbd.BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
+
+	rtbd.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
 	// RasterizerState
 	D3D12_RASTERIZER_DESC rasterizerDesc{};

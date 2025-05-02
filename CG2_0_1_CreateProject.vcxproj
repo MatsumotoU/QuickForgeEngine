@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
     <ClCompile Include="Engine\Base\DirectX\MaterialResource.cpp" />
+    <ClCompile Include="Engine\Base\EngineCore.cpp" />
     <ClCompile Include="Engine\Model\Model.cpp" />
     <ClCompile Include="Engine\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
@@ -203,6 +204,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\DirectionalLightResource.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h" />
     <ClInclude Include="Engine\Base\DirectX\MaterialResource.h" />
+    <ClInclude Include="Engine\Base\EngineCore.h" />
     <ClInclude Include="Engine\Model\ModelManager.h" />
     <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
     <ClInclude Include="Engine\Base\DirectX\Texture.h" />
