@@ -149,6 +149,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Object3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Audio\Audio3D.cpp" />
+    <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
+    <ClCompile Include="Engine\Audio\AudioListener.cpp" />
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Audio\MultiAudioLoader.cpp" />
     <ClCompile Include="Engine\Base\DirectX\CBufferManager.cpp" />
@@ -194,12 +197,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Audio\Audio3D.h" />
+    <ClInclude Include="Engine\Audio\AudioEmitter.h" />
+    <ClInclude Include="Engine\Audio\AudioListener.h" />
     <ClInclude Include="Engine\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Audio\ChunkHeader.h" />
     <ClInclude Include="Engine\Audio\FormatChunk.h" />
     <ClInclude Include="Engine\Audio\MultiAudioLoader.h" />
     <ClInclude Include="Engine\Audio\RiffHeader.h" />
     <ClInclude Include="Engine\Audio\SoundData.h" />
+    <ClInclude Include="Engine\Audio\SoundEmitter.h" />
     <ClInclude Include="Engine\Base\DirectX\D3DResourceLeakChecker.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectionalLightResource.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h" />

@@ -33,6 +33,9 @@
 
 // Audio
 #include "Engine/Audio/AudioManager.h"
+#include "Engine/Audio/Audio3D.h"
+#include "Engine/Audio/AudioEmitter.h"
+#include "Engine/Audio/AudioListener.h"
 
 // Input
 #include "Engine/Input/DirectInput/DirectInputManager.h"
@@ -70,6 +73,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	AudioManager audioManager;
 	audioManager.Initialize();
 
+	Audio3D audio3D;
+	audio3D.Initialize(audioManager.GetMasterVoice());
+
 	// Input
 	DirectInputManager input;
 	input.Initialize(winApp, hInstance);
@@ -91,7 +97,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	Sprite sprite(dxCommon, textureManager, imGuiManager, 640.0f, 320.0f,&pso);
 
 	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
-	SoundData soundData2 = Audiomanager::SoundLoadMp3("Resources/Enter.mp3");
+	//SoundData soundData2 = Audiomanager::SoundLoadMp3("Resources/Enter.mp3");
+	SoundData soundData3 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
+
+	// 3DAudio
+	/*AudioEmitter emitter{};
+	emitter.nChannels_ = static_cast<uint32_t>(soundData3.wfex.nChannels);
+	AudioListener listener{};
+	X3DAUDIO_DSP_SETTINGS settings = audio3D.CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), soundData3);
+	IXAudio2SourceVoice* sourceVoice = audio3d::Create3DSourceVoice(audioManager.xAudio2_.Get(), audioManager.GetMasterVoice(), soundData3, settings);*/
 
 	// Camera
 	DebugCamera debugCamera;
@@ -128,6 +142,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			//sprite.DrawSprite(transform2,monsterBallHandle,&debugCamera.camera_);
 
 			// ImGui
+			if (ImGui::Button("PlaySE")) {
+				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData1, 0.3f, 1.0f);
+			}
+
+			if (ImGui::Button("PlaySE3D")) {
+				//Audiomanager::SoundPlaySourceVoice(soundData3, sourceVoice);
+			}
+
 			ImGui::ColorPicker4("color", &color.x);
 			ImGui::DragFloat3("ObjTranslate", &transform.translate.x, 0.1f);
 			ImGui::DragFloat3("ObjRotate", &transform.rotate.x, 0.1f);

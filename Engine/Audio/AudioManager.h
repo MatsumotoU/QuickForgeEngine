@@ -6,6 +6,11 @@
 #include "MultiAudioLoader.h"
 #include "SoundData.h"
 
+#ifdef _DEBUG
+#include "../Base/MyString.h"
+#include "../Base/MyDebugLog.h"
+#endif // _DEBUG
+
 class AudioManager {
 public:
 	~AudioManager();
@@ -24,9 +29,13 @@ public:
 	void SetMasterVolume(float volume);
 
 public:
+	IXAudio2MasteringVoice* GetMasterVoice();
+
+public:
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
 
 private:
+	const uint32_t masterChannels = 2;
 	IXAudio2MasteringVoice* masterVoice_;
 	MultiAudioLoader multiAudioLoader_;
 };
@@ -57,4 +66,17 @@ namespace Audiomanager {
 	/// <param name="volume">音量(基準:1.0)</param>
 	/// <param name="pitch">ピッチというよりかは再生速度(基準:1.0)</param>
 	void SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData, float volume,float pitch);
+	/// <summary>
+	/// ソースボイスの設定を適用して音源を鳴らします
+	/// </summary>
+	/// <param name="xAudio2">XAudio2</param>
+	/// <param name="sourceVoice">SourceVoice</param>
+	void SoundPlaySourceVoice(const SoundData& soundData, IXAudio2SourceVoice* pSourceVoice);
+	/// <summary>
+	/// ソースボイスを作成します
+	/// </summary>
+	/// <param name="xAudio2">xAudio2</param>
+	/// <param name="soundData">soundData</param>
+	/// <returns>ソースボイス</returns>
+	IXAudio2SourceVoice* CreateSourceVoice(IXAudio2* xAudio2, const SoundData& soundData);
 }
