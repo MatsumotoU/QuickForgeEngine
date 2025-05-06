@@ -1,4 +1,6 @@
 #pragma once
+#define XAUDIO2_DEBUG 1
+
 #include <wrl.h>
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")
@@ -29,13 +31,13 @@ public:
 	void SetMasterVolume(float volume);
 
 public:
+	uint32_t GetOutputChannels();
 	IXAudio2MasteringVoice* GetMasterVoice();
 
 public:
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
 
 private:
-	const uint32_t masterChannels = 2;
 	IXAudio2MasteringVoice* masterVoice_;
 	MultiAudioLoader multiAudioLoader_;
 };
