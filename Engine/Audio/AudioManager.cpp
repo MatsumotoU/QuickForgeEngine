@@ -14,14 +14,23 @@ void AudioManager::Initialize() {
 	masterVoice_ = nullptr;
 	HRESULT hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(hr));
-	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_);
+	// ステレオで制作
+	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_, masterChannels);
 	assert(SUCCEEDED(hr));
+
+#ifdef _DEBUG
+	DebugLog(ConvertString(std::format(L"MasterVoice->nChannels:{}", masterChannels)));
+#endif // _DEBUG
 
 	multiAudioLoader_.Initialize();
 }
 
 void AudioManager::SetMasterVolume(float volume) {
 	masterVoice_->SetVolume(volume);
+}
+
+IXAudio2MasteringVoice* AudioManager::GetMasterVoice() {
+	return masterVoice_;
 }
 
 SoundData Audiomanager::SoundLoadWave(const char* filename) {
@@ -64,6 +73,11 @@ SoundData Audiomanager::SoundLoadWave(const char* filename) {
 	soundData.wfex = format.fmt;
 	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
 	soundData.bufferSize = data.size;
+
+#ifdef _DEBUG
+	DebugLog(ConvertString(std::format(L"LoadSoundData->nChannels:{}", soundData.wfex.nChannels)));
+#endif // _DEBUG
+
 	return soundData;
 }
 
@@ -82,9 +96,7 @@ void Audiomanager::SoundUnload(SoundData* soundData) {
 
 void Audiomanager::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData,float volume, float pitch) {
 	HRESULT hr;
-	IXAudio2SourceVoice* pSourceVoice = nullptr;
-	hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
-	assert(SUCCEEDED(hr));
+	IXAudio2SourceVoice* pSourceVoice = CreateSourceVoice(xAudio2, soundData);
 
 	hr = pSourceVoice->SetVolume(volume);
 	assert(SUCCEEDED(hr));
@@ -101,4 +113,25 @@ void Audiomanager::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData,f
 	assert(SUCCEEDED(hr));
 	hr = pSourceVoice->Start();
 	assert(SUCCEEDED(hr));
+}
+
+void Audiomanager::SoundPlaySourceVoice(const SoundData& soundData,IXAudio2SourceVoice* pSourceVoice) {
+	HRESULT hr{};
+
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = soundData.pBuffer;
+	buf.AudioBytes = soundData.bufferSize;
+	buf.Flags = XAUDIO2_END_OF_STREAM;
+
+	hr = pSourceVoice->SubmitSourceBuffer(&buf);
+	assert(SUCCEEDED(hr));
+	hr = pSourceVoice->Start();
+	assert(SUCCEEDED(hr));
+}
+
+IXAudio2SourceVoice* Audiomanager::CreateSourceVoice(IXAudio2* xAudio2, const SoundData& soundData) {
+	IXAudio2SourceVoice* pSourceVoice = nullptr;
+	HRESULT hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	assert(SUCCEEDED(hr));
+	return pSourceVoice;
 }
