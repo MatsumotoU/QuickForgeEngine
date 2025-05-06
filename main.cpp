@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	audioManager.Initialize();
 
 	Audio3D audio3D;
-	audio3D.Initialize(audioManager.GetMasterVoice());
+	audio3D.Initialize(&audioManager);
 
 	// Input
 	DirectInputManager input;
@@ -96,16 +96,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 
 	Sprite sprite(dxCommon, textureManager, imGuiManager, 640.0f, 320.0f,&pso);
 
-	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
+	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/mono48kHz.wav");
 	//SoundData soundData2 = Audiomanager::SoundLoadMp3("Resources/Enter.mp3");
-	SoundData soundData3 = Audiomanager::SoundLoadWave("Resources/Alarm01.wav");
+	SoundData soundData3 = Audiomanager::SoundLoadWave("Resources/mono48kHz.wav");
 
 	// 3DAudio
-	/*AudioEmitter emitter{};
+	AudioEmitter emitter{};
+	emitter.position_.z = 1.0f;
+	emitter.position_.x = 0.5f;
 	emitter.nChannels_ = static_cast<uint32_t>(soundData3.wfex.nChannels);
 	AudioListener listener{};
 	X3DAUDIO_DSP_SETTINGS settings = audio3D.CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), soundData3);
-	IXAudio2SourceVoice* sourceVoice = audio3d::Create3DSourceVoice(audioManager.xAudio2_.Get(), audioManager.GetMasterVoice(), soundData3, settings);*/
+	IXAudio2SourceVoice* sourceVoice = audio3d::Create3DSourceVoice(&audioManager, soundData3, settings);
 
 	// Camera
 	DebugCamera debugCamera;
@@ -147,7 +149,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			}
 
 			if (ImGui::Button("PlaySE3D")) {
-				//Audiomanager::SoundPlaySourceVoice(soundData3, sourceVoice);
+				Audiomanager::SoundPlaySourceVoice(soundData3, sourceVoice);
 			}
 
 			ImGui::ColorPicker4("color", &color.x);

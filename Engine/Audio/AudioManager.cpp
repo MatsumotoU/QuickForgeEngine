@@ -11,15 +11,18 @@ AudioManager::~AudioManager() {
 }
 
 void AudioManager::Initialize() {
-	masterVoice_ = nullptr;
-	HRESULT hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
-	assert(SUCCEEDED(hr));
-	// ステレオで制作
-	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_, masterChannels);
+	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
+	masterVoice_ = nullptr;
+	hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
+	assert(SUCCEEDED(hr));
+	// ステレオで制作
+	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_);
+	assert(SUCCEEDED(hr));
+	
 #ifdef _DEBUG
-	DebugLog(ConvertString(std::format(L"MasterVoice->nChannels:{}", masterChannels)));
+	DebugLog(ConvertString(std::format(L"MasterVoice->nChannels:{}", GetOutputChannels())));
 #endif // _DEBUG
 
 	multiAudioLoader_.Initialize();
@@ -27,6 +30,18 @@ void AudioManager::Initialize() {
 
 void AudioManager::SetMasterVolume(float volume) {
 	masterVoice_->SetVolume(volume);
+}
+
+uint32_t AudioManager::GetOutputChannels() {
+	DWORD channelMask = 0;
+	masterVoice_->GetChannelMask(&channelMask);
+
+	// チャンネル数を数える
+	uint32_t channelCount = 0;
+	for (uint32_t i = 0; i < 32; ++i) {
+		if (channelMask & (1 << i)) channelCount++;
+	}
+	return channelCount;
 }
 
 IXAudio2MasteringVoice* AudioManager::GetMasterVoice() {
@@ -131,7 +146,7 @@ void Audiomanager::SoundPlaySourceVoice(const SoundData& soundData,IXAudio2Sourc
 
 IXAudio2SourceVoice* Audiomanager::CreateSourceVoice(IXAudio2* xAudio2, const SoundData& soundData) {
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
-	HRESULT hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	HRESULT hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex, XAUDIO2_VOICE_USEFILTER);
 	assert(SUCCEEDED(hr));
 	return pSourceVoice;
 }
