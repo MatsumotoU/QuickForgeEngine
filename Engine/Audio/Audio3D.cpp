@@ -20,6 +20,7 @@ X3DAUDIO_DSP_SETTINGS Audio3D::CreateDspSettings(X3DAUDIO_LISTENER* listener, X3
 	dspSettings.DstChannelCount = audioManager_->GetOutputChannels();
 	dspSettings.pMatrixCoefficients = matrix.data();
 	dspSettings.pDelayTimes = delayTimes.data();
+	dspSettings.DopplerFactor = 1.0f;
 
 	X3DAudioCalculate(
 		x3DInstance_,

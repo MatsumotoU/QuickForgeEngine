@@ -126,6 +126,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 
 	bool Lighting = false;
 	Vector4 color{1.0f,1.0f,1.0f,1.0f};
+	float t = 0.0f;
 
 	// ウィンドウのXボタンが押されるまでループ
 	while (engineCore.GetWinApp()->GetIsWindowQuit()) {
@@ -133,6 +134,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 		if (engineCore.GetWinApp()->GetCanLoop()) {
 
 			// === Update ===
+			t += 0.1f;
 			input.Update();
 			debugCamera.Update();
 			sprite.material_.materialData_->color = color;
@@ -153,15 +155,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			}
 
 			if (ImGui::Button("PlaySE3D")) {
-				emitter.position_ = transform.translate;
-
+				/*emitter.position_ = transform.translate;
 				settings = audio3D.CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), matrix, delayTimes);
 				sourceVoice->SetOutputMatrix(audioManager.GetMasterVoice(), soundData3.wfex.nChannels, audioManager.GetOutputChannels(), settings.pMatrixCoefficients);
-				sourceVoice->SetFrequencyRatio(XAUDIO2_DEFAULT_FREQ_RATIO * settings.DopplerFactor);
+				sourceVoice->SetFrequencyRatio(settings.DopplerFactor);*/
 
 				Audiomanager::SoundPlaySourceVoice(soundData3, sourceVoice);
 			}
 
+			// 音源の位置を更新
+			emitter.position_.x = sinf(t);
+			settings = audio3D.CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), matrix, delayTimes);
+			sourceVoice->SetOutputMatrix(audioManager.GetMasterVoice(), soundData3.wfex.nChannels, audioManager.GetOutputChannels(), settings.pMatrixCoefficients);
+			sourceVoice->SetFrequencyRatio(settings.DopplerFactor);
+
+			ImGui::InputFloat("t", &t);
+			ImGui::Text("sin(t) :%f", sin(t));
 			ImGui::ColorPicker4("color", &color.x);
 			ImGui::DragFloat3("ObjTranslate", &transform.translate.x, 0.1f);
 			ImGui::DragFloat3("ObjRotate", &transform.rotate.x, 0.1f);
