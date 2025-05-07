@@ -1,5 +1,4 @@
 #include "Audio3D.h"
-#include <vector>
 #include <cassert>
 
 #include "AudioManager.h"
@@ -15,13 +14,11 @@ void Audio3D::Initialize(AudioManager* audioManager) {
 	assert(audioManager);
 }
 
-X3DAUDIO_DSP_SETTINGS Audio3D::CreateDspSettings(X3DAUDIO_LISTENER* listener,X3DAUDIO_EMITTER* emitter, const SoundData& soundData) {
+X3DAUDIO_DSP_SETTINGS Audio3D::CreateDspSettings(X3DAUDIO_LISTENER* listener, X3DAUDIO_EMITTER* emitter, std::vector<float>& matrix, std::vector<float>& delayTimes) {
 	X3DAUDIO_DSP_SETTINGS dspSettings = { 0 };
 	dspSettings.SrcChannelCount = emitter->ChannelCount;
 	dspSettings.DstChannelCount = audioManager_->GetOutputChannels();
-	std::vector<float> matrix(soundData.wfex.nChannels * audioManager_->GetOutputChannels());
 	dspSettings.pMatrixCoefficients = matrix.data();
-	std::vector<float> delayTimes(emitter->ChannelCount * audioManager_->GetOutputChannels(), 0.0f); // 例: 全て 0.0f で初期化
 	dspSettings.pDelayTimes = delayTimes.data();
 
 	X3DAudioCalculate(
@@ -33,6 +30,16 @@ X3DAUDIO_DSP_SETTINGS Audio3D::CreateDspSettings(X3DAUDIO_LISTENER* listener,X3D
 	);
 
 	return dspSettings;
+}
+
+std::vector<float> Audio3D::GetMatrixCoefficients(const SoundData& soundData) {
+	std::vector<float> matrix(soundData.wfex.nChannels * audioManager_->GetOutputChannels());
+	return matrix;
+}
+
+std::vector<float> Audio3D::GetDelayTimes(const SoundData& soundData) {
+	std::vector<float> delayTimes(soundData.wfex.nChannels * audioManager_->GetOutputChannels(), 0.0f);
+	return delayTimes;
 }
 
 X3DAUDIO_HANDLE* Audio3D::GetX3DInstance() {

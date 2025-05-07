@@ -5,11 +5,12 @@
 #include "RiffHeader.h"
 #include "FormatChunk.h"
 #include "ChunkHeader.h"
-
+// デストラクタ
 AudioManager::~AudioManager() {
 	xAudio2_.Reset();
 }
 
+// 初期化
 void AudioManager::Initialize() {
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
@@ -28,10 +29,12 @@ void AudioManager::Initialize() {
 	multiAudioLoader_.Initialize();
 }
 
+// マスターボリュームの設定
 void AudioManager::SetMasterVolume(float volume) {
 	masterVoice_->SetVolume(volume);
 }
 
+// 出力チャンネル数の取得
 uint32_t AudioManager::GetOutputChannels() {
 	DWORD channelMask = 0;
 	masterVoice_->GetChannelMask(&channelMask);
@@ -44,10 +47,12 @@ uint32_t AudioManager::GetOutputChannels() {
 	return channelCount;
 }
 
+// マスターボリュームの取得
 IXAudio2MasteringVoice* AudioManager::GetMasterVoice() {
 	return masterVoice_;
 }
 
+// サウンドデータのロード
 SoundData Audiomanager::SoundLoadWave(const char* filename) {
 	std::ifstream file;
 	file.open(filename, std::ios_base::binary);
@@ -70,6 +75,11 @@ SoundData Audiomanager::SoundLoadWave(const char* filename) {
 	assert(format.chunk.size <= sizeof(format.fmt));
 	file.read((char*)&format.fmt, format.chunk.size);
 
+#ifdef _DEBUG
+	DebugLog(ConvertString(std::format(L"WAV File Format - Channels: {}, SampleRate: {}, BitsPerSample: {}", 
+		format.fmt.nChannels, format.fmt.nSamplesPerSec, format.fmt.wBitsPerSample)));
+#endif
+
 	ChunkHeader data;
 	file.read((char*)&data, sizeof(data));
 	if (strncmp(data.id, "JUNK", 4) == 0) {
@@ -89,19 +99,17 @@ SoundData Audiomanager::SoundLoadWave(const char* filename) {
 	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
 	soundData.bufferSize = data.size;
 
-#ifdef _DEBUG
-	DebugLog(ConvertString(std::format(L"LoadSoundData->nChannels:{}", soundData.wfex.nChannels)));
-#endif // _DEBUG
-
 	return soundData;
 }
 
+// mp3データのロード
 SoundData Audiomanager::SoundLoadMp3(const char* filename) {
 	SoundData mp3Sound{};
 	mp3Sound = Multiaudioloader::LoadSoundData(filename);
 	return mp3Sound;
 }
 
+// サウンドデータのアンロード
 void Audiomanager::SoundUnload(SoundData* soundData) {
 	delete[] soundData->pBuffer;
 	soundData->pBuffer = 0;
@@ -109,6 +117,7 @@ void Audiomanager::SoundUnload(SoundData* soundData) {
 	soundData->wfex = {};
 }
 
+// サウンドデータの再生
 void Audiomanager::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData,float volume, float pitch) {
 	HRESULT hr;
 	IXAudio2SourceVoice* pSourceVoice = CreateSourceVoice(xAudio2, soundData);
@@ -146,6 +155,9 @@ void Audiomanager::SoundPlaySourceVoice(const SoundData& soundData,IXAudio2Sourc
 
 IXAudio2SourceVoice* Audiomanager::CreateSourceVoice(IXAudio2* xAudio2, const SoundData& soundData) {
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
+#ifdef _DEBUG
+	DebugLog(ConvertString(std::format(L"Creating SourceVoice with channels:{}", soundData.wfex.nChannels)));
+#endif
 	HRESULT hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex, XAUDIO2_VOICE_USEFILTER);
 	assert(SUCCEEDED(hr));
 	return pSourceVoice;
