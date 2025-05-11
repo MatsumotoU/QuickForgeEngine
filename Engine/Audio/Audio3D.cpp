@@ -52,7 +52,7 @@ IXAudio2SourceVoice* audio3d::Create3DSourceVoice(AudioManager* audioManager, co
 	IXAudio2SourceVoice* pSourceVoice = Audiomanager::CreateSourceVoice(audioManager->xAudio2_.Get(), soundData);
 	HRESULT hr{};
 
-	//XAUDIO2_EFFECTS_SENDS effectSendDesc = { 1, { &reverbSend } }; // リバーブサブミックスボイスへの送信 (ある場合)
+	//XAUDIO2_EFFECTS_SENDS effectSendDesc = { 1, { &reverbSend } };
 
 	hr = pSourceVoice->SetOutputMatrix(audioManager->GetMasterVoice(), soundData.wfex.nChannels, audioManager->GetOutputChannels(), dspSettings.pMatrixCoefficients);
 	assert(SUCCEEDED(hr));

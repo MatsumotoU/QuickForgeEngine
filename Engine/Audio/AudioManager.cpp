@@ -15,10 +15,11 @@ void AudioManager::Initialize() {
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
+	// XAudio2の初期化
 	masterVoice_ = nullptr;
 	hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(hr));
-	// ステレオで制作
+	// チャンネルを自動で選択します
 	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_);
 	assert(SUCCEEDED(hr));
 	
@@ -83,6 +84,11 @@ SoundData Audiomanager::SoundLoadWave(const char* filename) {
 	ChunkHeader data;
 	file.read((char*)&data, sizeof(data));
 	if (strncmp(data.id, "JUNK", 4) == 0) {
+		file.seekg(data.size, std::ios_base::cur);
+		file.read((char*)&data, sizeof(data));
+	}
+
+	if (strncmp(data.id, "LIST", 4) == 0) {
 		file.seekg(data.size, std::ios_base::cur);
 		file.read((char*)&data, sizeof(data));
 	}
@@ -161,4 +167,10 @@ IXAudio2SourceVoice* Audiomanager::CreateSourceVoice(IXAudio2* xAudio2, const So
 	HRESULT hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex, XAUDIO2_VOICE_USEFILTER);
 	assert(SUCCEEDED(hr));
 	return pSourceVoice;
+}
+
+bool Audiomanager::GetIsPlaying(IXAudio2SourceVoice* pSourceVoice) {
+	XAUDIO2_VOICE_STATE state;
+	pSourceVoice->GetState(&state);
+	return state.BuffersQueued > 0;
 }

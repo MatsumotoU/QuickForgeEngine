@@ -3,7 +3,7 @@
 AudioListener::AudioListener() {
 	position_ = {};
 	velocity_ = {};
-	orientFront_ = {0.0f,0.0f,-1.0f};
+	orientFront_ = {0.0f,0.0f,1.0f};
 	orientTop_ = {0.0f,1.0f,0.0f};
 
 	listener_ = {};

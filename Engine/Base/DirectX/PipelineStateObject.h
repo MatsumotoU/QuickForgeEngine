@@ -2,8 +2,9 @@
 #include "CBufferManager.h"
 #include "InputLayout.h"
 #include "ShaderCompiler.h"
-#include "DepthStencil.h"
+#include <wrl.h>
 
+class DepthStencil;
 class DirectXCommon;
 class WinApp;
 
@@ -12,7 +13,9 @@ public:
 	/// <summary>
 	/// 初期化します
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon, WinApp* winApp);
+	void Initialize(
+		DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil,
+		const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode);
 
 public:
 	ID3D12PipelineState* GetPipelineState();
@@ -24,10 +27,11 @@ public:
 private:
 	DirectXCommon* dxCommon_;
 	WinApp* winApp_;
+	DepthStencil* depthStencil_;
 	CBufferManager cBufferManager_;
 	InputLayout inputLayout_;
 	ShaderCompiler shaderCompiler_;
-	DepthStencil depthStencil_;
+	
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
 	Microsoft::WRL::ComPtr<ID3D10Blob> signatureBlob_;

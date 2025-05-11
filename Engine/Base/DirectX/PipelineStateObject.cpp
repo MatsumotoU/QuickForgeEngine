@@ -1,12 +1,14 @@
 #include "PipelineStateObject.h"
 #include "DirectXCommon.h"
+#include "DepthStencil.h"
 #include "../Windows/WinApp.h"
 #include <cassert>
 #include <d3d12.h>
 
-void PipelineStateObject::Initialize(DirectXCommon* dxCommon,WinApp* winApp) {
+void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode) {
 	dxCommon_ = dxCommon;
 	winApp_ = winApp;
+	depthStencil_ = depthStencil;
 
 	// * PSOを作成 * //
 	// RootSignatureを作成します
@@ -66,7 +68,7 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon,WinApp* winApp) {
 	/*D3D12_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL;*/
-	
+
 	D3D12_BLEND_DESC blendDesc{};
 	blendDesc.AlphaToCoverageEnable = FALSE;
 	blendDesc.IndependentBlendEnable = FALSE;
@@ -92,21 +94,21 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon,WinApp* winApp) {
 	// 裏面（時計回り）を表示しない
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	// 塗りつぶし
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc.FillMode = fillMode;
 
 	// シェーダーをコンパイルする
 	shaderCompiler_.InitializeDXC();
-	IDxcBlob* vertexShaderBlob = shaderCompiler_.CompileShader(L"Object3d.VS.hlsl",L"vs_6_0");
+	IDxcBlob* vertexShaderBlob = shaderCompiler_.CompileShader(L"Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
-	IDxcBlob* pixelShaderBlob = shaderCompiler_.CompileShader(L"Object3d.PS.hlsl",L"ps_6_0");
+	IDxcBlob* pixelShaderBlob = shaderCompiler_.CompileShader(L"Object3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	// DepthStencilState
-	depthStencil_.Initialize(winApp_,dxCommon_);
+	//depthStencil_->Initialize(winApp_,dxCommon_);
 
 	// PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.DepthStencilState = *depthStencil_.GetDepthStencilDesc();
+	graphicsPipelineStateDesc.DepthStencilState = *depthStencil_->GetDepthStencilDesc();
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();
@@ -121,8 +123,7 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon,WinApp* winApp) {
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	// 利用するトロポジ
-	graphicsPipelineStateDesc.PrimitiveTopologyType =
-		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	graphicsPipelineStateDesc.PrimitiveTopologyType = topologyType;
 	// どのように画面に色を打ち込むかの設定
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -131,7 +132,6 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon,WinApp* winApp) {
 	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(graphicsPipelineState_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
-
 }
 
 ID3D12PipelineState* PipelineStateObject::GetPipelineState() {
@@ -143,5 +143,5 @@ ID3D12RootSignature* PipelineStateObject::GetRootSignature() {
 }
 
 DepthStencil* PipelineStateObject::GetDepthStencil() {
-	return &depthStencil_;
+	return depthStencil_;
 }

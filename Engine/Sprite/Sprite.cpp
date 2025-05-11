@@ -2,6 +2,7 @@
 #include "../Base/DirectX/DirectXCommon.h"
 #include "../Base/DirectX/TextureManager.h"
 #include "../Math/VerTexData.h"
+#include "../Base/DirectX/DepthStencil.h"
 #include "../Base/DirectX/PipelineStateObject.h"
 
 #include "../Base/DirectX/MaterialResource.h"

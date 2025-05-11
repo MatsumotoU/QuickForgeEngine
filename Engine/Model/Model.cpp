@@ -2,6 +2,7 @@
 #include "ModelManager.h"
 #include "../Base/DirectX/DirectXCommon.h"
 #include "../Base/DirectX/TextureManager.h"
+#include "../Base/DirectX/DepthStencil.h"
 #include "../Base/DirectX/PipelineStateObject.h"
 #include "../Camera/Camera.h"
 
