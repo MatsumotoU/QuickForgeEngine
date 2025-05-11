@@ -81,4 +81,10 @@ namespace Audiomanager {
 	/// <param name="soundData">soundData</param>
 	/// <returns>ソースボイス</returns>
 	IXAudio2SourceVoice* CreateSourceVoice(IXAudio2* xAudio2, const SoundData& soundData);
+	/// <summary>
+	/// ソースボイスが再生中かどうかを取得します
+	/// </summary>
+	/// <param name="pSourceVoice">該当ソースボイス</param>
+	/// <returns></returns>
+	bool GetIsPlaying(IXAudio2SourceVoice* pSourceVoice);
 }

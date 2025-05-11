@@ -7,7 +7,7 @@
 #include "Engine/Base/DirectX/TextureManager.h"
 #include "Engine/Model/ModelManager.h"
 // PSO
-#include "Engine/Base/DirectX/PipelineStateObject.h"
+#include "Engine/Base/DirectX/GraphicsCommon.h"
 
 // Resorce
 #include "Engine/Base/DirectX/MaterialResource.h"
@@ -81,36 +81,39 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	input.Initialize(winApp, hInstance);
 
 	// * PSOを作成 * //
-	PipelineStateObject pso;
-	pso.Initialize(dxCommon,winApp);
+	GraphicsCommon graphicsCommon;
+	graphicsCommon.Initialize(dxCommon, winApp);
+
+	PipelineStateObject* pso = graphicsCommon.GetTrianglePso();
 
 	// * ゲーム内の設定 * //
 	// 変数定義
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	Transform transform2{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	Transform transform2{ {1.0f,1.0f,1.0f},{0.0f,3.14f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform uvTransformSprite{
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
 	};
 
-	Sprite sprite(dxCommon, textureManager, imGuiManager, 640.0f, 320.0f,&pso);
+	Sprite sprite(dxCommon, textureManager, imGuiManager, 640.0f, 320.0f,pso);
 
 	SoundData soundData1 = Audiomanager::SoundLoadWave("Resources/mono48kHz.wav");
-	//SoundData soundData2 = Audiomanager::SoundLoadMp3("Resources/Enter.mp3");
-	SoundData soundData3 = Audiomanager::SoundLoadWave("Resources/mono48kHz.wav");
+	SoundData soundData3 = Audiomanager::SoundLoadWave("Resources/Siren03.wav");
+	//SoundData soundData2 = Audiomanager::SoundLoadMp3("Resources/Siren03.mp3");
+	//SoundData soundData3 = Audiomanager::SoundLoadWave("Resources/mono48kHz.wav");
 
 	// 3DAudio
 	AudioEmitter emitter{};
-	emitter.position_.z = -1.0f;
-	emitter.position_.x = -0.5f;
+	emitter.position_.z = 0.0f;
+	emitter.position_.x = 0.0f;
 	emitter.nChannels_ = static_cast<uint32_t>(soundData3.wfex.nChannels);
 	AudioListener listener{};
+	listener.position_.z = -5.0f;
 	std::vector<float> matrix = audio3D.GetMatrixCoefficients(soundData3);
 	std::vector<float> delayTimes = audio3D.GetDelayTimes(soundData3);
 	X3DAUDIO_DSP_SETTINGS settings = audio3D.CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), matrix,delayTimes);
 	IXAudio2SourceVoice* sourceVoice = audio3d::Create3DSourceVoice(&audioManager, soundData3, settings);
-
 
 	// Camera
 	DebugCamera debugCamera;
@@ -118,8 +121,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 
 	// Modelを使う
 	Model model;
-	model.Initialize(dxCommon, textureManager, &pso);
+	model.Initialize(dxCommon, textureManager, pso);
 	model.LoadModel("Resources", "skyDome.obj", COORDINATESYSTEM_HAND_RIGHT);
+
+	Model speakerModel;
+	speakerModel.Initialize(dxCommon, textureManager, pso);
+	speakerModel.LoadModel("Resources", "speaker.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 	// テクスチャを読み込む
 	//int32_t monsterBallHandle = textureManager->LoadTexture("Resources/monsterBall.png");
@@ -134,7 +141,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 		if (engineCore.GetWinApp()->GetCanLoop()) {
 
 			// === Update ===
-			t += 0.1f;
 			input.Update();
 			debugCamera.Update();
 			sprite.material_.materialData_->color = color;
@@ -151,10 +157,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 
 			// ImGui
 			if (ImGui::Button("PlaySE")) {
-				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData1, 0.3f, 1.0f);
+				Audiomanager::SoundPlayWave(audioManager.xAudio2_.Get(), soundData3, 1.0f, 1.0f);
 			}
 
 			if (ImGui::Button("PlaySE3D")) {
+				emitter.position_.x = -20.0f;
 				/*emitter.position_ = transform.translate;
 				settings = audio3D.CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), matrix, delayTimes);
 				sourceVoice->SetOutputMatrix(audioManager.GetMasterVoice(), soundData3.wfex.nChannels, audioManager.GetOutputChannels(), settings.pMatrixCoefficients);
@@ -164,13 +171,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 			}
 
 			// 音源の位置を更新
-			emitter.position_.x = sinf(t);
-			settings = audio3D.CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), matrix, delayTimes);
-			sourceVoice->SetOutputMatrix(audioManager.GetMasterVoice(), soundData3.wfex.nChannels, audioManager.GetOutputChannels(), settings.pMatrixCoefficients);
-			sourceVoice->SetFrequencyRatio(settings.DopplerFactor);
+			if (Audiomanager::GetIsPlaying(sourceVoice)) {
+				emitter.position_.x += 0.1f;
+				emitter.velocity_.x = 30.0f;
+				settings = audio3D.CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), matrix, delayTimes);
+				sourceVoice->SetOutputMatrix(audioManager.GetMasterVoice(), soundData3.wfex.nChannels, audioManager.GetOutputChannels(), settings.pMatrixCoefficients);
+				sourceVoice->SetFrequencyRatio(settings.DopplerFactor);
+
+				transform2.translate.x = emitter.position_.x;
+				speakerModel.Draw(transform2, &debugCamera.camera_);
+			}
 
 			ImGui::InputFloat("t", &t);
 			ImGui::Text("sin(t) :%f", sin(t));
+			ImGui::Text("DopplerFactor :%f", settings.DopplerFactor);
+			ImGui::DragFloat3("EmmiterPos", &emitter.position_.x, 0.1f);
+			ImGui::DragFloat3("EmmiterVec", &emitter.velocity_.x, 0.1f);
+
 			ImGui::ColorPicker4("color", &color.x);
 			ImGui::DragFloat3("ObjTranslate", &transform.translate.x, 0.1f);
 			ImGui::DragFloat3("ObjRotate", &transform.rotate.x, 0.1f);
