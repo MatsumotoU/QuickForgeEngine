@@ -5,6 +5,7 @@
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")
 
+#include "Audio3D.h"
 #include "MultiAudioLoader.h"
 #include "SoundData.h"
 
@@ -33,6 +34,7 @@ public:
 public:
 	uint32_t GetOutputChannels();
 	IXAudio2MasteringVoice* GetMasterVoice();
+	Audio3D* GetAudio3D();
 
 public:
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
@@ -40,6 +42,7 @@ public:
 private:
 	IXAudio2MasteringVoice* masterVoice_;
 	MultiAudioLoader multiAudioLoader_;
+	Audio3D audio3D_;
 };
 
 namespace Audiomanager {
