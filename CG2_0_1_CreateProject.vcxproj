@@ -149,6 +149,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Object3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Assignments\AL3\2DAction\GameScene.cpp" />
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
@@ -198,6 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assignments\AL3\2DAction\GameScene.h" />
     <ClInclude Include="Engine\Audio\Audio3D.h" />
     <ClInclude Include="Engine\Audio\AudioEmitter.h" />
     <ClInclude Include="Engine\Audio\AudioListener.h" />
