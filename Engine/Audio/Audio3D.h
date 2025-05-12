@@ -42,3 +42,15 @@ namespace audio3d {
 
 	IXAudio2SourceVoice* Create3DSourceVoice(AudioManager* audioManager, const SoundData& soundData,const X3DAUDIO_DSP_SETTINGS& dspSettings);
 }
+
+// 立体音響作った時のコード
+/*AudioEmitter emitter{};
+	emitter.position_.z = 0.0f;
+	emitter.position_.x = 0.0f;
+	emitter.nChannels_ = static_cast<uint32_t>(soundData3.wfex.nChannels);
+	AudioListener listener{};
+	listener.position_.z = -5.0f;
+	std::vector<float> matrix = audio3D->GetMatrixCoefficients(soundData3);
+	std::vector<float> delayTimes = audio3D->GetDelayTimes(soundData3);
+	X3DAUDIO_DSP_SETTINGS settings = audio3D->CreateDspSettings(listener.GetListener(), emitter.GetEmitter(), matrix,delayTimes);
+	IXAudio2SourceVoice* sourceVoice = audio3d::Create3DSourceVoice(&audioManager, soundData3, settings);*/

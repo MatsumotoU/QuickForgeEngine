@@ -27,6 +27,9 @@ void AudioManager::Initialize() {
 	DebugLog(ConvertString(std::format(L"MasterVoice->nChannels:{}", GetOutputChannels())));
 #endif // _DEBUG
 
+	// X3DAudioの初期化
+	audio3D_.Initialize(this);
+
 	multiAudioLoader_.Initialize();
 }
 
@@ -52,6 +55,8 @@ uint32_t AudioManager::GetOutputChannels() {
 IXAudio2MasteringVoice* AudioManager::GetMasterVoice() {
 	return masterVoice_;
 }
+
+Audio3D* AudioManager::GetAudio3D() { return &audio3D_; }
 
 // サウンドデータのロード
 SoundData Audiomanager::SoundLoadWave(const char* filename) {
