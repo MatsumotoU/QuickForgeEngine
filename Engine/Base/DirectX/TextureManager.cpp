@@ -163,6 +163,29 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 	device_->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
 }
 
+void TextureManager::CreateOffscreenShaderResourceView() {
+	// オフスクリーン用のsrv登録
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = dxCommon_->GetOffscreenResource()->GetDesc().Format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;// 2Dテクスチャ
+	srvDesc.Texture2D.MipLevels = 1;
+
+	// SRVを作成するDescriptorHeapの場所を決める
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU{};
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU{};
+	textureSrvHandleCPU_.push_back(textureSrvHandleCPU);
+	textureSrvHandleGPU_.push_back(textureSrvHandleGPU);
+	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1] = GetCPUDecriptorHandle(imGuimanager_->GetSrvDescriptorHeap(), dxCommon_->GetDescriptorSizeSRV(), 1);
+	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1] = GetGPUDecriptorHandle(imGuimanager_->GetSrvDescriptorHeap(), dxCommon_->GetDescriptorSizeSRV(), 1);
+	// ImGuiの次のDescriptorを使う
+	UINT discriptorHeapSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
+	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
+	// SRVの作成
+	device_->CreateShaderResourceView(dxCommon_->GetOffscreenResource(), &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
+}
+
 void TextureManager::PreDraw() {
 	for (int32_t i = 0; i < textureResources_.size(); i++) {
 		intermediateResource_.push_back(UploadTextureData(textureResources_[i].Get(), scratchImages_[i], dxCommon_->GetCommandList()));
@@ -188,7 +211,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(metadata);
-	CreateShaderResourceView(metadata, imGuimanager_->GetSrvDescriptorHeap(), textureResource.Get(), 1 + textureHandle_);
+	CreateShaderResourceView(metadata, imGuimanager_->GetSrvDescriptorHeap(), textureResource.Get(), 2 + textureHandle_);
 	textureHandle_++;
 	textureResources_.push_back(textureResource);
 	return textureHandle_-1;

@@ -2,6 +2,7 @@
 #include "../Input/DirectInput/DirectInputManager.h"
 #include "../Base/DirectX/ImGuiManager.h"
 
+#ifdef _DEBUG
 void DebugCamera::Initialize(WinApp* win, DirectInputManager* input) {
 	camera_.Initialize(win);
 	input_ = input;
@@ -48,3 +49,4 @@ void DebugCamera::DrawImGui() {
 	}
 	ImGui::End();
 }
+#endif // _DEBUG

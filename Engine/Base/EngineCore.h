@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _DEBUG
+#include "MyDebugLog.h"
+#endif // _DEBUG
+
 // 現状ないと動かないコアたち
 #include <wrl.h>
 #include <Windows.h>
@@ -15,6 +19,30 @@
 #include "../Audio/Audio3D.h"
 // 入力機能
 #include "../Input/DirectInput/DirectInputManager.h"
+
+// Resorce
+#include "DirectX/MaterialResource.h"
+#include "DirectX/WVPResource.h"
+#include "DirectX/DirectionalLightResource.h"
+// Math
+#include "../Math/Matrix/Matrix3x3.h"
+#include "../Math/Transform.h"
+#include "../Math/VerTexData.h"
+#include "../Math/TransformationMatrix.h"
+// Object
+#include "../Object/DirectionalLight.h"
+#include "../Object/Material.h"
+// Debug
+#include "../Base/MyString.h"
+#include "../Sprite/Sprite.h"
+// Audio
+#include "../Audio/AudioEmitter.h"
+#include "../Audio/AudioListener.h"
+// Camera
+#include "../Camera/DebugCamera.h"
+#include "../Camera/Camera.h"
+// Model
+#include "../Model/Model.h"
 
 class EngineCore {
 public:
@@ -60,4 +88,8 @@ private:// ディスクリプタヒープ
 	/*Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dvrDescriptorHeap_;*/
+
+private:// デバッグ用一時変数
+	Sprite offscreen_;
+	Transform offscreenTransform_;
 };

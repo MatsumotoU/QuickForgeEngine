@@ -19,8 +19,11 @@ class Camera;
 
 class Sprite {
 public:
-	Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager,float width,float hight,PipelineStateObject* pso);
+	Sprite();
 	~Sprite();
+
+public:
+	void Initialize(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager, float width, float hight, PipelineStateObject* pso);
 
 public:
 	void DrawSprite(const Transform& transform, int32_t textureHandle,Camera* camera);

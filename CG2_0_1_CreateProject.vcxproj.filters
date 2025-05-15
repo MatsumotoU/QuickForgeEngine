@@ -294,9 +294,6 @@
     <ClInclude Include="Engine\Base\DirectX\DirectionalLightResource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Texture.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Sprite\Sprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -355,6 +352,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Assignments\AL3\2DAction\GameScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\DirectX\PostProcess.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
