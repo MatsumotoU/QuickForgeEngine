@@ -7,8 +7,9 @@
 #endif // DEBUG
 
 ImGuiManager::ImGuiManager() {
-	stateCheck_ = 0;
+	
 #ifdef _DEBUG
+	stateCheck_ = 0;
 	debugLog_ = MyDebugLog::GetInstatnce();
 	debugLog_->Log("ImGuiManager : Generate Instance");
 #endif // DEBUG

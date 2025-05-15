@@ -43,8 +43,10 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	CreateCommandQueue();
 	CreateSwapChain();
 	InitializeSwapChainResource();
-	rtvDescriptorHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	CreateRTV();
+	InitializeOffScreenResource();
+	rtvDescriptorHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 3, false);// こいつがRTV本体
+	CreateRTV();// 正確にいうとRTVにリソースを登録している
+	CreateOffScreenRTV();
 	CreateFence();
 	CreateFenceEvent();
 }
@@ -58,7 +60,7 @@ void DirectXCommon::PreDraw() {
 	// バックバッファのインデックス取得
 	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();
 
-	// バリア
+	// バックバッファのバリア
 	D3D12_RESOURCE_BARRIER barrier{};
 	// 今回のバリアはトランジション
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -161,6 +163,14 @@ D3D12_CPU_DESCRIPTOR_HANDLE* DirectXCommon::GetRtvHandles() {
 	return &rtvHandles_[swapChain_.Get()->GetCurrentBackBufferIndex()];
 }
 
+D3D12_CPU_DESCRIPTOR_HANDLE* DirectXCommon::GetOffscreenRtvHandles() {
+	return &offScreenRtvHandle_;
+}
+
+ID3D12Resource* DirectXCommon::GetOffscreenResource() {
+	return offScreenResource_.Get();
+}
+
 uint32_t DirectXCommon::GetDescriptorSizeSRV() {
 	return descriptorSizeSRV_;
 }
@@ -173,14 +183,17 @@ uint32_t DirectXCommon::GetDescriptorSizeDSV() {
 	return descriptorSizeDSV_;
 }
 
+#ifdef _DEBUG
 void DirectXCommon::SetCommandLine(LPSTR* lpCmdLine) {
 	lpCmdLine_ = lpCmdLine;
 }
+#endif // _DEBUG
 
 void DirectXCommon::CreateDxgiFactory() {
 	assert(!dxgiFactory_);
 	// DXGIファクトリーの生成
 	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory_));
+	hr;
 	assert(SUCCEEDED(hr));
 }
 
@@ -197,6 +210,7 @@ void DirectXCommon::FindAdapter() {
 		// アダプターの情報を取得する
 		DXGI_ADAPTER_DESC3 adapterDesc{};
 		HRESULT hr = useAdapter_.Get()->GetDesc3(&adapterDesc);
+		hr;
 		assert(SUCCEEDED(hr));
 
 		// ソフトウェアアダプタでなければ採用
@@ -297,6 +311,7 @@ void DirectXCommon::CreateCommandQueue() {
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 	HRESULT hr = device_->CreateCommandQueue(&commandQueueDesc,
 		IID_PPV_ARGS(&commandQueue_));
+	hr;
 	assert(SUCCEEDED(hr));
 	
 #ifdef _DEBUG
@@ -310,6 +325,7 @@ void DirectXCommon::CreateCommandAllocator() {
 	// コマンドアロケータを生成する
 	HRESULT hr = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(commandAllocator_.GetAddressOf()));
 	// コマンドアロケータの生成例外
+	hr;
 	assert(SUCCEEDED(hr));
 	
 #ifdef _DEBUG
@@ -322,6 +338,7 @@ void DirectXCommon::CreateCommandList() {
 	HRESULT hr = device_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator_.Get(), nullptr,
 		IID_PPV_ARGS(commandList_.GetAddressOf()));
 	// コマンドリスト生成例外
+	hr;
 	assert(SUCCEEDED(hr));
 	
 #ifdef _DEBUG
@@ -341,6 +358,7 @@ void DirectXCommon::CreateSwapChain() {
 	swapChainDesc_.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成
 	HRESULT hr = dxgiFactory_.Get()->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
+	hr;
 	assert(SUCCEEDED(hr));
 	
 #ifdef _DEBUG
@@ -361,6 +379,30 @@ void DirectXCommon::InitializeSwapChainResource() {
 #endif // _DEBUG
 }
 
+void DirectXCommon::InitializeOffScreenResource() {
+	offScreenDesc_ = {};
+	offScreenDesc_.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	offScreenDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	offScreenDesc_.Width = winApp_->kWindowWidth;
+	offScreenDesc_.Height = winApp_->kWindowHeight;
+	offScreenDesc_.DepthOrArraySize = 1; // テクスチャなので通常は1
+	offScreenDesc_.MipLevels = 1;       // 通常は1
+	offScreenDesc_.SampleDesc.Count = 1;
+	offScreenDesc_.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // レンダーターゲットとして使用
+	
+	D3D12_HEAP_PROPERTIES defaultHeapProperties{};
+	defaultHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+	HRESULT hr = device_->CreateCommittedResource(
+		&defaultHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&offScreenDesc_,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // 初期状態
+		nullptr,
+		IID_PPV_ARGS(&offScreenResource_));
+	hr;
+	assert(SUCCEEDED(hr));
+}
+
 void DirectXCommon::CreateRTV() {
 	// * RTVを作る * //
 	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
@@ -375,12 +417,19 @@ void DirectXCommon::CreateRTV() {
 	device_->CreateRenderTargetView(swapChainResource_[1].Get(), &rtvDesc_, rtvHandles_[1]);
 }
 
+void DirectXCommon::CreateOffScreenRTV() {
+	// スワップチェインの後にオフスク用RTV作成
+	offScreenRtvHandle_.ptr = rtvHandles_[1].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device_->CreateRenderTargetView(offScreenResource_.Get(), &rtvDesc_, offScreenRtvHandle_);
+}
+
 void DirectXCommon::CreateFence() {
 	// * FenceとEventを生成する * //
 	// 初期値０でFenceを作る
 	fence_ = nullptr;
 	fenceValue_ = 0;
 	HRESULT hr = device_->CreateFence(fenceValue_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
+	hr;
 	assert(SUCCEEDED(hr));
 }
 
@@ -421,6 +470,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device
 	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(vertexResource.GetAddressOf()));
+	hr;
 	assert(SUCCEEDED(hr));
 
 #ifdef _DEBUG
@@ -436,6 +486,7 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(ID3D12Device* 
 	descriptorHeapDesc.NumDescriptors = numDescriptors;
 	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(descriptorHeap.GetAddressOf()));
+	hr;
 	assert(SUCCEEDED(hr));
 
 #ifdef _DEBUG

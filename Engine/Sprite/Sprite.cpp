@@ -15,7 +15,14 @@
 #include "../Base/DirectX/Viewport.h"
 #include "../Base/DirectX/ScissorRect.h"
 
-Sprite::Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager, float width, float hight, PipelineStateObject* pso) {
+Sprite::Sprite() {
+	
+}
+
+Sprite::~Sprite() {
+}
+
+void Sprite::Initialize(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager, float width, float hight, PipelineStateObject* pso) {
 	dxCommon_ = dxCommon;
 	textureManager_ = textureManager;
 	imGuiManager_ = imguiManager;
@@ -62,9 +69,6 @@ Sprite::Sprite(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiMan
 	indexData_[3] = 1;
 	indexData_[4] = 3;
 	indexData_[5] = 2;
-}
-
-Sprite::~Sprite() {
 }
 
 void Sprite::DrawSprite(const Transform& transform, int32_t textureHandle, Camera* camera) {

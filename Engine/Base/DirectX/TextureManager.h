@@ -39,7 +39,7 @@ public:
 	void EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList);
 
 	void CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap, ID3D12Resource* textureResource, uint32_t index);
-
+	void CreateOffscreenShaderResourceView();
 public:
 	void PreDraw();
 	void PostDraw();

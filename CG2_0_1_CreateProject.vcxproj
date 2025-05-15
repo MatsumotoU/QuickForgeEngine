@@ -215,10 +215,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h" />
     <ClInclude Include="Engine\Base\DirectX\GraphicsCommon.h" />
     <ClInclude Include="Engine\Base\DirectX\MaterialResource.h" />
+    <ClInclude Include="Engine\Base\DirectX\PostProcess.h" />
     <ClInclude Include="Engine\Base\EngineCore.h" />
     <ClInclude Include="Engine\Model\ModelManager.h" />
     <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
-    <ClInclude Include="Engine\Base\DirectX\Texture.h" />
     <ClInclude Include="Engine\Base\DirectX\Viewport.h" />
     <ClInclude Include="Engine\Base\DirectX\WVPResource.h" />
     <ClInclude Include="Engine\Base\MyDebugLog.h" />

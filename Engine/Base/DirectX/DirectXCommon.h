@@ -39,6 +39,8 @@ public:
 	IDXGISwapChain4* GetSwapChain();
 	D3D12_RENDER_TARGET_VIEW_DESC* GetRtvDesc();
 	D3D12_CPU_DESCRIPTOR_HANDLE* GetRtvHandles();
+	D3D12_CPU_DESCRIPTOR_HANDLE* GetOffscreenRtvHandles();
+	ID3D12Resource* GetOffscreenResource();
 
 	uint32_t GetDescriptorSizeSRV();
 	uint32_t GetDescriptorSizeRTV();
@@ -70,6 +72,9 @@ private: // メンバ変数
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource_[2];
+	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResource_;
+	D3D12_RESOURCE_DESC offScreenDesc_;
+	D3D12_CPU_DESCRIPTOR_HANDLE offScreenRtvHandle_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
@@ -124,9 +129,17 @@ private: // 外部から触れてほしくない関数たち
 	/// </summary>
 	void InitializeSwapChainResource();
 	/// <summary>
+	/// オフスクリーンのリソースを確保します
+	/// </summary>
+	void InitializeOffScreenResource();
+	/// <summary>
 	/// RTVを作る
 	/// </summary>
 	void CreateRTV();
+	/// <summary>
+	/// オフスクリーン用のRTVを作成します
+	/// </summary>
+	void CreateOffScreenRTV();
 	/// <summary>
 	/// フェンス生成
 	/// </summary>
