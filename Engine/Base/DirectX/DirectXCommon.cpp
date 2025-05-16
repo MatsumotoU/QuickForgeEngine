@@ -142,7 +142,7 @@ void DirectXCommon::InitializeBackGround(float red, float green, float blue, flo
 	offScreenClearColor[1] = 0.25f;
 	offScreenClearColor[2] = 0.5f;
 	offScreenClearColor[3] = 1.0f;
-	//commandList_.Get()->ClearRenderTargetView(offScreenRtvHandle_, offScreenClearColor, 0, nullptr);
+	commandList_.Get()->ClearRenderTargetView(offScreenRtvHandle_, offScreenClearColor, 0, nullptr);
 }
 
 ID3D12Device* DirectXCommon::GetDevice() {
@@ -397,7 +397,7 @@ void DirectXCommon::InitializeOffScreenResource() {
 	offScreenDesc_.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // レンダーターゲットとして使用
 
 	offscreenClearValue_ = {};
-	offscreenClearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	offscreenClearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	offscreenClearValue_.Color[0] = 0.1f;
 	offscreenClearValue_.Color[1] = 0.25f;
 	offscreenClearValue_.Color[2] = 0.5f;
