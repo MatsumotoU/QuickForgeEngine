@@ -32,6 +32,9 @@ public:
 	void DrawSprite(const Transform& transform, const Transform& uvTransform, const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle, Camera* camera);
 
 public:
+	void SetPSO(PipelineStateObject* pso);
+
+public:
 	Transform transform_;
 
 public:

@@ -351,15 +351,17 @@
     <ClInclude Include="Engine\Base\DirectX\GraphicsCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Assignments\AL3\2DAction\GameScene.h">
+    <ClInclude Include="Engine\Base\DirectX\PostProcess.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\PostProcess.h">
+    <ClInclude Include="Assignments\AL3\2DAction\GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl" />
     <FxCompile Include="Object3d.PS.hlsl" />
+    <FxCompile Include="GrayscaleShader.hlsl" />
+    <FxCompile Include="TestShader.hlsl" />
   </ItemGroup>
 </Project>

@@ -14,6 +14,9 @@ public:
 	PipelineStateObject* GetTrianglePso() { return &trianglePso_; }
 	PipelineStateObject* GetLinePso() { return &linePso_; }
 	PipelineStateObject* GetPointPso() { return &pointPso_; }
+
+	PipelineStateObject* GetGrayScalePso() { return &grayScaleTrianglePso_; }
+
 	DepthStencil* GetDepthStencil() { return &depthStencil_; }
 
 private: // メンバ変数
@@ -23,4 +26,6 @@ private: // メンバ変数
 	PipelineStateObject trianglePso_;
 	PipelineStateObject linePso_;
 	PipelineStateObject pointPso_;
+
+	PipelineStateObject grayScaleTrianglePso_;
 };

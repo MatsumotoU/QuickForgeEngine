@@ -168,3 +168,7 @@ void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
+
+void Sprite::SetPSO(PipelineStateObject* pso) {
+	pso_ = pso;
+}

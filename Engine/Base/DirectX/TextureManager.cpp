@@ -26,6 +26,7 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, ImGuiManager* imguiMana
 	textureResources_.clear();
 	scratchImages_.clear();
 	intermediateResource_.clear();
+	filePathliblary_.clear();
 
 	textureHandle_ = 0;
 
@@ -209,8 +210,15 @@ void TextureManager::ReleaseIntermediateResources() {
 }
 
 int32_t TextureManager::LoadTexture(const std::string& filePath) {
-	//scratchImages_.push_back(DirectX::ScratchImage());
-	//scratchImages_[scratchImages_.size() - 1] = Load(filePath);
+	// 同じ画像ファイルを読み込まない
+	for (int i = 0; i < filePathliblary_.size(); i++) {
+		if (filePathliblary_[i] == filePath) {
+			return i;
+		}
+	}
+	filePathliblary_.push_back(filePath);
+	
+	// 画像読み込み処理
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(metadata);
