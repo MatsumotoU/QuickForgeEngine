@@ -190,15 +190,15 @@ void TextureManager::CreateOffscreenShaderResourceView() {
 }
 
 void TextureManager::PreDraw() {
-	for (int32_t i = 0; i < textureResources_.size(); i++) {
+	/*for (int32_t i = 0; i < textureResources_.size(); i++) {
 		intermediateResource_.push_back(UploadTextureData(textureResources_[i].Get(), scratchImages_[i], dxCommon_->GetCommandList()));
-	}
+	}*/
 }
 
 void TextureManager::PostDraw() {
-	for (int32_t i = 0; i < textureResources_.size(); i++) {
+	/*for (int32_t i = 0; i < textureResources_.size(); i++) {
 		TransitionResourceBarrier(textureResources_[i].Get(), dxCommon_->GetCommandList());
-	}
+	}*/
 }
 
 void TextureManager::ReleaseIntermediateResources() {
@@ -217,6 +217,8 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	CreateShaderResourceView(metadata, imGuimanager_->GetSrvDescriptorHeap(), textureResource.Get(), 2 + textureHandle_);
 	textureHandle_++;
 	textureResources_.push_back(textureResource);
+	intermediateResource_.push_back(
+		UploadTextureData(textureResources_[textureResources_.size() - 1].Get(), scratchImages_[textureResources_.size() - 1], dxCommon_->GetCommandList()));
 	return textureHandle_-1;
 }
 
