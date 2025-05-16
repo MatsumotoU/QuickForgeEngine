@@ -28,6 +28,8 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, ImGuiManager* imguiMana
 	intermediateResource_.clear();
 
 	textureHandle_ = 0;
+
+	CreateOffscreenShaderResourceView();
 }
 
 void TextureManager::Finalize() {
@@ -164,26 +166,27 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 }
 
 void TextureManager::CreateOffscreenShaderResourceView() {
-	// オフスクリーン用のsrv登録
+	// オフスクリーン用のSRV登録
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = dxCommon_->GetOffscreenResource()->GetDesc().Format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;// 2Dテクスチャ
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 
-	// SRVを作成するDescriptorHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU{};
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU{};
-	textureSrvHandleCPU_.push_back(textureSrvHandleCPU);
-	textureSrvHandleGPU_.push_back(textureSrvHandleGPU);
-	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1] = GetCPUDecriptorHandle(imGuimanager_->GetSrvDescriptorHeap(), dxCommon_->GetDescriptorSizeSRV(), 1);
-	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1] = GetGPUDecriptorHandle(imGuimanager_->GetSrvDescriptorHeap(), dxCommon_->GetDescriptorSizeSRV(), 1);
-	// ImGuiの次のDescriptorを使う
-	UINT discriptorHeapSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
-	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
+	// SRVを作成するディスクリプタヒープの場所を決める
+	offscreenSrvHandleCPU_ = GetCPUDecriptorHandle(
+		imGuimanager_->GetSrvDescriptorHeap(),
+		dxCommon_->GetDescriptorSizeSRV(),
+		1
+	);
+	offscreenSrvHandleGPU_ = GetGPUDecriptorHandle(
+		imGuimanager_->GetSrvDescriptorHeap(),
+		dxCommon_->GetDescriptorSizeSRV(),
+		1
+	);
+
 	// SRVの作成
-	device_->CreateShaderResourceView(dxCommon_->GetOffscreenResource(), &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
+	device_->CreateShaderResourceView(dxCommon_->GetOffscreenResource(), &srvDesc, offscreenSrvHandleCPU_);
 }
 
 void TextureManager::PreDraw() {
@@ -223,4 +226,8 @@ D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t inde
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleGPU(uint32_t index) {
 	return textureSrvHandleGPU_[index];
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetOffscreenSrvHandleGPU() {
+	return offscreenSrvHandleGPU_;
 }

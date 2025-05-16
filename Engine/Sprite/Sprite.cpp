@@ -109,9 +109,9 @@ void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform
 	// sprite
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = pso_->GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+	/*D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = pso_->GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
 	commandList->OMSetRenderTargets(1, dxCommon_->GetRtvHandles(), false, &dsvHandl);
-	commandList->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	commandList->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);*/
 
 	commandList->RSSetViewports(1, camera->viewport_.GetViewport());
 	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
@@ -123,6 +123,48 @@ void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(textureHandle));
+	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
+	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+void Sprite::DrawSprite(const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle) {
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+
+	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
+	commandList->SetPipelineState(pso_->GetPipelineState());
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetIndexBuffer(&indexBufferView_);
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
+	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
+	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform, const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle, Camera* camera) {
+	// uv
+	Matrix4x4 uvTransformMatrix = Matrix4x4::MakeScaleMatrix(uvTransform.scale);
+	uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeRotateZMatrix(uvTransform.rotate.z));
+	uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeTranslateMatrix(uvTransform.translate));
+	material_.SetUvTransformMatrix(uvTransformMatrix);
+
+	// wvp
+	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
+	wvp_.SetWorldMatrix(worldMatrix);
+	wvp_.SetWVPMatrix(wvpMatrix);
+
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+
+	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
+	commandList->SetPipelineState(pso_->GetPipelineState());
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetIndexBuffer(&indexBufferView_);
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
