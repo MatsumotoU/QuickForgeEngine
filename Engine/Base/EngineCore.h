@@ -66,6 +66,7 @@ public:
 	AudioManager* GetAudioManager();
 	Audio3D* GetAudio3D();
 	DirectInputManager* GetInputManager();
+	Sprite* GetOffscreen();
 
 private:// コア機能
 	WinApp winApp_;
@@ -92,4 +93,6 @@ private:// ディスクリプタヒープ
 private:// デバッグ用一時変数
 	Sprite offscreen_;
 	Transform offscreenTransform_;
+	Transform uvTransform_;
+	Camera camera_;
 };

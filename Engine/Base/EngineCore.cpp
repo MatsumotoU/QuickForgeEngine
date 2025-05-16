@@ -40,6 +40,14 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 		&dxCommon_, &textureManager_, &imGuiManager_,
 		static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight), 
 		graphicsCommon_.GetTrianglePso());
+	offscreen_.material_.materialData_->enableLighting = false;
+
+	/*offscreen_.Initialize(
+		&dxCommon_, &textureManager_, &imGuiManager_,
+		640.0f, 320.0f,
+		graphicsCommon_.GetTrianglePso());*/
+
+	camera_.Initialize(&winApp_);
 }
 
 void EngineCore::Update() {
@@ -68,8 +76,8 @@ void EngineCore::PreDraw() {
 
 	// 深度の設定
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = graphicsCommon_.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	//commandList->OMSetRenderTargets(1, dxCommon_->GetOffscreenRtvHandles(), false, &dsvHandl);
-	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
+	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
+	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
 	dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
@@ -88,6 +96,13 @@ void EngineCore::PostDraw() {
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	// バリア張る
 	dxCommon_.GetCommandList()->ResourceBarrier(1, &barrier);
+
+	// 深度の設定
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = graphicsCommon_.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
+	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
+	dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	offscreen_.DrawSprite(offscreenTransform_,uvTransform_,textureManager_.GetOffscreenSrvHandleGPU(),&camera_);
 
 	textureManager_.PostDraw();
 	imGuiManager_.EndFrame();
@@ -125,4 +140,8 @@ Audio3D* EngineCore::GetAudio3D() {
 
 DirectInputManager* EngineCore::GetInputManager() {
 	return &inputManager_;
+}
+
+Sprite* EngineCore::GetOffscreen() {
+	return &offscreen_;
 }

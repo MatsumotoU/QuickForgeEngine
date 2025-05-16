@@ -51,6 +51,7 @@ public:
 public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index);
 	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetOffscreenSrvHandleGPU();
 
 private:// メンバ変数
 	ID3D12Device* device_;
@@ -59,6 +60,8 @@ private:// メンバ変数
 	uint32_t srvHandleIndex_;
 	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> textureSrvHandleCPU_;
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPU_;
+	D3D12_CPU_DESCRIPTOR_HANDLE offscreenSrvHandleCPU_;
+	D3D12_GPU_DESCRIPTOR_HANDLE offscreenSrvHandleGPU_;
 	DirectXCommon* dxCommon_;
 	ImGuiManager* imGuimanager_;
 

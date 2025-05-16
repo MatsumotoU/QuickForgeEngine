@@ -74,6 +74,7 @@ private: // メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource_[2];
 	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResource_;
 	D3D12_RESOURCE_DESC offScreenDesc_;
+	D3D12_CLEAR_VALUE offscreenClearValue_;
 	D3D12_CPU_DESCRIPTOR_HANDLE offScreenRtvHandle_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;

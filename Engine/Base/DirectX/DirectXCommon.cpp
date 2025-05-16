@@ -137,6 +137,12 @@ void DirectXCommon::InitializeBackGround(float red, float green, float blue, flo
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { red,green,blue,alpha };
 	commandList_.Get()->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
+	float offScreenClearColor[4]{};
+	offScreenClearColor[0] = 0.1f;
+	offScreenClearColor[1] = 0.25f;
+	offScreenClearColor[2] = 0.5f;
+	offScreenClearColor[3] = 1.0f;
+	//commandList_.Get()->ClearRenderTargetView(offScreenRtvHandle_, offScreenClearColor, 0, nullptr);
 }
 
 ID3D12Device* DirectXCommon::GetDevice() {
@@ -389,7 +395,14 @@ void DirectXCommon::InitializeOffScreenResource() {
 	offScreenDesc_.MipLevels = 1;       // 通常は1
 	offScreenDesc_.SampleDesc.Count = 1;
 	offScreenDesc_.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // レンダーターゲットとして使用
-	
+
+	offscreenClearValue_ = {};
+	offscreenClearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	offscreenClearValue_.Color[0] = 0.1f;
+	offscreenClearValue_.Color[1] = 0.25f;
+	offscreenClearValue_.Color[2] = 0.5f;
+	offscreenClearValue_.Color[3] = 1.0f;
+
 	D3D12_HEAP_PROPERTIES defaultHeapProperties{};
 	defaultHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
 	HRESULT hr = device_->CreateCommittedResource(
@@ -397,7 +410,7 @@ void DirectXCommon::InitializeOffScreenResource() {
 		D3D12_HEAP_FLAG_NONE,
 		&offScreenDesc_,
 		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // 初期状態
-		nullptr,
+		&offscreenClearValue_,
 		IID_PPV_ARGS(&offScreenResource_));
 	hr;
 	assert(SUCCEEDED(hr));

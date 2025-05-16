@@ -28,6 +28,11 @@ public:
 public:
 	void DrawSprite(const Transform& transform, int32_t textureHandle,Camera* camera);
 	void DrawSprite(const Transform& transform, const Transform& uvTransform, int32_t textureHandle, Camera* camera);
+	void DrawSprite(const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle);
+	void DrawSprite(const Transform& transform, const Transform& uvTransform, const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle, Camera* camera);
+
+public:
+	Transform transform_;
 
 public:
 	MaterialResource material_;
