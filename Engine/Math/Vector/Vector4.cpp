@@ -20,3 +20,12 @@ Vector4 Vector4::Normalize() const {
 
 	return result;
 }
+
+Vector4 Vector4::Leap(const Vector4& v1, const Vector4& v2, float t) {
+	Vector4 result{};
+	result.x = v1.x * (1.0f - t) + v2.x * t;
+	result.y = v1.y * (1.0f - t) + v2.y * t;
+	result.z = v1.z * (1.0f - t) + v2.z * t;
+	result.w = v1.w * (1.0f - t) + v2.w * t;
+	return result;
+}

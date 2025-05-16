@@ -36,5 +36,8 @@ public:
 	/// </summary>
 	/// <returns>正規化された4次元ベクトル</returns>
 	[[nodiscard]] Vector4 Normalize() const;
+
+public:
+	[[nodiscard]] static Vector4 Leap(const Vector4& v1, const Vector4& v2, float t);
 };
 

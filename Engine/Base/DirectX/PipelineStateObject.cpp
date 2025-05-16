@@ -5,7 +5,7 @@
 #include <cassert>
 #include <d3d12.h>
 
-void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode) {
+void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode, const std::string& psFilepath) {
 	dxCommon_ = dxCommon;
 	winApp_ = winApp;
 	depthStencil_ = depthStencil;
@@ -100,7 +100,7 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, De
 	shaderCompiler_.InitializeDXC();
 	IDxcBlob* vertexShaderBlob = shaderCompiler_.CompileShader(L"Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
-	IDxcBlob* pixelShaderBlob = shaderCompiler_.CompileShader(L"Object3d.PS.hlsl", L"ps_6_0");
+	IDxcBlob* pixelShaderBlob = shaderCompiler_.CompileShader(ConvertString(psFilepath), L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	// DepthStencilState
