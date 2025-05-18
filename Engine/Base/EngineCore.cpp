@@ -28,6 +28,8 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	// テクスチャマネージャの初期化
 	textureManager_.Initialize(&dxCommon_, &imGuiManager_);
 	graphicsCommon_.Initialize(&dxCommon_, &winApp_);
+	// fps監視機能初期化
+	fpsCounter_.Initialize();
 
 	// 音声機能の初期化
 	audioManager_.Initialize();
@@ -51,6 +53,8 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 }
 
 void EngineCore::Update() {
+	imGuiManager_.BeginFrame();
+	fpsCounter_.Update();
 	inputManager_.Update();
 }
 
@@ -71,7 +75,7 @@ void EngineCore::PreDraw() {
 	dxCommon_.GetCommandList()->ResourceBarrier(1, &barrier);
 
 	dxCommon_.PreDraw();
-	imGuiManager_.BeginFrame();
+	
 	textureManager_.PreDraw();
 
 	// 深度の設定
@@ -144,4 +148,15 @@ DirectInputManager* EngineCore::GetInputManager() {
 
 Sprite* EngineCore::GetOffscreen() {
 	return &offscreen_;
+}
+
+FramePerSecond* EngineCore::GetFpsCounter() {
+	return &fpsCounter_;
+}
+
+float EngineCore::GetDeltaTime() {
+	if (fpsCounter_.GetFps() != 0.0f) {
+		return 1.0f / fpsCounter_.GetFps();
+	}
+	return 0.0f;
 }

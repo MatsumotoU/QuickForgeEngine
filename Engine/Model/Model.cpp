@@ -1,19 +1,20 @@
 #include "Model.h"
 #include "ModelManager.h"
+#include "../Base/EngineCore.h"
 #include "../Base/DirectX/DirectXCommon.h"
 #include "../Base/DirectX/TextureManager.h"
 #include "../Base/DirectX/DepthStencil.h"
 #include "../Base/DirectX/PipelineStateObject.h"
 #include "../Camera/Camera.h"
 
-void Model::Initialize(DirectXCommon* dxCommon, TextureManager* textureManager, PipelineStateObject* pso) {
-	dxCommon_ = dxCommon;
-	textureManager_ = textureManager;
-	pso_ = pso;
+void Model::Initialize(EngineCore* engineCore) {
+	dxCommon_ = engineCore->GetDirectXCommon();
+	textureManager_ = engineCore->GetTextureManager();
+	pso_ = engineCore->GetGraphicsCommon()->GetTrianglePso();
 
-	material_.Initialize(dxCommon);
-	wvp_.Initialize(dxCommon);
-	directionalLight_.Initialize(dxCommon);
+	material_.Initialize(dxCommon_);
+	wvp_.Initialize(dxCommon_);
+	directionalLight_.Initialize(dxCommon_);
 }
 
 void Model::LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem) {
