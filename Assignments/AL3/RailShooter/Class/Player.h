@@ -16,6 +16,8 @@ public:
 public:
 	bool GetIsActive();
 	bool GetIsShot();
+	Matrix4x4 GetWorldMatrix();
+	Matrix4x4 GetRotateMatrix();
 
 public:
 	void SetIsActive(bool isActive);
