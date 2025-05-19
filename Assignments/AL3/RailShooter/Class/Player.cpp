@@ -53,6 +53,13 @@ void Player::Update() {
 	if (shotCooldown_ > 0.0f) {
 		shotCooldown_--;
 	}
+
+	if (input->keyboard_.GetPress(DIK_D)) {
+		transform_.rotate.y += 0.05f;
+	}
+	if (input->keyboard_.GetPress(DIK_A)) {
+		transform_.rotate.y -= 0.05f;
+	}
 }
 
 void Player::Draw(Camera* camera) {
@@ -74,6 +81,14 @@ bool Player::GetIsActive() {
 
 bool Player::GetIsShot() {
 	return isShot_;
+}
+
+Matrix4x4 Player::GetWorldMatrix() {
+	return Matrix4x4::MakeAffineMatrix(transform_.scale,transform_.rotate,transform_.translate);
+}
+
+Matrix4x4 Player::GetRotateMatrix() {
+	return Matrix4x4::MakeRotateXYZMatrix(transform_.rotate);
 }
 
 void Player::SetIsActive(bool isActive) {

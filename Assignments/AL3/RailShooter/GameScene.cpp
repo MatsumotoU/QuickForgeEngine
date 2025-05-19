@@ -52,7 +52,7 @@ void GameScene::Update() {
 	if (player_.GetIsShot()) {
 		for (int i = 0; i < kBullets; i++) {
 			if (!bullets[i].GetIsActive()) {
-				bullets[i].ShotBullet(player_.transform_.translate, { 0.0f,0.0f,10.0f }, 120);
+				bullets[i].ShotBullet(player_.transform_.translate, Vector3::Transform({ 0.0f,0.0f,10.0f },player_.GetRotateMatrix()) , 120);
 				break;
 			}
 		}
