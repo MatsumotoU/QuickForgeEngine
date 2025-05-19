@@ -15,9 +15,11 @@ public:
 
 public:
 	bool GetIsActive();
+	bool GetIsShot();
 
 public:
 	void SetIsActive(bool isActive);
+	void SetIsShot(bool isShot);
 
 public:
 	Vector3 velocity_;
@@ -26,6 +28,7 @@ public:
 
 private:
 	bool isActive_;
+	bool isShot_;
 
 private:
 	Model model_;

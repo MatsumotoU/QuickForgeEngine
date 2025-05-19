@@ -149,6 +149,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Object3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Bulllet.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp" />
@@ -206,6 +207,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Bulllet.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h" />
