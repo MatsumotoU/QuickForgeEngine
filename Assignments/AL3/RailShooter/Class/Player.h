@@ -31,6 +31,10 @@ private:
 	bool isShot_;
 
 private:
+	float shotCooldown_;
+	float maxShotCooldown_;
+
+private:
 	Model model_;
 	EngineCore* engineCore_;
 };

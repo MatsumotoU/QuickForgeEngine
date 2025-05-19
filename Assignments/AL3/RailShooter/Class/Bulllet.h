@@ -10,6 +10,9 @@ public:
 public:
 	void ShotBullet(Vector3 position, Vector3 velocity, uint32_t aliveTime);
 
+public:
+	bool GetIsActive();
+
 private:
 	bool isActive_;
 	uint32_t aliveTime_;
