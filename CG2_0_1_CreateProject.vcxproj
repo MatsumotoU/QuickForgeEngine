@@ -160,6 +160,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Assignments\AL3\2DAction\Class\SkyDome.cpp" />
     <ClCompile Include="Assignments\AL3\2DAction\SceneManager.cpp" />
     <ClCompile Include="Assignments\AL3\2DAction\TitleScene.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\GameScene.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\SceneManager.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\TitleScene.cpp" />
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
@@ -223,6 +229,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Assignments\AL3\2DAction\GameScene.h" />
     <ClInclude Include="Assignments\AL3\2DAction\Class\SkyDome.h" />
     <ClInclude Include="Assignments\AL3\2DAction\TitleScene.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\GameScene.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\IScene.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\SceneManager.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\TitleScene.h" />
     <ClInclude Include="Engine\Audio\Audio3D.h" />
     <ClInclude Include="Engine\Audio\AudioEmitter.h" />
     <ClInclude Include="Engine\Audio\AudioListener.h" />
