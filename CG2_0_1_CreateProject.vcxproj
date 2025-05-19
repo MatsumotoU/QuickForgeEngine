@@ -149,17 +149,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Object3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Assignments\AL3\2DAction\Class\Block.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\CameraContoroller.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\DeathParticle.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\Enemy.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\Fade.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\MapChip.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\Player.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\GameScene.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\SkyDome.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\SceneManager.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\TitleScene.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp" />
@@ -217,18 +206,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Assignments\AL3\2DAction\Class\Block.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\CameraContoroller.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\DeathParticle.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\Enemy.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\Fade.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\MapChip.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\Player.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\IScene.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\SceneManager.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\GameScene.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\SkyDome.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\TitleScene.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h" />

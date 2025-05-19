@@ -12,6 +12,13 @@ public:
 	void Initialize(WinApp* winApp, const HINSTANCE& hInstance);
 	void Update();
 
+public:
+	/// <summary>
+	/// ゲームでありがちな移動操作の方向を返します
+	/// </summary>
+	/// <returns></returns>
+	Vector2 GetKeyMoveDir();
+
 private:// DirectInputのコア
 	HINSTANCE hInstance_;
 	WinApp* winApp_;
