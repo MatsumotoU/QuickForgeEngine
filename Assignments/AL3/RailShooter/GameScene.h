@@ -5,6 +5,8 @@
 #include "Class/Bulllet.h"
 #include "IScene.h"
 
+static inline const uint32_t kBullets = 32;
+
 class GameScene : public IScene{
 public:
 	GameScene(EngineCore* engineCore);
@@ -31,5 +33,5 @@ private:
 private:
 	SkyDome skyDome_;
 	Player player_;
-	Bullet bullet_;
+	Bullet bullets[kBullets];
 };

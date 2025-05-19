@@ -23,7 +23,9 @@ void GameScene::Initialize() {
 	camera_.transform_.translate.z = -20.0f;
 	debugCamera_.camera_.transform_.translate.z = -20.0f;
 	player_.Initialize(engineCore_);
-	bullet_.Initialize(engineCore_);
+	for (int i = 0; i < kBullets; i++) {
+		bullets[i].Initialize(engineCore_);
+	}
 }
 
 void GameScene::Update() {
@@ -39,11 +41,21 @@ void GameScene::Update() {
 	}
 #endif // _DEBUG
 
-	bullet_.Update();
+	for (int i = 0; i < kBullets; i++) {
+		if (bullets[i].GetIsActive()) {
+			bullets[i].Update();
+		}
+	}
+	
 	player_.Update();
 
 	if (player_.GetIsShot()) {
-		bullet_.ShotBullet(player_.transform_.translate, { 0.0f,0.0f,10.0f }, 120);
+		for (int i = 0; i < kBullets; i++) {
+			if (!bullets[i].GetIsActive()) {
+				bullets[i].ShotBullet(player_.transform_.translate, { 0.0f,0.0f,10.0f }, 120);
+				break;
+			}
+		}
 		player_.SetIsShot(false);
 	}
 }
@@ -55,7 +67,12 @@ void GameScene::Draw() {
 
 	skyDome_.Draw(&camera_);
 	player_.Draw(&camera_);
-	bullet_.Draw(&camera_);
+	for (int i = 0; i < kBullets; i++) {
+		if (bullets[i].GetIsActive()) {
+			bullets[i].Draw(&camera_);
+		}
+	}
+	
 }
 
 IScene* GameScene::GetNextScene() {

@@ -9,6 +9,9 @@ void Player::Initialize(EngineCore* engineCore) {
 
 	moveSpeed_ = 50.0f;
 
+	maxShotCooldown_ = 15.0f;
+	shotCooldown_ = 0.0f;
+
 	isActive_ = true;
 }
 
@@ -37,10 +40,18 @@ void Player::Update() {
 	transform_.translate.x = std::clamp(transform_.translate.x, -kLimitMoveWidh, kLimitMoveWidh);
 	transform_.translate.y = std::clamp(transform_.translate.y, -kLimitMoveHeight, kLimitMoveHeight);
 
-	if (input->keyboard_.GetTrigger(DIK_SPACE)) {
-		if (!isShot_) {
-			isShot_ = true;
+	if (input->keyboard_.GetPress(DIK_SPACE)) {
+		if (shotCooldown_ <= 0.0f) {
+			if (!isShot_) {
+				isShot_ = true;
+				shotCooldown_ = maxShotCooldown_;
+			}
 		}
+		
+	}
+
+	if (shotCooldown_ > 0.0f) {
+		shotCooldown_--;
 	}
 }
 

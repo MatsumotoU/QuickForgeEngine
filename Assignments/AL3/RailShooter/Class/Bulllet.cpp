@@ -41,3 +41,7 @@ void Bullet::ShotBullet(Vector3 position, Vector3 velocity, uint32_t aliveTime) 
 	maxAliveTime_ = aliveTime;
 	isActive_ = true;
 }
+
+bool Bullet::GetIsActive() {
+	return isActive_;
+}
