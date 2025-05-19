@@ -11,6 +11,8 @@
 #include "Windows/WinApp.h"
 #include "DirectX/DirectXCommon.h"
 #include "DirectX/ImGuiManager.h"
+// Fps管理
+#include "DirectX/FramePerSecond.h"
 // 描画機能
 #include "DirectX/TextureManager.h"
 #include "DirectX/GraphicsCommon.h"
@@ -57,7 +59,7 @@ public:
 	void PreDraw();
 	void PostDraw();
 
-public:
+public:// エンジンの機能取得
 	WinApp* GetWinApp();
 	DirectXCommon* GetDirectXCommon();
 	ImGuiManager* GetImGuiManager();
@@ -67,12 +69,20 @@ public:
 	Audio3D* GetAudio3D();
 	DirectInputManager* GetInputManager();
 	Sprite* GetOffscreen();
+	FramePerSecond* GetFpsCounter();
+
+public:
+	 float GetDeltaTime();
 
 private:// コア機能
 	WinApp winApp_;
 	MSG* msg_;
 	DirectXCommon dxCommon_;
 	ImGuiManager imGuiManager_;
+
+private:// 時間管理
+	FramePerSecond fpsCounter_;
+	float deltaTime_;
 
 private:// 描画機能
 	TextureManager textureManager_;

@@ -28,21 +28,21 @@ void DirectInputKeyboard::Update() {
 	keyboard_->GetDeviceState(sizeof(key_), key_);
 }
 
-bool DirectInputKeyboard::GetPress(int8_t DIK) {
+bool DirectInputKeyboard::GetPress(uint32_t DIK) {
 	if (key_[DIK]) {
 		return true;
 	}
 	return false;
 }
 
-bool DirectInputKeyboard::GetTrigger(int8_t DIK) {
+bool DirectInputKeyboard::GetTrigger(uint32_t DIK) {
 	if (key_[DIK] && !prekey_[DIK]) {
 		return true;
 	}
 	return false;
 }
 
-bool DirectInputKeyboard::GetRelease(int8_t DIK) {
+bool DirectInputKeyboard::GetRelease(uint32_t DIK) {
 	if (!key_[DIK] && prekey_[DIK]) {
 		return true;
 	}

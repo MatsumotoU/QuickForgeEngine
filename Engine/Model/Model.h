@@ -8,6 +8,7 @@
 #include "../Base/DirectX/WVPResource.h"
 #include "../Base/DirectX/DirectionalLightResource.h"
 
+class EngineCore;
 class DirectXCommon;
 class TextureManager;
 class PipelineStateObject;
@@ -15,7 +16,7 @@ class Camera;
 
 class Model {
 public:
-	void Initialize(DirectXCommon* dxCommon, TextureManager* textureManager, PipelineStateObject* pso);
+	void Initialize(EngineCore* engineCore);
 	/// <summary>
 	/// モデルを読み込みます
 	/// </summary>

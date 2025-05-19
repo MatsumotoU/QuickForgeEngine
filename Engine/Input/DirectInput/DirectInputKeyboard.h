@@ -23,19 +23,19 @@ public:// キー管理関数
 	/// </summary>
 	/// <param name="DIK">DIK_Key</param>
 	/// <returns></returns>
-	bool GetPress(int8_t DIK);
+	bool GetPress(uint32_t DIK);
 	/// <summary>
 	/// 任意のキーを押したか
 	/// </summary>
 	/// <param name="DIK">DIK_Key</param>
 	/// <returns></returns>
-	bool GetTrigger(int8_t DIK);
+	bool GetTrigger(uint32_t DIK);
 	/// <summary>
 	/// 任意のキーを離したか
 	/// </summary>
 	/// <param name="DIK">DIK_Key</param>
 	/// <returns></returns>
-	bool GetRelease(int8_t DIK);
+	bool GetRelease(uint32_t DIK);
 
 public:// キーボード操作変数
 	BYTE key_[256];
