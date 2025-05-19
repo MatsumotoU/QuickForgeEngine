@@ -2,6 +2,7 @@
 #include "../../../Engine/Base/EngineCore.h"
 #include "Class/SkyDome.h"
 #include "Class/Player.h"
+#include "Class/Bulllet.h"
 #include "IScene.h"
 
 class GameScene : public IScene{
@@ -30,4 +31,5 @@ private:
 private:
 	SkyDome skyDome_;
 	Player player_;
+	Bullet bullet_;
 };

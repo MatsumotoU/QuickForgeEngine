@@ -36,6 +36,12 @@ void Player::Update() {
 
 	transform_.translate.x = std::clamp(transform_.translate.x, -kLimitMoveWidh, kLimitMoveWidh);
 	transform_.translate.y = std::clamp(transform_.translate.y, -kLimitMoveHeight, kLimitMoveHeight);
+
+	if (input->keyboard_.GetTrigger(DIK_SPACE)) {
+		if (!isShot_) {
+			isShot_ = true;
+		}
+	}
 }
 
 void Player::Draw(Camera* camera) {
@@ -55,6 +61,14 @@ bool Player::GetIsActive() {
 	return isActive_;
 }
 
+bool Player::GetIsShot() {
+	return isShot_;
+}
+
 void Player::SetIsActive(bool isActive) {
 	isActive_ = isActive;
+}
+
+void Player::SetIsShot(bool isShot) {
+	isShot_ = isShot;
 }
