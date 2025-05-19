@@ -14,16 +14,41 @@ GameScene::~GameScene() {
 void GameScene::Initialize() {
 	skyDome_.Initialize(engineCore_);
 	camera_.Initialize(engineCore_->GetWinApp());
-	debugCamera_.Initialize(engineCore_->GetWinApp(), engineCore_->GetInputManager());
+#ifdef _DEBUG
+	debugCamera_.Initialize(engineCore_->GetWinApp(), input_);
+#endif // _DEBUG
 	isRequestedExit_ = false;
+	isActiveDebugCamera_ = false;
+
+	camera_.transform_.translate.z = -20.0f;
+	debugCamera_.camera_.transform_.translate.z = -20.0f;
+	player_.Initialize(engineCore_);
 }
 
 void GameScene::Update() {
-	debugCamera_.Update();
+	camera_.Update();
+#ifdef _DEBUG
+	if (input_->keyboard_.GetTrigger(DIK_P)) {
+		isActiveDebugCamera_ = !isActiveDebugCamera_;
+	}
+	
+	if (isActiveDebugCamera_) {
+		debugCamera_.Update();
+		camera_ = debugCamera_.camera_;
+	}
+#endif // _DEBUG
+
+	
+	player_.Update();
 }
 
 void GameScene::Draw() {
+	ImGui::Begin("GameScene");
+	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
+	ImGui::End();
+
 	skyDome_.Draw(&camera_);
+	player_.Draw(&camera_);
 }
 
 IScene* GameScene::GetNextScene() {

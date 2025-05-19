@@ -20,3 +20,29 @@ void DirectInputManager::Update() {
 	keyboard_.Update();
 	mouse_.Update();
 }
+
+Vector2 DirectInputManager::GetKeyMoveDir() {
+	Vector2 result{};
+
+	if (keyboard_.GetPress(DIK_RIGHT)) {
+		result.x += 1.0f;
+	}
+	if (keyboard_.GetPress(DIK_LEFT)) {
+		result.x -= 1.0f;
+	}
+	if (keyboard_.GetPress(DIK_UP)) {
+		result.y += 1.0f;
+	}
+	if (keyboard_.GetPress(DIK_DOWN)) {
+		result.y -= 1.0f;
+	}
+
+	if (!keyboard_.GetPress(DIK_RIGHT) && !keyboard_.GetPress(DIK_LEFT)) {
+		result.x += 0.0f;
+	}
+	if (!keyboard_.GetPress(DIK_UP) && !keyboard_.GetPress(DIK_DOWN)) {
+		result.y += 0.0f;
+	}
+
+	return result.Normalize();
+}

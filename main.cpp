@@ -8,7 +8,7 @@
 #include "Engine/Base/EngineCore.h"
 
 // 読み込む課題のシーン指定
-#include "Assignments/AL3/2DAction/SceneManager.h"
+#include "Assignments/AL3/RailShooter/SceneManager.h"
 
 // windowsアプリでのエントリーポイント(main関数) 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
