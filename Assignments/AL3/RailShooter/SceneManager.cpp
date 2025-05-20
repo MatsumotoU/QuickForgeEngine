@@ -46,5 +46,17 @@ void SceneManager::Draw() {
 	ImGui::Begin("FPS");
 	ImGui::Text("fps = %f", engineCore_->GetFpsCounter()->GetFps());
 	ImGui::Text("averageFps = %f", engineCore_->GetFpsCounter()->GetAverageFps());
+	
+	if (ImPlot::BeginPlot("Fps Plots")) {
+		float x[64];
+		for (float i = 0.0f; i < engineCore_->GetFpsCounter()->GetFpsSamplerNum(); i++) {
+			x[static_cast<int>(i)] = i;
+		}
+
+		ImPlot::SetupAxes("x", "y");
+		ImPlot::PlotLine("f(x)", x, engineCore_->GetFpsCounter()->GetFpsSample(), engineCore_->GetFpsCounter()->GetFpsSamplerNum());
+		ImPlot::EndPlot();
+	}
+
 	ImGui::End();
 }

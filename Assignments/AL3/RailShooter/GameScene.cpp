@@ -63,6 +63,7 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	ImGui::Begin("GameScene");
 	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
+	ImGui::Toggle("isActiveDebugCamera", &isActiveDebugCamera_);
 	ImGui::End();
 
 	skyDome_.Draw(&camera_);
