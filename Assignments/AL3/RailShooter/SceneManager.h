@@ -16,4 +16,7 @@ private:
 	IScene* scene;
 	EngineCore* engineCore_;
 	Fade fade_;
+
+private:
+	float value_;
 };
