@@ -202,7 +202,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
+    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle.cpp" />
+    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_palette.cpp" />
+    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_presets.cpp" />
+    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_renderer.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="externals\imgui\implot-master\implot.cpp" />
+    <ClCompile Include="externals\imgui\implot-master\implot_items.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
@@ -277,6 +283,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
     <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
     <ClInclude Include="externals\imgui\imgui_internal.h" />
+    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_offset_rect.h" />
+    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle.h" />
+    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_math.h" />
+    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_palette.h" />
+    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_presets.h" />
+    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_renderer.h" />
+    <ClInclude Include="externals\imgui\implot-master\implot.h" />
+    <ClInclude Include="externals\imgui\implot-master\implot_internal.h" />
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />

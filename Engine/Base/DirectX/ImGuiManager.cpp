@@ -44,9 +44,16 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 		srvDescriptorHeap_.Get(),
 		srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart());
+
+	// ImPlotの初期化
+	ImPlot::CreateContext();
 }
 
 void ImGuiManager::EndImGui() {
+	// ImPilotの終了処理
+	ImPlot::DestroyContext();
+
+	// ImGuiの終了処理
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
