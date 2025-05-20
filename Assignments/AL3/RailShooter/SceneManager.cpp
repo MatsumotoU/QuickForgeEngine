@@ -58,5 +58,7 @@ void SceneManager::Draw() {
 		ImPlot::EndPlot();
 	}
 
+	ImGuiKnobs::Knob("Volume", &value_, -6.0f, 6.0f, 0.1f, "%.1fdB", ImGuiKnobVariant_Tick);
+
 	ImGui::End();
 }
