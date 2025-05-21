@@ -3,6 +3,7 @@
 #include "Class/SkyDome.h"
 #include "Class/Player.h"
 #include "Class/Bulllet.h"
+#include "Class/Enemy.h"
 #include "IScene.h"
 
 static inline const uint32_t kBullets = 32;
@@ -34,4 +35,5 @@ private:
 	SkyDome skyDome_;
 	Player player_;
 	Bullet bullets[kBullets];
+	Enemy enemy_;
 };
