@@ -7,6 +7,7 @@
 #include "IScene.h"
 
 static inline const uint32_t kBullets = 32;
+static inline const uint32_t kEnemies = 32;
 
 class GameScene : public IScene{
 public:
@@ -35,5 +36,5 @@ private:
 	SkyDome skyDome_;
 	Player player_;
 	Bullet bullets[kBullets];
-	Enemy enemy_;
+	Enemy enemies[kEnemies];
 };

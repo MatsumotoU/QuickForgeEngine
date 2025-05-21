@@ -1,7 +1,12 @@
 #pragma once
 #include "../../../../Engine/Base/EngineCore.h"
 
-static inline const float kZLimit = 50.0f;
+static inline const float kXLimit = 20.0f;
+
+enum class Phase {
+	Approach,
+	Leave,
+};
 
 class Enemy {
 public:
@@ -19,6 +24,8 @@ private:
 	bool isActive_;
 	Vector3 velocity_;
 	Transform transform_;
+	Phase phase_;
+	float leaveSpeed_;
 
 private:
 	EngineCore* engineCore_;

@@ -25,9 +25,15 @@ void GameScene::Initialize() {
 	for (int i = 0; i < kBullets; i++) {
 		bullets[i].Initialize(engineCore_);
 	}
-	enemy_.Initialize(engineCore_);
 
-	enemy_.Spawn({ 0.0f,0.0f,30.0f }, { 0.0f,0.0f,-5.0f });
+	for (int i = 0; i < kEnemies; i++) {
+		enemies[i].Initialize(engineCore_);
+	}
+	
+
+	enemies[0].Spawn({ 0.0f,0.0f,30.0f }, { 0.0f,0.0f,-2.0f });
+	enemies[1].Spawn({ 1.5f,0.5f,30.0f }, { 0.0f,0.0f,-2.0f });
+	enemies[2].Spawn({ -0.5f,-0.5f,30.0f }, { 0.0f,0.0f,-2.0f });
 }
 
 void GameScene::Update() {
@@ -61,7 +67,9 @@ void GameScene::Update() {
 		player_.SetIsShot(false);
 	}
 
-	enemy_.Update();
+	for (int i = 0; i < kEnemies; i++) {
+		enemies[i].Update();
+	}
 }
 
 void GameScene::Draw() {
@@ -77,7 +85,9 @@ void GameScene::Draw() {
 			bullets[i].Draw(&camera_);
 		}
 	}
-	enemy_.Draw(&camera_);
+	for (int i = 0; i < kEnemies; i++) {
+		enemies[i].Draw(&camera_);
+	}
 }
 
 IScene* GameScene::GetNextScene() {

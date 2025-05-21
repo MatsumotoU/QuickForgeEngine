@@ -10,6 +10,8 @@ void Enemy::Initialize(EngineCore* engineCore) {
 
 	transform_.rotate.x = 3.14f * 0.5f;
 	transform_.rotate.y = 3.14f;
+	leaveSpeed_ = 3.0f;
+	phase_ = Phase::Approach;
 }
 
 void Enemy::Update() {
@@ -17,8 +19,29 @@ void Enemy::Update() {
 		return;
 	}
 
-	transform_.translate += velocity_ * engineCore_->GetDeltaTime();
-	if (transform_.translate.z <= -kZLimit) {
+	switch (phase_)
+	{
+	case Phase::Approach:
+		transform_.translate += velocity_ * engineCore_->GetDeltaTime();
+		if (transform_.translate.z <= 0.0f) {
+			phase_ = Phase::Leave;
+		}
+		break;
+
+	case Phase::Leave:
+		if (transform_.translate.Normalize().x == 0.0f) {
+			transform_.translate.x += leaveSpeed_ * engineCore_->GetDeltaTime();
+		} else {
+			transform_.translate.x += transform_.translate.Normalize().x * engineCore_->GetDeltaTime()* leaveSpeed_;
+		}
+		
+		break;
+	default:
+		break;
+	}
+
+	
+	if (fabsf(transform_.translate.x) >= kXLimit) {
 		isActive_ = false;
 	}
 }
