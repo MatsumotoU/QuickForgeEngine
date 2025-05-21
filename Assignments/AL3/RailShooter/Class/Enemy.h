@@ -15,10 +15,17 @@ public:
 	void Draw(Camera* camera);
 
 public:
+	void Approch();
+	void Leave();
+
+public:
 	void Spawn(Vector3 position, Vector3 velocity);
 
 public:
 	bool GetIsActive();
+
+private:
+	static void (Enemy::*spFuncTable[])();
 
 private:
 	bool isActive_;
