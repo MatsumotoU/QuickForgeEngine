@@ -1,4 +1,9 @@
 #include "Enemy.h"
+// 関数テーブル定義
+void (Enemy::* Enemy::spFuncTable[])() = {
+	&Enemy::Approch,
+	&Enemy::Leave
+};
 
 void Enemy::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
@@ -19,28 +24,9 @@ void Enemy::Update() {
 		return;
 	}
 
-	switch (phase_)
-	{
-	case Phase::Approach:
-		transform_.translate += velocity_ * engineCore_->GetDeltaTime();
-		if (transform_.translate.z <= 0.0f) {
-			phase_ = Phase::Leave;
-		}
-		break;
+	// 関数テーブル実行
+	(this->*spFuncTable[static_cast<size_t>(phase_)])();
 
-	case Phase::Leave:
-		if (transform_.translate.Normalize().x == 0.0f) {
-			transform_.translate.x += leaveSpeed_ * engineCore_->GetDeltaTime();
-		} else {
-			transform_.translate.x += transform_.translate.Normalize().x * engineCore_->GetDeltaTime()* leaveSpeed_;
-		}
-		
-		break;
-	default:
-		break;
-	}
-
-	
 	if (fabsf(transform_.translate.x) >= kXLimit) {
 		isActive_ = false;
 	}
@@ -52,6 +38,21 @@ void Enemy::Draw(Camera* camera) {
 	}
 
 	model_.Draw(transform_, camera);
+}
+
+void Enemy::Approch() {
+	transform_.translate += velocity_ * engineCore_->GetDeltaTime();
+	if (transform_.translate.z <= 0.0f) {
+		phase_ = Phase::Leave;
+	}
+}
+
+void Enemy::Leave() {
+	if (transform_.translate.Normalize().x == 0.0f) {
+		transform_.translate.x += leaveSpeed_ * engineCore_->GetDeltaTime();
+	} else {
+		transform_.translate.x += transform_.translate.Normalize().x * engineCore_->GetDeltaTime() * leaveSpeed_;
+	}
 }
 
 void Enemy::Spawn(Vector3 position, Vector3 velocity) {
