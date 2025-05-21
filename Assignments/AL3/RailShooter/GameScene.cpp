@@ -19,13 +19,15 @@ void GameScene::Initialize() {
 #endif // _DEBUG
 	isRequestedExit_ = false;
 	isActiveDebugCamera_ = false;
-
 	camera_.transform_.translate.z = -20.0f;
 	debugCamera_.camera_.transform_.translate.z = -20.0f;
 	player_.Initialize(engineCore_);
 	for (int i = 0; i < kBullets; i++) {
 		bullets[i].Initialize(engineCore_);
 	}
+	enemy_.Initialize(engineCore_);
+
+	enemy_.Spawn({ 0.0f,0.0f,30.0f }, { 0.0f,0.0f,-5.0f });
 }
 
 void GameScene::Update() {
@@ -58,6 +60,8 @@ void GameScene::Update() {
 		}
 		player_.SetIsShot(false);
 	}
+
+	enemy_.Update();
 }
 
 void GameScene::Draw() {
@@ -73,7 +77,7 @@ void GameScene::Draw() {
 			bullets[i].Draw(&camera_);
 		}
 	}
-	
+	enemy_.Draw(&camera_);
 }
 
 IScene* GameScene::GetNextScene() {
