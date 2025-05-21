@@ -20,7 +20,9 @@ void AudioManager::Initialize() {
 	hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(hr));
 	// チャンネルを自動で選択します
-	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_);
+	/*hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_);
+	assert(SUCCEEDED(hr));*/
+	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_,2);
 	assert(SUCCEEDED(hr));
 	
 #ifdef _DEBUG
