@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../../Engine/Base/EngineCore.h"
+#include "BaseEnemyState.h"
 
 static inline const float kXLimit = 20.0f;
 
@@ -15,6 +16,9 @@ public:
 	void Draw(Camera* camera);
 
 public:
+	void ChangeState(std::unique_ptr<BaseEnemyState> state);
+
+public:
 	void Approch();
 	void Leave();
 
@@ -23,9 +27,11 @@ public:
 
 public:
 	bool GetIsActive();
+	Phase GetPhase();
 
 private:
-	static void (Enemy::*spFuncTable[])();
+	//static void (Enemy::*spFuncTable[])();
+	std::unique_ptr<BaseEnemyState> state_;
 
 private:
 	bool isActive_;

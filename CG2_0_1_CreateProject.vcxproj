@@ -151,6 +151,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Bulllet.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Enemy.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp" />
@@ -215,8 +217,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\BaseEnemyState.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Bulllet.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Enemy.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h" />
