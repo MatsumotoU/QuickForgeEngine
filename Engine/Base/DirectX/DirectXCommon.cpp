@@ -138,10 +138,10 @@ void DirectXCommon::InitializeBackGround(float red, float green, float blue, flo
 	float clearColor[] = { red,green,blue,alpha };
 	commandList_.Get()->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
 	float offScreenClearColor[4]{};
-	offScreenClearColor[0] = 0.1f;
-	offScreenClearColor[1] = 0.25f;
-	offScreenClearColor[2] = 0.5f;
-	offScreenClearColor[3] = 1.0f;
+	offScreenClearColor[0] = red;
+	offScreenClearColor[1] = green;
+	offScreenClearColor[2] = blue;
+	offScreenClearColor[3] = alpha;
 	commandList_.Get()->ClearRenderTargetView(offScreenRtvHandle_, offScreenClearColor, 0, nullptr);
 }
 

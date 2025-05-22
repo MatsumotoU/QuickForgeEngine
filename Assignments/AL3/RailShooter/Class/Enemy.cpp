@@ -1,9 +1,12 @@
 #include "Enemy.h"
+#include "EnemyStateAproach.h"
+#include "EnemyStateLeave.h"
+
 // 関数テーブル定義
-void (Enemy::* Enemy::spFuncTable[])() = {
-	&Enemy::Approch,
-	&Enemy::Leave
-};
+//void (Enemy::* Enemy::spFuncTable[])() = {
+//	&Enemy::Approch,
+//	&Enemy::Leave
+//};
 
 void Enemy::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
@@ -17,6 +20,8 @@ void Enemy::Initialize(EngineCore* engineCore) {
 	transform_.rotate.y = 3.14f;
 	leaveSpeed_ = 3.0f;
 	phase_ = Phase::Approach;
+
+	ChangeState(std::make_unique<EnemyStateLeave>(this));
 }
 
 void Enemy::Update() {
@@ -25,7 +30,8 @@ void Enemy::Update() {
 	}
 
 	// 関数テーブル実行
-	(this->*spFuncTable[static_cast<size_t>(phase_)])();
+	//(this->*spFuncTable[static_cast<size_t>(phase_)])();
+	state_.get()->Update();
 
 	if (fabsf(transform_.translate.x) >= kXLimit) {
 		isActive_ = false;
@@ -38,6 +44,10 @@ void Enemy::Draw(Camera* camera) {
 	}
 
 	model_.Draw(transform_, camera);
+}
+
+void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
+	state_ = std::move(state);
 }
 
 void Enemy::Approch() {
@@ -65,4 +75,8 @@ void Enemy::Spawn(Vector3 position, Vector3 velocity) {
 
 bool Enemy::GetIsActive() {
 	return isActive_;
+}
+
+Phase Enemy::GetPhase() {
+	return phase_;
 }
