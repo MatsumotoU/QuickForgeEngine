@@ -4,6 +4,8 @@
 #include "ModelData.h"
 #include "../Math/Transform.h"
 
+#include "../Base/DirectX/PipelineStateObject.h"
+
 #include "../Base/DirectX/MaterialResource.h"
 #include "../Base/DirectX/WVPResource.h"
 #include "../Base/DirectX/DirectionalLightResource.h"
@@ -11,7 +13,6 @@
 class EngineCore;
 class DirectXCommon;
 class TextureManager;
-class PipelineStateObject;
 class Camera;
 
 class Model {
@@ -27,11 +28,15 @@ public:
 	void Draw(const Transform& transform, Camera* camera);
 
 public:
+	void SetBlendmode(BlendMode mode);
+
+public:
 	MaterialResource material_;
 	DirectionalLightResource directionalLight_;
 	WVPResource wvp_;
 
 private:
+	EngineCore* engineCore_;
 	DirectXCommon* dxCommon_;
 	TextureManager* textureManager_;
 

@@ -41,7 +41,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	offscreen_.Initialize(
 		&dxCommon_, &textureManager_, &imGuiManager_,
 		static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight), 
-		graphicsCommon_.GetTrianglePso());
+		graphicsCommon_.GetTrianglePso(kBlendModeNone));
 	offscreen_.material_.materialData_->enableLighting = false;
 
 	/*offscreen_.Initialize(

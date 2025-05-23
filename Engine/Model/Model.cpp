@@ -4,13 +4,15 @@
 #include "../Base/DirectX/DirectXCommon.h"
 #include "../Base/DirectX/TextureManager.h"
 #include "../Base/DirectX/DepthStencil.h"
-#include "../Base/DirectX/PipelineStateObject.h"
+
 #include "../Camera/Camera.h"
 
 void Model::Initialize(EngineCore* engineCore) {
+	engineCore_ = engineCore;
+
 	dxCommon_ = engineCore->GetDirectXCommon();
 	textureManager_ = engineCore->GetTextureManager();
-	pso_ = engineCore->GetGraphicsCommon()->GetTrianglePso();
+	pso_ = engineCore->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal);
 
 	material_.Initialize(dxCommon_);
 	wvp_.Initialize(dxCommon_);
@@ -52,4 +54,8 @@ void Model::Draw(const Transform& transform, Camera* camera) {
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(modelTextureHandle_));
 	commandList->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), 1, 0, 0);
+}
+
+void Model::SetBlendmode(BlendMode mode) {
+	pso_ = engineCore_->GetGraphicsCommon()->GetTrianglePso(mode);
 }
