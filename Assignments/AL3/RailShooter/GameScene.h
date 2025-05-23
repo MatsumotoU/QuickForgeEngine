@@ -39,4 +39,7 @@ private:
 	Bullet playerBullets[kPlayerBullets];
 	Enemy enemies[kEnemies];
 	Bullet enemyBullets[kEnemyBullets];
+
+	Model fance_;
+	Transform transform_;
 };
