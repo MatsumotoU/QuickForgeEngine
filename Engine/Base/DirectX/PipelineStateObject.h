@@ -8,6 +8,23 @@ class DepthStencil;
 class DirectXCommon;
 class WinApp;
 
+enum BlendMode{
+	// ブレンドなし
+	kBlendModeNone,
+	// 通常
+	kBlendModeNormal,
+	// 加算
+	kBlendModeAdd,
+	// 減算
+	kBlendModeSubtract,
+	// 乗算
+	kBlendModeMultily,
+	// スクリーン
+	kBlendModeScreen,
+	// 利用禁止
+	kCountOfBlendMode,
+};
+
 class PipelineStateObject {
 public:
 	/// <summary>
@@ -15,7 +32,7 @@ public:
 	/// </summary>
 	void Initialize(
 		DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil,
-		const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode,const std::string& psFilename);
+		const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode,const std::string& psFilename,BlendMode blendMode);
 
 public:
 	ID3D12PipelineState* GetPipelineState();

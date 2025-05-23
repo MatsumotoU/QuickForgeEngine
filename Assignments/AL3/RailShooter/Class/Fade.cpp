@@ -6,7 +6,7 @@ void Fade::Initialize(EngineCore* engineCore) {
 		engineCore->GetTextureManager(),
 		engineCore->GetImGuiManager(),
 		1280, 720, 
-		engineCore->GetGraphicsCommon()->GetTrianglePso());
+		engineCore->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal));
 	uvCheckerTextureHandle_ = engineCore->GetTextureManager()->LoadTexture("Resources/uvChecker.png");
 
 	isFadeIn_ = true;

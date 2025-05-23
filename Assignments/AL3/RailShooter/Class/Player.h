@@ -39,4 +39,6 @@ private:
 private:
 	Model model_;
 	EngineCore* engineCore_;
+	BlendMode blendMode_;
+	int blendNum_;
 };

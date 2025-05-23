@@ -12,6 +12,8 @@ void Player::Initialize(EngineCore* engineCore) {
 	maxShotCooldown_ = 15.0f;
 	shotCooldown_ = 0.0f;
 
+	blendNum_ = 0;
+
 	isActive_ = true;
 }
 
@@ -73,6 +75,10 @@ void Player::Draw(Camera* camera) {
 	ImGui::DragFloat3("velocity", &velocity_.x);
 	ImGui::DragFloat3("acceleration", &acceleration_.x);
 	ImGui::DragFloat4("color", &model_.material_.materialData_->color.x,0.1f);
+	ImGui::DragInt("BlendMode", &blendNum_);
+	if (ImGui::Button("SetBlendMode")) {
+		model_.SetBlendmode(static_cast<BlendMode>(blendNum_));
+	}
 	ImGui::End();
 }
 

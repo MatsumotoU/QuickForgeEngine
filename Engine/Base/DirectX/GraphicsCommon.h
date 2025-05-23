@@ -8,12 +8,9 @@ public:
 	void Initialize(DirectXCommon* dxCommon, WinApp* winApp);
 
 public:
-	void ChangeFillMode(D3D12_FILL_MODE fillMode);
-
-public:
-	PipelineStateObject* GetTrianglePso() { return &trianglePso_; }
-	PipelineStateObject* GetLinePso() { return &linePso_; }
-	PipelineStateObject* GetPointPso() { return &pointPso_; }
+	PipelineStateObject* GetTrianglePso(BlendMode blendmode) { return &trianglePso_[static_cast<uint32_t>(blendmode)]; }
+	PipelineStateObject* GetLinePso(BlendMode blendmode) { return &linePso_[static_cast<uint32_t>(blendmode)]; }
+	PipelineStateObject* GetPointPso(BlendMode blendmode) { return &pointPso_[static_cast<uint32_t>(blendmode)]; }
 
 	PipelineStateObject* GetGrayScalePso() { return &grayScaleTrianglePso_; }
 
@@ -23,9 +20,9 @@ private: // メンバ変数
 	DepthStencil depthStencil_;
 
 	// PSO
-	PipelineStateObject trianglePso_;
-	PipelineStateObject linePso_;
-	PipelineStateObject pointPso_;
+	PipelineStateObject trianglePso_[kCountOfBlendMode];
+	PipelineStateObject linePso_[kCountOfBlendMode];
+	PipelineStateObject pointPso_[kCountOfBlendMode];
 
 	PipelineStateObject grayScaleTrianglePso_;
 };
