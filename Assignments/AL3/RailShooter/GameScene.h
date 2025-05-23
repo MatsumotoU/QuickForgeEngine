@@ -6,7 +6,8 @@
 #include "Class/Enemy.h"
 #include "IScene.h"
 
-static inline const uint32_t kBullets = 32;
+static inline const uint32_t kPlayerBullets = 32;
+static inline const uint32_t kEnemyBullets = 128;
 static inline const uint32_t kEnemies = 32;
 
 class GameScene : public IScene{
@@ -35,6 +36,7 @@ private:
 private:
 	SkyDome skyDome_;
 	Player player_;
-	Bullet bullets[kBullets];
+	Bullet playerBullets[kPlayerBullets];
 	Enemy enemies[kEnemies];
+	Bullet enemyBullets[kEnemyBullets];
 };

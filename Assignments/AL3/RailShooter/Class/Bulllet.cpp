@@ -31,7 +31,6 @@ void Bullet::Draw(Camera* camera) {
 	if (isActive_) {
 		model_.Draw(transform_, camera);
 	}
-
 }
 
 void Bullet::ShotBullet(Vector3 position, Vector3 velocity, uint32_t aliveTime) {
