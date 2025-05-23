@@ -2,12 +2,6 @@
 #include "EnemyStateAproach.h"
 #include "EnemyStateLeave.h"
 
-// 関数テーブル定義
-//void (Enemy::* Enemy::spFuncTable[])() = {
-//	&Enemy::Approch,
-//	&Enemy::Leave
-//};
-
 void Enemy::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	model_.Initialize(engineCore_);
@@ -21,7 +15,7 @@ void Enemy::Initialize(EngineCore* engineCore) {
 	leaveSpeed_ = 3.0f;
 	phase_ = Phase::Approach;
 
-	ChangeState(std::make_unique<EnemyStateLeave>(this));
+	ChangeState(std::make_unique<EnemyStateAproach>(this));
 }
 
 void Enemy::Update() {
@@ -29,8 +23,6 @@ void Enemy::Update() {
 		return;
 	}
 
-	// 関数テーブル実行
-	//(this->*spFuncTable[static_cast<size_t>(phase_)])();
 	state_.get()->Update();
 
 	if (fabsf(transform_.translate.x) >= kXLimit) {

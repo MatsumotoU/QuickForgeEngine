@@ -187,13 +187,34 @@
     <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Assignments\TR\GameScene.cpp">
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Bulllet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Assignments\TR\ListenerObj.cpp">
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Enemy.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Assignments\TR\SoundObj.cpp">
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Assignments\AL3\RailShooter\GameScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Assignments\AL3\RailShooter\SceneManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Assignments\AL3\RailShooter\TitleScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -420,13 +441,40 @@
     <ClInclude Include="externals\imgui\imgui-knobs-main\imgui-knobs.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Assignments\TR\GameScene.h">
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\BaseEnemyState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Assignments\TR\ListenerObj.h">
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Bulllet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Assignments\TR\SoundObj.h">
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\GameScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\IScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\SceneManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignments\AL3\RailShooter\TitleScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
