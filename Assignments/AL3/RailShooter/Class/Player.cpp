@@ -72,6 +72,7 @@ void Player::Draw(Camera* camera) {
 	ImGui::DragFloat3("translate", &transform_.translate.x);
 	ImGui::DragFloat3("velocity", &velocity_.x);
 	ImGui::DragFloat3("acceleration", &acceleration_.x);
+	ImGui::DragFloat4("color", &model_.material_.materialData_->color.x,0.1f);
 	ImGui::End();
 }
 
