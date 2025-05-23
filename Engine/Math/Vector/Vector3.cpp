@@ -1,5 +1,6 @@
 #include "Vector3.h"
 #include "../Matrix/Matrix4x4.h"
+#include "Vector2.h"
 #include <math.h>
 #include <assert.h>
 #include <algorithm>
@@ -111,6 +112,15 @@ Vector3 Vector3::Transform(const Vector3& vector, const Matrix4x4& matrix) {
         result.y = (vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + matrix.m[3][1]) / w;
         result.z = (vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + matrix.m[3][2]) / w;
     } 
+
+    return result;
+}
+
+Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPosition) {
+    Vector3 result{};
+    Vector2 xz = { eyePosition.x - targetPosition.x,eyePosition.z - targetPosition.z };
+
+    result.y = atan2f(xz.x, xz.y);
 
     return result;
 }
