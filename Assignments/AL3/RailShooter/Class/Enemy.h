@@ -3,6 +3,7 @@
 #include "BaseEnemyState.h"
 
 static inline const float kXLimit = 20.0f;
+static inline const uint32_t kMaxShotInterval = 30;
 
 enum class Phase {
 	Approach,
@@ -26,8 +27,16 @@ public:
 	void Spawn(Vector3 position, Vector3 velocity);
 
 public:
+	void SetIsShot(bool isShot);
+
+public:
 	bool GetIsActive();
 	Phase GetPhase();
+	bool GetIsShot();
+	Matrix4x4 GetRotateMatrix();
+
+public:
+	Transform transform_;
 
 private:
 	//static void (Enemy::*spFuncTable[])();
@@ -36,9 +45,11 @@ private:
 private:
 	bool isActive_;
 	Vector3 velocity_;
-	Transform transform_;
 	Phase phase_;
 	float leaveSpeed_;
+	
+	bool isShot_;
+	uint32_t shotInterval_;
 
 private:
 	EngineCore* engineCore_;

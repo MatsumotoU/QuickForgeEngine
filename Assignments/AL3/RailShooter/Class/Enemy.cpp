@@ -15,6 +15,9 @@ void Enemy::Initialize(EngineCore* engineCore) {
 	leaveSpeed_ = 3.0f;
 	phase_ = Phase::Approach;
 
+	isShot_ = false;
+	shotInterval_ = kMaxShotInterval;
+
 	ChangeState(std::make_unique<EnemyStateAproach>(this));
 }
 
@@ -43,6 +46,15 @@ void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
 }
 
 void Enemy::Approch() {
+	if (shotInterval_ > 0) {
+		shotInterval_--;
+	} else {
+		if (!isShot_) {
+			isShot_ = true;
+			shotInterval_ = kMaxShotInterval;
+		}
+	}
+
 	transform_.translate += velocity_ * engineCore_->GetDeltaTime();
 	if (transform_.translate.z <= 0.0f) {
 		phase_ = Phase::Leave;
@@ -65,10 +77,22 @@ void Enemy::Spawn(Vector3 position, Vector3 velocity) {
 	}
 }
 
+void Enemy::SetIsShot(bool isShot) {
+	isShot_ = isShot;
+}
+
 bool Enemy::GetIsActive() {
 	return isActive_;
 }
 
 Phase Enemy::GetPhase() {
 	return phase_;
+}
+
+bool Enemy::GetIsShot() {
+	return isShot_;
+}
+
+Matrix4x4 Enemy::GetRotateMatrix() {
+	return Matrix4x4::MakeRotateXYZMatrix(transform_.rotate);
 }
