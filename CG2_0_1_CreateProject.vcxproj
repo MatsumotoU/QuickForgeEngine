@@ -149,9 +149,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Object3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Assignments\TR\GameScene.cpp" />
-    <ClCompile Include="Assignments\TR\ListenerObj.cpp" />
-    <ClCompile Include="Assignments\TR\SoundObj.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Bulllet.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Enemy.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\GameScene.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\SceneManager.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\TitleScene.cpp" />
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
@@ -210,9 +217,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Assignments\TR\GameScene.h" />
-    <ClInclude Include="Assignments\TR\ListenerObj.h" />
-    <ClInclude Include="Assignments\TR\SoundObj.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\BaseEnemyState.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Bulllet.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Enemy.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\GameScene.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\IScene.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\SceneManager.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\TitleScene.h" />
     <ClInclude Include="Engine\Audio\Audio3D.h" />
     <ClInclude Include="Engine\Audio\AudioEmitter.h" />
     <ClInclude Include="Engine\Audio\AudioListener.h" />
