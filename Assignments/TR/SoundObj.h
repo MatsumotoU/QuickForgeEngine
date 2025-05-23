@@ -7,11 +7,13 @@ public:
 	void Update();
 	void Draw(Camera* camera);
 
+	void SetTarget(Vector3* target);
+
 public:
 	Transform transform_;
+	Vector3* lookTargetPosition_;
 
 private:
 	EngineCore* engineCore_;
 	Model model_;
-
 };

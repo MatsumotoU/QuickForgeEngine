@@ -97,6 +97,14 @@ public:
 
 public:
 	/// <summary>
+	/// ある点からある点を見るrotationを返します(ラジアン)
+	/// </summary>
+	/// <param name="eyePosition">見る地点</param>
+	/// <param name="targetPosition">見る対象</param>
+	/// <returns>ラジアン</returns>
+	[[nodiscard]] static Vector3 LookAt(const Vector3& eyePosition, const Vector3& targetPosition);
+
+	/// <summary>
 	/// 正射影ベクトルを求める
 	/// </summary>
 	/// <param name="v1">1つ目の3次元ベクトル</param>
