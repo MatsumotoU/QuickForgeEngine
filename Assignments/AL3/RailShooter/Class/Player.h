@@ -14,6 +14,9 @@ public:
 	Transform transform_;
 
 public:
+	void onCollision();
+
+public:
 	bool GetIsActive();
 	bool GetIsShot();
 	Matrix4x4 GetWorldMatrix();

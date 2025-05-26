@@ -82,6 +82,10 @@ void Player::Draw(Camera* camera) {
 	ImGui::End();
 }
 
+void Player::onCollision() {
+	isActive_ = false;
+}
+
 bool Player::GetIsActive() {
 	return isActive_;
 }
