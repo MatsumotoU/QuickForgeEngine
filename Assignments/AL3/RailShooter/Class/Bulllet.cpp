@@ -19,11 +19,9 @@ void Bullet::Update() {
 			isActive_ = false;
 		}
 
-		transform_.rotate.z += 0.5f;
-
-		transform_.scale.x = static_cast<float>(aliveTime_) / static_cast<float>(maxAliveTime_);
-		transform_.scale.y = static_cast<float>(aliveTime_) / static_cast<float>(maxAliveTime_);
-		transform_.scale.z = static_cast<float>(aliveTime_) / static_cast<float>(maxAliveTime_);
+		transform_.rotate.x += 0.1f;
+		transform_.rotate.y += 0.1f;
+		transform_.rotate.z += 0.1f;
 	}
 }
 
