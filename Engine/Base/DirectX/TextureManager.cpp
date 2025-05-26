@@ -5,9 +5,11 @@
 #include "DirectXCommon.h"
 #include "ImGuiManager.h"
 
-void TextureManager::Initialize(DirectXCommon* dxCommon, ImGuiManager* imguiManager) {
+#include "Descriptors/SrvDescriptorHeap.h"
+
+void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvDescriptorHeap) {
 	dxCommon_ = dxCommon;
-	imGuimanager_ = imguiManager;
+	srvDescriptorHeap_ = srvDescriptorHeap;
 
 	// Comの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -176,12 +178,12 @@ void TextureManager::CreateOffscreenShaderResourceView() {
 
 	// SRVを作成するディスクリプタヒープの場所を決める
 	offscreenSrvHandleCPU_ = GetCPUDecriptorHandle(
-		imGuimanager_->GetSrvDescriptorHeap(),
+		srvDescriptorHeap_->GetSrvDescriptorHeap(),
 		dxCommon_->GetDescriptorSizeSRV(),
 		1
 	);
 	offscreenSrvHandleGPU_ = GetGPUDecriptorHandle(
-		imGuimanager_->GetSrvDescriptorHeap(),
+		srvDescriptorHeap_->GetSrvDescriptorHeap(),
 		dxCommon_->GetDescriptorSizeSRV(),
 		1
 	);
@@ -222,7 +224,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(metadata);
-	CreateShaderResourceView(metadata, imGuimanager_->GetSrvDescriptorHeap(), textureResource.Get(), 2 + textureHandle_);
+	CreateShaderResourceView(metadata, srvDescriptorHeap_->GetSrvDescriptorHeap(), textureResource.Get(), 2 + textureHandle_);
 	textureHandle_++;
 	textureResources_.push_back(textureResource);
 	intermediateResource_.push_back(

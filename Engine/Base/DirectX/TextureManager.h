@@ -6,14 +6,14 @@
 #include "../../../externals/DirectXTex/DirectXTex.h"
 
 class DirectXCommon;
-class ImGuiManager;
+class SrvDescriptorHeap;
 
 class TextureManager {
 public:// 一回は絶対に呼び出さないとバグるやつ
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon, ImGuiManager* imguiManager);
+	void Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvDescriptorHeap);
 	/// <summary>
 	/// 終了処理
 	/// </summary>
@@ -55,6 +55,7 @@ public:
 
 private:// メンバ変数
 	ID3D12Device* device_;
+	SrvDescriptorHeap* srvDescriptorHeap_;
 	D3D12_HEAP_PROPERTIES heapProperties_;
 	D3D12_RESOURCE_DESC resourceDesc_;
 	uint32_t srvHandleIndex_;
@@ -63,7 +64,6 @@ private:// メンバ変数
 	D3D12_CPU_DESCRIPTOR_HANDLE offscreenSrvHandleCPU_;
 	D3D12_GPU_DESCRIPTOR_HANDLE offscreenSrvHandleGPU_;
 	DirectXCommon* dxCommon_;
-	ImGuiManager* imGuimanager_;
 
 	int32_t textureHandle_;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResources_;

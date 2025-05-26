@@ -30,7 +30,7 @@ public:
 	/// </summary>
 	/// <param name="winApp"></param>
 	/// <param name="dxCommon"></param>
-	void Initialize(WinApp* winApp, DirectXCommon* dxCommon);
+	void Initialize(WinApp* winApp, DirectXCommon* dxCommon, ID3D12DescriptorHeap* srvDescriptorHeap);
 	/// <summary>
 	/// ImGuiを終了します。ゲームループが終わった後に置きます
 	/// </summary>
@@ -49,7 +49,7 @@ public:
 	ID3D12DescriptorHeap* GetSrvDescriptorHeap();
 
 private:
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
+	ID3D12DescriptorHeap* srvDescriptorHeap_;
 	Microsoft::WRL::ComPtr<ID3D12Device> device_;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
 

@@ -22,11 +22,18 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 #ifdef _DEBUG
 	dxCommon_.SetCommandLine(&lpCmdLine);
 #endif // _DEBUG
+	// DirectX初期化
 	dxCommon_.Initialize(&winApp_);
+	// 各ディスクリプタヒープの作成
+	rtvDescriptorHeap_.Initialize(dxCommon_.GetDevice(), 3, false);
+	srvDescriptorHeap_.Initialize(dxCommon_.GetDevice(), 128, true);
+	// DirectXの画面リソースの初期化とRTV登録
+	dxCommon_.InitializeScreenResources(rtvDescriptorHeap_.GetRtvDescriptorHeap());
+
 	// imGuiManager初期化
-	imGuiManager_.Initialize(&winApp_,&dxCommon_);
+	imGuiManager_.Initialize(&winApp_,&dxCommon_,srvDescriptorHeap_.GetSrvDescriptorHeap());
 	// テクスチャマネージャの初期化
-	textureManager_.Initialize(&dxCommon_, &imGuiManager_);
+	textureManager_.Initialize(&dxCommon_, &srvDescriptorHeap_);
 	graphicsCommon_.Initialize(&dxCommon_, &winApp_);
 	// fps監視機能初期化
 	fpsCounter_.Initialize();
@@ -43,11 +50,6 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 		static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight), 
 		graphicsCommon_.GetTrianglePso(kBlendModeNone));
 	offscreen_.material_.materialData_->enableLighting = false;
-
-	/*offscreen_.Initialize(
-		&dxCommon_, &textureManager_, &imGuiManager_,
-		640.0f, 320.0f,
-		graphicsCommon_.GetTrianglePso());*/
 
 	camera_.Initialize(&winApp_);
 }

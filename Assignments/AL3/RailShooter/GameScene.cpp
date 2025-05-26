@@ -40,6 +40,8 @@ void GameScene::Initialize() {
 	fance_.Initialize(engineCore_);
 	fance_.LoadModel("Resources", "fence.obj", COORDINATESYSTEM_HAND_RIGHT);
 	transform_.rotate = { 0.0f,3.14f,0.0f };
+
+	timeCount_ = 0.0f;
 }
 
 void GameScene::Update() {
@@ -91,10 +93,13 @@ void GameScene::Update() {
 			enemies[i].SetIsShot(false);
 		}
 	}
+
+	timeCount_ += engineCore_->GetDeltaTime();
 }
 
 void GameScene::Draw() {
 	ImGui::Begin("GameScene");
+	ImGui::Text("Time %.2f", timeCount_);
 	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
 	ImGui::Toggle("isActiveDebugCamera", &isActiveDebugCamera_);
 	ImGui::End();
