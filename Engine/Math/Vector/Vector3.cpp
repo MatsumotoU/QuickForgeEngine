@@ -118,9 +118,13 @@ Vector3 Vector3::Transform(const Vector3& vector, const Matrix4x4& matrix) {
 
 Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPosition) {
     Vector3 result{};
+    Vector2 yz = { eyePosition.y - targetPosition.y,eyePosition.z - targetPosition.z };
     Vector2 xz = { eyePosition.x - targetPosition.x,eyePosition.z - targetPosition.z };
+    Vector2 xy = { eyePosition.y - targetPosition.y,eyePosition.x - targetPosition.x };
 
+    result.x = atan2f(yz.x, yz.y);
     result.y = atan2f(xz.x, xz.y);
+    result.z = atan2f(xy.x, xy.y);
 
     return result;
 }

@@ -7,6 +7,7 @@ void Bullet::Initialize(EngineCore* engineCore) {
 	isActive_ = false;
 
 	transform_.rotate.x = 3.14f * 0.5f;
+	transform_.scale.y = 2.0f;
 }
 
 void Bullet::Update() {
@@ -18,10 +19,6 @@ void Bullet::Update() {
 		} else {
 			isActive_ = false;
 		}
-
-		transform_.rotate.x += 0.1f;
-		transform_.rotate.y += 0.1f;
-		transform_.rotate.z += 0.1f;
 	}
 }
 
