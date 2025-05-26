@@ -9,6 +9,7 @@ public:
 
 public:
 	void ShotBullet(Vector3 position, Vector3 velocity, uint32_t aliveTime);
+	void onCollision();
 
 public:
 	bool GetIsActive();

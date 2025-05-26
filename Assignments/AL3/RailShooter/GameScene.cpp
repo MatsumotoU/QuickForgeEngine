@@ -4,8 +4,12 @@
 GameScene::GameScene(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
+	isActiveDebugCamera_ = false;
 
-	isActiveDebugCamera_ = true;
+#ifdef _DEBUG
+	debugCamera_.Initialize(engineCore_->GetWinApp(), input_);
+	debugCamera_.camera_.transform_.translate.z = -20.0f;
+#endif // _DEBUG
 }
 
 GameScene::~GameScene() {
@@ -14,13 +18,10 @@ GameScene::~GameScene() {
 void GameScene::Initialize() {
 	skyDome_.Initialize(engineCore_);
 	camera_.Initialize(engineCore_->GetWinApp());
-#ifdef _DEBUG
-	debugCamera_.Initialize(engineCore_->GetWinApp(), input_);
-#endif // _DEBUG
+
 	isRequestedExit_ = false;
-	isActiveDebugCamera_ = false;
 	camera_.transform_.translate.z = -20.0f;
-	debugCamera_.camera_.transform_.translate.z = -20.0f;
+	
 	player_.Initialize(engineCore_);
 	for (int i = 0; i < kPlayerBullets; i++) {
 		playerBullets[i].Initialize(engineCore_);
@@ -97,6 +98,20 @@ void GameScene::Update() {
 	}
 
 	timeCount_ += engineCore_->GetDeltaTime();
+
+	// 当たり判定
+	for (int i = 0; i < kEnemyBullets; i++) {
+		if (enemyBullets[i].GetIsActive()) {
+			
+			if (player_.GetIsActive()) {
+
+				if ((enemyBullets[i].transform_.translate - player_.transform_.translate).Length() <= 2.0f) {
+					enemyBullets[i].onCollision();
+					//player_.onCollision();
+				}
+			}
+		}
+	}
 }
 
 void GameScene::Draw() {
