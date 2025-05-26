@@ -37,10 +37,6 @@ void GameScene::Initialize() {
 	enemies[1].Spawn({ 1.5f,0.5f,30.0f }, { 0.0f,0.0f,-2.0f });
 	enemies[2].Spawn({ -0.5f,-0.5f,30.0f }, { 0.0f,0.0f,-2.0f });
 
-	fance_.Initialize(engineCore_);
-	fance_.LoadModel("Resources", "fence.obj", COORDINATESYSTEM_HAND_RIGHT);
-	transform_.rotate = { 0.0f,3.14f,0.0f };
-
 	timeCount_ = 0.0f;
 }
 
@@ -120,8 +116,6 @@ void GameScene::Draw() {
 	for (int i = 0; i < kEnemies; i++) {
 		enemies[i].Draw(&camera_);
 	}
-
-	fance_.Draw(transform_, &camera_);
 }
 
 IScene* GameScene::GetNextScene() {

@@ -201,6 +201,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Vector\Vector3.cpp" />
     <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
+    <ClCompile Include="Engine\Utility\TimeCall.cpp" />
     <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
@@ -290,6 +291,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\DirectionalLight.h" />
     <ClInclude Include="Engine\Object\Material.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
+    <ClInclude Include="Engine\Utility\TimeCall.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui-knobs-main\imgui-knobs.h" />
     <ClInclude Include="externals\imgui\imgui.h" />

@@ -40,8 +40,5 @@ private:
 	Enemy enemies[kEnemies];
 	Bullet enemyBullets[kEnemyBullets];
 
-	Model fance_;
-	Transform transform_;
-
 	float timeCount_;
 };
