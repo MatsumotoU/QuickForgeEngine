@@ -61,6 +61,10 @@ void GameScene::Update() {
 	for (int i = 0; i < kEnemyBullets; i++) {
 		if (enemyBullets[i].GetIsActive()) {
 			enemyBullets[i].Update();
+			enemyBullets[i].transform_.rotate = Vector3::LookAt(enemyBullets[i].transform_.translate, player_.transform_.translate);
+			enemyBullets[i].transform_.rotate.x += -3.14f * 0.5f;
+
+			enemyBullets[i].velocity_ -= Vector3::Slerp(player_.transform_.translate, enemyBullets[i].transform_.translate, 1.0f);
 		}
 	}
 	
@@ -83,7 +87,7 @@ void GameScene::Update() {
 			for (int b = 0; b < kEnemyBullets; b++) {
 				if (!enemyBullets[b].GetIsActive()) {
 					enemyBullets[b].ShotBullet(enemies[i].transform_.translate, (player_.transform_.translate - enemies[i].transform_.translate).Normalize() * 10.0f, 120);
-					enemyBullets[b].transform_.rotate = Vector3::LookAt(enemyBullets->transform_.translate, player_.transform_.translate);
+					enemyBullets[b].transform_.rotate = Vector3::LookAt(enemyBullets[i].transform_.translate, player_.transform_.translate);
 					enemyBullets[b].transform_.rotate.x += -3.14f * 0.5f;
 					break;
 				}
