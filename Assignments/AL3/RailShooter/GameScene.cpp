@@ -82,7 +82,7 @@ void GameScene::Update() {
 		if (enemies[i].GetIsShot()) {
 			for (int b = 0; b < kEnemyBullets; b++) {
 				if (!enemyBullets[b].GetIsActive()) {
-					enemyBullets[b].ShotBullet(enemies[i].transform_.translate, Vector3::Transform({ 0.0f,10.0f,0.0f }, enemies[i].GetRotateMatrix()), 120);
+					enemyBullets[b].ShotBullet(enemies[i].transform_.translate, (player_.transform_.translate - enemies[i].transform_.translate).Normalize() * 10.0f, 120);
 					break;
 				}
 			}
