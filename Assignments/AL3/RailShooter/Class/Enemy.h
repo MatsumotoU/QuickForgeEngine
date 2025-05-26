@@ -1,6 +1,7 @@
 #pragma once
 #include "../../../../Engine/Base/EngineCore.h"
 #include "BaseEnemyState.h"
+#include "../../../../Engine/Utility/TimeCall.h"
 
 static inline const float kXLimit = 20.0f;
 static inline const uint32_t kMaxShotInterval = 30;
@@ -22,6 +23,7 @@ public:
 public:
 	void Approch();
 	void Leave();
+	void Shot();
 
 public:
 	void Spawn(Vector3 position, Vector3 velocity);
@@ -54,5 +56,7 @@ private:
 private:
 	EngineCore* engineCore_;
 	Model model_;
+
+	std::list<TimeCall*> timedCalls_;
 
 };

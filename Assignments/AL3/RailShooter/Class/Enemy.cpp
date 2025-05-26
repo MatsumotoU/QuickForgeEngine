@@ -31,6 +31,18 @@ void Enemy::Update() {
 	if (fabsf(transform_.translate.x) >= kXLimit) {
 		isActive_ = false;
 	}
+
+	timedCalls_.remove_if([](TimeCall* call) {
+		if (call->IsFinished()) {
+			delete call;
+			return true;
+		}
+		return false;
+		});
+
+	for (TimeCall* timedCall:timedCalls_) {
+		timedCall->Update();
+	}
 }
 
 void Enemy::Draw(Camera* camera) {
@@ -46,15 +58,6 @@ void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
 }
 
 void Enemy::Approch() {
-	if (shotInterval_ > 0) {
-		shotInterval_--;
-	} else {
-		if (!isShot_) {
-			isShot_ = true;
-			shotInterval_ = kMaxShotInterval;
-		}
-	}
-
 	transform_.translate += velocity_ * engineCore_->GetDeltaTime();
 	if (transform_.translate.z <= 0.0f) {
 		phase_ = Phase::Leave;
@@ -69,11 +72,17 @@ void Enemy::Leave() {
 	}
 }
 
+void Enemy::Shot() {
+	isShot_ = true;
+	timedCalls_.push_back(new TimeCall(engineCore_, std::bind(&Enemy::Shot, this), 4.0f));
+}
+
 void Enemy::Spawn(Vector3 position, Vector3 velocity) {
 	if (!isActive_) {
 		isActive_ = true;
 		transform_.translate = position;
 		velocity_ = velocity;
+		Shot();
 	}
 }
 
