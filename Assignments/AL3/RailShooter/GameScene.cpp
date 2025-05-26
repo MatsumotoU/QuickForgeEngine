@@ -83,6 +83,8 @@ void GameScene::Update() {
 			for (int b = 0; b < kEnemyBullets; b++) {
 				if (!enemyBullets[b].GetIsActive()) {
 					enemyBullets[b].ShotBullet(enemies[i].transform_.translate, (player_.transform_.translate - enemies[i].transform_.translate).Normalize() * 10.0f, 120);
+					enemyBullets[b].transform_.rotate = Vector3::LookAt(enemyBullets->transform_.translate, player_.transform_.translate);
+					enemyBullets[b].transform_.rotate.x += -3.14f * 0.5f;
 					break;
 				}
 			}
@@ -98,6 +100,10 @@ void GameScene::Draw() {
 	ImGui::Text("Time %.2f", timeCount_);
 	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
 	ImGui::Toggle("isActiveDebugCamera", &isActiveDebugCamera_);
+
+	if (ImGui::Button("Reset")) {
+		Initialize();
+	}
 	ImGui::End();
 
 	//skyDome_.Draw(&camera_);

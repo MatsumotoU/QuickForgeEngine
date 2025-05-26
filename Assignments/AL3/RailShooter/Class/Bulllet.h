@@ -13,12 +13,13 @@ public:
 public:
 	bool GetIsActive();
 
+	Transform transform_;
+
 private:
 	bool isActive_;
 	uint32_t aliveTime_;
 	uint32_t maxAliveTime_;
 	Vector3 velocity_;
-	Transform transform_;
 
 private:
 	EngineCore* engineCore_;
