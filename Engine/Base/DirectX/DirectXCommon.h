@@ -18,6 +18,12 @@ public:
 	/// </summary>
 	void Initialize(WinApp* winApp);
 	/// <summary>
+	/// 画面描画のリソース初期化(初期化の後に置くこと)
+	/// </summary>
+	/// <param name="rtvDescriptorHeap"></param>
+	void InitializeScreenResources(ID3D12DescriptorHeap* rtvDescriptorHeap);
+
+	/// <summary>
 	/// これまで生成してきたオブジェクトを解放する
 	/// </summary>
 	void ReleaseDirectXObject();
@@ -76,7 +82,7 @@ private: // メンバ変数
 	D3D12_RESOURCE_DESC offScreenDesc_;
 	D3D12_CLEAR_VALUE offscreenClearValue_;
 	D3D12_CPU_DESCRIPTOR_HANDLE offScreenRtvHandle_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	ID3D12DescriptorHeap* rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 

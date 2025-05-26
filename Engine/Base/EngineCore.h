@@ -11,6 +11,10 @@
 #include "Windows/WinApp.h"
 #include "DirectX/DirectXCommon.h"
 #include "DirectX/ImGuiManager.h"
+// ディスクリプタヒープ
+#include "DirectX/Descriptors/RtvDescriptorHeap.h"
+#include "DirectX/Descriptors/SrvDescriptorHeap.h"
+
 // Fps管理
 #include "DirectX/FramePerSecond.h"
 // 描画機能
@@ -96,9 +100,8 @@ private:// 入力
 	DirectInputManager inputManager_;
 	
 private:// ディスクリプタヒープ
-	/*Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dvrDescriptorHeap_;*/
+	RtvDescriptorHeap rtvDescriptorHeap_;
+	SrvDescriptorHeap srvDescriptorHeap_;
 
 private:// デバッグ用一時変数
 	Sprite offscreen_;

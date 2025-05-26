@@ -169,6 +169,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\DirectionalLightResource.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectX12DebugCore.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\Descriptors\RtvDescriptorHeap.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\Descriptors\SrvDescriptorHeap.cpp" />
     <ClCompile Include="Engine\Base\DirectX\FramePerSecond.cpp" />
     <ClCompile Include="Engine\Base\DirectX\GraphicsCommon.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
@@ -242,6 +244,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\D3DResourceLeakChecker.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectionalLightResource.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h" />
+    <ClInclude Include="Engine\Base\DirectX\Descriptors\RtvDescriptorHeap.h" />
+    <ClInclude Include="Engine\Base\DirectX\Descriptors\SrvDescriptorHeap.h" />
     <ClInclude Include="Engine\Base\DirectX\FramePerSecond.h" />
     <ClInclude Include="Engine\Base\DirectX\GraphicsCommon.h" />
     <ClInclude Include="Engine\Base\DirectX\MaterialResource.h" />

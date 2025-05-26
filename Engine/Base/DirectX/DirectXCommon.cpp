@@ -42,9 +42,13 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	CreateCommandList();
 	CreateCommandQueue();
 	CreateSwapChain();
+}
+
+void DirectXCommon::InitializeScreenResources(ID3D12DescriptorHeap* rtvDescriptorHeap) {
+	rtvDescriptorHeap_ = rtvDescriptorHeap;
 	InitializeSwapChainResource();
 	InitializeOffScreenResource();
-	rtvDescriptorHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 3, false);// こいつがRTV本体
+
 	CreateRTV();// 正確にいうとRTVにリソースを登録している
 	CreateOffScreenRTV();
 	CreateFence();
@@ -267,7 +271,7 @@ void DirectXCommon::CreateDevice() {
 
 	// エラー落ち処理
 #ifdef _DEBUG
-	debugLog_->Log("EnebleBreakOnSeverity");
+	debugLog_->Log("---EnebleBreakOnSeverity---");
 	ID3D12InfoQueue* infoQueue = nullptr;
 	if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 

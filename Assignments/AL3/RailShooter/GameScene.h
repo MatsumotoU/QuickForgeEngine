@@ -42,4 +42,6 @@ private:
 
 	Model fance_;
 	Transform transform_;
+
+	float timeCount_;
 };
