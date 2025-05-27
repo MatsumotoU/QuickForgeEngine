@@ -4,6 +4,7 @@
 #include <math.h>
 #include <assert.h>
 #include <algorithm>
+#include <cmath>
 
 float Vector3::Length() const {
 	return sqrtf(this->x * this->x + this->y * this->y + this->z * this->z);
@@ -63,19 +64,27 @@ Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 
 	// 2ベクトル間の角度を求める
 	float dot = std::clamp(Vector3::Dot(from, to), -1.0f, 1.0f);
-	float theta = acosf(dot);
+	float theta = std::acosf(dot);
 
-	// 角度が小さい場合はLerp
-	if (theta < 1e-5f) {
-		return Vector3::Lerp(from, to, t);
+	float sinTheta = std::sinf(theta);
+	float sinThetaFrom = std::sinf(theta * (1.0f - t));
+	float sinThetaTo = std::sinf(theta * t);
+
+	Vector3 normalizeVector{};
+	if (sinTheta != 0.0f) {
+		normalizeVector.x = (from.x * sinThetaFrom + to.x * sinThetaTo) / sinTheta;
+		normalizeVector.y = (from.y * sinThetaFrom + to.y * sinThetaTo) / sinTheta;
+		normalizeVector.z = (from.z * sinThetaFrom + to.z * sinThetaTo) / sinTheta;
+	} else {
+		normalizeVector = from; // 角度が0の場合はそのまま
 	}
 
-	float sinTheta = sinf(theta);
-	float a = sinf((1.0f - t) * theta) / sinTheta;
-	float b = sinf(t * theta) / sinTheta;
+	float length1 = v1.Length();
+	float length2 = v2.Length();
 
-	result = from * a + to * b;
-	return result;
+	float length = length1 * (1.0f - t) + length2 * t;
+
+	return normalizeVector * length;
 }
 
 Vector3 Vector3::BezierCurve(const Vector3& p0, const Vector3& p1, const Vector3& p2, float t) {
@@ -141,16 +150,17 @@ Vector3 Vector3::Transform(const Vector3& vector, const Matrix4x4& matrix) {
 }
 
 Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPosition) {
-	Vector3 result{};
-	Vector2 yz = { eyePosition.y - targetPosition.y,eyePosition.z - targetPosition.z };
-	Vector2 xz = { eyePosition.x - targetPosition.x,eyePosition.z - targetPosition.z };
-	Vector2 xy = { eyePosition.y - targetPosition.y,eyePosition.x - targetPosition.x };
+    Vector3 diff = targetPosition - eyePosition;
+    Vector3 result{};
 
-	result.x = atan2f(yz.x, yz.y);
-	result.y = atan2f(xz.x, xz.y);
-	result.z = atan2f(xy.x, xy.y);
+    // yaw（ヨー, y軸回り）
+    result.y = atan2f(diff.x, -diff.z);
+    // pitch（ピッチ, x軸回り）
+    result.x = atan2f(-diff.y, sqrtf(diff.x * diff.x + diff.z * diff.z));
+    // roll（ロール, z軸回り
+    result.z = 0.0f;
 
-	return result;
+    return result;
 }
 
 Vector3 Vector3::Project(const Vector3& v1, const Vector3& v2) {

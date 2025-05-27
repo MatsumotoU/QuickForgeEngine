@@ -82,8 +82,8 @@ void Player::Draw(Camera* camera) {
 	ImGui::End();
 }
 
-void Player::onCollision() {
-	isActive_ = false;
+void Player::OnCollision() {
+	//isActive_ = false;
 }
 
 bool Player::GetIsActive() {
@@ -100,6 +100,10 @@ Matrix4x4 Player::GetWorldMatrix() {
 
 Matrix4x4 Player::GetRotateMatrix() {
 	return Matrix4x4::MakeRotateXYZMatrix(transform_.rotate);
+}
+
+Vector3 Player::GetWorldPosition() {
+	return transform_.translate;
 }
 
 void Player::SetIsActive(bool isActive) {
