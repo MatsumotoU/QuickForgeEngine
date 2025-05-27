@@ -1,7 +1,8 @@
 #pragma once
 #include "../../../../Engine/Base/EngineCore.h"
+#include "../../../../Engine/Colliders/Collider.h"
 
-class Bullet {
+class Bullet : public Collider {
 public:
 	void Initialize(EngineCore* engineCore);
 	void Update();
@@ -9,10 +10,11 @@ public:
 
 public:
 	void ShotBullet(Vector3 position, Vector3 velocity, uint32_t aliveTime);
-	void onCollision();
+	void OnCollision() override;
 
 public:
 	bool GetIsActive();
+	Vector3 GetWorldPosition() override;
 
 	Transform transform_;
 	Vector3 velocity_;

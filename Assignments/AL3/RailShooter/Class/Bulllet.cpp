@@ -36,10 +36,14 @@ void Bullet::ShotBullet(Vector3 position, Vector3 velocity, uint32_t aliveTime) 
 	isActive_ = true;
 }
 
-void Bullet::onCollision() {
+void Bullet::OnCollision() {
 	isActive_ = false;
 }
 
 bool Bullet::GetIsActive() {
 	return isActive_;
+}
+
+Vector3 Bullet::GetWorldPosition() {
+	return transform_.translate;
 }

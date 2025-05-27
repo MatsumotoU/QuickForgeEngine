@@ -62,10 +62,12 @@ void GameScene::Update() {
 	for (int i = 0; i < kEnemyBullets; i++) {
 		if (enemyBullets[i].GetIsActive()) {
 			enemyBullets[i].Update();
-			enemyBullets[i].transform_.rotate = Vector3::LookAt(enemyBullets[i].transform_.translate, player_.transform_.translate);
-			enemyBullets[i].transform_.rotate.x += -3.14f * 0.5f;
 
-			enemyBullets[i].velocity_ -= Vector3::Slerp(player_.transform_.translate, enemyBullets[i].transform_.translate, 1.0f);
+			Vector3 toPlayer = player_.transform_.translate - enemyBullets[i].transform_.translate;
+			enemyBullets[i].velocity_ = Vector3::Slerp(enemyBullets[i].velocity_.Normalize(), toPlayer.Normalize(), 0.1f) * 10.0f;
+
+			enemyBullets[i].transform_.rotate = -Vector3::LookAt(enemyBullets[i].transform_.translate, enemyBullets[i].transform_.translate + enemyBullets[i].velocity_);
+			enemyBullets[i].transform_.rotate.x += -3.14f * 0.5f;
 		}
 	}
 	
@@ -87,9 +89,8 @@ void GameScene::Update() {
 		if (enemies[i].GetIsShot()) {
 			for (int b = 0; b < kEnemyBullets; b++) {
 				if (!enemyBullets[b].GetIsActive()) {
-					enemyBullets[b].ShotBullet(enemies[i].transform_.translate, (player_.transform_.translate - enemies[i].transform_.translate).Normalize() * 10.0f, 120);
+					enemyBullets[b].ShotBullet(enemies[i].transform_.translate, (player_.transform_.translate - enemies[i].transform_.translate).Normalize() * 10.0f, 6000);
 					enemyBullets[b].transform_.rotate = Vector3::LookAt(enemyBullets[i].transform_.translate, player_.transform_.translate);
-					enemyBullets[b].transform_.rotate.x += -3.14f * 0.5f;
 					break;
 				}
 			}
@@ -102,13 +103,8 @@ void GameScene::Update() {
 	// 当たり判定
 	for (int i = 0; i < kEnemyBullets; i++) {
 		if (enemyBullets[i].GetIsActive()) {
-			
 			if (player_.GetIsActive()) {
-
-				if ((enemyBullets[i].transform_.translate - player_.transform_.translate).Length() <= 2.0f) {
-					enemyBullets[i].onCollision();
-					//player_.onCollision();
-				}
+				CheckCollisionPair(&enemyBullets[i], &player_);
 			}
 		}
 	}
@@ -145,4 +141,11 @@ void GameScene::Draw() {
 
 IScene* GameScene::GetNextScene() {
 	return new TitleScene(engineCore_);
+}
+
+void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+	if ((colliderA->GetWorldPosition() - colliderB->GetWorldPosition()).Length() <= (colliderA->GetRadius() + colliderB->GetRadius())) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
+	}
 }

@@ -74,7 +74,7 @@ void Enemy::Leave() {
 
 void Enemy::Shot() {
 	isShot_ = true;
-	timedCalls_.push_back(new TimeCall(engineCore_, std::bind(&Enemy::Shot, this), 4.0f));
+	timedCalls_.push_back(new TimeCall(engineCore_, std::bind(&Enemy::Shot, this), 1.5f));
 }
 
 void Enemy::Spawn(Vector3 position, Vector3 velocity) {

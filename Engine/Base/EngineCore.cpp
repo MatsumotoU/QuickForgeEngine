@@ -37,6 +37,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	graphicsCommon_.Initialize(&dxCommon_, &winApp_);
 	// fps監視機能初期化
 	fpsCounter_.Initialize();
+	fpsCounter_.Update();
 
 	// 音声機能の初期化
 	audioManager_.Initialize();
@@ -157,7 +158,14 @@ FramePerSecond* EngineCore::GetFpsCounter() {
 }
 
 float EngineCore::GetDeltaTime() {
+	// FPSが0でない場合はFPSを基にデルタタイムを返す
 	if (fpsCounter_.GetFps() != 0.0f) {
+
+		// FPSが変動している場合は60FPS想定でデルタタイムを返す
+		if (fabsf(fpsCounter_.GetAverageFps() - fpsCounter_.GetFps()) >= 5.0f) {
+			return 1.0f / 60.0f;
+		}
+		// FPSが安定している場合はそのFPSを基にデルタタイムを返す
 		return 1.0f / fpsCounter_.GetFps();
 	}
 	return 0.0f;
