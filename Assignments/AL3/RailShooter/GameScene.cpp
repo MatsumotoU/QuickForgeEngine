@@ -45,6 +45,8 @@ void GameScene::Initialize() {
 	enemies[2].Spawn({ -0.5f,-0.5f,30.0f }, { 0.0f,0.0f,-2.0f });
 
 	timeCount_ = 0.0f;
+
+	collisionManager_.Initalize();
 }
 
 void GameScene::Update() {
@@ -107,7 +109,7 @@ void GameScene::Update() {
 	timeCount_ += engineCore_->GetDeltaTime();
 
 	// 当たり判定
-	allColliders_.clear();
+	std::list<Collider*> allColliders_;
 	allColliders_.push_back(&player_);
 	for (int i = 0; i < kPlayerBullets; i++) {
 		if (playerBullets[i].GetIsActive()) {
@@ -120,15 +122,7 @@ void GameScene::Update() {
 		}
 	}
 
-	std::list<Collider*>::iterator itrA = allColliders_.begin();
-	for (; itrA != allColliders_.end(); ++itrA) {
-
-		std::list<Collider*>::iterator itrB = itrA;
-		itrB++;
-		for (; itrB != allColliders_.end(); ++itrB) {
-			CheckCollisionPair(*itrA,*itrB);
-		}
-	}
+	collisionManager_.Update(allColliders_);
 }
 
 void GameScene::Draw() {
@@ -162,13 +156,4 @@ void GameScene::Draw() {
 
 IScene* GameScene::GetNextScene() {
 	return new TitleScene(engineCore_);
-}
-
-void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-	if (!(colliderA->GetMask() & colliderB->GetMask())) {
-		if ((colliderA->GetWorldPosition() - colliderB->GetWorldPosition()).Length() <= (colliderA->GetRadius() + colliderB->GetRadius())) {
-			colliderA->OnCollision();
-			colliderB->OnCollision();
-		}
-	}
 }
