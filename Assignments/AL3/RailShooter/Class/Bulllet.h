@@ -15,9 +15,11 @@ public:
 public:
 	bool GetIsActive();
 	Vector3 GetWorldPosition() override;
+	void SetName(const std::string& name);
 
 	Transform transform_;
 	Vector3 velocity_;
+	std::string name_;
 
 private:
 	bool isActive_;
