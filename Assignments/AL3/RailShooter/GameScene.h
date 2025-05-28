@@ -6,7 +6,7 @@
 #include "Class/Enemy.h"
 #include "IScene.h"
 
-#include "../../../Engine/Colliders/Collider.h"
+#include "../../../Engine/Colliders/CollisionManager.h"
 
 static inline const uint32_t kPlayerBullets = 32;
 static inline const uint32_t kEnemyBullets = 128;
@@ -23,9 +23,6 @@ public:
 	void Draw()override;
 
 	IScene* GetNextScene() override;
-
-private:
-	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 
 private:
 	EngineCore* engineCore_;
@@ -45,7 +42,7 @@ private:
 	Enemy enemies[kEnemies];
 	Bullet enemyBullets[kEnemyBullets];
 
-	std::list<Collider*> allColliders_;
+	CollisionManager collisionManager_;
 
 	float timeCount_;
 };
