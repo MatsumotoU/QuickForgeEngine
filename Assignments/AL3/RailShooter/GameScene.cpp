@@ -23,11 +23,17 @@ void GameScene::Initialize() {
 	camera_.transform_.translate.z = -20.0f;
 	
 	player_.Initialize(engineCore_);
+	player_.SetMask(0x00000001);
+
 	for (int i = 0; i < kPlayerBullets; i++) {
 		playerBullets[i].Initialize(engineCore_);
+		playerBullets[i].name_ = "Player";
+		playerBullets[i].SetMask(0x00000001);
 	}
 	for (int i = 0; i < kEnemyBullets; i++) {
 		enemyBullets[i].Initialize(engineCore_);
+		enemyBullets[i].name_ = "Enemy";
+		enemyBullets[i].SetMask(0x00000010);
 	}
 
 	for (int i = 0; i < kEnemies; i++) {
@@ -101,11 +107,26 @@ void GameScene::Update() {
 	timeCount_ += engineCore_->GetDeltaTime();
 
 	// 当たり判定
+	allColliders_.clear();
+	allColliders_.push_back(&player_);
+	for (int i = 0; i < kPlayerBullets; i++) {
+		if (playerBullets[i].GetIsActive()) {
+			allColliders_.push_back(&playerBullets[i]);
+		}
+	}
 	for (int i = 0; i < kEnemyBullets; i++) {
 		if (enemyBullets[i].GetIsActive()) {
-			if (player_.GetIsActive()) {
-				CheckCollisionPair(&enemyBullets[i], &player_);
-			}
+			allColliders_.push_back(&enemyBullets[i]);
+		}
+	}
+
+	std::list<Collider*>::iterator itrA = allColliders_.begin();
+	for (; itrA != allColliders_.end(); ++itrA) {
+
+		std::list<Collider*>::iterator itrB = itrA;
+		itrB++;
+		for (; itrB != allColliders_.end(); ++itrB) {
+			CheckCollisionPair(*itrA,*itrB);
 		}
 	}
 }
@@ -144,8 +165,10 @@ IScene* GameScene::GetNextScene() {
 }
 
 void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-	if ((colliderA->GetWorldPosition() - colliderB->GetWorldPosition()).Length() <= (colliderA->GetRadius() + colliderB->GetRadius())) {
-		colliderA->OnCollision();
-		colliderB->OnCollision();
+	if (!(colliderA->GetMask() & colliderB->GetMask())) {
+		if ((colliderA->GetWorldPosition() - colliderB->GetWorldPosition()).Length() <= (colliderA->GetRadius() + colliderB->GetRadius())) {
+			colliderA->OnCollision();
+			colliderB->OnCollision();
+		}
 	}
 }

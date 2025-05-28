@@ -45,5 +45,7 @@ private:
 	Enemy enemies[kEnemies];
 	Bullet enemyBullets[kEnemyBullets];
 
+	std::list<Collider*> allColliders_;
+
 	float timeCount_;
 };

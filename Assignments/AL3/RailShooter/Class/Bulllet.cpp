@@ -8,6 +8,8 @@ void Bullet::Initialize(EngineCore* engineCore) {
 
 	transform_.rotate.x = 3.14f * 0.5f;
 	transform_.scale.y = 2.0f;
+
+	name_ = "None";
 }
 
 void Bullet::Update() {
@@ -46,4 +48,8 @@ bool Bullet::GetIsActive() {
 
 Vector3 Bullet::GetWorldPosition() {
 	return transform_.translate;
+}
+
+void Bullet::SetName(const std::string& name) {
+	name_ = name;
 }
