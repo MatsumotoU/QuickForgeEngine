@@ -21,11 +21,16 @@ private:
 	float masterVolume_;
 	SoundData soundData_;
 	IXAudio2SourceVoice* sourceVoice_;
+	float rotateSpeed_;
 	float pan_;
+	float cutoff_;
+	float cutoffRate_;
 
 private:
 	DebugCamera debugCamera_;
 	float matrix[2];
 	SoundObj obj_;
 	ListenerObj listener_;
+
+	
 };
