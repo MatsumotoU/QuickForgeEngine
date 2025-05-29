@@ -5,6 +5,13 @@
 #include "RiffHeader.h"
 #include "FormatChunk.h"
 #include "ChunkHeader.h"
+
+#include <mmdeviceapi.h>
+#include <propsys.h> 
+#include <functiondiscoverykeys_devpkey.h> 
+#include <string>
+#include <iostream>
+
 // デストラクタ
 AudioManager::~AudioManager() {
 	xAudio2_.Reset();
@@ -27,7 +34,71 @@ void AudioManager::Initialize() {
 	
 #ifdef _DEBUG
 	DebugLog(ConvertString(std::format(L"MasterVoice->nChannels:{}", GetOutputChannels())));
+
+	// 音声デバイスを表示
+	IMMDeviceEnumerator* pEnumerator = NULL;
+	IMMDeviceCollection* pCollection = NULL;
+	IMMDevice* pEndpoint = NULL;
+	IPropertyStore* pProps = NULL;
+	PROPVARIANT varName;
+
+	hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&pEnumerator);
+	assert(SUCCEEDED(hr));
+	hr = pEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pCollection);
+	assert(SUCCEEDED(hr));
+
+	UINT count;
+	hr = pCollection->GetCount(&count);
+	assert(SUCCEEDED(hr));
+
+	if (count == 0)
+	{
+		DebugLog("No active rendering audio endpoints found.");
+	} else
+	{
+		DebugLog("Active Rendering Audio Endpoints");
+		for (UINT i = 0; i < count; i++)
+		{
+			// 4. コレクションから個々のエンドポイントを取得
+			hr = pCollection->Item(i, &pEndpoint);
+			assert(SUCCEEDED(hr));
+
+			// 5. デバイスのプロパティストアを開く
+			// デバイスの様々なプロパティ（名前、説明など）にアクセスするために必要
+			hr = pEndpoint->OpenPropertyStore(STGM_READ, &pProps);
+			assert(SUCCEEDED(hr));
+
+			// PROPVARIANT の初期化
+			PropVariantInit(&varName);
+
+			// 6. デバイスの表示名 (Friendly Name) を取得
+			// PKEY_Device_FriendlyName はデバイスの表示名を識別するプロパティキー
+			hr = pProps->GetValue(PKEY_Device_FriendlyName, &varName);
+			assert(SUCCEEDED(hr));
+
+			// 7. 取得したプロパティ値を表示
+			if (varName.vt == VT_LPWSTR) // 値の型がワイド文字列か確認
+			{
+				DebugLog("ActiveAudioDeviceName: " + ConvertString(varName.pwszVal));
+			} else
+			{
+				DebugLog("ActiveAudioDeviceName = Unknown format");
+			}
+
+			// PROPVARIANT の解放 (CoTaskMemFree を呼び出す)
+			PropVariantClear(&varName);
+
+			// リソースの解放
+			pProps->Release();
+			pEndpoint->Release();
+		}
+	}
+	pEnumerator->Release();
+	pCollection->Release();
+
 #endif // _DEBUG
+
+	
 
 	// X3DAudioの初期化
 	audio3D_.Initialize(this);
