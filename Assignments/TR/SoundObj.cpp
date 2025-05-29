@@ -12,7 +12,7 @@ void SoundObj::Initialize(EngineCore* engineCore) {
 
 void SoundObj::Update() {
 	if (lookTargetPosition_ != nullptr) {
-		transform_.rotate = Vector3::LookAt(transform_.translate, *lookTargetPosition_);
+		transform_.rotate = -Vector3::LookAt(transform_.translate, *lookTargetPosition_);
 		transform_.rotate.y += 3.14f;
 	}
 }
