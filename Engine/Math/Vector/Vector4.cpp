@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <cmath>
 
+#include "Vector3.h"
+
 float Vector4::Length() const {
 	return sqrt(x * x + y * y + z * z + w * w);
 }
@@ -18,6 +20,14 @@ Vector4 Vector4::Normalize() const {
 	result.z = z / this->Length();
 	result.w = w / this->Length();
 
+	return result;
+}
+
+Vector3 Vector4::xyz() const {
+	Vector3 result{};
+	result.x = this->x;
+	result.y = this->y;
+	result.z = this->z;
 	return result;
 }
 

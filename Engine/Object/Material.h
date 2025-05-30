@@ -10,7 +10,7 @@
 /// float padding[3];
 /// Matrix4x4 uvTransform;
 /// </summary>
-struct Material {
+struct alignas(16) Material {
 	Vector4 color;
 	int32_t enableLighting;
 	float padding[3];

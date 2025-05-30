@@ -93,6 +93,12 @@ public:
 	/// <returns>ベジェ曲線</returns>
 	[[nodiscard]] static Vector3 BezierCurve(const Vector3& p0, const Vector3& p1, const Vector3& p2, float t);
 
+	/// <summary>
+	/// スプライン曲線を求める
+	/// </summary>
+	/// <param name="controlPoints"></param>
+	/// <param name="t"></param>
+	/// <returns></returns>
 	[[nodiscard]] static Vector3 CatmullRom(const std::vector<Vector3>& controlPoints, float t);
 
 public:

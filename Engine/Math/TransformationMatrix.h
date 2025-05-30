@@ -1,7 +1,7 @@
 #pragma once
 #include "Matrix/Matrix4x4.h"
 
-struct TransformationMatrix {
+struct alignas(16) TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
 };
