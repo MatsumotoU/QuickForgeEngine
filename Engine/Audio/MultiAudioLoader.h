@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <wrl.h>
 
 #include <mfapi.h>
 #include <mfidl.h>
