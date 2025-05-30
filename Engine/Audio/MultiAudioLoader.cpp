@@ -20,8 +20,8 @@ SoundData Multiaudioloader::LoadSoundData(const std::string& path) {
 	SoundData soundData{};
 
 	// ソースリーダーの生成
-	IMFSourceReader* pMFSourceReader{ nullptr };
-	HRESULT hr = MFCreateSourceReaderFromURL(ConvertString(path).c_str(), nullptr, &pMFSourceReader);
+	Microsoft::WRL::ComPtr<IMFSourceReader> pMFSourceReader{ nullptr };
+	HRESULT hr = MFCreateSourceReaderFromURL(ConvertString(path).c_str(), nullptr, pMFSourceReader.GetAddressOf());
 	assert(SUCCEEDED(hr));
 
 	// メディアタイプの取得
@@ -32,12 +32,12 @@ SoundData Multiaudioloader::LoadSoundData(const std::string& path) {
 	assert(SUCCEEDED(hr));
 	hr = pMFMediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
 	assert(SUCCEEDED(hr));
-	hr = pMFSourceReader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, pMFMediaType);
+	hr = pMFSourceReader.Get()->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, pMFMediaType);
 	assert(SUCCEEDED(hr));
 
 	pMFMediaType->Release();
 	pMFMediaType = nullptr;
-	hr = pMFSourceReader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pMFMediaType);
+	hr = pMFSourceReader.Get()->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pMFMediaType);
 	assert(SUCCEEDED(hr));
 
 	// オーディオデータ形式の作成
@@ -52,7 +52,7 @@ SoundData Multiaudioloader::LoadSoundData(const std::string& path) {
 	{
 		IMFSample* pMFSample{ nullptr };
 		DWORD dwStreamFlags{ 0 };
-		hr = pMFSourceReader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, nullptr, &dwStreamFlags, nullptr, &pMFSample);
+		hr = pMFSourceReader.Get()->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, nullptr, &dwStreamFlags, nullptr, &pMFSample);
 		assert(SUCCEEDED(hr));
 
 		if (dwStreamFlags & MF_SOURCE_READERF_ENDOFSTREAM)
@@ -67,8 +67,6 @@ SoundData Multiaudioloader::LoadSoundData(const std::string& path) {
 		BYTE* pBuffer{ nullptr };
 		DWORD cbCurrentLength{ 0 };
 		hr = pMFMediaBuffer->Lock(&pBuffer, nullptr, &cbCurrentLength);
-		soundData.pBuffer = pBuffer;
-		soundData.bufferSize = cbCurrentLength;
 		assert(SUCCEEDED(hr));
 
 		mediaData.resize(mediaData.size() + cbCurrentLength);
@@ -79,6 +77,8 @@ SoundData Multiaudioloader::LoadSoundData(const std::string& path) {
 		pMFMediaBuffer->Release();
 		pMFSample->Release();
 	}
-	mediaData.clear();
+	soundData.pBuffer = new BYTE[mediaData.size()];
+	memcpy(soundData.pBuffer, mediaData.data(), mediaData.size());
+	soundData.bufferSize = sizeof(BYTE) * static_cast<UINT32>(mediaData.size());
 	return soundData;
 }
