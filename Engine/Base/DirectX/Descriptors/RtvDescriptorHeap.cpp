@@ -8,7 +8,10 @@
 
 void RtvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
 	rtvDescriptorHeap_ = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV,numDescriptors,shaderVisible);
-	DebugLog(std::format("CreateRTVDescriptorHeap: Create {} HeapSpace",numDescriptors));
+
+#ifdef _DEBUG
+	DebugLog(std::format("CreateRTVDescriptorHeap: Create {} HeapSpace", numDescriptors));
+#endif // _DEBUG
 }
 
 ID3D12DescriptorHeap* RtvDescriptorHeap::GetRtvDescriptorHeap() {
