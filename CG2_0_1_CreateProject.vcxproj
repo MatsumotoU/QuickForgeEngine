@@ -172,7 +172,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\EngineCore.cpp" />
     <ClCompile Include="Engine\Colliders\Collider.cpp" />
     <ClCompile Include="Engine\Colliders\CollisionManager.cpp" />
+    <ClCompile Include="Engine\Math\AudioMath.cpp" />
     <ClCompile Include="Engine\Math\MyMath.cpp" />
+    <ClCompile Include="Engine\Math\MyRandomNum.cpp" />
     <ClCompile Include="Engine\Math\Quaternion\Quaternion.cpp" />
     <ClCompile Include="Engine\Model\Model.cpp" />
     <ClCompile Include="Engine\Model\ModelManager.cpp" />
@@ -223,6 +225,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\AudioEmitter.h" />
     <ClInclude Include="Engine\Audio\AudioListener.h" />
     <ClInclude Include="Engine\Audio\AudioManager.h" />
+    <ClInclude Include="Engine\Math\AudioMath.h" />
     <ClInclude Include="Engine\Audio\ChunkHeader.h" />
     <ClInclude Include="Engine\Audio\FormatChunk.h" />
     <ClInclude Include="Engine\Audio\MultiAudioLoader.h" />
@@ -242,6 +245,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Colliders\Collider.h" />
     <ClInclude Include="Engine\Colliders\CollisionManager.h" />
     <ClInclude Include="Engine\Math\MyMath.h" />
+    <ClInclude Include="Engine\Math\MyRandomNum.h" />
     <ClInclude Include="Engine\Math\Quaternion\Quaternion.h" />
     <ClInclude Include="Engine\Model\ModelManager.h" />
     <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
