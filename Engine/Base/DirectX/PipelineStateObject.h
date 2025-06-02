@@ -32,7 +32,7 @@ public:
 	/// </summary>
 	void Initialize(
 		DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil,
-		const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode,const std::string& psFilename,BlendMode blendMode);
+		const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode,const std::string& psFilename,BlendMode blendMode,bool isParticle);
 
 public:
 	ID3D12PipelineState* GetPipelineState();

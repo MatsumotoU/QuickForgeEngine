@@ -157,6 +157,14 @@ FramePerSecond* EngineCore::GetFpsCounter() {
 	return &fpsCounter_;
 }
 
+RtvDescriptorHeap* EngineCore::GetRtvDescriptorHeap() {
+	return &rtvDescriptorHeap_;
+}
+
+SrvDescriptorHeap* EngineCore::GetSrvDescriptorHeap() {
+	return &srvDescriptorHeap_;
+}
+
 float EngineCore::GetDeltaTime() {
 	// FPSが0でない場合はFPSを基にデルタタイムを返す
 	if (fpsCounter_.GetFps() != 0.0f) {

@@ -224,7 +224,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(metadata);
-	CreateShaderResourceView(metadata, srvDescriptorHeap_->GetSrvDescriptorHeap(), textureResource.Get(), 2 + textureHandle_);
+	CreateShaderResourceView(metadata, srvDescriptorHeap_->GetSrvDescriptorHeap(), textureResource.Get(), 3 + textureHandle_);
 	textureHandle_++;
 	textureResources_.push_back(textureResource);
 	intermediateResource_.push_back(

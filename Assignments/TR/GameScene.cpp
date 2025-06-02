@@ -49,6 +49,15 @@ void GameScene::Initialize() {
 
 	echoRandMax_ = 1.0f;
 	echoRandMin_ = 0.0f;
+
+	particle_.Initialize(engineCore_, 64);
+	particle_.LoadModel("Resources","Triangle.obj",COORDINATESYSTEM_HAND_RIGHT);
+
+	tf.clear();
+	for (int i = 0; i < 64; i++) {
+		Transform tempTf{};
+		tf.push_back(tempTf);
+	}
 }
 
 void GameScene::Update() {
@@ -234,8 +243,19 @@ void GameScene::Draw() {
 	ImGui::DragFloat3("rotate", &obj_.transform_.rotate.x);
 	ImGui::End();
 
-	listener_.Draw(&debugCamera_.camera_);
-	obj_.Draw(&debugCamera_.camera_);
+	//listener_.Draw(&debugCamera_.camera_);
+	//obj_.Draw(&debugCamera_.camera_);
+
+	for (int i = 0; i < 64; i++) {
+		std::string friendName = ConvertString(std::format(L"translate[{}]", i));
+		ImGui::DragFloat3(friendName.c_str(), &tf[i].translate.x,0.01f);
+		friendName = ConvertString(std::format(L"rotate[{}]", i));
+		ImGui::DragFloat3(friendName.c_str(), &tf[i].rotate.x, 0.01f);
+		friendName = ConvertString(std::format(L"scale[{}]", i));
+		ImGui::DragFloat3(friendName.c_str(), &tf[i].scale.x, 0.01f);
+	}
+
+	particle_.Draw(&tf, &debugCamera_.camera_);
 }
 
 void GameScene::EchoVoice() {

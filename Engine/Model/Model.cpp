@@ -15,7 +15,7 @@ void Model::Initialize(EngineCore* engineCore) {
 	pso_ = engineCore->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal);
 
 	material_.Initialize(dxCommon_);
-	wvp_.Initialize(dxCommon_);
+	wvp_.Initialize(dxCommon_,1);
 	directionalLight_.Initialize(dxCommon_);
 }
 
@@ -38,8 +38,8 @@ void Model::LoadModel(const std::string& directoryPath, const std::string& filen
 void Model::Draw(const Transform& transform, Camera* camera) {
 	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE);
-	wvp_.SetWorldMatrix(worldMatrix);
-	wvp_.SetWVPMatrix(wvpMatrix);
+	wvp_.SetWorldMatrix(worldMatrix,0);
+	wvp_.SetWVPMatrix(wvpMatrix,0);
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
