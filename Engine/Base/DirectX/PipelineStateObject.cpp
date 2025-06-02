@@ -5,7 +5,7 @@
 #include <cassert>
 #include <d3d12.h>
 
-void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode) {
+void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle) {
 	dxCommon_ = dxCommon;
 	winApp_ = winApp;
 	depthStencil_ = depthStencil;
@@ -14,19 +14,48 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, De
 	// RootSignatureを作成します
 	cBufferManager_.Initialize();
 	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
+
+	if (isParticle) {
+		cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_SRV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
+	} else {
+		cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
+	}
+	
 	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
 
 	// DescriptiorRange
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0;
-	descriptorRange[0].NumDescriptors = 1;
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-	D3D12_ROOT_PARAMETER* srvRootParameters = cBufferManager_.GetRootParameters()->data() + 2;
-	srvRootParameters->DescriptorTable.pDescriptorRanges = descriptorRange;
-	srvRootParameters->DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+	if (isParticle) {
+		D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
+		descriptorRangeForInstancing[0].BaseShaderRegister = 0;
+		descriptorRangeForInstancing[0].NumDescriptors = 1;
+		descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+		D3D12_ROOT_PARAMETER* particleRootParameters = cBufferManager_.GetRootParameters()->data() + 1;
+		particleRootParameters->ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		particleRootParameters->ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+		particleRootParameters->DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
+		particleRootParameters->DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
+
+		D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+		descriptorRange[0].BaseShaderRegister = 0;
+		descriptorRange[0].NumDescriptors = 1;
+		descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+		D3D12_ROOT_PARAMETER* srvRootParameters = cBufferManager_.GetRootParameters()->data() + 2;
+		srvRootParameters->DescriptorTable.pDescriptorRanges = descriptorRange;
+		srvRootParameters->DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+	} else {
+		D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+		descriptorRange[0].BaseShaderRegister = 0;
+		descriptorRange[0].NumDescriptors = 1;
+		descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+		D3D12_ROOT_PARAMETER* srvRootParameters = cBufferManager_.GetRootParameters()->data() + 2;
+		srvRootParameters->DescriptorTable.pDescriptorRanges = descriptorRange;
+		srvRootParameters->DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+	}
+	
 
 	// Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
@@ -130,10 +159,20 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, De
 
 	// シェーダーをコンパイルする
 	shaderCompiler_.InitializeDXC();
-	IDxcBlob* vertexShaderBlob = shaderCompiler_.CompileShader(L"Object3d.VS.hlsl", L"vs_6_0");
-	assert(vertexShaderBlob != nullptr);
-	IDxcBlob* pixelShaderBlob = shaderCompiler_.CompileShader(ConvertString(psFilepath), L"ps_6_0");
-	assert(pixelShaderBlob != nullptr);
+	IDxcBlob* vertexShaderBlob = nullptr;
+	IDxcBlob* pixelShaderBlob = nullptr;
+	if (isParticle) {
+		vertexShaderBlob = shaderCompiler_.CompileShader(L"Particle.VS.hlsl", L"vs_6_0");
+		assert(vertexShaderBlob != nullptr);
+		pixelShaderBlob = shaderCompiler_.CompileShader(ConvertString(psFilepath), L"ps_6_0");
+		assert(pixelShaderBlob != nullptr);
+	} else {
+		vertexShaderBlob = shaderCompiler_.CompileShader(L"Object3d.VS.hlsl", L"vs_6_0");
+		assert(vertexShaderBlob != nullptr);
+		pixelShaderBlob = shaderCompiler_.CompileShader(ConvertString(psFilepath), L"ps_6_0");
+		assert(pixelShaderBlob != nullptr);
+	}
+	
 
 	// DepthStencilState
 	//depthStencil_->Initialize(winApp_,dxCommon_);

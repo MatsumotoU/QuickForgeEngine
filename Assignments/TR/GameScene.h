@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Engine/Base/EngineCore.h"
 #include "../../Engine/Math/MyRandomNum.h"
+#include "../../Engine/Particle/Particle.h"
 #include "SoundObj.h"
 #include "ListenerObj.h"
 
@@ -56,5 +57,7 @@ private:
 	SoundObj obj_;
 	ListenerObj listener_;
 
+	Particle particle_;
+	std::vector<Transform> tf;
 	
 };

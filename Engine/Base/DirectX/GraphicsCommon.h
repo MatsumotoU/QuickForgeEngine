@@ -12,6 +12,8 @@ public:
 	PipelineStateObject* GetLinePso(BlendMode blendmode) { return &linePso_[static_cast<uint32_t>(blendmode)]; }
 	PipelineStateObject* GetPointPso(BlendMode blendmode) { return &pointPso_[static_cast<uint32_t>(blendmode)]; }
 
+	PipelineStateObject* GetParticlePso(BlendMode blendmode) { return &particlePso_[static_cast<uint32_t>(blendmode)]; }
+
 	PipelineStateObject* GetGrayScalePso() { return &grayScaleTrianglePso_; }
 
 	DepthStencil* GetDepthStencil() { return &depthStencil_; }
@@ -23,6 +25,8 @@ private: // メンバ変数
 	PipelineStateObject trianglePso_[kCountOfBlendMode];
 	PipelineStateObject linePso_[kCountOfBlendMode];
 	PipelineStateObject pointPso_[kCountOfBlendMode];
+
+	PipelineStateObject particlePso_[kCountOfBlendMode];
 
 	PipelineStateObject grayScaleTrianglePso_;
 };

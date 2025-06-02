@@ -29,7 +29,7 @@ void Sprite::Initialize(DirectXCommon* dxCommon, TextureManager* textureManager,
 	pso_ = pso;
 
 	material_.Initialize(dxCommon);
-	wvp_.Initialize(dxCommon);
+	wvp_.Initialize(dxCommon,1);
 	directionalLight_.Initialize(dxCommon);
 
 	// Spriteを作る
@@ -74,8 +74,8 @@ void Sprite::Initialize(DirectXCommon* dxCommon, TextureManager* textureManager,
 void Sprite::DrawSprite(const Transform& transform, int32_t textureHandle, Camera* camera) {
 	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
-	wvp_.SetWorldMatrix(worldMatrix);
-	wvp_.SetWVPMatrix(wvpMatrix);
+	wvp_.SetWorldMatrix(worldMatrix,0);
+	wvp_.SetWVPMatrix(wvpMatrix,0);
 
 	// sprite
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
@@ -103,8 +103,8 @@ void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform
 	// wvp
 	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
-	wvp_.SetWorldMatrix(worldMatrix);
-	wvp_.SetWVPMatrix(wvpMatrix);
+	wvp_.SetWorldMatrix(worldMatrix,0);
+	wvp_.SetWVPMatrix(wvpMatrix,0);
 
 	// sprite
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
@@ -152,8 +152,8 @@ void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform
 	// wvp
 	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
-	wvp_.SetWorldMatrix(worldMatrix);
-	wvp_.SetWVPMatrix(wvpMatrix);
+	wvp_.SetWorldMatrix(worldMatrix,0);
+	wvp_.SetWVPMatrix(wvpMatrix,0);
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 

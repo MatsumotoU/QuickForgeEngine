@@ -74,6 +74,8 @@ public:// エンジンの機能取得
 	DirectInputManager* GetInputManager();
 	Sprite* GetOffscreen();
 	FramePerSecond* GetFpsCounter();
+	RtvDescriptorHeap* GetRtvDescriptorHeap();
+	SrvDescriptorHeap* GetSrvDescriptorHeap();
 
 public:
 	 float GetDeltaTime();
