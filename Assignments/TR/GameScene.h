@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Engine/Base/EngineCore.h"
+#include "EngineCore.h"
 #include "../../Engine/Math/MyRandomNum.h"
 #include "../../Engine/Particle/Particle.h"
 #include "SoundObj.h"
@@ -41,6 +41,9 @@ private:
 	float echoInitialVolumeAttenuation_;
 
 	std::vector<IXAudio2SourceVoice*> echoVoice_;
+
+	SoundData mp3Data_;
+	IXAudio2SourceVoice* mp3Voice_;
 
 	uint32_t oldEchoIndex_;
 	bool isEcho_;
