@@ -18,6 +18,9 @@ void GameScene::Initialize() {
 	rightVoice_ = Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), soundData_);
 	leftVoice_ = Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), soundData_);
 
+	mp3Data_ = Audiomanager::SoundLoadMp3("Resources/Enter.mp3");
+	mp3Voice_ = Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), mp3Data_);
+
 	for (int i = 0; i < 256; i++) {
 		echoVoice_.push_back(Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), soundData_));
 	}
@@ -197,6 +200,7 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 	ImGui::Begin("Audio");
+
 	if (ImGui::Button("PlaySound")) {
 		Audiomanager::SoundPlaySourceVoice(soundData_, rightVoice_);
 		Audiomanager::SoundPlaySourceVoice(soundData_, leftVoice_);
