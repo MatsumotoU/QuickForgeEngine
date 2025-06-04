@@ -5,6 +5,8 @@
 #include "../../MyDebugLog.h"
 #endif // _DEBUG
 
+// TODO: メモリ領域の可視化
+// TODO: メモリ選定機能の追加、外部から変更できないようにする
 
 void RtvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
 	rtvDescriptorHeap_ = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV,numDescriptors,shaderVisible);

@@ -8,6 +8,7 @@ class DepthStencil;
 class DirectXCommon;
 class WinApp;
 
+// TODO: ブレンドモードの列挙型をブレンドモードを管理するクラスに移送
 enum BlendMode{
 	// ブレンドなし
 	kBlendModeNone,
