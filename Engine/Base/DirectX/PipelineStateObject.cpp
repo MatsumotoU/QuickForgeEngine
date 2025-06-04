@@ -5,6 +5,8 @@
 #include <cassert>
 #include <d3d12.h>
 
+// TODO: 各機能を分離後、初期化と生成を別々の処理にする
+
 void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle) {
 	dxCommon_ = dxCommon;
 	winApp_ = winApp;

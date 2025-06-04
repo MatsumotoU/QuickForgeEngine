@@ -7,6 +7,10 @@
 
 #include "Descriptors/SrvDescriptorHeap.h"
 
+#ifdef _DEBUG
+#include "ImGuiManager.h"
+#endif // _DEBUG
+
 void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvDescriptorHeap) {
 	dxCommon_ = dxCommon;
 	srvDescriptorHeap_ = srvDescriptorHeap;
@@ -37,6 +41,10 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvD
 
 void TextureManager::Finalize() {
 	CoUninitialize();
+}
+
+// TODO: ロードされていいる画像たちを描画する
+void TextureManager::DrawImages() {
 }
 
 DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
@@ -127,24 +135,6 @@ void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12Graphic
 	commandList->ResourceBarrier(1, &barrier);
 }
 
-//void TextureManager::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
-//	// Meta情報の取得
-//	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
-//	// 全MipMapについて
-//	for (size_t mipLevel = 0; mipLevel < metaData.mipLevels; ++mipLevel) {
-//		// MipMapLevelを指定して各Imageを取得
-//		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-//		// Textureに転送
-//		HRESULT hr = texture->WriteToSubresource(
-//			static_cast<UINT>(mipLevel),
-//			nullptr,
-//			img->pixels,
-//			static_cast<UINT>(img->rowPitch),
-//			static_cast<UINT>(img->slicePitch));
-//		assert(SUCCEEDED(hr));
-//	}
-//}
-
 void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource,uint32_t index) {
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -193,15 +183,9 @@ void TextureManager::CreateOffscreenShaderResourceView() {
 }
 
 void TextureManager::PreDraw() {
-	/*for (int32_t i = 0; i < textureResources_.size(); i++) {
-		intermediateResource_.push_back(UploadTextureData(textureResources_[i].Get(), scratchImages_[i], dxCommon_->GetCommandList()));
-	}*/
 }
 
 void TextureManager::PostDraw() {
-	/*for (int32_t i = 0; i < textureResources_.size(); i++) {
-		TransitionResourceBarrier(textureResources_[i].Get(), dxCommon_->GetCommandList());
-	}*/
 }
 
 void TextureManager::ReleaseIntermediateResources() {

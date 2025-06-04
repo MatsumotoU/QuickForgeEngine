@@ -177,6 +177,11 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDecriptorHandle(ID3D12DescriptorHeap* descript
 /// <returns>リソース</returns>
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
 /// <summary>
-/// ディスクリプタヒープを作成する
+/// ディスクリプターヒープを生成します 
 /// </summary>
+/// <param name="device">dx12device</param>
+/// <param name="heapType">ヒープの種類</param>
+/// <param name="numDescriptors">ヒープの数</param>
+/// <param name="shaderVisible">シェーダーが直接参照できるかどうか</param>
+/// <returns></returns>
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);

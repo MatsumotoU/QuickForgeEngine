@@ -1,5 +1,7 @@
 #include "CBufferManager.h"
 
+// TODO: 名前の変更
+
 void CBufferManager::Initialize() {
 	rootParameters_.clear();
 

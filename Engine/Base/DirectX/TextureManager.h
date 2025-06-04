@@ -19,6 +19,14 @@ public:// 一回は絶対に呼び出さないとバグるやつ
 	/// </summary>
 	void Finalize();
 
+public:// デバッグ機能
+#ifdef _DEBUG
+	/// <summary>
+	/// 現在読み込んでいるテクスチャを表示します
+	/// </summary>
+	void DrawImages();
+#endif // _DEBUG
+
 public:
 	/// <summary>
 	/// テクスチャを読み込んでミップ付きマップにして読み込みます
