@@ -5,6 +5,9 @@
 #include "RiffHeader.h"
 #include "FormatChunk.h"
 #include "ChunkHeader.h"
+
+#pragma comment(lib,"xaudio2.lib")
+
 // デストラクタ
 AudioManager::~AudioManager() {
 	xAudio2_.Reset();

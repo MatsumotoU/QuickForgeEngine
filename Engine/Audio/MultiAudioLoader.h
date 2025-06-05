@@ -6,11 +6,6 @@
 #include <mfidl.h>
 #include <mfreadwrite.h>
 
-#pragma comment(lib, "Mf.lib")
-#pragma comment(lib, "mfplat.lib")
-#pragma comment(lib, "Mfreadwrite.lib")
-#pragma comment(lib, "mfuuid.lib")
-
 struct SoundData;
 class AudioManager;
 

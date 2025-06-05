@@ -1,6 +1,9 @@
 #include "DirectInputMouse.h"
 #include "../../Base/Windows/WinApp.h"
 
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
+
 #include <cassert>
 
 DirectInputMouse::DirectInputMouse() {

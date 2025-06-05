@@ -237,7 +237,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\MultiAudioLoader.h" />
     <ClInclude Include="Engine\Audio\RiffHeader.h" />
     <ClInclude Include="Engine\Audio\SoundData.h" />
-    <ClInclude Include="Engine\Audio\SoundEmitter.h" />
     <ClInclude Include="Engine\Base\DirectX\D3DResourceLeakChecker.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectionalLightResource.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h" />

@@ -2,7 +2,6 @@
 #include <Windows.h>
 #include <dbghelp.h>
 #include <strsafe.h>
-#pragma comment(lib,"Dbghelp.lib")
 
 static LONG WINAPI ExportDump(EXCEPTION_POINTERS* exception) {
 	SYSTEMTIME time;
