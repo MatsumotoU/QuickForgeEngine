@@ -50,6 +50,9 @@
 // Model
 #include "../Model/Model.h"
 
+// Json
+#include "../Utility/SimpleJson.h"
+
 class EngineCore {
 public:
 	EngineCore();

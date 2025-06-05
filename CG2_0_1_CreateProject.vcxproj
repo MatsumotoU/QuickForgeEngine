@@ -110,7 +110,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/Base/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/Base/;$(ProjectDir)/externals/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,7 +133,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/Base/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/Base/;$(ProjectDir)/externals/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,16 +152,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Assignments\AL3\RailShooter\Class\Bulllet.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\Class\Enemy.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\GameScene.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\SceneManager.cpp" />
-    <ClCompile Include="Assignments\AL3\RailShooter\TitleScene.cpp" />
+    <ClCompile Include="Assignments\TR\GameScene.cpp" />
+    <ClCompile Include="Assignments\TR\ListenerObj.cpp" />
+    <ClCompile Include="Assignments\TR\SoundObj.cpp" />
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
@@ -210,6 +203,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
     <ClCompile Include="Engine\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
+    <ClCompile Include="Engine\Utility\SimpleJson.cpp" />
     <ClCompile Include="Engine\Utility\TimeCall.cpp" />
     <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
@@ -229,18 +223,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Assignments\AL3\RailShooter\Class\BaseEnemyState.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\Class\Bulllet.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\Class\Enemy.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\GameScene.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\IScene.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\SceneManager.h" />
-    <ClInclude Include="Assignments\AL3\RailShooter\TitleScene.h" />
+    <ClInclude Include="Assignments\TR\GameScene.h" />
+    <ClInclude Include="Assignments\TR\ListenerObj.h" />
+    <ClInclude Include="Assignments\TR\SoundObj.h" />
     <ClInclude Include="Engine\Audio\Audio3D.h" />
     <ClInclude Include="Engine\Audio\AudioEmitter.h" />
     <ClInclude Include="Engine\Audio\AudioListener.h" />
@@ -306,6 +291,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\Material.h" />
     <ClInclude Include="Engine\Particle\Particle.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
+    <ClInclude Include="Engine\Utility\SimpleJson.h" />
     <ClInclude Include="Engine\Utility\TimeCall.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui-knobs-main\imgui-knobs.h" />
