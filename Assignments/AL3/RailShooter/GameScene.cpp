@@ -136,7 +136,7 @@ void GameScene::Draw() {
 	}
 	ImGui::End();
 
-	//skyDome_.Draw(&camera_);
+	skyDome_.Draw(&camera_);
 	player_.Draw(&camera_);
 	for (int i = 0; i < kPlayerBullets; i++) {
 		if (playerBullets[i].GetIsActive()) {

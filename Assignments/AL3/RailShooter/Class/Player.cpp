@@ -5,7 +5,7 @@
 void Player::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	model_.Initialize(engineCore_);
-	model_.LoadModel("Resources", "Speaker.obj", COORDINATESYSTEM_HAND_RIGHT);
+	model_.LoadModel("Resources", "plot.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 	moveSpeed_ = 50.0f;
 
