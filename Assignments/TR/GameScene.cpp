@@ -56,7 +56,7 @@ void GameScene::Initialize() {
 	cutoffOffset_ = 0.0f;
 
 	state_ = "Outside";
-	stateData_.emplace_back("Outside",)
+	//stateData_.emplace_back("Outside",)
 }
 
 void GameScene::Update() {

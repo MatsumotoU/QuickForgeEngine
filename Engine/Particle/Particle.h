@@ -5,11 +5,15 @@
 #include "../Base/DirectX/MaterialResource.h"
 #include "../Base/DirectX/WVPResource.h"
 #include "../Base/DirectX/DirectionalLightResource.h"
+#include "../Base/DirectX/Descriptors/SrvDescriptorHeap.h"
 
 class Camera;
 class EngineCore;
 
 class Particle {
+public:
+	Particle();
+
 public:
 	void Initialize(EngineCore* engineCore, uint32_t totalParticles);
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
@@ -21,6 +25,7 @@ private:
 	WVPResource wvp_;
 
 private:
+	static uint32_t instanceCount_;
 	uint32_t totalParticles_;
 	EngineCore* engineCore_;
 	PipelineStateObject* pso_;
@@ -31,6 +36,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	int32_t modelTextureHandle_;
-	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU_;
-	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU_;
+	DescriptorHandles instancingSrvHandles_;
 };

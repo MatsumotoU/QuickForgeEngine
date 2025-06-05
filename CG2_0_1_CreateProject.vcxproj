@@ -230,6 +230,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\AudioEmitter.h" />
     <ClInclude Include="Engine\Audio\AudioListener.h" />
     <ClInclude Include="Engine\Audio\AudioManager.h" />
+    <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h" />
     <ClInclude Include="Engine\Math\AudioMath.h" />
     <ClInclude Include="Engine\Audio\ChunkHeader.h" />
     <ClInclude Include="Engine\Audio\FormatChunk.h" />

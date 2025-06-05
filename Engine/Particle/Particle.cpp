@@ -7,6 +7,13 @@
 
 #include "../Camera/Camera.h"
 
+// インスタンスの総数初期化
+uint32_t Particle::instanceCount_ = 0;
+
+Particle::Particle() {
+	instanceCount_ ++;
+}
+
 void Particle::Initialize(EngineCore* engineCore, uint32_t totalParticles) {
 	totalParticles_ = totalParticles;
 	engineCore_ = engineCore;
@@ -25,11 +32,8 @@ void Particle::Initialize(EngineCore* engineCore, uint32_t totalParticles) {
 	srvDesc.Buffer.NumElements = totalParticles;
 	srvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
 
-	instancingSrvHandleCPU_ = GetCPUDecriptorHandle(
-		engineCore_->GetSrvDescriptorHeap()->GetSrvDescriptorHeap(), engineCore_->GetDirectXCommon()->GetDescriptorSizeSRV(), 2);
-	instancingSrvHandleGPU_ = GetGPUDecriptorHandle(
-		engineCore_->GetSrvDescriptorHeap()->GetSrvDescriptorHeap(), engineCore_->GetDirectXCommon()->GetDescriptorSizeSRV(), 2);
-	engineCore_->GetDirectXCommon()->GetDevice()->CreateShaderResourceView(wvp_.GetWVPResource(), &srvDesc, instancingSrvHandleCPU_);
+	instancingSrvHandles_ = engineCore_->GetSrvDescriptorHeap()->AssignArrayHandles(instanceCount_);
+	engineCore_->GetSrvDescriptorHeap()->AssignHeap(wvp_.GetWVPResource(), srvDesc, instancingSrvHandles_.cpuHandle_);
 
 	pso_ = engineCore_->GetGraphicsCommon()->GetParticlePso(kBlendModeNormal);
 }
@@ -68,7 +72,7 @@ void Particle::Draw(std::vector<Transform>* transform, Camera* camera) {
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU_);
+	commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandles_.gpuHandle_);
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(2, engineCore_->GetTextureManager()->GetTextureSrvHandleGPU(modelTextureHandle_));
 	commandList->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), totalParticles_, 0, 0);
