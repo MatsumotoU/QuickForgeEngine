@@ -2,6 +2,8 @@
 #include "../MyDebugLog.h"
 #include "../MyString.h"
 
+#pragma comment(lib,"Dbghelp.lib")
+
 WinAppDebugCore::WinAppDebugCore(const LPSTR& lpCmdLine) {
 	SetUnhandledExceptionFilter(ExportDump);
 
