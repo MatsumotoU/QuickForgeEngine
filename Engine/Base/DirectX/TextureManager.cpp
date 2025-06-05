@@ -135,7 +135,7 @@ void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12Graphic
 	commandList->ResourceBarrier(1, &barrier);
 }
 
-void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12DescriptorHeap* srvDescriptorHeap,ID3D12Resource* textureResource,uint32_t index) {
+void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12Resource* textureResource,uint32_t index) {
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
@@ -148,14 +148,15 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU{};
 	textureSrvHandleCPU_.push_back(textureSrvHandleCPU);
 	textureSrvHandleGPU_.push_back(textureSrvHandleGPU);
-	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1] = GetCPUDecriptorHandle(srvDescriptorHeap, dxCommon_->GetDescriptorSizeSRV(), index);
-	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1] = GetGPUDecriptorHandle(srvDescriptorHeap, dxCommon_->GetDescriptorSizeSRV(), index);
+	DescriptorHandles handles = srvDescriptorHeap_->AssignTextureHandles(index);
+	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1] = handles.cpuHandle_;
+	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1] = handles.gpuHandle_;
 	// ImGuiの次のDescriptorを使う
-	UINT discriptorHeapSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	/*UINT discriptorHeapSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
-	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
+	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;*/
 	// SRVの作成
-	device_->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1]);
+	srvDescriptorHeap_->AssignHeap(textureResource, srvDesc, handles.cpuHandle_);
 }
 
 void TextureManager::CreateOffscreenShaderResourceView() {
@@ -167,19 +168,12 @@ void TextureManager::CreateOffscreenShaderResourceView() {
 	srvDesc.Texture2D.MipLevels = 1;
 
 	// SRVを作成するディスクリプタヒープの場所を決める
-	offscreenSrvHandleCPU_ = GetCPUDecriptorHandle(
-		srvDescriptorHeap_->GetSrvDescriptorHeap(),
-		dxCommon_->GetDescriptorSizeSRV(),
-		1
-	);
-	offscreenSrvHandleGPU_ = GetGPUDecriptorHandle(
-		srvDescriptorHeap_->GetSrvDescriptorHeap(),
-		dxCommon_->GetDescriptorSizeSRV(),
-		1
-	);
+	DescriptorHandles handles = srvDescriptorHeap_->AssignOffscreenHandles(1);
+	offscreenSrvHandleCPU_ = handles.cpuHandle_;
+	offscreenSrvHandleGPU_ = handles.gpuHandle_;
 
 	// SRVの作成
-	device_->CreateShaderResourceView(dxCommon_->GetOffscreenResource(), &srvDesc, offscreenSrvHandleCPU_);
+	srvDescriptorHeap_->AssignHeap(dxCommon_->GetOffscreenResource(), srvDesc, offscreenSrvHandleCPU_);
 }
 
 void TextureManager::PreDraw() {
@@ -208,7 +202,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(metadata);
-	CreateShaderResourceView(metadata, srvDescriptorHeap_->GetSrvDescriptorHeap(), textureResource.Get(), 3 + textureHandle_);
+	CreateShaderResourceView(metadata, textureResource.Get(), 3 + textureHandle_);
 	textureHandle_++;
 	textureResources_.push_back(textureResource);
 	intermediateResource_.push_back(
