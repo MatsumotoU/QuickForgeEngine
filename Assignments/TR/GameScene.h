@@ -23,12 +23,16 @@ private:
 	AudioManager* audio_;
 
 private:
+	std::string state_;
+	SJN::json stateData_;
+
 	float masterVolume_;
 	SoundData soundData_;
 	IXAudio2SourceVoice* rightVoice_;
 	IXAudio2SourceVoice* leftVoice_;
 	float rotateSpeed_;
 	float pan_;
+	float cutoffOffset_;
 	float cutoff_;
 	float cutoffRate_;
 	float iidRate_;
@@ -59,8 +63,4 @@ private:
 	float matrix[2];
 	SoundObj obj_;
 	ListenerObj listener_;
-
-	Particle particle_;
-	std::vector<Transform> tf;
-	
 };

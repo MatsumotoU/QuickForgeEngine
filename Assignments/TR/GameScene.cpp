@@ -53,14 +53,10 @@ void GameScene::Initialize() {
 	echoRandMax_ = 1.0f;
 	echoRandMin_ = 0.0f;
 
-	particle_.Initialize(engineCore_, 64);
-	particle_.LoadModel("Resources","Triangle.obj",COORDINATESYSTEM_HAND_RIGHT);
+	cutoffOffset_ = 0.0f;
 
-	tf.clear();
-	for (int i = 0; i < 64; i++) {
-		Transform tempTf{};
-		tf.push_back(tempTf);
-	}
+	state_ = "Outside";
+	stateData_.emplace_back("Outside",)
 }
 
 void GameScene::Update() {
@@ -127,6 +123,9 @@ void GameScene::Update() {
 	}
 
 	cutoff_ = (sampleRateHz / 10.0f) + (sampleRateHz / 10.0f) * cutoffRate;
+	cutoff_ -= cutoffOffset_;
+	cutoff_ = std::clamp(cutoff_, 0.0f, 4800.0f);
+
 	if (cutoff_ <= 0.0f || cutoff_ > sampleRateHz) {
 		assert(false);
 	}
@@ -135,8 +134,6 @@ void GameScene::Update() {
 	iidRate_ = (cutoff_ * pan_) * iidVolume_;
 	float rightCutoffFrequencyHz = cutoff_ + iidRate_;
 	float leftCutoffFrequencyHz = cutoff_ + iidRate_;
-
-	cutoff_ = std::clamp(cutoff_, 0.0f, 4800.0f);
 
 	rightFilterParams.Frequency = 2.0f * sinf(XAUDIO2_PI * rightCutoffFrequencyHz / sampleRateHz);
 	leftFilterParams.Frequency = 2.0f * sinf(XAUDIO2_PI * leftCutoffFrequencyHz / sampleRateHz);
@@ -155,7 +152,7 @@ void GameScene::Update() {
 		if (echoTime_ > 0.0f) {
 			echoTime_ -= engineCore_->GetDeltaTime();
 		} else {
-			echoTime_ = echoInterval_ + echoIntervalRand_.GetUniformDistributionRand(0.0f, 0.5f);
+			echoTime_ = echoInterval_ + echoIntervalRand_.GetUniformDistributionRand(echoRandMin_, echoRandMax_);
 
 			for (IXAudio2SourceVoice* sourceVoice : echoVoice_) {
 
@@ -199,6 +196,24 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	ImGui::Begin("Preset");
+	ImGui::Text("State: %s", state_.c_str());
+	if (ImGui::Button("OutSide")) {
+		state_ = "Outside";
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Room")) {
+		state_ = "Room";
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cave")) {
+		state_ = "Cave";
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("UnderTheWater")) {
+		state_ = "UnderTheWater";
+	}
+	ImGui::End();
 
 	ImGui::Begin("Audio");
 
@@ -217,6 +232,8 @@ void GameScene::Draw() {
 	ImGui::Text("%f", static_cast<float>(soundData_.wfex.nSamplesPerSec));
 
 	ImGuiKnobs::Knob("Panning", &pan_, -1.0f, 1.0f, 0.01f, "%.2f");
+	ImGui::SameLine();
+	ImGuiKnobs::Knob("CutoffOffset", &cutoffOffset_, 0.0f, 2000.0f, 1.0f, "%.2f");
 	ImGui::SameLine();
 	ImGuiKnobs::Knob("Cutoff", &cutoff_, 0.0f, 48000.0f, 1.0f, "%.2f");
 	ImGui::SameLine();
@@ -248,19 +265,8 @@ void GameScene::Draw() {
 	ImGui::DragFloat3("rotate", &obj_.transform_.rotate.x);
 	ImGui::End();
 
-	//listener_.Draw(&debugCamera_.camera_);
-	//obj_.Draw(&debugCamera_.camera_);
-
-	for (int i = 0; i < 64; i++) {
-		std::string friendName = ConvertString(std::format(L"translate[{}]", i));
-		ImGui::DragFloat3(friendName.c_str(), &tf[i].translate.x,0.01f);
-		friendName = ConvertString(std::format(L"rotate[{}]", i));
-		ImGui::DragFloat3(friendName.c_str(), &tf[i].rotate.x, 0.01f);
-		friendName = ConvertString(std::format(L"scale[{}]", i));
-		ImGui::DragFloat3(friendName.c_str(), &tf[i].scale.x, 0.01f);
-	}
-
-	particle_.Draw(&tf, &debugCamera_.camera_);
+	listener_.Draw(&debugCamera_.camera_);
+	obj_.Draw(&debugCamera_.camera_);
 }
 
 void GameScene::EchoVoice() {
