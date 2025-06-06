@@ -9,6 +9,7 @@
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
+#include "../Base/MyDebugLog.h"
 #endif // _DEBUG
 
 void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvDescriptorHeap) {
@@ -71,9 +72,19 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	assert(SUCCEEDED(hr));
 
+#ifdef _DEBUG
+	const DirectX::TexMetadata& metadata = image.GetMetadata();
+	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height,metadata.arraySize)));
+#endif // _DEBUG
+
 	// ミップマップの作成
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, scratchImages_.back());
-	assert(SUCCEEDED(hr));
+	if (image.GetMetadata().width * image.GetMetadata().height != 1) {
+		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, scratchImages_.back());
+		assert(SUCCEEDED(hr));
+	} else {
+		// そのまま格納
+		scratchImages_.push_back(std::move(image));
+	}
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(const DirectX::TexMetadata& metadata) {
@@ -135,7 +146,7 @@ void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12Graphic
 	commandList->ResourceBarrier(1, &barrier);
 }
 
-void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata,ID3D12Resource* textureResource,uint32_t index) {
+void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource, uint32_t index) {
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
@@ -190,14 +201,23 @@ void TextureManager::ReleaseIntermediateResources() {
 }
 
 int32_t TextureManager::LoadTexture(const std::string& filePath) {
+	// ファイルパス表示
+#ifdef _DEBUG
+	DebugLog(std::format("TextureManager: LoadPath {}", filePath));
+#endif // _DEBUG
+
 	// 同じ画像ファイルを読み込まない
 	for (int i = 0; i < filePathliblary_.size(); i++) {
 		if (filePathliblary_[i] == filePath) {
+			
+#ifdef _DEBUG
+			DebugLog(ConvertString(std::format(L"TextureManager: LoadedTheSameFile->return {}", i)));
+#endif // _DEBUG
 			return i;
 		}
 	}
 	filePathliblary_.push_back(filePath);
-	
+
 	// 画像読み込み処理
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
@@ -206,8 +226,11 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	textureHandle_++;
 	textureResources_.push_back(textureResource);
 	intermediateResource_.push_back(
-		UploadTextureData(textureResources_[textureResources_.size() - 1].Get(), scratchImages_[textureResources_.size() - 1], dxCommon_->GetCommandList()));
-	return textureHandle_-1;
+		UploadTextureData(textureResources_[textureResources_.size() - 1].Get(), scratchImages_[scratchImages_.size() - 1], dxCommon_->GetCommandList()));
+#ifdef _DEBUG
+	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width,metadata.height,textureHandle_-1)));
+#endif // _DEBUG
+	return textureHandle_ - 1;
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t index) {

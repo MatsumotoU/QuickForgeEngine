@@ -1,8 +1,11 @@
 #include "SimpleJson.h"
-#include <cassert>
 
-SJN::json SJN::LoadJsonData(std::string& fp) {
-    SJN::json result;
+#ifdef _DEBUG
+#include "MyDebugLog.h"
+#endif // _DEBUG
+
+nlohmann::json SJN::LoadJsonData(std::string& fp) {
+	nlohmann::json result;
     
 	// jsonデータ読み込み
 	std::ifstream ifs;
@@ -10,7 +13,12 @@ SJN::json SJN::LoadJsonData(std::string& fp) {
 
 	// ファイル開けない時のエラー
 	if (ifs.fail()) {
-		assert(false && "Failed open data file for read");
+#ifdef _DEBUG
+		std::string message = "Failed open data file for read(" + fp + ")";
+		DebugLog(message);
+#endif // _DEBUG
+
+		assert(false);
 		return 0;
 	}
 
@@ -20,7 +28,7 @@ SJN::json SJN::LoadJsonData(std::string& fp) {
     return result;
 }
 
-void SJN::SaveJsonData(const std::string groupName, json saveData) {
+void SJN::SaveJsonData(const std::string groupName, nlohmann::json saveData) {
 
 	// ファイル生成(階層ごとにやらなきゃダメっぽい？)
 	if (!std::filesystem::exists("Resources")) {
@@ -37,10 +45,30 @@ void SJN::SaveJsonData(const std::string groupName, json saveData) {
 
 	// ファイル開けない時のエラー
 	if (ofs.fail()) {
-		assert(false && "Failed open data file for write.");
+#ifdef _DEBUG
+		std::string message = "Failed open data file for write.";
+		DebugLog(message);
+		assert(false);
+#endif // _DEBUG
+		
 		return;
 	}
 
 	ofs << std::setw(4) << saveData << std::endl;
 	ofs.close();
+}
+
+int SJN::ChackJsonfile(std::string fp) {
+	// jsonデータ読み込み
+	std::ifstream ifs;
+	ifs.open(fp);
+
+	// ファイルが開けたらtrue
+	if (ifs.fail()) {
+		ifs.close();
+		return false;
+	} else {
+		ifs.close();
+		return true;
+	}
 }

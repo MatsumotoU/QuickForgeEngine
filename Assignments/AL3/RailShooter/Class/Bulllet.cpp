@@ -1,20 +1,25 @@
 #include "Bulllet.h"
 
-void Bullet::Initialize(EngineCore* engineCore) {
+void Bullet::Initialize(EngineCore* engineCore, const std::string& name) {
+	name_ = name;
 	engineCore_ = engineCore;
 	model_.Initialize(engineCore_);
-	model_.LoadModel("Resources", "Triangle.obj", COORDINATESYSTEM_HAND_RIGHT);
+	if (name_ == "Player") {
+		model_.LoadModel("Resources", "Bullet.obj", COORDINATESYSTEM_HAND_RIGHT);
+	} else {
+		model_.LoadModel("Resources", "missile.obj", COORDINATESYSTEM_HAND_RIGHT);
+	}
+	
 	isActive_ = false;
 
-	transform_.rotate.x = 3.14f * 0.5f;
-	transform_.scale.y = 2.0f;
-
-	name_ = "None";
+	transform_.scale = Vector3(0.5f, 0.5f, 0.5f);
 }
 
 void Bullet::Update() {
 	if (isActive_) {
 		transform_.translate += velocity_ * engineCore_->GetDeltaTime();
+		transform_.rotate = Vector3::LookAt(transform_.translate, transform_.translate + velocity_);
+
 
 		if (aliveTime_ > 0) {
 			aliveTime_--;
