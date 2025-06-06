@@ -4,7 +4,7 @@
 
 class Bullet : public Collider {
 public:
-	void Initialize(EngineCore* engineCore);
+	void Initialize(EngineCore* engineCore,const std::string& name);
 	void Update();
 	void Draw(Camera* camera);
 

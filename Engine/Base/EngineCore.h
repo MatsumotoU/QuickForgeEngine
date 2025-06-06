@@ -53,6 +53,8 @@
 // Json
 #include "../Utility/SimpleJson.h"
 
+// TODO: ビルドツールpremakeの導入
+
 class EngineCore {
 public:
 	EngineCore();
