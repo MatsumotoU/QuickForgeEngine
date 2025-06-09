@@ -13,7 +13,7 @@
 #include "../Base/MyDebugLog.h"
 #endif // _DEBUG
 
-class AudioManager {
+class AudioManager final{
 public:
 	~AudioManager();
 	

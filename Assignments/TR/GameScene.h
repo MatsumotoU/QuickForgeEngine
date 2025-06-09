@@ -22,9 +22,21 @@ private:
 	EngineCore* engineCore_;
 	AudioManager* audio_;
 
+	Transform spriteTransform_;
+	Sprite sprite_;
+	uint32_t outsideGH_;
+	uint32_t roomGH_;
+	uint32_t caveGH_;
+	uint32_t waterGH_;
+
 private:
+	SoundData waterSoundData_;
+	IXAudio2SourceVoice* waterVoice_;
+	SoundData windSoundData_;
+	IXAudio2SourceVoice* windVoice_;
+
+	nlohmann::json presetData_;
 	std::string state_;
-	SJN::json stateData_;
 
 	float masterVolume_;
 	SoundData soundData_;
@@ -40,11 +52,15 @@ private:
 	float internalVolumeDifferenceRate_;
 	float nowRightVolume_;
 	float nowLeftVolume_;
+	float playTimeRate_;
+	float playTimeDecayRate_;
 
 	float echoVolumeAttenuation_;
 	float echoInitialVolumeAttenuation_;
+	float echoInitialVolumeDecay_;
 
 	std::vector<IXAudio2SourceVoice*> echoVoice_;
+	std::vector<float> echoPlayTime_;
 
 	SoundData mp3Data_;
 	IXAudio2SourceVoice* mp3Voice_;

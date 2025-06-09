@@ -6,7 +6,7 @@
 
 #include "../MyString.h"
 
-class ShaderCompiler {
+class ShaderCompiler final {
 public:
 	/// <summary>
 	/// DXCを初期化します

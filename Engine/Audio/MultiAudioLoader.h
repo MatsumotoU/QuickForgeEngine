@@ -9,9 +9,7 @@
 struct SoundData;
 class AudioManager;
 
-// Mp3ファイル糞音小さい
-
-class MultiAudioLoader {
+class MultiAudioLoader final{
 public:
 	~MultiAudioLoader();
 

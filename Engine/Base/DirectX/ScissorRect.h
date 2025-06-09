@@ -4,7 +4,7 @@
 
 class WinApp;
 
-class ScissorRect {
+class ScissorRect final {
 public:
 	void Initialize(WinApp* winApp);
 

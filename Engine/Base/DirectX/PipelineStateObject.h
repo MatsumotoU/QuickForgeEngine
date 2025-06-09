@@ -26,7 +26,7 @@ enum BlendMode{
 	kCountOfBlendMode,
 };
 
-class PipelineStateObject {
+class PipelineStateObject final {
 public:
 	/// <summary>
 	/// 初期化します

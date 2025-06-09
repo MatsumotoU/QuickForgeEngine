@@ -4,7 +4,7 @@
 #include<dxgi1_3.h>
 #include "../MyString.h"
 
-class D3DResourceLeakChecker {
+class D3DResourceLeakChecker final {
 public:
 	~D3DResourceLeakChecker() {
 		// * 終了時のエラー処理 * //

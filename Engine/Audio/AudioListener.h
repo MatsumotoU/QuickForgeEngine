@@ -4,7 +4,7 @@
 
 #include "../Math/Vector/Vector3.h"
 
-class AudioListener {
+class AudioListener final{
 public:
 	AudioListener();
 

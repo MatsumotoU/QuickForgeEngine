@@ -55,7 +55,7 @@
 
 // TODO: ビルドツールpremakeの導入
 
-class EngineCore {
+class EngineCore final {
 public:
 	EngineCore();
 	~EngineCore();

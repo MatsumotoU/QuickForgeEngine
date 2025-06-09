@@ -6,7 +6,7 @@
 
 #include "../Math/Vector/Vector3.h"
 
-class AudioEmitter {
+class AudioEmitter final {
 public:
 	AudioEmitter();
 

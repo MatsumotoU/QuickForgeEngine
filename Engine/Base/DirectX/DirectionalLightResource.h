@@ -4,7 +4,7 @@
 class DirectXCommon;
 struct DirectionalLight;
 
-class DirectionalLightResource {
+class DirectionalLightResource final {
 public:
 	void Initialize(DirectXCommon* dxCommon);
 

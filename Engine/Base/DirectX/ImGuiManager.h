@@ -20,7 +20,7 @@ class DirectXCommon;
 class MyDebugLog;
 #endif // _DEBUG
 
-class ImGuiManager {
+class ImGuiManager final {
 public:
 	ImGuiManager();
 	~ImGuiManager();

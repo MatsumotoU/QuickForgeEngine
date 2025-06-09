@@ -5,7 +5,7 @@
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 
-class CBufferManager {
+class CBufferManager final {
 public:
 
 	/// <summary>
@@ -18,12 +18,12 @@ public:
 	/// <param name="parameterType">パラメータタイプ</param>
 	/// <param name="shaderVisibility">シェーダーの種類</param>
 	/// <param name="shaderRegisterIndex">レジスタ番号</param>
-	void CreateRootParameter(const D3D12_ROOT_PARAMETER_TYPE& parameterType,const D3D12_SHADER_VISIBILITY& shaderVisibility,int shaderRegisterIndex);
+	void CreateRootParameter(const D3D12_ROOT_PARAMETER_TYPE& parameterType, const D3D12_SHADER_VISIBILITY& shaderVisibility, int shaderRegisterIndex);
 
 	void CreateEmptyRootParameter();
 
 public:
-	
+
 	std::vector<D3D12_ROOT_PARAMETER>* GetRootParameters();
 	D3D12_ROOT_SIGNATURE_DESC* GetDescriptionRootSignature();
 

@@ -3,7 +3,7 @@
 
 const uint32_t kFpsSamplers = 64;
 
-class FramePerSecond {
+class FramePerSecond final {
 public:
 	void Initialize();
 	void Update();

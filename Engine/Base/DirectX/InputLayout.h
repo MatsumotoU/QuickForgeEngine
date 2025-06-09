@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class InputLayout {
+class InputLayout final {
 public:
 	/// <summary>
 	/// 初期化

@@ -7,7 +7,7 @@
 class DirectXCommon;
 struct Material;
 
-class MaterialResource {
+class MaterialResource final {
 public:
 	void Initialize(DirectXCommon* dxCommon, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f }, bool enebleLighting = true);
 

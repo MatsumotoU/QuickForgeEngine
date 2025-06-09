@@ -3,7 +3,7 @@
 
 class WinApp;
 
-class ViewPort {
+class ViewPort final {
 public:
 	void Inititalize(WinApp* winApp);
 

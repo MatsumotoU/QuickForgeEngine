@@ -215,6 +215,9 @@
     <ClCompile Include="Engine\Particle\Particle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Utility\SimpleJson.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Bulllet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -243,9 +246,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Assignments\AL3\RailShooter\TitleScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Utility\SimpleJson.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -499,6 +499,9 @@
     <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Utility\SimpleJson.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Assignments\AL3\RailShooter\Class\BaseEnemyState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -533,9 +536,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Assignments\AL3\RailShooter\TitleScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\SimpleJson.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

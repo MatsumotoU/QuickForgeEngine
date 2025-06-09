@@ -15,14 +15,23 @@ GameScene::GameScene(EngineCore* engineCore) {
 void GameScene::Initialize() {
 	masterVolume_ = 0.5f;
 	soundData_ = Audiomanager::SoundLoadWave("Resources/mono48kHz.wav");
+	//soundData_ = Audiomanager::SoundLoadMp3("Resources/shock.mp3");
 	rightVoice_ = Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), soundData_);
 	leftVoice_ = Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), soundData_);
+
+	waterSoundData_ = Audiomanager::SoundLoadMp3("Resources/water.mp3");
+	waterVoice_ = Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), waterSoundData_);
+	windSoundData_ = Audiomanager::SoundLoadMp3("Resources/wind.mp3");
+	windVoice_ = Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), windSoundData_);
+	waterVoice_->SetVolume(0.5f);
+	windVoice_->SetVolume(0.5f);
 
 	mp3Data_ = Audiomanager::SoundLoadMp3("Resources/Enter.mp3");
 	mp3Voice_ = Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), mp3Data_);
 
 	for (int i = 0; i < 256; i++) {
 		echoVoice_.push_back(Audiomanager::CreateSourceVoice(audio_->xAudio2_.Get(), soundData_));
+		echoPlayTime_.push_back(1.0f);
 	}
 
 	debugCamera_.Initialize(engineCore_->GetWinApp(), engineCore_->GetInputManager());
@@ -55,8 +64,40 @@ void GameScene::Initialize() {
 
 	cutoffOffset_ = 0.0f;
 
+	playTimeRate_ = 1.0f;
+
 	state_ = "Outside";
-	//stateData_.emplace_back("Outside",)
+
+	playTimeDecayRate_ = 0.0f;
+	echoInitialVolumeDecay_ = 1.0f;
+
+	presetData_.emplace_back(cutoffOffset_);
+	presetData_.emplace_back( cutoffRate_);
+	presetData_.emplace_back( iidRate_);
+	presetData_.emplace_back(iidVolume_);
+	presetData_.emplace_back( internalVolumeDifferenceRate_);
+	presetData_.emplace_back( echoVolumeAttenuation_);
+	presetData_.emplace_back(echoInitialVolumeAttenuation_);
+	presetData_.emplace_back(echoInitialVolumeDecay_);
+	presetData_.emplace_back(echoRandMax_);
+	presetData_.emplace_back(echoRandMin_);
+	presetData_.emplace_back(playTimeDecayRate_);
+	presetData_.emplace_back(echoInterval_);
+
+	sprite_.Initialize(
+		engineCore_->GetDirectXCommon(),
+		engineCore_->GetTextureManager(),
+		engineCore_->GetImGuiManager(),
+		400.0f, 300.0f,
+		engineCore_->GetGraphicsCommon()->GetTrianglePso(kBlendModeNone));
+	sprite_.material_.materialData_->enableLighting = false;
+
+	spriteTransform_.translate = { 1280.0f * 0.5f - 200.0f,720.0f * 0.5f - 150.0f,-50.0f };
+
+	outsideGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/Outside.png");
+	roomGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/Room.png");
+	caveGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/Cave.png");
+	waterGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/Water.png");
 }
 
 void GameScene::Update() {
@@ -154,6 +195,8 @@ void GameScene::Update() {
 		} else {
 			echoTime_ = echoInterval_ + echoIntervalRand_.GetUniformDistributionRand(echoRandMin_, echoRandMax_);
 
+			bool isPlay = false;
+
 			for (IXAudio2SourceVoice* sourceVoice : echoVoice_) {
 
 				if (!Audiomanager::GetIsPlaying(sourceVoice) && Audiomanager::GetIsPlaying(rightVoice_)) {
@@ -165,6 +208,7 @@ void GameScene::Update() {
 					hr = sourceVoice->SetFilterParameters(&rightFilterParams);
 					assert(SUCCEEDED(hr));
 					Audiomanager::SoundPlaySourceVoice(soundData_, sourceVoice);
+					isPlay = true;
 					break;
 				}
 			}
@@ -175,12 +219,17 @@ void GameScene::Update() {
 					matrix[1] = 0.0f;
 					sourceVoice->SetOutputMatrix(audio_->GetMasterVoice(), 1, 2, matrix);
 
-					sourceVoice->SetVolume(nowLeftVolume_ * echoInitialVolumeAttenuation_);
+					sourceVoice->SetVolume(nowLeftVolume_* echoInitialVolumeAttenuation_);
 					hr = sourceVoice->SetFilterParameters(&leftFilterParams);
 					assert(SUCCEEDED(hr));
 					Audiomanager::SoundPlaySourceVoice(soundData_, sourceVoice);
+					isPlay = true;
 					break;
 				}
+			}
+
+			if (isPlay) {
+				echoInitialVolumeAttenuation_ *= echoInitialVolumeDecay_;
 			}
 		}
 	}
@@ -190,28 +239,100 @@ void GameScene::Update() {
 		if (Audiomanager::GetIsPlaying(sourceVoice)) {
 			float volume = 0.0f;
 			sourceVoice->GetVolume(&volume);
-			sourceVoice->SetVolume(volume * (1.0f - echoVolumeAttenuation_));
+			sourceVoice->SetVolume(volume * (1.0f - echoVolumeAttenuation_ * engineCore_->GetDeltaTime()));
 		}
+	}
+
+	// 再生速度減衰
+	int index = 0;
+	for (IXAudio2SourceVoice* sourceVoice : echoVoice_) {
+		if (Audiomanager::GetIsPlaying(sourceVoice)) {
+			echoPlayTime_[index] *= 1.0f - playTimeDecayRate_ * engineCore_->GetDeltaTime();
+			sourceVoice->SetFrequencyRatio(echoPlayTime_[index]);
+
+		}
+		index++;
 	}
 }
 
 void GameScene::Draw() {
+	if (state_ == "Outside") {
+		sprite_.DrawSprite(spriteTransform_, outsideGH_, &debugCamera_.camera_);
+	} else if (state_ == "Room") {
+		sprite_.DrawSprite(spriteTransform_, roomGH_, &debugCamera_.camera_);
+	} else if (state_ == "Cave") {
+		sprite_.DrawSprite(spriteTransform_, caveGH_, &debugCamera_.camera_);
+	} else if (state_ == "UnderTheWater") {
+		sprite_.DrawSprite(spriteTransform_,waterGH_,&debugCamera_.camera_);
+	}
+
 	ImGui::Begin("Preset");
 	ImGui::Text("State: %s", state_.c_str());
 	if (ImGui::Button("OutSide")) {
 		state_ = "Outside";
+		Audiomanager::SoundPlaySourceVoice(mp3Data_, mp3Voice_);
+		windVoice_->SetFrequencyRatio(1.0f);
+		Audiomanager::SoundPlaySourceVoice(windSoundData_, windVoice_);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Room")) {
 		state_ = "Room";
+		Audiomanager::SoundPlaySourceVoice(mp3Data_, mp3Voice_);
+
+		windVoice_->Stop();
+		waterVoice_->Stop();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Cave")) {
 		state_ = "Cave";
+		Audiomanager::SoundPlaySourceVoice(mp3Data_, mp3Voice_);
+
+		windVoice_->Stop();
+		waterVoice_->Stop();
+
+		windVoice_->SetFrequencyRatio(0.1f);
+		Audiomanager::SoundPlaySourceVoice(windSoundData_, windVoice_);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("UnderTheWater")) {
 		state_ = "UnderTheWater";
+		Audiomanager::SoundPlaySourceVoice(mp3Data_, mp3Voice_);
+
+		windVoice_->Stop();
+		Audiomanager::SoundPlaySourceVoice(waterSoundData_, waterVoice_);
+	}
+	if (ImGui::Button("Save")) {
+		presetData_[0] = cutoffOffset_;
+		presetData_[1] = cutoffRate_;
+		presetData_[2] = iidRate_;
+		presetData_[3] = iidVolume_;
+		presetData_[4] = internalVolumeDifferenceRate_;
+		presetData_[5] = echoVolumeAttenuation_;
+		presetData_[6] = echoInitialVolumeAttenuation_;
+		presetData_[7] = echoInitialVolumeDecay_;
+		presetData_[8] = echoRandMax_;
+		presetData_[9] = echoRandMin_;
+		presetData_[10] = playTimeDecayRate_;
+		presetData_[11] = echoInterval_;
+		SJN::SaveJsonData(state_ + "Preset", presetData_);
+		Audiomanager::SoundPlaySourceVoice(mp3Data_, mp3Voice_);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load")) {
+		presetData_ = SJN::LoadJsonData("Resources/GlobalVariables/" + state_ + "Preset.json");
+		cutoffOffset_ = presetData_[0];
+		cutoffRate_ = presetData_[1];
+		iidRate_ = presetData_[2];
+		iidVolume_ = presetData_[3];
+		internalVolumeDifferenceRate_ = presetData_[4];
+		echoVolumeAttenuation_ = presetData_[5];
+		echoInitialVolumeAttenuation_ = presetData_[6];
+		echoInitialVolumeDecay_ = presetData_[7];
+		echoRandMax_ = presetData_[8];
+		echoRandMin_ = presetData_[9];
+		playTimeDecayRate_ = presetData_[10];
+		echoInterval_ = presetData_[11];
+		Audiomanager::SoundPlaySourceVoice(mp3Data_, mp3Voice_);
 	}
 	ImGui::End();
 
@@ -220,6 +341,10 @@ void GameScene::Draw() {
 	if (ImGui::Button("PlaySound")) {
 		Audiomanager::SoundPlaySourceVoice(soundData_, rightVoice_);
 		Audiomanager::SoundPlaySourceVoice(soundData_, leftVoice_);
+
+		for (float& playTime : echoPlayTime_) {
+			playTime = 1.0f;
+		}
 	}
 	if (ImGui::Button("isMoved")) {
 		isMove = !isMove;
@@ -258,6 +383,10 @@ void GameScene::Draw() {
 	ImGuiKnobs::Knob("echoMax", &echoRandMax_, 0.0f, 1.0f, 0.01f, "%.2f");
 	ImGui::SameLine();
 	ImGuiKnobs::Knob("echomin", &echoRandMin_, 0.0f, 1.0f, 0.01f, "%.2f");
+
+	ImGuiKnobs::Knob("echoPlayTimeDecay", &playTimeDecayRate_, 0.0f, 1.0f, 0.01f, "%.2f");
+	ImGui::SameLine();
+	ImGuiKnobs::Knob("echoInitalVolumeDecay", &echoInitialVolumeDecay_, 0.0f, 1.0f, 0.01f, "%.2f");
 	ImGui::End();
 
 	ImGui::Begin("Emmiter");
