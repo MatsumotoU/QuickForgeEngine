@@ -47,3 +47,11 @@ Matrix4x4 Camera::MakeWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, Vi
 	}
 	return result;
 }
+
+Matrix4x4 Camera::GetWorldMatrix() const {
+	return Matrix4x4::MakeAffineMatrix(transform_.scale,transform_.rotate,transform_.translate);
+}
+
+Matrix4x4 Camera::GetRotateMatrix() const {
+	return Matrix4x4::MakeRotateXYZMatrix(transform_.rotate);
+}

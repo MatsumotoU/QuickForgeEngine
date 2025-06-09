@@ -17,6 +17,13 @@ void Model::Initialize(EngineCore* engineCore) {
 	material_.Initialize(dxCommon_);
 	wvp_.Initialize(dxCommon_,1);
 	directionalLight_.Initialize(dxCommon_);
+
+	worldMatrix_ = Matrix4x4::MakeIndentity4x4();
+}
+
+void Model::Update() {
+	// ワールド行列を更新
+	worldMatrix_ = Matrix4x4::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 }
 
 void Model::LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem) {
@@ -35,10 +42,9 @@ void Model::LoadModel(const std::string& directoryPath, const std::string& filen
 	modelTextureHandle_ = textureManager_->LoadTexture(modelData_.material.textureFilePath);
 }
 
-void Model::Draw(const Transform& transform, Camera* camera) {
-	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE);
-	wvp_.SetWorldMatrix(worldMatrix,0);
+void Model::Draw(Camera* camera) {
+	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix_, CAMERA_VIEW_STATE_PERSPECTIVE);
+	wvp_.SetWorldMatrix(worldMatrix_,0);
 	wvp_.SetWVPMatrix(wvpMatrix,0);
 
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();

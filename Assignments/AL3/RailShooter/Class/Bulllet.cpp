@@ -18,7 +18,7 @@ void Bullet::Initialize(EngineCore* engineCore, const std::string& name) {
 void Bullet::Update() {
 	if (isActive_) {
 		transform_.translate += velocity_ * engineCore_->GetDeltaTime();
-		transform_.rotate = Vector3::LookAt(transform_.translate, transform_.translate + velocity_);
+		transform_.rotate = -Vector3::LookAt(transform_.translate, transform_.translate + velocity_);
 
 
 		if (aliveTime_ > 0) {
@@ -27,11 +27,14 @@ void Bullet::Update() {
 			isActive_ = false;
 		}
 	}
+
+	model_.transform_ = transform_;
+	model_.Update();
 }
 
 void Bullet::Draw(Camera* camera) {
 	if (isActive_) {
-		model_.Draw(transform_, camera);
+		model_.Draw( camera);
 	}
 }
 

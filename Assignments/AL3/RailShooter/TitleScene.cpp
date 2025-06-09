@@ -24,10 +24,13 @@ void TitleScene::Update() {
 	if (input->keyboard_.GetTrigger(DIK_SPACE)) {
 		isRequestedExit_ = true;
 	}
+
+	model_.transform_ = titleTransform_;
+	model_.Update();
 }
 
 void TitleScene::Draw() {
-	model_.Draw(titleTransform_, &camera_);
+	model_.Draw( &camera_);
 }
 
 IScene* TitleScene::GetNextScene() { return new GameScene(engineCore_); }

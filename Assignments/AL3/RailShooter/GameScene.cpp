@@ -22,7 +22,6 @@ void GameScene::Initialize() {
 	isRequestedExit_ = false;
 	camera_.transform_.translate.y = 8.5f;
 	camera_.transform_.translate.z = -20.0f;
-	camera_.transform_.rotate.x = 0.4f;
 	
 	player_.Initialize(engineCore_);
 	player_.SetMask(0x00000001);
@@ -53,10 +52,11 @@ void GameScene::Initialize() {
 	groundTransform_.translate.y = -2400.0f;
 	groundTransform_.scale.x = 1400.0f;
 	groundTransform_.scale.z = 1400.0f;
-
 }
 
 void GameScene::Update() {
+	camera_.transform_.rotate.y += 0.001f;
+	camera_.transform_.translate.z += 0.01f;
 	camera_.Update();
 #ifdef _DEBUG
 	if (input_->keyboard_.GetTrigger(DIK_P)) {
@@ -68,29 +68,17 @@ void GameScene::Update() {
 		camera_ = debugCamera_.camera_;
 	}
 #endif // _DEBUG
-
-	for (int i = 0; i < kPlayerBullets; i++) {
-		if (playerBullets[i].GetIsActive()) {
-			playerBullets[i].Update();
-		}
-	}
-	for (int i = 0; i < kEnemyBullets; i++) {
-		if (enemyBullets[i].GetIsActive()) {
-			enemyBullets[i].Update();
-
-			Vector3 toPlayer = player_.transform_.translate - enemyBullets[i].transform_.translate;
-			enemyBullets[i].velocity_ = Vector3::Slerp(enemyBullets[i].velocity_.Normalize(), toPlayer.Normalize(), 0.1f) * 10.0f;
-
-			enemyBullets[i].transform_.rotate = -Vector3::LookAt(enemyBullets[i].transform_.translate, enemyBullets[i].transform_.translate + enemyBullets[i].velocity_);
-		}
-	}
+	
 	
 	player_.Update();
+	player_.SetParent(camera_.GetWorldMatrix());
 
 	if (player_.GetIsShot()) {
 		for (int i = 0; i < kPlayerBullets; i++) {
 			if (!playerBullets[i].GetIsActive()) {
-				playerBullets[i].ShotBullet(player_.transform_.translate, Vector3::Transform({ 0.0f,0.0f,30.0f },player_.GetRotateMatrix()) , 120);
+				playerBullets[i].ShotBullet(
+					Vector3::Transform(player_.transform_.translate,camera_.GetWorldMatrix()),
+					Vector3::Transform({ 0.0f,0.0f,30.0f },Matrix4x4::Multiply( player_.GetRotateMatrix(), camera_.GetRotateMatrix())) , 120);
 				break;
 			}
 		}
@@ -109,6 +97,25 @@ void GameScene::Update() {
 				}
 			}
 			enemies[i].SetIsShot(false);
+		}
+	}
+
+	for (int i = 0; i < kPlayerBullets; i++) {
+		if (playerBullets[i].GetIsActive()) {
+			playerBullets[i].Update();
+		}
+	}
+	for (int i = 0; i < kEnemyBullets; i++) {
+		if (enemyBullets[i].GetIsActive()) {
+
+			Vector3 toPlayer = player_.transform_.translate - enemyBullets[i].transform_.translate;
+			enemyBullets[i].velocity_ = Vector3::Slerp(enemyBullets[i].velocity_.Normalize(), toPlayer.Normalize(), 0.1f) * 10.0f;
+
+			enemyBullets[i].transform_.rotate = Vector3::LookAt(
+				enemyBullets[i].transform_.translate.Normalize(),
+				(enemyBullets[i].transform_.translate + enemyBullets[i].velocity_).Normalize());
+
+			enemyBullets[i].Update();
 		}
 	}
 
@@ -136,8 +143,8 @@ void GameScene::Draw() {
 	ImGui::Text("Time %.2f", timeCount_);
 	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
 	ImGui::Toggle("isActiveDebugCamera", &isActiveDebugCamera_);
-	ImGui::DragFloat3("CameraTranslate", &debugCamera_.transform_.translate.x);
-	ImGui::DragFloat3("CameraRotate", &debugCamera_.transform_.rotate.x);
+	ImGui::DragFloat3("CameraTranslate", &camera_.transform_.translate.x,0.1f);
+	ImGui::DragFloat3("CameraRotate", &camera_.transform_.rotate.x,0.01f);
 	ImGui::DragFloat3("groundTransform", &groundTransform_.translate.x);
 	ImGui::DragFloat3("groundScale", &groundTransform_.scale.x);
 	if (ImGui::Button("Reset")) {
@@ -162,7 +169,9 @@ void GameScene::Draw() {
 		enemies[i].Draw(&camera_);
 	}
 
-	groundModel_.Draw(groundTransform_, &camera_);
+	groundModel_.transform_ = groundTransform_;
+	groundModel_.Update();
+	groundModel_.Draw(&camera_);
 }
 
 IScene* GameScene::GetNextScene() {

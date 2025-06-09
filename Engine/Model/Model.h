@@ -20,6 +20,7 @@ class Camera;
 class Model {
 public:
 	void Initialize(EngineCore* engineCore);
+	void Update();
 	/// <summary>
 	/// モデルを読み込みます
 	/// </summary>
@@ -27,10 +28,14 @@ public:
 	/// <param name="filename">filename</param>
 	/// <param name="coordinateSystem">読み込むモデルの座標系</param>
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
-	void Draw(const Transform& transform, Camera* camera);
+	void Draw(Camera* camera);
 
 public:
 	void SetBlendmode(BlendMode mode);
+
+public:
+	Transform transform_;
+	Matrix4x4 worldMatrix_;
 
 public:
 	MaterialResource material_;

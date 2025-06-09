@@ -227,6 +227,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\RailCameraController.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\GameScene.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\SceneManager.cpp" />
@@ -308,6 +309,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\RailCameraController.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\GameScene.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\IScene.h" />
