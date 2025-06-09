@@ -150,7 +150,7 @@ Vector3 Vector3::Transform(const Vector3& vector, const Matrix4x4& matrix) {
 }
 
 Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPosition) {
-    Vector3 diff = targetPosition - eyePosition;
+	Vector3 diff = (targetPosition - eyePosition).Normalize();
     Vector3 result{};
 
     // yaw（ヨー, y軸回り）

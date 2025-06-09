@@ -25,6 +25,7 @@ public:
 	Vector3 GetWorldPosition() override;
 
 public:
+	void SetParent(const Matrix4x4& parentMatrix);
 	void SetIsActive(bool isActive);
 	void SetIsShot(bool isShot);
 
@@ -32,6 +33,9 @@ public:
 	Vector3 velocity_;
 	Vector3 acceleration_;
 	float moveSpeed_;
+
+private:
+	Matrix4x4 parentMatrix_;
 
 private:
 	bool isActive_;

@@ -9,12 +9,15 @@ void Player::Initialize(EngineCore* engineCore) {
 
 	moveSpeed_ = 50.0f;
 
-	maxShotCooldown_ = 15.0f;
+	maxShotCooldown_ = 10.0f;
 	shotCooldown_ = 0.0f;
 
 	blendNum_ = 0;
 
 	isActive_ = true;
+	parentMatrix_ = Matrix4x4::MakeIndentity4x4();
+
+	transform_.translate.z = 30.0f;
 }
 
 void Player::Update() {
@@ -62,16 +65,24 @@ void Player::Update() {
 	if (input->keyboard_.GetPress(DIK_A)) {
 		transform_.rotate.y -= 0.05f;
 	}
+
+	model_.transform_ = transform_;
+	
+	model_.Update();
+	model_.worldMatrix_ = Matrix4x4::Multiply(model_.worldMatrix_, parentMatrix_);
 }
 
 void Player::Draw(Camera* camera) {
 	if (!isActive_) {
 		return;
 	}
-	model_.Draw(transform_,camera);
+	model_.Draw(camera);
 
 	ImGui::Begin("Player");
+	ImGui::DragFloat3("ModelTransform", &model_.transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("ModelRotate", &model_.transform_.rotate.x,0.1f);
 	ImGui::DragFloat3("translate", &transform_.translate.x);
+	ImGui::DragFloat3("ModelRotate", &transform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("velocity", &velocity_.x);
 	ImGui::DragFloat3("acceleration", &acceleration_.x);
 	ImGui::DragFloat4("color", &model_.material_.materialData_->color.x,0.1f);
@@ -104,6 +115,10 @@ Matrix4x4 Player::GetRotateMatrix() {
 
 Vector3 Player::GetWorldPosition() {
 	return transform_.translate;
+}
+
+void Player::SetParent(const Matrix4x4& parentMatrix) {
+	parentMatrix_ = parentMatrix;
 }
 
 void Player::SetIsActive(bool isActive) {

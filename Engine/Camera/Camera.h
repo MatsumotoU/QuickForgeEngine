@@ -30,6 +30,10 @@ public:
 	/// <param name="viewState">透視投影か平行投影か(CAMERA_VIEW_STATE_?????)</param>
 	/// <returns>WVPMatrix</returns>
 	Matrix4x4 MakeWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, ViewState viewState);
+
+public:
+	Matrix4x4 GetWorldMatrix() const;
+	Matrix4x4 GetRotateMatrix() const;
 	
 private:
 	Matrix4x4 viewMatrix_;
@@ -37,6 +41,7 @@ private:
 	Matrix4x4 orthographicMatrix_;
 
 public:
+	// TODO: affineMatrixではなくworldMatrix
 	Matrix4x4 affineMatrix_;
 	Transform transform_;
 	ViewPort viewport_;

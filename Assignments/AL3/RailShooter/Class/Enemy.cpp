@@ -43,6 +43,9 @@ void Enemy::Update() {
 	for (TimeCall* timedCall:timedCalls_) {
 		timedCall->Update();
 	}
+
+	model_.transform_ = transform_;
+	model_.Update();
 }
 
 void Enemy::Draw(Camera* camera) {
@@ -50,7 +53,7 @@ void Enemy::Draw(Camera* camera) {
 		return;
 	}
 
-	model_.Draw(transform_, camera);
+	model_.Draw(camera);
 }
 
 void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {

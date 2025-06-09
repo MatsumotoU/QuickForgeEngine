@@ -8,6 +8,11 @@ struct TransformationMatrix;
 
 class WVPResource final {
 public:
+	/// <summary>
+	/// WVPのリソースを初期化します。
+	/// </summary>
+	/// <param name="dxCommon"></param>
+	/// <param name="totalResources">wvpリソースの数</param>
 	void Initialize(DirectXCommon* dxCommon,uint32_t totalResources);
 
 public:

@@ -5,7 +5,7 @@
 // 前方宣言
 class Vector3;
 
-class alignas(16) Matrix4x4 final{
+class Matrix4x4 final{
 public:
 	float m[4][4];
 
