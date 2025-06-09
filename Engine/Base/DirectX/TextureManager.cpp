@@ -9,7 +9,7 @@
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
-#include "../Base/MyDebugLog.h"
+#include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
 void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvDescriptorHeap) {

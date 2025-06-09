@@ -13,6 +13,8 @@
 #include "../Base/MyDebugLog.h"
 #endif // _DEBUG
 
+// TODO: 自分で書いたWave読み込みを消す
+
 class AudioManager final{
 public:
 	~AudioManager();
