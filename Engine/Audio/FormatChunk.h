@@ -2,8 +2,8 @@
 #include <xaudio2.h>
 #include "ChunkHeader.h"
 
-struct FormatChunk
-{
+// フォーマットチャンクを表す構造体
+struct FormatChunk final {
 	ChunkHeader chunk;
 	WAVEFORMATEX fmt;
 };

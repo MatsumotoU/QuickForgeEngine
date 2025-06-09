@@ -4,7 +4,7 @@
 #include "MyDebugLog.h"
 #endif // _DEBUG
 
-nlohmann::json SJN::LoadJsonData(std::string& fp) {
+nlohmann::json SJN::LoadJsonData(const std::string& fp) {
 	nlohmann::json result;
     
 	// jsonデータ読み込み
@@ -18,7 +18,7 @@ nlohmann::json SJN::LoadJsonData(std::string& fp) {
 		DebugLog(message);
 #endif // _DEBUG
 
-		assert(false);
+		assert(false && "Failed open data file for read");
 		return 0;
 	}
 

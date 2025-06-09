@@ -11,7 +11,7 @@
 
 class WinApp;
 
-class DirectXCommon {
+class DirectXCommon final {
 public:
 	/// <summary>
 	/// 初期化

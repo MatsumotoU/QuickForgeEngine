@@ -4,7 +4,7 @@
 #include <fstream>
 #include <chrono>
 
-class MyDebugLog {
+class MyDebugLog final {
 public:
 	// シングルトン
 	static MyDebugLog* GetInstatnce();

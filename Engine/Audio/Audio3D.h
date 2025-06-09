@@ -7,7 +7,7 @@
 
 class AudioManager;
 
-class Audio3D {
+class Audio3D final {
 
 public:
 	void Initialize(AudioManager* audioManager);

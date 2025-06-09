@@ -6,7 +6,7 @@
 class DirectXCommon;
 struct TransformationMatrix;
 
-class WVPResource {
+class WVPResource final {
 public:
 	void Initialize(DirectXCommon* dxCommon,uint32_t totalResources);
 

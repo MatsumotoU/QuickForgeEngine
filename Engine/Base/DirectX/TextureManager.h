@@ -8,7 +8,7 @@
 class DirectXCommon;
 class SrvDescriptorHeap;
 
-class TextureManager {
+class TextureManager final {
 public:// 一回は絶対に呼び出さないとバグるやつ
 	/// <summary>
 	/// 初期化

@@ -3,8 +3,8 @@
 
 #include "ChunkHeader.h"
 
-struct RiffHeader
-{
+// RIFFヘッダを表す構造体
+struct RiffHeader final {
 	ChunkHeader chunk;
 	char type[4];
 };

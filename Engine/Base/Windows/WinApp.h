@@ -2,8 +2,7 @@
 #include <Windows.h>
 #include <cstdint>
 
-class WinApp
-{
+class WinApp final {
 public:
 	// ウィンドウサイズ
 	static const int kWindowWidth = 1280; // 横幅

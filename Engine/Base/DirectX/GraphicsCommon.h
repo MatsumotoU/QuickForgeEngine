@@ -2,8 +2,7 @@
 #include "PipelineStateObject.h"
 #include "DepthStencil.h"
 
-class GraphicsCommon
-{
+class GraphicsCommon final {
 public:
 	void Initialize(DirectXCommon* dxCommon, WinApp* winApp);
 public:
