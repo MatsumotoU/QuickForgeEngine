@@ -1,12 +1,5 @@
 #include "Particle.hlsli"
 
-struct DirectionalLight
-{
-    float32_t4 color; // ライトの色
-    float32_t3 direction; // ライトの向き
-    float intensity; // 輝度
-};
-
 struct Material
 {
     float32_t4 color;
@@ -14,7 +7,6 @@ struct Material
     float32_t4x4 uvTransform;
 };
 ConstantBuffer<Material> gMaterial : register(b0);
-ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 Texture2D<float32_t4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
@@ -34,21 +26,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         discard;
     }
     
-    if (gMaterial.enableLighting != 0)
-    {
-        // HalfLambert
-        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-        
-        // 透過処理のためアルファ値を個別計算
-        output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
-        output.color.a = gMaterial.color.a * textureColor.a;
-
-    }
-    else
-    {
-        output.color = gMaterial.color * textureColor;
-    }
+    output.color = gMaterial.color * textureColor;
     
     if (textureColor.a == 0.0)
     {

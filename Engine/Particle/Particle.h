@@ -21,7 +21,6 @@ public:
 
 private:
 	MaterialResource material_;
-	DirectionalLightResource directionalLight_;
 	WVPResource wvp_;
 
 private:

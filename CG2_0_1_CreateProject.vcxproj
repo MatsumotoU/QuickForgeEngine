@@ -239,7 +239,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Audio\MultiAudioLoader.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\CBufferManager.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\DirectXStructToString.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\RootParameter.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectionalLightResource.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectX12DebugCore.cpp" />
@@ -349,7 +350,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\Viewport.h" />
     <ClInclude Include="Engine\Base\DirectX\WVPResource.h" />
     <ClInclude Include="Engine\Base\MyDebugLog.h" />
-    <ClInclude Include="Engine\Base\DirectX\CBufferManager.h" />
+    <ClInclude Include="Engine\Base\DirectX\RootParameter.h" />
     <ClInclude Include="Engine\Base\DirectX\DepthStencil.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXCommon.h" />
     <ClInclude Include="Engine\Base\DirectX\ImGuiManager.h" />
@@ -383,6 +384,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\Material.h" />
     <ClInclude Include="Engine\Particle\Particle.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
+    <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />
     <ClInclude Include="Engine\Utility\SimpleJson.h" />
     <ClInclude Include="Engine\Utility\TimeCall.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -404,6 +406,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Primitive.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Develop|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="GrayscaleShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

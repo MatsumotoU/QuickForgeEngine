@@ -20,7 +20,6 @@ void Particle::Initialize(EngineCore* engineCore, uint32_t totalParticles) {
 
 	wvp_.Initialize(engineCore_->GetDirectXCommon(), totalParticles_);
 	material_.Initialize(engineCore_->GetDirectXCommon());
-	directionalLight_.Initialize(engineCore_->GetDirectXCommon());
 	material_.materialData_->enableLighting = false;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -73,7 +72,6 @@ void Particle::Draw(std::vector<Transform>* transform, Camera* camera) {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandles_.gpuHandle_);
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(2, engineCore_->GetTextureManager()->GetTextureSrvHandleGPU(modelTextureHandle_));
 	commandList->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), totalParticles_, 0, 0);
 }

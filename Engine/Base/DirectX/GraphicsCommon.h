@@ -2,9 +2,11 @@
 #include "PipelineStateObject.h"
 #include "DepthStencil.h"
 
+class EngineCore;
+
 class GraphicsCommon final {
 public:
-	void Initialize(DirectXCommon* dxCommon, WinApp* winApp);
+	void Initialize(EngineCore* engineCore);
 public:
 	/// <summary>
 	/// 一般的な三角形のPSOを取得します
@@ -25,6 +27,8 @@ public:
 	/// <returns></returns>
 	PipelineStateObject* GetPointPso(BlendMode blendmode) { return &pointPso_[static_cast<uint32_t>(blendmode)]; }
 
+	PipelineStateObject* GetPrimitivePso(BlendMode blendmode) { return &primitivePso_[static_cast<uint32_t>(blendmode)]; }
+
 	PipelineStateObject* GetParticlePso(BlendMode blendmode) { return &particlePso_[static_cast<uint32_t>(blendmode)]; }
 
 	PipelineStateObject* GetGrayScalePso() { return &grayScaleTrianglePso_; }
@@ -34,10 +38,17 @@ public:
 private: // メンバ変数
 	DepthStencil depthStencil_;
 
+	// ルートパラメータ;
+	RootParameter normalGameObjectRootParameter_;
+	RootParameter particleRootParameter_;
+	RootParameter primitiveRootParameter_;
+
 	// PSO
 	PipelineStateObject trianglePso_[kCountOfBlendMode];
 	PipelineStateObject linePso_[kCountOfBlendMode];
 	PipelineStateObject pointPso_[kCountOfBlendMode];
+
+	PipelineStateObject primitivePso_[kCountOfBlendMode];
 
 	PipelineStateObject particlePso_[kCountOfBlendMode];
 
