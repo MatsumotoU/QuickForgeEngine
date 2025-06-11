@@ -2,62 +2,24 @@
 #include "DirectXCommon.h"
 #include "DepthStencil.h"
 #include "../Windows/WinApp.h"
+#include "Base/EngineCore.h"
 #include <cassert>
 #include <d3d12.h>
 
 // TODO: 各機能を分離後、初期化と生成を別々の処理にする
 
-void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle) {
-	dxCommon_ = dxCommon;
-	winApp_ = winApp;
+void PipelineStateObject::Initialize(EngineCore* engineCore) {
+	engineCore_ = engineCore;
+	dxCommon_ = engineCore->GetDirectXCommon();
+	winApp_ = engineCore->GetWinApp();
+}
+
+void PipelineStateObject::CreatePipelineStateObject(
+	RootParameter rootParameter,DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, 
+	D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle) {
+	HRESULT hr{};
+
 	depthStencil_ = depthStencil;
-
-	// * PSOを作成 * //
-	// RootSignatureを作成します
-	cBufferManager_.Initialize();
-	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-
-	if (isParticle) {
-		cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_SRV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
-	} else {
-		cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
-	}
-	
-	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-	cBufferManager_.CreateRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
-
-	// DescriptiorRange
-	if (isParticle) {
-		D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
-		descriptorRangeForInstancing[0].BaseShaderRegister = 0;
-		descriptorRangeForInstancing[0].NumDescriptors = 1;
-		descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-		descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-		D3D12_ROOT_PARAMETER* particleRootParameters = cBufferManager_.GetRootParameters()->data() + 1;
-		particleRootParameters->ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		particleRootParameters->ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-		particleRootParameters->DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
-		particleRootParameters->DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
-
-		D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-		descriptorRange[0].BaseShaderRegister = 0;
-		descriptorRange[0].NumDescriptors = 1;
-		descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-		descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-		D3D12_ROOT_PARAMETER* srvRootParameters = cBufferManager_.GetRootParameters()->data() + 2;
-		srvRootParameters->DescriptorTable.pDescriptorRanges = descriptorRange;
-		srvRootParameters->DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-	} else {
-		D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-		descriptorRange[0].BaseShaderRegister = 0;
-		descriptorRange[0].NumDescriptors = 1;
-		descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-		descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-		D3D12_ROOT_PARAMETER* srvRootParameters = cBufferManager_.GetRootParameters()->data() + 2;
-		srvRootParameters->DescriptorTable.pDescriptorRanges = descriptorRange;
-		srvRootParameters->DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-	}
-	
 
 	// Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
@@ -69,13 +31,14 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, De
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;
 	staticSamplers[0].ShaderRegister = 0;
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	cBufferManager_.GetDescriptionRootSignature()->pStaticSamplers = staticSamplers;
-	cBufferManager_.GetDescriptionRootSignature()->NumStaticSamplers = _countof(staticSamplers);
+	rootParameter.GetDescriptionRootSignature()->pStaticSamplers = staticSamplers;
+	rootParameter.GetDescriptionRootSignature()->NumStaticSamplers = _countof(staticSamplers);
 
+	// * RootSignatureの生成 * //
 	// シリアライズしてバイナリする
 	signatureBlob_ = nullptr;
 	errorBlob_ = nullptr;
-	HRESULT hr = D3D12SerializeRootSignature(cBufferManager_.GetDescriptionRootSignature(),
+	hr = D3D12SerializeRootSignature(rootParameter.GetDescriptionRootSignature(),
 		D3D_ROOT_SIGNATURE_VERSION_1, signatureBlob_.GetAddressOf(), errorBlob_.GetAddressOf());
 	if (FAILED(hr)) {
 		Log(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
@@ -96,13 +59,10 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, De
 	inputLayout.CreateInputElementDesc("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
 
 	// BlendState
-	/*D3D12_BLEND_DESC blendDesc{};
-	blendDesc.RenderTarget[0].RenderTargetWriteMask =
-		D3D12_COLOR_WRITE_ENABLE_ALL;*/
 	D3D12_BLEND_DESC blendDesc{};
 	blendDesc.AlphaToCoverageEnable = FALSE;
 	blendDesc.IndependentBlendEnable = FALSE;
-	
+
 	D3D12_RENDER_TARGET_BLEND_DESC& rtbd = blendDesc.RenderTarget[0];
 	rtbd.BlendEnable = TRUE; // ブレンドを有効にする
 	rtbd.LogicOpEnable = FALSE; // 論理演算は通常 FALSE
@@ -128,7 +88,7 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, De
 		rtbd.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT; // 減算
 		break;
 	case BlendMode::kBlendModeMultily:
-		rtbd.SrcBlend = D3D12_BLEND_ZERO; 
+		rtbd.SrcBlend = D3D12_BLEND_ZERO;
 		rtbd.DestBlend = D3D12_BLEND_SRC_COLOR;
 		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 乗算
 		break;
@@ -174,10 +134,6 @@ void PipelineStateObject::Initialize(DirectXCommon* dxCommon, WinApp* winApp, De
 		pixelShaderBlob = shaderCompiler_.CompileShader(ConvertString(psFilepath), L"ps_6_0");
 		assert(pixelShaderBlob != nullptr);
 	}
-	
-
-	// DepthStencilState
-	//depthStencil_->Initialize(winApp_,dxCommon_);
 
 	// PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};

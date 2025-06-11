@@ -6,6 +6,8 @@
 class DirectXCommon;
 class WinApp;
 
+// TODO: DescriptorHeapを引きはがす
+
 class DepthStencil final {
 public:
 	void Initialize(WinApp* winApp, DirectXCommon* dxCommon);

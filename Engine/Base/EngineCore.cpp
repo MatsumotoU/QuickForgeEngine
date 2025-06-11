@@ -34,7 +34,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	imGuiManager_.Initialize(&winApp_,&dxCommon_,srvDescriptorHeap_.GetSrvDescriptorHeap());
 	// テクスチャマネージャの初期化
 	textureManager_.Initialize(&dxCommon_, &srvDescriptorHeap_);
-	graphicsCommon_.Initialize(&dxCommon_, &winApp_);
+	graphicsCommon_.Initialize(this);
 	// fps監視機能初期化
 	fpsCounter_.Initialize();
 	fpsCounter_.Update();

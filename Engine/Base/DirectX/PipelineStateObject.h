@@ -1,10 +1,11 @@
 #pragma once
-#include "CBufferManager.h"
+#include "RootParameter.h"
 #include "InputLayout.h"
 #include "ShaderCompiler.h"
 #include <wrl.h>
 
 class DepthStencil;
+class EngineCore;
 class DirectXCommon;
 class WinApp;
 
@@ -31,9 +32,11 @@ public:
 	/// <summary>
 	/// 初期化します
 	/// </summary>
-	void Initialize(
-		DirectXCommon* dxCommon, WinApp* winApp, DepthStencil* depthStencil,
-		const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, D3D12_FILL_MODE fillMode,const std::string& psFilename,BlendMode blendMode,bool isParticle);
+	void Initialize(EngineCore* engineCore);
+
+	void CreatePipelineStateObject(
+		RootParameter rootParameter, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
+		D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle);
 
 public:
 	ID3D12PipelineState* GetPipelineState();
@@ -43,10 +46,10 @@ public:
 	DepthStencil* GetDepthStencil();
 
 private:
+	EngineCore* engineCore_;
 	DirectXCommon* dxCommon_;
 	WinApp* winApp_;
 	DepthStencil* depthStencil_;
-	CBufferManager cBufferManager_;
 	InputLayout inputLayout_;
 	ShaderCompiler shaderCompiler_;
 	
