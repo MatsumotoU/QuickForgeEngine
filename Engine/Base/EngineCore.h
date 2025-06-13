@@ -53,6 +53,9 @@
 // Json
 #include "../Utility/SimpleJson.h"
 
+// GraphRenderer
+#include "DirectX/GraphRenderer.h"
+
 // TODO: ビルドツールpremakeの導入
 
 class EngineCore final {
@@ -81,6 +84,7 @@ public:// エンジンの機能取得
 	FramePerSecond* GetFpsCounter();
 	RtvDescriptorHeap* GetRtvDescriptorHeap();
 	SrvDescriptorHeap* GetSrvDescriptorHeap();
+	GraphRenderer* GetGraphRenderer();
 
 public:
 	 float GetDeltaTime();
@@ -98,6 +102,7 @@ private:// 時間管理
 private:// 描画機能
 	TextureManager textureManager_;
 	GraphicsCommon graphicsCommon_;
+	GraphRenderer graphRenderer_;
 
 private:// 音声
 	AudioManager audioManager_;

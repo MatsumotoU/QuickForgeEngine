@@ -1,40 +1,88 @@
 #pragma once
-#include "../../Math/Vector/Vector3.h"
-#include "Base/DirectX/WVPResource.h"
+#include <d3d12.h>
+#include <wrl.h>
+#include "../../Math/VertexData.h"
+
 #include "Base/DirectX/MaterialResource.h"
+#include "Base/DirectX/WVPResource.h"
 
 class EngineCore;
 class PipelineStateObject;
+class Camera;
 
-static inline const uint32_t kGraphRendererMaxTriangleCount = 512;
-static inline const uint32_t kGraphRendererMaxLineCount = 512;
-static inline const uint32_t kGraphRendererMaxPointCount = 512;
+// グラフ描画の最大数
+static inline const uint32_t kGraphRendererMaxTriangleCount = 128;
+static inline const uint32_t kGraphRendererMaxLineCount = 128;
+static inline const uint32_t kGraphRendererMaxPointCount = 128;
 
 class GraphRenderer {
-public:
+public:// 一回は呼び出さないとバグるやつら
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="engineCore"></param>
 	void Initialize(EngineCore* engineCore);
-
+	/// <summary>
+	/// 描画前準備
+	/// </summary>
 	void PreDraw();
-
+	/// <summary>
+	/// 描画コマンドを発行します
+	/// </summary>
 	void PostDraw();
 
-public:
-	void DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, Vector4 color);
+public:// 描画関数
+	/// <summary>
+	/// 三角形を描画します(-1.0 ~ 1.0)
+	/// </summary>
+	void DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3);
+	/// <summary>
+	/// 線分を描画します(-1.0 ~ 1.0)
+	/// </summary>
+	void DrawLine(Vector3 point1, Vector3 point2);
+	/// <summary>
+	/// 点を描画します(-1.0 ~ 1.0)
+	/// </summary>
+	void DrawPoint(Vector3 point);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="size"></param>
+	/// <param name="gridCount"></param>
+	void DrawGrid(float size = 10.0f, int32_t gridCount = 10);
+
+public:// セッター
+	void SetCamera(Camera* camera);
 
 private:
-	uint32_t triangleIndex_;
-	uint32_t lineIndex_;
-	uint32_t pointIndex_;
+	uint32_t triangleCount_;
+	uint32_t lineCount_;
+	uint32_t pointCount_;
 
 private:
-	WVPResource triangleWvp_;
-	WVPResource lineWvp_;
-	WVPResource pointWvp_;
-	MaterialResource material_;
+	WVPResource wvpResource_;
+	MaterialResource materialResource_;
+
+private:
+	// 三角形の頂点データ
+	VertexData* triangleVertexData_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> triangleVertexResource_;
+	D3D12_VERTEX_BUFFER_VIEW triangleVertexBufferView_;
+	// 線の頂点データ
+	VertexData* lineVertexData_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> lineVertexResource_;
+	D3D12_VERTEX_BUFFER_VIEW lineVertexBufferView_;
+	// 点の頂点データ
+	VertexData* pointVertexData_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> pointVertexResource_;
+	D3D12_VERTEX_BUFFER_VIEW pointVertexBufferView_;
 
 private:
 	EngineCore* engineCore_;
 	PipelineStateObject* trianglePso_;
 	PipelineStateObject* linePso_;
 	PipelineStateObject* pointPso_;
+
+private:
+	Camera* camera_; // 描画するカメラ
 };

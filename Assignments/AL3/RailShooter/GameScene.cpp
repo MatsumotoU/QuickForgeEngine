@@ -10,6 +10,8 @@ GameScene::GameScene(EngineCore* engineCore) {
 	debugCamera_.Initialize(engineCore_->GetWinApp(), input_);
 	debugCamera_.camera_.transform_.translate.z = -20.0f;
 #endif // _DEBUG
+
+	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
 }
 
 GameScene::~GameScene() {
@@ -55,8 +57,8 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	camera_.transform_.rotate.y += 0.001f;
-	camera_.transform_.translate.z += 0.01f;
+	//camera_.transform_.rotate.y += 0.001f;
+	//camera_.transform_.translate.z += 0.01f;
 	camera_.Update();
 #ifdef _DEBUG
 	if (input_->keyboard_.GetTrigger(DIK_P)) {
@@ -172,6 +174,8 @@ void GameScene::Draw() {
 	groundModel_.transform_ = groundTransform_;
 	groundModel_.Update();
 	groundModel_.Draw(&camera_);
+
+	engineCore_->GetGraphRenderer()->DrawGrid();
 }
 
 IScene* GameScene::GetNextScene() {

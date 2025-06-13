@@ -44,27 +44,27 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 
 		trianglePso_[i].CreatePipelineStateObject(
 			normalGameObjectRootParameter_, &depthStencil_,
-			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Object3d.PS.hlsl", static_cast<BlendMode>(i), false);
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Object3d.PS.hlsl", static_cast<BlendMode>(i), false,false);
 
 		linePso_[i].CreatePipelineStateObject(
-			normalGameObjectRootParameter_, &depthStencil_,
-			D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", static_cast<BlendMode>(i), false);
+			primitiveRootParameter_, &depthStencil_,
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", static_cast<BlendMode>(i), false,true);
 
 		pointPso_[i].CreatePipelineStateObject(
-			normalGameObjectRootParameter_, &depthStencil_,
-			D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", static_cast<BlendMode>(i), false);
+			primitiveRootParameter_, &depthStencil_,
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", static_cast<BlendMode>(i), false,true);
 
-		primitivePso_[i].CreatePipelineStateObject(primitiveRootParameter_,&depthStencil_,
-			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", static_cast<BlendMode>(i), false);
+		primitivePso_[i].CreatePipelineStateObject(
+			primitiveRootParameter_,&depthStencil_,
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", static_cast<BlendMode>(i), false,true);
 
 		particlePso_[i].CreatePipelineStateObject(
 			particleRootParameter_, &depthStencil_,
-			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Particle.PS.hlsl", static_cast<BlendMode>(i), true);
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Particle.PS.hlsl", static_cast<BlendMode>(i), true,false);
 	}
-
 	
 	grayScaleTrianglePso_.Initialize(engineCore);
 	grayScaleTrianglePso_.CreatePipelineStateObject(
 		normalGameObjectRootParameter_, &depthStencil_,
-		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "GrayscaleShader.hlsl", kBlendModeNormal, false);
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "GrayscaleShader.hlsl", kBlendModeNormal, false,false);
 }
