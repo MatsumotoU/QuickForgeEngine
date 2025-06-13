@@ -35,6 +35,9 @@ private:
 #endif // _DEBUG
 	Camera camera_;
 	std::vector<Vector3> lailPoints_;
+	float cameraT;
+	float cameraMoveSpeed_ = 0.1f;
+	bool isMoveLail_;
 	
 private:
 	SkyDome skyDome_;

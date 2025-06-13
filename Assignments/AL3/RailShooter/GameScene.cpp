@@ -12,6 +12,9 @@ GameScene::GameScene(EngineCore* engineCore) {
 #endif // _DEBUG
 
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
+
+	cameraT = 0.0f;
+	cameraMoveSpeed_ = 0.1f;
 }
 
 GameScene::~GameScene() {
@@ -23,17 +26,17 @@ void GameScene::Initialize() {
 
 	isRequestedExit_ = false;
 	camera_.transform_.translate.y = 8.5f;
-	camera_.transform_.translate.z = -20.0f;
-	
+	camera_.transform_.translate.z = -10.0f;
+
 	player_.Initialize(engineCore_);
 	player_.SetMask(0x00000001);
 
 	for (int i = 0; i < kPlayerBullets; i++) {
-		playerBullets[i].Initialize(engineCore_,"Player");
+		playerBullets[i].Initialize(engineCore_, "Player");
 		playerBullets[i].SetMask(0x00000001);
 	}
 	for (int i = 0; i < kEnemyBullets; i++) {
-		enemyBullets[i].Initialize(engineCore_,"Enemy");
+		enemyBullets[i].Initialize(engineCore_, "Enemy");
 		enemyBullets[i].SetMask(0x00000010);
 	}
 
@@ -57,9 +60,12 @@ void GameScene::Initialize() {
 
 	lailPoints_.clear();
 	lailPoints_.push_back({ 0.0f,0.0f,0.0f });
-	lailPoints_.push_back({ 0.0f,0.0f,30.0f });
-	lailPoints_.push_back({ 0.0f,0.0f,60.0f });
+	lailPoints_.push_back({ 10.0f,5.0f,30.0f });
+	lailPoints_.push_back({ -10.0f,-5.0f,60.0f });
 	lailPoints_.push_back({ 0.0f,0.0f,90.0f });
+
+	isMoveLail_ = false;
+	cameraMoveSpeed_ = 0.1f;
 }
 
 void GameScene::Update() {
@@ -70,14 +76,26 @@ void GameScene::Update() {
 	if (input_->keyboard_.GetTrigger(DIK_P)) {
 		isActiveDebugCamera_ = !isActiveDebugCamera_;
 	}
-	
+
 	if (isActiveDebugCamera_) {
 		debugCamera_.Update();
 		camera_ = debugCamera_.camera_;
 	}
 #endif // _DEBUG
-	
-	
+
+	if (isMoveLail_) {
+		if (cameraT < 1.0f) {
+			cameraT += engineCore_->GetDeltaTime() * cameraMoveSpeed_;
+		} else {
+			cameraT = 0.0f;
+		}
+	}
+
+	camera_.transform_.translate = Vector3::CatmullRom(lailPoints_, cameraT);
+	camera_.transform_.rotate = -Vector3::LookAt(
+		Vector3::CatmullRom(lailPoints_, cameraT + 0.01f),
+		Vector3::CatmullRom(lailPoints_, cameraT));
+
 	player_.Update();
 	player_.SetParent(camera_.GetWorldMatrix());
 
@@ -85,8 +103,8 @@ void GameScene::Update() {
 		for (int i = 0; i < kPlayerBullets; i++) {
 			if (!playerBullets[i].GetIsActive()) {
 				playerBullets[i].ShotBullet(
-					Vector3::Transform(player_.transform_.translate,camera_.GetWorldMatrix()),
-					Vector3::Transform({ 0.0f,0.0f,30.0f },Matrix4x4::Multiply( player_.GetRotateMatrix(), camera_.GetRotateMatrix())) , 120);
+					Vector3::Transform(player_.transform_.translate, camera_.GetWorldMatrix()),
+					Vector3::Transform({ 0.0f,0.0f,30.0f }, Matrix4x4::Multiply(player_.GetRotateMatrix(), camera_.GetRotateMatrix())), 120);
 				break;
 			}
 		}
@@ -161,15 +179,20 @@ void GameScene::Draw() {
 	for (int i = 0; i < lailPoints_.size(); i++) {
 		ImGui::DragFloat3(("Point" + std::to_string(i)).c_str(), &lailPoints_[i].x, 0.1f);
 	}
-	
+
 	ImGui::End();
 
 	ImGui::Begin("GameScene");
+	if (ImGui::Button("MoveLail")) {
+		isMoveLail_ = !isMoveLail_;
+	}
+	ImGui::DragFloat("CameraMoveSpeed", &cameraMoveSpeed_, 0.01f, 0.01f, 1.0f);
+	ImGui::DragFloat("CameraT", &cameraT, 0.01f, 0.0f, 1.0f);
 	ImGui::Text("Time %.2f", timeCount_);
 	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
 	ImGui::Toggle("isActiveDebugCamera", &isActiveDebugCamera_);
-	ImGui::DragFloat3("CameraTranslate", &camera_.transform_.translate.x,0.1f);
-	ImGui::DragFloat3("CameraRotate", &camera_.transform_.rotate.x,0.01f);
+	ImGui::DragFloat3("CameraTranslate", &camera_.transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("CameraRotate", &camera_.transform_.rotate.x, 0.01f);
 	ImGui::DragFloat3("groundTransform", &groundTransform_.translate.x);
 	ImGui::DragFloat3("groundScale", &groundTransform_.scale.x);
 	if (ImGui::Button("Reset")) {

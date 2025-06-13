@@ -17,7 +17,7 @@ void Player::Initialize(EngineCore* engineCore) {
 	isActive_ = true;
 	parentMatrix_ = Matrix4x4::MakeIndentity4x4();
 
-	transform_.translate.z = 30.0f;
+	transform_.translate.z = 10.0f;
 }
 
 void Player::Update() {
