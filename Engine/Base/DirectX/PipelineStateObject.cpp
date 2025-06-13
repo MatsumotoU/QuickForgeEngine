@@ -6,8 +6,6 @@
 #include <cassert>
 #include <d3d12.h>
 
-// TODO: 各機能を分離後、初期化と生成を別々の処理にする
-
 void PipelineStateObject::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	dxCommon_ = engineCore->GetDirectXCommon();
@@ -16,7 +14,7 @@ void PipelineStateObject::Initialize(EngineCore* engineCore) {
 
 void PipelineStateObject::CreatePipelineStateObject(
 	RootParameter rootParameter,DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, 
-	D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle) {
+	D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle, bool isDrawBack) {
 	HRESULT hr{};
 
 	depthStencil_ = depthStencil;
@@ -114,8 +112,13 @@ void PipelineStateObject::CreatePipelineStateObject(
 
 	// RasterizerState
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
-	// 裏面（時計回り）を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	if (isDrawBack) {
+		// 裏面（時計回り）を表示しない
+		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	} else {
+		// 裏面（時計回り）を表示する
+		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	}
 	// 塗りつぶし
 	rasterizerDesc.FillMode = fillMode;
 

@@ -39,6 +39,9 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	fpsCounter_.Initialize();
 	fpsCounter_.Update();
 
+	// グラフ描画機能の初期化
+	graphRenderer_.Initialize(this);
+
 	// 音声機能の初期化
 	audioManager_.Initialize();
 
@@ -86,9 +89,14 @@ void EngineCore::PreDraw() {
 	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
 	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
 	dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+	graphRenderer_.PreDraw();
 }
 
 void EngineCore::PostDraw() {
+
+	graphRenderer_.PostDraw();
+
 	// オフスクリーンのバリア
 	D3D12_RESOURCE_BARRIER barrier{};
 	// 今回のバリアはトランジション
@@ -163,6 +171,10 @@ RtvDescriptorHeap* EngineCore::GetRtvDescriptorHeap() {
 
 SrvDescriptorHeap* EngineCore::GetSrvDescriptorHeap() {
 	return &srvDescriptorHeap_;
+}
+
+GraphRenderer* EngineCore::GetGraphRenderer() {
+	return &graphRenderer_;
 }
 
 float EngineCore::GetDeltaTime() {
