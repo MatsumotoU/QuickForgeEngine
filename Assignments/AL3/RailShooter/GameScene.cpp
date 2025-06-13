@@ -54,6 +54,12 @@ void GameScene::Initialize() {
 	groundTransform_.translate.y = -2400.0f;
 	groundTransform_.scale.x = 1400.0f;
 	groundTransform_.scale.z = 1400.0f;
+
+	lailPoints_.clear();
+	lailPoints_.push_back({ 0.0f,0.0f,0.0f });
+	lailPoints_.push_back({ 0.0f,0.0f,30.0f });
+	lailPoints_.push_back({ 0.0f,0.0f,60.0f });
+	lailPoints_.push_back({ 0.0f,0.0f,90.0f });
 }
 
 void GameScene::Update() {
@@ -141,6 +147,23 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	ImGui::Begin("Lail");
+	if (ImGui::Button("Add Point")) {
+		lailPoints_.push_back({ 0.0f,0.0f,0.0f });
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Delete Points")) {
+		if (lailPoints_.size() > 4) {
+			lailPoints_.erase(lailPoints_.end());
+		}
+	}
+	ImGui::Text("Lail Points");
+	for (int i = 0; i < lailPoints_.size(); i++) {
+		ImGui::DragFloat3(("Point" + std::to_string(i)).c_str(), &lailPoints_[i].x, 0.1f);
+	}
+	
+	ImGui::End();
+
 	ImGui::Begin("GameScene");
 	ImGui::Text("Time %.2f", timeCount_);
 	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
@@ -175,7 +198,11 @@ void GameScene::Draw() {
 	groundModel_.Update();
 	groundModel_.Draw(&camera_);
 
-	engineCore_->GetGraphRenderer()->DrawGrid();
+	for (float i = 0.0f; i < 1.0f; i += 0.01f) {
+		Vector3 p0 = Vector3::CatmullRom(lailPoints_, i);
+		Vector3 p1 = Vector3::CatmullRom(lailPoints_, i + 0.01f);
+		engineCore_->GetGraphRenderer()->DrawLine(p0, p1);
+	}
 }
 
 IScene* GameScene::GetNextScene() {
