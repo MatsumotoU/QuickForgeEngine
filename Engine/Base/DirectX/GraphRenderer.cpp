@@ -9,18 +9,18 @@ void GraphRenderer::Initialize(EngineCore* engineCore) {
 	pointPso_ = engineCore->GetGraphicsCommon()->GetPointPso(kBlendModeNormal);
 
 	// 三角形の頂点リソースを作成
-	triangleVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * kGraphRendererMaxTriangleCount);
+	triangleVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * 3 * kGraphRendererMaxTriangleCount);
 	triangleVertexBufferView_ = {};
 	triangleVertexBufferView_.BufferLocation = triangleVertexResource_->GetGPUVirtualAddress();
-	triangleVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * kGraphRendererMaxTriangleCount);
+	triangleVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * 3 * kGraphRendererMaxTriangleCount);
 	triangleVertexBufferView_.StrideInBytes = sizeof(VertexData);
 	triangleVertexData_ = nullptr;
 	triangleVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&triangleVertexData_));
 	// 線の頂点リソースを作成
-	lineVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * kGraphRendererMaxLineCount);
+	lineVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * 2 * kGraphRendererMaxLineCount);
 	lineVertexBufferView_ = {};
 	lineVertexBufferView_.BufferLocation = lineVertexResource_->GetGPUVirtualAddress();
-	lineVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * kGraphRendererMaxLineCount);
+	lineVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * 2 * kGraphRendererMaxLineCount);
 	lineVertexBufferView_.StrideInBytes = sizeof(VertexData);
 	lineVertexData_ = nullptr;
 	lineVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&lineVertexData_));
@@ -69,6 +69,13 @@ void GraphRenderer::PreDraw() {
 void GraphRenderer::PostDraw() {
 	if (triangleCount_ == 0 && lineCount_ == 0 && pointCount_ == 0) {
 		return; // 描画するものがない場合は何もしない
+	}
+
+	if (triangleCount_ > kGraphRendererMaxTriangleCount ||
+		lineCount_ > kGraphRendererMaxLineCount ||
+		pointCount_ > kGraphRendererMaxPointCount) {
+		
+		assert(false && "GraphRenderer: Exceeded maximum count of triangles, lines, or points.");
 	}
 
 	// 頂点リソースをGPUに転送

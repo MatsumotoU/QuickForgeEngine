@@ -34,6 +34,7 @@ private:
 	bool isActiveDebugCamera_;
 #endif // _DEBUG
 	Camera camera_;
+	std::vector<Vector3> lailPoints_;
 	
 private:
 	SkyDome skyDome_;
