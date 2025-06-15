@@ -38,6 +38,7 @@ private:
 	float cameraT;
 	float cameraMoveSpeed_ = 0.1f;
 	bool isMoveLail_;
+	std::list<TimeCall*> timedCalls_;
 	
 private:
 	SkyDome skyDome_;

@@ -44,10 +44,6 @@ void GameScene::Initialize() {
 		enemies[i].Initialize(engineCore_);
 	}
 
-	enemies[0].Spawn({ 0.0f,0.0f,30.0f }, { 0.0f,0.0f,-2.0f });
-	enemies[1].Spawn({ 1.5f,0.5f,30.0f }, { 0.0f,0.0f,-2.0f });
-	enemies[2].Spawn({ -0.5f,-0.5f,30.0f }, { 0.0f,0.0f,-2.0f });
-
 	timeCount_ = 0.0f;
 
 	collisionManager_.Initalize();
@@ -66,11 +62,41 @@ void GameScene::Initialize() {
 
 	isMoveLail_ = false;
 	cameraMoveSpeed_ = 0.1f;
+
+	std::vector<bool> isCalledSpone(kEnemies, false);
+
+	std::string EnemyData = FileLoader::ReadFile("Resources/EnemyData/EnemySpone.txt");
+	std::vector<std::string> sponeData = FileLoader::Split(EnemyData, ',');
+	for (int i = 0; i < sponeData.size() / 4;i++) {
+		
+		for (int e = 0; e < kEnemies; e++) {
+			if (isCalledSpone[e]) {
+				continue;
+			}
+			Vector3 position = { std::stof(sponeData[i * 4]), std::stof(sponeData[i * 4+1]), std::stof(sponeData[i * 4+2])};
+			Vector3 rotation = { 0.0f, 0.0f, -5.0f };
+
+			timedCalls_.push_back(new TimeCall(engineCore_, std::bind(&Enemy::Spawn,&enemies[e],position,rotation), std::stof(sponeData[i * 4 + 3])));
+			isCalledSpone[e] = true;
+			break;
+		}
+	}
 }
 
 void GameScene::Update() {
-	//camera_.transform_.rotate.y += 0.001f;
-	//camera_.transform_.translate.z += 0.01f;
+	for (TimeCall* timedCall : timedCalls_) {
+		timedCall->Update();
+	}
+
+	timedCalls_.remove_if([](TimeCall* call) {
+		if (call->IsFinished()) {
+			delete call;
+			return true;
+		}
+		return false;
+		});
+
+
 	camera_.Update();
 #ifdef _DEBUG
 	if (input_->keyboard_.GetTrigger(DIK_P)) {
@@ -165,6 +191,18 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+
+	ImGui::Begin("Enemy");
+	for (int i = 0; i < kEnemies; i++) {
+		if (!enemies[i].GetIsActive()) {
+			continue;
+		}
+		ImGui::Text("Enemy %d", i);
+		ImGui::DragFloat3(("Position" + std::to_string(i)).c_str(), &enemies[i].transform_.translate.x, 0.1f);
+		ImGui::DragFloat3(("Rotation" + std::to_string(i)).c_str(), &enemies[i].transform_.rotate.x, 0.01f);
+	}
+	ImGui::End();
+
 	ImGui::Begin("Lail");
 	if (ImGui::Button("Add Point")) {
 		lailPoints_.push_back({ 0.0f,0.0f,0.0f });
