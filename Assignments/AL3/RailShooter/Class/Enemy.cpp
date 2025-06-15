@@ -86,6 +86,8 @@ void Enemy::Spawn(Vector3 position, Vector3 velocity) {
 		transform_.translate = position;
 		velocity_ = velocity;
 		Shot();
+	} else {
+		assert(false && "Enemy is already active. Cannot spawn again.");
 	}
 }
 

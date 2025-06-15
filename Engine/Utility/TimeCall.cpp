@@ -14,6 +14,10 @@ TimeCall::TimeCall(EngineCore* engineCore, std::function<void()> callBack, float
 }
 
 void TimeCall::Update() {
+#ifdef _DEBUG
+	DebugLog(std::format("TimeCall CountDown {}", time_));
+#endif // _DEBUG
+
 	if (isFinished_) {
 		return;
 	}
