@@ -25,8 +25,6 @@ void GameScene::Initialize() {
 	camera_.Initialize(engineCore_->GetWinApp());
 
 	isRequestedExit_ = false;
-	camera_.transform_.translate.y = 8.5f;
-	camera_.transform_.translate.z = -10.0f;
 
 	player_.Initialize(engineCore_);
 	player_.SetMask(0x00000001);
@@ -60,6 +58,8 @@ void GameScene::Initialize() {
 	lailPoints_.push_back({ -10.0f,-5.0f,60.0f });
 	lailPoints_.push_back({ 0.0f,0.0f,90.0f });
 
+	isCartesian_ = true;
+
 	isMoveLail_ = false;
 	cameraMoveSpeed_ = 0.1f;
 
@@ -84,6 +84,9 @@ void GameScene::Initialize() {
 			break;
 		}
 	}
+
+	reticle_.Initialize(engineCore_);
+	reticle_.SetPlayer(&player_);
 }
 
 void GameScene::Update() {
@@ -127,6 +130,7 @@ void GameScene::Update() {
 
 	player_.Update();
 	player_.SetParent(camera_.GetWorldMatrix());
+	reticle_.Update();
 
 	if (player_.GetIsShot()) {
 		for (int i = 0; i < kPlayerBullets; i++) {
@@ -194,6 +198,7 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	reticle_.Draw(&camera_);
 
 	ImGui::Begin("Enemy");
 	for (int i = 0; i < kEnemies; i++) {

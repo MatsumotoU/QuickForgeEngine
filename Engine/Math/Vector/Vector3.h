@@ -4,6 +4,8 @@
 // 前方宣言
 class Matrix4x4;
 
+// TODO: 使える座標系を増やす
+
 class Vector3 final {
 public:
 	float x;
@@ -133,6 +135,21 @@ public:
 	/// <param name="vector">あるベクトル</param>
 	/// <returns>あるベクトルの垂直なベクトル</returns>
 	[[nodiscard]] static Vector3 Perpendicular(const Vector3& vector);
+
+public:
+	/// <summary>
+	/// 球面座標系から直交座標系に変換する
+	/// </summary>
+	/// <param name="rtp">x=半径,y=シータ,z=ファイ</param>
+	/// <returns></returns>
+	[[nodiscard]] static Vector3 SphericalToCartesian(const Vector3& rtp);
+	/// <summary>
+	/// デカルト座標系から球面座標系に変換する
+	/// </summary>
+	/// <param name="xyz"></param>
+	/// <returns></returns>
+	[[nodiscard]] static Vector3 CartesianToSpherical(const Vector3& xyz);
+
 };
 
 

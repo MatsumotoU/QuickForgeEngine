@@ -4,6 +4,7 @@
 #include "Class/Player.h"
 #include "Class/Bulllet.h"
 #include "Class/Enemy.h"
+#include "Class/Reticle.h"
 #include "IScene.h"
 
 #include "../../../Engine/Colliders/CollisionManager.h"
@@ -29,6 +30,9 @@ private:
 	DirectInputManager* input_;
 
 private:
+	bool isCartesian_;
+	Vector3 position_;
+
 #ifdef _DEBUG
 	DebugCamera debugCamera_;
 	bool isActiveDebugCamera_;
@@ -41,6 +45,7 @@ private:
 	std::list<TimeCall*> timedCalls_;
 	
 private:
+	Reticle reticle_;
 	SkyDome skyDome_;
 	Player player_;
 	Bullet playerBullets[kPlayerBullets];

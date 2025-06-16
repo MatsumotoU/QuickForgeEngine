@@ -178,3 +178,19 @@ Vector3 Vector3::Perpendicular(const Vector3& vector) {
 	}
 	return { 0.0f,-vector.z,vector.y };
 }
+
+Vector3 Vector3::SphericalToCartesian(const Vector3& rtp) {
+	Vector3 result{};
+	result.x = rtp.x * std::sinf(rtp.y) * std::cosf(rtp.z);
+	result.y = rtp.x * std::sinf(rtp.y) * std::sinf(rtp.z);
+	result.z = rtp.x * std::cosf(rtp.y);
+	return result;
+}
+
+Vector3 Vector3::CartesianToSpherical(const Vector3& xyz) {
+	Vector3 result{};
+	result.x = xyz.Length(); // r
+	result.y = std::acosf(xyz.z / result.x); // theta
+	result.z = std::atan2f(xyz.y, xyz.x); // phi
+	return result;
+}
