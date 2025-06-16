@@ -17,7 +17,7 @@ void Player::Initialize(EngineCore* engineCore) {
 	isActive_ = true;
 	parentMatrix_ = Matrix4x4::MakeIndentity4x4();
 
-	transform_.translate.z = 10.0f;
+	transform_.translate.z = 30.0f;
 }
 
 void Player::Update() {
@@ -105,8 +105,18 @@ bool Player::GetIsShot() {
 	return isShot_;
 }
 
+Matrix4x4 Player::GetParentMatrix() {
+	return parentMatrix_;
+}
+
+Matrix4x4 Player::GetParentWorldMatrix() {
+	Matrix4x4 result= Matrix4x4::MakeIndentity4x4();
+	result = Matrix4x4::Multiply(parentMatrix_, model_.worldMatrix_);
+	return result;
+}
+
 Matrix4x4 Player::GetWorldMatrix() {
-	return Matrix4x4::MakeAffineMatrix(transform_.scale,transform_.rotate,transform_.translate);
+	return model_.worldMatrix_;
 }
 
 Matrix4x4 Player::GetRotateMatrix() {

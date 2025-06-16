@@ -20,6 +20,8 @@ public:
 public:
 	bool GetIsActive();
 	bool GetIsShot();
+	Matrix4x4 GetParentMatrix();
+	Matrix4x4 GetParentWorldMatrix();
 	Matrix4x4 GetWorldMatrix();
 	Matrix4x4 GetRotateMatrix();
 	Vector3 GetWorldPosition() override;
