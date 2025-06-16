@@ -11,6 +11,11 @@ enum class Phase {
 	Leave,
 };
 
+enum class MoveType {
+	Normal,
+	Sin,
+};
+
 class Enemy {
 public:
 	void Initialize(EngineCore* engineCore);
@@ -26,7 +31,7 @@ public:
 	void Shot();
 
 public:
-	void Spawn(Vector3 position, Vector3 velocity);
+	void Spawn(Vector3 position, Vector3 velocity,uint32_t moveType);
 
 public:
 	void SetIsShot(bool isShot);
@@ -38,6 +43,7 @@ public:
 	Matrix4x4 GetRotateMatrix();
 
 public:
+	MoveType moveType_;
 	Transform transform_;
 
 private:
@@ -45,6 +51,7 @@ private:
 	std::unique_ptr<BaseEnemyState> state_;
 
 private:
+	float frameCount_;
 	bool isActive_;
 	Vector3 velocity_;
 	Phase phase_;

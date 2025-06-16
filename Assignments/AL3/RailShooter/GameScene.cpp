@@ -67,16 +67,19 @@ void GameScene::Initialize() {
 
 	std::string EnemyData = FileLoader::ReadFile("Resources/EnemyData/EnemySpone.txt");
 	std::vector<std::string> sponeData = FileLoader::Split(EnemyData, ',');
-	for (int i = 0; i < sponeData.size() / 4;i++) {
+	for (int i = 0; i < sponeData.size() / 5;i++) {
 		
 		for (int e = 0; e < kEnemies; e++) {
 			if (isCalledSpone[e]) {
 				continue;
 			}
-			Vector3 position = { std::stof(sponeData[i * 4]), std::stof(sponeData[i * 4+1]), std::stof(sponeData[i * 4+2])};
-			Vector3 rotation = { 0.0f, 0.0f, -5.0f };
+			Vector3 position = { std::stof(sponeData[i * 5]), std::stof(sponeData[i * 5+1]), std::stof(sponeData[i * 5+2])};
+			Vector3 vec = { 0.0f, 0.0f, -5.0f };
 
-			timedCalls_.push_back(new TimeCall(engineCore_, std::bind(&Enemy::Spawn,&enemies[e],position,rotation), std::stof(sponeData[i * 4 + 3])));
+			timedCalls_.push_back(
+				new TimeCall(
+					engineCore_, 
+					std::bind(&Enemy::Spawn,&enemies[e],position, vec, std::stoi(sponeData[i * 5 + 4])), std::stof(sponeData[i * 5 + 3])));
 			isCalledSpone[e] = true;
 			break;
 		}
@@ -198,6 +201,7 @@ void GameScene::Draw() {
 			continue;
 		}
 		ImGui::Text("Enemy %d", i);
+		ImGui::Text("MoveType %d", enemies[i].moveType_);
 		ImGui::DragFloat3(("Position" + std::to_string(i)).c_str(), &enemies[i].transform_.translate.x, 0.1f);
 		ImGui::DragFloat3(("Rotation" + std::to_string(i)).c_str(), &enemies[i].transform_.rotate.x, 0.01f);
 	}

@@ -14,6 +14,7 @@ void Enemy::Initialize(EngineCore* engineCore) {
 	transform_.rotate.y = 3.14f;
 	leaveSpeed_ = 3.0f;
 	phase_ = Phase::Approach;
+	moveType_ = MoveType::Normal;
 
 	isShot_ = false;
 	shotInterval_ = kMaxShotInterval;
@@ -25,6 +26,8 @@ void Enemy::Update() {
 	if (!isActive_) {
 		return;
 	}
+
+	frameCount_++;
 
 	state_.get()->Update();
 
@@ -61,7 +64,19 @@ void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
 }
 
 void Enemy::Approch() {
-	transform_.translate += velocity_ * engineCore_->GetDeltaTime();
+	switch (moveType_)
+	{
+	case MoveType::Normal:
+		transform_.translate += velocity_ * engineCore_->GetDeltaTime();
+		break;
+	case MoveType::Sin:
+		transform_.translate += velocity_ * engineCore_->GetDeltaTime();
+		velocity_.y += sinf(frameCount_ * engineCore_->GetDeltaTime()) * 0.01f;
+		break;
+	default:
+		break;
+	}
+	
 	if (transform_.translate.z <= 0.0f) {
 		phase_ = Phase::Leave;
 	}
@@ -80,7 +95,7 @@ void Enemy::Shot() {
 	timedCalls_.push_back(new TimeCall(engineCore_, std::bind(&Enemy::Shot, this), 1.5f));
 }
 
-void Enemy::Spawn(Vector3 position, Vector3 velocity) {
+void Enemy::Spawn(Vector3 position, Vector3 velocity, uint32_t moveType) {
 	if (!isActive_) {
 		isActive_ = true;
 		transform_.translate = position;
@@ -89,6 +104,8 @@ void Enemy::Spawn(Vector3 position, Vector3 velocity) {
 	} else {
 		assert(false && "Enemy is already active. Cannot spawn again.");
 	}
+
+	moveType_ = static_cast<MoveType>(moveType);
 }
 
 void Enemy::SetIsShot(bool isShot) {
