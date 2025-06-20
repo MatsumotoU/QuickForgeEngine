@@ -89,9 +89,13 @@ void GameScene::Initialize() {
 	isFpsCamera_ = false;
 	reticle_.Initialize(engineCore_);
 	reticle_.SetPlayer(&player_);
+
+	lockOn_.Initialize();
+	isLockOn_ = false;
 }
 
 void GameScene::Update() {
+	lockOn_.ResetTargets();
 
 	groundModel_.transform_ = groundTransform_;
 	groundModel_.Update();
@@ -152,6 +156,9 @@ void GameScene::Update() {
 
 	for (int i = 0; i < kEnemies; i++) {
 		enemies[i].Update();
+		if (enemies[i].GetIsActive()) {
+			lockOn_.AddTargetPosition(enemies[i].transform_.translate);
+		}
 
 		if (enemies[i].GetIsShot()) {
 			for (int b = 0; b < kEnemyBullets; b++) {
@@ -170,10 +177,11 @@ void GameScene::Update() {
 			playerBullets[i].Update();
 		}
 	}
+
 	for (int i = 0; i < kEnemyBullets; i++) {
 		if (enemyBullets[i].GetIsActive()) {
 
-			Vector3 toPlayer = player_.transform_.translate - enemyBullets[i].transform_.translate;
+			Vector3 toPlayer = player_.GetWorldPosition() - enemyBullets[i].transform_.translate;
 			enemyBullets[i].velocity_ = Vector3::Slerp(enemyBullets[i].velocity_.Normalize(), toPlayer.Normalize(), 0.1f) * 10.0f;
 
 			enemyBullets[i].transform_.rotate = Vector3::LookAt(
@@ -207,6 +215,11 @@ void GameScene::Update() {
 		fpsCamera_.transform_.translate = player_.GetWorldPosition();
 		fpsCamera_.transform_.rotate = camera_.transform_.rotate;
 		camera_ = fpsCamera_;
+	}
+
+	if (isLockOn_) {
+		lockOn_.SetReticlePosition(reticle_.GetWorldPos());
+		reticle_.model_.transform_.translate = lockOn_.GetLockPosition(&camera_);
 	}
 }
 
@@ -243,6 +256,9 @@ void GameScene::Draw() {
 	ImGui::End();
 
 	ImGui::Begin("GameScene");
+	if (ImGui::Button("LockOn")) {
+		isLockOn_ = !isLockOn_;
+	}
 	if (ImGui::Button("MoveLail")) {
 		isMoveLail_ = !isMoveLail_;
 	}

@@ -59,6 +59,7 @@ void EngineCore::Update() {
 	imGuiManager_.BeginFrame();
 	fpsCounter_.Update();
 	inputManager_.Update();
+	xController_.Update();
 }
 
 void EngineCore::PreDraw() {
@@ -172,6 +173,10 @@ SrvDescriptorHeap* EngineCore::GetSrvDescriptorHeap() {
 
 GraphRenderer* EngineCore::GetGraphRenderer() {
 	return &graphRenderer_;
+}
+
+XInputController* EngineCore::GetXInputController() {
+	return &xController_;
 }
 
 float EngineCore::GetDeltaTime() {

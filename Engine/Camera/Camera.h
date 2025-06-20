@@ -24,6 +24,8 @@ public:
 
 public:
 	[[nodiscard]] Vector3 GetScreenPos(const Vector3& localPos, const Matrix4x4& worldMatrix);
+	[[nodiscard]] Vector3 GetScreenToWorldPos(const Vector3& screen);
+	[[nodiscard]] Vector3 GetWorldToScreenPos(const Vector3& world);
 
 public:
 	/// <summary>

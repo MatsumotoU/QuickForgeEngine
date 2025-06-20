@@ -14,6 +14,10 @@ Vector3 Vector3::Zero() {
 	return result;
 }
 
+Vector2 Vector3::XY() {
+	return Vector2(this->x,this->y);
+}
+
 float Vector3::Length() const {
 	return sqrtf(this->x * this->x + this->y * this->y + this->z * this->z);
 }

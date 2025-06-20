@@ -4,6 +4,7 @@
 // 前方宣言
 class Matrix4x4;
 class Camera;
+class Vector2;
 
 // TODO: 使える座標系を増やす
 
@@ -33,6 +34,8 @@ public:
 
 public:
 	[[nodiscard]] static Vector3 Zero();
+
+	[[nodiscard]] Vector2 XY();
 
 public:
 	/// <summary>
