@@ -30,6 +30,8 @@ private:
 	DirectInputManager* input_;
 
 private:
+	Camera fpsCamera_;
+	bool isFpsCamera_;
 	bool isCartesian_;
 	Vector3 position_;
 

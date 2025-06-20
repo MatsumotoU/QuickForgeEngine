@@ -3,6 +3,7 @@
 
 // 前方宣言
 class Matrix4x4;
+class Camera;
 
 // TODO: 使える座標系を増やす
 
@@ -29,6 +30,9 @@ public:
 	Vector3 operator-(const float& other) const { return { x - other,y - other,z - other }; };
 	Vector3 operator/(const float& other) const { return { x / other,y / other,z / other }; };
 	Vector3 operator*(const float& other) const { return { x * other,y * other,z * other }; };
+
+public:
+	[[nodiscard]] static Vector3 Zero();
 
 public:
 	/// <summary>
@@ -149,7 +153,6 @@ public:
 	/// <param name="xyz"></param>
 	/// <returns></returns>
 	[[nodiscard]] static Vector3 CartesianToSpherical(const Vector3& xyz);
-
 };
 
 

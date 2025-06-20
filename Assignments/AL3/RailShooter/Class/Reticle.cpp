@@ -7,11 +7,10 @@ void Reticle::Initialize(EngineCore* engineCore) {
 	transform_.translate = { 0.0f, 0.0f, 30.0f };
 	isActive_ = true;
 
-	reticleGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/uvChecker.png");
+	reticleGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/Reticle.png");
 
 	sprite_.Initialize(
-		engineCore_->GetDirectXCommon(), engineCore_->GetTextureManager(), engineCore_->GetImGuiManager(),
-		100.0f, 100.0f, engineCore_->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal));
+		engineCore_,100.0f,100.0f);
 }
 
 void Reticle::Update() {
@@ -25,7 +24,9 @@ void Reticle::Update() {
 	}
 	model_.transform_ = transform_;
 	model_.Update();
-	model_.worldMatrix_ = Matrix4x4::Multiply(model_.worldMatrix_, player_->GetWorldMatrix());
+	model_.worldMatrix_ = Matrix4x4::Multiply(Matrix4x4::MakeAffineMatrix(transform_.scale,transform_.rotate,transform_.translate), player_->GetWorldMatrix());
+
+	
 }
 
 void Reticle::Draw(Camera* camera) {
@@ -33,6 +34,11 @@ void Reticle::Draw(Camera* camera) {
 		return;
 	}
 	model_.Draw(camera);
+    //spriteTransform_.translate = Vector3::WorldToScreen(transform_.translate, model_.worldMatrix_, camera, 1280.0f, 720.0f);
+	spriteTransform_.translate = camera->GetScreenPos(Vector3::Zero(), model_.worldMatrix_);
+    spriteTransform_.translate.x -= 50.0f;
+    spriteTransform_.translate.y -= 50.0f;
+	sprite_.DrawSprite(spriteTransform_, reticleGH_, camera);
 }
 
 void Reticle::SetPlayer(Player* player) {

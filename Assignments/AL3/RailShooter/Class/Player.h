@@ -25,6 +25,7 @@ public:
 	Matrix4x4 GetWorldMatrix();
 	Matrix4x4 GetRotateMatrix();
 	Vector3 GetWorldPosition() override;
+	Vector3 GetScreenPosition(Camera* camera);
 
 public:
 	void SetParent(const Matrix4x4& parentMatrix);

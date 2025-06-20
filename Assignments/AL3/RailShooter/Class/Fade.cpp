@@ -1,12 +1,9 @@
 #include "Fade.h"
 
 void Fade::Initialize(EngineCore* engineCore) {
-	sprite_.Initialize(
-		engineCore->GetDirectXCommon(),
-		engineCore->GetTextureManager(),
-		engineCore->GetImGuiManager(),
-		1280, 720, 
-		engineCore->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal));
+	sprite_.Initialize(engineCore, 
+		static_cast<float>(engineCore->GetWinApp()->kWindowWidth),
+		static_cast<float>(engineCore->GetWinApp()->kWindowHeight));
 	uvCheckerTextureHandle_ = engineCore->GetTextureManager()->LoadTexture("Resources/uvChecker.png");
 
 	isFadeIn_ = true;

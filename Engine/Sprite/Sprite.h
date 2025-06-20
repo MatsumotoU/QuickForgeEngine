@@ -5,9 +5,10 @@
 #include "../Math/VerTexData.h"
 #include "../Math/Transform.h"
 
+class EngineCore;
+
 class DirectXCommon;
 class TextureManager;
-class ImGuiManager;// 削除予定
 
 class PipelineStateObject;
 
@@ -19,13 +20,10 @@ class Camera;
 
 class Sprite {
 public:
-	Sprite();
-	~Sprite();
+	void Initialize(EngineCore* engineCore, float width, float hight);
 
 public:
-	void Initialize(DirectXCommon* dxCommon, TextureManager* textureManager, ImGuiManager* imguiManager, float width, float hight, PipelineStateObject* pso);
-
-public:
+	void DrawSprite(const Matrix4x4& worldMatrix, int32_t textureHandle, Camera* camera);
 	void DrawSprite(const Transform& transform, int32_t textureHandle,Camera* camera);
 	void DrawSprite(const Transform& transform, const Transform& uvTransform, int32_t textureHandle, Camera* camera);
 	void DrawSprite(const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle);
@@ -43,9 +41,9 @@ public:
 	WVPResource wvp_;	
 
 private:
+	EngineCore* engineCore_;
 	DirectXCommon* dxCommon_;
 	TextureManager* textureManager_;
-	ImGuiManager* imGuiManager_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	VertexData* vertexData_;
