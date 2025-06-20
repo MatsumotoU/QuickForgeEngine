@@ -226,6 +226,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\LockOn.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\RailCameraController.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Reticle.cpp" />
@@ -257,6 +258,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\EngineCore.cpp" />
     <ClCompile Include="Engine\Colliders\Collider.cpp" />
     <ClCompile Include="Engine\Colliders\CollisionManager.cpp" />
+    <ClCompile Include="Engine\Input\XInput\XInputController.cpp" />
     <ClCompile Include="Engine\Math\AudioMath.cpp" />
     <ClCompile Include="Engine\Math\MyMath.cpp" />
     <ClCompile Include="Engine\Math\MyRandomNum.cpp" />
@@ -312,6 +314,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\LockOn.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\RailCameraController.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Reticle.h" />
@@ -329,6 +332,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\AudioMaterial.h" />
     <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h" />
     <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h" />
+    <ClInclude Include="Engine\Input\XInput\XInputController.h" />
     <ClInclude Include="Engine\Math\AudioMath.h" />
     <ClInclude Include="Engine\Audio\ChunkHeader.h" />
     <ClInclude Include="Engine\Audio\FormatChunk.h" />

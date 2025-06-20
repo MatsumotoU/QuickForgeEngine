@@ -10,11 +10,14 @@ public:
 
 public:
 	void SetPlayer(Player* player);
+	Vector3 GetWorldPos();
+
+public:
+	Transform transform_;
+	Model model_;
 
 private:
 	EngineCore* engineCore_;
-	Transform transform_;
-	Model model_;
 	bool isActive_;
 	Sprite sprite_;
 	uint32_t reticleGH_;

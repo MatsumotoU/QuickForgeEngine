@@ -44,3 +44,7 @@ void Reticle::Draw(Camera* camera) {
 void Reticle::SetPlayer(Player* player) {
 	player_ = player;
 }
+
+Vector3 Reticle::GetWorldPos() {
+	return Vector3::Transform(Vector3::Zero(),Matrix4x4::MakeAffineMatrix(model_.transform_.scale, model_.transform_.rotate, model_.transform_.translate));
+}

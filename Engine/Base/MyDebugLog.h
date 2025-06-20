@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <chrono>
+#include <source_location>
 
 class MyDebugLog final {
 public:
@@ -13,7 +14,7 @@ public:
 
 	void Initialize();
 	void Finalize();
-	void Log(const std::string& message);
+	void Log(const std::string& message, const std::source_location& location = std::source_location::current());
 
 private:
 	std::ofstream logStream_;
@@ -30,4 +31,4 @@ private: // シングルトン用
 /// このヘッダーを読み込んでいれば使えるやつ
 /// </summary>
 /// <param name="message"></param>
-void DebugLog(const std::string& message);
+void DebugLog(const std::string& message, const std::source_location& location = std::source_location::current());

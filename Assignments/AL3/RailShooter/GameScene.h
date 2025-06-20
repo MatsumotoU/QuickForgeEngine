@@ -5,6 +5,7 @@
 #include "Class/Bulllet.h"
 #include "Class/Enemy.h"
 #include "Class/Reticle.h"
+#include "Class/LockOn.h"
 #include "IScene.h"
 
 #include "../../../Engine/Colliders/CollisionManager.h"
@@ -24,6 +25,9 @@ public:
 	void Draw()override;
 
 	IScene* GetNextScene() override;
+
+private:
+	bool isLockOn_;
 
 private:
 	EngineCore* engineCore_;
@@ -55,6 +59,7 @@ private:
 	Bullet enemyBullets[kEnemyBullets];
 	Model groundModel_;
 	Transform groundTransform_;
+	LockOn lockOn_;
 
 	CollisionManager collisionManager_;
 

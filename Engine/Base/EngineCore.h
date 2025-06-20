@@ -25,6 +25,7 @@
 #include "../Audio/Audio3D.h"
 // 入力機能
 #include "../Input/DirectInput/DirectInputManager.h"
+#include "../Input/XInput/XInputController.h"
 
 // Resorce
 #include "DirectX/MaterialResource.h"
@@ -88,6 +89,7 @@ public:// エンジンの機能取得
 	RtvDescriptorHeap* GetRtvDescriptorHeap();
 	SrvDescriptorHeap* GetSrvDescriptorHeap();
 	GraphRenderer* GetGraphRenderer();
+	XInputController* GetXInputController();
 
 public:
 	 float GetDeltaTime();
@@ -113,6 +115,7 @@ private:// 音声
 
 private:// 入力
 	DirectInputManager inputManager_;
+	XInputController xController_;
 	
 private:// ディスクリプタヒープ
 	RtvDescriptorHeap rtvDescriptorHeap_;

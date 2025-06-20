@@ -35,6 +35,14 @@ Vector3 Camera::GetScreenPos(const Vector3& localPos, const Matrix4x4& worldMatr
 	return result;
 }
 
+Vector3 Camera::GetScreenToWorldPos(const Vector3& screen) {
+	return Vector3::Transform(screen, Matrix4x4::Multiply(Matrix4x4::Multiply(viewMatrix_, perspectiveMatrix_), GetViewPortMatrix()).Inverse());
+}
+
+Vector3 Camera::GetWorldToScreenPos(const Vector3& world) {
+	return Vector3::Transform(world, Matrix4x4::Multiply(Matrix4x4::Multiply(viewMatrix_, perspectiveMatrix_), GetViewPortMatrix()));
+}
+
 Matrix4x4 Camera::MakeWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, ViewState viewState) {
 	Matrix4x4 result{};
 

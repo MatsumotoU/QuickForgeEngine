@@ -27,8 +27,10 @@ void Player::Update() {
 
 	DirectInputManager* input = engineCore_->GetInputManager();
 	
-	acceleration_.x += input->GetKeyMoveDir().x * moveSpeed_ * engineCore_->GetDeltaTime();
-	acceleration_.y += input->GetKeyMoveDir().y * moveSpeed_ * engineCore_->GetDeltaTime();
+	Vector2 moveDir = input->GetKeyMoveDir() + engineCore_->GetXInputController()->GetLeftStick(0);
+
+	acceleration_.x += moveDir.x * moveSpeed_ * engineCore_->GetDeltaTime();
+	acceleration_.y += moveDir.y * moveSpeed_ * engineCore_->GetDeltaTime();
 
 	acceleration_.x = std::clamp(acceleration_.x, -kLimitSpeed, kLimitSpeed);
 	acceleration_.y = std::clamp(acceleration_.y, -kLimitSpeed, kLimitSpeed);
@@ -45,7 +47,7 @@ void Player::Update() {
 	transform_.translate.x = std::clamp(transform_.translate.x, -kLimitMoveWidh, kLimitMoveWidh);
 	transform_.translate.y = std::clamp(transform_.translate.y, -kLimitMoveHeight, kLimitMoveHeight);
 
-	if (input->keyboard_.GetPress(DIK_SPACE)) {
+	if (input->keyboard_.GetPress(DIK_SPACE) || engineCore_->GetXInputController()->GetPressButton(XINPUT_GAMEPAD_A,0)) {
 		if (shotCooldown_ <= 0.0f) {
 			if (!isShot_) {
 				isShot_ = true;
@@ -88,6 +90,7 @@ void Player::Draw(Camera* camera) {
 	ImGui::DragFloat4("color", &model_.material_.materialData_->color.x,0.1f);
 	ImGui::DragInt("BlendMode", &blendNum_);
 	ImGui::Text("worldPos %f %f %f", GetWorldPosition().x, GetWorldPosition().y, GetWorldPosition().z);
+
 	if (ImGui::Button("SetBlendMode")) {
 		model_.SetBlendmode(static_cast<BlendMode>(blendNum_));
 	}
@@ -125,7 +128,7 @@ Matrix4x4 Player::GetRotateMatrix() {
 }
 
 Vector3 Player::GetWorldPosition() {
-	return Vector3::Transform( model_.transform_.translate, GetParentWorldMatrix());
+	return Vector3::Transform(Vector3::Zero(), GetParentWorldMatrix());
 }
 
 Vector3 Player::GetScreenPosition(Camera* camera) {
