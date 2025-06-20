@@ -23,6 +23,9 @@ public:
 	void Update();
 
 public:
+	[[nodiscard]] Vector3 GetScreenPos(const Vector3& localPos, const Matrix4x4& worldMatrix);
+
+public:
 	/// <summary>
 	/// WVPMatrixを作成します
 	/// </summary>
@@ -30,12 +33,13 @@ public:
 	/// <param name="viewState">透視投影か平行投影か(CAMERA_VIEW_STATE_?????)</param>
 	/// <returns>WVPMatrix</returns>
 	Matrix4x4 MakeWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, ViewState viewState);
+	Matrix4x4 GetViewPortMatrix();
 
 public:
 	Matrix4x4 GetWorldMatrix() const;
 	Matrix4x4 GetRotateMatrix() const;
 	
-private:
+public:
 	Matrix4x4 viewMatrix_;
 	Matrix4x4 perspectiveMatrix_;
 	Matrix4x4 orthographicMatrix_;
@@ -46,4 +50,7 @@ public:
 	Transform transform_;
 	ViewPort viewport_;
 	ScissorRect scissorrect_;	
+
+private:
+	WinApp* win_;
 };

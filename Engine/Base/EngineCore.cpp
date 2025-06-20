@@ -49,10 +49,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	inputManager_.Initialize(&winApp_, hInstance);
 
 	// オフスクリーンのスプライト生成
-	offscreen_.Initialize(
-		&dxCommon_, &textureManager_, &imGuiManager_,
-		static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight), 
-		graphicsCommon_.GetTrianglePso(kBlendModeNone));
+	offscreen_.Initialize(this,static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight));
 	offscreen_.material_.materialData_->enableLighting = false;
 
 	camera_.Initialize(&winApp_);

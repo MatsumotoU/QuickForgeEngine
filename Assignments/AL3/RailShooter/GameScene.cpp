@@ -15,6 +15,8 @@ GameScene::GameScene(EngineCore* engineCore) {
 
 	cameraT = 0.0f;
 	cameraMoveSpeed_ = 0.1f;
+
+	fpsCamera_.Initialize(engineCore_->GetWinApp());
 }
 
 GameScene::~GameScene() {
@@ -84,12 +86,16 @@ void GameScene::Initialize() {
 			break;
 		}
 	}
-
+	isFpsCamera_ = false;
 	reticle_.Initialize(engineCore_);
 	reticle_.SetPlayer(&player_);
 }
 
 void GameScene::Update() {
+
+	groundModel_.transform_ = groundTransform_;
+	groundModel_.Update();
+
 	for (TimeCall* timedCall : timedCalls_) {
 		timedCall->Update();
 	}
@@ -195,6 +201,13 @@ void GameScene::Update() {
 	}
 
 	collisionManager_.Update(allColliders_);
+
+	if (isFpsCamera_) {
+		fpsCamera_.Update();
+		fpsCamera_.transform_.translate = player_.GetWorldPosition();
+		fpsCamera_.transform_.rotate = camera_.transform_.rotate;
+		camera_ = fpsCamera_;
+	}
 }
 
 void GameScene::Draw() {
@@ -233,6 +246,9 @@ void GameScene::Draw() {
 	if (ImGui::Button("MoveLail")) {
 		isMoveLail_ = !isMoveLail_;
 	}
+	if (ImGui::Button("FpsCamera")) {
+		isFpsCamera_ = !isFpsCamera_;
+	}
 	ImGui::DragFloat("CameraMoveSpeed", &cameraMoveSpeed_, 0.01f, 0.01f, 1.0f);
 	ImGui::DragFloat("CameraT", &cameraT, 0.01f, 0.0f, 1.0f);
 	ImGui::Text("Time %.2f", timeCount_);
@@ -248,7 +264,10 @@ void GameScene::Draw() {
 	ImGui::End();
 
 	skyDome_.Draw(&camera_);
-	player_.Draw(&camera_);
+	if (!isFpsCamera_) {
+		player_.Draw(&camera_);
+	}
+	
 	for (int i = 0; i < kPlayerBullets; i++) {
 		if (playerBullets[i].GetIsActive()) {
 			playerBullets[i].Draw(&camera_);
@@ -264,8 +283,7 @@ void GameScene::Draw() {
 		enemies[i].Draw(&camera_);
 	}
 
-	groundModel_.transform_ = groundTransform_;
-	groundModel_.Update();
+	
 	groundModel_.Draw(&camera_);
 
 	for (float i = 0.0f; i < 1.0f; i += 0.01f) {

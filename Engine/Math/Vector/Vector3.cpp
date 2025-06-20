@@ -1,10 +1,18 @@
 #include "Vector3.h"
 #include "../Matrix/Matrix4x4.h"
+#include "Vector4.h"
 #include "Vector2.h"
 #include <math.h>
 #include <assert.h>
 #include <algorithm>
 #include <cmath>
+#include "Camera/Camera.h"
+
+Vector3 Vector3::Zero() {
+	Vector3 result{};
+	result = { 0.0f,0.0f,0.0f };
+	return result;
+}
 
 float Vector3::Length() const {
 	return sqrtf(this->x * this->x + this->y * this->y + this->z * this->z);

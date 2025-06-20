@@ -87,6 +87,7 @@ void Player::Draw(Camera* camera) {
 	ImGui::DragFloat3("acceleration", &acceleration_.x);
 	ImGui::DragFloat4("color", &model_.material_.materialData_->color.x,0.1f);
 	ImGui::DragInt("BlendMode", &blendNum_);
+	ImGui::Text("worldPos %f %f %f", GetWorldPosition().x, GetWorldPosition().y, GetWorldPosition().z);
 	if (ImGui::Button("SetBlendMode")) {
 		model_.SetBlendmode(static_cast<BlendMode>(blendNum_));
 	}
@@ -124,7 +125,13 @@ Matrix4x4 Player::GetRotateMatrix() {
 }
 
 Vector3 Player::GetWorldPosition() {
-	return transform_.translate;
+	return Vector3::Transform( model_.transform_.translate, GetParentWorldMatrix());
+}
+
+Vector3 Player::GetScreenPosition(Camera* camera) {
+	Vector3 result{};
+	result = camera->GetScreenPos(Vector3::Zero(), model_.worldMatrix_);
+	return result;
 }
 
 void Player::SetParent(const Matrix4x4& parentMatrix) {

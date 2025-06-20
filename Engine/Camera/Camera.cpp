@@ -16,6 +16,8 @@ Camera::~Camera() {
 }
 
 void Camera::Initialize(WinApp* win) {
+	win_ = win;
+
 	perspectiveMatrix_ = Matrix4x4::MakePerspectiveFovMatrix(0.45f, static_cast<float>(win->kWindowWidth) / static_cast<float>(win->kWindowHeight), 0.1f, 100.0f);
 	orthographicMatrix_ = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(win->kWindowWidth), static_cast<float>(win->kWindowHeight), 0.0f, 100.0f);
 
@@ -25,6 +27,12 @@ void Camera::Initialize(WinApp* win) {
 
 void Camera::Update() {
 	affineMatrix_ = Matrix4x4::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+}
+
+Vector3 Camera::GetScreenPos(const Vector3& localPos, const Matrix4x4& worldMatrix) {
+	Vector3 result{};
+	result = Vector3::Transform(localPos, Matrix4x4::Multiply( MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE),GetViewPortMatrix()));
+	return result;
 }
 
 Matrix4x4 Camera::MakeWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, ViewState viewState) {
@@ -46,6 +54,10 @@ Matrix4x4 Camera::MakeWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, Vi
 		break;
 	}
 	return result;
+}
+
+Matrix4x4 Camera::GetViewPortMatrix() {
+	return Matrix4x4::MakeViewportMatrix(0, 0, static_cast<float>(win_->kWindowWidth), static_cast<float>(win_->kWindowHeight), 0.0f, 1.0f);
 }
 
 Matrix4x4 Camera::GetWorldMatrix() const {
