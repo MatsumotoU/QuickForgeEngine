@@ -25,8 +25,6 @@ void Reticle::Update() {
 	model_.transform_ = transform_;
 	model_.Update();
 	model_.worldMatrix_ = Matrix4x4::Multiply(Matrix4x4::MakeAffineMatrix(transform_.scale,transform_.rotate,transform_.translate), player_->GetWorldMatrix());
-
-	
 }
 
 void Reticle::Draw(Camera* camera) {
@@ -47,4 +45,8 @@ void Reticle::SetPlayer(Player* player) {
 
 Vector3 Reticle::GetWorldPos() {
 	return Vector3::Transform(Vector3::Zero(),Matrix4x4::MakeAffineMatrix(model_.transform_.scale, model_.transform_.rotate, model_.transform_.translate));
+}
+
+Vector3 Reticle::GetReticleWorldPos() {
+	return Vector3::Transform(Vector3::Zero(),model_.worldMatrix_);
 }

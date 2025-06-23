@@ -11,6 +11,7 @@ public:
 public:
 	void SetPlayer(Player* player);
 	Vector3 GetWorldPos();
+	Vector3 GetReticleWorldPos();
 
 public:
 	Transform transform_;
