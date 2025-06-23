@@ -56,8 +56,8 @@ void GameScene::Initialize() {
 
 	lailPoints_.clear();
 	lailPoints_.push_back({ 0.0f,0.0f,0.0f });
-	lailPoints_.push_back({ 10.0f,5.0f,30.0f });
-	lailPoints_.push_back({ -10.0f,-5.0f,60.0f });
+	lailPoints_.push_back({ 0.0f,0.0f,30.0f });
+	lailPoints_.push_back({ 0.0f,0.0f,60.0f });
 	lailPoints_.push_back({ 0.0f,0.0f,90.0f });
 
 	isCartesian_ = true;
@@ -140,7 +140,7 @@ void GameScene::Update() {
 
 	player_.Update();
 	player_.SetParent(camera_.GetWorldMatrix());
-	reticle_.Update();
+	
 
 	if (player_.GetIsShot()) {
 		for (int i = 0; i < kPlayerBullets; i++) {
@@ -217,14 +217,32 @@ void GameScene::Update() {
 		camera_ = fpsCamera_;
 	}
 
+	reticle_.Update();
 	if (isLockOn_) {
-		lockOn_.SetReticlePosition(reticle_.GetWorldPos());
-		reticle_.model_.transform_.translate = lockOn_.GetLockPosition(&camera_);
+		reticle_.model_.worldMatrix_ =
+			Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
+
+		player_.transform_.rotate = Vector3::LookAt(player_.GetWorldPosition(), reticle_.GetReticleWorldPos());
 	}
+	
 }
 
 void GameScene::Draw() {
 	reticle_.Draw(&camera_);
+
+	ImGui::Begin("LockOn");
+	if (isLockOn_) {
+		lockOn_.SetReticlePosition(reticle_.GetWorldPos());
+		lockOn_.GetLockPosition(&camera_);
+	}
+	if (ImGui::Button("isLockOn")) {
+		isLockOn_ = !isLockOn_;
+	}
+	Vector3 r = lockOn_.GetLockPosition(&camera_);
+	ImGui::Text("isLockOn: %d", isLockOn_);
+	ImGui::Text("%f,%f,%f", r.x, r.y, r.z);
+	ImGui::Text("length: %f", (lockOn_.GetLockPosition(&camera_) - player_.GetWorldPosition()).Length());
+	ImGui::End();
 
 	ImGui::Begin("Enemy");
 	for (int i = 0; i < kEnemies; i++) {
