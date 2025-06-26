@@ -67,6 +67,12 @@ void Player::Update() {
 	if (input->keyboard_.GetPress(DIK_A)) {
 		transform_.rotate.y -= 0.05f;
 	}
+	if (input->keyboard_.GetPress(DIK_W)) {
+		transform_.rotate.x += 0.05f;
+	}
+	if (input->keyboard_.GetPress(DIK_S)) {
+		transform_.rotate.x -= 0.05f;
+	}
 
 	model_.transform_ = transform_;
 	
@@ -135,6 +141,10 @@ Vector3 Player::GetScreenPosition(Camera* camera) {
 	Vector3 result{};
 	result = camera->GetScreenPos(Vector3::Zero(), model_.worldMatrix_);
 	return result;
+}
+
+Vector3 Player::GetDir() {
+	return Vector3::Transform({0.0f,0.0f,1.0f},Matrix4x4::MakeRotateXYZMatrix(model_.transform_.rotate));
 }
 
 void Player::SetParent(const Matrix4x4& parentMatrix) {

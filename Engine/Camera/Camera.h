@@ -38,6 +38,7 @@ public:
 	Matrix4x4 GetViewPortMatrix();
 
 public:
+	Vector3 GetWorldPos();
 	Matrix4x4 GetWorldMatrix() const;
 	Matrix4x4 GetRotateMatrix() const;
 	
@@ -47,8 +48,8 @@ public:
 	Matrix4x4 orthographicMatrix_;
 
 public:
-	// TODO: affineMatrixではなくworldMatrix
-	Matrix4x4 affineMatrix_;
+	Vector3 localPos_;
+	Matrix4x4 worldMatrix_;
 	Transform transform_;
 	ViewPort viewport_;
 	ScissorRect scissorrect_;	

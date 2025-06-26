@@ -127,3 +127,11 @@ bool Enemy::GetIsShot() {
 Matrix4x4 Enemy::GetRotateMatrix() {
 	return Matrix4x4::MakeRotateXYZMatrix(transform_.rotate);
 }
+
+Vector3 Enemy::GetDir() {
+	return Vector3::Transform({ 0.0f,0.0f,1.0f }, Matrix4x4::MakeRotateXYZMatrix(model_.transform_.rotate));
+}
+
+Vector3 Enemy::GetWorldPosition() {
+	return Vector3::Transform(Vector3::Zero(),Matrix4x4::MakeAffineMatrix(model_.transform_.scale, model_.transform_.rotate, model_.transform_.translate));
+}

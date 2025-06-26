@@ -194,15 +194,21 @@ Vector3 Vector3::Perpendicular(const Vector3& vector) {
 Vector3 Vector3::SphericalToCartesian(const Vector3& rtp) {
 	Vector3 result{};
 	result.x = rtp.x * std::sinf(rtp.y) * std::cosf(rtp.z);
-	result.y = rtp.x * std::sinf(rtp.y) * std::sinf(rtp.z);
-	result.z = rtp.x * std::cosf(rtp.y);
+	result.y = rtp.x * std::cosf(rtp.y);
+	result.z = rtp.x * std::sinf(rtp.y) * std::sinf(rtp.z);
 	return result;
 }
-
 Vector3 Vector3::CartesianToSpherical(const Vector3& xyz) {
 	Vector3 result{};
 	result.x = xyz.Length(); // r
-	result.y = std::acosf(xyz.z / result.x); // theta
-	result.z = std::atan2f(xyz.y, xyz.x); // phi
+	if (result.x == 0.0f) {
+		result.y = 0.0f; // theta
+		result.z = 0.0f; // phi
+	} else {
+		float cosTheta = xyz.y / result.x;
+		cosTheta = std::clamp(cosTheta, -1.0f, 1.0f);
+		result.y = std::acosf(cosTheta); // theta
+		result.z = std::atan2f(xyz.z, xyz.x); // phi
+	}
 	return result;
 }

@@ -14,6 +14,7 @@ public:
 	Camera camera_;
 	Transform transform_;
 	float mouseSensitivity_;
+	Vector3 anchorPoint_;
 
 private:
 	DirectInputManager* input_;
