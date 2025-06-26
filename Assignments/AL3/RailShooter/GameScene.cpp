@@ -219,22 +219,20 @@ void GameScene::Update() {
 
 	reticle_.Update();
 	if (isLockOn_) {
-		reticle_.model_.worldMatrix_ =
-			Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
-
-		player_.transform_.rotate = Vector3::LookAt(player_.GetWorldPosition(), reticle_.GetReticleWorldPos());
+		lockOn_.SetReticlePosition(reticle_.GetWorldPos());
+		if (Vector3::Dot(player_.GetDir().Normalize(), (player_.GetWorldPosition() - reticle_.GetWorldPos()).Normalize()) < 0.0f) {
+			reticle_.model_.worldMatrix_ =
+				Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
+		}
 	}
 	
 }
 
 void GameScene::Draw() {
+	debugCamera_.DrawImGui();
 	reticle_.Draw(&camera_);
 
 	ImGui::Begin("LockOn");
-	if (isLockOn_) {
-		lockOn_.SetReticlePosition(reticle_.GetWorldPos());
-		lockOn_.GetLockPosition(&camera_);
-	}
 	if (ImGui::Button("isLockOn")) {
 		isLockOn_ = !isLockOn_;
 	}

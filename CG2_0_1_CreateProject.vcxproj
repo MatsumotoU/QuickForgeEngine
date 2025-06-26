@@ -285,9 +285,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Vector\Vector2.cpp" />
     <ClCompile Include="Engine\Math\Vector\Vector3.cpp" />
     <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
+    <ClCompile Include="Engine\Object\BaseGameObject.cpp" />
     <ClCompile Include="Engine\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\Utility\FileLoader.cpp" />
+    <ClCompile Include="Engine\Utility\MyGameMath.cpp" />
     <ClCompile Include="Engine\Utility\SimpleJson.cpp" />
     <ClCompile Include="Engine\Utility\TimeCall.cpp" />
     <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp" />
@@ -389,6 +391,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Vector\Vector4.h" />
     <ClInclude Include="Engine\Math\VerTexData.h" />
     <ClInclude Include="Engine\Model\Model.h" />
+    <ClInclude Include="Engine\Object\BaseGameObject.h" />
     <ClInclude Include="Engine\Object\DirectionalLight.h" />
     <ClInclude Include="Engine\Object\Material.h" />
     <ClInclude Include="Engine\Particle\Particle.h" />
@@ -396,6 +399,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />
     <ClInclude Include="Engine\Utility\FileLoader.h" />
+    <ClInclude Include="Engine\Utility\MyGameMath.h" />
     <ClInclude Include="Engine\Utility\SimpleJson.h" />
     <ClInclude Include="Engine\Utility\TimeCall.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />

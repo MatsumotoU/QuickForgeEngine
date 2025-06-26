@@ -14,6 +14,9 @@ DirectInputMouse::DirectInputMouse() {
 	preMouseState_ = {};
 	mousePos_ = {};
 	wheelDir_ = 0.0f;
+
+	mouseScreenPos_ = {};
+	preMouseScreenPos_ = {};
 }
 
 DirectInputMouse::~DirectInputMouse() {
@@ -30,6 +33,7 @@ void DirectInputMouse::Initialize(WinApp* win, IDirectInput8* directInput) {
 
 void DirectInputMouse::Update() {
 	preMouseState_ = mouseState_;
+	preMouseScreenPos_ = mouseScreenPos_;
 	mouse_->Acquire();
 	mouse_->GetDeviceState(sizeof(DIMOUSESTATE), &mouseState_);
 
@@ -43,6 +47,9 @@ void DirectInputMouse::Update() {
 	mouseMoveDir_.y = static_cast<float>(mouseState_.lY);
 	wheelDir_ = static_cast<float>(mouseState_.lZ);
 	mouseMoveDir_ = mouseMoveDir_.Normalize();
+
+	// 移動量計算
+	deltaMouse_ = mouseScreenPos_ - preMouseScreenPos_;
 }
 
 bool DirectInputMouse::GetPress(int8_t DIK) {

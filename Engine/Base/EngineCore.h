@@ -36,6 +36,7 @@
 #include "../Math/Transform.h"
 #include "../Math/VerTexData.h"
 #include "../Math/TransformationMatrix.h"
+#include "../Utility/MyGameMath.h"
 // Object
 #include "../Object/DirectionalLight.h"
 #include "../Object/Material.h"
@@ -60,7 +61,7 @@
 // GraphRenderer
 #include "DirectX/GraphRenderer.h"
 
-// TODO: ビルドツールpremakeの導入
+// TODO: ビルドツールpremakeの導入 
 
 class EngineCore final {
 public:

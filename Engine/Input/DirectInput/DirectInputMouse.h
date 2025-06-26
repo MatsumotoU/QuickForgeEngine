@@ -42,7 +42,9 @@ public:// マウス操作変数
 	DIMOUSESTATE mouseState_;
 	DIMOUSESTATE preMouseState_;
 	Vector2 mouseScreenPos_;
+	Vector2 preMouseScreenPos_;
 	Vector2 mouseMoveDir_;
+	Vector2 deltaMouse_;
 	float wheelDir_;
 
 private:

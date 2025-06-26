@@ -41,6 +41,8 @@ public:
 	Phase GetPhase();
 	bool GetIsShot();
 	Matrix4x4 GetRotateMatrix();
+	Vector3 GetDir();
+	Vector3 GetWorldPosition();
 
 public:
 	MoveType moveType_;
