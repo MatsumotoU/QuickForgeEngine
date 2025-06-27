@@ -157,7 +157,7 @@ void GameScene::Update() {
 	for (int i = 0; i < kEnemies; i++) {
 		enemies[i].Update();
 		if (enemies[i].GetIsActive()) {
-			lockOn_.AddTargetPosition(enemies[i].transform_.translate);
+			lockOn_.AddTargetPosition(enemies[i].GetWorldPosition());
 		}
 
 		if (enemies[i].GetIsShot()) {
@@ -219,11 +219,12 @@ void GameScene::Update() {
 
 	reticle_.Update();
 	if (isLockOn_) {
-		lockOn_.SetReticlePosition(reticle_.GetWorldPos());
-		if (Vector3::Dot(player_.GetDir().Normalize(), (player_.GetWorldPosition() - reticle_.GetWorldPos()).Normalize()) < 0.0f) {
+		lockOn_.SetReticlePosition(reticle_.GetReticleWorldPos());
+		if (Vector3::Dot(player_.GetDir().Normalize(), (player_.GetWorldPosition() - lockOn_.GetLockPosition(&camera_)).Normalize()) < 0.0f) {
 			reticle_.model_.worldMatrix_ =
 				Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
 		}
+		
 	}
 	
 }
@@ -240,6 +241,7 @@ void GameScene::Draw() {
 	ImGui::Text("isLockOn: %d", isLockOn_);
 	ImGui::Text("%f,%f,%f", r.x, r.y, r.z);
 	ImGui::Text("length: %f", (lockOn_.GetLockPosition(&camera_) - player_.GetWorldPosition()).Length());
+	ImGui::Text("Dot: %f", Vector3::Dot(player_.GetDir().Normalize(), (player_.GetWorldPosition() - lockOn_.GetLockPosition(&camera_)).Normalize()));
 	ImGui::End();
 
 	ImGui::Begin("Enemy");
