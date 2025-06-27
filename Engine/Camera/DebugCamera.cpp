@@ -1,19 +1,26 @@
 #include "DebugCamera.h"
+#include "Base/EngineCore.h"
 #include "../Input/DirectInput/DirectInputManager.h"
 #include "../Base/DirectX/ImGuiManager.h"
 
 #include <algorithm>
 
 #ifdef _DEBUG
-void DebugCamera::Initialize(WinApp* win, DirectInputManager* input) {
-	camera_.Initialize(win);
-	input_ = input;
+void DebugCamera::Initialize(EngineCore* engineCore) {
+	camera_.Initialize(engineCore->GetWinApp());
+	input_ = engineCore->GetInputManager();
 	mouseSensitivity_ = 0.5f;
 
 	transform_ = {};
 	transform_.scale = { 1.0f,1.0f,1.0f };
 
 	anchorPoint_ = {};
+
+	engineCore_ = engineCore;
+	anchorPointBillboard_.Initialize(engineCore_, 1.0f, 1.0f);
+	anchorGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/anchor.png");
+
+	isDrawAnchor_ = false;
 }
 
 void DebugCamera::Update() {
@@ -58,6 +65,8 @@ void DebugCamera::Update() {
 	}
 
 	camera_.Update();
+	anchorPointBillboard_.transform_.translate = anchorPoint_;
+	anchorPointBillboard_.Update(camera_.transform_.rotate);
 }
 
 void DebugCamera::DrawImGui() {
@@ -72,10 +81,27 @@ void DebugCamera::DrawImGui() {
 
 	ImGui::DragFloat3("CameraAnchorPoint", &anchorPoint_.x);
 
+	ImGui::Text("IsDrawAnchor: %s", isDrawAnchor_ ? "True" : "False");
+	if (ImGui::Button("IsDrawAnchor")) {
+		isDrawAnchor_ = !isDrawAnchor_;
+	}
+
 	if (ImGui::Button("ResetCamera")) {
+
+		anchorPoint_ = {};
+
+		camera_.transform_ = {};
+		camera_.transform_.translate.z = -5.0f;
+		camera_.transform_.scale = { 1.0f,1.0f,1.0f };
+
 		transform_ = {};
 		transform_.scale = { 1.0f,1.0f,1.0f };
 	}
 	ImGui::End();
+
+	if (isDrawAnchor_) {
+		anchorPointBillboard_.Draw(anchorGH_, &camera_);
+	}
+	
 }
 #endif // _DEBUG

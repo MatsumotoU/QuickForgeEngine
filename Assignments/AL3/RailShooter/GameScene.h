@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../Engine/Base/EngineCore.h"
+#include "Base/EngineCore.h"
 #include "Class/SkyDome.h"
 #include "Class/Player.h"
 #include "Class/Bulllet.h"
@@ -8,7 +8,7 @@
 #include "Class/LockOn.h"
 #include "IScene.h"
 
-#include "../../../Engine/Colliders/CollisionManager.h"
+#include "Colliders/CollisionManager.h"
 
 static inline const uint32_t kPlayerBullets = 32;
 static inline const uint32_t kEnemyBullets = 128;
@@ -60,8 +60,6 @@ private:
 	Model groundModel_;
 	Transform groundTransform_;
 	LockOn lockOn_;
-
 	CollisionManager collisionManager_;
-
 	float timeCount_;
 };
