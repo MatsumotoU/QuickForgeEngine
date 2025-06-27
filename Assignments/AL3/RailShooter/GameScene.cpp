@@ -7,7 +7,7 @@ GameScene::GameScene(EngineCore* engineCore) {
 	isActiveDebugCamera_ = false;
 
 #ifdef _DEBUG
-	debugCamera_.Initialize(engineCore_->GetWinApp(), input_);
+	debugCamera_.Initialize(engineCore_);
 	debugCamera_.camera_.transform_.translate.z = -20.0f;
 #endif // _DEBUG
 
@@ -226,10 +226,10 @@ void GameScene::Update() {
 		}
 		
 	}
-	
 }
 
 void GameScene::Draw() {
+
 	debugCamera_.DrawImGui();
 	reticle_.Draw(&camera_);
 
