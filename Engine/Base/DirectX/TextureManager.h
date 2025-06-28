@@ -4,6 +4,7 @@
 
 #include "../../../externals/DirectXTex/d3dx12.h"
 #include "../../../externals/DirectXTex/DirectXTex.h"
+#include "String/StringLiblary.h"
 
 class DirectXCommon;
 class SrvDescriptorHeap;
@@ -77,5 +78,5 @@ private:// メンバ変数
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResources_;
 	std::vector<DirectX::ScratchImage> scratchImages_;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
-	std::vector<std::string> filePathliblary_;
+	StringLiblary filePathLiblary_;
 };

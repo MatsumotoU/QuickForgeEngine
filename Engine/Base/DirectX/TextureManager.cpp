@@ -33,7 +33,7 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvD
 	textureResources_.clear();
 	scratchImages_.clear();
 	intermediateResource_.clear();
-	filePathliblary_.clear();
+	filePathLiblary_.Init("TextureFileName");
 
 	textureHandle_ = 0;
 
@@ -207,16 +207,13 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 #endif // _DEBUG
 
 	// 同じ画像ファイルを読み込まない
-	for (int i = 0; i < filePathliblary_.size(); i++) {
-		if (filePathliblary_[i] == filePath) {
-			
+	int32_t fileIndex = filePathLiblary_.GetLiblaryIndex(filePath);
+	if (fileIndex >= 0) {
 #ifdef _DEBUG
-			DebugLog(ConvertString(std::format(L"TextureManager: LoadedTheSameFile->return {}", i)));
+		DebugLog(ConvertString(std::format(L"TextureManager: LoadedTheSameFile->return {}", fileIndex)));
 #endif // _DEBUG
-			return i;
-		}
+		return fileIndex;
 	}
-	filePathliblary_.push_back(filePath);
 
 	// 画像読み込み処理
 	LoadScratchImage(filePath);
@@ -230,6 +227,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 #ifdef _DEBUG
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width,metadata.height,textureHandle_-1)));
 #endif // _DEBUG
+	filePathLiblary_.AddStringToLiblary(filePath);
 	return textureHandle_ - 1;
 }
 

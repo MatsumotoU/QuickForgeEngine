@@ -44,6 +44,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 
 	// 音声機能の初期化
 	audioManager_.Initialize();
+	audioResourceManager_.Initialize(this);
 
 	// 入力機能の初期化
 	inputManager_.Initialize(&winApp_, hInstance);
@@ -123,6 +124,11 @@ void EngineCore::PostDraw() {
 	textureManager_.ReleaseIntermediateResources();
 }
 
+uint32_t EngineCore::LoadSoundData(const std::string& filePath, const std::string& fileName) {
+	audioResourceManager_.LoadAudioResource(filePath, fileName);
+	return audioResourceManager_.GetAudioDataHandle(fileName);
+}
+
 WinApp* EngineCore::GetWinApp() {
 	return &winApp_;
 }
@@ -177,6 +183,10 @@ GraphRenderer* EngineCore::GetGraphRenderer() {
 
 XInputController* EngineCore::GetXInputController() {
 	return &xController_;
+}
+
+AudioResourceManager* EngineCore::GetAudioResourceManager() {
+	return &audioResourceManager_;
 }
 
 float EngineCore::GetDeltaTime() {

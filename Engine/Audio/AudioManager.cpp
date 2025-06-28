@@ -132,62 +132,7 @@ IXAudio2MasteringVoice* AudioManager::GetMasterVoice() {
 Audio3D* AudioManager::GetAudio3D() { return &audio3D_; }
 
 // サウンドデータのロード
-SoundData Audiomanager::SoundLoadWave(const char* filename) {
-	std::ifstream file;
-	file.open(filename, std::ios_base::binary);
-	assert(file.is_open());
-
-	RiffHeader riff;
-	file.read((char*)&riff, sizeof(riff));
-	if (strncmp(riff.chunk.id, "RIFF", 4) != 0) {
-		assert(0);
-	}
-	if (strncmp(riff.type, "WAVE", 4) != 0) {
-		assert(0);
-	}
-
-	FormatChunk format = {};
-	file.read((char*)&format, sizeof(ChunkHeader));
-	if (strncmp(format.chunk.id, "fmt ", 4) != 0) {
-		assert(0 && "Error");
-	}
-	assert(format.chunk.size <= sizeof(format.fmt));
-	file.read((char*)&format.fmt, format.chunk.size);
-
-#ifdef _DEBUG
-	DebugLog(ConvertString(std::format(L"WAV File Format - Channels: {}, SampleRate: {}, BitsPerSample: {}", 
-		format.fmt.nChannels, format.fmt.nSamplesPerSec, format.fmt.wBitsPerSample)));
-#endif
-
-	ChunkHeader data;
-	file.read((char*)&data, sizeof(data));
-	if (strncmp(data.id, "JUNK", 4) == 0) {
-		file.seekg(data.size, std::ios_base::cur);
-		file.read((char*)&data, sizeof(data));
-	}
-
-	if (strncmp(data.id, "LIST", 4) == 0) {
-		file.seekg(data.size, std::ios_base::cur);
-		file.read((char*)&data, sizeof(data));
-	}
-
-	if (strncmp(data.id, "data", 4) != 0) {
-		assert(0);
-	}
-	char* pBuffer = new char[data.size];
-	file.read(pBuffer, data.size);
-	file.close();
-
-	SoundData soundData = {};
-	soundData.wfex = format.fmt;
-	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
-	soundData.bufferSize = data.size;
-
-	return soundData;
-}
-
-// mp3データのロード
-SoundData Audiomanager::SoundLoadMp3(const char* filename) {
+SoundData Audiomanager::SoundLoad(const char* filename) {
 	SoundData mp3Sound{};
 	mp3Sound = Multiaudioloader::LoadSoundData(filename);
 	return mp3Sound;
