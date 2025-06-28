@@ -23,6 +23,7 @@
 // 音声機能
 #include "Audio/AudioManager.h"
 #include "Audio/Audio3D.h"
+#include "Audio/AudioResourceManager.h"
 // 入力機能
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Input/XInput/XInputController.h"
@@ -37,6 +38,7 @@
 #include "Math/VerTexData.h"
 #include "Math/TransformationMatrix.h"
 #include "Utility/MyGameMath.h"
+#include "Utility/MyEasing.h"
 // Object
 #include "Object/DirectionalLight.h"
 #include "Object/Material.h"
@@ -59,6 +61,9 @@
 // ファイル操作
 #include "../Utility/FileLoader.h"
 
+// String
+#include "String/StringLiblary.h"
+
 // GraphRenderer
 #include "DirectX/GraphRenderer.h"
 
@@ -77,6 +82,15 @@ public:
 	void PreDraw();
 	void PostDraw();
 
+public:// エンジンに包含されている機能を間接的に使う関数
+	/// <summary>
+	/// ゲームで使用する音声データをゲームに使える状態にします
+	/// </summary>
+	/// <param name="filePath"></param>
+	/// <param name="fileName"></param>
+	/// <returns>音声データの管理番号</returns>
+	uint32_t LoadSoundData(const std::string& filePath, const std::string& fileName);
+
 public:// エンジンの機能取得
 	WinApp* GetWinApp();
 	DirectXCommon* GetDirectXCommon();
@@ -92,6 +106,7 @@ public:// エンジンの機能取得
 	SrvDescriptorHeap* GetSrvDescriptorHeap();
 	GraphRenderer* GetGraphRenderer();
 	XInputController* GetXInputController();
+	AudioResourceManager* GetAudioResourceManager();
 
 public:
 	 float GetDeltaTime();
@@ -114,6 +129,7 @@ private:// 描画機能
 private:// 音声
 	AudioManager audioManager_;
 	Audio3D audio3D_;
+	AudioResourceManager audioResourceManager_;
 
 private:// 入力
 	DirectInputManager inputManager_;

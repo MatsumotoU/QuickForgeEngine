@@ -13,8 +13,6 @@
 #include "../Base/MyDebugLog.h"
 #endif // _DEBUG
 
-// TODO: 自分で書いたWave読み込みを消す
-
 class AudioManager final{
 public:
 	~AudioManager();
@@ -48,17 +46,11 @@ private:
 
 namespace Audiomanager {
 	/// <summary>
-	/// wavサウンドデータを読み込みます
+	/// サウンドデータを読み込みます
 	/// </summary>
 	/// <param name="filename">filePath</param>
 	/// <returns></returns>
-	SoundData SoundLoadWave(const char* filename);
-	/// <summary>
-	/// mp3サウンドデータを読み込みます
-	/// </summary>
-	/// <param name="filename">filePath</param>
-	/// <returns></returns>
-	SoundData SoundLoadMp3(const char* filename);
+	SoundData SoundLoad(const char* filename);
 	/// <summary>
 	/// サウンドデータを削除します
 	/// </summary>

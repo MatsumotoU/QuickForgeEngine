@@ -29,11 +29,13 @@ void Player::Update() {
 	
 	Vector2 moveDir = input->GetKeyMoveDir() + engineCore_->GetXInputController()->GetLeftStick(0);
 
+	// 移動方向を見る
+	MyEasing::SimpleEaseIn(&transform_.rotate.z, -moveDir.x * 0.5f, 0.1f);
+	MyEasing::SimpleEaseIn(&transform_.rotate.x, -moveDir.y * 0.3f, 0.1f);
+
+	// 移動処理
 	acceleration_.x += moveDir.x * moveSpeed_ * engineCore_->GetDeltaTime();
 	acceleration_.y += moveDir.y * moveSpeed_ * engineCore_->GetDeltaTime();
-
-	acceleration_.x = std::clamp(acceleration_.x, -kLimitSpeed, kLimitSpeed);
-	acceleration_.y = std::clamp(acceleration_.y, -kLimitSpeed, kLimitSpeed);
 
 	velocity_ += acceleration_ * engineCore_->GetDeltaTime();
 	acceleration_ = acceleration_ * 0.95f;
