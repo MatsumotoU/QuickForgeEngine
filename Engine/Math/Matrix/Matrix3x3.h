@@ -1,4 +1,6 @@
 #pragma once
+#ifndef Matrix3x3_H
+#define Matrix3x3_H
 
 // 前方宣言
 class Vector2;
@@ -134,3 +136,5 @@ public:
 	/// <returns>ワールドビュープロジェクション行列</returns>
 	[[nodiscard]] Matrix3x3 MakeWvpVpMatrix(const Matrix3x3& worldMatrix, const Matrix3x3& viewMatrix, const Matrix3x3& orthoMatrix, const Matrix3x3& viewportMatrix) const;
 };
+
+#endif

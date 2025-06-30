@@ -6,6 +6,12 @@
 #include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
+AudioResourceManager::~AudioResourceManager() {
+	for (SoundData& sd : soundData_) {
+		Audiomanager::SoundUnload(&sd);
+	}
+}
+
 void AudioResourceManager::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	fileNameLiblary_.Init("AudioResource");

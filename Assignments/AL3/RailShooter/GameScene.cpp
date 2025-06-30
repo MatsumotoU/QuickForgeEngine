@@ -17,6 +17,14 @@ GameScene::GameScene(EngineCore* engineCore) {
 	cameraMoveSpeed_ = 0.1f;
 
 	fpsCamera_.Initialize(engineCore_->GetWinApp());
+
+	audioHandle[0] = engineCore_->LoadSoundData("Resources/", "mokugyo.wav");
+	audioHandle[1] = engineCore_->LoadSoundData("Resources/", "mokugyo.wav");
+	audioHandle[2] = engineCore_->LoadSoundData("Resources/", "mono48kHz.wav");
+
+	engineCore_->GetAudioSourceBinder()->CreateSourceVoice("mokugyo1", audioHandle[0]);
+	engineCore_->GetAudioSourceBinder()->CreateSourceVoice("mokugyo2", audioHandle[1]);
+	engineCore_->GetAudioSourceBinder()->CreateSourceVoice("mono48kHz", audioHandle[2]);
 }
 
 GameScene::~GameScene() {
@@ -69,19 +77,19 @@ void GameScene::Initialize() {
 
 	std::string EnemyData = FileLoader::ReadFile("Resources/EnemyData/EnemySpone.txt");
 	std::vector<std::string> sponeData = FileLoader::Split(EnemyData, ',');
-	for (int i = 0; i < sponeData.size() / 5;i++) {
-		
+	for (int i = 0; i < sponeData.size() / 5; i++) {
+
 		for (int e = 0; e < kEnemies; e++) {
 			if (isCalledSpone[e]) {
 				continue;
 			}
-			Vector3 position = { std::stof(sponeData[i * 5]), std::stof(sponeData[i * 5+1]), std::stof(sponeData[i * 5+2])};
+			Vector3 position = { std::stof(sponeData[i * 5]), std::stof(sponeData[i * 5 + 1]), std::stof(sponeData[i * 5 + 2]) };
 			Vector3 vec = { 0.0f, 0.0f, -5.0f };
 
 			timedCalls_.push_back(
 				new TimeCall(
-					engineCore_, 
-					std::bind(&Enemy::Spawn,&enemies[e],position, vec, std::stoi(sponeData[i * 5 + 4])), std::stof(sponeData[i * 5 + 3])));
+					engineCore_,
+					std::bind(&Enemy::Spawn, &enemies[e], position, vec, std::stoi(sponeData[i * 5 + 4])), std::stof(sponeData[i * 5 + 3])));
 			isCalledSpone[e] = true;
 			break;
 		}
@@ -140,7 +148,7 @@ void GameScene::Update() {
 
 	player_.Update();
 	player_.SetParent(camera_.GetWorldMatrix());
-	
+
 
 	if (player_.GetIsShot()) {
 		for (int i = 0; i < kPlayerBullets; i++) {
@@ -224,7 +232,7 @@ void GameScene::Update() {
 			reticle_.model_.worldMatrix_ =
 				Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
 		}
-		
+
 	}
 }
 
@@ -276,6 +284,7 @@ void GameScene::Draw() {
 	ImGui::Begin("GameScene");
 	if (ImGui::Button("LockOn")) {
 		isLockOn_ = !isLockOn_;
+		engineCore_->GetAudioPlayer()->PlayAudio(audioHandle[0], "mokugyo1");
 	}
 	if (ImGui::Button("MoveLail")) {
 		isMoveLail_ = !isMoveLail_;
@@ -301,7 +310,7 @@ void GameScene::Draw() {
 	if (!isFpsCamera_) {
 		player_.Draw(&camera_);
 	}
-	
+
 	for (int i = 0; i < kPlayerBullets; i++) {
 		if (playerBullets[i].GetIsActive()) {
 			playerBullets[i].Draw(&camera_);
@@ -317,7 +326,7 @@ void GameScene::Draw() {
 		enemies[i].Draw(&camera_);
 	}
 
-	
+
 	groundModel_.Draw(&camera_);
 
 	for (float i = 0.0f; i < 1.0f; i += 0.01f) {
@@ -326,6 +335,7 @@ void GameScene::Draw() {
 		engineCore_->GetGraphRenderer()->DrawLine(p0, p1);
 	}
 }
+
 
 IScene* GameScene::GetNextScene() {
 	return new TitleScene(engineCore_);

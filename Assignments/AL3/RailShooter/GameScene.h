@@ -51,6 +51,8 @@ private:
 	std::list<TimeCall*> timedCalls_;
 	
 private:
+	uint32_t audioHandle[3];
+
 	Reticle reticle_;
 	SkyDome skyDome_;
 	Player player_;

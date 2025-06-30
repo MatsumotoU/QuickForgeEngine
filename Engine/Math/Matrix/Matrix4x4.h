@@ -1,5 +1,8 @@
 #pragma once
+#ifndef Matrix4x4_H
+#define Matrix4x4_H
 #define _USE_MATH_DEFINES
+
 #include <cmath>
 
 // 前方宣言
@@ -177,3 +180,5 @@ public:
 	/// <returns>ビューポート行列</returns>
 	[[nodiscard]] static Matrix4x4 MakeViewportMatrix(const float& left, const float& top, const float& width, const float& heigh, const float& minDepth, const float& maxDepth);
 };
+
+#endif

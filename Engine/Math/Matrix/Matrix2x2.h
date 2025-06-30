@@ -1,4 +1,7 @@
 #pragma once
+#ifndef Matrix2x2_H
+#define Matrix2x2_H
+
 class Matrix2x2 final{
 public:
 	float m[2][2];
@@ -44,3 +47,5 @@ public:
 	/// <returns>2x2の単位行列</returns>
 	[[nodiscard]] static Matrix2x2 MakeIdentity2x2();
 };
+
+#endif
