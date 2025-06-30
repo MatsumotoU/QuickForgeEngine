@@ -1,4 +1,7 @@
 #pragma once
+#ifndef VECTOR4_H
+#define VECTOR4_H
+
 class Vector3;
 
 class alignas(16) Vector4 final{
@@ -49,3 +52,4 @@ public:
 	[[nodiscard]] static Vector4 Leap(const Vector4& v1, const Vector4& v2, float t);
 };
 
+#endif

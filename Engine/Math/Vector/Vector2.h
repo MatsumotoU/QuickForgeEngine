@@ -1,4 +1,8 @@
 #pragma once
+
+#ifndef VECTOR2_H
+#define VECTOR2_H
+
 class Vector2 final{
 public:
 	float x;
@@ -60,3 +64,5 @@ public:
 	/// <returns>2つのベクトルの整数の距離</returns>
 	[[nodiscard]] static float Distance(const Vector2& v1, const Vector2& v2);
 };
+
+#endif // !VECTOR2.H

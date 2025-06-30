@@ -1,4 +1,7 @@
 #pragma once
+#ifndef VECTOR3_H
+#define VECTOR3_H
+
 #include <vector>
 
 // 前方宣言
@@ -158,9 +161,4 @@ public:
 	[[nodiscard]] static Vector3 CartesianToSpherical(const Vector3& xyz);
 };
 
-
-
-
-
-
-
+#endif // !VECTOR3_H
