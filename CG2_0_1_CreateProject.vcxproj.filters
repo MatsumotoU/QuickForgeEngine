@@ -122,7 +122,7 @@
     <ClCompile Include="Engine\Sprite\Sprite.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\AudioManager.cpp">
+    <ClCompile Include="Engine\Audio\XAudioCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Input\DirectInput\DirectInputManager.cpp">
@@ -290,6 +290,9 @@
     <ClCompile Include="Engine\Audio\AudioSourceBinder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Audio\AudioPlayer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -424,7 +427,7 @@
     <ClInclude Include="Engine\Sprite\Sprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\AudioManager.h">
+    <ClInclude Include="Engine\Audio\XAudioCore.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Audio\ChunkHeader.h">
@@ -626,6 +629,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Audio\AudioSourceBinder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Audio\AudioPlayer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

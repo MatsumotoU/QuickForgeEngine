@@ -1,4 +1,4 @@
-#include "AudioManager.h"
+#include "XAudioCore.h"
 #include <cassert>
 #include <fstream>
 
@@ -15,12 +15,12 @@
 #pragma comment(lib,"xaudio2.lib")
 
 // デストラクタ
-AudioManager::~AudioManager() {
+XAudioCore::~XAudioCore() {
 	xAudio2_.Reset();
 }
 
 // 初期化
-void AudioManager::Initialize() {
+void XAudioCore::Initialize() {
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
@@ -107,12 +107,12 @@ void AudioManager::Initialize() {
 }
 
 // マスターボリュームの設定
-void AudioManager::SetMasterVolume(float volume) {
+void XAudioCore::SetMasterVolume(float volume) {
 	masterVoice_->SetVolume(volume);
 }
 
 // 出力チャンネル数の取得
-uint32_t AudioManager::GetOutputChannels() {
+uint32_t XAudioCore::GetOutputChannels() {
 	DWORD channelMask = 0;
 	masterVoice_->GetChannelMask(&channelMask);
 
@@ -125,11 +125,11 @@ uint32_t AudioManager::GetOutputChannels() {
 }
 
 // マスターボリュームの取得
-IXAudio2MasteringVoice* AudioManager::GetMasterVoice() {
+IXAudio2MasteringVoice* XAudioCore::GetMasterVoice() {
 	return masterVoice_;
 }
 
-Audio3D* AudioManager::GetAudio3D() { return &audio3D_; }
+Audio3D* XAudioCore::GetAudio3D() { return &audio3D_; }
 
 // サウンドデータのロード
 SoundData Audiomanager::SoundLoad(const char* filename) {

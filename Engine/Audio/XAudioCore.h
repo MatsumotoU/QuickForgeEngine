@@ -13,9 +13,9 @@
 #include "../Base/MyDebugLog.h"
 #endif // _DEBUG
 
-class AudioManager final{
+class XAudioCore final{
 public:
-	~AudioManager();
+	~XAudioCore();
 	
 public:
 	/// <summary>

@@ -7,7 +7,7 @@
 #include <mfreadwrite.h>
 
 struct SoundData;
-class AudioManager;
+class XAudioCore;
 
 class MultiAudioLoader final{
 public:

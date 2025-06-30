@@ -9,6 +9,9 @@ class EngineCore;
 
 class AudioResourceManager {
 public:
+	~AudioResourceManager();
+
+public:
 	/// <summary>
 	/// 音声データ管理システムを初期化します
 	/// </summary>

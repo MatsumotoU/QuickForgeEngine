@@ -9,11 +9,13 @@
 AudioSourceBinder::~AudioSourceBinder() {
 	// 登録されている物の表示
 #ifdef _DEBUG
+	DebugLog("=====AudioSource=====");
 	uint32_t count = 0;
 	for (const std::pair<std::string, IXAudio2SourceVoice*>& pair : sourceVoiceMap_) {
 		DebugLog(std::format("Key[{}]: {} ",count, pair.first));
 		count++;
 	}
+	DebugLog("=====================");
 #endif // _DEBUG
 
 	// ソースボイスの削除
@@ -42,7 +44,7 @@ void AudioSourceBinder::CreateSourceVoice(const std::string& sourceVoiceFriendry
 IXAudio2SourceVoice* AudioSourceBinder::GetSourceVoice(const std::string& sourceVoiceFriendryName) {
 	// イテレータを取得して要素があるか探索
 	std::map<std::string, IXAudio2SourceVoice*>::iterator it = sourceVoiceMap_.find(sourceVoiceFriendryName);
-	assert(it== sourceVoiceMap_.end());
+	assert(it != sourceVoiceMap_.end());
 #ifdef _DEBUG
 	DebugLog(std::format("Returen: {}", it->first));
 #endif // _DEBUG
