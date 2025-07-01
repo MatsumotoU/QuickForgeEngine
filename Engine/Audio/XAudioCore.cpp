@@ -168,13 +168,46 @@ void Audiomanager::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData,f
 	assert(SUCCEEDED(hr));
 }
 
-void Audiomanager::SoundPlaySourceVoice(const SoundData& soundData,IXAudio2SourceVoice* pSourceVoice) {
+void Audiomanager::SoundPlaySourceVoice(const SoundData& soundData,IXAudio2SourceVoice* pSourceVoice, bool isLoop) {
 	HRESULT hr{};
 
 	XAUDIO2_BUFFER buf{};
 	buf.pAudioData = soundData.pBuffer;
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
+	if (isLoop) {
+		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+		buf.LoopBegin = 0;
+		buf.LoopLength = 0;
+	}
+
+	hr = pSourceVoice->SubmitSourceBuffer(&buf);
+	assert(SUCCEEDED(hr));
+	hr = pSourceVoice->Start();
+	assert(SUCCEEDED(hr));
+}
+
+void Audiomanager::SoundPlayLoopSourceVoice(const SoundData& soundData, IXAudio2SourceVoice* pSourceVoice, float loopBeginSecond, float loopSecond, uint32_t loopCount) {
+	HRESULT hr{};
+
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = soundData.pBuffer;
+	buf.AudioBytes = soundData.bufferSize;
+	buf.Flags = XAUDIO2_END_OF_STREAM;
+
+	// ループの設定
+	UINT32 sampleRate = soundData.wfex.nSamplesPerSec;
+	buf.LoopBegin = static_cast<UINT32>(loopBeginSecond * sampleRate);
+	buf.LoopLength = static_cast<UINT32>(loopSecond * sampleRate);
+	buf.LoopCount = loopCount;
+
+	// ループ終了位置までしか再生しない
+	buf.PlayBegin = 0;
+	buf.PlayLength = buf.LoopBegin + buf.LoopLength * buf.LoopCount;
+	// 再生する長さバッファが素材本来のバッファを超えないようにする
+	assert(soundData.wfex.nBlockAlign != 0);
+	UINT32 maxSamples = soundData.bufferSize / soundData.wfex.nBlockAlign;
+	buf.PlayLength = std::clamp(buf.PlayLength, static_cast<UINT32>(0), maxSamples);
 
 	hr = pSourceVoice->SubmitSourceBuffer(&buf);
 	assert(SUCCEEDED(hr));

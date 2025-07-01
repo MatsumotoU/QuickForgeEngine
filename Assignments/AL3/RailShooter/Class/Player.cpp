@@ -34,11 +34,14 @@ void Player::Update() {
 	MyEasing::SimpleEaseIn(&transform_.rotate.x, -moveDir.y * 0.3f, 0.1f);
 
 	// 移動処理
-	acceleration_.x += moveDir.x * moveSpeed_ * engineCore_->GetDeltaTime();
-	acceleration_.y += moveDir.y * moveSpeed_ * engineCore_->GetDeltaTime();
+	/*acceleration_.x += moveDir.x * moveSpeed_ * engineCore_->GetDeltaTime();
+	acceleration_.y += moveDir.y * moveSpeed_ * engineCore_->GetDeltaTime();*/
 
-	velocity_ += acceleration_ * engineCore_->GetDeltaTime();
-	acceleration_ = acceleration_ * 0.95f;
+	/*velocity_ += acceleration_ * engineCore_->GetDeltaTime();
+	acceleration_ = acceleration_ * 0.95f;*/
+
+	velocity_.x += moveDir.x * moveSpeed_ * engineCore_->GetDeltaTime();
+	velocity_.y += moveDir.y * moveSpeed_ * engineCore_->GetDeltaTime();
 
 	velocity_.x = std::clamp(velocity_.x, -kLimitSpeed, kLimitSpeed);
 	velocity_.y = std::clamp(velocity_.y, -kLimitSpeed, kLimitSpeed);

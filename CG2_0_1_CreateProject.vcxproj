@@ -237,6 +237,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
+    <ClCompile Include="Engine\Audio\Chiptune.cpp" />
+    <ClCompile Include="Engine\Audio\MusicalScale.cpp" />
     <ClCompile Include="Engine\Audio\XAudioCore.cpp" />
     <ClCompile Include="Engine\Audio\AudioPlayer.cpp" />
     <ClCompile Include="Engine\Audio\AudioResourceManager.cpp" />
@@ -294,6 +296,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utility\FileLoader.cpp" />
     <ClCompile Include="Engine\Utility\MyEasing.cpp" />
     <ClCompile Include="Engine\Utility\MyGameMath.cpp" />
+    <ClCompile Include="Engine\Utility\MyTimer.cpp" />
     <ClCompile Include="Engine\Utility\SimpleJson.cpp" />
     <ClCompile Include="Engine\Utility\TimeCall.cpp" />
     <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp" />
@@ -329,9 +332,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Assignments\AL3\RailShooter\IScene.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\SceneManager.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\TitleScene.h" />
+    <ClInclude Include="Engine\Audio\Chiptune.h" />
     <ClInclude Include="Engine\Audio\Audio3D.h" />
     <ClInclude Include="Engine\Audio\AudioEmitter.h" />
     <ClInclude Include="Engine\Audio\AudioListener.h" />
+    <ClInclude Include="Engine\Audio\MusicalScale.h" />
     <ClInclude Include="Engine\Audio\XAudioCore.h" />
     <ClInclude Include="Engine\Audio\AudioPlayer.h" />
     <ClInclude Include="Engine\Audio\AudioResourceManager.h" />
@@ -410,6 +415,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utility\MyGameMath.h" />
     <ClInclude Include="Engine\Utility\SimpleJson.h" />
     <ClInclude Include="Engine\Utility\TimeCall.h" />
+    <ClInclude Include="Engine\Utility\MyTimer.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui-knobs-main\imgui-knobs.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
