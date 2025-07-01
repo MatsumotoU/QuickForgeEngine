@@ -26,6 +26,8 @@
 #include "Audio/AudioResourceManager.h"
 #include "Audio/AudioSourceBinder.h"
 #include "Audio/AudioPlayer.h"
+#include "Audio/Chiptune.h"
+#include "Audio/MusicalScale.h"
 
 // 入力機能
 #include "Input/DirectInput/DirectInputManager.h"
@@ -58,6 +60,9 @@
 #include "Model/Model.h"
 #include "Model/Billboard.h"
 
+// 時間管理
+#include "Utility/MyTimer.h"
+
 // Json
 #include "../Utility/SimpleJson.h"
 
@@ -71,6 +76,9 @@
 #include "DirectX/GraphRenderer.h"
 
 // TODO: ビルドツールpremakeの導入 
+
+#include <chrono>
+static inline std::chrono::steady_clock::time_point engineStartTime;
 
 class EngineCore final {
 public:
@@ -112,6 +120,7 @@ public:// エンジンの機能取得
 	AudioResourceManager* GetAudioResourceManager();
 	AudioSourceBinder* GetAudioSourceBinder();
 	AudioPlayer* GetAudioPlayer();
+	Chiptune* GetChiptune();
 
 public:
 	 float GetDeltaTime();
@@ -137,6 +146,7 @@ private:// 音声
 	AudioResourceManager audioResourceManager_;
 	AudioSourceBinder audioSourceBinder_;
 	AudioPlayer audioPlayer_;
+	Chiptune chiptune_;
 
 private:// 入力
 	DirectInputManager inputManager_;

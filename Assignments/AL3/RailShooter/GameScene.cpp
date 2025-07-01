@@ -100,6 +100,12 @@ void GameScene::Initialize() {
 
 	lockOn_.Initialize();
 	isLockOn_ = false;
+
+	a = 4;
+	second = 1.0f;
+	audioPlayTimer_.Init();
+
+	note = GermanNote::A;
 }
 
 void GameScene::Update() {
@@ -234,9 +240,64 @@ void GameScene::Update() {
 		}
 
 	}
+
+	if (audioPlayTimer_.GetIsPlaying()) {
+		if (!engineCore_->GetChiptune()->GetIsPlayMainSquareWave()) {
+			audioPlayTimer_.StopTimer();
+		}
+	}
 }
 
 void GameScene::Draw() {
+	engineCore_->GetAudioResourceManager()->DrawImGui();
+
+	ImGui::Begin("Chiptune");
+	ImGui::DragFloat("PlaySecond", &second,0.1f);
+
+	if (ImGui::Button("C")) {
+		note = GermanNote::C;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("D")) {
+		note = GermanNote::D;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("E")) {
+		note = GermanNote::E;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("F")) {
+		note = GermanNote::F;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("A")) {
+		note = GermanNote::A;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("B")) {
+		note = GermanNote::B;
+	}
+
+	if (ImGui::Button("MainSquear")) {
+		engineCore_->GetChiptune()->PlayMainSquareWave(note, a, second);
+		audioPlayTimer_.StartTimer();
+	}
+	ImGui::SameLine();
+	ImGui::Text("PlaySecond: %f", audioPlayTimer_.GetElapsedTime());
+
+	if (ImGui::Button("SubSquear")) {
+		engineCore_->GetChiptune()->PlaySubSquareWave(note, a, second);
+	}
+	if (ImGui::Button("Triangle")) {
+		engineCore_->GetChiptune()->PlayTriangWave(note, a, second);
+	}
+	if (ImGui::Button("Noise")) {
+		engineCore_->GetChiptune()->PlayNoise(second);
+	}
+
+	ImGui::DragInt("a", &a);
+	ImGui::Text("%f", GetFrequencyFormGermanNote(note, a));
+	ImGui::End();
 
 	debugCamera_.DrawImGui();
 	reticle_.Draw(&camera_);
@@ -284,7 +345,6 @@ void GameScene::Draw() {
 	ImGui::Begin("GameScene");
 	if (ImGui::Button("LockOn")) {
 		isLockOn_ = !isLockOn_;
-		engineCore_->GetAudioPlayer()->PlayAudio(audioHandle[0], "mokugyo1");
 	}
 	if (ImGui::Button("MoveLail")) {
 		isMoveLail_ = !isMoveLail_;

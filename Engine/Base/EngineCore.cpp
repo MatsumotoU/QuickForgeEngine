@@ -1,6 +1,11 @@
 #include "EngineCore.h"
 
 EngineCore::EngineCore() {
+	engineStartTime = std::chrono::steady_clock::now();
+#ifdef _DEBUG
+	DebugLog("[[[EngineStarted]]]");
+#endif // _DEBUG
+
 }
 
 EngineCore::~EngineCore() {
@@ -47,6 +52,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	audioResourceManager_.Initialize(this);
 	audioSourceBinder_.Initialize(this);
 	audioPlayer_.Initialize(this);
+	chiptune_.Initialize(this);
 
 	// 入力機能の初期化
 	inputManager_.Initialize(&winApp_, hInstance);
@@ -197,6 +203,10 @@ AudioSourceBinder* EngineCore::GetAudioSourceBinder() {
 
 AudioPlayer* EngineCore::GetAudioPlayer() {
 	return &audioPlayer_;
+}
+
+Chiptune* EngineCore::GetChiptune() {
+	return &chiptune_;
 }
 
 float EngineCore::GetDeltaTime() {

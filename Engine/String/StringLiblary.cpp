@@ -1,6 +1,7 @@
 #include "StringLiblary.h"
 
 #ifdef _DEBUG
+#include "Base/EngineCore.h"
 #include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
@@ -72,3 +73,23 @@ int32_t StringLiblary::GetLiblaryIndex(const std::string& string) {
 	}
 	return -1;
 }
+
+std::string StringLiblary::GetDatanameFromIndex(uint32_t index) {
+	std::string result = "None";
+	if (static_cast<uint32_t>(liblary_.size()) >= index) {
+		return result;
+	}
+
+	result = liblary_[index];
+	return result;
+}
+
+#ifdef _DEBUG
+void StringLiblary::DrawLiblary() {
+	uint32_t index = 0;
+	for (std::string& str : liblary_) {
+		ImGui::Text("Data[%d]: %s", index, str.c_str());
+		index++;
+	}
+}
+#endif // _]DEBUG

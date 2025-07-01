@@ -51,6 +51,10 @@ private:
 	std::list<TimeCall*> timedCalls_;
 	
 private:
+	int a;
+	float second;
+	MyTimer audioPlayTimer_;
+	GermanNote note;
 	uint32_t audioHandle[3];
 
 	Reticle reticle_;

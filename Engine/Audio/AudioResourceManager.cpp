@@ -10,6 +10,10 @@ AudioResourceManager::~AudioResourceManager() {
 	for (SoundData& sd : soundData_) {
 		Audiomanager::SoundUnload(&sd);
 	}
+
+#ifdef _DEBUG
+	debugResourceIndex_ = 0;
+#endif // _DEBUG
 }
 
 void AudioResourceManager::Initialize(EngineCore* engineCore) {
@@ -48,3 +52,44 @@ SoundData AudioResourceManager::GetSoundData(uint32_t audioDataHandle) {
 	assert(audioDataHandle >= 0 && audioDataHandle < soundData_.size());
 	return soundData_[audioDataHandle];
 }
+
+void AudioResourceManager::AddSoundData(const SoundData& soundData, const std::string& fileName) {
+	if (fileNameLiblary_.GetLiblaryIndex(fileName) <= -1) {
+		// 読み込んだことのないリソース処理
+		soundData_.push_back(soundData);
+		fileNameLiblary_.AddStringToLiblary(fileName);
+#ifdef _DEBUG
+		DebugLog(std::format("LoadAudioResouce: {}", fileName));
+#endif // _DEBUG
+
+	} else {
+		// 読み込んだ事があるリソース処理
+#ifdef _DEBUG
+		DebugLog(std::format("AlreadyLoaded AudioResouce: {}", fileName));
+#endif // _DEBUG
+
+	}
+}
+
+#ifdef _DEBUG
+void AudioResourceManager::DrawImGui() {
+	ImGui::Begin("AudioResourceManager");
+	ImGui::SliderInt("ResourceIndex", &debugResourceIndex_, 0, static_cast<int>(soundData_.size()) - 1);
+	fileNameLiblary_.DrawLiblary();
+
+	DisplayWaveform(
+		fileNameLiblary_.GetDatanameFromIndex(debugResourceIndex_) + "Wave",
+		soundData_[debugResourceIndex_]);
+	ImGui::End();
+}
+void AudioResourceManager::DisplayWaveform(const std::string& plotName, const SoundData& data) {
+	static std::vector<float> samples;
+	int sampleCount = data.bufferSize / 2;
+	samples.resize(sampleCount);
+	for (int i = 0; i < sampleCount; ++i) {
+		short value = data.pBuffer[i * 2] | (data.pBuffer[i * 2 + 1] << 8);
+		samples[i] = static_cast<float>(value);
+	}
+	ImGui::PlotLines(plotName.c_str(), samples.data(), sampleCount, 0, nullptr, -32768.0f, 32767.0f, ImVec2(0, 100));
+}
+#endif // _DEBUG

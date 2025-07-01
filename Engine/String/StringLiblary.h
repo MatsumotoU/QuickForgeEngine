@@ -31,6 +31,17 @@ public:
 	/// <param name="string"></param>
 	/// <returns></returns>
 	int32_t GetLiblaryIndex(const std::string& string);
+	/// <summary>
+	/// データの登録名をインデックスから探します
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	std::string GetDatanameFromIndex(uint32_t index);
+
+public:// デバッグ機能
+#ifdef _DEBUG
+	void DrawLiblary();
+#endif // _DEBUG
 
 private:
 	std::string liblaryFriendryName_;

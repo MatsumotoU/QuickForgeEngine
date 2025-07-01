@@ -36,9 +36,26 @@ public:
 	/// <param name="audioDataHandle"></param>
 	/// <returns></returns>
 	SoundData GetSoundData(uint32_t audioDataHandle);
+	/// <summary>
+	/// 音声データを直接登録します
+	/// </summary>
+	/// <param name="soundData"></param>
+	/// <param name="fileName"></param>
+	void AddSoundData(const SoundData& soundData, const std::string& fileName);
+
+public:// デバッグ機能
+#ifdef _DEBUG
+	void DrawImGui();
+	void DisplayWaveform(const std::string& plotName,const SoundData& data);
+#endif // _DEBUG
 
 private:
 	EngineCore* engineCore_;
 	StringLiblary fileNameLiblary_;
 	std::vector<SoundData> soundData_;
+
+private:
+#ifdef _DEBUG
+	int32_t debugResourceIndex_;
+#endif // _DEBUG
 };
