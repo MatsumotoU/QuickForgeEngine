@@ -35,6 +35,9 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	// DirectXの画面リソースの初期化とRTV登録
 	dxCommon_.InitializeScreenResources(rtvDescriptorHeap_.GetRtvDescriptorHeap());
 
+	// Dxc初期化
+	shaderCompiler_.InitializeDXC();
+
 	// imGuiManager初期化
 	imGuiManager_.Initialize(&winApp_,&dxCommon_,srvDescriptorHeap_.GetSrvDescriptorHeap());
 	// テクスチャマネージャの初期化
@@ -207,6 +210,10 @@ AudioPlayer* EngineCore::GetAudioPlayer() {
 
 Chiptune* EngineCore::GetChiptune() {
 	return &chiptune_;
+}
+
+ShaderCompiler* EngineCore::GetShaderCompiler() {
+	return &shaderCompiler_;
 }
 
 float EngineCore::GetDeltaTime() {

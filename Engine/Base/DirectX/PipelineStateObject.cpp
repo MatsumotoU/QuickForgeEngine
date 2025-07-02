@@ -10,6 +10,7 @@ void PipelineStateObject::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	dxCommon_ = engineCore->GetDirectXCommon();
 	winApp_ = engineCore->GetWinApp();
+	shaderCompiler_ = engineCore_->GetShaderCompiler();
 }
 
 void PipelineStateObject::CreatePipelineStateObject(
@@ -123,18 +124,18 @@ void PipelineStateObject::CreatePipelineStateObject(
 	rasterizerDesc.FillMode = fillMode;
 
 	// シェーダーをコンパイルする
-	shaderCompiler_.InitializeDXC();
+	//shaderCompiler_.InitializeDXC();
 	IDxcBlob* vertexShaderBlob = nullptr;
 	IDxcBlob* pixelShaderBlob = nullptr;
 	if (isParticle) {
-		vertexShaderBlob = shaderCompiler_.CompileShader(L"Particle.VS.hlsl", L"vs_6_0");
+		vertexShaderBlob = shaderCompiler_->CompileShader(L"Particle.VS.hlsl", L"vs_6_0");
 		assert(vertexShaderBlob != nullptr);
-		pixelShaderBlob = shaderCompiler_.CompileShader(ConvertString(psFilepath), L"ps_6_0");
+		pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(psFilepath), L"ps_6_0");
 		assert(pixelShaderBlob != nullptr);
 	} else {
-		vertexShaderBlob = shaderCompiler_.CompileShader(L"Object3d.VS.hlsl", L"vs_6_0");
+		vertexShaderBlob = shaderCompiler_->CompileShader(L"Object3d.VS.hlsl", L"vs_6_0");
 		assert(vertexShaderBlob != nullptr);
-		pixelShaderBlob = shaderCompiler_.CompileShader(ConvertString(psFilepath), L"ps_6_0");
+		pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(psFilepath), L"ps_6_0");
 		assert(pixelShaderBlob != nullptr);
 	}
 

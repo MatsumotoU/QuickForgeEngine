@@ -121,6 +121,7 @@ public:// エンジンの機能取得
 	AudioSourceBinder* GetAudioSourceBinder();
 	AudioPlayer* GetAudioPlayer();
 	Chiptune* GetChiptune();
+	ShaderCompiler* GetShaderCompiler();
 
 public:
 	 float GetDeltaTime();
@@ -136,6 +137,7 @@ private:// 時間管理
 	float deltaTime_;
 
 private:// 描画機能
+	ShaderCompiler shaderCompiler_;
 	TextureManager textureManager_;
 	GraphicsCommon graphicsCommon_;
 	GraphRenderer graphRenderer_;
