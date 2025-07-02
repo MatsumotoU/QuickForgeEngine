@@ -5,11 +5,32 @@
 #pragma comment(lib,"dxcompiler.lib")
 #include <cassert>
 
-void ShaderCompiler::InitializeDXC() {
-	//assert(!dxcUtils_);
-	//assert(!dxcCompiler_);
-	//assert(!includeHandler_);
+#ifdef _DEBUG
+#include "Base/MyDebugLog.h"
+#endif // _DEBUG
 
+
+ShaderCompiler::ShaderCompiler() {
+	iDxcBlobMap_.clear();
+}
+
+ShaderCompiler::~ShaderCompiler() {
+	DebugLog("=====ShaderFiles=====");
+	// iDxcBlobMap_に格納されているIDxcBlob*をすべてReleaseしてからクリア
+	for (auto& [key, blob] : iDxcBlobMap_) {
+		if (blob) {
+			blob->Release();
+#ifdef _DEBUG
+			DebugLog(std::format("Delete: {}", ConvertString(key)));
+#endif // _DEBUG
+
+		}
+	}
+	iDxcBlobMap_.clear();
+	DebugLog("=====================");
+}
+
+void ShaderCompiler::InitializeDXC() {
 	//// * DXCの初期化 * //
 	dxcUtils_ = nullptr;
 	dxcCompiler_ = nullptr;
@@ -25,6 +46,14 @@ void ShaderCompiler::InitializeDXC() {
 }
 
 IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wchar_t* profile) {
+	// 既に読み込み済みのシェーダーを再度読み込まない
+	if (iDxcBlobMap_.contains(filePath)) {
+#ifdef _DEBUG
+		DebugLog(std::format("Loaded file: {}",ConvertString(filePath)));
+#endif // _DEBUG
+		return iDxcBlobMap_.at(filePath);
+	}
+
 	// 1:ファイル読み込み
 	// これからシェーダーをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, path:{},profile:{}\n", filePath, profile)));
@@ -75,5 +104,7 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	shaderSource->Release();
 	shaderResult->Release();
 
+	// シェーダーを登録
+	iDxcBlobMap_.emplace(filePath, shaderBlob);
 	return shaderBlob;
 }

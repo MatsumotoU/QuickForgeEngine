@@ -3,10 +3,15 @@
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 #include <dxcapi.h>
+#include <map>
 
 #include "../MyString.h"
 
 class ShaderCompiler final {
+public:
+	ShaderCompiler();
+	~ShaderCompiler();
+
 public:
 	/// <summary>
 	/// DXCを初期化します
@@ -25,7 +30,7 @@ public:
 	IDxcBlob* CompileShader(const std::wstring& filePath,const wchar_t* profile);
 
 private:
-
+	std::map<std::wstring, IDxcBlob*> iDxcBlobMap_;
 	IDxcUtils* dxcUtils_;
 	IDxcCompiler3* dxcCompiler_;
 	IDxcIncludeHandler* includeHandler_;

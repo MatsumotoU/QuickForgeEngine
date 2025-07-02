@@ -51,7 +51,7 @@ private:
 	WinApp* winApp_;
 	DepthStencil* depthStencil_;
 	InputLayout inputLayout_;
-	ShaderCompiler shaderCompiler_;
+	ShaderCompiler* shaderCompiler_;
 	
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
