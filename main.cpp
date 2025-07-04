@@ -33,7 +33,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 		if (engineCore.GetWinApp()->GetCanLoop()) {
 			// === Update ===
 			engineCore.Update();
-			sceneManager.Update();
+			if (!engineCore.GetLoopStopper()->GetIsStopping()) {
+				sceneManager.Update();
+			}
 
 			// === Draw ===
 			engineCore.PreDraw();

@@ -6,16 +6,32 @@ EngineCore::EngineCore() {
 	DebugLog("[[[EngineStarted]]]");
 	systemTimer_.Init();
 
-	isDrawFpsDebugWindow_ = false;
-	isDrawPerformanceDebugWindow_ = false;
-	isDrawAudioSourceDebugWindow_ = false;
-	isDrawAudioDataDebugWindow_ = false;
-	isDrawMemoryDebugWindow_ = false;
-
 	initializeRunningTime_ = 0.0f;
 	updateRunningTime_ = 0.0f;
 	drawRunningTime_ = 0.0f;
 #endif // _DEBUG
+
+	lunchConfigFileName_ = "EngineLunchConfig";
+	lunchConfig_ = SJN::LoadJsonData(lunchConfigFileName_);
+	lunchConfig_.emplace("FpsDB", false);
+	lunchConfig_.emplace("PerformanceDB", false);
+	lunchConfig_.emplace("AudioSourceDB", false);
+	lunchConfig_.emplace("AudioDataDB", false);
+	lunchConfig_.emplace("MemoryDB", false);
+
+	lunchConfig_.emplace("SystemSoundVolume",0.3f);
+
+	isDrawFpsDebugWindow_ = lunchConfig_.at("FpsDB").get<bool>();
+	isDrawPerformanceDebugWindow_ = lunchConfig_.at("PerformanceDB").get<bool>();
+	isDrawAudioSourceDebugWindow_ = lunchConfig_.at("AudioSourceDB").get<bool>();
+	isDrawAudioDataDebugWindow_ = lunchConfig_.at("AudioDataDB").get<bool>();
+	isDrawMemoryDebugWindow_ = lunchConfig_.at("MemoryDB").get<bool>();
+
+	systemSpundVolume_ = lunchConfig_.at("SystemSoundVolume").get<float>();
+
+	isDrawLunchConfigWindow_ = false;
+
+	loopStopper_.Initialize();
 }
 
 EngineCore::~EngineCore() {
@@ -87,6 +103,8 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	DebugLog(std::format("Complete InitializeEngine: {}s", initializeRunningTime_));
 	
 #endif // _DEBUG
+
+	loopStopper_.Initialize();
 }
 
 void EngineCore::Update() {
@@ -107,6 +125,8 @@ void EngineCore::Update() {
 	DebugLog(std::format("Update time : {}s", updateRunningTime_));
 	DebugLog("-------------End Update-------------");
 #endif // _DEBUG
+
+	loopStopper_.Update();
 }
 
 void EngineCore::PreDraw() {
@@ -267,6 +287,10 @@ ShaderCompiler* EngineCore::GetShaderCompiler() {
 	return &shaderCompiler_;
 }
 
+LoopStoper* EngineCore::GetLoopStopper() {
+	return &loopStopper_;
+}
+
 float EngineCore::GetDeltaTime() {
 	// FPSが0でない場合はFPSを基にデルタタイムを返す
 	if (fpsCounter_.GetFps() != 0.0f) {
@@ -286,6 +310,16 @@ void EngineCore::DrawEngineMenu() {
 	// エンジンのウィンドウと差別化用のスタイル変更
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
 	if (ImGui::BeginMainMenuBar()) {
+		// 編集機能
+		if (ImGui::BeginMenu("Edit")) {
+			// 起動構成
+			if (ImGui::Button("Lunch Config")) {
+				chiptune_.PlayMainSquareWave(GermanNote::A, 4, 0.1f, systemSpundVolume_);
+				isDrawLunchConfigWindow_ = true;
+			}
+			ImGui::EndMenu();
+		}
+
 		// エンジンの詳細情報
 		if (ImGui::BeginMenu("View")) {
 			// 一般
@@ -304,13 +338,92 @@ void EngineCore::DrawEngineMenu() {
 			ImGui::EndMenu();
 		}
 
+		ImGui::Spacing();
+		// 一時停止
+		if (ImGui::Button("Stop")) {
+			if (loopStopper_.GetIsStopping()) {
+				//chiptune_.PlayMainSquareWave(GermanNote::A, 1, 0.1f, systemSpundVolume_);
+			} else {
+				//chiptune_.PlayMainSquareWave(GermanNote::A, 4, 0.1f, systemSpundVolume_);
+				loopStopper_.SetIsStopping(true);
+			}
+		}
+		// 再生
+		if (ImGui::Button("Start")) {
+			if (!loopStopper_.GetIsStopping()) {
+				//chiptune_.PlayMainSquareWave(GermanNote::A, 1, 0.1f, systemSpundVolume_);
+			} else {
+				//chiptune_.PlayMainSquareWave(GermanNote::A, 4, 0.1f, systemSpundVolume_);
+				loopStopper_.SetIsStopping(false);
+			}
+		}
+		if (loopStopper_.GetIsStopping()) {
+			ImGui::Text("!!!Update Stopping Now!!!");
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 
 	// 場所が分かるようにアウトラインを出す
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-	//* 各監視機能 *//
+	//* Editタブ *//
+	if (isDrawLunchConfigWindow_) {
+		ImGui::Begin("LunchConfig", &isDrawLunchConfigWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		if (ImGui::Button("Save")) {
+			chiptune_.PlayMainSquareWave(GermanNote::A, 4, 0.1f, systemSpundVolume_);
+			SaveLunchConfig();
+		}
+
+		// 起動時に実行されるもの
+		if (ImGui::TreeNode("StratSetup")) {
+			// 起動時に表示しておくデバッグウィンドウ
+			if (ImGui::TreeNode("Window")) {
+
+				// 一般
+				if (ImGui::TreeNode("General")) {
+					if (ImGui::Button("FPS")) {
+						lunchConfig_.at("FpsDB") = !lunchConfig_.at("FpsDB").get<bool>();
+					}
+					ImGui::SameLine();
+					ImGui::Text("%s", lunchConfig_.at("FpsDB").get<bool>() ? "True" : "False");
+
+					if (ImGui::Button("PERFOFMANCE")) {
+						lunchConfig_.at("PerformanceDB") = !lunchConfig_.at("PerformanceDB").get<bool>();
+					}
+					ImGui::SameLine();
+					ImGui::Text("%s", lunchConfig_.at("PerformanceDB").get<bool>() ? "True" : "False");
+
+					if (ImGui::Button("MEMORY")) {
+						lunchConfig_.at("MemoryDB") = !lunchConfig_.at("MemoryDB").get<bool>();
+					}
+					ImGui::SameLine();
+					ImGui::Text("%s", lunchConfig_.at("MemoryDB").get<bool>() ? "True" : "False");
+					ImGui::TreePop();
+				}
+				// 音声
+				if (ImGui::TreeNode("Audio")) {
+					if (ImGui::Button("AUDIODATA")) {
+						lunchConfig_.at("AudioDataDB") = !lunchConfig_.at("AudioDataDB").get<bool>();
+					}
+					ImGui::SameLine();
+					ImGui::Text("%s", lunchConfig_.at("AudioDataDB").get<bool>() ? "True" : "False");
+
+					if (ImGui::Button("AUDIOSOURCE")) {
+						lunchConfig_.at("AudioSourceDB") = !lunchConfig_.at("AudioSourceDB").get<bool>();
+					}
+					ImGui::SameLine();
+					ImGui::Text("%s", lunchConfig_.at("AudioSourceDB").get<bool>() ? "True" : "False");
+					ImGui::TreePop();
+				}
+				ImGui::TreePop();
+			}
+			ImGui::TreePop();
+		}
+		ImGui::End();
+	}
+
+	//* Viewタブ *//
 	// Fpsデバッグ情報
 	if (isDrawFpsDebugWindow_) {
 		ImGui::Begin("FPS",&isDrawFpsDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
@@ -373,5 +486,9 @@ void EngineCore::DrawEngineMenu() {
 	// エンジンのウィンドウと差別化用のスタイル変更
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
+}
+
+void EngineCore::SaveLunchConfig() {
+	SJN::SaveJsonData(lunchConfigFileName_,lunchConfig_);
 }
 #endif // _DEBUG

@@ -26,6 +26,8 @@ public:
 
 	IScene* GetNextScene() override;
 
+	void CameraUpdate();
+
 private:
 	bool isLockOn_;
 

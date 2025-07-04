@@ -63,6 +63,7 @@
 
 // 時間管理
 #include "Utility/MyTimer.h"
+#include "LoopStoper.h"
 
 // Json
 #include "../Utility/SimpleJson.h"
@@ -123,6 +124,7 @@ public:// エンジンの機能取得
 	AudioPlayer* GetAudioPlayer();
 	Chiptune* GetChiptune();
 	ShaderCompiler* GetShaderCompiler();
+	LoopStoper* GetLoopStopper();
 
 public:
 	 float GetDeltaTime();
@@ -135,11 +137,21 @@ public:// デバッグ機能
 	void DrawEngineMenu();
 #endif // _DEBUG
 
+private:// デバッグ関数
+	void SaveLunchConfig();
+
+private:
+	bool isDrawLunchConfigWindow_;
+	std::string lunchConfigFileName_;
+	nlohmann::json lunchConfig_;
+	float systemSpundVolume_;
+
 private:// コア機能
 	WinApp winApp_;
 	MSG* msg_;
 	DirectXCommon dxCommon_;
 	ImGuiManager imGuiManager_;
+	LoopStoper loopStopper_;
 
 private:// 時間管理
 	FramePerSecond fpsCounter_;

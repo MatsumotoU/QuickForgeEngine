@@ -39,10 +39,10 @@ public:// 指定
 	/// <param name="note">ドレミ</param>
 	/// <param name="octave">オクターブ(4が安定)</param>
 	/// <param name="second">再生時間</param>
-	void PlayMainSquareWave(const GermanNote& note,uint32_t octave,float second);
-	void PlaySubSquareWave(const GermanNote& note, uint32_t octave, float second);
-	void PlayTriangWave(const GermanNote& note, uint32_t octave, float second);
-	void PlayNoise(float second);
+	void PlayMainSquareWave(const GermanNote& note,uint32_t octave,float second,float volume);
+	void PlaySubSquareWave(const GermanNote& note, uint32_t octave, float second, float volume);
+	void PlayTriangWave(const GermanNote& note, uint32_t octave, float second, float volume);
+	void PlayNoise(float second, float volume);
 
 public:// ゲッター
 	bool GetIsPlayMainSquareWave();

@@ -14,7 +14,7 @@ namespace SimpleJson {
 	/// </summary>
 	/// <param name="fp">ファイルのパス</param>
 	/// <returns>指定パスのjsonデータ</returns>
-	nlohmann::json LoadJsonData(const std::string& fp);
+	nlohmann::json LoadJsonData(const std::string& groupName);
 
 	/// <summary>
 	/// jsonデータを外部ファイルに書きだします

@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "TitleScene.h"
+#include <functional>
 
 GameScene::GameScene(EngineCore* engineCore) {
 	engineCore_ = engineCore;
@@ -25,6 +26,8 @@ GameScene::GameScene(EngineCore* engineCore) {
 	engineCore_->GetAudioSourceBinder()->CreateSourceVoice("mokugyo1", audioHandle[0]);
 	engineCore_->GetAudioSourceBinder()->CreateSourceVoice("mokugyo2", audioHandle[1]);
 	engineCore_->GetAudioSourceBinder()->CreateSourceVoice("mono48kHz", audioHandle[2]);
+
+	engineCore_->GetLoopStopper()->AddNonStoppingFunc(std::bind(&GameScene::CameraUpdate, this));
 }
 
 GameScene::~GameScene() {
@@ -133,10 +136,7 @@ void GameScene::Update() {
 		isActiveDebugCamera_ = !isActiveDebugCamera_;
 	}
 
-	if (isActiveDebugCamera_) {
-		debugCamera_.Update();
-		camera_ = debugCamera_.camera_;
-	}
+	CameraUpdate();
 #endif // _DEBUG
 
 	if (isMoveLail_) {
@@ -281,20 +281,20 @@ void GameScene::Draw() {
 	}
 
 	if (ImGui::Button("MainSquear")) {
-		engineCore_->GetChiptune()->PlayMainSquareWave(note, a, second);
+		engineCore_->GetChiptune()->PlayMainSquareWave(note, a, second,0.1f);
 		audioPlayTimer_.StartTimer();
 	}
 	ImGui::SameLine();
 	ImGui::Text("PlaySecond: %f", audioPlayTimer_.GetElapsedTime());
 
 	if (ImGui::Button("SubSquear")) {
-		engineCore_->GetChiptune()->PlaySubSquareWave(note, a, second);
+		engineCore_->GetChiptune()->PlaySubSquareWave(note, a, second,0.1f);
 	}
 	if (ImGui::Button("Triangle")) {
-		engineCore_->GetChiptune()->PlayTriangWave(note, a, second);
+		engineCore_->GetChiptune()->PlayTriangWave(note, a, second,0.1f);
 	}
 	if (ImGui::Button("Noise")) {
-		engineCore_->GetChiptune()->PlayNoise(second);
+		engineCore_->GetChiptune()->PlayNoise(second,0.1f);
 	}
 
 	ImGui::DragInt("a", &a);
@@ -401,4 +401,11 @@ void GameScene::Draw() {
 
 IScene* GameScene::GetNextScene() {
 	return new TitleScene(engineCore_);
+}
+
+void GameScene::CameraUpdate() {
+	if (isActiveDebugCamera_) {
+		debugCamera_.Update();
+		camera_ = debugCamera_.camera_;
+	}
 }

@@ -4,26 +4,32 @@
 #include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
-nlohmann::json SJN::LoadJsonData(const std::string& fp) {
+nlohmann::json SJN::LoadJsonData(const std::string& groupName) {
 	nlohmann::json result;
-    
-	// jsonデータ読み込み
-	std::ifstream ifs;
-	ifs.open(fp);
+	std::string fp = kDirectoryPath + groupName + ".json";
 
-	// ファイル開けない時のエラー
-	if (ifs.fail()) {
+	// jsonデータ読み込み
+	std::fstream file;
+	file.open(fp, std::ios::in | std::ios::out);
+
+	// ファイル開いたらデータを移す
+	if (file.is_open()) {
+		file >> result;
+		file.close();
+#ifdef _DEBUG
+		std::string message = "Read(" + fp + ")";
+		DebugLog(message);
+#endif // _DEBUG
+
+	} else {
+		// ファイルが存在しない場合生成
+		SaveJsonData(groupName, result);
 #ifdef _DEBUG
 		std::string message = "Failed open data file for read(" + fp + ")";
 		DebugLog(message);
 #endif // _DEBUG
-
-		assert(false && "Failed open data file for read");
-		return 0;
+		
 	}
-
-	ifs >> result;
-	ifs.close();
 
     return result;
 }
