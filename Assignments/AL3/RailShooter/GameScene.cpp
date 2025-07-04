@@ -249,8 +249,6 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
-	engineCore_->GetAudioResourceManager()->DrawImGui();
-
 	ImGui::Begin("Chiptune");
 	ImGui::DragFloat("PlaySecond", &second,0.1f);
 
@@ -268,6 +266,10 @@ void GameScene::Draw() {
 	ImGui::SameLine();
 	if (ImGui::Button("F")) {
 		note = GermanNote::F;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("G")) {
+		note = GermanNote::G;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("A")) {

@@ -76,7 +76,7 @@ int32_t StringLiblary::GetLiblaryIndex(const std::string& string) {
 
 std::string StringLiblary::GetDatanameFromIndex(uint32_t index) {
 	std::string result = "None";
-	if (static_cast<uint32_t>(liblary_.size()) >= index) {
+	if (static_cast<uint32_t>(liblary_.size()) <= index) {
 		return result;
 	}
 

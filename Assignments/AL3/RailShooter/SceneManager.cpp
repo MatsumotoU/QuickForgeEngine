@@ -43,7 +43,7 @@ void SceneManager::Draw() {
 		fade_.Draw();
 	}
 
-	ImGui::Begin("FPS");
+	/*ImGui::Begin("FPS");
 	ImGui::Text("fps = %f", engineCore_->GetFpsCounter()->GetFps());
 	ImGui::Text("averageFps = %f", engineCore_->GetFpsCounter()->GetAverageFps());
 	
@@ -60,5 +60,5 @@ void SceneManager::Draw() {
 
 	ImGuiKnobs::Knob("Volume", &value_, -6.0f, 6.0f, 0.1f, "%.1fdB", ImGuiKnobVariant_Tick);
 
-	ImGui::End();
+	ImGui::End();*/
 }

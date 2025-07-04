@@ -26,6 +26,15 @@ public:// メイン機能
 	/// <returns></returns>
 	IXAudio2SourceVoice* GetSourceVoice(const std::string& sourceVoiceFriendryName);
 
+public:
+#ifdef _DEBUG
+	void DrawImGui();
+#endif // _DEBUG
+
+public:
+	uint32_t GetSourceVoiceMapNumber();
+	std::string GetsourceVoiceMapElement(uint32_t index);
+
 private:
 	EngineCore* engineCore_;
 	std::map<std::string, IXAudio2SourceVoice*> sourceVoiceMap_;

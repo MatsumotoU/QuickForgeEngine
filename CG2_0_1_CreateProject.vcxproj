@@ -259,6 +259,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
     <ClCompile Include="Engine\Base\DirectX\MaterialResource.cpp" />
     <ClCompile Include="Engine\Base\EngineCore.cpp" />
+    <ClCompile Include="Engine\Base\Windows\MemoryWatcher.cpp" />
     <ClCompile Include="Engine\Colliders\Collider.cpp" />
     <ClCompile Include="Engine\Colliders\CollisionManager.cpp" />
     <ClCompile Include="Engine\Input\XInput\XInputController.cpp" />
@@ -343,6 +344,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\AudioSourceBinder.h" />
     <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h" />
     <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h" />
+    <ClInclude Include="Engine\Base\Windows\MemoryWatcher.h" />
     <ClInclude Include="Engine\Input\XInput\XInputController.h" />
     <ClInclude Include="Engine\Math\AudioMath.h" />
     <ClInclude Include="Engine\Audio\ChunkHeader.h" />
