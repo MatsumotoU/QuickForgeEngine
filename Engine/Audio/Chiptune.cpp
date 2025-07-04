@@ -61,7 +61,7 @@ void Chiptune::PlayNoise() {
     audioPlayer_->PlayAudio(noiseAudioHandle_, noiseSoureceVoiceName_, false);
 }
 
-void Chiptune::PlayMainSquareWave(const GermanNote& note, uint32_t octave, float second) {
+void Chiptune::PlayMainSquareWave(const GermanNote& note, uint32_t octave, float second, float volume) {
     if (second <= 0.1f) {
         audioPlayer_->PlayAudio(squareAudioHandle_, mainSquareWaveSoureceVoiceName_, false);
         return;
@@ -69,12 +69,13 @@ void Chiptune::PlayMainSquareWave(const GermanNote& note, uint32_t octave, float
 
     float rate = GetFrequencyFormGermanNote(note, octave) / GetFrequencyFormGermanNote(GermanNote::A, 4);
     engineCore_->GetAudioSourceBinder()->GetSourceVoice(mainSquareWaveSoureceVoiceName_)->SetFrequencyRatio(rate);
+    engineCore_->GetAudioSourceBinder()->GetSourceVoice(mainSquareWaveSoureceVoiceName_)->SetVolume(volume);
 
     uint32_t loopCount = static_cast<uint32_t>((second * 10.0f) * rate);
     audioPlayer_->PlayAudio(squareAudioHandle_, mainSquareWaveSoureceVoiceName_, 0.0f, 0.1f, loopCount);
 }
 
-void Chiptune::PlaySubSquareWave(const GermanNote& note, uint32_t octave, float second) {
+void Chiptune::PlaySubSquareWave(const GermanNote& note, uint32_t octave, float second, float volume) {
     if (second <= 0.1f) {
         audioPlayer_->PlayAudio(squareAudioHandle_, subSquareWaveSoureceVoiceName_, false);
         return;
@@ -82,12 +83,13 @@ void Chiptune::PlaySubSquareWave(const GermanNote& note, uint32_t octave, float 
 
     float rate = GetFrequencyFormGermanNote(note, octave) / GetFrequencyFormGermanNote(GermanNote::A, 4);
     engineCore_->GetAudioSourceBinder()->GetSourceVoice(subSquareWaveSoureceVoiceName_)->SetFrequencyRatio(rate);
+    engineCore_->GetAudioSourceBinder()->GetSourceVoice(subSquareWaveSoureceVoiceName_)->SetVolume(volume);
 
     uint32_t loopCount = static_cast<uint32_t>((second * 10.0f) * rate);
     audioPlayer_->PlayAudio(squareAudioHandle_, subSquareWaveSoureceVoiceName_, 0.0f, 0.1f, loopCount);
 }
 
-void Chiptune::PlayTriangWave(const GermanNote& note, uint32_t octave, float second) {
+void Chiptune::PlayTriangWave(const GermanNote& note, uint32_t octave, float second, float volume) {
     if (second <= 0.1f) {
         audioPlayer_->PlayAudio(triangleAudioHandle_, triangleWaveSoureceVoiceName_, false);
         return;
@@ -95,16 +97,18 @@ void Chiptune::PlayTriangWave(const GermanNote& note, uint32_t octave, float sec
 
     float rate = GetFrequencyFormGermanNote(note, octave) / GetFrequencyFormGermanNote(GermanNote::A, 4);
     engineCore_->GetAudioSourceBinder()->GetSourceVoice(triangleWaveSoureceVoiceName_)->SetFrequencyRatio(rate);
+    engineCore_->GetAudioSourceBinder()->GetSourceVoice(triangleWaveSoureceVoiceName_)->SetVolume(volume);
 
     uint32_t loopCount = static_cast<uint32_t>((second * 10.0f) * rate);
     audioPlayer_->PlayAudio(triangleAudioHandle_, triangleWaveSoureceVoiceName_, 0.0f, 0.1f, loopCount);
 }
 
-void Chiptune::PlayNoise(float second) {
+void Chiptune::PlayNoise(float second, float volume) {
     if (second <= 0.1f) {
         audioPlayer_->PlayAudio(noiseAudioHandle_, noiseSoureceVoiceName_, false);
         return;
     }
+    engineCore_->GetAudioSourceBinder()->GetSourceVoice(noiseSoureceVoiceName_)->SetVolume(volume);
 
     uint32_t loopCount = static_cast<uint32_t>(second * 10.0f);
     audioPlayer_->PlayAudio(noiseAudioHandle_, noiseSoureceVoiceName_, 0.0f, 0.1f, loopCount);

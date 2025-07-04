@@ -6,6 +6,7 @@
 #include <algorithm>
 
 #ifdef _DEBUG
+
 void DebugCamera::Initialize(EngineCore* engineCore) {
 	camera_.Initialize(engineCore->GetWinApp());
 	input_ = engineCore->GetInputManager();
@@ -21,6 +22,8 @@ void DebugCamera::Initialize(EngineCore* engineCore) {
 	anchorGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/anchor.png");
 
 	isDrawAnchor_ = false;
+
+	engineCore_->GetLoopStopper()->AddNonStoppingFunc(std::bind(&DebugCamera::Update, this));
 }
 
 void DebugCamera::Update() {

@@ -2,6 +2,7 @@
 #ifdef _DEBUG
 #include "Camera.h"
 #include "Model/Billboard.h"
+#include <functional>
 
 class EngineCore;
 class WinApp;
