@@ -4,8 +4,18 @@ EngineCore::EngineCore() {
 	engineStartTime = std::chrono::steady_clock::now();
 #ifdef _DEBUG
 	DebugLog("[[[EngineStarted]]]");
-#endif // _DEBUG
+	systemTimer_.Init();
 
+	isDrawFpsDebugWindow_ = false;
+	isDrawPerformanceDebugWindow_ = false;
+	isDrawAudioSourceDebugWindow_ = false;
+	isDrawAudioDataDebugWindow_ = false;
+	isDrawMemoryDebugWindow_ = false;
+
+	initializeRunningTime_ = 0.0f;
+	updateRunningTime_ = 0.0f;
+	drawRunningTime_ = 0.0f;
+#endif // _DEBUG
 }
 
 EngineCore::~EngineCore() {
@@ -17,6 +27,11 @@ EngineCore::~EngineCore() {
 }
 
 void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmdLine, MSG* msg) {
+#ifdef _DEBUG
+	systemTimer_.StartTimer();
+	DebugLog("Starting EngineInitialize");
+#endif // _DEBUG
+
 	lpCmdLine;
 	// windowsアプリ管理クラス初期化
 	winApp_.CreateGameWindow(windowName);
@@ -65,16 +80,41 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	offscreen_.material_.materialData_->enableLighting = false;
 
 	camera_.Initialize(&winApp_);
+
+#ifdef _DEBUG
+	systemTimer_.StopTimer();
+	initializeRunningTime_ = systemTimer_.GetElapsedTime();
+	DebugLog(std::format("Complete InitializeEngine: {}s", initializeRunningTime_));
+	
+#endif // _DEBUG
 }
 
 void EngineCore::Update() {
+#ifdef _DEBUG
+	systemTimer_.StartTimer();
+	DebugLog("==========Starting Update==========");
+#endif // _DEBUG
+
+	// エンジンの更新処理
 	imGuiManager_.BeginFrame();
 	fpsCounter_.Update();
 	inputManager_.Update();
 	xController_.Update();
+
+#ifdef _DEBUG
+	systemTimer_.StopTimer();
+	updateRunningTime_ = systemTimer_.GetElapsedTime();
+	DebugLog(std::format("Update time : {}s", updateRunningTime_));
+	DebugLog("-------------End Update-------------");
+#endif // _DEBUG
 }
 
 void EngineCore::PreDraw() {
+#ifdef _DEBUG
+	systemTimer_.StartTimer();
+	DebugLog("-------------Starting Draw-------------");
+#endif // _DEBUG
+
 	// オフスクリーンのバリア
 	D3D12_RESOURCE_BARRIER barrier{};
 	// 今回のバリアはトランジション
@@ -105,6 +145,10 @@ void EngineCore::PreDraw() {
 
 void EngineCore::PostDraw() {
 
+#ifdef _DEBUG
+	DrawEngineMenu();
+#endif // _DEBUG
+
 	graphRenderer_.PostDraw();
 
 	// オフスクリーンのバリア
@@ -133,6 +177,13 @@ void EngineCore::PostDraw() {
 	imGuiManager_.EndFrame();
 	dxCommon_.PostDraw();
 	textureManager_.ReleaseIntermediateResources();
+
+#ifdef _DEBUG
+	systemTimer_.StopTimer();
+	drawRunningTime_ = systemTimer_.GetElapsedTime();
+	DebugLog(std::format("Draw time : {}s", drawRunningTime_));
+	DebugLog("============End Draw============");
+#endif // _DEBUG
 }
 
 uint32_t EngineCore::LoadSoundData(const std::string& filePath, const std::string& fileName) {
@@ -229,3 +280,98 @@ float EngineCore::GetDeltaTime() {
 	}
 	return 0.0f;
 }
+
+#ifdef _DEBUG
+void EngineCore::DrawEngineMenu() {
+	// エンジンのウィンドウと差別化用のスタイル変更
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+	if (ImGui::BeginMainMenuBar()) {
+		// エンジンの詳細情報
+		if (ImGui::BeginMenu("View")) {
+			// 一般
+			if (ImGui::TreeNode("General")) {
+				ImGui::Checkbox("FPS", &isDrawFpsDebugWindow_);
+				ImGui::Checkbox("PERFOFMANCE", &isDrawPerformanceDebugWindow_);
+				ImGui::Checkbox("MEMORY", &isDrawMemoryDebugWindow_);
+				ImGui::TreePop();
+			}
+			// 音声
+			if (ImGui::TreeNode("Audio")) {
+				ImGui::Checkbox("AUDIODATA", &isDrawAudioDataDebugWindow_);
+				ImGui::Checkbox("AUDIOSOURCE", &isDrawAudioSourceDebugWindow_);
+				ImGui::TreePop();
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
+	}
+
+	// 場所が分かるようにアウトラインを出す
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+	//* 各監視機能 *//
+	// Fpsデバッグ情報
+	if (isDrawFpsDebugWindow_) {
+		ImGui::Begin("FPS",&isDrawFpsDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Text("AverageFps = %f", fpsCounter_.GetAverageFps());
+		ImGui::Text("nowFps = %f", fpsCounter_.GetFps());
+		ImGui::PlotLines(
+			"Fps",
+			fpsCounter_.GetFpsSample(),
+			static_cast<int>(fpsCounter_.GetFpsSamplerNum()),
+			0, NULL,
+			0, 128, ImVec2(0, 128.0f));
+		ImGui::End();
+	}
+
+	// 負荷監視
+	if (isDrawPerformanceDebugWindow_) {
+		ImGui::Begin("PERFOFMANCE", &isDrawPerformanceDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Text("InitializeRunningTime = %fs", initializeRunningTime_);
+		ImGui::Text("UpdateRunningTime = %fs", updateRunningTime_);
+		ImGui::Text("DrawRunningTime = %fs", drawRunningTime_);
+		ImGui::Text("Deltatime = %fs", GetDeltaTime());
+		ImGui::Separator();
+
+		float total = updateRunningTime_ + drawRunningTime_;
+		float updateRate = (total > 0.0f) ? (updateRunningTime_ / total) : 0.0f;
+		float drawRate = (total > 0.0f) ? (drawRunningTime_ / total) : 0.0f;
+
+		// 比率をプログレスバーで可視化
+		ImGui::Text("Process Rate");
+		ImGui::ProgressBar(updateRate, ImVec2(100, 0), "Update");
+		ImGui::SameLine();
+		ImGui::Text("%.1f%%", updateRate * 100.0f);
+		ImGui::ProgressBar(drawRate, ImVec2(100, 0), "Draw");
+		ImGui::SameLine();
+		ImGui::Text("%.1f%%", drawRate * 100.0f);
+		ImGui::End();
+	}
+
+	if (isDrawMemoryDebugWindow_) {
+		ImGui::Begin("MEMORY", &isDrawMemoryDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		memWatcher_.DrawImGui();
+		ImGui::End();
+	}
+
+	// オーディオソース監視
+	if (isDrawAudioSourceDebugWindow_) {
+		ImGui::Begin("AUDIOSOURCE", &isDrawAudioSourceDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Text("Loaded AudioSources");
+		ImGui::Separator();
+		audioSourceBinder_.DrawImGui();
+		ImGui::End();
+	}
+	// サウンドデータ監視
+	if (isDrawAudioDataDebugWindow_) {
+		ImGui::Begin("AUDIODATA", &isDrawAudioDataDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		audioResourceManager_.DrawImGui();
+		ImGui::End();
+	}
+
+	// エンジンのウィンドウと差別化用のスタイル変更
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+}
+#endif // _DEBUG

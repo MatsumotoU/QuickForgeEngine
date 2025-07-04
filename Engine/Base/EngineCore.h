@@ -14,7 +14,8 @@
 // ディスクリプタヒープ
 #include "DirectX/Descriptors/RtvDescriptorHeap.h"
 #include "DirectX/Descriptors/SrvDescriptorHeap.h"
-
+// メモリ管理
+#include "Windows/MemoryWatcher.h"
 // Fps管理
 #include "DirectX/FramePerSecond.h"
 // 描画機能
@@ -126,6 +127,14 @@ public:// エンジンの機能取得
 public:
 	 float GetDeltaTime();
 
+public:// デバッグ機能
+#ifdef _DEBUG
+	/// <summary>
+	/// ゲームエンジンのメニューをImGuiで表示します
+	/// </summary>
+	void DrawEngineMenu();
+#endif // _DEBUG
+
 private:// コア機能
 	WinApp winApp_;
 	MSG* msg_;
@@ -163,4 +172,18 @@ private:// デバッグ用一時変数
 	Transform offscreenTransform_;
 	Transform uvTransform_;
 	Camera camera_;
+
+#ifdef _DEBUG
+	MemoryWatcher memWatcher_;
+	bool isDrawMemoryDebugWindow_;
+
+	MyTimer systemTimer_;
+	bool isDrawFpsDebugWindow_;
+	bool isDrawPerformanceDebugWindow_;
+	float initializeRunningTime_;
+	float updateRunningTime_;
+	float drawRunningTime_;
+	bool isDrawAudioSourceDebugWindow_;
+	bool isDrawAudioDataDebugWindow_;
+#endif // _DEBUG
 };

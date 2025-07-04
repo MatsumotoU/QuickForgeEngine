@@ -73,14 +73,13 @@ void AudioResourceManager::AddSoundData(const SoundData& soundData, const std::s
 
 #ifdef _DEBUG
 void AudioResourceManager::DrawImGui() {
-	ImGui::Begin("AudioResourceManager");
 	ImGui::SliderInt("ResourceIndex", &debugResourceIndex_, 0, static_cast<int>(soundData_.size()) - 1);
 	fileNameLiblary_.DrawLiblary();
 
 	DisplayWaveform(
-		fileNameLiblary_.GetDatanameFromIndex(debugResourceIndex_) + "Wave",
+		fileNameLiblary_.GetDatanameFromIndex(debugResourceIndex_),
 		soundData_[debugResourceIndex_]);
-	ImGui::End();
+
 }
 void AudioResourceManager::DisplayWaveform(const std::string& plotName, const SoundData& data) {
 	static std::vector<float> samples;
@@ -90,6 +89,6 @@ void AudioResourceManager::DisplayWaveform(const std::string& plotName, const So
 		short value = data.pBuffer[i * 2] | (data.pBuffer[i * 2 + 1] << 8);
 		samples[i] = static_cast<float>(value);
 	}
-	ImGui::PlotLines(plotName.c_str(), samples.data(), sampleCount, 0, nullptr, -32768.0f, 32767.0f, ImVec2(0, 100));
+	ImGui::PlotLines(plotName.c_str(), samples.data(), sampleCount, 0, nullptr, -32768.0f, 32767.0f, ImVec2(400, 100));
 }
 #endif // _DEBUG
