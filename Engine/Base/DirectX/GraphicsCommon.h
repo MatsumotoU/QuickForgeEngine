@@ -4,6 +4,7 @@
 
 class EngineCore;
 
+// TODO: シェーダー周りの変数受け渡しの見直し
 class GraphicsCommon final {
 public:
 	void Initialize(EngineCore* engineCore);
@@ -33,6 +34,8 @@ public:
 
 	PipelineStateObject* GetGrayScalePso() { return &grayScaleTrianglePso_; }
 
+	PipelineStateObject* GetNormalPso() { return &normalPso_; }
+
 	DepthStencil* GetDepthStencil() { return &depthStencil_; }
 
 private: // メンバ変数
@@ -42,6 +45,8 @@ private: // メンバ変数
 	RootParameter normalGameObjectRootParameter_;
 	RootParameter particleRootParameter_;
 	RootParameter primitiveRootParameter_;
+	RootParameter grayScaleRootParameter_;
+	RootParameter normalRootParameter_;
 
 	// PSO
 	PipelineStateObject trianglePso_[kCountOfBlendMode];
@@ -53,4 +58,6 @@ private: // メンバ変数
 	PipelineStateObject particlePso_[kCountOfBlendMode];
 
 	PipelineStateObject grayScaleTrianglePso_;
+
+	PipelineStateObject normalPso_;
 };

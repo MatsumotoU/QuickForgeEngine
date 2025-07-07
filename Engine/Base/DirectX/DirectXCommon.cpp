@@ -60,24 +60,12 @@ void DirectXCommon::ReleaseDirectXObject() {
 }
 
 void DirectXCommon::PreDraw() {
-	// * コマンドを積み込む * //
 	// バックバッファのインデックス取得
 	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();
 
-	// バックバッファのバリア
-	D3D12_RESOURCE_BARRIER barrier{};
-	// 今回のバリアはトランジション
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにする
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを貼る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResource_[backBufferIndex].Get();
-	// 遷移前（現在）のリソースステート
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	// 遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// バリア張る
-	commandList_.Get()->ResourceBarrier(1, &barrier);
+	// バリア
+	TransitionResourceBarrier(
+		swapChainResource_[backBufferIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	// 画面を青っぽい色で初期化
 	InitializeBackGround(0.1f, 0.25f, 0.5f, 1.0f);
@@ -88,19 +76,8 @@ void DirectXCommon::PostDraw() {
 	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();
 
 	// バリア
-	D3D12_RESOURCE_BARRIER barrier{};
-	// 今回のバリアはトランジション
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにする
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを貼る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResource_[backBufferIndex].Get();
-	// 遷移前（現在）のリソースステート
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// 遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	// バリア張る
-	commandList_.Get()->ResourceBarrier(1, &barrier);
+	TransitionResourceBarrier(
+		swapChainResource_[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	// コマンドリストの内容を確定
 	HRESULT hr = commandList_.Get()->Close();
@@ -136,17 +113,27 @@ void DirectXCommon::PostDraw() {
 void DirectXCommon::InitializeBackGround(float red, float green, float blue, float alpha) {
 	// バックバッファのインデックス取得
 	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();
-	// 描画先のRTVを設定する
-	commandList_.Get()->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, nullptr);
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { red,green,blue,alpha };
 	commandList_.Get()->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
-	float offScreenClearColor[4]{};
-	offScreenClearColor[0] = red;
-	offScreenClearColor[1] = green;
-	offScreenClearColor[2] = blue;
-	offScreenClearColor[3] = alpha;
-	commandList_.Get()->ClearRenderTargetView(offScreenRtvHandle_, offScreenClearColor, 0, nullptr);
+}
+
+void DirectXCommon::TransitionResourceBarrier(ID3D12Resource* pResource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after) {
+	// バリア
+	D3D12_RESOURCE_BARRIER barrier{};
+	// 今回のバリアはトランジション
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにする
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを貼る対象のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = pResource;
+	// 遷移前（現在）のリソースステート
+	barrier.Transition.StateBefore = before;
+	// 遷移後のResourceState
+	barrier.Transition.StateAfter = after;
+	// TODO: 複数回無駄にコマンドを送らないようにする
+	// バリア張る
+	commandList_->ResourceBarrier(1, &barrier);
 }
 
 ID3D12Device* DirectXCommon::GetDevice() {
@@ -173,12 +160,12 @@ D3D12_CPU_DESCRIPTOR_HANDLE* DirectXCommon::GetRtvHandles() {
 	return &rtvHandles_[swapChain_.Get()->GetCurrentBackBufferIndex()];
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE* DirectXCommon::GetOffscreenRtvHandles() {
-	return &offScreenRtvHandle_;
+D3D12_CPU_DESCRIPTOR_HANDLE* DirectXCommon::GetOffscreenRtvHandles(uint32_t index) {
+	return &offScreenRtvHandle_[index];
 }
 
-ID3D12Resource* DirectXCommon::GetOffscreenResource() {
-	return offScreenResource_.Get();
+ID3D12Resource* DirectXCommon::GetOffscreenResource(uint32_t index) {
+	return offScreenResource_[index].Get();
 }
 
 uint32_t DirectXCommon::GetDescriptorSizeSRV() {
@@ -392,7 +379,7 @@ void DirectXCommon::InitializeSwapChainResource() {
 void DirectXCommon::InitializeOffScreenResource() {
 	offScreenDesc_ = {};
 	offScreenDesc_.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	offScreenDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	offScreenDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	offScreenDesc_.Width = winApp_->kWindowWidth;
 	offScreenDesc_.Height = winApp_->kWindowHeight;
 	offScreenDesc_.DepthOrArraySize = 1; // テクスチャなので通常は1
@@ -409,13 +396,25 @@ void DirectXCommon::InitializeOffScreenResource() {
 
 	D3D12_HEAP_PROPERTIES defaultHeapProperties{};
 	defaultHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+	// オフスクリーンリソースの生成
 	HRESULT hr = device_->CreateCommittedResource(
 		&defaultHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&offScreenDesc_,
 		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // 初期状態
 		&offscreenClearValue_,
-		IID_PPV_ARGS(&offScreenResource_));
+		IID_PPV_ARGS(&offScreenResource_[0]));
+	hr;
+	assert(SUCCEEDED(hr));
+
+	// 二つ目のオフスクリーンリソースを作成
+	hr = device_->CreateCommittedResource(
+		&defaultHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&offScreenDesc_,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // 初期状態
+		&offscreenClearValue_,
+		IID_PPV_ARGS(&offScreenResource_[1]));
 	hr;
 	assert(SUCCEEDED(hr));
 }
@@ -436,8 +435,11 @@ void DirectXCommon::CreateRTV() {
 
 void DirectXCommon::CreateOffScreenRTV() {
 	// スワップチェインの後にオフスク用RTV作成
-	offScreenRtvHandle_.ptr = rtvHandles_[1].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	device_->CreateRenderTargetView(offScreenResource_.Get(), &rtvDesc_, offScreenRtvHandle_);
+	offScreenRtvHandle_[0].ptr = rtvHandles_[1].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device_->CreateRenderTargetView(offScreenResource_[0].Get(), &rtvDesc_, offScreenRtvHandle_[0]);
+
+	offScreenRtvHandle_[1].ptr = offScreenRtvHandle_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device_->CreateRenderTargetView(offScreenResource_[1].Get(), &rtvDesc_, offScreenRtvHandle_[1]);
 }
 
 void DirectXCommon::CreateFence() {

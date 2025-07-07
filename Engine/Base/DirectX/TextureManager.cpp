@@ -173,18 +173,22 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 void TextureManager::CreateOffscreenShaderResourceView() {
 	// オフスクリーン用のSRV登録
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = dxCommon_->GetOffscreenResource()->GetDesc().Format;
+	srvDesc.Format = dxCommon_->GetOffscreenResource(0)->GetDesc().Format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 
 	// SRVを作成するディスクリプタヒープの場所を決める
 	DescriptorHandles handles = srvDescriptorHeap_->AssignOffscreenHandles(1);
-	offscreenSrvHandleCPU_ = handles.cpuHandle_;
-	offscreenSrvHandleGPU_ = handles.gpuHandle_;
+	offscreenSrvHandleCPU_[0] = handles.cpuHandle_;
+	offscreenSrvHandleGPU_[0] = handles.gpuHandle_;
+	handles = srvDescriptorHeap_->AssignOffscreenHandles(2);
+	offscreenSrvHandleCPU_[1] = handles.cpuHandle_;
+	offscreenSrvHandleGPU_[1] = handles.gpuHandle_;
 
 	// SRVの作成
-	srvDescriptorHeap_->AssignHeap(dxCommon_->GetOffscreenResource(), srvDesc, offscreenSrvHandleCPU_);
+	srvDescriptorHeap_->AssignHeap(dxCommon_->GetOffscreenResource(0), srvDesc, offscreenSrvHandleCPU_[0]);
+	srvDescriptorHeap_->AssignHeap(dxCommon_->GetOffscreenResource(1), srvDesc, offscreenSrvHandleCPU_[1]);
 }
 
 void TextureManager::PreDraw() {
@@ -239,6 +243,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleGPU(uint32_t inde
 	return textureSrvHandleGPU_[index];
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetOffscreenSrvHandleGPU() {
-	return offscreenSrvHandleGPU_;
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetOffscreenSrvHandleGPU(uint32_t index) {
+	return offscreenSrvHandleGPU_[index];
 }

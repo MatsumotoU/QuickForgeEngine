@@ -39,14 +39,23 @@ public:
 	void PostDraw();
 
 public:
-	ID3D12Device*  GetDevice();
+	/// <summary>
+	/// リソースのバリアを張り替えます
+	/// </summary>
+	/// <param name="pResource"></param>
+	/// <param name="before"></param>
+	/// <param name="after"></param>
+	void TransitionResourceBarrier(ID3D12Resource* pResource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
+
+public:
+	ID3D12Device* GetDevice();
 	ID3D12GraphicsCommandList* GetCommandList();
 	DXGI_SWAP_CHAIN_DESC1* GetSwapChainDesc();
 	IDXGISwapChain4* GetSwapChain();
 	D3D12_RENDER_TARGET_VIEW_DESC* GetRtvDesc();
 	D3D12_CPU_DESCRIPTOR_HANDLE* GetRtvHandles();
-	D3D12_CPU_DESCRIPTOR_HANDLE* GetOffscreenRtvHandles();
-	ID3D12Resource* GetOffscreenResource();
+	D3D12_CPU_DESCRIPTOR_HANDLE* GetOffscreenRtvHandles(uint32_t index);
+	ID3D12Resource* GetOffscreenResource(uint32_t index);
 
 	uint32_t GetDescriptorSizeSRV();
 	uint32_t GetDescriptorSizeRTV();
@@ -78,10 +87,10 @@ private: // メンバ変数
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource_[2];
-	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResource_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResource_[2];
 	D3D12_RESOURCE_DESC offScreenDesc_;
 	D3D12_CLEAR_VALUE offscreenClearValue_;
-	D3D12_CPU_DESCRIPTOR_HANDLE offScreenRtvHandle_;
+	D3D12_CPU_DESCRIPTOR_HANDLE offScreenRtvHandle_[2];
 	ID3D12DescriptorHeap* rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
