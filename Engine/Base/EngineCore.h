@@ -21,6 +21,7 @@
 // 描画機能
 #include "DirectX/TextureManager.h"
 #include "DirectX/GraphicsCommon.h"
+#include "DirectX/RendaringPostprocess.h"
 // 音声機能
 #include "Audio/XAudioCore.h"
 #include "Audio/Audio3D.h"
@@ -162,6 +163,7 @@ private:// 描画機能
 	TextureManager textureManager_;
 	GraphicsCommon graphicsCommon_;
 	GraphRenderer graphRenderer_;
+	RendaringPostprosecess postprocess_;
 
 private:// 音声
 	XAudioCore audioManager_;
@@ -197,5 +199,6 @@ private:// デバッグ用一時変数
 	float drawRunningTime_;
 	bool isDrawAudioSourceDebugWindow_;
 	bool isDrawAudioDataDebugWindow_;
+	bool isDrawPostprocessDebugWindow_;
 #endif // _DEBUG
 };

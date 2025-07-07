@@ -30,6 +30,7 @@ EngineCore::EngineCore() {
 	systemSpundVolume_ = lunchConfig_.at("SystemSoundVolume").get<float>();
 
 	isDrawLunchConfigWindow_ = false;
+	isDrawPostprocessDebugWindow_ = false;
 
 	loopStopper_.Initialize();
 }
@@ -61,7 +62,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	// DirectX初期化
 	dxCommon_.Initialize(&winApp_);
 	// 各ディスクリプタヒープの作成
-	rtvDescriptorHeap_.Initialize(dxCommon_.GetDevice(), 3, false);
+	rtvDescriptorHeap_.Initialize(dxCommon_.GetDevice(), 4, false);
 	srvDescriptorHeap_.Initialize(dxCommon_.GetDevice(), 128, true);
 	// DirectXの画面リソースの初期化とRTV登録
 	dxCommon_.InitializeScreenResources(rtvDescriptorHeap_.GetRtvDescriptorHeap());
@@ -90,6 +91,9 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 
 	// 入力機能の初期化
 	inputManager_.Initialize(&winApp_, hInstance);
+
+	// ポストプロセス
+	postprocess_.Initialize(this);
 
 	// オフスクリーンのスプライト生成
 	offscreen_.Initialize(this,static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight));
@@ -135,63 +139,29 @@ void EngineCore::PreDraw() {
 	DebugLog("-------------Starting Draw-------------");
 #endif // _DEBUG
 
-	// オフスクリーンのバリア
-	D3D12_RESOURCE_BARRIER barrier{};
-	// 今回のバリアはトランジション
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにする
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを貼る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = dxCommon_.GetOffscreenResource();
-	// 遷移前（現在）のリソースステート
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	// 遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// バリア張る
-	dxCommon_.GetCommandList()->ResourceBarrier(1, &barrier);
-
 	dxCommon_.PreDraw();
 	
 	textureManager_.PreDraw();
 
 	// 深度の設定
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = graphicsCommon_.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
-	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
 	dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+	// 描画先選択
+	postprocess_.PreDraw();
 
 	graphRenderer_.PreDraw();
 }
 
 void EngineCore::PostDraw() {
-
 #ifdef _DEBUG
 	DrawEngineMenu();
 #endif // _DEBUG
 
 	graphRenderer_.PostDraw();
 
-	// オフスクリーンのバリア
-	D3D12_RESOURCE_BARRIER barrier{};
-	// 今回のバリアはトランジション
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにする
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを貼る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = dxCommon_.GetOffscreenResource();
-	// 遷移前（現在）のリソースステート
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// 遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	// バリア張る
-	dxCommon_.GetCommandList()->ResourceBarrier(1, &barrier);
-
 	// 深度の設定
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = graphicsCommon_.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
-	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
-	dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	offscreen_.DrawSprite(offscreenTransform_,uvTransform_,textureManager_.GetOffscreenSrvHandleGPU(),&camera_);
+	postprocess_.PostDraw();
 
 	textureManager_.PostDraw();
 	imGuiManager_.EndFrame();
@@ -333,6 +303,11 @@ void EngineCore::DrawEngineMenu() {
 			if (ImGui::TreeNode("Audio")) {
 				ImGui::Checkbox("AUDIODATA", &isDrawAudioDataDebugWindow_);
 				ImGui::Checkbox("AUDIOSOURCE", &isDrawAudioSourceDebugWindow_);
+				ImGui::TreePop();
+			}
+			// 描画系
+			if (ImGui::TreeNode("RENDERING")) {
+				ImGui::Checkbox("POSTPROCESS", &isDrawPostprocessDebugWindow_);
 				ImGui::TreePop();
 			}
 			ImGui::EndMenu();
@@ -480,6 +455,12 @@ void EngineCore::DrawEngineMenu() {
 	if (isDrawAudioDataDebugWindow_) {
 		ImGui::Begin("AUDIODATA", &isDrawAudioDataDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 		audioResourceManager_.DrawImGui();
+		ImGui::End();
+	}
+	// ポストプロセス
+	if (isDrawPostprocessDebugWindow_) {
+		ImGui::Begin("POSTPROCESS", &isDrawPostprocessDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		postprocess_.DrawImGui();
 		ImGui::End();
 	}
 

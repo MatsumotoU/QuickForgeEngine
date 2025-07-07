@@ -15,7 +15,7 @@ void PipelineStateObject::Initialize(EngineCore* engineCore) {
 
 void PipelineStateObject::CreatePipelineStateObject(
 	RootParameter rootParameter,DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, 
-	D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle, bool isDrawBack) {
+	D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack) {
 	HRESULT hr{};
 
 	depthStencil_ = depthStencil;
@@ -127,17 +127,10 @@ void PipelineStateObject::CreatePipelineStateObject(
 	//shaderCompiler_.InitializeDXC();
 	IDxcBlob* vertexShaderBlob = nullptr;
 	IDxcBlob* pixelShaderBlob = nullptr;
-	if (isParticle) {
-		vertexShaderBlob = shaderCompiler_->CompileShader(L"Particle.VS.hlsl", L"vs_6_0");
-		assert(vertexShaderBlob != nullptr);
-		pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(psFilepath), L"ps_6_0");
-		assert(pixelShaderBlob != nullptr);
-	} else {
-		vertexShaderBlob = shaderCompiler_->CompileShader(L"Object3d.VS.hlsl", L"vs_6_0");
-		assert(vertexShaderBlob != nullptr);
-		pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(psFilepath), L"ps_6_0");
-		assert(pixelShaderBlob != nullptr);
-	}
+	vertexShaderBlob = shaderCompiler_->CompileShader(ConvertString(vsFilepath), L"vs_6_0");
+	assert(vertexShaderBlob != nullptr);
+	pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(psFilepath), L"ps_6_0");
+	assert(pixelShaderBlob != nullptr);
 
 	// PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};

@@ -36,7 +36,7 @@ public:
 
 	void CreatePipelineStateObject(
 		RootParameter rootParameter, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
-		D3D12_FILL_MODE fillMode, const std::string& psFilepath, BlendMode blendMode, bool isParticle,bool isDrawBack);
+		D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack);
 
 public:
 	ID3D12PipelineState* GetPipelineState();
