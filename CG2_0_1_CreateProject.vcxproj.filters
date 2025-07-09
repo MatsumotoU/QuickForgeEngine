@@ -679,6 +679,9 @@
     <ClInclude Include="Engine\Object\OffsetBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Object\VignetteOffset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl" />
@@ -688,6 +691,7 @@
     <FxCompile Include="Particle.VS.hlsl" />
     <FxCompile Include="Primitive.PS.hlsl" />
     <FxCompile Include="Simple.VS.hlsl" />
+    <FxCompile Include="VignetteShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />

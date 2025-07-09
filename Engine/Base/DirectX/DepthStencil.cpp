@@ -48,6 +48,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DepthStencil::CreateDepthStencilTextureRe
         &depthClearValue,
         IID_PPV_ARGS(&resource));
     assert(SUCCEEDED(hr));
+    hr;
     return resource;
 }
 

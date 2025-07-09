@@ -6,6 +6,7 @@
 #endif // _DEBUG
 
 #include <assert.h>
+#include <cmath>
 
 XInputController::XInputController() {
     stickDeadZone_ = 7849.0f;

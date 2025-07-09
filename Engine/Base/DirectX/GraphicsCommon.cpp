@@ -33,6 +33,13 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 
 	grayScaleRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
+	// ビネットのやつ
+	vignetteRootParameter_.Initialize();
+	vignetteRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	vignetteRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+
+	vignetteRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
 	// 何もしないやつ
 	normalRootParameter_.Initialize();
 	normalRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
@@ -44,6 +51,7 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 	particleRootParameter_.CheckIntegrityData();
 	primitiveRootParameter_.CheckIntegrityData();
 	grayScaleRootParameter_.CheckIntegrityData();
+	vignetteRootParameter_.CheckIntegrityData();
 	normalRootParameter_.CheckIntegrityData();
 #endif // _DEBUG
 
@@ -81,6 +89,11 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 	grayScaleTrianglePso_.CreatePipelineStateObject(
 		grayScaleRootParameter_, &depthStencil_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "GrayscaleShader.hlsl","Simple.VS.hlsl", kBlendModeNormal, false);
+
+	vignettePso_.Initialize(engineCore);
+	vignettePso_.CreatePipelineStateObject(
+		vignetteRootParameter_, &depthStencil_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "VignetteShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	normalPso_.Initialize(engineCore);
 	normalPso_.CreatePipelineStateObject(

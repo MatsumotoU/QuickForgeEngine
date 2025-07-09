@@ -2,6 +2,7 @@
 class EngineCore;
 #include "Sprite/Sprite.h"
 #include "Object/OffsetBuffer.h"
+#include "Object/VignetteOffset.h"
 
 #include <functional>
 #include <vector>
@@ -11,6 +12,7 @@ class EngineCore;
 // TODO: 他の効果を作成する
 // TODO: ポストプロセスの順番を動的に変えられるようにする
 // TODO: ポストプロセスのシェーダーを動的に作成できるようにする
+// TODO: 一つだけ選択したときにシェーダーが適用されないバグを直す
 
 class RendaringPostprosecess {
 public:
@@ -34,19 +36,27 @@ private:
 	void SwitchRenderTarget();
 
 	void ApplyGrayScale();
-	void ApplyBloom();
+	void ApplyVignette();
 
 public:// パブリック変数
 	bool isPostprocess_;
 
 	bool enableGrayscale_;
-	bool enableBloom_;
+	bool enableVignette_;
+	bool enableNormal_;
 
 private:// グレースケール変数
 	PipelineStateObject* grayScalePso_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> grayScaleResource_;
 	OffsetBuffer* grayScaleOffsetBuffer_;
 	float grayScaleOffset_;
+	int grayScaleProcessIndex_;
+
+private:// ビネット変数
+	PipelineStateObject* vignettePso_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vignetteResource_;
+	VignetteOffset* vignetteOffsetBuffer_;
+	int vignetteProcessIndex_;
 
 private:// メンバ変数
 	std::vector<std::function<void() >> postProcessFunctions_;

@@ -11,6 +11,7 @@
 #include <functiondiscoverykeys_devpkey.h> 
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 #pragma comment(lib,"xaudio2.lib")
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "../Math/Vector/Vector4.h"
 
-struct OffsetBuffer {
+struct alignas(16) OffsetBuffer {
 	Vector4 offset;
 };
