@@ -9,6 +9,7 @@ void DirectInputManager::Initialize(WinApp* winApp, const HINSTANCE& hInstance) 
 	directInput_ = nullptr;
 	HRESULT hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr);
 	assert(SUCCEEDED(hr));
+	hr;
 
 	// Deviceの生成
 	keyboard_.Initialize(winApp, directInput_);

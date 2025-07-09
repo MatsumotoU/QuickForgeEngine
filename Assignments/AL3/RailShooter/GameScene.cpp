@@ -5,9 +5,10 @@
 GameScene::GameScene(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
-	isActiveDebugCamera_ = false;
+	
 
 #ifdef _DEBUG
+	isActiveDebugCamera_ = false;
 	debugCamera_.Initialize(engineCore_);
 	debugCamera_.camera_.transform_.translate.z = -20.0f;
 #endif // _DEBUG
@@ -249,6 +250,7 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+
 	ImGui::Begin("Chiptune");
 	ImGui::DragFloat("PlaySecond", &second,0.1f);
 
@@ -301,7 +303,10 @@ void GameScene::Draw() {
 	ImGui::Text("%f", GetFrequencyFormGermanNote(note, a));
 	ImGui::End();
 
+#ifdef _DEBUG
 	debugCamera_.DrawImGui();
+#endif // _DEBUG
+
 	reticle_.Draw(&camera_);
 
 	ImGui::Begin("LockOn");
@@ -357,8 +362,10 @@ void GameScene::Draw() {
 	ImGui::DragFloat("CameraMoveSpeed", &cameraMoveSpeed_, 0.01f, 0.01f, 1.0f);
 	ImGui::DragFloat("CameraT", &cameraT, 0.01f, 0.0f, 1.0f);
 	ImGui::Text("Time %.2f", timeCount_);
+#ifdef _DEBUG
 	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
 	ImGui::Toggle("isActiveDebugCamera", &isActiveDebugCamera_);
+#endif // _DEBUG
 	ImGui::DragFloat3("CameraTranslate", &camera_.transform_.translate.x, 0.1f);
 	ImGui::DragFloat3("CameraRotate", &camera_.transform_.rotate.x, 0.01f);
 	ImGui::DragFloat3("groundTransform", &groundTransform_.translate.x);
@@ -404,8 +411,10 @@ IScene* GameScene::GetNextScene() {
 }
 
 void GameScene::CameraUpdate() {
+#ifdef _DEBUG
 	if (isActiveDebugCamera_) {
 		debugCamera_.Update();
 		camera_ = debugCamera_.camera_;
 	}
+#endif // _DEBUG
 }

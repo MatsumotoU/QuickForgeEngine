@@ -12,7 +12,8 @@ RendaringPostprosecess::RendaringPostprosecess() {
 
 	postProcessCount_ = 0;
 	enableGrayscale_ = true;
-	enableBloom_ = true;
+	enableVignette_ = true;
+	enableNormal_ = true;
 
 	renderingRosourceIndex_ = 0;
 	readingResourceIndex_ = 0;
@@ -27,11 +28,12 @@ RendaringPostprosecess::RendaringPostprosecess() {
 
 	postProcessFunctions_.clear();
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyGrayScale, this));
-	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyBloom, this));
+	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyVignette, this));
+
+	grayScaleProcessIndex_ = 0; // グレースケールのインデックス
+	vignetteProcessIndex_ = 1; // ビネットのインデックス
 
 	postProcessOrderForm_.clear();
-	postProcessOrderForm_.push_back(1); // グレースケール
-	postProcessOrderForm_.push_back(0); // ブルーム
 
 	grayScaleOffset_ = 0.0f;
 }
@@ -84,18 +86,40 @@ void RendaringPostprosecess::Initialize(EngineCore* engineCore) {
 	grayScaleResource_ = CreateBufferResource(engineCore->GetDirectXCommon()->GetDevice(), sizeof(OffsetBuffer));
 	grayScaleOffsetBuffer_ = nullptr;
 	grayScaleResource_->Map(0, nullptr, reinterpret_cast<void**>(&grayScaleOffsetBuffer_));
+
+	// ビネットのリソース作成
+	vignettePso_ = engineCore_->GetGraphicsCommon()->GetVignettePso();
+	vignetteResource_ = CreateBufferResource(engineCore->GetDirectXCommon()->GetDevice(), sizeof(VignetteOffset));
+	vignetteOffsetBuffer_ = nullptr;
+	vignetteResource_->Map(0, nullptr, reinterpret_cast<void**>(&vignetteOffsetBuffer_));
+	vignetteOffsetBuffer_->screenResolution = 
+		{ static_cast<float>(engineCore->GetWinApp()->kWindowWidth), static_cast<float>(engineCore->GetWinApp()->kWindowHeight) };
+	vignetteOffsetBuffer_->VignetteRadius = 0.3f; // ビネットの半径
+	vignetteOffsetBuffer_->VignetteSoftness = 0.5f; // ビネットの柔らかさ
+	vignetteOffsetBuffer_->VignetteIntensity = 0.2f; // ビネットの強さ
 }
 
 void RendaringPostprosecess::PreDraw() {
 	// 何回ポストプロセスがかかっているか調べる
 	postProcessCount_ = 0;
+	postProcessOrderForm_.clear();
 	if (enableGrayscale_) {
+		postProcessOrderForm_.push_back(grayScaleProcessIndex_); // グレースケール
+		
 		postProcessCount_++;
 		// グレースケールの強度
 		grayScaleOffsetBuffer_->offset.x = grayScaleOffset_;
 	}
-	if (enableBloom_) {
+	if (enableVignette_) {
+		postProcessOrderForm_.push_back(vignetteProcessIndex_); // ビネット
+
 		postProcessCount_++;
+	}
+
+	// ポストプロセスの順番を並び替える
+	if (postProcessCount_ > 0) {
+		grayScaleProcessIndex_ = std::clamp(grayScaleProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
+		vignetteProcessIndex_ = std::clamp(vignetteProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
 	}
 
 	// オフスクリーンのバリアを設定
@@ -165,11 +189,23 @@ void RendaringPostprosecess::DrawImGui() {
 	ImGui::Separator();
 	if (isPostprocess_) {
 		ImGui::Checkbox("Enable Grayscale", &enableGrayscale_);
+		ImGui::SameLine();
+		ImGui::InputInt("Grayscale Process Index", &grayScaleProcessIndex_);
 		if (enableGrayscale_) {
 			ImGui::SliderFloat("Grayscale Offset", &grayScaleOffset_, 0.0f, 1.0f);
 			ImGui::Spacing();
 		}
-		ImGui::Checkbox("Enable Bloom", &enableBloom_);
+
+		ImGui::Checkbox("Enable Vignette", &enableVignette_);
+		ImGui::SameLine();
+		ImGui::InputInt("Vignette Process Index", &vignetteProcessIndex_);
+		if (enableVignette_) {
+			ImGui::DragFloat2("ScreenResolution", &vignetteOffsetBuffer_->screenResolution.x, 0.1f);
+			ImGui::DragFloat("VignetteRadius", &vignetteOffsetBuffer_->VignetteRadius, 0.1f);
+			ImGui::DragFloat("VignetteSoftness", &vignetteOffsetBuffer_->VignetteSoftness, 0.1f);
+			ImGui::DragFloat("VignetteIntensity", &vignetteOffsetBuffer_->VignetteIntensity, 0.1f);
+			ImGui::Spacing();
+		}
 	}
 }
 #endif
@@ -243,14 +279,15 @@ void RendaringPostprosecess::ApplyGrayScale() {
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void RendaringPostprosecess::ApplyBloom() {
+void RendaringPostprosecess::ApplyVignette() {
 	DirectXCommon* dxCommon = engineCore_->GetDirectXCommon();
 	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandList();
-	commandList->SetGraphicsRootSignature(engineCore_->GetGraphicsCommon()->GetNormalPso()->GetRootSignature());
-	commandList->SetPipelineState(engineCore_->GetGraphicsCommon()->GetNormalPso()->GetPipelineState());
+	commandList->SetGraphicsRootSignature(vignettePso_->GetRootSignature());
+	commandList->SetPipelineState(vignettePso_->GetPipelineState());
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootDescriptorTable(0, engineCore_->GetTextureManager()->GetOffscreenSrvHandleGPU(readingResourceIndex_));
+	commandList->SetGraphicsRootConstantBufferView(1, vignetteResource_.Get()->GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }

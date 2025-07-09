@@ -15,7 +15,10 @@ ShaderCompiler::ShaderCompiler() {
 }
 
 ShaderCompiler::~ShaderCompiler() {
+#ifdef _DEBUG
 	DebugLog("=====ShaderFiles=====");
+#endif // _DEBUG
+	
 	// iDxcBlobMap_に格納されているIDxcBlob*をすべてReleaseしてからクリア
 	for (auto& [key, blob] : iDxcBlobMap_) {
 		if (blob) {
@@ -27,7 +30,9 @@ ShaderCompiler::~ShaderCompiler() {
 		}
 	}
 	iDxcBlobMap_.clear();
+#ifdef _DEBUG
 	DebugLog("=====================");
+#endif // _DEBUG
 }
 
 void ShaderCompiler::InitializeDXC() {

@@ -9,6 +9,7 @@ void Audio3D::Initialize(XAudioCore* xAudioCore) {
 	xAudioCore->GetMasterVoice()->GetChannelMask(&dwChannelMask);
 	HRESULT hr = X3DAudioInitialize(dwChannelMask, X3DAUDIO_SPEED_OF_SOUND, x3DInstance_);
 	assert(SUCCEEDED(hr));
+	hr;
 
 	audioManager_ = xAudioCore;
 	assert(xAudioCore);

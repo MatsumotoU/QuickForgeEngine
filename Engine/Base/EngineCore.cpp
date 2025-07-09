@@ -9,7 +9,6 @@ EngineCore::EngineCore() {
 	initializeRunningTime_ = 0.0f;
 	updateRunningTime_ = 0.0f;
 	drawRunningTime_ = 0.0f;
-#endif // _DEBUG
 
 	lunchConfigFileName_ = "EngineLunchConfig";
 	lunchConfig_ = SJN::LoadJsonData(lunchConfigFileName_);
@@ -19,7 +18,7 @@ EngineCore::EngineCore() {
 	lunchConfig_.emplace("AudioDataDB", false);
 	lunchConfig_.emplace("MemoryDB", false);
 
-	lunchConfig_.emplace("SystemSoundVolume",0.3f);
+	lunchConfig_.emplace("SystemSoundVolume", 0.3f);
 
 	isDrawFpsDebugWindow_ = lunchConfig_.at("FpsDB").get<bool>();
 	isDrawPerformanceDebugWindow_ = lunchConfig_.at("PerformanceDB").get<bool>();
@@ -31,6 +30,7 @@ EngineCore::EngineCore() {
 
 	isDrawLunchConfigWindow_ = false;
 	isDrawPostprocessDebugWindow_ = false;
+#endif // _DEBUG
 
 	loopStopper_.Initialize();
 }

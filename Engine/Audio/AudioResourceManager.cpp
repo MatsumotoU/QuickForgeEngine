@@ -43,7 +43,7 @@ bool AudioResourceManager::LoadAudioResource(const std::string& filePath, const 
 
 uint32_t AudioResourceManager::GetAudioDataHandle(const std::string& fileName) {
 	int32_t index = fileNameLiblary_.GetLiblaryIndex(fileName);
-
+	index;
 	assert(index >= 0);
 	return static_cast<uint32_t>(fileNameLiblary_.GetLiblaryIndex(fileName));
 }

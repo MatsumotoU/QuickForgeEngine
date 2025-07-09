@@ -33,6 +33,7 @@ public:
 	PipelineStateObject* GetParticlePso(BlendMode blendmode) { return &particlePso_[static_cast<uint32_t>(blendmode)]; }
 
 	PipelineStateObject* GetGrayScalePso() { return &grayScaleTrianglePso_; }
+	PipelineStateObject* GetVignettePso() { return &vignettePso_; }
 
 	PipelineStateObject* GetNormalPso() { return &normalPso_; }
 
@@ -46,6 +47,7 @@ private: // メンバ変数
 	RootParameter particleRootParameter_;
 	RootParameter primitiveRootParameter_;
 	RootParameter grayScaleRootParameter_;
+	RootParameter vignetteRootParameter_;
 	RootParameter normalRootParameter_;
 
 	// PSO
@@ -58,6 +60,7 @@ private: // メンバ変数
 	PipelineStateObject particlePso_[kCountOfBlendMode];
 
 	PipelineStateObject grayScaleTrianglePso_;
+	PipelineStateObject vignettePso_;
 
 	PipelineStateObject normalPso_;
 };

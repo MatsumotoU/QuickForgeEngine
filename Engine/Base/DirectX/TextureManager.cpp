@@ -19,6 +19,7 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvD
 	// Comの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
+	hr;
 
 	// デバイスを取得
 	assert(dxCommon_);
@@ -45,8 +46,10 @@ void TextureManager::Finalize() {
 }
 
 // TODO: ロードされていいる画像たちを描画する
+#ifdef _DEBUG
 void TextureManager::DrawImages() {
 }
+#endif // _DEBUG
 
 DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
 	// テクスチャファイルを読み込んでプログラムで使えるようにする
