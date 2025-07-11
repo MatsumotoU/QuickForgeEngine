@@ -39,6 +39,11 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvD
 	textureHandle_ = 0;
 
 	CreateOffscreenShaderResourceView();
+
+#ifdef _DEBUG
+	debugTextureIndex_ = 0;
+#endif
+
 }
 
 void TextureManager::Finalize() {
@@ -111,6 +116,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 		nullptr,
 		IID_PPV_ARGS(resource.GetAddressOf()));
 	assert(SUCCEEDED(hr));
+	hr;
 	return resource;
 }
 
@@ -237,6 +243,19 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	filePathLiblary_.AddStringToLiblary(filePath);
 	return textureHandle_ - 1;
 }
+
+#ifdef _DEBUG
+void TextureManager::DrawImGui() {
+	ImGui::SliderInt("Texture Handle", &debugTextureIndex_, 0, static_cast<int>(textureSrvHandleGPU_.size()) - 1);
+	ImGui::SameLine();
+	ImGui::Text("Texture Count: %d", textureHandle_);
+	if (textureResources_.size() > 0) {
+		ImGui::Image(textureSrvHandleGPU_[debugTextureIndex_].ptr, ImVec2(256, 256), ImVec2(0, 0), ImVec2(1, 1));
+	} else {
+		ImGui::Text("No Texture Loaded");
+	}
+}
+#endif // _DEBUG
 
 D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t index) {
 	return textureSrvHandleCPU_[index];

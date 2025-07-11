@@ -41,6 +41,24 @@ bool AudioResourceManager::LoadAudioResource(const std::string& filePath, const 
 	}
 }
 
+bool AudioResourceManager::LoadAudioResource(const std::string& filePath) {
+	if (fileNameLiblary_.GetLiblaryIndex(filePath) <= -1) {
+		// 読み込んだことのないリソース処理
+		soundData_.push_back(Audiomanager::SoundLoad(filePath.c_str()));
+		fileNameLiblary_.AddStringToLiblary(filePath);
+#ifdef _DEBUG
+		DebugLog(std::format("LoadAudioResouce: {}", filePath));
+#endif // _DEBUG
+		return true;
+	} else {
+		// 読み込んだ事があるリソース処理
+#ifdef _DEBUG
+		DebugLog(std::format("AlreadyLoaded AudioResouce: {}", filePath));
+#endif // _DEBUG
+		return false;
+	}
+}
+
 uint32_t AudioResourceManager::GetAudioDataHandle(const std::string& fileName) {
 	int32_t index = fileNameLiblary_.GetLiblaryIndex(fileName);
 	index;

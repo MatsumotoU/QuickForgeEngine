@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include <cstdint>
+#include <string>
+#include <vector>
 
 class WinApp final {
 public:
@@ -9,6 +11,8 @@ public:
 	static const int kWindowHeight = 720; // 縦幅
 	// ウィンドウクラス名
 	static const wchar_t kWindowClassName[];
+
+	WinApp();
 
 public:
 	/// <summary>
@@ -21,7 +25,6 @@ public:
 	/// <returns>成否</returns>
 	static LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-public:
 	/// <summary>
 	/// ゲームウィンドウの作成
 	/// <param name="title">ウィンドウタイトル</param>
@@ -34,14 +37,24 @@ public:
 public:
 	void SetMSG(MSG* msg);
 
-public:
 	bool GetCanLoop();
 	bool GetIsWindowQuit();
+	bool GetIsDroppedFiles() const;
+	std::vector<std::string>* GetDroppedFiles() ;
 	HWND GetHWND();
+
+private:
+	void OnFileDropped(const wchar_t* filePath);
 
 private:
 	WNDCLASS wc{};
 	HWND hwnd;
 	MSG* msg_;
+
+#ifdef _DEBUG
+private:
+	std::vector<std::string> droppedFiles_;
+	static WinApp* gWinApp_;
+#endif // _DEBUG
 };
 

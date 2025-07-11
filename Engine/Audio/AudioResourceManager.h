@@ -24,6 +24,7 @@ public:
 	/// <param name="fileName">FileName</param>
 	/// <returns></returns>
 	bool LoadAudioResource(const std::string& filePath , const std::string& fileName);
+	bool LoadAudioResource(const std::string& filePath);
 	/// <summary>
 	/// 音声データの管理番号を取得します
 	/// </summary>

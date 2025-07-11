@@ -31,7 +31,10 @@ EngineCore::EngineCore() {
 	systemSpundVolume_ = lunchConfig_.at("SystemSoundVolume").get<float>();
 
 	isDrawLunchConfigWindow_ = false;
-	isDrawPostprocessDebugWindow_ = false;
+
+	isDrawDebugLogWindow_ = true;
+	isDrawTextureDebugWindow_ = true;
+
 #endif // _DEBUG
 
 	loopStopper_.Initialize();
@@ -118,6 +121,22 @@ void EngineCore::Update() {
 	systemTimer_.StartTimer();
 	DebugLog("==========Starting Update==========");
 #endif // _DEBUG
+
+	// ファイルをドロップした場合の処理
+	if (winApp_.GetIsDroppedFiles()) {
+		DebugLog(std::format("Dropped FilePath: {}",winApp_.GetDroppedFiles()->at(0)));
+		FileExtension fileExt = GetFileExtension(winApp_.GetDroppedFiles()->at(0));
+
+		if (fileExt == FileExtension_PNG) {
+			textureManager_.LoadTexture(winApp_.GetDroppedFiles()->at(0));
+		}
+
+		if (fileExt == FileExtension_MP3 || fileExt == FileExtension_WAV) {
+			audioResourceManager_.LoadAudioResource(winApp_.GetDroppedFiles()->at(0));
+		}
+
+		winApp_.GetDroppedFiles()->clear();
+	}
 
 	// エンジンの更新処理
 	imGuiManager_.BeginFrame();
@@ -285,11 +304,15 @@ void EngineCore::DrawEngineMenu() {
 	if (ImGui::BeginMainMenuBar()) {
 		// 編集機能
 		if (ImGui::BeginMenu("Edit")) {
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+
 			// 起動構成
 			if (ImGui::Button("Lunch Config")) {
 				chiptune_.PlayMainSquareWave(GermanNote::A, 4, 0.1f, systemSpundVolume_);
 				isDrawLunchConfigWindow_ = true;
 			}
+
+			ImGui::PopStyleColor();
 			ImGui::EndMenu();
 		}
 
@@ -300,6 +323,8 @@ void EngineCore::DrawEngineMenu() {
 				ImGui::Checkbox("FPS", &isDrawFpsDebugWindow_);
 				ImGui::Checkbox("PERFOFMANCE", &isDrawPerformanceDebugWindow_);
 				ImGui::Checkbox("MEMORY", &isDrawMemoryDebugWindow_);
+				ImGui::Checkbox("DEBUGLOG", &isDrawDebugLogWindow_);
+				ImGui::Checkbox("TEXTURE", &isDrawTextureDebugWindow_);
 				ImGui::TreePop();
 			}
 			// 音声
@@ -372,6 +397,7 @@ void EngineCore::DrawEngineMenu() {
 
 	//* Editタブ *//
 	if (isDrawLunchConfigWindow_) {
+		// 起動時構成
 		ImGui::Begin("LunchConfig", &isDrawLunchConfigWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 		if (ImGui::Button("Save")) {
 			chiptune_.PlayMainSquareWave(GermanNote::A, 4, 0.1f, systemSpundVolume_);
@@ -498,6 +524,19 @@ void EngineCore::DrawEngineMenu() {
 	if (isDrawPostprocessDebugWindow_) {
 		ImGui::Begin("POSTPROCESS", &isDrawPostprocessDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 		postprocess_.DrawImGui();
+		ImGui::End();
+	}
+	// デバッグログウィンドウ
+	if (isDrawDebugLogWindow_) {
+		ImGui::Begin("DEBUGLOG", &isDrawDebugLogWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		for (const std::string& log : *(MyDebugLog::GetInstatnce()->GetLog())) {
+			ImGui::Text("%s", log.c_str());
+		}
+		ImGui::End();
+	}
+	if (isDrawTextureDebugWindow_) {
+		ImGui::Begin("TEXTURE", &isDrawTextureDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		textureManager_.DrawImGui();
 		ImGui::End();
 	}
 

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <chrono>
 #include <source_location>
+#include <vector>
 
 class MyDebugLog final {
 public:
@@ -11,14 +12,17 @@ public:
 	static MyDebugLog* GetInstatnce();
 
 public:
-
 	void Initialize();
 	void Finalize();
 	void Log(const std::string& message, const std::source_location& location = std::source_location::current());
 
+public:
+	std::vector<std::string>* GetLog();
+
 private:
 	std::ofstream logStream_;
 	std::string logFilePath_;
+	std::vector<std::string> log_;
 
 private: // シングルトン用
 	MyDebugLog() = default;

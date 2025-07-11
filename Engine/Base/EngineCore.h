@@ -46,6 +46,7 @@
 #include "Math/TransformationMatrix.h"
 #include "Utility/MyGameMath.h"
 #include "Utility/MyEasing.h"
+
 // Object
 #include "Object/DirectionalLight.h"
 #include "Object/Material.h"
@@ -71,6 +72,7 @@
 
 // ファイル操作
 #include "../Utility/FileLoader.h"
+#include "Utility/FileExtension.h"
 
 // String
 #include "String/StringLiblary.h"
@@ -200,5 +202,7 @@ private:// デバッグ用一時変数
 	bool isDrawAudioSourceDebugWindow_;
 	bool isDrawAudioDataDebugWindow_;
 	bool isDrawPostprocessDebugWindow_;
+	bool isDrawDebugLogWindow_;
+	bool isDrawTextureDebugWindow_;
 #endif // _DEBUG
 };

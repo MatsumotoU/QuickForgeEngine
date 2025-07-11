@@ -57,6 +57,11 @@ public:
 public:
 	int32_t LoadTexture(const std::string& filePath);
 
+#ifdef _DEBUG
+public:
+	void DrawImGui();
+#endif // _DEBUG
+
 public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index);
 	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index);
@@ -79,4 +84,9 @@ private:// メンバ変数
 	std::vector<DirectX::ScratchImage> scratchImages_;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
 	StringLiblary filePathLiblary_;
+
+#ifdef _DEBUG
+	int debugTextureIndex_;
+#endif // _DEBUG
+
 };
