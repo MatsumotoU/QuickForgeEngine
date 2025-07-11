@@ -32,9 +32,18 @@ void MyDebugLog::Log(const std::string& message, const std::source_location& loc
 
 	std::string funcName = location.function_name();
 
+	log_.push_back("[" + timeStamp + "] " + message);
+	if (log_.size() > 300) {
+		log_.erase(log_.begin());
+	}
+
 	logStream_ << "[" +  timeStamp + "] " + funcName+": " + message << std::endl;
 	std::string logMessage = message + "\n";
 	OutputDebugStringA(logMessage.c_str());
+}
+
+std::vector<std::string>* MyDebugLog::GetLog() {
+	return &log_;
 }
 
 void DebugLog(const std::string& message, const std::source_location& location) {

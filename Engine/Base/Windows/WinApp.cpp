@@ -1,9 +1,21 @@
 #include "WinApp.h"
 
 #ifdef _DEBUG
+WinApp* WinApp::gWinApp_ = nullptr;
+
 #include "../../../externals/imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+#include "Base/MyString.h"
 #endif // _DEBUG
+
+WinApp::WinApp() {
+#ifdef _DEBUG
+	droppedFiles_.clear();
+	assert(gWinApp_ == nullptr);
+	gWinApp_ = this;
+#endif // _DEBUG
+}
 
 LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
@@ -13,9 +25,24 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	}
 #endif // _DEBUG
 
-
 	// メッセージに応じてゲーム固有の処理を行う
 	switch (msg) {
+
+#ifdef _DEBUG
+		// ウィンドウに対して、ドラッグ＆ドロップされたファイルがある場合
+	case WM_DROPFILES: {
+		HDROP hDrop = (HDROP)wparam;
+		UINT fileCount = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
+		for (UINT i = 0; i < fileCount; ++i) {
+			wchar_t filePath[MAX_PATH];
+			DragQueryFile(hDrop, i, filePath, MAX_PATH);
+			gWinApp_->OnFileDropped(filePath);
+		}
+		DragFinish(hDrop);
+		return 0;
+	}
+#endif // _DEBUG
+
 	// ウィンドウが破棄された
 	case WM_DESTROY:
 		// OSに対して、アプリの終了を伝える
@@ -64,6 +91,12 @@ void WinApp::CreateGameWindow(const LPCWSTR& windowName,int32_t clientWidth, int
 	);
 
 	ShowWindow(hwnd, SW_SHOW);
+	
+#ifdef _DEBUG
+	// ウィンドウに対して、ドラッグ＆ドロップを有効にする
+	DragAcceptFiles(hwnd, TRUE);
+#endif // _DEBUG
+
 }
 
 void WinApp::SetMSG(MSG* msg) {
@@ -88,4 +121,27 @@ bool WinApp::GetIsWindowQuit() {
 
 HWND WinApp::GetHWND() {
 	return hwnd;
+}
+
+bool WinApp::GetIsDroppedFiles() const {
+#ifdef _DEBUG
+	if (droppedFiles_.size() > 0) {
+		return true;
+	}
+#endif // _DEBUG
+	
+	return false;
+}
+#ifdef _DEBUG
+std::vector<std::string>* WinApp::GetDroppedFiles() {
+	return &droppedFiles_;
+}
+#endif // _DEBUG
+
+
+void WinApp::OnFileDropped(const wchar_t* filePath) {
+	filePath;
+#ifdef _DEBUG
+	droppedFiles_.push_back(ConvertString(filePath));
+#endif // _DEBUG
 }

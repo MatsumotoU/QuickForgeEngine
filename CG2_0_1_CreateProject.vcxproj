@@ -295,6 +295,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Sprite\FullScreenSprite.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\String\StringLiblary.cpp" />
+    <ClCompile Include="Engine\Utility\FileExtension.cpp" />
     <ClCompile Include="Engine\Utility\FileLoader.cpp" />
     <ClCompile Include="Engine\Utility\MyEasing.cpp" />
     <ClCompile Include="Engine\Utility\MyGameMath.cpp" />
@@ -413,9 +414,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Sprite\FullScreenSprite.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />
+    <ClInclude Include="Engine\Utility\FileExtension.h" />
     <ClInclude Include="Engine\String\FontDrawer.h" />
     <ClInclude Include="Engine\String\StringLiblary.h" />
     <ClInclude Include="Engine\Utility\FileLoader.h" />
+    <ClInclude Include="Engine\Utility\IntrusiveList.h" />
     <ClInclude Include="Engine\Utility\MyEasing.h" />
     <ClInclude Include="Engine\Utility\MyGameMath.h" />
     <ClInclude Include="Engine\Utility\SimpleJson.h" />
