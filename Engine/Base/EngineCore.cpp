@@ -17,6 +17,7 @@ EngineCore::EngineCore() {
 	lunchConfig_.emplace("AudioSourceDB", false);
 	lunchConfig_.emplace("AudioDataDB", false);
 	lunchConfig_.emplace("MemoryDB", false);
+	lunchConfig_.emplace("PostprocessDB", false);
 
 	lunchConfig_.emplace("SystemSoundVolume", 0.3f);
 
@@ -25,6 +26,7 @@ EngineCore::EngineCore() {
 	isDrawAudioSourceDebugWindow_ = lunchConfig_.at("AudioSourceDB").get<bool>();
 	isDrawAudioDataDebugWindow_ = lunchConfig_.at("AudioDataDB").get<bool>();
 	isDrawMemoryDebugWindow_ = lunchConfig_.at("MemoryDB").get<bool>();
+	isDrawPostprocessDebugWindow_ = lunchConfig_.at("PostprocessDB").get<bool>();
 
 	systemSpundVolume_ = lunchConfig_.at("SystemSoundVolume").get<float>();
 
@@ -154,14 +156,15 @@ void EngineCore::PreDraw() {
 }
 
 void EngineCore::PostDraw() {
-#ifdef _DEBUG
-	DrawEngineMenu();
-#endif // _DEBUG
 
 	graphRenderer_.PostDraw();
 
 	// 深度の設定
 	postprocess_.PostDraw();
+
+#ifdef _DEBUG
+	DrawEngineMenu();
+#endif // _DEBUG
 
 	textureManager_.PostDraw();
 	imGuiManager_.EndFrame();
@@ -339,8 +342,33 @@ void EngineCore::DrawEngineMenu() {
 		ImGui::EndMainMenuBar();
 	}
 
+	// DockSpaceの作成
+	ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+	ImGui::DockSpaceOverViewport(dockspace_id,ImGui::GetMainViewport(), ImGuiDockNodeFlags_None);
+
 	// 場所が分かるようにアウトラインを出す
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+	// * Sceneタブ * //
+	ImGui::Begin("Scene Viewer");
+
+	// アスペクト比保持
+	ImVec2 avail = ImGui::GetContentRegionAvail();
+	float aspect = 19.0f / 9.0f;
+	// 幅・高さを計算
+	float w = avail.x;
+	float h = w / aspect;
+	if (h > avail.y) {
+		h = avail.y;
+		w = h * aspect;
+	}
+	ImVec2 imageSize(w, h);
+
+	ImGui::Image(
+		reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr), // SRVのGPUハンドル
+		imageSize
+	);
+	ImGui::End();
 
 	//* Editタブ *//
 	if (isDrawLunchConfigWindow_) {
@@ -389,6 +417,15 @@ void EngineCore::DrawEngineMenu() {
 					}
 					ImGui::SameLine();
 					ImGui::Text("%s", lunchConfig_.at("AudioSourceDB").get<bool>() ? "True" : "False");
+					ImGui::TreePop();
+				}
+				// 描画系
+				if (ImGui::TreeNode("Rendering")) {
+					if (ImGui::Button("POSTEFFECT")) {
+						lunchConfig_.at("PostprocessDB") = !lunchConfig_.at("PostprocessDB").get<bool>();
+					}
+					ImGui::SameLine();
+					ImGui::Text("%s", lunchConfig_.at("PostprocessDB").get<bool>() ? "True" : "False");
 					ImGui::TreePop();
 				}
 				ImGui::TreePop();

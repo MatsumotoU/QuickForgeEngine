@@ -8,5 +8,5 @@ void SkyDome::Initialize(EngineCore* engineCore) {
 }
 
 void SkyDome::Draw(Camera* camera) {
-	model_.Draw(transform_, camera);
+	model_.Draw( camera);
 }

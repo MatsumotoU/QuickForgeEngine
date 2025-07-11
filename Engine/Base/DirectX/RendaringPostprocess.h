@@ -30,6 +30,9 @@ public:// debug機能
 	void DrawImGui();
 #endif // _DEBUG
 
+public:
+	D3D12_GPU_DESCRIPTOR_HANDLE GetOffscreenSrvHandleGPU();
+
 private:
 	void ClearFirstRenderTarget();
 	void ClearSecondRenderTarget();
@@ -40,6 +43,7 @@ private:
 
 public:// パブリック変数
 	bool isPostprocess_;
+	bool isImGuiEnabled_;
 
 	bool enableGrayscale_;
 	bool enableVignette_;

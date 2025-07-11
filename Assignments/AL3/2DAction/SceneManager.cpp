@@ -41,9 +41,4 @@ void SceneManager::Draw() {
 	if (scene->GetReqesytedExit() || fade_.isFading()) {
 		fade_.Draw();
 	}
-
-	ImGui::Begin("FPS");
-	ImGui::Text("fps = %f", engineCore_->GetFpsCounter()->GetFps());
-	ImGui::Text("averageFps = %f", engineCore_->GetFpsCounter()->GetAverageFps());
-	ImGui::End();
 }

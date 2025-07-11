@@ -1,4 +1,6 @@
 #pragma once
+#define IMGUI_ENEBLE_VIEWPORTS
+#define IMGUI_HAS_DOCK
 // 基本機能
 #include "../../../externals/imgui/imgui.h"
 #include "../../../externals/imgui/imgui_impl_dx12.h"

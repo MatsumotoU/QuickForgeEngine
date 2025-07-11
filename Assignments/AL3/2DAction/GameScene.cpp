@@ -11,7 +11,7 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 #ifdef _DEBUG
-	debugCamera_.Initialize(engineCore_->GetWinApp(), engineCore_->GetInputManager());
+	debugCamera_.Initialize(engineCore_);
 	debugCamera_.camera_.transform_.translate.z = -30.0f;
 #endif // _DEBUG
 	camera.Initialize(engineCore_->GetWinApp());

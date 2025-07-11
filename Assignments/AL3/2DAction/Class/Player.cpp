@@ -144,6 +144,9 @@ void Player::Update() {
 	ImGui::Text("center %f", (map_->GetMapChipPositionByIndex(xIndex, yIndex) - transform_.translate).Length());
 	ImGui::Text("right %f", (map_->GetMapChipPositionByIndex(xIndex + 1, yIndex) - transform_.translate).Length());
 	ImGui::Text("left %f", (map_->GetMapChipPositionByIndex(xIndex - 1, yIndex) - transform_.translate).Length());
+
+	model_.transform_ = transform_;
+	model_.Update();
 }
 
 void Player::Draw(Camera* camera) {
@@ -162,7 +165,7 @@ void Player::Draw(Camera* camera) {
 	ImGui::Text("Deltatime:%f", engineCore_->GetDeltaTime());
 	ImGui::End();
 
-	model_.Draw(transform_,camera);
+	model_.Draw(camera);
 }
 
 bool Player::GetIsActive() {
