@@ -31,12 +31,17 @@ void DeathParticle::Update() {
 	if (emmitFrame_ <= 0) {
 		isActive_ = false;
 	}
+
+	for (int i = 0; i < kParticles; ++i) {
+		model_[i].transform_ = particleTransform[i];
+		model_[i].Update();
+	}
 }
 
 void DeathParticle::Draw(Camera* camera) {
 	if (isActive_) {
 		for (int i = 0; i < kParticles; ++i) {
-			model_[i].Draw(particleTransform[i], camera);
+			model_[i].Draw(camera);
 		}
 	}
 }

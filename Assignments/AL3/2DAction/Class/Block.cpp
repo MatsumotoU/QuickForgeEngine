@@ -7,6 +7,11 @@ void Block::Initialize(EngineCore* engineCore) {
 	model_.material_.materialData_->enableLighting = false;
 }
 
+void Block::Update() {
+	model_.transform_ = transform_;
+	model_.Update();
+}
+
 void Block::Draw(Camera* camera) {
-	model_.Draw(transform_, camera);
+	model_.Draw(camera);
 }

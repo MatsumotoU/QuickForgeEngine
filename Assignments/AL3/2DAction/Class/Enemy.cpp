@@ -17,8 +17,11 @@ void Enemy::Update() {
 	transform_.rotate.z = sinf(frameCount_ * 0.2f) * 0.5f;
 
 	transform_.translate.x -= engineCore_->GetDeltaTime();
+
+	model_.transform_ = transform_;
+	model_.Update();
 }
 
 void Enemy::Draw(Camera* camera) {
-	model_.Draw(transform_, camera);
+	model_.Draw(camera);
 }

@@ -21,6 +21,7 @@ void MapChip::Initialize(EngineCore* engineCore) {
 				blocks_.push_back(Block());
 				blocks_.back().Initialize(engineCore_);
 				blocks_.back().transform_.translate = GetMapChipPositionByIndex(x, y);
+				blocks_.back().Update();
 			}
 		}
 	}

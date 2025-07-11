@@ -3,6 +3,7 @@
 class Block {
 public:
 	void Initialize(EngineCore* engineCore);
+	void Update();
 	void Draw(Camera* camera);
 	Transform transform_;
 	

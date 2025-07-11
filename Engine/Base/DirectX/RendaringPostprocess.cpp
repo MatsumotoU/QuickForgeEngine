@@ -7,6 +7,11 @@
 
 
 RendaringPostprosecess::RendaringPostprosecess() {
+	isImGuiEnabled_ = false;
+#ifdef _DEBUG
+	isImGuiEnabled_ = true; // デバッグモードではImGuiを有効にする
+#endif // _DEBUG
+
 	isPostprocess_ = true;
 	engineCore_ = nullptr;
 
@@ -137,7 +142,9 @@ void RendaringPostprosecess::PreDraw() {
 
 	// 描画先の設定
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = engineCore_->GetGraphicsCommon()->GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	if (isPostprocess_) {
+
+	// ImGuiのレンダリング用に絶対にバックバッファに描画する必要があるので残す
+	if (isPostprocess_ || isImGuiEnabled_) {
 		// オフスクリーンに描画
 		renderingRosourceIndex_ = 0;
 		dxCommon->GetCommandList()->OMSetRenderTargets(1, dxCommon->GetOffscreenRtvHandles(renderingRosourceIndex_), false, &dsvHandl);
@@ -168,10 +175,14 @@ void RendaringPostprosecess::PostDraw() {
 
 	// ポストプロセスの適用
 	readingResourceIndex_ = postProcessCount_ % 2;
+
 	// バックバッファに書き込み
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = engineCore_->GetGraphicsCommon()->GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
 	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandList();
 	commandList->OMSetRenderTargets(1, dxCommon->GetRtvHandles(), false, &dsvHandl);
+	if (isImGuiEnabled_) {
+		return;
+	}
 	commandList->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	commandList->SetGraphicsRootSignature(engineCore_->GetGraphicsCommon()->GetNormalPso()->GetRootSignature());
 	commandList->SetPipelineState(engineCore_->GetGraphicsCommon()->GetNormalPso()->GetPipelineState());
@@ -209,6 +220,10 @@ void RendaringPostprosecess::DrawImGui() {
 	}
 }
 #endif
+
+D3D12_GPU_DESCRIPTOR_HANDLE RendaringPostprosecess::GetOffscreenSrvHandleGPU() {
+	return engineCore_->GetTextureManager()->GetOffscreenSrvHandleGPU(readingResourceIndex_);
+}
 
 void RendaringPostprosecess::ClearFirstRenderTarget() {
 	DirectXCommon* dxCommon = engineCore_->GetDirectXCommon();

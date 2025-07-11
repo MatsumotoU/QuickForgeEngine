@@ -1,8 +1,9 @@
 {
-    "AudioDataDB": false,
-    "AudioSourceDB": false,
-    "FpsDB": false,
-    "MemoryDB": false,
-    "PerformanceDB": false,
+    "AudioDataDB": true,
+    "AudioSourceDB": true,
+    "FpsDB": true,
+    "MemoryDB": true,
+    "PerformanceDB": true,
+    "PostprocessDB": true,
     "SystemSoundVolume": 0.30000001192092896
 }

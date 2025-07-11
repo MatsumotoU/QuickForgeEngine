@@ -45,6 +45,8 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon, ID3D12Des
 		srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart());
 
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 	// ImPlotの初期化
 	ImPlot::CreateContext();
 }
