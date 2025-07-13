@@ -55,6 +55,13 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 	normalRootParameter_.CheckIntegrityData();
 #endif // _DEBUG
 
+	// インプットレイアウトの初期化
+	InputLayout normalInputLayout;
+	normalInputLayout.CreateNormalPresetInputLayout();
+
+	InputLayout primitiveInputLayout;
+	primitiveInputLayout.CreatePrimitivePresetInputLayout();
+
 	// PSOを作成
 	for (int i = 0; i < kCountOfBlendMode; i++) {
 		// 初期化
@@ -65,38 +72,38 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 		primitivePso_[i].Initialize(engineCore);
 
 		trianglePso_[i].CreatePipelineStateObject(
-			normalGameObjectRootParameter_, &depthStencil_,
+			normalGameObjectRootParameter_, &depthStencil_, normalInputLayout,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Object3d.PS.hlsl", "Object3d.VS.hlsl", static_cast<BlendMode>(i),false);
 
 		linePso_[i].CreatePipelineStateObject(
-			primitiveRootParameter_, &depthStencil_,
-			D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Object3d.VS.hlsl", static_cast<BlendMode>(i),true);
+			primitiveRootParameter_, &depthStencil_, primitiveInputLayout,
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Primitive.VS.hlsl", static_cast<BlendMode>(i),true);
 
 		pointPso_[i].CreatePipelineStateObject(
-			primitiveRootParameter_, &depthStencil_,
-			D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Object3d.VS.hlsl", static_cast<BlendMode>(i),true);
+			primitiveRootParameter_, &depthStencil_, primitiveInputLayout,
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Primitive.VS.hlsl", static_cast<BlendMode>(i),true);
 
 		primitivePso_[i].CreatePipelineStateObject(
-			primitiveRootParameter_,&depthStencil_,
-			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Object3d.VS.hlsl", static_cast<BlendMode>(i),true);
+			primitiveRootParameter_,&depthStencil_, primitiveInputLayout,
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Primitive.VS.hlsl", static_cast<BlendMode>(i),true);
 
 		particlePso_[i].CreatePipelineStateObject(
-			particleRootParameter_, &depthStencil_,
+			particleRootParameter_, &depthStencil_, normalInputLayout,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Particle.PS.hlsl", "Particle.VS.hlsl", static_cast<BlendMode>(i),false);
 	}
 	
 	grayScaleTrianglePso_.Initialize(engineCore);
 	grayScaleTrianglePso_.CreatePipelineStateObject(
-		grayScaleRootParameter_, &depthStencil_,
+		grayScaleRootParameter_, &depthStencil_, normalInputLayout,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "GrayscaleShader.hlsl","Simple.VS.hlsl", kBlendModeNormal, false);
 
 	vignettePso_.Initialize(engineCore);
 	vignettePso_.CreatePipelineStateObject(
-		vignetteRootParameter_, &depthStencil_,
+		vignetteRootParameter_, &depthStencil_, normalInputLayout,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "VignetteShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	normalPso_.Initialize(engineCore);
 	normalPso_.CreatePipelineStateObject(
-		grayScaleRootParameter_, &depthStencil_,
+		grayScaleRootParameter_, &depthStencil_, normalInputLayout,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Simple.PS.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 }

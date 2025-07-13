@@ -14,7 +14,7 @@ void PipelineStateObject::Initialize(EngineCore* engineCore) {
 }
 
 void PipelineStateObject::CreatePipelineStateObject(
-	RootParameter rootParameter,DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType, 
+	RootParameter rootParameter,DepthStencil* depthStencil, InputLayout inputLayout, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
 	D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack) {
 	HRESULT hr{};
 
@@ -49,13 +49,6 @@ void PipelineStateObject::CreatePipelineStateObject(
 		signatureBlob_.Get()->GetBufferPointer(), signatureBlob_.Get()->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr));
-
-	// InputLayout
-	InputLayout inputLayout;
-	inputLayout.Initialize();
-	inputLayout.CreateInputElementDesc("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
-	inputLayout.CreateInputElementDesc("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
-	inputLayout.CreateInputElementDesc("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
 
 	// BlendState
 	D3D12_BLEND_DESC blendDesc{};

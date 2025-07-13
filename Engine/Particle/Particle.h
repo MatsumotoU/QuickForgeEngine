@@ -17,7 +17,7 @@ public:
 public:
 	void Initialize(EngineCore* engineCore, uint32_t totalParticles);
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
-	void Draw(std::vector<Transform>* transform, Camera* camera);
+	void Draw(std::vector<Transform>* transform, std::vector<Vector4>* color, Camera* camera);
 
 private:
 	MaterialResource material_;

@@ -9,33 +9,33 @@ void GraphRenderer::Initialize(EngineCore* engineCore) {
 	pointPso_ = engineCore->GetGraphicsCommon()->GetPointPso(kBlendModeNormal);
 
 	// 三角形の頂点リソースを作成
-	triangleVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * 3 * kGraphRendererMaxTriangleCount);
+	triangleVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
 	triangleVertexBufferView_ = {};
 	triangleVertexBufferView_.BufferLocation = triangleVertexResource_->GetGPUVirtualAddress();
-	triangleVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * 3 * kGraphRendererMaxTriangleCount);
-	triangleVertexBufferView_.StrideInBytes = sizeof(VertexData);
+	triangleVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
+	triangleVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
 	triangleVertexData_ = nullptr;
 	triangleVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&triangleVertexData_));
 	// 線の頂点リソースを作成
-	lineVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * 2 * kGraphRendererMaxLineCount);
+	lineVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
 	lineVertexBufferView_ = {};
 	lineVertexBufferView_.BufferLocation = lineVertexResource_->GetGPUVirtualAddress();
-	lineVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * 2 * kGraphRendererMaxLineCount);
-	lineVertexBufferView_.StrideInBytes = sizeof(VertexData);
+	lineVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
+	lineVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
 	lineVertexData_ = nullptr;
 	lineVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&lineVertexData_));
 	// 点の頂点リソースを作成
-	pointVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * kGraphRendererMaxPointCount);
+	pointVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
 	pointVertexBufferView_ = {};
 	pointVertexBufferView_.BufferLocation = pointVertexResource_->GetGPUVirtualAddress();
-	pointVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * kGraphRendererMaxPointCount);
-	pointVertexBufferView_.StrideInBytes = sizeof(VertexData);
+	pointVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
+	pointVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
 	pointVertexData_ = nullptr;
 	pointVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointVertexData_));
 
 	wvpResource_.Initialize(engineCore_->GetDirectXCommon(), 1);
 	materialResource_.Initialize(engineCore_->GetDirectXCommon());
-	materialResource_.materialData_->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	materialResource_.materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void GraphRenderer::PreDraw() {
@@ -46,17 +46,17 @@ void GraphRenderer::PreDraw() {
 	// 頂点リソースをクリア
 	for (uint32_t i = 0; i < kGraphRendererMaxTriangleCount; i++) {
 		triangleVertexData_[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-		triangleVertexData_[i].normal = Vector3(0.0f, 0.0f, -1.0f);
+		triangleVertexData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		triangleVertexData_[i].texcoord = Vector2(0.0f, 0.0f);
 	}
 	for (uint32_t i = 0; i < kGraphRendererMaxLineCount; i++) {
 		lineVertexData_[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-		lineVertexData_[i].normal = Vector3(0.0f, 0.0f, -1.0f);
+		lineVertexData_[i].color = Vector4(1.0f, 1.0f, 1.0f,1.0f);
 		lineVertexData_[i].texcoord = Vector2(0.0f, 0.0f);
 	}
 	for (uint32_t i = 0; i < kGraphRendererMaxPointCount; i++) {
 		pointVertexData_[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-		pointVertexData_[i].normal = Vector3(0.0f, 0.0f, -1.0f);
+		pointVertexData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		pointVertexData_[i].texcoord = Vector2(0.0f, 0.0f);
 	}
 
@@ -112,7 +112,7 @@ void GraphRenderer::PostDraw() {
 
 }
 
-void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3) {
+void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color) {
 	if (triangleCount_ >= kGraphRendererMaxTriangleCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
@@ -125,37 +125,36 @@ void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3)
 
 	// 頂点データを設定
 	triangleVertexData_[triangleCount_ * 3 + 0].position = p0;
-	triangleVertexData_[triangleCount_ * 3 + 0].normal = normalZ;
+	triangleVertexData_[triangleCount_ * 3 + 0].color = color;
 	triangleVertexData_[triangleCount_ * 3 + 0].texcoord = Vector2(0.0f, 0.0f);
 	triangleVertexData_[triangleCount_ * 3 + 1].position = p1;
-	triangleVertexData_[triangleCount_ * 3 + 1].normal = normalZ;
+	triangleVertexData_[triangleCount_ * 3 + 1].color = color;
 	triangleVertexData_[triangleCount_ * 3 + 1].texcoord = Vector2(0.0f, 0.0f);
 	triangleVertexData_[triangleCount_ * 3 + 2].position = p2;
-	triangleVertexData_[triangleCount_ * 3 + 2].normal = normalZ;
+	triangleVertexData_[triangleCount_ * 3 + 2].color = color;
 	triangleVertexData_[triangleCount_ * 3 + 2].texcoord = Vector2(0.0f, 0.0f);
 	triangleCount_++;
 	return;
 }
 
-void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2) {
+void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& color) {
 	if (lineCount_ >= kGraphRendererMaxLineCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
 	Vector4 p0 = Vector4(point1.x, point1.y, point1.z, 1.0f);
 	Vector4 p1 = Vector4(point2.x, point2.y, point2.z, 1.0f);
-	Vector3 normalZ = { 0.0f, 0.0f, 1.0f };
 	// 頂点データを設定
 	lineVertexData_[lineCount_ * 2 + 0].position = p0;
-	lineVertexData_[lineCount_ * 2 + 0].normal = normalZ;
+	lineVertexData_[lineCount_ * 2 + 0].color = color;
 	lineVertexData_[lineCount_ * 2 + 0].texcoord = Vector2(0.0f, 0.0f);
 	lineVertexData_[lineCount_ * 2 + 1].position = p1;
-	lineVertexData_[lineCount_ * 2 + 1].normal = normalZ;
+	lineVertexData_[lineCount_ * 2 + 1].color = color;
 	lineVertexData_[lineCount_ * 2 + 1].texcoord = Vector2(0.0f, 0.0f);
 	lineCount_++;
 	return;
 }
 
-void GraphRenderer::DrawPoint(Vector3 point) {
+void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
 	if (pointCount_ >= kGraphRendererMaxPointCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
@@ -163,7 +162,7 @@ void GraphRenderer::DrawPoint(Vector3 point) {
 	Vector3 normalZ = { 0.0f, 0.0f, 1.0f };
 	// 頂点データを設定
 	pointVertexData_[pointCount_].position = p;
-	pointVertexData_[pointCount_].normal = normalZ;
+	pointVertexData_[pointCount_].color = color;
 	pointVertexData_[pointCount_].texcoord = Vector2(0.0f, 0.0f);
 	pointCount_++;
 	return;
@@ -178,15 +177,50 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 	}
 	
 	float halfSize = size / 2.0f;
+	Vector4 color = { 0.5f,0.5f,0.5f, 1.0f };
 	for (int32_t i = 0; i <= gridCount; i++) {
+		float t = static_cast<float>(i) / gridCount;
+		float x = -halfSize + t * size;
+		float z = -halfSize + t * size;
+
+		float colorXt = (x + halfSize) / size;
+		float colorZt = (z + halfSize) / size;
+
+		if (i % 10 == 0) {
+			color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		} else {
+			color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 0.5f), Vector4(1.0f, 0.3f, 0.3f, 1.0f), colorXt);
+		}
+
 		// 横線
-		DrawLine(
-			Vector3(-halfSize + (static_cast<float>(i) * size / gridCount), 0.0f, -halfSize),
-			Vector3(-halfSize + (static_cast<float>(i) * size / gridCount), 0.0f, halfSize));
-		// 縦線
-		DrawLine(
-			Vector3(-halfSize, 0.0f, -halfSize + (static_cast<float>(i) * size / gridCount)),
-			Vector3(halfSize, 0.0f, -halfSize + (static_cast<float>(i) * size / gridCount)));
+		if (x == 0.0f) {
+			DrawLine(
+				Vector3(x, 0.0f, -halfSize),
+				Vector3(x, 0.0f, halfSize), Vector4(0.0f,0.0f,1.0f,1.0f));
+		} else {
+			DrawLine(
+				Vector3(x, 0.0f, -halfSize),
+				Vector3(x, 0.0f, halfSize), color);
+		}
+		
+		if (i % 10 == 0) {
+			color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		} else {
+			color = color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 0.5f), Vector4(0.3f, 0.3f, 1.0f, 1.0f), colorZt);
+		}
+
+		if (z == 0.0f) {
+			// 縦線
+			DrawLine(
+				Vector3(-halfSize, 0.0f, z),
+				Vector3(halfSize, 0.0f, z), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+		} else {
+			// 縦線
+			DrawLine(
+				Vector3(-halfSize, 0.0f, z),
+				Vector3(halfSize, 0.0f, z), color);
+		}
+		
 	}
 }
 

@@ -11,7 +11,14 @@ public:
 	/// 初期化
 	/// </summary>
 	void Initialize();
-
+	/// <summary>
+	/// POSITION, TEXCOORD, NORMALのInputLayoutを生成します
+	/// </summary>
+	void CreateNormalPresetInputLayout();
+	/// <summary>
+	/// 
+	/// </summary>
+	void CreatePrimitivePresetInputLayout();
 	/// <summary>
 	/// InputElementDescを生成します
 	/// </summary>

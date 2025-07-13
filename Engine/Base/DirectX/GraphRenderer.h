@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
-#include "../../Math/VertexData.h"
+#include "Math/PrimitiveVertexData.h"
 
 #include "Base/DirectX/MaterialResource.h"
 #include "Base/DirectX/WVPResource.h"
@@ -35,15 +35,15 @@ public:// 描画関数
 	/// <summary>
 	/// 三角形を描画します(-1.0 ~ 1.0)
 	/// </summary>
-	void DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3);
+	void DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color);
 	/// <summary>
 	/// 線分を描画します(-1.0 ~ 1.0)
 	/// </summary>
-	void DrawLine(Vector3 point1, Vector3 point2);
+	void DrawLine(Vector3 point1, Vector3 point2,const Vector4& color);
 	/// <summary>
 	/// 点を描画します(-1.0 ~ 1.0)
 	/// </summary>
-	void DrawPoint(Vector3 point);
+	void DrawPoint(Vector3 point, const Vector4& color);
 	/// <summary>
 	/// 
 	/// </summary>
@@ -65,15 +65,15 @@ private:
 
 private:
 	// 三角形の頂点データ
-	VertexData* triangleVertexData_;
+	PrimitiveVertexData* triangleVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> triangleVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW triangleVertexBufferView_;
 	// 線の頂点データ
-	VertexData* lineVertexData_;
+	PrimitiveVertexData* lineVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> lineVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW lineVertexBufferView_;
 	// 点の頂点データ
-	VertexData* pointVertexData_;
+	PrimitiveVertexData* pointVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW pointVertexBufferView_;
 
