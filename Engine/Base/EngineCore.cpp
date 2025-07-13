@@ -123,8 +123,9 @@ void EngineCore::Update() {
 #endif // _DEBUG
 
 	// ファイルをドロップした場合の処理
+#ifdef _DEBUG
 	if (winApp_.GetIsDroppedFiles()) {
-		DebugLog(std::format("Dropped FilePath: {}",winApp_.GetDroppedFiles()->at(0)));
+		DebugLog(std::format("Dropped FilePath: {}", winApp_.GetDroppedFiles()->at(0)));
 		FileExtension fileExt = GetFileExtension(winApp_.GetDroppedFiles()->at(0));
 
 		if (fileExt == FileExtension_PNG) {
@@ -137,6 +138,7 @@ void EngineCore::Update() {
 
 		winApp_.GetDroppedFiles()->clear();
 	}
+#endif // _DEBUG
 
 	// エンジンの更新処理
 	imGuiManager_.BeginFrame();

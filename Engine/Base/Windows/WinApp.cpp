@@ -118,30 +118,29 @@ bool WinApp::GetIsWindowQuit() {
 	}
 	return false;
 }
-
-HWND WinApp::GetHWND() {
-	return hwnd;
-}
-
-bool WinApp::GetIsDroppedFiles() const {
 #ifdef _DEBUG
+bool WinApp::GetIsDroppedFiles() const {
 	if (droppedFiles_.size() > 0) {
 		return true;
 	}
-#endif // _DEBUG
-	
+
 	return false;
 }
-#ifdef _DEBUG
+
 std::vector<std::string>* WinApp::GetDroppedFiles() {
 	return &droppedFiles_;
 }
 #endif // _DEBUG
 
 
-void WinApp::OnFileDropped(const wchar_t* filePath) {
-	filePath;
-#ifdef _DEBUG
-	droppedFiles_.push_back(ConvertString(filePath));
-#endif // _DEBUG
+
+HWND WinApp::GetHWND() {
+	return hwnd;
 }
+
+#ifdef _DEBUG
+void WinApp::OnFileDropped(const wchar_t* filePath) {
+	droppedFiles_.push_back(ConvertString(filePath));
+
+}
+#endif // _DEBUG

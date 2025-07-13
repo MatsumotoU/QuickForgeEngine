@@ -24,8 +24,8 @@ public:
 
 private:
 	uint32_t uvCheckerTextureHandle_;
+	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Sprite sprite_;
-	Vector4 color_ = {1.0f, 1.0f, 1.0f, 1.0f};
 
 	float fadeTime_;
 	EngineCore* engineCore_;

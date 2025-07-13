@@ -35,7 +35,7 @@ public:
 	void Initialize(EngineCore* engineCore);
 
 	void CreatePipelineStateObject(
-		RootParameter rootParameter, DepthStencil* depthStencil, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
+		RootParameter rootParameter, DepthStencil* depthStencil, InputLayout inputLayout, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
 		D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack);
 
 public:

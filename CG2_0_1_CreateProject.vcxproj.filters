@@ -676,6 +676,12 @@
     <ClInclude Include="Engine\Utility\FileExtension.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Particle\ParticleForGPU.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\PrimitiveVertexData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl" />
@@ -686,6 +692,7 @@
     <FxCompile Include="Primitive.PS.hlsl" />
     <FxCompile Include="Simple.VS.hlsl" />
     <FxCompile Include="VignetteShader.hlsl" />
+    <FxCompile Include="Primitive.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />

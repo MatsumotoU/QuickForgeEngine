@@ -39,12 +39,17 @@ public:
 
 	bool GetCanLoop();
 	bool GetIsWindowQuit();
+#ifdef _DEBUG
 	bool GetIsDroppedFiles() const;
-	std::vector<std::string>* GetDroppedFiles() ;
+	std::vector<std::string>* GetDroppedFiles();
+#endif // _DEBUG
+	
 	HWND GetHWND();
 
 private:
+#ifdef _DEBUG
 	void OnFileDropped(const wchar_t* filePath);
+#endif // _DEBUG
 
 private:
 	WNDCLASS wc{};

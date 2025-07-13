@@ -12,6 +12,12 @@ void TitleScene::Initialize() {
 	model_.Initialize(engineCore_);
 	model_.LoadModel("Resources", "Title.obj", COORDINATESYSTEM_HAND_RIGHT);
 	camera_.Initialize(engineCore_->GetWinApp());
+#ifdef _DEBUG
+	debugCamera_.Initialize(engineCore_);
+#endif // _DEBUG
+	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
+
+	
 }
 
 void TitleScene::Update() {
@@ -27,10 +33,18 @@ void TitleScene::Update() {
 
 	model_.transform_ = titleTransform_;
 	model_.Update();
+
+#ifdef _DEBUG
+	debugCamera_.Update();
+	camera_ = debugCamera_.camera_;
+#endif // _DEBUG
+	camera_.Update();
 }
 
 void TitleScene::Draw() {
 	model_.Draw(&camera_);
+
+	engineCore_->GetGraphRenderer()->DrawGrid(50.0f, 50);
 }
 
 IScene* TitleScene::GetNextScene() { return new GameScene(engineCore_); }
