@@ -16,12 +16,22 @@ enum class LRDirection {
 	kRight,
 };
 
+enum class BahaviorType {
+	kIdle,
+	kMove,
+	kAttack,
+};
+
 class Player {
 public:
 	void Initialize(EngineCore* engineCore);
 	void Update();
 	void Draw(Camera* camera);
 	Transform transform_;
+
+public:
+	void Move();
+	void Attack();
 
 public:
 	bool GetIsActive();
@@ -46,6 +56,12 @@ private:
 	float turnTable[2];
 	float turnTime_;
 	LRDirection lrDirection_;
+
+private:
+	BahaviorType bahaviorType_;
+	bool isAttacking_;
+	float attackChargeTime_;
+	Billboard billboard_;
 
 private:
 	MapChip* map_;

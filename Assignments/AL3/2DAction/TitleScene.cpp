@@ -16,8 +16,6 @@ void TitleScene::Initialize() {
 	debugCamera_.Initialize(engineCore_);
 #endif // _DEBUG
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
-
-	
 }
 
 void TitleScene::Update() {

@@ -26,6 +26,13 @@ void Player::Initialize(EngineCore* engineCore) {
 
 	map_ = nullptr;
 	isActive_ = true;
+
+	isAttacking_ = false;
+	attackChargeTime_ = 0.0f;
+
+	bahaviorType_ = BahaviorType::kIdle;
+
+	billboard_.Initialize(engineCore_,1.0f,1.0f);
 }
 
 void Player::Update() {
@@ -67,35 +74,19 @@ void Player::Update() {
 		}
 	}
 
-	DirectInputManager* input = engineCore_->GetInputManager();
-	if (input->keyboard_.GetPress(DIK_RIGHT)) {
-		acceleration_.x += kAcceleration * engineCore_->GetDeltaTime();
-
-		if (lrDirection_ != LRDirection::kRight) {
-			turnTime_ = kTimeTurn;
-			nowTurnY_ = transform_.rotate.y;
-			lrDirection_ = LRDirection::kRight;
-		}
-	}
-	if (input->keyboard_.GetPress(DIK_LEFT)) {
-		acceleration_.x -= kAcceleration * engineCore_->GetDeltaTime();
-
-		if (lrDirection_ != LRDirection::kLeft) {
-			turnTime_ = kTimeTurn;
-			nowTurnY_ = transform_.rotate.y;
-			lrDirection_ = LRDirection::kLeft;
-		}
-	}
-	if (input->keyboard_.GetPress(DIK_UP)) {
-		if (!isLanding_) {
-			isLanding_ = true;
-			isGround_ = false;
-			velocity_.y += kJumpPower;
-		}
-	}
-
-	if (!isGround_) {
-		acceleration_.y -= 9.8f * engineCore_->GetDeltaTime();
+	switch (bahaviorType_)
+	{
+	case BahaviorType::kIdle:
+		Move();
+		break;
+	case BahaviorType::kMove:
+		Move();
+		break;
+	case BahaviorType::kAttack:
+		Attack();
+		break;
+	default:
+		break;
 	}
 	
 	acceleration_.y *= 0.9f;
@@ -145,6 +136,7 @@ void Player::Update() {
 	ImGui::Text("right %f", (map_->GetMapChipPositionByIndex(xIndex + 1, yIndex) - transform_.translate).Length());
 	ImGui::Text("left %f", (map_->GetMapChipPositionByIndex(xIndex - 1, yIndex) - transform_.translate).Length());
 
+	
 	model_.transform_ = transform_;
 	model_.Update();
 }
@@ -153,6 +145,12 @@ void Player::Draw(Camera* camera) {
 	if (!isActive_) {
 		return;
 	}
+
+	if (isAttacking_) {
+		billboard_.Update(camera->transform_.rotate);
+		billboard_.Draw(0, camera);
+	}
+	
 
 	ImGui::Begin("player");
 	ImGui::DragFloat3("transition", &transform_.translate.x);
@@ -166,6 +164,80 @@ void Player::Draw(Camera* camera) {
 	ImGui::End();
 
 	model_.Draw(camera);
+}
+
+void Player::Move() {
+	DirectInputManager* input = engineCore_->GetInputManager();
+	if (input->keyboard_.GetPress(DIK_RIGHT)) {
+		acceleration_.x += kAcceleration * engineCore_->GetDeltaTime();
+
+		if (lrDirection_ != LRDirection::kRight) {
+			turnTime_ = kTimeTurn;
+			nowTurnY_ = transform_.rotate.y;
+			lrDirection_ = LRDirection::kRight;
+		}
+	}
+	if (input->keyboard_.GetPress(DIK_LEFT)) {
+		acceleration_.x -= kAcceleration * engineCore_->GetDeltaTime();
+
+		if (lrDirection_ != LRDirection::kLeft) {
+			turnTime_ = kTimeTurn;
+			nowTurnY_ = transform_.rotate.y;
+			lrDirection_ = LRDirection::kLeft;
+		}
+	}
+	if (input->keyboard_.GetPress(DIK_UP)) {
+		if (!isLanding_) {
+			isLanding_ = true;
+			isGround_ = false;
+			velocity_.y += kJumpPower;
+		}
+	}
+
+	if (input->keyboard_.GetPress(DIK_SPACE)) {
+		isAttacking_ = true;
+		bahaviorType_ = BahaviorType::kAttack;
+	}
+
+	if (!isGround_) {
+		acceleration_.y -= 9.8f * engineCore_->GetDeltaTime();
+	}
+}
+
+void Player::Attack() {
+	if (isAttacking_) {
+		velocity_.x = 0.0f;
+		velocity_.y = 0.0f;
+		acceleration_.x = 0.0f;
+		acceleration_.y = 0.0f;
+
+		attackChargeTime_ += engineCore_->GetDeltaTime();
+
+		float attackCargeDir = 1.0f;
+		if (lrDirection_ != LRDirection::kLeft) {
+			attackCargeDir = -1.0f;
+		}
+
+		transform_.rotate.z = attackChargeTime_ * -attackCargeDir;
+		transform_.translate.x += engineCore_->GetDeltaTime() * attackCargeDir;
+		billboard_.transform_.translate = { transform_.translate.x + 1.5f * -attackCargeDir,transform_.translate.y ,transform_.translate.z };
+		
+
+		if (attackChargeTime_ >= 0.3f) {
+			transform_.rotate.z = 0.0f;
+			attackChargeTime_ = 0.0f;
+			isAttacking_ = false;
+			transform_.scale.x = 2.0f;
+			velocity_.x = 10.0f * -attackCargeDir;
+		}
+		return;
+	} else {
+
+		if (velocity_.x <= 5.0f) {
+			bahaviorType_ = BahaviorType::kMove;
+		}
+	}
+
 }
 
 bool Player::GetIsActive() {
