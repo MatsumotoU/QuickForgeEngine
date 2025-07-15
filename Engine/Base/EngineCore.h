@@ -76,6 +76,7 @@
 
 // String
 #include "String/StringLiblary.h"
+#include "String/FontDrawer.h"
 
 // GraphRenderer
 #include "DirectX/GraphRenderer.h"

@@ -150,7 +150,6 @@ void Player::Draw(Camera* camera) {
 		billboard_.Update(camera->transform_.rotate);
 		billboard_.Draw(0, camera);
 	}
-	
 
 	ImGui::Begin("player");
 	ImGui::DragFloat3("transition", &transform_.translate.x);
