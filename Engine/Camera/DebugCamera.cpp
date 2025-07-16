@@ -7,6 +7,10 @@
 
 #ifdef _DEBUG
 
+DebugCamera::~DebugCamera() {
+	engineCore_->GetLoopStopper()->RemoveNonStoppingFunc();
+}
+
 void DebugCamera::Initialize(EngineCore* engineCore) {
 	camera_.Initialize(engineCore->GetWinApp());
 	input_ = engineCore->GetInputManager();

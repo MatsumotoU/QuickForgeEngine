@@ -40,9 +40,13 @@ void TitleScene::Update() {
 }
 
 void TitleScene::Draw() {
+	assert(engineCore_);
+
 	model_.Draw(&camera_);
 
 	engineCore_->GetGraphRenderer()->DrawGrid(50.0f, 50);
 }
 
-IScene* TitleScene::GetNextScene() { return new GameScene(engineCore_); }
+std::unique_ptr<IScene> TitleScene::GetNextScene() { 
+	return std::make_unique<GameScene>(engineCore_);
+}

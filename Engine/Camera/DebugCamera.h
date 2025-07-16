@@ -10,6 +10,9 @@ class DirectInputManager;
 
 class DebugCamera {
 public:
+	~DebugCamera();
+
+public:
 	void Initialize(EngineCore* engineCore);
 	void Update();
 	void DrawImGui();

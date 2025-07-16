@@ -18,7 +18,7 @@ public:
 	void Update()override;
 	void Draw()override;
 
-	IScene* GetNextScene() override;
+	std::unique_ptr<IScene> GetNextScene() override;
 
 private:
 	EngineCore* engineCore_;

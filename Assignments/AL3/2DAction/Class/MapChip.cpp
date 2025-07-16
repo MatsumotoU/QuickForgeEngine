@@ -18,7 +18,7 @@ void MapChip::Initialize(EngineCore* engineCore) {
 		for (int x = 0; x < kNumBlockHorizontal; x++) {
 
 			if (mapChipData_.data[y][x] == MapChipType::kBlock) {
-				blocks_.push_back(Block());
+				blocks_.push_back(std::move(Block()));
 				blocks_.back().Initialize(engineCore_);
 				blocks_.back().transform_.translate = GetMapChipPositionByIndex(x, y);
 				blocks_.back().Update();

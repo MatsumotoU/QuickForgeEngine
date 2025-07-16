@@ -62,7 +62,7 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 #ifdef _DEBUG
-
+	assert(engineCore_);
 #endif // _DEBUG
 	map_.Draw(&camera);
 	skyDome_.Draw(&camera);
@@ -71,6 +71,6 @@ void GameScene::Draw() {
 	deathParticle_.Draw(&camera);
 }
 
-IScene* GameScene::GetNextScene() {
-	return new TitleScene(engineCore_);
+std::unique_ptr<IScene> GameScene::GetNextScene() {
+	return std::make_unique<TitleScene>(engineCore_);
 }

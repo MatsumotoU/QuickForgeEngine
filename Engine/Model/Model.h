@@ -34,6 +34,11 @@ public:
 public:
 	void SetBlendmode(BlendMode mode);
 
+private:
+	EngineCore* engineCore_;
+	DirectXCommon* dxCommon_;
+	TextureManager* textureManager_;
+
 public:
 	Transform transform_;
 	Matrix4x4 worldMatrix_;
@@ -42,11 +47,6 @@ public:
 	MaterialResource material_;
 	DirectionalLightResource directionalLight_;
 	WVPResource wvp_;
-
-private:
-	EngineCore* engineCore_;
-	DirectXCommon* dxCommon_;
-	TextureManager* textureManager_;
 
 private:
 	ModelData modelData_;

@@ -10,6 +10,16 @@ struct TransformationMatrix;
 
 class WVPResource final {
 public:
+	WVPResource() = default;
+	~WVPResource() = default;
+
+	// コピーを禁止する
+	WVPResource(const WVPResource&) = delete;
+	WVPResource& operator=(const WVPResource&) = delete;
+	WVPResource(WVPResource&&) = default;
+	WVPResource& operator=(WVPResource&&) = default;
+
+public:
 	/// <summary>
 	/// WVPのリソースを初期化します。
 	/// </summary>
