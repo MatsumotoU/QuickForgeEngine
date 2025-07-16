@@ -1,4 +1,4 @@
-#include "object3d.hlsli"
+#include "../ShaderStructs/Object3d.hlsli"
 
 struct DirectionalLight
 {
