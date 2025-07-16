@@ -5,6 +5,7 @@ EngineCore::EngineCore() {
 #ifdef _DEBUG
 	DebugLog("[[[EngineStarted]]]");
 	systemTimer_.Init();
+	systemTimer_.SetIsDrawDebugLog(false);
 
 	initializeRunningTime_ = 0.0f;
 	updateRunningTime_ = 0.0f;
@@ -76,7 +77,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	shaderCompiler_.InitializeDXC();
 
 	// imGuiManager初期化
-	imGuiManager_.Initialize(&winApp_,&dxCommon_,srvDescriptorHeap_.GetSrvDescriptorHeap());
+	imGuiManager_.Initialize(&winApp_, &dxCommon_, srvDescriptorHeap_.GetSrvDescriptorHeap());
 	// テクスチャマネージャの初期化
 	textureManager_.Initialize(&dxCommon_, &srvDescriptorHeap_);
 	graphicsCommon_.Initialize(this);
@@ -101,7 +102,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	postprocess_.Initialize(this);
 
 	// オフスクリーンのスプライト生成
-	offscreen_.Initialize(this,static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight));
+	offscreen_.Initialize(this, static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight));
 	offscreen_.material_.materialData_->enableLighting = false;
 
 	camera_.Initialize(&winApp_);
@@ -110,7 +111,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	systemTimer_.StopTimer();
 	initializeRunningTime_ = systemTimer_.GetElapsedTime();
 	DebugLog(std::format("Complete InitializeEngine: {}s", initializeRunningTime_));
-	
+
 #endif // _DEBUG
 
 	loopStopper_.Initialize();
@@ -119,7 +120,6 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 void EngineCore::Update() {
 #ifdef _DEBUG
 	systemTimer_.StartTimer();
-	DebugLog("==========Starting Update==========");
 #endif // _DEBUG
 
 	// ファイルをドロップした場合の処理
@@ -149,8 +149,6 @@ void EngineCore::Update() {
 #ifdef _DEBUG
 	systemTimer_.StopTimer();
 	updateRunningTime_ = systemTimer_.GetElapsedTime();
-	DebugLog(std::format("Update time : {}s", updateRunningTime_));
-	DebugLog("-------------End Update-------------");
 #endif // _DEBUG
 
 	loopStopper_.Update();
@@ -159,11 +157,10 @@ void EngineCore::Update() {
 void EngineCore::PreDraw() {
 #ifdef _DEBUG
 	systemTimer_.StartTimer();
-	DebugLog("-------------Starting Draw-------------");
 #endif // _DEBUG
 
 	dxCommon_.PreDraw();
-	
+
 	textureManager_.PreDraw();
 
 	// 深度の設定
@@ -195,8 +192,6 @@ void EngineCore::PostDraw() {
 #ifdef _DEBUG
 	systemTimer_.StopTimer();
 	drawRunningTime_ = systemTimer_.GetElapsedTime();
-	DebugLog(std::format("Draw time : {}s", drawRunningTime_));
-	DebugLog("============End Draw============");
 #endif // _DEBUG
 }
 
@@ -371,7 +366,7 @@ void EngineCore::DrawEngineMenu() {
 
 	// DockSpaceの作成
 	ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-	ImGui::DockSpaceOverViewport(dockspace_id,ImGui::GetMainViewport(), ImGuiDockNodeFlags_None);
+	ImGui::DockSpaceOverViewport(dockspace_id, ImGui::GetMainViewport(), ImGuiDockNodeFlags_None);
 
 	// 場所が分かるようにアウトラインを出す
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -391,8 +386,15 @@ void EngineCore::DrawEngineMenu() {
 	}
 	ImVec2 imageSize(w, h);
 
+	// 画像をウィンドウ中央に配置
+	ImVec2 cursorPos = ImGui::GetCursorPos();
+	ImVec2 centerPos;
+	centerPos.x = cursorPos.x + (avail.x - imageSize.x) * 0.5f;
+	centerPos.y = cursorPos.y + (avail.y - imageSize.y) * 0.5f;
+	ImGui::SetCursorPos(centerPos);
+
 	ImGui::Image(
-		reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr), // SRVのGPUハンドル
+		reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr),
 		imageSize
 	);
 	ImGui::End();
@@ -466,7 +468,7 @@ void EngineCore::DrawEngineMenu() {
 	//* Viewタブ *//
 	// Fpsデバッグ情報
 	if (isDrawFpsDebugWindow_) {
-		ImGui::Begin("FPS",&isDrawFpsDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("FPS", &isDrawFpsDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::Text("AverageFps = %f", fpsCounter_.GetAverageFps());
 		ImGui::Text("nowFps = %f", fpsCounter_.GetFps());
 		ImGui::PlotLines(
@@ -548,6 +550,6 @@ void EngineCore::DrawEngineMenu() {
 }
 
 void EngineCore::SaveLunchConfig() {
-	SJN::SaveJsonData(lunchConfigFileName_,lunchConfig_);
+	SJN::SaveJsonData(lunchConfigFileName_, lunchConfig_);
 }
 #endif // _DEBUG

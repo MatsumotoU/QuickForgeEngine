@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 
 #ifdef _DEBUG
 #include "MyDebugLog.h"
