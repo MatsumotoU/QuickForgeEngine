@@ -120,7 +120,6 @@ void PipelineStateObject::CreatePipelineStateObject(
 	rasterizerDesc.FillMode = fillMode;
 
 	// シェーダーをコンパイルする
-	//shaderCompiler_.InitializeDXC();
 	IDxcBlob* vertexShaderBlob = nullptr;
 	IDxcBlob* pixelShaderBlob = nullptr;
 	vertexShaderBlob = shaderCompiler_->CompileShader(ConvertString(kVSFilePath+vsFilepath), L"vs_6_0");
