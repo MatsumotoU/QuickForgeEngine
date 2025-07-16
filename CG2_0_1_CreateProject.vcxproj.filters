@@ -16,8 +16,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="Object3d.hlsli" />
-    <None Include="Particle.hlsli" />
+    <None Include="Engine\Shaders\ShaderStructs\Object3d.hlsli" />
+    <None Include="Engine\Shaders\ShaderStructs\Particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -687,15 +687,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Object3d.VS.hlsl" />
-    <FxCompile Include="Object3d.PS.hlsl" />
-    <FxCompile Include="GrayscaleShader.hlsl" />
-    <FxCompile Include="Simple.PS.hlsl" />
-    <FxCompile Include="Particle.VS.hlsl" />
-    <FxCompile Include="Primitive.PS.hlsl" />
-    <FxCompile Include="Simple.VS.hlsl" />
-    <FxCompile Include="VignetteShader.hlsl" />
-    <FxCompile Include="Primitive.VS.hlsl" />
+    <FxCompile Include="Engine\Shaders\VS\Object3d.VS.hlsl" />
+    <FxCompile Include="Engine\Shaders\PS\Object3d.PS.hlsl" />
+    <FxCompile Include="Engine\Shaders\PS\GrayscaleShader.hlsl" />
+    <FxCompile Include="Engine\Shaders\PS\Simple.PS.hlsl" />
+    <FxCompile Include="Engine\Shaders\VS\Particle.VS.hlsl" />
+    <FxCompile Include="Engine\Shaders\PS\Primitive.PS.hlsl" />
+    <FxCompile Include="Engine\Shaders\VS\Simple.VS.hlsl" />
+    <FxCompile Include="Engine\Shaders\PS\VignetteShader.hlsl" />
+    <FxCompile Include="Engine\Shaders\VS\Primitive.VS.hlsl" />
+    <FxCompile Include="Engine\Shaders\PS\Particle.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />

@@ -1,4 +1,4 @@
-#include "Particle.hlsli"
+#include "../ShaderStructs/Particle.hlsli"
 
 struct Material
 {

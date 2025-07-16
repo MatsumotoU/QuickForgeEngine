@@ -1,4 +1,5 @@
-#include "object3d.hlsli"
+#include "../ShaderStructs/Object3d.hlsli"
+
 struct PixelShaderOutput
 {
     float32_t4 color : SV_TARGET0;

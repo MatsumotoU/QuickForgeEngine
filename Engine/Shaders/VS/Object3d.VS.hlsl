@@ -1,4 +1,4 @@
-#include "object3d.hlsli"
+#include "../ShaderStructs/Object3d.hlsli"
 
 struct TransformationMatrix{
     float32_t4x4 WVP;

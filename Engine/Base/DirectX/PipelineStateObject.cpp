@@ -6,6 +6,9 @@
 #include <cassert>
 #include <d3d12.h>
 
+const std::string kVSFilePath = "Engine/Shaders/VS/";
+const std::string kPSFilePath = "Engine/Shaders/PS/";
+
 void PipelineStateObject::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	dxCommon_ = engineCore->GetDirectXCommon();
@@ -120,9 +123,9 @@ void PipelineStateObject::CreatePipelineStateObject(
 	//shaderCompiler_.InitializeDXC();
 	IDxcBlob* vertexShaderBlob = nullptr;
 	IDxcBlob* pixelShaderBlob = nullptr;
-	vertexShaderBlob = shaderCompiler_->CompileShader(ConvertString(vsFilepath), L"vs_6_0");
+	vertexShaderBlob = shaderCompiler_->CompileShader(ConvertString(kVSFilePath+vsFilepath), L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
-	pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(psFilepath), L"ps_6_0");
+	pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(kPSFilePath+psFilepath), L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	// PSOを生成
