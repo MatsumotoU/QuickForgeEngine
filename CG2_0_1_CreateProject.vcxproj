@@ -294,6 +294,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Sprite\FullScreenSprite.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
+    <ClCompile Include="Engine\String\FontDrawer.cpp" />
     <ClCompile Include="Engine\String\StringLiblary.cpp" />
     <ClCompile Include="Engine\Utility\FileExtension.cpp" />
     <ClCompile Include="Engine\Utility\FileLoader.cpp" />

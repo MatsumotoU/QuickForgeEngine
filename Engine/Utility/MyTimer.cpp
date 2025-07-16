@@ -7,6 +7,7 @@
 MyTimer::~MyTimer() {
     if (isPlaying_) {
 #ifdef _DEBUG
+        isDrawDebugLog_ = true;
         DebugLog("The timer was removed before it finished.");
 #endif // _DEBUG
     }
@@ -55,3 +56,13 @@ float MyTimer::GetElapsedTime() {
 bool MyTimer::GetIsPlaying() {
     return isPlaying_;
 }
+
+#ifdef _DEBUG
+bool MyTimer::GetIsDrawDebugLog() {
+    return isDrawDebugLog_;
+}
+
+void MyTimer::SetIsDrawDebugLog(bool isDraw) {
+	isDrawDebugLog_ = isDraw;
+}
+#endif // _DEBUG

@@ -262,7 +262,7 @@ Matrix4x4 Matrix4x4::Inverse(const Matrix4x4& m) {
 
 	// 零除算回避用
 	if (i == 0.0f) {
-		assert(false);
+		return Matrix4x4::MakeIndentity4x4();
 	}
 
 	result.m[0][0] = (
