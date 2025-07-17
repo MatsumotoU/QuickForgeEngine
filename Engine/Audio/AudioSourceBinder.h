@@ -5,6 +5,11 @@
 
 class EngineCore;
 
+struct SoruceVoiceData {
+	uint32_t audioHandle;
+	IXAudio2SourceVoice* sourceVoice;
+};
+
 class AudioSourceBinder {
 public:
 	~AudioSourceBinder();
@@ -37,6 +42,6 @@ public:
 
 private:
 	EngineCore* engineCore_;
-	std::map<std::string, IXAudio2SourceVoice*> sourceVoiceMap_;
+	std::map<std::string, SoruceVoiceData> sourceVoiceMap_;
 
 };

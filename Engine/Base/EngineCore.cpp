@@ -538,6 +538,7 @@ void EngineCore::DrawEngineMenu() {
 		}
 		ImGui::End();
 	}
+	// テクスチャマネージャのデバッグウィンドウ
 	if (isDrawTextureDebugWindow_) {
 		ImGui::Begin("TEXTURE", &isDrawTextureDebugWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 		textureManager_.DrawImGui();

@@ -19,7 +19,7 @@ void GameScene::Initialize() {
 	camera.Initialize(engineCore_->GetWinApp());
 	camera.transform_.translate.z = -30.0f;
 
-	/*player.Initialize(engineCore_);
+	player.Initialize(engineCore_);
 	player.SetMap(&map_);
 	player.transform_.translate = map_.GetMapChipPositionByIndex(1, 18);
 	skyDome_.Initialize(engineCore_);
@@ -32,7 +32,7 @@ void GameScene::Initialize() {
 	enemy_.Initialize(engineCore_);
 	enemy_.transform_.translate = map_.GetMapChipPositionByIndex(15, 18);
 
-	deathParticle_.Initialize(engineCore_);*/
+	deathParticle_.Initialize(engineCore_);
 	isRequestedExit_ = false;
 }
 
@@ -42,7 +42,7 @@ void GameScene::Update() {
 	camera = debugCamera_.camera_;
 #endif // _DEBUG
 	camera.Update();
-	/*cameraContoroller_.Update();
+	cameraContoroller_.Update();
 	player.Update();
 	enemy_.Update();
 
@@ -57,24 +57,24 @@ void GameScene::Update() {
 		if (!deathParticle_.GetIsActive()) {
 			isRequestedExit_ = true;
 		}
-	}*/
+	}
 
 	if (input_->keyboard_.GetTrigger(DIK_ESCAPE)) {
 		isRequestedExit_ = true;
 	}
 
-	//deathParticle_.Update();
+	deathParticle_.Update();
 }
 
 void GameScene::Draw() {
 #ifdef _DEBUG
 	assert(engineCore_);
 #endif // _DEBUG
-	/*map_.Draw(&camera);
+	map_.Draw(&camera);
 	skyDome_.Draw(&camera);
 	player.Draw(&camera);
 	enemy_.Draw(&camera);
-	deathParticle_.Draw(&camera);*/
+	deathParticle_.Draw(&camera);
 }
 
 std::unique_ptr<IScene> GameScene::GetNextScene() {
