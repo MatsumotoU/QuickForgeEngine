@@ -7,7 +7,7 @@
 MyTimer::~MyTimer() {
     if (isPlaying_) {
 #ifdef _DEBUG
-        isDrawDebugLog_ = true;
+        isDrawDebugLog_ = false;
         DebugLog("The timer was removed before it finished.");
 #endif // _DEBUG
     }
@@ -23,7 +23,9 @@ void MyTimer::StartTimer() {
 	startTime_ = std::chrono::steady_clock::now();
 
 #ifdef _DEBUG
-    DebugLog("StartTimer");
+	if (isDrawDebugLog_) {
+		DebugLog("StartTimer");
+	}
 #endif // _DEBUG
 }
 
@@ -32,7 +34,9 @@ void MyTimer::StopTimer() {
 	endTime_ = std::chrono::steady_clock::now();
 
 #ifdef _DEBUG
-    DebugLog("StartTimer");
+    if (isDrawDebugLog_) {
+        DebugLog("StopTimer");
+    }
 #endif // _DEBUG
 }
 
@@ -41,13 +45,17 @@ float MyTimer::GetElapsedTime() {
         // 計測中は現在時刻との差分
         auto now = std::chrono::steady_clock::now();
 #ifdef _DEBUG
-        DebugLog(std::format( "Timer is running! Return: {}", duration_cast<std::chrono::duration<float>>(now - startTime_).count()));
+        if (isDrawDebugLog_) {
+            DebugLog(std::format("Timer is running! Return: {}", duration_cast<std::chrono::duration<float>>(now - startTime_).count()));
+        }
 #endif // _DEBUG
         return duration_cast<std::chrono::duration<float>>(now - startTime_).count();
     } else {
         // 停止中はstartとendの差分
 #ifdef _DEBUG
-        DebugLog(std::format("Return: {}", duration_cast<std::chrono::duration<float>>(endTime_ - startTime_).count()));
+		if (isDrawDebugLog_) {
+            DebugLog(std::format("Return: {}", duration_cast<std::chrono::duration<float>>(endTime_ - startTime_).count()));
+		}
 #endif // _DEBUG
         return duration_cast<std::chrono::duration<float>>(endTime_ - startTime_).count();
     }
