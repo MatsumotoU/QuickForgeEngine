@@ -31,10 +31,11 @@ private:
 	Camera camera;
 	
 private:
-	SkyDome skyDome_;
+	
+	/*SkyDome skyDome_;
 	MapChip map_;
 	Player player;
 	CameraContoroller cameraContoroller_;
 	Enemy enemy_;
-	DeathParticle deathParticle_;
+	DeathParticle deathParticle_;*/
 };

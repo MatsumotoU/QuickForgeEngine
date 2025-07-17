@@ -401,7 +401,7 @@ void GameScene::Draw() {
 	for (float i = 0.0f; i < 1.0f; i += 0.01f) {
 		Vector3 p0 = Vector3::CatmullRom(lailPoints_, i);
 		Vector3 p1 = Vector3::CatmullRom(lailPoints_, i + 0.01f);
-		engineCore_->GetGraphRenderer()->DrawLine(p0, p1);
+		engineCore_->GetGraphRenderer()->DrawLine(p0, p1,Vector4(1.0f,1.0f,1.0f,1.0f));
 	}
 }
 

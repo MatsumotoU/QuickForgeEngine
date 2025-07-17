@@ -12,6 +12,7 @@ public:
 	bool GetReqesytedExit() { return isRequestedExit_; }
 	virtual std::unique_ptr<IScene> GetNextScene() = 0;
 
+	bool isInitialized_ = false;
 protected:
 	bool isRequestedExit_;
 };
