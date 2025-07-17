@@ -10,8 +10,9 @@ public:
 	virtual void Draw() = 0;
 
 	bool GetReqesytedExit() { return isRequestedExit_; }
-	virtual IScene* GetNextScene() = 0;
+	virtual std::unique_ptr<IScene> GetNextScene() = 0;
 
+	bool isInitialized_ = false;
 protected:
 	bool isRequestedExit_;
 };

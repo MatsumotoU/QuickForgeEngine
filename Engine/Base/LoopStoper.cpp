@@ -17,6 +17,10 @@ void LoopStoper::AddNonStoppingFunc(std::function<void()> func) {
 	nonTimeStoppingFunctions_.push_back(func);
 }
 
+void LoopStoper::RemoveNonStoppingFunc() {
+	nonTimeStoppingFunctions_.clear();
+}
+
 bool LoopStoper::GetIsStopping() {
 	return isStopping_;
 }

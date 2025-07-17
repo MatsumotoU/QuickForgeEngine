@@ -2,6 +2,8 @@
 #include "Base/EngineCore.h"
 #include "Camera/Camera.h"
 
+#include <cassert>
+
 void GraphRenderer::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	trianglePso_ = engineCore->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal);
@@ -39,6 +41,10 @@ void GraphRenderer::Initialize(EngineCore* engineCore) {
 }
 
 void GraphRenderer::PreDraw() {
+	if (camera_ == nullptr) {
+		return;
+	}
+
 	triangleCount_ = 0;
 	lineCount_ = 0;
 	pointCount_ = 0;
@@ -61,12 +67,17 @@ void GraphRenderer::PreDraw() {
 	}
 
 	// カメラのワールドビュー投影行列を設定
-	if (camera_ != nullptr) {
+	if (camera_) {
+		assert(camera_);
 		wvpResource_.SetWVPMatrix(camera_->MakeWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(), CAMERA_VIEW_STATE_PERSPECTIVE), 0);
 	}
 }
 
 void GraphRenderer::PostDraw() {
+	if (camera_ == nullptr) {
+		return;
+	}
+
 	if (triangleCount_ == 0 && lineCount_ == 0 && pointCount_ == 0) {
 		return; // 描画するものがない場合は何もしない
 	}
@@ -82,6 +93,10 @@ void GraphRenderer::PostDraw() {
 	ID3D12GraphicsCommandList* commandList = engineCore_->GetDirectXCommon()->GetCommandList();
 
 	if (triangleCount_ > 0) {
+		assert(camera_);
+		commandList->RSSetViewports(1, camera_->viewport_.GetViewport());
+		commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
+
 		commandList->SetGraphicsRootSignature(trianglePso_->GetRootSignature());
 		commandList->SetPipelineState(trianglePso_->GetPipelineState());
 		commandList->SetGraphicsRootConstantBufferView(0, materialResource_.GetMaterial()->GetGPUVirtualAddress());
@@ -91,6 +106,10 @@ void GraphRenderer::PostDraw() {
 		commandList->DrawInstanced(triangleCount_ * 3, 1, 0, 0);
 	}
 	if (lineCount_ > 0) {
+		assert(camera_);
+		commandList->RSSetViewports(1, camera_->viewport_.GetViewport());
+		commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
+
 		commandList->SetGraphicsRootSignature(linePso_->GetRootSignature());
 		commandList->SetPipelineState(linePso_->GetPipelineState());
 		commandList->SetGraphicsRootConstantBufferView(0, materialResource_.GetMaterial()->GetGPUVirtualAddress());
@@ -100,6 +119,10 @@ void GraphRenderer::PostDraw() {
 		commandList->DrawInstanced(lineCount_ * 2, 1, 0, 0);
 	}
 	if (pointCount_ > 0) {
+		assert(camera_);
+		commandList->RSSetViewports(1, camera_->viewport_.GetViewport());
+		commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
+
 		commandList->SetGraphicsRootSignature(pointPso_->GetRootSignature());
 		commandList->SetPipelineState(pointPso_->GetPipelineState());
 		commandList->SetGraphicsRootConstantBufferView(0, materialResource_.GetMaterial()->GetGPUVirtualAddress());
@@ -113,6 +136,10 @@ void GraphRenderer::PostDraw() {
 }
 
 void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color) {
+	if (camera_ == nullptr) {
+		return;
+	}
+
 	if (triangleCount_ >= kGraphRendererMaxTriangleCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
@@ -138,6 +165,10 @@ void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3,
 }
 
 void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& color) {
+	if (camera_ == nullptr) {
+		return;
+	}
+
 	if (lineCount_ >= kGraphRendererMaxLineCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
@@ -155,6 +186,10 @@ void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& colo
 }
 
 void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
+	if (camera_ == nullptr) {
+		return;
+	}
+
 	if (pointCount_ >= kGraphRendererMaxPointCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
@@ -169,6 +204,10 @@ void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
 }
 
 void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
+	if (camera_ == nullptr) {
+		return;
+	}
+
 	if (gridCount <= 0 || size <= 0.0f) {
 #ifdef _DEBUG
 		DebugLog("DrawGrid: gridCount = 0 || size <= 0");
@@ -225,5 +264,12 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 }
 
 void GraphRenderer::SetCamera(Camera* camera) {
+	assert(camera);
 	camera_ = camera;
+}
+
+void GraphRenderer::DeleteCamera() {
+	if (camera_) {
+		camera_ = nullptr;
+	}
 }

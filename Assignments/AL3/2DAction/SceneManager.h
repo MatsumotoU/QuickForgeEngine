@@ -15,8 +15,8 @@ public:
 	void Draw();
 
 private:
-	std::unique_ptr<IScene> currentScene_;
-	IScene* scene;
+	
+	std::unique_ptr<IScene> scene;
 	EngineCore* engineCore_;
 	Fade fade_;
 };

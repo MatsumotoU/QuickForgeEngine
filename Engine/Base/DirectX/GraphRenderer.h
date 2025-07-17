@@ -54,6 +54,8 @@ public:// 描画関数
 public:// セッター
 	void SetCamera(Camera* camera);
 
+	void DeleteCamera();
+
 private:
 	uint32_t triangleCount_;
 	uint32_t lineCount_;

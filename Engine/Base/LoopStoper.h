@@ -9,6 +9,7 @@ public:
 
 public:
 	void AddNonStoppingFunc(std::function<void()> func);
+	void RemoveNonStoppingFunc();
 	bool GetIsStopping();
 	void SetIsStopping(bool set);
 

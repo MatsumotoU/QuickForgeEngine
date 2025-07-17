@@ -19,6 +19,10 @@ void Model::Initialize(EngineCore* engineCore) {
 	directionalLight_.Initialize(dxCommon_);
 
 	worldMatrix_ = Matrix4x4::MakeIndentity4x4();
+
+	assert(dxCommon_);
+	assert(textureManager_);
+	assert(pso_);
 }
 
 void Model::Update() {
@@ -43,6 +47,13 @@ void Model::LoadModel(const std::string& directoryPath, const std::string& filen
 }
 
 void Model::Draw(Camera* camera) {
+	assert(engineCore_);
+	assert(camera);
+	assert(dxCommon_);
+	assert(pso_);
+	assert(textureManager_);
+	assert(vertexResource_);
+
 	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix_, CAMERA_VIEW_STATE_PERSPECTIVE);
 	wvp_.SetWorldMatrix(worldMatrix_,0);
 	wvp_.SetWVPMatrix(wvpMatrix,0);

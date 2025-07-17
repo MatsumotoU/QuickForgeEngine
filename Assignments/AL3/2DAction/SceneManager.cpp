@@ -4,11 +4,10 @@ SceneManager::SceneManager(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	//scene = new GameScene(engineCore_);
 	fade_.Initialize(engineCore_);
-	scene = new TitleScene(engineCore_);
+	scene = std::make_unique<TitleScene>(engineCore_);
 }
 
 SceneManager::~SceneManager() {
-	delete scene;
 }
 
 void SceneManager::Initialize() {
@@ -19,10 +18,14 @@ void SceneManager::Update() {
 	if (scene->GetReqesytedExit()) {
 
 		if (fade_.isEndFadeOut_) {
-			IScene* nextScene = scene->GetNextScene();
-			delete scene;
-			scene = nextScene;
-			scene->Initialize();
+			DebugLog("Transition Scene");
+			std::unique_ptr<IScene> nextScene = scene->GetNextScene();
+			assert(nextScene);
+			assert(scene);
+			scene = std::move(nextScene);
+
+			scene.get()->Initialize();
+			scene.get()->Update();
 			fade_.StartFadeIn();
 			return;
 		}
@@ -30,14 +33,19 @@ void SceneManager::Update() {
 		if (!fade_.isFadeOut_) {
 			fade_.StartFadeOut();
 		}
+	} else {
+		scene->Update();
 	}
 	fade_.Update();
-
-	scene->Update();
 }
 
 void SceneManager::Draw() {
-	scene->Draw();
+	
+	assert(scene.get());
+	if (scene.get()->isInitialized_) {
+		scene->Draw();
+	}
+	
 	if (scene->GetReqesytedExit() || fade_.isFading()) {
 		fade_.Draw();
 	}

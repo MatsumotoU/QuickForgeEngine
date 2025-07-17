@@ -4,6 +4,8 @@ class EngineCore;
 #include "Object/OffsetBuffer.h"
 #include "Object/VignetteOffset.h"
 
+#include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
+
 #include <functional>
 #include <vector>
 #include <map>
@@ -51,15 +53,13 @@ public:// パブリック変数
 
 private:// グレースケール変数
 	PipelineStateObject* grayScalePso_;
-	Microsoft::WRL::ComPtr<ID3D12Resource> grayScaleResource_;
-	OffsetBuffer* grayScaleOffsetBuffer_;
+	ConstantBuffer<OffsetBuffer> grayScaleOffsetBuffer_;
 	float grayScaleOffset_;
 	int grayScaleProcessIndex_;
 
 private:// ビネット変数
 	PipelineStateObject* vignettePso_;
-	Microsoft::WRL::ComPtr<ID3D12Resource> vignetteResource_;
-	VignetteOffset* vignetteOffsetBuffer_;
+	ConstantBuffer<VignetteOffset> vignetteOffsetBuffer_;
 	int vignetteProcessIndex_;
 
 private:// メンバ変数

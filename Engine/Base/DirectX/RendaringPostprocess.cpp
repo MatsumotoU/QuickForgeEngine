@@ -88,20 +88,14 @@ void RendaringPostprosecess::Initialize(EngineCore* engineCore) {
 
 	// グレースケールのリソース作成
 	grayScalePso_ = engineCore_->GetGraphicsCommon()->GetGrayScalePso();
-	grayScaleResource_ = CreateBufferResource(engineCore->GetDirectXCommon()->GetDevice(), sizeof(OffsetBuffer));
-	grayScaleOffsetBuffer_ = nullptr;
-	grayScaleResource_->Map(0, nullptr, reinterpret_cast<void**>(&grayScaleOffsetBuffer_));
+	grayScaleOffsetBuffer_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
 
 	// ビネットのリソース作成
 	vignettePso_ = engineCore_->GetGraphicsCommon()->GetVignettePso();
-	vignetteResource_ = CreateBufferResource(engineCore->GetDirectXCommon()->GetDevice(), sizeof(VignetteOffset));
-	vignetteOffsetBuffer_ = nullptr;
-	vignetteResource_->Map(0, nullptr, reinterpret_cast<void**>(&vignetteOffsetBuffer_));
-	vignetteOffsetBuffer_->screenResolution = 
-		{ static_cast<float>(engineCore->GetWinApp()->kWindowWidth), static_cast<float>(engineCore->GetWinApp()->kWindowHeight) };
-	vignetteOffsetBuffer_->VignetteRadius = 0.3f; // ビネットの半径
-	vignetteOffsetBuffer_->VignetteSoftness = 0.5f; // ビネットの柔らかさ
-	vignetteOffsetBuffer_->VignetteIntensity = 0.2f; // ビネットの強さ
+	vignetteOffsetBuffer_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
+	vignetteOffsetBuffer_.GetData()->VignetteRadius = 0.3f; // ビネットの半径
+	vignetteOffsetBuffer_.GetData()->VignetteSoftness = 0.5f; // ビネットの柔らかさ
+	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.2f; // ビネットの強さ
 }
 
 void RendaringPostprosecess::PreDraw() {
@@ -113,7 +107,7 @@ void RendaringPostprosecess::PreDraw() {
 		
 		postProcessCount_++;
 		// グレースケールの強度
-		grayScaleOffsetBuffer_->offset.x = grayScaleOffset_;
+		grayScaleOffsetBuffer_.GetData()->offset.x = grayScaleOffset_;
 	}
 	if (enableVignette_) {
 		postProcessOrderForm_.push_back(vignetteProcessIndex_); // ビネット
@@ -161,7 +155,7 @@ void RendaringPostprosecess::PreDraw() {
 
 void RendaringPostprosecess::PostDraw() {
 	// ポストプロセスが有効でないなら何もしない
-	if (!isPostprocess_) {
+	if (!isPostprocess_ || !isImGuiEnabled_) {
 		return;
 	} 
 	DirectXCommon* dxCommon = engineCore_->GetDirectXCommon();
@@ -211,10 +205,10 @@ void RendaringPostprosecess::DrawImGui() {
 		ImGui::SameLine();
 		ImGui::InputInt("Vignette Process Index", &vignetteProcessIndex_);
 		if (enableVignette_) {
-			ImGui::DragFloat2("ScreenResolution", &vignetteOffsetBuffer_->screenResolution.x, 0.1f);
-			ImGui::DragFloat("VignetteRadius", &vignetteOffsetBuffer_->VignetteRadius, 0.1f);
-			ImGui::DragFloat("VignetteSoftness", &vignetteOffsetBuffer_->VignetteSoftness, 0.1f);
-			ImGui::DragFloat("VignetteIntensity", &vignetteOffsetBuffer_->VignetteIntensity, 0.1f);
+			ImGui::DragFloat2("ScreenResolution", &vignetteOffsetBuffer_.GetData()->screenResolution.x, 0.1f);
+			ImGui::DragFloat("VignetteRadius", &vignetteOffsetBuffer_.GetData()->VignetteRadius, 0.1f);
+			ImGui::DragFloat("VignetteSoftness", &vignetteOffsetBuffer_.GetData()->VignetteSoftness, 0.1f);
+			ImGui::DragFloat("VignetteIntensity", &vignetteOffsetBuffer_.GetData()->VignetteIntensity, 0.1f);
 			ImGui::Spacing();
 		}
 	}
@@ -290,7 +284,7 @@ void RendaringPostprosecess::ApplyGrayScale() {
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootDescriptorTable(0, engineCore_->GetTextureManager()->GetOffscreenSrvHandleGPU(readingResourceIndex_));
-	commandList->SetGraphicsRootConstantBufferView(1, grayScaleResource_.Get()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, grayScaleOffsetBuffer_.GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
@@ -303,6 +297,6 @@ void RendaringPostprosecess::ApplyVignette() {
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootDescriptorTable(0, engineCore_->GetTextureManager()->GetOffscreenSrvHandleGPU(readingResourceIndex_));
-	commandList->SetGraphicsRootConstantBufferView(1, vignetteResource_.Get()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, vignetteOffsetBuffer_.GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
