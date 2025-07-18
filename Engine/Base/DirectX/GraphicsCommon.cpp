@@ -26,6 +26,13 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 	primitiveRootParameter_.CreateRootParameter("PixelParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	primitiveRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
 
+	// 色調補正のやつ
+	colorCorrectionRootParameter_.Initialize();
+	colorCorrectionRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	colorCorrectionRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	
+	colorCorrectionRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
 	// グレースケールのやつ
 	grayScaleRootParameter_.Initialize();
 	grayScaleRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
@@ -53,6 +60,7 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 	grayScaleRootParameter_.CheckIntegrityData();
 	vignetteRootParameter_.CheckIntegrityData();
 	normalRootParameter_.CheckIntegrityData();
+	colorCorrectionRootParameter_.CheckIntegrityData();
 #endif // _DEBUG
 
 	// インプットレイアウトの初期化
@@ -92,6 +100,11 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Particle.PS.hlsl", "Particle.VS.hlsl", static_cast<BlendMode>(i),false);
 	}
 	
+	colorCorrectionPso_.Initialize(engineCore);
+	colorCorrectionPso_.CreatePipelineStateObject(
+		colorCorrectionRootParameter_, &depthStencil_, normalInputLayout,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "ColorCorrectionShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
+
 	grayScaleTrianglePso_.Initialize(engineCore);
 	grayScaleTrianglePso_.CreatePipelineStateObject(
 		grayScaleRootParameter_, &depthStencil_, normalInputLayout,

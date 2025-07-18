@@ -3,6 +3,7 @@ class EngineCore;
 #include "Sprite/Sprite.h"
 #include "Object/OffsetBuffer.h"
 #include "Object/VignetteOffset.h"
+#include "Object/ColorCorrectionOffset.h"
 
 #include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
 
@@ -42,14 +43,21 @@ private:
 
 	void ApplyGrayScale();
 	void ApplyVignette();
+	void ApplyColorCorrection();
 
 public:// パブリック変数
 	bool isPostprocess_;
 	bool isImGuiEnabled_;
 
 	bool enableGrayscale_;
+	bool enableColorCorrection_;
 	bool enableVignette_;
 	bool enableNormal_;
+
+private:// 色調補正
+	PipelineStateObject* colorCorrectionPso_;
+	ConstantBuffer<ColorCorrectionOffset> colorCorrectionOffsetBuffer_;
+	int colorCorrectionProcessIndex_;
 
 private:// グレースケール変数
 	PipelineStateObject* grayScalePso_;
