@@ -161,8 +161,6 @@ void EngineCore::PreDraw() {
 
 	dxCommon_.PreDraw();
 
-	textureManager_.PreDraw();
-
 	// 深度の設定
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = graphicsCommon_.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
 	dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -184,7 +182,6 @@ void EngineCore::PostDraw() {
 	DrawEngineMenu();
 #endif // _DEBUG
 
-	textureManager_.PostDraw();
 	imGuiManager_.EndFrame();
 	dxCommon_.PostDraw();
 	textureManager_.ReleaseIntermediateResources();

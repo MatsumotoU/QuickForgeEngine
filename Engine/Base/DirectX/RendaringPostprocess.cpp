@@ -17,6 +17,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 
 	postProcessCount_ = 0;
 	enableGrayscale_ = true;
+	enableColorCorrection_ = true;
 	enableVignette_ = true;
 	enableNormal_ = true;
 
@@ -31,12 +32,15 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	offScreenClearColor[2] = 0.5f;
 	offScreenClearColor[3] = 1.0f;
 
+	// ポストプロセスの関数を登録
 	postProcessFunctions_.clear();
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyGrayScale, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyVignette, this));
-
+	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyColorCorrection, this));
+	// 固定のインデックスを設定
 	grayScaleProcessIndex_ = 0; // グレースケールのインデックス
 	vignetteProcessIndex_ = 1; // ビネットのインデックス
+	colorCorrectionProcessIndex_ = 2; // 色調補正のインデックス
 
 	postProcessOrderForm_.clear();
 
@@ -90,6 +94,15 @@ void RendaringPostprosecess::Initialize(EngineCore* engineCore) {
 	grayScalePso_ = engineCore_->GetGraphicsCommon()->GetGrayScalePso();
 	grayScaleOffsetBuffer_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
 
+	// 色調補正のリソース作成
+	colorCorrectionPso_ = engineCore_->GetGraphicsCommon()->GetColorCorrectionPso();
+	colorCorrectionOffsetBuffer_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
+	colorCorrectionOffsetBuffer_.GetData()->exposure = 0.0f; // 露出
+	colorCorrectionOffsetBuffer_.GetData()->contrast = 1.0f; // コントラスト
+	colorCorrectionOffsetBuffer_.GetData()->saturation = 1.0f; // 彩度
+	colorCorrectionOffsetBuffer_.GetData()->gamma = 1.0f; // ガンマ
+	colorCorrectionOffsetBuffer_.GetData()->hue = 0.0f;
+
 	// ビネットのリソース作成
 	vignettePso_ = engineCore_->GetGraphicsCommon()->GetVignettePso();
 	vignetteOffsetBuffer_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
@@ -102,16 +115,21 @@ void RendaringPostprosecess::PreDraw() {
 	// 何回ポストプロセスがかかっているか調べる
 	postProcessCount_ = 0;
 	postProcessOrderForm_.clear();
+	// グレースケール
 	if (enableGrayscale_) {
 		postProcessOrderForm_.push_back(grayScaleProcessIndex_); // グレースケール
-		
 		postProcessCount_++;
 		// グレースケールの強度
 		grayScaleOffsetBuffer_.GetData()->offset.x = grayScaleOffset_;
 	}
+	// ビネット
 	if (enableVignette_) {
 		postProcessOrderForm_.push_back(vignetteProcessIndex_); // ビネット
-
+		postProcessCount_++;
+	}
+	// 色調補正
+	if (enableColorCorrection_) {
+		postProcessOrderForm_.push_back(colorCorrectionProcessIndex_); // 色調補正
 		postProcessCount_++;
 	}
 
@@ -155,7 +173,12 @@ void RendaringPostprosecess::PreDraw() {
 
 void RendaringPostprosecess::PostDraw() {
 	// ポストプロセスが有効でないなら何もしない
-	if (!isPostprocess_ || !isImGuiEnabled_) {
+#ifdef _DEBUG
+	if (!isImGuiEnabled_) {
+		return;
+	}
+#endif // _DEBUG
+	if (!isPostprocess_) {
 		return;
 	} 
 	DirectXCommon* dxCommon = engineCore_->GetDirectXCommon();
@@ -174,9 +197,11 @@ void RendaringPostprosecess::PostDraw() {
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = engineCore_->GetGraphicsCommon()->GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
 	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandList();
 	commandList->OMSetRenderTargets(1, dxCommon->GetRtvHandles(), false, &dsvHandl);
+#ifdef _DEBUG
 	if (isImGuiEnabled_) {
 		return;
 	}
+#endif // _DEBUG
 	commandList->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	commandList->SetGraphicsRootSignature(engineCore_->GetGraphicsCommon()->GetNormalPso()->GetRootSignature());
 	commandList->SetPipelineState(engineCore_->GetGraphicsCommon()->GetNormalPso()->GetPipelineState());
@@ -197,7 +222,11 @@ void RendaringPostprosecess::DrawImGui() {
 		ImGui::SameLine();
 		ImGui::InputInt("Grayscale Process Index", &grayScaleProcessIndex_);
 		if (enableGrayscale_) {
-			ImGui::SliderFloat("Grayscale Offset", &grayScaleOffset_, 0.0f, 1.0f);
+			if (ImGui::TreeNode("Grayscale Offset")) {
+				ImGui::Text("Grayscale Offset: %.2f", grayScaleOffset_);
+				ImGui::SliderFloat("Grayscale Offset", &grayScaleOffset_, 0.0f, 1.0f);
+				ImGui::TreePop();
+			}
 			ImGui::Spacing();
 		}
 
@@ -205,10 +234,28 @@ void RendaringPostprosecess::DrawImGui() {
 		ImGui::SameLine();
 		ImGui::InputInt("Vignette Process Index", &vignetteProcessIndex_);
 		if (enableVignette_) {
-			ImGui::DragFloat2("ScreenResolution", &vignetteOffsetBuffer_.GetData()->screenResolution.x, 0.1f);
-			ImGui::DragFloat("VignetteRadius", &vignetteOffsetBuffer_.GetData()->VignetteRadius, 0.1f);
-			ImGui::DragFloat("VignetteSoftness", &vignetteOffsetBuffer_.GetData()->VignetteSoftness, 0.1f);
-			ImGui::DragFloat("VignetteIntensity", &vignetteOffsetBuffer_.GetData()->VignetteIntensity, 0.1f);
+			if (ImGui::TreeNode("Vignette Offset")) {
+				ImGui::DragFloat2("ScreenResolution", &vignetteOffsetBuffer_.GetData()->screenResolution.x, 0.1f);
+				ImGui::DragFloat("VignetteRadius", &vignetteOffsetBuffer_.GetData()->VignetteRadius, 0.1f);
+				ImGui::DragFloat("VignetteSoftness", &vignetteOffsetBuffer_.GetData()->VignetteSoftness, 0.1f);
+				ImGui::DragFloat("VignetteIntensity", &vignetteOffsetBuffer_.GetData()->VignetteIntensity, 0.1f);
+				ImGui::TreePop();
+			}
+			ImGui::Spacing();
+		}
+
+		ImGui::Checkbox("Enable ColorCorrection", &enableColorCorrection_);
+		ImGui::SameLine();
+		ImGui::InputInt("ColorCorrection Process Index", &colorCorrectionProcessIndex_);
+		if (enableColorCorrection_) {
+			if (ImGui::TreeNode("ColorCorrection Offset")) {
+				ImGui::DragFloat("Exposure", &colorCorrectionOffsetBuffer_.GetData()->exposure, 0.1f);
+				ImGui::DragFloat("Contrast", &colorCorrectionOffsetBuffer_.GetData()->contrast, 0.1f);
+				ImGui::DragFloat("Saturation", &colorCorrectionOffsetBuffer_.GetData()->saturation, 0.1f);
+				ImGui::DragFloat("Gamma", &colorCorrectionOffsetBuffer_.GetData()->gamma, 0.1f);
+				ImGui::DragFloat("Hue", &colorCorrectionOffsetBuffer_.GetData()->hue, 0.1f);
+				ImGui::TreePop();
+			}
 			ImGui::Spacing();
 		}
 	}
@@ -298,5 +345,18 @@ void RendaringPostprosecess::ApplyVignette() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootDescriptorTable(0, engineCore_->GetTextureManager()->GetOffscreenSrvHandleGPU(readingResourceIndex_));
 	commandList->SetGraphicsRootConstantBufferView(1, vignetteOffsetBuffer_.GetGPUVirtualAddress());
+	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+void RendaringPostprosecess::ApplyColorCorrection() {
+	DirectXCommon* dxCommon = engineCore_->GetDirectXCommon();
+	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandList();
+	commandList->SetGraphicsRootSignature(colorCorrectionPso_->GetRootSignature());
+	commandList->SetPipelineState(colorCorrectionPso_->GetPipelineState());
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetIndexBuffer(&indexBufferView_);
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->SetGraphicsRootDescriptorTable(0, engineCore_->GetTextureManager()->GetOffscreenSrvHandleGPU(readingResourceIndex_));
+	commandList->SetGraphicsRootConstantBufferView(1, colorCorrectionOffsetBuffer_.GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }

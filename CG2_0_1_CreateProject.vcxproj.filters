@@ -694,6 +694,9 @@
     <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Object\ColorCorrectionOffset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Shaders\VS\Object3d.VS.hlsl" />
@@ -706,6 +709,7 @@
     <FxCompile Include="Engine\Shaders\PS\VignetteShader.hlsl" />
     <FxCompile Include="Engine\Shaders\VS\Primitive.VS.hlsl" />
     <FxCompile Include="Engine\Shaders\PS\Particle.PS.hlsl" />
+    <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />

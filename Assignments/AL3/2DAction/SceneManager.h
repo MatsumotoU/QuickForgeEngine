@@ -1,4 +1,6 @@
 #pragma once
+#define NOMINMAX
+
 #include "GameScene.h"
 #include "TitleScene.h"
 #include "Class/Fade.h"

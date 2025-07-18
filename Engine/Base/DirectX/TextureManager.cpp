@@ -171,10 +171,6 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 	DescriptorHandles handles = srvDescriptorHeap_->AssignTextureHandles(index);
 	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1] = handles.cpuHandle_;
 	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1] = handles.gpuHandle_;
-	// ImGuiの次のDescriptorを使う
-	/*UINT discriptorHeapSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleCPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;
-	textureSrvHandleGPU_[textureSrvHandleCPU_.size() - 1].ptr += discriptorHeapSize;*/
 	// SRVの作成
 	srvDescriptorHeap_->AssignHeap(textureResource, srvDesc, handles.cpuHandle_);
 }
@@ -198,12 +194,6 @@ void TextureManager::CreateOffscreenShaderResourceView() {
 	// SRVの作成
 	srvDescriptorHeap_->AssignHeap(dxCommon_->GetOffscreenResource(0), srvDesc, offscreenSrvHandleCPU_[0]);
 	srvDescriptorHeap_->AssignHeap(dxCommon_->GetOffscreenResource(1), srvDesc, offscreenSrvHandleCPU_[1]);
-}
-
-void TextureManager::PreDraw() {
-}
-
-void TextureManager::PostDraw() {
 }
 
 void TextureManager::ReleaseIntermediateResources() {

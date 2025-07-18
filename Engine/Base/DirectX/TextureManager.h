@@ -28,7 +28,7 @@ public:// デバッグ機能
 	void DrawImages();
 #endif // _DEBUG
 
-public:
+private:
 	/// <summary>
 	/// テクスチャを読み込んでミップ付きマップにして読み込みます
 	/// </summary>
@@ -50,8 +50,6 @@ public:
 	void CreateShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource, uint32_t index);
 	void CreateOffscreenShaderResourceView();
 public:
-	void PreDraw();
-	void PostDraw();
 	void ReleaseIntermediateResources();
 
 public:
