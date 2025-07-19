@@ -309,6 +309,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Base\DirectX\GraphRenderer.cpp" />
     <ClCompile Include="Engine\Base\DirectX\RendaringPostprocess.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Base\DirectX\RootParameter.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectionalLightResource.cpp" />
@@ -358,6 +359,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Sprite\FullScreenSprite.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
+    <ClCompile Include="Engine\String\Font.cpp" />
     <ClCompile Include="Engine\String\FontDrawer.cpp" />
     <ClCompile Include="Engine\String\FontLoader.cpp" />
     <ClCompile Include="Engine\String\StringLiblary.cpp" />
@@ -412,6 +414,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h" />
     <ClInclude Include="Engine\Base\DirectX\RendaringPostprocess.h" />
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\ConstantBuffer.h" />
+    <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.h" />
     <ClInclude Include="Engine\Base\LoopStoper.h" />
     <ClInclude Include="Engine\Base\Windows\MemoryWatcher.h" />
     <ClInclude Include="Engine\Input\XInput\XInputController.h" />
@@ -485,6 +488,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Sprite\FullScreenSprite.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />
+    <ClInclude Include="Engine\String\Font.h" />
     <ClInclude Include="Engine\String\FontLoader.h" />
     <ClInclude Include="Engine\String\FontStructures.h" />
     <ClInclude Include="Engine\Utility\FileExtension.h" />

@@ -27,27 +27,21 @@ void Sprite::Initialize(EngineCore* engineCore, float width, float hight) {
 	directionalLight_.Initialize(dxCommon_);
 
 	// Spriteを作る
-	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * 4);
-	vertexBufferView_ = {};
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
+	vertexBuffer_.CreateResource(dxCommon_->GetDevice(),4);
+	
 	// 頂点データ作成
-	vertexData_ = nullptr;
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	vertexData_[0].position = { 0.0f,hight,0.0f,1.0f };
-	vertexData_[0].texcoord = { 0.0f,1.0f };
-	vertexData_[0].normal = { 0.0f,0.0f,-1.0f };
-	vertexData_[1].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexData_[1].texcoord = { 0.0f,0.0f };
-	vertexData_[1].normal = { 0.0f,0.0f,-1.0f };
-	vertexData_[2].position = { width,hight,0.0f,1.0f };
-	vertexData_[2].texcoord = { 1.0f,1.0f };
-	vertexData_[2].normal = { 0.0f,0.0f,-1.0f };
-	vertexData_[3].position = { width,0.0f,0.0f,1.0f };
-	vertexData_[3].texcoord = { 1.0f,0.0f };
-	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
+	vertexBuffer_.GetData()[0].position = { 0.0f,hight,0.0f,1.0f };
+	vertexBuffer_.GetData()[0].texcoord = { 0.0f,1.0f };
+	vertexBuffer_.GetData()[0].normal = { 0.0f,0.0f,-1.0f };
+	vertexBuffer_.GetData()[1].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexBuffer_.GetData()[1].texcoord = { 0.0f,0.0f };
+	vertexBuffer_.GetData()[1].normal = { 0.0f,0.0f,-1.0f };
+	vertexBuffer_.GetData()[2].position = { width,hight,0.0f,1.0f };
+	vertexBuffer_.GetData()[2].texcoord = { 1.0f,1.0f };
+	vertexBuffer_.GetData()[2].normal = { 0.0f,0.0f,-1.0f };
+	vertexBuffer_.GetData()[3].position = { width,0.0f,0.0f,1.0f };
+	vertexBuffer_.GetData()[3].texcoord = { 1.0f,0.0f };
+	vertexBuffer_.GetData()[3].normal = { 0.0f,0.0f,-1.0f };
 
 	// indexBufferの作成
 	indexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(uint32_t) * 6);
@@ -76,7 +70,7 @@ void Sprite::DrawSprite(const Matrix4x4& worldMatrix, int32_t textureHandle, Cam
 	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
 	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
@@ -98,7 +92,7 @@ void Sprite::DrawSprite(const Transform& transform, int32_t textureHandle, Camer
 	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
 	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
@@ -128,7 +122,7 @@ void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform
 	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
 	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
@@ -143,7 +137,7 @@ void Sprite::DrawSprite(const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle) {
 
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
 	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
@@ -170,7 +164,7 @@ void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform
 
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
 	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());

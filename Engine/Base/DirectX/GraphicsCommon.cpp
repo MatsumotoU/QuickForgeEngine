@@ -52,6 +52,13 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 	normalRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	normalRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
+	// フォントのルートパラメータ
+	fontRootParameter_.Initialize();
+	fontRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
+	fontRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	fontRootParameter_.CreateRootParameter("FontParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	fontRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
 	// パラメータの整合性チェック
 #ifdef _DEBUG
 	normalGameObjectRootParameter_.CheckIntegrityData();
@@ -61,6 +68,7 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 	vignetteRootParameter_.CheckIntegrityData();
 	normalRootParameter_.CheckIntegrityData();
 	colorCorrectionRootParameter_.CheckIntegrityData();
+	fontRootParameter_.CheckIntegrityData();
 #endif // _DEBUG
 
 	// インプットレイアウトの初期化
@@ -119,4 +127,9 @@ void GraphicsCommon::Initialize(EngineCore* engineCore) {
 	normalPso_.CreatePipelineStateObject(
 		grayScaleRootParameter_, &depthStencil_, normalInputLayout,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Simple.PS.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
+
+	fontPso_.Initialize(engineCore);
+	fontPso_.CreatePipelineStateObject(
+		fontRootParameter_, &depthStencil_, primitiveInputLayout,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "MSDF.PS.hlsl", "Primitive.VS.hlsl", kBlendModeNormal, false);
 }

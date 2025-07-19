@@ -51,6 +51,7 @@ private: // メンバ変数
 	RootParameter colorCorrectionRootParameter_;
 	RootParameter vignetteRootParameter_;
 	RootParameter normalRootParameter_;
+	RootParameter fontRootParameter_;
 
 	// PSO
 	PipelineStateObject trianglePso_[kCountOfBlendMode];
@@ -64,6 +65,8 @@ private: // メンバ変数
 	PipelineStateObject colorCorrectionPso_;
 	PipelineStateObject grayScaleTrianglePso_;
 	PipelineStateObject vignettePso_;
+
+	PipelineStateObject fontPso_;
 
 	PipelineStateObject normalPso_;
 };
