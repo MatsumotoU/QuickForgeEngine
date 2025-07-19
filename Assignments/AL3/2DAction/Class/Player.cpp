@@ -27,6 +27,7 @@ void Player::Initialize(EngineCore* engineCore) {
 	map_ = nullptr;
 	isActive_ = true;
 
+	isAttackCharge_ = false;
 	isAttacking_ = false;
 	attackChargeTime_ = 0.0f;
 
@@ -194,7 +195,7 @@ void Player::Move() {
 	}
 
 	if (input->keyboard_.GetPress(DIK_SPACE)) {
-		isAttacking_ = true;
+		isAttackCharge_ = true;
 		bahaviorType_ = BahaviorType::kAttack;
 	}
 
@@ -204,7 +205,7 @@ void Player::Move() {
 }
 
 void Player::Attack() {
-	if (isAttacking_) {
+	if (isAttackCharge_) {
 		velocity_.x = 0.0f;
 		velocity_.y = 0.0f;
 		acceleration_.x = 0.0f;
@@ -225,22 +226,34 @@ void Player::Attack() {
 		if (attackChargeTime_ >= 0.3f) {
 			transform_.rotate.z = 0.0f;
 			attackChargeTime_ = 0.0f;
-			isAttacking_ = false;
+			isAttackCharge_ = false;
 			transform_.scale.x = 2.0f;
-			velocity_.x = 10.0f * -attackCargeDir;
+			velocity_.x = 20.0f * -attackCargeDir;
+			isAttacking_ = true;
 		}
 		return;
 	} else {
 
-		if (velocity_.x <= 5.0f) {
+		if (velocity_.x <= 2.0f) {
+			isAttacking_ = false;
 			bahaviorType_ = BahaviorType::kMove;
 		}
 	}
+
+	float attackCargeDir = 1.0f;
+	if (lrDirection_ != LRDirection::kLeft) {
+		attackCargeDir = -1.0f;
+	}
+	billboard_.transform_.translate = { transform_.translate.x + 1.5f * -attackCargeDir,transform_.translate.y ,transform_.translate.z };
 
 }
 
 bool Player::GetIsActive() {
 	return isActive_;
+}
+
+bool Player::GetIsAttacking() {
+	return isAttacking_;
 }
 
 void Player::SetIsActive(bool isActive) {

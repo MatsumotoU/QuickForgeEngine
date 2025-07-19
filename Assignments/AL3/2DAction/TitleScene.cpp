@@ -44,6 +44,9 @@ void TitleScene::Update() {
 
 void TitleScene::Draw() {
 	assert(engineCore_);
+#ifdef _DEBUG
+	camera_ = debugCamera_.camera_;
+#endif // _DEBUG
 
 	model_.Draw(&camera_);
 
