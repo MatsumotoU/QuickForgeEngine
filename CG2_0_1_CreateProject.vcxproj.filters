@@ -18,6 +18,7 @@
     <None Include=".editorconfig" />
     <None Include="Engine\Shaders\ShaderStructs\Object3d.hlsli" />
     <None Include="Engine\Shaders\ShaderStructs\Particle.hlsli" />
+    <None Include="Engine\Shaders\ShaderStructs\Font.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -315,6 +316,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Audio\Base\SpeakerVolumeMonitor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\String\FontLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -697,6 +701,12 @@
     <ClInclude Include="Engine\Object\ColorCorrectionOffset.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\String\FontStructures.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\String\FontLoader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Shaders\VS\Object3d.VS.hlsl" />
@@ -710,6 +720,7 @@
     <FxCompile Include="Engine\Shaders\VS\Primitive.VS.hlsl" />
     <FxCompile Include="Engine\Shaders\PS\Particle.PS.hlsl" />
     <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl" />
+    <FxCompile Include="Engine\Shaders\PS\MSDF.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />

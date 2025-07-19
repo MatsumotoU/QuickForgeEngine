@@ -38,8 +38,8 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 #ifdef _DEBUG
-	debugCamera_.Update();
-	camera = debugCamera_.camera_;
+	//debugCamera_.Update();
+	//camera = debugCamera_.camera_;
 #endif // _DEBUG
 	camera.Update();
 	cameraContoroller_.Update();
@@ -47,9 +47,14 @@ void GameScene::Update() {
 	enemy_.Update();
 
 	if ((player.transform_.translate - enemy_.transform_.translate).Length() <= kWith) {
-		if (player.GetIsActive()) {
-			player.SetIsActive(false);
-			deathParticle_.EmmitParticle(player.transform_.translate);
+		if (player.GetIsActive() && enemy_.GetIsAlive()) {
+			if (player.GetIsAttacking()) {
+				enemy_.bahaviorType_ = EnemyBahaviorType::kDeath;
+				enemy_.transform_.translate = player.transform_.translate;
+			} else {
+				player.SetIsActive(false);
+				deathParticle_.EmmitParticle(player.transform_.translate);
+			}
 		}
 	}
 
@@ -69,6 +74,7 @@ void GameScene::Update() {
 void GameScene::Draw() {
 #ifdef _DEBUG
 	assert(engineCore_);
+	//camera = debugCamera_.camera_;
 #endif // _DEBUG
 	map_.Draw(&camera);
 	skyDome_.Draw(&camera);

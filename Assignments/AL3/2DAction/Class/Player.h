@@ -35,6 +35,7 @@ public:
 
 public:
 	bool GetIsActive();
+	bool GetIsAttacking();
 
 public:
 	void SetIsActive(bool isActive);
@@ -60,6 +61,7 @@ private:
 private:
 	BahaviorType bahaviorType_;
 	bool isAttacking_;
+	bool isAttackCharge_;
 	float attackChargeTime_;
 	Billboard billboard_;
 

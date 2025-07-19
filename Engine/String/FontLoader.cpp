@@ -1,0 +1,50 @@
+#include "FontLoader.h"
+
+FontAtlasData FontDataLoader::LoadFontData(const std::string& jsonFilePath) {
+    FontAtlasData fontData;
+    std::ifstream file(jsonFilePath);
+    if (!file.is_open())
+    {
+        // エラー処理
+        throw std::runtime_error("Failed to open JSON file: " + jsonFilePath);
+    }
+
+    nlohmann::json j;
+    file >> j;
+
+    // --- atlas情報 ---
+    fontData.type = j["atlas"]["type"].get<std::string>();
+    fontData.distanceRange = j["atlas"]["distanceRange"].get<float>();
+    fontData.width = j["atlas"]["width"].get<float>();
+    fontData.height = j["atlas"]["height"].get<float>();
+    fontData.yOrigin = j["atlas"]["yOrigin"].get<std::string>();
+
+    // --- metrics情報 ---
+    fontData.metrics.emSize = j["metrics"]["emSize"].get<float>();
+    fontData.metrics.lineHeight = j["metrics"]["lineHeight"].get<float>();
+    fontData.metrics.ascender = j["metrics"]["ascender"].get<float>();
+    fontData.metrics.descender = j["metrics"]["descender"].get<float>();
+    // 他のmetricsもパース
+
+    // --- glyphs情報 ---
+    for (const auto& glyphJson : j["glyphs"])
+    {
+        GlyphInfo glyph;
+        glyph.unicode = glyphJson["unicode"].get<unsigned int>();
+        glyph.advance = glyphJson["advance"].get<float>();
+
+        glyph.planeBounds.left = glyphJson["planeBounds"]["left"].get<float>();
+        glyph.planeBounds.bottom = glyphJson["planeBounds"]["bottom"].get<float>();
+        glyph.planeBounds.right = glyphJson["planeBounds"]["right"].get<float>();
+        glyph.planeBounds.top = glyphJson["planeBounds"]["top"].get<float>();
+
+        glyph.atlasBounds.left = glyphJson["atlasBounds"]["left"].get<float>();
+        glyph.atlasBounds.bottom = glyphJson["atlasBounds"]["bottom"].get<float>();
+        glyph.atlasBounds.right = glyphJson["atlasBounds"]["right"].get<float>();
+        glyph.atlasBounds.top = glyphJson["atlasBounds"]["top"].get<float>();
+
+        fontData.glyphs[glyph.unicode] = glyph;
+    }
+
+    return fontData;
+}
