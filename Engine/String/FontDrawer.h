@@ -6,6 +6,4 @@
 class FontDrawer {
 public:
 	FontDrawer();
-
-	//Microsoft::WRL::ComPtr<ID3D12Resource> LoadFont(const std::string& path);
 };

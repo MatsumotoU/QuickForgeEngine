@@ -1,6 +1,6 @@
 #include "FontLoader.h"
 
-FontAtlasData FontDataLoader::LoadFontData(const std::string& jsonFilePath) {
+FontAtlasData FontLoader::LoadFontData(const std::string& jsonFilePath) {
     FontAtlasData fontData;
     std::ifstream file(jsonFilePath);
     if (!file.is_open())
@@ -47,4 +47,29 @@ FontAtlasData FontDataLoader::LoadFontData(const std::string& jsonFilePath) {
     }
 
     return fontData;
+}
+
+FontDataToShader FontLoader::ConvertToShaderData(const FontAtlasData& fontAtlasData) {
+    FontDataToShader result{};
+    result.AtlasSize = Vector2(fontAtlasData.width, fontAtlasData.height);
+    result.DistanceRange = fontAtlasData.distanceRange;
+	result.padding = 0.0f; // 必要に応じてパディングを設定
+    return result;
+}
+
+FontUVData FontLoader::GetGlyphUVData(const FontAtlasData& fontAtlasData, unsigned int unicode) {
+	auto it = fontAtlasData.glyphs.find(unicode);
+	if (it != fontAtlasData.glyphs.end()) {
+		const GlyphInfo& glyph = it->second;
+        FontUVData uvData{};
+		uvData.leftTop = Vector2(glyph.atlasBounds.left / fontAtlasData.width, glyph.atlasBounds.top / fontAtlasData.height);
+		uvData.rightTop = Vector2(glyph.atlasBounds.right / fontAtlasData.width, glyph.atlasBounds.top / fontAtlasData.height);
+		uvData.leftBottom = Vector2(glyph.atlasBounds.left / fontAtlasData.width, glyph.atlasBounds.bottom / fontAtlasData.height);
+		uvData.rightBottom = Vector2(glyph.atlasBounds.right / fontAtlasData.width, glyph.atlasBounds.bottom / fontAtlasData.height);
+		return uvData;
+	}
+
+	// グリフが見つからない場合はデフォルトのUVデータを返す
+	assert(false && "Glyph not found in font atlas data");
+    return FontUVData();
 }
