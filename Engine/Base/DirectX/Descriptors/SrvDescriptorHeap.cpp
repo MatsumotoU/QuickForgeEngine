@@ -20,6 +20,7 @@ void SrvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bo
 	offscreenBeginIndex_ = size;
 	arrayBeginIndex_ = size * 2;
 	descriptorSizeSRV_ = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	attayAssignCount_ = 0;
 
 	srvDescriptorHeap_ = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, numDescriptors, shaderVisible);
 	DebugLog(std::format("CreateSRVDescriptorHeap: Create {} HeapSpace", numDescriptors));
@@ -58,6 +59,20 @@ DescriptorHandles SrvDescriptorHeap::AssignArrayHandles(const uint32_t& index) {
 	result.cpuHandle_ = GetCPUDecriptorHandle(srvDescriptorHeap_.Get(), descriptorSizeSRV_, index + arrayBeginIndex_);
 	result.gpuHandle_ = GetGPUDecriptorHandle(srvDescriptorHeap_.Get(), descriptorSizeSRV_, index + arrayBeginIndex_);
 	DebugLog(std::format("SRVDescriptorHeap: AssignArrayHandleIndex {} ", index + arrayBeginIndex_));
+	attayAssignCount_++;
+	return result;
+}
+
+DescriptorHandles SrvDescriptorHeap::AssignEmptyArrayHandles() {
+	if (attayAssignCount_ + arrayBeginIndex_ >= srvDescriptorHeapSize_) {
+		assert(false && "offscreenBeginIndex_ >= arrayBeginIndex_");
+	}
+
+	DescriptorHandles result;
+	result.cpuHandle_ = GetCPUDecriptorHandle(srvDescriptorHeap_.Get(), descriptorSizeSRV_, attayAssignCount_ + arrayBeginIndex_);
+	result.gpuHandle_ = GetGPUDecriptorHandle(srvDescriptorHeap_.Get(), descriptorSizeSRV_, attayAssignCount_ + arrayBeginIndex_);
+	DebugLog(std::format("SRVDescriptorHeap: AssignArrayHandleIndex {} ", attayAssignCount_ + arrayBeginIndex_));
+	attayAssignCount_++;
 	return result;
 }
 

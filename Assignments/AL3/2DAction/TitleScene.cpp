@@ -1,7 +1,7 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 
-TitleScene::TitleScene(EngineCore* engineCore) {
+TitleScene::TitleScene(EngineCore* engineCore) :font_(engineCore){
 	engineCore_ = engineCore;
 }
 
@@ -19,6 +19,8 @@ void TitleScene::Initialize() {
 	debugCamera_.Initialize(engineCore_);
 #endif // _DEBUG
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
+
+	font_.Initialize("Resources/Fonts/DotGothic16_Regular", 100.0f);
 }
 
 void TitleScene::Update() {
@@ -40,9 +42,12 @@ void TitleScene::Update() {
 	camera_ = debugCamera_.camera_;
 #endif // _DEBUG
 	camera_.Update();
+
 }
 
 void TitleScene::Draw() {
+	font_.Draw('0', &camera_);
+
 	assert(engineCore_);
 #ifdef _DEBUG
 	camera_ = debugCamera_.camera_;

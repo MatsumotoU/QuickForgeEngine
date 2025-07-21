@@ -38,6 +38,8 @@ public:
 
 	PipelineStateObject* GetNormalPso() { return &normalPso_; }
 
+	PipelineStateObject* GetFontPso() { return &fontPso_; }
+
 	DepthStencil* GetDepthStencil() { return &depthStencil_; }
 
 private: // メンバ変数
