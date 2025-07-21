@@ -44,7 +44,7 @@ private:
 	EngineCore* engineCore_;
 	DirectXCommon* dxCommon_;
 	TextureManager* textureManager_;
-	VertexBuffer vertexBuffer_;
+	VertexBuffer<VertexData> vertexBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 	uint32_t* indexData_;

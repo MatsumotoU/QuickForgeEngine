@@ -58,18 +58,25 @@ FontDataToShader FontLoader::ConvertToShaderData(const FontAtlasData& fontAtlasD
 }
 
 FontUVData FontLoader::GetGlyphUVData(const FontAtlasData& fontAtlasData, unsigned int unicode) {
-	auto it = fontAtlasData.glyphs.find(unicode);
-	if (it != fontAtlasData.glyphs.end()) {
-		const GlyphInfo& glyph = it->second;
+    auto it = fontAtlasData.glyphs.find(unicode);
+    if (it != fontAtlasData.glyphs.end()) {
+        const GlyphInfo& glyph = it->second;
         FontUVData uvData{};
-		uvData.leftTop = Vector2(glyph.atlasBounds.left / fontAtlasData.width, glyph.atlasBounds.top / fontAtlasData.height);
-		uvData.rightTop = Vector2(glyph.atlasBounds.right / fontAtlasData.width, glyph.atlasBounds.top / fontAtlasData.height);
-		uvData.leftBottom = Vector2(glyph.atlasBounds.left / fontAtlasData.width, glyph.atlasBounds.bottom / fontAtlasData.height);
-		uvData.rightBottom = Vector2(glyph.atlasBounds.right / fontAtlasData.width, glyph.atlasBounds.bottom / fontAtlasData.height);
-		return uvData;
-	}
 
-	// グリフが見つからない場合はデフォルトのUVデータを返す
-	assert(false && "Glyph not found in font atlas data");
+        // yOriginが"bottom"ならY座標を反転
+        bool flipY = (fontAtlasData.yOrigin == "bottom");
+
+        auto calcY = [&](float y) {
+            return flipY ? (1.0f - (y / fontAtlasData.height)) : (y / fontAtlasData.height);
+            };
+
+        uvData.leftTop = Vector2(glyph.atlasBounds.left / fontAtlasData.width, calcY(glyph.atlasBounds.top));
+        uvData.rightTop = Vector2(glyph.atlasBounds.right / fontAtlasData.width, calcY(glyph.atlasBounds.top));
+        uvData.leftBottom = Vector2(glyph.atlasBounds.left / fontAtlasData.width, calcY(glyph.atlasBounds.bottom));
+        uvData.rightBottom = Vector2(glyph.atlasBounds.right / fontAtlasData.width, calcY(glyph.atlasBounds.bottom));
+        return uvData;
+    }
+
+    assert(false && "Glyph not found in font atlas data");
     return FontUVData();
 }

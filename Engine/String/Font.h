@@ -4,9 +4,12 @@
 
 #include "FontLoader.h"
 #include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
+#include "Base/DirectX/Resource/ShaderBuffers/VertexBuffer.h"
 #include "Base/DirectX/WVPResource.h"
+#include "Base/DirectX/Descriptors/DescriptorHandles.h"
 
 class EngineCore;
+class Camera;
 
 class Font final {
 public:
@@ -25,7 +28,7 @@ public:
 	/// </summary>
 	/// <param name="text">描画するテキスト</param>
 	/// <param name="position">描画位置</param>
-	void Draw(const char& text, const Vector2& position);
+	void Draw(const char& text, Camera* camera);
 
 private:
 	
@@ -37,4 +40,14 @@ private:
 
 	FontAtlasData fontAtlasData_;
 	ConstantBuffer<FontDataToShader> fontDataBuffer_;
+	VertexBuffer<PrimitiveVertexData> vertexBuffer_;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
+	uint32_t* indexData_;
+
+	uint32_t textureHandle_;
+	const uint32_t kIncetanceCount_ = 10;
+
+	DescriptorHandles instancingSrvHandles_;
 };

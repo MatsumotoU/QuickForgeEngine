@@ -2,6 +2,7 @@
 #include "../../../Engine/Base/EngineCore.h"
 #include "IScene.h"
 #include "Particle/Particle.h"
+#include "String/Font.h"
 
 class TitleScene : public IScene {
 public:
@@ -24,5 +25,6 @@ private:
 	Camera camera_;
 #ifdef _DEBUG
 	DebugCamera debugCamera_;
+	Font font_;
 #endif // _DEBUG
 };

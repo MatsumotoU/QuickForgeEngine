@@ -19,6 +19,7 @@ public:// メンバ関数
 	DescriptorHandles AssignOffscreenHandles(const uint32_t& index);
 
 	DescriptorHandles AssignArrayHandles(const uint32_t& index);
+	DescriptorHandles AssignEmptyArrayHandles();
 
 	void AssignHeap(ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc,const D3D12_CPU_DESCRIPTOR_HANDLE& cpuDescriptorHande);
 
@@ -42,6 +43,7 @@ private:
 	uint32_t textureBeginIndex_;
 	uint32_t offscreenBeginIndex_;
 	uint32_t arrayBeginIndex_;
+	uint32_t attayAssignCount_;
 
 	uint32_t descriptorSizeSRV_;
 };

@@ -25,17 +25,15 @@ PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
 
-    // MSDFテクスチャをサンプリング
     float3 sampleColor = g_MsdfAtlas.Sample(g_Sampler, input.texcoord).rgb;
-
-    // RGBチャンネルから単一の符号付き距離値を再構築
     float sd = median(sampleColor.r, sampleColor.g, sampleColor.b);
-    float alpha = saturate(sd - 0.5 + 0.5 * g_Constants.DistanceRange);
 
-    // 最終的な色を計算
+    // アンチエイリアス処理
+    float edgeWidth = fwidth(sd) * 0.1;
+    float alpha = smoothstep(0.5 - edgeWidth, 0.5 + edgeWidth, sd);
+
     float4 finalColor = float4(input.color.rgb, input.color.a * alpha);
 
-    // アルファがほぼ0のピクセルは破棄してパフォーマンス向上
     if (finalColor.a < 0.01f)
     {
         discard;

@@ -733,6 +733,7 @@
     <FxCompile Include="Engine\Shaders\PS\Particle.PS.hlsl" />
     <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl" />
     <FxCompile Include="Engine\Shaders\PS\MSDF.PS.hlsl" />
+    <FxCompile Include="Engine\Shaders\VS\Font.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
