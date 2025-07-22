@@ -20,7 +20,7 @@ void TitleScene::Initialize() {
 #endif // _DEBUG
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
 
-	font_.Initialize("Resources/Fonts/DotGothic16_Regular", 100.0f);
+	font_.Initialize("Resources/Fonts/DotGothic16_Regular", 1.0f);
 }
 
 void TitleScene::Update() {

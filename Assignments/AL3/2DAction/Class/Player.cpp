@@ -101,7 +101,9 @@ void Player::Update() {
 	velocity_.x *= 0.98f;
 	velocity_.y *= 0.98f;
 
-	velocity_.x = std::clamp(velocity_.x, -kMaxVelocity, kMaxVelocity);
+	if (bahaviorType_ != BahaviorType::kAttack) {
+		velocity_.x = std::clamp(velocity_.x, -kMaxVelocity, kMaxVelocity);
+	} 
 
 	transform_.translate.x += velocity_.x * engineCore_->GetDeltaTime();
 	transform_.translate.y += velocity_.y * engineCore_->GetDeltaTime();
@@ -234,7 +236,7 @@ void Player::Attack() {
 		return;
 	} else {
 
-		if (velocity_.x <= 2.0f) {
+		if (velocity_.Length() <= 15.0f) {
 			isAttacking_ = false;
 			bahaviorType_ = BahaviorType::kMove;
 		}

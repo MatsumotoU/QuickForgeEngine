@@ -6,6 +6,7 @@
 #include "Class/CameraContoroller.h"
 #include "Class/Enemy.h"
 #include "Class/DeathParticle.h"
+#include "Class/HitEffect.h"
 #include "IScene.h"
 
 class GameScene : public IScene{
@@ -37,4 +38,5 @@ private:
 	CameraContoroller cameraContoroller_;
 	Enemy enemy_;
 	DeathParticle deathParticle_;
+	HitEffect hitEffect_;
 };

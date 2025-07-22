@@ -34,6 +34,8 @@ void GameScene::Initialize() {
 
 	deathParticle_.Initialize(engineCore_);
 	isRequestedExit_ = false;
+
+	hitEffect_.Initialize(engineCore_);
 }
 
 void GameScene::Update() {
@@ -45,12 +47,14 @@ void GameScene::Update() {
 	cameraContoroller_.Update();
 	player.Update();
 	enemy_.Update();
+	hitEffect_.Update();
 
 	if ((player.transform_.translate - enemy_.transform_.translate).Length() <= kWith) {
 		if (player.GetIsActive() && enemy_.GetIsAlive()) {
 			if (player.GetIsAttacking()) {
 				enemy_.bahaviorType_ = EnemyBahaviorType::kDeath;
 				enemy_.transform_.translate = player.transform_.translate;
+				hitEffect_.EmmitEffect(enemy_.transform_.translate);
 			} else {
 				player.SetIsActive(false);
 				deathParticle_.EmmitParticle(player.transform_.translate);
@@ -76,6 +80,7 @@ void GameScene::Draw() {
 	assert(engineCore_);
 	//camera = debugCamera_.camera_;
 #endif // _DEBUG
+	hitEffect_.Draw(&camera);
 	map_.Draw(&camera);
 	skyDome_.Draw(&camera);
 	player.Draw(&camera);

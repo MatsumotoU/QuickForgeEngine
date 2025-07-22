@@ -54,7 +54,9 @@ void Font::Initialize(const std::string& fontFilePath, float fontSize) {
 	engineCore_->GetSrvDescriptorHeap()->AssignHeap(wvpResource_.GetWVPResource(), srvDesc, instancingSrvHandles_.cpuHandle_);
 
 	for (int i = 0; i < static_cast<int>(kIncetanceCount_); i++) {
-		wvpResource_.SetWorldMatrix(Matrix4x4::MakeAffineMatrix(Vector3(1.0f,1.0f,1.0f),Vector3(0.0f,0.0f,0.0f), Vector3(static_cast<float>(i * fontSize), 0.0f, 0.0f)), i);
+		transform[i].scale = Vector3(1.0f, 1.0f, 1.0f);
+		transform[i].rotate = Vector3(0.0f, 0.0f, 0.0f);
+		transform[i].translate = Vector3(static_cast<float>(i * fontSize), 0.0f, 0.0f);
 	}
 	
 }
@@ -66,14 +68,16 @@ void Font::Draw(const char& text, Camera* camera) {
 	vertexBuffer_.GetData()[3].texcoord = uv.rightTop;
 	vertexBuffer_.GetData()[2].texcoord = uv.rightBottom;
 
-	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(wvpResource_.particleData_->World, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
+	/*Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(wvpResource_.particleData_->World, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
 	wvpResource_.SetWorldMatrix(wvpResource_.particleData_->World, 0);
-	wvpResource_.SetWVPMatrix(wvpMatrix, 0);
+	wvpResource_.SetWVPMatrix(wvpMatrix, 0);*/
 
-	/*for (uint32_t index = 0; index < kIncetanceCount_; index++) {
-		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(), CAMERA_VIEW_STATE_PERSPECTIVE);
+	for (uint32_t index = 0; index < kIncetanceCount_; index++) {
+		Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform[index].scale, transform[index].rotate, transform[index].translate);
+		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE);
+		wvpResource_.SetWorldMatrix(worldMatrix, index);
 		wvpResource_.SetWVPMatrix(wvpMatrix, index);
-	}*/
+	}
 
 	// sprite
 	ID3D12GraphicsCommandList* commandList = engineCore_->GetDirectXCommon()->GetCommandList();
