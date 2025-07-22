@@ -9,7 +9,7 @@
 
 #include "../Windows/WinApp.h"
 
-void DirectXCommon::Initialize(WinApp* winApp) {
+void  DirectXCommon::Initialize(WinApp* winApp) {
 	// windowsの管理クラス取得
 	winApp_ = winApp;
 

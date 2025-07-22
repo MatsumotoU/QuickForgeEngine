@@ -289,6 +289,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Assignments\AL3\2DAction\Class\DeathParticle.cpp" />
     <ClCompile Include="Assignments\AL3\2DAction\Class\Enemy.cpp" />
     <ClCompile Include="Assignments\AL3\2DAction\Class\Fade.cpp" />
+    <ClCompile Include="Assignments\AL3\2DAction\Class\HitEffect.cpp" />
     <ClCompile Include="Assignments\AL3\2DAction\Class\MapChip.cpp" />
     <ClCompile Include="Assignments\AL3\2DAction\Class\Player.cpp" />
     <ClCompile Include="Assignments\AL3\2DAction\Class\SkyDome.cpp" />
@@ -393,6 +394,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Assignments\AL3\2DAction\Class\DeathParticle.h" />
     <ClInclude Include="Assignments\AL3\2DAction\Class\Enemy.h" />
     <ClInclude Include="Assignments\AL3\2DAction\Class\Fade.h" />
+    <ClInclude Include="Assignments\AL3\2DAction\Class\HitEffect.h" />
     <ClInclude Include="Assignments\AL3\2DAction\Class\MapChip.h" />
     <ClInclude Include="Assignments\AL3\2DAction\Class\Player.h" />
     <ClInclude Include="Assignments\AL3\2DAction\Class\SkyDome.h" />
@@ -498,6 +500,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utility\IntrusiveList.h" />
     <ClInclude Include="Engine\Utility\MyEasing.h" />
     <ClInclude Include="Engine\Utility\MyGameMath.h" />
+    <ClInclude Include="Engine\Utility\MyRandom.h" />
     <ClInclude Include="Engine\Utility\SimpleJson.h" />
     <ClInclude Include="Engine\Utility\TimeCall.h" />
     <ClInclude Include="Engine\Utility\MyTimer.h" />

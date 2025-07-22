@@ -7,9 +7,13 @@
 #include "Base/DirectX/Resource/ShaderBuffers/VertexBuffer.h"
 #include "Base/DirectX/WVPResource.h"
 #include "Base/DirectX/Descriptors/DescriptorHandles.h"
+#include "Math/Transform.h"
 
 class EngineCore;
 class Camera;
+
+// TODO: パーティクルDrawCall
+// TODO: uvをvsから送る
 
 class Font final {
 public:
@@ -31,9 +35,6 @@ public:
 	void Draw(const char& text, Camera* camera);
 
 private:
-	
-
-private:
 	EngineCore* engineCore_ = nullptr;
 
 	WVPResource wvpResource_;
@@ -49,5 +50,6 @@ private:
 	uint32_t textureHandle_;
 	const uint32_t kIncetanceCount_ = 10;
 
+	Transform transform[10];
 	DescriptorHandles instancingSrvHandles_;
 };

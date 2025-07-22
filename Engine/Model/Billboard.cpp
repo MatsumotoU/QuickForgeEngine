@@ -73,7 +73,7 @@ void Billboard::Initialize(EngineCore* engineCore, float width, float hight) {
 }
 
 void Billboard::Update(const Vector3& cameraRotate) {
-	transform_.rotate = cameraRotate;
+	transform_.rotate = { cameraRotate .x,cameraRotate .y,transform_.rotate.z};
 	worldMatrix_ = Matrix4x4::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 }
 
