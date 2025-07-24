@@ -284,18 +284,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Engine\Shaders\ShaderStructs\Particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Assignments\AL3\2DAction\Class\Block.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\CameraContoroller.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\DeathParticle.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\Enemy.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\Fade.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\HitEffect.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\MapChip.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\Player.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\Class\SkyDome.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\GameScene.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\SceneManager.cpp" />
-    <ClCompile Include="Assignments\AL3\2DAction\TitleScene.cpp" />
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
@@ -358,6 +346,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
     <ClCompile Include="Engine\Object\BaseGameObject.cpp" />
     <ClCompile Include="Engine\Particle\Particle.cpp" />
+    <ClCompile Include="Engine\Scene\SceneObject.cpp" />
     <ClCompile Include="Engine\Sprite\FullScreenSprite.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\String\Font.cpp" />
@@ -387,21 +376,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\implot-master\implot_items.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
+    <ClCompile Include="Engine\Scene\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Assignments\AL3\2DAction\Class\Block.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\CameraContoroller.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\DeathParticle.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\Enemy.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\Fade.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\HitEffect.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\MapChip.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\Player.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\Class\SkyDome.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\GameScene.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\IScene.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\SceneManager.h" />
-    <ClInclude Include="Assignments\AL3\2DAction\TitleScene.h" />
     <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h" />
     <ClInclude Include="Engine\Audio\Chiptune.h" />
     <ClInclude Include="Engine\Audio\Audio3D.h" />
@@ -416,6 +393,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h" />
     <ClInclude Include="Engine\Base\DirectX\RendaringPostprocess.h" />
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\ConstantBuffer.h" />
+    <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\StructuredBuffer.h" />
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.h" />
     <ClInclude Include="Engine\Base\LoopStoper.h" />
     <ClInclude Include="Engine\Base\Windows\MemoryWatcher.h" />
@@ -486,11 +464,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\VignetteOffset.h" />
     <ClInclude Include="Engine\Particle\Particle.h" />
     <ClInclude Include="Engine\Particle\ParticleForGPU.h" />
+    <ClInclude Include="Engine\Scene\IScene.h" />
+    <ClInclude Include="Engine\Scene\SceneManager.h" />
+    <ClInclude Include="Engine\Scene\SceneObject.h" />
     <ClInclude Include="Engine\Script\ScriptLoader.h" />
     <ClInclude Include="Engine\Sprite\FullScreenSprite.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />
     <ClInclude Include="Engine\String\Font.h" />
+    <ClInclude Include="Engine\String\GlyphForGPU.h" />
     <ClInclude Include="Engine\String\FontLoader.h" />
     <ClInclude Include="Engine\String\FontStructures.h" />
     <ClInclude Include="Engine\Utility\FileExtension.h" />

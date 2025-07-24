@@ -2,14 +2,15 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "ModelData.h"
-#include "../Math/Transform.h"
-#include "../Math/Matrix/Matrix4x4.h"
-
+#include "Object/BaseGameObject.h"
 #include "../Base/DirectX/PipelineStateObject.h"
 
-#include "../Base/DirectX/MaterialResource.h"
-#include "../Base/DirectX/WVPResource.h"
-#include "../Base/DirectX/DirectionalLightResource.h"
+#include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
+#include "Base/DirectX/Resource/ShaderBuffers/VertexBuffer.h"
+
+#include "Math/TransformationMatrix.h"
+#include "Object/Material.h"
+#include "Object/DirectionalLight.h"
 
 // .USD 色々読めるモデルデータ
 
@@ -18,10 +19,15 @@ class DirectXCommon;
 class TextureManager;
 class Camera;
 
-class Model {
+class Model :public BaseGameObject{
 public:
-	void Initialize(EngineCore* engineCore);
-	void Update();
+	Model() = delete;
+	Model(EngineCore* engineCore);
+	~Model() override = default;
+
+public:
+	void Init() override;
+	void Update() override;
 	/// <summary>
 	/// モデルを読み込みます
 	/// </summary>
@@ -31,6 +37,10 @@ public:
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
 	void Draw(Camera* camera);
 
+#ifdef _DEBUG
+	void DrawImGui() override;
+#endif // _DEBUG
+
 public:
 	void SetBlendmode(BlendMode mode);
 
@@ -38,21 +48,15 @@ private:
 	EngineCore* engineCore_;
 	DirectXCommon* dxCommon_;
 	TextureManager* textureManager_;
-
-public:
-	Transform transform_;
-	Matrix4x4 worldMatrix_;
-
-public:
-	MaterialResource material_;
-	DirectionalLightResource directionalLight_;
-	WVPResource wvp_;
+	PipelineStateObject* pso_;
 
 private:
+	ConstantBuffer<TransformationMatrix> wvp_; // ワールドビュー投影行列
+	ConstantBuffer<DirectionalLight> directionalLight_; // 環境光
+	ConstantBuffer<Material> material_; // マテリアル
+
+	VertexBuffer<VertexData> vertexBuffer_; // 頂点バッファ
+
 	ModelData modelData_;
-	VertexData* vertexData_;
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	int32_t modelTextureHandle_;
-	PipelineStateObject* pso_;
 };

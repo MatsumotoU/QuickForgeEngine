@@ -1,12 +1,11 @@
 #include "../ShaderStructs/Particle.hlsli"
 
-struct ParticleForGPU
+struct GlyphForGPU
 {
     float32_t4x4 WVP;
-    float32_t4x4 World;
-    float32_t4 color;
+    float32_t4 texCoords; // 2D texture coordinates for the glyph
 };
-StructuredBuffer<ParticleForGPU> gParticle : register(t0);
+StructuredBuffer<GlyphForGPU> gGlyph : register(t0);
 
 struct VertexShaderInput
 {
@@ -18,9 +17,14 @@ struct VertexShaderInput
 VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_InstanceID)
 {
     VertexShaderOutput output;
-    output.position = mul(input.position, gParticle[instanceId].WVP);
-    output.texcoord = input.texcoord;
-    output.color = gParticle[instanceId].color;
+    output.position = mul(input.position, gGlyph[instanceId].WVP);
+    
+    // Create UV
+    float2 uv;
+    uv.x = lerp(gGlyph[instanceId].texCoords.x, gGlyph[instanceId].texCoords.z, input.texcoord.x);
+    uv.y = lerp(gGlyph[instanceId].texCoords.y, gGlyph[instanceId].texCoords.w, input.texcoord.y);
+    output.texcoord = uv;
+    output.color = input.color;
     
     return output;
 }

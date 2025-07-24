@@ -29,3 +29,5 @@ std::string ConvertString(const std::wstring& str);
 /// <param name="str">変換元</param>
 /// <returns>変換先</returns>
 LPCWSTR StringToLPCWSTR(const std::string& str);
+
+char* StringToCharPtr(const std::string& str);

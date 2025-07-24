@@ -1,17 +1,19 @@
 #include "Font.h"
 #include "Base/EngineCore.h"
 #include "Camera/Camera.h"
+#include "Base/MyString.h"
 
 void Font::Initialize(const std::string& fontFilePath, float fontSize) {
+	// フォントに使うリソース読み込み
 	fontAtlasData_ = FontLoader::LoadFontData(fontFilePath + ".json");
 	textureHandle_ = engineCore_->GetTextureManager()->LoadTexture(fontFilePath + ".png");
 
+	// フォントのデータをPSシェーダーに送るためのバッファを作成
 	fontDataBuffer_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
 	fontDataBuffer_.GetData()->AtlasSize = Vector2(fontAtlasData_.width, fontAtlasData_.height);
 	fontDataBuffer_.GetData()->DistanceRange = fontAtlasData_.distanceRange;
 
-	wvpResource_.Initialize(engineCore_->GetDirectXCommon(), kIncetanceCount_,true);
-
+	// ローカル頂点生成
 	vertexBuffer_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice(), 4);
 	vertexBuffer_.GetData()[0].position = { 0.0f,fontSize,0.0f,1.0f };
 	vertexBuffer_.GetData()[0].texcoord = { 0.0f,1.0f };
@@ -41,42 +43,46 @@ void Font::Initialize(const std::string& fontFilePath, float fontSize) {
 	indexData_[4] = 2;
 	indexData_[5] = 3;
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	srvDesc.Buffer.FirstElement = 0;
-	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = kIncetanceCount_;
-	srvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
-
-	instancingSrvHandles_ = engineCore_->GetSrvDescriptorHeap()->AssignEmptyArrayHandles();
-	engineCore_->GetSrvDescriptorHeap()->AssignHeap(wvpResource_.GetWVPResource(), srvDesc, instancingSrvHandles_.cpuHandle_);
-
-	for (int i = 0; i < static_cast<int>(kIncetanceCount_); i++) {
+	for (int i = 0; i < static_cast<int>(kInstanceCount_); i++) {
 		transform[i].scale = Vector3(1.0f, 1.0f, 1.0f);
 		transform[i].rotate = Vector3(0.0f, 0.0f, 0.0f);
 		transform[i].translate = Vector3(static_cast<float>(i * fontSize), 0.0f, 0.0f);
 	}
 	
+	// インスタンス化用のWVPバッファを作成
+	wvpBuffer_.CreateResource(engineCore_->GetDirectXCommon(), engineCore_->GetSrvDescriptorHeap(), kInstanceCount_);
+	fontSize_ = fontSize;
+
 }
 
-void Font::Draw(const char& text, Camera* camera) {
-	FontUVData uv = FontLoader::GetGlyphUVData(fontAtlasData_, static_cast<unsigned int>(text));
-	vertexBuffer_.GetData()[1].texcoord = uv.leftTop;
-	vertexBuffer_.GetData()[0].texcoord = uv.leftBottom;
-	vertexBuffer_.GetData()[3].texcoord = uv.rightTop;
-	vertexBuffer_.GetData()[2].texcoord = uv.rightBottom;
+void Font::Draw(const std::string& text, Camera* camera) {
+	char* stringBuffer = StringToCharPtr(text);
+	assert(stringBuffer != nullptr && "Font::Draw: text is null");
 
-	/*Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(wvpResource_.particleData_->World, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
-	wvpResource_.SetWorldMatrix(wvpResource_.particleData_->World, 0);
-	wvpResource_.SetWVPMatrix(wvpMatrix, 0);*/
+	FontUVData uv = {};
+	for (uint32_t index = 0; index < kInstanceCount_; index++) {
+		if (index >= text.length()) {
+			uv = FontLoader::GetGlyphUVData(fontAtlasData_, stringBuffer[text.size()-1]);
 
-	for (uint32_t index = 0; index < kIncetanceCount_; index++) {
+			transform[index].scale = transform[text.size() - 1].scale;
+			transform[index].rotate = transform[text.size() - 1].rotate;
+			transform[index].translate = transform[text.size() - 1].translate;
+		} else {
+			uv = FontLoader::GetGlyphUVData(fontAtlasData_, stringBuffer[index]);
+
+			transform[index].scale = Vector3(1.0f, 1.0f, 1.0f);
+			transform[index].rotate = Vector3(0.0f, 0.0f, 0.0f);
+			transform[index].translate = Vector3(static_cast<float>(index * fontSize_), 0.0f, 0.0f);
+		}
+		
 		Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform[index].scale, transform[index].rotate, transform[index].translate);
 		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE);
-		wvpResource_.SetWorldMatrix(worldMatrix, index);
-		wvpResource_.SetWVPMatrix(wvpMatrix, index);
+		GlyphForGPU glyphData;
+		glyphData.WVP = wvpMatrix;
+		glyphData.texcorad = Vector4(uv.leftBottom.x, uv.leftBottom.y, uv.rightTop.x, uv.rightTop.y);
+		wvpBuffer_.SetData(glyphData, index);
+
+		
 	}
 
 	// sprite
@@ -88,8 +94,8 @@ void Font::Draw(const char& text, Camera* camera) {
 	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootDescriptorTable(0, instancingSrvHandles_.gpuHandle_);
+	commandList->SetGraphicsRootDescriptorTable(0, wvpBuffer_.GetInstancingSrvHandles().gpuHandle_);
 	commandList->SetGraphicsRootDescriptorTable(1, engineCore_->GetTextureManager()->GetTextureSrvHandleGPU(textureHandle_));
 	commandList->SetGraphicsRootConstantBufferView(2, fontDataBuffer_.GetGPUVirtualAddress());
-	commandList->DrawIndexedInstanced(6, kIncetanceCount_, 0, 0, 0);
+	commandList->DrawIndexedInstanced(6, kInstanceCount_, 0, 0, 0);
 }

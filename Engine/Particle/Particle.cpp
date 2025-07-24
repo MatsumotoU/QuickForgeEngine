@@ -32,7 +32,7 @@ void Particle::Initialize(EngineCore* engineCore, uint32_t totalParticles) {
 	srvDesc.Buffer.NumElements = totalParticles;
 	srvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
-	instancingSrvHandles_ = engineCore_->GetSrvDescriptorHeap()->AssignArrayHandles(instanceCount_);
+	instancingSrvHandles_ = engineCore_->GetSrvDescriptorHeap()->AssignEmptyArrayHandles();
 	engineCore_->GetSrvDescriptorHeap()->AssignHeap(wvp_.GetWVPResource(), srvDesc, instancingSrvHandles_.cpuHandle_);
 
 	pso_ = engineCore_->GetGraphicsCommon()->GetParticlePso(kBlendModeNormal);

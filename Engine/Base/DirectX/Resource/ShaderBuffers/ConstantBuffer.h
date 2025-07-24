@@ -5,7 +5,7 @@
 #include "Base/DirectX/DirectXCommon.h"
 
 template<class T>
-class ConstantBuffer {
+class ConstantBuffer final{
 public:
     /// <summary>
     /// リソースを生成します
