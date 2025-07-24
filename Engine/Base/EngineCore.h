@@ -82,6 +82,9 @@
 // GraphRenderer
 #include "DirectX/GraphRenderer.h"
 
+// Scene
+#include "Scene/SceneManager.h"
+
 // TODO: ビルドツールpremakeの導入 
 
 #include <chrono>
@@ -157,6 +160,7 @@ private:// コア機能
 	DirectXCommon dxCommon_;
 	ImGuiManager imGuiManager_;
 	LoopStoper loopStopper_;
+	SceneManager sceneManager_;
 
 private:// 時間管理
 	FramePerSecond fpsCounter_;

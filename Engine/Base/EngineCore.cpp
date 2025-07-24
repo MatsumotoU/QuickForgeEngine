@@ -115,6 +115,10 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 #endif // _DEBUG
 
 	loopStopper_.Initialize();
+
+	// シーンマネージャの初期化,初期シーンはサンプルシーンとする
+	sceneManager_.CreateScene(this, "SampleScene");
+	sceneManager_.InitializeScene();
 }
 
 void EngineCore::Update() {
@@ -152,6 +156,11 @@ void EngineCore::Update() {
 #endif // _DEBUG
 
 	loopStopper_.Update();
+
+	// シーンの更新処理
+	if (!loopStopper_.GetIsStopping()) {
+		sceneManager_.UpdateScene();
+	}
 }
 
 void EngineCore::PreDraw() {
@@ -169,6 +178,9 @@ void EngineCore::PreDraw() {
 	postprocess_.PreDraw();
 
 	graphRenderer_.PreDraw();
+
+	// シーン描画
+	sceneManager_.DrawScene();
 }
 
 void EngineCore::PostDraw() {
@@ -370,6 +382,7 @@ void EngineCore::DrawEngineMenu() {
 
 	// * Sceneタブ * //
 	ImGui::Begin("Scene Viewer");
+	ImGui::Text("Scene: %s", sceneManager_.GetCurrentSceneName().c_str());
 
 	// アスペクト比保持
 	ImVec2 avail = ImGui::GetContentRegionAvail();
@@ -394,6 +407,11 @@ void EngineCore::DrawEngineMenu() {
 		reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr),
 		imageSize
 	);
+	ImGui::End();
+
+	// * SceneObjectタブ * //
+	ImGui::Begin("SceneObjectViewer");
+	sceneManager_.DrawImGui();
 	ImGui::End();
 
 	//* Editタブ *//

@@ -42,3 +42,13 @@ LPCWSTR StringToLPCWSTR(const std::string& str) {
     lpcwstr = wstr.c_str();
     return lpcwstr;
 }
+
+char* StringToCharPtr(const std::string& str) {
+    if (str.empty()) {
+        return nullptr;
+    }
+    // ヌル終端を含めたバッファを確保
+    char* buffer = new char[str.size() + 1];
+    std::memcpy(buffer, str.c_str(), str.size() + 1); // ヌル終端もコピー
+    return buffer;
+}

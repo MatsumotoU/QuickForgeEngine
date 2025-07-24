@@ -57,3 +57,52 @@ std::vector<std::string> FileLoader::Split(const std::string& str, char delimite
     }
     return result;
 }
+
+std::string FileLoader::OpenFileDialog() {
+    char filename[MAX_PATH] = "";
+    OPENFILENAMEA ofn = {};
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = nullptr;
+    ofn.lpstrFilter = "All Files\0*.*\0";
+    ofn.lpstrFile = filename;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+    if (GetOpenFileNameA(&ofn)) {
+        return filename;
+    }
+    return "";
+}
+
+std::vector<std::string> FileLoader::GetFilesWithExtension(const std::string& directoryPath, const std::string& extension) {
+    std::vector<std::string> files;
+    std::string searchPath = directoryPath + "\\*";
+    WIN32_FIND_DATAA findData;
+    HANDLE hFind = FindFirstFileA(searchPath.c_str(), &findData);
+
+    if (hFind != INVALID_HANDLE_VALUE) {
+        do {
+            if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                std::string filename = findData.cFileName;
+                // 拡張子が一致するかチェック（大文字小文字区別なし）
+                if (filename.length() >= extension.length()) {
+                    std::string fileExt = filename.substr(filename.length() - extension.length());
+                    std::string extLower = extension;
+                    // ここを修正
+                    std::transform(fileExt.begin(), fileExt.end(), fileExt.begin(),
+                        [](char c) { return static_cast<char>(tolower(static_cast<unsigned char>(c))); });
+                    std::transform(extLower.begin(), extLower.end(), extLower.begin(),
+                        [](char c) { return static_cast<char>(tolower(static_cast<unsigned char>(c))); });
+                    if (fileExt == extLower) {
+                        files.emplace_back(filename);
+                    }
+                }
+            }
+        } while (FindNextFileA(hFind, &findData));
+        FindClose(hFind);
+    }
+    return files;
+}
+
+std::string FileLoader::ExtractFileName(const std::string& fullPath) {
+    return std::filesystem::path(fullPath).stem().string();
+}
