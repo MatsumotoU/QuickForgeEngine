@@ -110,6 +110,14 @@ void DirectXCommon::PostDraw() {
 	assert(SUCCEEDED(hr));
 }
 
+void DirectXCommon::WaitForGpu() {
+	// GPUの処理が終わるまで待機
+	if (fence_.Get()->GetCompletedValue() < fenceValue_) {
+		fence_.Get()->SetEventOnCompletion(fenceValue_, fenceEvent_);
+		WaitForSingleObject(fenceEvent_, INFINITE);
+	}
+}
+
 void DirectXCommon::InitializeBackGround(float red, float green, float blue, float alpha) {
 	// バックバッファのインデックス取得
 	UINT backBufferIndex = swapChain_.Get()->GetCurrentBackBufferIndex();

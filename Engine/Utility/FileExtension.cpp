@@ -10,6 +10,8 @@ FileExtension GetFileExtension(const std::string& fileName) {
 		return FileExtension_WAV;
 	} else if (result == "mp3") {
 		return FileExtension_MP3;
+	} else if (result == "obj") {
+		return FileExtension_OBJ;
 	}
 	return FileExtension_None;
 }

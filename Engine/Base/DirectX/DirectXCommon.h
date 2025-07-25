@@ -38,6 +38,11 @@ public:
 	/// </summary>
 	void PostDraw();
 
+	/// <summary>
+	/// GPUの処理が終わるまで待機します
+	/// </summary>
+	void WaitForGpu();
+
 public:
 	/// <summary>
 	/// リソースのバリアを張り替えます

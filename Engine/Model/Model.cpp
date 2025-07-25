@@ -8,7 +8,13 @@
 #include "../Camera/Camera.h"
 
 #include "Utility/FileLoader.h"
-// TODO: モデルの名前被り
+
+#ifdef _DEBUG
+#include "Base/MyDebugLog.h"
+#endif // _DEBUG
+
+int Model::instanceCount_ = 0;
+
 Model::Model(EngineCore* engineCore):BaseGameObject(engineCore) {
 	engineCore_ = engineCore;
 	modelTextureHandle_ = 0;
@@ -28,6 +34,7 @@ Model::Model(EngineCore* engineCore):BaseGameObject(engineCore) {
 	assert(pso_);
 
 	name_ = "Model"; // モデルの名前を設定
+	instanceCount_++;
 }
 
 void Model::Init() {
@@ -47,7 +54,8 @@ void Model::Update() {
 }
 
 void Model::LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem) {
-	name_ = FileLoader::ExtractFileName(filename);
+	std::string instanceNumber = "[" + std::to_string(instanceCount_) + "]";
+	name_ = FileLoader::ExtractFileName(filename) + instanceNumber;
 
 	modelData_ = Modelmanager::LoadObjFile(directoryPath, filename, coordinateSystem);
 	vertexBuffer_.CreateResource(dxCommon_->GetDevice(), static_cast<uint32_t>(modelData_.vertices.size()));
@@ -56,6 +64,7 @@ void Model::LoadModel(const std::string& directoryPath, const std::string& filen
 
 	// テクスチャを読み込む
 	modelTextureHandle_ = textureManager_->LoadTexture(modelData_.material.textureFilePath);
+	modelFileName_ = filename;
 }
 
 void Model::Draw(Camera* camera) {
@@ -79,6 +88,63 @@ void Model::Draw(Camera* camera) {
 	commandList->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), 1, 0, 0);
 }
 
+nlohmann::json Model::Serialize() const {
+	nlohmann::json j;
+	j["type"] = "Model";
+	j["name"] = name_;
+	j["position"] = { transform_.translate.x, transform_.translate.y, transform_.translate.z };
+	j["rotation"] = { transform_.rotate.x, transform_.rotate.y, transform_.rotate.z };
+	j["scale"] = { transform_.scale.x, transform_.scale.y, transform_.scale.z };
+	j["modelTextureHandle"] = modelTextureHandle_;
+	j["modelFileName"] = modelFileName_;
+	j["color"] = { material_.GetData()->color.x, material_.GetData()->color.y, material_.GetData()->color.z, material_.GetData()->color.w };
+	j["enableLighting"] = material_.GetData()->enableLighting;
+#ifdef _DEBUG
+	DebugLog(std::format("name: {}", name_));
+#endif // _DEBUG
+	return j;
+}
+
+std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* engineCore) {
+	auto model = std::make_unique<Model>(engineCore);
+	model.get()->Init();
+	// 名前復元
+	if (j.contains("name")) model->name_ = j["name"].get<std::string>();
+	// トランスフォーム復元
+	if (j.contains("position")) {
+		model->transform_.translate.x = j["position"][0];
+		model->transform_.translate.y = j["position"][1];
+		model->transform_.translate.z = j["position"][2];
+	}
+	if (j.contains("rotation")) {
+		model->transform_.rotate.x = j["rotation"][0];
+		model->transform_.rotate.y = j["rotation"][1];
+		model->transform_.rotate.z = j["rotation"][2];
+	}
+	if (j.contains("scale")) {
+		model->transform_.scale.x = j["scale"][0];
+		model->transform_.scale.y = j["scale"][1];
+		model->transform_.scale.z = j["scale"][2];
+	}
+	// テクスチャとモデルファイル名の復元
+	if (j.contains("modelTextureHandle")) {
+		model->modelTextureHandle_ = j["modelTextureHandle"].get<int>();
+	}
+	if (j.contains("modelFileName")) {
+		model->modelFileName_ = j["modelFileName"].get<std::string>();
+	}
+	if (j.contains("color")) {
+		model->material_.GetData()->color.x = j["color"][0];
+		model->material_.GetData()->color.y = j["color"][1];
+		model->material_.GetData()->color.z = j["color"][2];
+		model->material_.GetData()->color.w = j["color"][3];
+	}
+	if (j.contains("enableLighting")) {
+		model->material_.GetData()->enableLighting = j["enableLighting"].get<bool>();
+	}
+	return model;
+}
+
 #ifdef _DEBUG
 void Model::DrawImGui() {
 	ImGui::Text("Model Name: %s", name_.c_str());
@@ -98,6 +164,14 @@ void Model::DrawImGui() {
 		ImGui::TreePop();
 	}
 
+	if (ImGui::TreeNode("Material")) {
+		ImGui::ColorEdit4("Color", &material_.GetData()->color.x);
+		bool temp = static_cast<bool>(material_.GetData()->enableLighting);
+		ImGui::Checkbox("Enable Lighting", &temp);
+		material_.GetData()->enableLighting = temp;
+		ImGui::TreePop();
+	}
+
 	// 詳細
 	if(ImGui::TreeNode("Properties")) {
 		ImGui::Text("ObjectName: %s", name_.c_str());
@@ -105,8 +179,6 @@ void Model::DrawImGui() {
 		ImGui::Text("TextureHandle: %d", modelTextureHandle_);
 		ImGui::TreePop();
 	}
-
-	
 }
 #endif // _DEBUG
 
