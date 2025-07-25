@@ -37,11 +37,16 @@ public:
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
 	void Draw(Camera* camera);
 
+	nlohmann::json Serialize() const override;
+	static std::unique_ptr<Model> Deserialize(const nlohmann::json& j, EngineCore* engineCore);
 #ifdef _DEBUG
 	void DrawImGui() override;
 #endif // _DEBUG
 
 public:
+	std::string GetModelFileName() const {
+		return modelFileName_;
+	}
 	void SetBlendmode(BlendMode mode);
 
 private:
@@ -57,6 +62,8 @@ private:
 
 	VertexBuffer<VertexData> vertexBuffer_; // 頂点バッファ
 
+	std::string modelFileName_;
 	ModelData modelData_;
 	int32_t modelTextureHandle_;
+	static int instanceCount_;
 };

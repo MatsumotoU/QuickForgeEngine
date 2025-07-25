@@ -140,6 +140,10 @@ void EngineCore::Update() {
 			audioResourceManager_.LoadAudioResource(winApp_.GetDroppedFiles()->at(0));
 		}
 
+		if (fileExt == FileExtension_OBJ) {
+			// TODO: モデルの読み込み処理を追加
+		}
+
 		winApp_.GetDroppedFiles()->clear();
 	}
 #endif // _DEBUG
@@ -158,6 +162,7 @@ void EngineCore::Update() {
 	loopStopper_.Update();
 
 	// シーンの更新処理
+	sceneManager_.SwapScene();
 	if (!loopStopper_.GetIsStopping()) {
 		sceneManager_.UpdateScene();
 	}
@@ -378,7 +383,7 @@ void EngineCore::DrawEngineMenu() {
 	ImGui::DockSpaceOverViewport(dockspace_id, ImGui::GetMainViewport(), ImGuiDockNodeFlags_None);
 
 	// 場所が分かるようにアウトラインを出す
-	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+	//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	// * Sceneタブ * //
 	ImGui::Begin("Scene Viewer");
@@ -548,8 +553,11 @@ void EngineCore::DrawEngineMenu() {
 	// デバッグログウィンドウ
 	if (isDrawDebugLogWindow_) {
 		ImGui::Begin("DEBUGLOG", &isDrawDebugLogWindow_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-		for (const std::string& log : *(MyDebugLog::GetInstatnce()->GetLog())) {
-			ImGui::Text("%s", log.c_str());
+		const auto& logs = *(MyDebugLog::GetInstatnce()->GetLog());
+		int logIndex = 0;
+		for (auto it = logs.rbegin(); it != logs.rend(); ++it, ++logIndex) {
+			std::string label = *it + "##log" + std::to_string(logIndex);
+			ImGui::Selectable(label.c_str(), false, ImGuiSelectableFlags_AllowDoubleClick);
 		}
 		ImGui::End();
 	}
@@ -561,7 +569,7 @@ void EngineCore::DrawEngineMenu() {
 	}
 
 	// エンジンのウィンドウと差別化用のスタイル変更
-	ImGui::PopStyleColor();
+	//ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 }
 

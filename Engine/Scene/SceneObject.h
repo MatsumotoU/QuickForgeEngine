@@ -23,7 +23,14 @@ public:
 	void Draw() override;
 
 public:
+	nlohmann::json Serialize() const;
+	static std::unique_ptr<SceneObject> Deserialize(
+		const nlohmann::json& j, EngineCore* engineCore,
+		const std::string& modelFileDirectory);
+
+public:
 	void AddModel(const std::string& directoryPath, const std::string& filename);
+	void DeleteModel(BaseGameObject* model);
 
 public:
 	std::vector<std::unique_ptr<BaseGameObject>>& GetGameObjects() {
@@ -33,11 +40,15 @@ public:
 	std::string GetSceneName() const {
 		return sceneName_;
 	}
+	void SetSceneName(const std::string& sceneName) {
+		sceneName_ = sceneName;
+	}
 
 private:
 	EngineCore* engineCore_;
 	std::string sceneName_;
 	std::vector<std::unique_ptr<BaseGameObject>> gameObjects_;
+	std::vector<BaseGameObject*> destroyedGameObjects_;
 
 	Camera mainCamera_;
 #ifdef _DEBUG

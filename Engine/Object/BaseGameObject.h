@@ -7,6 +7,7 @@ class Camera;
 #include "Math/Vector/Vector3.h"
 #include "Math/Matrix/Matrix4x4.h"
 #include "Math/Transform.h"
+#include "Utility/SimpleJson.h"
 
 class BaseGameObject {
 public:
@@ -19,6 +20,7 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw(Camera* camera) = 0;
 
+	virtual nlohmann::json Serialize() const = 0;
 #ifdef _DEBUG
 	virtual void DrawImGui() = 0;
 #endif // _DEBUG

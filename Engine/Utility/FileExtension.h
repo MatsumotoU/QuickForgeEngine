@@ -7,6 +7,7 @@ enum FileExtension {
 	FileExtension_JPG,
 	FileExtension_WAV,
 	FileExtension_MP3,
+	FileExtension_OBJ,
 };
 
 FileExtension GetFileExtension(const std::string& fileName);

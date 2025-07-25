@@ -268,8 +268,10 @@ void GraphRenderer::SetCamera(Camera* camera) {
 	camera_ = camera;
 }
 
-void GraphRenderer::DeleteCamera() {
+void GraphRenderer::DeleteCamera(Camera* camera) {
 	if (camera_) {
-		camera_ = nullptr;
+		if (camera_ == camera) {
+			camera_ = nullptr; // カメラを削除
+		} 
 	}
 }
