@@ -5,7 +5,8 @@
 #include <dxcapi.h>
 #include <map>
 
-#include "../MyString.h"
+#include "ShaderReflection.h"
+#include "Base/MyString.h"
 
 class ShaderCompiler final {
 public:
@@ -28,6 +29,14 @@ public:
 	/// <param name="includeHandler"></param>
 	/// <returns></returns>
 	IDxcBlob* CompileShader(const std::wstring& filePath,const wchar_t* profile);
+
+	/// <summary>
+	/// シェーダーバイトコードからリフレクション情報を取得する
+	/// </summary>
+	/// <param name="shaderBlob">コンパイル済みシェーダー(IDxcBlob)</param>
+	/// <param name="reflection">リフレクション情報格納先</param>
+	/// <returns>成功した場合true</returns>
+	bool ReflectShader(IDxcBlob* shaderBlob, ShaderReflection& reflection);
 
 private:
 	std::map<std::wstring, IDxcBlob*> iDxcBlobMap_;

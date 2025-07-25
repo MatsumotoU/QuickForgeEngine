@@ -113,3 +113,8 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	iDxcBlobMap_.emplace(filePath, shaderBlob);
 	return shaderBlob;
 }
+
+bool ShaderCompiler::ReflectShader(IDxcBlob* shaderBlob, ShaderReflection& reflection) {
+	if (!shaderBlob) return false;
+	return reflection.Reflect(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+}

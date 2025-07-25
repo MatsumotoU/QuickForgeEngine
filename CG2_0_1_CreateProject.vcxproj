@@ -298,6 +298,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Base\DirectX\GraphRenderer.cpp" />
     <ClCompile Include="Engine\Base\DirectX\RendaringPostprocess.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\Rendering\PSOCreater.cpp" />
     <ClCompile Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Base\DirectX\RootParameter.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp" />
@@ -311,6 +312,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
     <ClCompile Include="Engine\Base\DirectX\MaterialResource.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderReflection.cpp" />
     <ClCompile Include="Engine\Base\EngineCore.cpp" />
     <ClCompile Include="Engine\Base\LoopStoper.cpp" />
     <ClCompile Include="Engine\Base\Windows\MemoryWatcher.cpp" />
@@ -326,7 +328,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ScissorRect.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\ShaderCompiler.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderCompiler.cpp" />
     <ClCompile Include="Engine\Base\DirectX\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\Viewport.cpp" />
     <ClCompile Include="Engine\Base\DirectX\WVPResource.cpp" />
@@ -391,10 +393,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\AudioSourceBinder.h" />
     <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h" />
     <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h" />
+    <ClInclude Include="Engine\Base\DirectX\Rendering\PSO.h" />
+    <ClInclude Include="Engine\Base\DirectX\Rendering\PSOBinder.h" />
     <ClInclude Include="Engine\Base\DirectX\RendaringPostprocess.h" />
+    <ClInclude Include="Engine\Base\DirectX\Rendering\PSOCreater.h" />
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\ConstantBuffer.h" />
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\StructuredBuffer.h" />
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.h" />
+    <ClInclude Include="Engine\Base\DirectX\Rendering\ShaderReflection.h" />
     <ClInclude Include="Engine\Base\LoopStoper.h" />
     <ClInclude Include="Engine\Base\Windows\MemoryWatcher.h" />
     <ClInclude Include="Engine\Input\XInput\XInputController.h" />
@@ -432,7 +438,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\ImGuiManager.h" />
     <ClInclude Include="Engine\Base\DirectX\InputLayout.h" />
     <ClInclude Include="Engine\Base\DirectX\PipelineStateObject.h" />
-    <ClInclude Include="Engine\Base\DirectX\ShaderCompiler.h" />
+    <ClInclude Include="Engine\Base\DirectX\Rendering\ShaderCompiler.h" />
     <ClInclude Include="Engine\Base\DirectX\TextureManager.h" />
     <ClInclude Include="Engine\Base\MyString.h" />
     <ClInclude Include="Engine\Base\Windows\CrashHandler.h" />

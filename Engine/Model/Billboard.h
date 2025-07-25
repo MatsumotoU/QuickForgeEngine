@@ -2,42 +2,49 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <string>
+
+#include "Object/BaseGameObject.h"
+
+#include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
+#include "Base/DirectX/Resource/ShaderBuffers/VertexBuffer.h"
+
 #include "../Math/VerTexData.h"
 #include "../Math/Transform.h"
-
-#include "../Base/DirectX/MaterialResource.h"
-#include "../Base/DirectX/WVPResource.h"
-#include "../Base/DirectX/DirectionalLightResource.h"
+#include "Math/TransformationMatrix.h"
+#include "Object/Material.h"
+#include "Object/DirectionalLight.h"
 
 class EngineCore;
 class DirectXCommon;
 class TextureManager;
 class PipelineStateObject;
 
-class Billboard {
+class Billboard : public BaseGameObject {
 public:
-	void Initialize(EngineCore* engineCore, float width, float hight);
-	void Update(const Vector3& cameraRotate);
-	void Draw(int32_t textureHandle, Camera* camera);
-
+	Billboard() = delete;
+	Billboard(EngineCore* engineCore, float width, float hight,uint32_t textureHandle);
+	~Billboard() override = default;
 public:
-	Transform transform_;
-	Matrix4x4 worldMatrix_;
+	void Init() override;
+	void Update() override;
+	void Draw(Camera* camera) override;
 
 private:
-	MaterialResource material_;
-	DirectionalLightResource directionalLight_;
-	WVPResource wvp_;
-
 	EngineCore* engineCore_;
 	DirectXCommon* dxCommon_;
 	TextureManager* textureManager_;
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
-	VertexData* vertexData_;
+
+private:
+	Vector2 size_;
+	ConstantBuffer<TransformationMatrix> wvp_; // ワールドビュー投影行列
+	ConstantBuffer<DirectionalLight> directionalLight_; // 環境光
+	ConstantBuffer<Material> material_; // マテリアル
+	VertexBuffer<VertexData> vertexBuffer_; // 頂点バッファ
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 	uint32_t* indexData_;
 
+	uint32_t modelTextureHandle_ = 0; // テクスチャハンドル
 	PipelineStateObject* pso_;
 };
