@@ -97,6 +97,8 @@ nlohmann::json Model::Serialize() const {
 	j["scale"] = { transform_.scale.x, transform_.scale.y, transform_.scale.z };
 	j["modelTextureHandle"] = modelTextureHandle_;
 	j["modelFileName"] = modelFileName_;
+	j["color"] = { material_.GetData()->color.x, material_.GetData()->color.y, material_.GetData()->color.z, material_.GetData()->color.w };
+	j["enableLighting"] = material_.GetData()->enableLighting;
 #ifdef _DEBUG
 	DebugLog(std::format("name: {}", name_));
 #endif // _DEBUG
@@ -130,6 +132,15 @@ std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* e
 	}
 	if (j.contains("modelFileName")) {
 		model->modelFileName_ = j["modelFileName"].get<std::string>();
+	}
+	if (j.contains("color")) {
+		model->material_.GetData()->color.x = j["color"][0];
+		model->material_.GetData()->color.y = j["color"][1];
+		model->material_.GetData()->color.z = j["color"][2];
+		model->material_.GetData()->color.w = j["color"][3];
+	}
+	if (j.contains("enableLighting")) {
+		model->material_.GetData()->enableLighting = j["enableLighting"].get<bool>();
 	}
 	return model;
 }
