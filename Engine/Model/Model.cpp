@@ -43,8 +43,6 @@ void Model::Init() {
 	directionalLight_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
 	directionalLight_.GetData()->direction = Vector3(0.0f, -1.0f, 0.0f); // 下方向
 	directionalLight_.GetData()->intensity = 1.0f; // 輝度
-	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
-	material_.GetData()->enableLighting = true; // ライティングを有効化
 	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4(); // UV変換行列を初期化
 }
 
@@ -98,7 +96,7 @@ nlohmann::json Model::Serialize() const {
 	j["modelTextureHandle"] = modelTextureHandle_;
 	j["modelFileName"] = modelFileName_;
 	j["color"] = { material_.GetData()->color.x, material_.GetData()->color.y, material_.GetData()->color.z, material_.GetData()->color.w };
-	j["enableLighting"] = material_.GetData()->enableLighting;
+	j["enableLighting"] = static_cast<bool>(material_.GetData()->enableLighting);
 #ifdef _DEBUG
 	DebugLog(std::format("name: {}", name_));
 #endif // _DEBUG
@@ -112,19 +110,19 @@ std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* e
 	if (j.contains("name")) model->name_ = j["name"].get<std::string>();
 	// トランスフォーム復元
 	if (j.contains("position")) {
-		model->transform_.translate.x = j["position"][0];
-		model->transform_.translate.y = j["position"][1];
-		model->transform_.translate.z = j["position"][2];
+		model->transform_.translate.x = j["position"][0].get<float>();
+		model->transform_.translate.y = j["position"][1].get<float>();
+		model->transform_.translate.z = j["position"][2].get<float>();
 	}
 	if (j.contains("rotation")) {
-		model->transform_.rotate.x = j["rotation"][0];
-		model->transform_.rotate.y = j["rotation"][1];
-		model->transform_.rotate.z = j["rotation"][2];
+		model->transform_.rotate.x = j["rotation"][0].get<float>();
+		model->transform_.rotate.y = j["rotation"][1].get<float>();
+		model->transform_.rotate.z = j["rotation"][2].get<float>();
 	}
 	if (j.contains("scale")) {
-		model->transform_.scale.x = j["scale"][0];
-		model->transform_.scale.y = j["scale"][1];
-		model->transform_.scale.z = j["scale"][2];
+		model->transform_.scale.x = j["scale"][0].get<float>();
+		model->transform_.scale.y = j["scale"][1].get<float>();
+		model->transform_.scale.z = j["scale"][2].get<float>();
 	}
 	// テクスチャとモデルファイル名の復元
 	if (j.contains("modelTextureHandle")) {
@@ -134,13 +132,13 @@ std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* e
 		model->modelFileName_ = j["modelFileName"].get<std::string>();
 	}
 	if (j.contains("color")) {
-		model->material_.GetData()->color.x = j["color"][0];
-		model->material_.GetData()->color.y = j["color"][1];
-		model->material_.GetData()->color.z = j["color"][2];
-		model->material_.GetData()->color.w = j["color"][3];
+		model->material_.GetData()->color.x = j["color"][0].get<float>();
+		model->material_.GetData()->color.y = j["color"][1].get<float>();
+		model->material_.GetData()->color.z = j["color"][2].get<float>();
+		model->material_.GetData()->color.w = j["color"][3].get<float>();
 	}
 	if (j.contains("enableLighting")) {
-		model->material_.GetData()->enableLighting = j["enableLighting"].get<bool>();
+		model->material_.GetData()->enableLighting = j["enableLighting"].get<int32_t>();
 	}
 	return model;
 }
