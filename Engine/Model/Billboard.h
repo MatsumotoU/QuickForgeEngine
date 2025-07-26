@@ -29,6 +29,12 @@ public:
 	void Update() override;
 	void Draw(Camera* camera) override;
 
+	nlohmann::json Serialize() const override;
+	static std::unique_ptr<Billboard> Deserialize(const nlohmann::json& j, EngineCore* engineCore);
+#ifdef _DEBUG
+	void DrawImGui() override;
+#endif // _DEBUG
+
 private:
 	EngineCore* engineCore_;
 	DirectXCommon* dxCommon_;

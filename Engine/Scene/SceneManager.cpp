@@ -33,6 +33,13 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	if (modelFilepaths_.size() > 0) {
 		inputFilepath_ = modelFilepaths_[0]; // 最初のモデルを選択
 	}
+
+	billboardSelectionIndex_ = 0;
+	
+	billboardFilepath_ = FileLoader::GetFilesWithExtension(ModelDirectoryPath_, ".png");
+	if (billboardFilepath_.size() > 0) {
+		billboardInputFilepath_ = billboardFilepath_[0]; // 最初のビルボードを選択
+	}
 #endif
 }
 
@@ -223,7 +230,7 @@ void SceneManager::DrawImGui() {
 			ImGui::Text("Model Directory: %s", ModelDirectoryPath_.c_str());
 			ImGui::Spacing();
 			if (modelFilepaths_.size() > 0) {
-				if (ImGui::Button("Add")) {
+				if (ImGui::Button("Add##AddModel")) {
 					if (currentScene_) {
 						currentScene_->AddModel(ModelDirectoryPath_, inputFilepath_);
 					}
@@ -241,6 +248,30 @@ void SceneManager::DrawImGui() {
 			} else {
 				ImGui::Text("No model files found in %s", ModelDirectoryPath_.c_str());
 			}
+
+			// ビルボード追加処理
+			ImGui::Text("Billboard Directory: Resources");
+			ImGui::Spacing();
+			if (billboardFilepath_.size() > 0) {
+				if (ImGui::Button("Add##AddBillboard")) {
+					if (currentScene_) {
+						currentScene_->AddBillboard("Resources", billboardInputFilepath_);
+					}
+				}
+				ImGui::SameLine();
+				// ImGui::Combo用にconst char*配列を作成
+				std::vector<const char*> items;
+				for (const auto& f : billboardFilepath_) {
+					items.push_back(f.c_str());
+				}
+				if (ImGui::Combo("Billboard", &billboardSelectionIndex_, items.data(), static_cast<int>(items.size()))) {
+					// 選択が変わったときの処理
+					billboardInputFilepath_ = billboardFilepath_[billboardSelectionIndex_];
+				}
+			} else {
+				//ImGui::Text("No model files found in %s", .c_str());
+			}
+
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

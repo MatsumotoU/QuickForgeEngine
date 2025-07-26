@@ -67,6 +67,13 @@ void Billboard::Init() {
 	wvp_.GetData()->World = Matrix4x4::MakeIndentity4x4();
 	wvp_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
 	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4();
+
+	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4(); // UV変換行列を初期化
+	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	material_.GetData()->enableLighting = true; // ライティングを有効にする
+	directionalLight_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	directionalLight_.GetData()->direction = Vector3(0.0f, -1.0f, 0.0f); // 下方向
+	directionalLight_.GetData()->intensity = 1.0f; // 輝度
 }
 
 void Billboard::Update() {
@@ -93,4 +100,55 @@ void Billboard::Draw(Camera* camera) {
 	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(modelTextureHandle_));
 	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+nlohmann::json Billboard::Serialize() const {
+	nlohmann::json j;
+	j["type"] = "Billboard";
+	j["name"] = name_;
+	j["position"] = { transform_.translate.x, transform_.translate.y, transform_.translate.z };
+	j["rotation"] = { transform_.rotate.x, transform_.rotate.y, transform_.rotate.z };
+	j["scale"] = { transform_.scale.x, transform_.scale.y, transform_.scale.z };
+	j["size"] = { size_.x, size_.y };
+	j["modelTextureHandle"] = modelTextureHandle_;
+	return j;
+}
+
+std::unique_ptr<Billboard> Billboard::Deserialize(const nlohmann::json& j, EngineCore* engineCore) {
+	std::unique_ptr<Billboard> billboard = std::make_unique<Billboard>(engineCore, 1.0f, 1.0f, 0);
+	billboard->Init();
+	// 名前復元
+	if (j.contains("name")) billboard->name_ = j["name"].get<std::string>();
+	// トランスフォーム復元
+	if (j.contains("position")) {
+		billboard->transform_.translate.x = j["position"][0].get<float>();
+		billboard->transform_.translate.y = j["position"][1].get<float>();
+		billboard->transform_.translate.z = j["position"][2].get<float>();
+	}
+	if (j.contains("rotation")) {
+		billboard->transform_.rotate.x = j["rotation"][0].get<float>();
+		billboard->transform_.rotate.y = j["rotation"][1].get<float>();
+		billboard->transform_.rotate.z = j["rotation"][2].get<float>();
+	}
+	if (j.contains("scale")) {
+		billboard->transform_.scale.x = j["scale"][0].get<float>();
+		billboard->transform_.scale.y = j["scale"][1].get<float>();
+		billboard->transform_.scale.z = j["scale"][2].get<float>();
+	}
+	if (j.contains("size")) {
+		billboard->size_.x = j["size"][0].get<float>();
+		billboard->size_.y = j["size"][1].get<float>();
+	}
+	if (j.contains("modelTextureHandle")) {
+		billboard->modelTextureHandle_ = j["modelTextureHandle"].get<int>();
+	}
+	return billboard;
+}
+
+void Billboard::DrawImGui() {
+	ImGui::Text("Billboard: %s", name_.c_str());
+	ImGui::DragFloat3("Position", &transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("Rotation", &transform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
+	ImGui::DragFloat2("Size", &size_.x, 0.1f);
 }

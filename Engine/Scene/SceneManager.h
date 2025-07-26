@@ -44,6 +44,10 @@ private:
 	std::vector<std::string> modelFilepaths_;
 	std::string inputFilepath_;
 	std::string ModelDirectoryPath_;
+
+	int billboardSelectionIndex_;
+	std::vector<std::string> billboardFilepath_;
+	std::string billboardInputFilepath_;
 #endif // _DEBUG
 
 };

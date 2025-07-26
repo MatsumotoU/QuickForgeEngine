@@ -30,6 +30,9 @@ public:
 	std::string GetName() const {
 		return name_;
 	}
+	void SetName(const std::string& name) {
+		name_ = name;
+	}
 
 public:
 	Vector3 localPos_;
