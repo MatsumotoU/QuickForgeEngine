@@ -9,7 +9,7 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> PSOCreater::CreatePSO(ID3D12Device* 
 	}
 
 	// パイプラインステートオブジェクトの生成に成功
-	ShaderCompiler::CompileShaders(psoDesc.VS, psoDesc.PS);
+	//ShaderCompiler::CompileShaders(psoDesc.VS, psoDesc.PS);
 
 	return pso;
 }

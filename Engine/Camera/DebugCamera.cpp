@@ -7,6 +7,10 @@
 
 #ifdef _DEBUG
 
+DebugCamera::DebugCamera(EngineCore* engineCore){
+	anchorPointBillboard_ = std::make_unique<Billboard>(engineCore, 1.0f, 1.0f, 0);
+}
+
 DebugCamera::~DebugCamera() {
 	engineCore_->GetLoopStopper()->RemoveNonStoppingFunc();
 }
@@ -22,7 +26,7 @@ void DebugCamera::Initialize(EngineCore* engineCore) {
 	anchorPoint_ = {};
 
 	engineCore_ = engineCore;
-	anchorPointBillboard_.Initialize(engineCore_, 1.0f, 1.0f);
+	anchorPointBillboard_->Init();
 	anchorGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/anchor.png");
 
 	isDrawAnchor_ = false;
@@ -38,7 +42,7 @@ void DebugCamera::Update() {
 
 		// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
 
-		sphericalTemp.x += -input_->mouse_.wheelDir_*0.01f;
+		sphericalTemp.x += -input_->mouse_.wheelDir_ * 0.01f;
 
 		Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(sphericalTemp);
 		camera_.transform_.translate = sphericalToCartesian + anchorPoint_;
@@ -60,7 +64,7 @@ void DebugCamera::Update() {
 			Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
 
 			// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
-			
+
 			sphericalTemp.z += -input_->mouse_.deltaMouse_.x * mouseSensitivity_ * 0.01f; // φ: 左右
 			sphericalTemp.y += -input_->mouse_.deltaMouse_.y * mouseSensitivity_ * 0.01f; // θ: 上下
 
@@ -72,8 +76,8 @@ void DebugCamera::Update() {
 	}
 
 	camera_.Update();
-	anchorPointBillboard_.transform_.translate = anchorPoint_;
-	anchorPointBillboard_.Update(camera_.transform_.rotate);
+	anchorPointBillboard_->transform_.translate = anchorPoint_;
+	anchorPointBillboard_->Update();
 }
 
 void DebugCamera::DrawImGui() {
@@ -107,8 +111,8 @@ void DebugCamera::DrawImGui() {
 	ImGui::End();
 
 	if (isDrawAnchor_) {
-		anchorPointBillboard_.Draw(anchorGH_, &camera_);
+		anchorPointBillboard_->Draw(&camera_);
 	}
-	
+
 }
 #endif // _DEBUG

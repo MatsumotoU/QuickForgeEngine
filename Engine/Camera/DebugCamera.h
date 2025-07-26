@@ -10,6 +10,8 @@ class DirectInputManager;
 
 class DebugCamera {
 public:
+	DebugCamera() = delete;
+	DebugCamera(EngineCore* engineCore);
 	~DebugCamera();
 
 public:
@@ -27,7 +29,7 @@ private:
 	bool isDrawAnchor_;
 	EngineCore* engineCore_;
 	DirectInputManager* input_;
-	Billboard anchorPointBillboard_;
+	std::unique_ptr<Billboard> anchorPointBillboard_;
 	uint32_t anchorGH_;
 };
 #endif // _DEBUG

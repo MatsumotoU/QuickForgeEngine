@@ -44,6 +44,8 @@ void Model::Init() {
 	directionalLight_.GetData()->direction = Vector3(0.0f, -1.0f, 0.0f); // 下方向
 	directionalLight_.GetData()->intensity = 1.0f; // 輝度
 	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4(); // UV変換行列を初期化
+	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	material_.GetData()->enableLighting = true; // ライティングを有効にする
 }
 
 void Model::Update() {
