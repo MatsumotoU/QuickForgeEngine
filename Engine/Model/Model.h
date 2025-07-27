@@ -43,6 +43,10 @@ public:
 	void DrawImGui() override;
 #endif // _DEBUG
 
+#ifdef _DEBUG
+	void DecomposeMatrix(const float* matrix, Vector3& scale, Vector3& rotation, Vector3& translation);
+#endif
+
 public:
 	std::string GetModelFileName() const {
 		return modelFileName_;
@@ -56,6 +60,8 @@ private:
 	PipelineStateObject* pso_;
 
 private:
+	Camera* camera_; // カメラ
+
 	ConstantBuffer<TransformationMatrix> wvp_; // ワールドビュー投影行列
 	ConstantBuffer<DirectionalLight> directionalLight_; // 環境光
 	ConstantBuffer<Material> material_; // マテリアル

@@ -11,6 +11,8 @@
 #include "../../../externals/imgui/implot-master/implot.h"
 // ノブ
 #include "../../../externals/imgui/imgui-knobs-main/imgui-knobs.h"// かなりの数の警告無視(imgui-knobs.cpp要参照)
+// ギズモ
+#include "../externals/imgui/ImGuizmo-1.83/ImGuizmo.h"
 
 #include <d3d12.h>
 #include <wrl.h>
