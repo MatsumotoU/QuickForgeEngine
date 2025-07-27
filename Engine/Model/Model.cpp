@@ -35,6 +35,8 @@ Model::Model(EngineCore* engineCore):BaseGameObject(engineCore) {
 
 	name_ = "Model"; // モデルの名前を設定
 	instanceCount_++;
+
+	camera_ = nullptr;
 }
 
 void Model::Init() {
@@ -68,6 +70,7 @@ void Model::LoadModel(const std::string& directoryPath, const std::string& filen
 }
 
 void Model::Draw(Camera* camera) {
+	camera_ = camera;
 
 	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix_, CAMERA_VIEW_STATE_PERSPECTIVE);
 	wvp_.GetData()->World = worldMatrix_;
@@ -155,6 +158,81 @@ void Model::DrawImGui() {
 	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.01f);
 	ImGui::Spacing();
 
+	// --- ImGuizmo ギズモ描画 ---
+	if (camera_) {
+		ImVec2 gizmoPos = ImVec2(0, 0);
+		ImVec2 gizmoSize = ImVec2(0, 0);
+
+		// Scene Viewerウィンドウがアクティブな場合のみ取得
+		if (ImGui::Begin("Scene Viewer")) {
+			// Scene Viewerのアスペクト比・サイズ計算
+			ImVec2 avail = ImGui::GetContentRegionAvail();
+			float aspect = 19.0f / 9.0f;
+			float w = avail.x;
+			float h = w / aspect;
+			if (h > avail.y) {
+				h = avail.y;
+				w = h * aspect;
+			}
+			ImVec2 imageSize(w, h);
+
+			// 画像をウィンドウ中央に配置
+			ImVec2 cursorPos = ImGui::GetCursorPos();
+			ImVec2 centerPos;
+			centerPos.x = cursorPos.x + (avail.x - imageSize.x) * 0.5f;
+			centerPos.y = cursorPos.y + (avail.y - imageSize.y) * 0.5f;
+			ImGui::SetCursorPos(centerPos);
+			ImGui::Dummy(imageSize); // 必須
+
+			// ImGui::Imageを描画する直前の絶対座標を取得
+			ImVec2 imageAbsPos = ImGui::GetCursorScreenPos();
+
+			// 必要ならここでImGui::Image(...)を呼ぶ
+
+			gizmoPos = imageAbsPos;
+			gizmoSize = imageSize;
+		}
+		ImGui::End();
+
+		// ギズモの描画範囲をゲーム画面に合わせる
+		ImGuizmo::SetRect(gizmoPos.x, gizmoPos.y, gizmoSize.x, gizmoSize.y);
+
+		// 行列データをfloat[16]に変換
+		float matrix[16];
+		memcpy(matrix, &worldMatrix_.m[0][0], sizeof(float) * 16);
+
+		// カメラのビュー・プロジェクション行列
+		float view[16], proj[16];
+		memcpy(view, &camera_->viewMatrix_.m[0][0], sizeof(float) * 16);
+		memcpy(proj, &camera_->perspectiveMatrix_.m[0][0], sizeof(float) * 16);
+
+		// 操作タイプ
+		static ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
+		if (ImGui::RadioButton("Translate", operation == ImGuizmo::TRANSLATE)) operation = ImGuizmo::TRANSLATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Rotate", operation == ImGuizmo::ROTATE)) operation = ImGuizmo::ROTATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale", operation == ImGuizmo::SCALE)) operation = ImGuizmo::SCALE;
+
+		// ギズモの描画
+		ImGuizmo::Manipulate(
+			view,
+			proj,
+			operation,
+			ImGuizmo::LOCAL,
+			matrix
+		);
+
+		// 変更があればtransform_に反映
+		if (ImGuizmo::IsUsing()) {
+			Vector3 translation, rotation, scale;
+			DecomposeMatrix(matrix, scale, rotation, translation);
+			transform_.translate = translation;
+			transform_.rotate = rotation;
+			transform_.scale = scale;
+		}
+	}
+
 	// ワールド行列の表示
 	if (ImGui::TreeNode("WorldMatrix")) {
 		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[0][0], worldMatrix_.m[0][1], worldMatrix_.m[0][2], worldMatrix_.m[0][3]);
@@ -179,6 +257,14 @@ void Model::DrawImGui() {
 		ImGui::Text("TextureHandle: %d", modelTextureHandle_);
 		ImGui::TreePop();
 	}
+}
+
+void Model::DecomposeMatrix(const float* matrix, Vector3& scale, Vector3& rotation, Vector3& translation) {
+	float s[3], r[3], t[3];
+	ImGuizmo::DecomposeMatrixToComponents(matrix, t, r, s);
+	translation = { t[0], t[1], t[2] };
+	rotation = { r[0], r[1], r[2] };
+	scale = { s[0], s[1], s[2] };
 }
 #endif // _DEBUG
 
