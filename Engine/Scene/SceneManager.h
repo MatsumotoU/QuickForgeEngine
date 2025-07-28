@@ -23,7 +23,7 @@ public:
 public:
 #ifdef _DEBUG
 	void DrawImGui();
-	void DrawGizmo(const ImGuizmo::OPERATION& op, const ImVec2& imageScreenPos, const ImVec2& imageSize);
+	void DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize);
 	void RequestUndo() { requestUndo_ = true; }
 	void RequestRedo() { requestRedo_ = true; }
 	void PickObjectFromScreen(float relX, float relY);

@@ -5,7 +5,7 @@
 #endif // _DEBUG
 
 
-void BaseGameObject::DrawGizmo(const ImGuizmo::OPERATION& op, const ImVec2& imageScreenPos, const ImVec2& imageSize) {// ギズモ表示
+void BaseGameObject::DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize) {// ギズモ表示
 	if (camera_) {
 		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::SetDrawlist();
@@ -27,7 +27,7 @@ void BaseGameObject::DrawGizmo(const ImGuizmo::OPERATION& op, const ImVec2& imag
 		std::memcpy(projMatrix, &proj, sizeof(float) * 16);
 
 		ImGuizmo::OPERATION currentGizmoOperation = op;
-		ImGuizmo::MODE currentGizmoMode = ImGuizmo::WORLD;
+		ImGuizmo::MODE currentGizmoMode = mode;
 
 		ImGuizmo::Manipulate(viewMatrix, projMatrix, currentGizmoOperation, currentGizmoMode, worldMatrix);
 
