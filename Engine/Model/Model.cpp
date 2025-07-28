@@ -17,7 +17,8 @@ int Model::instanceCount_ = 0;
 
 Model::Model(EngineCore* engineCore, Camera* camera) : BaseGameObject(engineCore, camera) {
 	engineCore_ = engineCore;
-	modelTextureHandle_ = 0;
+	modelTextureHandles_.clear();
+	vertexBuffers_.clear();
 
 	dxCommon_ = engineCore->GetDirectXCommon();
 	textureManager_ = engineCore->GetTextureManager();
@@ -57,13 +58,23 @@ void Model::LoadModel(const std::string& directoryPath, const std::string& filen
 	std::string instanceNumber = "[" + std::to_string(instanceCount_) + "]";
 	name_ = FileLoader::ExtractFileName(filename) + instanceNumber;
 
-	modelData_ = Modelmanager::LoadObjFile(directoryPath, filename, coordinateSystem);
-	vertexBuffer_.CreateResource(dxCommon_->GetDevice(), static_cast<uint32_t>(modelData_.vertices.size()));
+	modelData_ = AssimpModelLoader::LoadModelData(directoryPath, filename, coordinateSystem);
 
-	std::memcpy(vertexBuffer_.GetData(), modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+	vertexBuffers_.clear();
+	modelTextureHandles_.clear();
 
-	// テクスチャを読み込む
-	modelTextureHandle_ = textureManager_->LoadTexture(modelData_.material.textureFilePath);
+	for (const auto& mesh : modelData_.meshes) {
+		// 頂点バッファ作成
+		VertexBuffer<VertexData> vb;
+		vb.CreateResource(dxCommon_->GetDevice(), static_cast<uint32_t>(mesh.vertices.size()));
+		std::memcpy(vb.GetData(), mesh.vertices.data(), sizeof(VertexData) * mesh.vertices.size());
+		vertexBuffers_.push_back(std::move(vb));
+
+		// テクスチャ読み込み
+		int32_t texHandle = textureManager_->LoadTexture(mesh.material.textureFilePath);
+		modelTextureHandles_.push_back(texHandle);
+	}
+
 	modelFileName_ = filename;
 }
 
@@ -78,13 +89,16 @@ void Model::Draw() {
 	commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
 	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(modelTextureHandle_));
-	commandList->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), 1, 0, 0);
+
+	for (size_t i = 0; i < modelData_.meshes.size(); ++i) {
+		commandList->IASetVertexBuffers(0, 1, vertexBuffers_[i].GetVertexBufferView());
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(modelTextureHandles_[i]));
+		commandList->DrawInstanced(static_cast<UINT>(modelData_.meshes[i].vertices.size()), 1, 0, 0);
+	}
 }
 
 nlohmann::json Model::Serialize() const {
@@ -94,10 +108,17 @@ nlohmann::json Model::Serialize() const {
 	j["position"] = { transform_.translate.x, transform_.translate.y, transform_.translate.z };
 	j["rotation"] = { transform_.rotate.x, transform_.rotate.y, transform_.rotate.z };
 	j["scale"] = { transform_.scale.x, transform_.scale.y, transform_.scale.z };
-	j["modelTextureHandle"] = modelTextureHandle_;
 	j["modelFileName"] = modelFileName_;
 	j["color"] = { material_.GetData()->color.x, material_.GetData()->color.y, material_.GetData()->color.z, material_.GetData()->color.w };
 	j["enableLighting"] = static_cast<bool>(material_.GetData()->enableLighting);
+	// メッシュごとのテクスチャハンドルと頂点数を配列で保存
+	j["modelTextureHandles"] = modelTextureHandles_;
+	std::vector<size_t> meshVertexCounts;
+	for (const auto& mesh : modelData_.meshes) {
+		meshVertexCounts.push_back(mesh.vertices.size());
+	}
+	j["meshVertexCounts"] = meshVertexCounts;
+
 #ifdef _DEBUG
 	DebugLog(std::format("name: {}", name_));
 #endif // _DEBUG
@@ -106,7 +127,7 @@ nlohmann::json Model::Serialize() const {
 
 std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* engineCore, Camera* camera) {
 	auto model = std::make_unique<Model>(engineCore, camera);
-	model.get()->Init();
+	model->Init();
 	// 名前復元
 	if (j.contains("name")) model->name_ = j["name"].get<std::string>();
 	// トランスフォーム復元
@@ -125,13 +146,15 @@ std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* e
 		model->transform_.scale.y = j["scale"][1].get<float>();
 		model->transform_.scale.z = j["scale"][2].get<float>();
 	}
-	// テクスチャとモデルファイル名の復元
-	if (j.contains("modelTextureHandle")) {
-		model->modelTextureHandle_ = j["modelTextureHandle"].get<int>();
-	}
+	// モデルファイル名の復元
 	if (j.contains("modelFileName")) {
 		model->modelFileName_ = j["modelFileName"].get<std::string>();
 	}
+	// テクスチャハンドル（vector）復元
+	if (j.contains("modelTextureHandles")) {
+		model->modelTextureHandles_ = j["modelTextureHandles"].get<std::vector<int32_t>>();
+	}
+	// マテリアル情報
 	if (j.contains("color")) {
 		model->material_.GetData()->color.x = j["color"][0].get<float>();
 		model->material_.GetData()->color.y = j["color"][1].get<float>();
@@ -174,8 +197,16 @@ void Model::DrawImGui() {
 	// 詳細
 	if (ImGui::TreeNode("Properties")) {
 		ImGui::Text("ObjectName: %s", name_.c_str());
-		ImGui::Text("Vertex Count: %zu", modelData_.vertices.size());
-		ImGui::Text("TextureHandle: %d", modelTextureHandle_);
+		ImGui::Text("Mesh Count: %zu", modelData_.meshes.size());
+		for (size_t i = 0; i < modelData_.meshes.size(); ++i) {
+			ImGui::Separator();
+			ImGui::Text("Mesh[%zu]", i);
+			ImGui::Text("  Vertex Count: %zu", modelData_.meshes[i].vertices.size());
+			if (i < modelTextureHandles_.size()) {
+				ImGui::Text("  TextureHandle: %d", modelTextureHandles_[i]);
+			}
+			ImGui::Text("  TexturePath: %s", modelData_.meshes[i].material.textureFilePath.c_str());
+		}
 		ImGui::TreePop();
 	}
 }

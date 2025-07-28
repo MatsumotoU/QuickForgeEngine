@@ -4,7 +4,7 @@
 #include "Base/DirectX/ImGuiManager.h"
 #endif // _DEBUG
 
-
+#ifdef _DEBUG
 void BaseGameObject::DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize) {// ギズモ表示
 	if (camera_) {
 		ImGuizmo::SetOrthographic(false);
@@ -51,7 +51,7 @@ void BaseGameObject::DecomposeMatrix(const float* matrix, Vector3& scale, Vector
 	rotation = { r[0] * DegToRad, r[1] * DegToRad, r[2] * DegToRad };
 	scale = { s[0], s[1], s[2] };
 }
-
+#endif // _DEBUG
 Vector3 BaseGameObject::GetWorldPosition() {
 	return Vector3::Transform(localPos_, worldMatrix_);
 }

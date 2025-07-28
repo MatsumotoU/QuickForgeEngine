@@ -9,9 +9,13 @@ enum CoordinateSystem
 	COORDINATESYSTEM_HAND_LEFT,
 };
 
-struct ModelData {
+struct MeshData {
 	std::vector<VertexData> vertices;
 	MaterialData material;
+};
+
+struct ModelData {
+	std::vector<MeshData> meshes;
 };
 
 // Modelを使う時のコード

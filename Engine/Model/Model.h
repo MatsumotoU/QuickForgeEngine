@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "ModelData.h"
+#include "AssimpModelLoader.h"
 #include "Object/BaseGameObject.h"
 #include "../Base/DirectX/PipelineStateObject.h"
 
@@ -60,10 +61,12 @@ private:
 	ConstantBuffer<DirectionalLight> directionalLight_; // 環境光
 	ConstantBuffer<Material> material_; // マテリアル
 
-	VertexBuffer<VertexData> vertexBuffer_; // 頂点バッファ
+	std::vector<VertexBuffer<VertexData>> vertexBuffers_; // 各メッシュ用
+	std::vector<int32_t> modelTextureHandles_; // 各メッシュ用
+	//VertexBuffer<VertexData> vertexBuffer_; // 頂点バッファ
 
 	std::string modelFileName_;
 	ModelData modelData_;
-	int32_t modelTextureHandle_;
+	//int32_t modelTextureHandle_;
 	static int instanceCount_;
 };
