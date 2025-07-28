@@ -22,7 +22,7 @@ class Camera;
 class Model :public BaseGameObject{
 public:
 	Model() = delete;
-	Model(EngineCore* engineCore);
+	Model(EngineCore* engineCore,Camera* camera);
 	~Model() override = default;
 
 public:
@@ -35,17 +35,13 @@ public:
 	/// <param name="filename">filename</param>
 	/// <param name="coordinateSystem">読み込むモデルの座標系</param>
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
-	void Draw(Camera* camera);
+	void Draw()override;
 
 	nlohmann::json Serialize() const override;
-	static std::unique_ptr<Model> Deserialize(const nlohmann::json& j, EngineCore* engineCore);
+	static std::unique_ptr<Model> Deserialize(const nlohmann::json& j, EngineCore* engineCore,Camera* camera);
 #ifdef _DEBUG
 	void DrawImGui() override;
 #endif // _DEBUG
-
-#ifdef _DEBUG
-	void DecomposeMatrix(const float* matrix, Vector3& scale, Vector3& rotation, Vector3& translation);
-#endif
 
 public:
 	std::string GetModelFileName() const {
@@ -60,8 +56,6 @@ private:
 	PipelineStateObject* pso_;
 
 private:
-	Camera* camera_; // カメラ
-
 	ConstantBuffer<TransformationMatrix> wvp_; // ワールドビュー投影行列
 	ConstantBuffer<DirectionalLight> directionalLight_; // 環境光
 	ConstantBuffer<Material> material_; // マテリアル

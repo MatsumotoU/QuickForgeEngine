@@ -8,7 +8,7 @@
 #ifdef _DEBUG
 
 DebugCamera::DebugCamera(EngineCore* engineCore){
-	anchorPointBillboard_ = std::make_unique<Billboard>(engineCore, 1.0f, 1.0f, 0);
+	anchorPointBillboard_ = std::make_unique<Billboard>(engineCore, &camera_,1.0f, 1.0f, 0);
 }
 
 DebugCamera::~DebugCamera() {
@@ -111,7 +111,7 @@ void DebugCamera::DrawImGui() {
 	ImGui::End();
 
 	if (isDrawAnchor_) {
-		anchorPointBillboard_->Draw(&camera_);
+		anchorPointBillboard_->Draw();
 	}
 
 }

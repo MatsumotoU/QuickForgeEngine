@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include "Base/EngineCore.h"
+#include <utility>
 #ifdef _DEBUG
-#include "Base/DirectX/ImGuiManager.h"
 #include "Utility/FileLoader.h"
 #include "Base/MyDebugLog.h"
 #endif // _DEBUG
@@ -23,7 +23,7 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	if (sceneFilepath_.size() > 0) {
 		selectedSceneFilepath_ = sceneFilepath_[0]; // 最初のシーンを選択
 	} 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	modelSelectionIndex_ = 0;
 	inputFilepath_; // デフォルトのモデルデータパス
 	ModelDirectoryPath_ = "Resources"; // デフォルトのモデルデータパス
@@ -40,7 +40,7 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	if (billboardFilepath_.size() > 0) {
 		billboardInputFilepath_ = billboardFilepath_[0]; // 最初のビルボードを選択
 	}
-#endif
+//#endif
 }
 
 void SceneManager::InitializeScene() {
@@ -192,6 +192,19 @@ void SceneManager::DrawImGui() {
 				}
 				ImGui::EndChild();
 
+				// 何もない所のダブルクリックで選択解除
+				ImVec2 childMin = ImGui::GetItemRectMin();
+				ImVec2 childMax = ImGui::GetItemRectMax();
+				ImVec2 mousePos = ImGui::GetMousePos();
+				if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) &&
+					ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					// リスト領域内で、どのアイテムも選択されていない場合
+					if (mousePos.x >= childMin.x && mousePos.x <= childMax.x &&
+						mousePos.y >= childMin.y && mousePos.y <= childMax.y) {
+						selectedIndex = -1;
+					}
+				}
+
 				// ループ後に削除
 				if (objectToDelete) {
 					currentScene_->DeleteModel(objectToDelete);
@@ -275,6 +288,16 @@ void SceneManager::DrawImGui() {
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
+	}
+}
+
+void SceneManager::DrawGizmo(const ImGuizmo::OPERATION& op, const ImVec2& imageScreenPos, const ImVec2& imageSize) {
+	if (currentScene_) {
+		if (currentScene_->GetGameObjects().size() > 0 ){
+			if (MyGameMath::InRange(selectedIndex, 0, static_cast<int>(currentScene_->GetGameObjects().size()))) {
+				currentScene_->GetGameObjects()[selectedIndex]->DrawGizmo(op,imageScreenPos,imageSize);
+			}
+		}
 	}
 }
 #endif // _DEBUG

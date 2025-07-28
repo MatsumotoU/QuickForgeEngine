@@ -382,13 +382,25 @@ void EngineCore::DrawEngineMenu() {
 	ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 	ImGui::DockSpaceOverViewport(dockspace_id, ImGui::GetMainViewport(), ImGuiDockNodeFlags_None);
 
-	// 場所が分かるようにアウトラインを出す
-	//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-
 	// * Sceneタブ * //
 	ImGui::Begin("Scene Viewer");
 	ImGui::Text("Scene: %s", sceneManager_.GetCurrentSceneName().c_str());
 
+	// ギズモ操作モードの選択
+	ImGui::SameLine();
+	static ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
+	ImGui::BeginChild("GizmoModeBar", ImVec2(0, 40), false);
+	if (ImGui::RadioButton("Translate", currentGizmoOperation == ImGuizmo::TRANSLATE))
+		currentGizmoOperation = ImGuizmo::TRANSLATE;
+	ImGui::SameLine();
+	if (ImGui::RadioButton("Rotate", currentGizmoOperation == ImGuizmo::ROTATE))
+		currentGizmoOperation = ImGuizmo::ROTATE;
+	ImGui::SameLine();
+	if (ImGui::RadioButton("Scale", currentGizmoOperation == ImGuizmo::SCALE))
+		currentGizmoOperation = ImGuizmo::SCALE;
+	ImGui::EndChild();
+
+	// シーン描画
 	// アスペクト比保持
 	ImVec2 avail = ImGui::GetContentRegionAvail();
 	float aspect = 19.0f / 9.0f;
@@ -401,17 +413,24 @@ void EngineCore::DrawEngineMenu() {
 	}
 	ImVec2 imageSize(w, h);
 
-	// 画像をウィンドウ中央に配置
-	ImVec2 cursorPos = ImGui::GetCursorPos();
-	ImVec2 centerPos;
-	centerPos.x = cursorPos.x + (avail.x - imageSize.x) * 0.5f;
-	centerPos.y = cursorPos.y + (avail.y - imageSize.y) * 0.5f;
-	ImGui::SetCursorPos(centerPos);
+    // 画像をウィンドウ中央に配置
+    ImVec2 cursorPos = ImGui::GetCursorPos();
+    ImVec2 centerPos;
+    centerPos.x = cursorPos.x + (avail.x - imageSize.x) * 0.5f;
+    centerPos.y = cursorPos.y + (avail.y - imageSize.y) * 0.5f;
+    ImGui::SetCursorPos(centerPos);
 
-	ImGui::Image(
-		reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr),
-		imageSize
-	);
+    // 画像の左上スクリーン座標を取得
+    ImVec2 imageScreenPos = ImGui::GetCursorScreenPos();
+
+    ImGui::Image(
+        reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr),
+        imageSize
+    );
+
+    // ギズモ描画
+    sceneManager_.DrawGizmo(currentGizmoOperation, imageScreenPos, imageSize);
+
 	ImGui::End();
 
 	// * SceneObjectタブ * //

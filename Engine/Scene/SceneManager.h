@@ -1,6 +1,10 @@
 #pragma once
 #include "SceneObject.h"
 
+#ifdef _DEBUG
+#include "Base/DirectX/ImGuiManager.h"
+#endif // _DEBUG
+
 class EngineCore;
 
 class SceneManager {
@@ -18,6 +22,7 @@ public:
 public:
 #ifdef _DEBUG
 	void DrawImGui();
+	void DrawGizmo(const ImGuizmo::OPERATION& op, const ImVec2& imageScreenPos, const ImVec2& imageSize);
 #endif // _DEBUG
 
 public:
@@ -39,7 +44,7 @@ private:
 	std::string sceneDataDirectorypath_;
 
 private:
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	int modelSelectionIndex_;
 	std::vector<std::string> modelFilepaths_;
 	std::string inputFilepath_;
@@ -48,6 +53,6 @@ private:
 	int billboardSelectionIndex_;
 	std::vector<std::string> billboardFilepath_;
 	std::string billboardInputFilepath_;
-#endif // _DEBUG
+//#endif // _DEBUG
 
 };
