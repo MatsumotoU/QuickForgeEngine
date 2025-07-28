@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneObject.h"
+#include <stack>
 
 #ifdef _DEBUG
 #include "Base/DirectX/ImGuiManager.h"
@@ -23,6 +24,9 @@ public:
 #ifdef _DEBUG
 	void DrawImGui();
 	void DrawGizmo(const ImGuizmo::OPERATION& op, const ImVec2& imageScreenPos, const ImVec2& imageSize);
+	void RequestUndo() { requestUndo_ = true; }
+	void RequestRedo() { requestRedo_ = true; }
+	void PickObjectFromScreen(float relX, float relY);
 #endif // _DEBUG
 
 public:
@@ -34,6 +38,17 @@ public:
 	std::string GetCurrentSceneName() const;
 
 private:
+#ifdef _DEBUG
+	void Undo();
+	void Redo();
+	void PushUndo();
+	bool requestUndo_;
+	bool requestRedo_;
+	std::stack<nlohmann::json> undoStack_;
+	std::stack<nlohmann::json> redoStack_;
+	nlohmann::json currentSceneData_;
+#endif // _DEBUG
+
 	bool isRequestSwapScene_; // シーンの切り替え要求フラグ
 	std::unique_ptr<SceneObject> loadedScene_;
 	std::unique_ptr<SceneObject> currentScene_;

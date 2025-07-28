@@ -52,8 +52,8 @@ void BaseGameObject::DecomposeMatrix(const float* matrix, Vector3& scale, Vector
 	scale = { s[0], s[1], s[2] };
 }
 
-Vector3 BaseGameObject::GetWorldPos() {
-    return Vector3::Transform(localPos_,worldMatrix_);
+Vector3 BaseGameObject::GetWorldPosition() {
+	return Vector3::Transform(localPos_, worldMatrix_);
 }
 
 BaseGameObject::BaseGameObject(EngineCore* engineCore, Camera* camera) {
