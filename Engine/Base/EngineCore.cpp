@@ -375,6 +375,15 @@ void EngineCore::DrawEngineMenu() {
 			ImGui::Text("!!!Update Stopping Now!!!");
 		}
 
+		// RedoUndo
+		ImGui::Spacing();
+		if (ImGui::Button("Undo")) {
+			sceneManager_.RequestUndo();
+		}
+		if (ImGui::Button("Redo")) {
+			sceneManager_.RequestRedo();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 
@@ -413,24 +422,35 @@ void EngineCore::DrawEngineMenu() {
 	}
 	ImVec2 imageSize(w, h);
 
-    // 画像をウィンドウ中央に配置
-    ImVec2 cursorPos = ImGui::GetCursorPos();
-    ImVec2 centerPos;
-    centerPos.x = cursorPos.x + (avail.x - imageSize.x) * 0.5f;
-    centerPos.y = cursorPos.y + (avail.y - imageSize.y) * 0.5f;
-    ImGui::SetCursorPos(centerPos);
+	// 画像をウィンドウ中央に配置
+	ImVec2 cursorPos = ImGui::GetCursorPos();
+	ImVec2 centerPos;
+	centerPos.x = cursorPos.x + (avail.x - imageSize.x) * 0.5f;
+	centerPos.y = cursorPos.y + (avail.y - imageSize.y) * 0.5f;
+	ImGui::SetCursorPos(centerPos);
 
-    // 画像の左上スクリーン座標を取得
-    ImVec2 imageScreenPos = ImGui::GetCursorScreenPos();
+	// 画像の左上スクリーン座標を取得
+	ImVec2 imageScreenPos = ImGui::GetCursorScreenPos();
 
-    ImGui::Image(
-        reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr),
-        imageSize
-    );
+	ImGui::Image(
+		reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr),
+		imageSize
+	);
 
-    // ギズモ描画
-    sceneManager_.DrawGizmo(currentGizmoOperation, imageScreenPos, imageSize);
+	// ギズモ描画
+	sceneManager_.DrawGizmo(currentGizmoOperation, imageScreenPos, imageSize);
 
+	// 画像上でクリックされたか判定
+	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+		ImVec2 mousePos = ImGui::GetMousePos();
+		// Image内の相対座標
+		float relX = (mousePos.x - imageScreenPos.x) / imageSize.x;
+		float relY = (mousePos.y - imageScreenPos.y) / imageSize.y;
+		// relX, relY: 0.0～1.0（画像内の正規化座標）
+		// ここで選択処理を呼ぶ
+		sceneManager_.PickObjectFromScreen(relX, relY);
+	}
+	
 	ImGui::End();
 
 	// * SceneObjectタブ * //

@@ -41,6 +41,9 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 		billboardInputFilepath_ = billboardFilepath_[0]; // 最初のビルボードを選択
 	}
 //#endif
+
+	requestRedo_ = false;
+	requestUndo_ = false;
 }
 
 void SceneManager::InitializeScene() {
@@ -50,6 +53,11 @@ void SceneManager::InitializeScene() {
 }
 
 void SceneManager::UpdateScene() {
+#ifdef _DEBUG
+	Undo();
+	Redo();
+#endif // _DEBUG
+
 	if (currentScene_) {
 		currentScene_->Update();
 	}
@@ -149,6 +157,7 @@ void SceneManager::DrawImGui() {
 			}
 			if (ImGui::Combo("Model", &sceneSelectionIndex_, items.data(), static_cast<int>(items.size()))) {
 				// 選択が変わったときの処理
+				sceneSelectionIndex_ = std::clamp(sceneSelectionIndex_, 0, static_cast<int>(sceneFilepath_.size()) - 1);
 				selectedSceneFilepath_ = sceneFilepath_[sceneSelectionIndex_];
 			}
 
@@ -186,6 +195,7 @@ void SceneManager::DrawImGui() {
 					ImGui::SameLine();
 					std::string delLabel = "x##" + std::to_string(i);
 					if (ImGui::Button(delLabel.c_str())) {
+						PushUndo();
 						objectToDelete = gameObject.get();
 						deleteIndex = static_cast<int>(i);
 					}
@@ -245,6 +255,7 @@ void SceneManager::DrawImGui() {
 			if (modelFilepaths_.size() > 0) {
 				if (ImGui::Button("Add##AddModel")) {
 					if (currentScene_) {
+						PushUndo();
 						currentScene_->AddModel(ModelDirectoryPath_, inputFilepath_);
 					}
 				}
@@ -268,6 +279,7 @@ void SceneManager::DrawImGui() {
 			if (billboardFilepath_.size() > 0) {
 				if (ImGui::Button("Add##AddBillboard")) {
 					if (currentScene_) {
+						PushUndo();
 						currentScene_->AddBillboard("Resources", billboardInputFilepath_);
 					}
 				}
@@ -299,5 +311,77 @@ void SceneManager::DrawGizmo(const ImGuizmo::OPERATION& op, const ImVec2& imageS
 			}
 		}
 	}
+}
+void SceneManager::PickObjectFromScreen(float relX, float relY) {
+	if (!currentScene_) return;
+	// 画像内のピクセル座標
+	float px = relX * engineCore_->GetWinApp()->kWindowWidth;
+	float py = relY * engineCore_->GetWinApp()->kWindowHeight;
+
+	auto& gameObjects = currentScene_->GetGameObjects();
+	int nearestIndex = -1;
+	float minDist = 1e10f;
+
+	for (size_t i = 0; i < gameObjects.size(); ++i) {
+		auto& obj = gameObjects[i];
+		Vector3 worldPos = obj->GetWorldPosition();
+		Vector3 screenPos = currentScene_->GetMainCamera().GetWorldToScreenPos(worldPos);
+		// screenPos.x, screenPos.y: ピクセル座標（Image内の座標系に合わせる）
+		if ((screenPos.XY() - Vector2(px, py)).Length() <= minDist) {
+			minDist = (screenPos.XY() - Vector2(px, py)).Length();
+			nearestIndex = static_cast<int>(i);
+		}
+	}
+
+	if (nearestIndex >= 0) {
+		extern int selectedIndex;
+		selectedIndex = nearestIndex;
+	}
+}
+void SceneManager::PushUndo() {
+	if (currentScene_) {
+		undoStack_.push(currentScene_->Serialize());
+		// 新しい操作が入ったらRedo履歴は消す
+		while (!redoStack_.empty()) {
+			redoStack_.pop();
+		}
+	}
+}
+void SceneManager::Undo() {
+	if (!requestUndo_) {
+		return;
+	}
+
+	if (!undoStack_.empty() && currentScene_) {
+		// 今の状態をRedoスタックに保存
+		redoStack_.push(currentScene_->Serialize());
+
+		nlohmann::json prev = undoStack_.top();
+		undoStack_.pop();
+		std::string sceneName = currentScene_->GetSceneName();
+		currentScene_ = SceneObject::Deserialize(prev, engineCore_, ModelDirectoryPath_);
+		currentScene_->SetSceneName(sceneName);
+		currentScene_->Initialize();
+	}
+
+	requestUndo_ = false;
+}
+void SceneManager::Redo() {
+	if (!requestRedo_) {
+		return;
+	}
+
+	if (!redoStack_.empty() && currentScene_) {
+		undoStack_.push(currentScene_->Serialize());
+
+		nlohmann::json next = redoStack_.top();
+		redoStack_.pop();
+		std::string sceneName = currentScene_->GetSceneName();
+		currentScene_ = SceneObject::Deserialize(next, engineCore_, ModelDirectoryPath_);
+		currentScene_->SetSceneName(sceneName);
+		currentScene_->Initialize();
+	}
+
+	requestRedo_ = false;
 }
 #endif // _DEBUG

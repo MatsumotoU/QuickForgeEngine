@@ -32,7 +32,7 @@ public:
 #endif // _DEBUG
 
 public:
-	Vector3 GetWorldPos();
+	Vector3 GetWorldPosition();
 	std::string GetName() const {
 		return name_;
 	}
