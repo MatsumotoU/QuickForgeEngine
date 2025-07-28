@@ -42,8 +42,10 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	}
 //#endif
 
+#ifdef _DEBUG
 	requestRedo_ = false;
 	requestUndo_ = false;
+#endif // _DEBUG
 }
 
 void SceneManager::InitializeScene() {

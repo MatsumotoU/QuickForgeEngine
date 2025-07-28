@@ -8,6 +8,7 @@
 #include "../Camera/Camera.h"
 
 #include "Particle/ParticleForGPU.h"
+#include "Model/AssimpModelLoader.h"
 
 // インスタンスの総数初期化
 uint32_t Particle::instanceCount_ = 0;
@@ -39,19 +40,30 @@ void Particle::Initialize(EngineCore* engineCore, uint32_t totalParticles) {
 }
 
 void Particle::LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem) {
-	modelData_ = Modelmanager::LoadObjFile(directoryPath, filename, coordinateSystem);
-	vertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * modelData_.vertices.size());
+	modelData_ = AssimpModelLoader::LoadModelData(directoryPath, filename, coordinateSystem);
+
+	// 単一メッシュ前提
+	if (modelData_.meshes.empty()) {
+		// エラー処理
+		return;
+	}
+	const auto& mesh = modelData_.meshes[0];
+
+	vertexResource_ = CreateBufferResource(
+		engineCore_->GetDirectXCommon()->GetDevice(),
+		sizeof(VertexData) * mesh.vertices.size()
+	);
 	vertexBufferView_ = {};
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * modelData_.vertices.size());
+	vertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * mesh.vertices.size());
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	vertexData_ = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+	std::memcpy(vertexData_, mesh.vertices.data(), sizeof(VertexData) * mesh.vertices.size());
 
 	// テクスチャを読み込む
-	modelTextureHandle_ = engineCore_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
+	modelTextureHandle_ = engineCore_->GetTextureManager()->LoadTexture(mesh.material.textureFilePath);
 }
 
 void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* color, Camera* camera) {
@@ -61,6 +73,12 @@ void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* col
 		wvp_.SetWorldMatrix(worldMatrix, index);
 		wvp_.SetWVPMatrix(wvpMatrix, index);
 	}
+
+	// 単一メッシュ前提
+	if (modelData_.meshes.empty()) {
+		return;
+	}
+	const auto& mesh = modelData_.meshes[0];
 
 	for (uint32_t index = 0; index < color->size(); index++) {
 		wvp_.particleData_[index].color = (*color)[index];
@@ -78,5 +96,5 @@ void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* col
 	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandles_.gpuHandle_);
 	commandList->SetGraphicsRootDescriptorTable(2, engineCore_->GetTextureManager()->GetTextureSrvHandleGPU(modelTextureHandle_));
-	commandList->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), totalParticles_, 0, 0);
+	commandList->DrawInstanced(static_cast<UINT>(mesh.vertices.size()), totalParticles_, 0, 0);
 }
