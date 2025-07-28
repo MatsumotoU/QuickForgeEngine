@@ -303,11 +303,11 @@ void SceneManager::DrawImGui() {
 	}
 }
 
-void SceneManager::DrawGizmo(const ImGuizmo::OPERATION& op, const ImVec2& imageScreenPos, const ImVec2& imageSize) {
+void SceneManager::DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize) {
 	if (currentScene_) {
 		if (currentScene_->GetGameObjects().size() > 0 ){
 			if (MyGameMath::InRange(selectedIndex, 0, static_cast<int>(currentScene_->GetGameObjects().size()))) {
-				currentScene_->GetGameObjects()[selectedIndex]->DrawGizmo(op,imageScreenPos,imageSize);
+				currentScene_->GetGameObjects()[selectedIndex]->DrawGizmo(op,mode,imageScreenPos,imageSize);
 			}
 		}
 	}

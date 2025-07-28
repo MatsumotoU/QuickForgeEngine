@@ -107,6 +107,7 @@ std::unique_ptr<SceneObject> SceneObject::Deserialize(const nlohmann::json& j, E
 			else if (type == "Billboard") {
 				auto billboard = Billboard::Deserialize(objJson, engineCore, &(sceneObj->mainCamera_));
 				billboard->Init();
+				billboard->SetTextureHandle( engineCore->GetTextureManager()->LoadTexture(modelFileDirectory + "/" + billboard->GetName()));
 				sceneObj->GetGameObjects().push_back(std::move(billboard));
 			}
 		}

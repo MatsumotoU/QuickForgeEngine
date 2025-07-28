@@ -397,17 +397,32 @@ void EngineCore::DrawEngineMenu() {
 
 	// ギズモ操作モードの選択
 	ImGui::SameLine();
+	ImGui::SetNextItemWidth(120);
 	static ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
-	ImGui::BeginChild("GizmoModeBar", ImVec2(0, 40), false);
-	if (ImGui::RadioButton("Translate", currentGizmoOperation == ImGuizmo::TRANSLATE))
-		currentGizmoOperation = ImGuizmo::TRANSLATE;
+	static ImGuizmo::MODE currentGizmoMode = ImGuizmo::WORLD;
+	const char* gizmoOps[] = { "Translate", "Rotate", "Scale" };
+	int gizmoOpIndex = 0;
+	switch (currentGizmoOperation) {
+	case ImGuizmo::TRANSLATE: gizmoOpIndex = 0; break;
+	case ImGuizmo::ROTATE:    gizmoOpIndex = 1; break;
+	case ImGuizmo::SCALE:     gizmoOpIndex = 2; break;
+	}
+	if (ImGui::Combo("Gizmo Mode", &gizmoOpIndex, gizmoOps, IM_ARRAYSIZE(gizmoOps))) {
+		switch (gizmoOpIndex) {
+		case 0: currentGizmoOperation = ImGuizmo::TRANSLATE; break;
+		case 1: currentGizmoOperation = ImGuizmo::ROTATE;    break;
+		case 2: currentGizmoOperation = ImGuizmo::SCALE;     break;
+		}
+	}
+
+	// 座標系のドロップダウン
 	ImGui::SameLine();
-	if (ImGui::RadioButton("Rotate", currentGizmoOperation == ImGuizmo::ROTATE))
-		currentGizmoOperation = ImGuizmo::ROTATE;
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Scale", currentGizmoOperation == ImGuizmo::SCALE))
-		currentGizmoOperation = ImGuizmo::SCALE;
-	ImGui::EndChild();
+	ImGui::SetNextItemWidth(120);
+	const char* gizmoModes[] = { "World", "Local" };
+	int gizmoModeIndex = (currentGizmoMode == ImGuizmo::WORLD) ? 0 : 1;
+	if (ImGui::Combo("Coordinate", &gizmoModeIndex, gizmoModes, IM_ARRAYSIZE(gizmoModes))) {
+		currentGizmoMode = (gizmoModeIndex == 0) ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
+	}
 
 	// シーン描画
 	// アスペクト比保持
@@ -438,7 +453,7 @@ void EngineCore::DrawEngineMenu() {
 	);
 
 	// ギズモ描画
-	sceneManager_.DrawGizmo(currentGizmoOperation, imageScreenPos, imageSize);
+	sceneManager_.DrawGizmo(currentGizmoOperation, currentGizmoMode, imageScreenPos, imageSize);
 
 	// 画像上でクリックされたか判定
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
