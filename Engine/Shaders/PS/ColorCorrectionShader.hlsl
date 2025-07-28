@@ -2,20 +2,20 @@
 
 struct ColorCorrectionOffset
 {
-    float32_t exposure; // 露出
-    float32_t contrast; // コントラスト
-    float32_t saturation; // 彩度
-    float32_t gamma; // ガンマ
-    float32_t hue; // 色相
+    float exposure; // 露出
+    float contrast; // コントラスト
+    float saturation; // 彩度
+    float gamma; // ガンマ
+    float hue; // 色相
 };
 
 ConstantBuffer<ColorCorrectionOffset> gOffsetBuffer : register(b0);
-Texture2D<float32_t4> gTexture : register(t0);
+Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput
 {
-    float32_t4 color : SV_TARGET0;
+    float4 color : SV_TARGET0;
 };
 
 // 彩度調整

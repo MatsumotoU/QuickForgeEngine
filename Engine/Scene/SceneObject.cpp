@@ -6,7 +6,11 @@
 #include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
-SceneObject::SceneObject(EngineCore* enginecore, const std::string& sceneName) : debugCamera_(enginecore){
+SceneObject::SceneObject(EngineCore* enginecore, const std::string& sceneName) 
+#ifdef _DEBUG
+	: debugCamera_(enginecore)
+#endif 
+{
 	sceneName_ = sceneName;
 	engineCore_ = enginecore;
 	mainCamera_.Initialize(enginecore->GetWinApp());
@@ -63,7 +67,7 @@ void SceneObject::Draw() {
 
 	// シーン描画
 	for (const auto& gameObject : gameObjects_) {
-		gameObject->Draw(&mainCamera_);
+		gameObject->Draw();
 	}
 }
 
@@ -94,14 +98,14 @@ std::unique_ptr<SceneObject> SceneObject::Deserialize(const nlohmann::json& j, E
 
 			// Model
 			if (type == "Model") {
-				auto model = Model::Deserialize(objJson, engineCore);
+				auto model = Model::Deserialize(objJson, engineCore, &(sceneObj->mainCamera_));
 				model->LoadModel(modelFileDirectory, model->GetModelFileName(),COORDINATESYSTEM_HAND_RIGHT);
 				sceneObj->GetGameObjects().push_back(std::move(model));
 			}
 
 			// Billboard
 			else if (type == "Billboard") {
-				auto billboard = Billboard::Deserialize(objJson, engineCore);
+				auto billboard = Billboard::Deserialize(objJson, engineCore, &(sceneObj->mainCamera_));
 				billboard->Init();
 				sceneObj->GetGameObjects().push_back(std::move(billboard));
 			}
@@ -111,7 +115,7 @@ std::unique_ptr<SceneObject> SceneObject::Deserialize(const nlohmann::json& j, E
 }
 
 void SceneObject::AddModel(const std::string& directoryPath, const std::string& filename) {
-	Model model(engineCore_);
+	Model model(engineCore_, &mainCamera_);
 	model.LoadModel(directoryPath, filename,COORDINATESYSTEM_HAND_RIGHT);
 	model.Init();
 	gameObjects_.push_back(std::make_unique<Model>(model));
@@ -120,9 +124,9 @@ void SceneObject::AddModel(const std::string& directoryPath, const std::string& 
 void SceneObject::AddBillboard(const std::string& directoryPath, const std::string& filename) {
 	// テクスチャハンドルを取得
 	uint32_t textureHandle = engineCore_->GetTextureManager()->LoadTexture(directoryPath+"/"+ filename);
-	std::unique_ptr<Billboard> billboadard = std::make_unique<Billboard>(engineCore_, 1.0f, 1.0f, textureHandle);
+	std::unique_ptr<Billboard> billboadard = std::make_unique<Billboard>(engineCore_, &mainCamera_, 1.0f, 1.0f, textureHandle);
 	billboadard->Init();
-	billboadard->SetName(filename); // ビルボードの名前を設定
+	billboadard->SetName(filename);
 	gameObjects_.push_back(std::move(billboadard));
 }
 

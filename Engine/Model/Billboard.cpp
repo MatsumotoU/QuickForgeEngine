@@ -16,7 +16,7 @@
 #include "Base/DirectX/Viewport.h"
 #include "Base/DirectX/ScissorRect.h"
 
-Billboard::Billboard(EngineCore* engineCore, float width, float hight, uint32_t textureHandle) : BaseGameObject(engineCore) {
+Billboard::Billboard(EngineCore* engineCore, Camera* camera, float width, float hight, uint32_t textureHandle) : BaseGameObject(engineCore, camera) {
 	engineCore_ = engineCore;
 	dxCommon_ = engineCore->GetDirectXCommon();
 	textureManager_ = engineCore->GetTextureManager();
@@ -80,16 +80,16 @@ void Billboard::Update() {
 	// こっちにワールド行列を移す
 }
 
-void Billboard::Draw(Camera* camera) {
-	worldMatrix_ = Matrix4x4::MakeAffineMatrix(transform_.scale, camera->transform_.rotate, transform_.translate);
-	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix_, CAMERA_VIEW_STATE_PERSPECTIVE);
+void Billboard::Draw() {
+	worldMatrix_ = Matrix4x4::MakeAffineMatrix(transform_.scale, camera_->transform_.rotate, transform_.translate);
+	Matrix4x4 wvpMatrix = camera_->MakeWorldViewProjectionMatrix(worldMatrix_, CAMERA_VIEW_STATE_PERSPECTIVE);
 	wvp_.GetData()->World = worldMatrix_;
 	wvp_.GetData()->WVP = wvpMatrix;
 
 	// billboard
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	commandList->RSSetViewports(1, camera->viewport_.GetViewport());
-	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
+	commandList->RSSetViewports(1, camera_->viewport_.GetViewport());
+	commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
 	commandList->SetPipelineState(pso_->GetPipelineState());
 	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
@@ -114,8 +114,8 @@ nlohmann::json Billboard::Serialize() const {
 	return j;
 }
 
-std::unique_ptr<Billboard> Billboard::Deserialize(const nlohmann::json& j, EngineCore* engineCore) {
-	std::unique_ptr<Billboard> billboard = std::make_unique<Billboard>(engineCore, 1.0f, 1.0f, 0);
+std::unique_ptr<Billboard> Billboard::Deserialize(const nlohmann::json& j, EngineCore* engineCore, Camera* camera) {
+	std::unique_ptr<Billboard> billboard = std::make_unique<Billboard>(engineCore, camera, 1.0f, 1.0f, 0);
 	billboard->Init();
 	// 名前復元
 	if (j.contains("name")) billboard->name_ = j["name"].get<std::string>();
@@ -145,6 +145,7 @@ std::unique_ptr<Billboard> Billboard::Deserialize(const nlohmann::json& j, Engin
 	return billboard;
 }
 
+#ifdef _DEBUG
 void Billboard::DrawImGui() {
 	ImGui::Text("Billboard: %s", name_.c_str());
 	ImGui::DragFloat3("Position", &transform_.translate.x, 0.1f);
@@ -152,3 +153,4 @@ void Billboard::DrawImGui() {
 	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
 	ImGui::DragFloat2("Size", &size_.x, 0.1f);
 }
+#endif // _DEBUG

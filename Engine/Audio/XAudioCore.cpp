@@ -222,6 +222,7 @@ IXAudio2SourceVoice* Audiomanager::CreateSourceVoice(IXAudio2* xAudio2, const So
 	DebugLog(ConvertString(std::format(L"Creating SourceVoice with channels:{}", soundData.wfex.nChannels)));
 #endif
 	HRESULT hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex, XAUDIO2_VOICE_USEFILTER, XAUDIO2_DEFAULT_FREQ_RATIO);
+	hr;
 	assert(SUCCEEDED(hr));
 	return pSourceVoice;
 }

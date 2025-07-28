@@ -41,10 +41,13 @@ public:
 	std::string GetSceneName() const {
 		return sceneName_;
 	}
+	Camera& GetMainCamera() {
+		return mainCamera_;
+	}
 	void SetSceneName(const std::string& sceneName) {
 		sceneName_ = sceneName;
 	}
-
+	
 private:
 	EngineCore* engineCore_;
 	std::string sceneName_;

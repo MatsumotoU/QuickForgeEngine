@@ -7,4 +7,8 @@
 
 namespace MyGameMath {
 	Vector3 MakeDirection(const Vector3& rotate);
+	template<class T>
+	bool InRange(T value, T min, T max) {
+		return (value >= min && value <= max);
+	}
 }

@@ -22,15 +22,15 @@ class PipelineStateObject;
 class Billboard : public BaseGameObject {
 public:
 	Billboard() = delete;
-	Billboard(EngineCore* engineCore, float width, float hight,uint32_t textureHandle);
+	Billboard(EngineCore* engineCore,Camera* camera, float width, float hight,uint32_t textureHandle);
 	~Billboard() override = default;
 public:
 	void Init() override;
 	void Update() override;
-	void Draw(Camera* camera) override;
+	void Draw() override;
 
 	nlohmann::json Serialize() const override;
-	static std::unique_ptr<Billboard> Deserialize(const nlohmann::json& j, EngineCore* engineCore);
+	static std::unique_ptr<Billboard> Deserialize(const nlohmann::json& j, EngineCore* engineCore,Camera* camera);
 #ifdef _DEBUG
 	void DrawImGui() override;
 #endif // _DEBUG
