@@ -49,6 +49,7 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 }
 
 void SceneManager::InitializeScene() {
+
 	if (currentScene_) {
 		currentScene_->Initialize();
 	}

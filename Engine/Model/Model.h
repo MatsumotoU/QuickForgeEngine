@@ -38,7 +38,18 @@ public:
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
 	void Draw()override;
 
+	/// <summary>
+	/// jsonデータでオブジェクトを保存します
+	/// </summary>
+	/// <returns></returns>
 	nlohmann::json Serialize() const override;
+	/// <summary>
+	/// jsonデータからオブジェクトを復元します
+	/// </summary>
+	/// <param name="j"></param>
+	/// <param name="engineCore"></param>
+	/// <param name="camera"></param>
+	/// <returns></returns>
 	static std::unique_ptr<Model> Deserialize(const nlohmann::json& j, EngineCore* engineCore,Camera* camera);
 #ifdef _DEBUG
 	void DrawImGui() override;
@@ -63,10 +74,8 @@ private:
 
 	std::vector<VertexBuffer<VertexData>> vertexBuffers_; // 各メッシュ用
 	std::vector<int32_t> modelTextureHandles_; // 各メッシュ用
-	//VertexBuffer<VertexData> vertexBuffer_; // 頂点バッファ
 
 	std::string modelFileName_;
 	ModelData modelData_;
-	//int32_t modelTextureHandle_;
 	static int instanceCount_;
 };

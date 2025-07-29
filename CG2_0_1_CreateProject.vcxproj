@@ -194,7 +194,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -218,7 +218,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -241,7 +241,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -268,7 +268,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -286,6 +286,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Engine\Shaders\ShaderStructs\Font.hlsli" />
     <None Include="Engine\Shaders\ShaderStructs\Object3d.hlsli" />
     <None Include="Engine\Shaders\ShaderStructs\Particle.hlsli" />
+    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl" />
+    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl" />
+    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
     <None Include="externals\imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
   </ItemGroup>
@@ -303,6 +306,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Audio\MultiAudioLoader.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Base\DirectX\GraphRenderer.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\ImGuiNode.cpp" />
     <ClCompile Include="Engine\Base\DirectX\RendaringPostprocess.cpp" />
     <ClCompile Include="Engine\Base\DirectX\Rendering\PSOCreater.cpp" />
     <ClCompile Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.cpp" />
@@ -369,6 +373,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utility\SimpleJson.cpp" />
     <ClCompile Include="Engine\Utility\TimeCall.cpp" />
     <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp" />
+    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\crude_json.cpp" />
+    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp" />
+    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp" />
+    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
@@ -400,6 +408,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\AudioSourceBinder.h" />
     <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h" />
     <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h" />
+    <ClInclude Include="Engine\Base\DirectX\ImGuiNode.h" />
     <ClInclude Include="Engine\Base\DirectX\Rendering\PSO.h" />
     <ClInclude Include="Engine\Base\DirectX\Rendering\PSOBinder.h" />
     <ClInclude Include="Engine\Base\DirectX\RendaringPostprocess.h" />
@@ -501,6 +510,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utility\MyTimer.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui-knobs-main\imgui-knobs.h" />
+    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\crude_json.h" />
+    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h" />
+    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.h" />
+    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.h" />
+    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h" />
+    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />

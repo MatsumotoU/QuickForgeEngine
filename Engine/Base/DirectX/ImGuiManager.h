@@ -13,9 +13,12 @@
 #include "../../../externals/imgui/imgui-knobs-main/imgui-knobs.h"// かなりの数の警告無視(imgui-knobs.cpp要参照)
 // ギズモ
 #include "../externals/imgui/ImGuizmo-1.83/ImGuizmo.h"
+// ノードエディタ
+#include "Base/DirectX/ImGuiNode.h"
 
 #include <d3d12.h>
 #include <wrl.h>
+#include <vector>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 class WinApp;
@@ -39,7 +42,6 @@ public:
 	/// ImGuiを終了します。ゲームループが終わった後に置きます
 	/// </summary>
 	void EndImGui();
-
 	/// <summary>
 	/// ここからImGuiを使える
 	/// </summary>

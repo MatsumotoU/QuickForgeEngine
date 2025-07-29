@@ -77,7 +77,7 @@ void ImGuiManager::BeginFrame() {
 }
 
 void ImGuiManager::EndFrame() {
-
+	// ImGuiの描画
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_.Get());
 }
