@@ -1,0 +1,66 @@
+{
+    "scenes": [
+        {
+            "objects": [
+                {
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "enableLighting": true,
+                    "meshVertexCounts": [
+                        240
+                    ],
+                    "modelFileName": "Bullet.obj",
+                    "modelTextureHandles": [
+                        1
+                    ],
+                    "name": "Bullet[1]",
+                    "position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "Model"
+                },
+                {
+                    "modelTextureHandle": 0,
+                    "name": "anchor.png",
+                    "position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "size": [
+                        1.0,
+                        1.0
+                    ],
+                    "type": "Billboard"
+                }
+            ],
+            "sceneName": "SampleScene"
+        }
+    ]
+}

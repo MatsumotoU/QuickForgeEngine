@@ -3,7 +3,6 @@
 #include "../Base/DirectX/DirectXCommon.h"
 #include "../Base/DirectX/TextureManager.h"
 #include "../Base/DirectX/DepthStencil.h"
-#include "../Model/ModelManager.h"
 
 #include "../Camera/Camera.h"
 
