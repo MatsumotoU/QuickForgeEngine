@@ -85,6 +85,7 @@
 // Scene
 #include "Scene/SceneManager.h"
 
+#include "Script/LuaScriptManager.h"
 // TODO: ビルドツールpremakeの導入 
 
 #include <chrono>
@@ -194,6 +195,9 @@ private:// デバッグ用一時変数
 	Transform offscreenTransform_;
 	Transform uvTransform_;
 	Camera camera_;
+
+private:// スクリプト
+	//LuaScriptManager luaScriptManager_;
 
 #ifdef _DEBUG
 	MemoryWatcher memWatcher_;

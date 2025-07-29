@@ -1,9 +1,1 @@
-{
-    "AudioDataDB": true,
-    "AudioSourceDB": true,
-    "FpsDB": true,
-    "MemoryDB": true,
-    "PerformanceDB": true,
-    "PostprocessDB": true,
-    "SystemSoundVolume": 0.30000001192092896
-}
+null

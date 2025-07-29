@@ -39,6 +39,9 @@ EngineCore::EngineCore() {
 #endif // _DEBUG
 
 	loopStopper_.Initialize();
+
+	/*luaScriptManager_.BindDebugLog();
+	luaScriptManager_.GetLuaState().script_file("Resources/Scripts/Helloworld.lua");*/
 }
 
 EngineCore::~EngineCore() {
