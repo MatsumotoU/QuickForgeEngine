@@ -158,6 +158,7 @@ static void LogV(const char* fmt, va_list args)
 
 void ed::Log(const char* fmt, ...)
 {
+    fmt;
 # if defined(_DEBUG) && defined(_WIN32)
     va_list args;
     va_start(args, fmt);

@@ -22,8 +22,8 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	sceneFilepath_ = FileLoader::GetFilesWithExtension(sceneDataDirectorypath_, ".json");
 	if (sceneFilepath_.size() > 0) {
 		selectedSceneFilepath_ = sceneFilepath_[0]; // 最初のシーンを選択
-	} 
-//#ifdef _DEBUG
+	}
+	//#ifdef _DEBUG
 	modelSelectionIndex_ = 0;
 	inputFilepath_; // デフォルトのモデルデータパス
 	ModelDirectoryPath_ = "Resources"; // デフォルトのモデルデータパス
@@ -33,14 +33,20 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	if (modelFilepaths_.size() > 0) {
 		inputFilepath_ = modelFilepaths_[0]; // 最初のモデルを選択
 	}
-
+	// ビルボードのパスを取得
 	billboardSelectionIndex_ = 0;
-	
 	billboardFilepath_ = FileLoader::GetFilesWithExtension(ModelDirectoryPath_, ".png");
 	if (billboardFilepath_.size() > 0) {
 		billboardInputFilepath_ = billboardFilepath_[0]; // 最初のビルボードを選択
 	}
-//#endif
+	// スクリプトのパスを取得
+	scriptDirectoryPath_ = "Resources/Scripts";
+	scriptSelectionIndex_ = 0;
+	scriptFilepath_ = FileLoader::GetFilesWithExtension(scriptDirectoryPath_, ".lua");
+	if (scriptFilepath_.size() > 0) {
+		scriptInputFilepath_ = scriptFilepath_[0]; // 最初のスクリプトを選択
+	}
+	//#endif
 
 #ifdef _DEBUG
 	requestRedo_ = false;
@@ -63,6 +69,7 @@ void SceneManager::UpdateScene() {
 
 	if (currentScene_) {
 		currentScene_->Update();
+		engineCore_->GetLuaScriptManager()->UpdateScripts();
 	}
 }
 
@@ -110,7 +117,7 @@ void SceneManager::LoadScenesFromJson(const std::string& filepath) {
 	ifs >> root;
 	if (root.contains("scenes")) {
 		// 例: 1つだけロード
-		loadedScene_ = SceneObject::Deserialize(root["scenes"][0], engineCore_,ModelDirectoryPath_);
+		loadedScene_ = SceneObject::Deserialize(root["scenes"][0], engineCore_, ModelDirectoryPath_);
 		isRequestSwapScene_ = true;
 	}
 }
@@ -232,6 +239,36 @@ void SceneManager::DrawImGui() {
 				if (selectedIndex >= 0 && selectedIndex < static_cast<int>(gameObjects.size())) {
 					ImGui::Begin("Object Detail", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 					gameObjects[selectedIndex]->DrawImGui();
+
+					// スクリプトファイル選択UI
+					ImGui::Text("Script Directory: %s", scriptDirectoryPath_.c_str());
+					ImGui::Spacing();
+					if (scriptFilepath_.size() > 0) {
+						// Comboでスクリプトファイル選択
+						std::vector<const char*> scriptItems;
+						for (const auto& f : scriptFilepath_) {
+							scriptItems.push_back(f.c_str());
+						}
+						if (ImGui::Combo("Script", &scriptSelectionIndex_, scriptItems.data(), static_cast<int>(scriptItems.size()))) {
+							// 選択が変わったときの処理
+							scriptInputFilepath_ = scriptFilepath_[scriptSelectionIndex_];
+						}
+					} else {
+						ImGui::Text("No script files found in %s", scriptDirectoryPath_.c_str());
+					}
+
+					// スクリプト割り当てボタン
+					if (ImGui::Button("AddScript##AssignScript")) {
+						if (scriptFilepath_.size() > 0) {
+							BaseGameObject* targetObject = gameObjects[selectedIndex].get();
+							std::string key = targetObject->GetName();
+							std::string scriptPath = scriptDirectoryPath_ + "/" + scriptInputFilepath_; // 選択中のスクリプトファイル
+							engineCore_->GetLuaScriptManager()->AddGameObjScript(key, targetObject, scriptPath);
+							#ifdef _DEBUG
+							DebugLog((key + "assign to " + scriptPath).c_str());
+							#endif
+						}
+					}
 					ImGui::End();
 				}
 			} else {
@@ -266,7 +303,7 @@ void SceneManager::DrawImGui() {
 				// ImGui::Combo用にconst char*配列を作成
 				std::vector<const char*> items;
 				for (const auto& f : modelFilepaths_) {
-					items.push_back(f.c_str()); 
+					items.push_back(f.c_str());
 				}
 				if (ImGui::Combo("Model", &modelSelectionIndex_, items.data(), static_cast<int>(items.size()))) {
 					// 選択が変わったときの処理
@@ -308,9 +345,9 @@ void SceneManager::DrawImGui() {
 
 void SceneManager::DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize) {
 	if (currentScene_) {
-		if (currentScene_->GetGameObjects().size() > 0 ){
+		if (currentScene_->GetGameObjects().size() > 0) {
 			if (MyGameMath::InRange(selectedIndex, 0, static_cast<int>(currentScene_->GetGameObjects().size()))) {
-				currentScene_->GetGameObjects()[selectedIndex]->DrawGizmo(op,mode,imageScreenPos,imageSize);
+				currentScene_->GetGameObjects()[selectedIndex]->DrawGizmo(op, mode, imageScreenPos, imageSize);
 			}
 		}
 	}

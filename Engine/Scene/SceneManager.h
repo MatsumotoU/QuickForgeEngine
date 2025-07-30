@@ -60,6 +60,11 @@ private:
 
 private:
 //#ifdef _DEBUG
+	int scriptSelectionIndex_;
+	std::vector<std::string> scriptFilepath_;
+	std::string scriptInputFilepath_;
+	std::string scriptDirectoryPath_;
+
 	int modelSelectionIndex_;
 	std::vector<std::string> modelFilepaths_;
 	std::string inputFilepath_;

@@ -7,6 +7,14 @@ public:
 	float m[2][2];
 
 public:
+	float Get(int row, int col) const {
+		return m[row][col];
+	}
+	void Set(int row, int col, float value) {
+		m[row][col] = value;
+	}
+
+public:
 
 	/// <summary>
 	/// この行列の転地行列を求める
