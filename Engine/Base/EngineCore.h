@@ -134,6 +134,7 @@ public:// エンジンの機能取得
 	Chiptune* GetChiptune();
 	ShaderCompiler* GetShaderCompiler();
 	LoopStoper* GetLoopStopper();
+	LuaScriptManager* GetLuaScriptManager();
 
 public:
 	 float GetDeltaTime();
@@ -197,7 +198,7 @@ private:// デバッグ用一時変数
 	Camera camera_;
 
 private:// スクリプト
-	//LuaScriptManager luaScriptManager_;
+	LuaScriptManager luaScriptManager_;
 
 #ifdef _DEBUG
 	MemoryWatcher memWatcher_;

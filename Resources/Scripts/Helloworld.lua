@@ -1,1 +1,0 @@
-DebugLog("Hello World script loaded !!!!!!")

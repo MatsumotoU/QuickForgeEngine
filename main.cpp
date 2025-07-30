@@ -7,10 +7,6 @@
 // 現状ないと動かないコアたち
 #include "Engine/Base/EngineCore.h"
 
-// 読み込む課題のシーン指定
-//#include "Assignments/AL3/2DAction/SceneManager.h"
-//#include "Assignments/AL3/RailShooter/SceneManager.h"
-
 // windowsアプリでのエントリーポイント(main関数) 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	// * ゲーム以前の設定 * //
@@ -24,23 +20,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	EngineCore engineCore;
 	engineCore.Initialize(L"LE2A_14_マツモト_ユウタ_AL3", hInstance, lpCmdLine,&msg);
 
-	// * ゲームの初期化 * //
-	/*SceneManager sceneManager(&engineCore);
-	sceneManager.Initialize();*/
-
 	// ウィンドウのXボタンが押されるまでループ
 	while (engineCore.GetWinApp()->GetIsWindowQuit()) {
 		// windowにメッセージが基底たら最優先で処理される
 		if (engineCore.GetWinApp()->GetCanLoop()) {
 			// === Update ===
 			engineCore.Update();
-			/*if (!engineCore.GetLoopStopper()->GetIsStopping()) {
-				sceneManager.Update();
-			}*/
 
 			// === Draw ===
 			engineCore.PreDraw();
-			//sceneManager.Draw();
 
 			// === EndDraw ===
 			engineCore.PostDraw();

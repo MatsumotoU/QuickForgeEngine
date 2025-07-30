@@ -37,11 +37,12 @@ EngineCore::EngineCore() {
 	isDrawTextureDebugWindow_ = true;
 
 #endif // _DEBUG
-
 	loopStopper_.Initialize();
 
-	/*luaScriptManager_.BindDebugLog();
-	luaScriptManager_.GetLuaState().script_file("Resources/Scripts/Helloworld.lua");*/
+#ifdef _DEBUG
+	//luaScriptManager_.BindDebugLog();
+	//luaScriptManager_.GetLuaState().script_file("Resources/Scripts/LuaLoadTest.lua");
+#endif // _DEBUG
 }
 
 EngineCore::~EngineCore() {
@@ -295,6 +296,10 @@ ShaderCompiler* EngineCore::GetShaderCompiler() {
 
 LoopStoper* EngineCore::GetLoopStopper() {
 	return &loopStopper_;
+}
+
+LuaScriptManager* EngineCore::GetLuaScriptManager() {
+	return &luaScriptManager_;
 }
 
 float EngineCore::GetDeltaTime() {

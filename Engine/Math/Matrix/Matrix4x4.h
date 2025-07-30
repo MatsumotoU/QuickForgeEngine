@@ -13,6 +13,14 @@ public:
 	float m[4][4];
 
 public:
+	float Get(int row, int col) const {
+		return m[row][col];
+	}
+	void Set(int row, int col, float value) {
+		m[row][col] = value;
+	}
+
+public:
 	Matrix4x4 operator+(const Matrix4x4& other) const;
 	Matrix4x4 operator-(const Matrix4x4& other) const;
 	Matrix4x4 operator*(const Matrix4x4& other) const;

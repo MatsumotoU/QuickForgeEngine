@@ -39,6 +39,10 @@ void SceneObject::Update() {
 		for (auto dit = destroyedGameObjects_.begin(); dit != destroyedGameObjects_.end(); ++dit) {
 			for (auto git = gameObjects_.begin(); git != gameObjects_.end(); ++git) {
 				if (git->get() == *dit) {
+					if (engineCore_ && *dit) {
+						std::string key = (*dit)->GetName();
+						engineCore_->GetLuaScriptManager()->RemoveScript(key);
+					}
 					gameObjects_.erase(git);
 					break; // 一度削除したらループを抜ける
 				}

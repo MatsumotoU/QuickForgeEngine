@@ -291,6 +291,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
     <None Include="externals\imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
+    <None Include="Resources\Scripts\types.d.lua" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
@@ -359,6 +360,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Object\BaseGameObject.cpp" />
     <ClCompile Include="Engine\Particle\Particle.cpp" />
     <ClCompile Include="Engine\Scene\SceneObject.cpp" />
+    <ClCompile Include="Engine\Script\GameObjectLuaScript.cpp" />
+    <ClCompile Include="Engine\Script\ILuaScript.cpp" />
     <ClCompile Include="Engine\Script\LuaScriptManager.cpp" />
     <ClCompile Include="Engine\Sprite\FullScreenSprite.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
@@ -490,7 +493,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Scene\IScene.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Scene\SceneObject.h" />
-    <ClInclude Include="Engine\Script\ScriptLoader.h" />
+    <ClInclude Include="Engine\Script\GameObjectLuaScript.h" />
+    <ClInclude Include="Engine\Script\ILuaScript.h" />
+    <ClInclude Include="Engine\Script\LuaScriptManager.h" />
     <ClInclude Include="Engine\Sprite\FullScreenSprite.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />

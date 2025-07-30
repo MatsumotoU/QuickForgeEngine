@@ -10,6 +10,14 @@ public:
 	float m[3][3];
 
 public:
+	float Get(int row, int col) const {
+		return m[row][col];
+	}
+	void Set(int row, int col, float value) {
+		m[row][col] = value;
+	}
+
+public:
 	Matrix3x3 operator+(const Matrix3x3& other);
 	Matrix3x3 operator-(const Matrix3x3& other);
 	Matrix3x3 operator*(const Matrix3x3& other);
