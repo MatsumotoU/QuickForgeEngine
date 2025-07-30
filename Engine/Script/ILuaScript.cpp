@@ -165,9 +165,7 @@ ILuaScript::ILuaScript() {
 	);
 
 #ifdef _DEBUG
-	luaState_.set_function("DebugLog", [](const std::string& msg) {
-		DebugLog(msg.c_str());
-		});
+	luaState_.set_function("DebugLog", &DebugLogLua);
 #endif // _DEBUG
 }
 

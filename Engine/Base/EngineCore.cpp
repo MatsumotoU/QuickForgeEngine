@@ -1,6 +1,6 @@
 #include "EngineCore.h"
 
-EngineCore::EngineCore() {
+EngineCore::EngineCore() :luaScriptManager_(this) {
 	engineStartTime = std::chrono::steady_clock::now();
 #ifdef _DEBUG
 	DebugLog("[[[EngineStarted]]]");

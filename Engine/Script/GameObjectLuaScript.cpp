@@ -4,7 +4,10 @@
 #include "Object/BaseGameObject.h"
 #include <cassert>
 
-GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj) {
+#include "Base/EngineCore.h"
+#include "Input/XInput/XInputController.h"
+
+GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engineCore) {
 	// Model型のバインド
 	GetLuaState().new_usertype<Model>("Model",
 		sol::no_constructor,
@@ -46,6 +49,23 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj) {
 	// Luaのthisを設定
 	assert(obj != nullptr && "GameObjectLuaScript: obj is null");
 	GetLuaState()["this"] = obj;
+
+	// コントローラー登録
+	assert(engineCore != nullptr && "GameObjectLuaScript: engineCore is null");
+	GetLuaState().new_usertype<XInputController>("XInputController",
+		"GetIsActiveController", &XInputController::GetIsActiveController,
+		"GetPressButton", &XInputController::GetPressButton,
+		"GetLeftStick", &XInputController::GetLeftStick,
+		"GetRightStick", &XInputController::GetRightStick
+	);
+	GetLuaState()["controller"] = engineCore->GetXInputController();
+
+	// DirectInputManager型のバインド
+		GetLuaState().new_usertype<DirectInputManager>("DirectInputManager",
+			"GetKeyMoveDir", &DirectInputManager::GetKeyMoveDir
+		);
+	// Luaグローバルにinputとして登録
+	GetLuaState()["input"] = engineCore->GetInputManager();
 }
 
 void GameObjectLuaScript::LoadScript(const std::string& scriptFilePath) {

@@ -35,6 +35,8 @@ Model::Model(EngineCore* engineCore, Camera* camera) : BaseGameObject(engineCore
 
 	name_ = "Model"; // モデルの名前を設定
 	instanceCount_++;
+
+	attachedScriptName.clear();
 }
 
 void Model::Init() {
@@ -117,6 +119,7 @@ nlohmann::json Model::Serialize() const {
 		meshVertexCounts.push_back(mesh.vertices.size());
 	}
 	j["meshVertexCounts"] = meshVertexCounts;
+	j["scriptFileName"] = GetAttachedScriptName();
 
 #ifdef _DEBUG
 	DebugLog(std::format("name: {}", name_));
@@ -162,6 +165,11 @@ std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* e
 	}
 	if (j.contains("enableLighting")) {
 		model->material_.GetData()->enableLighting = j["enableLighting"].get<int32_t>();
+	}
+
+	// スクリプト名の復元
+	if (j.contains("scriptFileName")) {
+		model->SetScriptName(j["scriptFileName"].get<std::string>());
 	}
 	return model;
 }

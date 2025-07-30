@@ -8,14 +8,19 @@
 #include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
-LuaScriptManager::LuaScriptManager() {
+LuaScriptManager::LuaScriptManager(EngineCore* engineCore) {
 	luaScripts_.clear();
+	engineCore_ = engineCore;
 }
 
 LuaScriptManager::~LuaScriptManager() {}
 
+void LuaScriptManager::ClearAllGameObjScripts() {
+	luaScripts_.clear();
+}
+
 void LuaScriptManager::AddGameObjScript(const std::string& key, BaseGameObject* obj, const std::string& scriptFilePath) {
-	auto script = std::make_unique<GameObjectLuaScript>(obj);
+	auto script = std::make_unique<GameObjectLuaScript>(obj,engineCore_);
 	script->LoadScript(scriptFilePath);
 	luaScripts_[key] = std::move(script);
 }

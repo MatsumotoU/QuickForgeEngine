@@ -5,12 +5,14 @@
 
 class BaseGameObject;
 class GameObjectLuaScript;
+class EngineCore;
 
 class LuaScriptManager {
 public:
-    LuaScriptManager();
+    LuaScriptManager(EngineCore* engineCore);
     ~LuaScriptManager();
 
+    void ClearAllGameObjScripts();
     /// <summary>
     /// スクリプト追加
     /// </summary>
@@ -35,5 +37,6 @@ public:
 	void UpdateScripts();
 
 private:
+	EngineCore* engineCore_;
 	std::map<std::string, std::unique_ptr<ILuaScript>> luaScripts_;
 };

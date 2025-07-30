@@ -50,3 +50,17 @@ void DebugLog(const std::string& message, const std::source_location& location) 
 	MyDebugLog* myDebugLog = MyDebugLog::GetInstatnce();
 	myDebugLog->Log(message,location);
 }
+
+void DebugLogLua(const sol::object& obj) {
+	if (obj.is<std::string>()) {
+		DebugLog(obj.as<std::string>().c_str());
+	} else if (obj.is<double>()) {
+		DebugLog(std::to_string(obj.as<double>()).c_str());
+	} else if (obj.is<int>()) {
+		DebugLog(std::to_string(obj.as<int>()).c_str());
+	} else if (obj.is<bool>()) {
+		DebugLog(obj.as<bool>() ? "true" : "false");
+	} else {
+		DebugLog("<unsupported type>");
+	}
+}
