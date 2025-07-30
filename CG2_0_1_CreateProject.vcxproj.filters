@@ -1181,6 +1181,9 @@
     <ClInclude Include="Engine\Script\GameObjectLuaScript.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Script\LuaScriptGenerator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Shaders\VS\Object3d.VS.hlsl" />

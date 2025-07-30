@@ -17,7 +17,7 @@
                     "modelTextureHandles": [
                         1
                     ],
-                    "name": "anchor[1]",
+                    "name": "anchor[4]",
                     "position": [
                         0.0,
                         0.0,
@@ -33,11 +33,11 @@
                         1.0,
                         1.0
                     ],
-                    "scriptFileName": "",
+                    "scriptFileName": "Move.lua",
                     "type": "Model"
                 }
             ],
-            "sceneName": "SampleScene"
+            "sceneName": "LastScriptRunScene.json"
         }
     ]
 }

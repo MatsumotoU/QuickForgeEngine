@@ -104,6 +104,11 @@ std::unique_ptr<SceneObject> SceneObject::Deserialize(const nlohmann::json& j, E
 			if (type == "Model") {
 				auto model = Model::Deserialize(objJson, engineCore, &(sceneObj->mainCamera_));
 				model->LoadModel(modelFileDirectory, model->GetModelFileName(),COORDINATESYSTEM_HAND_RIGHT);
+				if (!model->GetAttachedScriptName().empty()) {
+					std::string scriptPath = "Resources/Scripts/" + model->GetAttachedScriptName();
+					std::string key = model->GetName();
+					engineCore->GetLuaScriptManager()->AddGameObjScript(key, model.get(), scriptPath);
+				}
 				sceneObj->GetGameObjects().push_back(std::move(model));
 			}
 

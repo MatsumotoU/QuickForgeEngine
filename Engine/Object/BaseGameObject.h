@@ -36,8 +36,14 @@ public:
 	std::string GetName() const {
 		return name_;
 	}
+	std::string GetAttachedScriptName() const {
+		return attachedScriptName;
+	}
 	void SetName(const std::string& name) {
 		name_ = name;
+	}
+	void SetScriptName(const std::string& scriptName) {
+		attachedScriptName = scriptName;
 	}
 
 public:
@@ -50,4 +56,6 @@ protected:
 	std::string name_;
 	EngineCore* engineCore_;
 	Camera* camera_;
+
+	std::string attachedScriptName;
 };

@@ -65,6 +65,8 @@ private:
 	std::string scriptInputFilepath_;
 	std::string scriptDirectoryPath_;
 
+	bool isRunningScript_;
+
 	int modelSelectionIndex_;
 	std::vector<std::string> modelFilepaths_;
 	std::string inputFilepath_;

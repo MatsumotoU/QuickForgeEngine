@@ -9,6 +9,13 @@
 static char saveFileName[256] = "";
 static int selectedIndex = -1;
 
+#include "Script/LuaScriptGenerator.h"
+static char newLuaFileName[128] = "NewScript.lua";
+static std::string lastCreatedLuaPath;
+static bool showCreateResult = false;
+
+static std::string lastScriptRunScenePath;
+
 SceneManager::SceneManager() {
 	isRequestSwapScene_ = false;
 }
@@ -48,6 +55,8 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	}
 	//#endif
 
+	isRunningScript_ = false;
+
 #ifdef _DEBUG
 	requestRedo_ = false;
 	requestUndo_ = false;
@@ -67,8 +76,13 @@ void SceneManager::UpdateScene() {
 	Redo();
 #endif // _DEBUG
 
+	// シーンの実行
 	if (currentScene_) {
 		currentScene_->Update();
+	}
+
+	// スクリプトの実行
+	if (isRunningScript_) {
 		engineCore_->GetLuaScriptManager()->UpdateScripts();
 	}
 }
@@ -107,6 +121,8 @@ void SceneManager::SaveScenesToJson(const std::string& filepath) {
 }
 
 void SceneManager::LoadScenesFromJson(const std::string& filepath) {
+
+	engineCore_->GetLuaScriptManager()->ClearAllGameObjScripts();
 	engineCore_->GetDirectXCommon()->WaitForGpu();
 
 	std::ifstream ifs;
@@ -136,6 +152,32 @@ std::string SceneManager::GetCurrentSceneName() const {
 
 #ifdef _DEBUG
 void SceneManager::DrawImGui() {
+	// スクリプトの実行状態を表示
+	if (ImGui::Button("RunningScript")) {
+		if (!isRunningScript_) {
+			// スクリプト開始時：シーンを保存
+			std::string fileName = "LastScriptRunScene.json";
+			lastScriptRunScenePath = sceneDataDirectorypath_ + "/" + fileName;
+			if (currentScene_) {
+				currentScene_->SetSceneName(fileName);
+			}
+			SaveScenesToJson(lastScriptRunScenePath);
+			engineCore_->GetLuaScriptManager()->InitScripts();
+			isRunningScript_ = true;
+		} else {
+			// スクリプト停止時：直前のシーンを再読込
+			if (!lastScriptRunScenePath.empty()) {
+				LoadScenesFromJson(lastScriptRunScenePath);
+				isRequestSwapScene_ = true;
+			}
+			isRunningScript_ = false;
+		}
+	}
+	if (isRunningScript_) {
+		ImGui::SameLine();
+		ImGui::Text("Running Script");
+	}
+
 	if (ImGui::BeginTabBar("SceneTab")) {
 		// シーンの保存と読み込みタブ
 		if (ImGui::BeginTabItem("Scenes")) {
@@ -242,6 +284,44 @@ void SceneManager::DrawImGui() {
 
 					// スクリプトファイル選択UI
 					ImGui::Text("Script Directory: %s", scriptDirectoryPath_.c_str());
+					if (ImGui::Button("SearchFile")) {
+						scriptFilepath_.clear();
+						scriptSelectionIndex_ = 0;
+						scriptFilepath_ = FileLoader::GetFilesWithExtension(scriptDirectoryPath_, ".lua");
+						if (!scriptFilepath_.empty()) {
+							scriptInputFilepath_ = scriptFilepath_[0];
+						} else {
+							scriptInputFilepath_.clear();
+						}
+					}
+					// ファイルを開く
+					ImGui::SameLine();
+					if (ImGui::Button("OpenSelectedFile")) {
+						if (!scriptFilepath_.empty() && scriptSelectionIndex_ >= 0 && scriptSelectionIndex_ < static_cast<int>(scriptFilepath_.size())) {
+							std::string luaPath = scriptDirectoryPath_ + "/" + scriptFilepath_[scriptSelectionIndex_];
+#ifdef _WIN32
+#include <windows.h>
+							ShellExecuteA(nullptr, "open", "code", luaPath.c_str(), nullptr, SW_HIDE);
+#else
+							std::string command = "code \"" + luaPath + "\"";
+							system(command.c_str());
+#endif
+						}
+					}
+					// スクリプト割り当てボタン
+					ImGui::SameLine();
+					if (ImGui::Button("AddScript##AssignScript")) {
+						if (scriptFilepath_.size() > 0) {
+							BaseGameObject* targetObject = gameObjects[selectedIndex].get();
+							std::string key = targetObject->GetName();
+							std::string scriptPath = scriptDirectoryPath_ + "/" + scriptInputFilepath_; // 選択中のスクリプトファイル
+							engineCore_->GetLuaScriptManager()->AddGameObjScript(key, targetObject, scriptPath);
+							targetObject->SetScriptName(scriptInputFilepath_);
+#ifdef _DEBUG
+							DebugLog((key + "assign to " + scriptPath).c_str());
+#endif
+						}
+					}
 					ImGui::Spacing();
 					if (scriptFilepath_.size() > 0) {
 						// Comboでスクリプトファイル選択
@@ -257,17 +337,28 @@ void SceneManager::DrawImGui() {
 						ImGui::Text("No script files found in %s", scriptDirectoryPath_.c_str());
 					}
 
-					// スクリプト割り当てボタン
-					if (ImGui::Button("AddScript##AssignScript")) {
-						if (scriptFilepath_.size() > 0) {
-							BaseGameObject* targetObject = gameObjects[selectedIndex].get();
-							std::string key = targetObject->GetName();
-							std::string scriptPath = scriptDirectoryPath_ + "/" + scriptInputFilepath_; // 選択中のスクリプトファイル
-							engineCore_->GetLuaScriptManager()->AddGameObjScript(key, targetObject, scriptPath);
-							#ifdef _DEBUG
-							DebugLog((key + "assign to " + scriptPath).c_str());
-							#endif
+					ImGui::Separator();
+					ImGui::Text("NewLuaScript");
+					ImGui::InputText("FileName", newLuaFileName, IM_ARRAYSIZE(newLuaFileName));
+					if (ImGui::Button("Create##CreateLuaScript")) {
+						std::string baseName = newLuaFileName;
+						std::string fileName = LuaScriptGenerator::GenerateUniqueFileName(scriptDirectoryPath_, baseName);
+						std::string content = LuaScriptGenerator::GetDefaultScriptContent();
+						std::string fullPath;
+						bool success = LuaScriptGenerator::CreateLuaScriptFile(scriptDirectoryPath_, fileName, content, fullPath);
+						if (success) {
+							// VSCodeで開く
+							std::string command = "code \"" + fullPath + "\"";
+							system(command.c_str());
+							lastCreatedLuaPath = fullPath;
+							showCreateResult = true;
+						} else {
+							lastCreatedLuaPath = "f";
+							showCreateResult = true;
 						}
+					}
+					if (showCreateResult) {
+						ImGui::Text("result: %s", lastCreatedLuaPath.c_str());
 					}
 					ImGui::End();
 				}
