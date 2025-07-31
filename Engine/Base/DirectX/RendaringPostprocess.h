@@ -75,7 +75,6 @@ private:// メンバ変数
 	std::vector<uint32_t> postProcessOrderForm_;
 
 	EngineCore* engineCore_;
-	Sprite offscreen_;
 
 	uint32_t postProcessCount_;
 	uint32_t renderingRosourceIndex_;

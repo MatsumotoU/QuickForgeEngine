@@ -49,8 +49,6 @@ RendaringPostprosecess::RendaringPostprosecess() {
 
 void RendaringPostprosecess::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
-	offscreen_.Initialize(engineCore, 
-		static_cast<float>(engineCore->GetWinApp()->kWindowWidth), static_cast<float>(engineCore->GetWinApp()->kWindowHeight));
 
 	// Spriteを作る
 	vertexResource_ = CreateBufferResource(engineCore->GetDirectXCommon()->GetDevice(), sizeof(VertexData) * 4);

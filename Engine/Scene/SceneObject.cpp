@@ -119,6 +119,14 @@ std::unique_ptr<SceneObject> SceneObject::Deserialize(const nlohmann::json& j, E
 				billboard->SetTextureHandle( engineCore->GetTextureManager()->LoadTexture(modelFileDirectory + "/" + billboard->GetName()));
 				sceneObj->GetGameObjects().push_back(std::move(billboard));
 			}
+
+			// Sprite
+			else if (type == "Sprite") {
+				auto sprite = Sprite::Deserialize(objJson, engineCore, &(sceneObj->mainCamera_));
+				sprite->Init();
+				sprite->SetTextureHandle(engineCore->GetTextureManager()->LoadTexture(modelFileDirectory + "/" + sprite->GetName()));
+				sceneObj->GetGameObjects().push_back(std::move(sprite));
+			}
 		}
 	}
 	return sceneObj;
@@ -138,6 +146,17 @@ void SceneObject::AddBillboard(const std::string& directoryPath, const std::stri
 	billboadard->Init();
 	billboadard->SetName(filename);
 	gameObjects_.push_back(std::move(billboadard));
+}
+
+void SceneObject::AddSprite(const std::string& directoryPath, const std::string& filename) {
+	// テクスチャハンドルを取得
+	uint32_t textureHandle = engineCore_->GetTextureManager()->LoadTexture(directoryPath + "/" + filename);
+	Vector2 size = engineCore_->GetTextureManager()->GetTextureSize(textureHandle);
+	std::unique_ptr<Sprite> sprite = std::make_unique<Sprite>(engineCore_, &mainCamera_, size.x,size.y);
+	sprite->SetTextureHandle(textureHandle);
+	sprite->Init();
+	sprite->SetName(filename);
+	gameObjects_.push_back(std::move(sprite));
 }
 
 void SceneObject::DeleteModel(BaseGameObject* model) {

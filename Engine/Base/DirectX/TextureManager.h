@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-
+#include "Math/Vector/Vector2.h"
 #include "../../../externals/DirectXTex/d3dx12.h"
 #include "../../../externals/DirectXTex/DirectXTex.h"
 #include "String/StringLiblary.h"
@@ -54,6 +54,7 @@ public:
 
 public:
 	int32_t LoadTexture(const std::string& filePath);
+	Vector2 GetTextureSize(int32_t textureHandle);
 
 #ifdef _DEBUG
 public:

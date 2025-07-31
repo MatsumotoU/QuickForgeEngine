@@ -16,19 +16,37 @@
 #include "../Base/DirectX/Viewport.h"
 #include "../Base/DirectX/ScissorRect.h"
 
-void Sprite::Initialize(EngineCore* engineCore, float width, float hight) {
+Sprite::Sprite(EngineCore* engineCore, Camera* camera, float width, float hight) : BaseGameObject(engineCore, camera) {
+	textureHandle_ = 0;
+
 	engineCore_ = engineCore;
 	dxCommon_ = engineCore->GetDirectXCommon();
 	textureManager_ = engineCore_->GetTextureManager();
-	pso_ = engineCore_->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal);
+	pso_ = engineCore->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal);
 
-	material_.Initialize(dxCommon_);
-	wvp_.Initialize(dxCommon_, 1);
-	directionalLight_.Initialize(dxCommon_);
+	// 初期化
+	wvp_.CreateResource(engineCore->GetDirectXCommon()->GetDevice());
+	directionalLight_.CreateResource(engineCore->GetDirectXCommon()->GetDevice());
+	material_.CreateResource(engineCore->GetDirectXCommon()->GetDevice());
+
+	// ワールド行列を初期化
+	worldMatrix_ = Matrix4x4::MakeIndentity4x4();
+	// スプライトのサイズを設定
+	width_ = width;
+	hight_ = hight;
+	// 名前を設定
+	name_ = "Sprite"; // スプライトの名前を設定
+	attachedScriptName.clear();
+	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4(); // UV変換行列を初期化
+	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	material_.GetData()->enableLighting = false; // ライティングを有効にする
+	directionalLight_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	directionalLight_.GetData()->direction = Vector3(0.0f, -1.0f, 0.0f); // 下方向
+	directionalLight_.GetData()->intensity = 1.0f; // 輝度
 
 	// Spriteを作る
-	vertexBuffer_.CreateResource(dxCommon_->GetDevice(),4);
-	
+	vertexBuffer_.CreateResource(dxCommon_->GetDevice(), 4);
+
 	// 頂点データ作成
 	vertexBuffer_.GetData()[0].position = { 0.0f,hight,0.0f,1.0f };
 	vertexBuffer_.GetData()[0].texcoord = { 0.0f,1.0f };
@@ -59,121 +77,165 @@ void Sprite::Initialize(EngineCore* engineCore, float width, float hight) {
 	indexData_[5] = 2;
 }
 
-void Sprite::DrawSprite(const Matrix4x4& worldMatrix, int32_t textureHandle, Camera* camera) {
-	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
-	wvp_.SetWorldMatrix(worldMatrix, 0);
-	wvp_.SetWVPMatrix(wvpMatrix, 0);
+void Sprite::Init() {
+	wvp_.GetData()->World = Matrix4x4::MakeIndentity4x4();
+	wvp_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
+	directionalLight_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	directionalLight_.GetData()->direction = Vector3(0.0f, -1.0f, 0.0f); // 下方向
+	directionalLight_.GetData()->intensity = 1.0f; // 輝度
+	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4(); // UV変換行列を初期化
+	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	material_.GetData()->enableLighting = true; // ライティングを有効にする
+}
 
-	// sprite
+void Sprite::Update() {
+	worldMatrix_ = Matrix4x4::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	wvp_.GetData()->World = worldMatrix_;
+}
+
+void Sprite::Draw() {
+	Matrix4x4 viewMatrix = Matrix4x4::MakeIndentity4x4();
+	Matrix4x4 projectionMatrix = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f,
+		static_cast<float>(engineCore_->GetWinApp()->kWindowWidth),
+		static_cast<float>(engineCore_->GetWinApp()->kWindowHeight), 0.0f, 100.0f);
+	Matrix4x4 wvpMatrix = Matrix4x4::Multiply(worldMatrix_, Matrix4x4::Multiply(viewMatrix, projectionMatrix));
+
+	wvp_.GetData()->WVP = wvpMatrix;
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	commandList->RSSetViewports(1, camera->viewport_.GetViewport());
-	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
-	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
+	commandList->RSSetViewports(1, camera_->viewport_.GetViewport());
+	commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
 	commandList->SetPipelineState(pso_->GetPipelineState());
+	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
+	commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(textureHandle_));
+	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetGPUVirtualAddress());
 	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(textureHandle));
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void Sprite::DrawSprite(const Transform& transform, int32_t textureHandle, Camera* camera) {
-	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
-	wvp_.SetWorldMatrix(worldMatrix,0);
-	wvp_.SetWVPMatrix(wvpMatrix,0);
-
-	// sprite
-	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	commandList->RSSetViewports(1, camera->viewport_.GetViewport());
-	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
-	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
-	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
-	commandList->IASetIndexBuffer(&indexBufferView_);
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(textureHandle));
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
-	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+nlohmann::json Sprite::Serialize() const {
+	nlohmann::json j;
+	j["type"] = "Sprite";
+	j["name"] = name_;
+	j["position"] = { transform_.translate.x, transform_.translate.y, transform_.translate.z };
+	j["rotation"] = { transform_.rotate.x, transform_.rotate.y, transform_.rotate.z };
+	j["scale"] = { transform_.scale.x, transform_.scale.y, transform_.scale.z };
+	j["width"] = width_;
+	j["hight"] = hight_;
+	j["textureHandle"] = textureHandle_;
+	j["scriptFileName"] = attachedScriptName;
+	return j;
 }
 
-void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform, int32_t textureHandle, Camera* camera) {
-	// uv
-	Matrix4x4 uvTransformMatrix = Matrix4x4::MakeScaleMatrix(uvTransform.scale);
-	uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeRotateZMatrix(uvTransform.rotate.z));
-	uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeTranslateMatrix(uvTransform.translate));
-	material_.SetUvTransformMatrix(uvTransformMatrix);
+std::unique_ptr<Sprite> Sprite::Deserialize(const nlohmann::json& j, EngineCore* engineCore, Camera* camera) {
+	// 先にwidthとhightを取得しておく
+	float width = -1.0f;
+	float hight = -1.0f;
+	if (j.contains("width")) {
+		width = j["width"].get<float>();
+	}
+	if (j.contains("hight")) {
+		hight = j["hight"].get<float>();
+	}
+	assert(width > 0.0f && hight > 0.0f && "Sprite width and height must be greater than 0");
 
-	// wvp
-	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
-	wvp_.SetWorldMatrix(worldMatrix,0);
-	wvp_.SetWVPMatrix(wvpMatrix,0);
-
-	// sprite
-	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-
-	commandList->RSSetViewports(1, camera->viewport_.GetViewport());
-	commandList->RSSetScissorRects(1, camera->scissorrect_.GetScissorRect());
-	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
-	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
-	commandList->IASetIndexBuffer(&indexBufferView_);
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, textureManager_->GetTextureSrvHandleGPU(textureHandle));
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
-	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	// スプライトのインスタンスを作成
+	auto sprite = std::make_unique<Sprite>(engineCore, camera, width, hight);
+	sprite->Init();
+	// 名前復元
+	if (j.contains("name")) sprite->name_ = j["name"].get<std::string>();
+	// トランスフォーム復元
+	if (j.contains("position")) {
+		sprite->transform_.translate.x = j["position"][0].get<float>();
+		sprite->transform_.translate.y = j["position"][1].get<float>();
+		sprite->transform_.translate.z = j["position"][2].get<float>();
+	}
+	if (j.contains("rotation")) {
+		sprite->transform_.rotate.x = j["rotation"][0].get<float>();
+		sprite->transform_.rotate.y = j["rotation"][1].get<float>();
+		sprite->transform_.rotate.z = j["rotation"][2].get<float>();
+	}
+	if (j.contains("scale")) {
+		sprite->transform_.scale.x = j["scale"][0].get<float>();
+		sprite->transform_.scale.y = j["scale"][1].get<float>();
+		sprite->transform_.scale.z = j["scale"][2].get<float>();
+	}
+	if (j.contains("textureHandle")) {
+		sprite->textureHandle_ = j["textureHandle"].get<uint32_t>();
+	}
+	if (j.contains("scriptFileName")) {
+		sprite->SetScriptName(j["scriptFileName"].get<std::string>());
+	}
+	return sprite;
 }
 
-void Sprite::DrawSprite(const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle) {
-	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+void Sprite::DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize) {
+	ImGuizmo::SetOrthographic(true);
+	ImGuizmo::SetDrawlist();
+	ImGuizmo::SetRect(imageScreenPos.x, imageScreenPos.y, imageSize.x, imageSize.y);
 
-	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
-	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
-	commandList->IASetIndexBuffer(&indexBufferView_);
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
-	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	// 行列をfloat配列に変換
+	Matrix4x4 world = worldMatrix_;
+	float worldMatrix[16];
+	std::memcpy(worldMatrix, &world, sizeof(float) * 16);
+
+	// ビュー行列（単位行列）
+	Matrix4x4 view = Matrix4x4::MakeIndentity4x4();
+	float viewMatrix[16];
+	std::memcpy(viewMatrix, &view, sizeof(float) * 16);
+
+	// 射影行列（ウィンドウ座標系に合わせる）
+	float windowWidth = static_cast<float>(engineCore_->GetWinApp()->kWindowWidth);
+	float windowHeight = static_cast<float>(engineCore_->GetWinApp()->kWindowHeight);
+	Matrix4x4 proj = Matrix4x4::MakeOrthographicMatrix(
+		0.0f, 0.0f,
+		windowWidth, windowHeight,
+		0.0f, 100.0f
+	);
+	float projMatrix[16];
+	std::memcpy(projMatrix, &proj, sizeof(float) * 16);
+
+	ImGuizmo::Manipulate(viewMatrix, projMatrix, op, mode, worldMatrix);
+
+	// ギズモで編集された場合、transform_に反映
+	if (ImGuizmo::IsUsing()) {
+		Vector3 scale, rotation, translation;
+		this->DecomposeMatrix(worldMatrix, scale, rotation, translation);
+
+		// スケールが0やnanの場合は安全値に補正
+		if (std::isnan(scale.x) || std::isnan(scale.y) || std::isnan(scale.z) ||
+			scale.x == 0.0f || scale.y == 0.0f || scale.z == 0.0f) {
+			scale = Vector3(1.0f, 1.0f, 1.0f);
+		}
+		transform_.scale = scale;
+		transform_.rotate = rotation;
+		transform_.translate = translation;
+	}
 }
 
-void Sprite::DrawSprite(const Transform& transform, const Transform& uvTransform, const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle, Camera* camera) {
-	// uv
-	Matrix4x4 uvTransformMatrix = Matrix4x4::MakeScaleMatrix(uvTransform.scale);
-	uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeRotateZMatrix(uvTransform.rotate.z));
-	uvTransformMatrix = Matrix4x4::Multiply(uvTransformMatrix, Matrix4x4::MakeTranslateMatrix(uvTransform.translate));
-	material_.SetUvTransformMatrix(uvTransformMatrix);
+void Sprite::DrawImGui() {
+	// ImGuiでスプライトのプロパティを表示
+	ImGui::Text("Model Name: %s", name_.c_str());
+	ImGui::Spacing();
+	// 位置情報
+	ImGui::DragFloat3("Position", &transform_.translate.x, 0.01f);
+	ImGui::DragFloat3("Rotation", &transform_.rotate.x, 0.01f);
+	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.01f);
+	ImGui::Spacing();
 
-	// wvp
-	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-	Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_ORTHOGRAPHIC);
-	wvp_.SetWorldMatrix(worldMatrix,0);
-	wvp_.SetWVPMatrix(wvpMatrix,0);
-
-	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-
-	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
-	commandList->SetPipelineState(pso_->GetPipelineState());
-	commandList->IASetVertexBuffers(0, 1, vertexBuffer_.GetVertexBufferView());
-	commandList->IASetIndexBuffer(&indexBufferView_);
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetWVPResource()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLight_.GetDirectionalLightResource()->GetGPUVirtualAddress());
-	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
-}
-
-void Sprite::SetPSO(PipelineStateObject* pso) {
-	pso_ = pso;
+	// ワールド行列の表示
+	if (ImGui::TreeNode("WorldMatrix")) {
+		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[0][0], worldMatrix_.m[0][1], worldMatrix_.m[0][2], worldMatrix_.m[0][3]);
+		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[1][0], worldMatrix_.m[1][1], worldMatrix_.m[1][2], worldMatrix_.m[1][3]);
+		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[2][0], worldMatrix_.m[2][1], worldMatrix_.m[2][2], worldMatrix_.m[2][3]);
+		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3]);
+		ImGui::TreePop();
+	}
+	ImGui::InputFloat("Width", &width_);
+	ImGui::InputFloat("Height", &hight_);
+	ImGui::Separator();
+	ImGui::Text("Attached Script: %s", attachedScriptName.c_str());
 }

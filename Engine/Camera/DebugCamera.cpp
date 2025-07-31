@@ -64,14 +64,22 @@ void DebugCamera::Update() {
 			Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
 
 			// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
+			sphericalTemp.z += -input_->mouse_.deltaMouse_.x * mouseSensitivity_ * 0.005f; // φ: 左右（感度を下げる）
+			sphericalTemp.y += -input_->mouse_.deltaMouse_.y * mouseSensitivity_ * 0.005f; // θ: 上下（感度を下げる）
 
-			sphericalTemp.z += -input_->mouse_.deltaMouse_.x * mouseSensitivity_ * 0.01f; // φ: 左右
-			sphericalTemp.y += -input_->mouse_.deltaMouse_.y * mouseSensitivity_ * 0.01f; // θ: 上下
+			// θ（緯度）のクランプ
+			const float epsilon = 0.01f;
+			const float minTheta = epsilon;
+			const float maxTheta = static_cast<float>(M_PI) - epsilon;
+			sphericalTemp.y = std::clamp(sphericalTemp.y, minTheta, maxTheta);
 
 			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(sphericalTemp);
 			camera_.transform_.translate = sphericalToCartesian + anchorPoint_;
 
-			camera_.transform_.rotate = -Vector3::LookAt(anchorPoint_, camera_.GetWorldPos());
+			// LookAtの方向ベクトルがゼロにならないように
+			if ((anchorPoint_ - camera_.GetWorldPos()).Length() > 0.001f) {
+				camera_.transform_.rotate = -Vector3::LookAt(anchorPoint_, camera_.GetWorldPos());
+			}
 		}
 	}
 
