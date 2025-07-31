@@ -13,7 +13,10 @@ public:
             "end\n\n"
             "function Update()\n"
             "\tDebugLog(\"Update\")\n"
-            "end\n";
+            "end\n\n"
+            "function Collision()\n"
+            "\tDebugLog(\"IsHit\")"
+            "end\n\n";
     }
 
     // ファイル名の重複を避けて新しいファイル名を生成

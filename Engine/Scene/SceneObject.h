@@ -11,6 +11,7 @@
 #endif // _DEBUG
 
 class EngineCore;
+class Collider;
 
 class SceneObject :public IScene {
 public:
@@ -35,6 +36,13 @@ public:
 	void DeleteModel(BaseGameObject* model);
 
 public:
+	std::list<Collider*> GetColliders() const {
+		std::list<Collider*> colliders;
+		for (const auto& obj : gameObjects_) {
+			colliders.push_back(obj.get());
+		}
+		return colliders;
+	}
 	std::vector<std::unique_ptr<BaseGameObject>>& GetGameObjects() {
 		return gameObjects_;
 	}

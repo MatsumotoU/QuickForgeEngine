@@ -35,6 +35,7 @@ public:
 public:
     void InitScripts();
 	void UpdateScripts();
+    void CollisionScripts();
 
 private:
 	EngineCore* engineCore_;

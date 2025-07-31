@@ -6,8 +6,11 @@
 
 #include "Base/EngineCore.h"
 #include "Input/XInput/XInputController.h"
+#include "Scene/SceneManager.h"
 
 GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engineCore) {
+	obj_ = obj;
+
 	// Model型のバインド
 	GetLuaState().new_usertype<Model>("Model",
 		sol::no_constructor,
@@ -46,6 +49,13 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engine
 		"worldMatrix", &BaseGameObject::worldMatrix_
 	);
 
+	// シーンマネージャーのロード関数だけをバインド
+	GetLuaState().new_usertype<SceneManager>("SceneManager",
+		sol::no_constructor,
+		"LoadScene", &SceneManager::LoadScenesLua,
+		"GetCurrentSceneName", &SceneManager::GetCurrentSceneName
+	);
+
 	// Luaのthisを設定
 	assert(obj != nullptr && "GameObjectLuaScript: obj is null");
 	GetLuaState()["this"] = obj;
@@ -66,6 +76,19 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engine
 		);
 	// Luaグローバルにinputとして登録
 	GetLuaState()["input"] = engineCore->GetInputManager();
+	GetLuaState()["deltaTime"] = engineCore->GetDeltaTime();
+	GetLuaState()["sceneManager"] = engineCore->GetSceneManager();
+}
+
+GameObjectLuaScript::~GameObjectLuaScript() {
+	// Luaのthisを解放
+	GetLuaState()["this"] = sol::nil;
+	// Luaのcontrollerを解放
+	GetLuaState()["controller"] = sol::nil;
+	// Luaのinputを解放
+	GetLuaState()["input"] = sol::nil;
+	// LuaのsceneManagerを解放
+	GetLuaState()["sceneManager"] = sol::nil;
 }
 
 void GameObjectLuaScript::LoadScript(const std::string& scriptFilePath) {
@@ -102,4 +125,13 @@ void GameObjectLuaScript::Update() {
 		return;
 	}
 	updateFunc();
+}
+
+void GameObjectLuaScript::Collision() {
+	sol::function collisionFunc = GetLuaState()["Collision"];
+	if (!collisionFunc.valid()) {
+		assert(false && "Collision function is not found in Lua script");
+		return;
+	}
+	collisionFunc();
 }

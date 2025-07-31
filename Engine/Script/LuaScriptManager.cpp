@@ -54,3 +54,20 @@ void LuaScriptManager::UpdateScripts() {
 		}
 	}
 }
+
+void LuaScriptManager::CollisionScripts() {
+	for (auto& scriptPair : luaScripts_) {
+		auto* script = dynamic_cast<GameObjectLuaScript*>(scriptPair.second.get());
+		if (script) {
+			// ゲームオブジェクトが存在するかどうかのチェック
+			if (script->GetGameObject() == nullptr) {
+				continue;
+			}
+			// 衝突しているかどうかのチェック
+			if (!script->GetGameObject()->IsHit()) {
+				continue;
+			}
+			script->Collision();
+		}
+	}
+}
