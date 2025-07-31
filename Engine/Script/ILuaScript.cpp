@@ -48,7 +48,7 @@ ILuaScript::ILuaScript() {
 	);
 	// Vector2
 	luaState_.new_usertype<Vector2>("Vector2",
-		sol::constructors<Vector2()>(),
+		sol::constructors<Vector2(), Vector2(float, float)>(),
 		"x", &Vector2::x,
 		"y", &Vector2::y,
 		"Length", &Vector2::Length,

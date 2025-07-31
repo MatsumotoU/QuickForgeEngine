@@ -182,6 +182,7 @@ std::unique_ptr<Sprite> Sprite::Deserialize(const nlohmann::json& j, EngineCore*
 	return sprite;
 }
 
+#ifdef _DEBUG
 void Sprite::DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize) {
 	ImGuizmo::SetOrthographic(true);
 	ImGuizmo::SetDrawlist();
@@ -234,3 +235,4 @@ void Sprite::DrawImGui() {
 	ImGui::Separator();
 	ImGui::Text("Attached Script: %s", attachedScriptName.c_str());
 }
+#endif // _DEBUG
