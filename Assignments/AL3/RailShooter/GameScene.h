@@ -55,6 +55,7 @@ private:
 	SkyDome skyDome_;
 	Player player_;
 	Bullet playerBullets[kPlayerBullets];
+	Bullet playerHomingBullets[kPlayerBullets];
 	Enemy enemies[kEnemies];
 	Bullet enemyBullets[kEnemyBullets];
 	Model groundModel_;

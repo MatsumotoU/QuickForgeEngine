@@ -1,5 +1,9 @@
 #include "Bulllet.h"
 
+Bullet::Bullet() {
+	color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
 void Bullet::Initialize(EngineCore* engineCore, const std::string& name) {
 	name_ = name;
 	engineCore_ = engineCore;
@@ -13,6 +17,8 @@ void Bullet::Initialize(EngineCore* engineCore, const std::string& name) {
 	isActive_ = false;
 
 	transform_.scale = Vector3(0.5f, 0.5f, 0.5f);
+	
+
 }
 
 void Bullet::Update() {
@@ -30,6 +36,7 @@ void Bullet::Update() {
 
 	model_.transform_ = transform_;
 	model_.Update();
+	model_.material_.materialData_->color = color_;
 }
 
 void Bullet::Draw(Camera* camera) {

@@ -4,6 +4,9 @@
 
 class Bullet : public Collider {
 public:
+	Bullet();
+
+public:
 	void Initialize(EngineCore* engineCore,const std::string& name);
 	void Update();
 	void Draw(Camera* camera);
@@ -20,11 +23,13 @@ public:
 	Transform transform_;
 	Vector3 velocity_;
 	std::string name_;
+	Vector4 color_;
 
 private:
 	bool isActive_;
 	uint32_t aliveTime_;
 	uint32_t maxAliveTime_;
+	
 
 private:
 	EngineCore* engineCore_;

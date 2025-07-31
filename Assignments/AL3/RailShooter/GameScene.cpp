@@ -34,6 +34,10 @@ void GameScene::Initialize() {
 	for (int i = 0; i < kPlayerBullets; i++) {
 		playerBullets[i].Initialize(engineCore_, "Player");
 		playerBullets[i].SetMask(0x00000001);
+
+		playerHomingBullets[i].Initialize(engineCore_, "PlayerHoming");
+		playerHomingBullets[i].SetMask(0x00000001);
+		playerHomingBullets[i].color_ = Vector4(0.0f, 1.0f, 0.0f, 1.0f); // 緑色の弾丸
 	}
 	for (int i = 0; i < kEnemyBullets; i++) {
 		enemyBullets[i].Initialize(engineCore_, "Enemy");
@@ -176,6 +180,12 @@ void GameScene::Update() {
 		if (playerBullets[i].GetIsActive()) {
 			playerBullets[i].Update();
 		}
+
+		if (playerHomingBullets[i].GetIsActive()) {
+			Vector3 toPlayer = lockOn_.GetLockPosition(&camera_) - playerHomingBullets[i].transform_.translate;
+			playerHomingBullets[i].velocity_ = Vector3::Slerp(playerHomingBullets[i].velocity_.Normalize(), toPlayer.Normalize(), 0.1f) * 10.0f;
+			playerHomingBullets[i].Update();
+		}
 	}
 
 	for (int i = 0; i < kEnemyBullets; i++) {
@@ -224,6 +234,25 @@ void GameScene::Update() {
 			reticle_.model_.worldMatrix_ =
 				Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
 		}
+
+		if (input_->keyboard_.GetRelease(DIK_SPACE)) {
+			for (int b = 0; b < 4; b++) {
+				for (int i = 0; i < kPlayerBullets; i++) {
+					if (!playerHomingBullets[i].GetIsActive()) {
+						if (b == 0) {
+							playerHomingBullets[i].ShotBullet(player_.GetWorldPosition(), { 0.0f,30.0f,0.0f }, 300);
+						} else if (b == 1) {
+							playerHomingBullets[i].ShotBullet(player_.GetWorldPosition(), { 0.0f,0.0f,30.0f }, 300);
+						} else if (b == 2) {
+							playerHomingBullets[i].ShotBullet(player_.GetWorldPosition(), { 0.0f,0.0f,-30.0f }, 300);
+						} else if (b == 3) {
+							playerHomingBullets[i].ShotBullet(player_.GetWorldPosition(), { 0.0f,-30.0f,0.0f }, 300);
+						}
+						break;
+					}
+				}
+			}
+		}
 		
 	}
 	
@@ -233,7 +262,17 @@ void GameScene::Draw() {
 	debugCamera_.DrawImGui();
 	reticle_.Draw(&camera_);
 
-	ImGui::Begin("LockOn");
+	ImGui::Begin("HomingBullets");
+	for (int i = 0; i < kPlayerBullets; i++) {
+		if (playerHomingBullets[i].GetIsActive()) {
+			ImGui::Text("HomingBullet %d", i);
+			ImGui::Text("Position: %f, %f, %f", playerHomingBullets[i].transform_.translate.x, playerHomingBullets[i].transform_.translate.y, playerHomingBullets[i].transform_.translate.z);
+			ImGui::Text("Velocity: %f, %f, %f", playerHomingBullets[i].velocity_.x, playerHomingBullets[i].velocity_.y, playerHomingBullets[i].velocity_.z);
+		}
+	}
+	ImGui::End();
+
+	/*ImGui::Begin("LockOn");
 	if (ImGui::Button("isLockOn")) {
 		isLockOn_ = !isLockOn_;
 	}
@@ -242,7 +281,7 @@ void GameScene::Draw() {
 	ImGui::Text("%f,%f,%f", r.x, r.y, r.z);
 	ImGui::Text("length: %f", (lockOn_.GetLockPosition(&camera_) - player_.GetWorldPosition()).Length());
 	ImGui::Text("Dot: %f", Vector3::Dot(player_.GetDir().Normalize(), (player_.GetWorldPosition() - lockOn_.GetLockPosition(&camera_)).Normalize()));
-	ImGui::End();
+	ImGui::End();*/
 
 	ImGui::Begin("Enemy");
 	for (int i = 0; i < kEnemies; i++) {
@@ -256,7 +295,7 @@ void GameScene::Draw() {
 	}
 	ImGui::End();
 
-	ImGui::Begin("Lail");
+	/*ImGui::Begin("Lail");
 	if (ImGui::Button("Add Point")) {
 		lailPoints_.push_back({ 0.0f,0.0f,0.0f });
 	}
@@ -271,7 +310,7 @@ void GameScene::Draw() {
 		ImGui::DragFloat3(("Point" + std::to_string(i)).c_str(), &lailPoints_[i].x, 0.1f);
 	}
 
-	ImGui::End();
+	ImGui::End();*/
 
 	ImGui::Begin("GameScene");
 	if (ImGui::Button("LockOn")) {
@@ -305,6 +344,10 @@ void GameScene::Draw() {
 	for (int i = 0; i < kPlayerBullets; i++) {
 		if (playerBullets[i].GetIsActive()) {
 			playerBullets[i].Draw(&camera_);
+		}
+
+		if (playerHomingBullets[i].GetIsActive()) {
+			playerHomingBullets[i].Draw(&camera_);
 		}
 	}
 	for (int i = 0; i < kEnemyBullets; i++) {
