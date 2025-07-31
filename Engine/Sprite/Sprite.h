@@ -2,52 +2,62 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <string>
-#include "../Math/Transform.h"
 
-class EngineCore;
+#include "Object/BaseGameObject.h"
 
-class DirectXCommon;
-class TextureManager;
-
-class PipelineStateObject;
+#include "Math/TransformationMatrix.h"
+#include "Object/Material.h"
+#include "Object/DirectionalLight.h"
 
 #include "Base/DirectX/Resource/ShaderBuffers/VertexBuffer.h"
-#include "../Base/DirectX/MaterialResource.h"
-#include "../Base/DirectX/WVPResource.h"
-#include "../Base/DirectX/DirectionalLightResource.h"
+#include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
 
+class EngineCore;
 class Camera;
+class DirectXCommon;
+class TextureManager;
+class PipelineStateObject;
 
-class Sprite {
+class Sprite : public BaseGameObject {
 public:
-	void Initialize(EngineCore* engineCore, float width, float hight);
-
-public:
-	void DrawSprite(const Matrix4x4& worldMatrix, int32_t textureHandle, Camera* camera);
-	void DrawSprite(const Transform& transform, int32_t textureHandle,Camera* camera);
-	void DrawSprite(const Transform& transform, const Transform& uvTransform, int32_t textureHandle, Camera* camera);
-	void DrawSprite(const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle);
-	void DrawSprite(const Transform& transform, const Transform& uvTransform, const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle, Camera* camera);
+	Sprite() = delete;
+	Sprite(EngineCore* engineCore, Camera* camera, float width, float hight);
+	~Sprite() override = default;
 
 public:
-	void SetPSO(PipelineStateObject* pso);
+	void Init() override;
+	void Update() override;
+	void Draw() override;
 
 public:
-	Transform transform_;
+	nlohmann::json Serialize() const override;
+	static std::unique_ptr<Sprite> Deserialize(const nlohmann::json& j, EngineCore* engineCore, Camera* camera);
+
+	void SetTextureHandle(uint32_t textureHandle) {
+		textureHandle_ = textureHandle;
+	}
+#ifdef _DEBUG
+	void DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize) override;
+	void DrawImGui() override;
+#endif // _DEBUG
 
 public:
-	MaterialResource material_;
-	DirectionalLightResource directionalLight_;
-	WVPResource wvp_;	
+	ConstantBuffer<TransformationMatrix> wvp_; // ワールドビュー投影行列
+	ConstantBuffer<DirectionalLight> directionalLight_; // 環境光
+	ConstantBuffer<Material> material_; // マテリアル
 
 private:
 	EngineCore* engineCore_;
 	DirectXCommon* dxCommon_;
 	TextureManager* textureManager_;
+	PipelineStateObject* pso_;
+
 	VertexBuffer<VertexData> vertexBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 	uint32_t* indexData_;
 
-	PipelineStateObject* pso_;
+	float width_;
+	float hight_;
+	uint32_t textureHandle_ = 0;
 };

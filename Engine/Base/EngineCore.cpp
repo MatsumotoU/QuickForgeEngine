@@ -106,8 +106,8 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	postprocess_.Initialize(this);
 
 	// オフスクリーンのスプライト生成
-	offscreen_.Initialize(this, static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight));
-	offscreen_.material_.materialData_->enableLighting = false;
+	/*offscreen_.Initialize(this, static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight));
+	offscreen_.material_.materialData_->enableLighting = false;*/
 
 	camera_.Initialize(&winApp_);
 
@@ -123,6 +123,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	// シーンマネージャの初期化,初期シーンはサンプルシーンとする
 	sceneManager_.CreateScene(this, "SampleScene");
 	sceneManager_.InitializeScene();
+
 }
 
 void EngineCore::Update() {
@@ -250,9 +251,9 @@ DirectInputManager* EngineCore::GetInputManager() {
 	return &inputManager_;
 }
 
-Sprite* EngineCore::GetOffscreen() {
-	return &offscreen_;
-}
+//Sprite* EngineCore::GetOffscreen() {
+//	return &offscreen_;
+//}
 
 FramePerSecond* EngineCore::GetFpsCounter() {
 	return &fpsCounter_;

@@ -72,9 +72,15 @@ private:
 	std::string inputFilepath_;
 	std::string ModelDirectoryPath_;
 
+	
 	int billboardSelectionIndex_;
 	std::vector<std::string> billboardFilepath_;
 	std::string billboardInputFilepath_;
+	std::string imageDirectoryPath_;
+
+	int spriteSelectionIndex_;
+	std::vector<std::string> spriteFilepath_;
+	std::string spriteInputFilepath_;
 //#endif // _DEBUG
 
 };

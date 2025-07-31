@@ -122,7 +122,7 @@ public:// エンジンの機能取得
 	XAudioCore* GetAudioManager();
 	Audio3D* GetAudio3D();
 	DirectInputManager* GetInputManager();
-	Sprite* GetOffscreen();
+	//Sprite* GetOffscreen();
 	FramePerSecond* GetFpsCounter();
 	RtvDescriptorHeap* GetRtvDescriptorHeap();
 	SrvDescriptorHeap* GetSrvDescriptorHeap();
@@ -192,7 +192,7 @@ private:// ディスクリプタヒープ
 	SrvDescriptorHeap srvDescriptorHeap_;
 
 private:// デバッグ用一時変数
-	Sprite offscreen_;
+	//Sprite offscreen_;
 	Transform offscreenTransform_;
 	Transform uvTransform_;
 	Camera camera_;

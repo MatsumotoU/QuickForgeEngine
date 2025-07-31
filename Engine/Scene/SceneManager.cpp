@@ -34,6 +34,7 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	modelSelectionIndex_ = 0;
 	inputFilepath_; // デフォルトのモデルデータパス
 	ModelDirectoryPath_ = "Resources"; // デフォルトのモデルデータパス
+	imageDirectoryPath_ = "Resources"; // デフォルトのイメージデータパス
 
 	// モデルファイルのパスを取得
 	modelFilepaths_ = FileLoader::GetFilesWithExtension(ModelDirectoryPath_, ".obj");
@@ -42,9 +43,15 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	}
 	// ビルボードのパスを取得
 	billboardSelectionIndex_ = 0;
-	billboardFilepath_ = FileLoader::GetFilesWithExtension(ModelDirectoryPath_, ".png");
+	billboardFilepath_ = FileLoader::GetFilesWithExtension(imageDirectoryPath_, ".png");
 	if (billboardFilepath_.size() > 0) {
 		billboardInputFilepath_ = billboardFilepath_[0]; // 最初のビルボードを選択
+	}
+	// スプライトのパスを取得
+	spriteSelectionIndex_ = 0;
+	spriteFilepath_ = FileLoader::GetFilesWithExtension(imageDirectoryPath_, ".png");
+	if (spriteFilepath_.size() > 0) {
+		spriteInputFilepath_ = spriteFilepath_[0]; // 最初のスプライトを選択
 	}
 	// スクリプトのパスを取得
 	scriptDirectoryPath_ = "Resources/Scripts";
@@ -405,13 +412,13 @@ void SceneManager::DrawImGui() {
 			}
 
 			// ビルボード追加処理
-			ImGui::Text("Billboard Directory: Resources");
+			ImGui::Text("Billboard Directory: %s", imageDirectoryPath_.c_str());
 			ImGui::Spacing();
 			if (billboardFilepath_.size() > 0) {
 				if (ImGui::Button("Add##AddBillboard")) {
 					if (currentScene_) {
 						PushUndo();
-						currentScene_->AddBillboard("Resources", billboardInputFilepath_);
+						currentScene_->AddBillboard(imageDirectoryPath_, billboardInputFilepath_);
 					}
 				}
 				ImGui::SameLine();
@@ -425,7 +432,31 @@ void SceneManager::DrawImGui() {
 					billboardInputFilepath_ = billboardFilepath_[billboardSelectionIndex_];
 				}
 			} else {
-				//ImGui::Text("No model files found in %s", .c_str());
+				ImGui::Text("No image files found in %s", imageDirectoryPath_.c_str());
+			}
+
+			// Sprite追加処理
+			ImGui::Text("Sprite Directory: %s", imageDirectoryPath_.c_str());
+			ImGui::Spacing();
+			if (spriteFilepath_.size() > 0) {
+				if (ImGui::Button("Add##AddSprite")) {
+					if (currentScene_) {
+						PushUndo();
+						currentScene_->AddSprite(imageDirectoryPath_, spriteInputFilepath_);
+					}
+				}
+				ImGui::SameLine();
+				// ImGui::Combo用にconst char*配列を作成
+				std::vector<const char*> items;
+				for (const auto& f : spriteFilepath_) {
+					items.push_back(f.c_str());
+				}
+				if (ImGui::Combo("Sprite", &spriteSelectionIndex_, items.data(), static_cast<int>(items.size()))) {
+					// 選択が変わったときの処理
+					spriteInputFilepath_ = spriteFilepath_[spriteSelectionIndex_];
+				}
+			} else {
+				ImGui::Text("No sprite files found in %s", imageDirectoryPath_.c_str());
 			}
 
 			ImGui::EndTabItem();

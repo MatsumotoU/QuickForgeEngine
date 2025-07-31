@@ -17,11 +17,11 @@
                     "modelTextureHandles": [
                         1
                     ],
-                    "name": "anchor[2]",
+                    "name": "anchor[1]",
                     "position": [
-                        0.0,
-                        0.0,
-                        -1.0235810279846191
+                        -0.546660304069519,
+                        0.6953967213630676,
+                        0.0
                     ],
                     "rotation": [
                         0.0,
@@ -34,40 +34,6 @@
                         1.0
                     ],
                     "scriptFileName": "Move.lua",
-                    "type": "Model"
-                },
-                {
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "enableLighting": true,
-                    "meshVertexCounts": [
-                        144
-                    ],
-                    "modelFileName": "anchor.obj",
-                    "modelTextureHandles": [
-                        1
-                    ],
-                    "name": "anchor[3]",
-                    "position": [
-                        1.2995535135269165,
-                        0.0,
-                        0.0
-                    ],
-                    "rotation": [
-                        0.0,
-                        -0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "scriptFileName": "",
                     "type": "Model"
                 }
             ],

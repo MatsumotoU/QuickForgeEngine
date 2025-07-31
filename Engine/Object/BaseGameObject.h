@@ -27,7 +27,7 @@ public:
 	virtual nlohmann::json Serialize() const = 0;
 #ifdef _DEBUG
 	virtual void DrawImGui() = 0;
-	void DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize);
+	virtual void DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize);
 	void DecomposeMatrix(const float* matrix, Vector3& scale, Vector3& rotation, Vector3& translation);
 #endif // _DEBUG
 

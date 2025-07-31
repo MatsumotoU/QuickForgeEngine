@@ -3,21 +3,8 @@
         {
             "objects": [
                 {
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "enableLighting": true,
-                    "meshVertexCounts": [
-                        144
-                    ],
-                    "modelFileName": "anchor.obj",
-                    "modelTextureHandles": [
-                        1
-                    ],
-                    "name": "anchor[1]",
+                    "hight": 64.0,
+                    "name": "anchor.png",
                     "position": [
                         0.0,
                         0.0,
@@ -34,7 +21,9 @@
                         1.0
                     ],
                     "scriptFileName": "",
-                    "type": "Model"
+                    "textureHandle": 0,
+                    "type": "Sprite",
+                    "width": 64.0
                 }
             ],
             "sceneName": "SampleScene"
