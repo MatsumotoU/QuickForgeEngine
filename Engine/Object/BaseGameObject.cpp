@@ -5,6 +5,40 @@
 #endif // _DEBUG
 
 #ifdef _DEBUG
+void BaseGameObject::DrawImGui() {
+	// 名前の表示
+	ImGui::Text("Name: %s", name_.c_str());
+	// タグの表示
+	ImGui::Text("Tag: %s",tag_.c_str());
+	// スクリプト名の表示
+	ImGui::Text("Script Name: %s", attachedScriptName.c_str());
+	// Transformの表示
+	ImGui::Text("Transform");
+	ImGui::DragFloat3("Position", &transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("Rotation", &transform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
+
+	// ワールド行列の表示
+	if (ImGui::TreeNode("WorldMatrix")) {
+		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[0][0], worldMatrix_.m[0][1], worldMatrix_.m[0][2], worldMatrix_.m[0][3]);
+		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[1][0], worldMatrix_.m[1][1], worldMatrix_.m[1][2], worldMatrix_.m[1][3]);
+		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[2][0], worldMatrix_.m[2][1], worldMatrix_.m[2][2], worldMatrix_.m[2][3]);
+		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3]);
+		ImGui::TreePop();
+	}
+
+	// コライダーの表示
+	if (ImGui::TreeNode("Collider")) {
+		float radius = GetRadius();
+		if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 100.0f)) {
+			SetRadius(radius);
+		}
+		ImGui::Text("Mask: %u", GetMask());
+		ImGui::Text("IsHitOther %s", IsHit() ? "Ture" : "False");
+		ImGui::TreePop();
+	}
+}
+
 void BaseGameObject::DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize) {// ギズモ表示
 	if (camera_) {
 		ImGuizmo::SetOrthographic(false);

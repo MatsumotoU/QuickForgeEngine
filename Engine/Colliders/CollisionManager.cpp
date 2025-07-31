@@ -9,7 +9,11 @@ void CollisionManager::Initalize() {
 void CollisionManager::Update(const std::list<Collider*>& colliderList) {
 	colliders_.clear();
 	colliders_ = colliderList;
-
+	// 衝突判定をリセットする
+	for (Collider* collider : colliders_) {
+		collider->SetHit(false);
+	}
+	// 衝突判定を行う
 	std::list<Collider*>::iterator itrA = colliders_.begin();
 	for (; itrA != colliders_.end(); ++itrA) {
 
@@ -26,6 +30,8 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		if ((colliderA->GetWorldPosition() - colliderB->GetWorldPosition()).Length() <= (colliderA->GetRadius() + colliderB->GetRadius())) {
 			colliderA->OnCollision();
 			colliderB->OnCollision();
+			colliderA->SetHit(true);
+			colliderB->SetHit(true);
 		}
 	}
 }

@@ -91,6 +91,8 @@
 #include <chrono>
 static inline std::chrono::steady_clock::time_point engineStartTime;
 
+// TODO: ファイル整理-主にBaseGameObjectをまとめる
+
 class EngineCore final {
 public:
 	EngineCore();
@@ -135,6 +137,7 @@ public:// エンジンの機能取得
 	ShaderCompiler* GetShaderCompiler();
 	LoopStoper* GetLoopStopper();
 	LuaScriptManager* GetLuaScriptManager();
+	SceneManager* GetSceneManager();
 
 public:
 	 float GetDeltaTime();

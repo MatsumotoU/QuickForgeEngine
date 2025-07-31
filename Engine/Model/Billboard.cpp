@@ -111,6 +111,9 @@ nlohmann::json Billboard::Serialize() const {
 	j["scale"] = { transform_.scale.x, transform_.scale.y, transform_.scale.z };
 	j["size"] = { size_.x, size_.y };
 	j["modelTextureHandle"] = modelTextureHandle_;
+	// コライダー情報を保存
+	j["radius"] = GetRadius();
+	j["mask"] = GetMask();
 	return j;
 }
 
@@ -142,15 +145,22 @@ std::unique_ptr<Billboard> Billboard::Deserialize(const nlohmann::json& j, Engin
 	if (j.contains("modelTextureHandle")) {
 		billboard->modelTextureHandle_ = j["modelTextureHandle"].get<int>();
 	}
+	// スクリプト名の復元
+	if (j.contains("scriptFileName")) {
+		billboard->SetScriptName(j["scriptFileName"].get<std::string>());
+	}
+	// コライダー情報の復元
+	if (j.contains("radius")) {
+		billboard->SetRadius(j["radius"].get<float>());
+	}
+	if (j.contains("mask")) {
+		billboard->SetMask(j["mask"].get<uint32_t>());
+	}
 	return billboard;
 }
 
 #ifdef _DEBUG
 void Billboard::DrawImGui() {
-	ImGui::Text("Billboard: %s", name_.c_str());
-	ImGui::DragFloat3("Position", &transform_.translate.x, 0.1f);
-	ImGui::DragFloat3("Rotation", &transform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
-	ImGui::DragFloat2("Size", &size_.x, 0.1f);
+	BaseGameObject::DrawImGui();
 }
 #endif // _DEBUG

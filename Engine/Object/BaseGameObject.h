@@ -12,8 +12,9 @@ class Camera;
 #include "Base/DirectX/ImGuiManager.h"
 #endif // _DEBUG
 
+#include "Colliders/Collider.h"
 
-class BaseGameObject {
+class BaseGameObject : public Collider{
 public:
 	BaseGameObject() = delete;
 	BaseGameObject(EngineCore* engineCore, Camera* camera);
@@ -26,24 +27,30 @@ public:
 
 	virtual nlohmann::json Serialize() const = 0;
 #ifdef _DEBUG
-	virtual void DrawImGui() = 0;
+	virtual void DrawImGui();
 	virtual void DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode, const ImVec2& imageScreenPos, const ImVec2& imageSize);
 	void DecomposeMatrix(const float* matrix, Vector3& scale, Vector3& rotation, Vector3& translation);
 #endif // _DEBUG
 
 public:
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
 	std::string GetName() const {
 		return name_;
 	}
 	std::string GetAttachedScriptName() const {
 		return attachedScriptName;
 	}
+	std::string GetTag() const {
+		return tag_;
+	}
 	void SetName(const std::string& name) {
 		name_ = name;
 	}
 	void SetScriptName(const std::string& scriptName) {
 		attachedScriptName = scriptName;
+	}
+	void SetTag(const std::string& tag) {
+		tag_ = tag;
 	}
 
 public:
@@ -54,6 +61,7 @@ public:
 
 protected:
 	std::string name_;
+	std::string tag_;
 	EngineCore* engineCore_;
 	Camera* camera_;
 

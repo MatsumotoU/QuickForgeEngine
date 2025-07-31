@@ -18,6 +18,7 @@ static std::string lastScriptRunScenePath;
 
 SceneManager::SceneManager() {
 	isRequestSwapScene_ = false;
+	loadedScenePath_.clear();
 }
 
 void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneName) {
@@ -71,10 +72,10 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 }
 
 void SceneManager::InitializeScene() {
-
 	if (currentScene_) {
 		currentScene_->Initialize();
 	}
+	collisionManager_.Initalize();
 }
 
 void SceneManager::UpdateScene() {
@@ -86,11 +87,16 @@ void SceneManager::UpdateScene() {
 	// シーンの実行
 	if (currentScene_) {
 		currentScene_->Update();
-	}
 
-	// スクリプトの実行
-	if (isRunningScript_) {
-		engineCore_->GetLuaScriptManager()->UpdateScripts();
+		// シュミレーション開始
+		if (isRunningScript_) {
+			// Luaスクリプトの更新
+			engineCore_->GetLuaScriptManager()->UpdateScripts();
+			// 衝突判定の更新
+			collisionManager_.Update(currentScene_->GetColliders());
+			// 衝突スクリプトの実行
+			engineCore_->GetLuaScriptManager()->CollisionScripts();
+		}
 	}
 }
 
@@ -128,26 +134,37 @@ void SceneManager::SaveScenesToJson(const std::string& filepath) {
 }
 
 void SceneManager::LoadScenesFromJson(const std::string& filepath) {
-
-	engineCore_->GetLuaScriptManager()->ClearAllGameObjScripts();
+#ifdef _DEBUG
+	DebugLog(std::format("LoadScene: {}", filepath));
+#endif // _DEBUG
+	loadedScenePath_ = filepath;
+	isRequestSwapScene_ = true;
 	engineCore_->GetDirectXCommon()->WaitForGpu();
+}
 
-	std::ifstream ifs;
-	ifs.open(filepath);
-	assert(ifs);
-
-	nlohmann::json root;
-	ifs >> root;
-	if (root.contains("scenes")) {
-		// 例: 1つだけロード
-		loadedScene_ = SceneObject::Deserialize(root["scenes"][0], engineCore_, ModelDirectoryPath_);
-		isRequestSwapScene_ = true;
-	}
+void SceneManager::LoadScenesLua(const std::string& filename) {
+	LoadScenesFromJson(sceneDataDirectorypath_ + "/" + filename + ".json");
 }
 
 void SceneManager::SwapScene() {
 	if (isRequestSwapScene_) {
 		isRequestSwapScene_ = false;
+
+		engineCore_->GetLuaScriptManager()->ClearAllGameObjScripts();
+
+		std::ifstream ifs;
+		assert(!loadedScenePath_.empty() && "Loaded scene path is empty");
+		ifs.open(loadedScenePath_);
+		assert(ifs);
+
+		nlohmann::json root;
+		ifs >> root;
+		if (root.contains("scenes")) {
+			// 例: 1つだけロード
+			loadedScene_ = SceneObject::Deserialize(root["scenes"][0], engineCore_, ModelDirectoryPath_);
+		}
+		assert(loadedScene_ && "Loaded scene is null");
+
 		currentScene_ = std::move(loadedScene_);
 		currentScene_->Initialize();
 	}

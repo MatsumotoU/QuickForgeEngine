@@ -303,6 +303,10 @@ LuaScriptManager* EngineCore::GetLuaScriptManager() {
 	return &luaScriptManager_;
 }
 
+SceneManager* EngineCore::GetSceneManager() {
+	return &sceneManager_;
+}
+
 float EngineCore::GetDeltaTime() {
 	// FPSが0でない場合はFPSを基にデルタタイムを返す
 	if (fpsCounter_.GetFps() != 0.0f) {

@@ -127,6 +127,9 @@ nlohmann::json Sprite::Serialize() const {
 	j["hight"] = hight_;
 	j["textureHandle"] = textureHandle_;
 	j["scriptFileName"] = attachedScriptName;
+	// コライダー情報を保存
+	j["radius"] = GetRadius();
+	j["mask"] = GetMask();
 	return j;
 }
 
@@ -168,6 +171,13 @@ std::unique_ptr<Sprite> Sprite::Deserialize(const nlohmann::json& j, EngineCore*
 	}
 	if (j.contains("scriptFileName")) {
 		sprite->SetScriptName(j["scriptFileName"].get<std::string>());
+	}
+	// コライダー情報の復元
+	if (j.contains("radius")) {
+		sprite->SetRadius(j["radius"].get<float>());
+	}
+	if (j.contains("mask")) {
+		sprite->SetMask(j["mask"].get<uint32_t>());
 	}
 	return sprite;
 }
@@ -217,23 +227,8 @@ void Sprite::DrawGizmo(const ImGuizmo::OPERATION& op, const ImGuizmo::MODE& mode
 }
 
 void Sprite::DrawImGui() {
-	// ImGuiでスプライトのプロパティを表示
-	ImGui::Text("Model Name: %s", name_.c_str());
-	ImGui::Spacing();
-	// 位置情報
-	ImGui::DragFloat3("Position", &transform_.translate.x, 0.01f);
-	ImGui::DragFloat3("Rotation", &transform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.01f);
-	ImGui::Spacing();
+	BaseGameObject::DrawImGui();
 
-	// ワールド行列の表示
-	if (ImGui::TreeNode("WorldMatrix")) {
-		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[0][0], worldMatrix_.m[0][1], worldMatrix_.m[0][2], worldMatrix_.m[0][3]);
-		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[1][0], worldMatrix_.m[1][1], worldMatrix_.m[1][2], worldMatrix_.m[1][3]);
-		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[2][0], worldMatrix_.m[2][1], worldMatrix_.m[2][2], worldMatrix_.m[2][3]);
-		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3]);
-		ImGui::TreePop();
-	}
 	ImGui::InputFloat("Width", &width_);
 	ImGui::InputFloat("Height", &hight_);
 	ImGui::Separator();

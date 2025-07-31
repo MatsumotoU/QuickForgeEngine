@@ -121,6 +121,10 @@ nlohmann::json Model::Serialize() const {
 	j["meshVertexCounts"] = meshVertexCounts;
 	j["scriptFileName"] = GetAttachedScriptName();
 
+	// コライダー情報を保存
+	j["radius"] = GetRadius();
+	j["mask"] = GetMask();
+
 #ifdef _DEBUG
 	DebugLog(std::format("name: {}", name_));
 #endif // _DEBUG
@@ -171,27 +175,20 @@ std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* e
 	if (j.contains("scriptFileName")) {
 		model->SetScriptName(j["scriptFileName"].get<std::string>());
 	}
+
+	// コライダー情報の復元
+	if (j.contains("radius")) {
+		model->SetRadius(j["radius"].get<float>());
+	}
+	if (j.contains("mask")) {
+		model->SetMask(j["mask"].get<uint32_t>());
+	}
 	return model;
 }
 
 #ifdef _DEBUG
 void Model::DrawImGui() {
-	ImGui::Text("Model Name: %s", name_.c_str());
-	ImGui::Spacing();
-	// 位置情報
-	ImGui::DragFloat3("Position", &transform_.translate.x, 0.01f);
-	ImGui::DragFloat3("Rotation", &transform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.01f);
-	ImGui::Spacing();
-
-	// ワールド行列の表示
-	if (ImGui::TreeNode("WorldMatrix")) {
-		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[0][0], worldMatrix_.m[0][1], worldMatrix_.m[0][2], worldMatrix_.m[0][3]);
-		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[1][0], worldMatrix_.m[1][1], worldMatrix_.m[1][2], worldMatrix_.m[1][3]);
-		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[2][0], worldMatrix_.m[2][1], worldMatrix_.m[2][2], worldMatrix_.m[2][3]);
-		ImGui::Text("  %f, %f, %f, %f", worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3]);
-		ImGui::TreePop();
-	}
+	BaseGameObject::DrawImGui();
 
 	if (ImGui::TreeNode("Material")) {
 		ImGui::ColorEdit4("Color", &material_.GetData()->color.x);

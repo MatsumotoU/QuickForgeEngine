@@ -6,7 +6,12 @@
 #include "Base/DirectX/ImGuiManager.h"
 #endif // _DEBUG
 
+#include "Colliders/CollisionManager.h"
+
 class EngineCore;
+
+// TODO: シーンでルアスクリプトを作らない
+// TODO: シーンマネージャーはシーンの切り替えとシーンの保存・読み込みのみを行う
 
 class SceneManager {
 public:
@@ -32,6 +37,7 @@ public:
 public:
 	void SaveScenesToJson(const std::string& filepath);
 	void LoadScenesFromJson(const std::string& filepath);
+	void LoadScenesLua(const std::string& filename);
 	void SwapScene();
 
 public:
@@ -50,6 +56,7 @@ private:
 #endif // _DEBUG
 
 	bool isRequestSwapScene_; // シーンの切り替え要求フラグ
+	std::string loadedScenePath_;
 	std::unique_ptr<SceneObject> loadedScene_;
 	std::unique_ptr<SceneObject> currentScene_;
 	std::vector<std::string> sceneFilepath_;
@@ -83,4 +90,5 @@ private:
 	std::string spriteInputFilepath_;
 //#endif // _DEBUG
 
+	CollisionManager collisionManager_;
 };
