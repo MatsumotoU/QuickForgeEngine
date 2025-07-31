@@ -12,6 +12,7 @@ public:
 
 public:
 	Vector3 GetLockPosition(Camera* camera);
+	Vector3 GetNearestTargetPosition(Camera* camera,int targetNum);
 
 private:
 	Vector3 reticlePosition_;

@@ -52,6 +52,7 @@ private:
 	
 private:
 	Reticle reticle_;
+	Reticle multiReticle_[3];
 	SkyDome skyDome_;
 	Player player_;
 	Bullet playerBullets[kPlayerBullets];

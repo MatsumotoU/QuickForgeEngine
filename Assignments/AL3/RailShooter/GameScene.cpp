@@ -94,6 +94,11 @@ void GameScene::Initialize() {
 	reticle_.Initialize(engineCore_);
 	reticle_.SetPlayer(&player_);
 
+	for (int i = 0; i < 3; i++) {
+		multiReticle_[i].SetPlayer(&player_);
+		multiReticle_[i].Initialize(engineCore_);
+	}
+
 	lockOn_.Initialize();
 	isLockOn_ = false;
 }
@@ -182,7 +187,7 @@ void GameScene::Update() {
 		}
 
 		if (playerHomingBullets[i].GetIsActive()) {
-			Vector3 toPlayer = lockOn_.GetLockPosition(&camera_) - playerHomingBullets[i].transform_.translate;
+			Vector3 toPlayer = lockOn_.GetNearestTargetPosition(&camera_, i) - playerHomingBullets[i].transform_.translate;
 			playerHomingBullets[i].velocity_ = Vector3::Slerp(playerHomingBullets[i].velocity_.Normalize(), toPlayer.Normalize(), 0.1f) * 10.0f;
 			playerHomingBullets[i].Update();
 		}
@@ -228,6 +233,10 @@ void GameScene::Update() {
 	}
 
 	reticle_.Update();
+	for (int i = 0; i < 3; i++) {
+		multiReticle_[i].Update();
+	}
+
 	if (isLockOn_) {
 		lockOn_.SetReticlePosition(reticle_.GetReticleWorldPos());
 		if (Vector3::Dot(player_.GetDir().Normalize(), (player_.GetWorldPosition() - lockOn_.GetLockPosition(&camera_)).Normalize()) < 0.0f) {
@@ -235,8 +244,14 @@ void GameScene::Update() {
 				Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
 		}
 
+		for (int i = 0; i < 3; i++) {
+			multiReticle_[i].model_.worldMatrix_ =
+				Matrix4x4::MakeAffineMatrix(multiReticle_[i].transform_.scale, multiReticle_[i].transform_.rotate, lockOn_.GetNearestTargetPosition(&camera_, i + 1));
+		}
+
 		if (input_->keyboard_.GetRelease(DIK_SPACE)) {
 			for (int b = 0; b < 4; b++) {
+
 				for (int i = 0; i < kPlayerBullets; i++) {
 					if (!playerHomingBullets[i].GetIsActive()) {
 						if (b == 0) {
@@ -261,6 +276,9 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	debugCamera_.DrawImGui();
 	reticle_.Draw(&camera_);
+	for (int i = 0; i < 3; i++) {
+		multiReticle_[i].Draw(&camera_);
+	}
 
 	ImGui::Begin("HomingBullets");
 	for (int i = 0; i < kPlayerBullets; i++) {
