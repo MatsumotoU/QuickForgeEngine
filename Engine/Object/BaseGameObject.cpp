@@ -98,4 +98,6 @@ BaseGameObject::BaseGameObject(EngineCore* engineCore, Camera* camera) {
     transform_ = Transform();
     engineCore_ = engineCore;
 	camera_ = camera;
+
+	timeCounter_ = 0.0f;
 }

@@ -42,6 +42,7 @@ public:
 
 public:
 	std::string GetCurrentSceneName() const;
+	void SetIsRunningScript(bool isRunning) { isRunningScript_ = isRunning; }
 
 private:
 #ifdef _DEBUG
@@ -52,8 +53,8 @@ private:
 	bool requestRedo_;
 	std::stack<nlohmann::json> undoStack_;
 	std::stack<nlohmann::json> redoStack_;
-	nlohmann::json currentSceneData_;
 #endif // _DEBUG
+	nlohmann::json currentSceneData_;
 
 	bool isRequestSwapScene_; // シーンの切り替え要求フラグ
 	std::string loadedScenePath_;
@@ -73,6 +74,7 @@ private:
 	std::string scriptDirectoryPath_;
 
 	bool isRunningScript_;
+	bool startToRunScript_;
 
 	int modelSelectionIndex_;
 	std::vector<std::string> modelFilepaths_;

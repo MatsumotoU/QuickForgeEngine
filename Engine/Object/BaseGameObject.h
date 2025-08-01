@@ -58,6 +58,7 @@ public:
 	Transform transform_;
 	Vector3 worldPos_;
 	Matrix4x4 worldMatrix_;
+	float timeCounter_;
 
 protected:
 	std::string name_;

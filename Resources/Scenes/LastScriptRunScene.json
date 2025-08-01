@@ -3,31 +3,18 @@
         {
             "objects": [
                 {
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "enableLighting": true,
                     "mask": 0,
-                    "meshVertexCounts": [
-                        144
-                    ],
-                    "modelFileName": "anchor.obj",
-                    "modelTextureHandles": [
-                        1
-                    ],
-                    "name": "anchor[1]",
+                    "modelTextureHandle": 0,
+                    "name": "anchor.png",
                     "position": [
-                        -1.594435691833496,
-                        0.0,
-                        0.0
+                        1.0296204090118408,
+                        0.5219320058822632,
+                        -0.32866644859313965
                     ],
-                    "radius": 0.10000000149011612,
+                    "radius": 1.0,
                     "rotation": [
-                        0.0,
-                        -0.0,
+                        0.4550005793571472,
+                        0.5475002527236938,
                         0.0
                     ],
                     "scale": [
@@ -35,44 +22,11 @@
                         1.0,
                         1.0
                     ],
-                    "scriptFileName": "Move.lua",
-                    "type": "Model"
-                },
-                {
-                    "color": [
-                        1.0,
-                        1.0,
+                    "size": [
                         1.0,
                         1.0
                     ],
-                    "enableLighting": true,
-                    "mask": 0,
-                    "meshVertexCounts": [
-                        144
-                    ],
-                    "modelFileName": "anchor.obj",
-                    "modelTextureHandles": [
-                        1
-                    ],
-                    "name": "anchor[2]",
-                    "position": [
-                        1.878066062927246,
-                        0.0,
-                        0.0
-                    ],
-                    "radius": 0.10000000149011612,
-                    "rotation": [
-                        0.0,
-                        -0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "scriptFileName": "",
-                    "type": "Model"
+                    "type": "Billboard"
                 }
             ],
             "sceneName": "LastScriptRunScene.json"

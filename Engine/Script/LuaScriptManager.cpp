@@ -22,6 +22,7 @@ void LuaScriptManager::ClearAllGameObjScripts() {
 void LuaScriptManager::AddGameObjScript(const std::string& key, BaseGameObject* obj, const std::string& scriptFilePath) {
 	auto script = std::make_unique<GameObjectLuaScript>(obj,engineCore_);
 	script->LoadScript(scriptFilePath);
+	assert(script && "Failed to create GameObjectLuaScript instance");
 	luaScripts_[key] = std::move(script);
 }
 

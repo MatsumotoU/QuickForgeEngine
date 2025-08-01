@@ -1,5 +1,7 @@
 #include "EngineCore.h"
 
+static char startSceneFileName[256] = "";
+
 EngineCore::EngineCore() :luaScriptManager_(this) {
 	engineStartTime = std::chrono::steady_clock::now();
 #ifdef _DEBUG
@@ -19,6 +21,7 @@ EngineCore::EngineCore() :luaScriptManager_(this) {
 	lunchConfig_.emplace("AudioDataDB", false);
 	lunchConfig_.emplace("MemoryDB", false);
 	lunchConfig_.emplace("PostprocessDB", false);
+	lunchConfig_.emplace("StartScene", "LastScriptRunScene");
 
 	lunchConfig_.emplace("SystemSoundVolume", 0.3f);
 
@@ -30,6 +33,8 @@ EngineCore::EngineCore() :luaScriptManager_(this) {
 	isDrawPostprocessDebugWindow_ = lunchConfig_.at("PostprocessDB").get<bool>();
 
 	systemSpundVolume_ = lunchConfig_.at("SystemSoundVolume").get<float>();
+
+	startSceneFilePath_ = lunchConfig_.at("StartScene").get<std::string>();
 
 	isDrawLunchConfigWindow_ = false;
 
@@ -115,7 +120,6 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	systemTimer_.StopTimer();
 	initializeRunningTime_ = systemTimer_.GetElapsedTime();
 	DebugLog(std::format("Complete InitializeEngine: {}s", initializeRunningTime_));
-
 #endif // _DEBUG
 
 	loopStopper_.Initialize();
@@ -124,6 +128,11 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	sceneManager_.CreateScene(this, "SampleScene");
 	sceneManager_.InitializeScene();
 
+#ifndef _DEBUG
+	/*sceneManager_.LoadScenesFromJson("Resources/Scenes/LastScriptRunScene.json");
+	sceneManager_.SwapScene();
+	sceneManager_.SetIsRunningScript(true);*/
+#endif // !_DEBUG
 }
 
 void EngineCore::Update() {
@@ -546,6 +555,13 @@ void EngineCore::DrawEngineMenu() {
 					ImGui::TreePop();
 				}
 				ImGui::TreePop();
+
+				// シーン
+				ImGui::InputText("StartScene", startSceneFileName, IM_ARRAYSIZE(startSceneFileName));
+				if (ImGui::Button("Set Start Scene")) {
+					startSceneFilePath_ = startSceneFileName;
+					lunchConfig_.at("StartScene") = startSceneFilePath_;
+				}
 			}
 			ImGui::TreePop();
 		}

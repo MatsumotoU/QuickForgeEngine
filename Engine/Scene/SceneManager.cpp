@@ -1,8 +1,8 @@
 #include "SceneManager.h"
 #include "Base/EngineCore.h"
 #include <utility>
-#ifdef _DEBUG
 #include "Utility/FileLoader.h"
+#ifdef _DEBUG
 #include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
@@ -64,6 +64,7 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 	//#endif
 
 	isRunningScript_ = false;
+	startToRunScript_ = false;
 
 #ifdef _DEBUG
 	requestRedo_ = false;
@@ -72,6 +73,16 @@ void SceneManager::CreateScene(EngineCore* engineCore, const std::string& sceneN
 }
 
 void SceneManager::InitializeScene() {
+#ifndef _DEBUG
+	isRequestSwapScene_ = true;
+	loadedScenePath_ = "Resources/Scenes/LastScriptRunScene.json";
+	//startToRunScript_ = true;
+#endif // !_DEBUG
+
+	/*isRequestSwapScene_ = true;
+	loadedScenePath_ = "Resources/Scenes/LastScriptRunScene.json";
+	startToRunScript_ = true;*/
+
 	if (currentScene_) {
 		currentScene_->Initialize();
 	}
@@ -83,6 +94,12 @@ void SceneManager::UpdateScene() {
 	Undo();
 	Redo();
 #endif // _DEBUG
+
+#ifndef _DEBUG
+	if (!isRunningScript_) {
+		isRunningScript_ = true;
+	}
+#endif // !_DEBUG
 
 	// シーンの実行
 	if (currentScene_) {
@@ -98,6 +115,12 @@ void SceneManager::UpdateScene() {
 			engineCore_->GetLuaScriptManager()->CollisionScripts();
 		}
 	}
+
+	/*if(engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE)){
+		isRequestSwapScene_ = true;
+		loadedScenePath_ = "Resources/Scenes/LastScriptRunScene.json";
+		startToRunScript_ = true;
+	}*/
 }
 
 void SceneManager::DrawScene() {
@@ -160,13 +183,20 @@ void SceneManager::SwapScene() {
 		nlohmann::json root;
 		ifs >> root;
 		if (root.contains("scenes")) {
-			// 例: 1つだけロード
 			loadedScene_ = SceneObject::Deserialize(root["scenes"][0], engineCore_, ModelDirectoryPath_);
 		}
 		assert(loadedScene_ && "Loaded scene is null");
 
 		currentScene_ = std::move(loadedScene_);
 		currentScene_->Initialize();
+
+		// ここでcurrentScene_のGameObjectとScriptの状態をデバッグ出力
+#ifdef _DEBUG
+		for (const auto& obj : currentScene_->GetGameObjects()) {
+			DebugLog(("GameObject: " + obj->GetName() + ", Script: " + obj->GetAttachedScriptName()).c_str());
+		}
+#endif
+		engineCore_->GetChiptune()->PlayNoise();
 	}
 }
 
