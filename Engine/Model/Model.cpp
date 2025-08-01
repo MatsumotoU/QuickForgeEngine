@@ -29,6 +29,15 @@ Model::Model(EngineCore* engineCore, Camera* camera) : BaseGameObject(engineCore
 	directionalLight_.CreateResource(engineCore->GetDirectXCommon()->GetDevice());
 	material_.CreateResource(engineCore->GetDirectXCommon()->GetDevice());
 
+	wvp_.GetData()->World = Matrix4x4::MakeIndentity4x4();
+	wvp_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
+	directionalLight_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	directionalLight_.GetData()->direction = Vector3(0.0f, -1.0f, 0.0f); // 下方向
+	directionalLight_.GetData()->intensity = 1.0f; // 輝度
+	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4(); // UV変換行列を初期化
+	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
+	material_.GetData()->enableLighting = true; // ライティングを有効にする
+
 	assert(dxCommon_);
 	assert(textureManager_);
 	assert(pso_);
@@ -40,17 +49,11 @@ Model::Model(EngineCore* engineCore, Camera* camera) : BaseGameObject(engineCore
 }
 
 void Model::Init() {
-	wvp_.GetData()->World = Matrix4x4::MakeIndentity4x4();
-	wvp_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
-	directionalLight_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
-	directionalLight_.GetData()->direction = Vector3(0.0f, -1.0f, 0.0f); // 下方向
-	directionalLight_.GetData()->intensity = 1.0f; // 輝度
-	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4(); // UV変換行列を初期化
-	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
-	material_.GetData()->enableLighting = true; // ライティングを有効にする
+	timeCounter_ = 0.0f;
 }
 
 void Model::Update() {
+	timeCounter_ += engineCore_->GetDeltaTime();
 	// ワールド行列を更新
 	worldMatrix_ = Matrix4x4::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 }
@@ -168,7 +171,7 @@ std::unique_ptr<Model> Model::Deserialize(const nlohmann::json& j, EngineCore* e
 		model->material_.GetData()->color.w = j["color"][3].get<float>();
 	}
 	if (j.contains("enableLighting")) {
-		model->material_.GetData()->enableLighting = j["enableLighting"].get<int32_t>();
+		model->material_.GetData()->enableLighting = j["enableLighting"].get<bool>();
 	}
 
 	// スクリプト名の復元

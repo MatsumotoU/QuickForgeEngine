@@ -46,7 +46,8 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engine
 		"localPos", &BaseGameObject::localPos_,
 		"transform", &BaseGameObject::transform_,
 		"worldPos", &BaseGameObject::worldPos_,
-		"worldMatrix", &BaseGameObject::worldMatrix_
+		"worldMatrix", &BaseGameObject::worldMatrix_,
+		"timeCounter", &BaseGameObject::timeCounter_
 	);
 
 	// シーンマネージャーのロード関数だけをバインド

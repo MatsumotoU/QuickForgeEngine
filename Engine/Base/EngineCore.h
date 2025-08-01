@@ -138,6 +138,7 @@ public:// エンジンの機能取得
 	LoopStoper* GetLoopStopper();
 	LuaScriptManager* GetLuaScriptManager();
 	SceneManager* GetSceneManager();
+	std::string GetStartSceneFilePath() const { return startSceneFilePath_; }
 
 public:
 	 float GetDeltaTime();
@@ -166,6 +167,7 @@ private:// コア機能
 	ImGuiManager imGuiManager_;
 	LoopStoper loopStopper_;
 	SceneManager sceneManager_;
+	std::string startSceneFilePath_;
 
 private:// 時間管理
 	FramePerSecond fpsCounter_;

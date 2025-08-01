@@ -107,7 +107,9 @@ std::unique_ptr<SceneObject> SceneObject::Deserialize(const nlohmann::json& j, E
 				if (!model->GetAttachedScriptName().empty()) {
 					std::string scriptPath = "Resources/Scripts/" + model->GetAttachedScriptName();
 					std::string key = model->GetName();
-					engineCore->GetLuaScriptManager()->AddGameObjScript(key, model.get(), scriptPath);
+					if (!scriptPath.empty()) {
+						engineCore->GetLuaScriptManager()->AddGameObjScript(key, model.get(), scriptPath);
+					}
 				}
 				sceneObj->GetGameObjects().push_back(std::move(model));
 			}
