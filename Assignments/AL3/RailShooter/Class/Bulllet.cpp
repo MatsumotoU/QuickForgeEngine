@@ -13,6 +13,8 @@ void Bullet::Initialize(EngineCore* engineCore, const std::string& name) {
 	isActive_ = false;
 
 	transform_.scale = Vector3(0.5f, 0.5f, 0.5f);
+
+	objData_["Attack"] = 10;
 }
 
 void Bullet::Update() {
@@ -30,6 +32,12 @@ void Bullet::Update() {
 
 	model_.transform_ = transform_;
 	model_.Update();
+
+	objData_["Position"] = {
+		{"x",GetWorldPosition().x},
+		{"y",GetWorldPosition().y},
+		{"z",GetWorldPosition().z}
+	};
 }
 
 void Bullet::Draw(Camera* camera) {
@@ -46,7 +54,8 @@ void Bullet::ShotBullet(Vector3 position, Vector3 velocity, uint32_t aliveTime) 
 	isActive_ = true;
 }
 
-void Bullet::OnCollision() {
+void Bullet::OnCollision(const nlohmann::json& otherData) {
+	otherData;
 	isActive_ = false;
 }
 

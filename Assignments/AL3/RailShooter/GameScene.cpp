@@ -33,11 +33,11 @@ void GameScene::Initialize() {
 
 	for (int i = 0; i < kPlayerBullets; i++) {
 		playerBullets[i].Initialize(engineCore_, "Player");
-		playerBullets[i].SetMask(0x00000001);
+		playerBullets[i].SetMask(0x10000001);
 	}
 	for (int i = 0; i < kEnemyBullets; i++) {
 		enemyBullets[i].Initialize(engineCore_, "Enemy");
-		enemyBullets[i].SetMask(0x00000010);
+		enemyBullets[i].SetMask(0x10000000);
 	}
 
 	for (int i = 0; i < kEnemies; i++) {
@@ -147,7 +147,7 @@ void GameScene::Update() {
 			if (!playerBullets[i].GetIsActive()) {
 				playerBullets[i].ShotBullet(
 					Vector3::Transform(player_.transform_.translate, camera_.GetWorldMatrix()),
-					Vector3::Transform({ 0.0f,0.0f,30.0f }, Matrix4x4::Multiply(player_.GetRotateMatrix(), camera_.GetRotateMatrix())), 120);
+					Vector3::Transform({ 0.0f,0.0f,60.0f }, Matrix4x4::Multiply(player_.GetRotateMatrix(), camera_.GetRotateMatrix())), 120);
 				break;
 			}
 		}
@@ -229,7 +229,6 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
-
 	debugCamera_.DrawImGui();
 	reticle_.Draw(&camera_);
 

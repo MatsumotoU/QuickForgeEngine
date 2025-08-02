@@ -10,7 +10,7 @@
 
 #include "Colliders/CollisionManager.h"
 
-static inline const uint32_t kPlayerBullets = 32;
+static inline const uint32_t kPlayerBullets = 128;
 static inline const uint32_t kEnemyBullets = 128;
 static inline const uint32_t kEnemies = 32;
 

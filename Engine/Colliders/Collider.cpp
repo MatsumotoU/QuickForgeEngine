@@ -10,6 +10,10 @@ uint32_t Collider::GetMask() const {
 	return mask_;
 }
 
+nlohmann::json Collider::GetObjectData() const {
+	return objData_;
+}
+
 void Collider::SetRadius(float r) {
 	radius_ = r;
 }

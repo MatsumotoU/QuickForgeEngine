@@ -3,7 +3,7 @@
 void Reticle::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	model_.Initialize(engineCore_);
-	model_.LoadModel("Resources", "Reticle.obj", COORDINATESYSTEM_HAND_RIGHT);
+	model_.LoadModel("Resources", "1mRing.obj", COORDINATESYSTEM_HAND_RIGHT);
 	transform_.translate = { 0.0f, 0.0f, 30.0f };
 	isActive_ = true;
 
@@ -36,7 +36,7 @@ void Reticle::Draw(Camera* camera) {
 	spriteTransform_.translate = camera->GetScreenPos(Vector3::Zero(), model_.worldMatrix_);
     spriteTransform_.translate.x -= 50.0f;
     spriteTransform_.translate.y -= 50.0f;
-	sprite_.DrawSprite(spriteTransform_, reticleGH_, camera);
+	//sprite_.DrawSprite(spriteTransform_, reticleGH_, camera);
 }
 
 void Reticle::SetPlayer(Player* player) {

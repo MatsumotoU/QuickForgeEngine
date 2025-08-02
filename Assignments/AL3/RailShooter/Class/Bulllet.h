@@ -10,7 +10,7 @@ public:
 
 public:
 	void ShotBullet(Vector3 position, Vector3 velocity, uint32_t aliveTime);
-	void OnCollision() override;
+	void OnCollision(const nlohmann::json& otherData) override;
 
 public:
 	bool GetIsActive();

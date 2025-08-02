@@ -24,8 +24,8 @@ void CollisionManager::Update(const std::list<Collider*>& colliderList) {
 void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
 	if (!(colliderA->GetMask() & colliderB->GetMask())) {
 		if ((colliderA->GetWorldPosition() - colliderB->GetWorldPosition()).Length() <= (colliderA->GetRadius() + colliderB->GetRadius())) {
-			colliderA->OnCollision();
-			colliderB->OnCollision();
+			colliderA->OnCollision(colliderB->GetObjectData());
+			colliderB->OnCollision(colliderA->GetObjectData());
 		}
 	}
 }
