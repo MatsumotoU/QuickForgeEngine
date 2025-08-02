@@ -16,7 +16,7 @@ static bool showCreateResult = false;
 
 static std::string lastScriptRunScenePath;
 
-SceneManager::SceneManager() {
+SceneManager::SceneManager() :sceneGameObjectGenerator_(currentScene_.get(), &assetManager_) {
 	isRequestSwapScene_ = false;
 	loadedScenePath_.clear();
 }
@@ -101,8 +101,16 @@ void SceneManager::UpdateScene() {
 	}
 #endif // !_DEBUG
 
+	
+
 	// シーンの実行
 	if (currentScene_) {
+		// 動的のアセットを読み込む
+		for (const auto& assetF : engineCore_->GetLuaCallFiles()->GetAssetFiles()) {
+			currentScene_->AddObjectFromJson(assetManager_.GetAsset(assetF).GetMetadata());
+		}
+		engineCore_->GetLuaCallFiles()->ClearAssetFiles();
+
 		currentScene_->Update();
 
 		// シュミレーション開始
@@ -115,12 +123,6 @@ void SceneManager::UpdateScene() {
 			engineCore_->GetLuaScriptManager()->CollisionScripts();
 		}
 	}
-
-	/*if(engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE)){
-		isRequestSwapScene_ = true;
-		loadedScenePath_ = "Resources/Scenes/LastScriptRunScene.json";
-		startToRunScript_ = true;
-	}*/
 }
 
 void SceneManager::DrawScene() {
@@ -206,6 +208,8 @@ std::string SceneManager::GetCurrentSceneName() const {
 
 #ifdef _DEBUG
 void SceneManager::DrawImGui() {
+	assetManager_.DrawImGui();
+
 	// スクリプトの実行状態を表示
 	if (ImGui::Button("RunningScript")) {
 		if (!isRunningScript_) {
@@ -335,7 +339,12 @@ void SceneManager::DrawImGui() {
 				if (selectedIndex >= 0 && selectedIndex < static_cast<int>(gameObjects.size())) {
 					ImGui::Begin("Object Detail", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 					gameObjects[selectedIndex]->DrawImGui();
-
+					ImGui::Separator();
+					// アセット化
+					if (ImGui::Button("Add to Asset")) {
+						assetManager_.AddAsset(*gameObjects[selectedIndex]);
+					}
+					
 					// スクリプトファイル選択UI
 					ImGui::Text("Script Directory: %s", scriptDirectoryPath_.c_str());
 					if (ImGui::Button("SearchFile")) {
@@ -504,6 +513,26 @@ void SceneManager::DrawImGui() {
 				}
 			} else {
 				ImGui::Text("No sprite files found in %s", imageDirectoryPath_.c_str());
+			}
+
+			// アセットからのオブジェクト追加
+			ImGui::Text("Asset Directory: %s", assetManager_.GetDirectoryPath().c_str());
+			ImGui::Spacing();
+			if (ImGui::Button("Add##AddAsset")) {
+				if (currentScene_) {
+					PushUndo();
+					currentScene_->AddObjectFromJson(assetManager_.GetAsset(assetFileName_).GetMetadata());
+				}
+			}
+			ImGui::SameLine();
+			// アセットの選択
+			std::vector<const char*> assetItems;
+			for (const auto& f : assetManager_.GetAssetFiles()) {
+				assetItems.push_back(f.c_str());
+			}
+			if (ImGui::Combo("Assets", &assetManager_.selectedAssetIndex_, assetItems.data(), static_cast<int>(assetItems.size()))) {
+				// 選択が変わったときの処理
+				assetFileName_ = assetManager_.GetAssetFiles()[assetManager_.selectedAssetIndex_];
 			}
 
 			ImGui::EndTabItem();

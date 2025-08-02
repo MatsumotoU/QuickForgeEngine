@@ -30,6 +30,7 @@ public:
 		const std::string& modelFileDirectory);
 
 public:
+	void AddObjectFromJson(const nlohmann::json& j);
 	void AddModel(const std::string& directoryPath, const std::string& filename);
 	void AddBillboard(const std::string& directoryPath, const std::string& filename);
 	void AddSprite(const std::string& directoryPath, const std::string& filename);

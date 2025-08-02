@@ -1,0 +1,36 @@
+{
+    "color": [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+    ],
+    "enableLighting": false,
+    "mask": 0,
+    "meshVertexCounts": [
+        144
+    ],
+    "modelFileName": "anchor.obj",
+    "modelTextureHandles": [
+        1
+    ],
+    "name": "anchor[1]",
+    "position": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "radius": 1.0,
+    "rotation": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "scale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "scriptFileName": "",
+    "type": "Model"
+}

@@ -86,6 +86,7 @@
 #include "Scene/SceneManager.h"
 
 #include "Script/LuaScriptManager.h"
+#include "Script/LuaCallFiles.h"
 // TODO: ビルドツールpremakeの導入 
 
 #include <chrono>
@@ -139,6 +140,7 @@ public:// エンジンの機能取得
 	LuaScriptManager* GetLuaScriptManager();
 	SceneManager* GetSceneManager();
 	std::string GetStartSceneFilePath() const { return startSceneFilePath_; }
+	LuaCallFiles* GetLuaCallFiles() { return &luaCallFiles_; }
 
 public:
 	 float GetDeltaTime();
@@ -204,6 +206,7 @@ private:// デバッグ用一時変数
 
 private:// スクリプト
 	LuaScriptManager luaScriptManager_;
+	LuaCallFiles luaCallFiles_;
 
 #ifdef _DEBUG
 	MemoryWatcher memWatcher_;

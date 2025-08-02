@@ -7,6 +7,9 @@
 #include "Base/EngineCore.h"
 #include "Input/XInput/XInputController.h"
 #include "Scene/SceneManager.h"
+#include "Object/Asset/AssetManager.h"
+#include "Scene/SceneGameObjectGenerator.h"
+#include "Script/LuaCallFiles.h"
 
 GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engineCore) {
 	obj_ = obj;
@@ -22,6 +25,15 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engine
 		"Update", &Model::Update
 	);
 
+	// アセットマネージャー型のバインド
+	GetLuaState().new_usertype<AssetManager>("AssetManager",
+		sol::no_constructor,
+		"GetDirectoryPath", &AssetManager::GetDirectoryPath,
+		"GetAssetFiles", &AssetManager::GetAssetFiles,
+		"AddAsset", &AssetManager::AddAsset,
+		"GetAsset", &AssetManager::GetAsset
+	);
+
 	// SceneObject型のバインド
 	GetLuaState().new_usertype<SceneObject>("SceneObject",
 		sol::no_constructor,
@@ -34,7 +46,8 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engine
 		},
 		"AddModel", &SceneObject::AddModel,
 		"DeleteModel", &SceneObject::DeleteModel,
-		"GetSceneName", &SceneObject::GetSceneName
+		"GetSceneName", &SceneObject::GetSceneName,
+		"AddObjectFromJson", &SceneObject::AddObjectFromJson
 	);
 
 	// BaseGameObject型のバインド（必要に応じて）
@@ -61,6 +74,14 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engine
 	assert(obj != nullptr && "GameObjectLuaScript: obj is null");
 	GetLuaState()["this"] = obj;
 
+	// LuaCallFiles登録
+	assert(engineCore != nullptr && "GameObjectLuaScript: engineCore is null");
+	GetLuaState().new_usertype<LuaCallFiles>("LuaCallFiles",
+		sol::no_constructor,
+		"CallAssetFile", &LuaCallFiles::CallAssetFile
+	);
+	GetLuaState()["asset"] = engineCore->GetLuaCallFiles();
+
 	// コントローラー登録
 	assert(engineCore != nullptr && "GameObjectLuaScript: engineCore is null");
 	GetLuaState().new_usertype<XInputController>("XInputController",
@@ -72,13 +93,14 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engine
 	GetLuaState()["controller"] = engineCore->GetXInputController();
 
 	// DirectInputManager型のバインド
-		GetLuaState().new_usertype<DirectInputManager>("DirectInputManager",
-			"GetKeyMoveDir", &DirectInputManager::GetKeyMoveDir
-		);
+	GetLuaState().new_usertype<DirectInputManager>("DirectInputManager",
+		"GetKeyMoveDir", &DirectInputManager::GetKeyMoveDir
+	);
 	// Luaグローバルにinputとして登録
 	GetLuaState()["input"] = engineCore->GetInputManager();
 	GetLuaState()["deltaTime"] = engineCore->GetDeltaTime();
 	GetLuaState()["sceneManager"] = engineCore->GetSceneManager();
+	
 }
 
 GameObjectLuaScript::~GameObjectLuaScript() {
