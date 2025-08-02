@@ -61,6 +61,8 @@ Billboard::Billboard(EngineCore* engineCore, Camera* camera, float width, float 
 	indexData_[5] = 2;
 
 	modelTextureHandle_ = textureHandle;
+
+	type_ = "Billboard"; // オブジェクトのタイプを設定
 }
 
 void Billboard::Init() {
@@ -104,7 +106,7 @@ void Billboard::Draw() {
 
 nlohmann::json Billboard::Serialize() const {
 	nlohmann::json j;
-	j["type"] = "Billboard";
+	j["type"] = type_;
 	j["name"] = name_;
 	j["position"] = { transform_.translate.x, transform_.translate.y, transform_.translate.z };
 	j["rotation"] = { transform_.rotate.x, transform_.rotate.y, transform_.rotate.z };

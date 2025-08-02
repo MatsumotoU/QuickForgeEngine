@@ -357,11 +357,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Vector\Vector2.cpp" />
     <ClCompile Include="Engine\Math\Vector\Vector3.cpp" />
     <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
+    <ClCompile Include="Engine\Object\Asset\Asset.cpp" />
+    <ClCompile Include="Engine\Object\Asset\AssetManager.cpp" />
     <ClCompile Include="Engine\Object\BaseGameObject.cpp" />
     <ClCompile Include="Engine\Particle\Particle.cpp" />
+    <ClCompile Include="Engine\Scene\SceneGameObjectGenerator.cpp" />
     <ClCompile Include="Engine\Scene\SceneObject.cpp" />
     <ClCompile Include="Engine\Script\GameObjectLuaScript.cpp" />
     <ClCompile Include="Engine\Script\ILuaScript.cpp" />
+    <ClCompile Include="Engine\Script\LuaCallFiles.cpp" />
     <ClCompile Include="Engine\Script\LuaScriptManager.cpp" />
     <ClCompile Include="Engine\Sprite\FullScreenSprite.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
@@ -482,6 +486,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Vector\Vector4.h" />
     <ClInclude Include="Engine\Math\VerTexData.h" />
     <ClInclude Include="Engine\Model\Model.h" />
+    <ClInclude Include="Engine\Object\Asset\Asset.h" />
+    <ClInclude Include="Engine\Object\Asset\AssetManager.h" />
     <ClInclude Include="Engine\Object\BaseGameObject.h" />
     <ClInclude Include="Engine\Object\ColorCorrectionOffset.h" />
     <ClInclude Include="Engine\Object\DirectionalLight.h" />
@@ -491,10 +497,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Particle\Particle.h" />
     <ClInclude Include="Engine\Particle\ParticleForGPU.h" />
     <ClInclude Include="Engine\Scene\IScene.h" />
+    <ClInclude Include="Engine\Scene\SceneGameObjectGenerator.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Scene\SceneObject.h" />
     <ClInclude Include="Engine\Script\GameObjectLuaScript.h" />
     <ClInclude Include="Engine\Script\ILuaScript.h" />
+    <ClInclude Include="Engine\Script\LuaCallFiles.h" />
     <ClInclude Include="Engine\Script\LuaScriptGenerator.h" />
     <ClInclude Include="Engine\Script\LuaScriptManager.h" />
     <ClInclude Include="Engine\Sprite\FullScreenSprite.h" />

@@ -7,6 +7,8 @@
 #endif // _DEBUG
 
 #include "Colliders/CollisionManager.h"
+#include "Object/Asset/AssetManager.h"
+#include "SceneGameObjectGenerator.h"
 
 class EngineCore;
 
@@ -92,5 +94,8 @@ private:
 	std::string spriteInputFilepath_;
 //#endif // _DEBUG
 
+	SceneGameObjectGenerator sceneGameObjectGenerator_;
 	CollisionManager collisionManager_;
+	AssetManager assetManager_;
+	std::string assetFileName_;
 };

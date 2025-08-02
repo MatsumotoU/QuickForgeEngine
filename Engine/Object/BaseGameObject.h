@@ -34,6 +34,9 @@ public:
 
 public:
 	Vector3 GetWorldPosition() override;
+	std::string GetType() const {
+		return type_;
+	}
 	std::string GetName() const {
 		return name_;
 	}
@@ -61,6 +64,7 @@ public:
 	float timeCounter_;
 
 protected:
+	std::string type_;
 	std::string name_;
 	std::string tag_;
 	EngineCore* engineCore_;

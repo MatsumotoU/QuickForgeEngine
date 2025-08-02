@@ -134,6 +134,42 @@ std::unique_ptr<SceneObject> SceneObject::Deserialize(const nlohmann::json& j, E
 	return sceneObj;
 }
 
+void SceneObject::AddObjectFromJson(const nlohmann::json& j) {
+#ifdef _DEBUG
+	DebugLog("AddObjectFromJson");
+#endif // _DEBUG
+	if (!j.is_object() || !j.contains("type")) {
+		return;
+	}
+
+	std::string type = j.value("type", "");
+
+	if (type == "Model") {
+		auto model = Model::Deserialize(j, engineCore_, &mainCamera_);
+		// モデルファイル名が必要な場合はここでロード
+		if (model) {
+			model->LoadModel("Resources", model->GetModelFileName(), COORDINATESYSTEM_HAND_RIGHT);
+			model->Init();
+			gameObjects_.push_back(std::move(model));
+		}
+	} else if (type == "Billboard") {
+		auto billboard = Billboard::Deserialize(j, engineCore_, &mainCamera_);
+		if (billboard) {
+			billboard->Init();
+			// テクスチャハンドルをセット
+			billboard->SetTextureHandle(engineCore_->GetTextureManager()->LoadTexture("Resources/" + billboard->GetName()));
+			gameObjects_.push_back(std::move(billboard));
+		}
+	} else if (type == "Sprite") {
+		auto sprite = Sprite::Deserialize(j, engineCore_, &mainCamera_);
+		if (sprite) {
+			sprite->Init();
+			sprite->SetTextureHandle(engineCore_->GetTextureManager()->LoadTexture("Resources/" + sprite->GetName()));
+			gameObjects_.push_back(std::move(sprite));
+		}
+	}
+}
+
 void SceneObject::AddModel(const std::string& directoryPath, const std::string& filename) {
 	Model model(engineCore_, &mainCamera_);
 	model.LoadModel(directoryPath, filename,COORDINATESYSTEM_HAND_RIGHT);

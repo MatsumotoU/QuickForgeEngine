@@ -43,6 +43,7 @@ Model::Model(EngineCore* engineCore, Camera* camera) : BaseGameObject(engineCore
 	assert(pso_);
 
 	name_ = "Model"; // モデルの名前を設定
+	type_ = "Model"; // オブジェクトのタイプを設定
 	instanceCount_++;
 
 	attachedScriptName.clear();
@@ -107,7 +108,7 @@ void Model::Draw() {
 
 nlohmann::json Model::Serialize() const {
 	nlohmann::json j;
-	j["type"] = "Model";
+	j["type"] = type_;
 	j["name"] = name_;
 	j["position"] = { transform_.translate.x, transform_.translate.y, transform_.translate.z };
 	j["rotation"] = { transform_.rotate.x, transform_.rotate.y, transform_.rotate.z };

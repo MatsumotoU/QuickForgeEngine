@@ -36,6 +36,7 @@ Sprite::Sprite(EngineCore* engineCore, Camera* camera, float width, float hight)
 	hight_ = hight;
 	// 名前を設定
 	name_ = "Sprite"; // スプライトの名前を設定
+	type_ = "Sprite"; // オブジェクトのタイプを設定
 	attachedScriptName.clear();
 	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4(); // UV変換行列を初期化
 	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白色
@@ -118,7 +119,7 @@ void Sprite::Draw() {
 
 nlohmann::json Sprite::Serialize() const {
 	nlohmann::json j;
-	j["type"] = "Sprite";
+	j["type"] = type_;
 	j["name"] = name_;
 	j["position"] = { transform_.translate.x, transform_.translate.y, transform_.translate.z };
 	j["rotation"] = { transform_.rotate.x, transform_.rotate.y, transform_.rotate.z };
