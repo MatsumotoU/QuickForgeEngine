@@ -3,8 +3,11 @@
 #include "BaseEnemyState.h"
 #include "../../../../Engine/Utility/TimeCall.h"
 #include "Colliders/Collider.h"
+#include <functional>
+#include <map>
+
 static inline const float kXLimit = 20.0f;
-static inline const uint32_t kMaxShotInterval = 30;
+static inline const uint32_t kMaxShotInterval = 120;
 
 enum class Phase {
 	Approach,
@@ -22,6 +25,7 @@ public:
 	void Update();
 	void Draw(Camera* camera);
 	void OnCollision(const nlohmann::json& otherData) override;
+	void HitRevenge(int level);
 
 public:
 	void ChangeState(std::unique_ptr<BaseEnemyState> state);
@@ -51,7 +55,19 @@ public:
 	Transform transform_;
 
 private:
-	//static void (Enemy::*spFuncTable[])();
+	void NormalMotion();
+	void DamageMotion();
+	void DeadMotion();
+
+private:
+	enum MotionState {
+		NORMAL,
+		DAMAGE,
+		DEAD,
+	};
+	std::map<MotionState, std::function<void()>> motionFuncMap_;
+	MotionState motionState_;
+	float motionTime_;
 	std::unique_ptr<BaseEnemyState> state_;
 
 private:
@@ -61,6 +77,7 @@ private:
 	Phase phase_;
 	float leaveSpeed_;
 	int hitPoint_;
+	int maxHitPoint_;
 	
 	bool isShot_;
 	uint32_t shotInterval_;
@@ -69,6 +86,6 @@ private:
 	EngineCore* engineCore_;
 	Model model_;
 
-	std::list<TimeCall*> timedCalls_;
+	//std::list<TimeCall*> timedCalls_;
 
 };

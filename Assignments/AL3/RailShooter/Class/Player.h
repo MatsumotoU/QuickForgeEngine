@@ -43,6 +43,8 @@ public:
 private:
 	void NormalMotion();
 	void DamageMotion();
+	void ShieldMotion();
+	void BreakingMotion();
 
 public:
 	int frameCount_;

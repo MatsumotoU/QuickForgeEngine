@@ -15,7 +15,7 @@ void Player::Initialize(EngineCore* engineCore) {
 
 	moveSpeed_ = 30.0f;
 
-	maxShotCooldown_ = 3.0f;
+	maxShotCooldown_ = 10.0f;
 	shotCooldown_ = 0.0f;
 
 	blendNum_ = 0;
@@ -35,6 +35,8 @@ void Player::Initialize(EngineCore* engineCore) {
 	motionState_ = NORMAL;
 	motionFuncMap_[NORMAL] = std::bind(&Player::NormalMotion, this);
 	motionFuncMap_[DAMAGE] = std::bind(&Player::DamageMotion, this);
+	motionFuncMap_[SHIELD] = std::bind(&Player::ShieldMotion, this);
+	motionFuncMap_[BREAKING] = std::bind(&Player::BreakingMotion, this);
 	shieldLevel_ = 0;
 }
 
@@ -154,7 +156,25 @@ void Player::Update() {
 	shieldModel_.Update();
 	shieldModel_.worldMatrix_ = Matrix4x4::Multiply(shieldModel_.worldMatrix_, parentMatrix_);
 
-	shieldLevel_ = static_cast<int>(sheildPoint_ / 33.3f);
+	if(!isRevenge_){
+		shieldLevel_ = static_cast<int>(sheildPoint_ / 33.3f);
+	}
+
+	if (isShield_) {
+		if (motionState_ == NORMAL) {
+			motionState_ = SHIELD;
+		}
+	} else {
+		if (motionState_ == SHIELD) {
+			motionState_ = NORMAL;
+		}
+	}
+
+	if (isBreaking_) {
+		if (motionState_ == NORMAL || motionState_ == SHIELD) {
+			motionState_ = BREAKING;
+		}
+	}
 }
 
 void Player::Draw(Camera* camera) {
@@ -204,6 +224,9 @@ void Player::OnCollision(const nlohmann::json& otherData) {
 		}
 
 	} else {
+		isShield_ = false;
+		isRevenge_ = false;
+		sheildPoint_ = 0.0f;
 		hitPoint_ -= otherData["Attack"].get<int>();
 		motionState_ = DAMAGE;
 		motionTime_ = 1.0f;
@@ -288,6 +311,10 @@ void Player::SetIsShot(bool isShot) {
 }
 
 void Player::NormalMotion() {
+	if (frameCount_ % 30 == 0) {
+		transform_.scale.y = 1.2f;
+	}
+
 	Eas::SimpleEaseIn(&transform_.scale.x, 1.0f, 0.1f);
 	Eas::SimpleEaseIn(&transform_.scale.y, 1.0f, 0.1f);
 	Eas::SimpleEaseIn(&transform_.scale.z, 1.0f, 0.1f);
@@ -300,7 +327,7 @@ void Player::NormalMotion() {
 }
 
 void Player::DamageMotion() {
-	if (frameCount_ % 2) {
+	if (frameCount_ % 2 == 0) {
 		model_.material_.materialData_->color.x = 1.0f;
 		model_.material_.materialData_->color.y = 0.0f;
 		model_.material_.materialData_->color.z = 0.0f;
@@ -314,6 +341,35 @@ void Player::DamageMotion() {
 	transform_.scale.z = sinf(static_cast<float>(frameCount_ / 3)) * 0.3f + 0.7f;
 
 	if (motionTime_ < 0.0f) {
+		motionState_ = NORMAL;
+	}
+}
+
+void Player::ShieldMotion() {
+	if (frameCount_ % 60 == 0) {
+		transform_.scale.y = 1.5f;
+	}
+
+	Eas::SimpleEaseIn(&transform_.scale.x, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&transform_.scale.y, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&transform_.scale.z, 1.0f, 0.1f);
+
+	Eas::SimpleEaseIn(&model_.material_.materialData_->color.x, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&model_.material_.materialData_->color.y, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&model_.material_.materialData_->color.z, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&model_.material_.materialData_->color.w, 1.0f, 0.1f);
+}
+
+void Player::BreakingMotion() {
+	Eas::SimpleEaseIn(&model_.material_.materialData_->color.x, 1.0f, 0.1f);
+	model_.material_.materialData_->color.y = fabsf(cosf(static_cast<float>(frameCount_) * 0.3f));
+	model_.material_.materialData_->color.z = fabsf(sinf(static_cast<float>(frameCount_) * 0.3f));
+
+	transform_.scale.x = sinf(static_cast<float>(frameCount_)*0.1f) * 0.1f + 1.0f;
+	transform_.scale.y = cosf(static_cast<float>(frameCount_)*0.1f) * 0.1f + 1.0f;
+	transform_.scale.z = sinf(static_cast<float>(frameCount_)*0.1f) * 0.1f + 1.0f;
+
+	if (!isBreaking_) {
 		motionState_ = NORMAL;
 	}
 }

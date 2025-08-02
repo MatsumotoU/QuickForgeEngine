@@ -35,6 +35,8 @@ void GameScene::Initialize() {
 	for (int i = 0; i < kPlayerBullets; i++) {
 		playerBullets[i].Initialize(engineCore_, "Player");
 		playerBullets[i].SetMask(0x00000011);
+		playerBullets[i].GetObjectData()["Attack"] = 1.0f;
+		playerBullets[i].SetRadius(0.3f);
 	}
 	for (int i = 0; i < kEnemyBullets; i++) {
 		enemyBullets[i].Initialize(engineCore_, "Enemy");
@@ -78,7 +80,7 @@ void GameScene::Initialize() {
 				continue;
 			}
 			Vector3 position = { std::stof(sponeData[i * 5]), std::stof(sponeData[i * 5+1]), std::stof(sponeData[i * 5+2])};
-			Vector3 vec = { 0.0f, 0.0f, -5.0f };
+			Vector3 vec = { 0.0f, 0.0f,0.0f };
 
 			timedCalls_.push_back(
 				new TimeCall(
@@ -199,6 +201,11 @@ void GameScene::Update() {
 	// 当たり判定
 	std::list<Collider*> allColliders_;
 	allColliders_.push_back(&player_);
+	for (int i = 0; i < kEnemies; i++) {
+		if (enemies[i].GetIsActive()) {
+			allColliders_.push_back(&enemies[i]);
+		}
+	}
 	for (int i = 0; i < kPlayerBullets; i++) {
 		if (playerBullets[i].GetIsActive()) {
 			allColliders_.push_back(&playerBullets[i]);
@@ -259,8 +266,7 @@ void GameScene::Update() {
 			Vector3 diff = { dx, dy, 0.0f };
 
 			if (diff.Length() < reticleRadius) {
-				// 当たり判定処理（例: 敵にダメージを与える等）
-				enemies[i].SetIsActive(false);
+				enemies[i].HitRevenge(player_.GetShieldLevel());
 			}
 		}
 	}
