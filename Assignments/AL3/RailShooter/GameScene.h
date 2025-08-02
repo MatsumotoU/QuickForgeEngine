@@ -44,6 +44,7 @@ private:
 	bool isActiveDebugCamera_;
 #endif // _DEBUG
 	Camera camera_;
+	Vector2 screenMove_;
 	std::vector<Vector3> lailPoints_;
 	float cameraT;
 	float cameraMoveSpeed_ = 0.1f;

@@ -2,7 +2,7 @@
 #include "../../../../Engine/Base/EngineCore.h"
 #include "BaseEnemyState.h"
 #include "../../../../Engine/Utility/TimeCall.h"
-
+#include "Colliders/Collider.h"
 static inline const float kXLimit = 20.0f;
 static inline const uint32_t kMaxShotInterval = 30;
 
@@ -16,11 +16,12 @@ enum class MoveType {
 	Sin,
 };
 
-class Enemy {
+class Enemy : public Collider{
 public:
 	void Initialize(EngineCore* engineCore);
 	void Update();
 	void Draw(Camera* camera);
+	void OnCollision(const nlohmann::json& otherData) override;
 
 public:
 	void ChangeState(std::unique_ptr<BaseEnemyState> state);
@@ -35,6 +36,7 @@ public:
 
 public:
 	void SetIsShot(bool isShot);
+	void SetIsActive(bool isActive);
 
 public:
 	bool GetIsActive();
@@ -58,6 +60,7 @@ private:
 	Vector3 velocity_;
 	Phase phase_;
 	float leaveSpeed_;
+	int hitPoint_;
 	
 	bool isShot_;
 	uint32_t shotInterval_;

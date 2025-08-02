@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "TitleScene.h"
+#include <algorithm>
 
 GameScene::GameScene(EngineCore* engineCore) {
 	engineCore_ = engineCore;
@@ -33,15 +34,16 @@ void GameScene::Initialize() {
 
 	for (int i = 0; i < kPlayerBullets; i++) {
 		playerBullets[i].Initialize(engineCore_, "Player");
-		playerBullets[i].SetMask(0x10000001);
+		playerBullets[i].SetMask(0x00000011);
 	}
 	for (int i = 0; i < kEnemyBullets; i++) {
 		enemyBullets[i].Initialize(engineCore_, "Enemy");
-		enemyBullets[i].SetMask(0x10000000);
+		enemyBullets[i].SetMask(0x10000010);
 	}
 
 	for (int i = 0; i < kEnemies; i++) {
 		enemies[i].Initialize(engineCore_);
+		enemies[i].SetMask(0x10000000);
 	}
 
 	timeCount_ = 0.0f;
@@ -225,6 +227,42 @@ void GameScene::Update() {
 				Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
 		}
 		
+	}
+
+	// プレイヤーの反撃処理
+	if (player_.GetIsRevenge()) {
+		player_.SetIsRevenge(false);
+
+		// レティクルのスクリーン座標を取得
+		Vector3 reticleScreenPos = camera_.GetWorldToScreenPos(
+			reticle_.GetReticleWorldPos());
+		Vector3 reticleTopScreenPos = camera_.GetWorldToScreenPos(
+			reticle_.GetTopPos());
+
+		reticleScreenPos.z = 0.0f; // Z座標を無視して2D座標に変換
+		reticleTopScreenPos.z = 0.0f; // Z座標を無視して2D座標に変換
+
+		Vector3 reticleRadiusVec = reticleScreenPos - reticleTopScreenPos;
+		float reticleRadius = reticleRadiusVec.Length();
+
+		for (int i = 0; i < kEnemies; i++) {
+			if (!enemies[i].GetIsActive()) continue;
+
+			// 敵のワールド座標をスクリーン座標に変換
+			Vector3 enemyScreenPos = camera_.GetWorldToScreenPos(
+				enemies[i].GetWorldPosition());
+			enemyScreenPos.z = 0.0f;
+
+			// 2D距離で判定
+			float dx = reticleScreenPos.x - enemyScreenPos.x;
+			float dy = reticleScreenPos.y - enemyScreenPos.y;
+			Vector3 diff = { dx, dy, 0.0f };
+
+			if (diff.Length() < reticleRadius) {
+				// 当たり判定処理（例: 敵にダメージを与える等）
+				enemies[i].SetIsActive(false);
+			}
+		}
 	}
 }
 

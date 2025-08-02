@@ -18,6 +18,7 @@ void Enemy::Initialize(EngineCore* engineCore) {
 
 	isShot_ = false;
 	shotInterval_ = kMaxShotInterval;
+	hitPoint_ = 30;
 
 	ChangeState(std::make_unique<EnemyStateAproach>(this));
 }
@@ -57,6 +58,17 @@ void Enemy::Draw(Camera* camera) {
 	}
 
 	model_.Draw(camera);
+}
+
+void Enemy::OnCollision(const nlohmann::json& otherData) {
+	if (otherData.contains("Attack")) {
+		hitPoint_ -= otherData["Attack"].get<int>();
+	} 
+	
+	if (hitPoint_ <= 0) {
+		isActive_ = false;
+		return;
+	}
 }
 
 void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
@@ -110,6 +122,10 @@ void Enemy::Spawn(Vector3 position, Vector3 velocity, uint32_t moveType) {
 
 void Enemy::SetIsShot(bool isShot) {
 	isShot_ = isShot;
+}
+
+void Enemy::SetIsActive(bool isActive) {
+	isActive_ = isActive;
 }
 
 bool Enemy::GetIsActive() {

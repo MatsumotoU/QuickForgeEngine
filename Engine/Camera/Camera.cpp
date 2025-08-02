@@ -3,6 +3,7 @@
 #include "../Base/Windows/WinApp.h"
 
 Camera::Camera() {
+	screenMove_ = { 0.0f, 0.0f, 0.0f };
 	transform_ = {};
 	transform_.translate = { 0.0f,0.0f,-5.0f };
 	transform_.scale = { 1.0f,1.0f,1.0f };

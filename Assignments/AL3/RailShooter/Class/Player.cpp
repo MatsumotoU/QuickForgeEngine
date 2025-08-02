@@ -35,7 +35,7 @@ void Player::Initialize(EngineCore* engineCore) {
 	motionState_ = NORMAL;
 	motionFuncMap_[NORMAL] = std::bind(&Player::NormalMotion, this);
 	motionFuncMap_[DAMAGE] = std::bind(&Player::DamageMotion, this);
-
+	shieldLevel_ = 0;
 }
 
 void Player::Update() {
@@ -81,7 +81,12 @@ void Player::Update() {
 		if (!isBreaking_) {
 			moveSpeed_ = 15.0f; // シールド中は移動速度を落とす
 		}
-	} 
+	} else {
+		if (shieldLevel_ > 0) {
+			sheildPoint_ = 0.0f;
+			isRevenge_ = true;
+		}
+	}
 
 	// si-ールドの状態更新
 	if (isShield_ && !isBreaking_) {
@@ -127,7 +132,7 @@ void Player::Update() {
 		shotCooldown_--;
 	}
 
-	if (input->keyboard_.GetPress(DIK_D)) {
+	/*if (input->keyboard_.GetPress(DIK_D)) {
 		transform_.rotate.y += 0.05f;
 	}
 	if (input->keyboard_.GetPress(DIK_A)) {
@@ -138,7 +143,7 @@ void Player::Update() {
 	}
 	if (input->keyboard_.GetPress(DIK_S)) {
 		transform_.rotate.x -= 0.05f;
-	}
+	}*/
 
 	model_.transform_ = transform_;
 
@@ -148,6 +153,8 @@ void Player::Update() {
 	shieldModel_.transform_.translate = transform_.translate;
 	shieldModel_.Update();
 	shieldModel_.worldMatrix_ = Matrix4x4::Multiply(shieldModel_.worldMatrix_, parentMatrix_);
+
+	shieldLevel_ = static_cast<int>(sheildPoint_ / 33.3f);
 }
 
 void Player::Draw(Camera* camera) {
@@ -230,6 +237,10 @@ bool Player::GetIsActive() {
 
 bool Player::GetIsShot() {
 	return isShot_;
+}
+
+bool Player::GetIsShield() {
+	return isShield_;
 }
 
 Matrix4x4 Player::GetParentMatrix() {

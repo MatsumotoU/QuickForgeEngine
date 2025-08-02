@@ -48,6 +48,7 @@ public:
 	Matrix4x4 orthographicMatrix_;
 
 public:
+	Vector3 screenMove_;
 	Vector3 localPos_;
 	Matrix4x4 worldMatrix_;
 	Transform transform_;

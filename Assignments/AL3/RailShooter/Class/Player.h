@@ -22,6 +22,8 @@ public:
 public:
 	bool GetIsActive();
 	bool GetIsShot();
+	bool GetIsShield();
+	bool GetIsRevenge() { return isRevenge_; }
 	Matrix4x4 GetParentMatrix();
 	Matrix4x4 GetParentWorldMatrix();
 	Matrix4x4 GetWorldMatrix();
@@ -29,11 +31,14 @@ public:
 	Vector3 GetWorldPosition() override;
 	Vector3 GetScreenPosition(Camera* camera);
 	Vector3 GetDir();
+	int GetShieldLevel() { return shieldLevel_; }
+
 
 public:
 	void SetParent(const Matrix4x4& parentMatrix);
 	void SetIsActive(bool isActive);
 	void SetIsShot(bool isShot);
+	void SetIsRevenge(bool isRevenge) { isRevenge_ = isRevenge; }
 
 private:
 	void NormalMotion();
@@ -65,12 +70,14 @@ private:
 	bool isShot_;
 	bool isShield_;
 	bool isBreaking_;
+	bool isRevenge_;
 
 private:
 	float shotCooldown_;
 	float maxShotCooldown_;
 	float sheildPoint_;
 	int hitPoint_;
+	int shieldLevel_;
 
 private:
 	Model model_;

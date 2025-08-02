@@ -12,12 +12,14 @@ public:
 	void SetPlayer(Player* player);
 	Vector3 GetWorldPos();
 	Vector3 GetReticleWorldPos();
+	Vector3 GetTopPos();
 
 public:
 	Transform transform_;
 	Model model_;
 
 private:
+	float reticleScale_ = 1.0f;
 	EngineCore* engineCore_;
 	bool isActive_;
 	Sprite sprite_;
