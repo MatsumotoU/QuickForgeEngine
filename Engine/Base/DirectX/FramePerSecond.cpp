@@ -19,7 +19,7 @@ void FramePerSecond::Update() {
 
 	if (static_cast<float>(elapsed.count()) != 0.0f) {
 		fps_ = 1000.0f / static_cast<float>(elapsed.count());
-		DebugLog(std::format( "fps = {}",fps_));
+		//DebugLog(std::format( "fps = {}",fps_));
 	} else {
 		fps_ = 60.0f;
 #ifdef _DEBUG

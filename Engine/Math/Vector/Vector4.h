@@ -1,7 +1,7 @@
 #pragma once
 class Vector3;
 
-class alignas(16) Vector4 final{
+class  Vector4 final{
 public:
 	float x;
 	float y;

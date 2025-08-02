@@ -4,8 +4,8 @@ SceneManager::SceneManager(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	fade_.Initialize(engineCore_);
 
-	scene = new GameScene(engineCore_);
-	//scene = new TitleScene(engineCore_);
+	//scene = new GameScene(engineCore_);
+	scene = new TitleScene(engineCore_);
 }
 
 SceneManager::~SceneManager() {
@@ -42,11 +42,11 @@ void SceneManager::Draw() {
 	if (scene->GetReqesytedExit() || fade_.isFading()) {
 		fade_.Draw();
 	}
-
+#ifdef _DEBUG
 	ImGui::Begin("FPS");
 	ImGui::Text("fps = %f", engineCore_->GetFpsCounter()->GetFps());
 	ImGui::Text("averageFps = %f", engineCore_->GetFpsCounter()->GetAverageFps());
-	
+
 	if (ImPlot::BeginPlot("Fps Plots")) {
 		float x[64];
 		for (float i = 0.0f; i < engineCore_->GetFpsCounter()->GetFpsSamplerNum(); i++) {
@@ -61,4 +61,6 @@ void SceneManager::Draw() {
 	ImGuiKnobs::Knob("Volume", &value_, -6.0f, 6.0f, 0.1f, "%.1fdB", ImGuiKnobVariant_Tick);
 
 	ImGui::End();
+#endif // _DEBUG
+	
 }

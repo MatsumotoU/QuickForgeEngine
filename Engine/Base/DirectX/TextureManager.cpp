@@ -45,8 +45,7 @@ void TextureManager::Finalize() {
 }
 
 // TODO: ロードされていいる画像たちを描画する
-void TextureManager::DrawImages() {
-}
+
 
 DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
 	// テクスチャファイルを読み込んでプログラムで使えるようにする

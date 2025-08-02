@@ -75,10 +75,10 @@ Vector2 XInputController::GetRightStick(uint32_t padId) {
     result.y = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbRY);
 
     // 足切り
-    if (std::fabsf(result.x) <= stickDeadZone_) {
+    if (fabsf(result.x) <= stickDeadZone_) {
         result.x = 0.0f;
     }
-    if (std::fabsf(result.y) <= stickDeadZone_) {
+    if (fabsf(result.y) <= stickDeadZone_) {
         result.y = 0.0f;
     }
 
@@ -103,10 +103,10 @@ Vector2 XInputController::GetLeftStick(uint32_t padId) {
     result.y = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbLY);
 
     // 足切り
-    if (std::fabsf(result.x) <= stickDeadZone_) {
+    if (fabsf(result.x) <= stickDeadZone_) {
         result.x = 0.0f;
     }
-    if (std::fabsf(result.y) <= stickDeadZone_) {
+    if (fabsf(result.y) <= stickDeadZone_) {
         result.y = 0.0f;
     }
 

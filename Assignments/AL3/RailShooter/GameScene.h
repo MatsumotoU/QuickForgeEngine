@@ -7,6 +7,8 @@
 #include "Class/Reticle.h"
 #include "Class/LockOn.h"
 #include "IScene.h"
+#include "Class/ShieldBar.h"
+#include "Class/PlayerHitPoint.h"
 
 #include "Colliders/CollisionManager.h"
 
@@ -52,6 +54,8 @@ private:
 	std::list<TimeCall*> timedCalls_;
 	
 private:
+	PlayerHitPoint playerHitPoint_;
+	ShieldBar shieldBar_;
 	Reticle reticle_;
 	SkyDome skyDome_;
 	Player player_;

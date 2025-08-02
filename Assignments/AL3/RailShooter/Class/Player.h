@@ -32,7 +32,8 @@ public:
 	Vector3 GetScreenPosition(Camera* camera);
 	Vector3 GetDir();
 	int GetShieldLevel() { return shieldLevel_; }
-
+	float GetShieldPoint() const { return sheildPoint_; }
+	int GetHitPoint();
 
 public:
 	void SetParent(const Matrix4x4& parentMatrix);

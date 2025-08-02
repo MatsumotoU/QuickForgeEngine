@@ -228,8 +228,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\LockOn.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\PlayerHitPoint.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\RailCameraController.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Reticle.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\ShieldBar.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\SkyDome.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\GameScene.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\SceneManager.cpp" />
@@ -320,8 +322,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\LockOn.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\PlayerHitPoint.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\RailCameraController.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Reticle.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\ShieldBar.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\SkyDome.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\GameScene.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\IScene.h" />

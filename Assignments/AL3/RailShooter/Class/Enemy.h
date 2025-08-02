@@ -43,6 +43,7 @@ public:
 	void SetIsActive(bool isActive);
 
 public:
+	bool GetIsShield();
 	bool GetIsActive();
 	Phase GetPhase();
 	bool GetIsShot();
@@ -79,12 +80,14 @@ private:
 	int hitPoint_;
 	int maxHitPoint_;
 	
+	bool isShield_;
 	bool isShot_;
 	uint32_t shotInterval_;
 
 private:
 	EngineCore* engineCore_;
 	Model model_;
+	Model shieldModel_;
 
 	//std::list<TimeCall*> timedCalls_;
 

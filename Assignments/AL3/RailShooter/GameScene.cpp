@@ -5,9 +5,9 @@
 GameScene::GameScene(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
-	isActiveDebugCamera_ = false;
 
 #ifdef _DEBUG
+	isActiveDebugCamera_ = false;
 	debugCamera_.Initialize(engineCore_);
 	debugCamera_.camera_.transform_.translate.z = -20.0f;
 #endif // _DEBUG
@@ -73,19 +73,19 @@ void GameScene::Initialize() {
 
 	std::string EnemyData = FileLoader::ReadFile("Resources/EnemyData/EnemySpone.txt");
 	std::vector<std::string> sponeData = FileLoader::Split(EnemyData, ',');
-	for (int i = 0; i < sponeData.size() / 5;i++) {
-		
+	for (int i = 0; i < sponeData.size() / 5; i++) {
+
 		for (int e = 0; e < kEnemies; e++) {
 			if (isCalledSpone[e]) {
 				continue;
 			}
-			Vector3 position = { std::stof(sponeData[i * 5]), std::stof(sponeData[i * 5+1]), std::stof(sponeData[i * 5+2])};
+			Vector3 position = { std::stof(sponeData[i * 5]), std::stof(sponeData[i * 5 + 1]), std::stof(sponeData[i * 5 + 2]) };
 			Vector3 vec = { 0.0f, 0.0f,0.0f };
 
 			timedCalls_.push_back(
 				new TimeCall(
-					engineCore_, 
-					std::bind(&Enemy::Spawn,&enemies[e],position, vec, std::stoi(sponeData[i * 5 + 4])), std::stof(sponeData[i * 5 + 3])));
+					engineCore_,
+					std::bind(&Enemy::Spawn, &enemies[e], position, vec, std::stoi(sponeData[i * 5 + 4])), std::stof(sponeData[i * 5 + 3])));
 			isCalledSpone[e] = true;
 			break;
 		}
@@ -96,6 +96,9 @@ void GameScene::Initialize() {
 
 	lockOn_.Initialize();
 	isLockOn_ = false;
+
+	shieldBar_.Initialize(engineCore_);
+	playerHitPoint_.Initialize(engineCore_);
 }
 
 void GameScene::Update() {
@@ -144,7 +147,7 @@ void GameScene::Update() {
 
 	player_.Update();
 	player_.SetParent(camera_.GetWorldMatrix());
-	
+
 
 	if (player_.GetIsShot()) {
 		for (int i = 0; i < kPlayerBullets; i++) {
@@ -233,7 +236,7 @@ void GameScene::Update() {
 			reticle_.model_.worldMatrix_ =
 				Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
 		}
-		
+
 	}
 
 	// プレイヤーの反撃処理
@@ -266,16 +269,49 @@ void GameScene::Update() {
 			Vector3 diff = { dx, dy, 0.0f };
 
 			if (diff.Length() < reticleRadius) {
-				enemies[i].HitRevenge(player_.GetShieldLevel());
+				if (enemies[i].GetIsShield()) {
+					for (int e = 0; e < 16; e++) {
+						for (int b = 0; b < kEnemyBullets; b++) {
+							if (!enemyBullets[b].GetIsActive()) {
+								// 角度を計算（0～2πを16分割）
+								float angle = (2.0f * 3.14159265f * e) / 16.0f;
+								// xy平面上の単位ベクトル
+								Vector3 dir = { std::cos(angle), std::sin(angle), 0.0f };
+								// 速度ベクトルを作成
+								Vector3 velocity = dir * 60.0f;
+								enemyBullets[b].ShotBullet(enemies[i].transform_.translate, velocity, 6000);
+								break;
+							}
+						}
+					}
+				} else {
+					enemies[i].HitRevenge(player_.GetShieldLevel());
+				}
 			}
 		}
+	}
+
+	playerHitPoint_.SetHitPoint(player_.GetHitPoint());
+	playerHitPoint_.Update();
+
+	shieldBar_.SetShieldPoint(player_.GetShieldPoint());
+	shieldBar_.Update();
+
+	if (!player_.GetIsActive()) {
+		isRequestedExit_ = true;
 	}
 }
 
 void GameScene::Draw() {
+	playerHitPoint_.Draw(&camera_);
+	shieldBar_.Draw(&camera_);
+#ifdef _DEBUG
 	debugCamera_.DrawImGui();
-	reticle_.Draw(&camera_);
+#endif // _DEBUG
 
+	
+	reticle_.Draw(&camera_);
+#ifdef _DEBUG
 	ImGui::Begin("LockOn");
 	if (ImGui::Button("isLockOn")) {
 		isLockOn_ = !isLockOn_;
@@ -339,12 +375,13 @@ void GameScene::Draw() {
 		Initialize();
 	}
 	ImGui::End();
+#endif // _DEBUG
 
 	skyDome_.Draw(&camera_);
 	if (!isFpsCamera_) {
 		player_.Draw(&camera_);
 	}
-	
+
 	for (int i = 0; i < kPlayerBullets; i++) {
 		if (playerBullets[i].GetIsActive()) {
 			playerBullets[i].Draw(&camera_);
@@ -360,7 +397,7 @@ void GameScene::Draw() {
 		enemies[i].Draw(&camera_);
 	}
 
-	
+
 	groundModel_.Draw(&camera_);
 
 	for (float i = 0.0f; i < 1.0f; i += 0.01f) {

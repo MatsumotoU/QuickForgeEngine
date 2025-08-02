@@ -28,7 +28,7 @@ void Player::Initialize(EngineCore* engineCore) {
 	transform_.translate.z = 8.0f;
 
 	sheildPoint_ = 0.0f;
-	hitPoint_ = 100;
+	hitPoint_ = 3;
 	frameCount_ = 0;
 
 	// モーション登録
@@ -175,6 +175,10 @@ void Player::Update() {
 			motionState_ = BREAKING;
 		}
 	}
+
+	if (hitPoint_ <= 0) {
+		isActive_ = false;
+	}
 }
 
 void Player::Draw(Camera* camera) {
@@ -185,7 +189,7 @@ void Player::Draw(Camera* camera) {
 	if (shieldModel_.transform_.scale.Length() >= 0.1f) {
 		shieldModel_.Draw(camera);
 	}
-
+#ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::DragFloat3("ModelTransform", &model_.transform_.translate.x, 0.1f);
 	ImGui::DragFloat3("ModelRotate", &model_.transform_.rotate.x, 0.1f);
@@ -201,6 +205,7 @@ void Player::Draw(Camera* camera) {
 		model_.SetBlendmode(static_cast<BlendMode>(blendNum_));
 	}
 	ImGui::End();
+#endif // _DEBUG
 }
 
 void Player::OnCollision(const nlohmann::json& otherData) {
@@ -227,7 +232,7 @@ void Player::OnCollision(const nlohmann::json& otherData) {
 		isShield_ = false;
 		isRevenge_ = false;
 		sheildPoint_ = 0.0f;
-		hitPoint_ -= otherData["Attack"].get<int>();
+		hitPoint_ --;
 		motionState_ = DAMAGE;
 		motionTime_ = 1.0f;
 	}
@@ -296,6 +301,10 @@ Vector3 Player::GetScreenPosition(Camera* camera) {
 
 Vector3 Player::GetDir() {
 	return Vector3::Transform({ 0.0f,0.0f,1.0f }, Matrix4x4::MakeRotateXYZMatrix(model_.transform_.rotate));
+}
+
+int Player::GetHitPoint() {
+	return hitPoint_;
 }
 
 void Player::SetParent(const Matrix4x4& parentMatrix) {

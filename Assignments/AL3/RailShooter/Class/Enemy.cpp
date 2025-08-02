@@ -13,6 +13,11 @@ void Enemy::Initialize(EngineCore* engineCore) {
 	model_.LoadModel("Resources", "Triangle.obj", COORDINATESYSTEM_HAND_RIGHT);
 	isActive_ = false;
 
+	shieldModel_.Initialize(engineCore_);
+	shieldModel_.LoadModel("Resources", "Shield.obj", COORDINATESYSTEM_HAND_RIGHT);
+	shieldModel_.material_.materialData_->enableLighting = false;
+	shieldModel_.material_.materialData_->color = { 0.4f, 0.1f, 0.1f, 1.0f };
+
 	velocity_ = { 0.0f,0.0f,0.0f };
 
 	transform_.rotate.x = 3.14f * 0.5f;
@@ -21,6 +26,7 @@ void Enemy::Initialize(EngineCore* engineCore) {
 	phase_ = Phase::Approach;
 	moveType_ = MoveType::Normal;
 
+	isShield_ = false;
 	isShot_ = false;
 	shotInterval_ = kMaxShotInterval;
 	maxHitPoint_ = 30;
@@ -75,13 +81,27 @@ void Enemy::Update() {
 		}
 	}
 
+	if (isShield_) {
+		Eas::SimpleEaseIn(&shieldModel_.transform_.scale.x, 1.0f, 0.1f);
+		Eas::SimpleEaseIn(&shieldModel_.transform_.scale.y, 1.0f, 0.1f);
+		Eas::SimpleEaseIn(&shieldModel_.transform_.scale.z, 1.0f, 0.1f);
+	}
+
 	model_.transform_ = transform_;
 	model_.Update();
+
+	shieldModel_.transform_.translate = transform_.translate;
+	shieldModel_.transform_.rotate.y += 0.1f;
+	shieldModel_.Update();
 }
 
 void Enemy::Draw(Camera* camera) {
 	if (!isActive_) {
 		return;
+	}
+
+	if (isShield_) {
+		shieldModel_.Draw(camera);
 	}
 
 	model_.Draw(camera);
@@ -162,14 +182,16 @@ void Enemy::Shot() {
 void Enemy::Spawn(Vector3 position, Vector3 velocity, uint32_t moveType) {
 	if (!isActive_) {
 		transform_.scale = { 0.0f,0.0f,0.0f };
+		shieldModel_.transform_.scale = { 0.0f,0.0f,0.0f };
 		isActive_ = true;
 		transform_.translate = position;
 		velocity_ = velocity;
+		isShield_ = static_cast<bool>(moveType);
 	} else {
 		assert(false && "Enemy is already active. Cannot spawn again.");
 	}
 
-	moveType_ = static_cast<MoveType>(moveType);
+	//moveType_ = static_cast<MoveType>(moveType);
 }
 
 void Enemy::SetIsShot(bool isShot) {
@@ -178,6 +200,10 @@ void Enemy::SetIsShot(bool isShot) {
 
 void Enemy::SetIsActive(bool isActive) {
 	isActive_ = isActive;
+}
+
+bool Enemy::GetIsShield() {
+	return isShield_;
 }
 
 bool Enemy::GetIsActive() {
