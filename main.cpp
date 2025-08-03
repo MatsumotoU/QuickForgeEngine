@@ -21,7 +21,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	// エンジンの初期化
 	MSG msg{};
 	EngineCore engineCore;
-	engineCore.Initialize(L"MyDirectx12Engine", hInstance, lpCmdLine,&msg);
+	engineCore.Initialize(L"LE2A_14_マツモト_ユウタ_俺の痛みを知れ", hInstance, lpCmdLine,&msg);
 
 	// * ゲームの初期化 * //
 	SceneManager sceneManager(&engineCore);

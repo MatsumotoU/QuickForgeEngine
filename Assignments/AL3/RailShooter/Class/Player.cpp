@@ -11,7 +11,7 @@ void Player::Initialize(EngineCore* engineCore) {
 	shieldModel_.Initialize(engineCore_);
 	shieldModel_.LoadModel("Resources", "Shield.obj", COORDINATESYSTEM_HAND_RIGHT);
 	shieldModel_.material_.materialData_->enableLighting = false;
-	shieldModel_.material_.materialData_->color = { 0.4f, 0.4f, 1.0f, 1.0f };
+	shieldModel_.material_.materialData_->color = { 0.2f, 0.2f, 0.0f, 1.0f };
 
 	moveSpeed_ = 30.0f;
 
@@ -98,7 +98,7 @@ void Player::Update() {
 
 		float shieldPointRatio = sheildPoint_ / 100.0f;
 		shieldModel_.material_.materialData_->color = 
-			Vector4::Leap({ 0.3f,0.3f,1.0f,1.0f }, { 0.2f,0.0f,0.0f,1.0f }, shieldPointRatio);
+			Vector4::Leap({ 0.6f, 0.3f, 0.1f, 0.8f }, { 0.2f,0.0f,0.0f,0.5f }, shieldPointRatio);
 
 		shieldModel_.transform_.rotate.x += 
 			sinf(static_cast<float>(frameCount_) * engineCore_->GetDeltaTime() * 0.01f ) * (shieldPointRatio + 0.1f);
@@ -301,6 +301,12 @@ Vector3 Player::GetScreenPosition(Camera* camera) {
 
 Vector3 Player::GetDir() {
 	return Vector3::Transform({ 0.0f,0.0f,1.0f }, Matrix4x4::MakeRotateXYZMatrix(model_.transform_.rotate));
+}
+
+Vector3 Player::GetMoveDir() {
+	DirectInputManager* input = engineCore_->GetInputManager();
+	Vector2 moveDir = (input->GetKeyMoveDir() + engineCore_->GetXInputController()->GetLeftStick(0)).Normalize();
+	return Vector3(moveDir.x, moveDir.y,0.0f);
 }
 
 int Player::GetHitPoint() {

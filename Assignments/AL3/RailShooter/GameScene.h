@@ -62,7 +62,7 @@ private:
 	Bullet playerBullets[kPlayerBullets];
 	Enemy enemies[kEnemies];
 	Bullet enemyBullets[kEnemyBullets];
-	Model groundModel_;
+	//Model groundModel_;
 	Transform groundTransform_;
 	LockOn lockOn_;
 	CollisionManager collisionManager_;

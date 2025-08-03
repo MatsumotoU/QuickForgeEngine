@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "TitleScene.h"
 #include <algorithm>
+#include "Utility/MyEasing.h"
 
 GameScene::GameScene(EngineCore* engineCore) {
 	engineCore_ = engineCore;
@@ -52,11 +53,11 @@ void GameScene::Initialize() {
 
 	collisionManager_.Initalize();
 
-	groundModel_.Initialize(engineCore_);
+	/*groundModel_.Initialize(engineCore_);
 	groundModel_.LoadModel("Resources", "ground.obj", COORDINATESYSTEM_HAND_RIGHT);
 	groundTransform_.translate.y = -2400.0f;
 	groundTransform_.scale.x = 1400.0f;
-	groundTransform_.scale.z = 1400.0f;
+	groundTransform_.scale.z = 1400.0f;*/
 
 	lailPoints_.clear();
 	lailPoints_.push_back({ 0.0f,0.0f,0.0f });
@@ -104,8 +105,8 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	lockOn_.ResetTargets();
 
-	groundModel_.transform_ = groundTransform_;
-	groundModel_.Update();
+	/*groundModel_.transform_ = groundTransform_;
+	groundModel_.Update();*/
 
 	for (TimeCall* timedCall : timedCalls_) {
 		timedCall->Update();
@@ -140,14 +141,17 @@ void GameScene::Update() {
 		}
 	}
 
-	camera_.transform_.translate = Vector3::CatmullRom(lailPoints_, cameraT);
+	Vector3 target = Vector3::CatmullRom(lailPoints_, cameraT) + player_.transform_.translate.Normalize() * 0.5f;
+	Eas::SimpleEaseIn(&camera_.transform_.translate.x, target.x, 0.1f);
+	Eas::SimpleEaseIn(&camera_.transform_.translate.y, target.y, 0.1f);
+	Eas::SimpleEaseIn(&camera_.transform_.translate.z, target.z, 0.1f);
+
 	camera_.transform_.rotate = -Vector3::LookAt(
 		Vector3::CatmullRom(lailPoints_, cameraT + 0.01f),
 		Vector3::CatmullRom(lailPoints_, cameraT));
 
 	player_.Update();
-	player_.SetParent(camera_.GetWorldMatrix());
-
+	//player_.SetParent(camera_.GetWorldMatrix());
 
 	if (player_.GetIsShot()) {
 		for (int i = 0; i < kPlayerBullets; i++) {
@@ -397,14 +401,11 @@ void GameScene::Draw() {
 		enemies[i].Draw(&camera_);
 	}
 
+	//groundModel_.Draw(&camera_);
 
-	groundModel_.Draw(&camera_);
-
-	for (float i = 0.0f; i < 1.0f; i += 0.01f) {
-		Vector3 p0 = Vector3::CatmullRom(lailPoints_, i);
-		Vector3 p1 = Vector3::CatmullRom(lailPoints_, i + 0.01f);
-		engineCore_->GetGraphRenderer()->DrawLine(p0, p1);
-	}
+	Vector3 p0 = player_.GetWorldPosition();
+	p0.z += 60.0f;
+	engineCore_->GetGraphRenderer()->DrawLine(player_.GetWorldPosition(), p0);
 }
 
 IScene* GameScene::GetNextScene() {

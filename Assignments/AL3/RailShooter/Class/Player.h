@@ -31,6 +31,7 @@ public:
 	Vector3 GetWorldPosition() override;
 	Vector3 GetScreenPosition(Camera* camera);
 	Vector3 GetDir();
+	Vector3 GetMoveDir();
 	int GetShieldLevel() { return shieldLevel_; }
 	float GetShieldPoint() const { return sheildPoint_; }
 	int GetHitPoint();

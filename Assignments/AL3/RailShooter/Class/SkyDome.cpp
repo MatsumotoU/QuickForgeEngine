@@ -4,6 +4,7 @@ void SkyDome::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	model_.Initialize(engineCore);
 	model_.LoadModel("Resources", "skyDome.obj", COORDINATESYSTEM_HAND_RIGHT);
+	model_.material_.materialData_->color = { 0.05f,0.05f,0.05f,1.0f };
 	model_.material_.materialData_->enableLighting = false;
 
 	model_.transform_ = transform_;

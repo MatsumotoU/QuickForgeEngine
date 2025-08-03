@@ -31,6 +31,7 @@ void PlayerHitPoint::Update() {
 void PlayerHitPoint::Draw(Camera* camera) {
 	for (int i = 0; i < 3; i++) {
 		if (model_[i].transform_.scale.Length() > 0.01f) {
+			model_[i].worldMatrix_ = Matrix4x4::Multiply(model_[i].worldMatrix_, camera->GetWorldMatrix());
 			model_[i].Draw(camera);
 		}
 	}

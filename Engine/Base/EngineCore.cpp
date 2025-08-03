@@ -84,8 +84,8 @@ void EngineCore::PreDraw() {
 
 	// 深度の設定
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = graphicsCommon_.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
-	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
+	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
+	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
 	dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	graphRenderer_.PreDraw();
@@ -110,12 +110,12 @@ void EngineCore::PostDraw() {
 	// バリア張る
 	dxCommon_.GetCommandList()->ResourceBarrier(1, &barrier);
 
-	// 深度の設定
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = graphicsCommon_.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
-	dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
-	dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	offscreen_.DrawSprite(offscreenTransform_,uvTransform_,textureManager_.GetOffscreenSrvHandleGPU(),&camera_);
+	//// 深度の設定
+	//D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = graphicsCommon_.GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+	////dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetOffscreenRtvHandles(), false, &dsvHandl);
+	//dxCommon_.GetCommandList()->OMSetRenderTargets(1, dxCommon_.GetRtvHandles(), false, &dsvHandl);
+	//dxCommon_.GetCommandList()->ClearDepthStencilView(dsvHandl, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	//offscreen_.DrawSprite(offscreenTransform_,uvTransform_,textureManager_.GetOffscreenSrvHandleGPU(),&camera_);
 
 	textureManager_.PostDraw();
 	imGuiManager_.EndFrame();

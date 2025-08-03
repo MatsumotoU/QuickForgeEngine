@@ -13,7 +13,7 @@ void ShieldBar::Initialize(EngineCore* engineCore) {
 	barWidth_ = 1.0f;
 	barHeight_ = 0.2f;
 	position_ = { 1.3f, -1.0f, 5.0f };
-	color_ = { 0.4f, 0.4f, 1.0f, 1.0f };
+	color_ = { 0.6f, 0.3f, 0.1f, 1.0f };
 	frameCount_ = 0;
 }
 
@@ -40,14 +40,18 @@ void ShieldBar::Update() {
 
 	backModel_.transform_.translate = position_;
 	backModel_.transform_.scale = { barWidth_, barHeight_ * 0.5f, 0.1f };
-	backModel_.material_.materialData_->color = { 0.2f, 0.2f, 0.2f, 1.0f };
+	backModel_.material_.materialData_->color = { 0.7f, 0.7f, 0.7f, 1.0f };
 	backModel_.Update();
 }
 
 void ShieldBar::Draw(Camera* camera) {
+	backModel_.worldMatrix_ = Matrix4x4::Multiply(backModel_.worldMatrix_, camera->GetWorldMatrix());
 	backModel_.Draw(camera);
+
 	if (shieldPoint_ <= 0.0f) {
 		return;
 	}
+
+	model_.worldMatrix_ = Matrix4x4::Multiply(model_.worldMatrix_, camera->GetWorldMatrix());
 	model_.Draw(camera);
 }
