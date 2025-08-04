@@ -1,10 +1,10 @@
 #include "Model.h"
-#include "../Base/EngineCore.h"
-#include "../Base/DirectX/DirectXCommon.h"
-#include "../Base/DirectX/TextureManager.h"
-#include "../Base/DirectX/DepthStencil.h"
+#include "Base/EngineCore.h"
+#include "Base/DirectX/DirectXCommon.h"
+#include "Base/DirectX/TextureManager.h"
+#include "Base/DirectX/DepthStencil.h"
 
-#include "../Camera/Camera.h"
+#include "Camera/Camera.h"
 
 #include "Utility/FileLoader.h"
 

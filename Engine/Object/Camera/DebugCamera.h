@@ -1,7 +1,6 @@
 #pragma once
 #ifdef _DEBUG
 #include "Camera.h"
-#include "Model/Billboard.h"
 #include <functional>
 
 class EngineCore;
@@ -26,10 +25,7 @@ public:
 	Vector3 anchorPoint_;
 
 private:
-	bool isDrawAnchor_;
 	EngineCore* engineCore_;
 	DirectInputManager* input_;
-	std::unique_ptr<Billboard> anchorPointBillboard_;
-	uint32_t anchorGH_;
 };
 #endif // _DEBUG
