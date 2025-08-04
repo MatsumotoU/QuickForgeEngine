@@ -19,7 +19,7 @@ public:
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
 	void Draw(std::vector<Transform>* transform, Camera* camera);
 
-private:
+public:
 	MaterialResource material_;
 	WVPResource wvp_;
 

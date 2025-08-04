@@ -293,6 +293,9 @@
     <ClCompile Include="Assignments\AL3\RailShooter\Class\PlayerHitPoint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Building.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">

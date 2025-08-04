@@ -9,6 +9,7 @@
 #include "IScene.h"
 #include "Class/ShieldBar.h"
 #include "Class/PlayerHitPoint.h"
+#include "Class/Building.h"
 
 #include "Colliders/CollisionManager.h"
 
@@ -54,6 +55,7 @@ private:
 	std::list<TimeCall*> timedCalls_;
 	
 private:
+	Building buillds_;
 	PlayerHitPoint playerHitPoint_;
 	ShieldBar shieldBar_;
 	Reticle reticle_;
@@ -67,4 +69,7 @@ private:
 	LockOn lockOn_;
 	CollisionManager collisionManager_;
 	float timeCount_;
+
+	uint32_t bgmHandle_ = 0;
+	uint32_t seHandle_ = 0;
 };

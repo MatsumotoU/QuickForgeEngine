@@ -20,7 +20,7 @@ void Particle::Initialize(EngineCore* engineCore, uint32_t totalParticles) {
 
 	wvp_.Initialize(engineCore_->GetDirectXCommon(), totalParticles_);
 	material_.Initialize(engineCore_->GetDirectXCommon());
-	material_.materialData_->enableLighting = false;
+	//material_.materialData_->enableLighting = false;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = DXGI_FORMAT_UNKNOWN;

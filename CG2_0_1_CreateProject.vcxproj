@@ -221,6 +221,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Building.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Bulllet.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Enemy.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.cpp" />

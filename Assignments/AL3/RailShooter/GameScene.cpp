@@ -25,6 +25,8 @@ GameScene::~GameScene() {
 }
 
 void GameScene::Initialize() {
+	buillds_.Init(engineCore_);
+
 	skyDome_.Initialize(engineCore_);
 	camera_.Initialize(engineCore_->GetWinApp());
 
@@ -103,6 +105,8 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	buillds_.Update();
+
 	lockOn_.ResetTargets();
 
 	/*groundModel_.transform_ = groundTransform_;
@@ -307,6 +311,7 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	buillds_.Draw(&camera_);
 	playerHitPoint_.Draw(&camera_);
 	shieldBar_.Draw(&camera_);
 #ifdef _DEBUG
