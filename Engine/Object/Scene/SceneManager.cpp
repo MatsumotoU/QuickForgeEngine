@@ -9,7 +9,8 @@
 static char saveFileName[256] = "";
 static int selectedIndex = -1;
 
-#include "Script/LuaScriptGenerator.h"
+#include "Script/Lua/LuaScriptGenerator.h"
+
 static char newLuaFileName[128] = "NewScript.lua";
 static std::string lastCreatedLuaPath;
 static bool showCreateResult = false;

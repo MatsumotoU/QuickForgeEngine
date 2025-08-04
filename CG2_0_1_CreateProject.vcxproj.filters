@@ -129,7 +129,7 @@
     <ClCompile Include="Engine\Base\DirectX\DirectionalLightResource.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Sprite\Sprite.cpp">
+    <ClCompile Include="Engine\Object\Sprite\Sprite.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Audio\XAudioCore.cpp">
@@ -147,13 +147,13 @@
     <ClCompile Include="Engine\Audio\MultiAudioLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Camera\Camera.cpp">
+    <ClCompile Include="Engine\Object\Camera\Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Camera\DebugCamera.cpp">
+    <ClCompile Include="Engine\Object\Camera\DebugCamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Model\Model.cpp">
+    <ClCompile Include="Engine\Object\Model\Model.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\EngineCore.cpp">
@@ -222,7 +222,7 @@
     <ClCompile Include="Engine\Math\MyRandomNum.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Particle\Particle.cpp">
+    <ClCompile Include="Engine\Object\Particle\Particle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Utility\SimpleJson.cpp">
@@ -246,7 +246,7 @@
     <ClCompile Include="Engine\Utility\MyGameMath.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Model\Billboard.cpp">
+    <ClCompile Include="Engine\Object\Model\Billboard.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Utility\MyEasing.cpp">
@@ -255,7 +255,7 @@
     <ClCompile Include="Engine\Audio\AudioResourceManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\String\StringLiblary.cpp">
+    <ClCompile Include="Engine\Utility\StringLiblary.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Audio\AudioSourceBinder.cpp">
@@ -282,31 +282,31 @@
     <ClCompile Include="Engine\Base\DirectX\RendaringPostprocess.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Sprite\FullScreenSprite.cpp">
+    <ClCompile Include="Engine\Object\Sprite\FullScreenSprite.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Utility\FileExtension.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\String\FontDrawer.cpp">
+    <ClCompile Include="Engine\Object\Font\FontDrawer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Audio\Base\SpeakerVolumeMonitor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\String\FontLoader.cpp">
+    <ClCompile Include="Engine\Object\Font\FontLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\String\Font.cpp">
+    <ClCompile Include="Engine\Object\Font\Font.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Scene\SceneManager.cpp">
+    <ClCompile Include="Engine\Object\Scene\SceneManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Scene\SceneObject.cpp">
+    <ClCompile Include="Engine\Object\Scene\SceneObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderReflection.cpp">
@@ -318,7 +318,7 @@
     <ClCompile Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Model\AssimpModelLoader.cpp">
+    <ClCompile Include="Engine\Object\Model\AssimpModelLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
@@ -336,13 +336,13 @@
     <ClCompile Include="Engine\Base\DirectX\ImGuiNode.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Script\LuaScriptManager.cpp">
+    <ClCompile Include="Engine\Object\Script\Lua\LuaScriptManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Script\ILuaScript.cpp">
+    <ClCompile Include="Engine\Object\Script\Lua\ILuaScript.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Script\GameObjectLuaScript.cpp">
+    <ClCompile Include="Engine\Object\Script\Lua\GameObjectLuaScript.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\Asset\Asset.cpp">
@@ -351,10 +351,10 @@
     <ClCompile Include="Engine\Object\Asset\AssetManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Scene\SceneGameObjectGenerator.cpp">
+    <ClCompile Include="Engine\Object\Scene\SceneGameObjectGenerator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Script\LuaCallFiles.cpp">
+    <ClCompile Include="Engine\Object\Script\Lua\LuaCallFiles.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -443,7 +443,7 @@
     <ClInclude Include="Engine\Base\MyDebugLog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Model\ModelData.h">
+    <ClInclude Include="Engine\Object\Model\ModelData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\MaterialData.h">
@@ -485,7 +485,7 @@
     <ClInclude Include="Engine\Base\DirectX\DirectionalLightResource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Sprite\Sprite.h">
+    <ClInclude Include="Engine\Object\Sprite\Sprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Audio\XAudioCore.h">
@@ -515,13 +515,13 @@
     <ClInclude Include="Engine\Audio\MultiAudioLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Camera\Camera.h">
+    <ClInclude Include="Engine\Object\Camera\Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Camera\DebugCamera.h">
+    <ClInclude Include="Engine\Object\Camera\DebugCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Model\Model.h">
+    <ClInclude Include="Engine\Object\Model\Model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\EngineCore.h">
@@ -596,7 +596,7 @@
     <ClInclude Include="Engine\Math\MyRandomNum.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Particle\Particle.h">
+    <ClInclude Include="Engine\Object\Particle\Particle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h">
@@ -623,19 +623,19 @@
     <ClInclude Include="Engine\Utility\MyGameMath.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Model\Billboard.h">
+    <ClInclude Include="Engine\Object\Model\Billboard.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Utility\MyEasing.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\String\FontDrawer.h">
+    <ClInclude Include="Engine\Object\Font\FontDrawer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Audio\AudioResourceManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\String\StringLiblary.h">
+    <ClInclude Include="Engine\Utility\StringLiblary.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Audio\AudioSourceBinder.h">
@@ -665,7 +665,7 @@
     <ClInclude Include="Engine\Base\DirectX\RendaringPostprocess.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Sprite\FullScreenSprite.h">
+    <ClInclude Include="Engine\Object\Sprite\FullScreenSprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\OffsetBuffer.h">
@@ -680,7 +680,7 @@
     <ClInclude Include="Engine\Utility\FileExtension.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Particle\ParticleForGPU.h">
+    <ClInclude Include="Engine\Object\Particle\ParticleForGPU.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\PrimitiveVertexData.h">
@@ -695,13 +695,13 @@
     <ClInclude Include="Engine\Object\ColorCorrectionOffset.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\String\FontStructures.h">
+    <ClInclude Include="Engine\Object\Font\FontStructures.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\String\FontLoader.h">
+    <ClInclude Include="Engine\Object\Font\FontLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\String\Font.h">
+    <ClInclude Include="Engine\Object\Font\Font.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.h">
@@ -710,19 +710,19 @@
     <ClInclude Include="Engine\Utility\MyRandom.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\String\GlyphForGPU.h">
+    <ClInclude Include="Engine\Object\Font\GlyphForGPU.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\StructuredBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Scene\IScene.h">
+    <ClInclude Include="Engine\Object\Scene\IScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Scene\SceneObject.h">
+    <ClInclude Include="Engine\Object\Scene\SceneObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Scene\SceneManager.h">
+    <ClInclude Include="Engine\Object\Scene\SceneManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\Rendering\ShaderReflection.h">
@@ -740,7 +740,7 @@
     <ClInclude Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Model\AssimpModelLoader.h">
+    <ClInclude Include="Engine\Object\Model\AssimpModelLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h">
@@ -1184,16 +1184,16 @@
     <ClInclude Include="externals\lua\lzio.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Script\LuaScriptManager.h">
+    <ClInclude Include="Engine\Object\Script\Lua\LuaScriptManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Script\ILuaScript.h">
+    <ClInclude Include="Engine\Object\Script\Lua\ILuaScript.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Script\GameObjectLuaScript.h">
+    <ClInclude Include="Engine\Object\Script\Lua\GameObjectLuaScript.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Script\LuaScriptGenerator.h">
+    <ClInclude Include="Engine\Object\Script\Lua\LuaScriptGenerator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Asset\Asset.h">
@@ -1202,10 +1202,10 @@
     <ClInclude Include="Engine\Object\Asset\AssetManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Scene\SceneGameObjectGenerator.h">
+    <ClInclude Include="Engine\Object\Scene\SceneGameObjectGenerator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Script\LuaCallFiles.h">
+    <ClInclude Include="Engine\Object\Script\Lua\LuaCallFiles.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

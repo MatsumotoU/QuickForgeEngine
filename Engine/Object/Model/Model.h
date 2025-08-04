@@ -4,7 +4,7 @@
 #include "ModelData.h"
 #include "AssimpModelLoader.h"
 #include "Object/BaseGameObject.h"
-#include "../Base/DirectX/PipelineStateObject.h"
+#include "Base/DirectX/PipelineStateObject.h"
 
 #include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
 #include "Base/DirectX/Resource/ShaderBuffers/VertexBuffer.h"

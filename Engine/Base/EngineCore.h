@@ -85,8 +85,8 @@
 // Scene
 #include "Scene/SceneManager.h"
 
-#include "Script/LuaScriptManager.h"
-#include "Script/LuaCallFiles.h"
+#include "Script/Lua/LuaScriptManager.h"
+#include "Script/Lua/LuaCallFiles.h"
 // TODO: ビルドツールpremakeの導入 
 
 #include <chrono>

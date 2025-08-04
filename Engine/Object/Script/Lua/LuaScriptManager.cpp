@@ -2,7 +2,7 @@
 #pragma comment(lib, "Lua.lib")
 
 #include "Object/BaseGameObject.h"
-#include "Script/GameObjectLuaScript.h"
+#include "GameObjectLuaScript.h"
 
 #ifdef _DEBUG
 #include "Base/MyDebugLog.h"

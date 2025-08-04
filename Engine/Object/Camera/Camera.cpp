@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include <cassert>
-#include "../Base/Windows/WinApp.h"
+#include "Base/Windows/WinApp.h"
 
 Camera::Camera() {
 	transform_ = {};

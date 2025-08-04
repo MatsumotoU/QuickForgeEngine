@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "../Math/VerTexData.h"
-#include "../Math/MaterialData.h"
+#include "Math/VerTexData.h"
+#include "Math/MaterialData.h"
 
 enum CoordinateSystem
 {

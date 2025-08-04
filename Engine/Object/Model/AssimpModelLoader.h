@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "Model/ModelData.h"
+#include "ModelData.h"
 
 class AssimpModelLoader {
 public:

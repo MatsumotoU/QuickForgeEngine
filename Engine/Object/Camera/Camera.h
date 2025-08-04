@@ -1,9 +1,9 @@
 #pragma once
-#include "../Math/Transform.h"
-#include "../Math/Matrix/Matrix4x4.h"
+#include "Math/Transform.h"
+#include "Math/Matrix/Matrix4x4.h"
 
-#include "../Base/DirectX/ScissorRect.h"
-#include "../Base/DirectX/Viewport.h"
+#include "Base/DirectX/ScissorRect.h"
+#include "Base/DirectX/Viewport.h"
 
 class WinApp;
 

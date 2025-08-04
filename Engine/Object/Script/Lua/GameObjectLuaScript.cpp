@@ -9,7 +9,7 @@
 #include "Scene/SceneManager.h"
 #include "Object/Asset/AssetManager.h"
 #include "Scene/SceneGameObjectGenerator.h"
-#include "Script/LuaCallFiles.h"
+#include "Script/Lua/LuaCallFiles.h"
 
 GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engineCore) {
 	obj_ = obj;
