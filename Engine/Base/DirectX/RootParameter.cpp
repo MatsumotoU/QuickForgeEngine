@@ -2,7 +2,7 @@
 #include <cassert>
 
 #ifdef _DEBUG
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #include "Base/DirectX/DirectXStructToString.h"
 #endif // _DEBUG
 

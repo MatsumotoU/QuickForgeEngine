@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
 
-struct MaterialData {
+struct ModelMaterialData {
 	std::string textureFilePath;
 };

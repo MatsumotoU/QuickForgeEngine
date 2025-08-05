@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #ifdef _DEBUG
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 std::string FileLoader::ReadFile(const std::string& filePath) {

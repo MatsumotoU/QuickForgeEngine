@@ -1,6 +1,6 @@
 #include "WinAppDebugCore.h"
-#include "../MyDebugLog.h"
-#include "../MyString.h"
+#include "Utility/MyDebugLog.h"
+#include "Utility/MyString.h"
 
 #pragma comment(lib,"Dbghelp.lib")
 

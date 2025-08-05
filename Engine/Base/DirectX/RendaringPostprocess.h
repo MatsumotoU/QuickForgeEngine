@@ -1,9 +1,9 @@
 #pragma once
 class EngineCore;
 #include "Sprite/Sprite.h"
-#include "Object/OffsetBuffer.h"
-#include "Object/VignetteOffset.h"
-#include "Object/ColorCorrectionOffset.h"
+#include "Shaders/StructsForGpu/OffsetBuffer.h"
+#include "Shaders/StructsForGpu/VignetteOffset.h"
+#include "Shaders/StructsForGpu/ColorCorrectionOffset.h"
 
 #include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
 

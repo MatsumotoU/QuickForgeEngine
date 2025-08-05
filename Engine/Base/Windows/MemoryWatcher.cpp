@@ -3,7 +3,7 @@
 
 #ifdef _DEBUG
 #include "Base/DirectX/ImGuiManager.h"
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 MemoryWatcher::MemoryWatcher() {

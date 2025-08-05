@@ -1,6 +1,8 @@
 #include "CollisionManager.h"
 
-#include "../Base/MyDebugLog.h"
+#ifdef _DEBUG
+#include "Utility/MyDebugLog.h"
+#endif // _DEBUG
 
 void CollisionManager::Initalize() {
 	colliders_.clear();

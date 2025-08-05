@@ -1,7 +1,7 @@
 #include "SimpleJson.h"
 
 #ifdef _DEBUG
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 nlohmann::json SJN::LoadJsonData(const std::string& groupName) {

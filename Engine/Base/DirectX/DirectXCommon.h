@@ -7,7 +7,7 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 
-#include "../MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 
 class WinApp;
 

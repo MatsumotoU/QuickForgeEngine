@@ -1,10 +1,12 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
-#include "Math/PrimitiveVertexData.h"
+#include "Shaders/StructsForGpu/PrimitiveVertexData.h"
 
-#include "Base/DirectX/MaterialResource.h"
-#include "Base/DirectX/WVPResource.h"
+#include "Shaders/StructsForGpu/Material.h"
+#include "Shaders/StructsForGpu/TransformationMatrix.h"
+
+#include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
 
 class EngineCore;
 class PipelineStateObject;
@@ -62,8 +64,8 @@ private:
 	uint32_t pointCount_;
 
 private:
-	WVPResource wvpResource_;
-	MaterialResource materialResource_;
+	ConstantBuffer<TransformationMatrix> wvp_;
+	ConstantBuffer<Material> material_;
 
 private:
 	// 三角形の頂点データ

@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <dxgidebug.h>
 #include<dxgi1_3.h>
-#include "../MyString.h"
+#include "Utility/MyString.h"
 
 class D3DResourceLeakChecker final {
 public:

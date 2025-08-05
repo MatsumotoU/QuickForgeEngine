@@ -1,7 +1,7 @@
 #include "MyTimer.h"
 
 #ifdef _DEBUG
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 MyTimer::~MyTimer() {

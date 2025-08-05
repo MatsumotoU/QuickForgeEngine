@@ -5,8 +5,6 @@
 #include "../Base/DirectX/DepthStencil.h"
 
 #include "../Camera/Camera.h"
-
-#include "Particle/ParticleForGPU.h"
 #include "Model/AssimpModelLoader.h"
 
 // インスタンスの総数初期化
@@ -20,20 +18,8 @@ void Particle::Initialize(EngineCore* engineCore, uint32_t totalParticles) {
 	totalParticles_ = totalParticles;
 	engineCore_ = engineCore;
 
-	wvp_.Initialize(engineCore_->GetDirectXCommon(), totalParticles_,true);
-	material_.Initialize(engineCore_->GetDirectXCommon());
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	srvDesc.Buffer.FirstElement = 0;
-	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = totalParticles;
-	srvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
-
-	instancingSrvHandles_ = engineCore_->GetSrvDescriptorHeap()->AssignEmptyArrayHandles();
-	engineCore_->GetSrvDescriptorHeap()->AssignHeap(wvp_.GetWVPResource(), srvDesc, instancingSrvHandles_.cpuHandle_);
+	wvp_.CreateResource(engineCore->GetDirectXCommon(), engineCore->GetSrvDescriptorHeap(), totalParticles);
+	material_.CreateResource(engineCore->GetDirectXCommon()->GetDevice());
 
 	pso_ = engineCore_->GetGraphicsCommon()->GetParticlePso(kBlendModeNormal);
 }
@@ -69,8 +55,8 @@ void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* col
 	for (uint32_t index = 0; index < transform->size(); index++) {
 		Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix((*transform)[index].scale, (*transform)[index].rotate, (*transform)[index].translate);
 		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE);
-		wvp_.SetWorldMatrix(worldMatrix, index);
-		wvp_.SetWVPMatrix(wvpMatrix, index);
+		wvp_.GetData()[index].WVP = wvpMatrix;
+		wvp_.GetData()[index].World = worldMatrix;
 	}
 
 	// 単一メッシュ前提
@@ -80,7 +66,7 @@ void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* col
 	const auto& mesh = modelData_.meshes[0];
 
 	for (uint32_t index = 0; index < color->size(); index++) {
-		wvp_.particleData_[index].color = (*color)[index];
+		wvp_.GetData()[index].color = (*color)[index];
 	}
 	
 	DirectXCommon* dxCommon_ = engineCore_->GetDirectXCommon();
@@ -92,8 +78,8 @@ void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* col
 	commandList->SetPipelineState(pso_->GetPipelineState());
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, material_.GetMaterial()->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandles_.gpuHandle_);
+	commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(1, wvp_.GetInstancingSrvHandles().gpuHandle_);
 	commandList->SetGraphicsRootDescriptorTable(2, engineCore_->GetTextureManager()->GetTextureSrvHandleGPU(modelTextureHandle_));
 	commandList->DrawInstanced(static_cast<UINT>(mesh.vertices.size()), totalParticles_, 0, 0);
 }

@@ -2,7 +2,7 @@
 #define NOMINMAX
 
 #ifdef _DEBUG
-#include "MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 // 現状ないと動かないコアたち
@@ -32,27 +32,28 @@
 #include "Audio/Chiptune.h"
 #include "Audio/MusicalScale.h"
 
+// バッファー
+#include "DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
+#include "DirectX/Resource/ShaderBuffers/StructuredBuffer.h"
+#include "DirectX/Resource/ShaderBuffers/VertexBuffer.h"
+
 // 入力機能
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Input/XInput/XInputController.h"
 
-// Resorce
-#include "DirectX/MaterialResource.h"
-#include "DirectX/WVPResource.h"
-#include "DirectX/DirectionalLightResource.h"
 // Math
 #include "Math/Matrix/Matrix3x3.h"
 #include "Math/Transform.h"
-#include "Math/VerTexData.h"
-#include "Math/TransformationMatrix.h"
+#include "Shaders/StructsForGpu/VerTexData.h"
+#include "Shaders/StructsForGpu/TransformationMatrix.h"
 #include "Utility/MyGameMath.h"
 #include "Utility/MyEasing.h"
 
 // Object
-#include "Object/DirectionalLight.h"
-#include "Object/Material.h"
+#include "Shaders/StructsForGpu/DirectionalLight.h"
+#include "Shaders/StructsForGpu/Material.h"
 // Debug
-#include "Base/MyString.h"
+#include "Utility/MyString.h"
 #include "Sprite/Sprite.h"
 // Audio
 #include "Audio/AudioEmitter.h"

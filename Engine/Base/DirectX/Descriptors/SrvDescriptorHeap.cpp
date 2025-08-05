@@ -2,7 +2,7 @@
 #include "../DirectXCommon.h"
 
 #ifdef _DEBUG
-#include "../../MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #include "../ImGuiManager.h"
 #endif // _DEBUG
 

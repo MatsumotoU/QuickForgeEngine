@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "SoundData.h"
-#include "Base/MyString.h"
+#include "Utility/MyString.h"
 
 #pragma comment(lib, "Mf.lib")
 #pragma comment(lib, "mfplat.lib")

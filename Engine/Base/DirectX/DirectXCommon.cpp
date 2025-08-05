@@ -1,5 +1,5 @@
 #include "DirectXCommon.h"
-#include "../MyString.h"
+#include "Utility/MyString.h"
 
 #include <cassert>
 #pragma comment(lib,"d3d12.lib")

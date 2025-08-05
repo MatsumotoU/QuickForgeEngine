@@ -2,7 +2,7 @@
 #include "../DirectXCommon.h"
 
 #ifdef _DEBUG
-#include "../../MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 // TODO: メモリ領域の可視化

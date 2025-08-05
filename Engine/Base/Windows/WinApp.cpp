@@ -6,7 +6,7 @@ WinApp* WinApp::gWinApp_ = nullptr;
 #include "../../../externals/imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-#include "Base/MyString.h"
+#include "Utility/MyString.h"
 #endif // _DEBUG
 
 WinApp::WinApp() {

@@ -72,7 +72,7 @@
     <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderCompiler.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\MyString.cpp">
+    <ClCompile Include="Engine\Utility\MyString.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Math\Matrix\Matrix2x2.cpp">
@@ -105,7 +105,7 @@
     <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\MyDebugLog.cpp">
+    <ClCompile Include="Engine\Utility\MyDebugLog.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\DirectX\Viewport.cpp">
@@ -118,15 +118,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\Windows\WinAppDebugCore.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\WVPResource.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\MaterialResource.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\DirectionalLightResource.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\Sprite\Sprite.cpp">
@@ -282,9 +273,6 @@
     <ClCompile Include="Engine\Base\DirectX\RendaringPostprocess.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Sprite\FullScreenSprite.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Utility\FileExtension.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -398,7 +386,7 @@
     <ClInclude Include="Engine\Base\DirectX\Rendering\ShaderCompiler.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\MyString.h">
+    <ClInclude Include="Engine\Utility\MyString.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\Windows\WinApp.h">
@@ -434,19 +422,19 @@
     <ClInclude Include="Engine\Base\DirectX\TextureManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\VerTexData.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\VerTexData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\DepthStencil.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\MyDebugLog.h">
+    <ClInclude Include="Engine\Utility\MyDebugLog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Model\ModelData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\MaterialData.h">
+    <ClInclude Include="Engine\Object\Model\ModelMaterialData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\Windows\CrashHandler.h">
@@ -467,22 +455,13 @@
     <ClInclude Include="Engine\Base\Windows\WinAppDebugCore.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\TransformationMatrix.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\TransformationMatrix.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Material.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\Material.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\DirectionalLight.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\WVPResource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\MaterialResource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\DirectionalLightResource.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\DirectionalLight.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Sprite\Sprite.h">
@@ -665,13 +644,10 @@
     <ClInclude Include="Engine\Base\DirectX\RendaringPostprocess.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Sprite\FullScreenSprite.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\OffsetBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\OffsetBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\VignetteOffset.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\VignetteOffset.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Utility\IntrusiveList.h">
@@ -680,10 +656,10 @@
     <ClInclude Include="Engine\Utility\FileExtension.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Particle\ParticleForGPU.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\ParticleForGPU.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\PrimitiveVertexData.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\PrimitiveVertexData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\ConstantBuffer.h">
@@ -692,7 +668,7 @@
     <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\ColorCorrectionOffset.h">
+    <ClInclude Include="Engine\Shaders\StructsForGpu\ColorCorrectionOffset.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Font\FontStructures.h">

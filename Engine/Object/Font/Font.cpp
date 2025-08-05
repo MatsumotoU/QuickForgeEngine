@@ -1,7 +1,7 @@
 #include "Font.h"
 #include "Base/EngineCore.h"
 #include "Camera/Camera.h"
-#include "Base/MyString.h"
+#include "Utility/MyString.h"
 
 void Font::Initialize(const std::string& fontFilePath, float fontSize) {
 	// フォントに使うリソース読み込み

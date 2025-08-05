@@ -1,5 +1,5 @@
 #pragma once
-#include "Matrix/Matrix4x4.h"
+#include "Math/Matrix/Matrix4x4.h"
 
 struct alignas(16) TransformationMatrix {
 	Matrix4x4 WVP;

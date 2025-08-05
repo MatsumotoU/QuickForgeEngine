@@ -3,7 +3,7 @@
 #include "Model/Model.h"
 
 #ifdef _DEBUG
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 SceneObject::SceneObject(EngineCore* enginecore, const std::string& sceneName) 
