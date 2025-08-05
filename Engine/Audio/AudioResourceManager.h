@@ -3,7 +3,7 @@
 #include <vector>
 #include <xaudio2.h>
 #include "SoundData.h"
-#include "String/StringLiblary.h"
+#include "Utility/StringLiblary.h"
 
 class EngineCore;
 

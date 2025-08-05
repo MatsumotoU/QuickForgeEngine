@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 #include "Math/Vector/Vector2.h"
-#include "../../../externals/DirectXTex/d3dx12.h"
-#include "../../../externals/DirectXTex/DirectXTex.h"
-#include "String/StringLiblary.h"
+#include "../externals/DirectXTex/d3dx12.h"
+#include "../externals/DirectXTex/DirectXTex.h"
+#include "Utility/StringLiblary.h"
 
 class DirectXCommon;
 class SrvDescriptorHeap;

@@ -76,8 +76,8 @@
 #include "Utility/FileExtension.h"
 
 // String
-#include "String/StringLiblary.h"
-#include "String/FontDrawer.h"
+#include "Utility/StringLiblary.h"
+#include "Font/FontDrawer.h"
 
 // GraphRenderer
 #include "DirectX/GraphRenderer.h"
