@@ -1,1 +1,10 @@
-null
+{
+    "AudioDataDB": true,
+    "AudioSourceDB": true,
+    "FpsDB": true,
+    "MemoryDB": true,
+    "PerformanceDB": true,
+    "PostprocessDB": true,
+    "StartScene": "LastScriptRunScene",
+    "SystemSoundVolume": 0.30000001192092896
+}
