@@ -1,8 +1,8 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
-#include "Math/VerTexData.h"
-#include "Math/PrimitiveVertexData.h"
+#include "Shaders/StructsForGpu/VerTexData.h"
+#include "Shaders/StructsForGpu/PrimitiveVertexData.h"
 
 #include <cassert>
 

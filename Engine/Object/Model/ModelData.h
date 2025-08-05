@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "Math/VerTexData.h"
-#include "Math/MaterialData.h"
+#include "Shaders/StructsForGpu/VerTexData.h"
+#include "ModelMaterialData.h"
 
 enum CoordinateSystem
 {
@@ -11,7 +11,7 @@ enum CoordinateSystem
 
 struct MeshData {
 	std::vector<VertexData> vertices;
-	MaterialData material;
+	ModelMaterialData material;
 };
 
 struct ModelData {

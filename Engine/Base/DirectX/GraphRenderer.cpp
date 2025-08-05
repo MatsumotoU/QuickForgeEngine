@@ -35,9 +35,11 @@ void GraphRenderer::Initialize(EngineCore* engineCore) {
 	pointVertexData_ = nullptr;
 	pointVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointVertexData_));
 
-	wvpResource_.Initialize(engineCore_->GetDirectXCommon(), 1);
-	materialResource_.Initialize(engineCore_->GetDirectXCommon());
-	materialResource_.materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	wvp_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
+	material_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
+
+	wvp_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
+	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void GraphRenderer::PreDraw() {
@@ -69,7 +71,7 @@ void GraphRenderer::PreDraw() {
 	// カメラのワールドビュー投影行列を設定
 	if (camera_) {
 		assert(camera_);
-		wvpResource_.SetWVPMatrix(camera_->MakeWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(), CAMERA_VIEW_STATE_PERSPECTIVE), 0);
+		wvp_.GetData()->WVP = camera_->MakeWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(), CAMERA_VIEW_STATE_PERSPECTIVE);
 	}
 }
 
@@ -99,8 +101,8 @@ void GraphRenderer::PostDraw() {
 
 		commandList->SetGraphicsRootSignature(trianglePso_->GetRootSignature());
 		commandList->SetPipelineState(trianglePso_->GetPipelineState());
-		commandList->SetGraphicsRootConstantBufferView(0, materialResource_.GetMaterial()->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootConstantBufferView(1, wvpResource_.GetWVPResource()->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		commandList->IASetVertexBuffers(0, 1, &triangleVertexBufferView_);
 		commandList->DrawInstanced(triangleCount_ * 3, 1, 0, 0);
@@ -112,8 +114,8 @@ void GraphRenderer::PostDraw() {
 
 		commandList->SetGraphicsRootSignature(linePso_->GetRootSignature());
 		commandList->SetPipelineState(linePso_->GetPipelineState());
-		commandList->SetGraphicsRootConstantBufferView(0, materialResource_.GetMaterial()->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootConstantBufferView(1, wvpResource_.GetWVPResource()->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 		commandList->IASetVertexBuffers(0, 1, &lineVertexBufferView_);
 		commandList->DrawInstanced(lineCount_ * 2, 1, 0, 0);
@@ -125,8 +127,8 @@ void GraphRenderer::PostDraw() {
 
 		commandList->SetGraphicsRootSignature(pointPso_->GetRootSignature());
 		commandList->SetPipelineState(pointPso_->GetPipelineState());
-		commandList->SetGraphicsRootConstantBufferView(0, materialResource_.GetMaterial()->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootConstantBufferView(1, wvpResource_.GetWVPResource()->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 		commandList->IASetVertexBuffers(0, 1, &pointVertexBufferView_);
 		commandList->DrawInstanced(pointCount_, 1, 0, 0);

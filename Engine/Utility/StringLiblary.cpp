@@ -2,7 +2,7 @@
 
 #ifdef _DEBUG
 #include "Base/EngineCore.h"
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 StringLiblary::StringLiblary() {

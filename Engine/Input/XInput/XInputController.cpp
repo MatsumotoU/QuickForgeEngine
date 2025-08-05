@@ -2,7 +2,7 @@
 #pragma comment(lib, "Xinput.lib")
 
 #ifdef _DEBUG
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 #include <assert.h>

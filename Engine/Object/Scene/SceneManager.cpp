@@ -3,7 +3,7 @@
 #include <utility>
 #include "Utility/FileLoader.h"
 #ifdef _DEBUG
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 static char saveFileName[256] = "";

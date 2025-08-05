@@ -9,9 +9,9 @@
 #include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
 #include "Base/DirectX/Resource/ShaderBuffers/VertexBuffer.h"
 
-#include "Math/TransformationMatrix.h"
-#include "Object/Material.h"
-#include "Object/DirectionalLight.h"
+#include "Shaders/StructsForGpu/TransformationMatrix.h"
+#include "Shaders/StructsForGpu/Material.h"
+#include "Shaders/StructsForGpu/DirectionalLight.h"
 
 // .USD 色々読めるモデルデータ
 

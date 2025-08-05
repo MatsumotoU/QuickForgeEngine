@@ -5,9 +5,9 @@
 
 #include "Object/BaseGameObject.h"
 
-#include "Math/TransformationMatrix.h"
-#include "Object/Material.h"
-#include "Object/DirectionalLight.h"
+#include "Shaders/StructsForGpu/TransformationMatrix.h"
+#include "Shaders/StructsForGpu/Material.h"
+#include "Shaders/StructsForGpu/DirectionalLight.h"
 
 #include "Base/DirectX/Resource/ShaderBuffers/VertexBuffer.h"
 #include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"

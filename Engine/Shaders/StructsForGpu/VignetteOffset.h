@@ -1,5 +1,5 @@
 #pragma once
-#include "../Math/Vector/Vector2.h"
+#include "Math/Vector/Vector2.h"
 
 struct alignas(16) VignetteOffset {
 	Vector2 screenResolution; // スクリーンの解像度

@@ -1,7 +1,7 @@
 #include "TextureManager.h"
 #include <cassert>
 
-#include "../MyString.h"
+#include "Utility/MyString.h"
 #include "DirectXCommon.h"
 #include "ImGuiManager.h"
 
@@ -9,7 +9,7 @@
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
-#include "Base/MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvDescriptorHeap) {
