@@ -190,11 +190,12 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /D BUILD_USER="\"$(USERNAME)\""
+/D BUILD_MACHINE="\"$(COMPUTERNAME)\""  /D BUILD_CONFIG="\"$(Configuration)\""  /D BUILD_PLATFORM="\"$(Platform)\"" %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -204,8 +205,13 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>  call "$(ProjectDir)GenerateBuildInfo.bat"
+  </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">
     <ClCompile>
@@ -214,11 +220,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /D BUILD_USER="\"$(USERNAME)\""
+/D BUILD_MACHINE="\"$(COMPUTERNAME)\""  /D BUILD_CONFIG="\"$(Configuration)\""  /D BUILD_PLATFORM="\"$(Platform)\"" %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -226,8 +233,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>  call "$(ProjectDir)GenerateBuildInfo.bat"
+  </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -238,10 +250,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /D BUILD_USER="\"$(USERNAME)\""
+/D BUILD_MACHINE="\"$(COMPUTERNAME)\""  /D BUILD_CONFIG="\"$(Configuration)\""  /D BUILD_PLATFORM="\"$(Platform)\"" %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -253,8 +266,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>  call "$(ProjectDir)GenerateBuildInfo.bat"
+  </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">
     <ClCompile>
@@ -265,10 +283,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /D BUILD_USER="\"$(USERNAME)\""
+/D BUILD_MACHINE="\"$(COMPUTERNAME)\""  /D BUILD_CONFIG="\"$(Configuration)\""  /D BUILD_PLATFORM="\"$(Platform)\"" %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -278,8 +297,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>  call "$(ProjectDir)GenerateBuildInfo.bat"
+  </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -291,6 +315,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
     <None Include="externals\imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
+    <None Include="GenerateBuildInfo.bat" />
     <None Include="Resources\Scripts\types.d.lua" />
   </ItemGroup>
   <ItemGroup>

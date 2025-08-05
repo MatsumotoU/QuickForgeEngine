@@ -1,7 +1,7 @@
 #include "FramePerSecond.h"
 
 #ifdef _DEBUG
-#include "../MyDebugLog.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
 void FramePerSecond::Initialize() {
