@@ -467,6 +467,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Colliders\CollisionManager.h" />
     <ClInclude Include="Engine\Math\MyMath.h" />
     <ClInclude Include="Engine\Math\MyRandomNum.h" />
+    <ClInclude Include="Engine\Object\Component\ComponentStrage.h" />
+    <ClInclude Include="Engine\Object\Component\CompornentStrage.h" />
+    <ClInclude Include="Engine\Object\Component\IComponentStrage.h" />
+    <ClInclude Include="Engine\Object\Entity\EntityManager.h" />
     <ClInclude Include="Engine\Shaders\StructsForGpu\PrimitiveVertexData.h" />
     <ClInclude Include="Engine\Math\Quaternion\Quaternion.h" />
     <ClInclude Include="Engine\Object\Model\AssimpModelLoader.h" />
