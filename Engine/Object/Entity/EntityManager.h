@@ -1,5 +1,6 @@
 #pragma once
 #include "Object/Component/ComponentStrage.h"
+#include <stdexcept>
 
 class EntityManager final {
 private:
@@ -11,14 +12,14 @@ public:
 		return nextEntityId_++;
 	}
 
-	template <typename T>
-	void AddComponent(uint32_t id, const T& component) {
+	template <typename T, typename... Args>
+	void EmplaceComponent(uint32_t id, Args&&... args) {
 		size_t typeId = typeid(T).hash_code();
 		if (componentStrages.find(typeId) == componentStrages.end()) {
 			componentStrages[typeId] = std::make_unique<ComponentStrage<T>>();
 		}
 		auto& strage = static_cast<ComponentStrage<T>&>(*componentStrages[typeId]);
-		strage.AddComponent(id, component);
+		strage.AddComponent(id, T(std::forward<Args>(args)...));
 	}
 
 	template <typename T>
@@ -47,5 +48,15 @@ public:
 			return static_cast<const ComponentStrage<T>&>(*componentStrages.at(typeId));
 		}
 		throw std::runtime_error("Component strage not found");
+	}
+
+	template <typename T>
+	bool HasComponent(uint32_t id) const {
+		size_t typeId = typeid(T).hash_code();
+		if (componentStrages.find(typeId) != componentStrages.end()) {
+			const auto& strage = static_cast<const ComponentStrage<T>&>(*componentStrages.at(typeId));
+			return strage.HasComponent(id);
+		}
+		return false;
 	}
 };

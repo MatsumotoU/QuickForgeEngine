@@ -147,9 +147,6 @@
     <ClCompile Include="Engine\Object\Camera\DebugCamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Model\Model.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Base\EngineCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -216,9 +213,6 @@
     <ClCompile Include="Engine\Math\MyRandomNum.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Particle\Particle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Utility\SimpleJson.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -238,9 +232,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Utility\MyGameMath.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\Model\Billboard.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Utility\MyEasing.cpp">
@@ -309,7 +300,7 @@
     <ClCompile Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Model\AssimpModelLoader.cpp">
+    <ClCompile Include="Engine\Object\System\Model\BaseSys\AssimpModelLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
@@ -333,9 +324,6 @@
     <ClCompile Include="Engine\Object\Script\Lua\ILuaScript.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Script\Lua\GameObjectLuaScript.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Object\Asset\Asset.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -346,6 +334,30 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\Script\Lua\LuaCallFiles.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Model\AppSys\LoadModelForEntities.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Entity\AppSys\BindEntityParent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Entity\AppSys\TransformUpdate.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\Script\Lua\GameObjectLuaScript.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -434,10 +446,10 @@
     <ClInclude Include="Engine\Utility\MyDebugLog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Model\ModelData.h">
+    <ClInclude Include="Engine\Object\Structs\ModelData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Model\ModelMaterialData.h">
+    <ClInclude Include="Engine\Object\Structs\ModelMaterialData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\Windows\CrashHandler.h">
@@ -501,9 +513,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Camera\DebugCamera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Model\Model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\EngineCore.h">
@@ -578,9 +587,6 @@
     <ClInclude Include="Engine\Math\MyRandomNum.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Particle\Particle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -603,9 +609,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Utility\MyGameMath.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Model\Billboard.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Utility\MyEasing.h">
@@ -719,7 +722,7 @@
     <ClInclude Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Model\AssimpModelLoader.h">
+    <ClInclude Include="Engine\Object\System\Model\BaseSys\AssimpModelLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h">
@@ -1169,12 +1172,6 @@
     <ClInclude Include="Engine\Object\Script\Lua\ILuaScript.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Script\Lua\GameObjectLuaScript.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Script\Lua\LuaScriptGenerator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Object\Asset\Asset.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -1197,6 +1194,48 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Entity\EntityManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\Component\Data\TransformComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\DirectoryManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Model\AppSys\LoadModelForEntities.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\Component\Data\MeshComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\Component\Data\MaterialComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\Component\Data\ParentComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Entity\AppSys\BindEntityParent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Entity\AppSys\TransformUpdate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\Script\Lua\LuaScriptGenerator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\Script\Lua\GameObjectLuaScript.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -399,12 +399,12 @@ void EngineCore::DrawEngineMenu() {
 
 		// RedoUndo
 		ImGui::Spacing();
-		if (ImGui::Button("Undo")) {
+		/*if (ImGui::Button("Undo")) {
 			sceneManager_.RequestUndo();
 		}
 		if (ImGui::Button("Redo")) {
 			sceneManager_.RequestRedo();
-		}
+		}*/
 
 		ImGui::EndMainMenuBar();
 	}
@@ -474,25 +474,24 @@ void EngineCore::DrawEngineMenu() {
 		imageSize
 	);
 
-	// ギズモ描画
-	sceneManager_.DrawGizmo(currentGizmoOperation, currentGizmoMode, imageScreenPos, imageSize);
+	//// ギズモ描画
+	//sceneManager_.DrawGizmo(currentGizmoOperation, currentGizmoMode, imageScreenPos, imageSize);
 
-	// 画像上でクリックされたか判定
-	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-		ImVec2 mousePos = ImGui::GetMousePos();
-		// Image内の相対座標
-		float relX = (mousePos.x - imageScreenPos.x) / imageSize.x;
-		float relY = (mousePos.y - imageScreenPos.y) / imageSize.y;
-		// relX, relY: 0.0～1.0（画像内の正規化座標）
-		// ここで選択処理を呼ぶ
-		sceneManager_.PickObjectFromScreen(relX, relY);
-	}
+	//// 画像上でクリックされたか判定
+	//if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+	//	ImVec2 mousePos = ImGui::GetMousePos();
+	//	// Image内の相対座標
+	//	float relX = (mousePos.x - imageScreenPos.x) / imageSize.x;
+	//	float relY = (mousePos.y - imageScreenPos.y) / imageSize.y;
+	//	// relX, relY: 0.0～1.0（画像内の正規化座標）
+	//	// ここで選択処理を呼ぶ
+	//	sceneManager_.PickObjectFromScreen(relX, relY);
+	//}
 	
 	ImGui::End();
 
 	// * SceneObjectタブ * //
 	ImGui::Begin("SceneObjectViewer");
-	sceneManager_.DrawImGui();
 	ImGui::End();
 
 	//* Editタブ *//

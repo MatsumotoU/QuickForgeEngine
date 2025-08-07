@@ -14,17 +14,6 @@
 GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engineCore) {
 	obj_ = obj;
 
-	// Model型のバインド
-	GetLuaState().new_usertype<Model>("Model",
-		sol::no_constructor,
-		"GetModelFileName", &Model::GetModelFileName,
-		"SetBlendmode", &Model::SetBlendmode,
-		"LoadModel", &Model::LoadModel,
-		"Draw", &Model::Draw,
-		"Init", &Model::Init,
-		"Update", &Model::Update
-	);
-
 	// アセットマネージャー型のバインド
 	GetLuaState().new_usertype<AssetManager>("AssetManager",
 		sol::no_constructor,
@@ -32,22 +21,6 @@ GameObjectLuaScript::GameObjectLuaScript(BaseGameObject* obj, EngineCore* engine
 		"GetAssetFiles", &AssetManager::GetAssetFiles,
 		"AddAsset", &AssetManager::AddAsset,
 		"GetAsset", &AssetManager::GetAsset
-	);
-
-	// SceneObject型のバインド
-	GetLuaState().new_usertype<SceneObject>("SceneObject",
-		sol::no_constructor,
-		"GetGameObjects", [](SceneObject& self) -> std::vector<BaseGameObject*> {
-			std::vector<BaseGameObject*> result;
-			for (auto& obj : self.GetGameObjects()) {
-				result.push_back(obj.get());
-			}
-			return result;
-		},
-		"AddModel", &SceneObject::AddModel,
-		"DeleteModel", &SceneObject::DeleteModel,
-		"GetSceneName", &SceneObject::GetSceneName,
-		"AddObjectFromJson", &SceneObject::AddObjectFromJson
 	);
 
 	// BaseGameObject型のバインド（必要に応じて）

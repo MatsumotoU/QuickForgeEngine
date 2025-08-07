@@ -134,7 +134,7 @@ ILuaScript::ILuaScript() {
 		"MakeWvpVpMatrix", &Matrix3x3::MakeWvpVpMatrix
 	);
 	// Matrix4x4
-	luaState_.new_usertype<Matrix4x4>("Matrix4x4",
+	/*luaState_.new_usertype<Matrix4x4>("Matrix4x4",
 		sol::constructors<Matrix4x4()>(),
 		"Get", &Matrix4x4::Get,
 		"Set", &Matrix4x4::Set,
@@ -162,7 +162,7 @@ ILuaScript::ILuaScript() {
 		"MakePerspectiveFovMatrix", &Matrix4x4::MakePerspectiveFovMatrix,
 		"MakeOrthographicMatrix", &Matrix4x4::MakeOrthographicMatrix,
 		"MakeViewportMatrix", &Matrix4x4::MakeViewportMatrix
-	);
+	);*/
 
 #ifdef _DEBUG
 	luaState_.set_function("DebugLog", &DebugLogLua);

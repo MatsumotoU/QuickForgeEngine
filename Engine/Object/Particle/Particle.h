@@ -1,5 +1,5 @@
 #pragma once
-#include "../Model/ModelData.h"
+#include "Object/Structs/ModelData.h"
 #include "../Math/Transform.h"
 #include "../Base/DirectX/PipelineStateObject.h"
 #include "../Base/DirectX/Descriptors/SrvDescriptorHeap.h"
