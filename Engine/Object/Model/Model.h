@@ -1,8 +1,8 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
-#include "ModelData.h"
-#include "AssimpModelLoader.h"
+#include "Object/Structs/ModelData.h"
+//#include "AssimpModelLoader.h"
 #include "Object/BaseGameObject.h"
 #include "Base/DirectX/PipelineStateObject.h"
 

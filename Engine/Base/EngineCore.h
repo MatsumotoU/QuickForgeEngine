@@ -31,6 +31,8 @@
 #include "Audio/AudioPlayer.h"
 #include "Audio/Chiptune.h"
 #include "Audio/MusicalScale.h"
+// リソース管理
+#include "Utility/DirectoryManager.h"
 
 // バッファー
 #include "DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
@@ -62,8 +64,8 @@
 #include "Camera/DebugCamera.h"
 #include "Camera/Camera.h"
 // Model
-#include "Model/Model.h"
-#include "Model/Billboard.h"
+//#include "Model/Model.h"
+//#include "Model/Billboard.h"
 
 // 時間管理
 #include "Utility/MyTimer.h"
@@ -126,7 +128,6 @@ public:// エンジンの機能取得
 	XAudioCore* GetAudioManager();
 	Audio3D* GetAudio3D();
 	DirectInputManager* GetInputManager();
-	//Sprite* GetOffscreen();
 	FramePerSecond* GetFpsCounter();
 	RtvDescriptorHeap* GetRtvDescriptorHeap();
 	SrvDescriptorHeap* GetSrvDescriptorHeap();
@@ -140,8 +141,9 @@ public:// エンジンの機能取得
 	LoopStoper* GetLoopStopper();
 	LuaScriptManager* GetLuaScriptManager();
 	SceneManager* GetSceneManager();
-	std::string GetStartSceneFilePath() const { return startSceneFilePath_; }
+	const std::string& GetStartSceneFilePath() const { return startSceneFilePath_; }
 	LuaCallFiles* GetLuaCallFiles() { return &luaCallFiles_; }
+	const DirectoryManager& GetDirectoryManager() { return directoryManager_; }
 
 public:
 	 float GetDeltaTime();
@@ -171,6 +173,9 @@ private:// コア機能
 	LoopStoper loopStopper_;
 	SceneManager sceneManager_;
 	std::string startSceneFilePath_;
+
+private:// リソース管理
+	DirectoryManager directoryManager_;
 
 private:// 時間管理
 	FramePerSecond fpsCounter_;

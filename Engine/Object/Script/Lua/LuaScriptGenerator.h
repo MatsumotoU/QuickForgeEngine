@@ -15,8 +15,8 @@ public:
             "\tDebugLog(\"Update\")\n"
             "end\n\n"
             "function Collision()\n"
-            "\tDebugLog(\"IsHit\")"
-            "end\n\n";
+            "\tDebugLog(\"IsHit\")\n"
+            "end";
     }
 
     // ファイル名の重複を避けて新しいファイル名を生成

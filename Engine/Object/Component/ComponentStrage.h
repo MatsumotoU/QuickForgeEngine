@@ -2,11 +2,18 @@
 #include "IComponentStrage.h"
 #include <unordered_map>
 #include <memory>
+#include <stdexcept>
 
 template <typename T>
 class ComponentStrage : public IComponentStrage {
 private:
 	std::unordered_map<uint32_t, T> components;
+
+public:
+	auto begin() const { return components.begin(); }
+	auto end() const { return components.end(); }
+	auto begin() { return components.begin(); }
+	auto end() { return components.end(); }
 
 public:
 	void AddComponent(uint32_t id, const T& component) {

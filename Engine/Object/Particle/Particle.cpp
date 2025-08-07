@@ -5,7 +5,7 @@
 #include "../Base/DirectX/DepthStencil.h"
 
 #include "../Camera/Camera.h"
-#include "Model/AssimpModelLoader.h"
+#include "Object/System/Model/BaseSys/AssimpModelLoader.h"
 
 // インスタンスの総数初期化
 uint32_t Particle::instanceCount_ = 0;

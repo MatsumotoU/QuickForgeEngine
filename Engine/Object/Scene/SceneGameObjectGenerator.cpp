@@ -17,5 +17,5 @@ void SceneGameObjectGenerator::AddAsset(const std::string& assetName) {
 	}
 	// メタデータからオブジェクトを生成
 	nlohmann::json metadata = asset.GetMetadata();
-	sceneObject_->AddObjectFromJson(metadata);
+	//sceneObject_->AddObjectFromJson(metadata);
 }

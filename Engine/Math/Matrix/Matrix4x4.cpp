@@ -1,5 +1,6 @@
 #include "Matrix4x4.h"
-#include "../Vector/Vector3.h"
+#include "Math/Vector/Vector3.h"
+#include "Math/Transform.h"
 #include <assert.h>
 
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
@@ -525,6 +526,17 @@ Matrix4x4 Matrix4x4::MakeAffineMatrix(const Vector3& scale, const Vector3& rotat
 		MakeScaleMatrix(scale),
 		Multiply(MakeRotateXYZMatrix(rotate),
 		MakeTranslateMatrix(translate)));
+
+	return result;
+}
+
+Matrix4x4 Matrix4x4::MakeAffineMatrix(const Transform& transform) {
+	Matrix4x4 result = MakeIndentity4x4();
+
+	result = Multiply(
+		MakeScaleMatrix(transform.scale),
+		Multiply(MakeRotateXYZMatrix(transform.rotate),
+			MakeTranslateMatrix(transform.translate)));
 
 	return result;
 }

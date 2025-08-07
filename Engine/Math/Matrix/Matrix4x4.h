@@ -7,6 +7,7 @@
 
 // 前方宣言
 class Vector3;
+struct Transform;
 
 class Matrix4x4 final{
 public:
@@ -136,6 +137,7 @@ public:
 	/// <param name="translate">移動の情報</param>
 	/// <returns>3次元のアフィン行列</returns>
 	[[nodiscard]] static Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+	[[nodiscard]] static Matrix4x4 MakeAffineMatrix(const Transform& transform);
 
 	/// <summary>
 	/// 任意軸回転行列を作成する
