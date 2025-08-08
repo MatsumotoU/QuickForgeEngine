@@ -11,6 +11,7 @@
 #include "Object/System/Model/AppSys/DrawMesh.h"
 #include "Object/System/Entity/AppSys/TransformUpdate.h"
 #include "Object/System/Entity/AppSys/PearentEntityMove.h"
+#include "Object/System/Entity/AppSys/EntityWVPUpdater.h"
 
 SceneObject::SceneObject(EngineCore* enginecore, const std::string& sceneName) 
 #ifdef _DEBUG
@@ -34,8 +35,7 @@ SceneObject::~SceneObject() {
 void SceneObject::Initialize() {
 	//EntityLoader::LoadEntities(engineCore_, entityManager_, "SampleScene.json");
 
-	//entityManager_.CreateEntity(); // 空のエンティティを作成
-	//LoadModelForEntities::Load(engineCore_, entityManager_, 2, "axis.obj");
+	LoadModelForEntities::Load(engineCore_, entityManager_, 0, "multiMaterial.obj");
 }
 
 void SceneObject::Update() {
@@ -47,8 +47,9 @@ void SceneObject::Update() {
 #endif // _DEBUG
 
 	// エンティティ更新
+	TransformUpdate::Update(entityManager_);
 	ParentEntityMove::Update(entityManager_);
-	TransformUpdate::Update(entityManager_,mainCamera_);
+	EntityWVPUpdater::Update(entityManager_, mainCamera_);
 }
 
 void SceneObject::Draw() {
