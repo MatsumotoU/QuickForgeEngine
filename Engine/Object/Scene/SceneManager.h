@@ -1,14 +1,13 @@
 #pragma once
 #include "SceneObject.h"
 #include <stack>
+#include "Utility/SimpleJson.h"
 
 #ifdef _DEBUG
 #include "Base/DirectX/ImGuiManager.h"
 #endif // _DEBUG
 
 #include "Colliders/CollisionManager.h"
-#include "Object/Asset/AssetManager.h"
-#include "SceneGameObjectGenerator.h"
 
 class EngineCore;
 

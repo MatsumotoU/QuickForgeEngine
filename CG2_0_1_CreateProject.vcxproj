@@ -370,7 +370,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\MyMath.cpp" />
     <ClCompile Include="Engine\Math\MyRandomNum.cpp" />
     <ClCompile Include="Engine\Math\Quaternion\Quaternion.cpp" />
-    <ClCompile Include="Engine\Object\BaseGameObject.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\BindEntityParent.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityLoader.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\EntitySerializer.cpp" />
@@ -408,11 +407,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Vector\Vector2.cpp" />
     <ClCompile Include="Engine\Math\Vector\Vector3.cpp" />
     <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
-    <ClCompile Include="Engine\Object\Asset\Asset.cpp" />
-    <ClCompile Include="Engine\Object\Asset\AssetManager.cpp" />
-    <ClCompile Include="Engine\Object\Scene\SceneGameObjectGenerator.cpp" />
     <ClCompile Include="Engine\Object\Scene\SceneObject.cpp" />
-    <ClCompile Include="Engine\Object\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\Object\Font\Font.cpp" />
     <ClCompile Include="Engine\Object\Font\FontDrawer.cpp" />
     <ClCompile Include="Engine\Object\Font\FontLoader.cpp" />
@@ -490,7 +485,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Colliders\CollisionManager.h" />
     <ClInclude Include="Engine\Math\MyMath.h" />
     <ClInclude Include="Engine\Math\MyRandomNum.h" />
-    <ClInclude Include="Engine\Object\BaseGameObject.h" />
     <ClInclude Include="Engine\Object\Component\ComponentStrage.h" />
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h" />
     <ClInclude Include="Engine\Object\Component\Data\MaterialComponent.h" />
@@ -552,8 +546,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Vector\Vector3.h" />
     <ClInclude Include="Engine\Math\Vector\Vector4.h" />
     <ClInclude Include="Engine\Shaders\StructsForGpu\VerTexData.h" />
-    <ClInclude Include="Engine\Object\Asset\Asset.h" />
-    <ClInclude Include="Engine\Object\Asset\AssetManager.h" />
     <ClInclude Include="Engine\Shaders\StructsForGpu\ColorCorrectionOffset.h" />
     <ClInclude Include="Engine\Shaders\StructsForGpu\DirectionalLight.h" />
     <ClInclude Include="Engine\Shaders\StructsForGpu\Material.h" />
@@ -561,10 +553,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Shaders\StructsForGpu\VignetteOffset.h" />
     <ClInclude Include="Engine\Shaders\StructsForGpu\ParticleForGPU.h" />
     <ClInclude Include="Engine\Object\Scene\IScene.h" />
-    <ClInclude Include="Engine\Object\Scene\SceneGameObjectGenerator.h" />
     <ClInclude Include="Engine\Object\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Object\Scene\SceneObject.h" />
-    <ClInclude Include="Engine\Object\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />
     <ClInclude Include="Engine\Object\Font\Font.h" />
     <ClInclude Include="Engine\Object\Font\GlyphForGPU.h" />

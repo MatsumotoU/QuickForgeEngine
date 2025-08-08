@@ -123,9 +123,6 @@
     <ClCompile Include="Engine\Base\Windows\WinAppDebugCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Sprite\Sprite.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Audio\XAudioCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -315,15 +312,6 @@
     <ClCompile Include="Engine\Base\DirectX\ImGuiNode.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Asset\Asset.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\Asset\AssetManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\Scene\SceneGameObjectGenerator.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -364,9 +352,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\System\Entity\AppSys\EntitySerializer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\BaseGameObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityLoader.cpp">
@@ -495,9 +480,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Shaders\StructsForGpu\DirectionalLight.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Sprite\Sprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Audio\XAudioCore.h">
@@ -1181,15 +1163,6 @@
     <ClInclude Include="externals\lua\lzio.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Asset\Asset.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Asset\AssetManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Scene\SceneGameObjectGenerator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Object\Component\IComponentStrage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -1257,9 +1230,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\System\Entity\AppSys\EntitySerializer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\BaseGameObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\System\Entity\AppSys\EntityLoader.h">
