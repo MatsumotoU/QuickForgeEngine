@@ -17,7 +17,7 @@ void PipelineStateObject::Initialize(EngineCore* engineCore) {
 }
 
 void PipelineStateObject::CreatePipelineStateObject(
-	RootParameter rootParameter,DepthStencil* depthStencil, InputLayout inputLayout, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
+	RootParameter rootParameter, DepthStencil* depthStencil, InputLayout inputLayout, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
 	D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack) {
 	HRESULT hr{};
 
@@ -112,6 +112,7 @@ void PipelineStateObject::CreatePipelineStateObject(
 	if (isDrawBack) {
 		// 裏面（時計回り）を表示しない
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+
 	} else {
 		// 裏面（時計回り）を表示する
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
@@ -122,9 +123,9 @@ void PipelineStateObject::CreatePipelineStateObject(
 	// シェーダーをコンパイルする
 	IDxcBlob* vertexShaderBlob = nullptr;
 	IDxcBlob* pixelShaderBlob = nullptr;
-	vertexShaderBlob = shaderCompiler_->CompileShader(ConvertString(kVSFilePath+vsFilepath), L"vs_6_0");
+	vertexShaderBlob = shaderCompiler_->CompileShader(ConvertString(kVSFilePath + vsFilepath), L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
-	pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(kPSFilePath+psFilepath), L"ps_6_0");
+	pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(kPSFilePath + psFilepath), L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	// PSOを生成

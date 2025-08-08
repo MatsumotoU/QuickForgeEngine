@@ -27,7 +27,7 @@ void AssimpModelLoader::LoadModelData(EngineCore* engineCore, const std::string&
 			vtx.position.z = mesh->mVertices[i].z;
 			vtx.position.w = 1.0f;
 			if (mesh->HasTextureCoords(0)) {
-				vtx.texcoord.x = mesh->mTextureCoords[0][i].x;
+				vtx.texcoord.x = 1.0f - mesh->mTextureCoords[0][i].x;
 				vtx.texcoord.y = mesh->mTextureCoords[0][i].y;
 			} else {
 				vtx.texcoord.x = 0.0f;
@@ -44,7 +44,7 @@ void AssimpModelLoader::LoadModelData(EngineCore* engineCore, const std::string&
 			}
 			vtx.position.x *= -1.0f;
 			vtx.normal.x *= -1.0f;
-			vtx.texcoord.y = 1.0f - vtx.texcoord.y;
+			vtx.texcoord.y = vtx.texcoord.y;
 
 			tempVertices.push_back(vtx);
 		}
@@ -53,9 +53,9 @@ void AssimpModelLoader::LoadModelData(EngineCore* engineCore, const std::string&
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			const aiFace& face = mesh->mFaces[i];
 			if (face.mNumIndices == 3) {
-				meshData.vertices.push_back(tempVertices[face.mIndices[2]]);
-				meshData.vertices.push_back(tempVertices[face.mIndices[1]]);
 				meshData.vertices.push_back(tempVertices[face.mIndices[0]]);
+				meshData.vertices.push_back(tempVertices[face.mIndices[1]]);
+				meshData.vertices.push_back(tempVertices[face.mIndices[2]]);
 
 			}
 		}

@@ -5,6 +5,7 @@
 #include "Object/System/Model/BaseSys/MaterialSerializer.h"
 #include "Object/System/Model/BaseSys/MeshSerializer.h"
 #include "Object/System/Model/BaseSys/TransformSerializer.h"
+#include "Object/System/Model/BaseSys/ParentSerializer.h"
 
 nlohmann::json EntitySerializer::Serialize(const EntityManager& entityManager) {
     nlohmann::json jEntities = nlohmann::json::array();
@@ -31,6 +32,12 @@ nlohmann::json EntitySerializer::Serialize(const EntityManager& entityManager) {
 		if (entityManager.HasComponent<MeshComponent>(id)) {
 			const auto& mesh = entityManager.GetComponent<MeshComponent>(id);
 			jEntity["MeshComponent"] = MeshSerializer::Serialize(mesh);
+		}
+
+		// ParentComponentが存在する場合
+		if (entityManager.HasComponent<ParentComponent>(id)) {
+			const auto& parent = entityManager.GetComponent<ParentComponent>(id);
+			jEntity["ParentComponent"] = ParentSerializer::Serialize(parent);
 		}
 
         // 何かしらのコンポーネントがあれば追加

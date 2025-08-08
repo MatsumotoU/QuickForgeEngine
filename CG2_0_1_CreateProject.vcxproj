@@ -374,6 +374,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Object\System\Entity\AppSys\BindEntityParent.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityLoader.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\EntitySerializer.cpp" />
+    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityWVPUpdater.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\TransformUpdate.cpp" />
@@ -385,6 +386,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\DirectX\Viewport.cpp" />
     <ClCompile Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.cpp" />
+    <ClCompile Include="Engine\Object\System\Entity\BaseSys\MakeWVPForTransformComponent.cpp" />
     <ClCompile Include="Engine\Object\System\Model\BaseSys\MaterialSerializer.cpp" />
     <ClCompile Include="Engine\Object\System\Model\BaseSys\MeshSerializer.cpp" />
     <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.cpp" />
@@ -500,11 +502,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\System\Entity\AppSys\BindEntityParent.h" />
     <ClInclude Include="Engine\Object\System\Entity\AppSys\EntityLoader.h" />
     <ClInclude Include="Engine\Object\System\Entity\AppSys\EntitySerializer.h" />
+    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntityWVPUpdater.h" />
     <ClInclude Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.h" />
     <ClInclude Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.h" />
     <ClInclude Include="Engine\Object\System\Entity\AppSys\TransformUpdate.h" />
     <ClInclude Include="Engine\Object\System\Model\AppSys\DrawMesh.h" />
     <ClInclude Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.h" />
+    <ClInclude Include="Engine\Object\System\Entity\BaseSys\MakeWVPForTransformComponent.h" />
     <ClInclude Include="Engine\Object\System\Model\BaseSys\MaterialSerializer.h" />
     <ClInclude Include="Engine\Object\System\Model\BaseSys\MeshSerializer.h" />
     <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.h" />

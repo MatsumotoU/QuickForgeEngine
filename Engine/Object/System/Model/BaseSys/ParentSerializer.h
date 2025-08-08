@@ -2,7 +2,7 @@
 #include "Utility/SimpleJson.h"
 #include "Object/Component/Data/ParentComponent.h"
 
-class ModelSerializer {
+class ParentSerializer {
 public:
 	// シリアライズ
 	static nlohmann::json Serialize(const ParentComponent& parent);
