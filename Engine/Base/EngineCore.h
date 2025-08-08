@@ -88,8 +88,8 @@
 // Scene
 #include "Scene/SceneManager.h"
 
-#include "Script/Lua/LuaScriptManager.h"
-#include "Script/Lua/LuaCallFiles.h"
+//#include "Script/Lua/LuaScriptManager.h"
+//#include "Script/Lua/LuaCallFiles.h"
 // TODO: ビルドツールpremakeの導入 
 
 #include <chrono>
@@ -139,10 +139,10 @@ public:// エンジンの機能取得
 	Chiptune* GetChiptune();
 	ShaderCompiler* GetShaderCompiler();
 	LoopStoper* GetLoopStopper();
-	LuaScriptManager* GetLuaScriptManager();
+	//LuaScriptManager* GetLuaScriptManager();
 	SceneManager* GetSceneManager();
 	const std::string& GetStartSceneFilePath() const { return startSceneFilePath_; }
-	LuaCallFiles* GetLuaCallFiles() { return &luaCallFiles_; }
+	//LuaCallFiles* GetLuaCallFiles() { return &luaCallFiles_; }
 	const DirectoryManager& GetDirectoryManager() { return directoryManager_; }
 
 public:
@@ -211,8 +211,8 @@ private:// デバッグ用一時変数
 	Camera camera_;
 
 private:// スクリプト
-	LuaScriptManager luaScriptManager_;
-	LuaCallFiles luaCallFiles_;
+	/*LuaScriptManager luaScriptManager_;
+	LuaCallFiles luaCallFiles_;*/
 
 #ifdef _DEBUG
 	MemoryWatcher memWatcher_;

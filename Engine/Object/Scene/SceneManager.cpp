@@ -9,13 +9,13 @@
 static char saveFileName[256] = "";
 static int selectedIndex = -1;
 
-#include "Script/Lua/LuaScriptGenerator.h"
-
-static char newLuaFileName[128] = "NewScript.lua";
-static std::string lastCreatedLuaPath;
-static bool showCreateResult = false;
-
-static std::string lastScriptRunScenePath;
+//#include "Script/Lua/LuaScriptGenerator.h"
+//
+//static char newLuaFileName[128] = "NewScript.lua";
+//static std::string lastCreatedLuaPath;
+//static bool showCreateResult = false;
+//
+//static std::string lastScriptRunScenePath;
 
 SceneManager::SceneManager() {
 	isRequestSwapScene_ = false;
