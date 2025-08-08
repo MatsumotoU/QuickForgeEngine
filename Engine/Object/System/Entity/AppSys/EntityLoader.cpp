@@ -6,7 +6,7 @@
 #include "EntitySerializer.h"
 
 void EntityLoader::LoadEntities(EngineCore* engineCore, EntityManager& entityManager, const std::string& fileName) {
-	std::string filePath = engineCore->GetDirectoryManager().GetDirectoryPath(DirectoryManager::AssetDirectory) + fileName;
+	std::string filePath = engineCore->GetDirectoryManager().GetDirectoryPath(DirectoryManager::SceneDirectory) + fileName;
 	std::ifstream inFile(filePath);
 	if (!inFile.is_open()) {
 		throw std::runtime_error("Failed to open file for reading: " + filePath);
