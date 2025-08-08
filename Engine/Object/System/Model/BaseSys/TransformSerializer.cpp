@@ -11,11 +11,12 @@ nlohmann::json TransformSerializer::Serialize(const TransformComponent& transfor
 
 void TransformSerializer::Deserialize(EngineCore* engineCore, TransformComponent& transformComponent, const nlohmann::json& j) {
 	transformComponent.transformationBuffer_.CreateResource(engineCore->GetDirectXCommon()->GetDevice());
+	transformComponent.transformationBuffer_.GetData()->World = Matrix4x4::MakeIndentity4x4();
+	transformComponent.transformationBuffer_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
+
 	transformComponent.transform_.translate = Vector3(0.0f, 0.0f, 0.0f);
 	transformComponent.transform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
 	transformComponent.transform_.scale = Vector3(1.0f, 1.0f, 1.0f);
-	transformComponent.transformationBuffer_.GetData()->World = Matrix4x4::MakeIndentity4x4();
-	transformComponent.transformationBuffer_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
 
 	if (j.contains("position")) {
 		const auto& pos = j["position"];

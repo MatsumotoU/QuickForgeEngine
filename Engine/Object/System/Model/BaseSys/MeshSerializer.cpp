@@ -41,6 +41,12 @@ void MeshSerializer::Deserialize(EngineCore* engineCore, MeshComponent& meshComp
             vertex.texcoord = Vector2(v["uv"][0].get<float>(), v["uv"][1].get<float>());
             meshComponent.vertices.push_back(vertex);
         }
+		// vertexBuffers_に頂点データをコピー
+        std::copy(
+            meshComponent.vertices.begin(),
+            meshComponent.vertices.end(),
+            meshComponent.vertexBuffers_.GetData()
+        );
     }
     if (j.contains("indexBuffer")) {
         meshComponent.indices = j["indexBuffer"].get<std::vector<uint32_t>>();
