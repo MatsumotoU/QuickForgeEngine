@@ -9,6 +9,7 @@
 #include "Camera/Camera.h"
 #ifdef _DEBUG
 #include "Camera/DebugCamera.h"
+
 #endif // _DEBUG
 
 class EngineCore;

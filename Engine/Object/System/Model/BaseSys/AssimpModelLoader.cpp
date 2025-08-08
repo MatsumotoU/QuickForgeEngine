@@ -1,9 +1,10 @@
 #include "AssimpModelLoader.h"
 #include <cassert>
+#include "Base/EngineCore.h"
 
-void AssimpModelLoader::LoadModelData(const std::string& directory, const std::string& filename, ModelData& modelData) {
+void AssimpModelLoader::LoadModelData(EngineCore* engineCore, const std::string& filename, ModelData& modelData) {
 	Assimp::Importer importer;
-	std::string filepath = directory + "/" + filename;
+	std::string filepath = engineCore->GetDirectoryManager().GetDirectoryPath(DirectoryManager::ModelDirectory) + filename;
 	const aiScene* scene = importer.ReadFile(
 		filepath,
 		aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals
@@ -64,7 +65,7 @@ void AssimpModelLoader::LoadModelData(const std::string& directory, const std::s
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			aiString texPath;
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
-				meshData.material.textureFilePath = directory + "/" + std::string(texPath.C_Str());
+				meshData.material.textureFilePath = engineCore->GetDirectoryManager().GetDirectoryPath(DirectoryManager::ImageDirectory) + std::string(texPath.C_Str());
 			}
 			// ここで他のマテリアル情報（色など）も必要なら取得可能
 		}

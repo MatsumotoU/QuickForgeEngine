@@ -2,8 +2,8 @@
 #include "../Windows/WinApp.h"
 #include "DirectXCommon.h"
 
-#ifdef DEBUG
-#include "../MyDebugLog.h"
+#ifdef _DEBUG
+#include "Utility/MyDebugLog.h"
 #endif // DEBUG
 
 ImGuiManager::ImGuiManager() {

@@ -51,6 +51,12 @@ public:
 	}
 
 	template <typename T>
+	bool HasComponentStrage() const {
+		size_t typeId = typeid(T).hash_code();
+		return componentStrages.find(typeId) != componentStrages.end();
+	}
+
+	template <typename T>
 	bool HasComponent(uint32_t id) const {
 		size_t typeId = typeid(T).hash_code();
 		if (componentStrages.find(typeId) != componentStrages.end()) {
@@ -58,5 +64,9 @@ public:
 			return strage.HasComponent(id);
 		}
 		return false;
+	}
+
+	uint32_t GetNextEntityId() const {
+		return nextEntityId_;
 	}
 };

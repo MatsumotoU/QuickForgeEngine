@@ -196,6 +196,8 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -226,6 +228,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -255,6 +259,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -288,6 +294,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -344,7 +352,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\DirectX\Descriptors\SrvDescriptorHeap.cpp" />
     <ClCompile Include="Engine\Base\DirectX\FramePerSecond.cpp" />
     <ClCompile Include="Engine\Base\DirectX\GraphicsCommon.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp" />
+    <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
     <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderReflection.cpp" />
     <ClCompile Include="Engine\Base\EngineCore.cpp" />
@@ -360,7 +373,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Object\Script\Lua\GameObjectLuaScript.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\BindEntityParent.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.cpp" />
+    <ClCompile Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.cpp" />
     <ClCompile Include="Engine\Object\System\Entity\AppSys\TransformUpdate.cpp" />
+    <ClCompile Include="Engine\Object\System\Model\AppSys\DrawMesh.cpp" />
     <ClCompile Include="Engine\Object\System\Model\BaseSys\AssimpModelLoader.cpp" />
     <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
     <ClCompile Include="Engine\Base\DirectX\ScissorRect.cpp" />
@@ -483,7 +498,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\Script\Lua\LuaScriptGenerator.h" />
     <ClInclude Include="Engine\Object\System\Entity\AppSys\BindEntityParent.h" />
     <ClInclude Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.h" />
+    <ClInclude Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.h" />
     <ClInclude Include="Engine\Object\System\Entity\AppSys\TransformUpdate.h" />
+    <ClInclude Include="Engine\Object\System\Model\AppSys\DrawMesh.h" />
     <ClInclude Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.h" />
     <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.h" />
     <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.h" />

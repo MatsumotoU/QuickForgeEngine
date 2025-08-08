@@ -8,4 +8,5 @@ struct MaterialComponent {
 	ConstantBuffer<DirectionalLight> directionalLight_;
 	ConstantBuffer<Material> material_;
 	std::string textureFilePath;
+	uint32_t textureHandle;
 };

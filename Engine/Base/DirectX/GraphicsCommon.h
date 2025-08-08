@@ -27,19 +27,13 @@ public:
 	/// <param name="blendmode">ブレンドモード</param>
 	/// <returns></returns>
 	PipelineStateObject* GetPointPso(BlendMode blendmode) { return &pointPso_[static_cast<uint32_t>(blendmode)]; }
-
 	PipelineStateObject* GetPrimitivePso(BlendMode blendmode) { return &primitivePso_[static_cast<uint32_t>(blendmode)]; }
-
 	PipelineStateObject* GetParticlePso(BlendMode blendmode) { return &particlePso_[static_cast<uint32_t>(blendmode)]; }
-
 	PipelineStateObject* GetColorCorrectionPso() { return &colorCorrectionPso_; }
 	PipelineStateObject* GetGrayScalePso() { return &grayScaleTrianglePso_; }
 	PipelineStateObject* GetVignettePso() { return &vignettePso_; }
-
 	PipelineStateObject* GetNormalPso() { return &normalPso_; }
-
 	PipelineStateObject* GetFontPso() { return &fontPso_; }
-
 	DepthStencil* GetDepthStencil() { return &depthStencil_; }
 
 private: // メンバ変数

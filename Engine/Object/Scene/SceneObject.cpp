@@ -4,7 +4,13 @@
 
 #ifdef _DEBUG
 #include "Utility/MyDebugLog.h"
+#include "Object/System/Entity/AppSys/SceneEntityViewer.h"
 #endif // _DEBUG
+
+#include "Object/System/Model/AppSys/LoadModelForEntities.h"
+#include "Object/System/Model/AppSys/DrawMesh.h"
+#include "Object/System/Entity/AppSys/TransformUpdate.h"
+#include "Object/System/Entity/AppSys/PearentEntityMove.h"
 
 SceneObject::SceneObject(EngineCore* enginecore, const std::string& sceneName) 
 #ifdef _DEBUG
@@ -26,7 +32,8 @@ SceneObject::~SceneObject() {
 }
 
 void SceneObject::Initialize() {
-
+	entityManager_.CreateEntity(); // エンティティを作成
+	LoadModelForEntities::Load(engineCore_, entityManager_, 0, "anchor.obj");
 }
 
 void SceneObject::Update() {
@@ -37,17 +44,19 @@ void SceneObject::Update() {
 	mainCamera_ = debugCamera_.camera_;
 #endif // _DEBUG
 
-	// シーン更新
-	
+	// エンティティ更新
+	ParentEntityMove::Update(entityManager_);
+	TransformUpdate::Update(entityManager_,mainCamera_);
 }
 
 void SceneObject::Draw() {
 #ifdef _DEBUG
+	SceneEntityViewer::DisplayEntities(entityManager_);
 	engineCore_->GetGraphRenderer()->DrawGrid(50.0f, 50);
 #endif // _DEBUG
 
 	// シーン描画
-	
+	DrawMesh::Draw(engineCore_, entityManager_, mainCamera_);
 }
 
 IScene* SceneObject::GetNextScene() {

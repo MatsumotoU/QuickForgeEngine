@@ -3,7 +3,11 @@
 #include "Object/Component/Data/ParentComponent.h"
 #include "Object/Component/Data/TransformComponent.h"
 
-void ParentEntityMove::ParentUpdate(EntityManager& entityManager) {
+void ParentEntityMove::Update(EntityManager& entityManager) {
+	if (!entityManager.HasComponentStrage<ParentComponent>()) {
+		return; // ParentComponentが存在しない場合は何もしない
+	}
+
     const ComponentStrage<ParentComponent>& strage = entityManager.GetComponentStrage<ParentComponent>();
     for (const auto& pair : strage) {
         uint32_t entityId = pair.first;
