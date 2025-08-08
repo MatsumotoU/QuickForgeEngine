@@ -56,16 +56,12 @@
 #include "Shaders/StructsForGpu/Material.h"
 // Debug
 #include "Utility/MyString.h"
-#include "Sprite/Sprite.h"
 // Audio
 #include "Audio/AudioEmitter.h"
 #include "Audio/AudioListener.h"
 // Camera
 #include "Camera/DebugCamera.h"
 #include "Camera/Camera.h"
-// Model
-//#include "Model/Model.h"
-//#include "Model/Billboard.h"
 
 // 時間管理
 #include "Utility/MyTimer.h"
@@ -87,9 +83,6 @@
 
 // Scene
 #include "Scene/SceneManager.h"
-
-//#include "Script/Lua/LuaScriptManager.h"
-//#include "Script/Lua/LuaCallFiles.h"
 // TODO: ビルドツールpremakeの導入 
 
 #include <chrono>
