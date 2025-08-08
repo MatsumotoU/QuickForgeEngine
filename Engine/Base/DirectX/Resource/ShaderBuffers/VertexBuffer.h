@@ -24,11 +24,6 @@ public:
 		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	};
 
-	// ゲッター
-	/// <summary>
-	/// 安全でないのでセッターを使うことを推奨します。
-	/// </summary>
-	/// <returns></returns>
 	T* GetData() { return vertexData_; }
 	ID3D12Resource* GetResource() const { return vertexResource_.Get(); }
 	const D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView() const { return &vertexBufferView_; }

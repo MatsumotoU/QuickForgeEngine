@@ -228,9 +228,6 @@
     <ClCompile Include="Engine\Input\XInput\XInputController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\BaseGameObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Utility\MyGameMath.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -318,12 +315,6 @@
     <ClCompile Include="Engine\Base\DirectX\ImGuiNode.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Script\Lua\LuaScriptManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\Script\Lua\ILuaScript.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Object\Asset\Asset.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -331,9 +322,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\Scene\SceneGameObjectGenerator.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\Script\Lua\LuaCallFiles.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.cpp">
@@ -357,13 +345,31 @@
     <ClCompile Include="Engine\Object\System\Entity\AppSys\TransformUpdate.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Script\Lua\GameObjectLuaScript.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\System\Model\AppSys\DrawMesh.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Model\BaseSys\MaterialSerializer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Model\BaseSys\MeshSerializer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Model\BaseSys\TransformSerializer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Model\BaseSys\ParentSerializer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntitySerializer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\BaseGameObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -609,9 +615,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Input\XInput\XInputController.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\BaseGameObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Utility\MyGameMath.h">
@@ -1172,12 +1175,6 @@
     <ClInclude Include="externals\lua\lzio.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Script\Lua\LuaScriptManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Script\Lua\ILuaScript.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Object\Asset\Asset.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -1185,9 +1182,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Scene\SceneGameObjectGenerator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Script\Lua\LuaCallFiles.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Component\IComponentStrage.h">
@@ -1238,16 +1232,31 @@
     <ClInclude Include="Engine\Object\System\Entity\AppSys\TransformUpdate.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Script\Lua\LuaScriptGenerator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Script\Lua\GameObjectLuaScript.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\System\Model\AppSys\DrawMesh.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Model\BaseSys\MaterialSerializer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Model\BaseSys\MeshSerializer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Model\BaseSys\TransformSerializer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Model\BaseSys\ParentSerializer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntitySerializer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\BaseGameObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntityLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

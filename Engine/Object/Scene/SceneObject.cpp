@@ -1,12 +1,12 @@
 #include "SceneObject.h"
 #include "Base/EngineCore.h"
-#include "Model/Model.h"
 
 #ifdef _DEBUG
 #include "Utility/MyDebugLog.h"
 #include "Object/System/Entity/AppSys/SceneEntityViewer.h"
 #endif // _DEBUG
 
+#include "Object/System/Entity/AppSys/EntityLoader.h"
 #include "Object/System/Model/AppSys/LoadModelForEntities.h"
 #include "Object/System/Model/AppSys/DrawMesh.h"
 #include "Object/System/Entity/AppSys/TransformUpdate.h"
@@ -33,7 +33,11 @@ SceneObject::~SceneObject() {
 
 void SceneObject::Initialize() {
 	entityManager_.CreateEntity(); // エンティティを作成
+	entityManager_.CreateEntity(); // もう一つエンティティを作成
 	LoadModelForEntities::Load(engineCore_, entityManager_, 0, "anchor.obj");
+	LoadModelForEntities::Load(engineCore_, entityManager_, 1, "anchor.obj");
+
+	EntityLoader::SaveEntities(engineCore_, entityManager_, sceneName_);
 }
 
 void SceneObject::Update() {

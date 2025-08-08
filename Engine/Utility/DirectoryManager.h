@@ -8,6 +8,8 @@ public:
 		ModelDirectory,
 		ImageDirectory,
 		AudioDirectory,
+		AssetDirectory,
+		SceneDirectory,
 		DirectoryTypeCount
 	};
 	/// <summary>
@@ -24,6 +26,8 @@ private:
 	std::array<std::string, DirectoryTypeCount> directories_ = {
 		basePath_ + "Models/",
 		basePath_ + "Images/",
-		basePath_ + "Sounds/"
+		basePath_ + "Sounds/",
+		basePath_ + "Assets/",
+		basePath_ + "Scenes/"
 	};
 };

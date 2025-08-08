@@ -39,12 +39,11 @@ public:
 	
 private:
 	EngineCore* engineCore_;
+	EntityManager entityManager_;
 	std::string sceneName_;
 
 	Camera mainCamera_;
 #ifdef _DEBUG
 	DebugCamera debugCamera_;
 #endif // _DEBUG
-
-	EntityManager entityManager_;
 };

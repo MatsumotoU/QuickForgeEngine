@@ -2,7 +2,7 @@
 
 static char startSceneFileName[256] = "";
 
-EngineCore::EngineCore() :luaScriptManager_(this) {
+EngineCore::EngineCore() {
 	engineStartTime = std::chrono::steady_clock::now();
 #ifdef _DEBUG
 	DebugLog("[[[EngineStarted]]]");
@@ -308,9 +308,9 @@ LoopStoper* EngineCore::GetLoopStopper() {
 	return &loopStopper_;
 }
 
-LuaScriptManager* EngineCore::GetLuaScriptManager() {
-	return &luaScriptManager_;
-}
+//LuaScriptManager* EngineCore::GetLuaScriptManager() {
+//	return &luaScriptManager_;
+//}
 
 SceneManager* EngineCore::GetSceneManager() {
 	return &sceneManager_;
