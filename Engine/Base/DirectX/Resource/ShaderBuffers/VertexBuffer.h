@@ -31,7 +31,7 @@ public:
 	/// <returns></returns>
 	T* GetData() { return vertexData_; }
 	ID3D12Resource* GetResource() const { return vertexResource_.Get(); }
-	D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView() { return &vertexBufferView_; }
+	const D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView() const { return &vertexBufferView_; }
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
 		return vertexResource_.Get()->GetGPUVirtualAddress();
 	}

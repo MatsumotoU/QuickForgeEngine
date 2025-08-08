@@ -14,9 +14,7 @@ void LoadModelForEntities::Load(EngineCore* engineCore, EntityManager& entityMan
 	ModelData modelData;
 	// Assimpを使用してモデルデータをロード
 	AssimpModelLoader modelLoader;
-	modelLoader.LoadModelData(
-		engineCore->GetDirectoryManager().GetDirectoryPath(DirectoryManager::ModelDirectory),
-		modelFileName, modelData);
+	modelLoader.LoadModelData(engineCore,modelFileName, modelData);
 	
 	// トランスフォームコンポーネントの作成
 	TransformComponent transformComponent;

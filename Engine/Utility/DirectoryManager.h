@@ -20,7 +20,7 @@ public:
 
 	}
 private:
-	const std::string basePath_ = "Resource/";
+	const std::string basePath_ = "Resources/";
 	std::array<std::string, DirectoryTypeCount> directories_ = {
 		basePath_ + "Models/",
 		basePath_ + "Images/",
