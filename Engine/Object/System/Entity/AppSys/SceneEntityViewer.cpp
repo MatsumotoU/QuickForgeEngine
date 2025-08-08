@@ -18,7 +18,7 @@ void SceneEntityViewer::DisplayEntities(EntityManager& entityManager) {
 
 void SceneEntityViewer::DisplayEntityDetails(EntityManager& entityManager, uint32_t entityId) {
 	ImGui::Text("Entity ID: %u", entityId);
-	if (ImGui::TreeNode("Components")) {
+	if (ImGui::TreeNode(("Components##" + std::to_string(entityId)).c_str())) {
 		if (entityManager.HasComponent<TransformComponent>(entityId)) {
 			const auto& transform = entityManager.GetComponent<TransformComponent>(entityId);
 			ImGui::Text("Position: (%.2f, %.2f, %.2f)", transform.transform_.translate.x, transform.transform_.translate.y, transform.transform_.translate.z);
