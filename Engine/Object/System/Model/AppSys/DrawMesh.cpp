@@ -7,6 +7,10 @@
 #include "Base/DirectX/PipelineStateObject.h"
 
 void DrawMesh::Draw(EngineCore* engineCore, EntityManager& entity, Camera& camera) {
+	if (entity.HasComponentStrage<MeshComponent>() == false) {
+		return; // MeshComponentがない場合は何もしない
+	}
+
 	const ComponentStrage<MeshComponent>& strage = entity.GetComponentStrage<MeshComponent>();
 	for (const auto& pair : strage) {
 		uint32_t entityId = pair.first;

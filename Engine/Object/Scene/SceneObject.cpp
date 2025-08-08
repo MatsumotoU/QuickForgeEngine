@@ -32,10 +32,10 @@ SceneObject::~SceneObject() {
 }
 
 void SceneObject::Initialize() {
-	EntityLoader::LoadEntities(engineCore_, entityManager_, "SampleScene.json");
+	//EntityLoader::LoadEntities(engineCore_, entityManager_, "SampleScene.json");
 
-	entityManager_.CreateEntity(); // 空のエンティティを作成
-	LoadModelForEntities::Load(engineCore_, entityManager_, 2, "axis.obj");
+	//entityManager_.CreateEntity(); // 空のエンティティを作成
+	//LoadModelForEntities::Load(engineCore_, entityManager_, 2, "axis.obj");
 }
 
 void SceneObject::Update() {
