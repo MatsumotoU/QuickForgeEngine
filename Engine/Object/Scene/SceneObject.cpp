@@ -12,6 +12,7 @@
 #include "Object/System/Entity/AppSys/TransformUpdate.h"
 #include "Object/System/Entity/AppSys/PearentEntityMove.h"
 #include "Object/System/Entity/AppSys/EntityWVPUpdater.h"
+#include "Object/System/Script/AppSys/AttachScriptForEntity.h"
 
 SceneObject::SceneObject(EngineCore* enginecore, const std::string& sceneName) 
 #ifdef _DEBUG
@@ -36,6 +37,7 @@ void SceneObject::Initialize() {
 	//EntityLoader::LoadEntities(engineCore_, entityManager_, "SampleScene.json");
 
 	LoadModelForEntities::Load(engineCore_, entityManager_, 0, "multiMaterial.obj");
+	AttachScriptForEntity::Attach(engineCore_, entityManager_, 0, "Log.lua");
 }
 
 void SceneObject::Update() {

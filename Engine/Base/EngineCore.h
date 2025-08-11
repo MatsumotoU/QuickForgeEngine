@@ -33,6 +33,7 @@
 #include "Audio/MusicalScale.h"
 // リソース管理
 #include "Utility/DirectoryManager.h"
+#include "Object/Script/Lua/LuaScriptResourceManager.h"
 
 // バッファー
 #include "DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
@@ -132,10 +133,9 @@ public:// エンジンの機能取得
 	Chiptune* GetChiptune();
 	ShaderCompiler* GetShaderCompiler();
 	LoopStoper* GetLoopStopper();
-	//LuaScriptManager* GetLuaScriptManager();
+	LuaScriptResourceManager* GetLuaScriptResourceManager();
 	SceneManager* GetSceneManager();
 	const std::string& GetStartSceneFilePath() const { return startSceneFilePath_; }
-	//LuaCallFiles* GetLuaCallFiles() { return &luaCallFiles_; }
 	const DirectoryManager& GetDirectoryManager() { return directoryManager_; }
 
 public:
@@ -169,6 +169,7 @@ private:// コア機能
 
 private:// リソース管理
 	DirectoryManager directoryManager_;
+	LuaScriptResourceManager luaScriptResourceManager_;
 
 private:// 時間管理
 	FramePerSecond fpsCounter_;

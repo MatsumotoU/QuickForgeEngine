@@ -7,6 +7,7 @@
 #include "Object/Component/Data/ParentComponent.h"
 #include "Object/Component/Data/MaterialComponent.h"
 #include "Object/Component/Data/MeshComponent.h"
+#include "Object/Component/Data/LuaScriptComponent.h"
 
 void SceneEntityViewer::DisplayEntities(EntityManager& entityManager) {
 	ImGui::Begin("Entity Viewer");
@@ -50,6 +51,20 @@ void SceneEntityViewer::DisplayEntityDetails(EntityManager& entityManager, uint3
 			const auto& parent = entityManager.GetComponent<ParentComponent>(entityId);
 			ImGui::Separator();
 			ImGui::Text("Parent Entity ID: %u", parent.parentEntityId);
+		}
+		if (entityManager.HasComponent<LuaScriptComponent>(entityId)) {
+			const auto& luaScript = entityManager.GetComponent<LuaScriptComponent>(entityId);
+			ImGui::Separator();
+			ImGui::Text("Lua Script Component:");
+			ImGui::Text("Script Name: %s", luaScript.scriptName.c_str());
+			ImGui::Text("Functions:");
+			for (const auto& funcName : luaScript.funcNames) {
+				ImGui::BulletText("%s", funcName.c_str());
+			}
+			ImGui::Text("User Data:");
+			for (const auto& valueName : luaScript.valueNames) {
+				ImGui::BulletText("%s", valueName.c_str());
+			}
 		}
 		ImGui::TreePop();
 	}

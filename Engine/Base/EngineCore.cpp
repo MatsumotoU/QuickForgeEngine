@@ -2,7 +2,7 @@
 
 static char startSceneFileName[256] = "";
 
-EngineCore::EngineCore() {
+EngineCore::EngineCore() : luaScriptResourceManager_(this) {
 	engineStartTime = std::chrono::steady_clock::now();
 #ifdef _DEBUG
 	DebugLog("[[[EngineStarted]]]");
@@ -110,10 +110,6 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	// ポストプロセス
 	postprocess_.Initialize(this);
 
-	// オフスクリーンのスプライト生成
-	/*offscreen_.Initialize(this, static_cast<float>(winApp_.kWindowWidth), static_cast<float>(winApp_.kWindowHeight));
-	offscreen_.material_.materialData_->enableLighting = false;*/
-
 	camera_.Initialize(&winApp_);
 
 #ifdef _DEBUG
@@ -128,11 +124,6 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	sceneManager_.CreateScene(this, "SampleScene");
 	sceneManager_.InitializeScene();
 
-#ifndef _DEBUG
-	/*sceneManager_.LoadScenesFromJson("Resources/Scenes/LastScriptRunScene.json");
-	sceneManager_.SwapScene();
-	sceneManager_.SetIsRunningScript(true);*/
-#endif // !_DEBUG
 }
 
 void EngineCore::Update() {
@@ -260,10 +251,6 @@ DirectInputManager* EngineCore::GetInputManager() {
 	return &inputManager_;
 }
 
-//Sprite* EngineCore::GetOffscreen() {
-//	return &offscreen_;
-//}
-
 FramePerSecond* EngineCore::GetFpsCounter() {
 	return &fpsCounter_;
 }
@@ -308,9 +295,9 @@ LoopStoper* EngineCore::GetLoopStopper() {
 	return &loopStopper_;
 }
 
-//LuaScriptManager* EngineCore::GetLuaScriptManager() {
-//	return &luaScriptManager_;
-//}
+LuaScriptResourceManager* EngineCore::GetLuaScriptResourceManager() {
+	return &luaScriptResourceManager_;
+}
 
 SceneManager* EngineCore::GetSceneManager() {
 	return &sceneManager_;
@@ -319,7 +306,6 @@ SceneManager* EngineCore::GetSceneManager() {
 float EngineCore::GetDeltaTime() {
 	// FPSが0でない場合はFPSを基にデルタタイムを返す
 	if (fpsCounter_.GetFps() != 0.0f) {
-
 		// FPSが変動している場合は60FPS想定でデルタタイムを返す
 		if (fabsf(fpsCounter_.GetAverageFps() - fpsCounter_.GetFps()) >= 5.0f) {
 			return 1.0f / 60.0f;
