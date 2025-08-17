@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "Object/Structs/ModelData.h"
+#include "Object/Data/ModelData.h"
 
 class EngineCore;
 

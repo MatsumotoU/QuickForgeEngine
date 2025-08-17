@@ -1,5 +1,5 @@
 #pragma once
-#include "Object/Structs/ModelData.h"
+#include "Object/Data/ModelData.h"
 #include "Object/Component/Data/MeshComponent.h"
 
 class EngineCore;
