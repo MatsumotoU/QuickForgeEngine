@@ -195,14 +195,14 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Engine;$(ProjectDir)\Engine\Externals;$(ProjectDir)\Engine\Externals\assimp\include;$(ProjectDir)\Engine\Externals\imgui;$(ProjectDir)\Engine\Externals\lua;$(ProjectDir)\Engine\Externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)\Engine\Utility;$(ProjectDir)\Engine\Platform\Windows;$(ProjectDir)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;$(ProjectDir)externals\lua\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Engine\Externals\assimp\lib\Debug;$(ProjectDir)\Engine\Externals\lua\lib\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mtd.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -258,7 +258,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
 /D BUILD_MACHINE="\"$(COMPUTERNAME)\""  /D BUILD_CONFIG="\"$(Configuration)\""  /D BUILD_PLATFORM="\"$(Platform)\"" %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Engine/;$(ProjectDir)/externals/;$(ProjectDir)\externals\assimp\include;$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\lua;$(ProjectDir)\externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Engine;$(ProjectDir)\Engine\Externals;$(ProjectDir)\Engine\Externals\assimp\include;$(ProjectDir\Engine\Externals\imgui;$(ProjectDir)\Engine\Externals\lua;$(ProjectDir)\Engine\Externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)\Engine\Utility;$(ProjectDir);$(ProjectDir)\Engine\Platform\Windows</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -267,7 +267,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;$(ProjectDir)externals\lua\lib\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Engine\Externals\assimp\lib\Release;$(ProjectDir)\Engine\Externals\lua\lib\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mt.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -315,442 +315,282 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="Engine\Shaders\ShaderStructs\Font.hlsli" />
-    <None Include="Engine\Shaders\ShaderStructs\Object3d.hlsli" />
-    <None Include="Engine\Shaders\ShaderStructs\Particle.hlsli" />
-    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl" />
-    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl" />
-    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
-    <None Include="externals\imgui\ImGuizmo-1.83\.editorconfig" />
-    <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
+    <None Include="readme.md" />
+    <None Include="Engine\Resources\Shaders\ShaderStructs\Font.hlsli" />
+    <None Include="Engine\Resources\Shaders\ShaderStructs\Object3d.hlsli" />
+    <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli" />
+    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl" />
+    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl" />
+    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
+    <None Include="Engine\Externals\imgui\ImGuizmo-1.83\.editorconfig" />
+    <None Include="Engine\Externals\imgui\ImGuizmo-1.83\Makefile" />
     <None Include="GenerateBuildInfo.bat" />
     <None Include="Resources\Scripts\types.d.lua" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Audio\Audio3D.cpp" />
-    <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
-    <ClCompile Include="Engine\Audio\AudioListener.cpp" />
-    <ClCompile Include="Engine\Audio\Base\SpeakerVolumeMonitor.cpp" />
-    <ClCompile Include="Engine\Audio\Chiptune.cpp" />
-    <ClCompile Include="Engine\Audio\MusicalScale.cpp" />
-    <ClCompile Include="Engine\Audio\XAudioCore.cpp" />
-    <ClCompile Include="Engine\Audio\AudioPlayer.cpp" />
-    <ClCompile Include="Engine\Audio\AudioResourceManager.cpp" />
-    <ClCompile Include="Engine\Audio\AudioSourceBinder.cpp" />
-    <ClCompile Include="Engine\Audio\MultiAudioLoader.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\DirectXStructToString.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\GraphRenderer.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\ImGuiNode.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\RendaringPostprocess.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\Rendering\PSOCreater.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\RootParameter.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\DirectX12DebugCore.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\DirectXCommon.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\Descriptors\RtvDescriptorHeap.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\Descriptors\SrvDescriptorHeap.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\FramePerSecond.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\GraphicsCommon.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderReflection.cpp" />
-    <ClCompile Include="Engine\Base\EngineCore.cpp" />
-    <ClCompile Include="Engine\Base\LoopStoper.cpp" />
-    <ClCompile Include="Engine\Base\Windows\MemoryWatcher.cpp" />
-    <ClCompile Include="Engine\Colliders\Collider.cpp" />
-    <ClCompile Include="Engine\Colliders\CollisionManager.cpp" />
-    <ClCompile Include="Engine\Input\XInput\XInputController.cpp" />
-    <ClCompile Include="Engine\Math\AudioMath.cpp" />
-    <ClCompile Include="Engine\Math\MyMath.cpp" />
-    <ClCompile Include="Engine\Math\MyRandomNum.cpp" />
-    <ClCompile Include="Engine\Math\Quaternion\Quaternion.cpp" />
-    <ClCompile Include="Engine\Object\Script\Lua\LuaScriptResourceManager.cpp" />
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\BindEntityParent.cpp" />
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityLoader.cpp" />
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntitySerializer.cpp" />
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityWVPUpdater.cpp" />
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.cpp" />
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.cpp" />
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\TransformUpdate.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\AppSys\DrawMesh.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\AssimpModelLoader.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\ScissorRect.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderCompiler.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\TextureManager.cpp" />
-    <ClCompile Include="Engine\Base\DirectX\Viewport.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.cpp" />
-    <ClCompile Include="Engine\Object\System\Entity\BaseSys\MakeWVPForTransformComponent.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\MaterialSerializer.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\MeshSerializer.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\AppSys\LoadModelForEntities.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\ParentSerializer.cpp" />
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\TransformSerializer.cpp" />
-    <ClCompile Include="Engine\Object\System\Script\AppSys\AttachScriptForEntity.cpp" />
-    <ClCompile Include="Engine\Object\System\Script\AppSys\EntityScriptUpdate.cpp" />
-    <ClCompile Include="Engine\Object\System\Script\BaseSys\RunningScript.cpp" />
-    <ClCompile Include="Engine\Object\System\Script\BaseSys\ScriptComponentCreater.cpp" />
-    <ClCompile Include="Engine\Utility\CheckLoadFileExtension.cpp" />
-    <ClCompile Include="Engine\Utility\MyDebugLog.cpp" />
-    <ClCompile Include="Engine\Utility\MyString.cpp" />
-    <ClCompile Include="Engine\Base\Windows\WinAppDebugCore.cpp" />
-    <ClCompile Include="Engine\Object\Camera\Camera.cpp" />
-    <ClCompile Include="Engine\Object\Camera\DebugCamera.cpp" />
-    <ClCompile Include="Engine\Input\DirectInput\DirectInputKeyboard.cpp" />
-    <ClCompile Include="Engine\Input\DirectInput\DirectInputManager.cpp" />
-    <ClCompile Include="Engine\Input\DirectInput\DirectInputMouse.cpp" />
-    <ClCompile Include="Engine\Math\Matrix\Matrix2x2.cpp" />
-    <ClCompile Include="Engine\Math\Matrix\Matrix3x3.cpp" />
-    <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp" />
-    <ClCompile Include="Engine\Math\Vector\Vector2.cpp" />
-    <ClCompile Include="Engine\Math\Vector\Vector3.cpp" />
-    <ClCompile Include="Engine\Math\Vector\Vector4.cpp" />
-    <ClCompile Include="Engine\Object\Scene\SceneObject.cpp" />
-    <ClCompile Include="Engine\Object\Font\Font.cpp" />
-    <ClCompile Include="Engine\Object\Font\FontDrawer.cpp" />
-    <ClCompile Include="Engine\Object\Font\FontLoader.cpp" />
-    <ClCompile Include="Engine\Utility\StringLiblary.cpp" />
-    <ClCompile Include="Engine\Utility\FileExtension.cpp" />
-    <ClCompile Include="Engine\Utility\FileLoader.cpp" />
-    <ClCompile Include="Engine\Utility\MyEasing.cpp" />
-    <ClCompile Include="Engine\Utility\MyGameMath.cpp" />
-    <ClCompile Include="Engine\Utility\MyTimer.cpp" />
-    <ClCompile Include="Engine\Utility\SimpleJson.cpp" />
-    <ClCompile Include="Engine\Utility\TimeCall.cpp" />
-    <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp" />
-    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\crude_json.cpp" />
-    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp" />
-    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp" />
-    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp" />
-    <ClCompile Include="externals\imgui\imgui.cpp" />
-    <ClCompile Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp" />
-    <ClCompile Include="externals\imgui\imgui_demo.cpp" />
-    <ClCompile Include="externals\imgui\imgui_draw.cpp" />
-    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="externals\imgui\imgui_tables.cpp" />
-    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle.cpp" />
-    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_palette.cpp" />
-    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_presets.cpp" />
-    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_renderer.cpp" />
-    <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="externals\imgui\implot-master\implot.cpp" />
-    <ClCompile Include="externals\imgui\implot-master\implot_items.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\DirectXDevice.cpp" />
+    <ClCompile Include="Engine\Core\Math\AudioMath.cpp" />
+    <ClCompile Include="Engine\Core\Math\MyMath.cpp" />
+    <ClCompile Include="Engine\Core\Math\MyRandomNum.cpp" />
+    <ClCompile Include="Engine\Core\Math\Quaternion\Quaternion.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Utility\DebugTool\App\WinAppDebugCore.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Utility\DebugTool\DirectX\DirectX12DebugCore.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Window\GameWindow.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Window\GameWindowManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\DropFile\DropFileEvent.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\ExitApp\ExitAppEvent.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\IEvent.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\WindowEventsManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowGenerater\WindowGenerater.cpp" />
+    <ClCompile Include="Engine\QuickForgeEngine.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Utility\DebugTool\DebugLog\MyDebugLog.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Utility\FileSystems\CheckFileExtension\CheckFileExtension.cpp" />
+    <ClCompile Include="Engine\Utility\String\MyString.cpp" />
+    <ClCompile Include="Engine\Core\Math\Matrix\Matrix2x2.cpp" />
+    <ClCompile Include="Engine\Core\Math\Matrix\Matrix3x3.cpp" />
+    <ClCompile Include="Engine\Core\Math\Matrix\Matrix4x4.cpp" />
+    <ClCompile Include="Engine\Core\Math\Vector\Vector2.cpp" />
+    <ClCompile Include="Engine\Core\Math\Vector\Vector3.cpp" />
+    <ClCompile Include="Engine\Core\Math\Vector\Vector4.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui-knobs-main\imgui-knobs.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\crude_json.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_palette.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_presets.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_renderer.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\implot-master\implot.cpp" />
+    <ClCompile Include="Engine\Externals\imgui\implot-master\implot_items.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
-    <ClCompile Include="Engine\Object\Scene\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h" />
-    <ClInclude Include="Engine\Audio\Chiptune.h" />
-    <ClInclude Include="Engine\Audio\Audio3D.h" />
-    <ClInclude Include="Engine\Audio\AudioEmitter.h" />
-    <ClInclude Include="Engine\Audio\AudioListener.h" />
-    <ClInclude Include="Engine\Audio\MusicalScale.h" />
-    <ClInclude Include="Engine\Audio\XAudioCore.h" />
-    <ClInclude Include="Engine\Audio\AudioPlayer.h" />
-    <ClInclude Include="Engine\Audio\AudioResourceManager.h" />
-    <ClInclude Include="Engine\Audio\AudioSourceBinder.h" />
-    <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h" />
-    <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h" />
-    <ClInclude Include="Engine\Base\DirectX\ImGuiNode.h" />
-    <ClInclude Include="Engine\Base\DirectX\Rendering\PSO.h" />
-    <ClInclude Include="Engine\Base\DirectX\Rendering\PSOBinder.h" />
-    <ClInclude Include="Engine\Base\DirectX\RendaringPostprocess.h" />
-    <ClInclude Include="Engine\Base\DirectX\Rendering\PSOCreater.h" />
-    <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\ConstantBuffer.h" />
-    <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\StructuredBuffer.h" />
-    <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.h" />
-    <ClInclude Include="Engine\Base\DirectX\Rendering\ShaderReflection.h" />
-    <ClInclude Include="Engine\Base\LoopStoper.h" />
-    <ClInclude Include="Engine\Base\Windows\MemoryWatcher.h" />
-    <ClInclude Include="Engine\Input\XInput\XInputController.h" />
-    <ClInclude Include="Engine\Math\AudioMath.h" />
-    <ClInclude Include="Engine\Audio\ChunkHeader.h" />
-    <ClInclude Include="Engine\Audio\FormatChunk.h" />
-    <ClInclude Include="Engine\Audio\MultiAudioLoader.h" />
-    <ClInclude Include="Engine\Audio\RiffHeader.h" />
-    <ClInclude Include="Engine\Audio\SoundData.h" />
-    <ClInclude Include="Engine\Base\DirectX\D3DResourceLeakChecker.h" />
-    <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h" />
-    <ClInclude Include="Engine\Base\DirectX\Descriptors\RtvDescriptorHeap.h" />
-    <ClInclude Include="Engine\Base\DirectX\Descriptors\SrvDescriptorHeap.h" />
-    <ClInclude Include="Engine\Base\DirectX\FramePerSecond.h" />
-    <ClInclude Include="Engine\Base\DirectX\GraphicsCommon.h" />
+    <ClInclude Include="Engine\Core\Graphic\IGraphicCommon.h" />
+    <ClInclude Include="Engine\Core\IEngineCore.h" />
+    <ClInclude Include="Engine\Core\Math\AudioMath.h" />
     <ClInclude Include="Engine\Base\DirectX\PostProcess.h" />
-    <ClInclude Include="Engine\Base\EngineCore.h" />
-    <ClInclude Include="Engine\Colliders\Collider.h" />
-    <ClInclude Include="Engine\Colliders\CollisionManager.h" />
-    <ClInclude Include="Engine\Math\MyMath.h" />
-    <ClInclude Include="Engine\Math\MyRandomNum.h" />
-    <ClInclude Include="Engine\Object\Component\ComponentStrage.h" />
+    <ClInclude Include="Engine\Core\Math\MyMath.h" />
+    <ClInclude Include="Engine\Core\Math\MyRandomNum.h" />
+    <ClInclude Include="Engine\Core\Window\IGameWindowManager.h" />
+    <ClInclude Include="Engine\Core\Window\IGameWindow.h" />
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h" />
-    <ClInclude Include="Engine\Object\Component\Data\LuaScriptComponent.h" />
-    <ClInclude Include="Engine\Object\Component\Data\MaterialComponent.h" />
-    <ClInclude Include="Engine\Object\Component\Data\MeshComponent.h" />
-    <ClInclude Include="Engine\Object\Component\Data\ParentComponent.h" />
-    <ClInclude Include="Engine\Object\Component\Data\TransformComponent.h" />
-    <ClInclude Include="Engine\Object\Component\IComponentStrage.h" />
-    <ClInclude Include="Engine\Object\Entity\EntityManager.h" />
-    <ClInclude Include="Engine\Object\Script\Lua\LuaScriptResourceManager.h" />
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\BindEntityParent.h" />
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntityLoader.h" />
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntitySerializer.h" />
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntityWVPUpdater.h" />
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.h" />
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.h" />
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\TransformUpdate.h" />
-    <ClInclude Include="Engine\Object\System\Model\AppSys\DrawMesh.h" />
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.h" />
-    <ClInclude Include="Engine\Object\System\Entity\BaseSys\MakeWVPForTransformComponent.h" />
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\MaterialSerializer.h" />
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\MeshSerializer.h" />
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.h" />
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.h" />
-    <ClInclude Include="Engine\Object\System\Model\AppSys\LoadModelForEntities.h" />
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\ParentSerializer.h" />
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\TransformSerializer.h" />
-    <ClInclude Include="Engine\Object\System\Script\AppSys\AttachScriptForEntity.h" />
-    <ClInclude Include="Engine\Object\System\Script\AppSys\EntityScriptUpdate.h" />
-    <ClInclude Include="Engine\Object\System\Script\BaseSys\RunningScript.h" />
-    <ClInclude Include="Engine\Object\System\Script\BaseSys\ScriptComponentCreater.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\PrimitiveVertexData.h" />
-    <ClInclude Include="Engine\Math\Quaternion\Quaternion.h" />
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\AssimpModelLoader.h" />
-    <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
-    <ClInclude Include="Engine\Base\DirectX\Viewport.h" />
-    <ClInclude Include="Engine\Utility\CheckLoadFileExtension.h" />
-    <ClInclude Include="Engine\Utility\DirectoryManager.h" />
-    <ClInclude Include="Engine\Utility\MyDebugLog.h" />
-    <ClInclude Include="Engine\Base\DirectX\RootParameter.h" />
-    <ClInclude Include="Engine\Base\DirectX\DepthStencil.h" />
-    <ClInclude Include="Engine\Base\DirectX\DirectXCommon.h" />
-    <ClInclude Include="Engine\Base\DirectX\ImGuiManager.h" />
-    <ClInclude Include="Engine\Base\DirectX\InputLayout.h" />
-    <ClInclude Include="Engine\Base\DirectX\PipelineStateObject.h" />
-    <ClInclude Include="Engine\Base\DirectX\Rendering\ShaderCompiler.h" />
-    <ClInclude Include="Engine\Base\DirectX\TextureManager.h" />
-    <ClInclude Include="Engine\Utility\MyString.h" />
-    <ClInclude Include="Engine\Base\Windows\CrashHandler.h" />
-    <ClInclude Include="Engine\Base\Windows\WinApp.h" />
-    <ClInclude Include="Engine\Base\Windows\WinAppDebugCore.h" />
-    <ClInclude Include="Engine\Object\Camera\Camera.h" />
-    <ClInclude Include="Engine\Object\Camera\DebugCamera.h" />
-    <ClInclude Include="Engine\Input\DirectInput\DirectInputKeyboard.h" />
-    <ClInclude Include="Engine\Input\DirectInput\DirectInputManager.h" />
-    <ClInclude Include="Engine\Input\DirectInput\DirectInputMouse.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\DirectXDevice.h" />
+    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\App\CrashHandler.h" />
+    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\App\WinAppDebugCore.h" />
+    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\DirectX\D3DResourceLeakChecker.h" />
+    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\DirectX\DirectX12DebugCore.h" />
+    <ClInclude Include="Engine\Platform\Windows\WindowsEngineCore.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\GameWindow.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\GameWindowManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\DropFile\DropFileEvent.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\ExitApp\ExitAppEvent.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\IEvent.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\WindowEventsManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowGenerater\Data\WindowConfigData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowGenerater\WindowGenerater.h" />
+    <ClInclude Include="Engine\QuickForgeEngine.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\PrimitiveVertexData.h" />
+    <ClInclude Include="Engine\Core\Math\Quaternion\Quaternion.h" />
+    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\DebugLog\MyDebugLog.h" />
+    <ClInclude Include="Engine\Utility\DesignPatterns\Observer.h" />
+    <ClInclude Include="Engine\Utility\DesignPatterns\Singleton.h" />
+    <ClInclude Include="Engine\Utility\DesignPatterns\Subject.h" />
+    <ClInclude Include="Engine\Platform\Windows\Utility\FileSystems\CheckFileExtension\CheckFileExtension.h" />
+    <ClInclude Include="Engine\Utility\String\MyString.h" />
     <ClInclude Include="Engine\Object\Structs\ModelMaterialData.h" />
-    <ClInclude Include="Engine\Math\MathInclude.h" />
-    <ClInclude Include="Engine\Math\Matrix\Matrix2x2.h" />
-    <ClInclude Include="Engine\Math\Matrix\Matrix3x3.h" />
-    <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h" />
+    <ClInclude Include="Engine\Core\Math\MathInclude.h" />
+    <ClInclude Include="Engine\Core\Math\Matrix\Matrix2x2.h" />
+    <ClInclude Include="Engine\Core\Math\Matrix\Matrix3x3.h" />
+    <ClInclude Include="Engine\Core\Math\Matrix\Matrix4x4.h" />
     <ClInclude Include="Engine\Object\Structs\ModelData.h" />
-    <ClInclude Include="Engine\Math\Transform.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\TransformationMatrix.h" />
-    <ClInclude Include="Engine\Math\Vector\Vector2.h" />
-    <ClInclude Include="Engine\Math\Vector\Vector3.h" />
-    <ClInclude Include="Engine\Math\Vector\Vector4.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\VerTexData.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\ColorCorrectionOffset.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\DirectionalLight.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\Material.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\OffsetBuffer.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\VignetteOffset.h" />
-    <ClInclude Include="Engine\Shaders\StructsForGpu\ParticleForGPU.h" />
-    <ClInclude Include="Engine\Object\Scene\IScene.h" />
-    <ClInclude Include="Engine\Object\Scene\SceneManager.h" />
-    <ClInclude Include="Engine\Object\Scene\SceneObject.h" />
-    <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />
-    <ClInclude Include="Engine\Object\Font\Font.h" />
-    <ClInclude Include="Engine\Object\Font\GlyphForGPU.h" />
-    <ClInclude Include="Engine\Object\Font\FontLoader.h" />
-    <ClInclude Include="Engine\Object\Font\FontStructures.h" />
-    <ClInclude Include="Engine\Utility\FileExtension.h" />
-    <ClInclude Include="Engine\Object\Font\FontDrawer.h" />
-    <ClInclude Include="Engine\Utility\StringLiblary.h" />
-    <ClInclude Include="Engine\Utility\FileLoader.h" />
-    <ClInclude Include="Engine\Utility\IntrusiveList.h" />
-    <ClInclude Include="Engine\Utility\MyEasing.h" />
-    <ClInclude Include="Engine\Utility\MyGameMath.h" />
-    <ClInclude Include="Engine\Utility\MyRandom.h" />
-    <ClInclude Include="Engine\Utility\SimpleJson.h" />
-    <ClInclude Include="Engine\Utility\TimeCall.h" />
-    <ClInclude Include="Engine\Utility\MyTimer.h" />
-    <ClInclude Include="externals\imgui\imconfig.h" />
-    <ClInclude Include="externals\imgui\imgui-knobs-main\imgui-knobs.h" />
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\crude_json.h" />
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h" />
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.h" />
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.h" />
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h" />
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h" />
-    <ClInclude Include="externals\imgui\imgui.h" />
-    <ClInclude Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.h" />
-    <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="externals\imgui\imgui_internal.h" />
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_offset_rect.h" />
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle.h" />
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_math.h" />
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_palette.h" />
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_presets.h" />
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_renderer.h" />
-    <ClInclude Include="externals\imgui\implot-master\implot.h" />
-    <ClInclude Include="externals\imgui\implot-master\implot_internal.h" />
-    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
-    <ClInclude Include="externals\imgui\imstb_textedit.h" />
-    <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="externals\lua\lapi.h" />
-    <ClInclude Include="externals\lua\lauxlib.h" />
-    <ClInclude Include="externals\lua\lcode.h" />
-    <ClInclude Include="externals\lua\lctype.h" />
-    <ClInclude Include="externals\lua\ldebug.h" />
-    <ClInclude Include="externals\lua\ldo.h" />
-    <ClInclude Include="externals\lua\lfunc.h" />
-    <ClInclude Include="externals\lua\lgc.h" />
-    <ClInclude Include="externals\lua\ljumptab.h" />
-    <ClInclude Include="externals\lua\llex.h" />
-    <ClInclude Include="externals\lua\llimits.h" />
-    <ClInclude Include="externals\lua\lmem.h" />
-    <ClInclude Include="externals\lua\lobject.h" />
-    <ClInclude Include="externals\lua\lopcodes.h" />
-    <ClInclude Include="externals\lua\lopnames.h" />
-    <ClInclude Include="externals\lua\lparser.h" />
-    <ClInclude Include="externals\lua\lprefix.h" />
-    <ClInclude Include="externals\lua\lstate.h" />
-    <ClInclude Include="externals\lua\lstring.h" />
-    <ClInclude Include="externals\lua\ltable.h" />
-    <ClInclude Include="externals\lua\ltm.h" />
-    <ClInclude Include="externals\lua\lua.h" />
-    <ClInclude Include="externals\lua\lua.hpp" />
-    <ClInclude Include="externals\lua\luaconf.h" />
-    <ClInclude Include="externals\lua\lualib.h" />
-    <ClInclude Include="externals\lua\lundump.h" />
-    <ClInclude Include="externals\lua\lvm.h" />
-    <ClInclude Include="externals\lua\lzio.h" />
-    <ClInclude Include="externals\sol2\sol\assert.hpp" />
-    <ClInclude Include="externals\sol2\sol\as_args.hpp" />
-    <ClInclude Include="externals\sol2\sol\as_returns.hpp" />
-    <ClInclude Include="externals\sol2\sol\base_traits.hpp" />
-    <ClInclude Include="externals\sol2\sol\bind_traits.hpp" />
-    <ClInclude Include="externals\sol2\sol\bytecode.hpp" />
-    <ClInclude Include="externals\sol2\sol\call.hpp" />
-    <ClInclude Include="externals\sol2\sol\compatibility.hpp" />
-    <ClInclude Include="externals\sol2\sol\compatibility\compat-5.3.c.h" />
-    <ClInclude Include="externals\sol2\sol\compatibility\compat-5.3.h" />
-    <ClInclude Include="externals\sol2\sol\compatibility\compat-5.4.h" />
-    <ClInclude Include="externals\sol2\sol\compatibility\lua_version.hpp" />
-    <ClInclude Include="externals\sol2\sol\config.hpp" />
-    <ClInclude Include="externals\sol2\sol\coroutine.hpp" />
-    <ClInclude Include="externals\sol2\sol\debug.hpp" />
-    <ClInclude Include="externals\sol2\sol\demangle.hpp" />
-    <ClInclude Include="externals\sol2\sol\deprecate.hpp" />
-    <ClInclude Include="externals\sol2\sol\detail\build_version.hpp" />
-    <ClInclude Include="externals\sol2\sol\dump_handler.hpp" />
-    <ClInclude Include="externals\sol2\sol\ebco.hpp" />
-    <ClInclude Include="externals\sol2\sol\environment.hpp" />
-    <ClInclude Include="externals\sol2\sol\epilogue.hpp" />
-    <ClInclude Include="externals\sol2\sol\error.hpp" />
-    <ClInclude Include="externals\sol2\sol\error_handler.hpp" />
-    <ClInclude Include="externals\sol2\sol\forward.hpp" />
-    <ClInclude Include="externals\sol2\sol\forward_detail.hpp" />
-    <ClInclude Include="externals\sol2\sol\function.hpp" />
-    <ClInclude Include="externals\sol2\sol\function_result.hpp" />
-    <ClInclude Include="externals\sol2\sol\function_types.hpp" />
-    <ClInclude Include="externals\sol2\sol\function_types_core.hpp" />
-    <ClInclude Include="externals\sol2\sol\function_types_overloaded.hpp" />
-    <ClInclude Include="externals\sol2\sol\function_types_stateful.hpp" />
-    <ClInclude Include="externals\sol2\sol\function_types_stateless.hpp" />
-    <ClInclude Include="externals\sol2\sol\function_types_templated.hpp" />
-    <ClInclude Include="externals\sol2\sol\inheritance.hpp" />
-    <ClInclude Include="externals\sol2\sol\in_place.hpp" />
-    <ClInclude Include="externals\sol2\sol\load_result.hpp" />
-    <ClInclude Include="externals\sol2\sol\lua_table.hpp" />
-    <ClInclude Include="externals\sol2\sol\lua_value.hpp" />
-    <ClInclude Include="externals\sol2\sol\make_reference.hpp" />
-    <ClInclude Include="externals\sol2\sol\metatable.hpp" />
-    <ClInclude Include="externals\sol2\sol\object.hpp" />
-    <ClInclude Include="externals\sol2\sol\object_base.hpp" />
-    <ClInclude Include="externals\sol2\sol\optional.hpp" />
-    <ClInclude Include="externals\sol2\sol\optional_implementation.hpp" />
-    <ClInclude Include="externals\sol2\sol\overload.hpp" />
-    <ClInclude Include="externals\sol2\sol\packaged_coroutine.hpp" />
-    <ClInclude Include="externals\sol2\sol\pairs_iterator.hpp" />
-    <ClInclude Include="externals\sol2\sol\pointer_like.hpp" />
-    <ClInclude Include="externals\sol2\sol\policies.hpp" />
-    <ClInclude Include="externals\sol2\sol\prologue.hpp" />
-    <ClInclude Include="externals\sol2\sol\property.hpp" />
-    <ClInclude Include="externals\sol2\sol\protect.hpp" />
-    <ClInclude Include="externals\sol2\sol\protected_function.hpp" />
-    <ClInclude Include="externals\sol2\sol\protected_function_result.hpp" />
-    <ClInclude Include="externals\sol2\sol\protected_handler.hpp" />
-    <ClInclude Include="externals\sol2\sol\proxy_base.hpp" />
-    <ClInclude Include="externals\sol2\sol\raii.hpp" />
-    <ClInclude Include="externals\sol2\sol\reference.hpp" />
-    <ClInclude Include="externals\sol2\sol\resolve.hpp" />
-    <ClInclude Include="externals\sol2\sol\sol.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack\detail\pairs.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_check.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_check_get.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_check_get_qualified.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_check_get_unqualified.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_check_qualified.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_check_unqualified.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_core.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_field.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_get.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_get_qualified.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_get_unqualified.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_guard.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_iterator.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_pop.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_probe.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_proxy.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_proxy_base.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_push.hpp" />
-    <ClInclude Include="externals\sol2\sol\stack_reference.hpp" />
-    <ClInclude Include="externals\sol2\sol\state.hpp" />
-    <ClInclude Include="externals\sol2\sol\state_handling.hpp" />
-    <ClInclude Include="externals\sol2\sol\state_view.hpp" />
-    <ClInclude Include="externals\sol2\sol\string_view.hpp" />
-    <ClInclude Include="externals\sol2\sol\table.hpp" />
-    <ClInclude Include="externals\sol2\sol\table_core.hpp" />
-    <ClInclude Include="externals\sol2\sol\table_iterator.hpp" />
-    <ClInclude Include="externals\sol2\sol\table_proxy.hpp" />
-    <ClInclude Include="externals\sol2\sol\thread.hpp" />
-    <ClInclude Include="externals\sol2\sol\tie.hpp" />
-    <ClInclude Include="externals\sol2\sol\traits.hpp" />
-    <ClInclude Include="externals\sol2\sol\trampoline.hpp" />
-    <ClInclude Include="externals\sol2\sol\tuple.hpp" />
-    <ClInclude Include="externals\sol2\sol\types.hpp" />
-    <ClInclude Include="externals\sol2\sol\unicode.hpp" />
-    <ClInclude Include="externals\sol2\sol\unique_usertype_traits.hpp" />
-    <ClInclude Include="externals\sol2\sol\unsafe_function.hpp" />
-    <ClInclude Include="externals\sol2\sol\unsafe_function_result.hpp" />
-    <ClInclude Include="externals\sol2\sol\userdata.hpp" />
-    <ClInclude Include="externals\sol2\sol\usertype.hpp" />
-    <ClInclude Include="externals\sol2\sol\usertype_container.hpp" />
-    <ClInclude Include="externals\sol2\sol\usertype_container_launch.hpp" />
-    <ClInclude Include="externals\sol2\sol\usertype_core.hpp" />
-    <ClInclude Include="externals\sol2\sol\usertype_proxy.hpp" />
-    <ClInclude Include="externals\sol2\sol\usertype_storage.hpp" />
-    <ClInclude Include="externals\sol2\sol\usertype_traits.hpp" />
-    <ClInclude Include="externals\sol2\sol\variadic_args.hpp" />
-    <ClInclude Include="externals\sol2\sol\variadic_results.hpp" />
-    <ClInclude Include="externals\sol2\sol\version.hpp" />
-    <ClInclude Include="externals\sol2\sol\wrapper.hpp" />
+    <ClInclude Include="Engine\Core\Math\Transform.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\TransformationMatrix.h" />
+    <ClInclude Include="Engine\Core\Math\Vector\Vector2.h" />
+    <ClInclude Include="Engine\Core\Math\Vector\Vector3.h" />
+    <ClInclude Include="Engine\Core\Math\Vector\Vector4.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\VerTexData.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\ColorCorrectionOffset.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\DirectionalLight.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\Material.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\OffsetBuffer.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\VignetteOffset.h" />
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\ParticleForGPU.h" />
+    <ClInclude Include="Engine\Externals\imgui\imconfig.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui-knobs-main\imgui-knobs.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\crude_json.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui.h" />
+    <ClInclude Include="Engine\Externals\imgui\ImGuizmo-1.83\ImGuizmo.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_internal.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_offset_rect.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_math.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_palette.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_presets.h" />
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_renderer.h" />
+    <ClInclude Include="Engine\Externals\imgui\implot-master\implot.h" />
+    <ClInclude Include="Engine\Externals\imgui\implot-master\implot_internal.h" />
+    <ClInclude Include="Engine\Externals\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Engine\Externals\imgui\imstb_textedit.h" />
+    <ClInclude Include="Engine\Externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="Engine\Externals\lua\lapi.h" />
+    <ClInclude Include="Engine\Externals\lua\lauxlib.h" />
+    <ClInclude Include="Engine\Externals\lua\lcode.h" />
+    <ClInclude Include="Engine\Externals\lua\lctype.h" />
+    <ClInclude Include="Engine\Externals\lua\ldebug.h" />
+    <ClInclude Include="Engine\Externals\lua\ldo.h" />
+    <ClInclude Include="Engine\Externals\lua\lfunc.h" />
+    <ClInclude Include="Engine\Externals\lua\lgc.h" />
+    <ClInclude Include="Engine\Externals\lua\ljumptab.h" />
+    <ClInclude Include="Engine\Externals\lua\llex.h" />
+    <ClInclude Include="Engine\Externals\lua\llimits.h" />
+    <ClInclude Include="Engine\Externals\lua\lmem.h" />
+    <ClInclude Include="Engine\Externals\lua\lobject.h" />
+    <ClInclude Include="Engine\Externals\lua\lopcodes.h" />
+    <ClInclude Include="Engine\Externals\lua\lopnames.h" />
+    <ClInclude Include="Engine\Externals\lua\lparser.h" />
+    <ClInclude Include="Engine\Externals\lua\lprefix.h" />
+    <ClInclude Include="Engine\Externals\lua\lstate.h" />
+    <ClInclude Include="Engine\Externals\lua\lstring.h" />
+    <ClInclude Include="Engine\Externals\lua\ltable.h" />
+    <ClInclude Include="Engine\Externals\lua\ltm.h" />
+    <ClInclude Include="Engine\Externals\lua\lua.h" />
+    <ClInclude Include="Engine\Externals\lua\lua.hpp" />
+    <ClInclude Include="Engine\Externals\lua\luaconf.h" />
+    <ClInclude Include="Engine\Externals\lua\lualib.h" />
+    <ClInclude Include="Engine\Externals\lua\lundump.h" />
+    <ClInclude Include="Engine\Externals\lua\lvm.h" />
+    <ClInclude Include="Engine\Externals\lua\lzio.h" />
+    <ClInclude Include="Engine\Externals\sol2\sol\assert.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\as_args.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\as_returns.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\base_traits.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\bind_traits.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\bytecode.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\call.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.3.c.h" />
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.3.h" />
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.4.h" />
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\lua_version.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\config.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\coroutine.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\debug.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\demangle.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\deprecate.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\detail\build_version.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\dump_handler.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\ebco.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\environment.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\epilogue.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\error.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\error_handler.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\forward.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\forward_detail.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\function.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\function_result.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_core.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_overloaded.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_stateful.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_stateless.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_templated.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\inheritance.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\in_place.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\load_result.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\lua_table.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\lua_value.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\make_reference.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\metatable.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\object.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\object_base.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\optional.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\optional_implementation.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\overload.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\packaged_coroutine.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\pairs_iterator.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\pointer_like.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\policies.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\prologue.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\property.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\protect.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\protected_function.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\protected_function_result.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\protected_handler.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\proxy_base.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\raii.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\reference.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\resolve.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\sol.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack\detail\pairs.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get_qualified.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get_unqualified.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_qualified.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_unqualified.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_core.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_field.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_get.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_get_qualified.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_get_unqualified.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_guard.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_iterator.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_pop.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_probe.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_proxy.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_proxy_base.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_push.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_reference.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\state.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\state_handling.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\state_view.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\string_view.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\table.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\table_core.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\table_iterator.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\table_proxy.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\thread.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\tie.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\traits.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\trampoline.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\tuple.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\types.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\unicode.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\unique_usertype_traits.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\unsafe_function.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\unsafe_function_result.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\userdata.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_container.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_container_launch.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_core.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_proxy.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_storage.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_traits.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\variadic_args.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\variadic_results.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\version.hpp" />
+    <ClInclude Include="Engine\Externals\sol2\sol\wrapper.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\PS\ColorCorrectionShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Pixel</ShaderType>
@@ -764,7 +604,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\PS\MSDF.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\PS\MSDF.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Pixel</ShaderType>
@@ -778,13 +618,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\PS\Particle.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\PS\Particle.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\VS\Font.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\VS\Font.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Vertex</ShaderType>
@@ -798,7 +638,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\VS\Primitive.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\VS\Primitive.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Develop|Win32'">Vertex</ShaderType>
@@ -812,7 +652,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\VS\Simple.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\VS\Simple.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Develop|Win32'">Vertex</ShaderType>
@@ -826,7 +666,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\PS\Primitive.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\PS\Primitive.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Develop|Win32'">Pixel</ShaderType>
@@ -840,13 +680,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\PS\GrayscaleShader.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\PS\GrayscaleShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\PS\Object3d.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\PS\Object3d.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -860,7 +700,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\VS\Object3d.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\VS\Object3d.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -874,7 +714,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\VS\Particle.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\VS\Particle.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -888,7 +728,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\PS\Simple.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\PS\Simple.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -902,7 +742,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Shaders\PS\VignetteShader.hlsl">
+    <FxCompile Include="Engine\Resources\Shaders\PS\VignetteShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='MemoryDebug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Develop|Win32'">Pixel</ShaderType>
@@ -916,11 +756,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
-      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
