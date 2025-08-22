@@ -6,7 +6,6 @@
 #endif // _DEBUG
 
 GameWindowManager::GameWindowManager() {
-	AddWindow(1280, 720, "MainWindow");
 }
 
 void GameWindowManager::Initialize() {

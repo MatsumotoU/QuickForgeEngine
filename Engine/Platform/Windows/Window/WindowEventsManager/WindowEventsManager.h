@@ -4,10 +4,9 @@
 #include <memory>
 #include "EventSystems/IEvent.h"
 
-class WindowEventsManager final{
+class WindowEventsManager final {
 public:
-	WindowEventsManager() = delete;
-	WindowEventsManager(HWND hwnd);
+	WindowEventsManager();
 	~WindowEventsManager() = default;
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

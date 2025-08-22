@@ -2,5 +2,5 @@
 #include <Windows.h>
 
 namespace QuickForgeEngine {
-	void Run(HINSTANCE& hInstance, LPSTR& lpCmdLine);
+	void RunOnWindows(HINSTANCE& hInstance, LPSTR& lpCmdLine);
 }

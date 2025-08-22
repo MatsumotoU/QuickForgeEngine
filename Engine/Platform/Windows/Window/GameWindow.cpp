@@ -7,8 +7,8 @@ void GameWindow::Initialize(const uint32_t& width, const  uint32_t& height, cons
 	configData_.windowName = std::wstring(windowName.begin(), windowName.end());
 	configData_.isCanDropFiles = true; // ドラッグ＆ドロップを有効にする
 
+	eventManagerPtr_ = std::make_unique<WindowEventsManager>();
 	WindowGenerater::CreateGameWindow(wc_, hwnd_, configData_, proc_, eventManagerPtr_.get());
-	eventManagerPtr_ = std::make_unique<WindowEventsManager>(hwnd_);
 }
 
 void GameWindow::Update() {

@@ -7,7 +7,7 @@
 #pragma comment(lib,"dxcompiler.lib")
 
 #ifdef _DEBUG
-#include "Utility/DebugTool/DebugLog/MyDebugLog.h"
+#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #include "String/MyString.h"
 #endif // DEBUG
 

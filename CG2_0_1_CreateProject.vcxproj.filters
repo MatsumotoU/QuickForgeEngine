@@ -130,22 +130,22 @@
     <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Platform\Windows\Utility\DebugTool\DebugLog\MyDebugLog.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DebugLog\MyDebugLog.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\DirectXDevice.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Device\DirectXDevice.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Platform\Windows\Utility\DebugTool\App\WinAppDebugCore.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\App\WinAppDebugCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Platform\Windows\Utility\DebugTool\DirectX\DirectX12DebugCore.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DirectX12DebugCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\QuickForgeEngine.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Platform\Windows\Utility\FileSystems\CheckFileExtension\CheckFileExtension.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\FileSystems\CheckFileExtension\CheckFileExtension.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\WindowEventsManager.cpp">
@@ -167,6 +167,48 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Platform\Windows\Window\GameWindowManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\WindowsEngineCore.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\String\HwndConvertString.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Descriptors\DescriptorGenerator\DescriptorGenerator.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Descriptors\IDescriptorHeap.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\GenerateDiscriptorHandle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Descriptors\RtvDescriptorHeap.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Descriptors\CheckGenerateConfig\CheckGenerateConfig.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Descriptors\SrvDescriptorHeap.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Descriptors\DescriptorHeapManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\List\DirectXCommandList.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\Queue\DirectXCommandQueue.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\CommandExecutor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\DirectXCommandManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -744,22 +786,22 @@
     <ClInclude Include="Engine\Core\Graphic\IGraphicCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\DirectXDevice.h">
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Device\DirectXDevice.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\DebugLog\MyDebugLog.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DebugLog\MyDebugLog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\App\CrashHandler.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\App\CrashHandler.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\App\WinAppDebugCore.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\App\WinAppDebugCore.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\DirectX\D3DResourceLeakChecker.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\D3DResourceLeakChecker.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\Utility\DebugTool\DirectX\DirectX12DebugCore.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DirectX12DebugCore.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\QuickForgeEngine.h">
@@ -774,7 +816,7 @@
     <ClInclude Include="Engine\Utility\DesignPatterns\Subject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\Utility\FileSystems\CheckFileExtension\CheckFileExtension.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\FileSystems\CheckFileExtension\CheckFileExtension.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\Window\IGameWindow.h">
@@ -811,6 +853,87 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Platform\Windows\WindowsEngineCore.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\String\HwndConvertString.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Descriptors\Data\DescriptorHandles.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Descriptors\DescriptorGenerator\DescriptorGenerator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Descriptors\Data\DescriptorGenerateConfig.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Descriptors\IDescriptorHeap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\GenerateDiscriptorHandle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Descriptors\RtvDescriptorHeap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Descriptors\CheckGenerateConfig\CheckGenerateConfig.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Descriptors\SrvDescriptorHeap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\ConstantBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\StructuredBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\VertexBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ColorCorrectionOffset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\DirectionalLight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\Material.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\OffsetBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ParticleForGPU.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\PrimitiveVertexData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\TransformationMatrix.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VerTexData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VignetteOffset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Descriptors\DescriptorHeapManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\List\DirectXCommandList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\Queue\DirectXCommandQueue.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\DirectXCommandManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\CommandExecutor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
