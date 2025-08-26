@@ -12,6 +12,9 @@ public:
 	void Draw()override;
 	void Shutdown()override;
 	bool IsWindowActive() const override;
+	std::string GetWindowName() const override;
+
+	HWND GetHwnd() const;
 
 private:
 	HWND hwnd_ = nullptr;

@@ -12,7 +12,7 @@ public:
 	DirectXDevice();
 	~DirectXDevice();
 	void Initialize();
-	void Shutdown(); 
+	void Shutdown();
 
 	[[nodiscard]] IDXGIFactory7* GetDxgiFactory() const;
 	[[nodiscard]] ID3D12Device* GetDevice() const;

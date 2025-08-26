@@ -6,7 +6,7 @@
 #endif // _DEBUG
 
 void DescriptorGenerator::GenerateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& heap, ID3D12Device* device, const DescriptorGenerateConfig& config) {
-	assert(heap);
+	assert(!heap && "Already generated");
 #ifdef _DEBUG
 	DebugLog("CreateDescriptorHeap");
 	DebugLog(std::format("NumDescriptors: {}, ShaderVisible: {}",

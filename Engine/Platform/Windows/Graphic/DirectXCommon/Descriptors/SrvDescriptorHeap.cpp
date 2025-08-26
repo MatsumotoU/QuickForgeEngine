@@ -10,7 +10,7 @@
 
 void SrvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
 #ifdef _DEBUG
-	DebugLog("-----SrvDescriptorHeap:Initialize-----\n");
+	DebugLog("-----SrvDescriptorHeap:Initialize-----");
 #endif // _DEBUG
 	// ディスクリプタ生成設定の初期化
 	descriptorGenerateConfig_.descriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -41,11 +41,11 @@ UINT SrvDescriptorHeap::GetDescriptorSize() const {
 
 DescriptorHandles SrvDescriptorHeap::AssignHeap(ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
 #ifdef _DEBUG
-	DebugLog("-----RtvDescriptorHeap:AssignHeap-----\n");
+	DebugLog("-----RtvDescriptorHeap:AssignHeap-----");
 #endif // _DEBUG
 	// 空きスタックからディスクリプタを取得
 	assert(!freeDescriptors_.empty() && "No free descriptors available.");
-	UINT index = freeDescriptors_.top();
+	UINT index = freeDescriptors_.front();
 	freeDescriptors_.pop();
 	// ディスクリプタハンドルを取得
 	DescriptorHandles handle;

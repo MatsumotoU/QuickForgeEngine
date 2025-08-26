@@ -15,8 +15,8 @@ public:
     void Log(const std::string& message, const std::source_location& location = std::source_location::current());
 	const std::vector<std::string>* GetLog();
 private:
-    MyDebugLog() = default;
-    ~MyDebugLog() override = default;
+    MyDebugLog();
+    ~MyDebugLog() override;
 	void Initialize();
 	void Finalize();
 

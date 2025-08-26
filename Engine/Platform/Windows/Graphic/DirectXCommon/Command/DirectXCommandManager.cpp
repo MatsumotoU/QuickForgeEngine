@@ -15,9 +15,6 @@ void DirectXCommandManager::Initialize(ID3D12Device* device) {
 }
 
 void DirectXCommandManager::ResetCommandList() {
-#ifdef _DEBUG
-	DebugLog("ResetCommandList called.");
-#endif // _DEBUG
 	assert(!commandExecutors_.empty() && "Command executors are not initialized.");
 	for (auto& executor : commandExecutors_) {
 		executor.ResetCommandList();
@@ -25,9 +22,6 @@ void DirectXCommandManager::ResetCommandList() {
 }
 
 void DirectXCommandManager::ExecuteCommandList() {
-#ifdef _DEBUG
-	DebugLog("ExecuteCommandList called.");
-#endif // _DEBUG
 	assert(!commandExecutors_.empty() && "Command executors are not initialized.");
 	for (auto& executor : commandExecutors_) {
 		executor.ExecuteCommandList();

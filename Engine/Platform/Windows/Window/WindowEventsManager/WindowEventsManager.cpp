@@ -4,8 +4,8 @@
 #include "EventSystems/ExitApp/ExitAppEvent.h"
 
 #ifdef _DEBUG
-#include "Utility/String/HwndConvertString.h"
-#include "Utility/DebugTool/DebugLog/MyDebugLog.h"
+#include "AppUtility/String/HwndConvertString.h"
+#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #include "String/MyString.h"
 #include "Externals/imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

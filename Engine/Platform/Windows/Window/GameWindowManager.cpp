@@ -46,3 +46,16 @@ bool GameWindowManager::IsWindowActive() const {
 	
 	return false;
 }
+
+HWND GameWindowManager::GetWindow(const std::string windowName) const {
+	for (const auto& window : windows) {
+		if (window->GetWindowName() == windowName) {
+			// IGameWindow* から GameWindow* へキャスト
+			if (auto gameWindow = dynamic_cast<GameWindow*>(window.get())) {
+				return gameWindow->GetHwnd();
+			}
+		}
+	}
+	throw std::runtime_error("指定されたウィンドウ名が見つかりませんでした。");
+
+}

@@ -26,3 +26,12 @@ bool GameWindow::IsWindowActive() const {
 	}
 	return false;
 }
+
+std::string GameWindow::GetWindowName() const {
+	assert(!configData_.windowName.empty() && "Window name is empty");
+	return ConvertString(configData_.windowName);
+}
+
+HWND GameWindow::GetHwnd() const {
+	return hwnd_;
+}

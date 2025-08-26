@@ -16,6 +16,8 @@ void DirectXCommandQueue::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TY
 void DirectXCommandQueue::ExecuteCommandList(ID3D12GraphicsCommandList* commandList) {
 	assert(commandList != nullptr && "CommandList is null");
 	assert(commandQueue_ && "CommandQueue is not initialized");
+	HRESULT hr = commandList->Close();
+	assert(SUCCEEDED(hr) && "Failed to close command list");
 	ID3D12CommandList* lists[] = { commandList };
 	commandQueue_->ExecuteCommandLists(_countof(lists), lists);
 }

@@ -1,6 +1,14 @@
 #include "MyDebugLog.h"
 #include "BuildInfo.h"
 
+MyDebugLog::MyDebugLog() {
+	Initialize();
+}
+
+MyDebugLog::~MyDebugLog() {
+	Finalize();
+}
+
 void MyDebugLog::Initialize() {
 	std::filesystem::create_directory("logs");
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();

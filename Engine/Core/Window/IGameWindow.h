@@ -27,9 +27,13 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsWindowActive() const = 0;
+	/// <summary>
+	/// ウィンドウの名前を取得する
+	/// </summary>
+	/// <returns></returns>
+	virtual std::string GetWindowName() const = 0;
 
 protected:
 	uint32_t clientWidth_;
 	uint32_t clientHeight_;
-	std::string windowName_;
 };

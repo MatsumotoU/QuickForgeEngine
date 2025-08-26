@@ -9,7 +9,7 @@
 
 void RtvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
 #ifdef _DEBUG
-	DebugLog("-----RtvDescriptorHeap:Initialize-----\n");
+	DebugLog("-----RtvDescriptorHeap:Initialize-----");
 #endif // _DEBUG
 	// ディスクリプタ生成設定の初期化
 	descriptorGenerateConfig_.descriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -40,19 +40,16 @@ UINT RtvDescriptorHeap::GetDescriptorSize() const {
 
 DescriptorHandles RtvDescriptorHeap::AssignHeap(ID3D12Resource* resource,const D3D12_RENDER_TARGET_VIEW_DESC* desc) {
 #ifdef _DEBUG
-	DebugLog("-----RtvDescriptorHeap:AssignHeap-----\n");
+	DebugLog("-----RtvDescriptorHeap:AssignHeap-----");
 #endif // _DEBUG
 	// 空きスタックからディスクリプタを取得
 	assert(!freeDescriptors_.empty() && "No free descriptors available.");
-	UINT index = freeDescriptors_.top();
+	UINT index = freeDescriptors_.front();
 	freeDescriptors_.pop();
 	// ディスクリプタハンドルを取得
 	DescriptorHandles handle;
 	handle.cpuHandle_ = 
 		GenerateDescriptorHandle::GetCpuDescriptorHandle(descriptorHeap_.Get(), descriptorGenerateConfig_.descriptorSize, index);
-	handle.gpuHandle_ =
-		GenerateDescriptorHandle::GetGpuDescriptorHandle(descriptorHeap_.Get(), descriptorGenerateConfig_.descriptorSize, index);
-
 	// リソースビューを生成
 	device_->CreateRenderTargetView(resource, desc, handle.cpuHandle_);
 

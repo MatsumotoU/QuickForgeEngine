@@ -27,3 +27,19 @@ UINT DescriptorHeapManager::GetRtvDescriptorSize() const {
 UINT DescriptorHeapManager::GetSrvDescriptorSize() const {
 	return srvDescriptorHeap.GetDescriptorSize();
 }
+
+ID3D12DescriptorHeap* DescriptorHeapManager::GetRtvDescriptorHeapAddress() { 
+	return rtvDescriptorHeap.GetDescriptorHeap(); 
+}
+
+ID3D12DescriptorHeap* DescriptorHeapManager::GetSrvDescriptorHeapAddress() {
+	return srvDescriptorHeap.GetDescriptorHeap();
+}
+
+ID3D12DescriptorHeap* const* DescriptorHeapManager::GetRtvDescriptorHeapAddressOf() {
+	return rtvDescriptorHeap.GetDescriptorHeapAddressOf();
+}
+
+ID3D12DescriptorHeap* const* DescriptorHeapManager::GetSrvDescriptorHeapAddressOf() {
+	return srvDescriptorHeap.GetDescriptorHeapAddressOf();
+}

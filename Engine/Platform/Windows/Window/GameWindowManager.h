@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <Windows.h>
 #include "Core/Window/IGameWindowManager.h"
 #include "Core/Window/IGameWindow.h"
 
@@ -12,4 +14,6 @@ public:
 	void Shutdown() override;
 	void AddWindow(const uint32_t& width, const uint32_t& height, const std::string& windowName) override;
 	bool IsWindowActive() const override;
+
+	HWND GetWindow(const std::string windowName) const;
 };
