@@ -19,6 +19,13 @@ WindowEventsManager::WindowEventsManager() {
 }
 
 LRESULT CALLBACK WindowEventsManager::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+	// TODO: ImGuiはImGuiの方に移動させる
+#ifdef _DEBUG
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+		return true;
+	}
+#endif // _DEBUG
+
 	// WM_NCCREATE時のみCREATESTRUCTからthisを取得して保存
 	if (msg == WM_NCCREATE) {
 		CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lparam);

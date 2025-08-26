@@ -63,8 +63,9 @@ void ImGuiFlameController::BeginFrame() {
 	commandList_->SetDescriptorHeaps(1, srvDescriptorHeap_);
 }
 
-void ImGuiFlameController::EndFrame() {
+void ImGuiFlameController::EndFrame(D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferCpuHandle) {
 	// ImGuiの描画
 	ImGui::Render();
+	commandList_->OMSetRenderTargets(1, &currentBackBufferCpuHandle, FALSE, nullptr);
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
 }

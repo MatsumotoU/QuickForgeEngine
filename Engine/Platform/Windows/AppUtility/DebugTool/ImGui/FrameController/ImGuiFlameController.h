@@ -15,8 +15,6 @@
 #include "Externals/imgui/imgui-knobs-main/imgui-knobs.h"// かなりの数の警告無視(imgui-knobs.cpp要参照)
 #include "Externals/imgui/ImGuizmo-1.83/ImGuizmo.h"
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 class ImGuiFlameController final {
 public:
 	ImGuiFlameController();
@@ -39,7 +37,7 @@ public:
 	/// <summary>
 	/// ImGuiここまでこの関数はシールドを表示用に切り替える前にする
 	/// </summary>
-	void EndFrame();
+	void EndFrame(D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferCpuHandle);
 
 private:
 #ifdef _DEBUG

@@ -24,11 +24,14 @@ public:
 	ID3D12Device* GetDevice();
 	ID3D12GraphicsCommandList* GetCommandManager(const D3D12_COMMAND_LIST_TYPE& type);
 	SwapChain* GetSwapChain();
+	uint32_t GetBackBufferCount();
 	Fence* GetFence();
+	D3D12_RENDER_TARGET_VIEW_DESC& GetSwapChainRtvDesc();
 	ID3D12DescriptorHeap* GetRtvDescriptorHeapAddress();
 	ID3D12DescriptorHeap* GetSrvDescriptorHeapAddress();
 	ID3D12DescriptorHeap* const* GetRtvDescriptorHeapAddressOf();
 	ID3D12DescriptorHeap* const* GetSrvDescriptorHeapAddressOf();
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferCpuHandle();
 
 private:
 #ifdef _DEBUG
@@ -42,4 +45,6 @@ private:
 	DirectXCommandManager commandManager_;
 	SwapChain swapChain_;
 	Fence fence_;
+
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 };

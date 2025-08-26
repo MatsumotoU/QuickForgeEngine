@@ -14,21 +14,22 @@ WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 	:debugCore_(lpCmdLine),hInstance_(hInstance),lpCmdLine_(lpCmdLine){}
 
 void WindowsEngineCore::Initialize() {
+	// ウィンドウマネージャー初期化
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
 	gameWindowManager->AddWindow(windowWidth, windowHeight, "QuickForgeEngine");
-
+	// DirectX初期化
 	directXCommon_.Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("QuickForgeEngine"), windowWidth, windowHeight);
-
+	// ImGuiの初期化
 	imguiFrameController_.Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("QuickForgeEngine"),
 		directXCommon_.GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		directXCommon_.GetSrvDescriptorHeapAddressOf());
 	ImGuiInitializer::Initialize(
 		directXCommon_.GetDevice(),
-		2,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
+		directXCommon_.GetBackBufferCount(),
+		directXCommon_.GetSwapChainRtvDesc().Format,
 		directXCommon_.GetSrvDescriptorHeapAddress(),
 		directXCommon_.GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
 		directXCommon_.GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
@@ -54,6 +55,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	imguiFrameController_.EndImGui();
 	directXCommon_.Shutdown();
 	gameWindowManager->Shutdown();
 #ifdef _DEBUG
@@ -67,6 +69,10 @@ void WindowsEngineCore::Update() {
 
 void WindowsEngineCore::Draw() {
 	directXCommon_.PreDraw();
+	imguiFrameController_.BeginFrame();
+
 	gameWindowManager->Draw();
+
+	imguiFrameController_.EndFrame(directXCommon_.GetCurrentBackBufferCpuHandle());
 	directXCommon_.PostDraw();
 }

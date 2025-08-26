@@ -64,12 +64,12 @@ void DirectXCommon::Shutdown() {
 
 void DirectXCommon::AssignSwapChainRenderTarget() {
 	// スワップチェインのリソース登録
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc_ = {};
+	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 	for (uint32_t i = 0; i < swapChain_.GetBackBufferCount(); ++i) {
 		DescriptorHandles handles;
-		handles = descriptorHeapManager_.AssignRtvHeap(swapChain_.GetBackBuffer(i), &rtvDesc);
+		handles = descriptorHeapManager_.AssignRtvHeap(swapChain_.GetBackBuffer(i), &rtvDesc_);
 		swapChain_.AssignDescriptorHandles(handles, i);
 	}
 	assert(swapChain_.CheckBackBufferViews());
@@ -90,9 +90,19 @@ SwapChain* DirectXCommon::GetSwapChain() {
 	return &swapChain_;
 }
 
+uint32_t DirectXCommon::GetBackBufferCount() {
+	assert(swapChain_.GetBackBufferCount() > 0 && "BackBufferCount is 0.");
+	return swapChain_.GetBackBufferCount();
+}
+
 Fence* DirectXCommon::GetFence() {
 	assert(&fence_ && "Fence is nullptr.");
 	return &fence_;
+}
+
+D3D12_RENDER_TARGET_VIEW_DESC& DirectXCommon::GetSwapChainRtvDesc() {
+	assert(rtvDesc_.Format != DXGI_FORMAT_UNKNOWN && "RtvDesc is not set.");
+	return rtvDesc_;
 }
 
 ID3D12DescriptorHeap* DirectXCommon::GetRtvDescriptorHeapAddress() {
@@ -109,4 +119,8 @@ ID3D12DescriptorHeap* const* DirectXCommon::GetRtvDescriptorHeapAddressOf() {
 
 ID3D12DescriptorHeap* const* DirectXCommon::GetSrvDescriptorHeapAddressOf() {
 	return descriptorHeapManager_.GetSrvDescriptorHeapAddressOf();
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCurrentBackBufferCpuHandle() {
+	return swapChain_.GetCurrentBackBufferView();
 }

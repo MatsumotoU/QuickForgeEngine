@@ -30,7 +30,7 @@ void SrvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bo
 	DescriptorGenerator::GenerateDescriptorHeap(
 		descriptorHeap_, device, descriptorGenerateConfig_);
 	// 空きスタックを初期化
-	for (UINT i = 0; i < descriptorGenerateConfig_.numDescriptors; ++i) {
+	for (UINT i = 1; i < descriptorGenerateConfig_.numDescriptors; ++i) {
 		freeDescriptors_.push(i);
 	}
 }
