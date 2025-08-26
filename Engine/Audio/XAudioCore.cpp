@@ -1,4 +1,4 @@
-#include "AudioManager.h"
+#include "XAudioCore.h"
 #include <cassert>
 #include <fstream>
 
@@ -11,16 +11,17 @@
 #include <functiondiscoverykeys_devpkey.h> 
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 #pragma comment(lib,"xaudio2.lib")
 
 // デストラクタ
-AudioManager::~AudioManager() {
+XAudioCore::~XAudioCore() {
 	xAudio2_.Reset();
 }
 
 // 初期化
-void AudioManager::Initialize() {
+void XAudioCore::Initialize() {
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
@@ -107,12 +108,12 @@ void AudioManager::Initialize() {
 }
 
 // マスターボリュームの設定
-void AudioManager::SetMasterVolume(float volume) {
+void XAudioCore::SetMasterVolume(float volume) {
 	masterVoice_->SetVolume(volume);
 }
 
 // 出力チャンネル数の取得
-uint32_t AudioManager::GetOutputChannels() {
+uint32_t XAudioCore::GetOutputChannels() {
 	DWORD channelMask = 0;
 	masterVoice_->GetChannelMask(&channelMask);
 
@@ -125,69 +126,14 @@ uint32_t AudioManager::GetOutputChannels() {
 }
 
 // マスターボリュームの取得
-IXAudio2MasteringVoice* AudioManager::GetMasterVoice() {
+IXAudio2MasteringVoice* XAudioCore::GetMasterVoice() {
 	return masterVoice_;
 }
 
-Audio3D* AudioManager::GetAudio3D() { return &audio3D_; }
+Audio3D* XAudioCore::GetAudio3D() { return &audio3D_; }
 
 // サウンドデータのロード
-SoundData Audiomanager::SoundLoadWave(const char* filename) {
-	std::ifstream file;
-	file.open(filename, std::ios_base::binary);
-	assert(file.is_open());
-
-	RiffHeader riff;
-	file.read((char*)&riff, sizeof(riff));
-	if (strncmp(riff.chunk.id, "RIFF", 4) != 0) {
-		assert(0);
-	}
-	if (strncmp(riff.type, "WAVE", 4) != 0) {
-		assert(0);
-	}
-
-	FormatChunk format = {};
-	file.read((char*)&format, sizeof(ChunkHeader));
-	if (strncmp(format.chunk.id, "fmt ", 4) != 0) {
-		assert(0 && "Error");
-	}
-	assert(format.chunk.size <= sizeof(format.fmt));
-	file.read((char*)&format.fmt, format.chunk.size);
-
-#ifdef _DEBUG
-	DebugLog(ConvertString(std::format(L"WAV File Format - Channels: {}, SampleRate: {}, BitsPerSample: {}", 
-		format.fmt.nChannels, format.fmt.nSamplesPerSec, format.fmt.wBitsPerSample)));
-#endif
-
-	ChunkHeader data;
-	file.read((char*)&data, sizeof(data));
-	if (strncmp(data.id, "JUNK", 4) == 0) {
-		file.seekg(data.size, std::ios_base::cur);
-		file.read((char*)&data, sizeof(data));
-	}
-
-	if (strncmp(data.id, "LIST", 4) == 0) {
-		file.seekg(data.size, std::ios_base::cur);
-		file.read((char*)&data, sizeof(data));
-	}
-
-	if (strncmp(data.id, "data", 4) != 0) {
-		assert(0);
-	}
-	char* pBuffer = new char[data.size];
-	file.read(pBuffer, data.size);
-	file.close();
-
-	SoundData soundData = {};
-	soundData.wfex = format.fmt;
-	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
-	soundData.bufferSize = data.size;
-
-	return soundData;
-}
-
-// mp3データのロード
-SoundData Audiomanager::SoundLoadMp3(const char* filename) {
+SoundData Audiomanager::SoundLoad(const char* filename) {
 	SoundData mp3Sound{};
 	mp3Sound = Multiaudioloader::LoadSoundData(filename);
 	return mp3Sound;
@@ -223,13 +169,46 @@ void Audiomanager::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData,f
 	assert(SUCCEEDED(hr));
 }
 
-void Audiomanager::SoundPlaySourceVoice(const SoundData& soundData,IXAudio2SourceVoice* pSourceVoice) {
+void Audiomanager::SoundPlaySourceVoice(const SoundData& soundData,IXAudio2SourceVoice* pSourceVoice, bool isLoop) {
 	HRESULT hr{};
 
 	XAUDIO2_BUFFER buf{};
 	buf.pAudioData = soundData.pBuffer;
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
+	if (isLoop) {
+		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+		buf.LoopBegin = 0;
+		buf.LoopLength = 0;
+	}
+
+	hr = pSourceVoice->SubmitSourceBuffer(&buf);
+	assert(SUCCEEDED(hr));
+	hr = pSourceVoice->Start();
+	assert(SUCCEEDED(hr));
+}
+
+void Audiomanager::SoundPlayLoopSourceVoice(const SoundData& soundData, IXAudio2SourceVoice* pSourceVoice, float loopBeginSecond, float loopSecond, uint32_t loopCount) {
+	HRESULT hr{};
+
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = soundData.pBuffer;
+	buf.AudioBytes = soundData.bufferSize;
+	buf.Flags = XAUDIO2_END_OF_STREAM;
+
+	// ループの設定
+	UINT32 sampleRate = soundData.wfex.nSamplesPerSec;
+	buf.LoopBegin = static_cast<UINT32>(loopBeginSecond * sampleRate);
+	buf.LoopLength = static_cast<UINT32>(loopSecond * sampleRate);
+	buf.LoopCount = loopCount;
+
+	// ループ終了位置までしか再生しない
+	buf.PlayBegin = 0;
+	buf.PlayLength = buf.LoopBegin + buf.LoopLength * buf.LoopCount;
+	// 再生する長さバッファが素材本来のバッファを超えないようにする
+	assert(soundData.wfex.nBlockAlign != 0);
+	UINT32 maxSamples = soundData.bufferSize / soundData.wfex.nBlockAlign;
+	buf.PlayLength = std::clamp(buf.PlayLength, static_cast<UINT32>(0), maxSamples);
 
 	hr = pSourceVoice->SubmitSourceBuffer(&buf);
 	assert(SUCCEEDED(hr));
@@ -243,6 +222,7 @@ IXAudio2SourceVoice* Audiomanager::CreateSourceVoice(IXAudio2* xAudio2, const So
 	DebugLog(ConvertString(std::format(L"Creating SourceVoice with channels:{}", soundData.wfex.nChannels)));
 #endif
 	HRESULT hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex, XAUDIO2_VOICE_USEFILTER, XAUDIO2_DEFAULT_FREQ_RATIO);
+	hr;
 	assert(SUCCEEDED(hr));
 	return pSourceVoice;
 }

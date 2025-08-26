@@ -9,15 +9,13 @@
 #include "SoundData.h"
 
 #ifdef _DEBUG
-#include "../Base/MyString.h"
-#include "../Base/MyDebugLog.h"
+#include "Utility/MyString.h"
+#include "Utility/MyDebugLog.h"
 #endif // _DEBUG
 
-// TODO: 自分で書いたWave読み込みを消す
-
-class AudioManager final{
+class XAudioCore final{
 public:
-	~AudioManager();
+	~XAudioCore();
 	
 public:
 	/// <summary>
@@ -48,17 +46,11 @@ private:
 
 namespace Audiomanager {
 	/// <summary>
-	/// wavサウンドデータを読み込みます
+	/// サウンドデータを読み込みます
 	/// </summary>
 	/// <param name="filename">filePath</param>
 	/// <returns></returns>
-	SoundData SoundLoadWave(const char* filename);
-	/// <summary>
-	/// mp3サウンドデータを読み込みます
-	/// </summary>
-	/// <param name="filename">filePath</param>
-	/// <returns></returns>
-	SoundData SoundLoadMp3(const char* filename);
+	SoundData SoundLoad(const char* filename);
 	/// <summary>
 	/// サウンドデータを削除します
 	/// </summary>
@@ -77,7 +69,18 @@ namespace Audiomanager {
 	/// </summary>
 	/// <param name="xAudio2">XAudio2</param>
 	/// <param name="sourceVoice">SourceVoice</param>
-	void SoundPlaySourceVoice(const SoundData& soundData, IXAudio2SourceVoice* pSourceVoice);
+	void SoundPlaySourceVoice(const SoundData& soundData, IXAudio2SourceVoice* pSourceVoice,bool isLoop);
+	/// <summary>
+	/// ソースボイスのループ回数を指定して音源を鳴らします
+	/// </summary>
+	/// <param name="soundData"></param>
+	/// <param name="pSourceVoice"></param>
+	/// <param name="loopBeginSecond">ループ開始地点を何秒ずらすか</param>
+	/// <param name="loopSecond">ループ開始地点から何秒鳴らすか</param>
+	/// <param name="loopCount"></param>
+	void SoundPlayLoopSourceVoice(
+		const SoundData& soundData, IXAudio2SourceVoice* pSourceVoice, 
+		float loopBeginSecond,float loopSecond,uint32_t loopCount);
 	/// <summary>
 	/// ソースボイスを作成します
 	/// </summary>

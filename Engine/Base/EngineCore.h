@@ -21,8 +21,15 @@
 #include "DirectX/TextureManager.h"
 #include "DirectX/GraphicsCommon.h"
 // 音声機能
-#include "Audio/AudioManager.h"
+#include "Audio/XAudioCore.h"
 #include "Audio/Audio3D.h"
+#include "Audio/AudioResourceManager.h"
+#include "Audio/AudioSourceBinder.h"
+#include "Audio/AudioPlayer.h"
+#include "Audio/Chiptune.h"
+#include "Audio/MusicalScale.h"
+#include "Audio/AudioEmitter.h"
+#include "Audio/AudioListener.h"
 // 入力機能
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Input/XInput/XInputController.h"
@@ -83,7 +90,7 @@ public:// エンジンの機能取得
 	ImGuiManager* GetImGuiManager();
 	TextureManager* GetTextureManager();
 	GraphicsCommon* GetGraphicsCommon();
-	AudioManager* GetAudioManager();
+	XAudioCore* GetAudioManager();
 	Audio3D* GetAudio3D();
 	DirectInputManager* GetInputManager();
 	Sprite* GetOffscreen();
@@ -112,8 +119,12 @@ private:// 描画機能
 	GraphRenderer graphRenderer_;
 
 private:// 音声
-	AudioManager audioManager_;
+	XAudioCore audioManager_;
 	Audio3D audio3D_;
+	AudioResourceManager audioResourceManager_;
+	AudioSourceBinder audioSourceBinder_;
+	AudioPlayer audioPlayer_;
+	Chiptune chiptune_;
 
 private:// 入力
 	DirectInputManager inputManager_;

@@ -44,6 +44,10 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 
 	// 音声機能の初期化
 	audioManager_.Initialize();
+	audioResourceManager_.Initialize(this);
+	audioSourceBinder_.Initialize(this);
+	audioPlayer_.Initialize(this);
+	chiptune_.Initialize(this);
 
 	// 入力機能の初期化
 	inputManager_.Initialize(&winApp_, hInstance);
@@ -143,7 +147,7 @@ GraphicsCommon* EngineCore::GetGraphicsCommon() {
 	return &graphicsCommon_;
 }
 
-AudioManager* EngineCore::GetAudioManager() {
+XAudioCore* EngineCore::GetAudioManager() {
 	return &audioManager_;
 }
 

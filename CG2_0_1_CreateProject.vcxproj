@@ -243,7 +243,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
+    <ClCompile Include="Engine\Audio\AudioPlayer.cpp" />
+    <ClCompile Include="Engine\Audio\AudioResourceManager.cpp" />
+    <ClCompile Include="Engine\Audio\AudioSourceBinder.cpp" />
+    <ClCompile Include="Engine\Audio\Chiptune.cpp" />
     <ClCompile Include="Engine\Audio\MultiAudioLoader.cpp" />
+    <ClCompile Include="Engine\Audio\MusicalScale.cpp" />
+    <ClCompile Include="Engine\Audio\XAudioCore.cpp" />
     <ClCompile Include="Engine\Base\DirectX\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Base\DirectX\GraphRenderer.cpp" />
     <ClCompile Include="Engine\Base\DirectX\RootParameter.cpp" />
@@ -340,6 +346,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Audio\AudioListener.h" />
     <ClInclude Include="Engine\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Audio\AudioMaterial.h" />
+    <ClInclude Include="Engine\Audio\AudioPlayer.h" />
+    <ClInclude Include="Engine\Audio\AudioResourceManager.h" />
+    <ClInclude Include="Engine\Audio\AudioSourceBinder.h" />
+    <ClInclude Include="Engine\Audio\Chiptune.h" />
+    <ClInclude Include="Engine\Audio\MusicalScale.h" />
+    <ClInclude Include="Engine\Audio\XAudioCore.h" />
     <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h" />
     <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h" />
     <ClInclude Include="Engine\Input\XInput\XInputController.h" />

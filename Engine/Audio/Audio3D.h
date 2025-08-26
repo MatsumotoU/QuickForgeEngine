@@ -5,12 +5,12 @@
 #include <x3daudio.h>
 #include "SoundData.h"
 
-class AudioManager;
+class XAudioCore;
 
 class Audio3D final {
 
 public:
-	void Initialize(AudioManager* audioManager);
+	void Initialize(XAudioCore* audioManager);
 
 public:
 	X3DAUDIO_DSP_SETTINGS CreateDspSettings(
@@ -33,13 +33,13 @@ public:
 	X3DAUDIO_HANDLE* GetX3DInstance();
 
 private:
-	AudioManager* audioManager_;
+	XAudioCore* audioManager_;
 	X3DAUDIO_HANDLE x3DInstance_;
 };
 
 namespace audio3d {
 
-	IXAudio2SourceVoice* Create3DSourceVoice(AudioManager* audioManager, const SoundData& soundData,const X3DAUDIO_DSP_SETTINGS& dspSettings);
+	IXAudio2SourceVoice* Create3DSourceVoice(XAudioCore* audioManager, const SoundData& soundData,const X3DAUDIO_DSP_SETTINGS& dspSettings);
 }
 
 // 立体音響作った時のコード
