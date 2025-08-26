@@ -4,9 +4,13 @@
 
 #include "Window/GameWindowManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
+#include "Graphic/Pipeline/GraphicPipelineManager.h"
 #include "AppUtility/DebugTool/App/WinAppDebugCore.h"
 
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
+
+// TODO: AssetManagerに統合
+#include "Platform/Windows/Assets/2DTexture/TextureManager.h"
 
 class WindowsEngineCore final : public IEngineCore {
 public:
@@ -27,5 +31,8 @@ private:
 	DirectXCommon directXCommon_;
 	WinAppDebugCore debugCore_;
 
+	TextureManager textureManager_;
+
+	GraphicPipelineManager graphicPipelineManager_;
 	ImGuiFlameController imguiFrameController_;
 };

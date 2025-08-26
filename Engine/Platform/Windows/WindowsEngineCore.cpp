@@ -33,6 +33,16 @@ void WindowsEngineCore::Initialize() {
 		directXCommon_.GetSrvDescriptorHeapAddress(),
 		directXCommon_.GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
 		directXCommon_.GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
+
+	// パイプライン管理クラス初期化
+	graphicPipelineManager_.Initialize(
+		directXCommon_.GetDevice(),
+		windowWidth,
+		windowHeight,
+		directXCommon_.GetDescriptorHeapManager()->GetDsvDescriptorHeap());
+
+	// テクスチャマネージャー初期化
+	textureManager_.Initialize(&directXCommon_, directXCommon_.GetDescriptorHeapManager()->GetSrvDescriptorHeap());
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -55,6 +65,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	textureManager_.Finalize();
 	imguiFrameController_.EndImGui();
 	directXCommon_.Shutdown();
 	gameWindowManager->Shutdown();
@@ -75,4 +86,6 @@ void WindowsEngineCore::Draw() {
 
 	imguiFrameController_.EndFrame(directXCommon_.GetCurrentBackBufferCpuHandle());
 	directXCommon_.PostDraw();
+
+	textureManager_.ReleaseIntermediateResources();
 }

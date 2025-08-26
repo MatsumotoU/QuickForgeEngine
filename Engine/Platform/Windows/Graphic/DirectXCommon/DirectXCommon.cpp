@@ -105,6 +105,10 @@ D3D12_RENDER_TARGET_VIEW_DESC& DirectXCommon::GetSwapChainRtvDesc() {
 	return rtvDesc_;
 }
 
+DescriptorHeapManager* DirectXCommon::GetDescriptorHeapManager() {
+	return &descriptorHeapManager_;
+}
+
 ID3D12DescriptorHeap* DirectXCommon::GetRtvDescriptorHeapAddress() {
 	return descriptorHeapManager_.GetRtvDescriptorHeapAddress();
 }
@@ -113,12 +117,20 @@ ID3D12DescriptorHeap* DirectXCommon::GetSrvDescriptorHeapAddress() {
 	return descriptorHeapManager_.GetSrvDescriptorHeapAddress();
 }
 
+ID3D12DescriptorHeap* DirectXCommon::GetDsvDescriptorHeapAddress() {
+	return descriptorHeapManager_.GetDsvDescriptorHeapAddress();
+}
+
 ID3D12DescriptorHeap* const* DirectXCommon::GetRtvDescriptorHeapAddressOf() {
 	return descriptorHeapManager_.GetRtvDescriptorHeapAddressOf();
 }
 
 ID3D12DescriptorHeap* const* DirectXCommon::GetSrvDescriptorHeapAddressOf() {
 	return descriptorHeapManager_.GetSrvDescriptorHeapAddressOf();
+}
+
+ID3D12DescriptorHeap* const* DirectXCommon::GetDsvDescriptorHeapAddressOf() {
+	return descriptorHeapManager_.GetDsvDescriptorHeapAddressOf();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCurrentBackBufferCpuHandle() {

@@ -40,12 +40,12 @@ UINT SrvDescriptorHeap::GetDescriptorSize() const {
 }
 
 DescriptorHandles SrvDescriptorHeap::AssignHeap(ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
-#ifdef _DEBUG
-	DebugLog("-----RtvDescriptorHeap:AssignHeap-----");
-#endif // _DEBUG
 	// 空きスタックからディスクリプタを取得
 	assert(!freeDescriptors_.empty() && "No free descriptors available.");
 	UINT index = freeDescriptors_.front();
+#ifdef _DEBUG
+	DebugLog(std::format("AssignHeapIndex: {}", index));
+#endif // _DEBUG
 	freeDescriptors_.pop();
 	// ディスクリプタハンドルを取得
 	DescriptorHandles handle;

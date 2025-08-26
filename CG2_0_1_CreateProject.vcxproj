@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -333,9 +333,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorGenerator\DescriptorGenerator.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorHeapManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DsvDescriptorHeap.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\IDescriptorHeap.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.cpp" />
@@ -355,7 +358,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Fence\Fence.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\SwapChain\SwapChain.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\GraphicPipelineManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\InputLayout.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\PipelineStateObject.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\RootParameter.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiler.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.cpp" />
     <ClCompile Include="Engine\Platform\Windows\WindowsEngineCore.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Window\GameWindow.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Window\GameWindowManager.cpp" />
@@ -393,6 +402,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Engine\Externals\imgui\implot-master\implot.cpp" />
     <ClCompile Include="Engine\Externals\imgui\implot-master\implot_items.cpp" />
+    <ClCompile Include="Engine\Utility\String\StringLiblary.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -410,11 +420,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorGenerateConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorHandles.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorGenerator\DescriptorGenerator.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorHeapManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DsvDescriptorHeap.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\IDescriptorHeap.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.h" />
@@ -432,6 +445,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\DirectXCommon.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Fence\Fence.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\SwapChain\SwapChain.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\GraphicPipelineManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\InputLayout.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\PipelineStateObject.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\RootParameter.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiler.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\ConstantBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ColorCorrectionOffset.h" />
@@ -443,6 +461,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\TransformationMatrix.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VerTexData.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VignetteOffset.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\StructuredBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\VertexBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\WindowsEngineCore.h" />
@@ -645,6 +664,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Externals\sol2\sol\variadic_results.hpp" />
     <ClInclude Include="Engine\Externals\sol2\sol\version.hpp" />
     <ClInclude Include="Engine\Externals\sol2\sol\wrapper.hpp" />
+    <ClInclude Include="Engine\Utility\String\StringLiblary.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Resources\Shaders\PS\ColorCorrectionShader.hlsl">
@@ -816,6 +836,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Engine\Externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
+      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

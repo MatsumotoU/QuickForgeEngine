@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <cassert>
-#include "../Descriptors/SrvDescriptorHeap.h"
+#include "Platform/Windows/Graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
 
 
 template<class T>

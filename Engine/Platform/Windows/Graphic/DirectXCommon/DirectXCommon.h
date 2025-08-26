@@ -27,10 +27,13 @@ public:
 	uint32_t GetBackBufferCount();
 	Fence* GetFence();
 	D3D12_RENDER_TARGET_VIEW_DESC& GetSwapChainRtvDesc();
+	DescriptorHeapManager* GetDescriptorHeapManager();
 	ID3D12DescriptorHeap* GetRtvDescriptorHeapAddress();
 	ID3D12DescriptorHeap* GetSrvDescriptorHeapAddress();
+	ID3D12DescriptorHeap* GetDsvDescriptorHeapAddress();
 	ID3D12DescriptorHeap* const* GetRtvDescriptorHeapAddressOf();
 	ID3D12DescriptorHeap* const* GetSrvDescriptorHeapAddressOf();
+	ID3D12DescriptorHeap* const* GetDsvDescriptorHeapAddressOf();
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferCpuHandle();
 
 private:
