@@ -70,6 +70,6 @@ private:
 	CollisionManager collisionManager_;
 	float timeCount_;
 
-	uint32_t bgmHandle_ = 0;
+	uint32_t bgmHandle_;
 	uint32_t seHandle_ = 0;
 };

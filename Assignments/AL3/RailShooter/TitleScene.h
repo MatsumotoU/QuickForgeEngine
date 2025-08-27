@@ -5,6 +5,7 @@
 #include "Class/Ice.h"
 #include "Class/Azarasi.h"
 #include "Class/Mouth.h"
+#include "Class/KeyTutorial.h"
 
 class TitleScene : public IScene {
 public:
@@ -34,6 +35,8 @@ private:
 	Azarasi azarasi_;
 	Vector3 azarasiMoveDir_;
 	bool isAzarasiMove_;
+
+	KeyTutorial keyTutorial_;
 
 	int mainTitleBeatRate_;
 	int subTitleBeatRate_;

@@ -22,6 +22,11 @@ GameScene::GameScene(EngineCore* engineCore) {
 }
 
 GameScene::~GameScene() {
+	engineCore_->GetAudioPlayer()->StopAudio("GameBgm.mp3");
+	for (TimeCall* timedCall : timedCalls_) {
+		delete timedCall;
+	}
+	timedCalls_.clear();
 }
 
 void GameScene::Initialize() {
@@ -102,6 +107,9 @@ void GameScene::Initialize() {
 
 	shieldBar_.Initialize(engineCore_);
 	playerHitPoint_.Initialize(engineCore_);
+
+	bgmHandle_ = engineCore_->LoadSoundData("Resources/", "GameBgm.mp3");
+	engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "GameBgm.mp3", true);
 }
 
 void GameScene::Update() {

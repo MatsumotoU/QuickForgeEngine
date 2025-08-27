@@ -4,7 +4,8 @@ void Fade::Initialize(EngineCore* engineCore) {
 	sprite_.Initialize(engineCore, 
 		static_cast<float>(engineCore->GetWinApp()->kWindowWidth),
 		static_cast<float>(engineCore->GetWinApp()->kWindowHeight));
-	uvCheckerTextureHandle_ = engineCore->GetTextureManager()->LoadTexture("Resources/uvChecker.png");
+	uvCheckerTextureHandle_ = engineCore->GetTextureManager()->LoadTexture("Resources/white1x1.png");
+	sprite_.material_.materialData_->enableLighting = false;
 
 	isFadeIn_ = true;
 	isFadeOut_ = false;

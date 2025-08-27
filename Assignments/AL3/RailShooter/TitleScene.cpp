@@ -43,6 +43,9 @@ void TitleScene::Initialize() {
 	engineCore_->GetAudioPlayer()->PlayAudio(titleBgmHandle_, "TitleBgm.mp3", true);
 	cameraShakePower_ = 0.3f;
 	transitionFrame_ = 60;
+
+	keyTutorial_.Initialize(engineCore_);
+	keyTutorial_.transform_.translate = { -3.4f,-1.1f,12.5f };
 }
 
 void TitleScene::Update() {
@@ -72,11 +75,14 @@ void TitleScene::Update() {
 		azarasi_.transform_.scale.z = 1.1f;
 	}
 
-	if (input->keyboard_.GetPress(DIK_SPACE)) {
-		//isRequestedExit_ = true;
+	keyTutorial_.transform_.rotate.y += 0.02f;
+	if (input->keyboard_.GetPress(DIK_SPACE) || engineCore_->GetXInputController()->GetPressButton(XINPUT_GAMEPAD_A, 0)) {
 		azarasi_.reqestMouthOpen_ = true;
+		keyTutorial_.isActive_ = false;
 
 	} else {
+
+		keyTutorial_.isActive_ = true;
 		if (azarasi_.reqestMouthOpen_) {
 			azarasi_.reqestMouthOpen_ = false;
 			if (azarasi_.transform_.scale.x > 0.8f) {
@@ -117,17 +123,20 @@ void TitleScene::Update() {
 	subTitleModel_.Update();
 	ice_.Update();
 	camera_.Update();
+	keyTutorial_.Update();
 }
 
 void TitleScene::Draw() {
 	ImGui::Begin("TitleScene");
-	ImGui::DragFloat3("camera", &camera_.transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("Ky", &keyTutorial_.transform_.translate.x, 0.1f);
+
 	ImGui::End();
 
 	mainTitlemodel_.Draw(&camera_);
 	subTitleModel_.Draw(&camera_);
 	ice_.Draw(&camera_);
 	azarasi_.Draw(&camera_);
+	keyTutorial_.Draw(&camera_);
 }
 
 IScene* TitleScene::GetNextScene() { return new GameScene(engineCore_); }

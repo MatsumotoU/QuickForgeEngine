@@ -229,6 +229,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Ice.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\KeyTutorial.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\LockOn.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Mouth.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
@@ -332,6 +333,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Ice.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\KeyTutorial.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\LockOn.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Mouth.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
