@@ -2,7 +2,8 @@
 #include "Base/EngineCore.h"
 
 #ifdef _DEBUG
-#include "Utility/MyDebugLog.h"
+#include "Base/MyString.h"
+#include "Base/MyDebugLog.h"
 #include "Base/DirectX/ImGuiManager.h"
 #endif // _DEBUG
 #include <cassert>

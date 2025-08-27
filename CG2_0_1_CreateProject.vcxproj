@@ -221,13 +221,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Azarasi.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Building.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Bulllet.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Enemy.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Fade.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Ice.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\LockOn.cpp" />
+    <ClCompile Include="Assignments\AL3\RailShooter\Class\Mouth.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\Player.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\PlayerHitPoint.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\Class\RailCameraController.cpp" />
@@ -237,12 +240,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Assignments\AL3\RailShooter\GameScene.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\SceneManager.cpp" />
     <ClCompile Include="Assignments\AL3\RailShooter\TitleScene.cpp" />
-    <ClCompile Include="Engine\Audio\AmbientSoundPlayer.cpp" />
-    <ClCompile Include="Engine\Audio\AmbientSoundPresetData.cpp" />
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
-    <ClCompile Include="Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Audio\AudioPlayer.cpp" />
     <ClCompile Include="Engine\Audio\AudioResourceManager.cpp" />
     <ClCompile Include="Engine\Audio\AudioSourceBinder.cpp" />
@@ -301,7 +301,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utility\FileLoader.cpp" />
     <ClCompile Include="Engine\Utility\MyEasing.cpp" />
     <ClCompile Include="Engine\Utility\MyGameMath.cpp" />
+    <ClCompile Include="Engine\Utility\RotateToDir.cpp" />
     <ClCompile Include="Engine\Utility\SimpleJson.cpp" />
+    <ClCompile Include="Engine\Utility\StringLiblary.cpp" />
     <ClCompile Include="Engine\Utility\TimeCall.cpp" />
     <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
@@ -321,6 +323,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Azarasi.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\BaseEnemyState.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Building.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Bulllet.h" />
@@ -328,7 +331,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateAproach.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\EnemyStateLeave.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Fade.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Ice.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\LockOn.h" />
+    <ClInclude Include="Assignments\AL3\RailShooter\Class\Mouth.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\Player.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\PlayerHitPoint.h" />
     <ClInclude Include="Assignments\AL3\RailShooter\Class\RailCameraController.h" />
@@ -422,7 +427,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utility\FileLoader.h" />
     <ClInclude Include="Engine\Utility\MyEasing.h" />
     <ClInclude Include="Engine\Utility\MyGameMath.h" />
+    <ClInclude Include="Engine\Utility\RotateToDir.h" />
     <ClInclude Include="Engine\Utility\SimpleJson.h" />
+    <ClInclude Include="Engine\Utility\StringLiblary.h" />
     <ClInclude Include="Engine\Utility\TimeCall.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui-knobs-main\imgui-knobs.h" />

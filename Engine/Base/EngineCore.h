@@ -84,6 +84,9 @@ public:
 	void PreDraw();
 	void PostDraw();
 
+public:
+	uint32_t LoadSoundData(const std::string& filePath, const std::string& fileName);
+
 public:// エンジンの機能取得
 	WinApp* GetWinApp();
 	DirectXCommon* GetDirectXCommon();
@@ -99,6 +102,10 @@ public:// エンジンの機能取得
 	SrvDescriptorHeap* GetSrvDescriptorHeap();
 	GraphRenderer* GetGraphRenderer();
 	XInputController* GetXInputController();
+	AudioResourceManager* GetAudioResourceManager();
+	AudioSourceBinder* GetAudioSourceBinder();
+	AudioPlayer* GetAudioPlayer();
+	Chiptune* GetChiptune();
 
 public:
 	 float GetDeltaTime();

@@ -127,6 +127,12 @@ void EngineCore::PostDraw() {
 	textureManager_.ReleaseIntermediateResources();
 }
 
+uint32_t EngineCore::LoadSoundData(const std::string& filePath, const std::string& fileName) {
+	audioResourceManager_.LoadAudioResource(filePath, fileName);
+	audioSourceBinder_.CreateSourceVoice(fileName, audioResourceManager_.GetAudioDataHandle(fileName));
+	return audioResourceManager_.GetAudioDataHandle(fileName);
+}
+
 WinApp* EngineCore::GetWinApp() {
 	return &winApp_;
 }
@@ -181,6 +187,22 @@ GraphRenderer* EngineCore::GetGraphRenderer() {
 
 XInputController* EngineCore::GetXInputController() {
 	return &xController_;
+}
+
+AudioResourceManager* EngineCore::GetAudioResourceManager() {
+	return &audioResourceManager_;
+}
+
+AudioSourceBinder* EngineCore::GetAudioSourceBinder() {
+	return &audioSourceBinder_;
+}
+
+AudioPlayer* EngineCore::GetAudioPlayer() {
+	return &audioPlayer_;
+}
+
+Chiptune* EngineCore::GetChiptune() {
+	return &chiptune_;
 }
 
 float EngineCore::GetDeltaTime() {

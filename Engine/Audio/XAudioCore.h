@@ -9,8 +9,8 @@
 #include "SoundData.h"
 
 #ifdef _DEBUG
-#include "Utility/MyString.h"
-#include "Utility/MyDebugLog.h"
+#include "Base/MyString.h"
+#include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
 class XAudioCore final{

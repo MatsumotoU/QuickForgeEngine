@@ -3,7 +3,8 @@
 #include <cassert>
 
 #ifdef _DEBUG
-#include "Utility/MyDebugLog.h"
+#include "Base/MyString.h"
+#include "Base/MyDebugLog.h"
 #endif // _DEBUG
 
 AudioResourceManager::~AudioResourceManager() {

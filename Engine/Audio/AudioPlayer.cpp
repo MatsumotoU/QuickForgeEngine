@@ -7,6 +7,13 @@ void AudioPlayer::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 }
 
+void AudioPlayer::StopAudio(const std::string& soundVoiceFriendryName) {
+	IXAudio2SourceVoice* sourceVoice = engineCore_->GetAudioSourceBinder()->GetSourceVoice(soundVoiceFriendryName);
+	sourceVoice->Stop();
+	sourceVoice->ExitLoop();
+	sourceVoice->FlushSourceBuffers();
+}
+
 void AudioPlayer::PlayAudio(uint32_t audioHandle, const std::string& soundVoiceFriendryName, bool isLoop) {
 	IXAudio2SourceVoice* sourceVoice = engineCore_->GetAudioSourceBinder()->GetSourceVoice(soundVoiceFriendryName);
 	// 再生時になっていたら止めてから鳴らす
