@@ -41,6 +41,7 @@ public:
 public:
 	void SetIsShot(bool isShot);
 	void SetIsActive(bool isActive);
+	void SetIsShield(bool isShield);
 
 public:
 	bool GetIsShield();
@@ -54,6 +55,9 @@ public:
 public:
 	MoveType moveType_;
 	Transform transform_;
+
+	int scoreValue_;
+	bool reqestGiveScore_;
 
 private:
 	void NormalMotion();
@@ -83,6 +87,8 @@ private:
 	bool isShield_;
 	bool isShot_;
 	uint32_t shotInterval_;
+
+	
 
 private:
 	EngineCore* engineCore_;

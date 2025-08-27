@@ -10,6 +10,9 @@
 #include "Class/ShieldBar.h"
 #include "Class/PlayerHitPoint.h"
 #include "Class/Building.h"
+#include "Class/Score.h"
+#include "Class/Ice.h"
+#include "Class/DeathParticle.h"
 
 #include "Colliders/CollisionManager.h"
 
@@ -19,7 +22,7 @@ static inline const uint32_t kEnemies = 32;
 
 class GameScene : public IScene{
 public:
-	GameScene(EngineCore* engineCore);
+	GameScene(EngineCore* engineCore, nlohmann::json data);
 	~GameScene()override;
 
 public:
@@ -55,6 +58,8 @@ private:
 	std::list<TimeCall*> timedCalls_;
 	
 private:
+	Ice bigIce_;
+	Score score_;
 	Building buillds_;
 	PlayerHitPoint playerHitPoint_;
 	ShieldBar shieldBar_;
@@ -64,12 +69,15 @@ private:
 	Bullet playerBullets[kPlayerBullets];
 	Enemy enemies[kEnemies];
 	Bullet enemyBullets[kEnemyBullets];
-	//Model groundModel_;
 	Transform groundTransform_;
 	LockOn lockOn_;
 	CollisionManager collisionManager_;
+	DeathParticle deathParticle_;
 	float timeCount_;
 
 	uint32_t bgmHandle_;
 	uint32_t seHandle_ = 0;
+	uint32_t revengeSE_;
+
+	nlohmann::json json_;
 };

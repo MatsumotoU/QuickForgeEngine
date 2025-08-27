@@ -19,4 +19,5 @@ private:
 
 private:
 	float value_;
+	nlohmann::json json_;
 };

@@ -3,6 +3,7 @@
 #include "../../../../Engine/Colliders/Collider.h"
 #include <map>
 #include <functional>
+#include "Azarasi.h"
 
 static inline const float kLimitMoveWidh = 2.3f;
 static inline const float kLimitMoveHeight = 1.5f;
@@ -35,6 +36,7 @@ public:
 	int GetShieldLevel() { return shieldLevel_; }
 	float GetShieldPoint() const { return sheildPoint_; }
 	int GetHitPoint();
+	Vector3 GetPlayerLay();
 
 public:
 	void SetParent(const Matrix4x4& parentMatrix);
@@ -61,7 +63,6 @@ public:
 		SHIELD,
 		BREAKING,
 	};
-
 	MotionState motionState_;
 
 private:
@@ -89,4 +90,11 @@ private:
 	EngineCore* engineCore_;
 	BlendMode blendMode_;
 	int blendNum_;
+
+	Azarasi azarasi_;
+	int invincibilityFrame_;
+
+	uint32_t mouthOpenSoundHandle_;
+	uint32_t damageSE_;
+	uint32_t eatSE_;
 };

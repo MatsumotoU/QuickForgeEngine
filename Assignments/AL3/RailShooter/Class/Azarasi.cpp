@@ -10,6 +10,7 @@ void Azarasi::Initialize(EngineCore* engineCore) {
 
 	reqestMouthOpen_ = false;
 	isMouthOpen_ = false;
+	color_ = { 1.0f,1.0f,1.0f,1.0f };
 }
 
 void Azarasi::Update() {
@@ -28,6 +29,9 @@ void Azarasi::Update() {
 			transform_.scale.y = 1.0f;
 		}
 	}
+
+	normalModel_.material_.materialData_->color = color_;
+	openMouthModel_.material_.materialData_->color = color_;
 
 	// 移動処理
 	normalModel_.transform_ = transform_;

@@ -3,8 +3,14 @@
 #include "Utility/MyEasing.h"
 #include "Utility/RotateToDir.h"
 
-TitleScene::TitleScene(EngineCore* engineCore) {
+TitleScene::TitleScene(EngineCore* engineCore, nlohmann::json data) {
 	engineCore_ = engineCore;
+	json_ = data;
+	score_.Initialize(engineCore_);
+	if (data.contains("HighScore")) {
+		score_.AddScore(data["HighScore"]);
+	} 
+	score_.position_ = { -0.2f,0.5f,3.4f };
 }
 
 TitleScene::~TitleScene() {
@@ -12,6 +18,7 @@ TitleScene::~TitleScene() {
 }
 
 void TitleScene::Initialize() {
+	isPlayExprotionSE_ = false;
 	cameraShakePower_ = 0.0f;
 	isRequestedExit_ = false;
 	mainTitlemodel_.Initialize(engineCore_);
@@ -46,9 +53,15 @@ void TitleScene::Initialize() {
 
 	keyTutorial_.Initialize(engineCore_);
 	keyTutorial_.transform_.translate = { -3.4f,-1.1f,12.5f };
+
+	eatSE_ = engineCore_->LoadSoundData("Resources/", "Azarasi.wav");
+	shotSE_ = engineCore_->LoadSoundData("Resources/", "shot.mp3");
+	exprotionSE_ = engineCore_->LoadSoundData("Resources/", "exprode.mp3");
 }
 
 void TitleScene::Update() {
+	score_.Update();
+
 	DirectInputManager* input = engineCore_->GetInputManager();
 	frameCount_++;
 
@@ -77,7 +90,11 @@ void TitleScene::Update() {
 
 	keyTutorial_.transform_.rotate.y += 0.02f;
 	if (input->keyboard_.GetPress(DIK_SPACE) || engineCore_->GetXInputController()->GetPressButton(XINPUT_GAMEPAD_A, 0)) {
-		azarasi_.reqestMouthOpen_ = true;
+		if (!azarasi_.reqestMouthOpen_) {
+			azarasi_.reqestMouthOpen_ = true;
+			engineCore_->GetAudioPlayer()->PlayAudio(eatSE_, "Azarasi.wav", false);
+		}
+		
 		keyTutorial_.isActive_ = false;
 
 	} else {
@@ -85,8 +102,9 @@ void TitleScene::Update() {
 		keyTutorial_.isActive_ = true;
 		if (azarasi_.reqestMouthOpen_) {
 			azarasi_.reqestMouthOpen_ = false;
-			if (azarasi_.transform_.scale.x > 0.8f) {
+			if (azarasi_.transform_.scale.y > 0.8f) {
 				isAzarasiMove_ = true;
+				engineCore_->GetAudioPlayer()->PlayAudio(shotSE_, "shot.mp3", false);
 			}
 		}
 	}
@@ -97,6 +115,12 @@ void TitleScene::Update() {
 		azarasi_.transform_.translate.z -= azarasiMoveDir_.z * 0.2f;
 		if (azarasi_.transform_.translate.z > 5.0f) {
 			
+			if (!isPlayExprotionSE_) {
+				engineCore_->GetAudioPlayer()->PlayAudio(exprotionSE_, "exprode.mp3", false);
+				isPlayExprotionSE_ = true;
+			}
+			
+
 			if (transitionFrame_ > 0) {
 				transitionFrame_--;
 				camera_.transform_.translate.x = std::cos(frameCount_ * 0.1f) * cameraShakePower_;
@@ -127,11 +151,7 @@ void TitleScene::Update() {
 }
 
 void TitleScene::Draw() {
-	ImGui::Begin("TitleScene");
-	ImGui::DragFloat3("Ky", &keyTutorial_.transform_.translate.x, 0.1f);
-
-	ImGui::End();
-
+	score_.Draw(&camera_);
 	mainTitlemodel_.Draw(&camera_);
 	subTitleModel_.Draw(&camera_);
 	ice_.Draw(&camera_);
@@ -139,4 +159,4 @@ void TitleScene::Draw() {
 	keyTutorial_.Draw(&camera_);
 }
 
-IScene* TitleScene::GetNextScene() { return new GameScene(engineCore_); }
+IScene* TitleScene::GetNextScene() { return new GameScene(engineCore_, json_); }

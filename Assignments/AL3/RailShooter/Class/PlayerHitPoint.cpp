@@ -4,7 +4,7 @@
 void PlayerHitPoint::Initialize(EngineCore* engineCore) {
 	for (int i = 0; i < 3; i++) {
 		model_[i].Initialize(engineCore);
-		model_[i].LoadModel("Resources", "plot.obj", COORDINATESYSTEM_HAND_RIGHT);
+		model_[i].LoadModel("Resources", "Azarasi.obj", COORDINATESYSTEM_HAND_RIGHT);
 		model_[i].transform_.scale = { 0.3f,0.3f,0.3f };
 		model_[i].transform_.rotate = { 3.14f*0.5f, 0.0f, 0.0f };
 	}

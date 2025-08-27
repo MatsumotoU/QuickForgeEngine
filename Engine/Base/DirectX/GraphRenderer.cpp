@@ -67,6 +67,10 @@ void GraphRenderer::PreDraw() {
 }
 
 void GraphRenderer::PostDraw() {
+	if (camera_ == nullptr) {
+		return; // カメラが設定されていない場合は描画しない
+	}
+
 	if (triangleCount_ == 0 && lineCount_ == 0 && pointCount_ == 0) {
 		return; // 描画するものがない場合は何もしない
 	}
@@ -192,4 +196,10 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 
 void GraphRenderer::SetCamera(Camera* camera) {
 	camera_ = camera;
+}
+
+void GraphRenderer::DeleteCamera(Camera* camera) {
+	if (camera_ == camera) {
+		camera_ = nullptr;
+	}
 }

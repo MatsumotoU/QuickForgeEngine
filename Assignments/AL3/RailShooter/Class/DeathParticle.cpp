@@ -6,7 +6,7 @@ void DeathParticle::Initialize(EngineCore* engineCore) {
 	isActive_ = false;
 	for (int i = 0; i < kParticles; ++i) {
 		model_[i].Initialize(engineCore_);
-		model_[i].LoadModel("Resources", "Speaker.obj", COORDINATESYSTEM_HAND_RIGHT);
+		model_[i].LoadModel("Resources", "Cube.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 		moveDir[i].x = cosf(std::numbers::pi_v<float> *2.0f * static_cast<float>(i + 1) / static_cast<float>(kParticles));
 		moveDir[i].y = sinf(std::numbers::pi_v<float> *2.0f * static_cast<float>(i + 1) / static_cast<float>(kParticles));
@@ -24,6 +24,9 @@ void DeathParticle::Update() {
 
 			Vector4 color = { 1.0f,1.0f,1.0f,powf(static_cast<float>(emmitFrame_) / static_cast<float>(kMaxFrame),2.0f) };
 			model_[i].material_.materialData_->color = color;
+
+			model_[i].transform_ = particleTransform[i];
+			model_[i].Update();
 		}
 	}
 
@@ -36,7 +39,7 @@ void DeathParticle::Update() {
 void DeathParticle::Draw(Camera* camera) {
 	if (isActive_) {
 		for (int i = 0; i < kParticles; ++i) {
-			model_[i].Draw(particleTransform[i], camera);
+			model_[i].Draw(camera);
 		}
 	}
 }

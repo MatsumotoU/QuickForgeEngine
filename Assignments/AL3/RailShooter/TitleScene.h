@@ -6,10 +6,11 @@
 #include "Class/Azarasi.h"
 #include "Class/Mouth.h"
 #include "Class/KeyTutorial.h"
+#include "Class/Score.h"
 
 class TitleScene : public IScene {
 public:
-	TitleScene(EngineCore* engineCore);
+	TitleScene(EngineCore* engineCore,nlohmann::json data);
 	~TitleScene() override;
 
 	void Initialize() override;
@@ -42,4 +43,13 @@ private:
 	int subTitleBeatRate_;
 
 	uint32_t titleBgmHandle_;
+	Score score_;
+
+	nlohmann::json json_;
+
+	uint32_t eatSE_;
+	uint32_t shotSE_;
+	uint32_t exprotionSE_;
+
+	bool isPlayExprotionSE_;
 };

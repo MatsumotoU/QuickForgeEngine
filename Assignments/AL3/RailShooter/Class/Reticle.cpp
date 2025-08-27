@@ -74,3 +74,7 @@ Vector3 Reticle::GetTopPos() {
 	Vector3 localTop = { 0.0f, model_.transform_.scale.y, 0.0f };
 	return Vector3::Transform(localTop, Matrix4x4::MakeAffineMatrix(model_.transform_.scale, model_.transform_.rotate, model_.transform_.translate));
 }
+
+Vector3 Reticle::GetTargetWorldPos() {
+	return Vector3::Transform(Vector3{0.0f,0.0f,30.0f}, model_.worldMatrix_);;
+}

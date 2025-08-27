@@ -1,6 +1,6 @@
 #include "Collider.h"
 
-Collider::Collider():radius_(1.0f), mask_(0xFFFFFFFF) {}
+Collider::Collider():radius_(0.5f), mask_(0xFFFFFFFF) {}
 
 float Collider::GetRadius() const {
     return radius_;

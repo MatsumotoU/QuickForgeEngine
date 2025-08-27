@@ -6,7 +6,7 @@ void Building::Init(EngineCore* engineCore) {
     engineCore_ = engineCore;
 	buillding_.Initialize(engineCore,64);
 	buillding_.LoadModel("Resources", "Box.obj", COORDINATESYSTEM_HAND_RIGHT);
-    buillding_.material_.materialData_->color = Vector4(0.3f, 0.3f, 0.3f, 1.0f);
+    buillding_.material_.materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
     for (int i = 0; i < 64; i++) {
         transform_.push_back(Transform());
     }

@@ -2,16 +2,12 @@
 #include <algorithm>
 #include "../../../../Engine/Math/MyMath.h"
 #include "Utility/MyEasing.h"
+#include "Utility/RotateToDir.h"
 
 void Player::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	model_.Initialize(engineCore_);
 	model_.LoadModel("Resources", "plot.obj", COORDINATESYSTEM_HAND_RIGHT);
-
-	shieldModel_.Initialize(engineCore_);
-	shieldModel_.LoadModel("Resources", "Shield.obj", COORDINATESYSTEM_HAND_RIGHT);
-	shieldModel_.material_.materialData_->enableLighting = false;
-	shieldModel_.material_.materialData_->color = { 0.2f, 0.2f, 0.0f, 1.0f };
 
 	moveSpeed_ = 30.0f;
 
@@ -38,12 +34,30 @@ void Player::Initialize(EngineCore* engineCore) {
 	motionFuncMap_[SHIELD] = std::bind(&Player::ShieldMotion, this);
 	motionFuncMap_[BREAKING] = std::bind(&Player::BreakingMotion, this);
 	shieldLevel_ = 0;
+
+	azarasi_.Initialize(engineCore_);
+	SetRadius(0.05f);
+	invincibilityFrame_ = 0;
+
+	mouthOpenSoundHandle_ = engineCore_->LoadSoundData("Resources/", "Azarasi.wav");
+	damageSE_ = engineCore_->LoadSoundData("Resources/", "damage.mp3");
+	eatSE_ = engineCore_->LoadSoundData("Resources/", "eat.mp3");
 }
 
 void Player::Update() {
 	if (!isActive_) {
 		return;
 	}
+
+	Vector3 dir = transform_.translate.Normalize();
+	dir.x *= -1.0f;
+	dir.y *= -1.0f;
+	transform_.rotate = RotateToDir::GetDirToRotate(dir);
+
+	if (invincibilityFrame_ > 0) {
+		invincibilityFrame_--;
+	}
+
 	frameCount_++;
 	motionTime_ -= engineCore_->GetDeltaTime();
 	motionFuncMap_[motionState_]();
@@ -74,7 +88,6 @@ void Player::Update() {
 	} else {
 		Eas::SimpleEaseIn(&transform_.rotate.z, velocity_.x * 0.2f, 0.05f);
 	}
-	
 
 	isShield_ = false;
 	moveSpeed_ = 30.0f;
@@ -83,11 +96,19 @@ void Player::Update() {
 		if (!isBreaking_) {
 			moveSpeed_ = 15.0f; // シールド中は移動速度を落とす
 		}
+		if (motionState_ != BREAKING && motionState_ != DAMAGE) {
+			if (!azarasi_.reqestMouthOpen_) {
+				azarasi_.reqestMouthOpen_ = true;
+				engineCore_->GetAudioPlayer()->PlayAudio(eatSE_, "eat.mp3", false);
+			}
+		}
+		
 	} else {
 		if (shieldLevel_ > 0) {
 			sheildPoint_ = 0.0f;
 			isRevenge_ = true;
 		}
+		azarasi_.reqestMouthOpen_ = false;
 	}
 
 	// si-ールドの状態更新
@@ -97,8 +118,6 @@ void Player::Update() {
 		Eas::SimpleEaseIn(&shieldModel_.transform_.scale.z, 1.0f, 0.5f);
 
 		float shieldPointRatio = sheildPoint_ / 100.0f;
-		shieldModel_.material_.materialData_->color = 
-			Vector4::Leap({ 0.6f, 0.3f, 0.1f, 0.8f }, { 0.2f,0.0f,0.0f,0.5f }, shieldPointRatio);
 
 		shieldModel_.transform_.rotate.x += 
 			sinf(static_cast<float>(frameCount_) * engineCore_->GetDeltaTime() * 0.01f ) * (shieldPointRatio + 0.1f);
@@ -134,27 +153,16 @@ void Player::Update() {
 		shotCooldown_--;
 	}
 
-	/*if (input->keyboard_.GetPress(DIK_D)) {
-		transform_.rotate.y += 0.05f;
-	}
-	if (input->keyboard_.GetPress(DIK_A)) {
-		transform_.rotate.y -= 0.05f;
-	}
-	if (input->keyboard_.GetPress(DIK_W)) {
-		transform_.rotate.x += 0.05f;
-	}
-	if (input->keyboard_.GetPress(DIK_S)) {
-		transform_.rotate.x -= 0.05f;
-	}*/
-
 	model_.transform_ = transform_;
-
 	model_.Update();
 	model_.worldMatrix_ = Matrix4x4::Multiply(model_.worldMatrix_, parentMatrix_);
 
-	shieldModel_.transform_.translate = transform_.translate;
-	shieldModel_.Update();
-	shieldModel_.worldMatrix_ = Matrix4x4::Multiply(shieldModel_.worldMatrix_, parentMatrix_);
+	azarasi_.transform_.translate = transform_.translate;
+	azarasi_.transform_.rotate = transform_.rotate;
+	azarasi_.transform_.rotate.y += 3.14f;
+	azarasi_.transform_.rotate.x *= -1.0f;
+	azarasi_.transform_.scale *= transform_.scale;
+	azarasi_.Update();
 
 	if(!isRevenge_){
 		shieldLevel_ = static_cast<int>(sheildPoint_ / 33.3f);
@@ -163,6 +171,7 @@ void Player::Update() {
 	if (isShield_) {
 		if (motionState_ == NORMAL) {
 			motionState_ = SHIELD;
+			engineCore_->GetAudioPlayer()->PlayAudio(mouthOpenSoundHandle_, "Azarasi.wav", false);
 		}
 	} else {
 		if (motionState_ == SHIELD) {
@@ -185,10 +194,7 @@ void Player::Draw(Camera* camera) {
 	if (!isActive_) {
 		return;
 	}
-	model_.Draw(camera);
-	if (shieldModel_.transform_.scale.Length() >= 0.1f) {
-		shieldModel_.Draw(camera);
-	}
+	azarasi_.Draw(camera);
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::DragFloat3("ModelTransform", &model_.transform_.translate.x, 0.1f);
@@ -209,6 +215,11 @@ void Player::Draw(Camera* camera) {
 }
 
 void Player::OnCollision(const nlohmann::json& otherData) {
+	// 無敵フレーム中は無視
+	if (invincibilityFrame_ > 0) {
+		return;
+	}
+
 	if (!otherData.contains("Attack")) {
 		return;
 	}
@@ -219,13 +230,15 @@ void Player::OnCollision(const nlohmann::json& otherData) {
 
 	// 被弾時のモーション
 	if (isShield_ && !isBreaking_) {
+		azarasi_.reqestMouthOpen_ = false;
 		float attack = otherData["Attack"].get<float>();
 		sheildPoint_ += attack;
-		shieldModel_.transform_.scale = { 1.3f,1.5f,1.3f };
+		azarasi_.transform_.scale = { 1.1f,0.1f,1.3f };
 		if (sheildPoint_ >= 100.0f) {
 			sheildPoint_ = 100.0f;
 			isBreaking_ = true;
-			shieldModel_.transform_.scale = { 2.0f,4.0f,2.0f };
+			azarasi_.transform_.scale = { 1.3f,0.1f,2.0f };
+			invincibilityFrame_ = 60;
 		}
 
 	} else {
@@ -235,6 +248,8 @@ void Player::OnCollision(const nlohmann::json& otherData) {
 		hitPoint_ --;
 		motionState_ = DAMAGE;
 		motionTime_ = 1.0f;
+
+		engineCore_->GetAudioPlayer()->PlayAudio(damageSE_, "damage.mp3", false);
 	}
 
 	// 被弾時の吹っ飛び
@@ -313,6 +328,10 @@ int Player::GetHitPoint() {
 	return hitPoint_;
 }
 
+Vector3 Player::GetPlayerLay() {
+	return Vector3::Transform({ 0.0f,0.0f,30.0f }, Matrix4x4::MakeRotateXYZMatrix(model_.transform_.rotate));
+}
+
 void Player::SetParent(const Matrix4x4& parentMatrix) {
 	parentMatrix_ = parentMatrix;
 }
@@ -334,22 +353,22 @@ void Player::NormalMotion() {
 	Eas::SimpleEaseIn(&transform_.scale.y, 1.0f, 0.1f);
 	Eas::SimpleEaseIn(&transform_.scale.z, 1.0f, 0.1f);
 
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.x, 1.0f, 0.1f);
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.y, 1.0f, 0.1f);
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.z, 1.0f, 0.1f);
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.w, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&azarasi_.color_.x, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&azarasi_.color_.y, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&azarasi_.color_.z, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&azarasi_.color_.w, 1.0f, 0.1f);
 	motionTime_ = 0.0f;
 }
 
 void Player::DamageMotion() {
 	if (frameCount_ % 2 == 0) {
-		model_.material_.materialData_->color.x = 1.0f;
-		model_.material_.materialData_->color.y = 0.0f;
-		model_.material_.materialData_->color.z = 0.0f;
+		azarasi_.color_.x = 1.0f;
+		azarasi_.color_.y = 0.0f;
+		azarasi_.color_.z = 0.0f;
 	} else {
-		model_.material_.materialData_->color.x = 1.0f;
-		model_.material_.materialData_->color.y = 1.0f;
-		model_.material_.materialData_->color.z = 1.0f;
+		azarasi_.color_.x = 1.0f;
+		azarasi_.color_.y = 1.0f;
+		azarasi_.color_.z = 1.0f;
 	}
 	transform_.scale.x = sinf(static_cast<float>(frameCount_ / 3)) * 0.3f + 0.7f;
 	transform_.scale.y = cosf(static_cast<float>(frameCount_ / 3)) * 0.3f + 0.7f;
@@ -369,16 +388,16 @@ void Player::ShieldMotion() {
 	Eas::SimpleEaseIn(&transform_.scale.y, 1.0f, 0.1f);
 	Eas::SimpleEaseIn(&transform_.scale.z, 1.0f, 0.1f);
 
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.x, 1.0f, 0.1f);
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.y, 1.0f, 0.1f);
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.z, 1.0f, 0.1f);
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.w, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&azarasi_.color_.x, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&azarasi_.color_.y, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&azarasi_.color_.z, 1.0f, 0.1f);
+	Eas::SimpleEaseIn(&azarasi_.color_.w, 1.0f, 0.1f);
 }
 
 void Player::BreakingMotion() {
-	Eas::SimpleEaseIn(&model_.material_.materialData_->color.x, 1.0f, 0.1f);
-	model_.material_.materialData_->color.y = fabsf(cosf(static_cast<float>(frameCount_) * 0.3f));
-	model_.material_.materialData_->color.z = fabsf(sinf(static_cast<float>(frameCount_) * 0.3f));
+	Eas::SimpleEaseIn(&azarasi_.color_.x, 1.0f, 0.1f);
+	azarasi_.color_.y = fabsf(cosf(static_cast<float>(frameCount_) * 0.3f));
+	azarasi_.color_.z = fabsf(sinf(static_cast<float>(frameCount_) * 0.3f));
 
 	transform_.scale.x = sinf(static_cast<float>(frameCount_)*0.1f) * 0.1f + 1.0f;
 	transform_.scale.y = cosf(static_cast<float>(frameCount_)*0.1f) * 0.1f + 1.0f;

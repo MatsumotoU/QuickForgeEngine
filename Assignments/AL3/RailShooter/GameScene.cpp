@@ -3,10 +3,11 @@
 #include <algorithm>
 #include "Utility/MyEasing.h"
 
-GameScene::GameScene(EngineCore* engineCore) {
+GameScene::GameScene(EngineCore* engineCore, nlohmann::json data) {
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
 
+	json_ = data;
 #ifdef _DEBUG
 	isActiveDebugCamera_ = false;
 	debugCamera_.Initialize(engineCore_);
@@ -27,6 +28,7 @@ GameScene::~GameScene() {
 		delete timedCall;
 	}
 	timedCalls_.clear();
+	engineCore_->GetGraphRenderer()->DeleteCamera(&camera_);
 }
 
 void GameScene::Initialize() {
@@ -59,12 +61,6 @@ void GameScene::Initialize() {
 	timeCount_ = 0.0f;
 
 	collisionManager_.Initalize();
-
-	/*groundModel_.Initialize(engineCore_);
-	groundModel_.LoadModel("Resources", "ground.obj", COORDINATESYSTEM_HAND_RIGHT);
-	groundTransform_.translate.y = -2400.0f;
-	groundTransform_.scale.x = 1400.0f;
-	groundTransform_.scale.z = 1400.0f;*/
 
 	lailPoints_.clear();
 	lailPoints_.push_back({ 0.0f,0.0f,0.0f });
@@ -108,17 +104,42 @@ void GameScene::Initialize() {
 	shieldBar_.Initialize(engineCore_);
 	playerHitPoint_.Initialize(engineCore_);
 
+	score_.Initialize(engineCore_);
+	score_.position_ = {2.1f,0.9f,6.1f};
+
 	bgmHandle_ = engineCore_->LoadSoundData("Resources/", "GameBgm.mp3");
 	engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "GameBgm.mp3", true);
+
+	revengeSE_ = engineCore_->LoadSoundData("Resources/", "revenge.mp3");
+
+	bigIce_.Initialize(engineCore_);
+	bigIce_.transform_.scale = { 10.0f,10.0f,10.0f };
+	bigIce_.transform_.translate = { 0.0f,0.0f,100.0f };
+
+	deathParticle_.Initialize(engineCore_);
 }
 
 void GameScene::Update() {
+	deathParticle_.Update();
+	if (bigIce_.transform_.translate.z <= 10.0f) {
+		if (json_["HighScore"] < score_.GetScore()) {
+			json_["HighScore"] = score_.GetScore();
+		}
+		isRequestedExit_ = true;
+	}
+	if (bigIce_.transform_.translate.z <= 40.0f) {
+		bigIce_.transform_.translate.z -= 1.0f;
+	} else {
+		bigIce_.transform_.translate.z -= 0.02f;
+	}
+	
+	bigIce_.transform_.rotate.y += 0.01f;
+	bigIce_.Update();
+
 	buillds_.Update();
+	score_.Update();
 
 	lockOn_.ResetTargets();
-
-	/*groundModel_.transform_ = groundTransform_;
-	groundModel_.Update();*/
 
 	for (TimeCall* timedCall : timedCalls_) {
 		timedCall->Update();
@@ -179,6 +200,11 @@ void GameScene::Update() {
 
 	for (int i = 0; i < kEnemies; i++) {
 		enemies[i].Update();
+		if (enemies[i].reqestGiveScore_) {
+			score_.AddScore(enemies[i].scoreValue_);
+			enemies[i].reqestGiveScore_ = false;
+		}
+
 		if (enemies[i].GetIsActive()) {
 			lockOn_.AddTargetPosition(enemies[i].GetWorldPosition());
 		}
@@ -188,6 +214,9 @@ void GameScene::Update() {
 				if (!enemyBullets[b].GetIsActive()) {
 					enemyBullets[b].ShotBullet(enemies[i].transform_.translate, (player_.transform_.translate - enemies[i].transform_.translate).Normalize() * 10.0f, 6000);
 					enemyBullets[b].transform_.rotate = Vector3::LookAt(enemyBullets[i].transform_.translate, player_.transform_.translate);
+					if (enemies[i].GetIsShield()) {
+						enemyBullets[b].isHoming_ = true;
+					}
 					break;
 				}
 			}
@@ -203,13 +232,14 @@ void GameScene::Update() {
 
 	for (int i = 0; i < kEnemyBullets; i++) {
 		if (enemyBullets[i].GetIsActive()) {
+			if (enemyBullets[i].isHoming_) {
+				Vector3 toPlayer = player_.GetWorldPosition() - enemyBullets[i].transform_.translate;
+				enemyBullets[i].velocity_ = Vector3::Slerp(enemyBullets[i].velocity_.Normalize(), toPlayer.Normalize(), 0.1f) * 10.0f;
 
-			Vector3 toPlayer = player_.GetWorldPosition() - enemyBullets[i].transform_.translate;
-			enemyBullets[i].velocity_ = Vector3::Slerp(enemyBullets[i].velocity_.Normalize(), toPlayer.Normalize(), 0.1f) * 10.0f;
-
-			enemyBullets[i].transform_.rotate = Vector3::LookAt(
-				enemyBullets[i].transform_.translate.Normalize(),
-				(enemyBullets[i].transform_.translate + enemyBullets[i].velocity_).Normalize());
+				enemyBullets[i].transform_.rotate = Vector3::LookAt(
+					enemyBullets[i].transform_.translate.Normalize(),
+					(enemyBullets[i].transform_.translate + enemyBullets[i].velocity_).Normalize());
+			}
 
 			enemyBullets[i].Update();
 		}
@@ -252,12 +282,12 @@ void GameScene::Update() {
 			reticle_.model_.worldMatrix_ =
 				Matrix4x4::MakeAffineMatrix(reticle_.transform_.scale, reticle_.transform_.rotate, lockOn_.GetLockPosition(&camera_));
 		}
-
 	}
 
 	// プレイヤーの反撃処理
 	if (player_.GetIsRevenge()) {
 		player_.SetIsRevenge(false);
+		engineCore_->GetAudioPlayer()->PlayAudio(revengeSE_, "revenge.mp3", false);
 
 		// レティクルのスクリーン座標を取得
 		Vector3 reticleScreenPos = camera_.GetWorldToScreenPos(
@@ -286,21 +316,24 @@ void GameScene::Update() {
 
 			if (diff.Length() < reticleRadius) {
 				if (enemies[i].GetIsShield()) {
-					for (int e = 0; e < 16; e++) {
+					for (int e = 0; e < 8; e++) {
 						for (int b = 0; b < kEnemyBullets; b++) {
 							if (!enemyBullets[b].GetIsActive()) {
 								// 角度を計算（0～2πを16分割）
-								float angle = (2.0f * 3.14159265f * e) / 16.0f;
+								float angle = (2.0f * 3.14159265f * e) / 8.0f;
 								// xy平面上の単位ベクトル
 								Vector3 dir = { std::cos(angle), std::sin(angle), 0.0f };
 								// 速度ベクトルを作成
-								Vector3 velocity = dir * 60.0f;
-								enemyBullets[b].ShotBullet(enemies[i].transform_.translate, velocity, 6000);
+								Vector3 velocity = dir * 100.0f;
+								enemyBullets[b].ShotBullet(enemies[i].transform_.translate, velocity, 6000,35);
+								enemyBullets[b].isHoming_ = true;
+								enemies[i].SetIsShield(false);
 								break;
 							}
 						}
 					}
 				} else {
+					score_.AddScore(enemies[i].scoreValue_);
 					enemies[i].HitRevenge(player_.GetShieldLevel());
 				}
 			}
@@ -314,86 +347,21 @@ void GameScene::Update() {
 	shieldBar_.Update();
 
 	if (!player_.GetIsActive()) {
+		if (json_["HighScore"] < score_.GetScore()) {
+			json_["HighScore"] = score_.GetScore();
+		}
 		isRequestedExit_ = true;
 	}
 }
 
 void GameScene::Draw() {
+	deathParticle_.Draw(&camera_);
+	bigIce_.Draw(&camera_);
+	score_.Draw(&camera_);
 	buillds_.Draw(&camera_);
 	playerHitPoint_.Draw(&camera_);
 	shieldBar_.Draw(&camera_);
-#ifdef _DEBUG
-	debugCamera_.DrawImGui();
-#endif // _DEBUG
-
-	
 	reticle_.Draw(&camera_);
-#ifdef _DEBUG
-	ImGui::Begin("LockOn");
-	if (ImGui::Button("isLockOn")) {
-		isLockOn_ = !isLockOn_;
-	}
-	Vector3 r = lockOn_.GetLockPosition(&camera_);
-	ImGui::Text("isLockOn: %d", isLockOn_);
-	ImGui::Text("%f,%f,%f", r.x, r.y, r.z);
-	ImGui::Text("length: %f", (lockOn_.GetLockPosition(&camera_) - player_.GetWorldPosition()).Length());
-	ImGui::Text("Dot: %f", Vector3::Dot(player_.GetDir().Normalize(), (player_.GetWorldPosition() - lockOn_.GetLockPosition(&camera_)).Normalize()));
-	ImGui::End();
-
-	ImGui::Begin("Enemy");
-	for (int i = 0; i < kEnemies; i++) {
-		if (!enemies[i].GetIsActive()) {
-			continue;
-		}
-		ImGui::Text("Enemy %d", i);
-		ImGui::Text("MoveType %d", enemies[i].moveType_);
-		ImGui::DragFloat3(("Position" + std::to_string(i)).c_str(), &enemies[i].transform_.translate.x, 0.1f);
-		ImGui::DragFloat3(("Rotation" + std::to_string(i)).c_str(), &enemies[i].transform_.rotate.x, 0.01f);
-	}
-	ImGui::End();
-
-	ImGui::Begin("Lail");
-	if (ImGui::Button("Add Point")) {
-		lailPoints_.push_back({ 0.0f,0.0f,0.0f });
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Delete Points")) {
-		if (lailPoints_.size() > 4) {
-			lailPoints_.erase(lailPoints_.end());
-		}
-	}
-	ImGui::Text("Lail Points");
-	for (int i = 0; i < lailPoints_.size(); i++) {
-		ImGui::DragFloat3(("Point" + std::to_string(i)).c_str(), &lailPoints_[i].x, 0.1f);
-	}
-
-	ImGui::End();
-
-	ImGui::Begin("GameScene");
-	if (ImGui::Button("LockOn")) {
-		isLockOn_ = !isLockOn_;
-	}
-	if (ImGui::Button("MoveLail")) {
-		isMoveLail_ = !isMoveLail_;
-	}
-	if (ImGui::Button("FpsCamera")) {
-		isFpsCamera_ = !isFpsCamera_;
-	}
-	ImGui::DragFloat("CameraMoveSpeed", &cameraMoveSpeed_, 0.01f, 0.01f, 1.0f);
-	ImGui::DragFloat("CameraT", &cameraT, 0.01f, 0.0f, 1.0f);
-	ImGui::Text("Time %.2f", timeCount_);
-	ImGui::Text("isDebug: %s", isActiveDebugCamera_ ? "True" : "False");
-	ImGui::Toggle("isActiveDebugCamera", &isActiveDebugCamera_);
-	ImGui::DragFloat3("CameraTranslate", &camera_.transform_.translate.x, 0.1f);
-	ImGui::DragFloat3("CameraRotate", &camera_.transform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("groundTransform", &groundTransform_.translate.x);
-	ImGui::DragFloat3("groundScale", &groundTransform_.scale.x);
-	if (ImGui::Button("Reset")) {
-		Initialize();
-	}
-	ImGui::End();
-#endif // _DEBUG
-
 	skyDome_.Draw(&camera_);
 	if (!isFpsCamera_) {
 		player_.Draw(&camera_);
@@ -416,11 +384,10 @@ void GameScene::Draw() {
 
 	//groundModel_.Draw(&camera_);
 
-	Vector3 p0 = player_.GetWorldPosition();
-	p0.z += 60.0f;
+	Vector3 p0 = player_.GetPlayerLay();
 	engineCore_->GetGraphRenderer()->DrawLine(player_.GetWorldPosition(), p0);
 }
 
 IScene* GameScene::GetNextScene() {
-	return new TitleScene(engineCore_);
+	return new TitleScene(engineCore_, json_);
 }

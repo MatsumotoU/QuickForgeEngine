@@ -1,19 +1,18 @@
 #pragma once
 #include "Base/EngineCore.h"
 
-class Azarasi {
+class Number {
 public:
 	void Initialize(EngineCore* engineCore);
 	void Update();
 	void Draw(Camera* camera);
+	
+	Model* GetCerrentModel();
 
-	bool reqestMouthOpen_;
 	Transform transform_;
-	Vector4 color_;
+	int value_;
 
 private:
-	bool isMouthOpen_;
-	EngineCore* engineCore_;
-	Model normalModel_;
-	Model openMouthModel_;
+	std::array<Model,10> models_;
+	EngineCore* engineCore_ = nullptr;
 };

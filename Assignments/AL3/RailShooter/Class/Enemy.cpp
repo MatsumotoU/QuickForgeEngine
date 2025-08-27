@@ -39,7 +39,8 @@ void Enemy::Initialize(EngineCore* engineCore) {
 	motionFuncMap_[NORMAL] = std::bind(&Enemy::NormalMotion, this);
 	motionFuncMap_[DAMAGE] = std::bind(&Enemy::DamageMotion, this);
 	motionFuncMap_[DEAD] = std::bind(&Enemy::DeadMotion, this);
-
+	reqestGiveScore_ = false;
+	scoreValue_ = 100;
 }
 
 void Enemy::Update() {
@@ -74,6 +75,7 @@ void Enemy::Update() {
 		if (motionState_ != DEAD) {
 			motionState_ = DEAD;
 			transform_.scale = { 5.0f,5.0f,5.0f };
+			reqestGiveScore_ = true;
 		}
 
 		if (transform_.scale.Length() < 0.01f) {
@@ -117,7 +119,7 @@ void Enemy::OnCollision(const nlohmann::json& otherData) {
 		motionTime_ = 0.3f;
 		motionState_ = DAMAGE;
 	}
-
+	engineCore_->GetChiptune()->PlayNoise();
 	shotInterval_ = kMaxShotInterval;
 }
 
@@ -187,6 +189,10 @@ void Enemy::Spawn(Vector3 position, Vector3 velocity, uint32_t moveType) {
 		transform_.translate = position;
 		velocity_ = velocity;
 		isShield_ = static_cast<bool>(moveType);
+		if (isShield_) {
+			scoreValue_ = 300;
+		}
+
 	} else {
 		assert(false && "Enemy is already active. Cannot spawn again.");
 	}
@@ -200,6 +206,10 @@ void Enemy::SetIsShot(bool isShot) {
 
 void Enemy::SetIsActive(bool isActive) {
 	isActive_ = isActive;
+}
+
+void Enemy::SetIsShield(bool isShield) {
+	isShield_ = isShield;
 }
 
 bool Enemy::GetIsShield() {

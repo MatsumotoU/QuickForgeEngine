@@ -6,4 +6,5 @@
 class RotateToDir final {
 public:
 	static Vector3 GetRotateToDir(const Vector3& rotate);
+	static Vector3 GetDirToRotate(const Vector3& dir);
 };

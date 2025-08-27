@@ -13,6 +13,7 @@ public:
 	Vector3 GetWorldPos();
 	Vector3 GetReticleWorldPos();
 	Vector3 GetTopPos();
+	Vector3 GetTargetWorldPos();
 
 public:
 	Transform transform_;

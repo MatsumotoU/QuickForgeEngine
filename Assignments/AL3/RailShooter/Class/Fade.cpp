@@ -43,9 +43,6 @@ void Fade::Update() {
 }
 
 void Fade::Draw() {
-
-	ImGui::Text("%f", fadeTime_);
-
 	sprite_.DrawSprite(transform_, uvCheckerTextureHandle_, &camera_);
 }
 
