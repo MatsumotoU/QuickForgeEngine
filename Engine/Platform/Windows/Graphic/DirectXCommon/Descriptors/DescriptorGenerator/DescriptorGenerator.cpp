@@ -1,8 +1,7 @@
 #include "DescriptorGenerator.h"
-
+#include <cassert>
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
-#include <cassert>
 #endif // _DEBUG
 
 void DescriptorGenerator::GenerateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& heap, ID3D12Device* device, const DescriptorGenerateConfig& config) {

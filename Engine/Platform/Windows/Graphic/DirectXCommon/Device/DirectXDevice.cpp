@@ -57,20 +57,16 @@ ID3D12Device* DirectXDevice::GetDevice() const {
 IDXGIAdapter4* DirectXDevice::GetUseAdapter() const {
 	return useAdapter_.Get();
 }
-
-void DirectXDevice::SetDisableError(bool disable) {
 #ifdef _DEBUG
+void DirectXDevice::SetDisableError(bool disable) {
 	disableError_ = disable;
 	DebugLog(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
-#endif // _DEBUG
 }
-
 void DirectXDevice::SetDisableWarning(bool disable) {
-#ifdef _DEBUG
 	disableWarning_ = disable;
 	DebugLog(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
-#endif // _DEBUG
 }
+#endif // _DEBUG
 
 void DirectXDevice::CreateDxgiFactory() {
 	assert(!dxgiFactory_);

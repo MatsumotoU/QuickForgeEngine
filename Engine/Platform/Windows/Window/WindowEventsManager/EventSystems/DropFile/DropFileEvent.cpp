@@ -1,7 +1,7 @@
 #include "DropFileEvent.h"
+#include "Utility/String/MyString.h"
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
-#include "String/MyString.h"
 #endif // _DEBUG
 
 DropFileEvent::DropFileEvent(nlohmann::json& data):IEvent(data) {}

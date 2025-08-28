@@ -199,7 +199,9 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 
 Vector2 TextureManager::GetTextureSize(int32_t textureHandle) {
 	if (textureHandle < 0 || textureHandle >= static_cast<int32_t>(textureResources_.size())) {
+#ifdef _DEBUG
 		DebugLog("TextureManager: Invalid texture handle");
+#endif // _DEBUG
 		return Vector2(0.0f, 0.0f);
 	}
 	const DirectX::TexMetadata& metadata = scratchImages_[textureHandle].GetMetadata();

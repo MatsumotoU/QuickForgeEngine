@@ -11,4 +11,5 @@ void ImGuiInitializer::Initialize(
 		cpuHandle,
 		gpuHandle);
 	assert(isInit);
+	isInit;
 }

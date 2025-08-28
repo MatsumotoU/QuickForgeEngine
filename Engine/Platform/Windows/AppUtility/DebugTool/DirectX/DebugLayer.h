@@ -1,5 +1,5 @@
-#ifdef _DEBUG
 #pragma once
+#ifdef _DEBUG
 #include <d3d12.h>
 #include <wrl.h>
 

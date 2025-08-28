@@ -258,7 +258,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
 /D BUILD_MACHINE="\"$(COMPUTERNAME)\""  /D BUILD_CONFIG="\"$(Configuration)\""  /D BUILD_PLATFORM="\"$(Platform)\"" %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Engine;$(ProjectDir)\Engine\Externals;$(ProjectDir)\Engine\Externals\assimp\include;$(ProjectDir\Engine\Externals\imgui;$(ProjectDir)\Engine\Externals\lua;$(ProjectDir)\Engine\Externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)\Engine\Utility;$(ProjectDir);$(ProjectDir)\Engine\Platform\Windows</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Engine;$(ProjectDir)\Engine\Externals;$(ProjectDir)\Engine\Externals\assimp\include;$(ProjectDir)\Engine\Externals\imgui;$(ProjectDir)\Engine\Externals\lua;$(ProjectDir)\Engine\Externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)\Engine\Utility;$(ProjectDir)\Engine\Platform\Windows;$(ProjectDir)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>

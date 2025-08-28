@@ -2,7 +2,6 @@
 #include "DescriptorGenerator/DescriptorGenerator.h"
 #include "CheckGenerateConfig/CheckGenerateConfig.h"
 #include "AppUtility/DirectX/GenerateDiscriptorHandle.h"
-
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG

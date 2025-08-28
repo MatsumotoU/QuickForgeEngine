@@ -73,6 +73,7 @@ void SwapChain::CreateDubleBuffering() {
 
 void SwapChain::Present() {
 	HRESULT hr = swapChain_->Present(1, 0);
+	hr;
 	assert(SUCCEEDED(hr) && "Failed to present the swap chain.");
 }
 
