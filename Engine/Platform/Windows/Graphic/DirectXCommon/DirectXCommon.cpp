@@ -62,6 +62,18 @@ void DirectXCommon::Shutdown() {
 	fence_.Shutdown();
 }
 
+DescriptorHandles DirectXCommon::AssignRtvHeap(ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc) {
+	return descriptorHeapManager_.AssignRtvHeap(resource, desc);
+}
+
+DescriptorHandles DirectXCommon::AssignSrvHeap(ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
+	return descriptorHeapManager_.AssignSrvHeap(resource, desc);
+}
+
+DescriptorHandles DirectXCommon::AssignDsvHeap(ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* desc) {
+	return descriptorHeapManager_.AssignDsvHeap(resource, desc);
+}
+
 void DirectXCommon::AssignSwapChainRenderTarget() {
 	// スワップチェインのリソース登録
 	rtvDesc_ = {};
