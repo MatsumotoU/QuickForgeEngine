@@ -55,7 +55,7 @@ void WindowsEngineCore::Initialize() {
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
 	// * ポストプロセスマネージャー初期化 * //
-	rendaringPostprocess_.Initialize(directXCommon_.GetDevice(), directXCommon_.GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	/*rendaringPostprocess_.Initialize(directXCommon_.GetDevice(), directXCommon_.GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	rendaringPostprocess_.SetNormalPSO(graphicPipelineManager_.GetNormalPso());
 	rendaringPostprocess_.SetColorCorrectionPSO(graphicPipelineManager_.GetColorCorrectionPso());
 	rendaringPostprocess_.SetGrayScalePSO(graphicPipelineManager_.GetGrayScalePso());
@@ -65,7 +65,7 @@ void WindowsEngineCore::Initialize() {
 	rendaringPostprocess_.SetOffscreenRtvHandle(
 		offScreenResourceManager_.GetOffscreenRtvHandles(0), offScreenResourceManager_.GetOffscreenRtvHandles(1));
 	rendaringPostprocess_.SetOffscreenSrvHandle(
-		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));
+		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));*/
 
 	// * テクスチャマネージャー初期化 * //
 	textureManager_.Initialize(&directXCommon_, directXCommon_.GetDescriptorHeapManager()->GetSrvDescriptorHeap());

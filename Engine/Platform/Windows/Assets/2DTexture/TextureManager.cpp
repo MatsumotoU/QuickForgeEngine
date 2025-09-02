@@ -10,8 +10,7 @@
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
-void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvDescriptorHeap) {
-	dxCommon_ = dxCommon;
+void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap) {
 	srvDescriptorHeap_ = srvDescriptorHeap;
 
 	// Comの初期化
@@ -20,8 +19,10 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvD
 	hr;
 
 	// デバイスを取得
-	assert(dxCommon_);
-	device_ = dxCommon_->GetDevice();
+	assert(device);
+	device_ = device;
+	assert(commandList);
+	commandList_ = commandList;
 
 	// 利用するHeapの設定
 	heapProperties_ = {};
@@ -39,7 +40,6 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvD
 #ifdef _DEBUG
 	debugTextureIndex_ = 0;
 #endif
-
 }
 
 void TextureManager::Finalize() {
@@ -189,7 +189,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	textureHandle_++;
 	textureResources_.push_back(textureResource);
 	intermediateResource_.push_back(
-		UploadTextureData(textureResources_[textureResources_.size() - 1].Get(), scratchImages_[scratchImages_.size() - 1], dxCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT)));
+		UploadTextureData(textureResources_[textureResources_.size() - 1].Get(), scratchImages_[scratchImages_.size() - 1], commandList_));
 #ifdef _DEBUG
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width,metadata.height,textureHandle_-1)));
 #endif // _DEBUG

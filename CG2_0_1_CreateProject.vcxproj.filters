@@ -268,7 +268,16 @@
     <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\RendaringPostprocess.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Assets\AssetManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1053,7 +1062,22 @@
     <ClInclude Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\Graphic\PostEffect\RendaringPostprocess.h">
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelMaterialData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\AssetManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

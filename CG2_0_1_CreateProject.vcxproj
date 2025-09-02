@@ -335,6 +335,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\AssetManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorGenerator\DescriptorGenerator.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorHeapManager.cpp" />
@@ -364,7 +368,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\RootParameter.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiler.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp" />
-    <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\RendaringPostprocess.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.cpp" />
     <ClCompile Include="Engine\Platform\Windows\WindowsEngineCore.cpp" />
@@ -424,6 +427,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelMaterialData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\AssetManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorGenerateConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorHandles.h" />
@@ -453,7 +462,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\RootParameter.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiler.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\PostEffect\RendaringPostprocess.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\ConstantBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ColorCorrectionOffset.h" />

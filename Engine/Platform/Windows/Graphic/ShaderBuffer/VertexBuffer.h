@@ -4,15 +4,18 @@
 #include <cassert>
 #include "Data/VerTexData.h"
 #include "Data/PrimitiveVertexData.h"
+#include "BufferGenerater/BufferGenerator.h"
 
 template<class T>
 class VertexBuffer {
 public:
 	void CreateResource(ID3D12Device* device, uint32_t vertexCount) {
+		assert(device);
+		assert(vertexCount_ != 0);
 		vertexCount_ = vertexCount;
 
 		// Spriteを作る
-		vertexResource_ = CreateBufferResource(device, sizeof(T) * vertexCount);
+		vertexResource_ = BufferGenerator::Generate(device, sizeof(T) * vertexCount);
 		vertexBufferView_ = {};
 		vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 		vertexBufferView_.SizeInBytes = sizeof(T) * vertexCount;

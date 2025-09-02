@@ -6,7 +6,6 @@
 #include "Externals/DirectXTex/DirectXTex.h"
 #include "Utility/String/StringLiblary.h"
 
-class DirectXCommon;
 class SrvDescriptorHeap;
 
 class TextureManager final {
@@ -14,7 +13,7 @@ public:// 一回は絶対に呼び出さないとバグるやつ
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon, SrvDescriptorHeap* srvDescriptorHeap);
+	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap);
 	/// <summary>
 	/// 終了処理
 	/// </summary>
@@ -45,8 +44,8 @@ private:
 	void CreateOffscreenShaderResourceView();	
 
 private:// メンバ変数
-	DirectXCommon* dxCommon_;
 	ID3D12Device* device_;
+	ID3D12GraphicsCommandList* commandList_;
 	SrvDescriptorHeap* srvDescriptorHeap_;
 	D3D12_HEAP_PROPERTIES heapProperties_;
 	D3D12_RESOURCE_DESC resourceDesc_;
