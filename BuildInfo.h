@@ -1,3 +1,3 @@
 #pragma once 
-#define BUILD_COMMIT "3d7ce98" 
+#define BUILD_COMMIT "798f278" 
 #define BUILD_BRANCH "FileDelete" 

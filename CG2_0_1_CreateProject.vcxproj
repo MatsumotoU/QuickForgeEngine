@@ -433,6 +433,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AssetManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Scene\IScene.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Scene\SceneObject.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorGenerateConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorHandles.h" />
@@ -476,6 +478,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\StructuredBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\VertexBuffer.h" />
+    <ClInclude Include="Engine\Platform\Windows\Scene\IScene.h" />
     <ClInclude Include="Engine\Platform\Windows\WindowsEngineCore.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\GameWindow.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\GameWindowManager.h" />
