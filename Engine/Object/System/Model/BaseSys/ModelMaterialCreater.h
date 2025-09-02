@@ -1,6 +1,6 @@
 #pragma once
 #include "Object/Component/Data/MaterialComponent.h"
-#include "Object/Structs/ModelMaterialData.h"
+#include "Object/Data/ModelMaterialData.h"
 
 class EngineCore;
 

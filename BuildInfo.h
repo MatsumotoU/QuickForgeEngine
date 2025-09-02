@@ -1,3 +1,3 @@
 #pragma once 
-#define BUILD_COMMIT "c751722" 
-#define BUILD_BRANCH "ECS" 
+#define BUILD_COMMIT "b3bc1b7" 
+#define BUILD_BRANCH "master" 
