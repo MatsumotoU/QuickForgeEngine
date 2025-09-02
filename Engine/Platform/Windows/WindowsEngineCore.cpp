@@ -67,8 +67,7 @@ void WindowsEngineCore::Initialize() {
 	rendaringPostprocess_.SetOffscreenSrvHandle(
 		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));*/
 
-	// * テクスチャマネージャー初期化 * //
-	textureManager_.Initialize(&directXCommon_, directXCommon_.GetDescriptorHeapManager()->GetSrvDescriptorHeap());
+	assetManager_.Initalize(&directXCommon_);
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -91,7 +90,6 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
-	textureManager_.Finalize();
 	imguiFrameController_.EndImGui();
 	directXCommon_.Shutdown();
 	gameWindowManager->Shutdown();
@@ -113,5 +111,5 @@ void WindowsEngineCore::Draw() {
 	imguiFrameController_.EndFrame(directXCommon_.GetCurrentBackBufferCpuHandle());
 	directXCommon_.PostDraw();
 
-	textureManager_.ReleaseIntermediateResources();
+	assetManager_.EndFrame();
 }

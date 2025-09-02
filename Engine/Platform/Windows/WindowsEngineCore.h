@@ -6,8 +6,9 @@
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "Graphic/Pipeline/GraphicPipelineManager.h"
 #include "AppUtility/DebugTool/App/WinAppDebugCore.h"
-
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
+
+#include "Assets/AssetManager.h"
 
 #include "Graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 //#include "Graphic/PostEffect/RendaringPostprocess.h"
@@ -34,9 +35,9 @@ private:
 	DirectXCommon directXCommon_;
 	WinAppDebugCore debugCore_;
 
-	TextureManager textureManager_;
-
 	OffScreenResourceManager offScreenResourceManager_;
+
+	AssetManager assetManager_;
 	//RendaringPostprosecess rendaringPostprocess_;
 
 	GraphicPipelineManager graphicPipelineManager_;
