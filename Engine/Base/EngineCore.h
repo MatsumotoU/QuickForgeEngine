@@ -81,12 +81,6 @@
 
 // GraphRenderer
 #include "DirectX/GraphRenderer.h"
-
-// Scene
-#include "Scene/SceneManager.h"
-
-#include "Script/LuaScriptManager.h"
-#include "Script/LuaCallFiles.h"
 // TODO: ビルドツールpremakeの導入 
 
 #include <chrono>
@@ -125,7 +119,6 @@ public:// エンジンの機能取得
 	XAudioCore* GetAudioManager();
 	Audio3D* GetAudio3D();
 	DirectInputManager* GetInputManager();
-	//Sprite* GetOffscreen();
 	FramePerSecond* GetFpsCounter();
 	RtvDescriptorHeap* GetRtvDescriptorHeap();
 	SrvDescriptorHeap* GetSrvDescriptorHeap();
@@ -137,10 +130,7 @@ public:// エンジンの機能取得
 	Chiptune* GetChiptune();
 	ShaderCompiler* GetShaderCompiler();
 	LoopStoper* GetLoopStopper();
-	LuaScriptManager* GetLuaScriptManager();
-	SceneManager* GetSceneManager();
 	std::string GetStartSceneFilePath() const { return startSceneFilePath_; }
-	LuaCallFiles* GetLuaCallFiles() { return &luaCallFiles_; }
 
 public:
 	 float GetDeltaTime();
@@ -168,7 +158,6 @@ private:// コア機能
 	DirectXCommon dxCommon_;
 	ImGuiManager imGuiManager_;
 	LoopStoper loopStopper_;
-	SceneManager sceneManager_;
 	std::string startSceneFilePath_;
 
 private:// 時間管理
@@ -203,10 +192,6 @@ private:// デバッグ用一時変数
 	Transform offscreenTransform_;
 	Transform uvTransform_;
 	Camera camera_;
-
-private:// スクリプト
-	LuaScriptManager luaScriptManager_;
-	LuaCallFiles luaCallFiles_;
 
 #ifdef _DEBUG
 	MemoryWatcher memWatcher_;

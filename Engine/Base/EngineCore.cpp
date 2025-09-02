@@ -2,7 +2,7 @@
 
 static char startSceneFileName[256] = "";
 
-EngineCore::EngineCore() :luaScriptManager_(this) {
+EngineCore::EngineCore() {
 	engineStartTime = std::chrono::steady_clock::now();
 #ifdef _DEBUG
 	DebugLog("[[[EngineStarted]]]");
@@ -123,16 +123,6 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 #endif // _DEBUG
 
 	loopStopper_.Initialize();
-
-	// シーンマネージャの初期化,初期シーンはサンプルシーンとする
-	sceneManager_.CreateScene(this, "SampleScene");
-	sceneManager_.InitializeScene();
-
-#ifndef _DEBUG
-	/*sceneManager_.LoadScenesFromJson("Resources/Scenes/LastScriptRunScene.json");
-	sceneManager_.SwapScene();
-	sceneManager_.SetIsRunningScript(true);*/
-#endif // !_DEBUG
 }
 
 void EngineCore::Update() {
@@ -174,12 +164,6 @@ void EngineCore::Update() {
 #endif // _DEBUG
 
 	loopStopper_.Update();
-
-	// シーンの更新処理
-	sceneManager_.SwapScene();
-	if (!loopStopper_.GetIsStopping()) {
-		sceneManager_.UpdateScene();
-	}
 }
 
 void EngineCore::PreDraw() {
@@ -197,9 +181,6 @@ void EngineCore::PreDraw() {
 	postprocess_.PreDraw();
 
 	graphRenderer_.PreDraw();
-
-	// シーン描画
-	sceneManager_.DrawScene();
 }
 
 void EngineCore::PostDraw() {
@@ -308,14 +289,6 @@ LoopStoper* EngineCore::GetLoopStopper() {
 	return &loopStopper_;
 }
 
-LuaScriptManager* EngineCore::GetLuaScriptManager() {
-	return &luaScriptManager_;
-}
-
-SceneManager* EngineCore::GetSceneManager() {
-	return &sceneManager_;
-}
-
 float EngineCore::GetDeltaTime() {
 	// FPSが0でない場合はFPSを基にデルタタイムを返す
 	if (fpsCounter_.GetFps() != 0.0f) {
@@ -397,15 +370,6 @@ void EngineCore::DrawEngineMenu() {
 			ImGui::Text("!!!Update Stopping Now!!!");
 		}
 
-		// RedoUndo
-		ImGui::Spacing();
-		if (ImGui::Button("Undo")) {
-			sceneManager_.RequestUndo();
-		}
-		if (ImGui::Button("Redo")) {
-			sceneManager_.RequestRedo();
-		}
-
 		ImGui::EndMainMenuBar();
 	}
 
@@ -415,36 +379,6 @@ void EngineCore::DrawEngineMenu() {
 
 	// * Sceneタブ * //
 	ImGui::Begin("Scene Viewer");
-	ImGui::Text("Scene: %s", sceneManager_.GetCurrentSceneName().c_str());
-
-	// ギズモ操作モードの選択
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(120);
-	static ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
-	static ImGuizmo::MODE currentGizmoMode = ImGuizmo::WORLD;
-	const char* gizmoOps[] = { "Translate", "Rotate", "Scale" };
-	int gizmoOpIndex = 0;
-	switch (currentGizmoOperation) {
-	case ImGuizmo::TRANSLATE: gizmoOpIndex = 0; break;
-	case ImGuizmo::ROTATE:    gizmoOpIndex = 1; break;
-	case ImGuizmo::SCALE:     gizmoOpIndex = 2; break;
-	}
-	if (ImGui::Combo("Gizmo Mode", &gizmoOpIndex, gizmoOps, IM_ARRAYSIZE(gizmoOps))) {
-		switch (gizmoOpIndex) {
-		case 0: currentGizmoOperation = ImGuizmo::TRANSLATE; break;
-		case 1: currentGizmoOperation = ImGuizmo::ROTATE;    break;
-		case 2: currentGizmoOperation = ImGuizmo::SCALE;     break;
-		}
-	}
-
-	// 座標系のドロップダウン
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(120);
-	const char* gizmoModes[] = { "World", "Local" };
-	int gizmoModeIndex = (currentGizmoMode == ImGuizmo::WORLD) ? 0 : 1;
-	if (ImGui::Combo("Coordinate", &gizmoModeIndex, gizmoModes, IM_ARRAYSIZE(gizmoModes))) {
-		currentGizmoMode = (gizmoModeIndex == 0) ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
-	}
 
 	// シーン描画
 	// アスペクト比保持
@@ -473,26 +407,6 @@ void EngineCore::DrawEngineMenu() {
 		reinterpret_cast<void*>(postprocess_.GetOffscreenSrvHandleGPU().ptr),
 		imageSize
 	);
-
-	// ギズモ描画
-	sceneManager_.DrawGizmo(currentGizmoOperation, currentGizmoMode, imageScreenPos, imageSize);
-
-	// 画像上でクリックされたか判定
-	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-		ImVec2 mousePos = ImGui::GetMousePos();
-		// Image内の相対座標
-		float relX = (mousePos.x - imageScreenPos.x) / imageSize.x;
-		float relY = (mousePos.y - imageScreenPos.y) / imageSize.y;
-		// relX, relY: 0.0～1.0（画像内の正規化座標）
-		// ここで選択処理を呼ぶ
-		sceneManager_.PickObjectFromScreen(relX, relY);
-	}
-	
-	ImGui::End();
-
-	// * SceneObjectタブ * //
-	ImGui::Begin("SceneObjectViewer");
-	sceneManager_.DrawImGui();
 	ImGui::End();
 
 	//* Editタブ *//
@@ -652,7 +566,6 @@ void EngineCore::DrawEngineMenu() {
 	}
 
 	// エンジンのウィンドウと差別化用のスタイル変更
-	//ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 }
 

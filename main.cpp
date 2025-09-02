@@ -6,6 +6,7 @@
 
 // 現状ないと動かないコアたち
 #include "Engine/Base/EngineCore.h"
+#include "LegacyScene/SceneManager.h"
 
 // windowsアプリでのエントリーポイント(main関数) 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
@@ -20,15 +21,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	EngineCore engineCore;
 	engineCore.Initialize(L"LE2A_14_マツモト_ユウタ_AL3", hInstance, lpCmdLine,&msg);
 
+	SceneManager sceneManager(&engineCore);
+	sceneManager.Initialize();
+
 	// ウィンドウのXボタンが押されるまでループ
 	while (engineCore.GetWinApp()->GetIsWindowQuit()) {
 		// windowにメッセージが基底たら最優先で処理される
 		if (engineCore.GetWinApp()->GetCanLoop()) {
 			// === Update ===
 			engineCore.Update();
+			sceneManager.Update();
 
 			// === Draw ===
 			engineCore.PreDraw();
+			sceneManager.Draw();
 
 			// === EndDraw ===
 			engineCore.PostDraw();

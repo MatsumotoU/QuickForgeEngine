@@ -361,12 +361,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Object\Asset\AssetManager.cpp" />
     <ClCompile Include="Engine\Object\BaseGameObject.cpp" />
     <ClCompile Include="Engine\Particle\Particle.cpp" />
-    <ClCompile Include="Engine\Scene\SceneGameObjectGenerator.cpp" />
-    <ClCompile Include="Engine\Scene\SceneObject.cpp" />
-    <ClCompile Include="Engine\Script\GameObjectLuaScript.cpp" />
-    <ClCompile Include="Engine\Script\ILuaScript.cpp" />
-    <ClCompile Include="Engine\Script\LuaCallFiles.cpp" />
-    <ClCompile Include="Engine\Script\LuaScriptManager.cpp" />
     <ClCompile Include="Engine\Sprite\FullScreenSprite.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\String\Font.cpp" />
@@ -399,9 +393,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="externals\imgui\implot-master\implot.cpp" />
     <ClCompile Include="externals\imgui\implot-master\implot_items.cpp" />
+    <ClCompile Include="LegacyScene\Class\Fade.cpp" />
+    <ClCompile Include="LegacyScene\GameScene.cpp" />
+    <ClCompile Include="LegacyScene\SceneManager.cpp" />
+    <ClCompile Include="LegacyScene\TitleScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
-    <ClCompile Include="Engine\Scene\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h" />
@@ -496,15 +493,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\VignetteOffset.h" />
     <ClInclude Include="Engine\Particle\Particle.h" />
     <ClInclude Include="Engine\Particle\ParticleForGPU.h" />
-    <ClInclude Include="Engine\Scene\IScene.h" />
-    <ClInclude Include="Engine\Scene\SceneGameObjectGenerator.h" />
-    <ClInclude Include="Engine\Scene\SceneManager.h" />
-    <ClInclude Include="Engine\Scene\SceneObject.h" />
-    <ClInclude Include="Engine\Script\GameObjectLuaScript.h" />
-    <ClInclude Include="Engine\Script\ILuaScript.h" />
-    <ClInclude Include="Engine\Script\LuaCallFiles.h" />
-    <ClInclude Include="Engine\Script\LuaScriptGenerator.h" />
-    <ClInclude Include="Engine\Script\LuaScriptManager.h" />
     <ClInclude Include="Engine\Sprite\FullScreenSprite.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h" />
@@ -687,6 +675,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\sol2\sol\variadic_results.hpp" />
     <ClInclude Include="externals\sol2\sol\version.hpp" />
     <ClInclude Include="externals\sol2\sol\wrapper.hpp" />
+    <ClInclude Include="LegacyScene\Class\Fade.h" />
+    <ClInclude Include="LegacyScene\GameScene.h" />
+    <ClInclude Include="LegacyScene\IScene.h" />
+    <ClInclude Include="LegacyScene\SceneManager.h" />
+    <ClInclude Include="LegacyScene\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl">
