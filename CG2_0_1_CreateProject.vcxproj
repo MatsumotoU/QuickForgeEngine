@@ -339,6 +339,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AssetManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Scene\IScene.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorGenerator\DescriptorGenerator.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorHeapManager.cpp" />
@@ -433,6 +434,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AssetManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Scene\IScene.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorGenerateConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorHandles.h" />
