@@ -19,11 +19,27 @@ void TitleScene::Initialize() {
 
 	isRequestedExit_ = false;
 	camera_.Initialize(engineCore_->GetWinApp());
+	
+	mole_ = std::make_unique<Mole>();
+	mole_.get()->Initialize(engineCore_,&camera_);
+	
+	wall_ = std::make_unique<Wall>();
+	wall_.get()->Initialize(engineCore_, &camera_);
+
+	titleName_ = std::make_unique<TitleName>();
+	titleName_.get()->Initialize(engineCore_, &camera_);
+
 }
 
 void TitleScene::Update() {
 	DirectInputManager* input = engineCore_->GetInputManager();
 	frameCount_++;
+
+	mole_.get()->Update();
+
+	wall_.get()->Update();
+
+	titleName_.get()->Update();
 
 	if (input->keyboard_.GetTrigger(DIK_SPACE)) {
 		isRequestedExit_ = true;
@@ -39,8 +55,17 @@ void TitleScene::Update() {
 
 void TitleScene::Draw() {
 	engineCore_->GetGraphRenderer()->DrawGrid();
+
+	mole_.get()->Draw();
+	wall_.get()->Draw();
+	titleName_.get()->Draw();
+
 #ifdef _DEBUG
 	debugCamera_.DrawImGui();
+
+	mole_.get()->DebugImGui();
+	wall_.get()->DebugImGui();
+	titleName_.get()->DebugImGui();
 #endif // _DEBUG
 }
 

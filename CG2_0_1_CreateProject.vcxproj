@@ -402,6 +402,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\TitleScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
+    <ClCompile Include="LegacyScene\Class\TitleScene\Mole.cpp" />
+    <ClCompile Include="LegacyScene\Class\TitleScene\Wall.cpp" />
+    <ClCompile Include="LegacyScene\Class\TitleScene\TitleName.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h" />
@@ -575,6 +578,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="LegacyScene\IScene.h" />
     <ClInclude Include="LegacyScene\SceneManager.h" />
     <ClInclude Include="LegacyScene\TitleScene.h" />
+    <ClInclude Include="LegacyScene\Class\TitleScene\Mole.h" />
+    <ClInclude Include="LegacyScene\Class\TitleScene\Wall.h" />
+    <ClInclude Include="LegacyScene\Class\TitleScene\TitleName.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl">
