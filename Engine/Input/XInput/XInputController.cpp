@@ -114,5 +114,5 @@ Vector2 XInputController::GetLeftStick(uint32_t padId) {
     result.x /= stickDeadZone_;
     result.y /= stickDeadZone_;
 
-    return result.Normalize();
+    return result;
 }

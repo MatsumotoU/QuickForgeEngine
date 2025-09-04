@@ -2,8 +2,8 @@
 #include "Base/EngineCore.h"
 #include "../Block.h"
 
-static inline const uint32_t kMapWidth = 7;
-static inline const uint32_t kMapHeight = 7;
+static inline const uint32_t kMapWidth = 8;
+static inline const uint32_t kMapHeight = 8;
 
 class MapChip final {
 public:
