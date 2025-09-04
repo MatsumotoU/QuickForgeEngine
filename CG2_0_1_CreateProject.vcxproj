@@ -394,8 +394,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\implot-master\implot_items.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Block.cpp" />
     <ClCompile Include="LegacyScene\Class\Fade.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapCollider.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChip.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChipLoader.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Player.cpp" />
     <ClCompile Include="LegacyScene\GameScene.cpp" />
     <ClCompile Include="LegacyScene\SceneManager.cpp" />
     <ClCompile Include="LegacyScene\TitleScene.cpp" />
@@ -567,8 +569,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\lua\lzio.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Block.h" />
     <ClInclude Include="LegacyScene\Class\Fade.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapCollider.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChip.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChipLoader.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Player.h" />
     <ClInclude Include="LegacyScene\GameScene.h" />
     <ClInclude Include="LegacyScene\IScene.h" />
     <ClInclude Include="LegacyScene\SceneManager.h" />

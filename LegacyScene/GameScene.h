@@ -6,6 +6,8 @@
 #include "Class/GameScene/Map/MapChip.h"
 #include "Class/GameScene/Map/MapChipLoader.h"
 
+#include "Class/GameScene/Player.h"
+
 class GameScene : public IScene{
 public:
 	GameScene(EngineCore* engineCore);
@@ -28,6 +30,7 @@ private:
 
 	MapChip floorChip_;
 	MapChip wallChip_;
+	Player player_;
 
 	std::vector<std::vector<uint32_t>> map_;
 

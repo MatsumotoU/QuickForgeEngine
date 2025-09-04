@@ -38,7 +38,7 @@ void MapChip::SetMap(std::vector<std::vector<uint32_t>>& map) {
 	for (uint32_t y = 0; y < kMapHeight; y++) {
 		for (uint32_t x = 0; x < kMapWidth; x++) {
 			if (map[y][x] == 1) {
-				blocks_[x + y * kMapWidth]->SetColor({0.0f,0.0f,0.0f,1.0f});
+				blocks_[x + y * kMapWidth]->SetColor({0.5f,0.5f,0.5f,1.0f});
 			}
 			if (map[y][x] == 0) {
 				blocks_[x + y * kMapWidth]->SetIsDraw(false);
