@@ -61,6 +61,7 @@ public:
 	}
 	void SetBlendmode(BlendMode mode);
 	void SetColor(const Vector4& color);
+	void SetDirectionalLightDir(const Vector3& dir);
 
 private:
 	EngineCore* engineCore_;
