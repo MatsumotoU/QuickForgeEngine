@@ -6,7 +6,6 @@ GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
 
-
 #ifdef _DEBUG
 	isActiveDebugCamera_ = false;
 	debugCamera_.Initialize(engineCore_);
@@ -15,6 +14,10 @@ GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
 	engineCore_->GetLoopStopper()->AddNonStoppingFunc(std::bind(&GameScene::CameraUpdate, this));
+
+	sceneID_ = 1;
+
+	map_ = MapChipLoader::Load("Resources/Map/Stage1.csv");
 }
 
 GameScene::~GameScene() {
@@ -25,6 +28,11 @@ void GameScene::Initialize() {
 	camera_.Initialize(engineCore_->GetWinApp());
 	isRequestedExit_ = false;
 	collisionManager_.Initalize();
+
+	floorChip_.Initialize(engineCore_, &camera_);
+	wallChip_.Initialize(engineCore_, &camera_);
+	floorChip_.SetMapPosition({ -3.5f,0.0f,-3.5f });
+	wallChip_.SetMapPosition({ -3.5f,1.0f,-3.5f });
 }
 
 void GameScene::Update() {
@@ -35,12 +43,20 @@ void GameScene::Update() {
 	}
 	CameraUpdate();
 #endif // _DEBUG
+
+	wallChip_.SetMap(map_);
+
+	floorChip_.Update();
+	wallChip_.Update();
 }
 
 void GameScene::Draw() {
 #ifdef _DEBUG
 	debugCamera_.DrawImGui();
 #endif // _DEBUG
+
+	floorChip_.Draw();
+	wallChip_.Draw();
 }
 
 

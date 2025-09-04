@@ -60,6 +60,7 @@ public:
 		return modelFileName_;
 	}
 	void SetBlendmode(BlendMode mode);
+	void SetColor(const Vector4& color);
 
 private:
 	EngineCore* engineCore_;

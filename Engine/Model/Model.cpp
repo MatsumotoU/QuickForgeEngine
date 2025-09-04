@@ -223,3 +223,7 @@ void Model::DrawImGui() {
 void Model::SetBlendmode(BlendMode mode) {
 	pso_ = engineCore_->GetGraphicsCommon()->GetTrianglePso(mode);
 }
+
+void Model::SetColor(const Vector4& color) {
+	material_.GetData()->color = color;
+}
