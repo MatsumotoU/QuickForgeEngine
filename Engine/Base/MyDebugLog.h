@@ -5,7 +5,6 @@
 #include <chrono>
 #include <source_location>
 #include <vector>
-#include <sol/sol.hpp>
 
 class MyDebugLog final {
 public:
@@ -36,5 +35,3 @@ private: // シングルトン用
 /// </summary>
 /// <param name="message"></param>
 void DebugLog(const std::string& message, const std::source_location& location = std::source_location::current());
-// 文字列・数値どちらも受け取れるラッパー関数
-void DebugLogLua(const sol::object& obj);

@@ -28,6 +28,7 @@ void DebugCamera::Initialize(EngineCore* engineCore) {
 	engineCore_ = engineCore;
 	anchorPointBillboard_->Init();
 	anchorGH_ = engineCore_->GetTextureManager()->LoadTexture("Resources/anchor.png");
+	anchorPointBillboard_->SetTextureHandle(anchorGH_);
 
 	isDrawAnchor_ = false;
 
