@@ -19,6 +19,7 @@ class EngineCore;
 class DirectXCommon;
 class TextureManager;
 class Camera;
+enum class ViewState;
 
 class Model :public BaseGameObject{
 public:
@@ -62,6 +63,7 @@ public:
 	void SetBlendmode(BlendMode mode);
 	void SetColor(const Vector4& color);
 	void SetDirectionalLightDir(const Vector3& dir);
+	void SetViewState(ViewState state);
 
 private:
 	EngineCore* engineCore_;
@@ -77,6 +79,7 @@ private:
 	std::vector<VertexBuffer<VertexData>> vertexBuffers_; // 各メッシュ用
 	std::vector<int32_t> modelTextureHandles_; // 各メッシュ用
 
+	ViewState viewState_;
 	std::string modelFileName_;
 	ModelData modelData_;
 	static int instanceCount_;

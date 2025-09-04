@@ -394,7 +394,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\implot-master\implot_items.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Block.cpp" />
     <ClCompile Include="LegacyScene\Class\Fade.cpp" />
-    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapCollider.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapReflection.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Enemy.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\GamePlayer.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChip.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChipLoader.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Player.cpp" />
@@ -451,6 +454,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\MyRandomNum.h" />
     <ClInclude Include="Engine\Math\PrimitiveVertexData.h" />
     <ClInclude Include="Engine\Math\Quaternion\Quaternion.h" />
+    <ClInclude Include="Engine\Math\Vector\IntVector2.h" />
     <ClInclude Include="Engine\Model\AssimpModelLoader.h" />
     <ClInclude Include="Engine\Model\Billboard.h" />
     <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
@@ -569,7 +573,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\lua\lzio.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Block.h" />
     <ClInclude Include="LegacyScene\Class\Fade.h" />
-    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapCollider.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapReflection.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Enemy.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\GamePlayer.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChip.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChipLoader.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Player.h" />

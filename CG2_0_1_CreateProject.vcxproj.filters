@@ -359,7 +359,16 @@
     <ClCompile Include="LegacyScene\Class\GameScene\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapCollider.cpp">
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapReflection.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\GamePlayer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -877,7 +886,19 @@
     <ClInclude Include="LegacyScene\Class\GameScene\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapCollider.h">
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapReflection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector\IntVector2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\GamePlayer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,6 +13,8 @@ public:
 
 	void SetMapPosition(const Vector3& position);
 	void SetMap(std::vector<std::vector<uint32_t>>& map);
+	void SetChipColor(uint32_t x, uint32_t y,const Vector4& color);
+	void ResetChipColor();
 
 private:
 	std::array<std::unique_ptr<Block>, kMapWidth * kMapHeight> blocks_;

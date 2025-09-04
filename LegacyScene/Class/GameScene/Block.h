@@ -1,6 +1,8 @@
 #pragma once
 #include "Base/EngineCore.h"
 
+static inline const float kBlockSize = 1.0f;
+
 class Block final {
 public:
 	Block() = default;
@@ -10,7 +12,6 @@ public:
 	void Update();
 	void Draw();
 
-	float GetBlockSize() const;
 	Transform& GetTransform();
 	void SetIsDraw(bool isDraw);
 	void SetColor(const Vector4& color);
@@ -21,5 +22,4 @@ private:
 
 	bool isDraw_;
 	std::unique_ptr<Model> model_;
-	float blockSize_;
 };

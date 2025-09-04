@@ -8,6 +8,8 @@
 
 #include "Class/GameScene/Player.h"
 
+#include "Math/Vector/IntVector2.h"
+
 class GameScene : public IScene{
 public:
 	GameScene(EngineCore* engineCore);
@@ -21,6 +23,10 @@ public:
 	IScene* GetNextScene() override;
 
 	void CameraUpdate();
+	void MapChipUpdate(GamePlayer& gamePlayer);
+	void BuildingMapChipUpdate(GamePlayer& gamePlayer);
+	void JumpingUpdate(GamePlayer& gamePlayer);
+	void GroundingUpdate(GamePlayer& gamePlayer);
 
 private:
 	EngineCore* engineCore_;
@@ -33,6 +39,7 @@ private:
 	Player player_;
 
 	std::vector<std::vector<uint32_t>> map_;
+	std::vector<IntVector2> buildMapChipIndex_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;
