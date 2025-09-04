@@ -11,7 +11,9 @@ public:
 
 	bool GetReqesytedExit() { return isRequestedExit_; }
 	virtual IScene* GetNextScene() = 0;
+	int GetSceneID() const { return sceneID_; }
 
 protected:
+	int sceneID_ = -1;
 	bool isRequestedExit_;
 };

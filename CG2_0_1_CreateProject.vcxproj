@@ -394,8 +394,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\implot-master\implot_items.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Block.cpp" />
     <ClCompile Include="LegacyScene\Class\Fade.cpp" />
-    <ClCompile Include="LegacyScene\Class\GameScene\Map\FieldBlockManager.cpp" />
-    <ClCompile Include="LegacyScene\Class\GameScene\Map\FieldManager.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChip.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChipLoader.cpp" />
     <ClCompile Include="LegacyScene\GameScene.cpp" />
     <ClCompile Include="LegacyScene\SceneManager.cpp" />
@@ -568,8 +567,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\lua\lzio.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Block.h" />
     <ClInclude Include="LegacyScene\Class\Fade.h" />
-    <ClInclude Include="LegacyScene\Class\GameScene\Map\FieldBlockManager.h" />
-    <ClInclude Include="LegacyScene\Class\GameScene\Map\FieldManager.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChip.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChipLoader.h" />
     <ClInclude Include="LegacyScene\GameScene.h" />
     <ClInclude Include="LegacyScene\IScene.h" />
@@ -751,6 +749,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
+    <Text Include="Resources\Map\Stage1.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

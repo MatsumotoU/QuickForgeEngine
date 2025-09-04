@@ -353,10 +353,7 @@
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChipLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="LegacyScene\Class\GameScene\Map\FieldManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="LegacyScene\Class\GameScene\Map\FieldBlockManager.cpp">
+    <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChip.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -862,16 +859,13 @@
     <ClInclude Include="LegacyScene\TitleScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="LegacyScene\Class\GameScene\Map\FieldManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="LegacyScene\Class\GameScene\Block.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChipLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="LegacyScene\Class\GameScene\Map\FieldBlockManager.h">
+    <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChip.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -892,5 +886,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
+    <Text Include="Resources\Map\Stage1.csv" />
   </ItemGroup>
 </Project>

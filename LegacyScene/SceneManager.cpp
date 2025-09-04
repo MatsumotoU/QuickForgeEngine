@@ -4,8 +4,8 @@ SceneManager::SceneManager(EngineCore* engineCore) :fade_(engineCore){
 	engineCore_ = engineCore;
 	fade_.Initialize();
 
-	//scene = new GameScene(engineCore_);
-	scene = new TitleScene(engineCore_);
+	scene = new GameScene(engineCore_);
+	//scene = new TitleScene(engineCore_);
 }
 
 SceneManager::~SceneManager() {
@@ -42,6 +42,10 @@ void SceneManager::Draw() {
 	if (scene->GetReqesytedExit() || fade_.isFading()) {
 		fade_.Draw();
 	}
+
+	ImGui::Begin("SceneManager");
+	ImGui::Text("SceneID = %d", scene->GetSceneID());
+	ImGui::End();
 
 	/*ImGui::Begin("FPS");
 	ImGui::Text("fps = %f", engineCore_->GetFpsCounter()->GetFps());

@@ -6,6 +6,9 @@ void Block::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources", "Cube.obj", COORDINATESYSTEM_HAND_LEFT);
+
+	blockSize_ = 1.0f;
+	isDraw_ = true;
 }
 
 void Block::Update() {
@@ -13,5 +16,23 @@ void Block::Update() {
 }
 
 void Block::Draw() {
-	model_->Draw();
+	if (isDraw_) {
+		model_->Draw();
+	}
+}
+
+float Block::GetBlockSize() const {
+	return blockSize_;
+}
+
+Transform& Block::GetTransform() {
+	return model_->transform_;
+}
+
+void Block::SetIsDraw(bool isDraw) {
+	isDraw_ = isDraw;
+}
+
+void Block::SetColor(const Vector4& color) {
+	model_->SetColor(color);
 }
