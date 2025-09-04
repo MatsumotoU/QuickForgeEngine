@@ -21,7 +21,8 @@ void Player::Initialize(EngineCore* engineCore, Camera* camera) {
 	moveDir_ = { 0.0f,0.0f };
 
 	model_->transform_.translate.y = 1.0f;
-	model_->SetColor({ 0.0f,1.0f,0.0f,1.0f });
+	alpha_ = 1.0f;
+	model_->SetColor({ 0.0f,1.0f,0.0f,alpha_ });
 }
 
 void Player::Update() {
@@ -72,6 +73,7 @@ void Player::Update() {
 		}
 	}
 
+	model_->SetColor({ 0.0f,1.0f,0.0f,alpha_ });
 	model_->Update();
 }
 

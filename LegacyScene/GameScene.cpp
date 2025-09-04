@@ -4,6 +4,8 @@
 #include "Class/GameScene/Collition/MapChipCollider.h"
 #include "Class/GameScene/Collition/MapReflection.h"
 
+#include "Utility/MyEasing.h"
+
 GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
@@ -22,7 +24,8 @@ GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 
 	sceneID_ = 1;
 
-	map_ = MapChipLoader::Load("Resources/Map/Stage1.csv");
+	wallMap_ = MapChipLoader::Load("Resources/Map/Stage1_wall.csv");
+	floorMap_ = MapChipLoader::Load("Resources/Map/Stage1_floor.csv");
 
 	buildMapChipIndex_.clear();
 }
@@ -42,8 +45,15 @@ void GameScene::Initialize() {
 	wallChip_.SetMapPosition({ 0.0f,1.0f,0.0f });
 
 	player_.Initialize(engineCore_, &camera_);
-	player_.GetTransform().translate.x += 4.0f;
+	player_.GetTransform().translate.x += 2.0f;
 	player_.GetTransform().translate.z += 4.0f;
+
+	enemy_.Initialize(engineCore_, &camera_);
+	enemy_.GetTransform().translate.x += 6.0f;
+	enemy_.GetTransform().translate.z += 4.0f;
+
+	isPlayerTurn_ = true;
+	isEndGame_ = false;
 }
 
 void GameScene::Update() {
@@ -55,16 +65,57 @@ void GameScene::Update() {
 	CameraUpdate();
 #endif // _DEBUG
 
-	wallChip_.SetMap(map_);
+	wallChip_.SetMap(wallMap_);
+	floorChip_.SetMap(floorMap_);
 
 	floorChip_.Update();
 	wallChip_.Update();
 
 	player_.Update();
+	enemy_.Update();
+
+	if (isEndGame_) {
+		if (!enemy_.GetIsAlive()) {
+			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, enemy_.GetTransform().translate.x, 0.1f);
+			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -enemy_.GetTransform().translate.z, 0.1f);
+		}
+		else if (!player_.GetIsAlive()) {
+			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, player_.GetTransform().translate.x, 0.1f);
+			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -player_.GetTransform().translate.z, 0.1f);
+			
+		}
+		MyEasing::SimpleEaseIn(&engineCore_->GetPostprocess()->grayScaleOffset_, 1.0f, 0.01f);
+		return;
+	}
+
+	// IngameUpdate
 	MapChipUpdate(player_);
 	BuildingMapChipUpdate(player_);
+	MapChipUpdate(enemy_);
+	BuildingMapChipUpdate(enemy_);
 	JumpingUpdate(player_);
 	GroundingUpdate(player_);
+	JumpingUpdate(enemy_);
+	GroundingUpdate(enemy_);
+	AliveCheck(player_);
+	AliveCheck(enemy_);
+
+	// ターン交換
+	if (isPlayerTurn_) {
+		if (player_.GetIsEndTurn()) {
+			isPlayerTurn_ = false;
+			enemy_.GetIsCanMove() = true;
+			player_.SetAlpha(0.5f);
+			enemy_.SetAlpha(1.0f);
+		}
+	} else {
+		if (enemy_.GetIsEndTurn()) {
+			isPlayerTurn_ = true;
+			player_.GetIsCanMove() = true;
+			player_.SetAlpha(1.0f);
+			enemy_.SetAlpha(0.5f);
+		}
+	}
 }
 
 void GameScene::Draw() {
@@ -76,6 +127,7 @@ void GameScene::Draw() {
 	wallChip_.Draw();
 
 	player_.Draw();
+	enemy_.Draw();
 }
 
 
@@ -103,9 +155,9 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 	Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
 	Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f);
 
-	for (int y = 0; y < map_.size(); y++) {
-		for (int x = 0; x < map_[y].size(); x++) {
-			if (map_[y][x] != 0) {
+	for (int y = 0; y < wallMap_.size(); y++) {
+		for (int x = 0; x < wallMap_[y].size(); x++) {
+			if (wallMap_[y][x] != 0) {
 				Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
 				if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
 					Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
@@ -126,7 +178,7 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 	if (isCollided) {
 		MapReflection::ReflectPlayer(gamePlayer.GetMoveDir(), playerPos, 1.0f, 1.0f, nearestMapChipPos, kBlockSize, kBlockSize);
 		if (gamePlayer.GetIsMoving()) {
-			map_[nearestY][nearestX] = 0;
+			wallMap_[nearestY][nearestX] = 0;
 		}
 	}
 }
@@ -137,8 +189,8 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 		mapChipPos.x = static_cast<int>(std::round(gamePlayer.GetTransform().translate.x));
 		mapChipPos.y = static_cast<int>(std::round(gamePlayer.GetTransform().translate.z));
 
-		if (mapChipPos.x >= 0 && mapChipPos.x < static_cast<int>(map_[0].size()) &&
-			mapChipPos.y >= 0 && mapChipPos.y < static_cast<int>(map_.size())) {
+		if (mapChipPos.x >= 0 && mapChipPos.x < static_cast<int>(wallMap_[0].size()) &&
+			mapChipPos.y >= 0 && mapChipPos.y < static_cast<int>(wallMap_.size())) {
 
 			if (buildMapChipIndex_.empty()) {
 				buildMapChipIndex_.push_back(mapChipPos);
@@ -148,7 +200,7 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 				buildMapChipIndex_.push_back(mapChipPos);
 			}
 
-			floorChip_.SetChipColor(mapChipPos.x, mapChipPos.y,{ 1.0f,0.0f,0.0f,1.0f });
+			floorChip_.SetChipColor(mapChipPos.x, mapChipPos.y, { 1.0f,0.0f,0.0f,1.0f });
 		}
 	}
 	// 建築
@@ -156,8 +208,8 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 		// 一個前の座標は削除
 		buildMapChipIndex_.pop_back();
 		for (const auto& index : buildMapChipIndex_) {
-			if (map_[index.y][index.x] == 0) {
-				map_[index.y][index.x] = 1;
+			if (wallMap_[index.y][index.x] == 0) {
+				wallMap_[index.y][index.x] = 1;
 			}
 		}
 		buildMapChipIndex_.clear();
@@ -170,9 +222,9 @@ void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
 		Vector2 totalNormal(0.0f, 0.0f);
 		bool isCollided = false;
 
-		for (int y = 0; y < map_.size(); y++) {
-			for (int x = 0; x < map_[y].size(); x++) {
-				if (map_[y][x] != 0) {
+		for (int y = 0; y < wallMap_.size(); y++) {
+			for (int x = 0; x < wallMap_[y].size(); x++) {
+				if (wallMap_[y][x] != 0) {
 					Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
 					Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
 					if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
@@ -203,21 +255,44 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 		mapChipPos.x = static_cast<int>(std::round(gamePlayer.GetTransform().translate.x));
 		mapChipPos.y = static_cast<int>(std::round(gamePlayer.GetTransform().translate.z));
 
-		if (mapChipPos.x >= 0 && mapChipPos.x < static_cast<int>(map_[0].size()) &&
-			mapChipPos.y >= 0 && mapChipPos.y < static_cast<int>(map_.size())) {
+		if (mapChipPos.x >= 0 && mapChipPos.x < static_cast<int>(wallMap_[0].size()) &&
+			mapChipPos.y >= 0 && mapChipPos.y < static_cast<int>(wallMap_.size())) {
 
 			// 周囲8マス＋中心の9マスを0にする
 			for (int dy = -1; dy <= 1; ++dy) {
 				for (int dx = -1; dx <= 1; ++dx) {
 					int nx = mapChipPos.x + dx;
 					int ny = mapChipPos.y + dy;
-					if (nx >= 0 && nx < static_cast<int>(map_[0].size()) &&
-						ny >= 0 && ny < static_cast<int>(map_.size())) {
-						map_[ny][nx] = 0;
+					if (nx >= 0 && nx < static_cast<int>(wallMap_[0].size()) &&
+						ny >= 0 && ny < static_cast<int>(wallMap_.size())) {
+						wallMap_[ny][nx] = 0;
 					}
 				}
 			}
 		}
 		gamePlayer.SetGrounded(false);
+	}
+}
+
+void GameScene::AliveCheck(GamePlayer& gamePlayer) {
+	bool isCollided = false;
+
+	Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
+	Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f);
+
+	for (int y = 0; y < floorMap_.size(); y++) {
+		for (int x = 0; x < floorMap_[y].size(); x++) {
+			if (floorMap_[y][x] != 0) {
+				Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
+				if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
+					isCollided = true;
+				}
+			}
+		}
+	}
+
+	if (isCollided == false) {
+		isEndGame_ = true;
+		gamePlayer.SetAlive(false);
 	}
 }

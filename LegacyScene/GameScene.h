@@ -7,6 +7,7 @@
 #include "Class/GameScene/Map/MapChipLoader.h"
 
 #include "Class/GameScene/Player.h"
+#include "Class/GameScene/Enemy.h"
 
 #include "Math/Vector/IntVector2.h"
 
@@ -27,6 +28,7 @@ public:
 	void BuildingMapChipUpdate(GamePlayer& gamePlayer);
 	void JumpingUpdate(GamePlayer& gamePlayer);
 	void GroundingUpdate(GamePlayer& gamePlayer);
+	void AliveCheck(GamePlayer& gamePlayer);
 
 private:
 	EngineCore* engineCore_;
@@ -36,9 +38,14 @@ private:
 
 	MapChip floorChip_;
 	MapChip wallChip_;
-	Player player_;
 
-	std::vector<std::vector<uint32_t>> map_;
+	bool isPlayerTurn_;
+	Player player_;
+	Enemy enemy_;
+	bool isEndGame_;
+
+	std::vector<std::vector<uint32_t>> wallMap_;
+	std::vector<std::vector<uint32_t>> floorMap_;
 	std::vector<IntVector2> buildMapChipIndex_;
 
 #ifdef _DEBUG

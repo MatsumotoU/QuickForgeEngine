@@ -35,6 +35,15 @@ bool& GamePlayer::GetIsGrounded() {
 	return isGrounded_;
 }
 
+bool GamePlayer::GetIsEndTurn() {
+	// すべての状態がfalseのときにターン終了
+	return !isMoving_ && !isCanMove_ && !isReqestBuilding_ && !isJumping_ && !isGrounded_;
+}
+
+bool GamePlayer::GetIsAlive() const {
+	return isAlive_;
+}
+
 void GamePlayer::SetMoveDir(const Vector2& dir) {
 	moveDir_ = dir;
 }
@@ -45,4 +54,12 @@ void GamePlayer::SetIsBuilding(bool set) {
 
 void GamePlayer::SetGrounded(bool set) {
 	isGrounded_ = set;
+}
+
+void GamePlayer::SetAlpha(float alpha) {
+	alpha_ = alpha;
+}
+
+void GamePlayer::SetAlive(bool set) {
+	isAlive_ = set;
 }

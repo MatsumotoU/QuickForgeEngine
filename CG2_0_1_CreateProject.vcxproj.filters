@@ -30,6 +30,7 @@
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="Resources\Map\Stage1_floor.csv" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -919,6 +920,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
-    <Text Include="Resources\Map\Stage1.csv" />
+    <Text Include="Resources\Map\Stage1_wall.csv" />
   </ItemGroup>
 </Project>

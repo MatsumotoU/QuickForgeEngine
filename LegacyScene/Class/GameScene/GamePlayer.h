@@ -18,9 +18,13 @@ public:
 	bool& GetIsMoving();
 	bool& GetIsBuilding();
 	bool& GetIsGrounded();
+	bool GetIsEndTurn();
+	bool GetIsAlive() const;
 	void SetMoveDir(const Vector2& dir);
 	void SetIsBuilding(bool set);
 	void SetGrounded(bool set);
+	void SetAlpha(float alpha);
+	void SetAlive(bool set);
 
 protected:
 	EngineCore* engineCore_;
@@ -40,8 +44,11 @@ protected:
 	bool isReqestBuilding_;
 	bool isJumping_;
 	bool isGrounded_;
+	bool isAlive_;
 	float moveTimer_;
 	float maxMoveTimer_;
 	float shotPower_;
 	Vector2 moveDir_;
+
+	float alpha_;
 };
