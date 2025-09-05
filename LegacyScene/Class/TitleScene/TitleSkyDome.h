@@ -17,5 +17,9 @@ private:
 	EngineCore* engineCore_;
 	Camera* camera_;
 	std::unique_ptr<Model> model_;
+
+	float rotetaTime = 20.0f;//一周の時間
+
 };
+
 
