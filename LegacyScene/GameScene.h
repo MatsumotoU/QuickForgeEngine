@@ -5,8 +5,12 @@
 
 #include "Class/GameScene/Map/MapChip.h"
 #include "Class/GameScene/Map/MapChipLoader.h"
+#include "Class/GameScene/Map/PredictionLine.h"
 
 #include "Class/GameScene/Player.h"
+#include "Class/GameScene/Enemy.h"
+
+#include "Math/Vector/IntVector2.h"
 
 class GameScene : public IScene{
 public:
@@ -21,6 +25,12 @@ public:
 	IScene* GetNextScene() override;
 
 	void CameraUpdate();
+	void PredictionLineUpdate(GamePlayer& gamePlayer);
+	void MapChipUpdate(GamePlayer& gamePlayer);
+	void BuildingMapChipUpdate(GamePlayer& gamePlayer);
+	void JumpingUpdate(GamePlayer& gamePlayer);
+	void GroundingUpdate(GamePlayer& gamePlayer);
+	void AliveCheck(GamePlayer& gamePlayer);
 
 private:
 	EngineCore* engineCore_;
@@ -30,9 +40,16 @@ private:
 
 	MapChip floorChip_;
 	MapChip wallChip_;
-	Player player_;
+	PredictionLine predictionLine_;
 
-	std::vector<std::vector<uint32_t>> map_;
+	bool isPlayerTurn_;
+	Player player_;
+	Enemy enemy_;
+	bool isEndGame_;
+
+	std::vector<std::vector<uint32_t>> wallMap_;
+	std::vector<std::vector<uint32_t>> floorMap_;
+	std::vector<IntVector2> buildMapChipIndex_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;

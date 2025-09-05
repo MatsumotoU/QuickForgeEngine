@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
 	// エンジンの初期化
 	MSG msg{};
 	EngineCore engineCore;
-	engineCore.Initialize(L"LE2A_14_マツモト_ユウタ_AL3", hInstance, lpCmdLine,&msg);
+	engineCore.Initialize(L"2001_モグラ相撲", hInstance, lpCmdLine,&msg);
 
 	SceneManager sceneManager(&engineCore);
 	sceneManager.Initialize();

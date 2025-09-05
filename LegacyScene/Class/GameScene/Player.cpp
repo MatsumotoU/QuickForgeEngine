@@ -9,17 +9,21 @@ void Player::Initialize(EngineCore* engineCore, Camera* camera) {
 	accelerationDamping_ = 0.95f;
 	velocityDamping_ = 0.98f;
 
+	isAlive_ = true;
 	isCanMove_ = true;
 	isCanShot_ = false;
 	isMoving_ = false;
+	isReqestBuilding_ = false;
+	isGrounded_ = false;
 
 	moveTimer_ = 0.0f;
-	maxMoveTimer_ = 1.5f;
+	maxMoveTimer_ = 1.0f;
 	shotPower_ = 6.0f;
 	moveDir_ = { 0.0f,0.0f };
 
 	model_->transform_.translate.y = 1.0f;
-	model_->SetColor({ 0.0f,1.0f,0.0f,1.0f });
+	alpha_ = 1.0f;
+	model_->SetColor({ 0.0f,1.0f,0.0f,alpha_ });
 }
 
 void Player::Update() {
@@ -48,19 +52,42 @@ void Player::Update() {
 			moveTimer_ -= deltaTime;
 		} else {
 			isMoving_ = false;
+			isReqestBuilding_ = true;
 		}
 	}
+
+	// 移動の処理
+	model_->transform_.translate += velocity_ * deltaTime;
+	velocity_ = velocity_ * velocityDamping_;
+
+	if (velocity_.y > -5.0f) {
+		velocity_.y -= 9.81f * deltaTime;
+	}
+
+	if (model_->transform_.translate.y <= 1.0f) {
+		model_->transform_.translate.y = 1.0f;
+		velocity_.y = 0.0f;
+
+		if (isJumping_) {
+			isJumping_ = false;
+			isGrounded_ = true;
+		}
+	}
+
+	model_->SetColor({ 0.0f,1.0f,0.0f,alpha_ });
 	model_->Update();
 }
 
 void Player::Draw() {
 	ImGui::Begin("Player");
 
+	ImGui::DragFloat3("Velocity", &velocity_.x, 0.1f);
 	ImGui::DragFloat3("Position", &model_->transform_.translate.x, 0.1f);
 	ImGui::DragFloat("ShotPower", &shotPower_, 0.01f, 0.0f, 10.0f);
 	ImGui::Checkbox("isCanMove", &isCanMove_);
 	ImGui::Checkbox("isCanShot", &isCanShot_);
 	ImGui::Checkbox("isMoving", &isMoving_);
+	ImGui::Checkbox("isReqestBuilding", &isReqestBuilding_);
 	ImGui::Text("MoveDir:%f,%f", moveDir_.x, moveDir_.y);
 	ImGui::Text("MoveTimer:%f", moveTimer_);
 
@@ -70,28 +97,4 @@ void Player::Draw() {
 	ImGui::End();
 
 	model_->Draw();
-}
-
-Vector2& Player::GetMoveDir() {
-	return moveDir_;
-}
-
-Vector3 Player::GetWorldPosition() {
-	return Vector3::Transform({ 0.0f,0.0f,0.0f }, model_->worldMatrix_);
-}
-
-Transform& Player::GetTransform() {
-	return model_->transform_;
-}
-
-bool& Player::GetIsCanMove() {
-	return isCanMove_;
-}
-
-bool& Player::GetIsMoving() {
-	return isMoving_;
-}
-
-void Player::SetMoveDir(const Vector2& dir) {
-	moveDir_ = dir;
 }

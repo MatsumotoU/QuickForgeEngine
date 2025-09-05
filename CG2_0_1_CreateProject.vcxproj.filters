@@ -30,6 +30,7 @@
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="Resources\Map\Stage1_floor.csv" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -359,7 +360,19 @@
     <ClCompile Include="LegacyScene\Class\GameScene\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapCollider.cpp">
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapReflection.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\GamePlayer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Map\PredictionLine.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -877,7 +890,22 @@
     <ClInclude Include="LegacyScene\Class\GameScene\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapCollider.h">
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapReflection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector\IntVector2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\GamePlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Map\PredictionLine.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -898,6 +926,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
-    <Text Include="Resources\Map\Stage1.csv" />
+    <Text Include="Resources\Map\Stage1_wall.csv" />
   </ItemGroup>
 </Project>

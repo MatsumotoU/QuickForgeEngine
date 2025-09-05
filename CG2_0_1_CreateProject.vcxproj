@@ -291,6 +291,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
     <None Include="externals\imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
+    <None Include="Resources\Map\Stage1_floor.csv" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
@@ -394,9 +395,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\implot-master\implot_items.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Block.cpp" />
     <ClCompile Include="LegacyScene\Class\Fade.cpp" />
-    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapCollider.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapReflection.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Enemy.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\GamePlayer.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChip.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChipLoader.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Map\PredictionLine.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Player.cpp" />
     <ClCompile Include="LegacyScene\GameScene.cpp" />
     <ClCompile Include="LegacyScene\SceneManager.cpp" />
@@ -451,6 +456,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\MyRandomNum.h" />
     <ClInclude Include="Engine\Math\PrimitiveVertexData.h" />
     <ClInclude Include="Engine\Math\Quaternion\Quaternion.h" />
+    <ClInclude Include="Engine\Math\Vector\IntVector2.h" />
     <ClInclude Include="Engine\Model\AssimpModelLoader.h" />
     <ClInclude Include="Engine\Model\Billboard.h" />
     <ClInclude Include="Engine\Base\DirectX\ScissorRect.h" />
@@ -569,9 +575,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\lua\lzio.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Block.h" />
     <ClInclude Include="LegacyScene\Class\Fade.h" />
-    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapCollider.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapReflection.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Enemy.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\GamePlayer.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChip.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChipLoader.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Map\PredictionLine.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Player.h" />
     <ClInclude Include="LegacyScene\GameScene.h" />
     <ClInclude Include="LegacyScene\IScene.h" />
@@ -753,7 +763,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
-    <Text Include="Resources\Map\Stage1.csv" />
+    <Text Include="Resources\Map\Stage1_wall.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

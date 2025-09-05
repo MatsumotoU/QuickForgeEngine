@@ -84,7 +84,7 @@ void Billboard::Update() {
 
 void Billboard::Draw() {
 	worldMatrix_ = Matrix4x4::MakeAffineMatrix(transform_.scale, camera_->transform_.rotate, transform_.translate);
-	Matrix4x4 wvpMatrix = camera_->MakeWorldViewProjectionMatrix(worldMatrix_, CAMERA_VIEW_STATE_PERSPECTIVE);
+	Matrix4x4 wvpMatrix = camera_->MakeWorldViewProjectionMatrix(worldMatrix_, ViewState::CAMERA_VIEW_STATE_PERSPECTIVE);
 	wvp_.GetData()->World = worldMatrix_;
 	wvp_.GetData()->WVP = wvpMatrix;
 

@@ -76,7 +76,7 @@ void Font::Draw(const std::string& text, Camera* camera) {
 		}
 		
 		Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(transform[index].scale, transform[index].rotate, transform[index].translate);
-		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE);
+		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, ViewState::CAMERA_VIEW_STATE_PERSPECTIVE);
 		GlyphForGPU glyphData;
 		glyphData.WVP = wvpMatrix;
 		glyphData.texcorad = Vector4(uv.leftBottom.x, uv.leftBottom.y, uv.rightTop.x, uv.rightTop.y);

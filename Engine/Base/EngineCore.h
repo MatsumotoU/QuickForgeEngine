@@ -130,6 +130,7 @@ public:// エンジンの機能取得
 	Chiptune* GetChiptune();
 	ShaderCompiler* GetShaderCompiler();
 	LoopStoper* GetLoopStopper();
+	RendaringPostprosecess* GetPostprocess();
 	std::string GetStartSceneFilePath() const { return startSceneFilePath_; }
 
 public:

@@ -7,7 +7,7 @@
 
 class WinApp;
 
-enum ViewState
+enum class ViewState
 {
 	CAMERA_VIEW_STATE_PERSPECTIVE,
 	CAMERA_VIEW_STATE_ORTHOGRAPHIC,
