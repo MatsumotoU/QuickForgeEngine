@@ -15,15 +15,13 @@ void Mole::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources/Model/mole", "mole.obj", COORDINATESYSTEM_HAND_LEFT);
-	model_.get()->transform_.translate = { -1.7f,-1.0f,3.0f };
+	model_.get()->transform_.translate = { -1.7f,-1.0f,2.0f };
 	model_.get()->transform_.rotate = { 0.0f,1.8f,0.0f };
 	model_.get()->transform_.scale = { 1.0f,1.0f,1.0f };
 	
 }
 
 void Mole::Update() {
-
-	
 
 	model_->Update();
 }

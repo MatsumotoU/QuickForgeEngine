@@ -15,7 +15,7 @@ void Wall::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources/Model/wall/soil", "soil.obj", COORDINATESYSTEM_HAND_LEFT);
-	model_.get()->transform_.translate = { 2.0f,0.0f,3.0f };
+	model_.get()->transform_.translate = { 1.2f,0.0f,3.0f };
 	model_.get()->transform_.scale = { 2.0f,2.0f,2.0f };
 }
 

@@ -17,7 +17,5 @@ private:
 	EngineCore* engineCore_;
 	Camera* camera_;
 	std::unique_ptr<Model> model_;
-
-	Vector3 directionalLight{0.0f,0.0f,9.0f};
 };
 

@@ -20,7 +20,7 @@ private:
 
 	float blockSize = 1.0f;
 
-	const int vertical = 15;
-	const int horizontal = 15;
+	const int vertical = 10;
+	const int horizontal = 10;
 
 };
