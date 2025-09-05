@@ -20,11 +20,13 @@ public:
 	bool& GetIsGrounded();
 	bool GetIsEndTurn();
 	bool GetIsAlive() const;
+	float GetMoveTimer() const;
 	void SetMoveDir(const Vector2& dir);
 	void SetIsBuilding(bool set);
 	void SetGrounded(bool set);
 	void SetAlpha(float alpha);
 	void SetAlive(bool set);
+	void SetMap(std::vector<std::vector<uint32_t>>* floor, std::vector<std::vector<uint32_t>>* wall);
 
 protected:
 	EngineCore* engineCore_;
@@ -51,4 +53,7 @@ protected:
 	Vector2 moveDir_;
 
 	float alpha_;
+
+	std::vector<std::vector<uint32_t>>* wallMap_;
+	std::vector<std::vector<uint32_t>>* floorMap_;
 };

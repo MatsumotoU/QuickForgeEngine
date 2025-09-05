@@ -44,6 +44,10 @@ bool GamePlayer::GetIsAlive() const {
 	return isAlive_;
 }
 
+float GamePlayer::GetMoveTimer() const {
+	return maxMoveTimer_*shotPower_;
+}
+
 void GamePlayer::SetMoveDir(const Vector2& dir) {
 	moveDir_ = dir;
 }
@@ -62,4 +66,9 @@ void GamePlayer::SetAlpha(float alpha) {
 
 void GamePlayer::SetAlive(bool set) {
 	isAlive_ = set;
+}
+
+void GamePlayer::SetMap(std::vector<std::vector<uint32_t>>* floor,std::vector<std::vector<uint32_t>>* wall) {
+	floorMap_ = floor;
+	wallMap_ = wall;
 }

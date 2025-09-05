@@ -9,6 +9,7 @@ void Player::Initialize(EngineCore* engineCore, Camera* camera) {
 	accelerationDamping_ = 0.95f;
 	velocityDamping_ = 0.98f;
 
+	isAlive_ = true;
 	isCanMove_ = true;
 	isCanShot_ = false;
 	isMoving_ = false;

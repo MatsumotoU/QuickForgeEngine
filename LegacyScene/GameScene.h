@@ -5,6 +5,7 @@
 
 #include "Class/GameScene/Map/MapChip.h"
 #include "Class/GameScene/Map/MapChipLoader.h"
+#include "Class/GameScene/Map/PredictionLine.h"
 
 #include "Class/GameScene/Player.h"
 #include "Class/GameScene/Enemy.h"
@@ -24,6 +25,7 @@ public:
 	IScene* GetNextScene() override;
 
 	void CameraUpdate();
+	void PredictionLineUpdate(GamePlayer& gamePlayer);
 	void MapChipUpdate(GamePlayer& gamePlayer);
 	void BuildingMapChipUpdate(GamePlayer& gamePlayer);
 	void JumpingUpdate(GamePlayer& gamePlayer);
@@ -38,6 +40,7 @@ private:
 
 	MapChip floorChip_;
 	MapChip wallChip_;
+	PredictionLine predictionLine_;
 
 	bool isPlayerTurn_;
 	Player player_;

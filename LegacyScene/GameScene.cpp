@@ -4,6 +4,7 @@
 #include "Class/GameScene/Collition/MapChipCollider.h"
 #include "Class/GameScene/Collition/MapReflection.h"
 
+
 #include "Utility/MyEasing.h"
 
 GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
@@ -43,6 +44,7 @@ void GameScene::Initialize() {
 	wallChip_.Initialize(engineCore_, &camera_);
 	floorChip_.SetMapPosition({ 0.0f,0.0f,0.0f });
 	wallChip_.SetMapPosition({ 0.0f,1.0f,0.0f });
+	predictionLine_.Init();
 
 	player_.Initialize(engineCore_, &camera_);
 	player_.GetTransform().translate.x += 2.0f;
@@ -71,20 +73,25 @@ void GameScene::Update() {
 	floorChip_.Update();
 	wallChip_.Update();
 
+	player_.SetMap(&floorMap_, &wallMap_);
+	enemy_.SetMap(&floorMap_, &wallMap_);
+	enemy_.SetPlayerPos({ player_.GetTransform().translate.x,player_.GetTransform().translate.z });
 	player_.Update();
 	enemy_.Update();
 
+	// ゲーム終了処理
 	if (isEndGame_) {
 		if (!enemy_.GetIsAlive()) {
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, enemy_.GetTransform().translate.x, 0.1f);
-			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -enemy_.GetTransform().translate.z, 0.1f);
-		}
-		else if (!player_.GetIsAlive()) {
+			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -7.8f + enemy_.GetTransform().translate.z, 0.1f);
+		} else if (!player_.GetIsAlive()) {
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, player_.GetTransform().translate.x, 0.1f);
-			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -player_.GetTransform().translate.z, 0.1f);
-			
+			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -7.8f + player_.GetTransform().translate.z, 0.1f);
+
+			MyEasing::SimpleEaseIn(&engineCore_->GetPostprocess()->grayScaleOffset_, 1.0f, 0.01f);
+
 		}
-		MyEasing::SimpleEaseIn(&engineCore_->GetPostprocess()->grayScaleOffset_, 1.0f, 0.01f);
+		
 		return;
 	}
 
@@ -102,6 +109,7 @@ void GameScene::Update() {
 
 	// ターン交換
 	if (isPlayerTurn_) {
+		PredictionLineUpdate(player_);
 		if (player_.GetIsEndTurn()) {
 			isPlayerTurn_ = false;
 			enemy_.GetIsCanMove() = true;
@@ -109,6 +117,7 @@ void GameScene::Update() {
 			enemy_.SetAlpha(1.0f);
 		}
 	} else {
+		PredictionLineUpdate(enemy_);
 		if (enemy_.GetIsEndTurn()) {
 			isPlayerTurn_ = true;
 			player_.GetIsCanMove() = true;
@@ -128,6 +137,8 @@ void GameScene::Draw() {
 
 	player_.Draw();
 	enemy_.Draw();
+
+	predictionLine_.Draw(engineCore_);
 }
 
 
@@ -144,6 +155,18 @@ void GameScene::CameraUpdate() {
 #endif // _DEBUG
 }
 
+void GameScene::PredictionLineUpdate(GamePlayer& gamePlayer) {
+	predictionLine_.Init();
+	if (gamePlayer.GetIsCanMove()) {
+		predictionLine_.Scan(
+			gamePlayer.GetTransform().translate,
+			gamePlayer.GetMoveDir(),
+			static_cast<int>(gamePlayer.GetMoveTimer()), // 1秒間に進むマス数
+			wallMap_,
+			kBlockSize
+		);
+	}
+}
 void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 	// マップの当たり判定（最も近いブロックのみ反射）
 	float minDistance = std::numeric_limits<float>::max();
@@ -273,7 +296,6 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 		gamePlayer.SetGrounded(false);
 	}
 }
-
 void GameScene::AliveCheck(GamePlayer& gamePlayer) {
 	bool isCollided = false;
 
