@@ -4,6 +4,8 @@
 TitleScene::TitleScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 	engineCore_ = engineCore;
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
+
+	sceneID_ = 0;
 }
 
 TitleScene::~TitleScene() {

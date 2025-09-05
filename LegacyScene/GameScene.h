@@ -3,6 +3,11 @@
 #include "IScene.h"
 #include "Colliders/CollisionManager.h"
 
+#include "Class/GameScene/Map/MapChip.h"
+#include "Class/GameScene/Map/MapChipLoader.h"
+
+#include "Class/GameScene/Player.h"
+
 class GameScene : public IScene{
 public:
 	GameScene(EngineCore* engineCore);
@@ -22,6 +27,12 @@ private:
 	DirectInputManager* input_;
 	CollisionManager collisionManager_;
 	Camera camera_;
+
+	MapChip floorChip_;
+	MapChip wallChip_;
+	Player player_;
+
+	std::vector<std::vector<uint32_t>> map_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;
