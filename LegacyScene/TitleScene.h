@@ -4,6 +4,8 @@
 #include "Class/TitleScene/Mole.h"
 #include "Class/TitleScene/Wall.h"
 #include "Class/TitleScene/TitleName.h"
+#include "Class/TitleScene/TitleGround.h"
+#include "Class/TitleScene/TitleSkyDome.h"
 
 class TitleScene : public IScene {
 public:
@@ -26,6 +28,9 @@ private:
 	std::unique_ptr<Mole> mole_;
 	std::unique_ptr<Wall> wall_; 
 	std::unique_ptr<TitleName> titleName_;
+	std::unique_ptr<TitleGround> titleGround_;
+	std::unique_ptr<TitleSkyDome> skyDome_;
+
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;

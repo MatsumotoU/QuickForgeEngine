@@ -29,6 +29,11 @@ void TitleScene::Initialize() {
 	titleName_ = std::make_unique<TitleName>();
 	titleName_.get()->Initialize(engineCore_, &camera_);
 
+	titleGround_ = std::make_unique<TitleGround>();
+	titleGround_.get()->Initialize(engineCore_, &camera_); 
+
+	skyDome_ = std::make_unique<TitleSkyDome>();
+	skyDome_.get()->Initialize(engineCore_, &camera_);
 }
 
 void TitleScene::Update() {
@@ -40,6 +45,10 @@ void TitleScene::Update() {
 	wall_.get()->Update();
 
 	titleName_.get()->Update();
+
+	titleGround_.get()->Update();
+
+	skyDome_.get()->Update();
 
 	if (input->keyboard_.GetTrigger(DIK_SPACE)) {
 		isRequestedExit_ = true;
@@ -59,6 +68,8 @@ void TitleScene::Draw() {
 	mole_.get()->Draw();
 	wall_.get()->Draw();
 	titleName_.get()->Draw();
+	titleGround_.get()->Draw();
+	skyDome_.get()->Draw();
 
 #ifdef _DEBUG
 	debugCamera_.DrawImGui();
@@ -66,6 +77,8 @@ void TitleScene::Draw() {
 	mole_.get()->DebugImGui();
 	wall_.get()->DebugImGui();
 	titleName_.get()->DebugImGui();
+	titleGround_.get()->DebugImGui();
+	skyDome_.get()->DebugImGui();
 #endif // _DEBUG
 }
 

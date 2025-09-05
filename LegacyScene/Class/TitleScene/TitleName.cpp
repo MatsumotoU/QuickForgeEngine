@@ -6,6 +6,7 @@ void TitleName::DebugImGui()
 		ImGui::DragFloat3("TitleNameTranslate", &model_.get()->transform_.translate.x, 0.1f);
 		ImGui::DragFloat3("TitleNameRotate", &model_.get()->transform_.rotate.x, 0.1f);
 		ImGui::DragFloat3("TitleNameScale", &model_.get()->transform_.scale.x, 0.1f);
+		
 	}
 }
 
@@ -15,7 +16,7 @@ void TitleName::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources/Model/titleName", "titleName.obj", COORDINATESYSTEM_HAND_LEFT);
-	model_.get()->transform_.translate = { -2.3f,0.7f,1.0f };
+	model_.get()->transform_.translate = { 0.0f,0.6f,0.0f };
 }
 
 void TitleName::Update() {
