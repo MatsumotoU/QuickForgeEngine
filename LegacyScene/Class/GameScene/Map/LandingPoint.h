@@ -1,15 +1,20 @@
 #pragma once
 #include "Base/EngineCore.h"
+#include "Math/Vector/IntVector2.h"
+#include <vector>
 
 class LandingPoint final {
 public:
 	LandingPoint() = default;
 	~LandingPoint() = default;
 
-	/*void Init();
-	void Scan(const Vector3& jumpPos,const std::vector<std::vector<uint32_t>>& wallMap, const std::vector<std::vector<uint32_t>>& floorMap, float kBlockSize);
-	void Draw(EngineCore* engineCore);*/
+	void Init();
+	void Scan(const Vector3& jumpPos,const Vector2 jumpDir, const std::vector<std::vector<uint32_t>>& floorMap, float kBlockSize);
+	void Draw(EngineCore* engineCore);
+
+	std::vector<Vector3> GetLandingPoints() const { return landingPoints_; }
+
 private:
-	Vector2 landingPoints_;
+	std::vector<Vector3> landingPoints_;
 	bool isOutOfMap_;
 };

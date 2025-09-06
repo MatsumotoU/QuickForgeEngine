@@ -6,6 +6,7 @@
 #include "Class/GameScene/Map/MapChip.h"
 #include "Class/GameScene/Map/MapChipLoader.h"
 #include "Class/GameScene/Map/PredictionLine.h"
+#include "Class/GameScene/Map/LandingPoint.h"
 
 #include "Class/GameScene/Player.h"
 #include "Class/GameScene/Enemy.h"
@@ -54,6 +55,7 @@ private:
 	MapChip floorChip_;
 	MapChip wallChip_;
 	PredictionLine predictionLine_;
+	LandingPoint landingPoint_;
 
 	bool isPlayerTurn_;
 	Player player_;
