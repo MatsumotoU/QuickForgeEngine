@@ -196,6 +196,8 @@ void GameScene::ResetGame(const std::string& stageName) {
 	wallMap_ = MapChipLoader::Load("Resources/Map/" + stageName + "_wall.csv");
 	floorMap_ = MapChipLoader::Load("Resources/Map/" + stageName + "_floor.csv");
 	buildMapChipIndex_.clear();
+	player_.RestParameter();
+	enemy_.RestParameter();
 	player_.GetTransform().translate = { 2.0f,0.0f,4.0f };
 	player_.SetAlive(true);
 	player_.SetAlpha(1.0f);
@@ -241,15 +243,15 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 	bool isCollided = false;
 
 	Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
-	Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f);
+	Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f); // プレイヤーの中央座標
 
 	for (int y = 0; y < wallMap_.size(); y++) {
 		for (int x = 0; x < wallMap_[y].size(); x++) {
 			if (wallMap_[y][x] != 0) {
 				Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
+				Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f); // ブロックの中央座標
+				float distance = Vector2::Distance(playerCenter, blockCenter); // 中央同士の距離で判定
 				if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
-					Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
-					float distance = Vector2::Distance(playerCenter, blockCenter);
 					if (distance < minDistance) {
 						minDistance = distance;
 						nearestX = x;
@@ -288,7 +290,11 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 				buildMapChipIndex_.push_back(mapChipPos);
 			}
 
-			floorChip_.SetChipColor(mapChipPos.x, mapChipPos.y, { 1.0f,0.0f,0.0f,1.0f });
+			// 一個前のブロックを赤く塗る
+			if (buildMapChipIndex_.size() >= 2) {
+				const IntVector2& prevPos = buildMapChipIndex_[buildMapChipIndex_.size() - 2];
+				floorChip_.SetChipColor(prevPos.x, prevPos.y, { 1.0f, 0.0f, 0.0f, 1.0f });
+			}
 		}
 	}
 	// 建築
@@ -328,10 +334,15 @@ void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
 			}
 		}
 
-		// 合成方向でジャンプ
-		if (isCollided && totalNormal.Length() > 0.0f) {
-			Vector2 jumpDir = totalNormal.Normalize();
-			gamePlayer.Jamp(jumpDir); // 反射ではなく、合成方向にジャンプ
+		// 合成方向でジャンプ（ゼロベクトルの場合は上方向にジャンプ）
+		if (isCollided) {
+			Vector2 jumpDir;
+			if (totalNormal.Length() > 0.0f) {
+				jumpDir = totalNormal.Normalize();
+			} else {
+				jumpDir = Vector2(0.0f, 1.0f); // デフォルトで上方向
+			}
+			gamePlayer.Jamp(jumpDir);
 		}
 	}
 }
