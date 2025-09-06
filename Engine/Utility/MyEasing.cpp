@@ -26,7 +26,7 @@ void MyEasing::SimpleEaseIn(float* value, float endValue, float transitionSpeed)
 
 	*value += (endValue - *value) * transitionSpeed;
 
-	if (std::fabsf(*value - endValue) <= 0.01f) {
+	if (std::fabsf(*value - endValue) <= 0.001f) {
 		*value = endValue;
 	}
 
