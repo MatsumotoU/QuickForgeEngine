@@ -33,6 +33,7 @@ GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 	nextScene_ = nullptr;
 
 	stageName_ = "Stage1";
+
 }
 
 GameScene::~GameScene() {
