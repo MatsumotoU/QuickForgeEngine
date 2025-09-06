@@ -84,7 +84,7 @@ void Enemy::Update() {
 				if (selectAnimIndex_ < selectedDirIndex_) {
 					moveDir_ = directionTable_[dirTableIndexTable_[selectAnimIndex_]];
 					selectAnimIndex_++;
-					delayTimer_ = 0.2f + static_cast<float>(std::rand()) / RAND_MAX * (0.4f - 0.2f);
+					delayTimer_ = 0.3f + static_cast<float>(std::rand()) / RAND_MAX * 0.2f;
 				} else {
 					moveDir_ = shotDir_;
 					float currentAngle = model_->transform_.rotate.y;

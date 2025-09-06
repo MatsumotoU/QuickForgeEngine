@@ -54,6 +54,10 @@ bool& GamePlayer::GetIsBuilding() {
 	return isReqestBuilding_;
 }
 
+bool& GamePlayer::GetIsJumping() {
+	return isJumping_;
+}
+
 bool& GamePlayer::GetIsGrounded() {
 	return isGrounded_;
 }

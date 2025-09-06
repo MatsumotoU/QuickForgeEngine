@@ -2,7 +2,7 @@
 #include "GamePlayer.h"
 #include "Map/PredictionLine.h"
 
-inline const int kCheckCount_ = 64;
+inline const int kCheckCount_ = 32;
 
 class Enemy final :public GamePlayer{
 public:
