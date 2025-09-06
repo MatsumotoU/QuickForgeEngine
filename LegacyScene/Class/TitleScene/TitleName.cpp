@@ -16,7 +16,7 @@ void TitleName::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources/Model/titleName", "titleName.obj", COORDINATESYSTEM_HAND_LEFT);
-	model_.get()->transform_.translate = { -0.8f,0.6f,0.0f };
+	model_.get()->transform_.translate = { 0.0f,0.6f,0.0f };
 	model_.get()->SetDirectionalLightDir({ 0.0f,0.0f,9.0f });
 }
 

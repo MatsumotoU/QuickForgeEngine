@@ -293,6 +293,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LegacyScene\Class\TitleScene\DiggingEffect.cpp" />
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
@@ -408,8 +409,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleName.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleGround.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleSkyDome.cpp" />
+    <ClCompile Include="LegacyScene\Class\TitleScene\SignBoard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LegacyScene\Class\TitleScene\DiggingEffect.h" />
     <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h" />
     <ClInclude Include="Engine\Audio\Chiptune.h" />
     <ClInclude Include="Engine\Audio\Audio3D.h" />
@@ -587,6 +590,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleName.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleGround.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleSkyDome.h" />
+    <ClInclude Include="LegacyScene\Class\TitleScene\SignBoard.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl">
