@@ -81,7 +81,7 @@ void TitleScene::Draw() {
 
 	mole_.get()->Draw();
 	diggingEffect_.get()->Draw();
-	//wall_.get()->Draw();
+	wall_.get()->Draw();
 	signBoard_.get()->Draw();
 	titleName_.get()->Draw();
 	titleGround_.get()->Draw();

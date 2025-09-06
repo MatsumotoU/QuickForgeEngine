@@ -32,7 +32,7 @@ void TitleGround::Initialize(EngineCore* engineCore, Camera* camera) {
 		std::vector<std::unique_ptr<Model>> row;
 		for (int j = 0; j < horizontal; j++) {
 			std::unique_ptr <Model> newmodel = std::make_unique<Model>(engineCore_, camera_);
-			newmodel->LoadModel("Resources/Model/blocks/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
+			newmodel->LoadModel("Resources/Model/blocks/grass", "grass.obj", COORDINATESYSTEM_HAND_LEFT);
 			newmodel.get()->transform_.translate = { j * blockSize - (horizontal / 2 * blockSize),-1.5f, i * blockSize };
 			row.push_back(std::move(newmodel));
 		}
