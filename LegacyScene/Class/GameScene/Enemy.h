@@ -2,7 +2,7 @@
 #include "GamePlayer.h"
 #include "Map/PredictionLine.h"
 
-inline const int kCheckCount_ = 32;
+inline const int kCheckCount_ = 64;
 
 class Enemy final :public GamePlayer{
 public:
@@ -20,6 +20,7 @@ private:
 	void TotalEvaluation();
 	void SortDirTableValue();
 	void SelectedDir();
+	void ShotRandomDir();
 	std::array<Vector2, kCheckCount_> directionTable_;
 	std::array<int, kCheckCount_> dirTableIndexTable_;
 
@@ -43,9 +44,13 @@ private:
 	PredictionLine predictionLine_;
 
 	Vector2 playerPos_;
+	Vector2 shotDir_;
 
 	float delayTimer_;
 
+	int selectAnimIndex_;
 	int selectedDirIndex_;
 	int maxSelect_;
+
+	bool isSelectedDir_;
 };

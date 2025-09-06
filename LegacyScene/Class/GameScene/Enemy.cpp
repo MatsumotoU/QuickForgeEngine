@@ -1,11 +1,13 @@
 #include "Enemy.h"
 #include "Block.h"
 
+#include "Utility/MyEasing.h"
+
 void Enemy::Initialize(EngineCore* engineCore, Camera* camera) {
 	engineCore_ = engineCore;
 	camera_ = camera;
 	model_ = std::make_unique<Model>(engineCore, camera);
-	model_->LoadModel("Resources", "Cube.obj", COORDINATESYSTEM_HAND_RIGHT);
+	model_->LoadModel("Resources/mole", "mole_fall.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 	accelerationDamping_ = 0.95f;
 	velocityDamping_ = 0.98f;
@@ -47,16 +49,21 @@ void Enemy::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	selectedDirIndex_ = 0;
 	maxSelect_ = 0;
+
+	isSelectedDir_ = false;
+	selectAnimIndex_ = 0;
 }
 
 void Enemy::Update() {
 	float deltaTime = engineCore_->GetDeltaTime();
 
+	// moveDir_の方向にモデルを向かせる
+	if (moveDir_.Length() > 0.0f) {
+		MyEasing::SimpleEaseIn(&model_->transform_.rotate.y, -std::atan2(moveDir_.y, moveDir_.x) + 3.14f * 0.5f, 0.2f);
+	}
+
 	if (isCanMove_ && !isJumping_ && !isGrounded_) {
-		if (delayTimer_ > 0.0f) {
-			delayTimer_ -= deltaTime;
-		} else {
-			delayTimer_ = 2.0f;
+		if (!isSelectedDir_) {
 			InitEvaluationValue();
 			LifeEvaluation();
 			AttackEvaluation();
@@ -64,6 +71,29 @@ void Enemy::Update() {
 			TotalEvaluation();
 			SortDirTableValue();
 			SelectedDir();
+			ShotRandomDir();
+			isSelectedDir_ = true;
+			selectAnimIndex_ = 0;
+		}
+		
+		if (isSelectedDir_) {
+			if (delayTimer_ > 0.0f) {
+				delayTimer_ -= deltaTime;
+			} else {
+				delayTimer_ = 0.0f;
+				if (selectAnimIndex_ < selectedDirIndex_) {
+					moveDir_ = directionTable_[dirTableIndexTable_[selectAnimIndex_]];
+					selectAnimIndex_++;
+					delayTimer_ = 0.2f + static_cast<float>(std::rand()) / RAND_MAX * (0.4f - 0.2f);
+				} else {
+					moveDir_ = shotDir_;
+					float currentAngle = model_->transform_.rotate.y;
+					Vector2 currentDir(std::sin(currentAngle), std::cos(currentAngle));
+					if ((currentDir - shotDir_).Length() < 0.1f) {
+						Shot(shotDir_);
+					}
+				}
+			}
 		}
 	}
 
@@ -110,6 +140,8 @@ void Enemy::Draw() {
 	ImGui::DragFloat3("AIWeight", &aiWeight_.life, 0.1f, 0.0f, 1.0f);
 	ImGui::Text("SelectIndex: %d MaxSelected: %d", selectedDirIndex_, maxSelect_);
 
+	ImGui::Text("DelayTime: %f", delayTimer_);
+	ImGui::DragFloat2("moveDir", &moveDir_.x, 0.1f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.1f);
 	ImGui::DragFloat3("Position", &model_->transform_.translate.x, 0.1f);
 	ImGui::DragFloat("ShotPower", &shotPower_, 0.01f, 0.0f, 10.0f);
@@ -134,6 +166,7 @@ void Enemy::Shot(Vector2& dir) {
 		isCanMove_ = false;
 		isCanShot_ = false;
 		isMoving_ = true;
+		isSelectedDir_ = false;
 	}
 }
 
@@ -178,11 +211,13 @@ void Enemy::SelectedDir() {
 	for (uint32_t i = 0; i < maxSelect; i++) {
 		selectedDirIndexTable_.push_back(dirTableIndexTable_[i]);
 	}
+}
 
+void Enemy::ShotRandomDir() {
 	// ランダムに選択
 	int randomIndex = rand() % selectedDirIndexTable_.size();
 	selectedDirIndex_ = randomIndex;
-	Shot(directionTable_[selectedDirIndexTable_[randomIndex]]);
+	shotDir_ = directionTable_[selectedDirIndexTable_[randomIndex]];
 }
 
 void Enemy::LifeEvaluation() {

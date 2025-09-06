@@ -46,6 +46,7 @@ private:
 	DirectInputManager* input_;
 	CollisionManager collisionManager_;
 	Camera camera_;
+	float cameraShakeTimer_;
 
 	bool isOpenMenu_;
 	MainMenu mainMenu_;

@@ -34,6 +34,7 @@ GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 
 	stageName_ = "Stage1";
 
+	cameraShakeTimer_ = 0.0f;
 }
 
 GameScene::~GameScene() {
@@ -67,6 +68,14 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	if (cameraShakeTimer_ > 0.0f) {
+		camera_.transform_.translate.x = 4.0f + sinf(cameraShakeTimer_ * 10.0f) * (cameraShakeTimer_ * 0.5f);
+		cameraShakeTimer_ -= engineCore_->GetDeltaTime();
+	} else {
+		cameraShakeTimer_ = 0.0f;
+		camera_.transform_.translate.x = 4.0f;
+	}
+
 	camera_.Update();
 #ifdef _DEBUG
 	if (input_->keyboard_.GetTrigger(DIK_R)) {
@@ -312,6 +321,10 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 		buildMapChipIndex_.clear();
 		gamePlayer.SetIsBuilding(false);
 		floorChip_.ResetChipColor();
+
+		if (cameraShakeTimer_ < 0.5f) {
+			cameraShakeTimer_ += 0.5f;
+		}
 	}
 }
 void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
@@ -369,6 +382,10 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 			}
 		}
 		gamePlayer.SetGrounded(false);
+
+		if (cameraShakeTimer_ < 0.5f) {
+			cameraShakeTimer_ += 0.5f;
+		}
 	}
 }
 void GameScene::AliveCheck(GamePlayer& gamePlayer) {
