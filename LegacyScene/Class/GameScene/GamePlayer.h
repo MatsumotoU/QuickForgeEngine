@@ -10,6 +10,7 @@ public:
 	virtual void Draw() = 0;
 
 	void ResetForce();
+	void RestParameter();
 	void Jamp(const Vector2& dir);
 
 	Vector2& GetMoveDir();

@@ -6,6 +6,23 @@ void GamePlayer::ResetForce() {
 	isJumping_ = false;
 }
 
+void GamePlayer::RestParameter() {
+	accelerationDamping_ = 0.95f;
+	velocityDamping_ = 0.98f;
+
+	isAlive_ = true;
+	isCanMove_ = false;
+	isCanShot_ = false;
+	isMoving_ = false;
+	isReqestBuilding_ = false;
+	isGrounded_ = false;
+
+	moveTimer_ = 0.0f;
+	maxMoveTimer_ = 1.0f;
+	shotPower_ = 6.0f;
+	moveDir_ = { 0.0f,0.0f };
+}
+
 void GamePlayer::Jamp(const Vector2& dir) {
 	if (!isJumping_ && !isGrounded_) {
 		isJumping_ = true;

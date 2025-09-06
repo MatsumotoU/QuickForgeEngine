@@ -1,5 +1,6 @@
 #include "PredictionLine.h"
 #include <cmath>
+#include <set>
 #include "../Collition/MapChipCollider.h"
 #include "../Collition/MapReflection.h"
 
@@ -21,13 +22,14 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
     float stepSize = 1.0f / static_cast<float>(numTiles);
     float totalDistance = 0.0f;
 
+    // 反射したことのあるブロック座標を記録
+    std::set<std::pair<int, int>> reflectedBlocks;
+
     for (int i = 0; i < numTiles * 30; ++i) {
         linePoints_.push_back(currentPos);
-        // 次の位置を計算
         Vector2 nextPos = currentPos + direction * stepSize;
         totalDistance += stepSize;
 
-        // 最も近い衝突ブロックを探す
         float minDistance = std::numeric_limits<float>::max();
         int nearestX = -1;
         int nearestY = -1;
@@ -39,9 +41,12 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
 
         for (int y = 0; y < static_cast<int>(wallMap.size()); y++) {
             for (int x = 0; x < static_cast<int>(wallMap[y].size()); x++) {
+                // 反射済みブロックはスキップ
+                if (reflectedBlocks.count({ x, y }) > 0) {
+                    continue;
+                }
                 if (wallMap[y][x] != 0) {
                     Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
-                    // AABB衝突判定
                     if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
                         Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
                         float distance = Vector2::Distance(playerCenter, blockCenter);
@@ -58,14 +63,14 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
         }
 
         if (isCollided) {
-            // 最も近いブロックでのみ反射
             direction = MapReflection::ReflectDirection(direction, playerPos, 1.0f, 1.0f, nearestMapChipPos, kBlockSize, kBlockSize);
             direction = direction.Normalize();
-            currentPos = nextPos; // 反射後も進める
+            currentPos = nextPos;
+            // 反射したブロック座標を記録
+            reflectedBlocks.insert({ nearestX, nearestY });
             continue;
         }
 
-        // マップの範囲外に出たら終了
         int mapX = static_cast<int>(std::floor(nextPos.x / kBlockSize));
         int mapY = static_cast<int>(std::floor(nextPos.y / kBlockSize));
         if (mapX < 0 || mapX >= static_cast<int>(wallMap[0].size()) ||
@@ -73,7 +78,6 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
             isOutOfMap_ = true;
         }
 
-        // 一定距離進んだら終了
         if (totalDistance >= static_cast<float>(numTiles)) {
             isFullLine_ = true;
             break;

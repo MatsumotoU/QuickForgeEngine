@@ -30,6 +30,7 @@ void Player::Update() {
 	float deltaTime = engineCore_->GetDeltaTime();
 	// はじきの処理
 	if (isCanMove_) {
+		// まだ動いてないときにスティックを倒したら動けるようにする
 		Vector2 leftStick = engineCore_->GetXInputController()->GetLeftStick(0);
 		if (leftStick.Length() >= 3.0f) {
 			isCanShot_ = true;
@@ -37,6 +38,16 @@ void Player::Update() {
 			moveTimer_ = maxMoveTimer_;
 		} else {
 			if (isCanShot_) {
+				isCanMove_ = false;
+				isCanShot_ = false;
+				isMoving_ = true;
+			}
+		}
+
+		// ボタンでも発射できる
+		if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
+			if (isCanShot_) {
+				moveDir_ = -leftStick.Normalize();
 				isCanMove_ = false;
 				isCanShot_ = false;
 				isMoving_ = true;
