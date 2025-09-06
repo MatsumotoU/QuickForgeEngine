@@ -1,5 +1,11 @@
 #include "GamePlayer.h"
 
+void GamePlayer::ResetForce() {
+	velocity_ = { 0.0f,0.0f,0.0f };
+	acceleration_ = { 0.0f,0.0f,0.0f };
+	isJumping_ = false;
+}
+
 void GamePlayer::Jamp(const Vector2& dir) {
 	if (!isJumping_ && !isGrounded_) {
 		isJumping_ = true;

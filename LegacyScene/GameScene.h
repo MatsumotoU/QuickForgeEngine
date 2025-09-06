@@ -10,6 +10,8 @@
 #include "Class/GameScene/Player.h"
 #include "Class/GameScene/Enemy.h"
 
+#include "Class/GameScene/MainMenu.h"
+
 #include "Math/Vector/IntVector2.h"
 
 class GameScene : public IScene{
@@ -24,6 +26,13 @@ public:
 
 	IScene* GetNextScene() override;
 
+private:
+	void ChangeNextScene(IScene* nextScene);
+
+	void MainGameUpdate();
+	void MenuUpdate();
+
+	void ResetGame(const std::string& stageName);
 	void CameraUpdate();
 	void PredictionLineUpdate(GamePlayer& gamePlayer);
 	void MapChipUpdate(GamePlayer& gamePlayer);
@@ -31,12 +40,15 @@ public:
 	void JumpingUpdate(GamePlayer& gamePlayer);
 	void GroundingUpdate(GamePlayer& gamePlayer);
 	void AliveCheck(GamePlayer& gamePlayer);
+	void CheckEndGame();
 
-private:
 	EngineCore* engineCore_;
 	DirectInputManager* input_;
 	CollisionManager collisionManager_;
 	Camera camera_;
+
+	bool isOpenMenu_;
+	MainMenu mainMenu_;
 
 	MapChip floorChip_;
 	MapChip wallChip_;
@@ -50,6 +62,9 @@ private:
 	std::vector<std::vector<uint32_t>> wallMap_;
 	std::vector<std::vector<uint32_t>> floorMap_;
 	std::vector<IntVector2> buildMapChipIndex_;
+
+	std::string stageName_;
+	IScene* nextScene_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;
