@@ -1,12 +1,22 @@
 #include "TriangleState.h"
 #include "../Engine/Input/DirectInput/DirectInputManager.h"
+#include "../Engine/Input/XInput/XInputController.h"
 #include "../Object/Triangle.h"
+#include "../externals/imgui/imgui.h"
 
 void TriangleStateIdle::Update() {
-	if (triangle_->GetInput()->keyboard_.GetPress(DIK_A) || triangle_->GetInput()->keyboard_.GetPress(DIK_LEFT) ||
-		triangle_->GetInput()->keyboard_.GetPress(DIK_D) || triangle_->GetInput()->keyboard_.GetPress(DIK_RIGHT)) {
+	if (triangle_->GetDirectInput()->keyboard_.GetPress(DIK_A) ||
+		triangle_->GetDirectInput()->keyboard_.GetPress(DIK_LEFT) ||
+		triangle_->GetXInput()->GetLeftStick(0).x < 0.0f ||
+		triangle_->GetDirectInput()->keyboard_.GetPress(DIK_D) ||
+		triangle_->GetDirectInput()->keyboard_.GetPress(DIK_RIGHT) ||
+		triangle_->GetXInput()->GetLeftStick(0).x > 0.0f) {
 		triangle_->ChangeState(new TriangleStateShrink(triangle_));
 	}
+
+#ifdef _DEBUG
+	ImGui::Text("CurrentTriangleState: Idle");
+#endif // DEBUG
 }
 
 void TriangleStateShrink::Initialize() {
@@ -18,6 +28,10 @@ void TriangleStateShrink::Update() {
 	if (triangle_->IsEaseFinished()) {
 		triangle_->ChangeState(new TriangleStateExpand(triangle_));
 	}
+
+#ifdef _DEBUG
+	ImGui::Text("CurrentTriangleState: Shrink");
+#endif // DEBUG
 }
 
 void TriangleStateExpand::Initialize() {
@@ -30,4 +44,8 @@ void TriangleStateExpand::Update() {
 		triangle_->SetFinished(true);
 		triangle_->ChangeState(new TriangleStateIdle(triangle_));
 	}
+
+#ifdef _DEBUG
+	ImGui::Text("CurrentTriangleState: Expand");
+#endif // DEBUG
 }

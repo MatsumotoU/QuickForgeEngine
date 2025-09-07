@@ -1,5 +1,4 @@
 #pragma once
-#include "../Object/Triangle.h"
 
 class StageSelectScene;
 
@@ -8,11 +7,7 @@ class BaseStageSelectScenePhase {
 public:
 	/// @brief コンストラクタ
 	/// @param stageSelectScene ステージ選択シーン
-	/// @param direction 方向
-	BaseStageSelectScenePhase(StageSelectScene *stageSelectScene, Triangle::Direction direction)
-		: stageSelectScene_(stageSelectScene)
-		, direction_(direction) {
-	}
+	BaseStageSelectScenePhase(StageSelectScene *stageSelectScene) : stageSelectScene_(stageSelectScene) {}
 
 	/// @brief デストラクタ
 	virtual ~BaseStageSelectScenePhase() = default;
@@ -25,7 +20,6 @@ public:
 
 protected:
 	StageSelectScene *stageSelectScene_ = nullptr;		// ステージ選択シーン
-	Triangle::Direction direction_ = Triangle::kLeft;	// 方向
 };
 
 /// @brief ステージ選択シーンの通常フェーズ
