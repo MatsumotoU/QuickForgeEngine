@@ -19,6 +19,7 @@ public:
 	bool& GetIsCanMove();
 	bool& GetIsMoving();
 	bool& GetIsBuilding();
+	bool& GetIsJumping();
 	bool& GetIsGrounded();
 	bool GetIsEndTurn();
 	bool GetIsAlive() const;

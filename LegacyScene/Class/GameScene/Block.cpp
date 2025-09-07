@@ -1,27 +1,81 @@
 #include "Block.h"
+#include "Utility/MyEasing.h"
+#include <cassert>
 
-void Block::Initialize(EngineCore* engineCore, Camera* camera) {
+void Block::Initialize(EngineCore* engineCore, Camera* camera, BlockType type) {
 	engineCore_ = engineCore;
 	camera_ = camera;
 
-	model_ = std::make_unique<Model>(engineCore_, camera_);
-	model_->LoadModel("Resources", "Cube.obj", COORDINATESYSTEM_HAND_LEFT);
+	dirtModel_ = std::make_unique<Model>(engineCore_, camera_);
+	grassModel_ = std::make_unique<Model>(engineCore_, camera_);
+	StoneModel_ = std::make_unique<Model>(engineCore_, camera_);
+
+	dirtModel_->LoadModel("Resources/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
+	grassModel_->LoadModel("Resources/grass", "grass.obj", COORDINATESYSTEM_HAND_LEFT);
+	StoneModel_->LoadModel("Resources/stone", "stone.obj", COORDINATESYSTEM_HAND_LEFT);
 
 	isDraw_ = true;
+	type_ = type;
 }
 
 void Block::Update() {
-	model_->Update();
+	MyEasing::SimpleEaseIn(&dirtModel_->transform_.scale.y, 1.0f, 0.1f);
+	MyEasing::SimpleEaseIn(&grassModel_->transform_.scale.y, 1.0f, 0.1f);
+	MyEasing::SimpleEaseIn(&StoneModel_->transform_.scale.y, 1.0f, 0.1f);
+
+	dirtModel_->Update();
+	grassModel_->Update();
+	StoneModel_->Update();
 }
 
 void Block::Draw() {
 	if (isDraw_) {
-		model_->Draw();
+		switch (type_)
+		{
+		case BlockType::Dirt:
+			dirtModel_->Draw();
+			break;
+		case BlockType::Grass:
+			grassModel_->Draw();
+			break;
+		case BlockType::Stone:
+			StoneModel_->Draw();
+			break;
+		default:
+			assert(false && "Invalid BlockType");
+			break;
+		}
 	}
 }
 
+void Block::BuildUpSpawn() {
+	if (isDraw_) {
+		return;
+	}
+
+	dirtModel_->transform_.scale.y = 0.0f;
+	grassModel_->transform_.scale.y = 0.0f;
+	StoneModel_->transform_.scale.y = 0.0f;
+	isDraw_ = true;
+}
+
 Transform& Block::GetTransform() {
-	return model_->transform_;
+	switch (type_)
+	{
+	case BlockType::Dirt:
+		return dirtModel_->transform_;
+		break;
+	case BlockType::Grass:
+		return grassModel_->transform_;
+		break;
+	case BlockType::Stone:
+		return StoneModel_->transform_;
+		break;
+	default:
+		assert(false && "Invalid BlockType");
+		return dirtModel_->transform_;
+		break;
+	}
 }
 
 void Block::SetIsDraw(bool isDraw) {
@@ -29,5 +83,30 @@ void Block::SetIsDraw(bool isDraw) {
 }
 
 void Block::SetColor(const Vector4& color) {
-	model_->SetColor(color);
+	switch (type_)
+	{
+	case BlockType::Dirt:
+		return dirtModel_->SetColor(color);
+		break;
+	case BlockType::Grass:
+		return grassModel_->SetColor(color);
+		break;
+	case BlockType::Stone:
+		return StoneModel_->SetColor(color);
+		break;
+	default:
+		assert(false && "Invalid BlockType");
+		return dirtModel_->SetColor(color);
+		break;
+	}
+}
+
+void Block::SetType(BlockType type) {
+	type_ = type;
+}
+
+void Block::SetTransform(const Transform& transform) {
+		dirtModel_->transform_ = transform;
+		grassModel_->transform_ = transform;
+		StoneModel_->transform_ = transform;
 }

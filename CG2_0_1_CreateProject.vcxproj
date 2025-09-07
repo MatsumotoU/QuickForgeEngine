@@ -400,6 +400,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\Class\GameScene\Enemy.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\GamePlayer.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\MainMenu.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Map\LandingPoint.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChip.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\MapChipLoader.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Map\PredictionLine.cpp" />
@@ -581,6 +582,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="LegacyScene\Class\GameScene\Enemy.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\GamePlayer.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\MainMenu.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Map\LandingPoint.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChip.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\MapChipLoader.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Map\PredictionLine.h" />

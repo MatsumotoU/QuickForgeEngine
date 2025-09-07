@@ -4,7 +4,7 @@ void Player::Initialize(EngineCore* engineCore, Camera* camera) {
 	engineCore_ = engineCore;
 	camera_ = camera;
 	model_ = std::make_unique<Model>(engineCore, camera);
-	model_->LoadModel("Resources", "Cube.obj", COORDINATESYSTEM_HAND_RIGHT);
+	model_->LoadModel("Resources/mole", "mole.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 	accelerationDamping_ = 0.95f;
 	velocityDamping_ = 0.98f;
@@ -28,6 +28,12 @@ void Player::Initialize(EngineCore* engineCore, Camera* camera) {
 
 void Player::Update() {
 	float deltaTime = engineCore_->GetDeltaTime();
+
+	// moveDir_の方向にモデルを向かせる
+	if (moveDir_.Length() > 0.0f) {
+		model_->transform_.rotate.y = -std::atan2(moveDir_.y, moveDir_.x)+3.14f*0.5f;
+	}
+
 	// はじきの処理
 	if (isCanMove_) {
 		// まだ動いてないときにスティックを倒したら動けるようにする

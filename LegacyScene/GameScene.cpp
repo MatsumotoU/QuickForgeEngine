@@ -34,6 +34,7 @@ GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 
 	stageName_ = "Stage1";
 
+	cameraShakeTimer_ = 0.0f;
 }
 
 GameScene::~GameScene() {
@@ -50,6 +51,7 @@ void GameScene::Initialize() {
 	floorChip_.SetMapPosition({ 0.0f,0.0f,0.0f });
 	wallChip_.SetMapPosition({ 0.0f,1.0f,0.0f });
 	predictionLine_.Init();
+	landingPoint_.Init();
 
 	player_.Initialize(engineCore_, &camera_);
 	player_.GetTransform().translate.x += 2.0f;
@@ -67,6 +69,14 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	if (cameraShakeTimer_ > 0.0f) {
+		camera_.transform_.translate.x = 4.0f + sinf(cameraShakeTimer_ * 10.0f) * (cameraShakeTimer_ * 0.5f);
+		cameraShakeTimer_ -= engineCore_->GetDeltaTime();
+	} else {
+		cameraShakeTimer_ = 0.0f;
+		camera_.transform_.translate.x = 4.0f;
+	}
+
 	camera_.Update();
 #ifdef _DEBUG
 	if (input_->keyboard_.GetTrigger(DIK_R)) {
@@ -86,7 +96,7 @@ void GameScene::Update() {
 	}
 
 	// メニューの開閉
-	if (input_->keyboard_.GetTrigger(DIK_ESCAPE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_START,0)) {
+	if (input_->keyboard_.GetTrigger(DIK_ESCAPE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_START, 0)) {
 		isOpenMenu_ = !isOpenMenu_;
 	}
 
@@ -112,6 +122,7 @@ void GameScene::Draw() {
 	mainMenu_.Draw();
 
 	predictionLine_.Draw(engineCore_);
+	landingPoint_.Draw(engineCore_);
 }
 
 
@@ -233,43 +244,116 @@ void GameScene::PredictionLineUpdate(GamePlayer& gamePlayer) {
 			wallMap_,
 			kBlockSize
 		);
+
+		// ブロック建築予測描画
+		floorChip_.ResetChipColor();
+		const auto& linePoints = predictionLine_.GetLinePoints();
+		if (!linePoints.empty()) {
+			// まず全て塗る
+			std::vector<Vector2> buildPoints;
+			for (const auto& point : linePoints) {
+				IntVector2 mapChipPos;
+				mapChipPos.x = static_cast<int>(std::round(point.x));
+				mapChipPos.y = static_cast<int>(std::round(point.y));
+				floorChip_.SetChipColor(mapChipPos.x, mapChipPos.y, { 0.3f, 1.0f, 0.3f, 1.0f });
+				buildPoints.push_back({ static_cast<float>(mapChipPos.x), static_cast<float>(mapChipPos.y) });
+			}
+			// 最後のブロックだけ色を消す
+			const Vector2& lastPoint = linePoints.back();
+			IntVector2 lastMapChipPos;
+			lastMapChipPos.x = static_cast<int>(std::round(lastPoint.x));
+			lastMapChipPos.y = static_cast<int>(std::round(lastPoint.y));
+			floorChip_.SetChipColor(lastMapChipPos.x, lastMapChipPos.y, { 1.0f, 1.0f, 1.0f, 1.0f }); // デフォルト色（必要に応じて調整）
+			buildPoints.pop_back();
+
+			// 着地点の予測表示
+			landingPoint_.Init();
+			Vector2 totalNormal(0.0f, 0.0f);
+			bool isCollided = false;
+			for (const auto& buildPoint : buildPoints) {
+				if (MapChipCollider::IsAABBCollision(lastPoint, 1.0f, 1.0f, buildPoint, kBlockSize, kBlockSize)) {
+					Vector2 blockCenter = buildPoint + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
+					Vector2 jumpDir = (lastPoint - blockCenter).Normalize();
+					totalNormal += jumpDir;
+					isCollided = true;
+				}
+			}
+
+			// 合成方向でジャンプ（ゼロベクトルの場合は上方向にジャンプ）
+			if (isCollided) {
+				Vector2 jumpDir;
+				if (totalNormal.Length() > 0.0f) {
+					jumpDir = totalNormal.Normalize();
+				} else {
+					jumpDir = Vector2(0.0f, 1.0f); // デフォルトで上方向
+				}
+				landingPoint_.Scan({ lastPoint.x ,1.0f,lastPoint.y }, jumpDir, floorMap_, 1.0f);
+
+				// 着地点の色を変える
+				if (!landingPoint_.GetLandingPoints().empty()) {
+					IntVector2 lastJampMapChipPos;
+					lastJampMapChipPos.x = static_cast<int>(std::round(landingPoint_.GetLandingPoints().back().x));
+					lastJampMapChipPos.y = static_cast<int>(std::round(landingPoint_.GetLandingPoints().back().z));
+					floorChip_.SetChipColor(lastJampMapChipPos.x, lastJampMapChipPos.y, { 1.0f, 1.0f, 0.0f, 1.0f });
+
+					IntVector2 firstJampMapChipPos;
+					firstJampMapChipPos.x = static_cast<int>(std::round(landingPoint_.GetLandingPoints()[0].x));
+					firstJampMapChipPos.y = static_cast<int>(std::round(landingPoint_.GetLandingPoints()[0].z));
+					floorChip_.SetChipColor(firstJampMapChipPos.x, firstJampMapChipPos.y, { 1.0f, 1.0f, 0.0f, 1.0f });
+
+				}
+			}
+
+			
+		}
 	}
 }
 void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
-	// マップの当たり判定（最も近いブロックのみ反射）
-	float minDistance = std::numeric_limits<float>::max();
-	int nearestX = -1;
-	int nearestY = -1;
-	Vector2 nearestMapChipPos;
-	bool isCollided = false;
+	if (gamePlayer.GetIsMoving() && !gamePlayer.GetIsJumping()) {
+		float minDistance = std::numeric_limits<float>::max();
+		int nearestX = -1;
+		int nearestY = -1;
+		Vector2 nearestMapChipPos;
+		bool isCollided = false;
 
-	Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
-	Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f); // プレイヤーの中央座標
+		Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
+		Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f); // プレイヤーの中央座標
 
-	for (int y = 0; y < wallMap_.size(); y++) {
-		for (int x = 0; x < wallMap_[y].size(); x++) {
-			if (wallMap_[y][x] != 0) {
-				Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
-				Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f); // ブロックの中央座標
-				float distance = Vector2::Distance(playerCenter, blockCenter); // 中央同士の距離で判定
-				if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
-					if (distance < minDistance) {
-						minDistance = distance;
-						nearestX = x;
-						nearestY = y;
-						nearestMapChipPos = mapChipPos;
-						isCollided = true;
+		for (int y = 0; y < wallMap_.size(); y++) {
+			for (int x = 0; x < wallMap_[y].size(); x++) {
+				if (wallMap_[y][x] != 0) {
+					Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
+					Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
+					float distance = Vector2::Distance(playerCenter, blockCenter);
+					if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
+						if (distance < minDistance) {
+							minDistance = distance;
+							nearestX = x;
+							nearestY = y;
+							nearestMapChipPos = mapChipPos;
+							isCollided = true;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	// 一番近いブロックでのみ反射
-	if (isCollided) {
-		MapReflection::ReflectPlayer(gamePlayer.GetMoveDir(), playerPos, 1.0f, 1.0f, nearestMapChipPos, kBlockSize, kBlockSize);
-		if (gamePlayer.GetIsMoving()) {
-			wallMap_[nearestY][nearestX] = 0;
+		// 一番近いブロックでのみ反射
+		static bool reflectedThisFrame = false; // 1フレームで1回だけ反射
+		if (isCollided && !reflectedThisFrame) {
+			MapReflection::ReflectPlayer(gamePlayer.GetMoveDir(), playerPos, 1.0f, 1.0f, nearestMapChipPos, kBlockSize, kBlockSize);
+			reflectedThisFrame = true;
+
+			// めり込み防止: プレイヤー座標をブロック外へ押し戻す
+			Vector2 reflectDir = (playerCenter - (nearestMapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f))).Normalize();
+			gamePlayer.GetTransform().translate.x += reflectDir.x * 0.1f;
+			gamePlayer.GetTransform().translate.z += reflectDir.y * 0.1f;
+
+			if (gamePlayer.GetIsMoving()) {
+				wallMap_[nearestY][nearestX] = 0;
+			}
+		} else {
+			reflectedThisFrame = false;
 		}
 	}
 }
@@ -312,6 +396,10 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 		buildMapChipIndex_.clear();
 		gamePlayer.SetIsBuilding(false);
 		floorChip_.ResetChipColor();
+
+		if (cameraShakeTimer_ < 0.5f) {
+			cameraShakeTimer_ += 0.5f;
+		}
 	}
 }
 void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
@@ -369,6 +457,10 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 			}
 		}
 		gamePlayer.SetGrounded(false);
+
+		if (cameraShakeTimer_ < 0.5f) {
+			cameraShakeTimer_ += 0.5f;
+		}
 	}
 }
 void GameScene::AliveCheck(GamePlayer& gamePlayer) {
