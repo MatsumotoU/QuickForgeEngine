@@ -12,6 +12,7 @@
 #include "Class/GameScene/Enemy.h"
 
 #include "Class/GameScene/MainMenu.h"
+#include "Class/GameScene/ResultUI.h"
 
 #include "Math/Vector/IntVector2.h"
 
@@ -51,6 +52,7 @@ private:
 
 	bool isOpenMenu_;
 	MainMenu mainMenu_;
+	ResultUI resultUI_;
 
 	MapChip floorChip_;
 	MapChip wallChip_;
@@ -61,6 +63,9 @@ private:
 	Player player_;
 	Enemy enemy_;
 	bool isEndGame_;
+	float endGameTimer_;
+
+	float timer_;
 
 	std::vector<std::vector<uint32_t>> wallMap_;
 	std::vector<std::vector<uint32_t>> floorMap_;

@@ -21,6 +21,12 @@ void GamePlayer::RestParameter() {
 	maxMoveTimer_ = 1.0f;
 	shotPower_ = 6.0f;
 	moveDir_ = { 0.0f,0.0f };
+
+	transform_.rotate = { 0.0f,0.0f,0.0f };
+	transform_.scale = {1.0f,1.0f,1.0f};
+	transform_.translate = { 0.0f,0.0f,0.0f };
+	model_->transform_ = transform_;
+	model_->Update();
 }
 
 void GamePlayer::Jamp(const Vector2& dir) {
@@ -28,6 +34,27 @@ void GamePlayer::Jamp(const Vector2& dir) {
 		isJumping_ = true;
 		velocity_ = { dir.x * 2.0f,15.0f,dir.y * 2.0f };
 	}
+}
+
+void GamePlayer::DeathAnimation() {
+	if (model_->transform_.scale.x <= 0.1f) {
+		return;
+	}
+
+	float deltaTime = engineCore_->GetDeltaTime();
+	MyEasing::SimpleEaseIn(&model_->transform_.scale.x, 0.0f, 0.01f);
+	MyEasing::SimpleEaseIn(&model_->transform_.scale.y, 0.0f, 0.01f);
+	MyEasing::SimpleEaseIn(&model_->transform_.scale.z, 0.0f, 0.01f);
+	model_->transform_.rotate.y += 10.0f * deltaTime;
+
+	model_->transform_.translate += velocity_ * deltaTime;
+	velocity_ = velocity_ * velocityDamping_;
+
+	if (velocity_.y > -5.0f) {
+		velocity_.y -= 9.81f * deltaTime;
+	}
+
+	model_->Update();
 }
 
 Vector2& GamePlayer::GetMoveDir() {
@@ -72,7 +99,7 @@ bool GamePlayer::GetIsAlive() const {
 }
 
 float GamePlayer::GetMoveTimer() const {
-	return maxMoveTimer_*shotPower_;
+	return maxMoveTimer_ * shotPower_;
 }
 
 void GamePlayer::SetMoveDir(const Vector2& dir) {
@@ -95,7 +122,7 @@ void GamePlayer::SetAlive(bool set) {
 	isAlive_ = set;
 }
 
-void GamePlayer::SetMap(std::vector<std::vector<uint32_t>>* floor,std::vector<std::vector<uint32_t>>* wall) {
+void GamePlayer::SetMap(std::vector<std::vector<uint32_t>>* floor, std::vector<std::vector<uint32_t>>* wall) {
 	floorMap_ = floor;
 	wallMap_ = wall;
 }
