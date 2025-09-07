@@ -90,6 +90,7 @@ void StageSelectScene::Update() {
 	CameraUpdate();
 
 	ImGui::Text("CurrentStage: %d", currentStage_);
+
 #endif // _DEBUG
 
 	// 現在のフェーズの更新
