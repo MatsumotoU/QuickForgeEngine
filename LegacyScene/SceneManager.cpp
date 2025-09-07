@@ -4,8 +4,8 @@ SceneManager::SceneManager(EngineCore* engineCore) :fade_(engineCore){
 	engineCore_ = engineCore;
 	fade_.Initialize();
 
-	scene = new GameScene(engineCore_);
-	//scene = new TitleScene(engineCore_);
+	//scene = new GameScene(engineCore_);
+	scene = new TitleScene(engineCore_);
 }
 
 SceneManager::~SceneManager() {
