@@ -1,0 +1,110 @@
+#pragma once
+#include "Base/EngineCore.h"
+#include "IScene.h"
+
+class StageObject;
+class Triangle;
+class CameraController;
+class BaseStageSelectScenePhase;
+
+/// @brief ステージ選択シーン
+class StageSelectScene : public IScene {
+
+	/// @brief シーン遷移状態
+	enum TransitionState {
+		None,		// 遷移なし
+		ToGame,		// ゲームへ
+		ToTitle,	// タイトルへ
+	};
+
+public:
+	static inline constexpr uint32_t kNumStage = 8;	// ステージ数
+
+	/// @brief コンストラクタ
+	/// @param engineCore エンジンの中核機能
+	StageSelectScene(EngineCore *engineCore);
+
+	/// @brief デストラクタ
+	~StageSelectScene() override;
+
+	/// @brief 初期化
+	void Initialize() override;
+
+	/// @brief 更新
+	void Update() override;
+
+	/// @brief 描画
+	void Draw() override;
+
+	/// @brief 次のシーンを取得する
+	/// @return 次のシーン
+	IScene *GetNextScene() override;
+
+	/// @brief カメラの更新
+	void CameraUpdate();
+
+	/// @brief フェーズの切り替え
+	/// @param newPhase 新しいフェーズ
+	void ChangePhase(BaseStageSelectScenePhase *newPhase);
+
+	/// @brief 三角錐の親を設定する
+	void SetTriangleParent();
+
+	/// @brief カメラのターゲット位置を設定する
+	void SetCameraTargetPosition();
+
+	/// @brief 現在のステージをインクリメントする
+	void CurrentStageUp() {
+		currentStage_++;
+	}
+
+	/// @brief 現在のステージをデクリメントする
+	void CurrentStageDown() {
+		currentStage_--;
+	}
+
+	/// @brief 現在のステージを循環させる
+	void CurrentStageCircle() {
+		currentStage_ = (currentStage_ + kNumStage) % kNumStage;
+	}
+
+	/// @brief 入力を取得する
+	/// @return 入力
+	DirectInputManager *GetInput() { return input_; }
+
+	/// @brief カメラコントローラーを取得する
+	/// @return カメラコントローラー
+	CameraController *GetCameraController() { return cameraController_.get(); }
+
+	/// @brief 現在のステージモデルを取得する
+	/// @return 現在のステージモデル
+	Model *GetCurrentStageModel() { return stageModels_[currentStage_].get(); }
+
+	/// @brief 三角錐を取得する
+	/// @param index インデックス
+	/// @return 三角錐
+	Triangle *GetTriangle(uint32_t index) { return triangles_[index].get(); }
+
+	/// @brief 現在のステージオブジェクトを取得する
+	/// @return 現在のステージオブジェクト
+	StageObject *GetCurrentStageObject() { return stageObjects_[currentStage_].get(); }
+
+private:
+	float frameCount_ = 0.0f;									// フレームカウント
+	EngineCore *engineCore_ = nullptr;							// エンジンの中核機能
+	DirectInputManager *input_ = nullptr;						// 入力
+	Camera camera_;												// カメラ
+	std::array<std::unique_ptr<Model>, 2> triangleModels_;		// 三角錐モデル
+	std::vector<std::unique_ptr<Model>> stageModels_;			// ステージモデル
+	std::array<std::unique_ptr<Triangle>, 2> triangles_;		// 三角錐
+	std::vector<std::unique_ptr<StageObject>> stageObjects_;	// ステージオブジェクト
+	std::unique_ptr<CameraController> cameraController_;		// カメラコントローラー
+	uint32_t currentStage_ = 0;									// 現在のステージ
+	TransitionState transitionState_ = None;					// シーン遷移状態
+	BaseStageSelectScenePhase *currentPhase_ = nullptr;			// 現在のフェーズ
+
+#ifdef _DEBUG
+	DebugCamera debugCamera_;	// デバッグカメラ
+	bool isActiveDebugCamera_;	// デバッグカメラが有効かどうか
+#endif // _DEBUG
+};

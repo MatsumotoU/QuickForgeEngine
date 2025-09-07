@@ -69,7 +69,7 @@ void GraphRenderer::PreDraw() {
 	// カメラのワールドビュー投影行列を設定
 	if (camera_) {
 		assert(camera_);
-		wvpResource_.SetWVPMatrix(camera_->MakeWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(), CAMERA_VIEW_STATE_PERSPECTIVE), 0);
+		wvpResource_.SetWVPMatrix(camera_->MakeWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(), ViewState::CAMERA_VIEW_STATE_PERSPECTIVE), 0);
 	}
 }
 

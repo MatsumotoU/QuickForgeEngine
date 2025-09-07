@@ -30,6 +30,7 @@
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="Resources\Map\Stage1_floor.csv" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -359,7 +360,43 @@
     <ClCompile Include="LegacyScene\Class\GameScene\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapCollider.cpp">
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Collition\MapReflection.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\GamePlayer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Map\PredictionLine.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\MainMenu.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\Map\LandingPoint.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\StageSelectScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\System\CameraController.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\Triangle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Phase\StageSelectScenePhase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\State\TriangleState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="LegacyScene\Class\TitleScene\Mole.cpp">
@@ -901,7 +938,46 @@
     <ClInclude Include="LegacyScene\Class\GameScene\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapCollider.h">
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapChipCollider.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Collition\MapReflection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector\IntVector2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\GamePlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Map\PredictionLine.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\MainMenu.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\GameScene\Map\LandingPoint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\StageSelectScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\System\CameraController.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\Triangle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Phase\StageSelectScenePhase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\State\TriangleState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="LegacyScene\Class\TitleScene\Mole.h">
@@ -946,6 +1022,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
-    <Text Include="Resources\Map\Stage1.csv" />
+    <Text Include="Resources\Map\Stage1_wall.csv" />
   </ItemGroup>
 </Project>

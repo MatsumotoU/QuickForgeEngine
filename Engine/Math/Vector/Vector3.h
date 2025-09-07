@@ -87,12 +87,21 @@ public:
 	[[nodiscard]] static Vector3 Lerp(const Vector3& v1, const Vector3& v2,float t);
 
 	/// <summary>
-	/// 
+	/// 角度の線形補完を求める
 	/// </summary>
-	/// <param name="v1"></param>
-	/// <param name="v2"></param>
-	/// <param name="t"></param>
-	/// <returns></returns>
+	/// <param name="v1">1つ目の3次元ベクトル(t=0)</param>
+	/// <param name="v2">2つ目の3次元ベクトル(t=1)</param>
+	/// <param name="t">補間に使用する値(0~1)</param>
+	/// <returns>角度の線形補完</returns>
+	[[nodiscard]] static Vector3 LerpAngle(const Vector3& v1, const Vector3& v2,float t);
+
+	/// <summary>
+	/// 球面線形補完を求める
+	/// </summary>
+	/// <param name="v1">1つ目の3次元ベクトル(t=0)</param>
+	/// <param name="v2">2つ目の3次元ベクトル(t=1)</param>
+	/// <param name="t">補間に使用する値(0~1)</param>
+	/// <returns>球面線形補間</returns>
 	[[nodiscard]] static Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
 	/// <summary>

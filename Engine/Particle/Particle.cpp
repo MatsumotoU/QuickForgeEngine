@@ -68,7 +68,7 @@ void Particle::LoadModel(const std::string& directoryPath, const std::string& fi
 void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* color, Camera* camera) {
 	for (uint32_t index = 0; index < transform->size(); index++) {
 		Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix((*transform)[index].scale, (*transform)[index].rotate, (*transform)[index].translate);
-		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE);
+		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, ViewState::CAMERA_VIEW_STATE_PERSPECTIVE);
 		wvp_.SetWorldMatrix(worldMatrix, index);
 		wvp_.SetWVPMatrix(wvpMatrix, index);
 	}

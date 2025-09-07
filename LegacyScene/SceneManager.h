@@ -1,7 +1,9 @@
 #pragma once
 #include "GameScene.h"
 #include "TitleScene.h"
+#include "StageSelectScene.h"
 #include "Class/Fade.h"
+
 class SceneManager {
 public:
 	SceneManager(EngineCore* engineCore);

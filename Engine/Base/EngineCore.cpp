@@ -289,6 +289,10 @@ LoopStoper* EngineCore::GetLoopStopper() {
 	return &loopStopper_;
 }
 
+RendaringPostprosecess* EngineCore::GetPostprocess() {
+	return &postprocess_;
+}
+
 float EngineCore::GetDeltaTime() {
 	// FPSが0でない場合はFPSを基にデルタタイムを返す
 	if (fpsCounter_.GetFps() != 0.0f) {

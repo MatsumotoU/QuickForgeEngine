@@ -34,5 +34,6 @@ std::vector<std::vector<uint32_t>> MapChipLoader::Load(const std::string& filePa
         }
     }
 
+    std::reverse(mapChips.begin(), mapChips.end());
     return mapChips;
 }
