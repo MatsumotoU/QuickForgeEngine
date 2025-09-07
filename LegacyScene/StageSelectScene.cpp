@@ -8,7 +8,8 @@
 
 StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json* data) : debugCamera_(engineCore) {
 	engineCore_ = engineCore;
-	input_ = engineCore_->GetInputManager();
+	directInput_ = engineCore_->GetInputManager();
+	xInput_ = engineCore_->GetXInputController();
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
 
 	sceneData_ = data;
@@ -49,7 +50,7 @@ void StageSelectScene::Initialize() {
 	// 三角錐の初期化
 	for(uint32_t i = 0; i < triangles_.size(); ++i) {
 		triangles_[i] = std::make_unique<Triangle>();
-		triangles_[i]->Initialize(triangleModels_[i].get(), input_, static_cast<Triangle::Direction>(i));
+		triangles_[i]->Initialize(triangleModels_[i].get(), directInput_, xInput_, static_cast<Triangle::Direction>(i));
 	}
 
 	// ステージオブジェクトの初期化
@@ -62,10 +63,10 @@ void StageSelectScene::Initialize() {
 
 	// カメラコントローラーの初期化
 	cameraController_ = std::make_unique<CameraController>();
-	cameraController_->Initialize(engineCore_, &camera_, stageModels_[currentStage_]->GetWorldPosition());
+	cameraController_->Initialize(&camera_, stageModels_[currentStage_]->GetWorldPosition());
 
 	// 現在のフェーズの初期化
-	currentPhase_ = new StageSelectScenePhaseIdle(this, Triangle::Direction::kLeft);
+	currentPhase_ = new StageSelectScenePhaseIdle(this);
 	currentPhase_->Initialize();
 }
 
@@ -74,17 +75,17 @@ void StageSelectScene::Update() {
 	frameCount_++;
 
 	// シーン切り替え
-	if (input_->keyboard_.GetTrigger(DIK_SPACE)) {
+	if (directInput_->keyboard_.GetTrigger(DIK_SPACE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToGame;
-	} else if (input_->keyboard_.GetTrigger(DIK_ESCAPE)) {
+	} else if (directInput_->keyboard_.GetTrigger(DIK_ESCAPE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_B, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToTitle;
 	}
 
 #ifdef _DEBUG
 	// デバッグカメラの切り替え
-	if (input_->keyboard_.GetTrigger(DIK_P)) {
+	if (directInput_->keyboard_.GetTrigger(DIK_P)) {
 		isActiveDebugCamera_ = !isActiveDebugCamera_;
 	}
 
@@ -92,7 +93,6 @@ void StageSelectScene::Update() {
 	CameraUpdate();
 
 	ImGui::Text("CurrentStage: %d", currentStage_);
-
 #endif // _DEBUG
 
 	// 現在のフェーズの更新

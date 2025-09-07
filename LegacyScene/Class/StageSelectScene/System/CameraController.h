@@ -1,10 +1,10 @@
 #pragma once
-#include "Base/EngineCore.h"
+#include "Camera/Camera.h"
 
 /// @brief カメラコントローラー
 class CameraController {
 public:
-	static inline constexpr float kLerpDuration = 60.0f;	// 補間にかける時間(frm)
+	static inline constexpr float kLerpDuration = 30.0f;	// 補間にかける時間(frm)
 
 	/// @brief コンストラクタ
 	CameraController() = default;
@@ -13,10 +13,9 @@ public:
 	~CameraController() = default;
 
 	/// @brief 初期化
-	/// @param engineCore エンジンの中核機能
 	/// @param camera カメラ
 	/// @param targetPosition 追従対象の座標
-	void Initialize(EngineCore *engineCore, Camera *camera, const Vector3 &targetPosition);
+	void Initialize(Camera *camera, const Vector3 &targetPosition);
 
 	/// @brief 更新
 	void Update();
@@ -33,7 +32,6 @@ public:
 	bool IsFinished() const { return lerpTimer_ > kLerpDuration; }
 
 private:
-	EngineCore *engineCore_ = nullptr;	// エンジンの中核機能
 	Camera *camera_ = nullptr;			// カメラ
 	Vector3 startPosition_{};			// 補間開始時の座標
 	Vector3 startRotation_{};			// 補間開始時の回転角
