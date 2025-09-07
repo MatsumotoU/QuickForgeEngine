@@ -6,10 +6,12 @@
 #include "Class/StageSelectScene/System/CameraController.h"
 #include "Class/StageSelectScene/Phase/StageSelectScenePhase.h"
 
-StageSelectScene::StageSelectScene(EngineCore *engineCore) : debugCamera_(engineCore) {
+StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json* data) : debugCamera_(engineCore) {
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
+
+	sceneData_ = data;
 }
 
 StageSelectScene::~StageSelectScene() {
@@ -118,14 +120,16 @@ void StageSelectScene::Draw() {
 }
 
 IScene *StageSelectScene::GetNextScene() {
+	(*sceneData_)["stage"] = currentStage_;
+
 	switch (transitionState_) {
 		case StageSelectScene::None:
 			break;
 		case StageSelectScene::ToGame:
-			return new GameScene(engineCore_);
+			return new GameScene(engineCore_,sceneData_);
 			break;
 		case StageSelectScene::ToTitle:
-			return new TitleScene(engineCore_);
+			return new TitleScene(engineCore_,sceneData_);
 			break;
 		default:
 			break;

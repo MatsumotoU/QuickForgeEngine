@@ -22,7 +22,7 @@ public:
 
 	/// @brief コンストラクタ
 	/// @param engineCore エンジンの中核機能
-	StageSelectScene(EngineCore *engineCore);
+	StageSelectScene(EngineCore *engineCore, nlohmann::json* data);
 
 	/// @brief デストラクタ
 	~StageSelectScene() override;

@@ -12,7 +12,7 @@
 
 class TitleScene : public IScene {
 public:
-	TitleScene(EngineCore* engineCore);
+	TitleScene(EngineCore* engineCore,nlohmann::json* data);
 	~TitleScene() override;
 
 	void Initialize() override;

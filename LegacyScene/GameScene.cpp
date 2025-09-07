@@ -1,13 +1,14 @@
 #include "GameScene.h"
 #include "TitleScene.h"
+#include "StageSelectScene.h"
 
 #include "Class/GameScene/Collition/MapChipCollider.h"
 #include "Class/GameScene/Collition/MapReflection.h"
 
-
 #include "Utility/MyEasing.h"
 
-GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
+GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_(engineCore) {
+	sceneData_ = data;
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
 
@@ -25,14 +26,28 @@ GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 
 	sceneID_ = 1;
 
-	wallMap_ = MapChipLoader::Load("Resources/Map/Stage1_wall.csv");
-	floorMap_ = MapChipLoader::Load("Resources/Map/Stage1_floor.csv");
-
 	buildMapChipIndex_.clear();
 
 	nextScene_ = nullptr;
 
-	stageName_ = "Stage1";
+	// ステージ名の取得
+	if (sceneData_->contains("stage")) {
+		int stage = sceneData_->at("stage").get<int>();
+		if (stage + 1 < 1) {
+			stage = 1;
+		} else if (stage + 1 > 8) {
+			stage = 8;
+		}
+		stageName_ = "Stage" + std::to_string(stage+1);
+
+	} else {
+		stageName_ = "Stage1";
+	}
+
+	std::string wallFilePath = "Resources/Map/" + stageName_ + "_wall.csv";
+	std::string floorFilePath = "Resources/Map/" + stageName_ + "_floor.csv";
+	wallMap_ = MapChipLoader::Load(wallFilePath);
+	floorMap_ = MapChipLoader::Load(floorFilePath);
 
 	cameraShakeTimer_ = 0.0f;
 }
@@ -128,7 +143,7 @@ void GameScene::Draw() {
 
 IScene* GameScene::GetNextScene() {
 	if (nextScene_ == nullptr) {
-		return new TitleScene(engineCore_);
+		return new StageSelectScene(engineCore_,sceneData_);
 	}
 	return nextScene_;
 }

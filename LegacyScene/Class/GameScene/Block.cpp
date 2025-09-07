@@ -10,9 +10,9 @@ void Block::Initialize(EngineCore* engineCore, Camera* camera, BlockType type) {
 	grassModel_ = std::make_unique<Model>(engineCore_, camera_);
 	StoneModel_ = std::make_unique<Model>(engineCore_, camera_);
 
-	dirtModel_->LoadModel("Resources/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
-	grassModel_->LoadModel("Resources/grass", "grass.obj", COORDINATESYSTEM_HAND_LEFT);
-	StoneModel_->LoadModel("Resources/stone", "stone.obj", COORDINATESYSTEM_HAND_LEFT);
+	dirtModel_->LoadModel("Resources/Model/blocks/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
+	grassModel_->LoadModel("Resources/Model/blocks/grass", "grass.obj", COORDINATESYSTEM_HAND_LEFT);
+	StoneModel_->LoadModel("Resources/Model/blocks/stone", "stone.obj", COORDINATESYSTEM_HAND_LEFT);
 
 	isDraw_ = true;
 	type_ = type;
