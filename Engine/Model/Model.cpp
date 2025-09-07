@@ -47,6 +47,8 @@ Model::Model(EngineCore* engineCore, Camera* camera) : BaseGameObject(engineCore
 	instanceCount_++;
 
 	attachedScriptName.clear();
+
+	viewState_ = ViewState::CAMERA_VIEW_STATE_PERSPECTIVE;
 }
 
 void Model::Init() {
@@ -84,7 +86,7 @@ void Model::LoadModel(const std::string& directoryPath, const std::string& filen
 }
 
 void Model::Draw() {
-	Matrix4x4 wvpMatrix = camera_->MakeWorldViewProjectionMatrix(worldMatrix_, CAMERA_VIEW_STATE_PERSPECTIVE);
+	Matrix4x4 wvpMatrix = camera_->MakeWorldViewProjectionMatrix(worldMatrix_, viewState_);
 	wvp_.GetData()->World = worldMatrix_;
 	wvp_.GetData()->WVP = wvpMatrix;
 
@@ -222,4 +224,16 @@ void Model::DrawImGui() {
 
 void Model::SetBlendmode(BlendMode mode) {
 	pso_ = engineCore_->GetGraphicsCommon()->GetTrianglePso(mode);
+}
+
+void Model::SetColor(const Vector4& color) {
+	material_.GetData()->color = color;
+}
+
+void Model::SetDirectionalLightDir(const Vector3& dir) {
+	directionalLight_.GetData()->direction = Vector3::Normalize(dir);
+}
+
+void Model::SetViewState(ViewState state) {
+	viewState_ = state;
 }

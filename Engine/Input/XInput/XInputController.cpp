@@ -13,6 +13,8 @@ XInputController::XInputController() {
 }
 
 void XInputController::Update() {
+    oldGamepadStates = gamepadStates;
+
 	for (DWORD i = 0; i < XUSER_MAX_COUNT; i++) {
 		DWORD dwResult = XInputGetState(i, &gamepadStates[i].state);
 
@@ -60,6 +62,19 @@ bool XInputController::GetPressButton(WORD type, uint32_t padId) {
     if (gamepadStates[padId].state.Gamepad.wButtons == type) {
         return true;
     }
+    return false;
+}
+
+bool XInputController::GetTriggerButton(WORD type, uint32_t padId) {
+	if (padId >= 4) {
+		assert(false && padId >= 4);
+	}
+
+	if ((oldGamepadStates[padId].state.Gamepad.wButtons & type) == 0 &&
+		(gamepadStates[padId].state.Gamepad.wButtons & type) != 0) {
+		return true;
+	}
+
     return false;
 }
 
@@ -114,5 +129,5 @@ Vector2 XInputController::GetLeftStick(uint32_t padId) {
     result.x /= stickDeadZone_;
     result.y /= stickDeadZone_;
 
-    return result.Normalize();
+    return result;
 }

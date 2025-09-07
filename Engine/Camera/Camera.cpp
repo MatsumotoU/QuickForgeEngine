@@ -32,7 +32,7 @@ void Camera::Update() {
 
 Vector3 Camera::GetScreenPos(const Vector3& localPos, const Matrix4x4& worldMatrix) {
 	Vector3 result{};
-	result = Vector3::Transform(localPos, Matrix4x4::Multiply( MakeWorldViewProjectionMatrix(worldMatrix, CAMERA_VIEW_STATE_PERSPECTIVE),GetViewPortMatrix()));
+	result = Vector3::Transform(localPos, Matrix4x4::Multiply( MakeWorldViewProjectionMatrix(worldMatrix, ViewState::CAMERA_VIEW_STATE_PERSPECTIVE),GetViewPortMatrix()));
 	return result;
 }
 
@@ -49,12 +49,12 @@ Matrix4x4 Camera::MakeWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, Vi
 
 	switch (viewState)
 	{
-	case CAMERA_VIEW_STATE_PERSPECTIVE:
+	case ViewState::CAMERA_VIEW_STATE_PERSPECTIVE:
 		viewMatrix_ = Matrix4x4::Inverse(worldMatrix_);
 		result = Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix_, perspectiveMatrix_));
 		break;
 
-	case CAMERA_VIEW_STATE_ORTHOGRAPHIC:
+	case ViewState::CAMERA_VIEW_STATE_ORTHOGRAPHIC:
 		viewMatrix_ = Matrix4x4::MakeIndentity4x4();
 		result = Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix_, orthographicMatrix_));
 		break;

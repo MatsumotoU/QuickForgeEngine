@@ -54,6 +54,8 @@ public:// パブリック変数
 	bool enableVignette_;
 	bool enableNormal_;
 
+	float grayScaleOffset_;
+
 private:// 色調補正
 	PipelineStateObject* colorCorrectionPso_;
 	ConstantBuffer<ColorCorrectionOffset> colorCorrectionOffsetBuffer_;
@@ -62,7 +64,6 @@ private:// 色調補正
 private:// グレースケール変数
 	PipelineStateObject* grayScalePso_;
 	ConstantBuffer<OffsetBuffer> grayScaleOffsetBuffer_;
-	float grayScaleOffset_;
 	int grayScaleProcessIndex_;
 
 private:// ビネット変数

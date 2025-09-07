@@ -34,12 +34,6 @@ std::vector<std::vector<uint32_t>> MapChipLoader::Load(const std::string& filePa
         }
     }
 
-    // 2x2行列に変換
-    std::vector<std::vector<uint32_t>> result(2, std::vector<uint32_t>(2, 0));
-    for (size_t i = 0; i < 2 && i < mapChips.size(); ++i) {
-        for (size_t j = 0; j < 2 && j < mapChips[i].size(); ++j) {
-            result[i][j] = mapChips[i][j];
-        }
-    }
-    return result;
+    std::reverse(mapChips.begin(), mapChips.end());
+    return mapChips;
 }
