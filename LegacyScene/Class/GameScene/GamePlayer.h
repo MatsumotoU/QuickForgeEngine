@@ -12,6 +12,7 @@ public:
 	void ResetForce();
 	void RestParameter();
 	void Jamp(const Vector2& dir);
+	void DeathAnimation();
 
 	Vector2& GetMoveDir();
 	Vector3 GetWorldPosition();
