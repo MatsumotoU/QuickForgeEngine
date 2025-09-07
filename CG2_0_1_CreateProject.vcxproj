@@ -291,13 +291,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
     <None Include="externals\imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
-    <None Include="Resources\Map\Stage1_floor.csv" />
   </ItemGroup>
   <ItemGroup>
-
     <ClCompile Include="LegacyScene\Class\TitleScene\DiggingEffect.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\System\CameraController.cpp" />
-
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
     <ClCompile Include="Engine\Audio\AudioEmitter.cpp" />
     <ClCompile Include="Engine\Audio\AudioListener.cpp" />
@@ -414,7 +411,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\TitleScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Windows\WinApp.cpp" />
-
     <ClCompile Include="LegacyScene\Class\TitleScene\Mole.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\Wall.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleName.cpp" />
@@ -425,7 +421,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\TitleScene\DiggingEffect.h" />
-
     <ClCompile Include="LegacyScene\StageSelectScene.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageObject.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\Triangle.cpp" />
@@ -434,7 +429,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\StageSelectScene\System\CameraController.h" />
-
     <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h" />
     <ClInclude Include="Engine\Audio\Chiptune.h" />
     <ClInclude Include="Engine\Audio\Audio3D.h" />
@@ -614,7 +608,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="LegacyScene\IScene.h" />
     <ClInclude Include="LegacyScene\SceneManager.h" />
     <ClInclude Include="LegacyScene\TitleScene.h" />
-
     <ClInclude Include="LegacyScene\Class\TitleScene\Mole.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\Wall.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleName.h" />
@@ -622,13 +615,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleSkyDome.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\SignBoard.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleUI.h" />
-
     <ClInclude Include="LegacyScene\StageSelectScene.h" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageObject.h" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\Triangle.h" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Phase\StageSelectScenePhase.h" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\State\TriangleState.h" />
-
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl">
@@ -805,7 +796,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
-    <Text Include="Resources\Map\Stage1_wall.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

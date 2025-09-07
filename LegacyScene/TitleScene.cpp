@@ -1,11 +1,12 @@
 #include "TitleScene.h"
-#include "GameScene.h"
+#include "StageSelectScene.h"
 
-TitleScene::TitleScene(EngineCore* engineCore) :debugCamera_(engineCore) {
+TitleScene::TitleScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_(engineCore) {
 	engineCore_ = engineCore;
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
 
 	sceneID_ = 0;
+	sceneData_ = data;
 }
 
 TitleScene::~TitleScene() {
@@ -108,7 +109,7 @@ void TitleScene::Draw() {
 #endif // _DEBUG
 }
 
-IScene* TitleScene::GetNextScene() { return new GameScene(engineCore_); }
+IScene* TitleScene::GetNextScene() { return new StageSelectScene(engineCore_,sceneData_); }
 
 void TitleScene::CameraUpdate() {
 #ifdef _DEBUG

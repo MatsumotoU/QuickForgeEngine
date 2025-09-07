@@ -16,4 +16,5 @@ public:
 protected:
 	int sceneID_ = -1;
 	bool isRequestedExit_;
+	nlohmann::json* sceneData_;
 };

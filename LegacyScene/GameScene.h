@@ -17,7 +17,7 @@
 
 class GameScene : public IScene{
 public:
-	GameScene(EngineCore* engineCore);
+	GameScene(EngineCore* engineCore, nlohmann::json* data);
 	~GameScene()override;
 
 public:
