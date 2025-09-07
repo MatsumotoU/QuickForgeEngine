@@ -17,7 +17,7 @@ public:
 
 	void DebugImGui();
 
-	void Initialize(EngineCore* engineCore, Camera* camera);
+	void Initialize(EngineCore* engineCore, Camera* camera, Vector3 directionalLightDir);
 	void Update();
 	void Draw();
 
@@ -65,5 +65,11 @@ private:
 	int moveMaxTime_ = 45;
 	float moveVelocity_ = 3.0f;
 
+	//動き
+	float rotetoMax = 3.14f / 4.0f;
+	float roteta_ = 0;
+	float speed_ = 3.0f;
+
+	Vector3 directionalLightDir_;
 };
 

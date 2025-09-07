@@ -410,6 +410,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleGround.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleSkyDome.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\SignBoard.cpp" />
+    <ClCompile Include="LegacyScene\Class\TitleScene\TitleUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\TitleScene\DiggingEffect.h" />
@@ -591,6 +592,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleGround.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleSkyDome.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\SignBoard.h" />
+    <ClInclude Include="LegacyScene\Class\TitleScene\TitleUI.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl">

@@ -10,18 +10,22 @@ void TitleName::DebugImGui()
 	}
 }
 
-void TitleName::Initialize(EngineCore* engineCore, Camera* camera) {
+void TitleName::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directionalLightDir) {
 	engineCore_ = engineCore;
 	camera_ = camera;
+	directionalLightDir_ = directionalLightDir;
 
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources/Model/titleName", "titleName.obj", COORDINATESYSTEM_HAND_LEFT);
 	model_.get()->transform_.translate = { 0.0f,0.6f,0.0f };
-	model_.get()->SetDirectionalLightDir({ 0.0f,0.0f,9.0f });
+	model_.get()->transform_.rotate = { 0.2f,-0.2f,0.0f }; 
+	model_.get()->SetDirectionalLightDir(directionalLightDir_);
 }
 
 void TitleName::Update() {
-
+	time+=3.0f/60.0f; // 経過時間
+	float y = 0.05f * sinf(time) + 0.6f;
+	model_.get()->transform_.translate.y = y;
 	model_->Update();
 }
 

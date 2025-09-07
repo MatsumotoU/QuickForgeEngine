@@ -31,9 +31,10 @@ void DiggingEffect::DebugImGui() {
 }
 
 
-void DiggingEffect::Initialize(EngineCore* engineCore, Camera* camera) {
+void DiggingEffect::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directionalLightDir) {
 	engineCore_ = engineCore;
 	camera_ = camera;
+    directionalLightDir_ = directionalLightDir;
 }
 
 void DiggingEffect::Update(Mole* mole) {
@@ -65,6 +66,7 @@ void DiggingEffect::SpwnParticle(Mole* mole)
         newParticle.model->LoadModel("Resources/Model/wall/soil", "soil.obj", COORDINATESYSTEM_HAND_LEFT);
         newParticle.model->transform_.translate = mole->GetTranslate() + Vector3(offsetX, 0.0f, offsetZ);  
         newParticle.model->transform_.scale = { 0.8f,0.8f,0.8f };
+        newParticle.model->SetDirectionalLightDir(directionalLightDir_);
         particle_.push_back(std::move(newParticle));  
     }  
 }

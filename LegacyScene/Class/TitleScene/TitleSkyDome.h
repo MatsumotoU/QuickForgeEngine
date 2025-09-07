@@ -20,6 +20,8 @@ private:
 
 	float rotetaTime = 20.0f;//一周の時間
 
+	Vector3 directionalLightDir_ = { 0.0f, 0.0f, 1.0f };
+
 };
 
 

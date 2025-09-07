@@ -21,16 +21,17 @@ void Mole::DebugImGui()
 	}
 }
 
-void Mole::Initialize(EngineCore* engineCore, Camera* camera) {
+void Mole::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directionalLightDir) {
 	engineCore_ = engineCore;
 	camera_ = camera;
+	directionalLightDir_ = directionalLightDir;
+
 	isGameStart = false;
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources/Model/mole", "mole.obj", COORDINATESYSTEM_HAND_LEFT);
 	model_.get()->transform_.translate = { -1.7f,-1.0f,2.0f };
 	model_.get()->transform_.rotate = { 0.0f,1.8f,0.0f };
-	model_.get()->transform_.scale = { 1.0f,1.0f,1.0f };
-
+	model_.get()->SetDirectionalLightDir(directionalLightDir_);
 }
 
 void Mole::Update() {
@@ -66,7 +67,13 @@ void Mole::Animation()
 	switch (moleState_)
 	{
 	case Mole::MoleState::Normal:
+		model_.get()->transform_.rotate.z = roteta_;
+		roteta_ += speed_ / 60.0f;
+		if (roteta_ <= -rotetoMax || roteta_ >= rotetoMax) {
+			speed_ *= -1.0f;
+		}
 		if (isAnimation_) {
+			model_.get()->transform_.rotate.z = 0.0f;
 			moleState_ = MoleState::StartDigging;
 		}
 		break;
