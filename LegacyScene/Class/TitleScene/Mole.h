@@ -12,6 +12,11 @@ public:
 		Emerging      // 出てくる
 	};
 
+	enum class Direction {
+		Left,   // 左向き
+		Right   // 右向き
+	};
+
 	Mole() = default;
 	~Mole() = default;
 
@@ -23,13 +28,20 @@ public:
 
 	void Animation();
 
+	void MoveInput();
+
 	void Move();
 
 	void ClampPosition();
 
 	Vector3 GetTranslate() { return model_.get()->transform_.translate; }
+
 	MoleState GetMoleState() { return moleState_; }
+	Direction GetDirection() { return direction_; }
+
 	bool IsGameStart() { return isGameStart; }
+	bool ISAnimation() { return isAnimation_; }
+	bool IsSetMove() { return isSetMove_; }
 
 private:
 
@@ -39,11 +51,10 @@ private:
 
 	bool isGameStart = false;
 
-	enum class Direction {
-		Left,   // 左向き
-		Right   // 右向き
-	};
 	Direction direction_;
+	float startDirection_;
+	float rotetaDirection_ = 1.8f;
+	float rotateFream_ = 0.0f; 
 
 	//アニメション
 
@@ -61,9 +72,14 @@ private:
 	int animationDuration_ = 30;//アニメーションの全体フレーム
 
 	//移動用
-	float moveTimer_=0;
+	float moveTimer_ = 0;
 	int moveMaxTime_ = 45;
-	float moveVelocity_ = 3.0f;
+	float moveVelocity_ = 4.0f;
+
+
+	Vector2 leftStick_;
+	float deadZone_ = 3.0f;
+	bool isSetMove_;
 
 	//動き
 	float rotetoMax = 3.14f / 4.0f;

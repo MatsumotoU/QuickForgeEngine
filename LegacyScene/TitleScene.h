@@ -23,10 +23,15 @@ public:
 
 	void CameraUpdate();
 
+	void CameraWork();
+
 private:
 	float frameCount_;
 	EngineCore* engineCore_;
 	Camera camera_;
+
+	float cameraWorkSpeed_=1.0f/(60.0f* 2.0f);//最後の数字が秒計算での時間
+	float cameraWorkFream_=-1.0f;
 
 	Vector3 directionalLightDir_ = { -1.0f, -1.0f, 0.5f };
 

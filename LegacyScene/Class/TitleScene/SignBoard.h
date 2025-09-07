@@ -17,6 +17,7 @@ private:
 	EngineCore* engineCore_;
 	Camera* camera_;
 	std::unique_ptr<Model> model_;
+	std::unique_ptr<Model> letterModel_;
 
 	Vector3 directionalLightDir_;
 };
