@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 #include "Camera/Camera.h"
 
 Vector3 Vector3::Zero() {
@@ -61,15 +62,30 @@ Vector3 Vector3::Cross(const Vector3& v1, const Vector3& v2) {
 
 Vector3 Vector3::Lerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 result{};
-	result.x = v1.x * (1.0f - t) + v2.x * t;
-	result.y = v1.y * (1.0f - t) + v2.y * t;
-	result.z = v1.z * (1.0f - t) + v2.z * t;
+	result = v1 * (1.0f - t) + v2 * t;
+	return result;
+}
+
+Vector3 Vector3::LerpAngle(const Vector3& v1, const Vector3& v2, float t) {
+	Vector3 result{};
+
+	// 差分を求めて-π~πの範囲に収める
+	Vector3 diff{};
+	diff.x = std::fmodf(v2.x - v1.x, 2.0f * std::numbers::pi_v<float>);
+	diff.y = std::fmodf(v2.y - v1.y, 2.0f * std::numbers::pi_v<float>);
+	diff.z = std::fmodf(v2.z - v1.z, 2.0f * std::numbers::pi_v<float>);
+	if (diff.x < -std::numbers::pi_v<float>) diff.x += 2.0f * std::numbers::pi_v<float>;
+	if (diff.y < -std::numbers::pi_v<float>) diff.y += 2.0f * std::numbers::pi_v<float>;
+	if (diff.z < -std::numbers::pi_v<float>) diff.z += 2.0f * std::numbers::pi_v<float>;
+	if (diff.x > std::numbers::pi_v<float>) diff.x -= 2.0f * std::numbers::pi_v<float>;
+	if (diff.y > std::numbers::pi_v<float>) diff.y -= 2.0f * std::numbers::pi_v<float>;
+	if (diff.z > std::numbers::pi_v<float>) diff.z -= 2.0f * std::numbers::pi_v<float>;
+
+	result = v1 + diff * t;
 	return result;
 }
 
 Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
-	Vector3 result{};
-
 	// 正規化
 	Vector3 from = v1.Normalize();
 	Vector3 to = v2.Normalize();
@@ -84,9 +100,7 @@ Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 
 	Vector3 normalizeVector{};
 	if (sinTheta != 0.0f) {
-		normalizeVector.x = (from.x * sinThetaFrom + to.x * sinThetaTo) / sinTheta;
-		normalizeVector.y = (from.y * sinThetaFrom + to.y * sinThetaTo) / sinTheta;
-		normalizeVector.z = (from.z * sinThetaFrom + to.z * sinThetaTo) / sinTheta;
+		normalizeVector = (from * sinThetaFrom + to * sinThetaTo) / sinTheta;
 	} else {
 		normalizeVector = from; // 角度が0の場合はそのまま
 	}
@@ -166,7 +180,7 @@ Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPositio
     Vector3 result{};
 
     // yaw（ヨー, y軸回り）
-    result.y = atan2f(diff.x, -diff.z);
+    result.y = atan2f(diff.x, diff.z);
     // pitch（ピッチ, x軸回り）
     result.x = atan2f(-diff.y, sqrtf(diff.x * diff.x + diff.z * diff.z));
     // roll（ロール, z軸回り
