@@ -51,6 +51,8 @@ void TitleScene::Initialize() {
 
 	skyDome_ = std::make_unique<TitleSkyDome>();
 	skyDome_.get()->Initialize(engineCore_, &camera_);
+
+	
 }
 
 void TitleScene::Update() {
