@@ -14,6 +14,7 @@ public:
 	void Jamp(const Vector2& dir);
 	void DeathAnimation();
 
+	Vector4 GetColor() const;
 	Vector2& GetMoveDir();
 	Vector3 GetWorldPosition();
 	Transform& GetTransform();
@@ -39,6 +40,7 @@ protected:
 	Transform transform_;
 	float playerSize_;
 
+	Vector4 color_;
 	Vector3 velocity_;
 	Vector3 acceleration_;
 	float velocityDamping_;

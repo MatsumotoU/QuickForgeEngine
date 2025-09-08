@@ -48,6 +48,7 @@ private:
 	void AliveCheck(GamePlayer& gamePlayer);
 	void CheckEndGame();
 
+	uint32_t frameCount_;
 	EngineCore* engineCore_;
 	DirectInputManager* input_;
 	CollisionManager collisionManager_;
@@ -75,6 +76,7 @@ private:
 	std::vector<std::vector<uint32_t>> wallMap_;
 	std::vector<std::vector<uint32_t>> floorMap_;
 	std::vector<IntVector2> buildMapChipIndex_;
+	std::vector<IntVector2> oldBuildMapChipIndex_;
 
 	std::string stageName_;
 	IScene* nextScene_;
