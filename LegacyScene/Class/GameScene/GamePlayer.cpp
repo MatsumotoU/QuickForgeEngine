@@ -32,7 +32,7 @@ void GamePlayer::RestParameter() {
 void GamePlayer::Jamp(const Vector2& dir) {
 	if (!isJumping_ && !isGrounded_) {
 		isJumping_ = true;
-		velocity_ = { dir.x * 2.0f,15.0f,dir.y * 2.0f };
+		velocity_ = { dir.x * 2.5f,15.0f,dir.y * 2.5f };
 	}
 }
 
@@ -55,6 +55,10 @@ void GamePlayer::DeathAnimation() {
 	}
 
 	model_->Update();
+}
+
+Vector4 GamePlayer::GetColor() const {
+	return color_;
 }
 
 Vector2& GamePlayer::GetMoveDir() {

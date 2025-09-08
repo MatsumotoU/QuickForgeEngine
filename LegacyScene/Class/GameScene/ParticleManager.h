@@ -3,7 +3,7 @@
 #include "Particle/Particle.h"
 #include "Data/ParticleData.h"
 
-static inline const uint32_t kMaxParticle = 1000;
+static inline const uint32_t kMaxParticle = 3000;
 
 class ParticleManager {
 public:
@@ -14,6 +14,8 @@ public:
 	void Draw();
 
 	void ResetParticle();
+	void EmitBomb(const Vector3& position,const Vector4& color,int power, float lifeTime, float velocityDecay,int maxParticle);
+
 
 private:
 	EngineCore* engineCore_;

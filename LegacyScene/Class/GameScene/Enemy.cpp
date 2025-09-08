@@ -49,6 +49,7 @@ void Enemy::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	selectedDirIndex_ = 0;
 	maxSelect_ = 0;
+	color_ = { 1.0f,0.0f,1.0f,1.0f };
 
 	isSelectedDir_ = false;
 	selectAnimIndex_ = 0;
