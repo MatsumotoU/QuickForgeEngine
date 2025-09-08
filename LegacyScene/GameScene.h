@@ -16,6 +16,7 @@
 #include "Class/GameScene/TurnText.h"
 
 #include "Class/TitleScene/TitleSkyDome.h"
+#include "Class/GameScene/ParticleManager.h"
 
 #include "Math/Vector/IntVector2.h"
 
@@ -81,6 +82,7 @@ private:
 	TitleSkyDome skyDome_;
 
 	uint32_t bgmHandle_;
+	ParticleManager particleManager_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;

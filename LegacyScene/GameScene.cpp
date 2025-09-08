@@ -116,9 +116,12 @@ void GameScene::Initialize() {
 	endGameTimer_ = 0.0f;
 
 	skyDome_.Initialize(engineCore_, &camera_);
+
+	particleManager_.Initialize(engineCore_, &camera_);
 }
 
 void GameScene::Update() {
+	particleManager_.Update();
 	skyDome_.Update();
 
 	timer_ += engineCore_->GetDeltaTime();
@@ -212,6 +215,7 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	particleManager_.Draw();
 #ifdef _DEBUG
 	debugCamera_.DrawImGui();
 #endif // _DEBUG
