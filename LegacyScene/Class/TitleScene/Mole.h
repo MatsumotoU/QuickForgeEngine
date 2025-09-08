@@ -18,7 +18,7 @@ public:
 	};
 
 	Mole() = default;
-	~Mole() = default;
+	~Mole();
 
 	void DebugImGui();
 

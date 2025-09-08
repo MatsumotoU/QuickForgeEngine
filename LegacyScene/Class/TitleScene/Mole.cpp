@@ -1,5 +1,10 @@
 #include "Mole.h"
 
+Mole::~Mole()
+{
+	engineCore_->GetAudioPlayer()->StopAudio("Dig.mp3");
+}
+
 void Mole::DebugImGui()
 {
 	if (ImGui::CollapsingHeader("Mole")) {
