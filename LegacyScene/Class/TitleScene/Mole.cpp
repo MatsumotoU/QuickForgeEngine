@@ -33,6 +33,7 @@ void Mole::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directiona
 	model_.get()->transform_.rotate = { 0.0f,3.14f / 2.0f,0.0f };
 	model_.get()->SetDirectionalLightDir(directionalLightDir_);
 	model_->Update();
+	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Dig.mp3");
 }
 
 void Mole::Update() {
@@ -115,9 +116,11 @@ void Mole::Animation()
 		model_.get()->transform_.scale = { scale, scale, scale };
 		break;
 	case Mole::MoleState::Digging:
+		engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "Dig.mp3", true);
 		if (!isAnimation_) {
 			animationTimer_ = 0;
 			moleState_ = Mole::MoleState::Emerging;
+			engineCore_->GetAudioPlayer()->StopAudio("Dig.mp3");
 		}
 		break;
 	case Mole::MoleState::Emerging:

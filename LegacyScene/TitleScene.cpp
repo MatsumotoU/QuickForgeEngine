@@ -9,10 +9,14 @@ TitleScene::TitleScene(EngineCore* engineCore, nlohmann::json* data) :debugCamer
 
 	sceneID_ = 0;
 	sceneData_ = data;
+
+	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/BGM/", "Title.mp3");
+	engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "Title.mp3", true);
 }
 
 TitleScene::~TitleScene() {
 	engineCore_->GetGraphRenderer()->DeleteCamera(&camera_);
+	engineCore_->GetAudioPlayer()->StopAudio("Title.mp3");
 }
 
 void TitleScene::Initialize() {

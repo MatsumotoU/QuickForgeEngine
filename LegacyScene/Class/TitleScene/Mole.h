@@ -49,6 +49,8 @@ private:
 	Camera* camera_;
 	std::unique_ptr<Model> model_;
 
+	uint32_t bgmHandle_;
+
 	bool isGameStart = false;
 
 	Direction direction_;
