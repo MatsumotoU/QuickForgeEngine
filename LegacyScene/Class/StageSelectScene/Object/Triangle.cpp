@@ -48,12 +48,12 @@ void Triangle::Initialize(Model *model, DirectInputManager *directInput, XInputC
 void Triangle::Update() {
 	// Y回転角テーブル
 	std::array<float, 2> destinationRotationYTable = {
-		-0.02f,	// kLeft
-		0.02f	// kRight
+		-std::numbers::pi_v<float> * 2.0f,	// kLeft
+		std::numbers::pi_v<float> * 2.0f	// kRight
 	};
 
 	// Y回転角を更新
-	model_->transform_.rotate.y += destinationRotationYTable[static_cast<uint32_t>(direction_)];
+	model_->transform_.rotate.y += destinationRotationYTable[static_cast<uint32_t>(direction_)] / (60.0f * rotateTime);
 
 	// モデルを更新
 	model_->Update();
