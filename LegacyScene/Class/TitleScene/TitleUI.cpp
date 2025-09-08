@@ -114,6 +114,14 @@ void TitleUI::Draw(Mole* mole) {
 
 void TitleUI::UpdateStickHold(Mole* mole)
 {
+	model_.get()->transform_.translate = mole->GetTranslate();
+	model_.get()->transform_.translate.y += 1.2f;
+	model_.get()->transform_.rotate.z = 0.0f;
+
+	mouseModel_.get()->transform_.translate = mole->GetTranslate();
+	mouseModel_.get()->transform_.translate.y += 1.2f;
+	mouseModel_.get()->transform_.rotate.z = 0.0f;
+
 	//矢印の処理
 	arrowModel_.get()->transform_.translate = mole->GetTranslate();
 	arrowModel_.get()->transform_.translate.y += 0.5f;
