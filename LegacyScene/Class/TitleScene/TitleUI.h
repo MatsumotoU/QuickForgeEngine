@@ -15,15 +15,39 @@ public:
 	void Update(Mole* mole);
 	void Draw(Mole* mole);
 
+	void UpdateStickHold(Mole* mole);
+
+	void ArrowSizeUP();
+
 private:
 	EngineCore* engineCore_;
 	Camera* camera_;
 	std::unique_ptr<Model> model_;
+	std::unique_ptr<Model> arrowModel_;
+	std::unique_ptr<Model> mouseModel_;
 
 	float rotetoMax = 3.14f / 4.0f;
 	float roteta_ = 0;
-	float speed_ = 3.0f;
+	float rotetaSpeed_ = 3.0f;
+
+	int colorFream_ = 0;
+	bool isRed_;
+
+	enum ArrowDirection {
+		None,
+		Left,
+		Right,
+	};
+	ArrowDirection arrowDirection_ = None;
+	bool isArrow_ = false;
+	bool arrowSizeUPFlag_;
+	Vector3 arrowSizeUPSpeed_ = { 0.2f,0.2f,0.2f };
+
+	Vector2 mouseTargetPos;
+	Vector2 input_;
 
 	Vector3 directionalLightDir_;
+
+
 };
 
