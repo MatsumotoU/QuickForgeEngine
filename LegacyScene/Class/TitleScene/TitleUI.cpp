@@ -22,6 +22,14 @@ void TitleUI::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directi
 	model_.get()->transform_.rotate.x = 2.0f;
 	model_.get()->SetDirectionalLightDir(directionalLightDir_);
 
+	mouseModel_ = std::make_unique<Model>(engineCore_, camera_);
+	mouseModel_->LoadModel("Resources/Model/mouse", "mouse.obj", COORDINATESYSTEM_HAND_LEFT);
+	mouseModel_.get()->transform_.translate = { 0.0f,0.0f,6.0f };
+	mouseModel_.get()->transform_.rotate.x = 2.0f;
+	mouseModel_.get()->SetDirectionalLightDir(directionalLightDir_);
+
+
+
 	arrowModel_ = std::make_unique<Model>(engineCore_, camera_);
 	arrowModel_->LoadModel("Resources/Model/TitleArrow", "TitleArrow.obj", COORDINATESYSTEM_HAND_LEFT);
 	arrowModel_.get()->SetDirectionalLightDir(directionalLightDir_);
@@ -29,11 +37,11 @@ void TitleUI::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directi
 }
 
 void TitleUI::Update(Mole* mole) {
-	
+
 	if (engineCore_->GetXInputController()->GetIsActiveController(0)) {
 		input_ = engineCore_->GetXInputController()->GetLeftStick(0);
 	}
-	else if (engineCore_->GetInputManager()->mouse_.GetTrigger(0)) {
+	else if (engineCore_->GetInputManager()->mouse_.GetPress(0)) {
 
 		Vector2 mousePos = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
 		input_ = mousePos - mouseTargetPos;
@@ -47,27 +55,57 @@ void TitleUI::Update(Mole* mole) {
 		model_.get()->transform_.translate = mole->GetTranslate();
 		model_.get()->transform_.translate.y += 1.2f;
 		model_.get()->transform_.rotate.z = roteta_;
-		roteta_ += speed_ / 60.0f;
-		if (roteta_ <= -rotetoMax || roteta_ >= rotetoMax) {
-			speed_ *= -1.0f;
+
+		mouseModel_.get()->transform_.translate = mole->GetTranslate();
+		mouseModel_.get()->transform_.translate.y += 1.2f;
+		if (engineCore_->GetInputManager()->mouse_.GetPress(0)) {
+			isRed_ = true;
+			mouseModel_.get()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+			mouseModel_.get()->transform_.rotate.z = roteta_;
 		}
+		else {
+			if (colorFream_ % 60 == 0) {
+				if (isRed_) {
+					mouseModel_.get()->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+					isRed_ = false;
+				}
+				else {
+					mouseModel_.get()->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+					isRed_ = true;
+				}
+			}
+		}
+		colorFream_++;
+		roteta_ += rotetaSpeed_ / 60.0f;
+		if (roteta_ <= -rotetoMax || roteta_ >= rotetoMax) {
+			rotetaSpeed_ *= -1.0f;
+		}
+
 		isArrow_ = false;
 		arrowModel_.get()->transform_.scale = { 0.0f,0.0f,0.0f };
 		arrowDirection_ = None;
 	}
 	else {
+		roteta_ = 0;
+		colorFream_ = 0;
 		isArrow_ = true;
 		UpdateStickHold(mole);
 	}
 
 	model_.get()->Update();
+	mouseModel_.get()->Update();
 	arrowModel_.get()->Update();
 }
 
 void TitleUI::Draw(Mole* mole) {
-	if (mole->GetMoleState() == Mole::MoleState::Normal&&
+	if (mole->GetMoleState() == Mole::MoleState::Normal &&
 		!mole->ISAnimation()) {
-		model_.get()->Draw();
+		if (engineCore_->GetXInputController()->GetIsActiveController(0)) {
+			model_.get()->Draw();
+		}
+		else {
+			mouseModel_.get()->Draw();
+		}
 		if (isArrow_) {
 			arrowModel_.get()->Draw();
 		}
@@ -76,9 +114,6 @@ void TitleUI::Draw(Mole* mole) {
 
 void TitleUI::UpdateStickHold(Mole* mole)
 {
-	model_.get()->transform_.translate = mole->GetTranslate();
-	model_.get()->transform_.translate.y += 1.2f;
-
 	//矢印の処理
 	arrowModel_.get()->transform_.translate = mole->GetTranslate();
 	arrowModel_.get()->transform_.translate.y += 0.5f;
@@ -89,6 +124,7 @@ void TitleUI::UpdateStickHold(Mole* mole)
 			arrowModel_.get()->transform_.scale = { 0.0f,0.0f,0.0f };
 		}
 		model_.get()->transform_.translate.x -= 0.2f;
+		mouseModel_.get()->transform_.translate.x -= 0.2f;
 		//矢印の処理
 		arrowModel_.get()->transform_.translate.x += 1.0f;
 		arrowModel_.get()->transform_.rotate.z = 3.14f;
@@ -101,6 +137,8 @@ void TitleUI::UpdateStickHold(Mole* mole)
 			arrowModel_.get()->transform_.scale = { 0.0f,0.0f,0.0f };
 		}
 		model_.get()->transform_.translate.x += 0.2f;
+		mouseModel_.get()->transform_.translate.x += 0.2f;
+
 		//矢印の処理
 		arrowModel_.get()->transform_.translate.x -= 1.0f;
 		arrowModel_.get()->transform_.rotate.z = 0;

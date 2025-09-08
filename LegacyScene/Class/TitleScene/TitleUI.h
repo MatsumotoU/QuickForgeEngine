@@ -24,10 +24,14 @@ private:
 	Camera* camera_;
 	std::unique_ptr<Model> model_;
 	std::unique_ptr<Model> arrowModel_;
+	std::unique_ptr<Model> mouseModel_;
 
 	float rotetoMax = 3.14f / 4.0f;
 	float roteta_ = 0;
-	float speed_ = 3.0f;
+	float rotetaSpeed_ = 3.0f;
+
+	int colorFream_ = 0;
+	bool isRed_;
 
 	enum ArrowDirection {
 		None,

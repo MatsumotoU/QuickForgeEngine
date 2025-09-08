@@ -153,7 +153,7 @@ void Mole::MoveInput()
 	if (engineCore_->GetXInputController()->GetIsActiveController(0)) {
 		input_ = engineCore_->GetXInputController()->GetLeftStick(0);
 	}
-	else if (engineCore_->GetInputManager()->mouse_.GetTrigger(0)) {
+	else if (engineCore_->GetInputManager()->mouse_.GetPress(0)) {
 		isCleck_ = true;
 	}
 	else {
