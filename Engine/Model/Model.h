@@ -64,6 +64,7 @@ public:
 	void SetColor(const Vector4& color);
 	void SetDirectionalLightDir(const Vector3& dir);
 	void SetViewState(ViewState state);
+	void SetEnableShadow(bool enable);
 
 private:
 	EngineCore* engineCore_;

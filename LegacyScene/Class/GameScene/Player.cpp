@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Utility/MyEasing.h"
 
 void Player::Initialize(EngineCore* engineCore, Camera* camera) {
 	engineCore_ = engineCore;
@@ -24,10 +25,16 @@ void Player::Initialize(EngineCore* engineCore, Camera* camera) {
 	model_->transform_.translate.y = 1.0f;
 	alpha_ = 1.0f;
 	model_->SetColor({ 0.0f,1.0f,0.0f,alpha_ });
+
+	isClicked_ = false;
+	clickStartPos_ = { 0.0f,0.0f };
+
+	timer_ = 0.0f;
 }
 
 void Player::Update() {
 	float deltaTime = engineCore_->GetDeltaTime();
+	timer_ += deltaTime;
 
 	// moveDir_の方向にモデルを向かせる
 	if (moveDir_.Length() > 0.0f) {
@@ -36,33 +43,22 @@ void Player::Update() {
 
 	// はじきの処理
 	if (isCanMove_) {
-		// まだ動いてないときにスティックを倒したら動けるようにする
-		Vector2 leftStick = engineCore_->GetXInputController()->GetLeftStick(0);
-		if (leftStick.Length() >= 3.0f) {
-			isCanShot_ = true;
-			moveDir_ = -leftStick.Normalize();
-			moveTimer_ = maxMoveTimer_;
-		} else {
-			if (isCanShot_) {
-				isCanMove_ = false;
-				isCanShot_ = false;
-				isMoving_ = true;
-			}
-		}
+		model_->transform_.scale.x = 1.0f + sinf(timer_) * 0.1f;
+		model_->transform_.scale.y = 1.0f + sinf(timer_) * 0.1f;
+		model_->transform_.scale.z = 1.0f + sinf(timer_) * 0.1f;
 
-		// ボタンでも発射できる
-		if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
-			if (isCanShot_) {
-				moveDir_ = -leftStick.Normalize();
-				isCanMove_ = false;
-				isCanShot_ = false;
-				isMoving_ = true;
-			}
-		}
+		//MouseControl();
+		ControllerControl();
+	} else {
+		model_->transform_.scale.x = 1.0f;
+		model_->transform_.scale.y = 1.0f;
+		model_->transform_.scale.z = 1.0f;
 	}
 
 	// 動いてる最中の処理
 	if (isMoving_) {
+		MyEasing::SimpleEaseIn(&model_->transform_.translate.y, 0.0f, 0.3f);
+
 		if (moveTimer_ > 0.0f) {
 			model_->transform_.translate.x += moveDir_.x * shotPower_ * deltaTime;
 			model_->transform_.translate.z += moveDir_.y * shotPower_ * deltaTime;
@@ -70,6 +66,7 @@ void Player::Update() {
 		} else {
 			isMoving_ = false;
 			isReqestBuilding_ = true;
+			model_->transform_.translate.y = 1.0f;
 		}
 	}
 
@@ -82,7 +79,10 @@ void Player::Update() {
 	}
 
 	if (model_->transform_.translate.y <= 1.0f) {
-		model_->transform_.translate.y = 1.0f;
+		if (!isMoving_) {
+			model_->transform_.translate.y = 1.0f;
+		}
+		
 		velocity_.y = 0.0f;
 
 		if (isJumping_) {
@@ -114,4 +114,67 @@ void Player::Draw() {
 	ImGui::End();
 
 	model_->Draw();
+}
+
+void Player::MouseControl() {
+	// マウス操作
+	if (engineCore_->GetInputManager()->mouse_.GetTrigger(0)) {
+		isClicked_ = true;
+		clickStartPos_ = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+	}
+
+	if (engineCore_->GetInputManager()->mouse_.GetPress(0)) {
+		// ドラッグ中の処理
+		if (isClicked_) {
+			Vector2 currentMousePos = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+			Vector2 dragVector = clickStartPos_ - currentMousePos;
+			dragVector.x *= -1.0f;
+
+			moveDir_ = -dragVector.Normalize();
+		}
+	}
+
+	if (engineCore_->GetInputManager()->mouse_.GetRelease(0)) {
+		if (isClicked_) {
+			isClicked_ = false;
+			Vector2 clickEndPos = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+			Vector2 dragVector = clickStartPos_ - clickEndPos;
+			if (dragVector.Length() >= 5.0f) {
+				isCanShot_ = true;
+				moveTimer_ = maxMoveTimer_;
+
+				if (isCanShot_) {
+					isCanMove_ = false;
+					isCanShot_ = false;
+					isMoving_ = true;
+				}
+			}
+		}
+	}
+}
+
+void Player::ControllerControl() {
+	// まだ動いてないときにスティックを倒したら動けるようにする
+	Vector2 leftStick = engineCore_->GetXInputController()->GetLeftStick(0);
+	if (leftStick.Length() >= 3.0f) {
+		isCanShot_ = true;
+		moveDir_ = -leftStick.Normalize();
+		moveTimer_ = maxMoveTimer_;
+	} else {
+		if (isCanShot_) {
+			isCanMove_ = false;
+			isCanShot_ = false;
+			isMoving_ = true;
+		}
+	}
+
+	// ボタンでも発射できる
+	if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
+		if (isCanShot_) {
+			moveDir_ = -leftStick.Normalize();
+			isCanMove_ = false;
+			isCanShot_ = false;
+			isMoving_ = true;
+		}
+	}
 }

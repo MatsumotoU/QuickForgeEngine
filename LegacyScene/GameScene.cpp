@@ -103,17 +103,24 @@ void GameScene::Initialize() {
 
 	mainMenu_.Initialize(engineCore_, &camera_);
 	resultUI_.Initialize(engineCore_, &camera_);
+	turnText_.Initialize(engineCore_, &camera_);
 
 	isPlayerTurn_ = true;
 	isEndGame_ = false;
 	isOpenMenu_ = false;
 
 	endGameTimer_ = 0.0f;
+
+	skyDome_.Initialize(engineCore_, &camera_);
 }
 
 void GameScene::Update() {
+	skyDome_.Update();
+
 	timer_ += engineCore_->GetDeltaTime();
 	resultUI_.Update();
+	turnText_.Update();
+	turnText_.SetIsHidden(isEndGame_);
 
 	if (cameraShakeTimer_ > 0.0f) {
 		camera_.transform_.translate.x = 4.0f + sinf(cameraShakeTimer_ * 10.0f) * (cameraShakeTimer_ * 0.5f);
@@ -139,6 +146,10 @@ void GameScene::Update() {
 	if (isEndGame_) {
 		if (endGameTimer_ > 0.0f) {
 			endGameTimer_ -= engineCore_->GetDeltaTime();
+			// 死亡演出スキップ
+			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
+				endGameTimer_ = 0.0f;
+			}	
 			CheckEndGame();
 
 		} else {
@@ -200,6 +211,7 @@ void GameScene::Draw() {
 #ifdef _DEBUG
 	debugCamera_.DrawImGui();
 #endif // _DEBUG
+	skyDome_.Draw();
 
 	floorChip_.Draw();
 	wallChip_.Draw();
@@ -215,9 +227,10 @@ void GameScene::Draw() {
 	if (isEndGame_) {
 		resultUI_.Draw();
 	}
+	turnText_.Draw();
 
 	predictionLine_.Draw(engineCore_);
-	landingPoint_.Draw(engineCore_);
+	//landingPoint_.Draw(engineCore_);
 }
 
 
@@ -269,6 +282,8 @@ void GameScene::MainGameUpdate() {
 		if (player_.GetIsEndTurn()) {
 			isPlayerTurn_ = false;
 			enemy_.GetIsCanMove() = true;
+
+			turnText_.ChangeTurn(isPlayerTurn_);
 		}
 
 		enemy_.SetAlpha(0.2f + sinf(timer_) * 0.1f);
@@ -280,6 +295,7 @@ void GameScene::MainGameUpdate() {
 			isPlayerTurn_ = true;
 			player_.GetIsCanMove() = true;
 			
+			turnText_.ChangeTurn(isPlayerTurn_);
 		}
 
 		enemy_.SetAlpha(1.0f);
@@ -324,6 +340,7 @@ void GameScene::ResetGame(const std::string& stageName) {
 	camera_.transform_.translate = { 4.0f,19.0f,-4.8f };
 	camera_.transform_.rotate.x = 1.14f;
 	engineCore_->GetPostprocess()->grayScaleOffset_ = 0.0f;
+	turnText_.ChangeTurn(isPlayerTurn_);
 }
 void GameScene::CameraUpdate() {
 #ifdef _DEBUG

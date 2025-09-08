@@ -60,4 +60,6 @@ private:
 	int maxSelect_;
 
 	bool isSelectedDir_;
+
+	float timer_;
 };
