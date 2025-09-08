@@ -76,10 +76,11 @@ private:
 	int moveMaxTime_ = 45;
 	float moveVelocity_ = 4.0f;
 
-
+	Vector2 mouseTargetPos;
 	Vector2 input_;
 	float deadZone_ = 3.0f;
 	bool isSetMove_;
+	bool isCleck_;
 
 	//動き
 	float rotetoMax = 3.14f / 4.0f;

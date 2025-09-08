@@ -33,6 +33,15 @@ void TitleUI::Update(Mole* mole) {
 	if (engineCore_->GetXInputController()->GetIsActiveController(0)) {
 		input_ = engineCore_->GetXInputController()->GetLeftStick(0);
 	}
+	else if (engineCore_->GetInputManager()->mouse_.GetTrigger(0)) {
+
+		Vector2 mousePos = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+		input_ = mousePos - mouseTargetPos;
+	}
+	else {
+		input_ = { 0.0f,0.0f };
+		mouseTargetPos = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+	}
 
 	if (!input_.Length()) {
 		model_.get()->transform_.translate = mole->GetTranslate();

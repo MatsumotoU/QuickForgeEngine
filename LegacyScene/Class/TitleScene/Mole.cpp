@@ -154,10 +154,16 @@ void Mole::MoveInput()
 		input_ = engineCore_->GetXInputController()->GetLeftStick(0);
 	}
 	else if (engineCore_->GetInputManager()->mouse_.GetTrigger(0)) {
-		input_ = engineCore_->GetInputManager()->mouse_.deltaMouse_;
+		isCleck_ = true;
 	}
 	else {
 		input_ = { 0.0f,0.0f };
+		mouseTargetPos= engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+		isCleck_ = false;
+	}
+	if (isCleck_) {
+		Vector2 mousePos = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+		input_ = mousePos - mouseTargetPos;
 	}
 
 	if (input_.Length() > deadZone_ &&
@@ -171,7 +177,7 @@ void Mole::MoveInput()
 			direction_ = Direction::Right;
 		}
 	}
-	if (input_.Length() == 0 && isSetMove_ ) {
+	if (input_.Length() == 0 && isSetMove_ && !isCleck_) {
 		isSetMove_ = false;
 		isAnimation_ = true;
 	}
