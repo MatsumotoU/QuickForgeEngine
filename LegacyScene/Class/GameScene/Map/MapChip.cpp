@@ -61,12 +61,16 @@ void MapChip::Update() {
 
 		index++;
 	}
+
+	dirtBlock_.Update(&dirtBlockTransforms_);
+	grassBlock_.Update(&grassBlockTransforms_);
+	stoneBlock_.Update(&stoneBlockTransforms_);
 }
 
 void MapChip::Draw() {
-	dirtBlock_.Draw(&dirtBlockTransforms_, &dirtBlockColors_, camera_);
-	grassBlock_.Draw(&grassBlockTransforms_, &grassBlockColors_, camera_);
-	stoneBlock_.Draw(&stoneBlockTransforms_, &stoneBlockColors_, camera_);
+	dirtBlock_.Draw(&dirtBlockColors_, camera_);
+	grassBlock_.Draw(&grassBlockColors_, camera_);
+	stoneBlock_.Draw(&stoneBlockColors_, camera_);
 
 }
 

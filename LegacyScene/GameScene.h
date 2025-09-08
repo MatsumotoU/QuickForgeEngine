@@ -80,6 +80,8 @@ private:
 
 	TitleSkyDome skyDome_;
 
+	uint32_t bgmHandle_;
+
 #ifdef _DEBUG
 	DebugCamera debugCamera_;
 	bool isActiveDebugCamera_;

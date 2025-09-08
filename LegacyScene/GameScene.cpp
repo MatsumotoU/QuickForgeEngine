@@ -73,10 +73,14 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_
 
 	timer_ = 0.0f;
 	cameraShakeTimer_ = 0.0f;
+
+	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/BGM/","GameSceneBGM.mp3");
+	engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "GameSceneBGM.mp3", true);
 }
 
 GameScene::~GameScene() {
 	engineCore_->GetGraphRenderer()->DeleteCamera(&camera_);
+	engineCore_->GetAudioPlayer()->StopAudio("GameSceneBGM.mp3");
 }
 
 void GameScene::Initialize() {
