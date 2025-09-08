@@ -150,13 +150,18 @@ void Mole::Animation()
 void Mole::MoveInput()
 {
 
-
 	if (engineCore_->GetXInputController()->GetIsActiveController(0)) {
 		input_ = engineCore_->GetXInputController()->GetLeftStick(0);
 	}
+	else if (engineCore_->GetInputManager()->mouse_.GetTrigger(0)) {
+		input_ = engineCore_->GetInputManager()->mouse_.deltaMouse_;
+	}
+	else {
+		input_ = { 0.0f,0.0f };
+	}
 
 	if (input_.Length() > deadZone_ &&
-		moleState_ == MoleState::Normal&&
+		moleState_ == MoleState::Normal &&
 		!isAnimation_) {
 		isSetMove_ = true;
 		if (input_.x < 0) {
@@ -166,7 +171,7 @@ void Mole::MoveInput()
 			direction_ = Direction::Right;
 		}
 	}
-	if (input_.Length() == 0 && isSetMove_) {
+	if (input_.Length() == 0 && isSetMove_ ) {
 		isSetMove_ = false;
 		isAnimation_ = true;
 	}
