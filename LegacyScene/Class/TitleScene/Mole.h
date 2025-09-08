@@ -9,7 +9,7 @@ public:
 		Normal,       // 通常
 		StartDigging, // 潜り開始
 		Digging,      // 潜っている
-		Emerging      // 出てくる
+		Emerging,     // 出てくる
 	};
 
 	enum class Direction {
@@ -77,7 +77,7 @@ private:
 	float moveVelocity_ = 4.0f;
 
 
-	Vector2 leftStick_;
+	Vector2 input_;
 	float deadZone_ = 3.0f;
 	bool isSetMove_;
 

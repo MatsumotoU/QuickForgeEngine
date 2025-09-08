@@ -40,7 +40,7 @@ private:
 	Vector3 arrowSizeUPSpeed_ = { 0.2f,0.2f,0.2f };
 
 
-	Vector2 leftStick_;
+	Vector2 input_;
 
 	Vector3 directionalLightDir_;
 

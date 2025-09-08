@@ -29,9 +29,12 @@ void TitleUI::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directi
 }
 
 void TitleUI::Update(Mole* mole) {
+	
+	if (engineCore_->GetXInputController()->GetIsActiveController(0)) {
+		input_ = engineCore_->GetXInputController()->GetLeftStick(0);
+	}
 
-	leftStick_ = engineCore_->GetXInputController()->GetLeftStick(0);
-	if (!leftStick_.Length()) {
+	if (!input_.Length()) {
 		model_.get()->transform_.translate = mole->GetTranslate();
 		model_.get()->transform_.translate.y += 1.2f;
 		model_.get()->transform_.rotate.z = roteta_;

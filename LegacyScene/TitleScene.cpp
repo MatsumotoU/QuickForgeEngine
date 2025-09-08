@@ -26,6 +26,7 @@ void TitleScene::Initialize() {
 	camera_.transform_.translate = { 1.4f, 0.0f, 1.0f };
 	camera_.transform_.rotate = { 0.0f,0.2f,0.0f };
 	cameraWorkFream_ = -1.0f;
+	cameraWorlEnd = false;
 
 	mole_ = std::make_unique<Mole>();
 	mole_.get()->Initialize(engineCore_, &camera_, directionalLightDir_);
@@ -58,7 +59,9 @@ void TitleScene::Update() {
 
 	CameraWork();
 
-	mole_.get()->Update();
+	if (cameraWorlEnd) {
+		mole_.get()->Update();
+	}
 
 	diggingEffect_.get()->Update(mole_.get());
 
@@ -149,6 +152,7 @@ void TitleScene::CameraWork()
 
 	if (cameraWorkFream_ >= 1.0f) {
 		cameraWorkFream_ = 1.0f;
+		cameraWorlEnd = true;
 	}
 
 }

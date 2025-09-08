@@ -32,6 +32,7 @@ void Mole::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directiona
 	model_.get()->transform_.translate = { -1.7f,-1.0f,2.0f };
 	model_.get()->transform_.rotate = { 0.0f,3.14f / 2.0f,0.0f };
 	model_.get()->SetDirectionalLightDir(directionalLightDir_);
+	model_->Update();
 }
 
 void Mole::Update() {
@@ -148,20 +149,24 @@ void Mole::Animation()
 
 void Mole::MoveInput()
 {
-	leftStick_ = engineCore_->GetXInputController()->GetLeftStick(0);
 
-	if (leftStick_.Length() > deadZone_ &&
+
+	if (engineCore_->GetXInputController()->GetIsActiveController(0)) {
+		input_ = engineCore_->GetXInputController()->GetLeftStick(0);
+	}
+
+	if (input_.Length() > deadZone_ &&
 		moleState_ == MoleState::Normal&&
 		!isAnimation_) {
 		isSetMove_ = true;
-		if (leftStick_.x < 0) {
+		if (input_.x < 0) {
 			direction_ = Direction::Left;
 		}
 		else {
 			direction_ = Direction::Right;
 		}
 	}
-	if (leftStick_.Length() == 0 && isSetMove_) {
+	if (input_.Length() == 0 && isSetMove_) {
 		isSetMove_ = false;
 		isAnimation_ = true;
 	}
