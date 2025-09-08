@@ -17,7 +17,10 @@ public:
 public:
 	void Initialize(EngineCore* engineCore, uint32_t totalParticles);
 	void LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem);
-	void Draw(std::vector<Transform>* transform, std::vector<Vector4>* color, Camera* camera);
+	void Update(std::vector<Transform>* transform);
+	void Draw(std::vector<Vector4>* color, Camera* camera);
+
+	std::vector<Matrix4x4> worldMatrixes_;
 
 private:
 	MaterialResource material_;

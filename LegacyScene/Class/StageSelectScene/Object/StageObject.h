@@ -6,6 +6,8 @@ class Model;
 /// @brief ステージオブジェクト
 class StageObject {
 public:
+	static inline constexpr float rotateTime = 4.0f;	// 回転にかける時間(秒)
+
 	/// @brief コンストラクタ
 	StageObject() = default;
 

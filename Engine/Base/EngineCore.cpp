@@ -206,6 +206,7 @@ void EngineCore::PostDraw() {
 
 uint32_t EngineCore::LoadSoundData(const std::string& filePath, const std::string& fileName) {
 	audioResourceManager_.LoadAudioResource(filePath, fileName);
+	audioSourceBinder_.CreateSourceVoice(fileName, audioResourceManager_.GetAudioDataHandle(fileName));
 	return audioResourceManager_.GetAudioDataHandle(fileName);
 }
 

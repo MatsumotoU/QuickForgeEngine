@@ -14,6 +14,13 @@ public:
 
 	void SetPlayerPos(const Vector2& pos) { playerPos_ = pos; }
 
+	void SetAiWeight(float life, float attack, float uniqe) {
+		aiWeight_.life = life;
+		aiWeight_.attack = attack;
+		aiWeight_.uniqe = uniqe;
+	}
+	void SetAiLevel(uint32_t level) { aiLevel_ = level; }
+
 private:
 	void Shot(Vector2& dir);
 	void InitEvaluationValue();
@@ -53,4 +60,6 @@ private:
 	int maxSelect_;
 
 	bool isSelectedDir_;
+
+	float timer_;
 };

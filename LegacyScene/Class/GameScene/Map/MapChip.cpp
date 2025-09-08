@@ -1,28 +1,77 @@
 #include "MapChip.h"
 
 void MapChip::Initialize(EngineCore* engineCore, Camera* camera) {
+	camera_ = camera;
 	for (uint32_t y = 0; y < kMapHeight; y++) {
 		for (uint32_t x = 0; x < kMapWidth; x++) {
 			blocks_[x + y * kMapWidth] = std::make_unique<Block>();
-			blocks_[x + y * kMapWidth]->Initialize(engineCore, camera,BlockType::Dirt);
-			blocks_[x + y * kMapWidth]->GetTransform().translate.x = x * kBlockSize;
-			blocks_[x + y * kMapWidth]->GetTransform().translate.y = 0.0f;
-			blocks_[x + y * kMapWidth]->GetTransform().translate.z = y * kBlockSize;
+			blocks_[x + y * kMapWidth]->Initialize(engineCore, camera,BlockType::None);
+			blocks_[x + y * kMapWidth]->transform_.translate.x = x * kBlockSize;
+			blocks_[x + y * kMapWidth]->transform_.translate.y = 0.0f;
+			blocks_[x + y * kMapWidth]->transform_.translate.z = y * kBlockSize;
 		}
 	}
 	blocks_[0]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
+	uint32_t totalParticles = kMapWidth * kMapHeight;
+	dirtBlock_.Initialize(engineCore, totalParticles);
+	grassBlock_.Initialize(engineCore, totalParticles);
+	stoneBlock_.Initialize(engineCore, totalParticles);
+
+	dirtBlock_.LoadModel("Resources/Model/blocks/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
+	grassBlock_.LoadModel("Resources/Model/blocks/grass", "grass.obj", COORDINATESYSTEM_HAND_LEFT);
+	stoneBlock_.LoadModel("Resources/Model/blocks/stone", "stone.obj", COORDINATESYSTEM_HAND_LEFT);
+
+	dirtBlockTransforms_.resize(totalParticles);
+	dirtBlockColors_.resize(totalParticles, { 1.0f,1.0f,1.0f,1.0f });
+	grassBlockTransforms_.resize(totalParticles);
+	grassBlockColors_.resize(totalParticles, { 1.0f,1.0f,1.0f,1.0f });
+	stoneBlockTransforms_.resize(totalParticles);
+	stoneBlockColors_.resize(totalParticles, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 void MapChip::Update() {
+	ResetAllBlock();
+
+	int index = 0;
 	for (auto& block : blocks_) {
+		if (!block->GetIsDraw()) {
+			index++;
+			continue;
+		}
+
+		switch (block->GetType())
+		{
+		case BlockType::Dirt:
+			dirtBlockTransforms_[index] = block->transform_;
+			dirtBlockColors_[index] = block->color_;
+			break;
+		case BlockType::Grass:
+			grassBlockTransforms_[index] = block->transform_;
+			grassBlockColors_[index] = block->color_;
+			break;
+		case BlockType::Stone:
+			stoneBlockTransforms_[index] = block->transform_;
+			stoneBlockColors_[index] = block->color_;
+			break;
+		default:
+			break;
+		}
 		block->Update();
+
+		index++;
 	}
+
+	dirtBlock_.Update(&dirtBlockTransforms_);
+	grassBlock_.Update(&grassBlockTransforms_);
+	stoneBlock_.Update(&stoneBlockTransforms_);
 }
 
 void MapChip::Draw() {
-	for (auto& block : blocks_) {
-		block->Draw();
-	}
+	dirtBlock_.Draw(&dirtBlockColors_, camera_);
+	grassBlock_.Draw(&grassBlockColors_, camera_);
+	stoneBlock_.Draw(&stoneBlockColors_, camera_);
+
 }
 
 void MapChip::SetMapPosition(const Vector3& position) {
@@ -69,5 +118,17 @@ void MapChip::SetChipColor(uint32_t x, uint32_t y, const Vector4& color) {
 void MapChip::ResetChipColor() {
 	for (auto& block : blocks_) {
 		block->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+}
+
+void MapChip::ResetAllBlock() {
+	for (Transform& transform : dirtBlockTransforms_) {
+		transform.translate.y = 1000.0f;
+	}
+	for (Transform& transform : grassBlockTransforms_) {
+		transform.translate.y = 1000.0f;
+	}
+	for (Transform& transform : stoneBlockTransforms_) {
+		transform.translate.y = 1000.0f;
 	}
 }

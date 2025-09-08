@@ -3,6 +3,7 @@
 #include "TitleScene.h"
 #include "StageSelectScene.h"
 #include "Class/Fade.h"
+#include "Utility/SimpleJson.h"
 
 class SceneManager {
 public:
@@ -21,4 +22,5 @@ private:
 
 private:
 	float value_;
+	nlohmann::json json_;
 };

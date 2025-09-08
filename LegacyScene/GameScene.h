@@ -12,12 +12,17 @@
 #include "Class/GameScene/Enemy.h"
 
 #include "Class/GameScene/MainMenu.h"
+#include "Class/GameScene/ResultUI.h"
+#include "Class/GameScene/TurnText.h"
+
+#include "Class/TitleScene/TitleSkyDome.h"
+#include "Class/GameScene/ParticleManager.h"
 
 #include "Math/Vector/IntVector2.h"
 
 class GameScene : public IScene{
 public:
-	GameScene(EngineCore* engineCore);
+	GameScene(EngineCore* engineCore, nlohmann::json* data);
 	~GameScene()override;
 
 public:
@@ -51,6 +56,8 @@ private:
 
 	bool isOpenMenu_;
 	MainMenu mainMenu_;
+	ResultUI resultUI_;
+	TurnText turnText_;
 
 	MapChip floorChip_;
 	MapChip wallChip_;
@@ -61,6 +68,9 @@ private:
 	Player player_;
 	Enemy enemy_;
 	bool isEndGame_;
+	float endGameTimer_;
+
+	float timer_;
 
 	std::vector<std::vector<uint32_t>> wallMap_;
 	std::vector<std::vector<uint32_t>> floorMap_;
@@ -68,6 +78,11 @@ private:
 
 	std::string stageName_;
 	IScene* nextScene_;
+
+	TitleSkyDome skyDome_;
+
+	uint32_t bgmHandle_;
+	ParticleManager particleManager_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;

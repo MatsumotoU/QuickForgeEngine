@@ -4,6 +4,7 @@
 static inline const float kBlockSize = 1.0f;
 
 enum class BlockType {
+	None,
 	Dirt,
 	Grass,
 	Stone,
@@ -16,24 +17,24 @@ public:
 
 	void Initialize(EngineCore* engineCore, Camera* camera,BlockType type);
 	void Update();
-	void Draw();
 
 	void BuildUpSpawn();
 
-	Transform& GetTransform();
+	bool GetIsDraw() const { return isDraw_; }
+	const BlockType& GetType() const;
 	void SetIsDraw(bool isDraw);
 	void SetColor(const Vector4& color);
 	void SetType(BlockType type);
 	void SetTransform(const Transform& transform);
+
+	Transform transform_;
+	Vector4 color_;
 
 private:
 	EngineCore* engineCore_;
 	Camera* camera_;
 
 	bool isDraw_;
-	std::unique_ptr<Model> dirtModel_;
-	std::unique_ptr<Model> grassModel_;
-	std::unique_ptr<Model> StoneModel_;
 
 	BlockType type_;
 };

@@ -1,13 +1,14 @@
 #include "GameScene.h"
 #include "TitleScene.h"
+#include "StageSelectScene.h"
 
 #include "Class/GameScene/Collition/MapChipCollider.h"
 #include "Class/GameScene/Collition/MapReflection.h"
 
-
 #include "Utility/MyEasing.h"
 
-GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
+GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_(engineCore) {
+	sceneData_ = data;
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
 
@@ -25,23 +26,66 @@ GameScene::GameScene(EngineCore* engineCore) :debugCamera_(engineCore) {
 
 	sceneID_ = 1;
 
-	wallMap_ = MapChipLoader::Load("Resources/Map/Stage1_wall.csv");
-	floorMap_ = MapChipLoader::Load("Resources/Map/Stage1_floor.csv");
-
 	buildMapChipIndex_.clear();
 
 	nextScene_ = nullptr;
 
-	stageName_ = "Stage1";
+	// ステージ名の取得
+	if (sceneData_->contains("stage")) {
+		int stage = sceneData_->at("stage").get<int>();
+		if (stage + 1 < 1) {
+			stage = 1;
+		} else if (stage + 1 > 8) {
+			stage = 8;
+		}
+		stageName_ = "Stage" + std::to_string(stage+1);
 
+	} else {
+		stageName_ = "Stage1";
+	}
+
+	std::string wallFilePath = "Resources/Map/" + stageName_ + "_wall.csv";
+	std::string floorFilePath = "Resources/Map/" + stageName_ + "_floor.csv";
+	wallMap_ = MapChipLoader::Load(wallFilePath);
+	floorMap_ = MapChipLoader::Load(floorFilePath);
+
+	// AIレベルの取得
+	if (sceneData_->contains("AILevel")) {
+		enemy_.SetAiLevel((*sceneData_)["AILevel"].get<uint32_t>());
+	} else {
+		uint32_t stageValue = 1;
+		if (sceneData_->contains("stage")) {
+			stageValue = (*sceneData_)["stage"].get<uint32_t>();
+		}
+		(*sceneData_)["AILevel"] = 10 * stageValue;
+		enemy_.SetAiLevel(10 * stageValue);
+	}
+
+	if (sceneData_->contains("AILifeWeight")) {
+		enemy_.SetAiWeight((*sceneData_)["AILifeWeight"].get<float>(), (*sceneData_)["AIAttackWeight"].get<float>(), (*sceneData_)["AIUniqeWeight"].get<float>());
+
+	} else {
+		(*sceneData_)["AILifeWeight"] = 1.0f;
+		(*sceneData_)["AIAttackWeight"] = 0.0f;
+		(*sceneData_)["AIUniqeWeight"] = 0.0f;
+		enemy_.SetAiWeight(1.0f, 0.0f, 0.0f);
+	}
+
+	timer_ = 0.0f;
 	cameraShakeTimer_ = 0.0f;
+
+	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/BGM/","GameSceneBGM.mp3");
+	engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "GameSceneBGM.mp3", true);
 }
 
 GameScene::~GameScene() {
 	engineCore_->GetGraphRenderer()->DeleteCamera(&camera_);
+	engineCore_->GetAudioPlayer()->StopAudio("GameSceneBGM.mp3");
 }
 
 void GameScene::Initialize() {
+	timer_ = 0.0f;
+
 	camera_.Initialize(engineCore_->GetWinApp());
 	isRequestedExit_ = false;
 	collisionManager_.Initalize();
@@ -62,13 +106,29 @@ void GameScene::Initialize() {
 	enemy_.GetTransform().translate.z += 4.0f;
 
 	mainMenu_.Initialize(engineCore_, &camera_);
+	resultUI_.Initialize(engineCore_, &camera_);
+	turnText_.Initialize(engineCore_, &camera_);
 
 	isPlayerTurn_ = true;
 	isEndGame_ = false;
 	isOpenMenu_ = false;
+
+	endGameTimer_ = 0.0f;
+
+	skyDome_.Initialize(engineCore_, &camera_);
+
+	particleManager_.Initialize(engineCore_, &camera_);
 }
 
 void GameScene::Update() {
+	particleManager_.Update();
+	skyDome_.Update();
+
+	timer_ += engineCore_->GetDeltaTime();
+	resultUI_.Update();
+	turnText_.Update();
+	turnText_.SetIsHidden(isEndGame_);
+
 	if (cameraShakeTimer_ > 0.0f) {
 		camera_.transform_.translate.x = 4.0f + sinf(cameraShakeTimer_ * 10.0f) * (cameraShakeTimer_ * 0.5f);
 		cameraShakeTimer_ -= engineCore_->GetDeltaTime();
@@ -90,8 +150,54 @@ void GameScene::Update() {
 #endif // _DEBUG
 
 	// ゲーム終了チェック
-	CheckEndGame();
 	if (isEndGame_) {
+		if (endGameTimer_ > 0.0f) {
+			endGameTimer_ -= engineCore_->GetDeltaTime();
+			// 死亡演出スキップ
+			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
+				endGameTimer_ = 0.0f;
+			}	
+			CheckEndGame();
+
+		} else {
+			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, 4.0f, 0.1f);
+			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -4.8f, 0.1f);
+			MyEasing::SimpleEaseIn(&camera_.transform_.rotate.x, 0.0f, 0.1f);
+			MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 3.14f, 0.1f);
+
+			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
+				if (resultUI_.GetSelectedTop()) {
+					if (player_.GetIsAlive()) {
+						std::string nextStageName;
+						if (stageName_ == "Stage1") {
+							nextStageName = "Stage2";
+						} else if (stageName_ == "Stage2") {
+							nextStageName = "Stage3";
+						} else if (stageName_ == "Stage3") {
+							nextStageName = "Stage4";
+						} else if (stageName_ == "Stage4") {
+							nextStageName = "Stage5";
+						} else if (stageName_ == "Stage5") {
+							nextStageName = "Stage6";
+						} else if (stageName_ == "Stage6") {
+							nextStageName = "Stage7";
+						} else if (stageName_ == "Stage7") {
+							nextStageName = "Stage8";
+						} else {
+							nextStageName = "Stage1";
+						}
+						stageName_ = nextStageName;
+					} 
+					ResetGame(stageName_);
+					
+				} else {
+					isRequestedExit_ = true;
+				}
+			}
+		}
+
+		player_.SetAlpha(1.0f);
+		enemy_.SetAlpha(1.0f);
 		return;
 	}
 
@@ -109,9 +215,11 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	particleManager_.Draw();
 #ifdef _DEBUG
 	debugCamera_.DrawImGui();
 #endif // _DEBUG
+	skyDome_.Draw();
 
 	floorChip_.Draw();
 	wallChip_.Draw();
@@ -119,16 +227,24 @@ void GameScene::Draw() {
 	player_.Draw();
 	enemy_.Draw();
 
-	mainMenu_.Draw();
+	if (isOpenMenu_) {
+		mainMenu_.Draw();
+	}
+
+	
+	if (isEndGame_) {
+		resultUI_.Draw();
+	}
+	turnText_.Draw();
 
 	predictionLine_.Draw(engineCore_);
-	landingPoint_.Draw(engineCore_);
+	//landingPoint_.Draw(engineCore_);
 }
 
 
 IScene* GameScene::GetNextScene() {
 	if (nextScene_ == nullptr) {
-		return new TitleScene(engineCore_);
+		return new StageSelectScene(engineCore_,sceneData_);
 	}
 	return nextScene_;
 }
@@ -174,17 +290,24 @@ void GameScene::MainGameUpdate() {
 		if (player_.GetIsEndTurn()) {
 			isPlayerTurn_ = false;
 			enemy_.GetIsCanMove() = true;
-			player_.SetAlpha(0.5f);
-			enemy_.SetAlpha(1.0f);
+
+			turnText_.ChangeTurn(isPlayerTurn_);
 		}
+
+		enemy_.SetAlpha(0.2f + sinf(timer_) * 0.1f);
+		player_.SetAlpha(1.0f);
+
 	} else {
 		PredictionLineUpdate(enemy_);
 		if (enemy_.GetIsEndTurn()) {
 			isPlayerTurn_ = true;
 			player_.GetIsCanMove() = true;
-			player_.SetAlpha(1.0f);
-			enemy_.SetAlpha(0.5f);
+			
+			turnText_.ChangeTurn(isPlayerTurn_);
 		}
+
+		enemy_.SetAlpha(1.0f);
+		player_.SetAlpha(0.2f + sinf(timer_) * 0.1f);
 	}
 }
 void GameScene::MenuUpdate() {
@@ -225,6 +348,7 @@ void GameScene::ResetGame(const std::string& stageName) {
 	camera_.transform_.translate = { 4.0f,19.0f,-4.8f };
 	camera_.transform_.rotate.x = 1.14f;
 	engineCore_->GetPostprocess()->grayScaleOffset_ = 0.0f;
+	turnText_.ChangeTurn(isPlayerTurn_);
 }
 void GameScene::CameraUpdate() {
 #ifdef _DEBUG
@@ -350,7 +474,12 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 			gamePlayer.GetTransform().translate.z += reflectDir.y * 0.1f;
 
 			if (gamePlayer.GetIsMoving()) {
-				wallMap_[nearestY][nearestX] = 0;
+				if (wallMap_[nearestY][nearestX] == 3) {
+					wallMap_[nearestY][nearestX] = 1;
+				} else {
+					wallMap_[nearestY][nearestX] = 0;
+				}
+
 			}
 		} else {
 			reflectedThisFrame = false;
@@ -390,7 +519,7 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 		}
 		for (const auto& index : buildMapChipIndex_) {
 			if (wallMap_[index.y][index.x] == 0) {
-				wallMap_[index.y][index.x] = 1;
+				wallMap_[index.y][index.x] = floorMap_[index.y][index.x];
 			}
 		}
 		buildMapChipIndex_.clear();
@@ -458,12 +587,20 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 		}
 		gamePlayer.SetGrounded(false);
 
-		if (cameraShakeTimer_ < 0.5f) {
-			cameraShakeTimer_ += 0.5f;
+		// 床があれば揺らす
+		if (mapChipPos.x >= 0 && mapChipPos.x < static_cast<int>(wallMap_[0].size()) &&
+			mapChipPos.y >= 0 && mapChipPos.y < static_cast<int>(wallMap_.size())) {
+			if (cameraShakeTimer_ < 0.5f) {
+				cameraShakeTimer_ += 0.5f;
+			}
 		}
 	}
 }
 void GameScene::AliveCheck(GamePlayer& gamePlayer) {
+	if (gamePlayer.GetIsJumping()) {
+		return;
+	}
+
 	bool isCollided = false;
 
 	Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
@@ -483,20 +620,29 @@ void GameScene::AliveCheck(GamePlayer& gamePlayer) {
 	if (isCollided == false) {
 		isEndGame_ = true;
 		gamePlayer.SetAlive(false);
+		endGameTimer_ = 1.5f;
 	}
 }
 void GameScene::CheckEndGame() {
 	// ゲーム終了処理
 	if (isEndGame_) {
 		if (!enemy_.GetIsAlive()) {
+			enemy_.DeathAnimation();
+
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, enemy_.GetTransform().translate.x, 0.1f);
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -7.8f + enemy_.GetTransform().translate.z, 0.1f);
+
+			resultUI_.isCleard_ = true;
+
 		} else if (!player_.GetIsAlive()) {
+			player_.DeathAnimation();
+
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, player_.GetTransform().translate.x, 0.1f);
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -7.8f + player_.GetTransform().translate.z, 0.1f);
 
 			MyEasing::SimpleEaseIn(&engineCore_->GetPostprocess()->grayScaleOffset_, 1.0f, 0.01f);
 
+			resultUI_.isCleard_ = false;
 		}
 
 		return;

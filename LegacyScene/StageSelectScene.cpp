@@ -2,14 +2,19 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 #include "Class/StageSelectScene/Object/Triangle.h"
+#include "Class/StageSelectScene/Object/StageSelectBlocks.h"
+#include "Class/StageSelectScene/Object/StageSelectSkydome.h"
 #include "Class/StageSelectScene/Object/StageObject.h"
 #include "Class/StageSelectScene/System/CameraController.h"
 #include "Class/StageSelectScene/Phase/StageSelectScenePhase.h"
+#include "../Engine/Particle/Particle.h"
 
-StageSelectScene::StageSelectScene(EngineCore *engineCore) : debugCamera_(engineCore) {
+StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json* data) : debugCamera_(engineCore) {
 	engineCore_ = engineCore;
-	input_ = engineCore_->GetInputManager();
+	directInput_ = engineCore_->GetInputManager();
+	xInput_ = engineCore_->GetXInputController();
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
+	sceneData_ = data;
 }
 
 StageSelectScene::~StageSelectScene() {
@@ -31,6 +36,15 @@ void StageSelectScene::Initialize() {
 	// カメラの初期化
 	camera_.Initialize(engineCore_->GetWinApp());
 
+	// 天球モデルの初期化
+	skydomeModel_ = std::make_unique<Model>(engineCore_, &camera_);
+	skydomeModel_->LoadModel("Resources/Model/skydome", "skydome.obj", COORDINATESYSTEM_HAND_LEFT);
+
+	// ブロックモデルの初期化
+	blockParticle_ = std::make_unique<Particle>();
+	blockParticle_->Initialize(engineCore_, 64);
+	blockParticle_->LoadModel("Resources/Model/blocks/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
+
 	// 三角錐モデルの初期化
 	for(uint32_t i = 0; i < triangleModels_.size(); ++i) {
 		triangleModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
@@ -44,10 +58,18 @@ void StageSelectScene::Initialize() {
 		stageModels_[i]->LoadModel("Resources", std::to_string(i) + ".obj", COORDINATESYSTEM_HAND_LEFT);
 	}
 
+	// 天球の初期化
+	skydome_ = std::make_unique<StageSelectSkydome>();
+	skydome_->Initialize(skydomeModel_.get());
+
+	// ブロックの初期化
+	blocks_ = std::make_unique<BaseStageSelectBlocks>(blockParticle_.get(), &camera_);
+	blocks_->Initialize();
+
 	// 三角錐の初期化
 	for(uint32_t i = 0; i < triangles_.size(); ++i) {
 		triangles_[i] = std::make_unique<Triangle>();
-		triangles_[i]->Initialize(triangleModels_[i].get(), input_, static_cast<Triangle::Direction>(i));
+		triangles_[i]->Initialize(triangleModels_[i].get(), directInput_, xInput_, static_cast<Triangle::Direction>(i));
 	}
 
 	// ステージオブジェクトの初期化
@@ -60,10 +82,10 @@ void StageSelectScene::Initialize() {
 
 	// カメラコントローラーの初期化
 	cameraController_ = std::make_unique<CameraController>();
-	cameraController_->Initialize(engineCore_, &camera_, stageModels_[currentStage_]->GetWorldPosition());
+	cameraController_->Initialize(&camera_, stageModels_[currentStage_]->GetWorldPosition());
 
 	// 現在のフェーズの初期化
-	currentPhase_ = new StageSelectScenePhaseIdle(this, Triangle::Direction::kLeft);
+	currentPhase_ = new StageSelectScenePhaseIdle(this);
 	currentPhase_->Initialize();
 }
 
@@ -72,17 +94,17 @@ void StageSelectScene::Update() {
 	frameCount_++;
 
 	// シーン切り替え
-	if (input_->keyboard_.GetTrigger(DIK_SPACE)) {
+	if (directInput_->keyboard_.GetTrigger(DIK_SPACE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToGame;
-	} else if (input_->keyboard_.GetTrigger(DIK_ESCAPE)) {
+	} else if (directInput_->keyboard_.GetTrigger(DIK_ESCAPE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_B, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToTitle;
 	}
 
 #ifdef _DEBUG
 	// デバッグカメラの切り替え
-	if (input_->keyboard_.GetTrigger(DIK_P)) {
+	if (directInput_->keyboard_.GetTrigger(DIK_P)) {
 		isActiveDebugCamera_ = !isActiveDebugCamera_;
 	}
 
@@ -90,8 +112,10 @@ void StageSelectScene::Update() {
 	CameraUpdate();
 
 	ImGui::Text("CurrentStage: %d", currentStage_);
-
 #endif // _DEBUG
+
+	// 天球の更新
+	skydome_->Update();
 
 	// 現在のフェーズの更新
 	currentPhase_->Update();
@@ -106,6 +130,9 @@ void StageSelectScene::Draw() {
 	debugCamera_.DrawImGui();
 #endif // _DEBUG
 
+	// 天球の描画
+	skydome_->Draw();
+
 	// 三角錐の描画
 	for (auto &triangle : triangles_) {
 		triangle->Draw();
@@ -115,17 +142,22 @@ void StageSelectScene::Draw() {
 	for (auto &stageObject : stageObjects_) {
 		stageObject->Draw();
 	}
+
+	// ブロックの描画
+	blocks_->Draw();
 }
 
 IScene *StageSelectScene::GetNextScene() {
+	(*sceneData_)["stage"] = currentStage_;
+
 	switch (transitionState_) {
 		case StageSelectScene::None:
 			break;
 		case StageSelectScene::ToGame:
-			return new GameScene(engineCore_);
+			return new GameScene(engineCore_,sceneData_);
 			break;
 		case StageSelectScene::ToTitle:
-			return new TitleScene(engineCore_);
+			return new TitleScene(engineCore_,sceneData_);
 			break;
 		default:
 			break;

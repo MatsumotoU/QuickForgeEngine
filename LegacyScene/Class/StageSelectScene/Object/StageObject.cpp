@@ -28,7 +28,7 @@ void StageObject::Initialize(Model *model, uint32_t stageNumber) {
 void StageObject::Update() {
 	// アニメーションの更新
 	model_->transform_.translate.y = std::sin(theta_) / 16.0f;
-	theta_ += std::numbers::pi_v<float> / 120.0f;
+	theta_ += std::numbers::pi_v<float> * 2.0f / (60.0f * rotateTime);
 	theta_ = std::fmodf(theta_, 2.0f * std::numbers::pi_v<float>);
 
 	// モデルの更新
