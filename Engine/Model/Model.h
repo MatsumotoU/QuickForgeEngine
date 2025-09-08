@@ -63,6 +63,7 @@ public:
 	void SetBlendmode(BlendMode mode);
 	void SetColor(const Vector4& color);
 	void SetDirectionalLightDir(const Vector3& dir);
+	void SetDirectionalLightIntensity(float intensity);
 	void SetViewState(ViewState state);
 	void SetEnableShadow(bool enable);
 

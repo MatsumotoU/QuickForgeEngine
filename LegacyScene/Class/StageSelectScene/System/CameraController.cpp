@@ -2,11 +2,7 @@
 #include "../Engine/Model/Model.h"
 #include <numbers>
 
-void CameraController::Initialize(EngineCore *engineCore, Camera *camera, const Vector3 &targetPosition) {
-	// エンジンの中核機能を設定
-	assert(engineCore);
-	engineCore_ = engineCore;
-
+void CameraController::Initialize(Camera *camera, const Vector3 &targetPosition) {
 	// カメラを設定
 	assert(camera);
 	camera_ = camera;
@@ -38,10 +34,6 @@ void CameraController::Update() {
 
 	// カメラの行列を更新
 	camera_->Update();
-
-#ifdef _DEBUG
-	ImGui::Text("lerpTimer: %.2f", lerpTimer_);
-#endif // DEBUG
 }
 
 void CameraController::Start() {

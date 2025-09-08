@@ -1,6 +1,5 @@
 #include "Triangle.h"
 #include "../Engine/Model/Model.h"
-#include "../Engine/Input/DirectInput/DirectInputManager.h"
 #include "../Engine/Utility/MyEasing.h"
 #include "../State/TriangleState.h"
 #include <numbers>
@@ -9,14 +8,18 @@ Triangle::~Triangle() {
 	delete currentState_;
 }
 
-void Triangle::Initialize(Model *model, DirectInputManager *input, Direction direction) {
+void Triangle::Initialize(Model *model, DirectInputManager *directInput, XInputController *xInput, Direction direction) {
 	// モデルを設定
 	assert(model);
 	model_ = model;
 
-	// 入力を設定
-	assert(input);
-	input_ = input;
+	// DirectInputを設定
+	assert(directInput);
+	directInput_ = directInput;
+
+	// XInputを設定
+	assert(xInput);
+	xInput_ = xInput;
 
 	// 方向を設定
 	direction_ = direction;
@@ -45,12 +48,12 @@ void Triangle::Initialize(Model *model, DirectInputManager *input, Direction dir
 void Triangle::Update() {
 	// Y回転角テーブル
 	std::array<float, 2> destinationRotationYTable = {
-		-0.02f,	// kLeft
-		0.02f	// kRight
+		-std::numbers::pi_v<float> * 2.0f,	// kLeft
+		std::numbers::pi_v<float> * 2.0f	// kRight
 	};
 
 	// Y回転角を更新
-	model_->transform_.rotate.y += destinationRotationYTable[static_cast<uint32_t>(direction_)];
+	model_->transform_.rotate.y += destinationRotationYTable[static_cast<uint32_t>(direction_)] / (60.0f * rotateTime);
 
 	// モデルを更新
 	model_->Update();

@@ -4,14 +4,16 @@
 
 class Model;
 class DirectInputManager;
+class XInputController;
 class BaseTriangleState;
 
 /// @brief 三角錐
 class Triangle {
 public:
-	static inline constexpr float kEaseDuration = 20.0f;			// 補間にかける時間(frm)
+	static inline constexpr float kEaseDuration = 10.0f;			// 補間にかける時間(frm)
 	static inline constexpr Vector3 smallScale{ 0.1f, 0.1f, 0.1f };	// 縮小サイズ
 	static inline constexpr Vector3 largeScale{ 1.0f, 1.0f, 1.0f };	// 拡大サイズ
+	static inline constexpr float rotateTime = 8.0f;				// 回転にかける時間(秒)
 
 	/// @brief 方向
 	enum Direction {
@@ -27,9 +29,10 @@ public:
 
 	/// @brief 初期化
 	/// @param model モデル
-	/// @param input 入力
+	/// @param directInput DirectInput
+	/// @param xInput XInput
 	/// @param direction 方向
-	void Initialize(Model *model, DirectInputManager *input, Direction direction);
+	void Initialize(Model *model, DirectInputManager *directInput, XInputController *xInput, Direction direction);
 
 	/// @brief 更新
 	void Update();
@@ -61,9 +64,13 @@ public:
 	/// @return アニメーションが終了したかどうか
 	bool IsFinished() const { return isFinished_; }
 
-	/// @brief 入力を取得
-	/// @return 入力
-	DirectInputManager *GetInput() const { return input_; }
+	/// @brief DirectInputを取得
+	/// @return DirectInput
+	DirectInputManager *GetDirectInput() const { return directInput_; }
+
+	/// @brief XInputを取得
+	/// @return XInput
+	XInputController *GetXInput() const { return xInput_; }
 
 	/// @brief アニメーション終了フラグを設定
 	/// @param isFinished アニメーション終了フラグ
@@ -77,7 +84,8 @@ public:
 
 private:
 	Model *model_ = nullptr;					// モデル
-	DirectInputManager *input_ = nullptr;		// 入力
+	DirectInputManager *directInput_ = nullptr;	// DirectInput
+	XInputController *xInput_ = nullptr;		// XInput
 	Direction direction_ = kLeft;				// 方向
 	Matrix4x4 parentWorldMatrix_{};				// 親のワールド行列
 	float easeTimer_ = 0.0f;					// 補間にかけた時間(frm)
