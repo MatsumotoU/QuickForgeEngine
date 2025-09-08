@@ -294,6 +294,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LegacyScene\Class\GameScene\ResultUI.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\TurnText.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\DiggingEffect.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\System\CameraController.cpp" />
     <ClCompile Include="Engine\Audio\Audio3D.cpp" />
@@ -424,6 +425,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\GameScene\ResultUI.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\TurnText.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\DiggingEffect.h" />
     <ClCompile Include="LegacyScene\StageSelectScene.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageObject.cpp" />

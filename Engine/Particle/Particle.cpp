@@ -36,6 +36,8 @@ void Particle::Initialize(EngineCore* engineCore, uint32_t totalParticles) {
 	engineCore_->GetSrvDescriptorHeap()->AssignHeap(wvp_.GetWVPResource(), srvDesc, instancingSrvHandles_.cpuHandle_);
 
 	pso_ = engineCore_->GetGraphicsCommon()->GetParticlePso(kBlendModeNormal);
+	worldMatrixes_.clear();
+	worldMatrixes_.resize(totalParticles_);
 }
 
 void Particle::LoadModel(const std::string& directoryPath, const std::string& filename, CoordinateSystem coordinateSystem) {
@@ -65,12 +67,17 @@ void Particle::LoadModel(const std::string& directoryPath, const std::string& fi
 	modelTextureHandle_ = engineCore_->GetTextureManager()->LoadTexture(mesh.material.textureFilePath);
 }
 
-void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* color, Camera* camera) {
-	for (uint32_t index = 0; index < transform->size(); index++) {
-		Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix((*transform)[index].scale, (*transform)[index].rotate, (*transform)[index].translate);
-		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrix, ViewState::CAMERA_VIEW_STATE_PERSPECTIVE);
-		wvp_.SetWorldMatrix(worldMatrix, index);
+void Particle::Update(std::vector<Transform>* transform) {
+	for (uint32_t index = 0; index < totalParticles_; index++) {
+		worldMatrixes_[index] = Matrix4x4::MakeAffineMatrix((*transform)[index].scale, (*transform)[index].rotate, (*transform)[index].translate);
+	}
+}
+
+void Particle::Draw(std::vector<Vector4>* color, Camera* camera) {
+	for (uint32_t index = 0; index < totalParticles_; index++) {
+		Matrix4x4 wvpMatrix = camera->MakeWorldViewProjectionMatrix(worldMatrixes_[index], ViewState::CAMERA_VIEW_STATE_PERSPECTIVE);
 		wvp_.SetWVPMatrix(wvpMatrix, index);
+		wvp_.SetWorldMatrix(worldMatrixes_[index], index);
 	}
 
 	// 単一メッシュ前提
@@ -82,7 +89,7 @@ void Particle::Draw(std::vector<Transform>* transform, std::vector<Vector4>* col
 	for (uint32_t index = 0; index < color->size(); index++) {
 		wvp_.particleData_[index].color = (*color)[index];
 	}
-	
+
 	DirectXCommon* dxCommon_ = engineCore_->GetDirectXCommon();
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 

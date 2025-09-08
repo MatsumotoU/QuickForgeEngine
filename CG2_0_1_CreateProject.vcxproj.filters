@@ -425,6 +425,7 @@
     <ClCompile Include="LegacyScene\Class\GameScene\ResultUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="LegacyScene\Class\GameScene\TurnText.cpp">
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageSelectSkydome.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -1015,10 +1016,14 @@
     <ClInclude Include="LegacyScene\Class\GameScene\ResultUI.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+
+    <ClInclude Include="LegacyScene\Class\GameScene\TurnText.h">
+
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageSelectSkydome.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageSelectBlocks.h">
+
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,6 +13,9 @@
 
 #include "Class/GameScene/MainMenu.h"
 #include "Class/GameScene/ResultUI.h"
+#include "Class/GameScene/TurnText.h"
+
+#include "Class/TitleScene/TitleSkyDome.h"
 
 #include "Math/Vector/IntVector2.h"
 
@@ -53,6 +56,7 @@ private:
 	bool isOpenMenu_;
 	MainMenu mainMenu_;
 	ResultUI resultUI_;
+	TurnText turnText_;
 
 	MapChip floorChip_;
 	MapChip wallChip_;
@@ -73,6 +77,10 @@ private:
 
 	std::string stageName_;
 	IScene* nextScene_;
+
+	TitleSkyDome skyDome_;
+
+	uint32_t bgmHandle_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;

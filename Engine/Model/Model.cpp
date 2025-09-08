@@ -241,3 +241,7 @@ void Model::SetDirectionalLightIntensity(float intensity) {
 void Model::SetViewState(ViewState state) {
 	viewState_ = state;
 }
+
+void Model::SetEnableShadow(bool enable) {
+	material_.GetData()->enableLighting = enable;
+}

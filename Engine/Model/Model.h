@@ -65,6 +65,7 @@ public:
 	void SetDirectionalLightDir(const Vector3& dir);
 	void SetDirectionalLightIntensity(float intensity);
 	void SetViewState(ViewState state);
+	void SetEnableShadow(bool enable);
 
 private:
 	EngineCore* engineCore_;

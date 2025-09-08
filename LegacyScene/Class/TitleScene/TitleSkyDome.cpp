@@ -16,7 +16,7 @@ void TitleSkyDome::Initialize(EngineCore* engineCore, Camera* camera) {
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources/Model/skydome", "skydome.obj", COORDINATESYSTEM_HAND_LEFT);
 	model_.get()->SetDirectionalLightDir(directionalLightDir_);
-	
+	model_->SetEnableShadow(false);
 }
 
 void TitleSkyDome::Update() {

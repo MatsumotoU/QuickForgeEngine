@@ -52,10 +52,12 @@ void Enemy::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	isSelectedDir_ = false;
 	selectAnimIndex_ = 0;
+	timer_ = 0.0f;
 }
 
 void Enemy::Update() {
 	float deltaTime = engineCore_->GetDeltaTime();
+	timer_ += deltaTime;
 
 	// moveDir_の方向にモデルを向かせる
 	if (moveDir_.Length() > 0.0f) {
@@ -63,6 +65,10 @@ void Enemy::Update() {
 	}
 
 	if (isCanMove_ && !isJumping_ && !isGrounded_) {
+		model_->transform_.scale.x = 1.0f + sinf(timer_) * 0.1f;
+		model_->transform_.scale.y = 1.0f + sinf(timer_) * 0.1f;
+		model_->transform_.scale.z = 1.0f + sinf(timer_) * 0.1f;
+
 		if (!isSelectedDir_) {
 			InitEvaluationValue();
 			LifeEvaluation();
@@ -101,10 +107,16 @@ void Enemy::Update() {
 				}
 			}
 		}
+	} else {
+		model_->transform_.scale.x = 1.0f;
+		model_->transform_.scale.y = 1.0f;
+		model_->transform_.scale.z = 1.0f;
 	}
 
 	// 動いてる最中の処理
 	if (isMoving_) {
+		MyEasing::SimpleEaseIn(&model_->transform_.translate.y, 0.0f, 0.3f);
+
 		if (moveTimer_ > 0.0f) {
 			model_->transform_.translate.x += moveDir_.x * shotPower_ * deltaTime;
 			model_->transform_.translate.z += moveDir_.y * shotPower_ * deltaTime;
@@ -112,6 +124,7 @@ void Enemy::Update() {
 		} else {
 			isMoving_ = false;
 			isReqestBuilding_ = true;
+			model_->transform_.translate.y = 1.0f;
 		}
 	}
 
@@ -124,7 +137,9 @@ void Enemy::Update() {
 	}
 
 	if (model_->transform_.translate.y <= 1.0f) {
-		model_->transform_.translate.y = 1.0f;
+		if (!isMoving_) {
+			model_->transform_.translate.y = 1.0f;
+		}
 		velocity_.y = 0.0f;
 
 		if (isJumping_) {
