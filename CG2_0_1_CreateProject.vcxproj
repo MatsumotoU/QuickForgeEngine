@@ -419,6 +419,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleSkyDome.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\SignBoard.cpp" />
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleUI.cpp" />
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageSelectSkydome.cpp" />
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageSelectBlocks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\GameScene\ResultUI.h" />
@@ -428,6 +430,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\Triangle.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Phase\StageSelectScenePhase.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\State\TriangleState.cpp" />
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageSelectSkydome.h" />
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageSelectBlocks.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\StageSelectScene\System\CameraController.h" />

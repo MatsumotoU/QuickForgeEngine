@@ -50,6 +50,8 @@ void StageSelectScenePhasePush::Initialize() {
 void StageSelectScenePhasePush::Update() {
 	stageSelectScene_->GetCurrentStageObject()->Update();
 
+	stageSelectScene_->GetTriangleModelByDirection()->SetColor(Vector4{ 1.0f, 1.0f, 0.0f, 1.0f });
+
 	stageSelectScene_->GetTriangleByDirection()->StateUpdate();
 
 	for (uint32_t i = 0; i < 2; ++i) {
@@ -66,6 +68,10 @@ void StageSelectScenePhasePush::Update() {
 }
 
 void StageSelectScenePhaseTransition::Initialize() {
+	for (uint32_t i = 0; i < 2; ++i) {
+		stageSelectScene_->GetTriangleModel(i)->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+
 	stageSelectScene_->GetCurrentStageObject()->Reset();
 	stageSelectScene_->GetCameraController()->Start();
 	stageSelectScene_->SetCameraTargetPosition();

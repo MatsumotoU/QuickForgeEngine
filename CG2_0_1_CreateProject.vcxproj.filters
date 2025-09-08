@@ -425,6 +425,12 @@
     <ClCompile Include="LegacyScene\Class\GameScene\ResultUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageSelectSkydome.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageSelectBlocks.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -1007,6 +1013,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="LegacyScene\Class\GameScene\ResultUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageSelectSkydome.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageSelectBlocks.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

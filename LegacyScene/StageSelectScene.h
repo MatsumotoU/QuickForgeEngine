@@ -3,8 +3,11 @@
 #include "IScene.h"
 #include "Class/StageSelectScene/Object/Triangle.h"
 
+class Particle;
+class StageSelectSkydome;
 class StageObject;
 class Triangle;
+class BaseStageSelectBlocks;
 class CameraController;
 class BaseStageSelectScenePhase;
 
@@ -91,6 +94,14 @@ public:
 	/// @return 現在のステージモデル
 	Model *GetCurrentStageModel() { return stageModels_[currentStage_].get(); }
 
+	/// @brief 三角錐のモデルを取得する
+	/// @return 三角錐のモデル
+	Model *GetTriangleModel(uint32_t index) { return triangleModels_[index].get(); }
+
+	/// @brief 方向に対応する三角錐のモデルを取得する
+	/// @return 方向に対応する三角錐のモデル
+	Model *GetTriangleModelByDirection() { return triangleModels_[static_cast<uint32_t>(direction_)].get(); }
+
 	/// @brief 三角錐を取得する
 	/// @param index インデックス
 	/// @return 三角錐
@@ -114,10 +125,14 @@ private:
 	DirectInputManager *directInput_ = nullptr;					// DirectInput
 	XInputController *xInput_ = nullptr;						// XInput
 	Camera camera_;												// カメラ
+	std::unique_ptr<Model> skydomeModel_;						// 天球モデル
 	std::array<std::unique_ptr<Model>, 2> triangleModels_;		// 三角錐モデル
 	std::vector<std::unique_ptr<Model>> stageModels_;			// ステージモデル
+	std::unique_ptr<Particle> blockParticle_;						// ブロックモデル
+	std::unique_ptr<StageSelectSkydome> skydome_;				// 天球
 	std::array<std::unique_ptr<Triangle>, 2> triangles_;		// 三角錐
 	std::vector<std::unique_ptr<StageObject>> stageObjects_;	// ステージオブジェクト
+	std::unique_ptr<BaseStageSelectBlocks> blocks_;				// ブロック
 	std::unique_ptr<CameraController> cameraController_;		// カメラコントローラー
 	uint32_t currentStage_ = 0;									// 現在のステージ
 	TransitionState transitionState_ = None;					// シーン遷移状態

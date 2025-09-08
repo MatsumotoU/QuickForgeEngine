@@ -2,16 +2,18 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 #include "Class/StageSelectScene/Object/Triangle.h"
+#include "Class/StageSelectScene/Object/StageSelectBlocks.h"
+#include "Class/StageSelectScene/Object/StageSelectSkydome.h"
 #include "Class/StageSelectScene/Object/StageObject.h"
 #include "Class/StageSelectScene/System/CameraController.h"
 #include "Class/StageSelectScene/Phase/StageSelectScenePhase.h"
+#include "../Engine/Particle/Particle.h"
 
 StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json* data) : debugCamera_(engineCore) {
 	engineCore_ = engineCore;
 	directInput_ = engineCore_->GetInputManager();
 	xInput_ = engineCore_->GetXInputController();
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
-
 	sceneData_ = data;
 }
 
@@ -34,6 +36,15 @@ void StageSelectScene::Initialize() {
 	// カメラの初期化
 	camera_.Initialize(engineCore_->GetWinApp());
 
+	// 天球モデルの初期化
+	skydomeModel_ = std::make_unique<Model>(engineCore_, &camera_);
+	skydomeModel_->LoadModel("Resources/Model/skydome", "skydome.obj", COORDINATESYSTEM_HAND_LEFT);
+
+	// ブロックモデルの初期化
+	blockParticle_ = std::make_unique<Particle>();
+	blockParticle_->Initialize(engineCore_, 64);
+	blockParticle_->LoadModel("Resources/Model/blocks/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
+
 	// 三角錐モデルの初期化
 	for(uint32_t i = 0; i < triangleModels_.size(); ++i) {
 		triangleModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
@@ -46,6 +57,14 @@ void StageSelectScene::Initialize() {
 		stageModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
 		stageModels_[i]->LoadModel("Resources", std::to_string(i) + ".obj", COORDINATESYSTEM_HAND_LEFT);
 	}
+
+	// 天球の初期化
+	skydome_ = std::make_unique<StageSelectSkydome>();
+	skydome_->Initialize(skydomeModel_.get());
+
+	// ブロックの初期化
+	blocks_ = std::make_unique<BaseStageSelectBlocks>(blockParticle_.get(), &camera_);
+	blocks_->Initialize();
 
 	// 三角錐の初期化
 	for(uint32_t i = 0; i < triangles_.size(); ++i) {
@@ -95,6 +114,9 @@ void StageSelectScene::Update() {
 	ImGui::Text("CurrentStage: %d", currentStage_);
 #endif // _DEBUG
 
+	// 天球の更新
+	skydome_->Update();
+
 	// 現在のフェーズの更新
 	currentPhase_->Update();
 }
@@ -108,6 +130,9 @@ void StageSelectScene::Draw() {
 	debugCamera_.DrawImGui();
 #endif // _DEBUG
 
+	// 天球の描画
+	skydome_->Draw();
+
 	// 三角錐の描画
 	for (auto &triangle : triangles_) {
 		triangle->Draw();
@@ -117,6 +142,9 @@ void StageSelectScene::Draw() {
 	for (auto &stageObject : stageObjects_) {
 		stageObject->Draw();
 	}
+
+	// ブロックの描画
+	blocks_->Draw();
 }
 
 IScene *StageSelectScene::GetNextScene() {

@@ -13,6 +13,7 @@ public:
 	static inline constexpr float kEaseDuration = 10.0f;			// 補間にかける時間(frm)
 	static inline constexpr Vector3 smallScale{ 0.1f, 0.1f, 0.1f };	// 縮小サイズ
 	static inline constexpr Vector3 largeScale{ 1.0f, 1.0f, 1.0f };	// 拡大サイズ
+	static inline constexpr float rotateTime = 8.0f;				// 回転にかける時間(秒)
 
 	/// @brief 方向
 	enum Direction {

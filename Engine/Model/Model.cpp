@@ -234,6 +234,10 @@ void Model::SetDirectionalLightDir(const Vector3& dir) {
 	directionalLight_.GetData()->direction = Vector3::Normalize(dir);
 }
 
+void Model::SetDirectionalLightIntensity(float intensity) {
+	directionalLight_.GetData()->intensity = intensity;
+}
+
 void Model::SetViewState(ViewState state) {
 	viewState_ = state;
 }
