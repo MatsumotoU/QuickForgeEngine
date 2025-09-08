@@ -16,5 +16,5 @@ void BaseStageSelectBlocks::Initialize() {
 }
 
 void BaseStageSelectBlocks::Draw() {
-	particle_->Draw(&transforms_, &colors_, camera_);
+	particle_->Draw(&colors_, camera_);
 }
