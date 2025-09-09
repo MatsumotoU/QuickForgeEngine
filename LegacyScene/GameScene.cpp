@@ -241,7 +241,7 @@ void GameScene::Draw() {
 	turnText_.Draw();
 
 	predictionLine_.Draw(engineCore_);
-	landingPoint_.Draw(engineCore_);
+	//landingPoint_.Draw(engineCore_);
 }
 
 
@@ -291,6 +291,7 @@ void GameScene::MainGameUpdate() {
 	if (isPlayerTurn_) {
 		PredictionLineUpdate(player_);
 		if (player_.GetIsEndTurn()) {
+			oldBuildMapChipIndex_.clear();
 			isPlayerTurn_ = false;
 			enemy_.GetIsCanMove() = true;
 
@@ -303,6 +304,7 @@ void GameScene::MainGameUpdate() {
 	} else {
 		PredictionLineUpdate(enemy_);
 		if (enemy_.GetIsEndTurn()) {
+			oldBuildMapChipIndex_.clear();
 			isPlayerTurn_ = true;
 			player_.GetIsCanMove() = true;
 			
@@ -383,56 +385,18 @@ void GameScene::PredictionLineUpdate(GamePlayer& gamePlayer) {
 				IntVector2 mapChipPos;
 				mapChipPos.x = static_cast<int>(std::round(point.x));
 				mapChipPos.y = static_cast<int>(std::round(point.y));
-				floorChip_.SetChipColor(mapChipPos.x, mapChipPos.y, { 0.3f, 1.0f, 0.3f, 1.0f });
+				
 				buildPoints.push_back({ static_cast<float>(mapChipPos.x), static_cast<float>(mapChipPos.y) });
 			}
-			// 最後のブロックだけ色を消す
-			const Vector2& lastPoint = linePoints.back();
-			IntVector2 lastMapChipPos;
-			lastMapChipPos.x = static_cast<int>(std::round(lastPoint.x));
-			lastMapChipPos.y = static_cast<int>(std::round(lastPoint.y));
-			floorChip_.SetChipColor(lastMapChipPos.x, lastMapChipPos.y, { 1.0f, 1.0f, 1.0f, 1.0f }); // デフォルト色（必要に応じて調整）
+			Vector2 lastPoint = buildPoints.back();
 			buildPoints.pop_back();
+			for (const auto& buildPoint : buildPoints) {
+				floorChip_.SetChipColor(static_cast<int>(buildPoint.x), static_cast<int>(buildPoint.y), { 0.0f, 1.0f, 0.0f, 1.0f });
+			}
 
 			// 着地点の予測表示
-			landingPoint_.Init();
-			Vector2 totalNormal(0.0f, 0.0f);
-			bool isCollided = false;
-			for (const auto& buildPoint : buildPoints) {
-				if (MapChipCollider::IsAABBCollision(lastPoint, 1.0f, 1.0f, buildPoint, kBlockSize, kBlockSize)) {
-					Vector2 blockCenter = buildPoint + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
-					Vector2 jumpDir = (lastPoint - blockCenter).Normalize();
-					totalNormal += jumpDir;
-					isCollided = true;
-				}
-			}
-
-			// 合成方向でジャンプ（ゼロベクトルの場合は上方向にジャンプ）
-			if (isCollided) {
-				Vector2 jumpDir;
-				if (totalNormal.Length() > 0.0f) {
-					jumpDir = totalNormal.Normalize();
-				} else {
-					jumpDir = Vector2(0.0f, 1.0f); // デフォルトで上方向
-				}
-				landingPoint_.Scan({ lastPoint.x ,1.0f,lastPoint.y }, jumpDir, floorMap_, 1.0f);
-
-				// 着地点の色を変える
-				if (!landingPoint_.GetLandingPoints().empty()) {
-					IntVector2 lastJampMapChipPos;
-					lastJampMapChipPos.x = static_cast<int>(std::round(landingPoint_.GetLandingPoints().back().x));
-					lastJampMapChipPos.y = static_cast<int>(std::round(landingPoint_.GetLandingPoints().back().z));
-					floorChip_.SetChipColor(lastJampMapChipPos.x, lastJampMapChipPos.y, { 1.0f, 1.0f, 0.0f, 1.0f });
-
-					IntVector2 firstJampMapChipPos;
-					firstJampMapChipPos.x = static_cast<int>(std::round(landingPoint_.GetLandingPoints()[0].x));
-					firstJampMapChipPos.y = static_cast<int>(std::round(landingPoint_.GetLandingPoints()[0].z));
-					floorChip_.SetChipColor(firstJampMapChipPos.x, firstJampMapChipPos.y, { 1.0f, 1.0f, 0.0f, 1.0f });
-
-				}
-			}
-
-			
+			/*landingPoint_.Init();
+			landingPoint_.Scan({ lastPoint.x ,1.0f,lastPoint.y }, oldBuildMapChipIndex_, floorMap_, 1.0f);*/
 		}
 	}
 }
@@ -543,7 +507,7 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 				oldBuildMapChipIndex_.push_back(index);
 
 				if (wallMap_[index.y][index.x] == 0) {
-					wallMap_[index.y][index.x] = 2;
+					wallMap_[index.y][index.x] = 4;
 				}
 			}
 		}

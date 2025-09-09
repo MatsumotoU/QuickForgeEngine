@@ -78,7 +78,7 @@ void EngineCore::Initialize(LPCWSTR windowName, HINSTANCE hInstance, LPSTR lpCmd
 	dxCommon_.Initialize(&winApp_);
 	// 各ディスクリプタヒープの作成
 	rtvDescriptorHeap_.Initialize(dxCommon_.GetDevice(), 4, false);
-	srvDescriptorHeap_.Initialize(dxCommon_.GetDevice(), 128, true);
+	srvDescriptorHeap_.Initialize(dxCommon_.GetDevice(), 1024, true);
 	// DirectXの画面リソースの初期化とRTV登録
 	dxCommon_.InitializeScreenResources(rtvDescriptorHeap_.GetRtvDescriptorHeap());
 

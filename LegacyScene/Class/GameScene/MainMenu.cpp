@@ -77,9 +77,9 @@ void MainMenu::Update() {
 
 	menuTextModel_->transform_.translate = transform_.translate;
 	returnSelectTextModel_->transform_.translate = transform_.translate;
-	returnSelectTextModel_->transform_.translate.y -= 3.0f;
+	returnSelectTextModel_->transform_.translate.y -= 5.0f;
 	resetGameTextModel_->transform_.translate = transform_.translate;
-	resetGameTextModel_->transform_.translate.y -= 5.0f;
+	resetGameTextModel_->transform_.translate.y -= 3.0f;
 
 	menuTextModel_->Update();
 	returnSelectTextModel_->Update();

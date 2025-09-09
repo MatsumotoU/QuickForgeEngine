@@ -13,7 +13,9 @@ void ResultUI::Initialize(EngineCore* engineCore, Camera* camera) {
 	toSelectTextModel_->LoadModel("Resources", "StageSelect.obj", COORDINATESYSTEM_HAND_RIGHT);
 	toNextStageTextModel_->LoadModel("Resources", "NextStage.obj", COORDINATESYSTEM_HAND_RIGHT);
 
-	transform_.translate = { 6.4f,21.0f,-23.0f };
+	niceTextModel_->SetColor({ 1.0f,0.5f,0.5f,1.0f });
+
+	transform_.translate = { 5.6f,21.0f,-23.0f };
 	transform_.rotate.y = -0.5f;
 
 	topOffset_ = 2.3f;
