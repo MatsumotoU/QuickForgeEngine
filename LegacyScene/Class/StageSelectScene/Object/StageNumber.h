@@ -3,11 +3,11 @@
 
 class Model;
 
-/// @brief ステージオブジェクト
+/// @brief ステージ番号
 class StageNumber {
 public:
 	static inline constexpr float kRotateTime = 4.0f;	// 回転にかける時間(秒)
-	static inline constexpr float kHeightOffset = 1.0f;	// 高さオフセット
+	static inline constexpr float kHeightOffset = 1.2f;	// 高さオフセット
 
 	/// @brief コンストラクタ
 	StageNumber() = default;

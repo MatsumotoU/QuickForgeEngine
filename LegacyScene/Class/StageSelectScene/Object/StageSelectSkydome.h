@@ -5,8 +5,6 @@ class Model;
 /// @brief ステージセレクトシーンの天球
 class StageSelectSkydome {
 public:
-	static inline constexpr float rotateTime = 16.0f; // 回転にかける時間(秒)
-
 	/// @brief コンストラクタ
 	StageSelectSkydome() = default;
 

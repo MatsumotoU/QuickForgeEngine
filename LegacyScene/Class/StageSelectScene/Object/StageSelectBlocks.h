@@ -1,9 +1,9 @@
 #pragma once
+#include "../Engine/Math/Transform.h"
 #include "../Engine/Math/Matrix/Matrix4x4.h"
 #include "../System/MapChipField.h"
 #include <vector>
 
-struct Transform;
 struct StageData;
 class Vector4;
 class Particle;
@@ -12,6 +12,8 @@ class Camera;
 /// @brief ステージ選択シーンのブロック
 class StageSelectBlocks {
 public:
+	static inline constexpr float kRotateTime = 16.0f;	// 回転にかける時間(秒)
+
 	/// @brief コンストラクタ
 	/// @param particle パーティクル
 	/// @param camera カメラ
@@ -39,10 +41,12 @@ public:
 	/// @param parentWorldMatrix 親のワールド行列
 	void SetParentWorldMatrix(const Matrix4x4 &parentWorldMatrix) { parentWorldMatrix_ = parentWorldMatrix; }
 
-protected:
+private:
 	std::vector<Transform> transforms_;	// ワールド変換データ
 	std::vector<Vector4> colors_;		// 色
 	Particle *particle_ = nullptr;		// パーティクル
 	Camera *camera_ = nullptr;			// カメラ
 	Matrix4x4 parentWorldMatrix_{};		// 親のワールド行列
+	Transform anchorTransform_{};		// 基準点のワールド変換データ
+	Matrix4x4 anchorWorldMatrix_{};		// 基準点のワールド行列
 };

@@ -86,12 +86,12 @@ public:
 
 	/// @brief 選択音を再生する
 	void PlaySelectSound() {
-		engineCore_->GetAudioPlayer()->PlayAudio(selectSoundHandle_, "セレクト音_4.mp3", false);
+		engineCore_->GetAudioPlayer()->PlayAudio(selectSoundHandle_, "TurnChange.mp3", false);
 	}
 
 	/// @brief 選択音を停止する
 	void StopSelectSound() {
-		engineCore_->GetAudioPlayer()->StopAudio("セレクト音_4.mp3");
+		engineCore_->GetAudioPlayer()->StopAudio("TurnChange.mp3");
 	}
 
 	/// @brief 現在のステージをインクリメントする
@@ -160,9 +160,10 @@ private:
 	DirectInputManager *directInput_ = nullptr;							// DirectInput
 	XInputController *xInput_ = nullptr;								// XInput
 	Camera camera_;														// カメラ
+	uint32_t bgmHandle_ = 0;											// BGMハンドル
 	uint32_t selectSoundHandle_ = 0;									// 選択音ハンドル
-	uint32_t systemSoundHandle_ = 0;									// システム音ハンドル
-	uint32_t systemDecisionSoundHandle_ = 0;							// システム決定音ハンドル
+	uint32_t toTitleSoundHandle_ = 0;									// タイトル遷移音ハンドル
+	uint32_t toGameSoundHandle_ = 0;									// ゲーム遷移音ハンドル
 	StageData stageData_;												// ステージデータ
 	std::unique_ptr<Model> skydomeModel_ = nullptr;						// 天球モデル
 	std::array<std::unique_ptr<Model>, 2> triangleModels_;				// 三角錐モデル
