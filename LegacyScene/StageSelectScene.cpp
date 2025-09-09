@@ -4,12 +4,14 @@
 #include "Class/StageSelectScene/Object/Triangle.h"
 #include "Class/StageSelectScene/Object/StageSelectBlocks.h"
 #include "Class/StageSelectScene/Object/StageSelectSkydome.h"
-#include "Class/StageSelectScene/Object/StageObject.h"
+#include "Class/StageSelectScene/Object/StageNumber.h"
 #include "Class/StageSelectScene/System/CameraController.h"
+#include "Class/StageSelectScene/System/MapChipField.h"
+#include "Class/StageSelectScene/System/StageSelectAnchor.h"
 #include "Class/StageSelectScene/Phase/StageSelectScenePhase.h"
 #include "../Engine/Particle/Particle.h"
 
-StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json* data) : debugCamera_(engineCore) {
+StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json *data) : debugCamera_(engineCore) {
 	engineCore_ = engineCore;
 	directInput_ = engineCore_->GetInputManager();
 	xInput_ = engineCore_->GetXInputController();
@@ -20,6 +22,9 @@ StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json* data)
 StageSelectScene::~StageSelectScene() {
 	delete currentPhase_;
 	engineCore_->GetGraphRenderer()->DeleteCamera(&camera_);
+	engineCore_->GetAudioPlayer()->StopAudio("システム決定音_7.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("システム音.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("セレクト音_4.mp3");
 }
 
 void StageSelectScene::Initialize() {
@@ -36,26 +41,55 @@ void StageSelectScene::Initialize() {
 	// カメラの初期化
 	camera_.Initialize(engineCore_->GetWinApp());
 
+	// 効果音の読み込み
+	selectSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/", "セレクト音_4.mp3");
+	systemSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/", "システム音.mp3");
+	systemDecisionSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/", "システム決定音_7.mp3");
+
+	// ステージデータの読み込み
+	stageData_.stageMapChipFields.resize(kNumMapType);
+	for (uint32_t i = 0; i < kNumMapType; ++i) {
+		stageData_.stageMapChipFields[i].resize(StageSelectScene::kNumStage);
+	}
+
+	for (uint32_t i = 0; i < StageSelectScene::kNumStage; ++i) {
+		std::string wallFilePath = "Resources/Map/Stage" + std::to_string(i + 1) + "_wall.csv";
+		std::string floorFilePath = "Resources/Map/Stage" + std::to_string(i + 1) + "_floor.csv";
+		stageData_.stageMapChipFields[kWall][i].LoadMapChipCsv(wallFilePath);
+		stageData_.stageMapChipFields[kFloor][i].LoadMapChipCsv(floorFilePath);
+	}
+
 	// 天球モデルの初期化
 	skydomeModel_ = std::make_unique<Model>(engineCore_, &camera_);
 	skydomeModel_->LoadModel("Resources/Model/skydome", "skydome.obj", COORDINATESYSTEM_HAND_LEFT);
 
-	// ブロックモデルの初期化
-	blockParticle_ = std::make_unique<Particle>();
-	blockParticle_->Initialize(engineCore_, 64);
-	blockParticle_->LoadModel("Resources/Model/blocks/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
+	// ブロックパーティクルの初期化
+	uint32_t size = MapChipField::kNumBlockHorizontal * MapChipField::kNumBlockVertical * StageSelectScene::kNumMapType;
+	for (uint32_t i = 0; i < blockParticles_.size(); ++i) {
+		blockParticles_[i] = std::make_unique<Particle>();
+		blockParticles_[i]->Initialize(engineCore_, size);
+	}
+	blockParticles_[static_cast<uint32_t>(MapChipType::kDirt) - 1]->LoadModel("Resources/Model/blocks/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
+	blockParticles_[static_cast<uint32_t>(MapChipType::kGrass) - 1]->LoadModel("Resources/Model/blocks/grass", "grass.obj", COORDINATESYSTEM_HAND_LEFT);
+	blockParticles_[static_cast<uint32_t>(MapChipType::kStone) - 1]->LoadModel("Resources/Model/blocks/stone", "stone.obj", COORDINATESYSTEM_HAND_LEFT);
 
 	// 三角錐モデルの初期化
-	for(uint32_t i = 0; i < triangleModels_.size(); ++i) {
+	for (uint32_t i = 0; i < triangleModels_.size(); ++i) {
 		triangleModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
 		triangleModels_[i]->LoadModel("Resources", "triangle.obj", COORDINATESYSTEM_HAND_LEFT);
 	}
 
 	// ステージモデルの初期化
-	stageModels_.resize(kNumStage);
-	for (uint32_t i = 0; i < stageModels_.size(); ++i) {
-		stageModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
-		stageModels_[i]->LoadModel("Resources", std::to_string(i) + ".obj", COORDINATESYSTEM_HAND_LEFT);
+	stageNumberModels_.resize(kNumStage);
+	for (uint32_t i = 0; i < stageNumberModels_.size(); ++i) {
+		stageNumberModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
+		stageNumberModels_[i]->LoadModel("Resources", std::to_string(i) + ".obj", COORDINATESYSTEM_HAND_LEFT);
+	}
+
+	// アンカーの初期化
+	for (uint32_t i = 0; i < anchor_.size(); ++i) {
+		anchor_[i] = std::make_unique<StageSelectAnchor>();
+		anchor_[i]->Initialize(i);
 	}
 
 	// 天球の初期化
@@ -63,26 +97,26 @@ void StageSelectScene::Initialize() {
 	skydome_->Initialize(skydomeModel_.get());
 
 	// ブロックの初期化
-	blocks_ = std::make_unique<BaseStageSelectBlocks>(blockParticle_.get(), &camera_);
-	blocks_->Initialize();
+	for (uint32_t i = 0; i < blocks_.size(); ++i) {
+		blocks_[i] = std::make_unique<StageSelectBlocks>(blockParticles_[i].get(), &camera_);
+		blocks_[i]->Initialize(stageData_, currentStage_, static_cast<MapChipType>(i + 1));
+	}
 
 	// 三角錐の初期化
-	for(uint32_t i = 0; i < triangles_.size(); ++i) {
+	for (uint32_t i = 0; i < triangles_.size(); ++i) {
 		triangles_[i] = std::make_unique<Triangle>();
 		triangles_[i]->Initialize(triangleModels_[i].get(), directInput_, xInput_, static_cast<Triangle::Direction>(i));
 	}
 
 	// ステージオブジェクトの初期化
-	stageObjects_.resize(kNumStage);
-	for (uint32_t i = 0; i < stageObjects_.size(); ++i) {
-		stageObjects_[i] = std::make_unique<StageObject>();
-		stageObjects_[i]->Initialize(stageModels_[i].get(), i);
-		stageObjects_[i]->Update();
+	for (uint32_t i = 0; i < stageNumbers_.size(); ++i) {
+		stageNumbers_[i] = std::make_unique<StageNumber>();
+		stageNumbers_[i]->Initialize(stageNumberModels_[i].get(), anchor_[i]->GetWorldMatrix());
 	}
 
 	// カメラコントローラーの初期化
 	cameraController_ = std::make_unique<CameraController>();
-	cameraController_->Initialize(&camera_, stageModels_[currentStage_]->GetWorldPosition());
+	cameraController_->Initialize(&camera_, anchor_[currentStage_]->GetWorldPosition());
 
 	// 現在のフェーズの初期化
 	currentPhase_ = new StageSelectScenePhaseIdle(this);
@@ -97,9 +131,11 @@ void StageSelectScene::Update() {
 	if (directInput_->keyboard_.GetTrigger(DIK_SPACE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToGame;
+		engineCore_->GetAudioPlayer()->PlayAudio(systemDecisionSoundHandle_, "システム決定音_7.mp3", false);
 	} else if (directInput_->keyboard_.GetTrigger(DIK_ESCAPE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_B, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToTitle;
+		engineCore_->GetAudioPlayer()->PlayAudio(systemSoundHandle_, "システム音.mp3", false);
 	}
 
 #ifdef _DEBUG
@@ -139,12 +175,14 @@ void StageSelectScene::Draw() {
 	}
 
 	// ステージオブジェクトの描画
-	for (auto &stageObject : stageObjects_) {
-		stageObject->Draw();
+	for (auto &stageNumber : stageNumbers_) {
+		stageNumber->Draw();
 	}
 
 	// ブロックの描画
-	blocks_->Draw();
+	for (auto &block : blocks_) {
+		block->Draw();
+	}
 }
 
 IScene *StageSelectScene::GetNextScene() {
@@ -154,10 +192,10 @@ IScene *StageSelectScene::GetNextScene() {
 		case StageSelectScene::None:
 			break;
 		case StageSelectScene::ToGame:
-			return new GameScene(engineCore_,sceneData_);
+			return new GameScene(engineCore_, sceneData_);
 			break;
 		case StageSelectScene::ToTitle:
-			return new TitleScene(engineCore_,sceneData_);
+			return new TitleScene(engineCore_, sceneData_);
 			break;
 		default:
 			break;
@@ -174,6 +212,12 @@ void StageSelectScene::CameraUpdate() {
 #endif // _DEBUG
 }
 
+void StageSelectScene::InitializeBlocks() {
+	for (uint32_t i = 0; i < blocks_.size(); ++i) {
+		blocks_[i]->Initialize(stageData_, currentStage_, static_cast<MapChipType>(i + 1));
+	}
+}
+
 void StageSelectScene::ChangePhase(BaseStageSelectScenePhase *newPhase) {
 	delete currentPhase_;
 	currentPhase_ = newPhase;
@@ -182,10 +226,16 @@ void StageSelectScene::ChangePhase(BaseStageSelectScenePhase *newPhase) {
 
 void StageSelectScene::SetTriangleParent() {
 	for (auto &triangle : triangles_) {
-		triangle->SetParent(stageModels_[currentStage_]->worldMatrix_);
+		triangle->SetParentWorldMatrix(anchor_[currentStage_]->GetWorldMatrix());
+	}
+}
+
+void StageSelectScene::SetBlocksParent() {
+	for (auto &block : blocks_) {
+		block->SetParentWorldMatrix(anchor_[currentStage_]->GetWorldMatrix());
 	}
 }
 
 void StageSelectScene::SetCameraTargetPosition() {
-	cameraController_->SetTargetPosition(stageModels_[currentStage_]->GetWorldPosition());
+	cameraController_->SetTargetPosition(anchor_[currentStage_]->GetWorldPosition());
 }

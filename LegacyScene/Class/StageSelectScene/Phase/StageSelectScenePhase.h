@@ -19,7 +19,7 @@ public:
 	virtual void Update() = 0;
 
 protected:
-	StageSelectScene *stageSelectScene_ = nullptr;		// ステージ選択シーン
+	StageSelectScene *stageSelectScene_ = nullptr;	// ステージ選択シーン
 };
 
 /// @brief ステージ選択シーンの通常フェーズ

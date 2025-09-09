@@ -1,11 +1,14 @@
 #include "StageSelectScenePhase.h"
 #include "../LegacyScene/StageSelectScene.h"
 #include "../Object/Triangle.h"
-#include "../Object/StageObject.h"
+#include "../Object/StageNumber.h"
+#include "../Object/StageSelectBlocks.h"
 #include "../System/CameraController.h"
 
 void StageSelectScenePhaseIdle::Initialize() {
 	stageSelectScene_->SetTriangleParent();
+	stageSelectScene_->SetBlocksParent();
+	stageSelectScene_->InitializeBlocks();
 }
 
 void StageSelectScenePhaseIdle::Update() {
@@ -29,6 +32,10 @@ void StageSelectScenePhaseIdle::Update() {
 		stageSelectScene_->GetTriangle(i)->Update();
 	}
 
+	for (uint32_t i = 0; i < 3; ++i) {
+		stageSelectScene_->GetBlocks(i)->Update();
+	}
+
 	if (stageSelectScene_->GetDirectInput()->keyboard_.GetPress(DIK_A) ||
 		stageSelectScene_->GetDirectInput()->keyboard_.GetPress(DIK_LEFT) ||
 		stageSelectScene_->GetXInput()->GetLeftStick(0).x < 0.0f ||
@@ -45,6 +52,8 @@ void StageSelectScenePhaseIdle::Update() {
 
 void StageSelectScenePhasePush::Initialize() {
 	stageSelectScene_->GetTriangleByDirection()->SetFinished(false);
+	stageSelectScene_->StopSelectSound();
+	stageSelectScene_->PlaySelectSound();
 }
 
 void StageSelectScenePhasePush::Update() {
@@ -56,6 +65,10 @@ void StageSelectScenePhasePush::Update() {
 
 	for (uint32_t i = 0; i < 2; ++i) {
 		stageSelectScene_->GetTriangle(i)->Update();
+	}
+
+	for (uint32_t i = 0; i < 3; ++i) {
+		stageSelectScene_->GetBlocks(i)->Update();
 	}
 
 	if (stageSelectScene_->GetTriangleByDirection()->IsFinished()) {

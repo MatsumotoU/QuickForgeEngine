@@ -26,8 +26,8 @@ void Triangle::Initialize(Model *model, DirectInputManager *directInput, XInputC
 
 	// X座標テーブル
 	std::array<float, 2> destinationPositionXTable = {
-		-1.5f,	// kLeft
-		1.5f,	// kRight
+		-2.0f,	// kLeft
+		2.0f,	// kRight
 	};
 
 	// Z回転角テーブル
@@ -36,9 +36,10 @@ void Triangle::Initialize(Model *model, DirectInputManager *directInput, XInputC
 		-std::numbers::pi_v<float> / 2.0f	// kRight
 	};
 
-	// 座標と回転角を設定
+	// ワールド変換データを設定
 	model_->transform_.translate.x = destinationPositionXTable[static_cast<uint32_t>(direction_)];
 	model_->transform_.rotate.z = destinationRotationZTable[static_cast<uint32_t>(direction_)];
+	model_->transform_.scale = kLargeScale;
 
 	// 現在の状態を設定
 	currentState_ = new TriangleStateIdle(this);
@@ -48,12 +49,12 @@ void Triangle::Initialize(Model *model, DirectInputManager *directInput, XInputC
 void Triangle::Update() {
 	// Y回転角テーブル
 	std::array<float, 2> destinationRotationYTable = {
-		-std::numbers::pi_v<float> * 2.0f,	// kLeft
-		std::numbers::pi_v<float> * 2.0f	// kRight
+		-std::numbers::pi_v<float> *2.0f,	// kLeft
+		std::numbers::pi_v<float> *2.0f	// kRight
 	};
 
 	// Y回転角を更新
-	model_->transform_.rotate.y += destinationRotationYTable[static_cast<uint32_t>(direction_)] / (60.0f * rotateTime);
+	model_->transform_.rotate.y += destinationRotationYTable[static_cast<uint32_t>(direction_)] / (60.0f * kRotateTime);
 
 	// モデルを更新
 	model_->Update();
@@ -76,14 +77,14 @@ void Triangle::StateUpdate() { currentState_->Update(); }
 
 void Triangle::Shrink() {
 	easeTimer_++;
-	model_->transform_.scale.x = MyEasing::EaseIn(easeTimer_ / kEaseDuration, 2.0f, largeScale.x, smallScale.x);
-	model_->transform_.scale.y = MyEasing::EaseIn(easeTimer_ / kEaseDuration, 2.0f, largeScale.y, smallScale.y);
-	model_->transform_.scale.z = MyEasing::EaseIn(easeTimer_ / kEaseDuration, 2.0f, largeScale.z, smallScale.z);
+	model_->transform_.scale.x = MyEasing::EaseIn(easeTimer_ / kEaseDuration, 2.0f, kLargeScale.x, kSmallScale.x);
+	model_->transform_.scale.y = MyEasing::EaseIn(easeTimer_ / kEaseDuration, 2.0f, kLargeScale.y, kSmallScale.y);
+	model_->transform_.scale.z = MyEasing::EaseIn(easeTimer_ / kEaseDuration, 2.0f, kLargeScale.z, kSmallScale.z);
 }
 
 void Triangle::Expand() {
 	easeTimer_++;
-	model_->transform_.scale.x = MyEasing::EaseOut(easeTimer_ / kEaseDuration, 2.0f, smallScale.x, largeScale.x);
-	model_->transform_.scale.y = MyEasing::EaseOut(easeTimer_ / kEaseDuration, 2.0f, smallScale.y, largeScale.y);
-	model_->transform_.scale.z = MyEasing::EaseOut(easeTimer_ / kEaseDuration, 2.0f, smallScale.z, largeScale.z);
+	model_->transform_.scale.x = MyEasing::EaseOut(easeTimer_ / kEaseDuration, 2.0f, kSmallScale.x, kLargeScale.x);
+	model_->transform_.scale.y = MyEasing::EaseOut(easeTimer_ / kEaseDuration, 2.0f, kSmallScale.y, kLargeScale.y);
+	model_->transform_.scale.z = MyEasing::EaseOut(easeTimer_ / kEaseDuration, 2.0f, kSmallScale.z, kLargeScale.z);
 }

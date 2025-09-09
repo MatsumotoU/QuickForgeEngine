@@ -5,11 +5,18 @@
 
 class Particle;
 class StageSelectSkydome;
-class StageObject;
+class StageNumber;
 class Triangle;
-class BaseStageSelectBlocks;
+class StageSelectBlocks;
+class MapChipField;
 class CameraController;
+class StageSelectAnchor;
 class BaseStageSelectScenePhase;
+
+/// @brief ステージデータ
+struct StageData {
+	std::vector<std::vector<MapChipField>> stageMapChipFields;	// ステージ別のマップチップフィールド
+};
 
 /// @brief ステージ選択シーン
 class StageSelectScene : public IScene {
@@ -22,10 +29,18 @@ class StageSelectScene : public IScene {
 	};
 
 public:
+	/// @brief マップチップフィールドの種類
+	enum MapChipFieldType {
+		kFloor,			// 床
+		kWall,			// 壁
+		kNumMapType,	// 種類数
+	};
+
 	static inline constexpr uint32_t kNumStage = 8;	// ステージ数
 
 	/// @brief コンストラクタ
 	/// @param engineCore エンジンの中核機能
+	/// @param data シーンデータ
 	StageSelectScene(EngineCore *engineCore, nlohmann::json* data);
 
 	/// @brief デストラクタ
@@ -47,6 +62,9 @@ public:
 	/// @brief カメラの更新
 	void CameraUpdate();
 
+	/// @brief ブロックの初期化
+	void InitializeBlocks();
+
 	/// @brief フェーズの切り替え
 	/// @param newPhase 新しいフェーズ
 	void ChangePhase(BaseStageSelectScenePhase *newPhase);
@@ -60,8 +78,21 @@ public:
 	/// @brief 三角錐の親を設定する
 	void SetTriangleParent();
 
+	/// @brief ブロックの親を設定する
+	void SetBlocksParent();
+
 	/// @brief カメラのターゲット位置を設定する
 	void SetCameraTargetPosition();
+
+	/// @brief 選択音を再生する
+	void PlaySelectSound() {
+		engineCore_->GetAudioPlayer()->PlayAudio(selectSoundHandle_, "セレクト音_4.mp3", false);
+	}
+
+	/// @brief 選択音を停止する
+	void StopSelectSound() {
+		engineCore_->GetAudioPlayer()->StopAudio("セレクト音_4.mp3");
+	}
 
 	/// @brief 現在のステージをインクリメントする
 	void CurrentStageUp() {
@@ -92,7 +123,7 @@ public:
 
 	/// @brief 現在のステージモデルを取得する
 	/// @return 現在のステージモデル
-	Model *GetCurrentStageModel() { return stageModels_[currentStage_].get(); }
+	Model *GetCurrentStageModel() { return stageNumberModels_[currentStage_].get(); }
 
 	/// @brief 三角錐のモデルを取得する
 	/// @return 三角錐のモデル
@@ -101,6 +132,10 @@ public:
 	/// @brief 方向に対応する三角錐のモデルを取得する
 	/// @return 方向に対応する三角錐のモデル
 	Model *GetTriangleModelByDirection() { return triangleModels_[static_cast<uint32_t>(direction_)].get(); }
+
+	/// @brief 現在のステージオブジェクトを取得する
+	/// @return 現在のステージオブジェクト
+	StageNumber *GetCurrentStageObject() { return stageNumbers_[currentStage_].get(); }
 
 	/// @brief 三角錐を取得する
 	/// @param index インデックス
@@ -111,33 +146,38 @@ public:
 	/// @return 方向に対応する三角錐
 	Triangle *GetTriangleByDirection() { return triangles_[static_cast<uint32_t>(direction_)].get(); }
 
-	/// @brief 現在のステージオブジェクトを取得する
-	/// @return 現在のステージオブジェクト
-	StageObject *GetCurrentStageObject() { return stageObjects_[currentStage_].get(); }
+	/// @brief ブロックを取得する
+	/// @return ブロック
+	StageSelectBlocks *GetBlocks(uint32_t index) { return blocks_[index].get(); }
 
 	/// @brief 方向を取得する
 	/// @return 方向
 	Triangle::Direction GetDirection() const { return direction_; }
 
 private:
-	float frameCount_ = 0.0f;									// フレームカウント
-	EngineCore *engineCore_ = nullptr;							// エンジンの中核機能
-	DirectInputManager *directInput_ = nullptr;					// DirectInput
-	XInputController *xInput_ = nullptr;						// XInput
-	Camera camera_;												// カメラ
-	std::unique_ptr<Model> skydomeModel_;						// 天球モデル
-	std::array<std::unique_ptr<Model>, 2> triangleModels_;		// 三角錐モデル
-	std::vector<std::unique_ptr<Model>> stageModels_;			// ステージモデル
-	std::unique_ptr<Particle> blockParticle_;						// ブロックモデル
-	std::unique_ptr<StageSelectSkydome> skydome_;				// 天球
-	std::array<std::unique_ptr<Triangle>, 2> triangles_;		// 三角錐
-	std::vector<std::unique_ptr<StageObject>> stageObjects_;	// ステージオブジェクト
-	std::unique_ptr<BaseStageSelectBlocks> blocks_;				// ブロック
-	std::unique_ptr<CameraController> cameraController_;		// カメラコントローラー
-	uint32_t currentStage_ = 0;									// 現在のステージ
-	TransitionState transitionState_ = None;					// シーン遷移状態
-	Triangle::Direction direction_ = Triangle::kLeft;			// 方向
-	BaseStageSelectScenePhase *currentPhase_ = nullptr;			// 現在のフェーズ
+	float frameCount_ = 0.0f;											// フレームカウント
+	EngineCore *engineCore_ = nullptr;									// エンジンの中核機能
+	DirectInputManager *directInput_ = nullptr;							// DirectInput
+	XInputController *xInput_ = nullptr;								// XInput
+	Camera camera_;														// カメラ
+	uint32_t selectSoundHandle_ = 0;									// 選択音ハンドル
+	uint32_t systemSoundHandle_ = 0;									// システム音ハンドル
+	uint32_t systemDecisionSoundHandle_ = 0;							// システム決定音ハンドル
+	StageData stageData_;												// ステージデータ
+	std::unique_ptr<Model> skydomeModel_ = nullptr;						// 天球モデル
+	std::array<std::unique_ptr<Model>, 2> triangleModels_;				// 三角錐モデル
+	std::vector<std::unique_ptr<Model>> stageNumberModels_;				// ステージ番号モデル
+	std::array<std::unique_ptr<Particle>, 3> blockParticles_;			// ブロックパーティクル
+	std::unique_ptr<StageSelectSkydome> skydome_ = nullptr;				// 天球
+	std::array<std::unique_ptr<Triangle>, 2> triangles_;				// 三角錐
+	std::array<std::unique_ptr<StageNumber>, kNumStage> stageNumbers_;	// ステージ番号
+	std::array<std::unique_ptr<StageSelectBlocks>, 3> blocks_;			// ブロック
+	std::array<std::unique_ptr<StageSelectAnchor>, kNumStage> anchor_;	// アンカー
+	std::unique_ptr<CameraController> cameraController_ = nullptr;		// カメラコントローラー
+	uint32_t currentStage_ = 0;											// 現在のステージ
+	TransitionState transitionState_ = None;							// シーン遷移状態
+	Triangle::Direction direction_ = Triangle::kLeft;					// 方向
+	BaseStageSelectScenePhase *currentPhase_ = nullptr;					// 現在のフェーズ
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;	// デバッグカメラ
