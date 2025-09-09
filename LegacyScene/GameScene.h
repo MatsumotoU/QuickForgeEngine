@@ -23,6 +23,7 @@
 #include "Math/Vector/IntVector2.h"
 
 #include "Class/GameScene/Number.h"
+#include "Class/GameScene/ContorolUI.h"
 
 class GameScene : public IScene{
 public:
@@ -93,4 +94,6 @@ private:
 
 	Number stageNumber_;
 	std::unique_ptr<Model> stageTextModel_;
+
+	ControlUI controlUI_;
 };
