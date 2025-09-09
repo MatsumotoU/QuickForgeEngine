@@ -424,6 +424,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\Class\TitleScene\TitleUI.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageSelectSkydome.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageSelectBlocks.cpp" />
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\System\StageSelectAnchor.cpp" />
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\System\MapChipField.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\GameScene\AiLeveler.h" />
@@ -433,12 +435,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="LegacyScene\Class\GameScene\TurnText.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\DiggingEffect.h" />
     <ClCompile Include="LegacyScene\StageSelectScene.cpp" />
-    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageObject.cpp" />
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\StageNumber.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\Triangle.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\Phase\StageSelectScenePhase.cpp" />
     <ClCompile Include="LegacyScene\Class\StageSelectScene\State\TriangleState.cpp" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageSelectSkydome.h" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageSelectBlocks.h" />
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\System\StageSelectAnchor.h" />
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\System\MapChipField.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\StageSelectScene\System\CameraController.h" />
@@ -629,7 +633,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="LegacyScene\Class\TitleScene\SignBoard.h" />
     <ClInclude Include="LegacyScene\Class\TitleScene\TitleUI.h" />
     <ClInclude Include="LegacyScene\StageSelectScene.h" />
-    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageObject.h" />
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\StageNumber.h" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\Triangle.h" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\Phase\StageSelectScenePhase.h" />
     <ClInclude Include="LegacyScene\Class\StageSelectScene\State\TriangleState.h" />

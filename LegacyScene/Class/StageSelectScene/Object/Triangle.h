@@ -10,10 +10,10 @@ class BaseTriangleState;
 /// @brief 三角錐
 class Triangle {
 public:
-	static inline constexpr float kEaseDuration = 10.0f;			// 補間にかける時間(frm)
-	static inline constexpr Vector3 smallScale{ 0.1f, 0.1f, 0.1f };	// 縮小サイズ
-	static inline constexpr Vector3 largeScale{ 1.0f, 1.0f, 1.0f };	// 拡大サイズ
-	static inline constexpr float rotateTime = 8.0f;				// 回転にかける時間(秒)
+	static inline constexpr float kEaseDuration = 10.0f;				// 補間にかける時間(frm)
+	static inline constexpr float kRotateTime = 8.0f;					// 回転にかける時間(秒)
+	static inline constexpr Vector3 kSmallScale{ 0.0f, 0.0f, 0.0f };	// 縮小サイズ
+	static inline constexpr Vector3 kLargeScale{ 0.8f, 0.8f, 0.8f };	// 拡大サイズ
 
 	/// @brief 方向
 	enum Direction {
@@ -58,7 +58,7 @@ public:
 
 	/// @brief 補間終了したかどうかを取得
 	/// @return 補間終了したかどうか
-	bool IsEaseFinished() const { return easeTimer_ > kEaseDuration; }
+	bool IsEaseFinished() const { return easeTimer_ >= kEaseDuration; }
 
 	/// @brief アニメーションが終了したかどうかを取得
 	/// @return アニメーションが終了したかどうか
@@ -75,11 +75,11 @@ public:
 	/// @brief アニメーション終了フラグを設定
 	/// @param isFinished アニメーション終了フラグ
 	void SetFinished(bool isFinished) { isFinished_ = isFinished; }
-	
+
 	/// @brief 親のワールド行列を設定する
 	/// @param worldMatrix 親のワールド行列
-	void SetParent(const Matrix4x4 &worldMatrix) {
-		parentWorldMatrix_ = worldMatrix;
+	void SetParentWorldMatrix(const Matrix4x4 &parentWorldMatrix) {
+		parentWorldMatrix_ = parentWorldMatrix;
 	}
 
 private:

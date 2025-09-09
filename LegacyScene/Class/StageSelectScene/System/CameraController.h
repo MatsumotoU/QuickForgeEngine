@@ -5,6 +5,8 @@
 class CameraController {
 public:
 	static inline constexpr float kLerpDuration = 30.0f;	// 補間にかける時間(frm)
+	static inline constexpr float kCameraDistance = 5.0f;	// カメラと原点の距離
+	static inline constexpr float kCameraHeight = 5.0f;		// カメラの高さ
 
 	/// @brief コンストラクタ
 	CameraController() = default;
@@ -29,12 +31,12 @@ public:
 
 	/// @brief 補間終了したかどうかを取得
 	/// @return 補間終了したかどうか
-	bool IsFinished() const { return lerpTimer_ > kLerpDuration; }
+	bool IsFinished() const { return lerpTimer_ >= kLerpDuration; }
 
 private:
-	Camera *camera_ = nullptr;			// カメラ
-	Vector3 startPosition_{};			// 補間開始時の座標
-	Vector3 startRotation_{};			// 補間開始時の回転角
-	Vector3 targetPosition_{};			// 追従対象の座標
-	float lerpTimer_ = 0.0f;			// 補間にかけた時間(frm)
+	Camera *camera_ = nullptr;	// カメラ
+	Vector3 startPosition_{};	// 補間開始時の座標
+	Vector3 startRotation_{};	// 補間開始時の回転角
+	Vector3 targetPosition_{};	// 追従対象の座標
+	float lerpTimer_ = 0.0f;	// 補間にかけた時間(frm)
 };
