@@ -1,7 +1,8 @@
 #pragma once
 #include "Base/EngineCore.h"
-
+#include<memory>
 static inline const float kFadeInTime = 20.0f;
+static inline const int kSpalateNum = 10;
 
 class Fade {
 public:
@@ -27,7 +28,7 @@ public:
 
 private:
 	uint32_t uvCheckerTextureHandle_;
-	Sprite sprite_;
+	std::vector<std::unique_ptr<Sprite>> sprites_;
 	Vector4 color_ = {1.0f, 1.0f, 1.0f, 1.0f};
 
 	float fadeTime_;
