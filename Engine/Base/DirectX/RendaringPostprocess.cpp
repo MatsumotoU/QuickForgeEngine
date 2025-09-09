@@ -106,7 +106,7 @@ void RendaringPostprosecess::Initialize(EngineCore* engineCore) {
 	vignetteOffsetBuffer_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
 	vignetteOffsetBuffer_.GetData()->VignetteRadius = 0.3f; // ビネットの半径
 	vignetteOffsetBuffer_.GetData()->VignetteSoftness = 0.5f; // ビネットの柔らかさ
-	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.2f; // ビネットの強さ
+	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.4f; // ビネットの強さ
 }
 
 void RendaringPostprosecess::PreDraw() {

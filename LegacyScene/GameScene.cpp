@@ -49,6 +49,16 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) {
 
 	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/BGM/","GameSceneBGM.mp3");
 	engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "GameSceneBGM.mp3", true);
+
+	digSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Dig.mp3");
+	buildSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Dig.mp3");
+	jumpSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Jump.mp3");
+	landSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Ground.mp3");
+	hitSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Hit.mp3");
+	selectSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SelectSound.mp3");
+	deathSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Death.mp3");
+	turnSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "TurnChange.mp3");
+	clearSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Clear.mp3");
 }
 
 GameScene::~GameScene() {
@@ -93,6 +103,7 @@ void GameScene::Initialize() {
 	isPlayerTurn_ = true;
 	isEndGame_ = false;
 	isOpenMenu_ = false;
+	isCountEndGameTime_ = false;
 
 	endGameTimer_ = 0.0f;
 
@@ -139,7 +150,9 @@ void GameScene::Update() {
 	stageNumber_.Update();
 
 	timer_ += engineCore_->GetDeltaTime();
-	resultUI_.Update();
+	if (isEndGame_) {
+		resultUI_.Update();
+	}
 	turnText_.Update();
 	turnText_.SetIsHidden(isEndGame_);
 
@@ -160,16 +173,25 @@ void GameScene::Update() {
 			// 死亡演出スキップ
 			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 				endGameTimer_ = 0.0f;
+				engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SelectSound.mp3", false);
 			}	
 			CheckEndGame();
 
 		} else {
+			if (isCountEndGameTime_) {
+				isCountEndGameTime_ = false;
+				if (player_.GetIsAlive()) {
+					engineCore_->GetAudioPlayer()->PlayAudio(clearSE_, "Clear.mp3", false);
+				} 
+			}
+
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, 4.0f, 0.1f);
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.z, -4.8f, 0.1f);
 			MyEasing::SimpleEaseIn(&camera_.transform_.rotate.x, 0.0f, 0.1f);
 			MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 3.14f, 0.1f);
 
 			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
+				engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SelectSound.mp3", false);
 				if (resultUI_.GetSelectedTop()) {
 					if (player_.GetIsAlive()) {
 						std::string nextStageName;
@@ -308,6 +330,7 @@ void GameScene::MainGameUpdate() {
 			enemy_.GetIsCanMove() = true;
 
 			turnText_.ChangeTurn(isPlayerTurn_);
+			engineCore_->GetAudioPlayer()->PlayAudio(turnSE_, "TurnChange.mp3", false);
 		}
 
 		enemy_.SetAlpha(0.2f + sinf(timer_) * 0.1f);
@@ -321,6 +344,7 @@ void GameScene::MainGameUpdate() {
 			player_.GetIsCanMove() = true;
 			
 			turnText_.ChangeTurn(isPlayerTurn_);
+			engineCore_->GetAudioPlayer()->PlayAudio(turnSE_, "TurnChange.mp3", false);
 		}
 
 		enemy_.SetAlpha(1.0f);
@@ -336,10 +360,12 @@ void GameScene::MenuUpdate() {
 	if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 		if (mainMenu_.GetMenuSelect() == MenuSelect::ReturnSelect) {
 			isRequestedExit_ = true;
+			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SelectSound.mp3", false);
 
 		} else if (mainMenu_.GetMenuSelect() == MenuSelect::ResetGame) {
 			ResetGame(stageName_);
 			isOpenMenu_ = false;
+			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SelectSound.mp3", false);
 		}
 	}
 }
@@ -440,6 +466,8 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 			Vector3 emmitPos = gamePlayer.GetWorldPosition();
 			emmitPos.y += 0.5f;
 			particleManager_.EmitBomb(emmitPos, gamePlayer.GetColor(), 3, 1.0f, 0.98f, 50);
+
+			engineCore_->GetAudioPlayer()->PlayAudio(digSE_, "Dig.mp3", false);
 		}
 
 		Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
@@ -485,6 +513,7 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 				} else {
 					wallMap_[nearestY][nearestX] = 0;
 				}
+				engineCore_->GetAudioPlayer()->PlayAudio(hitSE_, "Hit.mp3", false);
 
 			}
 		} else {
@@ -525,6 +554,7 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 		// 一個前の座標は削除
 		if (!buildMapChipIndex_.empty()) {
 			buildMapChipIndex_.pop_back();
+			engineCore_->GetAudioPlayer()->PlayAudio(buildSE_, "Dig.mp3", false);
 		}
 
 		oldBuildMapChipIndex_.clear();
@@ -537,6 +567,10 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 				if (wallMap_[index.y][index.x] == 0) {
 					if (floorMap_[index.y][index.x] != 0) {
 						wallMap_[index.y][index.x] = 4;
+					}
+
+					if (floorMap_[index.y][index.x] == 3) {
+						wallMap_[index.y][index.x] = 3;
 					}
 				}
 			}
@@ -552,7 +586,7 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 	}
 }
 void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
-	if (!gamePlayer.GetIsMoving()) {
+	if (!gamePlayer.GetIsMoving() && !gamePlayer.GetIsJumping()) {
 		Vector2 totalNormal(0.0f, 0.0f);
 		bool isCollided = false;
 		Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
@@ -578,6 +612,7 @@ void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
 				jumpDir = Vector2(0.0f, 1.0f); // デフォルトで上方向
 			}
 			gamePlayer.Jamp(jumpDir);
+			engineCore_->GetAudioPlayer()->PlayAudio(jumpSE_, "Jump.mp3", false);
 		}
 	}
 }
@@ -597,6 +632,8 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 					particleManager_.EmitBomb(
 						{ static_cast<float>(nx),1.0f,static_cast<float>(ny) },
 						{ 1.0f,0.5f,0.0f,1.0f }, 5, 1.0f, 0.98f, 100);
+
+					engineCore_->GetAudioPlayer()->PlayAudio(landSE_, "Ground.mp3", false);
 				}
 			}
 		}
@@ -639,6 +676,8 @@ void GameScene::AliveCheck(GamePlayer& gamePlayer) {
 		isEndGame_ = true;
 		gamePlayer.SetAlive(false);
 		endGameTimer_ = 1.5f;
+		engineCore_->GetAudioPlayer()->PlayAudio(deathSE_, "Death.mp3", false);
+		isCountEndGameTime_ = true;
 	}
 }
 void GameScene::CheckEndGame() {
