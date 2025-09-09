@@ -40,6 +40,8 @@ private:
 	float mapCenterX_;
 	float mapCenterY_;
 
+	float chageTimer_;
+
 	bool isClicked_;
 	Vector2 clickStartPos_;
 

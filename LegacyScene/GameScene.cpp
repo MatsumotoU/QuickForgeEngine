@@ -125,9 +125,13 @@ void GameScene::Initialize() {
 	stageTextModel_->transform_.translate = { -1.4f,3.5f,3.3f };
 	stageTextModel_->transform_.rotate = { -1.2f,-3.6f,0.0f };
 	stageTextModel_->transform_.scale = { 0.5f,0.5f,1.0f };
+
+	controlUI_.Initialize(engineCore_, &camera_);
 }
 
 void GameScene::Update() {
+	controlUI_.isActiveControll_ = player_.GetIsCanMove();
+	controlUI_.Update();
 	stageTextModel_->Update();
 	frameCount_++;
 	particleManager_.Update();
@@ -215,6 +219,8 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+
+	controlUI_.Draw();
 	stageTextModel_->Draw();
 	particleManager_.Draw();
 	skyDome_.Draw();
