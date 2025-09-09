@@ -77,7 +77,7 @@ void GameScene::Initialize() {
 	player_.SetOldBuildMapChipIndex(&oldBuildMapChipIndex_);
 
 	enemy_.Initialize(engineCore_, &camera_);
-	enemy_.GetTransform().translate.x += 6.0f;
+	enemy_.GetTransform().translate.x += 5.0f;
 	enemy_.GetTransform().translate.z += 4.0f;
 
 	// AIレベルの取得
