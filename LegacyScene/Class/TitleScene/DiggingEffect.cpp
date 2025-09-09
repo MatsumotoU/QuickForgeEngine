@@ -35,6 +35,15 @@ void DiggingEffect::Initialize(EngineCore* engineCore, Camera* camera, Vector3 d
 	engineCore_ = engineCore;
 	camera_ = camera;
     directionalLightDir_ = directionalLightDir;
+
+	for (int i = 0; i < particleMax_; i++) {
+		Particle newParticle;
+		newParticle.model = std::make_unique<Model>(engineCore_, camera_);
+		newParticle.model->LoadModel("Resources/Model/wall/soil", "soil.obj", COORDINATESYSTEM_HAND_LEFT);
+		newParticle.model->transform_.scale = { 0.8f,0.8f,0.8f };
+		newParticle.model->SetDirectionalLightDir(directionalLightDir_);
+		particle_.push_back(std::move(newParticle));
+	}
 }
 
 void DiggingEffect::Update(Mole* mole) {
@@ -45,36 +54,39 @@ void DiggingEffect::Update(Mole* mole) {
     for (int i = 0; i < particle_.size(); i++) {
         particle_[i].lefeTime--;
         if (particle_[i].lefeTime < 0) {
-            particle_.erase(particle_.begin() + i);
+            particle_[i].lefeTime = 0;
         }
     }
 }
 
 void DiggingEffect::Draw() {
 	for (int i = 0; i < particle_.size(); i++) {
-		particle_[i].model.get()->Draw();
+        if (particle_[i].lefeTime > 0) {
+            particle_[i].model.get()->Draw();
+        }
 	}
 }
 
 void DiggingEffect::SpwnParticle(Mole* mole)  
 {  
-    if (particle_.size() < particleMax_) {  
-        Particle newParticle;  
-        newParticle.model = std::make_unique<Model>(engineCore_, camera_);  
-        float offsetX = (rand() % 100 - 50) / 100.0f; // -0.5f ~ 0.5f  
-        float offsetZ = (rand() % 100 - 50) / 100.0f;  
-        newParticle.model->LoadModel("Resources/Model/wall/soil", "soil.obj", COORDINATESYSTEM_HAND_LEFT);
-        newParticle.model->transform_.translate = mole->GetTranslate() + Vector3(offsetX, 0.0f, offsetZ);  
-        newParticle.model->transform_.scale = { 0.8f,0.8f,0.8f };
-        newParticle.model->SetDirectionalLightDir(directionalLightDir_);
-        particle_.push_back(std::move(newParticle));  
-    }  
+	for (int i = 0; i < particle_.size(); i++) {
+		if (particle_[i].lefeTime <= 0) {
+			particle_[i].lefeTime = 30;
+			float offsetX = (rand() % 100 - 50) / 100.0f; // -0.5f ~ 0.5f  
+			float offsetZ = (rand() % 100 - 50) / 100.0f;
+			particle_[i].model->transform_.translate = mole->GetTranslate() + Vector3(offsetX, 0.0f, offsetZ);
+			particle_[i].model->transform_.scale = { 0.8f,0.8f,0.8f };
+			return;
+		}
+	} 
 }
 
 void DiggingEffect::ParticleUpdate()
 {
     for (int i = 0; i < particle_.size(); i++) {
-        particle_[i].model.get()->transform_.translate += velocity_;
+        if (particle_[i].lefeTime > 0) {
+            particle_[i].model.get()->transform_.translate += velocity_;
+        }
         particle_[i].model.get()->Update();
     }
 }

@@ -86,12 +86,12 @@ public:
 
 	/// @brief 選択音を再生する
 	void PlaySelectSound() {
-		engineCore_->GetAudioPlayer()->PlayAudio(selectSoundHandle_, "セレクト音_4.mp3", false);
+		engineCore_->GetAudioPlayer()->PlayAudio(selectSoundHandle_, "SelectSound.mp3", false);
 	}
 
 	/// @brief 選択音を停止する
 	void StopSelectSound() {
-		engineCore_->GetAudioPlayer()->StopAudio("セレクト音_4.mp3");
+		engineCore_->GetAudioPlayer()->StopAudio("SelectSound.mp3");
 	}
 
 	/// @brief 現在のステージをインクリメントする
@@ -178,9 +178,4 @@ private:
 	TransitionState transitionState_ = None;							// シーン遷移状態
 	Triangle::Direction direction_ = Triangle::kLeft;					// 方向
 	BaseStageSelectScenePhase *currentPhase_ = nullptr;					// 現在のフェーズ
-
-#ifdef _DEBUG
-	DebugCamera debugCamera_;	// デバッグカメラ
-	bool isActiveDebugCamera_;	// デバッグカメラが有効かどうか
-#endif // _DEBUG
 };

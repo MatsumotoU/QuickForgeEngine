@@ -158,10 +158,11 @@ void Enemy::Update() {
 }
 
 void Enemy::Draw() {
+#ifdef _DEBUG
 	ImGui::Begin("Enemy");
 
 	int aiLevel = aiLevel_;
-	ImGui::DragInt("AiLevel",&aiLevel);
+	ImGui::DragInt("AiLevel", &aiLevel);
 	aiLevel_ = std::clamp(aiLevel, 1, 100);
 	ImGui::DragFloat3("AIWeight", &aiWeight_.life, 0.1f, 0.0f, 1.0f);
 	ImGui::Text("SelectIndex: %d MaxSelected: %d", selectedDirIndex_, maxSelect_);
@@ -193,6 +194,8 @@ void Enemy::Draw() {
 	ImGui::Text("%f,%f", leftStick.x, leftStick.y);
 
 	ImGui::End();
+#endif // _DEBUG
+	
 	model_->Draw();
 }
 

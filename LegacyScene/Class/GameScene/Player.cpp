@@ -113,6 +113,7 @@ void Player::Update() {
 }
 
 void Player::Draw() {
+#ifdef _DEBUG
 	ImGui::Begin("Player");
 
 	ImGui::DragFloat3("ActionWeight", &actionWeight_.x, 0.01f, 0.0f, 1.0f);
@@ -121,6 +122,7 @@ void Player::Draw() {
 	ImGui::Text("Total:%d", totalEvaluationValue_);
 
 	ImGui::End();
+#endif // _DEBUG
 
 	model_->Draw();
 }

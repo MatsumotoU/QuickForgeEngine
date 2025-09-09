@@ -93,9 +93,4 @@ private:
 
 	Number stageNumber_;
 	std::unique_ptr<Model> stageTextModel_;
-
-#ifdef _DEBUG
-	DebugCamera debugCamera_;
-	bool isActiveDebugCamera_;
-#endif // _DEBUG
 };
