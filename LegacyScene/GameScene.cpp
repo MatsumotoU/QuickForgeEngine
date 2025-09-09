@@ -49,28 +49,6 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_
 	wallMap_ = MapChipLoader::Load(wallFilePath);
 	floorMap_ = MapChipLoader::Load(floorFilePath);
 
-	// AIレベルの取得
-	if (sceneData_->contains("AILevel")) {
-		enemy_.SetAiLevel((*sceneData_)["AILevel"].get<uint32_t>());
-	} else {
-		uint32_t stageValue = 1;
-		if (sceneData_->contains("stage")) {
-			stageValue = (*sceneData_)["stage"].get<uint32_t>();
-		}
-		(*sceneData_)["AILevel"] = 10 * stageValue;
-		enemy_.SetAiLevel(10 * stageValue);
-	}
-
-	if (sceneData_->contains("AILifeWeight")) {
-		enemy_.SetAiWeight((*sceneData_)["AILifeWeight"].get<float>(), (*sceneData_)["AIAttackWeight"].get<float>(), (*sceneData_)["AIUniqeWeight"].get<float>());
-
-	} else {
-		(*sceneData_)["AILifeWeight"] = 1.0f;
-		(*sceneData_)["AIAttackWeight"] = 0.0f;
-		(*sceneData_)["AIUniqeWeight"] = 0.0f;
-		enemy_.SetAiWeight(1.0f, 0.0f, 0.0f);
-	}
-
 	timer_ = 0.0f;
 	cameraShakeTimer_ = 0.0f;
 
@@ -101,10 +79,17 @@ void GameScene::Initialize() {
 	player_.Initialize(engineCore_, &camera_);
 	player_.GetTransform().translate.x += 2.0f;
 	player_.GetTransform().translate.z += 4.0f;
+	player_.SetOldBuildMapChipIndex(&oldBuildMapChipIndex_);
 
 	enemy_.Initialize(engineCore_, &camera_);
 	enemy_.GetTransform().translate.x += 6.0f;
 	enemy_.GetTransform().translate.z += 4.0f;
+
+	// AIレベルの取得
+	std::string aiFilePath = "Resources/Map/" + stageName_ + "_ai.csv";
+	aiLeveler_.LoadAIConfig(aiFilePath);
+	enemy_.SetAiLevel(aiLeveler_.GetAILevel());
+	enemy_.SetAiWeight(aiLeveler_.GetLifeWeight(), aiLeveler_.GetAttackWeight(), aiLeveler_.GetUniqueWeight());
 
 	mainMenu_.Initialize(engineCore_, &camera_);
 	resultUI_.Initialize(engineCore_, &camera_);
@@ -268,11 +253,14 @@ void GameScene::MainGameUpdate() {
 	floorChip_.Update();
 	wallChip_.Update();
 
-	player_.SetMap(&floorMap_, &wallMap_);
+	
 	enemy_.SetMap(&floorMap_, &wallMap_);
 	enemy_.SetPlayerPos({ player_.GetTransform().translate.x,player_.GetTransform().translate.z });
-	player_.Update();
 	enemy_.Update();
+
+	player_.SetMap(&floorMap_, &wallMap_);
+	player_.SetEnemyPos({ enemy_.GetTransform().translate.x,enemy_.GetTransform().translate.z });
+	player_.Update();
 
 	// IngameUpdate
 	MapChipUpdate(player_);
@@ -335,6 +323,10 @@ void GameScene::MenuUpdate() {
 void GameScene::ResetGame(const std::string& stageName) {
 	wallMap_ = MapChipLoader::Load("Resources/Map/" + stageName + "_wall.csv");
 	floorMap_ = MapChipLoader::Load("Resources/Map/" + stageName + "_floor.csv");
+	std::string aiFilePath = "Resources/Map/" + stageName_ + "_ai.csv";
+	aiLeveler_.LoadAIConfig(aiFilePath);
+	enemy_.SetAiLevel(aiLeveler_.GetAILevel());
+	enemy_.SetAiWeight(aiLeveler_.GetLifeWeight(), aiLeveler_.GetAttackWeight(), aiLeveler_.GetUniqueWeight());
 	buildMapChipIndex_.clear();
 	oldBuildMapChipIndex_.clear();
 	player_.RestParameter();
@@ -507,7 +499,9 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 				oldBuildMapChipIndex_.push_back(index);
 
 				if (wallMap_[index.y][index.x] == 0) {
-					wallMap_[index.y][index.x] = 4;
+					if (floorMap_[index.y][index.x] != 0) {
+						wallMap_[index.y][index.x] = 4;
+					}
 				}
 			}
 		}

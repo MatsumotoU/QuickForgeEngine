@@ -71,6 +71,7 @@ void Enemy::Update() {
 		model_->transform_.scale.z = 1.0f + sinf(timer_) * 0.1f;
 
 		if (!isSelectedDir_) {
+			ScanMapCenter();
 			InitEvaluationValue();
 			LifeEvaluation();
 			AttackEvaluation();
@@ -165,17 +166,28 @@ void Enemy::Draw() {
 	ImGui::DragFloat3("AIWeight", &aiWeight_.life, 0.1f, 0.0f, 1.0f);
 	ImGui::Text("SelectIndex: %d MaxSelected: %d", selectedDirIndex_, maxSelect_);
 
-	ImGui::Text("DelayTime: %f", delayTimer_);
-	ImGui::DragFloat2("moveDir", &moveDir_.x, 0.1f);
-	ImGui::DragFloat3("Velocity", &velocity_.x, 0.1f);
-	ImGui::DragFloat3("Position", &model_->transform_.translate.x, 0.1f);
-	ImGui::DragFloat("ShotPower", &shotPower_, 0.01f, 0.0f, 10.0f);
-	ImGui::Checkbox("isCanMove", &isCanMove_);
-	ImGui::Checkbox("isCanShot", &isCanShot_);
-	ImGui::Checkbox("isMoving", &isMoving_);
-	ImGui::Checkbox("isReqestBuilding", &isReqestBuilding_);
-	ImGui::Text("MoveDir:%f,%f", moveDir_.x, moveDir_.y);
-	ImGui::Text("MoveTimer:%f", moveTimer_);
+	if (ImGui::BeginTable("SelectedDirectionTable", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
+		ImGui::TableSetupColumn("Index");
+		ImGui::TableSetupColumn("Direction");
+		ImGui::TableSetupColumn("Evaluation");
+		ImGui::TableHeadersRow();
+
+		for (size_t i = 0; i < selectedDirIndexTable_.size(); ++i) {
+			int idx = selectedDirIndexTable_[i];
+			ImGui::TableNextRow();
+			if (static_cast<int>(i) == selectedDirIndex_) {
+				// 選択中の行の背景色を変更（例: 黄色）
+				ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(128, 0, 0, 255));
+			}
+			ImGui::TableNextColumn();
+			ImGui::Text("%d", idx);
+			ImGui::TableNextColumn();
+			ImGui::Text("(%.2f, %.2f)", directionTable_[idx].x, directionTable_[idx].y);
+			ImGui::TableNextColumn();
+			ImGui::Text("%d", totalEvaluationValue_[idx]);
+		}
+		ImGui::EndTable();
+	}
 
 	Vector2 leftStick = engineCore_->GetXInputController()->GetLeftStick(0);
 	ImGui::Text("%f,%f", leftStick.x, leftStick.y);
@@ -233,8 +245,25 @@ void Enemy::SelectedDir() {
 	maxSelect = std::max(maxSelect, 1u); // 最低1つは選択肢を残す
 	maxSelect_ = maxSelect;
 
-	for (uint32_t i = 0; i < maxSelect; i++) {
-		selectedDirIndexTable_.push_back(dirTableIndexTable_[i]);
+	float negativeKeepRate = 0.4938f * std::powf(1.0f - static_cast<float>(aiLevel_) / 100.0f, 2.0f);
+	negativeKeepRate = std::clamp(negativeKeepRate, 0.0f, 0.4938f);
+
+	uint32_t count = 0;
+	for (int idx : dirTableIndexTable_) {
+		if (count >= maxSelect) break;
+		if (totalEvaluationValue_[idx] < 0) {
+			if (static_cast<float>(rand()) / RAND_MAX < negativeKeepRate) {
+				selectedDirIndexTable_.push_back(idx);
+				++count;
+			}
+		} else {
+			selectedDirIndexTable_.push_back(idx);
+			++count;
+		}
+	}
+	// もし選択肢が0なら、最低1つは残す
+	if (selectedDirIndexTable_.empty() && !dirTableIndexTable_.empty()) {
+		selectedDirIndexTable_.push_back(dirTableIndexTable_[0]);
 	}
 }
 
@@ -245,11 +274,82 @@ void Enemy::ShotRandomDir() {
 	shotDir_ = directionTable_[selectedDirIndexTable_[randomIndex]];
 }
 
-void Enemy::LifeEvaluation() {
-	// ゲーム盤の中央座標
-	const float mapCenterX = static_cast<float>(wallMap_[0].size()) * kBlockSize * 0.5f;
-	const float mapCenterY = static_cast<float>(wallMap_->size()) * kBlockSize * 0.5f;
+void Enemy::ScanMapCenter() {
+	// 穴リスト作成
+	std::vector<std::pair<int, int>> holeList;
+	for (size_t y = 0; y < floorMap_->size(); ++y) {
+		for (size_t x = 0; x < (*floorMap_)[y].size(); ++x) {
+			if ((*floorMap_)[y][x] == 0) {
+				holeList.emplace_back(static_cast<int>(x), static_cast<int>(y));
+			}
+		}
+	}
 
+	// 床ブロックごとに穴からの最短距離を計算
+	struct BlockInfo {
+		int x, y;
+		float minDistToHole;
+	};
+	std::vector<BlockInfo> blockInfos;
+	for (size_t y = 0; y < floorMap_->size(); ++y) {
+		for (size_t x = 0; x < (*floorMap_)[y].size(); ++x) {
+			if ((*floorMap_)[y][x] != 0) {
+				float minDistToHole = std::numeric_limits<float>::max();
+				for (const auto& hole : holeList) {
+					float dist = static_cast<float>(
+						std::sqrt((static_cast<int>(x) - hole.first) * (static_cast<int>(x) - hole.first) +
+							(static_cast<int>(y) - hole.second) * (static_cast<int>(y) - hole.second)));
+
+					if (dist < minDistToHole) {
+						minDistToHole = dist;
+					}
+				}
+				blockInfos.push_back({ static_cast<int>(x), static_cast<int>(y), minDistToHole });
+			}
+		}
+	}
+
+	// 穴から最も遠い順にソート
+	std::sort(blockInfos.begin(), blockInfos.end(), [](const BlockInfo& a, const BlockInfo& b) {
+		return a.minDistToHole > b.minDistToHole;
+		});
+
+	// 自分の座標
+	int selfX = static_cast<int>(model_->transform_.translate.x / kBlockSize);
+	int selfY = static_cast<int>(model_->transform_.translate.z / kBlockSize);
+
+	// 予測経路で到達可能な床ブロックを探索
+	int bestX = selfX;
+	int bestY = selfY;
+	for (const auto& info : blockInfos) {
+		// 予測移動（自分から目的地方向にGetMoveTimer()分進む）
+		Vector2 startPos = { model_->transform_.translate.x, model_->transform_.translate.z };
+		Vector2 goalPos = { info.x * kBlockSize + kBlockSize * 0.5f, info.y * kBlockSize + kBlockSize * 0.5f };
+		Vector2 dir = (goalPos - startPos);
+		if (dir.x == 0.0f && dir.y == 0.0f) continue;
+		dir = dir / std::sqrt(dir.x * dir.x + dir.y * dir.y); // 正規化
+
+		predictionLine_.Init();
+		predictionLine_.Scan({ startPos.x, 1.0f, startPos.y }, dir, static_cast<int>(GetMoveTimer()), *wallMap_, kBlockSize);
+		const auto& points = predictionLine_.GetLinePoints();
+
+		// 最終到達点が目的地の床ブロック座標に近ければ到達可能とみなす
+		if (!points.empty()) {
+			const auto& last = points.back();
+			int lastX = static_cast<int>(last.x / kBlockSize);
+			int lastY = static_cast<int>(last.y / kBlockSize);
+			if (lastX == info.x && lastY == info.y) {
+				bestX = info.x;
+				bestY = info.y;
+				break;
+			}
+		}
+	}
+	mapCenterX_ = bestX * kBlockSize + kBlockSize * 0.5f;
+	mapCenterY_ = bestY * kBlockSize + kBlockSize * 0.5f;
+}
+
+void Enemy::LifeEvaluation() {
 	for (int i = 0; i < kCheckCount_; i++) {
 		// 予測移動（directionTable_[i]方向にGetMoveTimer()分進む）
 		Vector2 startPos = { model_->transform_.translate.x, model_->transform_.translate.z };
@@ -284,16 +384,18 @@ void Enemy::LifeEvaluation() {
 		}
 
 		if (isDead) {
-			lifeEvaluationValue_[i] = -10; // 死ぬ
+			lifeEvaluationValue_[i] = -100; // 死ぬ
 		} else {
 			lifeEvaluationValue_[i] = 5; // 盤外に落ちない
 			// 中央に近いほど高評価
 			float distToCenter = std::sqrt(
-				(lastPos.x - mapCenterX) * (lastPos.x - mapCenterX) +
-				(lastPos.y - mapCenterY) * (lastPos.y - mapCenterY)
+				(lastPos.x - mapCenterX_) * (lastPos.x - mapCenterX_) +
+				(lastPos.y - mapCenterY_) * (lastPos.y - mapCenterY_)
 			);
-			// 距離が近いほど高評価（例: 1点 - 距離補正）
-			lifeEvaluationValue_[i] += static_cast<int>(1.0f - distToCenter * 0.01f);
+			// 何マス離れているか
+			int blockDistance = static_cast<int>(distToCenter / kBlockSize);
+			// 1ブロック以内なら8点、1マス離れるごとに-1点
+			lifeEvaluationValue_[i] += 8 - blockDistance;
 		}
 	}
 }
@@ -301,11 +403,6 @@ void Enemy::LifeEvaluation() {
 void Enemy::AttackEvaluation() {
 	// プレイヤー座標（事前にplayerPos_へセットされている前提）
 	Vector2 playerPos = playerPos_;
-
-	// ゲーム盤の中央座標
-	const float mapCenterX = static_cast<float>(wallMap_[0].size()) * kBlockSize * 0.5f;
-	const float mapCenterY = static_cast<float>(wallMap_->size()) * kBlockSize * 0.5f;
-
 	for (int i = 0; i < kCheckCount_; i++) {
 		// 予測移動（directionTable_[i]方向にGetMoveTimer()分進む）
 		Vector2 startPos = { model_->transform_.translate.x, model_->transform_.translate.z };
@@ -323,12 +420,12 @@ void Enemy::AttackEvaluation() {
 
 		// 1. プレイヤーより中央に近いほど高評価
 		float distToCenter = std::sqrt(
-			(lastPos.x - mapCenterX) * (lastPos.x - mapCenterX) +
-			(lastPos.y - mapCenterY) * (lastPos.y - mapCenterY)
+			(lastPos.x - mapCenterX_) * (lastPos.x - mapCenterX_) +
+			(lastPos.y - mapCenterY_) * (lastPos.y - mapCenterY_)
 		);
 		float playerDistToCenter = std::sqrt(
-			(playerPos.x - mapCenterX) * (playerPos.x - mapCenterX) +
-			(playerPos.y - mapCenterY) * (playerPos.y - mapCenterY)
+			(playerPos.x - mapCenterX_) * (playerPos.x - mapCenterX_) +
+			(playerPos.y - mapCenterY_) * (playerPos.y - mapCenterY_)
 		);
 		if (distToCenter < playerDistToCenter) {
 			attackEvaluationValue_[i] += 3; // プレイヤーより中央に近い
@@ -369,5 +466,46 @@ void Enemy::AttackEvaluation() {
 }
 
 void Enemy::UniqeEvaluation() {
-	uniqeEvaluationValue_.fill(0);
+	for (int i = 0; i < kCheckCount_; i++) {
+		// 予測移動の最終到達点
+		const auto& points = predictionLine_.GetLinePoints();
+		if (!points.empty()) {
+			Vector2 lastPos = points.back();
+			Vector2 jumpDir = directionTable_[i].Normalize();
+
+			float vx = jumpDir.x * 2.5f;
+			float vz = jumpDir.y * 2.5f;
+			float vy = 15.0f;
+			float gravity = -9.81f;
+
+			float t = (-2.0f * vy) / gravity;
+
+			float jumpX = lastPos.x + vx * t;
+			float jumpZ = lastPos.y + vz * t;
+
+			int mapX = static_cast<int>(jumpX / kBlockSize);
+			int mapY = static_cast<int>(jumpZ / kBlockSize);
+
+			bool hasFloor = false;
+			if (floorMap_ &&
+				mapY >= 0 && mapY < static_cast<int>(floorMap_->size()) &&
+				mapX >= 0 && mapX < static_cast<int>((*floorMap_)[mapY].size())) {
+				hasFloor = ((*floorMap_)[mapY][mapX] != 0);
+			}
+
+			// 着地地点と中心の距離
+			float distToCenter = std::sqrt(
+				(jumpX - mapCenterX_) * (jumpX - mapCenterX_) +
+				(jumpZ - mapCenterY_) * (jumpZ - mapCenterY_)
+			);
+			int blockDistance = static_cast<int>(distToCenter / kBlockSize);
+
+			// 床があれば中心に近いほど高得点
+			if (hasFloor) {
+				uniqeEvaluationValue_[i] = 10 + (8 - blockDistance); // 1ブロック以内なら最大18点、遠いほど減点
+			} else {
+				uniqeEvaluationValue_[i] = -100;
+			}
+		}
+	}
 }

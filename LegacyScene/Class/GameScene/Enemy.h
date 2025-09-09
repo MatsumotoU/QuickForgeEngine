@@ -31,6 +31,7 @@ private:
 	std::array<Vector2, kCheckCount_> directionTable_;
 	std::array<int, kCheckCount_> dirTableIndexTable_;
 
+	void ScanMapCenter();
 	void LifeEvaluation();
 	void AttackEvaluation();
 	void UniqeEvaluation();
@@ -60,6 +61,9 @@ private:
 	int maxSelect_;
 
 	bool isSelectedDir_;
+
+	float mapCenterX_;
+	float mapCenterY_;
 
 	float timer_;
 };

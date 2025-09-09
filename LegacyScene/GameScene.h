@@ -18,6 +18,8 @@
 #include "Class/TitleScene/TitleSkyDome.h"
 #include "Class/GameScene/ParticleManager.h"
 
+#include "Class/GameScene/AiLeveler.h"
+
 #include "Math/Vector/IntVector2.h"
 
 class GameScene : public IScene{
@@ -68,6 +70,7 @@ private:
 	bool isPlayerTurn_;
 	Player player_;
 	Enemy enemy_;
+	AiLeveler aiLeveler_;
 	bool isEndGame_;
 	float endGameTimer_;
 
