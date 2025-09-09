@@ -31,4 +31,7 @@ private:
 	Particle stoneBlock_;
 	std::vector<Transform> stoneBlockTransforms_;
 	std::vector<Vector4> stoneBlockColors_;
+	Particle wallBlock_;
+	std::vector<Transform> wallBlockTransforms_;
+	std::vector<Vector4> wallBlockColors_;
 };

@@ -8,6 +8,7 @@ enum class BlockType {
 	Dirt,
 	Grass,
 	Stone,
+	Wall,
 };
 
 class Block final {
@@ -19,6 +20,7 @@ public:
 	void Update();
 
 	void BuildUpSpawn();
+	void BreakDespawn();
 
 	bool GetIsDraw() const { return isDraw_; }
 	const BlockType& GetType() const;
@@ -35,6 +37,8 @@ private:
 	Camera* camera_;
 
 	bool isDraw_;
+	float deathTimer_;
+	bool isDespawned_;
 
 	BlockType type_;
 };

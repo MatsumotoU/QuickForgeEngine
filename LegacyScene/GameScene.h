@@ -16,6 +16,9 @@
 #include "Class/GameScene/TurnText.h"
 
 #include "Class/TitleScene/TitleSkyDome.h"
+#include "Class/GameScene/ParticleManager.h"
+
+#include "Class/GameScene/AiLeveler.h"
 
 #include "Math/Vector/IntVector2.h"
 
@@ -47,6 +50,7 @@ private:
 	void AliveCheck(GamePlayer& gamePlayer);
 	void CheckEndGame();
 
+	uint32_t frameCount_;
 	EngineCore* engineCore_;
 	DirectInputManager* input_;
 	CollisionManager collisionManager_;
@@ -66,6 +70,7 @@ private:
 	bool isPlayerTurn_;
 	Player player_;
 	Enemy enemy_;
+	AiLeveler aiLeveler_;
 	bool isEndGame_;
 	float endGameTimer_;
 
@@ -74,6 +79,7 @@ private:
 	std::vector<std::vector<uint32_t>> wallMap_;
 	std::vector<std::vector<uint32_t>> floorMap_;
 	std::vector<IntVector2> buildMapChipIndex_;
+	std::vector<IntVector2> oldBuildMapChipIndex_;
 
 	std::string stageName_;
 	IScene* nextScene_;
@@ -81,6 +87,7 @@ private:
 	TitleSkyDome skyDome_;
 
 	uint32_t bgmHandle_;
+	ParticleManager particleManager_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;

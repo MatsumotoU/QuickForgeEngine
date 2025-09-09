@@ -1,5 +1,10 @@
 #include "Mole.h"
 
+Mole::~Mole()
+{
+	engineCore_->GetAudioPlayer()->StopAudio("Dig.mp3");
+}
+
 void Mole::DebugImGui()
 {
 	if (ImGui::CollapsingHeader("Mole")) {
@@ -30,29 +35,22 @@ void Mole::Initialize(EngineCore* engineCore, Camera* camera, Vector3 directiona
 	model_ = std::make_unique<Model>(engineCore_, camera_);
 	model_->LoadModel("Resources/Model/mole", "mole.obj", COORDINATESYSTEM_HAND_LEFT);
 	model_.get()->transform_.translate = { -1.7f,-1.0f,2.0f };
-	model_.get()->transform_.rotate = { 0.0f,1.8f,0.0f };
+	model_.get()->transform_.rotate = { 0.0f,3.14f / 2.0f,0.0f };
 	model_.get()->SetDirectionalLightDir(directionalLightDir_);
+	model_->Update();
+	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Dig.mp3");
 }
 
 void Mole::Update() {
 
-	Vector2 leftStick = engineCore_->GetXInputController()->GetLeftStick(0);
-
-	if (leftStick.x != 0 &&
-		moleState_ == MoleState::Normal) {
-		isAnimation_ = true;
-		if (leftStick.x < 0) {
-			direction_ = Direction::Left;
-		}
-		else {
-			direction_ = Direction::Right;
-		}
-	}
+	MoveInput();
 
 	Animation();
 	Move();
 
 	model_->Update();
+
+
 }
 
 void Mole::Draw() {
@@ -67,14 +65,37 @@ void Mole::Animation()
 	switch (moleState_)
 	{
 	case Mole::MoleState::Normal:
+
 		model_.get()->transform_.rotate.z = roteta_;
 		roteta_ += speed_ / 60.0f;
 		if (roteta_ <= -rotetoMax || roteta_ >= rotetoMax) {
 			speed_ *= -1.0f;
 		}
+		if (!isAnimation_) {
+			rotateFream_ = 0.0f;
+			startDirection_ = model_.get()->transform_.rotate.y;
+			if (direction_ == Direction::Right) {
+				rotetaDirection_ = 3.14f + 3.14f / 2.0f;
+			}
+			else {
+				rotetaDirection_ = 3.14f / 2.0f;
+			}if (startDirection_ == rotetaDirection_) {
+				rotateFream_ = 1.0f;
+			}
+
+		}
 		if (isAnimation_) {
-			model_.get()->transform_.rotate.z = 0.0f;
-			moleState_ = MoleState::StartDigging;
+			// 線形補間
+			rotateFream_ += 1.0f / 30.0f;
+			model_.get()->transform_.rotate.y = startDirection_ * (1.0f - rotateFream_) + rotetaDirection_ * rotateFream_;
+			if (rotateFream_ >= 1.0f) {
+				model_.get()->transform_.rotate.z = 0.0f;
+				moleState_ = MoleState::StartDigging;
+				rotateFream_ = 1.0f;
+				model_.get()->transform_.rotate.y = startDirection_ * (1.0f - rotateFream_) + rotetaDirection_ * rotateFream_;
+				rotateFream_ = 0.0f;
+
+			}
 		}
 		break;
 	case Mole::MoleState::StartDigging:
@@ -100,9 +121,11 @@ void Mole::Animation()
 		model_.get()->transform_.scale = { scale, scale, scale };
 		break;
 	case Mole::MoleState::Digging:
+		engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "Dig.mp3", true);
 		if (!isAnimation_) {
 			animationTimer_ = 0;
 			moleState_ = Mole::MoleState::Emerging;
+			engineCore_->GetAudioPlayer()->StopAudio("Dig.mp3");
 		}
 		break;
 	case Mole::MoleState::Emerging:
@@ -123,21 +146,54 @@ void Mole::Animation()
 			animationTimer_ = 0;
 			scale = 1.0f; // 元サイズに戻す
 		}
-
 		model_.get()->transform_.scale = { scale, scale, scale };
 
 		break;
-
 	default:
 		break;
 	}
+}
 
+
+void Mole::MoveInput()
+{
+
+	if (engineCore_->GetXInputController()->GetIsActiveController(0)) {
+		input_ = engineCore_->GetXInputController()->GetLeftStick(0);
+	}
+	else if (engineCore_->GetInputManager()->mouse_.GetPress(0)) {
+		isCleck_ = true;
+	}
+	else {
+		input_ = { 0.0f,0.0f };
+		mouseTargetPos= engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+		isCleck_ = false;
+	}
+	if (isCleck_) {
+		Vector2 mousePos = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
+		input_ = mousePos - mouseTargetPos;
+	}
+
+	if (input_.Length() > deadZone_ &&
+		moleState_ == MoleState::Normal &&
+		!isAnimation_) {
+		isSetMove_ = true;
+		if (input_.x < 0) {
+			direction_ = Direction::Left;
+		}
+		else {
+			direction_ = Direction::Right;
+		}
+	}
+	if (input_.Length() == 0 && isSetMove_ && !isCleck_) {
+		isSetMove_ = false;
+		isAnimation_ = true;
+	}
 
 }
 
 void Mole::Move()
 {
-	
 	if (moleState_ == MoleState::Digging) {
 		moveTimer_++;
 		if (direction_ == Direction::Left) {
@@ -159,7 +215,7 @@ void Mole::ClampPosition()
 	float posX = model_.get()->transform_.translate.x;
 	if (posX < -2.8f) {
 		model_.get()->transform_.translate.x = -2.7f;
-		moveTimer_ = float(moveMaxTime_);
+		isAnimation_ = false;
 	}
 	if (posX > 2.8f) {
 		isGameStart = true;

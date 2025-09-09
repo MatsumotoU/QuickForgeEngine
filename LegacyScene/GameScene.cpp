@@ -49,28 +49,6 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_
 	wallMap_ = MapChipLoader::Load(wallFilePath);
 	floorMap_ = MapChipLoader::Load(floorFilePath);
 
-	// AIレベルの取得
-	if (sceneData_->contains("AILevel")) {
-		enemy_.SetAiLevel((*sceneData_)["AILevel"].get<uint32_t>());
-	} else {
-		uint32_t stageValue = 1;
-		if (sceneData_->contains("stage")) {
-			stageValue = (*sceneData_)["stage"].get<uint32_t>();
-		}
-		(*sceneData_)["AILevel"] = 10 * stageValue;
-		enemy_.SetAiLevel(10 * stageValue);
-	}
-
-	if (sceneData_->contains("AILifeWeight")) {
-		enemy_.SetAiWeight((*sceneData_)["AILifeWeight"].get<float>(), (*sceneData_)["AIAttackWeight"].get<float>(), (*sceneData_)["AIUniqeWeight"].get<float>());
-
-	} else {
-		(*sceneData_)["AILifeWeight"] = 1.0f;
-		(*sceneData_)["AIAttackWeight"] = 0.0f;
-		(*sceneData_)["AIUniqeWeight"] = 0.0f;
-		enemy_.SetAiWeight(1.0f, 0.0f, 0.0f);
-	}
-
 	timer_ = 0.0f;
 	cameraShakeTimer_ = 0.0f;
 
@@ -79,6 +57,7 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_
 }
 
 GameScene::~GameScene() {
+	engineCore_->GetPostprocess()->grayScaleOffset_ = 0.0f;
 	engineCore_->GetGraphRenderer()->DeleteCamera(&camera_);
 	engineCore_->GetAudioPlayer()->StopAudio("GameSceneBGM.mp3");
 }
@@ -100,10 +79,17 @@ void GameScene::Initialize() {
 	player_.Initialize(engineCore_, &camera_);
 	player_.GetTransform().translate.x += 2.0f;
 	player_.GetTransform().translate.z += 4.0f;
+	player_.SetOldBuildMapChipIndex(&oldBuildMapChipIndex_);
 
 	enemy_.Initialize(engineCore_, &camera_);
 	enemy_.GetTransform().translate.x += 6.0f;
 	enemy_.GetTransform().translate.z += 4.0f;
+
+	// AIレベルの取得
+	std::string aiFilePath = "Resources/Map/" + stageName_ + "_ai.csv";
+	aiLeveler_.LoadAIConfig(aiFilePath);
+	enemy_.SetAiLevel(aiLeveler_.GetAILevel());
+	enemy_.SetAiWeight(aiLeveler_.GetLifeWeight(), aiLeveler_.GetAttackWeight(), aiLeveler_.GetUniqueWeight());
 
 	mainMenu_.Initialize(engineCore_, &camera_);
 	resultUI_.Initialize(engineCore_, &camera_);
@@ -116,9 +102,14 @@ void GameScene::Initialize() {
 	endGameTimer_ = 0.0f;
 
 	skyDome_.Initialize(engineCore_, &camera_);
+
+	particleManager_.Initialize(engineCore_, &camera_);
+	frameCount_ = 0;
 }
 
 void GameScene::Update() {
+	frameCount_++;
+	particleManager_.Update();
 	skyDome_.Update();
 
 	timer_ += engineCore_->GetDeltaTime();
@@ -212,6 +203,7 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	particleManager_.Draw();
 #ifdef _DEBUG
 	debugCamera_.DrawImGui();
 #endif // _DEBUG
@@ -261,20 +253,23 @@ void GameScene::MainGameUpdate() {
 	floorChip_.Update();
 	wallChip_.Update();
 
-	player_.SetMap(&floorMap_, &wallMap_);
+	
 	enemy_.SetMap(&floorMap_, &wallMap_);
 	enemy_.SetPlayerPos({ player_.GetTransform().translate.x,player_.GetTransform().translate.z });
-	player_.Update();
 	enemy_.Update();
+
+	player_.SetMap(&floorMap_, &wallMap_);
+	player_.SetEnemyPos({ enemy_.GetTransform().translate.x,enemy_.GetTransform().translate.z });
+	player_.Update();
 
 	// IngameUpdate
 	MapChipUpdate(player_);
-	BuildingMapChipUpdate(player_);
 	MapChipUpdate(enemy_);
+	BuildingMapChipUpdate(player_);
 	BuildingMapChipUpdate(enemy_);
 	JumpingUpdate(player_);
-	GroundingUpdate(player_);
 	JumpingUpdate(enemy_);
+	GroundingUpdate(player_);
 	GroundingUpdate(enemy_);
 
 	AliveCheck(player_);
@@ -284,6 +279,7 @@ void GameScene::MainGameUpdate() {
 	if (isPlayerTurn_) {
 		PredictionLineUpdate(player_);
 		if (player_.GetIsEndTurn()) {
+			oldBuildMapChipIndex_.clear();
 			isPlayerTurn_ = false;
 			enemy_.GetIsCanMove() = true;
 
@@ -296,6 +292,7 @@ void GameScene::MainGameUpdate() {
 	} else {
 		PredictionLineUpdate(enemy_);
 		if (enemy_.GetIsEndTurn()) {
+			oldBuildMapChipIndex_.clear();
 			isPlayerTurn_ = true;
 			player_.GetIsCanMove() = true;
 			
@@ -326,7 +323,12 @@ void GameScene::MenuUpdate() {
 void GameScene::ResetGame(const std::string& stageName) {
 	wallMap_ = MapChipLoader::Load("Resources/Map/" + stageName + "_wall.csv");
 	floorMap_ = MapChipLoader::Load("Resources/Map/" + stageName + "_floor.csv");
+	std::string aiFilePath = "Resources/Map/" + stageName_ + "_ai.csv";
+	aiLeveler_.LoadAIConfig(aiFilePath);
+	enemy_.SetAiLevel(aiLeveler_.GetAILevel());
+	enemy_.SetAiWeight(aiLeveler_.GetLifeWeight(), aiLeveler_.GetAttackWeight(), aiLeveler_.GetUniqueWeight());
 	buildMapChipIndex_.clear();
+	oldBuildMapChipIndex_.clear();
 	player_.RestParameter();
 	enemy_.RestParameter();
 	player_.GetTransform().translate = { 2.0f,0.0f,4.0f };
@@ -375,56 +377,18 @@ void GameScene::PredictionLineUpdate(GamePlayer& gamePlayer) {
 				IntVector2 mapChipPos;
 				mapChipPos.x = static_cast<int>(std::round(point.x));
 				mapChipPos.y = static_cast<int>(std::round(point.y));
-				floorChip_.SetChipColor(mapChipPos.x, mapChipPos.y, { 0.3f, 1.0f, 0.3f, 1.0f });
+				
 				buildPoints.push_back({ static_cast<float>(mapChipPos.x), static_cast<float>(mapChipPos.y) });
 			}
-			// 最後のブロックだけ色を消す
-			const Vector2& lastPoint = linePoints.back();
-			IntVector2 lastMapChipPos;
-			lastMapChipPos.x = static_cast<int>(std::round(lastPoint.x));
-			lastMapChipPos.y = static_cast<int>(std::round(lastPoint.y));
-			floorChip_.SetChipColor(lastMapChipPos.x, lastMapChipPos.y, { 1.0f, 1.0f, 1.0f, 1.0f }); // デフォルト色（必要に応じて調整）
+			Vector2 lastPoint = buildPoints.back();
 			buildPoints.pop_back();
+			for (const auto& buildPoint : buildPoints) {
+				floorChip_.SetChipColor(static_cast<int>(buildPoint.x), static_cast<int>(buildPoint.y), { 0.0f, 1.0f, 0.0f, 1.0f });
+			}
 
 			// 着地点の予測表示
-			landingPoint_.Init();
-			Vector2 totalNormal(0.0f, 0.0f);
-			bool isCollided = false;
-			for (const auto& buildPoint : buildPoints) {
-				if (MapChipCollider::IsAABBCollision(lastPoint, 1.0f, 1.0f, buildPoint, kBlockSize, kBlockSize)) {
-					Vector2 blockCenter = buildPoint + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
-					Vector2 jumpDir = (lastPoint - blockCenter).Normalize();
-					totalNormal += jumpDir;
-					isCollided = true;
-				}
-			}
-
-			// 合成方向でジャンプ（ゼロベクトルの場合は上方向にジャンプ）
-			if (isCollided) {
-				Vector2 jumpDir;
-				if (totalNormal.Length() > 0.0f) {
-					jumpDir = totalNormal.Normalize();
-				} else {
-					jumpDir = Vector2(0.0f, 1.0f); // デフォルトで上方向
-				}
-				landingPoint_.Scan({ lastPoint.x ,1.0f,lastPoint.y }, jumpDir, floorMap_, 1.0f);
-
-				// 着地点の色を変える
-				if (!landingPoint_.GetLandingPoints().empty()) {
-					IntVector2 lastJampMapChipPos;
-					lastJampMapChipPos.x = static_cast<int>(std::round(landingPoint_.GetLandingPoints().back().x));
-					lastJampMapChipPos.y = static_cast<int>(std::round(landingPoint_.GetLandingPoints().back().z));
-					floorChip_.SetChipColor(lastJampMapChipPos.x, lastJampMapChipPos.y, { 1.0f, 1.0f, 0.0f, 1.0f });
-
-					IntVector2 firstJampMapChipPos;
-					firstJampMapChipPos.x = static_cast<int>(std::round(landingPoint_.GetLandingPoints()[0].x));
-					firstJampMapChipPos.y = static_cast<int>(std::round(landingPoint_.GetLandingPoints()[0].z));
-					floorChip_.SetChipColor(firstJampMapChipPos.x, firstJampMapChipPos.y, { 1.0f, 1.0f, 0.0f, 1.0f });
-
-				}
-			}
-
-			
+			/*landingPoint_.Init();
+			landingPoint_.Scan({ lastPoint.x ,1.0f,lastPoint.y }, oldBuildMapChipIndex_, floorMap_, 1.0f);*/
 		}
 	}
 }
@@ -435,6 +399,12 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 		int nearestY = -1;
 		Vector2 nearestMapChipPos;
 		bool isCollided = false;
+
+		if (frameCount_ % 7 == 0) {
+			Vector3 emmitPos = gamePlayer.GetWorldPosition();
+			emmitPos.y += 0.5f;
+			particleManager_.EmitBomb(emmitPos, gamePlayer.GetColor(), 3, 1.0f, 0.98f, 50);
+		}
 
 		Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
 		Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f); // プレイヤーの中央座標
@@ -470,6 +440,10 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 			gamePlayer.GetTransform().translate.z += reflectDir.y * 0.1f;
 
 			if (gamePlayer.GetIsMoving()) {
+				particleManager_.EmitBomb(
+					{ nearestMapChipPos.x + 0.5f,0.5f,nearestMapChipPos.y + 0.5f },
+					{ 1.0f,0.5f,0.0f,1.0f }, 5, 1.0f, 0.98f, 100);
+
 				if (wallMap_[nearestY][nearestX] == 3) {
 					wallMap_[nearestY][nearestX] = 1;
 				} else {
@@ -489,15 +463,18 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 		mapChipPos.x = static_cast<int>(std::round(gamePlayer.GetTransform().translate.x));
 		mapChipPos.y = static_cast<int>(std::round(gamePlayer.GetTransform().translate.z));
 
+		// 範囲外チェック
 		if (mapChipPos.x >= 0 && mapChipPos.x < static_cast<int>(wallMap_[0].size()) &&
 			mapChipPos.y >= 0 && mapChipPos.y < static_cast<int>(wallMap_.size())) {
 
-			if (buildMapChipIndex_.empty()) {
-				buildMapChipIndex_.push_back(mapChipPos);
-			} else if
+			// 重複排除
+			if (buildMapChipIndex_.empty() ||
 				(buildMapChipIndex_.back().x != mapChipPos.x ||
-					buildMapChipIndex_.back().y != mapChipPos.y) {
-				buildMapChipIndex_.push_back(mapChipPos);
+					buildMapChipIndex_.back().y != mapChipPos.y)) {
+				// 既に登録済みなら追加しない
+				if (std::find(buildMapChipIndex_.begin(), buildMapChipIndex_.end(), mapChipPos) == buildMapChipIndex_.end()) {
+					buildMapChipIndex_.push_back(mapChipPos);
+				}
 			}
 
 			// 一個前のブロックを赤く塗る
@@ -513,18 +490,29 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 		if (!buildMapChipIndex_.empty()) {
 			buildMapChipIndex_.pop_back();
 		}
+
+		oldBuildMapChipIndex_.clear();
 		for (const auto& index : buildMapChipIndex_) {
-			if (wallMap_[index.y][index.x] == 0) {
-				wallMap_[index.y][index.x] = floorMap_[index.y][index.x];
+			// 範囲外チェック
+			if (index.x >= 0 && index.x < static_cast<int>(wallMap_[0].size()) &&
+				index.y >= 0 && index.y < static_cast<int>(wallMap_.size())) {
+				oldBuildMapChipIndex_.push_back(index);
+
+				if (wallMap_[index.y][index.x] == 0) {
+					if (floorMap_[index.y][index.x] != 0) {
+						wallMap_[index.y][index.x] = 4;
+					}
+				}
 			}
 		}
-		buildMapChipIndex_.clear();
 		gamePlayer.SetIsBuilding(false);
 		floorChip_.ResetChipColor();
 
 		if (cameraShakeTimer_ < 0.5f) {
 			cameraShakeTimer_ += 0.5f;
 		}
+
+		buildMapChipIndex_.clear();
 	}
 }
 void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
@@ -534,24 +522,21 @@ void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
 		Vector2 playerPos = { gamePlayer.GetTransform().translate.x - 0.5f, gamePlayer.GetTransform().translate.z - 0.5f };
 		Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f);
 
-		for (int y = 0; y < wallMap_.size(); y++) {
-			for (int x = 0; x < wallMap_[y].size(); x++) {
-				if (wallMap_[y][x] != 0) {
-					Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
-					if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
-						Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
-						Vector2 jumpDir = (playerCenter - blockCenter).Normalize();
-						totalNormal += jumpDir;
-						isCollided = true;
-					}
-				}
+		for (auto& mapchip : oldBuildMapChipIndex_) {
+			Vector2 mapChipPos = { static_cast<float>(mapchip.x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(mapchip.y) * kBlockSize - (kBlockSize * 0.5f) };
+
+			if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
+				Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
+				Vector2 jumpDir = (playerCenter - blockCenter).Normalize();
+				totalNormal += jumpDir;
+				isCollided = true;
 			}
 		}
 
 		// 合成方向でジャンプ（ゼロベクトルの場合は上方向にジャンプ）
 		if (isCollided) {
 			Vector2 jumpDir;
-			if (totalNormal.Length() > 0.0f) {
+			if (totalNormal.Length() > 0.01f) { // 0.0f だと不安定なので閾値を設ける
 				jumpDir = totalNormal.Normalize();
 			} else {
 				jumpDir = Vector2(0.0f, 1.0f); // デフォルトで上方向
@@ -566,18 +551,16 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 		mapChipPos.x = static_cast<int>(std::round(gamePlayer.GetTransform().translate.x));
 		mapChipPos.y = static_cast<int>(std::round(gamePlayer.GetTransform().translate.z));
 
-		if (mapChipPos.x >= 0 && mapChipPos.x < static_cast<int>(wallMap_[0].size()) &&
-			mapChipPos.y >= 0 && mapChipPos.y < static_cast<int>(wallMap_.size())) {
-
-			// 周囲8マス＋中心の9マスを0にする
-			for (int dy = -1; dy <= 1; ++dy) {
-				for (int dx = -1; dx <= 1; ++dx) {
-					int nx = mapChipPos.x + dx;
-					int ny = mapChipPos.y + dy;
-					if (nx >= 0 && nx < static_cast<int>(wallMap_[0].size()) &&
-						ny >= 0 && ny < static_cast<int>(wallMap_.size())) {
-						wallMap_[ny][nx] = 0;
-					}
+		for (int dy = -1; dy <= 1; ++dy) {
+			for (int dx = -1; dx <= 1; ++dx) {
+				int nx = mapChipPos.x + dx;
+				int ny = mapChipPos.y + dy;
+				if (nx >= 0 && nx < static_cast<int>(wallMap_[0].size()) &&
+					ny >= 0 && ny < static_cast<int>(wallMap_.size())) {
+					wallMap_[ny][nx] = 0;
+					particleManager_.EmitBomb(
+						{ static_cast<float>(nx),1.0f,static_cast<float>(ny) },
+						{ 1.0f,0.5f,0.0f,1.0f }, 5, 1.0f, 0.98f, 100);
 				}
 			}
 		}
@@ -588,6 +571,9 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 			mapChipPos.y >= 0 && mapChipPos.y < static_cast<int>(wallMap_.size())) {
 			if (cameraShakeTimer_ < 0.5f) {
 				cameraShakeTimer_ += 0.5f;
+				particleManager_.EmitBomb(
+					{ static_cast<float>(mapChipPos.x),1.0f,static_cast<float>(mapChipPos.y)},
+					{ 1.0f,1.0f,1.0f,1.0f }, 10, 1.0f, 0.98f, 50);
 			}
 		}
 	}

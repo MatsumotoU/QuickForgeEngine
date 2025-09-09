@@ -18,10 +18,33 @@ void Block::Initialize(EngineCore* engineCore, Camera* camera, BlockType type) {
 	type_ = type;
 
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	deathTimer_ = 0.0f;
+
+	isDespawned_ = false;
 }
 
 void Block::Update() {
+	MyEasing::SimpleEaseIn(&transform_.scale.x, 1.0f, 0.1f);
 	MyEasing::SimpleEaseIn(&transform_.scale.y, 1.0f, 0.1f);
+	MyEasing::SimpleEaseIn(&transform_.scale.z, 1.0f, 0.1f);
+
+
+	if (isDespawned_) {
+		if (deathTimer_ > 0.0f) {
+			deathTimer_ -= engineCore_->GetDeltaTime();
+			MyEasing::SimpleEaseIn(&transform_.scale.x, 0.0f, 0.1f);
+			MyEasing::SimpleEaseIn(&transform_.scale.y, 0.0f, 0.1f);
+			MyEasing::SimpleEaseIn(&transform_.scale.z, 0.0f, 0.1f);
+			transform_.rotate.y += 24.0f * engineCore_->GetDeltaTime();
+
+		} else {
+			isDraw_ = false;
+			isDespawned_ = false;
+			deathTimer_ = 0.0f;
+			transform_.scale.y = 1.0f;
+		}
+	}
 	/*MyEasing::SimpleEaseIn(&dirtModel_->transform_.scale.y, 1.0f, 0.1f);
 	MyEasing::SimpleEaseIn(&grassModel_->transform_.scale.y, 1.0f, 0.1f);
 	MyEasing::SimpleEaseIn(&StoneModel_->transform_.scale.y, 1.0f, 0.1f);
@@ -55,11 +78,18 @@ void Block::BuildUpSpawn() {
 	if (isDraw_) {
 		return;
 	}
-
-	/*dirtModel_->transform_.scale.y = 0.0f;
-	grassModel_->transform_.scale.y = 0.0f;
-	StoneModel_->transform_.scale.y = 0.0f;*/
+	transform_.rotate = { 0.0f,0.0f,0.0f };
+	transform_.scale.y = 0.0f;
 	isDraw_ = true;
+}
+
+void Block::BreakDespawn() {
+	if (isDespawned_ && isDraw_) {
+		return;
+	}
+
+	isDespawned_ = true;
+	deathTimer_ = 0.3f;
 }
 
 //Transform& Block::GetTransform() {
