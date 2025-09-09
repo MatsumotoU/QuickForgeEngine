@@ -9,7 +9,10 @@ public:
 	~LandingPoint() = default;
 
 	void Init();
-	void Scan(const Vector3& jumpPos,const Vector2 jumpDir, const std::vector<std::vector<uint32_t>>& floorMap, float kBlockSize);
+	void Scan(const Vector3& jumpPos,
+		const std::vector<IntVector2>& mapChipIndices,
+		const std::vector<std::vector<uint32_t>>& floorMap,
+		float kBlockSize);
 	void Draw(EngineCore* engineCore);
 
 	std::vector<Vector3> GetLandingPoints() const { return landingPoints_; }

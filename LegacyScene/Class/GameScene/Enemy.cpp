@@ -144,6 +144,9 @@ void Enemy::Update() {
 		velocity_.y = 0.0f;
 
 		if (isJumping_) {
+			velocity_.x = 0.0f;
+			velocity_.z = 0.0f;
+
 			isJumping_ = false;
 			isGrounded_ = true;
 		}

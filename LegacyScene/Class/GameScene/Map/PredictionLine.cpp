@@ -22,8 +22,8 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
     float stepSize = 1.0f / static_cast<float>(numTiles);
     float totalDistance = 0.0f;
 
-    // 反射したことのあるブロック座標を記録
-    std::set<std::pair<int, int>> reflectedBlocks;
+    bool reflectedThisFrame = false;
+    std::map<std::pair<int, int>, int> reflectCountMap; // 座標ごとの反射回数
 
     for (int i = 0; i < numTiles * 30; ++i) {
         linePoints_.push_back(currentPos);
@@ -39,17 +39,19 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
         Vector2 playerPos = nextPos - Vector2(0.5f, 0.5f);
         Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f);
 
+        // 最も近いブロックのみで反射
         for (int y = 0; y < static_cast<int>(wallMap.size()); y++) {
             for (int x = 0; x < static_cast<int>(wallMap[y].size()); x++) {
-                // 反射済みブロックはスキップ
-                if (reflectedBlocks.count({ x, y }) > 0) {
-                    continue;
-                }
                 if (wallMap[y][x] != 0) {
+                    // 反射回数制限
+                    auto key = std::make_pair(x, y);
+                    int maxReflect = (wallMap[y][x] == 3) ? 2 : 1;
+                    if (reflectCountMap[key] >= maxReflect) continue;
+
                     Vector2 mapChipPos = { static_cast<float>(x) * kBlockSize - (kBlockSize * 0.5f), static_cast<float>(y) * kBlockSize - (kBlockSize * 0.5f) };
+                    Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
+                    float distance = Vector2::Distance(playerCenter, blockCenter);
                     if (MapChipCollider::IsAABBCollision(playerPos, 1.0f, 1.0f, mapChipPos, kBlockSize, kBlockSize)) {
-                        Vector2 blockCenter = mapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f);
-                        float distance = Vector2::Distance(playerCenter, blockCenter);
                         if (distance < minDistance) {
                             minDistance = distance;
                             nearestX = x;
@@ -62,13 +64,22 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
             }
         }
 
-        if (isCollided) {
+        if (isCollided && !reflectedThisFrame) {
+            // 反射
             direction = MapReflection::ReflectDirection(direction, playerPos, 1.0f, 1.0f, nearestMapChipPos, kBlockSize, kBlockSize);
             direction = direction.Normalize();
-            currentPos = nextPos;
-            // 反射したブロック座標を記録
-            reflectedBlocks.insert({ nearestX, nearestY });
-            continue;
+            reflectedThisFrame = true;
+
+            // 反射回数を記録
+            auto key = std::make_pair(nearestX, nearestY);
+            reflectCountMap[key]++;
+
+            // めり込み防止: 線分座標をブロック外へ押し戻す
+            Vector2 reflectDir = (playerCenter - (nearestMapChipPos + Vector2(kBlockSize * 0.5f, kBlockSize * 0.5f))).Normalize();
+            nextPos.x += reflectDir.x * 0.1f;
+            nextPos.y += reflectDir.y * 0.1f;
+        } else {
+            reflectedThisFrame = false;
         }
 
         int mapX = static_cast<int>(std::floor(nextPos.x / kBlockSize));
