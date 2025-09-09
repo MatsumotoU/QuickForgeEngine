@@ -18,4 +18,5 @@ private:
 	std::vector<Vector2> linePoints_;
 	bool isFullLine_;
 	bool isOutOfMap_;
+	float timer_;
 };
