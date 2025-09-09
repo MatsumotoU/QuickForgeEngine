@@ -13,7 +13,7 @@ void StageNumber::Initialize(Model *model, const Matrix4x4 &parentWorldMatrix) {
 
 	// ワールド変換データを設定
 	model_->transform_.translate.y = kHeightOffset;
-	model_->transform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
+	model_->transform_.rotate.x = std::numbers::pi_v<float> * 9.0f / 16.0f;
 
 	// モデルの更新
 	model_->Update();

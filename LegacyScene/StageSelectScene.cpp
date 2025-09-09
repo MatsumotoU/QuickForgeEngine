@@ -22,9 +22,10 @@ StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json *data)
 StageSelectScene::~StageSelectScene() {
 	delete currentPhase_;
 	engineCore_->GetGraphRenderer()->DeleteCamera(&camera_);
-	engineCore_->GetAudioPlayer()->StopAudio("SystemSelectSound.mp3");
-	engineCore_->GetAudioPlayer()->StopAudio("SystemSound.mp3");
-	engineCore_->GetAudioPlayer()->StopAudio("SelectSound.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("ToGame.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("ToTitle.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("TurnChange.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("StageSelect.mp3");
 }
 
 void StageSelectScene::Initialize() {
@@ -36,16 +37,26 @@ void StageSelectScene::Initialize() {
 	camera_.Initialize(engineCore_->GetWinApp());
 
 	// 効果音の読み込み
-	selectSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SelectSound.mp3");
-	systemSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SystemSound.mp3");
-	systemDecisionSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SystemSelectSound.mp3");
+	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/BGM/", "StageSelect.mp3");
+	selectSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "TurnChange.mp3");
+	toTitleSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "ToTitle.mp3");
+	toGameSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "ToGame.mp3");
+	engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "StageSelect.mp3", true);
 
-	// ステージデータの読み込み
+	// 現在のステージの初期化
+	if (sceneData_->contains("stage")) {
+		currentStage_ = sceneData_->at("stage").get<int>();
+	} else {
+		currentStage_ = 0;
+	}
+
+	// ステージデータのリサイズ
 	stageData_.stageMapChipFields.resize(kNumMapType);
 	for (uint32_t i = 0; i < kNumMapType; ++i) {
 		stageData_.stageMapChipFields[i].resize(StageSelectScene::kNumStage);
 	}
 
+	// ステージデータの読み込み
 	for (uint32_t i = 0; i < StageSelectScene::kNumStage; ++i) {
 		std::string wallFilePath = "Resources/Map/Stage" + std::to_string(i + 1) + "_wall.csv";
 		std::string floorFilePath = "Resources/Map/Stage" + std::to_string(i + 1) + "_floor.csv";
@@ -93,7 +104,6 @@ void StageSelectScene::Initialize() {
 	// ブロックの初期化
 	for (uint32_t i = 0; i < blocks_.size(); ++i) {
 		blocks_[i] = std::make_unique<StageSelectBlocks>(blockParticles_[i].get(), &camera_);
-		blocks_[i]->Initialize(stageData_, currentStage_, static_cast<MapChipType>(i + 1));
 	}
 
 	// 三角錐の初期化
@@ -125,11 +135,11 @@ void StageSelectScene::Update() {
 	if (directInput_->keyboard_.GetTrigger(DIK_SPACE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToGame;
-		engineCore_->GetAudioPlayer()->PlayAudio(systemDecisionSoundHandle_, "SystemSelectSound.mp3", false);
+		engineCore_->GetAudioPlayer()->PlayAudio(toGameSoundHandle_, "ToGame.mp3", false);
 	} else if (directInput_->keyboard_.GetTrigger(DIK_ESCAPE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_B, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToTitle;
-		engineCore_->GetAudioPlayer()->PlayAudio(systemSoundHandle_, "SystemSound.mp3", false);
+		engineCore_->GetAudioPlayer()->PlayAudio(toTitleSoundHandle_, "ToTitle.mp3", false);
 	}
 
 	// 天球の更新

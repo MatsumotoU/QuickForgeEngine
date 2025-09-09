@@ -10,7 +10,6 @@ void StageSelectSkydome::Initialize(Model *model) {
 }
 
 void StageSelectSkydome::Update() {
-	model_->transform_.rotate.y += std::numbers::pi_v<float> * 2.0f / (60.0f * rotateTime);
 	model_->Update();
 }
 

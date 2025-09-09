@@ -6,9 +6,9 @@
 #include "../System/CameraController.h"
 
 void StageSelectScenePhaseIdle::Initialize() {
+	stageSelectScene_->InitializeBlocks();
 	stageSelectScene_->SetTriangleParent();
 	stageSelectScene_->SetBlocksParent();
-	stageSelectScene_->InitializeBlocks();
 }
 
 void StageSelectScenePhaseIdle::Update() {
