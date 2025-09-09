@@ -8,10 +8,10 @@ void ResultUI::Initialize(EngineCore* engineCore, Camera* camera) {
 	toSelectTextModel_ = std::make_unique<Model>(engineCore, camera);
 	toNextStageTextModel_ = std::make_unique<Model>(engineCore, camera);
 
-	niceTextModel_->LoadModel("Resources", "NiceMole.obj", COORDINATESYSTEM_HAND_RIGHT);
-	retryTextModel_->LoadModel("Resources", "Retry.obj", COORDINATESYSTEM_HAND_RIGHT);
-	toSelectTextModel_->LoadModel("Resources", "StageSelect.obj", COORDINATESYSTEM_HAND_RIGHT);
-	toNextStageTextModel_->LoadModel("Resources", "NextStage.obj", COORDINATESYSTEM_HAND_RIGHT);
+	niceTextModel_->LoadModel("Resources/Model/UI", "NiceMole.obj", COORDINATESYSTEM_HAND_RIGHT);
+	retryTextModel_->LoadModel("Resources/Model/UI", "Retry.obj", COORDINATESYSTEM_HAND_RIGHT);
+	toSelectTextModel_->LoadModel("Resources/Model/UI", "StageSelect.obj", COORDINATESYSTEM_HAND_RIGHT);
+	toNextStageTextModel_->LoadModel("Resources/Model/UI", "NextStage.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 	niceTextModel_->SetColor({ 1.0f,0.5f,0.5f,1.0f });
 
@@ -88,6 +88,7 @@ void ResultUI::Update() {
 }
 
 void ResultUI::Draw() {
+#ifdef _DEBUG
 	ImGui::Begin("ResultUI");
 
 	ImGui::DragFloat3("ResultUI Position", &transform_.translate.x, 0.1f);
@@ -95,6 +96,7 @@ void ResultUI::Draw() {
 	ImGui::DragFloat("ResultUI Bottom Offset", &bottomOffset_, 0.1f);
 
 	ImGui::End();
+#endif // _DEBUG
 
 	niceTextModel_->Draw();
 	if (isCleard_)

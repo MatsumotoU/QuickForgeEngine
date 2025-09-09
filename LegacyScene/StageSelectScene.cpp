@@ -11,7 +11,7 @@
 #include "Class/StageSelectScene/Phase/StageSelectScenePhase.h"
 #include "../Engine/Particle/Particle.h"
 
-StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json *data) : debugCamera_(engineCore) {
+StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json *data) {
 	engineCore_ = engineCore;
 	directInput_ = engineCore_->GetInputManager();
 	xInput_ = engineCore_->GetXInputController();
@@ -22,18 +22,12 @@ StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json *data)
 StageSelectScene::~StageSelectScene() {
 	delete currentPhase_;
 	engineCore_->GetGraphRenderer()->DeleteCamera(&camera_);
-	engineCore_->GetAudioPlayer()->StopAudio("システム決定音_7.mp3");
-	engineCore_->GetAudioPlayer()->StopAudio("システム音.mp3");
-	engineCore_->GetAudioPlayer()->StopAudio("セレクト音_4.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("SystemSelectSound.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("SystemSound.mp3");
+	engineCore_->GetAudioPlayer()->StopAudio("SelectSound.mp3");
 }
 
 void StageSelectScene::Initialize() {
-#ifdef _DEBUG
-	// デバッグカメラの初期化
-	isActiveDebugCamera_ = false;
-	debugCamera_.Initialize(engineCore_);
-	debugCamera_.camera_.transform_.translate.z = -20.0f;
-#endif // _DEBUG
 
 	// シーン切り替えフラグの初期化
 	isRequestedExit_ = false;
@@ -42,9 +36,9 @@ void StageSelectScene::Initialize() {
 	camera_.Initialize(engineCore_->GetWinApp());
 
 	// 効果音の読み込み
-	selectSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/", "セレクト音_4.mp3");
-	systemSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/", "システム音.mp3");
-	systemDecisionSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/", "システム決定音_7.mp3");
+	selectSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SelectSound.mp3");
+	systemSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SystemSound.mp3");
+	systemDecisionSoundHandle_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SystemSelectSound.mp3");
 
 	// ステージデータの読み込み
 	stageData_.stageMapChipFields.resize(kNumMapType);
@@ -76,14 +70,14 @@ void StageSelectScene::Initialize() {
 	// 三角錐モデルの初期化
 	for (uint32_t i = 0; i < triangleModels_.size(); ++i) {
 		triangleModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
-		triangleModels_[i]->LoadModel("Resources", "triangle.obj", COORDINATESYSTEM_HAND_LEFT);
+		triangleModels_[i]->LoadModel("Resources/Model/blocks", "triangle.obj", COORDINATESYSTEM_HAND_LEFT);
 	}
 
 	// ステージモデルの初期化
 	stageNumberModels_.resize(kNumStage);
 	for (uint32_t i = 0; i < stageNumberModels_.size(); ++i) {
 		stageNumberModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
-		stageNumberModels_[i]->LoadModel("Resources", std::to_string(i) + ".obj", COORDINATESYSTEM_HAND_LEFT);
+		stageNumberModels_[i]->LoadModel("Resources/Model/UI", std::to_string(i + 1) + ".obj", COORDINATESYSTEM_HAND_LEFT);
 	}
 
 	// アンカーの初期化
@@ -131,24 +125,12 @@ void StageSelectScene::Update() {
 	if (directInput_->keyboard_.GetTrigger(DIK_SPACE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToGame;
-		engineCore_->GetAudioPlayer()->PlayAudio(systemDecisionSoundHandle_, "システム決定音_7.mp3", false);
+		engineCore_->GetAudioPlayer()->PlayAudio(systemDecisionSoundHandle_, "SystemSelectSound.mp3", false);
 	} else if (directInput_->keyboard_.GetTrigger(DIK_ESCAPE) || xInput_->GetTriggerButton(XINPUT_GAMEPAD_B, 0)) {
 		isRequestedExit_ = true;
 		transitionState_ = ToTitle;
-		engineCore_->GetAudioPlayer()->PlayAudio(systemSoundHandle_, "システム音.mp3", false);
+		engineCore_->GetAudioPlayer()->PlayAudio(systemSoundHandle_, "SystemSound.mp3", false);
 	}
-
-#ifdef _DEBUG
-	// デバッグカメラの切り替え
-	if (directInput_->keyboard_.GetTrigger(DIK_P)) {
-		isActiveDebugCamera_ = !isActiveDebugCamera_;
-	}
-
-	// カメラの更新
-	CameraUpdate();
-
-	ImGui::Text("CurrentStage: %d", currentStage_);
-#endif // _DEBUG
 
 	// 天球の更新
 	skydome_->Update();
@@ -158,14 +140,6 @@ void StageSelectScene::Update() {
 }
 
 void StageSelectScene::Draw() {
-	// グリッドの描画
-	engineCore_->GetGraphRenderer()->DrawGrid();
-
-#ifdef _DEBUG
-	// デバッグカメラのImGui描画
-	debugCamera_.DrawImGui();
-#endif // _DEBUG
-
 	// 天球の描画
 	skydome_->Draw();
 
@@ -204,12 +178,7 @@ IScene *StageSelectScene::GetNextScene() {
 }
 
 void StageSelectScene::CameraUpdate() {
-#ifdef _DEBUG
-	if (isActiveDebugCamera_) {
-		debugCamera_.Update();
-		camera_ = debugCamera_.camera_;
-	}
-#endif // _DEBUG
+
 }
 
 void StageSelectScene::InitializeBlocks() {

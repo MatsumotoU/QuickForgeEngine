@@ -7,19 +7,13 @@
 
 #include "Utility/MyEasing.h"
 
-GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_(engineCore) {
+GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) {
 	sceneData_ = data;
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
 
 	camera_.transform_.translate = { 4.0f,19.0f,-4.8f };
 	camera_.transform_.rotate.x = 1.14f;
-
-#ifdef _DEBUG
-	isActiveDebugCamera_ = false;
-	debugCamera_.Initialize(engineCore_);
-	debugCamera_.camera_.transform_.translate.z = -20.0f;
-#endif // _DEBUG
 
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
 	engineCore_->GetLoopStopper()->AddNonStoppingFunc(std::bind(&GameScene::CameraUpdate, this));
@@ -154,16 +148,6 @@ void GameScene::Update() {
 	}
 
 	camera_.Update();
-#ifdef _DEBUG
-	if (input_->keyboard_.GetTrigger(DIK_R)) {
-		ResetGame(stageName_);
-	}
-
-	if (input_->keyboard_.GetTrigger(DIK_P)) {
-		isActiveDebugCamera_ = !isActiveDebugCamera_;
-	}
-	CameraUpdate();
-#endif // _DEBUG
 
 	// ゲーム終了チェック
 	if (isEndGame_) {
@@ -231,17 +215,8 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
-	ImGui::Begin("GameScene");
-	ImGui::DragFloat3("stageNumTranslate", &stageTextModel_->transform_.translate.x,0.1f);
-	ImGui::DragFloat3("stageNumRotate", &stageTextModel_->transform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("stageNumScale", &stageTextModel_->transform_.scale.x, 0.1f);
-	ImGui::End();
-
 	stageTextModel_->Draw();
 	particleManager_.Draw();
-#ifdef _DEBUG
-	debugCamera_.DrawImGui();
-#endif // _DEBUG
 	skyDome_.Draw();
 
 	floorChip_.Draw();
@@ -410,12 +385,6 @@ void GameScene::ResetGame(const std::string& stageName) {
 	}
 }
 void GameScene::CameraUpdate() {
-#ifdef _DEBUG
-	if (isActiveDebugCamera_) {
-		debugCamera_.Update();
-		camera_ = debugCamera_.camera_;
-	}
-#endif // _DEBUG
 }
 void GameScene::PredictionLineUpdate(GamePlayer& gamePlayer) {
 	predictionLine_.Init();
