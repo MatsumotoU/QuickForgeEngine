@@ -22,6 +22,8 @@
 
 #include "Math/Vector/IntVector2.h"
 
+#include "Class/GameScene/Number.h"
+
 class GameScene : public IScene{
 public:
 	GameScene(EngineCore* engineCore, nlohmann::json* data);
@@ -88,6 +90,9 @@ private:
 
 	uint32_t bgmHandle_;
 	ParticleManager particleManager_;
+
+	Number stageNumber_;
+	std::unique_ptr<Model> stageTextModel_;
 
 #ifdef _DEBUG
 	DebugCamera debugCamera_;

@@ -155,6 +155,7 @@
     <ClCompile Include="LegacyScene\Class\StageSelectScene\System\MapChipField.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\ParticleManager.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\AiLeveler.cpp" />
+    <ClCompile Include="LegacyScene\Class\GameScene\Number.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\GameScene\ResultUI.h" />
@@ -360,6 +361,7 @@
     <ClInclude Include="LegacyScene\Class\GameScene\Data\ParticleData.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\ParticleManager.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\AiLeveler.h" />
+    <ClInclude Include="LegacyScene\Class\GameScene\Number.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
