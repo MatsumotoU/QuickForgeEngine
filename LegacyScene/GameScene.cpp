@@ -41,6 +41,7 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_
 		stageName_ = "Stage" + std::to_string(stage+1);
 
 	} else {
+
 		stageName_ = "Stage1";
 	}
 
@@ -105,12 +106,39 @@ void GameScene::Initialize() {
 
 	particleManager_.Initialize(engineCore_, &camera_);
 	frameCount_ = 0;
+
+	stageNumber_.Initialize(engineCore_, &camera_);
+	if (stageName_ == "Stage1") {
+		stageNumber_.SetNumber(1);
+	} else if (stageName_ == "Stage2") {
+		stageNumber_.SetNumber(2);
+	} else if (stageName_ == "Stage3") {
+		stageNumber_.SetNumber(3);
+	} else if (stageName_ == "Stage4") {
+		stageNumber_.SetNumber(4);
+	} else if (stageName_ == "Stage5") {
+		stageNumber_.SetNumber(5);
+	} else if (stageName_ == "Stage6") {
+		stageNumber_.SetNumber(6);
+	} else if (stageName_ == "Stage7") {
+		stageNumber_.SetNumber(7);
+	} else if (stageName_ == "Stage8") {
+		stageNumber_.SetNumber(8);
+	}
+
+	stageTextModel_ = std::make_unique<Model>(engineCore_, &camera_);
+	stageTextModel_->LoadModel("Resources/Model/UI", "StageText.obj", COORDINATESYSTEM_HAND_RIGHT);
+	stageTextModel_->transform_.translate = { -1.4f,3.5f,3.3f };
+	stageTextModel_->transform_.rotate = { -1.2f,-3.6f,0.0f };
+	stageTextModel_->transform_.scale = { 0.5f,0.5f,1.0f };
 }
 
 void GameScene::Update() {
+	stageTextModel_->Update();
 	frameCount_++;
 	particleManager_.Update();
 	skyDome_.Update();
+	stageNumber_.Update();
 
 	timer_ += engineCore_->GetDeltaTime();
 	resultUI_.Update();
@@ -203,6 +231,13 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	ImGui::Begin("GameScene");
+	ImGui::DragFloat3("stageNumTranslate", &stageTextModel_->transform_.translate.x,0.1f);
+	ImGui::DragFloat3("stageNumRotate", &stageTextModel_->transform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("stageNumScale", &stageTextModel_->transform_.scale.x, 0.1f);
+	ImGui::End();
+
+	stageTextModel_->Draw();
 	particleManager_.Draw();
 #ifdef _DEBUG
 	debugCamera_.DrawImGui();
@@ -225,6 +260,7 @@ void GameScene::Draw() {
 	}
 	turnText_.Draw();
 
+	stageNumber_.Draw();
 	predictionLine_.Draw(engineCore_);
 	//landingPoint_.Draw(engineCore_);
 }
@@ -244,8 +280,15 @@ void GameScene::ChangeNextScene(IScene* nextScene) {
 }
 
 void GameScene::MainGameUpdate() {
-	MyEasing::SimpleEaseIn(&camera_.transform_.rotate.x, 1.14f, 0.1f);
-	MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 0.0f, 0.1f);
+	if (engineCore_->GetXInputController()->GetRightStick(0).Length() != 0.0f) {
+		Vector2 rightStick = engineCore_->GetXInputController()->GetRightStick(0).Normalize();
+		MyEasing::SimpleEaseIn(&camera_.transform_.rotate.x, 1.14f + -rightStick.y * 0.1f, 0.1f);
+		MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 0.0f + rightStick.x * 0.1f, 0.1f);
+
+	} else {
+		MyEasing::SimpleEaseIn(&camera_.transform_.rotate.x, 1.14f, 0.1f);
+		MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 0.0f, 0.1f);
+	}
 
 	wallChip_.SetMap(wallMap_);
 	floorChip_.SetMap(floorMap_);
@@ -347,6 +390,24 @@ void GameScene::ResetGame(const std::string& stageName) {
 	camera_.transform_.rotate.x = 1.14f;
 	engineCore_->GetPostprocess()->grayScaleOffset_ = 0.0f;
 	turnText_.ChangeTurn(isPlayerTurn_);
+
+	if (stageName_ == "Stage1") {
+		stageNumber_.SetNumber(1);
+	} else if (stageName_ == "Stage2") {
+		stageNumber_.SetNumber(2);
+	} else if (stageName_ == "Stage3") {
+		stageNumber_.SetNumber(3);
+	} else if (stageName_ == "Stage4") {
+		stageNumber_.SetNumber(4);
+	} else if (stageName_ == "Stage5") {
+		stageNumber_.SetNumber(5);
+	} else if (stageName_ == "Stage6") {
+		stageNumber_.SetNumber(6);
+	} else if (stageName_ == "Stage7") {
+		stageNumber_.SetNumber(7);
+	} else if (stageName_ == "Stage8") {
+		stageNumber_.SetNumber(8);
+	}
 }
 void GameScene::CameraUpdate() {
 #ifdef _DEBUG

@@ -45,7 +45,7 @@ void Enemy::Initialize(EngineCore* engineCore, Camera* camera) {
 	aiWeight_.uniqe = 0.0f;
 
 	aiLevel_ = 1;
-	delayTimer_ = 2.0f;
+	delayTimer_ = 0.0f;
 
 	selectedDirIndex_ = 0;
 	maxSelect_ = 0;
