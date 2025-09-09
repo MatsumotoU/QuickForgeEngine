@@ -36,37 +36,47 @@ PixelShaderOutput main(VertexShaderOutput input)
     float4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 
-    float alpha = gMaterial.color.a * textureColor.a;
-
-    // 透明度が0なら必ず消す
-    if (alpha == 0.0f)
-    {
-        discard;
-    }
-
-    // alphaが小さいほど間隔が広がる（粗くなる）
-    float scale = lerp(4.0f, 1.0f, alpha); // 4.0fは最大粗さ（調整可）
-    int2 pixelPos = (int2(input.position.xy / scale)) & 3;
-    float ditherThreshold = ditherMatrix[pixelPos.y][pixelPos.x];
-
-    float threshold = lerp(0.0f, 1.0f, 1.0f - alpha) * ditherThreshold;
-
-    if (alpha < threshold)
-    {
-        discard;
-    }
+    float3 baseColor;
+    float baseAlpha;
 
     if (gMaterial.enableLighting != 0)
     {
         float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
         float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-        output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
-        output.color.a = 1.0f;
+        baseColor = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+        baseAlpha = 1.0f;
     }
     else
     {
-        output.color = gMaterial.color * textureColor;
+        baseColor = (gMaterial.color * textureColor).rgb;
+        baseAlpha = (gMaterial.color * textureColor).a;
     }
+
+    float3 fogColor = float3(0.7f, 0.8f, 1.0f); 
+    float fogStart = 5.0f;
+    float fogEnd = 20.0f;
+
+    float fogFactor = saturate((fogEnd - input.position.z) / (fogEnd - fogStart));
+    float3 finalColor = lerp(fogColor, baseColor, fogFactor);
+    float finalAlpha = baseAlpha;
+
+    if (finalAlpha == 0.0f)
+    {
+        discard;
+    }
+
+    float scale = lerp(4.0f, 1.0f, finalAlpha);
+    int2 pixelPos = (int2(input.position.xy / scale)) & 3;
+    float ditherThreshold = ditherMatrix[pixelPos.y][pixelPos.x];
+
+    float threshold = lerp(0.0f, 1.0f, 1.0f - finalAlpha) * ditherThreshold;
+
+    if (finalAlpha < threshold)
+    {
+        discard;
+    }
+
+    output.color = float32_t4(finalColor, finalAlpha);
 
     return output;
 }

@@ -28,4 +28,6 @@ private:
 	float time_;
 	bool selectedTop_;
 	float selectInterval_;
+
+	uint32_t selectSE_;
 };

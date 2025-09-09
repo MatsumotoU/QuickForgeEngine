@@ -94,7 +94,7 @@ bool& GamePlayer::GetIsGrounded() {
 }
 
 bool GamePlayer::GetIsEndTurn() {
-	// すべての状態がfalseのときにターン終了
+	// 縺吶∋縺ｦ縺ｮ迥ｶ諷九′false縺ｮ縺ｨ縺阪↓繧ｿ繝ｼ繝ｳ邨ゆｺ・
 	return !isMoving_ && !isCanMove_ && !isReqestBuilding_ && !isJumping_ && !isGrounded_;
 }
 

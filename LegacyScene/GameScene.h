@@ -76,6 +76,7 @@ private:
 	AiLeveler aiLeveler_;
 	bool isEndGame_;
 	float endGameTimer_;
+	bool isCountEndGameTime_;
 
 	float timer_;
 
@@ -96,4 +97,14 @@ private:
 	std::unique_ptr<Model> stageTextModel_;
 
 	ControlUI controlUI_;
+
+	uint32_t digSE_;
+	uint32_t buildSE_;
+	uint32_t jumpSE_;
+	uint32_t landSE_;
+	uint32_t hitSE_;
+	uint32_t selectSE_;
+	uint32_t deathSE_;
+	uint32_t turnSE_;
+	uint32_t clearSE_;
 };
