@@ -46,9 +46,4 @@ private:
 	std::unique_ptr<TitleGround> titleGround_;
 	std::unique_ptr<TitleSkyDome> skyDome_; 
 	std::unique_ptr<TitleUI> titleUI_;
-
-#ifdef _DEBUG
-	DebugCamera debugCamera_;
-	bool isActiveDebugCamera_;
-#endif // _DEBUG
 };

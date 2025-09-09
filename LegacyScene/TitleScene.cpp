@@ -2,7 +2,7 @@
 #include "StageSelectScene.h"
 
 
-TitleScene::TitleScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_(engineCore) {
+TitleScene::TitleScene(EngineCore* engineCore, nlohmann::json* data) {
 
 	engineCore_ = engineCore;
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
@@ -20,11 +20,6 @@ TitleScene::~TitleScene() {
 }
 
 void TitleScene::Initialize() {
-#ifdef _DEBUG
-	isActiveDebugCamera_ = false;
-	debugCamera_.Initialize(engineCore_);
-	debugCamera_.camera_.transform_.translate.z = -20.0f;
-#endif // _DEBUG
 
 	isRequestedExit_ = false;
 	camera_.Initialize(engineCore_->GetWinApp());
@@ -62,7 +57,7 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Update() {
-	DirectInputManager* input = engineCore_->GetInputManager();
+	//DirectInputManager* input = engineCore_->GetInputManager();
 	frameCount_++;
 
 	CameraWork();
@@ -90,18 +85,10 @@ void TitleScene::Update() {
 		isRequestedExit_ = true;
 	}
 
-
-#ifdef _DEBUG
-	if (input->keyboard_.GetTrigger(DIK_P)) {
-		isActiveDebugCamera_ = !isActiveDebugCamera_;
-	}
-	CameraUpdate();
-#endif // _DEBUG
 	camera_.Update();
 }
 
 void TitleScene::Draw() {
-	engineCore_->GetGraphRenderer()->DrawGrid();
 
 	mole_.get()->Draw();
 	diggingEffect_.get()->Draw();
@@ -113,7 +100,6 @@ void TitleScene::Draw() {
 	skyDome_.get()->Draw();
 
 #ifdef _DEBUG
-	debugCamera_.DrawImGui();
 	mole_.get()->DebugImGui();
 	diggingEffect_.get()->DebugImGui();
 	wall_.get()->DebugImGui();
@@ -122,24 +108,12 @@ void TitleScene::Draw() {
 	titleGround_.get()->DebugImGui();
 	titleUI_.get()->DebugImGui();
 	skyDome_.get()->DebugImGui();
-
-	if (ImGui::CollapsingHeader("Camera")) {
-		ImGui::DragFloat3("CameraT", &camera_.transform_.translate.x, 0.1f);
-		ImGui::DragFloat3("CameraR", &camera_.transform_.rotate.x, 0.1f);
-		ImGui::DragFloat3("CameraS", &camera_.transform_.scale.x, 0.1f);
-	}
 #endif // _DEBUG
 }
 
 IScene* TitleScene::GetNextScene() { return new StageSelectScene(engineCore_,sceneData_); }
 
 void TitleScene::CameraUpdate() {
-#ifdef _DEBUG
-	if (isActiveDebugCamera_) {
-		debugCamera_.Update();
-		camera_ = debugCamera_.camera_;
-	}
-#endif // _DEBUG
 }
 
 void TitleScene::CameraWork()

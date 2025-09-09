@@ -179,9 +179,4 @@ private:
 	TransitionState transitionState_ = None;							// シーン遷移状態
 	Triangle::Direction direction_ = Triangle::kLeft;					// 方向
 	BaseStageSelectScenePhase *currentPhase_ = nullptr;					// 現在のフェーズ
-
-#ifdef _DEBUG
-	DebugCamera debugCamera_;	// デバッグカメラ
-	bool isActiveDebugCamera_;	// デバッグカメラが有効かどうか
-#endif // _DEBUG
 };

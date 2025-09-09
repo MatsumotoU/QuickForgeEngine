@@ -5,11 +5,11 @@ void MainMenu::Initialize(EngineCore* engineCore, Camera* camera) {
 	menuSelect_ = MenuSelect::ResetGame;
 
 	menuTextModel_ = std::make_unique<Model>(engineCore, camera);
-	menuTextModel_->LoadModel("Resources", "Menu.obj", COORDINATESYSTEM_HAND_RIGHT);
+	menuTextModel_->LoadModel("Resources/Model/UI", "Menu.obj", COORDINATESYSTEM_HAND_RIGHT);
 	returnSelectTextModel_ = std::make_unique<Model>(engineCore, camera);
-	returnSelectTextModel_->LoadModel("Resources", "StageSelect.obj", COORDINATESYSTEM_HAND_RIGHT);
+	returnSelectTextModel_->LoadModel("Resources/Model/UI", "StageSelect.obj", COORDINATESYSTEM_HAND_RIGHT);
 	resetGameTextModel_ = std::make_unique<Model>(engineCore, camera);
-	resetGameTextModel_->LoadModel("Resources", "Retry.obj", COORDINATESYSTEM_HAND_RIGHT);
+	resetGameTextModel_->LoadModel("Resources/Model/UI", "Retry.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 	menuTextModel_->transform_.rotate.y = -0.5f;
 	returnSelectTextModel_->transform_.rotate.y = -0.5f;
@@ -91,9 +91,11 @@ void MainMenu::Draw() {
 	returnSelectTextModel_->Draw();
 	resetGameTextModel_->Draw();
 
+#ifdef _DEBUG
 	ImGui::Begin("Menu");
 	ImGui::DragFloat3("MenuPos", &transform_.translate.x, 0.1f);
 	ImGui::End();
+#endif // _DEBUG
 }
 
 MenuSelect MainMenu::GetMenuSelect() const {

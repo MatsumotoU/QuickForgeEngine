@@ -7,12 +7,14 @@
 PredictionLine::PredictionLine() {
 	isFullLine_ = false;
 	isOutOfMap_ = false;
+    timer_ = 0.0f;
 }
 
 void PredictionLine::Init() {
 	linePoints_.clear();
 	isFullLine_ = false;
     isOutOfMap_ = false;
+	
 }
 
 void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int numTiles, const std::vector<std::vector<uint32_t>>& wallMap, float kBlockSize) {
@@ -99,19 +101,26 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
 }
 
 void PredictionLine::Draw(EngineCore* engineCore) {
+	timer_ += engineCore->GetDeltaTime(); 
 	if (linePoints_.size() < 2) return;
 	GraphRenderer* graphRenderer = engineCore->GetGraphRenderer();
-	for (size_t i = 0; i < linePoints_.size() - 1; ++i) {
-		Vector3 startPos = { linePoints_[i].x, 1.0f, linePoints_[i].y };
-		Vector3 endPos = { linePoints_[i + 1].x, 1.0f, linePoints_[i + 1].y };
+    for (size_t i = 0; i < linePoints_.size() - 1; ++i) {
+        Vector3 startPos = { linePoints_[i].x, 1.0f, linePoints_[i].y };
+        Vector3 endPos = { linePoints_[i + 1].x, 1.0f, linePoints_[i + 1].y };
 
-		if (isOutOfMap_) {
-            graphRenderer->DrawLine(startPos, endPos, { 1.0f, 0.0f, 0.0f, 1.0f });
-		} else {
-            graphRenderer->DrawLine(startPos, endPos, { 0.0f, 1.0f, 0.0f, 1.0f });
-			
-		}
-	}
+        // 色の指定
+        Vector4 targetColor = isOutOfMap_ ? Vector4(1.0f, 0.0f, 0.0f, 1.0f) : Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+        Vector4 whiteColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+        // 波状補間率の計算
+        float t = static_cast<float>(i) / static_cast<float>(linePoints_.size() - 1);
+        float wave = 0.5f * (1.0f + std::sin(-timer_ * 10.0f + t * 6.28f)); // timer_でアニメーション
+
+        // 色の補間
+        Vector4 color = whiteColor * (1.0f - wave) + targetColor * wave;
+
+        graphRenderer->DrawLine(startPos, endPos, color);
+    }
 }
 
 std::vector<Vector2>& PredictionLine::GetLinePoints() {

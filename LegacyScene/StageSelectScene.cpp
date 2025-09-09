@@ -11,7 +11,7 @@
 #include "Class/StageSelectScene/Phase/StageSelectScenePhase.h"
 #include "../Engine/Particle/Particle.h"
 
-StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json *data) : debugCamera_(engineCore) {
+StageSelectScene::StageSelectScene(EngineCore *engineCore, nlohmann::json *data) {
 	engineCore_ = engineCore;
 	directInput_ = engineCore_->GetInputManager();
 	xInput_ = engineCore_->GetXInputController();
@@ -29,12 +29,6 @@ StageSelectScene::~StageSelectScene() {
 }
 
 void StageSelectScene::Initialize() {
-#ifdef _DEBUG
-	// デバッグカメラの初期化
-	isActiveDebugCamera_ = false;
-	debugCamera_.Initialize(engineCore_);
-	debugCamera_.camera_.transform_.translate.z = -20.0f;
-#endif // _DEBUG
 
 	// シーン切り替えフラグの初期化
 	isRequestedExit_ = false;
@@ -87,14 +81,14 @@ void StageSelectScene::Initialize() {
 	// 三角錐モデルの初期化
 	for (uint32_t i = 0; i < triangleModels_.size(); ++i) {
 		triangleModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
-		triangleModels_[i]->LoadModel("Resources", "triangle.obj", COORDINATESYSTEM_HAND_LEFT);
+		triangleModels_[i]->LoadModel("Resources/Model/blocks", "triangle.obj", COORDINATESYSTEM_HAND_LEFT);
 	}
 
 	// ステージモデルの初期化
 	stageNumberModels_.resize(kNumStage);
 	for (uint32_t i = 0; i < stageNumberModels_.size(); ++i) {
 		stageNumberModels_[i] = std::make_unique<Model>(engineCore_, &camera_);
-		stageNumberModels_[i]->LoadModel("Resources", std::to_string(i) + ".obj", COORDINATESYSTEM_HAND_LEFT);
+		stageNumberModels_[i]->LoadModel("Resources/Model/UI", std::to_string(i + 1) + ".obj", COORDINATESYSTEM_HAND_LEFT);
 	}
 
 	// アンカーの初期化
@@ -148,18 +142,6 @@ void StageSelectScene::Update() {
 		engineCore_->GetAudioPlayer()->PlayAudio(toTitleSoundHandle_, "ToTitle.mp3", false);
 	}
 
-#ifdef _DEBUG
-	// デバッグカメラの切り替え
-	if (directInput_->keyboard_.GetTrigger(DIK_P)) {
-		isActiveDebugCamera_ = !isActiveDebugCamera_;
-	}
-
-	// カメラの更新
-	CameraUpdate();
-
-	ImGui::Text("CurrentStage: %d", currentStage_);
-#endif // _DEBUG
-
 	// 天球の更新
 	skydome_->Update();
 
@@ -168,14 +150,6 @@ void StageSelectScene::Update() {
 }
 
 void StageSelectScene::Draw() {
-	// グリッドの描画
-	engineCore_->GetGraphRenderer()->DrawGrid();
-
-#ifdef _DEBUG
-	// デバッグカメラのImGui描画
-	debugCamera_.DrawImGui();
-#endif // _DEBUG
-
 	// 天球の描画
 	skydome_->Draw();
 
@@ -214,12 +188,7 @@ IScene *StageSelectScene::GetNextScene() {
 }
 
 void StageSelectScene::CameraUpdate() {
-#ifdef _DEBUG
-	if (isActiveDebugCamera_) {
-		debugCamera_.Update();
-		camera_ = debugCamera_.camera_;
-	}
-#endif // _DEBUG
+
 }
 
 void StageSelectScene::InitializeBlocks() {

@@ -7,19 +7,13 @@
 
 #include "Utility/MyEasing.h"
 
-GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_(engineCore) {
+GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) {
 	sceneData_ = data;
 	engineCore_ = engineCore;
 	input_ = engineCore_->GetInputManager();
 
 	camera_.transform_.translate = { 4.0f,19.0f,-4.8f };
 	camera_.transform_.rotate.x = 1.14f;
-
-#ifdef _DEBUG
-	isActiveDebugCamera_ = false;
-	debugCamera_.Initialize(engineCore_);
-	debugCamera_.camera_.transform_.translate.z = -20.0f;
-#endif // _DEBUG
 
 	engineCore_->GetGraphRenderer()->SetCamera(&camera_);
 	engineCore_->GetLoopStopper()->AddNonStoppingFunc(std::bind(&GameScene::CameraUpdate, this));
@@ -41,6 +35,7 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) :debugCamera_
 		stageName_ = "Stage" + std::to_string(stage+1);
 
 	} else {
+
 		stageName_ = "Stage1";
 	}
 
@@ -82,7 +77,7 @@ void GameScene::Initialize() {
 	player_.SetOldBuildMapChipIndex(&oldBuildMapChipIndex_);
 
 	enemy_.Initialize(engineCore_, &camera_);
-	enemy_.GetTransform().translate.x += 6.0f;
+	enemy_.GetTransform().translate.x += 5.0f;
 	enemy_.GetTransform().translate.z += 4.0f;
 
 	// AIレベルの取得
@@ -105,12 +100,43 @@ void GameScene::Initialize() {
 
 	particleManager_.Initialize(engineCore_, &camera_);
 	frameCount_ = 0;
+
+	stageNumber_.Initialize(engineCore_, &camera_);
+	if (stageName_ == "Stage1") {
+		stageNumber_.SetNumber(1);
+	} else if (stageName_ == "Stage2") {
+		stageNumber_.SetNumber(2);
+	} else if (stageName_ == "Stage3") {
+		stageNumber_.SetNumber(3);
+	} else if (stageName_ == "Stage4") {
+		stageNumber_.SetNumber(4);
+	} else if (stageName_ == "Stage5") {
+		stageNumber_.SetNumber(5);
+	} else if (stageName_ == "Stage6") {
+		stageNumber_.SetNumber(6);
+	} else if (stageName_ == "Stage7") {
+		stageNumber_.SetNumber(7);
+	} else if (stageName_ == "Stage8") {
+		stageNumber_.SetNumber(8);
+	}
+
+	stageTextModel_ = std::make_unique<Model>(engineCore_, &camera_);
+	stageTextModel_->LoadModel("Resources/Model/UI", "StageText.obj", COORDINATESYSTEM_HAND_RIGHT);
+	stageTextModel_->transform_.translate = { -1.4f,3.5f,3.3f };
+	stageTextModel_->transform_.rotate = { -1.2f,-3.6f,0.0f };
+	stageTextModel_->transform_.scale = { 0.5f,0.5f,1.0f };
+
+	controlUI_.Initialize(engineCore_, &camera_);
 }
 
 void GameScene::Update() {
+	controlUI_.isActiveControll_ = player_.GetIsCanMove();
+	controlUI_.Update();
+	stageTextModel_->Update();
 	frameCount_++;
 	particleManager_.Update();
 	skyDome_.Update();
+	stageNumber_.Update();
 
 	timer_ += engineCore_->GetDeltaTime();
 	resultUI_.Update();
@@ -126,16 +152,6 @@ void GameScene::Update() {
 	}
 
 	camera_.Update();
-#ifdef _DEBUG
-	if (input_->keyboard_.GetTrigger(DIK_R)) {
-		ResetGame(stageName_);
-	}
-
-	if (input_->keyboard_.GetTrigger(DIK_P)) {
-		isActiveDebugCamera_ = !isActiveDebugCamera_;
-	}
-	CameraUpdate();
-#endif // _DEBUG
 
 	// ゲーム終了チェック
 	if (isEndGame_) {
@@ -203,10 +219,10 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+
+	controlUI_.Draw();
+	stageTextModel_->Draw();
 	particleManager_.Draw();
-#ifdef _DEBUG
-	debugCamera_.DrawImGui();
-#endif // _DEBUG
 	skyDome_.Draw();
 
 	floorChip_.Draw();
@@ -225,6 +241,7 @@ void GameScene::Draw() {
 	}
 	turnText_.Draw();
 
+	stageNumber_.Draw();
 	predictionLine_.Draw(engineCore_);
 	//landingPoint_.Draw(engineCore_);
 }
@@ -244,8 +261,15 @@ void GameScene::ChangeNextScene(IScene* nextScene) {
 }
 
 void GameScene::MainGameUpdate() {
-	MyEasing::SimpleEaseIn(&camera_.transform_.rotate.x, 1.14f, 0.1f);
-	MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 0.0f, 0.1f);
+	if (engineCore_->GetXInputController()->GetRightStick(0).Length() != 0.0f) {
+		Vector2 rightStick = engineCore_->GetXInputController()->GetRightStick(0).Normalize();
+		MyEasing::SimpleEaseIn(&camera_.transform_.rotate.x, 1.14f + -rightStick.y * 0.1f, 0.1f);
+		MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 0.0f + rightStick.x * 0.1f, 0.1f);
+
+	} else {
+		MyEasing::SimpleEaseIn(&camera_.transform_.rotate.x, 1.14f, 0.1f);
+		MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 0.0f, 0.1f);
+	}
 
 	wallChip_.SetMap(wallMap_);
 	floorChip_.SetMap(floorMap_);
@@ -347,14 +371,26 @@ void GameScene::ResetGame(const std::string& stageName) {
 	camera_.transform_.rotate.x = 1.14f;
 	engineCore_->GetPostprocess()->grayScaleOffset_ = 0.0f;
 	turnText_.ChangeTurn(isPlayerTurn_);
+
+	if (stageName_ == "Stage1") {
+		stageNumber_.SetNumber(1);
+	} else if (stageName_ == "Stage2") {
+		stageNumber_.SetNumber(2);
+	} else if (stageName_ == "Stage3") {
+		stageNumber_.SetNumber(3);
+	} else if (stageName_ == "Stage4") {
+		stageNumber_.SetNumber(4);
+	} else if (stageName_ == "Stage5") {
+		stageNumber_.SetNumber(5);
+	} else if (stageName_ == "Stage6") {
+		stageNumber_.SetNumber(6);
+	} else if (stageName_ == "Stage7") {
+		stageNumber_.SetNumber(7);
+	} else if (stageName_ == "Stage8") {
+		stageNumber_.SetNumber(8);
+	}
 }
 void GameScene::CameraUpdate() {
-#ifdef _DEBUG
-	if (isActiveDebugCamera_) {
-		debugCamera_.Update();
-		camera_ = debugCamera_.camera_;
-	}
-#endif // _DEBUG
 }
 void GameScene::PredictionLineUpdate(GamePlayer& gamePlayer) {
 	predictionLine_.Init();

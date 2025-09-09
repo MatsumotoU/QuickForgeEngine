@@ -44,6 +44,8 @@ void Player::Initialize(EngineCore* engineCore, Camera* camera) {
 	totalEvaluationValue_ = 0;
 
 	totalActionWeight_ = { 0.0f,0.0f,0.0f };
+
+	chageTimer_ = 0.0f;
 }
 
 void Player::Update() {
@@ -57,11 +59,11 @@ void Player::Update() {
 
 	// はじきの処理
 	if (isCanMove_) {
-		model_->transform_.scale.x = 1.0f + sinf(timer_) * 0.1f;
-		model_->transform_.scale.y = 1.0f + sinf(timer_) * 0.1f;
-		model_->transform_.scale.z = 1.0f + sinf(timer_) * 0.1f;
+		model_->transform_.scale.x = 1.0f + sinf(timer_ + (chageTimer_ * 10.0f)) * 0.1f;
+		model_->transform_.scale.y = 1.0f + sinf(timer_ + (chageTimer_ * 10.0f)) * 0.1f;
+		model_->transform_.scale.z = 1.0f + sinf(timer_ + (chageTimer_ * 10.0f)) * 0.1f;
 
-		//MouseControl();
+		MouseControl();
 		ControllerControl();
 	} else {
 		model_->transform_.scale.x = 1.0f;
@@ -113,6 +115,7 @@ void Player::Update() {
 }
 
 void Player::Draw() {
+#ifdef _DEBUG
 	ImGui::Begin("Player");
 
 	ImGui::DragFloat3("ActionWeight", &actionWeight_.x, 0.01f, 0.0f, 1.0f);
@@ -121,6 +124,7 @@ void Player::Draw() {
 	ImGui::Text("Total:%d", totalEvaluationValue_);
 
 	ImGui::End();
+#endif // _DEBUG
 
 	model_->Draw();
 }
@@ -150,6 +154,8 @@ void Player::MouseControl() {
 
 			moveDir_ = -dragVector.Normalize();
 		}
+
+		chageTimer_ += engineCore_->GetDeltaTime();
 	}
 
 	if (engineCore_->GetInputManager()->mouse_.GetRelease(0)) {
@@ -157,12 +163,13 @@ void Player::MouseControl() {
 			isClicked_ = false;
 			Vector2 clickEndPos = engineCore_->GetInputManager()->mouse_.mouseScreenPos_;
 			Vector2 dragVector = clickStartPos_ - clickEndPos;
-			if (dragVector.Length() >= 5.0f) {
+			if (dragVector.Length() >= 5.0f && chageTimer_ >= 0.5f) {
 				isCanShot_ = true;
 				moveTimer_ = maxMoveTimer_;
 
 				if (isCanShot_) {
 					Shot();
+					chageTimer_ = 0.0f;
 				}
 			}
 		}
@@ -173,12 +180,17 @@ void Player::ControllerControl() {
 	// まだ動いてないときにスティックを倒したら動けるようにする
 	Vector2 leftStick = engineCore_->GetXInputController()->GetLeftStick(0);
 	if (leftStick.Length() >= 3.0f) {
-		isCanShot_ = true;
+		if (chageTimer_ >= 0.5f) {
+			isCanShot_ = true;
+			moveTimer_ = maxMoveTimer_;
+		}
 		moveDir_ = -leftStick.Normalize();
-		moveTimer_ = maxMoveTimer_;
+		chageTimer_ += engineCore_->GetDeltaTime();
+		
 	} else {
 		if (isCanShot_) {
 			Shot();
+			chageTimer_ = 0.0f;
 		}
 	}
 
@@ -187,6 +199,7 @@ void Player::ControllerControl() {
 		if (isCanShot_) {
 			moveDir_ = -leftStick.Normalize();
 			Shot();
+			chageTimer_ = 0.0f;
 		}
 	}
 }

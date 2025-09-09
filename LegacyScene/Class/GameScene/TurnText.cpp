@@ -60,11 +60,13 @@ void TurnText::Update() {
 }
 
 void TurnText::Draw() {
+#ifdef _DEBUG
 	ImGui::Begin("TurnText");
 	ImGui::DragFloat3("Position", &transform_.translate.x, 0.1f);
 	ImGui::DragFloat3("Rotation", &transform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
 	ImGui::End();
+#endif // _DEBUG
 
 	if (isHidden_) {
 		if (transform_.scale.Length() < 0.1f) {
