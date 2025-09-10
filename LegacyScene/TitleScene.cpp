@@ -111,7 +111,10 @@ void TitleScene::Draw() {
 #endif // _DEBUG
 }
 
-IScene* TitleScene::GetNextScene() { return new StageSelectScene(engineCore_,sceneData_); }
+IScene* TitleScene::GetNextScene() {
+	(*sceneData_)["stage"] = 0;
+	return new StageSelectScene(engineCore_,sceneData_);
+}
 
 void TitleScene::CameraUpdate() {
 }
