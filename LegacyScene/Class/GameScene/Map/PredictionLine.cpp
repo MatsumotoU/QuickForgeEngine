@@ -27,7 +27,7 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
     bool reflectedThisFrame = false;
     std::map<std::pair<int, int>, int> reflectCountMap; // 座標ごとの反射回数
 
-    for (int i = 0; i < numTiles * 30; ++i) {
+    for (int i = 0; i < numTiles * 64; ++i) {
         linePoints_.push_back(currentPos);
         Vector2 nextPos = currentPos + direction * stepSize;
         totalDistance += stepSize;
@@ -38,7 +38,7 @@ void PredictionLine::Scan(const Vector3& startPos, const Vector2& moveDir, int n
         Vector2 nearestMapChipPos;
         bool isCollided = false;
 
-        Vector2 playerPos = nextPos - Vector2(0.5f, 0.5f);
+        Vector2 playerPos = { nextPos.x - 0.5f, nextPos.y - 0.5f };
         Vector2 playerCenter = playerPos + Vector2(0.5f, 0.5f);
 
         // 最も近いブロックのみで反射
