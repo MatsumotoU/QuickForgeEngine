@@ -16,7 +16,6 @@ public:
 	void ResetParticle();
 	void EmitBomb(const Vector3& position,const Vector4& color,int power, float lifeTime, float velocityDecay,int maxParticle);
 
-
 private:
 	EngineCore* engineCore_;
 	Camera* camera_;
