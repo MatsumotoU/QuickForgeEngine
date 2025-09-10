@@ -39,7 +39,7 @@ void DiggingEffect::Initialize(EngineCore* engineCore, Camera* camera, Vector3 d
 	for (int i = 0; i < particleMax_; i++) {
 		Particle newParticle;
 		newParticle.model = std::make_unique<Model>(engineCore_, camera_);
-		newParticle.model->LoadModel("Resources/Model/wall/soil", "soil.obj", COORDINATESYSTEM_HAND_LEFT);
+		newParticle.model->LoadModel("Resources/Model/blocks/soil", "soil.obj", COORDINATESYSTEM_HAND_LEFT);
 		newParticle.model->transform_.scale = { 0.8f,0.8f,0.8f };
 		newParticle.model->SetDirectionalLightDir(directionalLightDir_);
 		particle_.push_back(std::move(newParticle));
