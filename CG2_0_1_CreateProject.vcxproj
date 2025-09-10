@@ -293,6 +293,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\BigMole.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\AiLeveler.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\ContorolUI.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Number.cpp" />
@@ -430,6 +431,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="LegacyScene\Class\StageSelectScene\System\MapChipField.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\BigMole.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\AiLeveler.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\ContorolUI.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Data\ParticleData.h" />

@@ -156,6 +156,7 @@
     <ClCompile Include="LegacyScene\Class\GameScene\AiLeveler.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\Number.cpp" />
     <ClCompile Include="LegacyScene\Class\GameScene\ContorolUI.cpp" />
+    <ClCompile Include="LegacyScene\Class\StageSelectScene\Object\BigMole.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LegacyScene\Class\GameScene\ResultUI.h" />
@@ -362,6 +363,7 @@
     <ClInclude Include="LegacyScene\Class\GameScene\AiLeveler.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\Number.h" />
     <ClInclude Include="LegacyScene\Class\GameScene\ContorolUI.h" />
+    <ClInclude Include="LegacyScene\Class\StageSelectScene\Object\BigMole.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

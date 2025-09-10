@@ -68,6 +68,7 @@ void StageSelectScene::Initialize() {
 	skydomeModel_ = std::make_unique<Model>(engineCore_, &camera_);
 	skydomeModel_->LoadModel("Resources/Model/skydome", "skydome.obj", COORDINATESYSTEM_HAND_LEFT);
 
+
 	// ブロックパーティクルの初期化
 	uint32_t size = MapChipField::kNumBlockHorizontal * MapChipField::kNumBlockVertical * StageSelectScene::kNumMapType;
 	for (uint32_t i = 0; i < blockParticles_.size(); ++i) {
@@ -99,7 +100,12 @@ void StageSelectScene::Initialize() {
 
 	// 天球の初期化
 	skydome_ = std::make_unique<StageSelectSkydome>();
-	skydome_->Initialize(skydomeModel_.get());
+	skydome_.get()->Initialize(skydomeModel_.get());
+
+	// 天球の初期化
+	bigMole_ = std::make_unique<BigMole>();
+	bigMole_.get()->Initialize(engineCore_,&camera_);
+
 
 	// ブロックの初期化
 	for (uint32_t i = 0; i < blocks_.size(); ++i) {
@@ -144,7 +150,8 @@ void StageSelectScene::Update() {
 
 	// 天球の更新
 	skydome_->Update();
-
+	//大きいモグラの更新
+	bigMole_->Update();
 	// 現在のフェーズの更新
 	currentPhase_->Update();
 }
@@ -152,6 +159,9 @@ void StageSelectScene::Update() {
 void StageSelectScene::Draw() {
 	// 天球の描画
 	skydome_->Draw();
+	//大きいモグラの描画
+	bigMole_->Draw();
+
 
 	// 三角錐の描画
 	for (auto &triangle : triangles_) {
@@ -167,6 +177,7 @@ void StageSelectScene::Draw() {
 	for (auto &block : blocks_) {
 		block->Draw();
 	}
+
 }
 
 IScene *StageSelectScene::GetNextScene() {

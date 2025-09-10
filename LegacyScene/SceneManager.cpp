@@ -6,6 +6,7 @@ SceneManager::SceneManager(EngineCore* engineCore) :fade_(engineCore){
 
 	//scene = new GameScene(engineCore_, &json_);
 	scene = new TitleScene(engineCore_,&json_);
+	//scene = new StageSelectScene(engineCore_, &json_);
 }
 
 SceneManager::~SceneManager() {
