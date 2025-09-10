@@ -20,8 +20,8 @@ void MapChip::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	dirtBlock_.LoadModel("Resources/Model/blocks/dirt", "dirt.obj", COORDINATESYSTEM_HAND_LEFT);
 	grassBlock_.LoadModel("Resources/Model/blocks/grass", "grass.obj", COORDINATESYSTEM_HAND_LEFT);
-	stoneBlock_.LoadModel("Resources/Model/wall/rock", "rock.obj", COORDINATESYSTEM_HAND_LEFT);
-	wallBlock_.LoadModel("Resources/Model/wall/soil", "soil.obj", COORDINATESYSTEM_HAND_LEFT);
+	stoneBlock_.LoadModel("Resources/Model/blocks/stone", "stone.obj", COORDINATESYSTEM_HAND_LEFT);
+	wallBlock_.LoadModel("Resources/Model/blocks/soil", "soil.obj", COORDINATESYSTEM_HAND_LEFT);
 
 	dirtBlockTransforms_.resize(totalParticles);
 	dirtBlockColors_.resize(totalParticles, { 1.0f,1.0f,1.0f,1.0f });

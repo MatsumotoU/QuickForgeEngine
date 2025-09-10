@@ -7,7 +7,7 @@ void Enemy::Initialize(EngineCore* engineCore, Camera* camera) {
 	engineCore_ = engineCore;
 	camera_ = camera;
 	model_ = std::make_unique<Model>(engineCore, camera);
-	model_->LoadModel("Resources/mole", "mole_fall.obj", COORDINATESYSTEM_HAND_RIGHT);
+	model_->LoadModel("Resources/Model/mole", "mole_fall.obj", COORDINATESYSTEM_HAND_RIGHT);
 
 	accelerationDamping_ = 0.95f;
 	velocityDamping_ = 0.98f;
