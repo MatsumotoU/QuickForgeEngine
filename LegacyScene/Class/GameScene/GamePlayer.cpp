@@ -33,6 +33,10 @@ void GamePlayer::Jamp(const Vector2& dir) {
 	if (!isJumping_ && !isGrounded_) {
 		isJumping_ = true;
 		velocity_ = { dir.x * 2.5f,15.0f,dir.y * 2.5f };
+
+		model_->transform_.scale.y = 0.8f;
+		model_->transform_.scale.y = 1.2f;
+		model_->transform_.scale.y = 0.8f;
 	}
 }
 

@@ -3,7 +3,7 @@
 #include "Particle/Particle.h"
 #include "Data/ParticleData.h"
 
-static inline const uint32_t kMaxParticle = 3000;
+static inline const uint32_t kMaxParticle = 1500;
 
 class ParticleManager {
 public:
@@ -22,4 +22,5 @@ private:
 	Camera* camera_;
 	Particle particle_;
 	std::vector<ParticleData> particleData_;
+
 };

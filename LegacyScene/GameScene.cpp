@@ -55,7 +55,7 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) {
 	jumpSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Jump.mp3");
 	landSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Ground.mp3");
 	hitSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Hit.mp3");
-	selectSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SelectSound.mp3");
+	selectSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "ToGame.mp3");
 	deathSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Death.mp3");
 	turnSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "TurnChange.mp3");
 	clearSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Clear.mp3");
@@ -173,7 +173,7 @@ void GameScene::Update() {
 			// 死亡演出スキップ
 			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 				endGameTimer_ = 0.0f;
-				engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SelectSound.mp3", false);
+				engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "TurnChange.mp3", false);
 			}	
 			CheckEndGame();
 
@@ -191,7 +191,7 @@ void GameScene::Update() {
 			MyEasing::SimpleEaseIn(&camera_.transform_.rotate.y, 3.14f, 0.1f);
 
 			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
-				engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SelectSound.mp3", false);
+				engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "TurnChange.mp3", false);
 				if (resultUI_.GetSelectedTop()) {
 					if (player_.GetIsAlive()) {
 						std::string nextStageName;
@@ -360,12 +360,12 @@ void GameScene::MenuUpdate() {
 	if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 		if (mainMenu_.GetMenuSelect() == MenuSelect::ReturnSelect) {
 			isRequestedExit_ = true;
-			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SelectSound.mp3", false);
+			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "TurnChange.mp3", false);
 
 		} else if (mainMenu_.GetMenuSelect() == MenuSelect::ResetGame) {
 			ResetGame(stageName_);
 			isOpenMenu_ = false;
-			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SelectSound.mp3", false);
+			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "TurnChange.mp3", false);
 		}
 	}
 }
