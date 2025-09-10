@@ -1,23 +1,20 @@
 #pragma once
-#include "Base/EngineCore.h"
 
-class BigMole
-{
+class Model;
+
+class BigMole {
 public:
 	BigMole() = default;
 	~BigMole() = default;
 
 	void DebugImGui();
 
-	void Initialize(EngineCore* engineCore, Camera* camera);
+	void Initialize(Model *model, Model *hangar);
 	void Update();
 	void Draw();
 
 private:
-	EngineCore* engineCore_;
-	Camera* camera_;
-	std::unique_ptr<Model> model_;
-	std::unique_ptr<Model> hangar_;
-
+	Model* model_;
+	Model* hangar_;
 };
 
