@@ -20,6 +20,7 @@ public:
 	void EmitDoka(const Vector3& position, const Vector4& color, int power, float lifeTime);
 	void EmitZudon(const Vector3& position, const Vector4& color, int power, float lifeTime);
 	void EmitByon(const Vector3& position, const Vector4& color, int power, float lifeTime);
+	void EmitA(const Vector3& position, const Vector4& color, float lifeTime);
 
 private:
 	EngineCore* engineCore_;
@@ -29,10 +30,12 @@ private:
 	Particle doka_;
 	Particle zudon_;
 	Particle byon_;
+	Particle a_;
 	std::vector<ParticleData> particleData_;
 	std::vector<ParticleData> bakoData_;
 	std::vector<ParticleData> dokaData_;
 	std::vector<ParticleData> zudonData_;
 	std::vector<ParticleData> byonData_;
+	std::vector<ParticleData> aData_;
 
 };

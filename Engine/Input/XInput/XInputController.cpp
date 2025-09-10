@@ -4,7 +4,7 @@
 #ifdef _DEBUG
 #include "Base/MyDebugLog.h"
 #endif // _DEBUG
-
+#include <algorithm>
 #include <assert.h>
 #include <cmath>
 

@@ -11,6 +11,8 @@ void ParticleManager::Initialize(EngineCore* engineCore, Camera* camera) {
 	zudon_.LoadModel("Resources/Model/UI", "ZudonText.obj", COORDINATESYSTEM_HAND_RIGHT);
 	byon_.Initialize(engineCore, kMaxOnomatope);
 	byon_.LoadModel("Resources/Model/UI", "ByonnText.obj", COORDINATESYSTEM_HAND_RIGHT);
+	a_.Initialize(engineCore, kMaxOnomatope);
+	a_.LoadModel("Resources/Model/UI", "A.obj", COORDINATESYSTEM_HAND_RIGHT);
 	camera_ = camera;
 	engineCore_ = engineCore;
 	particleData_.resize(kMaxParticle);
@@ -18,6 +20,7 @@ void ParticleManager::Initialize(EngineCore* engineCore, Camera* camera) {
 	dokaData_.resize(kMaxOnomatope);
 	zudonData_.resize(kMaxOnomatope);
 	byonData_.resize(kMaxOnomatope);
+	aData_.resize(kMaxOnomatope);
 	ResetParticle();
 }
 
@@ -100,6 +103,21 @@ void ParticleManager::Update() {
 		}
 	}
 
+	for (auto& data : aData_) {
+		if (data.isActive) {
+			if (data.lifeTime > 0.0f) {
+				data.lifeTime -= engineCore_->GetDeltaTime();
+				if (data.isGravity) {
+					data.velocity.y -= 9.8f * engineCore_->GetDeltaTime();
+				}
+				data.transform.translate += data.velocity * engineCore_->GetDeltaTime();
+				data.velocity = data.velocity * data.velocityDecay;
+			} else {
+				data.isActive = false;
+			}
+		}
+	}
+
 	std::vector<Transform> transforms;
 	transforms.clear();
 	for (const auto& data : particleData_) {
@@ -164,6 +182,19 @@ void ParticleManager::Update() {
 		}
 	}
 	byon_.Update(&byonTransforms);
+
+	std::vector<Transform> aTransforms;
+	aTransforms.clear();
+	for (const auto& data : aData_) {
+		if (data.isActive) {
+			aTransforms.push_back(data.transform);
+		} else {
+			Transform temp;
+			temp.translate.y = 1000.0f; // 非アクティブなパーティクルを画面外に移動
+			aTransforms.push_back(temp);
+		}
+	}
+	a_.Update(&aTransforms);
 }
 
 void ParticleManager::Draw() {
@@ -208,6 +239,15 @@ void ParticleManager::Draw() {
 		}
 	}
 	byon_.Draw(&byonColors, camera_);
+
+	std::vector<Vector4> aColors;
+	aColors.clear();
+	for (const auto& data : aData_) {
+		if (data.isActive) {
+			aColors.push_back(data.color);
+		}
+	}
+	a_.Draw(&aColors, camera_);
 
 }
 
@@ -256,6 +296,17 @@ void ParticleManager::ResetParticle() {
 	}
 
 	for (auto& data : byonData_) {
+		data.isActive = false;
+		data.isGravity = false;
+		data.transform = Transform();
+		data.transform.rotate.y = 3.14f;
+		data.velocity = Vector3(0.0f, 0.0f, 0.0f);
+		data.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		data.lifeTime = 0.0f;
+		data.velocityDecay = 0.98f;
+	}
+
+	for (auto& data : aData_) {
 		data.isActive = false;
 		data.isGravity = false;
 		data.transform = Transform();
@@ -377,6 +428,27 @@ void ParticleManager::EmitByon(const Vector3& position, const Vector4& color, in
 				static_cast<float>(power),
 				speed * sinf(angle1) * sinf(angle2)
 			);
+			data.color = color;
+			data.lifeTime = lifeTime;
+			data.velocityDecay = 0.95f;
+			break;
+		}
+	}
+}
+
+void ParticleManager::EmitA(const Vector3& position, const Vector4& color, float lifeTime) {
+	for (auto& data : aData_) {
+		if (!data.isActive) {
+			data.isActive = true;
+			data.transform.translate = position;
+			data.transform.scale = Vector3(1.0f, 1.0f, 1.0f);
+			float angle1 = static_cast<float>(rand() % 360) * (3.14f / 180.0f);
+			float angle2 = static_cast<float>(rand() % 360) * (3.14f / 180.0f);
+			float speed = static_cast<float>((rand() % 10) + 1);
+			data.velocity = Vector3(
+				speed * cosf(angle1) * sinf(angle2),
+				5.0f,
+				speed * sinf(angle1) * sinf(angle2));
 			data.color = color;
 			data.lifeTime = lifeTime;
 			data.velocityDecay = 0.95f;

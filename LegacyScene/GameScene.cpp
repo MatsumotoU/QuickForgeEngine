@@ -207,6 +207,23 @@ void GameScene::Update() {
 	if (isEndGame_) {
 		if (endGameTimer_ > 0.0f) {
 			endGameTimer_ -= engineCore_->GetDeltaTime();
+
+			if (static_cast<int>(endGameTimer_ * 10.0f) % 5 == 0) {
+				if (!player_.GetIsAlive()) {
+					particleManager_.EmitA(
+						{ player_.GetTransform().translate.x,player_.GetTransform().translate.y + 1.0f,player_.GetTransform().translate.z },
+						player_.GetColor(), 1.0f);
+				}
+				
+				if (!enemy_.GetIsAlive()) {
+					particleManager_.EmitA(
+						{ enemy_.GetTransform().translate.x,enemy_.GetTransform().translate.y + 1.0f,enemy_.GetTransform().translate.z },
+						enemy_.GetColor(), 1.0f);
+				}
+				
+			}
+			
+
 			// 死亡演出スキップ
 			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 				endGameTimer_ = 0.0f;
@@ -278,15 +295,6 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
-	ImGui::Begin("GameScene");
-	ImGui::DragFloat3("MenutextTranslate", &menuControlTextModel_->transform_.translate.x, 0.1f);
-	ImGui::DragFloat3("MenutextRotate", &menuControlTextModel_->transform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("MenutextScale", &menuControlTextModel_->transform_.scale.x, 0.1f);
-	ImGui::DragFloat3("StartButtonTranslate", &startButtonModel_->transform_.translate.x, 0.1f);
-	ImGui::DragFloat3("StartButtonRotate", &startButtonModel_->transform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("StartButtonScale", &startButtonModel_->transform_.scale.x, 0.1f);
-	ImGui::End();
-
 	menuControlTextModel_->Draw();
 	startButtonModel_->Draw();
 	doNotFallTextModel_->Draw();
