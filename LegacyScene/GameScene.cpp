@@ -147,9 +147,22 @@ void GameScene::Initialize() {
 	doNotFallTextModel_->transform_.translate = { 4.0f,4.3f,2.3f };
 	doNotFallTextModel_->transform_.rotate = { 2.0f,0.0f,3.14f };
 	doNotFallTextModel_->transform_.scale = { 3.0f,3.0f,1.0f };
+
+	menuControlTextModel_ = std::make_unique<Model>(engineCore_, &camera_);
+	startButtonModel_ = std::make_unique<Model>(engineCore_, &camera_);
+
+	menuControlTextModel_->LoadModel("Resources/Model/UI", "Menu.obj", COORDINATESYSTEM_HAND_RIGHT);
+	startButtonModel_->LoadModel("Resources/Model/UI", "StartButton.obj", COORDINATESYSTEM_HAND_RIGHT);
+	menuControlTextModel_->transform_.translate = { 8.6f,3.0f,-0.3f };
+	menuControlTextModel_->transform_.rotate = { 1.9f,0.0f,3.14f };
+	startButtonModel_->transform_.translate = { 6.2f,3.0f,-0.3f };
+	startButtonModel_->transform_.rotate = { -1.8f,0.0f,0.0f };	
 }
 
 void GameScene::Update() {
+	menuControlTextModel_->Update();
+	startButtonModel_->Update();
+
 	doNotFallTextModel_->Update();
 	controlUI_.isActiveControll_ = player_.GetIsCanMove();
 	controlUI_.Update();
@@ -265,6 +278,17 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+	ImGui::Begin("GameScene");
+	ImGui::DragFloat3("MenutextTranslate", &menuControlTextModel_->transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("MenutextRotate", &menuControlTextModel_->transform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("MenutextScale", &menuControlTextModel_->transform_.scale.x, 0.1f);
+	ImGui::DragFloat3("StartButtonTranslate", &startButtonModel_->transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("StartButtonRotate", &startButtonModel_->transform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("StartButtonScale", &startButtonModel_->transform_.scale.x, 0.1f);
+	ImGui::End();
+
+	menuControlTextModel_->Draw();
+	startButtonModel_->Draw();
 	doNotFallTextModel_->Draw();
 	controlUI_.Draw();
 	stageTextModel_->Draw();
@@ -409,7 +433,7 @@ void GameScene::ResetGame(const std::string& stageName) {
 	player_.SetAlive(true);
 	player_.SetAlpha(1.0f);
 	player_.ResetForce();
-	enemy_.GetTransform().translate = { 6.0f,0.0f,4.0f };
+	enemy_.GetTransform().translate = { 5.0f,0.0f,4.0f };
 	enemy_.SetAlive(true);
 	enemy_.SetAlpha(1.0f);
 	enemy_.ResetForce();

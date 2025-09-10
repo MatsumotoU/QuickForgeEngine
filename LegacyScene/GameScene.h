@@ -101,6 +101,9 @@ private:
 
 	ControlUI controlUI_;
 
+	std::unique_ptr<Model> menuControlTextModel_;
+	std::unique_ptr<Model> startButtonModel_;
+
 	uint32_t digSE_;
 	uint32_t buildSE_;
 	uint32_t jumpSE_;
