@@ -346,7 +346,6 @@ void GameScene::MainGameUpdate() {
 
 	floorChip_.Update();
 	wallChip_.Update();
-
 	
 	enemy_.SetMap(&floorMap_, &wallMap_);
 	enemy_.SetPlayerPos({ player_.GetTransform().translate.x,player_.GetTransform().translate.z });
