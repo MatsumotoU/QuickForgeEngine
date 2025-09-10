@@ -25,7 +25,7 @@
 #include "Class/GameScene/Number.h"
 #include "Class/GameScene/ContorolUI.h"
 
-class GameScene : public IScene{
+class GameScene : public IScene {
 public:
 	GameScene(EngineCore* engineCore, nlohmann::json* data);
 	~GameScene()override;
@@ -95,6 +95,9 @@ private:
 
 	Number stageNumber_;
 	std::unique_ptr<Model> stageTextModel_;
+
+	std::unique_ptr<Model> doNotFallTextModel_;
+	float doNotFallTextTimer_;
 
 	ControlUI controlUI_;
 

@@ -59,6 +59,8 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) {
 	deathSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Death.mp3");
 	turnSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "TurnChange.mp3");
 	clearSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Clear.mp3");
+
+	doNotFallTextTimer_ = 0.0f;
 }
 
 GameScene::~GameScene() {
@@ -138,9 +140,17 @@ void GameScene::Initialize() {
 	stageTextModel_->transform_.scale = { 0.5f,0.5f,1.0f };
 
 	controlUI_.Initialize(engineCore_, &camera_);
+
+	doNotFallTextModel_ = std::make_unique<Model>(engineCore_, &camera_);
+	doNotFallTextModel_->LoadModel("Resources/Model/UI", "DoNotFallText.obj", COORDINATESYSTEM_HAND_RIGHT);
+	doNotFallTextTimer_ = 1.5f;
+	doNotFallTextModel_->transform_.translate = { 4.0f,4.3f,2.3f };
+	doNotFallTextModel_->transform_.rotate = { 2.0f,0.0f,3.14f };
+	doNotFallTextModel_->transform_.scale = { 3.0f,3.0f,1.0f };
 }
 
 void GameScene::Update() {
+	doNotFallTextModel_->Update();
 	controlUI_.isActiveControll_ = player_.GetIsCanMove();
 	controlUI_.Update();
 	stageTextModel_->Update();
@@ -150,6 +160,20 @@ void GameScene::Update() {
 	stageNumber_.Update();
 
 	timer_ += engineCore_->GetDeltaTime();
+	if (doNotFallTextTimer_ > 0.0f) {
+		if (sinf(timer_ * 20.0f) > 0.0f) {
+			doNotFallTextModel_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+		} else {
+			doNotFallTextModel_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		}
+
+		MyEasing::SimpleEaseIn(&doNotFallTextModel_->transform_.translate.y, 4.3f, 0.1f);
+		doNotFallTextTimer_ -= engineCore_->GetDeltaTime();
+	} else {
+		MyEasing::SimpleEaseIn(&doNotFallTextModel_->transform_.translate.y, 25.0f, 0.1f);
+		doNotFallTextTimer_ = 0.0f;
+	}
+
 	if (isEndGame_) {
 		resultUI_.Update();
 	}
@@ -241,7 +265,7 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
-
+	doNotFallTextModel_->Draw();
 	controlUI_.Draw();
 	stageTextModel_->Draw();
 	particleManager_.Draw();
@@ -415,12 +439,14 @@ void GameScene::ResetGame(const std::string& stageName) {
 	} else if (stageName_ == "Stage8") {
 		stageNumber_.SetNumber(8);
 	}
+
+	doNotFallTextTimer_ = 1.5f;
 }
 void GameScene::CameraUpdate() {
 }
 void GameScene::PredictionLineUpdate(GamePlayer& gamePlayer) {
 	predictionLine_.Init();
-	if (gamePlayer.GetIsCanMove()) {
+	if (gamePlayer.GetIsCanMove() && !gamePlayer.GetIsJumping()) {
 		predictionLine_.Scan(
 			gamePlayer.GetTransform().translate,
 			gamePlayer.GetMoveDir(),
