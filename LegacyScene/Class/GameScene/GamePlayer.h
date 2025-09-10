@@ -13,6 +13,7 @@ public:
 	void RestParameter();
 	void Jamp(const Vector2& dir);
 	void DeathAnimation();
+	void Rotate();
 
 	Vector4 GetColor() const;
 	Vector2& GetMoveDir();
@@ -39,6 +40,7 @@ protected:
 	std::unique_ptr<Model> model_;
 	Transform transform_;
 	float playerSize_;
+	float rotateTimer_;
 
 	Vector4 color_;
 	Vector3 velocity_;

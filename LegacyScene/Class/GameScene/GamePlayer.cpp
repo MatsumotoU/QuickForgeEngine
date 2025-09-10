@@ -61,6 +61,10 @@ void GamePlayer::DeathAnimation() {
 	model_->Update();
 }
 
+void GamePlayer::Rotate() {
+	rotateTimer_ = 1.0f;
+}
+
 Vector4 GamePlayer::GetColor() const {
 	return color_;
 }

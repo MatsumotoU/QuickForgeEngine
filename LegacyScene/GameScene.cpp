@@ -32,7 +32,7 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) {
 		} else if (stage + 1 > 8) {
 			stage = 8;
 		}
-		stageName_ = "Stage" + std::to_string(stage+1);
+		stageName_ = "Stage" + std::to_string(stage + 1);
 
 	} else {
 
@@ -47,7 +47,7 @@ GameScene::GameScene(EngineCore* engineCore, nlohmann::json* data) {
 	timer_ = 0.0f;
 	cameraShakeTimer_ = 0.0f;
 
-	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/BGM/","GameSceneBGM.mp3");
+	bgmHandle_ = engineCore_->LoadSoundData("Resources/Sound/BGM/", "GameSceneBGM.mp3");
 	engineCore_->GetAudioPlayer()->PlayAudio(bgmHandle_, "GameSceneBGM.mp3", true);
 
 	digSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "Dig.mp3");
@@ -156,7 +156,7 @@ void GameScene::Initialize() {
 	menuControlTextModel_->transform_.translate = { 8.6f,3.0f,-0.3f };
 	menuControlTextModel_->transform_.rotate = { 1.9f,0.0f,3.14f };
 	startButtonModel_->transform_.translate = { 6.2f,3.0f,-0.3f };
-	startButtonModel_->transform_.rotate = { -1.8f,0.0f,0.0f };	
+	startButtonModel_->transform_.rotate = { -1.8f,0.0f,0.0f };
 }
 
 void GameScene::Update() {
@@ -211,7 +211,7 @@ void GameScene::Update() {
 			if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_SPACE) || engineCore_->GetXInputController()->GetTriggerButton(XINPUT_GAMEPAD_A, 0)) {
 				endGameTimer_ = 0.0f;
 				engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "TurnChange.mp3", false);
-			}	
+			}
 			CheckEndGame();
 
 		} else {
@@ -219,7 +219,7 @@ void GameScene::Update() {
 				isCountEndGameTime_ = false;
 				if (player_.GetIsAlive()) {
 					engineCore_->GetAudioPlayer()->PlayAudio(clearSE_, "Clear.mp3", false);
-				} 
+				}
 			}
 
 			MyEasing::SimpleEaseIn(&camera_.transform_.translate.x, 4.0f, 0.1f);
@@ -250,9 +250,9 @@ void GameScene::Update() {
 							nextStageName = "Stage1";
 						}
 						stageName_ = nextStageName;
-					} 
+					}
 					ResetGame(stageName_);
-					
+
 				} else {
 					isRequestedExit_ = true;
 				}
@@ -305,7 +305,7 @@ void GameScene::Draw() {
 		mainMenu_.Draw();
 	}
 
-	
+
 	if (isEndGame_) {
 		resultUI_.Draw();
 	}
@@ -319,7 +319,7 @@ void GameScene::Draw() {
 
 IScene* GameScene::GetNextScene() {
 	if (nextScene_ == nullptr) {
-		return new StageSelectScene(engineCore_,sceneData_);
+		return new StageSelectScene(engineCore_, sceneData_);
 	}
 	return nextScene_;
 }
@@ -346,7 +346,7 @@ void GameScene::MainGameUpdate() {
 
 	floorChip_.Update();
 	wallChip_.Update();
-	
+
 	enemy_.SetMap(&floorMap_, &wallMap_);
 	enemy_.SetPlayerPos({ player_.GetTransform().translate.x,player_.GetTransform().translate.z });
 	enemy_.Update();
@@ -389,7 +389,7 @@ void GameScene::MainGameUpdate() {
 			oldBuildMapChipIndex_.clear();
 			isPlayerTurn_ = true;
 			player_.GetIsCanMove() = true;
-			
+
 			turnText_.ChangeTurn(isPlayerTurn_);
 			engineCore_->GetAudioPlayer()->PlayAudio(turnSE_, "TurnChange.mp3", false);
 		}
@@ -488,7 +488,7 @@ void GameScene::PredictionLineUpdate(GamePlayer& gamePlayer) {
 				IntVector2 mapChipPos;
 				mapChipPos.x = static_cast<int>(std::round(point.x));
 				mapChipPos.y = static_cast<int>(std::round(point.y));
-				
+
 				buildPoints.push_back({ static_cast<float>(mapChipPos.x), static_cast<float>(mapChipPos.y) });
 			}
 			Vector2 lastPoint = buildPoints.back();
@@ -563,7 +563,15 @@ void GameScene::MapChipUpdate(GamePlayer& gamePlayer) {
 					wallMap_[nearestY][nearestX] = 0;
 				}
 				engineCore_->GetAudioPlayer()->PlayAudio(hitSE_, "Hit.mp3", false);
-
+				if (rand() % 2) {
+					particleManager_.EmitBako(
+						{ nearestMapChipPos.x + 0.5f,0.5f,nearestMapChipPos.y + 0.5f },
+						{ 1.0f,0.5f,0.0f,1.0f }, 15, 1.0f);
+				} else {
+					particleManager_.EmitDoka(
+						{ nearestMapChipPos.x + 0.5f,0.5f,nearestMapChipPos.y + 0.5f },
+						{ 0.5f,0.1f,0.0f,1.0f }, 15, 1.0f);
+				}
 			}
 		} else {
 			reflectedThisFrame = false;
@@ -621,6 +629,16 @@ void GameScene::BuildingMapChipUpdate(GamePlayer& gamePlayer) {
 					if (floorMap_[index.y][index.x] == 3) {
 						wallMap_[index.y][index.x] = 3;
 					}
+
+					if (rand() % 2) {
+						particleManager_.EmitBako(
+							{ static_cast<float>(index.x),0.5f,static_cast<float>(index.y) },
+							{ 1.0f,0.5f,0.0f,1.0f }, 15, 1.0f);
+					} else {
+						particleManager_.EmitDoka(
+							{ static_cast<float>(index.x),0.5f,static_cast<float>(index.y) },
+							{ 0.5f,0.1f,0.0f,1.0f }, 15, 1.0f);
+					}
 				}
 			}
 		}
@@ -662,6 +680,9 @@ void GameScene::JumpingUpdate(GamePlayer& gamePlayer) {
 			}
 			gamePlayer.Jamp(jumpDir);
 			engineCore_->GetAudioPlayer()->PlayAudio(jumpSE_, "Jump.mp3", false);
+			particleManager_.EmitByon(
+				{ gamePlayer.GetTransform().translate.x,0.5f,gamePlayer.GetTransform().translate.z },
+				gamePlayer.GetColor(), 20, 2.0f);
 		}
 	}
 }
@@ -683,6 +704,7 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 						{ 1.0f,0.5f,0.0f,1.0f }, 5, 1.0f, 0.98f, 100);
 
 					engineCore_->GetAudioPlayer()->PlayAudio(landSE_, "Ground.mp3", false);
+					
 				}
 			}
 		}
@@ -694,8 +716,12 @@ void GameScene::GroundingUpdate(GamePlayer& gamePlayer) {
 			if (cameraShakeTimer_ < 0.5f) {
 				cameraShakeTimer_ += 0.5f;
 				particleManager_.EmitBomb(
-					{ static_cast<float>(mapChipPos.x),1.0f,static_cast<float>(mapChipPos.y)},
+					{ static_cast<float>(mapChipPos.x),1.0f,static_cast<float>(mapChipPos.y) },
 					{ 1.0f,1.0f,1.0f,1.0f }, 10, 1.0f, 0.98f, 50);
+
+				particleManager_.EmitZudon(
+					{ static_cast<float>(mapChipPos.x),1.0f,static_cast<float>(mapChipPos.y) },
+					{ 1.0f,0.5f,0.0f,1.0f }, 20, 1.0f);
 			}
 		}
 	}
