@@ -2,6 +2,7 @@
 #include "Base/EngineCore.h"
 #include "IScene.h"
 #include "Class/StageSelectScene/Object/Triangle.h"
+#include "Class/StageSelectScene/Object/BigMole.h"
 
 class Particle;
 class StageSelectSkydome;
@@ -170,6 +171,7 @@ private:
 	std::vector<std::unique_ptr<Model>> stageNumberModels_;				// ステージ番号モデル
 	std::array<std::unique_ptr<Particle>, 3> blockParticles_;			// ブロックパーティクル
 	std::unique_ptr<StageSelectSkydome> skydome_ = nullptr;				// 天球
+	std::unique_ptr<BigMole> bigMole_ = nullptr;							// 大きなモグラ
 	std::array<std::unique_ptr<Triangle>, 2> triangles_;				// 三角錐
 	std::array<std::unique_ptr<StageNumber>, kNumStage> stageNumbers_;	// ステージ番号
 	std::array<std::unique_ptr<StageSelectBlocks>, 3> blocks_;			// ブロック
