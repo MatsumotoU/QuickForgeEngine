@@ -11,6 +11,8 @@ void MainMenu::Initialize(EngineCore* engineCore, Camera* camera) {
 	resetGameTextModel_ = std::make_unique<Model>(engineCore, camera);
 	resetGameTextModel_->LoadModel("Resources/Model/UI", "Retry.obj", COORDINATESYSTEM_HAND_RIGHT);
 
+	menuTextModel_->SetColor({ 1.0f,0.5f,0.5f,1.0f });
+
 	menuTextModel_->transform_.rotate.y = -0.5f;
 	returnSelectTextModel_->transform_.rotate.y = -0.5f;
 	resetGameTextModel_->transform_.rotate.y = -0.5f;
