@@ -167,11 +167,13 @@ private:
 	uint32_t toGameSoundHandle_ = 0;									// ゲーム遷移音ハンドル
 	StageData stageData_;												// ステージデータ
 	std::unique_ptr<Model> skydomeModel_ = nullptr;						// 天球モデル
+	std::unique_ptr<Model> bigMoleModel_ = nullptr;						// 大きなモグラモデル
+	std::unique_ptr<Model> hangarModel_ = nullptr;						// 格納庫モデル
 	std::array<std::unique_ptr<Model>, 2> triangleModels_;				// 三角錐モデル
 	std::vector<std::unique_ptr<Model>> stageNumberModels_;				// ステージ番号モデル
 	std::array<std::unique_ptr<Particle>, 3> blockParticles_;			// ブロックパーティクル
 	std::unique_ptr<StageSelectSkydome> skydome_ = nullptr;				// 天球
-	std::unique_ptr<BigMole> bigMole_ = nullptr;							// 大きなモグラ
+	std::unique_ptr<BigMole> bigMole_ = nullptr;						// 大きなモグラ
 	std::array<std::unique_ptr<Triangle>, 2> triangles_;				// 三角錐
 	std::array<std::unique_ptr<StageNumber>, kNumStage> stageNumbers_;	// ステージ番号
 	std::array<std::unique_ptr<StageSelectBlocks>, 3> blocks_;			// ブロック

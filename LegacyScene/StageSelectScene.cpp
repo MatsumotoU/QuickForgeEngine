@@ -29,7 +29,6 @@ StageSelectScene::~StageSelectScene() {
 }
 
 void StageSelectScene::Initialize() {
-
 	// シーン切り替えフラグの初期化
 	isRequestedExit_ = false;
 
@@ -68,6 +67,13 @@ void StageSelectScene::Initialize() {
 	skydomeModel_ = std::make_unique<Model>(engineCore_, &camera_);
 	skydomeModel_->LoadModel("Resources/Model/skydome", "skydome.obj", COORDINATESYSTEM_HAND_LEFT);
 
+	// 大きなモグラモデルの初期化
+	bigMoleModel_ = std::make_unique<Model>(engineCore_, &camera_);
+	bigMoleModel_->LoadModel("Resources/Model/mole", "mole_fall.obj", COORDINATESYSTEM_HAND_LEFT);
+
+	// 格納庫モデルの初期化
+	hangarModel_ = std::make_unique<Model>(engineCore_, &camera_);
+	hangarModel_->LoadModel("Resources/Model/hangar", "hangar.obj", COORDINATESYSTEM_HAND_LEFT);
 
 	// ブロックパーティクルの初期化
 	uint32_t size = MapChipField::kNumBlockHorizontal * MapChipField::kNumBlockVertical * StageSelectScene::kNumMapType;
@@ -100,12 +106,11 @@ void StageSelectScene::Initialize() {
 
 	// 天球の初期化
 	skydome_ = std::make_unique<StageSelectSkydome>();
-	skydome_.get()->Initialize(skydomeModel_.get());
+	skydome_->Initialize(skydomeModel_.get());
 
-	// 天球の初期化
+	// 大きなモグラの初期化
 	bigMole_ = std::make_unique<BigMole>();
-	bigMole_.get()->Initialize(engineCore_,&camera_);
-
+	bigMole_->Initialize(bigMoleModel_.get(), hangarModel_.get());
 
 	// ブロックの初期化
 	for (uint32_t i = 0; i < blocks_.size(); ++i) {
