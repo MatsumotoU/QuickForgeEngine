@@ -15,7 +15,7 @@ void ResultUI::Initialize(EngineCore* engineCore, Camera* camera) {
 
 	niceTextModel_->SetColor({ 1.0f,0.5f,0.5f,1.0f });
 
-	transform_.translate = { 5.6f,21.0f,-23.0f };
+	transform_.translate = { 5.2f,21.0f,-23.0f };
 	transform_.rotate.y = -0.5f;
 
 	topOffset_ = 2.3f;
