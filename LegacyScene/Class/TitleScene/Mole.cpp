@@ -213,8 +213,8 @@ void Mole::Move()
 void Mole::ClampPosition()
 {
 	float posX = model_.get()->transform_.translate.x;
-	if (posX < -2.8f) {
-		model_.get()->transform_.translate.x = -2.7f;
+	if (posX < -1.7f) {
+		model_.get()->transform_.translate.x = -1.7f;
 		isAnimation_ = false;
 	}
 	if (posX > 2.8f) {
