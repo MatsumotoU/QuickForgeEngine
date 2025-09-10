@@ -23,7 +23,7 @@ void ResultUI::Initialize(EngineCore* engineCore, Camera* camera) {
 	isCleard_ = false;
 	selectedTop_ = true;
 
-	selectSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "SystemSelectSound.mp3");
+	selectSE_ = engineCore_->LoadSoundData("Resources/Sound/SE/", "ToTitle.mp3");
 }
 
 void ResultUI::Update() {
@@ -73,14 +73,14 @@ void ResultUI::Update() {
 		if (selectInterval_ <= 0.0f) {
 			selectedTop_ = !selectedTop_;
 			selectInterval_ = 0.2f;
-			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SystemSelectSound.mp3", false);
+			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "ToTitle.mp3", false);
 		}
 	}
 	if (engineCore_->GetInputManager()->keyboard_.GetTrigger(DIK_DOWN) || engineCore_->GetXInputController()->GetLeftStick(0).y < -3.0f) {
 		if (selectInterval_ <= 0.0f) {
 			selectedTop_ = !selectedTop_;
 			selectInterval_ = 0.2f;
-			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "SystemSelectSound.mp3", false);
+			engineCore_->GetAudioPlayer()->PlayAudio(selectSE_, "ToTitle.mp3", false);
 		}
 	}
 
