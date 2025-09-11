@@ -40,7 +40,7 @@
     <ProjectGuid>{a3978079-0b39-4065-a8c3-33bb131dd523}</ProjectGuid>
     <RootNamespace>CG201CreateProject</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>CG2</ProjectName>
+    <ProjectName>QuickForgeEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
