@@ -55,7 +55,7 @@ void WindowsEngineCore::Initialize() {
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
 	// * ポストプロセスマネージャー初期化 * //
-	/*rendaringPostprocess_.Initialize(directXCommon_.GetDevice(), directXCommon_.GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	rendaringPostprocess_.Initialize(directXCommon_.GetDevice(), directXCommon_.GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	rendaringPostprocess_.SetNormalPSO(graphicPipelineManager_.GetNormalPso());
 	rendaringPostprocess_.SetColorCorrectionPSO(graphicPipelineManager_.GetColorCorrectionPso());
 	rendaringPostprocess_.SetGrayScalePSO(graphicPipelineManager_.GetGrayScalePso());
@@ -65,7 +65,8 @@ void WindowsEngineCore::Initialize() {
 	rendaringPostprocess_.SetOffscreenRtvHandle(
 		offScreenResourceManager_.GetOffscreenRtvHandles(0), offScreenResourceManager_.GetOffscreenRtvHandles(1));
 	rendaringPostprocess_.SetOffscreenSrvHandle(
-		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));*/
+		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));
+	rendaringPostprocess_.SetDsvHandle(directXCommon_.GetDepthStencilViewHandle()->cpuHandle_);
 
 	assetManager_.Initalize(&directXCommon_);
 }
@@ -104,10 +105,14 @@ void WindowsEngineCore::Update() {
 
 void WindowsEngineCore::Draw() {
 	directXCommon_.PreDraw();
+	rendaringPostprocess_.SetBackBufferRtvHandle(directXCommon_.GetCurrentBackBufferCpuHandle());
+	rendaringPostprocess_.PreDraw();
 	imguiFrameController_.BeginFrame();
 
+	rendaringPostprocess_.DrawImGui();
 	gameWindowManager->Draw();
 
+	rendaringPostprocess_.PostDraw();
 	imguiFrameController_.EndFrame(directXCommon_.GetCurrentBackBufferCpuHandle());
 	directXCommon_.PostDraw();
 

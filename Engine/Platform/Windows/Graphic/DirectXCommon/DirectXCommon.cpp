@@ -11,16 +11,47 @@ namespace {
 void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
 	directXDevice_.Initialize();
 	descriptorHeapManager_.Initialize(directXDevice_.GetDevice());
-	
+
 	commandManager_.Initialize(directXDevice_.GetDevice());
 
 	swapChain_.CreateDubleBuffering();
 	swapChain_.Initialize(
 		hwnd, width, height, directXDevice_.GetDxgiFactory(), commandManager_.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
-	
+
 	AssignSwapChainRenderTarget();
 
 	fence_.Initialize(directXDevice_.GetDevice());
+
+	// depthStencilBufferの生成
+	D3D12_RESOURCE_DESC depthResourceDesc{};
+	depthResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	depthResourceDesc.Alignment = 0;
+	depthResourceDesc.Width = width;
+	depthResourceDesc.Height = height;
+	depthResourceDesc.DepthOrArraySize = 1;
+	depthResourceDesc.MipLevels = 1;
+	depthResourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthResourceDesc.SampleDesc.Count = 1;
+	depthResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+	D3D12_HEAP_PROPERTIES depthHeapProps{};
+	depthHeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+	D3D12_CLEAR_VALUE depthClearValue{};
+	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthClearValue.DepthStencil.Depth = 1.0f;
+	HRESULT hr = directXDevice_.GetDevice()->CreateCommittedResource(
+		&depthHeapProps,
+		D3D12_HEAP_FLAG_NONE,
+		&depthResourceDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		&depthClearValue,
+		IID_PPV_ARGS(depthStencilBuffer_.GetAddressOf()));
+	assert(SUCCEEDED(hr));
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+	dsvHandle_ = descriptorHeapManager_.AssignDsvHeap(depthStencilBuffer_.Get(), &dsvDesc);
+
 }
 
 void DirectXCommon::PreDraw() {
@@ -43,7 +74,7 @@ void DirectXCommon::PostDraw() {
 		swapChain_.GetCurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT);
-	
+
 	// コマンドリストのクローズ、実行
 	commandManager_.ExecuteCommandList();
 
@@ -147,4 +178,8 @@ ID3D12DescriptorHeap* const* DirectXCommon::GetDsvDescriptorHeapAddressOf() {
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCurrentBackBufferCpuHandle() {
 	return swapChain_.GetCurrentBackBufferView();
+}
+
+DescriptorHandles* DirectXCommon::GetDepthStencilViewHandle() {
+	return &dsvHandle_;
 }

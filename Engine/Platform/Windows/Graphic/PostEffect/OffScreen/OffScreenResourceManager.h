@@ -16,6 +16,7 @@ public:
 	D3D12_SHADER_RESOURCE_VIEW_DESC GetOffscreenSrvDesc();
 	D3D12_CPU_DESCRIPTOR_HANDLE GetOffscreenRtvHandles(int index);
 	DescriptorHandles GetOffscreenSrvHandles(int index);
+
 	void SetRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle, int index);
 	void SetSrvHandle(DescriptorHandles handles, int index);
 	

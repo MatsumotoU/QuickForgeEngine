@@ -368,6 +368,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\RootParameter.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiler.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\RendaringPostprocess.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.cpp" />
     <ClCompile Include="Engine\Platform\Windows\WindowsEngineCore.cpp" />
@@ -411,6 +412,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Core\Error\ErrorList.h" />
     <ClInclude Include="Engine\Core\Graphic\IGraphicCommon.h" />
     <ClInclude Include="Engine\Core\IEngineCore.h" />
     <ClInclude Include="Engine\Core\Math\AudioMath.h" />
@@ -464,6 +466,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\RootParameter.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiler.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\PostEffect\RendaringPostprocess.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\ConstantBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ColorCorrectionOffset.h" />

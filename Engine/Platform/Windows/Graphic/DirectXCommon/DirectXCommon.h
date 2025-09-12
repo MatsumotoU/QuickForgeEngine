@@ -12,6 +12,8 @@
 #include "AppUtility/DebugTool/DirectX/DirectX12DebugCore.h"
 #endif // _DEBUG
 
+// TODO: DepthStencilをここに置かない
+
 class DirectXCommon final {
 public:
 	DirectXCommon() = default;
@@ -40,6 +42,8 @@ public:
 	ID3D12DescriptorHeap* const* GetDsvDescriptorHeapAddressOf();
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferCpuHandle();
 
+	DescriptorHandles* GetDepthStencilViewHandle();
+
 private:
 #ifdef _DEBUG
 	DirectX12DebugCore directX12DebugCore_;
@@ -52,6 +56,9 @@ private:
 	DirectXCommandManager commandManager_;
 	SwapChain swapChain_;
 	Fence fence_;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer_;
+	DescriptorHandles dsvHandle_;
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 };
