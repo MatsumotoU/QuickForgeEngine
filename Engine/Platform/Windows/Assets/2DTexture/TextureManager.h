@@ -6,9 +6,18 @@
 #include "Externals/DirectXTex/DirectXTex.h"
 #include "Utility/String/StringLiblary.h"
 
+#include "Utility/DesignPatterns/Singleton.h"
+
 class SrvDescriptorHeap;
 
-class TextureManager final {
+class TextureManager final :public Singleton<TextureManager> {
+	friend class Singleton<TextureManager>;
+	TextureManager() = default;
+	TextureManager(const TextureManager&) = delete;
+	TextureManager& operator=(const TextureManager&) = delete;
+	TextureManager(TextureManager&&) = delete;
+	TextureManager& operator=(TextureManager&&) = delete;
+
 public:// 一回は絶対に呼び出さないとバグるやつ
 	/// <summary>
 	/// 初期化
@@ -41,9 +50,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList);
 	void EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList);
 	void CreateShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource);
-	void CreateOffscreenShaderResourceView();	
 
-private:// メンバ変数
 	ID3D12Device* device_;
 	ID3D12GraphicsCommandList* commandList_;
 	SrvDescriptorHeap* srvDescriptorHeap_;

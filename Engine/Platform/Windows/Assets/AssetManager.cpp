@@ -3,19 +3,22 @@
 #include "Assets/3DModel/Loader/AssimpModelLoader.h"
 
 void AssetManager::Initalize(DirectXCommon* dxCommon) {
+	assert(dxCommon && "dxCommon is nullptr.");
+
 	dxCommon_ = dxCommon;
-	textureManager_.Initialize(
+	textureManager_ = TextureManager::GetInstance();
+	textureManager_->Initialize(
 		dxCommon_->GetDevice(), dxCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		dxCommon_->GetDescriptorHeapManager()->GetSrvDescriptorHeap());
 }
 
 void AssetManager::Finalize() {
-	textureManager_.Finalize();
+	textureManager_->Finalize();
 }
 
 void AssetManager::LoadTexture(const std::string& imageName) {
 	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Image") + imageName;
-	textureHandleMap_[imageName] = textureManager_.LoadTexture(filePath);
+	textureHandleMap_[imageName] = textureManager_->LoadTexture(filePath);
 }
 
 void AssetManager::LoadModel(const std::string& modelName) {
@@ -29,9 +32,9 @@ void AssetManager::LoadModel(const std::string& modelName) {
 
 D3D12_GPU_DESCRIPTOR_HANDLE AssetManager::GetTextureSrvHandleGPU(const std::string& imageName) {
 	assert(textureHandleMap_.find(imageName) != textureHandleMap_.end() && "Not Found Image.");
-	return textureManager_.GetTextureSrvHandleGPU(textureHandleMap_[imageName]);
+	return textureManager_->GetTextureSrvHandleGPU(textureHandleMap_[imageName]);
 }
 
 void AssetManager::EndFrame() {
-	textureManager_.ReleaseIntermediateResources();
+	textureManager_->ReleaseIntermediateResources();
 }

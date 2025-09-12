@@ -68,7 +68,8 @@ void WindowsEngineCore::Initialize() {
 		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));
 	rendaringPostprocess_.SetDsvHandle(directXCommon_.GetDepthStencilViewHandle()->cpuHandle_);
 
-	assetManager_.Initalize(&directXCommon_);
+	assetManager_ = AssetManager::GetInstance();
+	assetManager_->Initalize(&directXCommon_);
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -91,6 +92,8 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	assetManager_->Finalize();
+
 	imguiFrameController_.EndImGui();
 	directXCommon_.Shutdown();
 	gameWindowManager->Shutdown();
@@ -116,5 +119,5 @@ void WindowsEngineCore::Draw() {
 	imguiFrameController_.EndFrame(directXCommon_.GetCurrentBackBufferCpuHandle());
 	directXCommon_.PostDraw();
 
-	assetManager_.EndFrame();
+	assetManager_->EndFrame();
 }

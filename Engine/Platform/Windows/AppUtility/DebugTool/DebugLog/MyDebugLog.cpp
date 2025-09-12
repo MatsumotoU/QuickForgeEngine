@@ -68,7 +68,7 @@ const std::vector<std::string>* MyDebugLog::GetLog() {
 }
 
 void DebugLog(const std::string& message, const std::source_location& location) {
-	MyDebugLog::GetInstance().Log(message, location);
+	MyDebugLog::GetInstance()->Log(message, location);
 }
 
 void DebugLogLua(const sol::object& obj) {

@@ -43,6 +43,13 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 }
 
 void TextureManager::Finalize() {
+	// リソースの解放
+	textureSrvHandleCPU_.clear();
+	textureSrvHandleGPU_.clear();
+	textureResources_.clear();
+	scratchImages_.clear();
+	intermediateResource_.clear();
+	
 	CoUninitialize();
 }
 
