@@ -1,3 +1,3 @@
 #pragma once 
-#define BUILD_COMMIT "b3bc1b7" 
-#define BUILD_BRANCH "master" 
+#define BUILD_COMMIT "f88d244" 
+#define BUILD_BRANCH "FileDelete" 

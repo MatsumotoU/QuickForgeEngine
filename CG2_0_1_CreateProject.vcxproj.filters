@@ -16,455 +16,324 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="Engine\Shaders\ShaderStructs\Object3d.hlsli" />
-    <None Include="Engine\Shaders\ShaderStructs\Particle.hlsli" />
-    <None Include="Engine\Shaders\ShaderStructs\Font.hlsli" />
-    <None Include="externals\imgui\ImGuizmo-1.83\.editorconfig" />
-    <None Include="externals\imgui\ImGuizmo-1.83\Makefile" />
-    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl">
+    <None Include="Engine\Resources\Shaders\ShaderStructs\Object3d.hlsli" />
+    <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli" />
+    <None Include="Engine\Resources\Shaders\ShaderStructs\Font.hlsli" />
+    <None Include="Engine\Externals\imgui\ImGuizmo-1.83\.editorconfig" />
+    <None Include="Engine\Externals\imgui\ImGuizmo-1.83\Makefile" />
+    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
-    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl">
+    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
-    <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl">
+    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
     <None Include="Resources\Scripts\types.d.lua" />
     <None Include="GenerateBuildInfo.bat">
       <Filter>ソース ファイル</Filter>
     </None>
+    <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_demo.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_demo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_draw.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_draw.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_impl_dx12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_impl_win32.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_tables.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_tables.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_widgets.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\RootParameter.cpp">
+    <ClCompile Include="Engine\Utility\String\MyString.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\DirectXCommon.cpp">
+    <ClCompile Include="Engine\Core\Math\Matrix\Matrix2x2.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\ImGuiManager.cpp">
+    <ClCompile Include="Engine\Core\Math\Matrix\Matrix3x3.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\InputLayout.cpp">
+    <ClCompile Include="Engine\Core\Math\Matrix\Matrix4x4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderCompiler.cpp">
+    <ClCompile Include="Engine\Core\Math\Vector\Vector2.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\MyString.cpp">
+    <ClCompile Include="Engine\Core\Math\Vector\Vector3.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix\Matrix2x2.cpp">
+    <ClCompile Include="Engine\Core\Math\Vector\Vector4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix\Matrix3x3.cpp">
+    <ClCompile Include="Engine\Core\Math\MyMath.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix\Matrix4x4.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector\Vector2.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_palette.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector\Vector3.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_presets.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector\Vector4.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_renderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\Windows\WinApp.cpp">
+    <ClCompile Include="Engine\Externals\imgui\implot-master\implot_items.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\PipelineStateObject.cpp">
+    <ClCompile Include="Engine\Externals\imgui\implot-master\implot.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\TextureManager.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui-knobs-main\imgui-knobs.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\DepthStencil.cpp">
+    <ClCompile Include="Engine\Core\Math\Quaternion\Quaternion.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\MyDebugLog.cpp">
+    <ClCompile Include="Engine\Core\Math\AudioMath.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\Viewport.cpp">
+    <ClCompile Include="Engine\Core\Math\MyRandomNum.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\ScissorRect.cpp">
+    <ClCompile Include="Engine\Externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\DirectX12DebugCore.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\Windows\WinAppDebugCore.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\crude_json.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\XAudioCore.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Input\DirectInput\DirectInputManager.cpp">
+    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Input\DirectInput\DirectInputKeyboard.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DebugLog\MyDebugLog.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Input\DirectInput\DirectInputMouse.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Device\DirectXDevice.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\MultiAudioLoader.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\App\WinAppDebugCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Camera\Camera.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DirectX12DebugCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Camera\DebugCamera.cpp">
+    <ClCompile Include="Engine\QuickForgeEngine.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\EngineCore.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\FileSystems\CheckFileExtension\CheckFileExtension.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\Audio3D.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\WindowEventsManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\AudioEmitter.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\IEvent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\AudioListener.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\DropFile\DropFileEvent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\GraphicsCommon.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\ExitApp\ExitAppEvent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\FramePerSecond.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowGenerater\WindowGenerater.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\MyMath.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Window\GameWindow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Window\GameWindowManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_palette.cpp">
+    <ClCompile Include="Engine\Platform\Windows\WindowsEngineCore.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_presets.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\String\HwndConvertString.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_toggle-main\imgui_toggle_renderer.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorGenerator\DescriptorGenerator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\implot-master\implot_items.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\IDescriptorHeap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\implot-master\implot.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\GenerateDiscriptorHandle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\imgui-knobs-main\imgui-knobs.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\Descriptors\RtvDescriptorHeap.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\Descriptors\SrvDescriptorHeap.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\TimeCall.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Colliders\Collider.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorHeapManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Colliders\CollisionManager.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\List\DirectXCommandList.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Quaternion\Quaternion.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\Queue\DirectXCommandQueue.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\AudioMath.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\CommandExecutor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\MyRandomNum.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\DirectXCommandManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\SimpleJson.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\SwapChain\SwapChain.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\DirectXStructToString.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\DirectXCommon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\GraphRenderer.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Fence\Fence.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\FileLoader.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Input\XInput\XInputController.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\MyGameMath.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\MyEasing.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\AudioResourceManager.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\StringLiblary.cpp">
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\AudioSourceBinder.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DsvDescriptorHeap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\AudioPlayer.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\GraphicPipelineManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\Chiptune.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\InputLayout.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\MusicalScale.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\PipelineStateObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\MyTimer.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\RootParameter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\Windows\MemoryWatcher.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiler.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\LoopStoper.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\RendaringPostprocess.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\FileExtension.cpp">
+    <ClCompile Include="Engine\Utility\String\StringLiblary.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Font\FontDrawer.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\Base\SpeakerVolumeMonitor.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Font\FontLoader.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Object\Font\Font.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Assets\AssetManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\Scene\SceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\Scene\SceneObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\Rendering\ShaderReflection.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\Rendering\PSOCreater.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\AssimpModelLoader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\crude_json.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\DirectX\ImGuiNode.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\AppSys\LoadModelForEntities.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\BindEntityParent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\TransformUpdate.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\AppSys\DrawMesh.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\MaterialSerializer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\MeshSerializer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\TransformSerializer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Model\BaseSys\ParentSerializer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntitySerializer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityLoader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Entity\BaseSys\MakeWVPForTransformComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Entity\AppSys\EntityWVPUpdater.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\Script\Lua\LuaScriptResourceManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Utility\CheckLoadFileExtension.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Script\BaseSys\RunningScript.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Script\AppSys\EntityScriptUpdate.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Script\BaseSys\ScriptComponentCreater.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Object\System\Script\AppSys\AttachScriptForEntity.cpp">
+    <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="externals\imgui\imconfig.h">
+    <ClInclude Include="Engine\Externals\imgui\imconfig.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_impl_dx12.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_impl_win32.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_impl_win32.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_internal.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_internal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imstb_rectpack.h">
+    <ClInclude Include="Engine\Externals\imgui\imstb_rectpack.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imstb_textedit.h">
+    <ClInclude Include="Engine\Externals\imgui\imstb_textedit.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imstb_truetype.h">
+    <ClInclude Include="Engine\Externals\imgui\imstb_truetype.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\RootParameter.h">
+    <ClInclude Include="Engine\Utility\String\MyString.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\DirectXCommon.h">
+    <ClInclude Include="Engine\Core\Math\MathInclude.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\ImGuiManager.h">
+    <ClInclude Include="Engine\Core\Math\Matrix\Matrix2x2.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\InputLayout.h">
+    <ClInclude Include="Engine\Core\Math\Matrix\Matrix3x3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Rendering\ShaderCompiler.h">
+    <ClInclude Include="Engine\Core\Math\Matrix\Matrix4x4.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\MyString.h">
+    <ClInclude Include="Engine\Core\Math\Transform.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\Windows\WinApp.h">
+    <ClInclude Include="Engine\Core\Math\Vector\Vector2.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\MathInclude.h">
+    <ClInclude Include="Engine\Core\Math\Vector\Vector3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix\Matrix2x2.h">
+    <ClInclude Include="Engine\Core\Math\Vector\Vector4.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix\Matrix3x3.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix\Matrix4x4.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Transform.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector\Vector2.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector\Vector3.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector\Vector4.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\PipelineStateObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\TextureManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\VerTexData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\DepthStencil.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\MyDebugLog.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\VerTexData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Structs\ModelData.h">
@@ -473,828 +342,768 @@
     <ClInclude Include="Engine\Object\Structs\ModelMaterialData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\Windows\CrashHandler.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\TransformationMatrix.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Viewport.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\Material.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\ScissorRect.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\DirectionalLight.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\D3DResourceLeakChecker.h">
+    <ClInclude Include="Engine\Core\Math\MyMath.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\DirectX12DebugCore.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_renderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\Windows\WinAppDebugCore.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_offset_rect.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\TransformationMatrix.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\Material.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_math.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\DirectionalLight.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_palette.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\XAudioCore.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_presets.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\ChunkHeader.h">
+    <ClInclude Include="Engine\Externals\imgui\implot-master\implot.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\RiffHeader.h">
+    <ClInclude Include="Engine\Externals\imgui\implot-master\implot_internal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\FormatChunk.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui-knobs-main\imgui-knobs.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\SoundData.h">
+    <ClInclude Include="Engine\Core\Math\Quaternion\Quaternion.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Input\DirectInput\DirectInputManager.h">
+    <ClInclude Include="Engine\Core\Math\AudioMath.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Input\DirectInput\DirectInputKeyboard.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Input\DirectInput\DirectInputMouse.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\MultiAudioLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Camera\Camera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Camera\DebugCamera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\EngineCore.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\Audio3D.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\AudioEmitter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\AudioListener.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\GraphicsCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\FramePerSecond.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\MyMath.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_renderer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_offset_rect.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_math.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_palette.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_toggle-main\imgui_toggle_presets.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\implot-master\implot.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\implot-master\implot_internal.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui-knobs-main\imgui-knobs.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Descriptors\RtvDescriptorHeap.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Descriptors\SrvDescriptorHeap.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\TimeCall.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Colliders\Collider.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Colliders\CollisionManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Quaternion\Quaternion.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\AudioMath.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\MyRandomNum.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Descriptors\DescriptorHandles.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\SimpleJson.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\DirectXStructToString.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\GraphRenderer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\FileLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Input\XInput\XInputController.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\MyGameMath.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\MyEasing.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Font\FontDrawer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\AudioResourceManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\StringLiblary.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\AudioSourceBinder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\AudioPlayer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\Chiptune.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio\MusicalScale.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\MyTimer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\Windows\MemoryWatcher.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\LoopStoper.h">
+    <ClInclude Include="Engine\Core\Math\MyRandomNum.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\PostProcess.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\RendaringPostprocess.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\OffsetBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\OffsetBuffer.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\VignetteOffset.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\VignetteOffset.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\ParticleForGPU.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\IntrusiveList.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\PrimitiveVertexData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\FileExtension.h">
+    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\ColorCorrectionOffset.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\ParticleForGPU.h">
+    <ClInclude Include="Engine\Externals\imgui\ImGuizmo-1.83\ImGuizmo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\PrimitiveVertexData.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\ConstantBuffer.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\Base\SpeakerVolumeMonitor.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\crude_json.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Shaders\StructsForGpu\ColorCorrectionOffset.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Font\FontStructures.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Font\FontLoader.h">
+    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Font\Font.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.3.c.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\VertexBuffer.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\MyRandom.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.4.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Font\GlyphForGPU.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\lua_version.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Resource\ShaderBuffers\StructuredBuffer.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\detail\build_version.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Scene\IScene.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack\detail\pairs.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Scene\SceneObject.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\as_args.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Scene\SceneManager.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\as_returns.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Rendering\ShaderReflection.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\assert.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Rendering\PSOBinder.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\base_traits.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Rendering\PSOCreater.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\bind_traits.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\Rendering\PSO.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\bytecode.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\ImGuizmo-1.83\ImGuizmo.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\call.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\AssimpModelLoader.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\compatibility.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\config.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\coroutine.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\crude_json.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\debug.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\demangle.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\deprecate.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\dump_handler.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectX\ImGuiNode.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\ebco.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\compatibility\compat-5.3.c.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\environment.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\compatibility\compat-5.3.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\epilogue.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\compatibility\compat-5.4.h">
+    <ClInclude Include="Engine\Externals\sol2\sol\error.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\compatibility\lua_version.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\error_handler.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\detail\build_version.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\forward.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack\detail\pairs.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\forward_detail.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\as_args.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\function.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\as_returns.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\function_result.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\assert.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\base_traits.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_core.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\bind_traits.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_overloaded.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\bytecode.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_stateful.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\call.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_stateless.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\compatibility.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\function_types_templated.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\config.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\in_place.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\coroutine.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\inheritance.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\debug.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\load_result.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\demangle.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\lua_table.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\deprecate.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\lua_value.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\dump_handler.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\make_reference.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\ebco.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\metatable.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\environment.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\object.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\epilogue.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\object_base.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\error.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\optional.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\error_handler.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\optional_implementation.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\forward.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\overload.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\forward_detail.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\packaged_coroutine.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\function.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\pairs_iterator.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\function_result.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\pointer_like.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\function_types.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\policies.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\function_types_core.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\prologue.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\function_types_overloaded.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\property.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\function_types_stateful.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\protect.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\function_types_stateless.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\protected_function.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\function_types_templated.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\protected_function_result.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\in_place.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\protected_handler.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\inheritance.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\proxy_base.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\load_result.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\raii.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\lua_table.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\reference.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\lua_value.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\resolve.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\make_reference.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\sol.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\metatable.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\object.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\object_base.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\optional.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get_qualified.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\optional_implementation.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get_unqualified.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\overload.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_qualified.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\packaged_coroutine.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_unqualified.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\pairs_iterator.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_core.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\pointer_like.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_field.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\policies.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_get.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\prologue.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_get_qualified.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\property.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_get_unqualified.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\protect.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_guard.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\protected_function.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_iterator.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\protected_function_result.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_pop.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\protected_handler.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_probe.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\proxy_base.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_proxy.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\raii.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_proxy_base.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\reference.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_push.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\resolve.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\stack_reference.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\sol.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\state.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\state_handling.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_check.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\state_view.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_check_get.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\string_view.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_check_get_qualified.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\table.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_check_get_unqualified.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\table_core.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_check_qualified.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\table_iterator.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_check_unqualified.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\table_proxy.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_core.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\thread.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_field.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\tie.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_get.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\traits.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_get_qualified.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\trampoline.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_get_unqualified.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\tuple.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_guard.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\types.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_iterator.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\unicode.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_pop.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\unique_usertype_traits.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_probe.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\unsafe_function.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_proxy.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\unsafe_function_result.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_proxy_base.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\userdata.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_push.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\stack_reference.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_container.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\state.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_container_launch.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\state_handling.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_core.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\state_view.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_proxy.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\string_view.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_storage.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\table.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\usertype_traits.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\table_core.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\variadic_args.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\table_iterator.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\variadic_results.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\table_proxy.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\version.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\thread.hpp">
+    <ClInclude Include="Engine\Externals\sol2\sol\wrapper.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\tie.hpp">
+    <ClInclude Include="Engine\Externals\lua\lapi.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\traits.hpp">
+    <ClInclude Include="Engine\Externals\lua\lauxlib.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\trampoline.hpp">
+    <ClInclude Include="Engine\Externals\lua\lcode.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\tuple.hpp">
+    <ClInclude Include="Engine\Externals\lua\lctype.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\types.hpp">
+    <ClInclude Include="Engine\Externals\lua\ldebug.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\unicode.hpp">
+    <ClInclude Include="Engine\Externals\lua\ldo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\unique_usertype_traits.hpp">
+    <ClInclude Include="Engine\Externals\lua\lfunc.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\unsafe_function.hpp">
+    <ClInclude Include="Engine\Externals\lua\lgc.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\unsafe_function_result.hpp">
+    <ClInclude Include="Engine\Externals\lua\ljumptab.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\userdata.hpp">
+    <ClInclude Include="Engine\Externals\lua\llex.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\usertype.hpp">
+    <ClInclude Include="Engine\Externals\lua\llimits.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\usertype_container.hpp">
+    <ClInclude Include="Engine\Externals\lua\lmem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\usertype_container_launch.hpp">
+    <ClInclude Include="Engine\Externals\lua\lobject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\usertype_core.hpp">
+    <ClInclude Include="Engine\Externals\lua\lopcodes.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\usertype_proxy.hpp">
+    <ClInclude Include="Engine\Externals\lua\lopnames.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\usertype_storage.hpp">
+    <ClInclude Include="Engine\Externals\lua\lparser.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\usertype_traits.hpp">
+    <ClInclude Include="Engine\Externals\lua\lprefix.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\variadic_args.hpp">
+    <ClInclude Include="Engine\Externals\lua\lstate.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\variadic_results.hpp">
+    <ClInclude Include="Engine\Externals\lua\lstring.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\version.hpp">
+    <ClInclude Include="Engine\Externals\lua\ltable.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\sol2\sol\wrapper.hpp">
+    <ClInclude Include="Engine\Externals\lua\ltm.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\lua\lapi.h">
+    <ClInclude Include="Engine\Externals\lua\lua.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\lua\lauxlib.h">
+    <ClInclude Include="Engine\Externals\lua\lua.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\lua\lcode.h">
+    <ClInclude Include="Engine\Externals\lua\luaconf.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\lua\lctype.h">
+    <ClInclude Include="Engine\Externals\lua\lualib.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\lua\ldebug.h">
+    <ClInclude Include="Engine\Externals\lua\lundump.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\lua\ldo.h">
+    <ClInclude Include="Engine\Externals\lua\lvm.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="externals\lua\lfunc.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lgc.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\ljumptab.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\llex.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\llimits.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lmem.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lobject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lopcodes.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lopnames.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lparser.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lprefix.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lstate.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lstring.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\ltable.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\ltm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lua.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lua.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\luaconf.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lualib.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lundump.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lvm.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\lua\lzio.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Object\Component\IComponentStrage.h">
+    <ClInclude Include="Engine\Externals\lua\lzio.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Component\ComponentStrage.h">
+    <ClInclude Include="Engine\Core\Graphic\IGraphicCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Entity\EntityManager.h">
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Device\DirectXDevice.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Component\Data\TransformComponent.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DebugLog\MyDebugLog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\DirectoryManager.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\App\CrashHandler.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMeshCreater.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\App\WinAppDebugCore.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\ModelMaterialCreater.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\D3DResourceLeakChecker.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\AppSys\LoadModelForEntities.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DirectX12DebugCore.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Component\Data\MeshComponent.h">
+    <ClInclude Include="Engine\QuickForgeEngine.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Component\Data\MaterialComponent.h">
+    <ClInclude Include="Engine\Utility\DesignPatterns\Singleton.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\CreateTransformationComponent.h">
+    <ClInclude Include="Engine\Utility\DesignPatterns\Observer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Component\Data\ParentComponent.h">
+    <ClInclude Include="Engine\Utility\DesignPatterns\Subject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\BindEntityParent.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\FileSystems\CheckFileExtension\CheckFileExtension.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\PearentEntityMove.h">
+    <ClInclude Include="Engine\Core\Window\IGameWindow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\TransformUpdate.h">
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\WindowEventsManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\SceneEntityViewer.h">
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\IEvent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\AppSys\DrawMesh.h">
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\DropFile\DropFileEvent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\MaterialSerializer.h">
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\ExitApp\ExitAppEvent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\MeshSerializer.h">
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowGenerater\WindowGenerater.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\TransformSerializer.h">
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowGenerater\Data\WindowConfigData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Model\BaseSys\ParentSerializer.h">
+    <ClInclude Include="Engine\Platform\Windows\Window\GameWindow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntitySerializer.h">
+    <ClInclude Include="Engine\Core\Window\IGameWindowManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntityLoader.h">
+    <ClInclude Include="Engine\Platform\Windows\Window\GameWindowManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Entity\BaseSys\MakeWVPForTransformComponent.h">
+    <ClInclude Include="Engine\Core\IEngineCore.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Entity\AppSys\EntityWVPUpdater.h">
+    <ClInclude Include="Engine\Platform\Windows\WindowsEngineCore.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Component\Data\LuaScriptComponent.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\String\HwndConvertString.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Script\Lua\LuaScriptResourceManager.h">
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorHandles.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\CheckLoadFileExtension.h">
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorGenerator\DescriptorGenerator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Script\BaseSys\RunningScript.h">
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\Data\DescriptorGenerateConfig.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Script\AppSys\EntityScriptUpdate.h">
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\IDescriptorHeap.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Script\BaseSys\ScriptComponentCreater.h">
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\GenerateDiscriptorHandle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Object\System\Script\AppSys\AttachScriptForEntity.h">
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\ConstantBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\StructuredBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\VertexBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ColorCorrectionOffset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\DirectionalLight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\Material.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\OffsetBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ParticleForGPU.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\PrimitiveVertexData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\TransformationMatrix.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VerTexData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VignetteOffset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DescriptorHeapManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\List\DirectXCommandList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\Queue\DirectXCommandQueue.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\DirectXCommandManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Command\CommandExecutor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\SwapChain\SwapChain.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\DirectXCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Fence\Fence.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\DsvDescriptorHeap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\GraphicPipelineManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\InputLayout.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\PipelineStateObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\RootParameter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiler.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\String\StringLiblary.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelMaterialData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\AssetManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Scene\IScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\Scene\IScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\Scene\SceneObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\Shaders\VS\Object3d.VS.hlsl" />
-    <FxCompile Include="Engine\Shaders\PS\Object3d.PS.hlsl" />
-    <FxCompile Include="Engine\Shaders\PS\GrayscaleShader.hlsl" />
-    <FxCompile Include="Engine\Shaders\PS\Simple.PS.hlsl" />
-    <FxCompile Include="Engine\Shaders\VS\Particle.VS.hlsl" />
-    <FxCompile Include="Engine\Shaders\PS\Primitive.PS.hlsl" />
-    <FxCompile Include="Engine\Shaders\VS\Simple.VS.hlsl" />
-    <FxCompile Include="Engine\Shaders\PS\VignetteShader.hlsl" />
-    <FxCompile Include="Engine\Shaders\VS\Primitive.VS.hlsl" />
-    <FxCompile Include="Engine\Shaders\PS\Particle.PS.hlsl" />
-    <FxCompile Include="Engine\Shaders\PS\ColorCorrectionShader.hlsl" />
-    <FxCompile Include="Engine\Shaders\PS\MSDF.PS.hlsl" />
-    <FxCompile Include="Engine\Shaders\VS\Font.VS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\VS\Object3d.VS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\PS\Object3d.PS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\PS\GrayscaleShader.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\PS\Simple.PS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\VS\Particle.VS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\PS\Primitive.PS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\VS\Simple.VS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\PS\VignetteShader.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\VS\Primitive.VS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\PS\Particle.PS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\PS\ColorCorrectionShader.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\PS\MSDF.PS.hlsl" />
+    <FxCompile Include="Engine\Resources\Shaders\VS\Font.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\EnemyData\EnemySpone.txt" />
