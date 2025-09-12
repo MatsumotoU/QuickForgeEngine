@@ -37,7 +37,7 @@ private:
 
 	OffScreenResourceManager offScreenResourceManager_;
 
-	AssetManager assetManager_;
+	AssetManager* assetManager_;
 	RendaringPostprosecess rendaringPostprocess_;
 
 	GraphicPipelineManager graphicPipelineManager_;
