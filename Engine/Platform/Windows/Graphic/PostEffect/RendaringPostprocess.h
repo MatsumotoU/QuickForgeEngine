@@ -1,8 +1,8 @@
 #pragma once
 #include "Graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
-#include "Resources/Shaders/StructsForGpu/OffsetBuffer.h"
-#include "Resources/Shaders/StructsForGpu/VignetteOffset.h"
-#include "Resources/Shaders/StructsForGpu/ColorCorrectionOffset.h"
+#include "Graphic/ShaderBuffer/Data/OffsetBuffer.h"
+#include "Graphic/ShaderBuffer/Data/VignetteOffset.h"
+#include "Graphic/ShaderBuffer/Data/ColorCorrectionOffset.h"
 
 #include "Graphic/Pipeline/PSO/PipelineStateObject.h"
 #include "Graphic/ShaderBuffer/VertexBuffer.h"
