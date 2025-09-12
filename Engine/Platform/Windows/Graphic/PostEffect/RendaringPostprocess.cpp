@@ -4,6 +4,7 @@
 
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
 #endif // _DEBUG
 
 RendaringPostprosecess::RendaringPostprosecess() {
@@ -152,6 +153,11 @@ void RendaringPostprosecess::SetDsvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) {
 	assert(dsvHandle_.ptr != 0);
 }
 
+void RendaringPostprosecess::SetBackBufferRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) {
+	backBufferRtvHandle_ = handle;
+	assert(backBufferRtvHandle_.ptr != 0);
+}
+
 void RendaringPostprosecess::PreDraw() {
 	// 何回ポストプロセスがかかっているか調べる
 	postProcessCount_ = 0;
@@ -196,7 +202,7 @@ void RendaringPostprosecess::PreDraw() {
 	if (isPostprocess_ || isImGuiEnabled_) {
 		// オフスクリーンに描画
 		renderingRosourceIndex_ = 0;
-		list_->OMSetRenderTargets(1, , false, dsvHandle_);
+		list_->OMSetRenderTargets(1,&offScreenRtvHandles_[renderingRosourceIndex_], false, &dsvHandle_);
 
 		// オフスクリーンのクリア
 		ClearFirstRenderTarget();
@@ -204,7 +210,7 @@ void RendaringPostprosecess::PreDraw() {
 		ClearSecondRenderTarget();
 	} else {
 		// バックバッファに描画
-		list_->OMSetRenderTargets(1, dxCommon->GetRtvHandles(), false, &dsvHandl);
+		list_->OMSetRenderTargets(1, &backBufferRtvHandle_, false, &dsvHandle_);
 	}
 }
 
@@ -230,7 +236,7 @@ void RendaringPostprosecess::PostDraw() {
 	readingResourceIndex_ = postProcessCount_ % 2;
 
 	// バックバッファに書き込み
-	list_->OMSetRenderTargets(1, dxCommon->GetRtvHandles(), false, nullptr);
+	list_->OMSetRenderTargets(1, &backBufferRtvHandle_, false, &dsvHandle_);
 #ifdef _DEBUG
 	if (isImGuiEnabled_) {
 		return;
@@ -241,9 +247,60 @@ void RendaringPostprosecess::PostDraw() {
 	list_->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	list_->IASetIndexBuffer(&indexBufferView_);
 	list_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	list_->SetGraphicsRootDescriptorTable(0, offScreenSrvHandles_.at(readingResourceIndex_));
+	list_->SetGraphicsRootDescriptorTable(0, offScreenSrvHandles_[readingResourceIndex_].gpuHandle_);
 	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
+
+#ifdef _DEBUG
+void RendaringPostprosecess::DrawImGui() {
+	// ポストプロセスのデバッグウィンドウを表示
+	ImGui::Checkbox("Enable Postprocess", &isPostprocess_);
+	ImGui::Separator();
+	if (isPostprocess_) {
+		ImGui::Checkbox("Enable Grayscale", &enableGrayscale_);
+		ImGui::SameLine();
+		ImGui::InputInt("Grayscale Process Index", &grayScaleProcessIndex_);
+		if (enableGrayscale_) {
+			if (ImGui::TreeNode("Grayscale Offset")) {
+				ImGui::Text("Grayscale Offset: %.2f", grayScaleOffset_);
+				ImGui::SliderFloat("Grayscale Offset", &grayScaleOffset_, 0.0f, 1.0f);
+				ImGui::TreePop();
+			}
+			ImGui::Spacing();
+		}
+
+		ImGui::Checkbox("Enable Vignette", &enableVignette_);
+		ImGui::SameLine();
+		ImGui::InputInt("Vignette Process Index", &vignetteProcessIndex_);
+		if (enableVignette_) {
+			if (ImGui::TreeNode("Vignette Offset")) {
+				ImGui::DragFloat2("ScreenResolution", &vignetteOffsetBuffer_.GetData()->screenResolution.x, 0.1f);
+				ImGui::DragFloat("VignetteRadius", &vignetteOffsetBuffer_.GetData()->VignetteRadius, 0.1f);
+				ImGui::DragFloat("VignetteSoftness", &vignetteOffsetBuffer_.GetData()->VignetteSoftness, 0.1f);
+				ImGui::DragFloat("VignetteIntensity", &vignetteOffsetBuffer_.GetData()->VignetteIntensity, 0.1f);
+				ImGui::TreePop();
+			}
+			ImGui::Spacing();
+		}
+
+		ImGui::Checkbox("Enable ColorCorrection", &enableColorCorrection_);
+		ImGui::SameLine();
+		ImGui::InputInt("ColorCorrection Process Index", &colorCorrectionProcessIndex_);
+		if (enableColorCorrection_) {
+			if (ImGui::TreeNode("ColorCorrection Offset")) {
+				ImGui::DragFloat("Exposure", &colorCorrectionOffsetBuffer_.GetData()->exposure, 0.1f);
+				ImGui::DragFloat("Contrast", &colorCorrectionOffsetBuffer_.GetData()->contrast, 0.1f);
+				ImGui::DragFloat("Saturation", &colorCorrectionOffsetBuffer_.GetData()->saturation, 0.1f);
+				ImGui::DragFloat("Gamma", &colorCorrectionOffsetBuffer_.GetData()->gamma, 0.1f);
+				ImGui::DragFloat("Hue", &colorCorrectionOffsetBuffer_.GetData()->hue, 0.1f);
+				ImGui::TreePop();
+			}
+			ImGui::Spacing();
+		}
+	}
+}
+#endif
+
 
 void RendaringPostprosecess::ClearFirstRenderTarget() {
 	list_->ClearRenderTargetView(offScreenRtvHandles_.at(0), offScreenClearColor, 0, nullptr);
@@ -268,7 +325,7 @@ void RendaringPostprosecess::SwitchRenderTarget() {
 		}
 		if (!isSecondStateRenderTarget_) {
 			TransitionResourceBarrier::Transition(
-				list_, offScreenResources_[0], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+				list_, offScreenResources_[1], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 			isSecondStateRenderTarget_ = true;
 		}
 		ClearSecondRenderTarget();
@@ -281,7 +338,7 @@ void RendaringPostprosecess::SwitchRenderTarget() {
 		}
 		if (isSecondStateRenderTarget_) {
 			TransitionResourceBarrier::Transition(
-				list_, offScreenResources_[1], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+				list_, offScreenResources_[1], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 			isSecondStateRenderTarget_ = false;
 		}
 		ClearFirstRenderTarget();
@@ -290,8 +347,7 @@ void RendaringPostprosecess::SwitchRenderTarget() {
 	renderingRosourceIndex_ = (renderingRosourceIndex_ + 1) % 2;
 
 	// 描画先の設定
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandl = engineCore_->GetGraphicsCommon()->GetDepthStencil()->GetDsvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	list_->OMSetRenderTargets(1, dxCommon->GetOffscreenRtvHandles(renderingRosourceIndex_), false, &dsvHandl);
+	list_->OMSetRenderTargets(1, &offScreenRtvHandles_[renderingRosourceIndex_], false, &dsvHandle_);
 }
 
 void RendaringPostprosecess::ApplyGrayScale() {

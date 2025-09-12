@@ -13,6 +13,7 @@
 #include <vector>
 #include <map>
 #include <wrl.h>
+#include <array>
 
 // TODO: 他の効果を作成する
 // TODO: ポストプロセスの順番を動的に変えられるようにする
@@ -33,6 +34,7 @@ public:
 	void SetOffscreenRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE firstHandle, D3D12_CPU_DESCRIPTOR_HANDLE secondHandle);
 	void SetOffscreenSrvHandle(DescriptorHandles firstHandle, DescriptorHandles secondHandle);
 	void SetDsvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle);
+	void SetBackBufferRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle);
 
 public:
 	void PreDraw();
@@ -42,9 +44,6 @@ public:// debug機能
 #ifdef _DEBUG
 	void DrawImGui();
 #endif // _DEBUG
-
-public:
-	D3D12_GPU_DESCRIPTOR_HANDLE GetOffscreenSrvHandleGPU();
 
 private:
 	void ClearFirstRenderTarget();
