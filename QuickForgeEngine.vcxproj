@@ -195,7 +195,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Engine;$(ProjectDir)\Engine\Externals;$(ProjectDir)\Engine\Externals\assimp\include;$(ProjectDir)\Engine\Externals\imgui;$(ProjectDir)\Engine\Externals\lua;$(ProjectDir)\Engine\Externals\sol2;$(ProjectDir)\Engine\Object;$(ProjectDir)\Engine\Utility;$(ProjectDir)\Engine\Platform\Windows;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Engine\Externals;$(ProjectDir)Engine\Externals\assimp\include;$(ProjectDir)Engine\Externals\imgui;$(ProjectDir)Engine\Externals\lua;$(ProjectDir)Engine\Externals\sol2;$(ProjectDir)Engine\Object;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\Platform\Windows;$(ProjectDir)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -481,7 +481,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\StructuredBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\VertexBuffer.h" />
-    <ClInclude Include="Engine\Platform\Windows\Scene\IScene.h" />
     <ClInclude Include="Engine\Platform\Windows\WindowsEngineCore.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\GameWindow.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\GameWindowManager.h" />
@@ -492,7 +491,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Window\WindowGenerater\Data\WindowConfigData.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\WindowGenerater\WindowGenerater.h" />
     <ClInclude Include="Engine\QuickForgeEngine.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\PrimitiveVertexData.h" />
     <ClInclude Include="Engine\Core\Math\Quaternion\Quaternion.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DebugLog\MyDebugLog.h" />
     <ClInclude Include="Engine\Utility\DesignPatterns\Observer.h" />
@@ -507,17 +505,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Core\Math\Matrix\Matrix4x4.h" />
     <ClInclude Include="Engine\Object\Structs\ModelData.h" />
     <ClInclude Include="Engine\Core\Math\Transform.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\TransformationMatrix.h" />
     <ClInclude Include="Engine\Core\Math\Vector\Vector2.h" />
     <ClInclude Include="Engine\Core\Math\Vector\Vector3.h" />
     <ClInclude Include="Engine\Core\Math\Vector\Vector4.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\VerTexData.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\ColorCorrectionOffset.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\DirectionalLight.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\Material.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\OffsetBuffer.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\VignetteOffset.h" />
-    <ClInclude Include="Engine\Resources\Shaders\StructsForGpu\ParticleForGPU.h" />
     <ClInclude Include="Engine\Externals\imgui\imconfig.h" />
     <ClInclude Include="Engine\Externals\imgui\imgui-knobs-main\imgui-knobs.h" />
     <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\crude_json.h" />
