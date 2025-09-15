@@ -336,6 +336,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\ModelDataManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AssetManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.cpp" />
@@ -432,6 +433,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelMaterialData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelDataManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelVertexResourceManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AssetManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ResourceDirectoryManager.h" />
@@ -481,6 +483,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\StructuredBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\VertexBuffer.h" />
+    <ClInclude Include="Engine\Platform\Windows\Renderer\ModelRenderer.h" />
     <ClInclude Include="Engine\Platform\Windows\WindowsEngineCore.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\GameWindow.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\GameWindowManager.h" />
@@ -672,6 +675,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Externals\sol2\sol\variadic_results.hpp" />
     <ClInclude Include="Engine\Externals\sol2\sol\version.hpp" />
     <ClInclude Include="Engine\Externals\sol2\sol\wrapper.hpp" />
+    <ClInclude Include="Engine\Utility\String\StringHistory.h" />
     <ClInclude Include="Engine\Utility\String\StringLiblary.h" />
   </ItemGroup>
   <ItemGroup>

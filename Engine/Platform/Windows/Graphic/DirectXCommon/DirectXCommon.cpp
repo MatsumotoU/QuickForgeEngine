@@ -52,6 +52,19 @@ void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
 	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 	dsvHandle_ = descriptorHeapManager_.AssignDsvHeap(depthStencilBuffer_.Get(), &dsvDesc);
 
+	// ビューポートとシザー矩形の設定
+	viewport_ = {};
+	viewport_.TopLeftX = 0.0f;
+	viewport_.TopLeftY = 0.0f;
+	viewport_.Width = static_cast<float>(width);
+	viewport_.Height = static_cast<float>(height);
+	viewport_.MinDepth = 0.0f;
+	viewport_.MaxDepth = 1.0f;
+	scissorRect_ = {};
+	scissorRect_.left = 0;
+	scissorRect_.top = 0;
+	scissorRect_.right = static_cast<LONG>(width);
+	scissorRect_.bottom = static_cast<LONG>(height);
 }
 
 void DirectXCommon::PreDraw() {
@@ -182,4 +195,12 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCurrentBackBufferCpuHandle() {
 
 DescriptorHandles* DirectXCommon::GetDepthStencilViewHandle() {
 	return &dsvHandle_;
+}
+
+D3D12_VIEWPORT* DirectXCommon::GetViewPort() {
+	return &viewport_;
+}
+
+D3D12_RECT* DirectXCommon::GetScissorRect() {
+	return &scissorRect_;
 }

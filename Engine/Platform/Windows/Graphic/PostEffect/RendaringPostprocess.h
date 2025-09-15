@@ -20,6 +20,8 @@
 // TODO: ポストプロセスのシェーダーを動的に作成できるようにする
 // TODO: 一つだけ選択したときにシェーダーが適用されないバグを直す
 
+class DirectXCommon;
+
 class RendaringPostprosecess {
 public:
 	RendaringPostprosecess();
@@ -80,6 +82,7 @@ private:// ビネット変数
 	int vignetteProcessIndex_;
 
 private:// メンバ変数
+	DirectXCommon* dxCommon_ = nullptr;
 	ID3D12Device* device_; 
 	ID3D12GraphicsCommandList* list_;
 	PipelineStateObject* normalPso_;
