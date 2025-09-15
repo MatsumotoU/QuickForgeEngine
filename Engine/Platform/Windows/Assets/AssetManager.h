@@ -1,7 +1,13 @@
 #pragma once
 #include "ResourceDirectoryManager.h"
 #include "2DTexture/TextureManager.h"
+
+#include "3DModel/ModelRenderDataManager.h"
 #include "3DModel/ModelVertexResourceManager.h"
+#include "ConstantBufferManager/ConstantBufferManager.h"
+#include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
+#include "Graphic/ShaderBuffer/Data/Material.h"
+#include "Graphic/ShaderBuffer/Data/DirectionalLight.h"
 
 #include "Utility/DesignPatterns/Singleton.h"
 
@@ -22,16 +28,27 @@ public:
 	void EndFrame();
 	void Finalize();
 	
-	void LoadTexture(const std::string& imageName);
-	void LoadModel(const std::string& modelName);
+	/// 拡張子付きで書くこと
+	uint32_t LoadTexture(const std::string& imageName);
+	/// 拡張子付きで書くこと
+	uint32_t LoadModel(const std::string& modelName);
 
-	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(const std::string& imageName);
+	const ModelRenderData* GetModelRenderData(uint32_t modelHandle) const;
+	TextureManager* GetTextureManager() { return textureManager_; }
+	ModelVertexResourceManager* GetModelVertexResourceManager() { return &modelVertexResourceManager_; }
+	ConstantBufferManager<TransformationMatrix>* GetWpvBufferManager() { return &wpvBufferManager_; }
+	ConstantBufferManager<Material>* GetMaterialBufferManager() { return &materialBufferManager_; }
+	ConstantBufferManager<DirectionalLight>* GetLightBufferManager() { return &lightBufferManager_; }
 
 private:
 	DirectXCommon* dxCommon_;
-
 	ResourceDirectoryManager resourceDirectoryManager_;
+
 	TextureManager* textureManager_;
-	std::unordered_map<std::string, uint32_t> textureHandleMap_;
+
+	ModelRenderDataManager modelRenderDataManager_;
 	ModelVertexResourceManager modelVertexResourceManager_;
+	ConstantBufferManager<TransformationMatrix> wpvBufferManager_;
+	ConstantBufferManager<Material> materialBufferManager_;
+	ConstantBufferManager<DirectionalLight> lightBufferManager_;
 };

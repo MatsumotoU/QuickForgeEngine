@@ -1,40 +1,43 @@
+#include "pch.h"
 #include "ModelVertexResourceManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
 
 void ModelVertexResourceManager::Initialize() {
-	modelVertexBuffers.clear();
+	modelDatas_.clear();
+	modelVertexBuffers_.clear();
 }
 
-void ModelVertexResourceManager::AssignModelVertexBuffer(ID3D12Device* device, const std::string& modelName, const ModelData& modelData) {
-	// すでに登録されている場合はスキップ
-	if (modelVertexBuffers.find(modelName) != modelVertexBuffers.end()) {
-		return;
-	}
+void ModelVertexResourceManager::Finalize() {
+	modelDatas_.clear();
+	modelVertexBuffers_.clear();
+}
+
+uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelData& modelData) {
 	// 頂点バッファを作成
 	if (modelData.meshes.empty()) {
 		assert(false && "ModelData has no meshes");
-		return;
+		return 0;
 	}
 	// メッシュごとに頂点バッファを作成
-	int meshIndex = 0;
+	uint32_t firstHandle = static_cast<uint32_t>(modelVertexBuffers_.size());
 	for (const auto& mesh : modelData.meshes) {
-		VertexBuffer<VertexData> vertexBuffer;
-		std::string meshName = modelName + "_mesh" + std::to_string(meshIndex++);
-		modelVertexBuffers[meshName].CreateResource(device, static_cast<uint32_t>(mesh.vertices.size()));
+		modelVertexBuffers_.emplace_back();
+		modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(mesh.vertices.size()));
 		// 頂点データをセット
 		for (size_t i = 0; i < mesh.vertices.size(); ++i) {
-			modelVertexBuffers[meshName].SetData(static_cast<uint32_t>(i), mesh.vertices[i]);
+			modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), mesh.vertices[i]);
 		}
 	}
+	return firstHandle;
 }
 
-ID3D12Resource* ModelVertexResourceManager::GetModelVertexBuffer(const std::string& modelName) {
-	assert(modelVertexBuffers.find(modelName) != modelVertexBuffers.end() && "Model not found");
-	return modelVertexBuffers[modelName].GetResource();
+ID3D12Resource* ModelVertexResourceManager::GetModelVertexBuffer(const uint32_t& handle) {
+	assert(handle < modelVertexBuffers_.size() && "Model not found");
+	return modelVertexBuffers_.at(handle).GetResource();
 }
 
-const D3D12_VERTEX_BUFFER_VIEW* ModelVertexResourceManager::GetVertexBufferView(const std::string& modelName) {
-	assert(modelVertexBuffers.find(modelName) != modelVertexBuffers.end() && "Model not found");
-	return modelVertexBuffers[modelName].GetVertexBufferView();
+const D3D12_VERTEX_BUFFER_VIEW* ModelVertexResourceManager::GetVertexBufferView(const uint32_t& handle) {
+	assert(handle < modelVertexBuffers_.size() && "Model not found");
+	return modelVertexBuffers_.at(handle).GetVertexBufferView();
 }

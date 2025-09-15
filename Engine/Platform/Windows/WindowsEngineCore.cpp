@@ -36,7 +36,8 @@ void WindowsEngineCore::Initialize() {
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
 
 	// * パイプライン管理クラス初期化 * //
-	graphicPipelineManager_.Initialize(
+	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
+	graphicPipelineManager_->Initialize(
 		directXCommon_->GetDevice(),
 		windowWidth,
 		windowHeight,
@@ -57,10 +58,10 @@ void WindowsEngineCore::Initialize() {
 	}
 	// * ポストプロセスマネージャー初期化 * //
 	rendaringPostprocess_.Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
-	rendaringPostprocess_.SetNormalPSO(graphicPipelineManager_.GetNormalPso());
-	rendaringPostprocess_.SetColorCorrectionPSO(graphicPipelineManager_.GetColorCorrectionPso());
-	rendaringPostprocess_.SetGrayScalePSO(graphicPipelineManager_.GetGrayScalePso());
-	rendaringPostprocess_.SetVignettePSO(graphicPipelineManager_.GetVignettePso());
+	rendaringPostprocess_.SetNormalPSO(graphicPipelineManager_->GetNormalPso());
+	rendaringPostprocess_.SetColorCorrectionPSO(graphicPipelineManager_->GetColorCorrectionPso());
+	rendaringPostprocess_.SetGrayScalePSO(graphicPipelineManager_->GetGrayScalePso());
+	rendaringPostprocess_.SetVignettePSO(graphicPipelineManager_->GetVignettePso());
 	rendaringPostprocess_.SetOffscreenResource(
 		offScreenResourceManager_.GetOffscreenResource(0), offScreenResourceManager_.GetOffscreenResource(1));
 	rendaringPostprocess_.SetOffscreenRtvHandle(
@@ -113,7 +114,6 @@ void WindowsEngineCore::Draw() {
 	rendaringPostprocess_.PreDraw();
 	imguiFrameController_.BeginFrame();
 
-	rendaringPostprocess_.DrawImGui();
 	gameWindowManager->Draw();
 
 	rendaringPostprocess_.PostDraw();

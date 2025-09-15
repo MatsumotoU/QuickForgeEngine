@@ -3,7 +3,11 @@
 #include "Platform/Windows/Graphic/DirectXCommon/Descriptors/DsvDescriptorHeap.h"
 #include "Platform/Windows/Graphic/ShaderBuffer/DepthStencil.h"
 
-class GraphicPipelineManager final {
+#include "Utility/DesignPatterns/Singleton.h"
+
+class GraphicPipelineManager final :public Singleton<GraphicPipelineManager> {
+	friend class Singleton<GraphicPipelineManager>;
+
 public:
 	void Initialize(ID3D12Device* device,uint32_t width,uint32_t height, DsvDescriptorHeap* dsvHeap);
 public:
