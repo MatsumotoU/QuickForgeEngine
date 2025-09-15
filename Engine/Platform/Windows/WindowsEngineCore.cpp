@@ -19,43 +19,44 @@ void WindowsEngineCore::Initialize() {
 	gameWindowManager->Initialize();
 	gameWindowManager->AddWindow(windowWidth, windowHeight, "QuickForgeEngine");
 	// * DirectX初期化 * //
-	directXCommon_.Initialize(
+	directXCommon_ = DirectXCommon::GetInstance();
+	directXCommon_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("QuickForgeEngine"), windowWidth, windowHeight);
 	// * ImGuiの初期化 * //
 	imguiFrameController_.Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("QuickForgeEngine"),
-		directXCommon_.GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
-		directXCommon_.GetSrvDescriptorHeapAddressOf());
+		directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
+		directXCommon_->GetSrvDescriptorHeapAddressOf());
 	ImGuiInitializer::Initialize(
-		directXCommon_.GetDevice(),
-		directXCommon_.GetBackBufferCount(),
-		directXCommon_.GetSwapChainRtvDesc().Format,
-		directXCommon_.GetSrvDescriptorHeapAddress(),
-		directXCommon_.GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
-		directXCommon_.GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
+		directXCommon_->GetDevice(),
+		directXCommon_->GetBackBufferCount(),
+		directXCommon_->GetSwapChainRtvDesc().Format,
+		directXCommon_->GetSrvDescriptorHeapAddress(),
+		directXCommon_->GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
+		directXCommon_->GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
 
 	// * パイプライン管理クラス初期化 * //
 	graphicPipelineManager_.Initialize(
-		directXCommon_.GetDevice(),
+		directXCommon_->GetDevice(),
 		windowWidth,
 		windowHeight,
-		directXCommon_.GetDescriptorHeapManager()->GetDsvDescriptorHeap());
+		directXCommon_->GetDescriptorHeapManager()->GetDsvDescriptorHeap());
 
 	// * オフスクリーンリソースマネージャー初期化 * //
-	offScreenResourceManager_.Initialize(directXCommon_.GetDevice(), windowWidth, windowHeight);
+	offScreenResourceManager_.Initialize(directXCommon_->GetDevice(), windowWidth, windowHeight);
 	// オフスクリーンRTVヒープ割り当て & SRVヒープ割り当て
 	for (uint32_t i = 0; i < offScreenResourceManager_.GetOffscreenCount(); i++) {
 		// RTVヒープ割り当て
 		DescriptorHandles rtvHandles = 
-			directXCommon_.AssignRtvHeap(offScreenResourceManager_.GetOffscreenResource(i), &directXCommon_.GetSwapChainRtvDesc());
+			directXCommon_->AssignRtvHeap(offScreenResourceManager_.GetOffscreenResource(i), &directXCommon_->GetSwapChainRtvDesc());
 		offScreenResourceManager_.SetRtvHandle(rtvHandles.cpuHandle_, i);
 		// SRVヒープ割り当て
 		DescriptorHandles srvHandles =
-			directXCommon_.AssignSrvHeap(offScreenResourceManager_.GetOffscreenResource(i), offScreenResourceManager_.GetOffscreenSrvDesc());
+			directXCommon_->AssignSrvHeap(offScreenResourceManager_.GetOffscreenResource(i), offScreenResourceManager_.GetOffscreenSrvDesc());
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
 	// * ポストプロセスマネージャー初期化 * //
-	rendaringPostprocess_.Initialize(directXCommon_.GetDevice(), directXCommon_.GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	rendaringPostprocess_.Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	rendaringPostprocess_.SetNormalPSO(graphicPipelineManager_.GetNormalPso());
 	rendaringPostprocess_.SetColorCorrectionPSO(graphicPipelineManager_.GetColorCorrectionPso());
 	rendaringPostprocess_.SetGrayScalePSO(graphicPipelineManager_.GetGrayScalePso());
@@ -66,10 +67,10 @@ void WindowsEngineCore::Initialize() {
 		offScreenResourceManager_.GetOffscreenRtvHandles(0), offScreenResourceManager_.GetOffscreenRtvHandles(1));
 	rendaringPostprocess_.SetOffscreenSrvHandle(
 		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));
-	rendaringPostprocess_.SetDsvHandle(directXCommon_.GetDepthStencilViewHandle()->cpuHandle_);
+	rendaringPostprocess_.SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
 
 	assetManager_ = AssetManager::GetInstance();
-	assetManager_->Initalize(&directXCommon_);
+	assetManager_->Initalize(directXCommon_);
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -95,7 +96,7 @@ void WindowsEngineCore::Shutdown() {
 	assetManager_->Finalize();
 
 	imguiFrameController_.EndImGui();
-	directXCommon_.Shutdown();
+	directXCommon_->Shutdown();
 	gameWindowManager->Shutdown();
 #ifdef _DEBUG
 	DebugLog("FinalizeEngine");
@@ -107,8 +108,8 @@ void WindowsEngineCore::Update() {
 }
 
 void WindowsEngineCore::Draw() {
-	directXCommon_.PreDraw();
-	rendaringPostprocess_.SetBackBufferRtvHandle(directXCommon_.GetCurrentBackBufferCpuHandle());
+	directXCommon_->PreDraw();
+	rendaringPostprocess_.SetBackBufferRtvHandle(directXCommon_->GetCurrentBackBufferCpuHandle());
 	rendaringPostprocess_.PreDraw();
 	imguiFrameController_.BeginFrame();
 
@@ -116,8 +117,8 @@ void WindowsEngineCore::Draw() {
 	gameWindowManager->Draw();
 
 	rendaringPostprocess_.PostDraw();
-	imguiFrameController_.EndFrame(directXCommon_.GetCurrentBackBufferCpuHandle());
-	directXCommon_.PostDraw();
+	imguiFrameController_.EndFrame(directXCommon_->GetCurrentBackBufferCpuHandle());
+	directXCommon_->PostDraw();
 
 	assetManager_->EndFrame();
 }

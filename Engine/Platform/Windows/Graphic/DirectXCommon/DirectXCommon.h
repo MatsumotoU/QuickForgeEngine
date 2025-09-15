@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Graphic/IGraphicCommon.h"
+#include "Utility/DesignPatterns/Singleton.h"
 
 #include "Descriptors/DescriptorHeapManager.h"
 
@@ -14,10 +15,10 @@
 
 // TODO: DepthStencilをここに置かない
 
-class DirectXCommon final {
+class DirectXCommon final : public Singleton<DirectXCommon> {
+	friend class Singleton<DirectXCommon>;
+
 public:
-	DirectXCommon() = default;
-	~DirectXCommon() = default;
 	void Initialize(HWND hwnd, uint32_t width, uint32_t height);
 	void PreDraw();
 	void PostDraw();
@@ -43,6 +44,8 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferCpuHandle();
 
 	DescriptorHandles* GetDepthStencilViewHandle();
+	D3D12_VIEWPORT* GetViewPort();
+	D3D12_RECT* GetScissorRect();
 
 private:
 #ifdef _DEBUG
@@ -56,6 +59,8 @@ private:
 	DirectXCommandManager commandManager_;
 	SwapChain swapChain_;
 	Fence fence_;
+	D3D12_VIEWPORT viewport_;
+	D3D12_RECT scissorRect_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer_;
 	DescriptorHandles dsvHandle_;

@@ -32,7 +32,7 @@ private:
 	LPSTR& lpCmdLine_;
 
 	std::unique_ptr<IGameWindowManager> gameWindowManager;
-	DirectXCommon directXCommon_;
+	DirectXCommon* directXCommon_;
 	WinAppDebugCore debugCore_;
 
 	OffScreenResourceManager offScreenResourceManager_;

@@ -2,6 +2,8 @@
 #include "AppUtility/DirectX/TransitionResourceBarrier.h"
 #include "Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
+#include "Graphic/DirectXCommon/DirectXCommon.h"
+
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
@@ -53,6 +55,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* list) {
 	device_ = device;
 	list_ = list;
+	dxCommon_ = DirectXCommon::GetInstance();
 
 	assert(device_);
 	assert(list_);
@@ -216,11 +219,6 @@ void RendaringPostprosecess::PreDraw() {
 
 void RendaringPostprosecess::PostDraw() {
 	// ポストプロセスが有効でないなら何もしない
-#ifdef _DEBUG
-	if (!isImGuiEnabled_) {
-		return;
-	}
-#endif // _DEBUG
 	if (!isPostprocess_) {
 		return;
 	} 
@@ -236,6 +234,8 @@ void RendaringPostprosecess::PostDraw() {
 	readingResourceIndex_ = postProcessCount_ % 2;
 
 	// バックバッファに書き込み
+	list_->RSSetViewports(1, dxCommon_->GetViewPort());
+	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->OMSetRenderTargets(1, &backBufferRtvHandle_, false, &dsvHandle_);
 #ifdef _DEBUG
 	if (isImGuiEnabled_) {
@@ -351,6 +351,8 @@ void RendaringPostprosecess::SwitchRenderTarget() {
 }
 
 void RendaringPostprosecess::ApplyGrayScale() {
+	list_->RSSetViewports(1, dxCommon_->GetViewPort());
+	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->SetGraphicsRootSignature(grayScalePso_->GetRootSignature());
 	list_->SetPipelineState(grayScalePso_->GetPipelineState());
 	list_->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -362,6 +364,8 @@ void RendaringPostprosecess::ApplyGrayScale() {
 }
 
 void RendaringPostprosecess::ApplyVignette() {
+	list_->RSSetViewports(1, dxCommon_->GetViewPort());
+	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->SetGraphicsRootSignature(vignettePso_->GetRootSignature());
 	list_->SetPipelineState(vignettePso_->GetPipelineState());
 	list_->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -373,6 +377,8 @@ void RendaringPostprosecess::ApplyVignette() {
 }
 
 void RendaringPostprosecess::ApplyColorCorrection() {
+	list_->RSSetViewports(1, dxCommon_->GetViewPort());
+	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->SetGraphicsRootSignature(colorCorrectionPso_->GetRootSignature());
 	list_->SetPipelineState(colorCorrectionPso_->GetPipelineState());
 	list_->IASetVertexBuffers(0, 1, &vertexBufferView_);
