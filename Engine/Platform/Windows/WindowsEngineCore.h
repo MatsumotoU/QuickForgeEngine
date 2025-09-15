@@ -13,9 +13,6 @@
 #include "Graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include "Graphic/PostEffect/RendaringPostprocess.h"
 
-// TODO: AssetManagerに統合
-#include "Platform/Windows/Assets/2DTexture/TextureManager.h"
-
 class WindowsEngineCore final : public IEngineCore {
 public:
 	WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
@@ -40,6 +37,6 @@ private:
 	AssetManager* assetManager_;
 	RendaringPostprosecess rendaringPostprocess_;
 
-	GraphicPipelineManager graphicPipelineManager_;
+	GraphicPipelineManager* graphicPipelineManager_;
 	ImGuiFlameController imguiFrameController_;
 };
