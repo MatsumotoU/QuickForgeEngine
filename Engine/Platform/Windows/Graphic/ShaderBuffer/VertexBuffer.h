@@ -11,7 +11,7 @@ class VertexBuffer {
 public:
 	void CreateResource(ID3D12Device* device, uint32_t vertexCount) {
 		assert(device);
-		assert(vertexCount_ != 0);
+		assert(vertexCount != 0);
 		vertexCount_ = vertexCount;
 
 		// Spriteを作る

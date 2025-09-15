@@ -1,4 +1,5 @@
 #pragma once
+#include "Utility/DesignPatterns/Singleton.h"
 #include "Graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
 #include "Graphic/ShaderBuffer/Data/OffsetBuffer.h"
 #include "Graphic/ShaderBuffer/Data/VignetteOffset.h"
@@ -22,7 +23,9 @@
 
 class DirectXCommon;
 
-class RendaringPostprosecess {
+class RendaringPostprosecess final : public Singleton<RendaringPostprosecess> {
+	friend class Singleton<RendaringPostprosecess>;
+
 public:
 	RendaringPostprosecess();
 

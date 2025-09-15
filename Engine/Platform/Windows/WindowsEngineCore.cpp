@@ -1,8 +1,10 @@
 #include "WindowsEngineCore.h"
+#include "Editor/OnWindowsEditor.h"
 
 #include "AppUtility/DebugTool/ImGui/Initializer/ImGuiInitializer.h"
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "Renderer/ModelRenderer.h"
 #endif // _DEBUG
 
 namespace {
@@ -57,21 +59,29 @@ void WindowsEngineCore::Initialize() {
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
 	// * ポストプロセスマネージャー初期化 * //
-	rendaringPostprocess_.Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
-	rendaringPostprocess_.SetNormalPSO(graphicPipelineManager_->GetNormalPso());
-	rendaringPostprocess_.SetColorCorrectionPSO(graphicPipelineManager_->GetColorCorrectionPso());
-	rendaringPostprocess_.SetGrayScalePSO(graphicPipelineManager_->GetGrayScalePso());
-	rendaringPostprocess_.SetVignettePSO(graphicPipelineManager_->GetVignettePso());
-	rendaringPostprocess_.SetOffscreenResource(
+	rendaringPostprocess_ = RendaringPostprosecess::GetInstance();
+	rendaringPostprocess_->Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	rendaringPostprocess_->SetNormalPSO(graphicPipelineManager_->GetNormalPso());
+	rendaringPostprocess_->SetColorCorrectionPSO(graphicPipelineManager_->GetColorCorrectionPso());
+	rendaringPostprocess_->SetGrayScalePSO(graphicPipelineManager_->GetGrayScalePso());
+	rendaringPostprocess_->SetVignettePSO(graphicPipelineManager_->GetVignettePso());
+	rendaringPostprocess_->SetOffscreenResource(
 		offScreenResourceManager_.GetOffscreenResource(0), offScreenResourceManager_.GetOffscreenResource(1));
-	rendaringPostprocess_.SetOffscreenRtvHandle(
+	rendaringPostprocess_->SetOffscreenRtvHandle(
 		offScreenResourceManager_.GetOffscreenRtvHandles(0), offScreenResourceManager_.GetOffscreenRtvHandles(1));
-	rendaringPostprocess_.SetOffscreenSrvHandle(
+	rendaringPostprocess_->SetOffscreenSrvHandle(
 		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));
-	rendaringPostprocess_.SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
+	rendaringPostprocess_->SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
 
 	assetManager_ = AssetManager::GetInstance();
 	assetManager_->Initalize(directXCommon_);
+
+	editor_ = std::make_unique<OnWindowsEditor>();
+	editor_->Initialize();
+
+	assetManager_->LoadModel("Cube.obj");
+	assetManager_->LoadModel("plane.obj");
+	assetManager_->LoadModel("skyDome.obj");
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -106,17 +116,20 @@ void WindowsEngineCore::Shutdown() {
 
 void WindowsEngineCore::Update() {
 	gameWindowManager->Update();
+	editor_->Update();
 }
 
 void WindowsEngineCore::Draw() {
 	directXCommon_->PreDraw();
-	rendaringPostprocess_.SetBackBufferRtvHandle(directXCommon_->GetCurrentBackBufferCpuHandle());
-	rendaringPostprocess_.PreDraw();
+	rendaringPostprocess_->SetBackBufferRtvHandle(directXCommon_->GetCurrentBackBufferCpuHandle());
+	rendaringPostprocess_->PreDraw();
 	imguiFrameController_.BeginFrame();
 
 	gameWindowManager->Draw();
+	editor_->Draw();
+	Render::Model::DrawModel(handleIndex_);
 
-	rendaringPostprocess_.PostDraw();
+	rendaringPostprocess_->PostDraw();
 	imguiFrameController_.EndFrame(directXCommon_->GetCurrentBackBufferCpuHandle());
 	directXCommon_->PostDraw();
 
