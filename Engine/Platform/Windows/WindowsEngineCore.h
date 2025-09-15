@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/IEngineCore.h"
+#include "Editor/IEditor.h"
 #include <Windows.h>
 
 #include "Window/GameWindowManager.h"
@@ -35,8 +36,11 @@ private:
 	OffScreenResourceManager offScreenResourceManager_;
 
 	AssetManager* assetManager_;
-	RendaringPostprosecess rendaringPostprocess_;
+	RendaringPostprosecess* rendaringPostprocess_;
 
 	GraphicPipelineManager* graphicPipelineManager_;
 	ImGuiFlameController imguiFrameController_;
+
+	std::unique_ptr<IEditor> editor_ = nullptr;
+	uint32_t handleIndex_ = 0;
 };

@@ -328,6 +328,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Resources\Scripts\types.d.lua" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Editor\OnWindowsEditor.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.cpp" />
@@ -417,6 +418,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Editor\OnWindowsEditor.h" />
+    <ClInclude Include="Editor\IEditor.h" />
     <ClInclude Include="Engine\Core\Error\ErrorList.h" />
     <ClInclude Include="Engine\Core\Graphic\IGraphicCommon.h" />
     <ClInclude Include="Engine\Core\IEngineCore.h" />

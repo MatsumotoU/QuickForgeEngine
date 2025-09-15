@@ -25,6 +25,7 @@ class AssetManager final :public Singleton<AssetManager> {
 
 public:
 	void Initalize(DirectXCommon* dxCommon);
+	void PreDraw();
 	void EndFrame();
 	void Finalize();
 	
