@@ -50,6 +50,9 @@ public:
         }
 
         bufferResource_->Map(0, nullptr, reinterpret_cast<void**>(&data_));
+        if (data_) {
+            *data_ = T();
+        }
     }
 
     // ゲッター

@@ -32,7 +32,7 @@ public:
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
 		return vertexResource_.Get()->GetGPUVirtualAddress();
 	}
-
+	const uint32_t GetVertexCount() const { return vertexCount_; }
 	// セッター
 	void SetData(uint32_t index, const VertexData& data) {
 		assert(index < vertexCount_ && "Index out of bounds");
