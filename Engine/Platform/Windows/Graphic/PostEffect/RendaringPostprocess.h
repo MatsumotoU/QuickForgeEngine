@@ -40,6 +40,7 @@ public:
 	void SetOffscreenSrvHandle(DescriptorHandles firstHandle, DescriptorHandles secondHandle);
 	void SetDsvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle);
 	void SetBackBufferRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle);
+	DescriptorHandles GetCurrentSrvHandle() const;
 
 public:
 	void PreDraw();

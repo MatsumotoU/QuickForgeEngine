@@ -162,6 +162,10 @@ void RendaringPostprosecess::SetBackBufferRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE 
 	assert(backBufferRtvHandle_.ptr != 0);
 }
 
+DescriptorHandles RendaringPostprosecess::GetCurrentSrvHandle() const  {
+	return offScreenSrvHandles_.at(readingResourceIndex_); 
+}
+
 void RendaringPostprosecess::PreDraw() {
 	// 何回ポストプロセスがかかっているか調べる
 	postProcessCount_ = 0;
