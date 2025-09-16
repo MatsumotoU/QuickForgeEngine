@@ -1,9 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <d3d12.h>
-#include "Externals/imgui/imgui.h"
-#include "Externals/imgui/imgui_impl_dx12.h"
-#include "Externals/imgui/imgui_impl_win32.h"              
+#include "../ImGuiInclude.h"         
 
 class ImGuiInitializer final {
 private:

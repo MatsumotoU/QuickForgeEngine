@@ -78,10 +78,6 @@ void WindowsEngineCore::Initialize() {
 
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
-
-	handleIndex_ = assetManager_->LoadModel("Cube.obj");
-	handleIndex_ = assetManager_->LoadModel("plane.obj");
-	handleIndex_ = assetManager_->LoadModel("skyDome.obj");
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -127,7 +123,6 @@ void WindowsEngineCore::Draw() {
 
 	gameWindowManager->Draw();
 	editor_->Draw();
-	Render::Model::DrawModel(handleIndex_);
 
 	rendaringPostprocess_->PostDraw();
 	imguiFrameController_.EndFrame(directXCommon_->GetCurrentBackBufferCpuHandle());

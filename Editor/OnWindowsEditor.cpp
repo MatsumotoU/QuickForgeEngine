@@ -1,27 +1,23 @@
 #include "OnWindowsEditor.h"
+
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
 #endif // _DEBUG
 
 void OnWindowsEditor::Initialize() {
+#ifdef _DEBUG
+	uiManager_.Initialize();
+#endif // _DEBUG
 }
 
 void OnWindowsEditor::Update() {
+#ifdef _DEBUG
+	uiManager_.Update();
+#endif // _DEBUG
 }
 
 void OnWindowsEditor::Draw() {
 #ifdef _DEBUG
-    if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Edit")) {
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("View")) {
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
+	uiManager_.Draw();
 #endif // _DEBUG
 }
