@@ -34,6 +34,7 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 			assetManager->GetLightBufferManager()->GetBufferAddress(handle.lightBufferHandle));
 		commandList->SetGraphicsRootDescriptorTable(2, 
 			assetManager->GetTextureManager()->GetTextureSrvHandleGPU(handle.textureHandle));
-		commandList->DrawInstanced(static_cast<UINT>(modelDataPtr->meshRenderDataHandles.size()), 1, 0, 0);
+		commandList->DrawInstanced(static_cast<UINT>(
+			assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);
 	}
 }

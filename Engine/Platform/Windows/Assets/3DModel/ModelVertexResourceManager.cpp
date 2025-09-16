@@ -36,6 +36,12 @@ uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelDat
     return firstHandle;
 }
 
+const uint32_t ModelVertexResourceManager::GetVertexBufferCount(uint32_t handle) const {
+	assert(handle < modelVertexBuffers_.size() && "Model not found");
+
+	return modelVertexBuffers_.at(handle).GetVertexCount();
+}
+
 ID3D12Resource* ModelVertexResourceManager::GetModelVertexBuffer(const uint32_t& handle) {
 	assert(handle < modelVertexBuffers_.size() && "Model not found");
 	return modelVertexBuffers_.at(handle).GetResource();

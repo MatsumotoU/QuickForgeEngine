@@ -79,9 +79,9 @@ void WindowsEngineCore::Initialize() {
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
 
-	assetManager_->LoadModel("Cube.obj");
-	assetManager_->LoadModel("plane.obj");
-	assetManager_->LoadModel("skyDome.obj");
+	handleIndex_ = assetManager_->LoadModel("Cube.obj");
+	handleIndex_ = assetManager_->LoadModel("plane.obj");
+	handleIndex_ = assetManager_->LoadModel("skyDome.obj");
 }
 
 void WindowsEngineCore::MainLoop() {
