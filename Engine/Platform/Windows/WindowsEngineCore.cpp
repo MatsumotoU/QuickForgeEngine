@@ -1,6 +1,7 @@
 #include "WindowsEngineCore.h"
 #include "Editor/OnWindowsEditor.h"
 
+#include <thread>
 #include "AppUtility/DebugTool/ImGui/Initializer/ImGuiInitializer.h"
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
@@ -13,7 +14,8 @@ namespace {
 }
 
 WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine) 
-	:debugCore_(lpCmdLine),hInstance_(hInstance),lpCmdLine_(lpCmdLine){}
+	:debugCore_(lpCmdLine),hInstance_(hInstance),lpCmdLine_(lpCmdLine){
+}
 
 void WindowsEngineCore::Initialize() {
 	// * ウィンドウマネージャー初期化 * //
@@ -78,11 +80,14 @@ void WindowsEngineCore::Initialize() {
 
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
+
+	frameCounter_.Initialize();
 }
 
 void WindowsEngineCore::MainLoop() {
 	while (gameWindowManager->IsWindowActive())
 	{
+		frameCounter_.FrameStart();
 		// アプリケーション安全終了処理
 		MSG msg;
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -96,6 +101,7 @@ void WindowsEngineCore::MainLoop() {
 			Update();
 			Draw();
 		}
+		frameCounter_.FrameEnd();
 	}
 }
 
@@ -110,6 +116,7 @@ void WindowsEngineCore::Shutdown() {
 #endif // _DEBUG
 }
 
+// この先はプライベート関数
 void WindowsEngineCore::Update() {
 	gameWindowManager->Update();
 	editor_->Update();
