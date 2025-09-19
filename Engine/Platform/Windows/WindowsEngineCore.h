@@ -1,13 +1,16 @@
 #pragma once
 #include "Core/IEngineCore.h"
+#include "Core/EngineGlobalValue.h"
 #include "Editor/IEditor.h"
 #include <Windows.h>
+#include <chrono>
 
 #include "Window/GameWindowManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "Graphic/Pipeline/GraphicPipelineManager.h"
 #include "AppUtility/DebugTool/App/WinAppDebugCore.h"
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
+#include "AppUtility/DebugTool/FrameCounter.h"
 
 #include "Assets/AssetManager.h"
 
@@ -42,5 +45,5 @@ private:
 	ImGuiFlameController imguiFrameController_;
 
 	std::unique_ptr<IEditor> editor_ = nullptr;
-	uint32_t handleIndex_ = 0;
+	FrameCounter frameCounter_;
 };

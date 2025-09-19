@@ -332,6 +332,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Editor\UI\SceneView.cpp" />
     <ClCompile Include="Editor\UI\UIManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\FrameCounter.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.cpp" />
@@ -425,6 +426,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\UI\IEditorUI.h" />
     <ClInclude Include="Editor\UI\SceneView.h" />
     <ClInclude Include="Editor\UI\UIManager.h" />
+    <ClInclude Include="Engine\Core\EngineGlobalValue.h" />
     <ClInclude Include="Engine\Core\Error\ErrorList.h" />
     <ClInclude Include="Engine\Core\Graphic\IGraphicCommon.h" />
     <ClInclude Include="Engine\Core\IEngineCore.h" />
@@ -436,6 +438,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Core\Window\IGameWindow.h" />
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\FrameCounter.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\ImGuiInclude.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.h" />
