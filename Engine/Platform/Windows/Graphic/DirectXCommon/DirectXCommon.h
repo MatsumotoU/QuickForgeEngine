@@ -28,6 +28,8 @@ public:
 	[[nodiscard]] DescriptorHandles AssignSrvHeap(ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc);
 	[[nodiscard]] DescriptorHandles AssignDsvHeap(ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* desc);
 
+	void ClearDepthStencil();
+
 	ID3D12Device* GetDevice();
 	ID3D12GraphicsCommandList* GetCommandManager(const D3D12_COMMAND_LIST_TYPE& type);
 	SwapChain* GetSwapChain();

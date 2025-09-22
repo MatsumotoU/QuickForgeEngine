@@ -50,8 +50,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	grayScaleOffset_ = 0.0f;
 
 #ifdef _DEBUG
-	isImGuiEnabled_ = false; // デバッグモードではImGuiを有効にする
-	isPostprocess_ = false;
+	isImGuiEnabled_ = true; // デバッグモードではImGuiを有効にする
 #endif // _DEBUG
 }
 
@@ -95,11 +94,11 @@ void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsComm
 	indexData_ = nullptr;
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 	indexData_[0] = 0;
-	indexData_[1] = 1;
-	indexData_[2] = 2;
+	indexData_[1] = 2;
+	indexData_[2] = 1;
 	indexData_[3] = 1;
-	indexData_[4] = 3;
-	indexData_[5] = 2;
+	indexData_[4] = 2;
+	indexData_[5] = 3;
 }
 
 void RendaringPostprosecess::SetColorCorrectionPSO(PipelineStateObject* pso) {
@@ -354,7 +353,8 @@ void RendaringPostprosecess::SwitchRenderTarget() {
 	renderingRosourceIndex_ = (renderingRosourceIndex_ + 1) % 2;
 
 	// 描画先の設定
-	list_->OMSetRenderTargets(1, &offScreenRtvHandles_[renderingRosourceIndex_], false, &dsvHandle_);
+	DirectXCommon::GetInstance()->ClearDepthStencil();
+	list_->OMSetRenderTargets(1, &offScreenRtvHandles_[renderingRosourceIndex_], false,&dsvHandle_);
 }
 
 void RendaringPostprosecess::ApplyGrayScale() {

@@ -79,8 +79,7 @@ void DirectXCommon::PreDraw() {
 		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), swapChain_.GetCurrentBackBufferView(),
 		clearColor_[0], clearColor_[1], clearColor_[2], clearColor_[3]);
 
-	commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ClearDepthStencilView(
-		dsvHandle_.cpuHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	ClearDepthStencil();
 }
 
 void DirectXCommon::PostDraw() {
@@ -119,6 +118,11 @@ DescriptorHandles DirectXCommon::AssignSrvHeap(ID3D12Resource* resource, const D
 
 DescriptorHandles DirectXCommon::AssignDsvHeap(ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* desc) {
 	return descriptorHeapManager_.AssignDsvHeap(resource, desc);
+}
+
+void DirectXCommon::ClearDepthStencil() {
+	commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ClearDepthStencilView(
+		dsvHandle_.cpuHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void DirectXCommon::AssignSwapChainRenderTarget() {
