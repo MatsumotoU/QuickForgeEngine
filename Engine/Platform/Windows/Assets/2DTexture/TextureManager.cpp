@@ -8,6 +8,7 @@
 
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
 #endif // _DEBUG
 
 void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap) {
@@ -70,7 +71,6 @@ DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
 }
 
 void TextureManager::LoadScratchImage(const std::string& filePath) {
-	scratchImages_.push_back(DirectX::ScratchImage());
 	// テクスチャファイルを読み込んでプログラムで使えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
@@ -84,6 +84,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 
 	// ミップマップの作成
 	if (image.GetMetadata().width * image.GetMetadata().height != 1) {
+		scratchImages_.emplace_back();
 		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, scratchImages_.back());
 		assert(SUCCEEDED(hr));
 	} else {
@@ -194,9 +195,9 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(metadata);
 	CreateShaderResourceView(metadata, textureResource.Get());
 	textureHandle_++;
-	textureResources_.push_back(textureResource);
+	textureResources_.push_back(std::move(textureResource));
 	intermediateResource_.push_back(
-		UploadTextureData(textureResources_[textureResources_.size() - 1].Get(), scratchImages_[scratchImages_.size() - 1], commandList_));
+		std::move(UploadTextureData(textureResources_.back().Get(), scratchImages_.back(), commandList_)));
 #ifdef _DEBUG
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width,metadata.height,textureHandle_-1)));
 #endif // _DEBUG
@@ -221,4 +222,13 @@ D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t inde
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleGPU(uint32_t index) {
 	return textureSrvHandleGPU_[index];
+}
+
+void TextureManager::DrawDebugTexture() {
+	ImGui::Begin("TextureManager");
+	for (int i = 0; i < textureResources_.size(); i++) {
+		ImGui::Text(ConvertString(std::format(L"TextureHandle: {}", i)).c_str());
+		ImGui::Image((void*)textureSrvHandleGPU_[i].ptr, ImVec2(100.0f, 100.0f));
+	}
+	ImGui::End();
 }

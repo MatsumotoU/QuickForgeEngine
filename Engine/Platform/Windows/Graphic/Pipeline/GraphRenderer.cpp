@@ -11,7 +11,7 @@ void GraphRenderer::Initialize() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	GraphicPipelineManager* pipelineManager = GraphicPipelineManager::GetInstance();
 
-	trianglePso_ = pipelineManager->GetTrianglePso(kBlendModeNormal);
+	trianglePso_ = pipelineManager->GetPrimitivePso(kBlendModeNormal);
 	linePso_ = pipelineManager->GetLinePso(kBlendModeNormal);
 	pointPso_ = pipelineManager->GetPointPso(kBlendModeNormal);
 
@@ -43,8 +43,11 @@ void GraphRenderer::Initialize() {
 	wvp_.CreateResource(dxCommon->GetDevice());
 	material_.CreateResource(dxCommon->GetDevice());
 
+	wvp_.GetData()->World = Matrix4x4::MakeIndentity4x4();
 	wvp_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
 	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	material_.GetData()->enableLighting = 0;
+	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4();
 }
 
 void GraphRenderer::PreDraw() {
