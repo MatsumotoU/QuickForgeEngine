@@ -17,9 +17,23 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 	lightBufferManager_.Initialize();
 	modelVertexResourceManager_.Initialize();
 	modelRenderDataManager_.Initialize();
+
+	cameraManager_ = CameraManager::GetInstance();
+	cameraManager_->Initialize();
+}
+
+void AssetManager::PreDraw() {
+	cameraManager_->Update();
+	for (uint32_t i = 0; i < wpvBufferManager_.GetBufferCount(); i++) {
+		Camera& camera = cameraManager_->GetMainCamera();
+		TransformationMatrix* wpvMatrix = wpvBufferManager_.GetBufferData(i);
+		wpvMatrix->World = camera.GetWorldMatrix();
+		wpvMatrix->WVP = camera.GetWorldViewProjectionMatrix(wpvMatrix->World);
+	}
 }
 
 void AssetManager::Finalize() {
+	cameraManager_->Shutdown();
 	textureManager_->Finalize();
 	wpvBufferManager_.Finalize();
 	materialBufferManager_.Finalize();
@@ -41,7 +55,7 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
-		modelName,modelData);
+		modelName, modelData);
 
 	// メッシュの数だけメッシュ描画データを確保
 	modelRenderData.meshRenderDataHandles.resize(modelData.meshes.size());
@@ -56,8 +70,18 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		meshRenderData.materialHandle = materialBufferManager_.CreateBuffer();
 		meshRenderData.wpvBufferHandle = wpvBufferManager_.CreateBuffer();
 		meshRenderData.lightBufferHandle = lightBufferManager_.CreateBuffer();
+
+		materialBufferManager_.GetBufferData(meshRenderData.materialHandle)->color = { 1.0f,1.0f,1.0f,1.0f };
+		materialBufferManager_.GetBufferData(meshRenderData.materialHandle)->enableLighting = true;
+		materialBufferManager_.GetBufferData(meshRenderData.materialHandle)->uvTransform = Matrix4x4::MakeIndentity4x4();
+		wpvBufferManager_.GetBufferData(meshRenderData.wpvBufferHandle)->World = Matrix4x4::MakeIndentity4x4();
+		wpvBufferManager_.GetBufferData(meshRenderData.wpvBufferHandle)->WVP = Matrix4x4::MakeIndentity4x4();
+		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->color = { 1.0f,1.0f,1.0f,1.0f };
+		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->direction = { 0.0f,-1.0f,0.0f };
+		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->intensity = 1.0f;
+
 	}
-	
+
 	// モデル描画データを登録
 	return modelRenderDataManager_.Add(modelRenderData);
 }

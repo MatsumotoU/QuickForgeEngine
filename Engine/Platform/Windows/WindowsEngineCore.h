@@ -11,6 +11,7 @@
 #include "AppUtility/DebugTool/App/WinAppDebugCore.h"
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
 #include "AppUtility/DebugTool/FrameCounter.h"
+#include "Graphic/Pipeline/GraphRenderer.h"
 
 #include "Assets/AssetManager.h"
 
@@ -40,10 +41,13 @@ private:
 
 	AssetManager* assetManager_;
 	RendaringPostprosecess* rendaringPostprocess_;
+	GraphRenderer graphRenderer_;
 
 	GraphicPipelineManager* graphicPipelineManager_;
 	ImGuiFlameController imguiFrameController_;
 
 	std::unique_ptr<IEditor> editor_ = nullptr;
 	FrameCounter frameCounter_;
+
+	uint32_t hl;
 };

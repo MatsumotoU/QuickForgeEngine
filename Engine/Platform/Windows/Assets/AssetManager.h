@@ -8,6 +8,7 @@
 #include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
 #include "Graphic/ShaderBuffer/Data/Material.h"
 #include "Graphic/ShaderBuffer/Data/DirectionalLight.h"
+#include "Camera/CameraManager.h"
 
 #include "Utility/DesignPatterns/Singleton.h"
 
@@ -52,4 +53,6 @@ private:
 	ConstantBufferManager<TransformationMatrix> wpvBufferManager_;
 	ConstantBufferManager<Material> materialBufferManager_;
 	ConstantBufferManager<DirectionalLight> lightBufferManager_;
+
+	CameraManager* cameraManager_;
 };

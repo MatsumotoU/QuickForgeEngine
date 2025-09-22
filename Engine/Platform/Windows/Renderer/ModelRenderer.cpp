@@ -21,7 +21,7 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 	commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso->GetRootSignature());
 	commandList->SetPipelineState(pso->GetPipelineState());
-
+	
 	for (auto& handle : modelDataPtr->meshRenderDataHandles) {
 		commandList->IASetVertexBuffers(0, 1,
 			assetManager->GetModelVertexResourceManager()->GetVertexBufferView(handle.vertexBufferHandle));
@@ -30,10 +30,10 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 			assetManager->GetMaterialBufferManager()->GetBufferAddress(handle.materialHandle));
 		commandList->SetGraphicsRootConstantBufferView(1, 
 			assetManager->GetWpvBufferManager()->GetBufferAddress(handle.wpvBufferHandle));
+		commandList->SetGraphicsRootDescriptorTable(2,
+			assetManager->GetTextureManager()->GetTextureSrvHandleGPU(handle.textureHandle));
 		commandList->SetGraphicsRootConstantBufferView(3, 
 			assetManager->GetLightBufferManager()->GetBufferAddress(handle.lightBufferHandle));
-		commandList->SetGraphicsRootDescriptorTable(2, 
-			assetManager->GetTextureManager()->GetTextureSrvHandleGPU(handle.textureHandle));
 		commandList->DrawInstanced(static_cast<UINT>(
 			assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);
 	}

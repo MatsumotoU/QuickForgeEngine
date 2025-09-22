@@ -521,12 +521,9 @@ Matrix4x4 Matrix4x4::MakeRotateXYZMatrix(const Vector3& rotate) {
 
 Matrix4x4 Matrix4x4::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
 	Matrix4x4 result = MakeIndentity4x4();
-
-	result = Multiply(
-		MakeScaleMatrix(scale),
-		Multiply(MakeRotateXYZMatrix(rotate),
-		MakeTranslateMatrix(translate)));
-
+	result = MakeScaleMatrix(scale);
+	result = Multiply(result, MakeRotateXYZMatrix(rotate));
+	result = Multiply(result, MakeTranslateMatrix(translate));
 	return result;
 }
 

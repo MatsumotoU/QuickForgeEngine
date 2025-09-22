@@ -28,17 +28,6 @@ void FrameCounter::FrameEnd() {
 		maxFps_ = 60.0f; // 無効な値を防ぐ
 	}
 
-	float targetFrameTime = 1.0f / maxFps_;
-	if (deltaTime_ < targetFrameTime) {
-		auto sleepDuration = std::chrono::duration<float>(targetFrameTime - deltaTime_);
-		std::this_thread::sleep_for(sleepDuration);
-		// スリープ後の正確なdeltaTime再計算
-		endTime_ = std::chrono::high_resolution_clock::now();
-		elapsedTime = endTime_ - startTime_;
-		deltaTime_ = elapsedTime.count();
-		fps_ = 1.0f / deltaTime_;
-	}
-
 	QFE::EngineGlobalValue::deltaTime = deltaTime_;
 	QFE::EngineGlobalValue::fps = fps_;
 }
