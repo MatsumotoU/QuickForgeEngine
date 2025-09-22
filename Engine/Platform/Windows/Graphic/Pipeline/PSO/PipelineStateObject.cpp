@@ -104,12 +104,12 @@ void PipelineStateObject::CreatePipelineStateObject(
 	// RasterizerState
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	if (isDrawBack) {
-		// 裏面（時計回り）を表示しない
-		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
-
-	} else {
 		// 裏面（時計回り）を表示する
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+
+	} else {
+		// 裏面（時計回り）を表示しない
+		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	}
 	// 塗りつぶし
 	rasterizerDesc.FillMode = fillMode;

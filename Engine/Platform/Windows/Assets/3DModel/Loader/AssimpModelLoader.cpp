@@ -9,7 +9,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals
 	);
 	if (!scene || !scene->HasMeshes()) {
-		assert(false && "Assimp: モデルの読み込みに失敗しました");
+		assert(false && "Faild Loaded Model");
 		return;
 	}
 
@@ -53,8 +53,8 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			const aiFace& face = mesh->mFaces[i];
 			if (face.mNumIndices == 3) {
 				meshData.vertices.push_back(tempVertices[face.mIndices[0]]);
-				meshData.vertices.push_back(tempVertices[face.mIndices[1]]);
 				meshData.vertices.push_back(tempVertices[face.mIndices[2]]);
+				meshData.vertices.push_back(tempVertices[face.mIndices[1]]);
 
 			}
 		}

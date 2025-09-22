@@ -136,10 +136,8 @@ void WindowsEngineCore::Draw() {
 
 	gameWindowManager->Draw();
 	CameraManager::GetInstance()->DrawImGui();
-	//graphRenderer_.DrawGrid();
-	graphRenderer_.DrawLine({ 0.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f,1.0f });
-	graphRenderer_.DrawLine({ 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 0.0f,1.0f,0.0f,1.0f });
-	graphRenderer_.DrawLine({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,1.0f }, { 0.0f,0.0f,1.0f,1.0f });
+	graphRenderer_.DrawGrid();
+	graphRenderer_.DrawLine({ 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 1.0f,1.0f,0.0f,1.0f });
 
 	graphRenderer_.DrawTriangle({ -1.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 1.0f,0.0f,0.0f,1.0f });
 	Render::Model::DrawModel(hl);
