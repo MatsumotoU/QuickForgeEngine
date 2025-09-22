@@ -12,9 +12,6 @@
 
 RendaringPostprosecess::RendaringPostprosecess() {
 	isImGuiEnabled_ = false;
-#ifdef _DEBUG
-	isImGuiEnabled_ = true; // デバッグモードではImGuiを有効にする
-#endif // _DEBUG
 
 	device_ = nullptr;
 	list_ = nullptr;
@@ -51,6 +48,11 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	postProcessOrderForm_.clear();
 
 	grayScaleOffset_ = 0.0f;
+
+#ifdef _DEBUG
+	isImGuiEnabled_ = false; // デバッグモードではImGuiを有効にする
+	isPostprocess_ = false;
+#endif // _DEBUG
 }
 
 void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* list) {

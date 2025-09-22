@@ -27,7 +27,6 @@ void AssetManager::PreDraw() {
 	for (uint32_t i = 0; i < wpvBufferManager_.GetBufferCount(); i++) {
 		Camera& camera = cameraManager_->GetMainCamera();
 		TransformationMatrix* wpvMatrix = wpvBufferManager_.GetBufferData(i);
-		wpvMatrix->World = camera.GetWorldMatrix();
 		wpvMatrix->WVP = camera.GetWorldViewProjectionMatrix(wpvMatrix->World);
 	}
 }
@@ -79,7 +78,6 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->color = { 1.0f,1.0f,1.0f,1.0f };
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->direction = { 0.0f,-1.0f,0.0f };
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->intensity = 1.0f;
-
 	}
 
 	// モデル描画データを登録

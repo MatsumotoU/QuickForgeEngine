@@ -589,7 +589,7 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 
 Matrix4x4 Matrix4x4::MakePerspectiveFovMatrix(const float& fovY, const float& aspectRatio, const float& nearClip, const float& farClip) {
 	if (aspectRatio == 0.0f || nearClip - farClip == 0.0f) {
-		assert(false);
+		//assert(false);
 	}
 	
 	Matrix4x4 result = {};

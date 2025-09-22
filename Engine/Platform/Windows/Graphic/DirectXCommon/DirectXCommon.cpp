@@ -78,6 +78,9 @@ void DirectXCommon::PreDraw() {
 	InitializeSwapChainBuffer::Execute(
 		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), swapChain_.GetCurrentBackBufferView(),
 		clearColor_[0], clearColor_[1], clearColor_[2], clearColor_[3]);
+
+	commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ClearDepthStencilView(
+		dsvHandle_.cpuHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void DirectXCommon::PostDraw() {

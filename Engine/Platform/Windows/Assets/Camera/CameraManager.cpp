@@ -43,8 +43,8 @@ void CameraManager::DrawImGui() {
 			ImGui::DragFloat3("Rotation", &cameras_[i].transform_.rotate.x, 0.01f);
 			ImGui::DragFloat3("Scale", &cameras_[i].transform_.scale.x, 0.01f);
 			ImGui::DragFloat("FovY", &cameras_[i].fovY_, 0.01f, 0.1f, 3.14f);
-			ImGui::DragFloat("NearZ", &cameras_[i].nearZ_, 0.01f, 0.01f, 100.0f);
-			ImGui::DragFloat("FarZ", &cameras_[i].farZ_, 0.1f, 10.0f, 10000.0f);
+			ImGui::DragFloat("NearZ", &cameras_[i].nearZ_, 0.01f);
+			ImGui::DragFloat("FarZ", &cameras_[i].farZ_, 0.1f);
 			if (i != mainCameraIndex_) {
 				if (ImGui::Button("Set as MainCamera")) {
 					mainCameraIndex_ = i;
