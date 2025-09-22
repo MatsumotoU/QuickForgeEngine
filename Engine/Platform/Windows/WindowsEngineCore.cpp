@@ -139,7 +139,7 @@ void WindowsEngineCore::Draw() {
 	graphRenderer_.DrawGrid();
 	graphRenderer_.DrawLine({ 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 1.0f,1.0f,0.0f,1.0f });
 
-	graphRenderer_.DrawTriangle({ -1.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 1.0f,0.0f,0.0f,1.0f });
+	graphRenderer_.DrawTriangle({ -1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f,1.0f });
 	Render::Model::DrawModel(hl);
 	editor_->Draw();
 

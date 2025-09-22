@@ -125,7 +125,11 @@ void PipelineStateObject::CreatePipelineStateObject(
 	// PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
-	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	if (depthStencilDesc.DepthEnable) {
+		graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	} else {
+		graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
+	}
 
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();
 	graphicsPipelineStateDesc.InputLayout = *inputLayout.GetInputLayoutDesc();
