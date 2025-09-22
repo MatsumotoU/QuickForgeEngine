@@ -42,6 +42,8 @@ public:// 一回は絶対に呼び出さないとバグるやつ
 	D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index);
 	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index);
 
+	void DrawDebugTexture();
+
 private:
 	DirectX::ScratchImage Load(const std::string& filePath);
 	void LoadScratchImage(const std::string& filePath);

@@ -86,6 +86,7 @@ void WindowsEngineCore::Initialize() {
 
 	hl = assetManager_->LoadModel("Cube.obj");
 	hl = assetManager_->LoadModel("axis.obj");
+	assetManager_->LoadTexture("anchor.png");
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -135,7 +136,9 @@ void WindowsEngineCore::Draw() {
 	graphRenderer_.PreDraw();
 
 	gameWindowManager->Draw();
+	
 	CameraManager::GetInstance()->DrawImGui();
+	TextureManager::GetInstance()->DrawDebugTexture();
 	graphRenderer_.DrawGrid();
 	graphRenderer_.DrawLine({ 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 1.0f,1.0f,0.0f,1.0f });
 
