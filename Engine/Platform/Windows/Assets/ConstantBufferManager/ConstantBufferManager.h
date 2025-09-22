@@ -20,6 +20,7 @@ public:
 		assert(handle < buffers_.size() && "Buffer Handle is Out of Range.");
 		return buffers_.at(handle).GetGPUVirtualAddress();
 	}
+	uint32_t GetBufferCount() const { return static_cast<uint32_t>(buffers_.size()); }
     void Finalize() { buffers_.clear(); }
 
 private:

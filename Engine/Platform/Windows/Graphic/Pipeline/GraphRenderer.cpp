@@ -1,17 +1,22 @@
 #include "GraphRenderer.h"
-#include "Base/EngineCore.h"
-#include "Camera/Camera.h"
+#include "Graphic/DirectXCommon/DirectXCommon.h"
+#include "Graphic/Pipeline/GraphicPipelineManager.h"
+#include "Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
+#include "Assets/AssetManager.h"
+#include "Assets/Camera/CameraManager.h"
 #include <cassert>
 
-void GraphRenderer::Initialize(EngineCore* engineCore) {
-	engineCore_ = engineCore;
-	trianglePso_ = engineCore->GetGraphicsCommon()->GetTrianglePso(kBlendModeNormal);
-	linePso_ = engineCore->GetGraphicsCommon()->GetLinePso(kBlendModeNormal);
-	pointPso_ = engineCore->GetGraphicsCommon()->GetPointPso(kBlendModeNormal);
+void GraphRenderer::Initialize() {
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+	GraphicPipelineManager* pipelineManager = GraphicPipelineManager::GetInstance();
+
+	trianglePso_ = pipelineManager->GetTrianglePso(kBlendModeNormal);
+	linePso_ = pipelineManager->GetLinePso(kBlendModeNormal);
+	pointPso_ = pipelineManager->GetPointPso(kBlendModeNormal);
 
 	// 三角形の頂点リソースを作成
-	triangleVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
+	triangleVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
 	triangleVertexBufferView_ = {};
 	triangleVertexBufferView_.BufferLocation = triangleVertexResource_->GetGPUVirtualAddress();
 	triangleVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
@@ -19,7 +24,7 @@ void GraphRenderer::Initialize(EngineCore* engineCore) {
 	triangleVertexData_ = nullptr;
 	triangleVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&triangleVertexData_));
 	// 線の頂点リソースを作成
-	lineVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
+	lineVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
 	lineVertexBufferView_ = {};
 	lineVertexBufferView_.BufferLocation = lineVertexResource_->GetGPUVirtualAddress();
 	lineVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
@@ -27,7 +32,7 @@ void GraphRenderer::Initialize(EngineCore* engineCore) {
 	lineVertexData_ = nullptr;
 	lineVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&lineVertexData_));
 	// 点の頂点リソースを作成
-	pointVertexResource_ = CreateBufferResource(engineCore_->GetDirectXCommon()->GetDevice(), sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
+	pointVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
 	pointVertexBufferView_ = {};
 	pointVertexBufferView_.BufferLocation = pointVertexResource_->GetGPUVirtualAddress();
 	pointVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
@@ -35,17 +40,16 @@ void GraphRenderer::Initialize(EngineCore* engineCore) {
 	pointVertexData_ = nullptr;
 	pointVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointVertexData_));
 
-	wvp_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
-	material_.CreateResource(engineCore_->GetDirectXCommon()->GetDevice());
+	wvp_.CreateResource(dxCommon->GetDevice());
+	material_.CreateResource(dxCommon->GetDevice());
 
 	wvp_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
 	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void GraphRenderer::PreDraw() {
-	if (camera_ == nullptr) {
-		return;
-	}
+	CameraManager* cameraManager = CameraManager::GetInstance();
+	Camera& camera = cameraManager->GetMainCamera();
 
 	triangleCount_ = 0;
 	lineCount_ = 0;
@@ -69,16 +73,11 @@ void GraphRenderer::PreDraw() {
 	}
 
 	// カメラのワールドビュー投影行列を設定
-	if (camera_) {
-		assert(camera_);
-		wvp_.GetData()->WVP = camera_->MakeWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(), CAMERA_VIEW_STATE_PERSPECTIVE);
-	}
+	wvp_.GetData()->WVP = camera.GetWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4());
 }
 
 void GraphRenderer::PostDraw() {
-	if (camera_ == nullptr) {
-		return;
-	}
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	if (triangleCount_ == 0 && lineCount_ == 0 && pointCount_ == 0) {
 		return; // 描画するものがない場合は何もしない
@@ -92,12 +91,11 @@ void GraphRenderer::PostDraw() {
 	}
 
 	// 頂点リソースをGPUに転送
-	ID3D12GraphicsCommandList* commandList = engineCore_->GetDirectXCommon()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 	if (triangleCount_ > 0) {
-		assert(camera_);
-		commandList->RSSetViewports(1, camera_->viewport_.GetViewport());
-		commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
+		commandList->RSSetViewports(1, dxCommon->GetViewPort());
+		commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
 
 		commandList->SetGraphicsRootSignature(trianglePso_->GetRootSignature());
 		commandList->SetPipelineState(trianglePso_->GetPipelineState());
@@ -108,9 +106,8 @@ void GraphRenderer::PostDraw() {
 		commandList->DrawInstanced(triangleCount_ * 3, 1, 0, 0);
 	}
 	if (lineCount_ > 0) {
-		assert(camera_);
-		commandList->RSSetViewports(1, camera_->viewport_.GetViewport());
-		commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
+		commandList->RSSetViewports(1, dxCommon->GetViewPort());
+		commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
 
 		commandList->SetGraphicsRootSignature(linePso_->GetRootSignature());
 		commandList->SetPipelineState(linePso_->GetPipelineState());
@@ -121,9 +118,8 @@ void GraphRenderer::PostDraw() {
 		commandList->DrawInstanced(lineCount_ * 2, 1, 0, 0);
 	}
 	if (pointCount_ > 0) {
-		assert(camera_);
-		commandList->RSSetViewports(1, camera_->viewport_.GetViewport());
-		commandList->RSSetScissorRects(1, camera_->scissorrect_.GetScissorRect());
+		commandList->RSSetViewports(1, dxCommon->GetViewPort());
+		commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
 
 		commandList->SetGraphicsRootSignature(pointPso_->GetRootSignature());
 		commandList->SetPipelineState(pointPso_->GetPipelineState());
@@ -138,10 +134,6 @@ void GraphRenderer::PostDraw() {
 }
 
 void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color) {
-	if (camera_ == nullptr) {
-		return;
-	}
-
 	if (triangleCount_ >= kGraphRendererMaxTriangleCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
@@ -167,10 +159,6 @@ void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3,
 }
 
 void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& color) {
-	if (camera_ == nullptr) {
-		return;
-	}
-
 	if (lineCount_ >= kGraphRendererMaxLineCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
@@ -188,10 +176,6 @@ void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& colo
 }
 
 void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
-	if (camera_ == nullptr) {
-		return;
-	}
-
 	if (pointCount_ >= kGraphRendererMaxPointCount) {
 		return; // 最大数を超えた場合は描画しない
 	}
@@ -206,14 +190,7 @@ void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
 }
 
 void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
-	if (camera_ == nullptr) {
-		return;
-	}
-
 	if (gridCount <= 0 || size <= 0.0f) {
-#ifdef _DEBUG
-		DebugLog("DrawGrid: gridCount = 0 || size <= 0");
-#endif // _DEBUG
 		return; // グリッド数が0以下または偶数の場合は描画しない
 	}
 	
@@ -262,18 +239,5 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 				Vector3(halfSize, 0.0f, z), color);
 		}
 		
-	}
-}
-
-void GraphRenderer::SetCamera(Camera* camera) {
-	assert(camera);
-	camera_ = camera;
-}
-
-void GraphRenderer::DeleteCamera(Camera* camera) {
-	if (camera_) {
-		if (camera_ == camera) {
-			camera_ = nullptr; // カメラを削除
-		} 
 	}
 }

@@ -1,7 +1,6 @@
 #pragma once
 #include "PSO/PipelineStateObject.h"
 #include "Platform/Windows/Graphic/DirectXCommon/Descriptors/DsvDescriptorHeap.h"
-#include "Platform/Windows/Graphic/ShaderBuffer/DepthStencil.h"
 
 #include "Utility/DesignPatterns/Singleton.h"
 
@@ -9,7 +8,7 @@ class GraphicPipelineManager final :public Singleton<GraphicPipelineManager> {
 	friend class Singleton<GraphicPipelineManager>;
 
 public:
-	void Initialize(ID3D12Device* device,uint32_t width,uint32_t height, DsvDescriptorHeap* dsvHeap);
+	void Initialize(ID3D12Device* device);
 public:
 	/// <summary>
 	/// 一般的な三角形のPSOを取得します
@@ -36,10 +35,8 @@ public:
 	PipelineStateObject* GetVignettePso() { return &vignettePso_; }
 	PipelineStateObject* GetNormalPso() { return &normalPso_; }
 	PipelineStateObject* GetFontPso() { return &fontPso_; }
-	DepthStencil* GetDepthStencil() { return &depthStencil_; }
 
 private: // メンバ変数
-	DepthStencil depthStencil_;
 	ShaderCompiler shaderCompiler_;
 
 	// ルートパラメータ;

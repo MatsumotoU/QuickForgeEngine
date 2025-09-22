@@ -7,6 +7,7 @@
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #include "Renderer/ModelRenderer.h"
 #endif // _DEBUG
+#include "Core/EngineGlobalValue.h"
 
 namespace {
 	uint32_t windowWidth = 1280;
@@ -18,6 +19,9 @@ WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 }
 
 void WindowsEngineCore::Initialize() {
+	QFE::EngineGlobalValue::windowWidth = windowWidth;
+	QFE::EngineGlobalValue::windowHeight = windowHeight;
+
 	// * ウィンドウマネージャー初期化 * //
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
@@ -41,11 +45,7 @@ void WindowsEngineCore::Initialize() {
 
 	// * パイプライン管理クラス初期化 * //
 	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
-	graphicPipelineManager_->Initialize(
-		directXCommon_->GetDevice(),
-		windowWidth,
-		windowHeight,
-		directXCommon_->GetDescriptorHeapManager()->GetDsvDescriptorHeap());
+	graphicPipelineManager_->Initialize(directXCommon_->GetDevice());
 
 	// * オフスクリーンリソースマネージャー初期化 * //
 	offScreenResourceManager_.Initialize(directXCommon_->GetDevice(), windowWidth, windowHeight);
@@ -82,6 +82,10 @@ void WindowsEngineCore::Initialize() {
 	editor_->Initialize();
 
 	frameCounter_.Initialize();
+	graphRenderer_.Initialize();
+
+	hl = assetManager_->LoadModel("Cube.obj");
+	hl = assetManager_->LoadModel("axis.obj");
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -123,14 +127,21 @@ void WindowsEngineCore::Update() {
 }
 
 void WindowsEngineCore::Draw() {
+	assetManager_->PreDraw();
 	directXCommon_->PreDraw();
 	rendaringPostprocess_->SetBackBufferRtvHandle(directXCommon_->GetCurrentBackBufferCpuHandle());
 	rendaringPostprocess_->PreDraw();
 	imguiFrameController_.BeginFrame();
+	graphRenderer_.PreDraw();
 
 	gameWindowManager->Draw();
+	CameraManager::GetInstance()->DrawImGui();
+	graphRenderer_.DrawGrid();
+	graphRenderer_.DrawTriangle({ -1.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 1.0f,0.0f,0.0f,1.0f });
+	Render::Model::DrawModel(hl);
 	editor_->Draw();
 
+	graphRenderer_.PostDraw();
 	rendaringPostprocess_->PostDraw();
 	imguiFrameController_.EndFrame(directXCommon_->GetCurrentBackBufferCpuHandle());
 	directXCommon_->PostDraw();

@@ -331,6 +331,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Editor\OnWindowsEditor.cpp" />
     <ClCompile Include="Editor\UI\SceneView.cpp" />
     <ClCompile Include="Editor\UI\UIManager.cpp" />
+    <ClCompile Include="Engine\Core\EngineGlobalValue.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\FrameCounter.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.cpp" />
@@ -339,6 +340,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Camera\Camera.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Camera\CameraManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\GraphRenderer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -378,7 +382,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\PostEffect\RendaringPostprocess.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp" />
-    <ClCompile Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Renderer\ModelRenderer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\WindowsEngineCore.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Window\GameWindow.cpp" />
@@ -450,6 +453,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelMaterialData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelRenderData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ConstantBufferManager\ConstantBufferManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Camera\Camera.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Camera\CameraManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\GraphRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelRenderDataManager.h" />
@@ -499,7 +505,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\TransformationMatrix.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VerTexData.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VignetteOffset.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\DepthStencil.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\StructuredBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\VertexBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Renderer\ModelRenderer.h" />

@@ -1,16 +1,13 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
-#include "Shaders/StructsForGpu/PrimitiveVertexData.h"
+#include "Graphic/ShaderBuffer/Data/PrimitiveVertexData.h"
+#include "Graphic/ShaderBuffer/Data/Material.h"
+#include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
 
-#include "Shaders/StructsForGpu/Material.h"
-#include "Shaders/StructsForGpu/TransformationMatrix.h"
+#include "Graphic/ShaderBuffer/ConstantBuffer.h"
 
-#include "Base/DirectX/Resource/ShaderBuffers/ConstantBuffer.h"
-
-class EngineCore;
 class PipelineStateObject;
-class Camera;
 
 // グラフ描画の最大数
 static inline const uint32_t kGraphRendererMaxTriangleCount = 128;
@@ -23,7 +20,7 @@ public:// 一回は呼び出さないとバグるやつら
 	/// 初期化
 	/// </summary>
 	/// <param name="engineCore"></param>
-	void Initialize(EngineCore* engineCore);
+	void Initialize();
 	/// <summary>
 	/// 描画前準備
 	/// </summary>
@@ -53,11 +50,6 @@ public:// 描画関数
 	/// <param name="gridCount"></param>
 	void DrawGrid(float size = 10.0f, int32_t gridCount = 10);
 
-public:// セッター
-	void SetCamera(Camera* camera);
-
-	void DeleteCamera(Camera* camera);
-
 private:
 	uint32_t triangleCount_;
 	uint32_t lineCount_;
@@ -82,11 +74,7 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW pointVertexBufferView_;
 
 private:
-	EngineCore* engineCore_;
 	PipelineStateObject* trianglePso_;
 	PipelineStateObject* linePso_;
 	PipelineStateObject* pointPso_;
-
-private:
-	Camera* camera_; // 描画するカメラ
 };

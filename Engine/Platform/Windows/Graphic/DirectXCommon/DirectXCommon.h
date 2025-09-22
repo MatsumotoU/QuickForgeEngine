@@ -44,6 +44,7 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferCpuHandle();
 
 	DescriptorHandles* GetDepthStencilViewHandle();
+	D3D12_DEPTH_STENCIL_DESC GetDepthStencilDesc();
 	D3D12_VIEWPORT* GetViewPort();
 	D3D12_RECT* GetScissorRect();
 
