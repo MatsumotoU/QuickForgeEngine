@@ -5,7 +5,7 @@
 void Camera::Initialize() {
 	fovY_ = 0.45f;
 	nearZ_ = 0.1f;
-	farZ_ = 1000.0f;
+	farZ_ = 100.0f;
 	cameraType = CameraType::Perspective;
 	viewMatrix_ = Matrix4x4::MakeIndentity4x4();
 }
@@ -27,7 +27,7 @@ Matrix4x4 Camera::GetOrthographicMatrix() const {
 	return Matrix4x4::MakeOrthographicMatrix(
 		0.0f, 0.0f,
 		static_cast<float>(QFE::EngineGlobalValue::windowWidth),
-		static_cast<float>(QFE::EngineGlobalValue::windowHeight), nearZ_, farZ_);
+		static_cast<float>(QFE::EngineGlobalValue::windowHeight), 0.0f, farZ_);
 }
 
 Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix) const {
