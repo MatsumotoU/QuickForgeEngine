@@ -44,7 +44,7 @@ DescriptorHandles SrvDescriptorHeap::AssignHeap(ID3D12Resource* resource, const 
 	assert(!freeDescriptors_.empty() && "No free descriptors available.");
 	UINT index = freeDescriptors_.front();
 #ifdef _DEBUG
-	DebugLog(std::format("AssignHeapIndex: {}", index));
+	DebugLog(std::format("Srv_AssignHeapIndex: {}", index));
 #endif // _DEBUG
 	freeDescriptors_.pop();
 	// ディスクリプタハンドルを取得
