@@ -37,10 +37,6 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	filePathLiblary_.Init("TextureFileName");
 
 	textureHandle_ = 0;
-
-#ifdef _DEBUG
-	debugTextureIndex_ = 0;
-#endif
 }
 
 void TextureManager::Finalize() {
@@ -134,7 +130,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(ID3D12R
 	subresources.clear();
 	DirectX::PrepareUpload(device_, mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
 	
-	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = BufferGenerator::Generate(device_, subresources.size());
+	UINT64 uploadBufferSize = GetRequiredIntermediateSize(texture, 0, static_cast<UINT>(subresources.size()));
+	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = BufferGenerator::Generate(device_, uploadBufferSize);
+
 	UpdateSubresources(commandList, texture, intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
 
 	EndUploadTextureData(texture, commandList);
@@ -192,12 +190,19 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	// 画像読み込み処理
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
-	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(metadata);
-	CreateShaderResourceView(metadata, textureResource.Get());
+	textureResources_.emplace_back() = CreateTextureResource(metadata);
+#ifdef _DEBUG
+	const auto& resource = textureResources_.back();
+	if (resource) {
+		D3D12_RESOURCE_DESC desc = resource->GetDesc();
+		D3D12_RESOURCE_ALLOCATION_INFO allocInfo = device_->GetResourceAllocationInfo(0, 1, &desc);
+		DebugLog(std::format("ResourceSize: {}byte", allocInfo.SizeInBytes));
+	}
+#endif // _DEBUG
+	CreateShaderResourceView(metadata, textureResources_.back().Get());
 	textureHandle_++;
-	textureResources_.push_back(std::move(textureResource));
 	intermediateResource_.push_back(
-		std::move(UploadTextureData(textureResources_.back().Get(), scratchImages_.back(), commandList_)));
+		UploadTextureData(textureResources_.back().Get(), scratchImages_.back(), commandList_));
 #ifdef _DEBUG
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width,metadata.height,textureHandle_-1)));
 #endif // _DEBUG
@@ -228,7 +233,7 @@ void TextureManager::DrawDebugTexture() {
 	ImGui::Begin("TextureManager");
 	for (int i = 0; i < textureResources_.size(); i++) {
 		ImGui::Text(ConvertString(std::format(L"TextureHandle: {}", i)).c_str());
-		ImGui::Image((void*)textureSrvHandleGPU_[i].ptr, ImVec2(100.0f, 100.0f));
+		ImGui::Image((ImTextureID)textureSrvHandleGPU_[i].ptr, ImVec2(100.0f, 100.0f));
 	}
 	ImGui::End();
 }

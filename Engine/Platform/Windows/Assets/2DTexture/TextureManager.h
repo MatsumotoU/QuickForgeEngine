@@ -58,7 +58,6 @@ private:
 	SrvDescriptorHeap* srvDescriptorHeap_;
 	D3D12_HEAP_PROPERTIES heapProperties_;
 	D3D12_RESOURCE_DESC resourceDesc_;
-	uint32_t srvHandleIndex_;
 	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> textureSrvHandleCPU_;
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPU_;
 
@@ -67,8 +66,4 @@ private:
 	std::vector<DirectX::ScratchImage> scratchImages_;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
 	StringLiblary filePathLiblary_;
-
-#ifdef _DEBUG
-	int debugTextureIndex_;
-#endif // _DEBUG
 };
