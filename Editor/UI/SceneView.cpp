@@ -3,6 +3,7 @@
 #include "Assets/Camera/CameraManager.h"
 #include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
 #include "Input/DirectInput/DirectInputManager.h"
+#include "Renderer/GraphRenderer.h"
 
 #include <cmath>
 #include <algorithm>
@@ -10,6 +11,7 @@
 SceneView::SceneView() {
 	name_ = "Scene View";
 	isActiveCamera_ = true;
+	isDrawGrid_ = true;
 
 	anchorPoint_ = { 0.0f,0.0f,0.0f };
 	mouseSensitivity_ = 0.5f;
@@ -23,6 +25,7 @@ void SceneView::Update() {
 #ifdef _DEBUG
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
 	if (isActiveCamera_) {
+		CameraManager::GetInstance()->SetActiveDebugCamera(true);
 		DirectInputManager* input = DirectInputManager::GetInstance();
 		
 		if (input->mouse_.wheelDir_ != 0.0f) {
@@ -92,23 +95,33 @@ void SceneView::Draw() {
 		isActiveCamera_ = false;
     }
 
-    ImVec2 availSize = ImGui::GetContentRegionAvail();
-    float targetAspect = 1280.0f / 720.0f;
-    ImVec2 imageSize;
-    if (availSize.x / availSize.y > targetAspect) {
-        imageSize.y = availSize.y;
-        imageSize.x = availSize.y * targetAspect;
-    } else {
-        imageSize.x = availSize.x;
-        imageSize.y = availSize.x / targetAspect;
-    }
-    ImVec2 centerPos = ImVec2(
-        (availSize.x - imageSize.x) * 0.5f,
-        (availSize.y - imageSize.y) * 0.5f
-    );
-    ImGui::SetCursorPos(centerPos);
-    ImGui::Image((void*)handle.gpuHandle_.ptr, imageSize);
+	ImVec2 windowPos = ImGui::GetWindowPos();
+	ImVec2 contentRegionMin = ImGui::GetWindowContentRegionMin();
+	ImVec2 contentRegionMax = ImGui::GetWindowContentRegionMax();
 
+	ImVec2 contentMin = ImVec2(windowPos.x + contentRegionMin.x, windowPos.y + contentRegionMin.y);
+	ImVec2 contentMax = ImVec2(windowPos.x + contentRegionMax.x, windowPos.y + contentRegionMax.y);
+	ImVec2 contentSize = ImVec2(contentMax.x - contentMin.x, contentMax.y - contentMin.y);
+
+	float targetAspect = 1280.0f / 720.0f;
+	ImVec2 imageSize;
+	if (contentSize.x / contentSize.y > targetAspect) {
+		imageSize.y = contentSize.y;
+		imageSize.x = contentSize.y * targetAspect;
+	} else {
+		imageSize.x = contentSize.x;
+		imageSize.y = contentSize.x / targetAspect;
+	}
+	ImVec2 centerPos = ImVec2(
+		contentMin.x + (contentSize.x - imageSize.x) * 0.5f,
+		contentMin.y + (contentSize.y - imageSize.y) * 0.5f
+	);
+	ImGui::SetCursorScreenPos(centerPos);
+	ImGui::Image((void*)handle.gpuHandle_.ptr, imageSize);
     ImGui::End();
+
+	if (isDrawGrid_) {
+		GraphRenderer::GetInstance()->DrawGrid();
+	}
 #endif // _DEBUG
 }

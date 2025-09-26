@@ -13,10 +13,19 @@ public:
 	uint32_t AddCamera();
 	Camera& GetCamera(uint32_t index);
 	Camera& GetMainCamera();
+	
+#ifdef _DEBUG
+	void SetActiveDebugCamera(bool isActive) { isActiveDebugCamera_ = isActive; }
+	bool IsActiveDebugCamera() const { return isActiveDebugCamera_; }
+#endif // _DEBUG
 
 private:
 	CameraManager() = default;
 	~CameraManager() = default;
+
+#ifdef _DEBUG
+	bool isActiveDebugCamera_;
+#endif // _DEBUG
 
 	uint32_t mainCameraIndex_;
 	std::vector<Camera> cameras_;

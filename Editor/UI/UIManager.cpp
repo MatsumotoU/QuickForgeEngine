@@ -3,6 +3,9 @@
 #include "SceneView.h"
 #include "AssetsView.h"
 #include "ConsoleView.h"
+#include "InspectorView.h"
+#include "HierarchyView.h"
+#include "GameView.h"
 
 void UIManager::Initialize() {
 	isActiveUI_ = false;
@@ -13,6 +16,10 @@ void UIManager::Initialize() {
 	editorUIs_.push_back(std::make_unique<SceneView>());
 	editorUIs_.push_back(std::make_unique<AssetsView>());
 	editorUIs_.push_back(std::make_unique<ConsoleView>());
+	editorUIs_.push_back(std::make_unique<InspectorView>());
+	editorUIs_.push_back(std::make_unique<HierarchyView>());
+	editorUIs_.push_back(std::make_unique<GameView>());
+
 	for (auto& ui : editorUIs_) {
 		ui->Initialize();
 	}

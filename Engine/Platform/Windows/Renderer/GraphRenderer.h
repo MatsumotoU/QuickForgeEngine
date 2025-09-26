@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
+#include "Utility/DesignPatterns/Singleton.h"
 #include "Graphic/ShaderBuffer/Data/PrimitiveVertexData.h"
 #include "Graphic/ShaderBuffer/Data/Material.h"
 #include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
@@ -14,7 +15,11 @@ static inline const uint32_t kGraphRendererMaxTriangleCount = 128;
 static inline const uint32_t kGraphRendererMaxLineCount = 128;
 static inline const uint32_t kGraphRendererMaxPointCount = 128;
 
-class GraphRenderer {
+class GraphRenderer : public Singleton<GraphRenderer> {
+public:
+	friend class Singleton<GraphRenderer>;
+	~GraphRenderer() override = default;
+
 public:// 一回は呼び出さないとバグるやつら
 	/// <summary>
 	/// 初期化
@@ -29,6 +34,10 @@ public:// 一回は呼び出さないとバグるやつら
 	/// 描画コマンドを発行します
 	/// </summary>
 	void PostDraw();
+	/// <summary>
+	/// リソースを解放します
+	/// </summary>
+	void Finalize();
 
 public:// 描画関数
 	/// <summary>

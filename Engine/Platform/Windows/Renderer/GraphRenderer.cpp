@@ -136,6 +136,10 @@ void GraphRenderer::PostDraw() {
 
 }
 
+void GraphRenderer::Finalize() {
+	
+}
+
 void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color) {
 	if (triangleCount_ >= kGraphRendererMaxTriangleCount) {
 		return; // 最大数を超えた場合は描画しない

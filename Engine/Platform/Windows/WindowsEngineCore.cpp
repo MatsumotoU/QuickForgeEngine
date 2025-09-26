@@ -82,7 +82,8 @@ void WindowsEngineCore::Initialize() {
 	editor_->Initialize();
 
 	frameCounter_.Initialize();
-	graphRenderer_.Initialize();
+	graphRenderer_ = GraphRenderer::GetInstance();
+	graphRenderer_->Initialize();
 
 	directInputManager_ = DirectInputManager::GetInstance();
 	directInputManager_->Initialize(
@@ -111,6 +112,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	graphRenderer_->Finalize();
 	assetManager_->Finalize();
 
 	imguiFrameController_.EndImGui();
@@ -134,17 +136,12 @@ void WindowsEngineCore::Draw() {
 	rendaringPostprocess_->SetBackBufferRtvHandle(directXCommon_->GetCurrentBackBufferCpuHandle());
 	rendaringPostprocess_->PreDraw();
 	imguiFrameController_.BeginFrame();
-	graphRenderer_.PreDraw();
+	graphRenderer_->PreDraw();
 
 	gameWindowManager->Draw();
-	
-	graphRenderer_.DrawGrid();
-	graphRenderer_.DrawLine({ 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 1.0f,1.0f,0.0f,1.0f });
-
-	graphRenderer_.DrawTriangle({ -1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f,1.0f });
 	editor_->Draw();
 
-	graphRenderer_.PostDraw();
+	graphRenderer_->PostDraw();
 	rendaringPostprocess_->PostDraw();
 	imguiFrameController_.EndFrame(directXCommon_->GetCurrentBackBufferCpuHandle());
 	directXCommon_->PostDraw();

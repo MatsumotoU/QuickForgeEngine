@@ -5,6 +5,10 @@
 
 void CameraManager::Initialize() {
 	cameras_.clear();
+#ifdef _DEBUG
+	isActiveDebugCamera_ = false;
+	AddCamera();
+#endif // _DEBUG
 	// デフォルトカメラを追加
 	mainCameraIndex_ = AddCamera();
 }
@@ -31,6 +35,12 @@ Camera& CameraManager::GetCamera(uint32_t index) {
 }
 
 Camera& CameraManager::GetMainCamera() {
+#ifdef _DEBUG
+	if (isActiveDebugCamera_) {
+		return cameras_[0];
+	}
+#endif // _DEBUG
+
 	assert(mainCameraIndex_ < cameras_.size() && "MainCameraIndex is out of range.");
 	return cameras_[mainCameraIndex_];
 }
