@@ -36,13 +36,13 @@ public:// 一回は絶対に呼び出さないとバグるやつ
 	/// </summary>
 	/// <param name="filePath"></param>
 	/// <returns></returns>
-	int32_t LoadTexture(const std::string& filePath);
+	[[nodiscard]] int32_t LoadTexture(const std::string& filePath);
 
-	Vector2 GetTextureSize(int32_t textureHandle);
-	D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index);
-	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index);
-
-	void DrawDebugTexture();
+	[[nodiscard]] Vector2 GetTextureSize(int32_t textureHandle);
+	[[nodiscard]] const D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index) const;
+	[[nodiscard]] const D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index) const;
+	[[nodiscard]] const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& GetTextureSrvHandleCPUList() const;
+	[[nodiscard]] const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>& GetTextureSrvHandleGPUList() const;
 
 private:
 	DirectX::ScratchImage Load(const std::string& filePath);

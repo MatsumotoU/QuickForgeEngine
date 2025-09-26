@@ -329,6 +329,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor\OnWindowsEditor.cpp" />
+    <ClCompile Include="Editor\UI\AssetsView.cpp" />
+    <ClCompile Include="Editor\UI\ConsoleView.cpp" />
     <ClCompile Include="Editor\UI\SceneView.cpp" />
     <ClCompile Include="Editor\UI\UIManager.cpp" />
     <ClCompile Include="Engine\Core\EngineGlobalValue.cpp" />
@@ -338,6 +340,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\FileSystems\FileUtility.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Camera\Camera.cpp" />
@@ -426,6 +429,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Editor\OnWindowsEditor.h" />
     <ClInclude Include="Editor\IEditor.h" />
+    <ClInclude Include="Editor\UI\AssetsView.h" />
+    <ClInclude Include="Editor\UI\ConsoleView.h" />
     <ClInclude Include="Editor\UI\IEditorUI.h" />
     <ClInclude Include="Editor\UI\SceneView.h" />
     <ClInclude Include="Editor\UI\UIManager.h" />
@@ -447,6 +452,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\FileSystems\FileUtility.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelData.h" />

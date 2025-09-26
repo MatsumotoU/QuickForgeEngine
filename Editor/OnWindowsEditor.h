@@ -5,7 +5,7 @@
 
 class OnWindowsEditor final : public IEditor {
 public:
-	OnWindowsEditor() = default;
+	OnWindowsEditor();
 	~OnWindowsEditor() override = default;
 	void Initialize() override;
 	void Update() override;

@@ -46,7 +46,7 @@ void TextureManager::Finalize() {
 	textureResources_.clear();
 	scratchImages_.clear();
 	intermediateResource_.clear();
-	
+
 	CoUninitialize();
 }
 
@@ -75,7 +75,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 
 #ifdef _DEBUG
 	const DirectX::TexMetadata& metadata = image.GetMetadata();
-	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height,metadata.arraySize)));
+	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height, metadata.arraySize)));
 #endif // _DEBUG
 
 	// ミップマップの作成
@@ -129,7 +129,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(ID3D12R
 	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 	subresources.clear();
 	DirectX::PrepareUpload(device_, mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
-	
+
 	UINT64 uploadBufferSize = GetRequiredIntermediateSize(texture, 0, static_cast<UINT>(subresources.size()));
 	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = BufferGenerator::Generate(device_, uploadBufferSize);
 
@@ -204,7 +204,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	intermediateResource_.push_back(
 		UploadTextureData(textureResources_.back().Get(), scratchImages_.back(), commandList_));
 #ifdef _DEBUG
-	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width,metadata.height,textureHandle_-1)));
+	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width, metadata.height, textureHandle_ - 1)));
 #endif // _DEBUG
 	filePathLiblary_.AddStringToLiblary(filePath);
 	return textureHandle_ - 1;
@@ -221,19 +221,20 @@ Vector2 TextureManager::GetTextureSize(int32_t textureHandle) {
 	return Vector2(static_cast<float>(metadata.width), static_cast<float>(metadata.height));
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t index) {
+const D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_t index) const {
 	return textureSrvHandleCPU_[index];
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleGPU(uint32_t index) {
+const D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleGPU(uint32_t index) const {
 	return textureSrvHandleGPU_[index];
 }
 
-void TextureManager::DrawDebugTexture() {
-	ImGui::Begin("TextureManager");
-	for (int i = 0; i < textureResources_.size(); i++) {
-		ImGui::Text(ConvertString(std::format(L"TextureHandle: {}", i)).c_str());
-		ImGui::Image((ImTextureID)textureSrvHandleGPU_[i].ptr, ImVec2(100.0f, 100.0f));
-	}
-	ImGui::End();
+const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& TextureManager::GetTextureSrvHandleCPUList() const {
+	return textureSrvHandleCPU_;
 }
+
+const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>& TextureManager::GetTextureSrvHandleGPUList() const {
+	return textureSrvHandleGPU_;
+}
+
+

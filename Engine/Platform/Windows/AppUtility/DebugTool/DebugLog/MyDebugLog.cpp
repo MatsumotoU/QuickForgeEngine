@@ -10,6 +10,12 @@ MyDebugLog::~MyDebugLog() {
 }
 
 void MyDebugLog::Initialize() {
+	log_.clear();
+	engineLog_.clear();
+	editorLog_.clear();
+	warningLog_.clear();
+	errorLog_.clear();
+
 	std::filesystem::create_directory("logs");
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 	std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
@@ -67,8 +73,29 @@ const std::vector<std::string>* MyDebugLog::GetLog() {
 	return &log_;
 }
 
-void DebugLog(const std::string& message, const std::source_location& location) {
+void DebugLog(const std::string& message, const LogLevel& logLevel, const std::source_location& location) {
 	MyDebugLog::GetInstance()->Log(message, location);
+	if (logLevel == LogLevel::EngineInfo) {
+		MyDebugLog::GetInstance()->engineLog_.push_back(message);
+		if (MyDebugLog::GetInstance()->engineLog_.size() > 300) {
+			MyDebugLog::GetInstance()->engineLog_.erase(MyDebugLog::GetInstance()->engineLog_.begin());
+		}
+	} else if (logLevel == LogLevel::EditorInfo) {
+		MyDebugLog::GetInstance()->editorLog_.push_back(message);
+		if (MyDebugLog::GetInstance()->editorLog_.size() > 300) {
+			MyDebugLog::GetInstance()->editorLog_.erase(MyDebugLog::GetInstance()->editorLog_.begin());
+		}
+	} else if (logLevel == LogLevel::Warning) {
+		MyDebugLog::GetInstance()->warningLog_.push_back(message);
+		if (MyDebugLog::GetInstance()->warningLog_.size() > 300) {
+			MyDebugLog::GetInstance()->warningLog_.erase(MyDebugLog::GetInstance()->warningLog_.begin());
+		}
+	} else if (logLevel == LogLevel::Error) {
+		MyDebugLog::GetInstance()->errorLog_.push_back(message);
+		if (MyDebugLog::GetInstance()->errorLog_.size() > 300) {
+			MyDebugLog::GetInstance()->errorLog_.erase(MyDebugLog::GetInstance()->errorLog_.begin());
+		}
+	}
 }
 
 void DebugLogLua(const sol::object& obj) {

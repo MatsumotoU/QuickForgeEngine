@@ -14,8 +14,6 @@ public:
 	Camera& GetCamera(uint32_t index);
 	Camera& GetMainCamera();
 
-	void DrawImGui();
-
 private:
 	CameraManager() = default;
 	~CameraManager() = default;
