@@ -1,12 +1,10 @@
 #include "DirectInputKeyboard.h"
-#include "../../Base/Windows/WinApp.h"
 
 #include <cassert>
 
 DirectInputKeyboard::DirectInputKeyboard() {
 	keyboard_ = nullptr;
 	directInput_ = nullptr;
-	winApp_ = nullptr;
 }
 
 DirectInputKeyboard::~DirectInputKeyboard() {
@@ -14,10 +12,9 @@ DirectInputKeyboard::~DirectInputKeyboard() {
 	keyboard_->Release();
 }
 
-void DirectInputKeyboard::Initialize(WinApp* win, IDirectInput8* directInput) {
-	winApp_ = win;
+void DirectInputKeyboard::Initialize(const HWND& hwnd, IDirectInput8* directInput) {
 	directInput_ = directInput;
-
+	hwnd_ = hwnd;
 	keyboard_ = CreateKeyboard();
 }
 
@@ -58,7 +55,7 @@ IDirectInputDevice8* DirectInputKeyboard::CreateKeyboard() {
 	assert(SUCCEEDED(hr));
 
 	hr = keyboard->SetCooperativeLevel(
-		winApp_->GetHWND(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+		hwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
 	return keyboard;

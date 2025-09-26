@@ -84,9 +84,9 @@ void WindowsEngineCore::Initialize() {
 	frameCounter_.Initialize();
 	graphRenderer_.Initialize();
 
-	hl = assetManager_->LoadModel("Cube.obj");
-	hl = assetManager_->LoadModel("axis.obj");
-	assetManager_->LoadTexture("anchor.png");
+	directInputManager_ = DirectInputManager::GetInstance();
+	directInputManager_->Initialize(
+		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("QuickForgeEngine"), hInstance_);
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -123,6 +123,7 @@ void WindowsEngineCore::Shutdown() {
 
 // この先はプライベート関数
 void WindowsEngineCore::Update() {
+	directInputManager_->Update();
 	gameWindowManager->Update();
 	editor_->Update();
 }
@@ -141,7 +142,6 @@ void WindowsEngineCore::Draw() {
 	graphRenderer_.DrawLine({ 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 1.0f,1.0f,0.0f,1.0f });
 
 	graphRenderer_.DrawTriangle({ -1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f,1.0f });
-	Render::Model::DrawModel(hl);
 	editor_->Draw();
 
 	graphRenderer_.PostDraw();

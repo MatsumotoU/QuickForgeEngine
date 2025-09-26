@@ -1,9 +1,7 @@
 #include "DirectInputManager.h"
-#include "../../Base/Windows/WinApp.h"
 #include <cassert>
 
-void DirectInputManager::Initialize(WinApp* winApp, const HINSTANCE& hInstance) {
-	winApp_ = winApp;
+void DirectInputManager::Initialize(const HWND& hwnd,const HINSTANCE& hInstance) {
 	hInstance_ = hInstance;
 	// directInputの生成
 	directInput_ = nullptr;
@@ -12,8 +10,8 @@ void DirectInputManager::Initialize(WinApp* winApp, const HINSTANCE& hInstance) 
 	hr;
 
 	// Deviceの生成
-	keyboard_.Initialize(winApp, directInput_);
-	mouse_.Initialize(winApp, directInput_);
+	keyboard_.Initialize(hwnd,directInput_);
+	mouse_.Initialize(hwnd,directInput_);
 }
 
 void DirectInputManager::Update() {

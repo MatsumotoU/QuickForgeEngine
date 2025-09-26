@@ -1,6 +1,7 @@
 #include "DropFileEvent.h"
 #include "Utility/String/MyString.h"
 #ifdef _DEBUG
+#include "Assets/AssetManager.h"
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
@@ -20,6 +21,7 @@ void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 		DragQueryFile(hDrop, i, filePath, MAX_PATH);
 		eventData_["DropFilePath"] = ConvertString(filePath);
 #ifdef _DEBUG
+		
 		DebugLog("Drop File: " + ConvertString(filePath));
 #endif // _DEBUG
 	}

@@ -1,5 +1,4 @@
 #include "DirectInputMouse.h"
-#include "../../Base/Windows/WinApp.h"
 
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -9,7 +8,6 @@
 DirectInputMouse::DirectInputMouse() {
 	mouse_ = nullptr;
 	directInput_ = nullptr;
-	winApp_ = nullptr;
 	mouseState_ = {};
 	preMouseState_ = {};
 	mousePos_ = {};
@@ -24,10 +22,9 @@ DirectInputMouse::~DirectInputMouse() {
 	mouse_->Release();
 }
 
-void DirectInputMouse::Initialize(WinApp* win, IDirectInput8* directInput) {
-	winApp_ = win;
+void DirectInputMouse::Initialize(const HWND& hwnd, IDirectInput8* directInput) {
 	directInput_ = directInput;
-
+	hwnd_ = hwnd;
 	mouse_ = CreateMouse();
 }
 
@@ -39,7 +36,7 @@ void DirectInputMouse::Update() {
 
 	// スクリーン上の座標に変換
 	GetCursorPos(&mousePos_);
-	ScreenToClient(winApp_->GetHWND(),&mousePos_);
+	ScreenToClient(hwnd_,&mousePos_);
 	mouseScreenPos_.x = static_cast<float>(mousePos_.x);
 	mouseScreenPos_.y = static_cast<float>(mousePos_.y);
 
@@ -82,7 +79,7 @@ IDirectInputDevice8* DirectInputMouse::CreateMouse() {
 	assert(SUCCEEDED(hr));
 
 	hr = mouse->SetCooperativeLevel(
-		winApp_->GetHWND(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+		hwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
 	return mouse;

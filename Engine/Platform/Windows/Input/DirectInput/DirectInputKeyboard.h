@@ -4,15 +4,13 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 
-class WinApp;
-
 class DirectInputKeyboard {
 public:
 	DirectInputKeyboard();
 	~DirectInputKeyboard();
 
 public:// コアの関数
-	void Initialize(WinApp* win, IDirectInput8* directInput);
+	void Initialize(const HWND& hwnd, IDirectInput8* directInput);
 	void Update();
 
 public:// キー管理関数
@@ -45,5 +43,5 @@ private:
 private:
 	IDirectInputDevice8* keyboard_;
 	IDirectInput8* directInput_;
-	WinApp* winApp_;
+	HWND hwnd_;
 };

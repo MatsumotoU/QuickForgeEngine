@@ -18,6 +18,8 @@
 #include "Graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include "Graphic/PostEffect/RendaringPostprocess.h"
 
+#include "Input/DirectInput/DirectInputManager.h"
+
 class WindowsEngineCore final : public IEngineCore {
 public:
 	WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
@@ -49,5 +51,5 @@ private:
 	std::unique_ptr<IEditor> editor_ = nullptr;
 	FrameCounter frameCounter_;
 
-	uint32_t hl;
+	DirectInputManager* directInputManager_;
 };
