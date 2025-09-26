@@ -11,6 +11,9 @@ ResourceDirectoryManager::ResourceDirectoryManager() {
 	resourceDirectories_["Font"] = "Resources/Fonts/";
 	resourceDirectories_["Scenes"] = "Resources/Scenes/";
 	resourceDirectories_["Sounds"] = "Resources/Sounds/";
+#ifdef _DEBUG
+	resourceDirectories_["Editor"] = "Editor/Resource/Images/";
+#endif // _DEBUG
 
 #ifdef _DEBUG
 	for (const auto& [key, value] : resourceDirectories_) {

@@ -84,6 +84,11 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 	return modelRenderDataManager_.Add(modelRenderData);
 }
 
+uint32_t AssetManager::LoadEditorTexture(const std::string& imageName) {
+	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Editor") + imageName;
+	return textureManager_->LoadTexture(filePath);
+}
+
 const ModelRenderData* AssetManager::GetModelRenderData(uint32_t modelHandle) const {
 	return modelRenderDataManager_.Get(modelHandle);
 }

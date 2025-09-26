@@ -9,11 +9,23 @@
 
 #include "DesignPatterns/Singleton.h"
 
+enum class LogLevel {
+	EngineInfo,
+	EditorInfo,
+	Warning,
+	Error
+};
+
 class MyDebugLog : public Singleton<MyDebugLog> {
     friend class Singleton<MyDebugLog>;
 public:
     void Log(const std::string& message, const std::source_location& location = std::source_location::current());
 	const std::vector<std::string>* GetLog();
+
+	std::vector<std::string> engineLog_;
+	std::vector<std::string> editorLog_;
+	std::vector<std::string> warningLog_;
+	std::vector<std::string> errorLog_;
 private:
     MyDebugLog();
     ~MyDebugLog() override;
@@ -29,6 +41,6 @@ private:
 /// このヘッダーを読み込んでいれば使えるやつ
 /// </summary>
 /// <param name="message"></param>
-void DebugLog(const std::string& message, const std::source_location& location = std::source_location::current());
+void DebugLog(const std::string& message,const LogLevel& logLevel = LogLevel::EngineInfo, const std::source_location& location = std::source_location::current());
 // 文字列・数値どちらも受け取れるラッパー関数
 void DebugLogLua(const sol::object& obj);

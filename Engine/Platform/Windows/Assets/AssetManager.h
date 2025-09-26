@@ -35,6 +35,10 @@ public:
 	/// 拡張子付きで書くこと
 	uint32_t LoadModel(const std::string& modelName);
 
+#ifdef _DEBUG
+	uint32_t LoadEditorTexture(const std::string& imageName);
+#endif // _DEBUG
+
 	const ModelRenderData* GetModelRenderData(uint32_t modelHandle) const;
 	TextureManager* GetTextureManager() { return textureManager_; }
 	ModelVertexResourceManager* GetModelVertexResourceManager() { return &modelVertexResourceManager_; }
