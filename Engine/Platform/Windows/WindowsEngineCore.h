@@ -11,7 +11,7 @@
 #include "AppUtility/DebugTool/App/WinAppDebugCore.h"
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
 #include "AppUtility/DebugTool/FrameCounter.h"
-#include "Graphic/Pipeline/GraphRenderer.h"
+#include "Renderer/GraphRenderer.h"
 
 #include "Assets/AssetManager.h"
 
@@ -43,7 +43,7 @@ private:
 
 	AssetManager* assetManager_;
 	RendaringPostprosecess* rendaringPostprocess_;
-	GraphRenderer graphRenderer_;
+	GraphRenderer* graphRenderer_;
 
 	GraphicPipelineManager* graphicPipelineManager_;
 	ImGuiFlameController imguiFrameController_;

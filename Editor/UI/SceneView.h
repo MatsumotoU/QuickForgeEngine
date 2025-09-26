@@ -12,6 +12,7 @@ public:
 
 private:
 	bool isActiveCamera_;
+	bool isDrawGrid_;
 	Vector3 anchorPoint_;
 	float mouseSensitivity_;
 };
