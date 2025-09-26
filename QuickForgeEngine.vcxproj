@@ -464,8 +464,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelMaterialData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelRenderData.h" />
-    <ClInclude Include="Engine\Platform\Windows\Assets\Component\ComponentStrage.h" />
-    <ClInclude Include="Engine\Platform\Windows\Assets\Component\IComponentStrage.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Entity\Component\ComponentStrage.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Entity\Component\IComponentStrage.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ConstantBufferManager\ConstantBufferManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Camera\Camera.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Camera\CameraManager.h" />

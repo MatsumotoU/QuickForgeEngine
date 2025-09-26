@@ -1,5 +1,5 @@
 #pragma once
-#include "Assets/Component/ComponentStrage.h"
+#include "Component/ComponentStrage.h"
 #include <stdexcept>
 
 class EntityManager final {
