@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "ModelVertexResourceManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>

@@ -9,7 +9,11 @@
 #include "Graphic/ShaderBuffer/VertexBuffer.h"
 #include "Graphic/ShaderBuffer/ConstantBuffer.h"
 
-#include "pch.h"
+#include <stdint.h>
+#include <string>
+#include <vector>
+#include <list>
+#include <unordered_map>
 #include <d3d12.h>
 #include <functional>
 #include <map>

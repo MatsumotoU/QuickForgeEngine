@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "AssetManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "Assets/3DModel/Loader/AssimpModelLoader.h"

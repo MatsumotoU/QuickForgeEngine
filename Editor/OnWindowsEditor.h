@@ -1,5 +1,9 @@
 #pragma once
-#include "pch.h"
+#include <stdint.h>
+#include <string>
+#include <vector>
+#include <list>
+#include <unordered_map>
 #include "IEditor.h"
 #include "UI/UIManager.h"
 

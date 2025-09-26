@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "RendaringPostprocess.h"
 #include "AppUtility/DirectX/TransitionResourceBarrier.h"
 #include "Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"

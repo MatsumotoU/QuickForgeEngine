@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "ModelRenderDataManager.h"
 
 void ModelRenderDataManager::Initialize() {
