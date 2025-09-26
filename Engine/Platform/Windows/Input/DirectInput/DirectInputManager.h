@@ -1,15 +1,21 @@
 #pragma once
+#include "Utility/DesignPatterns/Singleton.h"
+
 #include "DirectInputKeyboard.h"
 #include "DirectInputMouse.h"
 
 #include <Windows.h>
 
-// デバイス単位でクラス分け
-class WinApp;
+class DirectInputManager : public Singleton<DirectInputManager>{
+	friend class Singleton<DirectInputManager>;
+	DirectInputManager() = default;
+	DirectInputManager(const DirectInputManager&) = delete;
+	DirectInputManager& operator=(const DirectInputManager&) = delete;
+	DirectInputManager(DirectInputManager&&) = delete;
+	DirectInputManager& operator=(DirectInputManager&&) = delete;
 
-class DirectInputManager {
 public:
-	void Initialize(WinApp* winApp, const HINSTANCE& hInstance);
+	void Initialize(const HWND& hwnd,const HINSTANCE& hInstance);
 	void Update();
 
 public:
@@ -21,7 +27,6 @@ public:
 
 private:// DirectInputのコア
 	HINSTANCE hInstance_;
-	WinApp* winApp_;
 	IDirectInput8* directInput_;
 
 public:

@@ -346,6 +346,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Assets\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Camera\CameraManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\GraphRenderer.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Input\DirectInput\DirectInputKeyboard.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Input\DirectInput\DirectInputManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Input\DirectInput\DirectInputMouse.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -462,6 +465,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\Camera\Camera.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\GraphRenderer.h" />
+    <ClInclude Include="Engine\Platform\Windows\Input\DirectInput\DirectInputKeyboard.h" />
+    <ClInclude Include="Engine\Platform\Windows\Input\DirectInput\DirectInputManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Input\DirectInput\DirectInputMouse.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Loader\AssimpModelLoader.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\ModelRenderDataManager.h" />

@@ -23,6 +23,10 @@ public:
 	float nearZ_;
 	float farZ_;
 
+#ifdef _DEBUG
+	void DrawImgui();
+#endif // _DEBUG
+
 private:
 	Matrix4x4 viewMatrix_;
 	CameraType cameraType;

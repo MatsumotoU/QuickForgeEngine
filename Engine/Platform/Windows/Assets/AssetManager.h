@@ -54,6 +54,7 @@ private:
 
 	ModelRenderDataManager modelRenderDataManager_;
 	ModelVertexResourceManager modelVertexResourceManager_;
+	std::vector<Transform> transforms_;
 	ConstantBufferManager<TransformationMatrix> wpvBufferManager_;
 	ConstantBufferManager<Material> materialBufferManager_;
 	ConstantBufferManager<DirectionalLight> lightBufferManager_;

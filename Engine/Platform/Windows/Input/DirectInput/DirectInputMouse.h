@@ -4,10 +4,8 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 
-#include "../../Math/Vector/Vector2.h"
-#include "../../Math/Vector/Vector3.h"
-
-class WinApp;
+#include "Core/Math/Vector/Vector2.h"
+#include "Core/Math/Vector/Vector3.h"
 
 class DirectInputMouse {
 public:
@@ -15,7 +13,7 @@ public:
 	~DirectInputMouse();
 
 public:// コアの関数
-	void Initialize(WinApp* win, IDirectInput8* directInput);
+	void Initialize(const HWND& hwnd, IDirectInput8* directInput);
 	void Update();
 
 public:// マウス管理関数
@@ -53,6 +51,6 @@ private:
 private:
 	IDirectInputDevice8* mouse_;
 	IDirectInput8* directInput_;
-	WinApp* winApp_;
+	HWND hwnd_;
 	POINT mousePos_;
 };
