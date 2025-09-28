@@ -7,7 +7,7 @@
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
-
+uint32_t HierarchyView::selectedEntityId_ = 0;
 
 HierarchyView::HierarchyView() {
 	isActive_ = true;
@@ -32,8 +32,6 @@ void HierarchyView::Draw() {
 	DrawPopupContextWindow();
 	// Entity一覧表示
 	DrawEntityList();
-	// Camera一覧表示
-	DrawCameraList();
 
 	ImGui::End();
 }
@@ -59,15 +57,11 @@ void HierarchyView::DrawEntityList() {
 	// TODO: 名前をつけられるようにする
 	AssetManager* assetManager = AssetManager::GetInstance();
 	for (uint32_t i = 0; i < assetManager->GetEntityManager()->GetNextEntityId(); i++) {
-		ImGui::Text("GameObject");
+		// 選択状態かどうか
+		bool isSelected = (selectedEntityId_ == i);
+		// クリック可能なリスト項目
+		if (ImGui::Selectable(("GameObject " + std::to_string(i)).c_str(), isSelected)) {
+			selectedEntityId_ = i;
+		}
 	}
-}
-
-void HierarchyView::DrawCameraList() {
-	CameraManager* cameraManager = CameraManager::GetInstance();
-	for (const Camera& camera : cameraManager->GetCameras()) {
-		camera;
-		ImGui::Text("Camera");
-	}
-	
 }

@@ -9,4 +9,5 @@ public:
 	void Update() override;
 	void Draw() override;
 private:
+	uint32_t selectedEntityId_;
 };

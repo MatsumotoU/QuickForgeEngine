@@ -478,6 +478,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Entity\EntityManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneObjectData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Renderer\GraphRenderer.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\DirectInput\DirectInputKeyboard.h" />

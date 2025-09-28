@@ -13,10 +13,12 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	static uint32_t selectedEntityId_;
+
 private:
 	void DrawPopupContextWindow();
 	void DrawEntityList();
-	void DrawCameraList();
+
 #ifdef _DEBUG
 	DropDownFileList modelDropDownFileList_;
 #endif // _DEBUG

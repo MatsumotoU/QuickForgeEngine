@@ -4,6 +4,7 @@
 #include "Assets/AssetManager.h"
 #include "Camera/CameraManager.h"
 #include "Assets/3DModel/Data/ModelHandle.h"
+#include "Data/SceneObjectData.h"
 
 void SceneManager::Initalize() {
 	currentScene_ = std::make_unique<SceneObject>();
@@ -50,5 +51,6 @@ void SceneManager::LoadModel(const std::string& modelName) {
 	ModelHandle modelHandle;
 	modelHandle.handle = assetManager->LoadModel(modelName);
 	assetManager->GetEntityManager()->EmplaceComponent<ModelHandle>(entityId, modelHandle);
-
+	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
+	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, SceneObjectData{ modelName, "Untagged" });
 }
