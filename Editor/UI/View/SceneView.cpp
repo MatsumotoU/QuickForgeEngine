@@ -86,29 +86,34 @@ void SceneView::DebugCameraControl() {
 
 		float distance = (camera.transform_.translate - anchorPoint_).Length();
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD7)) {
-			targetRotate_ = { distance, 0.0f, 0.0f };
+			targetRotate_ = { distance, 0.0f, 3.14f };
 			startPos_ = camera.transform_.translate;
 			cameraMoveT_ = 0.0f;
 		}
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD1)) {
-			targetRotate_ = { distance, 3.14f * 0.5f,0.0f  };
+			targetRotate_ = { distance, -3.14f * 0.5f,3.14f*0.5f  };
 			startPos_ = camera.transform_.translate;
 			cameraMoveT_ = 0.0f;
 		}
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD9)) {
-			targetRotate_ = { distance, 3.14f, 3.14f };
+			float PI = 3.14f;
+			// 反対方向
+			float thetaOpposite = PI - targetRotate_.y;
+			float phiOpposite = targetRotate_.z + PI;
+
+			targetRotate_ = { distance, thetaOpposite, phiOpposite };
 			startPos_ = camera.transform_.translate;
 			cameraMoveT_ = 0.0f;
 		}
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD3)) {
-			targetRotate_ = { distance, -3.14f * 0.5f,0.0f };
+			targetRotate_ = { distance, 3.14f * 0.5f,0.0f };
 			startPos_ = camera.transform_.translate;
 			cameraMoveT_ = 0.0f;
 		}
 		if (cameraMoveT_ < 1.0f) {
 			cameraMoveT_ += 0.1f;
 			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(targetRotate_);
-			camera.transform_.translate = Vector3::Slerp(startPos_,sphericalToCartesian + anchorPoint_,powf( cameraMoveT_,2.0f));
+			camera.transform_.translate = Vector3::Slerp(startPos_,sphericalToCartesian + anchorPoint_, cameraMoveT_);
 
 			// LookAtの方向ベクトルがゼロにならないように
 			if ((anchorPoint_ - Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix())).Length() > 0.001f) {
