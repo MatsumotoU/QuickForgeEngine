@@ -15,6 +15,9 @@ SceneView::SceneView() {
 
 	anchorPoint_ = { 0.0f,0.0f,0.0f };
 	mouseSensitivity_ = 0.5f;
+	cameraMoveT_ = 1.0f;
+	targetRotate_ = { 0.0f,0.0f,0.0f };
+	startPos_ = targetRotate_;
 }
 
 void SceneView::Initialize() {
@@ -23,11 +26,98 @@ void SceneView::Initialize() {
 
 void SceneView::Update() {
 #ifdef _DEBUG
+	DebugCameraControl();
+#endif // _DEBUG
+}
+
+void SceneView::Draw() {
+	if (!isActive_) {
+		return;
+	}
+#ifdef _DEBUG
+	RendaringPostprosecess* render = RendaringPostprosecess::GetInstance();
+	DescriptorHandles handle = render->GetCurrentSrvHandle();
+	ImGui::Begin("Scene View");
+
+	// フォーカス判定
+	bool isSceneViewFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+	if (isSceneViewFocused) {
+		isActiveCamera_ = true;
+	} else {
+		isActiveCamera_ = false;
+	}
+
+	ImVec2 windowPos = ImGui::GetWindowPos();
+	ImVec2 contentRegionMin = ImGui::GetWindowContentRegionMin();
+	ImVec2 contentRegionMax = ImGui::GetWindowContentRegionMax();
+
+	ImVec2 contentMin = ImVec2(windowPos.x + contentRegionMin.x, windowPos.y + contentRegionMin.y);
+	ImVec2 contentMax = ImVec2(windowPos.x + contentRegionMax.x, windowPos.y + contentRegionMax.y);
+	ImVec2 contentSize = ImVec2(contentMax.x - contentMin.x, contentMax.y - contentMin.y);
+
+	float targetAspect = 1280.0f / 720.0f;
+	ImVec2 imageSize;
+	if (contentSize.x / contentSize.y > targetAspect) {
+		imageSize.y = contentSize.y;
+		imageSize.x = contentSize.y * targetAspect;
+	} else {
+		imageSize.x = contentSize.x;
+		imageSize.y = contentSize.x / targetAspect;
+	}
+	ImVec2 centerPos = ImVec2(
+		contentMin.x + (contentSize.x - imageSize.x) * 0.5f,
+		contentMin.y + (contentSize.y - imageSize.y) * 0.5f
+	);
+	ImGui::SetCursorScreenPos(centerPos);
+	ImGui::Image((void*)handle.gpuHandle_.ptr, imageSize);
+	ImGui::End();
+
+	if (isDrawGrid_) {
+		GraphRenderer::GetInstance()->DrawGrid();
+	}
+#endif // _DEBUG
+}
+
+void SceneView::DebugCameraControl() {
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
 	if (isActiveCamera_) {
 		CameraManager::GetInstance()->SetActiveDebugCamera(true);
 		DirectInputManager* input = DirectInputManager::GetInstance();
-		
+
+		float distance = (camera.transform_.translate - anchorPoint_).Length();
+		if (input->keyboard_.GetTrigger(DIK_NUMPAD7)) {
+			targetRotate_ = { distance, 0.0f, 0.0f };
+			startPos_ = camera.transform_.translate;
+			cameraMoveT_ = 0.0f;
+		}
+		if (input->keyboard_.GetTrigger(DIK_NUMPAD1)) {
+			targetRotate_ = { distance, 3.14f * 0.5f,0.0f  };
+			startPos_ = camera.transform_.translate;
+			cameraMoveT_ = 0.0f;
+		}
+		if (input->keyboard_.GetTrigger(DIK_NUMPAD9)) {
+			targetRotate_ = { distance, 3.14f, 3.14f };
+			startPos_ = camera.transform_.translate;
+			cameraMoveT_ = 0.0f;
+		}
+		if (input->keyboard_.GetTrigger(DIK_NUMPAD3)) {
+			targetRotate_ = { distance, -3.14f * 0.5f,0.0f };
+			startPos_ = camera.transform_.translate;
+			cameraMoveT_ = 0.0f;
+		}
+		if (cameraMoveT_ < 1.0f) {
+			cameraMoveT_ += 0.1f;
+			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(targetRotate_);
+			camera.transform_.translate = Vector3::Slerp(startPos_,sphericalToCartesian + anchorPoint_,powf( cameraMoveT_,2.0f));
+
+			// LookAtの方向ベクトルがゼロにならないように
+			if ((anchorPoint_ - Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix())).Length() > 0.001f) {
+				camera.transform_.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
+			}
+			return;
+		}
+
+		// ホイールでズームイン・アウト
 		if (input->mouse_.wheelDir_ != 0.0f) {
 			Vector3 cartesianTemp = camera.transform_.translate - anchorPoint_;
 			Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
@@ -68,60 +158,10 @@ void SceneView::Update() {
 				camera.transform_.translate = sphericalToCartesian + anchorPoint_;
 
 				// LookAtの方向ベクトルがゼロにならないように
-				if ((anchorPoint_ - Vector3::Transform({0.0f,0.0f,0.0f}, camera.GetWorldMatrix())).Length() > 0.001f) {
+				if ((anchorPoint_ - Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix())).Length() > 0.001f) {
 					camera.transform_.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
 				}
 			}
 		}
-
 	}
-#endif // _DEBUG
-}
-
-void SceneView::Draw() {
-    if (!isActive_) {
-        return;
-    }
-#ifdef _DEBUG
-    RendaringPostprosecess* render = RendaringPostprosecess::GetInstance();
-    DescriptorHandles handle = render->GetCurrentSrvHandle();
-    ImGui::Begin("Scene View");
-
-    // フォーカス判定
-    bool isSceneViewFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
-    if (isSceneViewFocused) {
-		isActiveCamera_ = true;
-	} else {
-		isActiveCamera_ = false;
-    }
-
-	ImVec2 windowPos = ImGui::GetWindowPos();
-	ImVec2 contentRegionMin = ImGui::GetWindowContentRegionMin();
-	ImVec2 contentRegionMax = ImGui::GetWindowContentRegionMax();
-
-	ImVec2 contentMin = ImVec2(windowPos.x + contentRegionMin.x, windowPos.y + contentRegionMin.y);
-	ImVec2 contentMax = ImVec2(windowPos.x + contentRegionMax.x, windowPos.y + contentRegionMax.y);
-	ImVec2 contentSize = ImVec2(contentMax.x - contentMin.x, contentMax.y - contentMin.y);
-
-	float targetAspect = 1280.0f / 720.0f;
-	ImVec2 imageSize;
-	if (contentSize.x / contentSize.y > targetAspect) {
-		imageSize.y = contentSize.y;
-		imageSize.x = contentSize.y * targetAspect;
-	} else {
-		imageSize.x = contentSize.x;
-		imageSize.y = contentSize.x / targetAspect;
-	}
-	ImVec2 centerPos = ImVec2(
-		contentMin.x + (contentSize.x - imageSize.x) * 0.5f,
-		contentMin.y + (contentSize.y - imageSize.y) * 0.5f
-	);
-	ImGui::SetCursorScreenPos(centerPos);
-	ImGui::Image((void*)handle.gpuHandle_.ptr, imageSize);
-    ImGui::End();
-
-	if (isDrawGrid_) {
-		GraphRenderer::GetInstance()->DrawGrid();
-	}
-#endif // _DEBUG
 }

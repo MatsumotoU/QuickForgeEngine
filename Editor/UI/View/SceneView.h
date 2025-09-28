@@ -11,6 +11,11 @@ public:
 	void Draw() override;
 
 private:
+	void DebugCameraControl();
+	float cameraMoveT_;
+	Vector3 startPos_;
+	Vector3 targetRotate_;
+
 	bool isActiveCamera_;
 	bool isDrawGrid_;
 	Vector3 anchorPoint_;
