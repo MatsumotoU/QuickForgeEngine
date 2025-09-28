@@ -26,7 +26,7 @@ public:
 		}
 		throw std::runtime_error("Component not found");
 	}
-	void RemoveComponent(uint32_t id) {
+	void RemoveComponent(uint32_t id) override {
 		components.erase(id);
 	}
 	auto& GetAllComponents() {

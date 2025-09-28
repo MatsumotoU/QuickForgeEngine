@@ -1,20 +1,43 @@
 #pragma once
 #include "Component/ComponentStrage.h"
 #include <stdexcept>
+#include <unordered_set>
+#include <vector>
 
 class EntityManager final {
 private:
 	std::unordered_map<size_t, std::unique_ptr<IComponentStrage>> componentStrages;
 	uint32_t nextEntityId_;
+	std::unordered_set<uint32_t> activeEntityIds_;
+	std::vector<uint32_t> entitiesToRemove_;
+
 public:
 	EntityManager() : nextEntityId_(0) {}
+	void EndFrame() {
+		// 削除予定のEntityに紐づくコンポーネントを全て削除
+		for (uint32_t id : entitiesToRemove_) {
+			for (auto& [typeId, strage] : componentStrages) {
+				strage->RemoveComponent(id);
+			}
+			activeEntityIds_.erase(id);
+		}
+		entitiesToRemove_.clear();
+	}
+
 	void ResetEntiry() {
 		componentStrages.clear();
+		activeEntityIds_.clear();
 		nextEntityId_ = 0;
 	}
 
 	uint32_t CreateEntity() {
-		return nextEntityId_++;
+		uint32_t id = nextEntityId_++;
+		activeEntityIds_.insert(id);
+		return id;
+	}
+
+	void RemoveEntity(uint32_t id) {
+		entitiesToRemove_.push_back(id);
 	}
 
 	template <typename T, typename... Args>
@@ -73,5 +96,9 @@ public:
 
 	uint32_t GetNextEntityId() const {
 		return nextEntityId_;
+	}
+
+	std::vector<uint32_t> GetActiveEntityIds() const {
+		return std::vector<uint32_t>(activeEntityIds_.begin(), activeEntityIds_.end());
 	}
 };

@@ -2,6 +2,7 @@
 #include "Assets/AssetManager.h"
 #include "Camera/CameraManager.h"
 #include "Scene/SceneManager.h"
+#include "Scene/Data/SceneObjectData.h"
 
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
@@ -56,12 +57,30 @@ void HierarchyView::DrawPopupContextWindow() {
 void HierarchyView::DrawEntityList() {
 	// TODO: 名前をつけられるようにする
 	AssetManager* assetManager = AssetManager::GetInstance();
-	for (uint32_t i = 0; i < assetManager->GetEntityManager()->GetNextEntityId(); i++) {
-		// 選択状態かどうか
-		bool isSelected = (selectedEntityId_ == i);
-		// クリック可能なリスト項目
-		if (ImGui::Selectable(("GameObject " + std::to_string(i)).c_str(), isSelected)) {
-			selectedEntityId_ = i;
-		}
-	}
+	auto entityIds = assetManager->GetEntityManager()->GetActiveEntityIds();
+    for (uint32_t id : entityIds) {
+        bool isSelected = (selectedEntityId_ == id);
+		std::string& name = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(id).name;
+        std::string label = name + "##" + std::to_string(id);
+
+        // Selectable（左クリックで選択）
+        if (ImGui::Selectable(label.c_str(), isSelected)) {
+            selectedEntityId_ = id;
+        }
+
+        // 右クリックでコンテキストメニュー
+        if (ImGui::BeginPopupContextItem(label.c_str())) {
+            if (ImGui::MenuItem("Delete")) {
+                // 削除処理
+                AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(id);
+
+                // 選択中だったら選択解除
+                if (selectedEntityId_ == id) {
+                    selectedEntityId_ = 0;
+                }
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+    }
 }

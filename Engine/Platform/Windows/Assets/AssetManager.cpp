@@ -84,4 +84,5 @@ const ModelRenderData* AssetManager::GetModelRenderData(uint32_t modelHandle) co
 
 void AssetManager::EndFrame() {
 	textureManager_->ReleaseIntermediateResources();
+	entityManager_.EndFrame();
 }
