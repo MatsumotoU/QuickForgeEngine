@@ -1,6 +1,6 @@
 #include "GameView.h"
 #include "Graphic/PostEffect/RendaringPostprocess.h"
-#include "Assets/Camera/CameraManager.h"
+#include "Camera/CameraManager.h"
 
 GameView::GameView() {
 	name_ = "Game View";
