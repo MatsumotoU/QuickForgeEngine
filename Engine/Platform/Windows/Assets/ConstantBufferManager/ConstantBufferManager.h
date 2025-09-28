@@ -1,5 +1,9 @@
 #pragma once
-#include "pch.h"
+#include <stdint.h>
+#include <string>
+#include <vector>
+#include <list>
+#include <unordered_map>
 #include "Graphic/ShaderBuffer/ConstantBuffer.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 

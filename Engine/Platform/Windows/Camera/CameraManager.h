@@ -13,6 +13,7 @@ public:
 	uint32_t AddCamera();
 	Camera& GetCamera(uint32_t index);
 	Camera& GetMainCamera();
+	std::vector<Camera>& GetCameras();
 	
 #ifdef _DEBUG
 	void SetActiveDebugCamera(bool isActive) { isActiveDebugCamera_ = isActive; }

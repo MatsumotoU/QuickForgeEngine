@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "AssetManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "Assets/3DModel/Loader/AssimpModelLoader.h"
@@ -17,24 +16,12 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 	lightBufferManager_.Initialize();
 	modelVertexResourceManager_.Initialize();
 	modelRenderDataManager_.Initialize();
-
-	cameraManager_ = CameraManager::GetInstance();
-	cameraManager_->Initialize();
-
-	transforms_.clear();
 }
 
 void AssetManager::PreDraw() {
-	cameraManager_->Update();
-	for (uint32_t i = 0; i < wpvBufferManager_.GetBufferCount(); i++) {
-		Camera& camera = cameraManager_->GetMainCamera();
-		TransformationMatrix* wpvMatrix = wpvBufferManager_.GetBufferData(i);
-		wpvMatrix->WVP = camera.GetWorldViewProjectionMatrix(wpvMatrix->World);
-	}
 }
 
 void AssetManager::Finalize() {
-	cameraManager_->Shutdown();
 	textureManager_->Finalize();
 	wpvBufferManager_.Finalize();
 	materialBufferManager_.Finalize();
@@ -77,7 +64,6 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		materialBufferManager_.GetBufferData(meshRenderData.materialHandle)->uvTransform = Matrix4x4::MakeIndentity4x4();
 		wpvBufferManager_.GetBufferData(meshRenderData.wpvBufferHandle)->World = Matrix4x4::MakeIndentity4x4();
 		wpvBufferManager_.GetBufferData(meshRenderData.wpvBufferHandle)->WVP = Matrix4x4::MakeIndentity4x4();
-		transforms_.emplace_back();
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->color = { 1.0f,1.0f,1.0f,1.0f };
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->direction = { 0.0f,-1.0f,0.0f };
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->intensity = 1.0f;
@@ -98,4 +84,5 @@ const ModelRenderData* AssetManager::GetModelRenderData(uint32_t modelHandle) co
 
 void AssetManager::EndFrame() {
 	textureManager_->ReleaseIntermediateResources();
+	entityManager_.EndFrame();
 }

@@ -20,6 +20,8 @@
 
 #include "Input/DirectInput/DirectInputManager.h"
 
+#include "Scene/SceneManager.h"
+
 class WindowsEngineCore final : public IEngineCore {
 public:
 	WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
@@ -52,4 +54,5 @@ private:
 	FrameCounter frameCounter_;
 
 	DirectInputManager* directInputManager_;
+	SceneManager* sceneManager_;
 };

@@ -1,9 +1,14 @@
 #pragma once
-#include "IEditorUI.h"
+#include "../IEditorUI.h"
 #include <unordered_map>
 #include <functional>
 
 class AssetManager;
+
+enum class LoadSpace {
+	Memory,
+	File
+};
 
 enum class ViewHierarchy {
 	Root,
@@ -36,6 +41,8 @@ private:
 	ViewHierarchy currentHierarchy;
 	std::unordered_map<ViewHierarchy, std::function<void()>> drawFunctions;
 	std::unordered_map<ViewHierarchy, std::string> hierarchyNames;
+
+	LoadSpace loadSpace_;
 
 	uint32_t fileGH_;
 	uint32_t arrowGH_;

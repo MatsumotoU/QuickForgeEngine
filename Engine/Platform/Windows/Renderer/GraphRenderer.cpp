@@ -4,7 +4,7 @@
 #include "Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
 #include "Assets/AssetManager.h"
-#include "Assets/Camera/CameraManager.h"
+#include "Camera/CameraManager.h"
 #include <cassert>
 
 void GraphRenderer::Initialize() {

@@ -1,5 +1,5 @@
 #pragma once
-#include "IEditorUI.h"
+#include "../IEditorUI.h"
 
 class InspectorView final : public IEditorUI {
 public:
@@ -9,4 +9,5 @@ public:
 	void Update() override;
 	void Draw() override;
 private:
+	uint32_t selectedEntityId_;
 };

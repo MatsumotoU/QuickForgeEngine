@@ -19,11 +19,14 @@ void WindowGenerater::CreateGameWindow(WNDCLASS& wc, HWND& hwnd, WindowConfigDat
 	// クライアント領域を元に実際のサイズにwrcを更新してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
+	// リサイズ禁止
+	DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+	
 	// ウィンドウの生成
 	hwnd = CreateWindow(
 		wc.lpszClassName,
 		config.windowName.c_str(),
-		WS_OVERLAPPEDWINDOW,
+		style,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		wrc.right - wrc.left,

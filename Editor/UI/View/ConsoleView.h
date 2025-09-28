@@ -1,5 +1,5 @@
 #pragma once
-#include "IEditorUI.h"
+#include "../IEditorUI.h"
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG

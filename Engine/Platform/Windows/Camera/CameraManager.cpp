@@ -44,3 +44,28 @@ Camera& CameraManager::GetMainCamera() {
 	assert(mainCameraIndex_ < cameras_.size() && "MainCameraIndex is out of range.");
 	return cameras_[mainCameraIndex_];
 }
+
+std::vector<Camera>& CameraManager::GetCameras() {
+	if (cameras_.empty()) {
+		assert(!cameras_.empty() && "No cameras available.");
+	}
+
+#ifdef _DEBUG
+	// 0番以外のカメラだけを返す
+	if (cameras_.size() > 1) {
+		// 0番以外のカメラだけを格納するstaticなvectorを用意
+		static std::vector<Camera> nonDebugCameras;
+		nonDebugCameras.clear();
+		for (size_t i = 1; i < cameras_.size(); ++i) {
+			nonDebugCameras.push_back(cameras_[i]);
+		}
+		return nonDebugCameras;
+	}
+	// 0番しかない場合は空のvectorを返す
+	static std::vector<Camera> emptyCameras;
+	emptyCameras.clear();
+	return emptyCameras;
+#else
+	return cameras_;
+#endif // _DEBUG
+}

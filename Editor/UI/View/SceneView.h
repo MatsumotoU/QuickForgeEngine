@@ -1,5 +1,5 @@
 #pragma once
-#include "IEditorUI.h"
+#include "../IEditorUI.h"
 #include "Core/Math/Vector/Vector3.h"
 
 class SceneView : public IEditorUI {

@@ -8,7 +8,7 @@
 #include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
 #include "Graphic/ShaderBuffer/Data/Material.h"
 #include "Graphic/ShaderBuffer/Data/DirectionalLight.h"
-#include "Camera/CameraManager.h"
+#include "Entity/EntityManager.h"
 
 #include "Utility/DesignPatterns/Singleton.h"
 
@@ -45,6 +45,8 @@ public:
 	ConstantBufferManager<TransformationMatrix>* GetWpvBufferManager() { return &wpvBufferManager_; }
 	ConstantBufferManager<Material>* GetMaterialBufferManager() { return &materialBufferManager_; }
 	ConstantBufferManager<DirectionalLight>* GetLightBufferManager() { return &lightBufferManager_; }
+	EntityManager* GetEntityManager() { return &entityManager_; }
+	const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
 
 private:
 	DirectXCommon* dxCommon_;
@@ -54,10 +56,8 @@ private:
 
 	ModelRenderDataManager modelRenderDataManager_;
 	ModelVertexResourceManager modelVertexResourceManager_;
-	std::vector<Transform> transforms_;
 	ConstantBufferManager<TransformationMatrix> wpvBufferManager_;
 	ConstantBufferManager<Material> materialBufferManager_;
 	ConstantBufferManager<DirectionalLight> lightBufferManager_;
-
-	CameraManager* cameraManager_;
+	EntityManager entityManager_;
 };

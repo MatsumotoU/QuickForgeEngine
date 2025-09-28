@@ -1,5 +1,9 @@
 #pragma once
-#include "pch.h"
+#include <stdint.h>
+#include <string>
+#include <vector>
+#include <list>
+#include <unordered_map>
 #include "Core/Math/Matrix/Matrix4x4.h"
 #include "Core/Math/Vector/Vector4.h"
 

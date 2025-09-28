@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "ModelRenderer.h"
 #include "Assets/AssetManager.h"
 #include "Assets/3DModel/Data/ModelRenderData.h"
