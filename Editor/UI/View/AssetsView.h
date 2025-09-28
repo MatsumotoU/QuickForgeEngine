@@ -1,5 +1,5 @@
 #pragma once
-#include "IEditorUI.h"
+#include "../IEditorUI.h"
 #include <unordered_map>
 #include <functional>
 

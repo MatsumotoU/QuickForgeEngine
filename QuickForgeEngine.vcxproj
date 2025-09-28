@@ -329,12 +329,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor\OnWindowsEditor.cpp" />
-    <ClCompile Include="Editor\UI\AssetsView.cpp" />
-    <ClCompile Include="Editor\UI\ConsoleView.cpp" />
-    <ClCompile Include="Editor\UI\GameView.cpp" />
-    <ClCompile Include="Editor\UI\HierarchyView.cpp" />
-    <ClCompile Include="Editor\UI\InspectorView.cpp" />
-    <ClCompile Include="Editor\UI\SceneView.cpp" />
+    <ClCompile Include="Editor\UI\View\AssetsView.cpp" />
+    <ClCompile Include="Editor\UI\View\ConsoleView.cpp" />
+    <ClCompile Include="Editor\UI\View\GameView.cpp" />
+    <ClCompile Include="Editor\UI\View\HierarchyView.cpp" />
+    <ClCompile Include="Editor\UI\View\InspectorView.cpp" />
+    <ClCompile Include="Editor\UI\View\SceneView.cpp" />
     <ClCompile Include="Editor\UI\UIManager.cpp" />
     <ClCompile Include="Engine\Core\EngineGlobalValue.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.cpp" />
@@ -435,13 +435,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Editor\OnWindowsEditor.h" />
     <ClInclude Include="Editor\IEditor.h" />
-    <ClInclude Include="Editor\UI\AssetsView.h" />
-    <ClInclude Include="Editor\UI\ConsoleView.h" />
-    <ClInclude Include="Editor\UI\GameView.h" />
-    <ClInclude Include="Editor\UI\HierarchyView.h" />
+    <ClInclude Include="Editor\UI\View\AssetsView.h" />
+    <ClInclude Include="Editor\UI\View\ConsoleView.h" />
+    <ClInclude Include="Editor\UI\View\GameView.h" />
+    <ClInclude Include="Editor\UI\View\HierarchyView.h" />
     <ClInclude Include="Editor\UI\IEditorUI.h" />
-    <ClInclude Include="Editor\UI\InspectorView.h" />
-    <ClInclude Include="Editor\UI\SceneView.h" />
+    <ClInclude Include="Editor\UI\View\InspectorView.h" />
+    <ClInclude Include="Editor\UI\View\SceneView.h" />
     <ClInclude Include="Editor\UI\UIManager.h" />
     <ClInclude Include="Engine\Core\EngineGlobalValue.h" />
     <ClInclude Include="Engine\Core\Error\ErrorList.h" />

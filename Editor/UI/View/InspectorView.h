@@ -1,5 +1,5 @@
 #pragma once
-#include "IEditorUI.h"
+#include "../IEditorUI.h"
 
 class InspectorView final : public IEditorUI {
 public:
