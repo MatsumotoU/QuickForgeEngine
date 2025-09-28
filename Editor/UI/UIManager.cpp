@@ -22,12 +22,12 @@ void UIManager::Initialize() {
 	}
 
 	// ViewUIの初期化
-	viewUIs_.push_back(std::make_unique<SceneView>());
 	viewUIs_.push_back(std::make_unique<AssetsView>());
 	viewUIs_.push_back(std::make_unique<ConsoleView>());
 	viewUIs_.push_back(std::make_unique<InspectorView>());
 	viewUIs_.push_back(std::make_unique<HierarchyView>());
 	viewUIs_.push_back(std::make_unique<GameView>());
+	viewUIs_.push_back(std::make_unique<SceneView>());
 	for (auto& ui : viewUIs_) {
 		ui->Initialize();
 	}

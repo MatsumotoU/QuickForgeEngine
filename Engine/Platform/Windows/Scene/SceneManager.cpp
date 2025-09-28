@@ -18,15 +18,34 @@ void SceneManager::Update() {
 }
 
 void SceneManager::PreDraw() {
+	// ワールド行列更新
+	AssetManager* assetManager = AssetManager::GetInstance();
+	std::vector<uint32_t> entities = assetManager->GetEntityManager()->GetActiveEntityIds();
+	for (auto entityId : entities) {
+		if (assetManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
+			Transform& transform = assetManager->GetEntityManager()->GetComponent<Transform>(entityId);
+			if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
+				ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
+				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(modelHandle.handle);
+				wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
+					transform.scale,
+					transform.rotate,
+					transform.translate
+				);
+			}
+		}
+	}
+
 	// カメラ更新
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	cameraManager->Update();
-	AssetManager* assetManager = AssetManager::GetInstance();
 	for (uint32_t i = 0; i < assetManager->GetWpvBufferManager()->GetBufferCount(); i++) {
 		Camera& camera = cameraManager->GetMainCamera();
 		TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(i);
 		wpvMatrix->WVP = camera.GetWorldViewProjectionMatrix(wpvMatrix->World);
 	}
+
+
 }
 
 void SceneManager::Draw() {

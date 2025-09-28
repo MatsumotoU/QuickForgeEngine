@@ -214,7 +214,7 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 		if (i % 10 == 0) {
 			color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		} else {
-			color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 0.5f), Vector4(1.0f, 0.3f, 0.3f, 1.0f), colorXt);
+			color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 1.0f), Vector4(1.0f, 0.0f, 0.0f, 1.0f), colorXt);
 		}
 
 		// 横線
@@ -231,7 +231,7 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 		if (i % 10 == 0) {
 			color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		} else {
-			color = color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 0.5f), Vector4(0.3f, 0.3f, 1.0f, 1.0f), colorZt);
+			color = color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 0.1f), Vector4(0.0f, 0.0f, 1.0f, 1.0f), colorZt);
 		}
 
 		if (z == 0.0f) {
