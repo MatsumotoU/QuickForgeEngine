@@ -339,6 +339,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\EngineGlobalValue.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\FrameCounter.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\DropDownFileList.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.cpp" />
@@ -348,6 +349,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Camera\CameraManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Scene\SceneManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Scene\SceneObject.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Renderer\GraphRenderer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\DirectInput\DirectInputKeyboard.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\DirectInput\DirectInputManager.cpp" />
@@ -453,6 +456,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\FrameCounter.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\DropDownFileList.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\ImGuiInclude.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.h" />
@@ -462,6 +466,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelHandle.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelMaterialData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelRenderData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Entity\Component\ComponentStrage.h" />
@@ -470,6 +475,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\Camera\Camera.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Entity\EntityManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Scene\Data\SceneData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Renderer\GraphRenderer.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\DirectInput\DirectInputKeyboard.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\DirectInput\DirectInputManager.h" />

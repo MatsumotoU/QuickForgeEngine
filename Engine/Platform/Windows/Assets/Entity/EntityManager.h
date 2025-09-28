@@ -8,6 +8,11 @@ private:
 	uint32_t nextEntityId_;
 public:
 	EntityManager() : nextEntityId_(0) {}
+	void ResetEntiry() {
+		componentStrages.clear();
+		nextEntityId_ = 0;
+	}
+
 	uint32_t CreateEntity() {
 		return nextEntityId_++;
 	}

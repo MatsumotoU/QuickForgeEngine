@@ -47,6 +47,7 @@ public:
 	ConstantBufferManager<Material>* GetMaterialBufferManager() { return &materialBufferManager_; }
 	ConstantBufferManager<DirectionalLight>* GetLightBufferManager() { return &lightBufferManager_; }
 	EntityManager* GetEntityManager() { return &entityManager_; }
+	const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
 
 private:
 	DirectXCommon* dxCommon_;

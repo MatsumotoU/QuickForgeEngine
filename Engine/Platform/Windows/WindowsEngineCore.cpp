@@ -9,6 +9,7 @@
 #endif // _DEBUG
 #include "Core/EngineGlobalValue.h"
 
+
 namespace {
 	uint32_t windowWidth = 1280;
 	uint32_t windowHeight = 720;
@@ -88,6 +89,9 @@ void WindowsEngineCore::Initialize() {
 	directInputManager_ = DirectInputManager::GetInstance();
 	directInputManager_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("QuickForgeEngine"), hInstance_);
+
+	sceneManager_ = SceneManager::GetInstance();
+	sceneManager_->Initalize();
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -128,6 +132,7 @@ void WindowsEngineCore::Update() {
 	directInputManager_->Update();
 	gameWindowManager->Update();
 	editor_->Update();
+	sceneManager_->Update();
 }
 
 void WindowsEngineCore::Draw() {
@@ -140,6 +145,7 @@ void WindowsEngineCore::Draw() {
 
 	gameWindowManager->Draw();
 	editor_->Draw();
+	sceneManager_->Draw();
 
 	graphRenderer_->PostDraw();
 	rendaringPostprocess_->PostDraw();
