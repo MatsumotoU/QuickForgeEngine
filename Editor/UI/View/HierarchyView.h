@@ -16,6 +16,7 @@ public:
 private:
 	void DrawPopupContextWindow();
 	void DrawEntityList();
+	void DrawCameraList();
 #ifdef _DEBUG
 	DropDownFileList modelDropDownFileList_;
 #endif // _DEBUG

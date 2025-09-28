@@ -35,6 +35,8 @@ AssetsView::AssetsView() {
 	fileGH_ = assetManager->LoadEditorTexture("file.png");
 	arrowGH_ = assetManager->LoadEditorTexture("arrow.png");
 #endif // _DEBUG
+
+	loadSpace_ = LoadSpace::Memory;
 }
 
 void AssetsView::Initialize() {
@@ -49,7 +51,13 @@ void AssetsView::Draw() {
 	}
 
 	ImGui::Begin(name_.c_str(), &isActive_);
-	ImGui::Text("Assets View");
+	if (ImGui::RadioButton("Memory", loadSpace_ == LoadSpace::Memory)) {
+		loadSpace_ = LoadSpace::Memory;
+	}
+	ImGui::SameLine();
+	if (ImGui::RadioButton("File", loadSpace_ == LoadSpace::File)) {
+		loadSpace_ = LoadSpace::File;
+	}
 	drawFunctions[currentHierarchy]();
 	ImGui::End();
 }
@@ -57,7 +65,7 @@ void AssetsView::Draw() {
 // 各ビューの描画関数
 void AssetsView::RootView() {
 	ImGui::Text("Root");
-	ImGui::NewLine();
+	ImGui::Separator();
 	const int buttonSize = 64;
 	const int buttonPadding = 8;
 	ImVec2 avail = ImGui::GetContentRegionAvail();
@@ -93,10 +101,13 @@ void AssetsView::RootView() {
 
 void AssetsView::ImagesView() {
 	ImGui::Text("Root->Image");
+	ImGui::Separator();
 	if (ImGui::ImageButton("Root", assetManager->GetTextureManager()->GetTextureSrvHandleGPU(arrowGH_).ptr,
 		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;
 	}
+
+	// メモリ上のテクスチャを表示
 	const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> handles = assetManager->GetTextureManager()->GetTextureSrvHandleGPUList();
 	const int buttonSize = 64;
 	const int buttonPadding = 8;
@@ -127,6 +138,7 @@ void AssetsView::ImagesView() {
 
 void AssetsView::ModelsView() {
 	ImGui::Text("Root->Model");
+	ImGui::Separator();
 	if (ImGui::ImageButton("Root", assetManager->GetTextureManager()->GetTextureSrvHandleGPU(arrowGH_).ptr,
 		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;
@@ -136,6 +148,7 @@ void AssetsView::ModelsView() {
 
 void AssetsView::MaterialsView() {
 	ImGui::Text("Root->Material");
+	ImGui::Separator();
 	if (ImGui::ImageButton("Root", assetManager->GetTextureManager()->GetTextureSrvHandleGPU(arrowGH_).ptr,
 		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;
@@ -144,6 +157,7 @@ void AssetsView::MaterialsView() {
 
 void AssetsView::ShadersView() {
 	ImGui::Text("Root->Shader");
+	ImGui::Separator();
 	if (ImGui::ImageButton("Root", assetManager->GetTextureManager()->GetTextureSrvHandleGPU(arrowGH_).ptr,
 		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;
@@ -152,6 +166,7 @@ void AssetsView::ShadersView() {
 
 void AssetsView::AudioView() {
 	ImGui::Text("Root->Audio");
+	ImGui::Separator();
 	if (ImGui::ImageButton("Root", assetManager->GetTextureManager()->GetTextureSrvHandleGPU(arrowGH_).ptr,
 		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;
@@ -160,6 +175,7 @@ void AssetsView::AudioView() {
 
 void AssetsView::OthersView() {
 	ImGui::Text("Root->Others");
+	ImGui::Separator();
 	if (ImGui::ImageButton("Root", assetManager->GetTextureManager()->GetTextureSrvHandleGPU(arrowGH_).ptr,
 		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;

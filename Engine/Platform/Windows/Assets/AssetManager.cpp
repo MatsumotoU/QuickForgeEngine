@@ -19,8 +19,6 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 
 	cameraManager_ = CameraManager::GetInstance();
 	cameraManager_->Initialize();
-
-	transforms_.clear();
 }
 
 void AssetManager::PreDraw() {
@@ -76,7 +74,6 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		materialBufferManager_.GetBufferData(meshRenderData.materialHandle)->uvTransform = Matrix4x4::MakeIndentity4x4();
 		wpvBufferManager_.GetBufferData(meshRenderData.wpvBufferHandle)->World = Matrix4x4::MakeIndentity4x4();
 		wpvBufferManager_.GetBufferData(meshRenderData.wpvBufferHandle)->WVP = Matrix4x4::MakeIndentity4x4();
-		transforms_.emplace_back();
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->color = { 1.0f,1.0f,1.0f,1.0f };
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->direction = { 0.0f,-1.0f,0.0f };
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->intensity = 1.0f;

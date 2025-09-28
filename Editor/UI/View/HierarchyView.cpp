@@ -1,6 +1,6 @@
 #include "HierarchyView.h"
 #include "Assets/AssetManager.h"
-
+#include "Assets/Camera/CameraManager.h"
 #include "Assets/Scene/SceneManager.h"
 
 #ifdef _DEBUG
@@ -32,6 +32,8 @@ void HierarchyView::Draw() {
 	DrawPopupContextWindow();
 	// Entity一覧表示
 	DrawEntityList();
+	// Camera一覧表示
+	DrawCameraList();
 
 	ImGui::End();
 }
@@ -59,4 +61,13 @@ void HierarchyView::DrawEntityList() {
 	for (uint32_t i = 0; i < assetManager->GetEntityManager()->GetNextEntityId(); i++) {
 		ImGui::Text("GameObject");
 	}
+}
+
+void HierarchyView::DrawCameraList() {
+	CameraManager* cameraManager = CameraManager::GetInstance();
+	for (const Camera& camera : cameraManager->GetCameras()) {
+		camera;
+		ImGui::Text("Camera");
+	}
+	
 }
