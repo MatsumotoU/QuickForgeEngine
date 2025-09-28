@@ -329,6 +329,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor\OnWindowsEditor.cpp" />
+    <ClCompile Include="Editor\UI\File\CreateNewScene.cpp" />
     <ClCompile Include="Editor\UI\View\AssetsView.cpp" />
     <ClCompile Include="Editor\UI\View\ConsoleView.cpp" />
     <ClCompile Include="Editor\UI\View\GameView.cpp" />
@@ -435,6 +436,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Editor\OnWindowsEditor.h" />
     <ClInclude Include="Editor\IEditor.h" />
+    <ClInclude Include="Editor\UI\File\CreateNewScene.h" />
     <ClInclude Include="Editor\UI\View\AssetsView.h" />
     <ClInclude Include="Editor\UI\View\ConsoleView.h" />
     <ClInclude Include="Editor\UI\View\GameView.h" />

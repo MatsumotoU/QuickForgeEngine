@@ -13,6 +13,7 @@ public:
 	void Draw();
 	void Finalize();
 
+	void ResetScene();
 	void LoadModel(const std::string& modelName);
 
 private:

@@ -2,6 +2,7 @@
 #include "SceneObject.h"
 
 #include "Assets/AssetManager.h"
+#include "Assets/Camera/CameraManager.h"
 #include "Assets/3DModel/Data/ModelHandle.h"
 
 void SceneManager::Initalize() {
@@ -18,6 +19,11 @@ void SceneManager::Draw() {
 }
 
 void SceneManager::Finalize() {
+}
+
+void SceneManager::ResetScene() {
+	AssetManager::GetInstance()->GetEntityManager()->ResetEntiry();
+	CameraManager::GetInstance()->Initialize();
 }
 
 void SceneManager::LoadModel(const std::string& modelName) {

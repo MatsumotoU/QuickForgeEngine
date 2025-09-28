@@ -7,6 +7,8 @@
 #include "View/HierarchyView.h"
 #include "View/GameView.h"
 
+#include "File/CreateNewScene.h"
+
 void UIManager::Initialize() {
 	isActiveUI_ = false;
 
@@ -14,6 +16,7 @@ void UIManager::Initialize() {
 	isActiveUI_ = true;
 
 	// FileUIの初期化
+	fileUIs_.push_back(std::make_unique<CreateNewScene>());
 	for (auto& ui : fileUIs_) {
 		ui->Initialize();
 	}
