@@ -10,7 +10,9 @@ class SceneManager final : public Singleton<SceneManager> {
 public:
 	void Initalize();
 	void Update();
+	void PreDraw();
 	void Draw();
+	void PostDraw();
 	void Finalize();
 
 	void ResetScene();

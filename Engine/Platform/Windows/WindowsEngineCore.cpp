@@ -142,11 +142,13 @@ void WindowsEngineCore::Draw() {
 	rendaringPostprocess_->PreDraw();
 	imguiFrameController_.BeginFrame();
 	graphRenderer_->PreDraw();
+	sceneManager_->PreDraw();
 
 	gameWindowManager->Draw();
 	editor_->Draw();
 	sceneManager_->Draw();
 
+	sceneManager_->PostDraw();
 	graphRenderer_->PostDraw();
 	rendaringPostprocess_->PostDraw();
 	imguiFrameController_.EndFrame(directXCommon_->GetCurrentBackBufferCpuHandle());

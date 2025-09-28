@@ -20,7 +20,7 @@
 
 #include "Input/DirectInput/DirectInputManager.h"
 
-#include "Assets/Scene/SceneManager.h"
+#include "Scene/SceneManager.h"
 
 class WindowsEngineCore final : public IEngineCore {
 public:

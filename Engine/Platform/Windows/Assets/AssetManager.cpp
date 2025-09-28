@@ -16,22 +16,12 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 	lightBufferManager_.Initialize();
 	modelVertexResourceManager_.Initialize();
 	modelRenderDataManager_.Initialize();
-
-	cameraManager_ = CameraManager::GetInstance();
-	cameraManager_->Initialize();
 }
 
 void AssetManager::PreDraw() {
-	cameraManager_->Update();
-	for (uint32_t i = 0; i < wpvBufferManager_.GetBufferCount(); i++) {
-		Camera& camera = cameraManager_->GetMainCamera();
-		TransformationMatrix* wpvMatrix = wpvBufferManager_.GetBufferData(i);
-		wpvMatrix->WVP = camera.GetWorldViewProjectionMatrix(wpvMatrix->World);
-	}
 }
 
 void AssetManager::Finalize() {
-	cameraManager_->Shutdown();
 	textureManager_->Finalize();
 	wpvBufferManager_.Finalize();
 	materialBufferManager_.Finalize();

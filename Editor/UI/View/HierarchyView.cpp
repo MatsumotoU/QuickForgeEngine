@@ -1,7 +1,7 @@
 #include "HierarchyView.h"
 #include "Assets/AssetManager.h"
-#include "Assets/Camera/CameraManager.h"
-#include "Assets/Scene/SceneManager.h"
+#include "Camera/CameraManager.h"
+#include "Scene/SceneManager.h"
 
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
