@@ -14,7 +14,10 @@ class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager>
 	LuaScriptResourceManager& operator=(LuaScriptResourceManager&&) = delete;
 public:
 	void Initialize();
+	void CreateScript(const std::string& scriptName);
 	uint32_t AddScript(uint32_t entityId,const std::string& scriptName);
+	void RequestRemoveScript(uint32_t handle);
+	void OpenAndEditScript(const std::string& scriptName);
 	void RemoveScript(uint32_t handle);
 	void InitializeAllScripts();
 	void UpdateAllScripts();

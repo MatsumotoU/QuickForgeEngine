@@ -3,6 +3,7 @@
 #include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
 #include "Assets/AssetManager.h"
 #include "Scene/SceneManager.h"
+#include "Assets/Script/LuaScriptResourceManager.h"
 #include "Scene/Data/SceneObjectData.h"
 #include "Core/Math/Transform.h"
 #include "Assets/AssetManager.h"
@@ -53,10 +54,34 @@ void InspectorView::Draw() {
 	// スクリプト
 	if (assetManager->GetEntityManager()->HasComponent<ScriptHandles>(selectedEntityId_)) {
 		ScriptHandles& scriptHandle = assetManager->GetEntityManager()->GetComponent<ScriptHandles>(selectedEntityId_);
-		
-		ImGui::Text("Script");
-		for (const auto& sh : scriptHandle.scriptHandles_) {
-			ImGui::Text("Name: %s", sh.scriptName_.c_str());
+
+		ImGui::Text("Scripts");
+		std::vector<uint32_t> eraseIndices;
+		for (size_t i = 0; i < scriptHandle.scriptHandles_.size(); ++i) {
+			const auto& sh = scriptHandle.scriptHandles_[i];
+			// リスト表示
+			ImGui::Selectable(sh.scriptName_.c_str());
+
+			// 右クリックでポップアップメニュー
+			if (ImGui::BeginPopupContextItem()) {
+				if (ImGui::MenuItem("Open in VSCode")) {
+					LuaScriptResourceManager::GetInstance()->OpenAndEditScript(sh.scriptName_);
+				}
+				if (ImGui::MenuItem("Remove")) {
+					// スクリプト削除処理 
+					eraseIndices.push_back(static_cast<uint32_t>(i));
+					LuaScriptResourceManager::GetInstance()->RequestRemoveScript(sh.handle_);
+				}
+				ImGui::EndPopup();
+			}
+		}
+		// 後ろから削除してインデックスずれを防ぐ
+		for (auto it = eraseIndices.rbegin(); it != eraseIndices.rend(); ++it) {
+			scriptHandle.scriptHandles_.erase(scriptHandle.scriptHandles_.begin() + *it);
+		}
+		// スクリプトがなくなったらコンポーネントごと削除
+		if (scriptHandle.scriptHandles_.size() <= 0) {
+			assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
 		}
 		ImGui::Separator();
 	}
@@ -66,15 +91,43 @@ void InspectorView::Draw() {
 		ImGui::OpenPopup("AddComponentPopup");
 	}
 	if (ImGui::BeginPopup("AddComponentPopup")) {
-		if (ImGui::BeginMenu("NewScript")) {
-			scriptList_.DrawMenuItem();
+		if (ImGui::BeginMenu("Script")) {
+			if (ImGui::MenuItem("NewScript")) {
+				openScriptPopup_ = true;
+				strcpy_s(scriptBuffer_, "NewScript.lua");
+			}
+
+			if (ImGui::BeginMenu("AddScript")) {
+				scriptList_.DrawMenuItem();
+				ImGui::EndMenu();
+			}
+
 			std::string selectedScript;
 			if (scriptList_.GetSelectedFileName(selectedScript)) {
 				SceneManager::GetInstance()->AddScript(selectedEntityId_, selectedScript);
 			}
+
+
 			ImGui::EndMenu();
 		}
 		ImGui::EndPopup();
+	}
+	if (openScriptPopup_) {
+		ImGui::OpenPopup("NewScript");
+		if (ImGui::BeginPopupModal("NewScript", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::InputText("Script Name", scriptBuffer_, IM_ARRAYSIZE(scriptBuffer_));
+			if (ImGui::Button("Create")) {
+				LuaScriptResourceManager::GetInstance()->CreateScript(scriptBuffer_);
+				SceneManager::GetInstance()->AddScript(selectedEntityId_, scriptBuffer_);
+				openScriptPopup_ = false;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel")) {
+				openScriptPopup_ = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
 	}
 
 	ImGui::End();

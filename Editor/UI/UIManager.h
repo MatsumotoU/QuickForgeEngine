@@ -14,4 +14,5 @@ private:
 	bool isActiveUI_;
 	std::vector<std::unique_ptr<IEditorUI>> fileUIs_;
 	std::vector<std::unique_ptr<IEditorUI>> viewUIs_;
+	std::vector<std::unique_ptr<IEditorUI>> editUIs_;
 };

@@ -4,6 +4,7 @@
 #include "Editor/IEditor.h"
 #include <Windows.h>
 #include <chrono>
+#include <nlohmann/json.hpp>
 
 #include "Window/GameWindowManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
@@ -56,4 +57,6 @@ private:
 	DirectInputManager* directInputManager_;
 	SceneManager* sceneManager_;
 	LuaScriptResourceManager* luaScriptResourceManager_;
+
+	nlohmann::json configJson_;
 };

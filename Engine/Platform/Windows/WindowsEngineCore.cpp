@@ -8,7 +8,7 @@
 #include "Renderer/ModelRenderer.h"
 #endif // _DEBUG
 #include "Core/EngineGlobalValue.h"
-
+#include "AppUtility/FileSystems/FileUtility.h"
 
 namespace {
 	uint32_t windowWidth = 1280;
@@ -160,4 +160,5 @@ void WindowsEngineCore::Draw() {
 
 	assetManager_->EndFrame();
 	luaScriptResourceManager_->EndFrame();
+	sceneManager_->EndFrame();
 }

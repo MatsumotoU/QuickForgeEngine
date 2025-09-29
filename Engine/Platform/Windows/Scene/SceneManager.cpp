@@ -22,9 +22,15 @@ void SceneManager::Initalize() {
 	currentScene_->Initialize();
 
 	CameraManager::GetInstance()->Initialize();
+	isRequestStopScript_ = false;
+	isRunningScript_ = false;
 }
 
 void SceneManager::Update() {
+	// スクリプト更新
+	if (isRunningScript_) {
+		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
+	}
 	currentScene_->Update();
 }
 
@@ -64,6 +70,16 @@ void SceneManager::Draw() {
 void SceneManager::PostDraw() {
 }
 
+void SceneManager::EndFrame() {
+	if (isRequestStopScript_) {
+		if (isRunningScript_) {
+			isRunningScript_ = false;
+			LoadScene(currentScene_->GetSceneName());
+		}
+		isRequestStopScript_ = false;
+	}
+}
+
 void SceneManager::Finalize() {
 	CameraManager::GetInstance()->Shutdown();
 }
@@ -93,8 +109,14 @@ void SceneManager::SaveScene(const std::string& sceneName) {
 }
 
 void SceneManager::LoadScene(const std::string& sceneName) {
+	std::string sceneNameCopy = sceneName;
+	// 拡張子がなければ追加
+	if (!sceneNameCopy.ends_with(".json")) {
+		sceneNameCopy += ".json";
+	}
+
 #ifdef _DEBUG
-	DebugLog("LoadScene: " + sceneName);
+	DebugLog("LoadScene: " + sceneNameCopy);
 #endif // _DEBUG
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
@@ -102,7 +124,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 
 	// シーンファイルのパスを組み立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
-	std::ifstream ifs(sceneFilePath + sceneName);
+	std::ifstream ifs(sceneFilePath + sceneNameCopy);
 	if (!ifs.is_open()) {
 		assert(false && "FaildOpenFile");
 	}
@@ -153,6 +175,8 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 }
 
 void SceneManager::ResetScene() {
+	currentScene_ = std::make_unique<SceneObject>();
+	currentScene_->Initialize();
 	AssetManager::GetInstance()->GetEntityManager()->ResetEntiry();
 	CameraManager::GetInstance()->Initialize();
 }
@@ -194,4 +218,17 @@ void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
 		scriptHandles.scriptHandles_.push_back(scriptHandle);
 	}
+}
+
+void SceneManager::StartScript() {
+	if (!isRunningScript_) {
+		SaveScene(currentScene_->GetSceneName());
+		isRunningScript_ = true;
+		LuaScriptResourceManager::GetInstance()->InitializeAllScripts();
+	}
+}
+
+void SceneManager::StopScript() {
+	if (isRequestStopScript_) {return;}
+	isRequestStopScript_ = true;
 }
