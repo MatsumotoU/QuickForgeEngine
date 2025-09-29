@@ -3,6 +3,7 @@
 #include "Graphic/PostEffect/RendaringPostprocess.h"
 #include "Camera/CameraManager.h"
 #include "Assets/AssetManager.h"
+#include "Core/Entity/EntityManager.h" 
 #include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Renderer/GraphRenderer.h"
@@ -74,6 +75,8 @@ void SceneView::Draw() {
 	);
 	ImGui::SetCursorScreenPos(centerPos);
 	ImGui::Image((void*)handle.gpuHandle_.ptr, imageSize);
+	ImGuizmo::SetRect(centerPos.x, centerPos.y, imageSize.x, imageSize.y);
+	UpdateGizmo();
 	ImGui::End();
 
 	if (isDrawGrid_) {
@@ -176,5 +179,52 @@ void SceneView::DebugCameraControl() {
 }
 
 void SceneView::UpdateGizmo() {
+#ifdef _DEBUG
+	// ImGuizmoのセットアップ
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::SetDrawlist();
 
+	// ImGuiウィンドウのサイズ・位置を取得
+	ImVec2 windowPos = ImGui::GetWindowPos();
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
+
+	// 選択中エンティティのTransform取得（例: HierarchyView::selectedEntityId_ から）
+	if (!AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(selectEntityId_)) {
+		return;
+	} 
+	Transform& transform = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(selectEntityId_);
+
+	// カメラ行列取得
+	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
+	Matrix4x4 view = camera.GetViewMatrix();
+	Matrix4x4 proj = camera.GetPerspectiveMatrix();
+
+	// ギズモ操作タイプ
+	static ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
+	if (ImGui::IsKeyPressed(ImGuiKey_T)) currentGizmoOperation = ImGuizmo::TRANSLATE;
+	if (ImGui::IsKeyPressed(ImGuiKey_R)) currentGizmoOperation = ImGuizmo::ROTATE;
+	if (ImGui::IsKeyPressed(ImGuiKey_S)) currentGizmoOperation = ImGuizmo::SCALE;
+
+	// Transformを行列に変換
+	Matrix4x4 matrix = Matrix4x4::MakeAffineMatrix(
+		transform.scale,
+		transform.rotate,
+		transform.translate
+	);
+	float* matrixPtr = &matrix.m[0][0];
+
+	// ギズモ描画・操作
+	ImGuizmo::Manipulate(
+		&view.m[0][0], &proj.m[0][0],
+		currentGizmoOperation, ImGuizmo::LOCAL, matrixPtr
+	);
+
+	// 変更があればTransformに反映
+	if (ImGuizmo::IsUsing()) {
+		Matrix4x4 newMat;
+		std::memcpy(&newMat.m[0][0], matrixPtr, sizeof(float) * 16);
+		transform.FromMatrix(newMat);
+	}
+#endif
 }
