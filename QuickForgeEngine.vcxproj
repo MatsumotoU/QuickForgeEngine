@@ -330,6 +330,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Editor\OnWindowsEditor.cpp" />
     <ClCompile Include="Editor\UI\File\CreateNewScene.cpp" />
+    <ClCompile Include="Editor\UI\File\LoadScene.cpp" />
+    <ClCompile Include="Editor\UI\File\SaveScene.cpp" />
     <ClCompile Include="Editor\UI\View\AssetsView.cpp" />
     <ClCompile Include="Editor\UI\View\ConsoleView.cpp" />
     <ClCompile Include="Editor\UI\View\GameView.cpp" />
@@ -348,6 +350,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\FileSystems\FileUtility.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelHandle.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptResourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\CameraManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Scene\SceneManager.cpp" />
@@ -437,6 +442,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\OnWindowsEditor.h" />
     <ClInclude Include="Editor\IEditor.h" />
     <ClInclude Include="Editor\UI\File\CreateNewScene.h" />
+    <ClInclude Include="Editor\UI\File\LoadScene.h" />
+    <ClInclude Include="Editor\UI\File\SaveScene.h" />
     <ClInclude Include="Editor\UI\View\AssetsView.h" />
     <ClInclude Include="Editor\UI\View\ConsoleView.h" />
     <ClInclude Include="Editor\UI\View\GameView.h" />
@@ -446,6 +453,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\UI\View\SceneView.h" />
     <ClInclude Include="Editor\UI\UIManager.h" />
     <ClInclude Include="Engine\Core\EngineGlobalValue.h" />
+    <ClInclude Include="Engine\Core\Entity\Component\ComponentData.h" />
     <ClInclude Include="Engine\Core\Error\ErrorList.h" />
     <ClInclude Include="Engine\Core\Graphic\IGraphicCommon.h" />
     <ClInclude Include="Engine\Core\IEngineCore.h" />
@@ -471,12 +479,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelHandle.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelMaterialData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelRenderData.h" />
-    <ClInclude Include="Engine\Platform\Windows\Assets\Entity\Component\ComponentStrage.h" />
-    <ClInclude Include="Engine\Platform\Windows\Assets\Entity\Component\IComponentStrage.h" />
+    <ClInclude Include="Engine\Core\Entity\Component\ComponentStrage.h" />
+    <ClInclude Include="Engine\Core\Entity\Component\IComponentStrage.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ConstantBufferManager\ConstantBufferManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\Data\ScriptHandle.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\LuaScriptResourceManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Camera\Camera.h" />
     <ClInclude Include="Engine\Platform\Windows\Camera\CameraManager.h" />
-    <ClInclude Include="Engine\Platform\Windows\Assets\Entity\EntityManager.h" />
+    <ClInclude Include="Engine\Core\Entity\EntityManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneObjectData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\SceneManager.h" />

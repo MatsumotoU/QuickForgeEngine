@@ -1,6 +1,8 @@
 #include "SceneView.h"
+#include "HierarchyView.h"
 #include "Graphic/PostEffect/RendaringPostprocess.h"
 #include "Camera/CameraManager.h"
+#include "Assets/AssetManager.h"
 #include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Renderer/GraphRenderer.h"
@@ -26,6 +28,8 @@ void SceneView::Initialize() {
 
 void SceneView::Update() {
 #ifdef _DEBUG
+	selectEntityId_ = HierarchyView::selectedEntityId_;
+
 	DebugCameraControl();
 #endif // _DEBUG
 }
@@ -169,4 +173,8 @@ void SceneView::DebugCameraControl() {
 			}
 		}
 	}
+}
+
+void SceneView::UpdateGizmo() {
+
 }

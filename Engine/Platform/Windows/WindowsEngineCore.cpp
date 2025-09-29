@@ -92,6 +92,9 @@ void WindowsEngineCore::Initialize() {
 
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->Initalize();
+
+	luaScriptResourceManager_ = LuaScriptResourceManager::GetInstance();
+	luaScriptResourceManager_->Initialize();
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -116,6 +119,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	luaScriptResourceManager_->Finalize();
 	graphRenderer_->Finalize();
 	assetManager_->Finalize();
 
@@ -155,4 +159,5 @@ void WindowsEngineCore::Draw() {
 	directXCommon_->PostDraw();
 
 	assetManager_->EndFrame();
+	luaScriptResourceManager_->EndFrame();
 }

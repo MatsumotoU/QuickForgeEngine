@@ -13,14 +13,14 @@
 #include "AppUtility/DebugTool/FrameCounter.h"
 #include "Renderer/GraphRenderer.h"
 
-#include "Assets/AssetManager.h"
-
 #include "Graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include "Graphic/PostEffect/RendaringPostprocess.h"
-
 #include "Input/DirectInput/DirectInputManager.h"
 
+#include "Assets/AssetManager.h"
+// なんかAssetsではなさそうなやつら
 #include "Scene/SceneManager.h"
+#include "Assets/Script/LuaScriptResourceManager.h"
 
 class WindowsEngineCore final : public IEngineCore {
 public:
@@ -55,4 +55,5 @@ private:
 
 	DirectInputManager* directInputManager_;
 	SceneManager* sceneManager_;
+	LuaScriptResourceManager* luaScriptResourceManager_;
 };

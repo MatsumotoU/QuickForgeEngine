@@ -11,6 +11,7 @@ ResourceDirectoryManager::ResourceDirectoryManager() {
 	resourceDirectories_["Font"] = "Resources/Fonts/";
 	resourceDirectories_["Scenes"] = "Resources/Scenes/";
 	resourceDirectories_["Sounds"] = "Resources/Sounds/";
+	resourceDirectories_["Scripts"] = "Resources/Scripts/";
 #ifdef _DEBUG
 	resourceDirectories_["Editor"] = "Editor/Resource/Images/";
 #endif // _DEBUG

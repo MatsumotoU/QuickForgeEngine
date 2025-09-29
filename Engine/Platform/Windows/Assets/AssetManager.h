@@ -8,8 +8,7 @@
 #include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
 #include "Graphic/ShaderBuffer/Data/Material.h"
 #include "Graphic/ShaderBuffer/Data/DirectionalLight.h"
-#include "Entity/EntityManager.h"
-
+#include "Core/Entity/EntityManager.h"
 #include "Utility/DesignPatterns/Singleton.h"
 
 #include <unordered_map>

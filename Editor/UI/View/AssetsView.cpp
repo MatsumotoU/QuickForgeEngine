@@ -51,6 +51,7 @@ void AssetsView::Draw() {
 	}
 
 	ImGui::Begin(name_.c_str(), &isActive_);
+
 	if (ImGui::RadioButton("Memory", loadSpace_ == LoadSpace::Memory)) {
 		loadSpace_ = LoadSpace::Memory;
 	}
@@ -58,6 +59,14 @@ void AssetsView::Draw() {
 	if (ImGui::RadioButton("File", loadSpace_ == LoadSpace::File)) {
 		loadSpace_ = LoadSpace::File;
 	}
+
+	// ファイルシステム上のアセットを表示
+	if (loadSpace_ == LoadSpace::File) {
+		FilesView();
+		ImGui::End();
+		return;
+	}
+	// メモリ上のアセットを表示
 	drawFunctions[currentHierarchy]();
 	ImGui::End();
 }
@@ -180,4 +189,10 @@ void AssetsView::OthersView() {
 		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;
 	}
+}
+
+void AssetsView::FilesView() {
+	ImGui::Text("Files View");
+	ImGui::Separator();
+
 }
