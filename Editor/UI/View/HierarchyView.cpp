@@ -60,12 +60,28 @@ void HierarchyView::DrawEntityList() {
 	auto entityIds = assetManager->GetEntityManager()->GetActiveEntityIds();
     for (uint32_t id : entityIds) {
         bool isSelected = (selectedEntityId_ == id);
-		std::string& name = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(id).name;
+        std::string& name = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(id).name;
         std::string label = name + "##" + std::to_string(id);
 
-        // Selectable（左クリックで選択）
-        if (ImGui::Selectable(label.c_str(), isSelected)) {
-            selectedEntityId_ = id;
+        if (isSelected) {
+            // 選択中はInputTextで名前編集
+            char buf[128];
+            strncpy_s(buf, sizeof(buf), name.c_str(), _TRUNCATE);
+            buf[sizeof(buf) - 1] = '\0';
+            ImGui::PushID(id);
+            if (ImGui::InputText("##edit", buf, sizeof(buf), ImGuiInputTextFlags_EnterReturnsTrue)) {
+                name = buf;
+            }
+            ImGui::PopID();
+            // 選択解除用
+            if (ImGui::IsItemDeactivatedAfterEdit() && !ImGui::IsItemActive()) {
+                selectedEntityId_ = 0;
+            }
+        } else {
+            // 通常はSelectable
+            if (ImGui::Selectable(label.c_str(), isSelected)) {
+                selectedEntityId_ = id;
+            }
         }
 
         // 右クリックでコンテキストメニュー

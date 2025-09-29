@@ -12,6 +12,10 @@ public:
 
 private:
 	void DebugCameraControl();
+	void UpdateGizmo();
+
+	uint32_t selectEntityId_;
+
 	float cameraMoveT_;
 	Vector3 startPos_;
 	Vector3 targetRotate_;
