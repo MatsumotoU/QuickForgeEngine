@@ -11,12 +11,8 @@
             "ScriptHandle": {
                 "scriptHandles": [
                     {
-                        "handle": 0,
-                        "scriptName": "Move.lua"
-                    },
-                    {
                         "handle": 1,
-                        "scriptName": "NewScript.lua"
+                        "scriptName": "RightMove.lua"
                     }
                 ]
             },

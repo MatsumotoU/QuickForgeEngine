@@ -1,5 +1,6 @@
 #include "UIManager.h"
 #include "Graphic/PostEffect/RendaringPostprocess.h"
+#include "Scene/SceneManager.h"
 #include "View/SceneView.h"
 #include "View/AssetsView.h"
 #include "View/ConsoleView.h"
@@ -10,6 +11,8 @@
 #include "File/CreateNewScene.h"
 #include "File/SaveScene.h"
 #include "File/LoadScene.h"
+
+#include "Edit/DebugConsole.h"
 
 void UIManager::Initialize() {
 	isActiveUI_ = false;
@@ -36,6 +39,12 @@ void UIManager::Initialize() {
 		ui->Initialize();
 	}
 
+	// EditUIの初期化
+	editUIs_.push_back(std::make_unique<DebugConsole>());
+	for (auto& ui : editUIs_) {
+		ui->Initialize();
+	}
+
 #endif // _DEBUG
 }
 
@@ -47,6 +56,9 @@ void UIManager::Update() {
 	for (auto& ui : viewUIs_) {
 		ui->Update();
 	}
+	for (auto& ui : editUIs_) {
+		ui->Update();
+	}
 #endif // _DEBUG
 }
 
@@ -55,6 +67,14 @@ void UIManager::Draw() {
 		return;
 	}
 #ifdef _DEBUG
+	// シーンが実行中は色を変える
+	bool isScriptRunning = SceneManager::GetInstance()->IsRunningScript();
+	if (isScriptRunning) {
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
+	}
+
 	// メインメニュー描画
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
@@ -66,6 +86,11 @@ void UIManager::Draw() {
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Edit")) {
+			for (auto& ui : editUIs_) {
+				if (ImGui::MenuItem(ui->GetName().c_str())) {
+					ui->Run();
+				}
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("View")) {
@@ -75,6 +100,20 @@ void UIManager::Draw() {
 			}
 			ImGui::EndMenu();
 		}
+
+		// シーン再生ボタン
+		if (SceneManager::GetInstance()->IsRunningScript()) {
+			if (ImGui::Button("||")) {
+				SceneManager::GetInstance()->StopScript();
+			}
+		} else {
+			if (ImGui::Button(">")) {
+				SceneManager::GetInstance()->StartScript();
+			}
+		}
+
+		// シーン名
+		ImGui::Text(("Scene: " + SceneManager::GetInstance()->GetCurrentSceneName()).c_str());
 		ImGui::EndMainMenuBar();
 	}
 
@@ -104,9 +143,16 @@ void UIManager::Draw() {
 	for (auto& ui : fileUIs_) {
 		ui->Draw();
 	}
-
 	for (auto& ui : viewUIs_) {
 		ui->Draw();
+	}
+	for (auto& ui : editUIs_) {
+		ui->Draw();
+	}
+
+	// 実行中は色を変える
+	if (isScriptRunning) {
+		ImGui::PopStyleColor(3);
 	}
 #endif // _DEBUG
 }

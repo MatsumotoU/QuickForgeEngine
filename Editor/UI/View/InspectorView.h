@@ -12,4 +12,6 @@ public:
 private:
 	uint32_t selectedEntityId_;
 	DropDownFileList scriptList_;
+	char scriptBuffer_[256];
+	bool openScriptPopup_ = false;
 };

@@ -1,5 +1,6 @@
 #include "LuaScriptOnQFE.h"
 #include "Assets/AssetManager.h"
+#include "Input/DirectInput/DirectInputManager.h"
 #include "Core/Math/Transform.h"
 #include "Assets/Script/Data/ScriptHandle.h"
 #ifdef _DEBUG
@@ -138,11 +139,21 @@ void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 }
 
 void LuaScriptOnQFE::SetQFEFunctions() {
+	// テーブル作成
+	sol::table qfe = luaState_->create_named_table("QFE");
+	sol::table input = qfe.create_named("Input");
+
+	// * 関数登録 * //
+	DirectInputManager* inputManager = DirectInputManager::GetInstance();
+	input.set_function("GetKeyMoveDir", [inputManager]() {
+		return inputManager->GetKeyMoveDir();
+		});
 #ifdef _DEBUG
 	luaState_->set_function("DebugLog", [](const std::string& message) {
 		DebugLog(message,LogLevel::EditorInfo);
 		});
 #endif // _DEBUG
+
 	// Math
 	luaState_->new_usertype<Vector2>("Vector2",
 		sol::constructors<Vector2(), Vector2(float, float)>(),
