@@ -9,6 +9,7 @@
 SceneObject::SceneObject() {
 	assetManager_ = nullptr;
 	isRequestedExit_ = false;
+	sceneName_ = "NewScene";
 }
 
 SceneObject::~SceneObject() {

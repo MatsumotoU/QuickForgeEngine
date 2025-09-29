@@ -3,8 +3,11 @@
 
 #include "Assets/AssetManager.h"
 #include "Camera/CameraManager.h"
+#include "Assets/Script/LuaScriptResourceManager.h"
+
 #include "Assets/3DModel/Data/ModelHandle.h"
 #include "Data/SceneObjectData.h"
+#include "Assets/Script/Data/ScriptHandle.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -75,6 +78,7 @@ void SceneManager::SaveScene(const std::string& sceneName) {
 	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
 
 	nlohmann::json sceneJson;
+	sceneJson["sceneName"] = sceneName;
 
 	for (auto entityId : entities) {
 		nlohmann::json entityJson;
@@ -105,7 +109,15 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
+	ifs.close();
+	// シーン名の設定
+	if (sceneJson.contains("sceneName")) {
+		currentScene_->SetSceneName(sceneJson["sceneName"].get<std::string>());
+	} else {
+		currentScene_->SetSceneName("NoNameScene");
+	}
 
+	// エンティティの復元
 	if (!sceneJson.contains("entities")) return;
 
 	for (const auto& entityJson : sceneJson["entities"]) {
@@ -127,6 +139,16 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 			SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
 			sceneObjectData.Deserialize(entityJson["SceneObjectData"]);
 		}
+		if(entityJson.contains("ScriptHandle")) {
+			std::vector<std::string> scriptNames;
+			if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
+				for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
+					if (handle.contains("scriptName")) {
+						AddScript(entityId, handle["scriptName"].get<std::string>());
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -147,4 +169,29 @@ void SceneManager::LoadModel(const std::string& modelName) {
 	sceneObjectData.name = modelName;
 	sceneObjectData.tag = "Untagged";
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+}
+
+void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (!entityManager->HasComponent<ScriptHandles>(entityId)) {
+		ScriptHandles scriptHandles;
+		LuaHandle scriptHandle;
+		scriptHandle.scriptName_ = scriptName;
+		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
+		scriptHandles.scriptHandles_.push_back(scriptHandle);
+		entityManager->EmplaceComponent<ScriptHandles>(entityId, scriptHandles);
+	} else {
+		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+		// すでに同じスクリプトがアタッチされている場合は追加しない
+		for (const auto& sh : scriptHandles.scriptHandles_) {
+			if (sh.scriptName_ == scriptName) {
+				return;
+			}
+		}
+		LuaHandle scriptHandle;
+		scriptHandle.scriptName_ = scriptName;
+		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
+		scriptHandles.scriptHandles_.push_back(scriptHandle);
+	}
 }

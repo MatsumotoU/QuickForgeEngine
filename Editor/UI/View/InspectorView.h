@@ -1,5 +1,6 @@
 #pragma once
 #include "../IEditorUI.h"
+#include "AppUtility/DebugTool/ImGui/DropDownFileList.h"
 
 class InspectorView final : public IEditorUI {
 public:
@@ -10,4 +11,5 @@ public:
 	void Draw() override;
 private:
 	uint32_t selectedEntityId_;
+	DropDownFileList scriptList_;
 };

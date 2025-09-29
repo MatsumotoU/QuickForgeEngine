@@ -15,10 +15,14 @@ public:
 	void PostDraw();
 	void Finalize();
 
+	std::string GetCurrentSceneName() const { return currentScene_->GetSceneName(); }
+
 	void SaveScene(const std::string& sceneName);
 	void LoadScene(const std::string& sceneName);
 	void ResetScene();
+
 	void LoadModel(const std::string& modelName);
+	void AddScript(uint32_t entityId,const std::string& scriptName);
 
 private:
 	std::unique_ptr<IScene> currentScene_;

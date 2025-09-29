@@ -36,4 +36,5 @@ void SaveScene::Draw() {
 
 void SaveScene::Run() {
 	isActive_ = true;
+	sceneName_ = SceneManager::GetInstance()->GetCurrentSceneName();
 }

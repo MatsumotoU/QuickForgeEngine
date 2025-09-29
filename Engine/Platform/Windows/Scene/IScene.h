@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 class IScene {
 public:
 	virtual ~IScene() = default;
@@ -9,8 +11,11 @@ public:
 	// Draw the scene
 	virtual void Draw() = 0;
 
+	std::string& GetSceneName() { return sceneName_; }
+	void SetSceneName(const std::string& name) { sceneName_ = name; }
 	bool GetReqesytedExit() { return isRequestedExit_; }
 
 protected:
+	std::string sceneName_;
 	bool isRequestedExit_;
 };

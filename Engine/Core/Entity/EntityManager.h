@@ -99,6 +99,10 @@ public:
 
 	template <typename T>
 	bool HasComponent(uint32_t id) const {
+		if (id >= nextEntityId_) {
+			return false;
+		}
+
 		size_t typeId = typeid(T).hash_code();
 		if (componentStrages.find(typeId) != componentStrages.end()) {
 			const auto& strage = static_cast<const ComponentStrage<T>&>(*componentStrages.at(typeId));

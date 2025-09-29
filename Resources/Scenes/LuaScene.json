@@ -8,31 +8,17 @@
                 "name": "anchor.obj",
                 "tag": "Untagged"
             },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.30000001192092896,
-                    0.0,
-                    0.0
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "handle": 0,
+                        "scriptName": "Move.lua"
+                    },
+                    {
+                        "handle": 1,
+                        "scriptName": "NewScript.lua"
+                    }
                 ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "modelName": "monkey.obj"
-            },
-            "SceneObjectData": {
-                "name": "monkey.obj",
-                "tag": "Untagged"
             },
             "Transform": {
                 "rotate": [
@@ -46,11 +32,12 @@
                     1.0
                 ],
                 "translate": [
-                    1.600000023841858,
+                    0.0,
                     0.0,
                     0.0
                 ]
             }
         }
-    ]
+    ],
+    "sceneName": "LuaScene"
 }

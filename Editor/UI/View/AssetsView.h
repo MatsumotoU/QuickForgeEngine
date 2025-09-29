@@ -36,6 +36,8 @@ public:
 	void AudioView();
 	void OthersView();
 
+	void FilesView();
+
 private:
 	AssetManager* assetManager;
 	ViewHierarchy currentHierarchy;
