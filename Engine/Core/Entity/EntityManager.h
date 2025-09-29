@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <unordered_set>
 #include <vector>
+#include <nlohmann/json.hpp>
+
 
 class EntityManager final {
 private:
@@ -13,6 +15,17 @@ private:
 
 public:
 	EntityManager() : nextEntityId_(0) {}
+	nlohmann::json SerializeEntityComponents(uint32_t entityId) const {
+		nlohmann::json componentsJson;
+		for (const auto& [typeId, stragePtr] : componentStrages) {
+			const ComponentData* comp = stragePtr->GetComponentDataPtr(entityId);
+			if (comp) {
+				componentsJson[comp->GetTypeName()] = comp->Serialize();
+			}
+		}
+		return componentsJson;
+	}
+
 	void EndFrame() {
 		// 削除予定のEntityに紐づくコンポーネントを全て削除
 		for (uint32_t id : entitiesToRemove_) {

@@ -35,4 +35,11 @@ public:
 	bool HasComponent(uint32_t id) const {
 		return components.find(id) != components.end();
 	}
+	ComponentData* GetComponentDataPtr(uint32_t id) override {
+		auto it = components.find(id);
+		if (it != components.end()) {
+			return &(it->second);
+		}
+		return nullptr;
+	}
 };

@@ -1,5 +1,19 @@
 #pragma once
 #include <cstdint>
-struct ModelHandle {
+#include <string>
+#include "Core/Entity/Component/ComponentData.h"
+
+class ModelHandle final :public ComponentData {
+public:
 	uint32_t handle;
+	std::string modelName;
+
+	nlohmann::json Serialize() const override {
+		nlohmann::json json;
+		json["modelName"] = modelName;
+		return json;
+	}
+	void Deserialize(const nlohmann::json& json) override;
+
+	std::string GetTypeName() const override { return "ModelHandle"; }
 };

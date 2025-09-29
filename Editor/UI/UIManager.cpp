@@ -8,6 +8,8 @@
 #include "View/GameView.h"
 
 #include "File/CreateNewScene.h"
+#include "File/SaveScene.h"
+#include "File/LoadScene.h"
 
 void UIManager::Initialize() {
 	isActiveUI_ = false;
@@ -17,6 +19,8 @@ void UIManager::Initialize() {
 
 	// FileUIの初期化
 	fileUIs_.push_back(std::make_unique<CreateNewScene>());
+	fileUIs_.push_back(std::make_unique<SaveScene>());
+	fileUIs_.push_back(std::make_unique<LoadScene>());
 	for (auto& ui : fileUIs_) {
 		ui->Initialize();
 	}
@@ -96,6 +100,10 @@ void UIManager::Draw() {
 	ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 	ImGui::End();
+
+	for (auto& ui : fileUIs_) {
+		ui->Draw();
+	}
 
 	for (auto& ui : viewUIs_) {
 		ui->Draw();

@@ -7,7 +7,7 @@
 
 // 前方宣言
 class Vector3;
-struct Transform;
+class Transform;
 
 class Matrix4x4 final{
 public:

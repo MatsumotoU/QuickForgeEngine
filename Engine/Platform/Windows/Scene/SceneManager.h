@@ -15,6 +15,8 @@ public:
 	void PostDraw();
 	void Finalize();
 
+	void SaveScene(const std::string& sceneName);
+	void LoadScene(const std::string& sceneName);
 	void ResetScene();
 	void LoadModel(const std::string& modelName);
 
