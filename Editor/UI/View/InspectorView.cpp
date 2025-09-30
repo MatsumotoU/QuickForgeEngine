@@ -8,6 +8,7 @@
 #include "Core/Math/Transform.h"
 #include "Assets/AssetManager.h"
 #include "Assets/Script/Data/ScriptHandle.h"
+#include "Physics/Force.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
@@ -85,12 +86,33 @@ void InspectorView::Draw() {
 		}
 		ImGui::Separator();
 	}
+	// Force
+	if (assetManager->GetEntityManager()->HasComponent<Force>(selectedEntityId_)) {
+		Force& force = assetManager->GetEntityManager()->GetComponent<Force>(selectedEntityId_);
+		ImGui::Text("Force");
+		ImGui::DragFloat3("Velocity", &force.velocity.x, 0.1f);
+		ImGui::DragFloat3("Acceleration", &force.acceleration.x, 0.1f);
+		ImGui::DragFloat("Mass", &force.mass, 0.1f, 0.1f);
+		ImGui::DragFloat("Friction", &force.friction, 0.01f, 0.0f);
+		ImGui::DragFloat("GravityStrength", &force.gravityStrength, 0.01f, 0.0f);
+		ImGui::Checkbox("Use Gravity", &force.isGravity);
+		ImGui::Separator();
+	}
 
 	// コンポーネントの追加
 	if (ImGui::Button("Add Component")) {
 		ImGui::OpenPopup("AddComponentPopup");
 	}
 	if (ImGui::BeginPopup("AddComponentPopup")) {
+		if (ImGui::BeginMenu("Physics")) {
+			if (ImGui::MenuItem("Force")) {
+				if (!assetManager->GetEntityManager()->HasComponent<Force>(selectedEntityId_)) {
+					assetManager->GetEntityManager()->EmplaceComponent<Force>(selectedEntityId_);
+				}
+			}
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("Script")) {
 			if (ImGui::MenuItem("NewScript")) {
 				openScriptPopup_ = true;

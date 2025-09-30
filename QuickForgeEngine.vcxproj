@@ -335,6 +335,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Editor\UI\File\SaveScene.cpp" />
     <ClCompile Include="Editor\UI\View\AssetsView.cpp" />
     <ClCompile Include="Editor\UI\View\ConsoleView.cpp" />
+    <ClCompile Include="Editor\UI\View\EngineProfileView.cpp" />
     <ClCompile Include="Editor\UI\View\GameView.cpp" />
     <ClCompile Include="Editor\UI\View\HierarchyView.cpp" />
     <ClCompile Include="Editor\UI\View\InspectorView.cpp" />
@@ -357,6 +358,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptResourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\CameraManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Physics\Force.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Physics\PhysicsManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Scene\SceneManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Scene\SceneObject.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Renderer\GraphRenderer.cpp" />
@@ -449,6 +452,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\UI\File\SaveScene.h" />
     <ClInclude Include="Editor\UI\View\AssetsView.h" />
     <ClInclude Include="Editor\UI\View\ConsoleView.h" />
+    <ClInclude Include="Editor\UI\View\EngineProfileView.h" />
     <ClInclude Include="Editor\UI\View\GameView.h" />
     <ClInclude Include="Editor\UI\View\HierarchyView.h" />
     <ClInclude Include="Editor\UI\IEditorUI.h" />
@@ -491,6 +495,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Camera\Camera.h" />
     <ClInclude Include="Engine\Platform\Windows\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Core\Entity\EntityManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Physics\Force.h" />
+    <ClInclude Include="Engine\Platform\Windows\Physics\PhysicsManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneObjectData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\SceneManager.h" />

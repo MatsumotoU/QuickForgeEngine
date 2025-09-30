@@ -22,6 +22,7 @@
 // なんかAssetsではなさそうなやつら
 #include "Scene/SceneManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
+#include "Physics/PhysicsManager.h"
 
 class WindowsEngineCore final : public IEngineCore {
 public:
@@ -57,6 +58,7 @@ private:
 	DirectInputManager* directInputManager_;
 	SceneManager* sceneManager_;
 	LuaScriptResourceManager* luaScriptResourceManager_;
+	PhysicsManager* physicsManager_;
 
 	nlohmann::json configJson_;
 };

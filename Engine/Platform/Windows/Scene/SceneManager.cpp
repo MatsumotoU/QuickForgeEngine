@@ -1,6 +1,8 @@
 #include "SceneManager.h"
 #include "SceneObject.h"
 
+#include "Core/EngineGlobalValue.h"
+
 #include "Assets/AssetManager.h"
 #include "Camera/CameraManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
@@ -8,6 +10,7 @@
 #include "Assets/3DModel/Data/ModelHandle.h"
 #include "Data/SceneObjectData.h"
 #include "Assets/Script/Data/ScriptHandle.h"
+#include "Physics/PhysicsManager.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -30,6 +33,7 @@ void SceneManager::Update() {
 	// スクリプト更新
 	if (isRunningScript_) {
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
+		PhysicsManager::GetInstance()->Update();
 	}
 	currentScene_->Update();
 }
@@ -170,6 +174,11 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 					}
 				}
 			}
+		}
+		if (entityJson.contains("Force")) {
+			entityManager->EmplaceComponent<Force>(entityId);
+			Force& force = entityManager->GetComponent<Force>(entityId);
+			force.Deserialize(entityJson["Force"]);
 		}
 	}
 }

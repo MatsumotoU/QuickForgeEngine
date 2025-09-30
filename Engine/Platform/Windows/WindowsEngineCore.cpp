@@ -95,6 +95,9 @@ void WindowsEngineCore::Initialize() {
 
 	luaScriptResourceManager_ = LuaScriptResourceManager::GetInstance();
 	luaScriptResourceManager_->Initialize();
+
+	physicsManager_ = PhysicsManager::GetInstance();
+	physicsManager_->Initialize();
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -119,6 +122,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	physicsManager_->Finalize();
 	luaScriptResourceManager_->Finalize();
 	graphRenderer_->Finalize();
 	assetManager_->Finalize();
