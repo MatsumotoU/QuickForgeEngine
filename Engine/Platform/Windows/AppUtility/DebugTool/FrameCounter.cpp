@@ -28,6 +28,18 @@ void FrameCounter::FrameEnd() {
 		maxFps_ = 60.0f; // 無効な値を防ぐ
 	}
 
+	deltaTimeBuffer_.push(deltaTime_);
+	if (deltaTimeBuffer_.size() > 512) {
+		deltaTimeBuffer_.pop();
+	}
+	float totalDeltaTime = 0.0f;
+	std::queue<float> tempQueue = deltaTimeBuffer_;
+	while (!tempQueue.empty()) {
+		totalDeltaTime += tempQueue.front();
+		tempQueue.pop();
+	}
+	deltaTime_ = totalDeltaTime / static_cast<float>(deltaTimeBuffer_.size());
+
 	QFE::EngineGlobalValue::deltaTime = deltaTime_;
 	QFE::EngineGlobalValue::fps = fps_;
 }

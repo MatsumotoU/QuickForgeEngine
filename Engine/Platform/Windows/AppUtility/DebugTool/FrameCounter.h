@@ -2,6 +2,7 @@
 #include <chrono>
 #include <cstdint>
 #include <thread>
+#include <queue>
 
 class FrameCounter final {
 public:
@@ -19,4 +20,5 @@ private:
 	uint32_t frameCount_;
 	float fps_;
 	float deltaTime_;
+	std::queue<float> deltaTimeBuffer_;
 };
