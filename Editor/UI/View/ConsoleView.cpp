@@ -7,7 +7,9 @@
 ConsoleView::ConsoleView() {
 	name_ = "Console View";
 	isActive_ = true;
+#ifdef _DEBUG
 	logLevel_ = LogLevel::EditorInfo;
+#endif // _DEBUG
 }
 
 void ConsoleView::Initialize() {
@@ -17,6 +19,7 @@ void ConsoleView::Update() {
 }
 
 void ConsoleView::Draw() {
+#ifdef _DEBUG
 	if (!isActive_) {
 		return;
 	}
@@ -73,4 +76,6 @@ void ConsoleView::Draw() {
 	}
 	ImGui::EndChild();
 	ImGui::End();
+
+#endif // _DEBUG
 }

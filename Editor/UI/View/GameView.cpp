@@ -13,11 +13,14 @@ void GameView::Initialize() {
 
 void GameView::Update() {
 	if (isSceneViewFocused_) {
+#ifdef _DEBUG
 		CameraManager::GetInstance()->SetActiveDebugCamera(false);
+#endif // _DEBUG
 	}
 }
 
 void GameView::Draw() {
+#ifdef _DEBUG
 	if (!isActive_) {
 		return;
 	}
@@ -53,5 +56,5 @@ void GameView::Draw() {
 	ImGui::SetCursorScreenPos(centerPos);
 	ImGui::Image((void*)handle.gpuHandle_.ptr, imageSize);
 	ImGui::End();
-
+#endif // _DEBUG
 }

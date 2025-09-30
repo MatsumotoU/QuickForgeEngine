@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include "Externals/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 class IEvent {
 public:
