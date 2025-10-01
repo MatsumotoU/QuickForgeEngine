@@ -294,6 +294,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptResourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\CameraManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Collider\ColliderManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Physics\Force.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Physics\PhysicsManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Scene\SceneManager.cpp" />
@@ -407,6 +409,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\PostProcess.h" />
     <ClInclude Include="Engine\Core\Math\MyMath.h" />
     <ClInclude Include="Engine\Core\Math\MyRandomNum.h" />
+    <ClInclude Include="Engine\Core\Math\Shapes.h" />
     <ClInclude Include="Engine\Core\Window\IGameWindowManager.h" />
     <ClInclude Include="Engine\Core\Window\IGameWindow.h" />
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h" />
@@ -434,6 +437,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Camera\Camera.h" />
     <ClInclude Include="Engine\Platform\Windows\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Core\Entity\EntityManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Collider\ColliderManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Physics\Force.h" />
     <ClInclude Include="Engine\Platform\Windows\Physics\PhysicsManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneData.h" />

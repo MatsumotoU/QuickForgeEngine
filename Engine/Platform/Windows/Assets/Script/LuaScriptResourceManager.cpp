@@ -115,6 +115,29 @@ void LuaScriptResourceManager::UpdateAllScripts() {
 	}
 }
 
+void LuaScriptResourceManager::RunColliderStay(uint32_t aEintityId, uint32_t bEintityId) {
+	if (scripts_.empty()) {
+#ifdef _DEBUG
+		DebugLog("Script Not Found", LogLevel::Warning);
+#endif // _DEBUG
+		return;
+	}
+
+	for (auto& script : scripts_) {
+		if (script->GetBindEntityId() != aEintityId && script->GetBindEntityId() != bEintityId) {
+			continue;
+		}
+
+		if (script->HasFunction("OnCollisonStay")) {
+			script->RunFunction("OnCollisonStay");
+		} else {
+#ifdef _DEBUG
+			DebugLog("OnCollisonStay Not Found", LogLevel::Warning);
+#endif // _DEBUG
+		}
+	}
+}
+
 void LuaScriptResourceManager::EndFrame() {
 	CheckScriptEntity();
 	for (uint32_t& handle : removeScriptHandles_) {

@@ -21,6 +21,7 @@ public:
 	void RemoveScript(uint32_t handle);
 	void InitializeAllScripts();
 	void UpdateAllScripts();
+	void RunColliderStay(uint32_t aEintityId, uint32_t bEintityId);
 	void EndFrame();
 	void Finalize();
 
