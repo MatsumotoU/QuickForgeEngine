@@ -21,6 +21,7 @@ class MyDebugLog : public Singleton<MyDebugLog> {
 public:
     void Log(const std::string& message, const std::source_location& location = std::source_location::current());
 	const std::vector<std::string>* GetLog();
+	void DebugLogClear();
 
 	std::vector<std::string> engineLog_;
 	std::vector<std::string> editorLog_;

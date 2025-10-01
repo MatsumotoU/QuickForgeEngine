@@ -73,6 +73,13 @@ const std::vector<std::string>* MyDebugLog::GetLog() {
 	return &log_;
 }
 
+void MyDebugLog::DebugLogClear() {
+	engineLog_.clear();
+	editorLog_.clear();
+	warningLog_.clear();
+	errorLog_.clear();
+}
+
 void DebugLog(const std::string& message, const LogLevel& logLevel, const std::source_location& location) {
 	MyDebugLog::GetInstance()->Log(message, location);
 	if (logLevel == LogLevel::EngineInfo) {
