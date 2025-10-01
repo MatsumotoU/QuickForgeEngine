@@ -6,11 +6,13 @@
 #include "Assets/AssetManager.h"
 #include "Camera/CameraManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
+#include "Collider/ColliderManager.h"
 
 #include "Assets/3DModel/Data/ModelHandle.h"
 #include "Data/SceneObjectData.h"
 #include "Assets/Script/Data/ScriptHandle.h"
 #include "Physics/PhysicsManager.h"
+#include "Collider/Data/SphereColliderData.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -31,6 +33,7 @@ void SceneManager::Initalize() {
 
 void SceneManager::Update() {
 	// スクリプト更新
+	ColliderManager::GetInstance()->Update();
 	if (isRunningScript_) {
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
 		PhysicsManager::GetInstance()->Update();
@@ -68,6 +71,7 @@ void SceneManager::PreDraw() {
 }
 
 void SceneManager::Draw() {
+	ColliderManager::GetInstance()->Draw();
 	currentScene_->Draw();
 }
 
@@ -180,6 +184,11 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 			Force& force = entityManager->GetComponent<Force>(entityId);
 			force.Deserialize(entityJson["Force"]);
 		}
+		if (entityJson.contains("SphereColliderData")) {
+			entityManager->EmplaceComponent<SphereColliderData>(entityId);
+			SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
+			sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
+		}
 	}
 }
 
@@ -235,10 +244,12 @@ void SceneManager::StartScript() {
 		LoadScene(currentScene_->GetSceneName());
 		isRunningScript_ = true;
 		LuaScriptResourceManager::GetInstance()->InitializeAllScripts();
+		ColliderManager::GetInstance()->isRunning = true;
 	}
 }
 
 void SceneManager::StopScript() {
 	if (isRequestStopScript_) {return;}
 	isRequestStopScript_ = true;
+	ColliderManager::GetInstance()->isRunning = false;
 }

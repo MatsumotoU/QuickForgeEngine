@@ -23,6 +23,7 @@
 #include "Scene/SceneManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
 #include "Physics/PhysicsManager.h"
+#include "Collider/ColliderManager.h"
 
 class WindowsEngineCore final : public IEngineCore {
 public:
@@ -59,6 +60,7 @@ private:
 	SceneManager* sceneManager_;
 	LuaScriptResourceManager* luaScriptResourceManager_;
 	PhysicsManager* physicsManager_;
+	ColliderManager* colliderManager_;
 
 	nlohmann::json configJson_;
 };

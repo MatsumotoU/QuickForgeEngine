@@ -50,6 +50,8 @@ public:// 描画関数
 	void DrawGrid(float size = 10.0f, int32_t gridCount = 10);
 	/// 球を描画します
 	void DrawSphere(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
+	/// 円を描画します
+	void DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
 
 	/// 何回三角形を描画するかを取得します
 	void GetDrawTriangleCount(uint32_t* triangleCount) { *triangleCount = triangleCount_; };

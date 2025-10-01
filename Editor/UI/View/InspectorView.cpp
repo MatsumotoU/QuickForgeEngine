@@ -9,6 +9,7 @@
 #include "Assets/AssetManager.h"
 #include "Assets/Script/Data/ScriptHandle.h"
 #include "Physics/Force.h"
+#include "Collider/Data/SphereColliderData.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
@@ -58,7 +59,7 @@ void InspectorView::Draw() {
 
 		ImGui::Text("Scripts");
 		ImGui::SameLine();
-		if (ImGui::Button("Delete")) {
+		if (ImGui::Button("Delete##Scripts")) {
 			assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
 		}
 		std::vector<uint32_t> eraseIndices;
@@ -95,7 +96,7 @@ void InspectorView::Draw() {
 		Force& force = assetManager->GetEntityManager()->GetComponent<Force>(selectedEntityId_);
 		ImGui::Text("Force");
 		ImGui::SameLine();
-		if (ImGui::Button("Delete")) {
+		if (ImGui::Button("Delete##Force")) {
 			assetManager->GetEntityManager()->RemoveComponent<Force>(selectedEntityId_);
 		}
 		ImGui::DragFloat3("Velocity", &force.velocity.x, 0.1f);
@@ -106,12 +107,40 @@ void InspectorView::Draw() {
 		ImGui::Checkbox("Use Gravity", &force.isGravity);
 		ImGui::Separator();
 	}
+	// SphereColliderData
+	if (assetManager->GetEntityManager()->HasComponent<SphereColliderData>(selectedEntityId_)) {
+		SphereColliderData& sphereCollider = assetManager->GetEntityManager()->GetComponent<SphereColliderData>(selectedEntityId_);
+		ImGui::Text("SphereCollider");
+		ImGui::SameLine();
+		if (ImGui::Button("Delete##SphereCollider")) {
+			assetManager->GetEntityManager()->RemoveComponent<SphereColliderData>(selectedEntityId_);
+		}
+		ImGui::Checkbox("Is Trigger", &sphereCollider.isTrigger);
+		ImGui::Checkbox("Is Static", &sphereCollider.isStatic);
+		ImGui::DragFloat3("Center", &sphereCollider.sphere.center.x, 0.1f);
+		ImGui::DragFloat("Radius", &sphereCollider.sphere.radius, 0.1f, 0.1f);
+#ifdef _DEBUG
+		ImGui::Checkbox("Debug Draw", &sphereCollider.isDraw);
+#endif // _DEBUG
+		ImGui::Separator();
+	}
+	
 
 	// コンポーネントの追加
 	if (ImGui::Button("Add Component")) {
 		ImGui::OpenPopup("AddComponentPopup");
 	}
 	if (ImGui::BeginPopup("AddComponentPopup")) {
+		// SphereCollider
+		if (ImGui::BeginMenu("Collider3D")) {
+			if (ImGui::MenuItem("SphereCollider")) {
+				if (!assetManager->GetEntityManager()->HasComponent<SphereColliderData>(selectedEntityId_)) {
+					assetManager->GetEntityManager()->EmplaceComponent<SphereColliderData>(selectedEntityId_);
+				}
+			}
+			ImGui::EndMenu();
+		}
+		// Force
 		if (ImGui::BeginMenu("Physics")) {
 			if (ImGui::MenuItem("Force")) {
 				if (!assetManager->GetEntityManager()->HasComponent<Force>(selectedEntityId_)) {
@@ -120,7 +149,7 @@ void InspectorView::Draw() {
 			}
 			ImGui::EndMenu();
 		}
-
+		// Script
 		if (ImGui::BeginMenu("Script")) {
 			if (ImGui::MenuItem("NewScript")) {
 				openScriptPopup_ = true;

@@ -98,6 +98,9 @@ void WindowsEngineCore::Initialize() {
 
 	physicsManager_ = PhysicsManager::GetInstance();
 	physicsManager_->Initialize();
+
+	colliderManager_ = ColliderManager::GetInstance();
+	colliderManager_->Initialize();
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -122,6 +125,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	colliderManager_->Finalize();
 	physicsManager_->Finalize();
 	luaScriptResourceManager_->Finalize();
 	graphRenderer_->Finalize();

@@ -18,6 +18,7 @@ public:
 	bool IsAliveEntity();
 
 	void SetEntityValue(uint32_t entityId);
+	uint32_t GetBindEntityId() const { return bindEntityId_; }
 
 private:
 	/// QFE用の関数を登録
