@@ -45,6 +45,10 @@ void ConsoleView::Draw() {
 		}
 		ImGui::EndCombo();
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Clear")) {
+		MyDebugLog::GetInstance()->DebugLogClear();
+	}
 	ImGui::Separator();
 	
 	ImVec2 logAreaSize = ImGui::GetContentRegionAvail();

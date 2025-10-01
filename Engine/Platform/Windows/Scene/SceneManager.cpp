@@ -240,6 +240,10 @@ void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 
 void SceneManager::StartScript() {
 	if (!isRunningScript_) {
+#ifdef _DEBUG
+		MyDebugLog::GetInstance()->DebugLogClear();
+#endif // _DEBUG
+
 		SaveScene(currentScene_->GetSceneName());
 		LoadScene(currentScene_->GetSceneName());
 		isRunningScript_ = true;
