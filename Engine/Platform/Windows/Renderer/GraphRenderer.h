@@ -12,7 +12,7 @@ class PipelineStateObject;
 
 // グラフ描画の最大数
 static inline const uint32_t kGraphRendererMaxTriangleCount = 128;
-static inline const uint32_t kGraphRendererMaxLineCount = 128;
+static inline const uint32_t kGraphRendererMaxLineCount = 1024;
 static inline const uint32_t kGraphRendererMaxPointCount = 128;
 
 class GraphRenderer : public Singleton<GraphRenderer> {
@@ -40,24 +40,23 @@ public:// 一回は呼び出さないとバグるやつら
 	void Finalize();
 
 public:// 描画関数
-	/// <summary>
-	/// 三角形を描画します(-1.0 ~ 1.0)
-	/// </summary>
+	/// 三角形を描画します
 	void DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color);
-	/// <summary>
-	/// 線分を描画します(-1.0 ~ 1.0)
-	/// </summary>
+	/// 線分を描画します
 	void DrawLine(Vector3 point1, Vector3 point2,const Vector4& color);
-	/// <summary>
-	/// 点を描画します(-1.0 ~ 1.0)
-	/// </summary>
+	/// 点を描画します
 	void DrawPoint(Vector3 point, const Vector4& color);
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="size"></param>
-	/// <param name="gridCount"></param>
+	/// グリッドを描画します
 	void DrawGrid(float size = 10.0f, int32_t gridCount = 10);
+	/// 球を描画します
+	void DrawSphere(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
+
+	/// 何回三角形を描画するかを取得します
+	void GetDrawTriangleCount(uint32_t* triangleCount) { *triangleCount = triangleCount_; };
+	/// 何回ラインを描画するかを取得します
+	void GetDrawLineCount(uint32_t* lineCount) { *lineCount = lineCount_; };
+	/// 何回点を描画するかを取得します
+	void GetDrawPointCount(uint32_t* pointCount) { *pointCount = pointCount_; };
 
 private:
 	uint32_t triangleCount_;

@@ -57,6 +57,10 @@ void InspectorView::Draw() {
 		ScriptHandles& scriptHandle = assetManager->GetEntityManager()->GetComponent<ScriptHandles>(selectedEntityId_);
 
 		ImGui::Text("Scripts");
+		ImGui::SameLine();
+		if (ImGui::Button("Delete")) {
+			assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
+		}
 		std::vector<uint32_t> eraseIndices;
 		for (size_t i = 0; i < scriptHandle.scriptHandles_.size(); ++i) {
 			const auto& sh = scriptHandle.scriptHandles_[i];
@@ -90,6 +94,10 @@ void InspectorView::Draw() {
 	if (assetManager->GetEntityManager()->HasComponent<Force>(selectedEntityId_)) {
 		Force& force = assetManager->GetEntityManager()->GetComponent<Force>(selectedEntityId_);
 		ImGui::Text("Force");
+		ImGui::SameLine();
+		if (ImGui::Button("Delete")) {
+			assetManager->GetEntityManager()->RemoveComponent<Force>(selectedEntityId_);
+		}
 		ImGui::DragFloat3("Velocity", &force.velocity.x, 0.1f);
 		ImGui::DragFloat3("Acceleration", &force.acceleration.x, 0.1f);
 		ImGui::DragFloat("Mass", &force.mass, 0.1f, 0.1f);
