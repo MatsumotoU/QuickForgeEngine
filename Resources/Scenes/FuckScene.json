@@ -1,0 +1,127 @@
+{
+    "entities": [
+        {
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 1.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "Name",
+                "tag": "Untagged"
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "handle": 4,
+                        "scriptName": "Fuck.lua"
+                    },
+                    {
+                        "handle": 5,
+                        "scriptName": "Move.lua"
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.0862971544265747,
+                    0.48277348279953003,
+                    0.0
+                ]
+            }
+        },
+        {
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 1.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "anchor.obj",
+                "tag": "Untagged"
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -0.9829039573669434,
+                    0.9924174547195435,
+                    -1.0108124017715454
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "anchor.obj",
+                "tag": "Untagged"
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    ],
+    "sceneName": "FuckScene"
+}

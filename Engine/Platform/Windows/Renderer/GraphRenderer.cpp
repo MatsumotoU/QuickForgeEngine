@@ -6,6 +6,11 @@
 #include "Assets/AssetManager.h"
 #include "Camera/CameraManager.h"
 #include <cassert>
+#include <numbers>
+
+#ifdef _DEBUG
+#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#endif // _DEBUG
 
 void GraphRenderer::Initialize() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
@@ -142,6 +147,9 @@ void GraphRenderer::Finalize() {
 
 void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color) {
 	if (triangleCount_ >= kGraphRendererMaxTriangleCount) {
+#ifdef _DEBUG
+		DebugLog("Exceeded maximum triangle count.");
+#endif // _DEBUG
 		return; // 最大数を超えた場合は描画しない
 	}
 
@@ -167,6 +175,9 @@ void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3,
 
 void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& color) {
 	if (lineCount_ >= kGraphRendererMaxLineCount) {
+#ifdef _DEBUG
+		DebugLog("Exceeded maximum Line count.");
+#endif // _DEBUG
 		return; // 最大数を超えた場合は描画しない
 	}
 	Vector4 p0 = Vector4(point1.x, point1.y, point1.z, 1.0f);
@@ -184,6 +195,9 @@ void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& colo
 
 void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
 	if (pointCount_ >= kGraphRendererMaxPointCount) {
+#ifdef _DEBUG
+		DebugLog("Exceeded maximum Points count.");
+#endif // _DEBUG
 		return; // 最大数を超えた場合は描画しない
 	}
 	Vector4 p = Vector4(point.x, point.y, point.z, 1.0f);
@@ -246,5 +260,52 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 				Vector3(halfSize, 0.0f, z), color);
 		}
 		
+	}
+}
+
+void GraphRenderer::DrawSphere(Vector3 center, float radius, const Vector4& color, uint32_t subdivision) {
+	const float pi = std::numbers::pi_v<float>;
+	const float kLonEvery = pi / static_cast<float>(subdivision) * 2;
+	const float kLatEvery = (pi * 2.0f) / static_cast<float>(subdivision) * 2;
+	// 緯度の方向に分割
+	for (uint32_t latIndex = 0; latIndex < subdivision; ++latIndex) {
+		float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);// 現在の緯度
+		float nextLat = (2.0f * pi) / static_cast<float>(subdivision) * 2.0f;
+
+		// 経度の方向に分割
+		for (uint32_t lonIndex = 0; lonIndex < subdivision; ++lonIndex) {
+			float lot = kLonEvery * static_cast<float>(lonIndex);// 現在の緯度
+			float nextLot = pi / static_cast<float>(subdivision) * 2.0f;
+
+			Vector3 a{}, b{}, c{};
+			a = {
+				cosf(lot) * cosf(lat),
+				sinf(lot),
+				cosf(lot) * sinf(lat) 
+			};
+			b = {
+				cosf(lot + nextLot) * cosf(lat),
+				sinf(lot + nextLot),
+				cosf(lot + nextLot) * sinf(lat) 
+			};
+			c = {
+				cosf(lot) * cosf(lat + nextLat),
+				sinf(lot),
+				cosf(lot) * sinf(lat + nextLat) 
+			};
+
+			// 半径分でかくする
+			a = a * radius;
+			b = b * radius;
+			c = c * radius;
+
+			// 中心をずらす
+			a = a + center;
+			b = b + center;
+			c = c + center;
+
+			DrawLine(a, b, color);
+			DrawLine(a, c, color);
+		}
 	}
 }

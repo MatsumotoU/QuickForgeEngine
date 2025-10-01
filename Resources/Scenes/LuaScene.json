@@ -11,7 +11,7 @@
             "ScriptHandle": {
                 "scriptHandles": [
                     {
-                        "handle": 1,
+                        "handle": 0,
                         "scriptName": "RightMove.lua"
                     }
                 ]

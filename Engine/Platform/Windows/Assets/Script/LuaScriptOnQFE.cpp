@@ -1,4 +1,5 @@
 #include "LuaScriptOnQFE.h"
+#include "Core/EngineGlobalValue.h"
 #include "Assets/AssetManager.h"
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Core/Math/Transform.h"
@@ -47,6 +48,8 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 }
 
 void LuaScriptOnQFE::RunFunction(const std::string& functionName) {
+	luaState_->set("deltaTime", QFE::EngineGlobalValue::deltaTime);
+
 	try {
 		if (!isCanRun_) {
 			throw std::runtime_error("Cannot run function. Lua script is not loaded or failed to load.");
@@ -153,6 +156,9 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		DebugLog(message,LogLevel::EditorInfo);
 		});
 #endif // _DEBUG
+
+	// GlobalValue
+	
 
 	// Math
 	luaState_->new_usertype<Vector2>("Vector2",

@@ -1,22 +1,6 @@
 {
     "entities": [
         {
-            "Force": {
-                "acceleration": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "friction": 1.0,
-                "gravityStrength": 1.0,
-                "isGravity": false,
-                "mass": 1.0,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
             "ModelHandle": {
                 "modelName": "anchor.obj"
             },
@@ -27,7 +11,7 @@
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -36,8 +20,8 @@
                     1.0
                 ],
                 "translate": [
-                    -1.0513052940368652,
-                    0.30513307452201843,
+                    0.0,
+                    0.0,
                     0.0
                 ]
             }
