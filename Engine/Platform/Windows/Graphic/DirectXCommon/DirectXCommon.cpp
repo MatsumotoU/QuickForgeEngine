@@ -46,6 +46,7 @@ void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
 		&depthClearValue,
 		IID_PPV_ARGS(depthStencilBuffer_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
+	hr;
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;

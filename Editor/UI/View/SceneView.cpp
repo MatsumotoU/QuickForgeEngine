@@ -86,6 +86,7 @@ void SceneView::Draw() {
 }
 
 void SceneView::DebugCameraControl() {
+#ifdef _DEBUG
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
 	if (isActiveCamera_) {
 		CameraManager::GetInstance()->SetActiveDebugCamera(true);
@@ -98,7 +99,7 @@ void SceneView::DebugCameraControl() {
 			cameraMoveT_ = 0.0f;
 		}
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD1)) {
-			targetRotate_ = { distance, -3.14f * 0.5f,3.14f*0.5f  };
+			targetRotate_ = { distance, -3.14f * 0.5f,3.14f * 0.5f };
 			startPos_ = camera.transform_.translate;
 			cameraMoveT_ = 0.0f;
 		}
@@ -120,7 +121,7 @@ void SceneView::DebugCameraControl() {
 		if (cameraMoveT_ < 1.0f) {
 			cameraMoveT_ += 0.1f;
 			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(targetRotate_);
-			camera.transform_.translate = Vector3::Slerp(startPos_,sphericalToCartesian + anchorPoint_, cameraMoveT_);
+			camera.transform_.translate = Vector3::Slerp(startPos_, sphericalToCartesian + anchorPoint_, cameraMoveT_);
 
 			// LookAtの方向ベクトルがゼロにならないように
 			if ((anchorPoint_ - Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix())).Length() > 0.001f) {
@@ -176,6 +177,7 @@ void SceneView::DebugCameraControl() {
 			}
 		}
 	}
+#endif // _DEBUG
 }
 
 void SceneView::UpdateGizmo() {

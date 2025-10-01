@@ -16,7 +16,9 @@ HierarchyView::HierarchyView() {
 }
 
 void HierarchyView::Initialize() {
-	modelDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
+#ifdef _DEBUG
+    modelDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
+#endif // _DEBUG
 }
 
 void HierarchyView::Update() {
@@ -24,27 +26,30 @@ void HierarchyView::Update() {
 }
 
 void HierarchyView::Draw() {
-	if (!isActive_) {
-		return;
-	}
+#ifdef _DEBUG
+    if (!isActive_) {
+        return;
+    }
 
-	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	// 右クリックでコンテキストメニュー
-	DrawPopupContextWindow();
-	// Entity一覧表示
-	DrawEntityList();
+    ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+    // 右クリックでコンテキストメニュー
+    DrawPopupContextWindow();
+    // Entity一覧表示
+    DrawEntityList();
 
-	ImGui::End();
+    ImGui::End();
+#endif // _DEBUG
 }
 
 void HierarchyView::DrawPopupContextWindow() {
+#ifdef _DEBUG
     if (ImGui::BeginPopupContextWindow(nullptr, ImGuiPopupFlags_MouseButtonRight)) {
         if (ImGui::BeginMenu("Add")) {
             if (ImGui::BeginMenu("Model")) {
                 modelDropDownFileList_.DrawMenuItem();
                 std::string selectedModelFileName_;
                 if (modelDropDownFileList_.GetSelectedFileName(selectedModelFileName_)) {
-					SceneManager::GetInstance()->LoadModel(selectedModelFileName_);
+                    SceneManager::GetInstance()->LoadModel(selectedModelFileName_);
                 }
                 ImGui::EndMenu();
             }
@@ -52,12 +57,14 @@ void HierarchyView::DrawPopupContextWindow() {
         }
         ImGui::EndPopup();
     }
+#endif // _DEBUG
 }
 
 void HierarchyView::DrawEntityList() {
-	// TODO: 名前をつけられるようにする
-	AssetManager* assetManager = AssetManager::GetInstance();
-	auto entityIds = assetManager->GetEntityManager()->GetActiveEntityIds();
+#ifdef _DEBUG
+    // TODO: 名前をつけられるようにする
+    AssetManager* assetManager = AssetManager::GetInstance();
+    auto entityIds = assetManager->GetEntityManager()->GetActiveEntityIds();
     for (uint32_t id : entityIds) {
         bool isSelected = (selectedEntityId_ == id);
         std::string& name = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(id).name;
@@ -99,4 +106,5 @@ void HierarchyView::DrawEntityList() {
             ImGui::EndPopup();
         }
     }
+#endif // _DEBUG
 }

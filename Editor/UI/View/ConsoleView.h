@@ -12,5 +12,7 @@ public:
 	void Update() override;
 	void Draw() override;
 private:
+#ifdef _DEBUG
 	LogLevel logLevel_;
+#endif // _DEBUG
 };

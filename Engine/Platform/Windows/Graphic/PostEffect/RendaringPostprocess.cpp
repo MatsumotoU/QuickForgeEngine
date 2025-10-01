@@ -4,6 +4,9 @@
 
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 
+#include <cassert>
+#include <algorithm>
+
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"

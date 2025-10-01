@@ -39,6 +39,7 @@ bool QFE::FILE::LoadFileToJson(const std::string& filePath, nlohmann::json& json
         }
         catch (const nlohmann::json::parse_error& e) {
             ifs.close();
+            e;
             assert(false && e.what());
         }
     }
