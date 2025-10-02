@@ -7,6 +7,7 @@
 #include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Renderer/GraphRenderer.h"
+#include "Core/Math/MyMath.h"
 
 #include <cmath>
 #include <algorithm>
@@ -186,29 +187,45 @@ void SceneView::UpdateGizmo() {
 	ImGuizmo::SetOrthographic(false);
 	ImGuizmo::SetDrawlist();
 
-	// ImGuiウィンドウのサイズ・位置を取得
 	ImVec2 windowPos = ImGui::GetWindowPos();
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
 
-	// 選択中エンティティのTransform取得（例: HierarchyView::selectedEntityId_ から）
 	if (!AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(selectEntityId_)) {
 		return;
-	} 
+	}
 	Transform& transform = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(selectEntityId_);
 
-	// カメラ行列取得
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
 	Matrix4x4 view = camera.GetViewMatrix();
 	Matrix4x4 proj = camera.GetPerspectiveMatrix();
 
-	// ギズモ操作タイプ
 	static ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
 	if (ImGui::IsKeyPressed(ImGuiKey_T)) currentGizmoOperation = ImGuizmo::TRANSLATE;
 	if (ImGui::IsKeyPressed(ImGuiKey_R)) currentGizmoOperation = ImGuizmo::ROTATE;
 	if (ImGui::IsKeyPressed(ImGuiKey_S)) currentGizmoOperation = ImGuizmo::SCALE;
 
-	// Transformを行列に変換
+	ImGui::PushID("GizmoOperationMenu");
+	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered()) {
+		ImGui::OpenPopup("GizmoOperationPopup");
+	}
+	if (ImGui::BeginPopup("GizmoOperationPopup")) {
+		ImGui::Text("Gizmo Operation");
+		ImGui::Separator();
+		if (ImGui::MenuItem("Translate", nullptr, currentGizmoOperation == ImGuizmo::TRANSLATE)) {
+			currentGizmoOperation = ImGuizmo::TRANSLATE;
+		}
+		if (ImGui::MenuItem("Rotate", nullptr, currentGizmoOperation == ImGuizmo::ROTATE)) {
+			currentGizmoOperation = ImGuizmo::ROTATE;
+		}
+		if (ImGui::MenuItem("Scale", nullptr, currentGizmoOperation == ImGuizmo::SCALE)) {
+			currentGizmoOperation = ImGuizmo::SCALE;
+		}
+		ImGui::EndPopup();
+	}
+	ImGui::PopID();
+
+	// ギズモ用行列
 	Matrix4x4 matrix = Matrix4x4::MakeAffineMatrix(
 		transform.scale,
 		transform.rotate,
@@ -222,11 +239,12 @@ void SceneView::UpdateGizmo() {
 		currentGizmoOperation, ImGuizmo::LOCAL, matrixPtr
 	);
 
-	// 変更があればTransformに反映
+	// ギズモ操作中のみTransformに反映
 	if (ImGuizmo::IsUsing()) {
 		Matrix4x4 newMat;
 		std::memcpy(&newMat.m[0][0], matrixPtr, sizeof(float) * 16);
 		transform.FromMatrix(newMat);
 	}
+	// ギズモ操作していないときはTransformの値で行列を再生成（matrixは毎フレーム再生成されるのでOK）
 #endif
 }

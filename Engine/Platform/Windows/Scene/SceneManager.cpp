@@ -199,6 +199,16 @@ void SceneManager::ResetScene() {
 	CameraManager::GetInstance()->Initialize();
 }
 
+void SceneManager::AddEpmtyObject() {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
+	SceneObjectData sceneObjectData;
+	sceneObjectData.name = "EmptyObject";
+	sceneObjectData.tag = "Untagged";
+	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+}
+
 void SceneManager::LoadModel(const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
