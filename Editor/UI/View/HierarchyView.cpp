@@ -45,6 +45,10 @@ void HierarchyView::DrawPopupContextWindow() {
 #ifdef _DEBUG
     if (ImGui::BeginPopupContextWindow(nullptr, ImGuiPopupFlags_MouseButtonRight)) {
         if (ImGui::BeginMenu("Add")) {
+            if (ImGui::MenuItem("Empty Entity")) {
+                SceneManager::GetInstance()->AddEpmtyObject();
+            }
+
             if (ImGui::BeginMenu("Model")) {
                 modelDropDownFileList_.DrawMenuItem();
                 std::string selectedModelFileName_;

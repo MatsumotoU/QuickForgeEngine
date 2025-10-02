@@ -11,3 +11,7 @@ void MyMath::SimpleEaseIn(float* value, float endValue, float transitionSpeed) {
 		*value = endValue;
 	}
 }
+
+float MyMath::DegreesToRadians(float degrees) {
+	return degrees * 3.14159265358979323846f / 180.0f;
+}

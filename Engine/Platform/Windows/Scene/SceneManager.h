@@ -23,6 +23,7 @@ public:
 	void LoadScene(const std::string& sceneName);
 	void ResetScene();
 
+	void AddEpmtyObject();
 	void LoadModel(const std::string& modelName);
 	void AddScript(uint32_t entityId,const std::string& scriptName);
 
