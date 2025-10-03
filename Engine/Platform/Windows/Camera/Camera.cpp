@@ -34,11 +34,11 @@ Matrix4x4 Camera::GetOrthographicMatrix() const {
 	return Matrix4x4::MakeOrthographicMatrix(
 		0.0f, 0.0f,
 		static_cast<float>(QFE::EngineGlobalValue::windowWidth),
-		static_cast<float>(QFE::EngineGlobalValue::windowHeight), 0.0f, farZ_);
+		static_cast<float>(QFE::EngineGlobalValue::windowHeight), 0.01f, farZ_);
 }
 
-Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix) const {
-	switch (cameraType)
+Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, CameraType type) const {
+	switch (type)
 	{
 	case CameraType::Perspective:
 		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix_, GetPerspectiveMatrix()));

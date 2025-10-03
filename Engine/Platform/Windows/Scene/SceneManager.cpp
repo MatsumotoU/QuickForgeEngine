@@ -62,7 +62,7 @@ void SceneManager::PreDraw() {
 					transform.translate
 				);
 
-				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World);
+				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World,CameraType::Perspective);
 			}
 			// スプライトのワールド行列更新
 			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
@@ -74,7 +74,7 @@ void SceneManager::PreDraw() {
 					transform.translate
 				);
 
-				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrixOrthographic(wpvMatrix->World);
+				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World,CameraType::Orthographic);
 			}
 		}
 	}

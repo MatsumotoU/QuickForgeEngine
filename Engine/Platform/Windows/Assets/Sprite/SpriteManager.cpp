@@ -1,5 +1,6 @@
 #include "SpriteManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
+#include <cassert>
 
 void SpriteManager::Initialize() {
 	spriteVertexBuffers_.clear();
@@ -8,29 +9,31 @@ void SpriteManager::Initialize() {
 uint32_t SpriteManager::CreateVertexBuffer(float width, float height) {
     spriteVertexBuffers_.emplace_back();
 	spriteVertexBuffers_.back().CreateResource(DirectXCommon::GetInstance()->GetDevice(), 6);
-	// 頂点データをセット
-	VertexData topLeft;
-	topLeft.normal = { 0.0f,0.0f,-1.0f };
-	topLeft.texcoord = { 0.0f,0.0f };
-	topLeft.position = { 0.0f, 0.0f, 0.0f };
-	spriteVertexBuffers_.back().SetData(0, topLeft);
-	VertexData topRight;
-	topRight.normal = { 0.0f,0.0f,-1.0f };
-	topRight.texcoord = { 1.0f,0.0f };
-	topRight.position = { width, 0.0f, 0.0f };
-	spriteVertexBuffers_.back().SetData(1, topRight);
-	VertexData bottomLeft;
-	bottomLeft.normal = { 0.0f,0.0f,-1.0f };
-	bottomLeft.texcoord = { 0.0f,1.0f };
-	bottomLeft.position = { 0.0f, height, 0.0f };
-	spriteVertexBuffers_.back().SetData(2, bottomLeft);
-	VertexData bottomRight;
-	bottomRight.normal = { 0.0f,0.0f,-1.0f };
-	bottomRight.texcoord = { 1.0f,1.0f };
-	bottomRight.position = { width, height, 0.0f };
-	spriteVertexBuffers_.back().SetData(3, bottomRight);
-	spriteVertexBuffers_.back().SetData(4, bottomLeft);
-	spriteVertexBuffers_.back().SetData(5, topRight);
+	VertexData* vertexData = spriteVertexBuffers_.back().GetData();
+	assert(vertexData);
+	std::vector<VertexData> tempVertices;
+	tempVertices.resize(6);
+	float w = width;
+	float h = height;
+	tempVertices[0].position = { 0.0f, 0.0f, 0.0f,1.0f };   // 左上
+	tempVertices[0].texcoord = { 0.0f, 0.0f };
+	tempVertices[0].normal = { 0.0f, 0.0f, 1.0f };
+	tempVertices[1].position = { w, 0.0f, 0.0f ,1.0f}; // 右上
+	tempVertices[1].texcoord = { 1.0f, 0.0f };
+	tempVertices[1].normal = { 0.0f, 0.0f, 1.0f };
+	tempVertices[2].position = { 0.0f, h, 0.0f ,1.0f }; // 左下
+	tempVertices[2].texcoord = { 0.0f, 1.0f };
+	tempVertices[2].normal = { 0.0f, 0.0f,1.0f };
+	tempVertices[3].position = { w, h, 0.0f ,1.0f }; // 右下
+	tempVertices[3].texcoord = { 1.0f, 1.0f };
+	tempVertices[3].normal = { 0.0f, 0.0f, 1.0f };
+	tempVertices[4].position = { 0.0f, h, 0.0f,1.0f }; // 左下
+	tempVertices[4].texcoord = { 0.0f, 1.0f };
+	tempVertices[4].normal = { 0.0f, 0.0f, 1.0f };
+	tempVertices[5].position = { w, 0.0f, 0.0f ,1.0f }; // 右上
+	tempVertices[5].texcoord = { 1.0f, 0.0f };
+	tempVertices[5].normal = { 0.0f, 0.0f, 1.0f };
+	memcpy(vertexData, tempVertices.data(), sizeof(VertexData) * 6);
 	return static_cast<uint32_t>(spriteVertexBuffers_.size()) - 1;
 }
 

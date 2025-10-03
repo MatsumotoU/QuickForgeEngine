@@ -21,7 +21,6 @@ void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 	commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
 	commandList->SetGraphicsRootSignature(pso->GetRootSignature());
 	commandList->SetPipelineState(pso->GetPipelineState());
-
 	commandList->IASetVertexBuffers(0, 1,
 		assetManager->GetSpriteManager()->GetVertexBuffer(spriteData.vertexBufferHandle)->GetVertexBufferView());
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -33,6 +32,5 @@ void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 		assetManager->GetTextureManager()->GetTextureSrvHandleGPU(spriteData.textureHandle));
 	commandList->SetGraphicsRootConstantBufferView(3,
 		assetManager->GetLightBufferManager()->GetBufferAddress(spriteData.lightBufferHandle));
-	commandList->DrawInstanced(static_cast<UINT>(
-		assetManager->GetSpriteManager()->GetVertexBuffer(spriteData.vertexBufferHandle)->GetVertexCount()), 1, 0, 0);
+	commandList->DrawInstanced(6, 1, 0, 0);
 }

@@ -81,7 +81,7 @@ void GraphRenderer::PreDraw() {
 	}
 
 	// カメラのワールドビュー投影行列を設定
-	wvp_.GetData()->WVP = camera.GetWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4());
+	wvp_.GetData()->WVP = camera.GetWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(),CameraType::Perspective);
 }
 
 void GraphRenderer::PostDraw() {
