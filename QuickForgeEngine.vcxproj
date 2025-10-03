@@ -292,12 +292,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelHandle.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptResourceManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Sprite\Data\SpriteData.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\CameraManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Collider\ColliderManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Physics\Force.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Physics\PhysicsManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Renderer\SpriteRenderer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Scene\SceneManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Scene\SceneObject.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Renderer\GraphRenderer.cpp" />
@@ -434,6 +437,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\Data\ScriptHandle.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\LuaScriptResourceManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Sprite\Data\SpriteData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Camera\Camera.h" />
     <ClInclude Include="Engine\Platform\Windows\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Core\Entity\EntityManager.h" />
@@ -441,6 +446,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Collider\ColliderManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Physics\Force.h" />
     <ClInclude Include="Engine\Platform\Windows\Physics\PhysicsManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Renderer\SpriteRenderer.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneObjectData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\SceneManager.h" />

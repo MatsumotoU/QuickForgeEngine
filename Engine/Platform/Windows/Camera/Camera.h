@@ -16,6 +16,7 @@ public:
 	Matrix4x4 GetPerspectiveMatrix() const;
 	Matrix4x4 GetOrthographicMatrix() const;
 	Matrix4x4 GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix) const;
+	Matrix4x4 GetWorldViewProjectionMatrixOrthographic(const Matrix4x4& worldMatrix) const;
 	Matrix4x4 GetWorldMatrix() const;
 
 	Transform transform_;

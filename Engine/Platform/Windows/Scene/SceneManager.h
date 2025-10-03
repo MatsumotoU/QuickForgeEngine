@@ -25,6 +25,7 @@ public:
 
 	void AddEpmtyObject();
 	void LoadModel(const std::string& modelName);
+	void AddSprite(const std::string& spriteName);
 	void AddScript(uint32_t entityId,const std::string& scriptName);
 
 	void StartScript();

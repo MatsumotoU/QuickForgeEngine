@@ -53,6 +53,10 @@ Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix) con
 	return Matrix4x4();
 }
 
+Matrix4x4 Camera::GetWorldViewProjectionMatrixOrthographic(const Matrix4x4& worldMatrix) const {
+	return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(Matrix4x4::MakeIndentity4x4(), GetOrthographicMatrix()));
+}
+
 Matrix4x4 Camera::GetWorldMatrix() const {
 	return Matrix4x4::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate); 
 }

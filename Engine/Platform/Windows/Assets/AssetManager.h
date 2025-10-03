@@ -4,6 +4,8 @@
 
 #include "3DModel/ModelRenderDataManager.h"
 #include "3DModel/ModelVertexResourceManager.h"
+#include "Sprite/SpriteManager.h" 
+#include "Sprite/Data/SpriteData.h"
 #include "ConstantBufferManager/ConstantBufferManager.h"
 #include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
 #include "Graphic/ShaderBuffer/Data/Material.h"
@@ -45,6 +47,7 @@ public:
 	ConstantBufferManager<Material>* GetMaterialBufferManager() { return &materialBufferManager_; }
 	ConstantBufferManager<DirectionalLight>* GetLightBufferManager() { return &lightBufferManager_; }
 	EntityManager* GetEntityManager() { return &entityManager_; }
+	SpriteManager* GetSpriteManager() { return &spriteManager_; }
 	const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
 
 private:
@@ -59,4 +62,5 @@ private:
 	ConstantBufferManager<Material> materialBufferManager_;
 	ConstantBufferManager<DirectionalLight> lightBufferManager_;
 	EntityManager entityManager_;
+	SpriteManager spriteManager_;
 };

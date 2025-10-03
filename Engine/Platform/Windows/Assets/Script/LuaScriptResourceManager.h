@@ -25,6 +25,9 @@ public:
 	void EndFrame();
 	void Finalize();
 
+	std::set<std::string>& GetScriptGlobals(uint32_t entityId) const;
+
+
 private:
 	void CheckScriptEntity();
 	std::vector<uint32_t> removeScriptHandles_;

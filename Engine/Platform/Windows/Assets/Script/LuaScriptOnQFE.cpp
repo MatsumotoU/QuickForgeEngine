@@ -12,6 +12,8 @@ LuaScriptOnQFE::LuaScriptOnQFE() {
 	isCanRun_ = false;
 	scriptName_ = "";
 	bindEntityId_ = 0;
+	defaultGlobals.clear();
+	UserGlobals.clear();
 }
 
 void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
@@ -19,9 +21,19 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 	try {
 		luaState_ = std::make_unique<sol::state>();
 		luaState_->open_libraries(sol::lib::base, sol::lib::package);
+		// 起動直後のグローバル一覧を保存
+		for (auto& kv : luaState_->globals()) {
+			defaultGlobals.insert(kv.first.as<std::string>());
+		}
 
 		std::string filePath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + scriptName;
 		sol::load_result loadResult = luaState_->load_file(filePath);
+		// Userグローバル一覧を保存
+		for (auto& kv : luaState_->globals()) {
+			if (defaultGlobals.find(kv.first.as<std::string>()) == defaultGlobals.end()) {
+				UserGlobals.insert(kv.first.as<std::string>());
+			}
+		}
 		if (!loadResult.valid()) {
 			sol::error err = loadResult;
 			throw std::runtime_error("Failed to load Lua script: " + scriptName + "\n" + err.what());
