@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 
+#include <set>
+
 class LuaScriptOnQFE {
 public:
 	LuaScriptOnQFE();
@@ -19,6 +21,8 @@ public:
 
 	void SetEntityValue(uint32_t entityId);
 	uint32_t GetBindEntityId() const { return bindEntityId_; }
+	std::set<std::string>& GetGlobals() { return UserGlobals; }
+	std::string GetScriptName() const { return scriptName_; }
 
 private:
 	/// QFE用の関数を登録
@@ -27,5 +31,7 @@ private:
 	bool isCanRun_;
 	uint32_t bindEntityId_;
 	std::string scriptName_;
+	std::set<std::string> defaultGlobals;
+	std::set<std::string> UserGlobals;
 	std::unique_ptr<sol::state> luaState_;
 };

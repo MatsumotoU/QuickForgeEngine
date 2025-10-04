@@ -6,6 +6,7 @@
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
+static std::set<std::string> emptySet;
 
 void LuaScriptResourceManager::Initialize() {
 	scripts_.clear();
@@ -148,6 +149,17 @@ void LuaScriptResourceManager::EndFrame() {
 
 void LuaScriptResourceManager::Finalize() {
 	scripts_.clear();
+}
+
+std::set<std::string>& LuaScriptResourceManager::GetScriptGlobals(uint32_t entityId) const {
+	for (auto& script : scripts_) {
+		if (script->GetBindEntityId() != entityId) {
+			continue;
+		}
+		return script->GetGlobals();
+	}
+	assert(false && "Script Not Found");
+	return emptySet;
 }
 
 void LuaScriptResourceManager::CheckScriptEntity() {

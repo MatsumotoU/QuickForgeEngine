@@ -16,12 +16,14 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 	lightBufferManager_.Initialize();
 	modelVertexResourceManager_.Initialize();
 	modelRenderDataManager_.Initialize();
+	spriteManager_.Initialize();
 }
 
 void AssetManager::PreDraw() {
 }
 
 void AssetManager::Finalize() {
+	spriteManager_.Finalize();
 	textureManager_->Finalize();
 	wpvBufferManager_.Finalize();
 	materialBufferManager_.Finalize();

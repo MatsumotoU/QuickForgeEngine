@@ -42,12 +42,17 @@ void SceneManager::Update() {
 }
 
 void SceneManager::PreDraw() {
+	// カメラ更新
+	CameraManager* cameraManager = CameraManager::GetInstance();
+	cameraManager->Update();
+
 	// ワールド行列更新
 	AssetManager* assetManager = AssetManager::GetInstance();
 	std::vector<uint32_t> entities = assetManager->GetEntityManager()->GetActiveEntityIds();
 	for (auto entityId : entities) {
 		if (assetManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
 			Transform& transform = assetManager->GetEntityManager()->GetComponent<Transform>(entityId);
+			// モデルのワールド行列更新
 			if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
 				ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
 				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(modelHandle.handle);
@@ -56,17 +61,22 @@ void SceneManager::PreDraw() {
 					transform.rotate,
 					transform.translate
 				);
+
+				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World,CameraType::Perspective);
+			}
+			// スプライトのワールド行列更新
+			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
+				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
+				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
+				wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
+					transform.scale,
+					transform.rotate,
+					transform.translate
+				);
+
+				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World,CameraType::Orthographic);
 			}
 		}
-	}
-
-	// カメラ更新
-	CameraManager* cameraManager = CameraManager::GetInstance();
-	cameraManager->Update();
-	for (uint32_t i = 0; i < assetManager->GetWpvBufferManager()->GetBufferCount(); i++) {
-		Camera& camera = cameraManager->GetMainCamera();
-		TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(i);
-		wpvMatrix->WVP = camera.GetWorldViewProjectionMatrix(wpvMatrix->World);
 	}
 }
 
@@ -154,6 +164,11 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 		uint32_t entityId = entityManager->CreateEntity();
 
 		// 必要なコンポーネントを追加
+		if (entityJson.contains("SpriteData")) {
+			SpriteData spriteData;
+			spriteData.Deserialize(entityJson["SpriteData"]);
+			AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId));
+		}
 		if (entityJson.contains("Transform")) {
 			entityManager->EmplaceComponent<Transform>(entityId);
 			Transform& transform = entityManager->GetComponent<Transform>(entityId);
@@ -189,6 +204,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 			SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
 			sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
 		}
+		
 	}
 }
 
@@ -209,7 +225,7 @@ void SceneManager::AddEpmtyObject() {
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
-void SceneManager::LoadModel(const std::string& modelName) {
+void SceneManager::AddModel(const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 	ModelHandle modelHandle;
@@ -219,6 +235,52 @@ void SceneManager::LoadModel(const std::string& modelName) {
 	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = modelName;
+	sceneObjectData.tag = "Untagged";
+	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+}
+
+void SceneManager::AddSprite(const std::string& spriteName, float width, float height, int inEntityId) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	// entityId指定があればそれを使う、なければ新規作成
+	uint32_t entityId;
+	if (inEntityId != -1) {
+		entityId = static_cast<uint32_t>(inEntityId);
+	} else {
+		entityId = assetManager->GetEntityManager()->CreateEntity();
+	}
+	// SpriteData追加
+	SpriteData spriteData;
+	spriteData.textureName = spriteName;
+	spriteData.textureHandle = assetManager->LoadTexture(spriteName);
+	Vector2 textureSize = assetManager->GetTextureManager()->GetTextureSize(spriteData.textureHandle);
+	spriteData.height = textureSize.y;
+	spriteData.width = textureSize.x;
+	if (width != 0.0f) {
+		textureSize.x = width;
+	}
+	if (height != 0.0f) {
+		textureSize.y = height;
+	}
+	spriteData.vertexBufferHandle = assetManager->GetSpriteManager()->CreateVertexBuffer(textureSize.x, textureSize.y);
+	spriteData.wvpBufferHandle = assetManager->GetWpvBufferManager()->CreateBuffer();
+	assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle)->World = Matrix4x4::MakeIndentity4x4();
+	spriteData.materialBufferHandle = assetManager->GetMaterialBufferManager()->CreateBuffer();
+	Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(spriteData.materialBufferHandle);
+	material->color = { 1.0f,1.0f,1.0f,1.0f };
+	material->enableLighting = false;
+	material->uvTransform = Matrix4x4::MakeIndentity4x4();
+	spriteData.lightBufferHandle = assetManager->GetLightBufferManager()->CreateBuffer();
+	DirectionalLight* light = assetManager->GetLightBufferManager()->GetBufferData(spriteData.lightBufferHandle);
+	light->color = { 1.0f,1.0f,1.0f,1.0f };
+	light->direction = { 0.0f,-1.0f,0.0f };
+	light->intensity = 1.0f;
+	// スプライトデータをエンティティに追加
+	assetManager->GetEntityManager()->EmplaceComponent<SpriteData>(entityId, spriteData);
+
+	// いつものやつ追加
+	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
+	SceneObjectData sceneObjectData;
+	sceneObjectData.name = spriteName;
 	sceneObjectData.tag = "Untagged";
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }

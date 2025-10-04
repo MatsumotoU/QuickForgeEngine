@@ -18,6 +18,7 @@ HierarchyView::HierarchyView() {
 void HierarchyView::Initialize() {
 #ifdef _DEBUG
     modelDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
+	spriteDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Image"), ".png");
 #endif // _DEBUG
 }
 
@@ -53,10 +54,20 @@ void HierarchyView::DrawPopupContextWindow() {
                 modelDropDownFileList_.DrawMenuItem();
                 std::string selectedModelFileName_;
                 if (modelDropDownFileList_.GetSelectedFileName(selectedModelFileName_)) {
-                    SceneManager::GetInstance()->LoadModel(selectedModelFileName_);
+                    SceneManager::GetInstance()->AddModel(selectedModelFileName_);
                 }
                 ImGui::EndMenu();
             }
+            
+			if (ImGui::BeginMenu("Sprite")) {
+				spriteDropDownFileList_.DrawMenuItem();
+				std::string selectedSpriteFileName_;
+				if (spriteDropDownFileList_.GetSelectedFileName(selectedSpriteFileName_)) {
+					SceneManager::GetInstance()->AddSprite(selectedSpriteFileName_);
+				}
+				ImGui::EndMenu();
+			}
+
             ImGui::EndMenu();
         }
         ImGui::EndPopup();

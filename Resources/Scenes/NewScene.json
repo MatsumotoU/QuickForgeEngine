@@ -1,15 +1,44 @@
 {
     "entities": [
         {
+            "ModelHandle": {
+                "modelName": "anchor.obj"
+            },
             "SceneObjectData": {
-                "name": "EmptyObject",
+                "name": "anchor.obj",
+                "tag": "Untagged"
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "anchor.obj",
                 "tag": "Untagged"
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
-                        "handle": 4,
-                        "scriptName": "Fuck.lua"
+                        "handle": 8,
+                        "scriptName": "NewScript.lua"
                     }
                 ]
             },
@@ -25,8 +54,8 @@
                     1.0
                 ],
                 "translate": [
-                    -1.507408618927002,
-                    0.8946152925491333,
+                    -0.7646769285202026,
+                    0.2615368068218231,
                     0.0
                 ]
             }

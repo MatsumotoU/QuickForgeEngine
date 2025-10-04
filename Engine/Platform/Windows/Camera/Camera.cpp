@@ -34,23 +34,27 @@ Matrix4x4 Camera::GetOrthographicMatrix() const {
 	return Matrix4x4::MakeOrthographicMatrix(
 		0.0f, 0.0f,
 		static_cast<float>(QFE::EngineGlobalValue::windowWidth),
-		static_cast<float>(QFE::EngineGlobalValue::windowHeight), 0.0f, farZ_);
+		static_cast<float>(QFE::EngineGlobalValue::windowHeight), 0.01f, farZ_);
 }
 
-Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix) const {
-	switch (cameraType)
+Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, CameraType type) const {
+	switch (type)
 	{
 	case CameraType::Perspective:
 		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix_, GetPerspectiveMatrix()));
 		break;
 	case CameraType::Orthographic:
-		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix_, GetOrthographicMatrix()));
+		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(Matrix4x4::MakeIndentity4x4(), GetOrthographicMatrix()));
 		break;
 	default:
 		assert(false && "Unknown Camera Type.");
 		break;
 	}
 	return Matrix4x4();
+}
+
+Matrix4x4 Camera::GetWorldViewProjectionMatrixOrthographic(const Matrix4x4& worldMatrix) const {
+	return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(Matrix4x4::MakeIndentity4x4(), GetOrthographicMatrix()));
 }
 
 Matrix4x4 Camera::GetWorldMatrix() const {
