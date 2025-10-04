@@ -54,7 +54,7 @@ void HierarchyView::DrawPopupContextWindow() {
                 modelDropDownFileList_.DrawMenuItem();
                 std::string selectedModelFileName_;
                 if (modelDropDownFileList_.GetSelectedFileName(selectedModelFileName_)) {
-                    SceneManager::GetInstance()->LoadModel(selectedModelFileName_);
+                    SceneManager::GetInstance()->AddModel(selectedModelFileName_);
                 }
                 ImGui::EndMenu();
             }

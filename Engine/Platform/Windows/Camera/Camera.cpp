@@ -44,7 +44,7 @@ Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, Cam
 		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix_, GetPerspectiveMatrix()));
 		break;
 	case CameraType::Orthographic:
-		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix_, GetOrthographicMatrix()));
+		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(Matrix4x4::MakeIndentity4x4(), GetOrthographicMatrix()));
 		break;
 	default:
 		assert(false && "Unknown Camera Type.");

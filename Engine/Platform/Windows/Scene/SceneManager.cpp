@@ -164,6 +164,11 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 		uint32_t entityId = entityManager->CreateEntity();
 
 		// 必要なコンポーネントを追加
+		if (entityJson.contains("SpriteData")) {
+			SpriteData spriteData;
+			spriteData.Deserialize(entityJson["SpriteData"]);
+			AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId));
+		}
 		if (entityJson.contains("Transform")) {
 			entityManager->EmplaceComponent<Transform>(entityId);
 			Transform& transform = entityManager->GetComponent<Transform>(entityId);
@@ -199,6 +204,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 			SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
 			sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
 		}
+		
 	}
 }
 
@@ -219,7 +225,7 @@ void SceneManager::AddEpmtyObject() {
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
-void SceneManager::LoadModel(const std::string& modelName) {
+void SceneManager::AddModel(const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 	ModelHandle modelHandle;
@@ -233,15 +239,28 @@ void SceneManager::LoadModel(const std::string& modelName) {
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
-void SceneManager::AddSprite(const std::string& spriteName) {
+void SceneManager::AddSprite(const std::string& spriteName, float width, float height, int inEntityId) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+	// entityId指定があればそれを使う、なければ新規作成
+	uint32_t entityId;
+	if (inEntityId != -1) {
+		entityId = static_cast<uint32_t>(inEntityId);
+	} else {
+		entityId = assetManager->GetEntityManager()->CreateEntity();
+	}
+	// SpriteData追加
 	SpriteData spriteData;
 	spriteData.textureName = spriteName;
 	spriteData.textureHandle = assetManager->LoadTexture(spriteName);
 	Vector2 textureSize = assetManager->GetTextureManager()->GetTextureSize(spriteData.textureHandle);
 	spriteData.height = textureSize.y;
 	spriteData.width = textureSize.x;
+	if (width != 0.0f) {
+		textureSize.x = width;
+	}
+	if (height != 0.0f) {
+		textureSize.y = height;
+	}
 	spriteData.vertexBufferHandle = assetManager->GetSpriteManager()->CreateVertexBuffer(textureSize.x, textureSize.y);
 	spriteData.wvpBufferHandle = assetManager->GetWpvBufferManager()->CreateBuffer();
 	assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle)->World = Matrix4x4::MakeIndentity4x4();
@@ -255,7 +274,8 @@ void SceneManager::AddSprite(const std::string& spriteName) {
 	light->color = { 1.0f,1.0f,1.0f,1.0f };
 	light->direction = { 0.0f,-1.0f,0.0f };
 	light->intensity = 1.0f;
-	assetManager->GetEntityManager()->EmplaceComponent<SpriteData>(entityId,spriteData);
+	// スプライトデータをエンティティに追加
+	assetManager->GetEntityManager()->EmplaceComponent<SpriteData>(entityId, spriteData);
 
 	// いつものやつ追加
 	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());

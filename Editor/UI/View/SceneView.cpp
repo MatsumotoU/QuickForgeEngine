@@ -184,12 +184,9 @@ void SceneView::DebugCameraControl() {
 void SceneView::UpdateGizmo() {
 #ifdef _DEBUG
 	// ImGuizmoのセットアップ
-	ImGuizmo::SetOrthographic(false);
+	bool is2D = AssetManager::GetInstance()->GetEntityManager()->HasComponent<SpriteData>(selectEntityId_);
+	ImGuizmo::SetOrthographic(is2D);
 	ImGuizmo::SetDrawlist();
-
-	ImVec2 windowPos = ImGui::GetWindowPos();
-	ImVec2 windowSize = ImGui::GetWindowSize();
-	ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
 
 	if (!AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(selectEntityId_)) {
 		return;
@@ -197,8 +194,15 @@ void SceneView::UpdateGizmo() {
 	Transform& transform = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(selectEntityId_);
 
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
-	Matrix4x4 view = camera.GetViewMatrix();
-	Matrix4x4 proj = camera.GetPerspectiveMatrix();
+	Matrix4x4 view;
+	Matrix4x4 proj;
+	if (is2D) {
+		view = Matrix4x4::MakeIndentity4x4();
+		proj = camera.GetOrthographicMatrix();
+	} else {
+		view = camera.GetViewMatrix();
+		proj = camera.GetPerspectiveMatrix();
+	}
 
 	static ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
 	if (ImGui::IsKeyPressed(ImGuiKey_T)) currentGizmoOperation = ImGuizmo::TRANSLATE;
