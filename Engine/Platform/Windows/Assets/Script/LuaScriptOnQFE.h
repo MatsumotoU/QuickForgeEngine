@@ -21,6 +21,7 @@ public:
 
 	void SetEntityValue(uint32_t entityId);
 	uint32_t GetBindEntityId() const { return bindEntityId_; }
+	std::vector<std::string> GetGlobalValuesList() const;
 	std::set<std::string>& GetGlobals() { return UserGlobals; }
 	std::string GetScriptName() const { return scriptName_; }
 

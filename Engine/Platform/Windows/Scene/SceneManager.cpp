@@ -192,6 +192,8 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 				for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
 					if (handle.contains("scriptName")) {
 						AddScript(entityId, handle["scriptName"].get<std::string>());
+						ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+						scriptHandles.Deserialize(entityJson["ScriptHandle"]);
 					}
 				}
 			}
@@ -303,6 +305,24 @@ void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 		LuaHandle scriptHandle;
 		scriptHandle.scriptName_ = scriptName;
 		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
+		LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(scriptHandle.handle_);
+		for (std::string& val : script->GetGlobalValuesList()) {
+			sol::state* state = script->GetScript();
+			sol::object obj = (*state)[val];
+			if (obj.is<int>()) {
+				int v = obj.as<int>();
+				scriptHandle.intParams_[val] = v;
+			} else if (obj.is<float>()) {
+				float v = obj.as<float>();
+				scriptHandle.floatParams_[val] = v;
+			} else if (obj.is<bool>()) {
+				bool v = obj.as<bool>();
+				scriptHandle.boolParams_[val] = v;
+			} else if (obj.is<std::string>()) {
+				std::string v = obj.as<std::string>();
+				scriptHandle.stringParams_[val] = v;
+			}
+		}
 		scriptHandles.scriptHandles_.push_back(scriptHandle);
 		entityManager->EmplaceComponent<ScriptHandles>(entityId, scriptHandles);
 	} else {

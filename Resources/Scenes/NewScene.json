@@ -2,19 +2,29 @@
     "entities": [
         {
             "SceneObjectData": {
-                "name": "uvChecker.png",
+                "name": "EmptyObject",
                 "tag": "Untagged"
             },
-            "SpriteData": {
-                "height": 512.0,
-                "layer": 30,
-                "textureName": "uvChecker.png",
-                "width": 512.0
+            "ScriptHandle": {
+                "boolParams": {},
+                "floatParams": {
+                    "floatVal": 1.0
+                },
+                "intParams": {
+                    "intVal": 5
+                },
+                "scriptHandles": [
+                    {
+                        "handle": 0,
+                        "scriptName": "TestScript.lua"
+                    }
+                ],
+                "stringParams": {}
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -23,27 +33,37 @@
                     1.0
                 ],
                 "translate": [
-                    398.04962158203125,
-                    93.65934753417969,
-                    0.020000001415610313
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         },
         {
             "SceneObjectData": {
-                "name": "monsterBall.png",
+                "name": "EmptyObject",
                 "tag": "Untagged"
             },
-            "SpriteData": {
-                "height": 471.0,
-                "layer": 1,
-                "textureName": "monsterBall.png",
-                "width": 942.0
+            "ScriptHandle": {
+                "boolParams": {},
+                "floatParams": {
+                    "floatVal": 1.0
+                },
+                "intParams": {
+                    "intVal": 5
+                },
+                "scriptHandles": [
+                    {
+                        "handle": 5,
+                        "scriptName": "TestScript.lua"
+                    }
+                ],
+                "stringParams": {}
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -54,7 +74,7 @@
                 "translate": [
                     0.0,
                     0.0,
-                    0.020000001415610313
+                    0.0
                 ]
             }
         }

@@ -21,6 +21,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 	try {
 		luaState_ = std::make_unique<sol::state>();
 		luaState_->open_libraries(sol::lib::base, sol::lib::package);
+
 		// 起動直後のグローバル一覧を保存
 		for (auto& kv : luaState_->globals()) {
 			defaultGlobals.insert(kv.first.as<std::string>());
@@ -28,21 +29,24 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 
 		std::string filePath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + scriptName;
 		sol::load_result loadResult = luaState_->load_file(filePath);
-		// Userグローバル一覧を保存
-		for (auto& kv : luaState_->globals()) {
-			if (defaultGlobals.find(kv.first.as<std::string>()) == defaultGlobals.end()) {
-				UserGlobals.insert(kv.first.as<std::string>());
-			}
-		}
+
 		if (!loadResult.valid()) {
 			sol::error err = loadResult;
 			throw std::runtime_error("Failed to load Lua script: " + scriptName + "\n" + err.what());
 		}
 
+		// スクリプトを実行
 		sol::protected_function_result execResult = loadResult();
 		if (!execResult.valid()) {
 			sol::error err = execResult;
 			throw std::runtime_error("Failed to execute Lua script: " + scriptName + "\n" + err.what());
+		}
+
+		// Userグローバル一覧を保存（スクリプト実行後！）
+		for (auto& kv : luaState_->globals()) {
+			if (defaultGlobals.find(kv.first.as<std::string>()) == defaultGlobals.end()) {
+				UserGlobals.insert(kv.first.as<std::string>());
+			}
 		}
 
 		SetQFEFunctions();
@@ -151,6 +155,18 @@ void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 #endif // _DEBUG
 	}
 	
+}
+
+std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
+	std::vector<std::string> globalNames;
+	for (const auto& global : UserGlobals) {
+		sol::object obj = luaState_->get<sol::object>(global);
+		if (obj.is<sol::function>()) {
+			continue;
+		}
+		globalNames.push_back(global);
+	}
+	return globalNames;
 }
 
 void LuaScriptOnQFE::SetQFEFunctions() {

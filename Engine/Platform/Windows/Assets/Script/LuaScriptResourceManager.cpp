@@ -151,6 +151,14 @@ void LuaScriptResourceManager::Finalize() {
 	scripts_.clear();
 }
 
+LuaScriptOnQFE* LuaScriptResourceManager::GetScript(uint32_t handle) const {
+	if (handle < scripts_.size()) {
+		return scripts_[handle].get();
+	}
+	assert(false && "Script Not Found");
+	return nullptr;
+}
+
 std::set<std::string>& LuaScriptResourceManager::GetScriptGlobals(uint32_t entityId) const {
 	for (auto& script : scripts_) {
 		if (script->GetBindEntityId() != entityId) {

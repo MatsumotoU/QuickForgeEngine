@@ -79,7 +79,7 @@ void InspectorView::Draw() {
 	if (assetManager->GetEntityManager()->HasComponent<ScriptHandles>(selectedEntityId_)) {
 		ScriptHandles& scriptHandle = assetManager->GetEntityManager()->GetComponent<ScriptHandles>(selectedEntityId_);
 
-		if (ImGui::CollapsingHeader("Scripts")) {
+		if (ImGui::CollapsingHeader("Scripts##ScripPropaties")) {
 			if (ImGui::Button("Delete##Scripts")) {
 				assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
 			}
@@ -87,10 +87,44 @@ void InspectorView::Draw() {
 			for (size_t i = 0; i < scriptHandle.scriptHandles_.size(); ++i) {
 				const auto& sh = scriptHandle.scriptHandles_[i];
 				// リスト表示
-				ImGui::Selectable(sh.scriptName_.c_str());
+				if (ImGui::TreeNode(sh.scriptName_.c_str())) {
+					// スクリプトのパラメータ表示
+					LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(sh.handle_);
+					for (std::string& val : script->GetGlobalValuesList()) {
+						std::string inputLabel = val + "##" + std::to_string(i);
+						sol::state* state = script->GetScript();
+						sol::object obj = (*state)[val];
+						if (obj.is<int>()) {
+							int v = obj.as<int>();
+							if (ImGui::InputInt(inputLabel.c_str(), &v)) {
+								(*state)[val] = v;
+							}
+						} else if (obj.is<float>()) {
+							float v = obj.as<float>();
+							if (ImGui::InputFloat(inputLabel.c_str(), &v)) {
+								(*state)[val] = v;
+							}
+						} else if (obj.is<bool>()) {
+							bool v = obj.as<bool>();
+							if (ImGui::Checkbox(inputLabel.c_str(), &v)) {
+								(*state)[val] = v;
+							}
+						} else if (obj.is<std::string>()) {
+							std::string v = obj.as<std::string>();
+							char buf[256];
+							strcpy_s(buf, v.c_str());
+							if (ImGui::InputText(inputLabel.c_str(), buf, sizeof(buf))) {
+								(*state)[val] = std::string(buf);
+							}
+						}
+					}
+
+					ImGui::TreePop();
+				}
 
 				// 右クリックでポップアップメニュー
-				if (ImGui::BeginPopupContextItem()) {
+				std::string popupLabel = "ScriptPopup" + std::to_string(i);
+				if (ImGui::BeginPopupContextItem(popupLabel.c_str())) {
 					if (ImGui::MenuItem("Open in VSCode")) {
 						LuaScriptResourceManager::GetInstance()->OpenAndEditScript(sh.scriptName_);
 					}
