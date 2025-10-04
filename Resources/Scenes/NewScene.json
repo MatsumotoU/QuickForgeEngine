@@ -1,12 +1,25 @@
 {
     "entities": [
         {
-            "ModelHandle": {
-                "modelName": "anchor.obj"
-            },
             "SceneObjectData": {
-                "name": "anchor.obj",
+                "name": "EmptyObject",
                 "tag": "Untagged"
+            },
+            "ScriptHandle": {
+                "boolParams": {},
+                "floatParams": {
+                    "floatVal": 1.0
+                },
+                "intParams": {
+                    "intVal": 5
+                },
+                "scriptHandles": [
+                    {
+                        "handle": 0,
+                        "scriptName": "TestScript.lua"
+                    }
+                ],
+                "stringParams": {}
             },
             "Transform": {
                 "rotate": [
@@ -28,39 +41,24 @@
         },
         {
             "SceneObjectData": {
-                "name": "uvChecker.png",
+                "name": "EmptyObject",
                 "tag": "Untagged"
             },
-            "SpriteData": {
-                "height": 512.0,
-                "textureName": "uvChecker.png",
-                "width": 512.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
+            "ScriptHandle": {
+                "boolParams": {},
+                "floatParams": {
+                    "floatVal": 1.0
+                },
+                "intParams": {
+                    "intVal": 5
+                },
+                "scriptHandles": [
+                    {
+                        "handle": 5,
+                        "scriptName": "TestScript.lua"
+                    }
                 ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "modelName": "axis.obj"
-            },
-            "SceneObjectData": {
-                "name": "axis.obj",
-                "tag": "Untagged"
+                "stringParams": {}
             },
             "Transform": {
                 "rotate": [

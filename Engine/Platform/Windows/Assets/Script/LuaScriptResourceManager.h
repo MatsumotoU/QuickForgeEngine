@@ -5,7 +5,7 @@
 #include "LuaScriptOnQFE.h"
 #include "Utility/DesignPatterns/Singleton.h"
 
-class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager>{
+class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager> {
 	friend class Singleton<LuaScriptResourceManager>;
 	LuaScriptResourceManager() = default;
 	LuaScriptResourceManager(const LuaScriptResourceManager&) = delete;
@@ -15,7 +15,7 @@ class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager>
 public:
 	void Initialize();
 	void CreateScript(const std::string& scriptName);
-	uint32_t AddScript(uint32_t entityId,const std::string& scriptName);
+	uint32_t AddScript(uint32_t entityId, const std::string& scriptName);
 	void RequestRemoveScript(uint32_t handle);
 	void OpenAndEditScript(const std::string& scriptName);
 	void RemoveScript(uint32_t handle);
@@ -25,6 +25,7 @@ public:
 	void EndFrame();
 	void Finalize();
 
+	LuaScriptOnQFE* GetScript(uint32_t handle) const;
 	std::set<std::string>& GetScriptGlobals(uint32_t entityId) const;
 
 

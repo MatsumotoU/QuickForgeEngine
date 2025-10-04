@@ -16,6 +16,7 @@ public:
 	uint32_t wvpBufferHandle;
 	uint32_t materialBufferHandle;
 	uint32_t lightBufferHandle;
+	uint32_t layer;
 	float width;
 	float height;
 };
