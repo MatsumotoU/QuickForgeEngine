@@ -40,7 +40,7 @@ public:
 	uint32_t LoadEditorTexture(const std::string& imageName);
 #endif // _DEBUG
 
-	const ModelRenderData* GetModelRenderData(uint32_t modelHandle) const;
+	ModelRenderData* GetModelRenderData(uint32_t modelHandle);
 	TextureManager* GetTextureManager() { return textureManager_; }
 	ModelVertexResourceManager* GetModelVertexResourceManager() { return &modelVertexResourceManager_; }
 	ConstantBufferManager<TransformationMatrix>* GetWpvBufferManager() { return &wpvBufferManager_; }

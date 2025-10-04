@@ -60,6 +60,12 @@ void InspectorView::Draw() {
 		ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(selectedEntityId_);
 		if (ImGui::CollapsingHeader("Model")) {
 			ImGui::Text("Model Name: %s", modelHandle.modelName.c_str());
+			ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
+			for (auto& mesh : modelData->meshRenderDataHandles) {
+				Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(mesh.materialHandle);
+				std::string label = "Color##" + std::to_string(mesh.materialHandle);
+				ImGui::ColorEdit4(label.c_str(), &material->color.x);
+			}
 		}
 	}
 	// Sprite
@@ -85,7 +91,7 @@ void InspectorView::Draw() {
 			}
 			std::vector<uint32_t> eraseIndices;
 			for (size_t i = 0; i < scriptHandle.scriptHandles_.size(); ++i) {
-				const auto& sh = scriptHandle.scriptHandles_[i];
+				LuaHandle& sh = scriptHandle.scriptHandles_[i];
 				// リスト表示
 				if (ImGui::TreeNode(sh.scriptName_.c_str())) {
 					// スクリプトのパラメータ表示
@@ -98,16 +104,19 @@ void InspectorView::Draw() {
 							int v = obj.as<int>();
 							if (ImGui::InputInt(inputLabel.c_str(), &v)) {
 								(*state)[val] = v;
+								sh.intParams_.find(val)->second = v;
 							}
 						} else if (obj.is<float>()) {
 							float v = obj.as<float>();
 							if (ImGui::InputFloat(inputLabel.c_str(), &v)) {
 								(*state)[val] = v;
+								sh.floatParams_.find(val)->second = v;
 							}
 						} else if (obj.is<bool>()) {
 							bool v = obj.as<bool>();
 							if (ImGui::Checkbox(inputLabel.c_str(), &v)) {
 								(*state)[val] = v;
+								sh.boolParams_.find(val)->second = v;
 							}
 						} else if (obj.is<std::string>()) {
 							std::string v = obj.as<std::string>();
@@ -115,6 +124,7 @@ void InspectorView::Draw() {
 							strcpy_s(buf, v.c_str());
 							if (ImGui::InputText(inputLabel.c_str(), buf, sizeof(buf))) {
 								(*state)[val] = std::string(buf);
+								sh.stringParams_.find(val)->second = std::string(buf);
 							}
 						}
 					}

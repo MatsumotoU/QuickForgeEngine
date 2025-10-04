@@ -13,6 +13,11 @@ void LuaScriptResourceManager::Initialize() {
 	removeScriptHandles_.clear();
 }
 
+void LuaScriptResourceManager::Reset() {
+	scripts_.clear();
+	removeScriptHandles_.clear();
+}
+
 void LuaScriptResourceManager::CreateScript(const std::string& scriptName) {
 	// ディレクトリパス
 	const std::string dirPath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");

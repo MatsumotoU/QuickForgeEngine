@@ -81,6 +81,7 @@ void MyDebugLog::DebugLogClear() {
 }
 
 void DebugLog(const std::string& message, const LogLevel& logLevel, const std::source_location& location) {
+
 	MyDebugLog::GetInstance()->Log(message, location);
 	if (logLevel == LogLevel::EngineInfo) {
 		MyDebugLog::GetInstance()->engineLog_.push_back(message);
@@ -105,16 +106,21 @@ void DebugLog(const std::string& message, const LogLevel& logLevel, const std::s
 	}
 }
 
-void DebugLogLua(const sol::object& obj) {
-	if (obj.is<std::string>()) {
-		DebugLog(obj.as<std::string>().c_str());
-	} else if (obj.is<double>()) {
-		DebugLog(std::to_string(obj.as<double>()).c_str());
-	} else if (obj.is<int>()) {
-		DebugLog(std::to_string(obj.as<int>()).c_str());
-	} else if (obj.is<bool>()) {
-		DebugLog(obj.as<bool>() ? "true" : "false");
-	} else {
-		DebugLog("<unsupported type>");
+void DebugLogLua(sol::variadic_args va) {
+	std::string msg;
+	for (auto&& v : va) {
+		if (v.is<std::string>()) {
+			msg += v.as<std::string>();
+		} else if (v.is<double>()) {
+			msg += std::to_string(v.as<double>());
+		} else if (v.is<int>()) {
+			msg += std::to_string(v.as<int>());
+		} else if (v.is<bool>()) {
+			msg += v.as<bool>() ? "true" : "false";
+		} else {
+			msg += "<unsupported type>";
+		}
+		msg += " ";
 	}
+	DebugLog(msg,LogLevel::EditorInfo);
 }

@@ -10,7 +10,7 @@ public:
 
 	void Initialize();
 	uint32_t Add(const ModelRenderData& data);
-	const ModelRenderData* Get(uint32_t handle) const;
+	ModelRenderData* Get(uint32_t handle);
 	void Finalize();
 
 private:

@@ -9,7 +9,7 @@ uint32_t ModelRenderDataManager::Add(const ModelRenderData& data) {
 	return static_cast<uint32_t>(modelRenderDatas_.size() - 1);
 }
 
-const ModelRenderData* ModelRenderDataManager::Get(uint32_t handle) const {
+ModelRenderData* ModelRenderDataManager::Get(uint32_t handle) {
 	return &modelRenderDatas_.at(handle);
 }
 

@@ -141,6 +141,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	entityManager->ResetEntiry();
+	LuaScriptResourceManager::GetInstance()->Reset();
 
 	// シーンファイルのパスを組み立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
@@ -194,6 +195,21 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 						AddScript(entityId, handle["scriptName"].get<std::string>());
 						ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
 						scriptHandles.Deserialize(entityJson["ScriptHandle"]);
+						for (LuaHandle& hl : scriptHandles.scriptHandles_) {
+							sol::state* state = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_)->GetScript();
+							for (const auto& [key, val] : hl.intParams_) {
+								(*state)[key] = val;
+							}
+							for (const auto& [key, val] : hl.floatParams_) {
+								(*state)[key] = val;
+							}
+							for (const auto& [key, val] : hl.boolParams_) {
+								(*state)[key] = val;
+							}
+							for (const auto& [key, val] : hl.stringParams_) {
+								(*state)[key] = val;
+							}
+						}
 					}
 				}
 			}

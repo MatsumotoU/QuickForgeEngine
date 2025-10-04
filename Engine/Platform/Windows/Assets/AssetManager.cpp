@@ -82,7 +82,7 @@ uint32_t AssetManager::LoadEditorTexture(const std::string& imageName) {
 }
 #endif // _DEBUG
 
-const ModelRenderData* AssetManager::GetModelRenderData(uint32_t modelHandle) const {
+ModelRenderData* AssetManager::GetModelRenderData(uint32_t modelHandle) {
 	return modelRenderDataManager_.Get(modelHandle);
 }
 
