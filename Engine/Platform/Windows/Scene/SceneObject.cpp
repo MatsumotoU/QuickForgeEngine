@@ -25,6 +25,16 @@ void SceneObject::Initialize() {
 }
 
 void SceneObject::Update() {
+	// スプライトサイズ更新
+	if (assetManager_->GetEntityManager()->HasComponentStrage<SpriteData>()) {
+		const auto& spriteStrage = assetManager_->GetEntityManager()->GetComponentStrage<SpriteData>();
+		for (const auto& [entityId, sprite] : spriteStrage) {
+			Vector2 nowSize = assetManager_->GetSpriteManager()->GetSpriteSize(sprite.vertexBufferHandle);
+			if (sprite.width != nowSize.x || sprite.height != nowSize.y) {
+				assetManager_->GetSpriteManager()->ResizeSprite(sprite.vertexBufferHandle, nowSize.x, nowSize.y);
+			}
+		}
+	}
 }
 
 void SceneObject::Draw() {

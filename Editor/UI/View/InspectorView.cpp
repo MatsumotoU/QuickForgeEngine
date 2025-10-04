@@ -10,6 +10,8 @@
 #include "Assets/Script/Data/ScriptHandle.h"
 #include "Physics/Force.h"
 #include "Collider/Data/SphereColliderData.h"
+#include "Assets/3DModel/Data/ModelHandle.h"
+#include "Assets/Sprite/Data/SpriteData.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
@@ -35,7 +37,6 @@ void InspectorView::Draw() {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	if (assetManager->GetEntityManager()->HasComponent<SceneObjectData>(selectedEntityId_)) {
 		SceneObjectData& sceneObjData = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(selectedEntityId_);
-		ImGui::Text("Entity");
 		ImGui::Text("Entity ID: %d", selectedEntityId_);
 		ImGui::Text("Name: %s", sceneObjData.name.c_str());
 		ImGui::Separator();
@@ -44,87 +45,104 @@ void InspectorView::Draw() {
 		ImGui::End();
 		return;
 	}
+
 	// Transform
 	if (assetManager->GetEntityManager()->HasComponent<Transform>(selectedEntityId_)) {
 		Transform& transform = assetManager->GetEntityManager()->GetComponent<Transform>(selectedEntityId_);
-		ImGui::Text("Transform");
-		ImGui::DragFloat3("Transition", &transform.translate.x, 0.1f);
-		ImGui::DragFloat3("Rotation", &transform.rotate.x, 0.1f);
-		ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f);
-		ImGui::Separator();
+		if (ImGui::CollapsingHeader("Transform")) {
+			ImGui::DragFloat3("Transition", &transform.translate.x, 0.1f);
+			ImGui::DragFloat3("Rotation", &transform.rotate.x, 0.1f);
+			ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f);
+		}
 	}
+	// Model
+	if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(selectedEntityId_)) {
+		ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(selectedEntityId_);
+		if (ImGui::CollapsingHeader("Model")) {
+			ImGui::Text("Model Name: %s", modelHandle.modelName.c_str());
+		}
+	}
+	// Sprite
+	if (assetManager->GetEntityManager()->HasComponent<SpriteData>(selectedEntityId_)) {
+		SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(selectedEntityId_);
+		if (ImGui::CollapsingHeader("Sprite")) {
+			ImGui::Text("Sprite Name: %s", spriteData.textureName.c_str());
+			ImGui::DragFloat("Width", &spriteData.width, 1.0f, 1.0f);
+			ImGui::DragFloat("Height", &spriteData.height, 1.0f, 1.0f);
+			Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(spriteData.materialBufferHandle);
+			ImGui::ColorEdit4("Color", &material->color.x);
+		}
+	}
+
 	// スクリプト
 	if (assetManager->GetEntityManager()->HasComponent<ScriptHandles>(selectedEntityId_)) {
 		ScriptHandles& scriptHandle = assetManager->GetEntityManager()->GetComponent<ScriptHandles>(selectedEntityId_);
 
-		ImGui::Text("Scripts");
-		ImGui::SameLine();
-		if (ImGui::Button("Delete##Scripts")) {
-			assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
-		}
-		std::vector<uint32_t> eraseIndices;
-		for (size_t i = 0; i < scriptHandle.scriptHandles_.size(); ++i) {
-			const auto& sh = scriptHandle.scriptHandles_[i];
-			// リスト表示
-			ImGui::Selectable(sh.scriptName_.c_str());
+		if (ImGui::CollapsingHeader("Scripts")) {
+			if (ImGui::Button("Delete##Scripts")) {
+				assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
+			}
+			std::vector<uint32_t> eraseIndices;
+			for (size_t i = 0; i < scriptHandle.scriptHandles_.size(); ++i) {
+				const auto& sh = scriptHandle.scriptHandles_[i];
+				// リスト表示
+				ImGui::Selectable(sh.scriptName_.c_str());
 
-			// 右クリックでポップアップメニュー
-			if (ImGui::BeginPopupContextItem()) {
-				if (ImGui::MenuItem("Open in VSCode")) {
-					LuaScriptResourceManager::GetInstance()->OpenAndEditScript(sh.scriptName_);
+				// 右クリックでポップアップメニュー
+				if (ImGui::BeginPopupContextItem()) {
+					if (ImGui::MenuItem("Open in VSCode")) {
+						LuaScriptResourceManager::GetInstance()->OpenAndEditScript(sh.scriptName_);
+					}
+					if (ImGui::MenuItem("Remove")) {
+						// スクリプト削除処理 
+						eraseIndices.push_back(static_cast<uint32_t>(i));
+						LuaScriptResourceManager::GetInstance()->RequestRemoveScript(sh.handle_);
+					}
+					ImGui::EndPopup();
 				}
-				if (ImGui::MenuItem("Remove")) {
-					// スクリプト削除処理 
-					eraseIndices.push_back(static_cast<uint32_t>(i));
-					LuaScriptResourceManager::GetInstance()->RequestRemoveScript(sh.handle_);
-				}
-				ImGui::EndPopup();
+			}
+			// 後ろから削除してインデックスずれを防ぐ
+			for (auto it = eraseIndices.rbegin(); it != eraseIndices.rend(); ++it) {
+				scriptHandle.scriptHandles_.erase(scriptHandle.scriptHandles_.begin() + *it);
+			}
+			// スクリプトがなくなったらコンポーネントごと削除
+			if (scriptHandle.scriptHandles_.size() <= 0) {
+				assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
 			}
 		}
-		// 後ろから削除してインデックスずれを防ぐ
-		for (auto it = eraseIndices.rbegin(); it != eraseIndices.rend(); ++it) {
-			scriptHandle.scriptHandles_.erase(scriptHandle.scriptHandles_.begin() + *it);
-		}
-		// スクリプトがなくなったらコンポーネントごと削除
-		if (scriptHandle.scriptHandles_.size() <= 0) {
-			assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
-		}
-		ImGui::Separator();
+
 	}
 	// Force
 	if (assetManager->GetEntityManager()->HasComponent<Force>(selectedEntityId_)) {
 		Force& force = assetManager->GetEntityManager()->GetComponent<Force>(selectedEntityId_);
-		ImGui::Text("Force");
-		ImGui::SameLine();
-		if (ImGui::Button("Delete##Force")) {
-			assetManager->GetEntityManager()->RemoveComponent<Force>(selectedEntityId_);
+		if (ImGui::CollapsingHeader("Force")) {
+			if (ImGui::Button("Delete##Force")) {
+				assetManager->GetEntityManager()->RemoveComponent<Force>(selectedEntityId_);
+			}
+			ImGui::DragFloat3("Velocity", &force.velocity.x, 0.1f);
+			ImGui::DragFloat3("Acceleration", &force.acceleration.x, 0.1f);
+			ImGui::DragFloat("Mass", &force.mass, 0.1f, 0.1f);
+			ImGui::DragFloat("Friction", &force.friction, 0.01f, 0.0f);
+			ImGui::DragFloat("GravityStrength", &force.gravityStrength, 0.01f, 0.0f);
+			ImGui::Checkbox("Use Gravity", &force.isGravity);
 		}
-		ImGui::DragFloat3("Velocity", &force.velocity.x, 0.1f);
-		ImGui::DragFloat3("Acceleration", &force.acceleration.x, 0.1f);
-		ImGui::DragFloat("Mass", &force.mass, 0.1f, 0.1f);
-		ImGui::DragFloat("Friction", &force.friction, 0.01f, 0.0f);
-		ImGui::DragFloat("GravityStrength", &force.gravityStrength, 0.01f, 0.0f);
-		ImGui::Checkbox("Use Gravity", &force.isGravity);
-		ImGui::Separator();
 	}
 	// SphereColliderData
 	if (assetManager->GetEntityManager()->HasComponent<SphereColliderData>(selectedEntityId_)) {
 		SphereColliderData& sphereCollider = assetManager->GetEntityManager()->GetComponent<SphereColliderData>(selectedEntityId_);
-		ImGui::Text("SphereCollider");
-		ImGui::SameLine();
-		if (ImGui::Button("Delete##SphereCollider")) {
-			assetManager->GetEntityManager()->RemoveComponent<SphereColliderData>(selectedEntityId_);
-		}
-		ImGui::Checkbox("Is Trigger", &sphereCollider.isTrigger);
-		ImGui::Checkbox("Is Static", &sphereCollider.isStatic);
-		ImGui::DragFloat3("Center", &sphereCollider.sphere.center.x, 0.1f);
-		ImGui::DragFloat("Radius", &sphereCollider.sphere.radius, 0.1f, 0.1f);
+		if (ImGui::CollapsingHeader("SphereCollider")) {
+			if (ImGui::Button("Delete##SphereCollider")) {
+				assetManager->GetEntityManager()->RemoveComponent<SphereColliderData>(selectedEntityId_);
+			}
+			ImGui::DragFloat3("Center", &sphereCollider.sphere.center.x, 0.1f);
+			ImGui::DragFloat("Radius", &sphereCollider.sphere.radius, 0.1f, 0.1f);
+			ImGui::Checkbox("Is Trigger", &sphereCollider.isTrigger);
+			ImGui::Checkbox("Is Static", &sphereCollider.isStatic);
 #ifdef _DEBUG
-		ImGui::Checkbox("Debug Draw", &sphereCollider.isDraw);
+			ImGui::Checkbox("Debug Draw", &sphereCollider.isDraw);
 #endif // _DEBUG
-		ImGui::Separator();
+		}
 	}
-	
 
 	// コンポーネントの追加
 	if (ImGui::Button("Add Component")) {
@@ -165,7 +183,6 @@ void InspectorView::Draw() {
 			if (scriptList_.GetSelectedFileName(selectedScript)) {
 				SceneManager::GetInstance()->AddScript(selectedEntityId_, selectedScript);
 			}
-
 
 			ImGui::EndMenu();
 		}
