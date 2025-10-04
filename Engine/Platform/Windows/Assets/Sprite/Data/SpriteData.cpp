@@ -7,6 +7,7 @@ SpriteData::SpriteData() {
 	wvpBufferHandle = 0;
 	materialBufferHandle = 0;
 	lightBufferHandle = 0;
+	layer = 0;
 	width = 100.0f;
 	height = 100.0f;
 }
@@ -16,6 +17,7 @@ nlohmann::json SpriteData::Serialize() const {
 	json["textureName"] = textureName;
 	json["width"] = width;
 	json["height"] = height;
+	json["layer"] = layer;
 	return json;
 }
 
@@ -28,5 +30,8 @@ void SpriteData::Deserialize(const nlohmann::json& json) {
 	}
 	if (json.contains("height")) {
 		height = json["height"].get<float>();
+	}
+	if (json.contains("layer")) {
+		layer = json["layer"].get<uint32_t>();
 	}
 }

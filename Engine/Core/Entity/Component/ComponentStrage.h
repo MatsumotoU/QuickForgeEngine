@@ -14,6 +14,7 @@ public:
 	auto end() const { return components.end(); }
 	auto begin() { return components.begin(); }
 	auto end() { return components.end(); }
+	auto size() const { return components.size(); }
 
 public:
 	void AddComponent(uint32_t id, const T& component) {
