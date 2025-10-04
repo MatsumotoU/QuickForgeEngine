@@ -31,7 +31,7 @@ void SceneObject::Update() {
 		for (const auto& [entityId, sprite] : spriteStrage) {
 			Vector2 nowSize = assetManager_->GetSpriteManager()->GetSpriteSize(sprite.vertexBufferHandle);
 			if (sprite.width != nowSize.x || sprite.height != nowSize.y) {
-				assetManager_->GetSpriteManager()->ResizeSprite(sprite.vertexBufferHandle, nowSize.x, nowSize.y);
+				assetManager_->GetSpriteManager()->ResizeSprite(sprite.vertexBufferHandle, sprite.width, sprite.height);
 			}
 		}
 	}
@@ -45,10 +45,18 @@ void SceneObject::Draw() {
 			Render::Model::DrawModel(model.handle);
 		}
 	}
-	// スプライト描画
+	// スプライト描画（layer順にソート）
 	if (assetManager_->GetEntityManager()->HasComponentStrage<SpriteData>()) {
 		const auto& spriteStrage = assetManager_->GetEntityManager()->GetComponentStrage<SpriteData>();
-		for (const auto& [entityId, sprite] : spriteStrage) {
+		// 一時的なvectorにコピー
+		std::vector<std::pair<uint32_t, SpriteData>> sortedSprites(spriteStrage.begin(), spriteStrage.end());
+		// layerで昇順ソート
+		std::sort(sortedSprites.begin(), sortedSprites.end(),
+			[](const auto& a, const auto& b) {
+				return a.second.layer < b.second.layer;
+			});
+		// ソート済み順で描画
+		for (const auto& [entityId, sprite] : sortedSprites) {
 			Render::Sprite::DrawSprite(entityId);
 		}
 	}

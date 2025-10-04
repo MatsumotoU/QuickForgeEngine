@@ -1,45 +1,20 @@
 {
     "entities": [
         {
-            "ModelHandle": {
-                "modelName": "anchor.obj"
-            },
-            "SceneObjectData": {
-                "name": "anchor.obj",
-                "tag": "Untagged"
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
             "SceneObjectData": {
                 "name": "uvChecker.png",
                 "tag": "Untagged"
             },
             "SpriteData": {
                 "height": 512.0,
+                "layer": 30,
                 "textureName": "uvChecker.png",
                 "width": 512.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -48,24 +23,27 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    0.0,
-                    0.0
+                    398.04962158203125,
+                    93.65934753417969,
+                    0.020000001415610313
                 ]
             }
         },
         {
-            "ModelHandle": {
-                "modelName": "axis.obj"
-            },
             "SceneObjectData": {
-                "name": "axis.obj",
+                "name": "monsterBall.png",
                 "tag": "Untagged"
+            },
+            "SpriteData": {
+                "height": 471.0,
+                "layer": 1,
+                "textureName": "monsterBall.png",
+                "width": 942.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -76,7 +54,7 @@
                 "translate": [
                     0.0,
                     0.0,
-                    0.0
+                    0.020000001415610313
                 ]
             }
         }

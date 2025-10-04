@@ -56,6 +56,7 @@ void SceneManager::PreDraw() {
 			if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
 				ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
 				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
+				// メッシュごとにワールド行列更新
 				for (const auto& meshData : modelData->meshRenderDataHandles) {
 					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
 					wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
@@ -75,8 +76,7 @@ void SceneManager::PreDraw() {
 					transform.rotate,
 					transform.translate
 				);
-
-				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World,CameraType::Orthographic);
+				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Orthographic);
 			}
 		}
 	}
@@ -169,7 +169,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 		if (entityJson.contains("SpriteData")) {
 			SpriteData spriteData;
 			spriteData.Deserialize(entityJson["SpriteData"]);
-			AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId));
+			AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId),static_cast<int>(spriteData.layer));
 		}
 		if (entityJson.contains("Transform")) {
 			entityManager->EmplaceComponent<Transform>(entityId);
@@ -186,7 +186,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 			SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
 			sceneObjectData.Deserialize(entityJson["SceneObjectData"]);
 		}
-		if(entityJson.contains("ScriptHandle")) {
+		if (entityJson.contains("ScriptHandle")) {
 			std::vector<std::string> scriptNames;
 			if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
 				for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
@@ -206,7 +206,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 			SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
 			sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
 		}
-		
+
 	}
 }
 
@@ -241,7 +241,7 @@ void SceneManager::AddModel(const std::string& modelName) {
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
-void SceneManager::AddSprite(const std::string& spriteName, float width, float height, int inEntityId) {
+void SceneManager::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	// entityId指定があればそれを使う、なければ新規作成
 	uint32_t entityId;
@@ -252,6 +252,14 @@ void SceneManager::AddSprite(const std::string& spriteName, float width, float h
 	}
 	// SpriteData追加
 	SpriteData spriteData;
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	spriteData.layer = 0;
+	if (entityManager->HasComponentStrage<SpriteData>()) {
+		spriteData.layer = static_cast<uint32_t>(entityManager->GetComponentStrage<SpriteData>().size());
+	}
+	if (layer != -1) {
+		spriteData.layer = static_cast<uint32_t>(layer);
+	}
 	spriteData.textureName = spriteName;
 	spriteData.textureHandle = assetManager->LoadTexture(spriteName);
 	Vector2 textureSize = assetManager->GetTextureManager()->GetTextureSize(spriteData.textureHandle);
@@ -327,7 +335,7 @@ void SceneManager::StartScript() {
 }
 
 void SceneManager::StopScript() {
-	if (isRequestStopScript_) {return;}
+	if (isRequestStopScript_) { return; }
 	isRequestStopScript_ = true;
 	ColliderManager::GetInstance()->isRunning = false;
 }
