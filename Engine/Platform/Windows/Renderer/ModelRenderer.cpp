@@ -10,6 +10,8 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 	assert(assetManager && "AssetManager is nullptr.");
 	const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(modelHandle);
 
+	modelDataPtr->meshRenderDataHandles[0].wpvBufferHandle;
+
 	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetTrianglePso(kBlendModeNormal);
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();

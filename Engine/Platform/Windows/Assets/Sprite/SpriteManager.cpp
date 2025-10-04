@@ -6,6 +6,31 @@ void SpriteManager::Initialize() {
 	spriteVertexBuffers_.clear();
 }
 
+void SpriteManager::ResizeSprite(uint32_t handle, float width, float height) {
+	assert(handle < spriteVertexBuffers_.size());
+	VertexData* vertexData = spriteVertexBuffers_[handle].GetData();
+	assert(vertexData);
+	float w = width;
+	float h = height;
+	vertexData[0].position = { 0.0f, 0.0f, 0.0f,1.0f };   // 左上
+	vertexData[0].texcoord = { 0.0f, 0.0f };
+	vertexData[0].normal = { 0.0f, 0.0f, 1.0f };
+	vertexData[1].position = { w, 0.0f, 0.0f ,1.0f }; // 右上
+	vertexData[1].texcoord = { 1.0f, 0.0f };
+	vertexData[1].normal = { 0.0f, 0.0f, 1.0f };
+	vertexData[2].position = { 0.0f, h, 0.0f ,1.0f }; // 左下
+	vertexData[2].texcoord = { 0.0f, 1.0f };
+	vertexData[2].normal = { 0.0f, 0.0f,1.0f };
+	vertexData[3].position = { w, h, 0.0f ,1.0f }; // 右下
+	vertexData[3].texcoord = { 1.0f, 1.0f };
+	vertexData[3].normal = { 0.0f, 0.0f, 1.0f };
+	vertexData[4].position = { 0.0f, h, 0.0f,1.0f }; // 左下
+	vertexData[4].texcoord = { 0.0f, 1.0f };
+	vertexData[4].normal = { 0.0f, 0.0f, 1.0f };
+	vertexData[5].position = { w, 0.0f, 0.0f ,1.0f }; // 右上
+	vertexData[5].texcoord = { 1.0f, 0.0f };
+}
+
 uint32_t SpriteManager::CreateVertexBuffer(float width, float height) {
     spriteVertexBuffers_.emplace_back();
 	spriteVertexBuffers_.back().CreateResource(DirectXCommon::GetInstance()->GetDevice(), 6);
@@ -39,6 +64,16 @@ uint32_t SpriteManager::CreateVertexBuffer(float width, float height) {
 
 VertexBuffer<VertexData>* SpriteManager::GetVertexBuffer(uint32_t handle) {
 	return &spriteVertexBuffers_[handle];
+}
+
+Vector2 SpriteManager::GetSpriteSize(uint32_t handle) {
+	if (handle < spriteVertexBuffers_.size()) {
+		VertexData* vertexData = spriteVertexBuffers_[handle].GetData();
+		assert(vertexData);
+		return Vector2(vertexData[1].position.x, vertexData[2].position.y);
+	}
+	assert(false && "Invalid handle");
+	return Vector2();
 }
 
 void SpriteManager::Finalize() {

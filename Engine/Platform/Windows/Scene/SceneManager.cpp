@@ -55,14 +55,16 @@ void SceneManager::PreDraw() {
 			// モデルのワールド行列更新
 			if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
 				ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
-				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(modelHandle.handle);
-				wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
-					transform.scale,
-					transform.rotate,
-					transform.translate
-				);
-
-				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World,CameraType::Perspective);
+				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
+				for (const auto& meshData : modelData->meshRenderDataHandles) {
+					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+					wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
+						transform.scale,
+						transform.rotate,
+						transform.translate
+					);
+					wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
+				}
 			}
 			// スプライトのワールド行列更新
 			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {

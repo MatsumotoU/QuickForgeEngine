@@ -27,25 +27,19 @@
             }
         },
         {
-            "ModelHandle": {
-                "modelName": "anchor.obj"
-            },
             "SceneObjectData": {
-                "name": "anchor.obj",
+                "name": "uvChecker.png",
                 "tag": "Untagged"
             },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "handle": 8,
-                        "scriptName": "NewScript.lua"
-                    }
-                ]
+            "SpriteData": {
+                "height": 512.0,
+                "textureName": "uvChecker.png",
+                "width": 512.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -54,8 +48,34 @@
                     1.0
                 ],
                 "translate": [
-                    -0.7646769285202026,
-                    0.2615368068218231,
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "modelName": "axis.obj"
+            },
+            "SceneObjectData": {
+                "name": "axis.obj",
+                "tag": "Untagged"
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
                     0.0
                 ]
             }
