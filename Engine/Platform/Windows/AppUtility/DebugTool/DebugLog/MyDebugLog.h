@@ -44,4 +44,4 @@ private:
 /// <param name="message"></param>
 void DebugLog(const std::string& message,const LogLevel& logLevel = LogLevel::EngineInfo, const std::source_location& location = std::source_location::current());
 // 文字列・数値どちらも受け取れるラッパー関数
-void DebugLogLua(const sol::object& obj);
+void DebugLogLua(sol::variadic_args va);

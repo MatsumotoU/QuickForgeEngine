@@ -180,8 +180,8 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		return inputManager->GetKeyMoveDir();
 		});
 #ifdef _DEBUG
-	luaState_->set_function("DebugLog", [](const std::string& message) {
-		DebugLog(message,LogLevel::EditorInfo);
+	luaState_->set_function("DebugLog", [](sol::variadic_args message) {
+		DebugLogLua(message);
 		});
 #endif // _DEBUG
 

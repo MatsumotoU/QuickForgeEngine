@@ -1,11 +1,13 @@
+speed = 0.1
+
 function Init()
-	DebugLog("RightMove Init")
+	DebugLog(speed)
 	transform.translate.x = 0
-	DebugLog("Done")
+	DebugLog("Init")
 end
 
 function Update()
-	DebugLog("RightMove")
-	transform.translate.x = transform.translate.x + 0.1
-	DebugLog("Done")
+	DebugLog(speed)
+	transform.translate.x = transform.translate.x + speed
+	DebugLog("Update")
 end

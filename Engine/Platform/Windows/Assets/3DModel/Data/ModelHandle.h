@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 #include "Core/Entity/Component/ComponentData.h"
+#include "Core/Math/Vector/Vector4.h"
 
 class ModelHandle final :public ComponentData {
 public:
