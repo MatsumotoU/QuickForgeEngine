@@ -19,6 +19,7 @@ void HierarchyView::Initialize() {
 #ifdef _DEBUG
     modelDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
 	spriteDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Image"), ".png");
+	entityDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Entities"), ".json");
 #endif // _DEBUG
 }
 
@@ -45,10 +46,23 @@ void HierarchyView::Draw() {
 void HierarchyView::DrawPopupContextWindow() {
 #ifdef _DEBUG
     if (ImGui::BeginPopupContextWindow(nullptr, ImGuiPopupFlags_MouseButtonRight)) {
+		if (ImGui::MenuItem("Reload FileList")) {
+            Initialize();
+		}
+
         if (ImGui::BeginMenu("Add")) {
             if (ImGui::MenuItem("Empty Entity")) {
                 SceneManager::GetInstance()->AddEpmtyObject();
             }
+
+			if (ImGui::BeginMenu("Entity")) {
+				entityDropDownFileList_.DrawMenuItem();
+				std::string selectedEntityFileName_;
+				if (entityDropDownFileList_.GetSelectedFileName(selectedEntityFileName_)) {
+					SceneManager::GetInstance()->AddEntity(selectedEntityFileName_);
+				}
+				ImGui::EndMenu();
+			}
 
             if (ImGui::BeginMenu("Model")) {
                 modelDropDownFileList_.DrawMenuItem();
@@ -108,6 +122,11 @@ void HierarchyView::DrawEntityList() {
 
         // 右クリックでコンテキストメニュー
         if (ImGui::BeginPopupContextItem(label.c_str())) {
+            if (ImGui::MenuItem("Save")) {
+				// 保存処理
+				SceneManager::GetInstance()->SaveEntity(id, name);
+                ImGui::CloseCurrentPopup();
+            }
             if (ImGui::MenuItem("Delete")) {
                 // 削除処理
                 AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(id);
