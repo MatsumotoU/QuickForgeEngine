@@ -118,7 +118,7 @@ void SceneManager::SaveScene(const std::string& sceneName) {
 
 	for (auto entityId : entities) {
 		nlohmann::json entityJson;
-		entityJson = entityManager->SerializeEntityComponents(entityId);
+		SerializeEntity(entityId, entityJson);
 		sceneJson["entities"].push_back(entityJson);
 	}
 
@@ -165,66 +165,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 
 	for (const auto& entityJson : sceneJson["entities"]) {
 		uint32_t entityId = entityManager->CreateEntity();
-
-		// 必要なコンポーネントを追加
-		if (entityJson.contains("SpriteData")) {
-			SpriteData spriteData;
-			spriteData.Deserialize(entityJson["SpriteData"]);
-			AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId),static_cast<int>(spriteData.layer));
-		}
-		if (entityJson.contains("Transform")) {
-			entityManager->EmplaceComponent<Transform>(entityId);
-			Transform& transform = entityManager->GetComponent<Transform>(entityId);
-			transform.Deserialize(entityJson["Transform"]);
-		}
-		if (entityJson.contains("ModelHandle")) {
-			entityManager->EmplaceComponent<ModelHandle>(entityId);
-			ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
-			modelHandle.Deserialize(entityJson["ModelHandle"]);
-		}
-		if (entityJson.contains("SceneObjectData")) {
-			entityManager->EmplaceComponent<SceneObjectData>(entityId);
-			SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
-			sceneObjectData.Deserialize(entityJson["SceneObjectData"]);
-		}
-		if (entityJson.contains("ScriptHandle")) {
-			std::vector<std::string> scriptNames;
-			if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
-				for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
-					if (handle.contains("scriptName")) {
-						AddScript(entityId, handle["scriptName"].get<std::string>());
-						ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
-						scriptHandles.Deserialize(entityJson["ScriptHandle"]);
-						for (LuaHandle& hl : scriptHandles.scriptHandles_) {
-							sol::state* state = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_)->GetScript();
-							for (const auto& [key, val] : hl.intParams_) {
-								(*state)[key] = val;
-							}
-							for (const auto& [key, val] : hl.floatParams_) {
-								(*state)[key] = val;
-							}
-							for (const auto& [key, val] : hl.boolParams_) {
-								(*state)[key] = val;
-							}
-							for (const auto& [key, val] : hl.stringParams_) {
-								(*state)[key] = val;
-							}
-						}
-					}
-				}
-			}
-		}
-		if (entityJson.contains("Force")) {
-			entityManager->EmplaceComponent<Force>(entityId);
-			Force& force = entityManager->GetComponent<Force>(entityId);
-			force.Deserialize(entityJson["Force"]);
-		}
-		if (entityJson.contains("SphereColliderData")) {
-			entityManager->EmplaceComponent<SphereColliderData>(entityId);
-			SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
-			sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
-		}
-
+		DeserializeEntity(entityId, entityJson);
 	}
 }
 
@@ -233,6 +174,91 @@ void SceneManager::ResetScene() {
 	currentScene_->Initialize();
 	AssetManager::GetInstance()->GetEntityManager()->ResetEntiry();
 	CameraManager::GetInstance()->Initialize();
+}
+
+void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (!entityManager->IsActiveEntity(entityId)) {
+		assert(false && "Entity is not active");
+		return;
+	}
+	nlohmann::json entityJson;
+	SerializeEntity(entityId, entityJson);
+	std::string entityFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
+	std::ofstream ofs(entityFilePath + entityFileName + ".json");
+	ofs << entityJson.dump(4);
+	ofs.close();
+}
+
+void SceneManager::SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	entityJson = entityManager->SerializeEntityComponents(entityId);
+}
+
+void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+
+	// 必要なコンポーネントを追加
+	if (entityJson.contains("SpriteData")) {
+		SpriteData spriteData;
+		spriteData.Deserialize(entityJson["SpriteData"]);
+		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer));
+	}
+	if (entityJson.contains("Transform")) {
+		entityManager->EmplaceComponent<Transform>(entityId);
+		Transform& transform = entityManager->GetComponent<Transform>(entityId);
+		transform.Deserialize(entityJson["Transform"]);
+	}
+	if (entityJson.contains("ModelHandle")) {
+		entityManager->EmplaceComponent<ModelHandle>(entityId);
+		ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
+		modelHandle.Deserialize(entityJson["ModelHandle"]);
+	}
+	if (entityJson.contains("SceneObjectData")) {
+		entityManager->EmplaceComponent<SceneObjectData>(entityId);
+		SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
+		sceneObjectData.Deserialize(entityJson["SceneObjectData"]);
+	}
+	if (entityJson.contains("ScriptHandle")) {
+		std::vector<std::string> scriptNames;
+		if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
+			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
+				if (handle.contains("scriptName")) {
+					AddScript(entityId, handle["scriptName"].get<std::string>());
+					ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+					scriptHandles.Deserialize(entityJson["ScriptHandle"]);
+					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
+						sol::state* state = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_)->GetScript();
+						for (const auto& [key, val] : hl.intParams_) {
+							(*state)[key] = val;
+						}
+						for (const auto& [key, val] : hl.floatParams_) {
+							(*state)[key] = val;
+						}
+						for (const auto& [key, val] : hl.boolParams_) {
+							(*state)[key] = val;
+						}
+						for (const auto& [key, val] : hl.stringParams_) {
+							(*state)[key] = val;
+						}
+					}
+				}
+			}
+		}
+	}
+	if (entityJson.contains("Force")) {
+		entityManager->EmplaceComponent<Force>(entityId);
+		Force& force = entityManager->GetComponent<Force>(entityId);
+		force.Deserialize(entityJson["Force"]);
+	}
+	if (entityJson.contains("SphereColliderData")) {
+		entityManager->EmplaceComponent<SphereColliderData>(entityId);
+		SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
+		sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
+	}
 }
 
 void SceneManager::AddEpmtyObject() {
@@ -354,6 +380,25 @@ void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
 		scriptHandles.scriptHandles_.push_back(scriptHandle);
 	}
+}
+
+void SceneManager::AddEntity(const std::string& entityName) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	
+	// Entityのパスを組み立て
+	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
+	std::ifstream ifs(sceneFilePath + entityName);
+	if (!ifs.is_open()) {
+		assert(false && "FaildOpenFile");
+	}
+	// Entityの復元
+	nlohmann::json sceneJson;
+	ifs >> sceneJson;
+	ifs.close();
+
+	// Entityの生成
+	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+	DeserializeEntity(entityId, sceneJson);
 }
 
 void SceneManager::StartScript() {

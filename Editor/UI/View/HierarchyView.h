@@ -22,5 +22,6 @@ private:
 #ifdef _DEBUG
 	DropDownFileList modelDropDownFileList_;
 	DropDownFileList spriteDropDownFileList_;
+	DropDownFileList entityDropDownFileList_;
 #endif // _DEBUG
 };

@@ -53,6 +53,10 @@ public:
 		entitiesToRemove_.push_back(id);
 	}
 
+	bool IsActiveEntity(uint32_t id) const {
+		return activeEntityIds_.find(id) != activeEntityIds_.end();
+	}
+
 	template <typename T, typename... Args>
 	void EmplaceComponent(uint32_t id, Args&&... args) {
 		size_t typeId = typeid(T).hash_code();
