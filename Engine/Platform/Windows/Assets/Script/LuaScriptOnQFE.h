@@ -4,6 +4,8 @@
 #include <memory>
 #include <map>
 #include <vector>
+#include <stdint.h>
+#include "Core/Math/Vector/Vector3.h"
 
 #include <set>
 
@@ -28,6 +30,9 @@ public:
 private:
 	/// QFE用の関数を登録
 	void SetQFEFunctions();
+
+	// QFE用の関数
+	void SetPosition(uint32_t entityId,const Vector3& position);
 
 	bool isCanRun_;
 	uint32_t bindEntityId_;

@@ -34,7 +34,7 @@ public:
 	void AddModel(const std::string& modelName);
 	void AddSprite(const std::string& spriteName,float width = 0.0f,float height = 0.0f,int inEntityId = -1,int layer = -1);
 	void AddScript(uint32_t entityId,const std::string& scriptName);
-	void AddEntity(const std::string& entityName);
+	uint32_t AddEntity(const std::string& entityName);
 
 	void StartScript();
 	void StopScript();

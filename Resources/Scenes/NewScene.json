@@ -1,31 +1,33 @@
 {
     "entities": [
         {
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 1.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
             "ModelHandle": {
                 "modelName": "anchor.obj"
             },
             "SceneObjectData": {
-                "name": "TopBall",
+                "name": "anchor.obj",
                 "tag": "Untagged"
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "speed": 0.0
-                        },
-                        "handle": 0,
-                        "intParams": {},
-                        "scriptName": "RightMove.lua",
-                        "stringParams": {}
-                    }
-                ]
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -35,70 +37,7 @@
                 ],
                 "translate": [
                     0.0,
-                    1.1435096263885498,
-                    0.0
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "EmptyObject",
-                "tag": "Untagged"
-            },
-            "Transform": {
-                "rotate": [
                     0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -2.0856266021728516,
-                    -0.693224310874939,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "modelName": "anchor.obj"
-            },
-            "SceneObjectData": {
-                "name": "UnderBall",
-                "tag": "Untagged"
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "speed": 0.20000000298023224
-                        },
-                        "handle": 1,
-                        "intParams": {},
-                        "scriptName": "RightMove.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.3064504861831665,
                     0.0
                 ]
             }
