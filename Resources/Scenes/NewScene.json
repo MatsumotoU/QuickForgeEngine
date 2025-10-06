@@ -1,28 +1,30 @@
 {
     "entities": [
         {
-            "Force": {
-                "acceleration": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "friction": 1.0,
-                "gravityStrength": 1.0,
-                "isGravity": true,
-                "mass": 1.0,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
             "ModelHandle": {
                 "modelName": "anchor.obj"
             },
             "SceneObjectData": {
                 "name": "anchor.obj",
                 "tag": "Untagged"
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {
+                            "unti": true
+                        },
+                        "floatParams": {
+                            "deltaSpeed": 0.5,
+                            "metaSpeed": 0.0,
+                            "speed": 0.10000000149011612
+                        },
+                        "handle": 0,
+                        "intParams": {},
+                        "scriptName": "RightMove.lua",
+                        "stringParams": {}
+                    }
+                ]
             },
             "Transform": {
                 "rotate": [

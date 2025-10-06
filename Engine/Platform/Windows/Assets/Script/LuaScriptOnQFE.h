@@ -14,6 +14,7 @@ public:
 	LuaScriptOnQFE();
 	~LuaScriptOnQFE() = default;
 	void LoadScript(const std::string& scriptName);
+	void ReloadScript();
 	void RunFunction(const std::string& functionName);
 	bool HasFunction(const std::string& functionName) const;
 	std::vector<std::string> GetFunctionList() const;

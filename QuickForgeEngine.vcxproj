@@ -350,6 +350,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\DropFile\DropFileEvent.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\ExitApp\ExitAppEvent.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\IEvent.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\OnFocus\OnFocusEvent.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Window\WindowEventsManager\WindowEventsManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Window\WindowGenerater\WindowGenerater.cpp" />
     <ClCompile Include="Engine\QuickForgeEngine.cpp" />
@@ -511,6 +512,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\DropFile\DropFileEvent.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\ExitApp\ExitAppEvent.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\IEvent.h" />
+    <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\EventSystems\OnFocus\OnFocusEvent.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\WindowEventsManager\WindowEventsManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\WindowGenerater\Data\WindowConfigData.h" />
     <ClInclude Include="Engine\Platform\Windows\Window\WindowGenerater\WindowGenerater.h" />

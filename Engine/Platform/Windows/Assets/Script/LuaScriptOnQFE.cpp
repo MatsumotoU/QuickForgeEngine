@@ -64,6 +64,34 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 	}
 }
 
+void LuaScriptOnQFE::ReloadScript() {
+	if (scriptName_.empty()) {
+		return;
+	}
+
+	std::set<std::string> oldGlobals = UserGlobals;
+	LoadScript(scriptName_);
+	// 古いグローバル変数を新しいスクリプトにコピー
+	for (const auto& global : oldGlobals) {
+		if (UserGlobals.find(global) != UserGlobals.end()) {
+			sol::object oldObj = luaState_->get<sol::object>(global);
+			if (oldObj.is<int>()) {
+				int v = oldObj.as<int>();
+				luaState_->set(global, v);
+			} else if (oldObj.is<float>()) {
+				float v = oldObj.as<float>();
+				luaState_->set(global, v);
+			} else if (oldObj.is<bool>()) {
+				bool v = oldObj.as<bool>();
+				luaState_->set(global, v);
+			} else if (oldObj.is<std::string>()) {
+				std::string v = oldObj.as<std::string>();
+				luaState_->set(global, v);
+			}
+		}
+	}
+}
+
 void LuaScriptOnQFE::RunFunction(const std::string& functionName) {
 	luaState_->set("deltaTime", QFE::EngineGlobalValue::deltaTime);
 
