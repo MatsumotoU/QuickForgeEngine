@@ -1,6 +1,7 @@
 #include "LuaScriptOnQFE.h"
 #include "Core/EngineGlobalValue.h"
 #include "Assets/AssetManager.h"
+#include "Scene/SceneManager.h"
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Core/Math/Transform.h"
 #include "Assets/Script/Data/ScriptHandle.h"
@@ -185,6 +186,21 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		});
 #endif // _DEBUG
 
+	luaState_->set_function("CreateEntity", [](const std::string& entityName) {
+		return SceneManager::GetInstance()->AddEntity(entityName);
+		});
+
+	luaState_->set_function("SetPosition", [this](const Vector3& position, uint32_t entityId) {
+		SetPosition(entityId, position);
+		});
+	luaState_->set_function("SetPosition", [this](sol::table posTable, uint32_t entityId) {
+		Vector3 position;
+		position.x = posTable[1].get_or(0.0f);
+		position.y = posTable[2].get_or(0.0f);
+		position.z = posTable[3].get_or(0.0f);
+		SetPosition(entityId, position);
+		});
+
 	// GlobalValue
 	
 
@@ -213,4 +229,17 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		"rotate", &Transform::rotate,
 		"translate", &Transform::translate
 	);
+}
+
+void LuaScriptOnQFE::SetPosition(uint32_t entityId, const Vector3& position) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (entityManager->HasComponent<Transform>(entityId)) {
+		Transform& transform = entityManager->GetComponent<Transform>(entityId);
+		transform.translate = position;
+	} else {
+#ifdef _DEBUG
+		DebugLog("Entity does not have Transform component.", LogLevel::Error);
+#endif // _DEBUG
+	}
 }

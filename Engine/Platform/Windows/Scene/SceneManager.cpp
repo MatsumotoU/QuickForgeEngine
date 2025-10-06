@@ -382,7 +382,7 @@ void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 	}
 }
 
-void SceneManager::AddEntity(const std::string& entityName) {
+uint32_t SceneManager::AddEntity(const std::string& entityName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	
 	// Entityのパスを組み立て
@@ -399,6 +399,7 @@ void SceneManager::AddEntity(const std::string& entityName) {
 	// Entityの生成
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 	DeserializeEntity(entityId, sceneJson);
+	return entityId;
 }
 
 void SceneManager::StartScript() {
