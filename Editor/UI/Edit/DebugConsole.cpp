@@ -64,6 +64,9 @@ void DebugConsole::ExecCommand(const char* command) {
     } else if (strcmp(command, "scene_stop") == 0) {
         items_.emplace_back("Stop Scene.");
         SceneManager::GetInstance()->StopScript();
+    } else if (strcmp(command, "scp_reload") == 0) {
+        items_.emplace_back("Reload All Scripts.");
+		LuaScriptResourceManager::GetInstance()->ReloadAllScripts();
     } else {
         items_.emplace_back("Unknown command. Type 'help' for list.");
     }

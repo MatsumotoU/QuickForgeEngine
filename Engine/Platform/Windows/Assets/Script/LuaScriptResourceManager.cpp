@@ -3,6 +3,10 @@
 #include <fstream>
 #include <filesystem>
 
+#include "Core/Entity/EntityManager.h"
+
+#include "Assets/Script/Data/ScriptHandle.h"
+
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -16,6 +20,12 @@ void LuaScriptResourceManager::Initialize() {
 void LuaScriptResourceManager::Reset() {
 	scripts_.clear();
 	removeScriptHandles_.clear();
+}
+
+void LuaScriptResourceManager::ReloadAllScripts() {
+	for (auto& script : scripts_) {
+		script->ReloadScript();
+	}
 }
 
 void LuaScriptResourceManager::CreateScript(const std::string& scriptName) {
@@ -51,7 +61,7 @@ void LuaScriptResourceManager::CreateScript(const std::string& scriptName) {
 	// ファイル書き込み
 	std::ofstream ofs(filePath);
 	if (!ofs) {
-		return ;
+		return;
 	}
 	ofs << luaTemplate;
 	ofs.close();

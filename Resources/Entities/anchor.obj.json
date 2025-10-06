@@ -1,26 +1,29 @@
 {
-    "Force": {
-        "acceleration": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "friction": 1.0,
-        "gravityStrength": 1.0,
-        "isGravity": true,
-        "mass": 1.0,
-        "velocity": [
-            0.0,
-            0.0,
-            0.0
-        ]
-    },
     "ModelHandle": {
         "modelName": "anchor.obj"
     },
     "SceneObjectData": {
         "name": "anchor.obj",
         "tag": "Untagged"
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "floatVal": 1.0
+                },
+                "handle": 0,
+                "intParams": {
+                    "intVal": 5,
+                    "intVal2": 5
+                },
+                "scriptName": "TestScript.lua",
+                "stringParams": {
+                    "stringVal": "HelloWorld!"
+                }
+            }
+        ]
     },
     "Transform": {
         "rotate": [
