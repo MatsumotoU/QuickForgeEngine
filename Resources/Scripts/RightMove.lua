@@ -1,5 +1,6 @@
 speed = 0.1
-deltaSpeed = 1.0
+stateLog = "Update"
+global = 0.0
 
 function Init()
 	DebugLog(speed)
@@ -9,6 +10,6 @@ end
 
 function Update()
 	DebugLog(speed)
-	transform.translate.x = transform.translate.x + speed * deltaSpeed
-	DebugLog("Update")
+	transform.translate.x = transform.translate.x + speed
+	DebugLog(stateLog)
 end

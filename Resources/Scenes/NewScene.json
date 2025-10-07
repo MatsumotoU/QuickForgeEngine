@@ -11,18 +11,18 @@
             "ScriptHandle": {
                 "scriptHandles": [
                     {
-                        "boolParams": {
-                            "unti": true
-                        },
+                        "boolParams": {},
                         "floatParams": {
-                            "deltaSpeed": 0.5,
-                            "metaSpeed": 0.0,
+                            "deltaSpeed": 1.0,
+                            "global": 1.0,
                             "speed": 0.10000000149011612
                         },
                         "handle": 0,
                         "intParams": {},
                         "scriptName": "RightMove.lua",
-                        "stringParams": {}
+                        "stringParams": {
+                            "stateLog": "Update"
+                        }
                     }
                 ]
             },
