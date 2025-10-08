@@ -22,6 +22,7 @@ SceneView::SceneView() {
 	cameraMoveT_ = 1.0f;
 	targetRotate_ = { 0.0f,0.0f,0.0f };
 	startPos_ = targetRotate_;
+	isDrawGizmo_ = true;
 }
 
 void SceneView::Initialize() {
@@ -225,9 +226,17 @@ void SceneView::UpdateGizmo() {
 		if (ImGui::MenuItem("Scale", nullptr, currentGizmoOperation == ImGuizmo::SCALE)) {
 			currentGizmoOperation = ImGuizmo::SCALE;
 		}
+		ImGui::Separator();
+		if (ImGui::MenuItem("Toggle Gizmo", nullptr, isDrawGizmo_)) {
+			isDrawGizmo_ = !isDrawGizmo_;
+		}
 		ImGui::EndPopup();
 	}
 	ImGui::PopID();
+
+	if (!isDrawGizmo_) {
+		return;
+	}
 
 	// ギズモ用行列
 	Matrix4x4 matrix = Matrix4x4::MakeAffineMatrix(

@@ -1,0 +1,54 @@
+{
+    "ModelHandle": {
+        "color": [
+            0.006926394067704678,
+            0.6683937907218933,
+            0.0,
+            1.0
+        ],
+        "modelName": "anchor.obj"
+    },
+    "SceneObjectData": {
+        "name": "Player",
+        "tag": "Untagged"
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 0,
+                "intParams": {},
+                "scriptName": "Move.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            -3.0,
+            0.0,
+            0.0,
+            1.0
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            2.0,
+            2.0,
+            2.0
+        ],
+        "translate": [
+            -3.0,
+            0.0,
+            0.0
+        ]
+    }
+}

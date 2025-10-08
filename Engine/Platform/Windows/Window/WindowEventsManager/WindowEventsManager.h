@@ -13,7 +13,7 @@ public:
 	LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 private:
-	static inline constexpr int kEventSystemCount_ = 2;
+	static inline constexpr int kEventSystemCount_ = 3;
 	nlohmann::json eventData_;
 	std::array<std::unique_ptr<IEvent>, kEventSystemCount_> eventSystems_;
 };

@@ -38,7 +38,19 @@ void InspectorView::Draw() {
 	if (assetManager->GetEntityManager()->HasComponent<SceneObjectData>(selectedEntityId_)) {
 		SceneObjectData& sceneObjData = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(selectedEntityId_);
 		ImGui::Text("Entity ID: %d", selectedEntityId_);
-		ImGui::Text("Name: %s", sceneObjData.name.c_str());
+		// name
+		char nameBuffer[256];
+		strncpy_s(nameBuffer, sizeof(nameBuffer), sceneObjData.name.c_str(), sizeof(nameBuffer) - 1);
+		if (ImGui::InputText("Name", nameBuffer, sizeof(nameBuffer))) {
+			sceneObjData.name = nameBuffer;
+		}
+		// tag
+		char tagBuffer[256];
+		strncpy_s(tagBuffer, sizeof(tagBuffer), sceneObjData.tag.c_str(), sizeof(tagBuffer) - 1);
+		if (ImGui::InputText("Tag", tagBuffer, sizeof(tagBuffer))) {
+			sceneObjData.tag = tagBuffer;
+		}
+
 		ImGui::Separator();
 	} else {
 		ImGui::Text("No entity selected");
@@ -96,6 +108,10 @@ void InspectorView::Draw() {
 				if (ImGui::TreeNode(sh.scriptName_.c_str())) {
 					// スクリプトのパラメータ表示
 					LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(sh.handle_);
+					ImGui::Text("Handle: %d", sh.handle_);
+					ImGui::Text("Entity ID: %d", script->GetBindEntityId());
+					ImGui::Text("Can Run: %s", script->IsCanRun() ? "True" : "False");
+					ImGui::Separator();
 					for (std::string& val : script->GetGlobalValuesList()) {
 						std::string inputLabel = val + "##" + std::to_string(i);
 						sol::state* state = script->GetScript();
@@ -104,19 +120,34 @@ void InspectorView::Draw() {
 							int v = obj.as<int>();
 							if (ImGui::InputInt(inputLabel.c_str(), &v)) {
 								(*state)[val] = v;
-								sh.intParams_.find(val)->second = v;
+								auto it = sh.intParams_.find(val);
+								if (it != sh.intParams_.end()) {
+									it->second = v;
+								} else {
+									sh.intParams_[val] = v;// 新規追加
+								}
 							}
 						} else if (obj.is<float>()) {
 							float v = obj.as<float>();
 							if (ImGui::InputFloat(inputLabel.c_str(), &v)) {
 								(*state)[val] = v;
-								sh.floatParams_.find(val)->second = v;
+								auto it = sh.floatParams_.find(val);
+								if (it != sh.floatParams_.end()) {
+									it->second = v;
+								} else {
+									sh.floatParams_[val] = v; // 新規追加
+								}
 							}
 						} else if (obj.is<bool>()) {
 							bool v = obj.as<bool>();
 							if (ImGui::Checkbox(inputLabel.c_str(), &v)) {
 								(*state)[val] = v;
-								sh.boolParams_.find(val)->second = v;
+								auto it = sh.boolParams_.find(val);
+								if (it != sh.boolParams_.end()) {
+									it->second = v;
+								} else {
+									sh.boolParams_[val] = v; // 新規追加
+								}
 							}
 						} else if (obj.is<std::string>()) {
 							std::string v = obj.as<std::string>();
@@ -124,7 +155,12 @@ void InspectorView::Draw() {
 							strcpy_s(buf, v.c_str());
 							if (ImGui::InputText(inputLabel.c_str(), buf, sizeof(buf))) {
 								(*state)[val] = std::string(buf);
-								sh.stringParams_.find(val)->second = std::string(buf);
+								auto it = sh.stringParams_.find(val);
+								if (it != sh.stringParams_.end()) {
+									it->second = std::string(buf);
+								} else {
+									sh.stringParams_[val] = std::string(buf); // 新規追加
+								}
 							}
 						}
 					}

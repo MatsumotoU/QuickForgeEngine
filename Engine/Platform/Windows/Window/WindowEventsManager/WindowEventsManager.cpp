@@ -2,6 +2,7 @@
 
 #include "EventSystems/DropFile/DropFileEvent.h"
 #include "EventSystems/ExitApp/ExitAppEvent.h"
+#include "EventSystems/OnFocus/OnFocusEvent.h"
 
 #ifdef _DEBUG
 #include "AppUtility/String/HwndConvertString.h"
@@ -16,6 +17,7 @@ WindowEventsManager::WindowEventsManager() {
 	eventData_ = nlohmann::json::object();
 	eventSystems_[0] = std::make_unique<DropFileEvent>(eventData_);
 	eventSystems_[1] = std::make_unique<ExitAppEvent>(eventData_);
+	eventSystems_[2] = std::make_unique<OnFocusEvent>(eventData_);
 }
 
 LRESULT CALLBACK WindowEventsManager::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {

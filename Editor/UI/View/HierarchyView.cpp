@@ -91,37 +91,44 @@ void HierarchyView::DrawPopupContextWindow() {
 
 void HierarchyView::DrawEntityList() {
 #ifdef _DEBUG
-    // TODO: 名前をつけられるようにする
     AssetManager* assetManager = AssetManager::GetInstance();
     auto entityIds = assetManager->GetEntityManager()->GetActiveEntityIds();
     for (uint32_t id : entityIds) {
         bool isSelected = (selectedEntityId_ == id);
-        std::string& name = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(id).name;
+        SceneObjectData& data = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(id);
+        std::string& name = data.name;
         std::string label = name + "##" + std::to_string(id);
 
-        if (isSelected) {
-            // 選択中はInputTextで名前編集
-            char buf[128];
-            strncpy_s(buf, sizeof(buf), name.c_str(), _TRUNCATE);
-            buf[sizeof(buf) - 1] = '\0';
-            ImGui::PushID(id);
-            if (ImGui::InputText("##edit", buf, sizeof(buf), ImGuiInputTextFlags_EnterReturnsTrue)) {
-                name = buf;
-            }
-            ImGui::PopID();
-            // 選択解除用
-            if (ImGui::IsItemDeactivatedAfterEdit() && !ImGui::IsItemActive()) {
-                selectedEntityId_ = 0;
-            }
-        } else {
-            // 通常はSelectable
-            if (ImGui::Selectable(label.c_str(), isSelected)) {
-                selectedEntityId_ = id;
-            }
+        // ドラッグソース
+        ImGui::PushID(id);
+        if (ImGui::Selectable(label.c_str(), isSelected)) {
+            selectedEntityId_ = id;
         }
+
+        if (ImGui::BeginDragDropSource()) {
+            ImGui::SetDragDropPayload("ENTITY_ID", &id, sizeof(id));
+            ImGui::Text("%s", name.c_str());
+            ImGui::EndDragDropSource();
+        }
+
+        // ドロップターゲット
+        if (ImGui::BeginDragDropTarget()) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_ID")) {
+                uint32_t draggedId = *(const uint32_t*)payload->Data;
+                if (draggedId != id) {
+                    // 親子関係を設定
+                    
+                }
+            }
+            ImGui::EndDragDropTarget();
+        }
+        ImGui::PopID();
 
         // 右クリックでコンテキストメニュー
         if (ImGui::BeginPopupContextItem(label.c_str())) {
+            if (ImGui::MenuItem("Rename")) {
+				ImGui::OpenPopup("Rename Entity");
+            }
             if (ImGui::MenuItem("Save")) {
 				// 保存処理
 				SceneManager::GetInstance()->SaveEntity(id, name);

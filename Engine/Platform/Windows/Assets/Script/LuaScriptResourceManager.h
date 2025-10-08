@@ -4,6 +4,7 @@
 #include <string>
 #include "LuaScriptOnQFE.h"
 #include "Utility/DesignPatterns/Singleton.h"
+#include "Scene/Data/SceneObjectData.h"
 
 class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager> {
 	friend class Singleton<LuaScriptResourceManager>;
@@ -15,6 +16,7 @@ class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager>
 public:
 	void Initialize();
 	void Reset();
+	void ReloadAllScripts();
 	void CreateScript(const std::string& scriptName);
 	uint32_t AddScript(uint32_t entityId, const std::string& scriptName);
 	void RequestRemoveScript(uint32_t handle);
@@ -22,12 +24,14 @@ public:
 	void RemoveScript(uint32_t handle);
 	void InitializeAllScripts();
 	void UpdateAllScripts();
-	void RunColliderStay(uint32_t aEintityId, uint32_t bEintityId);
+	void RunColliderStay(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB);
+	void RunTriggerEnter(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB);
 	void EndFrame();
 	void Finalize();
 
 	LuaScriptOnQFE* GetScript(uint32_t handle) const;
 	std::set<std::string>& GetScriptGlobals(uint32_t entityId) const;
+	sol::object GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName);
 
 
 private:

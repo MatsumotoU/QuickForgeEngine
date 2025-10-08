@@ -104,6 +104,22 @@ void SceneManager::Finalize() {
 	CameraManager::GetInstance()->Shutdown();
 }
 
+uint32_t SceneManager::GetEntityByName(const std::string& entityName) const {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
+	for (auto entityId : entities) {
+		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
+			const SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
+			if (sceneObjectData.name == entityName) {
+				return entityId;
+			}
+		}
+	}
+	assert(false && "Entity Not Found");
+	return 0;
+}
+
 void SceneManager::SaveScene(const std::string& sceneName) {
 #ifdef _DEBUG
 	DebugLog("SaveScene: " + sceneName);
@@ -229,7 +245,17 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 				if (handle.contains("scriptName")) {
 					AddScript(entityId, handle["scriptName"].get<std::string>());
 					ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+					// グローバル変数の復元準備
+					std::vector<uint32_t> luaHandles;
+					for (auto& sh : scriptHandles.scriptHandles_) {
+						luaHandles.push_back(sh.handle_);
+					}
 					scriptHandles.Deserialize(entityJson["ScriptHandle"]);
+					for (size_t i = 0; i < luaHandles.size(); ++i) {
+						scriptHandles.scriptHandles_[i].handle_ = luaHandles[i];
+					}
+
+					// グローバル変数の復元
 					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
 						sol::state* state = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_)->GetScript();
 						for (const auto& [key, val] : hl.intParams_) {
