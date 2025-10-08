@@ -1,17 +1,13 @@
 #include "../ShaderStructs/Particle.hlsli"
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
-struct GlyphForGPU
-{
-    float32_t4x4 WVP;
-    float32_t4 texCoords; // 2D texture coordinates for the glyph
-};
 StructuredBuffer<GlyphForGPU> gGlyph : register(t0);
 
 struct VertexShaderInput
 {
     float32_t4 position : POSITION0;
-    float32_t2 texcoord : TEXCOORD0;
     float32_t4 color : COLOR0;
+    float32_t2 texcoord : TEXCOORD0;
 };
 
 VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_InstanceID)

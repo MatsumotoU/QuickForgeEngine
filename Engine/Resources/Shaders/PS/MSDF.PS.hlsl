@@ -1,11 +1,5 @@
 #include "../ShaderStructs/Font.hlsli"
-
-struct Constants
-{
-    float32_t2 AtlasSize; // アトラスのピクセルサイズ (width, height)
-    float32_t DistanceRange; // JSONから読み込んだ distanceRange (pixelRange)
-    float32_t padding;
-};
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
 ConstantBuffer<Constants> g_Constants : register(b0);
 Texture2D<float4> g_MsdfAtlas : register(t0);
@@ -28,7 +22,6 @@ PixelShaderOutput main(VertexShaderOutput input)
     float3 sampleColor = g_MsdfAtlas.Sample(g_Sampler, input.texcoord).rgb;
     float sd = median(sampleColor.r, sampleColor.g, sampleColor.b);
 
-    // アンチエイリアス処理
     float edgeWidth = fwidth(sd) * 0.1;
     float alpha = smoothstep(0.5 - edgeWidth, 0.5 + edgeWidth, sd);
 

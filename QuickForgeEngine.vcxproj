@@ -495,15 +495,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Graphic\PostEffect\RendaringPostprocess.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\ConstantBuffer.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ColorCorrectionOffset.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\DirectionalLight.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\Material.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\OffsetBuffer.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\ParticleForGPU.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\PrimitiveVertexData.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\TransformationMatrix.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VerTexData.h" />
-    <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\Data\VignetteOffset.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\StructuredBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\ShaderBuffer\VertexBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\Renderer\ModelRenderer.h" />
@@ -520,6 +511,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\QuickForgeEngine.h" />
     <ClInclude Include="Engine\Core\Math\Quaternion\Quaternion.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\DebugLog\MyDebugLog.h" />
+    <ClInclude Include="Engine\Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="Engine\Utility\DesignPatterns\Observer.h" />
     <ClInclude Include="Engine\Utility\DesignPatterns\Singleton.h" />
     <ClInclude Include="Engine\Utility\DesignPatterns\Subject.h" />

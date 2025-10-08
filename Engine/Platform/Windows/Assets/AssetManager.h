@@ -7,9 +7,7 @@
 #include "Sprite/SpriteManager.h" 
 #include "Sprite/Data/SpriteData.h"
 #include "ConstantBufferManager/ConstantBufferManager.h"
-#include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
-#include "Graphic/ShaderBuffer/Data/Material.h"
-#include "Graphic/ShaderBuffer/Data/DirectionalLight.h"
+#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "Core/Entity/EntityManager.h"
 #include "Utility/DesignPatterns/Singleton.h"
 

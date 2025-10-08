@@ -1,9 +1,5 @@
 #include "../ShaderStructs/Object3d.hlsli"
-
-struct OffsetBuffer
-{
-    float32_t4 gOffset;
-};
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
 ConstantBuffer<OffsetBuffer> gOffsetBuffer : register(b0);
 Texture2D<float32_t4> gTexture : register(t0);
@@ -20,9 +16,9 @@ PixelShaderOutput main(VertexShaderOutput input)
     float32_t4 textureColor = gTexture.Sample(gSampler, input.texcoord.xy);
     
     float scale = textureColor.r * 0.29891f + textureColor.g * 0.58661f +  textureColor.b * 0.11448f;
-    output.color.r = lerp(textureColor.r, scale, gOffsetBuffer.gOffset.r);
-    output.color.g = lerp(textureColor.g, scale, gOffsetBuffer.gOffset.r);
-    output.color.b = lerp(textureColor.b, scale, gOffsetBuffer.gOffset.r);
+    output.color.r = lerp(textureColor.r, scale, gOffsetBuffer.offset.r);
+    output.color.g = lerp(textureColor.g, scale, gOffsetBuffer.offset.r);
+    output.color.b = lerp(textureColor.b, scale, gOffsetBuffer.offset.r);
     output.color.a = textureColor.a;
     
     return output;

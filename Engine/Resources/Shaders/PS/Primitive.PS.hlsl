@@ -1,11 +1,6 @@
 #include "../ShaderStructs/Particle.hlsli"
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
-struct Material
-{
-    float32_t4 color;
-    int32_t enableLighting;
-    float32_t4x4 uvTransform;
-};
 ConstantBuffer<Material> gMaterial : register(b0);
 
 struct PixelShaderOutput
@@ -17,10 +12,12 @@ PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
     
-    output.color = gMaterial.color * input.color;
+    //output.color = gMaterial.color * input.color;
+    output.color = input.color;
     
     if (output.color.a == 0.0f)
     {
+        //output.color = float32_t4(1.0f, 0.0f, 0.0f, 1.0f);
         discard;
     }
     
