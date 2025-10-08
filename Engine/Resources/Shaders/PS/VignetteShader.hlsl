@@ -1,14 +1,7 @@
 #include "../ShaderStructs/Object3d.hlsli"
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
-struct OffsetBuffer
-{
-    float32_t2 screenResolution;
-    float VignetteRadius;
-    float VignetteSoftness;
-    float VignetteIntensity;
-};
-
-ConstantBuffer<OffsetBuffer> gOffsetBuffer : register(b0);
+ConstantBuffer<VignetteOffset> gOffsetBuffer : register(b0);
 Texture2D<float32_t4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 

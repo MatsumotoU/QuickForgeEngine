@@ -1,13 +1,5 @@
 #include "../ShaderStructs/Object3d.hlsli"
-
-struct ColorCorrectionOffset
-{
-    float exposure; // 露出
-    float contrast; // コントラスト
-    float saturation; // 彩度
-    float gamma; // ガンマ
-    float hue; // 色相
-};
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
 ConstantBuffer<ColorCorrectionOffset> gOffsetBuffer : register(b0);
 Texture2D<float4> gTexture : register(t0);
@@ -18,14 +10,12 @@ struct PixelShaderOutput
     float4 color : SV_TARGET0;
 };
 
-// 彩度調整
 float3 AdjustSaturation(float3 color, float saturation)
 {
     float gray = dot(color, float3(0.299, 0.587, 0.114));
     return lerp(float3(gray, gray, gray), color, saturation);
 }
 
-// RGB→HSV変換
 float3 RGBtoHSV(float3 c)
 {
     float4 K = float4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
@@ -39,7 +29,6 @@ float3 RGBtoHSV(float3 c)
     return float3(h, s, v);
 }
 
-// HSV→RGB変換
 float3 HSVtoRGB(float3 hsv)
 {
     float h = hsv.x;
@@ -76,11 +65,9 @@ float3 HSVtoRGB(float3 hsv)
     return rgb;
 }
 
-// 色相調整
 float3 AdjustHue(float3 color, float hue)
 {
     float3 hsv = RGBtoHSV(color);
-    // hueは度数なので360で割って正規化
     hsv.x = frac(hsv.x + hue / 360.0);
     return HSVtoRGB(hsv);
 }
@@ -91,15 +78,10 @@ PixelShaderOutput main(VertexShaderOutput input)
 
     float32_t4 textureColor = gTexture.Sample(gSampler, input.texcoord.xy);
 
-    // 露出
     textureColor.rgb *= pow(2.0, gOffsetBuffer.exposure);
-    // コントラスト
     textureColor.rgb = (textureColor.rgb - 0.5) * gOffsetBuffer.contrast + 0.5;
-    // 彩度
     textureColor.rgb = AdjustSaturation(textureColor.rgb, gOffsetBuffer.saturation);
-    // 色相
     textureColor.rgb = AdjustHue(textureColor.rgb, gOffsetBuffer.hue);
-    // ガンマ補正
     textureColor.rgb = pow(textureColor.rgb, float3(1.0 / gOffsetBuffer.gamma, 1.0 / gOffsetBuffer.gamma, 1.0 / gOffsetBuffer.gamma));
     
     output.color = textureColor;
