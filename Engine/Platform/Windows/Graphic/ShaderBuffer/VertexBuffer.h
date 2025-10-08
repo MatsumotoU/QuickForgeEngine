@@ -2,8 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <cassert>
-#include "Data/VerTexData.h"
-#include "Data/PrimitiveVertexData.h"
+#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "BufferGenerater/BufferGenerator.h"
 
 template<class T>

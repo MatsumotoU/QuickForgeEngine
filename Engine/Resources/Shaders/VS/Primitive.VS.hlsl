@@ -1,10 +1,6 @@
 #include "../ShaderStructs/Particle.hlsli"
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
-struct TransformationMatrix
-{
-    float32_t4x4 WVP;
-    float32_t4x4 World;
-};
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 
 struct VertexShaderInput

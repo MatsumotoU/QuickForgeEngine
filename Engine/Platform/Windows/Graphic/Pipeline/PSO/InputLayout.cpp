@@ -15,8 +15,8 @@ void InputLayout::CreateNormalPresetInputLayout() {
 void InputLayout::CreatePrimitivePresetInputLayout() {
 	Initialize();
 	CreateInputElementDesc("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
-	CreateInputElementDesc("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
 	CreateInputElementDesc("COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
+	CreateInputElementDesc("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
 }
 
 void InputLayout::CreateInputElementDesc(const LPCSTR& semanticName, const UINT& semanticIndex, const DXGI_FORMAT& format, const UINT& alignedByteOffset) {

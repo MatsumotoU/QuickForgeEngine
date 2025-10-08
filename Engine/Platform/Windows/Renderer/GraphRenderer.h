@@ -2,9 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "Utility/DesignPatterns/Singleton.h"
-#include "Graphic/ShaderBuffer/Data/PrimitiveVertexData.h"
-#include "Graphic/ShaderBuffer/Data/Material.h"
-#include "Graphic/ShaderBuffer/Data/TransformationMatrix.h"
+#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 #include "Graphic/ShaderBuffer/ConstantBuffer.h"
 

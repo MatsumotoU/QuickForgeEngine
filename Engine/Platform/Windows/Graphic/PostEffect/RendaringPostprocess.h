@@ -1,9 +1,7 @@
 #pragma once
 #include "Utility/DesignPatterns/Singleton.h"
 #include "Graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
-#include "Graphic/ShaderBuffer/Data/OffsetBuffer.h"
-#include "Graphic/ShaderBuffer/Data/VignetteOffset.h"
-#include "Graphic/ShaderBuffer/Data/ColorCorrectionOffset.h"
+#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 #include "Graphic/Pipeline/PSO/PipelineStateObject.h"
 #include "Graphic/ShaderBuffer/VertexBuffer.h"

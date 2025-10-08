@@ -1,6 +1,6 @@
 #include "../ShaderStructs/Object3d.hlsli"
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
-// 4x4 Bayerマトリクス
 static const float ditherMatrix[4][4] =
 {
     { 0.0 / 16.0, 8.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0 },
@@ -9,18 +9,6 @@ static const float ditherMatrix[4][4] =
     { 15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0 }
 };
 
-struct DirectionalLight
-{
-    float32_t4 color;// ライトの色
-    float32_t3 direction;// ライトの向き
-    float intensity;// 輝度
-};
-
-struct Material{
-    float32_t4 color;
-    int32_t enableLighting;
-    float32_t4x4 uvTransform;
-};
 ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 Texture2D<float32_t4> gTexture : register(t0);
@@ -38,14 +26,12 @@ PixelShaderOutput main(VertexShaderOutput input)
     
     float alpha = gMaterial.color.a * textureColor.a;
 
-    // 透明度が0なら必ず消す
     if (alpha == 0.0f)
     {
         discard;
     }
 
-    // alphaが小さいほど間隔が広がる（粗くなる）
-    float scale = lerp(4.0f, 1.0f, alpha); // 4.0fは最大粗さ（調整可）
+    float scale = lerp(4.0f, 1.0f, alpha); 
     int2 pixelPos = (int2(input.position.xy / scale)) & 3;
     float ditherThreshold = ditherMatrix[pixelPos.y][pixelPos.x];
 
