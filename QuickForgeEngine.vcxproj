@@ -443,6 +443,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Camera\Camera.h" />
     <ClInclude Include="Engine\Platform\Windows\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Core\Entity\EntityManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Camera\Data\CameraData.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\ColliderManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Physics\Force.h" />

@@ -4,6 +4,7 @@
 #include "Assets/Script/LuaScriptResourceManager.h"
 
 #include "Core/Math/Transform.h"
+#include "Scene/Data/SceneObjectData.h"
 
 #ifdef _DEBUG
 #include "Renderer/GraphRenderer.h"
@@ -27,6 +28,8 @@ void ColliderManager::Update() {
 			Transform& transform = entityManager->GetComponent<Transform>(pair.first);
 			SphereColliderData& collider = entityManager->GetComponent<SphereColliderData>(pair.first);
 			collider.sphere.center = transform.translate;
+			collider.isOldHit = collider.isHit;
+			collider.isHit = false;
 		}
     }
 
@@ -37,15 +40,39 @@ void ColliderManager::Update() {
 
     for (size_t i = 0; i < entityIds.size(); ++i) {
         uint32_t idA = entityIds[i];
-        const SphereColliderData& colliderA = entityManager->GetComponent<SphereColliderData>(idA);
+        SphereColliderData& colliderA = entityManager->GetComponent<SphereColliderData>(idA);
 
         for (size_t j = i + 1; j < entityIds.size(); ++j) {
             uint32_t idB = entityIds[j];
-            const SphereColliderData& colliderB = entityManager->GetComponent<SphereColliderData>(idB);
+            SphereColliderData& colliderB = entityManager->GetComponent<SphereColliderData>(idB);
 
             if (isCollision(colliderA.sphere, colliderB.sphere)) {
 #ifdef _DEBUG
-				LuaScriptResourceManager::GetInstance()->RunColliderStay(idA, idB);
+                // SceneObjectData取得
+                SceneObjectData* objA = nullptr;
+                SceneObjectData* objB = nullptr;
+                if (entityManager->HasComponent<SceneObjectData>(idA)) {
+                    objA = &entityManager->GetComponent<SceneObjectData>(idA);
+					colliderA.isHit = true;
+                }
+                if (entityManager->HasComponent<SceneObjectData>(idB)) {
+                    objB = &entityManager->GetComponent<SceneObjectData>(idB);
+					colliderB.isHit = true;
+                }
+
+				// 当たり判定中のイベントを呼び出し
+                LuaScriptResourceManager::GetInstance()->RunColliderStay(idA, idB, objA, objB);
+
+				// Triggerイベント
+				if (!colliderA.isOldHit) {
+					if (entityManager->HasComponent<SceneObjectData>(idA)) {
+						objA = &entityManager->GetComponent<SceneObjectData>(idA);
+					}
+					if (entityManager->HasComponent<SceneObjectData>(idB)) {
+						objB = &entityManager->GetComponent<SceneObjectData>(idB);
+					}
+					LuaScriptResourceManager::GetInstance()->RunTriggerEnter(idA, idB, objA, objB);
+				}
 #endif // _DEBUG
             }
         }

@@ -9,11 +9,7 @@ public:
 	uint32_t handle;
 	std::string modelName;
 
-	nlohmann::json Serialize() const override {
-		nlohmann::json json;
-		json["modelName"] = modelName;
-		return json;
-	}
+	nlohmann::json Serialize() const override;
 	void Deserialize(const nlohmann::json& json) override;
 
 	std::string GetTypeName() const override { return "ModelHandle"; }

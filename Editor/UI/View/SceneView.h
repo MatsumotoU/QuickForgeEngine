@@ -15,6 +15,7 @@ private:
 	void UpdateGizmo();
 
 	uint32_t selectEntityId_;
+	bool isDrawGizmo_;
 
 	float cameraMoveT_;
 	Vector3 startPos_;

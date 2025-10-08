@@ -2,9 +2,11 @@
 #include "Core/EngineGlobalValue.h"
 #include "Assets/AssetManager.h"
 #include "Scene/SceneManager.h"
+#include "Assets/Script/LuaScriptResourceManager.h"
 #include "Input/DirectInput/DirectInputManager.h"
 #include "Core/Math/Transform.h"
 #include "Assets/Script/Data/ScriptHandle.h"
+#include "Scene/Data/SceneObjectData.h"
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -92,34 +94,7 @@ void LuaScriptOnQFE::ReloadScript() {
 	}
 }
 
-void LuaScriptOnQFE::RunFunction(const std::string& functionName) {
-	luaState_->set("deltaTime", QFE::EngineGlobalValue::deltaTime);
 
-	try {
-		if (!isCanRun_) {
-			throw std::runtime_error("Cannot run function. Lua script is not loaded or failed to load.");
-		}
-		if (!luaState_) {
-			throw std::runtime_error("Lua state is not initialized.");
-		}
-		sol::function func = luaState_->get<sol::function>(functionName);
-		if (!func) {
-			throw std::runtime_error("Function " + functionName + " not found in Lua script.");
-		}
-		sol::protected_function_result result = func();
-		if (!result.valid()) {
-			sol::error err = result;
-			throw std::runtime_error("Error running function " + functionName + ": " + std::string(err.what()));
-		}
-	}
-	catch (const std::exception& e) {
-#ifdef _DEBUG
-		DebugLog(e.what(), LogLevel::Error);
-#else
-		std::cerr << e.what() << std::endl;
-#endif
-	}
-}
 
 bool LuaScriptOnQFE::HasFunction(const std::string& functionName) const {
 	if (luaState_) {
@@ -208,11 +183,57 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	input.set_function("GetKeyMoveDir", [inputManager]() {
 		return inputManager->GetKeyMoveDir();
 		});
+
+	// キーボード
+	input.set_function("GetKeyPress", [inputManager](uint32_t DIK) {
+		return inputManager->keyboard_.GetPress(DIK);
+		});
+	input.set_function("GetKeyTrigger", [inputManager](uint32_t DIK) {
+		return inputManager->keyboard_.GetTrigger(DIK);
+		});
+	input.set_function("GetKeyRelease", [inputManager](uint32_t DIK) {
+		return inputManager->keyboard_.GetRelease(DIK);
+		});
+
+	// マウス
+	input.set_function("GetMousePress", [inputManager](int8_t button) {
+		return inputManager->mouse_.GetPress(button);
+		});
+	input.set_function("GetMouseTrigger", [inputManager](int8_t button) {
+		return inputManager->mouse_.GetTrigger(button);
+		});
+	input.set_function("GetMouseRelease", [inputManager](int8_t button) {
+		return inputManager->mouse_.GetRelease(button);
+		});
+	input.set_function("GetMouseScreenPos", [inputManager]() {
+		return inputManager->mouse_.mouseScreenPos_;
+		});
+	input.set_function("GetMouseMoveDir", [inputManager]() {
+		return inputManager->mouse_.mouseMoveDir_;
+		});
+	input.set_function("GetMouseWheelDir", [inputManager]() {
+		return inputManager->mouse_.wheelDir_;
+		});
+
 #ifdef _DEBUG
 	luaState_->set_function("DebugLog", [](sol::variadic_args message) {
 		DebugLogLua(message);
 		});
 #endif // _DEBUG
+	luaState_->new_usertype<SceneObjectData>("SceneObjectData",
+		"name", &SceneObjectData::name,
+		"tag", &SceneObjectData::tag
+	);
+
+	luaState_->set_function("GetEntity", [](const std::string& entityName) {
+		return SceneManager::GetInstance()->GetEntityByName(entityName);
+		});
+
+	luaState_->set_function("GetEntityScriptGlobal",
+		[](uint32_t entityId, const std::string& scriptName, const std::string& varName) {
+			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName);
+		}
+	);
 
 	luaState_->set_function("CreateEntity", [](const std::string& entityName) {
 		return SceneManager::GetInstance()->AddEntity(entityName);
@@ -230,7 +251,9 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		});
 
 	// GlobalValue
-	
+	luaState_->set_function("destroy", [this]() {
+		AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(this->GetBindEntityId());
+		});
 
 	// Math
 	luaState_->new_usertype<Vector2>("Vector2",
@@ -257,6 +280,18 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		"rotate", &Transform::rotate,
 		"translate", &Transform::translate
 	);
+
+	sol::table dik = luaState_->create_named_table("DIK");
+	dik["W"] = static_cast<uint32_t>(0x11);
+	dik["A"] = static_cast<uint32_t>(0x1E);
+	dik["S"] = static_cast<uint32_t>(0x1F);
+	dik["D"] = static_cast<uint32_t>(0x20);
+	// 必要なキーを追加
+	luaState_->set("DIK_W", 0x11);
+	luaState_->set("DIK_A", 0x1E);
+	luaState_->set("DIK_S", 0x1F);
+	luaState_->set("DIK_D", 0x20);
+	luaState_->set("DIK", dik);
 }
 
 void LuaScriptOnQFE::SetPosition(uint32_t entityId, const Vector3& position) {

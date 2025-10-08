@@ -38,7 +38,19 @@ void InspectorView::Draw() {
 	if (assetManager->GetEntityManager()->HasComponent<SceneObjectData>(selectedEntityId_)) {
 		SceneObjectData& sceneObjData = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(selectedEntityId_);
 		ImGui::Text("Entity ID: %d", selectedEntityId_);
-		ImGui::Text("Name: %s", sceneObjData.name.c_str());
+		// name
+		char nameBuffer[256];
+		strncpy_s(nameBuffer, sizeof(nameBuffer), sceneObjData.name.c_str(), sizeof(nameBuffer) - 1);
+		if (ImGui::InputText("Name", nameBuffer, sizeof(nameBuffer))) {
+			sceneObjData.name = nameBuffer;
+		}
+		// tag
+		char tagBuffer[256];
+		strncpy_s(tagBuffer, sizeof(tagBuffer), sceneObjData.tag.c_str(), sizeof(tagBuffer) - 1);
+		if (ImGui::InputText("Tag", tagBuffer, sizeof(tagBuffer))) {
+			sceneObjData.tag = tagBuffer;
+		}
+
 		ImGui::Separator();
 	} else {
 		ImGui::Text("No entity selected");
@@ -96,6 +108,10 @@ void InspectorView::Draw() {
 				if (ImGui::TreeNode(sh.scriptName_.c_str())) {
 					// スクリプトのパラメータ表示
 					LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(sh.handle_);
+					ImGui::Text("Handle: %d", sh.handle_);
+					ImGui::Text("Entity ID: %d", script->GetBindEntityId());
+					ImGui::Text("Can Run: %s", script->IsCanRun() ? "True" : "False");
+					ImGui::Separator();
 					for (std::string& val : script->GetGlobalValuesList()) {
 						std::string inputLabel = val + "##" + std::to_string(i);
 						sol::state* state = script->GetScript();

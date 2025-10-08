@@ -131,7 +131,7 @@ void LuaScriptResourceManager::UpdateAllScripts() {
 	}
 }
 
-void LuaScriptResourceManager::RunColliderStay(uint32_t aEintityId, uint32_t bEintityId) {
+void LuaScriptResourceManager::RunColliderStay(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB) {
 	if (scripts_.empty()) {
 #ifdef _DEBUG
 		DebugLog("Script Not Found", LogLevel::Warning);
@@ -144,11 +144,32 @@ void LuaScriptResourceManager::RunColliderStay(uint32_t aEintityId, uint32_t bEi
 			continue;
 		}
 
-		if (script->HasFunction("OnCollisonStay")) {
-			script->RunFunction("OnCollisonStay");
+		if (script->HasFunction("OnCollisionStay")) {
+			script->RunFunction("OnCollisionStay", aEintityId, bEintityId, objA, objB);
 		} else {
 #ifdef _DEBUG
-			DebugLog("OnCollisonStay Not Found", LogLevel::Warning);
+			DebugLog("OnCollisionStay Not Found", LogLevel::Warning);
+#endif // _DEBUG
+		}
+	}
+}
+
+void LuaScriptResourceManager::RunTriggerEnter(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB) {
+	if (scripts_.empty()) {
+#ifdef _DEBUG
+		DebugLog("Script Not Found", LogLevel::Warning);
+#endif // _DEBUG
+	}
+	for (auto& script : scripts_) {
+		if (script->GetBindEntityId() != aEintityId && script->GetBindEntityId() != bEintityId) {
+			continue;
+		}
+
+		if (script->HasFunction("OnCollisionEnter")) {
+			script->RunFunction("OnCollisionEnter", aEintityId, bEintityId, objA, objB);
+		} else {
+#ifdef _DEBUG
+			DebugLog("OnCollisionEnter Not Found", LogLevel::Warning);
 #endif // _DEBUG
 		}
 	}
@@ -183,6 +204,25 @@ std::set<std::string>& LuaScriptResourceManager::GetScriptGlobals(uint32_t entit
 	}
 	assert(false && "Script Not Found");
 	return emptySet;
+}
+
+sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+
+	if (!entityManager->HasComponent<ScriptHandles>(entityId)) return sol::nil;
+
+	ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+	for (const auto& handle : scriptHandles.scriptHandles_) {
+		if (handle.scriptName_ == scriptName) {
+			LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(handle.handle_);
+			if (script) {
+				sol::state* state = script->GetScript();
+				return (*state)[varName];
+			}
+		}
+	}
+	return sol::nil;
 }
 
 void LuaScriptResourceManager::CheckScriptEntity() {

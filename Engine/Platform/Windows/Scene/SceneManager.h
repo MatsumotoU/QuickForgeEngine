@@ -18,6 +18,7 @@ public:
 	void Finalize();
 
 	std::string GetCurrentSceneName() const { return currentScene_->GetSceneName(); }
+	uint32_t GetEntityByName(const std::string& entityName) const;
 	bool IsRunningScript() const { return isRunningScript_; }
 
 	void SaveScene(const std::string& sceneName);

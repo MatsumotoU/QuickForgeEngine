@@ -7,6 +7,10 @@
 #include <stdint.h>
 #include "Core/Math/Vector/Vector3.h"
 
+#ifdef _DEBUG
+#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#endif // _DEBUG
+
 #include <set>
 
 class LuaScriptOnQFE {
@@ -15,7 +19,32 @@ public:
 	~LuaScriptOnQFE() = default;
 	void LoadScript(const std::string& scriptName);
 	void ReloadScript();
-	void RunFunction(const std::string& functionName);
+	template<typename... Args>
+	inline void RunFunction(const std::string& functionName, Args&&... args) {
+		//luaState_->set("deltaTime", QFE::EngineGlobalValue::deltaTime);
+		try {
+			if (!isCanRun_) {
+				throw std::runtime_error("Cannot run function. Lua script is not loaded or failed to load.");
+			}
+			if (!luaState_) {
+				throw std::runtime_error("Lua state is not initialized.");
+			}
+			sol::object obj = luaState_->get<sol::object>(functionName);
+			if (!obj.is<sol::function>()) {
+				throw std::runtime_error("Function '" + functionName + "' not found in Lua script.");
+			}
+			sol::function func = obj.as<sol::function>();
+			func(std::forward<Args>(args)...);
+		}
+		catch (const std::exception& e) {
+#ifdef _DEBUG
+			DebugLog("Error in Lua function '" + functionName + "': " + e.what(), LogLevel::Error);
+#else
+			std::cerr << "Error in Lua function '" + functionName + "': " + e.what() << std::endl;
+#endif
+		}
+
+	}
 	bool HasFunction(const std::string& functionName) const;
 	std::vector<std::string> GetFunctionList() const;
 	sol::state* GetScript() const;
