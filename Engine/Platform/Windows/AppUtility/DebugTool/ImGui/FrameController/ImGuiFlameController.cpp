@@ -33,6 +33,7 @@ void ImGuiFlameController::Initialize(const HWND& hwnd, ID3D12GraphicsCommandLis
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ImGui_ImplWin32_Init(hwnd);
 
 	// ImPlotの初期化
@@ -66,6 +67,15 @@ void ImGuiFlameController::BeginFrame() {
 void ImGuiFlameController::EndFrame(D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferCpuHandle) {
 	// ImGuiの描画
 	ImGui::Render();
+
+	// 追加: ビューポート用のプラットフォームウィンドウも描画
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+
+	// レンダーターゲットの設定
 	commandList_->OMSetRenderTargets(1, &currentBackBufferCpuHandle, FALSE, nullptr);
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
 }

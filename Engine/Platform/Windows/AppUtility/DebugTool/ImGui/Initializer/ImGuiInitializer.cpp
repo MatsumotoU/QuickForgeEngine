@@ -26,6 +26,9 @@ void ImGuiInitializer::Initialize(
 		OutputDebugStringA("Not Find Fonts: YuGothB.ttc\n");
 	}
 
+	// Viewportの設定
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // 複数ウィンドウを有効化
+
 	// ImGuiの初期化
 	bool isInit = ImGui_ImplDX12_Init(device,
 		bufferCount,
