@@ -1,9 +1,11 @@
 #pragma once
 #include "IScene.h"
 #include "Utility/DesignPatterns/Singleton.h"
+#include "AppUtility/ID/UniqeIDManager.h"
 #include <memory>
 #include <string>
 #include <nlohmann/json.hpp>
+
 
 class SceneManager final : public Singleton<SceneManager> {
 	friend class Singleton<SceneManager>;
@@ -27,6 +29,8 @@ public:
 
 	// ここにいるべきじゃない
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName);
+	void ParentChild(uint32_t parentId, uint32_t childId);	
+	void Unparent(uint32_t childId);
 
 	void SerializeEntity(uint32_t entityId, nlohmann::json& entityJson);
 	void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson);
@@ -44,4 +48,5 @@ private:
 	std::unique_ptr<IScene> currentScene_;
 	bool isRunningScript_;
 	bool isRequestStopScript_;
+	ListUniqueIDManager uniqueIdManager_;
 };

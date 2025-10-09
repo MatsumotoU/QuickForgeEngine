@@ -12,7 +12,8 @@
             },
             "SceneObjectData": {
                 "name": "Player",
-                "tag": "Untagged"
+                "tag": "Untagged",
+                "uniqueId": 1
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -72,7 +73,8 @@
             },
             "SceneObjectData": {
                 "name": "TinyEnemy",
-                "tag": "Untagged"
+                "tag": "Untagged",
+                "uniqueId": 2
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -131,7 +133,8 @@
             },
             "SceneObjectData": {
                 "name": "MediamEnemy",
-                "tag": "Untagged"
+                "tag": "Untagged",
+                "uniqueId": 3
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -190,7 +193,8 @@
             },
             "SceneObjectData": {
                 "name": "BigEnemy",
-                "tag": "Untagged"
+                "tag": "Untagged",
+                "uniqueId": 4
             },
             "ScriptHandle": {
                 "scriptHandles": [

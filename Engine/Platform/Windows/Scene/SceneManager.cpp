@@ -13,6 +13,7 @@
 #include "Assets/Script/Data/ScriptHandle.h"
 #include "Physics/PhysicsManager.h"
 #include "Collider/Data/SphereColliderData.h"
+#include "Core/Math/ParentData.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -39,22 +40,29 @@ void SceneManager::Update() {
 		PhysicsManager::GetInstance()->Update();
 	}
 	currentScene_->Update();
-}
 
-void SceneManager::PreDraw() {
-	// カメラ更新
-	CameraManager* cameraManager = CameraManager::GetInstance();
-	cameraManager->Update();
-
-	// ワールド行列更新
-	AssetManager* assetManager = AssetManager::GetInstance();
-	std::vector<uint32_t> entities = assetManager->GetEntityManager()->GetActiveEntityIds();
+	// ユニークIDが未設定なら設定する
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
 	for (auto entityId : entities) {
-		if (assetManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
-			Transform& transform = assetManager->GetEntityManager()->GetComponent<Transform>(entityId);
+		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
+			SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
+			if (sceneObjectData.uniqueId == 0) {
+				sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
+			} else {
+				uniqueIdManager_.AddUsedID(sceneObjectData.uniqueId);
+			}
+		}
+	}
+
+	// ワールド行列更新(wvpを別コンポーネントにする)
+	AssetManager* assetManager = AssetManager::GetInstance();
+	for (auto entityId : entities) {
+		if (entityManager->HasComponent<Transform>(entityId)) {
+			Transform& transform = entityManager->GetComponent<Transform>(entityId);
 			// モデルのワールド行列更新
-			if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
-				ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
+			if (entityManager->HasComponent<ModelHandle>(entityId)) {
+				ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
 				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 				// メッシュごとにワールド行列更新
 				for (const auto& meshData : modelData->meshRenderDataHandles) {
@@ -64,7 +72,6 @@ void SceneManager::PreDraw() {
 						transform.rotate,
 						transform.translate
 					);
-					wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
 				}
 			}
 			// スプライトのワールド行列更新
@@ -76,6 +83,79 @@ void SceneManager::PreDraw() {
 					transform.rotate,
 					transform.translate
 				);
+			}
+		}
+	}
+
+	// ペアレント子関係更新
+	for (auto entityId : entities) {
+		if (assetManager->GetEntityManager()->HasComponent<ParentData>(entityId)) {
+			ParentData& parentData = assetManager->GetEntityManager()->GetComponent<ParentData>(entityId);
+			
+			uint32_t parentId = 0;
+			bool isFound = false;
+			if (entityManager->HasComponentStrage<SceneObjectData>()) {
+				 auto& strage = entityManager->GetComponentStrage<SceneObjectData>();
+				 for (const auto& [id, sceneObjData] : strage) {
+					 if (sceneObjData.uniqueId == parentData.parentId) {
+						 parentId = id;
+						 isFound = true;
+						 break;
+					 }
+				 }
+			}
+			if (!isFound) { continue; }
+
+			if (assetManager->GetEntityManager()->HasComponent<Transform>(parentId)) {
+				Transform& parentTransform = assetManager->GetEntityManager()->GetComponent<Transform>(parentId);
+				// モデルのワールド行列更新
+				if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
+					ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
+					const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
+					// メッシュごとにワールド行列更新
+					for (const auto& meshData : modelData->meshRenderDataHandles) {
+						TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+						wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
+							parentTransform.scale, parentTransform.rotate, parentTransform.translate));
+					}
+				}
+				// スプライトのワールド行列更新
+				if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
+					SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
+					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
+					wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World,Matrix4x4::MakeAffineMatrix(
+						parentTransform.scale, parentTransform.rotate, parentTransform.translate));
+				}
+			}
+
+		}
+	}
+}
+
+void SceneManager::PreDraw() {
+	// カメラ更新
+	CameraManager* cameraManager = CameraManager::GetInstance();
+	cameraManager->Update();
+
+	// ビュー行列更新
+	AssetManager* assetManager = AssetManager::GetInstance();
+	std::vector<uint32_t> entities = assetManager->GetEntityManager()->GetActiveEntityIds();
+	for (auto entityId : entities) {
+		if (assetManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
+			// モデルのワールド行列更新
+			if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
+				ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
+				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
+				// メッシュごとにワールド行列更新
+				for (const auto& meshData : modelData->meshRenderDataHandles) {
+					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+					wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
+				}
+			}
+			// スプライトのワールド行列更新
+			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
+				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
+				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
 				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Orthographic);
 			}
 		}
@@ -190,6 +270,7 @@ void SceneManager::ResetScene() {
 	currentScene_->Initialize();
 	AssetManager::GetInstance()->GetEntityManager()->ResetEntiry();
 	CameraManager::GetInstance()->Initialize();
+	uniqueIdManager_.Reset();
 }
 
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
@@ -205,6 +286,73 @@ void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileNa
 	std::ofstream ofs(entityFilePath + entityFileName + ".json");
 	ofs << entityJson.dump(4);
 	ofs.close();
+}
+
+void SceneManager::ParentChild(uint32_t parentId, uint32_t childId) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (!entityManager->IsActiveEntity(parentId) || !entityManager->IsActiveEntity(childId)) {
+		assert(false && "Entity is not active");
+		return;
+	}
+	if (!entityManager->HasComponent<SceneObjectData>(parentId) || !entityManager->HasComponent<SceneObjectData>(childId)) {
+		assert(false && "Entity does not have SceneObjectData");
+		return;
+	}
+	SceneObjectData& parentSceneObjectData = entityManager->GetComponent<SceneObjectData>(parentId);
+	SceneObjectData& childSceneObjectData = entityManager->GetComponent<SceneObjectData>(childId);
+	if (parentSceneObjectData.uniqueId == 0 || childSceneObjectData.uniqueId == 0) {
+		assert(false && "Entity does not have uniqueId");
+		return;
+	}
+	if (!entityManager->HasComponent<ParentData>(childId)) {
+		ParentData parentData;
+		parentData.parentId = parentSceneObjectData.uniqueId;
+		entityManager->EmplaceComponent<ParentData>(childId, parentData);
+	} else {
+		ParentData& parentData = entityManager->GetComponent<ParentData>(childId);
+		parentData.parentId = parentSceneObjectData.uniqueId;
+	}
+
+	if (!entityManager->HasComponent<Transform>(parentId) || !entityManager->HasComponent<Transform>(childId)) {
+		return;
+	}
+	Transform& parentTransform = entityManager->GetComponent<Transform>(parentId);
+	Transform& childTransform = entityManager->GetComponent<Transform>(childId);
+	childTransform.translate -= parentTransform.translate;
+}
+
+void SceneManager::Unparent(uint32_t childId) {
+	if (!AssetManager::GetInstance()->GetEntityManager()->HasComponent<ParentData>(childId)) {
+		return;
+	}
+
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+
+	ParentData& parentData = entityManager->GetComponent<ParentData>(childId);
+	uint32_t parentId = 0;
+	bool isFound = false;
+	if (entityManager->HasComponentStrage<SceneObjectData>()) {
+		auto& strage = entityManager->GetComponentStrage<SceneObjectData>();
+		for (const auto& [id, sceneObjData] : strage) {
+			if (sceneObjData.uniqueId == parentData.parentId) {
+				parentId = id;
+				isFound = true;
+				break;
+			}
+		}
+	}
+	if (!isFound) { return; }
+	if (!entityManager->HasComponent<Transform>(parentId) || !entityManager->HasComponent<Transform>(childId)) {
+		entityManager->RemoveComponent<ParentData>(childId);
+		return;
+	}
+	//Transform& parentTransform = entityManager->GetComponent<Transform>(parentId);
+	//Transform& childTransform = entityManager->GetComponent<Transform>(childId);
+	// childTransform.translate += parentTransform.translate;
+
+	entityManager->RemoveComponent<ParentData>(childId);
 }
 
 void SceneManager::SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) {
@@ -237,13 +385,24 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 		entityManager->EmplaceComponent<SceneObjectData>(entityId);
 		SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
 		sceneObjectData.Deserialize(entityJson["SceneObjectData"]);
+		uniqueIdManager_.AddUsedID(sceneObjectData.uniqueId);
 	}
 	if (entityJson.contains("ScriptHandle")) {
 		std::vector<std::string> scriptNames;
 		if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
+
+			// スクリプトの復元
 			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
 				if (handle.contains("scriptName")) {
+#ifdef _DEBUG
+					DebugLog("Load Script: " + handle["scriptName"].get<std::string>());
+#endif // _DEBUG
 					AddScript(entityId, handle["scriptName"].get<std::string>());
+				}
+			}
+			// グローバル変数の復元
+			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
+				if (handle.contains("scriptName")) {
 					ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
 					// グローバル変数の復元準備
 					std::vector<uint32_t> luaHandles;
@@ -273,6 +432,7 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 					}
 				}
 			}
+			
 		}
 	}
 	if (entityJson.contains("Force")) {
@@ -294,6 +454,7 @@ void SceneManager::AddEpmtyObject() {
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = "EmptyObject";
 	sceneObjectData.tag = "Untagged";
+	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
@@ -308,6 +469,7 @@ void SceneManager::AddModel(const std::string& modelName) {
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = modelName;
 	sceneObjectData.tag = "Untagged";
+	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
@@ -362,6 +524,7 @@ void SceneManager::AddSprite(const std::string& spriteName, float width, float h
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = spriteName;
 	sceneObjectData.tag = "Untagged";
+	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 

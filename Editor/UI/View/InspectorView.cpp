@@ -12,6 +12,7 @@
 #include "Collider/Data/SphereColliderData.h"
 #include "Assets/3DModel/Data/ModelHandle.h"
 #include "Assets/Sprite/Data/SpriteData.h"
+#include "Core/Math/ParentData.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
@@ -37,7 +38,7 @@ void InspectorView::Draw() {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	if (assetManager->GetEntityManager()->HasComponent<SceneObjectData>(selectedEntityId_)) {
 		SceneObjectData& sceneObjData = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(selectedEntityId_);
-		ImGui::Text("Entity ID: %d", selectedEntityId_);
+		ImGui::Text("Entity ID: %d(%d)", selectedEntityId_,sceneObjData.uniqueId);
 		// name
 		char nameBuffer[256];
 		strncpy_s(nameBuffer, sizeof(nameBuffer), sceneObjData.name.c_str(), sizeof(nameBuffer) - 1);
@@ -58,6 +59,15 @@ void InspectorView::Draw() {
 		return;
 	}
 
+	// Parent ID
+	if (assetManager->GetEntityManager()->HasComponent<ParentData>(selectedEntityId_)) {
+		ParentData& parentData = assetManager->GetEntityManager()->GetComponent<ParentData>(selectedEntityId_);
+		ImGui::Text("Parent Unique ID: %d", parentData.parentId);
+		if (ImGui::Button("Delete")) {
+			SceneManager::GetInstance()->Unparent(selectedEntityId_);
+		}
+	}
+
 	// Transform
 	if (assetManager->GetEntityManager()->HasComponent<Transform>(selectedEntityId_)) {
 		Transform& transform = assetManager->GetEntityManager()->GetComponent<Transform>(selectedEntityId_);
@@ -67,6 +77,7 @@ void InspectorView::Draw() {
 			ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f);
 		}
 	}
+
 	// Model
 	if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(selectedEntityId_)) {
 		ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(selectedEntityId_);

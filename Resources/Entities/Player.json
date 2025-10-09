@@ -10,7 +10,8 @@
     },
     "SceneObjectData": {
         "name": "Player",
-        "tag": "Untagged"
+        "tag": "Untagged",
+        "uniqueId": 1
     },
     "ScriptHandle": {
         "scriptHandles": [
@@ -18,9 +19,17 @@
                 "boolParams": {},
                 "floatParams": {},
                 "handle": 0,
-                "intParams": {},
+                "intParams": {
+                    "leftCount": 0,
+                    "maxCount": 0,
+                    "rightCount": 0,
+                    "topCount": 0,
+                    "underCount": 0
+                },
                 "scriptName": "Move.lua",
-                "stringParams": {}
+                "stringParams": {
+                    "m": "bbb"
+                }
             }
         ]
     },

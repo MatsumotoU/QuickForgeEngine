@@ -117,7 +117,7 @@ void HierarchyView::DrawEntityList() {
                 uint32_t draggedId = *(const uint32_t*)payload->Data;
                 if (draggedId != id) {
                     // 親子関係を設定
-                    
+					SceneManager::GetInstance()->ParentChild(id, draggedId);
                 }
             }
             ImGui::EndDragDropTarget();
