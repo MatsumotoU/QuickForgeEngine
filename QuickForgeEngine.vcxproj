@@ -287,6 +287,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\FileSystems\FileUtility.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\ID\UniqeIDManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelHandle.cpp" />
@@ -413,6 +414,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\DirectX\PostProcess.h" />
     <ClInclude Include="Engine\Core\Math\MyMath.h" />
     <ClInclude Include="Engine\Core\Math\MyRandomNum.h" />
+    <ClInclude Include="Engine\Core\Math\ParentData.h" />
     <ClInclude Include="Engine\Core\Math\Shapes.h" />
     <ClInclude Include="Engine\Core\Window\IGameWindowManager.h" />
     <ClInclude Include="Engine\Core\Window\IGameWindow.h" />
@@ -426,6 +428,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\InitializeSwapChainBuffer.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\FileSystems\FileUtility.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\ID\UniqeIDManager.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelData.h" />
@@ -449,7 +452,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Physics\Force.h" />
     <ClInclude Include="Engine\Platform\Windows\Physics\PhysicsManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Renderer\SpriteRenderer.h" />
-    <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\Data\SceneObjectData.h" />
     <ClInclude Include="Engine\Platform\Windows\Scene\SceneManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Renderer\GraphRenderer.h" />

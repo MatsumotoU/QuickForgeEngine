@@ -4,8 +4,6 @@ topCount = 0
 underCount = 0
 maxCount = 0
 
-speed = 10
-
 function Init()
 rightCount = 0
 leftCount = 0

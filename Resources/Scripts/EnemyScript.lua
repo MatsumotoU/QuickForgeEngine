@@ -43,6 +43,17 @@ function OnCollisionStay(idA,idB)
     end
 end
 
+function func()
+
+if a<=5 then
+    
+
+else
+
+end
+
+end
+
 -- function OnCollisionEnter(idA,idB)
 -- local count = GetEntityScriptGlobal(idA,"Move.lua","maxCount")
 -- DebugLog(count)

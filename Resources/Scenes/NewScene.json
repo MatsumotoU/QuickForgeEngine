@@ -1,18 +1,10 @@
 {
     "entities": [
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "anchor.obj"
-            },
             "SceneObjectData": {
-                "name": "anchor.obj",
-                "tag": "Untagged"
+                "name": "DebugObject",
+                "tag": "Untagged",
+                "uniqueId": 1
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -20,15 +12,79 @@
                         "boolParams": {},
                         "floatParams": {},
                         "handle": 0,
-                        "intParams": {
-                            "leftCount": 0,
-                            "maxCount": 0,
-                            "rightCount": 0,
-                            "topCount": 0,
-                            "underCount": 0
-                        },
-                        "scriptName": "Move.lua",
+                        "intParams": {},
+                        "scriptName": "GrobalValue.lua",
                         "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 1,
+                        "intParams": {
+                            "intVal": 1,
+                            "intVal2": 1
+                        },
+                        "scriptName": "TestScript.lua",
+                        "stringParams": {
+                            "stringVal": "GoodDays"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "DebugObject",
+                "tag": "Untagged",
+                "uniqueId": 1
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "b": 3.0
+                        },
+                        "handle": 2,
+                        "intParams": {
+                            "a": 3
+                        },
+                        "scriptName": "GrobalValue.lua",
+                        "stringParams": {
+                            "c": "non"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "floatVal": 2.0
+                        },
+                        "handle": 3,
+                        "intParams": {
+                            "intVal": 2,
+                            "intVal2": 2
+                        },
+                        "scriptName": "TestScript.lua",
+                        "stringParams": {
+                            "stringVal": "Have a nice day"
+                        }
                     }
                 ]
             },
