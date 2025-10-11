@@ -172,7 +172,7 @@ void LuaScriptResourceManager::UpdateAllScripts() {
 	}
 }
 
-void LuaScriptResourceManager::RunColliderStay(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB) {
+void LuaScriptResourceManager::RunColliderStay(uint32_t runId, uint32_t id, SceneObjectData* objData) {
 	if (scripts_.empty()) {
 #ifdef _DEBUG
 		DebugLog("Script Not Found", LogLevel::Warning);
@@ -180,52 +180,39 @@ void LuaScriptResourceManager::RunColliderStay(uint32_t aEintityId, uint32_t bEi
 		return;
 	}
 
-	for (auto& [handle, script] : scripts_) {
-		if (script->GetBindEntityId() != aEintityId && script->GetBindEntityId() != bEintityId) {
-			continue;
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	if (entityManager->HasComponent<ScriptHandles>(runId))
+	{
+		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(runId);
+		for (const auto& handle : scriptHandles.scriptHandles_) {
+			auto script = GetScript(handle.handle_);
+			if (script && script->HasFunction("OnCollisionStay")) {
+				script->RunFunction("OnCollisionStay", id, objData);
+			}
 		}
-
-		if (!script || !script->GetScript()) {
-#ifdef _DEBUG
-			DebugLog("Script Not Found", LogLevel::Warning);
-#endif // _DEBUG
-			continue;
-		}
-
-		if (script->HasFunction("OnCollisionStay")) {
-			script->RunFunction("OnCollisionStay", aEintityId, bEintityId, objA, objB);
-		} else {
-#ifdef _DEBUG
-			DebugLog("OnCollisionStay Not Found", LogLevel::Warning);
-#endif // _DEBUG
-		}
+		return;
 	}
 }
 
-void LuaScriptResourceManager::RunTriggerEnter(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB) {
+void LuaScriptResourceManager::RunTriggerEnter(uint32_t runId, uint32_t id, SceneObjectData* objData) {
 	if (scripts_.empty()) {
 #ifdef _DEBUG
 		DebugLog("Script Not Found", LogLevel::Warning);
 #endif // _DEBUG
+		return;
 	}
-	for (auto& [handle, script] : scripts_) {
-		if (script->GetBindEntityId() != aEintityId && script->GetBindEntityId() != bEintityId) {
-			continue;
-		}
-		if (!script || !script->GetScript()) {
-#ifdef _DEBUG
-			DebugLog("Script Not Found", LogLevel::Warning);
-#endif // _DEBUG
-			continue;
-		}
 
-		if (script->HasFunction("OnCollisionEnter")) {
-			script->RunFunction("OnCollisionEnter", aEintityId, bEintityId, objA, objB);
-		} else {
-#ifdef _DEBUG
-			DebugLog("OnCollisionEnter Not Found", LogLevel::Warning);
-#endif // _DEBUG
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	if (entityManager->HasComponent<ScriptHandles>(runId))
+	{
+		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(runId);
+		for (const auto& handle : scriptHandles.scriptHandles_) {
+			auto script = GetScript(handle.handle_);
+			if (script && script->HasFunction("OnCollisionEnter")) {
+				script->RunFunction("OnCollisionEnter", id, objData);
+			}
 		}
+		return;
 	}
 }
 

@@ -40,7 +40,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 7.0
                         },
-                        "handle": 26,
+                        "handle": 97,
                         "intParams": {},
                         "scriptName": "ShotGunPlayer.lua",
                         "stringParams": {}
@@ -53,7 +53,7 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.5
                         },
-                        "handle": 27,
+                        "handle": 98,
                         "intParams": {
                             "bullets": 3
                         },
@@ -103,7 +103,7 @@
                         "floatParams": {
                             "space": 48.0
                         },
-                        "handle": 28,
+                        "handle": 99,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -154,7 +154,7 @@
             },
             "SceneObjectData": {
                 "name": "ShotGunEnemy",
-                "tag": "Untagged",
+                "tag": "enemy",
                 "uniqueId": 160
             },
             "ScriptHandle": {
@@ -162,7 +162,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 29,
+                        "handle": 100,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -198,6 +198,70 @@
                 ],
                 "translate": [
                     0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "Bullet",
+                "tag": "bullet",
+                "uniqueId": 161
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "aliveTime": 0.25,
+                            "moveSpeed": 0.25
+                        },
+                        "handle": 101,
+                        "intParams": {
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17
+                        },
+                        "scriptName": "BulletMove.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    1.5442358255386353,
+                    0.0,
+                    0.0,
+                    0.20000000298023224
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.5442358255386353,
                     0.0,
                     0.0
                 ]

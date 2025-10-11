@@ -14,3 +14,9 @@ end
 
     transform:AddForward(moveSpeed)
 end
+
+function OnCollisionEnter(id,obj)
+    if obj.tag == "enemy" then
+        destroy()
+    end
+end

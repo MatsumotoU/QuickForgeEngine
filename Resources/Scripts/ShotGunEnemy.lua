@@ -6,6 +6,6 @@ function Update()
 
 end
 
-function OnCollisionEnter(idA,idB,objA,objB)
-    DebugLog(objA.name)
+function OnCollisionEnter(id,obj)
+    DebugLog("ID:".. id.." Name:"..obj.name)
 end

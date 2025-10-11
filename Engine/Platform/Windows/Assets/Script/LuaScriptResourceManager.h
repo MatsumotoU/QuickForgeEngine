@@ -26,8 +26,8 @@ public:
 	void InitializeAllScripts();
 	void InitializeScript(uint32_t handle);
 	void UpdateAllScripts();
-	void RunColliderStay(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB);
-	void RunTriggerEnter(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB);
+	void RunColliderStay(uint32_t runId,uint32_t id, SceneObjectData* objData);
+	void RunTriggerEnter(uint32_t runId,uint32_t id, SceneObjectData* objData);
 	void EndFrame();
 	void Finalize();
 
