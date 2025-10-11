@@ -77,6 +77,14 @@ void ConsoleView::Draw() {
 	for (auto it = logs.rbegin(); it != logs.rend(); ++it, ++logIndex) {
 		std::string label = *it + "##log" + std::to_string(logIndex);
 		ImGui::Selectable(label.c_str(), false, ImGuiSelectableFlags_AllowDoubleClick);
+
+		// 右クリックメニュー追加
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem("Copy")) {
+				ImGui::SetClipboardText(it->c_str());
+			}
+			ImGui::EndPopup();
+		}
 	}
 	ImGui::EndChild();
 	ImGui::End();

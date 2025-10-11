@@ -10,6 +10,7 @@ SpriteData::SpriteData() {
 	layer = 0;
 	width = 100.0f;
 	height = 100.0f;
+	isDraw = true;
 }
 
 nlohmann::json SpriteData::Serialize() const {
@@ -18,6 +19,7 @@ nlohmann::json SpriteData::Serialize() const {
 	json["width"] = width;
 	json["height"] = height;
 	json["layer"] = layer;
+	json["isDraw"] = isDraw;
 	return json;
 }
 
@@ -33,5 +35,8 @@ void SpriteData::Deserialize(const nlohmann::json& json) {
 	}
 	if (json.contains("layer")) {
 		layer = json["layer"].get<uint32_t>();
+	}
+	if (json.contains("isDraw")) {
+		isDraw = json["isDraw"].get<bool>();
 	}
 }

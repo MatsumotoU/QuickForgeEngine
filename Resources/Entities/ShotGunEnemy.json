@@ -1,34 +1,32 @@
 {
     "ModelHandle": {
         "color": [
-            0.006926394067704678,
-            0.6683937907218933,
-            0.0,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
-        "modelName": "anchor.obj"
+        "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "Player",
+        "name": "ShotGunEnemy",
         "tag": "Untagged",
-        "uniqueId": 1
+        "uniqueId": 160
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {
-                    "maxAttackChargeTime": 0.5
-                },
-                "handle": 0,
+                "floatParams": {},
+                "handle": 3,
                 "intParams": {
-                    "leftCount": 0,
-                    "maxCount": 0,
-                    "rightCount": 0,
-                    "topCount": 0,
-                    "underCount": 0
+                    "DIK_A": 30,
+                    "DIK_D": 32,
+                    "DIK_S": 31,
+                    "DIK_SPACE": 57,
+                    "DIK_W": 17
                 },
-                "scriptName": "Move.lua",
+                "scriptName": "ShotGunEnemy.lua",
                 "stringParams": {}
             }
         ]
@@ -37,25 +35,25 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            -3.0,
             0.0,
             0.0,
-            1.0
+            0.0,
+            0.800000011920929
         ]
     },
     "Transform": {
         "rotate": [
             0.0,
-            -0.0,
+            0.0,
             0.0
         ],
         "scale": [
-            2.0,
-            2.0,
-            2.0
+            1.0,
+            1.0,
+            1.0
         ],
         "translate": [
-            -3.0,
+            0.0,
             0.0,
             0.0
         ]

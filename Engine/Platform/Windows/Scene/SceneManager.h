@@ -21,6 +21,7 @@ public:
 
 	std::string GetCurrentSceneName() const { return currentScene_->GetSceneName(); }
 	uint32_t GetEntityByName(const std::string& entityName) const;
+	uint32_t GetEntityByUniqeID(uint32_t uniqueId) const;
 	bool IsRunningScript() const { return isRunningScript_; }
 
 	void SaveScene(const std::string& sceneName);
@@ -40,6 +41,7 @@ public:
 	void AddSprite(const std::string& spriteName,float width = 0.0f,float height = 0.0f,int inEntityId = -1,int layer = -1);
 	void AddScript(uint32_t entityId,const std::string& scriptName);
 	uint32_t AddEntity(const std::string& entityName);
+	uint32_t RunTimeAddEntity(const std::string& entityName);
 
 	void StartScript();
 	void StopScript();

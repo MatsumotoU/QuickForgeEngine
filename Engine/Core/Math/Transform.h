@@ -14,4 +14,14 @@ public:
 	nlohmann::json Serialize() const override;
     void Deserialize(const nlohmann::json& json) override;
     std::string GetTypeName() const override { return "Transform"; }
+
+    void AddForward(float distance) ;
+	void AddRight(float distance) ;
+
+    bool operator==(const Transform& other) const noexcept { return this == &other; }
+    bool operator!=(const Transform& other) const noexcept { return this != &other; }
+    bool operator<(const Transform& other) const noexcept { return this < &other; }
+    bool operator<=(const Transform& other) const noexcept { return this <= &other; }
+    bool operator>(const Transform& other) const noexcept { return this > &other; }
+    bool operator>=(const Transform& other) const noexcept { return this >= &other; }
 };

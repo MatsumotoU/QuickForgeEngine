@@ -54,6 +54,17 @@ void SceneManager::Update() {
 			}
 		}
 	}
+	// ユニークIDが重複していたら再設定する
+	std::set<uint32_t> checkIds;
+	for (auto entityId : entities) {
+		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
+			SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
+			if (checkIds.find(sceneObjectData.uniqueId) != checkIds.end()) {
+				sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
+			}
+			checkIds.insert(sceneObjectData.uniqueId);
+		}
+	}
 
 	// ワールド行列更新(wvpを別コンポーネントにする)
 	AssetManager* assetManager = AssetManager::GetInstance();
@@ -192,6 +203,22 @@ uint32_t SceneManager::GetEntityByName(const std::string& entityName) const {
 		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
 			const SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
 			if (sceneObjectData.name == entityName) {
+				return entityId;
+			}
+		}
+	}
+	assert(false && "Entity Not Found");
+	return 0;
+}
+
+uint32_t SceneManager::GetEntityByUniqeID(uint32_t uniqueId) const {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
+	for (auto entityId : entities) {
+		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
+			const SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
+			if (sceneObjectData.uniqueId == uniqueId) {
 				return entityId;
 			}
 		}
@@ -387,6 +414,16 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 		sceneObjectData.Deserialize(entityJson["SceneObjectData"]);
 		uniqueIdManager_.AddUsedID(sceneObjectData.uniqueId);
 	}
+	if (entityJson.contains("Force")) {
+		entityManager->EmplaceComponent<Force>(entityId);
+		Force& force = entityManager->GetComponent<Force>(entityId);
+		force.Deserialize(entityJson["Force"]);
+	}
+	if (entityJson.contains("SphereColliderData")) {
+		entityManager->EmplaceComponent<SphereColliderData>(entityId);
+		SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
+		sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
+	}
 	if (entityJson.contains("ScriptHandle")) {
 		std::vector<std::string> scriptNames;
 		if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
@@ -435,16 +472,7 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 			
 		}
 	}
-	if (entityJson.contains("Force")) {
-		entityManager->EmplaceComponent<Force>(entityId);
-		Force& force = entityManager->GetComponent<Force>(entityId);
-		force.Deserialize(entityJson["Force"]);
-	}
-	if (entityJson.contains("SphereColliderData")) {
-		entityManager->EmplaceComponent<SphereColliderData>(entityId);
-		SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
-		sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
-	}
+	
 }
 
 void SceneManager::AddEpmtyObject() {
@@ -591,6 +619,19 @@ uint32_t SceneManager::AddEntity(const std::string& entityName) {
 	return entityId;
 }
 
+uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {
+	uint32_t entityId = AddEntity(entityName);
+	// スクリプト初期化
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	if (entityManager->HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
+		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+		for (const auto& sh : scriptHandles.scriptHandles_) {
+			LuaScriptResourceManager::GetInstance()->InitializeScript(sh.handle_);
+		}
+	}
+	return entityId;
+}
+
 void SceneManager::StartScript() {
 	if (!isRunningScript_) {
 #ifdef _DEBUG
@@ -602,6 +643,7 @@ void SceneManager::StartScript() {
 		isRunningScript_ = true;
 		LuaScriptResourceManager::GetInstance()->InitializeAllScripts();
 		ColliderManager::GetInstance()->isRunning = true;
+		LuaScriptResourceManager::GetInstance()->isRunningScript_ = true;
 	}
 }
 
@@ -609,4 +651,5 @@ void SceneManager::StopScript() {
 	if (isRequestStopScript_) { return; }
 	isRequestStopScript_ = true;
 	ColliderManager::GetInstance()->isRunning = false;
+	LuaScriptResourceManager::GetInstance()->isRunningScript_ = false;
 }

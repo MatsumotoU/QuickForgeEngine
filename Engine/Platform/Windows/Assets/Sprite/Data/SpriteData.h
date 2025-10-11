@@ -19,4 +19,6 @@ public:
 	uint32_t layer;
 	float width;
 	float height;
+
+	bool isDraw;
 };

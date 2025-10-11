@@ -106,7 +106,7 @@ void WindowsEngineCore::Initialize() {
 void WindowsEngineCore::MainLoop() {
 	while (gameWindowManager->IsWindowActive())
 	{
-		frameCounter_.FrameStart();
+		
 		// アプリケーション安全終了処理
 		MSG msg;
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -117,10 +117,11 @@ void WindowsEngineCore::MainLoop() {
 			DispatchMessage(&msg);
 
 		} else {
+			frameCounter_.FrameStart();
 			Update();
 			Draw();
+			frameCounter_.FrameEnd();
 		}
-		frameCounter_.FrameEnd();
 	}
 }
 

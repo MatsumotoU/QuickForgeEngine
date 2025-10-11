@@ -76,6 +76,16 @@ public:
 		}
 		throw std::runtime_error("Component not found");
 	}
+	template <typename T>
+	T* GetComponentPtr(uint32_t id) const {
+		size_t typeId = typeid(T).hash_code();
+		if (componentStrages.find(typeId) != componentStrages.end()) {
+			auto& strage = static_cast<ComponentStrage<T>&>(*componentStrages.at(typeId));
+			return strage.GetComponentPtr(id);
+		}
+		assert(false && "Component strage not found");
+		return nullptr;
+	}
 
 	template <typename T>
 	void RemoveComponent(uint32_t id) {

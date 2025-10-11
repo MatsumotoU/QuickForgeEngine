@@ -58,3 +58,32 @@ void Transform::Deserialize(const nlohmann::json& json) {
         translate.z = json["translate"][2].get<float>();
     }
 }
+
+void Transform::AddForward(float distance)  {
+	// ラジアンに変換
+	float pitch = rotate.x;
+	float yaw = rotate.y;
+	// 前方ベクトルを計算
+	Vector3 forward;
+	forward.x = std::cos(pitch) * std::sin(yaw);
+	forward.y = std::sin(pitch);
+	forward.z = std::cos(pitch) * std::cos(yaw);
+	// 位置を更新
+	translate.x += forward.x * distance;
+	translate.y += forward.y * distance;
+	translate.z += forward.z * distance;
+}
+
+void Transform::AddRight(float distance) {
+	// ラジアンに変換
+	float yaw = rotate.y;
+	// 右方向ベクトルを計算
+	Vector3 right;
+	right.x = std::sin(yaw - 3.14f * 0.5f);
+	right.y = 0;
+	right.z = std::cos(yaw - 3.14f * 0.5f);
+	// 位置を更新
+	translate.x += right.x * distance;
+	translate.y += right.y * distance;
+	translate.z += right.z * distance;
+}

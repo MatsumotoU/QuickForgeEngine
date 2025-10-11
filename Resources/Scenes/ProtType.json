@@ -19,7 +19,9 @@
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {},
+                        "floatParams": {
+                            "maxAttackChargeTime": 0.5
+                        },
                         "handle": 0,
                         "intParams": {
                             "leftCount": 0,
@@ -83,7 +85,9 @@
                             "isReadyChack": true,
                             "isReverse": false
                         },
-                        "floatParams": {},
+                        "floatParams": {
+                            "maxAttackInterVal": 2.0
+                        },
                         "handle": 1,
                         "intParams": {
                             "enemyReversPoint": 1
@@ -143,7 +147,9 @@
                             "isReadyChack": true,
                             "isReverse": false
                         },
-                        "floatParams": {},
+                        "floatParams": {
+                            "maxAttackInterVal": 2.0
+                        },
                         "handle": 2,
                         "intParams": {
                             "enemyReversPoint": 2
@@ -200,7 +206,9 @@
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {},
+                        "floatParams": {
+                            "maxAttackInterVal": 2.0
+                        },
                         "handle": 3,
                         "intParams": {
                             "enemyReversPoint": 3

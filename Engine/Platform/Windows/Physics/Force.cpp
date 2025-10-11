@@ -9,6 +9,10 @@ Force::Force() {
 	isGravity = true;
 }
 
+void Force::AddForce(const Vector3& force) {
+	acceleration += force / mass;
+}
+
 nlohmann::json Force::Serialize() const {
 	nlohmann::json json;
 	json["velocity"] = { velocity.x, velocity.y, velocity.z };

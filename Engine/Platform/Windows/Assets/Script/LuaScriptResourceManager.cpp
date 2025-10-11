@@ -15,6 +15,8 @@ static std::set<std::string> emptySet;
 void LuaScriptResourceManager::Initialize() {
 	scripts_.clear();
 	removeScriptHandles_.clear();
+	isRunningScript_ = false;
+	nextScriptHandle_ = 0;
 }
 
 void LuaScriptResourceManager::Reset() {
@@ -23,8 +25,14 @@ void LuaScriptResourceManager::Reset() {
 }
 
 void LuaScriptResourceManager::ReloadAllScripts() {
-	for (auto& script : scripts_) {
-		script->ReloadScript();
+	if (isRunningScript_) {
+		return;
+	}
+
+	for (auto& [handle, script] : scripts_) {
+		if (script) {
+			script->ReloadScript();
+		}
 	}
 }
 
@@ -81,12 +89,12 @@ void LuaScriptResourceManager::CreateScript(const std::string& scriptName) {
 }
 
 uint32_t LuaScriptResourceManager::AddScript(uint32_t entityId, const std::string& scriptName) {
-	scripts_.emplace_back();
-	scripts_.back() = std::make_unique<LuaScriptOnQFE>();
-	scripts_.back()->LoadScript(scriptName);
-	scripts_.back()->SetEntityValue(entityId);
-
-	return static_cast<uint32_t>(scripts_.size() - 1);
+	uint32_t handle = nextScriptHandle_++;
+	auto script = std::make_unique<LuaScriptOnQFE>();
+	script->LoadScript(scriptName);
+	script->SetEntityValue(entityId);
+	scripts_.emplace(handle, std::move(script));
+	return handle;
 }
 
 void LuaScriptResourceManager::RequestRemoveScript(uint32_t handle) {
@@ -110,13 +118,33 @@ void LuaScriptResourceManager::OpenAndEditScript(const std::string& scriptName) 
 }
 
 void LuaScriptResourceManager::RemoveScript(uint32_t handle) {
-	if (handle < scripts_.size()) {
-		scripts_.erase(scripts_.begin() + handle);
-	}
+	scripts_.erase(handle);
 }
 
 void LuaScriptResourceManager::InitializeAllScripts() {
-	for (auto& script : scripts_) {
+	for (auto& [handle, script] : scripts_) {
+		if (!script) {
+#ifdef _DEBUG
+			DebugLog("Script Not Found", LogLevel::Warning);
+#endif // _DEBUG
+			continue;
+		}
+
+		if (script->HasFunction("Init")) {
+			script->RunFunction("Init");
+		}
+	}
+}
+
+void LuaScriptResourceManager::InitializeScript(uint32_t handle) {
+	if (handle < scripts_.size()) {
+		auto& script = scripts_[handle];
+		if (!script || !script->GetScript()) {
+#ifdef _DEBUG
+			DebugLog("Script Not Found", LogLevel::Warning);
+#endif // _DEBUG
+			return;
+		}
 		if (script->HasFunction("Init")) {
 			script->RunFunction("Init");
 		}
@@ -124,7 +152,20 @@ void LuaScriptResourceManager::InitializeAllScripts() {
 }
 
 void LuaScriptResourceManager::UpdateAllScripts() {
-	for (auto& script : scripts_) {
+	for (auto& [handle, script] : scripts_) {
+		if (!script) {
+#ifdef _DEBUG
+			DebugLog("Script pointer is nullptr", LogLevel::Warning);
+#endif
+			continue;
+		}
+		auto* state = script->GetScript();
+		if (!state) {
+#ifdef _DEBUG
+			DebugLog("Lua state is nullptr", LogLevel::Warning);
+#endif
+			continue;
+		}
 		if (script->HasFunction("Update")) {
 			script->RunFunction("Update");
 		}
@@ -139,8 +180,15 @@ void LuaScriptResourceManager::RunColliderStay(uint32_t aEintityId, uint32_t bEi
 		return;
 	}
 
-	for (auto& script : scripts_) {
+	for (auto& [handle, script] : scripts_) {
 		if (script->GetBindEntityId() != aEintityId && script->GetBindEntityId() != bEintityId) {
+			continue;
+		}
+
+		if (!script || !script->GetScript()) {
+#ifdef _DEBUG
+			DebugLog("Script Not Found", LogLevel::Warning);
+#endif // _DEBUG
 			continue;
 		}
 
@@ -160,8 +208,14 @@ void LuaScriptResourceManager::RunTriggerEnter(uint32_t aEintityId, uint32_t bEi
 		DebugLog("Script Not Found", LogLevel::Warning);
 #endif // _DEBUG
 	}
-	for (auto& script : scripts_) {
+	for (auto& [handle, script] : scripts_) {
 		if (script->GetBindEntityId() != aEintityId && script->GetBindEntityId() != bEintityId) {
+			continue;
+		}
+		if (!script || !script->GetScript()) {
+#ifdef _DEBUG
+			DebugLog("Script Not Found", LogLevel::Warning);
+#endif // _DEBUG
 			continue;
 		}
 
@@ -177,7 +231,9 @@ void LuaScriptResourceManager::RunTriggerEnter(uint32_t aEintityId, uint32_t bEi
 
 void LuaScriptResourceManager::EndFrame() {
 	CheckScriptEntity();
-	for (uint32_t& handle : removeScriptHandles_) {
+	// 降順で削除
+	std::sort(removeScriptHandles_.rbegin(), removeScriptHandles_.rend());
+	for (uint32_t handle : removeScriptHandles_) {
 		RemoveScript(handle);
 	}
 	removeScriptHandles_.clear();
@@ -188,15 +244,15 @@ void LuaScriptResourceManager::Finalize() {
 }
 
 LuaScriptOnQFE* LuaScriptResourceManager::GetScript(uint32_t handle) const {
-	if (handle < scripts_.size()) {
-		return scripts_[handle].get();
+	auto it = scripts_.find(handle);
+	if (it != scripts_.end()) {
+		return it->second.get();
 	}
-	assert(false && "Script Not Found");
 	return nullptr;
 }
 
 std::set<std::string>& LuaScriptResourceManager::GetScriptGlobals(uint32_t entityId) const {
-	for (auto& script : scripts_) {
+	for (auto& [handle, script] : scripts_) {
 		if (script->GetBindEntityId() != entityId) {
 			continue;
 		}
@@ -226,12 +282,13 @@ sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, c
 }
 
 void LuaScriptResourceManager::CheckScriptEntity() {
-	uint32_t handle = 0;
-	for (auto& script : scripts_) {
+	for (auto& [handle, script] : scripts_) {
+		if (!script) {
+			continue;
+		}
+
 		if (!script->IsAliveEntity()) {
 			removeScriptHandles_.push_back(handle);
 		}
-		handle++;
 	}
-
 }

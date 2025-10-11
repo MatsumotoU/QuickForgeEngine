@@ -14,6 +14,8 @@ public:
 	Force();
 	~Force() override = default;
 
+	void AddForce(const Vector3& force);
+
 	nlohmann::json Serialize() const override;
 	void Deserialize(const nlohmann::json& json) override;
 	std::string GetTypeName() const override;

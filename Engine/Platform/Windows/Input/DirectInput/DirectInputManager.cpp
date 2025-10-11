@@ -23,25 +23,25 @@ void DirectInputManager::Update() {
 Vector2 DirectInputManager::GetKeyMoveDir() {
 	Vector2 result{};
 
-	if (keyboard_.GetPress(DIK_RIGHT)) {
+	if (keyboard_.GetPress(DIK_RIGHT) || keyboard_.GetPress(DIK_D)) {
 		result.x += 1.0f;
 	}
-	if (keyboard_.GetPress(DIK_LEFT)) {
+	if (keyboard_.GetPress(DIK_LEFT) || keyboard_.GetPress(DIK_A)) {
 		result.x -= 1.0f;
 	}
-	if (keyboard_.GetPress(DIK_UP)) {
+	if (keyboard_.GetPress(DIK_UP) || keyboard_.GetPress(DIK_W)) {
 		result.y += 1.0f;
 	}
-	if (keyboard_.GetPress(DIK_DOWN)) {
+	if (keyboard_.GetPress(DIK_DOWN) || keyboard_.GetPress(DIK_S)) {
 		result.y -= 1.0f;
 	}
 
-	if (!keyboard_.GetPress(DIK_RIGHT) && !keyboard_.GetPress(DIK_LEFT)) {
+	/*if (!keyboard_.GetPress(DIK_RIGHT) && !keyboard_.GetPress(DIK_LEFT)) {
 		result.x += 0.0f;
 	}
 	if (!keyboard_.GetPress(DIK_UP) && !keyboard_.GetPress(DIK_DOWN)) {
 		result.y += 0.0f;
-	}
+	}*/
 
 	return result.Normalize();
 }

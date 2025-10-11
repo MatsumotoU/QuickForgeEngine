@@ -1,57 +1,33 @@
 {
     "entities": [
         {
-            "SceneObjectData": {
-                "name": "DebugObject",
-                "tag": "Untagged",
-                "uniqueId": 1
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 0,
-                        "intParams": {},
-                        "scriptName": "GrobalValue.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 1,
-                        "intParams": {
-                            "intVal": 1,
-                            "intVal2": 1
-                        },
-                        "scriptName": "TestScript.lua",
-                        "stringParams": {
-                            "stringVal": "GoodDays"
-                        }
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
+            "Force": {
+                "acceleration": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "scale": [
+                "friction": 1.0,
+                "gravityStrength": 10.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
                     1.0,
                     1.0,
                     1.0
                 ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
+                "modelName": "Arrow.obj"
+            },
             "SceneObjectData": {
-                "name": "DebugObject",
+                "name": "ShotGunPlayer",
                 "tag": "Untagged",
                 "uniqueId": 1
             },
@@ -60,38 +36,33 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "b": 3.0
+                            "backSpeed": 8.0,
+                            "minVelocity": 6.0,
+                            "moveSpeed": 7.0
                         },
-                        "handle": 2,
-                        "intParams": {
-                            "a": 3
-                        },
-                        "scriptName": "GrobalValue.lua",
-                        "stringParams": {
-                            "c": "non"
-                        }
+                        "handle": 0,
+                        "intParams": {},
+                        "scriptName": "ShotGunPlayer.lua",
+                        "stringParams": {}
                     },
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "floatVal": 2.0
+                            "diffusionRate": 0.5,
+                            "knockBack": 10.0,
+                            "knockBackPower": 10.0
                         },
-                        "handle": 3,
-                        "intParams": {
-                            "intVal": 2,
-                            "intVal2": 2
-                        },
-                        "scriptName": "TestScript.lua",
-                        "stringParams": {
-                            "stringVal": "Have a nice day"
-                        }
+                        "handle": 1,
+                        "intParams": {},
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
                     }
                 ]
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    1.600000023841858,
                     0.0
                 ],
                 "scale": [

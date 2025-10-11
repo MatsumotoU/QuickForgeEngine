@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include "LuaScriptOnQFE.h"
 #include "Utility/DesignPatterns/Singleton.h"
 #include "Scene/Data/SceneObjectData.h"
@@ -23,6 +24,7 @@ public:
 	void OpenAndEditScript(const std::string& scriptName);
 	void RemoveScript(uint32_t handle);
 	void InitializeAllScripts();
+	void InitializeScript(uint32_t handle);
 	void UpdateAllScripts();
 	void RunColliderStay(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB);
 	void RunTriggerEnter(uint32_t aEintityId, uint32_t bEintityId, SceneObjectData* objA, SceneObjectData* objB);
@@ -33,9 +35,10 @@ public:
 	std::set<std::string>& GetScriptGlobals(uint32_t entityId) const;
 	sol::object GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName);
 
-
+	bool isRunningScript_;
 private:
 	void CheckScriptEntity();
 	std::vector<uint32_t> removeScriptHandles_;
-	std::vector<std::unique_ptr<LuaScriptOnQFE>> scripts_;
+	std::unordered_map<uint32_t, std::unique_ptr<LuaScriptOnQFE>> scripts_;
+	uint32_t nextScriptHandle_;
 };

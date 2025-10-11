@@ -11,6 +11,10 @@ void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 	assert(assetManager && "AssetManager is nullptr.");
 	const SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(spriteHandle);
 
+	if (!spriteData.isDraw) {
+		return;
+	}
+
 	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetTrianglePso(kBlendModeNormal);
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();

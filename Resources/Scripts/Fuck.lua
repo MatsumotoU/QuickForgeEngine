@@ -3,7 +3,7 @@ function Init()
 end
 
 function Update()
-
+DebugLog(force.velocity.y)
 end
 
 function OnCollisionStay(idA,idB,objA,objB)

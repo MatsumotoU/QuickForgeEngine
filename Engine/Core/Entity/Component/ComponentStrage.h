@@ -27,6 +27,13 @@ public:
 		}
 		throw std::runtime_error("Component not found");
 	}
+	T* GetComponentPtr(uint32_t id) {
+		auto it = components.find(id);
+		if (it != components.end()) {
+			return &(it->second);
+		}
+		return nullptr;
+	}
 	void RemoveComponent(uint32_t id) override {
 		components.erase(id);
 	}

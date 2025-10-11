@@ -21,7 +21,6 @@ public:
 	void ReloadScript();
 	template<typename... Args>
 	inline void RunFunction(const std::string& functionName, Args&&... args) {
-		//luaState_->set("deltaTime", QFE::EngineGlobalValue::deltaTime);
 		try {
 			if (!isCanRun_) {
 				throw std::runtime_error("Cannot run function. Lua script is not loaded or failed to load.");
@@ -33,17 +32,24 @@ public:
 			if (!obj.is<sol::function>()) {
 				throw std::runtime_error("Function '" + functionName + "' not found in Lua script.");
 			}
-			sol::function func = obj.as<sol::function>();
-			func(std::forward<Args>(args)...);
+			sol::protected_function func = obj.as<sol::protected_function>();
+			sol::protected_function_result result = func(std::forward<Args>(args)...);
+			if (!result.valid()) {
+				sol::error err = result;
+#ifdef _DEBUG
+				DebugLog("Lua error in '" + functionName + "': " + std::string(err.what()), LogLevel::Error);
+#else
+				std::cerr << "Lua error in '" << functionName << "': " << err.what() << std::endl;
+#endif
+			}
 		}
 		catch (const std::exception& e) {
 #ifdef _DEBUG
 			DebugLog("Error in Lua function '" + functionName + "': " + e.what(), LogLevel::Error);
 #else
-			std::cerr << "Error in Lua function '" + functionName + "': " + e.what() << std::endl;
+			std::cerr << "Error in Lua function '" << functionName << "': " << e.what() << std::endl;
 #endif
 		}
-
 	}
 	bool HasFunction(const std::string& functionName) const;
 	std::vector<std::string> GetFunctionList() const;
@@ -60,9 +66,6 @@ public:
 private:
 	/// QFE用の関数を登録
 	void SetQFEFunctions();
-
-	// QFE用の関数
-	void SetPosition(uint32_t entityId,const Vector3& position);
 
 	bool isCanRun_;
 	uint32_t bindEntityId_;

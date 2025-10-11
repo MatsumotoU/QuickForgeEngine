@@ -96,6 +96,7 @@ void InspectorView::Draw() {
 		SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(selectedEntityId_);
 		if (ImGui::CollapsingHeader("Sprite")) {
 			ImGui::Text("Sprite Name: %s", spriteData.textureName.c_str());
+			ImGui::Checkbox("Is Draw", &spriteData.isDraw);
 			ImGui::DragInt("Layer##Drag", reinterpret_cast<int*>(&spriteData.layer), 1, 0);
 			ImGui::DragFloat("Width", &spriteData.width, 1.0f, 1.0f);
 			ImGui::DragFloat("Height", &spriteData.height, 1.0f, 1.0f);
