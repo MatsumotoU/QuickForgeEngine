@@ -1,4 +1,1 @@
-# TODO
-- シーンの保存と読み込み
-- シーンのエクスポート
-- シーンのインポート
+[![DebugBuild](https://github.com/MatsumotoU/QuickForgeEngine/actions/workflows/DebugBuild.yml/badge.svg)](https://github.com/MatsumotoU/QuickForgeEngine/actions/workflows/DebugBuild.yml)
