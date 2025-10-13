@@ -90,19 +90,25 @@ void SceneView::Draw() {
 void SceneView::DebugCameraControl() {
 #ifdef _DEBUG
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	if (!entityManager->HasComponent<Transform>(camera.GetBindEntityId())) {
+		return;
+	}
+	Transform& cameraTransform = entityManager->GetComponent<Transform>(camera.GetBindEntityId());
+
 	if (isActiveCamera_) {
 		CameraManager::GetInstance()->SetActiveDebugCamera(true);
 		DirectInputManager* input = DirectInputManager::GetInstance();
 
-		float distance = (camera.transform_.translate - anchorPoint_).Length();
+		float distance = (cameraTransform.translate - anchorPoint_).Length();
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD7)) {
 			targetRotate_ = { distance, 0.0f, 3.14f };
-			startPos_ = camera.transform_.translate;
+			startPos_ = cameraTransform.translate;
 			cameraMoveT_ = 0.0f;
 		}
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD1)) {
 			targetRotate_ = { distance, -3.14f * 0.5f,3.14f * 0.5f };
-			startPos_ = camera.transform_.translate;
+			startPos_ = cameraTransform.translate;
 			cameraMoveT_ = 0.0f;
 		}
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD9)) {
@@ -112,38 +118,38 @@ void SceneView::DebugCameraControl() {
 			float phiOpposite = targetRotate_.z + PI;
 
 			targetRotate_ = { distance, thetaOpposite, phiOpposite };
-			startPos_ = camera.transform_.translate;
+			startPos_ = cameraTransform.translate;
 			cameraMoveT_ = 0.0f;
 		}
 		if (input->keyboard_.GetTrigger(DIK_NUMPAD3)) {
 			targetRotate_ = { distance, 3.14f * 0.5f,0.0f };
-			startPos_ = camera.transform_.translate;
+			startPos_ = cameraTransform.translate;
 			cameraMoveT_ = 0.0f;
 		}
 		if (cameraMoveT_ < 1.0f) {
 			cameraMoveT_ += 0.1f;
 			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(targetRotate_);
-			camera.transform_.translate = Vector3::Slerp(startPos_, sphericalToCartesian + anchorPoint_, cameraMoveT_);
+			cameraTransform.translate = Vector3::Slerp(startPos_, sphericalToCartesian + anchorPoint_, cameraMoveT_);
 
 			// LookAtの方向ベクトルがゼロにならないように
 			if ((anchorPoint_ - Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix())).Length() > 0.001f) {
-				camera.transform_.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
+				cameraTransform.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
 			}
 			return;
 		}
 
 		// ホイールでズームイン・アウト
 		if (input->mouse_.wheelDir_ != 0.0f) {
-			Vector3 cartesianTemp = camera.transform_.translate - anchorPoint_;
+			Vector3 cartesianTemp = cameraTransform.translate - anchorPoint_;
 			Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
 
 			// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
 			sphericalTemp.x += -input->mouse_.wheelDir_ * 0.01f;
 
 			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(sphericalTemp);
-			camera.transform_.translate = sphericalToCartesian + anchorPoint_;
+			cameraTransform.translate = sphericalToCartesian + anchorPoint_;
 
-			camera.transform_.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
+			cameraTransform.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
 		}
 
 		if (input->mouse_.GetPress(2)) {
@@ -151,12 +157,12 @@ void SceneView::DebugCameraControl() {
 			if (input->keyboard_.GetPress(DIK_LSHIFT)) {
 				Vector2 mouseMove = input->mouse_.deltaMouse_ * mouseSensitivity_ * 0.1f;
 				Vector3 mouseMove3 = { -mouseMove.x,mouseMove.y,0.0f };
-				Vector3 move = Vector3::Transform(mouseMove3, Matrix4x4::MakeRotateXYZMatrix(camera.transform_.rotate));
-				camera.transform_.translate += move;
+				Vector3 move = Vector3::Transform(mouseMove3, Matrix4x4::MakeRotateXYZMatrix(cameraTransform.rotate));
+				cameraTransform.translate += move;
 				anchorPoint_ += move;
 
 			} else {
-				Vector3 cartesianTemp = camera.transform_.translate - anchorPoint_;
+				Vector3 cartesianTemp = cameraTransform.translate - anchorPoint_;
 				Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
 
 				// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
@@ -170,11 +176,11 @@ void SceneView::DebugCameraControl() {
 				sphericalTemp.y = std::clamp(sphericalTemp.y, minTheta, maxTheta);
 
 				Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(sphericalTemp);
-				camera.transform_.translate = sphericalToCartesian + anchorPoint_;
+				cameraTransform.translate = sphericalToCartesian + anchorPoint_;
 
 				// LookAtの方向ベクトルがゼロにならないように
 				if ((anchorPoint_ - Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix())).Length() > 0.001f) {
-					camera.transform_.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
+					cameraTransform.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
 				}
 			}
 		}

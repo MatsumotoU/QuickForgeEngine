@@ -14,6 +14,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Collider/Data/SphereColliderData.h"
 #include "Core/Math/ParentData.h"
+#include "Camera/Data/CameraData.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -402,6 +403,16 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 		entityManager->EmplaceComponent<Transform>(entityId);
 		Transform& transform = entityManager->GetComponent<Transform>(entityId);
 		transform.Deserialize(entityJson["Transform"]);
+	}
+	if (entityJson.contains("ParentData")) {
+		entityManager->EmplaceComponent<ParentData>(entityId);
+		ParentData& parentData = entityManager->GetComponent<ParentData>(entityId);
+		parentData.Deserialize(entityJson["ParentData"]);
+	}
+	if (entityJson.contains("CameraData")) {
+		entityManager->EmplaceComponent<CameraData>(entityId);
+		CameraData& cameraData = entityManager->GetComponent<CameraData>(entityId);
+		cameraData.Deserialize(entityJson["CameraData"]);
 	}
 	if (entityJson.contains("ModelHandle")) {
 		entityManager->EmplaceComponent<ModelHandle>(entityId);

@@ -1,6 +1,7 @@
 #pragma once
 #include "Utility/DesignPatterns/Singleton.h"
 #include <vector>
+#include <unordered_map>
 #include "Camera.h"
 
 class CameraManager final : public Singleton<CameraManager> {
@@ -9,12 +10,16 @@ public:
 	void Initialize();
 	void Shutdown();
 	void Update();
-
+	void Reset();
+	
 	uint32_t AddCamera();
+	uint32_t GetMainCameraIndex() const { return mainCameraIndex_; }
 	Camera& GetCamera(uint32_t index);
 	Camera& GetMainCamera();
-	std::vector<Camera>& GetCameras();
-	
+	std::unordered_map<uint32_t, Camera>& GetAllCameras();
+	void SnapToDebugCamera(uint32_t index);
+
+	void SetMainCameraIndex(uint32_t index);
 #ifdef _DEBUG
 	void SetActiveDebugCamera(bool isActive) { isActiveDebugCamera_ = isActive; }
 	bool IsActiveDebugCamera() const { return isActiveDebugCamera_; }
@@ -29,5 +34,6 @@ private:
 #endif // _DEBUG
 
 	uint32_t mainCameraIndex_;
-	std::vector<Camera> cameras_;
+	std::unordered_map<uint32_t, Camera> cameras_;
+	uint32_t nextCameraHandle_;
 };

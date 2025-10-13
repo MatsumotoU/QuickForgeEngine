@@ -311,7 +311,11 @@ void GraphRenderer::DrawSphere(Vector3 center, float radius, const Vector4& colo
 }
 
 void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision) {
-	Matrix4x4 matRot = Matrix4x4::MakeRotateXYZMatrix(CameraManager::GetInstance()->GetMainCamera().transform_.rotate);
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	Transform& camTransform = 
+		entityManager->GetComponent<Transform>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId());
+
+	Matrix4x4 matRot = Matrix4x4::MakeRotateXYZMatrix(camTransform.rotate);
 
 	const float pi = std::numbers::pi_v<float>;
 	const float kAngleEvery = (pi * 2.0f) / static_cast<float>(subdivision);

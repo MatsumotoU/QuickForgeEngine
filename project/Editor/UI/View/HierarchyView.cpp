@@ -82,6 +82,14 @@ void HierarchyView::DrawPopupContextWindow() {
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::MenuItem("Camera")) {
+#ifdef _DEBUG
+                DebugLog("Can not Add Camera");
+#endif // _DEBUG
+
+				//CameraManager::GetInstance()->AddCamera();
+			}
+
             ImGui::EndMenu();
         }
         ImGui::EndPopup();
@@ -98,6 +106,13 @@ void HierarchyView::DrawEntityList() {
         SceneObjectData& data = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(id);
         std::string& name = data.name;
         std::string label = name + "##" + std::to_string(id);
+
+		// デバッグカメラは表示しない
+#ifdef _DEBUG
+		if (id == CameraManager::GetInstance()->GetCamera(0).GetBindEntityId()) {
+			continue;
+		}
+#endif // _DEBUG
 
         // ドラッグソース
         ImGui::PushID(id);
