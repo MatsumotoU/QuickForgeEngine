@@ -1,0 +1,21 @@
+#pragma once
+#include <stdint.h>
+#include <string>
+#include <vector>
+#include <list>
+#include <unordered_map>
+#include "IEditor.h"
+#include "UI/UIManager.h"
+
+class OnWindowsEditor final : public IEditor {
+public:
+	OnWindowsEditor();
+	~OnWindowsEditor() override = default;
+	void Initialize() override;
+	void Update() override;
+	void Draw() override;
+
+private:
+	UIManager uiManager_;
+
+};

@@ -6,6 +6,7 @@
 # User
 *.ini
 BuildInfo.h
+*.lib
 
 #DumpFile
 Dumps/
