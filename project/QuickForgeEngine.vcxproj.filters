@@ -405,6 +405,7 @@
     <ClCompile Include="Engine\Platform\Windows\WindowsEngineCore.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Core\Math\Shapes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">

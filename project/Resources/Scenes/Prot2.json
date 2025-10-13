@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.5338909029960632,
-                    -0.3575010895729065,
+                    0.5813909769058228,
+                    0.24499885737895966,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    5.576430320739746,
-                    9.420445442199707,
-                    -14.928099632263184
+                    -3.75241756439209,
+                    10.166478157043457,
+                    -15.008381843566895
                 ]
             }
         },
@@ -98,7 +98,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 7.0
                         },
-                        "handle": 41,
+                        "handle": 0,
                         "intParams": {},
                         "scriptName": "ShotGunPlayer.lua",
                         "stringParams": {}
@@ -111,7 +111,7 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.5
                         },
-                        "handle": 42,
+                        "handle": 1,
                         "intParams": {
                             "bullets": 3
                         },
@@ -161,7 +161,7 @@
                         "floatParams": {
                             "space": 48.0
                         },
-                        "handle": 43,
+                        "handle": 2,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -220,7 +220,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 44,
+                        "handle": 3,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,

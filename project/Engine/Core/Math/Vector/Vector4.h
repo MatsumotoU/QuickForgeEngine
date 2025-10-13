@@ -3,6 +3,7 @@
 #define VECTOR4_H
 
 class Vector3;
+class Matrix4x4;
 
 class  Vector4 final{
 public:
@@ -41,6 +42,14 @@ public:
 	/// </summary>
 	/// <returns>正規化された4次元ベクトル</returns>
 	[[nodiscard]] Vector4 Normalize() const;
+
+	/// <summary>
+	/// ワールド座標に変換する
+	/// </summary>
+	/// <param name="vector">変換元ローカル座標</param>
+	/// <param name="matrix">変換に使用する行列</param>
+	/// <returns>ワールド座標</returns>
+	[[nodiscard]] static Vector4 Transform(const Vector4& vector, const Matrix4x4& matrix);
 
 	/// <summary>
 	/// XYZの要素を抜き出します

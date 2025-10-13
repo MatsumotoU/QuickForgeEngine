@@ -34,10 +34,37 @@ void Camera::Initialize() {
 	cameraData.farZ_ = 100.0f;
 
 	viewMatrix_ = Matrix4x4::MakeIndentity4x4();
+	projectionMatrix_ = Matrix4x4::MakeIndentity4x4();
+	orthographicMatrix_ = Matrix4x4::MakeIndentity4x4();
+	viewProjectionMatrix_ = Matrix4x4::MakeIndentity4x4();
+	viewOrthographicMatrix_ = Matrix4x4::MakeIndentity4x4();
 }
 
 void Camera::Update() {
 	viewMatrix_ = GetViewMatrix();
+	projectionMatrix_ = GetPerspectiveMatrix();
+	orthographicMatrix_ = GetOrthographicMatrix();
+	viewProjectionMatrix_ = Matrix4x4::Multiply(viewMatrix_, projectionMatrix_);
+	viewOrthographicMatrix_ = Matrix4x4::Multiply(Matrix4x4::MakeIndentity4x4(), orthographicMatrix_);
+}
+
+bool Camera::CheckVisible(const Matrix4x4& world) const {
+	// ワールド座標の原点を取得
+	Vector4 pos4(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4 worldPos = Vector4::Transform(pos4, world);
+
+	// クリップ空間へ変換
+	Vector4 clipPos = Vector4::Transform(worldPos, viewProjectionMatrix_);
+
+	// wで割ってNDCへ
+	if (clipPos.w == 0.0f) return false;
+	Vector3 ndcPos = { clipPos.x / clipPos.w, clipPos.y / clipPos.w, clipPos.z / clipPos.w };
+
+	// NDC範囲内か判定（DirectX: zは0～1, OpenGL: zは-1～1）
+	return
+		ndcPos.x >= -1.0f && ndcPos.x <= 1.0f &&
+		ndcPos.y >= -1.0f && ndcPos.y <= 1.0f &&
+		ndcPos.z >= 0.0f && ndcPos.z <= 1.0f;
 }
 
 uint32_t Camera::GetBindEntityId() const {
@@ -76,10 +103,10 @@ Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, Cam
 	switch (type)
 	{
 	case CameraType::Perspective:
-		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(viewMatrix_, GetPerspectiveMatrix()));
+		return Matrix4x4::Multiply(worldMatrix, viewProjectionMatrix_);
 		break;
 	case CameraType::Orthographic:
-		return Matrix4x4::Multiply(worldMatrix, Matrix4x4::Multiply(Matrix4x4::MakeIndentity4x4(), GetOrthographicMatrix()));
+		return Matrix4x4::Multiply(worldMatrix,viewOrthographicMatrix_);
 		break;
 	default:
 		assert(false && "Unknown Camera Type.");
@@ -101,27 +128,3 @@ Matrix4x4 Camera::GetWorldMatrix() const {
 
 	return Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 }
-
-#ifdef _DEBUG
-void Camera::DrawImgui() {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
-	assert(entityManager->HasComponent<Transform>(bindEntityId_) && "Camera entity must have Transform component.");
-	assert(entityManager->HasComponent<CameraData>(bindEntityId_) && "Camera entity must have CameraData component.");
-	CameraData& cameraData = entityManager->GetComponent<CameraData>(bindEntityId_);
-	Transform& transform = entityManager->GetComponent<Transform>(bindEntityId_);
-
-	if (ImGui::CollapsingHeader("Camera")) {
-		ImGui::Text("Camera Type");
-		const char* items[] = { "Perspective","Orthographic" };
-		static int item_current = (cameraType == CameraType::Perspective) ? 0 : 1;
-		if (ImGui::Combo("Type", &item_current, items, IM_ARRAYSIZE(items))) {
-			cameraType = (item_current == 0) ? CameraType::Perspective : CameraType::Orthographic;
-		}
-		ImGui::SliderFloat("FovY", &cameraData.fovY_, 0.1f, 3.0f);
-		ImGui::SliderFloat("NearZ", &cameraData.nearZ_, 0.01f, 10.0f);
-		ImGui::SliderFloat("FarZ", &cameraData.farZ_, 10.0f, 1000.0f);
-		ImGui::DragFloat3("Position", &transform.translate.x, 0.1f);
-		ImGui::DragFloat3("Rotation", &transform.rotate.x, 0.1f);
-	}
-}
-#endif // _DEBUG

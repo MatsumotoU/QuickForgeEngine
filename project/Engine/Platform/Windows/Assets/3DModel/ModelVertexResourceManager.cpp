@@ -12,7 +12,13 @@ void ModelVertexResourceManager::Finalize() {
 	modelVertexBuffers_.clear();
 }
 
-uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelData& modelData) {
+uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelData& modelData, const std::string& modelName) {
+	// 同じ名前のモデルが既に存在する場合はそのハンドルを返す
+    auto it = modelHandleMap_.find(modelName);
+    if (it != modelHandleMap_.end()) {
+        return it->second;
+    }
+    
     // 頂点バッファを作成
     if (modelData.meshes.empty()) {
         assert(false && "ModelData has no meshes");
@@ -32,6 +38,8 @@ uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelDat
             modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), mesh.vertices[i]);
         }
     }
+
+	modelHandleMap_.insert({ modelName, firstHandle });
     return firstHandle;
 }
 

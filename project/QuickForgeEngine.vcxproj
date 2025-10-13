@@ -289,6 +289,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Editor\UI\View\SceneView.cpp" />
     <ClCompile Include="Editor\UI\UIManager.cpp" />
     <ClCompile Include="Engine\Core\EngineGlobalValue.cpp" />
+    <ClCompile Include="Engine\Core\Math\Shapes.cpp" />
     <ClCompile Include="Engine\Core\Math\Transform.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\DirectX\DebugLayer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\FrameCounter.cpp" />
