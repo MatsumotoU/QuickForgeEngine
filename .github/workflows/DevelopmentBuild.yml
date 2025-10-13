@@ -1,15 +1,14 @@
-name: DebugBuild
+name: DevelopmentBuild
 on:
   push:
     branches:
       - master
 env:
   SOLUTION_FILE_PATH: project/MyGameEngine.sln
-  CONFIGURATION: Debug
+  CONFIGURATION: Development
 jobs:
   build:
     runs-on: windows-2022
-
 
     steps:
       - name: Checkout
