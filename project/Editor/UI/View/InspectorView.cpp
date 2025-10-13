@@ -7,12 +7,14 @@
 #include "Scene/Data/SceneObjectData.h"
 #include "Core/Math/Transform.h"
 #include "Assets/AssetManager.h"
+#include "Camera/CameraManager.h"
 #include "Assets/Script/Data/ScriptHandle.h"
 #include "Physics/Force.h"
 #include "Collider/Data/SphereColliderData.h"
 #include "Assets/3DModel/Data/ModelHandle.h"
 #include "Assets/Sprite/Data/SpriteData.h"
 #include "Core/Math/ParentData.h"
+#include "Camera/Data/CameraData.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
@@ -38,6 +40,7 @@ void InspectorView::Draw() {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	if (assetManager->GetEntityManager()->HasComponent<SceneObjectData>(selectedEntityId_)) {
 		SceneObjectData& sceneObjData = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(selectedEntityId_);
+		
 		ImGui::Text("Entity ID: %d(%d)", selectedEntityId_,sceneObjData.uniqueId);
 		// name
 		char nameBuffer[256];
@@ -103,6 +106,27 @@ void InspectorView::Draw() {
 			Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(spriteData.materialBufferHandle);
 			ImGui::ColorEdit4("Color", &material->color.x);
 		}
+	}
+	// Camera
+	if (assetManager->GetEntityManager()->HasComponent<CameraData>(selectedEntityId_)) {
+		CameraData& cameraData = assetManager->GetEntityManager()->GetComponent<CameraData>(selectedEntityId_);
+		if (ImGui::CollapsingHeader("Camera")) {
+			ImGui::SliderFloat("FovY", &cameraData.fovY_, 0.1f, 3.0f);
+			ImGui::SliderFloat("NearZ", &cameraData.nearZ_, 0.01f, 10.0f);
+			ImGui::SliderFloat("FarZ", &cameraData.farZ_, 10.0f, 1000.0f);
+		}
+
+		CameraManager* cameraManager = CameraManager::GetInstance();
+		if (cameraManager->GetMainCameraIndex() == cameraData.handle_) {
+			ImGui::Text("This is Main Camera");
+		} /*else {
+			if (ImGui::Button("Set Main Camera")) {
+				CameraManager::GetInstance()->SetMainCameraIndex(cameraData.handle_);
+			}
+		}*/
+		/*if (ImGui::Button("Snap To DebugCamera")) {
+			CameraManager::GetInstance()->SnapToDebugCamera(cameraData.handle_);
+		}*/
 	}
 
 	// スクリプト

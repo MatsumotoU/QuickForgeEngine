@@ -1,68 +1,49 @@
 {
     "entities": [
         {
-            "Force": {
-                "acceleration": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "friction": 1.0,
-                "gravityStrength": 10.0,
-                "isGravity": true,
-                "mass": 1.0,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
             },
-            "ModelHandle": {
-                "color": [
-                    1.0,
+            "SceneObjectData": {
+                "name": "DebugCamera",
+                "tag": "camera",
+                "uniqueId": 2
+            },
+            "Transform": {
+                "rotate": [
+                    0.5713905692100525,
+                    -0.5125001072883606,
+                    -0.0
+                ],
+                "scale": [
                     1.0,
                     1.0,
                     1.0
                 ],
-                "modelName": "Arrow.obj"
+                "translate": [
+                    7.140528678894043,
+                    9.362298965454102,
+                    -12.690985679626465
+                ]
+            }
+        },
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
             },
             "SceneObjectData": {
-                "name": "ShotGunPlayer",
-                "tag": "Untagged",
+                "name": "Camera",
+                "tag": "camera",
                 "uniqueId": 1
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "backSpeed": 8.0,
-                            "minVelocity": 6.0,
-                            "moveSpeed": 7.0
-                        },
-                        "handle": 0,
-                        "intParams": {},
-                        "scriptName": "ShotGunPlayer.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "diffusionRate": 0.5,
-                            "knockBack": 10.0,
-                            "knockBackPower": 10.0
-                        },
-                        "handle": 1,
-                        "intParams": {},
-                        "scriptName": "BulletShot.lua",
-                        "stringParams": {}
-                    }
-                ]
             },
             "Transform": {
                 "rotate": [
+                    0.10000000149011612,
                     0.0,
-                    1.600000023841858,
                     0.0
                 ],
                 "scale": [
@@ -72,8 +53,8 @@
                 ],
                 "translate": [
                     0.0,
-                    0.0,
-                    0.0
+                    1.5,
+                    -10.0
                 ]
             }
         }
