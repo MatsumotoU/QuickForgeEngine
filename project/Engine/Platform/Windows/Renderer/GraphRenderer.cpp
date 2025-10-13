@@ -1,0 +1,327 @@
+#include "GraphRenderer.h"
+#include "Graphic/DirectXCommon/DirectXCommon.h"
+#include "Graphic/Pipeline/GraphicPipelineManager.h"
+#include "Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
+
+#include "Assets/AssetManager.h"
+#include "Camera/CameraManager.h"
+#include <cassert>
+#include <numbers>
+
+#ifdef _DEBUG
+#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#endif // _DEBUG
+
+void GraphRenderer::Initialize() {
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+	GraphicPipelineManager* pipelineManager = GraphicPipelineManager::GetInstance();
+
+	trianglePso_ = pipelineManager->GetPrimitivePso(kBlendModeNormal);
+	linePso_ = pipelineManager->GetLinePso(kBlendModeNormal);
+	pointPso_ = pipelineManager->GetPointPso(kBlendModeNormal);
+
+	// 三角形の頂点リソースを作成
+	triangleVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
+	triangleVertexBufferView_ = {};
+	triangleVertexBufferView_.BufferLocation = triangleVertexResource_->GetGPUVirtualAddress();
+	triangleVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
+	triangleVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
+	triangleVertexData_ = nullptr;
+	triangleVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&triangleVertexData_));
+	// 線の頂点リソースを作成
+	lineVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
+	lineVertexBufferView_ = {};
+	lineVertexBufferView_.BufferLocation = lineVertexResource_->GetGPUVirtualAddress();
+	lineVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
+	lineVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
+	lineVertexData_ = nullptr;
+	lineVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&lineVertexData_));
+	// 点の頂点リソースを作成
+	pointVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
+	pointVertexBufferView_ = {};
+	pointVertexBufferView_.BufferLocation = pointVertexResource_->GetGPUVirtualAddress();
+	pointVertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
+	pointVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
+	pointVertexData_ = nullptr;
+	pointVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointVertexData_));
+
+	wvp_.CreateResource(dxCommon->GetDevice());
+	material_.CreateResource(dxCommon->GetDevice());
+
+	wvp_.GetData()->World = Matrix4x4::MakeIndentity4x4();
+	wvp_.GetData()->WVP = Matrix4x4::MakeIndentity4x4();
+	material_.GetData()->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	material_.GetData()->enableLighting = 0;
+	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4();
+}
+
+void GraphRenderer::PreDraw() {
+	CameraManager* cameraManager = CameraManager::GetInstance();
+	Camera& camera = cameraManager->GetMainCamera();
+
+	triangleCount_ = 0;
+	lineCount_ = 0;
+	pointCount_ = 0;
+
+	// 頂点リソースをクリア
+	for (uint32_t i = 0; i < kGraphRendererMaxTriangleCount; i++) {
+		triangleVertexData_[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+		triangleVertexData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		triangleVertexData_[i].texcoord = Vector2(0.0f, 0.0f);
+	}
+	for (uint32_t i = 0; i < kGraphRendererMaxLineCount; i++) {
+		lineVertexData_[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+		lineVertexData_[i].color = Vector4(1.0f, 1.0f, 1.0f,1.0f);
+		lineVertexData_[i].texcoord = Vector2(0.0f, 0.0f);
+	}
+	for (uint32_t i = 0; i < kGraphRendererMaxPointCount; i++) {
+		pointVertexData_[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+		pointVertexData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		pointVertexData_[i].texcoord = Vector2(0.0f, 0.0f);
+	}
+
+	// カメラのワールドビュー投影行列を設定
+	wvp_.GetData()->WVP = camera.GetWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(),CameraType::Perspective);
+}
+
+void GraphRenderer::PostDraw() {
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+
+	if (triangleCount_ == 0 && lineCount_ == 0 && pointCount_ == 0) {
+		return; // 描画するものがない場合は何もしない
+	}
+
+	if (triangleCount_ > kGraphRendererMaxTriangleCount ||
+		lineCount_ > kGraphRendererMaxLineCount ||
+		pointCount_ > kGraphRendererMaxPointCount) {
+		
+		assert(false && "GraphRenderer: Exceeded maximum count of triangles, lines, or points.");
+	}
+
+	// 頂点リソースをGPUに転送
+	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+	if (triangleCount_ > 0) {
+		commandList->RSSetViewports(1, dxCommon->GetViewPort());
+		commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
+
+		commandList->SetGraphicsRootSignature(trianglePso_->GetRootSignature());
+		commandList->SetPipelineState(trianglePso_->GetPipelineState());
+		commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandList->IASetVertexBuffers(0, 1, &triangleVertexBufferView_);
+		commandList->DrawInstanced(triangleCount_ * 3, 1, 0, 0);
+	}
+	if (lineCount_ > 0) {
+		commandList->RSSetViewports(1, dxCommon->GetViewPort());
+		commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
+
+		commandList->SetGraphicsRootSignature(linePso_->GetRootSignature());
+		commandList->SetPipelineState(linePso_->GetPipelineState());
+		commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+		commandList->IASetVertexBuffers(0, 1, &lineVertexBufferView_);
+		commandList->DrawInstanced(lineCount_ * 2, 1, 0, 0);
+	}
+	if (pointCount_ > 0) {
+		commandList->RSSetViewports(1, dxCommon->GetViewPort());
+		commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
+
+		commandList->SetGraphicsRootSignature(pointPso_->GetRootSignature());
+		commandList->SetPipelineState(pointPso_->GetPipelineState());
+		commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(1, wvp_.GetGPUVirtualAddress());
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		commandList->IASetVertexBuffers(0, 1, &pointVertexBufferView_);
+		commandList->DrawInstanced(pointCount_, 1, 0, 0);
+	}
+
+
+}
+
+void GraphRenderer::Finalize() {
+	
+}
+
+void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color) {
+	if (triangleCount_ >= kGraphRendererMaxTriangleCount) {
+#ifdef _DEBUG
+		DebugLog("Exceeded maximum triangle count.");
+#endif // _DEBUG
+		return; // 最大数を超えた場合は描画しない
+	}
+
+	Vector4 p0 = Vector4(point1.x, point1.y, point1.z, 1.0f);
+	Vector4 p1 = Vector4(point2.x, point2.y, point2.z, 1.0f);
+	Vector4 p2 = Vector4(point3.x, point3.y, point3.z, 1.0f);
+
+	Vector3 normalZ = { 0.0f, 0.0f, -1.0f };
+
+	// 頂点データを設定
+	triangleVertexData_[triangleCount_ * 3 + 0].position = p0;
+	triangleVertexData_[triangleCount_ * 3 + 0].color = color;
+	triangleVertexData_[triangleCount_ * 3 + 0].texcoord = Vector2(0.0f, 0.0f);
+	triangleVertexData_[triangleCount_ * 3 + 1].position = p1;
+	triangleVertexData_[triangleCount_ * 3 + 1].color = color;
+	triangleVertexData_[triangleCount_ * 3 + 1].texcoord = Vector2(0.0f, 0.0f);
+	triangleVertexData_[triangleCount_ * 3 + 2].position = p2;
+	triangleVertexData_[triangleCount_ * 3 + 2].color = color;
+	triangleVertexData_[triangleCount_ * 3 + 2].texcoord = Vector2(0.0f, 0.0f);
+	triangleCount_++;
+	return;
+}
+
+void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& color) {
+	if (lineCount_ >= kGraphRendererMaxLineCount) {
+#ifdef _DEBUG
+		DebugLog("Exceeded maximum Line count.");
+#endif // _DEBUG
+		return; // 最大数を超えた場合は描画しない
+	}
+	Vector4 p0 = Vector4(point1.x, point1.y, point1.z, 1.0f);
+	Vector4 p1 = Vector4(point2.x, point2.y, point2.z, 1.0f);
+	// 頂点データを設定
+	lineVertexData_[lineCount_ * 2 + 0].position = p0;
+	lineVertexData_[lineCount_ * 2 + 0].color = color;
+	lineVertexData_[lineCount_ * 2 + 0].texcoord = Vector2(0.0f, 0.0f);
+	lineVertexData_[lineCount_ * 2 + 1].position = p1;
+	lineVertexData_[lineCount_ * 2 + 1].color = color;
+	lineVertexData_[lineCount_ * 2 + 1].texcoord = Vector2(0.0f, 0.0f);
+	lineCount_++;
+	return;
+}
+
+void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
+	if (pointCount_ >= kGraphRendererMaxPointCount) {
+#ifdef _DEBUG
+		DebugLog("Exceeded maximum Points count.");
+#endif // _DEBUG
+		return; // 最大数を超えた場合は描画しない
+	}
+	Vector4 p = Vector4(point.x, point.y, point.z, 1.0f);
+	Vector3 normalZ = { 0.0f, 0.0f, 1.0f };
+	// 頂点データを設定
+	pointVertexData_[pointCount_].position = p;
+	pointVertexData_[pointCount_].color = color;
+	pointVertexData_[pointCount_].texcoord = Vector2(0.0f, 0.0f);
+	pointCount_++;
+	return;
+}
+
+void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
+	if (gridCount <= 0 || size <= 0.0f) {
+		return; // グリッド数が0以下または偶数の場合は描画しない
+	}
+	
+	float halfSize = size / 2.0f;
+	Vector4 color = { 0.5f,0.5f,0.5f, 1.0f };
+	for (int32_t i = 0; i <= gridCount; i++) {
+		float t = static_cast<float>(i) / gridCount;
+		float x = -halfSize + t * size;
+		float z = -halfSize + t * size;
+
+		float colorXt = (x + halfSize) / size;
+		float colorZt = (z + halfSize) / size;
+
+		if (i % 10 == 0) {
+			color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		} else {
+			color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 1.0f), Vector4(1.0f, 0.0f, 0.0f, 1.0f), colorXt);
+		}
+
+		// 横線
+		if (x == 0.0f) {
+			DrawLine(
+				Vector3(x, 0.0f, -halfSize),
+				Vector3(x, 0.0f, halfSize), Vector4(0.0f,0.0f,1.0f,1.0f));
+		} else {
+			DrawLine(
+				Vector3(x, 0.0f, -halfSize),
+				Vector3(x, 0.0f, halfSize), color);
+		}
+		
+		if (i % 10 == 0) {
+			color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		} else {
+			color = color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 0.1f), Vector4(0.0f, 0.0f, 1.0f, 1.0f), colorZt);
+		}
+
+		if (z == 0.0f) {
+			// 縦線
+			DrawLine(
+				Vector3(-halfSize, 0.0f, z),
+				Vector3(halfSize, 0.0f, z), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+		} else {
+			// 縦線
+			DrawLine(
+				Vector3(-halfSize, 0.0f, z),
+				Vector3(halfSize, 0.0f, z), color);
+		}
+		
+	}
+}
+
+void GraphRenderer::DrawSphere(Vector3 center, float radius, const Vector4& color, uint32_t subdivision) {
+	const float pi = std::numbers::pi_v<float>;
+	const float kLonEvery = pi / static_cast<float>(subdivision) * 2;
+	const float kLatEvery = (pi * 2.0f) / static_cast<float>(subdivision) * 2;
+	// 緯度の方向に分割
+	for (uint32_t latIndex = 0; latIndex < subdivision; ++latIndex) {
+		float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);// 現在の緯度
+		float nextLat = (2.0f * pi) / static_cast<float>(subdivision) * 2.0f;
+
+		// 経度の方向に分割
+		for (uint32_t lonIndex = 0; lonIndex < subdivision; ++lonIndex) {
+			float lot = kLonEvery * static_cast<float>(lonIndex);// 現在の緯度
+			float nextLot = pi / static_cast<float>(subdivision) * 2.0f;
+
+			Vector3 a{}, b{}, c{};
+			a = {
+				cosf(lot) * cosf(lat),
+				sinf(lot),
+				cosf(lot) * sinf(lat) 
+			};
+			b = {
+				cosf(lot + nextLot) * cosf(lat),
+				sinf(lot + nextLot),
+				cosf(lot + nextLot) * sinf(lat) 
+			};
+			c = {
+				cosf(lot) * cosf(lat + nextLat),
+				sinf(lot),
+				cosf(lot) * sinf(lat + nextLat) 
+			};
+
+			// 半径分でかくする
+			a = a * radius;
+			b = b * radius;
+			c = c * radius;
+
+			// 中心をずらす
+			a = a + center;
+			b = b + center;
+			c = c + center;
+
+			DrawLine(a, b, color);
+			DrawLine(a, c, color);
+		}
+	}
+}
+
+void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision) {
+	Matrix4x4 matRot = Matrix4x4::MakeRotateXYZMatrix(CameraManager::GetInstance()->GetMainCamera().transform_.rotate);
+
+	const float pi = std::numbers::pi_v<float>;
+	const float kAngleEvery = (pi * 2.0f) / static_cast<float>(subdivision);
+	Vector3 prevPoint = center + Vector3(radius, 0.0f, 0.0f);
+	prevPoint = Vector3::Transform(prevPoint - center, matRot) + center;
+	for (uint32_t i = 1; i <= subdivision; ++i) {
+		float angle = kAngleEvery * static_cast<float>(i);
+		Vector3 nextPoint = center + Vector3(cosf(angle) * radius, sinf(angle) * radius, 0.0f);
+		nextPoint = Vector3::Transform(nextPoint - center, matRot) + center;
+		DrawLine(prevPoint, nextPoint, color);
+		prevPoint = nextPoint;
+	}
+}

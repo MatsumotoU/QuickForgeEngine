@@ -1,0 +1,63 @@
+#pragma once
+#include "Core/Entity/Component/ComponentData.h"
+#include <vector>
+#include <unordered_map>
+
+struct LuaHandle {
+	std::string scriptName_;
+	std::unordered_map<std::string, int> intParams_;
+	std::unordered_map<std::string, float> floatParams_;
+	std::unordered_map<std::string, bool> boolParams_;
+	std::unordered_map<std::string, std::string> stringParams_;
+	uint32_t handle_;
+};
+
+class ScriptHandles final :public ComponentData {
+public:
+	std::vector<LuaHandle> scriptHandles_;
+	
+	ScriptHandles() = default;
+	~ScriptHandles() override = default;
+	nlohmann::json Serialize() const override {
+		nlohmann::json json;
+		for (const LuaHandle& scriptHandle : scriptHandles_) {
+			nlohmann::json shJson;
+			shJson["scriptName"] = scriptHandle.scriptName_;
+			shJson["handle"] = scriptHandle.handle_;
+			shJson["intParams"] = scriptHandle.intParams_;
+			shJson["floatParams"] = scriptHandle.floatParams_;
+			shJson["boolParams"] = scriptHandle.boolParams_;
+			shJson["stringParams"] = scriptHandle.stringParams_;
+			json["scriptHandles"].push_back(shJson);
+		}
+		return json;
+	}
+	void Deserialize(const nlohmann::json& json) override {
+		scriptHandles_.clear();
+		if (json.contains("scriptHandles") && json["scriptHandles"].is_array()) {
+			for (const auto& shJson : json["scriptHandles"]) {
+				LuaHandle sh;
+				if (shJson.contains("scriptName") && shJson["scriptName"].is_string()) {
+					sh.scriptName_ = shJson["scriptName"].get<std::string>();
+				}
+				if (shJson.contains("handle") && shJson["handle"].is_number_unsigned()) {
+					sh.handle_ = shJson["handle"].get<uint32_t>();
+				}
+				if (shJson.contains("intParams") && shJson["intParams"].is_object()) {
+					sh.intParams_ = shJson["intParams"].get<std::unordered_map<std::string, int>>();
+				}
+				if (shJson.contains("floatParams") && shJson["floatParams"].is_object()) {
+					sh.floatParams_ = shJson["floatParams"].get<std::unordered_map<std::string, float>>();
+				}
+				if (shJson.contains("boolParams") && shJson["boolParams"].is_object()) {
+					sh.boolParams_ = shJson["boolParams"].get<std::unordered_map<std::string, bool>>();
+				}
+				if (shJson.contains("stringParams") && shJson["stringParams"].is_object()) {
+					sh.stringParams_ = shJson["stringParams"].get<std::unordered_map<std::string, std::string>>();
+				}
+				scriptHandles_.push_back(sh);
+			}
+		}
+	}
+	std::string GetTypeName() const override { return "ScriptHandle"; }
+};
