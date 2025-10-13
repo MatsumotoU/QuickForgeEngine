@@ -366,7 +366,8 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		"y", &Vector3::y,
 		"z", &Vector3::z,
 
-		"Length", &Vector3::Length
+		"Length", &Vector3::Length,
+		"Normalize", sol::resolve<Vector3() const>(&Vector3::Normalize)
 	);
 	luaState_->new_usertype<Vector4>("Vector4",
 		sol::constructors<Vector4(), Vector4(float, float, float, float)>(),
@@ -375,7 +376,8 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		"z", &Vector4::z,
 		"w", &Vector4::w,
 
-		"Length", &Vector4::Length
+		"Length", &Vector4::Length,
+		"Normalize", & Vector4::Normalize
 	);
 	luaState_->new_usertype<Transform>("Transform",
 		sol::constructors<Transform()>(),
