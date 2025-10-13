@@ -119,14 +119,7 @@ void InspectorView::Draw() {
 		CameraManager* cameraManager = CameraManager::GetInstance();
 		if (cameraManager->GetMainCameraIndex() == cameraData.handle_) {
 			ImGui::Text("This is Main Camera");
-		} /*else {
-			if (ImGui::Button("Set Main Camera")) {
-				CameraManager::GetInstance()->SetMainCameraIndex(cameraData.handle_);
-			}
-		}*/
-		/*if (ImGui::Button("Snap To DebugCamera")) {
-			CameraManager::GetInstance()->SnapToDebugCamera(cameraData.handle_);
-		}*/
+		}
 	}
 
 	// スクリプト

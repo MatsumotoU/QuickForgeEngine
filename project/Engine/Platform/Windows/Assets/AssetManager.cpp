@@ -49,7 +49,7 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 
 	// メッシュの数だけメッシュ描画データを確保
 	modelRenderData.meshRenderDataHandles.resize(modelData.meshes.size());
-	modelRenderData.meshRenderDataHandles.at(0).vertexBufferHandle = modelVertexResourceManager_.Assign(dxCommon_->GetDevice(), modelData);
+	modelRenderData.meshRenderDataHandles.at(0).vertexBufferHandle = modelVertexResourceManager_.Assign(dxCommon_->GetDevice(), modelData, modelName);
 
 	// 各メッシュの描画データを作成
 	for (size_t i = 0; i < modelData.meshes.size(); i++) {

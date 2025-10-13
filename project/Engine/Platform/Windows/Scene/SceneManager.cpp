@@ -17,6 +17,7 @@
 #include "Camera/Data/CameraData.h"
 
 #include <fstream>
+#include <execution>
 #include <nlohmann/json.hpp>
 
 #ifdef _DEBUG

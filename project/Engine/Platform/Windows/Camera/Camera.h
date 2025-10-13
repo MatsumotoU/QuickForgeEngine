@@ -12,6 +12,7 @@ public:
 	void Initialize();
 	void Update();
 
+	bool CheckVisible(const Matrix4x4& world) const;
 	uint32_t GetBindEntityId() const;
 	Matrix4x4 GetViewMatrix() const;
 	Matrix4x4 GetPerspectiveMatrix() const;
@@ -20,17 +21,12 @@ public:
 	Matrix4x4 GetWorldViewProjectionMatrixOrthographic(const Matrix4x4& worldMatrix) const;
 	Matrix4x4 GetWorldMatrix() const;
 
-	/*Transform transform_;
-	float fovY_;
-	float nearZ_;
-	float farZ_;*/
-
-#ifdef _DEBUG
-	void DrawImgui();
-#endif // _DEBUG
-
 private:
 	Matrix4x4 viewMatrix_;
-	CameraType cameraType;
 	uint32_t bindEntityId_;
+
+	Matrix4x4 projectionMatrix_;
+	Matrix4x4 orthographicMatrix_;
+	Matrix4x4 viewProjectionMatrix_;
+	Matrix4x4 viewOrthographicMatrix_;
 };

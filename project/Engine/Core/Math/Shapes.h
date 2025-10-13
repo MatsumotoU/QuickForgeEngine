@@ -26,6 +26,8 @@ struct Plane
 {
 	Vector3 normal; // 法線
 	float distance; // 距離
+
+	float DistanceToPoint(const Vector3& point);
 };
 /// 三角形
 struct Triangle {
