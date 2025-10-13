@@ -1,0 +1,272 @@
+{
+    "entities": [
+        {
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 10.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Arrow.obj"
+            },
+            "SceneObjectData": {
+                "name": "ShotGunPlayer",
+                "tag": "player",
+                "uniqueId": 1
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "backSpeed": 8.0,
+                            "minVelocity": 6.0,
+                            "moveSpeed": 7.0
+                        },
+                        "handle": 97,
+                        "intParams": {},
+                        "scriptName": "ShotGunPlayer.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "diffusionRate": 0.5,
+                            "knockBack": 10.0,
+                            "knockBackPower": 10.0,
+                            "maxShotInterval": 0.5
+                        },
+                        "handle": 98,
+                        "intParams": {
+                            "bullets": 3
+                        },
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    -5.0,
+                    0.0,
+                    0.0,
+                    0.6000000238418579
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    1.600000023841858,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -5.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "BulletUI",
+                "tag": "Untagged",
+                "uniqueId": 2
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "space": 48.0
+                        },
+                        "handle": 99,
+                        "intParams": {
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17,
+                            "nowNum": 1,
+                            "numMax": 3,
+                            "objectUniqeID": 1
+                        },
+                        "scriptName": "BulletNumUI.lua",
+                        "stringParams": {
+                            "objectName": "ShotGunPlayer",
+                            "scriptName": "BulletShot.lua",
+                            "uiObjName": "ShotGunSallUI.json",
+                            "varName": "bullets"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "ShotGunEnemy",
+                "tag": "enemy",
+                "uniqueId": 160
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 100,
+                        "intParams": {
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17
+                        },
+                        "scriptName": "ShotGunEnemy.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.800000011920929
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "Bullet",
+                "tag": "bullet",
+                "uniqueId": 161
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "aliveTime": 0.25,
+                            "moveSpeed": 0.25
+                        },
+                        "handle": 101,
+                        "intParams": {
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17
+                        },
+                        "scriptName": "BulletMove.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    1.5442358255386353,
+                    0.0,
+                    0.0,
+                    0.20000000298023224
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.5442358255386353,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    ],
+    "sceneName": "Prot2"
+}

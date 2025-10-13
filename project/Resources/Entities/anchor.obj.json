@@ -1,0 +1,45 @@
+{
+    "ModelHandle": {
+        "modelName": "anchor.obj"
+    },
+    "SceneObjectData": {
+        "name": "anchor.obj",
+        "tag": "Untagged"
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "floatVal": 1.0
+                },
+                "handle": 0,
+                "intParams": {
+                    "intVal": 5,
+                    "intVal2": 5
+                },
+                "scriptName": "TestScript.lua",
+                "stringParams": {
+                    "stringVal": "HelloWorld!"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}
