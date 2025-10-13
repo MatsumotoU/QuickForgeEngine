@@ -152,7 +152,6 @@ void AssetsView::ModelsView() {
 		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;
 	}
-
 }
 
 void AssetsView::MaterialsView() {
