@@ -13,6 +13,7 @@ ResourceDirectoryManager::ResourceDirectoryManager() {
 	resourceDirectories_["Sounds"] = "Resources/Sounds/";
 	resourceDirectories_["Scripts"] = "Resources/Scripts/";
 	resourceDirectories_["Entities"] = "Resources/Entities/";
+	resourceDirectories_["Config"] = "Resources/Config/";
 #ifdef _DEBUG
 	resourceDirectories_["Editor"] = "Editor/Resource/Images/";
 #endif // _DEBUG

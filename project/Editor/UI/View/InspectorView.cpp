@@ -15,6 +15,7 @@
 #include "Assets/Sprite/Data/SpriteData.h"
 #include "Core/Math/ParentData.h"
 #include "Camera/Data/CameraData.h"
+#include "Collider/Data/AABBColliderData.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
@@ -254,6 +255,23 @@ void InspectorView::Draw() {
 		}
 	}
 
+	// AABBColliderData
+	if (assetManager->GetEntityManager()->HasComponent<AABBColliderData>(selectedEntityId_)) {
+		AABBColliderData& aabbCollider = assetManager->GetEntityManager()->GetComponent<AABBColliderData>(selectedEntityId_);
+		if (ImGui::CollapsingHeader("AABBCollider")) {
+			if (ImGui::Button("Delete##AABBCollider")) {
+				assetManager->GetEntityManager()->RemoveComponent<AABBColliderData>(selectedEntityId_);
+			}
+			ImGui::DragFloat3("Min", &aabbCollider.aabb.min.x, 0.1f);
+			ImGui::DragFloat3("Max", &aabbCollider.aabb.max.x, 0.1f);
+			ImGui::Checkbox("Is Trigger", &aabbCollider.isTrigger);
+			ImGui::Checkbox("Is Static", &aabbCollider.isStatic);
+#ifdef _DEBUG
+			ImGui::Checkbox("Debug Draw", &aabbCollider.isDraw);
+#endif // _DEBUG
+		}
+	}
+
 	// コンポーネントの追加
 	if (ImGui::Button("Add Component")) {
 		ImGui::OpenPopup("AddComponentPopup");
@@ -266,6 +284,12 @@ void InspectorView::Draw() {
 					assetManager->GetEntityManager()->EmplaceComponent<SphereColliderData>(selectedEntityId_);
 				}
 			}
+			if (ImGui::MenuItem("AABBCollider")) {
+				if (!assetManager->GetEntityManager()->HasComponent<AABBColliderData>(selectedEntityId_)) {
+					assetManager->GetEntityManager()->EmplaceComponent<AABBColliderData>(selectedEntityId_);
+				}
+			}
+
 			ImGui::EndMenu();
 		}
 		// Force

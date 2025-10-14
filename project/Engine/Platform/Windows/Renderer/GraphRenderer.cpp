@@ -329,3 +329,28 @@ void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& colo
 		prevPoint = nextPoint;
 	}
 }
+
+void GraphRenderer::DrawBox(Vector3 min, Vector3 max, const Vector4& color) {
+	// 8頂点を計算
+	Vector3 v0 = { min.x, min.y, min.z };
+	Vector3 v1 = { max.x, min.y, min.z };
+	Vector3 v2 = { max.x, max.y, min.z };
+	Vector3 v3 = { min.x, max.y, min.z };
+	Vector3 v4 = { min.x, min.y, max.z };
+	Vector3 v5 = { max.x, min.y, max.z };
+	Vector3 v6 = { max.x, max.y, max.z };
+	Vector3 v7 = { min.x, max.y, max.z };
+	// 12本の辺を描画
+	DrawLine(v0, v1, color); // 下前
+	DrawLine(v1, v2, color); // 右前
+	DrawLine(v2, v3, color); // 上前
+	DrawLine(v3, v0, color); // 左前
+	DrawLine(v4, v5, color); // 下後
+	DrawLine(v5, v6, color); // 右後
+	DrawLine(v6, v7, color); // 上後
+	DrawLine(v7, v4, color); // 左後
+	DrawLine(v0, v4, color); // 左下
+	DrawLine(v1, v5, color); // 右下
+	DrawLine(v2, v6, color); // 右上
+	DrawLine(v3, v7, color); // 左上
+}

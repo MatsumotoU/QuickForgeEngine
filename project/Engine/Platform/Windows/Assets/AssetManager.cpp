@@ -17,12 +17,14 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 	modelVertexResourceManager_.Initialize();
 	modelRenderDataManager_.Initialize();
 	spriteManager_.Initialize();
+	audioSourceManager_.Initialize();
 }
 
 void AssetManager::PreDraw() {
 }
 
 void AssetManager::Finalize() {
+	audioSourceManager_.Finalize();
 	spriteManager_.Finalize();
 	textureManager_->Finalize();
 	wpvBufferManager_.Finalize();
@@ -73,6 +75,12 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 
 	// モデル描画データを登録
 	return modelRenderDataManager_.Add(modelRenderData);
+}
+
+uint32_t AssetManager::LoadAudio(const std::string& audioName) {
+	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Audio") + audioName;
+	uint32_t handle = audioSourceManager_.LoadSoundData(filePath);
+	return handle;
 }
 
 #ifdef _DEBUG

@@ -69,3 +69,20 @@ function Update()
         end
     end
 end
+
+function OnCollisionEnter(id,obj)
+    
+end
+
+function OnCollisionStay(id,obj)
+    if isBackFriping then
+        return
+    end
+
+    if obj.tag == "enemy" then
+        if force.velocity:Length() >= minVelocity then
+           force.velocity.x = 0.0
+           force.velocity.z = 0.0
+        end
+    end
+end

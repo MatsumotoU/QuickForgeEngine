@@ -10,6 +10,7 @@
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "Core/Entity/EntityManager.h"
 #include "Utility/DesignPatterns/Singleton.h"
+#include "AudioSource/AudioSourceManager.h"
 
 #include <unordered_map>
 
@@ -33,6 +34,8 @@ public:
 	uint32_t LoadTexture(const std::string& imageName);
 	/// 拡張子付きで書くこと
 	uint32_t LoadModel(const std::string& modelName);
+	/// 拡張子付きで書くこと
+	uint32_t LoadAudio(const std::string& audioName);
 
 #ifdef _DEBUG
 	uint32_t LoadEditorTexture(const std::string& imageName);
@@ -47,6 +50,7 @@ public:
 	EntityManager* GetEntityManager() { return &entityManager_; }
 	SpriteManager* GetSpriteManager() { return &spriteManager_; }
 	const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
+	AudioSourceManager* GetAudioSourceManager() { return &audioSourceManager_; }
 
 private:
 	DirectXCommon* dxCommon_;
@@ -54,6 +58,7 @@ private:
 
 	TextureManager* textureManager_;
 
+	AudioSourceManager audioSourceManager_;
 	ModelRenderDataManager modelRenderDataManager_;
 	ModelVertexResourceManager modelVertexResourceManager_;
 	ConstantBufferManager<TransformationMatrix> wpvBufferManager_;

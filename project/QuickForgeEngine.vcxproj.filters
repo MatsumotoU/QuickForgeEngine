@@ -180,9 +180,6 @@
     <ClCompile Include="Engine\Platform\Windows\Camera\CameraManager.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Platform\Windows\AppUtility\FileSystems\CheckFileExtension\CheckFileExtension.cpp">
-      <Filter>source\engine\base</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
@@ -406,6 +403,11 @@
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Math\Shapes.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Audio\XAudioCore.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Audio\AudioInterface.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -984,9 +986,6 @@
     <ClInclude Include="Engine\Platform\Windows\Camera\CameraManager.h">
       <Filter>include\engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Platform\Windows\AppUtility\FileSystems\CheckFileExtension\CheckFileExtension.h">
-      <Filter>include\engine\base</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Platform\Windows\Graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.h">
       <Filter>include\engine\base</Filter>
     </ClInclude>
@@ -1320,6 +1319,17 @@
     <ClInclude Include="Editor\UI\UIManager.h">
       <Filter>include\editor</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Data\AudioData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\XAudioCore.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\AudioType.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\AudioInterface.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\IAudioInterface.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\ChunkHeader.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\FormatChunk.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\RiffHeader.h" />
+    <ClInclude Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

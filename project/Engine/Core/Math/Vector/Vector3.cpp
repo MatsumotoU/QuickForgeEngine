@@ -21,6 +21,10 @@ float Vector3::Length() const {
 	return sqrtf(this->x * this->x + this->y * this->y + this->z * this->z);
 }
 
+float Vector3::LengthSq() const {
+	return this->x * this->x + this->y * this->y + this->z * this->z;
+}
+
 Vector3 Vector3::Normalize() const {
 	Vector3 result = {};
 

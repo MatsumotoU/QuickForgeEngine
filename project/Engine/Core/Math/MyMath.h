@@ -1,5 +1,6 @@
 #pragma once
 #include "MathInclude.h"
+#include "Shapes.h"
 #include <random>
 
 namespace MyMath {
@@ -29,4 +30,6 @@ namespace MyMath {
 		std::uniform_real_distribution<float> dist(min, max);
 		return dist(mt);
 	}
+
+	Vector3 ClosestPoint(const Sphere& sphere, const AABB& aabb);
 }

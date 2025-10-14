@@ -48,6 +48,12 @@ public:
 	[[nodiscard]] float Length() const;
 
 	/// <summary>
+	/// ベクトルの長さの二乗を求める
+	/// </summary>
+	/// <returns></returns>
+	[[nodiscard]] float LengthSq() const;
+
+	/// <summary>
 	/// 正規化された3次元ベクトルを求める
 	/// </summary>
 	/// <returns>正規化された3次元ベクトル</returns>

@@ -15,3 +15,11 @@ void MyMath::SimpleEaseIn(float* value, float endValue, float transitionSpeed) {
 float MyMath::DegreesToRadians(float degrees) {
 	return degrees * 3.14159265358979323846f / 180.0f;
 }
+
+Vector3 MyMath::ClosestPoint(const Sphere& sphere, const AABB& aabb) {
+	Vector3 closestPoint;
+	closestPoint.x = std::max(aabb.min.x, std::min(sphere.center.x, aabb.max.x));
+	closestPoint.y = std::max(aabb.min.y, std::min(sphere.center.y, aabb.max.y));
+	closestPoint.z = std::max(aabb.min.z, std::min(sphere.center.z, aabb.max.z));
+	return closestPoint;
+}
