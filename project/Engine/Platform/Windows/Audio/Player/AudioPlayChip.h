@@ -1,6 +1,6 @@
 #pragma once
 #include <xaudio2.h>
-#include <wrl.h>
+#include <memory>
 #include <cstdint>
 #include "Assets/AudioSource/Data/AudioData.h"
 
@@ -26,7 +26,7 @@ public:
 	float GetVolume() const;
 
 private:
-	Microsoft::WRL::ComPtr<IXAudio2SourceVoice> sourceVoice_;
+	IXAudio2SourceVoice* sourceVoice_;
 	float volume_;
 	bool isPaused_;
 	bool isPlaying_;

@@ -50,15 +50,19 @@ void AudioInterface::SetMasterVolume(float volume) {
 }
 
 void AudioInterface::SetBGMVolume(float volume) {
+	volume;
 }
 
 void AudioInterface::SetSEVolume(float volume) {
+	volume;
 }
 
 void AudioInterface::SetVoiceVolume(float volume) {
+	volume;
 }
 
 void AudioInterface::SetASVolume(float volume) {
+	volume;
 }
 
 float AudioInterface::GetMasterVolume() {
