@@ -32,6 +32,38 @@ void SceneManager::Initalize() {
 	CameraManager::GetInstance()->Initialize();
 	isRequestStopScript_ = false;
 	isRunningScript_ = false;
+
+	// SceneConfig.jsonの読み込み
+	sceneConfig_ = nlohmann::json::object();
+	try {
+		std::string path = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Config") + "SceneConfig.json";
+		std::ifstream ifs(path);
+		if (ifs.is_open()) {
+			ifs >> sceneConfig_;
+			ifs.close();
+		}
+#ifdef _DEBUG
+		DebugLog("Load SceneConfig.json");
+#endif // _DEBUG
+	}
+	catch (const std::exception& e) {
+#ifdef _DEBUG
+		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+#endif // _DEBUG
+	}
+
+	// 最後に開いたシーンをロード
+	if (sceneConfig_.contains("lastScene")) {
+		try {
+			LoadScene(sceneConfig_["lastScene"].get<std::string>());
+		}
+		catch (const std::exception& e) {
+#ifdef _DEBUG
+			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+#endif // _DEBUG
+		}
+		
+	}
 }
 
 void SceneManager::Update() {
@@ -104,18 +136,18 @@ void SceneManager::Update() {
 	for (auto entityId : entities) {
 		if (assetManager->GetEntityManager()->HasComponent<ParentData>(entityId)) {
 			ParentData& parentData = assetManager->GetEntityManager()->GetComponent<ParentData>(entityId);
-			
+
 			uint32_t parentId = 0;
 			bool isFound = false;
 			if (entityManager->HasComponentStrage<SceneObjectData>()) {
-				 auto& strage = entityManager->GetComponentStrage<SceneObjectData>();
-				 for (const auto& [id, sceneObjData] : strage) {
-					 if (sceneObjData.uniqueId == parentData.parentId) {
-						 parentId = id;
-						 isFound = true;
-						 break;
-					 }
-				 }
+				auto& strage = entityManager->GetComponentStrage<SceneObjectData>();
+				for (const auto& [id, sceneObjData] : strage) {
+					if (sceneObjData.uniqueId == parentData.parentId) {
+						parentId = id;
+						isFound = true;
+						break;
+					}
+				}
 			}
 			if (!isFound) { continue; }
 
@@ -136,7 +168,7 @@ void SceneManager::Update() {
 				if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 					SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
 					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
-					wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World,Matrix4x4::MakeAffineMatrix(
+					wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
 						parentTransform.scale, parentTransform.rotate, parentTransform.translate));
 				}
 			}
@@ -194,6 +226,22 @@ void SceneManager::EndFrame() {
 }
 
 void SceneManager::Finalize() {
+	sceneConfig_["lastScene"] = currentScene_->GetSceneName();
+	try {
+		std::string path = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Config") + "SceneConfig.json";
+		std::ofstream ofs(path);
+		ofs << sceneConfig_.dump(4);
+		ofs.close();
+#ifdef _DEBUG
+		DebugLog("SaveSceneConfig");
+#endif // _DEBUG
+	}
+	catch (const std::exception& e) {
+#ifdef _DEBUG
+		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+#endif // _DEBUG
+	}
+
 	CameraManager::GetInstance()->Shutdown();
 }
 
@@ -436,6 +484,11 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 		SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
 		sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
 	}
+	if (entityJson.contains("AABBColliderData")) {
+		entityManager->EmplaceComponent<AABBColliderData>(entityId);
+		AABBColliderData& aabbColliderData = entityManager->GetComponent<AABBColliderData>(entityId);
+		aabbColliderData.Deserialize(entityJson["AABBColliderData"]);
+	}
 	if (entityJson.contains("ScriptHandle")) {
 		std::vector<std::string> scriptNames;
 		if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
@@ -481,10 +534,10 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 					}
 				}
 			}
-			
+
 		}
 	}
-	
+
 }
 
 void SceneManager::AddEpmtyObject() {
@@ -613,7 +666,7 @@ void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 
 uint32_t SceneManager::AddEntity(const std::string& entityName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	
+
 	// Entityのパスを組み立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
 	std::ifstream ifs(sceneFilePath + entityName);

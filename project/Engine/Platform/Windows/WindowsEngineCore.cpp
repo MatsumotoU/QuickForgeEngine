@@ -129,6 +129,7 @@ void WindowsEngineCore::Shutdown() {
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();
 	luaScriptResourceManager_->Finalize();
+	sceneManager_->Finalize();
 	graphRenderer_->Finalize();
 	assetManager_->Finalize();
 

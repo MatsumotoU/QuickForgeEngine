@@ -12,4 +12,5 @@ namespace QFE::FILE {
 	extern std::vector<std::string> GetFilesInDirectory(const std::string& directoryPath, const std::string& extension = "");
 	extern bool OpenFileOnExe(const std::string& exePath, const std::string& filePath);
 	extern bool LoadFileToJson(const std::string& filePath, nlohmann::json& json);
+	bool HasExtension(const std::string& fileName, const std::string& extension);
 }

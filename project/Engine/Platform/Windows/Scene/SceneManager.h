@@ -47,6 +47,7 @@ public:
 	void StopScript();
 
 private:
+	nlohmann::json sceneConfig_;
 	std::unique_ptr<IScene> currentScene_;
 	bool isRunningScript_;
 	bool isRequestStopScript_;
