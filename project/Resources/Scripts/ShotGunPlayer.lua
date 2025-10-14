@@ -3,6 +3,7 @@ backSpeed = 5.0
 local objectDir = Vector3.new(0.0,0.0,0.0)
 isBackFriping = false
 minVelocity = 1.0
+hp = 100
 
 function Init()
 objectDir.x = 0.0
@@ -12,6 +13,11 @@ isBackFriping = false
 end
 
 function Update()
+    -- 死亡処理
+    if hp <= 0 then
+        return
+    end
+
     -- 接地処理
     if transform.translate.y <= 0.0 then
         transform.translate.y = 0.0
