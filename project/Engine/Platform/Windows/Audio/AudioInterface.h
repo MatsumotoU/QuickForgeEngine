@@ -1,6 +1,7 @@
 #pragma once
 #include "IAudioInterface.h"
-#include "XAudioCore.h"
+#include "Core/XAudioCore.h"
+#include "Player/AudioChipManager.h"
 
 class AudioInterface final : public IAudioInterface {
 public:
@@ -53,4 +54,5 @@ public:
 
 private:
 	XAudioCore xAudioCore_;
+	AudioChipManager audioChipManager_;
 };

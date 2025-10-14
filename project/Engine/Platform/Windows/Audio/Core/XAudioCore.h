@@ -20,6 +20,7 @@ public:
 	void SetMasterVolume(float volume);
 	uint32_t GetOutputChannels();
 	IXAudio2MasteringVoice* GetMasterVoice();
+	IXAudio2* GetXAudio2();
 
 private:
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;

@@ -405,9 +405,11 @@
     <ClCompile Include="Engine\Core\Math\Shapes.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.cpp" />
-    <ClCompile Include="Engine\Platform\Windows\Audio\XAudioCore.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Audio\Core\XAudioCore.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Audio\AudioInterface.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Audio\Player\AudioPlayChip.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Audio\Player\AudioChipManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1322,14 +1324,16 @@
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Data\AudioData.h" />
-    <ClInclude Include="Engine\Platform\Windows\Audio\XAudioCore.h" />
-    <ClInclude Include="Engine\Platform\Windows\Audio\AudioType.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\Core\XAudioCore.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\Core\AudioType.h" />
     <ClInclude Include="Engine\Platform\Windows\Audio\AudioInterface.h" />
     <ClInclude Include="Engine\Platform\Windows\Audio\IAudioInterface.h" />
-    <ClInclude Include="Engine\Platform\Windows\Audio\ChunkHeader.h" />
-    <ClInclude Include="Engine\Platform\Windows\Audio\FormatChunk.h" />
-    <ClInclude Include="Engine\Platform\Windows\Audio\RiffHeader.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\Core\ChunkHeader.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\Core\FormatChunk.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\Core\RiffHeader.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\Player\AudioPlayChip.h" />
+    <ClInclude Include="Engine\Platform\Windows\Audio\Player\AudioChipManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

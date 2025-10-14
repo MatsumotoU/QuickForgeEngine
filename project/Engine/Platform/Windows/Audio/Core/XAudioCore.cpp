@@ -131,3 +131,7 @@ uint32_t XAudioCore::GetOutputChannels() {
 IXAudio2MasteringVoice* XAudioCore::GetMasterVoice() {
 	return masterVoice_;
 }
+
+IXAudio2* XAudioCore::GetXAudio2() {
+	return xAudio2_.Get();
+}
