@@ -19,7 +19,10 @@ void AudioPlayChip::Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* master
 
 void AudioPlayChip::Finalize() {
 	StopSound();
-	sourceVoice_ = nullptr;
+	if (sourceVoice_ != nullptr) {
+		sourceVoice_->DestroyVoice();
+		sourceVoice_ = nullptr;
+	}
 }
 
 void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float volume) {
@@ -27,6 +30,7 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 	assert(xAudio2_ != nullptr);
 	assert(masterVoice_ != nullptr);
 	// ソースボイスの作成
+	sourceVoice_ = nullptr;
 	HRESULT hr = xAudio2_->CreateSourceVoice(&sourceVoice_, &audioData.wfex);
 	assert(SUCCEEDED(hr));
 
