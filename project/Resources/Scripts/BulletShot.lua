@@ -16,7 +16,7 @@ end
 
 function Update()
     -- リロード
-    if QFE.Input.GetKeyTrigger(DIK_A) then
+    if QFE.Input.GetKeyTrigger("MoveLeft") then
         bullets = maxBullets
     end
 
@@ -32,7 +32,7 @@ function Update()
     end
 
     -- 射撃処理
-    if QFE.Input.GetKeyTrigger(DIK_SPACE) then
+    if QFE.Input.GetKeyTrigger("Shot") then
         local tempTransform = Transform.new()
         tempTransform.translate = transform.translate
         tempTransform.rotate = transform.rotate

@@ -410,6 +410,10 @@
     <ClCompile Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Audio\Player\AudioPlayChip.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Audio\Player\AudioChipManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Input\KeyConfig.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Input\InputInterface.cpp" />
+    <ClCompile Include="Editor\UI\Edit\KeyConfigEdit.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectInputToString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1334,6 +1338,10 @@
     <ClInclude Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.h" />
     <ClInclude Include="Engine\Platform\Windows\Audio\Player\AudioPlayChip.h" />
     <ClInclude Include="Engine\Platform\Windows\Audio\Player\AudioChipManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Input\InputInterface.h" />
+    <ClInclude Include="Engine\Platform\Windows\Input\KeyConfig.h" />
+    <ClInclude Include="Editor\UI\Edit\KeyConfigEdit.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectInputToString.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

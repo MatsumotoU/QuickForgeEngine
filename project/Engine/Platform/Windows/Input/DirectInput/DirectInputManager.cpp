@@ -14,6 +14,10 @@ void DirectInputManager::Initialize(const HWND& hwnd,const HINSTANCE& hInstance)
 	mouse_.Initialize(hwnd,directInput_);
 }
 
+void DirectInputManager::Finalize() {
+	
+}
+
 void DirectInputManager::Update() {
 	// キーボードの処理
 	keyboard_.Update();
@@ -35,13 +39,6 @@ Vector2 DirectInputManager::GetKeyMoveDir() {
 	if (keyboard_.GetPress(DIK_DOWN) || keyboard_.GetPress(DIK_S)) {
 		result.y -= 1.0f;
 	}
-
-	/*if (!keyboard_.GetPress(DIK_RIGHT) && !keyboard_.GetPress(DIK_LEFT)) {
-		result.x += 0.0f;
-	}
-	if (!keyboard_.GetPress(DIK_UP) && !keyboard_.GetPress(DIK_DOWN)) {
-		result.y += 0.0f;
-	}*/
 
 	return result.Normalize();
 }
