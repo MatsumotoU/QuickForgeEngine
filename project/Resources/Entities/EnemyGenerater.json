@@ -1,15 +1,15 @@
 {
     "SceneObjectData": {
-        "name": "MapGenerater",
+        "name": "EnemyGenerater",
         "tag": "Untagged",
-        "uniqueId": 9
+        "uniqueId": 7
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 27,
+                "handle": 2,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -17,9 +17,15 @@
                     "DIK_SPACE": 57,
                     "DIK_W": 17
                 },
-                "scriptName": "MapGenerater.lua",
+                "scriptName": "EnemyGenerater.lua",
                 "stringParams": {
-                    "wallObjName": "Wall.json"
+                    "floatyEnemyName": "FloatyEnemy.json",
+                    "generatorMapScriptName": "MapGenerater.lua",
+                    "lockOnEnemyName": "LockOnEnemy.json",
+                    "mapObjName": "MapGenerater",
+                    "playerName": "Aoi.json",
+                    "sliderEnemyName": "SliderEnemy.json",
+                    "varMapName": "map"
                 }
             }
         ]

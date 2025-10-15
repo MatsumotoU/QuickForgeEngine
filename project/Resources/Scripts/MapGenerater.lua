@@ -16,7 +16,7 @@ mapDivision = 10
 mapDifficulty = 8
 
 -- マップ
-local map = {{},{}}
+map = {{},{}}
 
 --[[
     初期化処理

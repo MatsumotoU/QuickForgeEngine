@@ -1,0 +1,72 @@
+{
+    "ModelHandle": {
+        "color": [
+            0.787564754486084,
+            1.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "FloatyEnemy",
+        "tag": "Enemy",
+        "uniqueId": 5
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "lifeTime": 5.0,
+                    "speed": 0.5
+                },
+                "handle": 4,
+                "intParams": {
+                    "DIK_A": 30,
+                    "DIK_D": 32,
+                    "DIK_S": 31,
+                    "DIK_SPACE": 57,
+                    "DIK_W": 17
+                },
+                "scriptName": "FloatyEnemyMove.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 5,
+                "intParams": {},
+                "scriptName": "EnemyCollsionBehavior.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            0.0,
+            0.0,
+            0.0,
+            0.699999988079071
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}
