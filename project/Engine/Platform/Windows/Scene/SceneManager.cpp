@@ -350,6 +350,10 @@ void SceneManager::ResetScene() {
 	uniqueIdManager_.Reset();
 }
 
+void SceneManager::SwapScene(const std::string& sceneName) {
+	sceneName;
+}
+
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();

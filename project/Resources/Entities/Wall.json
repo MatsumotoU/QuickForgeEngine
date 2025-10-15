@@ -1,4 +1,17 @@
 {
+    "AABBColliderData": {
+        "aabb": [
+            -0.38994574546813965,
+            -0.5,
+            -0.5,
+            0.6100540161132813,
+            0.5,
+            0.5
+        ],
+        "isDraw": false,
+        "isStatic": false,
+        "isTrigger": false
+    },
     "ModelHandle": {
         "color": [
             1.0,
@@ -11,7 +24,7 @@
     "SceneObjectData": {
         "name": "Wall",
         "tag": "MapObject",
-        "uniqueId": 2
+        "uniqueId": 3
     },
     "Transform": {
         "rotate": [
@@ -25,7 +38,7 @@
             1.0
         ],
         "translate": [
-            -1.131565809249878,
+            0.1100541353225708,
             0.0,
             0.0
         ]

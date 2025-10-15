@@ -9,12 +9,12 @@
             "SceneObjectData": {
                 "name": "DebugCamera",
                 "tag": "camera",
-                "uniqueId": 2
+                "uniqueId": 1
             },
             "Transform": {
                 "rotate": [
-                    0.48139044642448425,
-                    -0.4075002372264862,
+                    0.5652092099189758,
+                    1.4953631162643433,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    4.3951096534729,
-                    5.793149471282959,
-                    -10.1818208694458
+                    -15.625899314880371,
+                    9.938678741455078,
+                    -1.1809518337249756
                 ]
             }
         },
@@ -38,33 +38,11 @@
             "SceneObjectData": {
                 "name": "Camera",
                 "tag": "camera",
-                "uniqueId": 1
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "offsetX": 0.5
-                        },
-                        "handle": 70,
-                        "intParams": {
-                            "DIK_A": 30,
-                            "DIK_D": 32,
-                            "DIK_S": 31,
-                            "DIK_SPACE": 57,
-                            "DIK_W": 17
-                        },
-                        "scriptName": "CameraMove.lua",
-                        "stringParams": {
-                            "targetObjName": "AObject"
-                        }
-                    }
-                ]
+                "uniqueId": 2
             },
             "Transform": {
                 "rotate": [
-                    0.699999988079071,
+                    0.10000000149011612,
                     0.0,
                     0.0
                 ],
@@ -75,8 +53,58 @@
                 ],
                 "translate": [
                     0.0,
-                    10.600000381469727,
-                    -13.5
+                    1.5,
+                    -10.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "EmptyObject",
+                "tag": "Untagged",
+                "uniqueId": 4
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "blockSize": 1.0
+                        },
+                        "handle": 2,
+                        "intParams": {
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17,
+                            "mapDifficulty": 8,
+                            "mapDivision": 10,
+                            "maxHeight": 11,
+                            "maxWidth": 100
+                        },
+                        "scriptName": "MapGenerater.lua",
+                        "stringParams": {
+                            "wallObjName": "Wall.json"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         },
@@ -91,32 +119,16 @@
                 "modelName": "anchor.obj"
             },
             "SceneObjectData": {
-                "name": "AObject",
+                "name": "anchor.obj",
                 "tag": "Untagged",
-                "uniqueId": 3
+                "uniqueId": 251
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 71,
-                        "intParams": {
-                            "DIK_A": 30,
-                            "DIK_D": 32,
-                            "DIK_S": 31,
-                            "DIK_SPACE": 57,
-                            "DIK_W": 17
-                        },
-                        "scriptName": "ColliderTest.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "speed": 5.0
-                        },
-                        "handle": 72,
+                        "handle": 3,
                         "intParams": {},
                         "scriptName": "Move.lua",
                         "stringParams": {}
@@ -124,13 +136,14 @@
                 ]
             },
             "SphereColliderData": {
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    -0.406283438205719,
+                    1.9554895162582397,
                     0.0,
-                    0.0,
-                    0.6000000238418579
+                    -1.889891266822815,
+                    0.30000001192092896
                 ]
             },
             "Transform": {
@@ -145,54 +158,9 @@
                     1.0
                 ],
                 "translate": [
-                    -0.406283438205719,
+                    1.9554895162582397,
                     0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "AABBColliderData": {
-                "aabb": [
-                    0.7538520097732544,
-                    -0.5,
-                    1.1633312702178955,
-                    1.7538520097732544,
-                    0.5,
-                    2.1633317470550537
-                ],
-                "isStatic": false,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "anchor.obj"
-            },
-            "SceneObjectData": {
-                "name": "Bobject",
-                "tag": "Untagged",
-                "uniqueId": 4
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    1.2538520097732544,
-                    0.0,
-                    1.6633315086364746
+                    -1.889891266822815
                 ]
             }
         }

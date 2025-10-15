@@ -253,7 +253,12 @@ sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, c
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 
-	if (!entityManager->HasComponent<ScriptHandles>(entityId)) return sol::nil;
+	if (!entityManager->HasComponent<ScriptHandles>(entityId)) {
+#ifdef _DEBUG
+		DebugLog("Entity has no ScriptHandles component", LogLevel::Warning);
+#endif // _DEBUG
+		return sol::nil;
+	} 
 
 	ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
 	for (const auto& handle : scriptHandles.scriptHandles_) {
@@ -265,6 +270,9 @@ sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, c
 			}
 		}
 	}
+#ifdef _DEBUG
+	DebugLog("Script is not found", LogLevel::Warning);
+#endif // _DEBUG
 	return sol::nil;
 }
 
