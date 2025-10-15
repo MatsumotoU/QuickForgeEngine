@@ -86,8 +86,8 @@ void WindowsEngineCore::Initialize() {
 	graphRenderer_ = GraphRenderer::GetInstance();
 	graphRenderer_->Initialize();
 
-	directInputManager_ = DirectInputManager::GetInstance();
-	directInputManager_->Initialize(
+	inputInterface_ = InputInterface::GetInstance();
+	inputInterface_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("QuickForgeEngine"), hInstance_);
 
 	sceneManager_ = SceneManager::GetInstance();
@@ -131,6 +131,7 @@ void WindowsEngineCore::Shutdown() {
 	luaScriptResourceManager_->Finalize();
 	sceneManager_->Finalize();
 	graphRenderer_->Finalize();
+	inputInterface_->Finalize();
 	assetManager_->Finalize();
 
 	imguiFrameController_.EndImGui();
@@ -143,7 +144,7 @@ void WindowsEngineCore::Shutdown() {
 
 // この先はプライベート関数
 void WindowsEngineCore::Update() {
-	directInputManager_->Update();
+	inputInterface_->Update();
 	gameWindowManager->Update();
 	editor_->Update();
 	sceneManager_->Update();

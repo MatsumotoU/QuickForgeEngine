@@ -53,7 +53,7 @@ function Update()
     end
 
     -- バックフリップ開始処理
-    if QFE.Input.GetKeyTrigger(DIK_A) then
+    if QFE.Input.GetKeyTrigger("MoveLeft") then
         if isBackFriping then
             return
         end
@@ -69,7 +69,7 @@ function Update()
     transform.rotate.y = math.atan(objectDir.x,objectDir.y)
 
     -- 移動処理
-    if QFE.Input.GetKeyPress(DIK_W) or QFE.Input.GetKeyPress(DIK_S) or QFE.Input.GetKeyPress(DIK_D) then
+    if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetKeyPress("MoveDown") or QFE.Input.GetKeyPress("MoveUp") then
         if not isBackFriping then
             transform:AddForward(moveSpeed*0.016)
         end

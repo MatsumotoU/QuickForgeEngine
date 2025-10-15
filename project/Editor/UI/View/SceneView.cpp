@@ -5,7 +5,7 @@
 #include "Assets/AssetManager.h"
 #include "Core/Entity/EntityManager.h" 
 #include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
-#include "Input/DirectInput/DirectInputManager.h"
+#include "Input/InputInterface.h"
 #include "Renderer/GraphRenderer.h"
 #include "Core/Math/MyMath.h"
 
@@ -98,20 +98,20 @@ void SceneView::DebugCameraControl() {
 
 	if (isActiveCamera_) {
 		CameraManager::GetInstance()->SetActiveDebugCamera(true);
-		DirectInputManager* input = DirectInputManager::GetInstance();
+		DirectInputManager& input = InputInterface::GetInstance()->GetDirectInputManager();
 
 		float distance = (cameraTransform.translate - anchorPoint_).Length();
-		if (input->keyboard_.GetTrigger(DIK_NUMPAD7)) {
+		if (input.keyboard_.GetTrigger(DIK_NUMPAD7)) {
 			targetRotate_ = { distance, 0.0f, 3.14f };
 			startPos_ = cameraTransform.translate;
 			cameraMoveT_ = 0.0f;
 		}
-		if (input->keyboard_.GetTrigger(DIK_NUMPAD1)) {
+		if (input.keyboard_.GetTrigger(DIK_NUMPAD1)) {
 			targetRotate_ = { distance, -3.14f * 0.5f,3.14f * 0.5f };
 			startPos_ = cameraTransform.translate;
 			cameraMoveT_ = 0.0f;
 		}
-		if (input->keyboard_.GetTrigger(DIK_NUMPAD9)) {
+		if (input.keyboard_.GetTrigger(DIK_NUMPAD9)) {
 			float PI = 3.14f;
 			// 反対方向
 			float thetaOpposite = PI - targetRotate_.y;
@@ -121,7 +121,7 @@ void SceneView::DebugCameraControl() {
 			startPos_ = cameraTransform.translate;
 			cameraMoveT_ = 0.0f;
 		}
-		if (input->keyboard_.GetTrigger(DIK_NUMPAD3)) {
+		if (input.keyboard_.GetTrigger(DIK_NUMPAD3)) {
 			targetRotate_ = { distance, 3.14f * 0.5f,0.0f };
 			startPos_ = cameraTransform.translate;
 			cameraMoveT_ = 0.0f;
@@ -139,12 +139,12 @@ void SceneView::DebugCameraControl() {
 		}
 
 		// ホイールでズームイン・アウト
-		if (input->mouse_.wheelDir_ != 0.0f) {
+		if (input.mouse_.wheelDir_ != 0.0f) {
 			Vector3 cartesianTemp = cameraTransform.translate - anchorPoint_;
 			Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
 
 			// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
-			sphericalTemp.x += -input->mouse_.wheelDir_ * 0.01f;
+			sphericalTemp.x += -input.mouse_.wheelDir_ * 0.01f;
 
 			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(sphericalTemp);
 			cameraTransform.translate = sphericalToCartesian + anchorPoint_;
@@ -152,10 +152,10 @@ void SceneView::DebugCameraControl() {
 			cameraTransform.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
 		}
 
-		if (input->mouse_.GetPress(2)) {
+		if (input.mouse_.GetPress(2)) {
 
-			if (input->keyboard_.GetPress(DIK_LSHIFT)) {
-				Vector2 mouseMove = input->mouse_.deltaMouse_ * mouseSensitivity_ * 0.1f;
+			if (input.keyboard_.GetPress(DIK_LSHIFT)) {
+				Vector2 mouseMove = input.mouse_.deltaMouse_ * mouseSensitivity_ * 0.1f;
 				Vector3 mouseMove3 = { -mouseMove.x,mouseMove.y,0.0f };
 				Vector3 move = Vector3::Transform(mouseMove3, Matrix4x4::MakeRotateXYZMatrix(cameraTransform.rotate));
 				cameraTransform.translate += move;
@@ -166,8 +166,8 @@ void SceneView::DebugCameraControl() {
 				Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
 
 				// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
-				sphericalTemp.z += -input->mouse_.deltaMouse_.x * mouseSensitivity_ * 0.005f; // φ: 左右（感度を下げる）
-				sphericalTemp.y += -input->mouse_.deltaMouse_.y * mouseSensitivity_ * 0.005f; // θ: 上下（感度を下げる）
+				sphericalTemp.z += -input.mouse_.deltaMouse_.x * mouseSensitivity_ * 0.005f; // φ: 左右（感度を下げる）
+				sphericalTemp.y += -input.mouse_.deltaMouse_.y * mouseSensitivity_ * 0.005f; // θ: 上下（感度を下げる）
 
 				// θ（緯度）のクランプ
 				const float epsilon = 0.01f;

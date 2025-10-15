@@ -16,7 +16,7 @@
 
 #include "Graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include "Graphic/PostEffect/RendaringPostprocess.h"
-#include "Input/DirectInput/DirectInputManager.h"
+#include "Input/InputInterface.h"
 
 #include "Assets/AssetManager.h"
 // なんかAssetsではなさそうなやつら
@@ -56,7 +56,7 @@ private:
 	std::unique_ptr<IEditor> editor_ = nullptr;
 	FrameCounter frameCounter_;
 
-	DirectInputManager* directInputManager_;
+	InputInterface* inputInterface_;
 	SceneManager* sceneManager_;
 	LuaScriptResourceManager* luaScriptResourceManager_;
 	PhysicsManager* physicsManager_;

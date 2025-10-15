@@ -3,7 +3,7 @@
 #include "Assets/AssetManager.h"
 #include "Scene/SceneManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
-#include "Input/DirectInput/DirectInputManager.h"
+#include "Input/InputInterface.h"
 #include "Core/Math/Transform.h"
 #include "Physics/Force.h"
 #include "Assets/Script/Data/ScriptHandle.h"
@@ -251,41 +251,41 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		}
 		return MyMath::Rand(min, max);
 		});
-
-	DirectInputManager* inputManager = DirectInputManager::GetInstance();
+	
+	InputInterface* inputManager = InputInterface::GetInstance();
 	input.set_function("GetKeyMoveDir", [inputManager]() {
 		return inputManager->GetKeyMoveDir();
 		});
 
 	// キーボード
-	input.set_function("GetKeyPress", [inputManager](uint32_t DIK) {
-		return inputManager->keyboard_.GetPress(DIK);
+	input.set_function("GetKeyPress", [inputManager](std::string actionName) {
+		return inputManager->GetKeyPress(actionName);
 		});
-	input.set_function("GetKeyTrigger", [inputManager](uint32_t DIK) {
-		return inputManager->keyboard_.GetTrigger(DIK);
+	input.set_function("GetKeyTrigger", [inputManager](std::string actionName) {
+		return inputManager->GetKeyTrigger(actionName);
 		});
-	input.set_function("GetKeyRelease", [inputManager](uint32_t DIK) {
-		return inputManager->keyboard_.GetRelease(DIK);
+	input.set_function("GetKeyRelease", [inputManager](std::string actionName) {
+		return inputManager->GetKeyRelease(actionName);
 		});
 
 	// マウス
 	input.set_function("GetMousePress", [inputManager](int8_t button) {
-		return inputManager->mouse_.GetPress(button);
+		return inputManager->GetMousePress(button);
 		});
 	input.set_function("GetMouseTrigger", [inputManager](int8_t button) {
-		return inputManager->mouse_.GetTrigger(button);
+		return inputManager->GetMouseTrigger(button);
 		});
 	input.set_function("GetMouseRelease", [inputManager](int8_t button) {
-		return inputManager->mouse_.GetRelease(button);
+		return inputManager->GetMouseRelease(button);
 		});
 	input.set_function("GetMouseScreenPos", [inputManager]() {
-		return inputManager->mouse_.mouseScreenPos_;
+		return inputManager->GetMouseScreenPos();
 		});
 	input.set_function("GetMouseMoveDir", [inputManager]() {
-		return inputManager->mouse_.mouseMoveDir_;
+		return inputManager->GetMouseMove();
 		});
 	input.set_function("GetMouseWheelDir", [inputManager]() {
-		return inputManager->mouse_.wheelDir_;
+		return inputManager->GetMouseWheelDir();
 		});
 
 #ifdef _DEBUG
