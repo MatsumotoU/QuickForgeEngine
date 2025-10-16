@@ -310,6 +310,31 @@ sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, c
 	return sol::nil;
 }
 
+void LuaScriptResourceManager::RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (!entityManager->HasComponent<ScriptHandles>(entityId)) {
+#ifdef _DEBUG
+		DebugLog("Entity has no ScriptHandles component", LogLevel::Warning);
+#endif // _DEBUG
+		return;
+	}
+	ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+	for (const auto& handle : scriptHandles.scriptHandles_) {
+		if (handle.scriptName_ == scriptName) {
+#ifdef _DEBUG
+			DebugLog("Run Script Function: " + functionName + " from " + scriptName, LogLevel::EditorInfo);
+			DebugLog("Run Handle: " + std::to_string(handle.handle_), LogLevel::EditorInfo);
+#endif // _DEBUG
+			LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(handle.handle_);
+			if (script) {
+				script->RunFunction(functionName);
+			}
+			return;
+		}
+	}
+}
+
 void LuaScriptResourceManager::CopyLuaTable(const sol::table& src, sol::table& dst) {
 	for (auto& pair : src) {
 		if (pair.second.is<sol::table>()) {

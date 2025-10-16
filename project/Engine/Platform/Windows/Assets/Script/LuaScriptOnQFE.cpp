@@ -210,6 +210,8 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	sol::table input = qfe.create_named("Input");
 	sol::table math = qfe.create_named("Math");
 
+	luaState_->set("DeltaTime", &QFE::EngineGlobalValue::deltaTime);
+
 	luaState_->set_function("LookAtFromDir", [](const Vector3& dir) {
 		Vector3 lookAt;
 		float yaw = atan2f(dir.x, dir.z);
@@ -337,6 +339,12 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		}
 	);
 
+	luaState_->set_function("RunEntityScriptFunction",
+		[](uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
+			LuaScriptResourceManager::GetInstance()->RunFunction(entityId, scriptName, functionName);
+		}
+	);
+
 	luaState_->set_function("CreateEntity", [this](const std::string& entityName,const Transform& transform) {
 #ifdef _DEBUG
 		DebugLog(
@@ -419,20 +427,6 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		"gravityStrength", &Force::gravityStrength,
 		"isGravity", &Force::isGravity
 	);
-
-	sol::table dik = luaState_->create_named_table("DIK");
-	dik["W"] = static_cast<uint32_t>(0x11);
-	dik["A"] = static_cast<uint32_t>(0x1E);
-	dik["S"] = static_cast<uint32_t>(0x1F);
-	dik["D"] = static_cast<uint32_t>(0x20);
-	dik["SPACE"] = static_cast<uint32_t>(0x39);
-	// 必要なキーを追加
-	luaState_->set("DIK_W", 0x11);
-	luaState_->set("DIK_A", 0x1E);
-	luaState_->set("DIK_S", 0x1F);
-	luaState_->set("DIK_D", 0x20);
-	luaState_->set("DIK_SPACE", 0x39);
-	luaState_->set("DIK", dik);
 
 	luaState_->set_function("GetTransform", [](uint32_t entityId) {
 		auto* em = AssetManager::GetInstance()->GetEntityManager();

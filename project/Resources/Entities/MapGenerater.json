@@ -9,7 +9,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 27,
+                "handle": 71,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -17,6 +17,7 @@
                     "DIK_SPACE": 57,
                     "DIK_W": 17
                 },
+                "priority": 0,
                 "scriptName": "MapGenerater.lua",
                 "stringParams": {
                     "wallObjName": "Wall.json"

@@ -73,7 +73,7 @@ void UIManager::Draw() {
 #ifdef _DEBUG
 	// シーンが実行中は色を変える
 	bool isScriptRunning = SceneManager::GetInstance()->IsRunningScript();
-	if (isScriptRunning) {
+	if (isScriptRunning && RendaringPostprosecess::GetInstance()->isImGuiEnabled_) {
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
@@ -155,7 +155,7 @@ void UIManager::Draw() {
 	}
 
 	// 実行中は色を変える
-	if (isScriptRunning) {
+	if (isScriptRunning && RendaringPostprosecess::GetInstance()->isImGuiEnabled_) {
 		ImGui::PopStyleColor(3);
 	}
 #endif // _DEBUG

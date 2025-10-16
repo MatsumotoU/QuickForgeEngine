@@ -26,8 +26,8 @@
     },
     "SceneObjectData": {
         "name": "ShotGunPlayer",
-        "tag": "Untagged",
-        "uniqueId": 1
+        "tag": "player",
+        "uniqueId": 162
     },
     "ScriptHandle": {
         "scriptHandles": [
@@ -36,10 +36,11 @@
                 "floatParams": {
                     "backSpeed": 8.0,
                     "minVelocity": 6.0,
-                    "moveSpeed": 7.0
+                    "moveSpeed": 8.5
                 },
-                "handle": 0,
+                "handle": 40,
                 "intParams": {},
+                "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
                 "stringParams": {}
             },
@@ -48,30 +49,47 @@
                 "floatParams": {
                     "diffusionRate": 0.5,
                     "knockBack": 10.0,
-                    "knockBackPower": 10.0
+                    "knockBackPower": 10.0,
+                    "maxShotInterval": 0.5
                 },
-                "handle": 1,
-                "intParams": {},
+                "handle": 41,
+                "intParams": {
+                    "bullets": 3,
+                    "maxBullets": 3,
+                    "shotNum": 3
+                },
+                "priority": 0,
                 "scriptName": "BulletShot.lua",
                 "stringParams": {}
             }
         ]
     },
+    "SphereColliderData": {
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            3.0255227088928223,
+            1.2449007158465974e-07,
+            2.304914712905884,
+            0.6000000238418579
+        ]
+    },
     "Transform": {
         "rotate": [
             0.0,
-            1.600000023841858,
+            0.0,
             0.0
         ],
         "scale": [
+            0.9999999403953552,
             1.0,
-            1.0,
-            1.0
+            0.9999999403953552
         ],
         "translate": [
-            0.0,
-            0.0,
-            0.0
+            3.0255227088928223,
+            1.2449007158465974e-07,
+            2.304914712905884
         ]
     }
 }

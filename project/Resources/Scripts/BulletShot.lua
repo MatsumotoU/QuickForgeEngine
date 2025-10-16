@@ -10,11 +10,21 @@ maxShotInterval = 1.0
 bullets = 1
 maxBullets = 3
 
+isKnockback = false
+
 function Init()
 shotInterval = 0.0
+isKnockback = false
 end
 
 function Update()
+    -- ノックバックしているか判断
+    if isKnockback then
+        if force.velocity:Length() <= 0.0 then
+            isKnockback = false
+        end
+    end
+
     -- リロード
     if QFE.Input.GetKeyTrigger("MoveLeft") then
         bullets = maxBullets
@@ -22,6 +32,9 @@ function Update()
 
     -- 射撃のクールダウンが終わってなければここで関数終了
     if shotInterval > 0.0 then
+        if force.velocity:Length() > 1.0 then
+            return
+        end
         shotInterval = shotInterval - 0.016
         return
     end
@@ -47,5 +60,6 @@ function Update()
 
         shotInterval = maxShotInterval
         bullets = bullets - 1
+        isKnockback = true
     end
 end

@@ -1,4 +1,3 @@
-
 -- 移動する幅を設定
 minMove = 0.0
 maxMove = 0.0
@@ -27,9 +26,13 @@ move = RandomRange(minMove,maxMove)
 -- スロー時間を求める
 slowMoveTime = slowMoveTime + moveTime * 2.0
 moveMaxTime = moveTime
+hitPoint = maxHitPoint
 end
 
 function Update()
+    if transform.translate.y <= 0.0 then
+        transform.translate.y = 0.0
+    end
 
     if isHit then
         moveMaxTime = slowMoveTime
