@@ -98,7 +98,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 7.0
                         },
-                        "handle": 4,
+                        "handle": 0,
                         "intParams": {},
                         "scriptName": "ShotGunPlayer.lua",
                         "stringParams": {}
@@ -111,7 +111,7 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.5
                         },
-                        "handle": 5,
+                        "handle": 1,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -123,6 +123,7 @@
                 ]
             },
             "SphereColliderData": {
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -163,7 +164,7 @@
                         "floatParams": {
                             "space": 48.0
                         },
-                        "handle": 6,
+                        "handle": 2,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -222,7 +223,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 7,
+                        "handle": 3,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -236,6 +237,7 @@
                 ]
             },
             "SphereColliderData": {
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [

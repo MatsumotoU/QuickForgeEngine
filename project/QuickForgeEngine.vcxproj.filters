@@ -414,6 +414,8 @@
     <ClCompile Include="Engine\Platform\Windows\Input\InputInterface.cpp" />
     <ClCompile Include="Editor\UI\Edit\KeyConfigEdit.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectInputToString.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\MultiThreadRunFunction.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\MultiThreadTaskExecutor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1342,6 +1344,8 @@
     <ClInclude Include="Engine\Platform\Windows\Input\KeyConfig.h" />
     <ClInclude Include="Editor\UI\Edit\KeyConfigEdit.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectInputToString.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\MultiThreadRunFunction.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\MultiThreadTaskExecutor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

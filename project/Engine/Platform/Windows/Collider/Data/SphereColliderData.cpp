@@ -11,6 +11,10 @@ nlohmann::json SphereColliderData::Serialize() const {
 	json["isTrigger"] = isTrigger;
 	json["isStatic"] = isStatic;
 	json["sphere"] = { sphere.center.x, sphere.center.y, sphere.center.z, sphere.radius };
+#ifdef _DEBUG
+	json["isDraw"] = isDraw;
+#endif // _DEBUG
+
 	return json;
 }
 
@@ -27,4 +31,11 @@ void SphereColliderData::Deserialize(const nlohmann::json& json) {
 		sphere.center.z = json["sphere"][2].get<float>();
 		sphere.radius = json["sphere"][3].get<float>();
 	} 
+
+#ifdef _DEBUG
+	if (json.contains("isDraw") && json["isDraw"].is_boolean()) {
+		isDraw = json["isDraw"].get<bool>();
+	}
+#endif // _DEBUG
+
 }

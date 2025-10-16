@@ -11,6 +11,10 @@ nlohmann::json AABBColliderData::Serialize() const {
 	json["isTrigger"] = isTrigger;
 	json["isStatic"] = isStatic;
 	json["aabb"] = { aabb.min.x, aabb.min.y, aabb.min.z, aabb.max.x, aabb.max.y, aabb.max.z };
+#ifdef _DEBUG
+	json["isDraw"] = isDraw;
+#endif // _DEBUG
+
 	return json;
 }
 
@@ -29,4 +33,10 @@ void AABBColliderData::Deserialize(const nlohmann::json& json) {
 		aabb.max.y = json["aabb"][4].get<float>();
 		aabb.max.z = json["aabb"][5].get<float>();
 	}
+
+#ifdef _DEBUG
+	if (json.contains("isDraw") && json["isDraw"].is_boolean()) {
+		isDraw = json["isDraw"].get<bool>();
+	}
+#endif // _DEBUG
 }

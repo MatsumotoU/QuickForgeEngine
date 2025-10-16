@@ -25,6 +25,8 @@
 #include "Physics/PhysicsManager.h"
 #include "Collider/ColliderManager.h"
 
+#include "AppUtility/MultiThreadTaskExecutor.h"
+
 class WindowsEngineCore final : public IEngineCore {
 public:
 	WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
@@ -62,5 +64,6 @@ private:
 	PhysicsManager* physicsManager_;
 	ColliderManager* colliderManager_;
 
+	MultiThreadTaskExecutor* multiThreadTaskExecutor_;
 	nlohmann::json configJson_;
 };
