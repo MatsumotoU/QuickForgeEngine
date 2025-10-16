@@ -301,6 +301,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\FileSystems\FileUtility.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\ID\UniqeIDManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\MultiThreadRunFunction.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\AppUtility\MultiThreadTaskExecutor.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectInputToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
@@ -452,6 +454,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DirectX\TransitionResourceBarrier.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\FileSystems\FileUtility.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\ID\UniqeIDManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\MultiThreadRunFunction.h" />
+    <ClInclude Include="Engine\Platform\Windows\AppUtility\MultiThreadTaskExecutor.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectInputToString.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.h" />

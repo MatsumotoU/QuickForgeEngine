@@ -32,6 +32,7 @@ void SceneManager::Initalize() {
 	CameraManager::GetInstance()->Initialize();
 	isRequestStopScript_ = false;
 	isRunningScript_ = false;
+	isRequestRunTimeLoadScene_ = false;
 
 	// SceneConfig.jsonの読み込み
 	sceneConfig_ = nlohmann::json::object();
@@ -67,6 +68,13 @@ void SceneManager::Initalize() {
 }
 
 void SceneManager::Update() {
+	if (isRequestRunTimeLoadScene_) {
+		LoadScene(nextSceneName_);
+		StartScript();
+		isRequestRunTimeLoadScene_ = false;
+		nextSceneName_.clear();
+	}
+
 	// スクリプト更新
 	ColliderManager::GetInstance()->Update();
 	if (isRunningScript_) {
@@ -350,6 +358,12 @@ void SceneManager::ResetScene() {
 	uniqueIdManager_.Reset();
 }
 
+void SceneManager::RunTimeSwapScene(const std::string& sceneName) {
+	StopScript();
+	isRequestRunTimeLoadScene_ = true;
+	nextSceneName_ = sceneName;
+}
+
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
@@ -516,9 +530,11 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 						scriptHandles.scriptHandles_[i].handle_ = luaHandles[i];
 					}
 
-					// グローバル変数の復元
+					// 後付け情報の復元
 					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
-						sol::state* state = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_)->GetScript();
+						// グローバル変数の復元
+						LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_);
+						sol::state* state = script->GetScript();
 						for (const auto& [key, val] : hl.intParams_) {
 							(*state)[key] = val;
 						}
@@ -531,6 +547,9 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 						for (const auto& [key, val] : hl.stringParams_) {
 							(*state)[key] = val;
 						}
+
+						// 優先度の復元
+						script->SetPriority(hl.priority_);
 					}
 				}
 			}

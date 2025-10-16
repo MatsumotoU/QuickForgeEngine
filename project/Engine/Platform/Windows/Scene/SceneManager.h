@@ -26,7 +26,9 @@ public:
 
 	void SaveScene(const std::string& sceneName);
 	void LoadScene(const std::string& sceneName);
+	void LoadAsyncScene(const std::string& sceneName);
 	void ResetScene();
+	void RunTimeSwapScene(const std::string& sceneName);
 
 	// ここにいるべきじゃない
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName);
@@ -47,8 +49,12 @@ public:
 	void StopScript();
 
 private:
+
 	nlohmann::json sceneConfig_;
 	std::unique_ptr<IScene> currentScene_;
+	std::unique_ptr<IScene> nextScene_;
+	bool isRequestRunTimeLoadScene_;
+	std::string nextSceneName_;
 	bool isRunningScript_;
 	bool isRequestStopScript_;
 	ListUniqueIDManager uniqueIdManager_;

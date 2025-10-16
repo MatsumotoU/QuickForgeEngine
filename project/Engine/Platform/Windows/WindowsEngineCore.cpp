@@ -101,6 +101,9 @@ void WindowsEngineCore::Initialize() {
 
 	colliderManager_ = ColliderManager::GetInstance();
 	colliderManager_->Initialize();
+
+	multiThreadTaskExecutor_ = MultiThreadTaskExecutor::GetInstance();
+	multiThreadTaskExecutor_->Initialize();
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -126,6 +129,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	multiThreadTaskExecutor_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();
 	luaScriptResourceManager_->Finalize();
@@ -172,4 +176,5 @@ void WindowsEngineCore::Draw() {
 	assetManager_->EndFrame();
 	luaScriptResourceManager_->EndFrame();
 	sceneManager_->EndFrame();
+	multiThreadTaskExecutor_->FrameEnd();
 }

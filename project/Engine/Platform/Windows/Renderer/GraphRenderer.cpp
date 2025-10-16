@@ -312,6 +312,9 @@ void GraphRenderer::DrawSphere(Vector3 center, float radius, const Vector4& colo
 
 void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision) {
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	if (!entityManager->HasComponent<Transform>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId())) {
+		return;
+	}
 	Transform& camTransform = 
 		entityManager->GetComponent<Transform>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId());
 

@@ -54,9 +54,14 @@ function Init()
     linkID = GetEntity(mapObjName)
     DebugLog("LinkedID:"..linkID)
     DebugLog("StartLoadMapData")
+    DebugLog(generatorMapScriptName)
+    DebugLog(varMapName)
+
     map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
     for z = 1,#map do
+        DebugLog("Map:"..z)
        DebugLog(map[z][1])
+       
     end
 
     -- 最大の敵の数を初期化

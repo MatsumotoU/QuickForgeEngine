@@ -106,21 +106,29 @@ void DebugLog(const std::string& message, const LogLevel& logLevel, const std::s
 	}
 }
 
+void AppendLuaValueToString(const sol::object& v, std::string& msg) {
+	if (v.is<std::string>()) {
+		msg += v.as<std::string>();
+	} else if (v.is<double>()) {
+		msg += std::to_string(v.as<double>());
+	} else if (v.is<int>()) {
+		msg += std::to_string(v.as<int>());
+	} else if (v.is<bool>()) {
+		msg += v.as<bool>() ? "true" : "false";
+	} else if (v.is<sol::table>()) {
+		AppendLuaValueToString(v.as<sol::table>(), msg);
+	} else if (v.is<sol::nil_t>()) {
+		msg += "nil";
+	} else {
+		msg += "<unsupported type>";
+	}
+}
+
 void DebugLogLua(sol::variadic_args va) {
 	std::string msg;
 	for (auto&& v : va) {
-		if (v.is<std::string>()) {
-			msg += v.as<std::string>();
-		} else if (v.is<double>()) {
-			msg += std::to_string(v.as<double>());
-		} else if (v.is<int>()) {
-			msg += std::to_string(v.as<int>());
-		} else if (v.is<bool>()) {
-			msg += v.as<bool>() ? "true" : "false";
-		} else {
-			msg += "<unsupported type>";
-		}
+		AppendLuaValueToString(v, msg);
 		msg += " ";
 	}
-	DebugLog(msg,LogLevel::EditorInfo);
+	DebugLog(msg, LogLevel::EditorInfo);
 }

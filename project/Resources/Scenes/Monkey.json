@@ -59,31 +59,19 @@
             }
         },
         {
-            "SceneObjectData": {
-                "name": "EmptyObject",
-                "tag": "Untagged",
-                "uniqueId": 4
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "monkey.obj"
             },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 0,
-                        "intParams": {
-                            "DIK_A": 30,
-                            "DIK_D": 32,
-                            "DIK_S": 31,
-                            "DIK_SPACE": 57,
-                            "DIK_W": 17
-                        },
-                        "priority": 0,
-                        "scriptName": "RunTimeSceneLoad.lua",
-                        "stringParams": {
-                            "sceneName": "Monkey.json"
-                        }
-                    }
-                ]
+            "SceneObjectData": {
+                "name": "monkey.obj",
+                "tag": "Untagged",
+                "uniqueId": 3
             },
             "Transform": {
                 "rotate": [
@@ -104,5 +92,5 @@
             }
         }
     ],
-    "sceneName": "NewScene"
+    "sceneName": "Monkey"
 }
