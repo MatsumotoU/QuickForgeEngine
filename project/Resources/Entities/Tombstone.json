@@ -1,0 +1,90 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            6.635435104370117,
+            3.40000057220459,
+            2.640949010848999,
+            7.635435104370117,
+            4.399999618530273,
+            3.640948534011841
+        ],
+        "isDraw": true,
+        "isStatic": true,
+        "isTrigger": false
+    },
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 20.0,
+        "isGravity": true,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "Tombstone",
+        "tag": "Untagged",
+        "uniqueId": 781
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "breakMaxTime": 1.0
+                },
+                "handle": 506,
+                "intParams": {
+                    "maxBreakNockbackCount": 2
+                },
+                "priority": 0,
+                "scriptName": "TombstoneBehavior.lua",
+                "stringParams": {
+                    "slowObjName": "SlowArea.json"
+                }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 507,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "Ground0.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            7.135435104370117,
+            3.9000000953674316,
+            3.14094877243042
+        ]
+    }
+}

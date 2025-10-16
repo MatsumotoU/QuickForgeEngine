@@ -33,8 +33,7 @@ void SceneManager::Initalize() {
 	isRequestStopScript_ = false;
 	isRunningScript_ = false;
 	isRequestRunTimeLoadScene_ = false;
-
-	lastSceneName_.clear();
+	isFirstLoadScene_ = false;
 
 	// SceneConfig.jsonの読み込み
 	sceneConfig_ = nlohmann::json::object();
@@ -55,21 +54,29 @@ void SceneManager::Initalize() {
 #endif // _DEBUG
 	}
 
-	// 最後に開いたシーンをロード
-	if (sceneConfig_.contains("lastScene")) {
-		try {
-			LoadScene(sceneConfig_["lastScene"].get<std::string>());
-		}
-		catch (const std::exception& e) {
-#ifdef _DEBUG
-			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // _DEBUG
-		}
-		
-	}
+	
 }
 
 void SceneManager::Update() {
+	// 最後に開いたシーンをロード
+	if (!isFirstLoadScene_) {
+		if (sceneConfig_.contains("lastScene")) {
+			try {
+				LoadScene(sceneConfig_["lastScene"].get<std::string>());
+#ifdef NDEBUG
+				StartScript();
+#endif // _RELEASE
+
+			}
+			catch (const std::exception& e) {
+#ifdef _DEBUG
+				DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+#endif // _DEBUG
+			}
+		}
+		isFirstLoadScene_ = true;
+	}
+
 	if (isRequestRunTimeLoadScene_) {
 		LoadScene(nextSceneName_);
 		StartScript();
@@ -229,10 +236,7 @@ void SceneManager::EndFrame() {
 	if (isRequestStopScript_) {
 		if (isRunningScript_) {
 			isRunningScript_ = false;
-			if (lastSceneName_.empty()) {
-				lastSceneName_ = currentScene_->GetSceneName();
-			}
-			LoadScene(lastSceneName_);
+			LoadScene(currentScene_->GetSceneName());
 		}
 		isRequestStopScript_ = false;
 	}
@@ -367,10 +371,6 @@ void SceneManager::RunTimeSwapScene(const std::string& sceneName) {
 	StopScript();
 	isRequestRunTimeLoadScene_ = true;
 	nextSceneName_ = sceneName;
-}
-
-void SceneManager::SetCurrentSceneName() {
-	lastSceneName_ = currentScene_->GetSceneName();
 }
 
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {

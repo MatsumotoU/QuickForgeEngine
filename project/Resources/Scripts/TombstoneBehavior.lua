@@ -3,7 +3,7 @@
 local isBreak = false
 
 -- 墓石に当たったノックバック回数
-local nockbackCount = 0
+nockbackCount = 0
 -- ノックバックによって墓石が壊れる回数
 maxBreakNockbackCount = 2
 
@@ -20,13 +20,17 @@ slowObjName = "obj"
 --]]
 function Init()
     isBreak = false
+    nockbackCount = 0
+    force.velocity.y = -5.0
 end
 
 --[[
     更新処理
 --]]
 function Update()
-
+    if maxBreakNockbackCount > 0 then
+        transform.scale.y = (maxBreakNockbackCount - nockbackCount) / maxBreakNockbackCount
+    end
 end
 
 function OnCollisionEnter(id,obj)
@@ -36,18 +40,18 @@ function OnCollisionEnter(id,obj)
         CreateEntity(slowObjName,transform)
         destroy()
     else
-        if obj.tag == "Player" then
+        if obj.tag == "player" then
             -- プレイヤーの位置を取得
             local playerTransform = GetTransform(id)
 
             -- プレイヤーがブロックに触れている時
             if transform.translate.x >= playerTransform.translate.x then
                 breakTimer = breakTimer + 1.0 / (60.0 * breakMaxTime)
+                transform.rotate.y = transform.rotate.y + breakTimer
                 -- 時間がたったら壊れる
                 if breakTimer >= 1.0 then
                     isBreak = true
                 end
-
             end         
         end
     end
@@ -60,21 +64,23 @@ function OnCollisionStay(id,obj)
     end
 
     -- 弾を打たれた時
-    if obj.tag == "Bullet" then
+    if obj.tag == "bullet" then
         isBreak = true
     end
 
     -- ノックバック攻撃を食らった時
-    if obj.tag == "Player" then
-        -- プレイヤーの位置を取得
-        local playerTransform = GetTransform(id)
-
-        if transform.translate.x <= playerTransform.translate.x then
-            nockbackCount = nockbackCount + 1
-            -- ノックバック回数
-            if nockbackCount >= maxBreakNockbackCount then
-                isBreak = true
-            end
-        end         
+    if obj.tag == "player" then
+        -- プレイヤーがノックバックしているなら
+        local isKB = GetEntityScriptGlobal(id,"BulletShot.lua","isKnockback")
+        if not isKB then
+            return
+        end
+        
+        -- ノックバックできる回数減少
+        nockbackCount = nockbackCount + 1
+        -- ノックバック回数
+        if nockbackCount >= maxBreakNockbackCount then
+            isBreak = true
+        end       
     end
 end

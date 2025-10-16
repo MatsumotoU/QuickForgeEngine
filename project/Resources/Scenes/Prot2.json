@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6813909411430359,
-                    0.027498766779899597,
+                    0.5165871381759644,
+                    0.0089865168556571,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -0.4978370666503906,
-                    14.68353271484375,
-                    -18.099414825439453
+                    -0.15406611561775208,
+                    9.73867130279541,
+                    -17.143680572509766
                 ]
             }
         },
@@ -40,10 +40,27 @@
                 "tag": "camera",
                 "uniqueId": 1
             },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "offsetX": 1.0
+                        },
+                        "handle": 0,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "CameraMove.lua",
+                        "stringParams": {
+                            "targetObjName": "ShotGunPlayer"
+                        }
+                    }
+                ]
+            },
             "Transform": {
                 "rotate": [
-                    0.10000000149011612,
-                    0.0,
+                    0.8999999761581421,
+                    -0.10000000149011612,
                     0.0
                 ],
                 "scale": [
@@ -52,9 +69,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    1.5,
-                    -10.0
+                    7.400000095367432,
+                    20.700000762939453,
+                    -11.399999618530273
                 ]
             }
         },
@@ -96,10 +113,11 @@
                         "floatParams": {
                             "backSpeed": 8.0,
                             "minVelocity": 6.0,
-                            "moveSpeed": 7.0
+                            "moveSpeed": 8.5
                         },
-                        "handle": 0,
+                        "handle": 1,
                         "intParams": {},
+                        "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
                         "stringParams": {}
                     },
@@ -109,16 +127,28 @@
                             "diffusionRate": 0.5,
                             "knockBack": 10.0,
                             "knockBackPower": 10.0,
-                            "maxShotInterval": 0.5
+                            "maxShotInterval": 0.30000001192092896
                         },
-                        "handle": 1,
+                        "handle": 2,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
                             "shotNum": 3
                         },
+                        "priority": 0,
                         "scriptName": "BulletShot.lua",
                         "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 3,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "HitPoint.lua",
+                        "stringParams": {
+                            "damageTag": "Enemy"
+                        }
                     }
                 ]
             },
@@ -127,27 +157,27 @@
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    -5.0,
-                    0.0,
-                    0.0,
+                    3.0255227088928223,
+                    1.2449007158465974e-07,
+                    2.304914712905884,
                     0.6000000238418579
                 ]
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    1.600000023841858,
+                    0.0,
                     0.0
                 ],
                 "scale": [
+                    0.9999999403953552,
                     1.0,
-                    1.0,
-                    1.0
+                    0.9999999403953552
                 ],
                 "translate": [
-                    -5.0,
-                    0.0,
-                    0.0
+                    3.0255227088928223,
+                    1.2449007158465974e-07,
+                    2.304914712905884
                 ]
             }
         },
@@ -164,7 +194,7 @@
                         "floatParams": {
                             "space": 48.0
                         },
-                        "handle": 2,
+                        "handle": 4,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -175,12 +205,58 @@
                             "numMax": 3,
                             "objectUniqeID": 1
                         },
+                        "priority": 0,
                         "scriptName": "BulletNumUI.lua",
                         "stringParams": {
                             "objectName": "ShotGunPlayer",
                             "scriptName": "BulletShot.lua",
                             "uiObjName": "ShotGunSallUI.json",
                             "varName": "bullets"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    32.0,
+                    32.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "MapGenerater",
+                "tag": "Untagged",
+                "uniqueId": 9
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 5,
+                        "intParams": {
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17
+                        },
+                        "priority": 0,
+                        "scriptName": "MapGenerater.lua",
+                        "stringParams": {
+                            "wallObjName": "Wall.json"
                         }
                     }
                 ]
@@ -204,26 +280,17 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "ShotGunEnemy",
-                "tag": "enemy",
-                "uniqueId": 160
+                "name": "EnemyGenerater",
+                "tag": "Untagged",
+                "uniqueId": 7
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 3,
+                        "handle": 6,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -231,20 +298,18 @@
                             "DIK_SPACE": 57,
                             "DIK_W": 17
                         },
-                        "scriptName": "ShotGunEnemy.lua",
-                        "stringParams": {}
+                        "priority": 10,
+                        "scriptName": "EnemyGenerater.lua",
+                        "stringParams": {
+                            "floatyEnemyName": "FloatyEnemy.json",
+                            "generatorMapScriptName": "MapGenerater.lua",
+                            "lockOnEnemyName": "LockOnEnemy.json",
+                            "mapObjName": "MapGenerater",
+                            "playerName": "ShotGunPlayer.json",
+                            "sliderEnemyName": "SliderEnemy.json",
+                            "varMapName": "map"
+                        }
                     }
-                ]
-            },
-            "SphereColliderData": {
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    5.0,
-                    0.0,
-                    0.0,
-                    0.800000011920929
                 ]
             },
             "Transform": {
@@ -259,7 +324,7 @@
                     1.0
                 ],
                 "translate": [
-                    5.0,
+                    0.0,
                     0.0,
                     0.0
                 ]

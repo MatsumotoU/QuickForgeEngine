@@ -3,7 +3,6 @@ backSpeed = 5.0
 local objectDir = Vector3.new(0.0,0.0,0.0)
 isBackFriping = false
 minVelocity = 1.0
-hp = 100
 
 function Init()
 objectDir.x = 0.0
@@ -13,11 +12,6 @@ isBackFriping = false
 end
 
 function Update()
-    -- 死亡処理
-    if hp <= 0 then
-        return
-    end
-
     -- 接地処理
     if transform.translate.y <= 0.0 then
         transform.translate.y = 0.0
@@ -85,10 +79,15 @@ function OnCollisionStay(id,obj)
         return
     end
 
-    if obj.tag == "enemy" then
-        if force.velocity:Length() >= minVelocity then
-           force.velocity.x = 0.0
-           force.velocity.z = 0.0
-        end
+    if obj.tag == "bullet" then
+        return
     end
+
+    if force.velocity:Length() >= minVelocity then
+        force.velocity.x = 0.0
+        force.velocity.z = 0.0
+        force.acceleration.x = 0.0
+        force.acceleration.z = 0.0
+    end
+
 end

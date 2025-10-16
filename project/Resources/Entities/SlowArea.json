@@ -1,0 +1,60 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "anchor.obj"
+    },
+    "SceneObjectData": {
+        "name": "SlowArea",
+        "tag": "Untagged",
+        "uniqueId": 1031
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "lifeSpan": 5.0,
+                    "maxLifeSpan": 5.0
+                },
+                "handle": 48,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "LifespanEntity.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": true,
+        "sphere": [
+            0.0,
+            0.0,
+            0.0,
+            2.0
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

@@ -16,7 +16,9 @@ end
 end
 
 function OnCollisionEnter(id,obj)
-    if obj.tag == "enemy" then
-        destroy()
+    if obj.tag == "bullet" or obj.tag == "player" then
+        return
     end
+
+    destroy()
 end

@@ -115,8 +115,6 @@ void AppendLuaValueToString(const sol::object& v, std::string& msg) {
 		msg += std::to_string(v.as<int>());
 	} else if (v.is<bool>()) {
 		msg += v.as<bool>() ? "true" : "false";
-	} else if (v.is<sol::table>()) {
-		AppendLuaValueToString(v.as<sol::table>(), msg);
 	} else if (v.is<sol::nil_t>()) {
 		msg += "nil";
 	} else {

@@ -62,26 +62,36 @@
             "SceneObjectData": {
                 "name": "EmptyObject",
                 "tag": "Untagged",
-                "uniqueId": 4
+                "uniqueId": 3
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 3,
-                        "intParams": {
-                            "DIK_A": 30,
-                            "DIK_D": 32,
-                            "DIK_S": 31,
-                            "DIK_SPACE": 57,
-                            "DIK_W": 17
-                        },
+                        "handle": 0,
+                        "intParams": {},
                         "priority": 0,
-                        "scriptName": "RunTimeSceneLoad.lua",
-                        "stringParams": {
-                            "sceneName": "Monkey.json"
-                        }
+                        "scriptName": "Fuck.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 1,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TestMove.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 2,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "HitPoint.lua",
+                        "stringParams": {}
                     }
                 ]
             },

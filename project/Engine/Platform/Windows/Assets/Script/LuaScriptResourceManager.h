@@ -34,6 +34,7 @@ public:
 	LuaScriptOnQFE* GetScript(uint32_t handle) const;
 	std::set<std::string>& GetScriptGlobals(uint32_t entityId) const;
 	sol::object GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName,sol::state_view callScriptState);
+	void RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName);
 
 	bool isRunningScript_;
 private:

@@ -6,6 +6,8 @@
 #include <source_location>
 #include <vector>
 #include <sol/sol.hpp>
+#include <string>
+#include <unordered_set>
 
 #include "DesignPatterns/Singleton.h"
 

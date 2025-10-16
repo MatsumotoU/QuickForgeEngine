@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.4088911712169647,
-                    -1.0525010824203491,
+                    0.6704978942871094,
+                    -0.17523853480815887,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    14.754960060119629,
-                    7.360171794891357,
-                    -8.414758682250977
+                    3.4207167625427246,
+                    15.560416221618652,
+                    -19.320119857788086
                 ]
             }
         },
@@ -59,235 +59,6 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "LockOnEnemy",
-                "tag": "Enemy",
-                "uniqueId": 3
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {
-                            "isAlive": true
-                        },
-                        "floatParams": {
-                            "speed": 0.6000000238418579
-                        },
-                        "handle": 200,
-                        "intParams": {
-                            "DIK_A": 30,
-                            "DIK_D": 32,
-                            "DIK_S": 31,
-                            "DIK_SPACE": 57,
-                            "DIK_W": 17
-                        },
-                        "priority": 0,
-                        "scriptName": "LockOnEnemyMove.lua",
-                        "stringParams": {
-                            "LockOnObjName": "Aoi"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 201,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "EnemyCollsionBehavior.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    -1.8005831241607666,
-                    0.0,
-                    -2.8059301376342773,
-                    0.699999988079071
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -1.8005831241607666,
-                    0.0,
-                    -2.8059301376342773
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    0.07253885269165039,
-                    1.0,
-                    0.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "SliderEnemy",
-                "tag": "Enemy",
-                "uniqueId": 4
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "maxMove": 0.5,
-                            "minMove": 0.20000000298023224,
-                            "moveTime": 2.0
-                        },
-                        "handle": 202,
-                        "intParams": {
-                            "DIK_A": 30,
-                            "DIK_D": 32,
-                            "DIK_S": 31,
-                            "DIK_SPACE": 57,
-                            "DIK_W": 17
-                        },
-                        "priority": 0,
-                        "scriptName": "SliderEnemyMove.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 203,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "EnemyCollsionBehavior.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    -1.6289875507354736,
-                    0.0,
-                    0.0,
-                    0.699999988079071
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -1.6289875507354736,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    0.787564754486084,
-                    1.0,
-                    0.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "FloatyEnemy",
-                "tag": "Enemy",
-                "uniqueId": 5
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "lifeTime": 5.0,
-                            "speed": 0.5
-                        },
-                        "handle": 204,
-                        "intParams": {
-                            "DIK_A": 30,
-                            "DIK_D": 32,
-                            "DIK_S": 31,
-                            "DIK_SPACE": 57,
-                            "DIK_W": 17
-                        },
-                        "priority": 0,
-                        "scriptName": "FloatyEnemyMove.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 205,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "EnemyCollsionBehavior.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    -0.18314886093139648,
-                    0.0,
-                    0.0,
-                    0.699999988079071
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -0.18314886093139648,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
             "SceneObjectData": {
                 "name": "EnemyGenerater",
                 "tag": "Untagged",
@@ -298,7 +69,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 206,
+                        "handle": 0,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -339,39 +110,6 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "monkey.obj"
-            },
-            "SceneObjectData": {
-                "name": "Aoi",
-                "tag": "Player",
-                "uniqueId": 8
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    1.600000023841858,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -4.199999809265137,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
             "SceneObjectData": {
                 "name": "MapGenerater",
                 "tag": "Untagged",
@@ -382,7 +120,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 207,
+                        "handle": 1,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -413,6 +151,85 @@
                     0.0,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 10.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Arrow.obj"
+            },
+            "SceneObjectData": {
+                "name": "ShotGunPlayer",
+                "tag": "Untagged",
+                "uniqueId": 499
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "backSpeed": 8.0,
+                            "minVelocity": 6.0,
+                            "moveSpeed": 7.0
+                        },
+                        "handle": 2,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShotGunPlayer.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "diffusionRate": 0.5,
+                            "knockBack": 10.0,
+                            "knockBackPower": 10.0
+                        },
+                        "handle": 3,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -3.1415822505950928,
+                    1.5415942668914795,
+                    -3.1415822505950928
+                ],
+                "scale": [
+                    0.9999999403953552,
+                    1.0,
+                    0.9999999403953552
+                ],
+                "translate": [
+                    2.337099552154541,
+                    1.2169130059191957e-07,
+                    3.5280673503875732
                 ]
             }
         }

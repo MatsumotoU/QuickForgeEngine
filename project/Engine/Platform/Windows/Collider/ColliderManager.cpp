@@ -105,7 +105,6 @@ void ColliderManager::SphereToSphereUpdate() {
 			uint32_t idB = entityIds[j];
 			SphereColliderData& colliderB = entityManager->GetComponent<SphereColliderData>(idB);
 			if (isCollision(colliderA.sphere, colliderB.sphere)) {
-#ifdef _DEBUG
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
 				// SceneObjectData取得
 				if (!entityManager->HasComponent<SceneObjectData>(idA) ||
@@ -156,7 +155,6 @@ void ColliderManager::SphereToSphereUpdate() {
 				} else if (colliderA.isStatic == true && colliderB.isStatic == false) {
 					transformB.translate -= length;
 				}
-#endif // _DEBUG
 			}
 		}
 	}
@@ -192,7 +190,6 @@ void ColliderManager::AABBToAABBUpdate() {
 			uint32_t idB = entityIds[j];
 			AABBColliderData& colliderB = entityManager->GetComponent<AABBColliderData>(idB);
 			if (isCollision(colliderA.aabb, colliderB.aabb)) {
-#ifdef _DEBUG
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
 				// SceneObjectData取得
 				if (!entityManager->HasComponent<SceneObjectData>(idA) ||
@@ -268,7 +265,6 @@ void ColliderManager::AABBToAABBUpdate() {
 				} else if (colliderA.isStatic && !colliderB.isStatic) {
 					transformB.translate += push;
 				}
-#endif // _DEBUG
 			}
 		}
 	}
@@ -320,7 +316,6 @@ void ColliderManager::SphereToAABBUpdate() {
 			uint32_t aabbId = aabbEntityIds[j];
 			AABBColliderData& aabbCollider = entityManager->GetComponent<AABBColliderData>(aabbId);
 			if (isCollision(sphereCollider.sphere, aabbCollider.aabb)) {
-#ifdef _DEBUG
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
 				// SceneObjectData取得
 				if (!entityManager->HasComponent<SceneObjectData>(sphereId) ||
@@ -389,7 +384,6 @@ void ColliderManager::SphereToAABBUpdate() {
 				} else if (sphereCollider.isStatic && !aabbCollider.isStatic) {
 					transformB.translate += push;
 				}
-#endif // _DEBUG
 			}
 		}
 	}
