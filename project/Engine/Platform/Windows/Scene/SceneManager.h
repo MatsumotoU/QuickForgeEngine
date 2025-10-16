@@ -30,6 +30,8 @@ public:
 	void ResetScene();
 	void RunTimeSwapScene(const std::string& sceneName);
 
+	void SetCurrentSceneName();
+
 	// ここにいるべきじゃない
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName);
 	void ParentChild(uint32_t parentId, uint32_t childId);	
@@ -55,6 +57,7 @@ private:
 	std::unique_ptr<IScene> nextScene_;
 	bool isRequestRunTimeLoadScene_;
 	std::string nextSceneName_;
+	std::string lastSceneName_;
 	bool isRunningScript_;
 	bool isRequestStopScript_;
 	ListUniqueIDManager uniqueIdManager_;

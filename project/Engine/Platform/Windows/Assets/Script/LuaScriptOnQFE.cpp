@@ -337,7 +337,15 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		}
 	);
 
-	luaState_->set_function("CreateEntity", [](const std::string& entityName,const Transform& transform) {
+	luaState_->set_function("CreateEntity", [this](const std::string& entityName,const Transform& transform) {
+#ifdef _DEBUG
+		DebugLog(
+			"ID: " + std::to_string(this->GetBindEntityId()) + 
+			"CallScript: " + this->GetScriptName() + 
+			"Create Entity: " + entityName, LogLevel::EditorInfo);
+#endif // _DEBUG
+
+
 		uint32_t id = SceneManager::GetInstance()->RunTimeAddEntity(entityName);
 		AssetManager* assetManager = AssetManager::GetInstance();
 		EntityManager* entityManager = assetManager->GetEntityManager();
@@ -373,7 +381,15 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		"z", &Vector3::z,
 
 		"Length", &Vector3::Length,
-		"Normalize", sol::resolve<Vector3() const>(&Vector3::Normalize)
+		"Normalize", sol::resolve<Vector3() const>(&Vector3::Normalize),
+
+		sol::meta_function::addition, [](const Vector3& a, const Vector3& b) { return a + b; },
+		sol::meta_function::subtraction, [](const Vector3& a, const Vector3& b) { return a - b; },
+		sol::meta_function::unary_minus, [](const Vector3& v) { return -v; },
+		sol::meta_function::multiplication, [](const Vector3& v, float scalar) { return v * scalar; },
+		sol::meta_function::multiplication, [](float scalar, const Vector3& v) { return v * scalar; },
+		sol::meta_function::multiplication, [](const Vector3& a, const Vector3& b) { return Vector3(a.x * b.x, a.y * b.y, a.z * b.z); },
+		sol::meta_function::division, [](const Vector3& v, float scalar) { return v / scalar; }
 	);
 	luaState_->new_usertype<Vector4>("Vector4",
 		sol::constructors<Vector4(), Vector4(float, float, float, float)>(),

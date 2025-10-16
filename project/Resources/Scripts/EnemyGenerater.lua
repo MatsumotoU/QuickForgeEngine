@@ -212,6 +212,7 @@ function SpawnManager(cameraRightEdgeX)
             tmpTransform.translate.y = 0.0
             tmpTransform.translate.z = position.z
             -- 敵を生成する
+            DebugLog("SpawnEnemyName: ".. spawnEnemisList[i].name)
             SpawnEnemy(spawnEnemisList[i].name,tmpTransform)
         end
     end

@@ -34,6 +34,8 @@ void SceneManager::Initalize() {
 	isRunningScript_ = false;
 	isRequestRunTimeLoadScene_ = false;
 
+	lastSceneName_.clear();
+
 	// SceneConfig.jsonの読み込み
 	sceneConfig_ = nlohmann::json::object();
 	try {
@@ -227,7 +229,10 @@ void SceneManager::EndFrame() {
 	if (isRequestStopScript_) {
 		if (isRunningScript_) {
 			isRunningScript_ = false;
-			LoadScene(currentScene_->GetSceneName());
+			if (lastSceneName_.empty()) {
+				lastSceneName_ = currentScene_->GetSceneName();
+			}
+			LoadScene(lastSceneName_);
 		}
 		isRequestStopScript_ = false;
 	}
@@ -362,6 +367,10 @@ void SceneManager::RunTimeSwapScene(const std::string& sceneName) {
 	StopScript();
 	isRequestRunTimeLoadScene_ = true;
 	nextSceneName_ = sceneName;
+}
+
+void SceneManager::SetCurrentSceneName() {
+	lastSceneName_ = currentScene_->GetSceneName();
 }
 
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
