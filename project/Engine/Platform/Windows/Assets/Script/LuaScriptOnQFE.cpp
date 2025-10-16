@@ -18,6 +18,7 @@ LuaScriptOnQFE::LuaScriptOnQFE() {
 	isCanRun_ = false;
 	scriptName_ = "";
 	bindEntityId_ = 0;
+	priority_ = 0;
 	defaultGlobals.clear();
 	UserGlobals.clear();
 }
@@ -330,8 +331,9 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	);
 
 	luaState_->set_function("GetEntityScriptGlobal",
-		[](uint32_t entityId, const std::string& scriptName, const std::string& varName) {
-			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName);
+		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::this_state ts) {
+			sol::state_view callerState(ts);
+			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
 		}
 	);
 
@@ -349,6 +351,10 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	// GlobalValue
 	luaState_->set_function("destroy", [this]() {
 		AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(this->GetBindEntityId());
+		});
+
+	luaState_->set_function("LoadScene", [](const std::string& sceneName) {
+		SceneManager::GetInstance()->RunTimeSwapScene(sceneName);
 		});
 
 	// Math

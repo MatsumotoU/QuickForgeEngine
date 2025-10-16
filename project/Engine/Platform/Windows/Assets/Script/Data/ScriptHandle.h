@@ -5,6 +5,7 @@
 
 struct LuaHandle {
 	std::string scriptName_;
+	uint32_t priority_ = 0;
 	std::unordered_map<std::string, int> intParams_;
 	std::unordered_map<std::string, float> floatParams_;
 	std::unordered_map<std::string, bool> boolParams_;
@@ -28,6 +29,7 @@ public:
 			shJson["floatParams"] = scriptHandle.floatParams_;
 			shJson["boolParams"] = scriptHandle.boolParams_;
 			shJson["stringParams"] = scriptHandle.stringParams_;
+			shJson["priority"] = scriptHandle.priority_;
 			json["scriptHandles"].push_back(shJson);
 		}
 		return json;
@@ -54,6 +56,9 @@ public:
 				}
 				if (shJson.contains("stringParams") && shJson["stringParams"].is_object()) {
 					sh.stringParams_ = shJson["stringParams"].get<std::unordered_map<std::string, std::string>>();
+				}
+				if (shJson.contains("priority") && shJson["priority"].is_number_unsigned()) {
+					sh.priority_ = shJson["priority"].get<uint32_t>();
 				}
 				scriptHandles_.push_back(sh);
 			}

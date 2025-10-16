@@ -18,7 +18,7 @@ varMapName = "varMapName"
 local linkID = 0
 
 -- 取得したマップ
-local map = {}
+local map = {{},{}}
 -- ブロックの大きさ
 local kBlockSize = 1.0
 
@@ -50,9 +50,6 @@ local currentEnemysCounts = {
 -- 現在の生成されている敵のID
 local enemiesIDList = {}
 
--- マップ
-local map = {}
-
 -- 内部用タイマー(仮)
 local spawnTimer = 0
 local spawnInterval = 3.0
@@ -65,9 +62,14 @@ function Init()
     linkID = GetEntity(mapObjName)
     DebugLog("LinkedID:"..linkID)
     DebugLog("StartLoadMapData")
+    DebugLog(generatorMapScriptName)
+    DebugLog(varMapName)
+
     map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
     for z = 1,#map do
+        DebugLog("Map:"..z)
        DebugLog(map[z][1])
+       
     end
 
     DebugLog("EnemyGeneratorInit")

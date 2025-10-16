@@ -141,6 +141,7 @@ void InspectorView::Draw() {
 					ImGui::Text("Handle: %d", sh.handle_);
 					ImGui::Text("Entity ID: %d", script->GetBindEntityId());
 					ImGui::Text("Can Run: %s", script->IsCanRun() ? "True" : "False");
+					ImGui::DragInt("Priority", reinterpret_cast<int*>(&sh.priority_), 1, 0);
 					ImGui::Separator();
 					for (std::string& val : script->GetGlobalValuesList()) {
 						std::string inputLabel = val + "##" + std::to_string(i);

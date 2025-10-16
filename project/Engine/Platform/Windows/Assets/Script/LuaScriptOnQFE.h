@@ -58,10 +58,12 @@ public:
 	bool IsAliveEntity();
 
 	void SetEntityValue(uint32_t entityId);
+	void SetPriority(uint32_t priority) { priority_ = priority; }
 	uint32_t GetBindEntityId() const { return bindEntityId_; }
 	std::vector<std::string> GetGlobalValuesList() const;
 	std::set<std::string>& GetGlobals() { return UserGlobals; }
 	std::string GetScriptName() const { return scriptName_; }
+	uint32_t GetPriority() const { return priority_; }
 
 private:
 	/// QFE用の関数を登録
@@ -69,6 +71,7 @@ private:
 
 	bool isCanRun_;
 	uint32_t bindEntityId_;
+	uint32_t priority_;
 	std::string scriptName_;
 	std::set<std::string> defaultGlobals;
 	std::set<std::string> UserGlobals;

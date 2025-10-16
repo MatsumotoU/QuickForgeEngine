@@ -43,5 +43,9 @@ private:
 /// </summary>
 /// <param name="message"></param>
 void DebugLog(const std::string& message,const LogLevel& logLevel = LogLevel::EngineInfo, const std::source_location& location = std::source_location::current());
+
+// Luaの値を文字列に変換して追加する関数
+void AppendLuaValueToString(const sol::object& v, std::string& msg);
+
 // 文字列・数値どちらも受け取れるラッパー関数
 void DebugLogLua(sol::variadic_args va);

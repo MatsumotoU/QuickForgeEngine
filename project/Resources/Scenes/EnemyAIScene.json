@@ -90,6 +90,7 @@
                             "DIK_SPACE": 57,
                             "DIK_W": 17
                         },
+                        "priority": 0,
                         "scriptName": "LockOnEnemyMove.lua",
                         "stringParams": {
                             "LockOnObjName": "Aoi"
@@ -100,12 +101,14 @@
                         "floatParams": {},
                         "handle": 1,
                         "intParams": {},
+                        "priority": 0,
                         "scriptName": "EnemyCollsionBehavior.lua",
                         "stringParams": {}
                     }
                 ]
             },
             "SphereColliderData": {
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -165,6 +168,7 @@
                             "DIK_SPACE": 57,
                             "DIK_W": 17
                         },
+                        "priority": 0,
                         "scriptName": "SliderEnemyMove.lua",
                         "stringParams": {}
                     },
@@ -173,12 +177,14 @@
                         "floatParams": {},
                         "handle": 3,
                         "intParams": {},
+                        "priority": 0,
                         "scriptName": "EnemyCollsionBehavior.lua",
                         "stringParams": {}
                     }
                 ]
             },
             "SphereColliderData": {
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -237,6 +243,7 @@
                             "DIK_SPACE": 57,
                             "DIK_W": 17
                         },
+                        "priority": 0,
                         "scriptName": "FloatyEnemyMove.lua",
                         "stringParams": {}
                     },
@@ -245,12 +252,14 @@
                         "floatParams": {},
                         "handle": 5,
                         "intParams": {},
+                        "priority": 0,
                         "scriptName": "EnemyCollsionBehavior.lua",
                         "stringParams": {}
                     }
                 ]
             },
             "SphereColliderData": {
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -297,6 +306,7 @@
                             "DIK_SPACE": 57,
                             "DIK_W": 17
                         },
+                        "priority": 10,
                         "scriptName": "EnemyGenerater.lua",
                         "stringParams": {
                             "floatyEnemyName": "FloatyEnemy.json",
@@ -380,6 +390,7 @@
                             "DIK_SPACE": 57,
                             "DIK_W": 17
                         },
+                        "priority": 0,
                         "scriptName": "MapGenerater.lua",
                         "stringParams": {
                             "wallObjName": "Wall.json"
