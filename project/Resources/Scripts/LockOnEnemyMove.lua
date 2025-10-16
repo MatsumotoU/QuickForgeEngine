@@ -5,19 +5,38 @@ local id = 0
 
 -- 速度
 speed = 0.2
+-- スロー速度
+local slowSpeed = 0.0
+-- 適応する速度
+local nowSpeed = 0.0
 
 -- 移動量
 move = Vector3.new(0.0,0.0,0.0)
 
+-- ヒットフラグ
+local isHit = false
+
 function Init()
 id = GetEntity(LockOnObjName)
+-- スロー速度を求める
+slowSpeed = speed * 0.5
 end
 
 function Update()
+
+    if isHit then
+        nowSpeed = slowSpeed
+    else
+        nowSpeed = speed
+    end
+
     -- 目的の位置を取得
-    targetTransform = GetTransform(id)
+    local targetTransform = GetTransform(id)
     targetTransform.translate.y = 0.0
-    dir = targetTransform.translate - transform.translate
+    local dir = Vector3.new(0.0,0.0,0.0)
+    dir.x = targetTransform.translate.x - transform.translate.x
+    dir.y = targetTransform.translate.y - transform.translate.y
+    dir.z = targetTransform.translate.z - transform.translate.z
 
     -- 距離を求める
     local distance = dir:Length()
@@ -26,12 +45,26 @@ function Update()
         -- 正規化する
         dir:Normalize()
         -- 移動量を取得
-        move = dir * speed
+        move.x = dir.x * nowSpeed
+        move.y = dir.y * nowSpeed
+        move.z = dir.z * nowSpeed
         -- 移動
-        transform.translate = transform.translate + move
+        transform.translate.x = transform.translate.x + move.x
+        transform.translate.y = transform.translate.y + move.y
+        transform.translate.z = transform.translate.z + move.z
     else
         -- 移動
-        transform.translate = transform.translate + move
+        transform.translate.x = transform.translate.x + move.x
+        transform.translate.y = transform.translate.y + move.y
+        transform.translate.z = transform.translate.z + move.z
     end
 
+    isHit = false
+end
+
+function OnCollisionEnter(id,obj)
+
+    if obj.tag == "SlowArea" then
+        isHit = true
+    end
 end

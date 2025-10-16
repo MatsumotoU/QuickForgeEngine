@@ -35,17 +35,9 @@ maxDifficulty = 5
 local currentDifficulty = 0
 
 -- 各敵の最大数
-local maxEnemysCounts = {
-    {name = lockOnEnemyName,maxCount = 2},
-    {name = sliderEnemyName,maxCount = 3},
-    {name = floatyEnemyName,maxCount = 3}
-}
+local maxEnemysCounts = {}
 -- 各敵の現在数
-local currentEnemysCounts = {
-    {name = lockOnEnemyName,difficulty = 2,count = 0},
-    {name = sliderEnemyName,difficulty = 1,count = 0},
-    {name = floatyEnemyName,difficulty = 1,count = 0}
-}
+local currentEnemysCounts = {}
 
 -- 現在の生成されている敵のID
 local enemiesIDList = {}
@@ -70,6 +62,19 @@ function Init()
         DebugLog("Map:"..z)
        DebugLog(map[z][1])
        
+    end
+
+    -- 最大の敵の数を初期化
+    table.insert(maxEnemysCounts,{name = lockOnEnemyName,maxCount = 2})
+    table.insert(maxEnemysCounts,{name = sliderEnemyName,maxCount = 3})
+    table.insert(maxEnemysCounts,{name = floatyEnemyName,maxCount = 3})
+    -- 現在の敵の数を初期化
+    table.insert(currentEnemysCounts,{name = lockOnEnemyName,difficulty = 2,count = 0})
+    table.insert(currentEnemysCounts,{name = sliderEnemyName,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = floatyEnemyName,difficulty = 1,count = 0})
+
+    for i = 1,#currentEnemysCounts do
+        DebugLog("LoadEnemyName :"..currentEnemysCounts[i].name)
     end
 
     DebugLog("EnemyGeneratorInit")
