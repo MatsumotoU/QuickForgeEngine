@@ -69,7 +69,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 0,
+                        "handle": 3,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,

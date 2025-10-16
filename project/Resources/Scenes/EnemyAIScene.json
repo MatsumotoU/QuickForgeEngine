@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.7113913297653198,
-                    -0.022500112652778625,
+                    0.4088911712169647,
+                    -1.0525010824203491,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.31546750664711,
-                    12.086177825927734,
-                    -14.018341064453125
+                    14.754960060119629,
+                    7.360171794891357,
+                    -8.414758682250977
                 ]
             }
         },
@@ -80,9 +80,9 @@
                             "isAlive": true
                         },
                         "floatParams": {
-                            "speed": 0.20000000298023224
+                            "speed": 0.6000000238418579
                         },
-                        "handle": 0,
+                        "handle": 200,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -99,7 +99,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1,
+                        "handle": 201,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyCollsionBehavior.lua",
@@ -112,9 +112,9 @@
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    -2.986881732940674,
+                    -1.8005831241607666,
                     0.0,
-                    0.0,
+                    -2.8059301376342773,
                     0.699999988079071
                 ]
             },
@@ -130,9 +130,9 @@
                     1.0
                 ],
                 "translate": [
-                    -2.986881732940674,
+                    -1.8005831241607666,
                     0.0,
-                    0.0
+                    -2.8059301376342773
                 ]
             }
         },
@@ -160,7 +160,7 @@
                             "minMove": 0.20000000298023224,
                             "moveTime": 2.0
                         },
-                        "handle": 2,
+                        "handle": 202,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -175,7 +175,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 3,
+                        "handle": 203,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyCollsionBehavior.lua",
@@ -235,7 +235,7 @@
                             "lifeTime": 5.0,
                             "speed": 0.5
                         },
-                        "handle": 4,
+                        "handle": 204,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -250,7 +250,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 5,
+                        "handle": 205,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyCollsionBehavior.lua",
@@ -263,7 +263,7 @@
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    0.0,
+                    -0.18314886093139648,
                     0.0,
                     0.0,
                     0.699999988079071
@@ -272,7 +272,7 @@
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -281,7 +281,7 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
+                    -0.18314886093139648,
                     0.0,
                     0.0
                 ]
@@ -298,7 +298,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 6,
+                        "handle": 206,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -382,7 +382,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 7,
+                        "handle": 207,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,

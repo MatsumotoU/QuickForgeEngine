@@ -8,11 +8,14 @@ end
 
 function Update()
 
-    if isAlive then 
+    if not isAlive then 
         destroy()
     end
 end
 
 function OnCollisionEnter(id,obj)
-    isAlive = false
+
+    if obj.tag == "Bullet" then
+        isAlive = false
+    end
 end
