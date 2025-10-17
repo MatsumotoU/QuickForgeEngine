@@ -78,7 +78,7 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 }
 
 uint32_t AssetManager::LoadAudio(const std::string& audioName) {
-	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Audio") + audioName;
+	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Sounds") + audioName;
 	uint32_t handle = audioSourceManager_.LoadSoundData(filePath);
 	return handle;
 }

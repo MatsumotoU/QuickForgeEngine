@@ -105,6 +105,9 @@ void WindowsEngineCore::Initialize() {
 
 	multiThreadTaskExecutor_ = MultiThreadTaskExecutor::GetInstance();
 	multiThreadTaskExecutor_->Initialize();
+
+	audioInterface_ = AudioInterface::GetInstance();
+	audioInterface_->Initialize();
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -130,6 +133,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	audioInterface_->Finalize();
 	multiThreadTaskExecutor_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();

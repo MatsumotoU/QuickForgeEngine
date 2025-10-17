@@ -6,6 +6,7 @@
 #include <chrono>
 #include <nlohmann/json.hpp>
 
+// Core
 #include "Window/GameWindowManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "Graphic/Pipeline/GraphicPipelineManager.h"
@@ -13,18 +14,19 @@
 #include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
 #include "AppUtility/DebugTool/FrameCounter.h"
 #include "Renderer/GraphRenderer.h"
-
 #include "Graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include "Graphic/PostEffect/RendaringPostprocess.h"
-#include "Input/InputInterface.h"
-
 #include "Assets/AssetManager.h"
+
 // なんかAssetsではなさそうなやつら
 #include "Scene/SceneManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
+
+// サブモジュール
+#include "Audio/AudioInterface.h"
+#include "Input/InputInterface.h"
 #include "Physics/PhysicsManager.h"
 #include "Collider/ColliderManager.h"
-
 #include "AppUtility/MultiThreadTaskExecutor.h"
 
 class WindowsEngineCore final : public IEngineCore {
@@ -63,6 +65,7 @@ private:
 	LuaScriptResourceManager* luaScriptResourceManager_;
 	PhysicsManager* physicsManager_;
 	ColliderManager* colliderManager_;
+	IAudioInterface* audioInterface_;
 
 	MultiThreadTaskExecutor* multiThreadTaskExecutor_;
 	nlohmann::json configJson_;

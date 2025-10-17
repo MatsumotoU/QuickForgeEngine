@@ -2,8 +2,10 @@
 #include "IAudioInterface.h"
 #include "Core/XAudioCore.h"
 #include "Player/AudioChipManager.h"
+#include "Utility/DesignPatterns/Singleton.h"
 
-class AudioInterface final : public IAudioInterface {
+class AudioInterface final : public IAudioInterface , public Singleton<AudioInterface>{
+	friend class Singleton<AudioInterface>;
 public:
 	AudioInterface() = default;
 	~AudioInterface() override = default;

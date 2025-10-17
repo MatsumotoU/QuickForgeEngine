@@ -9,6 +9,7 @@ void AudioSourceManager::Initialize() {
 	audioDataMap_.clear();
 	audioHandleMap_.clear();
 	nextHandle_ = 0;
+	Multiaudioloader::Initialize();
 }
 
 uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
@@ -52,6 +53,7 @@ AudioData& AudioSourceManager::GetSoundData(uint32_t handle) {
 }
 
 void AudioSourceManager::Finalize() {
+	Multiaudioloader::Finalize();
 	audioDataMap_.clear();
 	audioHandleMap_.clear();
 }

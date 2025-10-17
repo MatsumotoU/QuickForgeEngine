@@ -21,6 +21,7 @@ local isHit = false
 --]]
 function Init()
 id = GetEntity(LockOnObjName)
+DebugLog("LockOnEnemyTargetID: "..id)
 -- スロー速度を求める
 slowSpeed = speed * 0.5
 end
