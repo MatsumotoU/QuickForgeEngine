@@ -1,6 +1,8 @@
 
--- プレイヤーの名前
-playerName = "name"
+-- カメラの名前
+cameraName = "name"
+local targetId = 0
+local targetTransform = Transform.new()
 
 -- 敵の名前
 lockOnEnemyName = "name"
@@ -42,9 +44,11 @@ local currentEnemysCounts = {}
 -- 現在の生成されている敵のID
 local enemiesIDList = {}
 
--- 内部用タイマー(仮)
-local spawnTimer = 0
-local spawnInterval = 3.0
+-- 敵を生成するための変数
+local lastCameraX = 0.0      -- 前回のプレイヤー位置
+local movedDistance = 0.0    -- 移動距離を計算
+local spawnDistance = 5.0    -- 敵を生成する距離
+local offsetX = 8.0 -- カメラの画面端までの位置
 
 --[[
     初期化処理
@@ -57,11 +61,18 @@ function Init()
     DebugLog(generatorMapScriptName)
     DebugLog(varMapName)
 
+    -- 追跡するidを取得
+    targetId = GetEntity(cameraName)
+    -- カメラの画面端までの位置
+    offsetX = 8.0
+    -- カメラの追跡する位置を設定
+    local targetTransform = GetTransform(targetId)
+    lastCameraX = targetTransform.translate.x + offsetX
+
     map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
     for z = 1,#map do
         DebugLog("Map:"..z)
        DebugLog(map[z][1])
-       
     end
 
     -- 最大の敵の数を初期化
@@ -84,9 +95,8 @@ end
     更新処理
 --]]
 function Update()
-
     -- 敵の生成処理
-    SpawnManager(3.0)
+    SpawnManager()
 
     -- 現在の敵の数を管理
     EnemyCountManager()
@@ -132,7 +142,7 @@ end
 function CanSpawnEnemy()
     -- 現在の難易度が最大の難易度を超えていれば早期リターン
     if currentDifficulty > maxDifficulty then
-        return 
+        return {}
     end
 
     -- 生成する敵のリスト
@@ -140,6 +150,12 @@ function CanSpawnEnemy()
 
     -- 生成可能な難易度値を取得
     local tmpDifficulty = maxDifficulty - currentDifficulty
+
+    -- 生成可能な難易度が1以下なら早期リターン
+    if tmpDifficulty <= 1 then
+        return {}
+    end
+
     -- 今回生成する難易度の総量を求める
     local targetDifficulty = math.random(1,tmpDifficulty)
 
@@ -188,18 +204,32 @@ function SpawnEnemy(enemyName,Transform)
 end
 
 -- 敵の生成を管理する
-function SpawnManager(cameraRightEdgeX)
+function SpawnManager()
 
-    spawnTimer = spawnTimer + (1.0 / (60.0 * 5))
+    -- カメラの位置を取得
+    targetTransform = GetTransform(targetId)
+    local targetX = targetTransform.translate.x + offsetX
 
-    if spawnTimer >= 1.0 then
-        spawnTimer = 0.0
+    -- 移動量を取得
+    local delta = math.abs(targetX - lastCameraX)
+    movedDistance = movedDistance + delta
+    -- 前回の位置を更新
+    lastCameraX = targetX
+
+    -- 一定距離進んだら敵を生成
+    if movedDistance >= spawnDistance then
+        movedDistance = 0.0
 
         -- 配置出来る座標リストを追加
-        local positions = GetAvailableEnemyPositions(cameraRightEdgeX)
+        local positions = GetAvailableEnemyPositions(targetX)
 
         -- 配置する敵を求める
         local spawnEnemisList = CanSpawnEnemy()
+
+        -- 配置出来る敵がいなければ早期リターン
+        if #spawnEnemisList <= 1 then
+            return
+        end
 
         for i = 1,#spawnEnemisList do
             -- 生成する座標を取得する

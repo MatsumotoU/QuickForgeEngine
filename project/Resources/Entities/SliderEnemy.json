@@ -22,7 +22,7 @@
                     "minMove": 0.20000000298023224,
                     "moveTime": 2.0
                 },
-                "handle": 518,
+                "handle": 11,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -39,16 +39,18 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 519,
+                "handle": 12,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyCollsionBehavior.lua",
-                "stringParams": {}
+                "stringParams": {
+                    "cameraName": "Camera"
+                }
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 520,
+                "handle": 13,
                 "intParams": {
                     "hp": 3,
                     "maxHp": 3
@@ -66,9 +68,9 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            9.365549087524414,
+            -1.889857292175293,
             0.0,
-            4.180290222167969,
+            2.530200958251953,
             0.699999988079071
         ]
     },
@@ -84,9 +86,9 @@
             1.0
         ],
         "translate": [
-            9.365549087524414,
+            -1.889857292175293,
             0.0,
-            4.180290222167969
+            2.530200958251953
         ]
     }
 }
