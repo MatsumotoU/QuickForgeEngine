@@ -9,7 +9,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 175,
+                "handle": 50,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -20,11 +20,12 @@
                 "priority": 10,
                 "scriptName": "EnemyGenerater.lua",
                 "stringParams": {
+                    "cameraName": "Camera",
                     "floatyEnemyName": "FloatyEnemy.json",
                     "generatorMapScriptName": "MapGenerater.lua",
                     "lockOnEnemyName": "LockOnEnemy.json",
                     "mapObjName": "MapGenerater",
-                    "playerName": "ShotGunPlayer.json",
+                    "playerName": "Camera",
                     "sliderEnemyName": "SliderEnemy.json",
                     "varMapName": "map"
                 }

@@ -16,13 +16,21 @@ move = Vector3.new(0.0,0.0,0.0)
 -- ヒットフラグ
 local isHit = false
 
+--[[
+    初期化処理
+--]]
 function Init()
 id = GetEntity(LockOnObjName)
 -- スロー速度を求める
 slowSpeed = speed * 0.5
 end
 
+--[[
+    更新処理
+--]]
 function Update()
+
+    id = GetEntity(LockOnObjName)
 
     if isHit then
         nowSpeed = slowSpeed
