@@ -22,7 +22,7 @@
                 "floatParams": {
                     "speed": 0.01600000075995922
                 },
-                "handle": 521,
+                "handle": 56,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -39,7 +39,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 522,
+                "handle": 57,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyCollsionBehavior.lua",
@@ -48,7 +48,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 523,
+                "handle": 58,
                 "intParams": {
                     "hp": 1,
                     "maxHp": 1

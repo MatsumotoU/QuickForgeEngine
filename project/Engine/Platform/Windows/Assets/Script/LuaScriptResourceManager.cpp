@@ -151,17 +151,23 @@ void LuaScriptResourceManager::InitializeAllScripts() {
 }
 
 void LuaScriptResourceManager::InitializeScript(uint32_t handle) {
-	if (handle < scripts_.size()) {
-		auto& script = scripts_[handle];
-		if (!script || !script->GetScript()) {
+	if (scripts_.find(handle) == scripts_.end()) {
 #ifdef _DEBUG
-			DebugLog("Script Not Found", LogLevel::Warning);
+		DebugLog("Script Not Found", LogLevel::Warning);
 #endif // _DEBUG
-			return;
-		}
-		if (script->HasFunction("Init")) {
-			script->RunFunction("Init");
-		}
+		return;
+	}
+
+	auto& script = scripts_[handle];
+
+	if (!script || !script->GetScript()) {
+#ifdef _DEBUG
+		DebugLog("Script Not Found", LogLevel::Warning);
+#endif // _DEBUG
+		return;
+	}
+	if (script->HasFunction("Init")) {
+		script->RunFunction("Init");
 	}
 }
 

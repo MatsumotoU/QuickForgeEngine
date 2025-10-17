@@ -7,6 +7,7 @@
 #include "Camera/CameraManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
 #include "Collider/ColliderManager.h"
+#include "Audio/AudioInterface.h"
 
 #include "Assets/3DModel/Data/ModelHandle.h"
 #include "Data/SceneObjectData.h"
@@ -333,6 +334,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	entityManager->ResetEntiry();
 	LuaScriptResourceManager::GetInstance()->Reset();
+	AudioInterface::GetInstance()->StopAllSound();
 
 	// シーンファイルのパスを組み立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");

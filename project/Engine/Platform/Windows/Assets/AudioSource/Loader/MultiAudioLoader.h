@@ -8,15 +8,8 @@
 
 struct AudioData;
 
-class MultiAudioLoader final{
-public:
-	~MultiAudioLoader();
-
-public:
-	void Initialize();
-
-};
-
 namespace Multiaudioloader {
+	void Initialize();
+	void Finalize();
 	AudioData LoadAudioData(const std::string& path);
 }

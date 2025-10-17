@@ -10,15 +10,15 @@
 #pragma comment(lib, "Mfreadwrite.lib")
 #pragma comment(lib, "mfuuid.lib")
 
-MultiAudioLoader::~MultiAudioLoader() {
-	MFShutdown();
-}
-
-void MultiAudioLoader::Initialize() {
+void Multiaudioloader::Initialize() {
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 	hr = MFStartup(MF_VERSION, MFSTARTUP_NOSOCKET);
 	assert(SUCCEEDED(hr));
+}
+
+void Multiaudioloader::Finalize() {
+	MFShutdown();
 }
 
 AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
