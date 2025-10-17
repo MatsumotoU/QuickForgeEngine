@@ -21,7 +21,7 @@
                     "lifeTime": 5.0,
                     "speed": 0.5
                 },
-                "handle": 508,
+                "handle": 14,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -36,16 +36,18 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 509,
+                "handle": 15,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyCollsionBehavior.lua",
-                "stringParams": {}
+                "stringParams": {
+                    "cameraName": "Camera"
+                }
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 510,
+                "handle": 16,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
