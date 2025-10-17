@@ -6,7 +6,7 @@ isAlive = true
 cameraName = "name"
 local targetId = 0
 local targetTransform = Transform.new()
-local offsetX = 5.0 -- カメラの画面端までの位置
+local offsetX = 12.0 -- カメラの画面端までの位置
 
 function Init()
     isAlive = true
@@ -14,7 +14,7 @@ function Init()
     -- 追跡するidを取得
     targetId = GetEntity(cameraName)
     -- カメラの画面端までの位置
-    offsetX = 5.0
+    offsetX = 12.0
 end
 
 function Update()
