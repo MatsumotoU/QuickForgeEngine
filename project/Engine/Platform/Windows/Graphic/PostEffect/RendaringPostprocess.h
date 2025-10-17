@@ -37,6 +37,7 @@ public:
 	void SetGrayScalePSO(PipelineStateObject* pso);
 	void SetVignettePSO(PipelineStateObject* pso);
 	void SetNormalPSO(PipelineStateObject* pso);
+	void SetPixcelPSO(PipelineStateObject* pso);
 	void SetOffscreenResource(ID3D12Resource* firstResource, ID3D12Resource* secondResource);
 	void SetOffscreenRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE firstHandle, D3D12_CPU_DESCRIPTOR_HANDLE secondHandle);
 	void SetOffscreenSrvHandle(DescriptorHandles firstHandle, DescriptorHandles secondHandle);
@@ -61,6 +62,7 @@ private:
 	void ApplyGrayScale();
 	void ApplyVignette();
 	void ApplyColorCorrection();
+	void ApplyPixcel();
 
 public:// パブリック変数
 	bool isPostprocess_;
@@ -70,6 +72,7 @@ public:// パブリック変数
 	bool enableColorCorrection_;
 	bool enableVignette_;
 	bool enableNormal_;
+	bool enablePixcel_;
 
 private:// 色調補正
 	PipelineStateObject* colorCorrectionPso_;
@@ -86,6 +89,11 @@ private:// ビネット変数
 	PipelineStateObject* vignettePso_;
 	ConstantBuffer<VignetteOffset> vignetteOffsetBuffer_;
 	int vignetteProcessIndex_;
+
+private:// ピクセル化変数
+	PipelineStateObject* pixcelPso_;
+	ConstantBuffer<PixcelOffset> pixcelOffsetBuffer_;
+	int pixcelProcessIndex_;
 
 private:// メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;

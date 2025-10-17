@@ -40,6 +40,7 @@
     <FxCompile Include="Engine\Resources\Shaders\PS\VignetteShader.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
+    <FxCompile Include="Engine\Resources\Shaders\PS\PixcelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Externals\imgui\imgui.cpp">
@@ -416,6 +417,7 @@
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectInputToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\MultiThreadRunFunction.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\MultiThreadTaskExecutor.cpp" />
+    <ClCompile Include="Editor\UI\Edit\PostprocessEdit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1346,6 +1348,7 @@
     <ClInclude Include="Engine\Platform\Windows\AppUtility\String\DirectInputToString.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\MultiThreadRunFunction.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\MultiThreadTaskExecutor.h" />
+    <ClInclude Include="Editor\UI\Edit\PostprocessEdit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">
