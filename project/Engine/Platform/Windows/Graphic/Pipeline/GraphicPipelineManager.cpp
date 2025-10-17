@@ -49,6 +49,13 @@ void GraphicPipelineManager::Initialize(
 
 	vignetteRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
+	// ドット化のやつ
+	pixcelRootParameter_.Initialize();
+	pixcelRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	pixcelRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	
+	pixcelRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
 	// 何もしないやつ
 	normalRootParameter_.Initialize();
 	normalRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
@@ -129,6 +136,11 @@ void GraphicPipelineManager::Initialize(
 	normalPso_.CreatePipelineStateObject(
 		grayScaleRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Simple.PS.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
+
+	pixcelPso_.Initialize(&shaderCompiler_, device);
+	pixcelPso_.CreatePipelineStateObject(
+		pixcelRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "PixcelShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	fontPso_.Initialize(&shaderCompiler_, device);
 	fontPso_.CreatePipelineStateObject(

@@ -47,7 +47,7 @@
                         "floatParams": {
                             "offsetX": 1.0
                         },
-                        "handle": 0,
+                        "handle": 28,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "CameraMove.lua",
@@ -115,7 +115,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 8.5
                         },
-                        "handle": 1,
+                        "handle": 29,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -129,7 +129,7 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.30000001192092896
                         },
-                        "handle": 2,
+                        "handle": 30,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -142,7 +142,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 3,
+                        "handle": 31,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "HitPoint.lua",
@@ -194,7 +194,7 @@
                         "floatParams": {
                             "space": 48.0
                         },
-                        "handle": 4,
+                        "handle": 32,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -245,7 +245,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 5,
+                        "handle": 33,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -290,7 +290,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 6,
+                        "handle": 34,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,

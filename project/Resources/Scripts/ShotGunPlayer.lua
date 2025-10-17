@@ -4,6 +4,8 @@ local objectDir = Vector3.new(0.0,0.0,0.0)
 isBackFriping = false
 minVelocity = 1.0
 
+local deltatime = 0.016
+
 function Init()
 objectDir.x = 0.0
 objectDir.y = 0.0
@@ -12,6 +14,8 @@ isBackFriping = false
 end
 
 function Update()
+    deltatime = GetDeltaTime()
+
     -- 接地処理
     if transform.translate.y <= 0.0 then
         transform.translate.y = 0.0
@@ -47,16 +51,13 @@ function Update()
     end
 
     -- バックフリップ開始処理
-    if QFE.Input.GetKeyTrigger("MoveLeft") then
-        if isBackFriping then
-            return
-        end
-
-        force.velocity.x = force.velocity.x - backSpeed
-        force.velocity.y = 3.0
-        isBackFriping = true
-        objectDir.x = 1.0
-        objectDir.y = 0.0
+    if QFE.Input.GetKeyPress("MoveLeft") then
+       transform.translate.x = transform.translate.x - (moveSpeed*0.5 * deltatime)
+       objectDir.x = 1.0
+       objectDir.y = 0.0
+       -- 設定された向きを見る
+        transform.rotate.y = math.atan(objectDir.x,objectDir.y)
+       return
     end
 
     -- 設定された向きを見る
@@ -65,7 +66,7 @@ function Update()
     -- 移動処理
     if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetKeyPress("MoveDown") or QFE.Input.GetKeyPress("MoveUp") then
         if not isBackFriping then
-            transform:AddForward(moveSpeed*0.016)
+            transform:AddForward(moveSpeed*deltatime)
         end
     end
 end

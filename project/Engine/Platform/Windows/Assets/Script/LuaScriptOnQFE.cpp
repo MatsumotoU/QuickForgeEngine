@@ -210,7 +210,7 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	sol::table input = qfe.create_named("Input");
 	sol::table math = qfe.create_named("Math");
 
-	luaState_->set("DeltaTime", &QFE::EngineGlobalValue::deltaTime);
+	luaState_->set_function("GetDeltaTime", []() {return QFE::EngineGlobalValue::deltaTime; });
 
 	luaState_->set_function("LookAtFromDir", [](const Vector3& dir) {
 		Vector3 lookAt;

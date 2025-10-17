@@ -2,6 +2,7 @@
 #include "AppUtility/DirectX/TransitionResourceBarrier.h"
 #include "Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
+#include "Core/EngineGlobalValue.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 
 #include <cassert>
@@ -25,6 +26,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	enableColorCorrection_ = true;
 	enableVignette_ = true;
 	enableNormal_ = true;
+	enablePixcel_ = false;
 
 	renderingRosourceIndex_ = 0;
 	readingResourceIndex_ = 0;
@@ -42,10 +44,12 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyGrayScale, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyVignette, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyColorCorrection, this));
+	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyPixcel, this));
 	// 固定のインデックスを設定
 	grayScaleProcessIndex_ = 0; // グレースケールのインデックス
 	vignetteProcessIndex_ = 1; // ビネットのインデックス
 	colorCorrectionProcessIndex_ = 2; // 色調補正のインデックス
+	pixcelProcessIndex_ = 3; // ピクセル化のインデックス
 
 	postProcessOrderForm_.clear();
 
@@ -131,6 +135,15 @@ void RendaringPostprosecess::SetNormalPSO(PipelineStateObject* pso) {
 	normalPso_ = pso;
 }
 
+void RendaringPostprosecess::SetPixcelPSO(PipelineStateObject* pso) {
+	assert(pso);
+	pixcelPso_ = pso;
+	pixcelOffsetBuffer_.CreateResource(device_);
+	pixcelOffsetBuffer_.GetData()->pixcelSize = 5; // ピクセルの大きさ
+	pixcelOffsetBuffer_.GetData()->screenResolution.x = static_cast<float>(QFE::EngineGlobalValue::windowWidth);
+	pixcelOffsetBuffer_.GetData()->screenResolution.y = static_cast<float>(QFE::EngineGlobalValue::windowHeight);
+}
+
 void RendaringPostprosecess::SetOffscreenResource(ID3D12Resource* firstResource, ID3D12Resource* secondResource) {
 	assert(firstResource);
 	assert(secondResource);
@@ -173,6 +186,12 @@ void RendaringPostprosecess::PreDraw() {
 	// 何回ポストプロセスがかかっているか調べる
 	postProcessCount_ = 0;
 	postProcessOrderForm_.clear();
+
+	// ピクセル化
+	if (enablePixcel_) {
+		postProcessOrderForm_.push_back(pixcelProcessIndex_); // ピクセル化
+		postProcessCount_++;
+	}
 	// グレースケール
 	if (enableGrayscale_) {
 		postProcessOrderForm_.push_back(grayScaleProcessIndex_); // グレースケール
@@ -395,5 +414,18 @@ void RendaringPostprosecess::ApplyColorCorrection() {
 	list_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	list_->SetGraphicsRootDescriptorTable(0, offScreenSrvHandles_.at(readingResourceIndex_).gpuHandle_);
 	list_->SetGraphicsRootConstantBufferView(1, colorCorrectionOffsetBuffer_.GetGPUVirtualAddress());
+	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+void RendaringPostprosecess::ApplyPixcel() {
+	list_->RSSetViewports(1, dxCommon_->GetViewPort());
+	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
+	list_->SetGraphicsRootSignature(pixcelPso_->GetRootSignature());
+	list_->SetPipelineState(pixcelPso_->GetPipelineState());
+	list_->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	list_->IASetIndexBuffer(&indexBufferView_);
+	list_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	list_->SetGraphicsRootDescriptorTable(0, offScreenSrvHandles_.at(readingResourceIndex_).gpuHandle_);
+	list_->SetGraphicsRootConstantBufferView(1, pixcelOffsetBuffer_.GetGPUVirtualAddress());
 	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
