@@ -23,6 +23,7 @@
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
+#include "Assets/3DModel/Loader/AssimpModelLoader.h"
 
 
 void SceneManager::Initalize() {
@@ -371,6 +372,22 @@ void SceneManager::RunTimeSwapScene(const std::string& sceneName) {
 	StopScript();
 	isRequestRunTimeLoadScene_ = true;
 	nextSceneName_ = sceneName;
+}
+
+void SceneManager::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	// エンティティがモデルを持っていなければ何もしない
+	if (!entityManager->HasComponent<ModelHandle>(entityId)) {
+#ifdef _DEBUG
+		DebugLog("ChangeModel entity does not have ModelRenderData", LogLevel::Warning);
+#endif // _DEBUG
+		return;
+	}
+
+	ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
+	modelHandle.modelName = modelName;
+	modelHandle.handle = assetManager->LoadModel(modelName);
 }
 
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
