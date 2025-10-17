@@ -22,6 +22,7 @@ InspectorView::InspectorView() {
 	name_ = "Inspector View";
 	selectedEntityId_ = 0;
 	scriptList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts"), ".lua");
+	modelList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
 }
 
 void InspectorView::Initialize() {
@@ -92,6 +93,14 @@ void InspectorView::Draw() {
 				Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(mesh.materialHandle);
 				std::string label = "Color##" + std::to_string(mesh.materialHandle);
 				ImGui::ColorEdit4(label.c_str(), &material->color.x);
+			}
+
+			ImGui::Separator();
+			ImGui::Text("Change Model:");
+			modelList_.DrawCombo();
+			std::string selectedModel;
+			if (modelList_.GetSelectedFileName(selectedModel)) {
+				SceneManager::GetInstance()->ChangeEntityModel(selectedEntityId_, selectedModel);
 			}
 		}
 	}
