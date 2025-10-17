@@ -35,6 +35,7 @@ public:
 	PipelineStateObject* GetVignettePso() { return &vignettePso_; }
 	PipelineStateObject* GetNormalPso() { return &normalPso_; }
 	PipelineStateObject* GetFontPso() { return &fontPso_; }
+	PipelineStateObject* GetPixcelPso() { return &pixcelPso_; }
 
 private: // メンバ変数
 	ShaderCompiler shaderCompiler_;
@@ -48,6 +49,7 @@ private: // メンバ変数
 	RootParameter vignetteRootParameter_;
 	RootParameter normalRootParameter_;
 	RootParameter fontRootParameter_;
+	RootParameter pixcelRootParameter_;
 
 	// PSO
 	PipelineStateObject trianglePso_[kCountOfBlendMode];
@@ -61,6 +63,7 @@ private: // メンバ変数
 	PipelineStateObject colorCorrectionPso_;
 	PipelineStateObject grayScaleTrianglePso_;
 	PipelineStateObject vignettePso_;
+	PipelineStateObject pixcelPso_;
 
 	PipelineStateObject fontPso_;
 

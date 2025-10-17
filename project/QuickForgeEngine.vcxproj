@@ -278,6 +278,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Editor\OnWindowsEditor.cpp" />
     <ClCompile Include="Editor\UI\Edit\DebugConsole.cpp" />
     <ClCompile Include="Editor\UI\Edit\KeyConfigEdit.cpp" />
+    <ClCompile Include="Editor\UI\Edit\PostprocessEdit.cpp" />
     <ClCompile Include="Editor\UI\File\CreateNewScene.cpp" />
     <ClCompile Include="Editor\UI\File\LoadScene.cpp" />
     <ClCompile Include="Editor\UI\File\SaveScene.cpp" />
@@ -418,6 +419,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\IEditor.h" />
     <ClInclude Include="Editor\UI\Edit\DebugConsole.h" />
     <ClInclude Include="Editor\UI\Edit\KeyConfigEdit.h" />
+    <ClInclude Include="Editor\UI\Edit\PostprocessEdit.h" />
     <ClInclude Include="Editor\UI\File\CreateNewScene.h" />
     <ClInclude Include="Editor\UI\File\LoadScene.h" />
     <ClInclude Include="Editor\UI\File\SaveScene.h" />
@@ -764,6 +766,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Engine\Resources\Shaders\PS\PixcelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Engine\Resources\Shaders\VS\Font.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
