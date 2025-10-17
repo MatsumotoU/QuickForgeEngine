@@ -19,9 +19,9 @@
                 "boolParams": {},
                 "floatParams": {
                     "aliveTime": 0.25,
-                    "moveSpeed": 0.25
+                    "moveSpeed": 24.0
                 },
-                "handle": 27,
+                "handle": 1248,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -29,12 +29,14 @@
                     "DIK_SPACE": 57,
                     "DIK_W": 17
                 },
+                "priority": 0,
                 "scriptName": "BulletMove.lua",
                 "stringParams": {}
             }
         ]
     },
     "SphereColliderData": {
+        "isDraw": true,
         "isStatic": false,
         "isTrigger": false,
         "sphere": [

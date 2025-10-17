@@ -1,14 +1,14 @@
 {
     "SceneObjectData": {
-        "name": "ShotGunSallUI",
+        "name": "HpBarUI",
         "tag": "Untagged",
-        "uniqueId": 5471
+        "uniqueId": 1037
     },
     "SpriteData": {
         "height": 128.0,
         "isDraw": true,
         "layer": 0,
-        "textureName": "ShotGunSall.png",
+        "textureName": "HpBar.png",
         "width": 128.0
     },
     "Transform": {

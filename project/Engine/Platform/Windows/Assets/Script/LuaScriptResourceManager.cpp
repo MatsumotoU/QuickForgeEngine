@@ -290,8 +290,8 @@ sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, c
 	for (const auto& handle : scriptHandles.scriptHandles_) {
 		if (handle.scriptName_ == scriptName) {
 #ifdef _DEBUG
-			DebugLog("Get Script Global: " + varName + " from " + scriptName, LogLevel::EditorInfo);
-			DebugLog("Get Handle: " + std::to_string(handle.handle_), LogLevel::EditorInfo);
+			DebugLog("Get Script Global: " + varName + " from " + scriptName, LogLevel::EngineInfo);
+			DebugLog("Get Handle: " + std::to_string(handle.handle_), LogLevel::EngineInfo);
 #endif // _DEBUG
 			LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(handle.handle_);
 			if (script) {

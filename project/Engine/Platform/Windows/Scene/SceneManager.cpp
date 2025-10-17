@@ -639,9 +639,11 @@ void SceneManager::AddSprite(const std::string& spriteName, float width, float h
 	spriteData.width = textureSize.x;
 	if (width != 0.0f) {
 		textureSize.x = width;
+		spriteData.width = width;
 	}
 	if (height != 0.0f) {
 		textureSize.y = height;
+		spriteData.height = height;
 	}
 	spriteData.vertexBufferHandle = assetManager->GetSpriteManager()->CreateVertexBuffer(textureSize.x, textureSize.y);
 	spriteData.wvpBufferHandle = assetManager->GetWpvBufferManager()->CreateBuffer();

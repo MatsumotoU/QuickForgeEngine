@@ -88,6 +88,12 @@ function Init()
         DebugLog("LoadEnemyName :"..currentEnemysCounts[i].name)
     end
 
+    local positions = GetAvailableEnemyPositions(3.0)
+
+    for i = 1,#positions do
+        DebugLog("x:"..positions[i].x.."z:"..positions[i].z)
+    end
+
     DebugLog("EnemyGeneratorInit")
 end
 
@@ -95,6 +101,10 @@ end
     更新処理
 --]]
 function Update()
+
+    DebugLog("currentDifficulty : ".. currentDifficulty)
+    DebugLog("currentEnemyCount : ".. currentEnemyCount)
+
     -- 敵の生成処理
     SpawnManager()
 
@@ -227,7 +237,7 @@ function SpawnManager()
         local spawnEnemisList = CanSpawnEnemy()
 
         -- 配置出来る敵がいなければ早期リターン
-        if #spawnEnemisList <= 1 then
+        if #spawnEnemisList <= 0 then
             return
         end
 
@@ -235,7 +245,7 @@ function SpawnManager()
             -- 生成する座標を取得する
             local index = math.random(1,#positions)
             local positionIndex = positions[index]
-            local position = {x = positionIndex.x * 1.0,y = 0.0,z = positionIndex.z * 1.0}
+            local position = {x = (positionIndex.x - 1) * 1.0,y = 0.0,z = (positionIndex.z - 1) * 1.0}
             table.remove(positions,index)
             local tmpTransform = Transform.new()
             tmpTransform.translate.x = position.x
@@ -251,18 +261,41 @@ end
 -- 現在の敵の数を管理する
 function EnemyCountManager()
 
+    if #enemiesIDList < 1 then
+        return
+    end
+
+    -- 削除する要素リスト
+    local removeList = {}
+
     for i = 1,#enemiesIDList do
 
         local isAlive = GetEntityScriptGlobal(enemiesIDList[i].id,aliveScriptName,isAliveVarName)
 
         if not isAlive then
+            DebugLog("isAlive : false")
             for j = 1,#currentEnemysCounts do
                 if enemiesIDList[i].name == currentEnemysCounts[j].name then
+                    -- 敵の数を減らす
                     currentEnemysCounts[j].count = currentEnemysCounts[j].count - 1
                     currentEnemyCount = currentEnemyCount - 1
+                    -- 難易度を減らす
+                    currentDifficulty = currentDifficulty - currentEnemysCounts[j].difficulty
+                    if currentDifficulty < 0 then
+                        currentDifficulty = 0
+                    end
+                    -- 削除リストに追加
+                    table.insert(removeList,{index = i})
                     break
                 end
             end
+        end
+    end
+
+    -- リストから削除
+    if #removeList > 0 then
+        for i = 1, #removeList do
+            table.remove(enemiesIDList,removeList[i].index)
         end
     end
 end

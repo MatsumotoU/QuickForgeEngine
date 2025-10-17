@@ -1,24 +1,24 @@
 {
     "SceneObjectData": {
-        "name": "BulletUI",
+        "name": "PlayerHPUI",
         "tag": "Untagged",
-        "uniqueId": 163
+        "uniqueId": 1036
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {
-                    "space": 48.0
+                    "space": 64.0
                 },
-                "handle": 127,
+                "handle": 140,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
                     "DIK_S": 31,
                     "DIK_SPACE": 57,
                     "DIK_W": 17,
-                    "nowNum": 1,
+                    "nowNum": 3,
                     "numMax": 3,
                     "objectUniqeID": 1
                 },
@@ -26,9 +26,9 @@
                 "scriptName": "BulletNumUI.lua",
                 "stringParams": {
                     "objectName": "ShotGunPlayer",
-                    "scriptName": "BulletShot.lua",
-                    "uiObjName": "ShotGunSallUI.json",
-                    "varName": "bullets"
+                    "scriptName": "HitPoint.lua",
+                    "uiObjName": "HpBarUI.json",
+                    "varName": "hitPoint"
                 }
             }
         ]
@@ -46,7 +46,7 @@
         ],
         "translate": [
             32.0,
-            32.0,
+            600.0,
             0.0
         ]
     }
