@@ -1,4 +1,17 @@
 {
+    "AABBColliderData": {
+        "aabb": [
+            -0.5,
+            -0.5,
+            -0.5,
+            0.5,
+            0.5,
+            0.5
+        ],
+        "isDraw": false,
+        "isStatic": true,
+        "isTrigger": false
+    },
     "ModelHandle": {
         "color": [
             1.0,
@@ -6,38 +19,24 @@
             1.0,
             1.0
         ],
-        "modelName": "anchor.obj"
+        "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "SlowArea",
-        "tag": "slowArea",
-        "uniqueId": 1031
+        "name": "BreakWall",
+        "tag": "Untagged",
+        "uniqueId": 164
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {
-                    "lifeSpan": 5.0,
-                    "maxLifeSpan": 5.0
-                },
-                "handle": 1249,
+                "floatParams": {},
+                "handle": 7,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "LifespanEntity.lua",
+                "scriptName": "BreakWall.lua",
                 "stringParams": {}
             }
-        ]
-    },
-    "SphereColliderData": {
-        "isDraw": true,
-        "isStatic": false,
-        "isTrigger": true,
-        "sphere": [
-            0.0,
-            0.0,
-            0.0,
-            2.0
         ]
     },
     "Transform": {

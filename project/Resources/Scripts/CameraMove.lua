@@ -6,7 +6,6 @@ local targetTransform = Transform.new()
 
 function Init()
     targetId = GetEntity(targetObjName)
-    DebugLog(targetId)
 end
 
 function Update()

@@ -2,21 +2,23 @@ moveSpeed = 1.0
 aliveTime = 1.0
 
 function Init()
-    DebugLog("Init")
+
 end
 
 function Update()
+    local deltaTime = GetDeltaTime()
+
 if aliveTime > 0.0 then
-    aliveTime = aliveTime - 0.016
+    aliveTime = aliveTime - deltaTime
 else
     destroy()
 end
 
-    transform:AddForward(moveSpeed)
+    transform:AddForward(moveSpeed * deltaTime)
 end
 
 function OnCollisionEnter(id,obj)
-    if obj.tag == "bullet" or obj.tag == "player" then
+    if obj.tag == "bullet" or obj.tag == "player" or obj.tag == "slowArea" then
         return
     end
 

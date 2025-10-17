@@ -291,11 +291,13 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		return inputManager->GetMouseWheelDir();
 		});
 
-#ifdef _DEBUG
+
 	luaState_->set_function("DebugLog", [](sol::variadic_args message) {
+#ifdef _DEBUG
 		DebugLogLua(message);
-		});
 #endif // _DEBUG
+		});
+
 	luaState_->new_usertype<SceneObjectData>("SceneObjectData",
 		"name", &SceneObjectData::name,
 		"tag", &SceneObjectData::tag
