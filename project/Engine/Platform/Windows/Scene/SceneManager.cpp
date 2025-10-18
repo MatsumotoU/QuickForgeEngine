@@ -750,6 +750,7 @@ void SceneManager::StartScript() {
 	if (!isRunningScript_) {
 #ifdef _DEBUG
 		MyDebugLog::GetInstance()->DebugLogClear();
+		MyDebugLog::GetInstance()->scriptLogs_.clear();
 #endif // _DEBUG
 
 		SaveScene(currentScene_->GetSceneName());

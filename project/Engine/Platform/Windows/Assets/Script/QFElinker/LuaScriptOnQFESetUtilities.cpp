@@ -7,12 +7,7 @@
 #include "AppUtility/FileSystems/FileUtility.h"
 
 void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
-	// Log
-	luaState->set_function("DebugLog", [](sol::variadic_args message) {
-#ifdef _DEBUG
-		DebugLogLua(message);
-#endif // _DEBUG
-		});
+	
 
 	// CSV読み込み
 	luaState->set_function("Load2DMap", [](const std::string& fileName) {
