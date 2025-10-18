@@ -1,18 +1,17 @@
 #include "LuaScriptOnQFE.h"
-#include "Core/EngineGlobalValue.h"
+
 #include "Assets/AssetManager.h"
-#include "Scene/SceneManager.h"
+#include "Core/Entity/EntityManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
-#include "Input/InputInterface.h"
+
 #include "Core/Math/Transform.h"
 #include "Physics/Force.h"
 #include "Assets/Script/Data/ScriptHandle.h"
-#include "Scene/Data/SceneObjectData.h"
-#include "Assets/Sprite/Data/SpriteData.h"
+#include "QFElinker/SetQFELinkers.h"
+
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
-#include "Core/Math/MyMath.h"
 
 LuaScriptOnQFE::LuaScriptOnQFE() {
 	isCanRun_ = false;
@@ -207,239 +206,25 @@ std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
 void LuaScriptOnQFE::SetQFEFunctions() {
 	// テーブル作成
 	sol::table qfe = luaState_->create_named_table("QFE");
-	sol::table input = qfe.create_named("Input");
-	sol::table math = qfe.create_named("Math");
+	// QFE関数登録
+	QFE::Script::SetQFEFunctions(luaState_.get());
 
-	luaState_->set_function("GetDeltaTime", []() {return QFE::EngineGlobalValue::deltaTime; });
-
-	luaState_->set_function("LookAtFromDir", [](const Vector3& dir) {
-		Vector3 lookAt;
-		float yaw = atan2f(dir.x, dir.z);
-		float pitch = asinf(-dir.y / dir.Length());
-		lookAt.y = yaw;
-		lookAt.x = pitch;
-		return lookAt;
+	// 訳アリ関数群
+	luaState_->set_function("GetThisEntityId", [this]() {
+		return bindEntityId_;
 		});
-
-	// * 関数登録 * //
-	math.set("pi", 3.14159265358979323846f);
-	math.set_function("Leap", [](float a, float b, float t) {
-		return a * t + b * (1.0f - t);
-		});
-	math.set_function("EaseIn", [](float from, float to, float t) {
-		return MyMath::EaseIn(from, to, t);
-		});
-	math.set_function("EaseOut", [](float from, float to, float t) {
-		return MyMath::EaseOut(from, to, t);
-		});
-	math.set_function("EaseInOut", [](float from, float to, float t) {
-		return MyMath::EaseInOut(from, to, t);
-		});
-	math.set_function("Rand", [](sol::object minObj, sol::object maxObj) {
-		float min = 0.0f;
-		float max = 1.0f;
-		if (minObj.is<int>()) {
-			min = static_cast<float>(minObj.as<int>());
-		} else if (minObj.is<double>()) {
-			min = static_cast<float>(minObj.as<double>());
-		} else if (minObj.is<float>()) {
-			min = minObj.as<float>();
-		}
-		if (maxObj.is<int>()) {
-			max = static_cast<float>(maxObj.as<int>());
-		} else if (maxObj.is<double>()) {
-			max = static_cast<float>(maxObj.as<double>());
-		} else if (maxObj.is<float>()) {
-			max = maxObj.as<float>();
-		}
-		return MyMath::Rand(min, max);
-		});
-	
-	InputInterface* inputManager = InputInterface::GetInstance();
-	input.set_function("GetKeyMoveDir", [inputManager]() {
-		return inputManager->GetKeyMoveDir();
-		});
-
-	// キーボード
-	input.set_function("GetKeyPress", [inputManager](std::string actionName) {
-		return inputManager->GetKeyPress(actionName);
-		});
-	input.set_function("GetKeyTrigger", [inputManager](std::string actionName) {
-		return inputManager->GetKeyTrigger(actionName);
-		});
-	input.set_function("GetKeyRelease", [inputManager](std::string actionName) {
-		return inputManager->GetKeyRelease(actionName);
-		});
-
-	// マウス
-	input.set_function("GetMousePress", [inputManager](int8_t button) {
-		return inputManager->GetMousePress(button);
-		});
-	input.set_function("GetMouseTrigger", [inputManager](int8_t button) {
-		return inputManager->GetMouseTrigger(button);
-		});
-	input.set_function("GetMouseRelease", [inputManager](int8_t button) {
-		return inputManager->GetMouseRelease(button);
-		});
-	input.set_function("GetMouseScreenPos", [inputManager]() {
-		return inputManager->GetMouseScreenPos();
-		});
-	input.set_function("GetMouseMoveDir", [inputManager]() {
-		return inputManager->GetMouseMove();
-		});
-	input.set_function("GetMouseWheelDir", [inputManager]() {
-		return inputManager->GetMouseWheelDir();
-		});
-
-
-	luaState_->set_function("DebugLog", [](sol::variadic_args message) {
-#ifdef _DEBUG
-		DebugLogLua(message);
-#endif // _DEBUG
-		});
-
-	luaState_->new_usertype<SceneObjectData>("SceneObjectData",
-		"name", &SceneObjectData::name,
-		"tag", &SceneObjectData::tag
-	);
-
-	luaState_->set_function("GetEntity", [](const std::string& entityName) {
-		return SceneManager::GetInstance()->GetEntityByName(entityName);
-		});
-	luaState_->set_function("GetEntityFromUniqeID", [](uint32_t uniqeId) {
-		return SceneManager::GetInstance()->GetEntityByUniqeID(uniqeId);
+	luaState_->set_function("RunEntityScriptFunction",
+		[](uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
+			LuaScriptResourceManager::GetInstance()->RunFunction(entityId, scriptName, functionName);
 		}
 	);
-	luaState_->set_function("GetIsDraw", [](uint32_t entityId) {
-		AssetManager* assetManager = AssetManager::GetInstance();
-		EntityManager* entityManager = assetManager->GetEntityManager();
-		if (entityManager->HasComponent<SpriteData>(entityId)) {
-			SpriteData& sprite = entityManager->GetComponent<SpriteData>(entityId);
-			return sprite.isDraw;
-		}
-		return false;
-	});
-	luaState_->set_function("SetIsDraw", [](uint32_t entityId,bool isDraw) {
-		AssetManager* assetManager = AssetManager::GetInstance();
-		EntityManager* entityManager = assetManager->GetEntityManager();
-		if (entityManager->HasComponent<SpriteData>(entityId)) {
-			SpriteData& sprite = entityManager->GetComponent<SpriteData>(entityId);
-			sprite.isDraw = isDraw;
-		}
+	luaState_->set_function("destroy", [this]() {
+		AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(this->GetBindEntityId());
 		});
-	luaState_->set_function("GetTransform",
-		[](uint32_t entityId) {
-			AssetManager* assetManager = AssetManager::GetInstance();
-			return &assetManager->GetEntityManager()->GetComponent<Transform>(entityId);
-		}
-	);
-
 	luaState_->set_function("GetEntityScriptGlobal",
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::this_state ts) {
 			sol::state_view callerState(ts);
 			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
 		}
 	);
-
-	luaState_->set_function("RunEntityScriptFunction",
-		[](uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
-			LuaScriptResourceManager::GetInstance()->RunFunction(entityId, scriptName, functionName);
-		}
-	);
-
-	luaState_->set_function("CreateEntity", [this](const std::string& entityName,const Transform& transform) {
-#ifdef _DEBUG
-		DebugLog(
-			"ID: " + std::to_string(this->GetBindEntityId()) + 
-			"CallScript: " + this->GetScriptName() + 
-			"Create Entity: " + entityName, LogLevel::EditorInfo);
-#endif // _DEBUG
-
-
-		uint32_t id = SceneManager::GetInstance()->RunTimeAddEntity(entityName);
-		AssetManager* assetManager = AssetManager::GetInstance();
-		EntityManager* entityManager = assetManager->GetEntityManager();
-		if (entityManager->HasComponent<Transform>(id)) {
-			Transform& t = entityManager->GetComponent<Transform>(id);
-			t = transform;
-		}
-		return id;
-		});
-
-	// GlobalValue
-	luaState_->set_function("destroy", [this]() {
-		AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(this->GetBindEntityId());
-		});
-
-	luaState_->set_function("LoadScene", [](const std::string& sceneName) {
-		SceneManager::GetInstance()->RunTimeSwapScene(sceneName);
-		});
-
-	// Math
-	luaState_->new_usertype<Vector2>("Vector2",
-		sol::constructors<Vector2(), Vector2(float, float)>(),
-		"x", &Vector2::x,
-		"y", &Vector2::y,
-
-		"Length", &Vector2::Length,
-		"Normalize", & Vector2::Normalize
-	);
-	luaState_->new_usertype<Vector3>("Vector3",
-		sol::constructors<Vector3(), Vector3(float, float, float)>(),
-		"x", &Vector3::x,
-		"y", &Vector3::y,
-		"z", &Vector3::z,
-
-		"Length", &Vector3::Length,
-		"Normalize", sol::resolve<Vector3() const>(&Vector3::Normalize),
-
-		sol::meta_function::addition, [](const Vector3& a, const Vector3& b) { return a + b; },
-		sol::meta_function::subtraction, [](const Vector3& a, const Vector3& b) { return a - b; },
-		sol::meta_function::unary_minus, [](const Vector3& v) { return -v; },
-		sol::meta_function::multiplication, [](const Vector3& v, float scalar) { return v * scalar; },
-		sol::meta_function::multiplication, [](float scalar, const Vector3& v) { return v * scalar; },
-		sol::meta_function::multiplication, [](const Vector3& a, const Vector3& b) { return Vector3(a.x * b.x, a.y * b.y, a.z * b.z); },
-		sol::meta_function::division, [](const Vector3& v, float scalar) { return v / scalar; }
-	);
-	luaState_->new_usertype<Vector4>("Vector4",
-		sol::constructors<Vector4(), Vector4(float, float, float, float)>(),
-		"x", &Vector4::x,
-		"y", &Vector4::y,
-		"z", &Vector4::z,
-		"w", &Vector4::w,
-
-		"Length", &Vector4::Length,
-		"Normalize", & Vector4::Normalize
-	);
-	luaState_->new_usertype<Transform>("Transform",
-		sol::constructors<Transform()>(),
-		"scale", &Transform::scale,
-		"rotate", &Transform::rotate,
-		"translate", &Transform::translate,
-		"AddForward", &Transform::AddForward,
-		"AddRight", &Transform::AddRight
-	);
-
-	luaState_->new_usertype<Force>("Force",
-		sol::constructors<Force()>(),
-		"velocity", &Force::velocity,
-		"acceleration", &Force::acceleration,
-		"mass", &Force::mass,
-		"friction", &Force::friction,
-		"gravityStrength", &Force::gravityStrength,
-		"isGravity", &Force::isGravity
-	);
-
-	luaState_->set_function("GetTransform", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		return em->HasComponent<Transform>(entityId) ? &em->GetComponent<Transform>(entityId) : nullptr;
-		});
-	luaState_->set_function("GetSceneObjectData", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		return em->HasComponent<SceneObjectData>(entityId) ? &em->GetComponent<SceneObjectData>(entityId) : nullptr;
-		});
-	luaState_->set_function("GetForce", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		return em->HasComponent<Force>(entityId) ? &em->GetComponent<Force>(entityId) : nullptr;
-		});
 }

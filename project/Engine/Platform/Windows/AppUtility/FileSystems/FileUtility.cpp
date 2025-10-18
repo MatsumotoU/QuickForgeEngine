@@ -53,3 +53,22 @@ bool QFE::FILE::HasExtension(const std::string& fileName, const std::string& ext
     return fileName.size() >= extension.size() &&
         fileName.compare(fileName.size() - extension.size(), extension.size(), extension) == 0;
 }
+
+bool QFE::FILE::LoadCSVToVector(const std::string& filePath, std::vector<std::vector<uint32_t>>& map) {
+	std::ifstream ifs(filePath);
+	if (ifs.is_open()) {
+		std::string line;
+		while (std::getline(ifs, line)) {
+			std::istringstream ss(line);
+			std::string cell;
+			std::vector<uint32_t> row;
+			while (std::getline(ss, cell, ',')) {
+				row.push_back(static_cast<uint32_t>(std::stoul(cell)));
+			}
+			map.push_back(row);
+		}
+		ifs.close();
+		return true;
+	}
+    return false;
+}

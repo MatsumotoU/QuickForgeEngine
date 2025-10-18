@@ -29,7 +29,9 @@ end
 
 function Update()
     -- 一応制限
+    DebugLog("ID:"..linkID .. " scriptName:" .. scriptName .. " varName:"..varName)
     nowNum = GetEntityScriptGlobal(linkID,scriptName,varName)
+    
 
     if nowNum > numMax then
         nowNum = numMax
