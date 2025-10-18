@@ -23,7 +23,7 @@
     },
     "SceneObjectData": {
         "name": "Wall",
-        "tag": "MapObject",
+        "tag": "Wall",
         "uniqueId": 256
     },
     "Transform": {
