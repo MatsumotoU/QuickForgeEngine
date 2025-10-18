@@ -425,6 +425,7 @@
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\SetQFELinkers.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetUtilities.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp" />
+    <ClCompile Include="Editor\UI\View\ScriptLoggerView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1363,6 +1364,7 @@
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\SetQFELinkers.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetUtilities.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h" />
+    <ClInclude Include="Editor\UI\View\ScriptLoggerView.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

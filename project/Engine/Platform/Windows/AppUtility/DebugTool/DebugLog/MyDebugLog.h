@@ -8,6 +8,7 @@
 #include <sol/sol.hpp>
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
 
 #include "DesignPatterns/Singleton.h"
 
@@ -29,6 +30,8 @@ public:
 	std::vector<std::string> editorLog_;
 	std::vector<std::string> warningLog_;
 	std::vector<std::string> errorLog_;
+
+	std::unordered_map<uint32_t, std::unordered_map<std::string,std::vector<std::string>>> scriptLogs_;
 private:
     MyDebugLog();
     ~MyDebugLog() override;
@@ -50,4 +53,4 @@ void DebugLog(const std::string& message,const LogLevel& logLevel = LogLevel::En
 void AppendLuaValueToString(const sol::object& v, std::string& msg);
 
 // 文字列・数値どちらも受け取れるラッパー関数
-void DebugLogLua(sol::variadic_args va);
+void DebugLogLua(sol::variadic_args va,uint32_t id,const std::string& scriptName);

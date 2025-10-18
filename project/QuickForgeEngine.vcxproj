@@ -291,6 +291,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Editor\UI\View\InspectorView.cpp" />
     <ClCompile Include="Editor\UI\View\SceneView.cpp" />
     <ClCompile Include="Editor\UI\UIManager.cpp" />
+    <ClCompile Include="Editor\UI\View\ScriptLoggerView.cpp" />
     <ClCompile Include="Engine\Core\EngineGlobalValue.cpp" />
     <ClCompile Include="Engine\Core\Math\Shapes.cpp" />
     <ClCompile Include="Engine\Core\Math\Transform.cpp" />
@@ -440,6 +441,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\UI\View\InspectorView.h" />
     <ClInclude Include="Editor\UI\View\SceneView.h" />
     <ClInclude Include="Editor\UI\UIManager.h" />
+    <ClInclude Include="Editor\UI\View\ScriptLoggerView.h" />
     <ClInclude Include="Engine\Core\EngineGlobalValue.h" />
     <ClInclude Include="Engine\Core\Entity\Component\ComponentData.h" />
     <ClInclude Include="Engine\Core\Error\ErrorList.h" />
