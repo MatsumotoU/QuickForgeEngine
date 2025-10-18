@@ -5,12 +5,12 @@ local targetId = 0
 local targetTransform = Transform.new()
 
 -- 敵の名前
-lockOnEnemyName = "name"
-sliderEnemyName = "name"
-floatyEnemyName = "name"
+normalGhostEnemyJson = "name"
+bigGhostEnemyJson = "name"
+longGhostEnemyJson = "name"
 
 -- 敵の生存を管理する
-local aliveScriptName = "EnemyCollsionBehavior.lua"
+local aliveScriptName = "EnemyHp.lua"
 local isAliveVarName = "isAlive"
 
 -- マップ情報を取得するための名前
@@ -76,13 +76,13 @@ function Init()
     end
 
     -- 最大の敵の数を初期化
-    table.insert(maxEnemysCounts,{name = lockOnEnemyName,maxCount = 2})
-    table.insert(maxEnemysCounts,{name = sliderEnemyName,maxCount = 3})
-    table.insert(maxEnemysCounts,{name = floatyEnemyName,maxCount = 3})
+    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
+    table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 3})
+    table.insert(maxEnemysCounts,{name = longGhostEnemyJson,maxCount = 3})
     -- 現在の敵の数を初期化
-    table.insert(currentEnemysCounts,{name = lockOnEnemyName,difficulty = 2,count = 0})
-    table.insert(currentEnemysCounts,{name = sliderEnemyName,difficulty = 1,count = 0})
-    table.insert(currentEnemysCounts,{name = floatyEnemyName,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
+    table.insert(currentEnemysCounts,{name = bigGhostEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = longGhostEnemyJson,difficulty = 1,count = 0})
 
     for i = 1,#currentEnemysCounts do
         DebugLog("LoadEnemyName :"..currentEnemysCounts[i].name)

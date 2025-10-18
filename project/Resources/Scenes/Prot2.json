@@ -47,7 +47,7 @@
                         "floatParams": {
                             "offsetX": 1.0
                         },
-                        "handle": 46,
+                        "handle": 83,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "CameraMove.lua",
@@ -115,7 +115,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 8.5
                         },
-                        "handle": 47,
+                        "handle": 84,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -129,7 +129,7 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.30000001192092896
                         },
-                        "handle": 48,
+                        "handle": 85,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -142,7 +142,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 49,
+                        "handle": 86,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "HitPoint.lua",
@@ -194,7 +194,7 @@
                         "floatParams": {
                             "space": 48.0
                         },
-                        "handle": 50,
+                        "handle": 87,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -245,7 +245,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 51,
+                        "handle": 88,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -290,7 +290,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 52,
+                        "handle": 89,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -301,13 +301,16 @@
                         "priority": 10,
                         "scriptName": "EnemyGenerater.lua",
                         "stringParams": {
+                            "bigGhostEnemyJson": "BigGhostEnemy.json",
                             "cameraName": "Camera",
-                            "floatyEnemyName": "FloatyEnemy.json",
+                            "floatyEnemyName": "LongGhostEnemy.json",
                             "generatorMapScriptName": "MapGenerater.lua",
-                            "lockOnEnemyName": "LockOnEnemy.json",
+                            "lockOnEnemyName": "NormalGhostEnemy.json",
+                            "longGhostEnemyJson": "LongGhostEnemy.json",
                             "mapObjName": "MapGenerater",
+                            "normalGhostEnemyJson": "NormalGhostEnemy.json",
                             "playerName": "Camera",
-                            "sliderEnemyName": "SliderEnemy.json",
+                            "sliderEnemyName": "BigGhostEnemy.json",
                             "varMapName": "map"
                         }
                     }
