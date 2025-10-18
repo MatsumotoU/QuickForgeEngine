@@ -210,6 +210,12 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	QFE::Script::SetQFEFunctions(luaState_.get());
 
 	// 訳アリ関数群
+	// Log
+	luaState_->set_function("DebugLog", [this](sol::variadic_args message) {
+#ifdef _DEBUG
+		DebugLogLua(message,this->GetBindEntityId(),this->GetScriptName());
+#endif // _DEBUG
+		});
 	luaState_->set_function("GetThisEntityId", [this]() {
 		return bindEntityId_;
 		});
