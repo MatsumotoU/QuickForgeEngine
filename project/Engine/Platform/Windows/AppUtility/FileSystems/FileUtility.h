@@ -13,4 +13,6 @@ namespace QFE::FILE {
 	extern bool OpenFileOnExe(const std::string& exePath, const std::string& filePath);
 	extern bool LoadFileToJson(const std::string& filePath, nlohmann::json& json);
 	bool HasExtension(const std::string& fileName, const std::string& extension);
+
+	extern bool LoadCSVToVector(const std::string& filePath, std::vector<std::vector<uint32_t>>& map);
 }

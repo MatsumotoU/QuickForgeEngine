@@ -102,8 +102,8 @@ end
 --]]
 function Update()
 
-    DebugLog("currentDifficulty : ".. currentDifficulty)
-    DebugLog("currentEnemyCount : ".. currentEnemyCount)
+    --DebugLog("currentDifficulty : ".. currentDifficulty)
+    --DebugLog("currentEnemyCount : ".. currentEnemyCount)
 
     -- 敵の生成処理
     SpawnManager()
