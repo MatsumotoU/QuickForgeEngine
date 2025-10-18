@@ -272,6 +272,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Engine\Externals\imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="Engine\Externals\imgui\ImGuizmo-1.83\Makefile" />
     <None Include="GenerateBuildInfo.bat" />
+    <None Include="Resources\2DMap\testCSV.csv" />
     <None Include="Resources\Scripts\types.d.lua" />
   </ItemGroup>
   <ItemGroup>
@@ -290,6 +291,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Editor\UI\View\InspectorView.cpp" />
     <ClCompile Include="Editor\UI\View\SceneView.cpp" />
     <ClCompile Include="Editor\UI\UIManager.cpp" />
+    <ClCompile Include="Editor\UI\View\ScriptLoggerView.cpp" />
     <ClCompile Include="Engine\Core\EngineGlobalValue.cpp" />
     <ClCompile Include="Engine\Core\Math\Shapes.cpp" />
     <ClCompile Include="Engine\Core\Math\Transform.cpp" />
@@ -311,7 +313,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetStructBase.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptResourceManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetUtilities.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\SetQFELinkers.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Sprite\Data\SpriteData.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Audio\AudioInterface.cpp" />
@@ -432,6 +441,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\UI\View\InspectorView.h" />
     <ClInclude Include="Editor\UI\View\SceneView.h" />
     <ClInclude Include="Editor\UI\UIManager.h" />
+    <ClInclude Include="Editor\UI\View\ScriptLoggerView.h" />
     <ClInclude Include="Engine\Core\EngineGlobalValue.h" />
     <ClInclude Include="Engine\Core\Entity\Component\ComponentData.h" />
     <ClInclude Include="Engine\Core\Error\ErrorList.h" />
@@ -473,7 +483,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\ConstantBufferManager\ConstantBufferManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\Data\ScriptHandle.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetUtilities.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\SetQFELinkers.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetStructBase.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\LuaScriptResourceManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Sprite\Data\SpriteData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Audio\AudioInterface.h" />

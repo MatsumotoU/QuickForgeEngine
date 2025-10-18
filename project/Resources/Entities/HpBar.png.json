@@ -1,15 +1,15 @@
 {
     "SceneObjectData": {
-        "name": "ShotGunSallUI",
+        "name": "HpBar.png",
         "tag": "Untagged",
-        "uniqueId": 5471
+        "uniqueId": 1037
     },
     "SpriteData": {
-        "height": 128.0,
+        "height": 32.0,
         "isDraw": true,
         "layer": 0,
-        "textureName": "ShotGunSall.png",
-        "width": 128.0
+        "textureName": "HpBar.png",
+        "width": 32.0
     },
     "Transform": {
         "rotate": [
@@ -18,9 +18,9 @@
             0.0
         ],
         "scale": [
-            1.0,
-            1.0,
-            1.0
+            2.0,
+            2.0,
+            2.0
         ],
         "translate": [
             0.0,

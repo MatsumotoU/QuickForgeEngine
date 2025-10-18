@@ -1,6 +1,7 @@
 
 -- 壁の名前
 wallObjName = "name"
+breakWallName = "breakName"
 
 -- マップの縦、横幅
 maxWidth = 100
@@ -54,7 +55,7 @@ function SpawnMap(map)
             tmpTransform.translate.z = zPos
 
                 if map[z][x] == 1 then
-                    CreateEntity(wallObjName,tmpTransform)
+                    CreateEntity(breakWallName,tmpTransform)
                 elseif map[z][x] == 2 then
                     CreateEntity(wallObjName,tmpTransform)
                 end

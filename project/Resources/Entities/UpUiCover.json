@@ -1,21 +1,21 @@
 {
     "SceneObjectData": {
-        "name": "ShotGunSallUI",
+        "name": "UpUiCover",
         "tag": "Untagged",
-        "uniqueId": 5471
+        "uniqueId": 2848
     },
     "SpriteData": {
-        "height": 128.0,
-        "isDraw": true,
-        "layer": 0,
-        "textureName": "ShotGunSall.png",
-        "width": 128.0
+        "height": 184.0,
+        "isDraw": false,
+        "layer": 100,
+        "textureName": "white1x1.png",
+        "width": 1697.0
     },
     "Transform": {
         "rotate": [
             0.0,
             0.0,
-            0.0
+            0.07000000029802322
         ],
         "scale": [
             1.0,
@@ -24,7 +24,7 @@
         ],
         "translate": [
             0.0,
-            0.0,
+            -118.0999984741211,
             0.0
         ]
     }

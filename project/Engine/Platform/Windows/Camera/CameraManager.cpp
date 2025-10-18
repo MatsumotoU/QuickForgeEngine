@@ -12,10 +12,12 @@ void CameraManager::Initialize() {
 	cameras_.clear();
 #ifdef _DEBUG
 	isActiveDebugCamera_ = false;
+#endif // _DEBUG
+	
 	AddCamera();
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	entityManager->GetComponent<SceneObjectData>(cameras_[0].GetBindEntityId()).name = "DebugCamera";
-#endif // _DEBUG
+
 	// デフォルトカメラを追加
 	mainCameraIndex_ = AddCamera();
 }

@@ -38,7 +38,7 @@
                     "minVelocity": 6.0,
                     "moveSpeed": 8.5
                 },
-                "handle": 40,
+                "handle": 317,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -50,9 +50,9 @@
                     "diffusionRate": 0.5,
                     "knockBack": 10.0,
                     "knockBackPower": 10.0,
-                    "maxShotInterval": 0.5
+                    "maxShotInterval": 0.30000001192092896
                 },
-                "handle": 41,
+                "handle": 318,
                 "intParams": {
                     "bullets": 3,
                     "maxBullets": 3,
@@ -61,6 +61,21 @@
                 "priority": 0,
                 "scriptName": "BulletShot.lua",
                 "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "maxDamageInterval": 0.5
+                },
+                "handle": 319,
+                "intParams": {
+                    "hitPoint": 5
+                },
+                "priority": 0,
+                "scriptName": "HitPoint.lua",
+                "stringParams": {
+                    "damageTag": "Enemy"
+                }
             }
         ]
     },
@@ -71,7 +86,7 @@
         "sphere": [
             3.0255227088928223,
             1.2449007158465974e-07,
-            2.304914712905884,
+            5.0,
             0.6000000238418579
         ]
     },
@@ -89,7 +104,7 @@
         "translate": [
             3.0255227088928223,
             1.2449007158465974e-07,
-            2.304914712905884
+            5.0
         ]
     }
 }

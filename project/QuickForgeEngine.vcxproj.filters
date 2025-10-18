@@ -418,6 +418,14 @@
     <ClCompile Include="Engine\Platform\Windows\AppUtility\MultiThreadRunFunction.cpp" />
     <ClCompile Include="Engine\Platform\Windows\AppUtility\MultiThreadTaskExecutor.cpp" />
     <ClCompile Include="Editor\UI\Edit\PostprocessEdit.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetStructBase.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\SetQFELinkers.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetUtilities.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp" />
+    <ClCompile Include="Editor\UI\View\ScriptLoggerView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1349,6 +1357,14 @@
     <ClInclude Include="Engine\Platform\Windows\AppUtility\MultiThreadRunFunction.h" />
     <ClInclude Include="Engine\Platform\Windows\AppUtility\MultiThreadTaskExecutor.h" />
     <ClInclude Include="Editor\UI\Edit\PostprocessEdit.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetStructBase.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\SetQFELinkers.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetUtilities.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h" />
+    <ClInclude Include="Editor\UI\View\ScriptLoggerView.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">
@@ -1384,6 +1400,7 @@
     <None Include="Resources\Scripts\types.d.lua">
       <Filter>external\sol2</Filter>
     </None>
+    <None Include="Resources\2DMap\testCSV.csv" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="external">

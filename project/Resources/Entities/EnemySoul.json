@@ -2,29 +2,29 @@
     "ModelHandle": {
         "color": [
             1.0,
-            1.0,
-            1.0,
+            0.0,
+            0.0,
             1.0
         ],
-        "modelName": "anchor.obj"
+        "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "SlowArea",
-        "tag": "slowArea",
-        "uniqueId": 1031
+        "name": "EnemySoul",
+        "tag": "Enemy",
+        "uniqueId": 8840
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {
-                    "lifeSpan": 5.0,
-                    "maxLifeSpan": 5.0
+                    "speed": 20.0,
+                    "zSpeed": 0.800000011920929
                 },
-                "handle": 1249,
+                "handle": 1966,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "LifespanEntity.lua",
+                "scriptName": "EnemySoulMove.lua",
                 "stringParams": {}
             }
         ]
@@ -34,10 +34,10 @@
         "isStatic": false,
         "isTrigger": true,
         "sphere": [
+            -3.200000047683716,
             0.0,
-            0.0,
-            0.0,
-            2.0
+            5.300000190734863,
+            0.6000000238418579
         ]
     },
     "Transform": {
@@ -52,9 +52,9 @@
             1.0
         ],
         "translate": [
+            -3.200000047683716,
             0.0,
-            0.0,
-            0.0
+            5.300000190734863
         ]
     }
 }

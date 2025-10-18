@@ -122,11 +122,15 @@ void AppendLuaValueToString(const sol::object& v, std::string& msg) {
 	}
 }
 
-void DebugLogLua(sol::variadic_args va) {
+void DebugLogLua(sol::variadic_args va, uint32_t id, const std::string& scriptName) {
 	std::string msg;
 	for (auto&& v : va) {
 		AppendLuaValueToString(v, msg);
 		msg += " ";
+		MyDebugLog::GetInstance()->scriptLogs_[id][scriptName].push_back(msg);
+		if (MyDebugLog::GetInstance()->scriptLogs_[id][scriptName].size() > 100) {
+			MyDebugLog::GetInstance()->scriptLogs_[id][scriptName].erase(MyDebugLog::GetInstance()->scriptLogs_[id][scriptName].begin());
+		}
 	}
 	DebugLog(msg, LogLevel::EditorInfo);
 }
