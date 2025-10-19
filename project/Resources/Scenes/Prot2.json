@@ -47,7 +47,7 @@
                         "floatParams": {
                             "offsetX": 1.0
                         },
-                        "handle": 83,
+                        "handle": 152,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "CameraMove.lua",
@@ -115,7 +115,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 8.5
                         },
-                        "handle": 84,
+                        "handle": 153,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -129,7 +129,7 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.30000001192092896
                         },
-                        "handle": 85,
+                        "handle": 154,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -142,7 +142,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 86,
+                        "handle": 155,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "HitPoint.lua",
@@ -194,7 +194,7 @@
                         "floatParams": {
                             "space": 128.0
                         },
-                        "handle": 87,
+                        "handle": 156,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -245,7 +245,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 88,
+                        "handle": 157,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -291,7 +291,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 89,
+                        "handle": 158,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -348,7 +348,7 @@
                         "floatParams": {
                             "space": 95.0
                         },
-                        "handle": 7,
+                        "handle": 159,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -408,7 +408,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 8,
+                        "handle": 160,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DamageBorder.lua",

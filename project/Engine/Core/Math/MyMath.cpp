@@ -12,6 +12,15 @@ void MyMath::SimpleEaseIn(float* value, float endValue, float transitionSpeed) {
 	}
 }
 
+float MyMath::SimpleEaseIn(float from, float to, float transitionSpeed) {
+	float value = from;
+	value += (to - value) * transitionSpeed;
+	if (fabsf(value - to) <= 0.01f) {
+		return to;
+	}
+	return value;
+}
+
 float MyMath::DegreesToRadians(float degrees) {
 	return degrees * 3.14159265358979323846f / 180.0f;
 }
