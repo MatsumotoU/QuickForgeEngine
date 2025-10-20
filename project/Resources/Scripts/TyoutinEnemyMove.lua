@@ -55,7 +55,7 @@ function Update()
         -- 移動
         local timer = GetDeltaTime()
         moveDistance = moveDistance + moveSpeed * timer
-        transform.translate.x = transform.translate.x + moveSpeed * timer
+        transform.translate.x = transform.translate.x - moveSpeed * timer
 
         -- 3マス分移動したら終了
         if moveDistance >= 3.0 then

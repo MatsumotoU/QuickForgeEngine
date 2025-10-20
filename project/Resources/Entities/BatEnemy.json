@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 63,
+                "handle": 34,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BatEnemyMove.lua",
@@ -27,7 +27,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 64,
+                "handle": 35,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",

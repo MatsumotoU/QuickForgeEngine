@@ -9,7 +9,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 258,
+                "handle": 44,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -35,7 +35,8 @@
                     "sliderEnemyName": "BigGhostEnemy.json",
                     "smallGhostEnemyJson": "SmallGhostEnemy.json",
                     "tyoutinEnemyJson": "TyoutinEnemy.json",
-                    "varMapName": "map"
+                    "varMapName": "map",
+                    "zizouEnemyJson": "ZizouEnemy.json"
                 }
             }
         ]

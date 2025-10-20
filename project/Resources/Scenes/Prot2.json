@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.9129636883735657,
-                    -0.24233001470565796,
+                    0.9184938073158264,
+                    -0.40621790289878845,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    9.924307823181152,
-                    18.477706909179688,
-                    -9.51943302154541
+                    8.784930229187012,
+                    22.042530059814453,
+                    -12.50377368927002
                 ]
             }
         },
@@ -47,7 +47,7 @@
                         "floatParams": {
                             "offsetX": 1.0
                         },
-                        "handle": 319,
+                        "handle": 114,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "CameraMove.lua",
@@ -115,7 +115,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 8.5
                         },
-                        "handle": 320,
+                        "handle": 115,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -132,7 +132,7 @@
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.5
                         },
-                        "handle": 321,
+                        "handle": 116,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -145,7 +145,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 322,
+                        "handle": 117,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "HitPoint.lua",
@@ -197,7 +197,7 @@
                         "floatParams": {
                             "space": 128.0
                         },
-                        "handle": 323,
+                        "handle": 118,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -248,7 +248,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 324,
+                        "handle": 119,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -294,7 +294,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 325,
+                        "handle": 120,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -320,7 +320,8 @@
                             "sliderEnemyName": "BigGhostEnemy.json",
                             "smallGhostEnemyJson": "SmallGhostEnemy.json",
                             "tyoutinEnemyJson": "TyoutinEnemy.json",
-                            "varMapName": "map"
+                            "varMapName": "map",
+                            "zizouEnemyJson": "ZizouEnemy.json"
                         }
                     }
                 ]
@@ -356,7 +357,7 @@
                         "floatParams": {
                             "space": 95.0
                         },
-                        "handle": 326,
+                        "handle": 121,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -416,7 +417,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 327,
+                        "handle": 122,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DamageBorder.lua",
