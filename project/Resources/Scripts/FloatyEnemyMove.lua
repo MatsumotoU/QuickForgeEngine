@@ -22,10 +22,12 @@ function Update()
         nowSpeed = speed
     end
 
--- 移動
-transform.translate.x = transform.translate.x - nowSpeed * (1.0 / 60.0)
+    local deltaTime = GetDeltaTime()
 
-isHit = false
+    -- 移動
+    transform.translate.x = transform.translate.x - nowSpeed * deltaTime
+
+    isHit = false
 end
 
 function OnCollisionEnter(id,obj)

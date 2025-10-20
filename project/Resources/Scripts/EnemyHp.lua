@@ -68,23 +68,24 @@ function OnCollisionEnter(id,obj)
         damageInterval = maxDamageInterval
 
         if hp <= 0 then
-            isAlive = false
-            if enemyType == 0 then
-                local temp = Transform.new()
-                temp.translate.x = transform.translate.x
-                temp.translate.y = transform.translate.y + 2.0
-                temp.translate.z = transform.translate.z
-                CreateEntity(stoneName,temp)
-            else
+            if isAlive then
                 isAlive = false
-                -- 双子のゴーストの場合
-                local temp = Transform.new()
-                temp.translate.x = transform.translate.x
-                temp.translate.y = transform.translate.y + 2.0
-                temp.translate.z = transform.translate.z - 0.5
-                CreateEntity(normalEnemyName,temp)
-                temp.translate.z = transform.translate.z + 0.5
-                CreateEntity(normalEnemyName,temp)
+                if enemyType == 0 then
+                    local temp = Transform.new()
+                    temp.translate.x = transform.translate.x
+                    temp.translate.y = transform.translate.y + 2.0
+                    temp.translate.z = transform.translate.z
+                    CreateEntity(stoneName,temp)
+                elseif enemyType == 1 then 
+                    -- 双子のゴーストの場合
+                    local temp = Transform.new()
+                    temp.translate.x = transform.translate.x
+                    temp.translate.y = transform.translate.y + 2.0
+                    temp.translate.z = transform.translate.z - 0.5
+                    CreateEntity(normalEnemyName,temp)
+                    temp.translate.z = transform.translate.z + 0.5
+                    CreateEntity(normalEnemyName,temp)
+                end
             end
         end
     end

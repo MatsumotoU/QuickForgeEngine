@@ -1,36 +1,33 @@
 {
     "ModelHandle": {
         "color": [
-            0.8496447205543518,
-            0.9585492014884949,
-            0.04469917342066765,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "SmallGhostEnemy",
+        "name": "BatEnemy",
         "tag": "Enemy",
-        "uniqueId": 501
+        "uniqueId": 5732
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 5,
+                "handle": 63,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "SmallGhotEnemyMove.lua",
-                "stringParams": {
-                    "LockOnObjName": "ShotGunPlayer",
-                    "bulletName": "Bullet.json"
-                }
+                "scriptName": "BatEnemyMove.lua",
+                "stringParams": {}
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 6,
+                "handle": 64,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -45,8 +42,8 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            0.6635217070579529,
-            0.0,
+            4.148106575012207,
+            2.5311217308044434,
             0.0,
             0.800000011920929
         ]
@@ -63,8 +60,8 @@
             1.0
         ],
         "translate": [
-            0.6635217070579529,
-            0.0,
+            4.148106575012207,
+            2.5311217308044434,
             0.0
         ]
     }
