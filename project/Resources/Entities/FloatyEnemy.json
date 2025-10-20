@@ -19,7 +19,7 @@
                 "boolParams": {},
                 "floatParams": {
                     "lifeTime": 5.0,
-                    "speed": 0.5
+                    "speed": 7.0
                 },
                 "handle": 14,
                 "intParams": {

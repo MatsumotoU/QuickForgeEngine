@@ -4,7 +4,7 @@ LockOnObjName = "objName"
 local id = 0
 
 -- 速度
-speed = 0.2
+speed = 0.04
 -- スロー速度
 local slowSpeed = 0.0
 -- 適応する速度
