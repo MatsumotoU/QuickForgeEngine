@@ -1,36 +1,35 @@
 {
     "ModelHandle": {
         "color": [
-            0.8496447205543518,
-            0.9585492014884949,
-            0.04469917342066765,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "SmallGhostEnemy",
+        "name": "NasuEnemy",
         "tag": "Enemy",
-        "uniqueId": 501
+        "uniqueId": 5730
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {},
-                "handle": 5,
+                "floatParams": {
+                    "speed": 0.20000000298023224
+                },
+                "handle": 59,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "SmallGhotEnemyMove.lua",
-                "stringParams": {
-                    "LockOnObjName": "ShotGunPlayer",
-                    "bulletName": "Bullet.json"
-                }
+                "scriptName": "FloatyEnemyMove.lua",
+                "stringParams": {}
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 6,
+                "handle": 60,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -45,10 +44,10 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            0.6635217070579529,
+            0.5790788531303406,
+            2.5504708290100098,
             0.0,
-            0.0,
-            0.800000011920929
+            0.6000000238418579
         ]
     },
     "Transform": {
@@ -63,8 +62,8 @@
             1.0
         ],
         "translate": [
-            0.6635217070579529,
-            0.0,
+            0.5790788531303406,
+            2.5504708290100098,
             0.0
         ]
     }

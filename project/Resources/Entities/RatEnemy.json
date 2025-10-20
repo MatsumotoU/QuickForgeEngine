@@ -1,36 +1,33 @@
 {
     "ModelHandle": {
         "color": [
-            0.8496447205543518,
-            0.9585492014884949,
-            0.04469917342066765,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "SmallGhostEnemy",
+        "name": "RatEnemy",
         "tag": "Enemy",
-        "uniqueId": 501
+        "uniqueId": 5728
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 5,
+                "handle": 55,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "SmallGhotEnemyMove.lua",
-                "stringParams": {
-                    "LockOnObjName": "ShotGunPlayer",
-                    "bulletName": "Bullet.json"
-                }
+                "scriptName": "RatEnemyMove.lua",
+                "stringParams": {}
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 6,
+                "handle": 56,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -45,10 +42,10 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            0.6635217070579529,
+            -2.9573915004730225,
+            2.3810787200927734,
             0.0,
-            0.0,
-            0.800000011920929
+            0.699999988079071
         ]
     },
     "Transform": {
@@ -63,8 +60,8 @@
             1.0
         ],
         "translate": [
-            0.6635217070579529,
-            0.0,
+            -2.9573915004730225,
+            2.3810787200927734,
             0.0
         ]
     }
