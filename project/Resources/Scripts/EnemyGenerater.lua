@@ -5,15 +5,20 @@ local targetId = 0
 local targetTransform = Transform.new()
 
 -- 敵幽霊の名前
-normalGhostEnemyJson = "name" -- 通常の幽霊
-bigGhostEnemyJson = "name" -- 大きい幽霊
-longGhostEnemyJson = "name" -- 長い幽霊
-doubleGhostEnemyJson = "name" -- 双子の幽霊
-smallGhostEnemyJson = "name" -- 小さい幽霊
-boxGhostEnemyJson = "name" -- 四角い幽霊
+normalGhostEnemyJson = "NormalGhostEnemy.json" -- 通常の幽霊
+bigGhostEnemyJson = "BigGhostEnemy.json" -- 大きい幽霊
+longGhostEnemyJson = "LongGhostEnemy.json" -- 長い幽霊
+doubleGhostEnemyJson = "doubleGhostEnemy.json" -- 双子の幽霊
+smallGhostEnemyJson = "SmallGhostEnemy.json" -- 小さい幽霊
+boxGhostEnemyJson = "BoxGhostEnemy.json" -- 四角い幽霊
 -- 有機物の敵の名前
---tyoutinEnemyJson = "name" -- 提灯の敵
---ratEnemyJson = "name" -- ネズミの敵
+tyoutinEnemyJson = "TyoutinEnemy.json" -- 提灯の敵
+ratEnemyJson = "RatEnemy.json" -- ネズミの敵
+zizouEnemyJson = "ZizouEnemy.json" -- 地蔵の敵
+nasuEnemyJson = "NasuEnemy.json" -- ナスの敵
+eyeEnemyJson = "EyeEnemy.json" -- 目玉の敵
+batEnemyJson = "BatEnemy.json" -- コウモリの敵
+pillBugEnemyJson = "PillBugEnemy.json" -- ダンゴムシの敵
 
 -- 敵の生存を管理する
 local aliveScriptName = "EnemyHp.lua"
@@ -102,6 +107,13 @@ function Init()
     end
 
     DebugLog("EnemyGeneratorInit")
+
+    -- 正しく敵を生成出来るかを確認する(デバック用)
+    --local tmpTransform = Transform.new()
+    --tmpTransform.translate.y = 1.0
+    --tmpTransform.translate.x = 4.0
+    --tmpTransform.translate.z = 2.0
+    --CreateEntity(pillBugEnemyJson,tmpTransform)
 end
 
 --[[

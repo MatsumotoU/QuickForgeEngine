@@ -26,8 +26,8 @@ local moveType = 0
 local dir = 1.0
 
 -- マップ情報を取得するための名前
-mapObjName = "MapGenerator"
-generatorMapScriptName = "MapGenerator.lua"
+mapObjName = "MapGenerater"
+generatorMapScriptName = "MapGenerater.lua"
 varMapName = "map"
 local linkID = 0
 -- 取得したマップ
