@@ -127,13 +127,16 @@
                             "diffusionRate": 0.5,
                             "knockBack": 10.0,
                             "knockBackPower": 10.0,
-                            "maxShotInterval": 0.30000001192092896
+                            "maxShotInterval": 0.5,
+                            "reloadInterval": 0.0,
+                            "shotInterval": 10.0,
+                            "targetReloadInterval": 0.5
                         },
                         "handle": 321,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
-                            "shotNum": 3
+                            "shotNum": 15
                         },
                         "priority": 0,
                         "scriptName": "BulletShot.lua",

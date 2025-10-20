@@ -6,6 +6,9 @@ void QFE::Script::MyLuaMath::LuaScriptOnQEFSetMyMath(sol::state* luaState) {
 	sol::table math = qfe.create_named("Math");
 
 	math.set("pi", 3.14159265358979323846f);
+	math.set_function("SimpleEaseIn", [](float from,float to,float speed) {
+		return MyMath::SimpleEaseIn(from, to, speed);
+		});
 	math.set_function("Leap", [](float a, float b, float t) {
 		return a * t + b * (1.0f - t);
 		});

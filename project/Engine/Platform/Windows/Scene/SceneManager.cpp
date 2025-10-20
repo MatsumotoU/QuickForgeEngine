@@ -87,12 +87,14 @@ void SceneManager::Update() {
 	}
 
 	// スクリプト更新
-	ColliderManager::GetInstance()->Update();
 	if (isRunningScript_) {
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
 		PhysicsManager::GetInstance()->Update();
 	}
 	currentScene_->Update();
+
+	// コライダー更新
+	ColliderManager::GetInstance()->Update();
 
 	// ユニークIDが未設定なら設定する
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();

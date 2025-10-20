@@ -348,41 +348,27 @@ void ColliderManager::SphereToAABBUpdate() {
 				}
 				Transform& transformA = entityManager->GetComponent<Transform>(sphereId);
 				Transform& transformB = entityManager->GetComponent<Transform>(aabbId);
-				// AABBの中心座標
-				Vector3 centerB = (aabbCollider.aabb.min + aabbCollider.aabb.max) * 0.5f;
-				// AABBの半サイズ
-				Vector3 halfB = (aabbCollider.aabb.max - aabbCollider.aabb.min) * 0.5f;
-				// 中心間距離
-				Vector3 delta = centerB - sphereCollider.sphere.center;
-				Vector3 overlap = {
-					sphereCollider.sphere.radius + halfB.x - std::abs(delta.x),
-					sphereCollider.sphere.radius + halfB.y - std::abs(delta.y),
-					sphereCollider.sphere.radius + halfB.z - std::abs(delta.z)
-				};
-				// 最小オーバーラップ軸を探す
-				float minOverlap = overlap.x;
-				int axis = 0; // 0:x, 1:y, 2:z
-				if (overlap.y < minOverlap) { minOverlap = overlap.y; axis = 1; }
-				if (overlap.z < minOverlap) { minOverlap = overlap.z; axis = 2; }
-				// 反発ベクトルを決定
-				Vector3 push(0, 0, 0);
-				if (axis == 0) { // x軸
-					push.x = (delta.x > 0) ? minOverlap : -minOverlap;
-				} else if (axis == 1) { // y軸
-					push.y = (delta.y > 0) ? minOverlap : -minOverlap;
-				} else { // z軸
-					push.z = (delta.z > 0) ? minOverlap : -minOverlap;
-				}
-				// どちらも動く場合は等しく反発
-				if (!sphereCollider.isStatic && !aabbCollider.isStatic) {
-					transformA.translate -= push * 0.5f;
-					transformB.translate += push * 0.5f;
-				}
-				// 片方が動かない場合は動く方だけ反発
-				else if (!sphereCollider.isStatic && aabbCollider.isStatic) {
-					transformA.translate -= push;
-				} else if (sphereCollider.isStatic && !aabbCollider.isStatic) {
-					transformB.translate += push;
+
+				// 最近傍点を取得
+				Vector3 closestPoint = MyMath::ClosestPoint(sphereCollider.sphere, aabbCollider.aabb);
+				Vector3 direction = sphereCollider.sphere.center - closestPoint;
+				float distance = direction.Length();
+
+				// 球がAABBにめり込んだ分だけ押し戻す
+				float penetration = sphereCollider.sphere.radius - distance;
+				if (penetration > 0.0f && distance > 0.0f) {
+					Vector3 push = direction.Normalize() * penetration;
+					// どちらも動く場合は等しく反発
+					if (!sphereCollider.isStatic && !aabbCollider.isStatic) {
+						transformA.translate += push * 0.5f;
+						transformB.translate -= push * 0.5f;
+					}
+					// 片方が動かない場合は動く方だけ反発
+					else if (!sphereCollider.isStatic && aabbCollider.isStatic) {
+						transformA.translate += push;
+					} else if (sphereCollider.isStatic && !aabbCollider.isStatic) {
+						transformB.translate -= push;
+					}
 				}
 			}
 		}
