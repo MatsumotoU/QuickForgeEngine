@@ -6,6 +6,7 @@
 namespace MyMath {
 	float Leap(float a, float b, float t);
 	void SimpleEaseIn(float* value, float endValue, float transitionSpeed);
+	float SimpleEaseIn(float from, float to, float transitionSpeed);
 	float DegreesToRadians(float degrees);
 
 	template<typename T>

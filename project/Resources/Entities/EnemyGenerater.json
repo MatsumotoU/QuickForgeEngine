@@ -9,7 +9,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 50,
+                "handle": 6,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -20,13 +20,16 @@
                 "priority": 10,
                 "scriptName": "EnemyGenerater.lua",
                 "stringParams": {
+                    "bigGhostEnemyJson": "BigGhostEnemy.json",
                     "cameraName": "Camera",
-                    "floatyEnemyName": "FloatyEnemy.json",
+                    "floatyEnemyName": "LongGhostEnemy.json",
                     "generatorMapScriptName": "MapGenerater.lua",
-                    "lockOnEnemyName": "LockOnEnemy.json",
+                    "lockOnEnemyName": "NormalGhostEnemy.json",
+                    "longGhostEnemyJson": "LongGhostEnemy.json",
                     "mapObjName": "MapGenerater",
+                    "normalGhostEnemyJson": "NormalGhostEnemy.json",
                     "playerName": "Camera",
-                    "sliderEnemyName": "SliderEnemy.json",
+                    "sliderEnemyName": "BigGhostEnemy.json",
                     "varMapName": "map"
                 }
             }

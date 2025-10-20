@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6204977631568909,
-                    -0.017736511304974556,
+                    0.4329957664012909,
+                    -0.0052362242713570595,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.3093947470188141,
-                    12.467157363891602,
-                    -17.44211769104004
+                    0.10191231966018677,
+                    8.996821403503418,
+                    -19.46276092529297
                 ]
             }
         },
@@ -69,7 +69,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 30,
+                        "handle": 189,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -143,7 +143,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 7.0
                         },
-                        "handle": 31,
+                        "handle": 190,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -156,7 +156,7 @@
                             "knockBack": 10.0,
                             "knockBackPower": 10.0
                         },
-                        "handle": 32,
+                        "handle": 191,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BulletShot.lua",
@@ -179,6 +179,410 @@
                     2.337099552154541,
                     1.2169130059191957e-07,
                     3.5280673503875732
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    0.26424872875213623,
+                    0.26424872875213623,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "BigGhostEnemy",
+                "tag": "Enemy",
+                "uniqueId": 500
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "speed": 0.4000000059604645
+                        },
+                        "handle": 192,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BigGhostEnemyMove.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 193,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "EnemyHp.lua",
+                        "stringParams": {
+                            "stoneName": "Tombstone.json"
+                        }
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    2.6503891944885254,
+                    0.0,
+                    0.0,
+                    0.800000011920929
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    2.6503891944885254,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.8496447205543518,
+                    0.9585492014884949,
+                    0.04469917342066765,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "SmallGhostEnemy",
+                "tag": "Enemy",
+                "uniqueId": 501
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 194,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SmallGhotEnemyMove.lua",
+                        "stringParams": {
+                            "LockOnObjName": "ShotGunPlayer",
+                            "bulletName": "Bullet.json"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 195,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "EnemyHp.lua",
+                        "stringParams": {
+                            "stoneName": "Tombstone.json"
+                        }
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    0.6635217070579529,
+                    0.0,
+                    0.0,
+                    0.800000011920929
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.6635217070579529,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.05100809037685394,
+                    0.8828890919685364,
+                    0.984455943107605,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "LongGhostEnemy",
+                "tag": "Enemy",
+                "uniqueId": 502
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "speed": 0.4000000059604645
+                        },
+                        "handle": 196,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "FloatyEnemyMove.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 197,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "EnemyHp.lua",
+                        "stringParams": {
+                            "stoneName": "Tombstone.json"
+                        }
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    -1.428290605545044,
+                    0.0,
+                    0.0,
+                    0.800000011920929
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -1.428290605545044,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.5194732546806335,
+                    0.10929150879383087,
+                    0.9170984625816345,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "doubleGhostEnemy",
+                "tag": "Enemy",
+                "uniqueId": 503
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "speed": 0.4000000059604645
+                        },
+                        "handle": 198,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "doubleGhostEnemyMove.lua",
+                        "stringParams": {
+                            "LockOnObjName": "ShotGunPlayer"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 199,
+                        "intParams": {
+                            "enemyType": 1
+                        },
+                        "priority": 0,
+                        "scriptName": "EnemyHp.lua",
+                        "stringParams": {
+                            "normalEnemyName": "NormalEnemy.json",
+                            "stoneName": "Tombstone.json"
+                        }
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    -3.427076816558838,
+                    0.0,
+                    0.0,
+                    0.800000011920929
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -3.427076816558838,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.14091654121875763,
+                    0.9378238320350647,
+                    0.33085307478904724,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "NormalGhostEnemy",
+                "tag": "Enemy",
+                "uniqueId": 504
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "speed": 0.20000000298023224
+                        },
+                        "handle": 200,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "LockOnEnemyMove.lua",
+                        "stringParams": {
+                            "LockOnObjName": "ShotGunPlayer"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 201,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "EnemyHp.lua",
+                        "stringParams": {
+                            "stoneName": "Tombstone.json"
+                        }
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    -5.383298873901367,
+                    0.0,
+                    0.0,
+                    0.800000011920929
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -5.383298873901367,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    -0.38994574546813965,
+                    -0.5,
+                    -0.5,
+                    0.6100540161132813,
+                    0.5,
+                    0.5
+                ],
+                "isDraw": false,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "Wall",
+                "tag": "Wall",
+                "uniqueId": 256
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.1100541353225708,
+                    0.0,
+                    0.0
                 ]
             }
         }

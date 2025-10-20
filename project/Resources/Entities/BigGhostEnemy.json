@@ -1,0 +1,70 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.26424872875213623,
+            0.26424872875213623,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "BigGhostEnemy",
+        "tag": "Enemy",
+        "uniqueId": 500
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "speed": 0.4000000059604645
+                },
+                "handle": 3,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "BigGhostEnemyMove.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 11,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "EnemyHp.lua",
+                "stringParams": {
+                    "stoneName": "Tombstone.json"
+                }
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            2.6503891944885254,
+            0.0,
+            0.0,
+            0.800000011920929
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            2.6503891944885254,
+            0.0,
+            0.0
+        ]
+    }
+}
