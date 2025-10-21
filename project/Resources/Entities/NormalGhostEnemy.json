@@ -18,9 +18,9 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "speed": 0.04
+                    "speed": 0.20000000298023224
                 },
-                "handle": 10,
+                "handle": 20,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "LockOnEnemyMove.lua",
@@ -31,8 +31,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 18,
-                "intParams": {},
+                "handle": 21,
+                "intParams": {
+                    "enemyType": 1
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {
@@ -49,7 +51,7 @@
             -5.383298873901367,
             0.0,
             0.0,
-            0.7
+            0.800000011920929
         ]
     },
     "Transform": {

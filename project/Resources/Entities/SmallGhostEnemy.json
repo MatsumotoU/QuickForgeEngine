@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 5,
+                "handle": 14,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "SmallGhotEnemyMove.lua",
@@ -30,8 +30,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 6,
-                "intParams": {},
+                "handle": 15,
+                "intParams": {
+                    "enemyType": 1
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {

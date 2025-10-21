@@ -330,27 +330,53 @@ end
 -- ステージ1で使用する敵を登録
 function StageOneRegisterEnemy()
     -- 最大の敵の数を初期化
+    -- 幽霊の敵
     table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
     table.insert(maxEnemysCounts,{name = longGhostEnemyJson,maxCount = 3})
     table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 1})
+    -- 有機物の敵
+    table.insert(maxEnemysCounts,{name = tyoutinEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = zizouEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = nasuEnemyJson,maxCount = 1})
+    
     -- 現在の敵の数を初期化
+    -- 幽霊の敵
     table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
     table.insert(currentEnemysCounts,{name = longGhostEnemyJson,difficulty = 1,count = 0})
     table.insert(currentEnemysCounts,{name = smallGhostEnemyJson,difficulty = 2,count = 0})
+    -- 有機物の敵
+    table.insert(currentEnemysCounts,{name = tyoutinEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = ratEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = zizouEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = nasuEnemyJson,difficulty = 1,count = 0})
 end
 
 --ステージ2で使用する敵を登録
 function StageTwoRegisterEnemy()
     -- 最大の敵の数を初期化
+    -- 幽霊の敵
     table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
     table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 2})
     table.insert(maxEnemysCounts,{name = doubleGhostEnemyJson,maxCount = 1})
     table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 1})
-    table.insert(maxEnemysCounts,{name = boxGhostEnemyJson,maxCount = 1})
+    --箱幽霊の敵はいったんコメントアウトtable.insert(maxEnemysCounts,{name = boxGhostEnemyJson,maxCount = 1})
+    -- 有機物の敵
+    table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = batEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = pillBugEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = eyeEnemyJson,maxCount = 1})
+
     -- 現在の敵の数を初期化
+    -- 幽霊の敵
     table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
     table.insert(currentEnemysCounts,{name = bigGhostEnemyJson,difficulty = 1,count = 0})
     table.insert(currentEnemysCounts,{name = doubleGhostEnemyJson,difficulty = 2,count = 0})
     table.insert(currentEnemysCounts,{name = smallGhostEnemyJson,difficulty = 2,count = 0})
-    table.insert(currentEnemysCounts,{name = boxGhostEnemyJson,difficulty = 2,count = 0})
+    --箱幽霊の敵はいったんコメントアウトtable.insert(currentEnemysCounts,{name = boxGhostEnemyJson,difficulty = 2,count = 0})
+    -- 有機物の敵
+    table.insert(currentEnemysCounts,{name = ratEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = batEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = pillBugEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = eyeEnemyJson,difficulty = 1,count = 0})
 end
