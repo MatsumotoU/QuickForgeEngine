@@ -9,7 +9,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 6,
+                "handle": 44,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -21,7 +21,9 @@
                 "scriptName": "EnemyGenerater.lua",
                 "stringParams": {
                     "bigGhostEnemyJson": "BigGhostEnemy.json",
+                    "boxGhostEnemyJson": "BoxGhostEnemy.json",
                     "cameraName": "Camera",
+                    "doubleGhostEnemyJson": "doubleGhostEnemy.json",
                     "floatyEnemyName": "LongGhostEnemy.json",
                     "generatorMapScriptName": "MapGenerater.lua",
                     "lockOnEnemyName": "NormalGhostEnemy.json",
@@ -29,8 +31,12 @@
                     "mapObjName": "MapGenerater",
                     "normalGhostEnemyJson": "NormalGhostEnemy.json",
                     "playerName": "Camera",
+                    "ratEnemyJson": "RatEnemy.json",
                     "sliderEnemyName": "BigGhostEnemy.json",
-                    "varMapName": "map"
+                    "smallGhostEnemyJson": "SmallGhostEnemy.json",
+                    "tyoutinEnemyJson": "TyoutinEnemy.json",
+                    "varMapName": "map",
+                    "zizouEnemyJson": "ZizouEnemy.json"
                 }
             }
         ]

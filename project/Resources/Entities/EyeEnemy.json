@@ -1,40 +1,34 @@
 {
     "ModelHandle": {
         "color": [
-            0.14091654121875763,
-            0.9378238320350647,
-            0.33085307478904724,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "NormalGhostEnemy",
+        "name": "EyeEnemy",
         "tag": "Enemy",
-        "uniqueId": 504
+        "uniqueId": 5731
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {
-                    "speed": 0.20000000298023224
-                },
-                "handle": 20,
+                "floatParams": {},
+                "handle": 61,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "LockOnEnemyMove.lua",
-                "stringParams": {
-                    "LockOnObjName": "ShotGunPlayer"
-                }
+                "scriptName": "EyeEnemyMove.lua",
+                "stringParams": {}
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 21,
-                "intParams": {
-                    "enemyType": 1
-                },
+                "handle": 62,
+                "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {
@@ -48,10 +42,10 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            -5.383298873901367,
+            2.588057518005371,
+            2.5309934616088867,
             0.0,
-            0.0,
-            0.800000011920929
+            0.699999988079071
         ]
     },
     "Transform": {
@@ -66,8 +60,8 @@
             1.0
         ],
         "translate": [
-            -5.383298873901367,
-            0.0,
+            2.588057518005371,
+            2.5309934616088867,
             0.0
         ]
     }

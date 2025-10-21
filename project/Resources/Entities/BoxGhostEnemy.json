@@ -1,37 +1,33 @@
 {
     "ModelHandle": {
         "color": [
-            0.14091654121875763,
-            0.9378238320350647,
-            0.33085307478904724,
+            1.0,
+            0.07253885269165039,
+            0.07253885269165039,
             1.0
         ],
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "NormalGhostEnemy",
+        "name": "BoxGhostEnemy",
         "tag": "Enemy",
-        "uniqueId": 504
+        "uniqueId": 5726
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {
-                    "speed": 0.20000000298023224
-                },
-                "handle": 20,
+                "floatParams": {},
+                "handle": 22,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "LockOnEnemyMove.lua",
-                "stringParams": {
-                    "LockOnObjName": "ShotGunPlayer"
-                }
+                "scriptName": "BoxGhostEnemyMove.lua",
+                "stringParams": {}
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 21,
+                "handle": 23,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -48,7 +44,7 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            -5.383298873901367,
+            4.205979824066162,
             0.0,
             0.0,
             0.800000011920929
@@ -66,7 +62,7 @@
             1.0
         ],
         "translate": [
-            -5.383298873901367,
+            4.205979824066162,
             0.0,
             0.0
         ]

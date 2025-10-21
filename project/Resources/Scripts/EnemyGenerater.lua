@@ -4,10 +4,21 @@ cameraName = "name"
 local targetId = 0
 local targetTransform = Transform.new()
 
--- 敵の名前
-normalGhostEnemyJson = "name"
-bigGhostEnemyJson = "name"
-longGhostEnemyJson = "name"
+-- 敵幽霊の名前
+normalGhostEnemyJson = "NormalGhostEnemy.json" -- 通常の幽霊
+bigGhostEnemyJson = "BigGhostEnemy.json" -- 大きい幽霊
+longGhostEnemyJson = "LongGhostEnemy.json" -- 長い幽霊
+doubleGhostEnemyJson = "doubleGhostEnemy.json" -- 双子の幽霊
+smallGhostEnemyJson = "SmallGhostEnemy.json" -- 小さい幽霊
+boxGhostEnemyJson = "BoxGhostEnemy.json" -- 四角い幽霊
+-- 有機物の敵の名前
+tyoutinEnemyJson = "TyoutinEnemy.json" -- 提灯の敵
+ratEnemyJson = "RatEnemy.json" -- ネズミの敵
+zizouEnemyJson = "ZizouEnemy.json" -- 地蔵の敵
+nasuEnemyJson = "NasuEnemy.json" -- ナスの敵
+eyeEnemyJson = "EyeEnemy.json" -- 目玉の敵
+batEnemyJson = "BatEnemy.json" -- コウモリの敵
+pillBugEnemyJson = "PillBugEnemy.json" -- ダンゴムシの敵
 
 -- 敵の生存を管理する
 local aliveScriptName = "EnemyHp.lua"
@@ -50,6 +61,9 @@ local movedDistance = 0.0    -- 移動距離を計算
 local spawnDistance = 5.0    -- 敵を生成する距離
 local offsetX = 8.0 -- カメラの画面端までの位置
 
+-- 生成するステージの番号
+stageNumber = 1
+
 --[[
     初期化処理
 --]]
@@ -60,6 +74,13 @@ function Init()
     DebugLog("StartLoadMapData")
     DebugLog(generatorMapScriptName)
     DebugLog(varMapName)
+
+    --ステージに対応する敵を登録する
+    if stageNumber == 1 then
+        StageOneRegisterEnemy()
+    else
+        StageTwoRegisterEnemy()
+    end
 
     -- 追跡するidを取得
     targetId = GetEntity(cameraName)
@@ -75,15 +96,6 @@ function Init()
        DebugLog(map[z][1])
     end
 
-    -- 最大の敵の数を初期化
-    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
-    table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 3})
-    table.insert(maxEnemysCounts,{name = longGhostEnemyJson,maxCount = 3})
-    -- 現在の敵の数を初期化
-    table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
-    table.insert(currentEnemysCounts,{name = bigGhostEnemyJson,difficulty = 1,count = 0})
-    table.insert(currentEnemysCounts,{name = longGhostEnemyJson,difficulty = 1,count = 0})
-
     for i = 1,#currentEnemysCounts do
         DebugLog("LoadEnemyName :"..currentEnemysCounts[i].name)
     end
@@ -95,6 +107,13 @@ function Init()
     end
 
     DebugLog("EnemyGeneratorInit")
+
+    -- 正しく敵を生成出来るかを確認する(デバック用)
+    --local tmpTransform = Transform.new()
+    --tmpTransform.translate.y = 1.0
+    --tmpTransform.translate.x = 4.0
+    --tmpTransform.translate.z = 2.0
+    --CreateEntity(tyoutinEnemyJson,tmpTransform)
 end
 
 --[[
@@ -119,6 +138,10 @@ function GetAvailableEnemyPositions(cameraRightEdgeX)
     local height = #map
     local startX = math.max(1,math.floor(cameraRightEdgeX / kBlockSize))
     local endX = math.min(width - 2,math.floor((cameraRightEdgeX + spawnRange) / kBlockSize))
+
+    if endX <= startX then
+        return positions
+    end
 
     for x = startX,endX do
         local isStartCount = false
@@ -241,6 +264,10 @@ function SpawnManager()
             return
         end
 
+        if #positions <= 0 then
+            return
+        end
+
         for i = 1,#spawnEnemisList do
             -- 生成する座標を取得する
             local index = math.random(1,#positions)
@@ -298,4 +325,58 @@ function EnemyCountManager()
             table.remove(enemiesIDList,removeList[i].index)
         end
     end
+end
+
+-- ステージ1で使用する敵を登録
+function StageOneRegisterEnemy()
+    -- 最大の敵の数を初期化
+    -- 幽霊の敵
+    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
+    table.insert(maxEnemysCounts,{name = longGhostEnemyJson,maxCount = 3})
+    table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 1})
+    -- 有機物の敵
+    table.insert(maxEnemysCounts,{name = tyoutinEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = zizouEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = nasuEnemyJson,maxCount = 1})
+    
+    -- 現在の敵の数を初期化
+    -- 幽霊の敵
+    table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
+    table.insert(currentEnemysCounts,{name = longGhostEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = smallGhostEnemyJson,difficulty = 2,count = 0})
+    -- 有機物の敵
+    table.insert(currentEnemysCounts,{name = tyoutinEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = ratEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = zizouEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = nasuEnemyJson,difficulty = 1,count = 0})
+end
+
+--ステージ2で使用する敵を登録
+function StageTwoRegisterEnemy()
+    -- 最大の敵の数を初期化
+    -- 幽霊の敵
+    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
+    table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 2})
+    table.insert(maxEnemysCounts,{name = doubleGhostEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 1})
+    --箱幽霊の敵はいったんコメントアウトtable.insert(maxEnemysCounts,{name = boxGhostEnemyJson,maxCount = 1})
+    -- 有機物の敵
+    table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = batEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = pillBugEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = eyeEnemyJson,maxCount = 1})
+
+    -- 現在の敵の数を初期化
+    -- 幽霊の敵
+    table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
+    table.insert(currentEnemysCounts,{name = bigGhostEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = doubleGhostEnemyJson,difficulty = 2,count = 0})
+    table.insert(currentEnemysCounts,{name = smallGhostEnemyJson,difficulty = 2,count = 0})
+    --箱幽霊の敵はいったんコメントアウトtable.insert(currentEnemysCounts,{name = boxGhostEnemyJson,difficulty = 2,count = 0})
+    -- 有機物の敵
+    table.insert(currentEnemysCounts,{name = ratEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = batEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = pillBugEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = eyeEnemyJson,difficulty = 1,count = 0})
 end

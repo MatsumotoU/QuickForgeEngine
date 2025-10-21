@@ -18,9 +18,9 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "speed": 0.1
+                    "speed": 0.4000000059604645
                 },
-                "handle": 3,
+                "handle": 12,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BigGhostEnemyMove.lua",
@@ -29,8 +29,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 11,
-                "intParams": {},
+                "handle": 13,
+                "intParams": {
+                    "enemyType": 1
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {
@@ -48,6 +50,7 @@
             0.0,
             0.0,
             1.5
+
         ]
     },
     "Transform": {
@@ -62,9 +65,9 @@
             1.0
         ],
         "translate": [
-            2.6503891944885254,
+            13.190983772277832,
             0.0,
-            0.0
+            3.711031913757324
         ]
     }
 }

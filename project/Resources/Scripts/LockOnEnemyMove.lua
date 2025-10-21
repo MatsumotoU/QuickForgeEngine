@@ -53,10 +53,11 @@ function Update()
     if distance > 2.0 then
         -- 正規化する
         dir:Normalize()
+        local deltaTime = GetDeltaTime()
         -- 移動量を取得
-        move.x = dir.x * nowSpeed
-        move.y = dir.y * nowSpeed
-        move.z = dir.z * nowSpeed
+        move.x = dir.x * nowSpeed * deltaTime
+        move.y = dir.y * nowSpeed * deltaTime
+        move.z = dir.z * nowSpeed * deltaTime
         -- 移動
         transform.translate.x = transform.translate.x + move.x
         transform.translate.y = transform.translate.y + move.y
