@@ -5,7 +5,7 @@ breakWallName = "breakName"
 
 -- マップの縦、横幅
 maxWidth = 100
-maxHeight = 11
+maxHeight = 9
 
 -- ブロックの大きさ
 blockSize = 1.0
