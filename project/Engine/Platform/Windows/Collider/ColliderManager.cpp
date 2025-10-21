@@ -116,6 +116,14 @@ void ColliderManager::SphereToSphereUpdate() {
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(idA);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(idB);
 
+				// 衝突イベントを発生させるレイヤーか
+				if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
+#endif // _DEBUG
+					continue;
+				}
+
 				// OnCollisionStayイベント
 				colliderA.isHit = true;
 				colliderB.isHit = true;
@@ -127,6 +135,14 @@ void ColliderManager::SphereToSphereUpdate() {
 				}
 				if (!colliderB.isOldHit) {
 					luaManager->RunTriggerEnter(idB, idA, objA);
+				}
+
+				// 反発しうるレイヤーか
+				if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
+#endif // _DEBUG
+					continue;
 				}
 
 				// 反発処理

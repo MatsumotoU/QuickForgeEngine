@@ -50,7 +50,6 @@ public:
 	void StopScript();
 
 private:
-
 	nlohmann::json sceneConfig_;
 	std::unique_ptr<IScene> currentScene_;
 	std::unique_ptr<IScene> nextScene_;
