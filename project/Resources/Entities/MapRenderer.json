@@ -1,0 +1,44 @@
+{
+    "SceneObjectData": {
+        "name": "MapRenderer",
+        "tag": "Untagged",
+        "uniqueId": 5734
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 393,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "MapRenderer.lua",
+                "stringParams": {
+                    "breakWallName": "Wall.json",
+                    "generatorMapScriptName": "MapGenerater.lua",
+                    "mapObjName": "MapGenerater",
+                    "playerName": "ShotGunPlayer",
+                    "varMapName": "map",
+                    "wallObjName": "Wall.json"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

@@ -31,8 +31,6 @@ end
 --]]
 function Update()
 
-    id = GetEntity(LockOnObjName)
-
     if isHit then
         nowSpeed = slowSpeed
     else
