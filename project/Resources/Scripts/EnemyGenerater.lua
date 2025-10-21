@@ -113,7 +113,7 @@ function Init()
     --tmpTransform.translate.y = 1.0
     --tmpTransform.translate.x = 4.0
     --tmpTransform.translate.z = 2.0
-    --CreateEntity(pillBugEnemyJson,tmpTransform)
+    --CreateEntity(tyoutinEnemyJson,tmpTransform)
 end
 
 --[[
