@@ -14,6 +14,8 @@ public:
 #ifdef _DEBUG
 	bool isDraw = true;
 #endif // _DEBUG
+	uint8_t colliderLayer = 0xFF;
+	uint8_t eventColliderLayer = 0xFF;
 
 	SphereColliderData();
 	~SphereColliderData() override = default;

@@ -4,6 +4,8 @@ SphereColliderData::SphereColliderData() {
 	sphere = { {0.0f, 0.0f, 0.0f}, 1.0f };
 	isTrigger = false;
 	isStatic = false;
+	colliderLayer = 0xFF;
+	eventColliderLayer = 0xFF;
 }
 
 nlohmann::json SphereColliderData::Serialize() const {
@@ -11,6 +13,8 @@ nlohmann::json SphereColliderData::Serialize() const {
 	json["isTrigger"] = isTrigger;
 	json["isStatic"] = isStatic;
 	json["sphere"] = { sphere.center.x, sphere.center.y, sphere.center.z, sphere.radius };
+	json["colliderLayer"] = colliderLayer;
+	json["eventColliderLayer"] = eventColliderLayer;
 #ifdef _DEBUG
 	json["isDraw"] = isDraw;
 #endif // _DEBUG
@@ -31,7 +35,12 @@ void SphereColliderData::Deserialize(const nlohmann::json& json) {
 		sphere.center.z = json["sphere"][2].get<float>();
 		sphere.radius = json["sphere"][3].get<float>();
 	} 
-
+	if (json.contains("colliderLayer") && json["colliderLayer"].is_number_unsigned()) {
+		colliderLayer = json["colliderLayer"].get<uint8_t>();
+	}
+	if (json.contains("eventColliderLayer") && json["eventColliderLayer"].is_number_unsigned()) {
+		eventColliderLayer = json["eventColliderLayer"].get<uint8_t>();
+	}
 #ifdef _DEBUG
 	if (json.contains("isDraw") && json["isDraw"].is_boolean()) {
 		isDraw = json["isDraw"].get<bool>();
