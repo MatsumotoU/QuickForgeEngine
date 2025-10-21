@@ -13,9 +13,9 @@
             },
             "Transform": {
                 "rotate": [
-                    0.683890163898468,
-                    -0.3299998939037323,
-                    -0.0
+                    0.10000000149011612,
+                    0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    3.7454497814178467,
-                    9.421514511108398,
-                    -10.934829711914063
+                    0.0,
+                    1.5,
+                    -10.0
                 ]
             }
         },
@@ -62,47 +62,21 @@
             "ModelHandle": {
                 "color": [
                     1.0,
-                    0.0,
-                    0.0,
+                    1.0,
+                    1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "ghostBody.obj"
             },
             "SceneObjectData": {
-                "name": "Box1x1.obj",
+                "name": "ghostBody.obj",
                 "tag": "Untagged",
                 "uniqueId": 3
             },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "speed": 1.0
-                        },
-                        "handle": 0,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "Move.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    -1.228000283241272,
-                    0.0,
-                    0.0,
-                    1.0
-                ]
-            },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -111,53 +85,7 @@
                     1.0
                 ],
                 "translate": [
-                    -1.228000283241272,
                     0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "AABBColliderData": {
-                "aabb": [
-                    0.8512604236602783,
-                    -0.5,
-                    -0.5,
-                    1.8512604236602783,
-                    0.5,
-                    0.5
-                ],
-                "isDraw": true,
-                "isStatic": true,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "Box1x1.obj",
-                "tag": "Untagged",
-                "uniqueId": 4
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    1.3512604236602783,
                     0.0,
                     0.0
                 ]
