@@ -25,9 +25,9 @@ local aliveScriptName = "EnemyHp.lua"
 local isAliveVarName = "isAlive"
 
 -- マップ情報を取得するための名前
-mapObjName = "name"
-generatorMapScriptName = "mapName"
-varMapName = "varMapName"
+mapObjName = "MapGenerater"
+generatorMapScriptName = "MapGenerater.lua"
+varMapName = "map"
 local linkID = 0
 
 -- 取得したマップ
@@ -120,7 +120,6 @@ end
     更新処理
 --]]
 function Update()
-
     --DebugLog("currentDifficulty : ".. currentDifficulty)
     --DebugLog("currentEnemyCount : ".. currentEnemyCount)
 
