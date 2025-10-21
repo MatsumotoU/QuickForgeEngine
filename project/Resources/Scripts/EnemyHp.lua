@@ -12,7 +12,7 @@ isAlive = true
 -- 敵のタイプ番号
 enemyType = 0
 -- 普通の敵の名前
-normalEnemyName = "normalEnemy"
+normalEnemyName = "NormalGhostEnemy.json"
 
 -- カメラの名前
 targetName = "DamageBorder"
