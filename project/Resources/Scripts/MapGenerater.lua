@@ -25,7 +25,7 @@ function Init()
     stageNumber = 1
     DebugLog("mapInit")
     GenerateMap(mapDivision,mapDifficulty)
-    SpawnMap(map)
+    --SpawnMap(map)
 
     -- 生成されたステージの難易度を表示
     local generatedMapDifficulty = EvaluateDifficulty(map, mapDivision)
