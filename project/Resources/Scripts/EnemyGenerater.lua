@@ -70,10 +70,20 @@ sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
 local transitionID = 0
 
+-- マップの番号に対応するテーブル
+local enemyNumber = {{},{}}
+
+-- 更新した時にマップデータをしっかりと読み込めるように辻褄を合わせる処理
+local isLoadMap = false
+
 --[[
     初期化処理
 --]]
 function Init()
+
+    -- マップチップに対応する敵のテーブルを生成
+    CreateEnemyNumberTable()
+
     -- 生成したマップを取得
     linkID = GetEntity(mapObjName)
     DebugLog("LinkedID:"..linkID)
@@ -136,9 +146,23 @@ function Update()
     -- リセット
     if isReset then
         Reset()
+        if not isLoadMap then
+            isLoadMap = true
+        end
     end
 
     if not isReset then
+
+        if isLoadMap then
+            map = {{},{}}
+            map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
+            for z = 1,#map do
+                DebugLog("Map:"..z)
+                DebugLog(map[z][1])
+            end
+            isLoadMap = false
+        end
+
     -- 敵の生成処理
     SpawnManager()
 
@@ -299,6 +323,9 @@ function SpawnManager()
             SpawnEnemy(spawnEnemisList[i].name,tmpTransform)
         end
     end
+
+    -- 固定の敵を出す処理
+    SpawnEnemiesFromMap(targetX)
 end
 
 -- 現在の敵の数を管理する
@@ -424,6 +451,83 @@ function Reset()
         StageTwoRegisterEnemy()
     end
 
+    -- 新しいマップの情報を取得する
+    map = {{},{}}
+    map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
+    --  for z = 1,#map do
+    --     DebugLog("Map:"..z)
+    --    DebugLog(map[z][1])
+    -- end
+
     -- カメラ位置をリセット
     lastCameraX = 7.4
+end
+
+-- マップデータに基づいて敵を生成
+function SpawnEnemiesFromMap(cameraRightEdgeX)
+    local height = #map
+    local width = #map[1]
+    local startX = math.max(1,math.floor(cameraRightEdgeX / kBlockSize))
+    local endX = math.min(width - 2,math.floor((cameraRightEdgeX + 2.0) / kBlockSize))
+
+    if endX <= startX then
+        return positions
+    end
+
+    for z = 1, height do
+        for x = startX, endX do
+            -- マップ番号を取得する
+            local enemyType = map[z][x]
+             if enemyType > 2 then
+                DebugLog("EnemyFormMapType : "..enemyType)
+                -- 番号に対応する敵を決定
+               local spawnEnemyName = enemyNumber[enemyType].name
+               -- 番号を空白に設定する
+               map[z][x] = 0
+                -- 敵を生成
+                local tmp = Transform.new()
+                tmp.translate.x = (x - 1) * kBlockSize
+                tmp.translate.y = 0.0
+                tmp.translate.z = (z - 1) * kBlockSize
+                CreateEntity(spawnEnemyName, tmp)
+            end
+        end
+    end
+end
+
+function CreateEnemyNumberTable()
+    -- 番号に対応する敵のリストを作成する
+    enemyNumber = {
+       [1] = {name = "none"}, -- 1、障害物ブロック
+       [2] = {name = "none"}, -- 2、番外壁ブロック
+       [3] = {name = normalGhostEnemyJson}, -- 3、通常の幽霊
+       [4] = {name = bigGhostEnemyJson},    -- 4、大きい幽霊
+       [5] = {name = longGhostEnemyJson},   -- 5、長い幽霊
+       [6] = {name = doubleGhostEnemyJson}, -- 6、双子の幽霊
+       [7] = {name = smallGhostEnemyJson},  -- 7、小さい幽霊
+       [8] = {name = tyoutinEnemyJson},     -- 8、ちょうちんの敵
+       [9] = {name = ratEnemyJson},         -- 9、ネズミの敵
+       [10] = {name = zizouEnemyJson},      -- 10、地蔵の敵
+       [11] = {name = nasuEnemyJson},       -- 11、ナスの敵
+       [12] = {name = eyeEnemyJson},        -- 12、目玉の敵
+       [13] = {name = batEnemyJson},        -- 13、コウモリの敵
+       [14] = {name = pillBugEnemyJson},    -- 14、ダンゴムシの敵
+    }
+
+    -- enemyNumber = {
+    --    [1] = {name = "none"}, 
+    --    [2] = {name = "none"}, 
+    --    [3] = {name = normalGhostEnemyJson}, 
+    --    [4] = {name = bigGhostEnemyJson},    
+    --    [5] = {name = longGhostEnemyJson},   
+    --    [6] = {name = doubleGhostEnemyJson}, 
+    --    [7] = {name = smallGhostEnemyJson},  
+    --    [8] = {name = tyoutinEnemyJson},     
+    --    [9] = {name = ratEnemyJson},         
+    --    [10] = {name = zizouEnemyJson},     
+    --    [11] = {name = nasuEnemyJson},        
+    --    [12] = {name = eyeEnemyJson},        
+    --    [13] = {name = batEnemyJson},      
+    --    [14] = {name = pillBugEnemyJson}
+    -- }
 end
