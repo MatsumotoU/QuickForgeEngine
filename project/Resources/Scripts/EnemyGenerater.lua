@@ -128,11 +128,11 @@ function Init()
     DebugLog("EnemyGeneratorInit")
 
     -- 正しく敵を生成出来るかを確認する(デバック用)
-    --local tmpTransform = Transform.new()
-    --tmpTransform.translate.y = 1.0
-    --tmpTransform.translate.x = 4.0
-    --tmpTransform.translate.z = 2.0
-    --CreateEntity(tyoutinEnemyJson,tmpTransform)
+    -- local tmpTransform = Transform.new()
+    -- tmpTransform.translate.y = 0.0
+    -- tmpTransform.translate.x = 4.0
+    -- tmpTransform.translate.z = 2.0
+    -- CreateEntity(bigGhostEnemyJson,tmpTransform)
 end
 
 --[[
@@ -513,21 +513,4 @@ function CreateEnemyNumberTable()
        [13] = {name = batEnemyJson},        -- 13、コウモリの敵
        [14] = {name = pillBugEnemyJson},    -- 14、ダンゴムシの敵
     }
-
-    -- enemyNumber = {
-    --    [1] = {name = "none"}, 
-    --    [2] = {name = "none"}, 
-    --    [3] = {name = normalGhostEnemyJson}, 
-    --    [4] = {name = bigGhostEnemyJson},    
-    --    [5] = {name = longGhostEnemyJson},   
-    --    [6] = {name = doubleGhostEnemyJson}, 
-    --    [7] = {name = smallGhostEnemyJson},  
-    --    [8] = {name = tyoutinEnemyJson},     
-    --    [9] = {name = ratEnemyJson},         
-    --    [10] = {name = zizouEnemyJson},     
-    --    [11] = {name = nasuEnemyJson},        
-    --    [12] = {name = eyeEnemyJson},        
-    --    [13] = {name = batEnemyJson},      
-    --    [14] = {name = pillBugEnemyJson}
-    -- }
 end

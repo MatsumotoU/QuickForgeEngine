@@ -61,7 +61,7 @@ function Update()
         if enemyType == 0 then
              local temp = Transform.new()
             temp.translate.x = transform.translate.x + 1.0
-            temp.translate.y = transform.translate.y + 2.0
+            temp.translate.y = transform.translate.y
             temp.translate.z = transform.translate.z
             CreateEntity(normalEnemyName,temp)
         end
@@ -93,11 +93,14 @@ function OnCollisionEnter(id,obj)
                     -- 双子のゴーストの場合
                     local temp = Transform.new()
                     temp.translate.x = transform.translate.x
-                    temp.translate.y = transform.translate.y + 2.0
+                    temp.translate.y = transform.translate.y
                     temp.translate.z = transform.translate.z - 0.5
                     CreateEntity(normalEnemyName,temp)
-                    temp.translate.z = transform.translate.z + 0.5
-                    CreateEntity(normalEnemyName,temp)
+                    local temp2 = Transform.new()
+                    temp2.translate.x = transform.translate.x
+                    temp2.translate.y = transform.translate.y
+                    temp2.translate.z = transform.translate.z + 0.5
+                    CreateEntity(normalEnemyName,temp2)
                 end
             end
         end
