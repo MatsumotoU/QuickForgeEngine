@@ -16,7 +16,7 @@ function Update()
 
      local endLinePosX = targetTransform.translate.x - offsetX
 
-     if transform.translate.x <= endLinePosX then
+     if transform.translate.x <= endLinePosX or transform.translate.x > targetTransform.translate.x + 20.0 then
         destroy()
      end
 end

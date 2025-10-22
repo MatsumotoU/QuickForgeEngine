@@ -6,11 +6,20 @@ minVelocity = 1.0
 
 local deltatime = 0.016
 
+-- リセットに関する名前
+transitionObjName = "SceneTransitionManager"
+sceneTransitionScriptName = "SceneTransitionManager.lua"
+varIsResetName = "isReset"
+local transitionID = 0
+
 function Init()
 objectDir.x = 0.0
 objectDir.y = 0.0
 objectDir.z = 0.0
 isBackFriping = false
+
+    -- シーン遷移を取得
+    transitionID = GetEntity(transitionObjName)
 end
 
 function Update()
@@ -69,6 +78,12 @@ function Update()
             transform:AddForward(moveSpeed*deltatime)
         end
     end
+
+    local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
+    -- リセット
+    if isReset then
+        Reset()
+    end
 end
 
 function OnCollisionEnter(id,obj)
@@ -90,5 +105,11 @@ function OnCollisionStay(id,obj)
         force.acceleration.x = 0.0
         force.acceleration.z = 0.0
     end
+end
 
+function Reset()
+    -- 位置をリセット
+    transform.translate.x = 3.0
+    transform.translate.y = 0.0
+    transform.translate.z = 5.0
 end

@@ -66,6 +66,12 @@ function Update()
             CreateEntity(normalEnemyName,temp)
         end
     end
+
+    -- 前に行き過ぎていたら削除する
+    if transform.translate.x >= targetX + 30.0 then
+        isAlive = false
+    end
+
 end
 
 function OnCollisionEnter(id,obj)
