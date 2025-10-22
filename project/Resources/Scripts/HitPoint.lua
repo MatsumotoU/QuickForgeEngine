@@ -31,6 +31,7 @@ function Update()
         force.velocity.x = force.velocity.x + 20
         force.velocity.y = force.velocity.y + 10
         damageInterval = maxDamageInterval
+        CreateEntity("ExplotionParticleEmitter.json",transform)
     end
 
     if damageInterval > 0.0 then
@@ -59,8 +60,13 @@ function OnCollisionStay(id,obj)
     end
 
     if obj.tag == damageTag then
+
+        if not GetEntityScriptGlobal(id,"EnemyHp.lua","isAlive") then
+            return
+        end
         damageInterval = maxDamageInterval  
         hitPoint = hitPoint - 1
         isDamaged = true
+        CreateEntity("ExplotionParticleEmitter.json",transform)
     end
 end

@@ -718,11 +718,23 @@ void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 uint32_t SceneManager::AddEntity(const std::string& entityName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 
+	// 既に読み込んだことがあるエンティティ名ならそれを返す
+	if (loadEntities_.find(entityName) != loadEntities_.end()) {
+		// Entityの生成
+		uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+		DeserializeEntity(entityId, loadEntities_[entityName]);
+		return entityId;
+	}
+
 	// Entityのパスを組み立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
 	std::ifstream ifs(sceneFilePath + entityName);
 	if (!ifs.is_open()) {
-		assert(false && "FaildOpenFile");
+		std::string errorMsg = "FaildOpenFile: " + sceneFilePath + entityName;
+#ifdef _DEBUG
+		DebugLog(errorMsg, LogLevel::Error);
+#endif // _DEBUG
+		assert(false && "Faild Open Entity File.");
 	}
 	// Entityの復元
 	nlohmann::json sceneJson;
@@ -732,6 +744,9 @@ uint32_t SceneManager::AddEntity(const std::string& entityName) {
 	// Entityの生成
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 	DeserializeEntity(entityId, sceneJson);
+	// 読み込んだエンティティ名を保存
+	loadEntities_[entityName] = sceneJson;
+
 	return entityId;
 }
 

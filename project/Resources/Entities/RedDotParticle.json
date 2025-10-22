@@ -1,0 +1,62 @@
+{
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 1.0,
+        "isGravity": true,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "RedDotParticle",
+        "tag": "Untagged",
+        "uniqueId": 3
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 30,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "ParticleLife.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            3.140000104904175,
+            0.0
+        ],
+        "scale": [
+            0.4000000059604645,
+            0.4000000059604645,
+            0.4000000059604645
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

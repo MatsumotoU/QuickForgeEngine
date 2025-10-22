@@ -21,7 +21,7 @@
                     "aliveTime": 0.25,
                     "moveSpeed": 24.0
                 },
-                "handle": 17,
+                "handle": 13,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -40,7 +40,7 @@
         "eventColliderLayer": 128,
         "isDraw": true,
         "isStatic": false,
-        "isTrigger": false,
+        "isTrigger": true,
         "sphere": [
             1.5442358255386353,
             0.0,

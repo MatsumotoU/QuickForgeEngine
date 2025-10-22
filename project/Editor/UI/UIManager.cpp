@@ -16,6 +16,7 @@
 
 #include "Edit/DebugConsole.h"
 #include "Edit/KeyConfigEdit.h"
+#include "Edit/PostprocessEdit.h"
 
 void UIManager::Initialize() {
 	isActiveUI_ = false;
@@ -47,6 +48,7 @@ void UIManager::Initialize() {
 	// EditUIの初期化
 	editUIs_.push_back(std::make_unique<DebugConsole>());
 	editUIs_.push_back(std::make_unique<KeyConfigEdit>());
+	editUIs_.push_back(std::make_unique<PostprocessEdit>());
 	for (auto& ui : editUIs_) {
 		ui->Initialize();
 	}

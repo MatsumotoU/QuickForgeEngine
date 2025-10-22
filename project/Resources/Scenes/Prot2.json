@@ -82,8 +82,8 @@
                     0.0,
                     0.0
                 ],
-                "friction": 1.0,
-                "gravityStrength": 10.0,
+                "friction": 5.0,
+                "gravityStrength": 2.0,
                 "isGravity": true,
                 "mass": 1.0,
                 "velocity": [
@@ -152,6 +152,19 @@
                         "stringParams": {
                             "damageTag": "Enemy"
                         }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "knockBackPower": 10.0
+                        },
+                        "handle": 3,
+                        "intParams": {
+                            "bullets": 3
+                        },
+                        "priority": 0,
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
                     }
                 ]
             },
@@ -206,7 +219,7 @@
                             "DIK_S": 31,
                             "DIK_SPACE": 57,
                             "DIK_W": 17,
-                            "nowNum": 1,
+                            "nowNum": 3,
                             "numMax": 3,
                             "objectUniqeID": 1
                         },
@@ -582,6 +595,88 @@
                 "translate": [
                     0.0,
                     0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "shotGun.obj"
+            },
+            "ParentData": {
+                "parentId": 162
+            },
+            "SceneObjectData": {
+                "name": "ShotGun",
+                "tag": "player",
+                "uniqueId": 5740
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 12,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShotGunAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -3.141592502593994,
+                    0.0015925486804917455,
+                    -3.141592502593994
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.5392918586730957,
+                    7.403116342175053e-07,
+                    0.18073129653930664
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "Ground",
+                "tag": "Untagged",
+                "uniqueId": 5741
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    100.0,
+                    1.0,
+                    100.0
+                ],
+                "translate": [
+                    0.0,
+                    -0.5,
                     0.0
                 ]
             }
