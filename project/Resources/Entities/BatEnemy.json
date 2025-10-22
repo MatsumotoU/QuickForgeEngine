@@ -6,7 +6,7 @@
             1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "batEnemy.obj"
     },
     "SceneObjectData": {
         "name": "BatEnemy",
@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 34,
+                "handle": 37,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BatEnemyMove.lua",
@@ -27,7 +27,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 35,
+                "handle": 38,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -38,6 +38,8 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,

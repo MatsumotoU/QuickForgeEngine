@@ -6,7 +6,7 @@
             1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "pillBugEnemy.obj"
     },
     "SceneObjectData": {
         "name": "PillBugEnemy",
@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 65,
+                "handle": 39,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "PillBugEnemyMove.lua",
@@ -27,7 +27,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 66,
+                "handle": 40,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -38,6 +38,8 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,
