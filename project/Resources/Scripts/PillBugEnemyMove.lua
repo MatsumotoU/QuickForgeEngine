@@ -27,6 +27,9 @@ end
 --]]
 function Update()
 
+    -- 回転
+    transform.rotate.y = -1.6
+
     if isHit then
         moveSpeed = slowSpeed
     else

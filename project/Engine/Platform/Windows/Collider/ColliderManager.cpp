@@ -214,6 +214,15 @@ void ColliderManager::AABBToAABBUpdate() {
 				}
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(idA);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(idB);
+
+				// 衝突イベントを発生させるレイヤーか
+				if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
+#endif // _DEBUG
+					continue;
+				}
+
 				// OnCollisionStayイベント
 				colliderA.isHit = true;
 				colliderB.isHit = true;
@@ -226,6 +235,15 @@ void ColliderManager::AABBToAABBUpdate() {
 				if (!colliderB.isOldHit) {
 					luaManager->RunTriggerEnter(idB, idA, objA);
 				}
+
+				// 反発しうるレイヤーか
+				if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
+#endif // _DEBUG
+					continue;
+				}
+
 				// 反発処理
 				// どちらかがTriggerなら反発しない
 				if (colliderA.isTrigger || colliderB.isTrigger) {
@@ -340,6 +358,15 @@ void ColliderManager::SphereToAABBUpdate() {
 				}
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(sphereId);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(aabbId);
+
+				// 衝突イベントを発生させるレイヤーか
+				if ((sphereCollider.eventColliderLayer & aabbCollider.colliderLayer) == 0) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", sphereId, aabbId));
+#endif // _DEBUG
+					continue;
+				}
+
 				// OnCollisionStayイベント
 				sphereCollider.isHit = true;
 				aabbCollider.isHit = true;
@@ -352,6 +379,15 @@ void ColliderManager::SphereToAABBUpdate() {
 				if (!aabbCollider.isOldHit) {
 					luaManager->RunTriggerEnter(aabbId, sphereId, objA);
 				}
+
+				// 反発しうるレイヤーか
+				if ((sphereCollider.colliderLayer & aabbCollider.eventColliderLayer) == 0) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", sphereId, aabbId));
+#endif // _DEBUG
+					continue;
+				}
+
 				// 反発処理
 				// どちらかがTriggerなら反発しない
 				if (sphereCollider.isTrigger || aabbCollider.isTrigger) {

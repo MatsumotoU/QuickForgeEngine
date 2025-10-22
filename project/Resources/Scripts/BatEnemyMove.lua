@@ -71,13 +71,19 @@ function Update()
             isMove = true
             moveType = math.random(0,1)
 
+            if moveType == 0 then
+                transform.rotate.y = -1.6
+            end
+
             -- 縦の場合は移動する方向を求める
             if moveType == 1 then
                local halfPosZ = GetHalfMapPosition()
                if transform.translate.z >= halfPosZ then
                     dir = -1.0
+                    transform.rotate.y = 3.2
                else
                     dir = 1.0
+                    transform.rotate.y = 0.0
                end
             end
         end

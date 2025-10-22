@@ -26,6 +26,15 @@ local offsetX = 10.0
 -- 移動した
 local moveXIndex = 0
 
+-- リセットに関する名前
+transitionObjName = "SceneTransitionManager"
+sceneTransitionScriptName = "SceneTransitionManager.lua"
+varIsResetName = "isReset"
+local transitionID = 0
+
+--[[
+    初期化処理
+--]]
 function Init()
     -- 生成したマップを取得
     linkID = GetEntity(mapObjName)
@@ -62,9 +71,23 @@ function Init()
     playerID = GetEntity(playerName)
     local targetTransform = GetTransform(playerID)
     linePosX = targetTransform.translate.x
+
+    -- シーン遷移を取得
+    transitionID = GetEntity(transitionObjName)
 end
 
+--[[
+    更新処理
+--]]
 function Update()
+
+    local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
+    -- リセット
+    if isReset then
+        Reset()
+    end
+
+    if not isReset then
 
     local targetTransform = GetTransform(playerID)
 
@@ -104,4 +127,37 @@ function Update()
         -- 移動した位置にxを変更
         moveXIndex = xIndex
     end
+    end
+
+end
+
+function Reset()
+
+    map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
+    mapWidth = #map[1]
+
+     for z = 1,#map do
+        for x = 1,20 do
+            -- マップが空白の場合は飛ばす
+            if map[z][x] ~= 0 then
+                -- マップの位置を生成
+                local xPos = (x - 1) * kBlockSize
+                local zPos = (z - 1) * kBlockSize
+                local tmpTransform = Transform.new()
+                tmpTransform.translate.x = xPos
+                tmpTransform.translate.y = 0.0
+                tmpTransform.translate.z = zPos
+
+                if map[z][x] == 1 then
+                    CreateEntity(breakWallName,tmpTransform)
+                elseif map[z][x] == 2 then
+                    CreateEntity(wallObjName,tmpTransform)
+                end
+            end
+        end
+    end  
+    moveXIndex = 20
+
+    local targetTransform = GetTransform(playerID)
+    linePosX = targetTransform.translate.x
 end

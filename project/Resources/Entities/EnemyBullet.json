@@ -1,0 +1,46 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "anchor.obj"
+    },
+    "SceneObjectData": {
+        "name": "EnemyBullet",
+        "tag": "EnemyBullet",
+        "uniqueId": 6229
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 889,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "EnemyBulletMove.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            1.0765202045440674,
+            0.0,
+            0.0
+        ]
+    }
+}

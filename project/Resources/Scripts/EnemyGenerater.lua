@@ -64,10 +64,26 @@ local offsetX = 8.0 -- カメラの画面端までの位置
 -- 生成するステージの番号
 stageNumber = 1
 
+-- リセットに関する名前
+transitionObjName = "SceneTransitionManager"
+sceneTransitionScriptName = "SceneTransitionManager.lua"
+varIsResetName = "isReset"
+local transitionID = 0
+
+-- マップの番号に対応するテーブル
+local enemyNumber = {{},{}}
+
+-- 更新した時にマップデータをしっかりと読み込めるように辻褄を合わせる処理
+local isLoadMap = false
+
 --[[
     初期化処理
 --]]
 function Init()
+
+    -- マップチップに対応する敵のテーブルを生成
+    CreateEnemyNumberTable()
+
     -- 生成したマップを取得
     linkID = GetEntity(mapObjName)
     DebugLog("LinkedID:"..linkID)
@@ -106,14 +122,17 @@ function Init()
         DebugLog("x:"..positions[i].x.."z:"..positions[i].z)
     end
 
+    -- シーン遷移を取得
+    transitionID = GetEntity(transitionObjName)
+
     DebugLog("EnemyGeneratorInit")
 
     -- 正しく敵を生成出来るかを確認する(デバック用)
-    --local tmpTransform = Transform.new()
-    --tmpTransform.translate.y = 1.0
-    --tmpTransform.translate.x = 4.0
-    --tmpTransform.translate.z = 2.0
-    --CreateEntity(tyoutinEnemyJson,tmpTransform)
+    -- local tmpTransform = Transform.new()
+    -- tmpTransform.translate.y = 0.0
+    -- tmpTransform.translate.x = 4.0
+    -- tmpTransform.translate.z = 2.0
+    -- CreateEntity(eyeEnemyJson,tmpTransform)
 end
 
 --[[
@@ -123,11 +142,33 @@ function Update()
     --DebugLog("currentDifficulty : ".. currentDifficulty)
     --DebugLog("currentEnemyCount : ".. currentEnemyCount)
 
+    local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
+    -- リセット
+    if isReset then
+        Reset()
+        if not isLoadMap then
+            isLoadMap = true
+        end
+    end
+
+    if not isReset then
+
+        if isLoadMap then
+            map = {{},{}}
+            map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
+            for z = 1,#map do
+                DebugLog("Map:"..z)
+                DebugLog(map[z][1])
+            end
+            isLoadMap = false
+        end
+
     -- 敵の生成処理
     SpawnManager()
 
     -- 現在の敵の数を管理
     EnemyCountManager()
+    end
 end
 
 -- 敵を配置できる座標リストを取得
@@ -282,6 +323,9 @@ function SpawnManager()
             SpawnEnemy(spawnEnemisList[i].name,tmpTransform)
         end
     end
+
+    -- 固定の敵を出す処理
+    SpawnEnemiesFromMap(targetX)
 end
 
 -- 現在の敵の数を管理する
@@ -378,4 +422,95 @@ function StageTwoRegisterEnemy()
     table.insert(currentEnemysCounts,{name = batEnemyJson,difficulty = 1,count = 0})
     table.insert(currentEnemysCounts,{name = pillBugEnemyJson,difficulty = 1,count = 0})
     table.insert(currentEnemysCounts,{name = eyeEnemyJson,difficulty = 1,count = 0})
+end
+
+-- リセット処理
+function Reset()
+
+    -- 現在いる敵のリストをリセット
+    enemiesIDList = {}
+
+    -- 生成する移動距離をリセット
+    movedDistance = 0.0
+
+    -- 敵の数と難易度をリセット
+    currentEnemyCount = 0
+    currentDifficulty = 0
+
+    -- 敵のリストをリセット
+    maxEnemysCounts = {}
+    currentEnemysCounts = {}
+
+    if stageNumber <= 2 then
+        stageNumber = stageNumber + 1
+    end
+
+    if stageNumber == 1 then
+        StageOneRegisterEnemy()
+    else
+        StageTwoRegisterEnemy()
+    end
+
+    -- 新しいマップの情報を取得する
+    map = {{},{}}
+    map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
+    --  for z = 1,#map do
+    --     DebugLog("Map:"..z)
+    --    DebugLog(map[z][1])
+    -- end
+
+    -- カメラ位置をリセット
+    lastCameraX = 7.4
+end
+
+-- マップデータに基づいて敵を生成
+function SpawnEnemiesFromMap(cameraRightEdgeX)
+    local height = #map
+    local width = #map[1]
+    local startX = math.max(1,math.floor(cameraRightEdgeX / kBlockSize))
+    local endX = math.min(width - 2,math.floor((cameraRightEdgeX + 2.0) / kBlockSize))
+
+    if endX <= startX then
+        return positions
+    end
+
+    for z = 1, height do
+        for x = startX, endX do
+            -- マップ番号を取得する
+            local enemyType = map[z][x]
+             if enemyType > 2 then
+                DebugLog("EnemyFormMapType : "..enemyType)
+                -- 番号に対応する敵を決定
+               local spawnEnemyName = enemyNumber[enemyType].name
+               -- 番号を空白に設定する
+               map[z][x] = 0
+                -- 敵を生成
+                local tmp = Transform.new()
+                tmp.translate.x = (x - 1) * kBlockSize
+                tmp.translate.y = 0.0
+                tmp.translate.z = (z - 1) * kBlockSize
+                CreateEntity(spawnEnemyName, tmp)
+            end
+        end
+    end
+end
+
+function CreateEnemyNumberTable()
+    -- 番号に対応する敵のリストを作成する
+    enemyNumber = {
+       [1] = {name = "none"}, -- 1、障害物ブロック
+       [2] = {name = "none"}, -- 2、番外壁ブロック
+       [3] = {name = normalGhostEnemyJson}, -- 3、通常の幽霊
+       [4] = {name = bigGhostEnemyJson},    -- 4、大きい幽霊
+       [5] = {name = longGhostEnemyJson},   -- 5、長い幽霊
+       [6] = {name = doubleGhostEnemyJson}, -- 6、双子の幽霊
+       [7] = {name = smallGhostEnemyJson},  -- 7、小さい幽霊
+       [8] = {name = tyoutinEnemyJson},     -- 8、ちょうちんの敵
+       [9] = {name = ratEnemyJson},         -- 9、ネズミの敵
+       [10] = {name = zizouEnemyJson},      -- 10、地蔵の敵
+       [11] = {name = nasuEnemyJson},       -- 11、ナスの敵
+       [12] = {name = eyeEnemyJson},        -- 12、目玉の敵
+       [13] = {name = batEnemyJson},        -- 13、コウモリの敵
+       [14] = {name = pillBugEnemyJson},    -- 14、ダンゴムシの敵
+    }
 end

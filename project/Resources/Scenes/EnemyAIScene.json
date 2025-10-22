@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6386364698410034,
-                    -0.020920708775520325,
+                    0.3461241126060486,
+                    -0.04318959638476372,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.563742995262146,
-                    20.007368087768555,
-                    -26.942716598510742
+                    1.0481196641921997,
+                    8.754743576049805,
+                    -24.25278091430664
                 ]
             }
         },
@@ -69,7 +69,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 9,
+                        "handle": 150,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -143,7 +143,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 7.0
                         },
-                        "handle": 10,
+                        "handle": 151,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -156,7 +156,7 @@
                             "knockBack": 10.0,
                             "knockBackPower": 10.0
                         },
-                        "handle": 11,
+                        "handle": 152,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BulletShot.lua",
@@ -186,11 +186,11 @@
             "ModelHandle": {
                 "color": [
                     1.0,
-                    0.26424872875213623,
-                    0.26424872875213623,
+                    1.0,
+                    1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "bigEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "BigGhostEnemy",
@@ -204,7 +204,7 @@
                         "floatParams": {
                             "speed": 0.4000000059604645
                         },
-                        "handle": 12,
+                        "handle": 153,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BigGhostEnemyMove.lua",
@@ -213,7 +213,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 13,
+                        "handle": 154,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -226,13 +226,15 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    13.190983772277832,
-                    0.0,
-                    3.711031913757324,
+                    6.061912536621094,
+                    -0.33281970024108887,
+                    0.7657085657119751,
                     0.800000011920929
                 ]
             },
@@ -248,21 +250,21 @@
                     1.0
                 ],
                 "translate": [
-                    13.190983772277832,
-                    0.0,
-                    3.711031913757324
+                    6.061912536621094,
+                    -0.33281970024108887,
+                    0.7657085657119751
                 ]
             }
         },
         {
             "ModelHandle": {
                 "color": [
-                    0.8496447205543518,
-                    0.9585492014884949,
-                    0.04469917342066765,
+                    1.0,
+                    1.0,
+                    1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "smallEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "SmallGhostEnemy",
@@ -274,7 +276,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 14,
+                        "handle": 155,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "SmallGhotEnemyMove.lua",
@@ -286,7 +288,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 15,
+                        "handle": 156,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -299,11 +301,13 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    0.6635217070579529,
+                    1.635136604309082,
                     0.0,
                     0.0,
                     0.800000011920929
@@ -321,7 +325,7 @@
                     1.0
                 ],
                 "translate": [
-                    0.6635217070579529,
+                    1.635136604309082,
                     0.0,
                     0.0
                 ]
@@ -330,12 +334,12 @@
         {
             "ModelHandle": {
                 "color": [
-                    0.05100809037685394,
-                    0.8828890919685364,
-                    0.984455943107605,
+                    1.0,
+                    1.0,
+                    1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "longEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "LongGhostEnemy",
@@ -349,7 +353,7 @@
                         "floatParams": {
                             "speed": 0.4000000059604645
                         },
-                        "handle": 16,
+                        "handle": 157,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "FloatyEnemyMove.lua",
@@ -358,7 +362,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 17,
+                        "handle": 158,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -371,6 +375,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -384,13 +390,13 @@
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    1.600000023841858,
                     0.0
                 ],
                 "scale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.5,
+                    0.5,
+                    0.5
                 ],
                 "translate": [
                     -1.428290605545044,
@@ -402,12 +408,12 @@
         {
             "ModelHandle": {
                 "color": [
-                    0.5194732546806335,
-                    0.10929150879383087,
-                    0.9170984625816345,
+                    1.0,
+                    1.0,
+                    1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "doubleEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "doubleGhostEnemy",
@@ -421,7 +427,7 @@
                         "floatParams": {
                             "speed": 0.4000000059604645
                         },
-                        "handle": 18,
+                        "handle": 159,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "doubleGhostEnemyMove.lua",
@@ -432,7 +438,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 19,
+                        "handle": 160,
                         "intParams": {
                             "enemyType": 2
                         },
@@ -446,6 +452,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -477,12 +485,12 @@
         {
             "ModelHandle": {
                 "color": [
-                    0.14091654121875763,
-                    0.9378238320350647,
-                    0.33085307478904724,
+                    1.0,
+                    1.0,
+                    1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "normalEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "NormalGhostEnemy",
@@ -496,7 +504,7 @@
                         "floatParams": {
                             "speed": 0.20000000298023224
                         },
-                        "handle": 20,
+                        "handle": 161,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "LockOnEnemyMove.lua",
@@ -507,7 +515,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 21,
+                        "handle": 162,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -520,6 +528,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -558,6 +568,8 @@
                     0.5,
                     0.5
                 ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": false,
                 "isStatic": true,
                 "isTrigger": false
@@ -614,7 +626,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 22,
+                        "handle": 163,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BoxGhostEnemyMove.lua",
@@ -623,7 +635,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 23,
+                        "handle": 164,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -636,6 +648,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -672,7 +686,7 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "tyoutinEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "TyoutinEnemy",
@@ -684,7 +698,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 24,
+                        "handle": 165,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TyoutinEnemyMove.lua",
@@ -693,7 +707,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 25,
+                        "handle": 166,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -704,6 +718,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -717,7 +733,7 @@
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    -1.600000023841858,
                     0.0
                 ],
                 "scale": [
@@ -740,7 +756,7 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "ratEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "RatEnemy",
@@ -752,7 +768,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 26,
+                        "handle": 167,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "RatEnemyMove.lua",
@@ -761,7 +777,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 27,
+                        "handle": 168,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -772,6 +788,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -820,7 +838,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 28,
+                        "handle": 169,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ZizouEnemyMove.lua",
@@ -829,7 +847,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 29,
+                        "handle": 170,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -840,6 +858,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -890,7 +910,7 @@
                         "floatParams": {
                             "speed": 0.20000000298023224
                         },
-                        "handle": 30,
+                        "handle": 171,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "FloatyEnemyMove.lua",
@@ -899,7 +919,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 31,
+                        "handle": 172,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -910,6 +930,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -946,7 +968,7 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "eyeEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "EyeEnemy",
@@ -958,7 +980,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 32,
+                        "handle": 173,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EyeEnemyMove.lua",
@@ -967,7 +989,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 33,
+                        "handle": 174,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -978,6 +1000,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -1014,7 +1038,7 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "batEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "BatEnemy",
@@ -1026,7 +1050,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 34,
+                        "handle": 175,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BatEnemyMove.lua",
@@ -1035,7 +1059,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 35,
+                        "handle": 176,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -1046,6 +1070,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -1082,7 +1108,7 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "pillBugEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "PillBugEnemy",
@@ -1094,7 +1120,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 36,
+                        "handle": 177,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "PillBugEnemyMove.lua",
@@ -1103,7 +1129,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 37,
+                        "handle": 178,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -1114,6 +1140,8 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -1138,6 +1166,52 @@
                 "translate": [
                     6.0172014236450195,
                     2.570373058319092,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "EnemyBullet",
+                "tag": "Untagged",
+                "uniqueId": 6229
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 179,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "EnemyBulletMove.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.0765202045440674,
+                    0.0,
                     0.0
                 ]
             }
