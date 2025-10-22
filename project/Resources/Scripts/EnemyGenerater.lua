@@ -132,7 +132,7 @@ function Init()
     -- tmpTransform.translate.y = 0.0
     -- tmpTransform.translate.x = 4.0
     -- tmpTransform.translate.z = 2.0
-    -- CreateEntity(zizouEnemyJson,tmpTransform)
+    -- CreateEntity(eyeEnemyJson,tmpTransform)
 end
 
 --[[
