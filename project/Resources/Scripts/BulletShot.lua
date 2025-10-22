@@ -17,6 +17,10 @@ isKnockback = false
 
 local deltatime = 0.016
 
+
+
+
+
 function Init()
 shotInterval = 0.0
 isKnockback = false
@@ -74,9 +78,22 @@ function Update()
         local tempTransform = Transform.new()
         tempTransform.translate = transform.translate
         tempTransform.rotate = transform.rotate
+        
 
         for i = 1, shotNum, 1 do
-            tempTransform.rotate.y = transform.rotate.y + (math.random() * diffusionRate - (diffusionRate * 0.5))
+
+            local tmp = i % 2
+            local max_addNum = math.pi * diffusionRate
+            local addNum = 0
+
+            if tmp == 0 then
+                  addNum =  max_addNum * math.random() 
+            else
+                addNum  = -max_addNum * math.random()
+            end
+
+
+            tempTransform.rotate.y = transform.rotate.y + addNum
             CreateEntity(bulletName,tempTransform)
         end
 
