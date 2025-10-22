@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.8839969038963318,
-                    -0.6928007006645203,
+                    0.883996844291687,
+                    -0.6928006410598755,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    638.9395751953125,
-                    1220.025146484375,
-                    -769.7552490234375
+                    778.9486694335938,
+                    1487.3658447265625,
+                    -938.4296875
                 ]
             }
         },
@@ -47,7 +47,7 @@
                         "floatParams": {
                             "offsetX": 1.0
                         },
-                        "handle": 2097,
+                        "handle": 119,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "CameraMove.lua",
@@ -82,7 +82,7 @@
                     0.0,
                     0.0
                 ],
-                "friction": 1.0,
+                "friction": 3.0,
                 "gravityStrength": 10.0,
                 "isGravity": true,
                 "mass": 1.0,
@@ -112,10 +112,10 @@
                         "boolParams": {},
                         "floatParams": {
                             "backSpeed": 8.0,
-                            "minVelocity": 6.0,
-                            "moveSpeed": 7.0
+                            "minVelocity": 1.0,
+                            "moveSpeed": 4.0
                         },
-                        "handle": 2098,
+                        "handle": 120,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -124,15 +124,15 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "diffusionRate": 1.0,
+                            "diffusionRate": 0.009999999776482582,
                             "knockBack": 10.0,
-                            "knockBackPower": 10.0,
+                            "knockBackPower": 15.0,
                             "maxShotInterval": 0.5,
                             "reloadInterval": 0.0,
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.5
                         },
-                        "handle": 2099,
+                        "handle": 121,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -145,7 +145,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 2100,
+                        "handle": 122,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "HitPoint.lua",
@@ -199,7 +199,7 @@
                         "floatParams": {
                             "space": 128.0
                         },
-                        "handle": 2101,
+                        "handle": 123,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -250,7 +250,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 2102,
+                        "handle": 124,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -296,7 +296,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 2103,
+                        "handle": 125,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -359,7 +359,7 @@
                         "floatParams": {
                             "space": 95.0
                         },
-                        "handle": 2104,
+                        "handle": 126,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -421,7 +421,7 @@
                         "floatParams": {
                             "borderSpeed": 0.009999999776482582
                         },
-                        "handle": 2105,
+                        "handle": 127,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DamageBorder.lua",
@@ -458,7 +458,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 2106,
+                        "handle": 128,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MapRenderer.lua",
@@ -492,7 +492,6 @@
             }
         },
         {
-
             "SceneObjectData": {
                 "name": "MapManager",
                 "tag": "Untagged",
@@ -502,9 +501,8 @@
                 "scriptHandles": [
                     {
                         "boolParams": {},
-
                         "floatParams": {},
-                        "handle": 10,
+                        "handle": 129,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MapManager.lua",
@@ -512,7 +510,6 @@
                     }
                 ]
             },
-
             "Transform": {
                 "rotate": [
                     0.0,
@@ -540,7 +537,6 @@
             "ScriptHandle": {
                 "scriptHandles": [
                     {
-
                         "boolParams": {
                             "isReset": false
                         },
@@ -549,7 +545,7 @@
                             "fadeOutTime": 0.5,
                             "waitTime": 0.20000000298023224
                         },
-                        "handle": 11,
+                        "handle": 130,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "SceneTransitionManager.lua",
@@ -581,6 +577,75 @@
                 ],
                 "translate": [
                     0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "Bullet",
+                "tag": "bullet",
+                "uniqueId": 161
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "aliveTime": 10.0,
+                            "coe": 0.0,
+                            "moveSpeed": 1.0
+                        },
+                        "handle": 131,
+                        "intParams": {
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17
+                        },
+                        "priority": 0,
+                        "scriptName": "BulletMove.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 128,
+                "eventColliderLayer": 128,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    1.5442358255386353,
+                    0.0,
+                    0.0,
+                    0.20000000298023224
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.5442358255386353,
                     0.0,
                     0.0
                 ]
