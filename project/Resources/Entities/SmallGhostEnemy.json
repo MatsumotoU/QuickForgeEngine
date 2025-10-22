@@ -1,12 +1,12 @@
 {
     "ModelHandle": {
         "color": [
-            0.8496447205543518,
-            0.9585492014884949,
-            0.04469917342066765,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "smallEnemy.obj"
     },
     "SceneObjectData": {
         "name": "SmallGhostEnemy",
@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 14,
+                "handle": 363,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "SmallGhotEnemyMove.lua",
@@ -30,7 +30,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 15,
+                "handle": 364,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -43,11 +43,13 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            0.6635217070579529,
+            1.635136604309082,
             0.0,
             0.0,
             0.800000011920929
@@ -65,7 +67,7 @@
             1.0
         ],
         "translate": [
-            0.6635217070579529,
+            1.635136604309082,
             0.0,
             0.0
         ]

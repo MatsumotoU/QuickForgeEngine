@@ -22,7 +22,7 @@
             1.0,
             1.0
         ],
-        "modelName": "Arrow.obj"
+        "modelName": "ghostBody.obj"
     },
     "SceneObjectData": {
         "name": "ShotGunPlayer",
@@ -36,9 +36,9 @@
                 "floatParams": {
                     "backSpeed": 8.0,
                     "minVelocity": 6.0,
-                    "moveSpeed": 8.5
+                    "moveSpeed": 7.0
                 },
-                "handle": 317,
+                "handle": 83,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -50,13 +50,16 @@
                     "diffusionRate": 0.5,
                     "knockBack": 10.0,
                     "knockBackPower": 10.0,
-                    "maxShotInterval": 0.30000001192092896
+                    "maxShotInterval": 0.5,
+                    "reloadInterval": 0.0,
+                    "shotInterval": 10.0,
+                    "targetReloadInterval": 0.5
                 },
-                "handle": 318,
+                "handle": 84,
                 "intParams": {
                     "bullets": 3,
                     "maxBullets": 3,
-                    "shotNum": 3
+                    "shotNum": 15
                 },
                 "priority": 0,
                 "scriptName": "BulletShot.lua",
@@ -64,13 +67,9 @@
             },
             {
                 "boolParams": {},
-                "floatParams": {
-                    "maxDamageInterval": 0.5
-                },
-                "handle": 319,
-                "intParams": {
-                    "hitPoint": 5
-                },
+                "floatParams": {},
+                "handle": 85,
+                "intParams": {},
                 "priority": 0,
                 "scriptName": "HitPoint.lua",
                 "stringParams": {
@@ -80,6 +79,8 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,
@@ -93,7 +94,7 @@
     "Transform": {
         "rotate": [
             0.0,
-            0.0,
+            -0.0,
             0.0
         ],
         "scale": [
