@@ -66,7 +66,6 @@ Transform AnimCrip::GetTransformAtTime(float time) const {
 	float segmentDuration = nextKeyFrame->time - previousKeyFrame->time;
 	float t = (time - previousKeyFrame->time) / segmentDuration;
 	t;
-	
 
 	return result;
 }

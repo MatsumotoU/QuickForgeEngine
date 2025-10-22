@@ -1,12 +1,12 @@
 {
     "ModelHandle": {
         "color": [
-            0.14091654121875763,
-            0.9378238320350647,
-            0.33085307478904724,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "normalEnemy.obj"
     },
     "SceneObjectData": {
         "name": "NormalGhostEnemy",

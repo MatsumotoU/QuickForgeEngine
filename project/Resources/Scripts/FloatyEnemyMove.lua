@@ -16,6 +16,13 @@ slowSpeed = speed * 0.5
 end
 
 function Update()
+
+    -- 向きを設定する
+    transform.rotate.y = 1.6
+    transform.scale.x = 0.5
+    transform.scale.y = 0.5
+    transform.scale.z = 0.5
+
     if isHit then
         nowSpeed = slowSpeed
     else

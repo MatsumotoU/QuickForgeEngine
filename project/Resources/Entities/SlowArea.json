@@ -21,7 +21,7 @@
                     "lifeSpan": 5.0,
                     "maxLifeSpan": 5.0
                 },
-                "handle": 1249,
+                "handle": 10,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "LifespanEntity.lua",
@@ -30,6 +30,8 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 128,
+        "eventColliderLayer": 128,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": true,

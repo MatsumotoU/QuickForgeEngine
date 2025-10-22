@@ -6,7 +6,7 @@
             1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "tyoutinEnemy.obj"
     },
     "SceneObjectData": {
         "name": "TyoutinEnemy",
@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 53,
+                "handle": 165,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "TyoutinEnemyMove.lua",
@@ -27,7 +27,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 54,
+                "handle": 166,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -38,6 +38,8 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,
@@ -51,7 +53,7 @@
     "Transform": {
         "rotate": [
             0.0,
-            -0.0,
+            -1.600000023841858,
             0.0
         ],
         "scale": [

@@ -42,6 +42,10 @@ function Update()
         transform:AddForward(moveSpeed * t)
     end
 
+    if timer > moveTime then
+        transform.rotate.y = transform.rotate.y + 3.2 * t
+    end
+
     -- 止まる時間が過ぎたら
     if timer >= moveTime + stopTime then
         timer = 0.0

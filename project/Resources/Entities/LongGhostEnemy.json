@@ -1,12 +1,12 @@
 {
     "ModelHandle": {
         "color": [
-            0.05100809037685394,
-            0.8828890919685364,
-            0.984455943107605,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "longEnemy.obj"
     },
     "SceneObjectData": {
         "name": "LongGhostEnemy",
@@ -20,7 +20,7 @@
                 "floatParams": {
                     "speed": 0.4000000059604645
                 },
-                "handle": 141,
+                "handle": 36,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "FloatyEnemyMove.lua",
@@ -68,13 +68,13 @@
     "Transform": {
         "rotate": [
             0.0,
-            -0.0,
+            1.600000023841858,
             0.0
         ],
         "scale": [
-            1.0,
-            1.0,
-            1.0
+            0.5,
+            0.5,
+            0.5
         ],
         "translate": [
             -1.428290605545044,

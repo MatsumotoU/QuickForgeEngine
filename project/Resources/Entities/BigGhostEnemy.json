@@ -2,11 +2,11 @@
     "ModelHandle": {
         "color": [
             1.0,
-            0.26424872875213623,
-            0.26424872875213623,
+            1.0,
+            1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "bigEnemy.obj"
     },
     "SceneObjectData": {
         "name": "BigGhostEnemy",
@@ -29,7 +29,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 138,
+                "handle": 16,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -77,9 +77,9 @@
             1.0
         ],
         "translate": [
-            13.190983772277832,
-            0.0,
-            3.711031913757324
+            6.061912536621094,
+            -0.33281970024108887,
+            0.7657085657119751
         ]
     }
 }

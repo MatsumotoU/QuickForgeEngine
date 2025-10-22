@@ -62,11 +62,16 @@ function Update()
     local angle = math.acos(dot)
 
     -- プレイヤーが視界にいる時、移動する
-    if angle <= viewAngle and angle > 0.0 then
+    if angle <= viewAngle then
         local deltaTime = GetDeltaTime()
         transform.translate.x = transform.translate.x + dir.x * moveSpeed * deltaTime
         transform.translate.y = transform.translate.y + dir.y * moveSpeed * deltaTime
         transform.translate.z = transform.translate.z + dir.z * moveSpeed * deltaTime
+        -- 回転
+        local angle = math.atan(dir.x, dir.z)
+        transform.rotate.y = angle
+    else
+        transform.rotate.y = -1.6
     end
 
     isHit = false

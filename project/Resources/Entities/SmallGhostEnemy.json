@@ -1,12 +1,12 @@
 {
     "ModelHandle": {
         "color": [
-            0.8496447205543518,
-            0.9585492014884949,
-            0.04469917342066765,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "smallEnemy.obj"
     },
     "SceneObjectData": {
         "name": "SmallGhostEnemy",
@@ -60,7 +60,7 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            0.6635217070579529,
+            1.635136604309082,
             0.0,
             0.0,
             0.800000011920929
@@ -78,7 +78,7 @@
             1.0
         ],
         "translate": [
-            0.6635217070579529,
+            1.635136604309082,
             0.0,
             0.0
         ]

@@ -1,12 +1,12 @@
 {
     "ModelHandle": {
         "color": [
-            0.5194732546806335,
-            0.10929150879383087,
-            0.9170984625816345,
+            1.0,
+            1.0,
+            1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "doubleEnemy.obj"
     },
     "SceneObjectData": {
         "name": "doubleGhostEnemy",
@@ -20,7 +20,7 @@
                 "floatParams": {
                     "speed": 0.4000000059604645
                 },
-                "handle": 18,
+                "handle": 21,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "doubleGhostEnemyMove.lua",
@@ -31,7 +31,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 19,
+                "handle": 22,
                 "intParams": {
                     "enemyType": 2
                 },
@@ -45,6 +45,8 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,

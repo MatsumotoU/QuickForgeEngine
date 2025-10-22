@@ -99,7 +99,7 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Arrow.obj"
+                "modelName": "ghostBody.obj"
             },
             "SceneObjectData": {
                 "name": "ShotGunPlayer",
@@ -124,7 +124,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "diffusionRate": 0.5,
+                            "diffusionRate": 1.0,
                             "knockBack": 10.0,
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.5,
@@ -156,8 +156,8 @@
                 ]
             },
             "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
+                "colliderLayer": 127,
+                "eventColliderLayer": 127,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -171,7 +171,7 @@
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -492,76 +492,31 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    0.26424872875213623,
-                    0.26424872875213623,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
+
             "SceneObjectData": {
-                "name": "BigGhostEnemy",
-                "tag": "Enemy",
-                "uniqueId": 500
+                "name": "MapManager",
+                "tag": "Untagged",
+                "uniqueId": 5735
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {
-                            "speed": 0.4000000059604645
-                        },
-                        "handle": 2107,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "BigGhostEnemyMove.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
+
                         "floatParams": {},
-                        "handle": 2108,
-                        "intParams": {
-                            "enemyType": 1
-                        },
-                        "priority": 0,
-                        "scriptName": "EnemyHp.lua",
-                        "stringParams": {
-                            "stoneName": "Tombstone.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "performingTime": 3.0
-                        },
-                        "handle": 2109,
+                        "handle": 10,
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "DeathAnim.lua",
+                        "scriptName": "MapManager.lua",
                         "stringParams": {}
                     }
                 ]
             },
-            "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    13.190983772277832,
-                    0.0,
-                    3.711031913757324,
-                    1.5
-                ]
-            },
+
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -570,83 +525,53 @@
                     1.0
                 ],
                 "translate": [
-                    13.190983772277832,
                     0.0,
-                    3.711031913757324
+                    0.0,
+                    0.0
                 ]
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    0.05100809037685394,
-                    0.8828890919685364,
-                    0.984455943107605,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "LongGhostEnemy",
-                "tag": "Enemy",
-                "uniqueId": 502
+                "name": "SceneTransitionManager",
+                "tag": "Untagged",
+                "uniqueId": 5738
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
-                        "boolParams": {},
-                        "floatParams": {
-                            "speed": 0.4000000059604645
+
+                        "boolParams": {
+                            "isReset": false
                         },
-                        "handle": 2110,
+                        "floatParams": {
+                            "fadeInTime": 0.5,
+                            "fadeOutTime": 0.5,
+                            "waitTime": 0.20000000298023224
+                        },
+                        "handle": 11,
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "FloatyEnemyMove.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 2111,
-                        "intParams": {
-                            "enemyType": 1
-                        },
-                        "priority": 0,
-                        "scriptName": "EnemyHp.lua",
+                        "scriptName": "SceneTransitionManager.lua",
                         "stringParams": {
-                            "stoneName": "Tombstone.json"
+                            "mapManagerObjName": "MapManager",
+                            "mapManagerScriptName": "MapManager.lua",
+                            "varflagName": "isClear"
                         }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "performingTime": 2.25
-                        },
-                        "handle": 2112,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "DeathAnim.lua",
-                        "stringParams": {}
                     }
                 ]
             },
-            "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
+            "SpriteData": {
+                "height": 720.0,
                 "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    9.371999740600586,
-                    0.0,
-                    0.6000000238418579,
-                    0.800000011920929
-                ]
+                "layer": 0,
+                "textureName": "white1x1.png",
+                "width": 1280.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -655,95 +580,9 @@
                     1.0
                 ],
                 "translate": [
-                    9.371999740600586,
                     0.0,
-                    0.6000000238418579
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    0.8496447205543518,
-                    0.9585492014884949,
-                    0.04469917342066765,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "SmallGhostEnemy",
-                "tag": "Enemy",
-                "uniqueId": 501
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 2113,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "SmallGhotEnemyMove.lua",
-                        "stringParams": {
-                            "LockOnObjName": "ShotGunPlayer",
-                            "bulletName": "Bullet.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 2114,
-                        "intParams": {
-                            "enemyType": 1
-                        },
-                        "priority": 0,
-                        "scriptName": "EnemyHp.lua",
-                        "stringParams": {
-                            "stoneName": "Tombstone.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "performingTime": 1.25
-                        },
-                        "handle": 2115,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "DeathAnim.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    10.064000129699707,
                     0.0,
-                    4.5,
-                    0.800000011920929
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
                     0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    10.064000129699707,
-                    0.0,
-                    4.5
                 ]
             }
         }

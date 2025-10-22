@@ -263,17 +263,48 @@ void InspectorView::Draw() {
 			ImGui::Checkbox("Is Static", &sphereCollider.isStatic);
 
 			ImGui::Text("Collider Layer:");
+			bool colliderLayerBits[8];
 			for (int i = 0; i < 8; i++) {
-				ImGui::Checkbox(std::format("##{}", i).c_str(), reinterpret_cast<bool*>(&(sphereCollider.colliderLayer)) + i);
+				colliderLayerBits[i] = (sphereCollider.colliderLayer & (1 << i)) != 0;
+			}
+			bool changed = false;
+			for (int i = 0; i < 8; i++) {
+				if (ImGui::Checkbox(std::format("##{}", i).c_str(), &colliderLayerBits[i])) {
+					changed = true;
+				}
 				ImGui::SameLine();
 			}
 			ImGui::NewLine();
+			if (changed) {
+				sphereCollider.colliderLayer = 0;
+				for (int i = 0; i < 8; i++) {
+					if (colliderLayerBits[i]) {
+						sphereCollider.colliderLayer |= (1 << i);
+					}
+				}
+			}
+
 			ImGui::Text("Event Collider Layer:");
+			bool eventColliderLayerBits[8];
 			for (int i = 0; i < 8; i++) {
-				ImGui::Checkbox(std::format("##event{}", i).c_str(), reinterpret_cast<bool*>(&(sphereCollider.eventColliderLayer)) + i);
+				eventColliderLayerBits[i] = (sphereCollider.eventColliderLayer & (1 << i)) != 0;
+			}
+			changed = false;
+			for (int i = 0; i < 8; i++) {
+				if (ImGui::Checkbox(std::format("##event{}", i).c_str(), &eventColliderLayerBits[i])) {
+					changed = true;
+				}
 				ImGui::SameLine();
 			}
 			ImGui::NewLine();
+			if (changed) {
+				sphereCollider.eventColliderLayer = 0;
+				for (int i = 0; i < 8; i++) {
+					if (eventColliderLayerBits[i]) {
+						sphereCollider.eventColliderLayer |= (1 << i);
+					}
+				}
+			}
 #ifdef _DEBUG
 			ImGui::Checkbox("Debug Draw", &sphereCollider.isDraw);
 #endif // _DEBUG
@@ -292,17 +323,48 @@ void InspectorView::Draw() {
 			ImGui::Checkbox("Is Trigger", &aabbCollider.isTrigger);
 			ImGui::Checkbox("Is Static", &aabbCollider.isStatic);
 			ImGui::Text("Collider Layer:");
+			bool colliderLayerBits[8];
 			for (int i = 0; i < 8; i++) {
-				ImGui::Checkbox(std::format("##{}", i).c_str(), reinterpret_cast<bool*>(&(aabbCollider.colliderLayer)) + i);
+				colliderLayerBits[i] = (aabbCollider.colliderLayer & (1 << i)) != 0;
+			}
+			bool changed = false;
+			for (int i = 0; i < 8; i++) {
+				if (ImGui::Checkbox(std::format("##{}", i).c_str(), &colliderLayerBits[i])) {
+					changed = true;
+				}
 				ImGui::SameLine();
 			}
 			ImGui::NewLine();
+			if (changed) {
+				aabbCollider.colliderLayer = 0;
+				for (int i = 0; i < 8; i++) {
+					if (colliderLayerBits[i]) {
+						aabbCollider.colliderLayer |= (1 << i);
+					}
+				}
+			}
+
 			ImGui::Text("Event Collider Layer:");
+			bool eventColliderLayerBits[8];
 			for (int i = 0; i < 8; i++) {
-				ImGui::Checkbox(std::format("##event{}", i).c_str(), reinterpret_cast<bool*>(&(aabbCollider.eventColliderLayer)) + i);
+				eventColliderLayerBits[i] = (aabbCollider.eventColliderLayer & (1 << i)) != 0;
+			}
+			changed = false;
+			for (int i = 0; i < 8; i++) {
+				if (ImGui::Checkbox(std::format("##event{}", i).c_str(), &eventColliderLayerBits[i])) {
+					changed = true;
+				}
 				ImGui::SameLine();
 			}
 			ImGui::NewLine();
+			if (changed) {
+				aabbCollider.eventColliderLayer = 0;
+				for (int i = 0; i < 8; i++) {
+					if (eventColliderLayerBits[i]) {
+						aabbCollider.eventColliderLayer |= (1 << i);
+					}
+				}
+			}
 #ifdef _DEBUG
 			ImGui::Checkbox("Debug Draw", &aabbCollider.isDraw);
 #endif // _DEBUG
