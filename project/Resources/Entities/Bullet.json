@@ -40,7 +40,7 @@
         "eventColliderLayer": 128,
         "isDraw": true,
         "isStatic": false,
-        "isTrigger": false,
+        "isTrigger": true,
         "sphere": [
             1.5442358255386353,
             0.0,

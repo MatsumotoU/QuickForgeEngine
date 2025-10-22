@@ -45,6 +45,11 @@ public:
 	void SetBackBufferRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle);
 	DescriptorHandles GetCurrentSrvHandle() const;
 
+	ColorCorrectionOffset& GetColorCorrectionOffset() { return *colorCorrectionOffsetBuffer_.GetData(); }
+	OffsetBuffer& GetGrayScaleOffset() { return *grayScaleOffsetBuffer_.GetData(); }
+	VignetteOffset& GetVignetteOffset() { return *vignetteOffsetBuffer_.GetData(); }
+	PixcelOffset& GetPixcelOffset() { return *pixcelOffsetBuffer_.GetData(); }
+
 public:
 	void PreDraw();
 	void PostDraw();

@@ -4,6 +4,7 @@
 #include "AppUtility/ID/UniqeIDManager.h"
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <nlohmann/json.hpp>
 
 
@@ -50,6 +51,7 @@ public:
 	void StopScript();
 
 private:
+	std::unordered_map<std::string, nlohmann::json> loadEntities_;
 	nlohmann::json sceneConfig_;
 	std::unique_ptr<IScene> currentScene_;
 	std::unique_ptr<IScene> nextScene_;
