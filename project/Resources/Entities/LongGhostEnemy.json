@@ -29,7 +29,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 37,
+                "handle": 142,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -38,6 +38,17 @@
                 "stringParams": {
                     "stoneName": "Tombstone.json"
                 }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 2.25
+                },
+                "handle": 149,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
             }
         ]
     },

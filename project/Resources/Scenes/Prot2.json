@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.2971276640892029,
-                    -0.03286166489124298,
+                    0.8839969038963318,
+                    -0.6928007006645203,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.4432452917098999,
-                    4.130725383758545,
-                    -13.48336124420166
+                    638.9395751953125,
+                    1220.025146484375,
+                    -769.7552490234375
                 ]
             }
         },
@@ -47,7 +47,7 @@
                         "floatParams": {
                             "offsetX": 1.0
                         },
-                        "handle": 0,
+                        "handle": 2097,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "CameraMove.lua",
@@ -115,7 +115,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 7.0
                         },
-                        "handle": 1,
+                        "handle": 2098,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -123,8 +123,29 @@
                     },
                     {
                         "boolParams": {},
+                        "floatParams": {
+                            "diffusionRate": 1.0,
+                            "knockBack": 10.0,
+                            "knockBackPower": 10.0,
+                            "maxShotInterval": 0.5,
+                            "reloadInterval": 0.0,
+                            "shotInterval": 10.0,
+                            "targetReloadInterval": 0.5
+                        },
+                        "handle": 2099,
+                        "intParams": {
+                            "bullets": 3,
+                            "maxBullets": 3,
+                            "shotNum": 15
+                        },
+                        "priority": 0,
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
                         "floatParams": {},
-                        "handle": 2,
+                        "handle": 2100,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "HitPoint.lua",
@@ -157,7 +178,7 @@
                     3.0255227088928223,
                     1.2449007158465974e-07,
                     5.0,
-                    0.30000001192092896
+                    0.4000000059604645
                 ]
             },
             "Transform": {
@@ -191,7 +212,7 @@
                         "floatParams": {
                             "space": 128.0
                         },
-                        "handle": 4,
+                        "handle": 2101,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -242,7 +263,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 5,
+                        "handle": 2102,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -288,7 +309,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 6,
+                        "handle": 2103,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -351,7 +372,7 @@
                         "floatParams": {
                             "space": 95.0
                         },
-                        "handle": 7,
+                        "handle": 2104,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -410,8 +431,10 @@
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {},
-                        "handle": 8,
+                        "floatParams": {
+                            "borderSpeed": 0.009999999776482582
+                        },
+                        "handle": 2105,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DamageBorder.lua",
@@ -448,7 +471,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 9,
+                        "handle": 2106,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MapRenderer.lua",
@@ -482,6 +505,7 @@
             }
         },
         {
+
             "SceneObjectData": {
                 "name": "MapManager",
                 "tag": "Untagged",
@@ -491,6 +515,7 @@
                 "scriptHandles": [
                     {
                         "boolParams": {},
+
                         "floatParams": {},
                         "handle": 10,
                         "intParams": {},
@@ -500,6 +525,7 @@
                     }
                 ]
             },
+
             "Transform": {
                 "rotate": [
                     0.0,
@@ -527,6 +553,7 @@
             "ScriptHandle": {
                 "scriptHandles": [
                     {
+
                         "boolParams": {
                             "isReset": false
                         },

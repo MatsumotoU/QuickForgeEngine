@@ -20,7 +20,7 @@
                 "floatParams": {
                     "speed": 0.4000000059604645
                 },
-                "handle": 15,
+                "handle": 137,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BigGhostEnemyMove.lua",
@@ -38,6 +38,17 @@
                 "stringParams": {
                     "stoneName": "Tombstone.json"
                 }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 3.0
+                },
+                "handle": 150,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
             }
         ]
     },
@@ -48,10 +59,10 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            6.061912536621094,
-            -0.33281970024108887,
-            0.7657085657119751,
-            0.800000011920929
+            13.190983772277832,
+            0.0,
+            3.711031913757324,
+            1.5
         ]
     },
     "Transform": {
