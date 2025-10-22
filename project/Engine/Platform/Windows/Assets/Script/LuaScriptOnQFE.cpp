@@ -209,6 +209,12 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	// QFE関数登録
 	QFE::Script::SetQFEFunctions(luaState_.get());
 
+	// thisエンティティ情報登録
+	sol::table thisEntity = luaState_->create_named_table("this");
+	thisEntity.set_function("GetEntityId", [this]() {
+		return bindEntityId_;
+		});
+
 	// 訳アリ関数群
 	// Log
 	luaState_->set_function("DebugLog", [this](sol::variadic_args message) {
