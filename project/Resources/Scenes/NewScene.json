@@ -13,9 +13,9 @@
             },
             "Transform": {
                 "rotate": [
-                    0.23639017343521118,
-                    -0.7300004363059998,
-                    -0.0
+                    0.10000000149011612,
+                    0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    12.779690742492676,
-                    4.616419792175293,
-                    -14.280288696289063
+                    0.0,
+                    1.5,
+                    -10.0
                 ]
             }
         },
@@ -55,111 +55,6 @@
                     0.0,
                     1.5,
                     -10.0
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "ExplotionParticleEmitter",
-                "tag": "Untagged",
-                "uniqueId": 4
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 139,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "ExplotionParticleEmitter.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    0.30000001192092896,
-                    0.30000001192092896,
-                    0.30000001192092896
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "anchor.obj"
-            },
-            "SceneObjectData": {
-                "name": "Bullet",
-                "tag": "bullet",
-                "uniqueId": 161
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "aliveTime": 0.25,
-                            "moveSpeed": 24.0
-                        },
-                        "handle": 140,
-                        "intParams": {
-                            "DIK_A": 30,
-                            "DIK_D": 32,
-                            "DIK_S": 31,
-                            "DIK_SPACE": 57,
-                            "DIK_W": 17
-                        },
-                        "priority": 0,
-                        "scriptName": "BulletMove.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "colliderLayer": 128,
-                "eventColliderLayer": 128,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    1.5442358255386353,
-                    0.0,
-                    0.0,
-                    0.20000000298023224
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    1.5442358255386353,
-                    0.0,
-                    0.0
                 ]
             }
         }
