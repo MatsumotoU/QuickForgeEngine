@@ -65,9 +65,8 @@ Transform AnimCrip::GetTransformAtTime(float time) const {
 	// キーフレーム間の補間
 	float segmentDuration = nextKeyFrame->time - previousKeyFrame->time;
 	float t = (time - previousKeyFrame->time) / segmentDuration;
-	result.position = previousKeyFrame->transform.position * (1.0f - t) + nextKeyFrame->transform.position * t;
-	result.rotation = previousKeyFrame->transform.rotation * (1.0f - t) + nextKeyFrame->transform.rotation * t;
-	result.scale = previousKeyFrame->transform.scale * (1.0f - t) + nextKeyFrame->transform.scale * t;
+	t;
+	
 
 	return result;
 }

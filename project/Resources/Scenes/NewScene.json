@@ -13,9 +13,9 @@
             },
             "Transform": {
                 "rotate": [
-                    0.15138955414295197,
-                    0.37999871373176575,
-                    -0.0
+                    0.10000000149011612,
+                    0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -3.707792043685913,
-                    1.5249919891357422,
-                    -9.283143997192383
+                    0.0,
+                    1.5,
+                    -10.0
                 ]
             }
         },
@@ -59,60 +59,28 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "A",
+                "name": "TestEnitty",
                 "tag": "Untagged",
-                "uniqueId": 4
+                "uniqueId": 3
             },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.2142718881368637,
-                    1.1398999691009521,
-                    0.0
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 22,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TestEntityID.lua",
+                        "stringParams": {}
+                    }
                 ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "ParentData": {
-                "parentId": 4
-            },
-            "SceneObjectData": {
-                "name": "B",
-                "tag": "Untagged",
-                "uniqueId": 5
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -121,7 +89,7 @@
                     1.0
                 ],
                 "translate": [
-                    1.8744926452636719,
+                    0.0,
                     0.0,
                     0.0
                 ]
