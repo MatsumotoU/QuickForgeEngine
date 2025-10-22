@@ -17,6 +17,10 @@ isKnockback = false
 
 local deltatime = 0.016
 
+
+
+
+
 function Init()
 shotInterval = 0.0
 isKnockback = false
@@ -34,14 +38,22 @@ function Update()
 
     -- リロード
     if QFE.Input.GetKeyPress("MoveLeft") then
+        if force.velocity:Length() > 0.1 then
+            return
+        end
+
         reloadInterval = reloadInterval + deltatime
-    if reloadInterval >= targetReloadInterval then
+        if reloadInterval >= targetReloadInterval then
         reloadInterval = 0.0
         bullets = bullets + 1
-        if bullets >= maxBullets then
-            bullets = maxBullets
+        if bullets <= maxBullets then
+            RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Reroad")
+        end        
+
+            if bullets >= maxBullets then
+                bullets = maxBullets
+            end
         end
-    end
 
     else
         reloadInterval = 0.0
@@ -66,9 +78,22 @@ function Update()
         local tempTransform = Transform.new()
         tempTransform.translate = transform.translate
         tempTransform.rotate = transform.rotate
+        
 
         for i = 1, shotNum, 1 do
-            tempTransform.rotate.y = transform.rotate.y + (math.random() * diffusionRate - (diffusionRate * 0.5))
+
+            local tmp = i % 2
+            local max_addNum = math.pi * diffusionRate
+            local addNum = 0
+
+            if tmp == 0 then
+                  addNum =  max_addNum * math.random() 
+            else
+                addNum  = -max_addNum * math.random()
+            end
+
+
+            tempTransform.rotate.y = transform.rotate.y + addNum
             CreateEntity(bulletName,tempTransform)
         end
 
@@ -78,5 +103,7 @@ function Update()
         shotInterval = maxShotInterval
         bullets = bullets - 1
         isKnockback = true
+
+        RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
     end
 end

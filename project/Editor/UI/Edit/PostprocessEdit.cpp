@@ -15,7 +15,28 @@ void PostprocessEdit::Draw() {
 	}
 	ImGui::Begin("Postprocess Edit", &isActive_, ImGuiWindowFlags_AlwaysAutoResize);
 	RendaringPostprosecess* postprocess = RendaringPostprosecess::GetInstance();
-	postprocess;
+	ImGui::Checkbox("Enable Postprocess", &postprocess->isPostprocess_);
+	ImGui::Separator();
+	if (ImGui::BeginChild("ColorCorrection", ImVec2(0, 150), true)) {
+		auto& color = postprocess->GetColorCorrectionOffset();
+		ImGui::SliderFloat("Contrast", &color.contrast, 0.0f, 4.0f);
+		ImGui::SliderFloat("Saturation", &color.saturation, 0.0f, 4.0f);
+		ImGui::SliderFloat("Exposure", &color.exposure, 0.0f, 4.0f);
+		ImGui::SliderFloat("Gamma", &color.gamma, 0.0f, 4.0f);
+		ImGui::SliderFloat("Hue", &color.hue, -3.14f, 3.14f);
+	}
+	ImGui::EndChild();
+
+	if (ImGui::BeginChild("Vignette", ImVec2(0, 150), true)) {
+		auto& vignette = postprocess->GetVignetteOffset();
+		ImGui::SliderFloat("Vignette Intensity", &vignette.VignetteIntensity, 0.0f, 4.0f);
+		ImGui::SliderFloat("Vignette Radius", &vignette.VignetteRadius, 0.0f, 1.0f);
+		ImGui::SliderFloat("Vignette Softness", &vignette.VignetteSoftness, 0.0f, 1.0f);
+	}
+	ImGui::EndChild();
+
+
+	ImGui::Separator();
 	ImGui::End();
 }
 
