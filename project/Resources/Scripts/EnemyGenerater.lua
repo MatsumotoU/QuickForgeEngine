@@ -64,6 +64,12 @@ local offsetX = 8.0 -- カメラの画面端までの位置
 -- 生成するステージの番号
 stageNumber = 1
 
+-- リセットに関する名前
+transitionObjName = "SceneTransitionManager"
+sceneTransitionScriptName = "SceneTransitionManager.lua"
+varIsResetName = "isReset"
+local transitionID = 0
+
 --[[
     初期化処理
 --]]
@@ -106,6 +112,9 @@ function Init()
         DebugLog("x:"..positions[i].x.."z:"..positions[i].z)
     end
 
+    -- シーン遷移を取得
+    transitionID = GetEntity(transitionObjName)
+
     DebugLog("EnemyGeneratorInit")
 
     -- 正しく敵を生成出来るかを確認する(デバック用)
@@ -123,11 +132,19 @@ function Update()
     --DebugLog("currentDifficulty : ".. currentDifficulty)
     --DebugLog("currentEnemyCount : ".. currentEnemyCount)
 
+    local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
+    -- リセット
+    if isReset then
+        Reset()
+    end
+
+    if not isReset then
     -- 敵の生成処理
     SpawnManager()
 
     -- 現在の敵の数を管理
     EnemyCountManager()
+    end
 end
 
 -- 敵を配置できる座標リストを取得
@@ -378,4 +395,35 @@ function StageTwoRegisterEnemy()
     table.insert(currentEnemysCounts,{name = batEnemyJson,difficulty = 1,count = 0})
     table.insert(currentEnemysCounts,{name = pillBugEnemyJson,difficulty = 1,count = 0})
     table.insert(currentEnemysCounts,{name = eyeEnemyJson,difficulty = 1,count = 0})
+end
+
+-- リセット処理
+function Reset()
+
+    -- 現在いる敵のリストをリセット
+    enemiesIDList = {}
+
+    -- 生成する移動距離をリセット
+    movedDistance = 0.0
+
+    -- 敵の数と難易度をリセット
+    currentEnemyCount = 0
+    currentDifficulty = 0
+
+    -- 敵のリストをリセット
+    maxEnemysCounts = {}
+    currentEnemysCounts = {}
+
+    if stageNumber <= 2 then
+        stageNumber = stageNumber + 1
+    end
+
+    if stageNumber == 1 then
+        StageOneRegisterEnemy()
+    else
+        StageTwoRegisterEnemy()
+    end
+
+    -- カメラ位置をリセット
+    lastCameraX = 7.4
 end
