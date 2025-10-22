@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 22,
+                "handle": 145,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BoxGhostEnemyMove.lua",
@@ -27,7 +27,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 23,
+                "handle": 146,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -36,10 +36,23 @@
                 "stringParams": {
                     "stoneName": "Tombstone.json"
                 }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 2.0
+                },
+                "handle": 147,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
             }
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,
