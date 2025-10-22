@@ -10,6 +10,8 @@ public:
 	bool isOldHit = false;
 	bool isTrigger = false;
 	bool isStatic = false;
+	uint8_t colliderLayer = 0xFF;
+	uint8_t eventColliderLayer = 0xFF;
 #ifdef _DEBUG
 	bool isDraw = true;
 #endif // _DEBUG

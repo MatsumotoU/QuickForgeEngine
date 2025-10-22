@@ -12,13 +12,12 @@ isAlive = true
 -- 敵のタイプ番号
 enemyType = 0
 -- 普通の敵の名前
-normalEnemyName = "normalEnemy"
+normalEnemyName = "NormalGhostEnemy.json"
 
 -- カメラの名前
-cameraName = "Camera"
+targetName = "DamageBorder"
 local targetId = 0
 local targetTransform = Transform.new()
-local offsetX = 12.0 -- カメラの画面端までの位置
 
 function Init()
     isAlive = true
@@ -27,9 +26,7 @@ function Init()
     time = 0.0
 
      -- 追跡するidを取得
-    targetId = GetEntity(cameraName)
-    -- カメラの画面端までの位置
-    offsetX = 12.0
+    targetId = GetEntity(targetName)
 end
 
 function Update()
@@ -48,8 +45,8 @@ function Update()
     end
 
     -- カメラの追跡する位置を設定
-    targetTransform = GetTransform(1)
-    local targetX = targetTransform.translate.x - offsetX
+    targetTransform = GetTransform(targetId)
+    local targetX = targetTransform.translate.x
 
     --DebugLog("Id"..targetId)
     --DebugLog("cameraLeftBoderX"..targetX)
@@ -59,6 +56,15 @@ function Update()
     if transform.translate.x <= targetX then
         DebugLog("EnemyIsAliveFalse")
         isAlive = false
+
+        -- 通常の敵だった場合、通常の幽霊を生成
+        if enemyType == 0 then
+             local temp = Transform.new()
+            temp.translate.x = transform.translate.x + 1.0
+            temp.translate.y = transform.translate.y + 2.0
+            temp.translate.z = transform.translate.z
+            CreateEntity(normalEnemyName,temp)
+        end
     end
 end
 
@@ -68,23 +74,25 @@ function OnCollisionEnter(id,obj)
         damageInterval = maxDamageInterval
 
         if hp <= 0 then
-            isAlive = false
-            if enemyType == 0 then
-                local temp = Transform.new()
-                temp.translate.x = transform.translate.x
-                temp.translate.y = transform.translate.y + 2.0
-                temp.translate.z = transform.translate.z
-                CreateEntity(stoneName,temp)
-            else
+            if isAlive then
                 isAlive = false
-                -- 双子のゴーストの場合
-                local temp = Transform.new()
-                temp.translate.x = transform.translate.x
-                temp.translate.y = transform.translate.y + 2.0
-                temp.translate.z = transform.translate.z - 0.5
-                CreateEntity(normalEnemyName,temp)
-                temp.translate.z = transform.translate.z + 0.5
-                CreateEntity(normalEnemyName,temp)
+                if enemyType == 0 then
+                    -- 通常の敵の場合、墓石を生成
+                    local temp = Transform.new()
+                    temp.translate.x = transform.translate.x
+                    temp.translate.y = transform.translate.y + 2.0
+                    temp.translate.z = transform.translate.z
+                    CreateEntity(stoneName,temp)
+                elseif enemyType == 2 then 
+                    -- 双子のゴーストの場合
+                    local temp = Transform.new()
+                    temp.translate.x = transform.translate.x
+                    temp.translate.y = transform.translate.y + 2.0
+                    temp.translate.z = transform.translate.z - 0.5
+                    CreateEntity(normalEnemyName,temp)
+                    temp.translate.z = transform.translate.z + 0.5
+                    CreateEntity(normalEnemyName,temp)
+                end
             end
         end
     end

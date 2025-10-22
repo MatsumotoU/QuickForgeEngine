@@ -20,7 +20,7 @@
                 "floatParams": {
                     "speed": 0.4000000059604645
                 },
-                "handle": 5,
+                "handle": 16,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "FloatyEnemyMove.lua",
@@ -29,8 +29,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 13,
-                "intParams": {},
+                "handle": 17,
+                "intParams": {
+                    "enemyType": 1
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {

@@ -47,7 +47,7 @@
                         "floatParams": {
                             "xOffset": 7.0
                         },
-                        "handle": 0,
+                        "handle": 56,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TitleCamera.lua",
@@ -113,7 +113,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 8.5
                         },
-                        "handle": 1,
+                        "handle": 57,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -127,7 +127,7 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.30000001192092896
                         },
-                        "handle": 2,
+                        "handle": 58,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -140,6 +140,7 @@
                 ]
             },
             "SphereColliderData": {
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -177,6 +178,7 @@
                     1.0500001907348633,
                     1.3999998569488525
                 ],
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": true
             },
@@ -199,7 +201,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 3,
+                        "handle": 59,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TitleString.lua",
@@ -235,6 +237,7 @@
                     0.5,
                     5.900000095367432
                 ],
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -271,6 +274,7 @@
                     0.5,
                     5.87980842590332
                 ],
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -307,6 +311,7 @@
                     0.5,
                     -4.917377948760986
                 ],
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -343,6 +348,7 @@
                     0.5,
                     5.050000190734863
                 ],
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": true
             },
@@ -356,7 +362,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 4,
+                        "handle": 60,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "SceneManager.lua",

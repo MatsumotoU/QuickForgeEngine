@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.9129636883735657,
-                    -0.24233001470565796,
+                    0.8609940409660339,
+                    -0.4437178075313568,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    9.924307823181152,
-                    18.477706909179688,
-                    -9.51943302154541
+                    12.306745529174805,
+                    23.499149322509766,
+                    -14.826416969299316
                 ]
             }
         },
@@ -47,7 +47,7 @@
                         "floatParams": {
                             "offsetX": 1.0
                         },
-                        "handle": 18,
+                        "handle": 827,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "CameraMove.lua",
@@ -71,7 +71,7 @@
                 "translate": [
                     7.400000095367432,
                     20.700000762939453,
-                    -11.399999618530273
+                    -12.399999618530273
                 ]
             }
         },
@@ -113,9 +113,9 @@
                         "floatParams": {
                             "backSpeed": 8.0,
                             "minVelocity": 6.0,
-                            "moveSpeed": 8.5
+                            "moveSpeed": 7.0
                         },
-                        "handle": 19,
+                        "handle": 828,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -127,13 +127,16 @@
                             "diffusionRate": 0.5,
                             "knockBack": 10.0,
                             "knockBackPower": 10.0,
-                            "maxShotInterval": 0.30000001192092896
+                            "maxShotInterval": 0.5,
+                            "reloadInterval": 0.0,
+                            "shotInterval": 10.0,
+                            "targetReloadInterval": 0.5
                         },
-                        "handle": 20,
+                        "handle": 829,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
-                            "shotNum": 3
+                            "shotNum": 15
                         },
                         "priority": 0,
                         "scriptName": "BulletShot.lua",
@@ -142,7 +145,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 21,
+                        "handle": 830,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "HitPoint.lua",
@@ -153,6 +156,9 @@
                 ]
             },
             "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -193,7 +199,7 @@
                         "floatParams": {
                             "space": 128.0
                         },
-                        "handle": 22,
+                        "handle": 831,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -244,7 +250,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 23,
+                        "handle": 832,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -290,7 +296,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 24,
+                        "handle": 833,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -302,7 +308,9 @@
                         "scriptName": "EnemyGenerater.lua",
                         "stringParams": {
                             "bigGhostEnemyJson": "BigGhostEnemy.json",
+                            "boxGhostEnemyJson": "BoxGhostEnemy.json",
                             "cameraName": "Camera",
+                            "doubleGhostEnemyJson": "doubleGhostEnemy.json",
                             "floatyEnemyName": "LongGhostEnemy.json",
                             "generatorMapScriptName": "MapGenerater.lua",
                             "lockOnEnemyName": "NormalGhostEnemy.json",
@@ -310,8 +318,12 @@
                             "mapObjName": "MapGenerater",
                             "normalGhostEnemyJson": "NormalGhostEnemy.json",
                             "playerName": "Camera",
+                            "ratEnemyJson": "RatEnemy.json",
                             "sliderEnemyName": "BigGhostEnemy.json",
-                            "varMapName": "map"
+                            "smallGhostEnemyJson": "SmallGhostEnemy.json",
+                            "tyoutinEnemyJson": "TyoutinEnemy.json",
+                            "varMapName": "map",
+                            "zizouEnemyJson": "ZizouEnemy.json"
                         }
                     }
                 ]
@@ -347,7 +359,7 @@
                         "floatParams": {
                             "space": 95.0
                         },
-                        "handle": 25,
+                        "handle": 834,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -407,7 +419,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 26,
+                        "handle": 835,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DamageBorder.lua",
@@ -430,6 +442,50 @@
                     0.0,
                     0.0,
                     5.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "MapRenderer",
+                "tag": "Untagged",
+                "uniqueId": 5734
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 836,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "MapRenderer.lua",
+                        "stringParams": {
+                            "breakWallName": "Wall.json",
+                            "generatorMapScriptName": "MapGenerater.lua",
+                            "mapObjName": "MapGenerater",
+                            "playerName": "ShotGunPlayer",
+                            "varMapName": "map",
+                            "wallObjName": "Wall.json"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }

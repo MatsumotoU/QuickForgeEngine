@@ -426,6 +426,8 @@
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetUtilities.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp" />
     <ClCompile Include="Editor\UI\View\ScriptLoggerView.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Animeter\AnimCrip.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Animeter\AnimationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1365,6 +1367,9 @@
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetUtilities.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h" />
     <ClInclude Include="Editor\UI\View\ScriptLoggerView.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\AnimCrip.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\KeyFrame.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\AnimationManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

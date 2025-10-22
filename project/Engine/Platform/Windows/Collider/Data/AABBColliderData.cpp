@@ -11,6 +11,8 @@ nlohmann::json AABBColliderData::Serialize() const {
 	json["isTrigger"] = isTrigger;
 	json["isStatic"] = isStatic;
 	json["aabb"] = { aabb.min.x, aabb.min.y, aabb.min.z, aabb.max.x, aabb.max.y, aabb.max.z };
+	json["colliderLayer"] = colliderLayer;
+	json["eventColliderLayer"] = eventColliderLayer;
 #ifdef _DEBUG
 	json["isDraw"] = isDraw;
 #endif // _DEBUG
@@ -33,7 +35,12 @@ void AABBColliderData::Deserialize(const nlohmann::json& json) {
 		aabb.max.y = json["aabb"][4].get<float>();
 		aabb.max.z = json["aabb"][5].get<float>();
 	}
-
+	if (json.contains("colliderLayer") && json["colliderLayer"].is_number_unsigned()) {
+		colliderLayer = json["colliderLayer"].get<uint8_t>();
+	}
+	if (json.contains("eventColliderLayer") && json["eventColliderLayer"].is_number_unsigned()) {
+		eventColliderLayer = json["eventColliderLayer"].get<uint8_t>();
+	}
 #ifdef _DEBUG
 	if (json.contains("isDraw") && json["isDraw"].is_boolean()) {
 		isDraw = json["isDraw"].get<bool>();

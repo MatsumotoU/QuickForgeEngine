@@ -52,7 +52,7 @@ function Update()
 
     -- バックフリップ開始処理
     if QFE.Input.GetKeyPress("MoveLeft") then
-       transform.translate.x = transform.translate.x - (moveSpeed*0.5 * deltatime)
+       transform.translate.x = transform.translate.x - (moveSpeed*0.25 * deltatime)
        objectDir.x = 1.0
        objectDir.y = 0.0
        -- 設定された向きを見る

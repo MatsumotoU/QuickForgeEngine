@@ -67,9 +67,11 @@ void InspectorView::Draw() {
 	// Parent ID
 	if (assetManager->GetEntityManager()->HasComponent<ParentData>(selectedEntityId_)) {
 		ParentData& parentData = assetManager->GetEntityManager()->GetComponent<ParentData>(selectedEntityId_);
-		ImGui::Text("Parent Unique ID: %d", parentData.parentId);
-		if (ImGui::Button("Delete")) {
-			SceneManager::GetInstance()->Unparent(selectedEntityId_);
+		if (ImGui::CollapsingHeader("Parent")) {
+			ImGui::Text("Parent Unique ID: %d", parentData.parentId);
+			if (ImGui::Button("Delete")) {
+				SceneManager::GetInstance()->Unparent(selectedEntityId_);
+			}
 		}
 	}
 
@@ -259,6 +261,19 @@ void InspectorView::Draw() {
 			ImGui::DragFloat("Radius", &sphereCollider.sphere.radius, 0.1f, 0.1f);
 			ImGui::Checkbox("Is Trigger", &sphereCollider.isTrigger);
 			ImGui::Checkbox("Is Static", &sphereCollider.isStatic);
+
+			ImGui::Text("Collider Layer:");
+			for (int i = 0; i < 8; i++) {
+				ImGui::Checkbox(std::format("##{}", i).c_str(), reinterpret_cast<bool*>(&(sphereCollider.colliderLayer)) + i);
+				ImGui::SameLine();
+			}
+			ImGui::NewLine();
+			ImGui::Text("Event Collider Layer:");
+			for (int i = 0; i < 8; i++) {
+				ImGui::Checkbox(std::format("##event{}", i).c_str(), reinterpret_cast<bool*>(&(sphereCollider.eventColliderLayer)) + i);
+				ImGui::SameLine();
+			}
+			ImGui::NewLine();
 #ifdef _DEBUG
 			ImGui::Checkbox("Debug Draw", &sphereCollider.isDraw);
 #endif // _DEBUG
@@ -276,6 +291,18 @@ void InspectorView::Draw() {
 			ImGui::DragFloat3("Max", &aabbCollider.aabb.max.x, 0.1f);
 			ImGui::Checkbox("Is Trigger", &aabbCollider.isTrigger);
 			ImGui::Checkbox("Is Static", &aabbCollider.isStatic);
+			ImGui::Text("Collider Layer:");
+			for (int i = 0; i < 8; i++) {
+				ImGui::Checkbox(std::format("##{}", i).c_str(), reinterpret_cast<bool*>(&(aabbCollider.colliderLayer)) + i);
+				ImGui::SameLine();
+			}
+			ImGui::NewLine();
+			ImGui::Text("Event Collider Layer:");
+			for (int i = 0; i < 8; i++) {
+				ImGui::Checkbox(std::format("##event{}", i).c_str(), reinterpret_cast<bool*>(&(aabbCollider.eventColliderLayer)) + i);
+				ImGui::SameLine();
+			}
+			ImGui::NewLine();
 #ifdef _DEBUG
 			ImGui::Checkbox("Debug Draw", &aabbCollider.isDraw);
 #endif // _DEBUG

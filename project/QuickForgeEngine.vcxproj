@@ -310,6 +310,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\AppUtility\String\DirectXStructToString.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\2DTexture\TextureManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelHandle.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Animeter\AnimationManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Animeter\AnimCrip.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.cpp" />
@@ -477,6 +479,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\3DModel\Data\ModelRenderData.h" />
     <ClInclude Include="Engine\Core\Entity\Component\ComponentStrage.h" />
     <ClInclude Include="Engine\Core\Entity\Component\IComponentStrage.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\AnimationManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\AnimCrip.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\KeyFrame.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Data\AudioData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.h" />
