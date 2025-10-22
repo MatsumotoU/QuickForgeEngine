@@ -22,7 +22,7 @@
                 "floatParams": {
                     "speed": 0.01600000075995922
                 },
-                "handle": 440,
+                "handle": 1943,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -39,7 +39,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 441,
+                "handle": 1944,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyCollsionBehavior.lua",
@@ -50,7 +50,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 442,
+                "handle": 1945,
                 "intParams": {
                     "hp": 1,
                     "maxHp": 1
@@ -64,6 +64,8 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,

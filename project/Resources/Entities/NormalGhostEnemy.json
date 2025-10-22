@@ -20,7 +20,7 @@
                 "floatParams": {
                     "speed": 0.20000000298023224
                 },
-                "handle": 20,
+                "handle": 133,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "LockOnEnemyMove.lua",
@@ -31,7 +31,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 21,
+                "handle": 134,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -40,10 +40,23 @@
                 "stringParams": {
                     "stoneName": "Tombstone.json"
                 }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 2.0
+                },
+                "handle": 135,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
             }
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,
