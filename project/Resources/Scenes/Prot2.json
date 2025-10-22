@@ -124,7 +124,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "diffusionRate": 0.5,
+                            "diffusionRate": 1.0,
                             "knockBack": 10.0,
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.5,
@@ -156,8 +156,8 @@
                 ]
             },
             "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
+                "colliderLayer": 127,
+                "eventColliderLayer": 127,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
@@ -165,7 +165,7 @@
                     3.0255227088928223,
                     1.2449007158465974e-07,
                     5.0,
-                    0.6000000238418579
+                    0.30000001192092896
                 ]
             },
             "Transform": {
