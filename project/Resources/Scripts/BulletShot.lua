@@ -34,14 +34,22 @@ function Update()
 
     -- リロード
     if QFE.Input.GetKeyPress("MoveLeft") then
+        if force.velocity:Length() > 0.1 then
+            return
+        end
+
         reloadInterval = reloadInterval + deltatime
-    if reloadInterval >= targetReloadInterval then
+        if reloadInterval >= targetReloadInterval then
         reloadInterval = 0.0
         bullets = bullets + 1
-        if bullets >= maxBullets then
-            bullets = maxBullets
+        if bullets <= maxBullets then
+            RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Reroad")
+        end        
+
+            if bullets >= maxBullets then
+                bullets = maxBullets
+            end
         end
-    end
 
     else
         reloadInterval = 0.0
@@ -78,5 +86,7 @@ function Update()
         shotInterval = maxShotInterval
         bullets = bullets - 1
         isKnockback = true
+
+        RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
     end
 end

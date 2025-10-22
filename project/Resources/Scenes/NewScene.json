@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.466390460729599,
-                    0.12750107049942017,
+                    0.23639017343521118,
+                    -0.7300004363059998,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -1.1484588384628296,
-                    4.546957015991211,
-                    -8.958581924438477
+                    12.779690742492676,
+                    4.616419792175293,
+                    -14.280288696289063
                 ]
             }
         },
@@ -59,34 +59,23 @@
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    -0.5,
-                    -0.5,
-                    -0.5,
-                    0.5,
-                    0.5,
-                    0.5
-                ],
-                "colliderLayer": 0,
-                "eventColliderLayer": 0,
-                "isDraw": true,
-                "isStatic": true,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "Box1x1.obj",
+                "name": "ExplotionParticleEmitter",
                 "tag": "Untagged",
-                "uniqueId": 163
+                "uniqueId": 4
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 139,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ExplotionParticleEmitter.lua",
+                        "stringParams": {}
+                    }
+                ]
             },
             "Transform": {
                 "rotate": [
@@ -95,9 +84,9 @@
                     0.0
                 ],
                 "scale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.30000001192092896,
+                    0.30000001192092896,
+                    0.30000001192092896
                 ],
                 "translate": [
                     0.0,
@@ -107,22 +96,6 @@
             }
         },
         {
-            "Force": {
-                "acceleration": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "friction": 1.0,
-                "gravityStrength": 10.0,
-                "isGravity": true,
-                "mass": 1.0,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
             "ModelHandle": {
                 "color": [
                     1.0,
@@ -130,76 +103,63 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Arrow.obj"
+                "modelName": "anchor.obj"
             },
             "SceneObjectData": {
-                "name": "ShotGunPlayer",
-                "tag": "player",
-                "uniqueId": 162
+                "name": "Bullet",
+                "tag": "bullet",
+                "uniqueId": 161
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "backSpeed": 8.0,
-                            "minVelocity": 0.10000000149011612,
-                            "moveSpeed": 8.5
+                            "aliveTime": 0.25,
+                            "moveSpeed": 24.0
                         },
-                        "handle": 0,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "ShotGunPlayer.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "diffusionRate": 0.5,
-                            "knockBack": 10.0,
-                            "knockBackPower": 0.0,
-                            "maxShotInterval": 0.30000001192092896
-                        },
-                        "handle": 1,
+                        "handle": 140,
                         "intParams": {
-                            "bullets": 3,
-                            "maxBullets": 3,
-                            "shotNum": 3
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17
                         },
                         "priority": 0,
-                        "scriptName": "BulletShot.lua",
+                        "scriptName": "BulletMove.lua",
                         "stringParams": {}
                     }
                 ]
             },
             "SphereColliderData": {
-                "colliderLayer": 127,
-                "eventColliderLayer": 255,
+                "colliderLayer": 128,
+                "eventColliderLayer": 128,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    3.0255227088928223,
-                    1.2449007158465974e-07,
-                    5.0,
-                    0.6000000238418579
+                    1.5442358255386353,
+                    0.0,
+                    0.0,
+                    0.20000000298023224
                 ]
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
-                    0.9999999403953552,
                     1.0,
-                    0.9999999403953552
+                    1.0,
+                    1.0
                 ],
                 "translate": [
-                    3.0255227088928223,
-                    1.2449007158465974e-07,
-                    5.0
+                    1.5442358255386353,
+                    0.0,
+                    0.0
                 ]
             }
         }

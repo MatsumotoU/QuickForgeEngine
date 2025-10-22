@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.8225836157798767,
-                    -0.10468777269124985,
+                    0.2971276640892029,
+                    -0.03286166489124298,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    5.816764831542969,
-                    17.01893424987793,
-                    -13.471220016479492
+                    0.4432452917098999,
+                    4.130725383758545,
+                    -13.48336124420166
                 ]
             }
         },
@@ -82,8 +82,8 @@
                     0.0,
                     0.0
                 ],
-                "friction": 1.0,
-                "gravityStrength": 10.0,
+                "friction": 5.0,
+                "gravityStrength": 2.0,
                 "isGravity": true,
                 "mass": 1.0,
                 "velocity": [
@@ -123,35 +123,27 @@
                     },
                     {
                         "boolParams": {},
-                        "floatParams": {
-                            "diffusionRate": 1.0,
-                            "knockBack": 10.0,
-                            "knockBackPower": 10.0,
-                            "maxShotInterval": 0.5,
-                            "reloadInterval": 0.0,
-                            "shotInterval": 10.0,
-                            "targetReloadInterval": 0.5
-                        },
-                        "handle": 2,
-                        "intParams": {
-                            "bullets": 3,
-                            "maxBullets": 3,
-                            "shotNum": 15
-                        },
-                        "priority": 0,
-                        "scriptName": "BulletShot.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
                         "floatParams": {},
-                        "handle": 3,
+                        "handle": 2,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "HitPoint.lua",
                         "stringParams": {
                             "damageTag": "Enemy"
                         }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "knockBackPower": 10.0
+                        },
+                        "handle": 3,
+                        "intParams": {
+                            "bullets": 3
+                        },
+                        "priority": 0,
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
                     }
                 ]
             },
@@ -206,7 +198,7 @@
                             "DIK_S": 31,
                             "DIK_SPACE": 57,
                             "DIK_W": 17,
-                            "nowNum": 1,
+                            "nowNum": 3,
                             "numMax": 3,
                             "objectUniqeID": 1
                         },
@@ -576,6 +568,88 @@
                 "translate": [
                     0.0,
                     0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "shotGun.obj"
+            },
+            "ParentData": {
+                "parentId": 162
+            },
+            "SceneObjectData": {
+                "name": "ShotGun",
+                "tag": "player",
+                "uniqueId": 5740
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 12,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShotGunAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -3.141592502593994,
+                    0.0015925486804917455,
+                    -3.141592502593994
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.5392918586730957,
+                    7.403116342175053e-07,
+                    0.18073129653930664
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "Ground",
+                "tag": "Untagged",
+                "uniqueId": 5741
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    100.0,
+                    1.0,
+                    100.0
+                ],
+                "translate": [
+                    0.0,
+                    -0.5,
                     0.0
                 ]
             }
