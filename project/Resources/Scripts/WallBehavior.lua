@@ -1,6 +1,6 @@
 
 -- プレイヤーの位置を取得
-playerName = "ShotGunPlayer"
+playerName = "Camera"
 local playerID = 0
 
 local offsetX = 18.0

@@ -52,9 +52,13 @@ end
 function Reset()
     -- 位置をリセット
     transform.translate.x = 7.4
+    local tx = transform.translate.x
+    DebugLog("ResetCamera:"..tx)
 end
 
 function PreReset()
     -- 位置をリセット
     transform.translate.x = -100.0
+    local tx = transform.translate.x
+    DebugLog("PreResetCamera:"..tx)
 end
