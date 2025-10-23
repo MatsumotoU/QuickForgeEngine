@@ -446,6 +446,8 @@ function Reset()
     else
         if stageNumber <= 2 then
             stageNumber = stageNumber + 1
+        else
+            stageNumber = 1
         end
     end
 
