@@ -46,6 +46,7 @@ local stageNumber = 1
 -- 有効になるまでの時間を求める
 local timer = 0.0
 local activeGameOverTime = 2.5
+local activeClearTime = 2.0
 
 local isGameOver = false
 
@@ -87,6 +88,8 @@ function Update()
             NormalScene()
         elseif sceneType == 1 then
             GameOverScene()
+        elseif sceneType == 2 then
+            ClearScene()
         end
 
     end
@@ -109,13 +112,20 @@ function NormalScene()
     -- マップのクリア判定を取得する
     if targetTransform.translate.x >= goalPosX then
         if not isClear then
-        isClear = true
         stageNumber = stageNumber + 1
         DebugLog("CurrentStageNumber :"..stageNumber)
+            if stageNumber >= 3 then
+                sceneType = 2
+                timer = 0.0
+                CreateClearObj()
+            else
+                isClear = true
+            end
         end
     end
 end
 
+-- ゲームオーバーシーンの処理
 function GameOverScene()
 
     local deltatime = GetDeltaTime()
@@ -147,6 +157,21 @@ function GameOverScene()
     end
 end
 
+-- クリアシーンの処理
+function ClearScene()
+
+    local deltatime = GetDeltaTime()
+    timer = timer + deltatime
+
+    if timer >= activeClearTime then
+        -- タイトルに戻る
+        if QFE.Input.GetKeyTrigger("Shot") then
+            -- タイトルシーンに移動
+            LoadScene("TitleScene")
+        end
+    end
+end
+
 -- ゲームオーバーシーンで使用するオブジェクト
 function CreateGameOverObj()
     local tmpTransform = Transform.new()
@@ -156,4 +181,12 @@ function CreateGameOverObj()
     CreateEntity("SelectTitleUI.json",tmpTransform)
     CreateEntity("GameOverUI.json",tmpTransform)
     CreateEntity("arrowUI.json",tmpTransform)
+end
+
+function CreateClearObj()
+    local tmpTransform = Transform.new()
+    tmpTransform.translate.x = 1280.0
+    CreateEntity("ResultSceneBg.json",tmpTransform)
+    CreateEntity("ClearUI.json",tmpTransform)
+    CreateEntity("ClearTitleUI.json",tmpTransform)
 end
