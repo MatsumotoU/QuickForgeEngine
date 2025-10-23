@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.3461241126060486,
-                    -0.04318959638476372,
+                    0.9211243987083435,
+                    0.019996091723442078,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    1.0481196641921997,
-                    8.754743576049805,
-                    -24.25278091430664
+                    -0.2540725767612457,
+                    16.726573944091797,
+                    -12.704418182373047
                 ]
             }
         },
@@ -69,7 +69,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 819,
+                        "handle": 0,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -143,7 +143,7 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 7.0
                         },
-                        "handle": 820,
+                        "handle": 1,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -156,7 +156,7 @@
                             "knockBack": 10.0,
                             "knockBackPower": 10.0
                         },
-                        "handle": 821,
+                        "handle": 2,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BulletShot.lua",
@@ -204,7 +204,7 @@
                         "floatParams": {
                             "speed": 0.4000000059604645
                         },
-                        "handle": 822,
+                        "handle": 3,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BigGhostEnemyMove.lua",
@@ -213,7 +213,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 823,
+                        "handle": 4,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -276,7 +276,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 824,
+                        "handle": 5,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "SmallGhotEnemyMove.lua",
@@ -288,7 +288,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 825,
+                        "handle": 6,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -353,7 +353,7 @@
                         "floatParams": {
                             "speed": 0.4000000059604645
                         },
-                        "handle": 826,
+                        "handle": 7,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "FloatyEnemyMove.lua",
@@ -362,7 +362,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 827,
+                        "handle": 8,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -427,7 +427,7 @@
                         "floatParams": {
                             "speed": 0.4000000059604645
                         },
-                        "handle": 828,
+                        "handle": 9,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "doubleGhostEnemyMove.lua",
@@ -438,7 +438,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 829,
+                        "handle": 10,
                         "intParams": {
                             "enemyType": 2
                         },
@@ -504,7 +504,7 @@
                         "floatParams": {
                             "speed": 0.20000000298023224
                         },
-                        "handle": 830,
+                        "handle": 11,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "LockOnEnemyMove.lua",
@@ -515,7 +515,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 831,
+                        "handle": 12,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -626,7 +626,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 832,
+                        "handle": 13,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BoxGhostEnemyMove.lua",
@@ -635,7 +635,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 833,
+                        "handle": 14,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -698,7 +698,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 834,
+                        "handle": 15,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TyoutinEnemyMove.lua",
@@ -707,7 +707,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 835,
+                        "handle": 16,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -768,7 +768,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 836,
+                        "handle": 17,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "RatEnemyMove.lua",
@@ -777,7 +777,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 837,
+                        "handle": 18,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -826,7 +826,7 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "boxEnemy.obj"
             },
             "SceneObjectData": {
                 "name": "ZizouEnemy",
@@ -838,7 +838,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 838,
+                        "handle": 19,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ZizouEnemyMove.lua",
@@ -847,13 +847,26 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 839,
-                        "intParams": {},
+                        "handle": 20,
+                        "intParams": {
+                            "enemyType": 1
+                        },
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
                         "stringParams": {
                             "stoneName": "Tombstone.json"
                         }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "performingTime": 1.0
+                        },
+                        "handle": 21,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "DeathAnim.lua",
+                        "stringParams": {}
                     }
                 ]
             },
@@ -910,7 +923,7 @@
                         "floatParams": {
                             "speed": 0.20000000298023224
                         },
-                        "handle": 840,
+                        "handle": 22,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "FloatyEnemyMove.lua",
@@ -919,7 +932,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 841,
+                        "handle": 23,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -980,7 +993,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 842,
+                        "handle": 24,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EyeEnemyMove.lua",
@@ -989,7 +1002,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 843,
+                        "handle": 25,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -1050,7 +1063,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 844,
+                        "handle": 26,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BatEnemyMove.lua",
@@ -1059,7 +1072,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 845,
+                        "handle": 27,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -1120,7 +1133,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 846,
+                        "handle": 28,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "PillBugEnemyMove.lua",
@@ -1129,7 +1142,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 847,
+                        "handle": 29,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -1190,7 +1203,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 848,
+                        "handle": 30,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyBulletMove.lua",
