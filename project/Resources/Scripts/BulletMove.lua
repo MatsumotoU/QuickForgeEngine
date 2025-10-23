@@ -3,6 +3,8 @@ aliveTime = 0.75
 maxSpeed = 20.0
 minSpeed = 15.0 
 
+
+
 function Init()
 local randNum = math.random()
 
