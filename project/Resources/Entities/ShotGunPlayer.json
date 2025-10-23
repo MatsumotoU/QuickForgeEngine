@@ -5,7 +5,7 @@
             0.0,
             0.0
         ],
-        "friction": 1.0,
+        "friction": 3.0,
         "gravityStrength": 10.0,
         "isGravity": true,
         "mass": 1.0,
@@ -35,10 +35,10 @@
                 "boolParams": {},
                 "floatParams": {
                     "backSpeed": 8.0,
-                    "minVelocity": 6.0,
-                    "moveSpeed": 7.0
+                    "minVelocity": 1.0,
+                    "moveSpeed": 4.0
                 },
-                "handle": 691,
+                "handle": 205,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -47,19 +47,19 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "diffusionRate": 0.5,
+                    "diffusionRate": 0.125,
                     "knockBack": 10.0,
-                    "knockBackPower": 10.0,
-                    "maxShotInterval": 0.5,
+                    "knockBackPower": 15.0,
+                    "maxShotInterval": 0.4000000059604645,
                     "reloadInterval": 0.0,
                     "shotInterval": 10.0,
                     "targetReloadInterval": 0.5
                 },
-                "handle": 692,
+                "handle": 206,
                 "intParams": {
                     "bullets": 3,
                     "maxBullets": 3,
-                    "shotNum": 15
+                    "shotNum": 20
                 },
                 "priority": 0,
                 "scriptName": "BulletShot.lua",
@@ -68,8 +68,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 693,
-                "intParams": {},
+                "handle": 207,
+                "intParams": {
+                    "hitPoint": 3
+                },
                 "priority": 0,
                 "scriptName": "HitPoint.lua",
                 "stringParams": {
@@ -88,7 +90,7 @@
             3.0255227088928223,
             1.2449007158465974e-07,
             5.0,
-            0.30000001192092896
+            0.4000000059604645
         ]
     },
     "Transform": {
