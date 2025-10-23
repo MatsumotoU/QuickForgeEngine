@@ -22,6 +22,7 @@ stageNumber = 1
 transitionObjName = "SceneTransitionManager"
 sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
+varIsDeadName = "isDead"
 local transitionID = 0
 
 -- プレイヤーに関する名前
@@ -401,9 +402,18 @@ end
 -- リセット処理
 function Reset()
     map = {{},{}}
-    if stageNumber <= 2 then
-        stageNumber = stageNumber + 1
+
+    local isDead = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsDeadName)
+    if isDead then
+        stageNumber = 1
+        DebugLog("IsDeadFlag : true")
+    else
+        DebugLog("IsDeadFlag : false")
+        if stageNumber <= 2 then
+            stageNumber = stageNumber + 1
+        end
     end
+
     DebugLog("CreateStageNum"..stageNumber)
     GenerateMap(mapDivision,mapDifficulty)
 end

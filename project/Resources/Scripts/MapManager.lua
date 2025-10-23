@@ -27,6 +27,13 @@ sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsRunName = "isRun"
 local transitionID = 0
 
+-- プレイヤーの死亡状態
+isDead = false
+
+-- HPを取得するための名前
+hpScriptName = "HitPoint.lua"
+varHpName = "hitPoint"
+
 function Init()
     -- 生成したマップを取得
     linkID = GetEntity(mapObjName)
@@ -56,10 +63,18 @@ function Update()
     end
 
     if not isRun then
-         isClear = false
+        isClear = false
+        isDead = false
     end
 
     local targetTransform = GetTransform(playerID)
+
+    -- プレイヤーが死亡しているか取得
+    local hp = GetEntityScriptGlobal(playerID,hpScriptName,varHpName)
+    if hp <= 0 then
+        isDead = true
+        isClear = true
+    end
 
     -- マップのクリア判定を取得する
     if targetTransform.translate.x >= goalPosX then
