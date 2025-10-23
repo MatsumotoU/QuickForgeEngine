@@ -11,9 +11,6 @@ function Init()
 end
 
 function Update()
-    transform.scale.x = 2.0
-    transform.scale.y = 1.0
-    transform.scale.z = 2.0
 
      local targetTransform = GetTransform(playerID)
 

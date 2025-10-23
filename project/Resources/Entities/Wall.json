@@ -1,12 +1,12 @@
 {
     "AABBColliderData": {
         "aabb": [
-            -1.2798916101455688,
-            -1.499969482421875,
-            -1.5,
-            1.4999998807907104,
-            1.499969482421875,
-            1.5
+            -0.7955167293548584,
+            -1.0001220703125,
+            -1.0000152587890625,
+            1.015625,
+            1.0001220703125,
+            1.0000152587890625
         ],
         "colliderLayer": 255,
         "eventColliderLayer": 255,
@@ -21,7 +21,7 @@
             1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "block2x2.obj"
     },
     "SceneObjectData": {
         "name": "Wall",
@@ -33,7 +33,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 595,
+                "handle": 466,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "WallBehavior.lua",
