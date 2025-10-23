@@ -18,10 +18,10 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "aliveTime": 0.25,
-                    "moveSpeed": 24.0
+                    "aliveTime": 10.0,
+                    "moveSpeed": 1.0
                 },
-                "handle": 1248,
+                "handle": 312,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -36,9 +36,11 @@
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 128,
+        "eventColliderLayer": 128,
         "isDraw": true,
         "isStatic": false,
-        "isTrigger": false,
+        "isTrigger": true,
         "sphere": [
             1.5442358255386353,
             0.0,

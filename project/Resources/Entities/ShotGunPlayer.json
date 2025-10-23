@@ -38,7 +38,7 @@
                     "minVelocity": 6.0,
                     "moveSpeed": 7.0
                 },
-                "handle": 83,
+                "handle": 691,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -55,7 +55,7 @@
                     "shotInterval": 10.0,
                     "targetReloadInterval": 0.5
                 },
-                "handle": 84,
+                "handle": 692,
                 "intParams": {
                     "bullets": 3,
                     "maxBullets": 3,
@@ -68,7 +68,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 85,
+                "handle": 693,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "HitPoint.lua",
@@ -79,8 +79,8 @@
         ]
     },
     "SphereColliderData": {
-        "colliderLayer": 255,
-        "eventColliderLayer": 255,
+        "colliderLayer": 127,
+        "eventColliderLayer": 127,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,
@@ -88,7 +88,7 @@
             3.0255227088928223,
             1.2449007158465974e-07,
             5.0,
-            0.6000000238418579
+            0.30000001192092896
         ]
     },
     "Transform": {

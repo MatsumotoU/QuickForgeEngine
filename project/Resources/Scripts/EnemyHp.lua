@@ -31,19 +31,17 @@ end
 
 function Update()
 
-    if not isAlive then 
-        destroy()
-    end
+  if isAlive then 
 
-    time = time + 1.0
+      time = time + 1.0
 
-    if damageInterval > 0.0 then
-        damageInterval = damageInterval - 0.016
-        transform.scale.y = math.sin(time) * math.sin(time)
-    else
-        transform.scale.y = 1.0
-    end
-
+      if damageInterval > 0.0 then
+          damageInterval = damageInterval - 0.016
+          transform.scale.y = math.sin(time) * math.sin(time)
+      else
+          transform.scale.y = 1.0
+      end
+    
     -- カメラの追跡する位置を設定
     targetTransform = GetTransform(targetId)
     local targetX = targetTransform.translate.x
@@ -71,7 +69,8 @@ function Update()
     if transform.translate.x >= targetX + 30.0 then
         isAlive = false
     end
-
+    
+  end
 end
 
 function OnCollisionEnter(id,obj)
