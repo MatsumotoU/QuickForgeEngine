@@ -1,0 +1,46 @@
+{
+    "SceneObjectData": {
+        "name": "RetryUI",
+        "tag": "Untagged",
+        "uniqueId": 5743
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "InTime": 2.0
+                },
+                "handle": 337,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "RetryUIMove.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 64.0,
+        "isDraw": true,
+        "layer": 2,
+        "textureName": "retry.png",
+        "width": 256.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            1280.0,
+            420.0,
+            0.0
+        ]
+    }
+}

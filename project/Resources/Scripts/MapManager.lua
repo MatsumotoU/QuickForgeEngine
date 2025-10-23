@@ -34,8 +34,20 @@ isDead = false
 hpScriptName = "HitPoint.lua"
 varHpName = "hitPoint"
 
+-- 操作するシーンのタイプ
+local sceneType = 0
+
+-- ゲームオーバー時の選択タイプ
+selectType = 0
+
 -- ステージ番号
 local stageNumber = 1
+
+-- 有効になるまでの時間を求める
+local timer = 0.0
+local activeGameOverTime = 2.5
+
+local isGameOver = false
 
 function Init()
     -- 生成したマップを取得
@@ -66,22 +78,32 @@ function Update()
         map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
         mapWidth = #map[1]
         goalPosX = (mapWidth - 2) * kBlockSize
-    end
-
-    if not isRun then
+    else
         isClear = false
         isDead = false
-    end
+        isGameOver = false
 
+         if sceneType == 0 then
+            NormalScene()
+        elseif sceneType == 1 then
+            GameOverScene()
+        end
+
+    end
+end
+
+function NormalScene()
     local targetTransform = GetTransform(playerID)
 
     -- プレイヤーが死亡しているか取得
     local hp = GetEntityScriptGlobal(playerID,hpScriptName,varHpName)
     if hp <= 0 then
-        isDead = true
-        isClear = true
-        stageNumber = 1
-        DebugLog("CurrentStageNumber :"..stageNumber)
+        if not isGameOver then
+            sceneType = 1
+            isGameOver = true
+            CreateGameOverObj()
+            timer = 0.0
+        end
     end
 
     -- マップのクリア判定を取得する
@@ -92,5 +114,46 @@ function Update()
         DebugLog("CurrentStageNumber :"..stageNumber)
         end
     end
+end
 
+function GameOverScene()
+
+    local deltatime = GetDeltaTime()
+    timer = timer + deltatime
+
+    if timer >= activeGameOverTime then
+        -- リトライを選択
+        if QFE.Input.GetKeyPress("MoveLeft") then
+            selectType = 0
+        end
+
+        -- タイトルに戻るを選択
+        if QFE.Input.GetKeyPress("MoveRight") then
+            selectType = 1
+        end
+
+        if QFE.Input.GetKeyTrigger("Shot") then
+            if selectType == 0 then
+                isDead = true
+                isClear = true
+                stageNumber = 1
+                sceneType = 0
+                DebugLog("CurrentStageNumber :"..stageNumber)
+            elseif selectType == 1 then
+                -- タイトルシーンに移動
+                LoadScene("TitleScene")
+            end
+        end
+    end
+end
+
+-- ゲームオーバーシーンで使用するオブジェクト
+function CreateGameOverObj()
+    local tmpTransform = Transform.new()
+    tmpTransform.translate.x = 1280.0
+    CreateEntity("ResultSceneBg.json",tmpTransform)
+    CreateEntity("RetryUI.json",tmpTransform)
+    CreateEntity("SelectTitleUI.json",tmpTransform)
+    CreateEntity("GameOverUI.json",tmpTransform)
+    CreateEntity("arrowUI.json",tmpTransform)
 end
