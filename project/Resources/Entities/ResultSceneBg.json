@@ -1,0 +1,44 @@
+{
+    "SceneObjectData": {
+        "name": "ResultSceneBg",
+        "tag": "Untagged",
+        "uniqueId": 5742
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 336,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "ResultSceneBG.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 360.0,
+        "isDraw": true,
+        "layer": 1,
+        "textureName": "resultSceneBg.png",
+        "width": 1280.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            1280.0,
+            180.0,
+            0.0
+        ]
+    }
+}
