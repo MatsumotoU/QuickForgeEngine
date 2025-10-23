@@ -8,6 +8,8 @@
             4.399999618530273,
             3.640948534011841
         ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": true,
         "isTrigger": false
@@ -35,7 +37,7 @@
             1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "tombstone.obj"
     },
     "SceneObjectData": {
         "name": "Tombstone",
@@ -49,7 +51,7 @@
                 "floatParams": {
                     "breakMaxTime": 1.0
                 },
-                "handle": 506,
+                "handle": 14,
                 "intParams": {
                     "maxBreakNockbackCount": 2
                 },
@@ -62,7 +64,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 507,
+                "handle": 15,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "Ground0.lua",
