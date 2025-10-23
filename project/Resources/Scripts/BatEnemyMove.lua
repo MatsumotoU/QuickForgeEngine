@@ -33,7 +33,7 @@ local linkID = 0
 -- 取得したマップ
 local map = {{},{}}
 -- ブロックの大きさ
-local kBlockSize = 1.0
+local kBlockSize = 2.0
 
 --[[
     初期化処理
@@ -115,7 +115,7 @@ function GetHalfMapPosition()
     local height = #map
 
     -- マップ上での現在位置を取得する
-    local x = (transform.translate.x + 1.0) / 1.0
+    local x = (transform.translate.x + kBlockSize) / kBlockSize
 
     local isStartCount = false
     local startZ = 0
@@ -134,7 +134,7 @@ function GetHalfMapPosition()
     end
 
     local startPosZ =  (startZ - 1) * kBlockSize
-    local endPosZ = (endZ - 1) * klockSize
+    local endPosZ = (endZ - 1) * kBlockSize
 
     -- 半分の位置を取得
     local halfPosZ = (startPosZ + endPosZ) / 2.0

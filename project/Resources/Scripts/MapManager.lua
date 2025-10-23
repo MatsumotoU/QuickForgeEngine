@@ -11,7 +11,7 @@ local linkID = 0
 -- 取得したマップ
 local map = {{},{}}
 -- ブロックの大きさ
-local kBlockSize = 1.0
+local kBlockSize = 2.0
 -- マップの横幅
 local mapWidth = 0
 
@@ -46,7 +46,7 @@ function Init()
     DebugLog(varMapName)
     map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
     mapWidth = #map[1]
-    goalPosX = (mapWidth - 2) * 1.0
+    goalPosX = (mapWidth - 2) * kBlockSize
 
     -- プレイヤーのIDを取得
     playerID = GetEntity(playerName)
@@ -65,7 +65,7 @@ function Update()
     if isRun then
         map = GetEntityScriptGlobal(linkID,generatorMapScriptName,varMapName)
         mapWidth = #map[1]
-        goalPosX = (mapWidth - 2) * 1.0
+        goalPosX = (mapWidth - 2) * kBlockSize
     end
 
     if not isRun then

@@ -33,7 +33,7 @@ local linkID = 0
 -- 取得したマップ
 local map = {{},{}}
 -- ブロックの大きさ
-local kBlockSize = 1.0
+local kBlockSize = 2.0
 
 -- 敵を生成する範囲
 local spawnRange = 10
@@ -313,7 +313,7 @@ function SpawnManager()
             -- 生成する座標を取得する
             local index = math.random(1,#positions)
             local positionIndex = positions[index]
-            local position = {x = (positionIndex.x - 1) * 1.0,y = 0.0,z = (positionIndex.z - 1) * 1.0}
+            local position = {x = (positionIndex.x - 1) * kBlockSize,y = 0.0,z = (positionIndex.z - 1) * kBlockSize}
             table.remove(positions,index)
             local tmpTransform = Transform.new()
             tmpTransform.translate.x = position.x
