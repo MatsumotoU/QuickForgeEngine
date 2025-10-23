@@ -13,6 +13,12 @@ local angleY = 0.0
 
 local isStart = false
 
+local rotateType = 0
+
+-- 当たり判定のためのインターバル
+local timer = 0.0
+local intervalTime = 1.0
+
 --[[
     初期化処理
 --]]
@@ -42,6 +48,10 @@ function Update()
     local deltaTime = GetDeltaTime()
     transform:AddForward(moveSpeed * deltaTime)
 
+    if timer <= 1.0 then
+        timer = timer + deltaTime
+    end
+
     isHit = false
 end
 
@@ -55,10 +65,15 @@ end
 function OnCollisionStay(id,obj)
     -- 壁に触れた場合向く角度を変える
     if obj.tag == "Wall" then
-        if transform.rotate.y == -angleY then
-            transform.rotate.y = -angleY * 3.0
-        else
-            transform.rotate.y = -angleY
+        if timer >= 1.0 then
+            timer = 0.0
+            if rotateType == 0 then
+                rotateType = 1
+                transform.rotate.y = -angleY * 3.0
+            else
+                rotateType = 0
+                transform.rotate.y = -angleY
+            end
         end
     end
 end

@@ -8,6 +8,7 @@ local targetTransform = Transform.new()
 transitionObjName = "SceneTransitionManager"
 sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
+varIsPreResetName = "isPreReset"
 local transitionID = 0
 
 --[[
@@ -23,6 +24,13 @@ end
     更新処理
 --]]
 function Update()
+
+    -- 前状態をリセット
+    local isPreReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsPreResetName)
+
+    if isPreReset then
+        PreReset()
+    end
 
     local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
     -- リセット
@@ -44,4 +52,9 @@ end
 function Reset()
     -- 位置をリセット
     transform.translate.x = 7.4
+end
+
+function PreReset()
+    -- 位置をリセット
+    transform.translate.x = -100.0
 end

@@ -30,15 +30,22 @@ isDead = false
 -- マテリアル
 local mat = Material.new()
 
+-- シーン遷移する間隔を調整する
 local intervalTime = 3.0
 local intervalTimer = 0.0
 local isPlay = false
+
+-- カメラの位置だけを先に移動させる処理
+local isPreReset = false
+local fremeCount = 0
 
 --[[
     初期化処理
 --]]
 function Init()
     isReset = false
+    isPreReset = false
+    fremeCount = 0
     -- クリアしたかを取得する
     linkID = GetEntity(mapManagerObjName)
     DebugLog("LinkedID:"..linkID)
@@ -108,14 +115,29 @@ function FadeIn()
         timer = 0.0
         mat.color.w = 1.0
         -- リセットを有効にする
-        isReset = true
+        isPreReset = true
+        isReset = false
     end
 
 end
 
 -- 待ち時間
 function Wait()
-    isReset = false
+
+    if isPreReset then
+        isPreReset = false
+        fremeCount = 0
+    end
+
+    if not isPreReset then
+        fremeCount = fremeCount + 1
+
+        if fremeCount == 1 then
+            isReset = true
+        elseif fremeCount == 2 then
+            isReset = false
+        end
+    end
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
