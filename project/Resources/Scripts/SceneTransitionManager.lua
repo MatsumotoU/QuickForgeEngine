@@ -14,6 +14,7 @@ local runType = 0
 mapManagerObjName = "MapManager"
 mapManagerScriptName = "MapManager.lua"
 varflagName = "isClear"
+varIsDeadName = "isDead"
 local linkID = 0
 local isClear = false
 
@@ -22,6 +23,9 @@ isReset = false
 
 -- 実行中かを判断するフラグ
 isRun = false
+
+-- 死亡判定を取得する
+isDead = false
 
 -- マテリアル
 local mat = Material.new()
@@ -63,6 +67,8 @@ function Update()
     end
 
     isClear = GetEntityScriptGlobal(linkID,mapManagerScriptName,varflagName)
+    local tmpIsDead = GetEntityScriptGlobal(linkID,mapManagerScriptName,varIsDeadName)
+    isDead = tmpIsDead
 
     -- クリアしていなければ早期リターン
     if not isClear then

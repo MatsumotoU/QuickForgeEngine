@@ -49,5 +49,5 @@ end
 
 function Reset()
     transform.translate.x = -4.0
-    targetX = 3.0
+    targetX = 0.0
 end
