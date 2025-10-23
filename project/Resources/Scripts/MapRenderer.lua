@@ -7,7 +7,7 @@ local linkID = 0
 -- 取得したマップ
 local map = {{},{}}
 -- ブロックの大きさ
-local kBlockSize = 1.0
+local kBlockSize = 2.0
 -- マップの横幅
 local mapWidth = 0
 
@@ -107,7 +107,7 @@ function Update()
         linePosX = targetTransform.translate.x
     end
 
-    local xIndex = math.floor(((linePosX + offsetX) + 1.0) / 1.0)
+    local xIndex = math.floor(((linePosX + offsetX) + kBlockSize) / kBlockSize)
 
     if moveXIndex < xIndex then
     
