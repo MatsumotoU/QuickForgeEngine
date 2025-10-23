@@ -32,6 +32,9 @@ sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
 local transitionID = 0
 
+-- 更新した時にマップデータをしっかりと読み込めるように辻褄を合わせる処理
+local isLoadMap = false
+
 --[[
     初期化処理
 --]]
@@ -84,10 +87,18 @@ function Update()
     local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
     -- リセット
     if isReset then
-        Reset()
+        --Reset()
+        if not isLoadMap then
+            isLoadMap = true
+        end
     end
 
     if not isReset then
+
+        if isLoadMap then
+            Reset()
+            isLoadMap = false
+        end
 
     local targetTransform = GetTransform(playerID)
 

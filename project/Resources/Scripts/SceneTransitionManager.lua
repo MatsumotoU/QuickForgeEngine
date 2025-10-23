@@ -36,7 +36,7 @@ local intervalTimer = 0.0
 local isPlay = false
 
 -- カメラの位置だけを先に移動させる処理
-local isPreReset = false
+isPreReset = false
 local fremeCount = 0
 
 --[[
@@ -127,14 +127,12 @@ function Wait()
     if isPreReset then
         isPreReset = false
         fremeCount = 0
-    end
+    else
+         fremeCount = fremeCount + 1
 
-    if not isPreReset then
-        fremeCount = fremeCount + 1
-
-        if fremeCount == 1 then
+        if fremeCount == 2 then
             isReset = true
-        elseif fremeCount == 2 then
+        elseif fremeCount == 3 then
             isReset = false
         end
     end

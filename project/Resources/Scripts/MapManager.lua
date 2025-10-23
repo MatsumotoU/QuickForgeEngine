@@ -34,6 +34,9 @@ isDead = false
 hpScriptName = "HitPoint.lua"
 varHpName = "hitPoint"
 
+-- ステージ番号
+local stageNumber = 1
+
 function Init()
     -- 生成したマップを取得
     linkID = GetEntity(mapObjName)
@@ -50,6 +53,9 @@ function Init()
 
     -- シーン遷移を取得
     transitionID = GetEntity(transitionObjName)
+
+    -- ステージ番号を取得
+    stageNumber = 1
 end
 
 function Update()
@@ -74,11 +80,17 @@ function Update()
     if hp <= 0 then
         isDead = true
         isClear = true
+        stageNumber = 1
+        DebugLog("CurrentStageNumber :"..stageNumber)
     end
 
     -- マップのクリア判定を取得する
     if targetTransform.translate.x >= goalPosX then
+        if not isClear then
         isClear = true
+        stageNumber = stageNumber + 1
+        DebugLog("CurrentStageNumber :"..stageNumber)
+        end
     end
 
 end

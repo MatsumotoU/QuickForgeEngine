@@ -33,12 +33,12 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 83,
+                "handle": 2149,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "WallBehavior.lua",
                 "stringParams": {
-                    "playerName": "ShotGunPlayer"
+                    "playerName": "Camera"
                 }
             }
         ]
