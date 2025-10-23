@@ -11,14 +11,30 @@ local damageInterval = 0.0
 local isDamaged = false
 local frameCount = 0.0
 
+-- リセットに関する名前
+transitionObjName = "SceneTransitionManager"
+sceneTransitionScriptName = "SceneTransitionManager.lua"
+varIsResetName = "isReset"
+local transitionID = 0
+
 function Init()
     time = 0.0
     damageInterval = 0.0
     isDamaged = false
     borderId = GetEntity(borderName)
+
+    -- 生成したマップを取得
+    transitionID = GetEntity(transitionObjName)
 end
 
 function Update()
+
+    -- リセット処理
+    local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
+    if isReset then
+        Reset()
+    end
+
     frameCount = frameCount + 1.0
     if hitPoint <= 0 then
         return
@@ -48,9 +64,7 @@ function Update()
 
     if maxPosX < transform.translate.x then
         maxPosX = transform.translate.x
-    end
-
-    
+    end    
 end
 
 function OnCollisionStay(id,obj)
@@ -63,4 +77,8 @@ function OnCollisionStay(id,obj)
         hitPoint = hitPoint - 1
         isDamaged = true
     end
+end
+
+function Reset()
+    hitPoint = 5
 end

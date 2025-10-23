@@ -68,6 +68,7 @@ stageNumber = 1
 transitionObjName = "SceneTransitionManager"
 sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
+varIsDeadName = "isDead"
 local transitionID = 0
 
 -- マップの番号に対応するテーブル
@@ -132,7 +133,7 @@ function Init()
     -- tmpTransform.translate.y = 0.0
     -- tmpTransform.translate.x = 4.0
     -- tmpTransform.translate.z = 2.0
-    -- CreateEntity(eyeEnemyJson,tmpTransform)
+    -- CreateEntity(doubleGhostEnemyJson,tmpTransform)
 end
 
 --[[
@@ -441,8 +442,13 @@ function Reset()
     maxEnemysCounts = {}
     currentEnemysCounts = {}
 
-    if stageNumber <= 2 then
-        stageNumber = stageNumber + 1
+    local isDead = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsDeadName)
+    if isDead then
+        stageNumber = 1
+    else
+        if stageNumber <= 2 then
+            stageNumber = stageNumber + 1
+        end
     end
 
     if stageNumber == 1 then

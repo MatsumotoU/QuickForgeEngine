@@ -20,7 +20,7 @@
                 "floatParams": {
                     "speed": 0.4000000059604645
                 },
-                "handle": 21,
+                "handle": 828,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "doubleGhostEnemyMove.lua",
@@ -31,14 +31,14 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 22,
+                "handle": 829,
                 "intParams": {
                     "enemyType": 2
                 },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {
-                    "normalEnemyName": "NormalEnemy.json",
+                    "normalEnemyName": "NormalGhostEnemy.json",
                     "stoneName": "Tombstone.json"
                 }
             }
