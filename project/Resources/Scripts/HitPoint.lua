@@ -63,9 +63,9 @@ function Update()
         end
     end
 
-    if maxPosX < transform.translate.x then
-        maxPosX = transform.translate.x
-    end    
+    -- if maxPosX < transform.translate.x then
+    --     maxPosX = transform.translate.x
+    -- end    
 end
 
 function OnCollisionStay(id,obj)
@@ -87,4 +87,5 @@ end
 
 function Reset()
     hitPoint = 5
+    transform.translate.x = 3.0
 end

@@ -668,6 +668,70 @@
                     0.0
                 ]
             }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "Bullet",
+                "tag": "bullet",
+                "uniqueId": 161
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "aliveTime": 0.75,
+                            "maxSpeed": 20.0,
+                            "minSpeed": 15.0,
+                            "moveSpeed": 0.5
+                        },
+                        "handle": 104,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BulletMove.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 128,
+                "eventColliderLayer": 128,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": true,
+                "sphere": [
+                    1.5442358255386353,
+                    0.0,
+                    0.0,
+                    0.20000000298023224
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.5442358255386353,
+                    0.0,
+                    0.0
+                ]
+            }
         }
     ],
     "sceneName": "Prot2"
