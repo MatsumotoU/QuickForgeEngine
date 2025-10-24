@@ -1,0 +1,50 @@
+{
+    "CameraData": {
+        "farZ": 100.0,
+        "fovY": 0.44999998807907104,
+        "nearZ": 0.10000000149011612
+    },
+    "SceneObjectData": {
+        "name": "Camera",
+        "tag": "camera",
+        "uniqueId": 2
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "offsetX": 1.0
+                },
+                "handle": 138,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "CameraMove.lua",
+                "stringParams": {
+                    "sceneTransitionScriptName": "SceneTransitionManager.lua",
+                    "targetObjName": "targetObjName",
+                    "transitionObjName": "SceneTransitionManager",
+                    "varIsPreResetName": "isPreReset",
+                    "varIsResetName": "isReset"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.8999999761581421,
+            -0.10000000149011612,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            7.400000095367432,
+            28.0,
+            -17.0
+        ]
+    }
+}
