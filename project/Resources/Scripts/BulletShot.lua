@@ -17,8 +17,10 @@ isKnockback = false
 
 local deltatime = 0.016
 
-
-
+-- リロードしたかを取得
+isReload = false
+-- 打ったかを取得
+isShot = false
 
 
 function Init()
@@ -27,6 +29,10 @@ isKnockback = false
 end
 
 function Update()
+
+    isReload = false
+    isShot = false
+
     deltatime = GetDeltaTime()
 
     -- ノックバックしているか判断
@@ -42,6 +48,7 @@ function Update()
             return
         end
 
+        isReload = true
         reloadInterval = reloadInterval + deltatime
         if reloadInterval >= targetReloadInterval then
         reloadInterval = 0.0
@@ -79,6 +86,7 @@ function Update()
         tempTransform.translate = transform.translate
         tempTransform.rotate = transform.rotate
         
+        isShot = true
 
         for i = 1, shotNum, 1 do
 
