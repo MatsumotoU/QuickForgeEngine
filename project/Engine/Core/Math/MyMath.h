@@ -5,6 +5,7 @@
 
 namespace MyMath {
 	float Leap(float a, float b, float t);
+	float Slerp(float from, float to, float t);
 	void SimpleEaseIn(float* value, float endValue, float transitionSpeed);
 	float SimpleEaseIn(float from, float to, float transitionSpeed);
 	float DegreesToRadians(float degrees);

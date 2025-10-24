@@ -45,7 +45,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 123,
+                        "handle": 0,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialCameraMove.lua",
@@ -113,7 +113,7 @@
                             "minVelocity": 2.0,
                             "moveSpeed": 4.0
                         },
-                        "handle": 124,
+                        "handle": 1,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -128,7 +128,7 @@
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.5
                         },
-                        "handle": 125,
+                        "handle": 2,
                         "intParams": {
                             "bullets": 3,
                             "shotNum": 20
@@ -193,7 +193,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 126,
+                        "handle": 3,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunAnim.lua",
@@ -230,7 +230,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 127,
+                        "handle": 4,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapGenerater.lua",
@@ -267,7 +267,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 128,
+                        "handle": 5,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapRenderer.lua",
@@ -310,7 +310,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 129,
+                        "handle": 6,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialManager.lua",
