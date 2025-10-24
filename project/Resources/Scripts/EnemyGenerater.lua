@@ -33,7 +33,7 @@ local linkID = 0
 -- 取得したマップ
 local map = {{},{}}
 -- ブロックの大きさ
-local kBlockSize = 1.0
+local kBlockSize = 2.0
 
 -- 敵を生成する範囲
 local spawnRange = 10
@@ -68,6 +68,7 @@ stageNumber = 1
 transitionObjName = "SceneTransitionManager"
 sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
+varIsDeadName = "isDead"
 local transitionID = 0
 
 -- マップの番号に対応するテーブル
@@ -130,9 +131,9 @@ function Init()
     -- 正しく敵を生成出来るかを確認する(デバック用)
     -- local tmpTransform = Transform.new()
     -- tmpTransform.translate.y = 0.0
-    -- tmpTransform.translate.x = 4.0
+    -- tmpTransform.translate.x = 8.0
     -- tmpTransform.translate.z = 2.0
-    -- CreateEntity(eyeEnemyJson,tmpTransform)
+    -- CreateEntity(zizouEnemyJson,tmpTransform)
 end
 
 --[[
@@ -312,7 +313,7 @@ function SpawnManager()
             -- 生成する座標を取得する
             local index = math.random(1,#positions)
             local positionIndex = positions[index]
-            local position = {x = (positionIndex.x - 1) * 1.0,y = 0.0,z = (positionIndex.z - 1) * 1.0}
+            local position = {x = (positionIndex.x - 1) * kBlockSize,y = 0.0,z = (positionIndex.z - 1) * kBlockSize}
             table.remove(positions,index)
             local tmpTransform = Transform.new()
             tmpTransform.translate.x = position.x
@@ -376,23 +377,21 @@ function StageOneRegisterEnemy()
     -- 幽霊の敵
     table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
     table.insert(maxEnemysCounts,{name = longGhostEnemyJson,maxCount = 3})
-    table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 1})
     -- 有機物の敵
     table.insert(maxEnemysCounts,{name = tyoutinEnemyJson,maxCount = 1})
     table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 1})
+    --四角いゴーストに変える
     table.insert(maxEnemysCounts,{name = zizouEnemyJson,maxCount = 1})
-    table.insert(maxEnemysCounts,{name = nasuEnemyJson,maxCount = 1})
     
     -- 現在の敵の数を初期化
     -- 幽霊の敵
     table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
     table.insert(currentEnemysCounts,{name = longGhostEnemyJson,difficulty = 1,count = 0})
-    table.insert(currentEnemysCounts,{name = smallGhostEnemyJson,difficulty = 2,count = 0})
     -- 有機物の敵
     table.insert(currentEnemysCounts,{name = tyoutinEnemyJson,difficulty = 1,count = 0})
     table.insert(currentEnemysCounts,{name = ratEnemyJson,difficulty = 1,count = 0})
+    --四角いゴーストに変える
     table.insert(currentEnemysCounts,{name = zizouEnemyJson,difficulty = 1,count = 0})
-    table.insert(currentEnemysCounts,{name = nasuEnemyJson,difficulty = 1,count = 0})
 end
 
 --ステージ2で使用する敵を登録
@@ -441,8 +440,15 @@ function Reset()
     maxEnemysCounts = {}
     currentEnemysCounts = {}
 
-    if stageNumber <= 2 then
-        stageNumber = stageNumber + 1
+    local isDead = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsDeadName)
+    if isDead then
+        stageNumber = 1
+    else
+        if stageNumber <= 2 then
+            stageNumber = stageNumber + 1
+        else
+            stageNumber = 1
+        end
     end
 
     if stageNumber == 1 then

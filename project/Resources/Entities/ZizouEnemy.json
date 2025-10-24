@@ -6,7 +6,7 @@
             1.0,
             1.0
         ],
-        "modelName": "Box1x1.obj"
+        "modelName": "boxEnemy.obj"
     },
     "SceneObjectData": {
         "name": "ZizouEnemy",
@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 57,
+                "handle": 429,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ZizouEnemyMove.lua",
@@ -27,17 +27,32 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 58,
-                "intParams": {},
+                "handle": 430,
+                "intParams": {
+                    "enemyType": 1
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {
                     "stoneName": "Tombstone.json"
                 }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 1.0
+                },
+                "handle": 440,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
             }
         ]
     },
     "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false,

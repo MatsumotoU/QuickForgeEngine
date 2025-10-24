@@ -116,6 +116,14 @@ void ColliderManager::SphereToSphereUpdate() {
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(idA);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(idB);
 
+				// タグマスクが衝突可能か
+				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
+#endif // _DEBUG
+					continue;
+				}
+
 				// 衝突イベントを発生させるレイヤーか
 				if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
 #ifdef _DEBUG
@@ -214,6 +222,14 @@ void ColliderManager::AABBToAABBUpdate() {
 				}
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(idA);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(idB);
+
+				// タグマスクが衝突可能か
+				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
+#endif // _DEBUG
+					continue;
+				}
 
 				// 衝突イベントを発生させるレイヤーか
 				if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
@@ -358,6 +374,14 @@ void ColliderManager::SphereToAABBUpdate() {
 				}
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(sphereId);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(aabbId);
+
+				// タグマスクが衝突可能か
+				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
+#ifdef _DEBUG
+					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", sphereId, aabbId));
+#endif // _DEBUG
+					continue;
+				}
 
 				// 衝突イベントを発生させるレイヤーか
 				if ((sphereCollider.eventColliderLayer & aabbCollider.colliderLayer) == 0) {

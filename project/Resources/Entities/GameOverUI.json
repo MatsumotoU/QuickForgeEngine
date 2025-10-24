@@ -1,0 +1,46 @@
+{
+    "SceneObjectData": {
+        "name": "GameOverUI",
+        "tag": "Untagged",
+        "uniqueId": 5745
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "InTime": 1.5
+                },
+                "handle": 339,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "gameOverUIMove.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 80.0,
+        "isDraw": true,
+        "layer": 4,
+        "textureName": "gameOver.png",
+        "width": 512.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            1280.0,
+            240.0,
+            0.0
+        ]
+    }
+}

@@ -1,0 +1,341 @@
+{
+    "entities": [
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "DebugCamera",
+                "tag": "camera",
+                "uniqueId": 1
+            },
+            "Transform": {
+                "rotate": [
+                    0.39139121770858765,
+                    0.010000272653996944,
+                    -0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -0.21549242734909058,
+                    8.89289379119873,
+                    -21.547937393188477
+                ]
+            }
+        },
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "Camera",
+                "tag": "camera",
+                "uniqueId": 2
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 123,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialCameraMove.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.8999999761581421,
+                    -0.10000000149011612,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    7.400000095367432,
+                    28.0,
+                    -17.0
+                ]
+            }
+        },
+        {
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    -1.92642080783844,
+                    0.0
+                ],
+                "friction": 3.0,
+                "gravityStrength": 10.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    -0.04041153937578201,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "ghostBody.obj"
+            },
+            "SceneObjectData": {
+                "name": "TutorialPlayer",
+                "tag": "player",
+                "uniqueId": 5742
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {
+                            "isBackFriping": false
+                        },
+                        "floatParams": {
+                            "backSpeed": 5.0,
+                            "minVelocity": 2.0,
+                            "moveSpeed": 4.0
+                        },
+                        "handle": 124,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShotGunPlayer.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "diffusionRate": 0.125,
+                            "knockBackPower": 15.0,
+                            "maxShotInterval": 0.4000000059604645,
+                            "shotInterval": 10.0,
+                            "targetReloadInterval": 0.5
+                        },
+                        "handle": 125,
+                        "intParams": {
+                            "bullets": 3,
+                            "shotNum": 20
+                        },
+                        "priority": 0,
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 127,
+                "eventColliderLayer": 127,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    3.1040000915527344,
+                    0.0,
+                    4.085000038146973,
+                    0.4000000059604645
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    1.5707963705062866,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    3.1040000915527344,
+                    0.0,
+                    4.085000038146973
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "shotGun.obj"
+            },
+            "ParentData": {
+                "parentId": 5742
+            },
+            "SceneObjectData": {
+                "name": "ShotGun",
+                "tag": "Untagged",
+                "uniqueId": 5744
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 126,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShotGunAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -3.140000104904175,
+                    0.0,
+                    -3.140000104904175
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.5299999713897705,
+                    0.0,
+                    0.18000000715255737
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "TutorialMapGenerater",
+                "tag": "Untagged",
+                "uniqueId": 5927
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 127,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialMapGenerater.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "TutorialMapRenderer",
+                "tag": "Untagged",
+                "uniqueId": 5928
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 128,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialMapRenderer.lua",
+                        "stringParams": {
+                            "generatorMapScriptName": "TutorialMapGenerater.lua",
+                            "mapObjName": "TutorialMapGenerater",
+                            "playerName": "TutorialPlayer",
+                            "varMapName": "map",
+                            "wallObjName": "Wall.json"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "TutorialManager",
+                "tag": "Untagged",
+                "uniqueId": 6312
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 129,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialManager.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    ],
+    "sceneName": "TutorialScene"
+}

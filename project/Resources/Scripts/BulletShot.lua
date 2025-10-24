@@ -17,8 +17,10 @@ isKnockback = false
 
 local deltatime = 0.016
 
-
-
+-- リロードしたかを取得
+isReload = false
+-- 打ったかを取得
+isShot = false
 
 
 function Init()
@@ -27,6 +29,10 @@ isKnockback = false
 end
 
 function Update()
+
+    isReload = false
+    isShot = false
+
     deltatime = GetDeltaTime()
 
     -- ノックバックしているか判断
@@ -38,10 +44,11 @@ function Update()
 
     -- リロード
     if QFE.Input.GetKeyPress("MoveLeft") then
-        if force.velocity:Length() > 0.1 then
+        if force.velocity:Length() > 0.3 then
             return
         end
 
+        isReload = true
         reloadInterval = reloadInterval + deltatime
         if reloadInterval >= targetReloadInterval then
         reloadInterval = 0.0
@@ -65,6 +72,7 @@ function Update()
             return
         end
         shotInterval = shotInterval - deltatime
+        RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","PumpAction")
         return
     end
 
@@ -78,7 +86,9 @@ function Update()
         local tempTransform = Transform.new()
         tempTransform.translate = transform.translate
         tempTransform.rotate = transform.rotate
+
         
+        isShot = true
 
         for i = 1, shotNum, 1 do
 
@@ -103,7 +113,7 @@ function Update()
         shotInterval = maxShotInterval
         bullets = bullets - 1
         isKnockback = true
-
+        transform.rotate.x = -1.0
         RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
     end
 end

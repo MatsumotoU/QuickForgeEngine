@@ -18,17 +18,13 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "aliveTime": 10.0,
-                    "moveSpeed": 1.0
+                    "aliveTime": 0.75,
+                    "maxSpeed": 20.0,
+                    "minSpeed": 15.0,
+                    "moveSpeed": 0.5
                 },
-                "handle": 312,
-                "intParams": {
-                    "DIK_A": 30,
-                    "DIK_D": 32,
-                    "DIK_S": 31,
-                    "DIK_SPACE": 57,
-                    "DIK_W": 17
-                },
+                "handle": 354,
+                "intParams": {},
                 "priority": 0,
                 "scriptName": "BulletMove.lua",
                 "stringParams": {}

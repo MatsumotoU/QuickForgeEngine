@@ -1,17 +1,20 @@
 moveSpeed = 0.5
-aliveTime = 1.0
-coe = 0.5
-minSpeedCoe = 0.65 
+aliveTime = 0.75
+maxSpeed = 20.0
+minSpeed = 15.0 
+
+
 
 function Init()
+local randNum = math.random()
 
-local randNum =math.random()
+    moveSpeed = randNum * maxSpeed
 
-    if randNum <= minSpeed then
-        randNum = minSpeed
+    if moveSpeed <= minSpeed then
+        moveSpeed = minSpeed + randNum * 1.25
     end
 
-    moveSpeed = randNum * coe
+    transform.translate.z = transform.translate.z + randNum
 end
 
 function Update()
@@ -21,11 +24,10 @@ if aliveTime > 0.0 then
 else
     destroy()
 end
-    
 
     moveSpeed = moveSpeed * 0.95
 
-    transform:AddForward(moveSpeed * deltaTime)
+    transform:AddForward(moveSpeed*deltaTime)
 end
 
 function OnCollisionEnter(id,obj)

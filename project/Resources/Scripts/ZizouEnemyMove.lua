@@ -76,6 +76,10 @@ function Update()
     transform.translate.y = transform.translate.y + dir.y * finalSpeed
     transform.translate.z = transform.translate.z + dir.z * finalSpeed
 
+    -- 回転
+    local angle = math.atan(dir.x, dir.z)
+    transform.rotate.y = angle
+
     isHit = false
 end
 
