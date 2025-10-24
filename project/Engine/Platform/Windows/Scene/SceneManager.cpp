@@ -717,6 +717,9 @@ void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 
 uint32_t SceneManager::AddEntity(const std::string& entityName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
+#ifdef _DEBUG
+	DebugLog("AddEntity: " + entityName);
+#endif // _DEBUG
 
 	// 既に読み込んだことがあるエンティティ名ならそれを返す
 	if (loadEntities_.find(entityName) != loadEntities_.end()) {

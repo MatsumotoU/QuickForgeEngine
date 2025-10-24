@@ -134,7 +134,7 @@ function EventTwoScene()
             local tmp = Transform.new()
             tmp.translate.x = 28.0
             tmp.translate.z = 4.0
-            normalGhostID = CreateEntity(normalGhostaEnemyJson, tmp)
+            normalGhostID = CreateEntity(normalGhostEnemyJson, tmp)
         end
     end
 
