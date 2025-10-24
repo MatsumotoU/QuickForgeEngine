@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <Windows.h>
 #include <format>
+#include <utility>
 
 /// <summary>
 /// 出力ウィンドウにログを出す関数
@@ -30,4 +31,9 @@ std::string ConvertString(const std::wstring& str);
 /// <param name="str">変換元</param>
 /// <returns>変換先</returns>
 LPCWSTR StringToLPCWSTR(const std::string& str);
+
+// stringからcharPtrに変換
 char* StringToCharPtr(const std::string& str);
+
+// ２対の文字列ペアが順不同で一致しているかどうかを判断します
+bool IsUnorderedPairEqual(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2);

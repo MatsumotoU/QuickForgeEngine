@@ -277,6 +277,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor\OnWindowsEditor.cpp" />
+    <ClCompile Include="Editor\UI\Edit\ColliderMaskEdit.cpp" />
     <ClCompile Include="Editor\UI\Edit\DebugConsole.cpp" />
     <ClCompile Include="Editor\UI\Edit\KeyConfigEdit.cpp" />
     <ClCompile Include="Editor\UI\Edit\PostprocessEdit.cpp" />
@@ -332,6 +333,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Camera\CameraManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Collider\ColliderManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Collider\ColliderMask.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\InputInterface.cpp" />
@@ -428,6 +430,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Editor\OnWindowsEditor.h" />
     <ClInclude Include="Editor\IEditor.h" />
+    <ClInclude Include="Editor\UI\Edit\ColliderMaskEdit.h" />
     <ClInclude Include="Editor\UI\Edit\DebugConsole.h" />
     <ClInclude Include="Editor\UI\Edit\KeyConfigEdit.h" />
     <ClInclude Include="Editor\UI\Edit\PostprocessEdit.h" />
@@ -511,6 +514,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Camera\CameraManager.h" />
     <ClInclude Include="Engine\Core\Entity\EntityManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Camera\Data\CameraData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Collider\ColliderMask.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\ColliderManager.h" />

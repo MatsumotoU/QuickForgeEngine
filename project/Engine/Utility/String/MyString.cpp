@@ -52,3 +52,8 @@ char* StringToCharPtr(const std::string& str) {
     std::memcpy(buffer, str.c_str(), str.size() + 1); // ヌル終端もコピー
     return buffer;
 }
+
+bool IsUnorderedPairEqual(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2) {
+    return (p1.first == p2.first && p1.second == p2.second) ||
+        (p1.first == p2.second && p1.second == p2.first);
+}
