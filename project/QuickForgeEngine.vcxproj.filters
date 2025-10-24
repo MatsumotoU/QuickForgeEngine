@@ -428,6 +428,8 @@
     <ClCompile Include="Editor\UI\View\ScriptLoggerView.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Animeter\AnimCrip.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Animeter\AnimationManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Collider\ColliderMask.cpp" />
+    <ClCompile Include="Editor\UI\Edit\ColliderMaskEdit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1370,6 +1372,8 @@
     <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\AnimCrip.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\KeyFrame.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\AnimationManager.h" />
+    <ClInclude Include="Editor\UI\Edit\ColliderMaskEdit.h" />
+    <ClInclude Include="Engine\Platform\Windows\Collider\ColliderMask.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

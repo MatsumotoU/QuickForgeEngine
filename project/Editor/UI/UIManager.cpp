@@ -17,6 +17,7 @@
 #include "Edit/DebugConsole.h"
 #include "Edit/KeyConfigEdit.h"
 #include "Edit/PostprocessEdit.h"
+#include "Edit/ColliderMaskEdit.h"
 
 void UIManager::Initialize() {
 	isActiveUI_ = false;
@@ -49,6 +50,7 @@ void UIManager::Initialize() {
 	editUIs_.push_back(std::make_unique<DebugConsole>());
 	editUIs_.push_back(std::make_unique<KeyConfigEdit>());
 	editUIs_.push_back(std::make_unique<PostprocessEdit>());
+	editUIs_.push_back(std::make_unique<ColliderMaskEdit>());
 	for (auto& ui : editUIs_) {
 		ui->Initialize();
 	}
