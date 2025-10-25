@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    1721.3338623046875,
-                    6725.65869140625,
-                    -7604.400390625
+                    2.4188315868377686,
+                    9.424595832824707,
+                    -6.835275173187256
                 ]
             }
         },
@@ -154,6 +154,18 @@
                         "stringParams": {
                             "damageTag": "Enemy"
                         }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "backSpeed": 8.0,
+                            "moveSpeed": 4.0
+                        },
+                        "handle": 1960,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShotGunPlayer.lua",
+                        "stringParams": {}
                     }
                 ]
             },
@@ -468,6 +480,7 @@
                         "boolParams": {},
                         "floatParams": {},
                         "handle": 2917,
+                        "handle": 1966,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MapRenderer.lua",

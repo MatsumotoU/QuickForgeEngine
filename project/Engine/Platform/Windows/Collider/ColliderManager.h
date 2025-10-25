@@ -1,5 +1,6 @@
 #pragma once
 #include "Utility/DesignPatterns/Singleton.h"
+#include "ColliderMask.h"
 #include "Data/SphereColliderData.h"
 #include "Data/AABBColliderData.h"
 
@@ -12,6 +13,7 @@ public:
 	void Finalize();
 
 	bool isRunning = false;
+	ColliderTagMask colliderTagMask_;
 
 private:
 	bool isCollision(const Sphere& sphere1, const Sphere& sphere2);

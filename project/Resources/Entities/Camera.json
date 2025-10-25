@@ -21,7 +21,11 @@
                 "priority": 0,
                 "scriptName": "CameraMove.lua",
                 "stringParams": {
-                    "targetObjName": "ShotGunPlayer"
+                    "sceneTransitionScriptName": "SceneTransitionManager.lua",
+                    "targetObjName": "targetObjName",
+                    "transitionObjName": "SceneTransitionManager",
+                    "varIsPreResetName": "isPreReset",
+                    "varIsResetName": "isReset"
                 }
             }
         ]

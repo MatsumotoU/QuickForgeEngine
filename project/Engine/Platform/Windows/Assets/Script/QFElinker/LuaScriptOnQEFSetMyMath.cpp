@@ -1,4 +1,5 @@
 #include "LuaScriptOnQEFSetMyMath.h"
+#include "Core/Math/Vector/Vector3.h"
 #include "Core/Math/MyMath.h"
 
 void QFE::Script::MyLuaMath::LuaScriptOnQEFSetMyMath(sol::state* luaState) {
@@ -11,6 +12,12 @@ void QFE::Script::MyLuaMath::LuaScriptOnQEFSetMyMath(sol::state* luaState) {
 		});
 	math.set_function("Leap", [](float a, float b, float t) {
 		return a * t + b * (1.0f - t);
+		});
+	math.set_function("Slerp", [](float from, float to, float t) {
+		return MyMath::Slerp(from, to, t);
+		});
+	math.set_function("Slerp",[](const Vector3& v1, const Vector3& v2, float t) {
+		return Vector3::Slerp(v1, v2, t);
 		});
 	math.set_function("EaseIn", [](float from, float to, float t) {
 		return MyMath::EaseIn(from, to, t);

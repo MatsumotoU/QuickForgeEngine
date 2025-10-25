@@ -4,6 +4,13 @@ float MyMath::Leap(float a, float b, float t) {
     return a * t + b * (1.0f - t);
 }
 
+float MyMath::Slerp(float from, float to, float t) {
+	if (fabsf(from - to) > 0.0001f) {
+		return (from * (1.0f - t)) + (to * t);
+	}
+	return 0.0f;
+}
+
 void MyMath::SimpleEaseIn(float* value, float endValue, float transitionSpeed) {
 	*value += (endValue - *value) * transitionSpeed;
 
