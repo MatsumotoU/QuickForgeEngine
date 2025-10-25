@@ -14,18 +14,14 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "offsetX": 0.0
+                    "offsetX": 2.0
                 },
-                "handle": 2559,
+                "handle": 1604,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "CameraMove.lua",
                 "stringParams": {
-                    "sceneTransitionScriptName": "SceneTransitionManager.lua",
-                    "targetObjName": "targetObjName",
-                    "transitionObjName": "SceneTransitionManager",
-                    "varIsPreResetName": "isPreReset",
-                    "varIsResetName": "isReset"
+                    "targetObjName": "ShotGunPlayer"
                 }
             }
         ]
@@ -43,8 +39,8 @@
         ],
         "translate": [
             7.400000095367432,
-            23.5,
-            -11.0
+            22.0,
+            -10.0
         ]
     }
 }

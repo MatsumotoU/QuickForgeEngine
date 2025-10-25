@@ -53,7 +53,7 @@
                     "minVelocity": 4.0,
                     "moveSpeed": 4.0
                 },
-                "handle": 1870,
+                "handle": 2410,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -65,12 +65,12 @@
                     "diffusionRate": 0.125,
                     "knockBack": 10.0,
                     "knockBackPower": 23.5,
-                    "maxShotInterval": 0.30000001192092896,
+                    "maxShotInterval": 0.3499999940395355,
                     "reloadInterval": 0.0,
                     "shotInterval": 10.0,
                     "targetReloadInterval": 0.3499999940395355
                 },
-                "handle": 1871,
+                "handle": 2411,
                 "intParams": {
                     "bullets": 4,
                     "maxBullets": 4,
@@ -83,7 +83,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 1872,
+                "handle": 2412,
                 "intParams": {
                     "hitPoint": 5
                 },
