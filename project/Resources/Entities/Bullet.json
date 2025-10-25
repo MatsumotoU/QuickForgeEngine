@@ -23,7 +23,7 @@
                     "minSpeed": 15.0,
                     "moveSpeed": 0.5
                 },
-                "handle": 354,
+                "handle": 344,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BulletMove.lua",
@@ -36,7 +36,7 @@
         "eventColliderLayer": 128,
         "isDraw": true,
         "isStatic": false,
-        "isTrigger": true,
+        "isTrigger": false,
         "sphere": [
             1.5442358255386353,
             0.0,

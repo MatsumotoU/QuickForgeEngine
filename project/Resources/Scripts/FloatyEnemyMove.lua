@@ -19,13 +19,13 @@ function Init()
 DebugLog("Init")
 -- スロー速度を求める
 slowSpeed = speed * 0.5
-rotateCount = 1.1
+rotateCount = 0.0
 local isWallHit = false
 local isWallHitbuff = false
 -- transform.scale.x = 0.5
 -- transform.scale.y = 0.5
 -- transform.scale.z = 0.5
-nextRotate = math.pi
+nextRotate = math.pi * 2.0
 end
 
 function Lerp(st_, end_, t_)
@@ -43,7 +43,7 @@ function Update()
     if isWallHitbuff == true then
         wallHitCnt = wallHitCnt + 1 
 
-        if wallHitCnt >= 150 then
+        if wallHitCnt >= 125 then
             wallHitCnt = 0
             isWallHitbuff = false
         end
