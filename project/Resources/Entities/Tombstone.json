@@ -1,10 +1,10 @@
 {
     "AABBColliderData": {
         "aabb": [
-            6.635435104370117,
+            6.435625076293945,
             3.40000057220459,
             2.640949010848999,
-            7.635435104370117,
+            7.835245132446289,
             4.399999618530273,
             3.640948534011841
         ],
@@ -51,7 +51,7 @@
                 "floatParams": {
                     "breakMaxTime": 1.0
                 },
-                "handle": 14,
+                "handle": 1130,
                 "intParams": {
                     "maxBreakNockbackCount": 2
                 },
@@ -64,7 +64,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 15,
+                "handle": 1131,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "Ground0.lua",

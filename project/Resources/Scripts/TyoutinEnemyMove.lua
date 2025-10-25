@@ -61,7 +61,7 @@ function Update()
         transform.translate.x = transform.translate.x - moveSpeed * timer
 
         -- 3マス分移動したら終了
-        if moveDistance >= 3.0 then
+        if moveDistance >= 7.0 then
             shotBullet = false
         end
     end
