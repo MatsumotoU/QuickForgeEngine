@@ -17,8 +17,10 @@
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {},
-                "handle": 21,
+                "floatParams": {
+                    "speed": 3.0
+                },
+                "handle": 878,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "TyoutinEnemyMove.lua",
@@ -27,7 +29,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 22,
+                "handle": 879,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -40,7 +42,7 @@
                 "floatParams": {
                     "performingTime": 1.0
                 },
-                "handle": 24,
+                "handle": 880,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",

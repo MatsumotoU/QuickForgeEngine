@@ -20,7 +20,7 @@
                 "floatParams": {
                     "speed": 0.4000000059604645
                 },
-                "handle": 828,
+                "handle": 109,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "doubleGhostEnemyMove.lua",
@@ -31,7 +31,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 829,
+                "handle": 110,
                 "intParams": {
                     "enemyType": 2
                 },
@@ -41,6 +41,26 @@
                     "normalEnemyName": "NormalGhostEnemy.json",
                     "stoneName": "Tombstone.json"
                 }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 0.5
+                },
+                "handle": 111,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 112,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "GhostMoveAnim.lua",
+                "stringParams": {}
             }
         ]
     },

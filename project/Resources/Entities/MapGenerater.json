@@ -2,14 +2,14 @@
     "SceneObjectData": {
         "name": "MapGenerater",
         "tag": "Untagged",
-        "uniqueId": 9
+        "uniqueId": 5742
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 71,
+                "handle": 415,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
@@ -20,6 +20,7 @@
                 "priority": 0,
                 "scriptName": "MapGenerater.lua",
                 "stringParams": {
+                    "breakWallName": "Tombstone",
                     "wallObjName": "Wall.json"
                 }
             }
