@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 145,
+                "handle": 13,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BoxGhostEnemyMove.lua",
@@ -27,7 +27,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 146,
+                "handle": 14,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -42,10 +42,19 @@
                 "floatParams": {
                     "performingTime": 2.0
                 },
-                "handle": 147,
+                "handle": 15,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 16,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "GhostMoveAnim.lua",
                 "stringParams": {}
             }
         ]

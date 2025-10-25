@@ -7,16 +7,16 @@
     "SceneObjectData": {
         "name": "Camera",
         "tag": "camera",
-        "uniqueId": 2
+        "uniqueId": 1
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {
-                    "offsetX": 1.0
+                    "offsetX": 0.0
                 },
-                "handle": 138,
+                "handle": 2559,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "CameraMove.lua",
@@ -43,8 +43,8 @@
         ],
         "translate": [
             7.400000095367432,
-            28.0,
-            -17.0
+            23.5,
+            -11.0
         ]
     }
 }

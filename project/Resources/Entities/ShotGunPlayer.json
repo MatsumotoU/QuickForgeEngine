@@ -5,7 +5,7 @@
             0.0,
             0.0
         ],
-        "friction": 3.0,
+        "friction": 4.0,
         "gravityStrength": 10.0,
         "isGravity": true,
         "mass": 1.0,
@@ -35,10 +35,10 @@
                 "boolParams": {},
                 "floatParams": {
                     "backSpeed": 8.0,
-                    "minVelocity": 1.0,
+                    "minVelocity": 2.0,
                     "moveSpeed": 4.0
                 },
-                "handle": 205,
+                "handle": 89,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -49,16 +49,16 @@
                 "floatParams": {
                     "diffusionRate": 0.125,
                     "knockBack": 10.0,
-                    "knockBackPower": 15.0,
-                    "maxShotInterval": 0.4000000059604645,
+                    "knockBackPower": 25.0,
+                    "maxShotInterval": 0.30000001192092896,
                     "reloadInterval": 0.0,
                     "shotInterval": 10.0,
-                    "targetReloadInterval": 0.5
+                    "targetReloadInterval": 0.3499999940395355
                 },
-                "handle": 206,
+                "handle": 90,
                 "intParams": {
-                    "bullets": 3,
-                    "maxBullets": 3,
+                    "bullets": 4,
+                    "maxBullets": 4,
                     "shotNum": 20
                 },
                 "priority": 0,
@@ -68,9 +68,9 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 207,
+                "handle": 91,
                 "intParams": {
-                    "hitPoint": 3
+                    "hitPoint": 5
                 },
                 "priority": 0,
                 "scriptName": "HitPoint.lua",
