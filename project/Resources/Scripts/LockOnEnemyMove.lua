@@ -38,12 +38,16 @@ DebugLog("LockOnEnemyTargetID: "..id)
 -- スロー速度を求める
 slowSpeed = speed * 0.5
 inv_hitCoolTime = 1.0 / hitCoolTime 
+
 end
+
 
 --[[
     更新処理
 --]]
 function Update()
+
+    transform.rotate.x = math.pi * 0.2
 
     local deltaTime = GetDeltaTime()
 
