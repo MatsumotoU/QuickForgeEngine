@@ -1,0 +1,79 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "ratEnemy.obj"
+    },
+    "SceneObjectData": {
+        "name": "TutorialEnemy",
+        "tag": "Untagged",
+        "uniqueId": 6314
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 11,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "TutorialEnemy.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 12,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "TutorialEnemyHP.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 13,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {
+                    "aliveScriptName": "TutorialEnemyHP.lua"
+                }
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            0.0,
+            0.0,
+            0.0,
+            0.4000000059604645
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

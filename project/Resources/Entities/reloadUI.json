@@ -1,0 +1,50 @@
+{
+    "SceneObjectData": {
+        "name": "reloadUI",
+        "tag": "Untagged",
+        "uniqueId": 6622
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 10,
+                "intParams": {
+                    "UIType": 1,
+                    "shotType": 1,
+                    "targetType": 2
+                },
+                "priority": 0,
+                "scriptName": "TutorialUIbehavior.lua",
+                "stringParams": {
+                    "TutorialManagerJson": "TutorialManager"
+                }
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 80.0,
+        "isDraw": true,
+        "layer": 4,
+        "textureName": "reload.png",
+        "width": 512.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            412.0,
+            36.0,
+            0.0
+        ]
+    }
+}
