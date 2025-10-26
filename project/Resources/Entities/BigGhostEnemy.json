@@ -18,9 +18,9 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "speed": 0.4000000059604645
+                    "speed": 1.25
                 },
-                "handle": 3845,
+                "handle": 119,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BigGhostEnemyMove.lua",
@@ -29,7 +29,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 3846,
+                "handle": 120,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -44,7 +44,7 @@
                 "floatParams": {
                     "performingTime": 3.0
                 },
-                "handle": 3847,
+                "handle": 121,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",
@@ -55,7 +55,7 @@
                 "floatParams": {
                     "performingTime": 1.75
                 },
-                "handle": 3848,
+                "handle": 122,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "GhostMoveAnim.lua",
@@ -73,7 +73,7 @@
             6.061912536621094,
             -0.33281970024108887,
             0.7657085657119751,
-            1.5
+            1.100000023841858
         ]
     },
     "Transform": {

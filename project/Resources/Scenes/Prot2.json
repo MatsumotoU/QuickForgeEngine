@@ -768,12 +768,12 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "normalEnemy.obj"
+                "modelName": "pillBugEnemy.obj"
             },
             "SceneObjectData": {
-                "name": "NormalGhostEnemy",
+                "name": "PillBugEnemy",
                 "tag": "Enemy",
-                "uniqueId": 504
+                "uniqueId": 5733
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -788,10 +788,8 @@
                         "handle": 16,
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "LockOnEnemyMove.lua",
-                        "stringParams": {
-                            "LockOnObjName": "ShotGunPlayer"
-                        }
+                        "scriptName": "PillBugEnemyMove.lua",
+                        "stringParams": {}
                     },
                     {
                         "boolParams": {},
@@ -809,7 +807,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "performingTime": 2.0
+                            "performingTime": 1.0
                         },
                         "handle": 18,
                         "intParams": {},
@@ -835,10 +833,10 @@
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    -5.383298873901367,
+                    6.0172014236450195,
+                    2.570373058319092,
                     0.0,
-                    0.0,
-                    0.4000000059604645
+                    0.699999988079071
                 ]
             },
             "Transform": {
@@ -853,8 +851,8 @@
                     1.0
                 ],
                 "translate": [
-                    -5.383298873901367,
-                    0.0,
+                    6.0172014236450195,
+                    2.570373058319092,
                     0.0
                 ]
             }

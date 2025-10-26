@@ -61,8 +61,14 @@ local movedDistance = 0.0    -- 移動距離を計算
 local spawnDistance = 5.0    -- 敵を生成する距離
 local offsetX = 8.0 -- カメラの画面端までの位置
 
+
+
 -- 生成するステージの番号
-stageNumber = 1
+stageNumber = 2
+
+
+
+
 
 -- リセットに関する名前
 transitionObjName = "SceneTransitionManager"
@@ -133,7 +139,7 @@ function Init()
     tmpTransform.translate.y = 0.0
     tmpTransform.translate.x = 15.0
     tmpTransform.translate.z = 6.5
-    CreateEntity(ratEnemyJson,tmpTransform)
+    CreateEntity(pillBugEnemyJson,tmpTransform)
     -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
 
 end
