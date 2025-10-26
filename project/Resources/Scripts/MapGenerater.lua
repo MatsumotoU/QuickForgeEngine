@@ -17,8 +17,7 @@ map = {{},{}}
 
 
 -- ステージ番号
-stageNumber = 2
-
+stageNumber = 1
 
 
 

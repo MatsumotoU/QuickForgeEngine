@@ -64,7 +64,7 @@ local offsetX = 8.0 -- カメラの画面端までの位置
 
 
 -- 生成するステージの番号
-stageNumber = 2
+stageNumber = 1
 
 
 

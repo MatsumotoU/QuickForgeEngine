@@ -3,6 +3,10 @@
         {
             "tag1": "bullet",
             "tag2": "bullet"
+        },
+        {
+            "tag1": "Enemy",
+            "tag2": "Enemy"
         }
     ]
 }
