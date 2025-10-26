@@ -87,8 +87,12 @@ end
 function OnCollisionEnter(id,obj)
     if obj.tag == "bullet" then
         hp = hp - 1
-        damageInterval = maxDamageInterval
-
+        
+        if damageInterval <= 0.0 then
+            CreateEntity("ExplotionParticleEmitter.json",transform)
+            damageInterval = maxDamageInterval
+        end
+        
         if hp <= 0 then
             if isAlive then
                 isAlive = false

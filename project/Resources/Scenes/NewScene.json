@@ -59,34 +59,34 @@
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    -0.5,
-                    -0.5,
-                    -0.5,
-                    0.5,
-                    0.5,
-                    0.5
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "B",
-                "tag": "b",
+                "name": "MoveUi",
+                "tag": "Untagged",
                 "uniqueId": 3
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 28,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "MoveButtonUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 90.0,
+                "isDraw": true,
+                "layer": 0,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "MoveUi.png",
+                "width": 360.0
             },
             "Transform": {
                 "rotate": [
@@ -101,60 +101,45 @@
                 ],
                 "translate": [
                     0.0,
-                    0.0,
+                    461.1000061035156,
                     0.0
                 ]
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    1.5255541801452637,
-                    -0.5,
-                    -0.5,
-                    2.5255541801452637,
-                    0.5,
-                    0.5
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "A",
-                "tag": "a",
+                "name": "ShotUi",
+                "tag": "Untagged",
                 "uniqueId": 4
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {
-                            "speed": 1.0
-                        },
-                        "handle": 0,
+                        "floatParams": {},
+                        "handle": 29,
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "Move.lua",
+                        "scriptName": "ShotButtonUi.lua",
                         "stringParams": {}
                     }
                 ]
             },
+            "SpriteData": {
+                "height": 90.0,
+                "isDraw": true,
+                "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "ShotUi.png",
+                "width": 360.0
+            },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -163,8 +148,8 @@
                     1.0
                 ],
                 "translate": [
-                    2.0255541801452637,
                     0.0,
+                    398.6000061035156,
                     0.0
                 ]
             }

@@ -1,8 +1,8 @@
 {
     "SceneObjectData": {
-        "name": "moveUI",
+        "name": "MoveUi",
         "tag": "Untagged",
-        "uniqueId": 6616
+        "uniqueId": 3
     },
     "ScriptHandle": {
         "scriptHandles": [
@@ -10,21 +10,23 @@
                 "boolParams": {},
                 "floatParams": {},
                 "handle": 32,
-                "intParams": {
-                    "targetType": 1
-                },
+                "intParams": {},
                 "priority": 0,
-                "scriptName": "TutorialUIbehavior.lua",
+                "scriptName": "MoveButtonUI.lua",
                 "stringParams": {}
             }
         ]
     },
     "SpriteData": {
-        "height": 80.0,
+        "height": 90.0,
         "isDraw": true,
-        "layer": 2,
-        "textureName": "move.png",
-        "width": 340.0
+        "layer": 0,
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "textureName": "MoveUi.png",
+        "width": 360.0
     },
     "Transform": {
         "rotate": [
@@ -38,8 +40,8 @@
             1.0
         ],
         "translate": [
-            480.0,
-            36.0,
+            0.0,
+            461.1000061035156,
             0.0
         ]
     }

@@ -1,28 +1,32 @@
 {
     "SceneObjectData": {
-        "name": "HpBarUI",
+        "name": "ShotUi",
         "tag": "Untagged",
-        "uniqueId": 1037
+        "uniqueId": 4
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 21,
+                "handle": 33,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "HpUiAnim.lua",
+                "scriptName": "ShotButtonUi.lua",
                 "stringParams": {}
             }
         ]
     },
     "SpriteData": {
-        "height": 128.0,
+        "height": 90.0,
         "isDraw": true,
-        "layer": 10,
-        "textureName": "HpBar.png",
-        "width": 128.0
+        "layer": 1,
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "textureName": "ShotUi.png",
+        "width": 360.0
     },
     "Transform": {
         "rotate": [
@@ -37,7 +41,7 @@
         ],
         "translate": [
             0.0,
-            0.0,
+            398.6000061035156,
             0.0
         ]
     }

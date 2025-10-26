@@ -6,7 +6,7 @@
     },
     "SpriteData": {
         "height": 184.0,
-        "isDraw": false,
+        "isDraw": true,
         "layer": 100,
         "textureName": "white1x1.png",
         "width": 1697.0
@@ -15,7 +15,7 @@
         "rotate": [
             0.0,
             0.0,
-            0.09000000357627869
+            0.0
         ],
         "scale": [
             1.0,

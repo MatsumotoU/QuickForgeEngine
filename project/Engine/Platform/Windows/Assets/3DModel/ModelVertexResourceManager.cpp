@@ -54,6 +54,10 @@ ID3D12Resource* ModelVertexResourceManager::GetModelVertexBuffer(const uint32_t&
 	return modelVertexBuffers_.at(handle).GetResource();
 }
 
+VertexData* ModelVertexResourceManager::GetModelVertexBufferData(const uint32_t& handle) {
+	return modelVertexBuffers_.at(handle).GetData();
+}
+
 const D3D12_VERTEX_BUFFER_VIEW* ModelVertexResourceManager::GetVertexBufferView(const uint32_t& handle) {
 	assert(handle < modelVertexBuffers_.size() && "Model not found");
 	return modelVertexBuffers_.at(handle).GetVertexBufferView();
