@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.9150374531745911,
-                    -0.3401225209236145,
+                    0.4925377070903778,
+                    -0.5126236081123352,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    152.44357299804688,
-                    593.9723510742188,
-                    -430.78399658203125
+                    7.183147430419922,
+                    5.945494174957275,
+                    -8.65884017944336
                 ]
             }
         },
@@ -779,7 +779,12 @@
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {},
+                        "floatParams": {
+                            "maxSpeed": 5.0,
+                            "moveAcceleraion": 0.15000000596046448,
+                            "speed": 2.0,
+                            "targetRate": 1.0
+                        },
                         "handle": 16,
                         "intParams": {},
                         "priority": 0,
@@ -790,7 +795,9 @@
                         "boolParams": {},
                         "floatParams": {},
                         "handle": 17,
-                        "intParams": {},
+                        "intParams": {
+                            "enemyType": 1
+                        },
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
                         "stringParams": {
@@ -806,6 +813,15 @@
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DeathAnim.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 19,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "GhostMoveAnim.lua",
                         "stringParams": {}
                     }
                 ]
@@ -837,6 +853,57 @@
                 "translate": [
                     6.0172014236450195,
                     2.570373058319092,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "anchor.obj"
+            },
+            "SceneObjectData": {
+                "name": "Bullet",
+                "tag": "bullet",
+                "uniqueId": 161
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "aliveTime": 0.75,
+                            "maxSpeed": 20.0,
+                            "minSpeed": 15.0,
+                            "moveSpeed": 0.5
+                        },
+                        "handle": 20,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BulletMove.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.5442358255386353,
+                    0.0,
                     0.0
                 ]
             }

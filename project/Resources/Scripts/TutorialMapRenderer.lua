@@ -93,8 +93,6 @@ function UpdateDrawMap()
 
     local xIndex = math.floor(((linePosX + offsetX) + kBlockSize) / kBlockSize)
 
-    DebugLog("xIndex :"..xIndex)
-
     if moveXIndex < xIndex then
     
         if xIndex > mapWidth then

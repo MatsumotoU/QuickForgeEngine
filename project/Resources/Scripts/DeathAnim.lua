@@ -22,7 +22,7 @@ function Update()
 
     -- アタッチ対象のid
     local thisId = this.GetEntityId()
-    local isAlive = GetEntityScriptGlobal(thisId,aliveScriptName,isAliveName)
+    local isAlive = GetEntityScriptGlobal(thiwaaaasId,aliveScriptName,isAliveName)
 
     if  isAlive == false then
 

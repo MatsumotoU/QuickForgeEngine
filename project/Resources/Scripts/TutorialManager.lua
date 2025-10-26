@@ -8,7 +8,7 @@ varIsShotName = "isShot"
 varBullesName = "bullets"
 
 -- 現在のイベントのタイプ
-local EventType = 1
+EventType = 1
 
 -- イベント状態のリスト
 local EventTypeList = {}
@@ -22,22 +22,62 @@ local move = 0
 -- 弾を打つ回数
 local shotCount = 0
 local reloadCount = 0
-local shotType = 0
+shotType = 0
 
 -- 敵の名前
-normalGhostEnemyJson = "NormalGhostEnemy.json" -- 通常の幽霊
+normalGhostEnemyJson = "TutorialGhost.json" -- 通常の幽霊
 local normalGhostID = 0
-ratEnemyJson = "RatEnemy.json" -- ネズミの敵
+ratEnemyJson = "TutorialEnemy.json" -- ネズミの敵
 local ratEnemyID = 0
 -- 敵の生存を管理する
-local aliveScriptName = "EnemyHp.lua"
+local aliveScriptName = "TutorialEnemyHP.lua"
 local isAliveVarName = "isAlive"
+
+-- ゲージ管理
+gaugeName = "Gauge"
+local gaugeID = 0
+
+-- 敵を倒した時のゲージ管理
+gaugeTimer = 0.0
+
+-- 出現させるUI
+moveUIName = "moveUI.json"
+shotBulletUIName = "shotBulletUI.json"
+reloadUIName = "reloadUI.json"
+breakEnemyUI = "breakEnemyUI.json"
+breakNormalEnemyUI = "breakNormalEnemyUI.json"
+damegeBorderUIName = "damegeBorderUI.json"
+
+-- 最終ラインの描画用
+endLineName = "EndLine"
+local endLineID = 0
+
+-- ダメージ床の名前
+damageBorderName = "TutorialDamageBorder"
+local damageBorderId = 0
 
 function Init()
     -- プレイヤーのIDを取得
     playerID = GetEntity(playerName)
+    -- ゲージを取得する
+    gaugeID = GetEntity(gaugeName)
+    local gaugeTransform = GetTransform(gaugeID)
+    gaugeTransform.scale.x = 0.0
     -- イベントを登録する
     RegisterList()
+
+    -- 移動を促すUIを生成
+    local tmpTransform = Transform.new()
+    tmpTransform.translate.x = 480.0
+    tmpTransform.translate.y = 36.0
+    CreateEntity(moveUIName,tmpTransform)
+    DebugLog("CreateMoveUI")
+    -- 最終ラインの描画用
+    endLineID = GetEntity(endLineName)
+
+    -- ダメージ床を取得
+    damageBorderId = GetEntity(damageBorderName)
+    local borderTransform = GetTransform(damageBorderId)
 end
 
 function Update()
@@ -75,11 +115,13 @@ function RegisterList()
        [2] = {endPosX = 20.0, isClear = false},
        [3] = {endPosX = 30.0, isClear = false},
        [4] = {endPosX = 40.0, isClear = false},
-       [5] = {endPosX = 40.0, isClear = false},
+       [5] = {endPosX = 50.0, isClear = false},
     }
 
     -- イベントライン
     endLinePosX = EventTypeList[1].endPosX
+    local endLineTransform = GetTransform(endLineID)
+    endLineTransform.translate.x = endLinePosX
 end
 
 -- シーン1
@@ -87,6 +129,8 @@ function EventOneScene()
     -- 移動量を取得する
     if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetKeyPress("MoveDown") or QFE.Input.GetKeyPress("MoveUp") or QFE.Input.GetKeyPress("MoveLeft") then
         move = move + 1
+        local gaugeTransform = GetTransform(gaugeID)
+        gaugeTransform.scale.x = move / 100.0
     end
 
     -- 一定量移動したら次のシーンに移行する
@@ -95,9 +139,20 @@ function EventOneScene()
         EventType = 2
         -- 最終ラインを取得
         endLinePosX = EventTypeList[EventType].endPosX
+        local endLineTransform = GetTransform(endLineID)
+        endLineTransform.translate.x = endLinePosX
         -- 弾を満タンにする
         local bullets = GetEntityScriptGlobal(playerID,bulletScriptName,varBullesName)
         bullets = 3
+        -- ゲージをリセット
+        local gaugeTransform = GetTransform(gaugeID)
+        gaugeTransform.scale.x = 0.0
+
+        -- 弾の発射を促すUIを生成
+        local tmpTransform = Transform.new()
+        tmpTransform.translate.x = 400.0
+        tmpTransform.translate.y = 36.0
+        CreateEntity(shotBulletUIName,tmpTransform)
     end
 end
 
@@ -109,6 +164,8 @@ function EventTwoScene()
         local isShot = GetEntityScriptGlobal(playerID,bulletScriptName,varIsShotName)
         if isShot then
             shotCount = shotCount + 1
+            local gaugeTransform = GetTransform(gaugeID)
+            gaugeTransform.scale.x = shotCount / 3.0
         end
 
         if shotCount >= 3 then
@@ -116,25 +173,44 @@ function EventTwoScene()
             -- 弾を空にする
             local bullets = GetEntityScriptGlobal(playerID,bulletScriptName,varBullesName)
             bullets = 0
+            -- ゲージをリセット
+            local gaugeTransform = GetTransform(gaugeID)
+            gaugeTransform.scale.x = 0.0
+
+            -- リロードを促すUIを生成
+            local tmpTransform = Transform.new()
+            tmpTransform.translate.x = 412.0
+            tmpTransform.translate.y = 36.0
+            CreateEntity(reloadUIName,tmpTransform)
         end
 
     elseif shotType == 1 then
-         local isReload = GetEntityScriptGlobal(playerID,bulletScriptName,varIsReloadName)
-        -- リロードを取得する
-        if isReload then
-            reloadCount = reloadCount + 1
-        end
 
-        if reloadCount >= 3 then
+        local bullets = GetEntityScriptGlobal(playerID,bulletScriptName,varBullesName)
+        local gaugeTransform = GetTransform(gaugeID)
+        gaugeTransform.scale.x = bullets / 3.0
+
+        if bullets >= 3 then
             -- 次のイベントを設定
             EventType = 3
             -- 最終ラインを取得
             endLinePosX = EventTypeList[EventType].endPosX
+            local endLineTransform = GetTransform(endLineID)
+            endLineTransform.translate.x = endLinePosX
             -- 幽霊の敵を生成
             local tmp = Transform.new()
             tmp.translate.x = 28.0
             tmp.translate.z = 4.0
             normalGhostID = CreateEntity(normalGhostEnemyJson, tmp)
+            -- ゲージをリセット
+            local gaugeTransform = GetTransform(gaugeID)
+            gaugeTransform.scale.x = 0.0
+
+            -- 敵を倒すことを促すUIを生成
+            local tmpTransform = Transform.new()
+            tmpTransform.translate.x = 480.0
+            tmpTransform.translate.y = 36.0
+            CreateEntity(breakEnemyUI,tmpTransform)
         end
     end
 
@@ -143,22 +219,94 @@ end
 -- シーン3
 function EventThreeScene()
 
-    -- local isAlive = GetEntityScriptGlobal(normalGhostID,aliveScriptName,isAliveVarName)
+    local isAlive = GetEntityScriptGlobal(normalGhostID,aliveScriptName,isAliveVarName)
 
-    -- if not isAlive then
-    --      -- 次のイベントを設定
-    --     EventType = 4
-    --     -- 最終ラインを取得
-    --     endLinePosX = EventTypeList[EventType].endPosX
-    -- end
+    if not isAlive then
+        -- ゲージ
+        local gaugeTransform = GetTransform(gaugeID)
+        gaugeTransform.scale.x = 1.0
+         -- 次のイベントを設定
+        EventType = 4
+        -- 最終ラインを取得
+        endLinePosX = EventTypeList[EventType].endPosX
+        local endLineTransform = GetTransform(endLineID)
+        endLineTransform.translate.x = endLinePosX
+
+         -- 幽霊の敵を生成
+        local tmp = Transform.new()
+        tmp.translate.x = 38.0
+        tmp.translate.z = 4.0
+        ratEnemyID = CreateEntity(ratEnemyJson, tmp)
+
+        -- 敵を倒すことを促すUIを生成
+        local tmpTransform = Transform.new()
+        tmpTransform.translate.x = 480.0
+        tmpTransform.translate.y = 36.0
+        CreateEntity(breakNormalEnemyUI,tmpTransform)
+    end
 end
 
 -- シーン4
 function EventFourScene()
-    
+
+    local deltatime = GetDeltaTime()
+    gaugeTimer = gaugeTimer + deltatime
+
+    if gaugeTimer >= 0.5 then
+        -- ゲージをリセット
+        local gaugeTransform = GetTransform(gaugeID)
+        gaugeTransform.scale.x = 0.0
+    end
+
+    local isAlive = GetEntityScriptGlobal(ratEnemyID,aliveScriptName,isAliveVarName)
+
+    if not isAlive then
+        gaugeTimer = 0.0
+         -- 次のイベントを設定
+        EventType = 5
+        -- 最終ラインを取得
+        endLinePosX = EventTypeList[EventType].endPosX
+        local endLineTransform = GetTransform(endLineID)
+        endLineTransform.translate.x = endLinePosX
+        -- ゲージをリセット
+        local gaugeTransform = GetTransform(gaugeID)
+        gaugeTransform.scale.x = 0.0
+
+        -- ダメージ床の情報を促すUIを生成
+        local tmpTransform = Transform.new()
+        tmpTransform.translate.x = 323.0
+        tmpTransform.translate.y = 36.0
+        CreateEntity(damegeBorderUIName,tmpTransform)
+    end
 end
 
 -- シーン5
 function EventFiveScene()
-    
+   local deltatime = GetDeltaTime()
+    gaugeTimer = gaugeTimer + deltatime
+
+    if gaugeTimer >= 0.5 then
+        -- ゲージをリセット
+        local gaugeTransform = GetTransform(gaugeID)
+        gaugeTransform.scale.x = 0.0
+    end
+
+    local borderTransform = GetTransform(damageBorderId)
+
+    borderTransform.translate.x = borderTransform.translate.x + 10.0 * deltatime
+
+    if borderTransform.translate.x >= endLinePosX + 10.0 then
+        LoadScene("TitleScene")
+    end
+end
+
+-- シーン6
+function EventSixScene()
+   
+end
+
+-- シーン7
+function EventSevenScene()
+    -- ゲームシーンに移動
+    LoadScene("TitleScene")
 end
