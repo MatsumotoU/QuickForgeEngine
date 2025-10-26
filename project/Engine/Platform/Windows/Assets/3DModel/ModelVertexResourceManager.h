@@ -18,6 +18,7 @@ public:
 	uint32_t Assign(ID3D12Device* device,const ModelData& modelData,const std::string& modelName);
 	const uint32_t GetVertexBufferCount(uint32_t handle) const;
 	ID3D12Resource* GetModelVertexBuffer(const uint32_t& handle);
+	VertexData* GetModelVertexBufferData(const uint32_t& handle);
 	const D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView(const uint32_t& handle);
 
 	void Finalize();

@@ -47,7 +47,7 @@
                         "floatParams": {
                             "offsetX": 2.0
                         },
-                        "handle": 1067,
+                        "handle": 0,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "CameraMove.lua",
@@ -60,7 +60,7 @@
             "Transform": {
                 "rotate": [
                     0.8999999761581421,
-                    -0.10000000149011612,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -130,7 +130,7 @@
                             "minVelocity": 4.0,
                             "moveSpeed": 4.0
                         },
-                        "handle": 1068,
+                        "handle": 1,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -147,7 +147,7 @@
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.3499999940395355
                         },
-                        "handle": 1069,
+                        "handle": 2,
                         "intParams": {
                             "bullets": 4,
                             "maxBullets": 4,
@@ -160,7 +160,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1070,
+                        "handle": 3,
                         "intParams": {
                             "hitPoint": 5
                         },
@@ -203,7 +203,7 @@
                         "floatParams": {
                             "space": 128.0
                         },
-                        "handle": 1071,
+                        "handle": 4,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -237,8 +237,8 @@
                     1.0
                 ],
                 "translate": [
-                    32.0,
-                    32.0,
+                    700.0,
+                    560.0,
                     0.0
                 ]
             }
@@ -257,7 +257,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1072,
+                        "handle": 5,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -303,7 +303,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1073,
+                        "handle": 6,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -369,7 +369,7 @@
                         "floatParams": {
                             "space": 95.0
                         },
-                        "handle": 1074,
+                        "handle": 7,
                         "intParams": {
                             "DIK_A": 30,
                             "DIK_D": 32,
@@ -432,7 +432,7 @@
                             "borderSpeed": 0.25,
                             "maxBorderX": 12.0
                         },
-                        "handle": 1075,
+                        "handle": 8,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DamageBorder.lua",
@@ -449,7 +449,7 @@
                 "scale": [
                     1.0,
                     1.0,
-                    11.0
+                    38.900001525878906
                 ],
                 "translate": [
                     0.0,
@@ -469,7 +469,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1076,
+                        "handle": 9,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MapRenderer.lua",
@@ -513,7 +513,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1077,
+                        "handle": 10,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MapManager.lua",
@@ -556,7 +556,7 @@
                             "fadeOutTime": 0.5,
                             "waitTime": 0.20000000298023224
                         },
-                        "handle": 1078,
+                        "handle": 11,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "SceneTransitionManager.lua",
@@ -572,6 +572,10 @@
                 "height": 720.0,
                 "isDraw": true,
                 "layer": 20,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
                 "textureName": "white1x1.png",
                 "width": 1280.0
             },
@@ -616,7 +620,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1079,
+                        "handle": 12,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunAnim.lua",
@@ -699,7 +703,7 @@
                             "speed": 5.0,
                             "stopTime": 1.0
                         },
-                        "handle": 1080,
+                        "handle": 13,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "RatEnemyMove.lua",
@@ -708,7 +712,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1081,
+                        "handle": 14,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -721,7 +725,7 @@
                         "floatParams": {
                             "performingTime": 1.0
                         },
-                        "handle": 1082,
+                        "handle": 15,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DeathAnim.lua",
@@ -785,7 +789,7 @@
                             "speed": 2.0,
                             "targetRate": 1.0
                         },
-                        "handle": 1083,
+                        "handle": 16,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "PillBugEnemyMove.lua",
@@ -794,7 +798,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1084,
+                        "handle": 17,
                         "intParams": {
                             "enemyType": 1
                         },
@@ -809,7 +813,7 @@
                         "floatParams": {
                             "performingTime": 1.0
                         },
-                        "handle": 1085,
+                        "handle": 18,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DeathAnim.lua",
@@ -818,7 +822,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1086,
+                        "handle": 19,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "GhostMoveAnim.lua",
@@ -858,42 +862,26 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "anchor.obj"
-            },
             "SceneObjectData": {
-                "name": "Bullet",
-                "tag": "bullet",
-                "uniqueId": 161
+                "name": "UpUiCover",
+                "tag": "Untagged",
+                "uniqueId": 2848
             },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "aliveTime": 0.75,
-                            "maxSpeed": 20.0,
-                            "minSpeed": 15.0,
-                            "moveSpeed": 0.5
-                        },
-                        "handle": 1087,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "BulletMove.lua",
-                        "stringParams": {}
-                    }
-                ]
+            "SpriteData": {
+                "height": 100.0,
+                "isDraw": true,
+                "layer": 0,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -902,8 +890,139 @@
                     1.0
                 ],
                 "translate": [
-                    1.5442358255386353,
                     0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "UnderUiCover",
+                "tag": "Untagged",
+                "uniqueId": 3634
+            },
+            "SpriteData": {
+                "height": 100.0,
+                "isDraw": true,
+                "layer": 0,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    620.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "ShotUi",
+                "tag": "Untagged",
+                "uniqueId": 4
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 20,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShotButtonUi.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 90.0,
+                "isDraw": true,
+                "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "ShotUi.png",
+                "width": 360.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    433.79998779296875,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "MoveUi",
+                "tag": "Untagged",
+                "uniqueId": 3
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 21,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "MoveButtonUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 90.0,
+                "isDraw": true,
+                "layer": 0,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "MoveUi.png",
+                "width": 360.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    499.8999938964844,
                     0.0
                 ]
             }

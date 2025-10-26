@@ -56,7 +56,7 @@ void SceneManager::Initalize() {
 #endif // _DEBUG
 	}
 
-	
+
 }
 
 void SceneManager::Update() {
@@ -722,12 +722,14 @@ uint32_t SceneManager::AddEntity(const std::string& entityName) {
 #endif // _DEBUG
 
 	// 既に読み込んだことがあるエンティティ名ならそれを返す
+#ifdef _NODEBUG
 	if (loadEntities_.find(entityName) != loadEntities_.end()) {
 		// Entityの生成
 		uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 		DeserializeEntity(entityId, loadEntities_[entityName]);
 		return entityId;
 	}
+#endif // _NODEBUG
 
 	// Entityのパスを組み立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
@@ -754,6 +756,7 @@ uint32_t SceneManager::AddEntity(const std::string& entityName) {
 }
 
 uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {
+	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	uint32_t entityId = AddEntity(entityName);
 	// スクリプト初期化
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
@@ -763,6 +766,10 @@ uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {
 			LuaScriptResourceManager::GetInstance()->InitializeScript(sh.handle_);
 		}
 	}
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+#ifdef _DEBUG
+	DebugLog("RunTimeAddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
+#endif // _DEBUG
 	return entityId;
 }
 
