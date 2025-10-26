@@ -7,25 +7,21 @@
     "SceneObjectData": {
         "name": "Camera",
         "tag": "camera",
-        "uniqueId": 2
+        "uniqueId": 1
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {
-                    "offsetX": 1.0
+                    "offsetX": 2.0
                 },
-                "handle": 138,
+                "handle": 1604,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "CameraMove.lua",
                 "stringParams": {
-                    "sceneTransitionScriptName": "SceneTransitionManager.lua",
-                    "targetObjName": "targetObjName",
-                    "transitionObjName": "SceneTransitionManager",
-                    "varIsPreResetName": "isPreReset",
-                    "varIsResetName": "isReset"
+                    "targetObjName": "ShotGunPlayer"
                 }
             }
         ]
@@ -43,8 +39,8 @@
         ],
         "translate": [
             7.400000095367432,
-            28.0,
-            -17.0
+            22.0,
+            -10.0
         ]
     }
 }

@@ -17,8 +17,10 @@
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {},
-                "handle": 429,
+                "floatParams": {
+                    "speed": 0.25
+                },
+                "handle": 812,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ZizouEnemyMove.lua",
@@ -27,7 +29,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 430,
+                "handle": 813,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -42,10 +44,21 @@
                 "floatParams": {
                     "performingTime": 1.0
                 },
-                "handle": 440,
+                "handle": 814,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 1.0
+                },
+                "handle": 815,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "GhostMoveAnim.lua",
                 "stringParams": {}
             }
         ]
@@ -60,7 +73,7 @@
             -1.0698139667510986,
             2.4057602882385254,
             0.0,
-            0.6000000238418579
+            0.5
         ]
     },
     "Transform": {

@@ -128,12 +128,14 @@ function Init()
 
     DebugLog("EnemyGeneratorInit")
 
-    -- 正しく敵を生成出来るかを確認する(デバック用)
-    -- local tmpTransform = Transform.new()
-    -- tmpTransform.translate.y = 0.0
-    -- tmpTransform.translate.x = 8.0
-    -- tmpTransform.translate.z = 2.0
-    -- CreateEntity(zizouEnemyJson,tmpTransform)
+    -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
+    local tmpTransform = Transform.new()
+    tmpTransform.translate.y = 0.0
+    tmpTransform.translate.x = 15.0
+    tmpTransform.translate.z = 6.5
+    CreateEntity(ratEnemyJson,tmpTransform)
+    -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
+
 end
 
 --[[

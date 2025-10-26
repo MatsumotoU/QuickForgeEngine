@@ -17,8 +17,11 @@
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {},
-                "handle": 604,
+                "floatParams": {
+                    "borderSpeed": 0.25,
+                    "maxBorderX": 12.0
+                },
+                "handle": 717,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DamageBorder.lua",

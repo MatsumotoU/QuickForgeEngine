@@ -9,12 +9,12 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 393,
+                "handle": 165,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "MapRenderer.lua",
                 "stringParams": {
-                    "breakWallName": "Wall.json",
+                    "breakWallName": "Tombstone.json",
                     "generatorMapScriptName": "MapGenerater.lua",
                     "mapObjName": "MapGenerater",
                     "playerName": "ShotGunPlayer",

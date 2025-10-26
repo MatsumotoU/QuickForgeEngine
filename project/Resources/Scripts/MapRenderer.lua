@@ -13,7 +13,7 @@ local mapWidth = 0
 
 -- 壁の名前
 wallObjName = "Wall.json"
-breakWallName = "Wall.json"
+breakWallName = "Tombstone.json"
 
 -- プレイヤーの位置を取得
 playerName = "ShotGunPlayer"
