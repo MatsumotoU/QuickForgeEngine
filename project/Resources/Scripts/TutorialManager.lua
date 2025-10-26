@@ -48,6 +48,10 @@ breakEnemyUI = "breakEnemyUI.json"
 breakNormalEnemyUI = "breakNormalEnemyUI.json"
 damegeBorderUIName = "damegeBorderUI.json"
 
+keyWASDUIName = "KeyWASDUI.json"
+keyAUIName = "KeyAUI.json"
+keySpaceUIName = "KeySpaceUI.json"
+
 -- 最終ラインの描画用
 endLineName = "EndLine"
 local endLineID = 0
@@ -71,6 +75,10 @@ function Init()
     tmpTransform.translate.x = 480.0
     tmpTransform.translate.y = 36.0
     CreateEntity(moveUIName,tmpTransform)
+    tmpTransform.translate.x = 5
+    tmpTransform.translate.y = -1.0
+    tmpTransform.translate.z = 7.5
+    CreateEntity(keyWASDUIName,tmpTransform)
     DebugLog("CreateMoveUI")
     -- 最終ラインの描画用
     endLineID = GetEntity(endLineName)
@@ -153,6 +161,10 @@ function EventOneScene()
         tmpTransform.translate.x = 400.0
         tmpTransform.translate.y = 36.0
         CreateEntity(shotBulletUIName,tmpTransform)
+        tmpTransform.translate.x = 15.0
+        tmpTransform.translate.y = -1.0
+        tmpTransform.translate.z = 7.5
+        CreateEntity(keySpaceUIName,tmpTransform)
     end
 end
 
@@ -182,6 +194,10 @@ function EventTwoScene()
             tmpTransform.translate.x = 412.0
             tmpTransform.translate.y = 36.0
             CreateEntity(reloadUIName,tmpTransform)
+            tmpTransform.translate.x = 15.0
+            tmpTransform.translate.y = -1.0
+            tmpTransform.translate.z = 7.5
+            CreateEntity(keyAUIName,tmpTransform)
         end
 
     elseif shotType == 1 then
