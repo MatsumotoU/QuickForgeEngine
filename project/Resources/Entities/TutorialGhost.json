@@ -6,49 +6,45 @@
             1.0,
             1.0
         ],
-        "modelName": "tyoutinEnemy.obj"
+        "modelName": "normalEnemy.obj"
     },
     "SceneObjectData": {
-        "name": "TyoutinEnemy",
-        "tag": "Enemy",
-        "uniqueId": 5727
+        "name": "TutorialGhost",
+        "tag": "Untagged",
+        "uniqueId": 6313
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {
-                    "idleTime": 3.5,
-                    "moveTime": 2.5,
-                    "speed": 3.0
-                },
-                "handle": 5600,
+                "floatParams": {},
+                "handle": 695,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "TyoutinEnemyMove.lua",
+                "scriptName": "TutorialGhost.lua",
                 "stringParams": {}
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 5601,
-                "intParams": {},
+                "handle": 696,
+                "intParams": {
+                    "enemyType": 1
+                },
                 "priority": 0,
-                "scriptName": "EnemyHp.lua",
-                "stringParams": {
-                    "stoneName": "Tombstone.json"
-                }
+                "scriptName": "TutorialEnemyHP.lua",
+                "stringParams": {}
             },
             {
                 "boolParams": {},
-                "floatParams": {
-                    "performingTime": 1.0
-                },
-                "handle": 5602,
+                "floatParams": {},
+                "handle": 697,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",
-                "stringParams": {}
+                "stringParams": {
+                    "aliveScriptName": "TutorialEnemyHP.lua"
+                }
             }
         ]
     },
@@ -59,16 +55,16 @@
         "isStatic": false,
         "isTrigger": false,
         "sphere": [
-            -5.193133354187012,
-            2.2886545658111572,
+            -1.1656187772750854,
             0.0,
-            0.699999988079071
+            0.0,
+            0.4000000059604645
         ]
     },
     "Transform": {
         "rotate": [
             0.0,
-            -1.600000023841858,
+            -0.0,
             0.0
         ],
         "scale": [
@@ -77,8 +73,8 @@
             1.0
         ],
         "translate": [
-            -5.193133354187012,
-            2.2886545658111572,
+            -1.1656187772750854,
+            0.0,
             0.0
         ]
     }

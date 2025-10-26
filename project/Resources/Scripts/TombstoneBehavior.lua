@@ -40,20 +40,20 @@ function OnCollisionEnter(id,obj)
         CreateEntity(slowObjName,transform)
         destroy()
     else
-        if obj.tag == "player" then
+        --if obj.tag == "player" then
             -- プレイヤーの位置を取得
-            local playerTransform = GetTransform(id)
+            --local playerTransform = GetTransform(id)
 
             -- プレイヤーがブロックに触れている時
-            if transform.translate.x >= playerTransform.translate.x then
-                breakTimer = breakTimer + 1.0 / (60.0 * breakMaxTime)
-                transform.rotate.y = transform.rotate.y + breakTimer
+            --if transform.translate.x >= playerTransform.translate.x then
+                --breakTimer = breakTimer + 1.0 / (60.0 * breakMaxTime)
+                --transform.rotate.y = transform.rotate.y + breakTimer
                 -- 時間がたったら壊れる
-                if breakTimer >= 1.0 then
-                    isBreak = true
-                end
-            end         
-        end
+                --if breakTimer >= 1.0 then
+                --    isBreak = true
+              --  end
+           -- end         
+        --end
     end
 end
 

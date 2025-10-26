@@ -1,11 +1,26 @@
 {
+    "AABBColliderData": {
+        "aabb": [
+            2.5255227088928223,
+            -0.49999988079071045,
+            4.5,
+            3.5255227088928223,
+            0.5000001192092896,
+            5.5
+        ],
+        "colliderLayer": 127,
+        "eventColliderLayer": 127,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false
+    },
     "Force": {
         "acceleration": [
             0.0,
             0.0,
             0.0
         ],
-        "friction": 4.0,
+        "friction": 4.5,
         "gravityStrength": 10.0,
         "isGravity": true,
         "mass": 1.0,
@@ -35,10 +50,10 @@
                 "boolParams": {},
                 "floatParams": {
                     "backSpeed": 8.0,
-                    "minVelocity": 2.0,
+                    "minVelocity": 4.0,
                     "moveSpeed": 4.0
                 },
-                "handle": 89,
+                "handle": 2410,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -49,13 +64,13 @@
                 "floatParams": {
                     "diffusionRate": 0.125,
                     "knockBack": 10.0,
-                    "knockBackPower": 25.0,
-                    "maxShotInterval": 0.30000001192092896,
+                    "knockBackPower": 23.5,
+                    "maxShotInterval": 0.3499999940395355,
                     "reloadInterval": 0.0,
                     "shotInterval": 10.0,
                     "targetReloadInterval": 0.3499999940395355
                 },
-                "handle": 90,
+                "handle": 2411,
                 "intParams": {
                     "bullets": 4,
                     "maxBullets": 4,
@@ -68,7 +83,7 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 91,
+                "handle": 2412,
                 "intParams": {
                     "hitPoint": 5
                 },
@@ -78,19 +93,6 @@
                     "damageTag": "Enemy"
                 }
             }
-        ]
-    },
-    "SphereColliderData": {
-        "colliderLayer": 127,
-        "eventColliderLayer": 127,
-        "isDraw": true,
-        "isStatic": false,
-        "isTrigger": false,
-        "sphere": [
-            3.0255227088928223,
-            1.2449007158465974e-07,
-            5.0,
-            0.4000000059604645
         ]
     },
     "Transform": {

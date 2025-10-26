@@ -90,7 +90,7 @@ function Update()
     transform.translate.z = transform.translate.z + dir.z * finalSpeed
  
     else
-    transform.translate.x = transform.translate.x - speed*0.075 
+    transform.translate.x = transform.translate.x - speed*0.15 
 
     end
 

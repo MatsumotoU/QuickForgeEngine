@@ -1,0 +1,50 @@
+{
+    "SceneObjectData": {
+        "name": "damegeBorderUI",
+        "tag": "Untagged",
+        "uniqueId": 6844
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 278,
+                "intParams": {
+                    "UIType": 0,
+                    "shotType": 0,
+                    "targetType": 5
+                },
+                "priority": 0,
+                "scriptName": "TutorialUIbehavior.lua",
+                "stringParams": {
+                    "TutorialManagerJson": "TutorialManager"
+                }
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 80.0,
+        "isDraw": true,
+        "layer": 4,
+        "textureName": "damegeBorderUI.png",
+        "width": 682.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            323.6000061035156,
+            36.0,
+            0.0
+        ]
+    }
+}

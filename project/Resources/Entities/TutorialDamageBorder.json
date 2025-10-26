@@ -9,23 +9,26 @@
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "DamageBorder",
-        "tag": "border",
-        "uniqueId": 5725
+        "name": "TutorialDamageBorder",
+        "tag": "Untagged",
+        "uniqueId": 6469
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {
-                    "borderSpeed": 0.25,
-                    "maxBorderX": 12.0
+                    "borderSpeed": 1.0,
+                    "borderX": 10.0,
+                    "maxBorderX": 10.0
                 },
-                "handle": 717,
+                "handle": 236,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "DamageBorder.lua",
-                "stringParams": {}
+                "scriptName": "TutorialDamageBorder.lua",
+                "stringParams": {
+                    "objName": "TutorialPlayer"
+                }
             }
         ]
     },
@@ -38,12 +41,12 @@
         "scale": [
             1.0,
             1.0,
-            11.0
+            9.899999618530273
         ],
         "translate": [
+            -6.0,
             0.0,
-            0.0,
-            5.0
+            5.400000095367432
         ]
     }
 }

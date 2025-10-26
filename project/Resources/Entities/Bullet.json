@@ -1,4 +1,19 @@
 {
+    "AABBColliderData": {
+        "aabb": [
+            1.394001841545105,
+            -1.25,
+            -0.15000000596046448,
+            1.6944698095321655,
+            1.25,
+            0.15000000596046448
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false
+    },
     "ModelHandle": {
         "color": [
             1.0,
@@ -23,25 +38,12 @@
                     "minSpeed": 15.0,
                     "moveSpeed": 0.5
                 },
-                "handle": 354,
+                "handle": 140,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BulletMove.lua",
                 "stringParams": {}
             }
-        ]
-    },
-    "SphereColliderData": {
-        "colliderLayer": 128,
-        "eventColliderLayer": 128,
-        "isDraw": true,
-        "isStatic": false,
-        "isTrigger": true,
-        "sphere": [
-            1.5442358255386353,
-            0.0,
-            0.0,
-            0.20000000298023224
         ]
     },
     "Transform": {

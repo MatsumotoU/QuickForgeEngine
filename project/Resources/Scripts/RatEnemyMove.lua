@@ -59,10 +59,17 @@ function Update()
 
      -- 移動する
     if actStatus == 0 then 
+        local deltaRotate = math.pi / 8.0
+        local numRepeat = 8
 
         next_actStatus = 1
         actCounter  = actCounter  + deltaTime * inv_moveTime
         transform:AddForward(moveSpeed * deltaTime)
+        
+        local cov = math.sin(math.pi * actCounter*numRepeat)*deltaRotate
+        transform.rotate.y = currentRad + cov 
+
+
 
         
      -- 止まる
