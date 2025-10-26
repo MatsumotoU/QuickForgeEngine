@@ -45,7 +45,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1129,
+                        "handle": 21,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialCameraMove.lua",
@@ -113,7 +113,7 @@
                             "minVelocity": 2.0,
                             "moveSpeed": 4.0
                         },
-                        "handle": 1130,
+                        "handle": 22,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -128,7 +128,7 @@
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.5
                         },
-                        "handle": 1131,
+                        "handle": 23,
                         "intParams": {
                             "bullets": 3,
                             "shotNum": 20
@@ -193,7 +193,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1132,
+                        "handle": 24,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunAnim.lua",
@@ -230,7 +230,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1133,
+                        "handle": 25,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapGenerater.lua",
@@ -267,7 +267,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1134,
+                        "handle": 26,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapRenderer.lua",
@@ -310,7 +310,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1135,
+                        "handle": 27,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialManager.lua",
@@ -360,7 +360,7 @@
                             "borderX": 10.0,
                             "maxBorderX": 10.0
                         },
-                        "handle": 1136,
+                        "handle": 28,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialDamageBorder.lua",
@@ -382,7 +382,7 @@
                     9.899999618530273
                 ],
                 "translate": [
-                    -6.0,
+                    -13.600000381469727,
                     0.0,
                     5.400000095367432
                 ]
@@ -430,7 +430,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1137,
+                        "handle": 29,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "gaugeBehavior.lua",
@@ -491,7 +491,7 @@
                 ],
                 "translate": [
                     10.0,
-                    0.0,
+                    -1.100000023841858,
                     5.0
                 ]
             }
@@ -507,7 +507,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1138,
+                        "handle": 30,
                         "intParams": {
                             "UIType": 0,
                             "shotType": 0,
@@ -541,106 +541,6 @@
                 ],
                 "translate": [
                     480.0,
-                    36.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "breakNormalEnemyUI",
-                "tag": "Untagged",
-                "uniqueId": 6843
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 1139,
-                        "intParams": {
-                            "UIType": 0,
-                            "shotType": 0,
-                            "targetType": 4
-                        },
-                        "priority": 0,
-                        "scriptName": "TutorialUIbehavior.lua",
-                        "stringParams": {
-                            "TutorialManagerJson": "TutorialManager"
-                        }
-                    }
-                ]
-            },
-            "SpriteData": {
-                "height": 80.0,
-                "isDraw": true,
-                "layer": 3,
-                "textureName": "breakEnemy.png",
-                "width": 340.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "damegeBorderUI",
-                "tag": "Untagged",
-                "uniqueId": 6844
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 1140,
-                        "intParams": {
-                            "UIType": 0,
-                            "shotType": 0,
-                            "targetType": 5
-                        },
-                        "priority": 0,
-                        "scriptName": "TutorialUIbehavior.lua",
-                        "stringParams": {
-                            "TutorialManagerJson": "TutorialManager"
-                        }
-                    }
-                ]
-            },
-            "SpriteData": {
-                "height": 80.0,
-                "isDraw": true,
-                "layer": 4,
-                "textureName": "damegeBorderUI.png",
-                "width": 682.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    323.6000061035156,
                     36.0,
                     0.0
                 ]
