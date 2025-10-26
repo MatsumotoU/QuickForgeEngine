@@ -3,7 +3,7 @@
 playerName = "Camera"
 local playerID = 0
 
-local offsetX = 36.0
+local offsetX = 18.0
 
 function Init()
     -- プレイヤーのIDを取得
