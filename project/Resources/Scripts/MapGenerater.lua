@@ -15,8 +15,14 @@ mapDifficulty = 8
 -- マップ
 map = {{},{}}
 
+
 -- ステージ番号
-stageNumber = 1
+stageNumber = 2
+
+
+
+
+
 
 -- リセットに関する名前
 transitionObjName = "SceneTransitionManager"
