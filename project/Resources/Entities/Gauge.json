@@ -1,0 +1,44 @@
+{
+    "SceneObjectData": {
+        "name": "Gauge",
+        "tag": "Untagged",
+        "uniqueId": 6615
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 8,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "gaugeBehavior.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 75.0,
+        "isDraw": true,
+        "layer": 1,
+        "textureName": "white1x1.png",
+        "width": 500.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            384.0,
+            128.0,
+            0.0
+        ]
+    }
+}

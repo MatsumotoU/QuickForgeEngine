@@ -1,0 +1,52 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "TutorialDamageBorder",
+        "tag": "Untagged",
+        "uniqueId": 6469
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "borderSpeed": 1.0,
+                    "borderX": 10.0,
+                    "maxBorderX": 10.0
+                },
+                "handle": 236,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "TutorialDamageBorder.lua",
+                "stringParams": {
+                    "objName": "TutorialPlayer"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            9.899999618530273
+        ],
+        "translate": [
+            -6.0,
+            0.0,
+            5.400000095367432
+        ]
+    }
+}
