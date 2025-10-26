@@ -21,6 +21,7 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 }
 
 void AssetManager::PreDraw() {
+	
 }
 
 void AssetManager::Finalize() {
