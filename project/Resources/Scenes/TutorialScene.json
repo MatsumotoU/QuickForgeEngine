@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6813934445381165,
-                    4.0133926404450904e-07,
+                    0.6813935041427612,
+                    4.0133929246621847e-07,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -1.0259224836772773e-05,
-                    20.730363845825195,
-                    -25.562475204467773
+                    -4.8787627747515216e-05,
+                    98.58302307128906,
+                    -121.56205749511719
                 ]
             }
         },
@@ -45,7 +45,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 269,
+                        "handle": 1129,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialCameraMove.lua",
@@ -67,7 +67,7 @@
                 "translate": [
                     7.400000095367432,
                     28.0,
-                    -17.0
+                    -15.5
                 ]
             }
         },
@@ -113,7 +113,7 @@
                             "minVelocity": 2.0,
                             "moveSpeed": 4.0
                         },
-                        "handle": 270,
+                        "handle": 1130,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -128,7 +128,7 @@
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.5
                         },
-                        "handle": 271,
+                        "handle": 1131,
                         "intParams": {
                             "bullets": 3,
                             "shotNum": 20
@@ -193,7 +193,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 272,
+                        "handle": 1132,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunAnim.lua",
@@ -230,7 +230,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 273,
+                        "handle": 1133,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapGenerater.lua",
@@ -267,7 +267,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 274,
+                        "handle": 1134,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapRenderer.lua",
@@ -310,7 +310,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 275,
+                        "handle": 1135,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialManager.lua",
@@ -360,7 +360,7 @@
                             "borderX": 10.0,
                             "maxBorderX": 10.0
                         },
-                        "handle": 276,
+                        "handle": 1136,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialDamageBorder.lua",
@@ -430,7 +430,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 277,
+                        "handle": 1137,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "gaugeBehavior.lua",
@@ -507,7 +507,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 278,
+                        "handle": 1138,
                         "intParams": {
                             "UIType": 0,
                             "shotType": 0,
@@ -557,7 +557,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 279,
+                        "handle": 1139,
                         "intParams": {
                             "UIType": 0,
                             "shotType": 0,
@@ -607,7 +607,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 280,
+                        "handle": 1140,
                         "intParams": {
                             "UIType": 0,
                             "shotType": 0,
@@ -642,6 +642,39 @@
                 "translate": [
                     323.6000061035156,
                     36.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "ground.obj"
+            },
+            "SceneObjectData": {
+                "name": "Ground",
+                "tag": "Untagged",
+                "uniqueId": 6845
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    31.899999618530273,
+                    -4.699999809265137,
                     0.0
                 ]
             }
