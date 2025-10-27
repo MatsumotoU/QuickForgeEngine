@@ -20,6 +20,8 @@ dropBullets = 2
 
 playerName = "ShotGunPlayer"
 
+local cameraID = 0
+
 local timer = 0.0
 local maxTime = 1.0
 
@@ -33,6 +35,8 @@ function Init()
     isBreak = false
     nockbackCount = 0
     force.velocity.y = -5.0
+    -- カメラのIDを取得
+    cameraID = GetEntity("Camera")
 end
 
 --[[
@@ -48,6 +52,13 @@ function Update()
 
     if maxBreakNockbackCount > 0 then
         transform.scale.y = (maxBreakNockbackCount - nockbackCount) / maxBreakNockbackCount
+    end
+
+    -- 画面外に出たら削除する
+    local targetTransform = GetTransform(cameraID)
+    local endLinePosX = targetTransform.translate.x - 20.0
+    if transform.translate.x <= endLinePosX or transform.translate.x > targetTransform.translate.x + 50.0 then
+        destroy()
     end
 end
 
@@ -113,6 +124,9 @@ function OnCollisionStay(id,obj)
             end
             RunEntityScriptFunction(GetEntity("ShallReload"),"ShallReloadUI.lua","Anim")
             QFE.Audio.PlaySound(breakSE,false,0.3)
+            CreateEntity("TombstoneEmitter.json",transform)
+        else
+            CreateEntity("HalfTombstoneEmitter.json",transform)
         end       
     end
 end

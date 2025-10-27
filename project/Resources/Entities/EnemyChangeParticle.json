@@ -1,19 +1,4 @@
 {
-    "AABBColliderData": {
-        "aabb": [
-            4.077000141143799,
-            -1.7000000476837158,
-            4.0,
-            4.2769999504089355,
-            1.7000000476837158,
-            4.199999809265137
-        ],
-        "colliderLayer": 255,
-        "eventColliderLayer": 255,
-        "isDraw": true,
-        "isStatic": false,
-        "isTrigger": false
-    },
     "ModelHandle": {
         "color": [
             1.0,
@@ -21,12 +6,12 @@
             1.0,
             1.0
         ],
-        "modelName": "anchor.obj"
+        "modelName": "circleParticle.obj"
     },
     "SceneObjectData": {
-        "name": "EnemyBullet",
-        "tag": "EnemyBullet",
-        "uniqueId": 6229
+        "name": "EnemyChangeParticle",
+        "tag": "Untagged",
+        "uniqueId": 7554
     },
     "ScriptHandle": {
         "scriptHandles": [
@@ -35,7 +20,7 @@
                 "floatParams": {},
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "EnemyBulletMove.lua",
+                "scriptName": "enemyChangeParticle.lua",
                 "stringParams": {}
             }
         ]
@@ -43,7 +28,7 @@
     "Transform": {
         "rotate": [
             0.0,
-            -0.0,
+            0.0,
             0.0
         ],
         "scale": [
@@ -52,9 +37,9 @@
             1.0
         ],
         "translate": [
-            4.177000045776367,
             0.0,
-            4.099999904632568
+            0.0,
+            0.0
         ]
     }
 }

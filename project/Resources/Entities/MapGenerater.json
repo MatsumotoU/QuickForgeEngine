@@ -1,26 +1,30 @@
 {
+    "ParentData": {
+        "parentId": 1
+    },
     "SceneObjectData": {
         "name": "MapGenerater",
         "tag": "Untagged",
-        "uniqueId": 5742
+        "uniqueId": 9
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 415,
                 "intParams": {
                     "DIK_A": 30,
                     "DIK_D": 32,
                     "DIK_S": 31,
                     "DIK_SPACE": 57,
-                    "DIK_W": 17
+                    "DIK_W": 17,
+                    "mapDifficulty": 1,
+                    "mapDivision": 7
                 },
                 "priority": 0,
                 "scriptName": "MapGenerater.lua",
                 "stringParams": {
-                    "breakWallName": "Tombstone",
+                    "breakWallName": "BreakWall.json",
                     "wallObjName": "Wall.json"
                 }
             }
@@ -38,9 +42,9 @@
             1.0
         ],
         "translate": [
-            0.0,
-            0.0,
-            0.0
+            -7.400000095367432,
+            -28.200000762939453,
+            17.0
         ]
     }
 }

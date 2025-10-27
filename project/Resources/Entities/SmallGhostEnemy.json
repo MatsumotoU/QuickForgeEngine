@@ -18,19 +18,17 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 3841,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "SmallGhotEnemyMove.lua",
                 "stringParams": {
                     "LockOnObjName": "ShotGunPlayer",
-                    "bulletName": "Bullet.json"
+                    "bulletName": "EnemyBullet.json"
                 }
             },
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 3842,
                 "intParams": {
                     "enemyType": 1
                 },
@@ -45,7 +43,6 @@
                 "floatParams": {
                     "performingTime": 1.25
                 },
-                "handle": 3843,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",
@@ -54,7 +51,6 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 3844,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "GhostMoveAnim.lua",

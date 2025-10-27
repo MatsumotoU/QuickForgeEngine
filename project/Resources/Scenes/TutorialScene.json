@@ -613,7 +613,7 @@
                 "translate": [
                     6.276935577392578,
                     0.0,
-                    3.5728321075439453
+                    -2.5962390899658203
                 ]
             }
         },
@@ -696,76 +696,19 @@
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    5.801031112670898,
-                    -8.699999809265137,
-                    4.260635852813721,
-                    7.301031112670898,
-                    8.699999809265137,
-                    5.060636043548584
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false
-            },
-            "Force": {
-                "acceleration": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "friction": 1.0,
-                "gravityStrength": 1.0,
-                "isGravity": true,
-                "mass": 1.0,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "tombstone.obj"
-            },
             "SceneObjectData": {
-                "name": "TutorialTombstone",
+                "name": "EnemyHitEmitter",
                 "tag": "Untagged",
-                "uniqueId": 6853
+                "uniqueId": 7551
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {
-                            "breakMaxTime": 1.0
-                        },
-                        "intParams": {
-                            "dropBullets": 2,
-                            "maxBreakNockbackCount": 2,
-                            "nockbackCount": 0
-                        },
-                        "priority": 0,
-                        "scriptName": "TombstoneBehavior.lua",
-                        "stringParams": {
-                            "playerName": "TutorialPlayer",
-                            "slowObjName": "SlowArea.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "Ground0.lua",
+                        "scriptName": "EnemyHitEmitter.lua",
                         "stringParams": {}
                     }
                 ]
@@ -782,9 +725,45 @@
                     1.0
                 ],
                 "translate": [
-                    6.551031112670898,
+                    6.848334789276123,
                     0.0,
-                    4.660635948181152
+                    -2.8678138256073
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "EnemyChangeEmitter",
+                "tag": "Untagged",
+                "uniqueId": 7552
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "enemyChangeEmitter.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    7.190454959869385,
+                    0.0,
+                    4.407754898071289
                 ]
             }
         }

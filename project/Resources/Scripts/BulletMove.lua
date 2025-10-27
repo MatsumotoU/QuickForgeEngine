@@ -5,6 +5,7 @@ minSpeed = 15.0
 
 -- 音
 local hit = QFE.Audio.LoadSound("hit.mp3")
+local rotateNum = 0.0
 
 function Init()
 local randNum = math.random()
@@ -16,13 +17,17 @@ local randNum = math.random()
     end
 
     transform.translate.z = transform.translate.z + randNum
+
+   rotateNum = (math.random()+0.2) * math.pi*4.0*0.0166666
 end
 
 function Update()
 
-    transform.scale.x = 3.0
-    transform.scale.y = 3.0
-    transform.scale.z = 3.0
+    transform.scale.x = 2.5
+    transform.scale.y = 2.5
+    transform.scale.z = 2.5
+
+    transform.rotate.z = transform.rotate.z +  rotateNum
 
     local deltaTime = GetDeltaTime()
 if aliveTime > 0.0 then
@@ -31,7 +36,7 @@ else
     destroy()
 end
 
-    moveSpeed = moveSpeed * 0.95
+    moveSpeed = moveSpeed * 0.975
 
     transform:AddForward(moveSpeed*deltaTime)
 end

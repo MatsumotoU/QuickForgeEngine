@@ -1,29 +1,17 @@
 {
-    "ModelHandle": {
-        "color": [
-            1.0,
-            0.0,
-            0.0,
-            1.0
-        ],
-        "modelName": "Box1x1.obj"
-    },
     "SceneObjectData": {
-        "name": "DamageBorder",
-        "tag": "border",
-        "uniqueId": 5725
+        "name": "EnemyHitEmitter",
+        "tag": "Untagged",
+        "uniqueId": 7551
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {
-                    "borderSpeed": 0.30000001192092896,
-                    "maxBorderX": 12.0
-                },
+                "floatParams": {},
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "DamageBorder.lua",
+                "scriptName": "EnemyHitEmitter.lua",
                 "stringParams": {}
             }
         ]
@@ -37,12 +25,12 @@
         "scale": [
             1.0,
             1.0,
-            38.900001525878906
+            1.0
         ],
         "translate": [
             0.0,
             0.0,
-            5.0
+            0.0
         ]
     }
 }

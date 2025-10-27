@@ -44,11 +44,12 @@ function Update()
     end
 
     local deltaTime = GetDeltaTime()
+    
 
     if actCnt <= 1.0 then
             -- 移動する
         if cur_act == 0 then
-            local dst_rotateX = math.pi*2.0
+            local dst_rotateX = math.pi*2.5
 
             actCnt = actCnt + (inv_moveTime * deltaTime)
             transform.rotate.x = EaseInBounce(0.0,dst_rotateX,actCnt) 
@@ -78,22 +79,23 @@ function OnCollisionEnter(id,obj)
 
     if obj.tag == "SlowArea" then
         isHit = true
-    end
-end
 
-function OnCollisionEnter(id,obj)
+    elseif obj.tag == "Wall" then
+        cur_act = 1
 
-    if obj.tag == "bullet" then
+    elseif obj.tag == "Tombstone" then
+        cur_act = 1
+
+    elseif obj.tag == "bullet" then
 
         if cur_act ~= 0 then
         next_xPos = transform.translate.x - delta_xPos
         cur_xPos = transform.translate.x
         cur_act = 0
-        
-
         end
         
     end
+
 end
 
 function Lerp(st_, end_, t_)
