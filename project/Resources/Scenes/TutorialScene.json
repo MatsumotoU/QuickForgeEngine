@@ -45,7 +45,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1208,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialCameraMove.lua",
@@ -113,7 +112,6 @@
                             "minVelocity": 2.0,
                             "moveSpeed": 4.0
                         },
-                        "handle": 1209,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -128,7 +126,6 @@
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.5
                         },
-                        "handle": 1210,
                         "intParams": {
                             "bullets": 3,
                             "shotNum": 20
@@ -193,7 +190,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1211,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunAnim.lua",
@@ -230,7 +226,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1212,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapGenerater.lua",
@@ -267,7 +262,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1213,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapRenderer.lua",
@@ -310,7 +304,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1214,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialManager.lua",
@@ -360,7 +353,6 @@
                             "borderX": 10.0,
                             "maxBorderX": 10.0
                         },
-                        "handle": 1215,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialDamageBorder.lua",
@@ -434,7 +426,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1216,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "gaugeBehavior.lua",
@@ -515,7 +506,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1217,
                         "intParams": {
                             "UIType": 0,
                             "shotType": 0,

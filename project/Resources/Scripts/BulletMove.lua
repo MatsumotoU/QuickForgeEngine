@@ -18,6 +18,11 @@ local randNum = math.random()
 end
 
 function Update()
+
+    transform.scale.x = 3.0
+    transform.scale.y = 3.0
+    transform.scale.z = 3.0
+
     local deltaTime = GetDeltaTime()
 if aliveTime > 0.0 then
     aliveTime = aliveTime - deltaTime

@@ -11,6 +11,18 @@
         {
             "tag1": "player",
             "tag2": "bullet"
+        },
+        {
+            "tag1": "slowArea",
+            "tag2": "bullet"
+        },
+        {
+            "tag1": "slowArea",
+            "tag2": "player"
+        },
+        {
+            "tag1": "slowArea",
+            "tag2": "Enemy"
         }
     ]
 }

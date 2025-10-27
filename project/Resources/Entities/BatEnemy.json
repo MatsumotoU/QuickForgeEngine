@@ -17,8 +17,11 @@
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {},
-                "handle": 13,
+                "floatParams": {
+                    "curveTime": 1.0,
+                    "moveTime": 1.0,
+                    "speed": 3.5
+                },
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BatEnemyMove.lua",
@@ -27,7 +30,6 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 14,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -40,7 +42,6 @@
                 "floatParams": {
                     "performingTime": 1.0
                 },
-                "handle": 28,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",

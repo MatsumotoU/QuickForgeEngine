@@ -24,7 +24,6 @@ public:
 		for (const LuaHandle& scriptHandle : scriptHandles_) {
 			nlohmann::json shJson;
 			shJson["scriptName"] = scriptHandle.scriptName_;
-			shJson["handle"] = scriptHandle.handle_;
 			shJson["intParams"] = scriptHandle.intParams_;
 			shJson["floatParams"] = scriptHandle.floatParams_;
 			shJson["boolParams"] = scriptHandle.boolParams_;
@@ -41,9 +40,6 @@ public:
 				LuaHandle sh;
 				if (shJson.contains("scriptName") && shJson["scriptName"].is_string()) {
 					sh.scriptName_ = shJson["scriptName"].get<std::string>();
-				}
-				if (shJson.contains("handle") && shJson["handle"].is_number_unsigned()) {
-					sh.handle_ = shJson["handle"].get<uint32_t>();
 				}
 				if (shJson.contains("intParams") && shJson["intParams"].is_object()) {
 					sh.intParams_ = shJson["intParams"].get<std::unordered_map<std::string, int>>();
