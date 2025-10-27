@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Entity/Component/ComponentData.h"
+#include "Core/Math/Vector/Vector2.h"
 
 class SpriteData final: public ComponentData {
 public:
@@ -19,6 +20,7 @@ public:
 	uint32_t layer;
 	float width;
 	float height;
+	Vector2 pivot;
 
 	bool isDraw;
 };

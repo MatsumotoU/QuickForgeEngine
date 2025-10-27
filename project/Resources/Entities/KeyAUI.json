@@ -1,0 +1,52 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "keyA.obj"
+    },
+    "SceneObjectData": {
+        "name": "KeyAUI",
+        "tag": "Untagged",
+        "uniqueId": 6904
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 325,
+                "intParams": {
+                    "UIType": 1,
+                    "shotType": 1,
+                    "targetType": 2
+                },
+                "priority": 0,
+                "scriptName": "TutorialUIbehavior.lua",
+                "stringParams": {
+                    "TutorialManagerJson": "TutorialManager"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            13.199999809265137,
+            0.0,
+            6.699999809265137
+        ]
+    }
+}

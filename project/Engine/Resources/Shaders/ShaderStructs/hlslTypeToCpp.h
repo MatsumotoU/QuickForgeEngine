@@ -85,15 +85,13 @@ struct PixcelOffset {
 #ifdef __cplusplus
 	PixcelOffset()
 		: screenResolution{ 1280.0f, 720.0f }
-		, pixcelSize(10.0f)
-		, padding(0.0f) {
+		, pixcelSize(0.001f)
+		, time(0.0f) {
 	}
 #endif
 	float32_t2 screenResolution;
 	float32_t pixcelSize;
-#ifdef __cplusplus
-	float32_t padding;
-#endif
+	float32_t time;
 };
 
 struct ParticleForGPU {

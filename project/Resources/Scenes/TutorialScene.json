@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6813934445381165,
-                    4.0133926404450904e-07,
+                    0.8347484469413757,
+                    -0.03774531930685043,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -1.0259224836772773e-05,
-                    20.730363845825195,
-                    -25.562475204467773
+                    0.8096874952316284,
+                    23.686037063598633,
+                    -21.44114875793457
                 ]
             }
         },
@@ -45,7 +45,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 269,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialCameraMove.lua",
@@ -67,7 +66,7 @@
                 "translate": [
                     7.400000095367432,
                     28.0,
-                    -17.0
+                    -15.5
                 ]
             }
         },
@@ -113,7 +112,6 @@
                             "minVelocity": 2.0,
                             "moveSpeed": 4.0
                         },
-                        "handle": 270,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -128,7 +126,6 @@
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.5
                         },
-                        "handle": 271,
                         "intParams": {
                             "bullets": 3,
                             "shotNum": 20
@@ -193,7 +190,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 272,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunAnim.lua",
@@ -230,7 +226,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 273,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapGenerater.lua",
@@ -267,7 +262,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 274,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapRenderer.lua",
@@ -310,7 +304,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 275,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialManager.lua",
@@ -360,7 +353,6 @@
                             "borderX": 10.0,
                             "maxBorderX": 10.0
                         },
-                        "handle": 276,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialDamageBorder.lua",
@@ -382,7 +374,7 @@
                     9.899999618530273
                 ],
                 "translate": [
-                    -6.0,
+                    -13.600000381469727,
                     0.0,
                     5.400000095367432
                 ]
@@ -398,6 +390,10 @@
                 "height": 80.0,
                 "isDraw": true,
                 "layer": 11,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
                 "textureName": "fream.png",
                 "width": 512.0
             },
@@ -430,7 +426,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 277,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "gaugeBehavior.lua",
@@ -442,6 +437,10 @@
                 "height": 75.0,
                 "isDraw": true,
                 "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
                 "textureName": "white1x1.png",
                 "width": 500.0
             },
@@ -491,7 +490,7 @@
                 ],
                 "translate": [
                     10.0,
-                    0.0,
+                    -1.100000023841858,
                     5.0
                 ]
             }
@@ -507,7 +506,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 278,
                         "intParams": {
                             "UIType": 0,
                             "shotType": 0,
@@ -525,6 +523,10 @@
                 "height": 80.0,
                 "isDraw": true,
                 "layer": 5,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
                 "textureName": "breakEnemy.png",
                 "width": 340.0
             },
@@ -547,36 +549,19 @@
             }
         },
         {
+            "ModelHandle": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "ground.obj"
+            },
             "SceneObjectData": {
-                "name": "breakNormalEnemyUI",
+                "name": "Ground",
                 "tag": "Untagged",
-                "uniqueId": 6843
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 279,
-                        "intParams": {
-                            "UIType": 0,
-                            "shotType": 0,
-                            "targetType": 4
-                        },
-                        "priority": 0,
-                        "scriptName": "TutorialUIbehavior.lua",
-                        "stringParams": {
-                            "TutorialManagerJson": "TutorialManager"
-                        }
-                    }
-                ]
-            },
-            "SpriteData": {
-                "height": 80.0,
-                "isDraw": true,
-                "layer": 3,
-                "textureName": "breakEnemy.png",
-                "width": 340.0
+                "uniqueId": 6845
             },
             "Transform": {
                 "rotate": [
@@ -590,48 +575,34 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    0.0,
+                    31.899999618530273,
+                    -4.699999809265137,
                     0.0
                 ]
             }
         },
         {
             "SceneObjectData": {
-                "name": "damegeBorderUI",
+                "name": "BreakEnemyEmitter",
                 "tag": "Untagged",
-                "uniqueId": 6844
+                "uniqueId": 6846
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 280,
-                        "intParams": {
-                            "UIType": 0,
-                            "shotType": 0,
-                            "targetType": 5
-                        },
+                        "intParams": {},
                         "priority": 0,
-                        "scriptName": "TutorialUIbehavior.lua",
-                        "stringParams": {
-                            "TutorialManagerJson": "TutorialManager"
-                        }
+                        "scriptName": "BreakEnemyEmitter.lua",
+                        "stringParams": {}
                     }
                 ]
-            },
-            "SpriteData": {
-                "height": 80.0,
-                "isDraw": true,
-                "layer": 4,
-                "textureName": "damegeBorderUI.png",
-                "width": 682.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -640,9 +611,159 @@
                     1.0
                 ],
                 "translate": [
-                    323.6000061035156,
-                    36.0,
+                    6.276935577392578,
+                    0.0,
+                    -2.5962390899658203
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "damageExplan.obj"
+            },
+            "SceneObjectData": {
+                "name": "DamageExplanUI",
+                "tag": "Untagged",
+                "uniqueId": 7548
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
                     0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    3.5613856315612793,
+                    -0.30000001192092896,
+                    -6.06992244720459
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "tombstoneExplan.obj"
+            },
+            "SceneObjectData": {
+                "name": "TombstoneExplanUI",
+                "tag": "Untagged",
+                "uniqueId": 6847
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "tombstoneExplaneBehavior.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -4.366053104400635,
+                    0.0,
+                    -6.221864700317383
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "EnemyHitEmitter",
+                "tag": "Untagged",
+                "uniqueId": 7551
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "EnemyHitEmitter.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    6.848334789276123,
+                    0.0,
+                    -2.8678138256073
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "EnemyChangeEmitter",
+                "tag": "Untagged",
+                "uniqueId": 7552
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "enemyChangeEmitter.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    7.190454959869385,
+                    0.0,
+                    4.407754898071289
                 ]
             }
         }

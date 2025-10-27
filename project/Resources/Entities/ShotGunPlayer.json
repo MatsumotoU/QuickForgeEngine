@@ -1,15 +1,15 @@
 {
     "AABBColliderData": {
         "aabb": [
-            2.5255227088928223,
+            2.5999975204467773,
             -0.49999988079071045,
             4.5,
-            3.5255227088928223,
+            3.451047897338867,
             0.5000001192092896,
             5.5
         ],
-        "colliderLayer": 127,
-        "eventColliderLayer": 127,
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": false,
         "isTrigger": false
@@ -20,8 +20,8 @@
             0.0,
             0.0
         ],
-        "friction": 4.5,
-        "gravityStrength": 10.0,
+        "friction": 4.25,
+        "gravityStrength": 0.9800000190734863,
         "isGravity": true,
         "mass": 1.0,
         "velocity": [
@@ -50,10 +50,9 @@
                 "boolParams": {},
                 "floatParams": {
                     "backSpeed": 8.0,
-                    "minVelocity": 4.0,
-                    "moveSpeed": 4.0
+                    "minVelocity": 0.5,
+                    "moveSpeed": 3.75
                 },
-                "handle": 2410,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -62,28 +61,8 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "diffusionRate": 0.125,
-                    "knockBack": 10.0,
-                    "knockBackPower": 23.5,
-                    "maxShotInterval": 0.3499999940395355,
-                    "reloadInterval": 0.0,
-                    "shotInterval": 10.0,
-                    "targetReloadInterval": 0.3499999940395355
+                    "maxDamageInterval": 2.0
                 },
-                "handle": 2411,
-                "intParams": {
-                    "bullets": 4,
-                    "maxBullets": 4,
-                    "shotNum": 20
-                },
-                "priority": 0,
-                "scriptName": "BulletShot.lua",
-                "stringParams": {}
-            },
-            {
-                "boolParams": {},
-                "floatParams": {},
-                "handle": 2412,
                 "intParams": {
                     "hitPoint": 5
                 },
@@ -92,6 +71,23 @@
                 "stringParams": {
                     "damageTag": "Enemy"
                 }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "diffusionRate": 0.125,
+                    "knockBackPower": 27.5,
+                    "maxShotInterval": 0.20000000298023224,
+                    "targetReloadInterval": 0.44999998807907104
+                },
+                "intParams": {
+                    "bullets": 4,
+                    "maxBullets": 4,
+                    "shotNum": 15
+                },
+                "priority": 0,
+                "scriptName": "BulletShot.lua",
+                "stringParams": {}
             }
         ]
     },

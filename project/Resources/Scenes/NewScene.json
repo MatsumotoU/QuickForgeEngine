@@ -13,9 +13,9 @@
             },
             "Transform": {
                 "rotate": [
-                    0.10000000149011612,
-                    0.0,
-                    0.0
+                    1.2038904428482056,
+                    -0.1350005567073822,
+                    -0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    1.5,
-                    -10.0
+                    0.25646552443504333,
+                    4.958316326141357,
+                    -1.8881819248199463
                 ]
             }
         },
@@ -59,21 +59,6 @@
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    -0.5,
-                    -0.5,
-                    -0.5,
-                    0.5,
-                    0.5,
-                    0.5
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false
-            },
             "ModelHandle": {
                 "color": [
                     1.0,
@@ -81,72 +66,21 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "circle.obj"
             },
             "SceneObjectData": {
-                "name": "B",
-                "tag": "b",
-                "uniqueId": 3
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "AABBColliderData": {
-                "aabb": [
-                    1.5255541801452637,
-                    -0.5,
-                    -0.5,
-                    2.5255541801452637,
-                    0.5,
-                    0.5
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "A",
-                "tag": "a",
-                "uniqueId": 4
+                "name": "CircleParticle",
+                "tag": "Untagged",
+                "uniqueId": 6851
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {
-                            "speed": 1.0
-                        },
-                        "handle": 0,
+                        "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "Move.lua",
+                        "scriptName": "circleParticle.lua",
                         "stringParams": {}
                     }
                 ]
@@ -154,16 +88,16 @@
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
+                    0.10000000149011612,
                     1.0,
-                    1.0,
-                    1.0
+                    0.30000001192092896
                 ],
                 "translate": [
-                    2.0255541801452637,
+                    0.0,
                     0.0,
                     0.0
                 ]

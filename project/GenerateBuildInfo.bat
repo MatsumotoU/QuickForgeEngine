@@ -1,5 +1,5 @@
 @echo off
-REM Gitî•ñ‚ğæ“¾‚µ‚ÄBuildInfo.h‚ğ¶¬
+REM Gitï¿½ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½ï¿½BuildInfo.hï¿½ğ¶ï¿½
 for /f %%i in ('git rev-parse --short HEAD') do set GIT_COMMIT=%%i
 for /f %%i in ('git rev-parse --abbrev-ref HEAD') do set GIT_BRANCH=%%i
 

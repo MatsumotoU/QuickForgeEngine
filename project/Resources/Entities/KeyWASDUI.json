@@ -1,0 +1,52 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "keyWASD.obj"
+    },
+    "SceneObjectData": {
+        "name": "KeyWASDUI",
+        "tag": "Untagged",
+        "uniqueId": 6849
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 89,
+                "intParams": {
+                    "UIType": 0,
+                    "shotType": 0,
+                    "targetType": 1
+                },
+                "priority": 0,
+                "scriptName": "TutorialUIbehavior.lua",
+                "stringParams": {
+                    "TutorialManagerJson": "TutorialManager"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            3.799999952316284,
+            -1.2999999523162842,
+            6.699999809265137
+        ]
+    }
+}

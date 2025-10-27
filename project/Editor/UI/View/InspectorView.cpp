@@ -115,6 +115,7 @@ void InspectorView::Draw() {
 			ImGui::DragInt("Layer##Drag", reinterpret_cast<int*>(&spriteData.layer), 1, 0);
 			ImGui::DragFloat("Width", &spriteData.width, 1.0f, 1.0f);
 			ImGui::DragFloat("Height", &spriteData.height, 1.0f, 1.0f);
+			ImGui::DragFloat2("Pivot", &spriteData.pivot.x, 0.01f);
 			Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(spriteData.materialBufferHandle);
 			ImGui::ColorEdit4("Color", &material->color.x);
 		}

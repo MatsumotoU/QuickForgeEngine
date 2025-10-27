@@ -3,6 +3,26 @@
         {
             "tag1": "bullet",
             "tag2": "bullet"
+        },
+        {
+            "tag1": "Enemy",
+            "tag2": "Enemy"
+        },
+        {
+            "tag1": "player",
+            "tag2": "bullet"
+        },
+        {
+            "tag1": "slowArea",
+            "tag2": "bullet"
+        },
+        {
+            "tag1": "slowArea",
+            "tag2": "player"
+        },
+        {
+            "tag1": "slowArea",
+            "tag2": "Enemy"
         }
     ]
 }

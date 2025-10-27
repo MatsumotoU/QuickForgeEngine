@@ -21,7 +21,7 @@ local playerID = 0
 
 -- 描画する線
 local linePosX = 0.0
-local offsetX = 10.0
+local offsetX = 15.0
 
 -- 移動した
 local moveXIndex = 0

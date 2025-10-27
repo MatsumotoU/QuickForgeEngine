@@ -59,10 +59,16 @@ local enemiesIDList = {}
 local lastCameraX = 0.0      -- 前回のプレイヤー位置
 local movedDistance = 0.0    -- 移動距離を計算
 local spawnDistance = 5.0    -- 敵を生成する距離
-local offsetX = 8.0 -- カメラの画面端までの位置
+local offsetX = 15.0 -- カメラの画面端までの位置
+
+
 
 -- 生成するステージの番号
 stageNumber = 1
+
+
+
+
 
 -- リセットに関する名前
 transitionObjName = "SceneTransitionManager"
@@ -81,6 +87,8 @@ local isLoadMap = false
     初期化処理
 --]]
 function Init()
+
+    stageNumber = 1
 
     -- マップチップに対応する敵のテーブルを生成
     CreateEnemyNumberTable()
@@ -102,7 +110,7 @@ function Init()
     -- 追跡するidを取得
     targetId = GetEntity(cameraName)
     -- カメラの画面端までの位置
-    offsetX = 8.0
+    offsetX = 15.0
     -- カメラの追跡する位置を設定
     local targetTransform = GetTransform(targetId)
     lastCameraX = targetTransform.translate.x + offsetX
@@ -133,7 +141,7 @@ function Init()
     tmpTransform.translate.y = 0.0
     tmpTransform.translate.x = 15.0
     tmpTransform.translate.z = 6.5
-    CreateEntity(ratEnemyJson,tmpTransform)
+    CreateEntity(pillBugEnemyJson,tmpTransform)
     -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
 
 end
@@ -377,7 +385,7 @@ end
 function StageOneRegisterEnemy()
     -- 最大の敵の数を初期化
     -- 幽霊の敵
-    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
+    --table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
     table.insert(maxEnemysCounts,{name = longGhostEnemyJson,maxCount = 3})
     -- 有機物の敵
     table.insert(maxEnemysCounts,{name = tyoutinEnemyJson,maxCount = 1})
@@ -387,7 +395,7 @@ function StageOneRegisterEnemy()
     
     -- 現在の敵の数を初期化
     -- 幽霊の敵
-    table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
+    --table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
     table.insert(currentEnemysCounts,{name = longGhostEnemyJson,difficulty = 1,count = 0})
     -- 有機物の敵
     table.insert(currentEnemysCounts,{name = tyoutinEnemyJson,difficulty = 1,count = 0})

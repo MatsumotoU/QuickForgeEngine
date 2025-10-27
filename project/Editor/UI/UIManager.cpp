@@ -9,6 +9,7 @@
 #include "View/GameView.h"
 #include "View/EngineProfileView.h"
 #include "View/ScriptLoggerView.h"
+#include "View/SceneProfileView.h"
 
 #include "File/CreateNewScene.h"
 #include "File/SaveScene.h"
@@ -34,6 +35,7 @@ void UIManager::Initialize() {
 	}
 
 	// ViewUIの初期化
+	viewUIs_.push_back(std::make_unique<SceneProfileView>());
 	viewUIs_.push_back(std::make_unique<EngineProfileView>());
 	viewUIs_.push_back(std::make_unique<ScriptLoggerView>());
 	viewUIs_.push_back(std::make_unique<AssetsView>());

@@ -2,7 +2,7 @@
 #pragma comment(lib, "Xinput.lib")
 
 #ifdef _DEBUG
-#include "Utility/MyDebugLog.h"
+#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 #include <assert.h>
@@ -13,6 +13,8 @@ XInputController::XInputController() {
 }
 
 void XInputController::Update() {
+    prevGamepadStates = gamepadStates;
+
 	for (DWORD i = 0; i < XUSER_MAX_COUNT; i++) {
 		DWORD dwResult = XInputGetState(i, &gamepadStates[i].state);
 
@@ -58,6 +60,30 @@ bool XInputController::GetPressButton(WORD type, uint32_t padId) {
     }
 
     if (gamepadStates[padId].state.Gamepad.wButtons == type) {
+        return true;
+    }
+    return false;
+}
+
+bool XInputController::GetTriggerButton(WORD type, uint32_t padId) {
+	if (padId >= 4) {
+		assert(false && padId >= 4);
+	}
+
+	if ((prevGamepadStates[padId].state.Gamepad.wButtons & type) == 0 &&
+		(gamepadStates[padId].state.Gamepad.wButtons & type) != 0) {
+		return true;
+	}
+	return false;
+}
+
+bool XInputController::GetReleaseButton(WORD type, uint32_t padId) {
+    if (padId >= 4) {
+        assert(false && padId >= 4);
+    }
+
+    if ((prevGamepadStates[padId].state.Gamepad.wButtons & type) != 0 &&
+        (gamepadStates[padId].state.Gamepad.wButtons & type) == 0) {
         return true;
     }
     return false;

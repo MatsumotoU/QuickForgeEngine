@@ -1,4 +1,19 @@
 {
+    "AABBColliderData": {
+        "aabb": [
+            4.077000141143799,
+            -1.7000000476837158,
+            4.0,
+            4.2769999504089355,
+            1.7000000476837158,
+            4.199999809265137
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false
+    },
     "ModelHandle": {
         "color": [
             1.0,
@@ -18,7 +33,6 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 889,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EnemyBulletMove.lua",
@@ -38,9 +52,9 @@
             1.0
         ],
         "translate": [
-            1.0765202045440674,
+            4.177000045776367,
             0.0,
-            0.0
+            4.099999904632568
         ]
     }
 }

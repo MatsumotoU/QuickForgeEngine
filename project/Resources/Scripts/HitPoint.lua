@@ -1,6 +1,11 @@
 hitPoint = 10
+max_hitPoint = 5
+do_reload = false
+korehaHidoi = false
+
 damageTag = "enemy"
 healTag = "item"
+
 
 borderName = "DamageBorder"
 local borderId = 0
@@ -17,6 +22,9 @@ sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
 local transitionID = 0
 
+-- 音声
+local damage = QFE.Audio.LoadSound("playerDamage.mp3")
+
 function Init()
     time = 0.0
     damageInterval = 0.0
@@ -25,9 +33,16 @@ function Init()
 
     -- 生成したマップを取得
     transitionID = GetEntity(transitionObjName)
+    pre_hitPoint = max_hitPoint
 end
 
 function Update()
+
+    do_reload = false
+    if korehaHidoi == true then
+        do_reload = true
+        korehaHidoi = false
+    end
 
     -- リセット処理
     local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
@@ -42,11 +57,12 @@ function Update()
 
     -- ボーダーダメージ
     if transform.translate.x < GetTransform(borderId).translate.x then
-        hitPoint = hitPoint - 1
-        isDamaged = true
-        force.velocity.x = force.velocity.x + 20
-        force.velocity.y = force.velocity.y + 10
-        damageInterval = maxDamageInterval
+        --hitPoint = hitPoint - 1
+        --do_reload = true
+        --isDamaged = true
+        force.velocity.x = force.velocity.x + 92.5
+        --force.velocity.y = force.velocity.y + 20
+        --damageInterval = maxDamageInterval
         CreateEntity("ExplotionParticleEmitter.json",transform)
     end
 
@@ -63,9 +79,7 @@ function Update()
         end
     end
 
-    -- if maxPosX < transform.translate.x then
-    --     maxPosX = transform.translate.x
-    -- end    
+    
 end
 
 function OnCollisionStay(id,obj)
@@ -80,12 +94,18 @@ function OnCollisionStay(id,obj)
         end
         damageInterval = maxDamageInterval  
         hitPoint = hitPoint - 1
+        do_reload = true
+        korehaHidoi = true
         isDamaged = true
         CreateEntity("ExplotionParticleEmitter.json",transform)
+        QFE.Audio.PlaySound(damage,false,0.5)
     end
 end
 
 function Reset()
-    hitPoint = 5
+    hitPoint = max_hitPoint 
+    pre_hitPoint = hitPoint  
     transform.translate.x = 3.0
+    do_reload = false
+
 end

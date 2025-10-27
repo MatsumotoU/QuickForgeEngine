@@ -17,8 +17,9 @@
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {},
-                "handle": 15,
+                "floatParams": {
+                    "speed": 1.0
+                },
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "EyeEnemyMove.lua",
@@ -27,8 +28,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 16,
-                "intParams": {},
+                "intParams": {
+                    "hp": 7,
+                    "maxHp": 7
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {
@@ -40,7 +43,6 @@
                 "floatParams": {
                     "performingTime": 1.0
                 },
-                "handle": 27,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",

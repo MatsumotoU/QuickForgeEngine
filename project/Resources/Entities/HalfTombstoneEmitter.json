@@ -1,0 +1,40 @@
+{
+    "SceneObjectData": {
+        "name": "HalfTombstoneEmitter",
+        "tag": "Untagged",
+        "uniqueId": 7398
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "maxNum": 3
+                },
+                "priority": 0,
+                "scriptName": "tombstoneEmitter.lua",
+                "stringParams": {
+                    "particleObjName": "TombstoneParticle.json"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

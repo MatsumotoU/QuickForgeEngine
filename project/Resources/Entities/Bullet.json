@@ -1,27 +1,43 @@
 {
     "AABBColliderData": {
         "aabb": [
-            1.394001841545105,
+            1.4500000476837158,
             -1.25,
             -0.15000000596046448,
-            1.6944698095321655,
+            1.6384716033935547,
             1.25,
             0.15000000596046448
         ],
         "colliderLayer": 255,
         "eventColliderLayer": 255,
         "isDraw": true,
-        "isStatic": false,
+        "isStatic": true,
         "isTrigger": false
+    },
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 20.0,
+        "isGravity": false,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
     },
     "ModelHandle": {
         "color": [
-            1.0,
-            1.0,
-            1.0,
+            0.7882353067398071,
+            0.6352941393852234,
+            0.1882352977991104,
             1.0
         ],
-        "modelName": "anchor.obj"
+        "modelName": "playerBullet.obj"
     },
     "SceneObjectData": {
         "name": "Bullet",
@@ -33,12 +49,11 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "aliveTime": 0.75,
-                    "maxSpeed": 20.0,
-                    "minSpeed": 15.0,
+                    "aliveTime": 0.699999988079071,
+                    "maxSpeed": 13.0,
+                    "minSpeed": 8.0,
                     "moveSpeed": 0.5
                 },
-                "handle": 140,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BulletMove.lua",

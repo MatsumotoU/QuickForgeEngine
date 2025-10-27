@@ -18,10 +18,9 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "borderSpeed": 0.25,
+                    "borderSpeed": 0.30000001192092896,
                     "maxBorderX": 12.0
                 },
-                "handle": 717,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DamageBorder.lua",
@@ -38,7 +37,7 @@
         "scale": [
             1.0,
             1.0,
-            11.0
+            38.900001525878906
         ],
         "translate": [
             0.0,
