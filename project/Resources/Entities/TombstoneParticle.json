@@ -1,30 +1,43 @@
 {
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 1.0,
+        "isGravity": true,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
     "ModelHandle": {
         "color": [
             1.0,
-            0.0,
-            0.0,
+            1.0,
+            1.0,
             1.0
         ],
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "DamageBorder",
-        "tag": "border",
-        "uniqueId": 5725
+        "name": "TombstoneParticle",
+        "tag": "Untagged",
+        "uniqueId": 6848
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {
-                    "borderSpeed": 0.10000000149011612,
-                    "maxBorderX": 12.0
-                },
-                "handle": 3053,
+                "floatParams": {},
+                "handle": 1371,
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "DamageBorder.lua",
+                "scriptName": "tombstoneParticle.lua",
                 "stringParams": {}
             }
         ]
@@ -38,12 +51,12 @@
         "scale": [
             1.0,
             1.0,
-            38.900001525878906
+            1.0
         ],
         "translate": [
             0.0,
             0.0,
-            5.0
+            0.0
         ]
     }
 }

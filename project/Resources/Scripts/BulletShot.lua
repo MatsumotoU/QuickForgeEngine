@@ -22,6 +22,10 @@ isReload = false
 -- 打ったかを取得
 isShot = false
 
+hitPointLuaName = "HitPoint.lua"
+do_reloadName = "do_reload"
+
+
 
 function Init()
 shotInterval = 0.0
@@ -29,6 +33,15 @@ isKnockback = false
 end
 
 function Update()
+
+    -- ダメージを受けたらリロード
+    local thisId = this.GetEntityId()
+    local do_reload = GetEntityScriptGlobal(thisId,hitPointLuaName,do_reloadName)
+
+    if do_reload == true then
+        bullets = bullets + 1
+        
+    end
 
     isReload = false
     isShot = false
@@ -49,7 +62,12 @@ function Update()
         end
 
         isReload = true
-        reloadInterval = reloadInterval + deltatime
+        if bullets == 0 then
+            reloadInterval = reloadInterval + deltatime*2.0
+        else
+            reloadInterval = reloadInterval + deltatime
+        end
+
         if reloadInterval >= targetReloadInterval then
         reloadInterval = 0.0
         bullets = bullets + 1
@@ -57,9 +75,10 @@ function Update()
             RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Reroad")
         end        
 
-            if bullets >= maxBullets then
-                bullets = maxBullets
-            end
+            --下部へ移動
+            -- if bullets >= maxBullets then
+            --     bullets = maxBullets
+            -- end
         end
 
     else
@@ -107,6 +126,16 @@ function Update()
             CreateEntity(bulletName,tempTransform)
         end
 
+        -- 薬莢の演出
+        local cartridgeTransform = Transform.new()
+        cartridgeTransform.translate = transform.translate
+        cartridgeTransform.translate.y = cartridgeTransform.translate.y + 1.0
+        cartridgeTransform.scale.x = 0.2
+        cartridgeTransform.scale.y = 0.2
+        cartridgeTransform.scale.z = 0.4
+        cartridgeTransform.rotate.y = transform.rotate.y
+        CreateEntity("CartridgeParticle.json",cartridgeTransform)
+
         force.velocity.x = -math.sin(transform.rotate.y) * knockBackPower
         force.velocity.z = -math.cos(transform.rotate.y) * knockBackPower
 
@@ -116,6 +145,11 @@ function Update()
         transform.rotate.x = -1.0
         RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
     end
+
+    if bullets >= maxBullets then
+        bullets = maxBullets
+    end
+
 end
 
 function ReloadOne()

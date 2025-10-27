@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.48616018891334534,
-                    -0.6925152540206909,
+                    0.4861597716808319,
+                    -0.6925151944160461,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.06483682990074158,
-                    0.053665462881326675,
-                    -0.07815682142972946
+                    1563.3837890625,
+                    1294.0118408203125,
+                    -1884.5634765625
                 ]
             }
         },
@@ -77,15 +77,15 @@
         {
             "AABBColliderData": {
                 "aabb": [
-                    2.5255227088928223,
+                    2.5999975204467773,
                     -0.49999988079071045,
                     4.5,
-                    3.5255227088928223,
+                    3.451047897338867,
                     0.5000001192092896,
                     5.5
                 ],
-                "colliderLayer": 127,
-                "eventColliderLayer": 127,
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false
@@ -96,7 +96,7 @@
                     0.0,
                     0.0
                 ],
-                "friction": 4.5,
+                "friction": 4.25,
                 "gravityStrength": 10.0,
                 "isGravity": true,
                 "mass": 1.0,
@@ -126,8 +126,8 @@
                         "boolParams": {},
                         "floatParams": {
                             "backSpeed": 8.0,
-                            "minVelocity": 4.0,
-                            "moveSpeed": 4.0
+                            "minVelocity": 0.5,
+                            "moveSpeed": 3.75
                         },
                         "intParams": {},
                         "priority": 0,
@@ -137,26 +137,8 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "diffusionRate": 0.125,
-                            "knockBack": 10.0,
-                            "knockBackPower": 23.5,
-                            "maxShotInterval": 0.3499999940395355,
-                            "reloadInterval": 0.0,
-                            "shotInterval": 10.0,
-                            "targetReloadInterval": 0.3499999940395355
+                            "maxDamageInterval": 2.0
                         },
-                        "intParams": {
-                            "bullets": 4,
-                            "maxBullets": 4,
-                            "shotNum": 20
-                        },
-                        "priority": 0,
-                        "scriptName": "BulletShot.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
                         "intParams": {
                             "hitPoint": 5
                         },
@@ -165,6 +147,24 @@
                         "stringParams": {
                             "damageTag": "Enemy"
                         }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "diffusionRate": 0.125,
+                            "knockBackPower": 27.5,
+                            "maxShotInterval": 0.20000000298023224,
+                            "targetReloadInterval": 0.550000011920929
+                        },
+                        "handle": 3,
+                        "intParams": {
+                            "bullets": 4,
+                            "maxBullets": 4,
+                            "shotNum": 20
+                        },
+                        "priority": 0,
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
                     }
                 ]
             },
@@ -421,7 +421,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "borderSpeed": 0.25,
+                            "borderSpeed": 0.10000000149011612,
                             "maxBorderX": 12.0
                         },
                         "intParams": {},
@@ -768,10 +768,9 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "maxSpeed": 5.0,
-                            "moveAcceleraion": 0.15000000596046448,
-                            "speed": 2.0,
-                            "targetRate": 1.0
+                            "delta_xPos": 7.0,
+                            "moveTime": 8.0,
+                            "stopTime": 5.0
                         },
                         "intParams": {},
                         "priority": 0,
@@ -922,6 +921,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
+                        "handle": 13,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotButtonUi.lua",
@@ -968,7 +968,13 @@
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {},
+                        "floatParams": {
+                            "aliveTime": 0.75,
+                            "maxSpeed": 20.0,
+                            "minSpeed": 15.0,
+                            "moveSpeed": 0.5
+                        },
+                        "handle": 14,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MoveButtonUI.lua",

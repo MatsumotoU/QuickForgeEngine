@@ -48,6 +48,13 @@ breakEnemyUI = "breakEnemyUI.json"
 breakNormalEnemyUI = "breakNormalEnemyUI.json"
 damegeBorderUIName = "damegeBorderUI.json"
 
+NotGhostEnemyUIName = "NotGhostEnemyUI.json"
+TombstoneExplanUIName = "TombstoneExplanUI.json"
+
+keyWASDUIName = "KeyWASDUI.json"
+keyAUIName = "KeyAUI.json"
+keySpaceUIName = "KeySpaceUI.json"
+
 -- 最終ラインの描画用
 endLineName = "EndLine"
 local endLineID = 0
@@ -71,6 +78,10 @@ function Init()
     tmpTransform.translate.x = 480.0
     tmpTransform.translate.y = 36.0
     CreateEntity(moveUIName,tmpTransform)
+    tmpTransform.translate.x = 5
+    tmpTransform.translate.y = -1.0
+    tmpTransform.translate.z = 7.5
+    CreateEntity(keyWASDUIName,tmpTransform)
     DebugLog("CreateMoveUI")
     -- 最終ラインの描画用
     endLineID = GetEntity(endLineName)
@@ -153,6 +164,10 @@ function EventOneScene()
         tmpTransform.translate.x = 400.0
         tmpTransform.translate.y = 36.0
         CreateEntity(shotBulletUIName,tmpTransform)
+        tmpTransform.translate.x = 15.0
+        tmpTransform.translate.y = -1.0
+        tmpTransform.translate.z = 7.5
+        CreateEntity(keySpaceUIName,tmpTransform)
     end
 end
 
@@ -182,6 +197,10 @@ function EventTwoScene()
             tmpTransform.translate.x = 412.0
             tmpTransform.translate.y = 36.0
             CreateEntity(reloadUIName,tmpTransform)
+            tmpTransform.translate.x = 15.0
+            tmpTransform.translate.y = -1.0
+            tmpTransform.translate.z = 7.5
+            CreateEntity(keyAUIName,tmpTransform)
         end
 
     elseif shotType == 1 then
@@ -243,6 +262,11 @@ function EventThreeScene()
         tmpTransform.translate.x = 480.0
         tmpTransform.translate.y = 36.0
         CreateEntity(breakNormalEnemyUI,tmpTransform)
+        tmpTransform.translate.x = 32.0
+        tmpTransform.translate.y = -1.0
+        tmpTransform.translate.z = 7.5
+        tmpTransform.scale.x = 2.0
+        CreateEntity(NotGhostEnemyUIName,tmpTransform)
     end
 end
 
@@ -277,6 +301,10 @@ function EventFourScene()
         tmpTransform.translate.x = 323.0
         tmpTransform.translate.y = 36.0
         CreateEntity(damegeBorderUIName,tmpTransform)
+        tmpTransform.translate.x = 32.0
+        tmpTransform.translate.y = -1.0
+        tmpTransform.translate.z = 7.5
+        CreateEntity(TombstoneExplanUIName,tmpTransform)
     end
 end
 
@@ -293,9 +321,9 @@ function EventFiveScene()
 
     local borderTransform = GetTransform(damageBorderId)
 
-    borderTransform.translate.x = borderTransform.translate.x + 10.0 * deltatime
+    borderTransform.translate.x = borderTransform.translate.x + 5.0 * deltatime
 
-    if borderTransform.translate.x >= endLinePosX + 10.0 then
+    if borderTransform.translate.x >= endLinePosX then
         LoadScene("TitleScene")
     end
 end

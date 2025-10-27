@@ -46,22 +46,33 @@ function Update()
     targetTransform = GetTransform(targetId)
     local targetX = targetTransform.translate.x
 
-    --DebugLog("Id"..targetId)
-    --DebugLog("cameraLeftBoderX"..targetX)
-    --DebugLog("enemyPosX"..transform.translate.x)
-
-    -- 画面左端を出たら生存フラグをfalse
-    if transform.translate.x <= targetX then
-        DebugLog("EnemyIsAliveFalse")
-        isAlive = false
-
-        -- 通常の敵だった場合、通常の幽霊を生成
-        if enemyType == 0 then
-             local temp = Transform.new()
-            temp.translate.x = transform.translate.x + 1.0
-            temp.translate.y = transform.translate.y
-            temp.translate.z = transform.translate.z
-            CreateEntity(normalEnemyName,temp)
+    if enemyType == 0 then
+        -- 画面左端を出たら生存フラグをfalse
+        if transform.translate.x <= targetX then
+            DebugLog("EnemyIsAliveFalse")
+            isAlive = false
+            -- 通常の敵だった場合、通常の幽霊を生成
+            if enemyType == 0 then
+                local temp = Transform.new()
+                temp.translate.x = transform.translate.x + 1.0
+                temp.translate.y = transform.translate.y
+                temp.translate.z = transform.translate.z
+                CreateEntity(normalEnemyName,temp)
+            end
+        end
+    else
+        -- 画面左端を出たら生存フラグをfalse
+        if transform.translate.x <= targetX - 4.0 then
+            DebugLog("EnemyIsAliveFalse")
+            isAlive = false
+            -- 通常の敵だった場合、通常の幽霊を生成
+            if enemyType == 0 then
+                local temp = Transform.new()
+                temp.translate.x = transform.translate.x + 1.0
+                temp.translate.y = transform.translate.y
+                temp.translate.z = transform.translate.z
+                CreateEntity(normalEnemyName,temp)
+            end
         end
     end
 

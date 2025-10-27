@@ -72,6 +72,7 @@ function OnCollisionStay(id,obj)
     -- 弾を打たれた時
     if obj.tag == "bullet" then
         isBreak = true
+        CreateEntity("TombstoneEmitter.json",transform)
     end
 
     -- ノックバック攻撃を食らった時
