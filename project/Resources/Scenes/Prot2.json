@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.4861597716808319,
-                    -0.6925151944160461,
+                    0.6938473582267761,
+                    0.09839383512735367,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    1563.3837890625,
-                    1294.0118408203125,
-                    -1884.5634765625
+                    0.6155482530593872,
+                    19.401411056518555,
+                    -16.747346878051758
                 ]
             }
         },
@@ -196,7 +196,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "space": 128.0
+                            "space": 90.0
                         },
                         "intParams": {
                             "DIK_A": 30,
@@ -213,6 +213,7 @@
                         "stringParams": {
                             "objectName": "ShotGunPlayer",
                             "scriptName": "BulletShot.lua",
+                            "uiHideObjName": "NShotGunSallUI.json",
                             "uiObjName": "ShotGunSallUI.json",
                             "varName": "bullets"
                         }
@@ -231,8 +232,8 @@
                     1.0
                 ],
                 "translate": [
-                    700.0,
-                    560.0,
+                    792.7999877929688,
+                    626.2999877929688,
                     0.0
                 ]
             }
@@ -379,6 +380,7 @@
                         "stringParams": {
                             "objectName": "ShotGunPlayer",
                             "scriptName": "HitPoint.lua",
+                            "uiHideObjName": "NHpBarUI.json",
                             "uiObjName": "HpBarUI.json",
                             "varName": "hitPoint"
                         }
@@ -397,8 +399,8 @@
                     1.0
                 ],
                 "translate": [
-                    32.0,
-                    560.0,
+                    104.9000015258789,
+                    626.2999877929688,
                     -5.0
                 ]
             }
@@ -752,76 +754,6 @@
         },
         {
             "SceneObjectData": {
-                "name": "UpUiCover",
-                "tag": "Untagged",
-                "uniqueId": 2848
-            },
-            "SpriteData": {
-                "height": 100.0,
-                "isDraw": true,
-                "layer": 0,
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "textureName": "white1x1.png",
-                "width": 1280.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "UnderUiCover",
-                "tag": "Untagged",
-                "uniqueId": 3634
-            },
-            "SpriteData": {
-                "height": 100.0,
-                "isDraw": true,
-                "layer": 0,
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "textureName": "white1x1.png",
-                "width": 1280.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    620.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
                 "name": "ShotUi",
                 "tag": "Untagged",
                 "uniqueId": 4
@@ -839,7 +771,7 @@
                 ]
             },
             "SpriteData": {
-                "height": 90.0,
+                "height": 75.0,
                 "isDraw": true,
                 "layer": 1,
                 "pivot": [
@@ -847,7 +779,7 @@
                     0.0
                 ],
                 "textureName": "ShotUi.png",
-                "width": 360.0
+                "width": 270.0
             },
             "Transform": {
                 "rotate": [
@@ -862,7 +794,7 @@
                 ],
                 "translate": [
                     0.0,
-                    433.79998779296875,
+                    118.30000305175781,
                     0.0
                 ]
             }
@@ -891,7 +823,7 @@
                 ]
             },
             "SpriteData": {
-                "height": 90.0,
+                "height": 75.0,
                 "isDraw": true,
                 "layer": 0,
                 "pivot": [
@@ -899,7 +831,7 @@
                     0.0
                 ],
                 "textureName": "MoveUi.png",
-                "width": 360.0
+                "width": 270.0
             },
             "Transform": {
                 "rotate": [
@@ -914,8 +846,90 @@
                 ],
                 "translate": [
                     0.0,
-                    499.8999938964844,
+                    173.60000610351563,
                     0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "MapBar",
+                "tag": "Untagged",
+                "uniqueId": 5746
+            },
+            "SpriteData": {
+                "height": 181.0,
+                "isDraw": true,
+                "layer": 10,
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "textureName": "MapBar.png",
+                "width": 1177.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    640.0,
+                    75.30000305175781,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "MapPlayer",
+                "tag": "Untagged",
+                "uniqueId": 7032
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "MapPlayerUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 128.0,
+                "isDraw": true,
+                "layer": 15,
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "textureName": "MapPlayer.png",
+                "width": 128.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    97.35211181640625,
+                    70.30982971191406,
+                    -0.10000000149011612
                 ]
             }
         }

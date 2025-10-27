@@ -1,34 +1,29 @@
 {
-    "ModelHandle": {
-        "color": [
-            1.0,
-            1.0,
-            1.0,
-            1.0
-        ],
-        "modelName": "tombstoneExplan.obj"
-    },
     "SceneObjectData": {
-        "name": "TombstoneExplanUI",
+        "name": "HalfTombstoneEmitter",
         "tag": "Untagged",
-        "uniqueId": 6847
+        "uniqueId": 7398
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {},
-                "intParams": {},
+                "intParams": {
+                    "maxNum": 3
+                },
                 "priority": 0,
-                "scriptName": "tombstoneExplaneBehavior.lua",
-                "stringParams": {}
+                "scriptName": "tombstoneEmitter.lua",
+                "stringParams": {
+                    "particleObjName": "TombstoneParticle.json"
+                }
             }
         ]
     },
     "Transform": {
         "rotate": [
             0.0,
-            -0.0,
+            0.0,
             0.0
         ],
         "scale": [
@@ -39,7 +34,7 @@
         "translate": [
             0.0,
             0.0,
-            -3.844661235809326
+            0.0
         ]
     }
 }

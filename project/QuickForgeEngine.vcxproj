@@ -339,6 +339,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\InputInterface.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\KeyConfig.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Input\XInput\XInputController.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Physics\Force.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Physics\PhysicsManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Renderer\SpriteRenderer.cpp" />
@@ -522,6 +523,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Collider\ColliderManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\InputInterface.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\KeyConfig.h" />
+    <ClInclude Include="Engine\Platform\Windows\Input\XInput\XInputController.h" />
     <ClInclude Include="Engine\Platform\Windows\Physics\Force.h" />
     <ClInclude Include="Engine\Platform\Windows\Physics\PhysicsManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Renderer\SpriteRenderer.h" />

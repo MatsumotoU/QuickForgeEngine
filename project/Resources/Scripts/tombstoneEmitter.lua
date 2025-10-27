@@ -1,7 +1,7 @@
 particleObjName = "TombstoneParticle.json"
 
 -- 生成する数
-local maxNum = 5
+maxNum = 5
 
 --[[
     初期化処理

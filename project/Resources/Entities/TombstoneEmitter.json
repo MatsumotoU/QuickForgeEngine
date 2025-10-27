@@ -9,7 +9,6 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 1370,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "tombstoneEmitter.lua",

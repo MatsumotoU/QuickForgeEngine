@@ -18,6 +18,13 @@ slowObjName = "obj"
 -- 弾薬の増える数
 dropBullets = 2
 
+playerName = "ShotGunPlayer"
+
+local cameraID = 0
+
+local timer = 0.0
+local maxTime = 1.0
+
 --[[
     初期化処理
 --]]
@@ -25,14 +32,30 @@ function Init()
     isBreak = false
     nockbackCount = 0
     force.velocity.y = -5.0
+    -- カメラのIDを取得
+    cameraID = GetEntity("Camera")
 end
 
 --[[
     更新処理
 --]]
 function Update()
+
+    -- 出現してから当たり判定が適応されるまでの時間
+    if timer <= 1.0 then
+        local deltatime = GetDeltaTime()
+        timer = timer + deltatime
+    end
+
     if maxBreakNockbackCount > 0 then
         transform.scale.y = (maxBreakNockbackCount - nockbackCount) / maxBreakNockbackCount
+    end
+
+    -- 画面外に出たら削除する
+    local targetTransform = GetTransform(cameraID)
+    local endLinePosX = targetTransform.translate.x - 20.0
+    if transform.translate.x <= endLinePosX or transform.translate.x > targetTransform.translate.x + 50.0 then
+        destroy()
     end
 end
 
@@ -42,7 +65,7 @@ function OnCollisionEnter(id,obj)
         -- スローエリアを生成
         CreateEntity(slowObjName,transform)
         for i = 1, dropBullets, 1 do
-            RunEntityScriptFunction(GetEntity("ShotGunPlayer"),"BulletShot.lua","ReloadOne")
+            RunEntityScriptFunction(GetEntity(playerName),"BulletShot.lua","ReloadOne")
         end
         destroy()
     else
@@ -71,8 +94,10 @@ function OnCollisionStay(id,obj)
 
     -- 弾を打たれた時
     if obj.tag == "bullet" then
-        isBreak = true
-        CreateEntity("TombstoneEmitter.json",transform)
+        if timer >= 1.0 then
+            isBreak = true
+            CreateEntity("TombstoneEmitter.json",transform)
+        end
     end
 
     -- ノックバック攻撃を食らった時
@@ -88,6 +113,9 @@ function OnCollisionStay(id,obj)
         -- ノックバック回数
         if nockbackCount >= maxBreakNockbackCount then
             isBreak = true
+            CreateEntity("TombstoneEmitter.json",transform)
+        else
+            CreateEntity("HalfTombstoneEmitter.json",transform)
         end       
     end
 end

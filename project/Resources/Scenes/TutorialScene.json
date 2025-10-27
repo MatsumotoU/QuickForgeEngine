@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6708106994628906,
-                    3.011284112930298,
+                    0.8347484469413757,
+                    -0.03774531930685043,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -3.466062068939209,
-                    18.88179588317871,
-                    26.67225456237793
+                    0.8096874952316284,
+                    23.686037063598633,
+                    -21.44114875793457
                 ]
             }
         },
@@ -592,7 +592,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1218,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BreakEnemyEmitter.lua",
@@ -626,30 +625,17 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "circle.obj"
+                "modelName": "damageExplan.obj"
             },
             "SceneObjectData": {
-                "name": "CircleParticle",
+                "name": "DamageExplanUI",
                 "tag": "Untagged",
-                "uniqueId": 6851
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 1219,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "circleParticle.lua",
-                        "stringParams": {}
-                    }
-                ]
+                "uniqueId": 7548
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -658,13 +644,73 @@
                     1.0
                 ],
                 "translate": [
-                    0.16250985860824585,
-                    0.0,
-                    -1.5223658084869385
+                    3.5613856315612793,
+                    -0.30000001192092896,
+                    -6.06992244720459
                 ]
             }
         },
         {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "tombstoneExplan.obj"
+            },
+            "SceneObjectData": {
+                "name": "TombstoneExplanUI",
+                "tag": "Untagged",
+                "uniqueId": 6847
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "tombstoneExplaneBehavior.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -4.366053104400635,
+                    0.0,
+                    -6.221864700317383
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    5.801031112670898,
+                    -8.699999809265137,
+                    4.260635852813721,
+                    7.301031112670898,
+                    8.699999809265137,
+                    5.060636043548584
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false
+            },
             "Force": {
                 "acceleration": [
                     0.0,
@@ -673,7 +719,7 @@
                 ],
                 "friction": 1.0,
                 "gravityStrength": 1.0,
-                "isGravity": false,
+                "isGravity": true,
                 "mass": 1.0,
                 "velocity": [
                     0.0,
@@ -688,87 +734,57 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "smokePlane.obj"
+                "modelName": "tombstone.obj"
             },
             "SceneObjectData": {
-                "name": "SmokeParticle",
+                "name": "TutorialTombstone",
                 "tag": "Untagged",
-                "uniqueId": 6850
+                "uniqueId": 6853
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
+                        "floatParams": {
+                            "breakMaxTime": 1.0
+                        },
+                        "intParams": {
+                            "dropBullets": 2,
+                            "maxBreakNockbackCount": 2,
+                            "nockbackCount": 0
+                        },
+                        "priority": 0,
+                        "scriptName": "TombstoneBehavior.lua",
+                        "stringParams": {
+                            "playerName": "TutorialPlayer",
+                            "slowObjName": "SlowArea.json"
+                        }
+                    },
+                    {
+                        "boolParams": {},
                         "floatParams": {},
-                        "handle": 1220,
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "smokeParticle.lua",
+                        "scriptName": "Ground0.lua",
                         "stringParams": {}
                     }
                 ]
             },
             "Transform": {
                 "rotate": [
-                    -1.4000000953674316,
-                    0.10000016540288925,
-                    0.20000001788139343
+                    0.0,
+                    -0.0,
+                    0.0
                 ],
                 "scale": [
-                    0.9999998211860657,
-                    0.9999994039535522,
-                    0.999999463558197
-                ],
-                "translate": [
-                    -0.4349639117717743,
-                    -0.22561931610107422,
-                    0.01127924956381321
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
                     1.0,
                     1.0,
                     1.0
                 ],
-                "modelName": "hitEffectPlane.obj"
-            },
-            "SceneObjectData": {
-                "name": "hitEffectParticle",
-                "tag": "Untagged",
-                "uniqueId": 6852
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 1221,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "hitEffectParticle.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    -0.699999988079071,
-                    0.0,
-                    -6.900000095367432
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    0.10000000149011612
-                ],
                 "translate": [
-                    2.8748297691345215,
+                    6.551031112670898,
                     0.0,
-                    -1.4390288591384888
+                    4.660635948181152
                 ]
             }
         }

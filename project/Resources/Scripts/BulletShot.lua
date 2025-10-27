@@ -25,7 +25,12 @@ isShot = false
 hitPointLuaName = "HitPoint.lua"
 do_reloadName = "do_reload"
 
-
+-- 音声
+local reload = QFE.Audio.LoadSound("reload2.mp3")
+local fullOfBullet = QFE.Audio.LoadSound("fullofBullets.mp3")
+local shot = QFE.Audio.LoadSound("shot.mp3")
+local emptyShot = QFE.Audio.LoadSound("empty.mp3")
+local pumpAction = QFE.Audio.LoadSound("pumpAction.mp3")
 
 function Init()
 shotInterval = 0.0
@@ -56,7 +61,7 @@ function Update()
     end
 
     -- リロード
-    if QFE.Input.GetKeyPress("MoveLeft") then
+    if QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
         if force.velocity:Length() > 0.3 then
             return
         end
@@ -73,12 +78,13 @@ function Update()
         bullets = bullets + 1
         if bullets <= maxBullets then
             RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Reroad")
+            QFE.Audio.PlaySound(reload,false,0.5)
         end        
 
-            --下部へ移動
-            -- if bullets >= maxBullets then
-            --     bullets = maxBullets
-            -- end
+            if bullets >= maxBullets then
+                bullets = maxBullets
+                --QFE.Audio.PlaySound(fullOfBullet,false,0.5)
+            end
         end
 
     else
@@ -92,16 +98,20 @@ function Update()
         end
         shotInterval = shotInterval - deltatime
         RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","PumpAction")
-        return
-    end
-
-    -- 弾倉管理
-    if bullets <= 0 then
+        if shotInterval <= 0.0 then
+            QFE.Audio.PlaySound(pumpAction,false,0.5)
+        end
         return
     end
 
     -- 射撃処理
-    if QFE.Input.GetKeyTrigger("Shot") then
+    if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
+        -- 弾倉管理
+        if bullets <= 0 then
+            QFE.Audio.PlaySound(emptyShot,false,0.5)
+            return
+        end
+
         local tempTransform = Transform.new()
         tempTransform.translate = transform.translate
         tempTransform.rotate = transform.rotate
@@ -144,6 +154,7 @@ function Update()
         isKnockback = true
         transform.rotate.x = -1.0
         RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
+        QFE.Audio.PlaySound(shot,false,0.3)
     end
 
     if bullets >= maxBullets then
