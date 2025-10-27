@@ -998,7 +998,6 @@
             },
             "ModelHandle": {
                 "color": [
-
                     1.0,
                     1.0,
                     1.0,
@@ -1017,6 +1016,7 @@
                         "boolParams": {},
                         "floatParams": {
                             "aliveTime": 0.699999988079071,
+                            "breakMaxTime": 1.0,
                             "maxSpeed": 13.0,
                             "minSpeed": 8.0,
                             "moveSpeed": 0.5
@@ -1024,8 +1024,11 @@
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BulletMove.lua",
-                            "breakMaxTime": 1.0
-                        },
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
                         "intParams": {
                             "maxBreakNockbackCount": 2
                         },
