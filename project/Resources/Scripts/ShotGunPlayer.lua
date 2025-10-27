@@ -40,6 +40,9 @@ function Update()
 
     -- 移動方向に向きを設定する
     local moveDir = QFE.Input.GetKeyMoveDir()
+    moveDir.x = moveDir.x + QFE.Input.GetGamePadLeftStickDir().x
+    moveDir.y = moveDir.y + QFE.Input.GetGamePadLeftStickDir().y
+    moveDir = moveDir:Normalize()
     if moveDir:Length() >= 0.1 then
         if not isBackFriping then
             objectDir = moveDir  
@@ -64,7 +67,7 @@ function Update()
     end
 
     -- バックフリップ開始処理
-    if QFE.Input.GetKeyPress("MoveLeft") then
+    if QFE.Input.GetKeyPress("MoveLeft") or moveDir.x + QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
        transform.translate.x = transform.translate.x - (moveSpeed*0.25 * deltatime)
        objectDir.x = 1.0
        objectDir.y = 0.0
@@ -77,7 +80,7 @@ function Update()
     transform.rotate.y =QFE.Math.SimpleEaseIn(transform.rotate.y,math.atan(objectDir.x,objectDir.y),0.8)
 
     -- 移動処理
-    if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetKeyPress("MoveDown") or QFE.Input.GetKeyPress("MoveUp") then
+    if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetKeyPress("MoveDown") or QFE.Input.GetKeyPress("MoveUp") or QFE.Input.GetGamePadLeftStickDir():Length() > 0.5 then
         if not isBackFriping then
             transform:AddForward(moveSpeed*deltatime)
         end

@@ -8,6 +8,10 @@
 #include "Renderer/ModelRenderer.h"
 #include "Renderer/SpriteRenderer.h"
 
+#ifdef _DEBUG
+#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#endif // _DEBUG
+
 SceneObject::SceneObject() {
 	assetManager_ = nullptr;
 	isRequestedExit_ = false;
@@ -56,8 +60,14 @@ void SceneObject::Draw() {
 				return a.second.layer < b.second.layer;
 			});
 		// ソート済み順で描画
+#ifdef _DEBUG
+		DebugLog(std::format("DrawSprite"));
+#endif // _DEBUG
 		for (const auto& [entityId, sprite] : sortedSprites) {
 			Render::Sprite::DrawSprite(entityId);
+#ifdef _DEBUG
+			DebugLog(std::format("Sprite: {} ID: {}",sprite.textureName,entityId));
+#endif // _DEBUG
 		}
 	}
 }

@@ -431,6 +431,7 @@
     <ClCompile Include="Engine\Platform\Windows\Collider\ColliderMask.cpp" />
     <ClCompile Include="Editor\UI\Edit\ColliderMaskEdit.cpp" />
     <ClCompile Include="Editor\UI\View\SceneProfileView.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Input\XInput\XInputController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1376,6 +1377,7 @@
     <ClInclude Include="Editor\UI\Edit\ColliderMaskEdit.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\ColliderMask.h" />
     <ClInclude Include="Editor\UI\View\SceneProfileView.h" />
+    <ClInclude Include="Engine\Platform\Windows\Input\XInput\XInputController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

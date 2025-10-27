@@ -14,6 +14,7 @@ void InputInterface::Finalize() {
 
 void InputInterface::Update() {
 	directInputManager_.Update();
+	xInputController_.Update();
 }
 
 uint32_t InputInterface::GetKeyCodeTrigger() {
@@ -84,6 +85,26 @@ Vector2 InputInterface::GetMouseScreenPos() {
 
 float InputInterface::GetMouseWheelDir() {
 	return directInputManager_.mouse_.wheelDir_;
+}
+
+bool InputInterface::GetGamePadPress(uint16_t button) {
+	return xInputController_.GetPressButton(static_cast<WORD>(button), 0);
+}
+
+bool InputInterface::GetGamePadTrigger(uint16_t button) {
+	return xInputController_.GetTriggerButton(static_cast<WORD>(button), 0);
+}
+
+bool InputInterface::GetGamePadRelease(uint16_t button) {
+	return xInputController_.GetReleaseButton(static_cast<WORD>(button),0);
+}
+
+Vector2 InputInterface::GetGamePadLeftStickDir() {
+	return xInputController_.GetLeftStick(0);
+}
+
+Vector2 InputInterface::GetGamePadRightStickDir() {
+	return xInputController_.GetRightStick(0);
 }
 
 void InputInterface::AddKeyConfig(const std::string& actionName, uint32_t keyCorde) {

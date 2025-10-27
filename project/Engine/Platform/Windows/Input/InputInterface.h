@@ -2,6 +2,7 @@
 #include "Utility/DesignPatterns/Singleton.h"
 #include "KeyConfig.h"
 #include "DirectInput/DirectInputManager.h"
+#include "XInput/XInputController.h"
 
 class InputInterface final :public Singleton<InputInterface> {
 	friend class Singleton<InputInterface>;
@@ -42,6 +43,17 @@ public:
 	// マウスのホイールの回転量を返します
 	float GetMouseWheelDir();
 
+	// ゲームパッドのボタンが押されているか
+	bool GetGamePadPress(uint16_t button);
+	// ゲームパッドのボタンが押された瞬間か
+	bool GetGamePadTrigger(uint16_t button);
+	// ゲームパッドのボタンが離された瞬間か
+	bool GetGamePadRelease(uint16_t button);
+	// ゲームパッドの左スティックの方向を返します
+	Vector2 GetGamePadLeftStickDir();
+	// ゲームパッドの右スティックの方向を返します
+	Vector2 GetGamePadRightStickDir();
+
 	// アクション名に対応するキーを追加します
 	void AddKeyConfig(const std::string& actionName, uint32_t keyCorde);
 	// アクション名に対応するキーをすべてクリアします
@@ -56,4 +68,5 @@ public:
 private:
 	KeyConfig keyConfig_;
 	DirectInputManager directInputManager_;
+	XInputController xInputController_;
 };
