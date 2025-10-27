@@ -23,6 +23,8 @@ end
 
 function Update()
 
+    transform.translate.y = 0.5
+
     transform.scale.x = 2.5
     transform.scale.y = 2.5
     transform.scale.z = 2.5
