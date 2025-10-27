@@ -96,6 +96,7 @@ function OnCollisionEnter(id,obj)
         if hp <= 0 then
             if isAlive then
                 isAlive = false
+                CreateEntity("BreakEnemyEmitter.json",transform)
                 if enemyType == 0 then
                     -- 通常の敵の場合、墓石を生成
                     local temp = Transform.new()

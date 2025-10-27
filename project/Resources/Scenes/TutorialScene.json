@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6909353137016296,
-                    -0.18634779751300812,
+                    0.6708106994628906,
+                    3.011284112930298,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    7.329380989074707,
-                    24.588590621948242,
-                    -24.853862762451172
+                    -3.466062068939209,
+                    18.88179588317871,
+                    26.67225456237793
                 ]
             }
         },
@@ -578,6 +578,197 @@
                     31.899999618530273,
                     -4.699999809265137,
                     0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "BreakEnemyEmitter",
+                "tag": "Untagged",
+                "uniqueId": 6846
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 1218,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BreakEnemyEmitter.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    6.276935577392578,
+                    0.0,
+                    3.5728321075439453
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "circle.obj"
+            },
+            "SceneObjectData": {
+                "name": "CircleParticle",
+                "tag": "Untagged",
+                "uniqueId": 6851
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 1219,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "circleParticle.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.16250985860824585,
+                    0.0,
+                    -1.5223658084869385
+                ]
+            }
+        },
+        {
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 1.0,
+                "isGravity": false,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "smokePlane.obj"
+            },
+            "SceneObjectData": {
+                "name": "SmokeParticle",
+                "tag": "Untagged",
+                "uniqueId": 6850
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 1220,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "smokeParticle.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -1.4000000953674316,
+                    0.10000016540288925,
+                    0.20000001788139343
+                ],
+                "scale": [
+                    0.9999998211860657,
+                    0.9999994039535522,
+                    0.999999463558197
+                ],
+                "translate": [
+                    -0.4349639117717743,
+                    -0.22561931610107422,
+                    0.01127924956381321
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "hitEffectPlane.obj"
+            },
+            "SceneObjectData": {
+                "name": "hitEffectParticle",
+                "tag": "Untagged",
+                "uniqueId": 6852
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 1221,
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "hitEffectParticle.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -0.699999988079071,
+                    0.0,
+                    -6.900000095367432
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    0.10000000149011612
+                ],
+                "translate": [
+                    2.8748297691345215,
+                    0.0,
+                    -1.4390288591384888
                 ]
             }
         }

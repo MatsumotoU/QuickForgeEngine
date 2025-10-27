@@ -86,7 +86,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false
             },
@@ -164,6 +163,19 @@
                         "priority": 0,
                         "scriptName": "BulletShot.lua",
                         "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "handle": 3,
+                        "intParams": {
+                            "hitPoint": 5
+                        },
+                        "priority": 0,
+                        "scriptName": "HitPoint.lua",
+                        "stringParams": {
+                            "damageTag": "Enemy"
+                        }
                     }
                 ]
             },
@@ -719,7 +731,6 @@
             "SphereColliderData": {
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -811,7 +822,6 @@
             "SphereColliderData": {
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
