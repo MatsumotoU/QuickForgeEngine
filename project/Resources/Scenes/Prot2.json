@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.48616018891334534,
-                    -0.6925152540206909,
+                    0.4861597716808319,
+                    -0.6925151944160461,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.06483682990074158,
-                    0.053665462881326675,
-                    -0.07815682142972946
+                    1563.3837890625,
+                    1294.0118408203125,
+                    -1884.5634765625
                 ]
             }
         },
@@ -97,7 +97,7 @@
                     0.0,
                     0.0
                 ],
-                "friction": 4.0,
+                "friction": 4.25,
                 "gravityStrength": 10.0,
                 "isGravity": true,
                 "mass": 1.0,
@@ -139,28 +139,9 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "diffusionRate": 0.125,
-                            "knockBack": 10.0,
-                            "knockBackPower": 27.5,
-                            "maxShotInterval": 0.20000000298023224,
-                            "reloadInterval": 0.0,
-                            "shotInterval": 10.0,
-                            "targetReloadInterval": 0.6000000238418579
+                            "maxDamageInterval": 2.0
                         },
                         "handle": 2,
-                        "intParams": {
-                            "bullets": 4,
-                            "maxBullets": 4,
-                            "shotNum": 20
-                        },
-                        "priority": 0,
-                        "scriptName": "BulletShot.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 3,
                         "intParams": {
                             "hitPoint": 5
                         },
@@ -169,6 +150,24 @@
                         "stringParams": {
                             "damageTag": "Enemy"
                         }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "diffusionRate": 0.125,
+                            "knockBackPower": 27.5,
+                            "maxShotInterval": 0.20000000298023224,
+                            "targetReloadInterval": 0.550000011920929
+                        },
+                        "handle": 3,
+                        "intParams": {
+                            "bullets": 4,
+                            "maxBullets": 4,
+                            "shotNum": 20
+                        },
+                        "priority": 0,
+                        "scriptName": "BulletShot.lua",
+                        "stringParams": {}
                     }
                 ]
             },
@@ -429,7 +428,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "borderSpeed": 0.25,
+                            "borderSpeed": 0.10000000149011612,
                             "maxBorderX": 12.0
                         },
                         "handle": 8,
@@ -680,187 +679,6 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "ratEnemy.obj"
-            },
-            "SceneObjectData": {
-                "name": "RatEnemy",
-                "tag": "Enemy",
-                "uniqueId": 5728
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "moveTime": 0.75,
-                            "speed": 5.0,
-                            "stopTime": 1.0
-                        },
-                        "handle": 23,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "RatEnemyMove.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 24,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "EnemyHp.lua",
-                        "stringParams": {
-                            "stoneName": "Tombstone.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "performingTime": 1.0
-                        },
-                        "handle": 25,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "DeathAnim.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    -2.9573915004730225,
-                    2.3810787200927734,
-                    0.0,
-                    0.3499999940395355
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -2.9573915004730225,
-                    2.3810787200927734,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "pillBugEnemy.obj"
-            },
-            "SceneObjectData": {
-                "name": "PillBugEnemy",
-                "tag": "Enemy",
-                "uniqueId": 5733
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "delta_xPos": 7.0,
-                            "moveTime": 8.0,
-                            "stopTime": 5.0
-                        },
-                        "handle": 13,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "PillBugEnemyMove.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 27,
-                        "intParams": {
-                            "enemyType": 1
-                        },
-                        "priority": 0,
-                        "scriptName": "EnemyHp.lua",
-                        "stringParams": {
-                            "stoneName": "Tombstone.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "performingTime": 1.0
-                        },
-                        "handle": 15,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "DeathAnim.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 29,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "GhostMoveAnim.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    6.0172014236450195,
-                    2.570373058319092,
-                    0.0,
-                    0.699999988079071
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    6.0172014236450195,
-                    2.570373058319092,
-                    0.0
-                ]
-            }
-        },
-        {
             "SceneObjectData": {
                 "name": "UpUiCover",
                 "tag": "Untagged",
@@ -941,7 +759,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 20,
+                        "handle": 13,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotButtonUi.lua",
@@ -994,7 +812,7 @@
                             "minSpeed": 15.0,
                             "moveSpeed": 0.5
                         },
-                        "handle": 30,
+                        "handle": 14,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MoveButtonUI.lua",

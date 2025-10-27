@@ -1,10 +1,10 @@
 {
     "AABBColliderData": {
         "aabb": [
-            1.394001841545105,
+            1.4500000476837158,
             -1.25,
             -0.15000000596046448,
-            1.6944698095321655,
+            1.6384716033935547,
             1.25,
             0.15000000596046448
         ],
@@ -33,12 +33,12 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "aliveTime": 0.75,
+                    "aliveTime": 0.6499999761581421,
                     "maxSpeed": 20.0,
                     "minSpeed": 15.0,
                     "moveSpeed": 0.5
                 },
-                "handle": 140,
+                "handle": 475,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "BulletMove.lua",

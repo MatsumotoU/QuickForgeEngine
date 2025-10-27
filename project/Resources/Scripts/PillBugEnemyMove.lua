@@ -48,15 +48,15 @@ function Update()
     if actCnt <= 1.0 then
             -- 移動する
         if cur_act == 0 then
-            local dst_rotateX = math.pi*4.0
+            local dst_rotateX = math.pi*2.0
 
             actCnt = actCnt + (inv_moveTime * deltaTime)
             transform.rotate.x = EaseInBounce(0.0,dst_rotateX,actCnt) 
             transform.translate.x = EaseInBounce(cur_xPos , next_xPos,actCnt) 
         else
-            local add_scale = 0.05
+            local add_scale = 0.065
             thetaForidle = thetaForidle + math.pi * deltaTime*0.75
-            local dstScale = 1.0 + math.sin(thetaForidle) * add_scale
+            local dstScale = 1.0 + math.sin(thetaForidle*0.5)*math.cos(thetaForidle*3.0) * add_scale
 
             transform.scale.x = dstScale
             transform.scale.y = dstScale
