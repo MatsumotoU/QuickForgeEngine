@@ -18,14 +18,14 @@ function Init()
 
     -- ヒットエフェクトの出現
     for i = 1, 5, 1 do    
-        tempTransform.scale.x = 1.0 + math.random() * 1.0
-        tempTransform.scale.y = 1.0 + math.random() * 1.0
-        tempTransform.scale.z = 1.0 + math.random() * 1.0
+        tempTransform.scale.x = 0.2 + math.random() * 1.0
+        tempTransform.scale.y = 0.2 + math.random() * 1.0
+        tempTransform.scale.z = 0.2 + math.random() * 1.0
         tempTransform.translate = transform.translate
         tempTransform.translate.y = transform.translate.y + 1.0
         tempTransform.translate.z = transform.translate.z - 1.0
         tempTransform.rotate.x = 0.0
-        tempTransform.rotate.y = 0.0
+        tempTransform.rotate.y = math.random() * 6.28
         tempTransform.rotate.z = 0.0
         CreateEntity(hitEffectObjName,tempTransform)
     end

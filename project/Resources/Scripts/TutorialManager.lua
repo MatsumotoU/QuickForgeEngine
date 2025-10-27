@@ -47,6 +47,8 @@ reloadUIName = "reloadUI.json"
 breakEnemyUI = "breakEnemyUI.json"
 breakNormalEnemyUI = "breakNormalEnemyUI.json"
 damegeBorderUIName = "damegeBorderUI.json"
+damageExplaneUIName = "DamageExplanUI.json"
+local isActive = false
 
 NotGhostEnemyUIName = "NotGhostEnemyUI.json"
 TombstoneExplanUIName = "TombstoneExplanUI.json"
@@ -301,10 +303,12 @@ function EventFourScene()
         tmpTransform.translate.x = 323.0
         tmpTransform.translate.y = 36.0
         CreateEntity(damegeBorderUIName,tmpTransform)
+        tmpTransform.scale.x = 2.0
         tmpTransform.translate.x = 32.0
         tmpTransform.translate.y = -1.0
         tmpTransform.translate.z = 7.5
         CreateEntity(TombstoneExplanUIName,tmpTransform)
+        isActive = false
     end
 end
 
@@ -313,10 +317,30 @@ function EventFiveScene()
    local deltatime = GetDeltaTime()
     gaugeTimer = gaugeTimer + deltatime
 
-    if gaugeTimer >= 0.5 then
+    if gaugeTimer >= 2.0 then
         -- ゲージをリセット
         local gaugeTransform = GetTransform(gaugeID)
         gaugeTransform.scale.x = 0.0
+
+        if not isActive then
+            isActive = true
+            local tmpTransform = Transform.new()
+            tmpTransform.scale.x = 2.0
+            tmpTransform.translate.x = 40.0
+            tmpTransform.translate.y = -1.0
+            tmpTransform.translate.z = 7.5
+            CreateEntity(damageExplaneUIName,tmpTransform)
+
+            tmpTransform.scale.x = 1.0
+            tmpTransform.translate.x = 32.0
+            tmpTransform.translate.y = 0.0
+            tmpTransform.translate.z = 6.0
+            CreateEntity(ratEnemyJson, tmpTransform)
+            tmpTransform.translate.x = 32.0
+            tmpTransform.translate.y = 0.0
+            tmpTransform.translate.z = 3.0
+            CreateEntity(ratEnemyJson, tmpTransform)
+        end
     end
 
     local borderTransform = GetTransform(damageBorderId)

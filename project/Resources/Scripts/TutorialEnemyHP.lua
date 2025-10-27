@@ -5,7 +5,7 @@ maxHp = 5
 
 local time = 0.0
 
-stoneName = "Tombstone.json"
+stoneName = "TutorialTombstone.json"
 
 -- 生存フラグ
 isAlive = true
@@ -16,6 +16,8 @@ enemyType = 0
 targetName = "TutorialDamageBorder"
 local targetId = 0
 local targetTransform = Transform.new()
+
+normalEnemyName = "TutorialGhost.json"
 
 function Init()
     isAlive = true
@@ -51,10 +53,10 @@ function Update()
     -- 画面左端を出たら生存フラグをfalse
     if transform.translate.x <= targetX then
         DebugLog("EnemyIsAliveFalse")
-        isAlive = false
 
         -- 通常の敵だった場合、通常の幽霊を生成
         if enemyType == 0 then
+            isAlive = false
              local temp = Transform.new()
             temp.translate.x = transform.translate.x + 1.0
             temp.translate.y = transform.translate.y

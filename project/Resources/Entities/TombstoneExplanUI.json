@@ -13,10 +13,22 @@
         "tag": "Untagged",
         "uniqueId": 6847
     },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "tombstoneExplaneBehavior.lua",
+                "stringParams": {}
+            }
+        ]
+    },
     "Transform": {
         "rotate": [
             0.0,
-            0.0,
+            -0.0,
             0.0
         ],
         "scale": [
@@ -27,7 +39,7 @@
         "translate": [
             0.0,
             0.0,
-            0.0
+            -3.844661235809326
         ]
     }
 }

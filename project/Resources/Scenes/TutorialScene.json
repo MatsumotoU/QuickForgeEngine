@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6708106994628906,
-                    3.011284112930298,
+                    0.8347484469413757,
+                    -0.03774531930685043,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -3.466062068939209,
-                    18.88179588317871,
-                    26.67225456237793
+                    0.8096874952316284,
+                    23.686037063598633,
+                    -21.44114875793457
                 ]
             }
         },
@@ -592,7 +592,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1218,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "BreakEnemyEmitter.lua",
@@ -626,30 +625,17 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "circle.obj"
+                "modelName": "damageExplan.obj"
             },
             "SceneObjectData": {
-                "name": "CircleParticle",
+                "name": "DamageExplanUI",
                 "tag": "Untagged",
-                "uniqueId": 6851
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 1219,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "circleParticle.lua",
-                        "stringParams": {}
-                    }
-                ]
+                "uniqueId": 7548
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -658,71 +644,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.16250985860824585,
-                    0.0,
-                    -1.5223658084869385
-                ]
-            }
-        },
-        {
-            "Force": {
-                "acceleration": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "friction": 1.0,
-                "gravityStrength": 1.0,
-                "isGravity": false,
-                "mass": 1.0,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "smokePlane.obj"
-            },
-            "SceneObjectData": {
-                "name": "SmokeParticle",
-                "tag": "Untagged",
-                "uniqueId": 6850
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 1220,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "smokeParticle.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    -1.4000000953674316,
-                    0.10000016540288925,
-                    0.20000001788139343
-                ],
-                "scale": [
-                    0.9999998211860657,
-                    0.9999994039535522,
-                    0.999999463558197
-                ],
-                "translate": [
-                    -0.4349639117717743,
-                    -0.22561931610107422,
-                    0.01127924956381321
+                    3.5613856315612793,
+                    -0.30000001192092896,
+                    -6.06992244720459
                 ]
             }
         },
@@ -734,41 +658,194 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "hitEffectPlane.obj"
+                "modelName": "tombstoneExplan.obj"
             },
             "SceneObjectData": {
-                "name": "hitEffectParticle",
+                "name": "TombstoneExplanUI",
                 "tag": "Untagged",
-                "uniqueId": 6852
+                "uniqueId": 6847
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1221,
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "hitEffectParticle.lua",
+                        "scriptName": "tombstoneExplaneBehavior.lua",
                         "stringParams": {}
                     }
                 ]
             },
             "Transform": {
                 "rotate": [
-                    -0.699999988079071,
                     0.0,
-                    -6.900000095367432
+                    -0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
                     1.0,
-                    0.10000000149011612
+                    1.0
                 ],
                 "translate": [
-                    2.8748297691345215,
+                    -4.366053104400635,
                     0.0,
-                    -1.4390288591384888
+                    -6.221864700317383
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "ratEnemy.obj"
+            },
+            "SceneObjectData": {
+                "name": "TutorialEnemy",
+                "tag": "Untagged",
+                "uniqueId": 6314
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialEnemy.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialEnemyHP.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "DeathAnim.lua",
+                        "stringParams": {
+                            "aliveScriptName": "TutorialEnemyHP.lua"
+                        }
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.4000000059604645
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "normalEnemy.obj"
+            },
+            "SceneObjectData": {
+                "name": "TutorialGhost",
+                "tag": "Untagged",
+                "uniqueId": 6313
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialGhost.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {
+                            "enemyType": 1
+                        },
+                        "priority": 0,
+                        "scriptName": "TutorialEnemyHP.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "DeathAnim.lua",
+                        "stringParams": {
+                            "aliveScriptName": "TutorialEnemyHP.lua"
+                        }
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    -1.1656187772750854,
+                    0.0,
+                    0.0,
+                    0.4000000059604645
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -1.1656187772750854,
+                    0.0,
+                    0.0
                 ]
             }
         }
