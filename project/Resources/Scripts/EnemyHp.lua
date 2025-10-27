@@ -19,6 +19,9 @@ targetName = "DamageBorder"
 local targetId = 0
 local targetTransform = Transform.new()
 
+-- 音
+local spawn = QFE.Audio.LoadSound("tomGen.mp3")
+
 function Init()
     isAlive = true
     hp = maxHp
@@ -104,6 +107,7 @@ function OnCollisionEnter(id,obj)
                     temp.translate.y = transform.translate.y + 2.0
                     temp.translate.z = transform.translate.z
                     CreateEntity(stoneName,temp)
+                    QFE.Audio.PlaySound(spawn,false,0.2)
                 elseif enemyType == 2 then 
                     -- 双子のゴーストの場合
                     local temp = Transform.new()

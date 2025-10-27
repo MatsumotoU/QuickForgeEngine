@@ -7,6 +7,9 @@ local boundCount = 0
 -- 回転速度
 local rotateSpeed = Vector3.new()
 
+-- 音声
+local yakkyou = QFE.Audio.LoadSound("yakkyou.mp3")
+
 --[[
     初期化処理
 --]]
@@ -55,5 +58,6 @@ function Update()
         if boundCount > 3 then
             destroy()
         end
+        QFE.Audio.PlaySound(yakkyou,false,0.1)
     end
 end

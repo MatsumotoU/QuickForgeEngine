@@ -22,6 +22,8 @@ sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
 local transitionID = 0
 
+-- 音声
+local damage = QFE.Audio.LoadSound("playerDamage.mp3")
 
 function Init()
     time = 0.0
@@ -96,6 +98,7 @@ function OnCollisionStay(id,obj)
         korehaHidoi = true
         isDamaged = true
         CreateEntity("ExplotionParticleEmitter.json",transform)
+        QFE.Audio.PlaySound(damage,false,0.5)
     end
 end
 

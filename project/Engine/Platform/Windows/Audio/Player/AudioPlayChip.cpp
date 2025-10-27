@@ -29,6 +29,33 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 	assert(sourceVoice_ == nullptr && "SourceVoice is already playing");
 	assert(xAudio2_ != nullptr);
 	assert(masterVoice_ != nullptr);
+
+	// TODO: 音のポストプロセス処理を別の場所に作ること(TD用の緊急オペ)
+	// --- チープ化処理ここから ---
+	// 8bit化 & サンプリングレート半減
+	if (audioData.wfex.wBitsPerSample == 16) {
+		// 元データ: 16bit PCM
+		const int16_t* src = reinterpret_cast<int16_t*>(audioData.pBuffer);
+		size_t sampleCount = audioData.bufferSize / 2;
+		// サンプリングレート半減
+		size_t cheapSampleCount = sampleCount / 2;
+		BYTE* cheapBuffer = new BYTE[cheapSampleCount];
+		for (size_t i = 0; i < cheapSampleCount; ++i) {
+			// 2サンプルごとに1サンプルだけ使う
+			int16_t s = src[i * 2];
+			// 8bit化（符号なし）
+			cheapBuffer[i] = static_cast<BYTE>((s + 32768) >> 8);
+		}
+		// WAVEFORMATEXを8bit/サンプリングレート半減に変更
+		audioData.wfex.wBitsPerSample = 8;
+		audioData.wfex.nBlockAlign = audioData.wfex.nChannels * audioData.wfex.wBitsPerSample / 8;
+		audioData.wfex.nAvgBytesPerSec = audioData.wfex.nSamplesPerSec / 2 * audioData.wfex.nBlockAlign;
+		audioData.wfex.nSamplesPerSec /= 2;
+		audioData.pBuffer = cheapBuffer;
+		audioData.bufferSize = static_cast<unsigned int>(cheapSampleCount);
+	}
+	// --- チープ化処理ここまで ---
+
 	// ソースボイスの作成
 	sourceVoice_ = nullptr;
 	HRESULT hr = xAudio2_->CreateSourceVoice(&sourceVoice_, &audioData.wfex);

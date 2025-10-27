@@ -26,7 +26,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	enableColorCorrection_ = true;
 	enableVignette_ = true;
 	enableNormal_ = true;
-	enablePixcel_ = false;
+	enablePixcel_ = true;
 
 	renderingRosourceIndex_ = 0;
 	readingResourceIndex_ = 0;
@@ -191,6 +191,8 @@ void RendaringPostprosecess::PreDraw() {
 	if (enablePixcel_) {
 		postProcessOrderForm_.push_back(pixcelProcessIndex_); // ピクセル化
 		postProcessCount_++;
+
+		pixcelOffsetBuffer_.GetData()->time += QFE::EngineGlobalValue::deltaTime;
 	}
 	// グレースケール
 	if (enableGrayscale_) {
