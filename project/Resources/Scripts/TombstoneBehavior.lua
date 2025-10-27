@@ -18,6 +18,8 @@ slowObjName = "obj"
 -- 弾薬の増える数
 dropBullets = 2
 
+playerName = "ShotGunPlayer"
+
 --[[
     初期化処理
 --]]
@@ -42,7 +44,7 @@ function OnCollisionEnter(id,obj)
         -- スローエリアを生成
         CreateEntity(slowObjName,transform)
         for i = 1, dropBullets, 1 do
-            RunEntityScriptFunction(GetEntity("ShotGunPlayer"),"BulletShot.lua","ReloadOne")
+            RunEntityScriptFunction(GetEntity(playerName),"BulletShot.lua","ReloadOne")
         end
         destroy()
     else
