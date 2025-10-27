@@ -2,11 +2,12 @@
 #include "IScene.h"
 #include "Utility/DesignPatterns/Singleton.h"
 #include "AppUtility/ID/UniqeIDManager.h"
+
+#include "Core/Math/Vector/Vector2.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <nlohmann/json.hpp>
-
 
 class SceneManager final : public Singleton<SceneManager> {
 	friend class Singleton<SceneManager>;
@@ -42,7 +43,7 @@ public:
 
 	void AddEpmtyObject();
 	void AddModel(const std::string& modelName);
-	void AddSprite(const std::string& spriteName,float width = 0.0f,float height = 0.0f,int inEntityId = -1,int layer = -1);
+	void AddSprite(const std::string& spriteName,float width = 0.0f,float height = 0.0f,int inEntityId = -1,int layer = -1,Vector2 pvot = {0.0f,0.0f});
 	void AddScript(uint32_t entityId,const std::string& scriptName);
 	uint32_t AddEntity(const std::string& entityName);
 	uint32_t RunTimeAddEntity(const std::string& entityName);

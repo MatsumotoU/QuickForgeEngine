@@ -226,6 +226,27 @@ void SceneManager::PreDraw() {
 			}
 		}
 	}
+
+	// スプライトのピボット更新
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (entityManager->HasComponentStrage<SpriteData>()) {
+		auto& strage = entityManager->GetComponentStrage<SpriteData>();
+		for (auto& [id,data] : strage) {
+			VertexData* vertexData = assetManager->GetSpriteManager()->GetVertexData(data.vertexBufferHandle);
+			float w = data.width;
+			float h = data.height;
+			// ピボットによる位置調整
+			Vector2 pivotOffset = Vector2(0.0f,0.0f);
+			pivotOffset.x = -w * data.pivot.x;
+			pivotOffset.y = -h * data.pivot.y;
+			vertexData[0].position = { pivotOffset.x, pivotOffset.y, 0.0f,1.0f };               // 左上
+			vertexData[1].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 右上
+			vertexData[2].position = { pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };       // 左下
+			vertexData[3].position = { w + pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };   // 右下
+			vertexData[4].position = { pivotOffset.x, h + pivotOffset.y, 0.0f,1.0f };       // 左下
+			vertexData[5].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 右上
+		}
+	}
 }
 
 void SceneManager::Draw() {
@@ -490,7 +511,7 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 	if (entityJson.contains("SpriteData")) {
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
-		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer));
+		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer),spriteData.pivot);
 	}
 	if (entityJson.contains("Transform")) {
 		entityManager->EmplaceComponent<Transform>(entityId);
@@ -615,7 +636,7 @@ void SceneManager::AddModel(const std::string& modelName) {
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
-void SceneManager::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer) {
+void SceneManager::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer, Vector2 pvot) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	// entityId指定があればそれを使う、なければ新規作成
 	uint32_t entityId;
@@ -628,6 +649,7 @@ void SceneManager::AddSprite(const std::string& spriteName, float width, float h
 	SpriteData spriteData;
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	spriteData.layer = 0;
+	spriteData.pivot = pvot;
 	if (entityManager->HasComponentStrage<SpriteData>()) {
 		spriteData.layer = static_cast<uint32_t>(entityManager->GetComponentStrage<SpriteData>().size());
 	}
