@@ -1,0 +1,62 @@
+{
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 1.0,
+        "isGravity": false,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "smokePlane.obj"
+    },
+    "SceneObjectData": {
+        "name": "SmokeParticle",
+        "tag": "Untagged",
+        "uniqueId": 6850
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 867,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "smokeParticle.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

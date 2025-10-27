@@ -1,0 +1,46 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "circle.obj"
+    },
+    "SceneObjectData": {
+        "name": "CircleParticle",
+        "tag": "Untagged",
+        "uniqueId": 6851
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 14,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "circleParticle.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}
