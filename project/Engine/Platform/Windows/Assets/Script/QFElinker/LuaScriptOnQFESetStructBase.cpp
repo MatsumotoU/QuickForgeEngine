@@ -32,6 +32,8 @@ void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 
 		"Length", &Vector3::Length,
 		"Normalize", sol::resolve<Vector3() const>(&Vector3::Normalize),
+		"Dot", & Vector3::Dot,
+		"Cross", & Vector3::Cross,
 
 		sol::meta_function::addition, [](const Vector3& a, const Vector3& b) { return a + b; },
 		sol::meta_function::subtraction, [](const Vector3& a, const Vector3& b) { return a - b; },

@@ -28,6 +28,8 @@
 
 
 void SceneManager::Initalize() {
+	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+
 	currentScene_ = std::make_unique<SceneObject>();
 	currentScene_->Initialize();
 
@@ -56,10 +58,15 @@ void SceneManager::Initalize() {
 #endif // _DEBUG
 	}
 
-
+	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+#ifdef _DEBUG
+	initTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
+#endif // _DEBUG
 }
 
 void SceneManager::Update() {
+	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+
 	// 最後に開いたシーンをロード
 	if (!isFirstLoadScene_) {
 		if (sceneConfig_.contains("lastScene")) {
@@ -196,9 +203,16 @@ void SceneManager::Update() {
 
 		}
 	}
+
+	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+#ifdef _DEBUG
+	updateTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
+#endif // _DEBUG
 }
 
 void SceneManager::PreDraw() {
+	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+
 	// カメラ更新
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	cameraManager->Update();
@@ -231,12 +245,12 @@ void SceneManager::PreDraw() {
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	if (entityManager->HasComponentStrage<SpriteData>()) {
 		auto& strage = entityManager->GetComponentStrage<SpriteData>();
-		for (auto& [id,data] : strage) {
+		for (auto& [id, data] : strage) {
 			VertexData* vertexData = assetManager->GetSpriteManager()->GetVertexData(data.vertexBufferHandle);
 			float w = data.width;
 			float h = data.height;
 			// ピボットによる位置調整
-			Vector2 pivotOffset = Vector2(0.0f,0.0f);
+			Vector2 pivotOffset = Vector2(0.0f, 0.0f);
 			pivotOffset.x = -w * data.pivot.x;
 			pivotOffset.y = -h * data.pivot.y;
 			vertexData[0].position = { pivotOffset.x, pivotOffset.y, 0.0f,1.0f };               // 左上
@@ -247,14 +261,32 @@ void SceneManager::PreDraw() {
 			vertexData[5].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 右上
 		}
 	}
+
+	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+#ifdef _DEBUG
+	preDrawTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
+#endif // _DEBUG
 }
 
 void SceneManager::Draw() {
+	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+
 	ColliderManager::GetInstance()->Draw();
 	currentScene_->Draw();
+
+	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+#ifdef _DEBUG
+	drawTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
+#endif // _DEBUG
 }
 
 void SceneManager::PostDraw() {
+	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+
+	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+#ifdef _DEBUG
+	postDrawTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
+#endif // _DEBUG
 }
 
 void SceneManager::EndFrame() {
@@ -511,7 +543,7 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 	if (entityJson.contains("SpriteData")) {
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
-		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer),spriteData.pivot);
+		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer), spriteData.pivot);
 	}
 	if (entityJson.contains("Transform")) {
 		entityManager->EmplaceComponent<Transform>(entityId);

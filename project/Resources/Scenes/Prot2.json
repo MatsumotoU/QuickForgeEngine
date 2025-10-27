@@ -1021,8 +1021,24 @@
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
                 "isDraw": true,
-                "isStatic": false,
+                "isStatic": true,
                 "isTrigger": false
+            },
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 20.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
             },
             "ModelHandle": {
                 "color": [
