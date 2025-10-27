@@ -290,6 +290,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Editor\UI\View\GameView.cpp" />
     <ClCompile Include="Editor\UI\View\HierarchyView.cpp" />
     <ClCompile Include="Editor\UI\View\InspectorView.cpp" />
+    <ClCompile Include="Editor\UI\View\SceneProfileView.cpp" />
     <ClCompile Include="Editor\UI\View\SceneView.cpp" />
     <ClCompile Include="Editor\UI\UIManager.cpp" />
     <ClCompile Include="Editor\UI\View\ScriptLoggerView.cpp" />
@@ -444,6 +445,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Editor\UI\View\HierarchyView.h" />
     <ClInclude Include="Editor\UI\IEditorUI.h" />
     <ClInclude Include="Editor\UI\View\InspectorView.h" />
+    <ClInclude Include="Editor\UI\View\SceneProfileView.h" />
     <ClInclude Include="Editor\UI\View\SceneView.h" />
     <ClInclude Include="Editor\UI\UIManager.h" />
     <ClInclude Include="Editor\UI\View\ScriptLoggerView.h" />

@@ -47,7 +47,6 @@
                         "floatParams": {
                             "xOffset": 7.0
                         },
-                        "handle": 1351,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TitleCamera.lua",
@@ -113,7 +112,6 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 8.5
                         },
-                        "handle": 1352,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -127,7 +125,6 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.30000001192092896
                         },
-                        "handle": 1353,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -142,6 +139,7 @@
             "SphereColliderData": {
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -181,6 +179,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": true
             },
@@ -203,7 +202,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1354,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TitleString.lua",
@@ -241,6 +239,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -279,6 +278,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -317,6 +317,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -355,6 +356,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": true
             },
@@ -368,7 +370,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 1355,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "SceneManager.lua",

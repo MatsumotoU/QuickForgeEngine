@@ -117,3 +117,10 @@ function Update()
         RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
     end
 end
+
+function ReloadOne()
+    bullets = bullets + 1
+    if bullets >= maxBullets then
+        bullets = maxBullets
+    end
+end
