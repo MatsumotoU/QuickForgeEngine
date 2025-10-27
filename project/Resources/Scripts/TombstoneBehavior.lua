@@ -20,6 +20,9 @@ dropBullets = 2
 
 playerName = "ShotGunPlayer"
 
+local timer = 0.0
+local maxTime = 1.0
+
 --[[
     初期化処理
 --]]
@@ -33,6 +36,13 @@ end
     更新処理
 --]]
 function Update()
+
+    -- 出現してから当たり判定が適応されるまでの時間
+    if timer <= 1.0 then
+        local deltatime = GetDeltaTime()
+        timer = timer + deltatime
+    end
+
     if maxBreakNockbackCount > 0 then
         transform.scale.y = (maxBreakNockbackCount - nockbackCount) / maxBreakNockbackCount
     end
@@ -73,8 +83,10 @@ function OnCollisionStay(id,obj)
 
     -- 弾を打たれた時
     if obj.tag == "bullet" then
-        isBreak = true
-        CreateEntity("TombstoneEmitter.json",transform)
+        if timer >= 1.0 then
+            isBreak = true
+            CreateEntity("TombstoneEmitter.json",transform)
+        end
     end
 
     -- ノックバック攻撃を食らった時

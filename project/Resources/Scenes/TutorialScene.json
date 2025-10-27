@@ -696,82 +696,37 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
+            "AABBColliderData": {
+                "aabb": [
+                    5.801031112670898,
+                    -8.699999809265137,
+                    4.260635852813721,
+                    7.301031112670898,
+                    8.699999809265137,
+                    5.060636043548584
                 ],
-                "modelName": "ratEnemy.obj"
-            },
-            "SceneObjectData": {
-                "name": "TutorialEnemy",
-                "tag": "Untagged",
-                "uniqueId": 6314
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "TutorialEnemy.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "TutorialEnemyHP.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "DeathAnim.lua",
-                        "stringParams": {
-                            "aliveScriptName": "TutorialEnemyHP.lua"
-                        }
-                    }
-                ]
-            },
-            "SphereColliderData": {
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
                 "isDraw": true,
                 "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
+                "isTrigger": false
+            },
+            "Force": {
+                "acceleration": [
                     0.0,
                     0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 1.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
                     0.0,
-                    0.4000000059604645
+                    0.0,
+                    0.0
                 ]
             },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
             "ModelHandle": {
                 "color": [
                     1.0,
@@ -779,56 +734,40 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "normalEnemy.obj"
+                "modelName": "tombstone.obj"
             },
             "SceneObjectData": {
-                "name": "TutorialGhost",
+                "name": "TutorialTombstone",
                 "tag": "Untagged",
-                "uniqueId": 6313
+                "uniqueId": 6853
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "TutorialGhost.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
+                        "floatParams": {
+                            "breakMaxTime": 1.0
+                        },
                         "intParams": {
-                            "enemyType": 1
+                            "dropBullets": 2,
+                            "maxBreakNockbackCount": 2,
+                            "nockbackCount": 0
                         },
                         "priority": 0,
-                        "scriptName": "TutorialEnemyHP.lua",
-                        "stringParams": {}
+                        "scriptName": "TombstoneBehavior.lua",
+                        "stringParams": {
+                            "playerName": "TutorialPlayer",
+                            "slowObjName": "SlowArea.json"
+                        }
                     },
                     {
                         "boolParams": {},
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "DeathAnim.lua",
-                        "stringParams": {
-                            "aliveScriptName": "TutorialEnemyHP.lua"
-                        }
+                        "scriptName": "Ground0.lua",
+                        "stringParams": {}
                     }
-                ]
-            },
-            "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    -1.1656187772750854,
-                    0.0,
-                    0.0,
-                    0.4000000059604645
                 ]
             },
             "Transform": {
@@ -843,9 +782,9 @@
                     1.0
                 ],
                 "translate": [
-                    -1.1656187772750854,
+                    6.551031112670898,
                     0.0,
-                    0.0
+                    4.660635948181152
                 ]
             }
         }
