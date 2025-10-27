@@ -11,14 +11,30 @@
         "colliderLayer": 255,
         "eventColliderLayer": 255,
         "isDraw": true,
-        "isStatic": false,
+        "isStatic": true,
         "isTrigger": false
+    },
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 20.0,
+        "isGravity": false,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
     },
     "ModelHandle": {
         "color": [
-            1.0,
-            1.0,
-            1.0,
+            0.7882353067398071,
+            0.6352941393852234,
+            0.1882352977991104,
             1.0
         ],
         "modelName": "playerBullet.obj"
@@ -33,7 +49,7 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "aliveTime": 0.6499999761581421,
+                    "aliveTime": 0.6000000238418579,
                     "maxSpeed": 20.0,
                     "minSpeed": 15.0,
                     "moveSpeed": 0.5

@@ -88,7 +88,7 @@ local isLoadMap = false
 --]]
 function Init()
 
-    stageNumber = 2
+    stageNumber = 1
 
     -- マップチップに対応する敵のテーブルを生成
     CreateEnemyNumberTable()
@@ -385,7 +385,7 @@ end
 function StageOneRegisterEnemy()
     -- 最大の敵の数を初期化
     -- 幽霊の敵
-    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
+    --table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 2})
     table.insert(maxEnemysCounts,{name = longGhostEnemyJson,maxCount = 3})
     -- 有機物の敵
     table.insert(maxEnemysCounts,{name = tyoutinEnemyJson,maxCount = 1})
@@ -395,7 +395,7 @@ function StageOneRegisterEnemy()
     
     -- 現在の敵の数を初期化
     -- 幽霊の敵
-    table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
+    --table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
     table.insert(currentEnemysCounts,{name = longGhostEnemyJson,difficulty = 1,count = 0})
     -- 有機物の敵
     table.insert(currentEnemysCounts,{name = tyoutinEnemyJson,difficulty = 1,count = 0})
