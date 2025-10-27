@@ -7,6 +7,10 @@
         {
             "tag1": "Enemy",
             "tag2": "Enemy"
+        },
+        {
+            "tag1": "player",
+            "tag2": "bullet"
         }
     ]
 }

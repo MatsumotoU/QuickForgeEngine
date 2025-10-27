@@ -49,7 +49,12 @@ function Update()
         end
 
         isReload = true
-        reloadInterval = reloadInterval + deltatime
+        if bullets == 0 then
+            reloadInterval = reloadInterval + deltatime*2.0
+        else
+            reloadInterval = reloadInterval + deltatime
+        end
+
         if reloadInterval >= targetReloadInterval then
         reloadInterval = 0.0
         bullets = bullets + 1
@@ -106,6 +111,16 @@ function Update()
             tempTransform.rotate.y = transform.rotate.y + addNum
             CreateEntity(bulletName,tempTransform)
         end
+
+        -- 薬莢の演出
+        local cartridgeTransform = Transform.new()
+        cartridgeTransform.translate = transform.translate
+        cartridgeTransform.translate.y = cartridgeTransform.translate.y + 1.0
+        cartridgeTransform.scale.x = 0.2
+        cartridgeTransform.scale.y = 0.2
+        cartridgeTransform.scale.z = 0.4
+        cartridgeTransform.rotate.y = transform.rotate.y
+        CreateEntity("CartridgeParticle.json",cartridgeTransform)
 
         force.velocity.x = -math.sin(transform.rotate.y) * knockBackPower
         force.velocity.z = -math.cos(transform.rotate.y) * knockBackPower
