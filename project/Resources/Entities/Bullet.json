@@ -49,9 +49,9 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "aliveTime": 0.6000000238418579,
-                    "maxSpeed": 20.0,
-                    "minSpeed": 15.0,
+                    "aliveTime": 0.699999988079071,
+                    "maxSpeed": 13.0,
+                    "minSpeed": 8.0,
                     "moveSpeed": 0.5
                 },
                 "intParams": {},
