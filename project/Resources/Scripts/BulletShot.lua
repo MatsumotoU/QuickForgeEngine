@@ -22,6 +22,10 @@ isReload = false
 -- 打ったかを取得
 isShot = false
 
+hitPointLuaName = "HitPoint.lua"
+do_reloadName = "do_reload"
+
+
 
 function Init()
 shotInterval = 0.0
@@ -29,6 +33,15 @@ isKnockback = false
 end
 
 function Update()
+
+    -- ダメージを受けたらリロード
+    local thisId = this.GetEntityId()
+    local do_reload = GetEntityScriptGlobal(thisId,hitPointLuaName,do_reloadName)
+
+    if do_reload == true then
+        bullets = bullets + 1
+        
+    end
 
     isReload = false
     isShot = false
@@ -62,9 +75,10 @@ function Update()
             RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Reroad")
         end        
 
-            if bullets >= maxBullets then
-                bullets = maxBullets
-            end
+            --下部へ移動
+            -- if bullets >= maxBullets then
+            --     bullets = maxBullets
+            -- end
         end
 
     else
@@ -131,4 +145,9 @@ function Update()
         transform.rotate.x = -1.0
         RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
     end
+
+    if bullets >= maxBullets then
+        bullets = maxBullets
+    end
+
 end
