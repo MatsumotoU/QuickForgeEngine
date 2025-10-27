@@ -59,7 +59,7 @@ local enemiesIDList = {}
 local lastCameraX = 0.0      -- 前回のプレイヤー位置
 local movedDistance = 0.0    -- 移動距離を計算
 local spawnDistance = 5.0    -- 敵を生成する距離
-local offsetX = 8.0 -- カメラの画面端までの位置
+local offsetX = 15.0 -- カメラの画面端までの位置
 
 
 
@@ -88,6 +88,8 @@ local isLoadMap = false
 --]]
 function Init()
 
+    stageNumber = 2
+
     -- マップチップに対応する敵のテーブルを生成
     CreateEnemyNumberTable()
 
@@ -108,7 +110,7 @@ function Init()
     -- 追跡するidを取得
     targetId = GetEntity(cameraName)
     -- カメラの画面端までの位置
-    offsetX = 8.0
+    offsetX = 15.0
     -- カメラの追跡する位置を設定
     local targetTransform = GetTransform(targetId)
     lastCameraX = targetTransform.translate.x + offsetX

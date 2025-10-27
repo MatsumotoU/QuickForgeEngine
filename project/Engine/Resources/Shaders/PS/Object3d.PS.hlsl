@@ -30,16 +30,16 @@ PixelShaderOutput main(VertexShaderOutput input)
         discard;
     }
 
-    float scale = lerp(4.0f, 1.0f, alpha); 
-    int2 pixelPos = (int2(input.position.xy / scale)) & 3;
-    float ditherThreshold = ditherMatrix[pixelPos.y][pixelPos.x];
-
-    float threshold = lerp(0.0f, 1.0f, 1.0f - alpha) * ditherThreshold;
-
-    if (alpha < threshold)
-    {
-        discard;
-    }
+    //float scale = lerp(4.0f, 1.0f, alpha); 
+    //int2 pixelPos = (int2(input.position.xy / scale)) & 3;
+    //float ditherThreshold = ditherMatrix[pixelPos.y][pixelPos.x];
+    //
+    //float threshold = lerp(0.0f, 1.0f, 1.0f - alpha) * ditherThreshold;
+    //
+    //if (alpha < threshold)
+    //{
+    //    discard;
+    //}
 
     if (gMaterial.enableLighting != 0)
     {

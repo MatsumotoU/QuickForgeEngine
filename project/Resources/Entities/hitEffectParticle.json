@@ -1,0 +1,61 @@
+{
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 1.0,
+        "isGravity": false,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "hitEffectPlane.obj"
+    },
+    "SceneObjectData": {
+        "name": "hitEffectParticle",
+        "tag": "Untagged",
+        "uniqueId": 6852
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "hitEffectParticle.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            -0.699999988079071,
+            0.0,
+            -6.900000095367432
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            0.10000000149011612
+        ],
+        "translate": [
+            2.8748297691345215,
+            0.0,
+            -1.4390288591384888
+        ]
+    }
+}

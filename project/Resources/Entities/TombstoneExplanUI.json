@@ -1,0 +1,45 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "tombstoneExplan.obj"
+    },
+    "SceneObjectData": {
+        "name": "TombstoneExplanUI",
+        "tag": "Untagged",
+        "uniqueId": 6847
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "tombstoneExplaneBehavior.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            -3.844661235809326
+        ]
+    }
+}

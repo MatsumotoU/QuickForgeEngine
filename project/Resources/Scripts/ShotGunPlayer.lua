@@ -1,5 +1,5 @@
 moveSpeed = 0.5
-backSpeed = 5.0
+
 local objectDir = Vector3.new(0.0,0.0,0.0)
 isBackFriping = false
 minVelocity = 1.0
@@ -26,6 +26,17 @@ function Update()
         transform.translate.y = 0.0
         force.velocity.y = 0.0
         force.acceleration.y = 0.0
+    end
+
+        -- バックフリップ終了処
+    if force.velocity:Length() <= minVelocity then
+        force.velocity.y = 0.0
+        force.velocity.z = 0.0
+        force.velocity.x = 0.0
+        if isBackFriping then
+           isBackFriping = false
+           
+        end
     end
 
     -- 自分に力がかかっていたら移動できない
@@ -55,16 +66,6 @@ function Update()
     end    
     -- transform.rotate.z = QFE.Math.SimpleEaseIn(transform.rotate.z,0.0,0.1)
 
-    -- バックフリップ終了処
-    if force.velocity:Length() <= minVelocity then
-        force.velocity.y = 0.0
-        force.velocity.z = 0.0
-        force.velocity.x = 0.0
-        if isBackFriping then
-           isBackFriping = false
-           
-        end
-    end
 
     -- バックフリップ開始処理
     if QFE.Input.GetKeyPress("MoveLeft") or moveDir.x + QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
@@ -72,7 +73,7 @@ function Update()
        objectDir.x = 1.0
        objectDir.y = 0.0
        -- 設定された向きを見る
-       transform.rotate.y =QFE.Math.SimpleEaseIn(transform.rotate.y,math.atan(objectDir.x,objectDir.y),0.8)
+       transform.rotate.y = QFE.Math.SimpleEaseIn(transform.rotate.y,math.atan(objectDir.x,objectDir.y),0.8)
        return
     end
 

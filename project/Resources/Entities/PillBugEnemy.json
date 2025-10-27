@@ -11,14 +11,18 @@
     "SceneObjectData": {
         "name": "PillBugEnemy",
         "tag": "Enemy",
-        "uniqueId": 5733
+        "uniqueId": 6132
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {},
-                "handle": 17,
+                "floatParams": {
+                    "delta_xPos": 8.0,
+                    "moveTime": 5.0,
+                    "stopTime": 5.0
+                },
+                "handle": 517,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "PillBugEnemyMove.lua",
@@ -27,8 +31,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 18,
-                "intParams": {},
+                "handle": 518,
+                "intParams": {
+                    "hp": 15
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {
@@ -40,7 +46,7 @@
                 "floatParams": {
                     "performingTime": 1.0
                 },
-                "handle": 26,
+                "handle": 519,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "DeathAnim.lua",

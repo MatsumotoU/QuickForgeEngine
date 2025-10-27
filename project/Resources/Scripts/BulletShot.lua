@@ -22,6 +22,9 @@ isReload = false
 -- 打ったかを取得
 isShot = false
 
+hitPointLuaName = "HitPoint.lua"
+do_reloadName = "do_reload"
+
 -- 音声
 local reload = QFE.Audio.LoadSound("reload2.mp3")
 local fullOfBullet = QFE.Audio.LoadSound("fullofBullets.mp3")
@@ -35,6 +38,15 @@ isKnockback = false
 end
 
 function Update()
+
+    -- ダメージを受けたらリロード
+    local thisId = this.GetEntityId()
+    local do_reload = GetEntityScriptGlobal(thisId,hitPointLuaName,do_reloadName)
+
+    if do_reload == true then
+        bullets = bullets + 1
+        
+    end
 
     isReload = false
     isShot = false
@@ -55,7 +67,12 @@ function Update()
         end
 
         isReload = true
-        reloadInterval = reloadInterval + deltatime
+        if bullets == 0 then
+            reloadInterval = reloadInterval + deltatime*2.0
+        else
+            reloadInterval = reloadInterval + deltatime
+        end
+
         if reloadInterval >= targetReloadInterval then
         reloadInterval = 0.0
         bullets = bullets + 1
@@ -119,6 +136,16 @@ function Update()
             CreateEntity(bulletName,tempTransform)
         end
 
+        -- 薬莢の演出
+        local cartridgeTransform = Transform.new()
+        cartridgeTransform.translate = transform.translate
+        cartridgeTransform.translate.y = cartridgeTransform.translate.y + 1.0
+        cartridgeTransform.scale.x = 0.2
+        cartridgeTransform.scale.y = 0.2
+        cartridgeTransform.scale.z = 0.4
+        cartridgeTransform.rotate.y = transform.rotate.y
+        CreateEntity("CartridgeParticle.json",cartridgeTransform)
+
         force.velocity.x = -math.sin(transform.rotate.y) * knockBackPower
         force.velocity.z = -math.cos(transform.rotate.y) * knockBackPower
 
@@ -129,6 +156,11 @@ function Update()
         RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
         QFE.Audio.PlaySound(shot,false,0.3)
     end
+
+    if bullets >= maxBullets then
+        bullets = maxBullets
+    end
+
 end
 
 function ReloadOne()
