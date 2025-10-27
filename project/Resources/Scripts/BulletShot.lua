@@ -79,6 +79,7 @@ function Update()
         if bullets <= maxBullets then
             RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Reroad")
             QFE.Audio.PlaySound(reload,false,0.5)
+            RunEntityScriptFunction(GetEntity("ShallReload"),"ShallReloadUI.lua","Anim")
         end        
 
             if bullets >= maxBullets then
@@ -134,6 +135,23 @@ function Update()
 
             tempTransform.rotate.y = transform.rotate.y + addNum
             CreateEntity(bulletName,tempTransform)
+        end
+
+        for i = 1, 5, 1 do
+
+            local tmp = i % 2
+            local max_addNum = math.pi * diffusionRate
+            local addNum = 0
+
+            if tmp == 0 then
+                  addNum =  max_addNum * math.random() 
+            else
+                addNum  = -max_addNum * math.random()
+            end
+
+
+            tempTransform.rotate.y = transform.rotate.y + addNum * 6.0
+            CreateEntity("SmokeParticle.json",tempTransform)
         end
 
         -- 薬莢の演出

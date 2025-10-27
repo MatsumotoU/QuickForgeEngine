@@ -13,9 +13,9 @@
             },
             "Transform": {
                 "rotate": [
-                    0.10000000149011612,
-                    0.0,
-                    0.0
+                    1.2038904428482056,
+                    -0.1350005567073822,
+                    -0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    1.5,
-                    -10.0
+                    0.25646552443504333,
+                    4.958316326141357,
+                    -1.8881819248199463
                 ]
             }
         },
@@ -59,37 +59,47 @@
             }
         },
         {
-            "SceneObjectData": {
-                "name": "anchor.png",
-                "tag": "Untagged",
-                "uniqueId": 3
-            },
-            "SpriteData": {
-                "height": 64.0,
-                "isDraw": true,
-                "layer": 0,
-                "pivot": [
-                    0.5,
-                    0.5
-                ],
-                "textureName": "anchor.png",
-                "width": 64.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
+            "ModelHandle": {
+                "color": [
+                    1.0,
                     1.0,
                     1.0,
                     1.0
                 ],
+                "modelName": "circle.obj"
+            },
+            "SceneObjectData": {
+                "name": "CircleParticle",
+                "tag": "Untagged",
+                "uniqueId": 6851
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "circleParticle.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.10000000149011612,
+                    1.0,
+                    0.30000001192092896
+                ],
                 "translate": [
-                    430.8739929199219,
-                    201.9163055419922,
-                    0.020000001415610313
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }

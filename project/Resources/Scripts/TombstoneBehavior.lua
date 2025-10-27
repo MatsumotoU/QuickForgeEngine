@@ -25,6 +25,9 @@ local cameraID = 0
 local timer = 0.0
 local maxTime = 1.0
 
+-- 音
+local breakSE = QFE.Audio.LoadSound("tomBreak.mp3")
+
 --[[
     初期化処理
 --]]
@@ -64,9 +67,7 @@ function OnCollisionEnter(id,obj)
     if isBreak then
         -- スローエリアを生成
         CreateEntity(slowObjName,transform)
-        for i = 1, dropBullets, 1 do
-            RunEntityScriptFunction(GetEntity(playerName),"BulletShot.lua","ReloadOne")
-        end
+        
         destroy()
     else
         --if obj.tag == "player" then
@@ -96,7 +97,12 @@ function OnCollisionStay(id,obj)
     if obj.tag == "bullet" then
         if timer >= 1.0 then
             isBreak = true
+            for i = 1, dropBullets, 1 do
+            RunEntityScriptFunction(GetEntity(playerName),"BulletShot.lua","ReloadOne")
+            end
+            RunEntityScriptFunction(GetEntity("ShallReload"),"ShallReloadUI.lua","Anim")
             CreateEntity("TombstoneEmitter.json",transform)
+            QFE.Audio.PlaySound(breakSE,false,0.3)
         end
     end
 
@@ -113,6 +119,11 @@ function OnCollisionStay(id,obj)
         -- ノックバック回数
         if nockbackCount >= maxBreakNockbackCount then
             isBreak = true
+            for i = 1, dropBullets, 1 do
+            RunEntityScriptFunction(GetEntity(playerName),"BulletShot.lua","ReloadOne")
+            end
+            RunEntityScriptFunction(GetEntity("ShallReload"),"ShallReloadUI.lua","Anim")
+            QFE.Audio.PlaySound(breakSE,false,0.3)
             CreateEntity("TombstoneEmitter.json",transform)
         else
             CreateEntity("HalfTombstoneEmitter.json",transform)
