@@ -156,7 +156,6 @@
                             "maxShotInterval": 0.20000000298023224,
                             "targetReloadInterval": 0.550000011920929
                         },
-                        "handle": 3,
                         "intParams": {
                             "bullets": 4,
                             "maxBullets": 4,
@@ -921,7 +920,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 13,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotButtonUi.lua",
@@ -974,7 +972,6 @@
                             "minSpeed": 15.0,
                             "moveSpeed": 0.5
                         },
-                        "handle": 14,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MoveButtonUI.lua",
@@ -1014,12 +1011,12 @@
         {
             "AABBColliderData": {
                 "aabb": [
-                    6.435625076293945,
-                    -0.8999991416931152,
-                    2.640949010848999,
-                    7.835245132446289,
-                    8.69999885559082,
-                    3.640948534011841
+                    1.4500000476837158,
+                    -1.25,
+                    -0.15000000596046448,
+                    1.6384716033935547,
+                    1.25,
+                    0.15000000596046448
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
@@ -1050,35 +1047,26 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "tombstone.obj"
+                "modelName": "playerBullet.obj"
             },
             "SceneObjectData": {
-                "name": "Tombstone",
-                "tag": "Untagged",
-                "uniqueId": 781
+                "name": "Bullet",
+                "tag": "bullet",
+                "uniqueId": 161
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "breakMaxTime": 1.0
+                            "aliveTime": 0.6499999761581421,
+                            "maxSpeed": 20.0,
+                            "minSpeed": 15.0,
+                            "moveSpeed": 0.5
                         },
-                        "intParams": {
-                            "maxBreakNockbackCount": 2
-                        },
-                        "priority": 0,
-                        "scriptName": "TombstoneBehavior.lua",
-                        "stringParams": {
-                            "slowObjName": "SlowArea.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "Ground0.lua",
+                        "scriptName": "BulletMove.lua",
                         "stringParams": {}
                     }
                 ]
@@ -1095,9 +1083,9 @@
                     1.0
                 ],
                 "translate": [
-                    7.135435104370117,
-                    3.9000000953674316,
-                    3.14094877243042
+                    1.5442358255386353,
+                    0.0,
+                    0.0
                 ]
             }
         }
