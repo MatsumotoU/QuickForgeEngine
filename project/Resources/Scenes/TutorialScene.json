@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.6813935041427612,
-                    4.0133929246621847e-07,
+                    0.6909353137016296,
+                    -0.18634779751300812,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -4.8787627747515216e-05,
-                    98.58302307128906,
-                    -121.56205749511719
+                    7.329380989074707,
+                    24.588590621948242,
+                    -24.853862762451172
                 ]
             }
         },
@@ -45,7 +45,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 21,
+                        "handle": 1123,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialCameraMove.lua",
@@ -113,7 +113,7 @@
                             "minVelocity": 2.0,
                             "moveSpeed": 4.0
                         },
-                        "handle": 22,
+                        "handle": 1124,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -128,7 +128,7 @@
                             "shotInterval": 10.0,
                             "targetReloadInterval": 0.5
                         },
-                        "handle": 23,
+                        "handle": 1125,
                         "intParams": {
                             "bullets": 3,
                             "shotNum": 20
@@ -193,7 +193,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 24,
+                        "handle": 1126,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunAnim.lua",
@@ -230,7 +230,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 25,
+                        "handle": 1127,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapGenerater.lua",
@@ -267,7 +267,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 26,
+                        "handle": 1128,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialMapRenderer.lua",
@@ -310,7 +310,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 27,
+                        "handle": 1129,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialManager.lua",
@@ -360,7 +360,7 @@
                             "borderX": 10.0,
                             "maxBorderX": 10.0
                         },
-                        "handle": 28,
+                        "handle": 1130,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TutorialDamageBorder.lua",
@@ -398,6 +398,10 @@
                 "height": 80.0,
                 "isDraw": true,
                 "layer": 11,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
                 "textureName": "fream.png",
                 "width": 512.0
             },
@@ -430,7 +434,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 29,
+                        "handle": 1131,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "gaugeBehavior.lua",
@@ -442,6 +446,10 @@
                 "height": 75.0,
                 "isDraw": true,
                 "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
                 "textureName": "white1x1.png",
                 "width": 500.0
             },
@@ -507,7 +515,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 30,
+                        "handle": 1132,
                         "intParams": {
                             "UIType": 0,
                             "shotType": 0,
@@ -525,6 +533,10 @@
                 "height": 80.0,
                 "isDraw": true,
                 "layer": 5,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
                 "textureName": "breakEnemy.png",
                 "width": 340.0
             },

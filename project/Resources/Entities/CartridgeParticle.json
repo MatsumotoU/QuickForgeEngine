@@ -1,0 +1,62 @@
+{
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 1.0,
+        "isGravity": true,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "CartridgeParticle",
+        "tag": "Untagged",
+        "uniqueId": 6846
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 10,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "cartridgeParticle.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            0.4000000059604645,
+            0.20000000298023224,
+            0.20000000298023224
+        ],
+        "translate": [
+            3.43265962600708,
+            0.008659124374389648,
+            3.181229591369629
+        ]
+    }
+}
