@@ -156,7 +156,6 @@
                             "maxShotInterval": 0.20000000298023224,
                             "targetReloadInterval": 0.550000011920929
                         },
-                        "handle": 3,
                         "intParams": {
                             "bullets": 4,
                             "maxBullets": 4,
@@ -921,7 +920,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 13,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotButtonUi.lua",
@@ -974,7 +972,6 @@
                             "minSpeed": 15.0,
                             "moveSpeed": 0.5
                         },
-                        "handle": 14,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "MoveButtonUI.lua",
@@ -1007,6 +1004,71 @@
                 "translate": [
                     0.0,
                     499.8999938964844,
+                    0.0
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    1.4500000476837158,
+                    -1.25,
+                    -0.15000000596046448,
+                    1.6384716033935547,
+                    1.25,
+                    0.15000000596046448
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "playerBullet.obj"
+            },
+            "SceneObjectData": {
+                "name": "Bullet",
+                "tag": "bullet",
+                "uniqueId": 161
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "aliveTime": 0.6499999761581421,
+                            "maxSpeed": 20.0,
+                            "minSpeed": 15.0,
+                            "moveSpeed": 0.5
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BulletMove.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.5442358255386353,
+                    0.0,
                     0.0
                 ]
             }
