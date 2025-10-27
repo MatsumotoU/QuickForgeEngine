@@ -60,38 +60,25 @@
         },
         {
             "SceneObjectData": {
-                "name": "MoveUi",
+                "name": "anchor.png",
                 "tag": "Untagged",
                 "uniqueId": 3
             },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 28,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "MoveButtonUI.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
             "SpriteData": {
-                "height": 90.0,
+                "height": 64.0,
                 "isDraw": true,
                 "layer": 0,
                 "pivot": [
-                    0.0,
-                    0.0
+                    0.5,
+                    0.5
                 ],
-                "textureName": "MoveUi.png",
-                "width": 360.0
+                "textureName": "anchor.png",
+                "width": 64.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -100,57 +87,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    461.1000061035156,
-                    0.0
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "ShotUi",
-                "tag": "Untagged",
-                "uniqueId": 4
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "handle": 29,
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "ShotButtonUi.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SpriteData": {
-                "height": 90.0,
-                "isDraw": true,
-                "layer": 1,
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "textureName": "ShotUi.png",
-                "width": 360.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    398.6000061035156,
-                    0.0
+                    430.8739929199219,
+                    201.9163055419922,
+                    0.020000001415610313
                 ]
             }
         }

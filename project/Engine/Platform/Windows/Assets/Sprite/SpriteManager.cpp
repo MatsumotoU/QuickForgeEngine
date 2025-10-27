@@ -55,6 +55,10 @@ VertexBuffer<VertexData>* SpriteManager::GetVertexBuffer(uint32_t handle) {
 	return &spriteVertexBuffers_[handle];
 }
 
+VertexData* SpriteManager::GetVertexData(uint32_t handle) {
+	return spriteVertexBuffers_[handle].GetData();
+}
+
 Vector2 SpriteManager::GetSpriteSize(uint32_t handle) {
 	if (handle < spriteVertexBuffers_.size()) {
 		VertexData* vertexData = spriteVertexBuffers_[handle].GetData();
