@@ -58,6 +58,7 @@ function Update()
                 temp.translate.y = transform.translate.y
                 temp.translate.z = transform.translate.z
                 CreateEntity(normalEnemyName,temp)
+                CreateEntity("EnemyChangeEmitter.json",transform)
             end
         end
     else
@@ -89,7 +90,8 @@ function OnCollisionEnter(id,obj)
         hp = hp - 1
         
         if damageInterval <= 0.0 then
-            CreateEntity("ExplotionParticleEmitter.json",transform)
+            --CreateEntity("ExplotionParticleEmitter.json",transform)
+            CreateEntity("EnemyHitEmitter.json",transform)
             damageInterval = maxDamageInterval
         end
         
