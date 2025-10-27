@@ -15,7 +15,6 @@
                     "fadeOutTime": 0.5,
                     "waitTime": 0.20000000298023224
                 },
-                "handle": 11,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "SceneTransitionManager.lua",
@@ -30,7 +29,11 @@
     "SpriteData": {
         "height": 720.0,
         "isDraw": true,
-        "layer": 5,
+        "layer": 20,
+        "pivot": [
+            0.0,
+            0.0
+        ],
         "textureName": "white1x1.png",
         "width": 1280.0
     },

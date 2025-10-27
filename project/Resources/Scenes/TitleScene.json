@@ -139,7 +139,6 @@
             "SphereColliderData": {
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -179,7 +178,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": true
             },
@@ -239,7 +237,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -278,7 +275,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -317,7 +313,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -356,7 +351,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": true
             },
