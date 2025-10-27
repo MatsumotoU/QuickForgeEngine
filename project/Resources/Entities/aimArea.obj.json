@@ -1,0 +1,36 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "aimArea.obj"
+    },
+    "ParentData": {
+        "parentId": 162
+    },
+    "SceneObjectData": {
+        "name": "aimArea.obj",
+        "tag": "Untagged",
+        "uniqueId": 7139
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            3.140000104904175,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            4.0
+        ],
+        "translate": [
+            0.0,
+            -1.2449007158465974e-07,
+            5.699999809265137
+        ]
+    }
+}

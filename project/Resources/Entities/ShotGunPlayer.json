@@ -21,7 +21,7 @@
             0.0
         ],
         "friction": 4.25,
-        "gravityStrength": 10.0,
+        "gravityStrength": 0.9800000190734863,
         "isGravity": true,
         "mass": 1.0,
         "velocity": [
@@ -53,7 +53,6 @@
                     "minVelocity": 0.5,
                     "moveSpeed": 3.75
                 },
-                "handle": 2726,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "ShotGunPlayer.lua",
@@ -64,7 +63,6 @@
                 "floatParams": {
                     "maxDamageInterval": 2.0
                 },
-                "handle": 2727,
                 "intParams": {
                     "hitPoint": 5
                 },
@@ -80,13 +78,12 @@
                     "diffusionRate": 0.125,
                     "knockBackPower": 27.5,
                     "maxShotInterval": 0.20000000298023224,
-                    "targetReloadInterval": 0.550000011920929
+                    "targetReloadInterval": 0.44999998807907104
                 },
-                "handle": 2728,
                 "intParams": {
                     "bullets": 4,
                     "maxBullets": 4,
-                    "shotNum": 20
+                    "shotNum": 15
                 },
                 "priority": 0,
                 "scriptName": "BulletShot.lua",
