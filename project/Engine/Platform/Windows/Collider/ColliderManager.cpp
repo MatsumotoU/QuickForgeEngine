@@ -277,15 +277,15 @@ void ColliderManager::AABBToAABBUpdate() {
 				Vector3 centerB = (colliderB.aabb.min + colliderB.aabb.max) * 0.5f;
 
 				// AABBの半サイズ
-				Vector3 halfA = (colliderA.aabb.max - colliderA.aabb.min) * 0.5f;
-				Vector3 halfB = (colliderB.aabb.max - colliderB.aabb.min) * 0.5f;
+				Vector3 halfA = (colliderA.aabb.max - colliderA.aabb.min) * 0.51f;
+				Vector3 halfB = (colliderB.aabb.max - colliderB.aabb.min) * 0.51f;
 
 				// 中心間距離
 				Vector3 delta = centerB - centerA;
 				Vector3 overlap = {
-					(halfA.x + halfB.x) - std::abs(delta.x),
-					(halfA.y + halfB.y) - std::abs(delta.y),
-					(halfA.z + halfB.z) - std::abs(delta.z)
+					(halfA.x + halfB.x) - (std::abs(delta.x) + 0.01f),
+					(halfA.y + halfB.y) - (std::abs(delta.y) + 0.01f),
+					(halfA.z + halfB.z) - (std::abs(delta.z) + 0.01f)
 				};
 
 				// 最小オーバーラップ軸を探す

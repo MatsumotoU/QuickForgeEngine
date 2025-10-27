@@ -83,8 +83,6 @@ function Update()
             transform:AddForward(moveSpeed*deltatime)
         end
     end
-
-    
 end
 
 function OnCollisionEnter(id,obj)
@@ -105,6 +103,7 @@ function OnCollisionStay(id,obj)
         force.velocity.z = 0.0
         force.acceleration.x = 0.0
         force.acceleration.z = 0.0
+        DebugLog("Reset force")
     end
 
 end

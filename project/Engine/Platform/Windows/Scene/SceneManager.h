@@ -51,6 +51,12 @@ public:
 	void StartScript();
 	void StopScript();
 
+	float initTime_;
+	float updateTime_;
+	float preDrawTime_;
+	float drawTime_;
+	float postDrawTime_;
+
 private:
 	std::unordered_map<std::string, nlohmann::json> loadEntities_;
 	nlohmann::json sceneConfig_;

@@ -47,7 +47,6 @@
                         "floatParams": {
                             "xOffset": 7.0
                         },
-                        "handle": 381,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TitleCamera.lua",
@@ -113,7 +112,6 @@
                             "minVelocity": 6.0,
                             "moveSpeed": 8.5
                         },
-                        "handle": 382,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "ShotGunPlayer.lua",
@@ -127,7 +125,6 @@
                             "knockBackPower": 10.0,
                             "maxShotInterval": 0.30000001192092896
                         },
-                        "handle": 383,
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
@@ -205,7 +202,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 384,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "TitleString.lua",
@@ -374,7 +370,6 @@
                     {
                         "boolParams": {},
                         "floatParams": {},
-                        "handle": 385,
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "SceneManager.lua",
