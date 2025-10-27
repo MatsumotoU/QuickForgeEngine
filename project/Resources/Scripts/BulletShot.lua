@@ -49,7 +49,12 @@ function Update()
         end
 
         isReload = true
-        reloadInterval = reloadInterval + deltatime
+        if bullets == 0 then
+            reloadInterval = reloadInterval + deltatime*2.0
+        else
+            reloadInterval = reloadInterval + deltatime
+        end
+
         if reloadInterval >= targetReloadInterval then
         reloadInterval = 0.0
         bullets = bullets + 1
