@@ -3,6 +3,8 @@ aliveTime = 0.75
 maxSpeed = 20.0
 minSpeed = 15.0 
 
+-- 音
+local hit = QFE.Audio.LoadSound("hit.mp3")
 local rotateNum = 0.0
 
 function Init()
@@ -46,5 +48,11 @@ function OnCollisionEnter(id,obj)
         return
     end
 
+    if obj.tag == "enemy" or obj.tag == "Enemy" then
+        QFE.Audio.PlaySound(hit,false,0.3)
+    else
+        QFE.Audio.PlaySound(hit,false,0.1)
+    end
+    
     destroy()
 end
