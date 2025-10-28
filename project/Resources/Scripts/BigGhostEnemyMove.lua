@@ -52,6 +52,7 @@ function Update()
         timer = timer + deltaTime
     end
 
+
     isHit = false
 end
 

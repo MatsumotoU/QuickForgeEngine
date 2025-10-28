@@ -61,7 +61,7 @@ function Update()
         --hitPoint = hitPoint - 1
         --do_reload = true
         --isDamaged = true
-        force.velocity.x = force.velocity.x + 87.5
+        force.velocity.x = force.velocity.x + 82.5
         --force.velocity.y = force.velocity.y + 20
         --damageInterval = maxDamageInterval
         CreateEntity("ExplotionParticleEmitter.json",transform)

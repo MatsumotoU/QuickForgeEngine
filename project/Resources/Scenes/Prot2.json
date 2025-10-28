@@ -424,7 +424,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "borderSpeed": 0.4000000059604645,
+                            "borderSpeed": 0.550000011920929,
                             "maxBorderX": 12.0
                         },
                         "intParams": {},
@@ -1190,34 +1190,34 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "pillBugEnemy.obj"
+                "modelName": "bigEnemy.obj"
             },
             "SceneObjectData": {
-                "name": "PillBugEnemy",
+                "name": "BigGhostEnemy",
                 "tag": "Enemy",
-                "uniqueId": 5733
+                "uniqueId": 500
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "delta_xPos": 8.5,
-                            "moveTime": 5.5,
-                            "stopTime": 5.0
+                            "speed": 1.25
                         },
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "PillBugEnemyMove.lua",
+                        "scriptName": "BigGhostEnemyMove.lua",
                         "stringParams": {}
                     },
                     {
                         "boolParams": {},
-                        "floatParams": {},
+                        "floatParams": {
+                            "maxDamageInterval": 0.25
+                        },
                         "intParams": {
                             "enemyType": 1,
-                            "hp": 25,
-                            "maxHp": 25
+                            "hp": 35,
+                            "maxHp": 35
                         },
                         "priority": 0,
                         "scriptName": "EnemyHp.lua",
@@ -1228,11 +1228,21 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "performingTime": 1.0
+                            "performingTime": 1.5
                         },
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "DeathAnim.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "performingTime": 1.75
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "GhostMoveAnim.lua",
                         "stringParams": {}
                     }
                 ]
@@ -1244,10 +1254,10 @@
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
-                    6.0172014236450195,
-                    2.570373058319092,
-                    0.0,
-                    0.699999988079071
+                    6.061912536621094,
+                    -0.33281970024108887,
+                    0.7657085657119751,
+                    1.5499999523162842
                 ]
             },
             "Transform": {
@@ -1262,9 +1272,9 @@
                     1.0
                 ],
                 "translate": [
-                    6.0172014236450195,
-                    2.570373058319092,
-                    0.0
+                    6.061912536621094,
+                    -0.33281970024108887,
+                    0.7657085657119751
                 ]
             }
         }
