@@ -110,6 +110,12 @@ function Update()
         -- 弾倉管理
         if bullets <= 0 then
             QFE.Audio.PlaySound(emptyShot,false,0.5)
+            local tmpPos = Transform.new()
+            tmpPos.rotate.x = -0.6
+            tmpPos.translate = transform.translate
+            tmpPos.translate.y = tmpPos.translate.y + 2.0
+            --tmpPos.translate.z = tmpPos.translate.z
+            CreateEntity("BulletEmptyUI.json",tmpPos)
             return
         end
 

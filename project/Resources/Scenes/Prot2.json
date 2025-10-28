@@ -1279,6 +1279,51 @@
                     0.7657085657119751
                 ]
             }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "bulletEmptyPlane.obj"
+            },
+            "SceneObjectData": {
+                "name": "BulletEmptyUI",
+                "tag": "Untagged",
+                "uniqueId": 11796
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "bulletEmptyUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -0.6000000238418579,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    3.5,
+                    2.200000047683716,
+                    5.400000095367432
+                ]
+            }
         }
     ],
     "sceneName": "Prot2"
