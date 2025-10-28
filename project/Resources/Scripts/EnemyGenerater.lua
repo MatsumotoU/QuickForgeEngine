@@ -85,7 +85,7 @@ local isLoadMap = false
 --]]
 function Init()
 
-    stageNumber = 1
+    stageNumber = 2
 
     -- マップチップに対応する敵のテーブルを生成
     CreateEnemyNumberTable()
@@ -138,7 +138,7 @@ function Init()
     tmpTransform.translate.y = 0.0
     tmpTransform.translate.x = 15.0
     tmpTransform.translate.z = 6.5
-    CreateEntity(bigGhostEnemyJson,tmpTransform)
+    CreateEntity(smallGhostEnemyJson,tmpTransform)
     -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
 
 end

@@ -89,7 +89,7 @@ function OnCollisionStay(id,obj)
         return
     end
 
-    if obj.tag == damageTag then
+    if obj.tag == damageTag  then
 
         if not GetEntityScriptGlobal(id,"EnemyHp.lua","isAlive") then
             return
@@ -101,7 +101,20 @@ function OnCollisionStay(id,obj)
         isDamaged = true
         CreateEntity("ExplotionParticleEmitter.json",transform)
         QFE.Audio.PlaySound(damage,false,0.5)
+        
+    elseif  obj.tag == "EnemyBullet" then
+
+        damageInterval = maxDamageInterval  
+        hitPoint = hitPoint - 1
+        do_reload = true
+        korehaHidoi = true
+        isDamaged = true
+        CreateEntity("ExplotionParticleEmitter.json",transform)
+        QFE.Audio.PlaySound(damage,false,0.5)
+
     end
+
+
 end
 
 function Reset()
