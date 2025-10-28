@@ -3,7 +3,7 @@ local timer = 0.0
 local maxTime = 1.0
 
 local performCnt = 0.0
-local performTime = 1.5
+local performTime = 2.0
 local inv_performTime = 0.0
 
 local st_posY = 0.0
@@ -38,28 +38,28 @@ function Update()
     performCnt = performCnt+ inv_performTime * deltatime
 
 
-    transform.translate.y = EasingInBack(st_posY,st_posY+ add_posY,performCnt) 
+    transform.translate.y = EaseInExpo(st_posY,st_posY+ add_posY,performCnt) 
 
     local mat = GetMaterial(GetThisEntityId())
 
-    if performCnt <= 0.2 then
-        local t = performCnt * 5.0 
+    if performCnt <= 0.3 then
+        local t = performCnt * 3.333333333 
         local dst_scale = 0.75
         local dst_alpha = 0.75
 
-        transform.scale.x =  EaseOutCubic(0.0,dst_scale,t) 
-        transform.scale.y =  EaseOutCubic(0.0,dst_scale,t) 
+        transform.scale.x =  EaseOutBack(0.0,dst_scale,t) 
+        transform.scale.y =  EaseOutBack(0.0,dst_scale,t) 
         mat.color.w = EaseOutCubic(0.0,dst_alpha,t)
 
-    elseif  performCnt > 0.2 and performCnt <= 0.7 then
-        local t = (performCnt - 0.2) * 2.0 
+    elseif  performCnt > 0.3 and performCnt <= 0.8 then
+        local t = (performCnt - 0.3) * 2.0 
         local add_alpha = 0.25
         local tmp = 0.5 + math.sin(t*math.pi*6.0) * add_alpha 
         mat.color.w = tmp
 
     else
         local dst_alpha = 0.0
-        local t = (performCnt-0.7) * 3.333333333333 
+        local t = (performCnt - 0.8) * 5.0 
 
         mat.color.w = EaseInBounce(1.0,dst_alpha,t)
 
@@ -142,3 +142,14 @@ end
 function EaseInBounce(st_, end_, t_)
     return Lerp(st_,end_,1.0 - EaseOutBounceForConvert(1.0 - t_))
 end
+
+function EaseOutBack(st_, end_, t_)
+    local c1 = 1.70158
+    local c3 = c1 + 1.0
+
+    local convertedT = 1.0 + c3 * (t_ - 1.0)*(t_ - 1.0)*(t_ - 1.0) + c1 * (t_ - 1.0) * (t_ - 1.0);
+
+    return Lerp(st_, end_, convertedT)
+end
+
+    

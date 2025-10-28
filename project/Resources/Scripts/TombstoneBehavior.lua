@@ -66,7 +66,7 @@ function OnCollisionEnter(id,obj)
 
     if isBreak then
         -- スローエリアを生成
-        CreateEntity(slowObjName,transform)
+        --CreateEntity(slowObjName,transform)
         
         destroy()
     else
