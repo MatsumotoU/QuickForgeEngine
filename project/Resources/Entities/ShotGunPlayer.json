@@ -20,7 +20,7 @@
             0.0,
             0.0
         ],
-        "friction": 4.25,
+        "friction": 4.099999904632568,
         "gravityStrength": 0.9800000190734863,
         "isGravity": true,
         "mass": 1.0,
@@ -50,7 +50,7 @@
                 "boolParams": {},
                 "floatParams": {
                     "backSpeed": 8.0,
-                    "minVelocity": 0.5,
+                    "minVelocity": 1.350000023841858,
                     "moveSpeed": 3.75
                 },
                 "intParams": {},
@@ -77,8 +77,8 @@
                 "floatParams": {
                     "diffusionRate": 0.125,
                     "knockBackPower": 27.5,
-                    "maxShotInterval": 0.20000000298023224,
-                    "targetReloadInterval": 0.44999998807907104
+                    "maxShotInterval": 0.25,
+                    "targetReloadInterval": 0.550000011920929
                 },
                 "intParams": {
                     "bullets": 4,

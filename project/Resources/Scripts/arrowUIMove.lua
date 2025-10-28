@@ -27,6 +27,10 @@ sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
 local transitionID = 0
 
+local waitTimer = 0.0
+local maxWaitTime = 2.0
+local tmpPosX = 0.0
+
 function Init()
     timer = 0.0
     -- 選択状態を取得する
@@ -84,7 +88,36 @@ function SelectScene()
 
     if selectType == 0 then
         transform.translate.x = selectRetryPosX
+        tmpPosX = selectRetryPosX
     else
         transform.translate.x = selectTitlePosX
+        tmpPosX = selectTitlePosX
     end
+
+    local delt = GetDeltaTime()
+    waitTimer = waitTimer + delt
+
+    -- 0から1の範囲に収める
+    local ti = math.min(waitTimer / maxWaitTime,1.0)
+
+        if ti <= 0.5 then
+            local inTimer = ti / 0.5
+           transform.translate.x = tmpPosX + QFE.Math.Leap(-10.0,10.0,EaseIn(inTimer))
+        else
+            local outTimer = (ti - 0.5) / 0.5
+           transform.translate.x = tmpPosX + QFE.Math.Leap(10.0,-10.0,EaseOut(outTimer))
+        end
+
+        if waitTimer >= maxWaitTime then
+            waitTimer = 0.0
+        end
+
+end
+
+function EaseIn(t)
+    return t * t
+end
+
+function EaseOut(t)
+    return -t * (t - 2.0)
 end

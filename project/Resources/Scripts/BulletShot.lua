@@ -25,6 +25,8 @@ isShot = false
 hitPointLuaName = "HitPoint.lua"
 do_reloadName = "do_reload"
 
+local time = 0.0
+
 -- 音声
 local reload = QFE.Audio.LoadSound("reload2.mp3")
 local fullOfBullet = QFE.Audio.LoadSound("fullofBullets.mp3")
@@ -38,20 +40,19 @@ isKnockback = false
 end
 
 function Update()
-
     -- ダメージを受けたらリロード
     local thisId = this.GetEntityId()
     local do_reload = GetEntityScriptGlobal(thisId,hitPointLuaName,do_reloadName)
 
     if do_reload == true then
         bullets = bullets + 1
-        
     end
 
     isReload = false
     isShot = false
 
     deltatime = GetDeltaTime()
+    time = time + deltatime
 
     -- ノックバックしているか判断
     if isKnockback then
@@ -109,7 +110,13 @@ function Update()
     if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
         -- 弾倉管理
         if bullets <= 0 then
-            QFE.Audio.PlaySound(emptyShot,false,0.5)
+            QFE.Audio.PlaySound(emptyShot,false,1.0)
+            local tmpPos = Transform.new()
+            tmpPos.rotate.x = -0.6
+            tmpPos.translate = transform.translate
+            tmpPos.translate.y = tmpPos.translate.y + 2.0
+            --tmpPos.translate.z = tmpPos.translate.z
+            CreateEntity("BulletEmptyUI.json",tmpPos)
             return
         end
 

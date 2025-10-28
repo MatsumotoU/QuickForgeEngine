@@ -1,5 +1,7 @@
 #include "AudioPlayChip.h"
 #include <cassert>
+#include <random>
+#include <algorithm>
 
 AudioPlayChip::~AudioPlayChip() {
 	Finalize();
@@ -32,21 +34,43 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 
 	// TODO: 音のポストプロセス処理を別の場所に作ること(TD用の緊急オペ)
 	// --- チープ化処理ここから ---
-	// 8bit化 & サンプリングレート半減
+	// 8bit化 & サンプリングレート半減 & ノイズ & lo-fiエフェクト
 	if (audioData.wfex.wBitsPerSample == 16) {
-		// 元データ: 16bit PCM
 		const int16_t* src = reinterpret_cast<int16_t*>(audioData.pBuffer);
 		size_t sampleCount = audioData.bufferSize / 2;
-		// サンプリングレート半減
 		size_t cheapSampleCount = sampleCount / 2;
 		BYTE* cheapBuffer = new BYTE[cheapSampleCount];
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int> noiseDist(-32, 32); // ノイズ
+		float lastSample = 0.0f; // ローパスフィルタ用
+
 		for (size_t i = 0; i < cheapSampleCount; ++i) {
-			// 2サンプルごとに1サンプルだけ使う
 			int16_t s = src[i * 2];
+
+			if (s == 0) {
+				cheapBuffer[i] = 128;
+				continue;
+			}
+
+			// ノイズ付加
+			s = static_cast<int16_t>(std::clamp<int>(s + noiseDist(gen), -32768, 32767));
+
+			// 歪み（クリッピング）
+			const int16_t clipLevel = 8000; // lo-fi感を出す閾値
+			if (s > clipLevel) s = clipLevel;
+			if (s < -clipLevel) s = -clipLevel;
+
+			// ローパスフィルタ（高域カット）
+			float alpha = 0.35f; // フィルタ強度（0.0～1.0）
+			float filtered = lastSample * (1.0f - alpha) + s * alpha;
+			lastSample = filtered;
+			s = static_cast<int16_t>(filtered);
+
 			// 8bit化（符号なし）
 			cheapBuffer[i] = static_cast<BYTE>((s + 32768) >> 8);
 		}
-		// WAVEFORMATEXを8bit/サンプリングレート半減に変更
 		audioData.wfex.wBitsPerSample = 8;
 		audioData.wfex.nBlockAlign = audioData.wfex.nChannels * audioData.wfex.wBitsPerSample / 8;
 		audioData.wfex.nAvgBytesPerSec = audioData.wfex.nSamplesPerSec / 2 * audioData.wfex.nBlockAlign;

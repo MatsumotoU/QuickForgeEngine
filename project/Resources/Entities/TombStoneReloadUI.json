@@ -1,0 +1,45 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "tombStoneReloadPlane.obj"
+    },
+    "SceneObjectData": {
+        "name": "TombStoneReloadUI",
+        "tag": "Untagged",
+        "uniqueId": 11925
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "tombstoneExplaneBehavior.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            -4.49676513671875,
+            0.0,
+            -3.9472172260284424
+        ]
+    }
+}

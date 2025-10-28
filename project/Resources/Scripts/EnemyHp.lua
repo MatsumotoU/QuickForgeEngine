@@ -1,5 +1,5 @@
-damageInterval = 0.0
-maxDamageInterval = 0.5
+local damageInterval = 0.5
+local maxDamageInterval = 0.5
 hp = 5
 maxHp = 5
 
@@ -36,18 +36,36 @@ function Update()
 
   if isAlive then 
 
-      time = time + 1.0
+      time = time + 0.01666666
 
-      if damageInterval > 0.0 then
-          damageInterval = damageInterval - 0.016
-          transform.scale.y = math.sin(time) * math.sin(time)
-      else
-          transform.scale.y = 1.0
-      end
+    local mat = GetMaterial(GetThisEntityId())
+
+    if damageInterval > 0.0 then
+        local dst_colorCoe = 0.0
+        local tmp =  (math.sin(math.pi* time * 2.0 ) + 1.0) * 3.0
+
+        local kirisuteGomen = math.floor(tmp) 
+        local tmp2 = kirisuteGomen  % 2 
+
+        if tmp2 == 0 then
+            dst_colorCoe = 0.0
+        else 
+            dst_colorCoe = 1.0
+        end
+
+        damageInterval = damageInterval - 0.016
+            local mat = GetMaterial(GetThisEntityId())
+
+        mat.color.w = 0.5 +  0.5 * dst_colorCoe
+
+    else
+        mat.color.w = 1.0
+    end
     
     -- カメラの追跡する位置を設定
     targetTransform = GetTransform(targetId)
     local targetX = targetTransform.translate.x
+
 
     if enemyType == 0 then
         -- 画面左端を出たら生存フラグをfalse
@@ -101,6 +119,7 @@ function OnCollisionEnter(id,obj)
         if hp <= 0 then
             if isAlive then
                 isAlive = false
+                SetColliderIsTrigger(this.GetEntityId(),false)
                 if enemyType == 0 then
                     CreateEntity("BreakEnemyEmitter.json",transform)
                     -- 通常の敵の場合、墓石を生成
@@ -111,6 +130,7 @@ function OnCollisionEnter(id,obj)
                     CreateEntity(stoneName,temp)
                     QFE.Audio.PlaySound(spawn,false,0.2)
                 elseif enemyType == 2 then 
+                    SetColliderIsTrigger(this.GetEntityId(),false)
                     -- 双子のゴーストの場合
                     local temp = Transform.new()
                     temp.translate.x = transform.translate.x

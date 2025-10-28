@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.8347484469413757,
-                    -0.03774531930685043,
+                    0.8851413130760193,
+                    -0.08111603558063507,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.8096874952316284,
-                    23.686037063598633,
-                    -21.44114875793457
+                    2.096817970275879,
+                    31.63344955444336,
+                    -25.792890548706055
                 ]
             }
         },
@@ -65,8 +65,8 @@
                 ],
                 "translate": [
                     7.400000095367432,
-                    28.0,
-                    -15.5
+                    23.0,
+                    -12.0
                 ]
             }
         },
@@ -132,6 +132,14 @@
                         },
                         "priority": 0,
                         "scriptName": "BulletShot.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialHitPoint.lua",
                         "stringParams": {}
                     }
                 ]
@@ -386,6 +394,18 @@
                 "tag": "Untagged",
                 "uniqueId": 6470
             },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialFrameBehavior.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
             "SpriteData": {
                 "height": 80.0,
                 "isDraw": true,
@@ -496,59 +516,6 @@
             }
         },
         {
-            "SceneObjectData": {
-                "name": "breakEnemyUI",
-                "tag": "Untagged",
-                "uniqueId": 6842
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {
-                            "UIType": 0,
-                            "shotType": 0,
-                            "targetType": 3
-                        },
-                        "priority": 0,
-                        "scriptName": "TutorialUIbehavior.lua",
-                        "stringParams": {
-                            "TutorialManagerJson": "TutorialManager"
-                        }
-                    }
-                ]
-            },
-            "SpriteData": {
-                "height": 80.0,
-                "isDraw": true,
-                "layer": 5,
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "textureName": "breakEnemy.png",
-                "width": 340.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    480.0,
-                    36.0,
-                    0.0
-                ]
-            }
-        },
-        {
             "ModelHandle": {
                 "color": [
                     0.0,
@@ -611,9 +578,109 @@
                     1.0
                 ],
                 "translate": [
-                    6.276935577392578,
+                    -8.89499568939209,
                     0.0,
-                    -2.5962390899658203
+                    -6.873446464538574
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "ShallReload",
+                "tag": "Untagged",
+                "uniqueId": 11924
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShallReloadUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 128.0,
+                "isDraw": true,
+                "layer": 9,
+                "pivot": [
+                    0.5,
+                    1.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 400.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    0.0,
+                    1.0
+                ],
+                "translate": [
+                    937.0,
+                    691.0,
+                    -1.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "BulletUI",
+                "tag": "Untagged",
+                "uniqueId": 163
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "space": 90.0
+                        },
+                        "intParams": {
+                            "DIK_A": 30,
+                            "DIK_D": 32,
+                            "DIK_S": 31,
+                            "DIK_SPACE": 57,
+                            "DIK_W": 17,
+                            "nowNum": 5,
+                            "numMax": 5,
+                            "objectUniqeID": 1
+                        },
+                        "priority": 0,
+                        "scriptName": "BulletNumUI.lua",
+                        "stringParams": {
+                            "objectName": "TutorialPlayer",
+                            "scriptName": "BulletShot.lua",
+                            "uiHideObjName": "NShotGunSallUI.json",
+                            "uiObjName": "ShotGunSallUI.json",
+                            "varName": "bullets"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    792.0,
+                    627.0,
+                    0.0
                 ]
             }
         },
@@ -625,17 +692,60 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "damageExplan.obj"
+                "modelName": "ratEnemy.obj"
             },
             "SceneObjectData": {
-                "name": "DamageExplanUI",
+                "name": "TutorialEnemy",
                 "tag": "Untagged",
-                "uniqueId": 7548
+                "uniqueId": 6314
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialEnemy.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialEnemyHP.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "DeathAnim.lua",
+                        "stringParams": {
+                            "aliveScriptName": "TutorialEnemyHP.lua"
+                        }
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.4000000059604645
+                ]
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -644,9 +754,9 @@
                     1.0
                 ],
                 "translate": [
-                    3.5613856315612793,
-                    -0.30000001192092896,
-                    -6.06992244720459
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         },
@@ -658,12 +768,12 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "tombstoneExplan.obj"
+                "modelName": "normalEnemy.obj"
             },
             "SceneObjectData": {
-                "name": "TombstoneExplanUI",
+                "name": "TutorialGhost",
                 "tag": "Untagged",
-                "uniqueId": 6847
+                "uniqueId": 6313
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -672,9 +782,42 @@
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "tombstoneExplaneBehavior.lua",
+                        "scriptName": "TutorialGhost.lua",
                         "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {
+                            "enemyType": 1
+                        },
+                        "priority": 0,
+                        "scriptName": "TutorialEnemyHP.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "DeathAnim.lua",
+                        "stringParams": {
+                            "aliveScriptName": "TutorialEnemyHP.lua"
+                        }
                     }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    -1.1656187772750854,
+                    0.0,
+                    0.0,
+                    0.4000000059604645
                 ]
             },
             "Transform": {
@@ -689,34 +832,132 @@
                     1.0
                 ],
                 "translate": [
-                    -4.366053104400635,
+                    -1.1656187772750854,
                     0.0,
-                    -6.221864700317383
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "PumpActionGage",
+                "tag": "Untagged",
+                "uniqueId": 17547
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "PumpActionGage.lua",
+                        "stringParams": {
+                            "playerName": "TutorialPlayer"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.0,
+                    1.0,
+                    0.10000000149011612
+                ],
+                "translate": [
+                    3.0999999046325684,
+                    1.0,
+                    5.599999904632568
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "ReloadActionGage",
+                "tag": "Untagged",
+                "uniqueId": 18058
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ReloadActionGage.lua",
+                        "stringParams": {
+                            "playerName": "TutorialPlayer"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.0,
+                    1.0,
+                    0.10000000149011612
+                ],
+                "translate": [
+                    3.0999999046325684,
+                    1.0,
+                    5.599999904632568
                 ]
             }
         },
         {
             "SceneObjectData": {
-                "name": "EnemyHitEmitter",
+                "name": "BGMPlayer",
                 "tag": "Untagged",
-                "uniqueId": 7551
+                "uniqueId": 11795
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {},
+                        "floatParams": {
+                            "volume": 0.20000000298023224
+                        },
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "EnemyHitEmitter.lua",
-                        "stringParams": {}
+                        "scriptName": "SceneBGMPlayer.lua",
+                        "stringParams": {
+                            "bgmName": "TutorialBGM.mp3"
+                        }
                     }
                 ]
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -725,45 +966,9 @@
                     1.0
                 ],
                 "translate": [
-                    6.848334789276123,
                     0.0,
-                    -2.8678138256073
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "EnemyChangeEmitter",
-                "tag": "Untagged",
-                "uniqueId": 7552
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "enemyChangeEmitter.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
                     0.0,
-                    -0.0,
                     0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    7.190454959869385,
-                    0.0,
-                    4.407754898071289
                 ]
             }
         }

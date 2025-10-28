@@ -16,6 +16,7 @@ local damageInterval = 0.0
 local isDamaged = false
 local frameCount = 0.0
 
+
 -- リセットに関する名前
 transitionObjName = "SceneTransitionManager"
 sceneTransitionScriptName = "SceneTransitionManager.lua"
@@ -24,6 +25,10 @@ local transitionID = 0
 
 -- 音声
 local damage = QFE.Audio.LoadSound("playerDamage.mp3")
+
+-- リセットした時にノックバックを食らわないようにする
+local waitTimer = 0.0
+local maxWaitTime = 0.5
 
 function Init()
     time = 0.0
@@ -37,6 +42,11 @@ function Init()
 end
 
 function Update()
+
+    if waitTimer <= maxWaitTime then
+        local deltatime = GetDeltaTime()
+        waitTimer = waitTimer + deltatime
+    end
 
     do_reload = false
     if korehaHidoi == true then
@@ -56,15 +66,18 @@ function Update()
     end
 
     -- ボーダーダメージ
+    if waitTimer >= maxWaitTime then
     if transform.translate.x < GetTransform(borderId).translate.x then
         --hitPoint = hitPoint - 1
         --do_reload = true
         --isDamaged = true
-        force.velocity.x = force.velocity.x + 92.5
+        force.velocity.x = force.velocity.x + 82.5
         --force.velocity.y = force.velocity.y + 20
         --damageInterval = maxDamageInterval
         CreateEntity("ExplotionParticleEmitter.json",transform)
     end
+    end
+
 
     if damageInterval > 0.0 then
         damageInterval = damageInterval - 0.016
@@ -99,13 +112,20 @@ function OnCollisionStay(id,obj)
         isDamaged = true
         CreateEntity("ExplotionParticleEmitter.json",transform)
         QFE.Audio.PlaySound(damage,false,0.5)
+
+        -- ダメージアニメーション
+        RunEntityScriptFunction(this.GetEntityId(),"ShotGunPlayer.lua","DamageAnim")
+        RunEntityScriptFunction(GetEntity("damageScreen"),"DamageScreen.lua","Damage")
     end
 end
 
 function Reset()
     hitPoint = max_hitPoint 
     pre_hitPoint = hitPoint  
-    transform.translate.x = 3.0
+    transform.translate.x = 1.7
+    transform.translate.z = 6.0
     do_reload = false
+    waitTimer = 0.0
 
+    DebugLog("PlayerStateReset")
 end

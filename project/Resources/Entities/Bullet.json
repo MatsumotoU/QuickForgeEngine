@@ -12,7 +12,7 @@
         "eventColliderLayer": 255,
         "isDraw": true,
         "isStatic": true,
-        "isTrigger": false
+        "isTrigger": true
     },
     "Force": {
         "acceleration": [
@@ -49,10 +49,11 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "aliveTime": 0.699999988079071,
-                    "maxSpeed": 13.0,
-                    "minSpeed": 8.0,
-                    "moveSpeed": 0.5
+                    "aliveTime": 0.800000011920929,
+                    "maxSpeed": 26.0,
+                    "minSpeed": 20.0,
+                    "moveSpeed": 0.4000000059604645,
+                    "reduceCoe": 0.925000011920929
                 },
                 "intParams": {},
                 "priority": 0,

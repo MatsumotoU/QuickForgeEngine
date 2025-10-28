@@ -34,9 +34,9 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	isFirstStateRenderTarget_ = false;
 	isSecondStateRenderTarget_ = false;
 
-	offScreenClearColor[0] = 0.1f;
-	offScreenClearColor[1] = 0.25f;
-	offScreenClearColor[2] = 0.5f;
+	offScreenClearColor[0] = 0.0f;
+	offScreenClearColor[1] = 0.0f;
+	offScreenClearColor[2] = 0.0f;
 	offScreenClearColor[3] = 1.0f;
 
 	// ポストプロセスの関数を登録

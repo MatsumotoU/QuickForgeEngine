@@ -20,7 +20,7 @@
                 "floatParams": {
                     "curveTime": 1.0,
                     "moveTime": 1.0,
-                    "speed": 3.5
+                    "speed": 2.75
                 },
                 "intParams": {},
                 "priority": 0,
@@ -30,7 +30,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "intParams": {},
+                "intParams": {
+                    "hp": 15,
+                    "maxHp": 15
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {
@@ -59,7 +62,7 @@
             4.148106575012207,
             2.5311217308044434,
             0.0,
-            0.800000011920929
+            0.550000011920929
         ]
     },
     "Transform": {
