@@ -110,7 +110,9 @@ end
 function Reset()
     hitPoint = max_hitPoint 
     pre_hitPoint = hitPoint  
-    transform.translate.x = 3.0
+    transform.translate.x = 1.7
+    transform.translate.z = 6.0
     do_reload = false
 
+    DebugLog("PlayerStateReset")
 end
