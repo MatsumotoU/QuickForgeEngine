@@ -39,7 +39,7 @@ local playerID = 0
     初期化処理
 --]]
 function Init()
-    stageNumber = 2
+    stageNumber = 1
     DebugLog("mapInit")
     GenerateMap(mapDivision,mapDifficulty)
     --SpawnMap(map)
