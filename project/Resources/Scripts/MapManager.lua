@@ -50,6 +50,8 @@ local activeClearTime = 2.0
 
 local isGameOver = false
 
+local stopTransform = Transform.new()
+
 function Init()
     -- 生成したマップを取得
     linkID = GetEntity(mapObjName)
@@ -108,6 +110,7 @@ function NormalScene()
             isGameOver = true
             CreateGameOverObj()
             timer = 0.0
+            stopTransform = targetTransform
         end
     end
 
@@ -120,11 +123,13 @@ function NormalScene()
                 sceneType = 2
                 timer = 0.0
                 CreateClearObj()
+                stopTransform = targetTransform
             else
                 CreateNextSceneObj()
                 --isClear = true
                 sceneType = 3
                 timer = 0.0
+                stopTransform = targetTransform
             end
         end
     end
@@ -132,6 +137,9 @@ end
 
 -- ゲームオーバーシーンの処理
 function GameOverScene()
+
+    local targetTransform = GetTransform(playerID)
+    targetTransform.translate = stopTransform.translate
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
@@ -164,6 +172,9 @@ end
 
 function NextScene()
 
+    local targetTransform = GetTransform(playerID)
+    targetTransform.translate = stopTransform.translate
+
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
 
@@ -195,6 +206,9 @@ end
 
 -- クリアシーンの処理
 function ClearScene()
+
+    local targetTransform = GetTransform(playerID)
+    targetTransform.translate = stopTransform.translate
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
