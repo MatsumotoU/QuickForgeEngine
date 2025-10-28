@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.5157954096794128,
-                    0.22670583426952362,
+                    0.41251081228256226,
+                    0.2023603320121765,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    1.341634750366211,
-                    21.619571685791016,
-                    -34.447357177734375
+                    -3.322138786315918,
+                    7.233646392822266,
+                    -16.192243576049805
                 ]
             }
         },
@@ -96,7 +96,7 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Arrow.obj"
+                "modelName": "ghostBody.obj"
             },
             "SceneObjectData": {
                 "name": "ShotGunPlayer",
@@ -128,7 +128,7 @@
                         "intParams": {
                             "bullets": 3,
                             "maxBullets": 3,
-                            "shotNum": 3
+                            "shotNum": 8
                         },
                         "priority": 0,
                         "scriptName": "BulletShot.lua",
@@ -139,6 +139,7 @@
             "SphereColliderData": {
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -178,6 +179,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": true
             },
@@ -237,6 +239,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -275,6 +278,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -313,6 +317,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -351,6 +356,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": true
             },
@@ -388,6 +394,101 @@
                     19.896286010742188,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "shotGun.obj"
+            },
+            "ParentData": {
+                "parentId": 162
+            },
+            "SceneObjectData": {
+                "name": "ShotGun",
+                "tag": "player",
+                "uniqueId": 5740
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShotGunAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -3.141592502593994,
+                    0.0015925486804917455,
+                    -3.141592502593994
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.5392918586730957,
+                    7.403116342175053e-07,
+                    0.18073129653930664
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "ShallReload",
+                "tag": "Untagged",
+                "uniqueId": 11681
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ShallReloadUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 128.0,
+                "isDraw": true,
+                "layer": 18,
+                "pivot": [
+                    0.5,
+                    1.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 400.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    0.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    -1.0
                 ]
             }
         }

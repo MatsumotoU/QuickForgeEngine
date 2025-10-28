@@ -101,6 +101,7 @@ function OnCollisionEnter(id,obj)
         if hp <= 0 then
             if isAlive then
                 isAlive = false
+                SetColliderIsTrigger(this.GetEntityId(),false)
                 if enemyType == 0 then
                     CreateEntity("BreakEnemyEmitter.json",transform)
                     -- 通常の敵の場合、墓石を生成
