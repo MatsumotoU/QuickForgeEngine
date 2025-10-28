@@ -153,8 +153,8 @@
                         "floatParams": {
                             "diffusionRate": 0.125,
                             "knockBackPower": 27.5,
-                            "maxShotInterval": 0.20000000298023224,
-                            "targetReloadInterval": 0.5
+                            "maxShotInterval": 0.25,
+                            "targetReloadInterval": 0.550000011920929
                         },
                         "intParams": {
                             "bullets": 4,
