@@ -1,7 +1,7 @@
 local isAddForce = false
 
 local timer = 0.0
-local maxTime = 1.0
+local maxTime = 1.5
 
 local scaleMove = 0.0
 
@@ -27,8 +27,8 @@ function Update()
         forward.x = math.cos(0.0) * math.sin(yaw)
         forward.y = math.sin(0.0)
         forward.z = math.cos(0.0) * math.cos(yaw)
-        force.velocity.x = -forward.x * 3.0
-        force.velocity.y = -2.0 + math.random() * 4.0
+        force.velocity.x = -forward.x * 3.0 
+        force.velocity.y = -2.0 + math.random() * 4.0 
         force.velocity.z = -forward.z * 3.0
 
         -- 角度を求める
@@ -37,9 +37,9 @@ function Update()
         transform.rotate.z = math.random() * 6.28
 
         -- 位置を求める
-        transform.translate.x = transform.translate.x + math.random() * -1.0
+        transform.translate.x = transform.translate.x + math.random() * -2.0
         transform.translate.y = transform.translate.y + -1.0 + math.random() * 2.0
-        transform.translate.z = transform.translate.z + -1.0 + math.random() * 2.0
+        transform.translate.z = transform.translate.z + -1.5 + math.random() * 3.0
 
         -- 最初の大きさを保存
         startScale = transform.scale.x
