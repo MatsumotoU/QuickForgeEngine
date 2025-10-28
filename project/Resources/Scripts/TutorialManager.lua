@@ -41,7 +41,7 @@ local gaugeID = 0
 gaugeTimer = 0.0
 
 -- 出現させるUI
-moveUIName = "moveUI.json"
+moveUIName = "TutorialMoveUI.json"
 shotBulletUIName = "shotBulletUI.json"
 reloadUIName = "reloadUI.json"
 breakEnemyUI = "breakEnemyUI.json"
@@ -52,6 +52,7 @@ local isActive = false
 
 NotGhostEnemyUIName = "NotGhostEnemyUI.json"
 TombstoneExplanUIName = "TombstoneExplanUI.json"
+tombstoneReloadUIName = "TombStoneReloadUI.json"
 
 keyWASDUIName = "KeyWASDUI.json"
 keyAUIName = "KeyAUI.json"
@@ -308,6 +309,13 @@ function EventFourScene()
         tmpTransform.translate.y = -1.0
         tmpTransform.translate.z = 7.5
         CreateEntity(TombstoneExplanUIName,tmpTransform)
+
+        tmpTransform.scale.x = 1.0
+        tmpTransform.translate.x = 32.0
+        tmpTransform.translate.y = -1.0
+        tmpTransform.translate.z = 4.5
+        CreateEntity(tombstoneReloadUIName,tmpTransform)
+
         isActive = false
     end
 end
@@ -317,7 +325,7 @@ function EventFiveScene()
    local deltatime = GetDeltaTime()
     gaugeTimer = gaugeTimer + deltatime
 
-    if gaugeTimer >= 2.0 then
+    if gaugeTimer >= 6.0 then
         -- ゲージをリセット
         local gaugeTransform = GetTransform(gaugeID)
         gaugeTransform.scale.x = 0.0

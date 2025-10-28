@@ -90,6 +90,8 @@ function Update()
             GameOverScene()
         elseif sceneType == 2 then
             ClearScene()
+        elseif sceneType == 3 then
+            NextScene()
         end
 
     end
@@ -119,7 +121,10 @@ function NormalScene()
                 timer = 0.0
                 CreateClearObj()
             else
-                isClear = true
+                CreateNextSceneObj()
+                --isClear = true
+                sceneType = 3
+                timer = 0.0
             end
         end
     end
@@ -145,6 +150,37 @@ function GameOverScene()
         if QFE.Input.GetKeyTrigger("Shot") then
             if selectType == 0 then
                 isDead = true
+                isClear = true
+                --stageNumber = 1
+                sceneType = 0
+                DebugLog("CurrentStageNumber :"..stageNumber)
+            elseif selectType == 1 then
+                -- タイトルシーンに移動
+                LoadScene("TitleScene")
+            end
+        end
+    end
+end
+
+function NextScene()
+
+    local deltatime = GetDeltaTime()
+    timer = timer + deltatime
+
+    if timer >= activeGameOverTime then
+        -- リトライを選択
+        if QFE.Input.GetKeyPress("MoveLeft") then
+            selectType = 0
+        end
+
+        -- タイトルに戻るを選択
+        if QFE.Input.GetKeyPress("MoveRight") then
+            selectType = 1
+        end
+
+        if QFE.Input.GetKeyTrigger("Shot") then
+            if selectType == 0 then
+                isDead = false
                 isClear = true
                 --stageNumber = 1
                 sceneType = 0
@@ -183,6 +219,17 @@ function CreateGameOverObj()
     CreateEntity("arrowUI.json",tmpTransform)
 end
 
+-- 次のシーンで使用するオブジェクト
+function CreateNextSceneObj()
+     local tmpTransform = Transform.new()
+    tmpTransform.translate.x = 1280.0
+    CreateEntity("ResultSceneBg.json",tmpTransform)
+    CreateEntity("NextSceneUI.json",tmpTransform)
+    CreateEntity("SelectTitleUI.json",tmpTransform)
+    CreateEntity("arrowUI.json",tmpTransform)
+end
+
+-- クリアした時の使用するオブジェクト
 function CreateClearObj()
     local tmpTransform = Transform.new()
     tmpTransform.translate.x = 1280.0

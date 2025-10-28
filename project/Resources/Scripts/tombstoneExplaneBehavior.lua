@@ -1,5 +1,5 @@
 local timer = 0.0
-local maxTime = 2.0
+local maxTime = 6.0
 
 function Init()
 
