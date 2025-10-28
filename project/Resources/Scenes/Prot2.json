@@ -1204,7 +1204,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "speed": 1.25
+                            "speed": 0.0
                         },
                         "intParams": {},
                         "priority": 0,
