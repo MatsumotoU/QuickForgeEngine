@@ -59,33 +59,3 @@ end
 function EaseOut(t)
     return -t * (t - 2.0)
 end
-
-function EaseOutBounceForConvert(t_)
-
-    	local n1 = 7.5625
-		local d1 = 2.75
-
-		local convertedT = 0.0
-
-		if t_ < (1.0 / d1) then
-		
-			convertedT = n1 * t_ * t_
-
-		elseif t_ < (2.0 / d1) then
-		
-            t_ = t_ - (1.5 / d1)
-			convertedT = n1 * t_ * t_ + 0.75
-		
-		elseif t_ < (2.5 / d1) then
-
-		    t_ = t_ - (2.25 / d1)
-			convertedT = n1 * t_ * t_ + 0.9375
-
-        else
-			t_ = t_ - (2.625 / d1)
-			convertedT = n1 * t_ * t_ + 0.984375
-		
-        end
-
-    return convertedT
-end
