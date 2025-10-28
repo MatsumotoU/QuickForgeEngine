@@ -146,7 +146,7 @@ function GameOverScene()
             if selectType == 0 then
                 isDead = true
                 isClear = true
-                stageNumber = 1
+                --stageNumber = 1
                 sceneType = 0
                 DebugLog("CurrentStageNumber :"..stageNumber)
             elseif selectType == 1 then

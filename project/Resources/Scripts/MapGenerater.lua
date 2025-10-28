@@ -424,7 +424,7 @@ function Reset()
 
     local isDead = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsDeadName)
     if isDead then
-        stageNumber = 1
+        -- stageNumber = 1
         DebugLog("IsDeadFlag : true")
     else
         DebugLog("IsDeadFlag : false")
