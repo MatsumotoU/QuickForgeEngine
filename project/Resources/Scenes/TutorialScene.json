@@ -837,6 +837,140 @@
                     0.0
                 ]
             }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "PumpActionGage",
+                "tag": "Untagged",
+                "uniqueId": 17547
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "PumpActionGage.lua",
+                        "stringParams": {
+                            "playerName": "TutorialPlayer"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.0,
+                    1.0,
+                    0.10000000149011612
+                ],
+                "translate": [
+                    3.0999999046325684,
+                    1.0,
+                    5.599999904632568
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "ReloadActionGage",
+                "tag": "Untagged",
+                "uniqueId": 18058
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ReloadActionGage.lua",
+                        "stringParams": {
+                            "playerName": "TutorialPlayer"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.0,
+                    1.0,
+                    0.10000000149011612
+                ],
+                "translate": [
+                    3.0999999046325684,
+                    1.0,
+                    5.599999904632568
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "BGMPlayer",
+                "tag": "Untagged",
+                "uniqueId": 11795
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "volume": 0.20000000298023224
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SceneBGMPlayer.lua",
+                        "stringParams": {
+                            "bgmName": "TutorialBGM.mp3"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
         }
     ],
     "sceneName": "TutorialScene"
