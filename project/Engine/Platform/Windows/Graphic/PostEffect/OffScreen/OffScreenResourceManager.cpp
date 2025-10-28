@@ -14,9 +14,9 @@ void OffScreenResourceManager::Initialize(ID3D12Device* device, int width, int h
 
 	offscreenClearValue_ = {};
 	offscreenClearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	offscreenClearValue_.Color[0] = 0.1f;
-	offscreenClearValue_.Color[1] = 0.25f;
-	offscreenClearValue_.Color[2] = 0.5f;
+	offscreenClearValue_.Color[0] = 0.0f;
+	offscreenClearValue_.Color[1] = 0.0f;
+	offscreenClearValue_.Color[2] = 0.0f;
 	offscreenClearValue_.Color[3] = 1.0f;
 
 	D3D12_HEAP_PROPERTIES defaultHeapProperties{};

@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    1.1209129095077515,
-                    -1.0919780731201172,
+                    0.5359132885932922,
+                    0.7355211973190308,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    389.2662353515625,
-                    908.2208251953125,
-                    -202.07191467285156
+                    -24.55998992919922,
+                    21.738384246826172,
+                    -27.14080810546875
                 ]
             }
         },
@@ -153,8 +153,8 @@
                         "floatParams": {
                             "diffusionRate": 0.125,
                             "knockBackPower": 27.5,
-                            "maxShotInterval": 0.20000000298023224,
-                            "targetReloadInterval": 0.5
+                            "maxShotInterval": 0.25,
+                            "targetReloadInterval": 0.550000011920929
                         },
                         "intParams": {
                             "bullets": 4,
@@ -1277,6 +1277,51 @@
                     6.061912536621094,
                     -0.33281970024108887,
                     0.7657085657119751
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "bulletEmptyPlane.obj"
+            },
+            "SceneObjectData": {
+                "name": "BulletEmptyUI",
+                "tag": "Untagged",
+                "uniqueId": 11796
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "bulletEmptyUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -0.6000000238418579,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    3.5,
+                    2.200000047683716,
+                    5.400000095367432
                 ]
             }
         }
