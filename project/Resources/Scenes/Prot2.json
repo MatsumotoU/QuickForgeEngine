@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.9359131455421448,
-                    0.013021036051213741,
+                    1.141911506652832,
+                    -0.06717140972614288,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    1.2149487733840942,
-                    39.58454513549805,
-                    -18.06008529663086
+                    1.1814535856246948,
+                    38.493228912353516,
+                    -17.562177658081055
                 ]
             }
         },
@@ -1169,6 +1169,39 @@
                 ],
                 "textureName": "damageScreen.png",
                 "width": 1280.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "smallPlayerGhost.obj"
+            },
+            "SceneObjectData": {
+                "name": "SmallPlayerGhost",
+                "tag": "Untagged",
+                "uniqueId": 18068
             },
             "Transform": {
                 "rotate": [
