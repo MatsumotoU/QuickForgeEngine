@@ -110,7 +110,7 @@ function NormalScene()
             isGameOver = true
             CreateGameOverObj()
             timer = 0.0
-            stopTransform = targetTransform
+            stopTransform.translate.x = targetTransform.translate.x
         end
     end
 
@@ -123,13 +123,13 @@ function NormalScene()
                 sceneType = 2
                 timer = 0.0
                 CreateClearObj()
-                stopTransform = targetTransform
+                stopTransform.translate.x = targetTransform.translate.x
             else
                 CreateNextSceneObj()
                 --isClear = true
                 sceneType = 3
                 timer = 0.0
-                stopTransform = targetTransform
+                stopTransform.translate.x = targetTransform.translate.x
             end
         end
     end
@@ -139,7 +139,8 @@ end
 function GameOverScene()
 
     local targetTransform = GetTransform(playerID)
-    targetTransform.translate = stopTransform.translate
+    targetTransform.translate.x = stopTransform.translate.x
+    targetTransform.translate.z = 5.0
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
@@ -173,7 +174,8 @@ end
 function NextScene()
 
     local targetTransform = GetTransform(playerID)
-    targetTransform.translate = stopTransform.translate
+    targetTransform.translate.x = stopTransform.translate.x
+    targetTransform.translate.z = 5.0
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
@@ -208,7 +210,8 @@ end
 function ClearScene()
 
     local targetTransform = GetTransform(playerID)
-    targetTransform.translate = stopTransform.translate
+    targetTransform.translate.x = stopTransform.translate.x
+    targetTransform.translate.z = 5.0
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
