@@ -66,6 +66,8 @@ local endLineID = 0
 damageBorderName = "TutorialDamageBorder"
 local damageBorderId = 0
 
+local isHit = false
+
 function Init()
     -- プレイヤーのIDを取得
     playerID = GetEntity(playerName)
@@ -103,9 +105,11 @@ function EventManager()
     -- プレイヤーの位置を取得する
     local targetTransform = GetTransform(playerID)
 
+    if not isHit then
     -- イベント中のラインを超えないようにする
     if targetTransform.translate.x > endLinePosX then
         targetTransform.translate.x = endLinePosX
+    end
     end
 
     -- イベントタイプによって
@@ -351,11 +355,18 @@ function EventFiveScene()
         end
     end
 
+    local targetTransform = GetTransform(playerID)
+
     local borderTransform = GetTransform(damageBorderId)
 
     borderTransform.translate.x = borderTransform.translate.x + 5.0 * deltatime
 
-    if borderTransform.translate.x >= endLinePosX then
+    if targetTransform.translate.x <= borderTransform.translate.x then
+        isHit = true
+        DebugLog("isHit")
+    end
+
+    if borderTransform.translate.x >= endLinePosX + 5.0 then
         LoadScene("TitleScene")
     end
 end

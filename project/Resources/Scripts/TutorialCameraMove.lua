@@ -18,7 +18,11 @@ function Update()
 
     targetTransform = GetTransform(targetId)
 
+    if transform.translate.x <= 42.0 then
+
     if transform.translate.x + offsetX <= targetTransform.translate.x then
         transform.translate.x = targetTransform.translate.x - offsetX
     end 
+    end
+
 end
