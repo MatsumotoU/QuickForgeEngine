@@ -6,6 +6,7 @@ minVelocity = 1.0
 
 local deltatime = 0.016
 local time = 0.0
+local damageAnimTime = 0.0
 
 function Init()
 objectDir.x = 0.0
@@ -17,6 +18,14 @@ end
 function Update()
     deltatime = GetDeltaTime()
     time = time + deltatime
+    -- ダメージアニメーション
+    if damageAnimTime > 0.0 then
+        damageAnimTime = damageAnimTime - deltatime
+        transform.rotate.y = transform.rotate.y + (10.0 * damageAnimTime)
+        transform.rotate.x = -1.0
+        return
+    end
+
     -- アニメーション
     transform.scale.y = 1.0 - (math.sin(time * 2.0) * 0.3)
     transform.rotate.x = QFE.Math.SimpleEaseIn(transform.rotate.x,0.0,0.1)
@@ -41,6 +50,7 @@ function Update()
 
     -- 自分に力がかかっていたら移動できない
     if force.velocity:Length() > minVelocity then
+        CreateEntity("PlayerAfterimageParticle.json",transform)
         return
     end
 
@@ -109,4 +119,9 @@ function OnCollisionStay(id,obj)
         DebugLog("Reset force")
     end
 
+end
+
+function DamageAnim()
+    damageAnimTime = 0.5
+    force.velocity.y = 5.0
 end

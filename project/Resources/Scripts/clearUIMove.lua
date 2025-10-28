@@ -18,6 +18,9 @@ local isInScene = true
 -- マテリアル
 local mat = Material.new()
 
+local waitTimer = 0.0
+local maxWaitTime = 0.8
+
 function Init()
     timer = 0.0
     -- 選択状態を取得する
@@ -65,5 +68,21 @@ end
 function SelectScene()
 
     local selectType = GetEntityScriptGlobal(linkID,mapManagerScriptName,varSelectTypeName)
+    
+    local delt = GetDeltaTime()
+    waitTimer = waitTimer + delt
+
+    -- 0から1の範囲に収める
+    local ti = math.min(waitTimer / maxWaitTime,1.0)
+
+    if ti <= 0.5 then
+        mat.color.w = 1.0
+    else
+        mat.color.w = 0.0
+    end
+
+    if waitTimer >= maxWaitTime then
+        waitTimer = 0.0
+    end
 
 end

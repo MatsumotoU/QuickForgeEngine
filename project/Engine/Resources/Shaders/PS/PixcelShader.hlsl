@@ -28,17 +28,29 @@ float2 FisheyeUV(float2 uv)
     return center + newDelta;
 }
 
-float Scanline(float y)
+float Scanline(float y, float time)
 {
-    float frequency = 400.0; 
+    float frequency = 400.0;
     float intensity = 0.15;
-    return 1.0 - intensity * (0.5 + 0.5 * sin(y * frequency));
+    float speed = 2.0;
+    return 1.0 - intensity * (0.5 + 0.5 * sin((y + time * speed) * frequency));
 }
 
 float2 ChromaticUV(float2 uv, float offset)
 {
     float2 dir = uv - float2(0.5, 0.5);
     return uv + dir * offset;
+}
+
+float3 QuantizeColor(float3 color, int levels)
+{
+    return floor(color * levels) / (levels - 1);
+}
+
+float2 PixelateUV(float2 uv, float2 screenSize, float pixelSize)
+{
+    float2 grid = pixelSize / screenSize;
+    return floor(uv / grid) * grid + grid * 0.5;
 }
 
 PixelShaderOutput main(VertexShaderOutput input)
@@ -49,18 +61,22 @@ PixelShaderOutput main(VertexShaderOutput input)
 
     float2 fisheyeUV = FisheyeUV(input.texcoord);
 
+    float pixelSize = 2.0;
+    float2 pixelatedUV = PixelateUV(fisheyeUV, textureSize, pixelSize);
+
     float chromaOffset = 0.003;
     float4 color;
-    color.r = gTexture.Sample(gSampler, ChromaticUV(fisheyeUV, +chromaOffset)).r;
-    color.g = gTexture.Sample(gSampler, ChromaticUV(fisheyeUV, 0.0)).g;
-    color.b = gTexture.Sample(gSampler, ChromaticUV(fisheyeUV, -chromaOffset)).b;
+    color.r = gTexture.Sample(gSampler, ChromaticUV(pixelatedUV, +chromaOffset)).r;
+    color.g = gTexture.Sample(gSampler, ChromaticUV(pixelatedUV, 0.0)).g;
+    color.b = gTexture.Sample(gSampler, ChromaticUV(pixelatedUV, -chromaOffset)).b;
     color.a = 1.0;
 
-    float scan = Scanline(fisheyeUV.y);
+    float scan = Scanline(pixelatedUV.y, gOffsetBuffer.time);
 
-    float noise = rand(fisheyeUV * textureSize + gOffsetBuffer.time) * 0.03 - 0.015;
+    float noise = rand(pixelatedUV * textureSize + gOffsetBuffer.time) * 0.03 - 0.015;
     
     color.rgb = color.rgb * scan + noise;
+    color.rgb = QuantizeColor(color.rgb, 32);
 
     output.color = saturate(color);
 

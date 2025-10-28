@@ -66,6 +66,11 @@ local endLineID = 0
 damageBorderName = "TutorialDamageBorder"
 local damageBorderId = 0
 
+local isHit = false
+
+-- 音声
+local clearSE = QFE.Audio.LoadSound("TutorialClearSE.mp3") 
+
 function Init()
     -- プレイヤーのIDを取得
     playerID = GetEntity(playerName)
@@ -103,9 +108,11 @@ function EventManager()
     -- プレイヤーの位置を取得する
     local targetTransform = GetTransform(playerID)
 
+    if not isHit then
     -- イベント中のラインを超えないようにする
     if targetTransform.translate.x > endLinePosX then
         targetTransform.translate.x = endLinePosX
+    end
     end
 
     -- イベントタイプによって
@@ -171,6 +178,9 @@ function EventOneScene()
         tmpTransform.translate.y = -1.0
         tmpTransform.translate.z = 7.5
         CreateEntity(keySpaceUIName,tmpTransform)
+
+        -- クリアの音を鳴らす
+        QFE.Audio.PlaySound(clearSE,false,0.3)
     end
 end
 
@@ -233,6 +243,9 @@ function EventTwoScene()
             tmpTransform.translate.x = 480.0
             tmpTransform.translate.y = 36.0
             CreateEntity(breakEnemyUI,tmpTransform)
+
+            -- クリアの音を鳴らす
+            QFE.Audio.PlaySound(clearSE,false,0.3)
         end
     end
 
@@ -270,6 +283,9 @@ function EventThreeScene()
         tmpTransform.translate.z = 7.5
         tmpTransform.scale.x = 2.0
         CreateEntity(NotGhostEnemyUIName,tmpTransform)
+
+        -- クリアの音を鳴らす
+        QFE.Audio.PlaySound(clearSE,false,0.3)
     end
 end
 
@@ -317,6 +333,9 @@ function EventFourScene()
         CreateEntity(tombstoneReloadUIName,tmpTransform)
 
         isActive = false
+
+        -- クリアの音を鳴らす
+        QFE.Audio.PlaySound(clearSE,false,0.3)
     end
 end
 
@@ -351,11 +370,18 @@ function EventFiveScene()
         end
     end
 
+    local targetTransform = GetTransform(playerID)
+
     local borderTransform = GetTransform(damageBorderId)
 
     borderTransform.translate.x = borderTransform.translate.x + 5.0 * deltatime
 
-    if borderTransform.translate.x >= endLinePosX then
+    if targetTransform.translate.x <= borderTransform.translate.x then
+        isHit = true
+        DebugLog("isHit")
+    end
+
+    if borderTransform.translate.x >= endLinePosX + 5.0 then
         LoadScene("TitleScene")
     end
 end

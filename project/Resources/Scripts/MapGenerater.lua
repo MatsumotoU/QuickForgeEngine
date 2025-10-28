@@ -60,7 +60,8 @@ function Update()
     local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
 
     if isReset then
-        Reset()
+        DebugLog("mapReset : true")
+        Reset() 
     end
 end
 

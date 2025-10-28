@@ -1,7 +1,7 @@
 
 -- シーン切り替えに使用する時間(秒)
 fadeInTime = 0.5
-waitTime = 0.2
+waitTime = 0.4
 fadeOutTime = 0.5
 
 -- タイマー
@@ -38,6 +38,8 @@ local isPlay = false
 -- カメラの位置だけを先に移動させる処理
 isPreReset = false
 local fremeCount = 0
+
+local hasSentReset = false
 
 --[[
     初期化処理
@@ -127,12 +129,15 @@ function Wait()
     if isPreReset then
         isPreReset = false
         fremeCount = 0
+        hasSentReset = false
     else
          fremeCount = fremeCount + 1
 
-        if fremeCount == 2 then
+        if fremeCount == 2 and not hasSentReset then
             isReset = true
-        elseif fremeCount == 3 then
+            hasSentReset = true
+            DebugLog("isReset : true")
+        elseif fremeCount >= 3 then
             isReset = false
         end
     end
@@ -150,6 +155,7 @@ end
 
 -- 終わりの時間
 function FadeOut()
+    isReset = false
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
