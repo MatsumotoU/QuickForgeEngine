@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "speed": 1.0
+                    "speed": 1.0499999523162842
                 },
                 "intParams": {},
                 "priority": 0,
@@ -29,8 +29,8 @@
                 "boolParams": {},
                 "floatParams": {},
                 "intParams": {
-                    "hp": 7,
-                    "maxHp": 7
+                    "hp": 17,
+                    "maxHp": 17
                 },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
@@ -60,7 +60,7 @@
             2.588057518005371,
             2.5309934616088867,
             0.0,
-            0.699999988079071
+            0.6000000238418579
         ]
     },
     "Transform": {
