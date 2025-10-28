@@ -1,0 +1,47 @@
+{
+    "SceneObjectData": {
+        "name": "ShallReload",
+        "tag": "Untagged",
+        "uniqueId": 11681
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "ShallReloadUI.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 128.0,
+        "isDraw": true,
+        "layer": 18,
+        "pivot": [
+            0.5,
+            1.0
+        ],
+        "textureName": "white1x1.png",
+        "width": 400.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            0.0,
+            1.0
+        ],
+        "translate": [
+            937.9154663085938,
+            691.3156127929688,
+            -1.0
+        ]
+    }
+}
