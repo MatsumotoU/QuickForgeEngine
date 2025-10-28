@@ -38,12 +38,12 @@ function Update()
 
       time = time + 1.0
 
-      if damageInterval > 0.0 then
-          damageInterval = damageInterval - 0.016
-          transform.scale.y = math.sin(time) * math.sin(time)
-      else
-          transform.scale.y = 1.0
-      end
+    --   if damageInterval > 0.0 then
+    --       damageInterval = damageInterval - 0.016
+    --       transform.scale.y = math.sin(time) * math.sin(time)
+    --   else
+    --       transform.scale.y = 1.0
+    --   end
     
     -- カメラの追跡する位置を設定
     targetTransform = GetTransform(targetId)

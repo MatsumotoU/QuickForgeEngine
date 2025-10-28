@@ -30,7 +30,10 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "intParams": {},
+                "intParams": {
+                    "hp": 8,
+                    "maxHp": 8
+                },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
                 "stringParams": {

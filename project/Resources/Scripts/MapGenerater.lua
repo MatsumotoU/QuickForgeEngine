@@ -39,7 +39,7 @@ local playerID = 0
     初期化処理
 --]]
 function Init()
-    stageNumber = 1
+    stageNumber = 2
     DebugLog("mapInit")
     GenerateMap(mapDivision,mapDifficulty)
     --SpawnMap(map)
@@ -367,28 +367,6 @@ function CreateMapOne()
             {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0   },
             {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }}
             
---local width = 200
- --local height = 9
- --
- --
- ---- 空のマップを作成する
- --for z = 1, height do
- --    map[z] = {}
- --    for x = 1, width do
- --        map[z][x] = 0
- --    end
- --end
- --
- -- --外周の壁を埋める
- --for z = 1, height do
- --       for x = 1, width do
- --           if x == 1 or z == 1 or x == width or z == height then
- --               map[z][x] = 2
- --           end
- --       end
- --   end
-
-    
 end
 
 function CreateMapTwo()
