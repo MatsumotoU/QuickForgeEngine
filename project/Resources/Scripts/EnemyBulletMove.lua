@@ -1,8 +1,8 @@
 moveSpeed = 0.5
-local aliveTime = 0.9
+local aliveTime = 0.8
 local maxSpeed = 25.0
 minSpeed = 15.0 
-local reduceCoe = 0.99
+local reduceCoe = 0.92
 
 
 local rotateNum = 0.0
@@ -38,7 +38,7 @@ else
     destroy()
 end
 
-    moveSpeed = moveSpeed * 0.95
+    moveSpeed = moveSpeed * reduceCoe
 
     local cur_aliveRate = aliveTime / max_aliveTime 
 
@@ -57,7 +57,6 @@ if cur_aliveRate  <= rate_beingWhite then
     end
 
 end
-    moveSpeed = moveSpeed * reduceCoe
 
     transform:AddForward(moveSpeed*deltaTime)
 

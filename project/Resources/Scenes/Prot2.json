@@ -1196,17 +1196,71 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "smallPlayerGhost.obj"
+                "modelName": "smallEnemy.obj"
             },
             "SceneObjectData": {
-                "name": "SmallPlayerGhost",
-                "tag": "Untagged",
-                "uniqueId": 18068
+                "name": "SmallGhostEnemy",
+                "tag": "Enemy",
+                "uniqueId": 501
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "serchDistance": 65.0
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SmallGhotEnemyMove.lua",
+                        "stringParams": {
+                            "LockOnObjName": "ShotGunPlayer",
+                            "bulletName": "EnemyBullet.json"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {
+                            "enemyType": 1,
+                            "hp": 3,
+                            "maxHp": 3
+                        },
+                        "priority": 0,
+                        "scriptName": "EnemyHp.lua",
+                        "stringParams": {
+                            "stoneName": "Tombstone.json"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "performingTime": 1.25
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "DeathAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    1.635136604309082,
+                    0.0,
+                    0.0,
+                    0.20000000298023224
+                ]
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    -0.0,
                     0.0
                 ],
                 "scale": [
@@ -1215,7 +1269,7 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
+                    1.635136604309082,
                     0.0,
                     0.0
                 ]
