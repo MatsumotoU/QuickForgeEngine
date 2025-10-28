@@ -31,7 +31,7 @@
                 "boolParams": {},
                 "floatParams": {},
                 "intParams": {
-                    "enemyType": 1,
+                    "enemyType": 0,
                     "hp": 25,
                     "maxHp": 25
                 },
