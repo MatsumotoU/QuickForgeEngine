@@ -101,6 +101,9 @@ function OnCollisionStay(id,obj)
         isDamaged = true
         CreateEntity("ExplotionParticleEmitter.json",transform)
         QFE.Audio.PlaySound(damage,false,0.5)
+
+        -- ダメージアニメーション
+        RunEntityScriptFunction(this.GetEntityId(),"ShotGunPlayer.lua","DamageAnim")
     end
 end
 
