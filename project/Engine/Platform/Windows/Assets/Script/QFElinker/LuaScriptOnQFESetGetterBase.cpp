@@ -6,6 +6,8 @@
 #include "Assets/Sprite/Data/SpriteData.h"
 #include "Assets/3DModel/Data/ModelHandle.h"
 
+#include "Collider/Data/AABBColliderData.h"
+#include "Collider/Data/SphereColliderData.h"
 #include "Core/Math/Transform.h"
 #include "Physics/Force.h"
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
@@ -72,5 +74,25 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 		DebugLog("GetMaterial: Entity does not have SpriteData or ModelHandle.", LogLevel::Warning);
 #endif // DEBUG
 		return nullptr;
+		});
+
+	luaState->set_function("GetColliderIsTrigger", [](uint32_t entityId) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<SphereColliderData>(entityId)) {
+			return em->GetComponent<SphereColliderData>(entityId).isTrigger;
+		}
+		if (em->HasComponent<AABBColliderData>(entityId)) {
+			return em->GetComponent<AABBColliderData>(entityId).isTrigger;
+		}
+		return false;
+		});
+	luaState->set_function("SetColliderIsTrigger", [](uint32_t entityId, bool isTrigger) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<SphereColliderData>(entityId)) {
+			em->GetComponent<SphereColliderData>(entityId).isTrigger = isTrigger;
+		}
+		if (em->HasComponent<AABBColliderData>(entityId)) {
+			em->GetComponent<AABBColliderData>(entityId).isTrigger = isTrigger;
+		}
 		});
 }
