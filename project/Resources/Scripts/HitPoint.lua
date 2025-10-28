@@ -16,6 +16,7 @@ local damageInterval = 0.0
 local isDamaged = false
 local frameCount = 0.0
 
+
 -- リセットに関する名前
 transitionObjName = "SceneTransitionManager"
 sceneTransitionScriptName = "SceneTransitionManager.lua"
@@ -60,11 +61,12 @@ function Update()
         --hitPoint = hitPoint - 1
         --do_reload = true
         --isDamaged = true
-        force.velocity.x = force.velocity.x + 92.5
+        force.velocity.x = force.velocity.x + 87.5
         --force.velocity.y = force.velocity.y + 20
         --damageInterval = maxDamageInterval
         CreateEntity("ExplotionParticleEmitter.json",transform)
     end
+
 
     if damageInterval > 0.0 then
         damageInterval = damageInterval - 0.016
