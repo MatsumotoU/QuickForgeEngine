@@ -2,7 +2,7 @@
 aliveScriptName = "EnemyHp.lua"
 isAliveName = "isAlive"
 
-local performingTime = 0.25
+local performingTime = 1.0
 deathAnimCount = 0.0
 deathAnimType = 0
 

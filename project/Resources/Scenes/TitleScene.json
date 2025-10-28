@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.41251081228256226,
-                    0.2023603320121765,
+                    0.6198298931121826,
+                    0.2661038935184479,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -3.322138786315918,
-                    7.233646392822266,
-                    -16.192243576049805
+                    0.038826942443847656,
+                    23.06304931640625,
+                    -32.307674407958984
                 ]
             }
         },
@@ -67,8 +67,8 @@
                 ],
                 "translate": [
                     0.0,
-                    14.0,
-                    -12.100000381469727
+                    17.0,
+                    -14.5
                 ]
             }
         },
@@ -164,66 +164,6 @@
                     -1.2000000476837158,
                     0.0,
                     -3.0
-                ]
-            }
-        },
-        {
-            "AABBColliderData": {
-                "aabb": [
-                    -3.650001049041748,
-                    -0.8500001430511475,
-                    0.40000009536743164,
-                    3.650001049041748,
-                    1.0500001907348633,
-                    1.3999998569488525
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": true
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Title.obj"
-            },
-            "SceneObjectData": {
-                "name": "Title",
-                "tag": "Untagged",
-                "uniqueId": 5726
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "TitleString.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    -0.800000011920929,
-                    3.140000104904175,
-                    0.0
-                ],
-                "scale": [
-                    3.0,
-                    3.0,
-                    3.0
-                ],
-                "translate": [
-                    0.0,
-                    0.10000000149011612,
-                    0.8999999761581421
                 ]
             }
         },
@@ -347,10 +287,10 @@
         {
             "AABBColliderData": {
                 "aabb": [
-                    18.99628448486328,
+                    21.42925453186035,
                     -0.5,
                     -5.050000190734863,
-                    20.796287536621094,
+                    23.229257583618164,
                     0.5,
                     5.050000190734863
                 ],
@@ -391,7 +331,7 @@
                     1.0
                 ],
                 "translate": [
-                    19.896286010742188,
+                    22.329256057739258,
                     0.0,
                     0.0
                 ]
@@ -489,6 +429,817 @@
                     0.0,
                     0.0,
                     -1.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "SideGround.obj"
+            },
+            "SceneObjectData": {
+                "name": "UpSideGround",
+                "tag": "Untagged",
+                "uniqueId": 9904
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    4.699999809265137,
+                    0.0
+                ],
+                "scale": [
+                    0.20000000298023224,
+                    1.0,
+                    0.699999988079071
+                ],
+                "translate": [
+                    24.700000762939453,
+                    0.0,
+                    4.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.010362684726715088,
+                    0.010362684726715088,
+                    0.010362684726715088,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 11811
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    50.0,
+                    1.0,
+                    8.399999618530273
+                ],
+                "translate": [
+                    0.0,
+                    -0.5,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "SideGround.obj"
+            },
+            "SceneObjectData": {
+                "name": "UnderSideGround",
+                "tag": "Untagged",
+                "uniqueId": 9995
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    1.5700242519378662,
+                    0.0
+                ],
+                "scale": [
+                    0.5,
+                    1.0,
+                    0.8999999761581421
+                ],
+                "translate": [
+                    28.100000381469727,
+                    0.0,
+                    -4.900000095367432
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "SideGround.obj"
+            },
+            "SceneObjectData": {
+                "name": "SideGround.obj",
+                "tag": "Untagged",
+                "uniqueId": 11819
+            },
+            "Transform": {
+                "rotate": [
+                    -3.141592502593994,
+                    -0.0015925487969070673,
+                    -3.141592502593994
+                ],
+                "scale": [
+                    0.699999988079071,
+                    1.0,
+                    0.20000000298023224
+                ],
+                "translate": [
+                    -6.0195136070251465,
+                    -9.089207537726907e-07,
+                    0.0007973141619004309
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    14.034000396728516,
+                    -0.6499999761581421,
+                    3.063000202178955,
+                    16.63399887084961,
+                    0.6499999761581421,
+                    4.86299991607666
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": true
+            },
+            "SceneObjectData": {
+                "name": "NextSceneEventTutorial",
+                "tag": "Untagged",
+                "uniqueId": 11820
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SceneManager.lua",
+                        "stringParams": {
+                            "nextSceneName": "TutorialScene.json"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    15.333999633789063,
+                    0.0,
+                    3.9630000591278076
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    -2.5999999046325684,
+                    -0.8809999227523804,
+                    -0.9500000476837158,
+                    2.5999999046325684,
+                    4.218897342681885,
+                    0.9500000476837158
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": false,
+                "isTrigger": true
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Title_Cyotto.obj"
+            },
+            "SceneObjectData": {
+                "name": "Title_Cyotto",
+                "tag": "Untagged",
+                "uniqueId": 11821
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TitleString.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -0.6000000238418579,
+                    3.140000104904175,
+                    0.0
+                ],
+                "scale": [
+                    1.5,
+                    1.5,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.668948769569397,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Title_BigShotGun.obj"
+            },
+            "ParentData": {
+                "parentId": 11821
+            },
+            "SceneObjectData": {
+                "name": "Title_BigShotGun",
+                "tag": "Untagged",
+                "uniqueId": 11822
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    -0.03973567485809326,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "Title_Back.obj"
+            },
+            "ParentData": {
+                "parentId": 11821
+            },
+            "SceneObjectData": {
+                "name": "Title_Back.obj",
+                "tag": "Untagged",
+                "uniqueId": 11823
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    -0.10297918319702148,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.10362696647644043,
+                    0.10362696647644043,
+                    0.10362696647644043,
+                    1.0
+                ],
+                "modelName": "SignBoard_Honban.obj"
+            },
+            "ParentData": {
+                "parentId": 11826
+            },
+            "SceneObjectData": {
+                "name": "SignBoard_Honban",
+                "tag": "Untagged",
+                "uniqueId": 11824
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.1243523359298706,
+                    0.1243523359298706,
+                    0.1243523359298706,
+                    1.0
+                ],
+                "modelName": "SignBoard_Rensyu.obj"
+            },
+            "ParentData": {
+                "parentId": 11827
+            },
+            "SceneObjectData": {
+                "name": "SignBoard_Rensyu",
+                "tag": "Untagged",
+                "uniqueId": 11825
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "SignBoard.obj"
+            },
+            "SceneObjectData": {
+                "name": "SignBoard_H",
+                "tag": "Untagged",
+                "uniqueId": 11826
+            },
+            "Transform": {
+                "rotate": [
+                    2.4749999046325684,
+                    -0.052000001072883606,
+                    -3.02306866645813
+                ],
+                "scale": [
+                    1.0,
+                    0.9999997615814209,
+                    0.9999998211860657
+                ],
+                "translate": [
+                    21.27400016784668,
+                    -1.13100004196167,
+                    1.7999999523162842
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "SignBoard.obj"
+            },
+            "SceneObjectData": {
+                "name": "SignBoard_R",
+                "tag": "Untagged",
+                "uniqueId": 11827
+            },
+            "Transform": {
+                "rotate": [
+                    -0.6000000238418579,
+                    -3.700000047683716,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    12.0,
+                    -1.0,
+                    1.399999976158142
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.7357512712478638,
+                    0.7357512712478638,
+                    0.7357512712478638,
+                    1.0
+                ],
+                "modelName": "MineShalf.obj"
+            },
+            "SceneObjectData": {
+                "name": "MineShalf",
+                "tag": "Untagged",
+                "uniqueId": 11828
+            },
+            "Transform": {
+                "rotate": [
+                    0.30000001192092896,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.2000000476837158,
+                    1.399999976158142,
+                    0.8999999761581421
+                ],
+                "translate": [
+                    15.199999809265137,
+                    0.5,
+                    3.9000000953674316
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "ParentData": {
+                "parentId": 11828
+            },
+            "SceneObjectData": {
+                "name": "MineDark",
+                "tag": "Untagged",
+                "uniqueId": 11829
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    -8.081743240356445,
+                    -1.2499990463256836,
+                    -5.047638893127441,
+                    -4.68216609954834,
+                    1.2500009536743164,
+                    -3.7473649978637695
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    0.8290155529975891,
+                    0.8247201442718506,
+                    0.8247201442718506,
+                    1.0
+                ],
+                "modelName": "Rock.obj"
+            },
+            "SceneObjectData": {
+                "name": "Rock",
+                "tag": "Untagged",
+                "uniqueId": 11830
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.7000000476837158,
+                    2.0,
+                    1.0
+                ],
+                "translate": [
+                    -6.381954669952393,
+                    9.5367431640625e-07,
+                    -4.3975019454956055
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    -8.409571647644043,
+                    -1.7999999523162842,
+                    2.1593332290649414,
+                    -3.509540557861328,
+                    1.800004243850708,
+                    5.2595720291137695
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    0.8290155529975891,
+                    0.8247201442718506,
+                    0.8247201442718506,
+                    1.0
+                ],
+                "modelName": "Rock.obj"
+            },
+            "SceneObjectData": {
+                "name": "Rock",
+                "tag": "Untagged",
+                "uniqueId": 11831
+            },
+            "Transform": {
+                "rotate": [
+                    -3.141592502593994,
+                    -0.45799997448921204,
+                    -3.141592502593994
+                ],
+                "scale": [
+                    2.4000000953674316,
+                    2.4000000953674316,
+                    1.5000001192092896
+                ],
+                "translate": [
+                    -5.9595561027526855,
+                    2.1241842205199646e-06,
+                    3.7094526290893555
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    5.316780090332031,
+                    -1.9613291025161743,
+                    3.4628710746765137,
+                    8.716354370117188,
+                    0.5386708974838257,
+                    4.763144016265869
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    0.8290155529975891,
+                    0.8247201442718506,
+                    0.8247201442718506,
+                    1.0
+                ],
+                "modelName": "Rock.obj"
+            },
+            "SceneObjectData": {
+                "name": "Rock",
+                "tag": "Untagged",
+                "uniqueId": 11836
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.7000000476837158,
+                    2.0,
+                    1.0
+                ],
+                "translate": [
+                    7.016567230224609,
+                    -0.7113291025161743,
+                    4.113007545471191
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    10.992666244506836,
+                    -3.1495161056518555,
+                    -1.7732901573181152,
+                    12.192068099975586,
+                    0.7509721517562866,
+                    -0.47301626205444336
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    0.8290155529975891,
+                    0.8247201442718506,
+                    0.8247201442718506,
+                    1.0
+                ],
+                "modelName": "Rock.obj"
+            },
+            "SceneObjectData": {
+                "name": "Rock",
+                "tag": "Untagged",
+                "uniqueId": 11837
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.699999988079071,
+                    0.0
+                ],
+                "scale": [
+                    0.5,
+                    2.0,
+                    1.0
+                ],
+                "translate": [
+                    11.592367172241211,
+                    -1.1992720365524292,
+                    -1.1231532096862793
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    4.78900146484375,
+                    -1.9298274517059326,
+                    -5.047638893127441,
+                    19.08795928955078,
+                    0.5701725482940674,
+                    -3.7473649978637695
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    0.8290155529975891,
+                    0.8247201442718506,
+                    0.8247201442718506,
+                    1.0
+                ],
+                "modelName": "Rock.obj"
+            },
+            "SceneObjectData": {
+                "name": "Rock",
+                "tag": "Untagged",
+                "uniqueId": 11838
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    9.399999618530273,
+                    2.0,
+                    1.0
+                ],
+                "translate": [
+                    11.938480377197266,
+                    -0.6798274517059326,
+                    -4.3975019454956055
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "SceneChangeAnim",
+                "tag": "Untagged",
+                "uniqueId": 11856
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SceneChangeAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 720.0,
+                "isDraw": true,
+                "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }

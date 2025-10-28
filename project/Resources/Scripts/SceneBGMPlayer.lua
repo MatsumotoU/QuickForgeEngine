@@ -1,3 +1,5 @@
+local bgmName = ""
+
 function Init()
 
 end

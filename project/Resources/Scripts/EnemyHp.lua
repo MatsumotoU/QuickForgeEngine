@@ -112,6 +112,7 @@ function OnCollisionEnter(id,obj)
                     CreateEntity(stoneName,temp)
                     QFE.Audio.PlaySound(spawn,false,0.2)
                 elseif enemyType == 2 then 
+                    SetColliderIsTrigger(this.GetEntityId(),false)
                     -- 双子のゴーストの場合
                     local temp = Transform.new()
                     temp.translate.x = transform.translate.x

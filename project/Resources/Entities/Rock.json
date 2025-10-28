@@ -1,0 +1,48 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            -8.081743240356445,
+            -1.2499990463256836,
+            -5.047638893127441,
+            -4.68216609954834,
+            1.2500009536743164,
+            -3.7473649978637695
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": true,
+        "isTrigger": false
+    },
+    "ModelHandle": {
+        "color": [
+            0.8290155529975891,
+            0.8247201442718506,
+            0.8247201442718506,
+            1.0
+        ],
+        "modelName": "Rock.obj"
+    },
+    "SceneObjectData": {
+        "name": "Rock",
+        "tag": "Untagged",
+        "uniqueId": 11830
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.7000000476837158,
+            2.0,
+            1.0
+        ],
+        "translate": [
+            -6.381954669952393,
+            9.5367431640625e-07,
+            -4.3975019454956055
+        ]
+    }
+}
