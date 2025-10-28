@@ -52,8 +52,10 @@ function Update()
         else 
             dst_colorCoe = 1.0
         end
-        
+
         damageInterval = damageInterval - 0.016
+            local mat = GetMaterial(GetThisEntityId())
+
         mat.color.w = 0.5 +  0.5 * dst_colorCoe
 
     else

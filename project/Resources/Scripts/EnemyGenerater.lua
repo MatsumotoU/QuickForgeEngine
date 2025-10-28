@@ -85,7 +85,7 @@ local isLoadMap = false
 --]]
 function Init()
 
-    stageNumber = 2
+    stageNumber = 1
 
     -- マップチップに対応する敵のテーブルを生成
     CreateEnemyNumberTable()

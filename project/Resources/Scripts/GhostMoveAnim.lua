@@ -37,7 +37,7 @@ function GhostMoveAnimUpdate(kPerformingTime_)
 
     local delta = math.sin(math.pi*moveAnimCount)
 
-    local default = 0.75
+    local default = 0.85
     local conv1 = delta*0.5
     transform.translate.y = default + conv1 
 
