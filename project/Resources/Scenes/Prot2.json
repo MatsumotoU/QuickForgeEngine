@@ -1115,7 +1115,7 @@
             "SpriteData": {
                 "height": 720.0,
                 "isDraw": true,
-                "layer": 6,
+                "layer": 20,
                 "pivot": [
                     0.0,
                     0.0
@@ -1143,9 +1143,9 @@
         },
         {
             "SceneObjectData": {
-                "name": "ClearUI",
+                "name": "damageScreen",
                 "tag": "Untagged",
-                "uniqueId": 5743
+                "uniqueId": 18067
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -1154,21 +1154,21 @@
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "clearUIMove.lua",
+                        "scriptName": "DamageScreen.lua",
                         "stringParams": {}
                     }
                 ]
             },
             "SpriteData": {
-                "height": 90.0,
+                "height": 720.0,
                 "isDraw": true,
-                "layer": 2,
+                "layer": 16,
                 "pivot": [
                     0.0,
                     0.0
                 ],
-                "textureName": "clear.png",
-                "width": 300.0
+                "textureName": "damageScreen.png",
+                "width": 1280.0
             },
             "Transform": {
                 "rotate": [
@@ -1182,8 +1182,8 @@
                     1.0
                 ],
                 "translate": [
-                    530.0,
-                    240.0,
+                    0.0,
+                    0.0,
                     0.0
                 ]
             }

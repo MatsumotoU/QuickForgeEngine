@@ -58,12 +58,12 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 			s = static_cast<int16_t>(std::clamp<int>(s + noiseDist(gen), -32768, 32767));
 
 			// 歪み（クリッピング）
-			const int16_t clipLevel = 7000; // lo-fi感を出す閾値
+			const int16_t clipLevel = 8000; // lo-fi感を出す閾値
 			if (s > clipLevel) s = clipLevel;
 			if (s < -clipLevel) s = -clipLevel;
 
 			// ローパスフィルタ（高域カット）
-			float alpha = 0.1f; // フィルタ強度（0.0～1.0）
+			float alpha = 0.35f; // フィルタ強度（0.0～1.0）
 			float filtered = lastSample * (1.0f - alpha) + s * alpha;
 			lastSample = filtered;
 			s = static_cast<int16_t>(filtered);
