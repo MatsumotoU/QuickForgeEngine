@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.8347485661506653,
-                    -0.037745311856269836,
+                    0.8851413130760193,
+                    -0.08111603558063507,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    3.716974973678589,
-                    22.981914520263672,
-                    -14.954471588134766
+                    2.096817970275879,
+                    31.63344955444336,
+                    -25.792890548706055
                 ]
             }
         },
@@ -516,59 +516,6 @@
             }
         },
         {
-            "SceneObjectData": {
-                "name": "breakEnemyUI",
-                "tag": "Untagged",
-                "uniqueId": 6842
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {
-                            "UIType": 0,
-                            "shotType": 0,
-                            "targetType": 3
-                        },
-                        "priority": 0,
-                        "scriptName": "TutorialUIbehavior.lua",
-                        "stringParams": {
-                            "TutorialManagerJson": "TutorialManager"
-                        }
-                    }
-                ]
-            },
-            "SpriteData": {
-                "height": 80.0,
-                "isDraw": true,
-                "layer": 5,
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "textureName": "breakEnemy.png",
-                "width": 340.0
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    478.2296142578125,
-                    36.0,
-                    0.0
-                ]
-            }
-        },
-        {
             "ModelHandle": {
                 "color": [
                     0.0,
@@ -634,156 +581,6 @@
                     -8.89499568939209,
                     0.0,
                     -6.873446464538574
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "damageExplan.obj"
-            },
-            "SceneObjectData": {
-                "name": "DamageExplanUI",
-                "tag": "Untagged",
-                "uniqueId": 7548
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    3.5613856315612793,
-                    -0.30000001192092896,
-                    -6.06992244720459
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "tombstoneExplan.obj"
-            },
-            "SceneObjectData": {
-                "name": "TombstoneExplanUI",
-                "tag": "Untagged",
-                "uniqueId": 6847
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "tombstoneExplaneBehavior.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -4.366053104400635,
-                    0.0,
-                    -6.221864700317383
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "EnemyHitEmitter",
-                "tag": "Untagged",
-                "uniqueId": 7551
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "EnemyHitEmitter.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -10.687945365905762,
-                    0.0,
-                    -7.377067565917969
-                ]
-            }
-        },
-        {
-            "SceneObjectData": {
-                "name": "EnemyChangeEmitter",
-                "tag": "Untagged",
-                "uniqueId": 7552
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "enemyChangeEmitter.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    4.2822089195251465,
-                    0.0,
-                    -7.104079246520996
                 ]
             }
         },
@@ -884,51 +681,6 @@
                     792.0,
                     627.0,
                     0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "tombStoneReloadPlane.obj"
-            },
-            "SceneObjectData": {
-                "name": "TombStoneReloadUI",
-                "tag": "Untagged",
-                "uniqueId": 11925
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "tombstoneExplaneBehavior.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -4.49676513671875,
-                    0.0,
-                    -3.9472172260284424
                 ]
             }
         },
@@ -1083,51 +835,6 @@
                     -1.1656187772750854,
                     0.0,
                     0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "addBulletPlane.obj"
-            },
-            "SceneObjectData": {
-                "name": "AddBulletUI",
-                "tag": "Untagged",
-                "uniqueId": 11926
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "AddBulletUIBehavior.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    -0.699999988079071,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    3.215662956237793,
-                    0.8999999761581421,
-                    5.179229736328125
                 ]
             }
         }
