@@ -26,6 +26,10 @@ local transitionID = 0
 -- 音声
 local damage = QFE.Audio.LoadSound("playerDamage.mp3")
 
+-- リセットした時にノックバックを食らわないようにする
+local waitTimer = 0.0
+local maxWaitTime = 0.5
+
 function Init()
     time = 0.0
     damageInterval = 0.0
@@ -38,6 +42,11 @@ function Init()
 end
 
 function Update()
+
+    if waitTimer <= maxWaitTime then
+        local deltatime = GetDeltaTime()
+        waitTimer = waitTimer + deltatime
+    end
 
     do_reload = false
     if korehaHidoi == true then
@@ -57,6 +66,7 @@ function Update()
     end
 
     -- ボーダーダメージ
+    if waitTimer >= maxWaitTime then
     if transform.translate.x < GetTransform(borderId).translate.x then
         --hitPoint = hitPoint - 1
         --do_reload = true
@@ -65,6 +75,7 @@ function Update()
         --force.velocity.y = force.velocity.y + 20
         --damageInterval = maxDamageInterval
         CreateEntity("ExplotionParticleEmitter.json",transform)
+    end
     end
 
 
@@ -110,6 +121,7 @@ function Reset()
     transform.translate.x = 1.7
     transform.translate.z = 6.0
     do_reload = false
+    waitTimer = 0.0
 
     DebugLog("PlayerStateReset")
 end

@@ -48,7 +48,7 @@ function Update()
 end
 
 function Reset()
-    transform.translate.x = -10.0
+    transform.translate.x = -15.0
     targetX = 0.0
 
     DebugLog("DamageBorder : Reset")
