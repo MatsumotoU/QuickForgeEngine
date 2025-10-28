@@ -115,6 +115,7 @@ function OnCollisionStay(id,obj)
 
         -- ダメージアニメーション
         RunEntityScriptFunction(this.GetEntityId(),"ShotGunPlayer.lua","DamageAnim")
+        RunEntityScriptFunction(GetEntity("damageScreen"),"DamageScreen.lua","Damage")
     end
 end
 

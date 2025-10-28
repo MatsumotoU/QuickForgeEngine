@@ -110,7 +110,7 @@ function Update()
     if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
         -- 弾倉管理
         if bullets <= 0 then
-            QFE.Audio.PlaySound(emptyShot,false,3.0)
+            QFE.Audio.PlaySound(emptyShot,false,1.0)
             local tmpPos = Transform.new()
             tmpPos.rotate.x = -0.6
             tmpPos.translate = transform.translate
