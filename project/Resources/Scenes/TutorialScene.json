@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.8347484469413757,
-                    -0.037745315581560135,
+                    0.8347485661506653,
+                    -0.037745311856269836,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.9008927345275879,
-                    26.35409164428711,
-                    -23.856334686279297
+                    3.716974973678589,
+                    22.981914520263672,
+                    -14.954471588134766
                 ]
             }
         },
@@ -1083,6 +1083,51 @@
                     -1.1656187772750854,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "addBulletPlane.obj"
+            },
+            "SceneObjectData": {
+                "name": "AddBulletUI",
+                "tag": "Untagged",
+                "uniqueId": 11926
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "AddBulletUIBehavior.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -0.699999988079071,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    3.215662956237793,
+                    0.8999999761581421,
+                    5.179229736328125
                 ]
             }
         }

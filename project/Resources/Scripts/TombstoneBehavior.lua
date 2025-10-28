@@ -103,6 +103,11 @@ function OnCollisionStay(id,obj)
             RunEntityScriptFunction(GetEntity("ShallReload"),"ShallReloadUI.lua","Anim")
             CreateEntity("TombstoneEmitter.json",transform)
             QFE.Audio.PlaySound(breakSE,false,0.3)
+            local tmpP = GetTransform(GetEntity(playerName))
+            tmpP.rotate.x = -0.7
+            tmpP.rotate.y = 0.0
+            tmpP.rotate.z = 0.0
+            CreateEntity("AddBulletUI.json",tmpP)
         end
     end
 
