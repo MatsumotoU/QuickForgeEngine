@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.5359132885932922,
-                    0.7355211973190308,
+                    0.9359131455421448,
+                    0.013021036051213741,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -24.55998992919922,
-                    21.738384246826172,
-                    -27.14080810546875
+                    1.2149487733840942,
+                    39.58454513549805,
+                    -18.06008529663086
                 ]
             }
         },
@@ -86,6 +86,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false
             },
@@ -964,107 +965,6 @@
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    6.435625076293945,
-                    -0.8999991416931152,
-                    2.640949010848999,
-                    7.835245132446289,
-                    8.69999885559082,
-                    3.640948534011841
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isStatic": true,
-                "isTrigger": false
-            },
-            "Force": {
-                "acceleration": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "friction": 1.0,
-                "gravityStrength": 20.0,
-                "isGravity": true,
-                "mass": 1.0,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "tombstone.obj"
-            },
-            "SceneObjectData": {
-                "name": "Tombstone",
-                "tag": "Untagged",
-                "uniqueId": 781
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "aliveTime": 0.699999988079071,
-                            "breakMaxTime": 1.0,
-                            "maxSpeed": 13.0,
-                            "minSpeed": 8.0,
-                            "moveSpeed": 0.5
-                        },
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "BulletMove.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {
-                            "maxBreakNockbackCount": 2
-                        },
-                        "priority": 0,
-                        "scriptName": "TombstoneBehavior.lua",
-                        "stringParams": {
-                            "slowObjName": "SlowArea.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "Ground0.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    7.135435104370117,
-                    3.9000000953674316,
-                    3.14094877243042
-                ]
-            }
-        },
-        {
             "SceneObjectData": {
                 "name": "BGMPlayer",
                 "tag": "Untagged",
@@ -1074,194 +974,22 @@
                 "scriptHandles": [
                     {
                         "boolParams": {},
-                        "floatParams": {},
+                        "floatParams": {
+                            "volume": 0.20000000298023224
+                        },
                         "intParams": {},
                         "priority": 0,
                         "scriptName": "SceneBGMPlayer.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "AABBColliderData": {
-                "aabb": [
-                    1.4500000476837158,
-                    -1.25,
-                    -0.15000000596046448,
-                    1.6384716033935547,
-                    1.25,
-                    0.15000000596046448
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isStatic": true,
-                "isTrigger": true
-            },
-            "Force": {
-                "acceleration": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "friction": 1.0,
-                "gravityStrength": 20.0,
-                "isGravity": false,
-                "mass": 1.0,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            "ModelHandle": {
-                "color": [
-                    0.7882353067398071,
-                    0.6352941393852234,
-                    0.1882352977991104,
-                    1.0
-                ],
-                "modelName": "playerBullet.obj"
-            },
-            "SceneObjectData": {
-                "name": "Bullet",
-                "tag": "bullet",
-                "uniqueId": 161
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "aliveTime": 0.800000011920929,
-                            "maxSpeed": 26.0,
-                            "minSpeed": 20.0,
-                            "moveSpeed": 0.4000000059604645,
-                            "reduceCoe": 0.925000011920929
-                        },
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "BulletMove.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    0.9999999403953552,
-                    1.0
-                ],
-                "translate": [
-                    1.5442358255386353,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "bigEnemy.obj"
-            },
-            "SceneObjectData": {
-                "name": "BigGhostEnemy",
-                "tag": "Enemy",
-                "uniqueId": 500
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "speed": 0.0
-                        },
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "BigGhostEnemyMove.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "maxDamageInterval": 0.25
-                        },
-                        "intParams": {
-                            "enemyType": 1,
-                            "hp": 35,
-                            "maxHp": 35
-                        },
-                        "priority": 0,
-                        "scriptName": "EnemyHp.lua",
                         "stringParams": {
-                            "stoneName": "Tombstone.json"
+                            "bgmName": "GameBGM.mp3"
                         }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "performingTime": 1.5
-                        },
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "DeathAnim.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "performingTime": 1.75
-                        },
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "GhostMoveAnim.lua",
-                        "stringParams": {}
                     }
-                ]
-            },
-            "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    6.061912536621094,
-                    -0.33281970024108887,
-                    0.7657085657119751,
-                    1.5499999523162842
                 ]
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -1270,9 +998,9 @@
                     1.0
                 ],
                 "translate": [
-                    6.061912536621094,
-                    -0.33281970024108887,
-                    0.7657085657119751
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         },
@@ -1284,12 +1012,12 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "bulletEmptyPlane.obj"
+                "modelName": "WhitePlate.obj"
             },
             "SceneObjectData": {
-                "name": "BulletEmptyUI",
+                "name": "PumpActionGage",
                 "tag": "Untagged",
-                "uniqueId": 11796
+                "uniqueId": 17547
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -1298,14 +1026,106 @@
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "bulletEmptyUI.lua",
+                        "scriptName": "PumpActionGage.lua",
                         "stringParams": {}
                     }
                 ]
             },
             "Transform": {
                 "rotate": [
-                    -0.6000000238418579,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.800000011920929,
+                    1.0,
+                    0.10000000149011612
+                ],
+                "translate": [
+                    3.0999999046325684,
+                    1.0,
+                    5.599999904632568
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "ReloadActionGage",
+                "tag": "Untagged",
+                "uniqueId": 18058
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ReloadActionGage.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.800000011920929,
+                    1.0,
+                    0.10000000149011612
+                ],
+                "translate": [
+                    3.0999999046325684,
+                    1.0,
+                    5.599999904632568
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "SceneCloseTex",
+                "tag": "Untagged",
+                "uniqueId": 18059
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SceneStartAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 720.0,
+                "isDraw": true,
+                "layer": 6,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
                     0.0,
                     0.0
                 ],
@@ -1315,9 +1135,9 @@
                     1.0
                 ],
                 "translate": [
-                    3.5,
-                    2.200000047683716,
-                    5.400000095367432
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }
