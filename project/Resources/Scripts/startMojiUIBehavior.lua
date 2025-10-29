@@ -35,8 +35,8 @@ function Update()
         cir.scale.x = QFE.Math.Leap(0.1,0.5,EaseIn(widthTimer))
         cir.scale.y = QFE.Math.Leap(0.6,0.4,EaseIn(widthTimer))
 
-        moj.scale.x = QFE.Math.Leap(0.1,0.5,EaseIn(widthTimer))
-        moj.scale.y = QFE.Math.Leap(0.6,0.4,EaseIn(widthTimer))
+        moj.scale.x = QFE.Math.Leap(0.5,0.0,EaseIn(widthTimer))
+        moj.scale.y = QFE.Math.Leap(0.2,0.0,EaseIn(widthTimer))
 
     elseif t <= 0.5 then
 
@@ -45,8 +45,8 @@ function Update()
         cir.scale.x = QFE.Math.Leap(1.4,0.1,EaseOut(heightTimer))
         cir.scale.y = QFE.Math.Leap(0.4,0.6,EaseOut(heightTimer))
 
-        moj.scale.x = QFE.Math.Leap(1.0,0.1,EaseOut(heightTimer))
-        moj.scale.y = QFE.Math.Leap(1.0,0.6,EaseOut(heightTimer))
+        moj.scale.x = QFE.Math.Leap(1.0,0.5,EaseOut(heightTimer))
+        moj.scale.y = QFE.Math.Leap(1.0,0.2,EaseOut(heightTimer))
 
     elseif t <= 0.75 then
 
