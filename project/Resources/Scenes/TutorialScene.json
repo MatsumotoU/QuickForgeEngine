@@ -147,7 +147,6 @@
             "SphereColliderData": {
                 "colliderLayer": 127,
                 "eventColliderLayer": 127,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [

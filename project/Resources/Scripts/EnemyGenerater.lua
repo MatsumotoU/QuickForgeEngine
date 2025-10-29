@@ -64,7 +64,7 @@ local offsetX = 15.0 -- カメラの画面端までの位置
 
 
 -- 生成するステージの番号
-stageNumber = 1
+local stageNumber = 1
 
 
 -- リセットに関する名前
@@ -132,11 +132,11 @@ function Init()
     DebugLog("EnemyGeneratorInit")
 
     -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
-    local tmpTransform = Transform.new()
-    tmpTransform.translate.y = 0.0
-    tmpTransform.translate.x = 15.0
-    tmpTransform.translate.z = 6.5
-    CreateEntity(smallGhostEnemyJson,tmpTransform)
+    --local tmpTransform = Transform.new()
+    --tmpTransform.translate.y = 0.0
+    --tmpTransform.translate.x = 15.0
+    --tmpTransform.translate.z = 6.5
+    --CreateEntity(smallGhostEnemyJson,tmpTransform)
     -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
 
 end
@@ -404,7 +404,7 @@ function StageTwoRegisterEnemy()
     -- 最大の敵の数を初期化
     -- 幽霊の敵
     table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 1})
-    table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 2})
+    table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 0})
     table.insert(maxEnemysCounts,{name = doubleGhostEnemyJson,maxCount = 1})
     table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 1})
     --箱幽霊の敵はいったんコメントアウトtable.insert(maxEnemysCounts,{name = boxGhostEnemyJson,maxCount = 1})
@@ -412,7 +412,7 @@ function StageTwoRegisterEnemy()
     table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 3})
     table.insert(maxEnemysCounts,{name = batEnemyJson,maxCount = 2})
     table.insert(maxEnemysCounts,{name = pillBugEnemyJson,maxCount = 1})
-    table.insert(maxEnemysCounts,{name = eyeEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = eyeEnemyJson,maxCount = 0})
 
     -- 現在の敵の数を初期化
     -- 幽霊の敵
@@ -476,6 +476,7 @@ end
 
 -- マップデータに基づいて敵を生成
 function SpawnEnemiesFromMap(cameraRightEdgeX)
+    cameraRightEdgeX = cameraRightEdgeX - 6.0
     local height = #map
     local width = #map[1]
     local startX = math.max(1,math.floor((cameraRightEdgeX + kBlockSize) / kBlockSize))

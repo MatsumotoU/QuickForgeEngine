@@ -20,6 +20,9 @@ function Update()
         isPush = true
         transform.scale.x = transform.scale.x + 0.1
     end
+    if QFE.Input.GetGamePadLeftStickDir():Length() > 0.5 then
+        isPush = true
+    end
 
     if isPush then
         transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,0.8,0.5)

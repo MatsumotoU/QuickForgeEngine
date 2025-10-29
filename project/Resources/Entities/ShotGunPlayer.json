@@ -61,7 +61,7 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "maxDamageInterval": 2.0
+                    "maxDamageInterval": 2.5
                 },
                 "intParams": {
                     "hitPoint": 5

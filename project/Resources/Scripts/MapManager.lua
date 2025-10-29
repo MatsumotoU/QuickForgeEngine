@@ -52,6 +52,10 @@ local isGameOver = false
 
 local stopTransform = Transform.new()
 
+-- 音声
+local selectSE = QFE.Audio.LoadSound("select.mp3")
+local swichSE = QFE.Audio.LoadSound("uiMove.mp3")
+
 function Init()
     -- 生成したマップを取得
     linkID = GetEntity(mapObjName)
@@ -150,15 +154,23 @@ function GameOverScene()
     if timer >= activeGameOverTime then
         -- リトライを選択
         if QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
+            if selectType ~= 0 then
+                QFE.Audio.PlaySound(swichSE,false,0.5)
+            end
             selectType = 0
         end
 
         -- タイトルに戻るを選択
         if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetGamePadLeftStickDir().x > 0.5 then
+            if selectType ~= 1 then
+                QFE.Audio.PlaySound(swichSE,false,0.5)
+            end
             selectType = 1
         end
 
         if QFE.Input.GetKeyTrigger("Shot") or  QFE.Input.GetGamePadTrigger(0x1000) then
+            QFE.Audio.PlaySound(selectSE,false,0.5)
+
             if selectType == 0 then
                 isDead = true
                 isClear = true
@@ -185,15 +197,23 @@ function NextScene()
     if timer >= activeGameOverTime then
         -- リトライを選択
         if QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
+            if selectType ~= 0 then
+                QFE.Audio.PlaySound(swichSE,false,0.5)
+            end
             selectType = 0
+
         end
 
         -- タイトルに戻るを選択
         if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetGamePadLeftStickDir().x > 0.5 then
+            if selectType ~= 1 then
+                QFE.Audio.PlaySound(swichSE,false,0.5)
+            end
             selectType = 1
         end
 
         if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
+            QFE.Audio.PlaySound(selectSE,false,0.5)
             if selectType == 0 then
                 isDead = false
                 isClear = true
@@ -221,6 +241,7 @@ function ClearScene()
     if timer >= activeClearTime then
         -- タイトルに戻る
         if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
+            QFE.Audio.PlaySound(selectSE,false,0.5)
             -- タイトルシーンに移動
             LoadScene("TitleScene")
         end
