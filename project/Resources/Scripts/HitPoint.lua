@@ -177,5 +177,7 @@ function Reset()
     do_reload = false
     waitTimer = 0.0
 
+    RunEntityScriptFunction(this.GetEntityId(),"BulletShot.lua","ResetBullet")
+
     DebugLog("PlayerStateReset")
 end
