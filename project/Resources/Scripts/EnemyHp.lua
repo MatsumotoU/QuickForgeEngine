@@ -114,7 +114,7 @@ function Update()
 end
 
 function OnCollisionEnter(id,obj)
-    if obj.tag == "bullet" then
+    if obj.tag == "bullet" or  obj.tag == "bigBullet"then
         hp = hp - 1
         
         if damageInterval <= 0.0 then
