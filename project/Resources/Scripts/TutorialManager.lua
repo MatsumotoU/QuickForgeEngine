@@ -86,6 +86,8 @@ function Init()
     tmpTransform.translate.x = 480.0
     tmpTransform.translate.y = 36.0
     CreateEntity(moveUIName,tmpTransform)
+    tmpTransform.scale.x = 0.8
+    tmpTransform.scale.z = 0.8
     tmpTransform.translate.x = 5
     tmpTransform.translate.y = -1.0
     tmpTransform.translate.z = 7.5
@@ -174,6 +176,7 @@ function EventOneScene()
         tmpTransform.translate.x = 400.0
         tmpTransform.translate.y = 36.0
         CreateEntity(shotBulletUIName,tmpTransform)
+        tmpTransform.scale.x = 2.0
         tmpTransform.translate.x = 15.0
         tmpTransform.translate.y = -1.0
         tmpTransform.translate.z = 7.5
@@ -210,6 +213,7 @@ function EventTwoScene()
             tmpTransform.translate.x = 412.0
             tmpTransform.translate.y = 36.0
             CreateEntity(reloadUIName,tmpTransform)
+            tmpTransform.scale.x = 1.5
             tmpTransform.translate.x = 15.0
             tmpTransform.translate.y = -1.0
             tmpTransform.translate.z = 7.5
@@ -317,20 +321,20 @@ function EventFourScene()
 
         -- ダメージ床の情報を促すUIを生成
         local tmpTransform = Transform.new()
-        tmpTransform.translate.x = 323.0
-        tmpTransform.translate.y = 36.0
-        CreateEntity(damegeBorderUIName,tmpTransform)
+        -- tmpTransform.translate.x = 323.0
+        -- tmpTransform.translate.y = 36.0
+        --CreateEntity(damegeBorderUIName,tmpTransform)
         tmpTransform.scale.x = 2.0
         tmpTransform.translate.x = 32.0
         tmpTransform.translate.y = -1.0
         tmpTransform.translate.z = 7.5
         CreateEntity(TombstoneExplanUIName,tmpTransform)
 
-        tmpTransform.scale.x = 1.0
-        tmpTransform.translate.x = 32.0
-        tmpTransform.translate.y = -1.0
-        tmpTransform.translate.z = 4.5
-        CreateEntity(tombstoneReloadUIName,tmpTransform)
+        -- tmpTransform.scale.x = 1.0
+        -- tmpTransform.translate.x = 32.0
+        -- tmpTransform.translate.y = -1.0
+        -- tmpTransform.translate.z = 4.5
+        --CreateEntity(tombstoneReloadUIName,tmpTransform)
 
         isActive = false
 
