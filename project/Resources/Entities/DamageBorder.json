@@ -18,8 +18,9 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "borderSpeed": 0.42500001192092896,
-                    "maxBorderX": 12.0
+                    "borderSpeed": 0.0,
+                    "borderX": 9.5,
+                    "maxBorderX": 9.5
                 },
                 "intParams": {},
                 "priority": 0,
