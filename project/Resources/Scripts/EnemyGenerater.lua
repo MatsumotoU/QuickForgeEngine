@@ -64,7 +64,7 @@ local offsetX = 15.0 -- カメラの画面端までの位置
 
 
 -- 生成するステージの番号
-stageNumber = 1
+local stageNumber = 1
 
 
 -- リセットに関する名前
@@ -476,6 +476,7 @@ end
 
 -- マップデータに基づいて敵を生成
 function SpawnEnemiesFromMap(cameraRightEdgeX)
+    cameraRightEdgeX = cameraRightEdgeX - 6.0
     local height = #map
     local width = #map[1]
     local startX = math.max(1,math.floor((cameraRightEdgeX + kBlockSize) / kBlockSize))
