@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.9852200150489807,
-                    0.3023187220096588,
+                    0.9852224588394165,
+                    0.3023187518119812,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -26268.044921875,
-                    133037.828125,
-                    -84225.203125
+                    -27408.197265625,
+                    138813.0,
+                    -87880.953125
                 ]
             }
         },
@@ -86,6 +86,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false
             },
@@ -1395,103 +1396,6 @@
                 "translate": [
                     -1.5,
                     -0.009999999776482582,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "normalEnemy.obj"
-            },
-            "SceneObjectData": {
-                "name": "NormalGhostEnemy",
-                "tag": "Enemy",
-                "uniqueId": 504
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "maxSpeed": 4.25,
-                            "moveAcceleraion": 0.10000000149011612,
-                            "speed": 2.0,
-                            "targetRate": 1.0
-                        },
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "LockOnEnemyMove.lua",
-                        "stringParams": {
-                            "LockOnObjName": "ShotGunPlayer"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {
-                            "enemyType": 1,
-                            "hp": 3,
-                            "maxHp": 3
-                        },
-                        "priority": 0,
-                        "scriptName": "EnemyHp.lua",
-                        "stringParams": {
-                            "stoneName": "Tombstone.json"
-                        }
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {
-                            "performingTime": 0.5
-                        },
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "DeathAnim.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "GhostMoveAnim.lua",
-                        "stringParams": {}
-                    }
-                ]
-            },
-            "SphereColliderData": {
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": false,
-                "isTrigger": false,
-                "sphere": [
-                    -5.383298873901367,
-                    0.0,
-                    0.0,
-                    0.4000000059604645
-                ]
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    -5.383298873901367,
-                    0.0,
                     0.0
                 ]
             }

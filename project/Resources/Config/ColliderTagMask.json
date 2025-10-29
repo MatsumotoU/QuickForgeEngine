@@ -31,6 +31,22 @@
         {
             "tag1": "EnemyBullet",
             "tag2": "bullet"
+        },
+        {
+            "tag1": "bigBullet",
+            "tag2": "EnemyBullet"
+        },
+        {
+            "tag1": "bigBullet",
+            "tag2": "bigBullet"
+        },
+        {
+            "tag1": "bigBullet",
+            "tag2": "player"
+        },
+        {
+            "tag1": "bigBullet",
+            "tag2": "Wall"
         }
     ]
 }

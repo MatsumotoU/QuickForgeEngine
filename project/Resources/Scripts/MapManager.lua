@@ -125,7 +125,7 @@ function NormalScene()
         if not isClear then
         stageNumber = stageNumber + 1
         DebugLog("CurrentStageNumber :"..stageNumber)
-            if stageNumber >= 3 then
+            if stageNumber > 3 then
                 sceneType = 2
                 timer = 0.0
                 CreateClearObj()
