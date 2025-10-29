@@ -15,7 +15,7 @@ function Update()
         end
     end
 
-    if QFE.Input.GetKeyPress("Shot") then
+    if QFE.Input.GetKeyPress("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
         isPush = true
     end
 
