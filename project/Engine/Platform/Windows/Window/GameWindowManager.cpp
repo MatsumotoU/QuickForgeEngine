@@ -56,6 +56,6 @@ HWND GameWindowManager::GetWindow(const std::string windowName) const {
 			}
 		}
 	}
-	throw std::runtime_error("指定されたウィンドウ名が見つかりませんでした。");
+	throw std::runtime_error("指定されたウィンドウ名が見つかりませんでした。"+ windowName);
 
 }
