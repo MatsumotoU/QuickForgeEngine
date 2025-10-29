@@ -98,8 +98,12 @@ function Init()
     --ステージに対応する敵を登録する
     if stageNumber == 1 then
         StageOneRegisterEnemy()
-    else
+    elseif stageNumber == 2 then
         StageTwoRegisterEnemy()
+    elseif stageNumber == 3 then
+        StageThreeRegisterEnemy()
+    else
+        StageOneRegisterEnemy()
     end
 
     -- 追跡するidを取得
@@ -428,6 +432,11 @@ function StageTwoRegisterEnemy()
     table.insert(currentEnemysCounts,{name = eyeEnemyJson,difficulty = 2,count = 0})
 end
 
+-- ステージ3で使用する敵を登録
+function StageThreeRegisterEnemy()
+   
+end
+
 -- リセット処理
 function Reset()
 
@@ -458,8 +467,12 @@ function Reset()
 
     if stageNumber == 1 then
         StageOneRegisterEnemy()
-    else
+    elseif stageNumber == 2 then
         StageTwoRegisterEnemy()
+    elseif stageNumber == 3 then
+        StageThreeRegisterEnemy()
+    else
+        StageOneRegisterEnemy()
     end
 
     -- 新しいマップの情報を取得する

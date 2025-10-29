@@ -5,7 +5,9 @@ local waitMaxTime = 10.0
 local gaugeId = 0
 
 local playerId = 0
+isMax = false
 
+local maxGaugeNum = 1
 gaugeNum = 0
 
 function Init()
@@ -17,15 +19,24 @@ end
 
 function Update()
 
-    if gaugeNum > 4 then
-        gaugeNum = 4
+    if gaugeNum > maxGaugeNum then
+        gaugeNum = maxGaugeNum
+
     elseif gaugeNum < 0 then
         gaugeNum = 0
     end
 
+    if gaugeNum >= maxGaugeNum then
+        isMax = true
+    else
+        isMax = false
+
+    end
+
+
     local tmpTransform = GetTransform(gaugeId)
     
-    tmpTransform.scale.x = (gaugeNum / 4.0) * 1.5
+    tmpTransform.scale.x = (gaugeNum / maxGaugeNum) * 1.5
 
     local playerTmp = GetTransform(playerId)
     transform.translate = playerTmp.translate

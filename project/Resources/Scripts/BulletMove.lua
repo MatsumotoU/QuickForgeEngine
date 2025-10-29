@@ -3,7 +3,9 @@ aliveTime = 0.75
 maxSpeed = 20.0
 minSpeed = 15.0 
 
-local reduceCoe = 0.945
+scaleScale = 2.5
+
+reduceCoe = 0.945
 
 -- 音
 local hit = QFE.Audio.LoadSound("hit.mp3")
@@ -35,9 +37,9 @@ function Update()
 
     transform.translate.y = 0.5
 
-    transform.scale.x = 2.5
-    transform.scale.y = 2.5
-    transform.scale.z = 2.5
+    transform.scale.x = scaleScale
+    transform.scale.y = scaleScale
+    transform.scale.z = scaleScale
 
     transform.rotate.z = transform.rotate.z +  rotateNum
 
@@ -55,14 +57,14 @@ local cur_aliveRate = aliveTime / max_aliveTime
 if cur_aliveRate  <= rate_beingWhite then
 
     local mat = GetMaterial(GetThisEntityId()) 
-    local rate_beWhite = 1.2
+    local rate_beWhite = 1.15
 
     mat.color.x = mat.color.x * rate_beWhite 
     mat.color.y = mat.color.y * rate_beWhite 
     mat.color.z = mat.color.z * rate_beWhite 
 
     if cur_aliveRate  <= vanishStartRate then
-        local rate_vanish = 0.8
+        local rate_vanish = 0.75
         mat.color.w = mat.color.w * rate_vanish 
     end
 

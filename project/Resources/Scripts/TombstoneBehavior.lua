@@ -96,7 +96,7 @@ function OnCollisionStay(id,obj)
     end
 
     -- 弾を打たれた時
-    if obj.tag == "bullet" then
+    if obj.tag == "bullet" or  obj.tag == "bigBullet" then
         if timer >= 1.0 then
             isBreak = true
             for i = 1, dropBullets, 1 do
