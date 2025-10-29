@@ -29,6 +29,7 @@ local isActive = false
 
 -- 音声
 local damage = QFE.Audio.LoadSound("playerDamage.mp3")
+local jump = QFE.Audio.LoadSound("jump.mp3")
 
 -- リセットした時にノックバックを食らわないようにする
 local waitTimer = 0.0
@@ -93,7 +94,7 @@ function Update()
         --force.velocity.y = force.velocity.y + 20
         --damageInterval = maxDamageInterval
         --CreateEntity("ExplotionParticleEmitter.json",transform)
-        
+        QFE.Audio.PlaySound(jump,false,1.0)
     end
     end
 
@@ -135,7 +136,7 @@ function OnCollisionStay(id,obj)
         korehaHidoi = true
         isDamaged = true
         CreateEntity("ExplotionParticleEmitter.json",transform)
-        QFE.Audio.PlaySound(damage,false,0.5)
+        QFE.Audio.PlaySound(damage,false,1.0)
          -- ダメージアニメーション
         RunEntityScriptFunction(this.GetEntityId(),"ShotGunPlayer.lua","DamageAnim")
         RunEntityScriptFunction(GetEntity("damageScreen"),"DamageScreen.lua","Damage")
@@ -148,7 +149,7 @@ function OnCollisionStay(id,obj)
         korehaHidoi = true
         isDamaged = true
         CreateEntity("ExplotionParticleEmitter.json",transform)
-        QFE.Audio.PlaySound(damage,false,0.5)
+        QFE.Audio.PlaySound(damage,false,1.0)
 
         -- ダメージアニメーション
         RunEntityScriptFunction(this.GetEntityId(),"ShotGunPlayer.lua","DamageAnim")
