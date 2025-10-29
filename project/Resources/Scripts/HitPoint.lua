@@ -44,12 +44,12 @@ function Init()
     transitionID = GetEntity(transitionObjName)
     pre_hitPoint = max_hitPoint
 
-    sceneId = GetEntity("SceneTransitionManager")
+    sceneId = GetEntity("MapManager")
 end
 
 function Update()
 
-    local ty = GetEntityScriptGlobal(sceneId,"SceneTransitionManager.lua","sceneType")
+    local ty = GetEntityScriptGlobal(sceneId,"MapManager.lua","sceneType")
 
     if ty == 0 then
         isActive = true
