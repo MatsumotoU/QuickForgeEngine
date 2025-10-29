@@ -23,6 +23,9 @@ local targetTransform = Transform.new()
 local spawn = QFE.Audio.LoadSound("tomGen.mp3")
 local death = QFE.Audio.LoadSound("death.mp3")
 
+-- コンボゲージ用
+local combId = 0
+
 function Init()
     isAlive = true
     hp = maxHp
@@ -31,6 +34,9 @@ function Init()
 
      -- 追跡するidを取得
     targetId = GetEntity(targetName)
+
+    -- コンボゲージid
+    combId = GetEntity("ComboGauge")
 end
 
 function Update()
@@ -119,6 +125,7 @@ function OnCollisionEnter(id,obj)
         
         if hp <= 0 then
             if isAlive then
+                RunEntityScriptFunction(combId,"ComboGaugeBehavior.lua","AddNum")
                 isAlive = false
                 SetColliderIsTrigger(this.GetEntityId(),false)
                 if enemyType == 0 then
