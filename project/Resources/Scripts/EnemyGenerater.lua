@@ -436,15 +436,15 @@ end
 function StageThreeRegisterEnemy()
        -- 最大の敵の数を初期化
     -- 幽霊の敵
-    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 0})
     table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 0})
-    table.insert(maxEnemysCounts,{name = doubleGhostEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = doubleGhostEnemyJson,maxCount = 0})
     table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 0})
     --箱幽霊の敵はいったんコメントアウトtable.insert(maxEnemysCounts,{name = boxGhostEnemyJson,maxCount = 1})
     -- 有機物の敵
-    table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 3})
-    table.insert(maxEnemysCounts,{name = batEnemyJson,maxCount = 2})
-    table.insert(maxEnemysCounts,{name = pillBugEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 0})
+    table.insert(maxEnemysCounts,{name = batEnemyJson,maxCount = 0})
+    table.insert(maxEnemysCounts,{name = pillBugEnemyJson,maxCount = 0})
     table.insert(maxEnemysCounts,{name = eyeEnemyJson,maxCount = 0})
 
     -- 現在の敵の数を初期化
