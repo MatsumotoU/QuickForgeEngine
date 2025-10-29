@@ -8,15 +8,15 @@
 // TODO: FPS制御を60に戻す
 
 namespace {
-	const std::chrono::microseconds kMinTime(static_cast<uint64_t>(1000000.0f / 30.0f));
-	const std::chrono::microseconds kMinCheckTime(static_cast<uint64_t>(1000000.0f / 35.0f));
+	const std::chrono::microseconds kMinTime(static_cast<uint64_t>(1000000.0f / 60.0f));
+	const std::chrono::microseconds kMinCheckTime(static_cast<uint64_t>(1000000.0f / 65.0f));
 }
 
 void FrameCounter::Initialize() {
 	frameCount_ = 0;
 	fps_ = 0.0f;
 	deltaTime_ = 0.0f;
-	maxFps_ = 30.0f;
+	maxFps_ = 60.0f;
 	timeBeginPeriod(1);
 }
 

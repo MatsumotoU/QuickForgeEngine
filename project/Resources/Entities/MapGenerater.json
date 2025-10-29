@@ -19,7 +19,8 @@
                     "DIK_SPACE": 57,
                     "DIK_W": 17,
                     "mapDifficulty": 10,
-                    "mapDivision": 1
+                    "mapDivision": 0,
+                    "stageNumber": 2
                 },
                 "priority": 0,
                 "scriptName": "MapGenerater.lua",
