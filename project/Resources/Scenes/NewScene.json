@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    1.2038904428482056,
-                    -0.1350005567073822,
+                    0.19638952612876892,
+                    -3.0849995613098145,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.25646552443504333,
-                    4.958316326141357,
-                    -1.8881819248199463
+                    0.2946801781654358,
+                    1.036507487297058,
+                    5.201445579528809
                 ]
             }
         },
@@ -66,12 +66,12 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "circle.obj"
+                "modelName": "japan.obj"
             },
             "SceneObjectData": {
-                "name": "CircleParticle",
+                "name": "JapanFlag",
                 "tag": "Untagged",
-                "uniqueId": 6851
+                "uniqueId": 3
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -80,7 +80,7 @@
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "circleParticle.lua",
+                        "scriptName": "FlagMove.lua",
                         "stringParams": {}
                     }
                 ]
@@ -93,8 +93,8 @@
                 ],
                 "scale": [
                     0.10000000149011612,
-                    1.0,
-                    0.30000001192092896
+                    0.10000000149011612,
+                    0.10000000149011612
                 ],
                 "translate": [
                     0.0,
