@@ -1,5 +1,5 @@
 moveSpeed = 0.5
-local aliveTime = 0.8
+local aliveTime = 0.7
 local maxSpeed = 20.0
 minSpeed = 15.0 
 local reduceCoe = 0.95
@@ -66,7 +66,7 @@ end
 
 function OnCollisionEnter(id,obj)
 
-    if obj.tag == "Enemy" or obj.tag == "Wall" or obj.tag == "TombStone" then
+    if obj.tag == "Enemy" then
 
         return
 

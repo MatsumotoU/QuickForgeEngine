@@ -13,7 +13,7 @@
             },
             "Transform": {
                 "rotate": [
-                    1.141906499862671,
+                    1.1418870687484741,
                     -0.06717140972614288,
                     -0.0
                 ],
@@ -136,7 +136,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "maxDamageInterval": 2.0
+                            "maxDamageInterval": 2.5
                         },
                         "intParams": {
                             "hitPoint": 5
@@ -266,8 +266,8 @@
                             "DIK_SPACE": 57,
                             "DIK_W": 17,
                             "mapDifficulty": 10,
-                            "mapDivision": 1,
-                            "stageNumber": 1
+                            "mapDivision": 0,
+                            "stageNumber": 2
                         },
                         "priority": 0,
                         "scriptName": "MapGenerater.lua",
@@ -313,7 +313,8 @@
                             "DIK_S": 31,
                             "DIK_SPACE": 57,
                             "DIK_W": 17,
-                            "maxDifficulty": 4
+                            "maxDifficulty": 4,
+                            "stageNumber": 2
                         },
                         "priority": 10,
                         "scriptName": "EnemyGenerater.lua",
@@ -433,7 +434,7 @@
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "borderSpeed": 0.44999998807907104,
+                            "borderSpeed": 0.42500001192092896,
                             "maxBorderX": 12.0
                         },
                         "intParams": {},
