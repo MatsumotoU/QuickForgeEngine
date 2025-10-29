@@ -110,7 +110,7 @@ function NormalScene()
             isGameOver = true
             CreateGameOverObj()
             timer = 0.0
-            stopTransform = targetTransform
+            stopTransform.translate.x = targetTransform.translate.x
         end
     end
 
@@ -123,13 +123,13 @@ function NormalScene()
                 sceneType = 2
                 timer = 0.0
                 CreateClearObj()
-                stopTransform = targetTransform
+                stopTransform.translate.x = targetTransform.translate.x
             else
                 CreateNextSceneObj()
                 --isClear = true
                 sceneType = 3
                 timer = 0.0
-                stopTransform = targetTransform
+                stopTransform.translate.x = targetTransform.translate.x
             end
         end
     end
@@ -139,23 +139,24 @@ end
 function GameOverScene()
 
     local targetTransform = GetTransform(playerID)
-    targetTransform.translate = stopTransform.translate
+    targetTransform.translate.x = stopTransform.translate.x
+    targetTransform.translate.z = 5.0
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
 
     if timer >= activeGameOverTime then
         -- リトライを選択
-        if QFE.Input.GetKeyPress("MoveLeft") then
+        if QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
             selectType = 0
         end
 
         -- タイトルに戻るを選択
-        if QFE.Input.GetKeyPress("MoveRight") then
+        if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetGamePadLeftStickDir().x > 0.5 then
             selectType = 1
         end
 
-        if QFE.Input.GetKeyTrigger("Shot") then
+        if QFE.Input.GetKeyTrigger("Shot") or  QFE.Input.GetGamePadTrigger(0x1000) then
             if selectType == 0 then
                 isDead = true
                 isClear = true
@@ -173,23 +174,24 @@ end
 function NextScene()
 
     local targetTransform = GetTransform(playerID)
-    targetTransform.translate = stopTransform.translate
+    targetTransform.translate.x = stopTransform.translate.x
+    targetTransform.translate.z = 5.0
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
 
     if timer >= activeGameOverTime then
         -- リトライを選択
-        if QFE.Input.GetKeyPress("MoveLeft") then
+        if QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
             selectType = 0
         end
 
         -- タイトルに戻るを選択
-        if QFE.Input.GetKeyPress("MoveRight") then
+        if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetGamePadLeftStickDir().x > 0.5 then
             selectType = 1
         end
 
-        if QFE.Input.GetKeyTrigger("Shot") then
+        if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
             if selectType == 0 then
                 isDead = false
                 isClear = true
@@ -208,14 +210,15 @@ end
 function ClearScene()
 
     local targetTransform = GetTransform(playerID)
-    targetTransform.translate = stopTransform.translate
+    targetTransform.translate.x = stopTransform.translate.x
+    targetTransform.translate.z = 5.0
 
     local deltatime = GetDeltaTime()
     timer = timer + deltatime
 
     if timer >= activeClearTime then
         -- タイトルに戻る
-        if QFE.Input.GetKeyTrigger("Shot") then
+        if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
             -- タイトルシーンに移動
             LoadScene("TitleScene")
         end

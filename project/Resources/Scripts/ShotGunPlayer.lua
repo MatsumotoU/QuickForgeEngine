@@ -8,6 +8,9 @@ local deltatime = 0.016
 local time = 0.0
 local damageAnimTime = 0.0
 
+-- 音
+local vecReset = QFE.Audio.LoadSound("vecStop.mp3")
+
 function Init()
 objectDir.x = 0.0
 objectDir.y = 0.0
@@ -44,7 +47,6 @@ function Update()
         force.velocity.x = 0.0
         if isBackFriping then
            isBackFriping = false
-           
         end
     end
 
@@ -75,7 +77,6 @@ function Update()
         end
     end    
     -- transform.rotate.z = QFE.Math.SimpleEaseIn(transform.rotate.z,0.0,0.1)
-
 
     -- バックフリップ開始処理
     if QFE.Input.GetKeyPress("MoveLeft") or moveDir.x + QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
@@ -117,6 +118,7 @@ function OnCollisionStay(id,obj)
         force.acceleration.x = 0.0
         force.acceleration.z = 0.0
         DebugLog("Reset force")
+        QFE.Audio.PlaySound(vecReset,false,0.5)
     end
 
 end

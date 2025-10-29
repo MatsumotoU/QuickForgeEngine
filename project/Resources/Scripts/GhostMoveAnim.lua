@@ -4,12 +4,14 @@ isAliveName = "isAlive"
 
 performingTime = 1.0
 moveAnimCount = 0.0
+local inv_performTime = 0.0
 
 
 
 function Init()
 
 moveAnimCount = 0.0
+inv_performTime = 1.0 / performingTime
 
 end
 
@@ -32,7 +34,6 @@ end
 
 function GhostMoveAnimUpdate(kPerformingTime_)
 
-    local inv_performTime = 1.0 / kPerformingTime_
     moveAnimCount = moveAnimCount + 0.0166666 * inv_performTime
 
     local delta = math.sin(math.pi*moveAnimCount)
@@ -42,13 +43,11 @@ function GhostMoveAnimUpdate(kPerformingTime_)
     transform.translate.y = default + conv1 
 
     local defaultScale = 1.0
-    local conv1 = delta*0.125
-    transform.scale.x = defaultScale+conv1 
-    transform.scale.y = defaultScale+conv1 
-    transform.scale.z = defaultScale+conv1 
+    local conv2 = delta*0.125
+    transform.scale.x = defaultScale+conv2 
+    transform.scale.y = defaultScale+conv2 
+    transform.scale.z = defaultScale+conv2 
 
-
-    return false
 
 end
 

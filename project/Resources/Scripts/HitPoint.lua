@@ -100,11 +100,24 @@ function OnCollisionStay(id,obj)
         return
     end
 
-    if obj.tag == damageTag then
+    if obj.tag == damageTag  then
 
         if not GetEntityScriptGlobal(id,"EnemyHp.lua","isAlive") then
             return
         end
+        damageInterval = maxDamageInterval  
+        hitPoint = hitPoint - 1
+        do_reload = true
+        korehaHidoi = true
+        isDamaged = true
+        CreateEntity("ExplotionParticleEmitter.json",transform)
+        QFE.Audio.PlaySound(damage,false,0.5)
+         -- ダメージアニメーション
+        RunEntityScriptFunction(this.GetEntityId(),"ShotGunPlayer.lua","DamageAnim")
+        RunEntityScriptFunction(GetEntity("damageScreen"),"DamageScreen.lua","Damage")
+    
+    elseif  obj.tag == "EnemyBullet" then
+
         damageInterval = maxDamageInterval  
         hitPoint = hitPoint - 1
         do_reload = true
@@ -117,6 +130,8 @@ function OnCollisionStay(id,obj)
         RunEntityScriptFunction(this.GetEntityId(),"ShotGunPlayer.lua","DamageAnim")
         RunEntityScriptFunction(GetEntity("damageScreen"),"DamageScreen.lua","Damage")
     end
+
+
 end
 
 function Reset()

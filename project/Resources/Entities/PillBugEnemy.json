@@ -32,8 +32,8 @@
                 "floatParams": {},
                 "intParams": {
                     "enemyType": 0,
-                    "hp": 25,
-                    "maxHp": 25
+                    "hp": 22,
+                    "maxHp": 22
                 },
                 "priority": 0,
                 "scriptName": "EnemyHp.lua",
