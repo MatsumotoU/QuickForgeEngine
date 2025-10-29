@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "idleTime": 3.5,
+                    "idleTime": 2.5,
                     "moveTime": 2.5,
                     "speed": 3.0
                 },
