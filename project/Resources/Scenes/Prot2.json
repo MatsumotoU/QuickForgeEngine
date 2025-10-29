@@ -455,7 +455,7 @@
                 "scale": [
                     1.0,
                     1.0,
-                    38.900001525878906
+                    1.0
                 ],
                 "translate": [
                     0.0,
@@ -1498,10 +1498,22 @@
             }
         },
         {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Otoko.obj"
+            },
+            "ParentData": {
+                "parentId": 5725
+            },
             "SceneObjectData": {
-                "name": "StartMojiUI",
+                "name": "Otoko",
                 "tag": "Untagged",
-                "uniqueId": 18210
+                "uniqueId": 21610
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -1510,7 +1522,7 @@
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "startMojiUIBehavior.lua",
+                        "scriptName": "Dancyo.lua",
                         "stringParams": {}
                     }
                 ]
@@ -1518,7 +1530,7 @@
             "Transform": {
                 "rotate": [
                     0.0,
-                    0.0,
+                    1.5199999809265137,
                     0.0
                 ],
                 "scale": [
@@ -1527,9 +1539,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    0.0,
-                    0.0
+                    -1.600000023841858,
+                    3.0999999046325684,
+                    2.4000000953674316
                 ]
             }
         }
