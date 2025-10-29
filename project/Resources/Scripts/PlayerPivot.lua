@@ -6,6 +6,7 @@ function Init()
 end
 
 function Update()
-    transform.translate = GetTransform(id).translate
+    transform.translate.x = GetTransform(id).translate.x
+    transform.translate.z = GetTransform(id).translate.z
     transform.rotate.y = QFE.Math.SimpleEaseIn(transform.rotate.y,GetTransform(id).rotate.y,0.3) 
 end
