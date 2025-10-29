@@ -132,11 +132,11 @@ function Init()
     DebugLog("EnemyGeneratorInit")
 
     -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
-    --local tmpTransform = Transform.new()
-    --tmpTransform.translate.y = 0.0
-    --tmpTransform.translate.x = 15.0
-    --tmpTransform.translate.z = 6.5
-    --CreateEntity(smallGhostEnemyJson,tmpTransform)
+    local tmpTransform = Transform.new()
+    tmpTransform.translate.y = 0.0
+    tmpTransform.translate.x = 15.0
+    tmpTransform.translate.z = 6.5
+    CreateEntity(smallGhostEnemyJson,tmpTransform)
     -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
 
 end
@@ -406,7 +406,7 @@ function StageTwoRegisterEnemy()
     table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 1})
     table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 0})
     table.insert(maxEnemysCounts,{name = doubleGhostEnemyJson,maxCount = 1})
-    table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 1})
+    table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 0})
     --箱幽霊の敵はいったんコメントアウトtable.insert(maxEnemysCounts,{name = boxGhostEnemyJson,maxCount = 1})
     -- 有機物の敵
     table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 3})

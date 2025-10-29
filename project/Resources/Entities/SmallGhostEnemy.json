@@ -18,7 +18,7 @@
             {
                 "boolParams": {},
                 "floatParams": {
-                    "serchDistance": 60.0
+                    "serchDistance": 35.0
                 },
                 "intParams": {},
                 "priority": 0,
@@ -64,7 +64,7 @@
             1.635136604309082,
             0.0,
             0.0,
-            0.30000001192092896
+            0.3499999940395355
         ]
     },
     "Transform": {

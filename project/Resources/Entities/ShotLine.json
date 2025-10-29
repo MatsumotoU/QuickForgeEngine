@@ -1,0 +1,48 @@
+{
+    "ModelHandle": {
+        "color": [
+            0.1568627506494522,
+            0.1568627506494522,
+            0.1568627506494522,
+            1.0
+        ],
+        "modelName": "ShotLine.obj"
+    },
+    "ParentData": {
+        "parentId": 18069
+    },
+    "SceneObjectData": {
+        "name": "ShotLine",
+        "tag": "Untagged",
+        "uniqueId": 18068
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "ShotLine.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            3.200000047683716,
+            0.0
+        ],
+        "scale": [
+            3.0,
+            1.0,
+            2.5
+        ],
+        "translate": [
+            0.30000001192092896,
+            -0.47999998927116394,
+            4.0
+        ]
+    }
+}
