@@ -15,5 +15,5 @@ function Update()
 
     local tempTransform = GetTransform(playerID)
     local tempX = tempTransform.translate.x
-    transform.translate.x = 97.0 + (1086.0 * (tempX / 200.0))
+    transform.translate.x = 97.0 + (1086.0 * (tempX / 140.0))
 end

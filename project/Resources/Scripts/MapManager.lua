@@ -147,16 +147,16 @@ function GameOverScene()
 
     if timer >= activeGameOverTime then
         -- リトライを選択
-        if QFE.Input.GetKeyPress("MoveLeft") then
+        if QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
             selectType = 0
         end
 
         -- タイトルに戻るを選択
-        if QFE.Input.GetKeyPress("MoveRight") then
+        if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetGamePadLeftStickDir().x > 0.5 then
             selectType = 1
         end
 
-        if QFE.Input.GetKeyTrigger("Shot") then
+        if QFE.Input.GetKeyTrigger("Shot") or  QFE.Input.GetGamePadTrigger(0x1000) then
             if selectType == 0 then
                 isDead = true
                 isClear = true
@@ -182,16 +182,16 @@ function NextScene()
 
     if timer >= activeGameOverTime then
         -- リトライを選択
-        if QFE.Input.GetKeyPress("MoveLeft") then
+        if QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
             selectType = 0
         end
 
         -- タイトルに戻るを選択
-        if QFE.Input.GetKeyPress("MoveRight") then
+        if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetGamePadLeftStickDir().x > 0.5 then
             selectType = 1
         end
 
-        if QFE.Input.GetKeyTrigger("Shot") then
+        if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
             if selectType == 0 then
                 isDead = false
                 isClear = true
@@ -218,7 +218,7 @@ function ClearScene()
 
     if timer >= activeClearTime then
         -- タイトルに戻る
-        if QFE.Input.GetKeyTrigger("Shot") then
+        if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
             -- タイトルシーンに移動
             LoadScene("TitleScene")
         end

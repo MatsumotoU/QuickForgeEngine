@@ -148,7 +148,7 @@ end
 -- シーン1
 function EventOneScene()
     -- 移動量を取得する
-    if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetKeyPress("MoveDown") or QFE.Input.GetKeyPress("MoveUp") or QFE.Input.GetKeyPress("MoveLeft") then
+    if QFE.Input.GetKeyPress("MoveRight") or QFE.Input.GetKeyPress("MoveDown") or QFE.Input.GetKeyPress("MoveUp") or QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir():Length() > 0.3 then
         move = move + 1
         local gaugeTransform = GetTransform(gaugeID)
         gaugeTransform.scale.x = move / 100.0
