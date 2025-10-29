@@ -25,6 +25,8 @@ local inv_idleTime = 0.0
 local cur_action = 1
 local default = 0.85
 
+
+
 serchDistance = 3.0
 
 aliveScriptName = "EnemyHp.lua"
@@ -150,7 +152,7 @@ function Update()
         end
 
         transform.scale.x = defaultScale
-        transform.scale.y = defaultScale
+        transform.scale.y = defaultScale * 1.5
         transform.scale.z = defaultScale
         -- transform.translate.y = default
 

@@ -85,8 +85,6 @@ local isLoadMap = false
 --]]
 function Init()
 
-    stageNumber = 2
-
     -- マップチップに対応する敵のテーブルを生成
     CreateEnemyNumberTable()
 
@@ -480,8 +478,8 @@ end
 function SpawnEnemiesFromMap(cameraRightEdgeX)
     local height = #map
     local width = #map[1]
-    local startX = math.max(1,math.floor(cameraRightEdgeX / kBlockSize))
-    local endX = math.min(width - 2,math.floor((cameraRightEdgeX + 2.0) / kBlockSize))
+    local startX = math.max(1,math.floor(cameraRightEdgeX + kBlockSize / kBlockSize))
+    local endX = math.min(width - 2,math.floor((cameraRightEdgeX + kBlockSize + 2.0) / kBlockSize))
 
     if endX <= startX then
         return positions

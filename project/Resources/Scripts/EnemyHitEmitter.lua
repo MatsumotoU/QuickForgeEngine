@@ -2,7 +2,7 @@ circleObjName = "EnemyCircleParticle.json"
 coneObjName = "EnemyConeParticle.json"
 
 -- 生成する数
-local maxNum = 10
+local maxNum = 15
 
 --[[
     初期化処理
@@ -24,10 +24,12 @@ function Init()
     end
 
     -- 破片の出現
+    local tmp = 0.25
+    local def = 0.1
     for i = 1, maxNum, 1 do    
-        tempTransform.scale.x = 0.2 + math.random() * 0.5
-        tempTransform.scale.y = 0.2 + math.random() * 0.5
-        tempTransform.scale.z = 0.2 + math.random() * 0.5
+        tempTransform.scale.x =  def + math.random() * tmp
+        tempTransform.scale.y =  def + math.random() * tmp
+        tempTransform.scale.z =  def + math.random() * tmp
         tempTransform.translate = transform.translate
         tempTransform.translate.y = transform.translate.y + 1.0
         tempTransform.rotate = transform.rotate

@@ -35,7 +35,7 @@ hpScriptName = "HitPoint.lua"
 varHpName = "hitPoint"
 
 -- 操作するシーンのタイプ
-local sceneType = 0
+sceneType = 0
 
 -- ゲームオーバー時の選択タイプ
 selectType = 0
@@ -71,6 +71,8 @@ function Init()
 
     -- ステージ番号を取得
     stageNumber = 1
+
+    sceneType = 0
 end
 
 function Update()
@@ -86,7 +88,7 @@ function Update()
         isDead = false
         isGameOver = false
 
-         if sceneType == 0 then
+        if sceneType == 0 then
             NormalScene()
         elseif sceneType == 1 then
             GameOverScene()
@@ -244,6 +246,19 @@ function CreateNextSceneObj()
     CreateEntity("NextSceneUI.json",tmpTransform)
     CreateEntity("SelectTitleUI.json",tmpTransform)
     CreateEntity("arrowUI.json",tmpTransform)
+    CreateEntity("SecondClearUI.json",tmpTransform)
+
+    tmpTransform.scale.x = 1.2
+    tmpTransform.scale.y = 1.2
+    CreateEntity("StageUI.json",tmpTransform)
+
+    tmpTransform.scale.x = 1.5
+    tmpTransform.scale.y = 1.5
+    if stageNumber == 2 then
+        CreateEntity("OneUI.json",tmpTransform)
+    elseif stageNumber == 3 then
+        CreateEntity("TwoUI.json",tmpTransform)
+    end
 end
 
 -- クリアした時の使用するオブジェクト
