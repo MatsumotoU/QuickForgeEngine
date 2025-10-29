@@ -5,7 +5,7 @@ local timer = 0.0
 InTime = 1.0
 
 local startPosX = 1280.0
-local endPosX = 530.0
+endPosX = 530.0
 
 -- クリアされたかを取得する名前
 mapManagerObjName = "MapManager"
