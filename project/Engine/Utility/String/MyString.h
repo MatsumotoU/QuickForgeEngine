@@ -37,3 +37,5 @@ char* StringToCharPtr(const std::string& str);
 
 // ２対の文字列ペアが順不同で一致しているかどうかを判断します
 bool IsUnorderedPairEqual(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2);
+
+std::wstring Utf8ToUtf16(const std::string& utf8);

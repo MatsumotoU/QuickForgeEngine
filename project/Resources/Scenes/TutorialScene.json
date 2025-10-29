@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    1.0176410675048828,
-                    -0.048615533858537674,
+                    0.9437518119812012,
+                    -0.2761915326118469,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    3.349297285079956,
-                    14.567651748657227,
-                    -6.07741117477417
+                    8.642175674438477,
+                    24.48216438293457,
+                    -14.2259521484375
                 ]
             }
         },
@@ -376,9 +376,9 @@
                     0.0
                 ],
                 "scale": [
-                    1.0,
-                    1.0,
-                    9.899999618530273
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "translate": [
                     -13.600000381469727,
@@ -818,55 +818,10 @@
             }
         },
         {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "modelName": "whitePlane.obj"
-            },
-            "ParentData": {
-                "parentId": 18060
-            },
             "SceneObjectData": {
-                "name": "RedGauge",
+                "name": "TutorialSceneChange",
                 "tag": "Untagged",
-                "uniqueId": 18059
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.5,
-                    0.4000000059604645,
-                    0.3499999940395355
-                ],
-                "translate": [
-                    -1.5,
-                    -0.009999999776482582,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "comboGauge.obj"
-            },
-            "SceneObjectData": {
-                "name": "ComboGauge",
-                "tag": "Untagged",
-                "uniqueId": 18060
+                "uniqueId": 21194
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -875,15 +830,26 @@
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "ComboGaugeBehavior.lua",
+                        "scriptName": "TutorialSceneChageBehavior.lua",
                         "stringParams": {}
                     }
                 ]
             },
+            "SpriteData": {
+                "height": 720.0,
+                "isDraw": true,
+                "layer": 19,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
+            },
             "Transform": {
                 "rotate": [
-                    -0.4000000059604645,
-                    -0.0,
+                    0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -892,9 +858,9 @@
                     1.0
                 ],
                 "translate": [
-                    3.3550000190734863,
-                    0.8999999761581421,
-                    4.599999904632568
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }

@@ -179,7 +179,9 @@ function GameOverScene()
                 DebugLog("CurrentStageNumber :"..stageNumber)
             elseif selectType == 1 then
                 -- タイトルシーンに移動
-                LoadScene("TitleScene")
+                --LoadScene("TitleScene")
+                local tmpTrans = Transform.new()
+                CreateEntity("FadeOutScene.json",tmpTrans)
             end
         end
     end
@@ -222,7 +224,9 @@ function NextScene()
                 DebugLog("CurrentStageNumber :"..stageNumber)
             elseif selectType == 1 then
                 -- タイトルシーンに移動
-                LoadScene("TitleScene")
+                --LoadScene("TitleScene")
+                local tmpTrans = Transform.new()
+                CreateEntity("FadeOutScene.json",tmpTrans)
             end
         end
     end
@@ -243,7 +247,9 @@ function ClearScene()
         if QFE.Input.GetKeyTrigger("Shot") or QFE.Input.GetGamePadTrigger(0x1000) then
             QFE.Audio.PlaySound(selectSE,false,0.5)
             -- タイトルシーンに移動
-            LoadScene("TitleScene")
+            --LoadScene("TitleScene")
+            local tmpTrans = Transform.new()
+            CreateEntity("FadeOutScene.json",tmpTrans)
         end
     end
 end

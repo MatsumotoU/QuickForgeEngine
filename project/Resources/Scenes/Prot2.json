@@ -455,7 +455,7 @@
                 "scale": [
                     1.0,
                     1.0,
-                    38.900001525878906
+                    1.0
                 ],
                 "translate": [
                     0.0,
@@ -1397,6 +1397,276 @@
                     -1.5,
                     -0.009999999776482582,
                     0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "normalEnemy.obj"
+            },
+            "SceneObjectData": {
+                "name": "NormalGhostEnemy",
+                "tag": "Enemy",
+                "uniqueId": 504
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "maxSpeed": 4.25,
+                            "moveAcceleraion": 0.10000000149011612,
+                            "speed": 2.0,
+                            "targetRate": 1.0
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "LockOnEnemyMove.lua",
+                        "stringParams": {
+                            "LockOnObjName": "ShotGunPlayer"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {
+                            "enemyType": 1,
+                            "hp": 3,
+                            "maxHp": 3
+                        },
+                        "priority": 0,
+                        "scriptName": "EnemyHp.lua",
+                        "stringParams": {
+                            "stoneName": "Tombstone.json"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "performingTime": 0.5
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "DeathAnim.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "GhostMoveAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    -5.383298873901367,
+                    0.0,
+                    0.0,
+                    0.4000000059604645
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -5.383298873901367,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Otoko.obj"
+            },
+            "ParentData": {
+                "parentId": 5725
+            },
+            "SceneObjectData": {
+                "name": "Otoko",
+                "tag": "Untagged",
+                "uniqueId": 21610
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Dancyo.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    1.5199999809265137,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -1.600000023841858,
+                    3.0999999046325684,
+                    2.4000000953674316
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "StartMojiUI",
+                "tag": "Untagged",
+                "uniqueId": 18210
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "startMojiUIBehavior.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    6.435625076293945,
+                    -0.8999991416931152,
+                    2.640949010848999,
+                    7.835245132446289,
+                    8.69999885559082,
+                    3.640948534011841
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 20.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "tombstone.obj"
+            },
+            "SceneObjectData": {
+                "name": "Tombstone",
+                "tag": "Untagged",
+                "uniqueId": 781
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "breakMaxTime": 1.0
+                        },
+                        "intParams": {
+                            "maxBreakNockbackCount": 2
+                        },
+                        "priority": 0,
+                        "scriptName": "TombstoneBehavior.lua",
+                        "stringParams": {
+                            "slowObjName": "SlowArea.json"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Ground0.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    7.135435104370117,
+                    3.9000000953674316,
+                    3.14094877243042
                 ]
             }
         }

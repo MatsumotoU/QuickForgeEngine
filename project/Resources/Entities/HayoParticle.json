@@ -1,0 +1,61 @@
+{
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 1.0,
+        "isGravity": true,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            0.18134713172912598,
+            0.18134713172912598,
+            0.18134713172912598,
+            1.0
+        ],
+        "modelName": "Hayo.obj"
+    },
+    "SceneObjectData": {
+        "name": "HayoParticle",
+        "tag": "Untagged",
+        "uniqueId": 22462
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "Susume.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

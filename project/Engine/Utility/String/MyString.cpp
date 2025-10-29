@@ -57,3 +57,11 @@ bool IsUnorderedPairEqual(const std::pair<std::string, std::string>& p1, const s
     return (p1.first == p2.first && p1.second == p2.second) ||
         (p1.first == p2.second && p1.second == p2.first);
 }
+
+std::wstring Utf8ToUtf16(const std::string& utf8) {
+    if (utf8.empty()) return std::wstring();
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), (int)utf8.size(), NULL, 0);
+    std::wstring wstrTo(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), (int)utf8.size(), &wstrTo[0], size_needed);
+    return wstrTo;
+}

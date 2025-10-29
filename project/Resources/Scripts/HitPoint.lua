@@ -64,10 +64,6 @@ function Update()
         isActive = false
     end
 
-    if not isActive then
-        return
-    end
-
     if QFE.Input.GetKeyPress("MoveLeft") then
         RunEntityScriptFunction(combId,"ComboGaugeBehavior.lua","DeleteNum")
     end
@@ -87,6 +83,10 @@ function Update()
     local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
     if isReset then
         Reset()
+    end
+
+    if not isActive then
+        return
     end
 
     frameCount = frameCount + 1.0

@@ -106,15 +106,14 @@ function OnCollisionStay(id,obj)
             CreateEntity("TombstoneEmitter.json",transform)
             QFE.Audio.PlaySound(breakSE,false,0.3)
             local tmpP = transform
-            tmpP.translate.y = tmpP.translate.y + 0.5
+            tmpP.translate.x = tmpP.translate.x
+            --tmpP.translate.y = tmpP.translate.y + 0.5
             tmpP.rotate.x = -0.7
             tmpP.rotate.y = 0.0
             tmpP.rotate.z = 0.0
             CreateEntity("AddBulletUI.json",tmpP)
-
-            transform.scale.x = 1.5
-            transform.scale.y = 1.5
-            transform.scale.z = 1.5
+            -- tmpP.translate.x = tmpP.translate.x + 1.0
+            -- CreateEntity("AddBulletUI.json",tmpP)
         end
     end
 
