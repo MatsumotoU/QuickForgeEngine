@@ -6,7 +6,7 @@ minVelocity = 1.0
 
 local deltatime = 0.016
 local time = 0.0
-local damageAnimTime = 0.0
+damageAnimTime = 0.0
 
 -- 音
 local vecReset = QFE.Audio.LoadSound("vecStop.mp3")
@@ -125,5 +125,4 @@ end
 
 function DamageAnim()
     damageAnimTime = 0.5
-    force.velocity.y = 5.0
 end
