@@ -34,6 +34,9 @@ local damage = QFE.Audio.LoadSound("playerDamage.mp3")
 local waitTimer = 0.0
 local maxWaitTime = 0.5
 
+-- コンボゲージ用
+local combId = 0
+
 function Init()
     time = 0.0
     damageInterval = 0.0
@@ -45,6 +48,9 @@ function Init()
     pre_hitPoint = max_hitPoint
 
     sceneId = GetEntity("MapManager")
+
+    -- コンボゲージid
+    combId = GetEntity("ComboGauge")
 end
 
 function Update()
@@ -59,6 +65,10 @@ function Update()
 
     if not isActive then
         return
+    end
+
+    if QFE.Input.GetKeyPress("MoveLeft") then
+        RunEntityScriptFunction(combId,"ComboGaugeBehavior.lua","DeleteNum")
     end
 
     if waitTimer <= maxWaitTime then

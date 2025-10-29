@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.8851413130760193,
-                    -0.08111603558063507,
+                    1.0176410675048828,
+                    -0.048615533858537674,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    2.096817970275879,
-                    31.63344955444336,
-                    -25.792890548706055
+                    3.349297285079956,
+                    14.567651748657227,
+                    -6.07741117477417
                 ]
             }
         },
@@ -815,6 +815,87 @@
                     0.0,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "whitePlane.obj"
+            },
+            "ParentData": {
+                "parentId": 18060
+            },
+            "SceneObjectData": {
+                "name": "RedGauge",
+                "tag": "Untagged",
+                "uniqueId": 18059
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.5,
+                    0.4000000059604645,
+                    0.3499999940395355
+                ],
+                "translate": [
+                    -1.5,
+                    -0.009999999776482582,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "comboGauge.obj"
+            },
+            "SceneObjectData": {
+                "name": "ComboGauge",
+                "tag": "Untagged",
+                "uniqueId": 18060
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ComboGaugeBehavior.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    -0.4000000059604645,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    3.3550000190734863,
+                    0.8999999761581421,
+                    4.599999904632568
                 ]
             }
         }
