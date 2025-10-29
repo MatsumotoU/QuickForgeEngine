@@ -1,0 +1,83 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            -0.5,
+            -1.0000152587890625,
+            -0.5,
+            0.5,
+            1.0000152587890625,
+            0.5
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": true
+    },
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 1.0,
+        "gravityStrength": 20.0,
+        "isGravity": false,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            0.1568627506494522,
+            0.21960784494876862,
+            0.47843137383461,
+            1.0
+        ],
+        "modelName": "BigBullet.obj"
+    },
+    "SceneObjectData": {
+        "name": "BigBullet",
+        "tag": "bigBullet",
+        "uniqueId": 21479
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "aliveTime": 0.5,
+                    "maxSpeed": 30.0,
+                    "minSpeed": 25.0,
+                    "moveSpeed": 0.5,
+                    "reduceCoe": 0.9200000166893005,
+                    "scaleScale": 1.75
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "BulletMove.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

@@ -1,4 +1,8 @@
-bulletName = "Bullet.json"
+local bulletName = "Bullet.json"
+local bigBulletName = "BigBullet.json"
+
+local bulletNameName = "BigBullet.json"
+
 shotNum = 3
 diffusionRate = 2.0
 
@@ -125,6 +129,16 @@ function Update()
             return
         end
 
+        -- アタッチ対象のid
+        local ComboGaugeID = GetEntity("ComboGauge")
+        local isMax = GetEntityScriptGlobal(ComboGaugeID,"ComboGaugeBehavior.lua","isMax")
+
+        if isMax == true then
+            bulletNameName = bigBulletName
+        else
+            bulletNameName = bulletName
+        end
+
         local tempTransform = Transform.new()
         tempTransform.translate = transform.translate
         tempTransform.rotate = transform.rotate
@@ -146,7 +160,7 @@ function Update()
 
 
             tempTransform.rotate.y = transform.rotate.y + addNum
-            CreateEntity(bulletName,tempTransform)
+            CreateEntity(bulletNameName,tempTransform)
         end
 
         for i = 1, 5, 1 do
