@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.9852226972579956,
-                    0.3023187816143036,
+                    0.9852308034896851,
+                    0.3023187518119812,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -28036.3125,
-                    141994.25,
-                    -89894.921875
+                    -27908.962890625,
+                    141351.75,
+                    -89486.59375
                 ]
             }
         },
@@ -86,7 +86,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false
             },
@@ -1469,7 +1468,6 @@
             "SphereColliderData": {
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -1593,7 +1591,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
