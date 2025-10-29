@@ -22,6 +22,9 @@ isReload = false
 -- 打ったかを取得
 isShot = false
 
+-- 球を打てる状況か
+isCanShot = false
+
 hitPointLuaName = "HitPoint.lua"
 do_reloadName = "do_reload"
 
@@ -40,6 +43,8 @@ isKnockback = false
 end
 
 function Update()
+    isCanShot = false
+
     -- ダメージを受けたらリロード
     local thisId = this.GetEntityId()
     local do_reload = GetEntityScriptGlobal(thisId,hitPointLuaName,do_reloadName)
@@ -181,6 +186,8 @@ function Update()
         RunEntityScriptFunction(GetEntity("ShotGun"),"ShotGunAnim.lua","Shot")
         QFE.Audio.PlaySound(shot,false,0.3)
     end
+
+    isCanShot = true
 
     if bullets >= maxBullets then
         bullets = maxBullets
