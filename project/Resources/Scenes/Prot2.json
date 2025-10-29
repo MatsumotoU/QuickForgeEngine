@@ -86,7 +86,6 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false
             },
@@ -571,7 +570,7 @@
             },
             "SpriteData": {
                 "height": 720.0,
-                "isDraw": false,
+                "isDraw": true,
                 "layer": 20,
                 "pivot": [
                     0.0,
@@ -1123,7 +1122,7 @@
             },
             "SpriteData": {
                 "height": 720.0,
-                "isDraw": false,
+                "isDraw": true,
                 "layer": 20,
                 "pivot": [
                     0.0,
@@ -1170,7 +1169,7 @@
             },
             "SpriteData": {
                 "height": 720.0,
-                "isDraw": false,
+                "isDraw": true,
                 "layer": 16,
                 "pivot": [
                     0.0,

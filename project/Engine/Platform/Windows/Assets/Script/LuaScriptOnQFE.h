@@ -20,6 +20,7 @@ public:
 	void ReloadScript();
 	template<typename... Args>
 	inline void RunFunction(const std::string& functionName, Args&&... args) {
+#ifdef _DEBUG
 		try {
 			if (!isCanRun_) {
 				throw std::runtime_error("Cannot run function. Lua script is not loaded or failed to load.");
@@ -35,20 +36,30 @@ public:
 			sol::protected_function_result result = func(std::forward<Args>(args)...);
 			if (!result.valid()) {
 				sol::error err = result;
-#ifdef _DEBUG
 				DebugLog("Lua error in '" + functionName + "': " + std::string(err.what()), LogLevel::Error);
-#else
-				std::cerr << "Lua error in '" << functionName << "': " << err.what() << std::endl;
-#endif
 			}
 		}
 		catch (const std::exception& e) {
-#ifdef _DEBUG
 			DebugLog("Error in Lua function '" + functionName + "': " + e.what(), LogLevel::Error);
-#else
-			std::cerr << "Error in Lua function '" << functionName << "': " << e.what() << std::endl;
-#endif
 		}
+#else
+		if (!isCanRun_ || !luaState_) {
+			return;
+		}
+		auto it = functionCache_.find(functionName);
+		sol::function func;
+		if (it != functionCache_.end()) {
+			func = it->second;
+		} else {
+			sol::object obj = luaState_->get<sol::object>(functionName);
+			if (!obj.is<sol::function>()) {
+				return;
+			}
+			func = obj.as<sol::function>();
+			functionCache_[functionName] = func;
+		}
+		func(std::forward<Args>(args)...);
+#endif
 	}
 	bool HasFunction(const std::string& functionName) const;
 	std::vector<std::string> GetFunctionList() const;
@@ -75,4 +86,8 @@ private:
 	std::set<std::string> defaultGlobals;
 	std::set<std::string> UserGlobals;
 	std::unique_ptr<sol::state> luaState_;
+
+#ifndef _DEBUG
+	std::map<std::string, sol::function> functionCache_;
+#endif
 };
