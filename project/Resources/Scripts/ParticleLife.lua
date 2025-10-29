@@ -1,10 +1,21 @@
 local isAddForce = false
 
+local onlyOnce = true
 function Init()
     isAddForce = false
 end
 
 function Update()
+
+    if onlyOnce  == true then
+        
+        transform.scale.x = transform.scale.x *0.75 
+        transform.scale.y = transform.scale.y *0.75
+        transform.scale.z = transform.scale.z *0.75
+
+        onlyOnce = false
+    end
+
     if not isAddForce then
         isAddForce = true
         local pitch = transform.rotate.x

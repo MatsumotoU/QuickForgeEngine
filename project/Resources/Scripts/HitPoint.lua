@@ -92,7 +92,8 @@ function Update()
         force.velocity.x = force.velocity.x + 82.5
         --force.velocity.y = force.velocity.y + 20
         --damageInterval = maxDamageInterval
-        CreateEntity("ExplotionParticleEmitter.json",transform)
+        --CreateEntity("ExplotionParticleEmitter.json",transform)
+        
     end
     end
 
