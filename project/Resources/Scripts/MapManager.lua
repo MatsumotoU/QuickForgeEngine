@@ -35,7 +35,7 @@ hpScriptName = "HitPoint.lua"
 varHpName = "hitPoint"
 
 -- 操作するシーンのタイプ
-local sceneType = 0
+sceneType = 0
 
 -- ゲームオーバー時の選択タイプ
 selectType = 0
@@ -71,6 +71,8 @@ function Init()
 
     -- ステージ番号を取得
     stageNumber = 1
+
+    sceneType = 0
 end
 
 function Update()
@@ -86,7 +88,7 @@ function Update()
         isDead = false
         isGameOver = false
 
-         if sceneType == 0 then
+        if sceneType == 0 then
             NormalScene()
         elseif sceneType == 1 then
             GameOverScene()

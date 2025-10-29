@@ -21,6 +21,10 @@ local mat = Material.new()
 local waitTimer = 0.0
 local maxWaitTime = 0.8
 
+local transitionID = 0
+sceneTransitionScriptName = "SceneTransitionManager.lua"
+varIsResetName = "isReset"
+
 function Init()
     timer = 0.0
     -- 選択状態を取得する
@@ -28,9 +32,17 @@ function Init()
     isInScene = true
     -- マテリアル情報を取得
     mat = GetMaterial(GetThisEntityId())
+     -- シーン遷移を取得
+    transitionID = GetEntity("SceneTransitionManager")
 end
 
 function Update()
+
+    local isReset = GetEntityScriptGlobal(transitionID,sceneTransitionScriptName,varIsResetName)
+
+    if isReset then
+        destroy()
+    end
 
     if isInScene then
         InScene()
@@ -84,5 +96,4 @@ function SelectScene()
     if waitTimer >= maxWaitTime then
         waitTimer = 0.0
     end
-
 end
