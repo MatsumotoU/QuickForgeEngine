@@ -317,20 +317,20 @@ function EventFourScene()
 
         -- ダメージ床の情報を促すUIを生成
         local tmpTransform = Transform.new()
-        tmpTransform.translate.x = 323.0
-        tmpTransform.translate.y = 36.0
-        CreateEntity(damegeBorderUIName,tmpTransform)
+        -- tmpTransform.translate.x = 323.0
+        -- tmpTransform.translate.y = 36.0
+        --CreateEntity(damegeBorderUIName,tmpTransform)
         tmpTransform.scale.x = 2.0
         tmpTransform.translate.x = 32.0
         tmpTransform.translate.y = -1.0
         tmpTransform.translate.z = 7.5
         CreateEntity(TombstoneExplanUIName,tmpTransform)
 
-        tmpTransform.scale.x = 1.0
-        tmpTransform.translate.x = 32.0
-        tmpTransform.translate.y = -1.0
-        tmpTransform.translate.z = 4.5
-        CreateEntity(tombstoneReloadUIName,tmpTransform)
+        -- tmpTransform.scale.x = 1.0
+        -- tmpTransform.translate.x = 32.0
+        -- tmpTransform.translate.y = -1.0
+        -- tmpTransform.translate.z = 4.5
+        --CreateEntity(tombstoneReloadUIName,tmpTransform)
 
         isActive = false
 

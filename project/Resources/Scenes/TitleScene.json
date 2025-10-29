@@ -1419,6 +1419,96 @@
                     0.0
                 ]
             }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    6.435625076293945,
+                    -0.8999991416931152,
+                    2.640949010848999,
+                    7.835245132446289,
+                    8.69999885559082,
+                    3.640948534011841
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": true,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "Force": {
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "friction": 1.0,
+                "gravityStrength": 20.0,
+                "isGravity": true,
+                "mass": 1.0,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "tombstone.obj"
+            },
+            "SceneObjectData": {
+                "name": "Tombstone",
+                "tag": "Untagged",
+                "uniqueId": 781
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "breakMaxTime": 1.0
+                        },
+                        "intParams": {
+                            "maxBreakNockbackCount": 2
+                        },
+                        "priority": 0,
+                        "scriptName": "TombstoneBehavior.lua",
+                        "stringParams": {
+                            "slowObjName": "SlowArea.json"
+                        }
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Ground0.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    7.135435104370117,
+                    3.9000000953674316,
+                    3.14094877243042
+                ]
+            }
         }
     ],
     "sceneName": "TitleScene"
