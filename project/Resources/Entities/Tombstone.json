@@ -51,7 +51,6 @@
                 "floatParams": {
                     "breakMaxTime": 1.0
                 },
-                "handle": 5598,
                 "intParams": {
                     "maxBreakNockbackCount": 2
                 },
@@ -64,7 +63,6 @@
             {
                 "boolParams": {},
                 "floatParams": {},
-                "handle": 5599,
                 "intParams": {},
                 "priority": 0,
                 "scriptName": "Ground0.lua",

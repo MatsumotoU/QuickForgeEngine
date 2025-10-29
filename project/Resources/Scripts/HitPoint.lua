@@ -23,6 +23,10 @@ sceneTransitionScriptName = "SceneTransitionManager.lua"
 varIsResetName = "isReset"
 local transitionID = 0
 
+local sceneId = 0
+
+local isActive = false
+
 -- 音声
 local damage = QFE.Audio.LoadSound("playerDamage.mp3")
 
@@ -39,9 +43,23 @@ function Init()
     -- 生成したマップを取得
     transitionID = GetEntity(transitionObjName)
     pre_hitPoint = max_hitPoint
+
+    sceneId = GetEntity("MapManager")
 end
 
 function Update()
+
+    local ty = GetEntityScriptGlobal(sceneId,"MapManager.lua","sceneType")
+
+    if ty == 0 then
+        isActive = true
+    else
+        isActive = false
+    end
+
+    if not isActive then
+        return
+    end
 
     if waitTimer <= maxWaitTime then
         local deltatime = GetDeltaTime()
@@ -96,6 +114,11 @@ function Update()
 end
 
 function OnCollisionStay(id,obj)
+
+    if not isActive then
+        return
+    end
+
     if damageInterval > 0.0 then
         return
     end
