@@ -1,8 +1,8 @@
 moveSpeed = 0.5
 local aliveTime = 0.8
-local maxSpeed = 25.0
+local maxSpeed = 20.0
 minSpeed = 15.0 
-local reduceCoe = 0.92
+local reduceCoe = 0.95
 
 
 local rotateNum = 0.0
@@ -52,8 +52,10 @@ if cur_aliveRate  <= rate_beingWhite then
     mat.color.z = mat.color.z * rate_beWhite 
 
     if cur_aliveRate  <= vanishStartRate then
+
         local rate_vanish = 0.8
         mat.color.w = mat.color.w * rate_vanish 
+
     end
 
 end
@@ -63,8 +65,11 @@ end
 end
 
 function OnCollisionEnter(id,obj)
-    if obj.tag == "Enemy"then
+
+    if obj.tag == "Enemy" or obj.tag == "Wall" or obj.tag == "TombStone" then
+
         return
+
     end
 
     destroy()
