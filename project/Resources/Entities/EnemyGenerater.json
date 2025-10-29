@@ -15,7 +15,8 @@
                     "DIK_S": 31,
                     "DIK_SPACE": 57,
                     "DIK_W": 17,
-                    "maxDifficulty": 4
+                    "maxDifficulty": 4,
+                    "stageNumber": 2
                 },
                 "priority": 10,
                 "scriptName": "EnemyGenerater.lua",
