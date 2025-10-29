@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.8851413130760193,
-                    -0.08111603558063507,
+                    0.9437518119812012,
+                    -0.2761915326118469,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    2.096817970275879,
-                    31.63344955444336,
-                    -25.792890548706055
+                    8.642175674438477,
+                    24.48216438293457,
+                    -14.2259521484375
                 ]
             }
         },
@@ -147,6 +147,7 @@
             "SphereColliderData": {
                 "colliderLayer": 127,
                 "eventColliderLayer": 127,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false,
                 "sphere": [
@@ -376,9 +377,9 @@
                     0.0
                 ],
                 "scale": [
-                    1.0,
-                    1.0,
-                    9.899999618530273
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "translate": [
                     -13.600000381469727,
@@ -798,6 +799,53 @@
                         }
                     }
                 ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "TutorialSceneChange",
+                "tag": "Untagged",
+                "uniqueId": 21194
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "TutorialSceneChageBehavior.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 720.0,
+                "isDraw": true,
+                "layer": 19,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
             },
             "Transform": {
                 "rotate": [

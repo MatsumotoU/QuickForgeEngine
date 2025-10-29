@@ -128,6 +128,10 @@ function EventManager()
         EventFourScene()
     elseif EventType == 5 then
         EventFiveScene()
+    elseif EventType == 6 then
+        EventSixScene()
+    elseif EventType == 7 then
+        EventSevenScene()
     end
 end
 
@@ -139,6 +143,7 @@ function RegisterList()
        [3] = {endPosX = 30.0, isClear = false},
        [4] = {endPosX = 40.0, isClear = false},
        [5] = {endPosX = 50.0, isClear = false},
+       [6] = {endPosX = 60.0, isClear = false},
     }
 
     -- イベントライン
@@ -360,17 +365,17 @@ function EventFiveScene()
             tmpTransform.translate.x = 40.0
             tmpTransform.translate.y = -1.0
             tmpTransform.translate.z = 7.5
-            CreateEntity(damageExplaneUIName,tmpTransform)
+            --CreateEntity(damageExplaneUIName,tmpTransform)
 
-            tmpTransform.scale.x = 1.0
-            tmpTransform.translate.x = 32.0
-            tmpTransform.translate.y = 0.0
-            tmpTransform.translate.z = 6.0
-            CreateEntity(ratEnemyJson, tmpTransform)
-            tmpTransform.translate.x = 32.0
-            tmpTransform.translate.y = 0.0
-            tmpTransform.translate.z = 3.0
-            CreateEntity(ratEnemyJson, tmpTransform)
+            -- tmpTransform.scale.x = 1.0
+            -- tmpTransform.translate.x = 32.0
+            -- tmpTransform.translate.y = 0.0
+            -- tmpTransform.translate.z = 6.0
+            -- CreateEntity(ratEnemyJson, tmpTransform)
+            -- tmpTransform.translate.x = 32.0
+            -- tmpTransform.translate.y = 0.0
+            -- tmpTransform.translate.z = 3.0
+            -- CreateEntity(ratEnemyJson, tmpTransform)
         end
     end
 
@@ -385,18 +390,41 @@ function EventFiveScene()
         DebugLog("isHit")
     end
 
-    if borderTransform.translate.x >= endLinePosX + 5.0 then
-        LoadScene("TitleScene")
+      -- プレイヤーの位置を取得する
+    local p = GetTransform(playerID)
+
+    -- イベント中のラインを超えないようにする
+    if p.translate.x < 36.0 then
+        p.translate.x = 36.0
+    end
+
+    if borderTransform.translate.x >= endLinePosX - 17.0 then
+         -- 次のイベントを設定
+        EventType = 6
+        -- 最終ラインを取得
+        endLinePosX = EventTypeList[EventType].endPosX
+        local endLineTransform = GetTransform(endLineID)
+        endLineTransform.translate.x = endLinePosX
+
+        local tmpTrans = Transform.new()
+        tmpTrans.translate.x = 265.0
+        tmpTrans.translate.y = 275.0
+        CreateEntity("TutorialNextSceneUI.json", tmpTrans)
     end
 end
 
 -- シーン6
 function EventSixScene()
-   
+
+    --  LoadScene("TitleScene")
 end
 
 -- シーン7
 function EventSevenScene()
     -- ゲームシーンに移動
-    LoadScene("TitleScene")
+    --LoadScene("TitleScene")
+end
+
+function AddNum()
+    EventType = 7
 end

@@ -4,27 +4,23 @@
             1.0,
             1.0,
             1.0,
-            0.0
+            1.0
         ],
-        "modelName": "plane.obj"
+        "modelName": "japan.obj"
     },
     "SceneObjectData": {
-        "name": "DamageBorder",
-        "tag": "border",
-        "uniqueId": 5725
+        "name": "JapanFlag",
+        "tag": "Untagged",
+        "uniqueId": 3
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
-                "floatParams": {
-                    "borderSpeed": 0.0,
-                    "borderX": 9.5,
-                    "maxBorderX": 9.5
-                },
+                "floatParams": {},
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "DamageBorder.lua",
+                "scriptName": "FlagMove.lua",
                 "stringParams": {}
             }
         ]
@@ -36,14 +32,14 @@
             0.0
         ],
         "scale": [
-            1.0,
-            1.0,
-            38.900001525878906
+            0.10000000149011612,
+            0.10000000149011612,
+            0.10000000149011612
         ],
         "translate": [
             0.0,
             0.0,
-            5.0
+            0.0
         ]
     }
 }

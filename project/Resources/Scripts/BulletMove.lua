@@ -3,7 +3,7 @@ aliveTime = 0.75
 maxSpeed = 20.0
 minSpeed = 15.0 
 
-local reduceCoe = 0.94
+local reduceCoe = 0.945
 
 -- 音
 local hit = QFE.Audio.LoadSound("hit.mp3")

@@ -1,8 +1,8 @@
 moveSpeed = 0.5
 local aliveTime = 0.7
-local maxSpeed = 20.0
+local maxSpeed = 12.5
 minSpeed = 15.0 
-local reduceCoe = 0.95
+local reduceCoe = 0.985
 
 
 local rotateNum = 0.0
