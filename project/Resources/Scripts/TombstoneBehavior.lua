@@ -51,7 +51,9 @@ function Update()
     end
 
     if maxBreakNockbackCount > 0 then
-        transform.scale.y = (maxBreakNockbackCount - nockbackCount) / maxBreakNockbackCount
+        transform.scale.y = QFE.Math.SimpleEaseIn(transform.scale.y,(maxBreakNockbackCount - nockbackCount) / maxBreakNockbackCount,0.5) 
+        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,1.0,0.5) 
+        transform.scale.z = QFE.Math.SimpleEaseIn(transform.scale.z,1.0,0.5) 
     end
 
     -- 画面外に出たら削除する
@@ -109,6 +111,10 @@ function OnCollisionStay(id,obj)
             tmpP.rotate.y = 0.0
             tmpP.rotate.z = 0.0
             CreateEntity("AddBulletUI.json",tmpP)
+
+            transform.scale.x = 1.5
+            transform.scale.y = 1.5
+            transform.scale.z = 1.5
         end
     end
 
@@ -119,6 +125,10 @@ function OnCollisionStay(id,obj)
         if not isKB then
             return
         end
+
+        transform.scale.x = 1.5
+        transform.scale.y = 1.5
+        transform.scale.z = 1.5
         
         -- ノックバックできる回数減少
         nockbackCount = nockbackCount + 1
