@@ -1,10 +1,13 @@
 local spinSpeed = 0.0
+local time = 0.0
 
 function Init()
     spinSpeed = 0.0
 end
 
 function Update()
+    time = time + GetDeltaTime()
+
     if math.abs(spinSpeed) > 0.0 then
         spinSpeed = spinSpeed * 0.98
     end
@@ -15,6 +18,10 @@ function Update()
     end
 
     transform.rotate.y = transform.rotate.y + spinSpeed * GetDeltaTime()
+
+    transform.scale.x = 1.0 + math.sin(time) * 0.2
+    transform.scale.y = 1.0 + math.sin(time) * 0.2
+    transform.scale.z = 1.0 + math.sin(time) * 0.2
 end
 
 function OnCollisionEnter(id,obj)

@@ -21,6 +21,7 @@ local targetTransform = Transform.new()
 
 -- 音
 local spawn = QFE.Audio.LoadSound("tomGen.mp3")
+local death = QFE.Audio.LoadSound("death.mp3")
 
 function Init()
     isAlive = true
@@ -128,7 +129,7 @@ function OnCollisionEnter(id,obj)
                     temp.translate.y = transform.translate.y + 2.0
                     temp.translate.z = transform.translate.z
                     CreateEntity(stoneName,temp)
-                    QFE.Audio.PlaySound(spawn,false,0.2)
+                    QFE.Audio.PlaySound(spawn,false,0.4)
                 elseif enemyType == 2 then 
                     SetColliderIsTrigger(this.GetEntityId(),false)
                     -- 双子のゴーストの場合
@@ -142,6 +143,7 @@ function OnCollisionEnter(id,obj)
                     temp2.translate.y = transform.translate.y
                     temp2.translate.z = transform.translate.z + 0.5
                     CreateEntity(normalEnemyName,temp2)
+                    QFE.Audio.PlaySound(death,false,0.5)
                 end
             end
         end
