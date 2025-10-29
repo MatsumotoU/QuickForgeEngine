@@ -571,7 +571,7 @@
             },
             "SpriteData": {
                 "height": 720.0,
-                "isDraw": false,
+                "isDraw": true,
                 "layer": 20,
                 "pivot": [
                     0.0,
@@ -1123,7 +1123,7 @@
             },
             "SpriteData": {
                 "height": 720.0,
-                "isDraw": false,
+                "isDraw": true,
                 "layer": 20,
                 "pivot": [
                     0.0,
@@ -1170,7 +1170,7 @@
             },
             "SpriteData": {
                 "height": 720.0,
-                "isDraw": false,
+                "isDraw": true,
                 "layer": 16,
                 "pivot": [
                     0.0,
