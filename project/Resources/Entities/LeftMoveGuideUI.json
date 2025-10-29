@@ -1,0 +1,47 @@
+{
+    "SceneObjectData": {
+        "name": "LeftMoveGuideUI",
+        "tag": "Untagged",
+        "uniqueId": 18211
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "deleteTimerMove.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 80.0,
+        "isDraw": true,
+        "layer": 8,
+        "pivot": [
+            0.5,
+            0.5
+        ],
+        "textureName": "leftMoveGuideUI.png",
+        "width": 270.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            640.0,
+            237.10000610351563,
+            0.0
+        ]
+    }
+}
