@@ -64,7 +64,7 @@ function Update()
         isActive = false
     end
 
-    if QFE.Input.GetKeyPress("MoveLeft") then
+    if QFE.Input.GetKeyPress("MoveLeft") or QFE.Input.GetGamePadLeftStickDir().x < -0.5 then
         RunEntityScriptFunction(combId,"ComboGaugeBehavior.lua","DeleteNum")
     end
 
