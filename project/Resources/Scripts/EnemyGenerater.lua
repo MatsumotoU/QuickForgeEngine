@@ -64,7 +64,7 @@ local offsetX = 15.0 -- カメラの画面端までの位置
 
 
 -- 生成するステージの番号
-local stageNumber = 1
+local stageNumber = 3
 
 
 -- リセットに関する名前
