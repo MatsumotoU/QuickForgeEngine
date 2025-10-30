@@ -136,12 +136,12 @@ function Init()
     DebugLog("EnemyGeneratorInit")
 
     -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
-    local tmpTransform = Transform.new()
-    tmpTransform.translate.y = 0.0
-    tmpTransform.translate.x = 15.0
-    tmpTransform.translate.z = 6.5
-    CreateEntity(smallGhostEnemyJson,tmpTransform)
-    -- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
+    --local tmpTransform = Transform.new()
+    --tmpTransform.translate.y = 0.0
+    --tmpTransform.translate.x = 15.0
+    --tmpTransform.translate.z = 6.5
+    --CreateEntity(smallGhostEnemyJson,tmpTransform)
+    ---- 正しく敵を生成出来るかを確認する(デバック用)-------------------------------------------------------------------
 
 end
 
@@ -434,7 +434,32 @@ end
 
 -- ステージ3で使用する敵を登録
 function StageThreeRegisterEnemy()
-   
+       -- 最大の敵の数を初期化
+    -- 幽霊の敵
+    table.insert(maxEnemysCounts,{name = normalGhostEnemyJson,maxCount = 0})
+    table.insert(maxEnemysCounts,{name = bigGhostEnemyJson,maxCount = 0})
+    table.insert(maxEnemysCounts,{name = doubleGhostEnemyJson,maxCount = 0})
+    table.insert(maxEnemysCounts,{name = smallGhostEnemyJson,maxCount = 0})
+    --箱幽霊の敵はいったんコメントアウトtable.insert(maxEnemysCounts,{name = boxGhostEnemyJson,maxCount = 1})
+    -- 有機物の敵
+    table.insert(maxEnemysCounts,{name = ratEnemyJson,maxCount = 0})
+    table.insert(maxEnemysCounts,{name = batEnemyJson,maxCount = 0})
+    table.insert(maxEnemysCounts,{name = pillBugEnemyJson,maxCount = 0})
+    table.insert(maxEnemysCounts,{name = eyeEnemyJson,maxCount = 0})
+
+    -- 現在の敵の数を初期化
+    -- 幽霊の敵
+    table.insert(currentEnemysCounts,{name = normalGhostEnemyJson,difficulty = 2,count = 0})
+    table.insert(currentEnemysCounts,{name = bigGhostEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = doubleGhostEnemyJson,difficulty = 3,count = 0})
+    table.insert(currentEnemysCounts,{name = smallGhostEnemyJson,difficulty = 2,count = 0})
+    --箱幽霊の敵はいったんコメントアウトtable.insert(currentEnemysCounts,{name = boxGhostEnemyJson,difficulty = 2,count = 0})
+    -- 有機物の敵
+    table.insert(currentEnemysCounts,{name = ratEnemyJson,difficulty = 1,count = 0})
+    table.insert(currentEnemysCounts,{name = batEnemyJson,difficulty = 2,count = 0})
+    table.insert(currentEnemysCounts,{name = pillBugEnemyJson,difficulty = 2,count = 0})
+    table.insert(currentEnemysCounts,{name = eyeEnemyJson,difficulty = 2,count = 0})
+
 end
 
 -- リセット処理

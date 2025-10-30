@@ -110,7 +110,7 @@ function FadeIn()
     -- 0から1の範囲に収める
     local t = math.min(timer / fadeInTime,1.0)
 
-    mat.color.w = QFE.Math.Leap(0.0,1.0,t)
+    mat.color.w = QFE.Math.Leap(1.0,0.0,t)
 
     if timer >= fadeInTime then
         runType = 1
@@ -163,7 +163,7 @@ function FadeOut()
     -- 0から1の範囲に収める
     local t = math.min(timer / fadeOutTime,1.0)
 
-    mat.color.w = QFE.Math.Leap(1.0,0.0,t)
+    mat.color.w = QFE.Math.Leap(0.0,1.0,t)
 
     if timer >= fadeOutTime then
         timer = 0.0

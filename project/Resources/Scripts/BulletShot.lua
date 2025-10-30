@@ -215,3 +215,7 @@ function ReloadOne()
         bullets = maxBullets
     end
 end
+
+function ResetBullet()
+    bullets = maxBullets
+end
