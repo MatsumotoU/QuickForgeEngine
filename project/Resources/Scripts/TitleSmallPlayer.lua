@@ -14,8 +14,6 @@ function Update()
         transform.translate.x = QFE.Math.SimpleEaseIn(transform.translate.x,transform.translate.x - length:Normalize().x * GetDeltaTime(),1.0) 
         transform.translate.y = QFE.Math.SimpleEaseIn(transform.translate.y,transform.translate.y - length:Normalize().y * GetDeltaTime(),1.0) 
         transform.translate.z = QFE.Math.SimpleEaseIn(transform.translate.z,transform.translate.z - length:Normalize().z * GetDeltaTime(),1.0) 
-        stayTime = 0.0
-        return
     end
     stayTime = stayTime + GetDeltaTime()
 
