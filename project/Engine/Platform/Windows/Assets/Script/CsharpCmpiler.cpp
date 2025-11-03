@@ -1,0 +1,25 @@
+#include "CsharpCmpiler.h"
+
+void GenerateCsproj(const std::string& dir, const std::string& outputPath) {
+    std::vector<std::string> csFiles;
+    for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+        if (entry.path().extension() == ".cs") {
+            csFiles.push_back(entry.path().filename().string());
+        }
+    }
+
+    std::ofstream ofs(outputPath);
+    ofs << "<Project Sdk=\"Microsoft.NET.Sdk\">\n";
+    ofs << "  <PropertyGroup>\n";
+    ofs << "    <TargetFramework>netstandard2.0</TargetFramework>\n";
+    ofs << "    <OutputType>Library</OutputType>\n";
+    ofs << "    <RootNamespace>MyGameScripts</RootNamespace>\n";
+    ofs << "  </PropertyGroup>\n";
+    ofs << "  <ItemGroup>\n";
+    for (const auto& file : csFiles) {
+        ofs << "    <Compile Include=\"" << file << "\" />\n";
+    }
+    ofs << "  </ItemGroup>\n";
+    ofs << "</Project>\n";
+    ofs.close();
+}

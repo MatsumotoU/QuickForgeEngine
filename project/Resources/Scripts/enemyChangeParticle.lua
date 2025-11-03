@@ -49,7 +49,7 @@ function Update()
 
     radius = QFE.Math.Leap(endRadius,startRadius,t)
 
-    rotateMove = rotateMove + 6.0 * deltatime
+    rotateMove = rotateMove + 8.0 * deltatime
 
     -- 回転運動
     transform.translate.x = centerX + math.cos(rotateMove) * radius
@@ -57,7 +57,7 @@ function Update()
 
     transform.translate.y = transform.translate.y + 0.5 * deltatime
 
-    scaleMove = QFE.Math.Leap(0.1,startScale,t)
+    scaleMove = QFE.Math.Leap(0.4,startScale,t)
 
     -- 拡縮
     transform.scale.x = scaleMove

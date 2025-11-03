@@ -86,7 +86,7 @@ function OnCollisionEnter(id,obj)
     elseif obj.tag == "Tombstone" then
         cur_act = 1
 
-    elseif obj.tag == "bullet" then
+    elseif obj.tag == "bullet" or  obj.tag == "bigBullet" then
 
         if cur_act ~= 0 then
         next_xPos = transform.translate.x - delta_xPos
