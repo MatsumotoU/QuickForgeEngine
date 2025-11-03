@@ -1,6 +1,7 @@
 #include "AssetManager.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "Assets/3DModel/Loader/AssimpModelLoader.h"
+#include "Script/CsharpCmpiler.h"
 
 void AssetManager::Initalize(DirectXCommon* dxCommon) {
 	assert(dxCommon && "dxCommon is nullptr.");

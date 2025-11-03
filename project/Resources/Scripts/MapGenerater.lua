@@ -17,7 +17,7 @@ map = {{},{}}
 
 
 -- ステージ番号
-local stageNumber = 3
+local stageNumber = 1
 
 
 
