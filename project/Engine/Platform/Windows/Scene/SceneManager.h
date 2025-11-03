@@ -24,11 +24,10 @@ public:
 	std::string GetCurrentSceneName() const { return currentScene_->GetSceneName(); }
 	uint32_t GetEntityByName(const std::string& entityName) const;
 	uint32_t GetEntityByUniqeID(uint32_t uniqueId) const;
-	bool IsRunningScript() const { return isRunningScript_; }
+	bool IsRunningScript() const { return currentScene_->IsRunningScript(); }
 
 	void SaveScene(const std::string& sceneName);
 	void LoadScene(const std::string& sceneName);
-	void LoadAsyncScene(const std::string& sceneName);
 	void ResetScene();
 	void RunTimeSwapScene(const std::string& sceneName);
 
@@ -58,14 +57,14 @@ public:
 	float postDrawTime_;
 
 private:
-	std::unordered_map<std::string, nlohmann::json> loadEntities_;
+	
+	
+	bool isFirstLoadScene_;
+	bool isRequestRunTimeLoadScene_;
 	nlohmann::json sceneConfig_;
 	std::unique_ptr<IScene> currentScene_;
 	std::unique_ptr<IScene> nextScene_;
-	bool isRequestRunTimeLoadScene_;
+	
 	std::string nextSceneName_;
-	bool isRunningScript_;
-	bool isRequestStopScript_;
-	bool isFirstLoadScene_;
-	ListUniqueIDManager uniqueIdManager_;
+	
 };
