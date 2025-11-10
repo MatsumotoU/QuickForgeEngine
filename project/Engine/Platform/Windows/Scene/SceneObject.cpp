@@ -50,8 +50,6 @@ void SceneObject::Initialize() {
 	CameraManager::GetInstance()->Initialize();
 	isRequestStopScript_ = false;
 	isRunningScript_ = false;
-	
-	
 }
 
 void SceneObject::Update() {
@@ -672,6 +670,7 @@ void SceneObject::SerializeEntity(uint32_t entityId, nlohmann::json& entityJson)
 void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
+	usedEntityId_.insert(entityId);
 
 	// 必要なコンポーネントを追加
 	if (entityJson.contains("SpriteData")) {

@@ -118,23 +118,21 @@ void SceneManager::EndFrame() {
 
 void SceneManager::Finalize() {
 	currentScene_->Finalize();
-
+#ifdef _DEBUG
 	sceneConfig_["lastScene"] = currentScene_->GetSceneName();
 	try {
 		std::string path = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Config") + "SceneConfig.json";
 		std::ofstream ofs(path);
 		ofs << sceneConfig_.dump(4);
 		ofs.close();
-#ifdef _DEBUG
 		DebugLog("SaveSceneConfig");
-#endif // _DEBUG
+
 	}
 	catch (const std::exception& e) {
-#ifdef _DEBUG
 		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // _DEBUG
-	}
 
+	}
+#endif // _DEBUG
 	CameraManager::GetInstance()->Shutdown();
 }
 

@@ -32,6 +32,15 @@ void CameraManager::Update() {
 	}
 }
 
+void CameraManager::Reset() {
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	for (auto& [id, camera] : cameras_) {
+		entityManager->InstantRemoveEntity(camera.GetBindEntityId());
+	}
+	cameras_.clear();
+	nextCameraHandle_ = 0;
+}
+
 uint32_t CameraManager::AddCamera() {
 	uint32_t handle = nextCameraHandle_++;
 	cameras_.emplace(handle, Camera{});

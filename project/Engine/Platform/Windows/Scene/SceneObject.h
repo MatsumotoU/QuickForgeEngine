@@ -5,6 +5,7 @@
 #include "Core/Math/Vector/Vector2.h"
 #include <memory>
 #include <string>
+#include <set>
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 
@@ -64,5 +65,5 @@ private:
 	bool isRequestStopScript_;
 	ListUniqueIDManager uniqueIdManager_;
 	
-	
+	std::set<uint32_t> usedEntityId_;
 };

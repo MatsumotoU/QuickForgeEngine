@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <unordered_set>
 #include <vector>
+#include <set>
 #include <nlohmann/json.hpp>
 
 
@@ -41,6 +42,13 @@ public:
 		componentStrages.clear();
 		activeEntityIds_.clear();
 		nextEntityId_ = 0;
+	}
+
+	void InstantRemoveEntity(uint32_t id) {
+		for (auto& [typeId, strage] : componentStrages) {
+			strage->RemoveComponent(id);
+		}
+		activeEntityIds_.erase(id);
 	}
 
 	uint32_t CreateEntity() {
