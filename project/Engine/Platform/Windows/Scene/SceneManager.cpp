@@ -126,7 +126,6 @@ void SceneManager::Finalize() {
 		ofs << sceneConfig_.dump(4);
 		ofs.close();
 		DebugLog("SaveSceneConfig");
-
 	}
 	catch (const std::exception& e) {
 		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
