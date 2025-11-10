@@ -432,9 +432,6 @@
     <ClCompile Include="Editor\UI\Edit\ColliderMaskEdit.cpp" />
     <ClCompile Include="Editor\UI\View\SceneProfileView.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\XInput\XInputController.cpp" />
-    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpScriptOnQFE.cpp" />
-    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.cpp" />
-    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1381,10 +1378,8 @@
     <ClInclude Include="Engine\Platform\Windows\Collider\ColliderMask.h" />
     <ClInclude Include="Editor\UI\View\SceneProfileView.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\XInput\XInputController.h" />
-    <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
     <ClInclude Include="Engine\Utility\memory\SparseSets.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpOnQFELinker.h" />
-    <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpProjectManager.h" />
   </ItemGroup>
   <ItemGroup>

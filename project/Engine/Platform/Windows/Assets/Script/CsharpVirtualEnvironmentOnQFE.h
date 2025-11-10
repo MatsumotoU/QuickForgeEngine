@@ -14,5 +14,5 @@ public:
 private:
 	MonoDomain* domain_;
 	MonoAssembly* assembly_;
-	SparseSets<MonoObject> scripts_;
+	SparseSet<MonoObject> scripts_;
 };

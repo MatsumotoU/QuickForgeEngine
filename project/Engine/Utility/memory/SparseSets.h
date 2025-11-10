@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstdint>
 template<typename T>
-class SparseSets {
+class SparseSet {
 public:
 	SparseSet() = default;
 	void Insert(uint32_t key, const T& value) {
