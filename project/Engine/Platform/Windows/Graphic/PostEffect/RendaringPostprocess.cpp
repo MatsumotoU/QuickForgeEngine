@@ -26,7 +26,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	enableColorCorrection_ = true;
 	enableVignette_ = true;
 	enableNormal_ = true;
-	enablePixcel_ = true;
+	enablePixcel_ = false;
 
 	renderingRosourceIndex_ = 0;
 	readingResourceIndex_ = 0;
@@ -37,7 +37,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	offScreenClearColor[0] = 0.0f;
 	offScreenClearColor[1] = 0.0f;
 	offScreenClearColor[2] = 0.0f;
-	offScreenClearColor[3] = 1.0f;
+	offScreenClearColor[3] = 0.0f;
 
 	// ポストプロセスの関数を登録
 	postProcessFunctions_.clear();
