@@ -22,18 +22,19 @@ WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 void WindowsEngineCore::Initialize() {
 	QFE::EngineGlobalValue::windowWidth = windowWidth;
 	QFE::EngineGlobalValue::windowHeight = windowHeight;
+	std::string windowTitle = "QuickForgeEngine";
 
 	// * ウィンドウマネージャー初期化 * //
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
-	gameWindowManager->AddWindow(windowWidth, windowHeight, "2103_チョットバック");
+	gameWindowManager->AddWindow(windowWidth, windowHeight, windowTitle);
 	// * DirectX初期化 * //
 	directXCommon_ = DirectXCommon::GetInstance();
 	directXCommon_->Initialize(
-		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("2103_チョットバック"), windowWidth, windowHeight);
+		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), windowWidth, windowHeight);
 	// * ImGuiの初期化 * //
 	imguiFrameController_.Initialize(
-		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("2103_チョットバック"),
+		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle),
 		directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		directXCommon_->GetSrvDescriptorHeapAddressOf());
 	ImGuiInitializer::Initialize(
@@ -89,7 +90,7 @@ void WindowsEngineCore::Initialize() {
 
 	inputInterface_ = InputInterface::GetInstance();
 	inputInterface_->Initialize(
-		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow("2103_チョットバック"), hInstance_);
+		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), hInstance_);
 
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->Initalize();
