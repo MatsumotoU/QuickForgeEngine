@@ -3,6 +3,8 @@
 
 #include "Assets/AssetManager.h"
 #include "Camera/CameraManager.h"
+#include <fstream>
+#include <string>
 
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
