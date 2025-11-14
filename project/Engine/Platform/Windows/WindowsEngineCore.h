@@ -21,6 +21,7 @@
 // なんかAssetsではなさそうなやつら
 #include "Scene/SceneManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
+#include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h"
 
 // サブモジュール
 #include "Audio/AudioInterface.h"
@@ -63,6 +64,7 @@ private:
 	InputInterface* inputInterface_;
 	SceneManager* sceneManager_;
 	LuaScriptResourceManager* luaScriptResourceManager_;
+	CsharpVirtualEnvironmentOnQFE* csScriptManager_;
 	PhysicsManager* physicsManager_;
 	ColliderManager* colliderManager_;
 	IAudioInterface* audioInterface_;

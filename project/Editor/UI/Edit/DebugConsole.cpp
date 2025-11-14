@@ -2,6 +2,7 @@
 #include "Assets/Script/LuaScriptResourceManager.h"
 #include "Scene/SceneManager.h"
 #include "Audio/AudioInterface.h"
+#include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h"
 
 void DebugConsole::Initialize() {
 	name_ = "DebugConsole";
@@ -68,7 +69,18 @@ void DebugConsole::ExecCommand(const char* command) {
 	} else if (strcmp(command, "scp_reload") == 0) {
 		items_.emplace_back("Reload All Scripts.");
 		LuaScriptResourceManager::GetInstance()->ReloadAllScripts();
-	} else {
+	} else if (strncmp(command, "cs_create ", 10) == 0) {
+		std::string projectName = command + 10;
+		items_.emplace_back("Create C# Project: " + projectName);
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->CreateCSProject(projectName);
+	} else if (strncmp(command, "cs_load ", 8) == 0) {
+		std::string assemblyPath = command + 8;
+		items_.emplace_back("Load C# Assembly: " + assemblyPath);
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->LoadAssembly(assemblyPath);
+	} else if (strcmp(command, "cs_open") == 0) {
+		items_.emplace_back("Open C# ScriptProject");
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->OpenCSharpProjectInVSCode();
+	}else {
 		items_.emplace_back("Unknown command. Type 'help' for list.");
 	}
 }

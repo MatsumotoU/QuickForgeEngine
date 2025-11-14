@@ -23,3 +23,11 @@ void GenerateCsproj(const std::string& dir, const std::string& outputPath) {
     ofs << "</Project>\n";
     ofs.close();
 }
+
+void CompileCSharpProject(const std::string& csprojPath, const std::string& outputDllPath) {
+	std::string command = "dotnet build " + csprojPath + " -c Release -o " + std::filesystem::path(outputDllPath).parent_path().string();
+	int result = system(command.c_str());
+	if (result != 0) {
+		throw std::runtime_error("Failed to compile C# project.");
+	}
+}

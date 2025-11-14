@@ -175,12 +175,16 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\Engine\Externals\assimp\lib\Debug;$(ProjectDir)\Engine\Externals\lua\lib\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Engine\Externals\assimp\lib\Debug;$(ProjectDir)\Engine\Externals\lua\lib\Debug;$(ProjectDir)\Engine\Externals\Mono\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;Lua.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+copy "$(ProjectDir)Engine\Externals\Mono\bin\mono-2.0-sgen.dll" "$(TargetDir)
+     mono\bin\mono-2.0-sgen.dll" /Y
+xcopy "$(ProjectDir)Engine\Externals\Mono\lib" "$(TargetDir)mono\lib" /E /I /Y
+xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
 </Command>
     </PostBuildEvent>
     <PreBuildEvent>
@@ -210,12 +214,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\Engine\Externals\assimp\lib\Release;$(ProjectDir)\Engine\Externals\lua\lib\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Engine\Externals\assimp\lib\Release;$(ProjectDir)\Engine\Externals\lua\lib\Release;$(ProjectDir)\Engine\Externals\Mono\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;Lua.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+copy "$(ProjectDir)Engine\Externals\Mono\bin\mono-2.0-sgen.dll" "$(TargetDir)
+     mono\bin\mono-2.0-sgen.dll" /Y
+xcopy "$(ProjectDir)Engine\Externals\Mono\lib" "$(TargetDir)mono\lib" /E /I /Y
+xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
 </Command>
     </PostBuildEvent>
     <PreBuildEvent>
@@ -254,6 +262,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"
+copy "$(ProjectDir)Engine\Externals\Mono\bin\mono-2.0-sgen.dll" "$(TargetDir)
+     mono\bin\mono-2.0-sgen.dll" /Y
+xcopy "$(ProjectDir)Engine\Externals\Mono\lib" "$(TargetDir)mono\lib" /E /I /Y
+xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
 </Command>
     </PostBuildEvent>
     <PreBuildEvent>
@@ -273,7 +285,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Engine\Externals\imgui\ImGuizmo-1.83\Makefile" />
     <None Include="GenerateBuildInfo.bat" />
     <None Include="Resources\2DMap\testCSV.csv" />
-    <None Include="Resources\Scripts\types.d.lua" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor\OnWindowsEditor.cpp" />
@@ -316,6 +327,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Platform\Windows\Assets\Animeter\AnimCrip.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpScriptOnQFE.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp" />
@@ -492,6 +506,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Data\AudioData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ConstantBufferManager\ConstantBufferManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\Data\ScriptHandle.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpOnQFELinker.h" />

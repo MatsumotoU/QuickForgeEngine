@@ -432,6 +432,9 @@
     <ClCompile Include="Editor\UI\Edit\ColliderMaskEdit.cpp" />
     <ClCompile Include="Editor\UI\View\SceneProfileView.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\XInput\XInputController.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpScriptOnQFE.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1381,6 +1384,8 @@
     <ClInclude Include="Engine\Utility\memory\SparseSets.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpOnQFELinker.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpProjectManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">
@@ -1411,9 +1416,6 @@
       <Filter>imgui</Filter>
     </None>
     <None Include="Engine\Externals\imgui\ImGuizmo-1.83\Makefile">
-      <Filter>external\sol2</Filter>
-    </None>
-    <None Include="Resources\Scripts\types.d.lua">
       <Filter>external\sol2</Filter>
     </None>
     <None Include="Resources\2DMap\testCSV.csv" />
