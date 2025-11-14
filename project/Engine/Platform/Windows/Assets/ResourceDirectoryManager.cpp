@@ -15,6 +15,7 @@ ResourceDirectoryManager::ResourceDirectoryManager() {
 	resourceDirectories_["Entities"] = "Resources/Entities/";
 	resourceDirectories_["Config"] = "Resources/Config/";
 	resourceDirectories_["2DMap"] = "Resources/2DMap/";
+	resourceDirectories_["Project"] = "Resources/Projects/";
 #ifdef _DEBUG
 	resourceDirectories_["Editor"] = "Editor/Resource/Images/";
 #endif // _DEBUG

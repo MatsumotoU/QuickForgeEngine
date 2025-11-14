@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MyGameScripts</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="testA.cs" />
+    <Compile Include="testB.cs" />
+    <Compile Include="testC.cs" />
+  </ItemGroup>
+</Project>

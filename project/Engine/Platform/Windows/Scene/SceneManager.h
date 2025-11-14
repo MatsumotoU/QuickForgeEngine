@@ -57,8 +57,6 @@ public:
 	float postDrawTime_;
 
 private:
-	
-	
 	bool isFirstLoadScene_;
 	bool isRequestRunTimeLoadScene_;
 	nlohmann::json sceneConfig_;

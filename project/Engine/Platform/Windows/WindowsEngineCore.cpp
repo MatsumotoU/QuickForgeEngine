@@ -98,6 +98,9 @@ void WindowsEngineCore::Initialize() {
 	luaScriptResourceManager_ = LuaScriptResourceManager::GetInstance();
 	luaScriptResourceManager_->Initialize();
 
+	csScriptManager_ = CsharpVirtualEnvironmentOnQFE::GetInstance();
+	csScriptManager_->Initialize();
+
 	physicsManager_ = PhysicsManager::GetInstance();
 	physicsManager_->Initialize();
 
@@ -138,6 +141,7 @@ void WindowsEngineCore::Shutdown() {
 	multiThreadTaskExecutor_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();
+	csScriptManager_->Finalize();
 	luaScriptResourceManager_->Finalize();
 	sceneManager_->Finalize();
 	graphRenderer_->Finalize();
