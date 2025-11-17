@@ -218,6 +218,7 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	// 訳アリ関数群
 	// Log
 	luaState_->set_function("DebugLog", [this](sol::variadic_args message) {
+		message;
 #ifdef _DEBUG
 		DebugLogLua(message,this->GetBindEntityId(),this->GetScriptName());
 #endif // _DEBUG

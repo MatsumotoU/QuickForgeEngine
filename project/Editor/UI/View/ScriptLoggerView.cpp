@@ -30,8 +30,9 @@ void ScriptLoggerView::Draw() {
 		MyDebugLog::GetInstance()->scriptLogs_.clear();
 #endif // _DEBUG
 	}
-	uint32_t id = selectedEntityId_;
+	
 #ifdef _DEBUG
+	uint32_t id = selectedEntityId_;
 	auto it = MyDebugLog::GetInstance()->scriptLogs_.find(id);
 	if (it != MyDebugLog::GetInstance()->scriptLogs_.end()) {
 		for (const auto& [scriptName, logs] : it->second) {

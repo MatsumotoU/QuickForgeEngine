@@ -73,6 +73,7 @@ std::unordered_map<uint32_t, Camera>& CameraManager::GetAllCameras() {
 
 void CameraManager::SnapToDebugCamera(uint32_t index) {
 	assert(index < cameras_.size() && "Camera index is out of range.");
+	index;
 #ifdef _DEBUG
 	if (isActiveDebugCamera_ && cameras_.size() > 1) {
 		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
