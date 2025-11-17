@@ -15,11 +15,16 @@ public:
 	void CreateCSProject(std::string& projectName);
 	void CompileScripts();
 	void OpenCSharpProjectInVSCode();
-	void LoadAssembly(const std::string& assemblyPath);
+	void LinkQFEAPIToMono();
+	void LoadAssembly();
+	void CreateScriptInstance(const std::string& className);
+	void RunScriptFunction(uint32_t index,const std::string& functionName);
+	void ReloadAssembly();
 	void Finalize();
 
 private:
-	MonoDomain* domain_;
-	MonoAssembly* assembly_;
-	SparseSet<MonoObject> scripts_;
+	MonoDomain* root_domain_ = nullptr;
+	MonoDomain* domain_ = nullptr;
+	MonoAssembly* assembly_ = nullptr;
+	std::vector<MonoObject*> scripts_;
 };

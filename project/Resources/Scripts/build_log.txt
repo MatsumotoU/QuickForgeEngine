@@ -1,0 +1,13 @@
+--- Build started at 2025/11/18  5:55:51.23 --- 
+  復元対象のプロジェクトを決定しています...
+  C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\CSharpScripts.csproj を復元しました (392 ミリ秒)。
+CSC : warning CS2002: ソース ファイル 'C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\obj\Debug\netstandard2.0\.NETStandard,Version=v2.0.AssemblyAttributes.cs' が複数回指定されました [C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\CSharpScripts.csproj]
+  CSharpScripts -> C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\bin\Debug\netstandard2.0\CSharpScripts.dll
+
+ビルドに成功しました。
+
+CSC : warning CS2002: ソース ファイル 'C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\obj\Debug\netstandard2.0\.NETStandard,Version=v2.0.AssemblyAttributes.cs' が複数回指定されました [C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\CSharpScripts.csproj]
+    1 個の警告
+    0 エラー
+
+経過時間 00:00:02.64
