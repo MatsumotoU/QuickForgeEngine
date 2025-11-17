@@ -255,8 +255,8 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\Engine\Externals\assimp\lib\Release;$(ProjectDir)\Engine\Externals\lua\lib\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Engine\Externals\assimp\lib\Release;$(ProjectDir)\Engine\Externals\lua\lib\Release;$(ProjectDir)\Engine\Externals\Mono\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;Lua.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration />
     </Link>
     <PostBuildEvent>
