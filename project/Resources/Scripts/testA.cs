@@ -1,10 +1,11 @@
 using System;
 using QuickForgeEngine;
 
-public class testA
+public class testA : QuickForgeComponent
 {
-    public void Run()
+    public override void Initialize()
     {
-        
+        Debug.Log("Hello!CSharp!!!!!!!");
     }
+    public override void Update(){}
 }

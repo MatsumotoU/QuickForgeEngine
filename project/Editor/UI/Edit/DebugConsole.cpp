@@ -73,14 +73,28 @@ void DebugConsole::ExecCommand(const char* command) {
 		std::string projectName = command + 10;
 		items_.emplace_back("Create C# Project: " + projectName);
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->CreateCSProject(projectName);
-	} else if (strncmp(command, "cs_load ", 8) == 0) {
-		std::string assemblyPath = command + 8;
-		items_.emplace_back("Load C# Assembly: " + assemblyPath);
-		CsharpVirtualEnvironmentOnQFE::GetInstance()->LoadAssembly(assemblyPath);
+	} else if (strcmp(command, "cs_load") == 0) {
+		items_.emplace_back("Load C# Assembly" );
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->LoadAssembly();
 	} else if (strcmp(command, "cs_open") == 0) {
 		items_.emplace_back("Open C# ScriptProject");
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->OpenCSharpProjectInVSCode();
-	}else {
+	} else if (strcmp(command, "cs_compile") == 0) {
+		items_.emplace_back("Compile C# Scripts");
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->CompileScripts();
+	} else if (strncmp(command, "cs_createInstance ", 18) == 0) {
+		std::string className = command + 18;
+		items_.emplace_back("Create C# Script Instance: " + className);
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->CreateScriptInstance(className);
+	} else if (strncmp(command, "cs_run ", 7) == 0) {
+		std::string index = command + 7;
+		std::string functionName = command + 9;
+		items_.emplace_back("Run C# Script Function: " + functionName + " on Instance Index: " + index);
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunScriptFunction(std::stoi(index), functionName);
+	} else if (strcmp(command, "cs_reload") == 0) {
+		items_.emplace_back("Reload C# Assembly");
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->ReloadAssembly();
+	} else {
 		items_.emplace_back("Unknown command. Type 'help' for list.");
 	}
 }

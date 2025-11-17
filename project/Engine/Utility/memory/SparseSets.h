@@ -5,6 +5,14 @@ template<typename T>
 class SparseSet {
 public:
 	SparseSet() = default;
+	void push_back(const T& value) {
+		uint32_t key = static_cast<uint32_t>(dense_.size());
+		if (key >= sparse_.size()) {
+			sparse_.resize(key + 1, -1);
+		}
+		dense_.push_back(value);
+		sparse_[key] = static_cast<int32_t>(dense_.size() - 1);
+	}
 	void Insert(uint32_t key, const T& value) {
 		if (key >= sparse_.size()) {
 			sparse_.resize(key + 1, -1);
@@ -44,6 +52,10 @@ public:
 	}
 
 	// 標準ライブラリ風インターフェース
+	void clear() {
+		sparse_.clear();
+		dense_.clear();
+	}
 	auto begin() { return dense_.begin(); }
 	auto end() { return dense_.end(); }
 	auto begin() const { return dense_.begin(); }
@@ -57,6 +69,9 @@ public:
 			Insert(key, T{});
 		}
 		return dense_[sparse_[key]];
+	}
+	T& at(uint32_t key) {
+		return dense_.at(sparse_.at(key));
 	}
 private:
 	std::vector<int32_t> sparse_;
