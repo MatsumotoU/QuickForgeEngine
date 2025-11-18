@@ -5,7 +5,7 @@ public class testA : QuickForgeComponent
 {
     public override void Initialize()
     {
-        Debug.Log("Hello!CSharp!!!!!!!");
+        Debug.Log(this.EntityID.ToString());
     }
     public override void Update(){}
 }

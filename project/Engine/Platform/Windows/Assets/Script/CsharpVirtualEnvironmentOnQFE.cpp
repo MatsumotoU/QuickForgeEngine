@@ -68,8 +68,6 @@ static void Native_Debug_Log(MonoString* message)
 {
     // MonoString* を C++で扱える const char* に変換します
     char* utf8_message = mono_string_to_utf8(message);
-
-    // あなたのC++のログ機能を呼び出します
     DebugLog(utf8_message);
 
     // mono_string_to_utf8で確保されたメモリを解放します
@@ -129,6 +127,53 @@ void CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(const std::string& clas
 	DebugLog(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size())-1));
 #endif // _DEBUG
 
+}
+
+void CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, const std::string& className) {
+	if (!assembly_) {
+#ifdef _DEBUG
+		DebugLog("Assembly not loaded. Cannot create script instance.");
+#endif // _DEBUG
+		return;
+	}
+	MonoImage* image = mono_assembly_get_image(assembly_);
+	MonoClass* monoClass = mono_class_from_name(image, "", className.c_str());
+	if (!monoClass) {
+#ifdef _DEBUG
+		DebugLog("Class not found: " + className);
+#endif // _DEBUG
+		return;
+	}
+	MonoObject* instance = mono_object_new(domain_, monoClass);
+	mono_runtime_object_init(instance);
+	MonoProperty* entityIdProperty = mono_class_get_property_from_name(monoClass, "EntityID");
+	if (!entityIdProperty) {
+#ifdef _DEBUG
+		DebugLog("Property 'EntityID' not found in class: " + className);
+		return;
+#endif // _DEBUG
+	}
+	void* args[1];
+	args[0] = &entityId;
+	MonoObject* exception = nullptr;
+	MonoMethod* setMethod = mono_property_get_set_method(entityIdProperty);
+	mono_runtime_invoke(setMethod, instance, args, &exception);
+	if (exception) {
+		MonoString* exceptionMsg = mono_object_to_string(exception, nullptr);
+		if (exceptionMsg) {
+			char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
+#ifdef _DEBUG
+			DebugLog(std::string("Mono Exception: ") + exceptionCStr);
+#endif
+			mono_free(exceptionCStr);
+		}
+	}
+
+	scripts_.push_back(instance);
+
+#ifdef _DEBUG
+	DebugLog(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
+#endif // _DEBUG
 }
 
 void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std::string& functionName) {

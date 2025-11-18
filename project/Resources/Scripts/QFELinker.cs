@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace QuickForgeEngine
 {
@@ -13,6 +14,7 @@ namespace QuickForgeEngine
     // C#スクリプト用QuickForgeコンポーネントクラス
     public abstract class QuickForgeComponent
     {
+        public uint EntityID { get; internal set; }
         public virtual void Initialize() { }
         public virtual void Update() { }
     }
