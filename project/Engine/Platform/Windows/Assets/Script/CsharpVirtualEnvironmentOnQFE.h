@@ -7,6 +7,7 @@
 #include <Windows.h> 
 #include <string> 
 #include <filesystem> 
+#include <vector>
 
 class CsharpVirtualEnvironmentOnQFE final:public Singleton<CsharpVirtualEnvironmentOnQFE> {
 	friend class Singleton<CsharpVirtualEnvironmentOnQFE>;
@@ -17,10 +18,12 @@ public:
 	void OpenCSharpProjectInVSCode();
 	void LinkQFEAPIToMono();
 	void LoadAssembly();
-	void CreateScriptInstance(const std::string& className);
-	void CreateScriptInstance(uint32_t entityId, const std::string& className);
+	std::vector<std::string> GetAvailableScriptClasses() const;
+	uint32_t CreateScriptInstance(const std::string& className);
+	uint32_t CreateScriptInstance(uint32_t entityId, const std::string& className);
 	void RunScriptFunction(uint32_t index,const std::string& functionName);
 	void ReloadAssembly();
+	void RunAllScriptsFunction(const std::string& functionName);
 	void Finalize();
 
 private:

@@ -53,3 +53,7 @@ bool DropDownFileList::GetSelectedFileName(std::string& fileName) {
 	}
 	return false;
 }
+
+void DropDownFileList::AddFile(const std::string& fileName) {
+	fileList_.push_back(fileName);
+}

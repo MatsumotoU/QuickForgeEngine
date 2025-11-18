@@ -40,7 +40,8 @@ public:
 	void AddSprite(
 		const std::string& spriteName, float width = 0.0f, float height = 0.0f,
 		int inEntityId = -1, int layer = -1, Vector2 pivot = { 0.0f,0.0f }) override;
-	void AddScript(uint32_t entityId, const std::string& scriptName) override;
+	void AddLuaScript(uint32_t entityId, const std::string& scriptName) override;
+	void AddCsharpScript(uint32_t entityId, const std::string& className) override;
 	uint32_t AddEntity(const std::string& entityName) override;
 	uint32_t RunTimeAddEntity(const std::string& entityName) override;
 

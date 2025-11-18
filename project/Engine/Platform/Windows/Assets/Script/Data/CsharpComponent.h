@@ -2,16 +2,21 @@
 #include "Core/Entity/Component/ComponentData.h"
 #include <mono/jit/jit.h>
 #include <Mono/metadata/object.h>
-#include <unordered_map>
+#include <vector>
+
+struct CsharpHandle {
+	std::string className_;
+	uint32_t scriptIndex_;
+};
 
 class CsharpComponent :public ComponentData {
+public:
 	CsharpComponent() = default;
 	~CsharpComponent() override = default;
 	nlohmann::json Serialize() const override;
 	void Deserialize(const nlohmann::json& json) override;
 	std::string GetTypeName() const override { return "CsharpComponent"; }
 
-	MonoObject* monoObject_ = nullptr;
-	std::unordered_map<std::string, MonoMethod*> methodCache_;	
+	std::vector<CsharpHandle> csharpHandles_;
 };
 

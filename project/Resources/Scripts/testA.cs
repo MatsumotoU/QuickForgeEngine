@@ -7,5 +7,7 @@ public class testA : QuickForgeComponent
     {
         Debug.Log(this.EntityID.ToString());
     }
-    public override void Update(){}
+    public override void Update(){
+        this.transform.Rotate += new QuickForgeEngine.Vector3 { x = 0, y = 0.1f, z = 0 };
+    }
 }
