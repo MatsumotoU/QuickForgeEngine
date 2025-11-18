@@ -82,10 +82,15 @@ void DebugConsole::ExecCommand(const char* command) {
 	} else if (strcmp(command, "cs_compile") == 0) {
 		items_.emplace_back("Compile C# Scripts");
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->CompileScripts();
-	} else if (strncmp(command, "cs_createInstance ", 18) == 0) {
-		std::string className = command + 18;
+	} else if (strncmp(command, "cs_ci ", 6) == 0) {
+		std::string className = command + 6;
 		items_.emplace_back("Create C# Script Instance: " + className);
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->CreateScriptInstance(className);
+	} else if (strncmp(command, "cs_cie ", 7) == 0) {
+		std::string entityIdStr = command + 7;
+		std::string className = command + 7 + entityIdStr.find_first_of(' ')+1;
+		items_.emplace_back("Create C# Script Instance: " + className + " BindEntity: " + entityIdStr);
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->CreateScriptInstance(std::stoi(entityIdStr), className);
 	} else if (strncmp(command, "cs_run ", 7) == 0) {
 		std::string index = command + 7;
 		std::string functionName = command + 9;

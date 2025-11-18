@@ -18,6 +18,7 @@ public:
 	void LinkQFEAPIToMono();
 	void LoadAssembly();
 	void CreateScriptInstance(const std::string& className);
+	void CreateScriptInstance(uint32_t entityId, const std::string& className);
 	void RunScriptFunction(uint32_t index,const std::string& functionName);
 	void ReloadAssembly();
 	void Finalize();
