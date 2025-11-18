@@ -2,6 +2,8 @@
 #include "CsharpCmpiler.h"
 
 #include <windows.h>
+#include <mono/metadata/metadata.h>
+#include <mono/metadata/image.h>
 
 #include "Assets/AssetManager.h"
 #ifdef _DEBUG
@@ -12,7 +14,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	// 実行ファイルのパスを取得
 	char path[MAX_PATH];
 	GetModuleFileNameA(NULL, path, MAX_PATH);
-	
+
 	// 実行ファイルのディレクトリを取得
 	std::filesystem::path exeDir(path);
 	exeDir = exeDir.parent_path();
@@ -68,15 +70,79 @@ static void Native_Debug_Log(MonoString* message)
 {
     // MonoString* を C++で扱える const char* に変換します
     char* utf8_message = mono_string_to_utf8(message);
-    DebugLog(utf8_message);
+    DebugLog(utf8_message); // This line will be replaced by the new DebugLog(utf8_message,LogLevel::EditorInfo); in the search string
 
     // mono_string_to_utf8で確保されたメモリを解放します
     mono_free(utf8_message);
 }
 
+// --- Transform操作用API ---
+#include "Core/Entity/EntityManager.h"
+#include "Core/Math/Transform.h"
+#include "Core/Math/Vector/Vector3.h"
+
+static void GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
+    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
+        *outTranslate = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate;
+    }
+}
+
+static void SetTransformTranslate(uint32_t entityId, Vector3* inTranslate) {
+    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
+        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate = *inTranslate;
+    }
+}
+
+static void GetTransformRotate(uint32_t entityId, Vector3* outRotate) {
+    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
+        *outRotate = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate;
+    }
+}
+
+static void SetTransformRotate(uint32_t entityId, Vector3* inRotate) {
+    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
+        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate = *inRotate;
+    }
+}
+
+static void GetTransformScale(uint32_t entityId, Vector3* outScale) {
+    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
+        *outScale = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).scale;
+    }
+}
+
+static void SetTransformScale(uint32_t entityId, Vector3* inScale) {
+    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
+        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).scale = *inScale;
+    }
+}
+
+static void Translate(uint32_t entityId, Vector3* translation) {
+    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
+        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate += *translation;
+    }
+}
+
+static void Rotate(uint32_t entityId, Vector3* eulerAngles) {
+    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
+        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate += *eulerAngles;
+    }
+}
+// --- Transform操作用APIここまで ---
+
 void CsharpVirtualEnvironmentOnQFE::LinkQFEAPIToMono() {
 	// 正しいメソッド名 "名前空間.クラス名::メソッド名" を指定し、ラッパー関数を登録します
 	mono_add_internal_call("QuickForgeEngine.Debug::Log", (const void*)Native_Debug_Log);
+
+	// Transform操作用APIの登録
+	mono_add_internal_call("QuickForge.TransformInternal::GetTranslate", (const void*)GetTransformTranslate);
+	mono_add_internal_call("QuickForge.TransformInternal::SetTranslate", (const void*)SetTransformTranslate);
+	mono_add_internal_call("QuickForge.TransformInternal::GetRotate", (const void*)GetTransformRotate);
+	mono_add_internal_call("QuickForge.TransformInternal::SetRotate", (const void*)SetTransformRotate);
+	mono_add_internal_call("QuickForge.TransformInternal::GetScale", (const void*)GetTransformScale);
+	mono_add_internal_call("QuickForge.TransformInternal::SetScale", (const void*)SetTransformScale);
+	mono_add_internal_call("QuickForge.TransformInternal::Translate", (const void*)Translate);
+	mono_add_internal_call("QuickForge.TransformInternal::Rotate", (const void*)Rotate);
 }
 
 void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
@@ -104,45 +170,141 @@ void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
 	return;
 }
 
-void CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(const std::string& className) {
+std::vector<std::string> CsharpVirtualEnvironmentOnQFE::GetAvailableScriptClasses() const {
+
+	std::vector<std::string> classNames;
+
+	if (!assembly_) {
+#ifdef _DEBUG
+		DebugLog("Error: Assembly is not loaded. Cannot get script class names. Check if 'CSharpScripts.dll' exists and is compiled correctly.");
+#endif // _DEBUG
+		return classNames;
+	}
+
+	MonoImage* image = mono_assembly_get_image(assembly_);
+
+	if (!image) {
+#ifdef _DEBUG
+		DebugLog("Error: Could not get image from assembly.");
+#endif // _DEBUG
+		return classNames;
+	}
+
+	const MonoTableInfo* type_definitions_table = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+
+	if (!type_definitions_table) {
+#ifdef _DEBUG
+		DebugLog("Error: Could not get type definitions table from image.");
+#endif // _DEBUG
+		return classNames;
+	}
+
+	int num_types = mono_table_info_get_rows(type_definitions_table);
+
+#ifdef _DEBUG
+	DebugLog(std::format("Scanning assembly for classes... Found {} type definitions.", num_types));
+#endif // _DEBUG
+
+	for (int i = 0; i < num_types; i++) {
+
+		uint32_t cols[MONO_TYPEDEF_SIZE];
+
+		mono_metadata_decode_row(type_definitions_table, i, cols, MONO_TYPEDEF_SIZE);
+
+		const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+		const char* ns = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+
+		// フィルタリング
+		if (!name || name[0] == '<' || strstr(name, "_AnonStorey")) {
+			continue;
+		}
+
+		std::string full_name;
+
+		if (ns && strlen(ns) > 0) {
+			full_name = std::string(ns) + "." + name;
+
+		} else {
+			full_name = name;
+		}
+
+		// QFELinkerに関連するクラスを除外
+		if (full_name.find("QuickForgeEngine") != std::string::npos) {
+			continue;
+		}
+#ifdef _DEBUG
+		DebugLog(std::format("Found valid class: {}", full_name));
+#endif // _DEBUG
+		classNames.push_back(full_name);
+	}
+
+#ifdef _DEBUG
+	DebugLog(std::format("Finished scanning. Returning {} valid classes.", classNames.size()));
+#endif // _DEBUG
+	return classNames;
+
+}
+
+uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(const std::string& className) {
 	if (!assembly_) {
 #ifdef _DEBUG
 		DebugLog("Assembly not loaded. Cannot create script instance.");
 #endif // _DEBUG
-		return;
+		return 0;
 	}
 	MonoImage* image = mono_assembly_get_image(assembly_);
-	MonoClass* monoClass = mono_class_from_name(image, "", className.c_str());
+
+	std::string ns_name;
+	std::string class_name = className;
+	size_t pos = className.rfind('.');
+	if (pos != std::string::npos) {
+		ns_name = className.substr(0, pos);
+		class_name = className.substr(pos + 1);
+	}
+
+	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
 	if (!monoClass) {
 #ifdef _DEBUG
 		DebugLog("Class not found: " + className);
 #endif // _DEBUG
-		return;
+		return 0;
 	}
 	MonoObject* instance = mono_object_new(domain_, monoClass);
 	mono_runtime_object_init(instance);
 	scripts_.push_back(instance);
 
 #ifdef _DEBUG
-	DebugLog(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size())-1));
+	DebugLog(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
 #endif // _DEBUG
 
+	return static_cast<uint32_t>(scripts_.size()) - 1;
 }
 
-void CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, const std::string& className) {
+uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, const std::string& className) {
 	if (!assembly_) {
 #ifdef _DEBUG
 		DebugLog("Assembly not loaded. Cannot create script instance.");
+		//assert(false && "Assembly not loaded. Cannot create script instance.");
 #endif // _DEBUG
-		return;
+		return 0;
 	}
 	MonoImage* image = mono_assembly_get_image(assembly_);
-	MonoClass* monoClass = mono_class_from_name(image, "", className.c_str());
+
+	std::string ns_name;
+	std::string class_name = className;
+	size_t pos = className.rfind('.');
+	if (pos != std::string::npos) {
+		ns_name = className.substr(0, pos);
+		class_name = className.substr(pos + 1);
+	}
+
+	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
 	if (!monoClass) {
 #ifdef _DEBUG
 		DebugLog("Class not found: " + className);
+		//assert(false && "Class not found.");
 #endif // _DEBUG
-		return;
+		return 0;
 	}
 	MonoObject* instance = mono_object_new(domain_, monoClass);
 	mono_runtime_object_init(instance);
@@ -150,8 +312,9 @@ void CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, cons
 	if (!entityIdProperty) {
 #ifdef _DEBUG
 		DebugLog("Property 'EntityID' not found in class: " + className);
-		return;
+		//assert(false && "Property 'EntityID' not found.");
 #endif // _DEBUG
+		return 0;
 	}
 	void* args[1];
 	args[0] = &entityId;
@@ -174,6 +337,8 @@ void CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, cons
 #ifdef _DEBUG
 	DebugLog(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
 #endif // _DEBUG
+
+	return static_cast<uint32_t>(scripts_.size()) - 1;
 }
 
 void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std::string& functionName) {
@@ -242,6 +407,12 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 
 	// 新しいドメインにアセンブリをロード
 	LoadAssembly();
+}
+
+void CsharpVirtualEnvironmentOnQFE::RunAllScriptsFunction(const std::string& functionName) {
+	for (size_t i = 0; i < scripts_.size(); ++i) {
+		RunScriptFunction(static_cast<uint32_t>(i), functionName);
+	}
 }
 
 void CsharpVirtualEnvironmentOnQFE::Finalize() {

@@ -12,6 +12,7 @@ public:
 	void DrawCombo();
 	void DrawMenuItem();
 	bool GetSelectedFileName(std::string& fileName);
+	void AddFile(const std::string& fileName);
 	
 private:
 	bool isSelected_;

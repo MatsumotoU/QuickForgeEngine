@@ -7,6 +7,8 @@
 #include "Assets/AssetManager.h"
 #include "Camera/CameraManager.h"
 #include "Assets/Script/LuaScriptResourceManager.h"
+#include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+#include "Assets/Script/Data/CsharpComponent.h"
 #include "Collider/ColliderManager.h"
 #include "Audio/AudioInterface.h"
 
@@ -57,6 +59,7 @@ void SceneObject::Update() {
 	// スクリプト更新
 	if (isRunningScript_) {
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();
 	}
 
@@ -360,6 +363,7 @@ void SceneObject::RunScene() {
 		LoadScene(sceneName_);
 		isRunningScript_ = true;
 		LuaScriptResourceManager::GetInstance()->InitializeAllScripts();
+		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Initialize");
 		ColliderManager::GetInstance()->isRunning = true;
 		LuaScriptResourceManager::GetInstance()->isRunningScript_ = true;
 	}
@@ -462,7 +466,7 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
-void SceneObject::AddScript(uint32_t entityId, const std::string& scriptName) {
+void SceneObject::AddLuaScript(uint32_t entityId, const std::string& scriptName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	if (!entityManager->HasComponent<ScriptHandles>(entityId)) {
@@ -502,6 +506,39 @@ void SceneObject::AddScript(uint32_t entityId, const std::string& scriptName) {
 		scriptHandle.scriptName_ = scriptName;
 		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
 		scriptHandles.scriptHandles_.push_back(scriptHandle);
+	}
+}
+
+void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& className) {
+	CsharpVirtualEnvironmentOnQFE* csharpEnv = CsharpVirtualEnvironmentOnQFE::GetInstance();
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (!entityManager->HasComponent<CsharpComponent>(entityId)) {
+		// 新規追加
+		CsharpComponent csharpComponent;
+		CsharpHandle csharpHandle;
+		csharpHandle.className_ = className;
+		csharpHandle.scriptIndex_ = csharpEnv->CreateScriptInstance(entityId, className);
+		csharpComponent.csharpHandles_.push_back(csharpHandle);
+		entityManager->EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
+
+	} else {
+		// 既存のコンポーネントに追加
+		CsharpComponent& csharpComponent = entityManager->GetComponent<CsharpComponent>(entityId);
+		// すでに同じクラスがアタッチされている場合は追加しない
+		for (const auto& handles : csharpComponent.csharpHandles_) {
+			if (handles.className_ == className) {
+#ifdef _DEBUG
+				DebugLog("Csharp class " + className + " is already attached to entity " + std::to_string(entityId), LogLevel::Warning);
+#endif // _DEBUG
+				return;
+			}
+		}
+
+		CsharpHandle csharpHandle;
+		csharpHandle.className_ = className;
+		csharpHandle.scriptIndex_ = csharpEnv->CreateScriptInstance(entityId, className);
+		csharpComponent.csharpHandles_.push_back(csharpHandle);
 	}
 }
 
@@ -729,7 +766,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 #ifdef _DEBUG
 					DebugLog("Load Script: " + handle["scriptName"].get<std::string>());
 #endif // _DEBUG
-					AddScript(entityId, handle["scriptName"].get<std::string>());
+					AddLuaScript(entityId, handle["scriptName"].get<std::string>());
 				}
 			}
 			// グローバル変数の復元

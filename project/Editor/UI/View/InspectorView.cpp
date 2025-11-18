@@ -16,11 +16,14 @@
 #include "Core/Math/ParentData.h"
 #include "Camera/Data/CameraData.h"
 #include "Collider/Data/AABBColliderData.h"
+#include "Assets/Script/Data/CsharpComponent.h"
+#include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#環境のヘッダーをインクルード
 
 InspectorView::InspectorView() {
 	isActive_ = true;
 	name_ = "Inspector View";
 	selectedEntityId_ = 0;
+	// csharpScriptListの初期化を削除
 	scriptList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts"), ".lua");
 	modelList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
 }
@@ -132,6 +135,18 @@ void InspectorView::Draw() {
 		CameraManager* cameraManager = CameraManager::GetInstance();
 		if (cameraManager->GetMainCameraIndex() == cameraData.handle_) {
 			ImGui::Text("This is Main Camera");
+		}
+	}
+	// CSスクリプト
+	if (assetManager->GetEntityManager()->HasComponent<CsharpComponent>(selectedEntityId_)) {
+		CsharpComponent& csharpComponent = assetManager->GetEntityManager()->GetComponent<CsharpComponent>(selectedEntityId_);
+		for (const auto& csHandle : csharpComponent.csharpHandles_) {
+			if (ImGui::CollapsingHeader(csHandle.className_.c_str())) {
+				ImGui::Text("Script Index: %d", csHandle.scriptIndex_);
+				if (ImGui::Button("Delete##CSharpScript")) {
+					assetManager->GetEntityManager()->RemoveComponent<CsharpComponent>(selectedEntityId_);
+				}
+			}
 		}
 	}
 
@@ -401,8 +416,27 @@ void InspectorView::Draw() {
 			}
 			ImGui::EndMenu();
 		}
-		// Script
-		if (ImGui::BeginMenu("Script")) {
+		// CsharpScript
+		if (ImGui::BeginMenu("CSharpScript")) {
+			if (ImGui::MenuItem("NewScript")) {
+				// TODO: 新規C#スクリプト作成機能
+			}
+
+			if (ImGui::BeginMenu("AddScript")) {
+				// C#クラスリストを取得
+				csharpScriptClasses_ = CsharpVirtualEnvironmentOnQFE::GetInstance()->GetAvailableScriptClasses();
+				for (const auto& className : csharpScriptClasses_) {
+					if (ImGui::MenuItem(className.c_str())) {
+						SceneManager::GetInstance()->AddCsharpScript(selectedEntityId_, className);
+					}
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+
+		// LuaScript
+		if (ImGui::BeginMenu("LuaScript")) {
 			if (ImGui::MenuItem("NewScript")) {
 				openScriptPopup_ = true;
 				strcpy_s(scriptBuffer_, "NewScript.lua");
@@ -415,7 +449,7 @@ void InspectorView::Draw() {
 
 			std::string selectedScript;
 			if (scriptList_.GetSelectedFileName(selectedScript)) {
-				SceneManager::GetInstance()->AddScript(selectedEntityId_, selectedScript);
+				SceneManager::GetInstance()->AddLuaScript(selectedEntityId_, selectedScript);
 			}
 
 			ImGui::EndMenu();
@@ -428,7 +462,7 @@ void InspectorView::Draw() {
 			ImGui::InputText("Script Name", scriptBuffer_, IM_ARRAYSIZE(scriptBuffer_));
 			if (ImGui::Button("Create")) {
 				LuaScriptResourceManager::GetInstance()->CreateScript(scriptBuffer_);
-				SceneManager::GetInstance()->AddScript(selectedEntityId_, scriptBuffer_);
+				SceneManager::GetInstance()->AddLuaScript(selectedEntityId_, scriptBuffer_);
 				openScriptPopup_ = false;
 			}
 			ImGui::SameLine();

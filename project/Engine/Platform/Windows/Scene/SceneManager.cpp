@@ -205,8 +205,12 @@ void SceneManager::AddSprite(const std::string& spriteName, float width, float h
 	currentScene_->AddSprite(spriteName, width, height, inEntityId, layer, pvot);
 }
 
-void SceneManager::AddScript(uint32_t entityId, const std::string& scriptName) {
-	currentScene_->AddScript(entityId, scriptName);
+void SceneManager::AddLuaScript(uint32_t entityId, const std::string& scriptName) {
+	currentScene_->AddLuaScript(entityId, scriptName);
+}
+
+void SceneManager::AddCsharpScript(uint32_t entityId, const std::string& className) {
+	currentScene_->AddCsharpScript(entityId, className);
 }
 
 uint32_t SceneManager::AddEntity(const std::string& entityName) {
