@@ -166,6 +166,10 @@ void SceneManager::RunTimeSwapScene(const std::string& sceneName) {
 	nextSceneName_ = sceneName;
 }
 
+void SceneManager::CopyEntity(uint32_t sourceEntityId) {
+	currentScene_->CopyEntity(sourceEntityId);
+}
+
 void SceneManager::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
 	currentScene_->ChangeEntityModel(entityId, modelName);
 	

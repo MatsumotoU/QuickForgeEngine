@@ -46,6 +46,7 @@ public:
 	uint32_t RunTimeAddEntity(const std::string& entityName) override;
 
 	// シーンにあるオブジェクトを保存、読み込み、変更
+	void CopyEntity(uint32_t sourceEntityId) override;
 	void ChangeEntityModel(uint32_t entityId, const std::string& modelName) override;
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName) override;
 	void ParentChild(uint32_t parentId, uint32_t childId) override;
