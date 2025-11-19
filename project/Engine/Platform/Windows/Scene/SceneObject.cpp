@@ -600,6 +600,19 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	return entityId;
 }
 
+void SceneObject::CopyEntity(uint32_t sourceEntityId) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (!entityManager->IsActiveEntity(sourceEntityId)) {
+		assert(false && "Entity is not active");
+		return;
+	}
+	nlohmann::json entityJson;
+	SerializeEntity(sourceEntityId, entityJson);
+	uint32_t newEntityId = entityManager->CreateEntity();
+	DeserializeEntity(newEntityId, entityJson);
+}
+
 void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();

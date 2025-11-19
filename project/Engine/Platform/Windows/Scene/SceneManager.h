@@ -32,6 +32,7 @@ public:
 	void RunTimeSwapScene(const std::string& sceneName);
 
 	// ここにいるべきじゃない
+	void CopyEntity(uint32_t sourceEntityId);
 	void ChangeEntityModel(uint32_t entityId, const std::string& modelName);
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName);
 	void ParentChild(uint32_t parentId, uint32_t childId);	

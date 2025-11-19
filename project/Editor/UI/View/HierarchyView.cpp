@@ -144,6 +144,9 @@ void HierarchyView::DrawEntityList() {
             if (ImGui::MenuItem("Rename")) {
 				ImGui::OpenPopup("Rename Entity");
             }
+            if (ImGui::MenuItem("Copy")) {
+				SceneManager::GetInstance()->CopyEntity(id);
+            }
             if (ImGui::MenuItem("Save")) {
 				// 保存処理
 				SceneManager::GetInstance()->SaveEntity(id, name);
