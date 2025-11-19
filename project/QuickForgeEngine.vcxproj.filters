@@ -436,6 +436,7 @@
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpScriptOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\Data\CsharpComponent.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\TempGraphic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1388,6 +1389,7 @@
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\Data\CsharpComponent.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\TempGraphic.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

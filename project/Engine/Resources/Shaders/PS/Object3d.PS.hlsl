@@ -11,6 +11,7 @@ static const float ditherMatrix[4][4] =
 
 ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
+ConstantBuffer<EchoSphere> gEchoSphere : register(b2);
 Texture2D<float32_t4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
@@ -22,25 +23,24 @@ PixelShaderOutput main(VertexShaderOutput input)
     PixelShaderOutput output;
     float4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
-    
-    float alpha = gMaterial.color.a * textureColor.a;
 
+    float4 color = gMaterial.color * textureColor;
+    float alpha = gMaterial.color.a * textureColor.a;
     if (alpha == 0.0f)
     {
         discard;
     }
 
-    if (gMaterial.enableLighting != 0)
+    float dist = length(input.worldPosition - gEchoSphere.sphereCenter);
+    float edgeMin = gEchoSphere.sphereRadius - gEchoSphere.sphereThickness * 0.5f;
+    float edgeMax = gEchoSphere.sphereRadius + gEchoSphere.sphereThickness * 0.5f;
+    bool isOnEdge = (dist >= edgeMin) && (dist <= edgeMax);
+
+    if (!isOnEdge)
     {
-        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-        output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
-        output.color.a = alpha;
-    }
-    else
-    {
-        output.color = gMaterial.color * textureColor;
+        discard;
     }
 
+    output.color = color;
     return output;
 }

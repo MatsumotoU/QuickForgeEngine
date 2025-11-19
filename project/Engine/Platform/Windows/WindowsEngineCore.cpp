@@ -10,6 +10,8 @@
 #include "Core/EngineGlobalValue.h"
 #include "AppUtility/FileSystems/FileUtility.h"
 
+#include "Graphic/TempGraphic.h"
+
 namespace {
 	uint32_t windowWidth = 1280;
 	uint32_t windowHeight = 720;
@@ -112,6 +114,8 @@ void WindowsEngineCore::Initialize() {
 
 	audioInterface_ = AudioInterface::GetInstance();
 	audioInterface_->Initialize();
+
+	TempGraphic::GetInstance()->Initialize();
 }
 
 void WindowsEngineCore::MainLoop() {
@@ -137,6 +141,7 @@ void WindowsEngineCore::MainLoop() {
 }
 
 void WindowsEngineCore::Shutdown() {
+	TempGraphic::GetInstance()->Finalize();
 	audioInterface_->Finalize();
 	multiThreadTaskExecutor_->Finalize();
 	colliderManager_->Finalize();
@@ -162,6 +167,7 @@ void WindowsEngineCore::Update() {
 	gameWindowManager->Update();
 	editor_->Update();
 	sceneManager_->Update();
+	TempGraphic::GetInstance()->Update();
 }
 
 void WindowsEngineCore::Draw() {
@@ -173,6 +179,7 @@ void WindowsEngineCore::Draw() {
 	graphRenderer_->PreDraw();
 	sceneManager_->PreDraw();
 
+	TempGraphic::GetInstance()->Draw();
 	gameWindowManager->Draw();
 	editor_->Draw();
 	sceneManager_->Draw();

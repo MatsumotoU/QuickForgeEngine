@@ -18,6 +18,18 @@ using float32_t3x3 = Matrix3x3;
 using float32_t2x2 = Matrix2x2;
 #endif
 
+struct EchoSphere {
+#ifdef __cplusplus
+	EchoSphere()
+		: sphereCenter{ 0.0f, 0.0f, 0.0f }
+		, sphereRadius(0.0f)
+		, sphereThickness(0.2f) {}
+#endif
+	float32_t3 sphereCenter;
+	float32_t  sphereRadius;
+	float32_t  sphereThickness;
+};
+
 struct ColorCorrectionOffset {
 #ifdef __cplusplus
 	ColorCorrectionOffset()

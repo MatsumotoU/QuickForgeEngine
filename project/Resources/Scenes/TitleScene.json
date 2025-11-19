@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.19638952612876892,
-                    -3.0849995613098145,
+                    0.6952699422836304,
+                    -2.0146610736846924,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.2946801781654358,
-                    1.036507487297058,
-                    5.201445579528809
+                    10.688002586364746,
+                    9.873008728027344,
+                    5.08225679397583
                 ]
             }
         },
@@ -88,6 +88,50 @@
                     0.0,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "EmptyObject",
+                "tag": "Untagged",
+                "uniqueId": 2850
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Echo.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "titleSceneTransition.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    -2.0
                 ]
             }
         }

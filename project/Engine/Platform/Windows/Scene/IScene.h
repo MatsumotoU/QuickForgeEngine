@@ -37,6 +37,7 @@ public:
 	virtual uint32_t RunTimeAddEntity(const std::string& entityName) = 0;
 
 	// シーンにあるオブジェクトを保存、読み込み、変更
+	//virtual void CopyEntity(uint32_t entityId, uint32_t& outNewEntityId);
 	virtual void ChangeEntityModel(uint32_t entityId, const std::string& modelName) = 0;
 	virtual void SaveEntity(uint32_t entityId, const std::string& entityFileName) = 0;
 	virtual void ParentChild(uint32_t parentId, uint32_t childId) = 0;

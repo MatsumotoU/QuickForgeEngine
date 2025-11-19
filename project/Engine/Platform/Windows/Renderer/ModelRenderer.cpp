@@ -3,6 +3,7 @@
 #include "Assets/3DModel/Data/ModelRenderData.h"
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "Graphic/Pipeline/GraphicPipelineManager.h"
+#include "Graphic/TempGraphic.h"
 #include <cassert>
 
 void Render::Model::DrawModel(const uint32_t& modelHandle) {
@@ -35,6 +36,8 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 			assetManager->GetTextureManager()->GetTextureSrvHandleGPU(handle.textureHandle));
 		commandList->SetGraphicsRootConstantBufferView(3, 
 			assetManager->GetLightBufferManager()->GetBufferAddress(handle.lightBufferHandle));
+		commandList->SetGraphicsRootConstantBufferView(4,
+			TempGraphic::GetInstance()->GetEchoSphereBuffer()->GetGPUVirtualAddress());
 		commandList->DrawInstanced(static_cast<UINT>(
 			assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);
 	}

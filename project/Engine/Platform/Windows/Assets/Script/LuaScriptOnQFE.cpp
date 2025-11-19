@@ -8,6 +8,7 @@
 #include "Physics/Force.h"
 #include "Assets/Script/Data/ScriptHandle.h"
 #include "QFElinker/SetQFELinkers.h"
+#include "Graphic/TempGraphic.h"
 
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
@@ -238,6 +239,11 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::this_state ts) {
 			sol::state_view callerState(ts);
 			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
+		}
+	);
+	luaState_->set_function("Echo",
+		[](Vector3 pos, float p) {
+			TempGraphic::GetInstance()->Echo(pos, p);
 		}
 	);
 }

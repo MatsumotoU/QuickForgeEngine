@@ -352,6 +352,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClCompile Include="Engine\Platform\Windows\Collider\ColliderMask.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\TempGraphic.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\InputInterface.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\KeyConfig.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Input\XInput\XInputController.cpp" />
@@ -541,6 +542,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClInclude Include="Engine\Platform\Windows\Collider\Data\AABBColliderData.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\Data\SphereColliderData.h" />
     <ClInclude Include="Engine\Platform\Windows\Collider\ColliderManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\TempGraphic.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\InputInterface.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\KeyConfig.h" />
     <ClInclude Include="Engine\Platform\Windows\Input\XInput\XInputController.h" />
