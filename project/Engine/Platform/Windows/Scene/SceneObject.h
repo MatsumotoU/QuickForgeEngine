@@ -64,6 +64,7 @@ private:
 	std::unordered_map<std::string, nlohmann::json> loadEntities_;
 
 	bool isRunningScript_;
+	bool isPauseScript_;
 	bool isRequestStopScript_;
 	ListUniqueIDManager uniqueIdManager_;
 	
