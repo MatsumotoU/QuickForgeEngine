@@ -6,6 +6,7 @@
 #include <mono/metadata/image.h>
 
 #include "Assets/AssetManager.h"
+#include "QFElinker/CsharpOnQFELinker.h"
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -25,6 +26,14 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 
 	// Monoランタイムにライブラリと設定ファイルの場所を教える
 	mono_set_dirs(monoLibPath.string().c_str(), monoEtcPath.string().c_str());
+
+	// Monoのデバッガを有効化
+#ifdef _DEBUG
+	const char* options[] = {
+		"--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555,suspend=n"
+	};
+	mono_jit_parse_options(sizeof(options) / sizeof(char*), (char**)options);
+#endif // _DEBUG
 
 	// ルートドメインを初期化 (プログラム終了時まで保持)
 	root_domain_ = mono_jit_init("QuickForgeRootDomain");
@@ -69,84 +78,24 @@ void CsharpVirtualEnvironmentOnQFE::OpenCSharpProjectInVSCode() {
 	system(command.c_str());
 }
 
-// C#の QuickForgeEngine.Debug.Log(string message) に対応するC++ラッパー関数
-static void Native_Debug_Log(MonoString* message)
-{
-    // MonoString* を C++で扱える const char* に変換します
-    char* utf8_message = mono_string_to_utf8(message);
-    DebugLog(utf8_message); // This line will be replaced by the new DebugLog(utf8_message,LogLevel::EditorInfo); in the search string
-
-    // mono_string_to_utf8で確保されたメモリを解放します
-    mono_free(utf8_message);
-}
-
-// --- Transform操作用API ---
-#include "Core/Entity/EntityManager.h"
-#include "Core/Math/Transform.h"
-#include "Core/Math/Vector/Vector3.h"
-
-static void GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        *outTranslate = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate;
-    }
-}
-
-static void SetTransformTranslate(uint32_t entityId, Vector3* inTranslate) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate = *inTranslate;
-    }
-}
-
-static void GetTransformRotate(uint32_t entityId, Vector3* outRotate) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        *outRotate = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate;
-    }
-}
-
-static void SetTransformRotate(uint32_t entityId, Vector3* inRotate) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate = *inRotate;
-    }
-}
-
-static void GetTransformScale(uint32_t entityId, Vector3* outScale) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        *outScale = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).scale;
-    }
-}
-
-static void SetTransformScale(uint32_t entityId, Vector3* inScale) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).scale = *inScale;
-    }
-}
-
-static void Translate(uint32_t entityId, Vector3* translation) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate += *translation;
-    }
-}
-
-static void Rotate(uint32_t entityId, Vector3* eulerAngles) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate += *eulerAngles;
-    }
-}
-// --- Transform操作用APIここまで ---
-
 void CsharpVirtualEnvironmentOnQFE::LinkQFEAPIToMono() {
-	// 正しいメソッド名 "名前空間.クラス名::メソッド名" を指定し、ラッパー関数を登録します
-	mono_add_internal_call("QuickForgeEngine.Debug::Log", (const void*)Native_Debug_Log);
+	// Debug用APIの登録
+	mono_add_internal_call("QuickForgeEngine.Debug::Log", (const void*)CsharpOnQFELinker::Native_Debug_Log);
+
+	// Input操作用APIの登録
+	mono_add_internal_call("QuickForgeEngine.Input::GetKeyTrigger", (const void*)CsharpOnQFELinker::IsKeyTrigger);
+	mono_add_internal_call("QuickForgeEngine.Input::GetKeyPress", (const void*)CsharpOnQFELinker::IsKeyPress);
+	mono_add_internal_call("QuickForgeEngine.Input::GetKeyRelease", (const void*)CsharpOnQFELinker::IsKeyRelease);
 
 	// Transform操作用APIの登録
-	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", (const void*)GetTransformTranslate);
-	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetTranslate", (const void*)SetTransformTranslate);
-	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetRotate", (const void*)GetTransformRotate);
-	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetRotate", (const void*)SetTransformRotate);
-	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetScale", (const void*)GetTransformScale);
-	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetScale", (const void*)SetTransformScale);
-	mono_add_internal_call("QuickForgeEngine.TransformInternal::Translate", (const void*)Translate);
-	mono_add_internal_call("QuickForgeEngine.TransformInternal::Rotate", (const void*)Rotate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", (const void*)CsharpOnQFELinker::GetTransformRotate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetTranslate", (const void*)CsharpOnQFELinker::SetTransformTranslate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetRotate", (const void*)CsharpOnQFELinker::GetTransformRotate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetRotate", (const void*)CsharpOnQFELinker::SetTransformRotate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetScale", (const void*)CsharpOnQFELinker::GetTransformScale);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetScale", (const void*)CsharpOnQFELinker::SetTransformScale);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::Translate", (const void*)CsharpOnQFELinker::Translate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::Rotate", (const void*)CsharpOnQFELinker::Rotate);
 }
 
 void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
@@ -164,11 +113,20 @@ void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
 		return;
 	}
 
-	std::string dllPath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + "bin/Debug/netstandard2.0/CSharpScripts.dll";
-	assembly_ = mono_domain_assembly_open(domain_, dllPath.c_str());
+    // 実行ファイルのパスを取得
+    char path[MAX_PATH];
+    GetModuleFileNameA(NULL, path, MAX_PATH);
+
+    // 実行ファイルのディレクトリを取得
+    std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
+
+    // 読み込むDLLのフルパスを構築 (exeと同じ階層)
+    std::filesystem::path dllPath = exeDir / "CSharpScripts.dll";
+
+	assembly_ = mono_domain_assembly_open(domain_, dllPath.string().c_str());
 	if (!assembly_) {
 #ifdef _DEBUG
-		DebugLog("Failed to load assembly: " + dllPath);
+		DebugLog("Failed to load assembly: " + dllPath.string());
 #endif // _DEBUG
 	}
 	return;
@@ -362,7 +320,7 @@ void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std:
 		if (exceptionMsg) {
 			char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
 #ifdef _DEBUG
-			DebugLog(std::string("Mono Exception: ") + exceptionCStr);
+			DebugLog("C# Script[" + std::to_string(index) + "]:" + exceptionCStr, LogLevel::Error);
 #endif
 			mono_free(exceptionCStr);
 		}
@@ -376,16 +334,14 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 
 	// 既存のスクリプトドメインをアンロード
 	if (domain_) {
-		// ルートドメインはアンロードしない
 		if (domain_ != root_domain_) {
-			// アンロードする前に、カレントドメインを安全なルートドメインに戻す
 			mono_domain_set(root_domain_, false);
 			mono_domain_unload(domain_);
 		}
 		domain_ = nullptr;
 	}
 
-	// --- 新しいドメインを作成してアセンブリをロード ---
+	// --- 新しいドメインを作成 ---
 	char domain_name[] = "QuickForgeScriptDomain";
 	domain_ = mono_domain_create_appdomain(domain_name, nullptr);
 	if (!domain_) {
@@ -395,7 +351,6 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 		return;
 	}
 
-	// 新しく作成したドメインを現在のドメインとして設定
 	if (!mono_domain_set(domain_, false)) {
 #ifdef _DEBUG
 		DebugLog("Failed to set app domain.");
@@ -403,8 +358,37 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 		return;
 	}
 
-	// スクリプトを再コンパイル
+	// --- C#スクリプトをコンパイル ---
 	CompileScripts();
+
+	// --- コンパイル済み成果物（DLL/PDB）をエンジンの実行ファイルディレクトリにコピー ---
+	try {
+		// 1. コピー元のパスを定義: C#プロジェクトのデフォルトビルド出力先
+		std::string scriptsBuildDir = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + "bin/Debug/netstandard2.0/";
+		std::filesystem::path srcDllPath = scriptsBuildDir + "CSharpScripts.dll";
+		std::filesystem::path srcPdbPath = scriptsBuildDir + "CSharpScripts.pdb";
+
+		// 2. コピー先のパスを定義: エンジンの実行ファイルがあるディレクトリ
+		char exePath[MAX_PATH];
+		GetModuleFileNameA(NULL, exePath, MAX_PATH);
+		std::filesystem::path destDir = std::filesystem::path(exePath).parent_path();
+
+		// 3. ファイルをコピー（既存のファイルを上書き）
+		std::filesystem::copy(srcDllPath, destDir, std::filesystem::copy_options::overwrite_existing);
+		std::filesystem::copy(srcPdbPath, destDir, std::filesystem::copy_options::overwrite_existing);
+
+#ifdef _DEBUG
+		DebugLog("Copied C# artifacts to executable directory.");
+#endif
+	}
+	catch (const std::filesystem::filesystem_error& e) {
+#ifdef _DEBUG
+		DebugLog(std::string("Failed to copy C# artifacts: ") + e.what());
+#endif
+		// コピーに失敗した場合は、後続のDLLロードをしないよう早期リターン
+		return;
+	}
+	// --- コピー処理ここまで ---
 
 	// APIを再度リンク
 	LinkQFEAPIToMono();

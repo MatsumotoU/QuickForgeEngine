@@ -41,6 +41,7 @@ private:
 	std::ofstream logStream_;
 	std::string logFilePath_;
 	std::vector<std::string> log_;
+	
 };
 
 /// <summary>
@@ -54,3 +55,5 @@ void AppendLuaValueToString(const sol::object& v, std::string& msg);
 
 // 文字列・数値どちらも受け取れるラッパー関数
 void DebugLogLua(sol::variadic_args va,uint32_t id,const std::string& scriptName);
+
+void DebugLogCsharp(const std::string& message);

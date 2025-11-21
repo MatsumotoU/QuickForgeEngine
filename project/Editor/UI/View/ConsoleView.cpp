@@ -55,6 +55,10 @@ void ConsoleView::Draw() {
 	ImGui::BeginChild("LogArea", logAreaSize, false, ImGuiWindowFlags_HorizontalScrollbar);
 
 	auto& logs = MyDebugLog::GetInstance()->editorLog_;
+	if (MyDebugLog::GetInstance()->errorLog_.size() > 0) {
+		logLevel_ = LogLevel::Error;
+	}
+
 	switch (logLevel_)
 	{
 	case LogLevel::EngineInfo:

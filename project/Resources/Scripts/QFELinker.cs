@@ -11,6 +11,16 @@ namespace QuickForgeEngine
         public static extern void Log(string message);
     }
 
+    public static class Input
+    {
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetKeyTrigger(string actionName);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetKeyPress(string actionName);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetKeyRelease(string actionName);
+    }
+
     // C#スクリプト用QuickForgeコンポーネントクラス
     public abstract class QuickForgeComponent
     {

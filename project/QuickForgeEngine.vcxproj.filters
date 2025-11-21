@@ -436,6 +436,7 @@
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpScriptOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\Data\CsharpComponent.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpOnQFELinker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">

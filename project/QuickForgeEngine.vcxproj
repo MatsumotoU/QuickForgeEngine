@@ -332,6 +332,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\Data\CsharpComponent.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\LuaScriptOnQFE.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpOnQFELinker.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.cpp" />
