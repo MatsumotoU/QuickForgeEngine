@@ -24,10 +24,12 @@ void ColliderManager::Update() {
 }
 
 void ColliderManager::Draw() {
+#ifdef _DEBUG
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	if (entityManager->HasComponentStrage<SphereColliderData>()) {
+
+
 		auto& sphereColliderStrage = entityManager->GetComponentStrage<SphereColliderData>();
-#ifdef _DEBUG
 		for (const auto& pair : sphereColliderStrage) {
 
 			const SphereColliderData& collider = pair.second;
@@ -35,20 +37,20 @@ void ColliderManager::Draw() {
 				GraphRenderer::GetInstance()->DrawCircle(collider.sphere.center, collider.sphere.radius, { 0.0f, 1.0f, 0.0f, 1.0f }, 12);
 			}
 		}
-#endif // _DEBUG
 	}
 
 	if (entityManager->HasComponentStrage<AABBColliderData>()) {
+
 		auto& aabbColliderStrage = entityManager->GetComponentStrage<AABBColliderData>();
-#ifdef _DEBUG
 		for (const auto& pair : aabbColliderStrage) {
 			const AABBColliderData& collider = pair.second;
 			if (collider.isDraw) {
 				GraphRenderer::GetInstance()->DrawBox(collider.aabb.min, collider.aabb.max, { 0.0f, 1.0f, 0.0f, 1.0f });
 			}
 		}
-#endif // _DEBUG
+
 	}
+#endif // _DEBUG
 }
 
 void ColliderManager::Finalize() {
