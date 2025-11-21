@@ -134,3 +134,7 @@ void DebugLogLua(sol::variadic_args va, uint32_t id, const std::string& scriptNa
 	}
 	DebugLog(msg, LogLevel::EditorInfo);
 }
+
+void DebugLogCsharp(const std::string& message) {
+	DebugLog(message, LogLevel::EditorInfo);
+}

@@ -56,7 +56,10 @@ const std::vector<uint32_t>& KeyConfig::GetKeys(const std::string& name) const {
 	if (it != keyMap_.end()) {
 		return it->second;
 	}
-	assert(false && "KeyConfig Not Found");
+	
+#ifdef _DEBUG
+	DebugLog("GetKeys: No keys found for action '" + name + "'", LogLevel::Error);
+#endif // _DEBUG
 	return emptyVector;
 }
 
