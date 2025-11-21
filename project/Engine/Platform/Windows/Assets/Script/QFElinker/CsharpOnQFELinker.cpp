@@ -83,7 +83,9 @@ bool CsharpOnQFELinker::IsKeyRelease(MonoString* actionName) {
 }
 
 void CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {
+#ifdef _DEBUG
     char* utf8_message = mono_string_to_utf8(message);
 	DebugLogCsharp(utf8_message);
     mono_free(utf8_message);
+#endif // _DEBUG
 }
