@@ -13,6 +13,7 @@ class CsharpVirtualEnvironmentOnQFE final:public Singleton<CsharpVirtualEnvironm
 	friend class Singleton<CsharpVirtualEnvironmentOnQFE>;
 public:
 	void Initialize();
+	void ResetScripts();
 	void CreateCSProject(std::string& projectName);
 	void CompileScripts();
 	void OpenCSharpProjectInVSCode();

@@ -39,6 +39,10 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	ReloadAssembly();
 }
 
+void CsharpVirtualEnvironmentOnQFE::ResetScripts() {
+	scripts_.clear();
+}
+
 void CsharpVirtualEnvironmentOnQFE::CreateCSProject(std::string& projectName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	std::string scriptsDir = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
@@ -135,14 +139,14 @@ void CsharpVirtualEnvironmentOnQFE::LinkQFEAPIToMono() {
 	mono_add_internal_call("QuickForgeEngine.Debug::Log", (const void*)Native_Debug_Log);
 
 	// Transform操作用APIの登録
-	mono_add_internal_call("QuickForge.TransformInternal::GetTranslate", (const void*)GetTransformTranslate);
-	mono_add_internal_call("QuickForge.TransformInternal::SetTranslate", (const void*)SetTransformTranslate);
-	mono_add_internal_call("QuickForge.TransformInternal::GetRotate", (const void*)GetTransformRotate);
-	mono_add_internal_call("QuickForge.TransformInternal::SetRotate", (const void*)SetTransformRotate);
-	mono_add_internal_call("QuickForge.TransformInternal::GetScale", (const void*)GetTransformScale);
-	mono_add_internal_call("QuickForge.TransformInternal::SetScale", (const void*)SetTransformScale);
-	mono_add_internal_call("QuickForge.TransformInternal::Translate", (const void*)Translate);
-	mono_add_internal_call("QuickForge.TransformInternal::Rotate", (const void*)Rotate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", (const void*)GetTransformTranslate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetTranslate", (const void*)SetTransformTranslate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetRotate", (const void*)GetTransformRotate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetRotate", (const void*)SetTransformRotate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetScale", (const void*)GetTransformScale);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetScale", (const void*)SetTransformScale);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::Translate", (const void*)Translate);
+	mono_add_internal_call("QuickForgeEngine.TransformInternal::Rotate", (const void*)Rotate);
 }
 
 void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {

@@ -52,12 +52,13 @@ void SceneObject::Initialize() {
 	CameraManager::GetInstance()->Initialize();
 	isRequestStopScript_ = false;
 	isRunningScript_ = false;
+	isPauseScript_ = false;
 }
 
 void SceneObject::Update() {
 
 	// スクリプト更新
-	if (isRunningScript_) {
+	if (isRunningScript_ && !isPauseScript_) {
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();
@@ -296,6 +297,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	entityManager->ResetEntiry();
 	LuaScriptResourceManager::GetInstance()->Reset();
 	AudioInterface::GetInstance()->StopAllSound();
+	CsharpVirtualEnvironmentOnQFE::GetInstance()->ResetScripts();
 
 	// シーンファイルのパスを組み立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
@@ -370,9 +372,11 @@ void SceneObject::RunScene() {
 }
 
 void SceneObject::PauseScene() {
+	isPauseScript_ = true;
 }
 
 void SceneObject::ResumeScene() {
+	isPauseScript_ = false;
 }
 
 void SceneObject::StopScene() {
@@ -768,6 +772,20 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		entityManager->EmplaceComponent<AABBColliderData>(entityId);
 		AABBColliderData& aabbColliderData = entityManager->GetComponent<AABBColliderData>(entityId);
 		aabbColliderData.Deserialize(entityJson["AABBColliderData"]);
+	}
+	if (entityJson.contains("CsharpComponent")) {
+		std::vector<std::string> classNames;
+		if (entityJson["CsharpComponent"].contains("CsharpHandles")) {
+			// C#スクリプトの復元
+			for (const auto& handle : entityJson["CsharpComponent"]["CsharpHandles"]) {
+				if (handle.contains("ClassName")) {
+#ifdef _DEBUG
+					DebugLog("Load Csharp Script: " + handle["ClassName"].get<std::string>());
+#endif // _DEBUG
+					AddCsharpScript(entityId, handle["ClassName"].get<std::string>());
+				}
+			}
+		}
 	}
 	if (entityJson.contains("ScriptHandle")) {
 		std::vector<std::string> scriptNames;

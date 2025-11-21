@@ -9,12 +9,12 @@
             "SceneObjectData": {
                 "name": "DebugCamera",
                 "tag": "camera",
-                "uniqueId": 1
+                "uniqueId": 2
             },
             "Transform": {
                 "rotate": [
-                    0.19638952612876892,
-                    -3.0849995613098145,
+                    0.29639026522636414,
+                    -0.10000022500753403,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.2946801781654358,
-                    1.036507487297058,
-                    5.201445579528809
+                    0.9654874205589294,
+                    2.95337176322937,
+                    -9.622648239135742
                 ]
             }
         },
@@ -38,7 +38,7 @@
             "SceneObjectData": {
                 "name": "Camera",
                 "tag": "camera",
-                "uniqueId": 2
+                "uniqueId": 1
             },
             "Transform": {
                 "rotate": [
@@ -55,6 +55,152 @@
                     0.0,
                     1.5,
                     -10.0
+                ]
+            }
+        },
+        {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "testA"
+                    }
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "AAAAAAAAAAAAAAAA",
+                "tag": "Untagged",
+                "uniqueId": 3
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "Box1x1.obj",
+                "tag": "Untagged",
+                "uniqueId": 4
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.7287518978118896,
+                    0.0
+                ]
+            }
+        },
+        {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "testA"
+                    }
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "block2x2.obj"
+            },
+            "SceneObjectData": {
+                "name": "block2x2.obj",
+                "tag": "Untagged",
+                "uniqueId": 5
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    -1.2375463247299194,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Bullet.obj"
+            },
+            "SceneObjectData": {
+                "name": "Bullet.obj",
+                "tag": "Untagged",
+                "uniqueId": 6
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    1.8626325130462646,
+                    -0.3117333650588989,
+                    0.0
                 ]
             }
         }
