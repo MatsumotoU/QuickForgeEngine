@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.29639026522636414,
-                    -0.10000022500753403,
+                    0.5088897347450256,
+                    0.15249961614608765,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    1.5383708477020264,
-                    4.705790042877197,
-                    -15.33236026763916
+                    -1.978211760520935,
+                    7.265183925628662,
+                    -12.871198654174805
                 ]
             }
         },
@@ -76,7 +76,7 @@
                 "modelName": "Box1x1.obj"
             },
             "SceneObjectData": {
-                "name": "AAAAAAAAAAAAAAAA",
+                "name": "CsharpTestObj",
                 "tag": "Untagged",
                 "uniqueId": 3
             },
@@ -94,112 +94,6 @@
                 "translate": [
                     0.0,
                     0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "Box1x1.obj",
-                "tag": "Untagged",
-                "uniqueId": 4
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    1.7287518978118896,
-                    0.0
-                ]
-            }
-        },
-        {
-            "CsharpComponent": {
-                "CsharpHandles": [
-                    {
-                        "ClassName": "testA"
-                    }
-                ]
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "block2x2.obj"
-            },
-            "SceneObjectData": {
-                "name": "block2x2.obj",
-                "tag": "Untagged",
-                "uniqueId": 5
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    -1.2375463247299194,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Bullet.obj"
-            },
-            "SceneObjectData": {
-                "name": "Bullet.obj",
-                "tag": "Untagged",
-                "uniqueId": 6
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    1.8626325130462646,
-                    -0.3117333650588989,
                     0.0
                 ]
             }

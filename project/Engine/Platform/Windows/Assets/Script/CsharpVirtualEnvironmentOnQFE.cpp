@@ -82,10 +82,16 @@ void CsharpVirtualEnvironmentOnQFE::LinkQFEAPIToMono() {
 	// Debug用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Debug::Log", (const void*)CsharpOnQFELinker::Native_Debug_Log);
 
+	// Time操作用APIの登録
+	mono_add_internal_call("QuickForgeEngine.Time::GetDeltaTime", (const void*)CsharpOnQFELinker::GetDeltaTime);
+
 	// Input操作用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyTrigger", (const void*)CsharpOnQFELinker::IsKeyTrigger);
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyPress", (const void*)CsharpOnQFELinker::IsKeyPress);
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyRelease", (const void*)CsharpOnQFELinker::IsKeyRelease);
+
+	// Entity操作用APIの登録
+	mono_add_internal_call("QuickForgeEngine.Entity::Create", (const void*)CsharpOnQFELinker::CreateEntity);
 
 	// Transform操作用APIの登録
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", (const void*)CsharpOnQFELinker::GetTransformRotate);

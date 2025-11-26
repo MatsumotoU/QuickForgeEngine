@@ -597,6 +597,12 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 			LuaScriptResourceManager::GetInstance()->InitializeScript(sh.handle_);
 		}
 	}
+	if (entityManager->HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
+		CsharpComponent& csharpComponent = entityManager->GetComponent<CsharpComponent>(entityId);
+		for (const auto& ch : csharpComponent.csharpHandles_) {
+			CsharpVirtualEnvironmentOnQFE::GetInstance()->RunScriptFunction(ch.scriptIndex_, "Initialize");
+		}
+	}
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 #ifdef _DEBUG
 	DebugLog("RunTimeAddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
