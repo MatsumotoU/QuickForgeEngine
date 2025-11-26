@@ -5,9 +5,12 @@
 #pragma comment(lib,"dxcompiler.lib")
 #include <cassert>
 
+#include "AppUtility/FileSystems/FileUtility.h"
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
+
+#include "ShaderReflection.h"
 
 ShaderCompiler::ShaderCompiler() {
 	iDxcBlobMap_.clear();
@@ -106,6 +109,13 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	Log(ConvertString(std::format(L"Compile Succeded, path:{},profile:{}\n", filePath, profile)));
 	shaderSource->Release();
 	shaderResult->Release();
+
+	// 5:シェーダーリフレクション情報を外部に出力する
+	ShaderReflection shaderReflection;
+	shaderReflection.RunShaderReflection(shaderBlob);
+	nlohmann::json shaderJson = shaderReflection.Serialize();
+	std::string savePath = "Resources/TestFolder/" + ConvertString(filePath.substr(filePath.find_last_of(L"/\\") + 1)) + ".json";
+	QFE::FILE::SaveJSONToFile( savePath, shaderJson);
 
 	// シェーダーを登録
 	iDxcBlobMap_.emplace(filePath, shaderBlob);

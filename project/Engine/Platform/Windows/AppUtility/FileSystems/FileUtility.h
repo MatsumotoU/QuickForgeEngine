@@ -15,4 +15,5 @@ namespace QFE::FILE {
 	bool HasExtension(const std::string& fileName, const std::string& extension);
 
 	extern bool LoadCSVToVector(const std::string& filePath, std::vector<std::vector<uint32_t>>& map);
+	extern bool SaveJSONToFile(const std::string& filePath, const nlohmann::json& json);
 }

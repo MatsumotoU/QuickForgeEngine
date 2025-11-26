@@ -1,0 +1,73 @@
+{
+    "ConstantBuffers": [
+        {
+            "Name": "gParticle",
+            "Size": 144,
+            "Variables": [
+                {
+                    "Name": "$Element",
+                    "Size": 144,
+                    "StartOffset": 0
+                }
+            ]
+        }
+    ],
+    "Inputs": [
+        {
+            "ComponentType": 3,
+            "Mask": 15,
+            "ReadWriteMask": 15,
+            "Register": 0,
+            "SemanticIndex": 0,
+            "SemanticName": "POSITION",
+            "SystemValueType": 0
+        },
+        {
+            "ComponentType": 3,
+            "Mask": 3,
+            "ReadWriteMask": 3,
+            "Register": 1,
+            "SemanticIndex": 0,
+            "SemanticName": "TEXCOORD",
+            "SystemValueType": 0
+        },
+        {
+            "ComponentType": 3,
+            "Mask": 7,
+            "ReadWriteMask": 0,
+            "Register": 2,
+            "SemanticIndex": 0,
+            "SemanticName": "NORMAL",
+            "SystemValueType": 0
+        },
+        {
+            "ComponentType": 1,
+            "Mask": 1,
+            "ReadWriteMask": 1,
+            "Register": 3,
+            "SemanticIndex": 0,
+            "SemanticName": "SV_INSTANCEID",
+            "SystemValueType": 8
+        }
+    ],
+    "Resources": [
+        {
+            "BindCount": 1,
+            "BindPoint": 0,
+            "Flags": 0,
+            "Name": "gParticle",
+            "Space": 0,
+            "Type": 5
+        }
+    ],
+    "StructuredBuffers": [
+        {
+            "BindCount": 1,
+            "BindPoint": 0,
+            "Flags": 0,
+            "Name": "gParticle",
+            "Space": 0
+        }
+    ],
+    "Textures": []
+}

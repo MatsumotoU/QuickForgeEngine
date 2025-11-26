@@ -72,3 +72,13 @@ bool QFE::FILE::LoadCSVToVector(const std::string& filePath, std::vector<std::ve
 	}
     return false;
 }
+
+bool QFE::FILE::SaveJSONToFile(const std::string& filePath, const nlohmann::json& json) {
+	std::ofstream ofs(filePath);
+	if (ofs.is_open()) {
+		ofs << json.dump(4); // インデント幅4で整形して保存
+		ofs.close();
+		return true;
+	}
+    return false;
+}

@@ -437,6 +437,8 @@
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\Data\CsharpComponent.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpOnQFELinker.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Renderer\ParticleRenderer.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderReflection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1389,6 +1391,9 @@
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\Data\CsharpComponent.h" />
+    <ClInclude Include="Engine\Platform\Windows\Renderer\ParticleRenderer.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderReflection.h" />
+    <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiledData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">
