@@ -1,6 +1,7 @@
 #pragma once
 #include "PSO/PipelineStateObject.h"
-#include "Platform/Windows/Graphic/DirectXCommon/Descriptors/DsvDescriptorHeap.h"
+#include "Graphic/DirectXCommon/Descriptors/DsvDescriptorHeap.h"
+#include "Graphic/Pipeline/PSO/ShaderReflection.h"
 
 #include "Utility/DesignPatterns/Singleton.h"
 

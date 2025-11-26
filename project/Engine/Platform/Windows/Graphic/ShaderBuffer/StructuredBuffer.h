@@ -2,13 +2,13 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <cassert>
-#include "Platform/Windows/Graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
-
+#include "Graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
+#include "Graphic/DirectXCommon/DirectXCommon.h"
 
 template<class T>
 class StructuredBuffer final {
 public:
-	void CreateResource(DirectXCommon* dxcommon, StvDescriptorHeap* srvDescriptor, uint32_t elementCount) {
+	void CreateResource(DirectXCommon* dxcommon, SrvDescriptorHeap* srvDescriptor, uint32_t elementCount) {
 		// Resourceの生成
 		structSize_ = sizeof(T);
 		elementCount_ = elementCount;

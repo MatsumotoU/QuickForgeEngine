@@ -5,6 +5,7 @@
 #include <dxcapi.h>
 #include <map>
 
+#include "ShaderCompiledData.h"
 #include "String/MyString.h"
 
 class ShaderCompiler final {
