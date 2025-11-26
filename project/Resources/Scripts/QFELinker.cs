@@ -21,6 +21,18 @@ namespace QuickForgeEngine
         public static extern bool GetKeyRelease(string actionName);
     }
 
+    public static class Time
+    {
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern float GetDeltaTime();
+    }
+
+    public static class Entity
+    {
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern uint Create(string name);
+    }
+
     // C#スクリプト用QuickForgeコンポーネントクラス
     public abstract class QuickForgeComponent
     {

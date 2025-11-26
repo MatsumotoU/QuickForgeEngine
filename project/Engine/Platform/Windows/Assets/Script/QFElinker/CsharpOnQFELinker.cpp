@@ -5,9 +5,11 @@
 #endif // _DEBUG
 
 #include "Assets/AssetManager.h"
+#include "Scene/SceneManager.h"
 #include "Core/Entity/EntityManager.h"
 #include "Input/InputInterface.h"
 
+#include "Core/EngineGlobalValue.h"
 #include "Core/Math/Transform.h"
 
 void CsharpOnQFELinker::GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
@@ -58,6 +60,10 @@ void CsharpOnQFELinker::Rotate(uint32_t entityId, Vector3* eulerAngles) {
     }
 }
 
+float CsharpOnQFELinker::GetDeltaTime() {
+	return QFE::EngineGlobalValue::deltaTime;
+}
+
 bool CsharpOnQFELinker::IsKeyTrigger(MonoString* actionName) {
 	bool result = false;
     char* utf8_message = mono_string_to_utf8(actionName);
@@ -80,6 +86,13 @@ bool CsharpOnQFELinker::IsKeyRelease(MonoString* actionName) {
     result = InputInterface::GetInstance()->GetKeyRelease(utf8_message);
     mono_free(utf8_message);
     return result;
+}
+
+uint32_t CsharpOnQFELinker::CreateEntity(MonoString* className) {
+	char* utf8_className = mono_string_to_utf8(className);
+	uint32_t entityId = SceneManager::GetInstance()->RunTimeAddEntity(utf8_className);
+	mono_free(utf8_className);
+	return entityId;
 }
 
 void CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {
