@@ -359,7 +359,9 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 	}
 
 	// --- C#スクリプトをコンパイル ---
+#ifdef _DEBUG
 	CompileScripts();
+#endif // _DEBUG
 
 	// --- コンパイル済み成果物（DLL/PDB）をエンジンの実行ファイルディレクトリにコピー ---
 	try {
