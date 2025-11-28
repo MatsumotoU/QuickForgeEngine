@@ -31,6 +31,7 @@
 
 #include "Renderer/ModelRenderer.h"
 #include "Renderer/SpriteRenderer.h"
+#include "Renderer/ParticleRenderer.h"
 
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
@@ -122,6 +123,19 @@ void SceneObject::Update() {
 					transform.translate
 				);
 			}
+
+			// パーティクルのワールド行列更新
+			if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
+				ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(entityId);
+				ParticleForGPU* particleData = assetManager->GetParticleGpuDataManager()->GetDataPtr(particleComp.particleGpuBufferHandle);
+				for (uint32_t i = 0; i < particleComp.maxParticleCount; i++) {
+					particleData[i].World = Matrix4x4::MakeAffineMatrix(
+						transform.scale,
+						transform.rotate,
+						transform.translate
+					);
+				}
+			}
 		}
 	}
 
@@ -207,6 +221,14 @@ void SceneObject::PreDraw() {
 				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
 				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Orthographic);
 			}
+			// パーティクルのワールド行列更新
+			if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
+				ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(entityId);
+				ParticleForGPU* particleData = assetManager->GetParticleGpuDataManager()->GetDataPtr(particleComp.particleGpuBufferHandle);
+				for (uint32_t i = 0; i < particleComp.maxParticleCount; i++) {
+					particleData[i].WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(particleData[i].World, CameraType::Perspective);
+				}
+			}
 		}
 	}
 
@@ -235,7 +257,13 @@ void SceneObject::PreDraw() {
 void SceneObject::Draw() {
 	// コライダー描画
 	ColliderManager::GetInstance()->Draw();
-
+	// パーティクル描画
+	if (assetManager_->GetEntityManager()->HasComponentStrage<ParticleComponent>()) {
+		const auto& particleStrage = assetManager_->GetEntityManager()->GetComponentStrage<ParticleComponent>();
+		for (const auto& [entityId, particle] : particleStrage) {
+			Render::Particle::DrawParticles(entityId);
+		}
+	}
 	// モデル描画
 	if (assetManager_->GetEntityManager()->HasComponentStrage<ModelHandle>()) {
 		const auto& modelStrage = assetManager_->GetEntityManager()->GetComponentStrage<ModelHandle>();
@@ -403,10 +431,13 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 	// ParticleComponent追加
 	ParticleComponent particleComponent;
+	particleComponent.modelName = modelName;
+	particleComponent.maxParticleCount = maxCount;
+	particleComponent.vartexBufferHandle = assetManager->LoadModelMesh(modelName);
+	particleComponent.textureHandle = assetManager->LoadModelTexture(modelName);
+	particleComponent.materialHandle = assetManager->GetMaterialBufferManager()->CreateBuffer();
 	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
 	assetManager->GetEntityManager()->EmplaceComponent<ParticleComponent>(entityId, particleComponent);
-
-
 
 	// いつものやつ追加
 	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
@@ -778,6 +809,11 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
 		modelHandle.Deserialize(entityJson["ModelHandle"]);
 	}
+	/*if (entityJson.contains("ParticleComponent")) {
+		entityManager->EmplaceComponent<ParticleComponent>(entityId);
+		ParticleComponent& particleComponent = entityManager->GetComponent<ParticleComponent>(entityId);
+		particleComponent.Deserialize(entityJson["ParticleComponent"]);
+	}*/
 	if (entityJson.contains("SceneObjectData")) {
 		entityManager->EmplaceComponent<SceneObjectData>(entityId);
 		SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);

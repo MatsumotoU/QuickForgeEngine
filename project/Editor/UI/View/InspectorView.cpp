@@ -18,6 +18,7 @@
 #include "Collider/Data/AABBColliderData.h"
 #include "Assets/Script/Data/CsharpComponent.h"
 #include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#環境のヘッダーをインクルード
+#include "Assets/Particle/Data/ParticleComponent.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
@@ -109,6 +110,15 @@ void InspectorView::Draw() {
 			}
 		}
 	}
+	// Particle
+	if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(selectedEntityId_)) {
+		ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(selectedEntityId_);
+		if (ImGui::CollapsingHeader("Particle")) {
+			ImGui::Text("Model Name: %s", particleComp.modelName.c_str());
+			ImGui::Text("Max Particle Count: %d", particleComp.maxParticleCount);
+		}
+	}
+
 	// Sprite
 	if (assetManager->GetEntityManager()->HasComponent<SpriteData>(selectedEntityId_)) {
 		SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(selectedEntityId_);

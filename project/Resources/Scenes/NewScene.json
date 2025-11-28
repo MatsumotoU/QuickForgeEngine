@@ -13,9 +13,9 @@
             },
             "Transform": {
                 "rotate": [
-                    0.5088897347450256,
-                    0.15249961614608765,
-                    -0.0
+                    0.10000000149011612,
+                    0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -1.978211760520935,
-                    7.265183925628662,
-                    -12.871198654174805
+                    0.0,
+                    1.5,
+                    -10.0
                 ]
             }
         },
@@ -55,46 +55,6 @@
                     0.0,
                     1.5,
                     -10.0
-                ]
-            }
-        },
-        {
-            "CsharpComponent": {
-                "CsharpHandles": [
-                    {
-                        "ClassName": "testA"
-                    }
-                ]
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "CsharpTestObj",
-                "tag": "Untagged",
-                "uniqueId": 3
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
                 ]
             }
         }

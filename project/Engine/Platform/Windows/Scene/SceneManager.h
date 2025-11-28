@@ -42,6 +42,7 @@ public:
 	void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson);
 
 	void AddEpmtyObject();
+	void AddParticleEmitter(const std::string& modelName, uint32_t maxCount);
 	void AddModel(const std::string& modelName);
 	void AddSprite(const std::string& spriteName,float width = 0.0f,float height = 0.0f,int inEntityId = -1,int layer = -1,Vector2 pvot = {0.0f,0.0f});
 	void AddLuaScript(uint32_t entityId,const std::string& scriptName);

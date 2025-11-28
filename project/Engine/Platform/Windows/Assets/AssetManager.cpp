@@ -87,6 +87,33 @@ uint32_t AssetManager::LoadAudio(const std::string& audioName) {
 	return handle;
 }
 
+uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
+	// モデルデータを読み込み
+	ModelData modelData{};
+	AssimpModelLoader::LoadModelData(
+		resourceDirectoryManager_.GetResourceDirectory("Model"),
+		resourceDirectoryManager_.GetResourceDirectory("Image"),
+		modelName, modelData);
+	// メッシュを返す
+	return modelVertexResourceManager_.Assign(dxCommon_->GetDevice(), modelData, modelName);
+}
+
+uint32_t AssetManager::LoadModelTexture(const std::string& modelName) {
+	// モデルデータを読み込み
+	ModelData modelData{};
+	AssimpModelLoader::LoadModelData(
+		resourceDirectoryManager_.GetResourceDirectory("Model"),
+		resourceDirectoryManager_.GetResourceDirectory("Image"),
+		modelName, modelData);
+	// 先頭のメッシュのテクスチャを返す
+	if (!modelData.meshes.empty()) {
+		const auto& mesh = modelData.meshes.at(0);
+		return textureManager_->LoadTexture(mesh.material.textureFilePath);
+	}
+	assert(false && "Model has no meshes.");
+	return 0;
+}
+
 #ifdef _DEBUG
 uint32_t AssetManager::LoadEditorTexture(const std::string& imageName) {
 	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Editor") + imageName;
