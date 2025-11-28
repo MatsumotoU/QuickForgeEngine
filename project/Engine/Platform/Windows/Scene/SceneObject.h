@@ -36,6 +36,7 @@ public:
 
 	// シーンにオブジェクトを追加
 	void AddEmptyObject() override;
+	void AddParticleEmitter(const std::string& modelName, uint32_t maxCount) override;
 	void AddModel(const std::string& modelName) override;
 	void AddSprite(
 		const std::string& spriteName, float width = 0.0f, float height = 0.0f,

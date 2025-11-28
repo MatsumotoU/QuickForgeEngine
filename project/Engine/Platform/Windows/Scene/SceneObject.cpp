@@ -27,6 +27,7 @@
 #include "Assets/3DModel/Loader/AssimpModelLoader.h"
 #include "Assets/3DModel/Data/ModelHandle.h"
 #include "Assets/Sprite/Data/SpriteData.h"
+#include "Assets/Particle/Data/ParticleComponent.h"
 
 #include "Renderer/ModelRenderer.h"
 #include "Renderer/SpriteRenderer.h"
@@ -392,6 +393,25 @@ void SceneObject::AddEmptyObject() {
 	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = "EmptyObject";
+	sceneObjectData.tag = "Untagged";
+	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
+	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+}
+
+void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxCount) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+	// ParticleComponent追加
+	ParticleComponent particleComponent;
+	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
+	assetManager->GetEntityManager()->EmplaceComponent<ParticleComponent>(entityId, particleComponent);
+
+
+
+	// いつものやつ追加
+	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
+	SceneObjectData sceneObjectData;
+	sceneObjectData.name = modelName + "_ParticleEmitter";
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);

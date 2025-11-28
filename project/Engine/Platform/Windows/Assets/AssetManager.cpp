@@ -19,6 +19,7 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 	modelRenderDataManager_.Initialize();
 	spriteManager_.Initialize();
 	audioSourceManager_.Initialize();
+	particleGpuDataManager_.Initialize();
 }
 
 void AssetManager::PreDraw() {
@@ -26,6 +27,7 @@ void AssetManager::PreDraw() {
 }
 
 void AssetManager::Finalize() {
+	particleGpuDataManager_.Finalize();
 	audioSourceManager_.Finalize();
 	spriteManager_.Finalize();
 	textureManager_->Finalize();
