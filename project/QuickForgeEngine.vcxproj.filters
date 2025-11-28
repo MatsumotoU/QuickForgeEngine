@@ -439,6 +439,8 @@
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\QFElinker\CsharpOnQFELinker.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Renderer\ParticleRenderer.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderReflection.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Particle\ParticleGpuDataManager.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Particle\Data\ParticleComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1394,6 +1396,8 @@
     <ClInclude Include="Engine\Platform\Windows\Renderer\ParticleRenderer.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderReflection.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiledData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Particle\ParticleGpuDataManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Particle\Data\ParticleComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

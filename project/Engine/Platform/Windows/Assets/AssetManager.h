@@ -7,6 +7,7 @@
 #include "Sprite/SpriteManager.h" 
 #include "Sprite/Data/SpriteData.h"
 #include "ConstantBufferManager/ConstantBufferManager.h"
+#include "Particle/ParticleGpuDataManager.h"
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "Core/Entity/EntityManager.h"
 #include "Utility/DesignPatterns/Singleton.h"
@@ -51,6 +52,7 @@ public:
 	SpriteManager* GetSpriteManager() { return &spriteManager_; }
 	const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
 	AudioSourceManager* GetAudioSourceManager() { return &audioSourceManager_; }
+	ParticleGpuDataManager* GetParticleGpuDataManager() { return &particleGpuDataManager_; }
 
 private:
 	DirectXCommon* dxCommon_;
@@ -66,4 +68,5 @@ private:
 	ConstantBufferManager<DirectionalLight> lightBufferManager_;
 	EntityManager entityManager_;
 	SpriteManager spriteManager_;
+	ParticleGpuDataManager particleGpuDataManager_;
 };
