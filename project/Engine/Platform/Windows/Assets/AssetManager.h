@@ -38,6 +38,9 @@ public:
 	/// 拡張子付きで書くこと
 	uint32_t LoadAudio(const std::string& audioName);
 
+	uint32_t LoadModelMesh(const std::string& modelName);
+	uint32_t LoadModelTexture(const std::string& modelName);
+
 #ifdef _DEBUG
 	uint32_t LoadEditorTexture(const std::string& imageName);
 #endif // _DEBUG

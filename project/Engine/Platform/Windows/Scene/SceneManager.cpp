@@ -201,6 +201,10 @@ void SceneManager::AddEpmtyObject() {
 	currentScene_->AddEmptyObject();
 }
 
+void SceneManager::AddParticleEmitter(const std::string& modelName, uint32_t maxCount) {
+	currentScene_->AddParticleEmitter(modelName, maxCount);
+}
+
 void SceneManager::AddModel(const std::string& modelName) {
 	currentScene_->AddModel(modelName);
 }

@@ -23,5 +23,6 @@ private:
 	DropDownFileList modelDropDownFileList_;
 	DropDownFileList spriteDropDownFileList_;
 	DropDownFileList entityDropDownFileList_;
+	int particleCount_ = 0;
 #endif // _DEBUG
 };
