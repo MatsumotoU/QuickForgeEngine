@@ -13,7 +13,9 @@ uint32_t HierarchyView::selectedEntityId_ = 0;
 HierarchyView::HierarchyView() {
 	isActive_ = true;
 	name_ = "Hierarchy View";
+#ifdef _DEBUG
 	particleCount_ = 1;
+#endif // _DEBUG
 }
 
 void HierarchyView::Initialize() {
@@ -84,6 +86,8 @@ void HierarchyView::DrawPopupContextWindow() {
 			}
 
 			if (ImGui::BeginMenu("Particle Emitter")) {
+				ImGui::DragInt("Particle Count", &particleCount_);
+				ImGui::Separator();
 				modelDropDownFileList_.DrawMenuItem();
 				std::string selectedModelFileName_;
 				if (modelDropDownFileList_.GetSelectedFileName(selectedModelFileName_)) {

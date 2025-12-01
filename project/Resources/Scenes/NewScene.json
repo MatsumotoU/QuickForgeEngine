@@ -57,6 +57,46 @@
                     -10.0
                 ]
             }
+        },
+        {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "testA"
+                    }
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "CsharpTestObj",
+                "tag": "Untagged",
+                "uniqueId": 3
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
         }
     ],
     "sceneName": "NewScene"

@@ -328,6 +328,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Particle\Data\ParticleComponent.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Particle\ParticleAnimationManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Particle\ParticleGpuDataManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Script\CsharpScriptOnQFE.cpp" />
@@ -513,6 +514,8 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ConstantBufferManager\ConstantBufferManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Particle\Data\ParticleComponent.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Particle\ParticleAnimationData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Particle\ParticleAnimationManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Particle\ParticleGpuDataManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
