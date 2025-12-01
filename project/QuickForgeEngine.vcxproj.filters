@@ -441,6 +441,7 @@
     <ClCompile Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderReflection.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Particle\ParticleGpuDataManager.cpp" />
     <ClCompile Include="Engine\Platform\Windows\Assets\Particle\Data\ParticleComponent.cpp" />
+    <ClCompile Include="Engine\Platform\Windows\Assets\Particle\ParticleAnimationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Externals\imgui\imconfig.h">
@@ -1398,6 +1399,8 @@
     <ClInclude Include="Engine\Platform\Windows\Graphic\Pipeline\PSO\ShaderCompiledData.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Particle\ParticleGpuDataManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Particle\Data\ParticleComponent.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Particle\ParticleAnimationManager.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\Particle\ParticleAnimationData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">
