@@ -38,6 +38,8 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 			assetManager->GetLightBufferManager()->GetBufferAddress(handle.lightBufferHandle));
 		commandList->SetGraphicsRootConstantBufferView(4,
 			TempGraphic::GetInstance()->GetEchoSphereBuffer()->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootDescriptorTable(5,
+			TempGraphic::GetInstance()->GetEchoSphereStructuredBuffer()->GetInstancingSrvHandles().gpuHandle_);
 		commandList->DrawInstanced(static_cast<UINT>(
 			assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);
 	}

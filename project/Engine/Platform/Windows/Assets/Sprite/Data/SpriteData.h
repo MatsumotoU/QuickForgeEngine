@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Entity/Component/ComponentData.h"
 #include "Core/Math/Vector/Vector2.h"
+#include "Core/Math/Vector/Vector4.h"
 
 class SpriteData final: public ComponentData {
 public:
@@ -21,6 +22,7 @@ public:
 	float width;
 	float height;
 	Vector2 pivot;
+	Vector4 color;
 
 	bool isDraw;
 };

@@ -68,12 +68,14 @@ void CsharpVirtualEnvironmentOnQFE::OpenCSharpProjectInVSCode() {
 // C#の QuickForgeEngine.Debug.Log(string message) に対応するC++ラッパー関数
 static void Native_Debug_Log(MonoString* message)
 {
+#ifdef _DEBUG
     // MonoString* を C++で扱える const char* に変換します
     char* utf8_message = mono_string_to_utf8(message);
     DebugLog(utf8_message); // This line will be replaced by the new DebugLog(utf8_message,LogLevel::EditorInfo); in the search string
 
     // mono_string_to_utf8で確保されたメモリを解放します
     mono_free(utf8_message);
+#endif // _DEBUG
 }
 
 // --- Transform操作用API ---
@@ -400,7 +402,9 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 	}
 
 	// スクリプトを再コンパイル
+#ifdef _DEBUG
 	CompileScripts();
+#endif // _DEBUG
 
 	// APIを再度リンク
 	LinkQFEAPIToMono();

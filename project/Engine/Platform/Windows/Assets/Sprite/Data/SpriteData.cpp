@@ -22,6 +22,7 @@ nlohmann::json SpriteData::Serialize() const {
 	json["layer"] = layer;
 	json["pivot"] = { pivot.x, pivot.y };
 	json["isDraw"] = isDraw;
+	json["color"] = { color.x, color.y, color.z, color.w };	
 	return json;
 }
 
@@ -45,5 +46,11 @@ void SpriteData::Deserialize(const nlohmann::json& json) {
 
 	if (json.contains("isDraw")) {
 		isDraw = json["isDraw"].get<bool>();
+	}
+	if (json.contains("color")) {
+		color.x = json["color"][0].get<float>();
+		color.y = json["color"][1].get<float>();
+		color.z = json["color"][2].get<float>();
+		color.w = json["color"][3].get<float>();
 	}
 }

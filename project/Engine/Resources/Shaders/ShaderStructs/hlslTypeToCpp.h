@@ -28,6 +28,15 @@ struct EchoSphere {
 	float32_t3 sphereCenter;
 	float32_t  sphereRadius;
 	float32_t  sphereThickness;
+	int32_t isActive;
+};
+
+struct EchoSphereInfo {
+#ifdef __cplusplus
+	EchoSphereInfo() {}
+#endif
+	int32_t count;
+	int32_t isUse;
 };
 
 struct ColorCorrectionOffset {

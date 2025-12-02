@@ -11,8 +11,9 @@ static const float ditherMatrix[4][4] =
 
 ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
-ConstantBuffer<EchoSphere> gEchoSphere : register(b2);
+ConstantBuffer<EchoSphereInfo> gEchoSphereInfo : register(b2);
 Texture2D<float32_t4> gTexture : register(t0);
+StructuredBuffer<EchoSphere> gEchoSpheres : register(t1);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput{
@@ -30,15 +31,38 @@ PixelShaderOutput main(VertexShaderOutput input)
     {
         discard;
     }
-
-    float dist = length(input.worldPosition - gEchoSphere.sphereCenter);
-    float edgeMin = gEchoSphere.sphereRadius - gEchoSphere.sphereThickness * 0.5f;
-    float edgeMax = gEchoSphere.sphereRadius + gEchoSphere.sphereThickness * 0.5f;
-    bool isOnEdge = (dist >= edgeMin) && (dist <= edgeMax);
-
-    if (!isOnEdge)
+    
+    if (gMaterial.enableLighting != 0)
     {
-        discard;
+        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+        output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+        output.color.a = alpha;
+    }
+    
+    if (gMaterial.enableLighting)
+    {
+        bool shouldDraw = false;
+        for (int i = 0; i < gEchoSphereInfo.count; i++)
+        {
+            if (gEchoSpheres[i].isActive)
+            {
+                float dist = length(input.worldPosition - gEchoSpheres[i].sphereCenter);
+                float edgeMin = gEchoSpheres[i].sphereRadius - gEchoSpheres[i].sphereThickness * 0.5f;
+                float edgeMax = gEchoSpheres[i].sphereRadius + gEchoSpheres[i].sphereThickness * 0.5f;
+                bool isOnEdge = (dist >= edgeMin) && (dist <= edgeMax);
+
+                if (isOnEdge)
+                {
+                    shouldDraw = true;
+                    break;
+                }
+            }
+        }
+        if (!shouldDraw)
+        {
+            discard;
+        }
     }
 
     output.color = color;

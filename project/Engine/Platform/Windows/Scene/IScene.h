@@ -2,6 +2,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 #include "Core/Math/Vector/Vector2.h"
+#include "Core/Math/Vector/Vector4.h"
 
 class IScene {
 public:
@@ -30,7 +31,7 @@ public:
 	// シーンにオブジェクトを追加
 	virtual void AddEmptyObject() = 0;
 	virtual void AddModel(const std::string& modelName) = 0;
-	virtual void AddSprite(const std::string& spriteName, float width = 0.0f, float height = 0.0f, int inEntityId = -1, int layer = -1, Vector2 pivot = { 0.0f,0.0f }) = 0;
+	virtual void AddSprite(const std::string& spriteName, float width = 0.0f, float height = 0.0f, int inEntityId = -1, int layer = -1, Vector2 pivot = { 0.0f,0.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f }) = 0;
 	virtual void AddLuaScript(uint32_t entityId, const std::string& scriptName) = 0;
 	virtual void AddCsharpScript(uint32_t entityId, const std::string& className) = 0;
 	virtual uint32_t AddEntity(const std::string& entityName) = 0;

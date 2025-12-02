@@ -8,6 +8,7 @@ end
 function Update()
     if QFE.Input.GetKeyTrigger("Jump") then
         isTransition = true;
+        RunEntityScriptFunction(GetEntity("SceneChangeAnim"),"SceneChangeAnim.lua","ReqestClose")
     end
 
     if isTransition then

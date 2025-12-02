@@ -1,0 +1,53 @@
+{
+    "SceneObjectData": {
+        "name": "StartUI",
+        "tag": "Untagged",
+        "uniqueId": 3655
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "StartUI.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SpriteData": {
+        "color": [
+            -107374176.0,
+            -107374176.0,
+            -107374176.0,
+            -107374176.0
+        ],
+        "height": 128.0,
+        "isDraw": true,
+        "layer": 0,
+        "pivot": [
+            0.5,
+            0.5
+        ],
+        "textureName": "StartUI.png",
+        "width": 512.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            640.0,
+            600.2000122070313,
+            0.0
+        ]
+    }
+}

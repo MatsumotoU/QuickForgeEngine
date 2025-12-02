@@ -8,6 +8,7 @@ class ModelHandle final :public ComponentData {
 public:
 	uint32_t handle;
 	std::string modelName;
+	bool isEchoVisible;
 
 	nlohmann::json Serialize() const override;
 	void Deserialize(const nlohmann::json& json) override;

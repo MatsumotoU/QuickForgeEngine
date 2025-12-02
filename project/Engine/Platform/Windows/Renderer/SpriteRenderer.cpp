@@ -4,13 +4,13 @@
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "Graphic/Pipeline/GraphicPipelineManager.h"
 #include "Assets/Sprite/Data/SpriteData.h" 
+#include "Graphic/TempGraphic.h"
 #include <cassert>
 
 void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	assert(assetManager && "AssetManager is nullptr.");
 	const SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(spriteHandle);
-
 	if (!spriteData.isDraw) {
 		return;
 	}
@@ -36,5 +36,9 @@ void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 		assetManager->GetTextureManager()->GetTextureSrvHandleGPU(spriteData.textureHandle));
 	commandList->SetGraphicsRootConstantBufferView(3,
 		assetManager->GetLightBufferManager()->GetBufferAddress(spriteData.lightBufferHandle));
+	commandList->SetGraphicsRootConstantBufferView(4,
+		TempGraphic::GetInstance()->GetEchoSphereBuffer()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(5,
+		TempGraphic::GetInstance()->GetEchoSphereStructuredBuffer()->GetInstancingSrvHandles().gpuHandle_);
 	commandList->DrawInstanced(6, 1, 0, 0);
 }

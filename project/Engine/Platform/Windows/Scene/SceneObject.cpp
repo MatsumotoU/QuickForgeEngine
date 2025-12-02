@@ -408,7 +408,7 @@ void SceneObject::AddModel(const std::string& modelName) {
 	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
-void SceneObject::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer, Vector2 pivot) {
+void SceneObject::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer, Vector2 pivot,Vector4 color) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	// entityId指定があればそれを使う、なければ新規作成
 	uint32_t entityId;
@@ -451,7 +451,7 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	material->uvTransform = Matrix4x4::MakeIndentity4x4();
 	spriteData.lightBufferHandle = assetManager->GetLightBufferManager()->CreateBuffer();
 	DirectionalLight* light = assetManager->GetLightBufferManager()->GetBufferData(spriteData.lightBufferHandle);
-	light->color = { 1.0f,1.0f,1.0f,1.0f };
+	light->color = color;
 	light->direction = { 0.0f,-1.0f,0.0f };
 	light->intensity = 1.0f;
 	// スプライトデータをエンティティに追加
@@ -713,7 +713,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	if (entityJson.contains("SpriteData")) {
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
-		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer), spriteData.pivot);
+		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer), spriteData.pivot,spriteData.color);
 	}
 	if (entityJson.contains("Transform")) {
 		entityManager->EmplaceComponent<Transform>(entityId);

@@ -66,6 +66,8 @@
                     1.0,
                     1.0
                 ],
+                "isEchoVisible": false,
+                "isEnableLight": true,
                 "modelName": "Title.obj"
             },
             "SceneObjectData": {
@@ -132,6 +134,147 @@
                     0.0,
                     0.0,
                     -2.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.0235294122248888,
+                    0.019607843831181526,
+                    0.0313725508749485,
+                    1.0
+                ],
+                "isEchoVisible": true,
+                "isEnableLight": false,
+                "modelName": "WhiteSkyDome.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhiteSkyDome.obj",
+                "tag": "Untagged",
+                "uniqueId": 3603
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "StartUI",
+                "tag": "Untagged",
+                "uniqueId": 3655
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "StartUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "color": [
+                    -2.398655270207048e-38,
+                    6.964453367694341e-43,
+                    -1.3599285463338798e-37,
+                    4.590373509435236e-41
+                ],
+                "height": 128.0,
+                "isDraw": true,
+                "layer": 0,
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "textureName": "StartUI.png",
+                "width": 512.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    640.0,
+                    600.2000122070313,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "SceneChangeAnim",
+                "tag": "Untagged",
+                "uniqueId": 11856
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SceneChangeAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "color": [
+                    -2.3975521680559315e-38,
+                    6.964453367694341e-43,
+                    -1.3599285463338798e-37,
+                    4.590373509435236e-41
+                ],
+                "height": 720.0,
+                "isDraw": true,
+                "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }

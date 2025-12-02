@@ -4,32 +4,45 @@
 #include "Renderer/GraphRenderer.h"
 
 void TempGraphic::Initialize() {
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+
 	echoSphereBuffer_.CreateResource(DirectXCommon::GetInstance()->GetDevice());
+	echoSphereBuffer_.GetData()->count = kMaxEchoSpheres;
+	echoSphereBuffer_.GetData()->isUse = true;
 	pow = 0.0f;
+
+	echoSphereStructuredBuffer_.CreateResource(
+		dxCommon,
+		dxCommon->GetDescriptorHeapManager()->GetSrvDescriptorHeap(),
+		kMaxEchoSpheres);
+	
+
+	for (int i = 0; i < kMaxEchoSpheres; i++) {
+		echoSphereStructuredBuffer_.GetData()[i].isActive = false;
+		echoSphereStructuredBuffer_.GetData()[i].sphereRadius = 0.0f;
+		echoSphereStructuredBuffer_.GetData()[i].sphereThickness = 0.0f;
+		echoSphereStructuredBuffer_.GetData()[i].sphereCenter = Vector3(0.0f, 0.0f, 0.0f);
+	}
 }
 
 void TempGraphic::Update() {
-	echoSphereBuffer_.GetData()->sphereRadius += pow * 0.05f;
-	if (echoSphereBuffer_.GetData()->sphereThickness > 0.0f) {
-		echoSphereBuffer_.GetData()->sphereThickness = pow;
-	}
+	for (int i = 0; i < kMaxEchoSpheres; i++) {
+		if (!echoSphereStructuredBuffer_.GetData()[i].isActive) {
+			continue;
+		}
 
-	if (pow > 0.0f) {
-		pow -= 0.01f;
-		if (pow < 0.0f) {
-			pow = 0.0f;
+		echoSphereStructuredBuffer_.GetData()[i].sphereRadius += echoSphereStructuredBuffer_.GetData()[i].sphereThickness * 0.05f;
+		if (echoSphereStructuredBuffer_.GetData()[i].isActive && echoSphereStructuredBuffer_.GetData()[i].sphereThickness > 0.0f) {
+			echoSphereStructuredBuffer_.GetData()[i].sphereThickness -= 0.01f; // 個別に減少
+			if (echoSphereStructuredBuffer_.GetData()[i].sphereThickness < 0.0f) {
+				echoSphereStructuredBuffer_.GetData()[i].sphereThickness = 0.0f;
+				echoSphereStructuredBuffer_.GetData()[i].isActive = false;
+			}
 		}
 	}
 }
 
 void TempGraphic::Draw() {
-	ImGui::Begin("GameTutorial");
-	ImGui::Text("Find Yellow box.");
-	ImGui::Text("=Movement=");
-	ImGui::Text("Move: WASD");
-	ImGui::Text("Angle: Mouse");
-	ImGui::Text("Space: Echo");
-	ImGui::End();
 
 	/*ImGui::Begin("TempGraphic");
 	ImGui::DragFloat3("SphereCenter",
@@ -54,8 +67,13 @@ void TempGraphic::Finalize() {
 }
 
 void TempGraphic::Echo(Vector3 pos, float power) {
-	echoSphereBuffer_.GetData()->sphereCenter = pos;
-	echoSphereBuffer_.GetData()->sphereRadius = 0.0f;
-	echoSphereBuffer_.GetData()->sphereThickness = power;
-	pow = power;
+	for (int i = 0; i < kMaxEchoSpheres; i++) {
+		if (!echoSphereStructuredBuffer_.GetData()[i].isActive) {
+			echoSphereStructuredBuffer_.GetData()[i].isActive = true;
+			echoSphereStructuredBuffer_.GetData()[i].sphereCenter = pos;
+			echoSphereStructuredBuffer_.GetData()[i].sphereRadius = 0.0f;
+			echoSphereStructuredBuffer_.GetData()[i].sphereThickness = power;
+			break;
+		}
+	}
 }

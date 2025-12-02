@@ -1,16 +1,16 @@
 {
     "AABBColliderData": {
         "aabb": [
-            -14.25,
             -0.5,
-            -5.800000190734863,
-            -5.149999618530273,
+            -0.30000001192092896,
+            -0.25,
             0.5,
-            5.800000190734863
+            0.30000001192092896,
+            0.25
         ],
         "colliderLayer": 255,
         "eventColliderLayer": 255,
-        "isDraw": true,
+        "isDraw": false,
         "isStatic": false,
         "isTrigger": false
     },
@@ -22,13 +22,25 @@
             1.0
         ],
         "isEchoVisible": true,
-        "isEnableLight": false,
+        "isEnableLight": true,
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
-        "name": "Wall",
-        "tag": "wall",
-        "uniqueId": 12
+        "name": "Block",
+        "tag": "block",
+        "uniqueId": 11
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "Block.lua",
+                "stringParams": {}
+            }
+        ]
     },
     "Transform": {
         "rotate": [
@@ -37,12 +49,12 @@
             0.0
         ],
         "scale": [
-            9.100000381469727,
             1.0,
-            12.0
+            0.5,
+            0.5
         ],
         "translate": [
-            -9.699999809265137,
+            0.0,
             0.0,
             0.0
         ]

@@ -11,9 +11,11 @@ void GraphicPipelineManager::Initialize(
 	normalGameObjectRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
 	normalGameObjectRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	normalGameObjectRootParameter_.CreateRootParameter("LightParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
-	normalGameObjectRootParameter_.CreateRootParameter("EchoParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 2);
+	normalGameObjectRootParameter_.CreateRootParameter("EchoParameterInfo", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 2);
+	normalGameObjectRootParameter_.CreateRootParameter("EchoParameters", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 1);
 
 	normalGameObjectRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	normalGameObjectRootParameter_.SetDescriptorRange("EchoParameters", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
 
 	// パーティクルのルートパラメータ
 	particleRootParameter_.Initialize();

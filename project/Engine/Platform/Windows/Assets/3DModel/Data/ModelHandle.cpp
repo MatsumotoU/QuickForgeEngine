@@ -10,6 +10,8 @@ nlohmann::json ModelHandle::Serialize() const {
 	assetManager->GetModelRenderData(handle)->meshRenderDataHandles[0].materialHandle;
 	Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(materialHandle);
 	json["color"] = { material->color.x, material->color.y, material->color.z, material->color.w };
+	json["isEnableLight"] = static_cast<bool> (material->enableLighting);
+	json["isEchoVisible"] = isEchoVisible;
 
 	return json;
 }
@@ -29,5 +31,18 @@ void ModelHandle::Deserialize(const nlohmann::json& json) {
 			material->color.z = json["color"][2].get<float>();
 			material->color.w = json["color"][3].get<float>();
 		}
+	}
+
+	if (json.contains("isEchoVisible") && json["isEchoVisible"].is_boolean()) {
+		isEchoVisible = json["isEchoVisible"].get<bool>();
+	}
+
+	if (json.contains("isEnableLight") && json["isEnableLight"].is_boolean()) {
+		AssetManager* assetManager = AssetManager::GetInstance();
+		uint32_t materialHandle =
+			assetManager->GetModelRenderData(handle)->meshRenderDataHandles[0].materialHandle;
+		Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(materialHandle);
+		material->enableLighting = json["isEnableLight"].get<bool>();
+		
 	}
 }

@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.3215143084526062,
-                    1.0622814893722534,
+                    1.118887186050415,
+                    0.005687280558049679,
                     -0.0
                 ],
                 "scale": [
@@ -23,37 +23,106 @@
                     1.0
                 ],
                 "translate": [
-                    -10.20839786529541,
-                    3.8926641941070557,
-                    -5.690267562866211
+                    -0.054915476590394974,
+                    19.892166137695313,
+                    -9.655736923217773
+                ]
+            }
+        },
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "Camera",
+                "tag": "camera",
+                "uniqueId": 2
+            },
+            "Transform": {
+                "rotate": [
+                    1.2000000476837158,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    21.200000762939453,
+                    -8.600000381469727
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.03529411926865578,
+                    0.027450980618596077,
+                    0.05098039284348488,
+                    1.0
+                ],
+                "isEchoVisible": false,
+                "isEnableLight": false,
+                "modelName": "WhiteSkyDome.obj"
+            },
+            "SceneObjectData": {
+                "name": "SkyDome",
+                "tag": "Untagged",
+                "uniqueId": 4
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         },
         {
             "AABBColliderData": {
                 "aabb": [
+                    -1.2000000476837158,
                     -0.5,
-                    -2.5,
-                    -3.5250000953674316,
+                    -4.75,
+                    1.2000000476837158,
                     0.5,
-                    5.5,
-                    -2.5250000953674316
+                    -4.25
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false
             },
-            "CameraData": {
-                "farZ": 100.0,
-                "fovY": 0.6050000190734863,
-                "nearZ": 0.10000000149011612
+            "ModelHandle": {
+                "color": [
+                    0.12778866291046143,
+                    0.6165803074836731,
+                    0.1835058182477951,
+                    1.0
+                ],
+                "isEchoVisible": true,
+                "isEnableLight": false,
+                "modelName": "Box1x1.obj"
             },
             "SceneObjectData": {
-                "name": "Camera",
+                "name": "PlayerBar",
                 "tag": "player",
-                "uniqueId": 2
+                "uniqueId": 7
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -70,14 +139,6 @@
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "LookAround.lua",
-                        "stringParams": {}
-                    },
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
                         "scriptName": "Echo.lua",
                         "stringParams": {}
                     }
@@ -85,51 +146,272 @@
             },
             "Transform": {
                 "rotate": [
-                    -0.10000000149011612,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.5,
+                    0.20000000298023224,
+                    0.5
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    -4.5
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.250980406999588,
+                    0.2235294133424759,
+                    0.29019609093666077,
+                    1.0
+                ],
+                "isEchoVisible": true,
+                "isEnableLight": true,
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "Floor",
+                "tag": "Untagged",
+                "uniqueId": 10
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
                     -0.0,
                     0.0
                 ],
                 "scale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    50.0,
+                    0.10000000149011612,
+                    50.0
                 ],
                 "translate": [
                     0.0,
-                    1.5,
-                    -3.0250000953674316
+                    -0.5,
+                    0.0
                 ]
             }
         },
         {
             "AABBColliderData": {
                 "aabb": [
-                    -0.4999999403953552,
+                    -5.199999809265137,
                     -0.5,
-                    2.427746295928955,
-                    0.4999999403953552,
+                    5.19999885559082,
+                    5.199999809265137,
                     0.5,
-                    3.4277472496032715
+                    16.80000114440918
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
-                "isDraw": true,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    0.0235294122248888,
+                    0.019607843831181526,
+                    0.0313725508749485,
+                    1.0
+                ],
+                "isEchoVisible": true,
+                "isEnableLight": false,
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "Wall",
+                "tag": "wall",
+                "uniqueId": 12
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    10.600000381469727,
+                    1.0,
+                    11.699999809265137
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    11.0
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    5.149999618530273,
+                    -0.5,
+                    -5.800000190734863,
+                    14.25,
+                    0.5,
+                    5.800000190734863
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    0.0235294122248888,
+                    0.019607843831181526,
+                    0.0313725508749485,
+                    1.0
+                ],
+                "isEchoVisible": true,
+                "isEnableLight": false,
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "Wall",
+                "tag": "wall",
+                "uniqueId": 13
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    9.100000381469727,
+                    1.0,
+                    12.0
+                ],
+                "translate": [
+                    9.699999809265137,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    -14.25,
+                    -0.5,
+                    -5.800000190734863,
+                    -5.149999618530273,
+                    0.5,
+                    5.800000190734863
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isStatic": true,
+                "isTrigger": false
+            },
+            "ModelHandle": {
+                "color": [
+                    0.022389836609363556,
+                    0.0180407352745533,
+                    0.031088054180145264,
+                    1.0
+                ],
+                "isEchoVisible": true,
+                "isEnableLight": false,
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "Wall",
+                "tag": "wall",
+                "uniqueId": 14
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    9.100000381469727,
+                    1.0,
+                    12.0
+                ],
+                "translate": [
+                    -9.699999809265137,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "AABBColliderData": {
+                "aabb": [
+                    -0.25,
+                    -0.25,
+                    -3.75,
+                    0.25,
+                    0.25,
+                    -3.25
+                ],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
                 "isStatic": false,
                 "isTrigger": false
             },
             "ModelHandle": {
                 "color": [
-                    1.0,
-                    0.6528496742248535,
-                    0.0,
+                    0.3183709681034088,
+                    0.9170984625816345,
+                    0.385969340801239,
                     1.0
                 ],
+                "isEchoVisible": true,
+                "isEnableLight": true,
                 "modelName": "Box1x1.obj"
             },
             "SceneObjectData": {
-                "name": "CrearSpot",
+                "name": "Ball",
                 "tag": "Untagged",
-                "uniqueId": 3
+                "uniqueId": 15
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "speed": 3.0
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Ball.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    -3.5
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "BlockManager",
+                "tag": "Untagged",
+                "uniqueId": 18
             },
             "ScriptHandle": {
                 "scriptHandles": [
@@ -138,7 +420,7 @@
                         "floatParams": {},
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "SceneTransition.lua",
+                        "scriptName": "BlockManager.lua",
                         "stringParams": {}
                     }
                 ]
@@ -146,7 +428,7 @@
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -156,200 +438,220 @@
                 ],
                 "translate": [
                     0.0,
-                    0.0,
-                    2.9277467727661133
-                ]
-            }
-        },
-        {
-            "AABBColliderData": {
-                "aabb": [
-                    -5.0,
-                    -0.5,
-                    -5.0,
-                    -4.0,
-                    0.5,
-                    5.0
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": true,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "wall",
-                "tag": "Untagged",
-                "uniqueId": 4
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    10.0
-                ],
-                "translate": [
-                    -4.5,
                     0.0,
                     0.0
                 ]
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    -4.0,
-                    -0.5,
-                    4.0,
-                    4.0,
-                    0.5,
-                    5.0
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": true,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "wall",
+                "name": "MoveUI.png",
                 "tag": "Untagged",
-                "uniqueId": 5
+                "uniqueId": 2896
             },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    8.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    4.5
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "MoveUI.lua",
+                        "stringParams": {}
+                    }
                 ]
-            }
-        },
-        {
-            "AABBColliderData": {
-                "aabb": [
-                    4.0,
-                    -0.5,
-                    -5.0,
-                    5.0,
-                    0.5,
-                    5.0
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": true,
-                "isTrigger": false
             },
-            "ModelHandle": {
+            "SpriteData": {
                 "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
+                    4.8495273452268277e-26,
+                    8.561933617024632e-43,
+                    -1.3599285463338798e-37,
+                    4.590373509435236e-41
                 ],
-                "modelName": "Box1x1.obj"
-            },
-            "SceneObjectData": {
-                "name": "wall",
-                "tag": "Untagged",
-                "uniqueId": 6
+                "height": 64.0,
+                "isDraw": true,
+                "layer": 0,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "MoveUI.png",
+                "width": 256.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
                     1.0,
                     1.0,
-                    10.0
+                    1.0
                 ],
                 "translate": [
-                    4.5,
                     0.0,
+                    41.29999923706055,
                     0.0
                 ]
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    -4.0,
-                    -0.5,
-                    -5.0,
-                    4.0,
-                    0.5,
-                    -4.0
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": true,
-                "isStatic": true,
-                "isTrigger": false
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "wall",
+                "name": "EchoUI.png",
                 "tag": "Untagged",
-                "uniqueId": 2849
+                "uniqueId": 2897
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "EchoUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "color": [
+                    4.850178155473635e-26,
+                    8.561933617024632e-43,
+                    -1.3599285463338798e-37,
+                    4.590373509435236e-41
+                ],
+                "height": 64.0,
+                "isDraw": true,
+                "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "EchoUI.png",
+                "width": 256.0
             },
             "Transform": {
                 "rotate": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "scale": [
-                    8.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    106.30000305175781,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "StartUI",
+                "tag": "Untagged",
+                "uniqueId": 3655
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "StartUI.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "color": [
+                    4.851183953127792e-26,
+                    8.561933617024632e-43,
+                    -1.3599285463338798e-37,
+                    4.590373509435236e-41
+                ],
+                "height": 128.0,
+                "isDraw": true,
+                "layer": 0,
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "textureName": "StartUI.png",
+                "width": 512.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    640.0,
+                    370.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "SceneChangeAnim",
+                "tag": "Untagged",
+                "uniqueId": 11856
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SceneChangeAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "color": [
+                    4.8544380043618285e-26,
+                    8.561933617024632e-43,
+                    -1.3599285463338798e-37,
+                    4.590373509435236e-41
+                ],
+                "height": 720.0,
+                "isDraw": true,
+                "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
                     1.0,
                     1.0
                 ],
                 "translate": [
                     0.0,
                     0.0,
-                    -4.5
+                    0.0
                 ]
             }
         }

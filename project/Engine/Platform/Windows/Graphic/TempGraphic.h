@@ -1,7 +1,12 @@
 #pragma once
 #include "Utility/DesignPatterns/Singleton.h"
 #include "Graphic/ShaderBuffer/ConstantBuffer.h"
+#include "Graphic/ShaderBuffer/StructuredBuffer.h"
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+
+namespace {
+	const int kMaxEchoSpheres = 500;
+}
 
 class TempGraphic : public Singleton<TempGraphic>{
 	friend class Singleton<TempGraphic>;
@@ -13,9 +18,11 @@ public:
 
 	void Echo(Vector3 pos, float power);
 
-	ConstantBuffer<EchoSphere>* GetEchoSphereBuffer() { return &echoSphereBuffer_; }
+	ConstantBuffer<EchoSphereInfo>* GetEchoSphereBuffer() { return &echoSphereBuffer_; }
+	StructuredBuffer<EchoSphere>* GetEchoSphereStructuredBuffer() { return &echoSphereStructuredBuffer_; }
 
 private:
 	float pow;
-	ConstantBuffer<EchoSphere> echoSphereBuffer_;
+	ConstantBuffer<EchoSphereInfo> echoSphereBuffer_;
+	StructuredBuffer<EchoSphere> echoSphereStructuredBuffer_;
 };

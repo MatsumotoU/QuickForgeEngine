@@ -98,7 +98,12 @@ void InspectorView::Draw() {
 				Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(mesh.materialHandle);
 				std::string label = "Color##" + std::to_string(mesh.materialHandle);
 				ImGui::ColorEdit4(label.c_str(), &material->color.x);
+				bool changed = material->enableLighting;
+				ImGui::Checkbox("Is Echo Visible", &changed);
+				material->enableLighting = changed;
 			}
+
+			
 
 			ImGui::Separator();
 			ImGui::Text("Change Model:");
@@ -121,6 +126,7 @@ void InspectorView::Draw() {
 			ImGui::DragFloat2("Pivot", &spriteData.pivot.x, 0.01f);
 			Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(spriteData.materialBufferHandle);
 			ImGui::ColorEdit4("Color", &material->color.x);
+			spriteData.color = material->color;
 		}
 	}
 	// Camera
