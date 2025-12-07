@@ -90,35 +90,36 @@ void TempGraphic::EchoFromAudioData(uint32_t audioHandle, Vector3 pos, float pow
 	AssetManager* assetManager = AssetManager::GetInstance();
 	AudioSourceManager* audioSourceManager = assetManager->GetAudioSourceManager();
 	Spectrum s = MyAudioMath::CreateSpectrumFromAudioData(audioSourceManager->GetSoundData(audioHandle));
-	// magnitudeが0.5以上の要素だけを抽出
-	std::vector<float> filteredFrequencies;
-	std::vector<float> filteredMagnitudes;
+	// magnitudeが0.3以上の要素だけを抽出
+	std::vector<std::pair<float, float>> freqMagPairs;
 	for (size_t i = 0; i < s.magnitudes.size(); ++i) {
-		if (s.magnitudes[i] >= 0.5f) {
-			filteredFrequencies.push_back(s.frequencies[i]);
-			filteredMagnitudes.push_back(s.magnitudes[i]);
+		if (s.magnitudes[i] >= 0.3f) {
+			freqMagPairs.emplace_back(s.frequencies[i], s.magnitudes[i]);
 		}
 	}
+
+	// magnitudeの大きい順にソート
+	std::sort(freqMagPairs.begin(), freqMagPairs.end(),
+		[](const std::pair<float, float>& a, const std::pair<float, float>& b) {
+			return a.second > b.second;
+		});
 
 	// 10個を超える場合は等間隔で10個選ぶ
-	if (filteredFrequencies.size() > 10) {
-		std::vector<float> selectedFrequencies;
-		std::vector<float> selectedMagnitudes;
-		size_t step = filteredFrequencies.size() / 10;
+	if (freqMagPairs.size() > 10) {
+		std::vector<std::pair<float, float>> selectedPairs;
+		size_t step = freqMagPairs.size() / 10;
 		for (size_t i = 0; i < 10; ++i) {
 			size_t idx = i * step;
-			// 最後のインデックスが範囲外にならないように調整
-			if (idx >= filteredFrequencies.size()) idx = filteredFrequencies.size() - 1;
-			selectedFrequencies.push_back(filteredFrequencies[idx]);
-			selectedMagnitudes.push_back(filteredMagnitudes[idx]);
+			if (idx >= freqMagPairs.size()) idx = freqMagPairs.size() - 1;
+			selectedPairs.push_back(freqMagPairs[idx]);
 		}
-		filteredFrequencies = selectedFrequencies;
-		filteredMagnitudes = selectedMagnitudes;
+		freqMagPairs = selectedPairs;
 	}
 
-	for (size_t i = 0; i < filteredFrequencies.size(); ++i) {
-		float magnitude = filteredMagnitudes[i];
-		float sphereThickness = magnitude * 0.05f* power; // 調整可能なスケーリングファクター
+	for (const auto& pair : freqMagPairs) {
+		float magnitude = pair.second;
+		float sphereThickness = magnitude * 0.01f * power; // 調整可能なスケーリングファクター
 		Echo(pos, sphereThickness);
+
 	}
 }

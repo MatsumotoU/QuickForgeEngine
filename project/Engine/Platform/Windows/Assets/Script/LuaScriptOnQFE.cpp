@@ -9,6 +9,7 @@
 #include "Assets/Script/Data/ScriptHandle.h"
 #include "QFElinker/SetQFELinkers.h"
 #include "Graphic/TempGraphic.h"
+#include "Audio/AudioInterface.h"
 
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
@@ -249,6 +250,7 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	luaState_->set_function("EchoForAudio",
 		[](Vector3 pos, uint32_t handle,float power) {
 			TempGraphic::GetInstance()->EchoFromAudioData(handle, pos, power);
+			AudioInterface::GetInstance()->PlaySoundForAudioData(handle, false, power);
 		}
 	);
 }

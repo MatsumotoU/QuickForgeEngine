@@ -49,7 +49,7 @@ function Update()
 end
 
 function OnStrongBeat()
-    EchoForAudio(transform.translate,strongBeatSE,0.9)
+    EchoForAudio(transform.translate,strongBeatSE,0.5)
     transform.scale.x = scaleX * 1.1
     transform.scale.z = scaleY * 1.1
 end

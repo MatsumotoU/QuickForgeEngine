@@ -29,7 +29,7 @@ function Update()
         RunAllFunction("OnStrongBeat")
         transform.scale.x = 2.0
         transform.scale.z = 2.0
-        QFE.Audio.PlaySound(strongBeatSE,false,1.0)
+        --QFE.Audio.PlaySound(strongBeatSE,false,1.0)
     end
 
     transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,1.0,0.1)
