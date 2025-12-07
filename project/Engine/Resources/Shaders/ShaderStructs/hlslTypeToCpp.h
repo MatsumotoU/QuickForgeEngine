@@ -31,6 +31,7 @@ struct EchoSphere {
 	float32_t sphereRadius;
 	float32_t sphereThickness;
 	float32_t alpha;
+	float32_t expandSpeed;
 	int32_t isActive;
 };
 

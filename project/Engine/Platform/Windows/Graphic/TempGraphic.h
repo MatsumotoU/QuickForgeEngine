@@ -16,7 +16,7 @@ public:
 	void Draw();
 	void Finalize();
 
-	void Echo(Vector3 pos, float power);
+	void Echo(Vector3 pos, float thickness, float expandSpeed);
 
 	void EchoFromAudioData(uint32_t audioHandle,Vector3 pos,float power);
 

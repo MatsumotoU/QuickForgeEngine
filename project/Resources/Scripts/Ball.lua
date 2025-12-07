@@ -6,6 +6,8 @@ speed = 2.0
 local timer =0.0
 local isEnd =false
 
+local wallHitSE = QFE.Audio.LoadSound("WallHit.wav")
+
 function Init()
     isStart = false
     dirX = 0.0
@@ -39,21 +41,18 @@ function Update()
     if math.abs(dirX) + math.abs(dirY) > 2.0 then
         if timer > 0.3 then
             timer = 0.0
-            Echo(transform.translate,0.8)
         end
     end
 
     if transform.translate.z <= -5.5 then
         isEnd =true
         timer = 0.0
-        Echo(transform.translate,10.0)
-        Echo(transform.translate,5.0)
-        Echo(transform.translate,3.0)
     end
 end
 
 function OnCollisionEnter(id,obj)
-    Echo(transform.translate,1.0)
+    EchoForAudio(transform.translate,wallHitSE,0.2)
+
     if obj.tag == "player" then
         local x = -(GetTransform(id).translate.x - transform.translate.x)
         dirX = x
