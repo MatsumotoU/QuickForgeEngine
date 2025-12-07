@@ -7,7 +7,7 @@ end
 function Update()
 
     if echoCharge > 3.0 then
-        Echo(transform.translate,2.0)
+        --Echo(transform.translate,2.0)
         transform.rotate.x = 10.0
         echoCharge = 0.0
     else

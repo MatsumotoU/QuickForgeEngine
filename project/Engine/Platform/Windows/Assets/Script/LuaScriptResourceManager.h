@@ -18,6 +18,8 @@ public:
 	void Initialize();
 	void Reset();
 	void ReloadAllScripts();
+
+	void RunAllFunction(const std::string& functionName);
 	void CreateScript(const std::string& scriptName);
 	uint32_t AddScript(uint32_t entityId, const std::string& scriptName);
 	void RequestRemoveScript(uint32_t handle);

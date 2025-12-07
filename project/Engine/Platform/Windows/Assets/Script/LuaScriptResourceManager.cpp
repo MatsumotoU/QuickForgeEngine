@@ -39,6 +39,15 @@ void LuaScriptResourceManager::ReloadAllScripts() {
 	}
 }
 
+void LuaScriptResourceManager::RunAllFunction(const std::string& functionName)
+{
+	for (auto& [handle, script] : scripts_) {
+		if (script && script->HasFunction(functionName)) {
+			script->RunFunction(functionName);
+		}
+	}
+}
+
 void LuaScriptResourceManager::CreateScript(const std::string& scriptName) {
 	// ディレクトリパス
 	const std::string dirPath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");

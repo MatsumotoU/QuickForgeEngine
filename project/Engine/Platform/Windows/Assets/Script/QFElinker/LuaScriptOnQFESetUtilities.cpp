@@ -1,6 +1,7 @@
 #include "LuaScriptOnQFESetUtilities.h"
 #include "Assets/AssetManager.h"
 #include "Scene/SceneManager.h"
+#include "Assets/Script/LuaScriptResourceManager.h"
 #ifdef _DEBUG
 #include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -59,4 +60,7 @@ void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 		}
 	);
 
+	luaState->set_function("RunAllFunction", [](const std::string& message) {
+		LuaScriptResourceManager::GetInstance()->RunAllFunction(message);
+	});
 }

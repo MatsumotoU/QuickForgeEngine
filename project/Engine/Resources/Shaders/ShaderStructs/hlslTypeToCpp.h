@@ -23,11 +23,14 @@ struct EchoSphere {
 	EchoSphere()
 		: sphereCenter{ 0.0f, 0.0f, 0.0f }
 		, sphereRadius(0.0f)
-		, sphereThickness(0.2f) {}
+		, sphereThickness(0.2f)
+		, alpha(0.0f)
+		, isActive(false){}
 #endif
 	float32_t3 sphereCenter;
-	float32_t  sphereRadius;
-	float32_t  sphereThickness;
+	float32_t sphereRadius;
+	float32_t sphereThickness;
+	float32_t alpha;
 	int32_t isActive;
 };
 

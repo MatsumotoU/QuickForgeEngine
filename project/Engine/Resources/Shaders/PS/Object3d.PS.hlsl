@@ -43,6 +43,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     if (gMaterial.enableLighting)
     {
         bool shouldDraw = false;
+        output.color.a = 0.0f;
         for (int i = 0; i < gEchoSphereInfo.count; i++)
         {
             if (gEchoSpheres[i].isActive)
@@ -51,9 +52,15 @@ PixelShaderOutput main(VertexShaderOutput input)
                 float edgeMin = gEchoSpheres[i].sphereRadius - gEchoSpheres[i].sphereThickness * 0.5f;
                 float edgeMax = gEchoSpheres[i].sphereRadius + gEchoSpheres[i].sphereThickness * 0.5f;
                 bool isOnEdge = (dist >= edgeMin) && (dist <= edgeMax);
+                
 
                 if (isOnEdge)
                 {
+                    color.a += gEchoSpheres[i].alpha;
+                    if (color.a >= 1.0f)
+                    {
+                        color.a = 1.0f;
+                    }
                     shouldDraw = true;
                     break;
                 }

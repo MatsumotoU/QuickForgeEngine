@@ -1390,6 +1390,7 @@
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\Data\CsharpComponent.h" />
     <ClInclude Include="Engine\Platform\Windows\Graphic\TempGraphic.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Data\Spectrum.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Resources\Shaders\ShaderStructs\Particle.hlsli">

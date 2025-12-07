@@ -2,6 +2,11 @@
 #include "Graphic/DirectXCommon/DirectXCommon.h"
 #include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
 #include "Renderer/GraphRenderer.h"
+#include "Core/Math/AudioMath.h"
+
+#include "Assets/AssetManager.h"
+#include "Assets/AudioSource/AudioSourceManager.h"
+#include "Assets/AudioSource/Data/Spectrum.h"
 
 void TempGraphic::Initialize() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
@@ -22,6 +27,7 @@ void TempGraphic::Initialize() {
 		echoSphereStructuredBuffer_.GetData()[i].sphereRadius = 0.0f;
 		echoSphereStructuredBuffer_.GetData()[i].sphereThickness = 0.0f;
 		echoSphereStructuredBuffer_.GetData()[i].sphereCenter = Vector3(0.0f, 0.0f, 0.0f);
+		echoSphereStructuredBuffer_.GetData()[i].alpha = 0.0f;
 	}
 }
 
@@ -73,7 +79,46 @@ void TempGraphic::Echo(Vector3 pos, float power) {
 			echoSphereStructuredBuffer_.GetData()[i].sphereCenter = pos;
 			echoSphereStructuredBuffer_.GetData()[i].sphereRadius = 0.0f;
 			echoSphereStructuredBuffer_.GetData()[i].sphereThickness = power;
+			echoSphereStructuredBuffer_.GetData()[i].alpha = 0.1f;
 			break;
 		}
+	}
+}
+
+void TempGraphic::EchoFromAudioData(uint32_t audioHandle, Vector3 pos, float power)
+{
+	AssetManager* assetManager = AssetManager::GetInstance();
+	AudioSourceManager* audioSourceManager = assetManager->GetAudioSourceManager();
+	Spectrum s = MyAudioMath::CreateSpectrumFromAudioData(audioSourceManager->GetSoundData(audioHandle));
+	// magnitudeが0.5以上の要素だけを抽出
+	std::vector<float> filteredFrequencies;
+	std::vector<float> filteredMagnitudes;
+	for (size_t i = 0; i < s.magnitudes.size(); ++i) {
+		if (s.magnitudes[i] >= 0.5f) {
+			filteredFrequencies.push_back(s.frequencies[i]);
+			filteredMagnitudes.push_back(s.magnitudes[i]);
+		}
+	}
+
+	// 10個を超える場合は等間隔で10個選ぶ
+	if (filteredFrequencies.size() > 10) {
+		std::vector<float> selectedFrequencies;
+		std::vector<float> selectedMagnitudes;
+		size_t step = filteredFrequencies.size() / 10;
+		for (size_t i = 0; i < 10; ++i) {
+			size_t idx = i * step;
+			// 最後のインデックスが範囲外にならないように調整
+			if (idx >= filteredFrequencies.size()) idx = filteredFrequencies.size() - 1;
+			selectedFrequencies.push_back(filteredFrequencies[idx]);
+			selectedMagnitudes.push_back(filteredMagnitudes[idx]);
+		}
+		filteredFrequencies = selectedFrequencies;
+		filteredMagnitudes = selectedMagnitudes;
+	}
+
+	for (size_t i = 0; i < filteredFrequencies.size(); ++i) {
+		float magnitude = filteredMagnitudes[i];
+		float sphereThickness = magnitude * 0.05f* power; // 調整可能なスケーリングファクター
+		Echo(pos, sphereThickness);
 	}
 }

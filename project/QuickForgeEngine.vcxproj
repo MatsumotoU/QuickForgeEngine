@@ -506,6 +506,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClInclude Include="Engine\Platform\Windows\Assets\Animeter\KeyFrame.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\AudioSourceManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Data\AudioData.h" />
+    <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Data\Spectrum.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\AudioSource\Loader\MultiAudioLoader.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\ConstantBufferManager\ConstantBufferManager.h" />
     <ClInclude Include="Engine\Platform\Windows\Assets\Script\CsharpCmpiler.h" />

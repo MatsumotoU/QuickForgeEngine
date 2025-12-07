@@ -246,4 +246,9 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 			TempGraphic::GetInstance()->Echo(pos, p);
 		}
 	);
+	luaState_->set_function("EchoForAudio",
+		[](Vector3 pos, uint32_t handle,float power) {
+			TempGraphic::GetInstance()->EchoFromAudioData(handle, pos, power);
+		}
+	);
 }

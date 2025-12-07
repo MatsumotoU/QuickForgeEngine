@@ -18,6 +18,8 @@ public:
 
 	void Echo(Vector3 pos, float power);
 
+	void EchoFromAudioData(uint32_t audioHandle,Vector3 pos,float power);
+
 	ConstantBuffer<EchoSphereInfo>* GetEchoSphereBuffer() { return &echoSphereBuffer_; }
 	StructuredBuffer<EchoSphere>* GetEchoSphereStructuredBuffer() { return &echoSphereStructuredBuffer_; }
 
