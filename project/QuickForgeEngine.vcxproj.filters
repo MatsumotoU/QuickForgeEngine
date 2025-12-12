@@ -106,34 +106,34 @@
     <ClCompile Include="externals\imgui\imgui-node-editor-0.9.3\crude_json.cpp">
       <Filter>external\sol2</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\View\AssetsView.cpp">
+    <ClCompile Include="editor\src\UI\View\AssetsView.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\View\ConsoleView.cpp">
+    <ClCompile Include="editor\src\UI\View\ConsoleView.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\View\EngineProfileView.cpp">
+    <ClCompile Include="editor\src\UI\View\EngineProfileView.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\View\GameView.cpp">
+    <ClCompile Include="editor\src\UI\View\GameView.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\View\HierarchyView.cpp">
+    <ClCompile Include="editor\src\UI\View\HierarchyView.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\View\InspectorView.cpp">
+    <ClCompile Include="editor\src\UI\View\InspectorView.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\View\SceneView.cpp">
+    <ClCompile Include="editor\src\UI\View\SceneView.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\File\SaveScene.cpp">
+    <ClCompile Include="editor\src\UI\File\SaveScene.cpp">
       <Filter>source\engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\File\CreateNewScene.cpp">
+    <ClCompile Include="editor\src\UI\File\CreateNewScene.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\File\LoadScene.cpp">
+    <ClCompile Include="editor\src\UI\File\LoadScene.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\scene\SceneManager.cpp">
@@ -181,7 +181,7 @@
     <ClCompile Include="engine\src\graphic\DirectXCommon\Command\CommandExecutor.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\Edit\DebugConsole.cpp">
+    <ClCompile Include="editor\src\UI\Edit\DebugConsole.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\utility\DebugTool\DirectX\DebugLayer.cpp">
@@ -301,7 +301,7 @@
     <ClCompile Include="engine\src\window\WindowEventsManager\EventSystems\OnFocusEvent.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="editor\OnWindowsEditor.cpp">
+    <ClCompile Include="editor\src\OnWindowsEditor.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\physics\PhysicsManager.cpp">
@@ -346,7 +346,7 @@
     <ClCompile Include="engine\src\utility\DirectX\TransitionResourceBarrier.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="editor\UI\UIManager.cpp">
+    <ClCompile Include="editor\src\UI\UIManager.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\utility\ID\UniqeIDManager.cpp">
@@ -374,11 +374,11 @@
     <ClCompile Include="engine\src\audio\Player\AudioChipManager.cpp" />
     <ClCompile Include="engine\src\input\KeyConfig.cpp" />
     <ClCompile Include="engine\src\input\InputInterface.cpp" />
-    <ClCompile Include="editor\UI\Edit\KeyConfigEdit.cpp" />
+    <ClCompile Include="editor\src\UI\Edit\KeyConfigEdit.cpp" />
     <ClCompile Include="engine\src\utility\String\DirectInputToString.cpp" />
     <ClCompile Include="engine\src\utility\MultiThreadRunFunction.cpp" />
     <ClCompile Include="engine\src\utility\MultiThreadTaskExecutor.cpp" />
-    <ClCompile Include="editor\UI\Edit\PostprocessEdit.cpp" />
+    <ClCompile Include="editor\src\UI\Edit\PostprocessEdit.cpp" />
     <ClCompile Include="engine\src\assets\Script\QFElinker\LuaScriptOnQFESetStructBase.cpp" />
     <ClCompile Include="engine\src\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp" />
     <ClCompile Include="engine\src\assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.cpp" />
@@ -386,12 +386,12 @@
     <ClCompile Include="engine\src\assets\Script\QFElinker\SetQFELinkers.cpp" />
     <ClCompile Include="engine\src\assets\Script\QFElinker\LuaScriptOnQFESetUtilities.cpp" />
     <ClCompile Include="engine\src\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp" />
-    <ClCompile Include="editor\UI\View\ScriptLoggerView.cpp" />
+    <ClCompile Include="editor\src\UI\View\ScriptLoggerView.cpp" />
     <ClCompile Include="engine\src\assets\Animeter\AnimCrip.cpp" />
     <ClCompile Include="engine\src\assets\Animeter\AnimationManager.cpp" />
     <ClCompile Include="engine\src\collider\ColliderMask.cpp" />
-    <ClCompile Include="editor\UI\Edit\ColliderMaskEdit.cpp" />
-    <ClCompile Include="editor\UI\View\SceneProfileView.cpp" />
+    <ClCompile Include="editor\src\UI\Edit\ColliderMaskEdit.cpp" />
+    <ClCompile Include="editor\src\UI\View\SceneProfileView.cpp" />
     <ClCompile Include="engine\src\input\XInput\XInputController.cpp" />
     <ClCompile Include="engine\src\assets\Script\CsharpCmpiler.cpp" />
     <ClCompile Include="engine\src\assets\Script\CsharpScriptOnQFE.cpp" />
@@ -901,43 +901,7 @@
     <ClInclude Include="externals\sol2\sol\version.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="editor\UI\View\ConsoleView.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\View\GameView.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\View\HierarchyView.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\IEditor.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\IEditorUI.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\View\SceneView.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\View\InspectorView.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\View\AssetsView.h">
-      <Filter>include\engine\base</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h">
-      <Filter>include\engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\File\CreateNewScene.h">
-      <Filter>include\engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\Edit\DebugConsole.h">
-      <Filter>include\engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\View\EngineProfileView.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\File\LoadScene.h">
       <Filter>include\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Object\Structs\ModelData.h">
@@ -946,26 +910,12 @@
     <ClInclude Include="Engine\Object\Structs\ModelMaterialData.h">
       <Filter>include\engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="editor\OnWindowsEditor.h">
-      <Filter>include\engine\base</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Base\DirectX\PostProcess.h">
       <Filter>include\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\QuickForgeEngine.h">
       <Filter>include\engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="editor\UI\File\SaveScene.h">
-      <Filter>include\engine\base</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\UIManager.h">
-      <Filter>include\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="editor\UI\Edit\KeyConfigEdit.h" />
-    <ClInclude Include="editor\UI\Edit\PostprocessEdit.h" />
-    <ClInclude Include="editor\UI\View\ScriptLoggerView.h" />
-    <ClInclude Include="editor\UI\Edit\ColliderMaskEdit.h" />
-    <ClInclude Include="editor\UI\View\SceneProfileView.h" />
     <ClInclude Include="engine\src\assets\Particle\Data\ParticleComponent.h" />
     <ClInclude Include="engine\include\assets\2DTexture\TextureManager.h" />
     <ClInclude Include="engine\include\assets\3DModel\Data\ModelData.h" />
@@ -1116,6 +1066,26 @@
     <ClInclude Include="engine\include\window\GameWindow.h" />
     <ClInclude Include="engine\include\window\GameWindowManager.h" />
     <ClInclude Include="engine\include\WindowsEngineCore.h" />
+    <ClInclude Include="editor\include\UI\Edit\ColliderMaskEdit.h" />
+    <ClInclude Include="editor\include\UI\Edit\DebugConsole.h" />
+    <ClInclude Include="editor\include\UI\Edit\KeyConfigEdit.h" />
+    <ClInclude Include="editor\include\UI\Edit\PostprocessEdit.h" />
+    <ClInclude Include="editor\include\UI\File\CreateNewScene.h" />
+    <ClInclude Include="editor\include\UI\File\LoadScene.h" />
+    <ClInclude Include="editor\include\UI\File\SaveScene.h" />
+    <ClInclude Include="editor\include\UI\View\AssetsView.h" />
+    <ClInclude Include="editor\include\UI\View\ConsoleView.h" />
+    <ClInclude Include="editor\include\UI\View\EngineProfileView.h" />
+    <ClInclude Include="editor\include\UI\View\GameView.h" />
+    <ClInclude Include="editor\include\UI\View\HierarchyView.h" />
+    <ClInclude Include="editor\include\UI\View\InspectorView.h" />
+    <ClInclude Include="editor\include\UI\View\SceneProfileView.h" />
+    <ClInclude Include="editor\include\UI\View\SceneView.h" />
+    <ClInclude Include="editor\include\UI\View\ScriptLoggerView.h" />
+    <ClInclude Include="editor\include\UI\IEditorUI.h" />
+    <ClInclude Include="editor\include\UI\UIManager.h" />
+    <ClInclude Include="editor\include\IEditor.h" />
+    <ClInclude Include="editor\include\OnWindowsEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\Resources\Shaders\ShaderStructs\Particle.hlsli">
