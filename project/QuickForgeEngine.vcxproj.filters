@@ -43,46 +43,46 @@
     <FxCompile Include="Engine\Resources\Shaders\PS\PixcelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Externals\imgui\imgui.cpp">
+    <ClCompile Include="Externals\imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp">
+    <ClCompile Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_demo.cpp">
+    <ClCompile Include="Externals\imgui\imgui_demo.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_draw.cpp">
+    <ClCompile Include="Externals\imgui\imgui_draw.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_impl_dx12.cpp">
+    <ClCompile Include="Externals\imgui\imgui_impl_dx12.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_impl_win32.cpp">
+    <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
+    <ClCompile Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
+    <ClCompile Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_tables.cpp">
+    <ClCompile Include="Externals\imgui\imgui_tables.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle.cpp">
+    <ClCompile Include="Externals\imgui\imgui_toggle-main\imgui_toggle.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_palette.cpp">
+    <ClCompile Include="Externals\imgui\imgui_toggle-main\imgui_toggle_palette.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_presets.cpp">
+    <ClCompile Include="Externals\imgui\imgui_toggle-main\imgui_toggle_presets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_renderer.cpp">
+    <ClCompile Include="Externals\imgui\imgui_toggle-main\imgui_toggle_renderer.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui_widgets.cpp">
+    <ClCompile Include="Externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.cpp">
@@ -91,19 +91,19 @@
     <ClCompile Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui-knobs-main\imgui-knobs.cpp">
+    <ClCompile Include="Externals\imgui\imgui-knobs-main\imgui-knobs.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp">
+    <ClCompile Include="Externals\imgui\ImGuizmo-1.83\ImGuizmo.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\implot-master\implot.cpp">
+    <ClCompile Include="Externals\imgui\implot-master\implot.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\implot-master\implot_items.cpp">
+    <ClCompile Include="Externals\imgui\implot-master\implot_items.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\crude_json.cpp">
+    <ClCompile Include="Externals\imgui\imgui-node-editor-0.9.3\crude_json.cpp">
       <Filter>external\sol2</Filter>
     </ClCompile>
     <ClCompile Include="Editor\UI\View\AssetsView.cpp">
@@ -444,52 +444,52 @@
     <ClCompile Include="Engine\Platform\Windows\Assets\Particle\ParticleAnimationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Externals\imgui\imconfig.h">
+    <ClInclude Include="Externals\imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui.h">
+    <ClInclude Include="Externals\imgui\imgui.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h">
+    <ClInclude Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.h">
+    <ClInclude Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_canvas.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.h">
+    <ClInclude Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_impl_dx12.h">
+    <ClInclude Include="Externals\imgui\imgui_impl_dx12.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_impl_win32.h">
+    <ClInclude Include="Externals\imgui\imgui_impl_win32.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_internal.h">
+    <ClInclude Include="Externals\imgui\imgui_internal.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h">
+    <ClInclude Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h">
+    <ClInclude Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_offset_rect.h">
+    <ClInclude Include="Externals\imgui\imgui_toggle-main\imgui_offset_rect.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle.h">
+    <ClInclude Include="Externals\imgui\imgui_toggle-main\imgui_toggle.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_math.h">
+    <ClInclude Include="Externals\imgui\imgui_toggle-main\imgui_toggle_math.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_palette.h">
+    <ClInclude Include="Externals\imgui\imgui_toggle-main\imgui_toggle_palette.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_presets.h">
+    <ClInclude Include="Externals\imgui\imgui_toggle-main\imgui_toggle_presets.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui_toggle-main\imgui_toggle_renderer.h">
+    <ClInclude Include="Externals\imgui\imgui_toggle-main\imgui_toggle_renderer.h">
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\FrameController\ImGuiFlameController.h">
@@ -501,451 +501,451 @@
     <ClInclude Include="Engine\Platform\Windows\AppUtility\DebugTool\ImGui\Initializer\ImGuiInitializer.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui-knobs-main\imgui-knobs.h">
+    <ClInclude Include="Externals\imgui\imgui-knobs-main\imgui-knobs.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\ImGuizmo-1.83\ImGuizmo.h">
+    <ClInclude Include="Externals\imgui\ImGuizmo-1.83\ImGuizmo.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\implot-master\implot.h">
+    <ClInclude Include="Externals\imgui\implot-master\implot.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\implot-master\implot_internal.h">
+    <ClInclude Include="Externals\imgui\implot-master\implot_internal.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imstb_rectpack.h">
+    <ClInclude Include="Externals\imgui\imstb_rectpack.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imstb_textedit.h">
+    <ClInclude Include="Externals\imgui\imstb_textedit.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imstb_truetype.h">
+    <ClInclude Include="Externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\wrapper.hpp">
+    <ClInclude Include="Externals\sol2\sol\wrapper.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\as_args.hpp">
+    <ClInclude Include="Externals\sol2\sol\as_args.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\as_returns.hpp">
+    <ClInclude Include="Externals\sol2\sol\as_returns.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\assert.hpp">
+    <ClInclude Include="Externals\sol2\sol\assert.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\base_traits.hpp">
+    <ClInclude Include="Externals\sol2\sol\base_traits.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\bind_traits.hpp">
+    <ClInclude Include="Externals\sol2\sol\bind_traits.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\detail\build_version.hpp">
+    <ClInclude Include="Externals\sol2\sol\detail\build_version.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\bytecode.hpp">
+    <ClInclude Include="Externals\sol2\sol\bytecode.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\call.hpp">
+    <ClInclude Include="Externals\sol2\sol\call.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.3.c.h">
+    <ClInclude Include="Externals\sol2\sol\compatibility\compat-5.3.c.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.3.h">
+    <ClInclude Include="Externals\sol2\sol\compatibility\compat-5.3.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\compat-5.4.h">
+    <ClInclude Include="Externals\sol2\sol\compatibility\compat-5.4.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\compatibility.hpp">
+    <ClInclude Include="Externals\sol2\sol\compatibility.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\config.hpp">
+    <ClInclude Include="Externals\sol2\sol\config.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\coroutine.hpp">
+    <ClInclude Include="Externals\sol2\sol\coroutine.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\crude_json.h">
+    <ClInclude Include="Externals\imgui\imgui-node-editor-0.9.3\crude_json.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\debug.hpp">
+    <ClInclude Include="Externals\sol2\sol\debug.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\demangle.hpp">
+    <ClInclude Include="Externals\sol2\sol\demangle.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\deprecate.hpp">
+    <ClInclude Include="Externals\sol2\sol\deprecate.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\dump_handler.hpp">
+    <ClInclude Include="Externals\sol2\sol\dump_handler.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\ebco.hpp">
+    <ClInclude Include="Externals\sol2\sol\ebco.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\environment.hpp">
+    <ClInclude Include="Externals\sol2\sol\environment.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\epilogue.hpp">
+    <ClInclude Include="Externals\sol2\sol\epilogue.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\error.hpp">
+    <ClInclude Include="Externals\sol2\sol\error.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\error_handler.hpp">
+    <ClInclude Include="Externals\sol2\sol\error_handler.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\forward.hpp">
+    <ClInclude Include="Externals\sol2\sol\forward.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\forward_detail.hpp">
+    <ClInclude Include="Externals\sol2\sol\forward_detail.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\function.hpp">
+    <ClInclude Include="Externals\sol2\sol\function.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\function_result.hpp">
+    <ClInclude Include="Externals\sol2\sol\function_result.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\function_types.hpp">
+    <ClInclude Include="Externals\sol2\sol\function_types.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\function_types_core.hpp">
+    <ClInclude Include="Externals\sol2\sol\function_types_core.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\function_types_overloaded.hpp">
+    <ClInclude Include="Externals\sol2\sol\function_types_overloaded.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\function_types_stateful.hpp">
+    <ClInclude Include="Externals\sol2\sol\function_types_stateful.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\function_types_stateless.hpp">
+    <ClInclude Include="Externals\sol2\sol\function_types_stateless.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\function_types_templated.hpp">
+    <ClInclude Include="Externals\sol2\sol\function_types_templated.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Resources\Shaders\ShaderStructs\hlslTypeToCpp.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\in_place.hpp">
+    <ClInclude Include="Externals\sol2\sol\in_place.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\inheritance.hpp">
+    <ClInclude Include="Externals\sol2\sol\inheritance.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lapi.h">
+    <ClInclude Include="Externals\lua\lapi.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lauxlib.h">
+    <ClInclude Include="Externals\lua\lauxlib.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lcode.h">
+    <ClInclude Include="Externals\lua\lcode.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lctype.h">
+    <ClInclude Include="Externals\lua\lctype.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\ldebug.h">
+    <ClInclude Include="Externals\lua\ldebug.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\ldo.h">
+    <ClInclude Include="Externals\lua\ldo.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lfunc.h">
+    <ClInclude Include="Externals\lua\lfunc.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lgc.h">
+    <ClInclude Include="Externals\lua\lgc.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\ljumptab.h">
+    <ClInclude Include="Externals\lua\ljumptab.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\llex.h">
+    <ClInclude Include="Externals\lua\llex.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\llimits.h">
+    <ClInclude Include="Externals\lua\llimits.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lmem.h">
+    <ClInclude Include="Externals\lua\lmem.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\load_result.hpp">
+    <ClInclude Include="Externals\sol2\sol\load_result.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lobject.h">
+    <ClInclude Include="Externals\lua\lobject.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lopcodes.h">
+    <ClInclude Include="Externals\lua\lopcodes.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lopnames.h">
+    <ClInclude Include="Externals\lua\lopnames.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lparser.h">
+    <ClInclude Include="Externals\lua\lparser.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lprefix.h">
+    <ClInclude Include="Externals\lua\lprefix.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lstate.h">
+    <ClInclude Include="Externals\lua\lstate.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lstring.h">
+    <ClInclude Include="Externals\lua\lstring.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\ltable.h">
+    <ClInclude Include="Externals\lua\ltable.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\ltm.h">
+    <ClInclude Include="Externals\lua\ltm.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lua.h">
+    <ClInclude Include="Externals\lua\lua.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lua.hpp">
+    <ClInclude Include="Externals\lua\lua.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\lua_table.hpp">
+    <ClInclude Include="Externals\sol2\sol\lua_table.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\lua_value.hpp">
+    <ClInclude Include="Externals\sol2\sol\lua_value.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\compatibility\lua_version.hpp">
+    <ClInclude Include="Externals\sol2\sol\compatibility\lua_version.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\luaconf.h">
+    <ClInclude Include="Externals\lua\luaconf.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lualib.h">
+    <ClInclude Include="Externals\lua\lualib.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lundump.h">
+    <ClInclude Include="Externals\lua\lundump.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lvm.h">
+    <ClInclude Include="Externals\lua\lvm.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\lua\lzio.h">
+    <ClInclude Include="Externals\lua\lzio.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\make_reference.hpp">
+    <ClInclude Include="Externals\sol2\sol\make_reference.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\metatable.hpp">
+    <ClInclude Include="Externals\sol2\sol\metatable.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\object.hpp">
+    <ClInclude Include="Externals\sol2\sol\object.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\object_base.hpp">
+    <ClInclude Include="Externals\sol2\sol\object_base.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\optional.hpp">
+    <ClInclude Include="Externals\sol2\sol\optional.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\optional_implementation.hpp">
+    <ClInclude Include="Externals\sol2\sol\optional_implementation.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\overload.hpp">
+    <ClInclude Include="Externals\sol2\sol\overload.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\packaged_coroutine.hpp">
+    <ClInclude Include="Externals\sol2\sol\packaged_coroutine.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack\detail\pairs.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack\detail\pairs.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\pairs_iterator.hpp">
+    <ClInclude Include="Externals\sol2\sol\pairs_iterator.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\pointer_like.hpp">
+    <ClInclude Include="Externals\sol2\sol\pointer_like.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\policies.hpp">
+    <ClInclude Include="Externals\sol2\sol\policies.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\prologue.hpp">
+    <ClInclude Include="Externals\sol2\sol\prologue.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\property.hpp">
+    <ClInclude Include="Externals\sol2\sol\property.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\protect.hpp">
+    <ClInclude Include="Externals\sol2\sol\protect.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\protected_function.hpp">
+    <ClInclude Include="Externals\sol2\sol\protected_function.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\protected_function_result.hpp">
+    <ClInclude Include="Externals\sol2\sol\protected_function_result.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\protected_handler.hpp">
+    <ClInclude Include="Externals\sol2\sol\protected_handler.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\proxy_base.hpp">
+    <ClInclude Include="Externals\sol2\sol\proxy_base.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\raii.hpp">
+    <ClInclude Include="Externals\sol2\sol\raii.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\reference.hpp">
+    <ClInclude Include="Externals\sol2\sol\reference.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\resolve.hpp">
+    <ClInclude Include="Externals\sol2\sol\resolve.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\sol.hpp">
+    <ClInclude Include="Externals\sol2\sol\sol.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_check.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_check.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_check_get.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get_qualified.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_check_get_qualified.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_get_unqualified.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_check_get_unqualified.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_qualified.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_check_qualified.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_check_unqualified.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_check_unqualified.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_core.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_core.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_field.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_field.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_get.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_get.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_get_qualified.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_get_qualified.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_get_unqualified.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_get_unqualified.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_guard.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_guard.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_iterator.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_iterator.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_pop.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_pop.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_probe.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_probe.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_proxy.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_proxy.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_proxy_base.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_proxy_base.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_push.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_push.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\stack_reference.hpp">
+    <ClInclude Include="Externals\sol2\sol\stack_reference.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\state.hpp">
+    <ClInclude Include="Externals\sol2\sol\state.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\state_handling.hpp">
+    <ClInclude Include="Externals\sol2\sol\state_handling.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\state_view.hpp">
+    <ClInclude Include="Externals\sol2\sol\state_view.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\string_view.hpp">
+    <ClInclude Include="Externals\sol2\sol\string_view.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\table.hpp">
+    <ClInclude Include="Externals\sol2\sol\table.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\table_core.hpp">
+    <ClInclude Include="Externals\sol2\sol\table_core.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\table_iterator.hpp">
+    <ClInclude Include="Externals\sol2\sol\table_iterator.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\table_proxy.hpp">
+    <ClInclude Include="Externals\sol2\sol\table_proxy.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\thread.hpp">
+    <ClInclude Include="Externals\sol2\sol\thread.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\tie.hpp">
+    <ClInclude Include="Externals\sol2\sol\tie.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\traits.hpp">
+    <ClInclude Include="Externals\sol2\sol\traits.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\trampoline.hpp">
+    <ClInclude Include="Externals\sol2\sol\trampoline.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\tuple.hpp">
+    <ClInclude Include="Externals\sol2\sol\tuple.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\types.hpp">
+    <ClInclude Include="Externals\sol2\sol\types.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\unicode.hpp">
+    <ClInclude Include="Externals\sol2\sol\unicode.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\unique_usertype_traits.hpp">
+    <ClInclude Include="Externals\sol2\sol\unique_usertype_traits.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\unsafe_function.hpp">
+    <ClInclude Include="Externals\sol2\sol\unsafe_function.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\unsafe_function_result.hpp">
+    <ClInclude Include="Externals\sol2\sol\unsafe_function_result.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\userdata.hpp">
+    <ClInclude Include="Externals\sol2\sol\userdata.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\usertype.hpp">
+    <ClInclude Include="Externals\sol2\sol\usertype.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\usertype_container.hpp">
+    <ClInclude Include="Externals\sol2\sol\usertype_container.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\usertype_container_launch.hpp">
+    <ClInclude Include="Externals\sol2\sol\usertype_container_launch.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\usertype_core.hpp">
+    <ClInclude Include="Externals\sol2\sol\usertype_core.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\usertype_proxy.hpp">
+    <ClInclude Include="Externals\sol2\sol\usertype_proxy.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\usertype_storage.hpp">
+    <ClInclude Include="Externals\sol2\sol\usertype_storage.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\usertype_traits.hpp">
+    <ClInclude Include="Externals\sol2\sol\usertype_traits.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\variadic_args.hpp">
+    <ClInclude Include="Externals\sol2\sol\variadic_args.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\variadic_results.hpp">
+    <ClInclude Include="Externals\sol2\sol\variadic_results.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Externals\sol2\sol\version.hpp">
+    <ClInclude Include="Externals\sol2\sol\version.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
     <ClInclude Include="Editor\UI\View\ConsoleView.h">
@@ -1409,7 +1409,7 @@
     <None Include="Engine\Resources\Shaders\ShaderStructs\Object3d.hlsli">
       <Filter>shader</Filter>
     </None>
-    <None Include="Engine\Externals\imgui\ImGuizmo-1.83\.editorconfig">
+    <None Include="Externals\imgui\ImGuizmo-1.83\.editorconfig">
       <Filter>build</Filter>
     </None>
     <None Include=".editorconfig">
@@ -1421,16 +1421,16 @@
     <None Include="GenerateBuildInfo.bat">
       <Filter>build</Filter>
     </None>
-    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl">
+    <None Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl">
       <Filter>imgui</Filter>
     </None>
-    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl">
+    <None Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl">
       <Filter>imgui</Filter>
     </None>
-    <None Include="Engine\Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl">
+    <None Include="Externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl">
       <Filter>imgui</Filter>
     </None>
-    <None Include="Engine\Externals\imgui\ImGuizmo-1.83\Makefile">
+    <None Include="Externals\imgui\ImGuizmo-1.83\Makefile">
       <Filter>external\sol2</Filter>
     </None>
     <None Include="Resources\2DMap\testCSV.csv" />
