@@ -7,6 +7,9 @@
 *.ini
 BuildInfo.h
 
+project/Resources/Scripts/bin/
+project/Resources/Scripts/obj/
+
 #DumpFile
 Dumps/
 
