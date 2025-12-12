@@ -190,9 +190,9 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="engine\Resources\Shaders\ShaderStructs\Font.hlsli" />
-    <None Include="engine\Resources\Shaders\ShaderStructs\Object3d.hlsli" />
-    <None Include="engine\Resources\Shaders\ShaderStructs\Particle.hlsli" />
+    <None Include="engine\resources\shaders\shaderStructs\Font.hlsli" />
+    <None Include="engine\resources\shaders\shaderStructs\Object3d.hlsli" />
+    <None Include="engine\resources\shaders\shaderStructs\Particle.hlsli" />
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl" />
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl" />
     <None Include="externals\imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
@@ -527,7 +527,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h" />
     <ClInclude Include="engine\src\assets\Particle\Data\ParticleComponent.h" />
     <ClInclude Include="engine\QuickForgeEngine.h" />
-    <ClInclude Include="engine\Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
+    <ClInclude Include="engine\resources\shaders\shaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="Engine\Object\Structs\ModelMaterialData.h" />
     <ClInclude Include="Engine\Object\Structs\ModelData.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -696,7 +696,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClInclude Include="externals\sol2\sol\wrapper.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="engine\Resources\Shaders\PS\ColorCorrectionShader.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\ColorCorrectionShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
@@ -704,7 +704,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\MSDF.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\MSDF.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
@@ -712,12 +712,12 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\Particle.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\Particle.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\PixcelShader.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\PixcelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
@@ -725,7 +725,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Font.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Font.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
@@ -733,7 +733,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Primitive.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Primitive.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
@@ -741,7 +741,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Simple.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Simple.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
@@ -749,7 +749,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\Primitive.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\Primitive.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
@@ -757,12 +757,12 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\GrayscaleShader.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\GrayscaleShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\Object3d.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\Object3d.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
@@ -770,7 +770,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Object3d.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Object3d.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
@@ -778,7 +778,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Particle.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Particle.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
@@ -786,7 +786,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\Simple.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\Simple.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
@@ -794,7 +794,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\VignetteShader.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\VignetteShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>

@@ -1,46 +1,46 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="engine\Resources\Shaders\PS\ColorCorrectionShader.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\ColorCorrectionShader.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Font.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Font.VS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\GrayscaleShader.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\GrayscaleShader.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\MSDF.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\MSDF.PS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\Object3d.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\Object3d.PS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Object3d.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Object3d.VS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\Particle.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\Particle.PS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Particle.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Particle.VS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\Primitive.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\Primitive.PS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Primitive.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Primitive.VS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\Simple.PS.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\Simple.PS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\VS\Simple.VS.hlsl">
+    <FxCompile Include="engine\resources\shaders\vs\Simple.VS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\VignetteShader.hlsl">
+    <FxCompile Include="engine\resources\shaders\ps\VignetteShader.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="engine\Resources\Shaders\PS\PixcelShader.hlsl" />
+    <FxCompile Include="engine\resources\shaders\ps\PixcelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -580,7 +580,7 @@
     <ClInclude Include="externals\sol2\sol\function_types_templated.hpp">
       <Filter>external\sol2</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Resources\Shaders\ShaderStructs\hlslTypeToCpp.h">
+    <ClInclude Include="engine\resources\shaders\shaderStructs\hlslTypeToCpp.h">
       <Filter>external\sol2</Filter>
     </ClInclude>
     <ClInclude Include="externals\sol2\sol\in_place.hpp">
@@ -1088,10 +1088,10 @@
     <ClInclude Include="editor\include\OnWindowsEditor.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\Resources\Shaders\ShaderStructs\Particle.hlsli">
+    <None Include="engine\resources\shaders\shaderStructs\Particle.hlsli">
       <Filter>shader</Filter>
     </None>
-    <None Include="engine\Resources\Shaders\ShaderStructs\Object3d.hlsli">
+    <None Include="engine\resources\shaders\shaderStructs\Object3d.hlsli">
       <Filter>shader</Filter>
     </None>
     <None Include="externals\imgui\ImGuizmo-1.83\.editorconfig">
@@ -1100,7 +1100,7 @@
     <None Include=".editorconfig">
       <Filter>build</Filter>
     </None>
-    <None Include="engine\Resources\Shaders\ShaderStructs\Font.hlsli">
+    <None Include="engine\resources\shaders\shaderStructs\Font.hlsli">
       <Filter>shader</Filter>
     </None>
     <None Include="GenerateBuildInfo.bat">
