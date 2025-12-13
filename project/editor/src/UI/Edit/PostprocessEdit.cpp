@@ -1,4 +1,4 @@
-#include "PostprocessEdit.h"
+#include "editor/include/UI/Edit/PostprocessEdit.h"
 #include "graphic/PostEffect/RendaringPostprocess.h"
 
 void PostprocessEdit::Initialize() {

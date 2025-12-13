@@ -1,5 +1,6 @@
-#include "EngineProfileView.h"
-#include "core/EngineGlobalValue.h"
+#include "editor/include/UI/View/EngineProfileView.h"
+
+#include "engine/include/core/EngineGlobalValue.h"
 
 EngineProfileView::EngineProfileView() {
 	isActive_ = false;

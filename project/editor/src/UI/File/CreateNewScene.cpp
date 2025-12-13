@@ -1,4 +1,4 @@
-#include "CreateNewScene.h"
+#include "editor/include/UI/File/CreateNewScene.h"
 #include "scene/SceneManager.h"
 
 void CreateNewScene::Initialize() {

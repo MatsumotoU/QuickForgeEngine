@@ -1,30 +1,31 @@
-#include "InspectorView.h"
-#include "HierarchyView.h"
-#include "utility/DebugTool/ImGui/ImGuiInclude.h"
-#include "assets/AssetManager.h"
-#include "scene/SceneManager.h"
-#include "assets/Script/LuaScriptResourceManager.h"
-#include "scene/Data/SceneObjectData.h"
-#include "core/Math/Transform.h"
-#include "assets/AssetManager.h"
-#include "camera/CameraManager.h"
-#include "assets/Script/Data/ScriptHandle.h"
-#include "physics/Force.h"
-#include "collider/Data/SphereColliderData.h"
-#include "assets/3DModel/Data/ModelHandle.h"
-#include "assets/Sprite/Data/SpriteData.h"
-#include "core/Math/ParentData.h"
-#include "camera/Data/CameraData.h"
-#include "collider/Data/AABBColliderData.h"
-#include "assets/Script/Data/CsharpComponent.h"
-#include "assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#環墁E�EヘッダーをインクルーチE
-#include "assets/Particle/Data/ParticleComponent.h"
+#include "editor/include/UI/View/InspectorView.h"
+#include "editor/include/UI/View/HierarchyView.h"
+
+#include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/scene/Data/SceneObjectData.h"
+#include "engine/include/core/Math/Transform.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/camera/CameraManager.h"
+#include "engine/include/assets/Script/Data/ScriptHandle.h"
+#include "engine/include/physics/Force.h"
+#include "engine/include/collider/Data/SphereColliderData.h"
+#include "engine/include/assets/3DModel/Data/ModelHandle.h"
+#include "engine/include/assets/Sprite/Data/SpriteData.h"
+#include "engine/include/core/Math/ParentData.h"
+#include "engine/include/camera/Data/CameraData.h"
+#include "engine/include/collider/Data/AABBColliderData.h"
+#include "engine/include/assets/Script/Data/CsharpComponent.h"
+#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#迺ｰ蠅・・繝倥ャ繝繝ｼ繧偵う繝ｳ繧ｯ繝ｫ繝ｼ繝・
+#include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
 	name_ = "Inspector View";
 	selectedEntityId_ = 0;
-	// csharpScriptListの初期化を削除
+	// csharpScriptList縺ｮ蛻晄悄蛹悶ｒ蜑企勁
 	scriptList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts"), ".lua");
 	modelList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
 }
@@ -42,7 +43,7 @@ void InspectorView::Draw() {
 	}
 
 	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	// オブジェクト�E名前
+	// 繧ｪ繝悶ず繧ｧ繧ｯ繝医・蜷榊燕
 	AssetManager* assetManager = AssetManager::GetInstance();
 	if (assetManager->GetEntityManager()->HasComponent<SceneObjectData>(selectedEntityId_)) {
 		SceneObjectData& sceneObjData = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(selectedEntityId_);
@@ -147,7 +148,7 @@ void InspectorView::Draw() {
 			ImGui::Text("This is Main Camera");
 		}
 	}
-	// CSスクリプト
+	// CS繧ｹ繧ｯ繝ｪ繝励ヨ
 	if (assetManager->GetEntityManager()->HasComponent<CsharpComponent>(selectedEntityId_)) {
 		CsharpComponent& csharpComponent = assetManager->GetEntityManager()->GetComponent<CsharpComponent>(selectedEntityId_);
 		for (const auto& csHandle : csharpComponent.csharpHandles_) {
@@ -160,7 +161,7 @@ void InspectorView::Draw() {
 		}
 	}
 
-	// スクリプト
+	// 繧ｹ繧ｯ繝ｪ繝励ヨ
 	if (assetManager->GetEntityManager()->HasComponent<ScriptHandles>(selectedEntityId_)) {
 		ScriptHandles& scriptHandle = assetManager->GetEntityManager()->GetComponent<ScriptHandles>(selectedEntityId_);
 
@@ -171,9 +172,9 @@ void InspectorView::Draw() {
 			std::vector<uint32_t> eraseIndices;
 			for (size_t i = 0; i < scriptHandle.scriptHandles_.size(); ++i) {
 				LuaHandle& sh = scriptHandle.scriptHandles_[i];
-				// リスト表示
+				// 繝ｪ繧ｹ繝郁｡ｨ遉ｺ
 				if (ImGui::TreeNode(sh.scriptName_.c_str())) {
-					// スクリプトのパラメータ表示
+					// 繧ｹ繧ｯ繝ｪ繝励ヨ縺ｮ繝代Λ繝｡繝ｼ繧ｿ陦ｨ遉ｺ
 					LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(sh.handle_);
 					ImGui::Text("Handle: %d", sh.handle_);
 					ImGui::Text("Entity ID: %d", script->GetBindEntityId());
@@ -192,7 +193,7 @@ void InspectorView::Draw() {
 								if (it != sh.intParams_.end()) {
 									it->second = v;
 								} else {
-									sh.intParams_[val] = v;// 新規追加
+									sh.intParams_[val] = v;// 譁ｰ隕剰ｿｽ蜉
 								}
 							}
 						} else if (obj.is<float>()) {
@@ -203,7 +204,7 @@ void InspectorView::Draw() {
 								if (it != sh.floatParams_.end()) {
 									it->second = v;
 								} else {
-									sh.floatParams_[val] = v; // 新規追加
+									sh.floatParams_[val] = v; // 譁ｰ隕剰ｿｽ蜉
 								}
 							}
 						} else if (obj.is<bool>()) {
@@ -214,7 +215,7 @@ void InspectorView::Draw() {
 								if (it != sh.boolParams_.end()) {
 									it->second = v;
 								} else {
-									sh.boolParams_[val] = v; // 新規追加
+									sh.boolParams_[val] = v; // 譁ｰ隕剰ｿｽ蜉
 								}
 							}
 						} else if (obj.is<std::string>()) {
@@ -227,7 +228,7 @@ void InspectorView::Draw() {
 								if (it != sh.stringParams_.end()) {
 									it->second = std::string(buf);
 								} else {
-									sh.stringParams_[val] = std::string(buf); // 新規追加
+									sh.stringParams_[val] = std::string(buf); // 譁ｰ隕剰ｿｽ蜉
 								}
 							}
 						}
@@ -236,25 +237,25 @@ void InspectorView::Draw() {
 					ImGui::TreePop();
 				}
 
-				// 右クリチE��でポップアチE�Eメニュー
+				// 蜿ｳ繧ｯ繝ｪ繝・け縺ｧ繝昴ャ繝励い繝・・繝｡繝九Η繝ｼ
 				std::string popupLabel = "ScriptPopup" + std::to_string(i);
 				if (ImGui::BeginPopupContextItem(popupLabel.c_str())) {
 					if (ImGui::MenuItem("Open in VSCode")) {
 						LuaScriptResourceManager::GetInstance()->OpenAndEditScript(sh.scriptName_);
 					}
 					if (ImGui::MenuItem("Remove")) {
-						// スクリプト削除処琁E
+						// 繧ｹ繧ｯ繝ｪ繝励ヨ蜑企勁蜃ｦ逅・
 						eraseIndices.push_back(static_cast<uint32_t>(i));
 						LuaScriptResourceManager::GetInstance()->RequestRemoveScript(sh.handle_);
 					}
 					ImGui::EndPopup();
 				}
 			}
-			// 後ろから削除してインチE��クスずれを防ぁE
+			// 蠕後ｍ縺九ｉ蜑企勁縺励※繧､繝ｳ繝・ャ繧ｯ繧ｹ縺壹ｌ繧帝亟縺・
 			for (auto it = eraseIndices.rbegin(); it != eraseIndices.rend(); ++it) {
 				scriptHandle.scriptHandles_.erase(scriptHandle.scriptHandles_.begin() + *it);
 			}
-			// スクリプトがなくなったらコンポ�Eネントごと削除
+			// 繧ｹ繧ｯ繝ｪ繝励ヨ縺後↑縺上↑縺｣縺溘ｉ繧ｳ繝ｳ繝昴・繝阪Φ繝医＃縺ｨ蜑企勁
 			if (scriptHandle.scriptHandles_.size() <= 0) {
 				assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
 			}
@@ -397,7 +398,7 @@ void InspectorView::Draw() {
 		}
 	}
 
-	// コンポ�Eネント�E追加
+	// 繧ｳ繝ｳ繝昴・繝阪Φ繝医・霑ｽ蜉
 	if (ImGui::Button("Add Component")) {
 		ImGui::OpenPopup("AddComponentPopup");
 	}
@@ -429,11 +430,11 @@ void InspectorView::Draw() {
 		// CsharpScript
 		if (ImGui::BeginMenu("CSharpScript")) {
 			if (ImGui::MenuItem("NewScript")) {
-				// TODO: 新規C#スクリプト作�E機�E
+				// TODO: 譁ｰ隕修#繧ｹ繧ｯ繝ｪ繝励ヨ菴懈・讖溯・
 			}
 
 			if (ImGui::BeginMenu("AddScript")) {
-				// C#クラスリストを取征E
+				// C#繧ｯ繝ｩ繧ｹ繝ｪ繧ｹ繝医ｒ蜿門ｾ・
 				csharpScriptClasses_ = CsharpVirtualEnvironmentOnQFE::GetInstance()->GetAvailableScriptClasses();
 				for (const auto& className : csharpScriptClasses_) {
 					if (ImGui::MenuItem(className.c_str())) {

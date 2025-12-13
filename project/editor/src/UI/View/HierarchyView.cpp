@@ -1,9 +1,9 @@
-#include "HierarchyView.h"
-#include "assets/AssetManager.h"
-#include "camera/CameraManager.h"
-#include "scene/SceneManager.h"
-#include "scene/Data/SceneObjectData.h"
+#include "editor/include/UI/View/HierarchyView.h"
 
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/camera/CameraManager.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/scene/Data/SceneObjectData.h"
 #ifdef _DEBUG
 #include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -37,9 +37,9 @@ void HierarchyView::Draw() {
 	}
 
 	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	// 右クリチE��でコンチE��ストメニュー
+	// 蜿ｳ繧ｯ繝ｪ繝・け縺ｧ繧ｳ繝ｳ繝・く繧ｹ繝医Γ繝九Η繝ｼ
 	DrawPopupContextWindow();
-	// Entity一覧表示
+	// Entity荳隕ｧ陦ｨ遉ｺ
 	DrawEntityList();
 
 	ImGui::End();
@@ -121,14 +121,14 @@ void HierarchyView::DrawEntityList() {
 		std::string& name = data.name;
 		std::string label = name + "##" + std::to_string(id);
 
-		// チE��チE��カメラは表示しなぁE
+		// 繝・ヰ繝・げ繧ｫ繝｡繝ｩ縺ｯ陦ｨ遉ｺ縺励↑縺・
 #ifdef _DEBUG
 		if (id == CameraManager::GetInstance()->GetCamera(0).GetBindEntityId()) {
 			continue;
 		}
 #endif // _DEBUG
 
-		// ドラチE��ソース
+		// 繝峨Λ繝・げ繧ｽ繝ｼ繧ｹ
 		ImGui::PushID(id);
 		if (ImGui::Selectable(label.c_str(), isSelected)) {
 			selectedEntityId_ = id;
@@ -140,12 +140,12 @@ void HierarchyView::DrawEntityList() {
 			ImGui::EndDragDropSource();
 		}
 
-		// ドロチE�EターゲチE��
+		// 繝峨Ο繝・・繧ｿ繝ｼ繧ｲ繝・ヨ
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_ID")) {
 				uint32_t draggedId = *(const uint32_t*)payload->Data;
 				if (draggedId != id) {
-					// 親子関係を設宁E
+					// 隕ｪ蟄宣未菫ゅｒ險ｭ螳・
 					SceneManager::GetInstance()->ParentChild(id, draggedId);
 				}
 			}
@@ -153,7 +153,7 @@ void HierarchyView::DrawEntityList() {
 		}
 		ImGui::PopID();
 
-		// 右クリチE��でコンチE��ストメニュー
+		// 蜿ｳ繧ｯ繝ｪ繝・け縺ｧ繧ｳ繝ｳ繝・く繧ｹ繝医Γ繝九Η繝ｼ
 		if (ImGui::BeginPopupContextItem(label.c_str())) {
 			if (ImGui::MenuItem("Rename")) {
 				ImGui::OpenPopup("Rename Entity");
@@ -162,15 +162,15 @@ void HierarchyView::DrawEntityList() {
 				SceneManager::GetInstance()->CopyEntity(id);
 			}
 			if (ImGui::MenuItem("Save")) {
-				// 保存�E琁E
+				// 菫晏ｭ伜・逅・
 				SceneManager::GetInstance()->SaveEntity(id, name);
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("Delete")) {
-				// 削除処琁E
+				// 蜑企勁蜃ｦ逅・
 				AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(id);
 
-				// 選択中だったら選択解除
+				// 驕ｸ謚樔ｸｭ縺縺｣縺溘ｉ驕ｸ謚櫁ｧ｣髯､
 				if (selectedEntityId_ == id) {
 					selectedEntityId_ = 0;
 				}

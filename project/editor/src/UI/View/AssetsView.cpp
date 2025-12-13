@@ -1,10 +1,10 @@
-#include "AssetsView.h"
+#include "editor/include/UI/View/AssetsView.h"
 #include "assets/AssetManager.h"
 #include <cassert>
 
-#include "utility/FileSystems/FileUtility.h"
-#include "utility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
-#include "utility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
+#include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 
 AssetsView::AssetsView() {
 	assetManager = nullptr;
@@ -31,7 +31,7 @@ AssetsView::AssetsView() {
 	drawFunctions[ViewHierarchy::Audio] = std::bind(&AssetsView::AudioView, this);
 	drawFunctions[ViewHierarchy::Others] = std::bind(&AssetsView::OthersView, this);
 #ifdef _DEBUG
-	// アセチE��用UIの登録
+	// 繧｢繧ｻ繝・ヨ逕ｨUI縺ｮ逋ｻ骭ｲ
 	fileGH_ = assetManager->LoadEditorTexture("file.png");
 	arrowGH_ = assetManager->LoadEditorTexture("arrow.png");
 #endif // _DEBUG
@@ -60,18 +60,18 @@ void AssetsView::Draw() {
 		loadSpace_ = LoadSpace::File;
 	}
 
-	// ファイルシスチE��上�EアセチE��を表示
+	// 繝輔ぃ繧､繝ｫ繧ｷ繧ｹ繝・Β荳翫・繧｢繧ｻ繝・ヨ繧定｡ｨ遉ｺ
 	if (loadSpace_ == LoadSpace::File) {
 		FilesView();
 		ImGui::End();
 		return;
 	}
-	// メモリ上�EアセチE��を表示
+	// 繝｡繝｢繝ｪ荳翫・繧｢繧ｻ繝・ヨ繧定｡ｨ遉ｺ
 	drawFunctions[currentHierarchy]();
 	ImGui::End();
 }
 
-// 吁E��ューの描画関数
+// 蜷・ン繝･繝ｼ縺ｮ謠冗判髢｢謨ｰ
 void AssetsView::RootView() {
 	ImGui::Text("Root");
 	ImGui::Separator();
@@ -84,7 +84,7 @@ void AssetsView::RootView() {
 			continue;
 		}
 
-		// 最初以外�E折り返し判宁E
+		// 譛蛻昜ｻ･螟悶・謚倥ｊ霑斐＠蛻､螳・
 		if (it != hierarchyNames.begin()) {
 			float nextX = ImGui::GetCursorPosX() + buttonSize + buttonPadding;
 			if (nextX > avail.x) {
@@ -116,13 +116,13 @@ void AssetsView::ImagesView() {
 		currentHierarchy = ViewHierarchy::Root;
 	}
 
-	// メモリ上�EチE��スチャを表示
+	// 繝｡繝｢繝ｪ荳翫・繝・け繧ｹ繝√Ε繧定｡ｨ遉ｺ
 	const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> handles = assetManager->GetTextureManager()->GetTextureSrvHandleGPUList();
 	const int buttonSize = 64;
 	const int buttonPadding = 8;
 	ImVec2 avail = ImGui::GetContentRegionAvail();
 	for (size_t i = 0; i < handles.size(); i++) {
-		// 現在のカーソル位置と次のボタンの位置を計箁E
+		// 迴ｾ蝨ｨ縺ｮ繧ｫ繝ｼ繧ｽ繝ｫ菴咲ｽｮ縺ｨ谺｡縺ｮ繝懊ち繝ｳ縺ｮ菴咲ｽｮ繧定ｨ育ｮ・
 		float nextX = ImGui::GetCursorPosX() + buttonSize + buttonPadding;
 		if (i != 0 && nextX > avail.x) {
 			ImGui::NewLine();
@@ -132,7 +132,7 @@ void AssetsView::ImagesView() {
 
 		ImGui::BeginGroup();
 		ImVec2 pos = ImGui::GetCursorScreenPos();
-		ImU32 bgColor = ImGui::ColorConvertFloat4ToU32(ImVec4(0.15f, 0.15f, 0.2f, 1.0f)); // 任意�E背景色
+		ImU32 bgColor = ImGui::ColorConvertFloat4ToU32(ImVec4(0.15f, 0.15f, 0.2f, 1.0f)); // 莉ｻ諢上・閭梧勹濶ｲ
 		ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + buttonSize, pos.y + buttonSize), bgColor);
 
 		ImGui::ImageButton(

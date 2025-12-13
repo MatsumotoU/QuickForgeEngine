@@ -1,4 +1,4 @@
-#include "LoadScene.h"
+#include "editor/include/UI/File/LoadScene.h"
 #include "scene/SceneManager.h"
 
 void LoadScene::Initialize() {
@@ -27,7 +27,7 @@ void LoadScene::Draw() {
 	}
 	ImGui::Separator();
 	if (!sceneList_.empty()) {
-		// ドロチE�Eダウンリストを表示
+		// 繝峨Ο繝・・繝繧ｦ繝ｳ繝ｪ繧ｹ繝医ｒ陦ｨ遉ｺ
 		std::vector<const char*> items;
 		for (const auto& s : sceneList_) items.push_back(s.c_str());
 		if (ImGui::Combo("Scene List", &selected_, items.data(), static_cast<int>(items.size()))) {

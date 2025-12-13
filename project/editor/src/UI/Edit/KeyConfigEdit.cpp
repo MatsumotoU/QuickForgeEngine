@@ -1,6 +1,6 @@
-#include "KeyConfigEdit.h"
+#include "editor/include/UI/Edit/KeyConfigEdit.h"
 #include "input/InputInterface.h" 
-#include "utility/String/DirectInputToString.h"
+#include "utility/String/DirectXStructToString.h"
 #include <format>
 #include <optional>
 
@@ -35,7 +35,7 @@ void KeyConfigEdit::Draw() {
             }
             if (ImGui::BeginPopup(label.c_str())) {
                 if (ImGui::MenuItem("Delete")) {
-                    // 削除はループ後に
+                    // 蜑企勁縺ｯ繝ｫ繝ｼ繝怜ｾ後↓
                     keyToRemove = std::make_pair(name, keys[i]);
                     ImGui::CloseCurrentPopup();
                 }
@@ -52,7 +52,7 @@ void KeyConfigEdit::Draw() {
 
 	ImGui::Separator();
 
-    // ここで削除を実衁E
+    // 縺薙％縺ｧ蜑企勁繧貞ｮ溯｡・
     if (keyToRemove) {
         keyConfig.RemoveKey(keyToRemove->first, keyToRemove->second);
     }
@@ -70,18 +70,18 @@ void KeyConfigEdit::Draw() {
 		ImGui::InputText("Action Name", inputBuf_, sizeof(inputBuf_));
 		if (ImGui::Button("OK")) {
 			if (inputBuf_[0] != '\0') {
-				// キー入力征E��へ
+				// 繧ｭ繝ｼ蜈･蜉帛ｾ・■縺ｸ
 				isAddPopupOpen_ = false;
 				isEditPopupOpen_ = true;
 				editActionName_ = inputBuf_;
-				editKeyIndex_ = SIZE_MAX; // 新規追加を示ぁE
+				editKeyIndex_ = SIZE_MAX; // 譁ｰ隕剰ｿｽ蜉繧堤､ｺ縺・
 				inputBuf_[0] = '\0';
 			}
 			ImGui::CloseCurrentPopup();
 		}
 	}
 
-    // 編雁E�EチE�EアチE�E
+    // 邱ｨ髮・・繝・・繧｢繝・・
     if (isEditPopupOpen_) {
         ImGui::OpenPopup("Edit Key");
         isEditPopupOpen_ = false;
@@ -91,7 +91,7 @@ void KeyConfigEdit::Draw() {
         if (input->IsAnyKeyPressed()) {
             uint32_t keyCode = input->GetKeyCodeTrigger();
             if (keyCode != 0) {
-                // キーを上書ぁE
+                // 繧ｭ繝ｼ繧剃ｸ頑嶌縺・
                 keyConfig.EditKey(editActionName_, editKeyIndex_, keyCode);
                 ImGui::CloseCurrentPopup();
             }

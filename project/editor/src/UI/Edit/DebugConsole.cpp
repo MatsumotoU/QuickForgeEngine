@@ -1,4 +1,4 @@
-#include "DebugConsole.h"
+#include "editor/include/UI/Edit/DebugConsole.h"
 #include "assets/Script/LuaScriptResourceManager.h"
 #include "scene/SceneManager.h"
 #include "audio/AudioInterface.h"
@@ -17,14 +17,14 @@ void DebugConsole::Draw() {
 
 	ImGui::Begin("DebugConsole", &isActive_, ImGuiWindowFlags_NoDocking);
 
-	// 履歴表示用の子ウィンドウ�E�上部�E�E
+	// 螻･豁ｴ陦ｨ遉ｺ逕ｨ縺ｮ蟄舌え繧｣繝ｳ繝峨え・井ｸ企Κ・・
 	ImGui::BeginChild("History", ImVec2(0, -ImGui::GetFrameHeightWithSpacing() - 8), false, ImGuiWindowFlags_HorizontalScrollbar);
 	for (const auto& item : items_) {
 		ImGui::TextUnformatted(item.c_str());
 	}
 	ImGui::EndChild();
 
-	// 入力欁E��下部固定！E
+	// 蜈･蜉帶ｬ・ｼ井ｸ矩Κ蝗ｺ螳夲ｼ・
 	ImGui::Separator();
 	ImGui::SetNextItemWidth(-1);
 	if (ImGui::InputText("Input", inputBuf_, IM_ARRAYSIZE(inputBuf_),
@@ -44,10 +44,10 @@ void DebugConsole::Run() {
 }
 
 void DebugConsole::ExecCommand(const char* command) {
-	// コマンド履歴に追加
+	// 繧ｳ繝槭Φ繝牙ｱ･豁ｴ縺ｫ霑ｽ蜉
 	items_.emplace_back(std::string("> ") + command);
 
-	// コマンド�E簡単な侁E
+	// 繧ｳ繝槭Φ繝峨・邁｡蜊倥↑萓・
 	if (strcmp(command, "clear") == 0) {
 		items_.clear();
 	} else if (strcmp(command, "help") == 0) {

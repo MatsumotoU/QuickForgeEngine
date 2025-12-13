@@ -1,4 +1,4 @@
-#include "ColliderMaskEdit.h"
+#include "editor/include/UI/Edit/ColliderMaskEdit.h"
 #include "collider/ColliderManager.h"
 
 ColliderMaskEdit::ColliderMaskEdit() {
@@ -21,7 +21,7 @@ void ColliderMaskEdit::Draw() {
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	ImGui::Begin("Collider Mask Edit", &isActive_, ImGuiWindowFlags_NoDocking);
 	ImGui::Text("Collider Tag Mask Pairs");
-	// 既存�Eタグマスクペア表示
+	// 譌｢蟄倥・繧ｿ繧ｰ繝槭せ繧ｯ繝壹い陦ｨ遉ｺ
 	for (const auto& pair : colliderManager->colliderTagMask_.GetTagMaskPairs()) {
 		ImGui::Text("%s - %s", pair.first.c_str(), pair.second.c_str());
 		ImGui::SameLine();
