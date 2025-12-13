@@ -1,5 +1,5 @@
 #include "ModelHandle.h"
-#include "Assets/AssetManager.h"
+#include "engine/include/assets/AssetManager.h"
 
 nlohmann::json ModelHandle::Serialize() const {
 	nlohmann::json json;

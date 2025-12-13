@@ -9,8 +9,8 @@
 #include "ConstantBufferManager/ConstantBufferManager.h"
 #include "Particle/ParticleGpuDataManager.h"
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
-#include "Core/Entity/EntityManager.h"
-#include "Utility/DesignPatterns/Singleton.h"
+#include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "AudioSource/AudioSourceManager.h"
 
 #include <unordered_map>

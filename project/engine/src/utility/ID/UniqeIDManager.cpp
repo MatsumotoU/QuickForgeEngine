@@ -13,7 +13,7 @@ void ListUniqueIDManager::AddUsedID(uint32_t id) {
 }
 
 uint32_t ListUniqueIDManager::GenerateUniqueID() {
-	// currentID_がusedIDSet_に存在しないまでインクリメント
+	// currentID_がusedIDSet_に存在しなぁE��でインクリメンチE
 	while (usedIDSet_.find(currentID_) != usedIDSet_.end()){
 		currentID_++;
 	}

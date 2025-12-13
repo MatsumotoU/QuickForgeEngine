@@ -4,17 +4,17 @@
 #include "ShaderCompiler.h"
 #include <wrl.h>
 
-// TODO: ブレンドモードの列挙型をブレンドモードを管理するクラスに移送
+// TODO: ブレンドモード�E列挙型をブレンドモードを管琁E��るクラスに移送E
 enum BlendMode{
-	// ブレンドなし
+	// ブレンドなぁE
 	kBlendModeNone,
 	// 通常
 	kBlendModeNormal,
-	// 加算
+	// 加箁E
 	kBlendModeAdd,
-	// 減算
+	// 減箁E
 	kBlendModeSubtract,
-	// 乗算
+	// 乗箁E
 	kBlendModeMultily,
 	// スクリーン
 	kBlendModeScreen,
@@ -25,7 +25,7 @@ enum BlendMode{
 class PipelineStateObject final {
 public:
 	/// <summary>
-	/// 初期化します
+	/// 初期化しまぁE
 	/// </summary>
 	void Initialize(ShaderCompiler* shaderCompiler,ID3D12Device* device);
 

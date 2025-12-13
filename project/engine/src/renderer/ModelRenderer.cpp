@@ -1,8 +1,8 @@
 #include "ModelRenderer.h"
-#include "Assets/AssetManager.h"
-#include "Assets/3DModel/Data/ModelRenderData.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
-#include "Graphic/Pipeline/GraphicPipelineManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/assets/3DModel/Data/ModelRenderData.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
 #include <cassert>
 
 void Render::Model::DrawModel(const uint32_t& modelHandle) {

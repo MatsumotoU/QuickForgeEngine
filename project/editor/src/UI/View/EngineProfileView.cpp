@@ -1,5 +1,5 @@
 #include "EngineProfileView.h"
-#include "Core/EngineGlobalValue.h"
+#include "core/EngineGlobalValue.h"
 
 EngineProfileView::EngineProfileView() {
 	isActive_ = false;

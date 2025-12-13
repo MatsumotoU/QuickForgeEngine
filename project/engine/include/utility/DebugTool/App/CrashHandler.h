@@ -12,17 +12,17 @@ namespace {
 		CreateDirectory(L"./Dumps", nullptr);
 		StringCchPrintfW(filePath, MAX_PATH, L"./Dumps/%04d-%02d%02d-%02d02d.dmp", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute);
 		HANDLE dumpFileHandle = CreateFile(filePath, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
-		// processId(このexeのID)とクラッシュ(例外)の発生したthredIdを取得
+		// processId(こ�EexeのID)とクラチE��ュ(例夁Eの発生したthredIdを取征E
 		DWORD processId = GetCurrentProcessId();
 		DWORD threadId = GetCurrentThreadId();
-		// 設定情報を入力
+		// 設定情報を�E劁E
 		MINIDUMP_EXCEPTION_INFORMATION minidumpInfomation{ 0 };
 		minidumpInfomation.ThreadId = threadId;
 		minidumpInfomation.ExceptionPointers = exception;
 		minidumpInfomation.ClientPointers = TRUE;
-		// Dumpを出力
+		// Dumpを�E劁E
 		MiniDumpWriteDump(GetCurrentProcess(), processId, dumpFileHandle, MiniDumpNormal, &minidumpInfomation, nullptr, nullptr);
-		// 他に関連付けられているSEH例外ハンドラがあれば実行。通常はプロセスを終了する
+		// 他に関連付けられてぁE��SEH例外ハンドラがあれ�E実行。通常はプロセスを終亁E��めE
 		return EXCEPTION_EXECUTE_HANDLER;
 	}
 }

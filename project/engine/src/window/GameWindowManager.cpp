@@ -1,5 +1,5 @@
-#include "GameWindowManager.h"
-#include "GameWindow.h"
+#include "engine/include/window/GameWindowManager.h"
+#include "engine/include/window/GameWindow.h"
 
 #ifdef _DEBUG
 
@@ -50,12 +50,12 @@ bool GameWindowManager::IsWindowActive() const {
 HWND GameWindowManager::GetWindow(const std::string windowName) const {
 	for (const auto& window : windows) {
 		if (window->GetWindowName() == windowName) {
-			// IGameWindow* から GameWindow* へキャスト
+			// IGameWindow* 縺九ｉ GameWindow* 縺ｸ繧ｭ繝｣繧ｹ繝・
 			if (auto gameWindow = dynamic_cast<GameWindow*>(window.get())) {
 				return gameWindow->GetHwnd();
 			}
 		}
 	}
-	throw std::runtime_error("指定されたウィンドウ名が見つかりませんでした。"+ windowName);
+	throw std::runtime_error("謖・ｮ壹＆繧後◆繧ｦ繧｣繝ｳ繝峨え蜷阪′隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆縲・+ windowName);
 
 }

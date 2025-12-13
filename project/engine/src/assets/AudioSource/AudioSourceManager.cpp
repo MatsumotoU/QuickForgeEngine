@@ -1,8 +1,8 @@
 #include "AudioSourceManager.h"
 #include "Loader/MultiAudioLoader.h"
-#include "AppUtility/FileSystems/FileUtility.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 void AudioSourceManager::Initialize() {
@@ -13,13 +13,13 @@ void AudioSourceManager::Initialize() {
 }
 
 uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
-	// すでに読み込まれている場合はハンドルを返す
+	// すでに読み込まれてぁE��場合�Eハンドルを返す
 	auto it = audioHandleMap_.find(filePath);
 	if (it != audioHandleMap_.end()) {
 		return it->second;
 	}
 
-	// ファイルを開く
+	// ファイルを開ぁE
 	AudioData soundData{};
 	try{
 #ifdef _DEBUG
@@ -34,7 +34,7 @@ uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
 		e;
 		return 0;
 	}
-	// ハンドルを生成して保存
+	// ハンドルを生成して保孁E
 	uint32_t handle = nextHandle_++;
 	audioDataMap_[handle] = soundData;
 	audioHandleMap_[filePath] = handle;

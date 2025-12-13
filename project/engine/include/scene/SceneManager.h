@@ -1,9 +1,9 @@
 #pragma once
 #include "IScene.h"
-#include "Utility/DesignPatterns/Singleton.h"
-#include "AppUtility/ID/UniqeIDManager.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
+#include "engine/include/utility/ID/UniqeIDManager.h"
 
-#include "Core/Math/Vector/Vector2.h"
+#include "engine/include/core/Math/Vector/Vector2.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -31,7 +31,7 @@ public:
 	void ResetScene();
 	void RunTimeSwapScene(const std::string& sceneName);
 
-	// ここにいるべきじゃない
+	// ここにぁE��べきじめE��ぁE
 	void CopyEntity(uint32_t sourceEntityId);
 	void ChangeEntityModel(uint32_t entityId, const std::string& modelName);
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName);

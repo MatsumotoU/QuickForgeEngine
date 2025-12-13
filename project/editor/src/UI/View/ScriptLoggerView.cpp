@@ -1,8 +1,8 @@
-#include "ScriptLoggerView.h"
-#include "HierarchyView.h"
+#include "editor/include/UI/View/ScriptLoggerView.h"
 
+#include "editor/include/UI/View/HierarchyView.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 ScriptLoggerView::ScriptLoggerView() {

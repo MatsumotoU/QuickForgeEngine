@@ -5,7 +5,7 @@
 
 namespace DirectXStructToString {
 	/// <summary>
-	/// RootParameterやDescriptorRangeの内容を文字列に変換します。
+	/// RootParameterやDescriptorRangeの冁E��を文字�Eに変換します、E
 	/// </summary>
 	std::string ToString(const D3D12_ROOT_PARAMETER& rootParameter);
 	std::string ToString(const D3D12_DESCRIPTOR_RANGE& descriptorRange);

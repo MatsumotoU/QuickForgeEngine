@@ -4,7 +4,7 @@
 #include <memory>
 #include <wrl.h>
 
-#include "Graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
+#include "engine/include/graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
 
 class OffScreenResourceManager {
 public:

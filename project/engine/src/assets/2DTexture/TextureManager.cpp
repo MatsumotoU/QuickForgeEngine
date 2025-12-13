@@ -1,31 +1,31 @@
 #include "TextureManager.h"
 #include <cassert>
 
-#include "Utility/String/MyString.h"
+#include "engine/include/utility/String/MyString.h"
 #include "Platform/Windows/Graphic/DirectXCommon/DirectXCommon.h"
 #include "Platform/Windows/Graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
 #include "Platform/Windows/Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
-#include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #endif // _DEBUG
 
 void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap) {
 	srvDescriptorHeap_ = srvDescriptorHeap;
 
-	// Comの初期化
+	// Comの初期匁E
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 	hr;
 
-	// デバイスを取得
+	// チE��イスを取征E
 	assert(device);
 	device_ = device;
 	assert(commandList);
 	commandList_ = commandList;
 
-	// 利用するHeapの設定
+	// 利用するHeapの設宁E
 	heapProperties_ = {};
 	heapProperties_.Type = D3D12_HEAP_TYPE_DEFAULT;
 
@@ -51,23 +51,23 @@ void TextureManager::Finalize() {
 }
 
 DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
-	// テクスチャファイルを読み込んでプログラムで使えるようにする
+	// チE��スチャファイルを読み込んでプログラムで使えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	assert(SUCCEEDED(hr));
 
-	// ミップマップの作成
+	// ミップ�EチE�Eの作�E
 	DirectX::ScratchImage mipImages{};
 	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
 	assert(SUCCEEDED(hr));
 
-	// ミップ付きのデータを返す
+	// ミップ付きのチE�Eタを返す
 	return mipImages;
 }
 
 void TextureManager::LoadScratchImage(const std::string& filePath) {
-	// テクスチャファイルを読み込んでプログラムで使えるようにする
+	// チE��スチャファイルを読み込んでプログラムで使えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
@@ -78,29 +78,29 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height, metadata.arraySize)));
 #endif // _DEBUG
 
-	// ミップマップの作成
+	// ミップ�EチE�Eの作�E
 	if (image.GetMetadata().width * image.GetMetadata().height != 1) {
 		scratchImages_.emplace_back();
 		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, scratchImages_.back());
 		assert(SUCCEEDED(hr));
 	} else {
-		// そのまま格納
+		// そ�Eまま格紁E
 		scratchImages_.push_back(std::move(image));
 	}
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(const DirectX::TexMetadata& metadata) {
-	// metadataを基にResourceの設定
+	// metadataを基にResourceの設宁E
 	resourceDesc_ = {};
-	resourceDesc_.Width = static_cast<UINT>(metadata.width); // テクスチャの幅
-	resourceDesc_.Height = static_cast<UINT>(metadata.height); // テクスチャの高さ
+	resourceDesc_.Width = static_cast<UINT>(metadata.width); // チE��スチャの幁E
+	resourceDesc_.Height = static_cast<UINT>(metadata.height); // チE��スチャの高さ
 	resourceDesc_.MipLevels = static_cast<UINT16>(metadata.mipLevels); // mipmapの数
-	resourceDesc_.DepthOrArraySize = static_cast<UINT16>(metadata.arraySize); // 奥行or配列テクスチャの配列数
+	resourceDesc_.DepthOrArraySize = static_cast<UINT16>(metadata.arraySize); // 奥行or配�EチE��スチャの配�E数
 	resourceDesc_.Format = metadata.format;
 	resourceDesc_.SampleDesc.Count = 1;
 	resourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
 
-	// リソースの生成
+	// リソースの生�E
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 	HRESULT hr = device_->CreateCommittedResource(
 		&heapProperties_,
@@ -140,7 +140,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(ID3D12R
 }
 
 void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList) {
-	// Textureへの転送後は利用できるようにD3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResouceStateを変更する
+	// Textureへの転送後�E利用できるようにD3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResouceStateを変更する
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -152,14 +152,14 @@ void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12Graphic
 }
 
 void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource) {
-	// metaDataを基にSRVの設定
+	// metaDataを基にSRVの設宁E
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;// 2Dテクスチャ
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;// 2DチE��スチャ
 	srvDesc.Texture2D.MipLevels = static_cast<UINT>(metadata.mipLevels);
 
-	// SRVの作成
+	// SRVの作�E
 	DescriptorHandles handles = srvDescriptorHeap_->AssignHeap(textureResource, srvDesc);
 	textureSrvHandleCPU_.push_back(handles.cpuHandle_);
 	textureSrvHandleGPU_.push_back(handles.gpuHandle_);
@@ -178,7 +178,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	DebugLog(std::format("TextureManager: LoadPath {}", filePath));
 #endif // _DEBUG
 
-	// 同じ画像ファイルを読み込まない
+	// 同じ画像ファイルを読み込まなぁE
 	int32_t fileIndex = filePathLiblary_.GetLiblaryIndex(filePath);
 	if (fileIndex >= 0) {
 #ifdef _DEBUG
@@ -187,7 +187,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 		return fileIndex;
 	}
 
-	// 画像読み込み処理
+	// 画像読み込み処琁E
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
 	textureResources_.emplace_back() = CreateTextureResource(metadata);

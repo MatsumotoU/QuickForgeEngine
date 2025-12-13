@@ -1,9 +1,9 @@
 #pragma once
 #include "PSO/PipelineStateObject.h"
-#include "Graphic/DirectXCommon/Descriptors/DsvDescriptorHeap.h"
-#include "Graphic/Pipeline/PSO/ShaderReflection.h"
+#include "engine/include/graphic/DirectXCommon/Descriptors/DsvDescriptorHeap.h"
+#include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
 
-#include "Utility/DesignPatterns/Singleton.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
 
 class GraphicPipelineManager final :public Singleton<GraphicPipelineManager> {
 	friend class Singleton<GraphicPipelineManager>;
@@ -12,21 +12,21 @@ public:
 	void Initialize(ID3D12Device* device);
 public:
 	/// <summary>
-	/// 一般的な三角形のPSOを取得します
+	/// 一般皁E��三角形のPSOを取得しまぁE
 	/// </summary>
-	/// <param name="blendmode">ブレンドモード</param>
+	/// <param name="blendmode">ブレンドモーチE/param>
 	/// <returns></returns>
 	PipelineStateObject* GetTrianglePso(BlendMode blendmode) { return &trianglePso_[static_cast<uint32_t>(blendmode)]; }
 	/// <summary>
-	/// 一般的な三角形のPSOを取得します
+	/// 一般皁E��三角形のPSOを取得しまぁE
 	/// </summary>
-	/// <param name="blendmode">ブレンドモード</param>
+	/// <param name="blendmode">ブレンドモーチE/param>
 	/// <returns></returns>
 	PipelineStateObject* GetLinePso(BlendMode blendmode) { return &linePso_[static_cast<uint32_t>(blendmode)]; }
 	/// <summary>
-	/// 一般的な三角形のPSOを取得します
+	/// 一般皁E��三角形のPSOを取得しまぁE
 	/// </summary>
-	/// <param name="blendmode">ブレンドモード</param>
+	/// <param name="blendmode">ブレンドモーチE/param>
 	/// <returns></returns>
 	PipelineStateObject* GetPointPso(BlendMode blendmode) { return &pointPso_[static_cast<uint32_t>(blendmode)]; }
 	PipelineStateObject* GetPrimitivePso(BlendMode blendmode) { return &primitivePso_[static_cast<uint32_t>(blendmode)]; }

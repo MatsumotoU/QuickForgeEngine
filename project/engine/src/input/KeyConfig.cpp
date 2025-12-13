@@ -1,14 +1,14 @@
-#include "KeyConfig.h"
+#include "engine/include/input/KeyConfig.h"
 #include <cassert>
 #include <dinput.h>
 #include <nlohmann/json.hpp>
 
 #include <fstream>
 
-#include "Assets/AssetManager.h"
+#include "engine/include/assets/AssetManager.h"
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 void KeyConfig::Initialize() {
@@ -17,7 +17,7 @@ void KeyConfig::Initialize() {
 }
 
 void KeyConfig::AddKey(const std::string& name, uint32_t key) {
-	// 同じキーが登録されていないか確認
+	// 蜷後§繧ｭ繝ｼ縺檎匳骭ｲ縺輔ｌ縺ｦ縺・↑縺・°遒ｺ隱・
 	for (const auto& existingKey : keyMap_[name]) {
 		if (existingKey == key) {
 			return;
@@ -64,7 +64,7 @@ const std::vector<uint32_t>& KeyConfig::GetKeys(const std::string& name) const {
 }
 
 void KeyConfig::SettingDefaultKeyConfig() {
-	// 移動
+	// 遘ｻ蜍・
 	AddKey("MoveRight", DIK_RIGHT);
 	AddKey("MoveRight", DIK_D);
 	AddKey("MoveLeft", DIK_LEFT);
@@ -73,16 +73,16 @@ void KeyConfig::SettingDefaultKeyConfig() {
 	AddKey("MoveUp", DIK_W);
 	AddKey("MoveDown", DIK_DOWN);
 	AddKey("MoveDown", DIK_S);
-	// ジャンプ
+	// 繧ｸ繝｣繝ｳ繝・
 	AddKey("Jump", DIK_SPACE);
-	// 攻撃
+	// 謾ｻ謦・
 	AddKey("Attack", DIK_LCONTROL);
-	// メニュー
+	// 繝｡繝九Η繝ｼ
 	AddKey("Menu", DIK_ESCAPE);
-	// 決定
+	// 豎ｺ螳・
 	AddKey("Decide", DIK_RETURN);
 	AddKey("Decide", DIK_SPACE);
-	// キャンセル
+	// 繧ｭ繝｣繝ｳ繧ｻ繝ｫ
 	AddKey("Cancel", DIK_BACKSPACE);
 	AddKey("Cancel", DIK_ESCAPE);
 }

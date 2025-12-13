@@ -1,11 +1,11 @@
 #include "HierarchyView.h"
-#include "Assets/AssetManager.h"
-#include "Camera/CameraManager.h"
-#include "Scene/SceneManager.h"
-#include "Scene/Data/SceneObjectData.h"
+#include "assets/AssetManager.h"
+#include "camera/CameraManager.h"
+#include "scene/SceneManager.h"
+#include "scene/Data/SceneObjectData.h"
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 uint32_t HierarchyView::selectedEntityId_ = 0;
@@ -37,7 +37,7 @@ void HierarchyView::Draw() {
 	}
 
 	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	// 右クリックでコンテキストメニュー
+	// 右クリチE��でコンチE��ストメニュー
 	DrawPopupContextWindow();
 	// Entity一覧表示
 	DrawEntityList();
@@ -121,14 +121,14 @@ void HierarchyView::DrawEntityList() {
 		std::string& name = data.name;
 		std::string label = name + "##" + std::to_string(id);
 
-		// デバッグカメラは表示しない
+		// チE��チE��カメラは表示しなぁE
 #ifdef _DEBUG
 		if (id == CameraManager::GetInstance()->GetCamera(0).GetBindEntityId()) {
 			continue;
 		}
 #endif // _DEBUG
 
-		// ドラッグソース
+		// ドラチE��ソース
 		ImGui::PushID(id);
 		if (ImGui::Selectable(label.c_str(), isSelected)) {
 			selectedEntityId_ = id;
@@ -140,12 +140,12 @@ void HierarchyView::DrawEntityList() {
 			ImGui::EndDragDropSource();
 		}
 
-		// ドロップターゲット
+		// ドロチE�EターゲチE��
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_ID")) {
 				uint32_t draggedId = *(const uint32_t*)payload->Data;
 				if (draggedId != id) {
-					// 親子関係を設定
+					// 親子関係を設宁E
 					SceneManager::GetInstance()->ParentChild(id, draggedId);
 				}
 			}
@@ -153,7 +153,7 @@ void HierarchyView::DrawEntityList() {
 		}
 		ImGui::PopID();
 
-		// 右クリックでコンテキストメニュー
+		// 右クリチE��でコンチE��ストメニュー
 		if (ImGui::BeginPopupContextItem(label.c_str())) {
 			if (ImGui::MenuItem("Rename")) {
 				ImGui::OpenPopup("Rename Entity");
@@ -162,12 +162,12 @@ void HierarchyView::DrawEntityList() {
 				SceneManager::GetInstance()->CopyEntity(id);
 			}
 			if (ImGui::MenuItem("Save")) {
-				// 保存処理
+				// 保存�E琁E
 				SceneManager::GetInstance()->SaveEntity(id, name);
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("Delete")) {
-				// 削除処理
+				// 削除処琁E
 				AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(id);
 
 				// 選択中だったら選択解除

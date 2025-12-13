@@ -1,12 +1,12 @@
 #pragma once
-#include "Core/Entity/Component/ComponentData.h"
+#include "engine/include/core/Entity/Component/ComponentData.h"
 
 class CameraData : public ComponentData {
 public:
 	uint32_t handle_;
-	float fovY_;      // 垂直視野角
-	float nearZ_;     // 前方クリップ距離
-	float farZ_;      // 後方クリップ距離
+	float fovY_;      // 垂直視野见E
+	float nearZ_;     // 前方クリチE�E距離
+	float farZ_;      // 後方クリチE�E距離
 
 	CameraData() = default;
 	virtual ~CameraData() = default;

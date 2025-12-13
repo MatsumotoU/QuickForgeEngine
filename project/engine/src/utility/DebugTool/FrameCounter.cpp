@@ -1,5 +1,5 @@
 #include "FrameCounter.h"
-#include "Core/EngineGlobalValue.h"
+#include "engine/include/core/EngineGlobalValue.h"
 
 #include <windows.h>
 #include <timeapi.h>
@@ -29,9 +29,9 @@ void FrameCounter::FrameEnd() {
 
 	// FPS下限制御
 	if (maxFps_ <= 0.0f) {
-		maxFps_ = 60.0f; // 無効な値を防ぐ
+		maxFps_ = 60.0f; // 無効な値を防ぁE
 	}
-	// 60fpsで固定
+	// 60fpsで固宁E
 	while (std::chrono::high_resolution_clock::now() - startTime_ < kMinTime) {
 		std::this_thread::sleep_for(std::chrono::microseconds(1));
 	}
@@ -39,7 +39,7 @@ void FrameCounter::FrameEnd() {
 	elapsedTime = endTime_ - startTime_;
 	deltaTime_ = elapsedTime.count();
 
-	// FPS計算
+	// FPS計箁E
 	if (deltaTime_ > 0.0f) {
 		fps_ = 1.0f / deltaTime_;
 	} else {

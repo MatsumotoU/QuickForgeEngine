@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <memory>
-#include "Core/Window/IGameWindow.h"
+#include "engine/include/core/Window/IGameWindow.h"
 #include "WindowGenerater/WindowGenerater.h"
 #include "WindowEventsManager/WindowEventsManager.h"
 

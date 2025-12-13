@@ -1,8 +1,8 @@
 #pragma once
 #include "IScene.h"
-#include "AppUtility/ID/UniqeIDManager.h"
+#include "engine/include/utility/ID/UniqeIDManager.h"
 
-#include "Core/Math/Vector/Vector2.h"
+#include "engine/include/core/Math/Vector/Vector2.h"
 #include <memory>
 #include <string>
 #include <set>
@@ -23,7 +23,7 @@ public:
 	void EndFrame() override;
 	void Finalize() override;
 
-	// シーンのロード、保存
+	// シーンのロード、保孁E
 	void LoadScene(const std::string& sceneName) override;
 	void SaveScene(const std::string& sceneName) override;
 	void ResetScene() override;
@@ -55,7 +55,7 @@ public:
 	void SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) override;
 	void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) override;
 
-	// シーンにあるオブジェクトの情報取得
+	// シーンにあるオブジェクト�E惁E��取征E
 	uint32_t GetEntityByName(const std::string& entityName) const override;
 	uint32_t GetEntityByUniqeID(uint32_t uniqueId) const override;
 	bool IsRunningScript() const override { return isRunningScript_; }

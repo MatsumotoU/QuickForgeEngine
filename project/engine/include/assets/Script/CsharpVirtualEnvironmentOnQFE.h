@@ -1,6 +1,6 @@
 #pragma once
-#include "Utility/DesignPatterns/Singleton.h"
-#include "Utility/memory/SparseSets.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
+#include "engine/include/utility/memory/SparseSets.h"
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>

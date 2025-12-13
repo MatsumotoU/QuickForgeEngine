@@ -4,8 +4,8 @@
 #include <string>
 #include <unordered_map>
 #include "LuaScriptOnQFE.h"
-#include "Utility/DesignPatterns/Singleton.h"
-#include "Scene/Data/SceneObjectData.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
+#include "engine/include/scene/Data/SceneObjectData.h"
 
 class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager> {
 	friend class Singleton<LuaScriptResourceManager>;

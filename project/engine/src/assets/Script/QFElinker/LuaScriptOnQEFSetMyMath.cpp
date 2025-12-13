@@ -1,6 +1,6 @@
 #include "LuaScriptOnQEFSetMyMath.h"
-#include "Core/Math/Vector/Vector3.h"
-#include "Core/Math/MyMath.h"
+#include "engine/include/core/Math/Vector/Vector3.h"
+#include "engine/include/core/Math/MyMath.h"
 
 void QFE::Script::MyLuaMath::LuaScriptOnQEFSetMyMath(sol::state* luaState) {
 	sol::table qfe = luaState->get<sol::table>("QFE");

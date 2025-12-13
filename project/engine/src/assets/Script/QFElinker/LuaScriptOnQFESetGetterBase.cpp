@@ -1,18 +1,18 @@
 #include "LuaScriptOnQFESetGetterBase.h"
-#include "Assets/AssetManager.h"
-#include "Scene/SceneManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
 
-#include "Scene/Data/SceneObjectData.h"
-#include "Assets/Sprite/Data/SpriteData.h"
-#include "Assets/3DModel/Data/ModelHandle.h"
+#include "engine/include/scene/Data/SceneObjectData.h"
+#include "engine/include/assets/Sprite/Data/SpriteData.h"
+#include "engine/include/assets/3DModel/Data/ModelHandle.h"
 
-#include "Collider/Data/AABBColliderData.h"
-#include "Collider/Data/SphereColliderData.h"
-#include "Core/Math/Transform.h"
-#include "Physics/Force.h"
+#include "engine/include/collider/Data/AABBColliderData.h"
+#include "engine/include/collider/Data/SphereColliderData.h"
+#include "engine/include/core/Math/Transform.h"
+#include "engine/include/physics/Force.h"
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
-#include "Core/EngineGlobalValue.h"
+#include "engine/include/core/EngineGlobalValue.h"
 
 void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 	luaState->set_function("GetDeltaTime", []() {return QFE::EngineGlobalValue::deltaTime; });

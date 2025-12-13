@@ -1,6 +1,6 @@
 #include "AudioChipManager.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 AudioChipManager::~AudioChipManager() {
@@ -10,7 +10,7 @@ AudioChipManager::~AudioChipManager() {
 void AudioChipManager::Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* masterVoice) {
 	xAudio2_ = xAudio2;
 	masterVoice_ = masterVoice;
-	nextHandle_ = 1; // エラーハンドルを避けるため1から開始
+	nextHandle_ = 1; // エラーハンドルを避けるため1から開姁E
 	audioChips_.clear();
 }
 

@@ -1,6 +1,6 @@
 #include "AssetManager.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
-#include "Assets/3DModel/Loader/AssimpModelLoader.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
 #include "Script/CsharpCmpiler.h"
 
 void AssetManager::Initalize(DirectXCommon* dxCommon) {
@@ -46,18 +46,18 @@ uint32_t AssetManager::LoadTexture(const std::string& imageName) {
 uint32_t AssetManager::LoadModel(const std::string& modelName) {
 	ModelRenderData modelRenderData;
 
-	// モデル自体の読み込み
+	// モチE��自体�E読み込み
 	ModelData modelData{};
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
 
-	// メッシュの数だけメッシュ描画データを確保
+	// メチE��ュの数だけメチE��ュ描画チE�Eタを確俁E
 	modelRenderData.meshRenderDataHandles.resize(modelData.meshes.size());
 	modelRenderData.meshRenderDataHandles.at(0).vertexBufferHandle = modelVertexResourceManager_.Assign(dxCommon_->GetDevice(), modelData, modelName);
 
-	// 各メッシュの描画データを作成
+	// 吁E��チE��ュの描画チE�Eタを作�E
 	for (size_t i = 0; i < modelData.meshes.size(); i++) {
 		auto& mesh = modelData.meshes.at(i);
 		auto& meshRenderData = modelRenderData.meshRenderDataHandles.at(i);
@@ -77,7 +77,7 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->intensity = 1.0f;
 	}
 
-	// モデル描画データを登録
+	// モチE��描画チE�Eタを登録
 	return modelRenderDataManager_.Add(modelRenderData);
 }
 
@@ -88,24 +88,24 @@ uint32_t AssetManager::LoadAudio(const std::string& audioName) {
 }
 
 uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
-	// モデルデータを読み込み
+	// モチE��チE�Eタを読み込み
 	ModelData modelData{};
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
-	// メッシュを返す
+	// メチE��ュを返す
 	return modelVertexResourceManager_.Assign(dxCommon_->GetDevice(), modelData, modelName);
 }
 
 uint32_t AssetManager::LoadModelTexture(const std::string& modelName) {
-	// モデルデータを読み込み
+	// モチE��チE�Eタを読み込み
 	ModelData modelData{};
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
-	// 先頭のメッシュのテクスチャを返す
+	// 先頭のメチE��ュのチE��スチャを返す
 	if (!modelData.meshes.empty()) {
 		const auto& mesh = modelData.meshes.at(0);
 		return textureManager_->LoadTexture(mesh.material.textureFilePath);

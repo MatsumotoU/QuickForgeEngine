@@ -2,8 +2,8 @@
 #include <assert.h>
 #include <vector>
 
-#include "../Data/AudioData.h"
-#include "Utility/String/MyString.h"
+#include "engine/include/assets/AudioSource/Data/AudioData.h"
+#include "engine/include/utility/String/MyString.h"
 
 #pragma comment(lib, "Mf.lib")
 #pragma comment(lib, "mfplat.lib")
@@ -24,12 +24,12 @@ void Multiaudioloader::Finalize() {
 AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 	AudioData soundData{};
 
-	// ソースリーダーの生成
+	// ソースリーダーの生�E
 	Microsoft::WRL::ComPtr<IMFSourceReader> pMFSourceReader{ nullptr };
 	HRESULT hr = MFCreateSourceReaderFromURL(ConvertString(path).c_str(), nullptr, pMFSourceReader.GetAddressOf());
 	assert(SUCCEEDED(hr));
 
-	// メディアタイプの取得
+	// メチE��アタイプ�E取征E
 	IMFMediaType* pMFMediaType{ nullptr };
 	hr = MFCreateMediaType(&pMFMediaType);
 	assert(SUCCEEDED(hr));
@@ -45,13 +45,13 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 	hr = pMFSourceReader.Get()->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pMFMediaType);
 	assert(SUCCEEDED(hr));
 
-	// オーディオデータ形式の作成
+	// オーチE��オチE�Eタ形式�E作�E
 	WAVEFORMATEX* waveFormat{ nullptr };
 	hr = MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, nullptr);
 	soundData.wfex = *waveFormat;
 	assert(SUCCEEDED(hr));
 
-	// データの読み込み
+	// チE�Eタの読み込み
 	std::vector<BYTE> mediaData;
 	while (true)
 	{

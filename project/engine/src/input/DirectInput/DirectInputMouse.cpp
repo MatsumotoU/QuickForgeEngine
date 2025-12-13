@@ -1,4 +1,4 @@
-#include "DirectInputMouse.h"
+#include "engine/include/input/DirectInput/DirectInputMouse.h"
 
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -34,7 +34,7 @@ void DirectInputMouse::Update() {
 	mouse_->Acquire();
 	mouse_->GetDeviceState(sizeof(DIMOUSESTATE), &mouseState_);
 
-	// スクリーン上の座標に変換
+	// 繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ荳翫・蠎ｧ讓吶↓螟画鋤
 	GetCursorPos(&mousePos_);
 	ScreenToClient(hwnd_,&mousePos_);
 	mouseScreenPos_.x = static_cast<float>(mousePos_.x);
@@ -45,7 +45,7 @@ void DirectInputMouse::Update() {
 	wheelDir_ = static_cast<float>(mouseState_.lZ);
 	mouseMoveDir_ = mouseMoveDir_.Normalize();
 
-	// 移動量計算
+	// 遘ｻ蜍暮㍼險育ｮ・
 	deltaMouse_ = mouseScreenPos_ - preMouseScreenPos_;
 }
 

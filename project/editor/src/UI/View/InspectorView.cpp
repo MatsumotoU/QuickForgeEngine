@@ -1,24 +1,24 @@
 #include "InspectorView.h"
 #include "HierarchyView.h"
-#include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
-#include "Assets/AssetManager.h"
-#include "Scene/SceneManager.h"
-#include "Assets/Script/LuaScriptResourceManager.h"
-#include "Scene/Data/SceneObjectData.h"
-#include "Core/Math/Transform.h"
-#include "Assets/AssetManager.h"
-#include "Camera/CameraManager.h"
-#include "Assets/Script/Data/ScriptHandle.h"
-#include "Physics/Force.h"
-#include "Collider/Data/SphereColliderData.h"
-#include "Assets/3DModel/Data/ModelHandle.h"
-#include "Assets/Sprite/Data/SpriteData.h"
-#include "Core/Math/ParentData.h"
-#include "Camera/Data/CameraData.h"
-#include "Collider/Data/AABBColliderData.h"
-#include "Assets/Script/Data/CsharpComponent.h"
-#include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#環境のヘッダーをインクルード
-#include "Assets/Particle/Data/ParticleComponent.h"
+#include "utility/DebugTool/ImGui/ImGuiInclude.h"
+#include "assets/AssetManager.h"
+#include "scene/SceneManager.h"
+#include "assets/Script/LuaScriptResourceManager.h"
+#include "scene/Data/SceneObjectData.h"
+#include "core/Math/Transform.h"
+#include "assets/AssetManager.h"
+#include "camera/CameraManager.h"
+#include "assets/Script/Data/ScriptHandle.h"
+#include "physics/Force.h"
+#include "collider/Data/SphereColliderData.h"
+#include "assets/3DModel/Data/ModelHandle.h"
+#include "assets/Sprite/Data/SpriteData.h"
+#include "core/Math/ParentData.h"
+#include "camera/Data/CameraData.h"
+#include "collider/Data/AABBColliderData.h"
+#include "assets/Script/Data/CsharpComponent.h"
+#include "assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#環墁E�EヘッダーをインクルーチE
+#include "assets/Particle/Data/ParticleComponent.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
@@ -42,7 +42,7 @@ void InspectorView::Draw() {
 	}
 
 	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	// オブジェクトの名前
+	// オブジェクト�E名前
 	AssetManager* assetManager = AssetManager::GetInstance();
 	if (assetManager->GetEntityManager()->HasComponent<SceneObjectData>(selectedEntityId_)) {
 		SceneObjectData& sceneObjData = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(selectedEntityId_);
@@ -236,25 +236,25 @@ void InspectorView::Draw() {
 					ImGui::TreePop();
 				}
 
-				// 右クリックでポップアップメニュー
+				// 右クリチE��でポップアチE�Eメニュー
 				std::string popupLabel = "ScriptPopup" + std::to_string(i);
 				if (ImGui::BeginPopupContextItem(popupLabel.c_str())) {
 					if (ImGui::MenuItem("Open in VSCode")) {
 						LuaScriptResourceManager::GetInstance()->OpenAndEditScript(sh.scriptName_);
 					}
 					if (ImGui::MenuItem("Remove")) {
-						// スクリプト削除処理 
+						// スクリプト削除処琁E
 						eraseIndices.push_back(static_cast<uint32_t>(i));
 						LuaScriptResourceManager::GetInstance()->RequestRemoveScript(sh.handle_);
 					}
 					ImGui::EndPopup();
 				}
 			}
-			// 後ろから削除してインデックスずれを防ぐ
+			// 後ろから削除してインチE��クスずれを防ぁE
 			for (auto it = eraseIndices.rbegin(); it != eraseIndices.rend(); ++it) {
 				scriptHandle.scriptHandles_.erase(scriptHandle.scriptHandles_.begin() + *it);
 			}
-			// スクリプトがなくなったらコンポーネントごと削除
+			// スクリプトがなくなったらコンポ�Eネントごと削除
 			if (scriptHandle.scriptHandles_.size() <= 0) {
 				assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
 			}
@@ -397,7 +397,7 @@ void InspectorView::Draw() {
 		}
 	}
 
-	// コンポーネントの追加
+	// コンポ�Eネント�E追加
 	if (ImGui::Button("Add Component")) {
 		ImGui::OpenPopup("AddComponentPopup");
 	}
@@ -429,11 +429,11 @@ void InspectorView::Draw() {
 		// CsharpScript
 		if (ImGui::BeginMenu("CSharpScript")) {
 			if (ImGui::MenuItem("NewScript")) {
-				// TODO: 新規C#スクリプト作成機能
+				// TODO: 新規C#スクリプト作�E機�E
 			}
 
 			if (ImGui::BeginMenu("AddScript")) {
-				// C#クラスリストを取得
+				// C#クラスリストを取征E
 				csharpScriptClasses_ = CsharpVirtualEnvironmentOnQFE::GetInstance()->GetAvailableScriptClasses();
 				for (const auto& className : csharpScriptClasses_) {
 					if (ImGui::MenuItem(className.c_str())) {

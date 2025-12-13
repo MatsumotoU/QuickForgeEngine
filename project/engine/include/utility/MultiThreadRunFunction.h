@@ -4,20 +4,20 @@
 
 class MultiThreadRunFunction final {
 public:
-	/// isRunningはfalseで初期化
+	/// isRunningはfalseで初期匁E
 	MultiThreadRunFunction();
-	/// 破棄時に別スレッドで実行している物があれば終了まで待つ
+	/// 破棁E��に別スレチE��で実行してぁE��物があれ�E終亁E��で征E��
 	~MultiThreadRunFunction();
 
-	/// 別スレッドで実行している物があれば終了まで待つ初期化
+	/// 別スレチE��で実行してぁE��物があれ�E終亁E��で征E��初期匁E
 	void Init();
-	/// 関数を別スレッドで実行する
+	/// 関数を別スレチE��で実行すめE
 	void Start(std::function<void()> func);
 	/// 開始したか
 	const bool IsStarted() const;
-	/// 実行中か
+	/// 実行中ぁE
 	const bool IsRunning() const;
-	/// 終わっているか
+	/// 終わってぁE��ぁE
 	const bool IsSuccess() const;
 
 private:

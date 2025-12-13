@@ -1,16 +1,16 @@
 #include "RendaringPostprocess.h"
-#include "AppUtility/DirectX/TransitionResourceBarrier.h"
-#include "Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
+#include "engine/include/utility/DirectX/TransitionResourceBarrier.h"
+#include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
-#include "Core/EngineGlobalValue.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/core/EngineGlobalValue.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 
 #include <cassert>
 #include <algorithm>
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
-#include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
 #endif // _DEBUG
 
 RendaringPostprosecess::RendaringPostprosecess() {
@@ -39,24 +39,24 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	offScreenClearColor[2] = 0.0f;
 	offScreenClearColor[3] = 0.0f;
 
-	// ポストプロセスの関数を登録
+	// ポスト�Eロセスの関数を登録
 	postProcessFunctions_.clear();
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyGrayScale, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyVignette, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyColorCorrection, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyPixcel, this));
-	// 固定のインデックスを設定
-	grayScaleProcessIndex_ = 0; // グレースケールのインデックス
-	vignetteProcessIndex_ = 1; // ビネットのインデックス
-	colorCorrectionProcessIndex_ = 2; // 色調補正のインデックス
-	pixcelProcessIndex_ = 3; // ピクセル化のインデックス
+	// 固定�EインチE��クスを設宁E
+	grayScaleProcessIndex_ = 0; // グレースケールのインチE��クス
+	vignetteProcessIndex_ = 1; // ビネチE��のインチE��クス
+	colorCorrectionProcessIndex_ = 2; // 色調補正のインチE��クス
+	pixcelProcessIndex_ = 3; // ピクセル化�EインチE��クス
 
 	postProcessOrderForm_.clear();
 
 	grayScaleOffset_ = 0.0f;
 
 #ifdef _DEBUG
-	isImGuiEnabled_ = true; // デバッグモードではImGuiを有効にする
+	isImGuiEnabled_ = true; // チE��チE��モードではImGuiを有効にする
 #endif // _DEBUG
 }
 
@@ -75,7 +75,7 @@ void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsComm
 	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
-	// 頂点データ作成
+	// 頂点チE�Eタ作�E
 	vertexData_ = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	vertexData_[0].position = { -1.0f,1.0f,0.0f,1.0f };
@@ -91,7 +91,7 @@ void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsComm
 	vertexData_[3].texcoord = { 1.0f,1.0f };
 	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
 
-	// indexBufferの作成
+	// indexBufferの作�E
 	indexResource_ = BufferGenerator::Generate(device, sizeof(uint32_t) * 6);
 	indexBufferView_ = {};
 	indexBufferView_.BufferLocation = indexResource_.Get()->GetGPUVirtualAddress();
@@ -111,9 +111,9 @@ void RendaringPostprosecess::SetColorCorrectionPSO(PipelineStateObject* pso) {
 	colorCorrectionPso_ = pso;
 	colorCorrectionOffsetBuffer_.CreateResource(device_);
 	colorCorrectionOffsetBuffer_.GetData()->exposure = 0.0f; // 露出
-	colorCorrectionOffsetBuffer_.GetData()->contrast = 1.0f; // コントラスト
+	colorCorrectionOffsetBuffer_.GetData()->contrast = 1.0f; // コントラスチE
 	colorCorrectionOffsetBuffer_.GetData()->saturation = 1.0f; // 彩度
-	colorCorrectionOffsetBuffer_.GetData()->gamma = 1.0f; // ガンマ
+	colorCorrectionOffsetBuffer_.GetData()->gamma = 1.0f; // ガンチE
 	colorCorrectionOffsetBuffer_.GetData()->hue = 0.0f;
 }
 
@@ -125,9 +125,9 @@ void RendaringPostprosecess::SetGrayScalePSO(PipelineStateObject* pso) {
 void RendaringPostprosecess::SetVignettePSO(PipelineStateObject* pso) {
 	vignettePso_ = pso;
 	vignetteOffsetBuffer_.CreateResource(device_);
-	vignetteOffsetBuffer_.GetData()->VignetteRadius = 0.3f; // ビネットの半径
-	vignetteOffsetBuffer_.GetData()->VignetteSoftness = 0.5f; // ビネットの柔らかさ
-	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.2f; // ビネットの強さ
+	vignetteOffsetBuffer_.GetData()->VignetteRadius = 0.3f; // ビネチE��の半征E
+	vignetteOffsetBuffer_.GetData()->VignetteSoftness = 0.5f; // ビネチE��の柔らかさ
+	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.2f; // ビネチE��の強ぁE
 }
 
 void RendaringPostprosecess::SetNormalPSO(PipelineStateObject* pso) {
@@ -183,13 +183,13 @@ DescriptorHandles RendaringPostprosecess::GetCurrentSrvHandle() const  {
 }
 
 void RendaringPostprosecess::PreDraw() {
-	// 何回ポストプロセスがかかっているか調べる
+	// 何回ポスト�EロセスがかかってぁE��か調べめE
 	postProcessCount_ = 0;
 	postProcessOrderForm_.clear();
 
-	// ピクセル化
+	// ピクセル匁E
 	if (enablePixcel_) {
-		postProcessOrderForm_.push_back(pixcelProcessIndex_); // ピクセル化
+		postProcessOrderForm_.push_back(pixcelProcessIndex_); // ピクセル匁E
 		postProcessCount_++;
 
 		pixcelOffsetBuffer_.GetData()->time += QFE::EngineGlobalValue::deltaTime;
@@ -201,9 +201,9 @@ void RendaringPostprosecess::PreDraw() {
 		// グレースケールの強度
 		grayScaleOffsetBuffer_.GetData()->offset.x = grayScaleOffset_;
 	}
-	// ビネット
+	// ビネチE��
 	if (enableVignette_) {
-		postProcessOrderForm_.push_back(vignetteProcessIndex_); // ビネット
+		postProcessOrderForm_.push_back(vignetteProcessIndex_); // ビネチE��
 		postProcessCount_++;
 	}
 	// 色調補正
@@ -212,13 +212,13 @@ void RendaringPostprosecess::PreDraw() {
 		postProcessCount_++;
 	}
 
-	// ポストプロセスの順番を並び替える
+	// ポスト�Eロセスの頁E��を並び替える
 	if (postProcessCount_ > 0) {
 		grayScaleProcessIndex_ = std::clamp(grayScaleProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
 		vignetteProcessIndex_ = std::clamp(vignetteProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
 	}
 
-	// オフスクリーンのバリアを設定
+	// オフスクリーンのバリアを設宁E
 	if (!isFirstStateRenderTarget_) {
 		TransitionResourceBarrier::Transition(
 			list_, offScreenResources_[0], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -230,7 +230,7 @@ void RendaringPostprosecess::PreDraw() {
 		isSecondStateRenderTarget_ = true;
 	}
 
-	// ImGuiのレンダリング用に絶対にバックバッファに描画する必要があるので残す
+	// ImGuiのレンダリング用に絶対にバックバッファに描画する忁E��があるので残す
 	if (isPostprocess_ || isImGuiEnabled_) {
 		// オフスクリーンに描画
 		renderingRosourceIndex_ = 0;
@@ -247,19 +247,19 @@ void RendaringPostprosecess::PreDraw() {
 }
 
 void RendaringPostprosecess::PostDraw() {
-	// ポストプロセスが有効でないなら何もしない
+	// ポスト�Eロセスが有効でなぁE��ら何もしなぁE
 	if (!isPostprocess_) {
 		return;
 	} 
 	// オフスクリーンのバリア
 	SwitchRenderTarget();
 	for (uint32_t i = 0; i < postProcessCount_; i++) {
-		// ポストプロセスの適用
+		// ポスト�Eロセスの適用
 		postProcessFunctions_[postProcessOrderForm_[i]]();
 		SwitchRenderTarget();
 	}
 
-	// ポストプロセスの適用
+	// ポスト�Eロセスの適用
 	readingResourceIndex_ = postProcessCount_ % 2;
 
 	// バックバッファに書き込み
@@ -282,7 +282,7 @@ void RendaringPostprosecess::PostDraw() {
 
 #ifdef _DEBUG
 void RendaringPostprosecess::DrawImGui() {
-	// ポストプロセスのデバッグウィンドウを表示
+	// ポスト�EロセスのチE��チE��ウィンドウを表示
 	ImGui::Checkbox("Enable Postprocess", &isPostprocess_);
 	ImGui::Separator();
 	if (isPostprocess_) {
@@ -340,7 +340,7 @@ void RendaringPostprosecess::ClearSecondRenderTarget() {
 }
 
 void RendaringPostprosecess::SwitchRenderTarget() {
-	// ポストプロセスが有効でないなら何もしない
+	// ポスト�Eロセスが有効でなぁE��ら何もしなぁE
 	if (!isPostprocess_) {
 		return;
 	}
@@ -375,7 +375,7 @@ void RendaringPostprosecess::SwitchRenderTarget() {
 	readingResourceIndex_ = renderingRosourceIndex_;
 	renderingRosourceIndex_ = (renderingRosourceIndex_ + 1) % 2;
 
-	// 描画先の設定
+	// 描画先�E設宁E
 	DirectXCommon::GetInstance()->ClearDepthStencil();
 	list_->OMSetRenderTargets(1, &offScreenRtvHandles_[renderingRosourceIndex_], false,&dsvHandle_);
 }

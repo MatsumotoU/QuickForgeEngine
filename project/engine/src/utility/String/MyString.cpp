@@ -1,12 +1,12 @@
-#include "MyString.h"
+#include "engine/include/utility/String/MyString.h"
 #include <winrt/base.h>
 
-// ログ描画関数
+// 繝ｭ繧ｰ謠冗判髢｢謨ｰ
 void Log(const std::string& message) {
 	OutputDebugStringA(message.c_str());
 }
 
-// stringからwstringに変換
+// string縺九ｉwstring縺ｫ螟画鋤
 std::wstring ConvertString(const std::string& str) {
     if (str.empty()) {
         return std::wstring();
@@ -21,7 +21,7 @@ std::wstring ConvertString(const std::string& str) {
     return result;
 }
 
-// wstringからstringに変換
+// wstring縺九ｉstring縺ｫ螟画鋤
 std::string ConvertString(const std::wstring& str) {
     if (str.empty()) {
         return std::string();
@@ -47,9 +47,9 @@ char* StringToCharPtr(const std::string& str) {
     if (str.empty()) {
         return nullptr;
     }
-    // ヌル終端を含めたバッファを確保
+    // 繝後Ν邨らｫｯ繧貞性繧√◆繝舌ャ繝輔ぃ繧堤｢ｺ菫・
     char* buffer = new char[str.size() + 1];
-    std::memcpy(buffer, str.c_str(), str.size() + 1); // ヌル終端もコピー
+    std::memcpy(buffer, str.c_str(), str.size() + 1); // 繝後Ν邨らｫｯ繧ゅさ繝斐・
     return buffer;
 }
 

@@ -1,14 +1,14 @@
 #include "Camera.h"
 #include <cassert>
-#include "Core/EngineGlobalValue.h"
+#include "engine/include/core/EngineGlobalValue.h"
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
+#include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #endif // _DEBUG
 
-#include "Assets/AssetManager.h" 
-#include "Core/Entity/EntityManager.h"
-#include "Scene/Data/SceneObjectData.h"
+#include "engine/include/assets/AssetManager.h" 
+#include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/scene/Data/SceneObjectData.h"
 #include "Data/CameraData.h"
 
 void Camera::Initialize() {
@@ -49,18 +49,18 @@ void Camera::Update() {
 }
 
 bool Camera::CheckVisible(const Matrix4x4& world) const {
-	// ワールド座標の原点を取得
+	// ワールド座標�E原点を取征E
 	Vector4 pos4(0.0f, 0.0f, 0.0f, 1.0f);
 	Vector4 worldPos = Vector4::Transform(pos4, world);
 
-	// クリップ空間へ変換
+	// クリチE�E空間へ変換
 	Vector4 clipPos = Vector4::Transform(worldPos, viewProjectionMatrix_);
 
 	// wで割ってNDCへ
 	if (clipPos.w == 0.0f) return false;
 	Vector3 ndcPos = { clipPos.x / clipPos.w, clipPos.y / clipPos.w, clipPos.z / clipPos.w };
 
-	// NDC範囲内か判定（DirectX: zは0～1, OpenGL: zは-1～1）
+	// NDC篁E��冁E��判定！EirectX: zは0�E�E, OpenGL: zは-1�E�E�E�E
 	return
 		ndcPos.x >= -1.0f && ndcPos.x <= 1.0f &&
 		ndcPos.y >= -1.0f && ndcPos.y <= 1.0f &&

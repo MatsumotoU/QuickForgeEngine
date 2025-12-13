@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <Windows.h>
-#include "Core/Window/IGameWindowManager.h"
-#include "Core/Window/IGameWindow.h"
+#include "engine/include/core/Window/IGameWindowManager.h"
+#include "engine/include/core/Window/IGameWindow.h"
 
 class GameWindowManager final : public IGameWindowManager {
 public:

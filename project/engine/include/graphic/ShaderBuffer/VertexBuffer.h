@@ -20,7 +20,7 @@ public:
 		vertexBufferView_.SizeInBytes = sizeof(T) * vertexCount;
 		vertexBufferView_.StrideInBytes = sizeof(T);
 
-		// 頂点データ作成
+		// 頂点チE�Eタ作�E
 		vertexData_ = nullptr;
 		vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	};
@@ -32,7 +32,7 @@ public:
 		return vertexResource_.Get()->GetGPUVirtualAddress();
 	}
 	const uint32_t GetVertexCount() const { return vertexCount_; }
-	// セッター
+	// セチE��ー
 	void SetData(uint32_t index, const VertexData& data) {
 		assert(index < vertexCount_ && "Index out of bounds");
 		vertexData_[index] = data;

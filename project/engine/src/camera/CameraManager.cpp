@@ -1,11 +1,11 @@
 #include "CameraManager.h"
 #include <cassert>
-#include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
+#include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #include <string>
-#include "Assets/AssetManager.h"
-#include "Core/Entity/EntityManager.h"
-#include "Scene/Data/SceneObjectData.h"
-#include "Camera/Data/CameraData.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/scene/Data/SceneObjectData.h"
+#include "engine/include/camera/Data/CameraData.h"
 
 void CameraManager::Initialize() {
 	nextCameraHandle_ = 0;
@@ -18,7 +18,7 @@ void CameraManager::Initialize() {
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	entityManager->GetComponent<SceneObjectData>(cameras_[0].GetBindEntityId()).name = "DebugCamera";
 
-	// デフォルトカメラを追加
+	// チE��ォルトカメラを追加
 	mainCameraIndex_ = AddCamera();
 }
 
@@ -94,9 +94,9 @@ void CameraManager::SnapToDebugCamera(uint32_t index) {
 //	}
 //
 //#ifdef _DEBUG
-//	// 0番以外のカメラだけを返す
+//	// 0番以外�Eカメラだけを返す
 //	if (cameras_.size() > 1) {
-//		// 0番以外のカメラだけを格納するstaticなvectorを用意
+//		// 0番以外�Eカメラだけを格納するstaticなvectorを用愁E
 //		static std::vector<Camera> nonDebugCameras;
 //		nonDebugCameras.clear();
 //		for (size_t i = 1; i < cameras_.size(); ++i) {
@@ -104,7 +104,7 @@ void CameraManager::SnapToDebugCamera(uint32_t index) {
 //		}
 //		return nonDebugCameras;
 //	}
-//	// 0番しかない場合は空のvectorを返す
+//	// 0番しかなぁE��合�E空のvectorを返す
 //	static std::vector<Camera> emptyCameras;
 //	emptyCameras.clear();
 //	return emptyCameras;

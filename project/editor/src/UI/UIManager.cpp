@@ -1,24 +1,25 @@
-#include "UIManager.h"
-#include "Graphic/PostEffect/RendaringPostprocess.h"
-#include "Scene/SceneManager.h"
-#include "View/SceneView.h"
-#include "View/AssetsView.h"
-#include "View/ConsoleView.h"
-#include "View/InspectorView.h"
-#include "View/HierarchyView.h"
-#include "View/GameView.h"
-#include "View/EngineProfileView.h"
-#include "View/ScriptLoggerView.h"
-#include "View/SceneProfileView.h"
+#include "editor/include/UI/UIManager.h"
 
-#include "File/CreateNewScene.h"
-#include "File/SaveScene.h"
-#include "File/LoadScene.h"
+#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
+#include "engine/include/scene/SceneManager.h"
+#include "editor/include/UI/View/SceneView.h"
+#include "editor/include/UI/View/AssetsView.h"
+#include "editor/include/UI/View/ConsoleView.h"
+#include "editor/include/UI/View/InspectorView.h"
+#include "editor/include/UI/View/HierarchyView.h"
+#include "editor/include/UI/View/GameView.h"
+#include "editor/include/UI/View/EngineProfileView.h"
+#include "editor/include/UI/View/ScriptLoggerView.h"
+#include "editor/include/UI/View/SceneProfileView.h"
 
-#include "Edit/DebugConsole.h"
-#include "Edit/KeyConfigEdit.h"
-#include "Edit/PostprocessEdit.h"
-#include "Edit/ColliderMaskEdit.h"
+#include "editor/include/UI/File/CreateNewScene.h"
+#include "editor/include/UI/File/SaveScene.h"
+#include "editor/include/UI/File/LoadScene.h"
+
+#include "editor/include/UI/Edit/DebugConsole.h"
+#include "editor/include/UI/Edit/KeyConfigEdit.h"
+#include "editor/include/UI/Edit/PostprocessEdit.h"
+#include "editor/include/UI/Edit/ColliderMaskEdit.h"
 
 void UIManager::Initialize() {
 	isActiveUI_ = false;
@@ -26,7 +27,7 @@ void UIManager::Initialize() {
 #ifdef _DEBUG
 	isActiveUI_ = true;
 
-	// FileUIの初期化
+	// FileUIの初期匁E
 	fileUIs_.push_back(std::make_unique<CreateNewScene>());
 	fileUIs_.push_back(std::make_unique<SaveScene>());
 	fileUIs_.push_back(std::make_unique<LoadScene>());
@@ -34,7 +35,7 @@ void UIManager::Initialize() {
 		ui->Initialize();
 	}
 
-	// ViewUIの初期化
+	// ViewUIの初期匁E
 	viewUIs_.push_back(std::make_unique<SceneProfileView>());
 	viewUIs_.push_back(std::make_unique<EngineProfileView>());
 	viewUIs_.push_back(std::make_unique<ScriptLoggerView>());
@@ -48,7 +49,7 @@ void UIManager::Initialize() {
 		ui->Initialize();
 	}
 
-	// EditUIの初期化
+	// EditUIの初期匁E
 	editUIs_.push_back(std::make_unique<DebugConsole>());
 	editUIs_.push_back(std::make_unique<KeyConfigEdit>());
 	editUIs_.push_back(std::make_unique<PostprocessEdit>());
@@ -79,7 +80,7 @@ void UIManager::Draw() {
 		return;
 	}
 #ifdef _DEBUG
-	// シーンが実行中は色を変える
+	// シーンが実行中は色を変えめE
 	bool isScriptRunning = SceneManager::GetInstance()->IsRunningScript();
 	if (isScriptRunning && RendaringPostprosecess::GetInstance()->isImGuiEnabled_) {
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
@@ -124,7 +125,7 @@ void UIManager::Draw() {
 			}
 		}
 
-		// シーン名
+		// シーン吁E
 		ImGui::Text(("Scene: " + SceneManager::GetInstance()->GetCurrentSceneName()).c_str());
 		ImGui::EndMainMenuBar();
 	}
@@ -133,7 +134,7 @@ void UIManager::Draw() {
 		return;
 	}
 
-	// Dockする場所を生成
+	// Dockする場所を生戁E
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->Pos);
 	ImGui::SetNextWindowSize(viewport->Size);
@@ -162,7 +163,7 @@ void UIManager::Draw() {
 		ui->Draw();
 	}
 
-	// 実行中は色を変える
+	// 実行中は色を変えめE
 	if (isScriptRunning && RendaringPostprosecess::GetInstance()->isImGuiEnabled_) {
 		ImGui::PopStyleColor(3);
 	}

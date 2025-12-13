@@ -17,14 +17,14 @@ std::vector<std::string> QFE::FILE::GetFilesInDirectory(const std::string& direc
 }
 
 bool QFE::FILE::OpenFileOnExe(const std::string& exePath, const std::string& filePath) {
-    // ShellExecuteAの戻り値が32以下なら失敗
+    // ShellExecuteAの戻り値ぁE2以下なら失敁E
     HINSTANCE result = ShellExecuteA(
         NULL,           // ウィンドウハンドル
-        "open",         // 操作
+        "open",         // 操佁E
         exePath.c_str(),// 実行するexe
-        filePath.c_str(),// 引数（ここでは開きたいファイルパス）
+        filePath.c_str(),// 引数�E�ここでは開きたいファイルパス�E�E
         NULL,           // カレントディレクトリ
-        SW_SHOWNORMAL   // ウィンドウ表示方法
+        SW_SHOWNORMAL   // ウィンドウ表示方況E
     );
     return reinterpret_cast<intptr_t>(result) > 32;
 }
@@ -76,7 +76,7 @@ bool QFE::FILE::LoadCSVToVector(const std::string& filePath, std::vector<std::ve
 bool QFE::FILE::SaveJSONToFile(const std::string& filePath, const nlohmann::json& json) {
 	std::ofstream ofs(filePath);
 	if (ofs.is_open()) {
-		ofs << json.dump(4); // インデント幅4で整形して保存
+		ofs << json.dump(4); // インチE��ト幁Eで整形して保孁E
 		ofs.close();
 		return true;
 	}

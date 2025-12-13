@@ -1,11 +1,11 @@
 #pragma once
-#include "Utility/DesignPatterns/Singleton.h"
-#include "Graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
+#include "engine/include/graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
-#include "Graphic/Pipeline/PSO/PipelineStateObject.h"
-#include "Graphic/ShaderBuffer/VertexBuffer.h"
-#include "Graphic/ShaderBuffer/ConstantBuffer.h"
+#include "engine/include/graphic/Pipeline/PSO/PipelineStateObject.h"
+#include "engine/include/graphic/ShaderBuffer/VertexBuffer.h"
+#include "engine/include/graphic/ShaderBuffer/ConstantBuffer.h"
 
 #include <stdint.h>
 #include <string>
@@ -18,10 +18,10 @@
 #include <wrl.h>
 #include <array>
 
-// TODO: 他の効果を作成する
-// TODO: ポストプロセスの順番を動的に変えられるようにする
-// TODO: ポストプロセスのシェーダーを動的に作成できるようにする
-// TODO: 一つだけ選択したときにシェーダーが適用されないバグを直す
+// TODO: 他�E効果を作�Eする
+// TODO: ポスト�Eロセスの頁E��を動皁E��変えられるよぁE��する
+// TODO: ポスト�Eロセスのシェーダーを動皁E��作�Eできるようにする
+// TODO: 一つだけ選択したときにシェーダーが適用されなぁE��グを直ぁE
 
 class DirectXCommon;
 
@@ -54,7 +54,7 @@ public:
 	void PreDraw();
 	void PostDraw();
 
-public:// debug機能
+public:// debug機�E
 #ifdef _DEBUG
 	void DrawImGui();
 #endif // _DEBUG
@@ -69,7 +69,7 @@ private:
 	void ApplyColorCorrection();
 	void ApplyPixcel();
 
-public:// パブリック変数
+public:// パブリチE��変数
 	bool isPostprocess_;
 	bool isImGuiEnabled_;
 
@@ -90,7 +90,7 @@ private:// グレースケール変数
 	float grayScaleOffset_;
 	int grayScaleProcessIndex_;
 
-private:// ビネット変数
+private:// ビネチE��変数
 	PipelineStateObject* vignettePso_;
 	ConstantBuffer<VignetteOffset> vignetteOffsetBuffer_;
 	int vignetteProcessIndex_;

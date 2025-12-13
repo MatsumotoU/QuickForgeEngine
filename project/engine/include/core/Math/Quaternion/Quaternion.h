@@ -13,84 +13,84 @@ public:
 
 public:
 	/// <summary>
-	/// 虚数部を取得します(x,y,z)
+	/// 虚数部を取得しまぁEx,y,z)
 	/// </summary>
 	/// <returns></returns>
 	[[nodiscard]] Vector3 ImaginaryPart() const;
 	/// <summary>
-	/// 実部を取得します(w)
+	/// 実部を取得しまぁEw)
 	/// </summary>
 	/// <returns></returns>
 	[[nodiscard]] float RealPart() const;
 	/// <summary>
-	/// 共役を取得します
+	/// 共役を取得しまぁE
 	/// </summary>
 	/// <returns></returns>
 	[[nodiscard]] Quaternion Conjugation() const;
 	/// <summary>
-	/// ノルムを取得します
+	/// ノルムを取得しまぁE
 	/// </summary>
 	/// <returns></returns>
 	[[nodiscard]] float Norm() const;
 	/// <summary>
-	/// 正規化クオータニオンを取得します
+	/// 正規化クオータニオンを取得しまぁE
 	/// </summary>
 	/// <returns></returns>
 	[[nodiscard]] Quaternion Normalize() const;
 
 public:
 	/// <summary>
-	/// 積を求めます
+	/// 積を求めまぁE
 	/// </summary>
 	/// <param name="lhs"></param>
 	/// <param name="rhs"></param>
 	/// <returns></returns>
 	[[nodiscard]] static Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs);
 	/// <summary>
-	/// 単位クオータニオンを返します
+	/// 単位クオータニオンを返しまぁE
 	/// </summary>
 	/// <returns></returns>
 	[[nodiscard]] static Quaternion IndentityQuaternion();
 	/// <summary>
-	/// 共役クオータニオンを返します
+	/// 共役クオータニオンを返しまぁE
 	/// </summary>
 	/// <param name="quaternion"></param>
 	/// <returns></returns>
 	[[nodiscard]] static Quaternion ConjugationQuaternion(const Quaternion& quaternion);
 	/// <summary>
-	/// クオータニオンのノルムを返します
+	/// クオータニオンのノルムを返しまぁE
 	/// </summary>
 	/// <param name="quaternion"></param>
 	/// <returns></returns>
 	[[nodiscard]] static float Norm(const Quaternion& quaternion);
 	/// <summary>
-	/// 正規化したクオータニオンを返します
+	/// 正規化したクオータニオンを返しまぁE
 	/// </summary>
 	/// <param name="quaternion"></param>
 	/// <returns></returns>
 	[[nodiscard]] static Quaternion Normalize(const Quaternion& quaternion);
 	/// <summary>
-	/// 逆クオータニオンを返します
+	/// 送E��オータニオンを返しまぁE
 	/// </summary>
 	/// <param name="quaternion"></param>
 	/// <returns></returns>
 	[[nodiscard]] static Quaternion Inverse(const Quaternion& quaternion);
 	/// <summary>
-	/// 任意の軸からクオータニオンを作成します
+	/// 任意�E軸からクオータニオンを作�EしまぁE
 	/// </summary>
 	/// <param name="axis"></param>
 	/// <param name="angle"></param>
 	/// <returns></returns>
 	[[nodiscard]] static Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
 	/// <summary>
-	/// クオータニオンでベクトルを回転させます
+	/// クオータニオンでベクトルを回転させまぁE
 	/// </summary>
 	/// <param name="vector"></param>
 	/// <param name="quaternion"></param>
 	/// <returns></returns>
 	[[nodiscard]] static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 	/// <summary>
-	/// クオータニオンから回転行列を作成します
+	/// クオータニオンから回転行�Eを作�EしまぁE
 	/// </summary>
 	/// <param name="quaternion"></param>
 	/// <returns></returns>

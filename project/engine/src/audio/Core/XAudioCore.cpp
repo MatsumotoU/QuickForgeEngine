@@ -17,32 +17,32 @@
 #pragma comment(lib,"xaudio2.lib")
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
-#include "Utility/String/MyString.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/String/MyString.h"
 #endif // _DEBUG
 
-// デストラクタ
+// チE��トラクタ
 XAudioCore::~XAudioCore() {
 	xAudio2_.Reset();
 }
 
-// 初期化
+// 初期匁E
 void XAudioCore::Initialize() {
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
-	// XAudio2の初期化
+	// XAudio2の初期匁E
 	masterVoice_ = nullptr;
 	hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(hr));
-	// チャンネルを2で固定します
+	// チャンネルめEで固定しまぁE
 	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_,2);
 	assert(SUCCEEDED(hr));
 
 #ifdef _DEBUG
 	DebugLog(ConvertString(std::format(L"MasterVoice->nChannels:{}", GetOutputChannels())));
 
-	// 音声デバイスを表示
+	// 音声チE��イスを表示
 	IMMDeviceEnumerator* pEnumerator = NULL;
 	IMMDeviceCollection* pCollection = NULL;
 	IMMDevice* pEndpoint = NULL;
@@ -66,25 +66,25 @@ void XAudioCore::Initialize() {
 		DebugLog("Active Rendering Audio Endpoints");
 		for (UINT i = 0; i < count; i++)
 		{
-			// 4. コレクションから個々のエンドポイントを取得
+			// 4. コレクションから個、E�Eエンド�Eイントを取征E
 			hr = pCollection->Item(i, &pEndpoint);
 			assert(SUCCEEDED(hr));
 
-			// 5. デバイスのプロパティストアを開く
-			// デバイスの様々なプロパティ（名前、説明など）にアクセスするために必要
+			// 5. チE��イスのプロパティストアを開ぁE
+			// チE��イスの様、E��プロパティ�E�名前、説明など�E�にアクセスするために忁E��E
 			hr = pEndpoint->OpenPropertyStore(STGM_READ, &pProps);
 			assert(SUCCEEDED(hr));
 
-			// PROPVARIANT の初期化
+			// PROPVARIANT の初期匁E
 			PropVariantInit(&varName);
 
-			// 6. デバイスの表示名 (Friendly Name) を取得
-			// PKEY_Device_FriendlyName はデバイスの表示名を識別するプロパティキー
+			// 6. チE��イスの表示吁E(Friendly Name) を取征E
+			// PKEY_Device_FriendlyName はチE��イスの表示名を識別するプロパティキー
 			hr = pProps->GetValue(PKEY_Device_FriendlyName, &varName);
 			assert(SUCCEEDED(hr));
 
-			// 7. 取得したプロパティ値を表示
-			if (varName.vt == VT_LPWSTR) // 値の型がワイド文字列か確認
+			// 7. 取得した�Eロパティ値を表示
+			if (varName.vt == VT_LPWSTR) // 値の型がワイド文字�Eか確誁E
 			{
 				DebugLog("ActiveAudioDeviceName: " + ConvertString(varName.pwszVal));
 			} else
@@ -92,7 +92,7 @@ void XAudioCore::Initialize() {
 				DebugLog("ActiveAudioDeviceName = Unknown format");
 			}
 
-			// PROPVARIANT の解放 (CoTaskMemFree を呼び出す)
+			// PROPVARIANT の解放 (CoTaskMemFree を呼び出ぁE
 			PropVariantClear(&varName);
 
 			// リソースの解放
@@ -109,12 +109,12 @@ void XAudioCore::Initialize() {
 void XAudioCore::Finalize() {
 }
 
-// マスターボリュームの設定
+// マスターボリュームの設宁E
 void XAudioCore::SetMasterVolume(float volume) {
 	masterVoice_->SetVolume(volume);
 }
 
-// 出力チャンネル数の取得
+// 出力チャンネル数の取征E
 uint32_t XAudioCore::GetOutputChannels() {
 	DWORD channelMask = 0;
 	masterVoice_->GetChannelMask(&channelMask);
@@ -127,7 +127,7 @@ uint32_t XAudioCore::GetOutputChannels() {
 	return channelCount;
 }
 
-// マスターボリュームの取得
+// マスターボリュームの取征E
 IXAudio2MasteringVoice* XAudioCore::GetMasterVoice() {
 	return masterVoice_;
 }

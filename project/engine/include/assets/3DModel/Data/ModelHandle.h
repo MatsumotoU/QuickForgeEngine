@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <string>
-#include "Core/Entity/Component/ComponentData.h"
-#include "Core/Math/Vector/Vector4.h"
+#include "engine/include/core/Entity/Component/ComponentData.h"
+#include "engine/include/core/Math/Vector/Vector4.h"
 
 class ModelHandle final :public ComponentData {
 public:

@@ -5,29 +5,29 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/image.h>
 
-#include "Assets/AssetManager.h"
+#include "engine/include/assets/AssetManager.h"
 #include "QFElinker/CsharpOnQFELinker.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 void CsharpVirtualEnvironmentOnQFE::Initialize() {
-	// 実行ファイルのパスを取得
+	// 実行ファイルのパスを取征E
 	char path[MAX_PATH];
 	GetModuleFileNameA(NULL, path, MAX_PATH);
 
-	// 実行ファイルのディレクトリを取得
+	// 実行ファイルのチE��レクトリを取征E
 	std::filesystem::path exeDir(path);
 	exeDir = exeDir.parent_path();
 
-	// Monoのlibとetcディレクトリへのパスを構築 (exeと同じ階層のmonoフォルダ内)
+	// MonoのlibとetcチE��レクトリへのパスを構篁E(exeと同じ階層のmonoフォルダ冁E
 	std::filesystem::path monoLibPath = exeDir / "mono" / "lib";
 	std::filesystem::path monoEtcPath = exeDir / "mono" / "etc";
 
 	// Monoランタイムにライブラリと設定ファイルの場所を教える
 	mono_set_dirs(monoLibPath.string().c_str(), monoEtcPath.string().c_str());
 
-	// Monoのデバッガを有効化
+	// MonoのチE��チE��を有効匁E
 #ifdef _DEBUG
 	const char* options[] = {
 		"--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555,suspend=n"
@@ -35,7 +35,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	mono_jit_parse_options(sizeof(options) / sizeof(char*), (char**)options);
 #endif // _DEBUG
 
-	// ルートドメインを初期化 (プログラム終了時まで保持)
+	// ルートドメインを�E期化 (プログラム終亁E��まで保持)
 	root_domain_ = mono_jit_init("QuickForgeRootDomain");
 	if (!root_domain_) {
 #ifdef _DEBUG
@@ -44,7 +44,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 		return;
 	}
 
-	// 最初のアセンブリロードを実行
+	// 最初�Eアセンブリロードを実衁E
 	ReloadAssembly();
 }
 
@@ -119,14 +119,14 @@ void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
 		return;
 	}
 
-    // 実行ファイルのパスを取得
+    // 実行ファイルのパスを取征E
     char path[MAX_PATH];
     GetModuleFileNameA(NULL, path, MAX_PATH);
 
-    // 実行ファイルのディレクトリを取得
+    // 実行ファイルのチE��レクトリを取征E
     std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
 
-    // 読み込むDLLのフルパスを構築 (exeと同じ階層)
+    // 読み込むDLLのフルパスを構篁E(exeと同じ階層)
     std::filesystem::path dllPath = exeDir / "CSharpScripts.dll";
 
 	assembly_ = mono_domain_assembly_open(domain_, dllPath.string().c_str());
@@ -196,7 +196,7 @@ std::vector<std::string> CsharpVirtualEnvironmentOnQFE::GetAvailableScriptClasse
 			full_name = name;
 		}
 
-		// QFELinkerに関連するクラスを除外
+		// QFELinkerに関連するクラスを除夁E
 		if (full_name.find("QuickForgeEngine") != std::string::npos) {
 			continue;
 		}
@@ -334,11 +334,11 @@ void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std:
 }
 
 void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
-	// 既存のスクリプトインスタンスへの参照をクリア
+	// 既存�Eスクリプトインスタンスへの参�Eをクリア
 	scripts_.clear();
 	assembly_ = nullptr;
 
-	// 既存のスクリプトドメインをアンロード
+	// 既存�EスクリプトドメインをアンローチE
 	if (domain_) {
 		if (domain_ != root_domain_) {
 			mono_domain_set(root_domain_, false);
@@ -347,7 +347,7 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 		domain_ = nullptr;
 	}
 
-	// --- 新しいドメインを作成 ---
+	// --- 新しいドメインを作�E ---
 	char domain_name[] = "QuickForgeScriptDomain";
 	domain_ = mono_domain_create_appdomain(domain_name, nullptr);
 	if (!domain_) {
@@ -369,19 +369,19 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 	CompileScripts();
 #endif // _DEBUG
 
-	// --- コンパイル済み成果物（DLL/PDB）をエンジンの実行ファイルディレクトリにコピー ---
+	// --- コンパイル済み成果物�E�ELL/PDB�E�をエンジンの実行ファイルチE��レクトリにコピ�E ---
 	try {
-		// 1. コピー元のパスを定義: C#プロジェクトのデフォルトビルド出力先
+		// 1. コピ�E允E�Eパスを定義: C#プロジェクト�EチE��ォルトビルド�E力�E
 		std::string scriptsBuildDir = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + "bin/Debug/netstandard2.0/";
 		std::filesystem::path srcDllPath = scriptsBuildDir + "CSharpScripts.dll";
 		std::filesystem::path srcPdbPath = scriptsBuildDir + "CSharpScripts.pdb";
 
-		// 2. コピー先のパスを定義: エンジンの実行ファイルがあるディレクトリ
+		// 2. コピ�E先�Eパスを定義: エンジンの実行ファイルがあるディレクトリ
 		char exePath[MAX_PATH];
 		GetModuleFileNameA(NULL, exePath, MAX_PATH);
 		std::filesystem::path destDir = std::filesystem::path(exePath).parent_path();
 
-		// 3. ファイルをコピー（既存のファイルを上書き）
+		// 3. ファイルをコピ�E�E�既存�Eファイルを上書き！E
 		std::filesystem::copy(srcDllPath, destDir, std::filesystem::copy_options::overwrite_existing);
 		std::filesystem::copy(srcPdbPath, destDir, std::filesystem::copy_options::overwrite_existing);
 
@@ -393,15 +393,15 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 #ifdef _DEBUG
 		DebugLog(std::string("Failed to copy C# artifacts: ") + e.what());
 #endif
-		// コピーに失敗した場合は、後続のDLLロードをしないよう早期リターン
+		// コピ�Eに失敗した場合�E、後続�EDLLロードをしなぁE��ぁE��期リターン
 		return;
 	}
-	// --- コピー処理ここまで ---
+	// --- コピ�E処琁E��こまで ---
 
-	// APIを再度リンク
+	// APIを�E度リンク
 	LinkQFEAPIToMono();
 
-	// 新しいドメインにアセンブリをロード
+	// 新しいドメインにアセンブリをローチE
 	LoadAssembly();
 }
 
@@ -412,15 +412,15 @@ void CsharpVirtualEnvironmentOnQFE::RunAllScriptsFunction(const std::string& fun
 }
 
 void CsharpVirtualEnvironmentOnQFE::Finalize() {
-	// スクリプトドメインをアンロード
+	// スクリプトドメインをアンローチE
 	if (domain_ && domain_ != root_domain_) {
-		// カレントドメインをルートに戻してからアンロードするのが安全
+		// カレントドメインをルートに戻してからアンロードする�Eが安�E
 		mono_domain_set(root_domain_, false);
 		mono_domain_unload(domain_);
 		domain_ = nullptr;
 	}
 
-	// Monoランタイム全体をクリーンアップ
+	// Monoランタイム全体をクリーンアチE�E
 	if (root_domain_) {
 		mono_jit_cleanup(root_domain_);
 		root_domain_ = nullptr;

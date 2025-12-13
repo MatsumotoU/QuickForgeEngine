@@ -1,5 +1,5 @@
 #pragma once
-#include "../IEvent.h"
+#include "IEvent.h"
 
 class DropFileEvent final : public IEvent {
 public:
@@ -7,7 +7,7 @@ public:
 	DropFileEvent(nlohmann::json& data);
 	~DropFileEvent() override = default;
 	/// <summary>
-	/// ドロップされたファイルのイベント処理
+	/// ドロチE�Eされたファイルのイベント�E琁E
 	/// </summary>
 	/// <param name="wparam">WPARAM</param>
 	/// <param name="lparam">LPARAM</param>

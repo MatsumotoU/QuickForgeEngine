@@ -1,7 +1,7 @@
 #pragma once
 #include <xaudio2.h>
 
-// 音声データを格納する構造体
+// 音声チE�Eタを格納する構造佁E
 struct AudioData final {
 	WAVEFORMATEX wfex;
 	BYTE* pBuffer;

@@ -17,7 +17,7 @@ void PipelineStateObject::CreatePipelineStateObject(
 	D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack) {
 	HRESULT hr{};
 
-	// Samplerの設定
+	// Samplerの設宁E
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_POINT_MIP_LINEAR;
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -30,7 +30,7 @@ void PipelineStateObject::CreatePipelineStateObject(
 	rootParameter.GetDescriptionRootSignature()->pStaticSamplers = staticSamplers;
 	rootParameter.GetDescriptionRootSignature()->NumStaticSamplers = _countof(staticSamplers);
 
-	// * RootSignatureの生成 * //
+	// * RootSignatureの生�E * //
 	// シリアライズしてバイナリする
 	signatureBlob_ = nullptr;
 	errorBlob_ = nullptr;
@@ -40,7 +40,7 @@ void PipelineStateObject::CreatePipelineStateObject(
 		Log(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
 		assert(false);
 	}
-	// バイナリをもとに生成
+	// バイナリをもとに生�E
 	rootSignature_ = nullptr;
 	hr = dxDevice_->CreateRootSignature(0,
 		signatureBlob_.Get()->GetBufferPointer(), signatureBlob_.Get()->GetBufferSize(),
@@ -54,37 +54,37 @@ void PipelineStateObject::CreatePipelineStateObject(
 
 	D3D12_RENDER_TARGET_BLEND_DESC& rtbd = blendDesc.RenderTarget[0];
 	rtbd.BlendEnable = TRUE; // ブレンドを有効にする
-	rtbd.LogicOpEnable = FALSE; // 論理演算は通常 FALSE
+	rtbd.LogicOpEnable = FALSE; // 論理演算�E通常 FALSE
 	switch (blendMode)
 	{
 	case BlendMode::kBlendModeNone:
 		rtbd.BlendEnable = FALSE; // ブレンドを無効にする
-		rtbd.LogicOpEnable = FALSE; // 論理演算は通常 FALSE
+		rtbd.LogicOpEnable = FALSE; // 論理演算�E通常 FALSE
 		break;
 	case BlendMode::kBlendModeNormal:
 		rtbd.SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値を使用
-		rtbd.DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デスティネーションの (1 - ソースアルファ) を使用
-		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 加算
+		rtbd.DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // チE��チE��ネ�Eションの (1 - ソースアルファ) を使用
+		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 加箁E
 		break;
 	case BlendMode::kBlendModeAdd:
 		rtbd.SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値を使用
 		rtbd.DestBlend = D3D12_BLEND_ONE;
-		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 加算
+		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 加箁E
 		break;
 	case BlendMode::kBlendModeSubtract:
 		rtbd.SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値を使用
 		rtbd.DestBlend = D3D12_BLEND_ONE;
-		rtbd.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT; // 減算
+		rtbd.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT; // 減箁E
 		break;
 	case BlendMode::kBlendModeMultily:
 		rtbd.SrcBlend = D3D12_BLEND_ZERO;
 		rtbd.DestBlend = D3D12_BLEND_SRC_COLOR;
-		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 乗算
+		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 乗箁E
 		break;
 	case BlendMode::kBlendModeScreen:
 		rtbd.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
 		rtbd.DestBlend = D3D12_BLEND_ONE;
-		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 乗算
+		rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 乗箁E
 		break;
 	case BlendMode::kCountOfBlendMode:
 		assert(false && "useBlendMode kCountOfBlendMode");
@@ -94,24 +94,24 @@ void PipelineStateObject::CreatePipelineStateObject(
 		break;
 	}
 
-	// アルファ ブレンドの設定 (通常はソースのアルファ値をそのまま使用)
+	// アルファ ブレンド�E設宁E(通常はソースのアルファ値をそのまま使用)
 	rtbd.SrcBlendAlpha = D3D12_BLEND_ONE; // ソースのアルファ値をそのまま使用
-	rtbd.DestBlendAlpha = D3D12_BLEND_ZERO; // デスティネーションのアルファ値に 0 を掛ける
-	rtbd.BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
+	rtbd.DestBlendAlpha = D3D12_BLEND_ZERO; // チE��チE��ネ�Eションのアルファ値に 0 を掛ける
+	rtbd.BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加箁E
 
 	rtbd.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
 	// RasterizerState
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	if (isDrawBack) {
-		// 裏面（時計回り）を表示する
+		// 裏面�E�時計回り）を表示する
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 
 	} else {
-		// 裏面（時計回り）を表示しない
+		// 裏面�E�時計回り）を表示しなぁE
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	}
-	// 塗りつぶし
+	// 塗りつぶぁE
 	rasterizerDesc.FillMode = fillMode;
 
 	// シェーダーをコンパイルする
@@ -122,7 +122,7 @@ void PipelineStateObject::CreatePipelineStateObject(
 	pixelShaderBlob = shaderCompiler_->CompileShader(ConvertString(kPSFilePath + psFilepath), L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
-	// PSOを生成
+	// PSOを生戁E
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	if (depthStencilDesc.DepthEnable) {
@@ -139,15 +139,15 @@ void PipelineStateObject::CreatePipelineStateObject(
 	pixelShaderBlob->GetBufferSize() };
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
-	// 書き込むRTVの情報
+	// 書き込むRTVの惁E��
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	// 利用するトロポジ
 	graphicsPipelineStateDesc.PrimitiveTopologyType = topologyType;
-	// どのように画面に色を打ち込むかの設定
+	// どのように画面に色を打ち込むか�E設宁E
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	// 実際に生成
+	// 実際に生�E
 	graphicsPipelineState_ = nullptr;
 	hr = dxDevice_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(graphicsPipelineState_.GetAddressOf()));

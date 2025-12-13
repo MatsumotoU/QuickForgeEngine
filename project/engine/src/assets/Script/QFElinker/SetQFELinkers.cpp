@@ -15,7 +15,7 @@ void QFE::Script::SetQFEFunctions(sol::state* luaState) {
 	QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(luaState);
 	// シーン操作関数を登録
 	QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(luaState);
-	// ユーティリティ関数を登録
+	// ユーチE��リチE��関数を登録
 	QFE::Script::MyLuaMath::LuaScriptOnQEFSetMyMath(luaState);
 	QFE::Script::Utility::LuaScriptOnQFESetUtility(luaState);
 }

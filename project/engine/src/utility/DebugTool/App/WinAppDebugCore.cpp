@@ -1,7 +1,7 @@
 #include "WinAppDebugCore.h"
-#include "Utility/String/MyString.h"
+#include "engine/include/utility/String/MyString.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 
@@ -20,7 +20,7 @@ WinAppDebugCore::WinAppDebugCore(const LPSTR& lpCmdLine) {
 	std::string exeName(ConvertString(fileName));
 	
 #ifdef _DEBUG
-	// コマンド引数確認
+	// コマンド引数確誁E
 	if (std::strcmp(lpCmdLine, "\0") != 0) {
 		DebugLog("!!! EnebleCommandLineArguments !!!");
 		DebugLog(std::format("EnebleCommand : {}", lpCmdLine));	

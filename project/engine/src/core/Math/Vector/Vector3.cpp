@@ -1,5 +1,5 @@
 #include "Vector3.h"
-#include "../Matrix/Matrix4x4.h"
+#include "engine/include/core/Math/Matrix/Matrix4x4.h"
 #include "Vector4.h"
 #include "Vector2.h"
 #include <math.h>
@@ -77,7 +77,7 @@ Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 from = v1.Normalize();
 	Vector3 to = v2.Normalize();
 
-	// 2ベクトル間の角度を求める
+	// 2ベクトル間�E角度を求めめE
 	float dot = std::clamp(Vector3::Dot(from, to), -1.0f, 1.0f);
 	float theta = std::acosf(dot);
 
@@ -91,7 +91,7 @@ Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 		normalizeVector.y = (from.y * sinThetaFrom + to.y * sinThetaTo) / sinTheta;
 		normalizeVector.z = (from.z * sinThetaFrom + to.z * sinThetaTo) / sinTheta;
 	} else {
-		normalizeVector = from; // 角度が0の場合はそのまま
+		normalizeVector = from; // 角度ぁEの場合�Eそ�Eまま
 	}
 
 	float length1 = v1.Length();
@@ -168,11 +168,11 @@ Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPositio
 	Vector3 diff = (targetPosition - eyePosition).Normalize();
     Vector3 result{};
 
-    // yaw（ヨー, y軸回り）
+    // yaw�E�ヨー, y軸回り�E�E
     result.y = atan2f(diff.x, -diff.z);
-    // pitch（ピッチ, x軸回り）
+    // pitch�E�ピチE��, x軸回り�E�E
     result.x = atan2f(-diff.y, sqrtf(diff.x * diff.x + diff.z * diff.z));
-    // roll（ロール, z軸回り
+    // roll�E�ロール, z軸回り
     result.z = 0.0f;
 
     return result;

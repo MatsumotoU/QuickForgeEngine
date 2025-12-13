@@ -1,13 +1,13 @@
 #include "SceneManager.h"
 #include "SceneObject.h"
 
-#include "Assets/AssetManager.h"
-#include "Camera/CameraManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/camera/CameraManager.h"
 #include <fstream>
 #include <string>
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 void SceneManager::Initalize() {
@@ -47,7 +47,7 @@ void SceneManager::Initalize() {
 void SceneManager::Update() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-	// 最後に開いたシーンをロード
+	// 最後に開いたシーンをローチE
 	if (!isFirstLoadScene_) {
 		if (sceneConfig_.contains("lastScene")) {
 			try {

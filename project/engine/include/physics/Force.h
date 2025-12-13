@@ -1,6 +1,6 @@
 #pragma once
-#include "Core/Entity/Component/ComponentData.h"
-#include "Core/Math/Vector/Vector3.h"
+#include "engine/include/core/Entity/Component/ComponentData.h"
+#include "engine/include/core/Math/Vector/Vector3.h"
 
 class Force final : public ComponentData {
 public:

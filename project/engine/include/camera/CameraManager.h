@@ -1,5 +1,5 @@
 #pragma once
-#include "Utility/DesignPatterns/Singleton.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
 #include <vector>
 #include <unordered_map>
 #include "Camera.h"

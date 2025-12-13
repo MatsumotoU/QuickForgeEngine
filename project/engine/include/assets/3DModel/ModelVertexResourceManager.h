@@ -9,7 +9,7 @@
 #include <unordered_map>
 
 #include "Data/ModelData.h"
-#include "Graphic/ShaderBuffer/VertexBuffer.h"
+#include "engine/include/graphic/ShaderBuffer/VertexBuffer.h"
 
 class ModelVertexResourceManager final {
 public:

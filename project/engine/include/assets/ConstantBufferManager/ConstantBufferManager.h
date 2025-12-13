@@ -4,8 +4,8 @@
 #include <vector>
 #include <list>
 #include <unordered_map>
-#include "Graphic/ShaderBuffer/ConstantBuffer.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/ShaderBuffer/ConstantBuffer.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 
 template<typename T>
 class ConstantBufferManager final {

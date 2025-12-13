@@ -1,16 +1,16 @@
 #include "LuaScriptOnQFE.h"
 
-#include "Assets/AssetManager.h"
-#include "Core/Entity/EntityManager.h"
-#include "Assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
 
-#include "Core/Math/Transform.h"
-#include "Physics/Force.h"
-#include "Assets/Script/Data/ScriptHandle.h"
+#include "engine/include/core/Math/Transform.h"
+#include "engine/include/physics/Force.h"
+#include "engine/include/assets/Script/Data/ScriptHandle.h"
 #include "QFElinker/SetQFELinkers.h"
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 LuaScriptOnQFE::LuaScriptOnQFE() {
@@ -37,7 +37,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 			sol::lib::utf8
 		);
 
-		// 起動直後のグローバル一覧を保存
+		// 起動直後�Eグローバル一覧を保孁E
 		for (auto& kv : luaState_->globals()) {
 			defaultGlobals.insert(kv.first.as<std::string>());
 		}
@@ -52,14 +52,14 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 
 		SetQFEFunctions();
 
-		// スクリプトを実行
+		// スクリプトを実衁E
 		sol::protected_function_result execResult = loadResult();
 		if (!execResult.valid()) {
 			sol::error err = execResult;
 			throw std::runtime_error("Failed to execute Lua script: " + scriptName + "\n" + err.what());
 		}
 
-		// Userグローバル一覧を保存（スクリプト実行後！）
+		// Userグローバル一覧を保存（スクリプト実行後！E��E
 		for (auto& kv : luaState_->globals()) {
 			if (defaultGlobals.find(kv.first.as<std::string>()) == defaultGlobals.end()) {
 				UserGlobals.insert(kv.first.as<std::string>());
@@ -86,7 +86,7 @@ void LuaScriptOnQFE::ReloadScript() {
 
 	std::set<std::string> oldGlobals = UserGlobals;
 	LoadScript(scriptName_);
-	// 古いグローバル変数を新しいスクリプトにコピー
+	// 古ぁE��ローバル変数を新しいスクリプトにコピ�E
 	for (const auto& global : oldGlobals) {
 		if (UserGlobals.find(global) != UserGlobals.end()) {
 			sol::object oldObj = luaState_->get<sol::object>(global);
@@ -161,7 +161,7 @@ void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 
-	// transformコンポーネントをLuaにセット
+	// transformコンポ�EネントをLuaにセチE��
 	try
 	{
 		if (entityManager->HasComponent<Transform>(bindEntityId_))
@@ -180,7 +180,7 @@ void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 #endif // _DEBUG
 	}
 
-	// ForceコンポーネントをLuaにセット
+	// Forceコンポ�EネントをLuaにセチE��
 	if (entityManager->HasComponent<Force>(bindEntityId_))
 	{
 		Force& force = entityManager->GetComponent<Force>(bindEntityId_);
@@ -204,12 +204,12 @@ std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
 }
 
 void LuaScriptOnQFE::SetQFEFunctions() {
-	// テーブル作成
+	// チE�Eブル作�E
 	sol::table qfe = luaState_->create_named_table("QFE");
 	// QFE関数登録
 	QFE::Script::SetQFEFunctions(luaState_.get());
 
-	// thisエンティティ情報登録
+	// thisエンチE��チE��惁E��登録
 	sol::table thisEntity = luaState_->create_named_table("this");
 	thisEntity.set_function("GetEntityId", [this]() {
 		return bindEntityId_;

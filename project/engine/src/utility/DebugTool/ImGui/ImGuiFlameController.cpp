@@ -1,6 +1,6 @@
 #include "ImGuiFlameController.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // DEBUG
 #include <cassert>
 
@@ -28,7 +28,7 @@ void ImGuiFlameController::Initialize(const HWND& hwnd, ID3D12GraphicsCommandLis
 	srvDescriptorHeap_ = srvDescriptorHeap;
 	assert(srvDescriptorHeap_ != nullptr);
 
-	// ImGuiの初期化
+	// ImGuiの初期匁E
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
@@ -36,15 +36,15 @@ void ImGuiFlameController::Initialize(const HWND& hwnd, ID3D12GraphicsCommandLis
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ImGui_ImplWin32_Init(hwnd);
 
-	// ImPlotの初期化
+	// ImPlotの初期匁E
 	ImPlot::CreateContext();
 }
 
 void ImGuiFlameController::EndImGui() {
-	// ImPilotの終了処理
+	// ImPilotの終亁E�E琁E
 	ImPlot::DestroyContext();
 
-	// ImGuiの終了処理
+	// ImGuiの終亁E�E琁E
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -60,7 +60,7 @@ void ImGuiFlameController::BeginFrame() {
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 
-	// DescriptorHeapの設定
+	// DescriptorHeapの設宁E
 	commandList_->SetDescriptorHeaps(1, srvDescriptorHeap_);
 }
 
@@ -68,14 +68,14 @@ void ImGuiFlameController::EndFrame(D3D12_CPU_DESCRIPTOR_HANDLE currentBackBuffe
 	// ImGuiの描画
 	ImGui::Render();
 
-	// 追加: ビューポート用のプラットフォームウィンドウも描画
+	// 追加: ビューポ�Eト用のプラチE��フォームウィンドウも描画
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 	}
 
-	// レンダーターゲットの設定
+	// レンダーターゲチE��の設宁E
 	commandList_->OMSetRenderTargets(1, &currentBackBufferCpuHandle, FALSE, nullptr);
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
 }

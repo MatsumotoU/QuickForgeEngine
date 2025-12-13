@@ -1,15 +1,15 @@
 #include "GraphRenderer.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
-#include "Graphic/Pipeline/GraphicPipelineManager.h"
-#include "Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
+#include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
-#include "Assets/AssetManager.h"
-#include "Camera/CameraManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/camera/CameraManager.h"
 #include <cassert>
 #include <numbers>
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 void GraphRenderer::Initialize() {
@@ -20,7 +20,7 @@ void GraphRenderer::Initialize() {
 	linePso_ = pipelineManager->GetLinePso(kBlendModeNormal);
 	pointPso_ = pipelineManager->GetPointPso(kBlendModeNormal);
 
-	// 三角形の頂点リソースを作成
+	// 三角形の頂点リソースを作�E
 	triangleVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
 	triangleVertexBufferView_ = {};
 	triangleVertexBufferView_.BufferLocation = triangleVertexResource_->GetGPUVirtualAddress();
@@ -28,7 +28,7 @@ void GraphRenderer::Initialize() {
 	triangleVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
 	triangleVertexData_ = nullptr;
 	triangleVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&triangleVertexData_));
-	// 線の頂点リソースを作成
+	// 線�E頂点リソースを作�E
 	lineVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
 	lineVertexBufferView_ = {};
 	lineVertexBufferView_.BufferLocation = lineVertexResource_->GetGPUVirtualAddress();
@@ -36,7 +36,7 @@ void GraphRenderer::Initialize() {
 	lineVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
 	lineVertexData_ = nullptr;
 	lineVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&lineVertexData_));
-	// 点の頂点リソースを作成
+	// 点の頂点リソースを作�E
 	pointVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
 	pointVertexBufferView_ = {};
 	pointVertexBufferView_.BufferLocation = pointVertexResource_->GetGPUVirtualAddress();
@@ -80,7 +80,7 @@ void GraphRenderer::PreDraw() {
 		pointVertexData_[i].texcoord = Vector2(0.0f, 0.0f);
 	}
 
-	// カメラのワールドビュー投影行列を設定
+	// カメラのワールドビュー投影行�Eを設宁E
 	wvp_.GetData()->WVP = camera.GetWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(),CameraType::Perspective);
 }
 
@@ -88,7 +88,7 @@ void GraphRenderer::PostDraw() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	if (triangleCount_ == 0 && lineCount_ == 0 && pointCount_ == 0) {
-		return; // 描画するものがない場合は何もしない
+		return; // 描画するも�EがなぁE��合�E何もしなぁE
 	}
 
 	if (triangleCount_ > kGraphRendererMaxTriangleCount ||
@@ -98,7 +98,7 @@ void GraphRenderer::PostDraw() {
 		assert(false && "GraphRenderer: Exceeded maximum count of triangles, lines, or points.");
 	}
 
-	// 頂点リソースをGPUに転送
+	// 頂点リソースをGPUに転送E
 	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 	if (triangleCount_ > 0) {
@@ -150,7 +150,7 @@ void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3,
 #ifdef _DEBUG
 		DebugLog("Exceeded maximum triangle count.");
 #endif // _DEBUG
-		return; // 最大数を超えた場合は描画しない
+		return; // 最大数を趁E��た場合�E描画しなぁE
 	}
 
 	Vector4 p0 = Vector4(point1.x, point1.y, point1.z, 1.0f);
@@ -159,7 +159,7 @@ void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3,
 
 	Vector3 normalZ = { 0.0f, 0.0f, -1.0f };
 
-	// 頂点データを設定
+	// 頂点チE�Eタを設宁E
 	triangleVertexData_[triangleCount_ * 3 + 0].position = p0;
 	triangleVertexData_[triangleCount_ * 3 + 0].color = color;
 	triangleVertexData_[triangleCount_ * 3 + 0].texcoord = Vector2(0.0f, 0.0f);
@@ -178,11 +178,11 @@ void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& colo
 #ifdef _DEBUG
 		DebugLog("Exceeded maximum Line count.");
 #endif // _DEBUG
-		return; // 最大数を超えた場合は描画しない
+		return; // 最大数を趁E��た場合�E描画しなぁE
 	}
 	Vector4 p0 = Vector4(point1.x, point1.y, point1.z, 1.0f);
 	Vector4 p1 = Vector4(point2.x, point2.y, point2.z, 1.0f);
-	// 頂点データを設定
+	// 頂点チE�Eタを設宁E
 	lineVertexData_[lineCount_ * 2 + 0].position = p0;
 	lineVertexData_[lineCount_ * 2 + 0].color = color;
 	lineVertexData_[lineCount_ * 2 + 0].texcoord = Vector2(0.0f, 0.0f);
@@ -198,11 +198,11 @@ void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
 #ifdef _DEBUG
 		DebugLog("Exceeded maximum Points count.");
 #endif // _DEBUG
-		return; // 最大数を超えた場合は描画しない
+		return; // 最大数を趁E��た場合�E描画しなぁE
 	}
 	Vector4 p = Vector4(point.x, point.y, point.z, 1.0f);
 	Vector3 normalZ = { 0.0f, 0.0f, 1.0f };
-	// 頂点データを設定
+	// 頂点チE�Eタを設宁E
 	pointVertexData_[pointCount_].position = p;
 	pointVertexData_[pointCount_].color = color;
 	pointVertexData_[pointCount_].texcoord = Vector2(0.0f, 0.0f);
@@ -212,7 +212,7 @@ void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
 
 void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 	if (gridCount <= 0 || size <= 0.0f) {
-		return; // グリッド数が0以下または偶数の場合は描画しない
+		return; // グリチE��数ぁE以下また�E偶数の場合�E描画しなぁE
 	}
 	
 	float halfSize = size / 2.0f;
@@ -231,7 +231,7 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 			color = Vector4::Leap(Vector4(0.5f, 0.5f, 0.5f, 1.0f), Vector4(1.0f, 0.0f, 0.0f, 1.0f), colorXt);
 		}
 
-		// 横線
+		// 横緁E
 		if (x == 0.0f) {
 			DrawLine(
 				Vector3(x, 0.0f, -halfSize),
@@ -249,12 +249,12 @@ void GraphRenderer::DrawGrid(float size, int32_t gridCount) {
 		}
 
 		if (z == 0.0f) {
-			// 縦線
+			// 縦緁E
 			DrawLine(
 				Vector3(-halfSize, 0.0f, z),
 				Vector3(halfSize, 0.0f, z), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 		} else {
-			// 縦線
+			// 縦緁E
 			DrawLine(
 				Vector3(-halfSize, 0.0f, z),
 				Vector3(halfSize, 0.0f, z), color);
@@ -267,12 +267,12 @@ void GraphRenderer::DrawSphere(Vector3 center, float radius, const Vector4& colo
 	const float pi = std::numbers::pi_v<float>;
 	const float kLonEvery = pi / static_cast<float>(subdivision) * 2;
 	const float kLatEvery = (pi * 2.0f) / static_cast<float>(subdivision) * 2;
-	// 緯度の方向に分割
+	// 緯度の方向に刁E��
 	for (uint32_t latIndex = 0; latIndex < subdivision; ++latIndex) {
 		float lat = -pi / 2.0f + kLatEvery * static_cast<float>(latIndex);// 現在の緯度
 		float nextLat = (2.0f * pi) / static_cast<float>(subdivision) * 2.0f;
 
-		// 経度の方向に分割
+		// 経度の方向に刁E��
 		for (uint32_t lonIndex = 0; lonIndex < subdivision; ++lonIndex) {
 			float lot = kLonEvery * static_cast<float>(lonIndex);// 現在の緯度
 			float nextLot = pi / static_cast<float>(subdivision) * 2.0f;
@@ -294,12 +294,12 @@ void GraphRenderer::DrawSphere(Vector3 center, float radius, const Vector4& colo
 				cosf(lot) * sinf(lat + nextLat) 
 			};
 
-			// 半径分でかくする
+			// 半征E�Eでかくする
 			a = a * radius;
 			b = b * radius;
 			c = c * radius;
 
-			// 中心をずらす
+			// 中忁E��ずらぁE
 			a = a + center;
 			b = b + center;
 			c = c + center;
@@ -334,7 +334,7 @@ void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& colo
 }
 
 void GraphRenderer::DrawBox(Vector3 min, Vector3 max, const Vector4& color) {
-	// 8頂点を計算
+	// 8頂点を計箁E
 	Vector3 v0 = { min.x, min.y, min.z };
 	Vector3 v1 = { max.x, min.y, min.z };
 	Vector3 v2 = { max.x, max.y, min.z };
@@ -345,15 +345,15 @@ void GraphRenderer::DrawBox(Vector3 min, Vector3 max, const Vector4& color) {
 	Vector3 v7 = { min.x, max.y, max.z };
 	// 12本の辺を描画
 	DrawLine(v0, v1, color); // 下前
-	DrawLine(v1, v2, color); // 右前
+	DrawLine(v1, v2, color); // 右剁E
 	DrawLine(v2, v3, color); // 上前
-	DrawLine(v3, v0, color); // 左前
-	DrawLine(v4, v5, color); // 下後
-	DrawLine(v5, v6, color); // 右後
-	DrawLine(v6, v7, color); // 上後
-	DrawLine(v7, v4, color); // 左後
-	DrawLine(v0, v4, color); // 左下
-	DrawLine(v1, v5, color); // 右下
-	DrawLine(v2, v6, color); // 右上
-	DrawLine(v3, v7, color); // 左上
+	DrawLine(v3, v0, color); // 左剁E
+	DrawLine(v4, v5, color); // 下征E
+	DrawLine(v5, v6, color); // 右征E
+	DrawLine(v6, v7, color); // 上征E
+	DrawLine(v7, v4, color); // 左征E
+	DrawLine(v0, v4, color); // 左丁E
+	DrawLine(v1, v5, color); // 右丁E
+	DrawLine(v2, v6, color); // 右丁E
+	DrawLine(v3, v7, color); // 左丁E
 }

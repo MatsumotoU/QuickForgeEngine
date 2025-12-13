@@ -217,13 +217,13 @@
     <ClCompile Include="engine\src\utility\DebugTool\ImGui\DropDownFileList.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\window\WindowEventsManager\EventSystems\DropFileEvent.cpp">
+    <ClCompile Include="engine\src\window\windowEventsManager\eventSystems\DropFileEvent.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\core\EngineGlobalValue.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\window\WindowEventsManager\EventSystems\ExitAppEvent.cpp">
+    <ClCompile Include="engine\src\window\windowEventsManager\eventSystems\ExitAppEvent.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\graphic\DirectXCommon\Fence\Fence.cpp">
@@ -256,7 +256,7 @@
     <ClCompile Include="engine\src\utility\String\HwndConvertString.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\window\WindowEventsManager\EventSystems\IEvent.cpp">
+    <ClCompile Include="engine\src\window\windowEventsManager\eventSystems\IEvent.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\utility\DirectX\InitializeSwapChainBuffer.cpp">
@@ -298,7 +298,7 @@
     <ClCompile Include="engine\src\graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\window\WindowEventsManager\EventSystems\OnFocusEvent.cpp">
+    <ClCompile Include="engine\src\window\windowEventsManager\eventSystems\OnFocusEvent.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="editor\src\OnWindowsEditor.cpp">
@@ -355,10 +355,10 @@
     <ClCompile Include="engine\src\utility\DebugTool\App\WinAppDebugCore.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\window\WindowEventsManager\WindowEventsManager.cpp">
+    <ClCompile Include="engine\src\window\windowEventsManager\WindowEventsManager.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\window\WindowGenerater\WindowGenerater.cpp">
+    <ClCompile Include="engine\src\window\WindowGenerater.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\WindowsEngineCore.cpp">
@@ -1056,11 +1056,11 @@
     <ClInclude Include="engine\include\utility\String\StringLiblary.h" />
     <ClInclude Include="engine\include\utility\MultiThreadRunFunction.h" />
     <ClInclude Include="engine\include\utility\MultiThreadTaskExecutor.h" />
-    <ClInclude Include="engine\include\window\WindowEventsManager\EventSystems\DropFileEvent.h" />
-    <ClInclude Include="engine\include\window\WindowEventsManager\EventSystems\ExitAppEvent.h" />
-    <ClInclude Include="engine\include\window\WindowEventsManager\EventSystems\OnFocusEvent.h" />
-    <ClInclude Include="engine\include\window\WindowEventsManager\EventSystems\IEvent.h" />
-    <ClInclude Include="engine\include\window\WindowEventsManager\WindowEventsManager.h" />
+    <ClInclude Include="engine\include\window\windowEventsManager\EventSystems\DropFileEvent.h" />
+    <ClInclude Include="engine\include\window\windowEventsManager\EventSystems\ExitAppEvent.h" />
+    <ClInclude Include="engine\include\window\windowEventsManager\EventSystems\OnFocusEvent.h" />
+    <ClInclude Include="engine\include\window\windowEventsManager\EventSystems\IEvent.h" />
+    <ClInclude Include="engine\include\window\windowEventsManager\WindowEventsManager.h" />
     <ClInclude Include="engine\include\window\WindowGenerater\Data\WindowConfigData.h" />
     <ClInclude Include="engine\include\window\WindowGenerater\WindowGenerater.h" />
     <ClInclude Include="engine\include\window\GameWindow.h" />
@@ -1086,6 +1086,12 @@
     <ClInclude Include="editor\include\UI\UIManager.h" />
     <ClInclude Include="editor\include\IEditor.h" />
     <ClInclude Include="editor\include\OnWindowsEditor.h" />
+    <ClInclude Include="engine\include\input\InputInterface.h" />
+    <ClInclude Include="engine\include\input\KeyConfig.h" />
+    <ClInclude Include="engine\include\input\XInput\XInputController.h" />
+    <ClInclude Include="engine\include\input\DirectInput\DirectInputKeyboard.h" />
+    <ClInclude Include="engine\include\input\DirectInput\DirectInputManager.h" />
+    <ClInclude Include="engine\include\input\DirectInput\DirectInputMouse.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\shaderStructs\Particle.hlsli">

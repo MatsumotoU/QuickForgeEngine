@@ -1,7 +1,7 @@
 #include "PhysicsManager.h"
-#include "Assets/AssetManager.h"
-#include "Core/EngineGlobalValue.h"
-#include "Core/Math/Transform.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/EngineGlobalValue.h"
+#include "engine/include/core/Math/Transform.h"
 
 void PhysicsManager::Initialize() {
 }
@@ -28,7 +28,7 @@ void PhysicsManager::Update() {
 			Transform& transform = entityManager->GetComponent<Transform>(entityId);
 			transform.translate += forceComp.velocity * QFE::EngineGlobalValue::deltaTime;
 		}
-		// 摩擦力の計算
+		// 摩擦力�E計箁E
 		forceComp.velocity = forceComp.velocity * (1.0f - forceComp.friction * QFE::EngineGlobalValue::deltaTime);
 		forceComp.acceleration = forceComp.acceleration * (1.0f - forceComp.friction * QFE::EngineGlobalValue::deltaTime);
 	}

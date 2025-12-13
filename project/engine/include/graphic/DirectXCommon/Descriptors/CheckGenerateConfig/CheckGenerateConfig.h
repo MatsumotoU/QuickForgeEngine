@@ -3,6 +3,6 @@
 
 class CheckGenerateConfig final {
 public:
-	// ディスクリプタ生成設定をチェックする関数
+	// チE��スクリプタ生�E設定をチェチE��する関数
 	static bool IsValid(const DescriptorGenerateConfig& config);
 };

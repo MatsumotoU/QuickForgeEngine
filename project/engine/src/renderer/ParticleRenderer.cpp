@@ -1,11 +1,11 @@
 #include "ParticleRenderer.h"
-#include "Assets/AssetManager.h"
+#include "engine/include/assets/AssetManager.h"
 
-#include "Graphic/DirectXCommon/DirectXCommon.h"
-#include "Graphic/Pipeline/GraphicPipelineManager.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
 #include <cassert>
 
-#include "Assets/Particle/Data/ParticleComponent.h"
+#include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
 void Render::Particle::DrawParticles(const uint32_t& particleHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();

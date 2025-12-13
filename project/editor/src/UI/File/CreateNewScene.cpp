@@ -1,5 +1,5 @@
 #include "CreateNewScene.h"
-#include "Scene/SceneManager.h"
+#include "scene/SceneManager.h"
 
 void CreateNewScene::Initialize() {
 	name_ = "New Scene";

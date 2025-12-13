@@ -1,5 +1,5 @@
 #include "ParticleGpuDataManager.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 
 void ParticleGpuDataManager::Initialize() {
 	particleBuffers_.clear();

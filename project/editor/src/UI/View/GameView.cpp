@@ -1,6 +1,6 @@
 #include "GameView.h"
-#include "Graphic/PostEffect/RendaringPostprocess.h"
-#include "Camera/CameraManager.h"
+#include "graphic/PostEffect/RendaringPostprocess.h"
+#include "camera/CameraManager.h"
 
 GameView::GameView() {
 	name_ = "Game View";
@@ -29,7 +29,7 @@ void GameView::Draw() {
 	DescriptorHandles handle = render->GetCurrentSrvHandle();
 	ImGui::Begin(name_.c_str());
 
-	// フォーカス判定
+	// フォーカス判宁E
 	isSceneViewFocused_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
 	ImVec2 windowPos = ImGui::GetWindowPos();

@@ -11,11 +11,11 @@ void TransitionResourceBarrier::Transition(
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	// バリアを貼る対象のリソース。現在のバックバッファに対して行う
 	barrier.Transition.pResource = pResource;
-	// 遷移前（現在）のリソースステート
+	// 遷移前（現在�E��EリソーススチE�EチE
 	barrier.Transition.StateBefore = before;
-	// 遷移後のResourceState
+	// 遷移後�EResourceState
 	barrier.Transition.StateAfter = after;
-	// TODO: 複数回無駄にコマンドを送らないようにする
-	// バリア張る
+	// TODO: 褁E��回無駁E��コマンドを送らなぁE��ぁE��する
+	// バリア張めE
 	list->ResourceBarrier(1, &barrier);
 }

@@ -1,15 +1,15 @@
-#include "DirectInputManager.h"
+#include "engine/include/input/DirectInput/DirectInputManager.h"
 #include <cassert>
 
 void DirectInputManager::Initialize(const HWND& hwnd,const HINSTANCE& hInstance) {
 	hInstance_ = hInstance;
-	// directInputの生成
+	// directInput縺ｮ逕滓・
 	directInput_ = nullptr;
 	HRESULT hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr);
 	assert(SUCCEEDED(hr));
 	hr;
 
-	// Deviceの生成
+	// Device縺ｮ逕滓・
 	keyboard_.Initialize(hwnd,directInput_);
 	mouse_.Initialize(hwnd,directInput_);
 }
@@ -19,7 +19,7 @@ void DirectInputManager::Finalize() {
 }
 
 void DirectInputManager::Update() {
-	// キーボードの処理
+	// 繧ｭ繝ｼ繝懊・繝峨・蜃ｦ逅・
 	keyboard_.Update();
 	mouse_.Update();
 }

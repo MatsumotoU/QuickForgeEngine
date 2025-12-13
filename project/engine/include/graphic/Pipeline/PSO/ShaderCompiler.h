@@ -15,14 +15,14 @@ public:
 
 public:
 	/// <summary>
-	/// DXCを初期化します
+	/// DXCを�E期化しまぁE
 	/// </summary>
 	void InitializeDXC();
 
 	/// <summary>
 	/// シェーダーをコンパイルする
 	/// </summary>
-	/// <param name="filePath">コンパイル対象のhlslファイル名</param>
+	/// <param name="filePath">コンパイル対象のhlslファイル吁E/param>
 	/// <param name="profile">コンパイラに使用するプロファイル</param>
 	/// <param name="dxUtils"></param>
 	/// <param name="dxcCompiler"></param>

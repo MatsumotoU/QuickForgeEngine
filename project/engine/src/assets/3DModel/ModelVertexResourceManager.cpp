@@ -1,5 +1,5 @@
 #include "ModelVertexResourceManager.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
 
 void ModelVertexResourceManager::Initialize() {
@@ -13,27 +13,27 @@ void ModelVertexResourceManager::Finalize() {
 }
 
 uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelData& modelData, const std::string& modelName) {
-	// 同じ名前のモデルが既に存在する場合はそのハンドルを返す
+	// 同じ名前のモチE��が既に存在する場合�Eそ�Eハンドルを返す
     auto it = modelHandleMap_.find(modelName);
     if (it != modelHandleMap_.end()) {
         return it->second;
     }
     
-    // 頂点バッファを作成
+    // 頂点バッファを作�E
     if (modelData.meshes.empty()) {
         assert(false && "ModelData has no meshes");
         return 0;
     }
-    // メッシュごとに頂点バッファを作成
+    // メチE��ュごとに頂点バッファを作�E
     uint32_t firstHandle = static_cast<uint32_t>(modelVertexBuffers_.size());
     for (const auto& mesh : modelData.meshes) {
         if (mesh.vertices.empty()) {
             assert(false && "Mesh has no vertices");
-            continue; // 頂点がないメッシュはスキップ
+            continue; // 頂点がなぁE��チE��ュはスキチE�E
         }
         modelVertexBuffers_.emplace_back();
         modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(mesh.vertices.size()));
-        // 頂点データをセット
+        // 頂点チE�EタをセチE��
         for (size_t i = 0; i < mesh.vertices.size(); ++i) {
             modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), mesh.vertices[i]);
         }

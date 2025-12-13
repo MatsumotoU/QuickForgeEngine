@@ -1,5 +1,5 @@
 #include "LoadScene.h"
-#include "Scene/SceneManager.h"
+#include "scene/SceneManager.h"
 
 void LoadScene::Initialize() {
 	currentScene_ = "";
@@ -27,7 +27,7 @@ void LoadScene::Draw() {
 	}
 	ImGui::Separator();
 	if (!sceneList_.empty()) {
-		// ドロップダウンリストを表示
+		// ドロチE�Eダウンリストを表示
 		std::vector<const char*> items;
 		for (const auto& s : sceneList_) items.push_back(s.c_str());
 		if (ImGui::Combo("Scene List", &selected_, items.data(), static_cast<int>(items.size()))) {

@@ -4,7 +4,7 @@
 class GenerateDescriptorHandle {
 public:
 	/// <summary>
-	/// ディスクリプターヒープからCPUディスクリプターハンドルを取得します。
+	/// チE��スクリプターヒ�EプからCPUチE��スクリプターハンドルを取得します、E
 	/// </summary>
 	/// <param name="descriptorHeap"></param>
 	/// <param name="descriptorSize"></param>
@@ -13,7 +13,7 @@ public:
 	[[nodiscard]] static D3D12_CPU_DESCRIPTOR_HANDLE GetCpuDescriptorHandle(
 		ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
 	/// <summary>
-	/// ディスクリプターヒープからGPUディスクリプターハンドルを取得します。
+	/// チE��スクリプターヒ�EプからGPUチE��スクリプターハンドルを取得します、E
 	/// </summary>
 	/// <param name="descriptorHeap"></param>
 	/// <param name="descriptorSize"></param>

@@ -1,8 +1,8 @@
 #include "DebugConsole.h"
-#include "Assets/Script/LuaScriptResourceManager.h"
-#include "Scene/SceneManager.h"
-#include "Audio/AudioInterface.h"
-#include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+#include "assets/Script/LuaScriptResourceManager.h"
+#include "scene/SceneManager.h"
+#include "audio/AudioInterface.h"
+#include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
 
 void DebugConsole::Initialize() {
 	name_ = "DebugConsole";
@@ -17,14 +17,14 @@ void DebugConsole::Draw() {
 
 	ImGui::Begin("DebugConsole", &isActive_, ImGuiWindowFlags_NoDocking);
 
-	// 履歴表示用の子ウィンドウ（上部）
+	// 履歴表示用の子ウィンドウ�E�上部�E�E
 	ImGui::BeginChild("History", ImVec2(0, -ImGui::GetFrameHeightWithSpacing() - 8), false, ImGuiWindowFlags_HorizontalScrollbar);
 	for (const auto& item : items_) {
 		ImGui::TextUnformatted(item.c_str());
 	}
 	ImGui::EndChild();
 
-	// 入力欄（下部固定）
+	// 入力欁E��下部固定！E
 	ImGui::Separator();
 	ImGui::SetNextItemWidth(-1);
 	if (ImGui::InputText("Input", inputBuf_, IM_ARRAYSIZE(inputBuf_),
@@ -47,7 +47,7 @@ void DebugConsole::ExecCommand(const char* command) {
 	// コマンド履歴に追加
 	items_.emplace_back(std::string("> ") + command);
 
-	// コマンドの簡単な例
+	// コマンド�E簡単な侁E
 	if (strcmp(command, "clear") == 0) {
 		items_.clear();
 	} else if (strcmp(command, "help") == 0) {

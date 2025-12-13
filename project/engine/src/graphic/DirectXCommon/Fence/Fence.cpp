@@ -2,12 +2,12 @@
 #include <cassert>
 
 void Fence::Initialize(ID3D12Device* device) {
-	// Fenceの生成
+	// Fenceの生�E
 	currentValue_ = 0;
 	HRESULT result = device->CreateFence(currentValue_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
 	assert(SUCCEEDED(result) && "Fence creation failed.");
 	result;
-	// Eventの生成
+	// Eventの生�E
 	fenceEvent_ = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 	assert(fenceEvent_ && "Failed to create fence event.");
 }
@@ -27,7 +27,7 @@ void Fence::Signal(ID3D12CommandQueue* queue) {
 }
 
 void Fence::Wait() {
-	// GPUがFenceの値に到達するまで待つ
+	// GPUがFenceの値に到達するまで征E��
 	if (fence_->GetCompletedValue() < currentValue_) {
 		HRESULT result = fence_->SetEventOnCompletion(currentValue_, fenceEvent_);
 		assert(SUCCEEDED(result) && "Failed to set event on fence completion.");

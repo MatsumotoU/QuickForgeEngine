@@ -32,27 +32,27 @@ public:
 
 public:
 	/// <summary>
-	/// 4次元ベクトルの長さを求める
+	/// 4次允E�Eクトルの長さを求めめE
 	/// </summary>
-	/// <returns>4次元ベクトルの長さ</returns>
+	/// <returns>4次允E�Eクトルの長ぁE/returns>
 	[[nodiscard]] float Length() const;
 
 	/// <summary>
-	/// 正規化された4次元ベクトルを求める
+	/// 正規化されぁE次允E�Eクトルを求めめE
 	/// </summary>
-	/// <returns>正規化された4次元ベクトル</returns>
+	/// <returns>正規化されぁE次允E�Eクトル</returns>
 	[[nodiscard]] Vector4 Normalize() const;
 
 	/// <summary>
 	/// ワールド座標に変換する
 	/// </summary>
-	/// <param name="vector">変換元ローカル座標</param>
-	/// <param name="matrix">変換に使用する行列</param>
-	/// <returns>ワールド座標</returns>
+	/// <param name="vector">変換允E��ーカル座樁E/param>
+	/// <param name="matrix">変換に使用する行�E</param>
+	/// <returns>ワールド座樁E/returns>
 	[[nodiscard]] static Vector4 Transform(const Vector4& vector, const Matrix4x4& matrix);
 
 	/// <summary>
-	/// XYZの要素を抜き出します
+	/// XYZの要素を抜き�EしまぁE
 	/// </summary>
 	/// <returns></returns>
 	[[nodiscard]] Vector3 xyz() const;

@@ -1,5 +1,5 @@
-#include "AudioInterface.h"
-#include "Assets/AssetManager.h"
+#include "engine/include/audio/AudioInterface.h"
+#include "engine/include/assets/AssetManager.h"
 #include <cassert>
 
 void AudioInterface::Initialize() {

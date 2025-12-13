@@ -8,7 +8,7 @@ AudioPlayChip::~AudioPlayChip() {
 }
 
 void AudioPlayChip::Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* masterVoice) {
-	// 初期化
+	// 初期匁E
 	volume_ = 1.0f;
 	isPaused_ = false;
 	isPlaying_ = false;
@@ -32,9 +32,9 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 	assert(xAudio2_ != nullptr);
 	assert(masterVoice_ != nullptr);
 
-	// TODO: 音のポストプロセス処理を別の場所に作ること(TD用の緊急オペ)
-	// --- チープ化処理ここから ---
-	// 8bit化 & サンプリングレート半減 & ノイズ & lo-fiエフェクト
+	// TODO: 音のポスト�Eロセス処琁E��別の場所に作ること(TD用の緊急オチE
+	// --- チ�Eプ化処琁E��こかめE---
+	// 8bit匁E& サンプリングレート半渁E& ノイズ & lo-fiエフェクチE
 	if (audioData.wfex.wBitsPerSample == 16) {
 		const int16_t* src = reinterpret_cast<int16_t*>(audioData.pBuffer);
 		size_t sampleCount = audioData.bufferSize / 2;
@@ -57,18 +57,18 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 			// ノイズ付加
 			s = static_cast<int16_t>(std::clamp<int>(s + noiseDist(gen), -32768, 32767));
 
-			// 歪み（クリッピング）
+			// 歪み�E�クリチE��ング�E�E
 			const int16_t clipLevel = 8000; // lo-fi感を出す閾値
 			if (s > clipLevel) s = clipLevel;
 			if (s < -clipLevel) s = -clipLevel;
 
-			// ローパスフィルタ（高域カット）
-			float alpha = 0.35f; // フィルタ強度（0.0～1.0）
+			// ローパスフィルタ�E�高域カチE���E�E
+			float alpha = 0.35f; // フィルタ強度�E�E.0�E�E.0�E�E
 			float filtered = lastSample * (1.0f - alpha) + s * alpha;
 			lastSample = filtered;
 			s = static_cast<int16_t>(filtered);
 
-			// 8bit化（符号なし）
+			// 8bit化（符号なし！E
 			cheapBuffer[i] = static_cast<BYTE>((s + 32768) >> 8);
 		}
 		audioData.wfex.wBitsPerSample = 8;
@@ -78,9 +78,9 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 		audioData.pBuffer = cheapBuffer;
 		audioData.bufferSize = static_cast<unsigned int>(cheapSampleCount);
 	}
-	// --- チープ化処理ここまで ---
+	// --- チ�Eプ化処琁E��こまで ---
 
-	// ソースボイスの作成
+	// ソースボイスの作�E
 	sourceVoice_ = nullptr;
 	HRESULT hr = xAudio2_->CreateSourceVoice(&sourceVoice_, &audioData.wfex);
 	assert(SUCCEEDED(hr));

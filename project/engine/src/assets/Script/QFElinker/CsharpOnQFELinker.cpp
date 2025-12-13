@@ -1,16 +1,16 @@
 #include "CsharpOnQFELinker.h"
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
-#include "Assets/AssetManager.h"
-#include "Scene/SceneManager.h"
-#include "Core/Entity/EntityManager.h"
-#include "Input/InputInterface.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/input/InputInterface.h"
 
-#include "Core/EngineGlobalValue.h"
-#include "Core/Math/Transform.h"
+#include "engine/include/core/EngineGlobalValue.h"
+#include "engine/include/core/Math/Transform.h"
 
 void CsharpOnQFELinker::GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
     if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {

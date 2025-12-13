@@ -45,15 +45,15 @@ private:
 };
 
 /// <summary>
-/// このヘッダーを読み込んでいれば使えるやつ
+/// こ�Eヘッダーを読み込んでぁE��ば使えるめE��
 /// </summary>
 /// <param name="message"></param>
 void DebugLog(const std::string& message,const LogLevel& logLevel = LogLevel::EngineInfo, const std::source_location& location = std::source_location::current());
 
-// Luaの値を文字列に変換して追加する関数
+// Luaの値を文字�Eに変換して追加する関数
 void AppendLuaValueToString(const sol::object& v, std::string& msg);
 
-// 文字列・数値どちらも受け取れるラッパー関数
+// 斁E���E・数値どちらも受け取れるラチE��ー関数
 void DebugLogLua(sol::variadic_args va,uint32_t id,const std::string& scriptName);
 
 void DebugLogCsharp(const std::string& message);

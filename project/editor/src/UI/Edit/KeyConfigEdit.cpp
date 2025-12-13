@@ -1,6 +1,6 @@
 #include "KeyConfigEdit.h"
-#include "Input/InputInterface.h" 
-#include "AppUtility/String/DirectInputToString.h"
+#include "input/InputInterface.h" 
+#include "utility/String/DirectInputToString.h"
 #include <format>
 #include <optional>
 
@@ -52,7 +52,7 @@ void KeyConfigEdit::Draw() {
 
 	ImGui::Separator();
 
-    // ここで削除を実行
+    // ここで削除を実衁E
     if (keyToRemove) {
         keyConfig.RemoveKey(keyToRemove->first, keyToRemove->second);
     }
@@ -70,18 +70,18 @@ void KeyConfigEdit::Draw() {
 		ImGui::InputText("Action Name", inputBuf_, sizeof(inputBuf_));
 		if (ImGui::Button("OK")) {
 			if (inputBuf_[0] != '\0') {
-				// キー入力待ちへ
+				// キー入力征E��へ
 				isAddPopupOpen_ = false;
 				isEditPopupOpen_ = true;
 				editActionName_ = inputBuf_;
-				editKeyIndex_ = SIZE_MAX; // 新規追加を示す
+				editKeyIndex_ = SIZE_MAX; // 新規追加を示ぁE
 				inputBuf_[0] = '\0';
 			}
 			ImGui::CloseCurrentPopup();
 		}
 	}
 
-    // 編集ポップアップ
+    // 編雁E�EチE�EアチE�E
     if (isEditPopupOpen_) {
         ImGui::OpenPopup("Edit Key");
         isEditPopupOpen_ = false;
@@ -91,7 +91,7 @@ void KeyConfigEdit::Draw() {
         if (input->IsAnyKeyPressed()) {
             uint32_t keyCode = input->GetKeyCodeTrigger();
             if (keyCode != 0) {
-                // キーを上書き
+                // キーを上書ぁE
                 keyConfig.EditKey(editActionName_, editKeyIndex_, keyCode);
                 ImGui::CloseCurrentPopup();
             }

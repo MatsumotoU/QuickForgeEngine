@@ -1,8 +1,8 @@
 #include "Quaternion.h"
 #include <cmath>
 
-#include "../Vector/Vector3.h"
-#include "../Matrix/Matrix4x4.h"
+#include "engine/include/core/Math/Vector/Vector3.h"
+#include "engine/include/core/Math/Matrix/Matrix4x4.h"
 
 Quaternion::Quaternion() {
 	q = { 0.0f,0.0f,0.0f,0.0f };
@@ -123,7 +123,7 @@ Quaternion Quaternion::MakeRotateAxisAngleQuaternion(const Vector3& axis, float 
 }
 
 Vector3 Quaternion::RotateVector(const Vector3& vector, const Quaternion& quaternion) {
-	// ベクトルをクオータニオンに変換（虚部のみ、実部0）
+	// ベクトルをクオータニオンに変換�E�虚部のみ、実部0�E�E
 	Quaternion p;
 	p.q.x = vector.x;
 	p.q.y = vector.y;
@@ -136,7 +136,7 @@ Vector3 Quaternion::RotateVector(const Vector3& vector, const Quaternion& quater
 	Quaternion qConj = quaternion.Conjugation();
 	Quaternion rotated = Quaternion::Multiply(qp, qConj);
 
-	// 回転後のベクトル（虚部）
+	// 回転後�Eベクトル�E�虚部�E�E
 	Vector3 result;
 	result.x = rotated.q.x;
 	result.y = rotated.q.y;

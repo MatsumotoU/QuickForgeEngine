@@ -1,7 +1,7 @@
 #pragma once
 #include "../IEditorUI.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 class ConsoleView : public IEditorUI {

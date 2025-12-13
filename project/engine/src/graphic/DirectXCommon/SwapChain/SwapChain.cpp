@@ -2,11 +2,11 @@
 #include <cassert>
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 void SwapChain::CreateSwapChain(HWND hwnd, uint32_t width, uint32_t height, IDXGIFactory7* dxgiFactory, ID3D12CommandQueue* commandQueue) {
-	// * SwapChainを生成する * //
+	// * SwapChainを生成すめE* //
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_ = {};
 	swapChainDesc_.Width = width;
 	swapChainDesc_.Height = height;
@@ -15,7 +15,7 @@ void SwapChain::CreateSwapChain(HWND hwnd, uint32_t width, uint32_t height, IDXG
 	swapChainDesc_.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc_.BufferCount = 2;
 	swapChainDesc_.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	// コマンドキュー、ウィンドウハンドル、設定を渡して生成
+	// コマンドキュー、ウィンドウハンドル、設定を渡して生�E
 	HRESULT hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue, hwnd, &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 	hr;
 	assert(SUCCEEDED(hr));
@@ -89,13 +89,13 @@ bool SwapChain::CheckBackBufferViews() const {
 #ifdef _DEBUG
 	DebugLog(std::format("Buffer: {} View: {}", backBuffers_.size(), backBufferViews_.size()));
 #endif // _DEBUG
-	// バックバッファがnullptrでないか確認
+	// バックバッファがnullptrでなぁE��確誁E
 	for (const auto& buffer : backBuffers_) {
 		if (buffer == nullptr) {
 			return false;
 		}
 	}
-	// バックバッファの数とビューの数が一致しているか確認
+	// バックバッファの数とビューの数が一致してぁE��か確誁E
 	if (backBufferViews_.size() != backBuffers_.size()) {
 		return false;
 	}

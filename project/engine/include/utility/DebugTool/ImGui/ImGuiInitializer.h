@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <d3d12.h>
-#include "../ImGuiInclude.h"         
+#include "ImGuiInclude.h"         
 
 class ImGuiInitializer final {
 private:
@@ -10,7 +10,7 @@ private:
 
 public:
 	/// <summary>
-	/// ImGuiを初期化します
+	/// ImGuiを�E期化しまぁE
 	/// </summary>
 	/// <param name="hwnd"></param>
 	static void Initialize(

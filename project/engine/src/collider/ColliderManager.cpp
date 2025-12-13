@@ -1,15 +1,15 @@
 #include "ColliderManager.h"
-#include "Assets/AssetManager.h"
-#include "Core/Entity/EntityManager.h"
-#include "Assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
 
-#include "Core/Math/MyMath.h"
-#include "Core/Math/Transform.h"
-#include "Scene/Data/SceneObjectData.h"
+#include "engine/include/core/Math/MyMath.h"
+#include "engine/include/core/Math/Transform.h"
+#include "engine/include/scene/Data/SceneObjectData.h"
 
 #ifdef _DEBUG
-#include "Renderer/GraphRenderer.h"
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/renderer/GraphRenderer.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 #include <algorithm>
@@ -96,7 +96,7 @@ void ColliderManager::SphereToSphereUpdate() {
 		}
 	}
 
-	// エンジンが停止中なら当たり判定を行わない
+	// エンジンが停止中なら当たり判定を行わなぁE
 	if (!isRunning) {
 		return;
 	}
@@ -109,7 +109,7 @@ void ColliderManager::SphereToSphereUpdate() {
 			SphereColliderData& colliderB = entityManager->GetComponent<SphereColliderData>(idB);
 			if (isCollision(colliderA.sphere, colliderB.sphere)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
-				// SceneObjectData取得
+				// SceneObjectData取征E
 				if (!entityManager->HasComponent<SceneObjectData>(idA) ||
 					!entityManager->HasComponent<SceneObjectData>(idB)) {
 
@@ -119,7 +119,7 @@ void ColliderManager::SphereToSphereUpdate() {
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(idA);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(idB);
 
-				// タグマスクが衝突可能か
+				// タグマスクが衝突可能ぁE
 				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
@@ -127,7 +127,7 @@ void ColliderManager::SphereToSphereUpdate() {
 					continue;
 				}
 
-				// 衝突イベントを発生させるレイヤーか
+				// 衝突イベントを発生させるレイヤーぁE
 				if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
@@ -135,12 +135,12 @@ void ColliderManager::SphereToSphereUpdate() {
 					continue;
 				}
 
-				// OnCollisionStayイベント
+				// OnCollisionStayイベンチE
 				colliderA.isHit = true;
 				colliderB.isHit = true;
 				luaManager->RunColliderStay(idA, idB, objB);
 				luaManager->RunColliderStay(idB, idA, objA);
-				// Triggerイベント
+				// TriggerイベンチE
 				if (!colliderA.isOldHit) {
 					luaManager->RunTriggerEnter(idA, idB, objB);
 				}
@@ -148,7 +148,7 @@ void ColliderManager::SphereToSphereUpdate() {
 					luaManager->RunTriggerEnter(idB, idA, objA);
 				}
 
-				// 反発しうるレイヤーか
+				// 反発しうるレイヤーぁE
 				if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
@@ -156,12 +156,12 @@ void ColliderManager::SphereToSphereUpdate() {
 					continue;
 				}
 
-				// 反発処理
-				// どちらかがTriggerなら反発しない
+				// 反発処琁E
+				// どちらかがTriggerなら反発しなぁE
 				if (colliderA.isTrigger || colliderB.isTrigger) {
 					continue;
 				}
-				// Transformがないなら反発しない
+				// TransformがなぁE��ら反発しなぁE
 				if (!entityManager->HasComponent<Transform>(idA) || !entityManager->HasComponent<Transform>(idB)) {
 					assert(false && "Entities do not have Transform");
 					continue;
@@ -169,14 +169,14 @@ void ColliderManager::SphereToSphereUpdate() {
 				Transform& transformA = entityManager->GetComponent<Transform>(idA);
 				Transform& transformB = entityManager->GetComponent<Transform>(idB);
 
-				// どちらも動く場合は等しく反発
+				// どちらも動く場合�E等しく反発
 				Vector3 length = colliderB.sphere.center - colliderA.sphere.center;
 				length -= length.Normalize() * (colliderA.sphere.radius + colliderB.sphere.radius);
 				if (colliderA.isStatic == false && colliderB.isStatic == false) {
 					transformA.translate += length * 0.5f;
 					transformB.translate -= length * 0.5f;
 				}
-				// 片方が動かない場合は動く方だけ反発
+				// 牁E��が動かなぁE��合�E動く方だけ反発
 				else if (colliderA.isStatic == false && colliderB.isStatic == true) {
 					transformA.translate += length;
 				} else if (colliderA.isStatic == true && colliderB.isStatic == false) {
@@ -206,7 +206,7 @@ void ColliderManager::AABBToAABBUpdate() {
 			collider.isHit = false;
 		}
 	}
-	// エンジンが停止中なら当たり判定を行わない
+	// エンジンが停止中なら当たり判定を行わなぁE
 	if (!isRunning) {
 		return;
 	}
@@ -218,7 +218,7 @@ void ColliderManager::AABBToAABBUpdate() {
 			AABBColliderData& colliderB = entityManager->GetComponent<AABBColliderData>(idB);
 			if (isCollision(colliderA.aabb, colliderB.aabb)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
-				// SceneObjectData取得
+				// SceneObjectData取征E
 				if (!entityManager->HasComponent<SceneObjectData>(idA) ||
 					!entityManager->HasComponent<SceneObjectData>(idB)) {
 					assert(false && "Entities do not have SceneObjectData");
@@ -226,7 +226,7 @@ void ColliderManager::AABBToAABBUpdate() {
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(idA);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(idB);
 
-				// タグマスクが衝突可能か
+				// タグマスクが衝突可能ぁE
 				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
@@ -234,7 +234,7 @@ void ColliderManager::AABBToAABBUpdate() {
 					continue;
 				}
 
-				// 衝突イベントを発生させるレイヤーか
+				// 衝突イベントを発生させるレイヤーぁE
 				if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
@@ -242,12 +242,12 @@ void ColliderManager::AABBToAABBUpdate() {
 					continue;
 				}
 
-				// OnCollisionStayイベント
+				// OnCollisionStayイベンチE
 				colliderA.isHit = true;
 				colliderB.isHit = true;
 				luaManager->RunColliderStay(idA, idB, objB);
 				luaManager->RunColliderStay(idB, idA, objA);
-				// Triggerイベント
+				// TriggerイベンチE
 				if (!colliderA.isOldHit) {
 					luaManager->RunTriggerEnter(idA, idB, objB);
 				}
@@ -255,7 +255,7 @@ void ColliderManager::AABBToAABBUpdate() {
 					luaManager->RunTriggerEnter(idB, idA, objA);
 				}
 
-				// 反発しうるレイヤーか
+				// 反発しうるレイヤーぁE
 				if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
@@ -263,19 +263,19 @@ void ColliderManager::AABBToAABBUpdate() {
 					continue;
 				}
 
-				// 反発処理
-				// どちらかがTriggerなら反発しない
+				// 反発処琁E
+				// どちらかがTriggerなら反発しなぁE
 				if (colliderA.isTrigger || colliderB.isTrigger) {
 					continue;
 				}
-				// Transformがないなら反発しない
+				// TransformがなぁE��ら反発しなぁE
 				if (!entityManager->HasComponent<Transform>(idA) || !entityManager->HasComponent<Transform>(idB)) {
 					assert(false && "Entities do not have Transform");
 					continue;
 				}
 				Transform& transformA = entityManager->GetComponent<Transform>(idA);
 				Transform& transformB = entityManager->GetComponent<Transform>(idB);
-				// AABBの中心座標
+				// AABBの中忁E��樁E
 				Vector3 centerA = (colliderA.aabb.min + colliderA.aabb.max) * 0.5f;
 				Vector3 centerB = (colliderB.aabb.min + colliderB.aabb.max) * 0.5f;
 
@@ -283,7 +283,7 @@ void ColliderManager::AABBToAABBUpdate() {
 				Vector3 halfA = (colliderA.aabb.max - colliderA.aabb.min) * 0.51f;
 				Vector3 halfB = (colliderB.aabb.max - colliderB.aabb.min) * 0.51f;
 
-				// 中心間距離
+				// 中忁E��距離
 				Vector3 delta = centerB - centerA;
 				Vector3 overlap = {
 					(halfA.x + halfB.x) - (std::abs(delta.x) + 0.01f),
@@ -291,13 +291,13 @@ void ColliderManager::AABBToAABBUpdate() {
 					(halfA.z + halfB.z) - (std::abs(delta.z) + 0.01f)
 				};
 
-				// 最小オーバーラップ軸を探す
+				// 最小オーバ�EラチE�E軸を探ぁE
 				float minOverlap = overlap.x;
 				int axis = 0; // 0:x, 1:y, 2:z
 				if (overlap.y < minOverlap) { minOverlap = overlap.y; axis = 1; }
 				if (overlap.z < minOverlap) { minOverlap = overlap.z; axis = 2; }
 
-				// 反発ベクトルを決定
+				// 反発ベクトルを決宁E
 				Vector3 push(0, 0, 0);
 				if (axis == 0) { // x軸
 					push.x = (delta.x > 0) ? minOverlap : -minOverlap;
@@ -307,12 +307,12 @@ void ColliderManager::AABBToAABBUpdate() {
 					push.z = (delta.z > 0) ? minOverlap : -minOverlap;
 				}
 
-				// どちらも動く場合は等しく反発
+				// どちらも動く場合�E等しく反発
 				if (!colliderA.isStatic && !colliderB.isStatic) {
 					transformA.translate -= push * 0.5f;
 					transformB.translate += push * 0.5f;
 				}
-				// 片方が動かない場合は動く方だけ反発
+				// 牁E��が動かなぁE��合�E動く方だけ反発
 				else if (!colliderA.isStatic && colliderB.isStatic) {
 					transformA.translate -= push;
 				} else if (colliderA.isStatic && !colliderB.isStatic) {
@@ -357,7 +357,7 @@ void ColliderManager::SphereToAABBUpdate() {
 			collider.isHit = false;
 		}
 	}
-	// エンジンが停止中なら当たり判定を行わない
+	// エンジンが停止中なら当たり判定を行わなぁE
 	if (!isRunning) {
 		return;
 	}
@@ -370,7 +370,7 @@ void ColliderManager::SphereToAABBUpdate() {
 			AABBColliderData& aabbCollider = entityManager->GetComponent<AABBColliderData>(aabbId);
 			if (isCollision(sphereCollider.sphere, aabbCollider.aabb)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
-				// SceneObjectData取得
+				// SceneObjectData取征E
 				if (!entityManager->HasComponent<SceneObjectData>(sphereId) ||
 					!entityManager->HasComponent<SceneObjectData>(aabbId)) {
 					assert(false && "Entities do not have SceneObjectData");
@@ -378,7 +378,7 @@ void ColliderManager::SphereToAABBUpdate() {
 				SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(sphereId);
 				SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(aabbId);
 
-				// タグマスクが衝突可能か
+				// タグマスクが衝突可能ぁE
 				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", sphereId, aabbId));
@@ -386,7 +386,7 @@ void ColliderManager::SphereToAABBUpdate() {
 					continue;
 				}
 
-				// 衝突イベントを発生させるレイヤーか
+				// 衝突イベントを発生させるレイヤーぁE
 				if ((sphereCollider.eventColliderLayer & aabbCollider.colliderLayer) == 0) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", sphereId, aabbId));
@@ -394,12 +394,12 @@ void ColliderManager::SphereToAABBUpdate() {
 					continue;
 				}
 
-				// OnCollisionStayイベント
+				// OnCollisionStayイベンチE
 				sphereCollider.isHit = true;
 				aabbCollider.isHit = true;
 				luaManager->RunColliderStay(sphereId, aabbId, objB);
 				luaManager->RunColliderStay(aabbId, sphereId, objA);
-				// Triggerイベント
+				// TriggerイベンチE
 				if (!sphereCollider.isOldHit) {
 					luaManager->RunTriggerEnter(sphereId, aabbId, objB);
 				}
@@ -407,7 +407,7 @@ void ColliderManager::SphereToAABBUpdate() {
 					luaManager->RunTriggerEnter(aabbId, sphereId, objA);
 				}
 
-				// 反発しうるレイヤーか
+				// 反発しうるレイヤーぁE
 				if ((sphereCollider.colliderLayer & aabbCollider.eventColliderLayer) == 0) {
 #ifdef _DEBUG
 					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", sphereId, aabbId));
@@ -415,12 +415,12 @@ void ColliderManager::SphereToAABBUpdate() {
 					continue;
 				}
 
-				// 反発処理
-				// どちらかがTriggerなら反発しない
+				// 反発処琁E
+				// どちらかがTriggerなら反発しなぁE
 				if (sphereCollider.isTrigger || aabbCollider.isTrigger) {
 					continue;
 				}
-				// Transformがないなら反発しない
+				// TransformがなぁE��ら反発しなぁE
 				if (!entityManager->HasComponent<Transform>(sphereId) || !entityManager->HasComponent<Transform>(aabbId)) {
 					assert(false && "Entities do not have Transform");
 					continue;
@@ -428,21 +428,21 @@ void ColliderManager::SphereToAABBUpdate() {
 				Transform& transformA = entityManager->GetComponent<Transform>(sphereId);
 				Transform& transformB = entityManager->GetComponent<Transform>(aabbId);
 
-				// 最近傍点を取得
+				// 最近傍点を取征E
 				Vector3 closestPoint = MyMath::ClosestPoint(sphereCollider.sphere, aabbCollider.aabb);
 				Vector3 direction = sphereCollider.sphere.center - closestPoint;
 				float distance = direction.Length();
 
-				// 球がAABBにめり込んだ分だけ押し戻す
+				// 琁E��AABBにめり込んだ刁E��け押し戻ぁE
 				float penetration = sphereCollider.sphere.radius - distance;
 				if (penetration > 0.0f && distance > 0.0f) {
 					Vector3 push = direction.Normalize() * penetration;
-					// どちらも動く場合は等しく反発
+					// どちらも動く場合�E等しく反発
 					if (!sphereCollider.isStatic && !aabbCollider.isStatic) {
 						transformA.translate += push * 0.5f;
 						transformB.translate -= push * 0.5f;
 					}
-					// 片方が動かない場合は動く方だけ反発
+					// 牁E��が動かなぁE��合�E動く方だけ反発
 					else if (!sphereCollider.isStatic && aabbCollider.isStatic) {
 						transformA.translate += push;
 					} else if (sphereCollider.isStatic && !aabbCollider.isStatic) {

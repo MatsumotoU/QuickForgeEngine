@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <nlohmann/json.hpp>
-#include "Core/Math/Vector/Vector2.h"
+#include "engine/include/core/Math/Vector/Vector2.h"
 
 class IScene {
 public:
@@ -16,7 +16,7 @@ public:
 	virtual void EndFrame() = 0;
 	virtual void Finalize() = 0;
 
-	// シーンのロード、保存
+	// シーンのロード、保孁E
 	virtual void LoadScene(const std::string& sceneName) = 0;
 	virtual void SaveScene(const std::string& sceneName) = 0;
 	virtual void ResetScene() = 0;
@@ -46,7 +46,7 @@ public:
 	virtual void SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) = 0;
 	virtual void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) = 0;
 
-	// シーンにあるオブジェクトの情報取得
+	// シーンにあるオブジェクト�E惁E��取征E
 	virtual uint32_t GetEntityByName(const std::string& entityName) const = 0;
 	virtual uint32_t GetEntityByUniqeID(uint32_t uniqueId) const = 0;
 

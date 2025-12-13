@@ -1,8 +1,8 @@
 #pragma once
 #include "IAudioInterface.h"
-#include "Core/XAudioCore.h"
+#include "engine/include/core/XAudioCore.h"
 #include "Player/AudioChipManager.h"
-#include "Utility/DesignPatterns/Singleton.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
 
 class AudioInterface final : public IAudioInterface , public Singleton<AudioInterface>{
 	friend class Singleton<AudioInterface>;
@@ -12,7 +12,7 @@ public:
 	void Initialize() override;
 	void Finalize() override;
 
-	// 全体の音声操作
+	// 全体�E音声操佁E
 	/// 全音声停止
 	void StopAllSound() override;
 	/// 全音声一時停止
@@ -20,8 +20,8 @@ public:
 	/// 全音声再開
 	void ResumeAllSound() override;
 
-	// 個別の音声操作
-	/// 音声再生(volume: 0.0 ~ 1.0の範囲)
+	// 個別の音声操佁E
+	/// 音声再生(volume: 0.0 ~ 1.0の篁E��)
 	uint32_t PlaySoundForAudioData(uint32_t audioDataHandle, bool loop, float volume) override;
 	/// 音声停止
 	void StopSound(uint32_t soundHandle) override;
@@ -30,28 +30,28 @@ public:
 	/// 音声再開
 	void ResumeSound(uint32_t soundHandle) override;
 
-	// 各音量設定
-	/// 主音量設定(0.0 ~ 1.0の範囲)
+	// 吁E��量設宁E
+	/// 主音量設宁E0.0 ~ 1.0の篁E��)
 	void SetMasterVolume(float volume) override;
-	/// BGM音量設定(0.0 ~ 1.0の範囲)
+	/// BGM音量設宁E0.0 ~ 1.0の篁E��)
 	void SetBGMVolume(float volume) override;
-	/// SE音量設定(0.0 ~ 1.0の範囲)
+	/// SE音量設宁E0.0 ~ 1.0の篁E��)
 	void SetSEVolume(float volume) override;
-	/// ボイス音量設定(0.0 ~ 1.0の範囲)
+	/// ボイス音量設宁E0.0 ~ 1.0の篁E��)
 	void SetVoiceVolume(float volume) override;
-	/// 環境音量設定(0.0 ~ 1.0の範囲)
+	/// 環墁E��量設宁E0.0 ~ 1.0の篁E��)
 	void SetASVolume(float volume) override;
 
-	// 各音量取得
-	/// 主音量取得(0.0 ~ 1.0の範囲)
+	// 吁E��量取征E
+	/// 主音量取征E0.0 ~ 1.0の篁E��)
 	float GetMasterVolume() override;
-	/// BGM音量取得(0.0 ~ 1.0の範囲)
+	/// BGM音量取征E0.0 ~ 1.0の篁E��)
 	float GetBGMVolume() override;
-	/// SE音量取得(0.0 ~ 1.0の範囲)
+	/// SE音量取征E0.0 ~ 1.0の篁E��)
 	float GetSEVolume() override;
-	/// ボイス音量取得(0.0 ~ 1.0の範囲)
+	/// ボイス音量取征E0.0 ~ 1.0の篁E��)
 	float GetVoiceVolume() override;
-	/// 環境音量取得(0.0 ~ 1.0の範囲)
+	/// 環墁E��量取征E0.0 ~ 1.0の篁E��)
 	float GetASVolume() override;
 
 private:

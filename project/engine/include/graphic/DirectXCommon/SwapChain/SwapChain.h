@@ -23,7 +23,7 @@ public:
 	void Present();
 	void AssignDescriptorHandles(const DescriptorHandles& rtvHandle, uint32_t index);
 	/// <summary>
-	/// バックバッファとビューの数が一致しているか確認
+	/// バックバッファとビューの数が一致してぁE��か確誁E
 	/// </summary>
 	/// <returns></returns>
 	bool CheckBackBufferViews() const;

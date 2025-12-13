@@ -1,4 +1,4 @@
-#include "InputInterface.h"
+#include "engine/include/input/InputInterface.h"
 
 void InputInterface::Initialize(const HWND& hwnd, const HINSTANCE& hInstance) {
 	keyConfig_.Initialize();

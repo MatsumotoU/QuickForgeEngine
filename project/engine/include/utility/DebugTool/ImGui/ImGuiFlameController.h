@@ -6,7 +6,7 @@
 #include <wrl.h>
 #include <vector>
 
-#include "../ImGuiInclude.h"
+#include "ImGuiInclude.h"
 
 class ImGuiFlameController final {
 public:
@@ -14,13 +14,13 @@ public:
 	~ImGuiFlameController();
 public:
 	/// <summary>
-	/// ImGuiを初期化します
+	/// ImGuiを�E期化しまぁE
 	/// </summary>
 	/// <param name="winApp"></param>
 	/// <param name="dxCommon"></param>
 	void Initialize(const HWND& hwnd, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* const* srvDescriptorHeap);
 	/// <summary>
-	/// ImGuiを終了します。ゲームループが終わった後に置きます
+	/// ImGuiを終亁E��ます。ゲームループが終わった後に置きまぁE
 	/// </summary>
 	void EndImGui();
 	/// <summary>
@@ -28,7 +28,7 @@ public:
 	/// </summary>
 	void BeginFrame();
 	/// <summary>
-	/// ImGuiここまでこの関数はシールドを表示用に切り替える前にする
+	/// ImGuiここまでこ�E関数はシールドを表示用に刁E��替える前にする
 	/// </summary>
 	void EndFrame(D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferCpuHandle);
 

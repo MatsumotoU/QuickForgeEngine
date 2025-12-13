@@ -9,33 +9,33 @@
 #include <utility>
 
 /// <summary>
-/// 出力ウィンドウにログを出す関数
+/// 出力ウィンドウにログを�Eす関数
 /// </summary>
-/// <param name="message">表示する文字列</param>
+/// <param name="message">表示する斁E���E</param>
 void Log(const std::string& message);
 /// <summary>
 /// std::stringからstd::wstringへ変換
 /// </summary>
-/// <param name="str">変換元</param>
-/// <returns>変換先</returns>
+/// <param name="str">変換允E/param>
+/// <returns>変換允E/returns>
 std::wstring ConvertString(const std::string& str);
 /// <summary>
 /// wstd::stringからstd::stringへ変換
 /// </summary>
-/// <param name="str">変換元</param>
-/// <returns>変換先</returns>
+/// <param name="str">変換允E/param>
+/// <returns>変換允E/returns>
 std::string ConvertString(const std::wstring& str);
 /// <summary>
 /// std::stringからLPCWSTRへ変換
 /// </summary>
-/// <param name="str">変換元</param>
-/// <returns>変換先</returns>
+/// <param name="str">変換允E/param>
+/// <returns>変換允E/returns>
 LPCWSTR StringToLPCWSTR(const std::string& str);
 
 // stringからcharPtrに変換
 char* StringToCharPtr(const std::string& str);
 
-// ２対の文字列ペアが順不同で一致しているかどうかを判断します
+// �E�対の斁E���Eペアが頁E��同で一致してぁE��かどぁE��を判断しまぁE
 bool IsUnorderedPairEqual(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2);
 
 std::wstring Utf8ToUtf16(const std::string& utf8);

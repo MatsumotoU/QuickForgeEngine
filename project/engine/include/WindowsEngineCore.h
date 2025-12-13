@@ -1,34 +1,34 @@
 #pragma once
-#include "Core/IEngineCore.h"
-#include "Core/EngineGlobalValue.h"
-#include "Editor/IEditor.h"
+#include "engine/include/core/IEngineCore.h"
+#include "engine/include/core/EngineGlobalValue.h"
+#include "editor/IEditor.h"
 #include <Windows.h>
 #include <chrono>
 #include <nlohmann/json.hpp>
 
 // Core
-#include "Window/GameWindowManager.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
-#include "Graphic/Pipeline/GraphicPipelineManager.h"
-#include "AppUtility/DebugTool/App/WinAppDebugCore.h"
-#include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
-#include "AppUtility/DebugTool/FrameCounter.h"
-#include "Renderer/GraphRenderer.h"
-#include "Graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
-#include "Graphic/PostEffect/RendaringPostprocess.h"
-#include "Assets/AssetManager.h"
+#include "engine/include/window/GameWindowManager.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
+#include "engine/include/utility/DebugTool/App/WinAppDebugCore.h"
+#include "engine/include/utility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
+#include "engine/include/utility/DebugTool/FrameCounter.h"
+#include "engine/include/renderer/GraphRenderer.h"
+#include "engine/include/graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
+#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
+#include "engine/include/assets/AssetManager.h"
 
-// なんかAssetsではなさそうなやつら
-#include "Scene/SceneManager.h"
-#include "Assets/Script/LuaScriptResourceManager.h"
-#include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+// なんかAssetsではなさそぁE�E��E�めE�E��E�めE
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
 
 // サブモジュール
-#include "Audio/AudioInterface.h"
-#include "Input/InputInterface.h"
-#include "Physics/PhysicsManager.h"
-#include "Collider/ColliderManager.h"
-#include "AppUtility/MultiThreadTaskExecutor.h"
+#include "engine/include/audio/AudioInterface.h"
+#include "engine/include/input/InputInterface.h"
+#include "engine/include/physics/PhysicsManager.h"
+#include "engine/include/collider/ColliderManager.h"
+#include "engine/include/utility/MultiThreadTaskExecutor.h"
 
 class WindowsEngineCore final : public IEngineCore {
 public:

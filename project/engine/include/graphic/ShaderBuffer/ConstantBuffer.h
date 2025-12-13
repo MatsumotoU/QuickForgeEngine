@@ -7,7 +7,7 @@ template<class T>
 class ConstantBuffer final{
 public:
     /// <summary>
-    /// リソースを生成します
+    /// リソースを生成しまぁE
     /// </summary>
     void CreateResource(ID3D12Device* device) {
 		size_ = sizeof(T);
@@ -55,7 +55,7 @@ public:
         }
     }
 
-    // ゲッター
+    // ゲチE��ー
     T* GetData() const { return data_; }
     ID3D12Resource* GetResource() const { return bufferResource_.Get(); }
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {

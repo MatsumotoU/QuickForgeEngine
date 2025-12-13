@@ -1,9 +1,9 @@
 #include "SpriteRenderer.h"
-#include "Assets/AssetManager.h"
-#include "Assets/3DModel/Data/ModelRenderData.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
-#include "Graphic/Pipeline/GraphicPipelineManager.h"
-#include "Assets/Sprite/Data/SpriteData.h" 
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/assets/3DModel/Data/ModelRenderData.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
+#include "engine/include/assets/Sprite/Data/SpriteData.h" 
 #include <cassert>
 
 void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {

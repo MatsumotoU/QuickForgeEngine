@@ -1,13 +1,14 @@
-#include "SceneView.h"
-#include "HierarchyView.h"
-#include "Graphic/PostEffect/RendaringPostprocess.h"
-#include "Camera/CameraManager.h"
-#include "Assets/AssetManager.h"
-#include "Core/Entity/EntityManager.h" 
-#include "AppUtility/DebugTool/ImGui/ImGuiInclude.h"
-#include "Input/InputInterface.h"
-#include "Renderer/GraphRenderer.h"
-#include "Core/Math/MyMath.h"
+#include "editor/include/UI/View/SceneView.h"
+#include "editor/include/UI/View/HierarchyView.h"
+
+#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
+#include "engine/include/camera/CameraManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Entity/EntityManager.h" 
+#include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
+#include "engine/include/InputInterface.h"
+#include "engine/include/renderer/GraphRenderer.h"
+#include "engine/include/core/Math/MyMath.h"
 
 #include <cmath>
 #include <algorithm>
@@ -46,7 +47,7 @@ void SceneView::Draw() {
 	DescriptorHandles handle = render->GetCurrentSrvHandle();
 	ImGui::Begin("Scene View");
 
-	// フォーカス判定
+	// 繝輔か繝ｼ繧ｫ繧ｹ蛻､螳・
 	bool isSceneViewFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 	if (isSceneViewFocused) {
 		isActiveCamera_ = true;
@@ -113,7 +114,7 @@ void SceneView::DebugCameraControl() {
 		}
 		if (input.keyboard_.GetTrigger(DIK_NUMPAD9)) {
 			float PI = 3.14f;
-			// 反対方向
+			// 蜿榊ｯｾ譁ｹ蜷・
 			float thetaOpposite = PI - targetRotate_.y;
 			float phiOpposite = targetRotate_.z + PI;
 
@@ -131,19 +132,19 @@ void SceneView::DebugCameraControl() {
 			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(targetRotate_);
 			cameraTransform.translate = Vector3::Slerp(startPos_, sphericalToCartesian + anchorPoint_, cameraMoveT_);
 
-			// LookAtの方向ベクトルがゼロにならないように
+			// LookAt縺ｮ譁ｹ蜷代・繧ｯ繝医Ν縺後ぞ繝ｭ縺ｫ縺ｪ繧峨↑縺・ｈ縺・↓
 			if ((anchorPoint_ - Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix())).Length() > 0.001f) {
 				cameraTransform.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
 			}
 			return;
 		}
 
-		// ホイールでズームイン・アウト
+		// 繝帙う繝ｼ繝ｫ縺ｧ繧ｺ繝ｼ繝繧､繝ｳ繝ｻ繧｢繧ｦ繝・
 		if (input.mouse_.wheelDir_ != 0.0f) {
 			Vector3 cartesianTemp = cameraTransform.translate - anchorPoint_;
 			Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
 
-			// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
+			// 繝槭え繧ｹ縺ｮX遘ｻ蜍輔〒ﾏ・ｼ育ｵ悟ｺｦ, Yaw・峨〆遘ｻ蜍輔〒ﾎｸ・育ｷｯ蠎ｦ, Pitch・峨ｒ蝗櫁ｻ｢
 			sphericalTemp.x += -input.mouse_.wheelDir_ * 0.01f;
 
 			Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(sphericalTemp);
@@ -165,11 +166,11 @@ void SceneView::DebugCameraControl() {
 				Vector3 cartesianTemp = cameraTransform.translate - anchorPoint_;
 				Vector3 sphericalTemp = Vector3::CartesianToSpherical(cartesianTemp);
 
-				// マウスのX移動でφ（経度, Yaw）、Y移動でθ（緯度, Pitch）を回転
-				sphericalTemp.z += -input.mouse_.deltaMouse_.x * mouseSensitivity_ * 0.005f; // φ: 左右（感度を下げる）
-				sphericalTemp.y += -input.mouse_.deltaMouse_.y * mouseSensitivity_ * 0.005f; // θ: 上下（感度を下げる）
+				// 繝槭え繧ｹ縺ｮX遘ｻ蜍輔〒ﾏ・ｼ育ｵ悟ｺｦ, Yaw・峨〆遘ｻ蜍輔〒ﾎｸ・育ｷｯ蠎ｦ, Pitch・峨ｒ蝗櫁ｻ｢
+				sphericalTemp.z += -input.mouse_.deltaMouse_.x * mouseSensitivity_ * 0.005f; // ﾏ・ 蟾ｦ蜿ｳ・域─蠎ｦ繧剃ｸ九￡繧具ｼ・
+				sphericalTemp.y += -input.mouse_.deltaMouse_.y * mouseSensitivity_ * 0.005f; // ﾎｸ: 荳贋ｸ具ｼ域─蠎ｦ繧剃ｸ九￡繧具ｼ・
 
-				// θ（緯度）のクランプ
+				// ﾎｸ・育ｷｯ蠎ｦ・峨・繧ｯ繝ｩ繝ｳ繝・
 				const float epsilon = 0.01f;
 				const float minTheta = epsilon;
 				const float maxTheta = static_cast<float>(3.14159f) - epsilon;
@@ -178,7 +179,7 @@ void SceneView::DebugCameraControl() {
 				Vector3 sphericalToCartesian = Vector3::SphericalToCartesian(sphericalTemp);
 				cameraTransform.translate = sphericalToCartesian + anchorPoint_;
 
-				// LookAtの方向ベクトルがゼロにならないように
+				// LookAt縺ｮ譁ｹ蜷代・繧ｯ繝医Ν縺後ぞ繝ｭ縺ｫ縺ｪ繧峨↑縺・ｈ縺・↓
 				if ((anchorPoint_ - Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix())).Length() > 0.001f) {
 					cameraTransform.rotate = -Vector3::LookAt(anchorPoint_, Vector3::Transform({ 0.0f,0.0f,0.0f }, camera.GetWorldMatrix()));
 				}
@@ -190,7 +191,7 @@ void SceneView::DebugCameraControl() {
 
 void SceneView::UpdateGizmo() {
 #ifdef _DEBUG
-	// ImGuizmoのセットアップ
+	// ImGuizmo縺ｮ繧ｻ繝・ヨ繧｢繝・・
 	bool is2D = AssetManager::GetInstance()->GetEntityManager()->HasComponent<SpriteData>(selectEntityId_);
 	ImGuizmo::SetOrthographic(is2D);
 	ImGuizmo::SetDrawlist();
@@ -244,7 +245,7 @@ void SceneView::UpdateGizmo() {
 		return;
 	}
 
-	// ギズモ用行列
+	// 繧ｮ繧ｺ繝｢逕ｨ陦悟・
 	Matrix4x4 matrix = Matrix4x4::MakeAffineMatrix(
 		transform.scale,
 		transform.rotate,
@@ -252,18 +253,18 @@ void SceneView::UpdateGizmo() {
 	);
 	float* matrixPtr = &matrix.m[0][0];
 
-	// ギズモ描画・操作
+	// 繧ｮ繧ｺ繝｢謠冗判繝ｻ謫堺ｽ・
 	ImGuizmo::Manipulate(
 		&view.m[0][0], &proj.m[0][0],
 		currentGizmoOperation, ImGuizmo::LOCAL, matrixPtr
 	);
 
-	// ギズモ操作中のみTransformに反映
+	// 繧ｮ繧ｺ繝｢謫堺ｽ應ｸｭ縺ｮ縺ｿTransform縺ｫ蜿肴丐
 	if (ImGuizmo::IsUsing()) {
 		Matrix4x4 newMat;
 		std::memcpy(&newMat.m[0][0], matrixPtr, sizeof(float) * 16);
 		transform.FromMatrix(newMat);
 	}
-	// ギズモ操作していないときはTransformの値で行列を再生成（matrixは毎フレーム再生成されるのでOK）
+	// 繧ｮ繧ｺ繝｢謫堺ｽ懊＠縺ｦ縺・↑縺・→縺阪・Transform縺ｮ蛟､縺ｧ陦悟・繧貞・逕滓・・・atrix縺ｯ豈弱ヵ繝ｬ繝ｼ繝蜀咲函謌舌＆繧後ｋ縺ｮ縺ｧOK・・
 #endif
 }

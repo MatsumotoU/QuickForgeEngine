@@ -1,10 +1,10 @@
 #include "LuaScriptOnQFESetUtilities.h"
-#include "Assets/AssetManager.h"
+#include "engine/include/assets/AssetManager.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
-#include "AppUtility/FileSystems/FileUtility.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 
 void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 	

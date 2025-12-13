@@ -1,7 +1,7 @@
 #include "SceneProfileView.h"
-#include "Assets/AssetManager.h"
-#include "Core/Entity/EntityManager.h"
-#include "Scene/SceneManager.h"
+#include "assets/AssetManager.h"
+#include "core/Entity/EntityManager.h"
+#include "scene/SceneManager.h"
 
 SceneProfileView::SceneProfileView() {
 	name_ = "Scene Profile";

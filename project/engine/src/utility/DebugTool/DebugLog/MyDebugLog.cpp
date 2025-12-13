@@ -26,7 +26,7 @@ void MyDebugLog::Initialize() {
 
 	logStream_.open(logFilePath_);
 
-	// ここでビルド情報を出力
+	// ここでビルド情報を�E劁E
 	logStream_ << "Build Date: " << __DATE__ << " " << __TIME__ << std::endl;
 #ifdef APP_VERSION
 	logStream_ << "App Version: " << APP_VERSION << std::endl;

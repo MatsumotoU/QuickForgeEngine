@@ -1,15 +1,15 @@
 #include "LuaScriptOnQFESetStructBase.h"
-#include "Core/Math/Vector/Vector2.h"
-#include "Core/Math/Vector/Vector3.h"
-#include "Core/Math/Vector/Vector4.h"
-#include "Core/Math/Transform.h"
+#include "engine/include/core/Math/Vector/Vector2.h"
+#include "engine/include/core/Math/Vector/Vector3.h"
+#include "engine/include/core/Math/Vector/Vector4.h"
+#include "engine/include/core/Math/Transform.h"
 
-#include "Scene/Data/SceneObjectData.h"
-#include "Physics/Force.h"
+#include "engine/include/scene/Data/SceneObjectData.h"
+#include "engine/include/physics/Force.h"
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
-	// シーン上のオブジェクトデータ
+	// シーン上�Eオブジェクトデータ
 	luaState->new_usertype<SceneObjectData>("SceneObjectData",
 		"name", &SceneObjectData::name,
 		"tag", &SceneObjectData::tag
@@ -62,7 +62,7 @@ void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 		"AddRight", &Transform::AddRight
 	);
 
-	// 物理力
+	// 物琁E��
 	luaState->new_usertype<Force>("Force",
 		sol::constructors<Force()>(),
 		"velocity", &Force::velocity,

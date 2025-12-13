@@ -1,5 +1,5 @@
 #include "DropDownFileList.h"
-#include "AppUtility/FileSystems/FileUtility.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 
 DropDownFileList::DropDownFileList() {
 	isSelected_ = false;
@@ -48,7 +48,7 @@ void DropDownFileList::DrawMenuItem() {
 bool DropDownFileList::GetSelectedFileName(std::string& fileName) {
 	if (isSelected_) {
 		fileName = selectedFileName_;
-		isSelected_ = false; // 一度取得したらリセット
+		isSelected_ = false; // 一度取得したらリセチE��
 		return true;
 	}
 	return false;

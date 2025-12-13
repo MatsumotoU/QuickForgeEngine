@@ -11,7 +11,7 @@ class AssimpModelLoader {
 public:
 	AssimpModelLoader() = default;
 	~AssimpModelLoader() = default;
-	// モデルの読み込み
+	// モチE��の読み込み
 	static void LoadModelData(
 		const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename,ModelData& modelData);
 };

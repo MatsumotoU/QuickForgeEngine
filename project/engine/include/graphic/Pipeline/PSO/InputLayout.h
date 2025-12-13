@@ -8,11 +8,11 @@
 class InputLayout final {
 public:
 	/// <summary>
-	/// 初期化
+	/// 初期匁E
 	/// </summary>
 	void Initialize();
 	/// <summary>
-	/// POSITION, TEXCOORD, NORMALのInputLayoutを生成します
+	/// POSITION, TEXCOORD, NORMALのInputLayoutを生成しまぁE
 	/// </summary>
 	void CreateNormalPresetInputLayout();
 	/// <summary>
@@ -20,10 +20,10 @@ public:
 	/// </summary>
 	void CreatePrimitivePresetInputLayout();
 	/// <summary>
-	/// InputElementDescを生成します
+	/// InputElementDescを生成しまぁE
 	/// </summary>
 	/// <param name="semanticName">ShaderInputの名前</param>
-	/// <param name="semanticIndex">その後に続く数字</param>
+	/// <param name="semanticIndex">そ�E後に続く数孁E/param>
 	/// <param name="format">format</param>
 	/// <param name="alignedByteOffset">offset</param>
 	void CreateInputElementDesc(const LPCSTR& semanticName, const UINT& semanticIndex, const DXGI_FORMAT& format, const UINT& alignedByteOffset);

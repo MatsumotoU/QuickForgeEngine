@@ -1,11 +1,11 @@
 #include "LuaScriptOnQFESetSceneFunction.h"
-#include "Assets/AssetManager.h"
-#include "Scene/SceneManager.h"
-#include "Assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
 
-#include "Core/Math/Transform.h"
-#include "Core/Entity/EntityManager.h"
-#include "Assets/Script/Data/ScriptHandle.h"
+#include "engine/include/core/Math/Transform.h"
+#include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/assets/Script/Data/ScriptHandle.h"
 
 void QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(sol::state* luaState) {
 	luaState->set_function("CreateEntity", [](const std::string& entityName, const Transform& transform) {

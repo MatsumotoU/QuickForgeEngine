@@ -1,10 +1,9 @@
-#include "OnWindowsEditor.h"
+#include "editor/include/OnWindowsEditor.h"
 
 #ifdef _DEBUG
-#include "Assets/AssetManager.h"
-#include "AppUtility/FileSystems/FileUtility.h"
-#include "AppUtility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 OnWindowsEditor::OnWindowsEditor() {

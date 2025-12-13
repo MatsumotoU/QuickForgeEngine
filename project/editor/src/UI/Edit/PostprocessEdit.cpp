@@ -1,5 +1,5 @@
 #include "PostprocessEdit.h"
-#include "Graphic/PostEffect/RendaringPostprocess.h"
+#include "graphic/PostEffect/RendaringPostprocess.h"
 
 void PostprocessEdit::Initialize() {
 	name_ = "PostprocessEdit";

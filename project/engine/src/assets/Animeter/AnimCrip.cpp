@@ -1,6 +1,6 @@
 #include "AnimCrip.h"
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 AnimCrip::AnimCrip() : isLoop_(false){
@@ -28,7 +28,7 @@ size_t AnimCrip::GetKeyFrameCount() const {
 
 Transform AnimCrip::GetTransformAtTime(float time) const {
 	Transform result;
-	// keyframeが存在しない場合はデフォルトのTransformを返す
+	// keyframeが存在しなぁE��合�EチE��ォルト�ETransformを返す
 	if (keyframes_.empty()) {
 #ifdef _DEBUG
 		DebugLog("GetTransformAtTime: No keyframes available.");
@@ -36,9 +36,9 @@ Transform AnimCrip::GetTransformAtTime(float time) const {
 		return result;
 	}
 
-	// 総アニメーション時間を計算
+	// 総アニメーション時間を計箁E
 	float totalDuration = keyframes_.back().time;
-	// ループ設定に基づいて時間を調整
+	// ループ設定に基づぁE��時間を調整
 	if (isLoop_) {
 		time = fmod(time, totalDuration);
 	} else {
@@ -58,11 +58,11 @@ Transform AnimCrip::GetTransformAtTime(float time) const {
 			break;
 		}
 	}
-	// 最初のキーフレームより前の場合
+	// 最初�Eキーフレームより前�E場吁E
 	if (!previousKeyFrame) {
 		return keyframes_.front().transform;
 	}
-	// キーフレーム間の補間
+	// キーフレーム間�E補間
 	float segmentDuration = nextKeyFrame->time - previousKeyFrame->time;
 	float t = (time - previousKeyFrame->time) / segmentDuration;
 	t;

@@ -1,6 +1,6 @@
-#include "Matrix4x4.h"
-#include "Core/Math/Vector/Vector3.h"
-#include "Core/Math/Transform.h"
+#include "engine/include/core/Math/Matrix/Matrix4x4.h"
+#include "engine/include/core/Math/Vector/Vector3.h"
+#include "engine/include/core/Math/Transform.h"
 #include <assert.h>
 
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
@@ -567,12 +567,12 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 
 	float dot = Vector3::Dot(u, v);
 
-	// ほぼ同じ方向の場合
+	// ほぼ同じ方向�E場吁E
 	if (std::abs(dot - 1.0f) < 1e-6f) {
 		return Matrix4x4::MakeIndentity4x4();
 	}
 
-	// ほぼ逆方向の場合（180度回転、任意の垂直軸で回転）
+	// ほぼ送E�E��E�向�E場合！E80度回転、任意�E垂直軸で回転�E�E�E�E
 	if (std::abs(dot + 1.0f) < 1e-6f) {
 		// uに垂直な任意軸を選ぶ
 		Vector3 axis = Vector3::Perpendicular(u).Normalize();

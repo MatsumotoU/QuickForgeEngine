@@ -4,8 +4,8 @@
 #include <vector>
 #include <list>
 #include <unordered_map>
-#include "IEditor.h"
-#include "UI/UIManager.h"
+#include "editor/include/IEditor.h"
+#include "editor/include/UI/UIManager.h"
 
 class OnWindowsEditor final : public IEditor {
 public:

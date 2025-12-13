@@ -1,6 +1,6 @@
 #pragma once
-#include "Core/Graphic/IGraphicCommon.h"
-#include "Utility/DesignPatterns/Singleton.h"
+#include "engine/include/core/Graphic/IGraphicCommon.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
 
 #include "Descriptors/DescriptorHeapManager.h"
 
@@ -10,10 +10,10 @@
 #include "Fence/Fence.h"
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DirectX/DirectX12DebugCore.h"
+#include "engine/include/utility/DebugTool/DirectX/DirectX12DebugCore.h"
 #endif // _DEBUG
 
-// TODO: DepthStencilをここに置かない
+// TODO: DepthStencilをここに置かなぁE
 
 class DirectXCommon final : public Singleton<DirectXCommon> {
 	friend class Singleton<DirectXCommon>;

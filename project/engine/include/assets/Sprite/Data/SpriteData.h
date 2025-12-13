@@ -1,6 +1,6 @@
 #pragma once
-#include "Core/Entity/Component/ComponentData.h"
-#include "Core/Math/Vector/Vector2.h"
+#include "engine/include/core/Entity/Component/ComponentData.h"
+#include "engine/include/core/Math/Vector/Vector2.h"
 
 class SpriteData final: public ComponentData {
 public:

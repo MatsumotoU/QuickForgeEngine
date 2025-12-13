@@ -1,5 +1,5 @@
-#include "GameWindow.h"
-#include "String/MyString.h"
+#include "engine/include/window/GameWindow.h"
+#include "engine/include/utility/String/MyString.h"
 
 void GameWindow::Initialize(const uint32_t& width, const uint32_t& height, const std::string& windowName) {
 	configData_.clientWidth = width;

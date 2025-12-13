@@ -1,40 +1,40 @@
 #include "SceneObject.h"
-#include "Assets/AssetManager.h"
+#include "engine/include/assets/AssetManager.h"
 #include <cassert>
 
-#include "Core/EngineGlobalValue.h"
+#include "engine/include/core/EngineGlobalValue.h"
 
-#include "Assets/AssetManager.h"
-#include "Camera/CameraManager.h"
-#include "Assets/Script/LuaScriptResourceManager.h"
-#include "Assets/Script/CsharpVirtualEnvironmentOnQFE.h"
-#include "Assets/Script/Data/CsharpComponent.h"
-#include "Collider/ColliderManager.h"
-#include "Audio/AudioInterface.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/camera/CameraManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+#include "engine/include/assets/Script/Data/CsharpComponent.h"
+#include "engine/include/collider/ColliderManager.h"
+#include "engine/include/audio/AudioInterface.h"
 
-#include "Assets/3DModel/Data/ModelHandle.h"
+#include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "Data/SceneObjectData.h"
-#include "Assets/Script/Data/ScriptHandle.h"
-#include "Physics/PhysicsManager.h"
-#include "Collider/Data/SphereColliderData.h"
-#include "Core/Math/ParentData.h"
-#include "Camera/Data/CameraData.h"
+#include "engine/include/assets/Script/Data/ScriptHandle.h"
+#include "engine/include/physics/PhysicsManager.h"
+#include "engine/include/collider/Data/SphereColliderData.h"
+#include "engine/include/core/Math/ParentData.h"
+#include "engine/include/camera/Data/CameraData.h"
 
 #include <fstream>
 #include <execution>
 #include <nlohmann/json.hpp>
 
-#include "Assets/3DModel/Loader/AssimpModelLoader.h"
-#include "Assets/3DModel/Data/ModelHandle.h"
-#include "Assets/Sprite/Data/SpriteData.h"
-#include "Assets/Particle/Data/ParticleComponent.h"
+#include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
+#include "engine/include/assets/3DModel/Data/ModelHandle.h"
+#include "engine/include/assets/Sprite/Data/SpriteData.h"
+#include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
-#include "Renderer/ModelRenderer.h"
-#include "Renderer/SpriteRenderer.h"
-#include "Renderer/ParticleRenderer.h"
+#include "engine/include/renderer/ModelRenderer.h"
+#include "engine/include/renderer/SpriteRenderer.h"
+#include "engine/include/renderer/ParticleRenderer.h"
 
 #ifdef _DEBUG
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 SceneObject::SceneObject() {
@@ -69,7 +69,7 @@ void SceneObject::Update() {
 	// コライダー更新
 	ColliderManager::GetInstance()->Update();
 
-	// ユニークIDが未設定なら設定する
+	// ユニ�EクIDが未設定なら設定すめE
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
 	for (auto entityId : entities) {
@@ -82,7 +82,7 @@ void SceneObject::Update() {
 			}
 		}
 	}
-	// ユニークIDが重複していたら再設定する
+	// ユニ�EクIDが重褁E��てぁE��ら�E設定すめE
 	std::set<uint32_t> checkIds;
 	for (auto entityId : entities) {
 		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
@@ -94,16 +94,16 @@ void SceneObject::Update() {
 		}
 	}
 
-	// ワールド行列更新(wvpを別コンポーネントにする)
+	// ワールド行�E更新(wvpを別コンポ�Eネントにする)
 	AssetManager* assetManager = AssetManager::GetInstance();
 	for (auto entityId : entities) {
 		if (entityManager->HasComponent<Transform>(entityId)) {
 			Transform& transform = entityManager->GetComponent<Transform>(entityId);
-			// モデルのワールド行列更新
+			// モチE��のワールド行�E更新
 			if (entityManager->HasComponent<ModelHandle>(entityId)) {
 				ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
 				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-				// メッシュごとにワールド行列更新
+				// メチE��ュごとにワールド行�E更新
 				for (const auto& meshData : modelData->meshRenderDataHandles) {
 					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
 					wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
@@ -113,7 +113,7 @@ void SceneObject::Update() {
 					);
 				}
 			}
-			// スプライトのワールド行列更新
+			// スプライト�Eワールド行�E更新
 			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
 				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
@@ -124,7 +124,7 @@ void SceneObject::Update() {
 				);
 			}
 
-			// パーティクルのワールド行列更新
+			// パ�EチE��クルのワールド行�E更新
 			if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
 				ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(entityId);
 				ParticleForGPU* particleData = assetManager->GetParticleGpuDataManager()->GetDataPtr(particleComp.particleGpuBufferHandle);
@@ -160,18 +160,18 @@ void SceneObject::Update() {
 
 			if (assetManager->GetEntityManager()->HasComponent<Transform>(parentId)) {
 				Transform& parentTransform = assetManager->GetEntityManager()->GetComponent<Transform>(parentId);
-				// モデルのワールド行列更新
+				// モチE��のワールド行�E更新
 				if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
 					ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
 					const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-					// メッシュごとにワールド行列更新
+					// メチE��ュごとにワールド行�E更新
 					for (const auto& meshData : modelData->meshRenderDataHandles) {
 						TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
 						wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
 							parentTransform.scale, parentTransform.rotate, parentTransform.translate));
 					}
 				}
-				// スプライトのワールド行列更新
+				// スプライト�Eワールド行�E更新
 				if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 					SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
 					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
@@ -200,28 +200,28 @@ void SceneObject::PreDraw() {
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	cameraManager->Update();
 
-	// ビュー行列更新
+	// ビュー行�E更新
 	AssetManager* assetManager = AssetManager::GetInstance();
 	std::vector<uint32_t> entities = assetManager->GetEntityManager()->GetActiveEntityIds();
 	for (auto entityId : entities) {
 		if (assetManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
-			// モデルのワールド行列更新
+			// モチE��のワールド行�E更新
 			if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
 				ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
 				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-				// メッシュごとにワールド行列更新
+				// メチE��ュごとにワールド行�E更新
 				for (const auto& meshData : modelData->meshRenderDataHandles) {
 					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
 					wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
 				}
 			}
-			// スプライトのワールド行列更新
+			// スプライト�Eワールド行�E更新
 			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
 				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
 				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Orthographic);
 			}
-			// パーティクルのワールド行列更新
+			// パ�EチE��クルのワールド行�E更新
 			if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
 				ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(entityId);
 				ParticleForGPU* particleData = assetManager->GetParticleGpuDataManager()->GetDataPtr(particleComp.particleGpuBufferHandle);
@@ -232,7 +232,7 @@ void SceneObject::PreDraw() {
 		}
 	}
 
-	// スプライトのピボット更新
+	// スプライト�Eピ�EチE��更新
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	if (entityManager->HasComponentStrage<SpriteData>()) {
 		auto& strage = entityManager->GetComponentStrage<SpriteData>();
@@ -240,16 +240,16 @@ void SceneObject::PreDraw() {
 			VertexData* vertexData = assetManager->GetSpriteManager()->GetVertexData(data.vertexBufferHandle);
 			float w = data.width;
 			float h = data.height;
-			// ピボットによる位置調整
+			// ピ�EチE��による位置調整
 			Vector2 pivotOffset = Vector2(0.0f, 0.0f);
 			pivotOffset.x = -w * data.pivot.x;
 			pivotOffset.y = -h * data.pivot.y;
-			vertexData[0].position = { pivotOffset.x, pivotOffset.y, 0.0f,1.0f };               // 左上
-			vertexData[1].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 右上
-			vertexData[2].position = { pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };       // 左下
-			vertexData[3].position = { w + pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };   // 右下
-			vertexData[4].position = { pivotOffset.x, h + pivotOffset.y, 0.0f,1.0f };       // 左下
-			vertexData[5].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 右上
+			vertexData[0].position = { pivotOffset.x, pivotOffset.y, 0.0f,1.0f };               // 左丁E
+			vertexData[1].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 右丁E
+			vertexData[2].position = { pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };       // 左丁E
+			vertexData[3].position = { w + pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };   // 右丁E
+			vertexData[4].position = { pivotOffset.x, h + pivotOffset.y, 0.0f,1.0f };       // 左丁E
+			vertexData[5].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 右丁E
 		}
 	}
 }
@@ -257,31 +257,31 @@ void SceneObject::PreDraw() {
 void SceneObject::Draw() {
 	// コライダー描画
 	ColliderManager::GetInstance()->Draw();
-	// パーティクル描画
+	// パ�EチE��クル描画
 	if (assetManager_->GetEntityManager()->HasComponentStrage<ParticleComponent>()) {
 		const auto& particleStrage = assetManager_->GetEntityManager()->GetComponentStrage<ParticleComponent>();
 		for (const auto& [entityId, particle] : particleStrage) {
 			Render::Particle::DrawParticles(entityId);
 		}
 	}
-	// モデル描画
+	// モチE��描画
 	if (assetManager_->GetEntityManager()->HasComponentStrage<ModelHandle>()) {
 		const auto& modelStrage = assetManager_->GetEntityManager()->GetComponentStrage<ModelHandle>();
 		for (const auto& [entityId, model] : modelStrage) {
 			Render::Model::DrawModel(model.handle);
 		}
 	}
-	// スプライト描画（layer順にソート）
+	// スプライト描画�E�Eayer頁E��ソート！E
 	if (assetManager_->GetEntityManager()->HasComponentStrage<SpriteData>()) {
 		const auto& spriteStrage = assetManager_->GetEntityManager()->GetComponentStrage<SpriteData>();
-		// 一時的なvectorにコピー
+		// 一時的なvectorにコピ�E
 		std::vector<std::pair<uint32_t, SpriteData>> sortedSprites(spriteStrage.begin(), spriteStrage.end());
-		// layerで昇順ソート
+		// layerで昁E��E��ーチE
 		std::sort(sortedSprites.begin(), sortedSprites.end(),
 			[](const auto& a, const auto& b) {
 				return a.second.layer < b.second.layer;
 			});
-		// ソート済み順で描画
+		// ソート済み頁E��描画
 #ifdef _DEBUG
 		DebugLog(std::format("DrawSprite"));
 #endif // _DEBUG
@@ -328,7 +328,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	AudioInterface::GetInstance()->StopAllSound();
 	CsharpVirtualEnvironmentOnQFE::GetInstance()->ResetScripts();
 
-	// シーンファイルのパスを組み立て
+	// シーンファイルのパスを絁E��立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
 	std::ifstream ifs(sceneFilePath + sceneNameCopy);
 	if (!ifs.is_open()) {
@@ -338,14 +338,14 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
 	ifs.close();
-	// シーン名の設定
+	// シーン名�E設宁E
 	if (sceneJson.contains("sceneName")) {
 		sceneName_ = sceneJson["sceneName"].get<std::string>();
 	} else {
 		sceneName_ = "NoNameScene";
 	}
 
-	// エンティティの復元
+	// エンチE��チE��の復允E
 	if (!sceneJson.contains("entities")) return;
 
 	for (const auto& entityJson : sceneJson["entities"]) {
@@ -439,7 +439,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
 	assetManager->GetEntityManager()->EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
-	// いつものやつ追加
+	// ぁE��も�EめE��追加
 	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = modelName + "_ParticleEmitter";
@@ -465,7 +465,7 @@ void SceneObject::AddModel(const std::string& modelName) {
 
 void SceneObject::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer, Vector2 pivot) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	// entityId指定があればそれを使う、なければ新規作成
+	// entityId持E��があればそれを使ぁE��なければ新規作�E
 	uint32_t entityId;
 	if (inEntityId != -1) {
 		entityId = static_cast<uint32_t>(inEntityId);
@@ -509,10 +509,10 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	light->color = { 1.0f,1.0f,1.0f,1.0f };
 	light->direction = { 0.0f,-1.0f,0.0f };
 	light->intensity = 1.0f;
-	// スプライトデータをエンティティに追加
+	// スプライトデータをエンチE��チE��に追加
 	assetManager->GetEntityManager()->EmplaceComponent<SpriteData>(entityId, spriteData);
 
-	// いつものやつ追加
+	// ぁE��も�EめE��追加
 	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = spriteName;
@@ -551,7 +551,7 @@ void SceneObject::AddLuaScript(uint32_t entityId, const std::string& scriptName)
 		entityManager->EmplaceComponent<ScriptHandles>(entityId, scriptHandles);
 	} else {
 		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
-		// すでに同じスクリプトがアタッチされている場合は追加しない
+		// すでに同じスクリプトがアタチE��されてぁE��場合�E追加しなぁE
 		for (const auto& sh : scriptHandles.scriptHandles_) {
 			if (sh.scriptName_ == scriptName) {
 				return;
@@ -578,9 +578,9 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		entityManager->EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
 
 	} else {
-		// 既存のコンポーネントに追加
+		// 既存�Eコンポ�Eネントに追加
 		CsharpComponent& csharpComponent = entityManager->GetComponent<CsharpComponent>(entityId);
-		// すでに同じクラスがアタッチされている場合は追加しない
+		// すでに同じクラスがアタチE��されてぁE��場合�E追加しなぁE
 		for (const auto& handles : csharpComponent.csharpHandles_) {
 			if (handles.className_ == className) {
 #ifdef _DEBUG
@@ -603,17 +603,17 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	DebugLog("AddEntity: " + entityName);
 #endif // _DEBUG
 
-	// 既に読み込んだことがあるエンティティ名ならそれを返す
+	// 既に読み込んだことがあるエンチE��チE��名ならそれを返す
 #ifdef _NODEBUG
 	if (loadEntities_.find(entityName) != loadEntities_.end()) {
-		// Entityの生成
+		// Entityの生�E
 		uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 		DeserializeEntity(entityId, loadEntities_[entityName]);
 		return entityId;
 	}
 #endif // _NODEBUG
 
-	// Entityのパスを組み立て
+	// Entityのパスを絁E��立て
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
 	std::ifstream ifs(sceneFilePath + entityName);
 	if (!ifs.is_open()) {
@@ -623,15 +623,15 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 #endif // _DEBUG
 		assert(false && "Faild Open Entity File.");
 	}
-	// Entityの復元
+	// Entityの復允E
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
 	ifs.close();
 
-	// Entityの生成
+	// Entityの生�E
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 	DeserializeEntity(entityId, sceneJson);
-	// 読み込んだエンティティ名を保存
+	// 読み込んだエンチE��チE��名を保孁E
 	loadEntities_[entityName] = sceneJson;
 
 	return entityId;
@@ -640,7 +640,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	uint32_t entityId = AddEntity(entityName);
-	// スクリプト初期化
+	// スクリプト初期匁E
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	if (entityManager->HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
 		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
@@ -677,7 +677,7 @@ void SceneObject::CopyEntity(uint32_t sourceEntityId) {
 void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
-	// エンティティがモデルを持っていなければ何もしない
+	// エンチE��チE��がモチE��を持ってぁE��ければ何もしなぁE
 	if (!entityManager->HasComponent<ModelHandle>(entityId)) {
 #ifdef _DEBUG
 		DebugLog("ChangeModel entity does not have ModelRenderData", LogLevel::Warning);
@@ -783,7 +783,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	usedEntityId_.insert(entityId);
 
-	// 必要なコンポーネントを追加
+	// 忁E��なコンポ�Eネントを追加
 	if (entityJson.contains("SpriteData")) {
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
@@ -838,7 +838,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	if (entityJson.contains("CsharpComponent")) {
 		std::vector<std::string> classNames;
 		if (entityJson["CsharpComponent"].contains("CsharpHandles")) {
-			// C#スクリプトの復元
+			// C#スクリプトの復允E
 			for (const auto& handle : entityJson["CsharpComponent"]["CsharpHandles"]) {
 				if (handle.contains("ClassName")) {
 #ifdef _DEBUG
@@ -853,7 +853,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		std::vector<std::string> scriptNames;
 		if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
 
-			// スクリプトの復元
+			// スクリプトの復允E
 			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
 				if (handle.contains("scriptName")) {
 #ifdef _DEBUG
@@ -862,11 +862,11 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 					AddLuaScript(entityId, handle["scriptName"].get<std::string>());
 				}
 			}
-			// グローバル変数の復元
+			// グローバル変数の復允E
 			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
 				if (handle.contains("scriptName")) {
 					ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
-					// グローバル変数の復元準備
+					// グローバル変数の復允E��備
 					std::vector<uint32_t> luaHandles;
 					for (auto& sh : scriptHandles.scriptHandles_) {
 						luaHandles.push_back(sh.handle_);
@@ -876,9 +876,9 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 						scriptHandles.scriptHandles_[i].handle_ = luaHandles[i];
 					}
 
-					// 後付け情報の復元
+					// 後付け惁E��の復允E
 					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
-						// グローバル変数の復元
+						// グローバル変数の復允E
 						LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_);
 						sol::state* state = script->GetScript();
 						for (const auto& [key, val] : hl.intParams_) {
@@ -894,7 +894,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 							(*state)[key] = val;
 						}
 
-						// 優先度の復元
+						// 優先度の復允E
 						script->SetPriority(hl.priority_);
 					}
 				}

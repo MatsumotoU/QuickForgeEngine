@@ -3,7 +3,7 @@
 
 #ifdef _DEBUG
 #include <format>
-#include "AppUtility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename, ModelData& modelData) {
@@ -33,7 +33,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		DebugLog(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
 #endif // _DEBUG
 
-		// 頂点データ
+		// 頂点チE�Eタ
 		std::vector<VertexData> tempVertices;
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			VertexData vtx;
@@ -65,7 +65,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			tempVertices.push_back(vtx);
 		}
 
-		// インデックス（三角形ごとに頂点を詰める）
+		// インチE��クス�E�三角形ごとに頂点を詰める�E�E
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			const aiFace& face = mesh->mFaces[i];
 			if (face.mNumIndices == 3) {
@@ -75,7 +75,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			}
 		}
 
-		// マテリアル・テクスチャ
+		// マテリアル・チE��スチャ
 		if (scene->HasMaterials() && mesh->mMaterialIndex < scene->mNumMaterials) {
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			aiString texPath;
