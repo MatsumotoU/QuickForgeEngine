@@ -1,4 +1,4 @@
-#include "Force.h"
+#include "engine/include/physics/Force.h"
 
 Force::Force() {
 	velocity = Vector3(0.0f, 0.0f, 0.0f);
