@@ -1,4 +1,4 @@
-#include "FileUtility.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 #include <cassert>
 #include <windows.h>
 
@@ -17,14 +17,14 @@ std::vector<std::string> QFE::FILE::GetFilesInDirectory(const std::string& direc
 }
 
 bool QFE::FILE::OpenFileOnExe(const std::string& exePath, const std::string& filePath) {
-    // ShellExecuteAの戻り値ぁE2以下なら失敁E
+    // ShellExecuteA縺ｮ謌ｻ繧雁､縺・2莉･荳九↑繧牙､ｱ謨・
     HINSTANCE result = ShellExecuteA(
-        NULL,           // ウィンドウハンドル
-        "open",         // 操佁E
-        exePath.c_str(),// 実行するexe
-        filePath.c_str(),// 引数�E�ここでは開きたいファイルパス�E�E
-        NULL,           // カレントディレクトリ
-        SW_SHOWNORMAL   // ウィンドウ表示方況E
+        NULL,           // 繧ｦ繧｣繝ｳ繝峨え繝上Φ繝峨Ν
+        "open",         // 謫堺ｽ・
+        exePath.c_str(),// 螳溯｡後☆繧菊xe
+        filePath.c_str(),// 蠑墓焚・医％縺薙〒縺ｯ髢九″縺溘＞繝輔ぃ繧､繝ｫ繝代せ・・
+        NULL,           // 繧ｫ繝ｬ繝ｳ繝医ョ繧｣繝ｬ繧ｯ繝医Μ
+        SW_SHOWNORMAL   // 繧ｦ繧｣繝ｳ繝峨え陦ｨ遉ｺ譁ｹ豕・
     );
     return reinterpret_cast<intptr_t>(result) > 32;
 }
@@ -76,7 +76,7 @@ bool QFE::FILE::LoadCSVToVector(const std::string& filePath, std::vector<std::ve
 bool QFE::FILE::SaveJSONToFile(const std::string& filePath, const nlohmann::json& json) {
 	std::ofstream ofs(filePath);
 	if (ofs.is_open()) {
-		ofs << json.dump(4); // インチE��ト幁Eで整形して保孁E
+		ofs << json.dump(4); // 繧､繝ｳ繝・Φ繝亥ｹ・縺ｧ謨ｴ蠖｢縺励※菫晏ｭ・
 		ofs.close();
 		return true;
 	}

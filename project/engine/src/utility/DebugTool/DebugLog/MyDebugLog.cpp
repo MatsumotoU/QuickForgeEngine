@@ -1,4 +1,4 @@
-#include "MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "BuildInfo.h"
 
 MyDebugLog::MyDebugLog() {
@@ -26,7 +26,7 @@ void MyDebugLog::Initialize() {
 
 	logStream_.open(logFilePath_);
 
-	// ここでビルド情報を�E劁E
+	// 縺薙％縺ｧ繝薙Ν繝画ュ蝣ｱ繧貞・蜉・
 	logStream_ << "Build Date: " << __DATE__ << " " << __TIME__ << std::endl;
 #ifdef APP_VERSION
 	logStream_ << "App Version: " << APP_VERSION << std::endl;

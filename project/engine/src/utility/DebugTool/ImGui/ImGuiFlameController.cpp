@@ -1,4 +1,4 @@
-#include "ImGuiFlameController.h"
+#include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // DEBUG
@@ -28,7 +28,7 @@ void ImGuiFlameController::Initialize(const HWND& hwnd, ID3D12GraphicsCommandLis
 	srvDescriptorHeap_ = srvDescriptorHeap;
 	assert(srvDescriptorHeap_ != nullptr);
 
-	// ImGuiの初期匁E
+	// ImGui縺ｮ蛻晄悄蛹・
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
@@ -36,15 +36,15 @@ void ImGuiFlameController::Initialize(const HWND& hwnd, ID3D12GraphicsCommandLis
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ImGui_ImplWin32_Init(hwnd);
 
-	// ImPlotの初期匁E
+	// ImPlot縺ｮ蛻晄悄蛹・
 	ImPlot::CreateContext();
 }
 
 void ImGuiFlameController::EndImGui() {
-	// ImPilotの終亁E�E琁E
+	// ImPilot縺ｮ邨ゆｺ・・逅・
 	ImPlot::DestroyContext();
 
-	// ImGuiの終亁E�E琁E
+	// ImGui縺ｮ邨ゆｺ・・逅・
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -60,22 +60,22 @@ void ImGuiFlameController::BeginFrame() {
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 
-	// DescriptorHeapの設宁E
+	// DescriptorHeap縺ｮ險ｭ螳・
 	commandList_->SetDescriptorHeaps(1, srvDescriptorHeap_);
 }
 
 void ImGuiFlameController::EndFrame(D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferCpuHandle) {
-	// ImGuiの描画
+	// ImGui縺ｮ謠冗判
 	ImGui::Render();
 
-	// 追加: ビューポ�Eト用のプラチE��フォームウィンドウも描画
+	// 霑ｽ蜉: 繝薙Η繝ｼ繝昴・繝育畑縺ｮ繝励Λ繝・ヨ繝輔か繝ｼ繝繧ｦ繧｣繝ｳ繝峨え繧よ緒逕ｻ
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 	}
 
-	// レンダーターゲチE��の設宁E
+	// 繝ｬ繝ｳ繝繝ｼ繧ｿ繝ｼ繧ｲ繝・ヨ縺ｮ險ｭ螳・
 	commandList_->OMSetRenderTargets(1, &currentBackBufferCpuHandle, FALSE, nullptr);
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
 }
