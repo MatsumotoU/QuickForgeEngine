@@ -1,4 +1,4 @@
-#include "CsharpComponent.h"
+#include "engine/include/assets/Script/Data/CsharpComponent.h"
 
 nlohmann::json CsharpComponent::Serialize() const {
 	nlohmann::json json;

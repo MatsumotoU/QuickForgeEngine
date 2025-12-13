@@ -1,4 +1,4 @@
-#include "AnimCrip.h"
+#include "engine/include/assets/Animeter/AnimCrip.h"
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -28,7 +28,7 @@ size_t AnimCrip::GetKeyFrameCount() const {
 
 Transform AnimCrip::GetTransformAtTime(float time) const {
 	Transform result;
-	// keyframeが存在しなぁE��合�EチE��ォルト�ETransformを返す
+	// keyframe縺悟ｭ伜惠縺励↑縺・ｴ蜷医・繝・ヵ繧ｩ繝ｫ繝医・Transform繧定ｿ斐☆
 	if (keyframes_.empty()) {
 #ifdef _DEBUG
 		DebugLog("GetTransformAtTime: No keyframes available.");
@@ -36,9 +36,9 @@ Transform AnimCrip::GetTransformAtTime(float time) const {
 		return result;
 	}
 
-	// 総アニメーション時間を計箁E
+	// 邱上い繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ譎る俣繧定ｨ育ｮ・
 	float totalDuration = keyframes_.back().time;
-	// ループ設定に基づぁE��時間を調整
+	// 繝ｫ繝ｼ繝苓ｨｭ螳壹↓蝓ｺ縺･縺・※譎る俣繧定ｪｿ謨ｴ
 	if (isLoop_) {
 		time = fmod(time, totalDuration);
 	} else {
@@ -46,7 +46,7 @@ Transform AnimCrip::GetTransformAtTime(float time) const {
 			return keyframes_.back().transform;
 		}
 	}
-	// 現在の時間に対応するキーフレームを見つける
+	// 迴ｾ蝨ｨ縺ｮ譎る俣縺ｫ蟇ｾ蠢懊☆繧九く繝ｼ繝輔Ξ繝ｼ繝繧定ｦ九▽縺代ｋ
 	const KeyFrame* previousKeyFrame = nullptr;
 	const KeyFrame* nextKeyFrame = nullptr;
 	for (size_t i = 0; i < keyframes_.size(); ++i) {
@@ -58,11 +58,11 @@ Transform AnimCrip::GetTransformAtTime(float time) const {
 			break;
 		}
 	}
-	// 最初�Eキーフレームより前�E場吁E
+	// 譛蛻昴・繧ｭ繝ｼ繝輔Ξ繝ｼ繝繧医ｊ蜑阪・蝣ｴ蜷・
 	if (!previousKeyFrame) {
 		return keyframes_.front().transform;
 	}
-	// キーフレーム間�E補間
+	// 繧ｭ繝ｼ繝輔Ξ繝ｼ繝髢薙・陬憺俣
 	float segmentDuration = nextKeyFrame->time - previousKeyFrame->time;
 	float t = (time - previousKeyFrame->time) / segmentDuration;
 	t;

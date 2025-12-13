@@ -1,4 +1,4 @@
-#include "LuaScriptOnQFESetSceneFunction.h"
+#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetSceneFunction.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/assets/Script/LuaScriptResourceManager.h"

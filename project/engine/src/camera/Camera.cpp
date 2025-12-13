@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "engine/include/camera/Camera.h"
 #include <cassert>
 #include "engine/include/core/EngineGlobalValue.h"
 
@@ -9,7 +9,7 @@
 #include "engine/include/assets/AssetManager.h" 
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
-#include "Data/CameraData.h"
+#include "engine/include/camera/Data/CameraData.h"
 
 void Camera::Initialize() {
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
@@ -49,18 +49,18 @@ void Camera::Update() {
 }
 
 bool Camera::CheckVisible(const Matrix4x4& world) const {
-	// ワールド座標�E原点を取征E
+	// 繝ｯ繝ｼ繝ｫ繝牙ｺｧ讓吶・蜴溽せ繧貞叙蠕・
 	Vector4 pos4(0.0f, 0.0f, 0.0f, 1.0f);
 	Vector4 worldPos = Vector4::Transform(pos4, world);
 
-	// クリチE�E空間へ変換
+	// 繧ｯ繝ｪ繝・・遨ｺ髢薙∈螟画鋤
 	Vector4 clipPos = Vector4::Transform(worldPos, viewProjectionMatrix_);
 
-	// wで割ってNDCへ
+	// w縺ｧ蜑ｲ縺｣縺ｦNDC縺ｸ
 	if (clipPos.w == 0.0f) return false;
 	Vector3 ndcPos = { clipPos.x / clipPos.w, clipPos.y / clipPos.w, clipPos.z / clipPos.w };
 
-	// NDC篁E��冁E��判定！EirectX: zは0�E�E, OpenGL: zは-1�E�E�E�E
+	// NDC遽・峇蜀・°蛻､螳夲ｼ・irectX: z縺ｯ0・・, OpenGL: z縺ｯ-1・・・・
 	return
 		ndcPos.x >= -1.0f && ndcPos.x <= 1.0f &&
 		ndcPos.y >= -1.0f && ndcPos.y <= 1.0f &&

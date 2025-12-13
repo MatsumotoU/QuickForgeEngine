@@ -1,4 +1,4 @@
-#include "LuaScriptOnQFESetSubModuleBase.h"
+#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetSubModuleBase.h"
 #include "engine/include/input/InputInterface.h"
 #include "engine/include/audio/AudioInterface.h"
 #include "engine/include/assets/AudioSource/AudioSourceManager.h"
@@ -9,12 +9,12 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 	sol::table input = qfe.create_named("Input");
 	sol::table audio = qfe.create_named("Audio");
 
-	// 入劁E
+	// 蜈･蜉・
 	InputInterface* inputManager = InputInterface::GetInstance();
 	input.set_function("GetKeyMoveDir", [inputManager]() {
 		return inputManager->GetKeyMoveDir();
 		});
-	// キーボ�EチE
+	// 繧ｭ繝ｼ繝懊・繝・
 	input.set_function("GetKeyPress", [inputManager](std::string actionName) {
 		return inputManager->GetKeyPress(actionName);
 		});
@@ -24,7 +24,7 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 	input.set_function("GetKeyRelease", [inputManager](std::string actionName) {
 		return inputManager->GetKeyRelease(actionName);
 		});
-	// マウス
+	// 繝槭え繧ｹ
 	input.set_function("GetMousePress", [inputManager](int8_t button) {
 		return inputManager->GetMousePress(button);
 		});
@@ -43,7 +43,7 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 	input.set_function("GetMouseWheelDir", [inputManager]() {
 		return inputManager->GetMouseWheelDir();
 		});
-	// ゲームパッチE
+	// 繧ｲ繝ｼ繝繝代ャ繝・
 	input.set_function("GetGamePadPress", [inputManager](uint16_t button) {
 		return inputManager->GetGamePadPress(button);
 		});
@@ -60,7 +60,7 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 		return inputManager->GetGamePadRightStickDir();
 		});
 
-	// オーチE��オ
+	// 繧ｪ繝ｼ繝・ぅ繧ｪ
 	audio.set_function("LoadSound", [](const std::string& soundName) {
 		return AssetManager::GetInstance()->LoadAudio(soundName);
 		});

@@ -1,4 +1,4 @@
-#include "ShaderReflection.h"
+#include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -29,12 +29,12 @@ void ShaderReflection::RunShaderReflection(IDxcBlob* shaderBlob) {
 
 nlohmann::json ShaderReflection::Serialize() const {
 	nlohmann::json jsonData;
-	// シェーダーの基本惁E��の取征E
+	// 繧ｷ繧ｧ繝ｼ繝繝ｼ縺ｮ蝓ｺ譛ｬ諠・ｱ縺ｮ蜿門ｾ・
 	D3D12_SHADER_DESC shaderDesc{};
 	HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
 	assert(SUCCEEDED(hr) && "Failed to get shader description.");
 
-	// 入力レイアウト情報の取征E
+	// 蜈･蜉帙Ξ繧､繧｢繧ｦ繝域ュ蝣ｱ縺ｮ蜿門ｾ・
 	jsonData["Inputs"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.InputParameters; ++i) {
 		D3D12_SIGNATURE_PARAMETER_DESC paramDesc{};
@@ -51,7 +51,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 		jsonData["Inputs"].push_back(inputJson);
 	}
 
-	// リソース惁E��の取征E
+	// 繝ｪ繧ｽ繝ｼ繧ｹ諠・ｱ縺ｮ蜿門ｾ・
 	jsonData["Resources"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -67,7 +67,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 		jsonData["Resources"].push_back(resourceJson);
 	}
 
-	// 定数バッファ惁E��の取征E
+	// 螳壽焚繝舌ャ繝輔ぃ諠・ｱ縺ｮ蜿門ｾ・
 	jsonData["ConstantBuffers"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.ConstantBuffers; ++i) {
 		ID3D12ShaderReflectionConstantBuffer* constBuffer = shaderReflection_->GetConstantBufferByIndex(i);
@@ -92,7 +92,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 		jsonData["ConstantBuffers"].push_back(bufferJson);
 	}
 
-	// StructuredBuffer惁E��の取征E
+	// StructuredBuffer諠・ｱ縺ｮ蜿門ｾ・
 	jsonData["StructuredBuffers"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -109,7 +109,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 		}
 	}
 
-	// チE��スチャ惁E��の取征E
+	// 繝・け繧ｹ繝√Ε諠・ｱ縺ｮ蜿門ｾ・
 	jsonData["Textures"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc{};

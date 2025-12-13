@@ -4,10 +4,10 @@
 
 #include "Descriptors/DescriptorHeapManager.h"
 
-#include "Device/DirectXDevice.h"
+#include "DirectXDevice.h"
 #include "Command/DirectXCommandManager.h"
-#include "SwapChain/SwapChain.h"
-#include "Fence/Fence.h"
+#include "SwapChain.h"
+#include "Fence.h"
 
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DirectX/DirectX12DebugCore.h"

@@ -1,4 +1,4 @@
-#include "SpriteData.h"
+#include "engine/include/assets/Sprite/Data/SpriteData.h"
 
 SpriteData::SpriteData() {
 	textureName = "";

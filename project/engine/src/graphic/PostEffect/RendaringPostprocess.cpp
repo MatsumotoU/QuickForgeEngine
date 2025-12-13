@@ -1,4 +1,5 @@
-#include "RendaringPostprocess.h"
+#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
+
 #include "engine/include/utility/DirectX/TransitionResourceBarrier.h"
 #include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
@@ -39,24 +40,24 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	offScreenClearColor[2] = 0.0f;
 	offScreenClearColor[3] = 0.0f;
 
-	// ポスト�Eロセスの関数を登録
+	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺ｮ髢｢謨ｰ繧堤匳骭ｲ
 	postProcessFunctions_.clear();
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyGrayScale, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyVignette, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyColorCorrection, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyPixcel, this));
-	// 固定�EインチE��クスを設宁E
-	grayScaleProcessIndex_ = 0; // グレースケールのインチE��クス
-	vignetteProcessIndex_ = 1; // ビネチE��のインチE��クス
-	colorCorrectionProcessIndex_ = 2; // 色調補正のインチE��クス
-	pixcelProcessIndex_ = 3; // ピクセル化�EインチE��クス
+	// 蝗ｺ螳壹・繧､繝ｳ繝・ャ繧ｯ繧ｹ繧定ｨｭ螳・
+	grayScaleProcessIndex_ = 0; // 繧ｰ繝ｬ繝ｼ繧ｹ繧ｱ繝ｼ繝ｫ縺ｮ繧､繝ｳ繝・ャ繧ｯ繧ｹ
+	vignetteProcessIndex_ = 1; // 繝薙ロ繝・ヨ縺ｮ繧､繝ｳ繝・ャ繧ｯ繧ｹ
+	colorCorrectionProcessIndex_ = 2; // 濶ｲ隱ｿ陬懈ｭ｣縺ｮ繧､繝ｳ繝・ャ繧ｯ繧ｹ
+	pixcelProcessIndex_ = 3; // 繝斐け繧ｻ繝ｫ蛹悶・繧､繝ｳ繝・ャ繧ｯ繧ｹ
 
 	postProcessOrderForm_.clear();
 
 	grayScaleOffset_ = 0.0f;
 
 #ifdef _DEBUG
-	isImGuiEnabled_ = true; // チE��チE��モードではImGuiを有効にする
+	isImGuiEnabled_ = true; // 繝・ヰ繝・げ繝｢繝ｼ繝峨〒縺ｯImGui繧呈怏蜉ｹ縺ｫ縺吶ｋ
 #endif // _DEBUG
 }
 
@@ -68,14 +69,14 @@ void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsComm
 	assert(device_);
 	assert(list_);
 
-	// Spriteを作る
+	// Sprite繧剃ｽ懊ｋ
 	vertexResource_ = BufferGenerator::Generate(device, sizeof(VertexData) * 4);
 	vertexBufferView_ = {};
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
-	// 頂点チE�Eタ作�E
+	// 鬆らせ繝・・繧ｿ菴懈・
 	vertexData_ = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	vertexData_[0].position = { -1.0f,1.0f,0.0f,1.0f };
@@ -91,7 +92,7 @@ void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsComm
 	vertexData_[3].texcoord = { 1.0f,1.0f };
 	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
 
-	// indexBufferの作�E
+	// indexBuffer縺ｮ菴懈・
 	indexResource_ = BufferGenerator::Generate(device, sizeof(uint32_t) * 6);
 	indexBufferView_ = {};
 	indexBufferView_.BufferLocation = indexResource_.Get()->GetGPUVirtualAddress();
@@ -110,10 +111,10 @@ void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsComm
 void RendaringPostprosecess::SetColorCorrectionPSO(PipelineStateObject* pso) {
 	colorCorrectionPso_ = pso;
 	colorCorrectionOffsetBuffer_.CreateResource(device_);
-	colorCorrectionOffsetBuffer_.GetData()->exposure = 0.0f; // 露出
-	colorCorrectionOffsetBuffer_.GetData()->contrast = 1.0f; // コントラスチE
-	colorCorrectionOffsetBuffer_.GetData()->saturation = 1.0f; // 彩度
-	colorCorrectionOffsetBuffer_.GetData()->gamma = 1.0f; // ガンチE
+	colorCorrectionOffsetBuffer_.GetData()->exposure = 0.0f; // 髴ｲ蜃ｺ
+	colorCorrectionOffsetBuffer_.GetData()->contrast = 1.0f; // 繧ｳ繝ｳ繝医Λ繧ｹ繝・
+	colorCorrectionOffsetBuffer_.GetData()->saturation = 1.0f; // 蠖ｩ蠎ｦ
+	colorCorrectionOffsetBuffer_.GetData()->gamma = 1.0f; // 繧ｬ繝ｳ繝・
 	colorCorrectionOffsetBuffer_.GetData()->hue = 0.0f;
 }
 
@@ -125,9 +126,9 @@ void RendaringPostprosecess::SetGrayScalePSO(PipelineStateObject* pso) {
 void RendaringPostprosecess::SetVignettePSO(PipelineStateObject* pso) {
 	vignettePso_ = pso;
 	vignetteOffsetBuffer_.CreateResource(device_);
-	vignetteOffsetBuffer_.GetData()->VignetteRadius = 0.3f; // ビネチE��の半征E
-	vignetteOffsetBuffer_.GetData()->VignetteSoftness = 0.5f; // ビネチE��の柔らかさ
-	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.2f; // ビネチE��の強ぁE
+	vignetteOffsetBuffer_.GetData()->VignetteRadius = 0.3f; // 繝薙ロ繝・ヨ縺ｮ蜊雁ｾ・
+	vignetteOffsetBuffer_.GetData()->VignetteSoftness = 0.5f; // 繝薙ロ繝・ヨ縺ｮ譟斐ｉ縺九＆
+	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.2f; // 繝薙ロ繝・ヨ縺ｮ蠑ｷ縺・
 }
 
 void RendaringPostprosecess::SetNormalPSO(PipelineStateObject* pso) {
@@ -139,7 +140,7 @@ void RendaringPostprosecess::SetPixcelPSO(PipelineStateObject* pso) {
 	assert(pso);
 	pixcelPso_ = pso;
 	pixcelOffsetBuffer_.CreateResource(device_);
-	pixcelOffsetBuffer_.GetData()->pixcelSize = 5; // ピクセルの大きさ
+	pixcelOffsetBuffer_.GetData()->pixcelSize = 5; // 繝斐け繧ｻ繝ｫ縺ｮ螟ｧ縺阪＆
 	pixcelOffsetBuffer_.GetData()->screenResolution.x = static_cast<float>(QFE::EngineGlobalValue::windowWidth);
 	pixcelOffsetBuffer_.GetData()->screenResolution.y = static_cast<float>(QFE::EngineGlobalValue::windowHeight);
 }
@@ -183,42 +184,42 @@ DescriptorHandles RendaringPostprosecess::GetCurrentSrvHandle() const  {
 }
 
 void RendaringPostprosecess::PreDraw() {
-	// 何回ポスト�EロセスがかかってぁE��か調べめE
+	// 菴募屓繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺後°縺九▲縺ｦ縺・ｋ縺玖ｪｿ縺ｹ繧・
 	postProcessCount_ = 0;
 	postProcessOrderForm_.clear();
 
-	// ピクセル匁E
+	// 繝斐け繧ｻ繝ｫ蛹・
 	if (enablePixcel_) {
-		postProcessOrderForm_.push_back(pixcelProcessIndex_); // ピクセル匁E
+		postProcessOrderForm_.push_back(pixcelProcessIndex_); // 繝斐け繧ｻ繝ｫ蛹・
 		postProcessCount_++;
 
 		pixcelOffsetBuffer_.GetData()->time += QFE::EngineGlobalValue::deltaTime;
 	}
-	// グレースケール
+	// 繧ｰ繝ｬ繝ｼ繧ｹ繧ｱ繝ｼ繝ｫ
 	if (enableGrayscale_) {
-		postProcessOrderForm_.push_back(grayScaleProcessIndex_); // グレースケール
+		postProcessOrderForm_.push_back(grayScaleProcessIndex_); // 繧ｰ繝ｬ繝ｼ繧ｹ繧ｱ繝ｼ繝ｫ
 		postProcessCount_++;
-		// グレースケールの強度
+		// 繧ｰ繝ｬ繝ｼ繧ｹ繧ｱ繝ｼ繝ｫ縺ｮ蠑ｷ蠎ｦ
 		grayScaleOffsetBuffer_.GetData()->offset.x = grayScaleOffset_;
 	}
-	// ビネチE��
+	// 繝薙ロ繝・ヨ
 	if (enableVignette_) {
-		postProcessOrderForm_.push_back(vignetteProcessIndex_); // ビネチE��
+		postProcessOrderForm_.push_back(vignetteProcessIndex_); // 繝薙ロ繝・ヨ
 		postProcessCount_++;
 	}
-	// 色調補正
+	// 濶ｲ隱ｿ陬懈ｭ｣
 	if (enableColorCorrection_) {
-		postProcessOrderForm_.push_back(colorCorrectionProcessIndex_); // 色調補正
+		postProcessOrderForm_.push_back(colorCorrectionProcessIndex_); // 濶ｲ隱ｿ陬懈ｭ｣
 		postProcessCount_++;
 	}
 
-	// ポスト�Eロセスの頁E��を並び替える
+	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺ｮ鬆・分繧剃ｸｦ縺ｳ譖ｿ縺医ｋ
 	if (postProcessCount_ > 0) {
 		grayScaleProcessIndex_ = std::clamp(grayScaleProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
 		vignetteProcessIndex_ = std::clamp(vignetteProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
 	}
 
-	// オフスクリーンのバリアを設宁E
+	// 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ縺ｮ繝舌Μ繧｢繧定ｨｭ螳・
 	if (!isFirstStateRenderTarget_) {
 		TransitionResourceBarrier::Transition(
 			list_, offScreenResources_[0], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -230,39 +231,39 @@ void RendaringPostprosecess::PreDraw() {
 		isSecondStateRenderTarget_ = true;
 	}
 
-	// ImGuiのレンダリング用に絶対にバックバッファに描画する忁E��があるので残す
+	// ImGui縺ｮ繝ｬ繝ｳ繝繝ｪ繝ｳ繧ｰ逕ｨ縺ｫ邨ｶ蟇ｾ縺ｫ繝舌ャ繧ｯ繝舌ャ繝輔ぃ縺ｫ謠冗判縺吶ｋ蠢・ｦ√′縺ゅｋ縺ｮ縺ｧ谿九☆
 	if (isPostprocess_ || isImGuiEnabled_) {
-		// オフスクリーンに描画
+		// 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ縺ｫ謠冗判
 		renderingRosourceIndex_ = 0;
 		list_->OMSetRenderTargets(1,&offScreenRtvHandles_[renderingRosourceIndex_], false, &dsvHandle_);
 
-		// オフスクリーンのクリア
+		// 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ縺ｮ繧ｯ繝ｪ繧｢
 		ClearFirstRenderTarget();
-		// 2つ目のオフスクリーンのクリア
+		// 2縺､逶ｮ縺ｮ繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ縺ｮ繧ｯ繝ｪ繧｢
 		ClearSecondRenderTarget();
 	} else {
-		// バックバッファに描画
+		// 繝舌ャ繧ｯ繝舌ャ繝輔ぃ縺ｫ謠冗判
 		list_->OMSetRenderTargets(1, &backBufferRtvHandle_, false, &dsvHandle_);
 	}
 }
 
 void RendaringPostprosecess::PostDraw() {
-	// ポスト�Eロセスが有効でなぁE��ら何もしなぁE
+	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺梧怏蜉ｹ縺ｧ縺ｪ縺・↑繧我ｽ輔ｂ縺励↑縺・
 	if (!isPostprocess_) {
 		return;
 	} 
-	// オフスクリーンのバリア
+	// 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ縺ｮ繝舌Μ繧｢
 	SwitchRenderTarget();
 	for (uint32_t i = 0; i < postProcessCount_; i++) {
-		// ポスト�Eロセスの適用
+		// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺ｮ驕ｩ逕ｨ
 		postProcessFunctions_[postProcessOrderForm_[i]]();
 		SwitchRenderTarget();
 	}
 
-	// ポスト�Eロセスの適用
+	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺ｮ驕ｩ逕ｨ
 	readingResourceIndex_ = postProcessCount_ % 2;
 
-	// バックバッファに書き込み
+	// 繝舌ャ繧ｯ繝舌ャ繝輔ぃ縺ｫ譖ｸ縺崎ｾｼ縺ｿ
 	list_->RSSetViewports(1, dxCommon_->GetViewPort());
 	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->OMSetRenderTargets(1, &backBufferRtvHandle_, false, &dsvHandle_);
@@ -282,7 +283,7 @@ void RendaringPostprosecess::PostDraw() {
 
 #ifdef _DEBUG
 void RendaringPostprosecess::DrawImGui() {
-	// ポスト�EロセスのチE��チE��ウィンドウを表示
+	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺ｮ繝・ヰ繝・げ繧ｦ繧｣繝ｳ繝峨え繧定｡ｨ遉ｺ
 	ImGui::Checkbox("Enable Postprocess", &isPostprocess_);
 	ImGui::Separator();
 	if (isPostprocess_) {
@@ -340,12 +341,12 @@ void RendaringPostprosecess::ClearSecondRenderTarget() {
 }
 
 void RendaringPostprosecess::SwitchRenderTarget() {
-	// ポスト�Eロセスが有効でなぁE��ら何もしなぁE
+	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺梧怏蜉ｹ縺ｧ縺ｪ縺・↑繧我ｽ輔ｂ縺励↑縺・
 	if (!isPostprocess_) {
 		return;
 	}
 
-	// オフスクリーンのバリア
+	// 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ縺ｮ繝舌Μ繧｢
 	if (renderingRosourceIndex_ == 0) {
 		if (isFirstStateRenderTarget_) {
 			TransitionResourceBarrier::Transition(
@@ -375,7 +376,7 @@ void RendaringPostprosecess::SwitchRenderTarget() {
 	readingResourceIndex_ = renderingRosourceIndex_;
 	renderingRosourceIndex_ = (renderingRosourceIndex_ + 1) % 2;
 
-	// 描画先�E設宁E
+	// 謠冗判蜈医・險ｭ螳・
 	DirectXCommon::GetInstance()->ClearDepthStencil();
 	list_->OMSetRenderTargets(1, &offScreenRtvHandles_[renderingRosourceIndex_], false,&dsvHandle_);
 }

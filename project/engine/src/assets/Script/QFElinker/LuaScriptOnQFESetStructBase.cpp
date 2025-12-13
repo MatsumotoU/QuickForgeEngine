@@ -1,4 +1,4 @@
-#include "LuaScriptOnQFESetStructBase.h"
+#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetStructBase.h"
 #include "engine/include/core/Math/Vector/Vector2.h"
 #include "engine/include/core/Math/Vector/Vector3.h"
 #include "engine/include/core/Math/Vector/Vector4.h"
@@ -9,7 +9,7 @@
 #include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
-	// シーン上�Eオブジェクトデータ
+	// 繧ｷ繝ｼ繝ｳ荳翫・繧ｪ繝悶ず繧ｧ繧ｯ繝医ョ繝ｼ繧ｿ
 	luaState->new_usertype<SceneObjectData>("SceneObjectData",
 		"name", &SceneObjectData::name,
 		"tag", &SceneObjectData::tag
@@ -62,7 +62,7 @@ void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 		"AddRight", &Transform::AddRight
 	);
 
-	// 物琁E��
+	// 迚ｩ逅・鴨
 	luaState->new_usertype<Force>("Force",
 		sol::constructors<Force()>(),
 		"velocity", &Force::velocity,
@@ -73,7 +73,7 @@ void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 		"isGravity", &Force::isGravity
 	);
 
-	// マテリアル
+	// 繝槭ユ繝ｪ繧｢繝ｫ
 	luaState->new_usertype<Material>("Material",
 		sol::constructors<Material()>(),
 		"color", &Material::color,

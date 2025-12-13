@@ -4,11 +4,11 @@
 #include <vector>
 #include <list>
 #include <unordered_map>
-#include "Graphic/ShaderBuffer/ConstantBuffer.h"
-#include "Graphic/ShaderBuffer/StructuredBuffer.h"
-#include "Graphic/DirectXCommon/DirectXCommon.h"
-#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
-#include "Utility/memory/SparseSets.h"
+#include "engine/include/graphic/ShaderBuffer/ConstantBuffer.h"
+#include "engine/include/graphic/ShaderBuffer/StructuredBuffer.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
+#include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/include/utility/memory/SparseSets.h"
 
 class DirectXCommon;
 class SrvDescriptorHeap;

@@ -178,7 +178,7 @@
     <ClCompile Include="engine\src\collider\ColliderManager.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\graphic\DirectXCommon\Command\CommandExecutor.cpp">
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\CommandExecutor.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="editor\src\UI\Edit\DebugConsole.cpp">
@@ -199,16 +199,16 @@
     <ClCompile Include="engine\src\utility\DebugTool\DirectX\DirectX12DebugCore.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\graphic\DirectXCommon\Command\DirectXCommandList.cpp">
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\DirectXCommandList.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\graphic\DirectXCommon\Command\DirectXCommandQueue.cpp">
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\DirectXCommandQueue.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\graphic\DirectXCommon\DirectXCommon.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\graphic\DirectXCommon\Device\DirectXDevice.cpp">
+    <ClCompile Include="Engine\src\graphic\DirectXDevice.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\utility\String\DirectXStructToString.cpp">
@@ -226,7 +226,7 @@
     <ClCompile Include="engine\src\window\windowEventsManager\eventSystems\ExitAppEvent.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\graphic\DirectXCommon\Fence\Fence.cpp">
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\Fence.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\utility\FileSystems\FileUtility.cpp">
@@ -313,9 +313,6 @@
     <ClCompile Include="engine\src\core\Math\Quaternion\Quaternion.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\QuickForgeEngine.cpp">
-      <Filter>source\engine\base</Filter>
-    </ClCompile>
     <ClCompile Include="engine\src\graphic\PostEffect\RendaringPostprocess.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
@@ -337,7 +334,7 @@
     <ClCompile Include="engine\src\utility\String\StringLiblary.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\graphic\DirectXCommon\SwapChain\SwapChain.cpp">
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\SwapChain.cpp">
       <Filter>source\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\assets\2DTexture\TextureManager.cpp">
@@ -403,7 +400,16 @@
     <ClCompile Include="engine\src\assets\Particle\ParticleGpuDataManager.cpp" />
     <ClCompile Include="engine\src\assets\Particle\Data\ParticleComponent.cpp" />
     <ClCompile Include="engine\src\assets\Particle\ParticleAnimationManager.cpp" />
-    <ClCompile Include="engine\include\assets\Sprite\Data\SpriteData.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\DescriptorHeapManager.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\DsvDescriptorHeap.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\IDescriptorHeap.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\DescriptorGenerator.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\CheckGenerateConfig.cpp" />
+    <ClCompile Include="Engine\QuickForgeEngine.cpp" />
+    <ClCompile Include="Engine\src\assets\Sprite\Data\SpriteData.cpp" />
+    <ClCompile Include="Engine\src\assets\Sprite\SpriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -913,9 +919,6 @@
     <ClInclude Include="Engine\Base\DirectX\PostProcess.h">
       <Filter>include\engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="engine\QuickForgeEngine.h">
-      <Filter>include\engine\base</Filter>
-    </ClInclude>
     <ClInclude Include="engine\include\assets\2DTexture\TextureManager.h" />
     <ClInclude Include="engine\include\assets\3DModel\Data\ModelData.h" />
     <ClInclude Include="engine\include\assets\3DModel\Data\ModelHandle.h" />
@@ -1002,9 +1005,9 @@
     <ClInclude Include="engine\include\graphic\DirectXCommon\Descriptors\IDescriptorHeap.h" />
     <ClInclude Include="engine\include\graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.h" />
     <ClInclude Include="engine\include\graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.h" />
-    <ClInclude Include="engine\include\graphic\DirectXCommon\Device\DirectXDevice.h" />
-    <ClInclude Include="engine\include\graphic\DirectXCommon\Fence\Fence.h" />
-    <ClInclude Include="engine\include\graphic\DirectXCommon\SwapChain\SwapChain.h" />
+    <ClInclude Include="Engine\include\graphic\DirectXCommon\DirectXDevice.h" />
+    <ClInclude Include="Engine\include\graphic\DirectXCommon\Fence.h" />
+    <ClInclude Include="Engine\include\graphic\DirectXCommon\SwapChain.h" />
     <ClInclude Include="engine\include\graphic\DirectXCommon\DirectXCommon.h" />
     <ClInclude Include="engine\include\graphic\Pipeline\PSO\InputLayout.h" />
     <ClInclude Include="engine\include\graphic\Pipeline\PSO\PipelineStateObject.h" />
@@ -1095,6 +1098,8 @@
     <ClInclude Include="Engine\include\assets\Particle\ParticleAnimationData.h" />
     <ClInclude Include="Engine\include\assets\Particle\ParticleAnimationManager.h" />
     <ClInclude Include="Engine\include\assets\Particle\Data\ParticleComponent.h" />
+    <ClInclude Include="Engine\include\graphic\DirectXCommon\Descriptors\DescriptorHeapManager.h" />
+    <ClInclude Include="Engine\QuickForgeEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\shaderStructs\Particle.hlsli">

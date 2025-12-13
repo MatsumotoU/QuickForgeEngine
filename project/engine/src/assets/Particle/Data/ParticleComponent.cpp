@@ -1,4 +1,4 @@
-#include "ParticleComponent.h"
+#include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
 nlohmann::json ParticleComponent::Serialize() const {
 	nlohmann::json json;

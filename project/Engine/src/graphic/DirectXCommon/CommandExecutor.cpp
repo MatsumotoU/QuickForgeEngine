@@ -1,4 +1,5 @@
-#include "CommandExecutor.h"
+#include "engine/include/graphic/DirectXCommon/Command/CommandExecutor.h"
+#include <d3d12.h>
 
 void CommandExecutor::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type) {
 	commandList_.Initialize(device, type);

@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <unordered_map>
 
-#include "DesignPatterns/Singleton.h"
+#include "engine/include/utility/DesignPatterns/Singleton.h"
 
 enum class LogLevel {
 	EngineInfo,
@@ -45,15 +45,15 @@ private:
 };
 
 /// <summary>
-/// こ�Eヘッダーを読み込んでぁE��ば使えるめE��
+/// 縺薙・繝倥ャ繝繝ｼ繧定ｪｭ縺ｿ霎ｼ繧薙〒縺・ｌ縺ｰ菴ｿ縺医ｋ繧・▽
 /// </summary>
 /// <param name="message"></param>
 void DebugLog(const std::string& message,const LogLevel& logLevel = LogLevel::EngineInfo, const std::source_location& location = std::source_location::current());
 
-// Luaの値を文字�Eに変換して追加する関数
+// Lua縺ｮ蛟､繧呈枚蟄怜・縺ｫ螟画鋤縺励※霑ｽ蜉縺吶ｋ髢｢謨ｰ
 void AppendLuaValueToString(const sol::object& v, std::string& msg);
 
-// 斁E���E・数値どちらも受け取れるラチE��ー関数
+// 譁・ｭ怜・繝ｻ謨ｰ蛟､縺ｩ縺｡繧峨ｂ蜿励￠蜿悶ｌ繧九Λ繝・ヱ繝ｼ髢｢謨ｰ
 void DebugLogLua(sol::variadic_args va,uint32_t id,const std::string& scriptName);
 
 void DebugLogCsharp(const std::string& message);

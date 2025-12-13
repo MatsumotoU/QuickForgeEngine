@@ -1,4 +1,4 @@
-#include "ParticleGpuDataManager.h"
+#include "engine/include/assets/Particle/ParticleGpuDataManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 
 void ParticleGpuDataManager::Initialize() {

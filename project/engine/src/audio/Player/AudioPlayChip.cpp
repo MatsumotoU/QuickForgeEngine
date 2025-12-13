@@ -1,4 +1,4 @@
-#include "AudioPlayChip.h"
+#include "engine/include/audio/Player/AudioPlayChip.h"
 #include <cassert>
 #include <random>
 #include <algorithm>
@@ -8,7 +8,7 @@ AudioPlayChip::~AudioPlayChip() {
 }
 
 void AudioPlayChip::Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* masterVoice) {
-	// 初期匁E
+	// 蛻晄悄蛹・
 	volume_ = 1.0f;
 	isPaused_ = false;
 	isPlaying_ = false;
@@ -32,9 +32,9 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 	assert(xAudio2_ != nullptr);
 	assert(masterVoice_ != nullptr);
 
-	// TODO: 音のポスト�Eロセス処琁E��別の場所に作ること(TD用の緊急オチE
-	// --- チ�Eプ化処琁E��こかめE---
-	// 8bit匁E& サンプリングレート半渁E& ノイズ & lo-fiエフェクチE
+	// TODO: 髻ｳ縺ｮ繝昴せ繝医・繝ｭ繧ｻ繧ｹ蜃ｦ逅・ｒ蛻･縺ｮ蝣ｴ謇縺ｫ菴懊ｋ縺薙→(TD逕ｨ縺ｮ邱頑･繧ｪ繝・
+	// --- 繝√・繝怜喧蜃ｦ逅・％縺薙°繧・---
+	// 8bit蛹・& 繧ｵ繝ｳ繝励Μ繝ｳ繧ｰ繝ｬ繝ｼ繝亥濠貂・& 繝弱う繧ｺ & lo-fi繧ｨ繝輔ぉ繧ｯ繝・
 	if (audioData.wfex.wBitsPerSample == 16) {
 		const int16_t* src = reinterpret_cast<int16_t*>(audioData.pBuffer);
 		size_t sampleCount = audioData.bufferSize / 2;
@@ -43,8 +43,8 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution<int> noiseDist(-32, 32); // ノイズ
-		float lastSample = 0.0f; // ローパスフィルタ用
+		std::uniform_int_distribution<int> noiseDist(-32, 32); // 繝弱う繧ｺ
+		float lastSample = 0.0f; // 繝ｭ繝ｼ繝代せ繝輔ぅ繝ｫ繧ｿ逕ｨ
 
 		for (size_t i = 0; i < cheapSampleCount; ++i) {
 			int16_t s = src[i * 2];
@@ -54,21 +54,21 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 				continue;
 			}
 
-			// ノイズ付加
+			// 繝弱う繧ｺ莉伜刈
 			s = static_cast<int16_t>(std::clamp<int>(s + noiseDist(gen), -32768, 32767));
 
-			// 歪み�E�クリチE��ング�E�E
-			const int16_t clipLevel = 8000; // lo-fi感を出す閾値
+			// 豁ｪ縺ｿ・医け繝ｪ繝・ヴ繝ｳ繧ｰ・・
+			const int16_t clipLevel = 8000; // lo-fi諢溘ｒ蜃ｺ縺咎明蛟､
 			if (s > clipLevel) s = clipLevel;
 			if (s < -clipLevel) s = -clipLevel;
 
-			// ローパスフィルタ�E�高域カチE���E�E
-			float alpha = 0.35f; // フィルタ強度�E�E.0�E�E.0�E�E
+			// 繝ｭ繝ｼ繝代せ繝輔ぅ繝ｫ繧ｿ・磯ｫ伜沺繧ｫ繝・ヨ・・
+			float alpha = 0.35f; // 繝輔ぅ繝ｫ繧ｿ蠑ｷ蠎ｦ・・.0・・.0・・
 			float filtered = lastSample * (1.0f - alpha) + s * alpha;
 			lastSample = filtered;
 			s = static_cast<int16_t>(filtered);
 
-			// 8bit化（符号なし！E
+			// 8bit蛹厄ｼ育ｬｦ蜿ｷ縺ｪ縺暦ｼ・
 			cheapBuffer[i] = static_cast<BYTE>((s + 32768) >> 8);
 		}
 		audioData.wfex.wBitsPerSample = 8;
@@ -78,9 +78,9 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 		audioData.pBuffer = cheapBuffer;
 		audioData.bufferSize = static_cast<unsigned int>(cheapSampleCount);
 	}
-	// --- チ�Eプ化処琁E��こまで ---
+	// --- 繝√・繝怜喧蜃ｦ逅・％縺薙∪縺ｧ ---
 
-	// ソースボイスの作�E
+	// 繧ｽ繝ｼ繧ｹ繝懊う繧ｹ縺ｮ菴懈・
 	sourceVoice_ = nullptr;
 	HRESULT hr = xAudio2_->CreateSourceVoice(&sourceVoice_, &audioData.wfex);
 	assert(SUCCEEDED(hr));

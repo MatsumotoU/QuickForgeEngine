@@ -1,4 +1,4 @@
-#include "ModelHandle.h"
+#include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/assets/AssetManager.h"
 
 nlohmann::json ModelHandle::Serialize() const {

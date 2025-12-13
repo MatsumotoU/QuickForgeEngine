@@ -1,4 +1,4 @@
-#include "engine/include/utility/DIrectX/TransitionResourceBarrier.h"
+#include "engine/include/utility/DirectX/TransitionResourceBarrier.h"
 
 void TransitionResourceBarrier::Transition(
 	ID3D12GraphicsCommandList* list, ID3D12Resource* pResource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after) {

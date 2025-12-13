@@ -1,10 +1,10 @@
-#include "ParticleAnimationManager.h"
+#include "engine/include/assets/Particle/ParticleAnimationManager.h"
 #include "engine/include/assets/AssetManager.h" 
 #include <fstream>
 
 uint32_t ParticleAnimationManager::LoadAnimationData(const std::string& fileName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	// シーンファイルのパスを絁E��立て
+	// 繧ｷ繝ｼ繝ｳ繝輔ぃ繧､繝ｫ縺ｮ繝代せ繧堤ｵ・∩遶九※
 	std::string filePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("ParticleAnim");
 	std::ifstream ifs(filePath + fileName);
 	if (!ifs.is_open()) {

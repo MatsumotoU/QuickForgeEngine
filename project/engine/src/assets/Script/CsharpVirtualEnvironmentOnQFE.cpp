@@ -1,33 +1,33 @@
-#include "CsharpVirtualEnvironmentOnQFE.h"
-#include "CsharpCmpiler.h"
+#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+#include "engine/include/assets/Script/CsharpCmpiler.h"
 
 #include <windows.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/image.h>
 
 #include "engine/include/assets/AssetManager.h"
-#include "QFElinker/CsharpOnQFELinker.h"
+#include "engine/include/assets/Script/QFElinker/CsharpOnQFELinker.h"
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
 void CsharpVirtualEnvironmentOnQFE::Initialize() {
-	// 実行ファイルのパスを取征E
+	// 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝代せ繧貞叙蠕・
 	char path[MAX_PATH];
 	GetModuleFileNameA(NULL, path, MAX_PATH);
 
-	// 実行ファイルのチE��レクトリを取征E
+	// 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝・ぅ繝ｬ繧ｯ繝医Μ繧貞叙蠕・
 	std::filesystem::path exeDir(path);
 	exeDir = exeDir.parent_path();
 
-	// MonoのlibとetcチE��レクトリへのパスを構篁E(exeと同じ階層のmonoフォルダ冁E
+	// Mono縺ｮlib縺ｨetc繝・ぅ繝ｬ繧ｯ繝医Μ縺ｸ縺ｮ繝代せ繧呈ｧ狗ｯ・(exe縺ｨ蜷後§髫主ｱ､縺ｮmono繝輔か繝ｫ繝蜀・
 	std::filesystem::path monoLibPath = exeDir / "mono" / "lib";
 	std::filesystem::path monoEtcPath = exeDir / "mono" / "etc";
 
-	// Monoランタイムにライブラリと設定ファイルの場所を教える
+	// Mono繝ｩ繝ｳ繧ｿ繧､繝縺ｫ繝ｩ繧､繝悶Λ繝ｪ縺ｨ險ｭ螳壹ヵ繧｡繧､繝ｫ縺ｮ蝣ｴ謇繧呈蕗縺医ｋ
 	mono_set_dirs(monoLibPath.string().c_str(), monoEtcPath.string().c_str());
 
-	// MonoのチE��チE��を有効匁E
+	// Mono縺ｮ繝・ヰ繝・ぎ繧呈怏蜉ｹ蛹・
 #ifdef _DEBUG
 	const char* options[] = {
 		"--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555,suspend=n"
@@ -35,7 +35,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	mono_jit_parse_options(sizeof(options) / sizeof(char*), (char**)options);
 #endif // _DEBUG
 
-	// ルートドメインを�E期化 (プログラム終亁E��まで保持)
+	// 繝ｫ繝ｼ繝医ラ繝｡繧､繝ｳ繧貞・譛溷喧 (繝励Ο繧ｰ繝ｩ繝邨ゆｺ・凾縺ｾ縺ｧ菫晄戟)
 	root_domain_ = mono_jit_init("QuickForgeRootDomain");
 	if (!root_domain_) {
 #ifdef _DEBUG
@@ -44,7 +44,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 		return;
 	}
 
-	// 最初�Eアセンブリロードを実衁E
+	// 譛蛻昴・繧｢繧ｻ繝ｳ繝悶Μ繝ｭ繝ｼ繝峨ｒ螳溯｡・
 	ReloadAssembly();
 }
 
@@ -79,21 +79,21 @@ void CsharpVirtualEnvironmentOnQFE::OpenCSharpProjectInVSCode() {
 }
 
 void CsharpVirtualEnvironmentOnQFE::LinkQFEAPIToMono() {
-	// Debug用APIの登録
+	// Debug逕ｨAPI縺ｮ逋ｻ骭ｲ
 	mono_add_internal_call("QuickForgeEngine.Debug::Log", (const void*)CsharpOnQFELinker::Native_Debug_Log);
 
-	// Time操作用APIの登録
+	// Time謫堺ｽ懃畑API縺ｮ逋ｻ骭ｲ
 	mono_add_internal_call("QuickForgeEngine.Time::GetDeltaTime", (const void*)CsharpOnQFELinker::GetDeltaTime);
 
-	// Input操作用APIの登録
+	// Input謫堺ｽ懃畑API縺ｮ逋ｻ骭ｲ
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyTrigger", (const void*)CsharpOnQFELinker::IsKeyTrigger);
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyPress", (const void*)CsharpOnQFELinker::IsKeyPress);
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyRelease", (const void*)CsharpOnQFELinker::IsKeyRelease);
 
-	// Entity操作用APIの登録
+	// Entity謫堺ｽ懃畑API縺ｮ逋ｻ骭ｲ
 	mono_add_internal_call("QuickForgeEngine.Entity::Create", (const void*)CsharpOnQFELinker::CreateEntity);
 
-	// Transform操作用APIの登録
+	// Transform謫堺ｽ懃畑API縺ｮ逋ｻ骭ｲ
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", (const void*)CsharpOnQFELinker::GetTransformRotate);
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetTranslate", (const void*)CsharpOnQFELinker::SetTransformTranslate);
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetRotate", (const void*)CsharpOnQFELinker::GetTransformRotate);
@@ -119,14 +119,14 @@ void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
 		return;
 	}
 
-    // 実行ファイルのパスを取征E
+    // 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝代せ繧貞叙蠕・
     char path[MAX_PATH];
     GetModuleFileNameA(NULL, path, MAX_PATH);
 
-    // 実行ファイルのチE��レクトリを取征E
+    // 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝・ぅ繝ｬ繧ｯ繝医Μ繧貞叙蠕・
     std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
 
-    // 読み込むDLLのフルパスを構篁E(exeと同じ階層)
+    // 隱ｭ縺ｿ霎ｼ繧DLL縺ｮ繝輔Ν繝代せ繧呈ｧ狗ｯ・(exe縺ｨ蜷後§髫主ｱ､)
     std::filesystem::path dllPath = exeDir / "CSharpScripts.dll";
 
 	assembly_ = mono_domain_assembly_open(domain_, dllPath.string().c_str());
@@ -182,7 +182,7 @@ std::vector<std::string> CsharpVirtualEnvironmentOnQFE::GetAvailableScriptClasse
 		const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 		const char* ns = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 
-		// フィルタリング
+		// 繝輔ぅ繝ｫ繧ｿ繝ｪ繝ｳ繧ｰ
 		if (!name || name[0] == '<' || strstr(name, "_AnonStorey")) {
 			continue;
 		}
@@ -196,7 +196,7 @@ std::vector<std::string> CsharpVirtualEnvironmentOnQFE::GetAvailableScriptClasse
 			full_name = name;
 		}
 
-		// QFELinkerに関連するクラスを除夁E
+		// QFELinker縺ｫ髢｢騾｣縺吶ｋ繧ｯ繝ｩ繧ｹ繧帝勁螟・
 		if (full_name.find("QuickForgeEngine") != std::string::npos) {
 			continue;
 		}
@@ -334,11 +334,11 @@ void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std:
 }
 
 void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
-	// 既存�Eスクリプトインスタンスへの参�Eをクリア
+	// 譌｢蟄倥・繧ｹ繧ｯ繝ｪ繝励ヨ繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ縺ｸ縺ｮ蜿ら・繧偵け繝ｪ繧｢
 	scripts_.clear();
 	assembly_ = nullptr;
 
-	// 既存�EスクリプトドメインをアンローチE
+	// 譌｢蟄倥・繧ｹ繧ｯ繝ｪ繝励ヨ繝峨Γ繧､繝ｳ繧偵い繝ｳ繝ｭ繝ｼ繝・
 	if (domain_) {
 		if (domain_ != root_domain_) {
 			mono_domain_set(root_domain_, false);
@@ -347,7 +347,7 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 		domain_ = nullptr;
 	}
 
-	// --- 新しいドメインを作�E ---
+	// --- 譁ｰ縺励＞繝峨Γ繧､繝ｳ繧剃ｽ懈・ ---
 	char domain_name[] = "QuickForgeScriptDomain";
 	domain_ = mono_domain_create_appdomain(domain_name, nullptr);
 	if (!domain_) {
@@ -364,24 +364,24 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 		return;
 	}
 
-	// --- C#スクリプトをコンパイル ---
+	// --- C#繧ｹ繧ｯ繝ｪ繝励ヨ繧偵さ繝ｳ繝代う繝ｫ ---
 #ifdef _DEBUG
 	CompileScripts();
 #endif // _DEBUG
 
-	// --- コンパイル済み成果物�E�ELL/PDB�E�をエンジンの実行ファイルチE��レクトリにコピ�E ---
+	// --- 繧ｳ繝ｳ繝代う繝ｫ貂医∩謌先棡迚ｩ・・LL/PDB・峨ｒ繧ｨ繝ｳ繧ｸ繝ｳ縺ｮ螳溯｡後ヵ繧｡繧､繝ｫ繝・ぅ繝ｬ繧ｯ繝医Μ縺ｫ繧ｳ繝斐・ ---
 	try {
-		// 1. コピ�E允E�Eパスを定義: C#プロジェクト�EチE��ォルトビルド�E力�E
+		// 1. 繧ｳ繝斐・蜈・・繝代せ繧貞ｮ夂ｾｩ: C#繝励Ο繧ｸ繧ｧ繧ｯ繝医・繝・ヵ繧ｩ繝ｫ繝医ン繝ｫ繝牙・蜉帛・
 		std::string scriptsBuildDir = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + "bin/Debug/netstandard2.0/";
 		std::filesystem::path srcDllPath = scriptsBuildDir + "CSharpScripts.dll";
 		std::filesystem::path srcPdbPath = scriptsBuildDir + "CSharpScripts.pdb";
 
-		// 2. コピ�E先�Eパスを定義: エンジンの実行ファイルがあるディレクトリ
+		// 2. 繧ｳ繝斐・蜈医・繝代せ繧貞ｮ夂ｾｩ: 繧ｨ繝ｳ繧ｸ繝ｳ縺ｮ螳溯｡後ヵ繧｡繧､繝ｫ縺後≠繧九ョ繧｣繝ｬ繧ｯ繝医Μ
 		char exePath[MAX_PATH];
 		GetModuleFileNameA(NULL, exePath, MAX_PATH);
 		std::filesystem::path destDir = std::filesystem::path(exePath).parent_path();
 
-		// 3. ファイルをコピ�E�E�既存�Eファイルを上書き！E
+		// 3. 繝輔ぃ繧､繝ｫ繧偵さ繝斐・・域里蟄倥・繝輔ぃ繧､繝ｫ繧剃ｸ頑嶌縺搾ｼ・
 		std::filesystem::copy(srcDllPath, destDir, std::filesystem::copy_options::overwrite_existing);
 		std::filesystem::copy(srcPdbPath, destDir, std::filesystem::copy_options::overwrite_existing);
 
@@ -393,15 +393,15 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 #ifdef _DEBUG
 		DebugLog(std::string("Failed to copy C# artifacts: ") + e.what());
 #endif
-		// コピ�Eに失敗した場合�E、後続�EDLLロードをしなぁE��ぁE��期リターン
+		// 繧ｳ繝斐・縺ｫ螟ｱ謨励＠縺溷ｴ蜷医・縲∝ｾ檎ｶ壹・DLL繝ｭ繝ｼ繝峨ｒ縺励↑縺・ｈ縺・掠譛溘Μ繧ｿ繝ｼ繝ｳ
 		return;
 	}
-	// --- コピ�E処琁E��こまで ---
+	// --- 繧ｳ繝斐・蜃ｦ逅・％縺薙∪縺ｧ ---
 
-	// APIを�E度リンク
+	// API繧貞・蠎ｦ繝ｪ繝ｳ繧ｯ
 	LinkQFEAPIToMono();
 
-	// 新しいドメインにアセンブリをローチE
+	// 譁ｰ縺励＞繝峨Γ繧､繝ｳ縺ｫ繧｢繧ｻ繝ｳ繝悶Μ繧偵Ο繝ｼ繝・
 	LoadAssembly();
 }
 
@@ -412,15 +412,15 @@ void CsharpVirtualEnvironmentOnQFE::RunAllScriptsFunction(const std::string& fun
 }
 
 void CsharpVirtualEnvironmentOnQFE::Finalize() {
-	// スクリプトドメインをアンローチE
+	// 繧ｹ繧ｯ繝ｪ繝励ヨ繝峨Γ繧､繝ｳ繧偵い繝ｳ繝ｭ繝ｼ繝・
 	if (domain_ && domain_ != root_domain_) {
-		// カレントドメインをルートに戻してからアンロードする�Eが安�E
+		// 繧ｫ繝ｬ繝ｳ繝医ラ繝｡繧､繝ｳ繧偵Ν繝ｼ繝医↓謌ｻ縺励※縺九ｉ繧｢繝ｳ繝ｭ繝ｼ繝峨☆繧九・縺悟ｮ牙・
 		mono_domain_set(root_domain_, false);
 		mono_domain_unload(domain_);
 		domain_ = nullptr;
 	}
 
-	// Monoランタイム全体をクリーンアチE�E
+	// Mono繝ｩ繝ｳ繧ｿ繧､繝蜈ｨ菴薙ｒ繧ｯ繝ｪ繝ｼ繝ｳ繧｢繝・・
 	if (root_domain_) {
 		mono_jit_cleanup(root_domain_);
 		root_domain_ = nullptr;

@@ -1,4 +1,4 @@
-#include "MultiAudioLoader.h"
+#include "engine/include/assets/AudioSource/Loader/MultiAudioLoader.h"
 #include <assert.h>
 #include <vector>
 
@@ -24,12 +24,12 @@ void Multiaudioloader::Finalize() {
 AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 	AudioData soundData{};
 
-	// ソースリーダーの生�E
+	// 繧ｽ繝ｼ繧ｹ繝ｪ繝ｼ繝繝ｼ縺ｮ逕滓・
 	Microsoft::WRL::ComPtr<IMFSourceReader> pMFSourceReader{ nullptr };
 	HRESULT hr = MFCreateSourceReaderFromURL(ConvertString(path).c_str(), nullptr, pMFSourceReader.GetAddressOf());
 	assert(SUCCEEDED(hr));
 
-	// メチE��アタイプ�E取征E
+	// 繝｡繝・ぅ繧｢繧ｿ繧､繝励・蜿門ｾ・
 	IMFMediaType* pMFMediaType{ nullptr };
 	hr = MFCreateMediaType(&pMFMediaType);
 	assert(SUCCEEDED(hr));
@@ -45,13 +45,13 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 	hr = pMFSourceReader.Get()->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pMFMediaType);
 	assert(SUCCEEDED(hr));
 
-	// オーチE��オチE�Eタ形式�E作�E
+	// 繧ｪ繝ｼ繝・ぅ繧ｪ繝・・繧ｿ蠖｢蠑上・菴懈・
 	WAVEFORMATEX* waveFormat{ nullptr };
 	hr = MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, nullptr);
 	soundData.wfex = *waveFormat;
 	assert(SUCCEEDED(hr));
 
-	// チE�Eタの読み込み
+	// 繝・・繧ｿ縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
 	std::vector<BYTE> mediaData;
 	while (true)
 	{

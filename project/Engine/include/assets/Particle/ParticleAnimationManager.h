@@ -3,7 +3,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 
-#include "Utility/memory/SparseSets.h"
+#include "engine/include/utility/memory/SparseSets.h"
 
 class ParticleAnimationManager {
 public:

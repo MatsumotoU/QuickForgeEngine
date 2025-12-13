@@ -1,4 +1,4 @@
-#include "ModelVertexResourceManager.h"
+#include "engine/include/assets/3DModel/ModelVertexResourceManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
 
@@ -13,27 +13,27 @@ void ModelVertexResourceManager::Finalize() {
 }
 
 uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelData& modelData, const std::string& modelName) {
-	// 同じ名前のモチE��が既に存在する場合�Eそ�Eハンドルを返す
+	// 蜷後§蜷榊燕縺ｮ繝｢繝・Ν縺梧里縺ｫ蟄伜惠縺吶ｋ蝣ｴ蜷医・縺昴・繝上Φ繝峨Ν繧定ｿ斐☆
     auto it = modelHandleMap_.find(modelName);
     if (it != modelHandleMap_.end()) {
         return it->second;
     }
     
-    // 頂点バッファを作�E
+    // 鬆らせ繝舌ャ繝輔ぃ繧剃ｽ懈・
     if (modelData.meshes.empty()) {
         assert(false && "ModelData has no meshes");
         return 0;
     }
-    // メチE��ュごとに頂点バッファを作�E
+    // 繝｡繝・す繝･縺斐→縺ｫ鬆らせ繝舌ャ繝輔ぃ繧剃ｽ懈・
     uint32_t firstHandle = static_cast<uint32_t>(modelVertexBuffers_.size());
     for (const auto& mesh : modelData.meshes) {
         if (mesh.vertices.empty()) {
             assert(false && "Mesh has no vertices");
-            continue; // 頂点がなぁE��チE��ュはスキチE�E
+            continue; // 鬆らせ縺後↑縺・Γ繝・す繝･縺ｯ繧ｹ繧ｭ繝・・
         }
         modelVertexBuffers_.emplace_back();
         modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(mesh.vertices.size()));
-        // 頂点チE�EタをセチE��
+        // 鬆らせ繝・・繧ｿ繧偵そ繝・ヨ
         for (size_t i = 0; i < mesh.vertices.size(); ++i) {
             modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), mesh.vertices[i]);
         }

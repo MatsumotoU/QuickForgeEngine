@@ -1,4 +1,4 @@
-#include "DirectXCommandQueue.h"
+#include "engine/include/graphic/DirectXCommon/Command/DirectXCommandQueue.h"
 #include <cassert>
 
 void DirectXCommandQueue::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type) {

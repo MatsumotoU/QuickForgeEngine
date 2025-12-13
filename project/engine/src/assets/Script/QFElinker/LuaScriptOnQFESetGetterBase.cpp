@@ -1,4 +1,4 @@
-#include "LuaScriptOnQFESetGetterBase.h"
+#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetGetterBase.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
 

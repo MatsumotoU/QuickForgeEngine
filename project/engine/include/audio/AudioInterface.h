@@ -1,6 +1,6 @@
 #pragma once
 #include "IAudioInterface.h"
-#include "engine/include/core/XAudioCore.h"
+#include "Core/XAudioCore.h"
 #include "Player/AudioChipManager.h"
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 
@@ -12,46 +12,46 @@ public:
 	void Initialize() override;
 	void Finalize() override;
 
-	// 全体�E音声操佁E
-	/// 全音声停止
+	// 蜈ｨ菴薙・髻ｳ螢ｰ謫堺ｽ・
+	/// 蜈ｨ髻ｳ螢ｰ蛛懈ｭ｢
 	void StopAllSound() override;
-	/// 全音声一時停止
+	/// 蜈ｨ髻ｳ螢ｰ荳譎ょ●豁｢
 	void PauseAllSound() override;
-	/// 全音声再開
+	/// 蜈ｨ髻ｳ螢ｰ蜀埼幕
 	void ResumeAllSound() override;
 
-	// 個別の音声操佁E
-	/// 音声再生(volume: 0.0 ~ 1.0の篁E��)
+	// 蛟句挨縺ｮ髻ｳ螢ｰ謫堺ｽ・
+	/// 髻ｳ螢ｰ蜀咲函(volume: 0.0 ~ 1.0縺ｮ遽・峇)
 	uint32_t PlaySoundForAudioData(uint32_t audioDataHandle, bool loop, float volume) override;
-	/// 音声停止
+	/// 髻ｳ螢ｰ蛛懈ｭ｢
 	void StopSound(uint32_t soundHandle) override;
-	/// 音声一時停止
+	/// 髻ｳ螢ｰ荳譎ょ●豁｢
 	void PauseSound(uint32_t soundHandle) override;
-	/// 音声再開
+	/// 髻ｳ螢ｰ蜀埼幕
 	void ResumeSound(uint32_t soundHandle) override;
 
-	// 吁E��量設宁E
-	/// 主音量設宁E0.0 ~ 1.0の篁E��)
+	// 蜷・浹驥剰ｨｭ螳・
+	/// 荳ｻ髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
 	void SetMasterVolume(float volume) override;
-	/// BGM音量設宁E0.0 ~ 1.0の篁E��)
+	/// BGM髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
 	void SetBGMVolume(float volume) override;
-	/// SE音量設宁E0.0 ~ 1.0の篁E��)
+	/// SE髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
 	void SetSEVolume(float volume) override;
-	/// ボイス音量設宁E0.0 ~ 1.0の篁E��)
+	/// 繝懊う繧ｹ髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
 	void SetVoiceVolume(float volume) override;
-	/// 環墁E��量設宁E0.0 ~ 1.0の篁E��)
+	/// 迺ｰ蠅・浹驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
 	void SetASVolume(float volume) override;
 
-	// 吁E��量取征E
-	/// 主音量取征E0.0 ~ 1.0の篁E��)
+	// 蜷・浹驥丞叙蠕・
+	/// 荳ｻ髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
 	float GetMasterVolume() override;
-	/// BGM音量取征E0.0 ~ 1.0の篁E��)
+	/// BGM髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
 	float GetBGMVolume() override;
-	/// SE音量取征E0.0 ~ 1.0の篁E��)
+	/// SE髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
 	float GetSEVolume() override;
-	/// ボイス音量取征E0.0 ~ 1.0の篁E��)
+	/// 繝懊う繧ｹ髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
 	float GetVoiceVolume() override;
-	/// 環墁E��量取征E0.0 ~ 1.0の篁E��)
+	/// 迺ｰ蠅・浹驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
 	float GetASVolume() override;
 
 private:

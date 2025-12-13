@@ -4,7 +4,7 @@
 #include <dxgi1_6.h>
 #include <d3d12.h>
 #include <vector>
-#include "../Descriptors/Data/DescriptorHandles.h"
+#include "Descriptors/Data/DescriptorHandles.h"
 
 class SwapChain {
 public:
@@ -23,7 +23,7 @@ public:
 	void Present();
 	void AssignDescriptorHandles(const DescriptorHandles& rtvHandle, uint32_t index);
 	/// <summary>
-	/// バックバッファとビューの数が一致してぁE��か確誁E
+	/// 繝舌ャ繧ｯ繝舌ャ繝輔ぃ縺ｨ繝薙Η繝ｼ縺ｮ謨ｰ縺御ｸ閾ｴ縺励※縺・ｋ縺狗｢ｺ隱・
 	/// </summary>
 	/// <returns></returns>
 	bool CheckBackBufferViews() const;

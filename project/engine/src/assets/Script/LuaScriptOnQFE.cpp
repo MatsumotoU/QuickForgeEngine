@@ -1,4 +1,4 @@
-#include "LuaScriptOnQFE.h"
+#include "engine/include/assets/Script/LuaScriptOnQFE.h"
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
@@ -7,7 +7,7 @@
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/physics/Force.h"
 #include "engine/include/assets/Script/Data/ScriptHandle.h"
-#include "QFElinker/SetQFELinkers.h"
+#include "engine/include/assets/Script/QFElinker/SetQFELinkers.h"
 
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -37,7 +37,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 			sol::lib::utf8
 		);
 
-		// 起動直後�Eグローバル一覧を保孁E
+		// 襍ｷ蜍慕峩蠕後・繧ｰ繝ｭ繝ｼ繝舌Ν荳隕ｧ繧剃ｿ晏ｭ・
 		for (auto& kv : luaState_->globals()) {
 			defaultGlobals.insert(kv.first.as<std::string>());
 		}
@@ -52,14 +52,14 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 
 		SetQFEFunctions();
 
-		// スクリプトを実衁E
+		// 繧ｹ繧ｯ繝ｪ繝励ヨ繧貞ｮ溯｡・
 		sol::protected_function_result execResult = loadResult();
 		if (!execResult.valid()) {
 			sol::error err = execResult;
 			throw std::runtime_error("Failed to execute Lua script: " + scriptName + "\n" + err.what());
 		}
 
-		// Userグローバル一覧を保存（スクリプト実行後！E��E
+		// User繧ｰ繝ｭ繝ｼ繝舌Ν荳隕ｧ繧剃ｿ晏ｭ假ｼ医せ繧ｯ繝ｪ繝励ヨ螳溯｡悟ｾ鯉ｼ・ｼ・
 		for (auto& kv : luaState_->globals()) {
 			if (defaultGlobals.find(kv.first.as<std::string>()) == defaultGlobals.end()) {
 				UserGlobals.insert(kv.first.as<std::string>());
@@ -86,7 +86,7 @@ void LuaScriptOnQFE::ReloadScript() {
 
 	std::set<std::string> oldGlobals = UserGlobals;
 	LoadScript(scriptName_);
-	// 古ぁE��ローバル変数を新しいスクリプトにコピ�E
+	// 蜿､縺・げ繝ｭ繝ｼ繝舌Ν螟画焚繧呈眠縺励＞繧ｹ繧ｯ繝ｪ繝励ヨ縺ｫ繧ｳ繝斐・
 	for (const auto& global : oldGlobals) {
 		if (UserGlobals.find(global) != UserGlobals.end()) {
 			sol::object oldObj = luaState_->get<sol::object>(global);
@@ -161,7 +161,7 @@ void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 
-	// transformコンポ�EネントをLuaにセチE��
+	// transform繧ｳ繝ｳ繝昴・繝阪Φ繝医ｒLua縺ｫ繧ｻ繝・ヨ
 	try
 	{
 		if (entityManager->HasComponent<Transform>(bindEntityId_))
@@ -180,7 +180,7 @@ void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 #endif // _DEBUG
 	}
 
-	// Forceコンポ�EネントをLuaにセチE��
+	// Force繧ｳ繝ｳ繝昴・繝阪Φ繝医ｒLua縺ｫ繧ｻ繝・ヨ
 	if (entityManager->HasComponent<Force>(bindEntityId_))
 	{
 		Force& force = entityManager->GetComponent<Force>(bindEntityId_);
@@ -204,18 +204,18 @@ std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
 }
 
 void LuaScriptOnQFE::SetQFEFunctions() {
-	// チE�Eブル作�E
+	// 繝・・繝悶Ν菴懈・
 	sol::table qfe = luaState_->create_named_table("QFE");
-	// QFE関数登録
+	// QFE髢｢謨ｰ逋ｻ骭ｲ
 	QFE::Script::SetQFEFunctions(luaState_.get());
 
-	// thisエンチE��チE��惁E��登録
+	// this繧ｨ繝ｳ繝・ぅ繝・ぅ諠・ｱ逋ｻ骭ｲ
 	sol::table thisEntity = luaState_->create_named_table("this");
 	thisEntity.set_function("GetEntityId", [this]() {
 		return bindEntityId_;
 		});
 
-	// 訳アリ関数群
+	// 險ｳ繧｢繝ｪ髢｢謨ｰ鄒､
 	// Log
 	luaState_->set_function("DebugLog", [this](sol::variadic_args message) {
 		message;

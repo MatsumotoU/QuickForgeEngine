@@ -1,4 +1,4 @@
-#include "OffScreenResourceManager.h"
+#include"engine/include/graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include <assert.h>
 
 void OffScreenResourceManager::Initialize(ID3D12Device* device, int width, int height) {
@@ -7,10 +7,10 @@ void OffScreenResourceManager::Initialize(ID3D12Device* device, int width, int h
 	offScreenDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	offScreenDesc_.Width = width;
 	offScreenDesc_.Height = height;
-	offScreenDesc_.DepthOrArraySize = 1; // チE��スチャなので通常は1
-	offScreenDesc_.MipLevels = 1;       // 通常は1
+	offScreenDesc_.DepthOrArraySize = 1; // 繝・け繧ｹ繝√Ε縺ｪ縺ｮ縺ｧ騾壼ｸｸ縺ｯ1
+	offScreenDesc_.MipLevels = 1;       // 騾壼ｸｸ縺ｯ1
 	offScreenDesc_.SampleDesc.Count = 1;
-	offScreenDesc_.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // レンダーターゲチE��として使用
+	offScreenDesc_.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // 繝ｬ繝ｳ繝繝ｼ繧ｿ繝ｼ繧ｲ繝・ヨ縺ｨ縺励※菴ｿ逕ｨ
 
 	offscreenClearValue_ = {};
 	offscreenClearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
@@ -21,23 +21,23 @@ void OffScreenResourceManager::Initialize(ID3D12Device* device, int width, int h
 
 	D3D12_HEAP_PROPERTIES defaultHeapProperties{};
 	defaultHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
-	// オフスクリーンリソースの生�E
+	// 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ逕滓・
 	HRESULT hr = device->CreateCommittedResource(
 		&defaultHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&offScreenDesc_,
-		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // 初期状慁E
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // 蛻晄悄迥ｶ諷・
 		&offscreenClearValue_,
 		IID_PPV_ARGS(offScreenResource_.at(0).GetAddressOf()));
 	hr;
 	assert(SUCCEEDED(hr));
 
-	// 二つ目のオフスクリーンリソースを作�E
+	// 莠後▽逶ｮ縺ｮ繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ繝ｪ繧ｽ繝ｼ繧ｹ繧剃ｽ懈・
 	hr = device->CreateCommittedResource(
 		&defaultHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&offScreenDesc_,
-		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // 初期状慁E
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, // 蛻晄悄迥ｶ諷・
 		&offscreenClearValue_,
 		IID_PPV_ARGS(offScreenResource_.at(1).GetAddressOf()));
 	hr;
