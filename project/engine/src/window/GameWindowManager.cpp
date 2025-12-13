@@ -56,6 +56,6 @@ HWND GameWindowManager::GetWindow(const std::string windowName) const {
 			}
 		}
 	}
-	throw std::runtime_error("謖・ｮ壹＆繧後◆繧ｦ繧｣繝ｳ繝峨え蜷阪′隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆縲・+ windowName);
+	throw std::runtime_error("謖・ｮ壹＆繧後◆繧ｦ繧｣繝ｳ繝峨え蜷阪′隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆縲・+ windowName");
 
 }

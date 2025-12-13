@@ -79,7 +79,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 /D BUILD_USER="\"$(USERNAME)\""
-/D BUILD_MACHINE="\"$(COMPUTERNAME)\""  /D BUILD_CONFIG="\"$(Configuration)\""  /D BUILD_PLATFORM="\"$(Platform)\"" /Zc:u8EscapeEncoding %(AdditionalOptions)</AdditionalOptions>
+/D BUILD_MACHINE="\"$(COMPUTERNAME)\""  /D BUILD_CONFIG="\"$(Configuration)\""  /D BUILD_PLATFORM="\"$(Platform)\"" %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>

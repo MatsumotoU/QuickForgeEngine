@@ -1,8 +1,8 @@
-#include "Vector4.h"
+#include "engine/include/core/Math/Vector/Vector4.h"
 #include <assert.h>
 #include <cmath>
 
-#include "Vector3.h"
+#include "engine/include/core/Math/Vector/Vector3.h"
 #include "engine/include/core/Math/Matrix/Matrix4x4.h"
 
 float Vector4::Length() const {

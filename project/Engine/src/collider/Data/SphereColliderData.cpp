@@ -1,16 +1,18 @@
-#include "engine/include/collider/Data/AABBColliderData.h"
+#include "engine/include/collider/Data/SphereColliderData.h"
 
-AABBColliderData::AABBColliderData() {
-	aabb = { {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f} };
+SphereColliderData::SphereColliderData() {
+	sphere = { {0.0f, 0.0f, 0.0f}, 1.0f };
 	isTrigger = false;
 	isStatic = false;
+	colliderLayer = 0xFF;
+	eventColliderLayer = 0xFF;
 }
 
-nlohmann::json AABBColliderData::Serialize() const {
+nlohmann::json SphereColliderData::Serialize() const {
 	nlohmann::json json;
 	json["isTrigger"] = isTrigger;
 	json["isStatic"] = isStatic;
-	json["aabb"] = { aabb.min.x, aabb.min.y, aabb.min.z, aabb.max.x, aabb.max.y, aabb.max.z };
+	json["sphere"] = { sphere.center.x, sphere.center.y, sphere.center.z, sphere.radius };
 	json["colliderLayer"] = colliderLayer;
 	json["eventColliderLayer"] = eventColliderLayer;
 #ifdef _DEBUG
@@ -20,21 +22,19 @@ nlohmann::json AABBColliderData::Serialize() const {
 	return json;
 }
 
-void AABBColliderData::Deserialize(const nlohmann::json& json) {
+void SphereColliderData::Deserialize(const nlohmann::json& json) {
 	if (json.contains("isTrigger") && json["isTrigger"].is_boolean()) {
 		isTrigger = json["isTrigger"].get<bool>();
 	}
 	if (json.contains("isStatic") && json["isStatic"].is_boolean()) {
 		isStatic = json["isStatic"].get<bool>();
 	}
-	if (json.contains("aabb") && json["aabb"].is_array() && json["aabb"].size() == 6) {
-		aabb.min.x = json["aabb"][0].get<float>();
-		aabb.min.y = json["aabb"][1].get<float>();
-		aabb.min.z = json["aabb"][2].get<float>();
-		aabb.max.x = json["aabb"][3].get<float>();
-		aabb.max.y = json["aabb"][4].get<float>();
-		aabb.max.z = json["aabb"][5].get<float>();
-	}
+	if (json.contains("sphere") && json["sphere"].is_array() && json["sphere"].size() == 4) {
+		sphere.center.x = json["sphere"][0].get<float>();
+		sphere.center.y = json["sphere"][1].get<float>();
+		sphere.center.z = json["sphere"][2].get<float>();
+		sphere.radius = json["sphere"][3].get<float>();
+	} 
 	if (json.contains("colliderLayer") && json["colliderLayer"].is_number_unsigned()) {
 		colliderLayer = json["colliderLayer"].get<uint8_t>();
 	}
@@ -46,4 +46,5 @@ void AABBColliderData::Deserialize(const nlohmann::json& json) {
 		isDraw = json["isDraw"].get<bool>();
 	}
 #endif // _DEBUG
+
 }
