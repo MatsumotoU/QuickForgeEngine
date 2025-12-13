@@ -1,4 +1,4 @@
-#include "UniqeIDManager.h"
+#include "engine/include/utility/ID/UniqeIDManager.h"
 
 void ListUniqueIDManager::Reset() {
 	currentID_ = 1;
@@ -13,7 +13,7 @@ void ListUniqueIDManager::AddUsedID(uint32_t id) {
 }
 
 uint32_t ListUniqueIDManager::GenerateUniqueID() {
-	// currentID_がusedIDSet_に存在しなぁE��でインクリメンチE
+	// currentID_縺蛍sedIDSet_縺ｫ蟄伜惠縺励↑縺・∪縺ｧ繧､繝ｳ繧ｯ繝ｪ繝｡繝ｳ繝・
 	while (usedIDSet_.find(currentID_) != usedIDSet_.end()){
 		currentID_++;
 	}
