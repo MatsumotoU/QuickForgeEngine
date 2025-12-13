@@ -1,4 +1,4 @@
-#include "SphereColliderData.h"
+#include "engine/include/collider/Data/SphereColliderData.h"
 
 SphereColliderData::SphereColliderData() {
 	sphere = { {0.0f, 0.0f, 0.0f}, 1.0f };
