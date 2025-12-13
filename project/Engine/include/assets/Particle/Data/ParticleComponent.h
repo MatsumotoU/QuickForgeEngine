@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
-#include "engine/include/core/Entity/Component/ComponentData.h"
+#include "Core/Entity/Component/ComponentData.h"
 
 class ParticleComponent final :public ComponentData {
 public:

@@ -390,6 +390,10 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClInclude Include="engine\include\assets\AudioSource\Data\AudioData.h" />
     <ClInclude Include="engine\include\assets\AudioSource\Loader\MultiAudioLoader.h" />
     <ClInclude Include="engine\include\assets\ConstantBufferManager\ConstantBufferManager.h" />
+    <ClInclude Include="Engine\include\assets\Particle\Data\ParticleComponent.h" />
+    <ClInclude Include="Engine\include\assets\Particle\ParticleAnimationData.h" />
+    <ClInclude Include="Engine\include\assets\Particle\ParticleAnimationManager.h" />
+    <ClInclude Include="Engine\include\assets\Particle\ParticleGpuDataManager.h" />
     <ClInclude Include="engine\include\assets\ResourceDirectoryManager.h" />
     <ClInclude Include="engine\include\assets\Script\CsharpCmpiler.h" />
     <ClInclude Include="engine\include\assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
@@ -531,7 +535,6 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClInclude Include="engine\include\window\WindowGenerater\WindowGenerater.h" />
     <ClInclude Include="Engine\Base\DirectX\PostProcess.h" />
     <ClInclude Include="Engine\Object\Component\CompornentStrage.h" />
-    <ClInclude Include="engine\src\assets\Particle\Data\ParticleComponent.h" />
     <ClInclude Include="engine\QuickForgeEngine.h" />
     <ClInclude Include="engine\resources\shaders\shaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="Engine\Object\Structs\ModelMaterialData.h" />

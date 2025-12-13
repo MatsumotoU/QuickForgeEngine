@@ -1,5 +1,5 @@
-#include "SceneManager.h"
-#include "SceneObject.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/scene/SceneObject.h"
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/camera/CameraManager.h"

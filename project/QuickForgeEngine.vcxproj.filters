@@ -916,7 +916,6 @@
     <ClInclude Include="engine\QuickForgeEngine.h">
       <Filter>include\engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="engine\src\assets\Particle\Data\ParticleComponent.h" />
     <ClInclude Include="engine\include\assets\2DTexture\TextureManager.h" />
     <ClInclude Include="engine\include\assets\3DModel\Data\ModelData.h" />
     <ClInclude Include="engine\include\assets\3DModel\Data\ModelHandle.h" />
@@ -1092,6 +1091,10 @@
     <ClInclude Include="engine\include\input\DirectInput\DirectInputKeyboard.h" />
     <ClInclude Include="engine\include\input\DirectInput\DirectInputManager.h" />
     <ClInclude Include="engine\include\input\DirectInput\DirectInputMouse.h" />
+    <ClInclude Include="Engine\include\assets\Particle\ParticleGpuDataManager.h" />
+    <ClInclude Include="Engine\include\assets\Particle\ParticleAnimationData.h" />
+    <ClInclude Include="Engine\include\assets\Particle\ParticleAnimationManager.h" />
+    <ClInclude Include="Engine\include\assets\Particle\Data\ParticleComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\shaderStructs\Particle.hlsli">
