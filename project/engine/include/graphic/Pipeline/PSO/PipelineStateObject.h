@@ -4,7 +4,7 @@
 #include "ShaderCompiler.h"
 #include <wrl.h>
 
-// TODO: ブレンドモード�E列挙型をブレンドモードを管琁E��るクラスに移送E
+// TODO: ブレンドモード�E列挙型をブレンドモードを管琁E��るクラスに移送E
 enum BlendMode{
 	// ブレンドなぁE
 	kBlendModeNone,

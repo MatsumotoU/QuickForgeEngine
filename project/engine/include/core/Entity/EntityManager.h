@@ -28,7 +28,7 @@ public:
 	}
 
 	void EndFrame() {
-		// 削除予定�EEntityに紐づくコンポ�Eネントを全て削除
+		// 削除予定�EEntityに紐づくコンポ�Eネントを全て削除
 		for (uint32_t id : entitiesToRemove_) {
 			for (auto& [typeId, strage] : componentStrages) {
 				strage->RemoveComponent(id);

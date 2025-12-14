@@ -45,7 +45,7 @@ void WindowsEngineCore::Initialize() {
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
 
-	// * パイプライン管琁E�E��E�ラス初期匁E* //
+	// * パイプライン管琁E�E��E�ラス初期匁E* //
 	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
 	graphicPipelineManager_->Initialize(directXCommon_->GetDevice());
 
@@ -118,7 +118,7 @@ void WindowsEngineCore::MainLoop() {
 	while (gameWindowManager->IsWindowActive())
 	{
 		
-		// アプリケーション安�E終亁E�E�E琁E
+		// アプリケーション安�E終亁E�E�E琁E
 		MSG msg;
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {

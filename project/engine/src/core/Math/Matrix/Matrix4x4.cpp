@@ -572,7 +572,7 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 		return Matrix4x4::MakeIndentity4x4();
 	}
 
-	// ほぼ送E�E��E�向�E場合！E80度回転、任意�E垂直軸で回転�E�E�E�E
+	// ほぼ送E�E��E�向�E場合！E80度回転、任意�E垂直軸で回転�E�E�E�E
 	if (std::abs(dot + 1.0f) < 1e-6f) {
 		// uに垂直な任意軸を選ぶ
 		Vector3 axis = Vector3::Perpendicular(u).Normalize();

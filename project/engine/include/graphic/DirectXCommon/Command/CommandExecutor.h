@@ -1,6 +1,6 @@
 #pragma once
-#include "List/DirectXCommandList.h"
-#include "Queue/DirectXCommandQueue.h"
+#include "DirectXCommandList.h"
+#include "DirectXCommandQueue.h"
 
 class CommandExecutor final {
 public:

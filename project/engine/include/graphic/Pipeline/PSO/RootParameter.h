@@ -15,7 +15,7 @@ public:
 	/// </summary>
 	void Initialize();
 	/// <summary>
-	/// RootParamaterを作�EしまぁE
+	/// RootParamaterを作�EしまぁE
 	/// </summary>
 	/// <param name="friendlyName">ルートシグネチャの登録吁E/param>
 	/// <param name="parameterType">パラメータタイチE/param>
@@ -23,7 +23,7 @@ public:
 	/// <param name="shaderRegisterIndex">レジスタ番号</param>
 	void CreateRootParameter(const std::string& friendlyName,const D3D12_ROOT_PARAMETER_TYPE& parameterType, const D3D12_SHADER_VISIBILITY& shaderVisibility, int shaderRegisterIndex);
 	/// <summary>
-	/// チE��スクリプターレンジを設定しまぁE
+	/// チE��スクリプターレンジを設定しまぁE
 	/// </summary>
 	/// <param name="friendlyName"></param>
 	/// <param name="rangeType"></param>
@@ -43,7 +43,7 @@ public:
 
 private:
 
-	std::map<std::string, D3D12_DESCRIPTOR_RANGE> descriptorRanges_; // ルートパラメータの登録名と篁E��を保持するマッチE
+	std::map<std::string, D3D12_DESCRIPTOR_RANGE> descriptorRanges_; // ルートパラメータの登録名と篁E��を保持するマッチE
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature_;
 	std::vector<D3D12_ROOT_PARAMETER> rootParameters_;
 	std::vector<std::string> friendlyNames_; // ルートシグネチャの登録名を保持するためのベクター

@@ -410,6 +410,10 @@
     <ClCompile Include="Engine\QuickForgeEngine.cpp" />
     <ClCompile Include="Engine\src\assets\Sprite\Data\SpriteData.cpp" />
     <ClCompile Include="Engine\src\assets\Sprite\SpriteManager.cpp" />
+    <ClCompile Include="Engine\src\assets\Script\LuaScriptResourceManager.cpp" />
+    <ClCompile Include="Engine\src\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp" />
+    <ClCompile Include="Engine\src\core\Math\Transform.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\DirectXCommandManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -1100,6 +1104,7 @@
     <ClInclude Include="Engine\include\assets\Particle\Data\ParticleComponent.h" />
     <ClInclude Include="Engine\include\graphic\DirectXCommon\Descriptors\DescriptorHeapManager.h" />
     <ClInclude Include="Engine\QuickForgeEngine.h" />
+    <ClInclude Include="Engine\include\utility\String\DirectInputToString.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\shaderStructs\Particle.hlsli">

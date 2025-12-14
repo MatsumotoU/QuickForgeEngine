@@ -55,7 +55,7 @@ public:
 	void SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) override;
 	void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) override;
 
-	// シーンにあるオブジェクト�E惁E��取征E
+	// シーンにあるオブジェクト�E惁E��取征E
 	uint32_t GetEntityByName(const std::string& entityName) const override;
 	uint32_t GetEntityByUniqeID(uint32_t uniqueId) const override;
 	bool IsRunningScript() const override { return isRunningScript_; }

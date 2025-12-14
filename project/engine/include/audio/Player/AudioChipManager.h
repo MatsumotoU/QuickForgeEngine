@@ -11,7 +11,7 @@ public:
 	void Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* masterVoice);
 	// 終亁E
 	void Finalize();
-	// 音声再生(volume: 0.0 ~ 1.0の篁E��)
+	// 音声再生(volume: 0.0 ~ 1.0の篁E��)
 	uint32_t PlaySoundForAudioData(AudioData audioData, bool loop, float volume);
 	// 音声停止
 	void StopSound(uint32_t soundHandle);
@@ -25,9 +25,9 @@ public:
 	void PauseAllSound();
 	// 全音声再開
 	void ResumeAllSound();
-	// 音量設宁E0.0 ~ 1.0の篁E��)
+	// 音量設宁E0.0 ~ 1.0の篁E��)
 	void SetVolume(uint32_t soundHandle, float volume);
-	// 音量取征E0.0 ~ 1.0の篁E��)
+	// 音量取征E0.0 ~ 1.0の篁E��)
 	float GetVolume(uint32_t soundHandle) const;
 private:
 	std::unordered_map<uint32_t, AudioPlayChip> audioChips_;

@@ -55,7 +55,7 @@ public:
         }
     }
 
-    // ゲチE��ー
+    // ゲチE��ー
     T* GetData() const { return data_; }
     ID3D12Resource* GetResource() const { return bufferResource_.Get(); }
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {

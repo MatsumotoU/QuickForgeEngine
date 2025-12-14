@@ -1,7 +1,7 @@
 #pragma once
 #include "engine/include/core/IEngineCore.h"
 #include "engine/include/core/EngineGlobalValue.h"
-#include "editor/IEditor.h"
+#include "editor/include/IEditor.h"
 #include <Windows.h>
 #include <chrono>
 #include <nlohmann/json.hpp>
@@ -11,14 +11,14 @@
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
 #include "engine/include/utility/DebugTool/App/WinAppDebugCore.h"
-#include "engine/include/utility/DebugTool/ImGui/FrameController/ImGuiFlameController.h"
+#include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
 #include "engine/include/utility/DebugTool/FrameCounter.h"
 #include "engine/include/renderer/GraphRenderer.h"
 #include "engine/include/graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
 #include "engine/include/assets/AssetManager.h"
 
-// なんかAssetsではなさそぁE�E��E�めE�E��E�めE
+// なんかAssetsではなさそぁE�E��E�めE�E��E�めE
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/assets/Script/LuaScriptResourceManager.h"
 #include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"

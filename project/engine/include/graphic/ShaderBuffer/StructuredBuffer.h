@@ -9,7 +9,7 @@ template<class T>
 class StructuredBuffer final {
 public:
 	void CreateResource(DirectXCommon* dxcommon, SrvDescriptorHeap* srvDescriptor, uint32_t elementCount) {
-		// Resourceの生�E
+		// Resourceの生�E
 		structSize_ = sizeof(T);
 		elementCount_ = elementCount;
 

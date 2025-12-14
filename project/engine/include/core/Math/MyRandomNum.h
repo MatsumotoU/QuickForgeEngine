@@ -9,7 +9,7 @@ public:
 
 public:
 	/// <summary>
-	/// 過去任意�E回数で一様�E币E��乱数を生成しまぁE
+	/// 過去任意�E回数で一様�E币E��乱数を生成しまぁE
 	/// </summary>
 	/// <param name="min">min</param>
 	/// <param name="max">max</param>

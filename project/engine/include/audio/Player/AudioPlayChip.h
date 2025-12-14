@@ -12,7 +12,7 @@ public:
 	void Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* masterVoice);
 	// 終亁E
 	void Finalize();
-	// 音声再生(volume: 0.0 ~ 1.0の篁E��)
+	// 音声再生(volume: 0.0 ~ 1.0の篁E��)
 	void PlaySoundForAudioData(AudioData audioData, bool loop, float volume);
 	// 音声停止
 	void StopSound();
@@ -20,9 +20,9 @@ public:
 	void PauseSound();
 	// 音声再開
 	void ResumeSound();
-	// 音量設宁E0.0 ~ 1.0の篁E��)
+	// 音量設宁E0.0 ~ 1.0の篁E��)
 	void SetVolume(float volume);
-	// 音量取征E0.0 ~ 1.0の篁E��)
+	// 音量取征E0.0 ~ 1.0の篁E��)
 	float GetVolume() const;
 
 private:

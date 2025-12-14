@@ -70,13 +70,13 @@ public:
 	/// <returns></returns>
 	[[nodiscard]] static Quaternion Normalize(const Quaternion& quaternion);
 	/// <summary>
-	/// 送E��オータニオンを返しまぁE
+	/// 送E��オータニオンを返しまぁE
 	/// </summary>
 	/// <param name="quaternion"></param>
 	/// <returns></returns>
 	[[nodiscard]] static Quaternion Inverse(const Quaternion& quaternion);
 	/// <summary>
-	/// 任意�E軸からクオータニオンを作�EしまぁE
+	/// 任意�E軸からクオータニオンを作�EしまぁE
 	/// </summary>
 	/// <param name="axis"></param>
 	/// <param name="angle"></param>
@@ -90,7 +90,7 @@ public:
 	/// <returns></returns>
 	[[nodiscard]] static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 	/// <summary>
-	/// クオータニオンから回転行�Eを作�EしまぁE
+	/// クオータニオンから回転行�Eを作�EしまぁE
 	/// </summary>
 	/// <param name="quaternion"></param>
 	/// <returns></returns>

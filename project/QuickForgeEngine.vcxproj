@@ -221,10 +221,12 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClCompile Include="editor\src\UI\UIManager.cpp" />
     <ClCompile Include="editor\src\UI\View\ScriptLoggerView.cpp" />
     <ClCompile Include="Engine\QuickForgeEngine.cpp" />
+    <ClCompile Include="Engine\src\assets\Script\LuaScriptResourceManager.cpp" />
     <ClCompile Include="Engine\src\assets\Sprite\Data\SpriteData.cpp" />
     <ClCompile Include="Engine\src\assets\Sprite\SpriteManager.cpp" />
     <ClCompile Include="engine\src\core\EngineGlobalValue.cpp" />
     <ClCompile Include="engine\src\core\Math\Shapes.cpp" />
+    <ClCompile Include="Engine\src\core\Math\Transform.cpp" />
     <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\CheckGenerateConfig.cpp" />
     <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\DescriptorGenerator.cpp" />
     <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\DescriptorHeapManager.cpp" />
@@ -232,6 +234,8 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\IDescriptorHeap.cpp" />
     <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.cpp" />
     <ClCompile Include="Engine\src\graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.cpp" />
+    <ClCompile Include="Engine\src\graphic\DirectXCommon\DirectXCommandManager.cpp" />
+    <ClCompile Include="Engine\src\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp" />
     <ClCompile Include="engine\src\utility\DebugTool\DirectX\DebugLayer.cpp" />
     <ClCompile Include="engine\src\utility\DebugTool\FrameCounter.cpp" />
     <ClCompile Include="engine\src\utility\DebugTool\ImGui\DropDownFileList.cpp" />
@@ -528,6 +532,7 @@ xcopy "$(ProjectDir)Engine\Externals\Mono\etc" "$(TargetDir)mono\etc" /E /I /Y
     <ClInclude Include="engine\include\utility\memory\SparseSets.h" />
     <ClInclude Include="engine\include\utility\MultiThreadRunFunction.h" />
     <ClInclude Include="engine\include\utility\MultiThreadTaskExecutor.h" />
+    <ClInclude Include="Engine\include\utility\String\DirectInputToString.h" />
     <ClInclude Include="engine\include\utility\String\DirectXStructToString.h" />
     <ClInclude Include="engine\include\utility\String\HwndConvertString.h" />
     <ClInclude Include="engine\include\utility\String\MyString.h" />

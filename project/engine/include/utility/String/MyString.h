@@ -9,9 +9,9 @@
 #include <utility>
 
 /// <summary>
-/// 出力ウィンドウにログを�Eす関数
+/// 出力ウィンドウにログを�Eす関数
 /// </summary>
-/// <param name="message">表示する斁E���E</param>
+/// <param name="message">表示する斁E���E</param>
 void Log(const std::string& message);
 /// <summary>
 /// std::stringからstd::wstringへ変換
@@ -35,7 +35,7 @@ LPCWSTR StringToLPCWSTR(const std::string& str);
 // stringからcharPtrに変換
 char* StringToCharPtr(const std::string& str);
 
-// �E�対の斁E���Eペアが頁E��同で一致してぁE��かどぁE��を判断しまぁE
+// �E�対の斁E���Eペアが頁E��同で一致してぁE��かどぁE��を判断しまぁE
 bool IsUnorderedPairEqual(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2);
 
 std::wstring Utf8ToUtf16(const std::string& utf8);

@@ -18,10 +18,10 @@
 #include <wrl.h>
 #include <array>
 
-// TODO: 他�E効果を作�Eする
-// TODO: ポスト�Eロセスの頁E��を動皁E��変えられるよぁE��する
-// TODO: ポスト�Eロセスのシェーダーを動皁E��作�Eできるようにする
-// TODO: 一つだけ選択したときにシェーダーが適用されなぁE��グを直ぁE
+// TODO: 他�E効果を作�Eする
+// TODO: ポスト�Eロセスの頁E��を動皁E��変えられるよぁE��する
+// TODO: ポスト�Eロセスのシェーダーを動皁E��作�Eできるようにする
+// TODO: 一つだけ選択したときにシェーダーが適用されなぁE��グを直ぁE
 
 class DirectXCommon;
 
@@ -54,7 +54,7 @@ public:
 	void PreDraw();
 	void PostDraw();
 
-public:// debug機�E
+public:// debug機�E
 #ifdef _DEBUG
 	void DrawImGui();
 #endif // _DEBUG
@@ -69,7 +69,7 @@ private:
 	void ApplyColorCorrection();
 	void ApplyPixcel();
 
-public:// パブリチE��変数
+public:// パブリチE��変数
 	bool isPostprocess_;
 	bool isImGuiEnabled_;
 
@@ -90,7 +90,7 @@ private:// グレースケール変数
 	float grayScaleOffset_;
 	int grayScaleProcessIndex_;
 
-private:// ビネチE��変数
+private:// ビネチE��変数
 	PipelineStateObject* vignettePso_;
 	ConstantBuffer<VignetteOffset> vignetteOffsetBuffer_;
 	int vignetteProcessIndex_;

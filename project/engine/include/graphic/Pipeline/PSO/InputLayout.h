@@ -23,7 +23,7 @@ public:
 	/// InputElementDescを生成しまぁE
 	/// </summary>
 	/// <param name="semanticName">ShaderInputの名前</param>
-	/// <param name="semanticIndex">そ�E後に続く数孁E/param>
+	/// <param name="semanticIndex">そ�E後に続く数孁E/param>
 	/// <param name="format">format</param>
 	/// <param name="alignedByteOffset">offset</param>
 	void CreateInputElementDesc(const LPCSTR& semanticName, const UINT& semanticIndex, const DXGI_FORMAT& format, const UINT& alignedByteOffset);

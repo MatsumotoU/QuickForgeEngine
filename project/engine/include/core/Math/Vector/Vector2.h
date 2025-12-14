@@ -31,24 +31,24 @@ public:
 
 public:
 	/// <summary>
-	/// 2次允E�Eクトルの長さを求めめE
+	/// 2次允E�Eクトルの長さを求めめE
 	/// </summary>
-	/// <returns>2次允E�Eクトルの長ぁE/returns>
+	/// <returns>2次允E�Eクトルの長ぁE/returns>
 	[[nodiscard]] float Length() const;
 
 	/// <summary>
-	/// 正規化されぁE次允E�Eクトルを求めめE
+	/// 正規化されぁE次允E�Eクトルを求めめE
 	/// </summary>
-	/// <returns>正規化されぁE次允E�Eクトル</returns>
+	/// <returns>正規化されぁE次允E�Eクトル</returns>
 	[[nodiscard]] Vector2 Normalize() const;
 
 public:
 	/// <summary>
-	/// 2つのベクトルの冁E��を求めめE
+	/// 2つのベクトルの冁E��を求めめE
 	/// </summary>
 	/// <param name="v1">1つ目のベクトル</param>
 	/// <param name="v2">2つ目のベクトル</param>
-	/// <returns>2つのベクトルの冁E��E/returns>
+	/// <returns>2つのベクトルの冁E��E/returns>
 	[[nodiscard]] static float Dot(const Vector2& v1, const Vector2& v2);
 
 	/// <summary>

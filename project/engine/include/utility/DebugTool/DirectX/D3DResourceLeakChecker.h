@@ -2,12 +2,12 @@
 #include <d3d12.h>
 #include <dxgidebug.h>
 #include<dxgi1_3.h>
-#include "String/MyString.h"
+#include "engine/include/utility/String/MyString.h"
 
 class D3DResourceLeakChecker final {
 public:
 	~D3DResourceLeakChecker() {
-		// * 終亁E��のエラー処琁E* //
+		// * 終亁E��のエラー処琁E* //
 		Log("=====D3DResourceLeakCheck=====\n");
 		IDXGIDebug1* debug;
 		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {

@@ -5,8 +5,8 @@ class CameraData : public ComponentData {
 public:
 	uint32_t handle_;
 	float fovY_;      // 垂直視野见E
-	float nearZ_;     // 前方クリチE�E距離
-	float farZ_;      // 後方クリチE�E距離
+	float nearZ_;     // 前方クリチE�E距離
+	float farZ_;      // 後方クリチE�E距離
 
 	CameraData() = default;
 	virtual ~CameraData() = default;

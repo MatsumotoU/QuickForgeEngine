@@ -6,7 +6,7 @@
 #include <map>
 
 #include "ShaderCompiledData.h"
-#include "String/MyString.h"
+#include "engine/include/utility/String/MyString.h"
 
 class ShaderCompiler final {
 public:
@@ -15,7 +15,7 @@ public:
 
 public:
 	/// <summary>
-	/// DXCを�E期化しまぁE
+	/// DXCを�E期化しまぁE
 	/// </summary>
 	void InitializeDXC();
 

@@ -10,7 +10,7 @@ private:
 
 public:
 	/// <summary>
-	/// ImGuiを�E期化しまぁE
+	/// ImGuiを�E期化しまぁE
 	/// </summary>
 	/// <param name="hwnd"></param>
 	static void Initialize(

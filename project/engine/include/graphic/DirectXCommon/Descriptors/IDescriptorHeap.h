@@ -20,5 +20,5 @@ protected:
 	ID3D12Device* device_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_;
 	std::queue<uint32_t> freeDescriptors_;
-	DescriptorGenerateConfig descriptorGenerateConfig_; // チE��スクリプタ生�E設宁E
+	DescriptorGenerateConfig descriptorGenerateConfig_; // チE��スクリプタ生�E設宁E
 };

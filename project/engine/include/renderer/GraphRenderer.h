@@ -18,7 +18,7 @@ public:
 	friend class Singleton<GraphRenderer>;
 	~GraphRenderer() override = default;
 
-public:// 一回�E呼び出さなぁE��バグるやつめE
+public:// 一回�E呼び出さなぁE��バグるやつめE
 	/// <summary>
 	/// 初期匁E
 	/// </summary>
@@ -40,15 +40,15 @@ public:// 一回�E呼び出さなぁE��バグるやつめE
 public:// 描画関数
 	/// 三角形を描画しまぁE
 	void DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color);
-	/// 線�Eを描画しまぁE
+	/// 線�Eを描画しまぁE
 	void DrawLine(Vector3 point1, Vector3 point2,const Vector4& color);
 	/// 点を描画しまぁE
 	void DrawPoint(Vector3 point, const Vector4& color);
-	/// グリチE��を描画しまぁE
+	/// グリチE��を描画しまぁE
 	void DrawGrid(float size = 10.0f, int32_t gridCount = 10);
-	/// 琁E��描画しまぁE
+	/// 琁E��描画しまぁE
 	void DrawSphere(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
-	/// 冁E��描画しまぁE
+	/// 冁E��描画しまぁE
 	void DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
 	/// 箱を描画しまぁE
 	void DrawBox(Vector3 min, Vector3 max, const Vector4& color);
@@ -70,15 +70,15 @@ private:
 	ConstantBuffer<Material> material_;
 
 private:
-	// 三角形の頂点チE�Eタ
+	// 三角形の頂点チE�Eタ
 	PrimitiveVertexData* triangleVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> triangleVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW triangleVertexBufferView_;
-	// 線�E頂点チE�Eタ
+	// 線�E頂点チE�Eタ
 	PrimitiveVertexData* lineVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> lineVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW lineVertexBufferView_;
-	// 点の頂点チE�Eタ
+	// 点の頂点チE�Eタ
 	PrimitiveVertexData* pointVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW pointVertexBufferView_;

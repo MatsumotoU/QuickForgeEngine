@@ -46,7 +46,7 @@ public:
 	virtual void SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) = 0;
 	virtual void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) = 0;
 
-	// シーンにあるオブジェクト�E惁E��取征E
+	// シーンにあるオブジェクト�E惁E��取征E
 	virtual uint32_t GetEntityByName(const std::string& entityName) const = 0;
 	virtual uint32_t GetEntityByUniqeID(uint32_t uniqueId) const = 0;
 

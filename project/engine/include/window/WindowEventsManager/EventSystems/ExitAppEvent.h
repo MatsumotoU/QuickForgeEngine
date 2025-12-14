@@ -6,7 +6,7 @@ public:
 	ExitAppEvent(nlohmann::json& data);
 	~ExitAppEvent() override = default;
 	/// <summary>
-	/// アプリケーションの終亁E��ベント�E琁E
+	/// アプリケーションの終亁E��ベント�E琁E
 	/// </summary>
 	/// <param name="wparam">WPARAM</param>
 	/// <param name="lparam">LPARAM</param>

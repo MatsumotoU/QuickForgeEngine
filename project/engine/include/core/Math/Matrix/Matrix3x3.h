@@ -24,124 +24,124 @@ public:
 
 public:
 	/// <summary>
-	/// こ�E行�Eの送E���Eを求めめE
+	/// こ�E行�Eの送E���Eを求めめE
 	/// </summary>
-	/// <returns>こ�E行�Eの送E���E</returns>
+	/// <returns>こ�E行�Eの送E���E</returns>
 	[[nodiscard]] Matrix3x3 Inverse() const;
 
 	/// <summary>
-	/// こ�E行�Eの転地行�Eを求めめE
+	/// こ�E行�Eの転地行�Eを求めめE
 	/// </summary>
-	/// <returns>こ�E行�Eの転地行�E</returns>
+	/// <returns>こ�E行�Eの転地行�E</returns>
 	[[nodiscard]] Matrix3x3 Transpose() const;
 
 public:
 	/// <summary>
-	/// 3x3の送E���Eを求めめE
+	/// 3x3の送E���Eを求めめE
 	/// </summary>
-	/// <param name="m">3x3の行�E</param>
-	/// <returns>3x3の送E���E</returns>
+	/// <param name="m">3x3の行�E</param>
+	/// <returns>3x3の送E���E</returns>
 	[[nodiscard]] static Matrix3x3 Inverse(const Matrix3x3& m);
 
 	/// <summary>
-	/// 3x3の転置行�Eを求めめE
+	/// 3x3の転置行�Eを求めめE
 	/// </summary>
-	/// <param name="m">3x3の行�E</param>
-	/// <returns>3x3の転置行�E</returns>
+	/// <param name="m">3x3の行�E</param>
+	/// <returns>3x3の転置行�E</returns>
 	[[nodiscard]] static Matrix3x3 Transpose(const Matrix3x3& m);
 
 public:
 	/// <summary>
-	/// 2つの3x3行�Eの加算結果を求めめE
+	/// 2つの3x3行�Eの加算結果を求めめE
 	/// </summary>
-	/// <param name="m1">1つ目の3x3行�E</param>
-	/// <param name="m2">2つ目の3x3行�E</param>
-	/// <returns>2つの3x3行�Eの加算結果</returns>
+	/// <param name="m1">1つ目の3x3行�E</param>
+	/// <param name="m2">2つ目の3x3行�E</param>
+	/// <returns>2つの3x3行�Eの加算結果</returns>
 	[[nodiscard]] static Matrix3x3 Add(const Matrix3x3& m1, const Matrix3x3& m2);
 
 	/// <summary>
-	/// 2つの3x3行�Eの減算結果を求めめE
+	/// 2つの3x3行�Eの減算結果を求めめE
 	/// </summary>
-	/// <param name="m1">1つ目の3x3行�E</param>
-	/// <param name="m2">2つ目の3x3行�E</param>
-	/// <returns>2つの3x3行�Eの減算結果</returns>
+	/// <param name="m1">1つ目の3x3行�E</param>
+	/// <param name="m2">2つ目の3x3行�E</param>
+	/// <returns>2つの3x3行�Eの減算結果</returns>
 	[[nodiscard]] static Matrix3x3 Subtract(const Matrix3x3& m1, const Matrix3x3& m2);
 
 	/// <summary>
-	/// 2つの3x3行�Eの乗算結果を求めめE
+	/// 2つの3x3行�Eの乗算結果を求めめE
 	/// </summary>
-	/// <param name="m1">1つ目の3x3行�E</param>
-	/// <param name="m2">2つ目の3x3行�E</param>
-	/// <returns>2つの3x3行�Eの乗算結果</returns>
+	/// <param name="m1">1つ目の3x3行�E</param>
+	/// <param name="m2">2つ目の3x3行�E</param>
+	/// <returns>2つの3x3行�Eの乗算結果</returns>
 	[[nodiscard]] static Matrix3x3 Multiply(const Matrix3x3& m1, const Matrix3x3& m2);
 
 public:
 	/// <summary>
-	/// 3x3の単位行�Eを求めめE
+	/// 3x3の単位行�Eを求めめE
 	/// </summary>
-	/// <returns>3x3の単位行�E</returns>
+	/// <returns>3x3の単位行�E</returns>
 	[[nodiscard]] static Matrix3x3 MakeIdentity3x3();
 
 public:
 	/// <summary>
-	/// 拡大縮小行�Eを作�Eする
+	/// 拡大縮小行�Eを作�Eする
 	/// </summary>
-	/// <param name="scale">拡大縮小�E惁E��</param>
-	/// <returns>拡大縮小行�E</returns>
+	/// <param name="scale">拡大縮小�E惁E��</param>
+	/// <returns>拡大縮小行�E</returns>
 	[[nodiscard]] Matrix3x3 MakeScaleMatrix(const Vector2& scale) const;
 
 	/// <summary>
-	/// 回転行�Eを作�Eする
+	/// 回転行�Eを作�Eする
 	/// </summary>
 	/// <param name="theta">ラジアン</param>
-	/// <returns>回転行�E</returns>
+	/// <returns>回転行�E</returns>
 	[[nodiscard]] Matrix3x3 MakeRotateMatrix(const float& theta) const;
 
 	/// <summary>
-	/// 移動行�Eを作�Eする
+	/// 移動行�Eを作�Eする
 	/// </summary>
-	/// <param name="translate">移動量の惁E��</param>
-	/// <returns>移動行�E</returns>
+	/// <param name="translate">移動量の惁E��</param>
+	/// <returns>移動行�E</returns>
 	[[nodiscard]] Matrix3x3 MakeTranslateMatrix(const Vector2& translate) const;
 
 	/// <summary>
-	/// アフィン行�Eを作�Eする
+	/// アフィン行�Eを作�Eする
 	/// </summary>
-	/// <param name="scale">拡大縮小�E惁E��</param>
+	/// <param name="scale">拡大縮小�E惁E��</param>
 	/// <param name="rotate">ラジアン</param>
-	/// <param name="translate">移動量の惁E��</param>
-	/// <returns>アフィン行�E</returns>
+	/// <param name="translate">移動量の惁E��</param>
+	/// <returns>アフィン行�E</returns>
 	[[nodiscard]] Matrix3x3 MakeAffineMatrix(const Vector2& scale, const float& rotate, const Vector2& translate) const;
 
 public:
 	/// <summary>
-	/// 正封E��行�Eを作�Eする
+	/// 正封E��行�Eを作�Eする
 	/// </summary>
 	/// <param name="left">画面の左端座樁E/param>
 	/// <param name="top">画面の上端座樁E/param>
 	/// <param name="right">画面の右端座樁E/param>
 	/// <param name="bottom">画面の下端座樁E/param>
-	/// <returns>正封E��行�E</returns>
+	/// <returns>正封E��行�E</returns>
 	[[nodiscard]] Matrix3x3 MakeOrthographicMatrix(const float& left, const float& top, const float& right, const float& bottom) const;
 
 	/// <summary>
-	/// ビューポ�Eト行�Eを作�Eする
+	/// ビューポ�Eト行�Eを作�Eする
 	/// </summary>
 	/// <param name="left">画面の左端座樁E/param>
 	/// <param name="top">画面の上端座樁E/param>
 	/// <param name="width">画面の右端座樁E/param>
 	/// <param name="height">画面の下端座樁E/param>
-	/// <returns>ビューポ�Eト行�E</returns>
+	/// <returns>ビューポ�Eト行�E</returns>
 	[[nodiscard]] Matrix3x3 MakeViewportMatrix(const float& left, const float& top, const float& width, const float& height) const;
 
 	/// <summary>
-	/// ワールドビュープロジェクション行�Eを作�Eする
+	/// ワールドビュープロジェクション行�Eを作�Eする
 	/// </summary>
-	/// <param name="worldMatrix">ワールド行�E</param>
-	/// <param name="viewMatrix">ビュー行�E</param>
-	/// <param name="orthoMatrix">正封E��行�E</param>
-	/// <param name="viewportMatrix">ビューポ�Eト行�E</param>
-	/// <returns>ワールドビュープロジェクション行�E</returns>
+	/// <param name="worldMatrix">ワールド行�E</param>
+	/// <param name="viewMatrix">ビュー行�E</param>
+	/// <param name="orthoMatrix">正封E��行�E</param>
+	/// <param name="viewportMatrix">ビューポ�Eト行�E</param>
+	/// <returns>ワールドビュープロジェクション行�E</returns>
 	[[nodiscard]] Matrix3x3 MakeWvpVpMatrix(const Matrix3x3& worldMatrix, const Matrix3x3& viewMatrix, const Matrix3x3& orthoMatrix, const Matrix3x3& viewportMatrix) const;
 };
 

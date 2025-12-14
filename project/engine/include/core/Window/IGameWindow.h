@@ -19,11 +19,11 @@ public:
 	/// </summary>
 	virtual void Draw() = 0;
 	/// <summary>
-	/// ウィンドウの終亁E�E琁E
+	/// ウィンドウの終亁E�E琁E
 	/// </summary>
 	virtual void Shutdown() = 0;
 	/// <summary>
-	/// ウィンドウがアクチE��ブかどぁE��を確認すめE
+	/// ウィンドウがアクチE��ブかどぁE��を確認すめE
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsWindowActive() const = 0;

@@ -1,4 +1,4 @@
-#include "ResourceDirectoryManager.h"
+#include "engine/include/assets/ResourceDirectoryManager.h"
 #include <cassert>
 
 #ifdef _DEBUG

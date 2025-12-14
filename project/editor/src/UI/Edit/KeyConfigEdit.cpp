@@ -1,6 +1,6 @@
 #include "editor/include/UI/Edit/KeyConfigEdit.h"
 #include "input/InputInterface.h" 
-#include "utility/String/DirectXStructToString.h"
+#include "utility/String/DirectInputToString.h"
 #include <format>
 #include <optional>
 
