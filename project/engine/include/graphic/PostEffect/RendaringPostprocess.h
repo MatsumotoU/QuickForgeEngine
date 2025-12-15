@@ -1,7 +1,7 @@
 #pragma once
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
-#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 #include "engine/include/graphic/Pipeline/PSO/PipelineStateObject.h"
 #include "engine/include/graphic/ShaderBuffer/VertexBuffer.h"

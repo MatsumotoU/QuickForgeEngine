@@ -6,7 +6,7 @@
 
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/physics/Force.h"
-#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 	// 繧ｷ繝ｼ繝ｳ荳翫・繧ｪ繝悶ず繧ｧ繧ｯ繝医ョ繝ｼ繧ｿ

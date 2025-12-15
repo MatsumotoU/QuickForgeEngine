@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <cassert>
-#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "BufferGenerater/BufferGenerator.h"
 
 template<class T>

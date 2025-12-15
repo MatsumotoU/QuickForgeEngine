@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "engine/include/utility/DesignPatterns/Singleton.h"
-#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 #include "engine/include/graphic/ShaderBuffer/ConstantBuffer.h"
 

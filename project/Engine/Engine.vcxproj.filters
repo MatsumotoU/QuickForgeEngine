@@ -1,17 +1,1247 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="include\assets">
+      <UniqueIdentifier>{6B16CE41-57E4-C147-4078-326E2CE59DAC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="include\assets\2DTexture">
+      <UniqueIdentifier>{41ABCE86-2DD0-1D07-561B-0397429F1C25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\assets\3DModel">
+      <UniqueIdentifier>{A23FC6EB-8E39-EF3D-77A6-854E633F55AA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\3DModel\Data">
+      <UniqueIdentifier>{4BCAE2A9-B7D7-1090-40BE-0C7BACCADC46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\3DModel\Loader">
+      <UniqueIdentifier>{28D45AC1-94EC-41EB-5D99-D184C970D684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\Animeter">
+      <UniqueIdentifier>{2FDC6232-9B13-ABC9-A41D-0FED10D4D1C2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\AudioSource">
+      <UniqueIdentifier>{3D403802-2950-E4D2-9209-49F17E38D36B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\AudioSource\Data">
+      <UniqueIdentifier>{C6632401-3247-3341-3B4A-617DA7ACF991}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\AudioSource\Loader">
+      <UniqueIdentifier>{63B868EF-CF26-BE6E-1810-796E84BDB30A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\ConstantBufferManager">
+      <UniqueIdentifier>{7951A2C2-6538-64BA-0E89-CAD7FA4EDD20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\Particle">
+      <UniqueIdentifier>{CE420837-3A7A-50CE-4384-B4F1AF3A77C7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\Particle\Data">
+      <UniqueIdentifier>{F7A881B4-E363-7160-8C1B-EAAA78B5BBF0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\Script">
+      <UniqueIdentifier>{4F6EAAC0-BBDA-65BB-84CE-FD18F0F98723}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\Script\Data">
+      <UniqueIdentifier>{182D200E-043D-CCDE-6DF6-30FD5925BB77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\Script\QFElinker">
+      <UniqueIdentifier>{1F300211-8B13-1151-9416-3F8D0079D7A1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\Sprite">
+      <UniqueIdentifier>{51AD95C1-BD19-51BC-860D-E919F2387324}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assets\Sprite\Data">
+      <UniqueIdentifier>{5A1D9553-462D-4124-AFE6-A5429B1530BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\audio">
+      <UniqueIdentifier>{6A10E8A4-D6D0-63DB-9F0B-AD580B8BA8B7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\audio\Core">
+      <UniqueIdentifier>{02072E43-EEEA-EE98-574B-E9EB434ED91A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\audio\Player">
+      <UniqueIdentifier>{46A6DFE4-3235-69AE-DB53-7DA9C7C17954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\camera">
+      <UniqueIdentifier>{01642F45-ED31-234B-D6C5-9371C232FFAF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\camera\Data">
+      <UniqueIdentifier>{0A823C24-76E3-1932-FF50-60E46BB150F1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\collider">
+      <UniqueIdentifier>{86686C82-7261-8BD4-9B93-705987EB6AE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\collider\Data">
+      <UniqueIdentifier>{AF217ABA-1B8E-35B5-E481-CD1250AD571D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core">
+      <UniqueIdentifier>{A17DD969-8DE0-680E-3666-A1C422A83491}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Entity">
+      <UniqueIdentifier>{CDCAFE40-392C-DC4E-C299-22012EFA120E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Entity\Component">
+      <UniqueIdentifier>{6F47B287-DB5F-99B1-A40C-294B10E42D4B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Error">
+      <UniqueIdentifier>{9AF966B4-86DD-270A-EF3D-225DDB40128C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Graphic">
+      <UniqueIdentifier>{CE10CD02-BA9F-56CC-63BE-6AC74F2C6772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Math">
+      <UniqueIdentifier>{1A8F5C89-86A5-5A1F-CF1C-E6403B722BA7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Math\Matrix">
+      <UniqueIdentifier>{7E85208B-6AAA-6F0B-93F5-549B7F796E29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Math\Quaternion">
+      <UniqueIdentifier>{6FC334BC-5B7E-2468-0436-9DB2F0CF6EF8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Math\Vector">
+      <UniqueIdentifier>{FC0B5EA0-E830-AD20-117C-92B0FDFFAB3E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Window">
+      <UniqueIdentifier>{68CB9D6A-D42C-7B78-5D9A-C12AC9FAB137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic">
+      <UniqueIdentifier>{D642D945-42CE-460A-4BDF-C9FEB7E9A20A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\DirectXCommon">
+      <UniqueIdentifier>{61D3412F-CDEB-2859-9698-B8F20270BDF2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\DirectXCommon\Command">
+      <UniqueIdentifier>{6F1DFE24-DBE1-FC14-A447-2DDF10CB984A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\DirectXCommon\Descriptors">
+      <UniqueIdentifier>{2283F777-8E9D-5A19-D7BF-6AAD43198220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\DirectXCommon\Descriptors\CheckGenerateConfig">
+      <UniqueIdentifier>{10AE55DC-7C76-2360-4507-2C72B18E539B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\DirectXCommon\Descriptors\Data">
+      <UniqueIdentifier>{CB3DEAF0-B7BB-3A8A-A0B3-F8218CD07CB2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\DirectXCommon\Descriptors\DescriptorGenerator">
+      <UniqueIdentifier>{D758883C-4321-56C0-0CB2-5ED2783986FB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\Pipeline">
+      <UniqueIdentifier>{BB7BE9DA-A7A0-385B-D0EB-1DEBBC6F3779}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\Pipeline\PSO">
+      <UniqueIdentifier>{5C0682E6-48C1-7192-F178-EADCDD12BC22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\PostEffect">
+      <UniqueIdentifier>{983A5DE2-844A-09B3-ED03-6ED1D932F84B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\PostEffect\OffScreen">
+      <UniqueIdentifier>{E2C7DBB1-CEAE-9DA9-77FF-03C763C51610}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\ShaderBuffer">
+      <UniqueIdentifier>{36DD801C-2298-70C8-CB4F-E912B7E9BA58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\graphic\ShaderBuffer\BufferGenerater">
+      <UniqueIdentifier>{DCCC15B0-C8DF-1509-71C9-F2F55DBBB256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\input">
+      <UniqueIdentifier>{683275A5-D4F2-F0DB-9D2D-3A5909AD35B8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\input\DirectInput">
+      <UniqueIdentifier>{4250364B-AE12-6AD5-F7C2-F86163C442B3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\input\XInput">
+      <UniqueIdentifier>{9FC6C51A-8B55-4FE4-3474-63DF20E25F8A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\physics">
+      <UniqueIdentifier>{1BC405E5-874F-73A9-9060-F69DFC6ACFA9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\renderer">
+      <UniqueIdentifier>{6F19995C-5B12-B8AE-8444-9D33709C97BA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\scene">
+      <UniqueIdentifier>{86EF23A6-F2AF-9FDC-BBEA-E859276AE4B8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\scene\Data">
+      <UniqueIdentifier>{AF08FEB0-9BEC-BE06-044D-B959F04FA988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility">
+      <UniqueIdentifier>{EC7EC180-580A-2F45-611B-B239CD258B45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\DebugTool">
+      <UniqueIdentifier>{2062D42D-8C24-08B8-D5D4-964441D6E095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\DebugTool\App">
+      <UniqueIdentifier>{505B93E7-BC73-7A11-8520-0AABF1F70EAB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\DebugTool\DebugLog">
+      <UniqueIdentifier>{D8965CF9-C4D2-5F63-2DE5-775A1940087E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\DebugTool\DirectX">
+      <UniqueIdentifier>{E26468C4-4ED3-BD43-97BC-7843036AB3DF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\DebugTool\ImGui">
+      <UniqueIdentifier>{4AEF651A-B6D2-745A-BFD5-A2962B383BAB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\DesignPatterns">
+      <UniqueIdentifier>{268068F4-12A6-325B-FBEB-B726E7B05727}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\DirectX">
+      <UniqueIdentifier>{AE8DDB23-1AC5-23BB-23CF-87DE8F854AB4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\FileSystems">
+      <UniqueIdentifier>{F365252B-5F73-5311-E859-4FFC54661FC8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\ID">
+      <UniqueIdentifier>{08F9BA9A-F4DC-7BF0-5D3D-764349406672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\String">
+      <UniqueIdentifier>{F2BB181D-DEB5-416F-C722-D87FB3BBA7DB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\utility\memory">
+      <UniqueIdentifier>{F4C8AC58-E0C2-D5AA-C92F-6CBBB5C83B17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\window">
+      <UniqueIdentifier>{70DC6774-5CAA-5B7A-453E-CCA031AB37DF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\window\WindowGenerater">
+      <UniqueIdentifier>{D4C83662-C0EE-00C9-A934-869495F92595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\window\WindowGenerater\Data">
+      <UniqueIdentifier>{BDE2B2AD-299C-1D58-B2FB-37321EB4D3C7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\window\windowEventsManager">
+      <UniqueIdentifier>{873E40B2-737A-431C-DC8C-5B13C8E7EB36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\window\windowEventsManager\EventSystems">
+      <UniqueIdentifier>{D05E162F-3C9A-76F2-458F-F381B149FB22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{202B5BA7-8C95-0F1E-D5D3-C0C3417DED72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders">
+      <UniqueIdentifier>{19081037-851E-0ECD-CE95-99EE3AEBDE54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders\shaderStructs">
+      <UniqueIdentifier>{B72A853E-230E-947E-2C11-C2BA98735ACF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets">
+      <UniqueIdentifier>{8F11E44F-7BC9-259D-E4D0-FEF8D0A7C08D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\2DTexture">
+      <UniqueIdentifier>{65E3E399-5172-6D63-FA90-815EE6FE7D09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\3DModel">
+      <UniqueIdentifier>{C61E27A3-B202-E8F8-1B63-E24B0766D27A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\3DModel\Data">
+      <UniqueIdentifier>{EFBFA07F-5BF7-E816-6401-4D3AD0B70F10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\3DModel\Loader">
+      <UniqueIdentifier>{CCC26CFE-3885-A088-8135-2F15ED367966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\Animeter">
+      <UniqueIdentifier>{D39FDFD5-3F01-BDE3-C86E-039634CFF3A2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\AudioSource">
+      <UniqueIdentifier>{61117C2F-4D0B-A581-3678-3B9222110BEE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\AudioSource\Loader">
+      <UniqueIdentifier>{0759592B-7371-4055-3C1E-D0EEA8F5D4EE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\Particle">
+      <UniqueIdentifier>{720685DA-DE67-62E8-67D5-A89AD33599A7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\Particle\Data">
+      <UniqueIdentifier>{1B53FE41-0778-4DC2-30C3-32521C474CE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\Script">
+      <UniqueIdentifier>{F3F8194A-5F0F-18E0-A886-A30114DCE867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\Script\Data">
+      <UniqueIdentifier>{3CFE633B-28F8-8C8D-1165-239EFDFDF2F9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\Script\QFElinker">
+      <UniqueIdentifier>{C3574ADA-2F65-78C0-B84B-74AB24584477}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\Sprite">
+      <UniqueIdentifier>{F537054B-614E-03E1-AAC5-8E02161BD468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\assets\Sprite\Data">
+      <UniqueIdentifier>{7EEED880-6AE8-01D3-5355-98E33FEE673F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\audio">
+      <UniqueIdentifier>{0E37D9B4-7AA1-8D2B-C3DF-3ED12F896B80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\audio\Core">
+      <UniqueIdentifier>{26F45414-12C2-481A-FB55-B940E7C2247F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\audio\Player">
+      <UniqueIdentifier>{6A6C769B-5665-95ED-7F97-7A726BEF74F9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\camera">
+      <UniqueIdentifier>{255F4553-1117-87A0-7A1E-60FC66F52191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\collider">
+      <UniqueIdentifier>{AABCED6D-961F-7D12-3FA5-B5C82BE74895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\collider\Data">
+      <UniqueIdentifier>{53ACE943-BFC2-E7D9-083A-73FB748FB861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{C55F2ECF-B12C-89DA-DA45-7782C671BE68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\Math">
+      <UniqueIdentifier>{BE6708E5-2A28-841B-F362-CD985FE2C8F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\Math\Matrix">
+      <UniqueIdentifier>{A2BD359E-8E4C-BF67-376B-D36223D9CF0D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\Math\Quaternion">
+      <UniqueIdentifier>{936DB149-7F92-00CA-A8DD-E5599461FFE7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\Math\Vector">
+      <UniqueIdentifier>{204473B3-0CD3-FC7C-B5F1-1078A15F0D23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic">
+      <UniqueIdentifier>{7AA2AE16-E657-270C-6F4C-21E3DB001E10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic\DirectXCommon">
+      <UniqueIdentifier>{05C2536C-7184-87F6-BA34-1683263660D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic\DirectXCommon\Descriptors">
+      <UniqueIdentifier>{C687400A-324C-3FFA-FBB1-6FC46735DB2F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic\Pipeline">
+      <UniqueIdentifier>{DFB3FEED-CB42-88B7-7461-9CB260CF985D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic\Pipeline\PSO">
+      <UniqueIdentifier>{80B0FE73-6CD5-4DF4-9520-338481A44C12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic\PostEffect">
+      <UniqueIdentifier>{BC0BA10F-A805-CA61-9172-60727D0B30CE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic\PostEffect\OffScreen">
+      <UniqueIdentifier>{0656E2FF-F2A6-CD41-1B0B-BC0307BB60AB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic\ShaderBuffer">
+      <UniqueIdentifier>{5A87FDA9-46AC-4C2A-6FF7-31BA5B7B4B48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphic\ShaderBuffer\BufferGenerater">
+      <UniqueIdentifier>{003F4A0C-ECBB-3D4F-1539-3E630115DAE2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\input">
+      <UniqueIdentifier>{0C5966B5-78C3-1A2C-C101-CCD12DABF880}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\input\DirectInput">
+      <UniqueIdentifier>{E68CF2C0-52F9-ADBB-1BED-45198718D023}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\input\XInput">
+      <UniqueIdentifier>{C38C5CD1-AF85-7B23-D8B7-60A8C40F5B2F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\physics">
+      <UniqueIdentifier>{BF23DBB5-2BD9-53AB-B4CD-4D8220824AAF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\renderer">
+      <UniqueIdentifier>{936D1A48-7FD0-A9EC-2856-E2A21498756F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\scene">
+      <UniqueIdentifier>{2A1615B6-9680-C92C-DFBE-7AD24B68A781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility">
+      <UniqueIdentifier>{90DE9651-FC93-0F47-8588-091EF13C064B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\DebugTool">
+      <UniqueIdentifier>{C49E90A3-300B-4C9E-F9FE-E3FB652A6E06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\DebugTool\App">
+      <UniqueIdentifier>{F449A524-600C-D9AE-A9BC-673B15BEB18C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\DebugTool\DebugLog">
+      <UniqueIdentifier>{FC4B61B3-E871-2B1A-D1B7-B0E5BD7C50E6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\DebugTool\DirectX">
+      <UniqueIdentifier>{86055900-F21D-402A-BBCA-CFC327A2D4C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\DebugTool\ImGui">
+      <UniqueIdentifier>{EE16AEE3-5A24-DCC9-E30A-D8B44F17A880}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\DirectX">
+      <UniqueIdentifier>{525158C7-BEB2-35D5-4720-7C87B3806C94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\FileSystems">
+      <UniqueIdentifier>{975BE300-0393-2B98-0C9D-8FBB78535291}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\ID">
+      <UniqueIdentifier>{2CE6E16B-18B4-D571-0148-4698EDB4B1D6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility\String">
+      <UniqueIdentifier>{169B79D4-027F-3A2A-6BDF-347D57E224AC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\window">
+      <UniqueIdentifier>{94D77D82-808F-BFCF-E996-982BD56D5AC0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\window\windowEventsManager">
+      <UniqueIdentifier>{ABF3446C-9719-0FD3-805F-949E6C24349F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\window\windowEventsManager\eventSystems">
+      <UniqueIdentifier>{94FACCEB-0060-6072-8938-024BF59C55E1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="QuickForgeEngine.h" />
+    <ClInclude Include="include\WindowsEngineCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\2DTexture\TextureManager.h">
+      <Filter>include\assets\2DTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\3DModel\Data\ModelData.h">
+      <Filter>include\assets\3DModel\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\3DModel\Data\ModelHandle.h">
+      <Filter>include\assets\3DModel\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\3DModel\Data\ModelMaterialData.h">
+      <Filter>include\assets\3DModel\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\3DModel\Data\ModelRenderData.h">
+      <Filter>include\assets\3DModel\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\3DModel\Loader\AssimpModelLoader.h">
+      <Filter>include\assets\3DModel\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\3DModel\ModelRenderDataManager.h">
+      <Filter>include\assets\3DModel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\3DModel\ModelVertexResourceManager.h">
+      <Filter>include\assets\3DModel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Animeter\AnimCrip.h">
+      <Filter>include\assets\Animeter</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Animeter\AnimationManager.h">
+      <Filter>include\assets\Animeter</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Animeter\KeyFrame.h">
+      <Filter>include\assets\Animeter</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\AssetManager.h">
+      <Filter>include\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\AudioSource\AudioSourceManager.h">
+      <Filter>include\assets\AudioSource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\AudioSource\Data\AudioData.h">
+      <Filter>include\assets\AudioSource\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\AudioSource\Loader\MultiAudioLoader.h">
+      <Filter>include\assets\AudioSource\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\ConstantBufferManager\ConstantBufferManager.h">
+      <Filter>include\assets\ConstantBufferManager</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Particle\Data\ParticleComponent.h">
+      <Filter>include\assets\Particle\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Particle\ParticleAnimationData.h">
+      <Filter>include\assets\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Particle\ParticleAnimationManager.h">
+      <Filter>include\assets\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Particle\ParticleGpuDataManager.h">
+      <Filter>include\assets\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\ResourceDirectoryManager.h">
+      <Filter>include\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\CsharpCmpiler.h">
+      <Filter>include\assets\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\CsharpVirtualEnvironmentOnQFE.h">
+      <Filter>include\assets\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\Data\CsharpComponent.h">
+      <Filter>include\assets\Script\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\Data\ScriptHandle.h">
+      <Filter>include\assets\Script\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\LuaScriptOnQFE.h">
+      <Filter>include\assets\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\LuaScriptResourceManager.h">
+      <Filter>include\assets\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\CsharpOnQFELinker.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\CsharpProjectManager.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetStructBase.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetUtilities.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Script\QFElinker\SetQFELinkers.h">
+      <Filter>include\assets\Script\QFElinker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Sprite\Data\SpriteData.h">
+      <Filter>include\assets\Sprite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\Sprite\SpriteManager.h">
+      <Filter>include\assets\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\AudioInterface.h">
+      <Filter>include\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\Core\AudioType.h">
+      <Filter>include\audio\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\Core\ChunkHeader.h">
+      <Filter>include\audio\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\Core\FormatChunk.h">
+      <Filter>include\audio\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\Core\RiffHeader.h">
+      <Filter>include\audio\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\Core\XAudioCore.h">
+      <Filter>include\audio\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\IAudioInterface.h">
+      <Filter>include\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\Player\AudioChipManager.h">
+      <Filter>include\audio\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\audio\Player\AudioPlayChip.h">
+      <Filter>include\audio\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\camera\Camera.h">
+      <Filter>include\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="include\camera\CameraManager.h">
+      <Filter>include\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="include\camera\Data\CameraData.h">
+      <Filter>include\camera\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\collider\ColliderManager.h">
+      <Filter>include\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="include\collider\ColliderMask.h">
+      <Filter>include\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="include\collider\Data\AABBColliderData.h">
+      <Filter>include\collider\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\collider\Data\SphereColliderData.h">
+      <Filter>include\collider\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\EngineGlobalValue.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Entity\Component\ComponentData.h">
+      <Filter>include\core\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Entity\Component\ComponentStrage.h">
+      <Filter>include\core\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Entity\Component\IComponentStrage.h">
+      <Filter>include\core\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Entity\EntityManager.h">
+      <Filter>include\core\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Error\ErrorList.h">
+      <Filter>include\core\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Graphic\IGraphicCommon.h">
+      <Filter>include\core\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\IEngineCore.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\AudioMath.h">
+      <Filter>include\core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\MathInclude.h">
+      <Filter>include\core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Matrix\Matrix2x2.h">
+      <Filter>include\core\Math\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Matrix\Matrix3x3.h">
+      <Filter>include\core\Math\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Matrix\Matrix4x4.h">
+      <Filter>include\core\Math\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\MyMath.h">
+      <Filter>include\core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\MyRandomNum.h">
+      <Filter>include\core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\ParentData.h">
+      <Filter>include\core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Quaternion\Quaternion.h">
+      <Filter>include\core\Math\Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Shapes.h">
+      <Filter>include\core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Transform.h">
+      <Filter>include\core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Vector\Vector2.h">
+      <Filter>include\core\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Vector\Vector3.h">
+      <Filter>include\core\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Math\Vector\Vector4.h">
+      <Filter>include\core\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Window\IGameWindow.h">
+      <Filter>include\core\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Window\IGameWindowManager.h">
+      <Filter>include\core\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Command\CommandExecutor.h">
+      <Filter>include\graphic\DirectXCommon\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Command\DirectXCommandList.h">
+      <Filter>include\graphic\DirectXCommon\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Command\DirectXCommandManager.h">
+      <Filter>include\graphic\DirectXCommon\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Command\DirectXCommandQueue.h">
+      <Filter>include\graphic\DirectXCommon\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\CheckGenerateConfig\CheckGenerateConfig.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors\CheckGenerateConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\Data\DescriptorGenerateConfig.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\Data\DescriptorHandles.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\DescriptorGenerator\DescriptorGenerator.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors\DescriptorGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\DescriptorHeapManager.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\DsvDescriptorHeap.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\IDescriptorHeap.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.h">
+      <Filter>include\graphic\DirectXCommon\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\DirectXCommon.h">
+      <Filter>include\graphic\DirectXCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\DirectXDevice.h">
+      <Filter>include\graphic\DirectXCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\Fence.h">
+      <Filter>include\graphic\DirectXCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\DirectXCommon\SwapChain.h">
+      <Filter>include\graphic\DirectXCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\Pipeline\GraphicPipelineManager.h">
+      <Filter>include\graphic\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\Pipeline\PSO\InputLayout.h">
+      <Filter>include\graphic\Pipeline\PSO</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\Pipeline\PSO\PipelineStateObject.h">
+      <Filter>include\graphic\Pipeline\PSO</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\Pipeline\PSO\RootParameter.h">
+      <Filter>include\graphic\Pipeline\PSO</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\Pipeline\PSO\ShaderCompiledData.h">
+      <Filter>include\graphic\Pipeline\PSO</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\Pipeline\PSO\ShaderCompiler.h">
+      <Filter>include\graphic\Pipeline\PSO</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\Pipeline\PSO\ShaderReflection.h">
+      <Filter>include\graphic\Pipeline\PSO</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\PostEffect\OffScreen\OffScreenResourceManager.h">
+      <Filter>include\graphic\PostEffect\OffScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\PostEffect\RendaringPostprocess.h">
+      <Filter>include\graphic\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h">
+      <Filter>include\graphic\ShaderBuffer\BufferGenerater</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\ShaderBuffer\ConstantBuffer.h">
+      <Filter>include\graphic\ShaderBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\ShaderBuffer\StructuredBuffer.h">
+      <Filter>include\graphic\ShaderBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphic\ShaderBuffer\VertexBuffer.h">
+      <Filter>include\graphic\ShaderBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\DirectInput\DirectInputKeyboard.h">
+      <Filter>include\input\DirectInput</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\DirectInput\DirectInputManager.h">
+      <Filter>include\input\DirectInput</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\DirectInput\DirectInputMouse.h">
+      <Filter>include\input\DirectInput</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\InputInterface.h">
+      <Filter>include\input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\KeyConfig.h">
+      <Filter>include\input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\XInput\XInputController.h">
+      <Filter>include\input\XInput</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Force.h">
+      <Filter>include\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\PhysicsManager.h">
+      <Filter>include\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\renderer\GraphRenderer.h">
+      <Filter>include\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\renderer\ModelRenderer.h">
+      <Filter>include\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\renderer\ParticleRenderer.h">
+      <Filter>include\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\renderer\SpriteRenderer.h">
+      <Filter>include\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\Data\SceneObjectData.h">
+      <Filter>include\scene\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\IScene.h">
+      <Filter>include\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneManager.h">
+      <Filter>include\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneObject.h">
+      <Filter>include\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\App\CrashHandler.h">
+      <Filter>include\utility\DebugTool\App</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\App\WinAppDebugCore.h">
+      <Filter>include\utility\DebugTool\App</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\DebugLog\MyDebugLog.h">
+      <Filter>include\utility\DebugTool\DebugLog</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\DirectX\D3DResourceLeakChecker.h">
+      <Filter>include\utility\DebugTool\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\DirectX\DebugLayer.h">
+      <Filter>include\utility\DebugTool\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\DirectX\DirectX12DebugCore.h">
+      <Filter>include\utility\DebugTool\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\FrameCounter.h">
+      <Filter>include\utility\DebugTool</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\ImGui\DropDownFileList.h">
+      <Filter>include\utility\DebugTool\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\ImGui\ImGuiFlameController.h">
+      <Filter>include\utility\DebugTool\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\ImGui\ImGuiInclude.h">
+      <Filter>include\utility\DebugTool\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DebugTool\ImGui\ImGuiInitializer.h">
+      <Filter>include\utility\DebugTool\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DesignPatterns\Observer.h">
+      <Filter>include\utility\DesignPatterns</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DesignPatterns\Singleton.h">
+      <Filter>include\utility\DesignPatterns</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DesignPatterns\Subject.h">
+      <Filter>include\utility\DesignPatterns</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DirectX\GenerateDiscriptorHandle.h">
+      <Filter>include\utility\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DirectX\InitializeSwapChainBuffer.h">
+      <Filter>include\utility\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\DirectX\TransitionResourceBarrier.h">
+      <Filter>include\utility\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\FileSystems\FileUtility.h">
+      <Filter>include\utility\FileSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\ID\UniqeIDManager.h">
+      <Filter>include\utility\ID</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\MultiThreadRunFunction.h">
+      <Filter>include\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\MultiThreadTaskExecutor.h">
+      <Filter>include\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\String\DirectInputToString.h">
+      <Filter>include\utility\String</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\String\DirectXStructToString.h">
+      <Filter>include\utility\String</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\String\HwndConvertString.h">
+      <Filter>include\utility\String</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\String\MyString.h">
+      <Filter>include\utility\String</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\String\StringLiblary.h">
+      <Filter>include\utility\String</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\memory\SparseSets.h">
+      <Filter>include\utility\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\GameWindow.h">
+      <Filter>include\window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\GameWindowManager.h">
+      <Filter>include\window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\WindowGenerater\Data\WindowConfigData.h">
+      <Filter>include\window\WindowGenerater\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h">
+      <Filter>include\window\WindowGenerater</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\windowEventsManager\EventSystems\DropFileEvent.h">
+      <Filter>include\window\windowEventsManager\EventSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\windowEventsManager\EventSystems\ExitAppEvent.h">
+      <Filter>include\window\windowEventsManager\EventSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\windowEventsManager\EventSystems\IEvent.h">
+      <Filter>include\window\windowEventsManager\EventSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\windowEventsManager\EventSystems\OnFocusEvent.h">
+      <Filter>include\window\windowEventsManager\EventSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\windowEventsManager\WindowEventsManager.h">
+      <Filter>include\window\windowEventsManager</Filter>
+    </ClInclude>
+    <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h">
+      <Filter>resources\shaders\shaderStructs</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="QuickForgeEngine.cpp" />
+    <ClCompile Include="src\WindowsEngineCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\2DTexture\TextureManager.cpp">
+      <Filter>src\assets\2DTexture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\3DModel\Data\ModelHandle.cpp">
+      <Filter>src\assets\3DModel\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\3DModel\Loader\AssimpModelLoader.cpp">
+      <Filter>src\assets\3DModel\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\3DModel\ModelRenderDataManager.cpp">
+      <Filter>src\assets\3DModel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\3DModel\ModelVertexResourceManager.cpp">
+      <Filter>src\assets\3DModel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Animeter\AnimCrip.cpp">
+      <Filter>src\assets\Animeter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Animeter\AnimationManager.cpp">
+      <Filter>src\assets\Animeter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\AssetManager.cpp">
+      <Filter>src\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\AudioSource\AudioSourceManager.cpp">
+      <Filter>src\assets\AudioSource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\AudioSource\Loader\MultiAudioLoader.cpp">
+      <Filter>src\assets\AudioSource\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Particle\Data\ParticleComponent.cpp">
+      <Filter>src\assets\Particle\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Particle\ParticleAnimationManager.cpp">
+      <Filter>src\assets\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Particle\ParticleGpuDataManager.cpp">
+      <Filter>src\assets\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\ResourceDirectoryManager.cpp">
+      <Filter>src\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\CsharpCmpiler.cpp">
+      <Filter>src\assets\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\CsharpScriptOnQFE.cpp">
+      <Filter>src\assets\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\CsharpVirtualEnvironmentOnQFE.cpp">
+      <Filter>src\assets\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\Data\CsharpComponent.cpp">
+      <Filter>src\assets\Script\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\LuaScriptOnQFE.cpp">
+      <Filter>src\assets\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\LuaScriptResourceManager.cpp">
+      <Filter>src\assets\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\QFElinker\CsharpOnQFELinker.cpp">
+      <Filter>src\assets\Script\QFElinker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp">
+      <Filter>src\assets\Script\QFElinker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp">
+      <Filter>src\assets\Script\QFElinker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.cpp">
+      <Filter>src\assets\Script\QFElinker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetStructBase.cpp">
+      <Filter>src\assets\Script\QFElinker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.cpp">
+      <Filter>src\assets\Script\QFElinker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetUtilities.cpp">
+      <Filter>src\assets\Script\QFElinker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Script\QFElinker\SetQFELinkers.cpp">
+      <Filter>src\assets\Script\QFElinker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Sprite\Data\SpriteData.cpp">
+      <Filter>src\assets\Sprite\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets\Sprite\SpriteManager.cpp">
+      <Filter>src\assets\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\AudioInterface.cpp">
+      <Filter>src\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\Core\XAudioCore.cpp">
+      <Filter>src\audio\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\Player\AudioChipManager.cpp">
+      <Filter>src\audio\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\Player\AudioPlayChip.cpp">
+      <Filter>src\audio\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera\Camera.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera\CameraManager.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\collider\ColliderManager.cpp">
+      <Filter>src\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\collider\ColliderMask.cpp">
+      <Filter>src\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\collider\Data\AABBColliderData.cpp">
+      <Filter>src\collider\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\collider\Data\SphereColliderData.cpp">
+      <Filter>src\collider\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\EngineGlobalValue.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\AudioMath.cpp">
+      <Filter>src\core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Matrix\Matrix2x2.cpp">
+      <Filter>src\core\Math\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Matrix\Matrix3x3.cpp">
+      <Filter>src\core\Math\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Matrix\Matrix4x4.cpp">
+      <Filter>src\core\Math\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\MyMath.cpp">
+      <Filter>src\core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\MyRandomNum.cpp">
+      <Filter>src\core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Quaternion\Quaternion.cpp">
+      <Filter>src\core\Math\Quaternion</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Shapes.cpp">
+      <Filter>src\core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Transform.cpp">
+      <Filter>src\core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Vector\Vector2.cpp">
+      <Filter>src\core\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Vector\Vector3.cpp">
+      <Filter>src\core\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Math\Vector\Vector4.cpp">
+      <Filter>src\core\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\CommandExecutor.cpp">
+      <Filter>src\graphic\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\Descriptors\CheckGenerateConfig.cpp">
+      <Filter>src\graphic\DirectXCommon\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\Descriptors\DescriptorGenerator.cpp">
+      <Filter>src\graphic\DirectXCommon\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\Descriptors\DescriptorHeapManager.cpp">
+      <Filter>src\graphic\DirectXCommon\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\Descriptors\DsvDescriptorHeap.cpp">
+      <Filter>src\graphic\DirectXCommon\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\Descriptors\IDescriptorHeap.cpp">
+      <Filter>src\graphic\DirectXCommon\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\Descriptors\RtvDescriptorHeap.cpp">
+      <Filter>src\graphic\DirectXCommon\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\Descriptors\SrvDescriptorHeap.cpp">
+      <Filter>src\graphic\DirectXCommon\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\DirectXCommandList.cpp">
+      <Filter>src\graphic\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\DirectXCommandManager.cpp">
+      <Filter>src\graphic\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\DirectXCommandQueue.cpp">
+      <Filter>src\graphic\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\DirectXCommon.cpp">
+      <Filter>src\graphic\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\Fence.cpp">
+      <Filter>src\graphic\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXCommon\SwapChain.cpp">
+      <Filter>src\graphic\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\DirectXDevice.cpp">
+      <Filter>src\graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\Pipeline\GraphicPipelineManager.cpp">
+      <Filter>src\graphic\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\Pipeline\PSO\InputLayout.cpp">
+      <Filter>src\graphic\Pipeline\PSO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\Pipeline\PSO\PipelineStateObject.cpp">
+      <Filter>src\graphic\Pipeline\PSO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\Pipeline\PSO\RootParameter.cpp">
+      <Filter>src\graphic\Pipeline\PSO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\Pipeline\PSO\ShaderCompiler.cpp">
+      <Filter>src\graphic\Pipeline\PSO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\Pipeline\PSO\ShaderReflection.cpp">
+      <Filter>src\graphic\Pipeline\PSO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp">
+      <Filter>src\graphic\PostEffect\OffScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\PostEffect\RendaringPostprocess.cpp">
+      <Filter>src\graphic\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp">
+      <Filter>src\graphic\ShaderBuffer\BufferGenerater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\DirectInput\DirectInputKeyboard.cpp">
+      <Filter>src\input\DirectInput</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\DirectInput\DirectInputManager.cpp">
+      <Filter>src\input\DirectInput</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\DirectInput\DirectInputMouse.cpp">
+      <Filter>src\input\DirectInput</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\InputInterface.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\KeyConfig.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\XInput\XInputController.cpp">
+      <Filter>src\input\XInput</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Force.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsManager.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\GraphRenderer.cpp">
+      <Filter>src\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\ModelRenderer.cpp">
+      <Filter>src\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\ParticleRenderer.cpp">
+      <Filter>src\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\SpriteRenderer.cpp">
+      <Filter>src\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneManager.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneObject.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DebugTool\App\WinAppDebugCore.cpp">
+      <Filter>src\utility\DebugTool\App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DebugTool\DebugLog\MyDebugLog.cpp">
+      <Filter>src\utility\DebugTool\DebugLog</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DebugTool\DirectX\DebugLayer.cpp">
+      <Filter>src\utility\DebugTool\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DebugTool\DirectX\DirectX12DebugCore.cpp">
+      <Filter>src\utility\DebugTool\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DebugTool\FrameCounter.cpp">
+      <Filter>src\utility\DebugTool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DebugTool\ImGui\DropDownFileList.cpp">
+      <Filter>src\utility\DebugTool\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DebugTool\ImGui\ImGuiFlameController.cpp">
+      <Filter>src\utility\DebugTool\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DebugTool\ImGui\ImGuiInitializer.cpp">
+      <Filter>src\utility\DebugTool\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DirectX\GenerateDiscriptorHandle.cpp">
+      <Filter>src\utility\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DirectX\InitializeSwapChainBuffer.cpp">
+      <Filter>src\utility\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\DirectX\TransitionResourceBarrier.cpp">
+      <Filter>src\utility\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\FileSystems\FileUtility.cpp">
+      <Filter>src\utility\FileSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\ID\UniqeIDManager.cpp">
+      <Filter>src\utility\ID</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\MultiThreadRunFunction.cpp">
+      <Filter>src\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\MultiThreadTaskExecutor.cpp">
+      <Filter>src\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\String\DirectInputToString.cpp">
+      <Filter>src\utility\String</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\String\DirectXStructToString.cpp">
+      <Filter>src\utility\String</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\String\HwndConvertString.cpp">
+      <Filter>src\utility\String</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\String\MyString.cpp">
+      <Filter>src\utility\String</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\String\StringLiblary.cpp">
+      <Filter>src\utility\String</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\GameWindow.cpp">
+      <Filter>src\window</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\GameWindowManager.cpp">
+      <Filter>src\window</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\WindowGenerater.cpp">
+      <Filter>src\window</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\windowEventsManager\WindowEventsManager.cpp">
+      <Filter>src\window\windowEventsManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\windowEventsManager\eventSystems\DropFileEvent.cpp">
+      <Filter>src\window\windowEventsManager\eventSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\windowEventsManager\eventSystems\ExitAppEvent.cpp">
+      <Filter>src\window\windowEventsManager\eventSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\windowEventsManager\eventSystems\IEvent.cpp">
+      <Filter>src\window\windowEventsManager\eventSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\windowEventsManager\eventSystems\OnFocusEvent.cpp">
+      <Filter>src\window\windowEventsManager\eventSystems</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

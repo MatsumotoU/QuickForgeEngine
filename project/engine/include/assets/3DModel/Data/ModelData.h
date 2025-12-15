@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "ModelMaterialData.h"
 
 struct MeshData {
