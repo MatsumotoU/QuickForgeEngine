@@ -6,6 +6,9 @@
 # User
 *.ini
 BuildInfo.h
+*.sln
+*.vcxproj
+*.vcxproj.filters
 
 #DumpFile
 Dumps/

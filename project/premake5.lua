@@ -28,12 +28,19 @@ group "QuickForge" -- MyMainProject
         kind "ConsoleApp"
         language "C++"
         files {"editor/**.h","editor/**.cpp"}
-        links{"Engine"}
+        links{
+            "Engine",
+            "ExternalFolders"
+        }
     
         -- 追加のインクルード
         includedirs{
             "$(SolutionDir)/",
-            "$(SolutionDir)/engine/include/"
+            "$(SolutionDir)/engine/include/",
+            "$(SolutionDir)/externals/",
+            "$(SolutionDir)/externals/nlohmann/",
+            "$(SolutionDir)/externals/lua/",
+            "$(SolutionDir)/externals/sol2/",
         }
 
     project "Engine"
