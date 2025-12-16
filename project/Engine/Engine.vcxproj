@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="QuickForgeEngine.h" />
+    <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
     <ClInclude Include="include\assets\2DTexture\TextureManager.h" />
     <ClInclude Include="include\assets\3DModel\Data\ModelData.h" />
@@ -278,14 +279,13 @@
     <ClInclude Include="include\utility\memory\SparseSets.h" />
     <ClInclude Include="include\window\GameWindow.h" />
     <ClInclude Include="include\window\GameWindowManager.h" />
+    <ClInclude Include="include\window\WindowEventsManager\EventSystems\DropFileEvent.h" />
+    <ClInclude Include="include\window\WindowEventsManager\EventSystems\ExitAppEvent.h" />
+    <ClInclude Include="include\window\WindowEventsManager\EventSystems\IEvent.h" />
+    <ClInclude Include="include\window\WindowEventsManager\EventSystems\OnFocusEvent.h" />
+    <ClInclude Include="include\window\WindowEventsManager\WindowEventsManager.h" />
     <ClInclude Include="include\window\WindowGenerater\Data\WindowConfigData.h" />
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h" />
-    <ClInclude Include="include\window\windowEventsManager\EventSystems\DropFileEvent.h" />
-    <ClInclude Include="include\window\windowEventsManager\EventSystems\ExitAppEvent.h" />
-    <ClInclude Include="include\window\windowEventsManager\EventSystems\IEvent.h" />
-    <ClInclude Include="include\window\windowEventsManager\EventSystems\OnFocusEvent.h" />
-    <ClInclude Include="include\window\windowEventsManager\WindowEventsManager.h" />
-    <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -403,12 +403,12 @@
     <ClCompile Include="src\utility\String\StringLiblary.cpp" />
     <ClCompile Include="src\window\GameWindow.cpp" />
     <ClCompile Include="src\window\GameWindowManager.cpp" />
+    <ClCompile Include="src\window\WindowEventsManager\EventSystems\DropFileEvent.cpp" />
+    <ClCompile Include="src\window\WindowEventsManager\EventSystems\ExitAppEvent.cpp" />
+    <ClCompile Include="src\window\WindowEventsManager\EventSystems\IEvent.cpp" />
+    <ClCompile Include="src\window\WindowEventsManager\EventSystems\OnFocusEvent.cpp" />
+    <ClCompile Include="src\window\WindowEventsManager\WindowEventsManager.cpp" />
     <ClCompile Include="src\window\WindowGenerater.cpp" />
-    <ClCompile Include="src\window\windowEventsManager\WindowEventsManager.cpp" />
-    <ClCompile Include="src\window\windowEventsManager\eventSystems\DropFileEvent.cpp" />
-    <ClCompile Include="src\window\windowEventsManager\eventSystems\ExitAppEvent.cpp" />
-    <ClCompile Include="src\window\windowEventsManager\eventSystems\IEvent.cpp" />
-    <ClCompile Include="src\window\windowEventsManager\eventSystems\OnFocusEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\externals\DirectXTex\DirectXTex.vcxproj">

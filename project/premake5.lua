@@ -38,9 +38,16 @@ group "QuickForge" -- MyMainProject
             "$(SolutionDir)/",
             "$(SolutionDir)/engine/include/",
             "$(SolutionDir)/externals/",
-            "$(SolutionDir)/externals/nlohmann/",
+            "$(SolutionDir)/externals/assimp/",
+            "$(SolutionDir)/externals/assimp/include/",
+            "$(SolutionDir)/externals/DirectXTex/",
+            "$(SolutionDir)/externals/imgui/",
             "$(SolutionDir)/externals/lua/",
-            "$(SolutionDir)/externals/sol2/",
+            "$(SolutionDir)/externals/Mono/",
+            "$(SolutionDir)/externals/Mono/include",
+            "$(SolutionDir)/externals/Mono/include/mono-2.0/",
+            "$(SolutionDir)/externals/nlohmann/",
+            "$(SolutionDir)/externals/sol2",
         }
 
     project "Engine"

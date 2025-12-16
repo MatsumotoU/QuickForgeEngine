@@ -13,6 +13,9 @@
     <Filter Include="Mono">
       <UniqueIdentifier>{7E2F897C-6A66-8A0D-1353-7010FF68060F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mono\bin">
+      <UniqueIdentifier>{26338CF4-1200-E7FF-3B19-D5A727451C8E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Mono\etc">
       <UniqueIdentifier>{49418CF4-350E-E7FF-5E27-D5A74A531C8E}</UniqueIdentifier>
     </Filter>
@@ -3230,6 +3233,594 @@
     </None>
     <None Include="DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS_cs40.pdb">
       <Filter>DirectXTex\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Mono\bin\MonoPosixHelper.dll">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\MonoPosixHelper.pdb">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\al">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\al.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\al2">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\al2.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\aprofutil">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\aprofutil.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\caspol">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\caspol.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\cccheck">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\cccheck.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ccrewrite">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ccrewrite.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\cert-sync">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\cert-sync.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\cert2spc">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\cert2spc.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\certmgr">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\certmgr.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\chktrust">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\chktrust.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\crlupdate">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\crlupdate.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\csc">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\csc.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\csharp">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\csharp.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\csi">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\csi.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\disco">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\disco.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\dmcs">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\dmcs.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\dtd2rng">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\dtd2rng.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\dtd2xsd">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\dtd2xsd.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\fsharpc">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\fsharpc.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\fsharpi">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\fsharpi.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\fsharpiAnyCpu">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\fsharpiAnyCpu.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\gacutil">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\gacutil.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\gacutil2">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\gacutil2.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\genxs">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\genxs.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\httpcfg">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\httpcfg.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ikdasm">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ikdasm.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ilasm">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ilasm.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\illinkanalyzer">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\illinkanalyzer.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\installvst">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\installvst.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ipy">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ipy.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ipy64">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ipy64.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ipyw">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ipyw.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ipyw64">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ipyw64.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ir">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ir.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ir64">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\ir64.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\irw">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\irw.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\irw64">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\irw64.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\lc">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\lc.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\libmono-btls-shared.dll">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\macpack">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\macpack.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\makecert">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\makecert.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mconfig">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mconfig.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mcs">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mcs.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdassembler">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdbrebase">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdbrebase.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdoc">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdoc-assemble">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdoc-export-html">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdoc-export-msxdoc">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdoc-update">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdoc-validate">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdoc.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mdvalidater">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mkbundle">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mkbundle.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mod">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mod.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-2.0-sgen.dll">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-2.0-sgen.pdb">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-api-html">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-api-html.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-api-info">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-api-info.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-cil-strip">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-cil-strip.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-configuration-crypto">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-find-provides">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-find-requires">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-gdb.py">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-hang-watchdog.exe">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-heapviz">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-service">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-service.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-service2">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-service2.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-sgen-gdb.py">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-sgen.exe">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-sgen.pdb">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-shlib-cop">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-shlib-cop.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-symbolicate">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-symbolicate.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-test-install">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-xmltool">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono-xmltool.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono.exe">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mono.pdb">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monodis.exe">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monodis.pdb">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monodocer">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monodocs2html">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monodocs2slashdoc">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monolinker">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monolinker.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monop">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monop.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monop2">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monop2.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\monow.exe">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mozroots">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\mozroots.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\msbuild">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\msbuild.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\nuget">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\nuget.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\pdb2mdb">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\pdb2mdb.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\permview">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\permview.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\peverify">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\pkg-config.exe">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\resgen">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\resgen.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\resgen2">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\resgen2.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\secutil">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\secutil.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\setmonopath.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\setreg">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\setreg.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sgen">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sgen-grep-binprot.exe">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sgen.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\signcode">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\signcode.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sn">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sn.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\soapsuds">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\soapsuds.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sqlmetal">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sqlmetal.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sqlsharp">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\sqlsharp.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\svcutil">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\svcutil.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\vbc">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\vbc.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\wsdl">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\wsdl.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\wsdl2">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\wsdl2.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xbuild">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xbuild.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xsd">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xsd.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xsp">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xsp.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xsp2">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xsp2.bat">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xsp4">
+      <Filter>Mono\bin</Filter>
+    </None>
+    <None Include="Mono\bin\xsp4.bat">
+      <Filter>Mono\bin</Filter>
     </None>
     <None Include="Mono\etc\mono\2.0\Browsers\Compat.browser">
       <Filter>Mono\etc\mono\2.0\Browsers</Filter>

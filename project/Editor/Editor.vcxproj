@@ -78,7 +78,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;$(SolutionDir)\externals;$(SolutionDir)\externals\assimp;$(SolutionDir)\externals\assimp\include;$(SolutionDir)\externals\DirectXTex;$(SolutionDir)\externals\imgui;$(SolutionDir)\externals\lua;$(SolutionDir)\externals\Mono;$(SolutionDir)\externals\Mono\include;$(SolutionDir)\externals\Mono\include\mono-2.0;$(SolutionDir)\externals\nlohmann;$(SolutionDir)\externals\sol2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -92,7 +92,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;$(SolutionDir)\externals;$(SolutionDir)\externals\assimp;$(SolutionDir)\externals\assimp\include;$(SolutionDir)\externals\DirectXTex;$(SolutionDir)\externals\imgui;$(SolutionDir)\externals\lua;$(SolutionDir)\externals\Mono;$(SolutionDir)\externals\Mono\include;$(SolutionDir)\externals\Mono\include\mono-2.0;$(SolutionDir)\externals\nlohmann;$(SolutionDir)\externals\sol2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -106,7 +106,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;$(SolutionDir)\externals;$(SolutionDir)\externals\assimp;$(SolutionDir)\externals\assimp\include;$(SolutionDir)\externals\DirectXTex;$(SolutionDir)\externals\imgui;$(SolutionDir)\externals\lua;$(SolutionDir)\externals\Mono;$(SolutionDir)\externals\Mono\include;$(SolutionDir)\externals\Mono\include\mono-2.0;$(SolutionDir)\externals\nlohmann;$(SolutionDir)\externals\sol2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -162,6 +162,9 @@
   <ItemGroup>
     <ProjectReference Include="..\engine\Engine.vcxproj">
       <Project>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\externals\ExternalFolders.vcxproj">
+      <Project>{B7C788AE-2353-F672-2C64-7967986E5273}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

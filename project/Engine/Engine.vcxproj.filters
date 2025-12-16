@@ -1,6 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{000BCD17-6C75-818E-B5B3-3234215D5FE3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{D92F8C3C-4546-8AD2-8EBD-15F4FA125B5A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders\ShaderStructs">
+      <UniqueIdentifier>{57B26A98-C395-79D8-CC98-A71438FB3F29}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
@@ -205,26 +214,17 @@
     <Filter Include="include\window">
       <UniqueIdentifier>{70DC6774-5CAA-5B7A-453E-CCA031AB37DF}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\window\WindowEventsManager">
+      <UniqueIdentifier>{6776F396-53B2-F600-BCC4-0EF8A81F9F1B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\window\WindowEventsManager\EventSystems">
+      <UniqueIdentifier>{B0623D83-1C9E-9D46-2593-1AD6914D2277}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\window\WindowGenerater">
       <UniqueIdentifier>{D4C83662-C0EE-00C9-A934-869495F92595}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\window\WindowGenerater\Data">
       <UniqueIdentifier>{BDE2B2AD-299C-1D58-B2FB-37321EB4D3C7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\window\windowEventsManager">
-      <UniqueIdentifier>{873E40B2-737A-431C-DC8C-5B13C8E7EB36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\window\windowEventsManager\EventSystems">
-      <UniqueIdentifier>{D05E162F-3C9A-76F2-458F-F381B149FB22}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="resources">
-      <UniqueIdentifier>{202B5BA7-8C95-0F1E-D5D3-C0C3417DED72}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="resources\shaders">
-      <UniqueIdentifier>{19081037-851E-0ECD-CE95-99EE3AEBDE54}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="resources\shaders\shaderStructs">
-      <UniqueIdentifier>{B72A853E-230E-947E-2C11-C2BA98735ACF}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
@@ -385,15 +385,18 @@
     <Filter Include="src\window">
       <UniqueIdentifier>{94D77D82-808F-BFCF-E996-982BD56D5AC0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\window\windowEventsManager">
-      <UniqueIdentifier>{ABF3446C-9719-0FD3-805F-949E6C24349F}</UniqueIdentifier>
+    <Filter Include="src\window\WindowEventsManager">
+      <UniqueIdentifier>{8B2BF850-7751-C2B7-6097-47834C5CE783}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\window\windowEventsManager\eventSystems">
-      <UniqueIdentifier>{94FACCEB-0060-6072-8938-024BF59C55E1}</UniqueIdentifier>
+    <Filter Include="src\window\WindowEventsManager\EventSystems">
+      <UniqueIdentifier>{54528821-C0B7-1BA8-4990-BD80B5F41017}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="QuickForgeEngine.h" />
+    <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h">
+      <Filter>Resources\Shaders\ShaderStructs</Filter>
+    </ClInclude>
     <ClInclude Include="include\WindowsEngineCore.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -856,29 +859,26 @@
     <ClInclude Include="include\window\GameWindowManager.h">
       <Filter>include\window</Filter>
     </ClInclude>
+    <ClInclude Include="include\window\WindowEventsManager\EventSystems\DropFileEvent.h">
+      <Filter>include\window\WindowEventsManager\EventSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\WindowEventsManager\EventSystems\ExitAppEvent.h">
+      <Filter>include\window\WindowEventsManager\EventSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\WindowEventsManager\EventSystems\IEvent.h">
+      <Filter>include\window\WindowEventsManager\EventSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\WindowEventsManager\EventSystems\OnFocusEvent.h">
+      <Filter>include\window\WindowEventsManager\EventSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\window\WindowEventsManager\WindowEventsManager.h">
+      <Filter>include\window\WindowEventsManager</Filter>
+    </ClInclude>
     <ClInclude Include="include\window\WindowGenerater\Data\WindowConfigData.h">
       <Filter>include\window\WindowGenerater\Data</Filter>
     </ClInclude>
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h">
       <Filter>include\window\WindowGenerater</Filter>
-    </ClInclude>
-    <ClInclude Include="include\window\windowEventsManager\EventSystems\DropFileEvent.h">
-      <Filter>include\window\windowEventsManager\EventSystems</Filter>
-    </ClInclude>
-    <ClInclude Include="include\window\windowEventsManager\EventSystems\ExitAppEvent.h">
-      <Filter>include\window\windowEventsManager\EventSystems</Filter>
-    </ClInclude>
-    <ClInclude Include="include\window\windowEventsManager\EventSystems\IEvent.h">
-      <Filter>include\window\windowEventsManager\EventSystems</Filter>
-    </ClInclude>
-    <ClInclude Include="include\window\windowEventsManager\EventSystems\OnFocusEvent.h">
-      <Filter>include\window\windowEventsManager\EventSystems</Filter>
-    </ClInclude>
-    <ClInclude Include="include\window\windowEventsManager\WindowEventsManager.h">
-      <Filter>include\window\windowEventsManager</Filter>
-    </ClInclude>
-    <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h">
-      <Filter>resources\shaders\shaderStructs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1225,23 +1225,23 @@
     <ClCompile Include="src\window\GameWindowManager.cpp">
       <Filter>src\window</Filter>
     </ClCompile>
+    <ClCompile Include="src\window\WindowEventsManager\EventSystems\DropFileEvent.cpp">
+      <Filter>src\window\WindowEventsManager\EventSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\WindowEventsManager\EventSystems\ExitAppEvent.cpp">
+      <Filter>src\window\WindowEventsManager\EventSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\WindowEventsManager\EventSystems\IEvent.cpp">
+      <Filter>src\window\WindowEventsManager\EventSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\WindowEventsManager\EventSystems\OnFocusEvent.cpp">
+      <Filter>src\window\WindowEventsManager\EventSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\WindowEventsManager\WindowEventsManager.cpp">
+      <Filter>src\window\WindowEventsManager</Filter>
+    </ClCompile>
     <ClCompile Include="src\window\WindowGenerater.cpp">
       <Filter>src\window</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window\windowEventsManager\WindowEventsManager.cpp">
-      <Filter>src\window\windowEventsManager</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window\windowEventsManager\eventSystems\DropFileEvent.cpp">
-      <Filter>src\window\windowEventsManager\eventSystems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window\windowEventsManager\eventSystems\ExitAppEvent.cpp">
-      <Filter>src\window\windowEventsManager\eventSystems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window\windowEventsManager\eventSystems\IEvent.cpp">
-      <Filter>src\window\windowEventsManager\eventSystems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window\windowEventsManager\eventSystems\OnFocusEvent.cpp">
-      <Filter>src\window\windowEventsManager\eventSystems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
