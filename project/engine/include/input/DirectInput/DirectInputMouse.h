@@ -4,8 +4,8 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 
-#include "Core/Math/Vector/Vector2.h"
-#include "Core/Math/Vector/Vector3.h"
+#include "engine/include/core/Math/Vector/Vector2.h"
+#include "engine/include/core/Math/Vector/Vector3.h"
 
 class DirectInputMouse {
 public:

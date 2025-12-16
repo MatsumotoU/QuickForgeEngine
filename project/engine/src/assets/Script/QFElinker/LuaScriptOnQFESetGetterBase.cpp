@@ -10,7 +10,7 @@
 #include "engine/include/collider/Data/SphereColliderData.h"
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/physics/Force.h"
-#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 #include "engine/include/core/EngineGlobalValue.h"
 

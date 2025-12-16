@@ -1,5 +1,6 @@
 #include "engine/include/utility/String/DirectXStructToString.h"
-
+#include <string>
+#include <cstdint>
 std::string DirectInputToString(uint32_t dikCode) {
     switch (dikCode) {
     case 0x01: return "Esc";

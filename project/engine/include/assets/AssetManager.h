@@ -8,7 +8,7 @@
 #include "Sprite/Data/SpriteData.h"
 #include "ConstantBufferManager/ConstantBufferManager.h"
 #include "Particle/ParticleGpuDataManager.h"
-#include "Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "AudioSource/AudioSourceManager.h"
