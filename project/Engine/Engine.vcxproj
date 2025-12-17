@@ -429,6 +429,9 @@
     <ProjectReference Include="..\externals\DirectXTex\DirectXTex.vcxproj">
       <Project>{A90EE592-95C6-26E0-FECD-FF3BEAA4C1D0}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\externals\imgui\ImGui.vcxproj">
+      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\externals\ExternalFolders.vcxproj">
       <Project>{B7C788AE-2353-F672-2C64-7967986E5273}</Project>
     </ProjectReference>

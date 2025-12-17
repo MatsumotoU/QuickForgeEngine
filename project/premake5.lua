@@ -70,6 +70,7 @@ group "QuickForge" -- MyMainProject
         files {"engine/**.h","engine/**.cpp"}
         links{
             "DirectXTex",
+            "ImGui",
             "ExternalFolders"
         }
 
@@ -120,4 +121,15 @@ project "DirectXTex"
         "externals/DirectXTex/**.cpp",
     }
 
-group ""
+project "ImGui"
+    location "externals/imgui"
+    kind "StaticLib" 
+    language "C++"
+    includedirs {
+        "externals/imgui", 
+    }
+
+    files {
+        "externals/imgui/**.h",
+        "externals/imgui/**.cpp",
+    }

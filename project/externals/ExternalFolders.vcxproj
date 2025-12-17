@@ -207,30 +207,6 @@
     <ClInclude Include="imgui\ImGuizmo-1.83\ImGuizmo.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui-knobs-main\imgui-knobs.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\crude_json.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\D3DX11.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\D3DX11async.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\D3DX11core.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\D3DX11tex.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\dxerr.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\ScopeGuard\ScopeGuard.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Include\GL\gl3w.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Include\GL\glcorearb.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imstb_truetype.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\stb_image\stb_image.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_canvas.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_extra_math.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h" />
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx12.h" />
     <ClInclude Include="imgui\imgui_impl_win32.h" />
@@ -413,38 +389,17 @@
     <ClCompile Include="DirectXTex\DirectXTexWIC.cpp" />
     <ClCompile Include="imgui\ImGuizmo-1.83\ImGuizmo.cpp" />
     <ClCompile Include="imgui\imgui-knobs-main\imgui-knobs.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\crude_json.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\src\dxerr.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Source\gl3w.c" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_tables.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp" />
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp" />
-    <ClCompile Include="imgui\imgui.cpp">
-      <ObjectFileName>$(IntDir)\imgui1.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
-      <ObjectFileName>$(IntDir)\imgui_demo1.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
-      <ObjectFileName>$(IntDir)\imgui_draw1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_dx12.cpp" />
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp">
-      <ObjectFileName>$(IntDir)\imgui_tables1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_toggle-main\imgui_toggle.cpp" />
     <ClCompile Include="imgui\imgui_toggle-main\imgui_toggle_palette.cpp" />
     <ClCompile Include="imgui\imgui_toggle-main\imgui_toggle_presets.cpp" />
     <ClCompile Include="imgui\imgui_toggle-main\imgui_toggle_renderer.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp">
-      <ObjectFileName>$(IntDir)\imgui_widgets1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="imgui\implot-master\implot.cpp" />
     <ClCompile Include="imgui\implot-master\implot_items.cpp" />
   </ItemGroup>
@@ -5124,16 +5079,6 @@
     <None Include="assimp\lib\Release\assimp-vc143-mt.lib" />
     <None Include="imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="imgui\ImGuizmo-1.83\Makefile" />
-    <None Include="imgui\imgui-node-editor-0.9.3\external\ScopeGuard\CMakeLists.txt" />
-    <None Include="imgui\imgui-node-editor-0.9.3\external\gl3w\CMakeLists.txt" />
-    <None Include="imgui\imgui-node-editor-0.9.3\external\imgui\CMakeLists.txt" />
-    <None Include="imgui\imgui-node-editor-0.9.3\external\imgui\LICENSE.txt" />
-    <None Include="imgui\imgui-node-editor-0.9.3\external\stb_image\CMakeLists.txt" />
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\FindScopeGuard.cmake" />
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\Findgl3w.cmake" />
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\Findimgui.cmake" />
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\Findimgui_node_editor.cmake" />
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\Findstb_image.cmake" />
     <None Include="lua\lib\Debug\Lua.idb" />
     <None Include="lua\lib\Debug\Lua.lib" />
     <None Include="lua\lib\Release\Lua.lib" />
@@ -5163,11 +5108,6 @@
     <Image Include="Mono\lib\xsp\test\monobutton.png" />
     <Image Include="Mono\lib\xsp\test\small-icon.png" />
     <Image Include="imgui\Images\nodeeditor.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui.natvis" />
-    <Natvis Include="imgui\imgui-node-editor-0.9.3\misc\crude_json.natvis" />
-    <Natvis Include="imgui\imgui-node-editor-0.9.3\misc\imgui_node_editor.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

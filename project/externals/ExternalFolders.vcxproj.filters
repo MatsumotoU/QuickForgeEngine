@@ -1957,48 +1957,6 @@
     <Filter Include="imgui\imgui-knobs-main">
       <UniqueIdentifier>{26D16C4E-12CB-95A0-FB37-2CB1E7D0FB0C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3">
-      <UniqueIdentifier>{F6B5C1B2-62CE-A8DC-2B7B-387697523D76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external">
-      <UniqueIdentifier>{0879BD7A-F4CA-946A-DDE9-D17AC9DAAD53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\DXSDK">
-      <UniqueIdentifier>{55C2A8F5-41D5-A84E-EABE-853BD6B0459C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include">
-      <UniqueIdentifier>{C86E2913-B4AD-D38E-5D30-B0C0494E89F9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\src">
-      <UniqueIdentifier>{ECA25746-D84B-BF75-01E2-DAF4EDE9D9B6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\ScopeGuard">
-      <UniqueIdentifier>{6455D29F-D01B-2FBC-1977-BD1E857C9D20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\gl3w">
-      <UniqueIdentifier>{342B470F-A090-DA95-2969-7C6E95CDCF04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Include">
-      <UniqueIdentifier>{87AECE51-F3BF-76F8-7C11-0938E8210032}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Include\GL">
-      <UniqueIdentifier>{89C6C206-7570-F815-5E41-00314A8A9804}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Source">
-      <UniqueIdentifier>{B4163031-A0AA-25D9-096F-7F8DF52160CB}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\imgui">
-      <UniqueIdentifier>{722C52F8-5E3F-5251-0729-2F3EF31AEF9E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\external\stb_image">
-      <UniqueIdentifier>{A2134944-8EBC-B073-B752-CCF2A35ACBB4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\misc">
-      <UniqueIdentifier>{91F27F0A-7D2E-8374-E640-9B6BD29B2B8F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules">
-      <UniqueIdentifier>{070721EE-F3AF-881D-1C46-A49C084EA35E}</UniqueIdentifier>
-    </Filter>
     <Filter Include="imgui\imgui_toggle-main">
       <UniqueIdentifier>{9D4F8BBC-0987-D353-1291-37777E47FA4C}</UniqueIdentifier>
     </Filter>
@@ -2450,78 +2408,6 @@
     </ClInclude>
     <ClInclude Include="imgui\imgui-knobs-main\imgui-knobs.h">
       <Filter>imgui\imgui-knobs-main</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\crude_json.h">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\D3DX11.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\DXSDK\include</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\D3DX11async.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\DXSDK\include</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\D3DX11core.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\DXSDK\include</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\D3DX11tex.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\DXSDK\include</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\include\dxerr.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\DXSDK\include</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\ScopeGuard\ScopeGuard.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\ScopeGuard</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Include\GL\gl3w.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\gl3w\Include\GL</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Include\GL\glcorearb.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\gl3w\Include\GL</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imconfig.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_internal.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imstb_rectpack.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imstb_textedit.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\imgui\imstb_truetype.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\external\stb_image\stb_image.h">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\stb_image</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_bezier_math.h">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_bezier_math.inl">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_canvas.h">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_extra_math.h">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_extra_math.inl">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor.h">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.h">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor_internal.inl">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui.h">
       <Filter>imgui</Filter>
@@ -3064,39 +2950,6 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui-knobs-main\imgui-knobs.cpp">
       <Filter>imgui\imgui-knobs-main</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\crude_json.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\DXSDK\src\dxerr.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\DXSDK\src</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\gl3w\Source\gl3w.c">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\gl3w\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_demo.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_draw.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_tables.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui_widgets.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\imgui_canvas.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui-node-editor-0.9.3\imgui_node_editor_api.cpp">
-      <Filter>imgui\imgui-node-editor-0.9.3</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>imgui</Filter>
@@ -17160,36 +17013,6 @@
     <None Include="imgui\ImGuizmo-1.83\Makefile">
       <Filter>imgui\ImGuizmo-1.83</Filter>
     </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\external\ScopeGuard\CMakeLists.txt">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\ScopeGuard</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\external\gl3w\CMakeLists.txt">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\gl3w</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\external\imgui\CMakeLists.txt">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\external\imgui\LICENSE.txt">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\external\stb_image\CMakeLists.txt">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\stb_image</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\FindScopeGuard.cmake">
-      <Filter>imgui\imgui-node-editor-0.9.3\misc\cmake-modules</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\Findgl3w.cmake">
-      <Filter>imgui\imgui-node-editor-0.9.3\misc\cmake-modules</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\Findimgui.cmake">
-      <Filter>imgui\imgui-node-editor-0.9.3\misc\cmake-modules</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\Findimgui_node_editor.cmake">
-      <Filter>imgui\imgui-node-editor-0.9.3\misc\cmake-modules</Filter>
-    </None>
-    <None Include="imgui\imgui-node-editor-0.9.3\misc\cmake-modules\Findstb_image.cmake">
-      <Filter>imgui\imgui-node-editor-0.9.3\misc\cmake-modules</Filter>
-    </None>
     <None Include="lua\lib\Debug\Lua.idb">
       <Filter>lua\lib\Debug</Filter>
     </None>
@@ -17273,16 +17096,5 @@
     <Image Include="imgui\Images\nodeeditor.jpg">
       <Filter>imgui\Images</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="imgui\imgui-node-editor-0.9.3\external\imgui\imgui.natvis">
-      <Filter>imgui\imgui-node-editor-0.9.3\external\imgui</Filter>
-    </Natvis>
-    <Natvis Include="imgui\imgui-node-editor-0.9.3\misc\crude_json.natvis">
-      <Filter>imgui\imgui-node-editor-0.9.3\misc</Filter>
-    </Natvis>
-    <Natvis Include="imgui\imgui-node-editor-0.9.3\misc\imgui_node_editor.natvis">
-      <Filter>imgui\imgui-node-editor-0.9.3\misc</Filter>
-    </Natvis>
   </ItemGroup>
 </Project>
