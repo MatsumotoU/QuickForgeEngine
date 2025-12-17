@@ -15,27 +15,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{8C1A20B0-78BC-4A86-6177-5EDA4DB8D1D6}</ProjectGuid>
+    <ProjectGuid>{C0FF640D-2C14-8DBE-F595-301E616989EF}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Editor</RootNamespace>
+    <RootNamespace>ImGui</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
@@ -54,32 +54,29 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Debug\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Debug\</IntDir>
-    <TargetName>Editor</TargetName>
-    <TargetExt>.exe</TargetExt>
+    <OutDir>$(ProjectDir)..\..\..\generated\outputs\Debug\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\generated\obj\ImGui\Debug\</IntDir>
+    <TargetName>ImGui</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Development\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Development\</IntDir>
-    <TargetName>Editor</TargetName>
-    <TargetExt>.exe</TargetExt>
+    <OutDir>$(ProjectDir)..\..\..\generated\outputs\Development\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\generated\obj\ImGui\Development\</IntDir>
+    <TargetName>ImGui</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Release\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Release\</IntDir>
-    <TargetName>Editor</TargetName>
-    <TargetExt>.exe</TargetExt>
+    <OutDir>$(ProjectDir)..\..\..\generated\outputs\Release\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\generated\obj\ImGui\Release\</IntDir>
+    <TargetName>ImGui</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -88,10 +85,8 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\lua\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
@@ -99,7 +94,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -112,12 +107,10 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\lua\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,7 +118,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -138,64 +131,48 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\lua\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\IEditor.h" />
-    <ClInclude Include="include\OnWindowsEditor.h" />
-    <ClInclude Include="include\UI\Edit\ColliderMaskEdit.h" />
-    <ClInclude Include="include\UI\Edit\DebugConsole.h" />
-    <ClInclude Include="include\UI\Edit\KeyConfigEdit.h" />
-    <ClInclude Include="include\UI\Edit\PostprocessEdit.h" />
-    <ClInclude Include="include\UI\File\CreateNewScene.h" />
-    <ClInclude Include="include\UI\File\LoadScene.h" />
-    <ClInclude Include="include\UI\File\SaveScene.h" />
-    <ClInclude Include="include\UI\IEditorUI.h" />
-    <ClInclude Include="include\UI\UIManager.h" />
-    <ClInclude Include="include\UI\View\AssetsView.h" />
-    <ClInclude Include="include\UI\View\ConsoleView.h" />
-    <ClInclude Include="include\UI\View\EngineProfileView.h" />
-    <ClInclude Include="include\UI\View\GameView.h" />
-    <ClInclude Include="include\UI\View\HierarchyView.h" />
-    <ClInclude Include="include\UI\View\InspectorView.h" />
-    <ClInclude Include="include\UI\View\SceneProfileView.h" />
-    <ClInclude Include="include\UI\View\SceneView.h" />
-    <ClInclude Include="include\UI\View\ScriptLoggerView.h" />
+    <ClInclude Include="ImGuizmo-1.83\ImGuizmo.h" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui-knobs-main\imgui-knobs.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="imgui_impl_dx12.h" />
+    <ClInclude Include="imgui_impl_win32.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="imgui_toggle-main\imgui_offset_rect.h" />
+    <ClInclude Include="imgui_toggle-main\imgui_toggle.h" />
+    <ClInclude Include="imgui_toggle-main\imgui_toggle_math.h" />
+    <ClInclude Include="imgui_toggle-main\imgui_toggle_palette.h" />
+    <ClInclude Include="imgui_toggle-main\imgui_toggle_presets.h" />
+    <ClInclude Include="imgui_toggle-main\imgui_toggle_renderer.h" />
+    <ClInclude Include="implot-master\implot.h" />
+    <ClInclude Include="implot-master\implot_internal.h" />
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\OnWindowsEditor.cpp" />
-    <ClCompile Include="src\UI\Edit\ColliderMaskEdit.cpp" />
-    <ClCompile Include="src\UI\Edit\DebugConsole.cpp" />
-    <ClCompile Include="src\UI\Edit\KeyConfigEdit.cpp" />
-    <ClCompile Include="src\UI\Edit\PostprocessEdit.cpp" />
-    <ClCompile Include="src\UI\File\CreateNewScene.cpp" />
-    <ClCompile Include="src\UI\File\LoadScene.cpp" />
-    <ClCompile Include="src\UI\File\SaveScene.cpp" />
-    <ClCompile Include="src\UI\UIManager.cpp" />
-    <ClCompile Include="src\UI\View\AssetsView.cpp" />
-    <ClCompile Include="src\UI\View\ConsoleView.cpp" />
-    <ClCompile Include="src\UI\View\EngineProfileView.cpp" />
-    <ClCompile Include="src\UI\View\GameView.cpp" />
-    <ClCompile Include="src\UI\View\HierarchyView.cpp" />
-    <ClCompile Include="src\UI\View\InspectorView.cpp" />
-    <ClCompile Include="src\UI\View\SceneProfileView.cpp" />
-    <ClCompile Include="src\UI\View\SceneView.cpp" />
-    <ClCompile Include="src\UI\View\ScriptLoggerView.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\engine\Engine.vcxproj">
-      <Project>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\externals\ExternalFolders.vcxproj">
-      <Project>{B7C788AE-2353-F672-2C64-7967986E5273}</Project>
-    </ProjectReference>
+    <ClCompile Include="ImGuizmo-1.83\ImGuizmo.cpp" />
+    <ClCompile Include="imgui-knobs-main\imgui-knobs.cpp" />
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_impl_dx12.cpp" />
+    <ClCompile Include="imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui_tables.cpp" />
+    <ClCompile Include="imgui_toggle-main\imgui_toggle.cpp" />
+    <ClCompile Include="imgui_toggle-main\imgui_toggle_palette.cpp" />
+    <ClCompile Include="imgui_toggle-main\imgui_toggle_presets.cpp" />
+    <ClCompile Include="imgui_toggle-main\imgui_toggle_renderer.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="implot-master\implot.cpp" />
+    <ClCompile Include="implot-master\implot_items.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

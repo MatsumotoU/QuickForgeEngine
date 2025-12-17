@@ -6,6 +6,7 @@ workspace "QuickForgeEngine"
     startproject "Editor"
 
     cppdialect "C++20"
+    staticruntime "on"
 
     -- projectDefaultSetting
     objdir ("../generated/obj/%{prj.name}/%{cfg.buildcfg}/%{cfg.platform}")
@@ -43,6 +44,7 @@ group "QuickForge" -- MyMainProject
         files {"editor/**.h","editor/**.cpp"}
         links{
             "Engine",
+            "Lua",
             "ExternalFolders"
         }
     
@@ -63,6 +65,16 @@ group "QuickForge" -- MyMainProject
             "./externals/nlohmann/",
         }
 
+        filter "configurations:Debug"
+            libdirs { "externals/lua/lib/Debug" }
+        filter "configurations:Release or configurations:Development"
+            libdirs { "externals/lua/lib/Release" }
+        filter ""
+
+        postbuildcommands {
+            '{COPY} "%{prj.location}/../../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"'
+        }
+
     project "Engine"
         location "engine"
         kind "StaticLib" 
@@ -71,7 +83,12 @@ group "QuickForge" -- MyMainProject
         links{
             "DirectXTex",
             "ImGui",
+            "Lua",
+            "mono-2.0-sgen",
             "ExternalFolders"
+        }
+        libdirs {
+            "externals/Mono/lib"
         }
 
         -- 追加のインクルード
@@ -90,6 +107,20 @@ group "QuickForge" -- MyMainProject
             "./externals/Mono/include/mono-2.0/",
             "./externals/nlohmann/",
         }
+
+        filter "configurations:Debug"
+            links { "assimp-vc143-mtd" }
+            libdirs {
+                "externals/lua/lib/Debug",
+                "externals/assimp/lib/Debug"
+            }
+        filter "configurations:Release or configurations:Development"
+            links { "assimp-vc143-mt" }
+            libdirs {
+                "externals/lua/lib/Release",
+                "externals/assimp/lib/Release"
+            }
+        filter ""
 group ""
 
 -- MySubProject
@@ -133,3 +164,5 @@ project "ImGui"
         "externals/imgui/**.h",
         "externals/imgui/**.cpp",
     }
+
+
