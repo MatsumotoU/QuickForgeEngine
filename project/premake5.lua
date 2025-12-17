@@ -18,8 +18,21 @@ workspace "QuickForgeEngine"
         buildoptions {
             "/permissive-",
             "/Zc:__cplusplus",
-            "/utf-8"
+            "/utf-8",
+            "/openmp"
         }
+    filter ""
+
+    filter "configurations:Debug"
+        defines { "_DEBUG" }
+        optimize "Off"
+        symbols "On"
+        runtime "Debug"
+    filter "configurations:Release or configurations:Development"
+        defines { "NDEBUG" }
+        optimize "On"
+        symbols "Off"
+        runtime "Release"
     filter ""
     
 group "QuickForge" -- MyMainProject
@@ -35,19 +48,19 @@ group "QuickForge" -- MyMainProject
     
         -- 追加のインクルード
         includedirs{
-            "$(SolutionDir)/",
-            "$(SolutionDir)/engine/include/",
-            "$(SolutionDir)/externals/",
-            "$(SolutionDir)/externals/assimp/",
-            "$(SolutionDir)/externals/assimp/include/",
-            "$(SolutionDir)/externals/DirectXTex/",
-            "$(SolutionDir)/externals/imgui/",
-            "$(SolutionDir)/externals/lua/",
-            "$(SolutionDir)/externals/Mono/",
-            "$(SolutionDir)/externals/Mono/include",
-            "$(SolutionDir)/externals/Mono/include/mono-2.0/",
-            "$(SolutionDir)/externals/nlohmann/",
-            "$(SolutionDir)/externals/sol2",
+            "./",
+            "./engine/include/",
+            "./externals/",
+            "./externals/assimp/",
+            "./externals/assimp/include/",
+            "./externals/DirectXTex/",
+            "./externals/imgui/",
+            "./externals/lua/",
+            "./externals/sol2",
+            "./externals/Mono/",
+            "./externals/Mono/include",
+            "./externals/Mono/include/mono-2.0/",
+            "./externals/nlohmann/",
         }
 
     project "Engine"
@@ -62,18 +75,19 @@ group "QuickForge" -- MyMainProject
 
         -- 追加のインクルード
         includedirs{
-            "$(SolutionDir)/",
-            "$(SolutionDir)/externals/",
-            "$(SolutionDir)/externals/assimp/",
-            "$(SolutionDir)/externals/assimp/include/",
-            "$(SolutionDir)/externals/DirectXTex/",
-            "$(SolutionDir)/externals/imgui/",
-            "$(SolutionDir)/externals/lua/",
-            "$(SolutionDir)/externals/Mono/",
-            "$(SolutionDir)/externals/Mono/include",
-            "$(SolutionDir)/externals/Mono/include/mono-2.0/",
-            "$(SolutionDir)/externals/nlohmann/",
-            "$(SolutionDir)/externals/sol2",
+            "./",
+            "./engine/include/",
+            "./externals/",
+            "./externals/assimp/",
+            "./externals/assimp/include/",
+            "./externals/DirectXTex/",
+            "./externals/imgui/",
+            "./externals/lua/",
+            "./externals/sol2",
+            "./externals/Mono/",
+            "./externals/Mono/include",
+            "./externals/Mono/include/mono-2.0/",
+            "./externals/nlohmann/",
         }
 group ""
 
@@ -95,53 +109,15 @@ project "DirectXTex"
     location "externals/DirectXTex"
     kind "StaticLib" 
     language "C++"
-    
-    configurations { "Debug","Development","Release" }
-    platforms { "x64" }
 
-    filter "system:windows"
-        systemversion "latest"
-        buildoptions {
-            "/permissive-",
-            "/openmp"
-        }
-    filter ""
-    
     includedirs {
-        ".", 
-        "Shaders/Compiled"
+        "externals/DirectXTex", 
+        "externals/DirectXTex/Shaders/Compiled"
     }
 
     files {
-        "BC.h", "BC.cpp", "BC4BC5.cpp", 
-        "BC6HBC7.cpp", "BCDirectCompute.h", "d3dx12.h",
-        "DDS.h", "filters.h", "scoped.h", "DirectXTex.h", 
-        "DirectXTexP.h", "DirectXTex.inl", "BCDirectCompute.cpp", 
-        "DirectXTexCompress.cpp", "DirectXTexCompressGPU.cpp", 
-        "DirectXTexConvert.cpp", "DirectXTexD3D11.cpp", 
-        "DirectXTexD3D12.cpp", "DirectXTexDDS.cpp", "DirectXTexFlipRotate.cpp", 
-        "DirectXTexHDR.cpp", "DirectXTexImage.cpp", "DirectXTexMipMaps.cpp", 
-        "DirectXTexMisc.cpp", "DirectXTexNormalMaps.cpp", 
-        "DirectXTexPMAlpha.cpp", "DirectXTexResize.cpp", 
-        "DirectXTexTGA.cpp", "DirectXTexUtil.cpp", 
-        "DirectXTexWIC.cpp"
+        "externals/DirectXTex/**.h",
+        "externals/DirectXTex/**.cpp",
     }
-
-    filter "platforms:x64"
-        targetdir "../generated/outputs/%{cfg.platform}/%{cfg.buildcfg}"
-        objdir "../generated/obj/DirectXTex/%{cfg.platform}/%{cfg.buildcfg}"
-    filter ""
-    
-    filter "configurations:Debug"
-        defines { "_DEBUG" }
-        optimize "Off"
-        runtime "Debug"
-        symbols "On"
-    filter "configurations:Release or configurations:Profile or configurations:Development"
-        defines { "NDEBUG" }
-        optimize "On"
-        runtime "Release"
-        symbols "Off"
-    filter ""
 
 group ""

@@ -23,7 +23,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <OutDir>$(ProjectDir)..\..\generated\outputs\Debug\</OutDir>
     <IntDir>$(ProjectDir)..\..\generated\obj\Resource\Debug\</IntDir>
@@ -57,15 +57,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakeOutput>$(OutDir)Resource</NMakeOutput>
-    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /std:c++latest %(AdditionalOptions)</AdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <NMakeOutput>$(OutDir)Resource</NMakeOutput>
-    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /std:c++latest %(AdditionalOptions)</AdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeOutput>$(OutDir)Resource</NMakeOutput>
-    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /std:c++latest %(AdditionalOptions)</AdditionalOptions>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

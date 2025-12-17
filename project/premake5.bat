@@ -42,6 +42,6 @@ echo ------------------------------------
 echo Generate complete.
 echo %TARGET_IDE% 
 echo ------------------------------------
-
+pause
 endlocal
 exit /b 0

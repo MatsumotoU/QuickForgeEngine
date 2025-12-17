@@ -24,7 +24,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
@@ -61,14 +61,14 @@
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\generated\outputs\Development\</OutDir>
     <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Development\</IntDir>
     <TargetName>Editor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\..\generated\outputs\Release\</OutDir>
     <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Release\</IntDir>
     <TargetName>Editor</TargetName>
@@ -78,42 +78,66 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;$(SolutionDir)\externals;$(SolutionDir)\externals\assimp;$(SolutionDir)\externals\assimp\include;$(SolutionDir)\externals\DirectXTex;$(SolutionDir)\externals\imgui;$(SolutionDir)\externals\lua;$(SolutionDir)\externals\Mono;$(SolutionDir)\externals\Mono\include;$(SolutionDir)\externals\Mono\include\mono-2.0;$(SolutionDir)\externals\nlohmann;$(SolutionDir)\externals\sol2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;$(SolutionDir)\externals;$(SolutionDir)\externals\assimp;$(SolutionDir)\externals\assimp\include;$(SolutionDir)\externals\DirectXTex;$(SolutionDir)\externals\imgui;$(SolutionDir)\externals\lua;$(SolutionDir)\externals\Mono;$(SolutionDir)\externals\Mono\include;$(SolutionDir)\externals\Mono\include\mono-2.0;$(SolutionDir)\externals\nlohmann;$(SolutionDir)\externals\sol2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>Disabled</Optimization>
-      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\engine\include;$(SolutionDir)\externals;$(SolutionDir)\externals\assimp;$(SolutionDir)\externals\assimp\include;$(SolutionDir)\externals\DirectXTex;$(SolutionDir)\externals\imgui;$(SolutionDir)\externals\lua;$(SolutionDir)\externals\Mono;$(SolutionDir)\externals\Mono\include;$(SolutionDir)\externals\Mono\include\mono-2.0;$(SolutionDir)\externals\nlohmann;$(SolutionDir)\externals\sol2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>Disabled</Optimization>
-      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
