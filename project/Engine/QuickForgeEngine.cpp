@@ -1,5 +1,5 @@
 #include "QuickForgeEngine.h"
-#include "Platform/Windows/WindowsEngineCore.h"
+#include "engine/include/WindowsEngineCore.h"
 #include <memory>
 
 void QuickForgeEngine::RunOnWindows(HINSTANCE& hInstance, LPSTR& lpCmdLine) {

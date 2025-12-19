@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\UI">
+      <UniqueIdentifier>{1642B8DA-02FA-F927-6B01-D38357D89418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\UI\Edit">
+      <UniqueIdentifier>{0B0DFD78-7798-6A3D-80A9-ED31ECB3C63D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\UI\File">
+      <UniqueIdentifier>{05AFFD78-713A-6B3D-7A4B-EE31E655C73D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\UI\View">
+      <UniqueIdentifier>{40740679-ACFF-733D-B510-F731211BD03D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI">
+      <UniqueIdentifier>{3A4B661C-26ED-90F2-0FA8-A446FBE81743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\Edit">
+      <UniqueIdentifier>{AF6CD249-1B22-4B3F-A416-451610CB4143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\File">
+      <UniqueIdentifier>{A90ED349-15C4-4B3F-9EB8-45160A6D4243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\View">
+      <UniqueIdentifier>{E4D3DB49-5089-543F-D97D-4E1645324B43}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BuildInfo.h" />
+    <ClInclude Include="include\IEditor.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OnWindowsEditor.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\Edit\ColliderMaskEdit.h">
+      <Filter>include\UI\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\Edit\DebugConsole.h">
+      <Filter>include\UI\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\Edit\KeyConfigEdit.h">
+      <Filter>include\UI\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\Edit\PostprocessEdit.h">
+      <Filter>include\UI\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\File\CreateNewScene.h">
+      <Filter>include\UI\File</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\File\LoadScene.h">
+      <Filter>include\UI\File</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\File\SaveScene.h">
+      <Filter>include\UI\File</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\IEditorUI.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\UIManager.h">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\AssetsView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\ConsoleView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\EngineProfileView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\GameView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\HierarchyView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\InspectorView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\SceneProfileView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\SceneView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\View\ScriptLoggerView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\OnWindowsEditor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Edit\ColliderMaskEdit.cpp">
+      <Filter>src\UI\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Edit\DebugConsole.cpp">
+      <Filter>src\UI\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Edit\KeyConfigEdit.cpp">
+      <Filter>src\UI\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Edit\PostprocessEdit.cpp">
+      <Filter>src\UI\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\File\CreateNewScene.cpp">
+      <Filter>src\UI\File</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\File\LoadScene.cpp">
+      <Filter>src\UI\File</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\File\SaveScene.cpp">
+      <Filter>src\UI\File</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\UIManager.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\AssetsView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\ConsoleView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\EngineProfileView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\GameView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\HierarchyView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\InspectorView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\SceneProfileView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\SceneView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\View\ScriptLoggerView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

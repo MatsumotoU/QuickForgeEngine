@@ -2,12 +2,12 @@
 
 #ifdef __cplusplus
 #include <stdint.h>
-#include "Core/Math/Vector/Vector4.h"
-#include "Core/Math/Vector/Vector3.h"
-#include "Core/Math/Vector/Vector2.h"
-#include "Core/Math/Matrix/Matrix4x4.h"
-#include "Core/Math/Matrix/Matrix3x3.h"
-#include "Core/Math/Matrix/Matrix2x2.h"
+#include "engine/include/core/Math/Vector/Vector4.h"
+#include "engine/include/core/Math/Vector/Vector3.h"
+#include "engine/include/core/Math/Vector/Vector2.h"
+#include "engine/include/core/Math/Matrix/Matrix4x4.h"
+#include "engine/include/core/Math/Matrix/Matrix3x3.h"
+#include "engine/include/core/Math/Matrix/Matrix2x2.h"
 
 using float32_t4 = Vector4;
 using float32_t3 = Vector3;
