@@ -2,8 +2,8 @@
 #include <cassert>
 #include <d3d12.h>
 
-const std::string kVSFilePath = "Engine/Resources/Shaders/VS/";
-const std::string kPSFilePath = "Engine/Resources/Shaders/PS/";
+const std::string kVSFilePath = "engine/Resources/Shaders/VS/";
+const std::string kPSFilePath = "engine/Resources/Shaders/PS/";
 
 void PipelineStateObject::Initialize(ShaderCompiler* shaderCompiler, ID3D12Device* device) {
 	shaderCompiler_ = shaderCompiler;

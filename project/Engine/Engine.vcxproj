@@ -159,6 +159,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
