@@ -100,7 +100,6 @@
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "../../generated/outputs/Debug"
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "../../generated/outputs/Debug"
 copy "..\externals\Mono\bin\mono-2.0-sgen.dll" "../../generated/outputs/Debug"
-xcopy "..\Resources" "../../generated/outputs/DebugResources\" /S /I /Y
 mkdir "../../generated/outputs/Debug\mono"
 xcopy "..\externals\Mono\lib" "../../generated/outputs/Debug\mono\lib\" /S /I /Y
 xcopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc\" /S /I /Y</Command>
@@ -138,7 +137,6 @@ xcopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc\" /S /I /Y
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "../../generated/outputs/Development"
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "../../generated/outputs/Development"
 copy "..\externals\Mono\bin\mono-2.0-sgen.dll" "../../generated/outputs/Development"
-xcopy "..\Resources" "../../generated/outputs/DevelopmentResources\" /S /I /Y
 mkdir "../../generated/outputs/Development\mono"
 xcopy "..\externals\Mono\lib" "../../generated/outputs/Development\mono\lib\" /S /I /Y
 xcopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc\" /S /I /Y</Command>
@@ -176,7 +174,6 @@ xcopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc\" /S
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "../../generated/outputs/Release"
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "../../generated/outputs/Release"
 copy "..\externals\Mono\bin\mono-2.0-sgen.dll" "../../generated/outputs/Release"
-xcopy "..\Resources" "../../generated/outputs/ReleaseResources\" /S /I /Y
 mkdir "../../generated/outputs/Release\mono"
 xcopy "..\externals\Mono\lib" "../../generated/outputs/Release\mono\lib\" /S /I /Y
 xcopy "..\externals\Mono\etc" "../../generated/outputs/Release\mono\etc\" /S /I /Y</Command>

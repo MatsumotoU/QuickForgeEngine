@@ -80,7 +80,7 @@ group "QuickForge" -- MyMainProject
             'copy "..\\externals\\Mono\\bin\\mono-2.0-sgen.dll" "%{cfg.targetdir}"',
             
             -- Copy runtime-required folders
-            'xcopy "..\\Resources" "%{cfg.targetdir}Resources\\" /S /I /Y',
+            -- 'xcopy "..\\Resources" "%{cfg.targetdir}Resources\\" /S /I /Y',
             "mkdir \"%{cfg.targetdir}\\mono\"",
             "xcopy \"..\\externals\\Mono\\lib\" \"%{cfg.targetdir}\\mono\\lib\\\" /S /I /Y",
             "xcopy \"..\\externals\\Mono\\etc\" \"%{cfg.targetdir}\\mono\\etc\\\" /S /I /Y"
