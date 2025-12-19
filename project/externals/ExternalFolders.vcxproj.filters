@@ -1966,14 +1966,14 @@
     <Filter Include="lua">
       <UniqueIdentifier>{C78D880B-3397-887C-BC12-9F7C281B947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lua\lib">
-      <UniqueIdentifier>{6DB83395-D997-B230-E2AF-3D074E0E1992}</UniqueIdentifier>
+    <Filter Include="lua\bin">
+      <UniqueIdentifier>{EF8D3395-5B6D-B230-6485-3D07D0E31892}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lua\lib\Debug">
-      <UniqueIdentifier>{A3A05384-0F61-CFBA-D89B-1838441B1497}</UniqueIdentifier>
+    <Filter Include="lua\bin\Debug">
+      <UniqueIdentifier>{A50F3293-11D0-ADC9-DA0A-F746468AF2A5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lua\lib\Release">
-      <UniqueIdentifier>{9DCC191E-0958-87E2-1269-0AD77E73E3E2}</UniqueIdentifier>
+    <Filter Include="lua\bin\Release">
+      <UniqueIdentifier>{1F04505E-8B8F-BD22-94A0-401700AB1923}</UniqueIdentifier>
     </Filter>
     <Filter Include="nlohmann">
       <UniqueIdentifier>{E0661284-CC33-6D8F-F54C-5B37E178A21D}</UniqueIdentifier>
@@ -17013,14 +17013,17 @@
     <None Include="imgui\ImGuizmo-1.83\Makefile">
       <Filter>imgui\ImGuizmo-1.83</Filter>
     </None>
-    <None Include="lua\lib\Debug\Lua.idb">
-      <Filter>lua\lib\Debug</Filter>
+    <None Include="lua\bin\Debug\Lua.lib">
+      <Filter>lua\bin\Debug</Filter>
     </None>
-    <None Include="lua\lib\Debug\Lua.lib">
-      <Filter>lua\lib\Debug</Filter>
+    <None Include="lua\bin\Debug\Lua.pdb">
+      <Filter>lua\bin\Debug</Filter>
     </None>
-    <None Include="lua\lib\Release\Lua.lib">
-      <Filter>lua\lib\Release</Filter>
+    <None Include="lua\bin\Release\Lua.lib">
+      <Filter>lua\bin\Release</Filter>
+    </None>
+    <None Include="lua\bin\Release\Lua.pdb">
+      <Filter>lua\bin\Release</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

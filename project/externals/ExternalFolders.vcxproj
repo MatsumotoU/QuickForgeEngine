@@ -5079,9 +5079,10 @@
     <None Include="assimp\lib\Release\assimp-vc143-mt.lib" />
     <None Include="imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="imgui\ImGuizmo-1.83\Makefile" />
-    <None Include="lua\lib\Debug\Lua.idb" />
-    <None Include="lua\lib\Debug\Lua.lib" />
-    <None Include="lua\lib\Release\Lua.lib" />
+    <None Include="lua\bin\Debug\Lua.lib" />
+    <None Include="lua\bin\Debug\Lua.pdb" />
+    <None Include="lua\bin\Release\Lua.lib" />
+    <None Include="lua\bin\Release\Lua.pdb" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Mono\lib\xsp\test\2.0\menu\stock_copy_24.png" />

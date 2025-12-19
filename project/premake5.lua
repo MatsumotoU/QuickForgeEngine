@@ -37,11 +37,14 @@ workspace "QuickForgeEngine"
     filter ""
     
 group "QuickForge" -- MyMainProject
-    project "Editor"
+    project "Editor" -- Editor
         location "editor"
-        kind "ConsoleApp"
+        kind "WindowedApp"
         language "C++"
-        files {"editor/**.h","editor/**.cpp"}
+        files {
+            "editor/**.h",
+            "editor/**.cpp"
+        }
         links{
             "Engine",
             "Lua",
@@ -65,17 +68,23 @@ group "QuickForge" -- MyMainProject
             "./externals/nlohmann/",
         }
 
-        filter "configurations:Debug"
-            libdirs { "externals/lua/lib/Debug" }
-        filter "configurations:Release or configurations:Development"
-            libdirs { "externals/lua/lib/Release" }
-        filter ""
-
         postbuildcommands {
-            '{COPY} "%{prj.location}/../../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"'
+            'copy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64\\dxcompiler.dll" "%{cfg.targetdir}"',
+            'copy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64\\dxil.dll" "%{cfg.targetdir}"',
+            "mkdir \"%{cfg.targetdir}\\mono\"",
+            "mkdir \"%{cfg.targetdir}\\mono\\bin\"",
+            "copy \"..\\externals\\Mono\\bin\\mono-2.0-sgen.dll\" \"%{cfg.targetdir}\\mono\\bin\\\"",
+            "xcopy \"..\\externals\\Mono\\lib\" \"%{cfg.targetdir}\\mono\\lib\\\" /S /I /Y",
+            "xcopy \"..\\externals\\Mono\\etc\" \"%{cfg.targetdir}\\mono\\etc\\\" /S /I /Y"
         }
 
-    project "Engine"
+        filter "configurations:Debug"
+            libdirs { "externals/lua/bin/Debug" }
+        filter "configurations:Release or configurations:Development"
+            libdirs { "externals/lua/bin/Release" }
+        filter ""
+
+    project "Engine" -- Engine
         location "engine"
         kind "StaticLib" 
         language "C++"
@@ -108,16 +117,21 @@ group "QuickForge" -- MyMainProject
             "./externals/nlohmann/",
         }
 
+        -- PreBuildEvents
+        prebuildcommands {
+            ' call "$(SolutionDir)GenerateBuildInfo.bat"'
+        }
+
         filter "configurations:Debug"
             links { "assimp-vc143-mtd" }
             libdirs {
-                "externals/lua/lib/Debug",
+                "externals/lua/bin/Debug",
                 "externals/assimp/lib/Debug"
             }
         filter "configurations:Release or configurations:Development"
             links { "assimp-vc143-mt" }
             libdirs {
-                "externals/lua/lib/Release",
+                "externals/lua/bin/Release",
                 "externals/assimp/lib/Release"
             }
         filter ""
