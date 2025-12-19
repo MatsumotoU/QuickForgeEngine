@@ -69,12 +69,19 @@ group "QuickForge" -- MyMainProject
             "./externals/nlohmann/",
         }
 
+        prebuildcommands {
+            'call "..\\GenerateBuildInfo.bat"'
+        }
+
         postbuildcommands {
+            -- Copy runtime dependencies
             'copy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64\\dxcompiler.dll" "%{cfg.targetdir}"',
             'copy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64\\dxil.dll" "%{cfg.targetdir}"',
+            'copy "..\\externals\\Mono\\bin\\mono-2.0-sgen.dll" "%{cfg.targetdir}"',
+            
+            -- Copy runtime-required folders
+            'xcopy "..\\Resources" "%{cfg.targetdir}Resources\\" /S /I /Y',
             "mkdir \"%{cfg.targetdir}\\mono\"",
-            "mkdir \"%{cfg.targetdir}\\mono\\bin\"",
-            "copy \"..\\externals\\Mono\\bin\\mono-2.0-sgen.dll\" \"%{cfg.targetdir}\\mono\\bin\\\"",
             "xcopy \"..\\externals\\Mono\\lib\" \"%{cfg.targetdir}\\mono\\lib\\\" /S /I /Y",
             "xcopy \"..\\externals\\Mono\\etc\" \"%{cfg.targetdir}\\mono\\etc\\\" /S /I /Y"
         }
@@ -116,11 +123,6 @@ group "QuickForge" -- MyMainProject
             "./externals/Mono/include",
             "./externals/Mono/include/mono-2.0/",
             "./externals/nlohmann/",
-        }
-
-        -- PreBuildEvents
-        prebuildcommands {
-            ' call "$(SolutionDir)GenerateBuildInfo.bat"'
         }
 
         filter "configurations:Debug"
