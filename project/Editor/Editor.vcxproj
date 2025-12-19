@@ -77,12 +77,15 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
@@ -108,7 +111,8 @@ xcopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc\" /S /I /Y
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -118,6 +122,7 @@ xcopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc\" /S /I /Y
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
@@ -145,7 +150,8 @@ xcopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc\" /S
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -155,6 +161,7 @@ xcopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc\" /S
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>

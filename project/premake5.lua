@@ -5,6 +5,8 @@ workspace "QuickForgeEngine"
     configurations {"Debug","Development","Release"}
     startproject "Editor"
 
+    flags { "MultiProcessorCompile" }
+
     cppdialect "C++20"
     staticruntime "on"
 
@@ -51,6 +53,10 @@ group "QuickForge" -- MyMainProject
             "Lua",
             "ExternalFolders"
         }
+
+        -- 警告レベル4
+        warnings "Extra"
+        fatalwarnings "All" --すべての警告をエラーとします
     
         -- 追加のインクルード
         includedirs{
@@ -107,6 +113,9 @@ group "QuickForge" -- MyMainProject
         libdirs {
             "externals/Mono/lib"
         }
+
+        -- 警告レベル4
+        warnings "Extra"
 
         -- 追加のインクルード
         includedirs{
