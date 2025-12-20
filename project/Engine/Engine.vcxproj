@@ -155,6 +155,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
+    <ClInclude Include="include\graphic\GpuBufferPool\GpuBufferPool.h" />
+    <ClInclude Include="include\utility\memory\VariableLengthPool.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />

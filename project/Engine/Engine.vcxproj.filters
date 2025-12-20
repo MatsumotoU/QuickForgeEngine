@@ -881,6 +881,8 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h">
       <Filter>include\window\WindowGenerater</Filter>
     </ClInclude>
+    <ClInclude Include="include\graphic\GpuBufferPool\GpuBufferPool.h" />
+    <ClInclude Include="include\utility\memory\VariableLengthPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
