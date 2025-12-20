@@ -1,16 +1,9 @@
 #pragma once
 #include <xaudio2.h>
+#include <vector>
 
-// 音声チE�Eタを格納する構造佁E
+// 音声データを格納する構造体
 struct AudioData final {
-	~AudioData() {
-		if (pBuffer) {
-			delete[] pBuffer;
-			pBuffer = nullptr;
-		}
-	}
-
-	WAVEFORMATEX wfex;
-	BYTE* pBuffer;
-	unsigned int bufferSize;
+	WAVEFORMATEXTENSIBLE wfxEx;
+	std::vector<BYTE> buffer;
 };

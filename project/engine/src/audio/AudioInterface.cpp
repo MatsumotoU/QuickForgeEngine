@@ -26,8 +26,8 @@ void AudioInterface::ResumeAllSound() {
 
 uint32_t AudioInterface::PlaySoundForAudioData(uint32_t audioDataHandle, bool loop, float volume) {
 	AudioData audioData = AssetManager::GetInstance()->GetAudioSourceManager()->GetSoundData(audioDataHandle);
-	if (audioData.pBuffer == nullptr) {
-		assert(false && "Audio data is null");
+	if (audioData.buffer.empty()) { // pBuffer から buffer.empty() に変更
+		assert(false && "Audio data is empty"); // アサートメッセージも修正
 		return 0;
 	}
 	return audioChipManager_.PlaySoundForAudioData(audioData, loop, volume);

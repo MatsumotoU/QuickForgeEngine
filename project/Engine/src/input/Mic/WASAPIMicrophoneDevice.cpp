@@ -4,6 +4,10 @@
 
 #include "Engine/include/assets/AudioSource/Data/AudioData.h"
 
+#ifdef _DEBUG
+
+#endif // _DEBUG
+
 WASAPIMicrophoneDevice::WASAPIMicrophoneDevice()
 {
 	isCapturing_ = false;
@@ -33,6 +37,8 @@ void WASAPIMicrophoneDevice::Initialize()
 	hr = audioClient_->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 10000000, 0, waveFormat, NULL);
 	assert(SUCCEEDED(hr));
 
+	CoTaskMemFree(waveFormat); // メモリリークを修正
+
 	hr = audioClient_->GetService(__uuidof(IAudioCaptureClient), (void**)&captureClient_);
 	assert(SUCCEEDED(hr));
 }
@@ -58,18 +64,32 @@ void WASAPIMicrophoneDevice::StopCapture()
 AudioData WASAPIMicrophoneDevice::GetAudioData()
 {
     AudioData audioData;
+    // メンバーをゼロ初期化
+    ZeroMemory(&audioData.wfxEx, sizeof(WAVEFORMATEXTENSIBLE));
 
-    // フォーマット情報をセット
-    WAVEFORMATEX* waveFormat;
-    audioClient_->GetMixFormat(&waveFormat);
-    audioData.wfex = *waveFormat;
+    // フォーマット情報を取得
+    WAVEFORMATEX* waveFormat = nullptr;
+    HRESULT hr = audioClient_->GetMixFormat(&waveFormat);
+    assert(SUCCEEDED(hr));
+
+    // 取得したフォーマットをコピー
+    // GetMixFormatはWAVEFORMATEXTENSIBLEを返すことがあるので、そのサイズを考慮してコピーする
+    if (waveFormat->wFormatTag == WAVE_FORMAT_EXTENSIBLE) {
+        memcpy(&audioData.wfxEx, waveFormat, sizeof(WAVEFORMATEXTENSIBLE));
+    }
+    else {
+        // 古いWAVEFORMATEXの場合は、WAVEFORMATEXTENSIBLEに変換して格納
+        memcpy(&audioData.wfxEx.Format, waveFormat, sizeof(WAVEFORMATEX));
+        audioData.wfxEx.Format.wFormatTag = waveFormat->wFormatTag;
+    }
+    CoTaskMemFree(waveFormat);
 
     std::vector<BYTE> buffer;
     UINT32 packetLength = 0;
-    HRESULT hr = captureClient_->GetNextPacketSize(&packetLength);
+    hr = captureClient_->GetNextPacketSize(&packetLength);
     assert(SUCCEEDED(hr));
 
-	// パケットがある限りデータを取得
+    // パケットがある限りデータを取得
     while (packetLength != 0) {
         BYTE* pData;
         UINT32 numFramesAvailable;
@@ -77,14 +97,23 @@ AudioData WASAPIMicrophoneDevice::GetAudioData()
         hr = captureClient_->GetBuffer(&pData, &numFramesAvailable, &flags, NULL, NULL);
         assert(SUCCEEDED(hr));
 
+        // WAVEFORMATEXTENSIBLE構造体のFormatメンバ(WAVEFORMATEX)を参照する
+        const WAVEFORMATEX& format = audioData.wfxEx.Format;
+
         // データが無音かどうか判定
         if (flags & AUDCLNT_BUFFERFLAGS_SILENT) {
-            // 無音の場合はゼロ埋め
-            std::vector<BYTE> silentData(numFramesAvailable * audioData.wfex.nBlockAlign, 0);
+            BYTE silentValue = 0;
+            if (format.wBitsPerSample == 8) {
+                // 8bit PCMは無音＝128
+                silentValue = 128;
+            }
+            // 正しいnBlockAlignを参照
+            std::vector<BYTE> silentData(numFramesAvailable * format.nBlockAlign, silentValue);
             buffer.insert(buffer.end(), silentData.begin(), silentData.end());
         }
         else {
-            size_t dataSize = numFramesAvailable * audioData.wfex.nBlockAlign;
+            // 正しいnBlockAlignを参照
+            size_t dataSize = numFramesAvailable * format.nBlockAlign;
             buffer.insert(buffer.end(), pData, pData + dataSize);
         }
 
@@ -94,10 +123,18 @@ AudioData WASAPIMicrophoneDevice::GetAudioData()
         assert(SUCCEEDED(hr));
     }
 
+    // バッファが空の場合、無音データを生成
+    if (buffer.empty()) {
+        // 正しいnBlockAlignとwBitsPerSampleを参照
+        const WAVEFORMATEX& format = audioData.wfxEx.Format;
+        size_t silentSize = format.nBlockAlign * 256;
+        BYTE silentValue = 0;
+        if (format.wBitsPerSample == 8) silentValue = 128;
+        buffer.resize(silentSize, silentValue);
+    }
+
     // バッファをAudioDataにセット
-    audioData.bufferSize = static_cast<unsigned int>(buffer.size());
-    audioData.pBuffer = new BYTE[audioData.bufferSize];
-    memcpy(audioData.pBuffer, buffer.data(), audioData.bufferSize);
+    audioData.buffer = std::move(buffer);
 
     return audioData;
 }

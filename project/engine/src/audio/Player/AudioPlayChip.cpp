@@ -32,19 +32,19 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 	assert(xAudio2_ != nullptr);
 	assert(masterVoice_ != nullptr);
 
-	// TODO: 髻ｳ縺ｮ繝昴せ繝医・繝ｭ繧ｻ繧ｹ蜃ｦ逅・ｒ蛻･縺ｮ蝣ｴ謇縺ｫ菴懊ｋ縺薙→(TD逕ｨ縺ｮ邱頑･繧ｪ繝・
-	// --- 繝√・繝怜喧蜃ｦ逅・％縺薙°繧・---
-	// 8bit蛹・& 繧ｵ繝ｳ繝励Μ繝ｳ繧ｰ繝ｬ繝ｼ繝亥濠貂・& 繝弱う繧ｺ & lo-fi繧ｨ繝輔ぉ繧ｯ繝・
-	if (audioData.wfex.wBitsPerSample == 16) {
-		const int16_t* src = reinterpret_cast<int16_t*>(audioData.pBuffer);
-		size_t sampleCount = audioData.bufferSize / 2;
+	// TODO: 既存のサンプル・レート変換は別の環境に任せること(TD経由の考慮)
+	// --- サンプル・レート変換ここから ---
+	// 8bit変換 & サンプリング周波数変更 & ノイズ & lo-fiエフェクト
+	if (audioData.wfxEx.Format.wBitsPerSample == 16) {
+		const int16_t* src = reinterpret_cast<int16_t*>(audioData.buffer.data());
+		size_t sampleCount = audioData.buffer.size() / sizeof(int16_t); // sizeof(int16_t) を追加
 		size_t cheapSampleCount = sampleCount / 2;
-		BYTE* cheapBuffer = new BYTE[cheapSampleCount];
+		std::vector<BYTE> cheapBuffer(cheapSampleCount); // new BYTE[] から std::vector に変更
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution<int> noiseDist(-32, 32); // 繝弱う繧ｺ
-		float lastSample = 0.0f; // 繝ｭ繝ｼ繝代せ繝輔ぅ繝ｫ繧ｿ逕ｨ
+		std::uniform_int_distribution<int> noiseDist(-32, 32); // ノイズ
+		float lastSample = 0.0f; // ローパスフィルター用
 
 		for (size_t i = 0; i < cheapSampleCount; ++i) {
 			int16_t s = src[i * 2];
@@ -54,40 +54,39 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 				continue;
 			}
 
-			// 繝弱う繧ｺ莉伜刈
+			// ノイズ乗算
 			s = static_cast<int16_t>(std::clamp<int>(s + noiseDist(gen), -32768, 32767));
 
-			// 豁ｪ縺ｿ・医け繝ｪ繝・ヴ繝ｳ繧ｰ・・
-			const int16_t clipLevel = 8000; // lo-fi諢溘ｒ蜃ｺ縺咎明蛟､
+			// 閾値を超えたクリッピング
+			const int16_t clipLevel = 8000; // lo-fi感を出す閾値
 			if (s > clipLevel) s = clipLevel;
 			if (s < -clipLevel) s = -clipLevel;
 
-			// 繝ｭ繝ｼ繝代せ繝輔ぅ繝ｫ繧ｿ・磯ｫ伜沺繧ｫ繝・ヨ・・
-			float alpha = 0.35f; // 繝輔ぅ繝ｫ繧ｿ蠑ｷ蠎ｦ・・.0・・.0・・
+			// ローパスフィルター・適用
+			float alpha = 0.35f; // フィルター強度0.0～1.0
 			float filtered = lastSample * (1.0f - alpha) + s * alpha;
 			lastSample = filtered;
 			s = static_cast<int16_t>(filtered);
 
-			// 8bit蛹厄ｼ育ｬｦ蜿ｷ縺ｪ縺暦ｼ・
+			// 8bit変換して格納
 			cheapBuffer[i] = static_cast<BYTE>((s + 32768) >> 8);
 		}
-		audioData.wfex.wBitsPerSample = 8;
-		audioData.wfex.nBlockAlign = audioData.wfex.nChannels * audioData.wfex.wBitsPerSample / 8;
-		audioData.wfex.nAvgBytesPerSec = audioData.wfex.nSamplesPerSec / 2 * audioData.wfex.nBlockAlign;
-		audioData.wfex.nSamplesPerSec /= 2;
-		audioData.pBuffer = cheapBuffer;
-		audioData.bufferSize = static_cast<unsigned int>(cheapSampleCount);
+		audioData.wfxEx.Format.wBitsPerSample = 8;
+		audioData.wfxEx.Format.nBlockAlign = audioData.wfxEx.Format.nChannels * audioData.wfxEx.Format.wBitsPerSample / 8;
+		audioData.wfxEx.Format.nAvgBytesPerSec = audioData.wfxEx.Format.nSamplesPerSec / 2 * audioData.wfxEx.Format.nBlockAlign;
+		audioData.wfxEx.Format.nSamplesPerSec /= 2;
+		audioData.buffer = std::move(cheapBuffer); // std::move で所有権を移動
 	}
-	// --- 繝√・繝怜喧蜃ｦ逅・％縺薙∪縺ｧ ---
+	// --- サンプル・レート変換ここまで ---
 
-	// 繧ｽ繝ｼ繧ｹ繝懊う繧ｹ縺ｮ菴懈・
+	// ソースバッファの作成
 	sourceVoice_ = nullptr;
-	HRESULT hr = xAudio2_->CreateSourceVoice(&sourceVoice_, &audioData.wfex);
+	HRESULT hr = xAudio2_->CreateSourceVoice(&sourceVoice_, &audioData.wfxEx.Format);
 	assert(SUCCEEDED(hr));
 
 	XAUDIO2_BUFFER buffer = {};
-	buffer.AudioBytes = audioData.bufferSize;
-	buffer.pAudioData = audioData.pBuffer;
+	buffer.AudioBytes = static_cast<UINT32>(audioData.buffer.size()); // bufferSize を buffer.size() に変更
+	buffer.pAudioData = audioData.buffer.data(); // pBuffer を buffer.data() に変更
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 	buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 	buffer.LoopBegin = 0;
