@@ -53,6 +53,8 @@ public:
 	ConstantBufferManager<TransformationMatrix>* GetWpvBufferManager() { return &wpvBufferManager_; }
 	ConstantBufferManager<Material>* GetMaterialBufferManager() { return &materialBufferManager_; }
 	ConstantBufferManager<DirectionalLight>* GetLightBufferManager() { return &lightBufferManager_; }
+
+	GpuBufferPool* GetGpuBufferPool() { return gpuBufferPool_.get(); }
 	EntityManager* GetEntityManager() { return &entityManager_; }
 	SpriteManager* GetSpriteManager() { return &spriteManager_; }
 	const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }

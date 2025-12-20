@@ -5,10 +5,12 @@
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
 #include <cassert>
 
+#include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 void Render::Model::DrawModel(const uint32_t& modelHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	assert(assetManager && "AssetManager is nullptr.");
 	const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(modelHandle);
+	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 
 	modelDataPtr->meshRenderDataHandles[0].wpvBufferHandle;
 
@@ -27,14 +29,14 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 		commandList->IASetVertexBuffers(0, 1,
 			assetManager->GetModelVertexResourceManager()->GetVertexBufferView(handle.vertexBufferHandle));
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		commandList->SetGraphicsRootConstantBufferView(0, 
-			assetManager->GetMaterialBufferManager()->GetBufferAddress(handle.materialHandle));
+		commandList->SetGraphicsRootConstantBufferView(0,
+			gpuBufferPool->GetConstantBufferAddress<Material>(handle.materialHandle));
 		commandList->SetGraphicsRootConstantBufferView(1, 
-			assetManager->GetWpvBufferManager()->GetBufferAddress(handle.wpvBufferHandle));
+			gpuBufferPool->GetConstantBufferAddress<TransformationMatrix>(handle.wpvBufferHandle));
 		commandList->SetGraphicsRootDescriptorTable(2,
 			assetManager->GetTextureManager()->GetTextureSrvHandleGPU(handle.textureHandle));
 		commandList->SetGraphicsRootConstantBufferView(3, 
-			assetManager->GetLightBufferManager()->GetBufferAddress(handle.lightBufferHandle));
+			gpuBufferPool->GetConstantBufferAddress<DirectionalLight>(handle.lightBufferHandle));
 		commandList->DrawInstanced(static_cast<UINT>(
 			assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);
 	}

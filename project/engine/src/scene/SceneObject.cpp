@@ -105,7 +105,7 @@ void SceneObject::Update() {
 				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 				// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 				for (const auto& meshData : modelData->meshRenderDataHandles) {
-					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
 					wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
 						transform.scale,
 						transform.rotate,
@@ -116,7 +116,7 @@ void SceneObject::Update() {
 			// 繧ｹ繝励Λ繧､繝医・繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
-				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
+				TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
 				wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
 					transform.scale,
 					transform.rotate,
@@ -166,7 +166,7 @@ void SceneObject::Update() {
 					const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 					// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 					for (const auto& meshData : modelData->meshRenderDataHandles) {
-						TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+						TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
 						wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
 							parentTransform.scale, parentTransform.rotate, parentTransform.translate));
 					}
@@ -211,7 +211,7 @@ void SceneObject::PreDraw() {
 				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 				// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 				for (const auto& meshData : modelData->meshRenderDataHandles) {
-					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
 					wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
 				}
 			}

@@ -28,6 +28,20 @@ public:
 			return static_cast<uint32_t>(index);
 		}
 	}
+	// オブジェクトを追加（ムーブ指定）
+	uint32_t Add(T&& obj) {
+		if (freeIndices_.empty()) {
+			size_t newIndex = pool_.size();
+			pool_.emplace_back(std::move(obj));
+			return static_cast<uint32_t>(newIndex);
+		}
+		else {
+			size_t index = freeIndices_.top();
+			freeIndices_.pop();
+			pool_[index] = std::move(obj);
+			return static_cast<uint32_t>(index);
+		}
+	}
 	// オブジェクトを取得
 	T* Acquire() {
 		if (freeIndices_.empty()) {
