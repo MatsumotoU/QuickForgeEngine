@@ -13,7 +13,7 @@
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "AudioSource/AudioSourceManager.h"
 
-//#include "Engine/include/graphic/GpuBufferPool/GpuBufferPool.h"
+#include "Engine/include/graphic/GpuBufferPool/GpuBufferPool.h"
 
 #include <unordered_map>
 
@@ -71,7 +71,7 @@ private:
 	ConstantBufferManager<TransformationMatrix> wpvBufferManager_;
 	ConstantBufferManager<Material> materialBufferManager_;
 	ConstantBufferManager<DirectionalLight> lightBufferManager_;
-	//GpuBufferPool gpuBufferPool_;
+	std::unique_ptr<GpuBufferPool> gpuBufferPool_;
 	EntityManager entityManager_;
 	SpriteManager spriteManager_;
 	ParticleGpuDataManager particleGpuDataManager_;
