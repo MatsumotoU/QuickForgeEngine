@@ -155,8 +155,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
-    <ClInclude Include="include\graphic\GpuBufferPool\GpuBufferPool.h" />
-    <ClInclude Include="include\utility\memory\VariableLengthPool.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
@@ -255,6 +253,7 @@
     <ClInclude Include="include\graphic\DirectXCommon\DirectXDevice.h" />
     <ClInclude Include="include\graphic\DirectXCommon\Fence.h" />
     <ClInclude Include="include\graphic\DirectXCommon\SwapChain.h" />
+    <ClInclude Include="include\graphic\GpuBufferPool\GpuBufferPool.h" />
     <ClInclude Include="include\graphic\Pipeline\GraphicPipelineManager.h" />
     <ClInclude Include="include\graphic\Pipeline\PSO\InputLayout.h" />
     <ClInclude Include="include\graphic\Pipeline\PSO\PipelineStateObject.h" />
@@ -311,6 +310,7 @@
     <ClInclude Include="include\utility\String\MyString.h" />
     <ClInclude Include="include\utility\String\StringLiblary.h" />
     <ClInclude Include="include\utility\memory\SparseSets.h" />
+    <ClInclude Include="include\utility\memory\VariableLengthPool.h" />
     <ClInclude Include="include\window\GameWindow.h" />
     <ClInclude Include="include\window\GameWindowManager.h" />
     <ClInclude Include="include\window\WindowEventsManager\EventSystems\DropFileEvent.h" />
