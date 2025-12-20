@@ -58,17 +58,18 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 	luaState->set_function("GetMaterial", [](uint32_t entityId) -> Material* {
 		auto* am = AssetManager::GetInstance();
 		auto* em = am->GetEntityManager();
+		auto* gpuBufferPool = am->GetGpuBufferPool();
 		if (em->HasComponent<SpriteData>(entityId)) {
-			return am->GetMaterialBufferManager()->GetBufferData(
+			return gpuBufferPool->GetConstantBuffer<Material>(
 				em->GetComponent<SpriteData>(entityId).materialBufferHandle
-			);
+			)->GetData();
 		}
 		if (em->HasComponent<ModelHandle>(entityId)) {
 			ModelHandle& modelData = em->GetComponent<ModelHandle>(entityId);
 			ModelRenderData* modelRenderData = am->GetModelRenderData(modelData.handle);
-			return am->GetMaterialBufferManager()->GetBufferData(
+			return gpuBufferPool->GetConstantBuffer<Material>(
 				modelRenderData->meshRenderDataHandles[0].materialHandle
-			);
+			)->GetData();
 		}
 #ifdef DEBUG
 		DebugLog("GetMaterial: Entity does not have SpriteData or ModelHandle.", LogLevel::Warning);

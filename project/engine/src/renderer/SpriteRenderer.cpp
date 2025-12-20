@@ -8,6 +8,7 @@
 
 void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
+	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 	assert(assetManager && "AssetManager is nullptr.");
 	const SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(spriteHandle);
 
@@ -29,12 +30,12 @@ void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 		assetManager->GetSpriteManager()->GetVertexBuffer(spriteData.vertexBufferHandle)->GetVertexBufferView());
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0,
-		assetManager->GetMaterialBufferManager()->GetBufferAddress(spriteData.materialBufferHandle));
+		gpuBufferPool->GetConstantBufferAddress<Material>(spriteData.materialBufferHandle));
 	commandList->SetGraphicsRootConstantBufferView(1,
-		assetManager->GetWpvBufferManager()->GetBufferAddress(spriteData.wvpBufferHandle));
+		gpuBufferPool->GetConstantBufferAddress<TransformationMatrix>(spriteData.wvpBufferHandle));
 	commandList->SetGraphicsRootDescriptorTable(2,
 		assetManager->GetTextureManager()->GetTextureSrvHandleGPU(spriteData.textureHandle));
 	commandList->SetGraphicsRootConstantBufferView(3,
-		assetManager->GetLightBufferManager()->GetBufferAddress(spriteData.lightBufferHandle));
+		gpuBufferPool->GetConstantBufferAddress<DirectionalLight>(spriteData.lightBufferHandle));
 	commandList->DrawInstanced(6, 1, 0, 0);
 }

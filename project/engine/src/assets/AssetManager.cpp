@@ -13,9 +13,6 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 		dxCommon_->GetDevice(), dxCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		dxCommon_->GetDescriptorHeapManager()->GetSrvDescriptorHeap());
 
-	wpvBufferManager_.Initialize();
-	materialBufferManager_.Initialize();
-	lightBufferManager_.Initialize();
 	modelVertexResourceManager_.Initialize();
 	modelRenderDataManager_.Initialize();
 	spriteManager_.Initialize();
@@ -32,9 +29,6 @@ void AssetManager::Finalize() {
 	audioSourceManager_.Finalize();
 	spriteManager_.Finalize();
 	textureManager_->Finalize();
-	wpvBufferManager_.Finalize();
-	materialBufferManager_.Finalize();
-	lightBufferManager_.Finalize();
 	modelVertexResourceManager_.Finalize();
 	modelRenderDataManager_.Finalize();
 }

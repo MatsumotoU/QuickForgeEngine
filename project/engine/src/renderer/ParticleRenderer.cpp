@@ -9,6 +9,7 @@
 
 void Render::Particle::DrawParticles(const uint32_t& particleHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
+	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 	ParticleComponent particleComponent = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(particleHandle);
 
 	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetParticlePso(kBlendModeNormal);
@@ -24,7 +25,7 @@ void Render::Particle::DrawParticles(const uint32_t& particleHandle) {
 
 	commandList->IASetVertexBuffers(0, 1, assetManager->GetModelVertexResourceManager()->GetVertexBufferView(particleComponent.vartexBufferHandle));
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, assetManager->GetMaterialBufferManager()->GetBufferAddress(particleComponent.materialHandle));
+	commandList->SetGraphicsRootConstantBufferView(0, gpuBufferPool->GetConstantBufferAddress<Material>(particleComponent.materialHandle));
 	commandList->SetGraphicsRootDescriptorTable(1, assetManager->GetParticleGpuDataManager()->GetBufferPtr(particleComponent.particleGpuBufferHandle)->GetInstancingSrvHandles().gpuHandle_);
 	commandList->SetGraphicsRootDescriptorTable(2, assetManager->GetTextureManager()->GetTextureSrvHandleGPU(particleComponent.textureHandle));
 	commandList->DrawInstanced(static_cast<UINT>(
