@@ -97,7 +97,8 @@
       <AdditionalLibraryDirectories>..\externals\lua\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>call "..\GenerateBuildInfo.bat"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
@@ -201,12 +202,14 @@ exit /b 0</Command>
     <ClInclude Include="include\UI\View\EngineProfileView.h" />
     <ClInclude Include="include\UI\View\GameView.h" />
     <ClInclude Include="include\UI\View\HierarchyView.h" />
+    <ClInclude Include="include\UI\View\InputDebugView.h" />
     <ClInclude Include="include\UI\View\InspectorView.h" />
     <ClInclude Include="include\UI\View\SceneProfileView.h" />
     <ClInclude Include="include\UI\View\SceneView.h" />
     <ClInclude Include="include\UI\View\ScriptLoggerView.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\UI\View\InputDebugView.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\OnWindowsEditor.cpp" />
     <ClCompile Include="src\UI\Edit\ColliderMaskEdit.cpp" />
