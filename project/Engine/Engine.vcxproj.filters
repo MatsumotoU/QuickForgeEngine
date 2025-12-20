@@ -136,6 +136,9 @@
     <Filter Include="include\graphic\DirectXCommon\Descriptors\DescriptorGenerator">
       <UniqueIdentifier>{D758883C-4321-56C0-0CB2-5ED2783986FB}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\graphic\GpuBufferPool">
+      <UniqueIdentifier>{8536F640-F14E-DD6A-BAFB-6C0426D37104}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\graphic\Pipeline">
       <UniqueIdentifier>{BB7BE9DA-A7A0-385B-D0EB-1DEBBC6F3779}</UniqueIdentifier>
     </Filter>
@@ -686,6 +689,9 @@
     <ClInclude Include="include\graphic\DirectXCommon\SwapChain.h">
       <Filter>include\graphic\DirectXCommon</Filter>
     </ClInclude>
+    <ClInclude Include="include\graphic\GpuBufferPool\GpuBufferPool.h">
+      <Filter>include\graphic\GpuBufferPool</Filter>
+    </ClInclude>
     <ClInclude Include="include\graphic\Pipeline\GraphicPipelineManager.h">
       <Filter>include\graphic\Pipeline</Filter>
     </ClInclude>
@@ -854,6 +860,9 @@
     <ClInclude Include="include\utility\memory\SparseSets.h">
       <Filter>include\utility\memory</Filter>
     </ClInclude>
+    <ClInclude Include="include\utility\memory\VariableLengthPool.h">
+      <Filter>include\utility\memory</Filter>
+    </ClInclude>
     <ClInclude Include="include\window\GameWindow.h">
       <Filter>include\window</Filter>
     </ClInclude>
@@ -881,6 +890,7 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h">
       <Filter>include\window\WindowGenerater</Filter>
     </ClInclude>
+    <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -1244,5 +1254,6 @@
     <ClCompile Include="src\window\WindowGenerater.cpp">
       <Filter>src\window</Filter>
     </ClCompile>
+    <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp" />
   </ItemGroup>
 </Project>

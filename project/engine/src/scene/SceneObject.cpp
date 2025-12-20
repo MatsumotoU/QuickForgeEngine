@@ -105,7 +105,7 @@ void SceneObject::Update() {
 				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 				// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 				for (const auto& meshData : modelData->meshRenderDataHandles) {
-					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
 					wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
 						transform.scale,
 						transform.rotate,
@@ -116,7 +116,7 @@ void SceneObject::Update() {
 			// 繧ｹ繝励Λ繧､繝医・繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
-				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
+				TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
 				wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
 					transform.scale,
 					transform.rotate,
@@ -166,7 +166,7 @@ void SceneObject::Update() {
 					const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 					// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 					for (const auto& meshData : modelData->meshRenderDataHandles) {
-						TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+						TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
 						wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
 							parentTransform.scale, parentTransform.rotate, parentTransform.translate));
 					}
@@ -174,7 +174,7 @@ void SceneObject::Update() {
 				// 繧ｹ繝励Λ繧､繝医・繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 				if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 					SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
-					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
+					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
 					wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
 						parentTransform.scale, parentTransform.rotate, parentTransform.translate));
 				}
@@ -211,14 +211,14 @@ void SceneObject::PreDraw() {
 				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 				// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 				for (const auto& meshData : modelData->meshRenderDataHandles) {
-					TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(meshData.wpvBufferHandle);
+					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
 					wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
 				}
 			}
 			// 繧ｹ繝励Λ繧､繝医・繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
-				TransformationMatrix* wpvMatrix = assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle);
+				TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
 				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Orthographic);
 			}
 			// 繝代・繝・ぅ繧ｯ繝ｫ縺ｮ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
@@ -435,7 +435,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	particleComponent.maxParticleCount = maxCount;
 	particleComponent.vartexBufferHandle = assetManager->LoadModelMesh(modelName);
 	particleComponent.textureHandle = assetManager->LoadModelTexture(modelName);
-	particleComponent.materialHandle = assetManager->GetMaterialBufferManager()->CreateBuffer();
+	particleComponent.materialHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<Material>();
 	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
 	assetManager->GetEntityManager()->EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
@@ -497,15 +497,15 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 		spriteData.height = height;
 	}
 	spriteData.vertexBufferHandle = assetManager->GetSpriteManager()->CreateVertexBuffer(textureSize.x, textureSize.y);
-	spriteData.wvpBufferHandle = assetManager->GetWpvBufferManager()->CreateBuffer();
-	assetManager->GetWpvBufferManager()->GetBufferData(spriteData.wvpBufferHandle)->World = Matrix4x4::MakeIndentity4x4();
-	spriteData.materialBufferHandle = assetManager->GetMaterialBufferManager()->CreateBuffer();
-	Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(spriteData.materialBufferHandle);
+	spriteData.wvpBufferHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<TransformationMatrix>();
+	assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle)->WVP = Matrix4x4::MakeIndentity4x4();
+	spriteData.materialBufferHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<Material>();
+	Material* material = assetManager->GetGpuBufferPool()->GetConstantBufferData<Material>(spriteData.materialBufferHandle);
 	material->color = { 1.0f,1.0f,1.0f,1.0f };
 	material->enableLighting = false;
 	material->uvTransform = Matrix4x4::MakeIndentity4x4();
-	spriteData.lightBufferHandle = assetManager->GetLightBufferManager()->CreateBuffer();
-	DirectionalLight* light = assetManager->GetLightBufferManager()->GetBufferData(spriteData.lightBufferHandle);
+	spriteData.lightBufferHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<DirectionalLight>();
+	DirectionalLight* light = assetManager->GetGpuBufferPool()->GetConstantBufferData<DirectionalLight>(spriteData.lightBufferHandle);
 	light->color = { 1.0f,1.0f,1.0f,1.0f };
 	light->direction = { 0.0f,-1.0f,0.0f };
 	light->intensity = 1.0f;

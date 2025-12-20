@@ -5,6 +5,8 @@ workspace "QuickForgeEngine"
     configurations {"Debug","Development","Release"}
     startproject "Editor"
 
+    flags { "MultiProcessorCompile" }
+
     cppdialect "C++20"
     staticruntime "on"
 
@@ -51,6 +53,10 @@ group "QuickForge" -- MyMainProject
             "Lua",
             "ExternalFolders"
         }
+
+        -- 警告レベル4
+        warnings "Extra"
+        fatalwarnings "All" --すべての警告をエラーとします
     
         -- 追加のインクルード
         includedirs{
@@ -74,16 +80,11 @@ group "QuickForge" -- MyMainProject
         }
 
         postbuildcommands {
-            -- Copy runtime dependencies
-            'copy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64\\dxcompiler.dll" "%{cfg.targetdir}"',
-            'copy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64\\dxil.dll" "%{cfg.targetdir}"',
-            'copy "..\\externals\\Mono\\bin\\mono-2.0-sgen.dll" "%{cfg.targetdir}"',
-            
-            -- Copy runtime-required folders
-            -- 'xcopy "..\\Resources" "%{cfg.targetdir}Resources\\" /S /I /Y',
-            "mkdir \"%{cfg.targetdir}\\mono\"",
-            "xcopy \"..\\externals\\Mono\\lib\" \"%{cfg.targetdir}\\mono\\lib\\\" /S /I /Y",
-            "xcopy \"..\\externals\\Mono\\etc\" \"%{cfg.targetdir}\\mono\\etc\\\" /S /I /Y"
+            'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
+            'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS > nul',
+            'robocopy "..\\externals\\Mono\\etc" "%{cfg.targetdir}\\mono\\etc" /E /XO /R:0 /W:0 /NJH /NJS > nul',
+            'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "%{cfg.targetdir}" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
+            "exit /b 0"
         }
 
         filter "configurations:Debug"
@@ -107,6 +108,9 @@ group "QuickForge" -- MyMainProject
         libdirs {
             "externals/Mono/lib"
         }
+
+        -- 警告レベル4
+        warnings "Extra"
 
         -- 追加のインクルード
         includedirs{

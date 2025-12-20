@@ -8,7 +8,7 @@ nlohmann::json ModelHandle::Serialize() const {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	uint32_t materialHandle =
 	assetManager->GetModelRenderData(handle)->meshRenderDataHandles[0].materialHandle;
-	Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(materialHandle);
+	Material* material = assetManager->GetGpuBufferPool()->GetConstantBufferData<Material>(materialHandle);
 	json["color"] = { material->color.x, material->color.y, material->color.z, material->color.w };
 
 	return json;
@@ -23,7 +23,7 @@ void ModelHandle::Deserialize(const nlohmann::json& json) {
 			AssetManager* assetManager = AssetManager::GetInstance();
 			uint32_t materialHandle =
 				assetManager->GetModelRenderData(handle)->meshRenderDataHandles[0].materialHandle;
-			Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(materialHandle);
+			Material* material = assetManager->GetGpuBufferPool()->GetConstantBufferData<Material>(materialHandle);
 			material->color.x = json["color"][0].get<float>();
 			material->color.y = json["color"][1].get<float>();
 			material->color.z = json["color"][2].get<float>();

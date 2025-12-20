@@ -3,6 +3,7 @@
 #include "KeyConfig.h"
 #include "DirectInput/DirectInputManager.h"
 #include "XInput/XInputController.h"
+#include "Engine/include/input/Mic/WASAPIMicrophoneDevice.h"
 
 class InputInterface final :public Singleton<InputInterface> {
 	friend class Singleton<InputInterface>;
@@ -65,8 +66,11 @@ public:
 	DirectInputManager& GetDirectInputManager() { return directInputManager_; }
 	KeyConfig& GetKeyConfigManager() { return keyConfig_; }
 
+	WASAPIMicrophoneDevice& GetMicrophoneDevice() { return microphoneDevice_; }
+
 private:
 	KeyConfig keyConfig_;
 	DirectInputManager directInputManager_;
 	XInputController xInputController_;
+	WASAPIMicrophoneDevice microphoneDevice_;
 };

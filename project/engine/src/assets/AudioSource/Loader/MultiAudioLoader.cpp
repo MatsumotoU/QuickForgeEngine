@@ -47,9 +47,20 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 
 	// 繧ｪ繝ｼ繝・ぅ繧ｪ繝・・繧ｿ蠖｢蠑上・菴懈・
 	WAVEFORMATEX* waveFormat{ nullptr };
-	hr = MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, nullptr);
-	soundData.wfex = *waveFormat;
+	UINT32 waveFormatSize = 0;
+	hr = MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, &waveFormatSize);
 	assert(SUCCEEDED(hr));
+
+	ZeroMemory(&soundData.wfxEx, sizeof(WAVEFORMATEXTENSIBLE));
+    if (waveFormatSize == sizeof(WAVEFORMATEXTENSIBLE)) {
+        memcpy(&soundData.wfxEx, waveFormat, sizeof(WAVEFORMATEXTENSIBLE));
+    }
+    else {
+        assert(waveFormatSize == sizeof(WAVEFORMATEX));
+        memcpy(&soundData.wfxEx.Format, waveFormat, sizeof(WAVEFORMATEX));
+    }
+
+	CoTaskMemFree(waveFormat);
 
 	// 繝・・繧ｿ縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
 	std::vector<BYTE> mediaData;
@@ -82,8 +93,6 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 		pMFMediaBuffer->Release();
 		pMFSample->Release();
 	}
-	soundData.pBuffer = new BYTE[mediaData.size()];
-	memcpy(soundData.pBuffer, mediaData.data(), mediaData.size());
-	soundData.bufferSize = sizeof(BYTE) * static_cast<UINT32>(mediaData.size());
+	soundData.buffer = std::move(mediaData);
 	return soundData;
 }

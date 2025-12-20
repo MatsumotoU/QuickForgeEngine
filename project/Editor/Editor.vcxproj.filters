@@ -94,6 +94,7 @@
     <ClInclude Include="include\UI\View\ScriptLoggerView.h">
       <Filter>include\UI\View</Filter>
     </ClInclude>
+    <ClInclude Include="include\UI\View\InputDebugView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -151,5 +152,6 @@
     <ClCompile Include="src\UI\View\ScriptLoggerView.cpp">
       <Filter>src\UI\View</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\View\InputDebugView.cpp" />
   </ItemGroup>
 </Project>

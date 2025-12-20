@@ -4,9 +4,11 @@ void InputInterface::Initialize(const HWND& hwnd, const HINSTANCE& hInstance) {
 	keyConfig_.Initialize();
 	keyConfig_.LoadKeyConfig();
 	directInputManager_.Initialize(hwnd, hInstance);
+	microphoneDevice_.Initialize();
 }
 
 void InputInterface::Finalize() {
+	microphoneDevice_.Finalize();
 	keyConfig_.SaveKeyConfig();
 	keyConfig_.Finalize();
 	directInputManager_.Finalize();

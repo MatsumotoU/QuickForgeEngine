@@ -97,7 +97,7 @@ void InspectorView::Draw() {
 			ImGui::Text("Model Name: %s", modelHandle.modelName.c_str());
 			ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 			for (auto& mesh : modelData->meshRenderDataHandles) {
-				Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(mesh.materialHandle);
+				Material* material = assetManager->GetGpuBufferPool()->GetConstantBufferData<Material>(mesh.materialHandle);
 				std::string label = "Color##" + std::to_string(mesh.materialHandle);
 				ImGui::ColorEdit4(label.c_str(), &material->color.x);
 			}
@@ -130,7 +130,7 @@ void InspectorView::Draw() {
 			ImGui::DragFloat("Width", &spriteData.width, 1.0f, 1.0f);
 			ImGui::DragFloat("Height", &spriteData.height, 1.0f, 1.0f);
 			ImGui::DragFloat2("Pivot", &spriteData.pivot.x, 0.01f);
-			Material* material = assetManager->GetMaterialBufferManager()->GetBufferData(spriteData.materialBufferHandle);
+			Material* material = assetManager->GetGpuBufferPool()->GetConstantBufferData<Material>(spriteData.materialBufferHandle);
 			ImGui::ColorEdit4("Color", &material->color.x);
 		}
 	}

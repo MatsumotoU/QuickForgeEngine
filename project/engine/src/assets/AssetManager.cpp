@@ -3,6 +3,7 @@
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
 //#include "engine/include/assets/Script/CsharpCmpiler.h"
 
+#include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 void AssetManager::Initalize(DirectXCommon* dxCommon) {
 	assert(dxCommon && "dxCommon is nullptr.");
 
@@ -12,28 +13,22 @@ void AssetManager::Initalize(DirectXCommon* dxCommon) {
 		dxCommon_->GetDevice(), dxCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		dxCommon_->GetDescriptorHeapManager()->GetSrvDescriptorHeap());
 
-	wpvBufferManager_.Initialize();
-	materialBufferManager_.Initialize();
-	lightBufferManager_.Initialize();
 	modelVertexResourceManager_.Initialize();
 	modelRenderDataManager_.Initialize();
 	spriteManager_.Initialize();
 	audioSourceManager_.Initialize();
 	particleGpuDataManager_.Initialize();
+	gpuBufferPool_ = std::make_unique<GpuBufferPool>(dxCommon);
 }
 
 void AssetManager::PreDraw() {
 	
 }
-
 void AssetManager::Finalize() {
 	particleGpuDataManager_.Finalize();
 	audioSourceManager_.Finalize();
 	spriteManager_.Finalize();
 	textureManager_->Finalize();
-	wpvBufferManager_.Finalize();
-	materialBufferManager_.Finalize();
-	lightBufferManager_.Finalize();
 	modelVertexResourceManager_.Finalize();
 	modelRenderDataManager_.Finalize();
 }
@@ -63,18 +58,21 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		auto& meshRenderData = modelRenderData.meshRenderDataHandles.at(i);
 		meshRenderData.vertexBufferHandle = modelRenderData.meshRenderDataHandles.at(0).vertexBufferHandle + static_cast<uint32_t>(i);
 		meshRenderData.textureHandle = textureManager_->LoadTexture(mesh.material.textureFilePath);
-		meshRenderData.materialHandle = materialBufferManager_.CreateBuffer();
-		meshRenderData.wpvBufferHandle = wpvBufferManager_.CreateBuffer();
-		meshRenderData.lightBufferHandle = lightBufferManager_.CreateBuffer();
+		meshRenderData.materialHandle = gpuBufferPool_->AcquireConstantBuffer<Material>();
+		meshRenderData.wpvBufferHandle = gpuBufferPool_->AcquireConstantBuffer<TransformationMatrix>();
+		meshRenderData.lightBufferHandle = gpuBufferPool_->AcquireConstantBuffer<DirectionalLight>();
 
-		materialBufferManager_.GetBufferData(meshRenderData.materialHandle)->color = { 1.0f,1.0f,1.0f,1.0f };
-		materialBufferManager_.GetBufferData(meshRenderData.materialHandle)->enableLighting = true;
-		materialBufferManager_.GetBufferData(meshRenderData.materialHandle)->uvTransform = Matrix4x4::MakeIndentity4x4();
-		wpvBufferManager_.GetBufferData(meshRenderData.wpvBufferHandle)->World = Matrix4x4::MakeIndentity4x4();
-		wpvBufferManager_.GetBufferData(meshRenderData.wpvBufferHandle)->WVP = Matrix4x4::MakeIndentity4x4();
-		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->color = { 1.0f,1.0f,1.0f,1.0f };
-		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->direction = { 0.0f,-1.0f,0.0f };
-		lightBufferManager_.GetBufferData(meshRenderData.lightBufferHandle)->intensity = 1.0f;
+		Material* materialData = gpuBufferPool_->GetConstantBufferData<Material>(meshRenderData.materialHandle);
+		materialData->color = { 1.0f,1.0f,1.0f,1.0f };
+		materialData->enableLighting = true;
+		materialData->uvTransform = Matrix4x4::MakeIndentity4x4();
+		TransformationMatrix* transformData = gpuBufferPool_->GetConstantBufferData<TransformationMatrix>(meshRenderData.wpvBufferHandle);
+		transformData->World = Matrix4x4::MakeIndentity4x4();
+		transformData->WVP = Matrix4x4::MakeIndentity4x4();
+		DirectionalLight* lightData = gpuBufferPool_->GetConstantBufferData<DirectionalLight>(meshRenderData.lightBufferHandle);
+		lightData->color = { 1.0f,1.0f,1.0f,1.0f };
+		lightData->direction = { 0.0f,-1.0f,0.0f };
+		lightData->intensity = 1.0f;
 	}
 
 	// 繝｢繝・Ν謠冗判繝・・繧ｿ繧堤匳骭ｲ

@@ -13,6 +13,8 @@
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "AudioSource/AudioSourceManager.h"
 
+#include "Engine/include/graphic/GpuBufferPool/GpuBufferPool.h"
+
 #include <unordered_map>
 
 class DirectXCommon;
@@ -47,10 +49,9 @@ public:
 
 	ModelRenderData* GetModelRenderData(uint32_t modelHandle);
 	TextureManager* GetTextureManager() { return textureManager_; }
+
 	ModelVertexResourceManager* GetModelVertexResourceManager() { return &modelVertexResourceManager_; }
-	ConstantBufferManager<TransformationMatrix>* GetWpvBufferManager() { return &wpvBufferManager_; }
-	ConstantBufferManager<Material>* GetMaterialBufferManager() { return &materialBufferManager_; }
-	ConstantBufferManager<DirectionalLight>* GetLightBufferManager() { return &lightBufferManager_; }
+	GpuBufferPool* GetGpuBufferPool() { return gpuBufferPool_.get(); }
 	EntityManager* GetEntityManager() { return &entityManager_; }
 	SpriteManager* GetSpriteManager() { return &spriteManager_; }
 	const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
@@ -66,9 +67,7 @@ private:
 	AudioSourceManager audioSourceManager_;
 	ModelRenderDataManager modelRenderDataManager_;
 	ModelVertexResourceManager modelVertexResourceManager_;
-	ConstantBufferManager<TransformationMatrix> wpvBufferManager_;
-	ConstantBufferManager<Material> materialBufferManager_;
-	ConstantBufferManager<DirectionalLight> lightBufferManager_;
+	std::unique_ptr<GpuBufferPool> gpuBufferPool_;
 	EntityManager entityManager_;
 	SpriteManager spriteManager_;
 	ParticleGpuDataManager particleGpuDataManager_;
