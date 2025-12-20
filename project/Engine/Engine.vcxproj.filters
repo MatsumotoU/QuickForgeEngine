@@ -890,6 +890,7 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h">
       <Filter>include\window\WindowGenerater</Filter>
     </ClInclude>
+    <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -1253,5 +1254,6 @@
     <ClCompile Include="src\window\WindowGenerater.cpp">
       <Filter>src\window</Filter>
     </ClCompile>
+    <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp" />
   </ItemGroup>
 </Project>

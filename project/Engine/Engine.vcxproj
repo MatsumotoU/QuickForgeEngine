@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
+    <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
@@ -322,6 +323,7 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp" />
     <ClCompile Include="QuickForgeEngine.cpp" />
     <ClCompile Include="src\WindowsEngineCore.cpp" />
     <ClCompile Include="src\assets\2DTexture\TextureManager.cpp" />
