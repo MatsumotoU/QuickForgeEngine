@@ -1,0 +1,43 @@
+#include "engine/include/renderer/ModelRenderer.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/assets/3DModel/Data/ModelRenderData.h"
+#include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
+#include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
+#include <cassert>
+
+#include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+void Render::Model::DrawModel(const uint32_t& modelHandle) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	assert(assetManager && "AssetManager is nullptr.");
+	const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(modelHandle);
+	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
+
+	modelDataPtr->meshRenderDataHandles[0].wpvBufferHandle;
+
+	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetTrianglePso(kBlendModeNormal);
+
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+	assert(dxCommon && "DirectXCommon is nullptr.");
+	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+	commandList->RSSetViewports(1, dxCommon->GetViewPort());
+	commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
+	commandList->SetGraphicsRootSignature(pso->GetRootSignature());
+	commandList->SetPipelineState(pso->GetPipelineState());
+	
+	for (auto& handle : modelDataPtr->meshRenderDataHandles) {
+		commandList->IASetVertexBuffers(0, 1,
+			assetManager->GetModelVertexResourceManager()->GetVertexBufferView(handle.vertexBufferHandle));
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandList->SetGraphicsRootConstantBufferView(0,
+			gpuBufferPool->GetConstantBufferAddress<Material>(handle.materialHandle));
+		commandList->SetGraphicsRootConstantBufferView(1, 
+			gpuBufferPool->GetConstantBufferAddress<TransformationMatrix>(handle.wpvBufferHandle));
+		commandList->SetGraphicsRootDescriptorTable(2,
+			assetManager->GetTextureManager()->GetTextureSrvHandleGPU(handle.textureHandle));
+		commandList->SetGraphicsRootConstantBufferView(3, 
+			gpuBufferPool->GetConstantBufferAddress<DirectionalLight>(handle.lightBufferHandle));
+		commandList->DrawInstanced(static_cast<UINT>(
+			assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);
+	}
+}

@@ -1,0 +1,5 @@
+#include "engine/include/core/Math/AudioMath.h"
+
+float MyAudioMath::SpeedOfSoundFromTemperature(float celsius) {
+    return 331.5f + 0.6f * celsius;
+}

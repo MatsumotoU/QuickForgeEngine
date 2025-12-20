@@ -53,4 +53,23 @@ namespace QuickForgeEngine
             }
         }
     }
+
+    public abstract class QuickForgeParticleSystem
+    {
+        public uint EntityID { get; internal set; }
+        public virtual void Initialize() { }
+        public virtual void Update() { }
+        private Transform _transform;
+        public Transform transform
+        {
+            get
+            {
+                if (_transform == null)
+                {
+                    _transform = new Transform(EntityID);
+                }
+                return _transform;
+            }
+        }
+    }
 }

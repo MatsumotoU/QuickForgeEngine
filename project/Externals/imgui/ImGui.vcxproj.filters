@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ImGuizmo-1.83">
+      <UniqueIdentifier>{4DA76AE7-B967-E61D-82A2-2F9BEE212BFA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui-knobs-main">
+      <UniqueIdentifier>{FC394C9D-E832-6BEF-1165-5074FDBC4AFB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui_toggle-main">
+      <UniqueIdentifier>{33D357E7-9FE9-557D-E860-E19E54B62605}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="implot-master">
+      <UniqueIdentifier>{F346BEFC-5F07-3A33-2842-83B094C17E0F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ImGuizmo-1.83\ImGuizmo.h">
+      <Filter>ImGuizmo-1.83</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui-knobs-main\imgui-knobs.h">
+      <Filter>imgui-knobs-main</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="imgui_impl_dx12.h" />
+    <ClInclude Include="imgui_impl_win32.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="imgui_toggle-main\imgui_offset_rect.h">
+      <Filter>imgui_toggle-main</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_toggle-main\imgui_toggle.h">
+      <Filter>imgui_toggle-main</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_toggle-main\imgui_toggle_math.h">
+      <Filter>imgui_toggle-main</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_toggle-main\imgui_toggle_palette.h">
+      <Filter>imgui_toggle-main</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_toggle-main\imgui_toggle_presets.h">
+      <Filter>imgui_toggle-main</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_toggle-main\imgui_toggle_renderer.h">
+      <Filter>imgui_toggle-main</Filter>
+    </ClInclude>
+    <ClInclude Include="implot-master\implot.h">
+      <Filter>implot-master</Filter>
+    </ClInclude>
+    <ClInclude Include="implot-master\implot_internal.h">
+      <Filter>implot-master</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ImGuizmo-1.83\ImGuizmo.cpp">
+      <Filter>ImGuizmo-1.83</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-knobs-main\imgui-knobs.cpp">
+      <Filter>imgui-knobs-main</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_impl_dx12.cpp" />
+    <ClCompile Include="imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui_tables.cpp" />
+    <ClCompile Include="imgui_toggle-main\imgui_toggle.cpp">
+      <Filter>imgui_toggle-main</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_toggle-main\imgui_toggle_palette.cpp">
+      <Filter>imgui_toggle-main</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_toggle-main\imgui_toggle_presets.cpp">
+      <Filter>imgui_toggle-main</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_toggle-main\imgui_toggle_renderer.cpp">
+      <Filter>imgui_toggle-main</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="implot-master\implot.cpp">
+      <Filter>implot-master</Filter>
+    </ClCompile>
+    <ClCompile Include="implot-master\implot_items.cpp">
+      <Filter>implot-master</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
