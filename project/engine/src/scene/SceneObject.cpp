@@ -105,49 +105,7 @@ void SceneObject::Update() {
 	//　ワールド行列更新
 	AssetManager* assetManager = AssetManager::GetInstance();
 	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(assetManager_->GetEntityManager())));
-
-	// 親子関係によるワールド行列更新
-	for (auto entityId : entities) {
-		if (assetManager->GetEntityManager()->HasComponent<ParentData>(entityId)) {
-			ParentData& parentData = assetManager->GetEntityManager()->GetComponent<ParentData>(entityId);
-
-			uint32_t parentId = 0;
-			bool isFound = false;
-			if (entityManager->HasComponentStrage<SceneObjectData>()) {
-				auto& strage = entityManager->GetComponentStrage<SceneObjectData>();
-				for (const auto& [id, sceneObjData] : strage) {
-					if (sceneObjData.uniqueId == parentData.parentId) {
-						parentId = id;
-						isFound = true;
-						break;
-					}
-				}
-			}
-			if (!isFound) { continue; }
-
-			if (assetManager->GetEntityManager()->HasComponent<Transform>(parentId)) {
-				Transform& parentTransform = assetManager->GetEntityManager()->GetComponent<Transform>(parentId);
-				// Modelのワールド行列更新
-				if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
-					ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
-					const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-					for (const auto& meshData : modelData->meshRenderDataHandles) {
-						TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
-						wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
-							parentTransform.scale, parentTransform.rotate, parentTransform.translate));
-					}
-				}
-				// スプライトのワールド行列更新
-				if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
-					SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
-					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
-					wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
-						parentTransform.scale, parentTransform.rotate, parentTransform.translate));
-				}
-			}
-
-		}
-	}
+	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(assetManager_->GetEntityManager())));
 
 	// スプライトのサイズ更新
 	if (assetManager_->GetEntityManager()->HasComponentStrage<SpriteData>()) {
