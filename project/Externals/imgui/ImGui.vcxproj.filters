@@ -53,6 +53,7 @@
     <ClInclude Include="imstb_rectpack.h" />
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="ImGuizmo-1.83\ImSequencer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGuizmo-1.83\ImGuizmo.cpp">
@@ -86,5 +87,6 @@
     <ClCompile Include="implot-master\implot_items.cpp">
       <Filter>implot-master</Filter>
     </ClCompile>
+    <ClCompile Include="ImGuizmo-1.83\ImSequencer.cpp" />
   </ItemGroup>
 </Project>
