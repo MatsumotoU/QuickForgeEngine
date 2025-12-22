@@ -2403,6 +2403,9 @@
     <ClInclude Include="imgui\ImGuizmo-1.83\ImGuizmo.h">
       <Filter>imgui\ImGuizmo-1.83</Filter>
     </ClInclude>
+    <ClInclude Include="imgui\ImGuizmo-1.83\ImSequencer.h">
+      <Filter>imgui\ImGuizmo-1.83</Filter>
+    </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -2946,6 +2949,9 @@
       <Filter>DirectXTex</Filter>
     </ClCompile>
     <ClCompile Include="imgui\ImGuizmo-1.83\ImGuizmo.cpp">
+      <Filter>imgui\ImGuizmo-1.83</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\ImGuizmo-1.83\ImSequencer.cpp">
       <Filter>imgui\ImGuizmo-1.83</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui-knobs-main\imgui-knobs.cpp">

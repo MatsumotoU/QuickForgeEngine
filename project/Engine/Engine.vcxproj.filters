@@ -163,6 +163,9 @@
     <Filter Include="include\input\DirectInput">
       <UniqueIdentifier>{4250364B-AE12-6AD5-F7C2-F86163C442B3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\input\Mic">
+      <UniqueIdentifier>{B04133E8-1C58-317E-65CF-BC9FD1240206}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\input\XInput">
       <UniqueIdentifier>{9FC6C51A-8B55-4FE4-3474-63DF20E25F8A}</UniqueIdentifier>
     </Filter>
@@ -177,6 +180,9 @@
     </Filter>
     <Filter Include="include\scene\Data">
       <UniqueIdentifier>{AF08FEB0-9BEC-BE06-044D-B959F04FA988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\scene\SceneCommand">
+      <UniqueIdentifier>{82C79B50-6ED7-4721-D790-AC3FC3BF36BA}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\utility">
       <UniqueIdentifier>{EC7EC180-580A-2F45-611B-B239CD258B45}</UniqueIdentifier>
@@ -343,6 +349,9 @@
     <Filter Include="src\input\DirectInput">
       <UniqueIdentifier>{E68CF2C0-52F9-ADBB-1BED-45198718D023}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\input\Mic">
+      <UniqueIdentifier>{541ADF43-C0DA-5A7A-8915-A4F7F5949F56}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\input\XInput">
       <UniqueIdentifier>{C38C5CD1-AF85-7B23-D8B7-60A8C40F5B2F}</UniqueIdentifier>
     </Filter>
@@ -354,6 +363,9 @@
     </Filter>
     <Filter Include="src\scene">
       <UniqueIdentifier>{2A1615B6-9680-C92C-DFBE-7AD24B68A781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\scene\SceneCommand">
+      <UniqueIdentifier>{A698DF7D-9292-08D0-7BFF-9EE067986E3C}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\utility">
       <UniqueIdentifier>{90DE9651-FC93-0F47-8588-091EF13C064B}</UniqueIdentifier>
@@ -746,6 +758,9 @@
     <ClInclude Include="include\input\KeyConfig.h">
       <Filter>include\input</Filter>
     </ClInclude>
+    <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h">
+      <Filter>include\input\Mic</Filter>
+    </ClInclude>
     <ClInclude Include="include\input\XInput\XInputController.h">
       <Filter>include\input\XInput</Filter>
     </ClInclude>
@@ -772,6 +787,18 @@
     </ClInclude>
     <ClInclude Include="include\scene\IScene.h">
       <Filter>include\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\ISceneEntityCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\SceneEntityCommandInvoker.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\SceneEntityCommands.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\WorldTransformationCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
     </ClInclude>
     <ClInclude Include="include\scene\SceneManager.h">
       <Filter>include\scene</Filter>
@@ -890,7 +917,6 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h">
       <Filter>include\window\WindowGenerater</Filter>
     </ClInclude>
-    <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -1143,6 +1169,9 @@
     <ClCompile Include="src\input\KeyConfig.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
+    <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp">
+      <Filter>src\input\Mic</Filter>
+    </ClCompile>
     <ClCompile Include="src\input\XInput\XInputController.cpp">
       <Filter>src\input\XInput</Filter>
     </ClCompile>
@@ -1163,6 +1192,12 @@
     </ClCompile>
     <ClCompile Include="src\renderer\SpriteRenderer.cpp">
       <Filter>src\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\SceneEntityCommandInvoker.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\WorldTransformationCommand.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\SceneManager.cpp">
       <Filter>src\scene</Filter>
@@ -1254,6 +1289,5 @@
     <ClCompile Include="src\window\WindowGenerater.cpp">
       <Filter>src\window</Filter>
     </ClCompile>
-    <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp" />
   </ItemGroup>
 </Project>

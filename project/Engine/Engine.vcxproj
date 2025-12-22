@@ -155,7 +155,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
-    <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
@@ -273,6 +272,7 @@
     <ClInclude Include="include\input\DirectInput\DirectInputMouse.h" />
     <ClInclude Include="include\input\InputInterface.h" />
     <ClInclude Include="include\input\KeyConfig.h" />
+    <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h" />
     <ClInclude Include="include\input\XInput\XInputController.h" />
     <ClInclude Include="include\physics\Force.h" />
     <ClInclude Include="include\physics\PhysicsManager.h" />
@@ -282,6 +282,10 @@
     <ClInclude Include="include\renderer\SpriteRenderer.h" />
     <ClInclude Include="include\scene\Data\SceneObjectData.h" />
     <ClInclude Include="include\scene\IScene.h" />
+    <ClInclude Include="include\scene\SceneCommand\ISceneEntityCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\SceneEntityCommandInvoker.h" />
+    <ClInclude Include="include\scene\SceneCommand\SceneEntityCommands.h" />
+    <ClInclude Include="include\scene\SceneCommand\WorldTransformationCommand.h" />
     <ClInclude Include="include\scene\SceneManager.h" />
     <ClInclude Include="include\scene\SceneObject.h" />
     <ClInclude Include="include\utility\DebugTool\App\CrashHandler.h" />
@@ -323,7 +327,6 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp" />
     <ClCompile Include="QuickForgeEngine.cpp" />
     <ClCompile Include="src\WindowsEngineCore.cpp" />
     <ClCompile Include="src\assets\2DTexture\TextureManager.cpp" />
@@ -408,6 +411,7 @@
     <ClCompile Include="src\input\DirectInput\DirectInputMouse.cpp" />
     <ClCompile Include="src\input\InputInterface.cpp" />
     <ClCompile Include="src\input\KeyConfig.cpp" />
+    <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp" />
     <ClCompile Include="src\input\XInput\XInputController.cpp" />
     <ClCompile Include="src\physics\Force.cpp" />
     <ClCompile Include="src\physics\PhysicsManager.cpp" />
@@ -415,6 +419,8 @@
     <ClCompile Include="src\renderer\ModelRenderer.cpp" />
     <ClCompile Include="src\renderer\ParticleRenderer.cpp" />
     <ClCompile Include="src\renderer\SpriteRenderer.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\SceneEntityCommandInvoker.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\WorldTransformationCommand.cpp" />
     <ClCompile Include="src\scene\SceneManager.cpp" />
     <ClCompile Include="src\scene\SceneObject.cpp" />
     <ClCompile Include="src\utility\DebugTool\App\WinAppDebugCore.cpp" />

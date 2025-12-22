@@ -76,7 +76,7 @@ group "QuickForge" -- MyMainProject
         }
 
         prebuildcommands {
-            'call "..\\GenerateBuildInfo.bat"'
+            'call "%{wks.location}/GenerateBuildInfo.bat"'
         }
 
         postbuildcommands {

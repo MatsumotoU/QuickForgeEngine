@@ -37,6 +37,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
+#include "Engine/include/scene/SceneCommand/SceneEntityCommands.h"
+
 SceneObject::SceneObject() {
 	assetManager_ = nullptr;
 	isRequestedExit_ = false;
@@ -55,21 +57,27 @@ void SceneObject::Initialize() {
 	isRequestStopScript_ = false;
 	isRunningScript_ = false;
 	isPauseScript_ = false;
+
+	// コマンドクリア
+	updateCommandInvoker_.ClearCommands();
+	preDrawCommandInvoker_.ClearCommands();
+	drawCommandInvoker_.ClearCommands();
+	postDrawCommandInvoker_.ClearCommands();
 }
 
 void SceneObject::Update() {
 
-	// 繧ｹ繧ｯ繝ｪ繝励ヨ譖ｴ譁ｰ
+	// ランタイム中のサブモジュールの更新
 	if (isRunningScript_ && !isPauseScript_) {
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();
 	}
 
-	// 繧ｳ繝ｩ繧､繝繝ｼ譖ｴ譁ｰ
+	// 当たり判定更新
 	ColliderManager::GetInstance()->Update();
 
-	// 繝ｦ繝九・繧ｯID縺梧悴險ｭ螳壹↑繧芽ｨｭ螳壹☆繧・
+	// ユニークID管理
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
 	for (auto entityId : entities) {
@@ -82,7 +90,7 @@ void SceneObject::Update() {
 			}
 		}
 	}
-	// 繝ｦ繝九・繧ｯID縺碁㍾隍・＠縺ｦ縺・◆繧牙・險ｭ螳壹☆繧・
+	// 重複してたら新しいID振る
 	std::set<uint32_t> checkIds;
 	for (auto entityId : entities) {
 		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
@@ -94,52 +102,11 @@ void SceneObject::Update() {
 		}
 	}
 
-	// 繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ(wvp繧貞挨繧ｳ繝ｳ繝昴・繝阪Φ繝医↓縺吶ｋ)
+	//　ワールド行列更新
 	AssetManager* assetManager = AssetManager::GetInstance();
-	for (auto entityId : entities) {
-		if (entityManager->HasComponent<Transform>(entityId)) {
-			Transform& transform = entityManager->GetComponent<Transform>(entityId);
-			// 繝｢繝・Ν縺ｮ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-			if (entityManager->HasComponent<ModelHandle>(entityId)) {
-				ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
-				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-				// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-				for (const auto& meshData : modelData->meshRenderDataHandles) {
-					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
-					wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
-						transform.scale,
-						transform.rotate,
-						transform.translate
-					);
-				}
-			}
-			// 繧ｹ繝励Λ繧､繝医・繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
-				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
-				TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
-				wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
-					transform.scale,
-					transform.rotate,
-					transform.translate
-				);
-			}
+	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(assetManager_->GetEntityManager())));
 
-			// 繝代・繝・ぅ繧ｯ繝ｫ縺ｮ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-			if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
-				ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(entityId);
-				ParticleForGPU* particleData = assetManager->GetParticleGpuDataManager()->GetDataPtr(particleComp.particleGpuBufferHandle);
-				for (uint32_t i = 0; i < particleComp.maxParticleCount; i++) {
-					particleData[i].World = Matrix4x4::MakeAffineMatrix(
-						transform.scale,
-						transform.rotate,
-						transform.translate
-					);
-				}
-			}
-		}
-	}
-
-	// 繝壹い繝ｬ繝ｳ繝亥ｭ宣未菫よ峩譁ｰ
+	// 親子関係によるワールド行列更新
 	for (auto entityId : entities) {
 		if (assetManager->GetEntityManager()->HasComponent<ParentData>(entityId)) {
 			ParentData& parentData = assetManager->GetEntityManager()->GetComponent<ParentData>(entityId);
@@ -160,18 +127,17 @@ void SceneObject::Update() {
 
 			if (assetManager->GetEntityManager()->HasComponent<Transform>(parentId)) {
 				Transform& parentTransform = assetManager->GetEntityManager()->GetComponent<Transform>(parentId);
-				// 繝｢繝・Ν縺ｮ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
+				// Modelのワールド行列更新
 				if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
 					ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
 					const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-					// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 					for (const auto& meshData : modelData->meshRenderDataHandles) {
 						TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
 						wpvMatrix->World = Matrix4x4::Multiply(wpvMatrix->World, Matrix4x4::MakeAffineMatrix(
 							parentTransform.scale, parentTransform.rotate, parentTransform.translate));
 					}
 				}
-				// 繧ｹ繝励Λ繧､繝医・繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
+				// スプライトのワールド行列更新
 				if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 					SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
 					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
@@ -183,7 +149,7 @@ void SceneObject::Update() {
 		}
 	}
 
-	// 繧ｹ繝励Λ繧､繝医し繧､繧ｺ譖ｴ譁ｰ
+	// スプライトのサイズ更新
 	if (assetManager_->GetEntityManager()->HasComponentStrage<SpriteData>()) {
 		const auto& spriteStrage = assetManager_->GetEntityManager()->GetComponentStrage<SpriteData>();
 		for (const auto& [entityId, sprite] : spriteStrage) {
@@ -193,10 +159,13 @@ void SceneObject::Update() {
 			}
 		}
 	}
+
+	// 更新後コマンド実行
+	updateCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::PreDraw() {
-	// 繧ｫ繝｡繝ｩ譖ｴ譁ｰ
+	// カメラ更新
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	cameraManager->Update();
 
@@ -252,6 +221,9 @@ void SceneObject::PreDraw() {
 			vertexData[5].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 蜿ｳ荳・
 		}
 	}
+
+	// 描画前コマンド実行
+	preDrawCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::Draw() {
@@ -292,9 +264,14 @@ void SceneObject::Draw() {
 #endif // _DEBUG
 		}
 	}
+
+	// 描画コマンド実行
+	drawCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::PostDraw() {
+	// 描画後コマンド実行
+	postDrawCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::EndFrame() {
@@ -631,9 +608,6 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	// Entity縺ｮ逕滓・
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 	DeserializeEntity(entityId, sceneJson);
-	// 隱ｭ縺ｿ霎ｼ繧薙□繧ｨ繝ｳ繝・ぅ繝・ぅ蜷阪ｒ菫晏ｭ・
-	loadEntities_[entityName] = sceneJson;
-
 	return entityId;
 }
 
