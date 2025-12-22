@@ -97,8 +97,7 @@
       <AdditionalLibraryDirectories>..\externals\lua\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
@@ -136,7 +135,7 @@ exit /b 0</Command>
       <AdditionalLibraryDirectories>..\externals\lua\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>call "..\GenerateBuildInfo.bat"</Command>
+      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
@@ -174,7 +173,7 @@ exit /b 0</Command>
       <AdditionalLibraryDirectories>..\externals\lua\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>call "..\GenerateBuildInfo.bat"</Command>
+      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
@@ -209,7 +208,6 @@ exit /b 0</Command>
     <ClInclude Include="include\UI\View\ScriptLoggerView.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\UI\View\InputDebugView.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\OnWindowsEditor.cpp" />
     <ClCompile Include="src\UI\Edit\ColliderMaskEdit.cpp" />
@@ -225,6 +223,7 @@ exit /b 0</Command>
     <ClCompile Include="src\UI\View\EngineProfileView.cpp" />
     <ClCompile Include="src\UI\View\GameView.cpp" />
     <ClCompile Include="src\UI\View\HierarchyView.cpp" />
+    <ClCompile Include="src\UI\View\InputDebugView.cpp" />
     <ClCompile Include="src\UI\View\InspectorView.cpp" />
     <ClCompile Include="src\UI\View\SceneProfileView.cpp" />
     <ClCompile Include="src\UI\View\SceneView.cpp" />
