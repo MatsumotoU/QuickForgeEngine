@@ -89,42 +89,14 @@ void SceneObject::Update() {
 
 void SceneObject::PreDraw() {
 	// カメラ更新
+	AssetManager* assetManager = AssetManager::GetInstance();
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	cameraManager->Update();
+	
+	// WVP行列更新
+	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(assetManager->GetEntityManager()), *cameraManager));
 
-	// 繝薙Η繝ｼ陦悟・譖ｴ譁ｰ
-	AssetManager* assetManager = AssetManager::GetInstance();
-	std::vector<uint32_t> entities = assetManager->GetEntityManager()->GetActiveEntityIds();
-	for (auto entityId : entities) {
-		if (assetManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
-			// 繝｢繝・Ν縺ｮ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-			if (assetManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
-				ModelHandle& modelHandle = assetManager->GetEntityManager()->GetComponent<ModelHandle>(entityId);
-				const ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-				// 繝｡繝・す繝･縺斐→縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-				for (const auto& meshData : modelData->meshRenderDataHandles) {
-					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
-					wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
-				}
-			}
-			// 繧ｹ繝励Λ繧､繝医・繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
-				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
-				TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
-				wpvMatrix->WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Orthographic);
-			}
-			// 繝代・繝・ぅ繧ｯ繝ｫ縺ｮ繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-			if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
-				ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(entityId);
-				ParticleForGPU* particleData = assetManager->GetParticleGpuDataManager()->GetDataPtr(particleComp.particleGpuBufferHandle);
-				for (uint32_t i = 0; i < particleComp.maxParticleCount; i++) {
-					particleData[i].WVP = cameraManager->GetMainCamera().GetWorldViewProjectionMatrix(particleData[i].World, CameraType::Perspective);
-				}
-			}
-		}
-	}
-
-	// 繧ｹ繝励Λ繧､繝医・繝斐・繝・ヨ譖ｴ譁ｰ
+	// Sprite頂点情報更新
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	if (entityManager->HasComponentStrage<SpriteData>()) {
 		auto& strage = entityManager->GetComponentStrage<SpriteData>();
@@ -132,7 +104,7 @@ void SceneObject::PreDraw() {
 			VertexData* vertexData = assetManager->GetSpriteManager()->GetVertexData(data.vertexBufferHandle);
 			float w = data.width;
 			float h = data.height;
-			// 繝斐・繝・ヨ縺ｫ繧医ｋ菴咲ｽｮ隱ｿ謨ｴ
+			// 中心を基準に頂点座標設定
 			Vector2 pivotOffset = Vector2(0.0f, 0.0f);
 			pivotOffset.x = -w * data.pivot.x;
 			pivotOffset.y = -h * data.pivot.y;
