@@ -77,46 +77,11 @@ void SceneObject::Update() {
 	// 当たり判定更新
 	ColliderManager::GetInstance()->Update();
 
-	// ユニークID管理
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
-	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
-	for (auto entityId : entities) {
-		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
-			SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
-			if (sceneObjectData.uniqueId == 0) {
-				sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
-			} else {
-				uniqueIdManager_.AddUsedID(sceneObjectData.uniqueId);
-			}
-		}
-	}
-	// 重複してたら新しいID振る
-	std::set<uint32_t> checkIds;
-	for (auto entityId : entities) {
-		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
-			SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
-			if (checkIds.find(sceneObjectData.uniqueId) != checkIds.end()) {
-				sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
-			}
-			checkIds.insert(sceneObjectData.uniqueId);
-		}
-	}
-
 	//　ワールド行列更新
-	AssetManager* assetManager = AssetManager::GetInstance();
+	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(assetManager_->GetEntityManager()),uniqueIdManager_));
 	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(assetManager_->GetEntityManager())));
 	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(assetManager_->GetEntityManager())));
-
-	// スプライトのサイズ更新
-	if (assetManager_->GetEntityManager()->HasComponentStrage<SpriteData>()) {
-		const auto& spriteStrage = assetManager_->GetEntityManager()->GetComponentStrage<SpriteData>();
-		for (const auto& [entityId, sprite] : spriteStrage) {
-			Vector2 nowSize = assetManager_->GetSpriteManager()->GetSpriteSize(sprite.vertexBufferHandle);
-			if (sprite.width != nowSize.x || sprite.height != nowSize.y) {
-				assetManager_->GetSpriteManager()->ResizeSprite(sprite.vertexBufferHandle, sprite.width, sprite.height);
-			}
-		}
-	}
+	updateCommandInvoker_.AddCommand(std::make_unique<AllSpriteResizeCommand>(*(assetManager_->GetEntityManager())));
 
 	// 更新後コマンド実行
 	updateCommandInvoker_.ExecuteCommands();

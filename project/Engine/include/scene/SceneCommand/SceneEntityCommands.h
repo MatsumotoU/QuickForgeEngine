@@ -3,3 +3,5 @@
 
 #include "WorldTransformationCommand.h"
 #include "ParentUpdateCommand.h"
+#include "AllSpriteResizeCommand.h"
+#include "RemakeUniqeIDCommand.h"

@@ -918,6 +918,8 @@
       <Filter>include\window\WindowGenerater</Filter>
     </ClInclude>
     <ClInclude Include="include\scene\SceneCommand\ParentUpdateCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\AllSpriteResizeCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\RemakeUniqeIDCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -1291,5 +1293,7 @@
       <Filter>src\window</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\SceneCommand\ParentUpdateCommand.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\AllSpriteResizeCommand.h.cpp" />
+    <ClCompile Include="include\scene\SceneCommand\RemakeUniqeIDCommand.cpp" />
   </ItemGroup>
 </Project>

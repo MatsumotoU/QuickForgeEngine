@@ -1,5 +1,4 @@
 #pragma once
-class EntityManager;
 #include "ISceneEntityCommand.h"
 
 class ParentUpdateCommand final : public ISceneEntityCommand {
