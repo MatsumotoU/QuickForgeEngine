@@ -95,27 +95,7 @@ void SceneObject::PreDraw() {
 	
 	// WVP行列更新
 	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(assetManager->GetEntityManager()), *cameraManager));
-
-	// Sprite頂点情報更新
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	if (entityManager->HasComponentStrage<SpriteData>()) {
-		auto& strage = entityManager->GetComponentStrage<SpriteData>();
-		for (auto& [id, data] : strage) {
-			VertexData* vertexData = assetManager->GetSpriteManager()->GetVertexData(data.vertexBufferHandle);
-			float w = data.width;
-			float h = data.height;
-			// 中心を基準に頂点座標設定
-			Vector2 pivotOffset = Vector2(0.0f, 0.0f);
-			pivotOffset.x = -w * data.pivot.x;
-			pivotOffset.y = -h * data.pivot.y;
-			vertexData[0].position = { pivotOffset.x, pivotOffset.y, 0.0f,1.0f };               // 蟾ｦ荳・
-			vertexData[1].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 蜿ｳ荳・
-			vertexData[2].position = { pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };       // 蟾ｦ荳・
-			vertexData[3].position = { w + pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };   // 蜿ｳ荳・
-			vertexData[4].position = { pivotOffset.x, h + pivotOffset.y, 0.0f,1.0f };       // 蟾ｦ荳・
-			vertexData[5].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };       // 蜿ｳ荳・
-		}
-	}
+	preDrawCommandInvoker_.AddCommand(std::make_unique<SpritePivotUpdateCommand>(*(assetManager->GetEntityManager())));
 
 	// 描画前コマンド実行
 	preDrawCommandInvoker_.ExecuteCommands();

@@ -158,6 +158,7 @@
     <ClInclude Include="include\scene\SceneCommand\ParentUpdateCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\AllSpriteResizeCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\RemakeUniqeIDCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\SpritePivotUpdateCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\WvpTransformationCommand.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
@@ -331,6 +332,7 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\scene\SceneCommand\SpritePivotUpdateCommand.cpp" />
     <ClCompile Include="src\scene\SceneCommand\WvpTransformationCommand.cpp" />
     <ClCompile Include="src\scene\SceneCommand\RemakeUniqeIDCommand.cpp" />
     <ClCompile Include="src\scene\SceneCommand\AllSpriteResizeCommand.h.cpp" />
