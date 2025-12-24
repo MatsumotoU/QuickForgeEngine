@@ -7,3 +7,5 @@
 #include "RemakeUniqeIDCommand.h"
 #include "WvpTransformationCommand.h"
 #include "SpritePivotUpdateCommand.h"
+
+#include "AllEntityRenderingCommand.h"

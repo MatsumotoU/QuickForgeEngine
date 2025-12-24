@@ -102,43 +102,12 @@ void SceneObject::PreDraw() {
 }
 
 void SceneObject::Draw() {
-	// 繧ｳ繝ｩ繧､繝繝ｼ謠冗判
+	// 当たり判定の描画
 	ColliderManager::GetInstance()->Draw();
-	// 繝代・繝・ぅ繧ｯ繝ｫ謠冗判
-	if (assetManager_->GetEntityManager()->HasComponentStrage<ParticleComponent>()) {
-		const auto& particleStrage = assetManager_->GetEntityManager()->GetComponentStrage<ParticleComponent>();
-		for (const auto& [entityId, particle] : particleStrage) {
-			Render::Particle::DrawParticles(entityId);
-		}
-	}
-	// 繝｢繝・Ν謠冗判
-	if (assetManager_->GetEntityManager()->HasComponentStrage<ModelHandle>()) {
-		const auto& modelStrage = assetManager_->GetEntityManager()->GetComponentStrage<ModelHandle>();
-		for (const auto& [entityId, model] : modelStrage) {
-			Render::Model::DrawModel(model.handle);
-		}
-	}
-	// 繧ｹ繝励Λ繧､繝域緒逕ｻ・・ayer鬆・↓繧ｽ繝ｼ繝茨ｼ・
-	if (assetManager_->GetEntityManager()->HasComponentStrage<SpriteData>()) {
-		const auto& spriteStrage = assetManager_->GetEntityManager()->GetComponentStrage<SpriteData>();
-		// 荳譎ら噪縺ｪvector縺ｫ繧ｳ繝斐・
-		std::vector<std::pair<uint32_t, SpriteData>> sortedSprites(spriteStrage.begin(), spriteStrage.end());
-		// layer縺ｧ譏・・た繝ｼ繝・
-		std::sort(sortedSprites.begin(), sortedSprites.end(),
-			[](const auto& a, const auto& b) {
-				return a.second.layer < b.second.layer;
-			});
-		// 繧ｽ繝ｼ繝域ｸ医∩鬆・〒謠冗判
-#ifdef _DEBUG
-		DebugLog(std::format("DrawSprite"));
-#endif // _DEBUG
-		for (const auto& [entityId, sprite] : sortedSprites) {
-			Render::Sprite::DrawSprite(entityId);
-#ifdef _DEBUG
-			DebugLog(std::format("Sprite: {} ID: {}",sprite.textureName,entityId));
-#endif // _DEBUG
-		}
-	}
+
+	AssetManager* assetManager = AssetManager::GetInstance();
+	drawCommandInvoker_.AddCommand(std::make_unique<AllEntityRenderingCommand>(*(assetManager->GetEntityManager())));
+
 
 	// 描画コマンド実行
 	drawCommandInvoker_.ExecuteCommands();

@@ -1,10 +1,10 @@
---- Build started at 2025/12/23 15:50:34.19 --- 
+--- Build started at 2025/12/24 16:31:46.93 --- 
   復元対象のプロジェクトを決定しています...
-  C:\Users\yutam\source\repos\QuickForgeEngine\project\Resources\Scripts\CSharpScripts.csproj を復元しました (225 ミリ秒)。
+  C:\Users\yutam\source\repos\QuickForgeEngine\project\Resources\Scripts\CSharpScripts.csproj を復元しました (711 ミリ秒)。
   CSharpScripts -> C:\Users\yutam\source\repos\QuickForgeEngine\project\Resources\Scripts\bin\Debug\netstandard2.0\CSharpScripts.dll
 
 ビルドに成功しました。
     0 個の警告
     0 エラー
 
-経過時間 00:00:01.23
+経過時間 00:00:03.92
