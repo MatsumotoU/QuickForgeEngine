@@ -161,6 +161,7 @@
     <ClInclude Include="include\scene\SceneCommand\RemakeUniqeIDCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\SpritePivotUpdateCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\WvpTransformationCommand.h" />
+    <ClInclude Include="include\utility\memory\IVariableLengthPoolContainer.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />

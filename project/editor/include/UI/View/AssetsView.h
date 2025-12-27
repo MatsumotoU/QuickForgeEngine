@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <functional>
 
+#include "engine/include/utility/memory/IVariableLengthPoolContainer.h"
+
 class AssetManager;
 
 enum class LoadSpace {

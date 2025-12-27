@@ -923,6 +923,7 @@
     <ClInclude Include="include\scene\SceneCommand\WvpTransformationCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\SpritePivotUpdateCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\AllEntityRenderingCommand.h" />
+    <ClInclude Include="include\utility\memory\IVariableLengthPoolContainer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />

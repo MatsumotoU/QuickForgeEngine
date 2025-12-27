@@ -1,9 +1,10 @@
 #pragma once
+#include "IVariableLengthPoolContainer.h"
 #include <vector>
 #include <stack>
 
 template <typename T>
-class VariableLengthPool {
+class VariableLengthPool final : public IVariableLengthPoolContainer {
 public:
 	// デフォルトだと10個のオブジェクトをプール
 	VariableLengthPool(size_t initialSize = 10) {
@@ -80,24 +81,28 @@ public:
 
 	// * コンテナ状態確認 * //
 	// プール内のオブジェクト数を取得
-	size_t Size() const {
+	size_t Size() const override {
 		return pool_.size();
 	}
 	// 使用中のオブジェクト数を取得
-	size_t UsedSize() const {
+	size_t UsedSize() const override {
 		return pool_.size() - freeIndices_.size();
 	}
 	// プールが空かどうかを確認
-	bool IsEmpty() const {
+	bool IsEmpty() const override {
 		return UsedSize() == 0;
 	}
 	// プールが満杯かどうかを確認
-	bool IsFull() const {
+	bool IsFull() const override {
 		return freeIndices_.empty();
 	}
 	// 空きインデックス数を取得
-	size_t FreeSize() const {
+	size_t FreeSize() const override {
 		return freeIndices_.size();
+	}
+	// 型名を取得
+	const char* GetTypeName() const override {
+		return typeid(T).name();
 	}
 	
 private:
