@@ -134,7 +134,7 @@ void SceneObject::Finalize() {
 
 void SceneObject::LoadScene(const std::string& sceneName) {
 	std::string sceneNameCopy = sceneName;
-	// 諡｡蠑ｵ蟄舌′縺ｪ縺代ｌ縺ｰ霑ｽ蜉
+	// 拡張子確認
 	if (!sceneNameCopy.ends_with(".json")) {
 		sceneNameCopy += ".json";
 	}
@@ -149,24 +149,28 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	AudioInterface::GetInstance()->StopAllSound();
 	CsharpVirtualEnvironmentOnQFE::GetInstance()->ResetScripts();
 
-	// 繧ｷ繝ｼ繝ｳ繝輔ぃ繧､繝ｫ縺ｮ繝代せ繧堤ｵ・∩遶九※
+	// シーンファイルを開く
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
 	std::ifstream ifs(sceneFilePath + sceneNameCopy);
 	if (!ifs.is_open()) {
-		assert(false && "FaildOpenFile");
+#ifdef _DEBUG
+		DebugLog("Faild load scene: " + sceneNameCopy,LogLevel::Error);
+#endif // _DEBUG
+		CameraManager::GetInstance()->Initialize();
+		return;
 	}
 
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
 	ifs.close();
-	// 繧ｷ繝ｼ繝ｳ蜷阪・險ｭ螳・
+	// シーン名の取得
 	if (sceneJson.contains("sceneName")) {
 		sceneName_ = sceneJson["sceneName"].get<std::string>();
 	} else {
 		sceneName_ = "NoNameScene";
 	}
 
-	// 繧ｨ繝ｳ繝・ぅ繝・ぅ縺ｮ蠕ｩ蜈・
+	// エンティティの生成
 	if (!sceneJson.contains("entities")) return;
 
 	for (const auto& entityJson : sceneJson["entities"]) {
@@ -601,7 +605,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	usedEntityId_.insert(entityId);
 
-	// 蠢・ｦ√↑繧ｳ繝ｳ繝昴・繝阪Φ繝医ｒ霑ｽ蜉
+	// 各コンポーネントの復元
 	if (entityJson.contains("SpriteData")) {
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
@@ -656,7 +660,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	if (entityJson.contains("CsharpComponent")) {
 		std::vector<std::string> classNames;
 		if (entityJson["CsharpComponent"].contains("CsharpHandles")) {
-			// C#繧ｹ繧ｯ繝ｪ繝励ヨ縺ｮ蠕ｩ蜈・
+			// C#のクラス名からインスタンスを生成
 			for (const auto& handle : entityJson["CsharpComponent"]["CsharpHandles"]) {
 				if (handle.contains("ClassName")) {
 #ifdef _DEBUG
@@ -670,8 +674,6 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	if (entityJson.contains("ScriptHandle")) {
 		std::vector<std::string> scriptNames;
 		if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
-
-			// 繧ｹ繧ｯ繝ｪ繝励ヨ縺ｮ蠕ｩ蜈・
 			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
 				if (handle.contains("scriptName")) {
 #ifdef _DEBUG
@@ -680,11 +682,9 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 					AddLuaScript(entityId, handle["scriptName"].get<std::string>());
 				}
 			}
-			// 繧ｰ繝ｭ繝ｼ繝舌Ν螟画焚縺ｮ蠕ｩ蜈・
 			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
 				if (handle.contains("scriptName")) {
 					ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
-					// 繧ｰ繝ｭ繝ｼ繝舌Ν螟画焚縺ｮ蠕ｩ蜈・ｺ門ｙ
 					std::vector<uint32_t> luaHandles;
 					for (auto& sh : scriptHandles.scriptHandles_) {
 						luaHandles.push_back(sh.handle_);
@@ -693,10 +693,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 					for (size_t i = 0; i < luaHandles.size(); ++i) {
 						scriptHandles.scriptHandles_[i].handle_ = luaHandles[i];
 					}
-
-					// 蠕御ｻ倥￠諠・ｱ縺ｮ蠕ｩ蜈・
 					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
-						// 繧ｰ繝ｭ繝ｼ繝舌Ν螟画焚縺ｮ蠕ｩ蜈・
 						LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_);
 						sol::state* state = script->GetScript();
 						for (const auto& [key, val] : hl.intParams_) {
@@ -712,7 +709,6 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 							(*state)[key] = val;
 						}
 
-						// 蜆ｪ蜈亥ｺｦ縺ｮ蠕ｩ蜈・
 						script->SetPriority(hl.priority_);
 					}
 				}

@@ -924,6 +924,7 @@
     <ClInclude Include="include\scene\SceneCommand\SpritePivotUpdateCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\AllEntityRenderingCommand.h" />
     <ClInclude Include="include\utility\memory\IVariableLengthPoolContainer.h" />
+    <ClInclude Include="include\assets\AudioSource\Data\Spectrum.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />

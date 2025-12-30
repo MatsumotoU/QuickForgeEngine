@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
+    <ClInclude Include="include\assets\AudioSource\Data\Spectrum.h" />
     <ClInclude Include="include\scene\SceneCommand\AllEntityRenderingCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\ParentUpdateCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\AllSpriteResizeCommand.h" />

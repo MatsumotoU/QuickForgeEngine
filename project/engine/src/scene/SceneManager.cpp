@@ -47,7 +47,7 @@ void SceneManager::Initalize() {
 void SceneManager::Update() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-	// 最後に開いたシーンをローチE
+	// 最後に開いたシーンを開く
 	if (!isFirstLoadScene_) {
 		if (sceneConfig_.contains("lastScene")) {
 			try {
