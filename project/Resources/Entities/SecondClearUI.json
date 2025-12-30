@@ -1,0 +1,54 @@
+{
+    "SceneObjectData": {
+        "name": "SecondClearUI",
+        "tag": "Untagged",
+        "uniqueId": 18450
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "InTime": 1.0,
+                    "endPosX": 756.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "clearUIMove.lua",
+                "stringParams": {
+                    "mapManagerObjName": "MapManager",
+                    "mapManagerScriptName": "MapManager.lua",
+                    "varSelectTypeName": "selectType"
+                }
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 90.0,
+        "isDraw": true,
+        "layer": 8,
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "textureName": "clear.png",
+        "width": 300.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            726.0,
+            240.0,
+            0.0
+        ]
+    }
+}

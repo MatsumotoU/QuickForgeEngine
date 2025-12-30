@@ -1,0 +1,31 @@
+{
+    "SceneObjectData": {
+        "name": "UnderUiCover",
+        "tag": "Untagged",
+        "uniqueId": 3634
+    },
+    "SpriteData": {
+        "height": 184.0,
+        "isDraw": true,
+        "layer": 100,
+        "textureName": "white1x1.png",
+        "width": 1697.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            578.2000122070313,
+            0.0
+        ]
+    }
+}

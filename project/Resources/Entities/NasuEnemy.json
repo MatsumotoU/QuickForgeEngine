@@ -1,0 +1,70 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "NasuEnemy",
+        "tag": "Enemy",
+        "uniqueId": 5730
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "speed": 0.20000000298023224
+                },
+                "handle": 59,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "FloatyEnemyMove.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 60,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "EnemyHp.lua",
+                "stringParams": {
+                    "stoneName": "Tombstone.json"
+                }
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            0.5790788531303406,
+            2.5504708290100098,
+            0.0,
+            0.6000000238418579
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.5790788531303406,
+            2.5504708290100098,
+            0.0
+        ]
+    }
+}

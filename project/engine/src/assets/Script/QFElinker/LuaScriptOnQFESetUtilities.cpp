@@ -5,6 +5,8 @@
 #endif // _DEBUG
 
 #include "engine/include/utility/FileSystems/FileUtility.h"
+#include "Engine/include/scene/Data/SceneObjectData.h"
+#include "Engine/include/assets/Script/LuaScriptResourceManager.h"
 
 void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 	
@@ -25,6 +27,40 @@ void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 #endif // _DEBUG
 			return sol::as_table(std::vector<std::vector<uint32_t>>{});
 		}
+		});
+
+	luaState->set_function("CountEntityName", [](const std::string& entityName) {
+		int32_t count = 0;
+		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		if (entityManager->HasComponentStrage<SceneObjectData>() == false) {
+			return 0;
+		}
+		for (const auto& [id, sceneObjectData] : entityManager->GetComponentStrage<SceneObjectData>()) {
+			if (sceneObjectData.name == entityName) {
+				++count;
+			}
+		}
+		return count;
+		}
+	);
+
+	luaState->set_function("CountEntityTag", [](const std::string& entityTag) {
+		int32_t count = 0;
+		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		if (entityManager->HasComponentStrage<SceneObjectData>() == false) {
+			return 0;
+		}
+		for (const auto& [id, sceneObjectData] : entityManager->GetComponentStrage<SceneObjectData>()) {
+			if (sceneObjectData.tag == entityTag) {
+				++count;
+			}
+		}
+		return count;
+		}
+	);
+
+	luaState->set_function("RunAllFunction", [](const std::string& message) {
+		LuaScriptResourceManager::GetInstance()->RunAllFunction(message);
 		});
 
 }

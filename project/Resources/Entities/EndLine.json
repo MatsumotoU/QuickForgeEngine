@@ -1,0 +1,33 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "EndLine",
+        "tag": "Untagged",
+        "uniqueId": 6623
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            0.5,
+            0.5,
+            10.0
+        ],
+        "translate": [
+            10.0,
+            0.0,
+            5.0
+        ]
+    }
+}

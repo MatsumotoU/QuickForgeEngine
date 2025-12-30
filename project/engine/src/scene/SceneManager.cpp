@@ -175,6 +175,11 @@ void SceneManager::ChangeEntityModel(uint32_t entityId, const std::string& model
 	
 }
 
+void SceneManager::ChangeEntityMesh(uint32_t entityId, const std::string& meshName)
+{
+	currentScene_->ChangeEntityMesh(entityId, meshName);
+}
+
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
 	currentScene_->SaveEntity(entityId, entityFileName);
 	

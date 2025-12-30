@@ -1,0 +1,36 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "whitePlane.obj"
+    },
+    "ParentData": {
+        "parentId": 18060
+    },
+    "SceneObjectData": {
+        "name": "RedGauge",
+        "tag": "Untagged",
+        "uniqueId": 18059
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            0.10000000149011612,
+            0.4000000059604645,
+            0.3499999940395355
+        ],
+        "translate": [
+            -1.5,
+            -0.009999999776482582,
+            0.0
+        ]
+    }
+}

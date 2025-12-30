@@ -240,4 +240,8 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
 		}
 	);
+	luaState_->set_function("SetEntityScriptGlobal",
+		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value) {
+			LuaScriptResourceManager::GetInstance()->SetEntityScriptGlobal(entityId, scriptName, varName, value);
+		});
 }

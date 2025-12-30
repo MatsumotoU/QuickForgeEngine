@@ -25,7 +25,19 @@ void QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(sol::state* luaState) {
 		return id;
 		});
 
+	luaState->set_function("SimpleCreateEntity", [](const std::string& entityName) {
+		return SceneManager::GetInstance()->RunTimeAddEntity(entityName);
+		});
+
 	luaState->set_function("LoadScene", [](const std::string& sceneName) {
 		SceneManager::GetInstance()->RunTimeSwapScene(sceneName);
+		});
+
+	luaState->set_function("ChangeModel", [](uint32_t id, const std::string& modelName) {
+		SceneManager::GetInstance()->ChangeEntityModel(id, modelName);
+		});
+
+	luaState->set_function("ChangeMesh", [](uint32_t id, const std::string& meshName) {
+		SceneManager::GetInstance()->ChangeEntityMesh(id, meshName);
 		});
 }

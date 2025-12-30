@@ -1,0 +1,85 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "ratEnemy.obj"
+    },
+    "SceneObjectData": {
+        "name": "RatEnemy",
+        "tag": "Enemy",
+        "uniqueId": 8812
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "moveTime": 0.75,
+                    "speed": 5.0,
+                    "stopTime": 1.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "RatEnemyMove.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "hp": 3,
+                    "maxHp": 3
+                },
+                "priority": 0,
+                "scriptName": "EnemyHp.lua",
+                "stringParams": {
+                    "stoneName": "Tombstone.json"
+                }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 1.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            -2.9573915004730225,
+            2.3810787200927734,
+            0.0,
+            0.3499999940395355
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            -2.9573915004730225,
+            2.3810787200927734,
+            0.0
+        ]
+    }
+}

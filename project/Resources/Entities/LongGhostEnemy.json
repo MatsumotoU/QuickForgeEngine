@@ -1,0 +1,95 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "longEnemy.obj"
+    },
+    "SceneObjectData": {
+        "name": "LongGhostEnemy",
+        "tag": "Enemy",
+        "uniqueId": 502
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "rotateTime": 1.0,
+                    "speed": 4.5
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "FloatyEnemyMove.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "enemyType": 1,
+                    "hp": 9,
+                    "maxHp": 9
+                },
+                "priority": 0,
+                "scriptName": "EnemyHp.lua",
+                "stringParams": {
+                    "stoneName": "Tombstone.json"
+                }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 1.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 0.5
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "GhostMoveAnim.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            -1.428290605545044,
+            0.0,
+            0.0,
+            0.800000011920929
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            1.600000023841858,
+            0.0
+        ],
+        "scale": [
+            0.5,
+            0.5,
+            0.5
+        ],
+        "translate": [
+            -1.428290605545044,
+            0.0,
+            0.0
+        ]
+    }
+}

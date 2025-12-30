@@ -1,0 +1,55 @@
+{
+    "SceneObjectData": {
+        "name": "BrankCard",
+        "tag": "card",
+        "uniqueId": 12279
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "Card.lua",
+                "stringParams": {
+                    "cardName": "BrankCard"
+                }
+            }
+        ]
+    },
+    "SpriteData": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "height": 256.0,
+        "isDraw": true,
+        "layer": 3,
+        "pivot": [
+            0.5,
+            0.5
+        ],
+        "textureName": "brankCard.png",
+        "width": 160.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

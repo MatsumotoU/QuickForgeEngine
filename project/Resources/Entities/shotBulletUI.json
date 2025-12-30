@@ -1,0 +1,50 @@
+{
+    "SceneObjectData": {
+        "name": "shotBulletUI",
+        "tag": "Untagged",
+        "uniqueId": 6621
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 9,
+                "intParams": {
+                    "UIType": 1,
+                    "shotType": 0,
+                    "targetType": 2
+                },
+                "priority": 0,
+                "scriptName": "TutorialUIbehavior.lua",
+                "stringParams": {
+                    "TutorialManagerJson": "TutorialManager"
+                }
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 80.0,
+        "isDraw": true,
+        "layer": 3,
+        "textureName": "shotBullet.png",
+        "width": 512.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            400.0,
+            36.0,
+            0.0
+        ]
+    }
+}

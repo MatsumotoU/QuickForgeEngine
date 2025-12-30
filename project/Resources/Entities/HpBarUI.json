@@ -1,0 +1,47 @@
+{
+    "SceneObjectData": {
+        "name": "HpBarUI",
+        "tag": "Untagged",
+        "uniqueId": 1037
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "HpUiAnim.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SpriteData": {
+        "height": 90.0,
+        "isDraw": true,
+        "layer": 10,
+        "pivot": [
+            0.5,
+            0.5
+        ],
+        "textureName": "HpBar.png",
+        "width": 90.0
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            658.0287475585938,
+            468.7330627441406,
+            0.020000001415610313
+        ]
+    }
+}

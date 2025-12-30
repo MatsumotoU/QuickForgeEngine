@@ -1,0 +1,96 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "boxEnemy.obj"
+    },
+    "SceneObjectData": {
+        "name": "ZizouEnemy",
+        "tag": "Enemy",
+        "uniqueId": 5729
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "speed": 0.25
+                },
+                "handle": 5225,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "ZizouEnemyMove.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "handle": 5226,
+                "intParams": {
+                    "enemyType": 1
+                },
+                "priority": 0,
+                "scriptName": "EnemyHp.lua",
+                "stringParams": {
+                    "stoneName": "Tombstone.json"
+                }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 1.0
+                },
+                "handle": 5227,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 1.0
+                },
+                "handle": 5228,
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "GhostMoveAnim.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            -1.0698139667510986,
+            2.4057602882385254,
+            0.0,
+            0.41999998688697815
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            -1.0698139667510986,
+            2.4057602882385254,
+            0.0
+        ]
+    }
+}

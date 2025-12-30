@@ -512,6 +512,28 @@ void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelN
 	modelHandle.handle = assetManager->LoadModel(modelName);
 }
 
+void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshName) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	// エンティティがモデルを持っていなければ何もしない
+	if (!entityManager->HasComponent<ModelHandle>(entityId)) {
+#ifdef _DEBUG
+		DebugLog("ChangeMesh entity does not have ModelRenderData", LogLevel::Warning);
+#endif // _DEBUG
+		return;
+	}
+	ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
+	ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
+	// メッシュが存在しなければ何もしない
+	if (modelData->meshRenderDataHandles.size() == 0) {
+#ifdef _DEBUG
+		DebugLog("ChangeMesh model does not have mesh", LogLevel::Warning);
+#endif // _DEBUG
+		return;
+	}
+	modelData->meshRenderDataHandles[0].vertexBufferHandle = assetManager_->LoadModelMesh(meshName);
+}
+
 void SceneObject::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();

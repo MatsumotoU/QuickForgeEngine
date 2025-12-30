@@ -1,0 +1,53 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            18.99628448486328,
+            -0.5,
+            -5.050000190734863,
+            20.796287536621094,
+            0.5,
+            5.050000190734863
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": true
+    },
+    "SceneObjectData": {
+        "name": "NextSceneEvent",
+        "tag": "Untagged",
+        "uniqueId": 5778
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "SceneManager.lua",
+                "stringParams": {
+                    "nextSceneName": "Prot2.json"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            19.896286010742188,
+            0.0,
+            0.0
+        ]
+    }
+}

@@ -1,0 +1,93 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "doubleEnemy.obj"
+    },
+    "SceneObjectData": {
+        "name": "doubleGhostEnemy",
+        "tag": "Enemy",
+        "uniqueId": 503
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "speed": 0.4000000059604645
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "doubleGhostEnemyMove.lua",
+                "stringParams": {
+                    "LockOnObjName": "ShotGunPlayer"
+                }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "enemyType": 2
+                },
+                "priority": 0,
+                "scriptName": "EnemyHp.lua",
+                "stringParams": {
+                    "normalEnemyName": "NormalGhostEnemy.json",
+                    "stoneName": "Tombstone.json"
+                }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "performingTime": 0.5
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "DeathAnim.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "GhostMoveAnim.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": false,
+        "sphere": [
+            -3.427076816558838,
+            0.0,
+            0.0,
+            0.5
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            -3.427076816558838,
+            0.0,
+            0.0
+        ]
+    }
+}

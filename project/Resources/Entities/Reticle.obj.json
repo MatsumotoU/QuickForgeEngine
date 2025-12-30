@@ -1,0 +1,33 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "Reticle.obj"
+    },
+    "SceneObjectData": {
+        "name": "Reticle.obj",
+        "tag": "Untagged",
+        "uniqueId": 6228
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            2.3769052028656006,
+            0.0,
+            0.0
+        ]
+    }
+}

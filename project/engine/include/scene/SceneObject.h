@@ -50,6 +50,7 @@ public:
 	// シーンにあるオブジェクトを保存、読み込み、変更
 	void CopyEntity(uint32_t sourceEntityId) override;
 	void ChangeEntityModel(uint32_t entityId, const std::string& modelName) override;
+	void ChangeEntityMesh(uint32_t entityId, const std::string& meshName) override;
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName) override;
 	void ParentChild(uint32_t parentId, uint32_t childId) override;
 	void Unparent(uint32_t childId) override;

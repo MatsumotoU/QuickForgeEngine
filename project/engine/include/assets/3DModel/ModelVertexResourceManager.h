@@ -20,6 +20,8 @@ public:
 	ID3D12Resource* GetModelVertexBuffer(const uint32_t& handle);
 	VertexData* GetModelVertexBufferData(const uint32_t& handle);
 	const D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView(const uint32_t& handle);
+	uint32_t GetModelHandle(const std::string& modelName) const;
+	bool HasModelHandle(const std::string& modelName) const;
 
 	void Finalize();
 
