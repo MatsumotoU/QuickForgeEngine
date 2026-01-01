@@ -925,6 +925,7 @@
     <ClInclude Include="include\scene\SceneCommand\AllEntityRenderingCommand.h" />
     <ClInclude Include="include\utility\memory\IVariableLengthPoolContainer.h" />
     <ClInclude Include="include\assets\AudioSource\Data\Spectrum.h" />
+    <ClInclude Include="include\scene\SceneCommand\DeleteSceneEntityCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -1303,5 +1304,6 @@
     <ClCompile Include="src\scene\SceneCommand\WvpTransformationCommand.cpp" />
     <ClCompile Include="src\scene\SceneCommand\SpritePivotUpdateCommand.cpp" />
     <ClCompile Include="src\scene\SceneCommand\AllEntityRenderingCommand.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\DeleteSceneEntityCommand.cpp" />
   </ItemGroup>
 </Project>

@@ -38,6 +38,7 @@ public:
 	virtual uint32_t RunTimeAddEntity(const std::string& entityName) = 0;
 
 	// シーンにあるオブジェクトを保存、読み込み、変更
+	virtual void DeleteEntity(uint32_t entityId) = 0;
 	virtual void CopyEntity(uint32_t sourceEntityId) = 0;
 	virtual void ChangeEntityModel(uint32_t entityId, const std::string& modelName) = 0;
 	virtual void ChangeEntityMesh(uint32_t entityId, const std::string& meshName) = 0;

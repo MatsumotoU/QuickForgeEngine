@@ -31,7 +31,7 @@ public:
 	void ResetScene();
 	void RunTimeSwapScene(const std::string& sceneName);
 
-	// ここにぁE��べきじめE��ぁE
+	void DeleteEntity(uint32_t entityId);
 	void CopyEntity(uint32_t sourceEntityId);
 	void ChangeEntityModel(uint32_t entityId, const std::string& modelName);
 	void ChangeEntityMesh(uint32_t entityId, const std::string& meshName);

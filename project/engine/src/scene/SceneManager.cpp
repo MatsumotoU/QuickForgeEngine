@@ -166,6 +166,11 @@ void SceneManager::RunTimeSwapScene(const std::string& sceneName) {
 	nextSceneName_ = sceneName;
 }
 
+void SceneManager::DeleteEntity(uint32_t entityId)
+{
+	currentScene_->DeleteEntity(entityId);
+}
+
 void SceneManager::CopyEntity(uint32_t sourceEntityId) {
 	currentScene_->CopyEntity(sourceEntityId);
 }

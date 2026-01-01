@@ -48,6 +48,7 @@ public:
 	uint32_t RunTimeAddEntity(const std::string& entityName) override;
 
 	// シーンにあるオブジェクトを保存、読み込み、変更
+	void DeleteEntity(uint32_t entityId) override;
 	void CopyEntity(uint32_t sourceEntityId) override;
 	void ChangeEntityModel(uint32_t entityId, const std::string& modelName) override;
 	void ChangeEntityMesh(uint32_t entityId, const std::string& meshName) override;
@@ -63,6 +64,7 @@ public:
 	bool IsRunningScript() const override { return isRunningScript_; }
 
 private:
+	SceneEntityCommandInvoker frameStartCommandInvoker_;
 	SceneEntityCommandInvoker updateCommandInvoker_;
 	SceneEntityCommandInvoker preDrawCommandInvoker_;
 	SceneEntityCommandInvoker drawCommandInvoker_;

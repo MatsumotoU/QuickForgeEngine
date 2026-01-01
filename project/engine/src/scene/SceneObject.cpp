@@ -38,6 +38,7 @@
 #endif // _DEBUG
 
 #include "Engine/include/scene/SceneCommand/SceneEntityCommands.h"
+#include "engine/include/scene/SceneObject.h"
 
 SceneObject::SceneObject() {
 	assetManager_ = nullptr;
@@ -59,6 +60,7 @@ void SceneObject::Initialize() {
 	isPauseScript_ = false;
 
 	// コマンドクリア
+	frameStartCommandInvoker_.ClearCommands();
 	updateCommandInvoker_.ClearCommands();
 	preDrawCommandInvoker_.ClearCommands();
 	drawCommandInvoker_.ClearCommands();
@@ -66,6 +68,7 @@ void SceneObject::Initialize() {
 }
 
 void SceneObject::Update() {
+	frameStartCommandInvoker_.ExecuteCommands();
 
 	// ランタイム中のサブモジュールの更新
 	if (isRunningScript_ && !isPauseScript_) {
@@ -481,6 +484,11 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	DebugLog("RunTimeAddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
 #endif // _DEBUG
 	return entityId;
+}
+
+void SceneObject::DeleteEntity(uint32_t entityId)
+{
+	frameStartCommandInvoker_.AddCommand(std::make_unique<DeleteSceneEntityCommand>(*(assetManager_->GetEntityManager()), entityId));
 }
 
 void SceneObject::CopyEntity(uint32_t sourceEntityId) {

@@ -9,3 +9,4 @@
 #include "SpritePivotUpdateCommand.h"
 
 #include "AllEntityRenderingCommand.h"
+#include "DeleteSceneEntityCommand.h"

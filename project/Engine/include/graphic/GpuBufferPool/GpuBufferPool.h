@@ -35,6 +35,14 @@ public:
         return handle;
     }
 
+	/// 解放したいハンドルのバッファーを解放します
+	template<typename T>
+	void ReleaseConstantBuffer(uint32_t handle) {
+		auto typeIdx = std::type_index(typeid(T));
+		auto& pool = static_cast<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>> &>(*constantBufferPoolsMap_.at(typeIdx));
+		pool.Release(handle);
+	}
+
 	/// 取得したハンドルから特定の型のバッファーを取得します
     template<typename T>
     ConstantBuffer<T>* GetConstantBuffer(uint32_t handle) {
