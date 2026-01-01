@@ -52,13 +52,13 @@ function Update()
     end
 
     if transform.translate.z <= -5.5 then
-        EchoForAudio(transform.translate,deathSE,0.5)
+        --EchoForAudio(transform.translate,deathSE,0.5)
         destroy()
     end
 end
 
 function OnCollisionEnter(id,obj)
-    EchoForAudio(transform.translate,wallHitSE,0.2)
+    --EchoForAudio(transform.translate,wallHitSE,0.2)
 end
 
 function OnCollisionStay(id,obj)
@@ -90,8 +90,5 @@ function OnNextStage()
 end
 
 function OnStrongBeat()
-    EchoForAudio(transform.translate,BarSE,0.3)
-    transform.scale.x = scaleX * 1.2
-    transform.scale.z = scaleY * 1.1
 end
 

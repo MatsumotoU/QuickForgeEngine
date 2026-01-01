@@ -13,7 +13,7 @@ function Update()
 
     if QFE.Input.GetKeyTrigger("Jump") then
         if echoCharge >= echoMaxCharge then
-            EchoForAudio(transform.translate,breakSE,0.5)
+            --EchoForAudio(transform.translate,breakSE,0.5)
             echoCharge = 0.0
         end 
     end

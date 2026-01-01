@@ -15,6 +15,6 @@ function OnStrongBeat()
 end
 
 function OnBar()
-    EchoForAudio(transform.translate,echoSE,0.5)
+    --EchoForAudio(transform.translate,echoSE,0.5)
     transform.rotate.x = 10.0
 end

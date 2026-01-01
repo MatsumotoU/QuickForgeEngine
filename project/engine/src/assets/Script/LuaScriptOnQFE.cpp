@@ -2,6 +2,7 @@
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
+#include "Engine/include/scene/SceneManager.h"
 #include "engine/include/assets/Script/LuaScriptResourceManager.h"
 
 #include "engine/include/core/Math/Transform.h"
@@ -232,7 +233,10 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		}
 	);
 	luaState_->set_function("destroy", [this]() {
-		AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(this->GetBindEntityId());
+		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
+		});
+	luaState_->set_function("delete", [this]() {
+		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
 		});
 	luaState_->set_function("GetEntityScriptGlobal",
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::this_state ts) {
