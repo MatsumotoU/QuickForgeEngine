@@ -19,7 +19,7 @@ void AudioChipManager::Finalize() {
 	audioChips_.clear();
 }
 
-uint32_t AudioChipManager::PlaySoundForAudioData(AudioData audioData, bool loop, float volume) {
+uint32_t AudioChipManager::PlaySoundForAudioData(const AudioData& audioData, bool loop, float volume) {
 	audioChips_.emplace(nextHandle_, AudioPlayChip());
 	audioChips_[nextHandle_].Initialize(xAudio2_, masterVoice_);
 	audioChips_[nextHandle_].PlaySoundForAudioData(audioData, loop, volume);

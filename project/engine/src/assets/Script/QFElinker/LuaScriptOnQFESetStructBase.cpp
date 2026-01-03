@@ -3,6 +3,9 @@
 #include "engine/include/core/Math/Vector/Vector3.h"
 #include "engine/include/core/Math/Vector/Vector4.h"
 #include "engine/include/core/Math/Transform.h"
+#include "engine/include/core/Math/Shapes.h"
+#include "engine/include/collider/Data/AABBColliderData.h"
+#include "engine/include/collider/Data/SphereColliderData.h"
 
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/physics/Force.h"
@@ -61,6 +64,34 @@ void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 		"AddForward", &Transform::AddForward,
 		"AddRight", &Transform::AddRight
 	);
+
+	luaState->new_usertype<Sphere>("Sphere",
+		"center", &Sphere::center,
+		"radius", &Sphere::radius
+	);
+	luaState->new_usertype<AABB>("AABB",
+		"min", &AABB::min,
+		"max", &AABB::max
+	);
+
+	// Collider
+	luaState->new_usertype<AABBColliderData>("AABBColliderData",
+		"aabb", &AABBColliderData::aabb,
+		"isHit", &AABBColliderData::isHit,
+		"isTrigger", &AABBColliderData::isTrigger,
+		"isStatic", &AABBColliderData::isStatic,
+		"colliderLayer", &AABBColliderData::colliderLayer,
+		"eventColliderLayer", &AABBColliderData::eventColliderLayer
+	);
+	luaState->new_usertype<SphereColliderData>("SphereColliderData",
+		"sphere", &SphereColliderData::sphere,
+		"isHit", &SphereColliderData::isHit,
+		"isTrigger", &SphereColliderData::isTrigger,
+		"isStatic", &SphereColliderData::isStatic,
+		"colliderLayer", &SphereColliderData::colliderLayer,
+		"eventColliderLayer", &SphereColliderData::eventColliderLayer
+	);
+
 
 	// 迚ｩ逅・鴨
 	luaState->new_usertype<Force>("Force",

@@ -9,6 +9,8 @@
 #include "engine/include/physics/Force.h"
 #include "engine/include/assets/Script/Data/ScriptHandle.h"
 #include "engine/include/assets/Script/QFElinker/SetQFELinkers.h"
+#include "engine/include/collider/Data/AABBColliderData.h"
+#include "engine/include/collider/Data/SphereColliderData.h"
 
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -189,6 +191,18 @@ void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 #ifdef _DEBUG
 		DebugLog(std::format( "{}: Active ForceComponent.",scriptName_), LogLevel::EditorInfo);
 #endif // _DEBUG
+	}
+	
+	// Collider componentsをLuaにセット
+	if (entityManager->HasComponent<AABBColliderData>(bindEntityId_))
+	{
+		AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(bindEntityId_);
+		luaState_->set("aabbCollider", &collider);
+	}
+	if (entityManager->HasComponent<SphereColliderData>(bindEntityId_))
+	{
+		SphereColliderData& collider = entityManager->GetComponent<SphereColliderData>(bindEntityId_);
+		luaState_->set("sphereCollider", &collider);
 	}
 }
 

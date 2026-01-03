@@ -3,6 +3,7 @@ dirX = 0.0
 dirY = 0.0
 speed = 2.0
 
+local baseSpeed = speed
 local ballsId = {}
 
 local timer =0.0
@@ -16,25 +17,28 @@ function Init()
     isStart = false
     dirX = 0.0
     dirY = 0.0
+    baseSpeed = speed
 end
 
 function Update()
     local delta = GetDeltaTime()
     timer = timer + delta
 
+    speed = QFE.Math.SimpleEaseIn(speed,baseSpeed,0.01)
+
     if isEnd then
-        Echo(transform.translate,0.5)
+        --Echo(transform.translate,0.5)
         if timer > 3.0 then
             --RunEntityScriptFunction(GetEntity("SceneChangeAnim"),"SceneChangeAnim.lua","ReqestClose")
             LoadScene("TitleScene.json")
         end
         return
     end
-
     
     if isStart then
         transform.translate.z = transform.translate.z + dirY * delta*speed
         transform.translate.x = transform.translate.x + dirX * delta*speed
+        
     else
         if QFE.Input.GetKeyTrigger("Jump") then
             
@@ -58,6 +62,7 @@ function Update()
 end
 
 function OnCollisionEnter(id,obj)
+    QFE.Audio.PlaySound(wallHitSE,false,0.2)
     --EchoForAudio(transform.translate,wallHitSE,0.2)
 end
 
@@ -66,6 +71,7 @@ function OnCollisionStay(id,obj)
         local x = -(GetTransform(id).translate.x - transform.translate.x)
         dirX = x
         dirY = math.abs(dirY)
+        speed =speed+3.5
     elseif obj.tag == "sideWall" then
         dirX =-dirX
     elseif obj.tag == "topWall" then

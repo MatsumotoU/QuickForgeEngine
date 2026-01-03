@@ -47,6 +47,27 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 		auto* em = AssetManager::GetInstance()->GetEntityManager();
 		return em->HasComponent<Transform>(entityId) ? &em->GetComponent<Transform>(entityId) : nullptr;
 		});
+	luaState->set_function("SetTranslate", [](uint32_t entityId, Vector3 translate) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<Transform>(entityId)) {
+			Transform& t = em->GetComponent<Transform>(entityId);
+			t.translate = translate;
+		}
+		});
+	luaState->set_function("SetRotate", [](uint32_t entityId, Vector3 rotate) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<Transform>(entityId)) {
+			Transform& t = em->GetComponent<Transform>(entityId);
+			t.rotate = rotate;
+		}
+		});
+	luaState->set_function("SetScale", [](uint32_t entityId, Vector3 scale) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<Transform>(entityId)) {
+			Transform& t = em->GetComponent<Transform>(entityId);
+			t.scale = scale;
+		}
+		});
 	luaState->set_function("GetSceneObjectData", [](uint32_t entityId) {
 		auto* em = AssetManager::GetInstance()->GetEntityManager();
 		return em->HasComponent<SceneObjectData>(entityId) ? &em->GetComponent<SceneObjectData>(entityId) : nullptr;

@@ -9,6 +9,6 @@ function Update()
 end
 
 function OnCollisionEnter(id,obj)
-    --EchoForAudio(transform.translate,breakSE,0.3)
+    QFE.Audio.PlaySound(breakSE,false,0.3)
     destroy()
 end

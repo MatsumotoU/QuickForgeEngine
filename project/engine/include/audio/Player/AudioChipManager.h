@@ -12,7 +12,7 @@ public:
 	// 終亁E
 	void Finalize();
 	// 音声再生(volume: 0.0 ~ 1.0の篁E��)
-	uint32_t PlaySoundForAudioData(AudioData audioData, bool loop, float volume);
+	uint32_t PlaySoundForAudioData(const AudioData& audioData, bool loop, float volume);
 	// 音声停止
 	void StopSound(uint32_t soundHandle);
 	// 音声一時停止

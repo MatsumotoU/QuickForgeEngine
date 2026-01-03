@@ -46,7 +46,7 @@ function Update()
         if ballCount <= 0 then
             isGameEnd = true
             isNextStage = false
-            QFE.Audio.PlaySound(miss,false,0.5)
+            QFE.Audio.PlaySound(missSE,false,0.5)
         end
     end
     

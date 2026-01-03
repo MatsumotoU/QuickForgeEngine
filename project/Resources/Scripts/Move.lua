@@ -1,5 +1,5 @@
-local moveSpeed = 3.0
-local moveAcc = 0.3
+local moveSpeed = 4.5
+local moveAcc = 0.7
 local dashSpeed = 8.0
 
 local moveTime = 0.0
@@ -23,6 +23,7 @@ function Update()
 
     transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,scaleX,0.1)
     transform.scale.z = QFE.Math.SimpleEaseIn(transform.scale.z,scaleY,0.1)
+    transform.rotate.y = QFE.Math.SimpleEaseIn(transform.rotate.y,0.0,0.1)
 
     if not isStart then
         return 
@@ -69,8 +70,13 @@ function Update()
     
 end
 
-function OnCollisionEnter()
+function OnCollisionEnter(id,obj)
     force.velocity.x = 0.0
+    if obj.tag == "ball" then
+        local x = -(GetTransform(id).translate.x - transform.translate.x)
+        transform.rotate.y = x * 10.0;
+    end
+
 end
 
 function OnStrongBeat()
@@ -79,7 +85,7 @@ function OnStrongBeat()
 end
 
 function OnBar()
-    EchoForAudio(transform.translate,strongBeatSE,0.5)
+    QFE.Audio.PlaySound(strongBeatSE,false,0.5)
     transform.scale.x = scaleX * 1.1
     transform.scale.z = scaleY * 1.2
 end
