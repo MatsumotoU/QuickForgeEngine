@@ -25,6 +25,7 @@ function Update()
     timer = timer + delta
 
     speed = QFE.Math.SimpleEaseIn(speed,baseSpeed,0.01)
+    transform.rotate.y = transform.rotate.y + (speed *dirX* 0.05)
 
     if isEnd then
         --Echo(transform.translate,0.5)

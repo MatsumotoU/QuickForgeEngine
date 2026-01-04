@@ -117,4 +117,27 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 			em->GetComponent<AABBColliderData>(entityId).isTrigger = isTrigger;
 		}
 		});
+
+	luaState->set_function("GetEntityTag", [](uint32_t entityId) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<SceneObjectData>(entityId)) {
+			return em->GetComponent<SceneObjectData>(entityId).tag;
+		}
+		return std::string{};
+		});
+
+	luaState->set_function("SetEntityTag", [](uint32_t entityId, const std::string& tag) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<SceneObjectData>(entityId)) {
+			em->GetComponent<SceneObjectData>(entityId).tag = tag;
+		}
+		});
+
+	luaState->set_function("GetEntityName", [](uint32_t entityId) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<SceneObjectData>(entityId)) {
+			return em->GetComponent<SceneObjectData>(entityId).name;
+		}
+		return std::string{};
+		});
 }

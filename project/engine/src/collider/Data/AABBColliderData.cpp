@@ -1,7 +1,8 @@
 #include "engine/include/collider/Data/AABBColliderData.h"
 
 AABBColliderData::AABBColliderData() {
-	aabb = { {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f} };
+	aabb.center = {0.0f, 0.0f, 0.0f};
+	aabb.size = {1.0f, 1.0f, 1.0f};
 	isTrigger = false;
 	isStatic = false;
 }
@@ -10,7 +11,7 @@ nlohmann::json AABBColliderData::Serialize() const {
 	nlohmann::json json;
 	json["isTrigger"] = isTrigger;
 	json["isStatic"] = isStatic;
-	json["aabb"] = { aabb.min.x, aabb.min.y, aabb.min.z, aabb.max.x, aabb.max.y, aabb.max.z };
+	json["aabb"] = { aabb.center.x, aabb.center.y, aabb.center.z, aabb.size.x, aabb.size.y, aabb.size.z };
 	json["colliderLayer"] = colliderLayer;
 	json["eventColliderLayer"] = eventColliderLayer;
 #ifdef _DEBUG
@@ -28,12 +29,12 @@ void AABBColliderData::Deserialize(const nlohmann::json& json) {
 		isStatic = json["isStatic"].get<bool>();
 	}
 	if (json.contains("aabb") && json["aabb"].is_array() && json["aabb"].size() == 6) {
-		aabb.min.x = json["aabb"][0].get<float>();
-		aabb.min.y = json["aabb"][1].get<float>();
-		aabb.min.z = json["aabb"][2].get<float>();
-		aabb.max.x = json["aabb"][3].get<float>();
-		aabb.max.y = json["aabb"][4].get<float>();
-		aabb.max.z = json["aabb"][5].get<float>();
+		aabb.center.x = json["aabb"][0].get<float>();
+		aabb.center.y = json["aabb"][1].get<float>();
+		aabb.center.z = json["aabb"][2].get<float>();
+		aabb.size.x = json["aabb"][3].get<float>();
+		aabb.size.y = json["aabb"][4].get<float>();
+		aabb.size.z = json["aabb"][5].get<float>();
 	}
 	if (json.contains("colliderLayer") && json["colliderLayer"].is_number_unsigned()) {
 		colliderLayer = json["colliderLayer"].get<uint8_t>();

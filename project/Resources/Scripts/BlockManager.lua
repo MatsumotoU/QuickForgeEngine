@@ -30,7 +30,6 @@ function Update()
     if c <= 0 then
         local delta = GetDeltaTime()
         timer = timer + delta
-        --Echo(transform.translate,8.0)
         if timer > 3.0 then
             --RunEntityScriptFunction(GetEntity("SceneChangeAnim"),"SceneChangeAnim.lua","ReqestClose")
             --LoadScene("TitleScene.json")

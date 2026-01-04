@@ -1,17 +1,17 @@
 {
     "AABBColliderData": {
         "aabb": [
-            -0.75,
-            -0.30000001192092896,
-            -0.3999999761581421,
-            0.75,
-            0.30000001192092896,
-            0.3999999761581421
+            0.0,
+            0.0,
+            0.0,
+            1.649999976158142,
+            1.7000000476837158,
+            0.8999999761581421
         ],
         "colliderLayer": 255,
         "eventColliderLayer": 255,
         "isDraw": false,
-        "isStatic": false,
+        "isStatic": true,
         "isTrigger": false
     },
     "ModelHandle": {
@@ -21,8 +21,6 @@
             1.0,
             1.0
         ],
-        "isEchoVisible": true,
-        "isEnableLight": true,
         "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {

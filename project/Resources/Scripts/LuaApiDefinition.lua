@@ -19,9 +19,18 @@ aabbCollider = {}
 ---@type SphereColliderData
 sphereCollider = {}
 
-
 --
 --[ GLOBAL FUNCTIONS ]
+---
+
+---@param entityId number
+---@return string
+function GetEntityTag(entityId)end
+
+---@param tagNeme string
+---@param pos Vector3
+---@return number
+function GetMinLengthToEntityFromTag(tagNeme,pos)end
 
 ---@param message string
 function DebugLog(message) end
@@ -246,8 +255,8 @@ Sphere = {}
 function Sphere.new() end
 
 ---@class AABB
----@field min Vector3
----@field max Vector3
+---@field center Vector3
+---@field size Vector3
 ---@type AABB
 AABB = {}
 ---@return AABB
@@ -308,6 +317,9 @@ this = {}
 
 ---@return number
 function this.GetEntityId() end
+
+---@param size Vector3
+function this.SetAABBColiderSize(size) end
 
 --
 --[ QFE NAMESPACE ]

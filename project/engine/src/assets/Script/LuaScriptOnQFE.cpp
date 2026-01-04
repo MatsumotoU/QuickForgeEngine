@@ -262,4 +262,14 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value) {
 			LuaScriptResourceManager::GetInstance()->SetEntityScriptGlobal(entityId, scriptName, varName, value);
 		});
+
+	luaState_->set_function("SetAABBColiderSize", [this](const Vector3& size) {
+		AssetManager* assetManager = AssetManager::GetInstance();
+		EntityManager* entityManager = assetManager->GetEntityManager();
+		if (entityManager->HasComponent<AABBColliderData>(this->GetBindEntityId()) == false) {
+			return;
+		}
+		AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(this->GetBindEntityId());
+		collider.aabb.size = size;
+		});
 }

@@ -1,13 +1,17 @@
 local moveSpeed = 4.5
 local moveAcc = 0.7
-local dashSpeed = 8.0
+local dashSpeed = 12.0
 
 local moveTime = 0.0
 local isStart = false
 local scaleX = 0.0
 local scaleY = 0.0
+local isNearBall = true
+
+local isMeshHeart = false
 
 local strongBeatSE = QFE.Audio.LoadSound("StrongBeat.wav")
+local moveRotateY = 0.0
 
 function Init()
     scaleX = transform.scale.x
@@ -21,9 +25,27 @@ function Update()
         end
     end
 
-    transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,scaleX,0.1)
+    if isNearBall then
+        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,scaleX*0.2,0.3)
+    else
+        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,scaleX,0.3)
+    end
+    aabbCollider.aabb.size.x = transform.scale.x*0.8
+    
     transform.scale.z = QFE.Math.SimpleEaseIn(transform.scale.z,scaleY,0.1)
-    transform.rotate.y = QFE.Math.SimpleEaseIn(transform.rotate.y,0.0,0.1)
+    transform.rotate.y = QFE.Math.SimpleEaseIn(transform.rotate.y+moveRotateY,3.14,0.1)
+
+    if transform.scale.x <= 0.75 then
+        if not isMeshHeart then
+            ChangeMesh(GetThisEntityId(),"heart.obj")
+            isMeshHeart = true
+        end        
+    else
+        if isMeshHeart then
+            ChangeMesh(GetThisEntityId(),"Box1x1.obj")
+            isMeshHeart = false
+        end
+    end
 
     if not isStart then
         return 
@@ -44,14 +66,16 @@ function Update()
             force.velocity.x = force.velocity.x + moveAcc
         end
         moveTime = moveTime + 1.0
-        
+        moveRotateY = 0.05
     elseif QFE.Input.GetKeyPress("MoveLeft") then
         if force.velocity.x > -moveSpeed then
             force.velocity.x = force.velocity.x - moveAcc
         end
         moveTime = moveTime + 1.0
+        moveRotateY = -0.05
     else
         force.velocity.x = force.velocity.x *0.8
+        moveRotateY = 0.0
     end
 
     if moveTime > 20 then
@@ -67,26 +91,31 @@ function Update()
         transform.translate.z = -4.5
     end
 
-    
+
+    if GetMinLengthToEntityFromTag("ball",transform.translate) >= 2.5 then
+        isNearBall = true
+    else
+        isNearBall = false
+    end
 end
 
 function OnCollisionEnter(id,obj)
     force.velocity.x = 0.0
     if obj.tag == "ball" then
-        local x = -(GetTransform(id).translate.x - transform.translate.x)
+        local x = (GetTransform(id).translate.x - transform.translate.x)
         transform.rotate.y = x * 10.0;
     end
 
 end
 
 function OnStrongBeat()
-    transform.scale.x = scaleX * 1.2
+    --transform.scale.x = scaleX * 1.2
     transform.scale.z = scaleY * 1.1
 end
 
 function OnBar()
     QFE.Audio.PlaySound(strongBeatSE,false,0.5)
-    transform.scale.x = scaleX * 1.1
+    --transform.scale.x = scaleX * 1.1
     transform.scale.z = scaleY * 1.2
 end
 

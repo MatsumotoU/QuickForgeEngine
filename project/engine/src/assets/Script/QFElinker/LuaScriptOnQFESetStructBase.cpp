@@ -70,8 +70,8 @@ void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 		"radius", &Sphere::radius
 	);
 	luaState->new_usertype<AABB>("AABB",
-		"min", &AABB::min,
-		"max", &AABB::max
+		"center", &AABB::center,
+		"size", &AABB::size
 	);
 
 	// Collider
