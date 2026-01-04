@@ -1,5 +1,6 @@
 local blockCount = 0
 local ballCount = 0
+local stage = 0
 
 local isGameEnd = false
 local isShop = false
@@ -26,8 +27,13 @@ function Update()
                 isGameEnd = false
                 isNextStage = false
                 gameEndTimer = 0.0
+                stage = stage + 1
+                if stage >3 then
+                    DebugLog("Finish")
+                    LoadScene("ResultScene.json")
+                end
             else
-                LoadScene("TitleScene.json")
+                LoadScene("ResultScene.json")
             end
         end
         

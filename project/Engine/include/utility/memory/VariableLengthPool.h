@@ -78,6 +78,15 @@ public:
 			freeIndices_.push(i);
 		}
 	}
+	// プールを解放
+	void Release() override {
+		while (!freeIndices_.empty()) {
+			freeIndices_.pop();
+		}
+		for (size_t i = 0; i < pool_.size(); ++i) {
+			freeIndices_.push(i);
+		}
+	}
 
 	// * コンテナ状態確認 * //
 	// プール内のオブジェクト数を取得

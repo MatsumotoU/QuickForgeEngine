@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    1.0099899768829346,
-                    0.08294479548931122,
+                    0.8024911284446716,
+                    0.06544402986764908,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -1.2517095804214478,
-                    24.054824829101563,
-                    -15.056252479553223
+                    -1.290924072265625,
+                    20.426328659057617,
+                    -19.69744873046875
                 ]
             }
         },
@@ -706,6 +706,354 @@
                     0.0,
                     0.0,
                     -10.958000183105469
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.6165803074836731,
+                    0.51408451795578,
+                    0.15654109418392181,
+                    1.0
+                ],
+                "modelName": "Crown.obj"
+            },
+            "SceneObjectData": {
+                "name": "Crown",
+                "tag": "Untagged",
+                "uniqueId": 3452817095
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "RotateY.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    1.399999976158142,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -6.480999946594238,
+                    4.150022029876709,
+                    -0.07900000363588333
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.3147735297679901,
+                    0.2778598368167877,
+                    0.38860106468200684,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "StageStick",
+                "tag": "Untagged",
+                "uniqueId": 3452817185
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.20000000298023224,
+                    1.0,
+                    4.0
+                ],
+                "translate": [
+                    -7.556000232696533,
+                    0.20000000298023224,
+                    -2.0999999046325684
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.5077720284461975,
+                    0.07629735767841339,
+                    0.07629735767841339,
+                    1.0
+                ],
+                "modelName": "heart.obj"
+            },
+            "SceneObjectData": {
+                "name": "BossStageIconObj",
+                "tag": "Untagged",
+                "uniqueId": 3452817186
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BeatAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    3.140000104904175,
+                    0.0
+                ],
+                "scale": [
+                    0.5,
+                    0.30000001192092896,
+                    0.5
+                ],
+                "translate": [
+                    -7.53000020980835,
+                    0.6982132792472839,
+                    -0.30000001192092896
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.25388598442077637,
+                    0.053934331983327866,
+                    0.053934331983327866,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "StageIcon",
+                "tag": "Untagged",
+                "uniqueId": 3452817322
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.7850000262260437,
+                    0.0
+                ],
+                "scale": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "translate": [
+                    -7.556000232696533,
+                    0.4746358394622803,
+                    -4.021999835968018
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.25388598442077637,
+                    0.053934331983327866,
+                    0.053934331983327866,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "StageIcon",
+                "tag": "Untagged",
+                "uniqueId": 3452817323
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.7850000262260437,
+                    0.0
+                ],
+                "scale": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "translate": [
+                    -7.556000232696533,
+                    0.4746358394622803,
+                    -2.7219998836517334
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.25388598442077637,
+                    0.053934331983327866,
+                    0.053934331983327866,
+                    1.0
+                ],
+                "modelName": "Box1x1.obj"
+            },
+            "SceneObjectData": {
+                "name": "StageIcon",
+                "tag": "Untagged",
+                "uniqueId": 3452817324
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.7850000262260437,
+                    0.0
+                ],
+                "scale": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "translate": [
+                    -7.556000232696533,
+                    0.4746358394622803,
+                    -1.4220000505447388
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.6424870491027832,
+                    0.6424870491027832,
+                    0.6424870491027832,
+                    1.0
+                ],
+                "modelName": "ScoreText.obj"
+            },
+            "SceneObjectData": {
+                "name": "ScoreText",
+                "tag": "Untagged",
+                "uniqueId": 3452817325
+            },
+            "Transform": {
+                "rotate": [
+                    -3.141592502593994,
+                    -0.0015925486804917455,
+                    -3.141592502593994
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    6.922999858856201,
+                    0.3630000054836273,
+                    0.4690000116825104
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "Score",
+                "tag": "Untagged",
+                "uniqueId": 3452817326
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {
+                            "dig": 5
+                        },
+                        "priority": 0,
+                        "scriptName": "Numbers.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    6.2230000495910645,
+                    0.5586923360824585,
+                    -0.30578798055648804
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "TrianglePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "StageMoveIcon",
+                "tag": "Untagged",
+                "uniqueId": 3452817327
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "x": 0.0
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Rotate.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "StageMoveIcon.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    1.5700000524520874,
+                    0.0
+                ],
+                "scale": [
+                    0.5,
+                    1.0,
+                    0.5
+                ],
+                "translate": [
+                    -6.644999980926514,
+                    0.7416799068450928,
+                    -4.015999794006348
                 ]
             }
         }

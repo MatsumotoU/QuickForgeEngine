@@ -17,4 +17,7 @@ public:
 	virtual size_t FreeSize() const = 0;
 	// 型名を取得
 	virtual const char* GetTypeName() const = 0;
+
+	// プールを解放
+	virtual void Release() = 0;
 };

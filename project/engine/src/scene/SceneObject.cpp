@@ -146,6 +146,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	DebugLog("LoadScene: " + sceneNameCopy);
 #endif // _DEBUG
 	AssetManager* assetManager = AssetManager::GetInstance();
+	assetManager->GetGpuBufferPool()->ReleaseAllConstantBuffers();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	entityManager->ResetEntiry();
 	LuaScriptResourceManager::GetInstance()->Reset();

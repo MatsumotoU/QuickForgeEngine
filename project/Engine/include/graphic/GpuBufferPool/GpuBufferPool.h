@@ -35,6 +35,13 @@ public:
         return handle;
     }
 
+	/// すべての型のプールのバッファーを解放します
+	void ReleaseAllConstantBuffers() {
+		for (auto const& [key, val] : constantBufferPoolsMap_) {
+			val->Release();
+		}
+	}
+
 	/// 解放したいハンドルのバッファーを解放します
 	template<typename T>
 	void ReleaseConstantBuffer(uint32_t handle) {
