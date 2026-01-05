@@ -1,5 +1,6 @@
 local time = 3.0
 local isTransition = false
+sceneName = "GameScene.json"
 
 function Init()
 time = 3.0
@@ -13,7 +14,7 @@ function Update()
 
     if isTransition then
         if time < 0.0 then
-            LoadScene("GameScene.json")   
+            LoadScene(sceneName)   
         else 
             time = time - GetDeltaTime()
         end

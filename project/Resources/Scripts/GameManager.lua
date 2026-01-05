@@ -1,6 +1,7 @@
 local blockCount = 0
 local ballCount = 0
 local stage = 0
+local beatId = 0
 
 local isGameEnd = false
 local isShop = false
@@ -11,9 +12,12 @@ local gameEndTimer = 0.0
 local fanfareSE = QFE.Audio.LoadSound("fanfare.wav")
 local missSE = QFE.Audio.LoadSound("miss.wav")
 
+SetSceneGlobalData("Score",0)
+
 function Init()
     blockCount = CountEntityTag("block")
     ballCount = CountEntityTag("ball")
+    beatId = GetEntity("Pacemaker")
     gameEndTimer = 0.0
 end
 
@@ -42,14 +46,14 @@ function Update()
         blockCount = CountEntityTag("block")
         ballCount = CountEntityTag("ball")
 
-        if blockCount <= 0 then
+        if blockCount <= 0 and CountEntityTag("Enemy") <= 0 then
             isGameEnd = true
             isNextStage = true
             DebugLog("Play")
-            QFE.Audio.PlaySound(fanfareSE,false,0.5)
+            QFE.Audio.PlaySound(fanfareSE,false,0.2)
         end
 
-        if ballCount <= 0 then
+        if GetEntityScriptGlobal(beatId,"Pacemaker.lua","bpm") <= 0 then
             isGameEnd = true
             isNextStage = false
             QFE.Audio.PlaySound(missSE,false,0.5)

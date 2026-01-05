@@ -6,6 +6,10 @@ function Init()
 end
 
 function Update()
+    if CountEntityTag("StageStop") > 0 then
+        return
+    end
+
     local delta = GetDeltaTime()
     timer = timer + delta
 

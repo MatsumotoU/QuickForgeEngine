@@ -14,12 +14,23 @@ local isMeshHeart = false
 local strongBeatSE = QFE.Audio.LoadSound("StrongBeat.wav")
 local moveRotateY = 0.0
 
+local beatId = 0
+
 function Init()
     scaleX = transform.scale.x
     scaleY = transform.scale.z
+    beatId = GetEntity("Pacemaker")
 end
 
 function Update()
+    if GetEntityScriptGlobal(beatId,"Pacemaker.lua","bpm") <= 0 then
+        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,0.0,0.02)
+        transform.scale.y = QFE.Math.SimpleEaseIn(transform.scale.x,0.0,0.02)
+        transform.scale.z = QFE.Math.SimpleEaseIn(transform.scale.x,0.0,0.02)
+        transform.rotate.y =transform.rotate.y+1.0
+        return
+    end
+
     if damageInterval > 0.0 then
         damageInterval = damageInterval - GetDeltaTime()
         transform.scale.x = math.abs(math.sin(damageInterval*10.0)) 
@@ -166,5 +177,6 @@ end
 function OnNextStage()
     isStart = false
     transform.translate.x = 0.0
+    transform.translate.z = -4.0
     force.velocity.x = 0.0
 end

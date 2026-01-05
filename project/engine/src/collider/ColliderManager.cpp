@@ -111,6 +111,7 @@ void ColliderManager::SphereToSphereUpdate() {
 		SphereColliderData& colliderA = entityManager->GetComponent<SphereColliderData>(idA);
 		for (size_t j = i + 1; j < entityIds.size(); ++j) {
 			uint32_t idB = entityIds[j];
+			if (idA == idB) continue;
 			SphereColliderData& colliderB = entityManager->GetComponent<SphereColliderData>(idB);
 			if (isCollision(colliderA.sphere, colliderB.sphere)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
@@ -218,6 +219,7 @@ void ColliderManager::AABBToAABBUpdate() {
 		AABBColliderData& colliderA = entityManager->GetComponent<AABBColliderData>(idA);
 		for (size_t j = i + 1; j < entityIds.size(); ++j) {
 			uint32_t idB = entityIds[j];
+			if (idA == idB) continue;
 			AABBColliderData& colliderB = entityManager->GetComponent<AABBColliderData>(idB);
 			if (isCollision(colliderA.aabb, colliderB.aabb)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
@@ -368,6 +370,7 @@ void ColliderManager::SphereToAABBUpdate() {
 		SphereColliderData& sphereCollider = entityManager->GetComponent<SphereColliderData>(sphereId);
 		for (int j = 0; j < aabbEntityIds.size(); ++j) {
 			uint32_t aabbId = aabbEntityIds[j];
+			if (sphereId == aabbId) continue;
 			AABBColliderData& aabbCollider = entityManager->GetComponent<AABBColliderData>(aabbId);
 			if (isCollision(sphereCollider.sphere, aabbCollider.aabb)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
