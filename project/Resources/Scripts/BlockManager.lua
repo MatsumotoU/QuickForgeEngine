@@ -10,7 +10,7 @@ function Init()
     for y = 0,3 do
         for i = 0,4 do
             if y ==2 and i == 2 then
-                CreateEntity("EchoBlock.json",temp)
+                CreateEntity("LockOnEnemy.json",temp)
             else
                 CreateEntity("Block.json",temp)
             end
@@ -24,8 +24,6 @@ function Init()
 end
 
 function Update()
-    
-
     local c = CountEntityTag("block")
     if c <= 0 then
         local delta = GetDeltaTime()

@@ -17,6 +17,10 @@ function Init()
 end
 
 function Update()
+    if bpm <= 0.0 then
+        bpm = 0.0
+    end
+
     time = time + GetDeltaTime()
 
     -- 1拍の長さを計算 (60秒 / BPM)

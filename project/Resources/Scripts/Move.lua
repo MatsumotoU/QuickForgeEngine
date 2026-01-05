@@ -1,6 +1,7 @@
 local moveSpeed = 4.5
 local moveAcc = 0.7
 local dashSpeed = 12.0
+local damageInterval = 0.0
 
 local moveTime = 0.0
 local isStart = false
@@ -19,6 +20,12 @@ function Init()
 end
 
 function Update()
+    if damageInterval > 0.0 then
+        damageInterval = damageInterval - GetDeltaTime()
+        transform.scale.x = math.abs(math.sin(damageInterval*10.0)) 
+        transform.scale.z = math.abs(math.cos(damageInterval*10.0))
+    end
+
     if QFE.Input.GetKeyTrigger("Jump") then
         if CountEntityTag("card") <= 0 then
             isStart =true
@@ -61,20 +68,42 @@ function Update()
     end
 
     -- 移動
+    local isMove = false
     if QFE.Input.GetKeyPress("MoveRight") then
         if force.velocity.x < moveSpeed then
             force.velocity.x = force.velocity.x + moveAcc
         end
         moveTime = moveTime + 1.0
         moveRotateY = 0.05
-    elseif QFE.Input.GetKeyPress("MoveLeft") then
+        isMove = true
+    end
+    if QFE.Input.GetKeyPress("MoveLeft") then
         if force.velocity.x > -moveSpeed then
             force.velocity.x = force.velocity.x - moveAcc
         end
         moveTime = moveTime + 1.0
         moveRotateY = -0.05
-    else
+        isMove = true
+    end
+    if QFE.Input.GetKeyPress("MoveDown") then
+        if force.velocity.z > -moveSpeed *0.5 then
+            force.velocity.z = force.velocity.z - moveAcc*0.5
+        end
+        moveTime = moveTime + 1.0
+        moveRotateY = -0.05
+        isMove = true
+    end
+    if QFE.Input.GetKeyPress("MoveUp") then
+        if force.velocity.z < moveSpeed * 0.5 then
+            force.velocity.z = force.velocity.z + moveAcc*0.5
+        end
+        moveTime = moveTime + 1.0
+        moveRotateY = -0.05
+        isMove = true
+    end
+    if not isMove then
         force.velocity.x = force.velocity.x *0.8
+        force.velocity.z = force.velocity.z *0.8
         moveRotateY = 0.0
     end
 
@@ -85,10 +114,6 @@ function Update()
 
     if transform.translate.y ~= 0.0 then
         transform.translate.y = 0.0
-    end
-
-    if transform.translate.z ~= -4.5 then
-        transform.translate.z = -4.5
     end
 
 
@@ -105,7 +130,26 @@ function OnCollisionEnter(id,obj)
         local x = (GetTransform(id).translate.x - transform.translate.x)
         transform.rotate.y = x * 10.0;
     end
+end
 
+function OnCollisionStay(id,obj)
+    if obj.tag == "enemyBullet" or obj.tag == "Enemy" then
+        if damageInterval > 0.0 then
+            return
+        end
+
+        local pacemakerId = GetEntity("Pacemaker")
+        if pacemakerId ~= -1 then
+            local currentBpm = GetEntityScriptGlobal(pacemakerId, "Pacemaker.lua", "bpm")
+            if currentBpm then
+                SetEntityScriptGlobal(pacemakerId, "Pacemaker.lua", "bpm", currentBpm - 30)
+                DebugLog("Player Hit! BPM Reduced to: " .. tostring(currentBpm - 30))
+                damageInterval = 2.5
+            end
+        end
+        force.velocity.x = (transform.translate.x - GetTransform(id).translate.x)*30.0
+        force.velocity.z = (transform.translate.z - GetTransform(id).translate.z)*30.0
+    end
 end
 
 function OnStrongBeat()

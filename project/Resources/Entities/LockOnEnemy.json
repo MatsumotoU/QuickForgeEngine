@@ -1,0 +1,72 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            1.399999976158142,
+            -0.2288191318511963,
+            1.0,
+            1.0,
+            1.0,
+            0.5
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": false,
+        "isStatic": true,
+        "isTrigger": false
+    },
+    "ModelHandle": {
+        "color": [
+            0.3005181550979614,
+            0.02647051401436329,
+            0.02647051401436329,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "LockOnEnemy",
+        "tag": "enemy",
+        "uniqueId": 100000
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "shotInterval": 2.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "EnemyShot.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "hp": 3
+                },
+                "priority": 0,
+                "scriptName": "Block.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            0.5
+        ],
+        "translate": [
+            1.399999976158142,
+            -0.2288191318511963,
+            1.0
+        ]
+    }
+}

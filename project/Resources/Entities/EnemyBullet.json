@@ -1,0 +1,62 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.5,
+            0.5
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": false,
+        "isStatic": false,
+        "isTrigger": true
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "EnemyBullet",
+        "tag": "enemyBullet",
+        "uniqueId": 3452817489
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "moveSpeed": 3.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "EnemyBullet.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

@@ -13,40 +13,12 @@
             "tag2": "bullet"
         },
         {
-            "tag1": "slowArea",
-            "tag2": "bullet"
+            "tag1": "ball",
+            "tag2": "enemyBullet"
         },
         {
-            "tag1": "slowArea",
-            "tag2": "player"
-        },
-        {
-            "tag1": "slowArea",
-            "tag2": "Enemy"
-        },
-        {
-            "tag1": "EnemyBullet",
-            "tag2": "Enemy"
-        },
-        {
-            "tag1": "EnemyBullet",
-            "tag2": "bullet"
-        },
-        {
-            "tag1": "bigBullet",
-            "tag2": "EnemyBullet"
-        },
-        {
-            "tag1": "bigBullet",
-            "tag2": "bigBullet"
-        },
-        {
-            "tag1": "bigBullet",
-            "tag2": "player"
-        },
-        {
-            "tag1": "bigBullet",
-            "tag2": "Wall"
+            "tag1": "enemy",
+            "tag2": "enemyBullet"
         }
     ]
 }

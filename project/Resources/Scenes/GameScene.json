@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.8024911284446716,
-                    0.06544402986764908,
+                    0.720788836479187,
+                    0.2029445618391037,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -1.290924072265625,
-                    20.426328659057617,
-                    -19.69744873046875
+                    -1.939122200012207,
+                    8.451568603515625,
+                    -9.423396110534668
                 ]
             }
         },
@@ -103,6 +103,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": false,
                 "isTrigger": false
             },
@@ -186,6 +187,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -233,6 +235,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -274,12 +277,13 @@
                     -9.699999809265137,
                     0.0,
                     0.0,
-                    -9.050000190734863,
+                    9.050000190734863,
                     1.2000000476837158,
                     14.399999618530273
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -669,6 +673,7 @@
                 ],
                 "colliderLayer": 255,
                 "eventColliderLayer": 255,
+                "isDraw": true,
                 "isStatic": true,
                 "isTrigger": false
             },
@@ -1049,6 +1054,98 @@
                     -6.644999980926514,
                     0.7416799068450928,
                     -4.015999794006348
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "BulletManager",
+                "tag": "Untagged",
+                "uniqueId": 100001
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BulletManager.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.12858319282531738,
+                    0.10373431444168091,
+                    0.14507770538330078,
+                    1.0
+                ],
+                "modelName": "cicle.obj"
+            },
+            "SceneObjectData": {
+                "name": "TransformAria",
+                "tag": "Untagged",
+                "uniqueId": 3452817328
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Follow.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {
+                            "speed": 3.0,
+                            "y": 1.0
+                        },
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Rotate.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.5,
+                    1.0,
+                    2.5
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    -4.047946929931641
                 ]
             }
         }

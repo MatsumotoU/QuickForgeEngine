@@ -1,6 +1,7 @@
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetGetterBase.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
 
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/assets/Sprite/Data/SpriteData.h"
@@ -139,5 +140,43 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 			return em->GetComponent<SceneObjectData>(entityId).name;
 		}
 		return std::string{};
+		});
+
+	luaState->set_function("SetSceneGlobalData", [](const std::string& key, const sol::object& value) {
+		auto& globalData = SceneManager::GetInstance()->GetSceneGlobalData();
+		if (value.is<int>()) {
+			globalData[key] = value.as<int>();
+		}
+		else if (value.is<double>()) {
+			globalData[key] = value.as<double>();
+		}
+		else if (value.is<std::string>()) {
+			globalData[key] = value.as<std::string>();
+		}
+		else if (value.is<bool>()) {
+			globalData[key] = value.as<bool>();
+		}
+		else {
+			globalData[key] = nullptr;
+		}
+		});
+
+	luaState->set_function("GetSceneGlobalData", [](const std::string& key, sol::this_state ts) {
+		auto& globalData = SceneManager::GetInstance()->GetSceneGlobalData();
+		if (globalData.contains(key)) {
+			if (globalData[key].is_number_integer()) {
+				return sol::object(sol::make_object(ts, globalData[key].get<int>()));
+			}
+			else if (globalData[key].is_string()) {
+				return sol::object(sol::make_object(ts, globalData[key].get<std::string>()));
+			}
+			else if (globalData[key].is_boolean()) {
+				return sol::object(sol::make_object(ts, globalData[key].get<bool>()));
+			}
+			else if (globalData[key].is_number_float()) {
+				return sol::object(sol::make_object(ts, globalData[key].get<double>()));
+			}
+		}
+		return sol::object(sol::nil);
 		});
 }

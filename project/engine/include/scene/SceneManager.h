@@ -51,6 +51,8 @@ public:
 	uint32_t AddEntity(const std::string& entityName);
 	uint32_t RunTimeAddEntity(const std::string& entityName);
 
+	nlohmann::json& GetSceneGlobalData() { return sceneGlobalData_; }
+
 	void StartScript();
 	void StopScript();
 
@@ -64,6 +66,7 @@ private:
 	bool isFirstLoadScene_;
 	bool isRequestRunTimeLoadScene_;
 	nlohmann::json sceneConfig_;
+	nlohmann::json sceneGlobalData_;
 	std::unique_ptr<IScene> currentScene_;
 	std::unique_ptr<IScene> nextScene_;
 	

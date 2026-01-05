@@ -23,6 +23,13 @@ sphereCollider = {}
 --[ GLOBAL FUNCTIONS ]
 ---
 
+---@param key string
+function GetSceneGlobalData(key)end
+
+---@param key string
+---@param value any
+function SetSceneGlobalData(key,value)end
+
 ---@param entityId number
 ---@return string
 function GetEntityTag(entityId)end
