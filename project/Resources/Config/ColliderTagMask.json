@@ -19,6 +19,10 @@
         {
             "tag1": "enemy",
             "tag2": "enemyBullet"
+        },
+        {
+            "tag1": "ball",
+            "tag2": "ball"
         }
     ]
 }
