@@ -46,7 +46,7 @@ function Update()
         blockCount = CountEntityTag("block")
         ballCount = CountEntityTag("ball")
 
-        if blockCount <= 0 and CountEntityTag("Enemy") <= 0 then
+        if blockCount <= 0 and CountEntityTag("enemy") <= 0 then
             isGameEnd = true
             isNextStage = true
             DebugLog("Play")

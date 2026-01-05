@@ -22,5 +22,8 @@ function OnCollisionEnter(id, obj)
         isHit = true
     end
 
-    delete()
+    if obj.tag ~= "enemy" then
+        delete()
+    end
+    
 end

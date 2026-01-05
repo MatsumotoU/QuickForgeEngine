@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.720788836479187,
-                    0.2029445618391037,
+                    1.4407875537872314,
+                    0.04544322192668915,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -1.939122200012207,
-                    8.451568603515625,
-                    -9.423396110534668
+                    -0.19556128978729248,
+                    32.925628662109375,
+                    -4.300457954406738
                 ]
             }
         },
@@ -1158,46 +1158,24 @@
             }
         },
         {
-            "AABBColliderData": {
-                "aabb": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.5,
-                    0.5,
-                    0.5
-                ],
-                "colliderLayer": 255,
-                "eventColliderLayer": 255,
-                "isDraw": false,
-                "isStatic": false,
-                "isTrigger": true
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "modelName": "Box1x1.obj"
-            },
             "SceneObjectData": {
-                "name": "EnemyBullet",
-                "tag": "enemyBullet",
-                "uniqueId": 3452817489
+                "name": "BGMPlayer",
+                "tag": "Untagged",
+                "uniqueId": 3452818198
             },
             "ScriptHandle": {
                 "scriptHandles": [
                     {
                         "boolParams": {},
                         "floatParams": {
-                            "moveSpeed": 3.0
+                            "vol": 0.20000000298023224
                         },
                         "intParams": {},
                         "priority": 0,
-                        "scriptName": "EnemyBullet.lua",
-                        "stringParams": {}
+                        "scriptName": "BGMPlayer.lua",
+                        "stringParams": {
+                            "bgmName": "battle.mp3"
+                        }
                     }
                 ]
             },
@@ -1208,9 +1186,9 @@
                     0.0
                 ],
                 "scale": [
-                    0.30000001192092896,
-                    0.30000001192092896,
-                    0.30000001192092896
+                    1.0,
+                    1.0,
+                    1.0
                 ],
                 "translate": [
                     0.0,

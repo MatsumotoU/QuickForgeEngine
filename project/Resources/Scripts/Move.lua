@@ -12,6 +12,7 @@ local isNearBall = true
 local isMeshHeart = false
 
 local strongBeatSE = QFE.Audio.LoadSound("StrongBeat.wav")
+local damageSE = QFE.Audio.LoadSound("Bassdrum.wav")
 local moveRotateY = 0.0
 
 local beatId = 0
@@ -148,6 +149,7 @@ function OnCollisionStay(id,obj)
         if damageInterval > 0.0 then
             return
         end
+        QFE.Audio.PlaySound(damageSE,false,0.8)
 
         local pacemakerId = GetEntity("Pacemaker")
         if pacemakerId ~= -1 then

@@ -23,6 +23,10 @@
         {
             "tag1": "ball",
             "tag2": "ball"
+        },
+        {
+            "tag1": "enemyBullet",
+            "tag2": "enemyBullet"
         }
     ]
 }

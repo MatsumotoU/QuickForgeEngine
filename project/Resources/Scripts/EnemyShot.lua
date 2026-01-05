@@ -1,5 +1,8 @@
 shotInterval = 2.0
 timer = 0.0
+bulletName = "EnemyBullet.json"
+
+local shotSE = QFE.Audio.LoadSound("byau.mp3")
 
 function Init()
     timer = 0.0
@@ -13,6 +16,9 @@ function Update()
     local delta = GetDeltaTime()
     timer = timer + delta
 
+    local t = timer / shotInterval
+    transform.rotate.x = t * t
+
     if timer >= shotInterval then
         timer = 0.0
         Shoot()
@@ -20,6 +26,8 @@ function Update()
 end
 
 function Shoot()
+    QFE.Audio.PlaySound(shotSE,false,0.3)
+
     -- Get Player Position
     local playerID = GetEntity("PlayerBar")
     if playerID == -1 then
@@ -37,7 +45,7 @@ function Shoot()
     dir:Normalize()
 
     -- Spawn Bullet
-    local bulletID = SimpleCreateEntity("EnemyBullet.json")
+    local bulletID = SimpleCreateEntity(bulletName)
     
     -- Set Bullet Position
     SetTranslate(bulletID, myPos)
