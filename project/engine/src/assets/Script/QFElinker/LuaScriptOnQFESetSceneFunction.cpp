@@ -40,4 +40,20 @@ void QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(sol::state* luaState) {
 	luaState->set_function("ChangeMesh", [](uint32_t id, const std::string& meshName) {
 		SceneManager::GetInstance()->ChangeEntityMesh(id, meshName);
 		});
+
+	luaState->set_function("DeleteAllTagEntity",[](const std::string& entityTag) {
+		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		std::vector<uint32_t> entitiesToDelete;
+		if (entityManager->HasComponentStrage<SceneObjectData>() == false) {
+			return;
+		}
+		for (const auto& [id, sceneObjectData] : entityManager->GetComponentStrage<SceneObjectData>()) {
+			if (sceneObjectData.tag == entityTag) {
+				entitiesToDelete.push_back(id);
+			}
+		}
+		for (const auto& id : entitiesToDelete) {
+			SceneManager::GetInstance()->DeleteEntity(id);
+		}
+	});
 }

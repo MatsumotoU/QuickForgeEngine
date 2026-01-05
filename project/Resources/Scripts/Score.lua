@@ -1,9 +1,9 @@
 function Init()
-    
+    DebugLog(GetSceneGlobalData("Score"))
 end
 
 function Update()
-
+    DebugLog(GetSceneGlobalData("Score"))
 end
 
 function UpdateScore()

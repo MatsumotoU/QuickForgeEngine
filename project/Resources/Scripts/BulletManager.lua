@@ -5,3 +5,7 @@ end
 function Update()
     -- Logic for managing bullets can go here (e.g. pooling or cleanup)
 end
+
+function OnNextStage()
+    DeleteAllTagEntity("enemyBullet")
+end

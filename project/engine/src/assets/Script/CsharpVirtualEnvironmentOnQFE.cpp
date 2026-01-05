@@ -12,39 +12,72 @@
 #endif // _DEBUG
 
 void CsharpVirtualEnvironmentOnQFE::Initialize() {
-	// 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝代せ繧貞叙蠕・
-	char path[MAX_PATH];
-	GetModuleFileNameA(NULL, path, MAX_PATH);
+	wchar_t path[MAX_PATH];
+	GetModuleFileNameW(NULL, path, MAX_PATH);
 
-	// 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝・ぅ繝ｬ繧ｯ繝医Μ繧貞叙蠕・
+#ifdef _DEBUG
+	DebugLog("Initializing Mono JIT...");
+#endif // _DEBUG
+
 	std::filesystem::path exeDir(path);
 	exeDir = exeDir.parent_path();
 
-	// Mono縺ｮlib縺ｨetc繝・ぅ繝ｬ繧ｯ繝医Μ縺ｸ縺ｮ繝代せ繧呈ｧ狗ｯ・(exe縺ｨ蜷後§髫主ｱ､縺ｮmono繝輔か繝ｫ繝蜀・
+#ifdef _DEBUG
+	DebugLog("Executable Directory: " + exeDir.string());
+#endif // _DEBUG
+
 	std::filesystem::path monoLibPath = exeDir / "mono" / "lib";
 	std::filesystem::path monoEtcPath = exeDir / "mono" / "etc";
 
-	// Mono繝ｩ繝ｳ繧ｿ繧､繝縺ｫ繝ｩ繧､繝悶Λ繝ｪ縺ｨ險ｭ螳壹ヵ繧｡繧､繝ｫ縺ｮ蝣ｴ謇繧呈蕗縺医ｋ
-	mono_set_dirs(monoLibPath.string().c_str(), monoEtcPath.string().c_str());
+#ifdef _DEBUG
+	DebugLog("Mono Lib Path: " + monoLibPath.string());
+	DebugLog("Mono Etc Path: " + monoEtcPath.string());
+#endif // _DEBUG
 
-	// Mono縺ｮ繝・ヰ繝・ぎ繧呈怏蜉ｹ蛹・
+	try
+	{
+		mono_set_dirs(monoLibPath.string().c_str(), monoEtcPath.string().c_str());
+	}
+	catch (const std::exception& e)
+	{
+#ifdef _DEBUG
+		DebugLog(std::string("Failed to set Mono directories: ") + e.what());
+#endif // _DEBUG
+
+	}
+
 #ifdef _DEBUG
 	const char* options[] = {
 		"--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555,suspend=n"
 	};
 	mono_jit_parse_options(sizeof(options) / sizeof(char*), (char**)options);
+
+	DebugLog("Mono JIT options set for debugging.");
 #endif // _DEBUG
 
-	// 繝ｫ繝ｼ繝医ラ繝｡繧､繝ｳ繧貞・譛溷喧 (繝励Ο繧ｰ繝ｩ繝邨ゆｺ・凾縺ｾ縺ｧ菫晄戟)
-	root_domain_ = mono_jit_init("QuickForgeRootDomain");
+	try
+	{
+		root_domain_ = mono_jit_init("QuickForgeRootDomain");
+	}
+	catch (const std::exception& e)
+	{
+#ifdef _DEBUG
+		DebugLog(std::string("Failed to initialize Mono JIT: ") + e.what());
+#endif // _DEBUG
+
+	}
+	
 	if (!root_domain_) {
 #ifdef _DEBUG
 		DebugLog("Failed to initialize Mono JIT.");
 #endif // _DEBUG
 		return;
 	}
-
-	// 譛蛻昴・繧｢繧ｻ繝ｳ繝悶Μ繝ｭ繝ｼ繝峨ｒ螳溯｡・
+	else {
+#ifdef _DEBUG
+		DebugLog("Succsess to initialize Mono JIT.");
+#endif // _DEBUG
+	}
 	ReloadAssembly();
 }
 
@@ -120,8 +153,8 @@ void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
 	}
 
     // 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝代せ繧貞叙蠕・
-    char path[MAX_PATH];
-    GetModuleFileNameA(NULL, path, MAX_PATH);
+    wchar_t path[MAX_PATH];
+    GetModuleFileNameW(NULL, path, MAX_PATH);
 
     // 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝・ぅ繝ｬ繧ｯ繝医Μ繧貞叙蠕・
     std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
@@ -377,8 +410,8 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 		std::filesystem::path srcPdbPath = scriptsBuildDir + "CSharpScripts.pdb";
 
 		// 2. 繧ｳ繝斐・蜈医・繝代せ繧貞ｮ夂ｾｩ: 繧ｨ繝ｳ繧ｸ繝ｳ縺ｮ螳溯｡後ヵ繧｡繧､繝ｫ縺後≠繧九ョ繧｣繝ｬ繧ｯ繝医Μ
-		char exePath[MAX_PATH];
-		GetModuleFileNameA(NULL, exePath, MAX_PATH);
+		wchar_t exePath[MAX_PATH];
+		GetModuleFileNameW(NULL, exePath, MAX_PATH);
 		std::filesystem::path destDir = std::filesystem::path(exePath).parent_path();
 
 		// 3. 繝輔ぃ繧､繝ｫ繧偵さ繝斐・・域里蟄倥・繝輔ぃ繧､繝ｫ繧剃ｸ頑嶌縺搾ｼ・

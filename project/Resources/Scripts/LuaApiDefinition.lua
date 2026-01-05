@@ -23,6 +23,9 @@ sphereCollider = {}
 --[ GLOBAL FUNCTIONS ]
 ---
 
+---@param tagName string
+function DeleteAllTagEntity(tagName)end
+
 ---@param key string
 function GetSceneGlobalData(key)end
 
