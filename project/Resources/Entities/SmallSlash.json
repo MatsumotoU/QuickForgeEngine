@@ -1,0 +1,47 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "cicle.obj"
+    },
+    "SceneObjectData": {
+        "name": "SmallSlash",
+        "tag": "Untagged",
+        "uniqueId": 3452820005
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "speed": 0.5
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "ScaleDelete.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            2.0,
+            1.0,
+            0.20000000298023224
+        ],
+        "translate": [
+            0.0,
+            13.899999618530273,
+            0.0
+        ]
+    }
+}

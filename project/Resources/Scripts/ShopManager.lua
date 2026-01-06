@@ -8,12 +8,10 @@ function Init()
     selectId = 1
     oldSelectNum = selectId
     -- カード名登録
-    cardNames[1] = "BrankCard.json"
-    cardNames[2] = "BpmCard.json"
-    cardNames[3] = "BallCard.json"
+    cardNames[1] = "BpmCard.json"
+    cardNames[2] = "BallCard.json"
 
     -- 生成
-
     tempT.translate = transform.translate
     tempT.translate.x = tempT.translate.x-220.0
     for i = 1, 3, 1 do

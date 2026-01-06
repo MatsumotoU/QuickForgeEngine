@@ -114,6 +114,14 @@
                         "priority": 0,
                         "scriptName": "titleSceneTransition.lua",
                         "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "ScoreReset.lua",
+                        "stringParams": {}
                     }
                 ]
             },

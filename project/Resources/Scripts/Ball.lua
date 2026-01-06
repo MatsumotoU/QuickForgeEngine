@@ -24,6 +24,10 @@ function Update()
     local delta = GetDeltaTime()
     timer = timer + delta
 
+    if speed > 10.0 then
+        speed = 10.0
+    end
+
     speed = QFE.Math.SimpleEaseIn(speed,baseSpeed,0.01)
     transform.rotate.y = transform.rotate.y + (speed *dirX* 0.05)
 
@@ -64,6 +68,8 @@ end
 
 function OnCollisionEnter(id,obj)
     QFE.Audio.PlaySound(wallHitSE,false,0.2)
+    local a = SimpleCreateEntity("HitCircleParticle.json")
+    SetTranslate(a,transform.translate)
     --EchoForAudio(transform.translate,wallHitSE,0.2)
 end
 

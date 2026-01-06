@@ -58,11 +58,15 @@ function Update()
         if not isMeshHeart then
             ChangeMesh(GetThisEntityId(),"heart.obj")
             isMeshHeart = true
+            local a = SimpleCreateEntity("BigHitCircleParticle.json")
+            SetTranslate(a,transform.translate)
         end        
     else
         if isMeshHeart then
             ChangeMesh(GetThisEntityId(),"Box1x1.obj")
             isMeshHeart = false
+            local a = SimpleCreateEntity("BigHitCircleParticle.json")
+            SetTranslate(a,transform.translate)
         end
     end
 
@@ -155,13 +159,16 @@ function OnCollisionStay(id,obj)
         if pacemakerId ~= -1 then
             local currentBpm = GetEntityScriptGlobal(pacemakerId, "Pacemaker.lua", "bpm")
             if currentBpm then
-                SetEntityScriptGlobal(pacemakerId, "Pacemaker.lua", "bpm", currentBpm - 30)
+                SetEntityScriptGlobal(pacemakerId, "Pacemaker.lua", "bpm", currentBpm - 10)
                 DebugLog("Player Hit! BPM Reduced to: " .. tostring(currentBpm - 30))
                 damageInterval = 2.5
             end
         end
-        force.velocity.x = (transform.translate.x - GetTransform(id).translate.x)*30.0
-        force.velocity.z = (transform.translate.z - GetTransform(id).translate.z)*30.0
+        force.velocity.x = (transform.translate.x - GetTransform(id).translate.x)*20.0
+        force.velocity.z = (transform.translate.z - GetTransform(id).translate.z)*20.0
+
+        local a = SimpleCreateEntity("BigHitCircleParticle.json")
+        SetTranslate(a,transform.translate)
     end
 end
 
@@ -181,4 +188,7 @@ function OnNextStage()
     transform.translate.x = 0.0
     transform.translate.z = -4.0
     force.velocity.x = 0.0
+    force.velocity.z = 0.0
+    force.acceleration.x = 0.0
+    force.acceleration.z = 0.0
 end
