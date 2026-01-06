@@ -12,9 +12,8 @@ local gameEndTimer = 0.0
 local fanfareSE = QFE.Audio.LoadSound("fanfare.wav")
 local missSE = QFE.Audio.LoadSound("miss.wav")
 
-SetSceneGlobalData("Score",0)
-
 function Init()
+    SetSceneGlobalData("Score",0)
     blockCount = CountEntityTag("block")
     ballCount = CountEntityTag("ball")
     beatId = GetEntity("Pacemaker")

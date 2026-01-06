@@ -33,6 +33,7 @@ function OnCollisionEnter(id,obj)
     transform.scale.z = scaleZ * 1.3
     if hp <= 0 then
         SetSceneGlobalData("Score",GetSceneGlobalData("Score") + 100 * baseHp)
+        SetScore(GetScore() + 100 * baseHp)
         RunAllFunction("UpdateScore")
         destroy()
     end

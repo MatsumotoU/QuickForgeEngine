@@ -1,11 +1,12 @@
 function Init()
-    DebugLog(GetSceneGlobalData("Score"))
+    DebugLog(GetScore())
+    UpdateScore()
 end
 
 function Update()
-    DebugLog(GetSceneGlobalData("Score"))
+    
 end
 
 function UpdateScore()
-    SetEntityScriptGlobal(this.GetEntityId(),"Numbers.lua","num",GetSceneGlobalData("Score"))
+    SetEntityScriptGlobal(this.GetEntityId(),"Numbers.lua","num",GetScore())
 end

@@ -52,6 +52,8 @@ public:
 	uint32_t RunTimeAddEntity(const std::string& entityName);
 
 	nlohmann::json& GetSceneGlobalData() { return sceneGlobalData_; }
+	void SetScore(int score) { score_ = score; }
+	int GetScore() const { return score_; }
 
 	void StartScript();
 	void StopScript();
@@ -63,6 +65,7 @@ public:
 	float postDrawTime_;
 
 private:
+	int score_;
 	bool isFirstLoadScene_;
 	bool isRequestRunTimeLoadScene_;
 	nlohmann::json sceneConfig_;

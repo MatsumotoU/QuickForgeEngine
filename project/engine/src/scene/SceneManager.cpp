@@ -42,6 +42,7 @@ void SceneManager::Initalize() {
 #ifdef _DEBUG
 	initTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
 #endif // _DEBUG
+	score_ = 0;
 }
 
 void SceneManager::Update() {

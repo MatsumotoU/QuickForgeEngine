@@ -142,6 +142,13 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 		return std::string{};
 		});
 
+	luaState->set_function("SetScore", [](int32_t score) {
+		SceneManager::GetInstance()->SetScore(score);
+		});
+	luaState->set_function("GetScore", []() {
+		return SceneManager::GetInstance()->GetScore();
+		});
+
 	luaState->set_function("SetSceneGlobalData", [](const std::string& key, const sol::object& value) {
 		auto& globalData = SceneManager::GetInstance()->GetSceneGlobalData();
 		if (value.is<int>()) {
@@ -163,6 +170,7 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 
 	luaState->set_function("GetSceneGlobalData", [](const std::string& key, sol::this_state ts) {
 		auto& globalData = SceneManager::GetInstance()->GetSceneGlobalData();
+
 		if (globalData.contains(key)) {
 			if (globalData[key].is_number_integer()) {
 				return sol::object(sol::make_object(ts, globalData[key].get<int>()));
