@@ -5,6 +5,9 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/image.h>
 
+#include <locale>
+#include <codecvt>
+
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/assets/Script/QFElinker/CsharpOnQFELinker.h"
 #ifdef _DEBUG
@@ -29,6 +32,11 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	std::filesystem::path monoLibPath = exeDir / "mono" / "lib";
 	std::filesystem::path monoEtcPath = exeDir / "mono" / "etc";
 
+	// UTF-8変換
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+	std::string monoLibPathUtf8 = conv.to_bytes(monoLibPath.wstring());
+	std::string monoEtcPathUtf8 = conv.to_bytes(monoEtcPath.wstring());
+
 #ifdef _DEBUG
 	DebugLog("Mono Lib Path: " + monoLibPath.string());
 	DebugLog("Mono Etc Path: " + monoEtcPath.string());
@@ -36,7 +44,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 
 	try
 	{
-		mono_set_dirs(monoLibPath.string().c_str(), monoEtcPath.string().c_str());
+		mono_set_dirs(monoLibPathUtf8.c_str(), monoEtcPathUtf8.c_str());
 	}
 	catch (const std::exception& e)
 	{
