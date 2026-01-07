@@ -205,6 +205,7 @@
     <ClInclude Include="assimp\include\assimp\vector3.inl" />
     <ClInclude Include="assimp\include\assimp\version.h" />
     <ClInclude Include="imgui\ImGuizmo-1.83\ImGuizmo.h" />
+    <ClInclude Include="imgui\ImGuizmo-1.83\ImSequencer.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui-knobs-main\imgui-knobs.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -388,6 +389,7 @@
     <ClCompile Include="DirectXTex\DirectXTexUtil.cpp" />
     <ClCompile Include="DirectXTex\DirectXTexWIC.cpp" />
     <ClCompile Include="imgui\ImGuizmo-1.83\ImGuizmo.cpp" />
+    <ClCompile Include="imgui\ImGuizmo-1.83\ImSequencer.cpp" />
     <ClCompile Include="imgui\imgui-knobs-main\imgui-knobs.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />

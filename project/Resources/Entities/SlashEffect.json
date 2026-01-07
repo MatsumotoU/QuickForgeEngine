@@ -1,0 +1,45 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "WhitePlate.obj"
+    },
+    "SceneObjectData": {
+        "name": "SlashEffect",
+        "tag": "Untagged",
+        "uniqueId": 3452818281
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "SlashEffect.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            10.0,
+            1.0,
+            0.5
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            -1.5866159200668335
+        ]
+    }
+}

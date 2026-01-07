@@ -167,10 +167,9 @@ void HierarchyView::DrawEntityList() {
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("Delete")) {
-				// 蜑企勁蜃ｦ逅・
-				AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(id);
+				SceneManager::GetInstance()->DeleteEntity(id);
 
-				// 驕ｸ謚樔ｸｭ縺縺｣縺溘ｉ驕ｸ謚櫁ｧ｣髯､
+				// 選んでいるEntityが消された場合、選択解除
 				if (selectedEntityId_ == id) {
 					selectedEntityId_ = 0;
 				}

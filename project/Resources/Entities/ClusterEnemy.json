@@ -1,0 +1,74 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            1.399999976158142,
+            -0.2288191318511963,
+            1.0,
+            1.0,
+            1.0,
+            0.5
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": false,
+        "isStatic": true,
+        "isTrigger": false
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.5,
+            0.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "ClusterEnemy",
+        "tag": "enemy",
+        "uniqueId": 100000
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "shotInterval": 3.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "EnemyShot.lua",
+                "stringParams": {
+                    "bulletName": "ClusterBullet.json"
+                }
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "hp": 5
+                },
+                "priority": 0,
+                "scriptName": "Block.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            0.5
+        ],
+        "translate": [
+            1.399999976158142,
+            -0.2288191318511963,
+            1.0
+        ]
+    }
+}

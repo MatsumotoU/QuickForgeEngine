@@ -62,3 +62,20 @@ const D3D12_VERTEX_BUFFER_VIEW* ModelVertexResourceManager::GetVertexBufferView(
 	assert(handle < modelVertexBuffers_.size() && "Model not found");
 	return modelVertexBuffers_.at(handle).GetVertexBufferView();
 }
+
+uint32_t ModelVertexResourceManager::GetModelHandle(const std::string& modelName) const {
+    auto it = modelHandleMap_.find(modelName);
+    if (it != modelHandleMap_.end()) {
+        return it->second;
+    }
+    assert(false && "Model not found");
+    return 0;
+}
+
+bool ModelVertexResourceManager::HasModelHandle(const std::string& modelName) const {
+    auto it = modelHandleMap_.find(modelName);
+    if (it != modelHandleMap_.end()) {
+        return true;
+    }
+    return false;
+}

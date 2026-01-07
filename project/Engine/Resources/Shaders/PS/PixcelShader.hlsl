@@ -76,7 +76,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     float noise = rand(pixelatedUV * textureSize + gOffsetBuffer.time) * 0.03 - 0.015;
     
     color.rgb = color.rgb * scan + noise;
-    color.rgb = QuantizeColor(color.rgb, 32);
+    color.rgb = QuantizeColor(color.rgb, 64);
 
     output.color = saturate(color);
 

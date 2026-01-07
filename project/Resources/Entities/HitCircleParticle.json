@@ -1,0 +1,45 @@
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "cicle.obj"
+    },
+    "SceneObjectData": {
+        "name": "HitCircleParticle",
+        "tag": "Untagged",
+        "uniqueId": 3452818203
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "ScaleDelete.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            2.0,
+            1.0,
+            2.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            -1.860917568206787
+        ]
+    }
+}

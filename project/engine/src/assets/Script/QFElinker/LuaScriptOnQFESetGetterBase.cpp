@@ -1,6 +1,7 @@
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetGetterBase.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
 
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/assets/Sprite/Data/SpriteData.h"
@@ -46,6 +47,27 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 	luaState->set_function("GetTransform", [](uint32_t entityId) {
 		auto* em = AssetManager::GetInstance()->GetEntityManager();
 		return em->HasComponent<Transform>(entityId) ? &em->GetComponent<Transform>(entityId) : nullptr;
+		});
+	luaState->set_function("SetTranslate", [](uint32_t entityId, Vector3 translate) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<Transform>(entityId)) {
+			Transform& t = em->GetComponent<Transform>(entityId);
+			t.translate = translate;
+		}
+		});
+	luaState->set_function("SetRotate", [](uint32_t entityId, Vector3 rotate) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<Transform>(entityId)) {
+			Transform& t = em->GetComponent<Transform>(entityId);
+			t.rotate = rotate;
+		}
+		});
+	luaState->set_function("SetScale", [](uint32_t entityId, Vector3 scale) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<Transform>(entityId)) {
+			Transform& t = em->GetComponent<Transform>(entityId);
+			t.scale = scale;
+		}
 		});
 	luaState->set_function("GetSceneObjectData", [](uint32_t entityId) {
 		auto* em = AssetManager::GetInstance()->GetEntityManager();
@@ -95,5 +117,74 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 		if (em->HasComponent<AABBColliderData>(entityId)) {
 			em->GetComponent<AABBColliderData>(entityId).isTrigger = isTrigger;
 		}
+		});
+
+	luaState->set_function("GetEntityTag", [](uint32_t entityId) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<SceneObjectData>(entityId)) {
+			return em->GetComponent<SceneObjectData>(entityId).tag;
+		}
+		return std::string{};
+		});
+
+	luaState->set_function("SetEntityTag", [](uint32_t entityId, const std::string& tag) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<SceneObjectData>(entityId)) {
+			em->GetComponent<SceneObjectData>(entityId).tag = tag;
+		}
+		});
+
+	luaState->set_function("GetEntityName", [](uint32_t entityId) {
+		auto* em = AssetManager::GetInstance()->GetEntityManager();
+		if (em->HasComponent<SceneObjectData>(entityId)) {
+			return em->GetComponent<SceneObjectData>(entityId).name;
+		}
+		return std::string{};
+		});
+
+	luaState->set_function("SetScore", [](int32_t score) {
+		SceneManager::GetInstance()->SetScore(score);
+		});
+	luaState->set_function("GetScore", []() {
+		return SceneManager::GetInstance()->GetScore();
+		});
+
+	luaState->set_function("SetSceneGlobalData", [](const std::string& key, const sol::object& value) {
+		auto& globalData = SceneManager::GetInstance()->GetSceneGlobalData();
+		if (value.is<int>()) {
+			globalData[key] = value.as<int>();
+		}
+		else if (value.is<double>()) {
+			globalData[key] = value.as<double>();
+		}
+		else if (value.is<std::string>()) {
+			globalData[key] = value.as<std::string>();
+		}
+		else if (value.is<bool>()) {
+			globalData[key] = value.as<bool>();
+		}
+		else {
+			globalData[key] = nullptr;
+		}
+		});
+
+	luaState->set_function("GetSceneGlobalData", [](const std::string& key, sol::this_state ts) {
+		auto& globalData = SceneManager::GetInstance()->GetSceneGlobalData();
+
+		if (globalData.contains(key)) {
+			if (globalData[key].is_number_integer()) {
+				return sol::object(sol::make_object(ts, globalData[key].get<int>()));
+			}
+			else if (globalData[key].is_string()) {
+				return sol::object(sol::make_object(ts, globalData[key].get<std::string>()));
+			}
+			else if (globalData[key].is_boolean()) {
+				return sol::object(sol::make_object(ts, globalData[key].get<bool>()));
+			}
+			else if (globalData[key].is_number_float()) {
+				return sol::object(sol::make_object(ts, globalData[key].get<double>()));
+			}
+		}
+		return sol::object(sol::nil);
 		});
 }

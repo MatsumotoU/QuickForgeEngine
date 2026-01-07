@@ -9,13 +9,13 @@
             "SceneObjectData": {
                 "name": "DebugCamera",
                 "tag": "camera",
-                "uniqueId": 1
+                "uniqueId": 3452816845
             },
             "Transform": {
                 "rotate": [
-                    0.10000000149011612,
-                    0.0,
-                    0.0
+                    0.7538904547691345,
+                    0.03750006854534149,
+                    -0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    1.5,
-                    -10.0
+                    -0.47317373752593994,
+                    11.849635124206543,
+                    -12.612028121948242
                 ]
             }
         },
@@ -38,11 +38,11 @@
             "SceneObjectData": {
                 "name": "Camera",
                 "tag": "camera",
-                "uniqueId": 2
+                "uniqueId": 3452816846
             },
             "Transform": {
                 "rotate": [
-                    0.10000000149011612,
+                    1.5,
                     0.0,
                     0.0
                 ],
@@ -53,8 +53,243 @@
                 ],
                 "translate": [
                     0.0,
-                    1.5,
-                    -10.0
+                    10.800000190734863,
+                    -0.8999999761581421
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.03529411926865578,
+                    0.027450980618596077,
+                    0.05098039284348488,
+                    1.0
+                ],
+                "modelName": "WhiteSkyDome.obj"
+            },
+            "SceneObjectData": {
+                "name": "SkyDome",
+                "tag": "Untagged",
+                "uniqueId": 3452816847
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "ScoreText.obj"
+            },
+            "SceneObjectData": {
+                "name": "ScoreText",
+                "tag": "Untagged",
+                "uniqueId": 3452817328
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    3.140000104904175,
+                    0.0
+                ],
+                "scale": [
+                    2.0,
+                    1.0,
+                    2.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    1.399999976158142
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "Score",
+                "tag": "Untagged",
+                "uniqueId": 3452817326
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {
+                            "dig": 5
+                        },
+                        "priority": 0,
+                        "scriptName": "Numbers.lua",
+                        "stringParams": {}
+                    },
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "Score.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -1.0,
+                    0.5586923360824585,
+                    -0.30578798055648804
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "EmptyObject",
+                "tag": "Untagged",
+                "uniqueId": 3452818012
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "titleSceneTransition.lua",
+                        "stringParams": {
+                            "sceneName": "TitleScene.json"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "SceneChangeAnim",
+                "tag": "Untagged",
+                "uniqueId": 11856
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SceneChangeAnim.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "SpriteData": {
+                "height": 720.0,
+                "isDraw": true,
+                "layer": 1,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "white1x1.png",
+                "width": 1280.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "BGMPlayer",
+                "tag": "Untagged",
+                "uniqueId": 3452818198
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "BGMPlayer.lua",
+                        "stringParams": {
+                            "bgmName": "result.mp3"
+                        }
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }

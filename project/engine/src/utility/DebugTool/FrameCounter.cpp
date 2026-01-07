@@ -5,6 +5,10 @@
 #include <timeapi.h>
 #pragma comment(lib,"winmm.lib") 
 
+#ifdef _DEBUG
+#include "Engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
+#endif // _DEBUG
+
 namespace {
 	const std::chrono::microseconds kMinTime(static_cast<uint64_t>(1000000.0f / 60.0f));
 	const std::chrono::microseconds kMinCheckTime(static_cast<uint64_t>(1000000.0f / 65.0f));
@@ -16,6 +20,11 @@ void FrameCounter::Initialize() {
 	deltaTime_ = 0.0f;
 	maxFps_ = 60.0f;
 	timeBeginPeriod(1);
+
+#ifdef _DEBUG
+	DebugLog("FrameCounter Initialized");
+#endif // _DEBUG
+
 }
 
 void FrameCounter::FrameStart() {

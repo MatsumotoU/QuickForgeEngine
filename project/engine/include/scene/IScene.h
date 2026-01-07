@@ -16,7 +16,7 @@ public:
 	virtual void EndFrame() = 0;
 	virtual void Finalize() = 0;
 
-	// シーンのロード、保孁E
+	// シーンのロード、保存
 	virtual void LoadScene(const std::string& sceneName) = 0;
 	virtual void SaveScene(const std::string& sceneName) = 0;
 	virtual void ResetScene() = 0;
@@ -38,15 +38,17 @@ public:
 	virtual uint32_t RunTimeAddEntity(const std::string& entityName) = 0;
 
 	// シーンにあるオブジェクトを保存、読み込み、変更
+	virtual void DeleteEntity(uint32_t entityId) = 0;
 	virtual void CopyEntity(uint32_t sourceEntityId) = 0;
 	virtual void ChangeEntityModel(uint32_t entityId, const std::string& modelName) = 0;
+	virtual void ChangeEntityMesh(uint32_t entityId, const std::string& meshName) = 0;
 	virtual void SaveEntity(uint32_t entityId, const std::string& entityFileName) = 0;
 	virtual void ParentChild(uint32_t parentId, uint32_t childId) = 0;
 	virtual void Unparent(uint32_t childId) = 0;
 	virtual void SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) = 0;
 	virtual void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) = 0;
 
-	// シーンにあるオブジェクト�E惁E��取征E
+	// シーンにあるオブジェクトの情報を取得
 	virtual uint32_t GetEntityByName(const std::string& entityName) const = 0;
 	virtual uint32_t GetEntityByUniqeID(uint32_t uniqueId) const = 0;
 

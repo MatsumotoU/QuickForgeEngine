@@ -86,13 +86,17 @@ uint32_t AssetManager::LoadAudio(const std::string& audioName) {
 }
 
 uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
-	// 繝｢繝・Ν繝・・繧ｿ繧定ｪｭ縺ｿ霎ｼ縺ｿ
+	// 既に読み込まれている場合はそのハンドルを返す
+	if (modelVertexResourceManager_.HasModelHandle(modelName)) {
+		return modelVertexResourceManager_.GetModelHandle(modelName);
+	}
+
+	// モデル自体の読み込み
 	ModelData modelData{};
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
-	// 繝｡繝・す繝･繧定ｿ斐☆
 	return modelVertexResourceManager_.Assign(dxCommon_->GetDevice(), modelData, modelName);
 }
 

@@ -2,7 +2,7 @@
     "SceneObjectData": {
         "name": "BGMPlayer",
         "tag": "Untagged",
-        "uniqueId": 11795
+        "uniqueId": 3452818198
     },
     "ScriptHandle": {
         "scriptHandles": [
@@ -11,9 +11,9 @@
                 "floatParams": {},
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "SceneBGMPlayer.lua",
+                "scriptName": "BGMPlayer.lua",
                 "stringParams": {
-                    "bgmName": "GameBGM"
+                    "bgmName": "battle.mp3"
                 }
             }
         ]

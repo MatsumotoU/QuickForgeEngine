@@ -11,8 +11,8 @@ struct Sphere
 /// 軸並行墁E��ボックス
 struct AABB
 {
-	Vector3 min;
-	Vector3 max;
+	Vector3 center;
+	Vector3 size;
 };
 /// 有向墁E��ボックス
 struct OBB

@@ -1,5 +1,6 @@
 #pragma once
 #include "IScene.h"
+#include "Engine/include/scene/SceneCommand/SceneEntityCommandInvoker.h"
 #include "engine/include/utility/ID/UniqeIDManager.h"
 
 #include "engine/include/core/Math/Vector/Vector2.h"
@@ -47,22 +48,29 @@ public:
 	uint32_t RunTimeAddEntity(const std::string& entityName) override;
 
 	// シーンにあるオブジェクトを保存、読み込み、変更
+	void DeleteEntity(uint32_t entityId) override;
 	void CopyEntity(uint32_t sourceEntityId) override;
 	void ChangeEntityModel(uint32_t entityId, const std::string& modelName) override;
+	void ChangeEntityMesh(uint32_t entityId, const std::string& meshName) override;
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName) override;
 	void ParentChild(uint32_t parentId, uint32_t childId) override;
 	void Unparent(uint32_t childId) override;
 	void SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) override;
 	void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) override;
 
-	// シーンにあるオブジェクト�E惁E��取征E
+	// シーンにあるオブジェクトの情報を取得
 	uint32_t GetEntityByName(const std::string& entityName) const override;
 	uint32_t GetEntityByUniqeID(uint32_t uniqueId) const override;
 	bool IsRunningScript() const override { return isRunningScript_; }
 
 private:
+	SceneEntityCommandInvoker frameStartCommandInvoker_;
+	SceneEntityCommandInvoker updateCommandInvoker_;
+	SceneEntityCommandInvoker preDrawCommandInvoker_;
+	SceneEntityCommandInvoker drawCommandInvoker_;
+	SceneEntityCommandInvoker postDrawCommandInvoker_;
+
 	AssetManager* assetManager_;
-	std::unordered_map<std::string, nlohmann::json> loadEntities_;
 
 	bool isRunningScript_;
 	bool isPauseScript_;

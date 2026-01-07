@@ -167,8 +167,23 @@ void AssetsView::ShadersView() {
 	ImGui::Text("Root->Shader");
 	ImGui::Separator();
 	if (ImGui::ImageButton("Root", assetManager->GetTextureManager()->GetTextureSrvHandleGPU(arrowGH_).ptr,
-		ImVec2(64, 64), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
+		ImVec2(32, 16), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1))) {
 		currentHierarchy = ViewHierarchy::Root;
+	}
+
+	ImGui::Separator();
+	ImGui::Text("Gpu Constant Buffer Pools");
+
+	GpuBufferPool* gpuPool = assetManager->GetGpuBufferPool();
+	auto poolsInfo = gpuPool->GetPoolsInfo();
+
+	for (IVariableLengthPoolContainer* pool : poolsInfo) {
+		if (pool) {
+			if (ImGui::CollapsingHeader(pool->GetTypeName())) {
+				ImGui::Text("Used: %zu / %zu", pool->UsedSize(), pool->Size());
+				ImGui::ProgressBar(static_cast<float>(pool->UsedSize()) / static_cast<float>(pool->Size()));
+			}
+		}
 	}
 }
 

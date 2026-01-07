@@ -22,7 +22,7 @@ WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 void WindowsEngineCore::Initialize() {
 	QFE::EngineGlobalValue::windowWidth = windowWidth;
 	QFE::EngineGlobalValue::windowHeight = windowHeight;
-	std::string windowTitle = "QuickForgeEngine";
+	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
 	// * ウィンドウマネージャー初期匁E* //
 	gameWindowManager = std::make_unique<GameWindowManager>();
@@ -84,34 +84,80 @@ void WindowsEngineCore::Initialize() {
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
 
+#ifdef _DEBUG
+	DebugLog("======================Initialized OnWindowsEditor======================");
+#endif // _DEBUG
+
 	frameCounter_.Initialize();
 	graphRenderer_ = GraphRenderer::GetInstance();
 	graphRenderer_->Initialize();
+
+#ifdef _DEBUG
+	DebugLog("======================InitializedGraphRenderer======================");
+#endif // _DEBUG
 
 	inputInterface_ = InputInterface::GetInstance();
 	inputInterface_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), hInstance_);
 
+#ifdef _DEBUG
+	DebugLog("======================Initialized InputInterface======================");
+#endif // _DEBUG
+
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->Initalize();
+
+#ifdef _DEBUG
+	DebugLog("======================Initialized SceneManager======================");
+#endif // _DEBUG
 
 	luaScriptResourceManager_ = LuaScriptResourceManager::GetInstance();
 	luaScriptResourceManager_->Initialize();
 
-	csScriptManager_ = CsharpVirtualEnvironmentOnQFE::GetInstance();
-	csScriptManager_->Initialize();
+#ifdef _DEBUG
+	DebugLog("======================Initialized LuaScriptResourceManager======================");
+#endif // _DEBUG
+	try {
+		csScriptManager_ = CsharpVirtualEnvironmentOnQFE::GetInstance();
+		csScriptManager_->Initialize();
+	}
+	catch (const std::exception& e) {
+#ifdef _DEBUG
+		DebugLog(std::string("Error: ") + e.what());
+#endif // _DEBUG
+	}
+
+#ifdef _DEBUG
+	DebugLog("======================Initialized CsharpVirtualEnvironmentOnQFE======================");
+#endif // _DEBUG
 
 	physicsManager_ = PhysicsManager::GetInstance();
 	physicsManager_->Initialize();
 
+#ifdef _DEBUG
+	DebugLog("======================Initialized PhysicsManager======================");
+#endif // _DEBUG
+
 	colliderManager_ = ColliderManager::GetInstance();
 	colliderManager_->Initialize();
+
+#ifdef _DEBUG
+	DebugLog("======================Initialized ColliderManager======================");
+#endif // _DEBUG
 
 	multiThreadTaskExecutor_ = MultiThreadTaskExecutor::GetInstance();
 	multiThreadTaskExecutor_->Initialize();
 
+#ifdef _DEBUG
+	DebugLog("======================Initialized MultiThreadTaskExecutor======================");
+#endif // _DEBUG
+
 	audioInterface_ = AudioInterface::GetInstance();
 	audioInterface_->Initialize();
+
+#ifdef _DEBUG
+	DebugLog("======================Initialized Engine======================");
+#endif // _DEBUG
 }
 
 void WindowsEngineCore::MainLoop() {

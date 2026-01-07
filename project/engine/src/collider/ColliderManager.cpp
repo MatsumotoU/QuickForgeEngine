@@ -45,7 +45,10 @@ void ColliderManager::Draw() {
 		for (const auto& pair : aabbColliderStrage) {
 			const AABBColliderData& collider = pair.second;
 			if (collider.isDraw) {
-				GraphRenderer::GetInstance()->DrawBox(collider.aabb.min, collider.aabb.max, { 0.0f, 1.0f, 0.0f, 1.0f });
+				Vector3 halfSize = collider.aabb.size * 0.5f;
+				Vector3 min = collider.aabb.center - halfSize;
+				Vector3 max = collider.aabb.center + halfSize;
+				GraphRenderer::GetInstance()->DrawBox(min, max, { 0.0f, 1.0f, 0.0f, 1.0f });
 			}
 		}
 
@@ -65,9 +68,11 @@ bool ColliderManager::isCollision(const Sphere& sphere1, const Sphere& sphere2) 
 }
 
 bool ColliderManager::isCollision(const AABB& aabb1, const AABB& aabb2) {
-	if (aabb1.max.x < aabb2.min.x || aabb1.min.x > aabb2.max.x) { return false; }
-	if (aabb1.max.y < aabb2.min.y || aabb1.min.y > aabb2.max.y) { return false; }
-	if (aabb1.max.z < aabb2.min.z || aabb1.min.z > aabb2.max.z) { return false; }
+	Vector3 halfSize1 = aabb1.size * 0.5f;
+	Vector3 halfSize2 = aabb2.size * 0.5f;
+	if (std::abs(aabb1.center.x - aabb2.center.x) > halfSize1.x + halfSize2.x) { return false; }
+	if (std::abs(aabb1.center.y - aabb2.center.y) > halfSize1.y + halfSize2.y) { return false; }
+	if (std::abs(aabb1.center.z - aabb2.center.z) > halfSize1.z + halfSize2.z) { return false; }
 	return true;
 }
 
@@ -106,6 +111,7 @@ void ColliderManager::SphereToSphereUpdate() {
 		SphereColliderData& colliderA = entityManager->GetComponent<SphereColliderData>(idA);
 		for (size_t j = i + 1; j < entityIds.size(); ++j) {
 			uint32_t idB = entityIds[j];
+			if (idA == idB) continue;
 			SphereColliderData& colliderB = entityManager->GetComponent<SphereColliderData>(idB);
 			if (isCollision(colliderA.sphere, colliderB.sphere)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
@@ -199,9 +205,7 @@ void ColliderManager::AABBToAABBUpdate() {
 		if (entityManager->HasComponent<Transform>(pair.first)) {
 			Transform& transform = entityManager->GetComponent<Transform>(pair.first);
 			AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(pair.first);
-			Vector3 halfSize = (collider.aabb.max - collider.aabb.min) * 0.5f;
-			collider.aabb.min = transform.translate - halfSize;
-			collider.aabb.max = transform.translate + halfSize;
+			collider.aabb.center = transform.translate;
 			collider.isOldHit = collider.isHit;
 			collider.isHit = false;
 		}
@@ -215,6 +219,7 @@ void ColliderManager::AABBToAABBUpdate() {
 		AABBColliderData& colliderA = entityManager->GetComponent<AABBColliderData>(idA);
 		for (size_t j = i + 1; j < entityIds.size(); ++j) {
 			uint32_t idB = entityIds[j];
+			if (idA == idB) continue;
 			AABBColliderData& colliderB = entityManager->GetComponent<AABBColliderData>(idB);
 			if (isCollision(colliderA.aabb, colliderB.aabb)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
@@ -276,19 +281,19 @@ void ColliderManager::AABBToAABBUpdate() {
 				Transform& transformA = entityManager->GetComponent<Transform>(idA);
 				Transform& transformB = entityManager->GetComponent<Transform>(idB);
 				// AABB縺ｮ荳ｭ蠢・ｺｧ讓・
-				Vector3 centerA = (colliderA.aabb.min + colliderA.aabb.max) * 0.5f;
-				Vector3 centerB = (colliderB.aabb.min + colliderB.aabb.max) * 0.5f;
+				Vector3 centerA = colliderA.aabb.center;
+				Vector3 centerB = colliderB.aabb.center;
 
 				// AABB縺ｮ蜊翫し繧､繧ｺ
-				Vector3 halfA = (colliderA.aabb.max - colliderA.aabb.min) * 0.51f;
-				Vector3 halfB = (colliderB.aabb.max - colliderB.aabb.min) * 0.51f;
+				Vector3 halfA = colliderA.aabb.size * 0.5f;
+				Vector3 halfB = colliderB.aabb.size * 0.5f;
 
 				// 荳ｭ蠢・俣霍晞屬
 				Vector3 delta = centerB - centerA;
 				Vector3 overlap = {
-					(halfA.x + halfB.x) - (std::abs(delta.x) + 0.01f),
-					(halfA.y + halfB.y) - (std::abs(delta.y) + 0.01f),
-					(halfA.z + halfB.z) - (std::abs(delta.z) + 0.01f)
+					(halfA.x + halfB.x) - std::abs(delta.x),
+					(halfA.y + halfB.y) - std::abs(delta.y),
+					(halfA.z + halfB.z) - std::abs(delta.z)
 				};
 
 				// 譛蟆上が繝ｼ繝舌・繝ｩ繝・・霆ｸ繧呈爾縺・
@@ -350,9 +355,7 @@ void ColliderManager::SphereToAABBUpdate() {
 		if (entityManager->HasComponent<Transform>(pair.first)) {
 			Transform& transform = entityManager->GetComponent<Transform>(pair.first);
 			AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(pair.first);
-			Vector3 halfSize = (collider.aabb.max - collider.aabb.min) * 0.5f;
-			collider.aabb.min = transform.translate - halfSize;
-			collider.aabb.max = transform.translate + halfSize;
+			collider.aabb.center = transform.translate;
 			collider.isOldHit = collider.isHit;
 			collider.isHit = false;
 		}
@@ -367,6 +370,7 @@ void ColliderManager::SphereToAABBUpdate() {
 		SphereColliderData& sphereCollider = entityManager->GetComponent<SphereColliderData>(sphereId);
 		for (int j = 0; j < aabbEntityIds.size(); ++j) {
 			uint32_t aabbId = aabbEntityIds[j];
+			if (sphereId == aabbId) continue;
 			AABBColliderData& aabbCollider = entityManager->GetComponent<AABBColliderData>(aabbId);
 			if (isCollision(sphereCollider.sphere, aabbCollider.aabb)) {
 				LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();

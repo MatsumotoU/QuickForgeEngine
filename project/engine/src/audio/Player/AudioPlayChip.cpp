@@ -27,57 +27,10 @@ void AudioPlayChip::Finalize() {
 	}
 }
 
-void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float volume) {
+void AudioPlayChip::PlaySoundForAudioData(const AudioData& audioData, bool loop, float volume) {
 	assert(sourceVoice_ == nullptr && "SourceVoice is already playing");
 	assert(xAudio2_ != nullptr);
 	assert(masterVoice_ != nullptr);
-
-	// TODO: 既存のサンプル・レート変換は別の環境に任せること(TD経由の考慮)
-	// --- サンプル・レート変換ここから ---
-	// 8bit変換 & サンプリング周波数変更 & ノイズ & lo-fiエフェクト
-	if (audioData.wfxEx.Format.wBitsPerSample == 16) {
-		const int16_t* src = reinterpret_cast<int16_t*>(audioData.buffer.data());
-		size_t sampleCount = audioData.buffer.size() / sizeof(int16_t); // sizeof(int16_t) を追加
-		size_t cheapSampleCount = sampleCount / 2;
-		std::vector<BYTE> cheapBuffer(cheapSampleCount); // new BYTE[] から std::vector に変更
-
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<int> noiseDist(-32, 32); // ノイズ
-		float lastSample = 0.0f; // ローパスフィルター用
-
-		for (size_t i = 0; i < cheapSampleCount; ++i) {
-			int16_t s = src[i * 2];
-
-			if (s == 0) {
-				cheapBuffer[i] = 128;
-				continue;
-			}
-
-			// ノイズ乗算
-			s = static_cast<int16_t>(std::clamp<int>(s + noiseDist(gen), -32768, 32767));
-
-			// 閾値を超えたクリッピング
-			const int16_t clipLevel = 8000; // lo-fi感を出す閾値
-			if (s > clipLevel) s = clipLevel;
-			if (s < -clipLevel) s = -clipLevel;
-
-			// ローパスフィルター・適用
-			float alpha = 0.35f; // フィルター強度0.0～1.0
-			float filtered = lastSample * (1.0f - alpha) + s * alpha;
-			lastSample = filtered;
-			s = static_cast<int16_t>(filtered);
-
-			// 8bit変換して格納
-			cheapBuffer[i] = static_cast<BYTE>((s + 32768) >> 8);
-		}
-		audioData.wfxEx.Format.wBitsPerSample = 8;
-		audioData.wfxEx.Format.nBlockAlign = audioData.wfxEx.Format.nChannels * audioData.wfxEx.Format.wBitsPerSample / 8;
-		audioData.wfxEx.Format.nAvgBytesPerSec = audioData.wfxEx.Format.nSamplesPerSec / 2 * audioData.wfxEx.Format.nBlockAlign;
-		audioData.wfxEx.Format.nSamplesPerSec /= 2;
-		audioData.buffer = std::move(cheapBuffer); // std::move で所有権を移動
-	}
-	// --- サンプル・レート変換ここまで ---
 
 	// ソースバッファの作成
 	sourceVoice_ = nullptr;
@@ -85,8 +38,8 @@ void AudioPlayChip::PlaySoundForAudioData(AudioData audioData, bool loop, float 
 	assert(SUCCEEDED(hr));
 
 	XAUDIO2_BUFFER buffer = {};
-	buffer.AudioBytes = static_cast<UINT32>(audioData.buffer.size()); // bufferSize を buffer.size() に変更
-	buffer.pAudioData = audioData.buffer.data(); // pBuffer を buffer.data() に変更
+	buffer.AudioBytes = static_cast<UINT32>(audioData.buffer.size()); 
+	buffer.pAudioData = const_cast<BYTE*>(audioData.buffer.data()); 
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 	buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 	buffer.LoopBegin = 0;
