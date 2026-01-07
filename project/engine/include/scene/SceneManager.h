@@ -31,9 +31,10 @@ public:
 	void ResetScene();
 	void RunTimeSwapScene(const std::string& sceneName);
 
-	// ここにぁE��べきじめE��ぁE
+	void DeleteEntity(uint32_t entityId);
 	void CopyEntity(uint32_t sourceEntityId);
 	void ChangeEntityModel(uint32_t entityId, const std::string& modelName);
+	void ChangeEntityMesh(uint32_t entityId, const std::string& meshName);
 	void SaveEntity(uint32_t entityId, const std::string& entityFileName);
 	void ParentChild(uint32_t parentId, uint32_t childId);	
 	void Unparent(uint32_t childId);
@@ -50,6 +51,10 @@ public:
 	uint32_t AddEntity(const std::string& entityName);
 	uint32_t RunTimeAddEntity(const std::string& entityName);
 
+	nlohmann::json& GetSceneGlobalData() { return sceneGlobalData_; }
+	void SetScore(int score) { score_ = score; }
+	int GetScore() const { return score_; }
+
 	void StartScript();
 	void StopScript();
 
@@ -60,9 +65,11 @@ public:
 	float postDrawTime_;
 
 private:
+	int score_;
 	bool isFirstLoadScene_;
 	bool isRequestRunTimeLoadScene_;
 	nlohmann::json sceneConfig_;
+	nlohmann::json sceneGlobalData_;
 	std::unique_ptr<IScene> currentScene_;
 	std::unique_ptr<IScene> nextScene_;
 	

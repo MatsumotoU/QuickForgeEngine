@@ -37,6 +37,15 @@ void LuaScriptResourceManager::ReloadAllScripts() {
 	}
 }
 
+void LuaScriptResourceManager::RunAllFunction(const std::string& functionName)
+{
+	for (auto& [handle, script] : scripts_) {
+		if (script && script->HasFunction(functionName)) {
+			script->RunFunction(functionName);
+		}
+	}
+}
+
 void LuaScriptResourceManager::CreateScript(const std::string& scriptName) {
 	// ディレクトリパス
 	const std::string dirPath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
@@ -314,6 +323,32 @@ sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, c
 	DebugLog("Script is not found", LogLevel::Warning);
 #endif // _DEBUG
 	return sol::nil;
+}
+
+void LuaScriptResourceManager::SetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value) {
+	AssetManager* assetManager = AssetManager::GetInstance();
+	EntityManager* entityManager = assetManager->GetEntityManager();
+	if (!entityManager->HasComponent<ScriptHandles>(entityId)) {
+#ifdef _DEBUG
+		DebugLog("Entity has no ScriptHandles component", LogLevel::Warning);
+#endif // _DEBUG
+		return;
+	}
+	ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+	for (const auto& handle : scriptHandles.scriptHandles_) {
+		if (handle.scriptName_ == scriptName) {
+			LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(handle.handle_);
+#ifdef _DEBUG
+			DebugLog("Set Script Global: " + varName + " from " + scriptName, LogLevel::EngineInfo);
+			DebugLog("Set Handle: " + std::to_string(handle.handle_), LogLevel::EngineInfo);
+#endif // _DEBUG
+			if (script) {
+				sol::state* state = script->GetScript();
+				(*state)[varName] = value;
+			}
+			return;
+		}
+	}
 }
 
 void LuaScriptResourceManager::RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName) {

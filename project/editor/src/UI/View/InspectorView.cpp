@@ -345,8 +345,8 @@ void InspectorView::Draw() {
 			if (ImGui::Button("Delete##AABBCollider")) {
 				assetManager->GetEntityManager()->RemoveComponent<AABBColliderData>(selectedEntityId_);
 			}
-			ImGui::DragFloat3("Min", &aabbCollider.aabb.min.x, 0.1f);
-			ImGui::DragFloat3("Max", &aabbCollider.aabb.max.x, 0.1f);
+			ImGui::DragFloat3("Center", &aabbCollider.aabb.center.x, 0.1f);
+			ImGui::DragFloat3("Size", &aabbCollider.aabb.size.x, 0.1f);
 			ImGui::Checkbox("Is Trigger", &aabbCollider.isTrigger);
 			ImGui::Checkbox("Is Static", &aabbCollider.isStatic);
 			ImGui::Text("Collider Layer:");

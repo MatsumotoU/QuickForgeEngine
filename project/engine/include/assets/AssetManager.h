@@ -61,9 +61,7 @@ public:
 private:
 	DirectXCommon* dxCommon_;
 	ResourceDirectoryManager resourceDirectoryManager_;
-
 	TextureManager* textureManager_;
-
 	AudioSourceManager audioSourceManager_;
 	ModelRenderDataManager modelRenderDataManager_;
 	ModelVertexResourceManager modelVertexResourceManager_;

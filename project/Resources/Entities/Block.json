@@ -1,0 +1,60 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            0.0,
+            0.0,
+            0.0,
+            1.649999976158142,
+            1.7000000476837158,
+            0.8999999761581421
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": false,
+        "isStatic": true,
+        "isTrigger": false
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "Block",
+        "tag": "block",
+        "uniqueId": 11
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "Block.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.5,
+            0.5,
+            0.800000011920929
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

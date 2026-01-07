@@ -2,12 +2,15 @@
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
+#include "Engine/include/scene/SceneManager.h"
 #include "engine/include/assets/Script/LuaScriptResourceManager.h"
 
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/physics/Force.h"
 #include "engine/include/assets/Script/Data/ScriptHandle.h"
 #include "engine/include/assets/Script/QFElinker/SetQFELinkers.h"
+#include "engine/include/collider/Data/AABBColliderData.h"
+#include "engine/include/collider/Data/SphereColliderData.h"
 
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -189,6 +192,18 @@ void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 		DebugLog(std::format( "{}: Active ForceComponent.",scriptName_), LogLevel::EditorInfo);
 #endif // _DEBUG
 	}
+	
+	// Collider componentsをLuaにセット
+	if (entityManager->HasComponent<AABBColliderData>(bindEntityId_))
+	{
+		AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(bindEntityId_);
+		luaState_->set("aabbCollider", &collider);
+	}
+	if (entityManager->HasComponent<SphereColliderData>(bindEntityId_))
+	{
+		SphereColliderData& collider = entityManager->GetComponent<SphereColliderData>(bindEntityId_);
+		luaState_->set("sphereCollider", &collider);
+	}
 }
 
 std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
@@ -232,7 +247,10 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		}
 	);
 	luaState_->set_function("destroy", [this]() {
-		AssetManager::GetInstance()->GetEntityManager()->RemoveEntity(this->GetBindEntityId());
+		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
+		});
+	luaState_->set_function("delete", [this]() {
+		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
 		});
 	luaState_->set_function("GetEntityScriptGlobal",
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::this_state ts) {
@@ -240,4 +258,18 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
 		}
 	);
+	luaState_->set_function("SetEntityScriptGlobal",
+		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value) {
+			LuaScriptResourceManager::GetInstance()->SetEntityScriptGlobal(entityId, scriptName, varName, value);
+		});
+
+	luaState_->set_function("SetAABBColiderSize", [this](const Vector3& size) {
+		AssetManager* assetManager = AssetManager::GetInstance();
+		EntityManager* entityManager = assetManager->GetEntityManager();
+		if (entityManager->HasComponent<AABBColliderData>(this->GetBindEntityId()) == false) {
+			return;
+		}
+		AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(this->GetBindEntityId());
+		collider.aabb.size = size;
+		});
 }

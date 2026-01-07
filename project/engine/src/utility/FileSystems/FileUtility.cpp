@@ -82,3 +82,12 @@ bool QFE::FILE::SaveJSONToFile(const std::string& filePath, const nlohmann::json
 	}
     return false;
 }
+
+std::string QFE::FILE::WideToUTF8(const std::wstring& wstr)
+{
+    if (wstr.empty()) return {};
+    int size = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
+    std::string result(size, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &result[0], size, nullptr, nullptr);
+    return result;
+}

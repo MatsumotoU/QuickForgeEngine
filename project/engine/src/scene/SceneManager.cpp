@@ -42,12 +42,13 @@ void SceneManager::Initalize() {
 #ifdef _DEBUG
 	initTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
 #endif // _DEBUG
+	score_ = 0;
 }
 
 void SceneManager::Update() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-	// 最後に開いたシーンをローチE
+	// 最後に開いたシーンを開く
 	if (!isFirstLoadScene_) {
 		if (sceneConfig_.contains("lastScene")) {
 			try {
@@ -166,6 +167,11 @@ void SceneManager::RunTimeSwapScene(const std::string& sceneName) {
 	nextSceneName_ = sceneName;
 }
 
+void SceneManager::DeleteEntity(uint32_t entityId)
+{
+	currentScene_->DeleteEntity(entityId);
+}
+
 void SceneManager::CopyEntity(uint32_t sourceEntityId) {
 	currentScene_->CopyEntity(sourceEntityId);
 }
@@ -173,6 +179,11 @@ void SceneManager::CopyEntity(uint32_t sourceEntityId) {
 void SceneManager::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
 	currentScene_->ChangeEntityModel(entityId, modelName);
 	
+}
+
+void SceneManager::ChangeEntityMesh(uint32_t entityId, const std::string& meshName)
+{
+	currentScene_->ChangeEntityMesh(entityId, meshName);
 }
 
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {

@@ -82,6 +82,9 @@
     <ClInclude Include="include\UI\View\HierarchyView.h">
       <Filter>include\UI\View</Filter>
     </ClInclude>
+    <ClInclude Include="include\UI\View\InputDebugView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
     <ClInclude Include="include\UI\View\InspectorView.h">
       <Filter>include\UI\View</Filter>
     </ClInclude>
@@ -94,7 +97,6 @@
     <ClInclude Include="include\UI\View\ScriptLoggerView.h">
       <Filter>include\UI\View</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\View\InputDebugView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -140,6 +142,9 @@
     <ClCompile Include="src\UI\View\HierarchyView.cpp">
       <Filter>src\UI\View</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\View\InputDebugView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
     <ClCompile Include="src\UI\View\InspectorView.cpp">
       <Filter>src\UI\View</Filter>
     </ClCompile>
@@ -152,6 +157,5 @@
     <ClCompile Include="src\UI\View\ScriptLoggerView.cpp">
       <Filter>src\UI\View</Filter>
     </ClCompile>
-    <ClCompile Include="src\UI\View\InputDebugView.cpp" />
   </ItemGroup>
 </Project>

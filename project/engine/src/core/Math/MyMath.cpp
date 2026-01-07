@@ -33,9 +33,12 @@ float MyMath::DegreesToRadians(float degrees) {
 }
 
 Vector3 MyMath::ClosestPoint(const Sphere& sphere, const AABB& aabb) {
+	Vector3 halfSize = aabb.size * 0.5f;
+	Vector3 min = aabb.center - halfSize;
+	Vector3 max = aabb.center + halfSize;
 	Vector3 closestPoint;
-	closestPoint.x = std::max(aabb.min.x, std::min(sphere.center.x, aabb.max.x));
-	closestPoint.y = std::max(aabb.min.y, std::min(sphere.center.y, aabb.max.y));
-	closestPoint.z = std::max(aabb.min.z, std::min(sphere.center.z, aabb.max.z));
+	closestPoint.x = std::max(min.x, std::min(sphere.center.x, max.x));
+	closestPoint.y = std::max(min.y, std::min(sphere.center.y, max.y));
+	closestPoint.z = std::max(min.z, std::min(sphere.center.z, max.z));
 	return closestPoint;
 }

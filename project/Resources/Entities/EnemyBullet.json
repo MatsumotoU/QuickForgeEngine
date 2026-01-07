@@ -1,4 +1,19 @@
 {
+    "AABBColliderData": {
+        "aabb": [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.5,
+            0.5
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": false,
+        "isStatic": false,
+        "isTrigger": true
+    },
     "ModelHandle": {
         "color": [
             1.0,
@@ -6,55 +21,42 @@
             0.0,
             1.0
         ],
-        "modelName": "playerBullet.obj"
+        "modelName": "Box1x1.obj"
     },
     "SceneObjectData": {
         "name": "EnemyBullet",
-        "tag": "EnemyBullet",
-        "uniqueId": 6229
+        "tag": "enemyBullet",
+        "uniqueId": 3452817489
     },
     "ScriptHandle": {
         "scriptHandles": [
             {
                 "boolParams": {},
                 "floatParams": {
-                    "aliveTime": 1.0
+                    "moveSpeed": 3.0
                 },
                 "intParams": {},
                 "priority": 0,
-                "scriptName": "EnemyBulletMove.lua",
+                "scriptName": "EnemyBullet.lua",
                 "stringParams": {}
             }
-        ]
-    },
-    "SphereColliderData": {
-        "colliderLayer": 255,
-        "eventColliderLayer": 255,
-        "isDraw": true,
-        "isStatic": true,
-        "isTrigger": true,
-        "sphere": [
-            4.177000045776367,
-            0.0,
-            4.099999904632568,
-            0.375
         ]
     },
     "Transform": {
         "rotate": [
             0.0,
-            -0.0,
+            0.0,
             0.0
         ],
         "scale": [
-            1.0,
-            1.0,
-            1.0
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896
         ],
         "translate": [
-            4.177000045776367,
             0.0,
-            4.099999904632568
+            0.0,
+            0.0
         ]
     }
 }

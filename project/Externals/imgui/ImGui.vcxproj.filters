@@ -18,6 +18,9 @@
     <ClInclude Include="ImGuizmo-1.83\ImGuizmo.h">
       <Filter>ImGuizmo-1.83</Filter>
     </ClInclude>
+    <ClInclude Include="ImGuizmo-1.83\ImSequencer.h">
+      <Filter>ImGuizmo-1.83</Filter>
+    </ClInclude>
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui-knobs-main\imgui-knobs.h">
       <Filter>imgui-knobs-main</Filter>
@@ -56,6 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGuizmo-1.83\ImGuizmo.cpp">
+      <Filter>ImGuizmo-1.83</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuizmo-1.83\ImSequencer.cpp">
       <Filter>ImGuizmo-1.83</Filter>
     </ClCompile>
     <ClCompile Include="imgui-knobs-main\imgui-knobs.cpp">

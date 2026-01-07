@@ -18,6 +18,8 @@ public:
 	void Initialize();
 	void Reset();
 	void ReloadAllScripts();
+
+	void RunAllFunction(const std::string& functionName);
 	void CreateScript(const std::string& scriptName);
 	uint32_t AddScript(uint32_t entityId, const std::string& scriptName);
 	void RequestRemoveScript(uint32_t handle);
@@ -34,6 +36,7 @@ public:
 	LuaScriptOnQFE* GetScript(uint32_t handle) const;
 	std::set<std::string>& GetScriptGlobals(uint32_t entityId) const;
 	sol::object GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName,sol::state_view callScriptState);
+	void SetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value);
 	void RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName);
 
 	bool isRunningScript_;
