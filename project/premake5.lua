@@ -75,10 +75,6 @@ group "QuickForge" -- MyMainProject
             "./externals/nlohmann/",
         }
 
-        prebuildcommands {
-            'call "%{wks.location}/GenerateBuildInfo.bat"'
-        }
-
         postbuildcommands {
             'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
             'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS > nul',
@@ -127,6 +123,10 @@ group "QuickForge" -- MyMainProject
             "./externals/Mono/include",
             "./externals/Mono/include/mono-2.0/",
             "./externals/nlohmann/",
+        }
+
+        prebuildcommands {
+            'call "%{wks.location}/GenerateBuildInfo.bat"'
         }
 
         filter "configurations:Debug"

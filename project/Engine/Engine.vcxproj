@@ -94,6 +94,9 @@
       <AdditionalDependencies>Lua.lib;mono-2.0-sgen.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Debug;..\externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <ClCompile>
@@ -123,6 +126,9 @@
       <AdditionalDependencies>Lua.lib;mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Release;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -152,18 +158,12 @@
       <AdditionalDependencies>Lua.lib;mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Release;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
-    <ClInclude Include="include\assets\AudioSource\Data\Spectrum.h" />
-    <ClInclude Include="include\scene\SceneCommand\AllEntityRenderingCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\DeleteSceneEntityCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\ParentUpdateCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\AllSpriteResizeCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\RemakeUniqeIDCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\SpritePivotUpdateCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\WvpTransformationCommand.h" />
-    <ClInclude Include="include\utility\memory\IVariableLengthPoolContainer.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
@@ -181,6 +181,7 @@
     <ClInclude Include="include\assets\AssetManager.h" />
     <ClInclude Include="include\assets\AudioSource\AudioSourceManager.h" />
     <ClInclude Include="include\assets\AudioSource\Data\AudioData.h" />
+    <ClInclude Include="include\assets\AudioSource\Data\Spectrum.h" />
     <ClInclude Include="include\assets\AudioSource\Loader\MultiAudioLoader.h" />
     <ClInclude Include="include\assets\ConstantBufferManager\ConstantBufferManager.h" />
     <ClInclude Include="include\assets\Particle\Data\ParticleComponent.h" />
@@ -291,10 +292,17 @@
     <ClInclude Include="include\renderer\SpriteRenderer.h" />
     <ClInclude Include="include\scene\Data\SceneObjectData.h" />
     <ClInclude Include="include\scene\IScene.h" />
+    <ClInclude Include="include\scene\SceneCommand\AllEntityRenderingCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\AllSpriteResizeCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\DeleteSceneEntityCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\ISceneEntityCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\ParentUpdateCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\RemakeUniqeIDCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\SceneEntityCommandInvoker.h" />
     <ClInclude Include="include\scene\SceneCommand\SceneEntityCommands.h" />
+    <ClInclude Include="include\scene\SceneCommand\SpritePivotUpdateCommand.h" />
     <ClInclude Include="include\scene\SceneCommand\WorldTransformationCommand.h" />
+    <ClInclude Include="include\scene\SceneCommand\WvpTransformationCommand.h" />
     <ClInclude Include="include\scene\SceneManager.h" />
     <ClInclude Include="include\scene\SceneObject.h" />
     <ClInclude Include="include\utility\DebugTool\App\CrashHandler.h" />
@@ -323,6 +331,7 @@
     <ClInclude Include="include\utility\String\HwndConvertString.h" />
     <ClInclude Include="include\utility\String\MyString.h" />
     <ClInclude Include="include\utility\String\StringLiblary.h" />
+    <ClInclude Include="include\utility\memory\IVariableLengthPoolContainer.h" />
     <ClInclude Include="include\utility\memory\SparseSets.h" />
     <ClInclude Include="include\utility\memory\VariableLengthPool.h" />
     <ClInclude Include="include\window\GameWindow.h" />
@@ -336,13 +345,6 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\scene\SceneCommand\DeleteSceneEntityCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\AllEntityRenderingCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\SpritePivotUpdateCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\WvpTransformationCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\RemakeUniqeIDCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\AllSpriteResizeCommand.h.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\ParentUpdateCommand.cpp" />
     <ClCompile Include="QuickForgeEngine.cpp" />
     <ClCompile Include="src\WindowsEngineCore.cpp" />
     <ClCompile Include="src\assets\2DTexture\TextureManager.cpp" />
@@ -435,8 +437,15 @@
     <ClCompile Include="src\renderer\ModelRenderer.cpp" />
     <ClCompile Include="src\renderer\ParticleRenderer.cpp" />
     <ClCompile Include="src\renderer\SpriteRenderer.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\AllEntityRenderingCommand.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\AllSpriteResizeCommand.h.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\DeleteSceneEntityCommand.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\ParentUpdateCommand.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\RemakeUniqeIDCommand.cpp" />
     <ClCompile Include="src\scene\SceneCommand\SceneEntityCommandInvoker.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\SpritePivotUpdateCommand.cpp" />
     <ClCompile Include="src\scene\SceneCommand\WorldTransformationCommand.cpp" />
+    <ClCompile Include="src\scene\SceneCommand\WvpTransformationCommand.cpp" />
     <ClCompile Include="src\scene\SceneManager.cpp" />
     <ClCompile Include="src\scene\SceneObject.cpp" />
     <ClCompile Include="src\utility\DebugTool\App\WinAppDebugCore.cpp" />
