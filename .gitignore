@@ -5,7 +5,6 @@
 
 # User
 *.ini
-BuildInfo.h
 
 project/Resources/Scripts/bin/
 project/Resources/Scripts/obj/

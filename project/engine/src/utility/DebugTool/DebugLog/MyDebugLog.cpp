@@ -1,5 +1,5 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#include "BuildInfo.h"
+#include "engine/BuildInfo.h"
 
 MyDebugLog::MyDebugLog() {
 	Initialize();
