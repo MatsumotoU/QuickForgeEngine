@@ -10,6 +10,30 @@ echo Target: %TARGET_IDE%
 echo ====================================
 
 :: ------------------------------------
+:: 0. 【ファイルのロックチェック】
+:: ------------------------------------
+echo Checking for locked project/solution files...
+
+:: チェック対象の拡張子を定義
+set "CHECK_EXTS=*.sln *.vcxproj"
+
+for /r %%f in (%CHECK_EXTS%) do (
+    if exist "%%f" (
+        ren "%%f" "%%f" 2>nul
+        if errorlevel 1 (
+            echo.
+            echo ---------------------------------------------------------
+            echo Error: [%%f] 
+            echo The file is currently in use by Visual Studio or another process.
+            echo Please close the solution and try again.
+            echo ---------------------------------------------------------
+            pause
+            exit /b 1
+        )
+    )
+)
+
+:: ------------------------------------
 :: 1. 【自動クリーンアップ処理の追加】
 :: ------------------------------------
 echo [1/2] Delete old files...
