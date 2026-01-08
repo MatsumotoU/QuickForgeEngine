@@ -18,4 +18,9 @@ echo #define BUILD_BRANCH "%GIT_BRANCH%" >> BuildInfo.h
 echo #define BUILD_DATE "%CURRENT_DATE%" >> BuildInfo.h
 echo #define BUILD_TIME "%CURRENT_TIME%" >> BuildInfo.h
 
+:WAIT_FILE
+if not exist "BuildInfo.h" (
+    timeout /t 1 /nobreak > nul
+    goto WAIT_FILE
+)
 exit /b 0
