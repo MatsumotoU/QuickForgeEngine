@@ -96,9 +96,6 @@
       <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\lua\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PreBuildEvent>
-      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
-    </PreBuildEvent>
     <PostBuildEvent>
       <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
 robocopy "..\externals\Mono\lib" "../../generated/outputs/Debug\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
@@ -134,9 +131,6 @@ exit /b 0</Command>
       <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\lua\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PreBuildEvent>
-      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
-    </PreBuildEvent>
     <PostBuildEvent>
       <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
 robocopy "..\externals\Mono\lib" "../../generated/outputs/Development\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
@@ -172,9 +166,6 @@ exit /b 0</Command>
       <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\lua\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PreBuildEvent>
-      <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
-    </PreBuildEvent>
     <PostBuildEvent>
       <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
 robocopy "..\externals\Mono\lib" "../../generated/outputs/Release\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
@@ -184,7 +175,6 @@ exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="include\IEditor.h" />
     <ClInclude Include="include\OnWindowsEditor.h" />
     <ClInclude Include="include\UI\Edit\ColliderMaskEdit.h" />
