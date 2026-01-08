@@ -90,6 +90,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>cd Shaders &amp;&amp; CompileShaders.cmd</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <ClCompile>
@@ -115,6 +118,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Command>cd Shaders &amp;&amp; CompileShaders.cmd</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -140,12 +146,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Command>cd Shaders &amp;&amp; CompileShaders.cmd</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BC.h" />
     <ClInclude Include="BCDirectCompute.h" />
     <ClInclude Include="DDS.h" />
     <ClInclude Include="DirectXTex.h" />
+    <ClInclude Include="DirectXTex.inl" />
     <ClInclude Include="DirectXTexP.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="filters.h" />
