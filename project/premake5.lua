@@ -169,9 +169,15 @@ project "DirectXTex"
     }
 
     files {
-        "externals/DirectXTex/**.h",
         "externals/DirectXTex/**.cpp",
+        "externals/DirectXTex/**.h",
+        "externals/DirectXTex/**.inl"
     }
+
+    filter "system:windows"
+        prebuildcommands {
+            "cd Shaders && CompileShaders.cmd"
+        }
 
 project "ImGui"
     location "externals/imgui"
