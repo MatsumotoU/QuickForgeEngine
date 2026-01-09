@@ -33,9 +33,8 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	std::filesystem::path monoEtcPath = exeDir / "mono" / "etc";
 
 	// UTF-8変換
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-	std::string monoLibPathUtf8 = conv.to_bytes(monoLibPath.wstring());
-	std::string monoEtcPathUtf8 = conv.to_bytes(monoEtcPath.wstring());
+	std::string monoLibPathUtf8 = ConvertString(monoLibPath.wstring());
+	std::string monoEtcPathUtf8 = ConvertString(monoEtcPath.wstring());
 
 #ifdef _DEBUG
 	DebugLog("Mono Lib Path: " + monoLibPath.string());
