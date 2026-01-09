@@ -1,15 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{000BCD17-6C75-818E-B5B3-3234215D5FE3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resources\Shaders">
-      <UniqueIdentifier>{D92F8C3C-4546-8AD2-8EBD-15F4FA125B5A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resources\Shaders\ShaderStructs">
-      <UniqueIdentifier>{57B26A98-C395-79D8-CC98-A71438FB3F29}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
@@ -235,6 +226,15 @@
     <Filter Include="include\window\WindowGenerater\Data">
       <UniqueIdentifier>{BDE2B2AD-299C-1D58-B2FB-37321EB4D3C7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{202B5BA7-8C95-0F1E-D5D3-C0C3417DED72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders">
+      <UniqueIdentifier>{19081037-851E-0ECD-CE95-99EE3AEBDE54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders\shaderStructs">
+      <UniqueIdentifier>{B72A853E-230E-947E-2C11-C2BA98735ACF}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -410,9 +410,6 @@
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="QuickForgeEngine.h" />
-    <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h">
-      <Filter>Resources\Shaders\ShaderStructs</Filter>
-    </ClInclude>
     <ClInclude Include="include\WindowsEngineCore.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -943,6 +940,9 @@
     </ClInclude>
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h">
       <Filter>include\window\WindowGenerater</Filter>
+    </ClInclude>
+    <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h">
+      <Filter>resources\shaders\shaderStructs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

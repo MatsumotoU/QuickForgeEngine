@@ -43,7 +43,7 @@ group "QuickForge" -- MyMainProject
         location "editor"
         kind "WindowedApp"
         language "C++"
-        debugdir "%{wks.location}"
+        debugdir "%{cfg.targetdir}"
         files {
             "editor/**.h",
             "editor/**.cpp"
@@ -76,18 +76,12 @@ group "QuickForge" -- MyMainProject
         }
 
         postbuildcommands {
-            'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
-            'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS > nul',
-            'robocopy "..\\externals\\Mono\\etc" "%{cfg.targetdir}\\mono\\etc" /E /XO /R:0 /W:0 /NJH /NJS > nul',
-            'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "%{cfg.targetdir}" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
+            'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > "%{wks.location}/logs/postbuild.log"',
+            'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
+            'robocopy "..\\externals\\Mono\\etc" "%{cfg.targetdir}\\mono\\etc" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
+            'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "%{cfg.targetdir}" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
             "exit /b 0"
         }
-
-        filter "configurations:Debug"
-            libdirs { "externals/lua/bin/Debug" }
-        filter "configurations:Release or configurations:Development"
-            libdirs { "externals/lua/bin/Release" }
-        filter ""
 
     project "Engine" -- Engine
         location "engine"
@@ -132,13 +126,11 @@ group "QuickForge" -- MyMainProject
         filter "configurations:Debug"
             links { "assimp-vc143-mtd" }
             libdirs {
-                "externals/lua/bin/Debug",
                 "externals/assimp/lib/Debug"
             }
         filter "configurations:Release or configurations:Development"
             links { "assimp-vc143-mt" }
             libdirs {
-                "externals/lua/bin/Release",
                 "externals/assimp/lib/Release"
             }
         filter ""
@@ -192,4 +184,20 @@ project "ImGui"
         "externals/imgui/**.cpp",
     }
 
+project "Lua"
+    location "externals/lua"
+    kind "StaticLib"
+    language "C"
+    
+    files {
+        "externals/lua/**.h",
+        "externals/lua/**.c"
+    }
 
+    removefiles {
+        "externals/lua/lua.c",
+        "externals/lua/luac.c"
+    }
+
+    filter "system:windows"
+        defines { "_CRT_SECURE_NO_WARNINGS" }
