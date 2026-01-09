@@ -43,7 +43,7 @@ group "QuickForge" -- MyMainProject
         location "editor"
         kind "WindowedApp"
         language "C++"
-        debugdir "%{cfg.targetdir}"
+        debugdir "%{wks.location}"
         files {
             "editor/**.h",
             "editor/**.cpp"
@@ -58,24 +58,28 @@ group "QuickForge" -- MyMainProject
         warnings "Extra"
         fatalwarnings "All" --すべての警告をエラーとします
     
-        -- 追加のインクルード
-        includedirs{
-            "./",
-            "./engine/include/",
+        -- 外部ファイルのインクルード
+        externalincludedirs {
             "./externals/",
+            "./externals/sol2",
             "./externals/assimp/",
             "./externals/assimp/include/",
             "./externals/DirectXTex/",
             "./externals/imgui/",
             "./externals/lua/",
-            "./externals/sol2",
             "./externals/Mono/",
             "./externals/Mono/include",
             "./externals/Mono/include/mono-2.0/",
             "./externals/nlohmann/",
         }
+        -- 追加のインクルード
+        includedirs{
+            "./",
+            "./engine/include/",
+        }
 
         postbuildcommands {
+            'robocopy "../engine/resources" "%{cfg.targetdir}/engine/resources" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
             'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > "%{wks.location}/logs/postbuild.log"',
             'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
             'robocopy "..\\externals\\Mono\\etc" "%{cfg.targetdir}\\mono\\etc" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
@@ -87,6 +91,7 @@ group "QuickForge" -- MyMainProject
         location "engine"
         kind "StaticLib" 
         language "C++"
+        debugdir "%{wks.location}"
         files {"engine/**.h","engine/**.cpp"}
         links{
             "DirectXTex",
@@ -102,21 +107,25 @@ group "QuickForge" -- MyMainProject
         -- 警告レベル4
         warnings "Extra"
 
-        -- 追加のインクルード
-        includedirs{
-            "./",
-            "./engine/include/",
+        -- 外部ファイルのインクルード
+        externalincludedirs {
             "./externals/",
+            "./externals/sol2",
             "./externals/assimp/",
             "./externals/assimp/include/",
             "./externals/DirectXTex/",
             "./externals/imgui/",
             "./externals/lua/",
-            "./externals/sol2",
             "./externals/Mono/",
             "./externals/Mono/include",
             "./externals/Mono/include/mono-2.0/",
             "./externals/nlohmann/",
+        }
+
+        -- 追加のインクルード
+        includedirs{
+            "./",
+            "./engine/include/",
         }
 
         prebuildcommands {

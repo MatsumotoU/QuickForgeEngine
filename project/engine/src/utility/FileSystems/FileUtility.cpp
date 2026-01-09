@@ -91,3 +91,12 @@ std::string QFE::FILE::WideToUTF8(const std::wstring& wstr)
     WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &result[0], size, nullptr, nullptr);
     return result;
 }
+
+std::wstring QFE::FILE::GetAbsolutePath(const std::wstring& relativePath) {
+    wchar_t fullPath[MAX_PATH];
+    DWORD ret = GetFullPathNameW(relativePath.c_str(), MAX_PATH, fullPath, nullptr);
+    if (ret == 0 || ret > MAX_PATH) {
+        return relativePath; // 失敗時はそのまま返す
+    }
+    return std::wstring(fullPath);
+}

@@ -23,4 +23,6 @@ namespace QFE::FILE {
 	extern bool SaveJSONToFile(const std::string& filePath, const nlohmann::json& json);
 
 	extern std::string WideToUTF8(const std::wstring& wstr);
+
+	extern std::wstring GetAbsolutePath(const std::wstring& relativePath);
 }
