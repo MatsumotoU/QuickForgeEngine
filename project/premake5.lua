@@ -83,12 +83,6 @@ group "QuickForge" -- MyMainProject
             "exit /b 0"
         }
 
-        filter "configurations:Debug"
-            libdirs { "externals/lua/bin/Debug" }
-        filter "configurations:Release or configurations:Development"
-            libdirs { "externals/lua/bin/Release" }
-        filter ""
-
     project "Engine" -- Engine
         location "engine"
         kind "StaticLib" 
@@ -132,13 +126,11 @@ group "QuickForge" -- MyMainProject
         filter "configurations:Debug"
             links { "assimp-vc143-mtd" }
             libdirs {
-                "externals/lua/bin/Debug",
                 "externals/assimp/lib/Debug"
             }
         filter "configurations:Release or configurations:Development"
             links { "assimp-vc143-mt" }
             libdirs {
-                "externals/lua/bin/Release",
                 "externals/assimp/lib/Release"
             }
         filter ""
@@ -192,4 +184,20 @@ project "ImGui"
         "externals/imgui/**.cpp",
     }
 
+project "Lua"
+    location "externals/lua"
+    kind "StaticLib"
+    language "C"
+    
+    files {
+        "externals/lua/**.h",
+        "externals/lua/**.c"
+    }
 
+    removefiles {
+        "externals/lua/lua.c",
+        "externals/lua/luac.c"
+    }
+
+    filter "system:windows"
+        defines { "_CRT_SECURE_NO_WARNINGS" }

@@ -91,8 +91,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>Lua.lib;mono-2.0-sgen.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Debug;..\externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
@@ -123,8 +123,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>Lua.lib;mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Release;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
@@ -155,8 +155,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>Lua.lib;mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Release;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
@@ -165,7 +165,6 @@
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="QuickForgeEngine.h" />
-    <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
     <ClInclude Include="include\assets\2DTexture\TextureManager.h" />
     <ClInclude Include="include\assets\3DModel\Data\ModelData.h" />
@@ -343,6 +342,7 @@
     <ClInclude Include="include\window\WindowEventsManager\WindowEventsManager.h" />
     <ClInclude Include="include\window\WindowGenerater\Data\WindowConfigData.h" />
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h" />
+    <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -483,6 +483,9 @@
     </ProjectReference>
     <ProjectReference Include="..\externals\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\externals\lua\Lua.vcxproj">
+      <Project>{A705880B-130F-887C-9C8A-9E7C0893937C}</Project>
     </ProjectReference>
     <ProjectReference Include="..\externals\ExternalFolders.vcxproj">
       <Project>{B7C788AE-2353-F672-2C64-7967986E5273}</Project>
