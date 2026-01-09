@@ -59,6 +59,7 @@
     <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Debug\</IntDir>
     <TargetName>Editor</TargetName>
     <TargetExt>.exe</TargetExt>
+    <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -66,6 +67,7 @@
     <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Development\</IntDir>
     <TargetName>Editor</TargetName>
     <TargetExt>.exe</TargetExt>
+    <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -73,6 +75,7 @@
     <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Release\</IntDir>
     <TargetName>Editor</TargetName>
     <TargetExt>.exe</TargetExt>
+    <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -80,7 +83,7 @@
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -95,7 +98,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+      <Command>robocopy "../engine/resources" "../../generated/outputs/Debug/engine/resources" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "..\externals\Mono\lib" "../../generated/outputs/Debug\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Debug" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
@@ -108,7 +112,7 @@ exit /b 0</Command>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -128,7 +132,8 @@ exit /b 0</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+      <Command>robocopy "../engine/resources" "../../generated/outputs/Development/engine/resources" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "..\externals\Mono\lib" "../../generated/outputs/Development\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Development" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
@@ -141,7 +146,7 @@ exit /b 0</Command>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -161,7 +166,8 @@ exit /b 0</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+      <Command>robocopy "../engine/resources" "../../generated/outputs/Release/engine/resources" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "..\externals\Mono\lib" "../../generated/outputs/Release\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "..\externals\Mono\etc" "../../generated/outputs/Release\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Release" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"

@@ -43,6 +43,7 @@ group "QuickForge" -- MyMainProject
         location "editor"
         kind "WindowedApp"
         language "C++"
+        debugdir "%{wks.location}"
         files {
             "editor/**.h",
             "editor/**.cpp"
