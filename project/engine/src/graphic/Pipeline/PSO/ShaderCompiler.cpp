@@ -12,6 +12,7 @@
 #endif // _DEBUG
 
 #include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 
 ShaderCompiler::ShaderCompiler() {
 	iDxcBlobMap_.clear();
@@ -61,10 +62,13 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 		return iDxcBlobMap_.at(filePath);
 	}
 
-	// 1:繝輔ぃ繧､繝ｫ隱ｭ縺ｿ霎ｼ縺ｿ
-	// 縺薙ｌ縺九ｉ繧ｷ繧ｧ繝ｼ繝繝ｼ繧偵さ繝ｳ繝代う繝ｫ縺吶ｋ譌ｨ繧偵Ο繧ｰ縺ｫ蜃ｺ縺・
 	Log(ConvertString(std::format(L"Begin CompileShader, path:{},profile:{}\n", filePath, profile)));
-	// hlsl繝輔ぃ繧､繝ｫ繧定ｪｭ繧
+
+	// ここで絶対パスを出力
+	std::wstring absPath = QFE::FILE::GetAbsolutePath(filePath);
+	Log(ConvertString(std::format(L"Shader file absolute path: {}\n", absPath)));
+
+	// hlslファイルをロード
 	IDxcBlobEncoding* shaderSource = nullptr;
 	HRESULT hr = dxcUtils_->LoadFile(filePath.c_str(), nullptr, &shaderSource);
 	// 隱ｭ繧√↑縺・↑繧牙●豁｢
