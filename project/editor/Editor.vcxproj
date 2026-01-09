@@ -93,14 +93,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\lua\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Debug\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Debug" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\lib" "../../generated/outputs/Debug\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Debug" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -128,14 +126,12 @@ exit /b 0</Command>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\lua\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Development\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Development" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\lib" "../../generated/outputs/Development\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Development" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -163,18 +159,17 @@ exit /b 0</Command>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\lua\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Release\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Release\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Release" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\lib" "../../generated/outputs/Release\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\etc" "../../generated/outputs/Release\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Release" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="include\IEditor.h" />
     <ClInclude Include="include\OnWindowsEditor.h" />
     <ClInclude Include="include\UI\Edit\ColliderMaskEdit.h" />
@@ -222,6 +217,9 @@ exit /b 0</Command>
   <ItemGroup>
     <ProjectReference Include="..\engine\Engine.vcxproj">
       <Project>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\externals\lua\Lua.vcxproj">
+      <Project>{A705880B-130F-887C-9C8A-9E7C0893937C}</Project>
     </ProjectReference>
     <ProjectReference Include="..\externals\ExternalFolders.vcxproj">
       <Project>{B7C788AE-2353-F672-2C64-7967986E5273}</Project>

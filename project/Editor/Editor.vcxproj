@@ -95,10 +95,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Debug\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Debug" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\lib" "../../generated/outputs/Debug\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Debug" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -128,10 +128,10 @@ exit /b 0</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Development\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Development" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\lib" "../../generated/outputs/Development\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Development" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -161,10 +161,10 @@ exit /b 0</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Release\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Release\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Release" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\lib" "../../generated/outputs/Release\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "..\externals\Mono\etc" "../../generated/outputs/Release\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
+robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Release" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt;&gt; "$(SolutionDir)/logs/postbuild.log"
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

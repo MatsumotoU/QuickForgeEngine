@@ -43,7 +43,7 @@ group "QuickForge" -- MyMainProject
         location "editor"
         kind "WindowedApp"
         language "C++"
-        debugdir "%{wks.location}"
+        debugdir "%{cfg.targetdir}"
         files {
             "editor/**.h",
             "editor/**.cpp"
@@ -76,10 +76,10 @@ group "QuickForge" -- MyMainProject
         }
 
         postbuildcommands {
-            'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
-            'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS > nul',
-            'robocopy "..\\externals\\Mono\\etc" "%{cfg.targetdir}\\mono\\etc" /E /XO /R:0 /W:0 /NJH /NJS > nul',
-            'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "%{cfg.targetdir}" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
+            'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > "%{wks.location}/logs/postbuild.log"',
+            'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
+            'robocopy "..\\externals\\Mono\\etc" "%{cfg.targetdir}\\mono\\etc" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
+            'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "%{cfg.targetdir}" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
             "exit /b 0"
         }
 
