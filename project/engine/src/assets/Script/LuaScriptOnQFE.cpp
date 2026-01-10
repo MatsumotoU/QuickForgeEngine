@@ -22,31 +22,55 @@ LuaScriptOnQFE::LuaScriptOnQFE() {
 	bindEntityId_ = 0;
 	priority_ = 0;
 	defaultGlobals.clear();
-	UserGlobals.clear();
 }
 
 void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 	isCanRun_ = false;
 	try {
-		luaState_ = std::make_unique<sol::state>();
-		luaState_->open_libraries(
-			sol::lib::base,
-			sol::lib::package,
-			sol::lib::math,
-			sol::lib::string,
-			sol::lib::table,
-			sol::lib::coroutine,
-			sol::lib::debug,
-			sol::lib::utf8
-		);
+		sol::state& luaState = LuaScriptResourceManager::GetInstance()->GetSharedState();
+		
+		// 1. 環境用テーブルを作成し、メタテーブルをセット
+		sol::table env_table = luaState.create_table();
+		sol::table mt = luaState.create_table();
+		mt["__index"] = [this, &luaState](sol::table t, sol::object key) -> sol::object {
+			if (key.is<std::string>()) {
+				std::string k = key.as<std::string>();
+				auto* em = AssetManager::GetInstance()->GetEntityManager();
+				if (k == "transform") {
+					if (em->HasComponent<Transform>(this->bindEntityId_)) {
+						return sol::make_object(luaState, &em->GetComponent<Transform>(this->bindEntityId_));
+					}
+				}
+				else if (k == "force") {
+					if (em->HasComponent<Force>(this->bindEntityId_)) {
+						return sol::make_object(luaState, &em->GetComponent<Force>(this->bindEntityId_));
+					}
+				}
+				else if (k == "aabbCollider") {
+					if (em->HasComponent<AABBColliderData>(this->bindEntityId_)) {
+						return sol::make_object(luaState, &em->GetComponent<AABBColliderData>(this->bindEntityId_));
+					}
+				}
+				else if (k == "sphereCollider") {
+					if (em->HasComponent<SphereColliderData>(this->bindEntityId_)) {
+						return sol::make_object(luaState, &em->GetComponent<SphereColliderData>(this->bindEntityId_));
+					}
+				}
+			}
+			// 環境のフォールバック（グローバルなど）をチェック
+			return luaState.globals()[key];
+		};
+		// sol::table::set_metatable がない古いバージョン向けの互換記法
+		env_table[sol::metatable_key] = mt;
 
-		// 襍ｷ蜍慕峩蠕後・繧ｰ繝ｭ繝ｼ繝舌Ν荳隕ｧ繧剃ｿ晏ｭ・
-		for (auto& kv : luaState_->globals()) {
-			defaultGlobals.insert(kv.first.as<std::string>());
-		}
+		// 2. 作成したテーブルから環境を初期化
 
+		environment_ = sol::environment(luaState, env_table);
+		// 環境の親としてglobalsを設定（globalsから値を取得できるようにする）
+		// ただし、メタテーブルの__indexで手動フォールバックしているので実質的にはmt経由でアクセスされる
+		
 		std::string filePath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + scriptName;
-		sol::load_result loadResult = luaState_->load_file(filePath);
+		sol::load_result loadResult = luaState.load_file(filePath);
 
 		if (!loadResult.valid()) {
 			sol::error err = loadResult;
@@ -55,23 +79,31 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 
 		SetQFEFunctions();
 
-		// 繧ｹ繧ｯ繝ｪ繝励ヨ繧貞ｮ溯｡・
-		sol::protected_function_result execResult = loadResult();
+		// スクリプトを実行（環境を指定）
+		sol::function scriptFunc = loadResult;
+		sol::set_environment(environment_, scriptFunc);
+
+		sol::protected_function_result execResult = scriptFunc();
 		if (!execResult.valid()) {
 			sol::error err = execResult;
 			throw std::runtime_error("Failed to execute Lua script: " + scriptName + "\n" + err.what());
 		}
 
-		// User繧ｰ繝ｭ繝ｼ繝舌Ν荳隕ｧ繧剃ｿ晏ｭ假ｼ医せ繧ｯ繝ｪ繝励ヨ螳溯｡悟ｾ鯉ｼ・ｼ・
-		for (auto& kv : luaState_->globals()) {
-			if (defaultGlobals.find(kv.first.as<std::string>()) == defaultGlobals.end()) {
-				UserGlobals.insert(kv.first.as<std::string>());
-			}
-		}
-		
 		isCanRun_ = true;
 		scriptName_ = scriptName;
+
+		// キャッシュする関数を取得
+		initFunc_ = environment_["Init"];
+		updateFunc_ = environment_["Update"];
+		onCollisionEnterFunc_ = environment_["OnCollisionEnter"];
+		onCollisionStayFunc_ = environment_["OnCollisionStay"];
+
+		// Lua側のレジストリに登録
+		if (updateFunc_.valid()) {
+			luaState["QFE_Internal"]["RegisterUpdate"](handle_, updateFunc_, priority_);
+		}
 	}
+
 	catch (const std::exception& e) {
 #ifdef _DEBUG
 		DebugLog(e.what(), LogLevel::Error);
@@ -87,59 +119,54 @@ void LuaScriptOnQFE::ReloadScript() {
 		return;
 	}
 
-	std::set<std::string> oldGlobals = UserGlobals;
 	LoadScript(scriptName_);
-	// 蜿､縺・げ繝ｭ繝ｼ繝舌Ν螟画焚繧呈眠縺励＞繧ｹ繧ｯ繝ｪ繝励ヨ縺ｫ繧ｳ繝斐・
-	for (const auto& global : oldGlobals) {
-		if (UserGlobals.find(global) != UserGlobals.end()) {
-			sol::object oldObj = luaState_->get<sol::object>(global);
-			if (oldObj.is<int>()) {
-				int v = oldObj.as<int>();
-				luaState_->set(global, v);
-			} else if (oldObj.is<float>()) {
-				float v = oldObj.as<float>();
-				luaState_->set(global, v);
-			} else if (oldObj.is<bool>()) {
-				bool v = oldObj.as<bool>();
-				luaState_->set(global, v);
-			} else if (oldObj.is<std::string>()) {
-				std::string v = oldObj.as<std::string>();
-				luaState_->set(global, v);
-			}
-		}
-	}
 }
 
+
 bool LuaScriptOnQFE::HasFunction(const std::string& functionName) const {
-	if (!luaState_ || !luaState_->lua_state()) {
-#ifdef _DEBUG
-		DebugLog("Lua state is not initialized.", LogLevel::Error);
-#endif // _DEBUG
-		return false;
-	}
-	sol::object obj = luaState_->get<sol::object>(functionName);
+	sol::object obj = environment_[functionName];
 	return obj.is<sol::function>();
 }
 
+
 std::vector<std::string> LuaScriptOnQFE::GetFunctionList() const {
 	std::vector<std::string> functionNames;
-	if (luaState_) {
-		sol::table globals = luaState_->globals();
-		for (const auto& pair : globals) {
-			if (pair.second.is<sol::function>()) {
-				functionNames.push_back(pair.first.as<std::string>());
-			}
+	for (auto& kv : environment_) {
+		if (kv.second.is<sol::function>()) {
+			functionNames.push_back(kv.first.as<std::string>());
 		}
 	}
 	return functionNames;
 }
 
-sol::state* LuaScriptOnQFE::GetScript() const {
-	if (!luaState_||!luaState_.get()) {
-		return nullptr;
-	}
 
-	return luaState_.get();
+sol::state* LuaScriptOnQFE::GetScript() const {
+	return &LuaScriptResourceManager::GetInstance()->GetSharedState();
+}
+
+
+void LuaScriptOnQFE::RunInit() {
+	if (initFunc_.valid()) {
+		initFunc_();
+	}
+}
+
+void LuaScriptOnQFE::RunUpdate() {
+	if (updateFunc_.valid()) {
+		updateFunc_();
+	}
+}
+
+void LuaScriptOnQFE::RunCollisionEnter(uint32_t id, SceneObjectData* objData) {
+	if (onCollisionEnterFunc_.valid()) {
+		onCollisionEnterFunc_(id, objData);
+	}
+}
+
+void LuaScriptOnQFE::RunCollisionStay(uint32_t id, SceneObjectData* objData) {
+	if (onCollisionStayFunc_.valid()) {
+		onCollisionStayFunc_(id, objData);
+	}
 }
 
 const bool& LuaScriptOnQFE::IsCanRun() const {
@@ -161,109 +188,65 @@ bool LuaScriptOnQFE::IsAliveEntity() {
 
 void LuaScriptOnQFE::SetEntityValue(uint32_t entityId) {
 	bindEntityId_ = entityId;
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-
-	// transform繧ｳ繝ｳ繝昴・繝阪Φ繝医ｒLua縺ｫ繧ｻ繝・ヨ
-	try
-	{
-		if (entityManager->HasComponent<Transform>(bindEntityId_))
-		{
-			Transform& transform = entityManager->GetComponent<Transform>(bindEntityId_);
-			luaState_->set("transform", &transform);
-		} else
-		{
-			throw std::runtime_error("Entity does not have Transform component.");
-		}
-	}
-	catch (const std::exception&)
-	{
-#ifdef _DEBUG
-		DebugLog("Failed to set entity values in Lua script.", LogLevel::Error);
-#endif // _DEBUG
-	}
-
-	// Force繧ｳ繝ｳ繝昴・繝阪Φ繝医ｒLua縺ｫ繧ｻ繝・ヨ
-	if (entityManager->HasComponent<Force>(bindEntityId_))
-	{
-		Force& force = entityManager->GetComponent<Force>(bindEntityId_);
-		luaState_->set("force", &force);
-#ifdef _DEBUG
-		DebugLog(std::format( "{}: Active ForceComponent.",scriptName_), LogLevel::EditorInfo);
-#endif // _DEBUG
-	}
-	
-	// Collider componentsをLuaにセット
-	if (entityManager->HasComponent<AABBColliderData>(bindEntityId_))
-	{
-		AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(bindEntityId_);
-		luaState_->set("aabbCollider", &collider);
-	}
-	if (entityManager->HasComponent<SphereColliderData>(bindEntityId_))
-	{
-		SphereColliderData& collider = entityManager->GetComponent<SphereColliderData>(bindEntityId_);
-		luaState_->set("sphereCollider", &collider);
-	}
 }
+
+
 
 std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
 	std::vector<std::string> globalNames;
-	for (const auto& global : UserGlobals) {
-		sol::object obj = luaState_->get<sol::object>(global);
+	for (auto& kv : environment_) {
+		sol::object obj = kv.second;
 		if (obj.is<sol::function>()) {
 			continue;
 		}
-		globalNames.push_back(global);
+		globalNames.push_back(kv.first.as<std::string>());
 	}
 	return globalNames;
 }
 
-void LuaScriptOnQFE::SetQFEFunctions() {
-	// 繝・・繝悶Ν菴懈・
-	sol::table qfe = luaState_->create_named_table("QFE");
-	// QFE髢｢謨ｰ逋ｻ骭ｲ
-	QFE::Script::SetQFEFunctions(luaState_.get());
 
-	// this繧ｨ繝ｳ繝・ぅ繝・ぅ諠・ｱ逋ｻ骭ｲ
-	sol::table thisEntity = luaState_->create_named_table("this");
+void LuaScriptOnQFE::SetQFEFunctions() {
+	sol::state& luaState = LuaScriptResourceManager::GetInstance()->GetSharedState();
+
+	// thisエンティティ情報登録
+	sol::table thisEntity = luaState.create_table();
 	thisEntity.set_function("GetEntityId", [this]() {
 		return bindEntityId_;
 		});
+	environment_["this"] = thisEntity;
 
-	// 險ｳ繧｢繝ｪ髢｢謨ｰ鄒､
+	// 訳アリ関数群
 	// Log
-	luaState_->set_function("DebugLog", [this](sol::variadic_args message) {
+	environment_["DebugLog"] = [this](sol::variadic_args message) {
 		message;
 #ifdef _DEBUG
 		DebugLogLua(message,this->GetBindEntityId(),this->GetScriptName());
 #endif // _DEBUG
-		});
-	luaState_->set_function("GetThisEntityId", [this]() {
+		};
+	environment_["GetThisEntityId"] = [this]() {
 		return bindEntityId_;
-		});
-	luaState_->set_function("RunEntityScriptFunction",
+		};
+	environment_["RunEntityScriptFunction"] = 
 		[](uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
 			LuaScriptResourceManager::GetInstance()->RunFunction(entityId, scriptName, functionName);
-		}
-	);
-	luaState_->set_function("destroy", [this]() {
+		};
+	environment_["destroy"] = [this]() {
 		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
-		});
-	luaState_->set_function("delete", [this]() {
+		};
+	environment_["delete"] = [this]() {
 		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
-		});
-	luaState_->set_function("GetEntityScriptGlobal",
+		};
+	environment_["GetEntityScriptGlobal"] = 
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::this_state ts) {
 			sol::state_view callerState(ts);
 			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
-		}
-	);
-	luaState_->set_function("SetEntityScriptGlobal",
+		};
+	environment_["SetEntityScriptGlobal"] = 
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value) {
 			LuaScriptResourceManager::GetInstance()->SetEntityScriptGlobal(entityId, scriptName, varName, value);
-		});
+		};
 
-	luaState_->set_function("SetAABBColiderSize", [this](const Vector3& size) {
+	environment_["SetAABBColiderSize"] = [this](const Vector3& size) {
 		AssetManager* assetManager = AssetManager::GetInstance();
 		EntityManager* entityManager = assetManager->GetEntityManager();
 		if (entityManager->HasComponent<AABBColliderData>(this->GetBindEntityId()) == false) {
@@ -271,5 +254,6 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		}
 		AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(this->GetBindEntityId());
 		collider.aabb.size = size;
-		});
+		};
 }
+

@@ -12,6 +12,8 @@
 
 #include <set>
 
+class SceneObjectData;
+
 class LuaScriptOnQFE {
 public:
 	LuaScriptOnQFE();
@@ -25,10 +27,7 @@ public:
 			if (!isCanRun_) {
 				throw std::runtime_error("Cannot run function. Lua script is not loaded or failed to load.");
 			}
-			if (!luaState_) {
-				throw std::runtime_error("Lua state is not initialized.");
-			}
-			sol::object obj = luaState_->get<sol::object>(functionName);
+			sol::object obj = environment_[functionName];
 			if (!obj.is<sol::function>()) {
 				throw std::runtime_error("Function '" + functionName + "' not found in Lua script.");
 			}
@@ -43,7 +42,8 @@ public:
 			DebugLog("Error in Lua function '" + functionName + "': " + e.what(), LogLevel::Error);
 		}
 #else
-		if (!isCanRun_ || !luaState_) {
+
+		if (!isCanRun_) {
 			return;
 		}
 		auto it = functionCache_.find(functionName);
@@ -51,7 +51,7 @@ public:
 		if (it != functionCache_.end()) {
 			func = it->second;
 		} else {
-			sol::object obj = luaState_->get<sol::object>(functionName);
+			sol::object obj = environment_[functionName];
 			if (!obj.is<sol::function>()) {
 				return;
 			}
@@ -61,10 +61,17 @@ public:
 		func(std::forward<Args>(args)...);
 #endif
 	}
+
 	bool HasFunction(const std::string& functionName) const;
+	void RunInit();
+	void RunUpdate();
+	void RunCollisionEnter(uint32_t id, SceneObjectData* objData);
+	void RunCollisionStay(uint32_t id, SceneObjectData* objData);
 	std::vector<std::string> GetFunctionList() const;
 	sol::state* GetScript() const;
+	sol::environment& GetEnvironment() { return environment_; }
 	const bool& IsCanRun() const;
+
 	bool IsAliveEntity();
 
 	void SetEntityValue(uint32_t entityId);
@@ -74,6 +81,9 @@ public:
 	std::set<std::string>& GetGlobals() { return UserGlobals; }
 	std::string GetScriptName() const { return scriptName_; }
 	uint32_t GetPriority() const { return priority_; }
+	void SetHandle(uint32_t handle) { handle_ = handle; }
+	uint32_t GetHandle() const { return handle_; }
+
 
 private:
 	/// QFE用の関数を登録
@@ -81,13 +91,21 @@ private:
 
 	bool isCanRun_;
 	uint32_t bindEntityId_;
+	uint32_t handle_;
 	uint32_t priority_;
+
 	std::string scriptName_;
 	std::set<std::string> defaultGlobals;
 	std::set<std::string> UserGlobals;
-	std::unique_ptr<sol::state> luaState_;
+	sol::environment environment_;
+
 
 #ifndef _DEBUG
 	std::map<std::string, sol::function> functionCache_;
 #endif
+	sol::function initFunc_;
+	sol::function updateFunc_;
+	sol::function onCollisionEnterFunc_;
+	sol::function onCollisionStayFunc_;
 };
+

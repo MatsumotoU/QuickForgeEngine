@@ -82,6 +82,8 @@ void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 				}
 			}
 		}
+		return minLength;
 		});
+
 
 }
