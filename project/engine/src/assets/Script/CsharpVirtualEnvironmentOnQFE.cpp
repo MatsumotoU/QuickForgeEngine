@@ -8,6 +8,7 @@
 #include <locale>
 #include <codecvt>
 
+#include "Engine/include/utility/String/MyString.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/assets/Script/QFElinker/CsharpOnQFELinker.h"
 #ifdef _DEBUG
