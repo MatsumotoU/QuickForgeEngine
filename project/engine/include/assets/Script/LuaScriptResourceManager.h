@@ -9,7 +9,7 @@
 
 class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager> {
 	friend class Singleton<LuaScriptResourceManager>;
-	LuaScriptResourceManager() = default;
+	LuaScriptResourceManager();
 	LuaScriptResourceManager(const LuaScriptResourceManager&) = delete;
 	LuaScriptResourceManager& operator=(const LuaScriptResourceManager&) = delete;
 	LuaScriptResourceManager(LuaScriptResourceManager&&) = delete;

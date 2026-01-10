@@ -14,6 +14,10 @@
 #endif // _DEBUG
 static std::set<std::string> emptySet;
 
+LuaScriptResourceManager::LuaScriptResourceManager() :
+	isRunningScript_(false),
+	maxPriority_(0),
+	nextScriptHandle_(0) {}
 void LuaScriptResourceManager::Initialize() {
 	sharedLuaState_ = std::make_unique<sol::state>();
 	sharedLuaState_->open_libraries(
@@ -455,7 +459,8 @@ void LuaScriptResourceManager::CopyLuaTable(const sol::table& src, sol::table& d
 			sol::table newTable = sol::state_view(dst.lua_state()).create_table();
 			CopyLuaTable(pair.second.as<sol::table>(), newTable);
 			dst.set(pair.first, newTable);
-		} else {
+		}
+		else {
 			dst.set(pair.first, pair.second);
 		}
 	}
