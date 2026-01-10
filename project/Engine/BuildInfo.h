@@ -1,5 +1,5 @@
 #pragma once 
-#define BUILD_COMMIT "d5d8d859" 
-#define BUILD_BRANCH "develop" 
+#define BUILD_COMMIT "c3a9a4e1" 
+#define BUILD_BRANCH "Lua" 
 #define BUILD_DATE "2026/01/10" 
-#define BUILD_TIME "16:16:31.48" 
+#define BUILD_TIME "17:12:24.89" 

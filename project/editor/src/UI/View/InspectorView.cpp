@@ -183,12 +183,12 @@ void InspectorView::Draw() {
 					ImGui::Separator();
 					for (std::string& val : script->GetGlobalValuesList()) {
 						std::string inputLabel = val + "##" + std::to_string(i);
-						sol::state* state = script->GetScript();
-						sol::object obj = (*state)[val];
+						sol::environment& env = script->GetEnvironment();
+						sol::object obj = env[val];
 						if (obj.is<int>()) {
 							int v = obj.as<int>();
 							if (ImGui::InputInt(inputLabel.c_str(), &v)) {
-								(*state)[val] = v;
+								env[val] = v;
 								auto it = sh.intParams_.find(val);
 								if (it != sh.intParams_.end()) {
 									it->second = v;
@@ -199,7 +199,7 @@ void InspectorView::Draw() {
 						} else if (obj.is<float>()) {
 							float v = obj.as<float>();
 							if (ImGui::InputFloat(inputLabel.c_str(), &v)) {
-								(*state)[val] = v;
+								env[val] = v;
 								auto it = sh.floatParams_.find(val);
 								if (it != sh.floatParams_.end()) {
 									it->second = v;
@@ -210,7 +210,7 @@ void InspectorView::Draw() {
 						} else if (obj.is<bool>()) {
 							bool v = obj.as<bool>();
 							if (ImGui::Checkbox(inputLabel.c_str(), &v)) {
-								(*state)[val] = v;
+								env[val] = v;
 								auto it = sh.boolParams_.find(val);
 								if (it != sh.boolParams_.end()) {
 									it->second = v;
@@ -223,7 +223,7 @@ void InspectorView::Draw() {
 							char buf[256];
 							strcpy_s(buf, v.c_str());
 							if (ImGui::InputText(inputLabel.c_str(), buf, sizeof(buf))) {
-								(*state)[val] = std::string(buf);
+								env[val] = std::string(buf);
 								auto it = sh.stringParams_.find(val);
 								if (it != sh.stringParams_.end()) {
 									it->second = std::string(buf);
@@ -233,6 +233,7 @@ void InspectorView::Draw() {
 							}
 						}
 					}
+
 
 					ImGui::TreePop();
 				}

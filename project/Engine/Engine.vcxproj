@@ -198,7 +198,6 @@
     <ClInclude Include="include\assets\Script\LuaScriptOnQFE.h" />
     <ClInclude Include="include\assets\Script\LuaScriptResourceManager.h" />
     <ClInclude Include="include\assets\Script\QFElinker\CsharpOnQFELinker.h" />
-    <ClInclude Include="include\assets\Script\QFElinker\CsharpProjectManager.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.h" />

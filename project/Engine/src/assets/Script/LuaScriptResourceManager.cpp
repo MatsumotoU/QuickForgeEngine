@@ -6,24 +6,95 @@
 #include "engine/include/Core/Entity/EntityManager.h"
 
 #include "engine/include/Assets/Script/Data/ScriptHandle.h"
+#include "engine/include/assets/Script/QFElinker/SetQFELinkers.h"
+
 
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 static std::set<std::string> emptySet;
 
+LuaScriptResourceManager::LuaScriptResourceManager() :
+	isRunningScript_(false),
+	maxPriority_(0),
+	nextScriptHandle_(0) {}
 void LuaScriptResourceManager::Initialize() {
+	sharedLuaState_ = std::make_unique<sol::state>();
+	sharedLuaState_->open_libraries(
+		sol::lib::base,
+		sol::lib::package,
+		sol::lib::math,
+		sol::lib::string,
+		sol::lib::table,
+		sol::lib::coroutine,
+		sol::lib::debug,
+		sol::lib::utf8
+	);
+
+	// QFEという名前のグローバルテーブルを作成
+	sharedLuaState_->create_named_table("QFE");
+
+	QFE::Script::SetQFEFunctions(sharedLuaState_.get());
+
+	// Lua側のレジストリを作成
+	sharedLuaState_->script(R"(
+		QFE_Internal = {
+			update_list = {},
+			UpdateAll = function()
+				if QFE_Internal.dirty then
+					QFE_Internal.sorted_list = {}
+					for handle, entry in pairs(QFE_Internal.update_list) do
+						table.insert(QFE_Internal.sorted_list, entry)
+					end
+					table.sort(QFE_Internal.sorted_list, function(a, b) return a.priority < b.priority end)
+					QFE_Internal.dirty = false
+				end
+				for _, entry in ipairs(QFE_Internal.sorted_list) do
+					entry.func()
+				end
+			end,
+
+			RegisterUpdate = function(handle, func, priority)
+				QFE_Internal.update_list[handle] = {func = func, priority = priority}
+				QFE_Internal.dirty = true
+			end,
+			UnregisterUpdate = function(handle)
+				if QFE_Internal.update_list[handle] then
+					QFE_Internal.update_list[handle] = nil
+					QFE_Internal.dirty = true
+				end
+			end,
+			ClearList = function()
+				QFE_Internal.update_list = {}
+				QFE_Internal.sorted_list = {}
+				QFE_Internal.dirty = false
+			end,
+			dirty = false,
+			sorted_list = {}
+		}
+	)");
+
+
 	scripts_.clear();
+
 	removeScriptHandles_.clear();
 	isRunningScript_ = false;
 	nextScriptHandle_ = 0;
 	maxPriority_ = 0;
 }
 
+
 void LuaScriptResourceManager::Reset() {
+	if (sharedLuaState_) {
+		(*sharedLuaState_)["QFE_Internal"]["ClearList"]();
+	}
 	scripts_.clear();
 	removeScriptHandles_.clear();
+	nextScriptHandle_ = 0;
+	maxPriority_ = 0;
 }
+
+
 
 void LuaScriptResourceManager::ReloadAllScripts() {
 	if (isRunningScript_) {
@@ -101,10 +172,12 @@ void LuaScriptResourceManager::CreateScript(const std::string& scriptName) {
 uint32_t LuaScriptResourceManager::AddScript(uint32_t entityId, const std::string& scriptName) {
 	uint32_t handle = nextScriptHandle_++;
 	auto script = std::make_unique<LuaScriptOnQFE>();
+	script->SetHandle(handle);
 	script->LoadScript(scriptName);
 	script->SetEntityValue(entityId);
 	script->SetPriority(maxPriority_++);
 	scripts_.emplace(handle, std::move(script));
+
 	return handle;
 }
 
@@ -129,8 +202,12 @@ void LuaScriptResourceManager::OpenAndEditScript(const std::string& scriptName) 
 }
 
 void LuaScriptResourceManager::RemoveScript(uint32_t handle) {
+	if (sharedLuaState_) {
+		(*sharedLuaState_)["QFE_Internal"]["UnregisterUpdate"](handle);
+	}
 	scripts_.erase(handle);
 }
+
 
 void LuaScriptResourceManager::InitializeAllScripts() {
 	// 優先度を取得
@@ -153,9 +230,10 @@ void LuaScriptResourceManager::InitializeAllScripts() {
 			continue;
 		}
 		// Lua状態が存在しない場合はスキップ
-		if (script->HasFunction("Init")) {
-			script->RunFunction("Init");
+		if (script->IsCanRun()) {
+			script->RunInit();
 		}
+
 	}
 }
 
@@ -175,37 +253,32 @@ void LuaScriptResourceManager::InitializeScript(uint32_t handle) {
 #endif // _DEBUG
 		return;
 	}
-	if (script->HasFunction("Init")) {
-		script->RunFunction("Init");
+	if (script->IsCanRun()) {
+		script->RunInit();
 	}
+
 }
 
 void LuaScriptResourceManager::UpdateAllScripts() {
-	// 優先度を取得
-	std::unordered_map<uint32_t, uint32_t> runSorts;
-	for (auto& [handle, script] : scripts_) {
-		runSorts[handle] = script->GetPriority();
-	}
-	// 優先度順にソート
-	std::vector<std::pair<uint32_t, uint32_t>> sortedScripts(runSorts.begin(), runSorts.end());
-	std::sort(sortedScripts.begin(), sortedScripts.end(), [](const auto& a, const auto& b) {
-		return a.second < b.second;
-		});
-	for (const auto& [handle, priority] : sortedScripts) {
-		auto script = GetScript(handle);
-		// スクリプトが存在しない場合はスキップ
-		if (!script) {
+	if (!isRunningScript_) return;
+
+	try {
+		sol::protected_function updateAll = (*sharedLuaState_)["QFE_Internal"]["UpdateAll"];
+		auto result = updateAll();
+		if (!result.valid()) {
+			sol::error err = result;
 #ifdef _DEBUG
-			DebugLog("Script Not Found", LogLevel::Warning);
-#endif // _DEBUG
-			continue;
+			DebugLog("Lua UpdateAll error: " + std::string(err.what()), LogLevel::Error);
+#endif
 		}
-		// Lua状態が存在しない場合はスキップ
-		if (script->HasFunction("Update")) {
-			script->RunFunction("Update");
-		}
+	}
+	catch (const std::exception& e) {
+#ifdef _DEBUG
+		DebugLog("Exception in UpdateAllAllScripts: " + std::string(e.what()), LogLevel::Error);
+#endif
 	}
 }
+
 
 void LuaScriptResourceManager::RunColliderStay(uint32_t runId, uint32_t id, SceneObjectData* objData) {
 	if (scripts_.empty()) {
@@ -221,9 +294,10 @@ void LuaScriptResourceManager::RunColliderStay(uint32_t runId, uint32_t id, Scen
 		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(runId);
 		for (const auto& handle : scriptHandles.scriptHandles_) {
 			auto script = GetScript(handle.handle_);
-			if (script && script->HasFunction("OnCollisionStay")) {
-				script->RunFunction("OnCollisionStay", id, objData);
+			if (script) {
+				script->RunCollisionStay(id, objData);
 			}
+
 		}
 		return;
 	}
@@ -243,9 +317,10 @@ void LuaScriptResourceManager::RunTriggerEnter(uint32_t runId, uint32_t id, Scen
 		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(runId);
 		for (const auto& handle : scriptHandles.scriptHandles_) {
 			auto script = GetScript(handle.handle_);
-			if (script && script->HasFunction("OnCollisionEnter")) {
-				script->RunFunction("OnCollisionEnter", id, objData);
+			if (script) {
+				script->RunCollisionEnter(id, objData);
 			}
+
 		}
 		return;
 	}
@@ -263,7 +338,9 @@ void LuaScriptResourceManager::EndFrame() {
 
 void LuaScriptResourceManager::Finalize() {
 	scripts_.clear();
+	sharedLuaState_.reset();
 }
+
 
 LuaScriptOnQFE* LuaScriptResourceManager::GetScript(uint32_t handle) const {
 	auto it = scripts_.find(handle);
@@ -304,8 +381,7 @@ sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, c
 #endif // _DEBUG
 			LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(handle.handle_);
 			if (script) {
-				sol::state* state = script->GetScript();
-				sol::object obj = (*state)[varName];
+				sol::object obj = script->GetEnvironment()[varName];
 
 				sol::state_view callerState = callScriptState;
 				if (obj.is<sol::table>()) {
@@ -317,6 +393,7 @@ sol::object LuaScriptResourceManager::GetEntityScriptGlobal(uint32_t entityId, c
 				}
 				return obj;
 			}
+
 		}
 	}
 #ifdef _DEBUG
@@ -343,9 +420,9 @@ void LuaScriptResourceManager::SetEntityScriptGlobal(uint32_t entityId, const st
 			DebugLog("Set Handle: " + std::to_string(handle.handle_), LogLevel::EngineInfo);
 #endif // _DEBUG
 			if (script) {
-				sol::state* state = script->GetScript();
-				(*state)[varName] = value;
+				script->GetEnvironment()[varName] = value;
 			}
+
 			return;
 		}
 	}
@@ -382,7 +459,8 @@ void LuaScriptResourceManager::CopyLuaTable(const sol::table& src, sol::table& d
 			sol::table newTable = sol::state_view(dst.lua_state()).create_table();
 			CopyLuaTable(pair.second.as<sol::table>(), newTable);
 			dst.set(pair.first, newTable);
-		} else {
+		}
+		else {
 			dst.set(pair.first, pair.second);
 		}
 	}

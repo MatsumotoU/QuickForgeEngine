@@ -726,19 +726,20 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 					}
 					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
 						LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_);
-						sol::state* state = script->GetScript();
+						sol::environment& env = script->GetEnvironment();
 						for (const auto& [key, val] : hl.intParams_) {
-							(*state)[key] = val;
+							env[key] = val;
 						}
 						for (const auto& [key, val] : hl.floatParams_) {
-							(*state)[key] = val;
+							env[key] = val;
 						}
 						for (const auto& [key, val] : hl.boolParams_) {
-							(*state)[key] = val;
+							env[key] = val;
 						}
 						for (const auto& [key, val] : hl.stringParams_) {
-							(*state)[key] = val;
+							env[key] = val;
 						}
+
 
 						script->SetPriority(hl.priority_);
 					}
