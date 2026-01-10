@@ -22,8 +22,6 @@ LuaScriptOnQFE::LuaScriptOnQFE() {
 	bindEntityId_ = 0;
 	priority_ = 0;
 	defaultGlobals.clear();
-	// defaultGlobals.clear(); // No longer needed with environments
-	// UserGlobals.clear(); // No longer needed with environments
 }
 
 void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
