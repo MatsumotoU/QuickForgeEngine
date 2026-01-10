@@ -500,9 +500,6 @@
     <ClInclude Include="include\assets\Script\QFElinker\CsharpOnQFELinker.h">
       <Filter>include\assets\Script\QFElinker</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Script\QFElinker\CsharpProjectManager.h">
-      <Filter>include\assets\Script\QFElinker</Filter>
-    </ClInclude>
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h">
       <Filter>include\assets\Script\QFElinker</Filter>
     </ClInclude>
