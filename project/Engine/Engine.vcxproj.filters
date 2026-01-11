@@ -725,7 +725,7 @@
     <ClInclude Include="include\graphic\PostEffect\OffScreen\OffScreenResourceManager.h">
       <Filter>include\graphic\PostEffect\OffScreen</Filter>
     </ClInclude>
-    <ClInclude Include="include\graphic\PostEffect\RendaringPostprocess.h">
+    <ClInclude Include="include\graphic\PostEffect\RenderingPostprocess.h">
       <Filter>include\graphic\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="include\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h">
@@ -1172,7 +1172,7 @@
     <ClCompile Include="src\graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp">
       <Filter>src\graphic\PostEffect\OffScreen</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphic\PostEffect\RendaringPostprocess.cpp">
+    <ClCompile Include="src\graphic\PostEffect\RenderingPostprocess.cpp">
       <Filter>src\graphic\PostEffect</Filter>
     </ClCompile>
     <ClCompile Include="src\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp">

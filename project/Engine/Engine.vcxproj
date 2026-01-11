@@ -273,7 +273,7 @@
     <ClInclude Include="include\graphic\Pipeline\PSO\ShaderCompiler.h" />
     <ClInclude Include="include\graphic\Pipeline\PSO\ShaderReflection.h" />
     <ClInclude Include="include\graphic\PostEffect\OffScreen\OffScreenResourceManager.h" />
-    <ClInclude Include="include\graphic\PostEffect\RendaringPostprocess.h" />
+    <ClInclude Include="include\graphic\PostEffect\RenderingPostprocess.h" />
     <ClInclude Include="include\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h" />
     <ClInclude Include="include\graphic\ShaderBuffer\ConstantBuffer.h" />
     <ClInclude Include="include\graphic\ShaderBuffer\StructuredBuffer.h" />
@@ -424,7 +424,7 @@
     <ClCompile Include="src\graphic\Pipeline\PSO\ShaderCompiler.cpp" />
     <ClCompile Include="src\graphic\Pipeline\PSO\ShaderReflection.cpp" />
     <ClCompile Include="src\graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp" />
-    <ClCompile Include="src\graphic\PostEffect\RendaringPostprocess.cpp" />
+    <ClCompile Include="src\graphic\PostEffect\RenderingPostprocess.cpp" />
     <ClCompile Include="src\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp" />
     <ClCompile Include="src\input\DirectInput\DirectInputKeyboard.cpp" />
     <ClCompile Include="src\input\DirectInput\DirectInputManager.cpp" />

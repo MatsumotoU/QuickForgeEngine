@@ -1,4 +1,4 @@
-#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
+#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 
 #include "engine/include/utility/DirectX/TransitionResourceBarrier.h"
 #include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
@@ -14,7 +14,7 @@
 #include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
 #endif // _DEBUG
 
-RendaringPostprosecess::RendaringPostprosecess() {
+RenderingPostprocess::RenderingPostprocess() {
 	isImGuiEnabled_ = false;
 
 	device_ = nullptr;
@@ -42,10 +42,10 @@ RendaringPostprosecess::RendaringPostprosecess() {
 
 	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺ｮ髢｢謨ｰ繧堤匳骭ｲ
 	postProcessFunctions_.clear();
-	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyGrayScale, this));
-	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyVignette, this));
-	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyColorCorrection, this));
-	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyPixcel, this));
+	postProcessFunctions_.push_back(std::bind(&RenderingPostprocess::ApplyGrayScale, this));
+	postProcessFunctions_.push_back(std::bind(&RenderingPostprocess::ApplyVignette, this));
+	postProcessFunctions_.push_back(std::bind(&RenderingPostprocess::ApplyColorCorrection, this));
+	postProcessFunctions_.push_back(std::bind(&RenderingPostprocess::ApplyPixcel, this));
 	// 蝗ｺ螳壹・繧､繝ｳ繝・ャ繧ｯ繧ｹ繧定ｨｭ螳・
 	grayScaleProcessIndex_ = 0; // 繧ｰ繝ｬ繝ｼ繧ｹ繧ｱ繝ｼ繝ｫ縺ｮ繧､繝ｳ繝・ャ繧ｯ繧ｹ
 	vignetteProcessIndex_ = 1; // 繝薙ロ繝・ヨ縺ｮ繧､繝ｳ繝・ャ繧ｯ繧ｹ
@@ -61,7 +61,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 #endif // _DEBUG
 }
 
-void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* list) {
+void RenderingPostprocess::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* list) {
 	device_ = device;
 	list_ = list;
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -108,7 +108,7 @@ void RendaringPostprosecess::Initialize(ID3D12Device* device, ID3D12GraphicsComm
 	indexData_[5] = 3;
 }
 
-void RendaringPostprosecess::SetColorCorrectionPSO(PipelineStateObject* pso) {
+void RenderingPostprocess::SetColorCorrectionPSO(PipelineStateObject* pso) {
 	colorCorrectionPso_ = pso;
 	colorCorrectionOffsetBuffer_.CreateResource(device_);
 	colorCorrectionOffsetBuffer_.GetData()->exposure = 0.0f; // 髴ｲ蜃ｺ
@@ -118,12 +118,12 @@ void RendaringPostprosecess::SetColorCorrectionPSO(PipelineStateObject* pso) {
 	colorCorrectionOffsetBuffer_.GetData()->hue = 0.0f;
 }
 
-void RendaringPostprosecess::SetGrayScalePSO(PipelineStateObject* pso) {
+void RenderingPostprocess::SetGrayScalePSO(PipelineStateObject* pso) {
 	grayScalePso_ = pso;
 	grayScaleOffsetBuffer_.CreateResource(device_);
 }
 
-void RendaringPostprosecess::SetVignettePSO(PipelineStateObject* pso) {
+void RenderingPostprocess::SetVignettePSO(PipelineStateObject* pso) {
 	vignettePso_ = pso;
 	vignetteOffsetBuffer_.CreateResource(device_);
 	vignetteOffsetBuffer_.GetData()->VignetteRadius = 0.3f; // 繝薙ロ繝・ヨ縺ｮ蜊雁ｾ・
@@ -131,12 +131,12 @@ void RendaringPostprosecess::SetVignettePSO(PipelineStateObject* pso) {
 	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.2f; // 繝薙ロ繝・ヨ縺ｮ蠑ｷ縺・
 }
 
-void RendaringPostprosecess::SetNormalPSO(PipelineStateObject* pso) {
+void RenderingPostprocess::SetNormalPSO(PipelineStateObject* pso) {
 	assert(pso);
 	normalPso_ = pso;
 }
 
-void RendaringPostprosecess::SetPixcelPSO(PipelineStateObject* pso) {
+void RenderingPostprocess::SetPixelPSO(PipelineStateObject* pso) {
 	assert(pso);
 	pixcelPso_ = pso;
 	pixcelOffsetBuffer_.CreateResource(device_);
@@ -145,7 +145,7 @@ void RendaringPostprosecess::SetPixcelPSO(PipelineStateObject* pso) {
 	pixcelOffsetBuffer_.GetData()->screenResolution.y = static_cast<float>(QFE::EngineGlobalValue::windowHeight);
 }
 
-void RendaringPostprosecess::SetOffscreenResource(ID3D12Resource* firstResource, ID3D12Resource* secondResource) {
+void RenderingPostprocess::SetOffscreenResource(ID3D12Resource* firstResource, ID3D12Resource* secondResource) {
 	assert(firstResource);
 	assert(secondResource);
 
@@ -153,14 +153,14 @@ void RendaringPostprosecess::SetOffscreenResource(ID3D12Resource* firstResource,
 	offScreenResources_[1] = secondResource;
 }
 
-void RendaringPostprosecess::SetOffscreenRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE firstHandle, D3D12_CPU_DESCRIPTOR_HANDLE secondHandle) {
+void RenderingPostprocess::SetOffscreenRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE firstHandle, D3D12_CPU_DESCRIPTOR_HANDLE secondHandle) {
 	offScreenRtvHandles_.at(0) = firstHandle;
 	offScreenRtvHandles_.at(1) = secondHandle;
 	assert(offScreenRtvHandles_.at(0).ptr != 0);
 	assert(offScreenRtvHandles_.at(1).ptr != 0);
 }
 
-void RendaringPostprosecess::SetOffscreenSrvHandle(DescriptorHandles firstHandle, DescriptorHandles secondHandle) {
+void RenderingPostprocess::SetOffscreenSrvHandle(DescriptorHandles firstHandle, DescriptorHandles secondHandle) {
 	offScreenSrvHandles_.at(0) = firstHandle;
 	offScreenSrvHandles_.at(1) = secondHandle;
 	assert(offScreenSrvHandles_.at(0).cpuHandle_.ptr != 0);
@@ -169,21 +169,21 @@ void RendaringPostprosecess::SetOffscreenSrvHandle(DescriptorHandles firstHandle
 	assert(offScreenSrvHandles_.at(1).gpuHandle_.ptr != 0);
 }
 
-void RendaringPostprosecess::SetDsvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) {
+void RenderingPostprocess::SetDsvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) {
 	dsvHandle_ = handle;
 	assert(dsvHandle_.ptr != 0);
 }
 
-void RendaringPostprosecess::SetBackBufferRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) {
+void RenderingPostprocess::SetBackBufferRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) {
 	backBufferRtvHandle_ = handle;
 	assert(backBufferRtvHandle_.ptr != 0);
 }
 
-DescriptorHandles RendaringPostprosecess::GetCurrentSrvHandle() const  {
+DescriptorHandles RenderingPostprocess::GetCurrentSrvHandle() const  {
 	return offScreenSrvHandles_.at(readingResourceIndex_); 
 }
 
-void RendaringPostprosecess::PreDraw() {
+void RenderingPostprocess::PreDraw() {
 	// 菴募屓繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺後°縺九▲縺ｦ縺・ｋ縺玖ｪｿ縺ｹ繧・
 	postProcessCount_ = 0;
 	postProcessOrderForm_.clear();
@@ -247,7 +247,7 @@ void RendaringPostprosecess::PreDraw() {
 	}
 }
 
-void RendaringPostprosecess::PostDraw() {
+void RenderingPostprocess::PostDraw() {
 	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺梧怏蜉ｹ縺ｧ縺ｪ縺・↑繧我ｽ輔ｂ縺励↑縺・
 	if (!isPostprocess_) {
 		return;
@@ -282,7 +282,7 @@ void RendaringPostprosecess::PostDraw() {
 }
 
 #ifdef _DEBUG
-void RendaringPostprosecess::DrawImGui() {
+void RenderingPostprocess::DrawImGui() {
 	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺ｮ繝・ヰ繝・げ繧ｦ繧｣繝ｳ繝峨え繧定｡ｨ遉ｺ
 	ImGui::Checkbox("Enable Postprocess", &isPostprocess_);
 	ImGui::Separator();
@@ -332,15 +332,15 @@ void RendaringPostprosecess::DrawImGui() {
 #endif
 
 
-void RendaringPostprosecess::ClearFirstRenderTarget() {
+void RenderingPostprocess::ClearFirstRenderTarget() {
 	list_->ClearRenderTargetView(offScreenRtvHandles_.at(0), offScreenClearColor, 0, nullptr);
 }
 
-void RendaringPostprosecess::ClearSecondRenderTarget() {
+void RenderingPostprocess::ClearSecondRenderTarget() {
 	list_->ClearRenderTargetView(offScreenRtvHandles_.at(1), offScreenClearColor, 0, nullptr);
 }
 
-void RendaringPostprosecess::SwitchRenderTarget() {
+void RenderingPostprocess::SwitchRenderTarget() {
 	// 繝昴せ繝医・繝ｭ繧ｻ繧ｹ縺梧怏蜉ｹ縺ｧ縺ｪ縺・↑繧我ｽ輔ｂ縺励↑縺・
 	if (!isPostprocess_) {
 		return;
@@ -381,7 +381,7 @@ void RendaringPostprosecess::SwitchRenderTarget() {
 	list_->OMSetRenderTargets(1, &offScreenRtvHandles_[renderingRosourceIndex_], false,&dsvHandle_);
 }
 
-void RendaringPostprosecess::ApplyGrayScale() {
+void RenderingPostprocess::ApplyGrayScale() {
 	list_->RSSetViewports(1, dxCommon_->GetViewPort());
 	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->SetGraphicsRootSignature(grayScalePso_->GetRootSignature());
@@ -394,7 +394,7 @@ void RendaringPostprosecess::ApplyGrayScale() {
 	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void RendaringPostprosecess::ApplyVignette() {
+void RenderingPostprocess::ApplyVignette() {
 	list_->RSSetViewports(1, dxCommon_->GetViewPort());
 	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->SetGraphicsRootSignature(vignettePso_->GetRootSignature());
@@ -407,7 +407,7 @@ void RendaringPostprosecess::ApplyVignette() {
 	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void RendaringPostprosecess::ApplyColorCorrection() {
+void RenderingPostprocess::ApplyColorCorrection() {
 	list_->RSSetViewports(1, dxCommon_->GetViewPort());
 	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->SetGraphicsRootSignature(colorCorrectionPso_->GetRootSignature());
@@ -420,7 +420,7 @@ void RendaringPostprosecess::ApplyColorCorrection() {
 	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void RendaringPostprosecess::ApplyPixcel() {
+void RenderingPostprocess::ApplyPixcel() {
 	list_->RSSetViewports(1, dxCommon_->GetViewPort());
 	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->SetGraphicsRootSignature(pixcelPso_->GetRootSignature());

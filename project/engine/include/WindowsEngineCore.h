@@ -15,7 +15,7 @@
 #include "engine/include/utility/DebugTool/FrameCounter.h"
 #include "engine/include/renderer/GraphRenderer.h"
 #include "engine/include/graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
-#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
+#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/assets/AssetManager.h"
 
 // なんかAssetsではなさそぁE�E��E�めE�E��E�めE
@@ -52,7 +52,7 @@ private:
 	OffScreenResourceManager offScreenResourceManager_;
 
 	AssetManager* assetManager_;
-	RendaringPostprosecess* rendaringPostprocess_;
+	RenderingPostprocess* renderingPostprocess_;
 	GraphRenderer* graphRenderer_;
 
 	GraphicPipelineManager* graphicPipelineManager_;

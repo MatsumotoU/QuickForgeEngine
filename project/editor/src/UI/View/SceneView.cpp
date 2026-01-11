@@ -1,7 +1,7 @@
 #include "editor/include/UI/View/SceneView.h"
 #include "editor/include/UI/View/HierarchyView.h"
 
-#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
+#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/camera/CameraManager.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h" 
@@ -43,7 +43,7 @@ void SceneView::Draw() {
 		return;
 	}
 #ifdef _DEBUG
-	RendaringPostprosecess* render = RendaringPostprosecess::GetInstance();
+	RenderingPostprocess* render = RenderingPostprocess::GetInstance();
 	DescriptorHandles handle = render->GetCurrentSrvHandle();
 	ImGui::Begin("Scene View");
 

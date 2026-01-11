@@ -18,18 +18,13 @@
 #include <wrl.h>
 #include <array>
 
-// TODO: 他�E効果を作�Eする
-// TODO: ポスト�Eロセスの頁E��を動皁E��変えられるよぁE��する
-// TODO: ポスト�Eロセスのシェーダーを動皁E��作�Eできるようにする
-// TODO: 一つだけ選択したときにシェーダーが適用されなぁE��グを直ぁE
-
 class DirectXCommon;
 
-class RendaringPostprosecess final : public Singleton<RendaringPostprosecess> {
-	friend class Singleton<RendaringPostprosecess>;
+class RenderingPostprocess final : public Singleton<RenderingPostprocess> {
+	friend class Singleton<RenderingPostprocess>;
 
 public:
-	RendaringPostprosecess();
+	RenderingPostprocess();
 
 public:
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* list);
@@ -37,7 +32,7 @@ public:
 	void SetGrayScalePSO(PipelineStateObject* pso);
 	void SetVignettePSO(PipelineStateObject* pso);
 	void SetNormalPSO(PipelineStateObject* pso);
-	void SetPixcelPSO(PipelineStateObject* pso);
+	void SetPixelPSO(PipelineStateObject* pso);
 	void SetOffscreenResource(ID3D12Resource* firstResource, ID3D12Resource* secondResource);
 	void SetOffscreenRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE firstHandle, D3D12_CPU_DESCRIPTOR_HANDLE secondHandle);
 	void SetOffscreenSrvHandle(DescriptorHandles firstHandle, DescriptorHandles secondHandle);
@@ -48,7 +43,7 @@ public:
 	ColorCorrectionOffset& GetColorCorrectionOffset() { return *colorCorrectionOffsetBuffer_.GetData(); }
 	OffsetBuffer& GetGrayScaleOffset() { return *grayScaleOffsetBuffer_.GetData(); }
 	VignetteOffset& GetVignetteOffset() { return *vignetteOffsetBuffer_.GetData(); }
-	PixcelOffset& GetPixcelOffset() { return *pixcelOffsetBuffer_.GetData(); }
+	PixcelOffset& GetPixelOffset() { return *pixcelOffsetBuffer_.GetData(); }
 
 public:
 	void PreDraw();

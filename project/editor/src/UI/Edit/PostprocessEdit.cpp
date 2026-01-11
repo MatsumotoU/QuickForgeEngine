@@ -1,5 +1,5 @@
 #include "editor/include/UI/Edit/PostprocessEdit.h"
-#include "graphic/PostEffect/RendaringPostprocess.h"
+#include "graphic/PostEffect/RenderingPostprocess.h"
 
 void PostprocessEdit::Initialize() {
 	name_ = "PostprocessEdit";
@@ -14,7 +14,7 @@ void PostprocessEdit::Draw() {
 		return;
 	}
 	ImGui::Begin("Postprocess Edit", &isActive_, ImGuiWindowFlags_AlwaysAutoResize);
-	RendaringPostprosecess* postprocess = RendaringPostprosecess::GetInstance();
+	RenderingPostprocess* postprocess = RenderingPostprocess::GetInstance();
 	ImGui::Checkbox("Enable Postprocess", &postprocess->isPostprocess_);
 	ImGui::Separator();
 	if (ImGui::BeginChild("ColorCorrection", ImVec2(0, 150), true)) {

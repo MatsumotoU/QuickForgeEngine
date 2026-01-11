@@ -1,6 +1,6 @@
 #include "editor/include/UI/UIManager.h"
 
-#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
+#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/scene/SceneManager.h"
 #include "editor/include/UI/View/SceneView.h"
 #include "editor/include/UI/View/AssetsView.h"
@@ -84,7 +84,7 @@ void UIManager::Draw() {
 #ifdef _DEBUG
 	// シーンが実行中は色を変えめE
 	bool isScriptRunning = SceneManager::GetInstance()->IsRunningScript();
-	if (isScriptRunning && RendaringPostprosecess::GetInstance()->isImGuiEnabled_) {
+	if (isScriptRunning && RenderingPostprocess::GetInstance()->isImGuiEnabled_) {
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
@@ -109,7 +109,7 @@ void UIManager::Draw() {
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("View")) {
-			ImGui::MenuItem("Dock View", nullptr, &RendaringPostprosecess::GetInstance()->isImGuiEnabled_);
+			ImGui::MenuItem("Dock View", nullptr, &RenderingPostprocess::GetInstance()->isImGuiEnabled_);
 			for (auto& ui : viewUIs_) {
 				ImGui::MenuItem(ui->GetName().c_str(), nullptr, &ui->isActive_);
 			}
@@ -132,7 +132,7 @@ void UIManager::Draw() {
 		ImGui::EndMainMenuBar();
 	}
 
-	if (!RendaringPostprosecess::GetInstance()->isImGuiEnabled_) {
+	if (!RenderingPostprocess::GetInstance()->isImGuiEnabled_) {
 		return;
 	}
 
@@ -166,7 +166,7 @@ void UIManager::Draw() {
 	}
 
 	// 実行中は色を変えめE
-	if (isScriptRunning && RendaringPostprosecess::GetInstance()->isImGuiEnabled_) {
+	if (isScriptRunning && RenderingPostprocess::GetInstance()->isImGuiEnabled_) {
 		ImGui::PopStyleColor(3);
 	}
 #endif // _DEBUG
