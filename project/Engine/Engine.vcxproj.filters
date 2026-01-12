@@ -941,6 +941,8 @@
     <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h">
       <Filter>resources\shaders\shaderStructs</Filter>
     </ClInclude>
+    <ClInclude Include="include\input\Logger\InputLogger.h" />
+    <ClInclude Include="include\input\Logger\InputLogData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -1334,5 +1336,6 @@
     <ClCompile Include="src\window\WindowGenerater.cpp">
       <Filter>src\window</Filter>
     </ClCompile>
+    <ClCompile Include="src\input\Logger\InputLogger.cpp" />
   </ItemGroup>
 </Project>

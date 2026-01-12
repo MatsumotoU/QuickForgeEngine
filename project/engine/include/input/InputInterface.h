@@ -1,9 +1,12 @@
 #pragma once
 #include "engine/include/utility/DesignPatterns/Singleton.h"
-#include "KeyConfig.h"
+
 #include "DirectInput/DirectInputManager.h"
 #include "XInput/XInputController.h"
 #include "Engine/include/input/Mic/WASAPIMicrophoneDevice.h"
+
+#include "KeyConfig.h"
+#include "Logger/InputLogger.h"
 
 class InputInterface final :public Singleton<InputInterface> {
 	friend class Singleton<InputInterface>;
@@ -16,6 +19,8 @@ public:
 	void Finalize();
 	// 更新
 	void Update();
+	// フレーム終了処理
+	void EndFrame();
 
 	// 今回のフレームで押されたキーコードを取得する
 	uint32_t GetKeyCodeTrigger();
@@ -64,12 +69,15 @@ public:
 
 	// Editor用
 	DirectInputManager& GetDirectInputManager() { return directInputManager_; }
-	KeyConfig& GetKeyConfigManager() { return keyConfig_; }
-
+	XInputController& GetXInputController() { return xInputController_; }
 	WASAPIMicrophoneDevice& GetMicrophoneDevice() { return microphoneDevice_; }
+
+	KeyConfig& GetKeyConfigManager() { return keyConfig_; }
+	InputLogger& GetInputLogger() { return inputLogger_; }
 
 private:
 	KeyConfig keyConfig_;
+	InputLogger inputLogger_;
 	DirectInputManager directInputManager_;
 	XInputController xInputController_;
 	WASAPIMicrophoneDevice microphoneDevice_;

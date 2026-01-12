@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <vector>
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -33,9 +34,15 @@ public:// キー管理関数
 	/// <returns></returns>
 	bool GetRelease(uint32_t DIK);
 
+	/// <summary>
+	/// 押されているキーのリストを取得
+	/// </summary>
+	const std::vector<uint32_t>& GetPressedKeys();
+
 public:// キーボード操作変数
 	BYTE key_[256];
-	BYTE prekey_[256];
+	BYTE preKey_[256];
+	std::vector<uint32_t> pressedKeys_;
 
 private:
 	IDirectInputDevice8* CreateKeyboard();

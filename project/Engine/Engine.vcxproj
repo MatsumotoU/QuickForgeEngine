@@ -167,6 +167,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
+    <ClInclude Include="include\input\Logger\InputLogData.h" />
+    <ClInclude Include="include\input\Logger\InputLogger.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
     <ClInclude Include="include\assets\2DTexture\TextureManager.h" />
@@ -347,6 +349,7 @@
     <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\input\Logger\InputLogger.cpp" />
     <ClCompile Include="QuickForgeEngine.cpp" />
     <ClCompile Include="src\WindowsEngineCore.cpp" />
     <ClCompile Include="src\assets\2DTexture\TextureManager.cpp" />

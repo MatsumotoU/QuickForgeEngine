@@ -20,9 +20,11 @@ void DirectInputKeyboard::Initialize(const HWND& hwnd, IDirectInput8* directInpu
 
 void DirectInputKeyboard::Update() {
 	// 繧ｭ繝ｼ繝懊・繝峨・蜃ｦ逅・
-	memcpy(prekey_, key_, sizeof(key_));
+	memcpy(preKey_, key_, sizeof(key_));
 	keyboard_->Acquire();
 	keyboard_->GetDeviceState(sizeof(key_), key_);
+
+	pressedKeys_.clear();
 }
 
 bool DirectInputKeyboard::GetPress(uint32_t DIK) {
@@ -33,17 +35,27 @@ bool DirectInputKeyboard::GetPress(uint32_t DIK) {
 }
 
 bool DirectInputKeyboard::GetTrigger(uint32_t DIK) {
-	if (key_[DIK] && !prekey_[DIK]) {
+	if (key_[DIK] && !preKey_[DIK]) {
 		return true;
 	}
 	return false;
 }
 
 bool DirectInputKeyboard::GetRelease(uint32_t DIK) {
-	if (!key_[DIK] && prekey_[DIK]) {
+	if (!key_[DIK] && preKey_[DIK]) {
 		return true;
 	}
 	return false;
+}
+
+const std::vector<uint32_t>& DirectInputKeyboard::GetPressedKeys()
+{
+	for (uint32_t keyCode = 0; keyCode < 256; keyCode++) {
+		if (key_[keyCode]) {
+			pressedKeys_.emplace_back(keyCode);
+		}
+	}
+	return pressedKeys_;
 }
 
 IDirectInputDevice8* DirectInputKeyboard::CreateKeyboard() {

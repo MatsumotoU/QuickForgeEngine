@@ -12,6 +12,7 @@
 #include "editor/include/UI/View/ScriptLoggerView.h"
 #include "editor/include/UI/View/SceneProfileView.h"
 #include "editor/include/UI/View/InputDebugView.h"
+#include "editor/include/UI/View/InputLogView.h"
 
 #include "editor/include/UI/File/CreateNewScene.h"
 #include "editor/include/UI/File/SaveScene.h"
@@ -47,6 +48,7 @@ void UIManager::Initialize() {
 	viewUIs_.push_back(std::make_unique<GameView>());
 	viewUIs_.push_back(std::make_unique<SceneView>());
 	viewUIs_.push_back(std::make_unique<InputDebugView>());
+	viewUIs_.push_back(std::make_unique<InputLogView>());
 	for (auto& ui : viewUIs_) {
 		ui->Initialize();
 	}

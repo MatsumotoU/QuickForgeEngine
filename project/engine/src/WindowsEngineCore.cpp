@@ -208,6 +208,8 @@ void WindowsEngineCore::Update() {
 	gameWindowManager->Update();
 	editor_->Update();
 	sceneManager_->Update();
+
+	inputInterface_->EndFrame();
 }
 
 void WindowsEngineCore::Draw() {

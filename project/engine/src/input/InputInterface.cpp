@@ -3,6 +3,7 @@
 void InputInterface::Initialize(const HWND& hwnd, const HINSTANCE& hInstance) {
 	keyConfig_.Initialize();
 	keyConfig_.LoadKeyConfig();
+
 	directInputManager_.Initialize(hwnd, hInstance);
 	microphoneDevice_.Initialize();
 }
@@ -15,8 +16,21 @@ void InputInterface::Finalize() {
 }
 
 void InputInterface::Update() {
+	inputLogger_.StartNewFrame();
+
 	directInputManager_.Update();
 	xInputController_.Update();
+}
+
+void InputInterface::EndFrame()
+{
+	// 押されたキーをログに記録
+	for (auto& pressKey : directInputManager_.keyboard_.GetPressedKeys()) {
+		inputLogger_.RecordKeyPress(pressKey);
+	}
+
+	// フレーム終了処理
+	inputLogger_.EndFrame();
 }
 
 uint32_t InputInterface::GetKeyCodeTrigger() {
@@ -40,6 +54,7 @@ bool InputInterface::IsAnyKeyPressed() {
 bool InputInterface::GetKeyPress(const std::string& actionName) {
 	bool isPressed = false;
 	for (const auto& keyCode : keyConfig_.GetKeys(actionName)) {
+		// キーが押されているかチェック
 		isPressed |= directInputManager_.keyboard_.GetPress(keyCode);
 	}
 	return isPressed;
@@ -48,6 +63,7 @@ bool InputInterface::GetKeyPress(const std::string& actionName) {
 bool InputInterface::GetKeyTrigger(const std::string& actionName) {
 	bool isTriggered = false;
 	for (const auto& keyCode : keyConfig_.GetKeys(actionName)) {
+		// キーが押された瞬間かチェック
 		isTriggered |= directInputManager_.keyboard_.GetTrigger(keyCode);
 	}
 	return isTriggered;
