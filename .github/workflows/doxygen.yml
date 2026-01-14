@@ -1,5 +1,10 @@
 name: Doxygen Deployment
 
+# 同時に動くジョブを制限し、新しいのが来たら古い方をキャンセルする
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 on:
   push:
     branches: ["master"] # mainブランチにpushされたら実行
