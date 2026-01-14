@@ -43,8 +43,11 @@ public:
     /** @brief 終了処理 */
 	void Shutdown();
 
+	/** @brief レンダーターゲットビュー用デスクリプタヒープのアサイン */
 	[[nodiscard]] DescriptorHandles AssignRtvHeap(ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc);
+	/** @brief シェーダーリソースビュー用デスクリプタヒープのアサイン */
 	[[nodiscard]] DescriptorHandles AssignSrvHeap(ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc);
+	/** @brief デプスステンシルビュー用デスクリプタヒープのアサイン */
 	[[nodiscard]] DescriptorHandles AssignDsvHeap(ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* desc);
 
 	void ClearDepthStencil();
