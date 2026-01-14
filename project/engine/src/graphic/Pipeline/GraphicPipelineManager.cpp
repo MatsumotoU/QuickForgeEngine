@@ -1,6 +1,15 @@
+/**
+ * @file GraphicPipelineManager.cpp
+ * @brief グラフィックスパイプラインおよびルートシグネチャの管理クラスの実装
+ */
+
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 
+/**
+ * @brief 各種パイプラインの初期化
+ * @param device ID3D12Deviceへのポインタ
+ */
 void GraphicPipelineManager::Initialize(
 	ID3D12Device* device) {
 	shaderCompiler_.InitializeDXC();
@@ -14,7 +23,7 @@ void GraphicPipelineManager::Initialize(
 
 	normalGameObjectRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	// パ�EチE�E��E�クルのルートパラメータ
+	// パーティクルのルートパラメータ
 	particleRootParameter_.Initialize();
 	particleRootParameter_.CreateRootParameter("PixelParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	particleRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_VERTEX, 0);
@@ -23,45 +32,45 @@ void GraphicPipelineManager::Initialize(
 	particleRootParameter_.SetDescriptorRange("VertexParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 	particleRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	// プリミティブ�Eルートパラメータ
+	// プリミティブのルートパラメータ
 	primitiveRootParameter_.Initialize();
 	primitiveRootParameter_.CreateRootParameter("PixelParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	primitiveRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
 
-	// 色調補正のめE�E��E�
+	// 色調補正のまとめ
 	colorCorrectionRootParameter_.Initialize();
 	colorCorrectionRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	colorCorrectionRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	
 	colorCorrectionRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	// グレースケールのめE�E��E�
+	// グレースケールのまとめ
 	grayScaleRootParameter_.Initialize();
 	grayScaleRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	grayScaleRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 
 	grayScaleRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	// ビネチE�E��E�のめE�E��E�
+	// ビネットのまとめ
 	vignetteRootParameter_.Initialize();
 	vignetteRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	vignetteRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 
 	vignetteRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	// ドット化のめE�E��E�
+	// ドット化のまとめ
 	pixcelRootParameter_.Initialize();
 	pixcelRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	pixcelRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	
 	pixcelRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	// 何もしなぁE�E��E�つ
+	// 何もしないもの
 	normalRootParameter_.Initialize();
 	normalRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	normalRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	// フォント�Eルートパラメータ
+	// フォントのルートパラメータ
 	fontRootParameter_.Initialize();
 	fontRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_VERTEX, 0);
 	fontRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
@@ -69,7 +78,7 @@ void GraphicPipelineManager::Initialize(
 	fontRootParameter_.SetDescriptorRange("VertexParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 	fontRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	// パラメータの整合性チェチE�E��E�
+	// パラメータの整合性チェック
 #ifdef _DEBUG
 	normalGameObjectRootParameter_.CheckIntegrityData();
 	particleRootParameter_.CheckIntegrityData();
@@ -81,14 +90,14 @@ void GraphicPipelineManager::Initialize(
 	fontRootParameter_.CheckIntegrityData();
 #endif // _DEBUG
 
-	// インプットレイアウト�E初期匁E
+	// インプットレイアウトの初期化
 	InputLayout normalInputLayout;
 	normalInputLayout.CreateNormalPresetInputLayout();
 
 	InputLayout primitiveInputLayout;
 	primitiveInputLayout.CreatePrimitivePresetInputLayout();
 
-	// PSOを作�E
+	// PSOを作成
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	for (int i = 0; i < kCountOfBlendMode; i++) {
 		trianglePso_[i].Initialize(&shaderCompiler_,device);

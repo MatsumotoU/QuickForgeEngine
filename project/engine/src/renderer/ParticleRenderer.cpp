@@ -1,3 +1,8 @@
+/**
+ * @file ParticleRenderer.cpp
+ * @brief パーティクルレンダリング機能の実装
+ */
+
 #include "engine/include/renderer/ParticleRenderer.h"
 #include "engine/include/assets/AssetManager.h"
 
@@ -7,9 +12,14 @@
 
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
+/**
+ * @brief パーティクルの描画実行
+ * @param particleHandle 描画するパーティクル(エンティティ等)のハンドル
+ */
 void Render::Particle::DrawParticles(const uint32_t& particleHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
+    // TODO: particleHandle の有効性チェックが必要
 	ParticleComponent particleComponent = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(particleHandle);
 
 	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetParticlePso(kBlendModeNormal);

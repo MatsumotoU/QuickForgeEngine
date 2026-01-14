@@ -1,3 +1,8 @@
+/**
+ * @file EngineGlobalValue.cpp
+ * @brief エンジン全体で使用される共通変数の実体定義
+ */
+
 #include "engine/include/core/EngineGlobalValue.h"
 
 namespace QFE::EngineGlobalValue {

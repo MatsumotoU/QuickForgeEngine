@@ -1,3 +1,8 @@
+/**
+ * @file SpriteManager.cpp
+ * @brief スプライトの頂点リソースを管理するクラスの実装
+ */
+
 #include "engine/include/assets/Sprite/SpriteManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
@@ -6,6 +11,7 @@ void SpriteManager::Initialize() {
 	spriteVertexBuffers_.clear();
 }
 
+/** @brief スプライトのサイズを変更 */
 void SpriteManager::ResizeSprite(uint32_t handle, float width, float height) {
 	assert(handle < spriteVertexBuffers_.size());
 	VertexData* vertexData = spriteVertexBuffers_[handle].GetData();
@@ -20,6 +26,7 @@ void SpriteManager::ResizeSprite(uint32_t handle, float width, float height) {
 	vertexData[5].position = { w, 0.0f, 0.0f ,1.0f }; // 右上
 }
 
+/** @brief スプライト用の頂点バッファを作成 */
 uint32_t SpriteManager::CreateVertexBuffer(float width, float height) {
     spriteVertexBuffers_.emplace_back();
 	spriteVertexBuffers_.back().CreateResource(DirectXCommon::GetInstance()->GetDevice(), 6);

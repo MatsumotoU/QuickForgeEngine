@@ -1,3 +1,8 @@
+/**
+ * @file Matrix4x4.cpp
+ * @brief 4x4次行列の演算実装
+ */
+
 #include "engine/include/core/Math/Matrix/Matrix4x4.h"
 #include "engine/include/core/Math/Vector/Vector3.h"
 #include "engine/include/core/Math/Transform.h"
@@ -434,6 +439,10 @@ Matrix4x4 Matrix4x4::Subtract(const Matrix4x4& m1, const Matrix4x4& m2) {
 	return result;
 }
 
+/**
+ * @brief 2つの行列の乗算
+ * TODO: SIMD等を用いた高速化の検討が可能
+ */
 Matrix4x4 Matrix4x4::Multiply(const Matrix4x4& m1, const Matrix4x4& m2)  {
 	Matrix4x4 result = {};
 
@@ -559,6 +568,9 @@ Matrix4x4 Matrix4x4::MakeRotateAxisAngle(const Vector3& axis, float angle) {
 	return result;
 }
 
+/**
+ * @brief A方向からB方向への回転行列を作成
+ */
 Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to) {
 	Matrix4x4 result{};
 
@@ -567,12 +579,12 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 
 	float dot = Vector3::Dot(u, v);
 
-	// ほぼ同じ方向�E場吁E
+	// ほぼ同じ方向の場合
 	if (std::abs(dot - 1.0f) < 1e-6f) {
 		return Matrix4x4::MakeIndentity4x4();
 	}
 
-	// ほぼ送E�E��E�向�E場合！E80度回転、任意�E垂直軸で回転�E�E�E�E
+	// ほぼ逆方向の場合。180度回転、任意の垂直軸で回転させる
 	if (std::abs(dot + 1.0f) < 1e-6f) {
 		// uに垂直な任意軸を選ぶ
 		Vector3 axis = Vector3::Perpendicular(u).Normalize();

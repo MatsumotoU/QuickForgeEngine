@@ -1,3 +1,8 @@
+/**
+ * @file XInputController.cpp
+ * @brief XInputを使用したゲームパッド入力管理クラスの実装
+ */
+
 #include "engine/include/input/XInput/XInputController.h"
 #pragma comment(lib, "Xinput.lib")
 
@@ -8,10 +13,12 @@
 #include <assert.h>
 #include <cmath>
 
+/** @brief コンストラクタ */
 XInputController::XInputController() {
     stickDeadZone_ = 7849.0f;
 }
 
+/** @brief 更新 */
 void XInputController::Update() {
     prevGamepadStates = gamepadStates;
 
@@ -24,7 +31,7 @@ void XInputController::Update() {
         #ifdef _DEBUG
                 DebugLog(std::format("Connected Controller! paletNumber: {}", gamepadStates[i].state.dwPacketNumber));
 
-                // 讖溯・諠・ｱ繧貞叙蠕・
+                // 機能情報を取得
                 XINPUT_CAPABILITIES cap;
                 if (XInputGetCapabilities(i, 0, &cap) == ERROR_SUCCESS) {
                     DebugLog(std::format("Type: {}", static_cast<int>(cap.Type)));
@@ -34,7 +41,7 @@ void XInputController::Update() {
                     DebugLog("Failed to get capabilities.");
                 }
 
-                // 繝舌ャ繝・Μ繝ｼ諠・ｱ繧貞叙蠕・
+                // バッテリー情報を取得
                 XINPUT_BATTERY_INFORMATION batteryInfo;
                 if (XInputGetBatteryInformation(i, BATTERY_DEVTYPE_GAMEPAD, &batteryInfo) == ERROR_SUCCESS) {
                     DebugLog(std::format("Battery Type: {}", static_cast<int>(batteryInfo.BatteryType)));
@@ -50,21 +57,31 @@ void XInputController::Update() {
 	}
 }
 
+/** @brief コントローラーが接続されているか */
 bool XInputController::GetIsActiveController(uint32_t padId) {
     return gamepadStates[padId].isConnected;
 }
 
+/**
+ * @brief ボタンが押されているか
+ * @param type ボタンの種類 (XINPUT_GAMEPAD_*)
+ * @param padId プレイヤーインデックス
+ * @return 押されているか
+ * TODO: (gamepadStates[padId].state.Gamepad.wButtons == type) は、単一ボタンのみ判定する場合にしか機能しない。
+ * 複数ボタン同時押しの場合はビット和による判定 (& type) が必要。
+ */
 bool XInputController::GetPressButton(WORD type, uint32_t padId) {
     if (padId >= 4) {
         assert(false && padId >= 4);
     }
 
-    if (gamepadStates[padId].state.Gamepad.wButtons == type) {
+    if ((gamepadStates[padId].state.Gamepad.wButtons & type) != 0) {
         return true;
     }
     return false;
 }
 
+/** @brief ボタンが押された瞬間か */
 bool XInputController::GetTriggerButton(WORD type, uint32_t padId) {
 	if (padId >= 4) {
 		assert(false && padId >= 4);
@@ -77,6 +94,7 @@ bool XInputController::GetTriggerButton(WORD type, uint32_t padId) {
 	return false;
 }
 
+/** @brief ボタンが離された瞬間か */
 bool XInputController::GetReleaseButton(WORD type, uint32_t padId) {
     if (padId >= 4) {
         assert(false && padId >= 4);
@@ -89,6 +107,7 @@ bool XInputController::GetReleaseButton(WORD type, uint32_t padId) {
     return false;
 }
 
+/** @brief 右スティックの入力を取得 */
 Vector2 XInputController::GetRightStick(uint32_t padId) {
     if (stickDeadZone_ >= 32767.0f) {
         stickDeadZone_ = 32767.0f;
@@ -101,7 +120,7 @@ Vector2 XInputController::GetRightStick(uint32_t padId) {
     result.x = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbRX);
     result.y = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbRY);
 
-    // 雜ｳ蛻・ｊ
+    // デッドゾーン処理
     if (std::fabsf(result.x) <= stickDeadZone_) {
         result.x = 0.0f;
     }
@@ -109,14 +128,13 @@ Vector2 XInputController::GetRightStick(uint32_t padId) {
         result.y = 0.0f;
     }
 
-    result.x /= stickDeadZone_;
-    result.y /= stickDeadZone_;
-
-    return result;
+    result.x /= 32767.0f;
+    result.y /= 32767.0f;
 
     return result;
 }
 
+/** @brief 左スティックの入力を取得 */
 Vector2 XInputController::GetLeftStick(uint32_t padId) {
     if (stickDeadZone_ >= 32767.0f) {
         stickDeadZone_ = 32767.0f;
@@ -129,7 +147,7 @@ Vector2 XInputController::GetLeftStick(uint32_t padId) {
     result.x = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbLX);
     result.y = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbLY);
 
-    // 雜ｳ蛻・ｊ
+    // デッドゾーン処理
     if (std::fabsf(result.x) <= stickDeadZone_) {
         result.x = 0.0f;
     }
@@ -137,8 +155,8 @@ Vector2 XInputController::GetLeftStick(uint32_t padId) {
         result.y = 0.0f;
     }
 
-    result.x /= stickDeadZone_;
-    result.y /= stickDeadZone_;
+    result.x /= 32767.0f;
+    result.y /= 32767.0f;
 
     return result.Normalize();
 }

@@ -1,39 +1,51 @@
+/**
+ * @file ModelVertexResourceManager.cpp
+ * @brief 3Dモデルの頂点リソースを管理するクラスの実装
+ */
+
 #include "engine/include/assets/3DModel/ModelVertexResourceManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
 
+/** @brief 初期化 */
 void ModelVertexResourceManager::Initialize() {
 	modelDatas_.clear();
 	modelVertexBuffers_.clear();
 }
 
+/** @brief 終了処理 */
 void ModelVertexResourceManager::Finalize() {
 	modelDatas_.clear();
 	modelVertexBuffers_.clear();
 }
 
+/**
+ * @brief モデルデータを割り当てて頂点バッファを作成する
+ * TODO: 1つのモデルが複数のメッシュを持つ場合、連続するハンドルが割り当てられるが、
+ *       外部からはそれらが1つのモデルに属することが分かりにくい設計になっている。
+ */
 uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelData& modelData, const std::string& modelName) {
-	// 蜷後§蜷榊燕縺ｮ繝｢繝・Ν縺梧里縺ｫ蟄伜惠縺吶ｋ蝣ｴ蜷医・縺昴・繝上Φ繝峨Ν繧定ｿ斐☆
+	// 同じ名前のモデルが既に存在する場合はそのハンドルを返す
     auto it = modelHandleMap_.find(modelName);
     if (it != modelHandleMap_.end()) {
         return it->second;
     }
     
-    // 鬆らせ繝舌ャ繝輔ぃ繧剃ｽ懈・
+    // 頂点バッファを作成
     if (modelData.meshes.empty()) {
         assert(false && "ModelData has no meshes");
         return 0;
     }
-    // 繝｡繝・す繝･縺斐→縺ｫ鬆らせ繝舌ャ繝輔ぃ繧剃ｽ懈・
+    // メッシュごとに頂点バッファを作成
     uint32_t firstHandle = static_cast<uint32_t>(modelVertexBuffers_.size());
     for (const auto& mesh : modelData.meshes) {
         if (mesh.vertices.empty()) {
             assert(false && "Mesh has no vertices");
-            continue; // 鬆らせ縺後↑縺・Γ繝・す繝･縺ｯ繧ｹ繧ｭ繝・・
+            continue; // 頂点がないメッシュはスキップ
         }
         modelVertexBuffers_.emplace_back();
         modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(mesh.vertices.size()));
-        // 鬆らせ繝・・繧ｿ繧偵そ繝・ヨ
+        // 頂点データをセット
         for (size_t i = 0; i < mesh.vertices.size(); ++i) {
             modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), mesh.vertices[i]);
         }

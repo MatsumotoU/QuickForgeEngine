@@ -1,3 +1,8 @@
+/**
+ * @file ModelRenderer.cpp
+ * @brief 3Dモデルのレンダリング機能の実装
+ */
+
 #include "engine/include/renderer/ModelRenderer.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/assets/3DModel/Data/ModelRenderData.h"
@@ -6,9 +11,16 @@
 #include <cassert>
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+
+/**
+ * @brief モデルの描画実行
+ * @param modelHandle 描画するモデルのハンドル
+ */
 void Render::Model::DrawModel(const uint32_t& modelHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	assert(assetManager && "AssetManager is nullptr.");
+    
+    // TODO: modelHandle の有効性チェック(範囲チェック)が欠けている
 	const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(modelHandle);
 	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 
@@ -25,6 +37,7 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 	commandList->SetGraphicsRootSignature(pso->GetRootSignature());
 	commandList->SetPipelineState(pso->GetPipelineState());
 	
+    // メッシュごとに描画
 	for (auto& handle : modelDataPtr->meshRenderDataHandles) {
 		commandList->IASetVertexBuffers(0, 1,
 			assetManager->GetModelVertexResourceManager()->GetVertexBufferView(handle.vertexBufferHandle));
