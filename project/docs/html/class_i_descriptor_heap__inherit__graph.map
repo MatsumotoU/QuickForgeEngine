@@ -1,0 +1,9 @@
+<map id="IDescriptorHeap" name="IDescriptorHeap">
+<area shape="rect" id="Node000001" title=" " alt="" coords="174,5,290,32"/>
+<area shape="rect" id="Node000002" href="$class_dsv_descriptor_heap.html" title=" " alt="" coords="5,80,142,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,40,102,82,100,77,188,38"/>
+<area shape="rect" id="Node000003" href="$class_rtv_descriptor_heap.html" title=" " alt="" coords="166,80,299,107"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="234,46,234,81,230,78,230,50"/>
+<area shape="rect" id="Node000004" href="$class_srv_descriptor_heap.html" title=" " alt="" coords="323,80,456,107"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="274,36,365,79,359,80,273,41"/>
+</map>

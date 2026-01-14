@@ -1,0 +1,18 @@
+<map id="engine/src/graphic/PostEffect/OffScreen/OffScreenResourceManager.cpp" name="engine/src/graphic/PostEffect/OffScreen/OffScreenResourceManager.cpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="109,5,323,64"/>
+<area shape="rect" id="Node000002" href="$_off_screen_resource_manager_8h.html" title=" " alt="" coords="37,112,237,171"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,67,170,101,165,98,196,62"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="262,128,330,155"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="238,62,280,115,274,116,237,67"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="143,325,211,352"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="65,174,39,194,18,220,11,235,8,249,10,261,18,276,40,298,68,314,99,325,131,333,125,334,98,330,66,319,37,303,14,279,5,263,3,248,6,234,14,217,36,190,67,169"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="28,235,78,261"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="113,173,75,224,70,221,115,169"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="103,235,171,261"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="138,169,140,220,135,219,136,173"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="195,235,244,261"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="160,169,203,222,198,223,159,174"/>
+<area shape="rect" id="Node000007" href="$_descriptor_handles_8h.html" title=" " alt="" coords="268,219,462,277"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="200,168,291,211,286,213,199,174"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="307,277,219,321,217,316,301,278"/>
+</map>

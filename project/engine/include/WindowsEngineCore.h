@@ -1,3 +1,8 @@
+/**
+ * @file WindowsEngineCore.h
+ * @brief Windows環境におけるエンジンコアの実装
+ */
+
 #pragma once
 #include "engine/include/core/IEngineCore.h"
 #include "engine/include/core/EngineGlobalValue.h"
@@ -6,7 +11,7 @@
 #include <chrono>
 #include <nlohmann/json.hpp>
 
-// Core
+// Core subsystems
 #include "engine/include/window/GameWindowManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
@@ -18,7 +23,7 @@
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/assets/AssetManager.h"
 
-// なんかAssetsではなさそぁE�E��E�めE�E��E�めE
+// Scene and Scripts
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/assets/Script/LuaScriptResourceManager.h"
 #include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
@@ -30,12 +35,33 @@
 #include "engine/include/collider/ColliderManager.h"
 #include "engine/include/utility/MultiThreadTaskExecutor.h"
 
+/**
+ * @class WindowsEngineCore
+ * @brief Windows OS上で動作するエンジンの中心クラス
+ */
 class WindowsEngineCore final : public IEngineCore {
 public:
+    /**
+     * @brief コンストラクタ
+     * @param hInstance インスタンスハンドル
+     * @param lpCmdLine コマンドライン引数
+     */
 	WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
 	~WindowsEngineCore() override = default;
+
+    /**
+     * @brief エンジンの初期化
+     */
 	void Initialize() override;
+
+    /**
+     * @brief メインループの実行
+     */
 	void MainLoop() override;
+
+    /**
+     * @brief エンジンの終了処理
+     */
 	void Shutdown() override;
 
 private:

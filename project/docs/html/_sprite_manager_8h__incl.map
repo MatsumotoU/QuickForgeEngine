@@ -1,0 +1,21 @@
+<map id="engine/include/assets/Sprite/SpriteManager.h" name="engine/include/assets/Sprite/SpriteManager.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="76,5,235,48"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="47,104,104,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="136,51,99,94,95,91,138,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="129,104,182,131"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="156,46,158,89,153,88,155,51"/>
+<area shape="rect" id="Node000004" href="$_vertex_buffer_8h.html" title=" " alt="" coords="206,96,393,139"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="189,46,255,87,250,88,189,51"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="43,277,111,304"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="204,140,82,168,35,181,15,189,9,198,8,207,15,228,29,249,47,267,42,269,24,252,10,230,3,207,4,196,11,185,33,176,80,163,207,136"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="167,277,216,304"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="393,122,474,134,546,154,573,168,590,185,593,207,580,231,556,249,519,263,473,273,422,281,318,290,232,292,232,287,318,284,422,276,472,268,517,258,553,244,576,228,588,206,585,187,570,172,544,158,472,139,393,128"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="267,195,332,221"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="301,137,302,180,297,178,298,141"/>
+<area shape="rect" id="Node000008" href="$hlsl_type_to_cpp_8h.html" title=" " alt="" coords="356,187,566,229"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="338,137,413,179,407,179,337,142"/>
+<area shape="rect" id="Node000009" href="$_buffer_generator_8h.html" title=" " alt="" coords="25,195,243,221"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="259,141,173,189,170,185,263,138"/>
+<area shape="poly" id="edge9_Node000009_Node000005" title=" " alt="" coords="128,221,96,267,92,263,123,223"/>
+<area shape="poly" id="edge10_Node000009_Node000006" title=" " alt="" coords="144,219,177,265,171,265,142,224"/>
+</map>

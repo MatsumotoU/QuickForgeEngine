@@ -1,0 +1,5 @@
+<map id="DirectInputMouse" name="DirectInputMouse">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,168,130,195"/>
+<area shape="rect" id="Node000002" href="$class_vector2.html" title=" " alt="" coords="35,5,100,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="70,47,70,168,65,167,65,48"/>
+</map>

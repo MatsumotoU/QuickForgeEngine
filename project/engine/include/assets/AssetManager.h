@@ -1,3 +1,8 @@
+/**
+ * @file AssetManager.h
+ * @brief 各種アセット（テクスチャ、モデル、音など）の一括管理を行うクラス
+ */
+
 #pragma once
 #include "ResourceDirectoryManager.h"
 #include "2DTexture/TextureManager.h"
@@ -19,6 +24,10 @@
 
 class DirectXCommon;
 
+/**
+ * @class AssetManager
+ * @brief テクスチャ、モデル、音声などのアセット読み込みとライフサイクルを管理するシングルトンクラス
+ */
 class AssetManager final :public Singleton<AssetManager> {
 	friend class Singleton<AssetManager>;
 	AssetManager() = default;
@@ -28,16 +37,32 @@ class AssetManager final :public Singleton<AssetManager> {
 	AssetManager& operator=(AssetManager&&) = delete;
 
 public:
+    /** @brief 初期化処理 */
 	void Initalize(DirectXCommon* dxCommon);
+    /** @brief 描画前処理 */
 	void PreDraw();
+    /** @brief フレーム終了時の処理 */
 	void EndFrame();
+    /** @brief 終了処理 */
 	void Finalize();
 	
-	/// 拡張子付きで書くこと
+	/**
+     * @brief テクスチャを読み込む
+     * @param imageName ファイル名（拡張子を含む）
+     * @return テクスチャハンドル
+     */
 	uint32_t LoadTexture(const std::string& imageName);
-	/// 拡張子付きで書くこと
+	/**
+     * @brief モデルを読み込む
+     * @param modelName ファイル名（拡張子を含む）
+     * @return モデルハンドル
+     */
 	uint32_t LoadModel(const std::string& modelName);
-	/// 拡張子付きで書くこと
+	/**
+     * @brief 音声を読み込む
+     * @param audioName ファイル名（拡張子を含む）
+     * @return オーディオハンドル
+     */
 	uint32_t LoadAudio(const std::string& audioName);
 
 	uint32_t LoadModelMesh(const std::string& modelName);

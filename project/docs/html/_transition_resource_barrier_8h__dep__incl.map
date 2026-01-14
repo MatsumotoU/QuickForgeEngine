@@ -1,0 +1,9 @@
+<map id="engine/include/utility/DirectX/TransitionResourceBarrier.h" name="engine/include/utility/DirectX/TransitionResourceBarrier.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="284,5,519,48"/>
+<area shape="rect" id="Node000002" href="$_direct_x_common_8cpp.html" title=" " alt="" coords="5,104,254,147"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="332,53,189,106,187,101,327,54"/>
+<area shape="rect" id="Node000003" href="$_rendering_postprocess_8cpp.html" title=" " alt="" coords="278,104,525,147"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="403,61,404,105,399,102,400,65"/>
+<area shape="rect" id="Node000004" href="$_transition_resource_barrier_8cpp.html" title=" " alt="" coords="550,96,736,155"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="468,52,574,95,568,95,467,57"/>
+</map>

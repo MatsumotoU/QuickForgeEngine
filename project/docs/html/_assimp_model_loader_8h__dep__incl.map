@@ -1,0 +1,9 @@
+<map id="engine/include/assets/3DModel/Loader/AssimpModelLoader.h" name="engine/include/assets/3DModel/Loader/AssimpModelLoader.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="257,5,461,64"/>
+<area shape="rect" id="Node000002" href="$_assimp_model_loader_8cpp.html" title=" " alt="" coords="5,112,217,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="274,69,165,114,163,109,269,70"/>
+<area shape="rect" id="Node000003" href="$_asset_manager_8cpp.html" title=" " alt="" coords="240,120,478,147"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="361,77,361,121,357,118,357,81"/>
+<area shape="rect" id="Node000004" href="$_scene_object_8cpp.html" title=" " alt="" coords="502,120,726,147"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="449,67,583,119,578,119,448,72"/>
+</map>

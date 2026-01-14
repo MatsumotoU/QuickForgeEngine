@@ -1,0 +1,7 @@
+<map id="editor/include/UI/View/SceneProfileView.h" name="editor/include/UI/View/SceneProfileView.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="120,5,269,48"/>
+<area shape="rect" id="Node000002" href="$_u_i_manager_8cpp.html" title=" " alt="" coords="5,104,192,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,58,114,106,110,101,159,59"/>
+<area shape="rect" id="Node000003" href="$_scene_profile_view_8cpp.html" title=" " alt="" coords="216,96,368,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="229,56,272,96,266,95,227,61"/>
+</map>
