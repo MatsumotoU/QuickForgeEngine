@@ -49,31 +49,6 @@ LPCWSTR StringToLPCWSTR(const std::string& str) {
     return lpcwstr;
 }
 
-/** @brief exeを指定してファイルを開く */
-bool QFE::FILE::OpenFileOnExe(const std::string& exePath, const std::string& filePath) {
-    // ShellExecuteAの戻り値が32以下なら失敗
-    HINSTANCE result = ShellExecuteA(
-        NULL,           // ウィンドウハンドル
-        "open",         // 操作
-        exePath.c_str(),// 実行するexe
-        filePath.c_str(),// 引数(ここでは開きたいファイルパス)
-        NULL,           // カレントディレクトリ
-        SW_SHOWNORMAL   // ウィンドウ表示方法
-    );
-    return reinterpret_cast<intptr_t>(result) > 32;
-}
-
-/** @brief JSONをファイルに保存 */
-bool QFE::FILE::SaveJSONToFile(const std::string& filePath, const nlohmann::json& json) {
-	std::ofstream ofs(filePath);
-	if (ofs.is_open()) {
-		ofs << json.dump(4); // インデント幅4で整形して保存
-		ofs.close();
-		return true;
-	}
-    return false;
-}
-
 /**
  * @brief std::stringを書き換え可能な char* に変換する
  * TODO: 呼び出し側で delete[] buffer が必須。スマートポインタや std::vector<char> への移行を検討。

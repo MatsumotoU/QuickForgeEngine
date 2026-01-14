@@ -36,6 +36,7 @@ void SwapChain::AssignBackbuffer() {
 }
 
 void SwapChain::Initialize(HWND hwnd, uint32_t width, uint32_t height, IDXGIFactory7* dxgiFactory, ID3D12CommandQueue* commandQueue) {
+	CreateDubleBuffering();
 	CreateSwapChain(hwnd, width, height, dxgiFactory, commandQueue);
 	AssignBackbuffer();
 }

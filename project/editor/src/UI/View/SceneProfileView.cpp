@@ -1,3 +1,8 @@
+/**
+ * @file SceneProfileView.cpp
+ * @brief シーン内のエンティティ数や負荷バランスを表示するパネルの実装
+ */
+
 #include "editor/include/UI/View/SceneProfileView.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"

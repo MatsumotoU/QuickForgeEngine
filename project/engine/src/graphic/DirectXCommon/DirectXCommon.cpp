@@ -31,33 +31,26 @@ DirectXCommon* DirectXCommon::GetInstance() {
  * @param width ウィンドウの幅
  * @param height ウィンドウの高さ
  */
-void DirectXCommon::Initialize(GameWindow* gameWindow, uint32_t width, uint32_t height) {
-	assert(gameWindow && "gameWindow is nullptr.");
+void DirectXCommon::Initialize(const HWND& hwnd, uint32_t width, uint32_t height) {
 
 	// デバイスの初期化
-	directXDevice_ = std::make_unique<DirectXDevice>();
-	directXDevice_->Initialize();
+	directXDevice_.Initialize();
 
 	// デスクリプタヒープ管理の初期化
-	descriptorHeapManager_ = std::make_unique<DescriptorHeapManager>();
-	descriptorHeapManager_->Initialize(directXDevice_->GetDevice());
+	descriptorHeapManager_.Initialize(directXDevice_.GetDevice());
 
-	// コマンドマネージャーの初期化(DIRECT)
-	commandManagers_[D3D12_COMMAND_LIST_TYPE_DIRECT] = std::make_unique<DirectXCommandManager>();
-	commandManagers_[D3D12_COMMAND_LIST_TYPE_DIRECT]->Initialize(directXDevice_->GetDevice(), D3D12_COMMAND_LIST_TYPE_DIRECT);
+	// コマンドマネージャーの初期化
+	commandManager_.Initialize(directXDevice_.GetDevice());
 
 	// スワップチェーンの初期化
-	swapChain_ = std::make_unique<SwapChain>();
-	swapChain_->Initialize(
-		directXDevice_->GetDxgiFactory(),
-		commandManagers_[D3D12_COMMAND_LIST_TYPE_DIRECT]->GetCommandQueue(),
-		descriptorHeapManager_->GetRtvDescriptorHeap(),
-		gameWindow->GetHwnd(), width, height);
+	swapChain_.Initialize(
+		hwnd, width, height,
+		directXDevice_.GetDxgiFactory(),
+		commandManager_.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
 	AssignSwapChainRenderTarget();
 
-	fence_ = std::make_unique<Fence>();
-	fence_->Initialize(directXDevice_->GetDevice());
+	fence_.Initialize(directXDevice_.GetDevice());
 
 	// depthStencilBufferの生成
 	D3D12_RESOURCE_DESC depthResourceDesc{};
@@ -91,14 +84,12 @@ void DirectXCommon::Initialize(GameWindow* gameWindow, uint32_t width, uint32_t 
 	dsvHandle_ = descriptorHeapManager_.AssignDsvHeap(depthStencilBuffer_.Get(), &dsvDesc);
 
 	// ビューポートとシザー矩形の設定
-	viewport_ = {};
 	viewport_.TopLeftX = 0.0f;
 	viewport_.TopLeftY = 0.0f;
 	viewport_.Width = static_cast<float>(width);
 	viewport_.Height = static_cast<float>(height);
 	viewport_.MinDepth = 0.0f;
 	viewport_.MaxDepth = 1.0f;
-	scissorRect_ = {};
 	scissorRect_.left = 0;
 	scissorRect_.top = 0;
 	scissorRect_.right = static_cast<LONG>(width);
@@ -108,15 +99,21 @@ void DirectXCommon::Initialize(GameWindow* gameWindow, uint32_t width, uint32_t 
 /** @brief 描画前処理 */
 void DirectXCommon::PreDraw() {
 	// スワップチェーンのリソース状態を描画可能に変更
-	TransitionResourceBarrier::Transition(
-		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT),
-		swapChain_.GetCurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_PRESENT,
-		D3D12_RESOURCE_STATE_RENDER_TARGET);
+	{
+		D3D12_RESOURCE_BARRIER barrier{};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.pResource = swapChain_.GetCurrentBackBuffer();
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ResourceBarrier(1, &barrier);
+	}
 
-	InitializeSwapChainBuffer::Execute(
-		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), swapChain_.GetCurrentBackBufferView(),
-		clearColor_[0], clearColor_[1], clearColor_[2], clearColor_[3]);
+	{
+		float color[] = { clearColor_[0], clearColor_[1], clearColor_[2], clearColor_[3] };
+		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ClearRenderTargetView(swapChain_.GetCurrentBackBufferView(), color, 0, nullptr);
+	}
 
 	// デプスステンシルのクリア
 	ClearDepthStencil();
@@ -125,11 +122,16 @@ void DirectXCommon::PreDraw() {
 /** @brief 描画後処理 */
 void DirectXCommon::PostDraw() {
 	// スワップチェーンのリソース状態を表示可能に変更
-	TransitionResourceBarrier::Transition(
-		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT),
-		swapChain_.GetCurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET,
-		D3D12_RESOURCE_STATE_PRESENT);
+	{
+		D3D12_RESOURCE_BARRIER barrier{};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.pResource = swapChain_.GetCurrentBackBuffer();
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ResourceBarrier(1, &barrier);
+	}
 
 	// コマンドリストをクローズ、実行
 	commandManager_.ExecuteCommandList();

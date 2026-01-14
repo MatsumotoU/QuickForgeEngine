@@ -1,3 +1,8 @@
+/**
+ * @file UIManager.cpp
+ * @brief エディタUIの統合管理を行うクラスの実装
+ */
+
 #include "editor/include/UI/UIManager.h"
 
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
@@ -23,13 +28,14 @@
 #include "editor/include/UI/Edit/PostprocessEdit.h"
 #include "editor/include/UI/Edit/ColliderMaskEdit.h"
 
+/** @brief 初期化 */
 void UIManager::Initialize() {
 	isActiveUI_ = false;
 
 #ifdef _DEBUG
 	isActiveUI_ = true;
 
-	// FileUIの初期匁E
+	// FileUIの初期化
 	fileUIs_.push_back(std::make_unique<CreateNewScene>());
 	fileUIs_.push_back(std::make_unique<SaveScene>());
 	fileUIs_.push_back(std::make_unique<LoadScene>());
@@ -37,7 +43,7 @@ void UIManager::Initialize() {
 		ui->Initialize();
 	}
 
-	// ViewUIの初期匁E
+	// ViewUIの初期化
 	viewUIs_.push_back(std::make_unique<SceneProfileView>());
 	viewUIs_.push_back(std::make_unique<EngineProfileView>());
 	viewUIs_.push_back(std::make_unique<ScriptLoggerView>());
@@ -53,7 +59,7 @@ void UIManager::Initialize() {
 		ui->Initialize();
 	}
 
-	// EditUIの初期匁E
+	// EditUIの初期化
 	editUIs_.push_back(std::make_unique<DebugConsole>());
 	editUIs_.push_back(std::make_unique<KeyConfigEdit>());
 	editUIs_.push_back(std::make_unique<PostprocessEdit>());
@@ -79,12 +85,13 @@ void UIManager::Update() {
 #endif // _DEBUG
 }
 
+/** @brief 描画 */
 void UIManager::Draw() {
 	if (!isActiveUI_) {
 		return;
 	}
 #ifdef _DEBUG
-	// シーンが実行中は色を変えめE
+	// シーンが実行中は色を変える
 	bool isScriptRunning = SceneManager::GetInstance()->IsRunningScript();
 	if (isScriptRunning && RenderingPostprocess::GetInstance()->isImGuiEnabled_) {
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.01f, 0.01f, 0.01f, 1.0f));
@@ -129,7 +136,7 @@ void UIManager::Draw() {
 			}
 		}
 
-		// シーン吁E
+		// シーン名
 		ImGui::Text(("Scene: " + SceneManager::GetInstance()->GetCurrentSceneName()).c_str());
 		ImGui::EndMainMenuBar();
 	}
@@ -138,7 +145,7 @@ void UIManager::Draw() {
 		return;
 	}
 
-	// Dockする場所を生戁E
+	// Dockする場所を生成
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->Pos);
 	ImGui::SetNextWindowSize(viewport->Size);
@@ -167,7 +174,7 @@ void UIManager::Draw() {
 		ui->Draw();
 	}
 
-	// 実行中は色を変えめE
+	// 実行中は色を変える
 	if (isScriptRunning && RenderingPostprocess::GetInstance()->isImGuiEnabled_) {
 		ImGui::PopStyleColor(3);
 	}

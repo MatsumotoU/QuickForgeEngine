@@ -1,3 +1,8 @@
+/**
+ * @file CreateNewScene.cpp
+ * @brief 新規シーン作成ダイアログの実装
+ */
+
 #include "editor/include/UI/File/CreateNewScene.h"
 #include "scene/SceneManager.h"
 

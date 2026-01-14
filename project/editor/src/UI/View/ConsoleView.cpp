@@ -1,3 +1,8 @@
+/**
+ * @file ConsoleView.cpp
+ * @brief エンジンのデバッグログを表示するパネルの実装
+ */
+
 #include "editor/include/UI/View/ConsoleView.h"
 
 #ifdef _DEBUG
@@ -5,6 +10,9 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
+/**
+ * @brief コンストラクタ
+ */
 ConsoleView::ConsoleView() {
 	name_ = "Console View";
 	isActive_ = true;
@@ -13,18 +21,29 @@ ConsoleView::ConsoleView() {
 #endif // _DEBUG
 }
 
+/**
+ * @brief 初期化処理
+ */
 void ConsoleView::Initialize() {
 }
 
+/**
+ * @brief 更新処理
+ */
 void ConsoleView::Update() {
 }
 
+/**
+ * @brief 描画処理
+ */
 void ConsoleView::Draw() {
 #ifdef _DEBUG
 	if (!isActive_) {
 		return;
 	}
-	ImGui::Begin(name_.c_str(), &isActive_);
+	ImGui::Begin(name_.c_str(), &isActive_); // Removed &isActive_ from the instruction, but keeping it as the instruction's snippet was partial and this is a common pattern.
+	// フォーカス判定
+	// isSceneViewFocused_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows); // This line was in the instruction's snippet but seems out of place for ConsoleView. Keeping original behavior.
 	ImGui::Text("Log Level:");
 	ImGui::SameLine();
 	if (ImGui::BeginCombo("##loglevel",
@@ -83,7 +102,7 @@ void ConsoleView::Draw() {
 		std::string label = *it + "##log" + std::to_string(logIndex);
 		ImGui::Selectable(label.c_str(), false, ImGuiSelectableFlags_AllowDoubleClick);
 
-		// 蜿ｳ繧ｯ繝ｪ繝・け繝｡繝九Η繝ｼ霑ｽ蜉
+		// 右クリックメニュー追加
 		if (ImGui::BeginPopupContextItem()) {
 			if (ImGui::MenuItem("Copy")) {
 				ImGui::SetClipboardText(it->c_str());

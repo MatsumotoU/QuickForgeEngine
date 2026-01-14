@@ -1,3 +1,8 @@
+/**
+ * @file EngineProfileView.cpp
+ * @brief エンジンのパフォーマンス統計（FPS等）を表示するパネルの実装
+ */
+
 #include "editor/include/UI/View/EngineProfileView.h"
 
 #include "engine/include/core/EngineGlobalValue.h"

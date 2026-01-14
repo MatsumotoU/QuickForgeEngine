@@ -1,3 +1,8 @@
+/** 
+ * @file OnWindowsEditor.h
+ * @brief Windowsプラットフォーム向けエディタの実装
+ */
+
 #pragma once
 #include <stdint.h>
 #include <string>
@@ -9,7 +14,7 @@
 
 /** 
  * @class OnWindowsEditor
- * @brief Windowsプラットフォーム向けエディタの実装
+ * @brief Windowsプラットフォーム向けエディタの実装。ゲームウィンドウとは別にエディタUIを構成する。
 */
 
 class OnWindowsEditor final : public IEditor {

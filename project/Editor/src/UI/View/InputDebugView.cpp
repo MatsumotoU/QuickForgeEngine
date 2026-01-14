@@ -1,3 +1,8 @@
+/**
+ * @file InputDebugView.cpp
+ * @brief 入力デバイスの状態を可視化・確認するデバッグパネルの実装
+ */
+
 #include "editor/include/UI/View/InputDebugView.h"
 #include "engine/include/input/InputInterface.h"
 #include "Engine/include/assets/AudioSource/Data/AudioData.h"

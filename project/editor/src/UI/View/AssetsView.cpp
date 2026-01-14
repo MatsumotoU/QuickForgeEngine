@@ -1,3 +1,8 @@
+/**
+ * @file AssetsView.cpp
+ * @brief プロジェクト内のアセットを表示・管理するパネルの実装
+ */
+
 #include "editor/include/UI/View/AssetsView.h"
 #include "assets/AssetManager.h"
 #include <cassert>
@@ -31,7 +36,7 @@ AssetsView::AssetsView() {
 	drawFunctions[ViewHierarchy::Audio] = std::bind(&AssetsView::AudioView, this);
 	drawFunctions[ViewHierarchy::Others] = std::bind(&AssetsView::OthersView, this);
 #ifdef _DEBUG
-	// 繧｢繧ｻ繝・ヨ逕ｨUI縺ｮ逋ｻ骭ｲ
+	// アセット用UIの登録
 	fileGH_ = assetManager->LoadEditorTexture("file.png");
 	arrowGH_ = assetManager->LoadEditorTexture("arrow.png");
 #endif // _DEBUG
@@ -39,12 +44,22 @@ AssetsView::AssetsView() {
 	loadSpace_ = LoadSpace::Memory;
 }
 
+/**
+ * @brief AssetsViewの初期化処理
+ */
 void AssetsView::Initialize() {
 }
 
+/**
+ * @brief AssetsViewの更新処理
+ */
 void AssetsView::Update() {
 }
 
+/**
+ * @brief AssetsViewの描画処理
+ * メモリ上のアセットとファイルシステム上のアセットの表示を切り替える。
+ */
 void AssetsView::Draw() {
 	if (!isActive_) {
 		return;
@@ -52,6 +67,7 @@ void AssetsView::Draw() {
 
 	ImGui::Begin(name_.c_str(), &isActive_);
 
+	// メモリ/ファイル表示の切り替えラジオボタン
 	if (ImGui::RadioButton("Memory", loadSpace_ == LoadSpace::Memory)) {
 		loadSpace_ = LoadSpace::Memory;
 	}
@@ -60,18 +76,21 @@ void AssetsView::Draw() {
 		loadSpace_ = LoadSpace::File;
 	}
 
-	// 繝輔ぃ繧､繝ｫ繧ｷ繧ｹ繝・Β荳翫・繧｢繧ｻ繝・ヨ繧定｡ｨ遉ｺ
+	// ファイルシステム上のアセットを表示
 	if (loadSpace_ == LoadSpace::File) {
 		FilesView();
 		ImGui::End();
 		return;
 	}
-	// 繝｡繝｢繝ｪ荳翫・繧｢繧ｻ繝・ヨ繧定｡ｨ遉ｺ
+	// メモリ上のアセットを表示
 	drawFunctions[currentHierarchy]();
 	ImGui::End();
 }
 
-// 蜷・ン繝･繝ｼ縺ｮ謠冗判髢｢謨ｰ
+/**
+ * @brief ルートビューの描画
+ * 各アセットカテゴリへの遷移ボタンを表示する。
+ */
 void AssetsView::RootView() {
 	ImGui::Text("Root");
 	ImGui::Separator();
@@ -84,7 +103,7 @@ void AssetsView::RootView() {
 			continue;
 		}
 
-		// 譛蛻昜ｻ･螟悶・謚倥ｊ霑斐＠蛻､螳・
+		// 最初以外の折り返し判定
 		if (it != hierarchyNames.begin()) {
 			float nextX = ImGui::GetCursorPosX() + buttonSize + buttonPadding;
 			if (nextX > avail.x) {
@@ -116,13 +135,13 @@ void AssetsView::ImagesView() {
 		currentHierarchy = ViewHierarchy::Root;
 	}
 
-	// 繝｡繝｢繝ｪ荳翫・繝・け繧ｹ繝√Ε繧定｡ｨ遉ｺ
+	// メモリ上のテクスチャを表示
 	const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> handles = assetManager->GetTextureManager()->GetTextureSrvHandleGPUList();
 	const int buttonSize = 64;
 	const int buttonPadding = 8;
 	ImVec2 avail = ImGui::GetContentRegionAvail();
 	for (size_t i = 0; i < handles.size(); i++) {
-		// 迴ｾ蝨ｨ縺ｮ繧ｫ繝ｼ繧ｽ繝ｫ菴咲ｽｮ縺ｨ谺｡縺ｮ繝懊ち繝ｳ縺ｮ菴咲ｽｮ繧定ｨ育ｮ・
+		// 現在のカーソル位置と次のボタンの位置を計算
 		float nextX = ImGui::GetCursorPosX() + buttonSize + buttonPadding;
 		if (i != 0 && nextX > avail.x) {
 			ImGui::NewLine();
@@ -132,7 +151,7 @@ void AssetsView::ImagesView() {
 
 		ImGui::BeginGroup();
 		ImVec2 pos = ImGui::GetCursorScreenPos();
-		ImU32 bgColor = ImGui::ColorConvertFloat4ToU32(ImVec4(0.15f, 0.15f, 0.2f, 1.0f)); // 莉ｻ諢上・閭梧勹濶ｲ
+		ImU32 bgColor = ImGui::ColorConvertFloat4ToU32(ImVec4(0.15f, 0.15f, 0.2f, 1.0f)); // 任意の背景色
 		ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + buttonSize, pos.y + buttonSize), bgColor);
 
 		ImGui::ImageButton(
