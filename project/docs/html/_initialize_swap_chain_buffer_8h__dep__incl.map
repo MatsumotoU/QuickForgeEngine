@@ -1,7 +1,0 @@
-<map id="engine/include/utility/DirectX/InitializeSwapChainBuffer.h" name="engine/include/utility/DirectX/InitializeSwapChainBuffer.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="157,5,345,64"/>
-<area shape="rect" id="Node000002" href="$_direct_x_common_8cpp.html" title=" " alt="" coords="5,120,254,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="209,73,155,122,152,117,204,75"/>
-<area shape="rect" id="Node000003" href="$_initialize_swap_chain_buffer_8cpp.html" title=" " alt="" coords="278,112,466,171"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="296,72,342,112,336,111,294,77"/>
-</map>

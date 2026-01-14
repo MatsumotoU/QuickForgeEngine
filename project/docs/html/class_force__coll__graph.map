@@ -1,7 +1,0 @@
-<map id="Force" name="Force">
-<area shape="rect" id="Node000001" title=" " alt="" coords="94,125,148,152"/>
-<area shape="rect" id="Node000002" href="$class_component_data.html" title=" " alt="" coords="5,5,122,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,44,117,124,112,125,74,48"/>
-<area shape="rect" id="Node000003" href="$class_vector3.html" title=" " alt="" coords="146,5,211,32"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="168,45,129,126,125,123,163,47"/>
-</map>

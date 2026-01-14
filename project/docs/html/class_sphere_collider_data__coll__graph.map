@@ -1,9 +1,0 @@
-<map id="SphereColliderData" name="SphereColliderData">
-<area shape="rect" id="Node000001" title=" " alt="" coords="35,203,169,229"/>
-<area shape="rect" id="Node000002" href="$class_component_data.html" title=" " alt="" coords="5,104,122,131"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="76,143,100,202,95,203,72,147"/>
-<area shape="rect" id="Node000003" href="$struct_sphere.html" title="琁E��E" alt="" coords="146,104,208,131"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="160,143,114,204,110,201,155,144"/>
-<area shape="rect" id="Node000004" href="$class_vector3.html" title=" " alt="" coords="144,5,210,32"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="178,46,179,105,174,103,175,50"/>
-</map>

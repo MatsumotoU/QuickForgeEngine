@@ -1,9 +1,0 @@
-<map id="AABBColliderData" name="AABBColliderData">
-<area shape="rect" id="Node000001" title=" " alt="" coords="38,224,167,251"/>
-<area shape="rect" id="Node000002" href="$class_component_data.html" title=" " alt="" coords="5,125,122,152"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="76,165,100,224,95,224,72,169"/>
-<area shape="rect" id="Node000003" href="$struct_a_a_b_b.html" title="軸並行墁E��ボックス" alt="" coords="146,125,203,152"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="158,164,113,226,109,222,153,165"/>
-<area shape="rect" id="Node000004" href="$class_vector3.html" title=" " alt="" coords="142,5,207,32"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="176,46,177,126,172,124,173,50"/>
-</map>

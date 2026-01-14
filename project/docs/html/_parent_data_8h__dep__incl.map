@@ -1,9 +1,0 @@
-<map id="engine/include/core/Math/ParentData.h" name="engine/include/core/Math/ParentData.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="205,5,340,48"/>
-<area shape="rect" id="Node000002" href="$_inspector_view_8cpp.html" title=" " alt="" coords="5,96,138,139"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="214,54,120,98,118,93,209,55"/>
-<area shape="rect" id="Node000003" href="$_parent_update_command_8cpp.html" title=" " alt="" coords="162,96,384,139"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="275,62,275,97,271,94,271,66"/>
-<area shape="rect" id="Node000004" href="$_scene_object_8cpp.html" title=" " alt="" coords="407,104,632,131"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="346,51,487,103,481,104,345,56"/>
-</map>
