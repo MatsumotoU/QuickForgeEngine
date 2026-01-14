@@ -1,3 +1,8 @@
+/**
+ * @file InspectorView.cpp
+ * @brief 選択されたエンティティの詳細情報（コンポーネント）を表示・編集するパネルの実装
+ */
+
 #include "editor/include/UI/View/InspectorView.h"
 #include "editor/include/UI/View/HierarchyView.h"
 
@@ -18,14 +23,14 @@
 #include "engine/include/camera/Data/CameraData.h"
 #include "engine/include/collider/Data/AABBColliderData.h"
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
-#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#迺ｰ蠅・・繝倥ャ繝繝ｼ繧偵う繝ｳ繧ｯ繝ｫ繝ｼ繝・
+#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#環境のヘッダーをインクルード
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
 InspectorView::InspectorView() {
 	isActive_ = true;
 	name_ = "Inspector View";
 	selectedEntityId_ = 0;
-	// csharpScriptList縺ｮ蛻晄悄蛹悶ｒ蜑企勁
+	// csharpScriptListの初期化を削除
 	scriptList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts"), ".lua");
 	modelList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
 }
@@ -37,13 +42,14 @@ void InspectorView::Update() {
 	selectedEntityId_ = HierarchyView::selectedEntityId_;
 }
 
+/** @brief 描画 */
 void InspectorView::Draw() {
 	if (!isActive_) {
 		return;
 	}
 
 	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	// 繧ｪ繝悶ず繧ｧ繧ｯ繝医・蜷榊燕
+	// オブジェクトの名前
 	AssetManager* assetManager = AssetManager::GetInstance();
 	if (assetManager->GetEntityManager()->HasComponent<SceneObjectData>(selectedEntityId_)) {
 		SceneObjectData& sceneObjData = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(selectedEntityId_);
@@ -148,7 +154,7 @@ void InspectorView::Draw() {
 			ImGui::Text("This is Main Camera");
 		}
 	}
-	// CS繧ｹ繧ｯ繝ｪ繝励ヨ
+	// CSスクリプト
 	if (assetManager->GetEntityManager()->HasComponent<CsharpComponent>(selectedEntityId_)) {
 		CsharpComponent& csharpComponent = assetManager->GetEntityManager()->GetComponent<CsharpComponent>(selectedEntityId_);
 		for (const auto& csHandle : csharpComponent.csharpHandles_) {
@@ -161,7 +167,7 @@ void InspectorView::Draw() {
 		}
 	}
 
-	// 繧ｹ繧ｯ繝ｪ繝励ヨ
+	// スクリプト
 	if (assetManager->GetEntityManager()->HasComponent<ScriptHandles>(selectedEntityId_)) {
 		ScriptHandles& scriptHandle = assetManager->GetEntityManager()->GetComponent<ScriptHandles>(selectedEntityId_);
 
@@ -172,9 +178,9 @@ void InspectorView::Draw() {
 			std::vector<uint32_t> eraseIndices;
 			for (size_t i = 0; i < scriptHandle.scriptHandles_.size(); ++i) {
 				LuaHandle& sh = scriptHandle.scriptHandles_[i];
-				// 繝ｪ繧ｹ繝郁｡ｨ遉ｺ
+				// リスト表示
 				if (ImGui::TreeNode(sh.scriptName_.c_str())) {
-					// 繧ｹ繧ｯ繝ｪ繝励ヨ縺ｮ繝代Λ繝｡繝ｼ繧ｿ陦ｨ遉ｺ
+					// スクリプトのパラメータ表示
 					LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(sh.handle_);
 					ImGui::Text("Handle: %d", sh.handle_);
 					ImGui::Text("Entity ID: %d", script->GetBindEntityId());
@@ -228,7 +234,7 @@ void InspectorView::Draw() {
 								if (it != sh.stringParams_.end()) {
 									it->second = std::string(buf);
 								} else {
-									sh.stringParams_[val] = std::string(buf); // 譁ｰ隕剰ｿｽ蜉
+									sh.stringParams_[val] = std::string(buf); // 新規追加
 								}
 							}
 						}
@@ -238,25 +244,25 @@ void InspectorView::Draw() {
 					ImGui::TreePop();
 				}
 
-				// 蜿ｳ繧ｯ繝ｪ繝・け縺ｧ繝昴ャ繝励い繝・・繝｡繝九Η繝ｼ
+				// 右クリックでポップアップメニュー
 				std::string popupLabel = "ScriptPopup" + std::to_string(i);
 				if (ImGui::BeginPopupContextItem(popupLabel.c_str())) {
 					if (ImGui::MenuItem("Open in VSCode")) {
 						LuaScriptResourceManager::GetInstance()->OpenAndEditScript(sh.scriptName_);
 					}
 					if (ImGui::MenuItem("Remove")) {
-						// 繧ｹ繧ｯ繝ｪ繝励ヨ蜑企勁蜃ｦ逅・
+						// スクリプト削除処理
 						eraseIndices.push_back(static_cast<uint32_t>(i));
 						LuaScriptResourceManager::GetInstance()->RequestRemoveScript(sh.handle_);
 					}
 					ImGui::EndPopup();
 				}
 			}
-			// 蠕後ｍ縺九ｉ蜑企勁縺励※繧､繝ｳ繝・ャ繧ｯ繧ｹ縺壹ｌ繧帝亟縺・
+			// 後ろから削除してインデックスずれを防ぐ
 			for (auto it = eraseIndices.rbegin(); it != eraseIndices.rend(); ++it) {
 				scriptHandle.scriptHandles_.erase(scriptHandle.scriptHandles_.begin() + *it);
 			}
-			// 繧ｹ繧ｯ繝ｪ繝励ヨ縺後↑縺上↑縺｣縺溘ｉ繧ｳ繝ｳ繝昴・繝阪Φ繝医＃縺ｨ蜑企勁
+			// スクリプトがなくなったらコンポーネントごと削除
 			if (scriptHandle.scriptHandles_.size() <= 0) {
 				assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
 			}
@@ -399,7 +405,7 @@ void InspectorView::Draw() {
 		}
 	}
 
-	// 繧ｳ繝ｳ繝昴・繝阪Φ繝医・霑ｽ蜉
+	// コンポーネントの追加
 	if (ImGui::Button("Add Component")) {
 		ImGui::OpenPopup("AddComponentPopup");
 	}
@@ -431,7 +437,7 @@ void InspectorView::Draw() {
 		// CsharpScript
 		if (ImGui::BeginMenu("CSharpScript")) {
 			if (ImGui::MenuItem("NewScript")) {
-				// TODO: 譁ｰ隕修#繧ｹ繧ｯ繝ｪ繝励ヨ菴懈・讖溯・
+				// TODO: 新規C#スクリプト作成機能
 			}
 
 			if (ImGui::BeginMenu("AddScript")) {

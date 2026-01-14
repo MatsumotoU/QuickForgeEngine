@@ -1,3 +1,8 @@
+/**
+ * @file SaveScene.cpp
+ * @brief シーン保存ダイアログの実装
+ */
+
 #include "editor/include/UI/File/SaveScene.h"
 #include "scene/SceneManager.h"
 

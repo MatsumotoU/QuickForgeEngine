@@ -1,3 +1,8 @@
+/**
+ * @file main.cpp
+ * @brief エディタアプリケーションのエントリポイント
+ */
+
 #include "engine/QuickForgeEngine.h"
 #include "engine/include/WindowsEngineCore.h"
 #include "engine/include/core/IEngineCore.h"
@@ -6,9 +11,13 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include <format>
 
+/**
+ * @brief Windowsアプリケーションのエントリポイント
+ */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     hPrevInstance; nCmdShow;
 
+    // エンジンコアの生成（Windowsの実装を使用）
     std::unique_ptr<IEngineCore> engineCore = std::make_unique<WindowsEngineCore>(hInstance, lpCmdLine);
 
     try {

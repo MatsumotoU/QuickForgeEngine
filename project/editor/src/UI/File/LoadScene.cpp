@@ -1,3 +1,8 @@
+/**
+ * @file LoadScene.cpp
+ * @brief シーンロード用ブラウザの実装
+ */
+
 #include "editor/include/UI/File/LoadScene.h"
 #include "scene/SceneManager.h"
 
@@ -27,7 +32,7 @@ void LoadScene::Draw() {
 	}
 	ImGui::Separator();
 	if (!sceneList_.empty()) {
-		// 繝峨Ο繝・・繝繧ｦ繝ｳ繝ｪ繧ｹ繝医ｒ陦ｨ遉ｺ
+		// ドロップダウンリストを表示
 		std::vector<const char*> items;
 		for (const auto& s : sceneList_) items.push_back(s.c_str());
 		if (ImGui::Combo("Scene List", &selected_, items.data(), static_cast<int>(items.size()))) {

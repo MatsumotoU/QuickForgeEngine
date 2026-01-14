@@ -1,3 +1,8 @@
+/**
+ * @file DebugConsole.cpp
+ * @brief エディタ内コマンドラインコンソールの実装
+ */
+
 #include "editor/include/UI/Edit/DebugConsole.h"
 #include "assets/Script/LuaScriptResourceManager.h"
 #include "scene/SceneManager.h"
@@ -17,14 +22,14 @@ void DebugConsole::Draw() {
 
 	ImGui::Begin("DebugConsole", &isActive_, ImGuiWindowFlags_NoDocking);
 
-	// 螻･豁ｴ陦ｨ遉ｺ逕ｨ縺ｮ蟄舌え繧｣繝ｳ繝峨え・井ｸ企Κ・・
+	// 履歴表示用の子ウィンドウ（上部）
 	ImGui::BeginChild("History", ImVec2(0, -ImGui::GetFrameHeightWithSpacing() - 8), false, ImGuiWindowFlags_HorizontalScrollbar);
 	for (const auto& item : items_) {
 		ImGui::TextUnformatted(item.c_str());
 	}
 	ImGui::EndChild();
 
-	// 蜈･蜉帶ｬ・ｼ井ｸ矩Κ蝗ｺ螳夲ｼ・
+	// 入力欄（下部固定）
 	ImGui::Separator();
 	ImGui::SetNextItemWidth(-1);
 	if (ImGui::InputText("Input", inputBuf_, IM_ARRAYSIZE(inputBuf_),
@@ -44,10 +49,10 @@ void DebugConsole::Run() {
 }
 
 void DebugConsole::ExecCommand(const char* command) {
-	// 繧ｳ繝槭Φ繝牙ｱ･豁ｴ縺ｫ霑ｽ蜉
+	// コマンド履歴に追加
 	items_.emplace_back(std::string("> ") + command);
 
-	// 繧ｳ繝槭Φ繝峨・邁｡蜊倥↑萓・
+	// コマンドの簡単な例
 	if (strcmp(command, "clear") == 0) {
 		items_.clear();
 	} else if (strcmp(command, "help") == 0) {

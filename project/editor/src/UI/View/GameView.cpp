@@ -1,3 +1,8 @@
+/**
+ * @file GameView.cpp
+ * @brief ゲームの最終描画結果を表示するパネルの実装
+ */
+
 #include "editor/include/UI/View/GameView.h"
 
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
@@ -30,7 +35,7 @@ void GameView::Draw() {
 	DescriptorHandles handle = render->GetCurrentSrvHandle();
 	ImGui::Begin(name_.c_str());
 
-	// フォーカス判宁E
+	// フォーカス判定
 	isSceneViewFocused_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
 	ImVec2 windowPos = ImGui::GetWindowPos();

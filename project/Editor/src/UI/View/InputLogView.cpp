@@ -1,3 +1,8 @@
+/**
+ * @file InputLogView.cpp
+ * @brief 入力イベントの履歴を記録し表示するパネルの実装
+ */
+
 #include "editor/include/UI/View/InputLogView.h"
 #include "Engine/include/input/InputInterface.h"
 #include "Engine/include/utility/String/DirectInputToString.h"

@@ -1,3 +1,8 @@
+/**
+ * @file ColliderMaskEdit.cpp
+ * @brief 衝突判定のマスク設定を編集するパネルの実装
+ */
+
 #include "editor/include/UI/Edit/ColliderMaskEdit.h"
 #include "collider/ColliderManager.h"
 
@@ -21,7 +26,7 @@ void ColliderMaskEdit::Draw() {
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	ImGui::Begin("Collider Mask Edit", &isActive_, ImGuiWindowFlags_NoDocking);
 	ImGui::Text("Collider Tag Mask Pairs");
-	// 譌｢蟄倥・繧ｿ繧ｰ繝槭せ繧ｯ繝壹い陦ｨ遉ｺ
+	// 既存のタグマスクペア表示
 	for (const auto& pair : colliderManager->colliderTagMask_.GetTagMaskPairs()) {
 		ImGui::Text("%s - %s", pair.first.c_str(), pair.second.c_str());
 		ImGui::SameLine();

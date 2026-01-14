@@ -1,3 +1,8 @@
+/**
+ * @file ScriptLoggerView.cpp
+ * @brief 各エンティティにアタッチされたスクリプトからの出力を表示するパネルの実装
+ */
+
 #include "editor/include/UI/View/ScriptLoggerView.h"
 
 #include "editor/include/UI/View/HierarchyView.h"
