@@ -1,7 +1,0 @@
-<map id="engine/include/input/DirectInput" name="engine/include/input/DirectInput">
-<area shape="rect" id="node1" href="dir_00984c3c8a19638c0f5a860fc067602f.html" title="DirectInput" alt="" coords="27,53,112,80"/>
-<area shape="rect" id="node2" href="dir_763b58b8e96e0027c9590240b203aff1.html" title="core" alt="" coords="46,128,92,155"/>
-<area shape="poly" id="edge1" href="dir_000051_000026.html" alt="" coords="71,79,72,113,67,112,68,83"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000051_000026.html" title="2" alt="" coords="74,101,81,117"/>
-<area shape="rect" id="clust1" href="dir_6321d725f81d232711fa41f2e98015b6.html" title="input" alt="" coords="16,16,123,91"/>
-</map>

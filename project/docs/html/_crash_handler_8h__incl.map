@@ -1,9 +1,0 @@
-<map id="engine/include/utility/DebugTool/App/CrashHandler.h" name="engine/include/utility/DebugTool/App/CrashHandler.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="49,5,258,48"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,96,92,123"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="129,48,79,89,75,84,124,49"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="115,96,192,123"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="156,47,156,81,151,79,152,51"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="216,96,289,123"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,46,228,86,223,86,178,51"/>
-</map>

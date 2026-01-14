@@ -1,7 +1,0 @@
-<map id="engine/include/utility/DebugTool/ImGui/ImGuiInitializer.h" name="engine/include/utility/DebugTool/ImGui/ImGuiInitializer.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="98,5,326,48"/>
-<area shape="rect" id="Node000002" href="$_windows_engine_core_8cpp.html" title=" " alt="" coords="5,96,185,139"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="175,57,124,98,121,93,171,58"/>
-<area shape="rect" id="Node000003" href="$_im_gui_initializer_8cpp.html" title=" " alt="" coords="208,96,451,139"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="252,55,305,96,300,95,251,60"/>
-</map>

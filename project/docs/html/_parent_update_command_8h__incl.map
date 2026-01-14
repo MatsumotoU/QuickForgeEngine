@@ -1,7 +1,0 @@
-<map id="engine/include/scene/SceneCommand/ParentUpdateCommand.h" name="engine/include/scene/SceneCommand/ParentUpdateCommand.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,283,48"/>
-<area shape="rect" id="Node000002" href="$_i_scene_entity_command_8h.html" title=" " alt="" coords="60,96,228,123"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="145,46,147,81,141,79,143,51"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="117,171,171,197"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="146,121,146,156,142,154,142,125"/>
-</map>

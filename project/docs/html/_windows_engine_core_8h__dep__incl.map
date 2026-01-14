@@ -1,9 +1,0 @@
-<map id="engine/include/WindowsEngineCore.h" name="engine/include/WindowsEngineCore.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="137,5,339,48"/>
-<area shape="rect" id="Node000002" href="$main_8cpp.html" title=" " alt="" coords="5,104,116,131"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,58,87,106,85,101,181,53"/>
-<area shape="rect" id="Node000003" href="$_quick_forge_engine_8cpp.html" title=" " alt="" coords="140,104,336,131"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="240,62,240,105,236,102,236,65"/>
-<area shape="rect" id="Node000004" href="$_windows_engine_core_8cpp.html" title=" " alt="" coords="360,96,540,139"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="302,52,403,95,397,96,301,57"/>
-</map>
