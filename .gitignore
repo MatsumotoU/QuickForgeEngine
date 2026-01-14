@@ -6,6 +6,9 @@
 # User
 *.ini
 
+docs/html/
+docs/latex/
+
 project/Resources/Scripts/bin/
 project/Resources/Scripts/obj/
 
