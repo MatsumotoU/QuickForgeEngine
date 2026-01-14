@@ -1,0 +1,31 @@
+<map id="engine/include/collider/ColliderManager.h" name="engine/include/collider/ColliderManager.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="214,5,363,48"/>
+<area shape="rect" id="Node000002" href="$_singleton_8h.html" title=" " alt="" coords="5,96,190,139"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="242,51,157,91,154,87,245,47"/>
+<area shape="rect" id="Node000003" href="$_collider_mask_8h.html" title=" " alt="" coords="73,203,181,229"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="272,51,204,140,153,193,149,190,199,137,275,46"/>
+<area shape="rect" id="Node000007" href="$_sphere_collider_data_8h.html" title=" " alt="" coords="461,104,638,131"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="349,46,500,98,495,100,349,51"/>
+<area shape="rect" id="Node000012" href="$_a_a_b_b_collider_data_8h.html" title=" " alt="" coords="265,104,437,131"/>
+<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="303,46,336,91,331,91,302,51"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="228,293,282,320"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="146,227,226,283,221,285,145,233"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="294,368,352,395"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="126,227,125,273,130,297,141,318,170,344,206,361,244,371,281,379,276,378,243,376,204,366,167,348,137,322,125,299,120,273,123,232"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="151,293,204,320"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="135,227,165,280,160,280,133,232"/>
+<area shape="rect" id="Node000008" href="$_shapes_8h.html" title=" " alt="" coords="483,195,616,237"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="551,129,552,180,547,178,548,133"/>
+<area shape="rect" id="Node000010" href="$_component_data_8h.html" title=" " alt="" coords="257,187,458,245"/>
+<area shape="poly" id="edge10_Node000007_Node000010" title=" " alt="" coords="522,132,429,182,427,177,527,130"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="306,293,436,320"/>
+<area shape="poly" id="edge13_Node000007_Node000011" title=" " alt="" coords="573,129,605,152,620,168,631,186,641,217,639,232,630,247,607,259,563,272,452,294,451,289,562,266,605,254,626,243,634,230,636,217,626,188,615,171,602,156,573,134"/>
+<area shape="rect" id="Node000009" href="$_vector3_8h.html" title=" " alt="" coords="475,293,592,320"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="548,236,540,280,536,276,544,240"/>
+<area shape="poly" id="edge9_Node000009_Node000005" title=" " alt="" coords="499,320,367,368,365,363,494,321"/>
+<area shape="poly" id="edge12_Node000010_Node000004" title=" " alt="" coords="327,244,283,285,280,281,322,247"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="363,243,369,279,364,277,360,248"/>
+<area shape="poly" id="edge15_Node000012_Node000008" title=" " alt="" coords="377,129,496,187,491,188,377,134"/>
+<area shape="poly" id="edge16_Node000012_Node000010" title=" " alt="" coords="353,129,357,172,352,170,350,134"/>
+<area shape="poly" id="edge17_Node000012_Node000011" title=" " alt="" coords="313,133,278,155,261,170,248,188,241,203,238,216,240,229,248,244,271,268,303,287,297,288,268,273,243,247,235,231,233,216,236,202,243,185,257,166,275,151,317,130"/>
+</map>

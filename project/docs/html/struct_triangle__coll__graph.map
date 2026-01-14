@@ -1,0 +1,5 @@
+<map id="Triangle" name="Triangle">
+<area shape="rect" id="Node000001" title="三角形" alt="" coords="5,104,73,131"/>
+<area shape="rect" id="Node000002" href="$class_vector3.html" title=" " alt="" coords="6,5,72,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="41,47,42,104,36,103,37,49"/>
+</map>

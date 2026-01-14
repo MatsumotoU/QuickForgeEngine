@@ -63,20 +63,20 @@ void WindowsEngineCore::Initialize() {
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
 	// * ポスト�Eロセスマネージャー初期匁E* //
-	rendaringPostprocess_ = RendaringPostprosecess::GetInstance();
-	rendaringPostprocess_->Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
-	rendaringPostprocess_->SetNormalPSO(graphicPipelineManager_->GetNormalPso());
-	rendaringPostprocess_->SetColorCorrectionPSO(graphicPipelineManager_->GetColorCorrectionPso());
-	rendaringPostprocess_->SetGrayScalePSO(graphicPipelineManager_->GetGrayScalePso());
-	rendaringPostprocess_->SetVignettePSO(graphicPipelineManager_->GetVignettePso());
-	rendaringPostprocess_->SetPixcelPSO(graphicPipelineManager_->GetPixcelPso());
-	rendaringPostprocess_->SetOffscreenResource(
+	renderingPostprocess_ = RenderingPostprocess::GetInstance();
+	renderingPostprocess_->Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	renderingPostprocess_->SetNormalPSO(graphicPipelineManager_->GetNormalPso());
+	renderingPostprocess_->SetColorCorrectionPSO(graphicPipelineManager_->GetColorCorrectionPso());
+	renderingPostprocess_->SetGrayScalePSO(graphicPipelineManager_->GetGrayScalePso());
+	renderingPostprocess_->SetVignettePSO(graphicPipelineManager_->GetVignettePso());
+	renderingPostprocess_->SetPixelPSO(graphicPipelineManager_->GetPixcelPso());
+	renderingPostprocess_->SetOffscreenResource(
 		offScreenResourceManager_.GetOffscreenResource(0), offScreenResourceManager_.GetOffscreenResource(1));
-	rendaringPostprocess_->SetOffscreenRtvHandle(
+	renderingPostprocess_->SetOffscreenRtvHandle(
 		offScreenResourceManager_.GetOffscreenRtvHandles(0), offScreenResourceManager_.GetOffscreenRtvHandles(1));
-	rendaringPostprocess_->SetOffscreenSrvHandle(
+	renderingPostprocess_->SetOffscreenSrvHandle(
 		offScreenResourceManager_.GetOffscreenSrvHandles(0), offScreenResourceManager_.GetOffscreenSrvHandles(1));
-	rendaringPostprocess_->SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
+	renderingPostprocess_->SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
 
 	assetManager_ = AssetManager::GetInstance();
 	assetManager_->Initalize(directXCommon_);
@@ -208,13 +208,15 @@ void WindowsEngineCore::Update() {
 	gameWindowManager->Update();
 	editor_->Update();
 	sceneManager_->Update();
+
+	inputInterface_->EndFrame();
 }
 
 void WindowsEngineCore::Draw() {
 	assetManager_->PreDraw();
 	directXCommon_->PreDraw();
-	rendaringPostprocess_->SetBackBufferRtvHandle(directXCommon_->GetCurrentBackBufferCpuHandle());
-	rendaringPostprocess_->PreDraw();
+	renderingPostprocess_->SetBackBufferRtvHandle(directXCommon_->GetCurrentBackBufferCpuHandle());
+	renderingPostprocess_->PreDraw();
 	imguiFrameController_.BeginFrame();
 	graphRenderer_->PreDraw();
 	sceneManager_->PreDraw();
@@ -225,7 +227,7 @@ void WindowsEngineCore::Draw() {
 
 	sceneManager_->PostDraw();
 	graphRenderer_->PostDraw();
-	rendaringPostprocess_->PostDraw();
+	renderingPostprocess_->PostDraw();
 	imguiFrameController_.EndFrame(directXCommon_->GetCurrentBackBufferCpuHandle());
 	directXCommon_->PostDraw();
 

@@ -1,0 +1,14 @@
+<map id="engine/include/assets/3DModel/Data/ModelHandle.h" name="engine/include/assets/3DModel/Data/ModelHandle.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="73,5,273,48"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,112,66,139"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="142,51,68,105,64,101,144,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="89,203,142,229"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="158,46,145,72,133,97,122,144,118,188,113,186,117,143,128,95,140,69,155,50"/>
+<area shape="rect" id="Node000004" href="$_component_data_8h.html" title=" " alt="" coords="142,96,343,155"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="188,46,216,83,210,83,187,51"/>
+<area shape="rect" id="Node000006" href="$_vector4_8h.html" title=" " alt="" coords="366,104,521,147"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="231,46,374,97,369,99,231,51"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="204,154,147,196,144,191,198,156"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="177,203,307,229"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="244,153,244,188,240,185,240,157"/>
+</map>

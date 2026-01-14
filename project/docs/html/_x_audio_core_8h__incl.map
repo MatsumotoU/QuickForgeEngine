@@ -1,0 +1,9 @@
+<map id="engine/include/audio/Core/XAudioCore.h" name="engine/include/audio/Core/XAudioCore.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="48,5,188,48"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,96,55,123"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,48,57,87,53,83,93,50"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="79,96,157,123"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="120,47,120,81,116,79,116,51"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="181,96,242,123"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="143,46,188,85,183,86,141,51"/>
+</map>

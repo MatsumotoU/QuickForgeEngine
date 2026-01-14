@@ -1,0 +1,21 @@
+<map id="engine/include/collider/ColliderMask.h" name="engine/include/collider/ColliderMask.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="384,5,533,48"/>
+<area shape="rect" id="Node000002" href="$_collider_manager_8h.html" title=" " alt="" coords="304,96,453,139"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="432,58,399,98,395,94,428,61"/>
+<area shape="rect" id="Node000010" href="$_collider_mask_8cpp.html" title=" " alt="" coords="477,96,603,139"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="488,57,524,96,519,95,487,62"/>
+<area shape="rect" id="Node000003" href="$_collider_mask_edit_8cpp.html" title=" " alt="" coords="5,187,155,229"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="293,146,151,188,149,184,296,141"/>
+<area shape="rect" id="Node000004" href="$_windows_engine_core_8h.html" title=" " alt="" coords="179,187,381,229"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="347,148,305,188,302,184,342,151"/>
+<area shape="rect" id="Node000008" href="$_collider_manager_8cpp.html" title=" " alt="" coords="405,187,550,229"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="414,147,457,186,452,186,412,152"/>
+<area shape="rect" id="Node000009" href="$_scene_object_8cpp.html" title=" " alt="" coords="573,195,798,221"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="465,141,644,194,639,195,465,146"/>
+<area shape="rect" id="Node000005" href="$main_8cpp.html" title=" " alt="" coords="48,285,158,312"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="228,237,129,287,127,282,222,237"/>
+<area shape="rect" id="Node000006" href="$_quick_forge_engine_8cpp.html" title=" " alt="" coords="182,285,378,312"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="282,243,282,286,278,283,278,247"/>
+<area shape="rect" id="Node000007" href="$_windows_engine_core_8cpp.html" title=" " alt="" coords="402,277,582,320"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="344,233,445,277,440,277,343,238"/>
+</map>

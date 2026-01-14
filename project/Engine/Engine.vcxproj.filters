@@ -725,7 +725,7 @@
     <ClInclude Include="include\graphic\PostEffect\OffScreen\OffScreenResourceManager.h">
       <Filter>include\graphic\PostEffect\OffScreen</Filter>
     </ClInclude>
-    <ClInclude Include="include\graphic\PostEffect\RendaringPostprocess.h">
+    <ClInclude Include="include\graphic\PostEffect\RenderingPostprocess.h">
       <Filter>include\graphic\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="include\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.h">
@@ -941,6 +941,8 @@
     <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h">
       <Filter>resources\shaders\shaderStructs</Filter>
     </ClInclude>
+    <ClInclude Include="include\input\Logger\InputLogger.h" />
+    <ClInclude Include="include\input\Logger\InputLogData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -1172,7 +1174,7 @@
     <ClCompile Include="src\graphic\PostEffect\OffScreen\OffScreenResourceManager.cpp">
       <Filter>src\graphic\PostEffect\OffScreen</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphic\PostEffect\RendaringPostprocess.cpp">
+    <ClCompile Include="src\graphic\PostEffect\RenderingPostprocess.cpp">
       <Filter>src\graphic\PostEffect</Filter>
     </ClCompile>
     <ClCompile Include="src\graphic\ShaderBuffer\BufferGenerater\BufferGenerator.cpp">
@@ -1334,5 +1336,6 @@
     <ClCompile Include="src\window\WindowGenerater.cpp">
       <Filter>src\window</Filter>
     </ClCompile>
+    <ClCompile Include="src\input\Logger\InputLogger.cpp" />
   </ItemGroup>
 </Project>

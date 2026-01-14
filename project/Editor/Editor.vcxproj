@@ -193,12 +193,14 @@ exit /b 0</Command>
     <ClInclude Include="include\UI\View\GameView.h" />
     <ClInclude Include="include\UI\View\HierarchyView.h" />
     <ClInclude Include="include\UI\View\InputDebugView.h" />
+    <ClInclude Include="include\UI\View\InputLogView.h" />
     <ClInclude Include="include\UI\View\InspectorView.h" />
     <ClInclude Include="include\UI\View\SceneProfileView.h" />
     <ClInclude Include="include\UI\View\SceneView.h" />
     <ClInclude Include="include\UI\View\ScriptLoggerView.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\UI\View\InputLogView.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\OnWindowsEditor.cpp" />
     <ClCompile Include="src\UI\Edit\ColliderMaskEdit.cpp" />

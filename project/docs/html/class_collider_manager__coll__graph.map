@@ -1,0 +1,7 @@
+<map id="ColliderManager" name="ColliderManager">
+<area shape="rect" id="Node000001" title=" " alt="" coords="134,104,249,131"/>
+<area shape="rect" id="Node000002" href="$class_singleton.html" title=" " alt="" coords="5,5,199,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,41,183,103,177,104,122,46"/>
+<area shape="rect" id="Node000003" href="$class_collider_tag_mask.html" title=" " alt="" coords="223,5,341,32"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="263,43,204,106,201,102,257,44"/>
+</map>

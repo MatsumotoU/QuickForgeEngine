@@ -1,0 +1,13 @@
+<map id="editor/src" name="editor/src">
+<area shape="rect" id="node1" href="dir_07800c8bc9e485b30bf8571db4a636e5.html" title="include" alt="" coords="54,139,116,165"/>
+<area shape="poly" id="edge1" href="dir_000129_000079.html" alt="" coords="63,88,78,124,72,124,61,93"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000129_000079.html" title="41" alt="" coords="75,110,89,126"/>
+<area shape="rect" id="node3" href="dir_5808df8bc6e0b6e23eecc1fb27c7565d.html" title="UI" alt="" coords="101,64,139,91"/>
+<area shape="poly" id="edge2" href="dir_000134_000079.html" alt="" coords="116,89,100,126,96,123,112,93"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000134_000079.html" title="40" alt="" coords="100,118,114,134"/>
+<area shape="rect" id="node4" href="dir_996f45160da62e1a3d7f6046fad68f51.html" title="engine" alt="" coords="170,139,230,165"/>
+<area shape="poly" id="edge3" href="dir_000134_000062.html" alt="" coords="135,89,178,128,173,129,133,94"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000134_000062.html" title="58" alt="" coords="171,112,185,128"/>
+<area shape="rect" id="clust2" href="dir_b7d7d6b8a78807b328f73545b8904b59.html" alt="" coords="27,53,149,101"/>
+<area shape="rect" id="clust1" href="dir_bac5aa69239d34ac960582aca466258e.html" title="editor" alt="" coords="16,16,160,176"/>
+</map>

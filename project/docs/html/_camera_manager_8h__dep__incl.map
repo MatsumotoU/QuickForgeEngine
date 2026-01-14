@@ -1,0 +1,21 @@
+<map id="engine/include/camera/CameraManager.h" name="engine/include/camera/CameraManager.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="634,5,786,48"/>
+<area shape="rect" id="Node000002" href="$_game_view_8cpp.html" title=" " alt="" coords="5,96,132,139"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="616,36,402,60,273,77,145,99,133,101,132,96,144,93,272,72,401,55,621,35"/>
+<area shape="rect" id="Node000003" href="$_hierarchy_view_8cpp.html" title=" " alt="" coords="156,96,290,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="616,41,470,67,302,99,291,101,290,96,301,93,469,62,621,41"/>
+<area shape="rect" id="Node000004" href="$_inspector_view_8cpp.html" title=" " alt="" coords="314,96,447,139"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="622,52,448,101,447,96,617,53"/>
+<area shape="rect" id="Node000005" href="$_scene_view_8cpp.html" title=" " alt="" coords="471,96,597,139"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="658,55,576,98,574,93,653,56"/>
+<area shape="rect" id="Node000006" href="$_camera_manager_8cpp.html" title=" " alt="" coords="621,96,799,139"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="712,62,712,97,708,94,708,65"/>
+<area shape="rect" id="Node000007" href="$_graph_renderer_8cpp.html" title=" " alt="" coords="823,96,962,139"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="767,53,853,96,847,95,766,58"/>
+<area shape="rect" id="Node000008" href="$_wvp_transformation_command_8cpp.html" title=" " alt="" coords="986,96,1210,139"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="801,46,1009,95,1004,95,801,51"/>
+<area shape="rect" id="Node000009" href="$_scene_manager_8cpp.html" title=" " alt="" coords="1234,104,1471,131"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="801,37,1222,93,1274,104,1269,103,1221,99,801,42"/>
+<area shape="rect" id="Node000010" href="$_scene_object_8cpp.html" title=" " alt="" coords="1495,104,1719,131"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="801,31,1104,54,1294,72,1484,93,1537,104,1532,103,1483,99,1293,77,1104,60,801,37"/>
+</map>

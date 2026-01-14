@@ -1,3 +1,8 @@
+/**
+ * @file DirectXCommon.h
+ * @brief DirectX12の共通基盤管理クラス
+ */
+
 #pragma once
 #include "engine/include/core/Graphic/IGraphicCommon.h"
 #include "engine/include/utility/DesignPatterns/Singleton.h"
@@ -13,15 +18,26 @@
 #include "engine/include/utility/DebugTool/DirectX/DirectX12DebugCore.h"
 #endif // _DEBUG
 
-// TODO: DepthStencilをここに置かなぁE
-
+/**
+ * @class DirectXCommon
+ * @brief DirectX12のデバイス、コマンド、スワップチェーンなどを一括管理するシングルトンクラス
+ */
 class DirectXCommon final : public Singleton<DirectXCommon> {
 	friend class Singleton<DirectXCommon>;
 
 public:
+    /**
+     * @brief DirectX12の初期化
+     * @param hwnd ウィンドウハンドル
+     * @param width 横幅
+     * @param height 縦幅
+     */
 	void Initialize(HWND hwnd, uint32_t width, uint32_t height);
+    /** @brief 描画前処理 */
 	void PreDraw();
+    /** @brief 描画後処理 */
 	void PostDraw();
+    /** @brief 終了処理 */
 	void Shutdown();
 
 	[[nodiscard]] DescriptorHandles AssignRtvHeap(ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc);

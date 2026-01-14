@@ -1,0 +1,16 @@
+<map id="engine/include/graphic/DirectXCommon/SwapChain.h" name="engine/include/graphic/DirectXCommon/SwapChain.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="161,5,365,48"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,104,89,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,51,93,100,91,95,213,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="113,104,162,131"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="232,50,169,97,166,93,236,47"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="187,104,264,131"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="256,47,239,91,235,88,252,50"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="373,187,441,213"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="273,46,297,90,330,137,352,158,376,178,371,177,349,162,326,140,293,93,271,51"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="340,104,397,131"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="288,46,344,94,339,94,287,51"/>
+<area shape="rect" id="Node000007" href="$_descriptor_handles_8h.html" title=" " alt="" coords="422,96,606,139"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="322,46,443,90,438,91,322,51"/>
+<area shape="poly" id="edge7_Node000007_Node000005" title=" " alt="" coords="489,138,437,179,435,175,484,140"/>
+</map>

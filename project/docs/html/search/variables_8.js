@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['id_0',['id',['../struct_chunk_header.html#a9375c3ee58f691801b05e1b83fa1d6c5',1,'ChunkHeader']]],
+  ['inittime_5f_1',['initTime_',['../class_scene_manager.html#a741c66d80c8782a6a9b38b19d3566cb8',1,'SceneManager']]],
+  ['intensity_2',['intensity',['../struct_directional_light.html#a04c1d9a0de07935a2fede559e03214c9',1,'DirectionalLight']]],
+  ['interpolationtype_3',['interpolationType',['../struct_key_frame.html#a2b0081658c192e605f5e19e9b97f767d',1,'KeyFrame']]],
+  ['intparams_5f_4',['intParams_',['../struct_lua_handle.html#a544d449ad3acd31cb41904a983103835',1,'LuaHandle']]],
+  ['isactive_5f_5',['isActive_',['../class_i_editor_u_i.html#aa1017a43b7bb3a4d6456868fda9d0a40',1,'IEditorUI']]],
+  ['iscandropfiles_6',['isCanDropFiles',['../struct_window_config_data.html#a63c3b8fdb24890f160fb46a8999c4eed',1,'WindowConfigData']]],
+  ['isconnected_7',['isConnected',['../struct_gamepad_state.html#adce2c120748827ebc8078c244d97d802',1,'GamepadState']]],
+  ['isdraw_8',['isDraw',['../class_sprite_data.html#a83d82242033d9016b2365bcc60c05c71',1,'SpriteData']]],
+  ['isgravity_9',['isGravity',['../class_force.html#afa66eed84090e128effceb327d62efca',1,'Force']]],
+  ['ishit_10',['isHit',['../class_a_a_b_b_collider_data.html#a8f6a623377cafe0073d5f3c8e35b41f4',1,'AABBColliderData::isHit'],['../class_sphere_collider_data.html#afcfbfb9f529dfe6b6fb7f34a17c714a7',1,'SphereColliderData::isHit']]],
+  ['isimguienabled_5f_11',['isImGuiEnabled_',['../class_rendering_postprocess.html#a2e1d7a86da2a8571a26d5f982ef0c804',1,'RenderingPostprocess']]],
+  ['isoldhit_12',['isOldHit',['../class_a_a_b_b_collider_data.html#a572cd82ff173fe841ebd2aeb45886f74',1,'AABBColliderData::isOldHit'],['../class_sphere_collider_data.html#a9b6e317b4e2ee9964ee396faae00db70',1,'SphereColliderData::isOldHit']]],
+  ['ispostprocess_5f_13',['isPostprocess_',['../class_rendering_postprocess.html#acb5a976d503c9465108e5886b7d9d152',1,'RenderingPostprocess']]],
+  ['isrequestedexit_5f_14',['isRequestedExit_',['../class_i_scene.html#ae60477b42fdeae950930d65a009c414c',1,'IScene']]],
+  ['isrunning_15',['isRunning',['../class_collider_manager.html#a7cac5d147c54df1700770f7584e32d74',1,'ColliderManager']]],
+  ['isrunningscript_5f_16',['isRunningScript_',['../class_lua_script_resource_manager.html#aa808c4ded1b7f7d61fb3317654acb32c',1,'LuaScriptResourceManager']]],
+  ['isstatic_17',['isStatic',['../class_a_a_b_b_collider_data.html#aaee01a8fbd9530f12dc95d6c5d3b7fe8',1,'AABBColliderData::isStatic'],['../class_sphere_collider_data.html#a98206ee7f7e2589495c6199ff535290c',1,'SphereColliderData::isStatic']]],
+  ['istrigger_18',['isTrigger',['../class_a_a_b_b_collider_data.html#a96185df86034a4f5bc3ae8ac58e943e9',1,'AABBColliderData::isTrigger'],['../class_sphere_collider_data.html#af554c7a91593794ec71d05b2519737f8',1,'SphereColliderData::isTrigger']]]
+];

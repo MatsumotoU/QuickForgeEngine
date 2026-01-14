@@ -1,3 +1,8 @@
+/**
+ * @file DirectXDevice.h
+ * @brief DirectX12デバイスの生成と管理を行うクラス
+ */
+
 #pragma once
 #include <wrl.h>
 #include <vector>
@@ -7,11 +12,17 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 
+/**
+ * @class DirectXDevice
+ * @brief ID3D12Deviceおよび関連するDXGIインターフェースを取得・生成するクラス
+ */
 class DirectXDevice final {
 public:
 	DirectXDevice();
 	~DirectXDevice();
+    /** @brief デバイスの初期化 */
 	void Initialize();
+    /** @brief デバイスの解放 */
 	void Shutdown();
 
 	[[nodiscard]] IDXGIFactory7* GetDxgiFactory() const;

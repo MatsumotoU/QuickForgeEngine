@@ -1,0 +1,27 @@
+<map id="engine/include/core/Entity/EntityManager.h" name="engine/include/core/Entity/EntityManager.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="477,5,635,48"/>
+<area shape="rect" id="Node000002" href="$_component_strage_8h.html" title=" " alt="" coords="216,96,424,123"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="493,50,373,93,371,88,497,47"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="362,352,492,379"/>
+<area shape="poly" id="edge13_Node000001_Node000005" title=" " alt="" coords="551,48,439,339,435,336,546,49"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="397,171,475,197"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="537,47,495,98,453,160,449,156,491,94,533,50"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="550,96,653,123"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="569,46,589,83,584,82,567,51"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="677,96,734,123"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="595,46,671,88,666,89,594,51"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="758,96,797,123"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="615,46,746,94,741,95,615,51"/>
+<area shape="rect" id="Node000003" href="$_i_component_strage_8h.html" title=" " alt="" coords="5,171,147,197"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="276,125,134,168,132,163,279,121"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="170,171,280,197"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="301,125,255,163,252,159,306,122"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="304,171,373,197"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="324,121,334,156,329,155,322,126"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="340,121,405,162,400,162,340,126"/>
+<area shape="rect" id="Node000004" href="$_component_data_8h.html" title=" " alt="" coords="125,245,326,304"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="98,195,166,236,162,238,97,201"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="291,302,387,345,382,346,290,307"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="199,352,252,379"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="227,302,228,338,223,335,223,306"/>
+</map>
