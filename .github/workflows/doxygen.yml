@@ -2,7 +2,7 @@ name: Doxygen Deployment
 
 on:
   push:
-    branches: ["main"] # mainブランチにpushされたら実行
+    branches: ["master"] # mainブランチにpushされたら実行
 
 permissions:
   contents: read
@@ -21,7 +21,7 @@ jobs:
           sudo apt-get install -y doxygen graphviz
 
       - name: Run Doxygen
-        run: doxygen Doxyfile
+        run: doxygen project/Doxyfile
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
