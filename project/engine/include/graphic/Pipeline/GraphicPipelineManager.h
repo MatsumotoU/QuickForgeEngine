@@ -1,3 +1,8 @@
+/**
+ * @file GraphicPipelineManager.h
+ * @brief グラフィックスパイプライン(PSO)を管理するクラス
+ */
+
 #pragma once
 #include "PSO/PipelineStateObject.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/DsvDescriptorHeap.h"
@@ -5,37 +10,38 @@
 
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 
+/**
+ * @class GraphicPipelineManager
+ * @brief 各種ブレンドモードやシェーダーに対応したPSOを一括管理するシングルトンクラス
+ */
 class GraphicPipelineManager final :public Singleton<GraphicPipelineManager> {
 	friend class Singleton<GraphicPipelineManager>;
 
 public:
+    /** @brief 初期化処理 */
 	void Initialize(ID3D12Device* device);
-public:
-	/// <summary>
-	/// 一般皁E��三角形のPSOを取得しまぁE
-	/// </summary>
-	/// <param name="blendmode">ブレンドモーチE/param>
-	/// <returns></returns>
+
+    /** @brief 三角形描画用のPSOを取得 */
 	PipelineStateObject* GetTrianglePso(BlendMode blendmode) { return &trianglePso_[static_cast<uint32_t>(blendmode)]; }
-	/// <summary>
-	/// 一般皁E��三角形のPSOを取得しまぁE
-	/// </summary>
-	/// <param name="blendmode">ブレンドモーチE/param>
-	/// <returns></returns>
+    /** @brief ライン描画用のPSOを取得 */
 	PipelineStateObject* GetLinePso(BlendMode blendmode) { return &linePso_[static_cast<uint32_t>(blendmode)]; }
-	/// <summary>
-	/// 一般皁E��三角形のPSOを取得しまぁE
-	/// </summary>
-	/// <param name="blendmode">ブレンドモーチE/param>
-	/// <returns></returns>
+    /** @brief 点描画用のPSOを取得 */
 	PipelineStateObject* GetPointPso(BlendMode blendmode) { return &pointPso_[static_cast<uint32_t>(blendmode)]; }
+    /** @brief プリミティブ描画用のPSOを取得 */
 	PipelineStateObject* GetPrimitivePso(BlendMode blendmode) { return &primitivePso_[static_cast<uint32_t>(blendmode)]; }
+    /** @brief パーティクル描画用のPSOを取得 */
 	PipelineStateObject* GetParticlePso(BlendMode blendmode) { return &particlePso_[static_cast<uint32_t>(blendmode)]; }
+    /** @brief 色補正用のPSOを取得 */
 	PipelineStateObject* GetColorCorrectionPso() { return &colorCorrectionPso_; }
+    /** @brief グレースケール用のPSOを取得 */
 	PipelineStateObject* GetGrayScalePso() { return &grayScaleTrianglePso_; }
+    /** @brief ビネット用のPSOを取得 */
 	PipelineStateObject* GetVignettePso() { return &vignettePso_; }
+    /** @brief 法線表示用のPSOを取得 */
 	PipelineStateObject* GetNormalPso() { return &normalPso_; }
+    /** @brief フォント描画用のPSOを取得 */
 	PipelineStateObject* GetFontPso() { return &fontPso_; }
+    /** @brief ピクセル化用のPSOを取得 */
 	PipelineStateObject* GetPixcelPso() { return &pixcelPso_; }
 
 private: // メンバ変数

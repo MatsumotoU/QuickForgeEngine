@@ -1,57 +1,75 @@
+/**
+ * @file AudioInterface.h
+ * @brief IAudioInterfaceの実装クラス。音声の再生・管理を行う
+ */
+
 #pragma once
 #include "IAudioInterface.h"
 #include "Core/XAudioCore.h"
 #include "Player/AudioChipManager.h"
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 
+/**
+ * @class AudioInterface
+ * @brief XAudio2を使用した音声再生機能を制御するシングルトンクラス
+ */
 class AudioInterface final : public IAudioInterface , public Singleton<AudioInterface>{
 	friend class Singleton<AudioInterface>;
 public:
 	AudioInterface() = default;
 	~AudioInterface() override = default;
+    
+    /** @brief 初期化 */
 	void Initialize() override;
+    /** @brief 終了処理 */
 	void Finalize() override;
 
-	// 蜈ｨ菴薙・髻ｳ螢ｰ謫堺ｽ・
-	/// 蜈ｨ髻ｳ螢ｰ蛛懈ｭ｢
+	// --- 全体の音声操作 ---
+	/** @brief 全ての音声を停止 */
 	void StopAllSound() override;
-	/// 蜈ｨ髻ｳ螢ｰ荳譎ょ●豁｢
+	/** @brief 全ての音声を一時停止 */
 	void PauseAllSound() override;
-	/// 蜈ｨ髻ｳ螢ｰ蜀埼幕
+	/** @brief 全ての音声を再開 */
 	void ResumeAllSound() override;
 
-	// 蛟句挨縺ｮ髻ｳ螢ｰ謫堺ｽ・
-	/// 髻ｳ螢ｰ蜀咲函(volume: 0.0 ~ 1.0縺ｮ遽・峇)
+	// --- 個別の音声操作 ---
+	/**
+     * @brief 音声データを再生
+     * @param audioDataHandle 再生するデータのハンドル
+     * @param loop ループ再生するか
+     * @param volume 音量 (0.0 ~ 1.0)
+     * @return 再生中の音声インスタンスを示すハンドル
+     */
 	uint32_t PlaySoundForAudioData(uint32_t audioDataHandle, bool loop, float volume) override;
-	/// 髻ｳ螢ｰ蛛懈ｭ｢
+	/** @brief 指定したハンドル音声を停止 */
 	void StopSound(uint32_t soundHandle) override;
-	/// 髻ｳ螢ｰ荳譎ょ●豁｢
+	/** @brief 指定したハンドル音声を一時停止 */
 	void PauseSound(uint32_t soundHandle) override;
-	/// 髻ｳ螢ｰ蜀埼幕
+	/** @brief 指定したハンドル音声を再開 */
 	void ResumeSound(uint32_t soundHandle) override;
 
-	// 蜷・浹驥剰ｨｭ螳・
-	/// 荳ｻ髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	// --- 各音量設定 (0.0 ~ 1.0) ---
+    /** @brief マスター音量を設定 */
 	void SetMasterVolume(float volume) override;
-	/// BGM髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	/** @brief BGM音量を設定 */
 	void SetBGMVolume(float volume) override;
-	/// SE髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	/** @brief SE音量を設定 */
 	void SetSEVolume(float volume) override;
-	/// 繝懊う繧ｹ髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	/** @brief ボイス音量を設定 */
 	void SetVoiceVolume(float volume) override;
-	/// 迺ｰ蠅・浹驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	/** @brief 環境音音量を設定 */
 	void SetASVolume(float volume) override;
 
-	// 蜷・浹驥丞叙蠕・
-	/// 荳ｻ髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	// --- 各音量取得 ---
+	/** @brief マスター音量を取得 */
 	float GetMasterVolume() override;
-	/// BGM髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	/** @brief BGM音量を取得 */
 	float GetBGMVolume() override;
-	/// SE髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	/** @brief SE音量を取得 */
 	float GetSEVolume() override;
-	/// 繝懊う繧ｹ髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	/** @brief ボイス音量を取得 */
 	float GetVoiceVolume() override;
-	/// 迺ｰ蠅・浹驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	/** @brief 環境音音量を取得 */
 	float GetASVolume() override;
 
 private:

@@ -1,3 +1,8 @@
+/**
+ * @file InputInterface.h
+ * @brief 入力（キーボード、マウス、ゲームパッド）を一括管理するクラス
+ */
+
 #pragma once
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 
@@ -8,63 +13,76 @@
 #include "KeyConfig.h"
 #include "Logger/InputLogger.h"
 
+/**
+ * @class InputInterface
+ * @brief 直観的な入力取得APIを提供し、内部でDirectInputやXInputを制御するシングルトンクラス
+ */
 class InputInterface final :public Singleton<InputInterface> {
 	friend class Singleton<InputInterface>;
 public:
 	InputInterface() = default;
 	~InputInterface() override = default;
-	// 初期化
+    
+    /**
+     * @brief 初期化処理
+     * @param hwnd ウィンドウハンドル
+     * @param hInstance インスタンスハンドル
+     */
 	void Initialize(const HWND& hwnd, const HINSTANCE& hInstance);
-	// 終了
+    /** @brief 終了処理 */
 	void Finalize();
-	// 更新
+    /** @brief 更新処理（毎フレーム呼び出し） */
 	void Update();
-	// フレーム終了処理
+    /** @brief フレーム終了時の処理 */
 	void EndFrame();
 
-	// 今回のフレームで押されたキーコードを取得する
+    /** @brief 今フレームで押されたキーコードを取得（任意の一つのキー） */
 	uint32_t GetKeyCodeTrigger();
-	// 何かのキーが押されたか
+    /** @brief 何らかのキーが押されているか判定 */
 	bool IsAnyKeyPressed();
 
-	// アクション名に対応するキーが押されているか
+	// --- キーボード入力 ---
+    /** @brief アクション名に対応するキーが押されているか */
 	bool GetKeyPress(const std::string& actionName);
-	// アクション名に対応するキーが押された瞬間か
+    /** @brief アクション名に対応するキーが押された瞬間か */
 	bool GetKeyTrigger(const std::string& actionName);
-	// アクション名に対応するキーが離された瞬間か
+    /** @brief アクション名に対応するキーが離された瞬間か */
 	bool GetKeyRelease(const std::string& actionName);
-	// ゲームでありがちな移動操作の方向を返します
+    /** @brief 移動操作（WASD等）の方向ベクトルを計算して取得 */
 	Vector2 GetKeyMoveDir();
 
-	// マウスのボタンが押されているか
+	// --- マウス入力 ---
+    /** @brief マウスボタンが押されているか */
 	bool GetMousePress(int8_t button);
-	// マウスのボタンが押された瞬間か
+    /** @brief マウスボタンが押された瞬間か */
 	bool GetMouseTrigger(int8_t button);
-	// マウスのボタンが離された瞬間か
+    /** @brief マウスボタンが離された瞬間か */
 	bool GetMouseRelease(int8_t button);
-	// マウスの移動量を返します
+    /** @brief マウスの移動量を取得 */
 	Vector2 GetMouseMove();
-	// マウスのスクリーン上の座標を返します
+    /** @brief マウスのスクリーン座標を取得 */
 	Vector2 GetMouseScreenPos();
-	// マウスのホイールの回転量を返します
+    /** @brief マウスホイールの回転量を取得 */
 	float GetMouseWheelDir();
 
-	// ゲームパッドのボタンが押されているか
+	// --- ゲームパッド入力 ---
+    /** @brief パッドのボタンが押されているか */
 	bool GetGamePadPress(uint16_t button);
-	// ゲームパッドのボタンが押された瞬間か
+    /** @brief パッドのボタンが押された瞬間か */
 	bool GetGamePadTrigger(uint16_t button);
-	// ゲームパッドのボタンが離された瞬間か
+    /** @brief パッドのボタンが離された瞬間か */
 	bool GetGamePadRelease(uint16_t button);
-	// ゲームパッドの左スティックの方向を返します
+    /** @brief 左スティックの入力を取得 */
 	Vector2 GetGamePadLeftStickDir();
-	// ゲームパッドの右スティックの方向を返します
+    /** @brief 右スティックの入力を取得 */
 	Vector2 GetGamePadRightStickDir();
 
-	// アクション名に対応するキーを追加します
+	// --- キーコンフィグ ---
+    /** @brief アクション名にキーコードを紐付け */
 	void AddKeyConfig(const std::string& actionName, uint32_t keyCorde);
-	// アクション名に対応するキーをすべてクリアします
+    /** @brief 指定したアクションのキー設定をクリア */
 	void ClearKeyConfig(const std::string& actionName);
-	// アクション名に対応するキーをすべて返します
+    /** @brief アクションに紐付けられたキーコードリストを取得 */
 	const std::vector<uint32_t>& GetKeyConfig(const std::string& actionName);
 
 	// Editor用

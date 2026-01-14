@@ -1,3 +1,8 @@
+/**
+ * @file TextureManager.h
+ * @brief テクスチャの読み込みとSRV管理を行うクラス
+ */
+
 #pragma once
 #include <string>
 #include <vector>
@@ -10,6 +15,10 @@
 
 class SrvDescriptorHeap;
 
+/**
+ * @class TextureManager
+ * @brief 画像データの読み込み、リソース生成、SRVの割り当てを一括管理するシングルトンクラス
+ */
 class TextureManager final :public Singleton<TextureManager> {
 	friend class Singleton<TextureManager>;
 	TextureManager() = default;
@@ -18,30 +27,37 @@ class TextureManager final :public Singleton<TextureManager> {
 	TextureManager(TextureManager&&) = delete;
 	TextureManager& operator=(TextureManager&&) = delete;
 
-public:// 一回�E絶対に呼び出さなぁE��バグるやつ
-	/// <summary>
-	/// 初期匁E
-	/// </summary>
+public:
+    /**
+     * @brief 初期化処理
+     * @param device DirectXデバイス
+     * @param commandList コマンドリスト
+     * @param srvDescriptorHeap SRV用ネスクリプタヒープ
+     */
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap);
-	/// <summary>
-	/// 終亁E�E琁E
-	/// </summary>
+    
+    /** @brief 終了処理 */
 	void Finalize();
-	/// <summary>
-	/// 中間リソースを削除しまぁE
-	/// </summary>
+    
+    /** @brief 中間リソースを解放する */
 	void ReleaseIntermediateResources();
-	/// <summary>
-	/// 持E���Eパスの画像ファイルを読み取りまぁE
-	/// </summary>
-	/// <param name="filePath"></param>
-	/// <returns></returns>
+    
+    /**
+     * @brief 画像ファイルを読み込む
+     * @param filePath ファイルパス
+     * @return テクスチャハンドル
+     */
 	[[nodiscard]] int32_t LoadTexture(const std::string& filePath);
 
+    /** @brief ハンドルからテクスチャサイズを取得 */
 	[[nodiscard]] Vector2 GetTextureSize(int32_t textureHandle);
+    /** @brief 指定インデックスのCPUディスクリプタハンドルを取得 */
 	[[nodiscard]] const D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index) const;
+    /** @brief 指定インデックスのGPUディスクリプタハンドルを取得 */
 	[[nodiscard]] const D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index) const;
+    /** @brief CPUディスクリプタハンドルのリストを取得 */
 	[[nodiscard]] const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& GetTextureSrvHandleCPUList() const;
+    /** @brief GPUディスクリプタハンドルのリストを取得 */
 	[[nodiscard]] const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>& GetTextureSrvHandleGPUList() const;
 
 private:
