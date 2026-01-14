@@ -1,3 +1,8 @@
+/**
+ * @file TextureManager.cpp
+ * @brief テクスチャ管理クラスの実装
+ */
+
 #include "engine/include/assets/2DTexture/TextureManager.h"
 #include <cassert>
 
@@ -11,21 +16,22 @@
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #endif // _DEBUG
 
+/** @brief 初期化 */
 void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap) {
 	srvDescriptorHeap_ = srvDescriptorHeap;
 
-	// Com縺ｮ蛻晄悄蛹・
+	// COMの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 	hr;
 
-	// 繝・ヰ繧､繧ｹ繧貞叙蠕・
+	// デバイスとコマンドリストを取得
 	assert(device);
 	device_ = device;
 	assert(commandList);
 	commandList_ = commandList;
 
-	// 蛻ｩ逕ｨ縺吶ｋHeap縺ｮ險ｭ螳・
+	// 利用するHeapの設定
 	heapProperties_ = {};
 	heapProperties_.Type = D3D12_HEAP_TYPE_DEFAULT;
 
@@ -39,8 +45,9 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	textureHandle_ = 0;
 }
 
+/** @brief 終了処理 */
 void TextureManager::Finalize() {
-	// 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ隗｣謾ｾ
+	// リソースの解放
 	textureSrvHandleCPU_.clear();
 	textureSrvHandleGPU_.clear();
 	textureResources_.clear();

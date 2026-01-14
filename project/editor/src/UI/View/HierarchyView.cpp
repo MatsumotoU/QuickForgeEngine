@@ -100,8 +100,6 @@ void HierarchyView::DrawPopupContextWindow() {
 #ifdef _DEBUG
 				DebugLog("Can not Add Camera");
 #endif // _DEBUG
-
-				//CameraManager::GetInstance()->AddCamera();
 			}
 
 			ImGui::EndMenu();

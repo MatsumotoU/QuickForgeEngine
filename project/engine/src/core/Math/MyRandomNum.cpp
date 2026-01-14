@@ -1,3 +1,8 @@
+/**
+ * @file MyRandomNum.cpp
+ * @brief 乱数生成機能の実装
+ */
+
 #include "engine/include/core/Math/MyRandomNum.h"
 
 
@@ -5,6 +10,14 @@ MyRandomNum::MyRandomNum() {
     maxSamplers_ = 1080;
 }
 
+/**
+ * @brief 指定範囲内の一様分布乱数を取得
+ * @param min 最小値
+ * @param max 最大値
+ * @return 生成された乱数
+ * TODO: 非常にメモリ・CPU効率が悪い。std::vectorに対する線形検索とrand()の無限ループの可能性がある。
+ *       通常の一様分布であれば std::mt19937 と std::uniform_real_distribution を使用することを推奨。
+ */
 float MyRandomNum::GetUniformDistributionRand(float min, float max) {
     
     int r = rand();

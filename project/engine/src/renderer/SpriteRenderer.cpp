@@ -1,3 +1,8 @@
+/**
+ * @file SpriteRenderer.cpp
+ * @brief スプライトレンダリング機能の実装
+ */
+
 #include "engine/include/renderer/SpriteRenderer.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/assets/3DModel/Data/ModelRenderData.h"
@@ -6,10 +11,16 @@
 #include "engine/include/assets/Sprite/Data/SpriteData.h" 
 #include <cassert>
 
+/**
+ * @brief スプライトの描画実行
+ * @param spriteHandle 描画するスプライトのハンドル
+ */
 void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 	assert(assetManager && "AssetManager is nullptr.");
+    
+    // TODO: spriteHandle の有効性チェックが必要
 	const SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(spriteHandle);
 
 	if (!spriteData.isDraw) {

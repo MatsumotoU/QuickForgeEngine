@@ -1,3 +1,8 @@
+/**
+ * @file ResourceDirectoryManager.cpp
+ * @brief リソースの種類ごとのディレクトリパスを管理するクラスの実装
+ */
+
 #include "engine/include/assets/ResourceDirectoryManager.h"
 #include <cassert>
 
@@ -5,6 +10,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
+/** @brief コンストラクタ。標準的なディレクトリパスを登録する。 */
 ResourceDirectoryManager::ResourceDirectoryManager() {
 	resourceDirectories_["Model"] = "Resources/Models/";
 	resourceDirectories_["Image"] = "Resources/Images/";
@@ -28,6 +34,11 @@ ResourceDirectoryManager::ResourceDirectoryManager() {
 #endif // _DEBUG
 }
 
+/**
+ * @brief リソースの種類に対応するディレクトリパスを取得
+ * @param resourceType リソースの種類(例: "Model", "Image")
+ * @return ディレクトリパス
+ */
 std::string ResourceDirectoryManager::GetResourceDirectory(const std::string& resourceType) const {
 	assert(resourceDirectories_.find(resourceType) != resourceDirectories_.end() && "Resource type not found");
 	return resourceDirectories_.at(resourceType);

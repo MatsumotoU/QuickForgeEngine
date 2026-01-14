@@ -1,3 +1,8 @@
+/**
+ * @file WindowsEngineCore.cpp
+ * @brief Windows版エンジンのコアシステム実装
+ */
+
 #include "engine/include/WindowsEngineCore.h"
 #include "editor/include/OnWindowsEditor.h"
 
@@ -15,24 +20,31 @@ namespace {
 	uint32_t windowHeight = 720;
 }
 
+/**
+ * @brief コンストラクタ
+ * @param hInstance インスタンスハンドル
+ * @param lpCmdLine コマンドライン引数
+ */
 WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine) 
 	:debugCore_(lpCmdLine),hInstance_(hInstance),lpCmdLine_(lpCmdLine){
 }
 
+/** @brief システム全体の初期化 */
 void WindowsEngineCore::Initialize() {
 	QFE::EngineGlobalValue::windowWidth = windowWidth;
 	QFE::EngineGlobalValue::windowHeight = windowHeight;
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
-	// * ウィンドウマネージャー初期匁E* //
+	// * ウィンドウマネージャー初期化 * //
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
 	gameWindowManager->AddWindow(windowWidth, windowHeight, windowTitle);
-	// * DirectX初期匁E* //
+	// * DirectX初期化 * //
 	directXCommon_ = DirectXCommon::GetInstance();
+	// TODO: GetWindowの結果が nullptr の場合の安全性が欠けている
 	directXCommon_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), windowWidth, windowHeight);
-	// * ImGuiの初期匁E* //
+	// * ImGuiの初期化 * //
 	imguiFrameController_.Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle),
 		directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
@@ -45,24 +57,24 @@ void WindowsEngineCore::Initialize() {
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
 
-	// * パイプライン管琁E�E��E�ラス初期匁E* //
+	// * パイプライン管理クラス初期化 * //
 	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
 	graphicPipelineManager_->Initialize(directXCommon_->GetDevice());
 
-	// * オフスクリーンリソースマネージャー初期匁E* //
+	// * オフスクリーンリソースマネージャー初期化 * //
 	offScreenResourceManager_.Initialize(directXCommon_->GetDevice(), windowWidth, windowHeight);
-	// オフスクリーンRTVヒ�Eプ割り当て & SRVヒ�Eプ割り当て
+	// オフスクリーンRTVヒープ割り当て & SRVヒープ割り当て
 	for (uint32_t i = 0; i < offScreenResourceManager_.GetOffscreenCount(); i++) {
-		// RTVヒ�Eプ割り当て
+		// RTVヒープ割り当て
 		DescriptorHandles rtvHandles = 
 			directXCommon_->AssignRtvHeap(offScreenResourceManager_.GetOffscreenResource(i), &directXCommon_->GetSwapChainRtvDesc());
 		offScreenResourceManager_.SetRtvHandle(rtvHandles.cpuHandle_, i);
-		// SRVヒ�Eプ割り当て
+		// SRVヒープ割り当て
 		DescriptorHandles srvHandles =
 			directXCommon_->AssignSrvHeap(offScreenResourceManager_.GetOffscreenResource(i), offScreenResourceManager_.GetOffscreenSrvDesc());
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
-	// * ポスト�Eロセスマネージャー初期匁E* //
+	// * ポストプロセスマネージャー初期化 * //
 	renderingPostprocess_ = RenderingPostprocess::GetInstance();
 	renderingPostprocess_->Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	renderingPostprocess_->SetNormalPSO(graphicPipelineManager_->GetNormalPso());
@@ -160,11 +172,12 @@ void WindowsEngineCore::Initialize() {
 #endif // _DEBUG
 }
 
+/** @brief メインループ実行 */
 void WindowsEngineCore::MainLoop() {
 	while (gameWindowManager->IsWindowActive())
 	{
 		
-		// アプリケーション安�E終亁E�E�E琁E
+		// アプリケーション安全終了用
 		MSG msg;
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
@@ -182,6 +195,7 @@ void WindowsEngineCore::MainLoop() {
 	}
 }
 
+/** @brief 終了処理 */
 void WindowsEngineCore::Shutdown() {
 	audioInterface_->Finalize();
 	multiThreadTaskExecutor_->Finalize();

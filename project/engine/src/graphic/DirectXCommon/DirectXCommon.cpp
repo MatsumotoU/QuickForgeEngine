@@ -1,28 +1,65 @@
+/**
+ * @file DirectXCommon.cpp
+ * @brief DirectX12の共通処理を管理するクラスの実装
+ */
+
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
+#include <thread>
 
-#include "engine/include/utility/DirectX/TransitionResourceBarrier.h"
-#include "engine/include/utility/DirectX/InitializeSwapChainBuffer.h"
+#include "engine/include/window/GameWindow.h"
+#include "engine/include/utility/String/MyString.h"
+#include "engine/include/core/EngineGlobalValue.h"
+
+#ifdef _DEBUG
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
+#endif // _DEBUG
 
 namespace {
 	float clearColor_[4] = { 0.1f, 0.25f, 0.5f, 1.0f };
 }
 
-void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
-	directXDevice_.Initialize();
-	descriptorHeapManager_.Initialize(directXDevice_.GetDevice());
+/** @brief インスタンス取得 */
+DirectXCommon* DirectXCommon::GetInstance() {
+	static DirectXCommon instance;
+	return &instance;
+}
 
-	commandManager_.Initialize(directXDevice_.GetDevice());
+/**
+ * @brief 初期化
+ * @param gameWindow ウィンドウクラスへのポインタ
+ * @param width ウィンドウの幅
+ * @param height ウィンドウの高さ
+ */
+void DirectXCommon::Initialize(GameWindow* gameWindow, uint32_t width, uint32_t height) {
+	assert(gameWindow && "gameWindow is nullptr.");
 
-	swapChain_.CreateDubleBuffering();
-	swapChain_.Initialize(
-		hwnd, width, height, directXDevice_.GetDxgiFactory(), commandManager_.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	// デバイスの初期化
+	directXDevice_ = std::make_unique<DirectXDevice>();
+	directXDevice_->Initialize();
+
+	// デスクリプタヒープ管理の初期化
+	descriptorHeapManager_ = std::make_unique<DescriptorHeapManager>();
+	descriptorHeapManager_->Initialize(directXDevice_->GetDevice());
+
+	// コマンドマネージャーの初期化(DIRECT)
+	commandManagers_[D3D12_COMMAND_LIST_TYPE_DIRECT] = std::make_unique<DirectXCommandManager>();
+	commandManagers_[D3D12_COMMAND_LIST_TYPE_DIRECT]->Initialize(directXDevice_->GetDevice(), D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+	// スワップチェーンの初期化
+	swapChain_ = std::make_unique<SwapChain>();
+	swapChain_->Initialize(
+		directXDevice_->GetDxgiFactory(),
+		commandManagers_[D3D12_COMMAND_LIST_TYPE_DIRECT]->GetCommandQueue(),
+		descriptorHeapManager_->GetRtvDescriptorHeap(),
+		gameWindow->GetHwnd(), width, height);
 
 	AssignSwapChainRenderTarget();
 
-	fence_.Initialize(directXDevice_.GetDevice());
+	fence_ = std::make_unique<Fence>();
+	fence_->Initialize(directXDevice_->GetDevice());
 
-	// depthStencilBuffer縺ｮ逕滂ｿｽE
+	// depthStencilBufferの生成
 	D3D12_RESOURCE_DESC depthResourceDesc{};
 	depthResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	depthResourceDesc.Alignment = 0;
@@ -53,7 +90,7 @@ void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
 	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 	dsvHandle_ = descriptorHeapManager_.AssignDsvHeap(depthStencilBuffer_.Get(), &dsvDesc);
 
-	// 繝薙Η繝ｼ繝晢ｿｽE繝医→繧ｷ繧ｶ繝ｼ遏ｩ蠖｢縺ｮ險ｭ螳・
+	// ビューポートとシザー矩形の設定
 	viewport_ = {};
 	viewport_.TopLeftX = 0.0f;
 	viewport_.TopLeftY = 0.0f;
@@ -68,8 +105,9 @@ void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
 	scissorRect_.bottom = static_cast<LONG>(height);
 }
 
+/** @brief 描画前処理 */
 void DirectXCommon::PreDraw() {
-	// 繧ｹ繝ｯ繝・・ｽE繝√ぉ繧､繝ｳ縺ｮ繝ｪ繧ｽ繝ｼ繧ｹ迥ｶ諷九ｒ謠冗判蜿ｯ閭ｽ縺ｫ螟画峩
+	// スワップチェーンのリソース状態を描画可能に変更
 	TransitionResourceBarrier::Transition(
 		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		swapChain_.GetCurrentBackBuffer(),
@@ -80,28 +118,30 @@ void DirectXCommon::PreDraw() {
 		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), swapChain_.GetCurrentBackBufferView(),
 		clearColor_[0], clearColor_[1], clearColor_[2], clearColor_[3]);
 
+	// デプスステンシルのクリア
 	ClearDepthStencil();
 }
 
+/** @brief 描画後処理 */
 void DirectXCommon::PostDraw() {
-	// 繧ｹ繝ｯ繝・・ｽE繝√ぉ繧､繝ｳ縺ｮ繝ｪ繧ｽ繝ｼ繧ｹ迥ｶ諷九ｒ隱ｭ縺ｿ蜿悶ｊ縺ｫ螟画峩
+	// スワップチェーンのリソース状態を表示可能に変更
 	TransitionResourceBarrier::Transition(
 		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		swapChain_.GetCurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT);
 
-	// 繧ｳ繝槭Φ繝峨Μ繧ｹ繝茨ｿｽE繧ｯ繝ｭ繝ｼ繧ｺ縲∝ｮ溯｡・
+	// コマンドリストをクローズ、実行
 	commandManager_.ExecuteCommandList();
 
-	// 繧ｹ繝ｯ繝・・ｽE繝√ぉ繧､繝ｳ縺ｮ逕ｻ髱｢縺ｸ縺ｮ陦ｨ遉ｺ
+	// スワップチェーンの画面への表示
 	swapChain_.Present();
 
-	// GPU縺ｨ縺ｮ蜷梧悄
+	// GPUとの同期
 	fence_.Signal(commandManager_.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	fence_.Wait();
 
-	// 繧ｳ繝槭Φ繝峨Μ繧ｹ繝茨ｿｽE繝ｪ繧ｻ繝・・ｽ・ｽ
+	// コマンドリストをリセット
 	commandManager_.ResetCommandList();
 }
 
@@ -126,8 +166,9 @@ void DirectXCommon::ClearDepthStencil() {
 		dsvHandle_.cpuHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
+/** @brief スワップチェーンのレンダーターゲットをアサイン */
 void DirectXCommon::AssignSwapChainRenderTarget() {
-	// 繧ｹ繝ｯ繝・・ｽE繝√ぉ繧､繝ｳ縺ｮ繝ｪ繧ｽ繝ｼ繧ｹ逋ｻ骭ｲ
+	// スワップチェーンのリソース登録
 	rtvDesc_ = {};
 	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;

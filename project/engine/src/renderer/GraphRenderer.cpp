@@ -1,3 +1,8 @@
+/**
+ * @file GraphRenderer.cpp
+ * @brief デバッグ用図形描画クラスの実装
+ */
+
 #include "engine/include/renderer/GraphRenderer.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
@@ -12,6 +17,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
+/** @brief 初期化 */
 void GraphRenderer::Initialize() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	GraphicPipelineManager* pipelineManager = GraphicPipelineManager::GetInstance();
@@ -20,7 +26,7 @@ void GraphRenderer::Initialize() {
 	linePso_ = pipelineManager->GetLinePso(kBlendModeNormal);
 	pointPso_ = pipelineManager->GetPointPso(kBlendModeNormal);
 
-	// 荳芽ｧ貞ｽ｢縺ｮ鬆らせ繝ｪ繧ｽ繝ｼ繧ｹ繧剃ｽ懈・
+	// 三角形の頂点リソースを作成
 	triangleVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * 3 * kGraphRendererMaxTriangleCount);
 	triangleVertexBufferView_ = {};
 	triangleVertexBufferView_.BufferLocation = triangleVertexResource_->GetGPUVirtualAddress();
@@ -28,7 +34,8 @@ void GraphRenderer::Initialize() {
 	triangleVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
 	triangleVertexData_ = nullptr;
 	triangleVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&triangleVertexData_));
-	// 邱壹・鬆らせ繝ｪ繧ｽ繝ｼ繧ｹ繧剃ｽ懈・
+
+	// 線の頂点リソースを作成
 	lineVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * 2 * kGraphRendererMaxLineCount);
 	lineVertexBufferView_ = {};
 	lineVertexBufferView_.BufferLocation = lineVertexResource_->GetGPUVirtualAddress();
@@ -36,7 +43,8 @@ void GraphRenderer::Initialize() {
 	lineVertexBufferView_.StrideInBytes = sizeof(PrimitiveVertexData);
 	lineVertexData_ = nullptr;
 	lineVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&lineVertexData_));
-	// 轤ｹ縺ｮ鬆らせ繝ｪ繧ｽ繝ｼ繧ｹ繧剃ｽ懈・
+
+	// 点の頂点リソースを作成
 	pointVertexResource_ = BufferGenerator::Generate(dxCommon->GetDevice(), sizeof(PrimitiveVertexData) * kGraphRendererMaxPointCount);
 	pointVertexBufferView_ = {};
 	pointVertexBufferView_.BufferLocation = pointVertexResource_->GetGPUVirtualAddress();
@@ -55,6 +63,11 @@ void GraphRenderer::Initialize() {
 	material_.GetData()->uvTransform = Matrix4x4::MakeIndentity4x4();
 }
 
+/**
+ * @brief 描画前処理
+ * TODO: 毎フレーム最大数分バッファをループでクリアしているが、非常に非効率的。
+ *       描画された分(count)だけクリアするか、そもそもクリアせず上書きするよう設計変更を推奨。
+ */
 void GraphRenderer::PreDraw() {
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	Camera& camera = cameraManager->GetMainCamera();
@@ -63,7 +76,7 @@ void GraphRenderer::PreDraw() {
 	lineCount_ = 0;
 	pointCount_ = 0;
 
-	// 鬆らせ繝ｪ繧ｽ繝ｼ繧ｹ繧偵け繝ｪ繧｢
+	// 頂点リソースをクリア
 	for (uint32_t i = 0; i < kGraphRendererMaxTriangleCount; i++) {
 		triangleVertexData_[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 		triangleVertexData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -80,15 +93,16 @@ void GraphRenderer::PreDraw() {
 		pointVertexData_[i].texcoord = Vector2(0.0f, 0.0f);
 	}
 
-	// 繧ｫ繝｡繝ｩ縺ｮ繝ｯ繝ｼ繝ｫ繝峨ン繝･繝ｼ謚募ｽｱ陦悟・繧定ｨｭ螳・
+	// カメラのワールドビュー投影行列を設定
 	wvp_.GetData()->WVP = camera.GetWorldViewProjectionMatrix(Matrix4x4::MakeIndentity4x4(),CameraType::Perspective);
 }
 
+/** @brief 描画実行 */
 void GraphRenderer::PostDraw() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	if (triangleCount_ == 0 && lineCount_ == 0 && pointCount_ == 0) {
-		return; // 謠冗判縺吶ｋ繧ゅ・縺後↑縺・ｴ蜷医・菴輔ｂ縺励↑縺・
+		return; // 描画するものが無い場合は何もしない
 	}
 
 	if (triangleCount_ > kGraphRendererMaxTriangleCount ||
@@ -98,7 +112,7 @@ void GraphRenderer::PostDraw() {
 		assert(false && "GraphRenderer: Exceeded maximum count of triangles, lines, or points.");
 	}
 
-	// 鬆らせ繝ｪ繧ｽ繝ｼ繧ｹ繧竪PU縺ｫ霆｢騾・
+	// 頂点リソースをGPUに転送
 	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 	if (triangleCount_ > 0) {
@@ -137,8 +151,6 @@ void GraphRenderer::PostDraw() {
 		commandList->IASetVertexBuffers(0, 1, &pointVertexBufferView_);
 		commandList->DrawInstanced(pointCount_, 1, 0, 0);
 	}
-
-
 }
 
 void GraphRenderer::Finalize() {

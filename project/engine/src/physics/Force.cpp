@@ -1,5 +1,11 @@
+/**
+ * @file Force.cpp
+ * @brief 物理演算用の力・加速度・速度を管理するコンポーネントの実装
+ */
+
 #include "engine/include/physics/Force.h"
 
+/** @brief コンストラクタ */
 Force::Force() {
 	velocity = Vector3(0.0f, 0.0f, 0.0f);
 	acceleration = Vector3(0.0f, 0.0f, 0.0f);
@@ -9,10 +15,15 @@ Force::Force() {
 	isGravity = true;
 }
 
+/**
+ * @brief 力を加える
+ * @param force 指定方向への力
+ */
 void Force::AddForce(const Vector3& force) {
 	acceleration += force / mass;
 }
 
+/** @brief シリアライズ */
 nlohmann::json Force::Serialize() const {
 	nlohmann::json json;
 	json["velocity"] = { velocity.x, velocity.y, velocity.z };
@@ -24,6 +35,7 @@ nlohmann::json Force::Serialize() const {
 	return json;
 }
 
+/** @brief デシリアライズ */
 void Force::Deserialize(const nlohmann::json& json) {
 	if (json.contains("velocity") && json["velocity"].is_array() && json["velocity"].size() == 3) {
 		velocity.x = json["velocity"][0].get<float>();
@@ -49,6 +61,7 @@ void Force::Deserialize(const nlohmann::json& json) {
 	}
 }
 
+/** @brief 型名の取得 */
 std::string Force::GetTypeName() const {
 	return "Force";
 }

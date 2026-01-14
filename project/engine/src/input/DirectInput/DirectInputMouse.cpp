@@ -1,3 +1,8 @@
+/**
+ * @file DirectInputMouse.cpp
+ * @brief DirectInputを使用したマウス入力管理クラスの実装
+ */
+
 #include "engine/include/input/DirectInput/DirectInputMouse.h"
 
 #pragma comment(lib,"dinput8.lib")
@@ -5,6 +10,7 @@
 
 #include <cassert>
 
+/** @brief コンストラクタ */
 DirectInputMouse::DirectInputMouse() {
 	mouse_ = nullptr;
 	directInput_ = nullptr;
@@ -17,24 +23,35 @@ DirectInputMouse::DirectInputMouse() {
 	preMouseScreenPos_ = {};
 }
 
+/** @brief デストラクタ */
 DirectInputMouse::~DirectInputMouse() {
-	mouse_->Unacquire();
-	mouse_->Release();
+	// TODO: リソース解放の確認とエラーハンドリング
+	if (mouse_) {
+		mouse_->Unacquire();
+		mouse_->Release();
+		mouse_ = nullptr;
+	}
 }
 
+/**
+ * @brief 初期化
+ * @param hwnd ウィンドウハンドル
+ * @param directInput DirectInputインターフェース
+ */
 void DirectInputMouse::Initialize(const HWND& hwnd, IDirectInput8* directInput) {
 	directInput_ = directInput;
 	hwnd_ = hwnd;
 	mouse_ = CreateMouse();
 }
 
+/** @brief 更新 */
 void DirectInputMouse::Update() {
 	preMouseState_ = mouseState_;
 	preMouseScreenPos_ = mouseScreenPos_;
 	mouse_->Acquire();
 	mouse_->GetDeviceState(sizeof(DIMOUSESTATE), &mouseState_);
 
-	// 繧ｹ繧ｯ繝ｪ繝ｼ繝ｳ荳翫・蠎ｧ讓吶↓螟画鋤
+	// スクリーン上の座標に変換
 	GetCursorPos(&mousePos_);
 	ScreenToClient(hwnd_,&mousePos_);
 	mouseScreenPos_.x = static_cast<float>(mousePos_.x);
@@ -45,7 +62,7 @@ void DirectInputMouse::Update() {
 	wheelDir_ = static_cast<float>(mouseState_.lZ);
 	mouseMoveDir_ = mouseMoveDir_.Normalize();
 
-	// 遘ｻ蜍暮㍼險育ｮ・
+	// 移動量計算
 	deltaMouse_ = mouseScreenPos_ - preMouseScreenPos_;
 }
 

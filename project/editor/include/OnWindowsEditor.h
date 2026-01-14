@@ -7,6 +7,11 @@
 #include "editor/include/IEditor.h"
 #include "editor/include/UI/UIManager.h"
 
+/** 
+ * @class OnWindowsEditor
+ * @brief Windowsプラットフォーム向けエディタの実装
+*/
+
 class OnWindowsEditor final : public IEditor {
 public:
 	OnWindowsEditor();

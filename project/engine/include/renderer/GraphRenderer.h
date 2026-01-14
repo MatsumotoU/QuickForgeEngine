@@ -1,3 +1,8 @@
+/**
+ * @file GraphRenderer.h
+ * @brief プリミティブ（線、点、三角形等）の描画を行うクラス
+ */
+
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
@@ -13,51 +18,46 @@ static inline const uint32_t kGraphRendererMaxTriangleCount = 128;
 static inline const uint32_t kGraphRendererMaxLineCount = 1024;
 static inline const uint32_t kGraphRendererMaxPointCount = 128;
 
+/**
+ * @class GraphRenderer
+ * @brief デバッグ用グリッド、ボックス、球体などのプリミティブ描画を管理するシングルトンクラス
+ */
 class GraphRenderer : public Singleton<GraphRenderer> {
 public:
 	friend class Singleton<GraphRenderer>;
 	~GraphRenderer() override = default;
 
-public:// 一回�E呼び出さなぁE��バグるやつめE
-	/// <summary>
-	/// 初期匁E
-	/// </summary>
-	/// <param name="engineCore"></param>
+public:
+    /** @brief 初期化処理 */
 	void Initialize();
-	/// <summary>
-	/// 描画前準備
-	/// </summary>
+    /** @brief 描画前準備 */
 	void PreDraw();
-	/// <summary>
-	/// 描画コマンドを発行しまぁE
-	/// </summary>
+    /** @brief 描画コマンドの発行 */
 	void PostDraw();
-	/// <summary>
-	/// リソースを解放しまぁE
-	/// </summary>
+    /** @brief 終了処理・リソース解放 */
 	void Finalize();
 
-public:// 描画関数
-	/// 三角形を描画しまぁE
+public:
+	/** @brief 三角形を描画 */
 	void DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color);
-	/// 線�Eを描画しまぁE
+	/** @brief 線を描画 */
 	void DrawLine(Vector3 point1, Vector3 point2,const Vector4& color);
-	/// 点を描画しまぁE
+	/** @brief 点を描画 */
 	void DrawPoint(Vector3 point, const Vector4& color);
-	/// グリチE��を描画しまぁE
+	/** @brief グリッドを描画 */
 	void DrawGrid(float size = 10.0f, int32_t gridCount = 10);
-	/// 琁E��描画しまぁE
+	/** @brief 球体を描画 */
 	void DrawSphere(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
-	/// 冁E��描画しまぁE
+	/** @brief 円を描画 */
 	void DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
-	/// 箱を描画しまぁE
+	/** @brief 箱を描画 */
 	void DrawBox(Vector3 min, Vector3 max, const Vector4& color);
 
-	/// 何回三角形を描画するかを取得しまぁE
+    /** @brief 三角形の描画回数を取得 */
 	void GetDrawTriangleCount(uint32_t* triangleCount) { *triangleCount = triangleCount_; };
-	/// 何回ラインを描画するかを取得しまぁE
+    /** @brief ラインの描画回数を取得 */
 	void GetDrawLineCount(uint32_t* lineCount) { *lineCount = lineCount_; };
-	/// 何回点を描画するかを取得しまぁE
+    /** @brief 点の描画回数を取得 */
 	void GetDrawPointCount(uint32_t* pointCount) { *pointCount = pointCount_; };
 
 private:
