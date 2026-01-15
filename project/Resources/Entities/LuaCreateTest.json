@@ -1,3 +1,47 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:251cb75117f50f31573a495efd132cafac1de469ddf17ca932627557a945a44c
-size 950
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "LuaCreateTest",
+        "tag": "Untagged",
+        "uniqueId": 3452816847
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "Hp": 90
+                },
+                "priority": 0,
+                "scriptName": "test.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

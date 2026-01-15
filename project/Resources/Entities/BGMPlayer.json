@@ -1,3 +1,38 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:10c2dc1ec23442275566a4a91e30176684a93827218f245c253bdb600f4b0796
-size 798
+{
+    "SceneObjectData": {
+        "name": "BGMPlayer",
+        "tag": "Untagged",
+        "uniqueId": 3452818198
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "BGMPlayer.lua",
+                "stringParams": {
+                    "bgmName": "battle.mp3"
+                }
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

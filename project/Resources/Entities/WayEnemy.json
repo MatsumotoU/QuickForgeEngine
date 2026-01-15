@@ -1,3 +1,70 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8f08522e90921583cc635a771d05c204dc8989ea88427b0fa1047e55fadea46a
-size 1618
+{
+    "AABBColliderData": {
+        "aabb": [
+            1.399999976158142,
+            -0.2288191318511963,
+            1.0,
+            1.0,
+            1.0,
+            0.5
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": false,
+        "isStatic": true,
+        "isTrigger": false
+    },
+    "ModelHandle": {
+        "color": [
+            0.3005181550979614,
+            0.12018627673387527,
+            0.02647051401436329,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "WayEnemy",
+        "tag": "enemy",
+        "uniqueId": 100000
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "hp": 5
+                },
+                "priority": 0,
+                "scriptName": "Block.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "BossShot.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            0.5
+        ],
+        "translate": [
+            1.399999976158142,
+            -0.2288191318511963,
+            1.0
+        ]
+    }
+}

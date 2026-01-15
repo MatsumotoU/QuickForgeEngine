@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a7981a5b8496e64046074470d2f256a7b6be34b398686e23c05003919a8626ed
-size 284
+function Init()
+    DebugLog("SpawnMoveXEntity.lua Initialized")
+    -- MovingCube.json を生成する
+    local id = SimpleCreateEntity("MovingCube.json")
+    DebugLog("Spawned MovingCube with ID: " .. tostring(id))
+end
+
+function Update()
+    -- 特に何もしない
+end

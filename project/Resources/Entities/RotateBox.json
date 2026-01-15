@@ -1,3 +1,50 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:597d3ba286e345b485210dab17a6ec88b7d2a26ce52d008761243f47a638de95
-size 1199
+{
+    "ModelHandle": {
+        "color": [
+            0.8290155529975891,
+            0.22765713930130005,
+            0.22765713930130005,
+            1.0
+        ],
+        "modelName": "Box1x1.obj"
+    },
+    "SceneObjectData": {
+        "name": "RotateBox",
+        "tag": "Untagged",
+        "uniqueId": 3452816849
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {
+                    "speed": 1.0,
+                    "x": 0.30000001192092896,
+                    "y": 0.5,
+                    "z": 1.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "Rotate.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.699999988079071,
+            -0.30000001192092896,
+            1.2999999523162842
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            -3.700000047683716,
+            0.20600000023841858,
+            7.425000190734863
+        ]
+    }
+}

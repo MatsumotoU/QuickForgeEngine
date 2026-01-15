@@ -1,3 +1,26 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ca4e12acac36c4637dc66517c981665e5b53fe4ef10069581bad9da9f3d48cfb
-size 553
+local timer = 0.0
+local isPress = false
+
+function Init()
+
+end
+
+function Update()
+    local delta = GetDeltaTime()
+    timer = timer + delta
+
+    if QFE.Input.GetKeyTrigger("Jump") then
+            isPress = true
+    end
+
+    if isPress then
+        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,0.0,0.5)
+        if transform.scale.x <= 0.0 then
+            destroy()
+        end
+    else
+        transform.scale.x = 1.0 + math.sin(timer) * 0.1
+        transform.scale.y = 1.0 + math.sin(timer) * 0.1
+    end
+
+end

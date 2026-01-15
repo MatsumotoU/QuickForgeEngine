@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ec2c36b39c594b7f5d0a60c13ad1f0236431cef1486f347870e69276195ec436
-size 188
+local timer = 0.0
+vol = 1.0
+speed = 1.0
+
+function Init()
+
+end
+
+function Update()
+    timer = timer + GetDeltaTime()
+    transform.translate.x = math.sin(timer*speed) * vol
+end

@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:39e149a4f28cfdff53a014ddfb7ea2275cf56122cc4caaa3013b552c2172b25b
-size 66
+ {
+    "Lua.workspace.library": [
+        "./Scripts"
+    ]
+ }

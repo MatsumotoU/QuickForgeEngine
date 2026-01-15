@@ -1,3 +1,34 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7d4b721084e8339879047a2a83990de244cf912ba61d358c11107c4177129770
-size 949
+using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+namespace QuickForgeEngine
+{
+    // C++のログ機能をC#から呼び出すためのDebugクラス
+    public static class Debug
+    {
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void Log(string message);
+    }
+
+    // C#スクリプト用QuickForgeコンポーネントクラス
+    public abstract class QuickForgeComponent
+    {
+        public uint EntityID { get; internal set; }
+        public virtual void Initialize() { }
+        public virtual void Update() { }
+
+        private Transform _transform;
+        public Transform transform
+        {
+            get
+            {
+                if (_transform == null)
+                {
+                    _transform = new Transform(EntityID);
+                }
+                return _transform;
+            }
+        }
+    }
+}

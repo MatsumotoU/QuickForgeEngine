@@ -1,3 +1,45 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3c6f3e7bd02a16a6529900c45b702dbb9b4afb73babbbdeed1b0b5c6a5821203
-size 929
+{
+    "ModelHandle": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "modelName": "WhitePlate.obj"
+    },
+    "SceneObjectData": {
+        "name": "SlashEffect",
+        "tag": "Untagged",
+        "uniqueId": 3452818281
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "SlashEffect.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            10.0,
+            1.0,
+            0.5
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            -1.5866159200668335
+        ]
+    }
+}

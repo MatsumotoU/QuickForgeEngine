@@ -1,3 +1,46 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:93d8fdce2eee13604bb2d3a7747fd26b6d2a73bb1245d5b565bca42fc753926c
-size 1073
+{
+    "SceneObjectData": {
+        "name": "Score",
+        "tag": "Untagged",
+        "uniqueId": 3452817326
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {
+                    "dig": 5
+                },
+                "priority": 0,
+                "scriptName": "Numbers.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "Score.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            6.2230000495910645,
+            0.5586923360824585,
+            -0.30578798055648804
+        ]
+    }
+}

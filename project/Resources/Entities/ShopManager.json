@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:edbdd287374766b864243cf8034c472553bc7336acfe10c13645b9fcbcb1e24b
-size 739
+{
+    "SceneObjectData": {
+        "name": "ShopManager",
+        "tag": "StageStop",
+        "uniqueId": 12250
+    },
+    "ScriptHandle": {
+        "scriptHandles": [
+            {
+                "boolParams": {},
+                "floatParams": {},
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "ShopManager.lua",
+                "stringParams": {}
+            }
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            640.0,
+            370.0,
+            0.0
+        ]
+    }
+}

@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dea8cd2e9edb8bafef9b4c9ab6a0203b413e09d44b84e68aa964e52f4666a9f8
-size 493
+local time = 3.0
+local isTransition = false
+sceneName = "GameScene.json"
+
+function Init()
+time = 3.0
+end
+
+function Update()
+    if QFE.Input.GetKeyTrigger("Jump") then
+        isTransition = true;
+        RunEntityScriptFunction(GetEntity("SceneChangeAnim"),"SceneChangeAnim.lua","ReqestClose")
+    end
+
+    if isTransition then
+        if time < 0.0 then
+            LoadScene(sceneName)   
+        else 
+            time = time - GetDeltaTime()
+        end
+    end
+end

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b77861b83ce120c5bd1ef43f7992deaf1a87a5dc205758d1d768a47ed0739e82
-size 252
+speed = 0.6
+
+function Init()
+    transform.rotate.y = math.random(0.0,10.0)
+end
+
+function Update()
+    transform.scale.z = QFE.Math.SimpleEaseIn(transform.scale.z,0.0,speed)
+    if transform.scale.z <= 0.1 then
+        delete()
+    end
+end

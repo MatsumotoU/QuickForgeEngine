@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f0f64dad85f96264f90c8fe8565c3df954fdc04c652e2bc65d28caf19dbf4194
-size 481
+mouseSpeed = 1.2
+
+function Init()
+
+end
+
+function Update()
+    local delatime = GetDeltaTime()
+    transform.rotate.y = transform.rotate.y + (QFE.Input.GetMouseMoveDir().x * delatime) * mouseSpeed
+    transform.rotate.x = transform.rotate.x + (QFE.Input.GetMouseMoveDir().y * delatime) * mouseSpeed
+    if transform.rotate.x >= 0.9 then
+        transform.rotate.x = 0.9
+    end
+    if transform.rotate.x <= -0.9 then
+        transform.rotate.x = -0.9
+    end
+
+end
