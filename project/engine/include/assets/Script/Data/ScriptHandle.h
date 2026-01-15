@@ -13,6 +13,8 @@ struct LuaHandle {
 	std::unordered_map<std::string, std::string> stringParams_;
 	uint32_t handle_ = 0;
 
+	// コピー・ムーブの明示的な指定のためのデフォルトコンストラクタ
+	LuaHandle() = default;
 	// ムーブコンストラクタをnoexceptで明示
 	LuaHandle(LuaHandle&&) noexcept = default;
 	LuaHandle& operator=(LuaHandle&&) noexcept = default;
