@@ -41,14 +41,6 @@ std::string ConvertString(const std::wstring& str) {
     return result;
 }
 
-/** @brief stringをLPCWSTRに変換 */
-LPCWSTR StringToLPCWSTR(const std::string& str) {
-    LPCWSTR lpcwstr{};
-    std::wstring wstr = ConvertString(str);
-    lpcwstr = wstr.c_str();
-    return lpcwstr;
-}
-
 /**
  * @brief std::stringを書き換え可能な char* に変換する
  * TODO: 呼び出し側で delete[] buffer が必須。スマートポインタや std::vector<char> への移行を検討。
