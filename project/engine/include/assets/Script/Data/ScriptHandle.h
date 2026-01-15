@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_map>
 
+// Luaスクリプトのハンドル情報
 struct LuaHandle {
 	std::string scriptName_;
 	uint32_t priority_ = 0;
@@ -10,7 +11,16 @@ struct LuaHandle {
 	std::unordered_map<std::string, float> floatParams_;
 	std::unordered_map<std::string, bool> boolParams_;
 	std::unordered_map<std::string, std::string> stringParams_;
-	uint32_t handle_;
+	uint32_t handle_ = 0;
+
+	// コピー・ムーブの明示的な指定のためのデフォルトコンストラクタ
+	LuaHandle() = default;
+	// ムーブコンストラクタをnoexceptで明示
+	LuaHandle(LuaHandle&&) noexcept = default;
+	LuaHandle& operator=(LuaHandle&&) noexcept = default;
+	// コピーコンストラクタ・代入演算子も必要なら明示
+	LuaHandle(const LuaHandle&) = default;
+	LuaHandle& operator=(const LuaHandle&) = default;
 };
 
 class ScriptHandles final :public ComponentData {

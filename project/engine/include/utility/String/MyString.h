@@ -25,12 +25,6 @@ std::wstring ConvertString(const std::string& str);
 /// <param name="str">変換允E/param>
 /// <returns>変換允E/returns>
 std::string ConvertString(const std::wstring& str);
-/// <summary>
-/// std::stringからLPCWSTRへ変換
-/// </summary>
-/// <param name="str">変換允E/param>
-/// <returns>変換允E/returns>
-LPCWSTR StringToLPCWSTR(const std::string& str);
 
 // stringからcharPtrに変換
 char* StringToCharPtr(const std::string& str);

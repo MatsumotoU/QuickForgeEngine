@@ -239,7 +239,6 @@
     <ClInclude Include="include\core\Math\Matrix\Matrix3x3.h" />
     <ClInclude Include="include\core\Math\Matrix\Matrix4x4.h" />
     <ClInclude Include="include\core\Math\MyMath.h" />
-    <ClInclude Include="include\core\Math\MyRandomNum.h" />
     <ClInclude Include="include\core\Math\ParentData.h" />
     <ClInclude Include="include\core\Math\Quaternion\Quaternion.h" />
     <ClInclude Include="include\core\Math\Shapes.h" />
@@ -398,7 +397,6 @@
     <ClCompile Include="src\core\Math\Matrix\Matrix3x3.cpp" />
     <ClCompile Include="src\core\Math\Matrix\Matrix4x4.cpp" />
     <ClCompile Include="src\core\Math\MyMath.cpp" />
-    <ClCompile Include="src\core\Math\MyRandomNum.cpp" />
     <ClCompile Include="src\core\Math\Quaternion\Quaternion.cpp" />
     <ClCompile Include="src\core\Math\Shapes.cpp" />
     <ClCompile Include="src\core\Math\Transform.cpp" />

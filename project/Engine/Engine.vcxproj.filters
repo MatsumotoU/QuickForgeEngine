@@ -617,9 +617,6 @@
     <ClInclude Include="include\core\Math\MyMath.h">
       <Filter>include\core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\Math\MyRandomNum.h">
-      <Filter>include\core\Math</Filter>
-    </ClInclude>
     <ClInclude Include="include\core\Math\ParentData.h">
       <Filter>include\core\Math</Filter>
     </ClInclude>
@@ -1085,9 +1082,6 @@
       <Filter>src\core\Math\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Math\MyMath.cpp">
-      <Filter>src\core\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Math\MyRandomNum.cpp">
       <Filter>src\core\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Math\Quaternion\Quaternion.cpp">
