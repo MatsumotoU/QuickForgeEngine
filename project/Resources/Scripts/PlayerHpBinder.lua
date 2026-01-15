@@ -1,15 +1,3 @@
-local beatId = 0
-
-function Init()
-    beatId = GetEntity("Pacemaker")
-    SetEntityScriptGlobal(this.GetEntityId(),"Numbers.lua","num",GetEntityScriptGlobal(beatId,"Pacemaker.lua","bpm"))
-end
-
-function Update()
-    
-end
-
-function OnPlayerChangeBpm()
-    DebugLog("Change")
-    SetEntityScriptGlobal(this.GetEntityId(),"Numbers.lua","num",GetEntityScriptGlobal(beatId,"Pacemaker.lua","bpm"))
-end
+version https://git-lfs.github.com/spec/v1
+oid sha256:18d3f3b21d8fadf9848c1c65e2851d796f0dfa4d6b469ba223491535f05ecc73
+size 410

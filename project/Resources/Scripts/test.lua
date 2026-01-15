@@ -1,13 +1,3 @@
-Hp = 100
-
-function Init()
-
-end
-
-function Update()
-    transform.rotate.y = transform.rotate.y + GetDeltaTime()
-
-    if GetDeltaTime() < 0.032 then
-        SimpleCreateEntity("LuaCreateTest.json")
-    end
-end
+version https://git-lfs.github.com/spec/v1
+oid sha256:c694ea1caca03903d70a35c85ae60a93d184a099a28c680294b1cddd6165f620
+size 221

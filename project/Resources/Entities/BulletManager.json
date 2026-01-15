@@ -1,36 +1,3 @@
-{
-    "SceneObjectData": {
-        "name": "BulletManager",
-        "tag": "Untagged",
-        "uniqueId": 0
-    },
-    "ScriptHandle": {
-        "scriptHandles": [
-            {
-                "boolParams": {},
-                "floatParams": {},
-                "intParams": {},
-                "priority": 0,
-                "scriptName": "BulletManager.lua",
-                "stringParams": {}
-            }
-        ]
-    },
-    "Transform": {
-        "rotate": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "scale": [
-            1.0,
-            1.0,
-            1.0
-        ],
-        "translate": [
-            0.0,
-            0.0,
-            0.0
-        ]
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4ace908e38aacb27f0838b275413b819aab1da8b54ea9fd6d2e2b616c4d044d2
+size 734

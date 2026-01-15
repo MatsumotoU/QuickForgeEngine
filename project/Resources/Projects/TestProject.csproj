@@ -1,12 +1,3 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <OutputType>Library</OutputType>
-    <RootNamespace>MyGameScripts</RootNamespace>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="testA.cs" />
-    <Compile Include="testB.cs" />
-    <Compile Include="testC.cs" />
-  </ItemGroup>
-</Project>
+version https://git-lfs.github.com/spec/v1
+oid sha256:e1e7b83af15bb9598b2023b2b97cb90d6e359a084646dc3ea5e2c747ea7c8232
+size 368

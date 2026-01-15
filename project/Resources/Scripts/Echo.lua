@@ -1,27 +1,3 @@
-echoCharge = 0.0
-echoMaxCharge = 2.5
-canEcho = false
-local breakSE = QFE.Audio.LoadSound("Slash.wav")
-
-function Init()
-    echoCharge = echoMaxCharge
-    canEcho = true
-end
-
-function Update()
-    echoCharge = echoCharge + GetDeltaTime()
-
-    if QFE.Input.GetKeyTrigger("Jump") then
-        if echoCharge >= echoMaxCharge then
-            --EchoForAudio(transform.translate,breakSE,0.5)
-            echoCharge = 0.0
-        end 
-    end
-
-    if echoCharge >= echoMaxCharge then
-        canEcho = true
-        echoCharge = echoMaxCharge
-    else
-        canEcho = false
-    end 
-end
+version https://git-lfs.github.com/spec/v1
+oid sha256:c6ff2b20a75ed2ae9bd038556c6d754d1aa1bd1a67f95322c2ffdc5145c7262a
+size 608

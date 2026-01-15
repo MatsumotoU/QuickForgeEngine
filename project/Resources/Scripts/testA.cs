@@ -1,13 +1,3 @@
-using System;
-using QuickForgeEngine;
-
-public class testA : QuickForgeComponent
-{
-    public override void Initialize()
-    {
-        Debug.Log(this.EntityID.ToString());
-    }
-    public override void Update(){
-        this.transform.Rotate += new QuickForgeEngine.Vector3 { x = 0, y = 0.1f, z = 0 };
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6f0d08f6c0241a76d95ffbaab40b311e9bf80e4c4514a2eb742bc823ea336933
+size 323

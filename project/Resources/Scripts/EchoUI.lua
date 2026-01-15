@@ -1,17 +1,3 @@
-local playerId =0
-
-function Init()
-    playerId = GetEntity("PlayerBar")
-end
-
-function Update()
-    if CountEntityTag("card") >= 1 then
-        return
-    end
-
-    if GetEntityScriptGlobal(playerId,"Echo.lua","canEcho") then
-        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,1.0,0.1)
-    else
-        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,0.0,0.5)
-    end
-end
+version https://git-lfs.github.com/spec/v1
+oid sha256:ca49d72073ce7ad9244c4ec6600d4cdbefcfaf94ae98325492fa980cebdd2d97
+size 417
