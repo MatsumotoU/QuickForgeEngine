@@ -10,7 +10,7 @@ public:
 	uint32_t LoadAnimationData(const std::string& fileName);
 	void SaveAnimationData(const std::string& fileName, const nlohmann::json& animationData);
 
-	void Initalize();
+	void Initialize();
 	void Finalize();
 private:
 	SparseSet<nlohmann::json> animationDataSet_;

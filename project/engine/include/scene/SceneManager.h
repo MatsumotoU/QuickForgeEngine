@@ -23,7 +23,7 @@ class SceneManager final : public Singleton<SceneManager> {
 
 public:
     /** @brief 初期化処理 */
-	void Initalize();
+	void Initialize();
     /** @brief 更新処理 */
 	void Update();
     /** @brief 描画前処理 */

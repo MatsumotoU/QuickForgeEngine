@@ -10,7 +10,7 @@
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 /** @brief 初期化 */
-void AssetManager::Initalize(DirectXCommon* dxCommon) {
+void AssetManager::Initialize(DirectXCommon* dxCommon) {
 	assert(dxCommon && "dxCommon is nullptr.");
 
 	dxCommon_ = dxCommon;

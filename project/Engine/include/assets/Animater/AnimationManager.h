@@ -7,7 +7,7 @@
 class AnimationManager final : public Singleton<AnimationManager> {
 	friend class Singleton<AnimationManager>;
 public:
-	void Initalize();
+	void Initialize();
 	void Update();
 	void Finalize();
 

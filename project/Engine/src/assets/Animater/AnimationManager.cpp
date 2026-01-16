@@ -6,7 +6,7 @@
 #include "engine/include/assets/Animater/AnimationManager.h"
 
 /** @brief 初期化 */
-void AnimationManager::Initalize() {
+void AnimationManager::Initialize() {
 }
 
 /** @brief 更新 */

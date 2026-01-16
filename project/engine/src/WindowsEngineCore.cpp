@@ -96,7 +96,7 @@ void WindowsEngineCore::Initialize() {
 	renderingPostprocess_->SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
 
 	assetManager_ = AssetManager::GetInstance();
-	assetManager_->Initalize(directXCommon_);
+	assetManager_->Initialize(directXCommon_);
 
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
@@ -122,7 +122,7 @@ void WindowsEngineCore::Initialize() {
 #endif // _DEBUG
 
 	sceneManager_ = SceneManager::GetInstance();
-	sceneManager_->Initalize();
+	sceneManager_->Initialize();
 
 #ifdef _DEBUG
 	DebugLog("======================Initialized SceneManager======================");

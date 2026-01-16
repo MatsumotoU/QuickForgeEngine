@@ -38,7 +38,7 @@ class AssetManager final :public Singleton<AssetManager> {
 
 public:
     /** @brief 初期化処理 */
-	void Initalize(DirectXCommon* dxCommon);
+	void Initialize(DirectXCommon* dxCommon);
     /** @brief 描画前処理 */
 	void PreDraw();
     /** @brief フレーム終了時の処理 */
