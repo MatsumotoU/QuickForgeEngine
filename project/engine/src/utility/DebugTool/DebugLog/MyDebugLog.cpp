@@ -1,49 +1,48 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/BuildInfo.h"
 
-MyDebugLog::MyDebugLog() {
-	Initialize();
-}
-
-MyDebugLog::~MyDebugLog() {
-	Finalize();
-}
-
 void MyDebugLog::Initialize() {
-	log_.clear();
-	engineLog_.clear();
-	editorLog_.clear();
-	warningLog_.clear();
-	errorLog_.clear();
+	try
+	{
+		log_.clear();
+		engineLog_.clear();
+		editorLog_.clear();
+		warningLog_.clear();
+		errorLog_.clear();
 
-	std::filesystem::create_directory("logs");
-	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-	std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
-		nowSeconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
-	std::chrono::zoned_time localTime{ std::chrono::current_zone(),nowSeconds };
-	std::string dateString = std::format("{:%Y-%m-%d_%H%M%S}", localTime);
-	logFilePath_ = std::string("logs/") + dateString + ".logs";
+		std::filesystem::create_directory("logs");
+		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+		std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
+			nowSeconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
+		std::chrono::zoned_time localTime{ std::chrono::current_zone(),nowSeconds };
+		std::string dateString = std::format("{:%Y-%m-%d_%H%M%S}", localTime);
+		logFilePath_ = std::string("logs/") + dateString + ".logs";
 
-	logStream_.open(logFilePath_);
+		logStream_.open(logFilePath_);
 
-	// 縺薙％縺ｧ繝薙Ν繝画ュ蝣ｱ繧貞・蜉・
-	logStream_ << "Build Date: " << __DATE__ << " " << __TIME__ << std::endl;
+		// 縺薙％縺ｧ繝薙Ν繝画ュ蝣ｱ繧貞・蜉・
+		logStream_ << "Build Date: " << __DATE__ << " " << __TIME__ << std::endl;
 #ifdef APP_VERSION
-	logStream_ << "App Version: " << APP_VERSION << std::endl;
+		logStream_ << "App Version: " << APP_VERSION << std::endl;
 #endif
 #ifdef BUILD_USER
-	logStream_ << "Build User: " << BUILD_USER << std::endl;
+		logStream_ << "Build User: " << BUILD_USER << std::endl;
 #endif
 #ifdef BUILD_BRANCH
-	logStream_ << "Build Branch: " << BUILD_BRANCH << std::endl;
+		logStream_ << "Build Branch: " << BUILD_BRANCH << std::endl;
 #endif
 #ifdef BUILD_COMMIT
-	logStream_ << "Build Commit: " << BUILD_COMMIT << std::endl;
+		logStream_ << "Build Commit: " << BUILD_COMMIT << std::endl;
 #endif
 #ifdef BUILD_PLATFORM
-	logStream_ << "Build Platform: " << BUILD_PLATFORM << std::endl;
+		logStream_ << "Build Platform: " << BUILD_PLATFORM << std::endl;
 #endif
-	logStream_ << "CreateLog" << std::endl;
+		logStream_ << "CreateLog" << std::endl;
+	}
+	catch (const std::exception&)
+	{
+		assert(false && "faild to open logFile.");
+	}
 }
 
 void MyDebugLog::Finalize() {
@@ -51,22 +50,29 @@ void MyDebugLog::Finalize() {
 }
 
 void MyDebugLog::Log(const std::string& message, const std::source_location& location) {
-	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-	std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
-		nowSeconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
-	std::chrono::zoned_time localTime{ std::chrono::current_zone(),nowSeconds };
-	std::string timeStamp = std::format("{:%Y-%m-%d_%H-%M-%S}", localTime);
+	try
+	{
+		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+		std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
+			nowSeconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
+		std::chrono::zoned_time localTime{ std::chrono::current_zone(),nowSeconds };
+		std::string timeStamp = std::format("{:%Y-%m-%d_%H-%M-%S}", localTime);
 
-	std::string funcName = location.function_name();
+		std::string funcName = location.function_name();
 
-	log_.push_back("[" + timeStamp + "] " + message);
-	if (log_.size() > 300) {
-		log_.erase(log_.begin());
+		log_.push_back("[" + timeStamp + "] " + message);
+		if (log_.size() > 300) {
+			log_.erase(log_.begin());
+		}
+
+		logStream_ << "[" + timeStamp + "] " + funcName + ": " + message << std::endl;
+		std::string logMessage = message + "\n";
+		OutputDebugStringA(logMessage.c_str());
 	}
-
-	logStream_ << "[" +  timeStamp + "] " + funcName+": " + message << std::endl;
-	std::string logMessage = message + "\n";
-	OutputDebugStringA(logMessage.c_str());
+	catch (const std::exception&)
+	{
+		assert(false && "faild to write logFile.");
+	}
 }
 
 const std::vector<std::string>* MyDebugLog::GetLog() {

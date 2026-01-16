@@ -7,16 +7,16 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
-namespace {
-	std::string configFilePath = "Resources/Config/ColliderTagMask.json";
-}
-ColliderTagMask::ColliderTagMask() : tagMaskPairs_{} {
-	// コンストラクタ内で未定義動作を避けるためにtry-catchで囲む
+void ColliderTagMask::Initialize(const std::string& maskTableFilePath)
+{
+	// コンフィグファイルパス設定
+	configFilePath_ = maskTableFilePath;
+	// コンフィグファイル読み込み
 	try
 	{
 		// コンフィグ読み込み処理
 		nlohmann::json jsonData;
-		std::ifstream ifs(configFilePath);
+		std::ifstream ifs(configFilePath_);
 		if (ifs.is_open()) {
 			ifs >> jsonData;
 			ifs.close();
@@ -38,12 +38,12 @@ ColliderTagMask::ColliderTagMask() : tagMaskPairs_{} {
 		DebugLog(e.what());
 #endif // _DEBUG
 	}
+	
 }
 
-ColliderTagMask::~ColliderTagMask() {
-	// デストラクタ内で未定義動作を避けるためにtry-catchで囲む
+void ColliderTagMask::Finalize()
+{
 	try {
-		// 保存処理
 		nlohmann::json jsonData;
 		jsonData["tagMaskPairs"] = nlohmann::json::array();
 		for (const auto& pair : tagMaskPairs_) {
@@ -52,10 +52,11 @@ ColliderTagMask::~ColliderTagMask() {
 			pairJson["tag2"] = pair.second;
 			jsonData["tagMaskPairs"].push_back(pairJson);
 		}
-		std::ofstream ofs(configFilePath);
+		std::ofstream ofs(configFilePath_);
 		ofs << jsonData.dump(4);
 		ofs.close();
-	}catch (const std::exception&e) {
+	}
+	catch (const std::exception& e) {
 		e;
 #ifdef _DEBUG
 		DebugLog(e.what());

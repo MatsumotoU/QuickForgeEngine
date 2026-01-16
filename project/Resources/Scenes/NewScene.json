@@ -59,6 +59,13 @@
             }
         },
         {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "testA"
+                    }
+                ]
+            },
             "ModelHandle": {
                 "color": [
                     1.0,
@@ -69,23 +76,9 @@
                 "modelName": "Box1x1.obj"
             },
             "SceneObjectData": {
-                "name": "LuaCreateTest",
+                "name": "Box1x1.obj",
                 "tag": "Untagged",
-                "uniqueId": 3452816847
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {
-                            "Hp": 90
-                        },
-                        "priority": 0,
-                        "scriptName": "test.lua",
-                        "stringParams": {}
-                    }
-                ]
+                "uniqueId": 3452816848
             },
             "Transform": {
                 "rotate": [

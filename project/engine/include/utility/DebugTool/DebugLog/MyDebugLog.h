@@ -19,24 +19,34 @@ enum class LogLevel {
 	Error
 };
 
+/**
+ * ログを出力するクラス.
+ */
 class MyDebugLog : public Singleton<MyDebugLog> {
     friend class Singleton<MyDebugLog>;
 public:
+	/// @brief 初期化処理.
+	void Initialize();
+	/// @brief 終了処理.
+	void Finalize();
+
+	/// @brief ログを出力します.
     void Log(const std::string& message, const std::source_location& location = std::source_location::current());
+	/// @brief 今までのログを取得します.
 	const std::vector<std::string>* GetLog();
+	/// @brief 一時的な分類わけされたログを放棄します
 	void DebugLogClear();
 
+	// 分類わけされたログ
 	std::vector<std::string> engineLog_;
 	std::vector<std::string> editorLog_;
 	std::vector<std::string> warningLog_;
 	std::vector<std::string> errorLog_;
 
+	// Luaスクリプト別ログ
 	std::unordered_map<uint32_t, std::unordered_map<std::string,std::vector<std::string>>> scriptLogs_;
 private:
-    MyDebugLog();
-    ~MyDebugLog() override;
-	void Initialize();
-	void Finalize();
+    ~MyDebugLog() override = default;
 
 	std::ofstream logStream_;
 	std::string logFilePath_;

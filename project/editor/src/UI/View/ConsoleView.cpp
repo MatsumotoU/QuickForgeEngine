@@ -43,7 +43,6 @@ void ConsoleView::Draw() {
 	}
 	ImGui::Begin(name_.c_str(), &isActive_); // Removed &isActive_ from the instruction, but keeping it as the instruction's snippet was partial and this is a common pattern.
 	// フォーカス判定
-	// isSceneViewFocused_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows); // This line was in the instruction's snippet but seems out of place for ConsoleView. Keeping original behavior.
 	ImGui::Text("Log Level:");
 	ImGui::SameLine();
 	if (ImGui::BeginCombo("##loglevel",

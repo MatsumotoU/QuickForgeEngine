@@ -15,6 +15,7 @@
 #include <algorithm>
 
 void ColliderManager::Initialize() {
+	colliderTagMask_.Initialize("Resources/Config/ColliderTagMask.json");
 }
 
 void ColliderManager::Update() {
@@ -57,6 +58,7 @@ void ColliderManager::Draw() {
 }
 
 void ColliderManager::Finalize() {
+	colliderTagMask_.Finalize();
 }
 
 bool ColliderManager::isCollision(const Sphere& sphere1, const Sphere& sphere2) {

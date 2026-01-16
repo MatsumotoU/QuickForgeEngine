@@ -35,6 +35,9 @@ void WindowsEngineCore::Initialize() {
 	QFE::EngineGlobalValue::windowHeight = windowHeight;
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
+	// * デバッグログ初期化 * //
+	MyDebugLog::GetInstance()->Initialize();
+
 	// * ウィンドウマネージャー初期化 * //
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
@@ -214,6 +217,7 @@ void WindowsEngineCore::Shutdown() {
 #ifdef _DEBUG
 	DebugLog("FinalizeEngine");
 #endif // _DEBUG
+	MyDebugLog::GetInstance()->Finalize();
 }
 
 // こ�E先�Eプライベ�Eト関数
