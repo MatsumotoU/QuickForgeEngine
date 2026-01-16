@@ -1,8 +1,8 @@
-#include "engine/include/assets/Script/QFElinker/LuaScriptOnQEFSetMyMath.h"
+#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetMyMath.h"
 #include "engine/include/core/Math/Vector/Vector3.h"
 #include "engine/include/core/Math/MyMath.h"
 
-void QFE::Script::MyLuaMath::LuaScriptOnQEFSetMyMath(sol::state* luaState) {
+void QFE::Script::MyLuaMath::LuaScriptOnQFESetMyMath(sol::state* luaState) {
 	sol::table qfe = luaState->get<sol::table>("QFE");
 	sol::table math = qfe.create_named("Math");
 

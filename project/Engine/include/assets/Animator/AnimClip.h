@@ -2,9 +2,9 @@
 #include <vector>
 #include "KeyFrame.h"
 
-class AnimCrip final {
+class AnimClip final {
 public:
-	AnimCrip();
+	AnimClip();
 	void SetLoop(bool isLoop);
 	bool IsLoop() const;
 	void AddKeyFrame(const KeyFrame& keyframe);

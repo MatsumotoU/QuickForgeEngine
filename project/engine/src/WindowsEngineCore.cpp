@@ -36,7 +36,9 @@ void WindowsEngineCore::Initialize() {
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
 	// * デバッグログ初期化 * //
+#ifdef _DEBUG
 	MyDebugLog::GetInstance()->Initialize();
+#endif // _DEBUG
 
 	// * ウィンドウマネージャー初期化 * //
 	gameWindowManager = std::make_unique<GameWindowManager>();
@@ -94,7 +96,7 @@ void WindowsEngineCore::Initialize() {
 	renderingPostprocess_->SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
 
 	assetManager_ = AssetManager::GetInstance();
-	assetManager_->Initalize(directXCommon_);
+	assetManager_->Initialize(directXCommon_);
 
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
@@ -120,7 +122,7 @@ void WindowsEngineCore::Initialize() {
 #endif // _DEBUG
 
 	sceneManager_ = SceneManager::GetInstance();
-	sceneManager_->Initalize();
+	sceneManager_->Initialize();
 
 #ifdef _DEBUG
 	DebugLog("======================Initialized SceneManager======================");
@@ -216,8 +218,8 @@ void WindowsEngineCore::Shutdown() {
 	gameWindowManager->Shutdown();
 #ifdef _DEBUG
 	DebugLog("FinalizeEngine");
-#endif // _DEBUG
 	MyDebugLog::GetInstance()->Finalize();
+#endif // _DEBUG
 }
 
 // こ�E先�Eプライベ�Eト関数

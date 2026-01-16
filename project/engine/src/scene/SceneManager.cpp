@@ -10,7 +10,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
-void SceneManager::Initalize() {
+void SceneManager::Initialize() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
 	isRequestRunTimeLoadScene_ = false;

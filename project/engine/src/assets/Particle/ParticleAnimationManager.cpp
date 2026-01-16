@@ -30,7 +30,7 @@ void ParticleAnimationManager::SaveAnimationData(const std::string& fileName, co
 	fileName; animationData;
 }
 
-void ParticleAnimationManager::Initalize() {
+void ParticleAnimationManager::Initialize() {
 	animationDataSet_.clear();
 }
 
