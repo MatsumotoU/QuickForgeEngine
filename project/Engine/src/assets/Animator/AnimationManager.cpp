@@ -3,7 +3,7 @@
  * @brief アニメーション管理クラスの実装(現状はスタブ)
  */
 
-#include "engine/include/assets/Animater/AnimationManager.h"
+#include "engine/include/assets/Animator/AnimationManager.h"
 
 /** @brief 初期化 */
 void AnimationManager::Initialize() {

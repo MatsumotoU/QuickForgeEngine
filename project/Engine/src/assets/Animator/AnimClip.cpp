@@ -1,4 +1,4 @@
-#include "engine/include/assets/Animater/AnimClip.h"
+#include "engine/include/assets/Animator/AnimClip.h"
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG

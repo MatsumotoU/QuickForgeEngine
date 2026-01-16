@@ -437,13 +437,13 @@
     <ClInclude Include="include\assets\3DModel\ModelVertexResourceManager.h">
       <Filter>include\assets\3DModel</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Animater\AnimClip.h">
+    <ClInclude Include="include\assets\Animator\AnimClip.h">
       <Filter>include\assets\Animeter</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Animater\AnimationManager.h">
+    <ClInclude Include="include\assets\Animator\AnimationManager.h">
       <Filter>include\assets\Animeter</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Animater\KeyFrame.h">
+    <ClInclude Include="include\assets\Animator\KeyFrame.h">
       <Filter>include\assets\Animeter</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\AssetManager.h">
@@ -961,10 +961,10 @@
     <ClCompile Include="src\assets\3DModel\ModelVertexResourceManager.cpp">
       <Filter>src\assets\3DModel</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Animater\AnimClip.cpp">
+    <ClCompile Include="src\assets\Animator\AnimClip.cpp">
       <Filter>src\assets\Animeter</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Animater\AnimationManager.cpp">
+    <ClCompile Include="src\assets\Animator\AnimationManager.cpp">
       <Filter>src\assets\Animeter</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\AssetManager.cpp">
