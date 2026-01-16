@@ -3,5 +3,5 @@
 
 namespace QFE::Script::MyLuaMath {
 	// MyMath関数をLua状態に設定する
-	void LuaScriptOnQEFSetMyMath(sol::state* luaState);
+	void LuaScriptOnQFESetMyMath(sol::state* luaState);
 }

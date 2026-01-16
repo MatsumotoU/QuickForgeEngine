@@ -1,7 +1,7 @@
 #include "engine/include/graphic/DirectXCommon/Descriptors/RtvDescriptorHeap.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/DescriptorGenerator/DescriptorGenerator.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/CheckGenerateConfig/CheckGenerateConfig.h"
-#include "engine/include/utility/DirectX/GenerateDiscriptorHandle.h"
+#include "engine/include/utility/DirectX/GenerateDescriptorHandle.h"
 
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"

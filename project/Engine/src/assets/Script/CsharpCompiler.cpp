@@ -1,4 +1,4 @@
-#include "engine/include/assets/Script/CsharpCmpiler.h"
+#include "engine/include/assets/Script/CsharpCompiler.h"
 
 void GenerateCsproj(const std::string& dir, const std::string& outputPath) {
     std::vector<std::string> csFiles;

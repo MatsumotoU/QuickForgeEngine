@@ -1,32 +1,32 @@
-#include "engine/include/assets/Animeter/AnimCrip.h"
+#include "engine/include/assets/Animater/AnimClip.h"
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
-AnimCrip::AnimCrip() : isLoop_(false){
+AnimClip::AnimClip() : isLoop_(false){
 }
 
-void AnimCrip::SetLoop(bool isLoop) {
+void AnimClip::SetLoop(bool isLoop) {
 	isLoop_ = isLoop;
 }
 
-bool AnimCrip::IsLoop() const {
+bool AnimClip::IsLoop() const {
 	return isLoop_;
 }
 
-void AnimCrip::AddKeyFrame(const KeyFrame& keyframe) {
+void AnimClip::AddKeyFrame(const KeyFrame& keyframe) {
 	keyframes_.push_back(keyframe);
 }
 
-const std::vector<KeyFrame>& AnimCrip::GetKeyFrames() const {
+const std::vector<KeyFrame>& AnimClip::GetKeyFrames() const {
 	return keyframes_;
 }
 
-size_t AnimCrip::GetKeyFrameCount() const {
+size_t AnimClip::GetKeyFrameCount() const {
 	return keyframes_.size();
 }
 
-Transform AnimCrip::GetTransformAtTime(float time) const {
+Transform AnimClip::GetTransformAtTime(float time) const {
 	Transform result;
 	// keyframe縺悟ｭ伜惠縺励↑縺・ｴ蜷医・繝・ヵ繧ｩ繝ｫ繝医・Transform繧定ｿ斐☆
 	if (keyframes_.empty()) {

@@ -4,7 +4,7 @@
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetSubModuleBase.h"
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetSceneFunction.h"
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetUtilities.h"
-#include "engine/include/assets/Script/QFElinker/LuaScriptOnQEFSetMyMath.h"
+#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetMyMath.h"
 
 void QFE::Script::SetQFEFunctions(sol::state* luaState) {
 	// 蝙九ｒ逋ｻ骭ｲ
@@ -16,6 +16,6 @@ void QFE::Script::SetQFEFunctions(sol::state* luaState) {
 	// 繧ｷ繝ｼ繝ｳ謫堺ｽ憺未謨ｰ繧堤匳骭ｲ
 	QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(luaState);
 	// 繝ｦ繝ｼ繝・ぅ繝ｪ繝・ぅ髢｢謨ｰ繧堤匳骭ｲ
-	QFE::Script::MyLuaMath::LuaScriptOnQEFSetMyMath(luaState);
+	QFE::Script::MyLuaMath::LuaScriptOnQFESetMyMath(luaState);
 	QFE::Script::Utility::LuaScriptOnQFESetUtility(luaState);
 }

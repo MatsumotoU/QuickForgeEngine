@@ -437,13 +437,13 @@
     <ClInclude Include="include\assets\3DModel\ModelVertexResourceManager.h">
       <Filter>include\assets\3DModel</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Animeter\AnimCrip.h">
+    <ClInclude Include="include\assets\Animater\AnimClip.h">
       <Filter>include\assets\Animeter</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Animeter\AnimationManager.h">
+    <ClInclude Include="include\assets\Animater\AnimationManager.h">
       <Filter>include\assets\Animeter</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Animeter\KeyFrame.h">
+    <ClInclude Include="include\assets\Animater\KeyFrame.h">
       <Filter>include\assets\Animeter</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\AssetManager.h">
@@ -479,7 +479,7 @@
     <ClInclude Include="include\assets\ResourceDirectoryManager.h">
       <Filter>include\assets</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Script\CsharpCmpiler.h">
+    <ClInclude Include="include\assets\Script\CsharpCompiler.h">
       <Filter>include\assets\Script</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\Script\CsharpVirtualEnvironmentOnQFE.h">
@@ -500,7 +500,7 @@
     <ClInclude Include="include\assets\Script\QFElinker\CsharpOnQFELinker.h">
       <Filter>include\assets\Script\QFElinker</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h">
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.h">
       <Filter>include\assets\Script\QFElinker</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h">
@@ -863,7 +863,7 @@
     <ClInclude Include="include\utility\DesignPatterns\Subject.h">
       <Filter>include\utility\DesignPatterns</Filter>
     </ClInclude>
-    <ClInclude Include="include\utility\DirectX\GenerateDiscriptorHandle.h">
+    <ClInclude Include="include\utility\DirectX\GenerateDescriptorHandle.h">
       <Filter>include\utility\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="include\utility\DirectX\InitializeSwapChainBuffer.h">
@@ -961,10 +961,10 @@
     <ClCompile Include="src\assets\3DModel\ModelVertexResourceManager.cpp">
       <Filter>src\assets\3DModel</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Animeter\AnimCrip.cpp">
+    <ClCompile Include="src\assets\Animater\AnimClip.cpp">
       <Filter>src\assets\Animeter</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Animeter\AnimationManager.cpp">
+    <ClCompile Include="src\assets\Animater\AnimationManager.cpp">
       <Filter>src\assets\Animeter</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\AssetManager.cpp">
@@ -988,7 +988,7 @@
     <ClCompile Include="src\assets\ResourceDirectoryManager.cpp">
       <Filter>src\assets</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Script\CsharpCmpiler.cpp">
+    <ClCompile Include="src\assets\Script\CsharpCompiler.cpp">
       <Filter>src\assets\Script</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\Script\CsharpScriptOnQFE.cpp">
@@ -1009,7 +1009,7 @@
     <ClCompile Include="src\assets\Script\QFElinker\CsharpOnQFELinker.cpp">
       <Filter>src\assets\Script\QFElinker</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp">
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.cpp">
       <Filter>src\assets\Script\QFElinker</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp">
@@ -1270,7 +1270,7 @@
     <ClCompile Include="src\utility\DebugTool\ImGui\ImGuiInitializer.cpp">
       <Filter>src\utility\DebugTool\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\utility\DirectX\GenerateDiscriptorHandle.cpp">
+    <ClCompile Include="src\utility\DirectX\GenerateDescriptorHandle.cpp">
       <Filter>src\utility\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="src\utility\DirectX\InitializeSwapChainBuffer.cpp">
