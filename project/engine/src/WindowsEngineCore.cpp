@@ -36,7 +36,9 @@ void WindowsEngineCore::Initialize() {
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
 	// * デバッグログ初期化 * //
+#ifdef _DEBUG
 	MyDebugLog::GetInstance()->Initialize();
+#endif // _DEBUG
 
 	// * ウィンドウマネージャー初期化 * //
 	gameWindowManager = std::make_unique<GameWindowManager>();
@@ -216,8 +218,8 @@ void WindowsEngineCore::Shutdown() {
 	gameWindowManager->Shutdown();
 #ifdef _DEBUG
 	DebugLog("FinalizeEngine");
-#endif // _DEBUG
 	MyDebugLog::GetInstance()->Finalize();
+#endif // _DEBUG
 }
 
 // こ�E先�Eプライベ�Eト関数
