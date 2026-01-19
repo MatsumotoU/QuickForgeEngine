@@ -8,13 +8,12 @@
 
 
 void RootParameter::Initialize() {
-	rootParameters_.clear();
-
-	// RootSignature縺ｮ逕滓・
+	// RootSignature
 	descriptionRootSignature_ = {};
 	descriptionRootSignature_.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	rootParameters_.clear();
 	friendlyNames_.clear();
 }
 
