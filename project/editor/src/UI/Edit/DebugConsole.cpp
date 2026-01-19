@@ -15,6 +15,7 @@ void DebugConsole::Initialize() {
 }
 
 void DebugConsole::Update() {
+	// 更新処理は必要ないため空実装としています
 }
 
 void DebugConsole::Draw() {

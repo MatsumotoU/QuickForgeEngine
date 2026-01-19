@@ -16,6 +16,7 @@ void KeyConfigEdit::Initialize() {
 }
 
 void KeyConfigEdit::Update() {
+	// 更新処理は必要ないため空実装としています
 }
 
 void KeyConfigEdit::Draw() {

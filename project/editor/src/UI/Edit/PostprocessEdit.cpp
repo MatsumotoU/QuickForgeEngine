@@ -7,6 +7,7 @@ void PostprocessEdit::Initialize() {
 }
 
 void PostprocessEdit::Update() {
+	// 更新処理は必要ないため空実装としています
 }
 
 void PostprocessEdit::Draw() {
