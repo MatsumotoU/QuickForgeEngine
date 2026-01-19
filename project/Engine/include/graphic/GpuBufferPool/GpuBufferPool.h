@@ -15,7 +15,7 @@ class GpuBufferPool final {
 public:
 	// このクラスを生成できるのはDirectXCommonを渡したときのみ
 	GpuBufferPool() = delete;
-    GpuBufferPool(DirectXCommon* dxCommon):dxCommon_(dxCommon){}
+    explicit GpuBufferPool(DirectXCommon* dxCommon):dxCommon_(dxCommon){}
     ~GpuBufferPool() = default;
     
 	/// 特定の型のバッファーを登録してハンドルを取得します

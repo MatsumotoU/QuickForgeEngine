@@ -5,7 +5,7 @@ class EntityManager;
 class WorldTransformationCommand : public ISceneEntityCommand {
 public:
 	WorldTransformationCommand() = delete;
-	WorldTransformationCommand(EntityManager& em);
+	explicit WorldTransformationCommand(EntityManager& em);
 
 	/// モデル、スプライト、パーティクルのワールド行列を更新する
 	void Execute() override;
