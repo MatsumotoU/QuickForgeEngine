@@ -176,6 +176,9 @@ exit /b 0</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
+    <ClInclude Include="include\Commands\AllEditorCommands.h" />
+    <ClInclude Include="include\Commands\EchoCommand.h" />
+    <ClInclude Include="include\Commands\IEditorCommand.h" />
     <ClInclude Include="include\IEditor.h" />
     <ClInclude Include="include\OnWindowsEditor.h" />
     <ClInclude Include="include\UI\Edit\ColliderMaskEdit.h" />
@@ -200,7 +203,7 @@ exit /b 0</Command>
     <ClInclude Include="include\UI\View\ScriptLoggerView.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\UI\View\InputLogView.cpp" />
+    <ClCompile Include="include\Commands\EchoCommand.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\OnWindowsEditor.cpp" />
     <ClCompile Include="src\UI\Edit\ColliderMaskEdit.cpp" />
@@ -217,6 +220,7 @@ exit /b 0</Command>
     <ClCompile Include="src\UI\View\GameView.cpp" />
     <ClCompile Include="src\UI\View\HierarchyView.cpp" />
     <ClCompile Include="src\UI\View\InputDebugView.cpp" />
+    <ClCompile Include="src\UI\View\InputLogView.cpp" />
     <ClCompile Include="src\UI\View\InspectorView.cpp" />
     <ClCompile Include="src\UI\View\SceneProfileView.cpp" />
     <ClCompile Include="src\UI\View\SceneView.cpp" />

@@ -22,8 +22,8 @@ ShaderCompiler::~ShaderCompiler() {
 #ifdef _DEBUG
 	DebugLog("=====ShaderFiles=====");
 #endif // _DEBUG
-	
-	// iDxcBlobMap_縺ｫ譬ｼ邏阪＆繧後※縺・ｋIDxcBlob*繧偵☆縺ｹ縺ｦRelease縺励※縺九ｉ繧ｯ繝ｪ繧｢
+
+	// iDxcBlobMap_に格納されているIDxcBlob*をReleaseして解放
 	for (auto& [key, blob] : iDxcBlobMap_) {
 		if (blob) {
 			blob->Release();
@@ -39,7 +39,7 @@ ShaderCompiler::~ShaderCompiler() {
 }
 
 void ShaderCompiler::InitializeDXC() {
-	//// * DXC縺ｮ蛻晄悄蛹・* //
+	//// * DXCの初期化 * //
 	dxcUtils_ = nullptr;
 	dxcCompiler_ = nullptr;
 	HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
@@ -47,59 +47,58 @@ void ShaderCompiler::InitializeDXC() {
 	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
 	assert(SUCCEEDED(hr));
 
-	// 迴ｾ譎らせ縺ｧinclude縺ｯ縺励↑縺・′縲（nclude縺ｫ蟇ｾ蠢懊☆繧九◆繧√・險ｭ螳壹ｒ陦後▲縺ｦ縺翫￥
+	// インクルード対応のためのハンドラ作成
 	includeHandler_ = nullptr;
 	hr = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
 	assert(SUCCEEDED(hr));
 }
 
 IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wchar_t* profile) {
-	// 譌｢縺ｫ隱ｭ縺ｿ霎ｼ縺ｿ貂医∩縺ｮ繧ｷ繧ｧ繝ｼ繝繝ｼ繧貞・蠎ｦ隱ｭ縺ｿ霎ｼ縺ｾ縺ｪ縺・
+	// すでにコンパイル済みならキャッシュから取得
 	if (iDxcBlobMap_.contains(filePath)) {
 #ifdef _DEBUG
-		DebugLog(std::format("Loaded file: {}",ConvertString(filePath)));
+		DebugLog(std::format("Loaded file: {}", ConvertString(filePath)));
 #endif // _DEBUG
 		return iDxcBlobMap_.at(filePath);
 	}
 
 	Log(ConvertString(std::format(L"Begin CompileShader, path:{},profile:{}\n", filePath, profile)));
 
-	// ここで絶対パスを出力
+	// 絶対パスを出力
 	std::wstring absPath = QFE::FILE::GetAbsolutePath(filePath);
 	Log(ConvertString(std::format(L"Shader file absolute path: {}\n", absPath)));
 
 	// hlslファイルをロード
 	IDxcBlobEncoding* shaderSource = nullptr;
 	HRESULT hr = dxcUtils_->LoadFile(filePath.c_str(), nullptr, &shaderSource);
-	// 隱ｭ繧√↑縺・↑繧牙●豁｢
 	assert(SUCCEEDED(hr));
-	// 隱ｭ縺ｿ霎ｼ繧薙□繝輔ぃ繧､繝ｫ縺ｮ蜀・ｮｹ繧定ｨｭ螳壹☆繧・
+	// バッファ作成
 	DxcBuffer shaderSourceBuffer;
 	shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
 	shaderSourceBuffer.Size = shaderSource->GetBufferSize();
 	shaderSourceBuffer.Encoding = DXC_CP_UTF8;
 
-	// 2:繧ｳ繝ｳ繝代う繝ｫ縺吶ｋ
+	// コンパイル引数
 	LPCWSTR arguments[] = {
-		filePath.c_str(),		// 繧ｳ繝ｳ繝代う繝ｫ蟇ｾ雎｡縺ｮhlsl繝輔ぃ繧､繝ｫ蜷・
-		L"-E",L"main",			// 繧ｨ繝ｳ繝医Μ繝ｼ繝昴う繝ｳ繝医・謖・ｮ壹ょ渕譛ｬmain莉･螟悶↓縺励↑縺・
-		L"-T",profile,			// ShaderProfile縺ｮ險ｭ螳・
-		L"-Zi",L"-Qembed_debug",// 繝・ヰ繝・げ逕ｨ縺ｮ諠・ｱ繧貞沂繧∬ｾｼ繧
-		L"-Od",					// 譛驕ｩ蛹悶ｒ螟悶＠縺ｦ縺翫￥
-		L"-Zpr",				// 繝ｬ繧､繧｢繧ｦ繝医・陦悟━蜈・
+		filePath.c_str(),		// 入力hlslファイル
+		L"-E",L"main",			// エントリーポイントmain
+		L"-T",profile,			// ShaderProfile
+		L"-Zi",L"-Qembed_debug",// デバッグ情報埋め込み
+		L"-Od",					// 最適化無効
+		L"-Zpr",				// 行優先パッキング
 	};
-	// 螳滄圀縺ｫ繧ｳ繝ｳ繝代う繝ｫ縺吶ｋ
+	// シェーダーをコンパイル
 	IDxcResult* shaderResult = nullptr;
 	hr = dxcCompiler_->Compile(
-		&shaderSourceBuffer,		// 隱ｭ縺ｿ霎ｼ繧薙□繝輔ぃ繧､繝ｫ
-		arguments,					// 繧ｳ繝ｳ繝代う繝ｫ繧ｪ繝励す繝ｧ繝ｳ
-		_countof(arguments),		// 繧ｳ繝ｳ繝代う繝ｫ繧ｪ繝励す繝ｧ繝ｳ謨ｰ
-		includeHandler_,				// include縺悟性縺ｾ繧後◆隲ｸ縲・
-		IID_PPV_ARGS(&shaderResult)	// 繧ｳ繝ｳ繝代う繝ｫ邨先棡
+		&shaderSourceBuffer,		// 入力ファイル
+		arguments,					// 引数
+		_countof(arguments),		// 引数数
+		includeHandler_,			// インクルードハンドラ
+		IID_PPV_ARGS(&shaderResult)	// 結果
 	);
 	assert(SUCCEEDED(hr));
 
-	// 3:繧ｨ繝ｩ繝ｼ遒ｺ隱・
+	// エラー出力を取得
 	IDxcBlobUtf8* shaderError = nullptr;
 	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
 	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
@@ -107,7 +106,7 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 		assert(false);
 	}
 
-	// 4:繧ｳ繝ｳ繝代う繝ｫ邨先棡繧貞女縺大叙縺｣縺ｦ霑斐☆
+	// バイナリ出力を取得
 	IDxcBlob* shaderBlob = nullptr;
 	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
 	assert(SUCCEEDED(hr));
@@ -115,14 +114,14 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	shaderSource->Release();
 	shaderResult->Release();
 
-	// 5:繧ｷ繧ｧ繝ｼ繝繝ｼ繝ｪ繝輔Ξ繧ｯ繧ｷ繝ｧ繝ｳ諠・ｱ繧貞､夜Κ縺ｫ蜃ｺ蜉帙☆繧・
+	// シェーダーリフレクションを実行しJSON保存
 	ShaderReflection shaderReflection;
 	shaderReflection.RunShaderReflection(shaderBlob);
 	nlohmann::json shaderJson = shaderReflection.Serialize();
 	std::string savePath = "Resources/TestFolder/" + ConvertString(filePath.substr(filePath.find_last_of(L"/\\") + 1)) + ".json";
-	QFE::FILE::SaveJSONToFile( savePath, shaderJson);
+	QFE::FILE::SaveJSONToFile(savePath, shaderJson);
 
-	// 繧ｷ繧ｧ繝ｼ繝繝ｼ繧堤匳骭ｲ
+	// キャッシュに保存
 	iDxcBlobMap_.emplace(filePath, shaderBlob);
 	return shaderBlob;
 }

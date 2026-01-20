@@ -19,8 +19,8 @@
     <Filter Include="include\assets\3DModel\Loader">
       <UniqueIdentifier>{28D45AC1-94EC-41EB-5D99-D184C970D684}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\assets\Animeter">
-      <UniqueIdentifier>{2FDC6232-9B13-ABC9-A41D-0FED10D4D1C2}</UniqueIdentifier>
+    <Filter Include="include\assets\Animator">
+      <UniqueIdentifier>{F5AB6032-61E3-A8C9-6AED-0CEDD6A3CFC2}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\assets\AudioSource">
       <UniqueIdentifier>{3D403802-2950-E4D2-9209-49F17E38D36B}</UniqueIdentifier>
@@ -154,6 +154,9 @@
     <Filter Include="include\input\DirectInput">
       <UniqueIdentifier>{4250364B-AE12-6AD5-F7C2-F86163C442B3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\input\Logger">
+      <UniqueIdentifier>{37837301-2312-FDCA-CC30-11C6B89E0D71}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\input\Mic">
       <UniqueIdentifier>{B04133E8-1C58-317E-65CF-BC9FD1240206}</UniqueIdentifier>
     </Filter>
@@ -253,8 +256,8 @@
     <Filter Include="src\assets\3DModel\Loader">
       <UniqueIdentifier>{CCC26CFE-3885-A088-8135-2F15ED367966}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\assets\Animeter">
-      <UniqueIdentifier>{D39FDFD5-3F01-BDE3-C86E-039634CFF3A2}</UniqueIdentifier>
+    <Filter Include="src\assets\Animator">
+      <UniqueIdentifier>{996FDDD5-05D1-BAE3-8E3E-0196FA9EF1A2}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\assets\AudioSource">
       <UniqueIdentifier>{61117C2F-4D0B-A581-3678-3B9222110BEE}</UniqueIdentifier>
@@ -349,6 +352,9 @@
     <Filter Include="src\input\DirectInput">
       <UniqueIdentifier>{E68CF2C0-52F9-ADBB-1BED-45198718D023}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\input\Logger">
+      <UniqueIdentifier>{5B490AB8-4742-290A-7074-0E8F5CCC0816}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\input\Mic">
       <UniqueIdentifier>{541ADF43-C0DA-5A7A-8915-A4F7F5949F56}</UniqueIdentifier>
     </Filter>
@@ -438,13 +444,13 @@
       <Filter>include\assets\3DModel</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\Animator\AnimClip.h">
-      <Filter>include\assets\Animeter</Filter>
+      <Filter>include\assets\Animator</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\Animator\AnimationManager.h">
-      <Filter>include\assets\Animeter</Filter>
+      <Filter>include\assets\Animator</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\Animator\KeyFrame.h">
-      <Filter>include\assets\Animeter</Filter>
+      <Filter>include\assets\Animator</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\AssetManager.h">
       <Filter>include\assets</Filter>
@@ -500,10 +506,10 @@
     <ClInclude Include="include\assets\Script\QFElinker\CsharpOnQFELinker.h">
       <Filter>include\assets\Script\QFElinker</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.h">
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h">
       <Filter>include\assets\Script\QFElinker</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h">
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.h">
       <Filter>include\assets\Script\QFElinker</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.h">
@@ -752,6 +758,12 @@
     <ClInclude Include="include\input\KeyConfig.h">
       <Filter>include\input</Filter>
     </ClInclude>
+    <ClInclude Include="include\input\Logger\InputLogData.h">
+      <Filter>include\input\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\Logger\InputLogger.h">
+      <Filter>include\input\Logger</Filter>
+    </ClInclude>
     <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h">
       <Filter>include\input\Mic</Filter>
     </ClInclude>
@@ -938,8 +950,6 @@
     <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h">
       <Filter>resources\shaders\shaderStructs</Filter>
     </ClInclude>
-    <ClInclude Include="include\input\Logger\InputLogger.h" />
-    <ClInclude Include="include\input\Logger\InputLogData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -962,10 +972,10 @@
       <Filter>src\assets\3DModel</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\Animator\AnimClip.cpp">
-      <Filter>src\assets\Animeter</Filter>
+      <Filter>src\assets\Animator</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\Animator\AnimationManager.cpp">
-      <Filter>src\assets\Animeter</Filter>
+      <Filter>src\assets\Animator</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\AssetManager.cpp">
       <Filter>src\assets</Filter>
@@ -1009,10 +1019,10 @@
     <ClCompile Include="src\assets\Script\QFElinker\CsharpOnQFELinker.cpp">
       <Filter>src\assets\Script\QFElinker</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.cpp">
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp">
       <Filter>src\assets\Script\QFElinker</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp">
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.cpp">
       <Filter>src\assets\Script\QFElinker</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.cpp">
@@ -1189,6 +1199,9 @@
     <ClCompile Include="src\input\KeyConfig.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
+    <ClCompile Include="src\input\Logger\InputLogger.cpp">
+      <Filter>src\input\Logger</Filter>
+    </ClCompile>
     <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp">
       <Filter>src\input\Mic</Filter>
     </ClCompile>
@@ -1330,6 +1343,5 @@
     <ClCompile Include="src\window\WindowGenerater.cpp">
       <Filter>src\window</Filter>
     </ClCompile>
-    <ClCompile Include="src\input\Logger\InputLogger.cpp" />
   </ItemGroup>
 </Project>

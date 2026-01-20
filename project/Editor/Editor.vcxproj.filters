@@ -4,6 +4,9 @@
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Commands">
+      <UniqueIdentifier>{EAD494FC-D6CD-B34E-FFFF-98D3EB57935A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\UI">
       <UniqueIdentifier>{1642B8DA-02FA-F927-6B01-D38357D89418}</UniqueIdentifier>
     </Filter>
@@ -34,6 +37,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
+    <ClInclude Include="include\Commands\AllEditorCommands.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\EchoCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\IEditorCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
     <ClInclude Include="include\IEditor.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -85,6 +97,9 @@
     <ClInclude Include="include\UI\View\InputDebugView.h">
       <Filter>include\UI\View</Filter>
     </ClInclude>
+    <ClInclude Include="include\UI\View\InputLogView.h">
+      <Filter>include\UI\View</Filter>
+    </ClInclude>
     <ClInclude Include="include\UI\View\InspectorView.h">
       <Filter>include\UI\View</Filter>
     </ClInclude>
@@ -97,9 +112,11 @@
     <ClInclude Include="include\UI\View\ScriptLoggerView.h">
       <Filter>include\UI\View</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\View\InputLogView.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\Commands\EchoCommand.cpp">
+      <Filter>include\Commands</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\OnWindowsEditor.cpp">
       <Filter>src</Filter>
@@ -146,6 +163,9 @@
     <ClCompile Include="src\UI\View\InputDebugView.cpp">
       <Filter>src\UI\View</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\View\InputLogView.cpp">
+      <Filter>src\UI\View</Filter>
+    </ClCompile>
     <ClCompile Include="src\UI\View\InspectorView.cpp">
       <Filter>src\UI\View</Filter>
     </ClCompile>
@@ -158,6 +178,5 @@
     <ClCompile Include="src\UI\View\ScriptLoggerView.cpp">
       <Filter>src\UI\View</Filter>
     </ClCompile>
-    <ClCompile Include="src\UI\View\InputLogView.cpp" />
   </ItemGroup>
 </Project>

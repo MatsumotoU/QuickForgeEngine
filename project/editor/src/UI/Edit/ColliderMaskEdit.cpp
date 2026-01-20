@@ -18,6 +18,7 @@ void ColliderMaskEdit::Initialize() {
 }
 
 void ColliderMaskEdit::Update() {
+	// このUIは更新処理を必要としないため、何もしない
 }
 
 void ColliderMaskEdit::Draw() {
