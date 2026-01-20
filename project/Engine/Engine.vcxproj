@@ -325,7 +325,7 @@
     <ClInclude Include="include\utility\DirectX\InitializeSwapChainBuffer.h" />
     <ClInclude Include="include\utility\DirectX\TransitionResourceBarrier.h" />
     <ClInclude Include="include\utility\FileSystems\FileUtility.h" />
-    <ClInclude Include="include\utility\ID\UniqeIDManager.h" />
+    <ClInclude Include="include\utility\ID\UniqueIDManager.h" />
     <ClInclude Include="include\utility\MultiThreadRunFunction.h" />
     <ClInclude Include="include\utility\MultiThreadTaskExecutor.h" />
     <ClInclude Include="include\utility\String\DirectInputToString.h" />
@@ -463,7 +463,7 @@
     <ClCompile Include="src\utility\DirectX\InitializeSwapChainBuffer.cpp" />
     <ClCompile Include="src\utility\DirectX\TransitionResourceBarrier.cpp" />
     <ClCompile Include="src\utility\FileSystems\FileUtility.cpp" />
-    <ClCompile Include="src\utility\ID\UniqeIDManager.cpp" />
+    <ClCompile Include="src\utility\ID\UniqueIDManager.cpp" />
     <ClCompile Include="src\utility\MultiThreadRunFunction.cpp" />
     <ClCompile Include="src\utility\MultiThreadTaskExecutor.cpp" />
     <ClCompile Include="src\utility\String\DirectInputToString.cpp" />

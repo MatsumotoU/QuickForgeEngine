@@ -6,7 +6,7 @@
 #pragma once
 #include "IScene.h"
 #include "engine/include/utility/DesignPatterns/Singleton.h"
-#include "engine/include/utility/ID/UniqeIDManager.h"
+#include "engine/include/utility/ID/UniqueIDManager.h"
 
 #include "engine/include/core/Math/Vector/Vector2.h"
 #include <memory>
@@ -76,7 +76,7 @@ public:
 	void DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson);
 
     /** @brief 空のオブジェクトを追加 */
-	void AddEpmtyObject();
+	void AddEmptyObject();
     /** @brief パーティクルエミッタを追加 */
 	void AddParticleEmitter(const std::string& modelName, uint32_t maxCount);
     /** @brief モデルを追加 */

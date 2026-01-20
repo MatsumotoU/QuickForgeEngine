@@ -208,7 +208,7 @@ void SceneManager::DeserializeEntity(uint32_t entityId, const nlohmann::json& en
 
 }
 
-void SceneManager::AddEpmtyObject() {
+void SceneManager::AddEmptyObject() {
 	currentScene_->AddEmptyObject();
 }
 

@@ -81,5 +81,5 @@ private:
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResources_;
 	std::vector<DirectX::ScratchImage> scratchImages_;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
-	StringLiblary filePathLiblary_;
+	StringLibrary filePathLiblary_;
 };

@@ -4,12 +4,12 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
-StringLiblary::StringLiblary() {
+StringLibrary::StringLibrary() {
 	liblary_.clear();
 	liblaryFriendryName_ = "";
 }
 
-StringLiblary::~StringLiblary() {
+StringLibrary::~StringLibrary() {
 #ifdef _DEBUG
 	DebugLog(std::format("=====LiblaryListLog from {}=====",liblaryFriendryName_));
 	uint32_t index = 0;
@@ -21,7 +21,7 @@ StringLiblary::~StringLiblary() {
 #endif // _DEBUG
 }
 
-void StringLiblary::Init(const std::string& libraryFriendName) {
+void StringLibrary::Init(const std::string& libraryFriendName) {
 	liblary_.clear();
 	liblaryFriendryName_ = libraryFriendName;
 #ifdef _DEBUG
@@ -29,7 +29,7 @@ void StringLiblary::Init(const std::string& libraryFriendName) {
 #endif // _DEBUG
 }
 
-void StringLiblary::AddStringToLiblary(const std::string& string) {
+void StringLibrary::AddStringToLiblary(const std::string& string) {
 	if (FindString(string)) {
 #ifdef _DEBUG
 		DebugLog(std::format("[{}] already loaded.",string));
@@ -43,7 +43,7 @@ void StringLiblary::AddStringToLiblary(const std::string& string) {
 	}
 }
 
-bool StringLiblary::FindString(const std::string& string) {
+bool StringLibrary::FindString(const std::string& string) {
 	for (std::string& str : liblary_) {
 		if (str == string) {
 #ifdef _DEBUG
@@ -59,7 +59,7 @@ bool StringLiblary::FindString(const std::string& string) {
 	return false;
 }
 
-int32_t StringLiblary::GetLiblaryIndex(const std::string& string) {
+int32_t StringLibrary::GetLiblaryIndex(const std::string& string) {
 	uint32_t indexCount = 0;
 	for (std::string& str : liblary_) {
 		if (str == string) {
@@ -73,7 +73,7 @@ int32_t StringLiblary::GetLiblaryIndex(const std::string& string) {
 	return -1;
 }
 
-std::string StringLiblary::GetDatanameFromIndex(uint32_t index) {
+std::string StringLibrary::GetDatanameFromIndex(uint32_t index) {
 	std::string result = "None";
 	if (static_cast<uint32_t>(liblary_.size()) <= index) {
 		return result;
