@@ -240,6 +240,11 @@ uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {
 	return currentScene_->RunTimeAddEntity(entityName);
 }
 
+void SceneManager::RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName)
+{
+	currentScene_->RunTimeAddLuaScript(entityId, scriptName);
+}
+
 void SceneManager::StartScript() {
 	currentScene_->RunScene();
 }

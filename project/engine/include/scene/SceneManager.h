@@ -91,6 +91,8 @@ public:
 	uint32_t AddEntity(const std::string& entityName);
     /** @brief 実行時にエンティティを追加 */
 	uint32_t RunTimeAddEntity(const std::string& entityName);
+	/** @brief 実行時にLuaスクリプトを追加 */
+	void RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName);
 
     /** @brief シングローバルのシーンデータを取得 */
 	nlohmann::json& GetSceneGlobalData() { return sceneGlobalData_; }

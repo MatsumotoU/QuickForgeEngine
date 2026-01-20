@@ -10,6 +10,9 @@ function Init()
     -- カード名登録
     cardNames[1] = "BpmCard.json"
     cardNames[2] = "BallCard.json"
+    cardNames[3] = "ScoreUpCard.json"
+    cardNames[4] = "SpeedCard.json"
+    cardNames[5] = "SizeDownCard.json"
 
     -- 生成
     tempT.translate = transform.translate
