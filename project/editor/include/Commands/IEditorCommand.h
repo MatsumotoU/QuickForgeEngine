@@ -10,7 +10,7 @@ public:
 	/** @brief コンストラクタ */
 	IEditorCommand() = delete;
 	explicit IEditorCommand(
-		std::vector<std::string>& consoleLog) : cons_(consoleLog) {}
+		std::vector<std::string>& consoleLog, const char* command = nullptr) : cons_(consoleLog), command_(command) {}
 
 	virtual ~IEditorCommand() = default;
 	/** @brief コマンドを実行する */
@@ -21,5 +21,6 @@ public:
 	virtual const std::vector<std::string> GetAliases() const = 0;
 
 protected:
+	const char* command_;
 	std::vector<std::string>& cons_;
 };

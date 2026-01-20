@@ -5,10 +5,10 @@
 #include <list>
 #include <unordered_map>
 
-class StringLiblary {
+class StringLibrary {
 public:
-	StringLiblary();
-	~StringLiblary();
+	StringLibrary();
+	~StringLibrary();
 
 public:
 	/// <summary>

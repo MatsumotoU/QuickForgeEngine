@@ -35,6 +35,9 @@
                 "fovY": 0.44999998807907104,
                 "nearZ": 0.10000000149011612
             },
+            "ParentData": {
+                "parentId": 3452816848
+            },
             "SceneObjectData": {
                 "name": "Camera",
                 "tag": "camera",

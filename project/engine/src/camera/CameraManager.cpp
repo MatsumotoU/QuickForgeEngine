@@ -88,31 +88,6 @@ void CameraManager::SnapToDebugCamera(uint32_t index) {
 #endif // _DEBUG
 }
 
-//std::vector<Camera>& CameraManager::GetCameras() {
-//	if (cameras_.empty()) {
-//		assert(!cameras_.empty() && "No cameras available.");
-//	}
-//
-//#ifdef _DEBUG
-//	// 0逡ｪ莉･螟悶・繧ｫ繝｡繝ｩ縺縺代ｒ霑斐☆
-//	if (cameras_.size() > 1) {
-//		// 0逡ｪ莉･螟悶・繧ｫ繝｡繝ｩ縺縺代ｒ譬ｼ邏阪☆繧虐tatic縺ｪvector繧堤畑諢・
-//		static std::vector<Camera> nonDebugCameras;
-//		nonDebugCameras.clear();
-//		for (size_t i = 1; i < cameras_.size(); ++i) {
-//			nonDebugCameras.push_back(cameras_[i]);
-//		}
-//		return nonDebugCameras;
-//	}
-//	// 0逡ｪ縺励°縺ｪ縺・ｴ蜷医・遨ｺ縺ｮvector繧定ｿ斐☆
-//	static std::vector<Camera> emptyCameras;
-//	emptyCameras.clear();
-//	return emptyCameras;
-//#else
-//	return cameras_;
-//#endif // _DEBUG
-//}
-
 void CameraManager::SetMainCameraIndex(uint32_t index) {
 	assert(index < cameras_.size() && "Camera index is out of range.");
 	mainCameraIndex_ = index;

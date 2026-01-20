@@ -2,7 +2,7 @@
 
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/assets/AssetManager.h"
-#include "engine/include/utility/ID/UniqeIDManager.h"
+#include "engine/include/utility/ID/UniqueIDManager.h"
 
 #include "engine/include/scene/Data/SceneObjectData.h"
 

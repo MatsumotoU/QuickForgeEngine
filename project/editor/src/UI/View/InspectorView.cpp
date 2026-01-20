@@ -171,7 +171,7 @@ void InspectorView::Draw() {
 	if (assetManager->GetEntityManager()->HasComponent<ScriptHandles>(selectedEntityId_)) {
 		ScriptHandles& scriptHandle = assetManager->GetEntityManager()->GetComponent<ScriptHandles>(selectedEntityId_);
 
-		if (ImGui::CollapsingHeader("Scripts##ScripPropaties")) {
+		if (ImGui::CollapsingHeader("Scripts##ScriptProperties")) {
 			if (ImGui::Button("Delete##Scripts")) {
 				assetManager->GetEntityManager()->RemoveComponent<ScriptHandles>(selectedEntityId_);
 			}

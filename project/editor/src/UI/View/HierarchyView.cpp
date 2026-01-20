@@ -61,7 +61,7 @@ void HierarchyView::DrawPopupContextWindow() {
 
 		if (ImGui::BeginMenu("Add")) {
 			if (ImGui::MenuItem("Empty Entity")) {
-				SceneManager::GetInstance()->AddEpmtyObject();
+				SceneManager::GetInstance()->AddEmptyObject();
 			}
 
 			if (ImGui::BeginMenu("Entity")) {
