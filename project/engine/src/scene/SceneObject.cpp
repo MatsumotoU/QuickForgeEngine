@@ -662,11 +662,6 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
 		modelHandle.Deserialize(entityJson["ModelHandle"]);
 	}
-	/*if (entityJson.contains("ParticleComponent")) {
-		entityManager->EmplaceComponent<ParticleComponent>(entityId);
-		ParticleComponent& particleComponent = entityManager->GetComponent<ParticleComponent>(entityId);
-		particleComponent.Deserialize(entityJson["ParticleComponent"]);
-	}*/
 	if (entityJson.contains("SceneObjectData")) {
 		entityManager->EmplaceComponent<SceneObjectData>(entityId);
 		SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
