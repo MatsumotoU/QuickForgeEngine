@@ -167,8 +167,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
-    <ClInclude Include="include\input\Logger\InputLogData.h" />
-    <ClInclude Include="include\input\Logger\InputLogger.h" />
     <ClInclude Include="QuickForgeEngine.h" />
     <ClInclude Include="include\WindowsEngineCore.h" />
     <ClInclude Include="include\assets\2DTexture\TextureManager.h" />
@@ -200,8 +198,8 @@
     <ClInclude Include="include\assets\Script\LuaScriptOnQFE.h" />
     <ClInclude Include="include\assets\Script\LuaScriptResourceManager.h" />
     <ClInclude Include="include\assets\Script\QFElinker\CsharpOnQFELinker.h" />
-    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h" />
+    <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetStructBase.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.h" />
@@ -284,6 +282,8 @@
     <ClInclude Include="include\input\DirectInput\DirectInputMouse.h" />
     <ClInclude Include="include\input\InputInterface.h" />
     <ClInclude Include="include\input\KeyConfig.h" />
+    <ClInclude Include="include\input\Logger\InputLogData.h" />
+    <ClInclude Include="include\input\Logger\InputLogger.h" />
     <ClInclude Include="include\input\Mic\WASAPIMicrophoneDevice.h" />
     <ClInclude Include="include\input\XInput\XInputController.h" />
     <ClInclude Include="include\physics\Force.h" />
@@ -348,7 +348,6 @@
     <ClInclude Include="resources\shaders\shaderStructs\hlslTypeToCpp.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\input\Logger\InputLogger.cpp" />
     <ClCompile Include="QuickForgeEngine.cpp" />
     <ClCompile Include="src\WindowsEngineCore.cpp" />
     <ClCompile Include="src\assets\2DTexture\TextureManager.cpp" />
@@ -372,8 +371,8 @@
     <ClCompile Include="src\assets\Script\LuaScriptOnQFE.cpp" />
     <ClCompile Include="src\assets\Script\LuaScriptResourceManager.cpp" />
     <ClCompile Include="src\assets\Script\QFElinker\CsharpOnQFELinker.cpp" />
-    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.cpp" />
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp" />
+    <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetMyMath.cpp" />
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.cpp" />
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetStructBase.cpp" />
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetSubModuleBase.cpp" />
@@ -432,6 +431,7 @@
     <ClCompile Include="src\input\DirectInput\DirectInputMouse.cpp" />
     <ClCompile Include="src\input\InputInterface.cpp" />
     <ClCompile Include="src\input\KeyConfig.cpp" />
+    <ClCompile Include="src\input\Logger\InputLogger.cpp" />
     <ClCompile Include="src\input\Mic\WASAPIMicrophoneDevice.cpp" />
     <ClCompile Include="src\input\XInput\XInputController.cpp" />
     <ClCompile Include="src\physics\Force.cpp" />
