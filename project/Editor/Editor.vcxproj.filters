@@ -39,7 +39,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="include\Commands\AllEditorCommands.h">
       <Filter>include\Commands</Filter>
     </ClInclude>

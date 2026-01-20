@@ -175,7 +175,6 @@ exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="include\Commands\AllEditorCommands.h" />
     <ClInclude Include="include\Commands\CSCompileScriptCommand.h" />
     <ClInclude Include="include\Commands\CSCreateBoundScriptInstanceCommand.h" />
