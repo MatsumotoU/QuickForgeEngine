@@ -177,8 +177,22 @@ exit /b 0</Command>
   <ItemGroup>
     <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="include\Commands\AllEditorCommands.h" />
+    <ClInclude Include="include\Commands\CSCompileScriptCommand.h" />
+    <ClInclude Include="include\Commands\CSCreateBoundScriptInstanceCommand.h" />
+    <ClInclude Include="include\Commands\CSCreateProjectCommand.h" />
+    <ClInclude Include="include\Commands\CSCreateScriptInstanceCommand.h" />
+    <ClInclude Include="include\Commands\CSLoadAssemblyCommand.h" />
+    <ClInclude Include="include\Commands\CSOpenProjectCommand.h" />
+    <ClInclude Include="include\Commands\CSReloadAssemblyCommand.h" />
+    <ClInclude Include="include\Commands\CSRunScriptCommand.h" />
+    <ClInclude Include="include\Commands\ClearCommand.h" />
     <ClInclude Include="include\Commands\EchoCommand.h" />
     <ClInclude Include="include\Commands\IEditorCommand.h" />
+    <ClInclude Include="include\Commands\LuaScriptInitializeCommand.h" />
+    <ClInclude Include="include\Commands\LuaScriptReloadCommand.h" />
+    <ClInclude Include="include\Commands\LuaScriptUpdateCommand.h" />
+    <ClInclude Include="include\Commands\SceneRunCommand.h" />
+    <ClInclude Include="include\Commands\SceneStopCommand.h" />
     <ClInclude Include="include\IEditor.h" />
     <ClInclude Include="include\OnWindowsEditor.h" />
     <ClInclude Include="include\UI\Edit\ColliderMaskEdit.h" />
@@ -203,8 +217,22 @@ exit /b 0</Command>
     <ClInclude Include="include\UI\View\ScriptLoggerView.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\Commands\EchoCommand.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Commands\CSCompileScriptCommand.cpp" />
+    <ClCompile Include="src\Commands\CSCreateBoundScriptInstanceCommand.cpp" />
+    <ClCompile Include="src\Commands\CSCreateProjectCommand.cpp" />
+    <ClCompile Include="src\Commands\CSCreateScriptInstanceCommand.cpp" />
+    <ClCompile Include="src\Commands\CSLoadAssemblyCommand.cpp" />
+    <ClCompile Include="src\Commands\CSOpenProjectCommand.cpp" />
+    <ClCompile Include="src\Commands\CSReloadAssemblyCommand.cpp" />
+    <ClCompile Include="src\Commands\CSRunScriptCommand.cpp" />
+    <ClCompile Include="src\Commands\ClearCommand.cpp" />
+    <ClCompile Include="src\Commands\EchoCommand.cpp" />
+    <ClCompile Include="src\Commands\LuaScriptInitializeCommand.cpp" />
+    <ClCompile Include="src\Commands\LuaScriptReloadCommand.cpp" />
+    <ClCompile Include="src\Commands\LuaScriptUpdateCommand.cpp" />
+    <ClCompile Include="src\Commands\SceneRunCommand.cpp" />
+    <ClCompile Include="src\Commands\SceneStopCommand.cpp" />
     <ClCompile Include="src\OnWindowsEditor.cpp" />
     <ClCompile Include="src\UI\Edit\ColliderMaskEdit.cpp" />
     <ClCompile Include="src\UI\Edit\DebugConsole.cpp" />

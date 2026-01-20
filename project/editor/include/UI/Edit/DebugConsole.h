@@ -6,6 +6,8 @@
 #pragma once
 #include "../IEditorUI.h"
 #include <vector>
+#include <memory>
+#include "editor/include/Commands/IEditorCommand.h"
 
 /**
  * @class DebugConsole
@@ -29,4 +31,5 @@ private:
 
 	/** @brief コマンドの実行 */
 	void ExecCommand(const char* command);
+	std::vector<std::unique_ptr<IEditorCommand>> commandList_; ///< 利用可能なコマンドのリスト
 };

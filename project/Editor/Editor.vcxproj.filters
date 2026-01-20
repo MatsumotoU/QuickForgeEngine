@@ -22,6 +22,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Commands">
+      <UniqueIdentifier>{0E2916E8-FA8B-A58C-A311-DE428F53710F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\UI">
       <UniqueIdentifier>{3A4B661C-26ED-90F2-0FA8-A446FBE81743}</UniqueIdentifier>
     </Filter>
@@ -40,10 +43,52 @@
     <ClInclude Include="include\Commands\AllEditorCommands.h">
       <Filter>include\Commands</Filter>
     </ClInclude>
+    <ClInclude Include="include\Commands\CSCompileScriptCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\CSCreateBoundScriptInstanceCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\CSCreateProjectCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\CSCreateScriptInstanceCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\CSLoadAssemblyCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\CSOpenProjectCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\CSReloadAssemblyCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\CSRunScriptCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\ClearCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
     <ClInclude Include="include\Commands\EchoCommand.h">
       <Filter>include\Commands</Filter>
     </ClInclude>
     <ClInclude Include="include\Commands\IEditorCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\LuaScriptInitializeCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\LuaScriptReloadCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\LuaScriptUpdateCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\SceneRunCommand.h">
+      <Filter>include\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commands\SceneStopCommand.h">
       <Filter>include\Commands</Filter>
     </ClInclude>
     <ClInclude Include="include\IEditor.h">
@@ -114,10 +159,52 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\Commands\EchoCommand.cpp">
-      <Filter>include\Commands</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Commands\CSCompileScriptCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\CSCreateBoundScriptInstanceCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\CSCreateProjectCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\CSCreateScriptInstanceCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\CSLoadAssemblyCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\CSOpenProjectCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\CSReloadAssemblyCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\CSRunScriptCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\ClearCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\EchoCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\LuaScriptInitializeCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\LuaScriptReloadCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\LuaScriptUpdateCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\SceneRunCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Commands\SceneStopCommand.cpp">
+      <Filter>src\Commands</Filter>
+    </ClCompile>
     <ClCompile Include="src\OnWindowsEditor.cpp">
       <Filter>src</Filter>
     </ClCompile>
