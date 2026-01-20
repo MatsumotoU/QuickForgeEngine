@@ -24,8 +24,8 @@ function Update()
     local delta = GetDeltaTime()
     timer = timer + delta
 
-    if speed > 10.0 then
-        speed = 10.0
+    if speed > 6.0 then
+        speed = 6.0
     end
 
     speed = QFE.Math.SimpleEaseIn(speed,baseSpeed,0.01)
@@ -77,15 +77,15 @@ function OnCollisionStay(id,obj)
     if obj.tag == "player" then
         local x = -(GetTransform(id).translate.x - transform.translate.x)
         dirX = x
-        dirY = math.abs(dirY)
+        dirY = -dirY
         speed =speed+3.5
     elseif obj.tag == "sideWall" then
         dirX =-dirX
     elseif obj.tag == "topWall" then
         dirY =-dirY
     else
-        local x = math.abs(GetTransform(id).translate.x - transform.translate.x) 
-        local z = math.abs(GetTransform(id).translate.z - transform.translate.z) 
+        local x = math.abs(GetTransform(id).translate.x - transform.translate.x)
+        local z = math.abs(GetTransform(id).translate.z - transform.translate.z)
         if x > z then
             dirX =-dirX
         else

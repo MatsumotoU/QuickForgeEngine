@@ -23,6 +23,11 @@ sphereCollider = {}
 --[ GLOBAL FUNCTIONS ]
 ---
 
+---comment
+---@param id number
+---@param scriptName string
+function AddLuaScript(id,scriptName)end
+
 ---@param tagName string
 function DeleteAllTagEntity(tagName)end
 

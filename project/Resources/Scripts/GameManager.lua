@@ -6,6 +6,7 @@ local beatId = 0
 local isGameEnd = false
 local isShop = false
 local isNextStage = false
+local isTakeFirstDamagePlayer = false
 
 local gameEndTimer = 0.0
 
@@ -27,6 +28,7 @@ function Update()
             if isNextStage then
                 SimpleCreateEntity("ShopManager.json")
                 RunAllFunction("OnNextStage")
+                isTakeFirstDamagePlayer = false
                 isGameEnd = false
                 isNextStage = false
                 gameEndTimer = 0.0
@@ -50,6 +52,11 @@ function Update()
             isNextStage = true
             DebugLog("Play")
             QFE.Audio.PlaySound(fanfareSE,false,0.2)
+
+            if not isTakeFirstDamagePlayer then
+                SimpleCreateEntity("NoDamageUI.json")
+            end
+            
         end
 
         if GetEntityScriptGlobal(beatId,"Pacemaker.lua","bpm") <= 0 then
@@ -60,4 +67,8 @@ function Update()
     end
     
 
+end
+
+function OnPlayerDamage()
+    isTakeFirstDamagePlayer = true
 end

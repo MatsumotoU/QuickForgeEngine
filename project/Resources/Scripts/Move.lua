@@ -17,6 +17,8 @@ local moveRotateY = 0.0
 
 local beatId = 0
 
+local startTime = 0.0
+
 function Init()
     scaleX = transform.scale.x
     scaleY = transform.scale.z
@@ -39,9 +41,14 @@ function Update()
     end
 
     if QFE.Input.GetKeyTrigger("Jump") then
+        startTime = 0.5
+    end
+
+    if startTime > 0.0 then
         if CountEntityTag("card") <= 0 then
             isStart =true
         end
+        startTime = startTime - GetDeltaTime()
     end
 
     if isNearBall then
@@ -141,10 +148,11 @@ function Update()
 end
 
 function OnCollisionEnter(id,obj)
-    force.velocity.x = 0.0
+    
     if obj.tag == "ball" then
         local x = (GetTransform(id).translate.x - transform.translate.x)
         transform.rotate.y = x * 10.0;
+        force.velocity.x = 0.0
     end
 end
 
@@ -164,11 +172,13 @@ function OnCollisionStay(id,obj)
                 damageInterval = 2.5
             end
         end
-        force.velocity.x = (transform.translate.x - GetTransform(id).translate.x)*20.0
-        force.velocity.z = (transform.translate.z - GetTransform(id).translate.z)*20.0
+        force.velocity.x = (transform.translate.x - GetTransform(id).translate.x)*5.0
+        force.velocity.z = (transform.translate.z - GetTransform(id).translate.z)*5.0
 
         local a = SimpleCreateEntity("BigHitCircleParticle.json")
         SetTranslate(a,transform.translate)
+
+        RunAllFunction("OnPlayerDamage")
     end
 end
 
@@ -191,4 +201,15 @@ function OnNextStage()
     force.velocity.z = 0.0
     force.acceleration.x = 0.0
     force.acceleration.z = 0.0
+end
+
+function OnUpGradeSizeDownCard()
+    DebugLog("PlayerSizeDown")
+    scaleX = scaleX * 0.6
+    scaleY = scaleY * 0.6
+end
+
+function OnUpGradeSpeedCard()
+    DebugLog("SpeedUp")
+    moveSpeed = moveSpeed + 1.5
 end

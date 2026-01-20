@@ -56,4 +56,8 @@ void QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(sol::state* luaState) {
 			SceneManager::GetInstance()->DeleteEntity(id);
 		}
 	});
+
+	luaState->set_function("AddLuaScript", [](uint32_t id, const std::string& scriptName) {
+		SceneManager::GetInstance()->RunTimeAddLuaScript(id, scriptName);
+		});
 }

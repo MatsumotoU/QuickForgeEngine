@@ -36,6 +36,7 @@ public:
 	virtual void AddCsharpScript(uint32_t entityId, const std::string& className) = 0;
 	virtual uint32_t AddEntity(const std::string& entityName) = 0;
 	virtual uint32_t RunTimeAddEntity(const std::string& entityName) = 0;
+	virtual void RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName) = 0;
 
 	// シーンにあるオブジェクトを保存、読み込み、変更
 	virtual void DeleteEntity(uint32_t entityId) = 0;

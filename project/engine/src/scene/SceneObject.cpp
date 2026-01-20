@@ -487,6 +487,21 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	return entityId;
 }
 
+void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName)
+{
+	AddLuaScript(entityId, scriptName);
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	if (entityManager->HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
+		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+		for (const auto& sh : scriptHandles.scriptHandles_) {
+			if (sh.scriptName_ == scriptName) {
+				LuaScriptResourceManager::GetInstance()->InitializeScript(sh.handle_);
+				break;
+			}
+		}
+	}
+}
+
 void SceneObject::DeleteEntity(uint32_t entityId)
 {
 	frameStartCommandInvoker_.AddCommand(std::make_unique<DeleteSceneEntityCommand>(*(assetManager_->GetEntityManager()), entityId));

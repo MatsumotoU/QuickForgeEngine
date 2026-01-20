@@ -46,6 +46,7 @@ public:
 	void AddCsharpScript(uint32_t entityId, const std::string& className) override;
 	uint32_t AddEntity(const std::string& entityName) override;
 	uint32_t RunTimeAddEntity(const std::string& entityName) override;
+	void RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName) override;
 
 	// シーンにあるオブジェクトを保存、読み込み、変更
 	void DeleteEntity(uint32_t entityId) override;
