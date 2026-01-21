@@ -73,6 +73,7 @@ void SceneObject::Update() {
 
 	// 繝ｩ繝ｳ繧ｿ繧､繝荳ｭ縺ｮ繧ｵ繝悶Δ繧ｸ繝･繝ｼ繝ｫ縺ｮ譖ｴ譁ｰ
 	if (isRunningScript_ && !isPauseScript_) {
+		LuaScriptResourceManager::GetInstance()->FrameStart();
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();

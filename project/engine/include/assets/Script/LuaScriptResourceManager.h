@@ -7,6 +7,10 @@
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 
+#ifdef QFE_OPTIMIZE_OFF
+#include <chrono>
+#endif // QFE_OPTIMIZE_OFF
+
 class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager> {
 	friend class Singleton<LuaScriptResourceManager>;
 	LuaScriptResourceManager();
@@ -16,6 +20,7 @@ class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager>
 	LuaScriptResourceManager& operator=(LuaScriptResourceManager&&) = delete;
 public:
 	void Initialize();
+	void FrameStart();
 	void Reset();
 	void ReloadAllScripts();
 
@@ -39,6 +44,12 @@ public:
 	void SetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value);
 	void RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName);
 	sol::state& GetSharedState() { return *sharedLuaState_; }
+	int GetScriptCount() const { return static_cast<int>(scripts_.size()); }
+
+#ifdef QFE_OPTIMIZE_OFF
+	double GetViewUpdateTime() const { return viewUpdateTime_.count(); }
+	double GetTotalUpdateTime() const { return totalUpdateTime_.count(); }
+#endif // QFE_OPTIMIZE_OFF
 
 	bool isRunningScript_;
 private:
@@ -50,4 +61,8 @@ private:
 	std::unique_ptr<sol::state> sharedLuaState_;
 	uint32_t nextScriptHandle_;
 
+#ifdef QFE_OPTIMIZE_OFF
+	std::chrono::duration<double> viewUpdateTime_;
+	std::chrono::duration<double> totalUpdateTime_;
+#endif // QFE_OPTIMIZE_OFF
 };

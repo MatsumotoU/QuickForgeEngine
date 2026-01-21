@@ -43,6 +43,8 @@ public:
 	void RunAllScriptsFunction(const std::string& functionName);
 	/// @brief 終了処理.
 	void Finalize();
+	/// @brief スクリプト数の取得.
+	int GetScriptCount() const { return static_cast<int>(scripts_.size()); }
 
 private:
 	MonoDomain* root_domain_ = nullptr;
