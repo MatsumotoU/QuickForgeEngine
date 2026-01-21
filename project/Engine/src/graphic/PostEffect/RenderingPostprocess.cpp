@@ -1,4 +1,4 @@
-#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
+﻿#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 
 #include "engine/include/utility/DirectX/TransitionResourceBarrier.h"
 #include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
@@ -9,10 +9,10 @@
 #include <cassert>
 #include <algorithm>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 RenderingPostprocess::RenderingPostprocess() {
 	isImGuiEnabled_ = false;
@@ -55,9 +55,9 @@ RenderingPostprocess::RenderingPostprocess() {
 
 	grayScaleOffset_ = 0.0f;
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	isImGuiEnabled_ = true;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void RenderingPostprocess::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* list) {
@@ -68,14 +68,14 @@ void RenderingPostprocess::Initialize(ID3D12Device* device, ID3D12GraphicsComman
 	assert(device_);
 	assert(list_);
 
-	// 頂点バッファ生成
+	// 鬆らせ繝舌ャ繝輔ぃ逕滓・
 	vertexResource_ = BufferGenerator::Generate(device, sizeof(VertexData) * 4);
 	vertexBufferView_ = {};
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
-	// 頂点データ設定
+	// 鬆らせ繝・・繧ｿ險ｭ螳・
 	vertexData_ = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	vertexData_[0].position = { -1.0f,1.0f,0.0f,1.0f };
@@ -91,7 +91,7 @@ void RenderingPostprocess::Initialize(ID3D12Device* device, ID3D12GraphicsComman
 	vertexData_[3].texcoord = { 1.0f,1.0f };
 	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
 
-	// インデックスバッファ生成
+	// 繧､繝ｳ繝・ャ繧ｯ繧ｹ繝舌ャ繝輔ぃ逕滓・
 	indexResource_ = BufferGenerator::Generate(device, sizeof(uint32_t) * 6);
 	indexBufferView_ = {};
 	indexBufferView_.BufferLocation = indexResource_.Get()->GetGPUVirtualAddress();
@@ -226,7 +226,7 @@ void RenderingPostprocess::PreDraw() {
 		isSecondStateRenderTarget_ = true;
 	}
 
-	// 初期レンダーターゲット設定
+	// 蛻晄悄繝ｬ繝ｳ繝繝ｼ繧ｿ繝ｼ繧ｲ繝・ヨ險ｭ螳・
 	if (isPostprocess_ || isImGuiEnabled_) {
 		renderingRosourceIndex_ = 0;
 		list_->OMSetRenderTargets(1, &offScreenRtvHandles_[renderingRosourceIndex_], false, &dsvHandle_);
@@ -253,11 +253,11 @@ void RenderingPostprocess::PostDraw() {
 	list_->RSSetViewports(1, dxCommon_->GetViewPort());
 	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->OMSetRenderTargets(1, &backBufferRtvHandle_, false, &dsvHandle_);
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (isImGuiEnabled_) {
 		return;
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	list_->SetGraphicsRootSignature(normalPso_->GetRootSignature());
 	list_->SetPipelineState(normalPso_->GetPipelineState());
 	list_->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -267,7 +267,7 @@ void RenderingPostprocess::PostDraw() {
 	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 void RenderingPostprocess::DrawImGui() {
 	ImGui::Checkbox("Enable Postprocess", &isPostprocess_);
 	ImGui::Separator();
@@ -414,3 +414,5 @@ void RenderingPostprocess::ApplyPixcel() {
 	list_->SetGraphicsRootConstantBufferView(1, pixcelOffsetBuffer_.GetGPUVirtualAddress());
 	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
+
+

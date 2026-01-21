@@ -20,18 +20,18 @@ public:
 	void SnapToDebugCamera(uint32_t index);
 
 	void SetMainCameraIndex(uint32_t index);
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	void SetActiveDebugCamera(bool isActive) { isActiveDebugCamera_ = isActive; }
 	bool IsActiveDebugCamera() const { return isActiveDebugCamera_; }
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 private:
 	CameraManager() = default;
 	~CameraManager() = default;
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	bool isActiveDebugCamera_;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	uint32_t mainCameraIndex_;
 	std::unordered_map<uint32_t, Camera> cameras_;

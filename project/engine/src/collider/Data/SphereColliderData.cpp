@@ -1,4 +1,4 @@
-#include "engine/include/collider/Data/SphereColliderData.h"
+﻿#include "engine/include/collider/Data/SphereColliderData.h"
 
 SphereColliderData::SphereColliderData() {
 	sphere = { {0.0f, 0.0f, 0.0f}, 1.0f };
@@ -15,9 +15,9 @@ nlohmann::json SphereColliderData::Serialize() const {
 	json["sphere"] = { sphere.center.x, sphere.center.y, sphere.center.z, sphere.radius };
 	json["colliderLayer"] = colliderLayer;
 	json["eventColliderLayer"] = eventColliderLayer;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	json["isDraw"] = isDraw;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	return json;
 }
@@ -41,10 +41,12 @@ void SphereColliderData::Deserialize(const nlohmann::json& json) {
 	if (json.contains("eventColliderLayer") && json["eventColliderLayer"].is_number_unsigned()) {
 		eventColliderLayer = json["eventColliderLayer"].get<uint8_t>();
 	}
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (json.contains("isDraw") && json["isDraw"].is_boolean()) {
 		isDraw = json["isDraw"].get<bool>();
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 }
+
+

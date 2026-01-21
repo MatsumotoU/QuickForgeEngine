@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
 #include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
@@ -49,10 +49,10 @@ public:
 	void PreDraw();
 	void PostDraw();
 
-public:// debug機�E
-#ifdef _DEBUG
+public:// debug讖滂ｿｽE
+#ifdef QFE_OPTIMIZE_OFF
 	void DrawImGui();
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 private:
 	void ClearFirstRenderTarget();
@@ -64,7 +64,7 @@ private:
 	void ApplyColorCorrection();
 	void ApplyPixcel();
 
-public:// パブリチE��変数
+public:// 繝代ヶ繝ｪ繝・・ｽ・ｽ螟画焚
 	bool isPostprocess_;
 	bool isImGuiEnabled_;
 
@@ -74,28 +74,28 @@ public:// パブリチE��変数
 	bool enableNormal_;
 	bool enablePixcel_;
 
-private:// 色調補正
+private:// 濶ｲ隱ｿ陬懈ｭ｣
 	PipelineStateObject* colorCorrectionPso_;
 	ConstantBuffer<ColorCorrectionOffset> colorCorrectionOffsetBuffer_;
 	int colorCorrectionProcessIndex_;
 
-private:// グレースケール変数
+private:// 繧ｰ繝ｬ繝ｼ繧ｹ繧ｱ繝ｼ繝ｫ螟画焚
 	PipelineStateObject* grayScalePso_;
 	ConstantBuffer<OffsetBuffer> grayScaleOffsetBuffer_;
 	float grayScaleOffset_;
 	int grayScaleProcessIndex_;
 
-private:// ビネチE��変数
+private:// 繝薙ロ繝・・ｽ・ｽ螟画焚
 	PipelineStateObject* vignettePso_;
 	ConstantBuffer<VignetteOffset> vignetteOffsetBuffer_;
 	int vignetteProcessIndex_;
 
-private:// ピクセル化変数
+private:// 繝斐け繧ｻ繝ｫ蛹門､画焚
 	PipelineStateObject* pixcelPso_;
 	ConstantBuffer<PixcelOffset> pixcelOffsetBuffer_;
 	int pixcelProcessIndex_;
 
-private:// メンバ変数
+private:// 繝｡繝ｳ繝仙､画焚
 	DirectXCommon* dxCommon_ = nullptr;
 	ID3D12Device* device_; 
 	ID3D12GraphicsCommandList* list_;
@@ -115,7 +115,7 @@ private:// メンバ変数
 	bool isFirstStateRenderTarget_;
 	bool isSecondStateRenderTarget_;
 
-private:// 画面用
+private:// 逕ｻ髱｢逕ｨ
 	float offScreenClearColor[4];
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
@@ -124,3 +124,5 @@ private:// 画面用
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 	uint32_t* indexData_;
 };
+
+

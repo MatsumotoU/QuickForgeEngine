@@ -1,28 +1,28 @@
 #include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // DEBUG
 #include <cassert>
 
 ImGuiFlameController::ImGuiFlameController() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	stateCheck_ = 0;
 	DebugLog("ImGuiManager : Generate Instance");
 #endif // DEBUG
 }
 
 ImGuiFlameController::~ImGuiFlameController() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (stateCheck_ != 0) {
 		DebugLog(std::format("!!! ImGuiManager : Error{} !!!\n", stateCheck_));
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void ImGuiFlameController::Initialize(const HWND& hwnd, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* const* srvDescriptorHeap) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	stateCheck_++;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	commandList_ = commandList;
 	assert(commandList_ != nullptr);
 	srvDescriptorHeap_ = srvDescriptorHeap;
@@ -49,9 +49,9 @@ void ImGuiFlameController::EndImGui() {
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	stateCheck_--;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void ImGuiFlameController::BeginFrame() {

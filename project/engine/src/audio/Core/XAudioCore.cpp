@@ -1,6 +1,6 @@
-/**
+﻿/**
  * @file XAudioCore.cpp
- * @brief XAudio2の基盤部分(デバイス生成等)を管理するクラスの実装
+ * @brief XAudio2縺ｮ蝓ｺ逶､驛ｨ蛻・繝・ヰ繧､繧ｹ逕滓・遲・繧堤ｮ｡逅・☆繧九け繝ｩ繧ｹ縺ｮ螳溯｣・
  */
 
 #include "engine/include/audio/Core/XAudioCore.h"
@@ -21,33 +21,33 @@
 
 #pragma comment(lib,"xaudio2.lib")
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/MyString.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
-/** @brief デストラクタ */
+/** @brief 繝・せ繝医Λ繧ｯ繧ｿ */
 XAudioCore::~XAudioCore() {
 	xAudio2_.Reset();
 }
 
-/** @brief 初期化 */
+/** @brief 蛻晄悄蛹・*/
 void XAudioCore::Initialize() {
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
-	// XAudio2の初期化
+	// XAudio2縺ｮ蛻晄悄蛹・
 	masterVoice_ = nullptr;
 	hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(hr));
-	// チャンネル数は2で固定
+	// 繝√Ε繝ｳ繝阪Ν謨ｰ縺ｯ2縺ｧ蝗ｺ螳・
 	hr = xAudio2_.Get()->CreateMasteringVoice(&masterVoice_,2);
 	assert(SUCCEEDED(hr));
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(ConvertString(std::format(L"MasterVoice->nChannels:{}", GetOutputChannels())));
 
-	// 音声デバイスを表示
+	// 髻ｳ螢ｰ繝・ヰ繧､繧ｹ繧定｡ｨ遉ｺ
 	IMMDeviceEnumerator* pEnumerator = NULL;
 	IMMDeviceCollection* pCollection = NULL;
 	IMMDevice* pEndpoint = NULL;
@@ -71,25 +71,25 @@ void XAudioCore::Initialize() {
 		DebugLog("Active Rendering Audio Endpoints");
 		for (UINT i = 0; i < count; i++)
 		{
-			// コレクションから個別のエンドポイントを取得
+			// 繧ｳ繝ｬ繧ｯ繧ｷ繝ｧ繝ｳ縺九ｉ蛟句挨縺ｮ繧ｨ繝ｳ繝峨・繧､繝ｳ繝医ｒ蜿門ｾ・
 			hr = pCollection->Item(i, &pEndpoint);
 			assert(SUCCEEDED(hr));
 
-			// デバイスのプロパティストアを開く
-			// デバイスの様々なプロパティ(名前、説明など)にアクセスするために必要
+			// 繝・ヰ繧､繧ｹ縺ｮ繝励Ο繝代ユ繧｣繧ｹ繝医い繧帝幕縺・
+			// 繝・ヰ繧､繧ｹ縺ｮ讒倥・↑繝励Ο繝代ユ繧｣(蜷榊燕縲∬ｪｬ譏弱↑縺ｩ)縺ｫ繧｢繧ｯ繧ｻ繧ｹ縺吶ｋ縺溘ａ縺ｫ蠢・ｦ・
 			hr = pEndpoint->OpenPropertyStore(STGM_READ, &pProps);
 			assert(SUCCEEDED(hr));
 
-			// PROPVARIANT の初期化
+			// PROPVARIANT 縺ｮ蛻晄悄蛹・
 			PropVariantInit(&varName);
 
-			// デバイスの表示名(Friendly Name) を取得
-			// PKEY_Device_FriendlyName はデバイスの表示名を識別するプロパティキー
+			// 繝・ヰ繧､繧ｹ縺ｮ陦ｨ遉ｺ蜷・Friendly Name) 繧貞叙蠕・
+			// PKEY_Device_FriendlyName 縺ｯ繝・ヰ繧､繧ｹ縺ｮ陦ｨ遉ｺ蜷阪ｒ隴伜挨縺吶ｋ繝励Ο繝代ユ繧｣繧ｭ繝ｼ
 			hr = pProps->GetValue(PKEY_Device_FriendlyName, &varName);
 			assert(SUCCEEDED(hr));
 
-			// 取得したプロパティ値を表示
-			if (varName.vt == VT_LPWSTR) // 値の型がワイド文字列か確認
+			// 蜿門ｾ励＠縺溘・繝ｭ繝代ユ繧｣蛟､繧定｡ｨ遉ｺ
+			if (varName.vt == VT_LPWSTR) // 蛟､縺ｮ蝙九′繝ｯ繧､繝画枚蟄怜・縺狗｢ｺ隱・
 			{
 				DebugLog("ActiveAudioDeviceName: " + ConvertString(varName.pwszVal));
 			} else
@@ -97,10 +97,10 @@ void XAudioCore::Initialize() {
 				DebugLog("ActiveAudioDeviceName = Unknown format");
 			}
 
-			// PROPVARIANT の解放
+			// PROPVARIANT 縺ｮ隗｣謾ｾ
 			PropVariantClear(&varName);
 
-			// リソースの解放
+			// 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ隗｣謾ｾ
 			pProps->Release();
 			pEndpoint->Release();
 		}
@@ -108,23 +108,23 @@ void XAudioCore::Initialize() {
 	pEnumerator->Release();
 	pCollection->Release();
 
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void XAudioCore::Finalize() {
 }
 
-/** @brief マスターボリュームの設定 */
+/** @brief 繝槭せ繧ｿ繝ｼ繝懊Μ繝･繝ｼ繝縺ｮ險ｭ螳・*/
 void XAudioCore::SetMasterVolume(float volume) {
 	masterVoice_->SetVolume(volume);
 }
 
-/** @brief 出力チャンネル数の取得 */
+/** @brief 蜃ｺ蜉帙メ繝｣繝ｳ繝阪Ν謨ｰ縺ｮ蜿門ｾ・*/
 uint32_t XAudioCore::GetOutputChannels() {
 	DWORD channelMask = 0;
 	masterVoice_->GetChannelMask(&channelMask);
 
-	// チャンネル数を数える
+	// 繝√Ε繝ｳ繝阪Ν謨ｰ繧呈焚縺医ｋ
 	uint32_t channelCount = 0;
 	for (uint32_t i = 0; i < 32; ++i) {
 		if (channelMask & (1 << i)) channelCount++;
@@ -132,7 +132,7 @@ uint32_t XAudioCore::GetOutputChannels() {
 	return channelCount;
 }
 
-// 繝槭せ繧ｿ繝ｼ繝懊Μ繝･繝ｼ繝縺ｮ蜿門ｾ・
+// 郢晄ｧｭ縺帷ｹｧ・ｿ郢晢ｽｼ郢晄㈱ﾎ懃ｹ晢ｽ･郢晢ｽｼ郢晢｣ｰ邵ｺ・ｮ陷ｿ髢・ｾ繝ｻ
 IXAudio2MasteringVoice* XAudioCore::GetMasterVoice() {
 	return masterVoice_;
 }
@@ -140,3 +140,5 @@ IXAudio2MasteringVoice* XAudioCore::GetMasterVoice() {
 IXAudio2* XAudioCore::GetXAudio2() {
 	return xAudio2_.Get();
 }
+
+

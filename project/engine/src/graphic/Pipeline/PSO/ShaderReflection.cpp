@@ -1,7 +1,7 @@
-#include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
-#ifdef _DEBUG
+﻿#include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 #include <cassert>
 
@@ -21,9 +21,9 @@ void ShaderReflection::RunShaderReflection(IDxcBlob* shaderBlob) {
 	hr = containerReflection_->GetPartReflection(partIndex, IID_PPV_ARGS(shaderReflection_.GetAddressOf()));
 	assert(SUCCEEDED(hr) && "Failed to get shader reflection from part.");
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 }
 
@@ -31,12 +31,12 @@ nlohmann::json ShaderReflection::Serialize() const {
 	nlohmann::json jsonData;
 	try
 	{
-		// シェーダーの説明を取得
+		// 繧ｷ繧ｧ繝ｼ繝繝ｼ縺ｮ隱ｬ譏弱ｒ蜿門ｾ・
 		D3D12_SHADER_DESC shaderDesc{};
 		HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
 		assert(SUCCEEDED(hr) && "Failed to get shader description.");
 		
-		// InputLayoutを取得
+		// InputLayout繧貞叙蠕・
 		jsonData["Inputs"] = nlohmann::json::array();
 		for (UINT i = 0; i < shaderDesc.InputParameters; ++i) {
 			D3D12_SIGNATURE_PARAMETER_DESC paramDesc{};
@@ -52,7 +52,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 			inputJson["ReadWriteMask"] = paramDesc.ReadWriteMask;
 			jsonData["Inputs"].push_back(inputJson);
 		}
-		// リソースバインディング情報を取得
+		// 繝ｪ繧ｽ繝ｼ繧ｹ繝舌う繝ｳ繝・ぅ繝ｳ繧ｰ諠・ｱ繧貞叙蠕・
 		jsonData["Resources"] = nlohmann::json::array();
 		for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 			D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -67,7 +67,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 			resourceJson["Flags"] = bindDesc.uFlags;
 			jsonData["Resources"].push_back(resourceJson);
 		}
-		// 定数バッファ情報を取得
+		// 螳壽焚繝舌ャ繝輔ぃ諠・ｱ繧貞叙蠕・
 		jsonData["ConstantBuffers"] = nlohmann::json::array();
 		for (UINT i = 0; i < shaderDesc.ConstantBuffers; ++i) {
 			ID3D12ShaderReflectionConstantBuffer* constBuffer = shaderReflection_->GetConstantBufferByIndex(i);
@@ -91,7 +91,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 			}
 			jsonData["ConstantBuffers"].push_back(bufferJson);
 		}
-		// ストラクチャードバッファ情報を取得
+		// 繧ｹ繝医Λ繧ｯ繝√Ε繝ｼ繝峨ヰ繝・ヵ繧｡諠・ｱ繧貞叙蠕・
 		jsonData["StructuredBuffers"] = nlohmann::json::array();
 		for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 			D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -107,7 +107,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 				jsonData["StructuredBuffers"].push_back(structuredBufferJson);
 			}
 		}
-		// テクスチャ情報を取得
+		// 繝・け繧ｹ繝√Ε諠・ｱ繧貞叙蠕・
 		jsonData["Textures"] = nlohmann::json::array();
 		for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 			D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -127,10 +127,12 @@ nlohmann::json ShaderReflection::Serialize() const {
 	catch (const std::exception& e)
 	{
 		e;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ShaderReflection::Serialize: Exception occurred - " + std::string(e.what()));
 #endif // =DEBUG
 
 	}
 	return jsonData;
 }
+
+

@@ -1,14 +1,14 @@
 #include "engine/include/graphic/DirectXCommon/Command/DirectXCommandManager.h"
 #include <cassert>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void DirectXCommandManager::Initialize(ID3D12Device* device) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Initialize called.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	assert(device && "Device is not initialized.");
 	commandExecutors_[0].Initialize(device, D3D12_COMMAND_LIST_TYPE_DIRECT);

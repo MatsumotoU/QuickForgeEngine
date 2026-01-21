@@ -25,14 +25,19 @@ workspace "QuickForgeEngine"
             "/openmp"
         }
     filter ""
-
+    
     filter "configurations:Debug"
-        defines { "_DEBUG" }
+        defines { "_DEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEBUG"}
         optimize "Off"
         symbols "On"
         runtime "Debug"
-    filter "configurations:Release or configurations:Development"
-        defines { "NDEBUG" }
+    filter "configurations:Development"
+        defines { "NDEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEVELOPMENT" } 
+        optimize "Off"  -- 最適化を無効化（ステップ実行が正確になる）
+        symbols "On"     -- デバッグ情報を出す
+        runtime "Release"
+    filter "configurations:Release"
+        defines { "NDEBUG", "QFE_OPTIMIZE_ON","QFE_MODE_RELEASE" }
         optimize "On"
         symbols "Off"
         runtime "Release"

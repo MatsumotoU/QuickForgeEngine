@@ -1,12 +1,12 @@
-#include "engine/include/graphic/DirectXCommon/SwapChain.h"
+﻿#include "engine/include/graphic/DirectXCommon/SwapChain.h"
 #include <cassert>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void SwapChain::CreateSwapChain(HWND hwnd, uint32_t width, uint32_t height, IDXGIFactory7* dxgiFactory, ID3D12CommandQueue* commandQueue) {
-	// * SwapChain繧堤函謌舌☆繧・* //
+	// * SwapChain郢ｧ蝣､蜃ｽ隰瑚・笘・ｹｧ繝ｻ* //
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_ = {};
 	swapChainDesc_.Width = width;
 	swapChainDesc_.Height = height;
@@ -15,7 +15,7 @@ void SwapChain::CreateSwapChain(HWND hwnd, uint32_t width, uint32_t height, IDXG
 	swapChainDesc_.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc_.BufferCount = 2;
 	swapChainDesc_.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	// 繧ｳ繝槭Φ繝峨く繝･繝ｼ縲√え繧｣繝ｳ繝峨え繝上Φ繝峨Ν縲∬ｨｭ螳壹ｒ貂｡縺励※逕滓・
+	// 郢ｧ・ｳ郢晄ｧｭﾎｦ郢晏ｳｨ縺冗ｹ晢ｽ･郢晢ｽｼ邵ｲ竏壹∴郢ｧ・｣郢晢ｽｳ郢晏ｳｨ縺育ｹ昜ｸ莞ｦ郢晏ｳｨﾎ晉ｸｲ竏ｬ・ｨ・ｭ陞ｳ螢ｹ・定ｲゑｽ｡邵ｺ蜉ｱ窶ｻ騾墓ｻ薙・
 	HRESULT hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue, hwnd, &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 	hr;
 	assert(SUCCEEDED(hr));
@@ -29,9 +29,9 @@ void SwapChain::AssignBackbuffer() {
 	for (int i = 0; i < backBuffers_.size(); ++i) {
 		hr = swapChain_.Get()->GetBuffer(i, IID_PPV_ARGS(backBuffers_.at(i).GetAddressOf()));
 		assert(SUCCEEDED(hr));
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::format("Assign BackBuffer: {}", i));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 }
 
@@ -79,26 +79,28 @@ void SwapChain::Present() {
 }
 
 void SwapChain::AssignDescriptorHandles(const DescriptorHandles& rtvHandle, uint32_t index) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Add DescriptorHandles to SwapChain: {}", index));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	assert(index < backBuffers_.size() && "Index out of range in AssignDescriptorHandles.");
 	backBufferViews_[index] = rtvHandle;
 }
 
 bool SwapChain::CheckBackBufferViews() const {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Buffer: {} View: {}", backBuffers_.size(), backBufferViews_.size()));
-#endif // _DEBUG
-	// 繝舌ャ繧ｯ繝舌ャ繝輔ぃ縺系ullptr縺ｧ縺ｪ縺・°遒ｺ隱・
+#endif // QFE_OPTIMIZE_OFF
+	// 郢晁・繝｣郢ｧ・ｯ郢晁・繝｣郢晁ｼ斐＜邵ｺ邉ｻullptr邵ｺ・ｧ邵ｺ・ｪ邵ｺ繝ｻﾂｰ驕抵ｽｺ髫ｱ繝ｻ
 	for (const auto& buffer : backBuffers_) {
 		if (buffer == nullptr) {
 			return false;
 		}
 	}
-	// 繝舌ャ繧ｯ繝舌ャ繝輔ぃ縺ｮ謨ｰ縺ｨ繝薙Η繝ｼ縺ｮ謨ｰ縺御ｸ閾ｴ縺励※縺・ｋ縺狗｢ｺ隱・
+	// 郢晁・繝｣郢ｧ・ｯ郢晁・繝｣郢晁ｼ斐＜邵ｺ・ｮ隰ｨ・ｰ邵ｺ・ｨ郢晁侭ﾎ礼ｹ晢ｽｼ邵ｺ・ｮ隰ｨ・ｰ邵ｺ蠕｡・ｸﾂ髢ｾ・ｴ邵ｺ蜉ｱ窶ｻ邵ｺ繝ｻ・狗ｸｺ迢暦ｽ｢・ｺ髫ｱ繝ｻ
 	if (backBufferViews_.size() != backBuffers_.size()) {
 		return false;
 	}
 	return true;
 }
+
+

@@ -1,5 +1,5 @@
 #include "engine/include/utility/DebugTool/DirectX/DebugLayer.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 DebugLayer::DebugLayer() {
 	debugController_ = nullptr;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_)))) {
@@ -8,4 +8,4 @@ DebugLayer::DebugLayer() {
 		debugController_->SetEnableSynchronizedCommandQueueValidation(TRUE);
 	}
 }
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF

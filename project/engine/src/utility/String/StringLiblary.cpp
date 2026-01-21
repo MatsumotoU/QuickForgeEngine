@@ -1,8 +1,8 @@
-#include "engine/include/utility/String/StringLiblary.h"
+﻿#include "engine/include/utility/String/StringLiblary.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 StringLibrary::StringLibrary() {
 	liblary_.clear();
@@ -10,7 +10,7 @@ StringLibrary::StringLibrary() {
 }
 
 StringLibrary::~StringLibrary() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("=====LiblaryListLog from {}=====",liblaryFriendryName_));
 	uint32_t index = 0;
 	for (std::string& str : liblary_) {
@@ -18,27 +18,27 @@ StringLibrary::~StringLibrary() {
 			index++;
 	}
 	DebugLog("========================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void StringLibrary::Init(const std::string& libraryFriendName) {
 	liblary_.clear();
 	liblaryFriendryName_ = libraryFriendName;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Create Liblary Name: {}", liblaryFriendryName_));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void StringLibrary::AddStringToLiblary(const std::string& string) {
 	if (FindString(string)) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::format("[{}] already loaded.",string));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	} else {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::format("Add string to liblary [{}].", string));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		liblary_.push_back(string);
 	}
 }
@@ -46,16 +46,16 @@ void StringLibrary::AddStringToLiblary(const std::string& string) {
 bool StringLibrary::FindString(const std::string& string) {
 	for (std::string& str : liblary_) {
 		if (str == string) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			DebugLog(std::format("Find [{}].", string));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 			return true;
 		}
 	}
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Not find [{}].", string));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	return false;
 }
 
@@ -63,9 +63,9 @@ int32_t StringLibrary::GetLiblaryIndex(const std::string& string) {
 	uint32_t indexCount = 0;
 	for (std::string& str : liblary_) {
 		if (str == string) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			DebugLog(std::format("Find {} Index: [{}].", string,indexCount));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 			return indexCount;
 		}
 		indexCount++;
@@ -82,3 +82,5 @@ std::string StringLibrary::GetDatanameFromIndex(uint32_t index) {
 	result = liblary_[index];
 	return result;
 }
+
+

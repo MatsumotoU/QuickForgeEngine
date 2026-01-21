@@ -1,4 +1,4 @@
-#include "engine/include/scene/SceneObject.h"
+﻿#include "engine/include/scene/SceneObject.h"
 #include "engine/include/assets/AssetManager.h"
 #include <cassert>
 
@@ -33,9 +33,9 @@
 #include "engine/include/renderer/SpriteRenderer.h"
 #include "engine/include/renderer/ParticleRenderer.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 #include "Engine/include/scene/SceneCommand/SceneEntityCommands.h"
 #include "engine/include/scene/SceneObject.h"
@@ -59,7 +59,7 @@ void SceneObject::Initialize() {
 	isRunningScript_ = false;
 	isPauseScript_ = false;
 
-	// コマンドクリア
+	// 繧ｳ繝槭Φ繝峨け繝ｪ繧｢
 	frameStartCommandInvoker_.ClearCommands();
 	updateCommandInvoker_.ClearCommands();
 	preDrawCommandInvoker_.ClearCommands();
@@ -70,54 +70,54 @@ void SceneObject::Initialize() {
 void SceneObject::Update() {
 	frameStartCommandInvoker_.ExecuteCommands();
 
-	// ランタイム中のサブモジュールの更新
+	// 繝ｩ繝ｳ繧ｿ繧､繝荳ｭ縺ｮ繧ｵ繝悶Δ繧ｸ繝･繝ｼ繝ｫ縺ｮ譖ｴ譁ｰ
 	if (isRunningScript_ && !isPauseScript_) {
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();
 	}
 
-	// 当たり判定更新
+	// 蠖薙◆繧雁愛螳壽峩譁ｰ
 	ColliderManager::GetInstance()->Update();
 
-	//　ワールド行列更新
+	//縲繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(assetManager_->GetEntityManager()),uniqueIdManager_));
 	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(assetManager_->GetEntityManager())));
 	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(assetManager_->GetEntityManager())));
 	updateCommandInvoker_.AddCommand(std::make_unique<AllSpriteResizeCommand>(*(assetManager_->GetEntityManager())));
 
-	// 更新後コマンド実行
+	// 譖ｴ譁ｰ蠕後さ繝槭Φ繝牙ｮ溯｡・
 	updateCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::PreDraw() {
-	// カメラ更新
+	// 繧ｫ繝｡繝ｩ譖ｴ譁ｰ
 	AssetManager* assetManager = AssetManager::GetInstance();
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	cameraManager->Update();
 	
-	// WVP行列更新
+	// WVP陦悟・譖ｴ譁ｰ
 	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(assetManager->GetEntityManager()), *cameraManager));
 	preDrawCommandInvoker_.AddCommand(std::make_unique<SpritePivotUpdateCommand>(*(assetManager->GetEntityManager())));
 
-	// 描画前コマンド実行
+	// 謠冗判蜑阪さ繝槭Φ繝牙ｮ溯｡・
 	preDrawCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::Draw() {
-	// 当たり判定の描画
+	// 蠖薙◆繧雁愛螳壹・謠冗判
 	ColliderManager::GetInstance()->Draw();
 
 	AssetManager* assetManager = AssetManager::GetInstance();
 	drawCommandInvoker_.AddCommand(std::make_unique<AllEntityRenderingCommand>(*(assetManager->GetEntityManager())));
 
 
-	// 描画コマンド実行
+	// 謠冗判繧ｳ繝槭Φ繝牙ｮ溯｡・
 	drawCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::PostDraw() {
-	// 描画後コマンド実行
+	// 謠冗判蠕後さ繝槭Φ繝牙ｮ溯｡・
 	postDrawCommandInvoker_.ExecuteCommands();
 }
 
@@ -137,14 +137,14 @@ void SceneObject::Finalize() {
 
 void SceneObject::LoadScene(const std::string& sceneName) {
 	std::string sceneNameCopy = sceneName;
-	// 拡張子確認
+	// 諡｡蠑ｵ蟄千｢ｺ隱・
 	if (!sceneNameCopy.ends_with(".json")) {
 		sceneNameCopy += ".json";
 	}
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("LoadScene: " + sceneNameCopy);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
 	assetManager->GetGpuBufferPool()->ReleaseAllConstantBuffers();
 	EntityManager* entityManager = assetManager->GetEntityManager();
@@ -153,13 +153,13 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	AudioInterface::GetInstance()->StopAllSound();
 	CsharpVirtualEnvironmentOnQFE::GetInstance()->ResetScripts();
 
-	// シーンファイルを開く
+	// 繧ｷ繝ｼ繝ｳ繝輔ぃ繧､繝ｫ繧帝幕縺・
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
 	std::ifstream ifs(sceneFilePath + sceneNameCopy);
 	if (!ifs.is_open()) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Faild load scene: " + sceneNameCopy,LogLevel::Error);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		CameraManager::GetInstance()->Initialize();
 		return;
 	}
@@ -167,14 +167,14 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
 	ifs.close();
-	// シーン名の取得
+	// 繧ｷ繝ｼ繝ｳ蜷阪・蜿門ｾ・
 	if (sceneJson.contains("sceneName")) {
 		sceneName_ = sceneJson["sceneName"].get<std::string>();
 	} else {
 		sceneName_ = "NoNameScene";
 	}
 
-	// エンティティの生成
+	// 繧ｨ繝ｳ繝・ぅ繝・ぅ縺ｮ逕滓・
 	if (!sceneJson.contains("entities")) return;
 
 	for (const auto& entityJson : sceneJson["entities"]) {
@@ -185,9 +185,9 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 }
 
 void SceneObject::SaveScene(const std::string& sceneName) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("SaveScene: " + sceneName);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
@@ -214,10 +214,10 @@ void SceneObject::ResetScene() {
 void SceneObject::RunScene() {
 
 	if (!isRunningScript_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		MyDebugLog::GetInstance()->DebugLogClear();
 		MyDebugLog::GetInstance()->scriptLogs_.clear();
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 		SaveScene(sceneName_);
 		LoadScene(sceneName_);
@@ -258,7 +258,7 @@ void SceneObject::AddEmptyObject() {
 void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxCount) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
-	// ParticleComponent霑ｽ蜉
+	// ParticleComponent髴托ｽｽ陷会｣ｰ
 	ParticleComponent particleComponent;
 	particleComponent.modelName = modelName;
 	particleComponent.maxParticleCount = maxCount;
@@ -268,7 +268,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
 	assetManager->GetEntityManager()->EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
-	// 縺・▽繧ゅ・繧・▽霑ｽ蜉
+	// 邵ｺ繝ｻ笆ｽ郢ｧ繧・・郢ｧ繝ｻ笆ｽ髴托ｽｽ陷会｣ｰ
 	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = modelName + "_ParticleEmitter";
@@ -294,14 +294,14 @@ void SceneObject::AddModel(const std::string& modelName) {
 
 void SceneObject::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer, Vector2 pivot) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	// entityId謖・ｮ壹′縺ゅｌ縺ｰ縺昴ｌ繧剃ｽｿ縺・√↑縺代ｌ縺ｰ譁ｰ隕丈ｽ懈・
+	// entityId隰悶・・ｮ螢ｹ窶ｲ邵ｺ繧・ｽ檎ｸｺ・ｰ邵ｺ譏ｴ・檎ｹｧ蜑・ｽｽ・ｿ邵ｺ繝ｻﾂ竏壺・邵ｺ莉｣・檎ｸｺ・ｰ隴・ｽｰ髫穂ｸ茨ｽｽ諛医・
 	uint32_t entityId;
 	if (inEntityId != -1) {
 		entityId = static_cast<uint32_t>(inEntityId);
 	} else {
 		entityId = assetManager->GetEntityManager()->CreateEntity();
 	}
-	// SpriteData霑ｽ蜉
+	// SpriteData髴托ｽｽ陷会｣ｰ
 	SpriteData spriteData;
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	spriteData.layer = 0;
@@ -338,10 +338,10 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	light->color = { 1.0f,1.0f,1.0f,1.0f };
 	light->direction = { 0.0f,-1.0f,0.0f };
 	light->intensity = 1.0f;
-	// 繧ｹ繝励Λ繧､繝医ョ繝ｼ繧ｿ繧偵お繝ｳ繝・ぅ繝・ぅ縺ｫ霑ｽ蜉
+	// 郢ｧ・ｹ郢晏干ﾎ帷ｹｧ・､郢晏現繝ｧ郢晢ｽｼ郢ｧ・ｿ郢ｧ蛛ｵ縺顔ｹ晢ｽｳ郢昴・縺・ｹ昴・縺・ｸｺ・ｫ髴托ｽｽ陷会｣ｰ
 	assetManager->GetEntityManager()->EmplaceComponent<SpriteData>(entityId, spriteData);
 
-	// 縺・▽繧ゅ・繧・▽霑ｽ蜉
+	// 邵ｺ繝ｻ笆ｽ郢ｧ繧・・郢ｧ繝ｻ笆ｽ髴托ｽｽ陷会｣ｰ
 	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = spriteName;
@@ -380,7 +380,7 @@ void SceneObject::AddLuaScript(uint32_t entityId, const std::string& scriptName)
 		entityManager->EmplaceComponent<ScriptHandles>(entityId, scriptHandles);
 	} else {
 		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
-		// 縺吶〒縺ｫ蜷後§繧ｹ繧ｯ繝ｪ繝励ヨ縺後い繧ｿ繝・メ縺輔ｌ縺ｦ縺・ｋ蝣ｴ蜷医・霑ｽ蜉縺励↑縺・
+		// 邵ｺ蜷ｶ縲堤ｸｺ・ｫ陷ｷ蠕個ｧ郢ｧ・ｹ郢ｧ・ｯ郢晢ｽｪ郢晏干繝ｨ邵ｺ蠕後＞郢ｧ・ｿ郢昴・繝｡邵ｺ霈費ｽ檎ｸｺ・ｦ邵ｺ繝ｻ・玖撻・ｴ陷ｷ蛹ｻ繝ｻ髴托ｽｽ陷会｣ｰ邵ｺ蜉ｱ竊醍ｸｺ繝ｻ
 		for (const auto& sh : scriptHandles.scriptHandles_) {
 			if (sh.scriptName_ == scriptName) {
 				return;
@@ -398,7 +398,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	if (!entityManager->HasComponent<CsharpComponent>(entityId)) {
-		// 譁ｰ隕剰ｿｽ蜉
+		// 隴・ｽｰ髫募臆・ｿ・ｽ陷会｣ｰ
 		CsharpComponent csharpComponent;
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
@@ -407,14 +407,14 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		entityManager->EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
 
 	} else {
-		// 譌｢蟄倥・繧ｳ繝ｳ繝昴・繝阪Φ繝医↓霑ｽ蜉
+		// 隴鯉ｽ｢陝・･繝ｻ郢ｧ・ｳ郢晢ｽｳ郢晄亢繝ｻ郢晞亂ﾎｦ郢晏現竊馴恆・ｽ陷会｣ｰ
 		CsharpComponent& csharpComponent = entityManager->GetComponent<CsharpComponent>(entityId);
-		// 縺吶〒縺ｫ蜷後§繧ｯ繝ｩ繧ｹ縺後い繧ｿ繝・メ縺輔ｌ縺ｦ縺・ｋ蝣ｴ蜷医・霑ｽ蜉縺励↑縺・
+		// 邵ｺ蜷ｶ縲堤ｸｺ・ｫ陷ｷ蠕個ｧ郢ｧ・ｯ郢晢ｽｩ郢ｧ・ｹ邵ｺ蠕後＞郢ｧ・ｿ郢昴・繝｡邵ｺ霈費ｽ檎ｸｺ・ｦ邵ｺ繝ｻ・玖撻・ｴ陷ｷ蛹ｻ繝ｻ髴托ｽｽ陷会｣ｰ邵ｺ蜉ｱ竊醍ｸｺ繝ｻ
 		for (const auto& handles : csharpComponent.csharpHandles_) {
 			if (handles.className_ == className) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 				DebugLog("Csharp class " + className + " is already attached to entity " + std::to_string(entityId), LogLevel::Warning);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 				return;
 			}
 		}
@@ -428,36 +428,36 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 
 uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("AddEntity: " + entityName);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
-	// 譌｢縺ｫ隱ｭ縺ｿ霎ｼ繧薙□縺薙→縺後≠繧九お繝ｳ繝・ぅ繝・ぅ蜷阪↑繧峨◎繧後ｒ霑斐☆
+	// 隴鯉ｽ｢邵ｺ・ｫ髫ｱ・ｭ邵ｺ・ｿ髴趣ｽｼ郢ｧ阮吮味邵ｺ阮吮・邵ｺ蠕娯旺郢ｧ荵昴♀郢晢ｽｳ郢昴・縺・ｹ昴・縺・惺髦ｪ竊醍ｹｧ蟲ｨ笳守ｹｧ蠕鯉ｽ帝恆譁絶・
 #ifdef _NODEBUG
 	if (loadEntities_.find(entityName) != loadEntities_.end()) {
-		// Entity縺ｮ逕滓・
+		// Entity邵ｺ・ｮ騾墓ｻ薙・
 		uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 		DeserializeEntity(entityId, loadEntities_[entityName]);
 		return entityId;
 	}
 #endif // _NODEBUG
 
-	// Entity縺ｮ繝代せ繧堤ｵ・∩遶九※
+	// Entity邵ｺ・ｮ郢昜ｻ｣縺帷ｹｧ蝣､・ｵ繝ｻ竏ｩ驕ｶ荵昶ｻ
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
 	std::ifstream ifs(sceneFilePath + entityName);
 	if (!ifs.is_open()) {
 		std::string errorMsg = "FaildOpenFile: " + sceneFilePath + entityName;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(errorMsg, LogLevel::Error);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		assert(false && "Faild Open Entity File.");
 	}
-	// Entity縺ｮ蠕ｩ蜈・
+	// Entity邵ｺ・ｮ陟包ｽｩ陷医・
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
 	ifs.close();
 
-	// Entity縺ｮ逕滓・
+	// Entity邵ｺ・ｮ騾墓ｻ薙・
 	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
 	DeserializeEntity(entityId, sceneJson);
 	return entityId;
@@ -466,7 +466,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	uint32_t entityId = AddEntity(entityName);
-	// 繧ｹ繧ｯ繝ｪ繝励ヨ蛻晄悄蛹・
+	// 郢ｧ・ｹ郢ｧ・ｯ郢晢ｽｪ郢晏干繝ｨ陋ｻ譎・ｄ陋ｹ繝ｻ
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	if (entityManager->HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
 		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
@@ -481,9 +481,9 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 		}
 	}
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("RunTimeAddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	return entityId;
 }
 
@@ -523,11 +523,11 @@ void SceneObject::CopyEntity(uint32_t sourceEntityId) {
 void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
-	// 繧ｨ繝ｳ繝・ぅ繝・ぅ縺後Δ繝・Ν繧呈戟縺｣縺ｦ縺・↑縺代ｌ縺ｰ菴輔ｂ縺励↑縺・
+	// 郢ｧ・ｨ郢晢ｽｳ郢昴・縺・ｹ昴・縺・ｸｺ蠕湖皮ｹ昴・ﾎ晉ｹｧ蜻域亜邵ｺ・｣邵ｺ・ｦ邵ｺ繝ｻ竊醍ｸｺ莉｣・檎ｸｺ・ｰ闖ｴ霈費ｽらｸｺ蜉ｱ竊醍ｸｺ繝ｻ
 	if (!entityManager->HasComponent<ModelHandle>(entityId)) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ChangeModel entity does not have ModelRenderData", LogLevel::Warning);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 
@@ -539,20 +539,20 @@ void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelN
 void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	EntityManager* entityManager = assetManager->GetEntityManager();
-	// エンティティがモデルを持っていなければ何もしない
+	// 繧ｨ繝ｳ繝・ぅ繝・ぅ縺後Δ繝・Ν繧呈戟縺｣縺ｦ縺・↑縺代ｌ縺ｰ菴輔ｂ縺励↑縺・
 	if (!entityManager->HasComponent<ModelHandle>(entityId)) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ChangeMesh entity does not have ModelRenderData", LogLevel::Warning);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
 	ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-	// メッシュが存在しなければ何もしない
+	// 繝｡繝・す繝･縺悟ｭ伜惠縺励↑縺代ｌ縺ｰ菴輔ｂ縺励↑縺・
 	if (modelData->meshRenderDataHandles.size() == 0) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ChangeMesh model does not have mesh", LogLevel::Warning);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	modelData->meshRenderDataHandles[0].vertexBufferHandle = assetManager_->LoadModelMesh(meshName);
@@ -651,7 +651,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	usedEntityId_.insert(entityId);
 
-	// 各コンポーネントの復元
+	// 蜷・さ繝ｳ繝昴・繝阪Φ繝医・蠕ｩ蜈・
 	if (entityJson.contains("SpriteData")) {
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
@@ -701,12 +701,12 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	if (entityJson.contains("CsharpComponent")) {
 		std::vector<std::string> classNames;
 		if (entityJson["CsharpComponent"].contains("CsharpHandles")) {
-			// C#のクラス名からインスタンスを生成
+			// C#縺ｮ繧ｯ繝ｩ繧ｹ蜷阪°繧峨う繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繧堤函謌・
 			for (const auto& handle : entityJson["CsharpComponent"]["CsharpHandles"]) {
 				if (handle.contains("ClassName")) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog("Load Csharp Script: " + handle["ClassName"].get<std::string>());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					AddCsharpScript(entityId, handle["ClassName"].get<std::string>());
 				}
 			}
@@ -717,9 +717,9 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
 			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
 				if (handle.contains("scriptName")) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog("Load Script: " + handle["scriptName"].get<std::string>());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					AddLuaScript(entityId, handle["scriptName"].get<std::string>());
 				}
 			}
@@ -791,3 +791,5 @@ uint32_t SceneObject::GetEntityByUniqeID(uint32_t uniqueId) const {
 	assert(false && "Entity Not Found");
 	return 0;
 }
+
+

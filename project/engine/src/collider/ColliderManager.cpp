@@ -7,10 +7,10 @@
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/renderer/GraphRenderer.h"
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 #include <algorithm>
 
@@ -25,7 +25,7 @@ void ColliderManager::Update() {
 }
 
 void ColliderManager::Draw() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	if (entityManager->HasComponentStrage<SphereColliderData>()) {
 
@@ -54,7 +54,7 @@ void ColliderManager::Draw() {
 		}
 
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void ColliderManager::Finalize() {
@@ -129,17 +129,17 @@ void ColliderManager::SphereToSphereUpdate() {
 
 				// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
 				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 
 				// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
 				if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 
@@ -158,9 +158,9 @@ void ColliderManager::SphereToSphereUpdate() {
 
 				// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
 				if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 
@@ -235,17 +235,17 @@ void ColliderManager::AABBToAABBUpdate() {
 
 				// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
 				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 
 				// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
 				if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 
@@ -264,9 +264,9 @@ void ColliderManager::AABBToAABBUpdate() {
 
 				// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
 				if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 
@@ -386,17 +386,17 @@ void ColliderManager::SphereToAABBUpdate() {
 
 				// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
 				if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", sphereId, aabbId));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 
 				// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
 				if ((sphereCollider.eventColliderLayer & aabbCollider.colliderLayer) == 0) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", sphereId, aabbId));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 
@@ -415,9 +415,9 @@ void ColliderManager::SphereToAABBUpdate() {
 
 				// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
 				if ((sphereCollider.colliderLayer & aabbCollider.eventColliderLayer) == 0) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 					DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", sphereId, aabbId));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 					continue;
 				}
 

@@ -1,17 +1,17 @@
 #include "engine/include/window/windowEventsManager/EventSystems/DropFileEvent.h"
 #include "engine/include/utility/String/MyString.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 DropFileEvent::DropFileEvent(nlohmann::json& data):IEvent(data) {}
 
 void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 	lparam;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Call DropFileEvent");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	// 繝峨Ο繝・・縺輔ｌ縺溘ヵ繧｡繧､繝ｫ縺ｮ蜃ｦ逅・
 	HDROP hDrop = (HDROP)wparam;
@@ -20,10 +20,10 @@ void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 		wchar_t filePath[MAX_PATH];
 		DragQueryFile(hDrop, i, filePath, MAX_PATH);
 		eventData_["DropFilePath"] = ConvertString(filePath);
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		
 		DebugLog("Drop File: " + ConvertString(filePath));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 	DragFinish(hDrop);
 }

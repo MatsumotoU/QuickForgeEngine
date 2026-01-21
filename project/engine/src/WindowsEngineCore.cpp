@@ -1,6 +1,6 @@
 /**
  * @file WindowsEngineCore.cpp
- * @brief Windows版エンジンのコアシステム実装
+ * @brief Windows迚医お繝ｳ繧ｸ繝ｳ縺ｮ繧ｳ繧｢繧ｷ繧ｹ繝・Β螳溯｣・
  */
 
 #include "engine/include/WindowsEngineCore.h"
@@ -8,10 +8,10 @@
 
 #include <thread>
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInitializer.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/renderer/ModelRenderer.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
@@ -21,35 +21,35 @@ namespace {
 }
 
 /**
- * @brief コンストラクタ
- * @param hInstance インスタンスハンドル
- * @param lpCmdLine コマンドライン引数
+ * @brief 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
+ * @param hInstance 繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繝上Φ繝峨Ν
+ * @param lpCmdLine 繧ｳ繝槭Φ繝峨Λ繧､繝ｳ蠑墓焚
  */
 WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine) 
 	:debugCore_(lpCmdLine),hInstance_(hInstance),lpCmdLine_(lpCmdLine){
 }
 
-/** @brief システム全体の初期化 */
+/** @brief 繧ｷ繧ｹ繝・Β蜈ｨ菴薙・蛻晄悄蛹・*/
 void WindowsEngineCore::Initialize() {
 	QFE::EngineGlobalValue::windowWidth = windowWidth;
 	QFE::EngineGlobalValue::windowHeight = windowHeight;
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
-	// * デバッグログ初期化 * //
-#ifdef _DEBUG
+	// * 繝・ヰ繝・げ繝ｭ繧ｰ蛻晄悄蛹・* //
+#ifdef QFE_OPTIMIZE_OFF
 	MyDebugLog::GetInstance()->Initialize();
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
-	// * ウィンドウマネージャー初期化 * //
+	// * 繧ｦ繧｣繝ｳ繝峨え繝槭ロ繝ｼ繧ｸ繝｣繝ｼ蛻晄悄蛹・* //
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
 	gameWindowManager->AddWindow(windowWidth, windowHeight, windowTitle);
-	// * DirectX初期化 * //
+	// * DirectX蛻晄悄蛹・* //
 	directXCommon_ = DirectXCommon::GetInstance();
-	// TODO: GetWindowの結果が nullptr の場合の安全性が欠けている
+	// TODO: GetWindow縺ｮ邨先棡縺・nullptr 縺ｮ蝣ｴ蜷医・螳牙・諤ｧ縺梧ｬ縺代※縺・ｋ
 	directXCommon_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), windowWidth, windowHeight);
-	// * ImGuiの初期化 * //
+	// * ImGui縺ｮ蛻晄悄蛹・* //
 	imguiFrameController_.Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle),
 		directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
@@ -62,24 +62,24 @@ void WindowsEngineCore::Initialize() {
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
 
-	// * パイプライン管理クラス初期化 * //
+	// * 繝代う繝励Λ繧､繝ｳ邂｡逅・け繝ｩ繧ｹ蛻晄悄蛹・* //
 	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
 	graphicPipelineManager_->Initialize(directXCommon_->GetDevice());
 
-	// * オフスクリーンリソースマネージャー初期化 * //
+	// * 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ繝ｪ繧ｽ繝ｼ繧ｹ繝槭ロ繝ｼ繧ｸ繝｣繝ｼ蛻晄悄蛹・* //
 	offScreenResourceManager_.Initialize(directXCommon_->GetDevice(), windowWidth, windowHeight);
-	// オフスクリーンRTVヒープ割り当て & SRVヒープ割り当て
+	// 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳRTV繝偵・繝怜牡繧雁ｽ薙※ & SRV繝偵・繝怜牡繧雁ｽ薙※
 	for (uint32_t i = 0; i < offScreenResourceManager_.GetOffscreenCount(); i++) {
-		// RTVヒープ割り当て
+		// RTV繝偵・繝怜牡繧雁ｽ薙※
 		DescriptorHandles rtvHandles = 
 			directXCommon_->AssignRtvHeap(offScreenResourceManager_.GetOffscreenResource(i), &directXCommon_->GetSwapChainRtvDesc());
 		offScreenResourceManager_.SetRtvHandle(rtvHandles.cpuHandle_, i);
-		// SRVヒープ割り当て
+		// SRV繝偵・繝怜牡繧雁ｽ薙※
 		DescriptorHandles srvHandles =
 			directXCommon_->AssignSrvHeap(offScreenResourceManager_.GetOffscreenResource(i), offScreenResourceManager_.GetOffscreenSrvDesc());
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
-	// * ポストプロセスマネージャー初期化 * //
+	// * 繝昴せ繝医・繝ｭ繧ｻ繧ｹ繝槭ロ繝ｼ繧ｸ繝｣繝ｼ蛻晄悄蛹・* //
 	renderingPostprocess_ = RenderingPostprocess::GetInstance();
 	renderingPostprocess_->Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	renderingPostprocess_->SetNormalPSO(graphicPipelineManager_->GetNormalPso());
@@ -101,88 +101,88 @@ void WindowsEngineCore::Initialize() {
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized OnWindowsEditor======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	frameCounter_.Initialize();
 	graphRenderer_ = GraphRenderer::GetInstance();
 	graphRenderer_->Initialize();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================InitializedGraphRenderer======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	inputInterface_ = InputInterface::GetInstance();
 	inputInterface_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), hInstance_);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized InputInterface======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->Initialize();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized SceneManager======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	luaScriptResourceManager_ = LuaScriptResourceManager::GetInstance();
 	luaScriptResourceManager_->Initialize();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized LuaScriptResourceManager======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	try {
 		csScriptManager_ = CsharpVirtualEnvironmentOnQFE::GetInstance();
 		csScriptManager_->Initialize();
 	}
 	catch (const std::exception& e) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Error: ") + e.what());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized CsharpVirtualEnvironmentOnQFE======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	physicsManager_ = PhysicsManager::GetInstance();
 	physicsManager_->Initialize();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized PhysicsManager======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	colliderManager_ = ColliderManager::GetInstance();
 	colliderManager_->Initialize();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized ColliderManager======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	multiThreadTaskExecutor_ = MultiThreadTaskExecutor::GetInstance();
 	multiThreadTaskExecutor_->Initialize();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized MultiThreadTaskExecutor======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	audioInterface_ = AudioInterface::GetInstance();
 	audioInterface_->Initialize();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized Engine======================");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
-/** @brief メインループ実行 */
+/** @brief 繝｡繧､繝ｳ繝ｫ繝ｼ繝怜ｮ溯｡・*/
 void WindowsEngineCore::MainLoop() {
 	while (gameWindowManager->IsWindowActive())
 	{
 		
-		// アプリケーション安全終了用
+		// 繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ螳牙・邨ゆｺ・畑
 		MSG msg;
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
@@ -200,7 +200,7 @@ void WindowsEngineCore::MainLoop() {
 	}
 }
 
-/** @brief 終了処理 */
+/** @brief 邨ゆｺ・・逅・*/
 void WindowsEngineCore::Shutdown() {
 	audioInterface_->Finalize();
 	multiThreadTaskExecutor_->Finalize();
@@ -216,13 +216,13 @@ void WindowsEngineCore::Shutdown() {
 	imguiFrameController_.EndImGui();
 	directXCommon_->Shutdown();
 	gameWindowManager->Shutdown();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("FinalizeEngine");
 	MyDebugLog::GetInstance()->Finalize();
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
-// こ�E先�Eプライベ�Eト関数
+// 縺難ｿｽE蜈茨ｿｽE繝励Λ繧､繝呻ｿｽE繝磯未謨ｰ
 void WindowsEngineCore::Update() {
 	inputInterface_->Update();
 	gameWindowManager->Update();
@@ -256,3 +256,5 @@ void WindowsEngineCore::Draw() {
 	sceneManager_->EndFrame();
 	multiThreadTaskExecutor_->FrameEnd();
 }
+
+

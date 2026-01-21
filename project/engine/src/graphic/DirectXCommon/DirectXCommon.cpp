@@ -11,9 +11,9 @@
 #include "engine/include/utility/String/MyString.h"
 #include "engine/include/core/EngineGlobalValue.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 namespace {
 	float clearColor_[4] = { 0.1f, 0.25f, 0.5f, 1.0f };

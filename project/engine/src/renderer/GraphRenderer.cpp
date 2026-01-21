@@ -13,9 +13,9 @@
 #include <cassert>
 #include <numbers>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 /** @brief 初期化 */
 void GraphRenderer::Initialize() {
@@ -159,9 +159,9 @@ void GraphRenderer::Finalize() {
 
 void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color) {
 	if (triangleCount_ >= kGraphRendererMaxTriangleCount) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Exceeded maximum triangle count.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return; // 譛螟ｧ謨ｰ繧定ｶ・∴縺溷ｴ蜷医・謠冗判縺励↑縺・
 	}
 
@@ -187,9 +187,9 @@ void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3,
 
 void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& color) {
 	if (lineCount_ >= kGraphRendererMaxLineCount) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Exceeded maximum Line count.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return; // 譛螟ｧ謨ｰ繧定ｶ・∴縺溷ｴ蜷医・謠冗判縺励↑縺・
 	}
 	Vector4 p0 = Vector4(point1.x, point1.y, point1.z, 1.0f);
@@ -207,9 +207,9 @@ void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& colo
 
 void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
 	if (pointCount_ >= kGraphRendererMaxPointCount) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Exceeded maximum Points count.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return; // 譛螟ｧ謨ｰ繧定ｶ・∴縺溷ｴ蜷医・謠冗判縺励↑縺・
 	}
 	Vector4 p = Vector4(point.x, point.y, point.z, 1.0f);

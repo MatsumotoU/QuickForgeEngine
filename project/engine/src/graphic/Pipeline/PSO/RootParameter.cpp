@@ -1,10 +1,10 @@
-#include "engine/include/graphic/Pipeline/PSO/RootParameter.h"
+﻿#include "engine/include/graphic/Pipeline/PSO/RootParameter.h"
 #include <cassert>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/DirectXStructToString.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 
 void RootParameter::Initialize() {
@@ -18,7 +18,7 @@ void RootParameter::Initialize() {
 }
 
 void RootParameter::CreateRootParameter(const std::string& friendlyName, const D3D12_ROOT_PARAMETER_TYPE& parameterType, const D3D12_SHADER_VISIBILITY& shaderVisibility, int shaderRegisterIndex) {
-	// RootParameter菴懈・縲・
+	// RootParameter闖ｴ諛医・邵ｲ繝ｻ
 	D3D12_ROOT_PARAMETER rootParameters{};
 	rootParameters_.push_back(rootParameters);
 	rootParameters_[rootParameters_.size() - 1].ParameterType = parameterType;
@@ -27,16 +27,16 @@ void RootParameter::CreateRootParameter(const std::string& friendlyName, const D
 	descriptionRootSignature_.pParameters = rootParameters_.data();
 	descriptionRootSignature_.NumParameters = static_cast<UINT>(rootParameters_.size());
 
-	// 繝ｫ繝ｼ繝医す繧ｰ繝阪メ繝｣縺ｮ逋ｻ骭ｲ蜷阪ｒ菫晄戟
+	// 郢晢ｽｫ郢晢ｽｼ郢晏現縺咏ｹｧ・ｰ郢晞亂繝｡郢晢ｽ｣邵ｺ・ｮ騾具ｽｻ鬪ｭ・ｲ陷ｷ髦ｪ・定将譎・亜
 	friendlyNames_.push_back(friendlyName);
 }
 
 void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3D12_DESCRIPTOR_RANGE_TYPE& rangeType, UINT numDescriptors, UINT baseShaderRegister) {
 	D3D12_ROOT_PARAMETER* rootParameter = GetRootParameter(friendlyName);
 	if (rootParameter == nullptr) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("RootParameter: RootParameter not found for the given friendly name.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		assert(false && "RootParameter not found for the given friendly name.");
 		return;
 	}
@@ -47,25 +47,25 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 	descriptorRange.BaseShaderRegister = baseShaderRegister;
 	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	descriptorRanges_[friendlyName] = descriptorRange; // 繝槭ャ繝励↓逋ｻ骭ｲ
+	descriptorRanges_[friendlyName] = descriptorRange; // 郢晄ｧｭ繝｣郢晏干竊馴具ｽｻ鬪ｭ・ｲ
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (rootParameter->ParameterType != D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) {
 		DebugLog("RootParameter: ParameterType is Not TableType! ChangedType->D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE");
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
-	// 繝ｫ繝ｼ繝医ヱ繝ｩ繝｡繝ｼ繧ｿ縺ｮ繧ｿ繧､繝励ｒ繝・・繝悶Ν縺ｫ險ｭ螳・
+	// 郢晢ｽｫ郢晢ｽｼ郢晏現繝ｱ郢晢ｽｩ郢晢ｽ｡郢晢ｽｼ郢ｧ・ｿ邵ｺ・ｮ郢ｧ・ｿ郢ｧ・､郢晏干・堤ｹ昴・繝ｻ郢晄じﾎ晉ｸｺ・ｫ髫ｪ・ｭ陞ｳ繝ｻ
 	rootParameter->ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameter->DescriptorTable.NumDescriptorRanges = 1; // 1縺､縺ｮ遽・峇繧呈戟縺､
+	rootParameter->DescriptorTable.NumDescriptorRanges = 1; // 1邵ｺ・､邵ｺ・ｮ驕ｽ繝ｻ蟲・ｹｧ蜻域亜邵ｺ・､
 	rootParameter->DescriptorTable.pDescriptorRanges = &descriptorRanges_[friendlyName];
 }
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 void RootParameter::CheckIntegrityData() {
 	DebugLog("RootParameter: CheckIntegrityData");
 
-	// 繝ｫ繝ｼ繝医ヱ繝ｩ繝｡繝ｼ繧ｿ縺悟ｮ夂ｾｩ縺輔ｌ縺ｦ縺・↑縺・ｴ蜷医・繝ｭ繧ｰ繧貞・蜉・
+	// 郢晢ｽｫ郢晢ｽｼ郢晏現繝ｱ郢晢ｽｩ郢晢ｽ｡郢晢ｽｼ郢ｧ・ｿ邵ｺ謔滂ｽｮ螟ゑｽｾ・ｩ邵ｺ霈費ｽ檎ｸｺ・ｦ邵ｺ繝ｻ竊醍ｸｺ繝ｻ・ｰ・ｴ陷ｷ蛹ｻ繝ｻ郢晢ｽｭ郢ｧ・ｰ郢ｧ雋槭・陷峨・
 	if (rootParameters_.empty()) {
 		DebugLog("RootParameter: No root parameters defined.");
 		return;
@@ -78,21 +78,21 @@ void RootParameter::CheckIntegrityData() {
 		DebugLog(DirectXStructToString::ToString(*rootParameter));
 	}
 }
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendlyName) {
 	D3D12_ROOT_PARAMETER* result = nullptr;
 
-	// 繝ｫ繝ｼ繝医ヱ繝ｩ繝｡繝ｼ繧ｿ縺ｮ蜷榊燕繧呈､懃ｴ｢
+	// 郢晢ｽｫ郢晢ｽｼ郢晏現繝ｱ郢晢ｽｩ郢晢ｽ｡郢晢ｽｼ郢ｧ・ｿ邵ｺ・ｮ陷ｷ讎顔√郢ｧ蜻茨ｽ､諛・ｽｴ・｢
 	for (std::string& name : friendlyNames_) {
 		if (name == friendlyName) {
-			// 蜷榊燕縺御ｸ閾ｴ縺励◆蝣ｴ蜷医∝ｯｾ蠢懊☆繧九Ν繝ｼ繝医ヱ繝ｩ繝｡繝ｼ繧ｿ繧貞叙蠕・
+			// 陷ｷ讎顔√邵ｺ蠕｡・ｸﾂ髢ｾ・ｴ邵ｺ蜉ｱ笳・撻・ｴ陷ｷ蛹ｻﾂ竏晢ｽｯ・ｾ陟｢諛岩・郢ｧ荵斟晉ｹ晢ｽｼ郢晏現繝ｱ郢晢ｽｩ郢晢ｽ｡郢晢ｽｼ郢ｧ・ｿ郢ｧ雋槫徐陟輔・
 			size_t index = &name - &friendlyNames_[0];
 			assert(index < rootParameters_.size() && "Index out of bounds for root parameters.");
 			result = &rootParameters_[index];
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			DebugLog(std::format("RootParameter: Return {}", friendlyNames_[index]));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 			return result;
 		} 
 	}
@@ -107,3 +107,5 @@ std::vector<D3D12_ROOT_PARAMETER>* RootParameter::GetRootParameters() {
 D3D12_ROOT_SIGNATURE_DESC* RootParameter::GetDescriptionRootSignature() {
 	return &descriptionRootSignature_;
 }
+
+

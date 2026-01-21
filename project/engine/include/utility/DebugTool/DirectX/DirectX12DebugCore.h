@@ -1,6 +1,6 @@
 #pragma once
 #define NOMINMAX
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include <memory>
 #include "D3DResourceLeakChecker.h"
 #include "DebugLayer.h"
@@ -16,4 +16,4 @@ private:
 	std::unique_ptr<DebugLayer> debugLayer_;
 	std::unique_ptr<D3DResourceLeakChecker> d3dResourceLeakChecker_;
 };
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
