@@ -1,10 +1,10 @@
---- Build started at 2026/01/21 11:45:58.08 --- 
+--- Build started at 2026/01/21 12:14:10.58 --- 
   復元対象のプロジェクトを決定しています...
-  C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\CSharpScripts.csproj を復元しました (1.35 秒)。
+  C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\CSharpScripts.csproj を復元しました (220 ミリ秒)。
   CSharpScripts -> C:\Users\K024G\source\repos\QuickForgeEngine\project\Resources\Scripts\bin\Debug\netstandard2.0\CSharpScripts.dll
 
 ビルドに成功しました。
     0 個の警告
     0 エラー
 
-経過時間 00:00:07.34
+経過時間 00:00:02.05

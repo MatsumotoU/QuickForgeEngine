@@ -20,22 +20,23 @@ void SaveScene::Draw() {
 		return;
 	}
 	ImGui::Begin("Save Scene", &isActive_, ImGuiWindowFlags_NoDocking);
-	
-		char buffer[256];
-		std::snprintf(buffer, sizeof(buffer), "%s", sceneName_.c_str());
 
-		if (ImGui::InputText("Scene Name", buffer, sizeof(buffer))) {
-			sceneName_ = buffer;
-		}
-		if (ImGui::Button("Save")) {
-			SceneManager::GetInstance()->SaveScene(sceneName_);
-			isActive_ = false;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel")) {
-			isActive_ = false;
-		}
-	
+	char buffer[256];
+	auto result = std::format_to_n(buffer, sizeof(buffer) - 1, "{}", sceneName_);
+	buffer[result.out - buffer] = '\0'; // 明示的に終端文字を追加
+
+	if (ImGui::InputText("Scene Name", buffer, sizeof(buffer))) {
+		sceneName_ = buffer;
+	}
+	if (ImGui::Button("Save")) {
+		SceneManager::GetInstance()->SaveScene(sceneName_);
+		isActive_ = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) {
+		isActive_ = false;
+	}
+
 	ImGui::End();
 }
 
