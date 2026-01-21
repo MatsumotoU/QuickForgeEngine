@@ -1,6 +1,6 @@
 /**
  * @file WindowsEngineCore.cpp
- * @brief Windows迚医お繝ｳ繧ｸ繝ｳ縺ｮ繧ｳ繧｢繧ｷ繧ｹ繝・Β螳溯｣・
+ * @brief Windows向けエンジンコア実装
  */
 
 #include "engine/include/WindowsEngineCore.h"
@@ -21,35 +21,31 @@ namespace {
 }
 
 /**
- * @brief 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
- * @param hInstance 繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繝上Φ繝峨Ν
- * @param lpCmdLine 繧ｳ繝槭Φ繝峨Λ繧､繝ｳ蠑墓焚
+ * @brief コンストラクタ
+ * @param hInstance
+ * @param lpCmdLine 
  */
 WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine) 
 	:debugCore_(lpCmdLine),hInstance_(hInstance),lpCmdLine_(lpCmdLine){
 }
 
-/** @brief 繧ｷ繧ｹ繝・Β蜈ｨ菴薙・蛻晄悄蛹・*/
 void WindowsEngineCore::Initialize() {
 	QFE::EngineGlobalValue::windowWidth = windowWidth;
 	QFE::EngineGlobalValue::windowHeight = windowHeight;
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
-	// * 繝・ヰ繝・げ繝ｭ繧ｰ蛻晄悄蛹・* //
 #ifdef QFE_OPTIMIZE_OFF
 	MyDebugLog::GetInstance()->Initialize();
 #endif // QFE_OPTIMIZE_OFF
-
-	// * 繧ｦ繧｣繝ｳ繝峨え繝槭ロ繝ｼ繧ｸ繝｣繝ｼ蛻晄悄蛹・* //
+	// Create Window
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
 	gameWindowManager->AddWindow(windowWidth, windowHeight, windowTitle);
-	// * DirectX蛻晄悄蛹・* //
+	// Initialize DirectXCommon
 	directXCommon_ = DirectXCommon::GetInstance();
-	// TODO: GetWindow縺ｮ邨先棡縺・nullptr 縺ｮ蝣ｴ蜷医・螳牙・諤ｧ縺梧ｬ縺代※縺・ｋ
 	directXCommon_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), windowWidth, windowHeight);
-	// * ImGui縺ｮ蛻晄悄蛹・* //
+	// Initialize ImGui
 	imguiFrameController_.Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle),
 		directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
@@ -61,25 +57,24 @@ void WindowsEngineCore::Initialize() {
 		directXCommon_->GetSrvDescriptorHeapAddress(),
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
-
-	// * 繝代う繝励Λ繧､繝ｳ邂｡逅・け繝ｩ繧ｹ蛻晄悄蛹・* //
+	// Initialize Other Managers
 	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
 	graphicPipelineManager_->Initialize(directXCommon_->GetDevice());
 
-	// * 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳ繝ｪ繧ｽ繝ｼ繧ｹ繝槭ロ繝ｼ繧ｸ繝｣繝ｼ蛻晄悄蛹・* //
+
 	offScreenResourceManager_.Initialize(directXCommon_->GetDevice(), windowWidth, windowHeight);
-	// 繧ｪ繝輔せ繧ｯ繝ｪ繝ｼ繝ｳRTV繝偵・繝怜牡繧雁ｽ薙※ & SRV繝偵・繝怜牡繧雁ｽ薙※
+
 	for (uint32_t i = 0; i < offScreenResourceManager_.GetOffscreenCount(); i++) {
-		// RTV繝偵・繝怜牡繧雁ｽ薙※
+
 		DescriptorHandles rtvHandles = 
 			directXCommon_->AssignRtvHeap(offScreenResourceManager_.GetOffscreenResource(i), &directXCommon_->GetSwapChainRtvDesc());
 		offScreenResourceManager_.SetRtvHandle(rtvHandles.cpuHandle_, i);
-		// SRV繝偵・繝怜牡繧雁ｽ薙※
+
 		DescriptorHandles srvHandles =
 			directXCommon_->AssignSrvHeap(offScreenResourceManager_.GetOffscreenResource(i), offScreenResourceManager_.GetOffscreenSrvDesc());
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
-	// * 繝昴せ繝医・繝ｭ繧ｻ繧ｹ繝槭ロ繝ｼ繧ｸ繝｣繝ｼ蛻晄悄蛹・* //
+
 	renderingPostprocess_ = RenderingPostprocess::GetInstance();
 	renderingPostprocess_->Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	renderingPostprocess_->SetNormalPSO(graphicPipelineManager_->GetNormalPso());
@@ -177,12 +172,11 @@ void WindowsEngineCore::Initialize() {
 #endif // QFE_OPTIMIZE_OFF
 }
 
-/** @brief 繝｡繧､繝ｳ繝ｫ繝ｼ繝怜ｮ溯｡・*/
+
 void WindowsEngineCore::MainLoop() {
 	while (gameWindowManager->IsWindowActive())
 	{
-		
-		// 繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ螳牙・邨ゆｺ・畑
+
 		MSG msg;
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
@@ -200,7 +194,7 @@ void WindowsEngineCore::MainLoop() {
 	}
 }
 
-/** @brief 邨ゆｺ・・逅・*/
+
 void WindowsEngineCore::Shutdown() {
 	audioInterface_->Finalize();
 	multiThreadTaskExecutor_->Finalize();
@@ -222,7 +216,7 @@ void WindowsEngineCore::Shutdown() {
 #endif // QFE_OPTIMIZE_OFF
 }
 
-// 縺難ｿｽE蜈茨ｿｽE繝励Λ繧､繝呻ｿｽE繝磯未謨ｰ
+
 void WindowsEngineCore::Update() {
 	inputInterface_->Update();
 	gameWindowManager->Update();
