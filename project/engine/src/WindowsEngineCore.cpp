@@ -23,10 +23,10 @@ namespace {
 /**
  * @brief コンストラクタ
  * @param hInstance
- * @param lpCmdLine 
+ * @param lpCmdLine
  */
-WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine) 
-	:debugCore_(lpCmdLine),hInstance_(hInstance),lpCmdLine_(lpCmdLine){
+WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
+	:debugCore_(lpCmdLine), hInstance_(hInstance), lpCmdLine_(lpCmdLine) {
 }
 
 void WindowsEngineCore::Initialize() {
@@ -66,7 +66,7 @@ void WindowsEngineCore::Initialize() {
 
 	for (uint32_t i = 0; i < offScreenResourceManager_.GetOffscreenCount(); i++) {
 
-		DescriptorHandles rtvHandles = 
+		DescriptorHandles rtvHandles =
 			directXCommon_->AssignRtvHeap(offScreenResourceManager_.GetOffscreenResource(i), &directXCommon_->GetSwapChainRtvDesc());
 		offScreenResourceManager_.SetRtvHandle(rtvHandles.cpuHandle_, i);
 
