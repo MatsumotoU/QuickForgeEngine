@@ -23,11 +23,11 @@ void PhysicsManager::Update() {
 	for (const auto& force : forceStrage) {
 		uint32_t entityId = force.first;
 		Force& forceComp = entityManager->GetComponent<Force>(entityId);
+		// 加速度のリセット
+		forceComp.acceleration = Vector3::Zero();
 
 		// 重力
 		if (forceComp.isGravity) {
-            // TODO: 加速度に deltaTime を掛けて加算しているが、通常の物理式では加速度そのものを変化させるべき。
-            // また、Updateの最初で加速度をリセットしない設計の場合、力が蓄積し続ける可能性がある。
 			forceComp.acceleration.y += -9.8f * QFE::EngineGlobalValue::deltaTime * forceComp.gravityStrength; 
 		}
 		// 速度に力を加える
@@ -38,10 +38,8 @@ void PhysicsManager::Update() {
 			transform.translate += forceComp.velocity * QFE::EngineGlobalValue::deltaTime;
 		}
 		// 摩擦力の計算
-        // TODO: (1.0f - friction * deltaTime) による線形近似は、deltaTime が大きい場合に負の値になる可能性がある。
-        // また、加速度に対しても摩擦を適用しているのは物理的に特殊な挙動であるため再検討が必要。
-		forceComp.velocity = forceComp.velocity * (1.0f - forceComp.friction * QFE::EngineGlobalValue::deltaTime);
-		forceComp.acceleration = forceComp.acceleration * (1.0f - forceComp.friction * QFE::EngineGlobalValue::deltaTime);
+		float frictionFactor = std::exp(-forceComp.friction * QFE::EngineGlobalValue::deltaTime);
+		forceComp.velocity = forceComp.velocity * frictionFactor;
 	}
 }
 
