@@ -1,8 +1,8 @@
-#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetUtilities.h"
+﻿#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetUtilities.h"
 #include "engine/include/assets/AssetManager.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 #include "engine/include/utility/FileSystems/FileUtility.h"
 #include "Engine/include/scene/Data/SceneObjectData.h"
@@ -12,21 +12,21 @@
 void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 
 
-	// CSV読み込み
+	// CSV隱ｭ縺ｿ霎ｼ縺ｿ
 	luaState->set_function("Load2DMap", [](const std::string& fileName) {
 		std::vector<std::vector<uint32_t>> result;
 		std::string path = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("2DMap") + fileName;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Load2DMap: " + path);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 		if (QFE::FILE::LoadCSVToVector(path, result)) {
 			return sol::as_table(result);
 		}
 		else {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			DebugLog("Failed to load 2D map: " + path, LogLevel::Error);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 			return sol::as_table(std::vector<std::vector<uint32_t>>{});
 		}
 		});
@@ -87,3 +87,5 @@ void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 
 
 }
+
+

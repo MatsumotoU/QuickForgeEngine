@@ -79,7 +79,7 @@ void GraphicPipelineManager::Initialize(
 	fontRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	// パラメータの整合性チェック
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	normalGameObjectRootParameter_.CheckIntegrityData();
 	particleRootParameter_.CheckIntegrityData();
 	primitiveRootParameter_.CheckIntegrityData();
@@ -88,7 +88,7 @@ void GraphicPipelineManager::Initialize(
 	normalRootParameter_.CheckIntegrityData();
 	colorCorrectionRootParameter_.CheckIntegrityData();
 	fontRootParameter_.CheckIntegrityData();
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	// インプットレイアウトの初期化
 	InputLayout normalInputLayout;

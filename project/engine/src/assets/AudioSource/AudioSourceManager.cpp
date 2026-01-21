@@ -1,9 +1,9 @@
 #include "engine/include/assets/AudioSource/AudioSourceManager.h"
 #include "engine/include/assets/AudioSource/Loader/MultiAudioLoader.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void AudioSourceManager::Initialize() {
 	audioDataMap_.clear();
@@ -22,15 +22,15 @@ uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
 	// 繝輔ぃ繧､繝ｫ繧帝幕縺・
 	AudioData soundData{};
 	try{
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("LoadSoundData: " + filePath);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		soundData = Multiaudioloader::LoadAudioData(filePath);
 	}
 	catch (const std::exception& e){
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Faild LoadSoundData: " + filePath);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		e;
 		return 0;
 	}
@@ -42,9 +42,9 @@ uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
 }
 
 AudioData& AudioSourceManager::GetSoundData(uint32_t handle) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("GetSoundData: " + std::to_string(handle));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	if (audioDataMap_.find(handle) == audioDataMap_.end()) {
 		assert(false && "Invalid handle");
 	}

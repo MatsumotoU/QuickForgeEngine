@@ -2,9 +2,9 @@
 #include "engine/include/graphic/DirectXCommon/Descriptors/DescriptorGenerator/DescriptorGenerator.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/CheckGenerateConfig/CheckGenerateConfig.h"
 #include "engine/include/utility/DirectX/GenerateDescriptorHandle.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void DsvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
 	assert(device);
@@ -38,9 +38,9 @@ DescriptorHandles DsvDescriptorHeap::AssignHeap(ID3D12Resource* resource, const 
 	// 空きスタックからディスクリプタを取得
 	assert(!freeDescriptors_.empty() && "No free descriptors available.");
 	UINT index = freeDescriptors_.front();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("AssignHeapIndex: {}", index));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	freeDescriptors_.pop();
 	// ディスクリプタハンドルを取得
 	DescriptorHandles handle;

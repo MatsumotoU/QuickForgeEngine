@@ -1,8 +1,8 @@
-#include "engine/include/utility/DebugTool/App/WinAppDebugCore.h"
+﻿#include "engine/include/utility/DebugTool/App/WinAppDebugCore.h"
 #include "engine/include/utility/String/MyString.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 
 #pragma comment(lib,"Dbghelp.lib")
@@ -10,17 +10,17 @@
 WinAppDebugCore::WinAppDebugCore(const LPSTR& lpCmdLine) {
 	SetUnhandledExceptionFilter(ExportDump);
 	lpCmdLine;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("=====WinAppDebugCore=====");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
-	// exeを起動したパス
+	// exe繧定ｵｷ蜍輔＠縺溘ヱ繧ｹ
 	wchar_t fileName[MAX_PATH];
 	GetModuleFileName(NULL, fileName, MAX_PATH);
 	std::string exeName(ConvertString(fileName));
 	
-#ifdef _DEBUG
-	// コマンド引数確誁E
+#ifdef QFE_OPTIMIZE_OFF
+	// 繧ｳ繝槭Φ繝牙ｼ墓焚遒ｺ隱・
 	if (std::strcmp(lpCmdLine, "\0") != 0) {
 		DebugLog("!!! EnebleCommandLineArguments !!!");
 		DebugLog(std::format("EnebleCommand : {}", lpCmdLine));	
@@ -28,8 +28,10 @@ WinAppDebugCore::WinAppDebugCore(const LPSTR& lpCmdLine) {
 		DebugLog("DisableCommandLineArguments");
 	}
 	DebugLog("");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 WinAppDebugCore::~WinAppDebugCore() {
 }
+
+

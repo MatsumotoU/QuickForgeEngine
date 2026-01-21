@@ -1,5 +1,5 @@
 #pragma once
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include <string>
 #include <d3d12.h>
 
@@ -10,4 +10,4 @@ namespace DirectXStructToString {
 	std::string ToString(const D3D12_ROOT_PARAMETER& rootParameter);
 	std::string ToString(const D3D12_DESCRIPTOR_RANGE& descriptorRange);
 }
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF

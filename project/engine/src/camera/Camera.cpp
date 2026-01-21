@@ -2,9 +2,9 @@
 #include <cassert>
 #include "engine/include/core/EngineGlobalValue.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 #include "engine/include/assets/AssetManager.h" 
 #include "engine/include/core/Entity/EntityManager.h"

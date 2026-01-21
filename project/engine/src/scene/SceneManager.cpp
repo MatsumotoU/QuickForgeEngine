@@ -1,4 +1,4 @@
-#include "engine/include/scene/SceneManager.h"
+﻿#include "engine/include/scene/SceneManager.h"
 #include "engine/include/scene/SceneObject.h"
 
 #include "engine/include/assets/AssetManager.h"
@@ -6,9 +6,9 @@
 #include <fstream>
 #include <string>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void SceneManager::Initialize() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
@@ -16,7 +16,7 @@ void SceneManager::Initialize() {
 	isRequestRunTimeLoadScene_ = false;
 	isFirstLoadScene_ = false;
 
-	// SceneConfig.jsonの読み込み
+	// SceneConfig.json縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
 	sceneConfig_ = nlohmann::json::object();
 	try {
 		std::string path = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Config") + "SceneConfig.json";
@@ -25,30 +25,30 @@ void SceneManager::Initialize() {
 			ifs >> sceneConfig_;
 			ifs.close();
 		}
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Load SceneConfig.json");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 	catch (const std::exception& e) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 
 	currentScene_ = std::make_unique<SceneObject>();
 	currentScene_->Initialize();
 
 	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	initTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	score_ = 0;
 }
 
 void SceneManager::Update() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-	// 最後に開いたシーンを開く
+	// 譛蠕後↓髢九＞縺溘す繝ｼ繝ｳ繧帝幕縺・
 	if (!isFirstLoadScene_) {
 		if (sceneConfig_.contains("lastScene")) {
 			try {
@@ -59,9 +59,9 @@ void SceneManager::Update() {
 
 			}
 			catch (const std::exception& e) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 				DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 			}
 		}
 		isFirstLoadScene_ = true;
@@ -77,9 +77,9 @@ void SceneManager::Update() {
 	currentScene_->Update();
 
 	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	updateTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void SceneManager::PreDraw() {
@@ -88,9 +88,9 @@ void SceneManager::PreDraw() {
 	currentScene_->PreDraw();
 
 	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	preDrawTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void SceneManager::Draw() {
@@ -99,9 +99,9 @@ void SceneManager::Draw() {
 	currentScene_->Draw();
 
 	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	drawTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void SceneManager::PostDraw() {
@@ -110,9 +110,9 @@ void SceneManager::PostDraw() {
 	currentScene_->PostDraw();
 
 	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	postDrawTime_ = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void SceneManager::EndFrame() {
@@ -121,7 +121,7 @@ void SceneManager::EndFrame() {
 
 void SceneManager::Finalize() {
 	currentScene_->Finalize();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	sceneConfig_["lastScene"] = currentScene_->GetSceneName();
 	try {
 		std::string path = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Config") + "SceneConfig.json";
@@ -134,7 +134,7 @@ void SceneManager::Finalize() {
 		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	CameraManager::GetInstance()->Shutdown();
 }
 
@@ -252,3 +252,5 @@ void SceneManager::StartScript() {
 void SceneManager::StopScript() {
 	currentScene_->StopScene();
 }
+
+

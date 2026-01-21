@@ -5,9 +5,9 @@
 #include <timeapi.h>
 #pragma comment(lib,"winmm.lib") 
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "Engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 namespace {
 	const std::chrono::microseconds kMinTime(static_cast<uint64_t>(1000000.0f / 60.0f));
@@ -21,9 +21,9 @@ void FrameCounter::Initialize() {
 	maxFps_ = 60.0f;
 	timeBeginPeriod(1);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("FrameCounter Initialized");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 }
 

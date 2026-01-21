@@ -28,10 +28,10 @@ public:
 	[[nodiscard]] IDXGIFactory7* GetDxgiFactory() const;
 	[[nodiscard]] ID3D12Device* GetDevice() const;
 	[[nodiscard]] IDXGIAdapter4* GetUseAdapter() const;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	void SetDisableError(bool disable);
 	void SetDisableWarning(bool disable);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 private:
 	void CreateDxgiFactory();
@@ -41,8 +41,8 @@ private:
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
 	Microsoft::WRL::ComPtr<ID3D12Device> device_;
 	Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter_;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	bool disableError_;
 	bool disableWarning_;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 };

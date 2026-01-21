@@ -14,9 +14,9 @@
 #include "SwapChain.h"
 #include "Fence.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DirectX/DirectX12DebugCore.h"
-#endif // _DEBUG
+#endif 
 
 class GameWindow;
 class DirectXDevice;
@@ -73,9 +73,9 @@ public:
 	D3D12_RECT* GetScissorRect();
 
 private:
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DirectX12DebugCore directX12DebugCore_;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	void AssignSwapChainRenderTarget();
 

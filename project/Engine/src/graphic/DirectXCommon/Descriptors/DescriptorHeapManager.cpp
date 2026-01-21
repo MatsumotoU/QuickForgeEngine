@@ -1,13 +1,13 @@
 #include "engine/include/graphic/DirectXCommon/Descriptors/DescriptorHeapManager.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void DescriptorHeapManager::Initialize(ID3D12Device* device) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("-----DescriptorHeapManager:Initialize-----\n");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	rtvDescriptorHeap.Initialize(device, kMaxRtvDescriptors, false);
 	srvDescriptorHeap.Initialize(device, kMaxSrvDescriptors, true);
 	dsvDescriptorHeap.Initialize(device, kMaxDsvDescriptors, false);

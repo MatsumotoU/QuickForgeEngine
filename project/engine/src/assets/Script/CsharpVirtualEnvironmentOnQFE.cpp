@@ -11,24 +11,24 @@
 #include "Engine/include/utility/String/MyString.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/assets/Script/QFElinker/CsharpOnQFELinker.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Initializing Mono JIT...");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	std::filesystem::path exeDir(path);
 	exeDir = exeDir.parent_path();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Executable Directory: " + exeDir.string());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	std::filesystem::path monoLibPath = exeDir / "mono" / "lib";
 	std::filesystem::path monoEtcPath = exeDir / "mono" / "etc";
@@ -37,10 +37,10 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	std::string monoLibPathUtf8 = ConvertString(monoLibPath.wstring());
 	std::string monoEtcPathUtf8 = ConvertString(monoEtcPath.wstring());
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Mono Lib Path: " + monoLibPath.string());
 	DebugLog("Mono Etc Path: " + monoEtcPath.string());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	try
 	{
@@ -48,20 +48,20 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	}
 	catch (const std::exception& e)
 	{
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to set Mono directories: ") + e.what());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	}
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	const char* options[] = {
 		"--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555,suspend=n"
 	};
 	mono_jit_parse_options(sizeof(options) / sizeof(char*), (char**)options);
 
 	DebugLog("Mono JIT options set for debugging.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	try
 	{
@@ -69,22 +69,22 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	}
 	catch (const std::exception& e)
 	{
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to initialize Mono JIT: ") + e.what());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	}
 	
 	if (!root_domain_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Failed to initialize Mono JIT.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	else {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Succsess to initialize Mono JIT.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 	ReloadAssembly();
 }
@@ -147,16 +147,16 @@ void CsharpVirtualEnvironmentOnQFE::LinkQFEAPIToMono() {
 
 void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
 	if (!domain_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Mono domain not initialized.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 
 	if (assembly_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Assembly already loaded.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 
@@ -172,9 +172,9 @@ void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
 
 	assembly_ = mono_domain_assembly_open(domain_, dllPath.string().c_str());
 	if (!assembly_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Failed to load assembly: " + dllPath.string());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 	return;
 }
@@ -184,35 +184,35 @@ std::vector<std::string> CsharpVirtualEnvironmentOnQFE::GetAvailableScriptClasse
 	std::vector<std::string> classNames;
 
 	if (!assembly_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Error: Assembly is not loaded. Cannot get script class names. Check if 'CSharpScripts.dll' exists and is compiled correctly.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return classNames;
 	}
 
 	MonoImage* image = mono_assembly_get_image(assembly_);
 
 	if (!image) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Error: Could not get image from assembly.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return classNames;
 	}
 
 	const MonoTableInfo* type_definitions_table = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
 
 	if (!type_definitions_table) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Error: Could not get type definitions table from image.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return classNames;
 	}
 
 	int num_types = mono_table_info_get_rows(type_definitions_table);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Scanning assembly for classes... Found {} type definitions.", num_types));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	for (int i = 0; i < num_types; i++) {
 
@@ -241,24 +241,24 @@ std::vector<std::string> CsharpVirtualEnvironmentOnQFE::GetAvailableScriptClasse
 		if (full_name.find("QuickForgeEngine") != std::string::npos) {
 			continue;
 		}
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::format("Found valid class: {}", full_name));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		classNames.push_back(full_name);
 	}
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Finished scanning. Returning {} valid classes.", classNames.size()));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	return classNames;
 
 }
 
 uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(const std::string& className) {
 	if (!assembly_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Assembly not loaded. Cannot create script instance.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return 0;
 	}
 	MonoImage* image = mono_assembly_get_image(assembly_);
@@ -273,28 +273,28 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(const std::string& 
 
 	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
 	if (!monoClass) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Class not found: " + className);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return 0;
 	}
 	MonoObject* instance = mono_object_new(domain_, monoClass);
 	mono_runtime_object_init(instance);
 	scripts_.push_back(instance);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	return static_cast<uint32_t>(scripts_.size()) - 1;
 }
 
 uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, const std::string& className) {
 	if (!assembly_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Assembly not loaded. Cannot create script instance.");
 		//assert(false && "Assembly not loaded. Cannot create script instance.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return 0;
 	}
 	MonoImage* image = mono_assembly_get_image(assembly_);
@@ -309,20 +309,20 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, 
 
 	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
 	if (!monoClass) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Class not found: " + className);
 		//assert(false && "Class not found.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return 0;
 	}
 	MonoObject* instance = mono_object_new(domain_, monoClass);
 	mono_runtime_object_init(instance);
 	MonoProperty* entityIdProperty = mono_class_get_property_from_name(monoClass, "EntityID");
 	if (!entityIdProperty) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Property 'EntityID' not found in class: " + className);
 		//assert(false && "Property 'EntityID' not found.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return 0;
 	}
 	void* args[1];
@@ -334,7 +334,7 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, 
 		MonoString* exceptionMsg = mono_object_to_string(exception, nullptr);
 		if (exceptionMsg) {
 			char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			DebugLog(std::string("Mono Exception: ") + exceptionCStr);
 #endif
 			mono_free(exceptionCStr);
@@ -343,9 +343,9 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, 
 
 	scripts_.push_back(instance);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	return static_cast<uint32_t>(scripts_.size()) - 1;
 }
@@ -355,9 +355,9 @@ void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std:
 	MonoClass* monoClass = mono_object_get_class(scriptInstance);
 	MonoMethod* method = mono_class_get_method_from_name(monoClass, functionName.c_str(), 0);
 	if (!method) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Method not found: " + functionName);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	MonoObject* exception = nullptr;
@@ -366,7 +366,7 @@ void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std:
 		MonoString* exceptionMsg = mono_object_to_string(exception, nullptr);
 		if (exceptionMsg) {
 			char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			DebugLog("C# Script[" + std::to_string(index) + "]:" + exceptionCStr, LogLevel::Error);
 #endif
 			mono_free(exceptionCStr);
@@ -392,23 +392,23 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 	char domain_name[] = "QuickForgeScriptDomain";
 	domain_ = mono_domain_create_appdomain(domain_name, nullptr);
 	if (!domain_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Failed to create new app domain.");
 #endif
 		return;
 	}
 
 	if (!mono_domain_set(domain_, false)) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Failed to set app domain.");
 #endif
 		return;
 	}
 
 	// --- C#繧ｹ繧ｯ繝ｪ繝励ヨ繧偵さ繝ｳ繝代う繝ｫ ---
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	CompileScripts();
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	// --- 繧ｳ繝ｳ繝代う繝ｫ貂医∩謌先棡迚ｩ・・LL/PDB・峨ｒ繧ｨ繝ｳ繧ｸ繝ｳ縺ｮ螳溯｡後ヵ繧｡繧､繝ｫ繝・ぅ繝ｬ繧ｯ繝医Μ縺ｫ繧ｳ繝斐・ ---
 	try {
@@ -426,12 +426,12 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 		std::filesystem::copy(srcDllPath, destDir, std::filesystem::copy_options::overwrite_existing);
 		std::filesystem::copy(srcPdbPath, destDir, std::filesystem::copy_options::overwrite_existing);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Copied C# artifacts to executable directory.");
 #endif
 	}
 	catch (const std::filesystem::filesystem_error& e) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to copy C# artifacts: ") + e.what());
 #endif
 		// 繧ｳ繝斐・縺ｫ螟ｱ謨励＠縺溷ｴ蜷医・縲∝ｾ檎ｶ壹・DLL繝ｭ繝ｼ繝峨ｒ縺励↑縺・ｈ縺・掠譛溘Μ繧ｿ繝ｼ繝ｳ

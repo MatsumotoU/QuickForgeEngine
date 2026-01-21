@@ -1,4 +1,4 @@
-#include "engine/include/assets/Script/LuaScriptOnQFE.h"
+﻿#include "engine/include/assets/Script/LuaScriptOnQFE.h"
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
@@ -12,9 +12,9 @@
 #include "engine/include/collider/Data/AABBColliderData.h"
 #include "engine/include/collider/Data/SphereColliderData.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 LuaScriptOnQFE::LuaScriptOnQFE() {
 	isCanRun_ = false;
@@ -29,7 +29,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 	try {
 		sol::state& luaState = LuaScriptResourceManager::GetInstance()->GetSharedState();
 		
-		// 1. 環境用テーブルを作成し、メタテーブルをセット
+		// 1. 迺ｰ蠅・畑繝・・繝悶Ν繧剃ｽ懈・縺励√Γ繧ｿ繝・・繝悶Ν繧偵そ繝・ヨ
 		sol::table env_table = luaState.create_table();
 		sol::table mt = luaState.create_table();
 		mt["__index"] = [this, &luaState](sol::table t, sol::object key) -> sol::object {
@@ -57,17 +57,17 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 					}
 				}
 			}
-			// 環境のフォールバック（グローバルなど）をチェック
+			// 迺ｰ蠅・・繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ・医げ繝ｭ繝ｼ繝舌Ν縺ｪ縺ｩ・峨ｒ繝√ぉ繝・け
 			return luaState.globals()[key];
 		};
-		// sol::table::set_metatable がない古いバージョン向けの互換記法
+		// sol::table::set_metatable 縺後↑縺・商縺・ヰ繝ｼ繧ｸ繝ｧ繝ｳ蜷代￠縺ｮ莠呈鋤險俶ｳ・
 		env_table[sol::metatable_key] = mt;
 
-		// 2. 作成したテーブルから環境を初期化
+		// 2. 菴懈・縺励◆繝・・繝悶Ν縺九ｉ迺ｰ蠅・ｒ蛻晄悄蛹・
 
 		environment_ = sol::environment(luaState, env_table);
-		// 環境の親としてglobalsを設定（globalsから値を取得できるようにする）
-		// ただし、メタテーブルの__indexで手動フォールバックしているので実質的にはmt経由でアクセスされる
+		// 迺ｰ蠅・・隕ｪ縺ｨ縺励※globals繧定ｨｭ螳夲ｼ・lobals縺九ｉ蛟､繧貞叙蠕励〒縺阪ｋ繧医≧縺ｫ縺吶ｋ・・
+		// 縺溘□縺励√Γ繧ｿ繝・・繝悶Ν縺ｮ__index縺ｧ謇句虚繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ縺励※縺・ｋ縺ｮ縺ｧ螳溯ｳｪ逧・↓縺ｯmt邨檎罰縺ｧ繧｢繧ｯ繧ｻ繧ｹ縺輔ｌ繧・
 		
 		std::string filePath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + scriptName;
 		sol::load_result loadResult = luaState.load_file(filePath);
@@ -79,7 +79,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 
 		SetQFEFunctions();
 
-		// スクリプトを実行（環境を指定）
+		// 繧ｹ繧ｯ繝ｪ繝励ヨ繧貞ｮ溯｡鯉ｼ育腸蠅・ｒ謖・ｮ夲ｼ・
 		sol::function scriptFunc = loadResult;
 		sol::set_environment(environment_, scriptFunc);
 
@@ -92,20 +92,20 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 		isCanRun_ = true;
 		scriptName_ = scriptName;
 
-		// キャッシュする関数を取得
+		// 繧ｭ繝｣繝・す繝･縺吶ｋ髢｢謨ｰ繧貞叙蠕・
 		initFunc_ = environment_["Init"];
 		updateFunc_ = environment_["Update"];
 		onCollisionEnterFunc_ = environment_["OnCollisionEnter"];
 		onCollisionStayFunc_ = environment_["OnCollisionStay"];
 
-		// Lua側のレジストリに登録
+		// Lua蛛ｴ縺ｮ繝ｬ繧ｸ繧ｹ繝医Μ縺ｫ逋ｻ骭ｲ
 		if (updateFunc_.valid()) {
 			luaState["QFE_Internal"]["RegisterUpdate"](handle_, updateFunc_, priority_);
 		}
 	}
 
 	catch (const std::exception& e) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(e.what(), LogLevel::Error);
 #else
 		std::cerr << e.what() << std::endl;
@@ -208,20 +208,20 @@ std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
 void LuaScriptOnQFE::SetQFEFunctions() {
 	sol::state& luaState = LuaScriptResourceManager::GetInstance()->GetSharedState();
 
-	// thisエンティティ情報登録
+	// this繧ｨ繝ｳ繝・ぅ繝・ぅ諠・ｱ逋ｻ骭ｲ
 	sol::table thisEntity = luaState.create_table();
 	thisEntity.set_function("GetEntityId", [this]() {
 		return bindEntityId_;
 		});
 	environment_["this"] = thisEntity;
 
-	// 訳アリ関数群
+	// 險ｳ繧｢繝ｪ髢｢謨ｰ鄒､
 	// Log
 	environment_["DebugLog"] = [this](sol::variadic_args message) {
 		message;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLogLua(message,this->GetBindEntityId(),this->GetScriptName());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		};
 	environment_["GetThisEntityId"] = [this]() {
 		return bindEntityId_;
@@ -256,4 +256,6 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		collider.aabb.size = size;
 		};
 }
+
+
 

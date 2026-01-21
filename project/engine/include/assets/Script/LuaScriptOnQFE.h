@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <sol/sol.hpp>
 #include <string>
 #include <memory>
@@ -6,9 +6,9 @@
 #include <vector>
 #include <stdint.h>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 #include <set>
 
@@ -22,7 +22,7 @@ public:
 	void ReloadScript();
 	template<typename... Args>
 	inline void RunFunction(const std::string& functionName, Args&&... args) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		try {
 			if (!isCanRun_) {
 				throw std::runtime_error("Cannot run function. Lua script is not loaded or failed to load.");
@@ -86,7 +86,7 @@ public:
 
 
 private:
-	/// QFE用の関数を登録
+	/// QFE逕ｨ縺ｮ髢｢謨ｰ繧堤匳骭ｲ
 	void SetQFEFunctions();
 
 	bool isCanRun_;
@@ -100,7 +100,7 @@ private:
 	sol::environment environment_;
 
 
-#ifndef _DEBUG
+#ifndef QFE_OPTIMIZE_OFF
 	std::map<std::string, sol::function> functionCache_;
 #endif
 	sol::function initFunc_;
@@ -108,4 +108,6 @@ private:
 	sol::function onCollisionEnterFunc_;
 	sol::function onCollisionStayFunc_;
 };
+
+
 

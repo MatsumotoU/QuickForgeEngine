@@ -4,13 +4,12 @@
  */
 
 #include "engine/include/core/Math/MyMath.h"
+#include <cassert>
 
 /**
- * @brief 線形補間(Lerp)
- * @note 引数名が Leap になっているが、実際は Lerp の挙動
- * TODO: メソッド名を Lerp にリネームすることを検討
+ * @brief 線形補間
  */
-float MyMath::Leap(float a, float b, float t) {
+float MyMath::Lerp(float a, float b, float t) {
     return a * t + b * (1.0f - t);
 }
 
@@ -27,7 +26,11 @@ float MyMath::Slerp(float from, float to, float t) {
 
 /** @brief 指数平滑化を用いた簡易的な補間 */
 void MyMath::SimpleEaseIn(float* value, float endValue, float transitionSpeed) {
-    // TODO: value が nullptr の場合の安全性が欠けている
+	if (value == nullptr) {
+		assert(false && "value is nullptr.");
+		return;
+	}
+
 	*value += (endValue - *value) * transitionSpeed;
 
 	if (fabsf(*value - endValue) <= 0.01f) {

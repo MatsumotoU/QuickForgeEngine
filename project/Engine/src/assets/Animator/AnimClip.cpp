@@ -1,7 +1,7 @@
 #include "engine/include/assets/Animator/AnimClip.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 AnimClip::AnimClip() : isLoop_(false){
 }
@@ -30,9 +30,9 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 	Transform result;
 	// keyframe縺悟ｭ伜惠縺励↑縺・ｴ蜷医・繝・ヵ繧ｩ繝ｫ繝医・Transform繧定ｿ斐☆
 	if (keyframes_.empty()) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog("GetTransformAtTime: No keyframes available.");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 		return result;
 	}
 

@@ -10,9 +10,9 @@
 void CameraManager::Initialize() {
 	nextCameraHandle_ = 0;
 	cameras_.clear();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	isActiveDebugCamera_ = false;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	
 	AddCamera();
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
@@ -57,11 +57,11 @@ Camera& CameraManager::GetCamera(uint32_t index) {
 }
 
 Camera& CameraManager::GetMainCamera() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (isActiveDebugCamera_) {
 		return cameras_[0];
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	assert(!cameras_.empty() && "No cameras available.");
 	assert(mainCameraIndex_ < cameras_.size() && "MainCameraIndex is out of range.");
 	return cameras_[mainCameraIndex_];
@@ -74,7 +74,7 @@ std::unordered_map<uint32_t, Camera>& CameraManager::GetAllCameras() {
 void CameraManager::SnapToDebugCamera(uint32_t index) {
 	assert(index < cameras_.size() && "Camera index is out of range.");
 	index;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (isActiveDebugCamera_ && cameras_.size() > 1) {
 		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 		Transform& debugCamTransform = entityManager->GetComponent<Transform>(cameras_[0].GetBindEntityId());
@@ -85,7 +85,7 @@ void CameraManager::SnapToDebugCamera(uint32_t index) {
 		CameraData& targetCamData = entityManager->GetComponent<CameraData>(cameras_[index].GetBindEntityId());
 		targetCamData = debugCamData;
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void CameraManager::SetMainCameraIndex(uint32_t index) {

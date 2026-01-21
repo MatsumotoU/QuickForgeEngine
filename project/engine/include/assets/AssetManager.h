@@ -68,9 +68,9 @@ public:
 	uint32_t LoadModelMesh(const std::string& modelName);
 	uint32_t LoadModelTexture(const std::string& modelName);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	uint32_t LoadEditorTexture(const std::string& imageName);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	ModelRenderData* GetModelRenderData(uint32_t modelHandle);
 	TextureManager* GetTextureManager() { return textureManager_; }

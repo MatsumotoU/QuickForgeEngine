@@ -1,5 +1,5 @@
 #include "engine/include/utility/String/DirectXStructToString.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 std::string DirectXStructToString::ToString(const D3D12_ROOT_PARAMETER& rootParameter) {
 	std::string result = "D3D12_ROOT_PARAMETER: ";
 	result += "ParameterType: " + std::to_string(rootParameter.ParameterType) + ", ";
@@ -13,4 +13,4 @@ std::string DirectXStructToString::ToString(const D3D12_DESCRIPTOR_RANGE& descri
 		", NumDescriptors: " + std::to_string(descriptorRange.NumDescriptors) +
 		", BaseShaderRegister: " + std::to_string(descriptorRange.BaseShaderRegister);
 }
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF

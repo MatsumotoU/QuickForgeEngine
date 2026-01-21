@@ -1,16 +1,16 @@
 #include "engine/include/graphic/DirectXCommon/Descriptors/DescriptorGenerator/DescriptorGenerator.h"
 #include <cassert>
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void DescriptorGenerator::GenerateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& heap, ID3D12Device* device, const DescriptorGenerateConfig& config) {
 	assert(!heap && "Already generated");
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("CreateDescriptorHeap");
 	DebugLog(std::format("NumDescriptors: {}, ShaderVisible: {}",
 		config.numDescriptors, config.shaderVisible ? "true" : "false"));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = config.heapType;

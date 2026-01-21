@@ -1,8 +1,8 @@
 #include "engine/include/assets/Script/QFElinker/CsharpOnQFELinker.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
@@ -96,9 +96,9 @@ uint32_t CsharpOnQFELinker::CreateEntity(MonoString* className) {
 }
 
 void CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
     char* utf8_message = mono_string_to_utf8(message);
 	DebugLogCsharp(utf8_message);
     mono_free(utf8_message);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }

@@ -1,9 +1,9 @@
 #include "engine/include/window/GameWindowManager.h"
 #include "engine/include/window/GameWindow.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 GameWindowManager::GameWindowManager() {
 }

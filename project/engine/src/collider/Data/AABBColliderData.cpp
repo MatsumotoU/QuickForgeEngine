@@ -14,9 +14,9 @@ nlohmann::json AABBColliderData::Serialize() const {
 	json["aabb"] = { aabb.center.x, aabb.center.y, aabb.center.z, aabb.size.x, aabb.size.y, aabb.size.z };
 	json["colliderLayer"] = colliderLayer;
 	json["eventColliderLayer"] = eventColliderLayer;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	json["isDraw"] = isDraw;
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	return json;
 }
@@ -42,9 +42,9 @@ void AABBColliderData::Deserialize(const nlohmann::json& json) {
 	if (json.contains("eventColliderLayer") && json["eventColliderLayer"].is_number_unsigned()) {
 		eventColliderLayer = json["eventColliderLayer"].get<uint8_t>();
 	}
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (json.contains("isDraw") && json["isDraw"].is_boolean()) {
 		isDraw = json["isDraw"].get<bool>();
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }

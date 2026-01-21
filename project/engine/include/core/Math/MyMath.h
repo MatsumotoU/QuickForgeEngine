@@ -14,7 +14,7 @@
  */
 namespace MyMath {
     /** @brief 線形補間(Linear Interpolation) */
-	float Leap(float a, float b, float t);
+	float Lerp(float a, float b, float t);
     /** @brief 球面線形補間(Spherical Linear Interpolation) */
 	float Slerp(float from, float to, float t);
     /** @brief 簡易的なイーズイン処理 */

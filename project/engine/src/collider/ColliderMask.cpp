@@ -3,9 +3,9 @@
 #include <nlohmann/json.hpp> 
 #include <fstream>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void ColliderTagMask::Initialize(const std::string& maskTableFilePath)
 {
@@ -34,9 +34,9 @@ void ColliderTagMask::Initialize(const std::string& maskTableFilePath)
 	catch (const std::exception& e)
 	{
 		e;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(e.what());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 	
 }
@@ -58,9 +58,9 @@ void ColliderTagMask::Finalize()
 	}
 	catch (const std::exception& e) {
 		e;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(e.what());
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 }
 

@@ -6,41 +6,41 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/MyString.h"
-#endif // DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 DirectXDevice::DirectXDevice() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	disableError_ = false;
 	disableWarning_ = false;
-#endif // DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 DirectXDevice::~DirectXDevice() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("-----DirectXDevice:Shutdown-----\n");
 	DebugLog(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
 	DebugLog(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void DirectXDevice::Initialize() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("-----DirectXDevice:Initialize-----\n");
 	DebugLog(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
 	DebugLog(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	// DXGIファクトリーの生�E
 	CreateDxgiFactory();
 	// アダプターの選宁E
 	FindAdapter();
 	// D3D12Deviceの生�E
 	CreateDevice();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("-----DirectXDevice:Initialize Complete-----\n");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void DirectXDevice::Shutdown() {
@@ -57,7 +57,7 @@ ID3D12Device* DirectXDevice::GetDevice() const {
 IDXGIAdapter4* DirectXDevice::GetUseAdapter() const {
 	return useAdapter_.Get();
 }
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 void DirectXDevice::SetDisableError(bool disable) {
 	disableError_ = disable;
 	DebugLog(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
@@ -66,7 +66,7 @@ void DirectXDevice::SetDisableWarning(bool disable) {
 	disableWarning_ = disable;
 	DebugLog(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
 }
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void DirectXDevice::CreateDxgiFactory() {
 	assert(!dxgiFactory_);
@@ -95,9 +95,9 @@ void DirectXDevice::FindAdapter() {
 		// ソフトウェアアダプタでなければ採用
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 			// 採用したアダプタの惁E��をログに出力、E
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			DebugLog(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 			break;
 		}
 		useAdapter_ = nullptr;
@@ -125,21 +125,21 @@ void DirectXDevice::CreateDevice() {
 		// 持E��した機�EレベルでチE��イスが生成できたかを確誁E
 		if (SUCCEEDED(hr)) {
 			// 生�Eできたのでログ出力してループ脱出
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			DebugLog(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 			break;
 		}
 	}
 	// チE��イス生�Eが上手くいかなかった�Eで起動できなぁE
 	assert(device_ != nullptr);
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Complete create D3D12Device");
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	// エラー落ち処琁E
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("---EnebleBreakOnSeverity---");
 	ID3D12InfoQueue* infoQueue = nullptr;
 	if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
@@ -179,5 +179,5 @@ void DirectXDevice::CreateDevice() {
 		// 解放
 		infoQueue->Release();
 	}
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 }

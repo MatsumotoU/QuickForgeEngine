@@ -1,10 +1,10 @@
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
 #include <cassert>
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include <format>
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename, ModelData& modelData) {
 	Assimp::Importer importer;
@@ -18,20 +18,20 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		return;
 	}
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Model Load Success: {}", filepath));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 	for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; ++meshIdx) {
 		const aiMesh* mesh = scene->mMeshes[meshIdx];
 		MeshData meshData;
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::format("Loading Mesh {} / {}", meshIdx + 1, scene->mNumMeshes));
 		DebugLog(std::format("UVChannel: {}", mesh->GetNumUVChannels()));
 		DebugLog(std::format("ColorChannel: {}", mesh->GetNumColorChannels()));
 		DebugLog(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 		// 鬆らせ繝・・繧ｿ
 		std::vector<VertexData> tempVertices;

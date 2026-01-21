@@ -1,6 +1,6 @@
-/**
+﻿/**
  * @file KeyConfig.cpp
- * @brief キーコンフィグ(アクション名とキーコードの紐付け)の管理クラスの実装
+ * @brief 繧ｭ繝ｼ繧ｳ繝ｳ繝輔ぅ繧ｰ(繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷阪→繧ｭ繝ｼ繧ｳ繝ｼ繝峨・邏蝉ｻ倥￠)縺ｮ邂｡逅・け繝ｩ繧ｹ縺ｮ螳溯｣・
  */
 
 #include "engine/include/input/KeyConfig.h"
@@ -12,23 +12,23 @@
 
 #include "engine/include/assets/AssetManager.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
-/** @brief 初期化 */
+/** @brief 蛻晄悄蛹・*/
 void KeyConfig::Initialize() {
 	keyMap_.clear();
 	SettingDefaultKeyConfig();
 }
 
 /**
- * @brief キーの追加
- * @param name アクション名
- * @param key キーコード(DIK_*)
+ * @brief 繧ｭ繝ｼ縺ｮ霑ｽ蜉
+ * @param name 繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷・
+ * @param key 繧ｭ繝ｼ繧ｳ繝ｼ繝・DIK_*)
  */
 void KeyConfig::AddKey(const std::string& name, uint32_t key) {
-	// 同じキーが登録されていないか確認
+	// 蜷後§繧ｭ繝ｼ縺檎匳骭ｲ縺輔ｌ縺ｦ縺・↑縺・°遒ｺ隱・
 	for (const auto& existingKey : keyMap_[name]) {
 		if (existingKey == key) {
 			return;
@@ -38,21 +38,21 @@ void KeyConfig::AddKey(const std::string& name, uint32_t key) {
 }
 
 /**
- * @brief 指定されたアクション名に関連付けられた全てのキーを削除する。
+ * @brief 謖・ｮ壹＆繧後◆繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷阪↓髢｢騾｣莉倥￠繧峨ｌ縺溷・縺ｦ縺ｮ繧ｭ繝ｼ繧貞炎髯､縺吶ｋ縲・
  *
- * @param name 削除するアクション名
+ * @param name 蜑企勁縺吶ｋ繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷・
  */
 void KeyConfig::RemoveKey(const std::string& name) {
 	keyMap_.erase(name);
 }
 
 /**
- * @brief 指定されたアクション名から特定のキーを削除する。
+ * @brief 謖・ｮ壹＆繧後◆繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷阪°繧臥音螳壹・繧ｭ繝ｼ繧貞炎髯､縺吶ｋ縲・
  *
- * アクション名に関連付けられたキーが全て削除された場合、そのアクション名もマップから削除されます。
+ * 繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷阪↓髢｢騾｣莉倥￠繧峨ｌ縺溘く繝ｼ縺悟・縺ｦ蜑企勁縺輔ｌ縺溷ｴ蜷医√◎縺ｮ繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷阪ｂ繝槭ャ繝励°繧牙炎髯､縺輔ｌ縺ｾ縺吶・
  *
- * @param name アクション名
- * @param key 削除するキーコード
+ * @param name 繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷・
+ * @param key 蜑企勁縺吶ｋ繧ｭ繝ｼ繧ｳ繝ｼ繝・
  */
 void KeyConfig::RemoveKey(const std::string& name, uint32_t key) {
 	auto it = keyMap_.find(name);
@@ -66,13 +66,13 @@ void KeyConfig::RemoveKey(const std::string& name, uint32_t key) {
 }
 
 /**
- * @brief 指定されたアクション名の特定のインデックスにあるキーを編集する。
+ * @brief 謖・ｮ壹＆繧後◆繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷阪・迚ｹ螳壹・繧､繝ｳ繝・ャ繧ｯ繧ｹ縺ｫ縺ゅｋ繧ｭ繝ｼ繧堤ｷｨ髮・☆繧九・
  *
- * 指定されたインデックスが存在しない場合、新しいキーとして追加されます。
+ * 謖・ｮ壹＆繧後◆繧､繝ｳ繝・ャ繧ｯ繧ｹ縺悟ｭ伜惠縺励↑縺・ｴ蜷医∵眠縺励＞繧ｭ繝ｼ縺ｨ縺励※霑ｽ蜉縺輔ｌ縺ｾ縺吶・
  *
- * @param name アクション名
- * @param index 編集するキーのインデックス
- * @param newKey 新しいキーコード
+ * @param name 繧｢繧ｯ繧ｷ繝ｧ繝ｳ蜷・
+ * @param index 邱ｨ髮・☆繧九く繝ｼ縺ｮ繧､繝ｳ繝・ャ繧ｯ繧ｹ
+ * @param newKey 譁ｰ縺励＞繧ｭ繝ｼ繧ｳ繝ｼ繝・
  */
 void KeyConfig::EditKey(const std::string& name, size_t index, uint32_t newKey) {
 	auto it = keyMap_.find(name);
@@ -90,15 +90,15 @@ const std::vector<uint32_t>& KeyConfig::GetKeys(const std::string& name) const {
 		return it->second;
 	}
 	
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("GetKeys: No keys found for action '" + name + "'", LogLevel::Error);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	return emptyVector;
 }
 
-/** @brief デフォルトのキーコンフィグを設定 */
+/** @brief 繝・ヵ繧ｩ繝ｫ繝医・繧ｭ繝ｼ繧ｳ繝ｳ繝輔ぅ繧ｰ繧定ｨｭ螳・*/
 void KeyConfig::SettingDefaultKeyConfig() {
-	// 移動
+	// 遘ｻ蜍・
 	AddKey("MoveRight", DIK_RIGHT);
 	AddKey("MoveRight", DIK_D);
 	AddKey("MoveLeft", DIK_LEFT);
@@ -107,16 +107,16 @@ void KeyConfig::SettingDefaultKeyConfig() {
 	AddKey("MoveUp", DIK_W);
 	AddKey("MoveDown", DIK_DOWN);
 	AddKey("MoveDown", DIK_S);
-	// ジャンプ
+	// 繧ｸ繝｣繝ｳ繝・
 	AddKey("Jump", DIK_SPACE);
-	// 攻撃
+	// 謾ｻ謦・
 	AddKey("Attack", DIK_LCONTROL);
-	// メニュー
+	// 繝｡繝九Η繝ｼ
 	AddKey("Menu", DIK_ESCAPE);
-	// 決定
+	// 豎ｺ螳・
 	AddKey("Decide", DIK_RETURN);
 	AddKey("Decide", DIK_SPACE);
-	// キャンセル
+	// 繧ｭ繝｣繝ｳ繧ｻ繝ｫ
 	AddKey("Cancel", DIK_BACKSPACE);
 	AddKey("Cancel", DIK_ESCAPE);
 }
@@ -144,9 +144,9 @@ void KeyConfig::SaveKeyConfig() {
 		ofs.close();
 	}
 	catch (const std::exception& e) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 }
 
@@ -171,8 +171,10 @@ void KeyConfig::LoadKeyConfig() {
 		}
 	}
 	catch (const std::exception& e) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	}
 }
+
+

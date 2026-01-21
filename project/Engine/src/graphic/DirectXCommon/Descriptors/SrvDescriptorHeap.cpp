@@ -1,18 +1,18 @@
-#include "engine/include/graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
+﻿#include "engine/include/graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
 
 #include "engine/include/graphic/DirectXCommon/Descriptors/DescriptorGenerator/DescriptorGenerator.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/CheckGenerateConfig/CheckGenerateConfig.h"
 #include "engine/include/utility/DirectX/GenerateDescriptorHandle.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 void SrvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog("-----SrvDescriptorHeap:Initialize-----");
-#endif // _DEBUG
-	// ディスクリプタ生成設定の初期化
+#endif // QFE_OPTIMIZE_OFF
+	// 繝・ぅ繧ｹ繧ｯ繝ｪ繝励ち逕滓・險ｭ螳壹・蛻晄悄蛹・
 	descriptorGenerateConfig_.descriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	descriptorGenerateConfig_.heapType = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	descriptorGenerateConfig_.numDescriptors = numDescriptors;
@@ -24,12 +24,12 @@ void SrvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bo
 	assert(descriptorGenerateConfig_.heapType == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV && "Heap type must be Srv for SrvDescriptorHeap.");
 	assert(descriptorGenerateConfig_.shaderVisible == true && "Shader visibility must be true for Srv descriptor heap.");
 
-	device_ = device; // デバイスを保存
+	device_ = device; // 繝・ヰ繧､繧ｹ繧剃ｿ晏ｭ・
 
-	// ディスクリプタヒープの生成
+	// 繝・ぅ繧ｹ繧ｯ繝ｪ繝励ち繝偵・繝励・逕滓・
 	DescriptorGenerator::GenerateDescriptorHeap(
 		descriptorHeap_, device, descriptorGenerateConfig_);
-	// 空きスタックを初期化
+	// 遨ｺ縺阪せ繧ｿ繝・け繧貞・譛溷喧
 	for (UINT i = 1; i < descriptorGenerateConfig_.numDescriptors; ++i) {
 		freeDescriptors_.push(i);
 	}
@@ -40,21 +40,23 @@ UINT SrvDescriptorHeap::GetDescriptorSize() const {
 }
 
 DescriptorHandles SrvDescriptorHeap::AssignHeap(ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
-	// 空きスタックからディスクリプタを取得
+	// 遨ｺ縺阪せ繧ｿ繝・け縺九ｉ繝・ぅ繧ｹ繧ｯ繝ｪ繝励ち繧貞叙蠕・
 	assert(!freeDescriptors_.empty() && "No free descriptors available.");
 	UINT index = freeDescriptors_.front();
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("Srv_AssignHeapIndex: {}", index));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	freeDescriptors_.pop();
-	// ディスクリプタハンドルを取得
+	// 繝・ぅ繧ｹ繧ｯ繝ｪ繝励ち繝上Φ繝峨Ν繧貞叙蠕・
 	DescriptorHandles handle;
 	handle.cpuHandle_ =
 		GenerateDescriptorHandle::GetCpuDescriptorHandle(descriptorHeap_.Get(), descriptorGenerateConfig_.descriptorSize, index);
 	handle.gpuHandle_ =
 		GenerateDescriptorHandle::GetGpuDescriptorHandle(descriptorHeap_.Get(), descriptorGenerateConfig_.descriptorSize, index);
 
-	// リソースビューを生成
+	// 繝ｪ繧ｽ繝ｼ繧ｹ繝薙Η繝ｼ繧堤函謌・
 	device_->CreateShaderResourceView(resource, &desc, handle.cpuHandle_);
 	return handle;
 }
+
+

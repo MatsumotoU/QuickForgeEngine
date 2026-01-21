@@ -1,9 +1,9 @@
 #include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 #include <cassert>
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "utility/String/MyString.h"
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 
 Microsoft::WRL::ComPtr<ID3D12Resource> BufferGenerator::Generate(ID3D12Device* device, size_t sizeInBytes) {
 	// * Resourceを生成する * //
@@ -27,8 +27,8 @@ Microsoft::WRL::ComPtr<ID3D12Resource> BufferGenerator::Generate(ID3D12Device* d
 	hr;
 	assert(SUCCEEDED(hr));
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	DebugLog(ConvertString(std::format(L"CreateBufferResource Bytes = {}", sizeInBytes)));
-#endif // _DEBUG
+#endif // QFE_OPTIMIZE_OFF
 	return vertexResource;
 }
