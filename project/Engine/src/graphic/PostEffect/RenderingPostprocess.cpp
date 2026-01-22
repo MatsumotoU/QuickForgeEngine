@@ -1,4 +1,4 @@
-﻿#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
+#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 
 #include "engine/include/utility/DirectX/TransitionResourceBarrier.h"
 #include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
@@ -27,7 +27,7 @@ RenderingPostprocess::RenderingPostprocess() {
 	enableColorCorrection_ = true;
 	enableVignette_ = true;
 	enableNormal_ = true;
-	enablePixcel_ = true;
+	enablePixcel_ = false;
 
 	renderingRosourceIndex_ = 0;
 	readingResourceIndex_ = 0;

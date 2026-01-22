@@ -104,8 +104,18 @@ void InspectorView::Draw() {
 			ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 			for (auto& mesh : modelData->meshRenderDataHandles) {
 				Material* material = assetManager->GetGpuBufferPool()->GetConstantBufferData<Material>(mesh.materialHandle);
+				DirectionalLight* lightData = assetManager->GetGpuBufferPool()->GetConstantBufferData<DirectionalLight>(mesh.lightBufferHandle);
+				
 				std::string label = "Color##" + std::to_string(mesh.materialHandle);
 				ImGui::ColorEdit4(label.c_str(), &material->color.x);
+				label = "PhongShading##" + std::to_string(mesh.materialHandle);
+				ImGui::DragFloat(label.c_str(), &material->shininess, 1.0f, 1.0f, 128.0f);
+
+				std::string lightLabel = "Light Color##" + std::to_string(mesh.lightBufferHandle);
+				ImGui::ColorEdit4(lightLabel.c_str(), &lightData->color.x);
+				std::string lightDirLabel = "Light Direction##" + std::to_string(mesh.lightBufferHandle);
+				ImGui::DragFloat3(lightDirLabel.c_str(), &lightData->direction.x, 0.1f);
+				lightData->direction = Vector3::Normalize(lightData->direction);
 			}
 
 			ImGui::Separator();

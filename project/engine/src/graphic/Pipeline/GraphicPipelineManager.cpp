@@ -20,8 +20,18 @@ void GraphicPipelineManager::Initialize(
 	normalGameObjectRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
 	normalGameObjectRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
 	normalGameObjectRootParameter_.CreateRootParameter("LightParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
+	normalGameObjectRootParameter_.CreateRootParameter("CameraParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 2);
 
 	normalGameObjectRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
+	// スプライトのルートパラメータ
+	spriteObjectRootParameter_.Initialize();
+	spriteObjectRootParameter_.CreateRootParameter("PixelParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	spriteObjectRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
+	spriteObjectRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	spriteObjectRootParameter_.CreateRootParameter("LightParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
+
+	spriteObjectRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	// パーティクルのルートパラメータ
 	particleRootParameter_.Initialize();
@@ -81,6 +91,7 @@ void GraphicPipelineManager::Initialize(
 	// パラメータの整合性チェック
 #ifdef QFE_OPTIMIZE_OFF
 	normalGameObjectRootParameter_.CheckIntegrityData();
+	spriteObjectRootParameter_.CheckIntegrityData();
 	particleRootParameter_.CheckIntegrityData();
 	primitiveRootParameter_.CheckIntegrityData();
 	grayScaleRootParameter_.CheckIntegrityData();
@@ -105,6 +116,11 @@ void GraphicPipelineManager::Initialize(
 			normalGameObjectRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Object3d.PS.hlsl", "Object3d.VS.hlsl", static_cast<BlendMode>(i),false);
 		
+		spritePso_[i].Initialize(&shaderCompiler_, device);
+		spritePso_[i].CreatePipelineStateObject(
+			spriteObjectRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Object2d.PS.hlsl", "Object2d.VS.hlsl", static_cast<BlendMode>(i), true);
+
 		linePso_[i].Initialize(&shaderCompiler_, device);
 		linePso_[i].CreatePipelineStateObject(
 			primitiveRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout,

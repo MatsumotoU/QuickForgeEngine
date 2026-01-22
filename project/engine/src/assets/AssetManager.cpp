@@ -6,7 +6,7 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
-//#include "engine/include/assets/Script/CsharpCmpiler.h"
+ //#include "engine/include/assets/Script/CsharpCmpiler.h"
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 /** @brief 初期化 */
@@ -28,7 +28,7 @@ void AssetManager::Initialize(DirectXCommon* dxCommon) {
 }
 
 void AssetManager::PreDraw() {
-	
+
 }
 void AssetManager::Finalize() {
 	particleGpuDataManager_.Finalize();
@@ -72,11 +72,13 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		meshRenderData.materialHandle = gpuBufferPool_->AcquireConstantBuffer<Material>();
 		meshRenderData.wpvBufferHandle = gpuBufferPool_->AcquireConstantBuffer<TransformationMatrix>();
 		meshRenderData.lightBufferHandle = gpuBufferPool_->AcquireConstantBuffer<DirectionalLight>();
+		meshRenderData.cameraPosBufferHandle = gpuBufferPool_->AcquireConstantBuffer<CameraForGPU>();
 
 		Material* materialData = gpuBufferPool_->GetConstantBufferData<Material>(meshRenderData.materialHandle);
 		materialData->color = { 1.0f,1.0f,1.0f,1.0f };
 		materialData->enableLighting = true;
 		materialData->uvTransform = Matrix4x4::MakeIndentity4x4();
+		materialData->shininess = 48.0f;
 		TransformationMatrix* transformData = gpuBufferPool_->GetConstantBufferData<TransformationMatrix>(meshRenderData.wpvBufferHandle);
 		transformData->World = Matrix4x4::MakeIndentity4x4();
 		transformData->WVP = Matrix4x4::MakeIndentity4x4();
@@ -84,6 +86,8 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		lightData->color = { 1.0f,1.0f,1.0f,1.0f };
 		lightData->direction = { 0.0f,-1.0f,0.0f };
 		lightData->intensity = 1.0f;
+		CameraForGPU* cameraData = gpuBufferPool_->GetConstantBufferData<CameraForGPU>(meshRenderData.cameraPosBufferHandle);
+		cameraData->cameraPosition = { 0.0f,0.0f,0.0f };
 	}
 
 	// モデル描画データを登録

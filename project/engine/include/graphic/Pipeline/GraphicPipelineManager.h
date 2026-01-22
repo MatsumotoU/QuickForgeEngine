@@ -23,6 +23,8 @@ public:
 
     /** @brief 三角形描画用のPSOを取得 */
 	PipelineStateObject* GetTrianglePso(BlendMode blendmode) { return &trianglePso_[static_cast<uint32_t>(blendmode)]; }
+	/** @brief スプライト描画用のPSOを取得 */
+	PipelineStateObject* GetSpritePso(BlendMode blendmode) { return &spritePso_[static_cast<uint32_t>(blendmode)]; }
     /** @brief ライン描画用のPSOを取得 */
 	PipelineStateObject* GetLinePso(BlendMode blendmode) { return &linePso_[static_cast<uint32_t>(blendmode)]; }
     /** @brief 点描画用のPSOを取得 */
@@ -49,6 +51,7 @@ private: // メンバ変数
 
 	// ルートパラメータ;
 	RootParameter normalGameObjectRootParameter_;
+	RootParameter spriteObjectRootParameter_;
 	RootParameter particleRootParameter_;
 	RootParameter primitiveRootParameter_;
 	RootParameter grayScaleRootParameter_;
@@ -62,6 +65,8 @@ private: // メンバ変数
 	PipelineStateObject trianglePso_[kCountOfBlendMode];
 	PipelineStateObject linePso_[kCountOfBlendMode];
 	PipelineStateObject pointPso_[kCountOfBlendMode];
+
+	PipelineStateObject spritePso_[kCountOfBlendMode];
 
 	PipelineStateObject primitivePso_[kCountOfBlendMode];
 

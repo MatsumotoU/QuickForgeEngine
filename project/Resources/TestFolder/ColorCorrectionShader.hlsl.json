@@ -39,6 +39,15 @@
             "SemanticIndex": 0,
             "SemanticName": "NORMAL",
             "SystemValueType": 0
+        },
+        {
+            "ComponentType": 3,
+            "Mask": 7,
+            "ReadWriteMask": 0,
+            "Register": 3,
+            "SemanticIndex": 0,
+            "SemanticName": "POSITION",
+            "SystemValueType": 0
         }
     ],
     "Resources": [

@@ -27,7 +27,7 @@ void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 		return;
 	}
 
-	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetTrianglePso(kBlendModeNormal);
+	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetSpritePso(kBlendModeNormal);
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	assert(dxCommon && "DirectXCommon is nullptr.");

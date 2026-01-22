@@ -18,6 +18,17 @@ using float32_t3x3 = Matrix3x3;
 using float32_t2x2 = Matrix2x2;
 #endif
 
+struct CameraForGPU {
+#ifdef __cplusplus
+	CameraForGPU()
+		: cameraPosition{ 0.0f, 0.0f, 0.0f }
+		, padding(0.0f) {
+	}
+#endif
+	float32_t3 cameraPosition;
+	float32_t padding;
+};
+
 struct ColorCorrectionOffset {
 #ifdef __cplusplus
 	ColorCorrectionOffset()
@@ -59,7 +70,8 @@ struct Material {
 		: color{ 1.0f, 1.0f, 1.0f, 1.0f }
 		, enableLighting(1)
 		, padding{ 0.0f, 0.0f, 0.0f }
-		, uvTransform(Matrix4x4::MakeIndentity4x4()) {
+		, uvTransform(Matrix4x4::MakeIndentity4x4())
+		, shininess(0.0f){
 	}
 #endif
 
@@ -69,6 +81,7 @@ struct Material {
 	float32_t padding[3];
 #endif
 	float32_t4x4 uvTransform;
+	float32_t shininess;
 };
 
 struct OffsetBuffer {

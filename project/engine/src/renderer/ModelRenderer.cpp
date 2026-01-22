@@ -50,6 +50,8 @@ void Render::Model::DrawModel(const uint32_t& modelHandle) {
 			assetManager->GetTextureManager()->GetTextureSrvHandleGPU(handle.textureHandle));
 		commandList->SetGraphicsRootConstantBufferView(3, 
 			gpuBufferPool->GetConstantBufferAddress<DirectionalLight>(handle.lightBufferHandle));
+		commandList->SetGraphicsRootConstantBufferView(4,
+			gpuBufferPool->GetConstantBufferAddress<CameraForGPU>(handle.cameraPosBufferHandle));
 		commandList->DrawInstanced(static_cast<UINT>(
 			assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);
 	}

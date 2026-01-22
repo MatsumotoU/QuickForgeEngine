@@ -1,4 +1,4 @@
-﻿#include "engine/include/graphic/Pipeline/PSO/ShaderCompiler.h"
+#include "engine/include/graphic/Pipeline/PSO/ShaderCompiler.h"
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -100,8 +100,8 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 
 	// 繧ｨ繝ｩ繝ｼ蜃ｺ蜉帙ｒ蜿門ｾ・
 	IDxcBlobUtf8* shaderError = nullptr;
-	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
-	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
+	hr = shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
+	if (SUCCEEDED(hr) && shaderError != nullptr && shaderError->GetStringLength() != 0) {
 		Log(shaderError->GetStringPointer());
 		assert(false);
 	}

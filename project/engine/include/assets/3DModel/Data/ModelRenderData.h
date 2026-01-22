@@ -11,6 +11,7 @@ struct MeshRenderDataHandle {
 	uint32_t materialHandle;
 	uint32_t wpvBufferHandle;
 	uint32_t lightBufferHandle;
+	uint32_t cameraPosBufferHandle;
 };
 
 struct ModelRenderData {

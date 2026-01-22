@@ -105,10 +105,10 @@ public:
 	}
 
 	template <typename T>
-	const ComponentStrage<T>& GetComponentStrage() const {
+	ComponentStrage<T>& GetComponentStrage() const {
 		size_t typeId = typeid(T).hash_code();
 		if (componentStrages.find(typeId) != componentStrages.end()) {
-			return static_cast<const ComponentStrage<T>&>(*componentStrages.at(typeId));
+			return static_cast<ComponentStrage<T>&>(*componentStrages.at(typeId));
 		}
 		throw std::runtime_error("Component strage not found");
 	}
