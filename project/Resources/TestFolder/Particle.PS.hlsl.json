@@ -2,11 +2,11 @@
     "ConstantBuffers": [
         {
             "Name": "gMaterial",
-            "Size": 96,
+            "Size": 112,
             "Variables": [
                 {
                     "Name": "gMaterial",
-                    "Size": 96,
+                    "Size": 100,
                     "StartOffset": 0
                 }
             ]

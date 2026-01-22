@@ -1,5 +1,28 @@
 {
-    "ConstantBuffers": [],
+    "ConstantBuffers": [
+        {
+            "Name": "gMaterial",
+            "Size": 112,
+            "Variables": [
+                {
+                    "Name": "gMaterial",
+                    "Size": 100,
+                    "StartOffset": 0
+                }
+            ]
+        },
+        {
+            "Name": "gDirectionalLight",
+            "Size": 32,
+            "Variables": [
+                {
+                    "Name": "gDirectionalLight",
+                    "Size": 32,
+                    "StartOffset": 0
+                }
+            ]
+        }
+    ],
     "Inputs": [
         {
             "ComponentType": 3,
@@ -22,23 +45,30 @@
         {
             "ComponentType": 3,
             "Mask": 7,
-            "ReadWriteMask": 0,
+            "ReadWriteMask": 7,
             "Register": 2,
             "SemanticIndex": 0,
             "SemanticName": "NORMAL",
             "SystemValueType": 0
-        },
-        {
-            "ComponentType": 3,
-            "Mask": 7,
-            "ReadWriteMask": 0,
-            "Register": 3,
-            "SemanticIndex": 0,
-            "SemanticName": "POSITION",
-            "SystemValueType": 0
         }
     ],
     "Resources": [
+        {
+            "BindCount": 1,
+            "BindPoint": 0,
+            "Flags": 1,
+            "Name": "gMaterial",
+            "Space": 0,
+            "Type": 0
+        },
+        {
+            "BindCount": 1,
+            "BindPoint": 1,
+            "Flags": 1,
+            "Name": "gDirectionalLight",
+            "Space": 0,
+            "Type": 0
+        },
         {
             "BindCount": 1,
             "BindPoint": 0,

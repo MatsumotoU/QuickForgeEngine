@@ -128,3 +128,10 @@ Matrix4x4 Camera::GetWorldMatrix() const {
 
 	return Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 }
+
+Vector3 Camera::GetPosition() const
+{
+	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	Transform& transform = entityManager->GetComponent<Transform>(bindEntityId_);
+	return transform.translate;
+}

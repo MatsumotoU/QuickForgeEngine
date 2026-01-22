@@ -1,4 +1,4 @@
-﻿#include "engine/include/scene/SceneObject.h"
+#include "engine/include/scene/SceneObject.h"
 #include "engine/include/assets/AssetManager.h"
 #include <cassert>
 
@@ -39,6 +39,7 @@
 
 #include "Engine/include/scene/SceneCommand/SceneEntityCommands.h"
 #include "engine/include/scene/SceneObject.h"
+#include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 SceneObject::SceneObject() {
 	assetManager_ = nullptr;
@@ -95,6 +96,19 @@ void SceneObject::PreDraw() {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	cameraManager->Update();
+
+	// 3Dモデルのカメラ位置更新
+	if (assetManager->GetEntityManager()->HasComponentStrage<ModelHandle>()) {
+		auto& modelStrage = assetManager->GetEntityManager()->GetComponentStrage<ModelHandle>();
+		for (auto& model : modelStrage) {
+			const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(model.second.handle);
+			GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
+			for (const auto& meshRenderDataHandle : modelDataPtr->meshRenderDataHandles) {
+				CameraForGPU* camera = gpuBufferPool->GetConstantBufferData<CameraForGPU>(meshRenderDataHandle.cameraPosBufferHandle);
+				camera->cameraPosition = cameraManager->GetMainCamera().GetPosition();
+			}
+		}
+	}
 	
 	// WVP陦悟・譖ｴ譁ｰ
 	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(assetManager->GetEntityManager()), *cameraManager));

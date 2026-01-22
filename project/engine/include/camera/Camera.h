@@ -20,6 +20,7 @@ public:
 	Matrix4x4 GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix ,CameraType type) const;
 	Matrix4x4 GetWorldViewProjectionMatrixOrthographic(const Matrix4x4& worldMatrix) const;
 	Matrix4x4 GetWorldMatrix() const;
+	Vector3 GetPosition() const;
 
 private:
 	Matrix4x4 viewMatrix_;

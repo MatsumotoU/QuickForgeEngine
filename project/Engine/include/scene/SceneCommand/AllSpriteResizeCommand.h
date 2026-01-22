@@ -5,7 +5,7 @@ class AllSpriteResizeCommand : public ISceneEntityCommand
 {
 public:
 	AllSpriteResizeCommand() = delete;
-	AllSpriteResizeCommand(EntityManager& em);
+	explicit AllSpriteResizeCommand(EntityManager& em);
 	virtual ~AllSpriteResizeCommand() = default;
 
 	virtual void Execute() override;
