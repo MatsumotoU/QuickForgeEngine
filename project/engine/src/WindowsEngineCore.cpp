@@ -81,7 +81,7 @@ void WindowsEngineCore::Initialize() {
 	renderingPostprocess_->SetColorCorrectionPSO(graphicPipelineManager_->GetColorCorrectionPso());
 	renderingPostprocess_->SetGrayScalePSO(graphicPipelineManager_->GetGrayScalePso());
 	renderingPostprocess_->SetVignettePSO(graphicPipelineManager_->GetVignettePso());
-	renderingPostprocess_->SetPixelPSO(graphicPipelineManager_->GetPixcelPso());
+	renderingPostprocess_->SetPixelPSO(graphicPipelineManager_->GetPixelPso());
 	renderingPostprocess_->SetOffscreenResource(
 		offScreenResourceManager_.GetOffscreenResource(0), offScreenResourceManager_.GetOffscreenResource(1));
 	renderingPostprocess_->SetOffscreenRtvHandle(
