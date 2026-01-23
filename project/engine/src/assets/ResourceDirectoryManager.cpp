@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file ResourceDirectoryManager.cpp
  * @brief 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ遞ｮ鬘槭＃縺ｨ縺ｮ繝・ぅ繝ｬ繧ｯ繝医Μ繝代せ繧堤ｮ｡逅・☆繧九け繝ｩ繧ｹ縺ｮ螳溯｣・
  */
@@ -23,6 +23,7 @@ ResourceDirectoryManager::ResourceDirectoryManager() {
 	resourceDirectories_["2DMap"] = "Resources/2DMap/";
 	resourceDirectories_["Project"] = "Resources/Projects/";
 	resourceDirectories_["ParticleAnim"] = "Resources/ParticleAnimation/";
+	resourceDirectories_["Animation"] = "Resources/Animation/";
 #ifdef QFE_OPTIMIZE_OFF
 	resourceDirectories_["Editor"] = "Editor/Resource/Images/";
 #endif // QFE_OPTIMIZE_OFF
