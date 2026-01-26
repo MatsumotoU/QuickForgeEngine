@@ -5,6 +5,8 @@
 #include <dxcapi.h>
 #include <map>
 
+#include <nlohmann/json.hpp>
+
 #include "ShaderCompiledData.h"
 #include "engine/include/utility/String/MyString.h"
 
@@ -29,6 +31,11 @@ public:
 	/// <param name="includeHandler"></param>
 	/// <returns></returns>
 	IDxcBlob* CompileShader(const std::wstring& filePath,const wchar_t* profile);
+
+	/// 指定のシェーダーのリフレクション情報をJSON形式で取得する
+	nlohmann::json GetShaderReflectionJson(const std::wstring& filePath) const;
+	/// 今までコンパイルしたシェーダーのリフレクション情報をJSON形式で取得する
+	std::map<std::string, nlohmann::json> GetAllShaderReflectionJson() const;
 
 private:
 	std::map<std::wstring, IDxcBlob*> iDxcBlobMap_;

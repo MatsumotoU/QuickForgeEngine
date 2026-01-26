@@ -21,8 +21,8 @@ namespace QFE::FILE {
 	extern bool LoadCSVToVector(const std::string& filePath, std::vector<std::vector<uint32_t>>& map);
 	/// JSON形式のデータを指定したファイルに保存します
 	extern bool SaveJSONToFile(const std::string& filePath, const nlohmann::json& json);
-
+	/// UTF-8文字列をワイド文字列に変換します
 	extern std::string WideToUTF8(const std::wstring& wstr);
-
+	/// ワイド文字列をUTF-8文字列に変換します
 	extern std::wstring GetAbsolutePath(const std::wstring& relativePath);
 }

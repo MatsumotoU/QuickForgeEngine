@@ -49,7 +49,8 @@ public:
 private: // メンバ変数
 	ShaderCompiler shaderCompiler_;
 
-	// ルートパラメータ;
+	// ルートパラメータ
+	std::map<std::string, RootParameter> rootParameterMap_;
 	RootParameter normalGameObjectRootParameter_;
 	RootParameter spriteObjectRootParameter_;
 	RootParameter particleRootParameter_;

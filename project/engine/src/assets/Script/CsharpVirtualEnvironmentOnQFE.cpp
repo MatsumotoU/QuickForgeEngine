@@ -349,6 +349,19 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, 
 	return static_cast<uint32_t>(scripts_.size()) - 1;
 }
 
+void CsharpVirtualEnvironmentOnQFE::DeleteScriptInstance(uint32_t index) {
+	if (index >= scripts_.size()) {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("Invalid script index: " + std::to_string(index));
+#endif // QFE_OPTIMIZE_OFF
+		return;
+	}
+	scripts_.erase(scripts_.begin() + index);
+#ifdef QFE_OPTIMIZE_OFF
+	DebugLog("Deleted script instance at index: " + std::to_string(index));
+#endif // QFE_OPTIMIZE_OFF
+}
+
 void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std::string& functionName) {
 	MonoObject* scriptInstance = scripts_.at(index);
 	MonoClass* monoClass = mono_object_get_class(scriptInstance);

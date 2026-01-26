@@ -2,8 +2,10 @@
 #include <cassert>
 #include <d3d12.h>
 
-const std::string kVSFilePath = "engine/resources/shaders/vs/";
-const std::string kPSFilePath = "engine/resources/shaders/ps/";
+namespace {
+	const std::string kVSFilePath = "engine/resources/shaders/vs/";
+	const std::string kPSFilePath = "engine/resources/shaders/ps/";
+}
 
 void PipelineStateObject::Initialize(ShaderCompiler* shaderCompiler, ID3D12Device* device) {
 	shaderCompiler_ = shaderCompiler;
@@ -17,7 +19,7 @@ void PipelineStateObject::CreatePipelineStateObject(
 	D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack) {
 	HRESULT hr{};
 
-	// Sampler縺ｮ險ｭ螳・
+	// サンプラー設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_POINT_MIP_LINEAR;
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -30,8 +32,8 @@ void PipelineStateObject::CreatePipelineStateObject(
 	rootParameter.GetDescriptionRootSignature()->pStaticSamplers = staticSamplers;
 	rootParameter.GetDescriptionRootSignature()->NumStaticSamplers = _countof(staticSamplers);
 
-	// * RootSignature縺ｮ逕滓・ * //
-	// 繧ｷ繝ｪ繧｢繝ｩ繧､繧ｺ縺励※繝舌う繝翫Μ縺吶ｋ
+	// * RootSignature * //
+	// シェーダーとリソースをどのように繋ぐかを定義している
 	signatureBlob_ = nullptr;
 	errorBlob_ = nullptr;
 	hr = D3D12SerializeRootSignature(rootParameter.GetDescriptionRootSignature(),
@@ -40,14 +42,15 @@ void PipelineStateObject::CreatePipelineStateObject(
 		Log(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
 		assert(false);
 	}
-	// 繝舌う繝翫Μ繧偵ｂ縺ｨ縺ｫ逕滓・
+	// 
 	rootSignature_ = nullptr;
 	hr = dxDevice_->CreateRootSignature(0,
 		signatureBlob_.Get()->GetBufferPointer(), signatureBlob_.Get()->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr));
 
-	// BlendState
+	// * BlendState * //
+	// 
 	D3D12_BLEND_DESC blendDesc{};
 	blendDesc.AlphaToCoverageEnable = FALSE;
 	blendDesc.IndependentBlendEnable = FALSE;
