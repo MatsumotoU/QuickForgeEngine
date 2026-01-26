@@ -118,12 +118,35 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	ShaderReflection shaderReflection;
 	shaderReflection.RunShaderReflection(shaderBlob);
 	nlohmann::json shaderJson = shaderReflection.Serialize();
-	std::string savePath = "Resources/TestFolder/" + ConvertString(filePath.substr(filePath.find_last_of(L"/\\") + 1)) + ".json";
+	std::string savePath = "Resources/ShaderReflection/" + ConvertString(filePath.substr(filePath.find_last_of(L"/\\") + 1)) + ".json";
 	QFE::FILE::SaveJSONToFile(savePath, shaderJson);
 
 	// 繧ｭ繝｣繝・す繝･縺ｫ菫晏ｭ・
 	iDxcBlobMap_.emplace(filePath, shaderBlob);
 	return shaderBlob;
+}
+
+nlohmann::json ShaderCompiler::GetShaderReflectionJson(const std::wstring& filePath) const {
+	if (!iDxcBlobMap_.contains(filePath)) {
+		Log(ConvertString(std::format(L"Shader not compiled yet: {}", filePath)));
+		return nlohmann::json();
+	}
+	IDxcBlob* blob = iDxcBlobMap_.at(filePath);
+	ShaderReflection shaderReflection;
+	shaderReflection.RunShaderReflection(blob);
+	nlohmann::json shaderJson = shaderReflection.Serialize();
+	return shaderJson;
+}
+
+std::map<std::string, nlohmann::json> ShaderCompiler::GetAllShaderReflectionJson() const {
+	std::map<std::string, nlohmann::json> shaderJsonMap;
+	for (const auto& [filePath, blob] : iDxcBlobMap_) {
+		ShaderReflection shaderReflection;
+		shaderReflection.RunShaderReflection(blob);
+		nlohmann::json shaderJson = shaderReflection.Serialize();
+		shaderJsonMap[ConvertString(filePath)] = shaderJson;
+	}
+	return shaderJsonMap;
 }
 
 

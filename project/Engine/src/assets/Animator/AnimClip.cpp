@@ -3,7 +3,9 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
-AnimClip::AnimClip() : isLoop_(false){
+AnimClip::AnimClip(const std::string& name) :
+	name_(name),
+	isLoop_(false) {
 }
 
 void AnimClip::SetLoop(bool isLoop) {

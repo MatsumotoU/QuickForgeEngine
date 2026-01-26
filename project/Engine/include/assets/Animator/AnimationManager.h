@@ -11,8 +11,14 @@ public:
 	void Update();
 	void Finalize();
 
-	Transform GetAnimationTransform(uint32_t animationId, float currentTime);
+	// 空のアニメーションクリップを作成
+	uint32_t CreateEmptyAnimationClip(const std::string& name);
+	// アニメーションクリップを登録
+	uint32_t RegisterAnimationClip(uint32_t animationId, const AnimClip& animClip);
+	// アニメーションクリップを取得
+	AnimClip* GetAnimationClip(uint32_t animationId);
 
 private:
+	uint32_t nextAnimationId_;
 	std::unordered_map<uint32_t, AnimClip> animationMap_;
 };

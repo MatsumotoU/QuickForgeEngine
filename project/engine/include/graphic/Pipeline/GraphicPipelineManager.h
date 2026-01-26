@@ -44,12 +44,13 @@ public:
     /** @brief フォント描画用のPSOを取得 */
 	PipelineStateObject* GetFontPso() { return &fontPso_; }
     /** @brief ピクセル化用のPSOを取得 */
-	PipelineStateObject* GetPixcelPso() { return &pixcelPso_; }
+	PipelineStateObject* GetPixelPso() { return &pixelPso_; }
 
 private: // メンバ変数
 	ShaderCompiler shaderCompiler_;
 
-	// ルートパラメータ;
+	// ルートパラメータ
+	std::map<std::string, RootParameter> rootParameterMap_;
 	RootParameter normalGameObjectRootParameter_;
 	RootParameter spriteObjectRootParameter_;
 	RootParameter particleRootParameter_;
@@ -59,7 +60,7 @@ private: // メンバ変数
 	RootParameter vignetteRootParameter_;
 	RootParameter normalRootParameter_;
 	RootParameter fontRootParameter_;
-	RootParameter pixcelRootParameter_;
+	RootParameter pixelRootParameter_;
 
 	// PSO
 	PipelineStateObject trianglePso_[kCountOfBlendMode];
@@ -75,7 +76,7 @@ private: // メンバ変数
 	PipelineStateObject colorCorrectionPso_;
 	PipelineStateObject grayScaleTrianglePso_;
 	PipelineStateObject vignettePso_;
-	PipelineStateObject pixcelPso_;
+	PipelineStateObject pixelPso_;
 
 	PipelineStateObject fontPso_;
 

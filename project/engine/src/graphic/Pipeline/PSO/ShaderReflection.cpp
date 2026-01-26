@@ -1,4 +1,4 @@
-﻿#include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
+#include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF

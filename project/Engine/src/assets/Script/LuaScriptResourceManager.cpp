@@ -1,4 +1,4 @@
-﻿#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
 #include <fstream>
 #include <filesystem>
 
@@ -17,7 +17,8 @@ static std::set<std::string> emptySet;
 LuaScriptResourceManager::LuaScriptResourceManager() :
 	isRunningScript_(false),
 	maxPriority_(0),
-	nextScriptHandle_(0) {}
+	nextScriptHandle_(0) {
+}
 void LuaScriptResourceManager::Initialize() {
 	sharedLuaState_ = std::make_unique<sol::state>();
 	sharedLuaState_->open_libraries(
@@ -81,6 +82,17 @@ void LuaScriptResourceManager::Initialize() {
 	isRunningScript_ = false;
 	nextScriptHandle_ = 0;
 	maxPriority_ = 0;
+
+#ifdef QFE_OPTIMIZE_OFF
+	viewUpdateTime_ = std::chrono::duration<double>::zero();
+	totalUpdateTime_ = std::chrono::duration<double>::zero();
+#endif // QFE_OPTIMIZE_OFF
+}
+
+void LuaScriptResourceManager::FrameStart() {
+#ifdef QFE_OPTIMIZE_OFF
+	totalUpdateTime_ = std::chrono::duration<double>::zero();
+#endif // QFE_OPTIMIZE_OFF
 }
 
 
@@ -108,13 +120,19 @@ void LuaScriptResourceManager::ReloadAllScripts() {
 	}
 }
 
-void LuaScriptResourceManager::RunAllFunction(const std::string& functionName)
-{
+void LuaScriptResourceManager::RunAllFunction(const std::string& functionName) {
+#ifdef QFE_OPTIMIZE_OFF
+	auto startTime = std::chrono::steady_clock::now();
+#endif // QFE_OPTIMIZE_OFF
 	for (auto& [handle, script] : scripts_) {
 		if (script && script->HasFunction(functionName)) {
 			script->RunFunction(functionName);
 		}
 	}
+#ifdef QFE_OPTIMIZE_OFF
+	auto endTime = std::chrono::steady_clock::now();
+	totalUpdateTime_ += endTime - startTime;
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void LuaScriptResourceManager::CreateScript(const std::string& scriptName) {
@@ -238,6 +256,10 @@ void LuaScriptResourceManager::InitializeAllScripts() {
 }
 
 void LuaScriptResourceManager::InitializeScript(uint32_t handle) {
+#ifdef QFE_OPTIMIZE_OFF
+	auto startTime = std::chrono::steady_clock::now();
+#endif // QFE_OPTIMIZE_OFF
+
 	if (scripts_.find(handle) == scripts_.end()) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Script Not Found", LogLevel::Warning);
@@ -257,10 +279,17 @@ void LuaScriptResourceManager::InitializeScript(uint32_t handle) {
 		script->RunInit();
 	}
 
+#ifdef QFE_OPTIMIZE_OFF
+	auto endTime = std::chrono::steady_clock::now();
+	totalUpdateTime_ += endTime - startTime;
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void LuaScriptResourceManager::UpdateAllScripts() {
 	if (!isRunningScript_) return;
+#ifdef QFE_OPTIMIZE_OFF
+	auto startTime = std::chrono::steady_clock::now();
+#endif // QFE_OPTIMIZE_OFF
 
 	try {
 		sol::protected_function updateAll = (*sharedLuaState_)["QFE_Internal"]["UpdateAll"];
@@ -277,10 +306,19 @@ void LuaScriptResourceManager::UpdateAllScripts() {
 		DebugLog("Exception in UpdateAllAllScripts: " + std::string(e.what()), LogLevel::Error);
 #endif
 	}
+
+#ifdef QFE_OPTIMIZE_OFF
+	auto endTime = std::chrono::steady_clock::now();
+	totalUpdateTime_ += endTime - startTime;
+#endif // QFE_OPTIMIZE_OFF
 }
 
 
 void LuaScriptResourceManager::RunColliderStay(uint32_t runId, uint32_t id, SceneObjectData* objData) {
+#ifdef QFE_OPTIMIZE_OFF
+	auto startTime = std::chrono::steady_clock::now();
+#endif // QFE_OPTIMIZE_OFF
+
 	if (scripts_.empty()) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Script Not Found", LogLevel::Warning);
@@ -301,9 +339,18 @@ void LuaScriptResourceManager::RunColliderStay(uint32_t runId, uint32_t id, Scen
 		}
 		return;
 	}
+
+#ifdef QFE_OPTIMIZE_OFF
+	auto endTime = std::chrono::steady_clock::now();
+	totalUpdateTime_ += endTime - startTime;
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void LuaScriptResourceManager::RunTriggerEnter(uint32_t runId, uint32_t id, SceneObjectData* objData) {
+#ifdef QFE_OPTIMIZE_OFF
+	auto startTime = std::chrono::steady_clock::now();
+#endif // QFE_OPTIMIZE_OFF
+
 	if (scripts_.empty()) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Script Not Found", LogLevel::Warning);
@@ -324,6 +371,11 @@ void LuaScriptResourceManager::RunTriggerEnter(uint32_t runId, uint32_t id, Scen
 		}
 		return;
 	}
+
+#ifdef QFE_OPTIMIZE_OFF
+	auto endTime = std::chrono::steady_clock::now();
+	totalUpdateTime_ += endTime - startTime;
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void LuaScriptResourceManager::EndFrame() {
@@ -334,6 +386,8 @@ void LuaScriptResourceManager::EndFrame() {
 		RemoveScript(handle);
 	}
 	removeScriptHandles_.clear();
+
+	viewUpdateTime_ = totalUpdateTime_;
 }
 
 void LuaScriptResourceManager::Finalize() {
@@ -459,8 +513,7 @@ void LuaScriptResourceManager::CopyLuaTable(const sol::table& src, sol::table& d
 			sol::table newTable = sol::state_view(dst.lua_state()).create_table();
 			CopyLuaTable(pair.second.as<sol::table>(), newTable);
 			dst.set(pair.first, newTable);
-		}
-		else {
+		} else {
 			dst.set(pair.first, pair.second);
 		}
 	}

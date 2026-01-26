@@ -25,12 +25,9 @@ void InputDebugView::Update()
 void InputDebugView::Draw()
 {
     if (!isActive_) { return; }
-
-    if (ImGui::CollapsingHeader("Input Debug View", ImGuiTreeNodeFlags_DefaultOpen)) {
-
+	ImGui::Begin("Input Debug View", &isActive_);
+    if (ImGui::CollapsingHeader("Mic State View", ImGuiTreeNodeFlags_DefaultOpen)) {
         InputInterface* input = InputInterface::GetInstance();
-
-        ImGui::Text("Mic State:");
         if (input->GetMicrophoneDevice().IsCapturing()) {
             if (ImGui::Button("Stop Capturing")) {
                 input->GetMicrophoneDevice().StopCapture();
@@ -96,9 +93,11 @@ void InputDebugView::Draw()
         else {
             ImGui::Text("No audio data available.");
         }
-
-
     }
+	if (ImGui::CollapsingHeader("Test View")) {
+		
+	}
+	ImGui::End();
 }
 
 void InputDebugView::Run()

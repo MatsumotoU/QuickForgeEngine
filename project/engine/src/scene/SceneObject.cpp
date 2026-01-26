@@ -73,6 +73,7 @@ void SceneObject::Update() {
 
 	// 繝ｩ繝ｳ繧ｿ繧､繝荳ｭ縺ｮ繧ｵ繝悶Δ繧ｸ繝･繝ｼ繝ｫ縺ｮ譖ｴ譁ｰ
 	if (isRunningScript_ && !isPauseScript_) {
+		LuaScriptResourceManager::GetInstance()->FrameStart();
 		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
 		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();
@@ -82,7 +83,7 @@ void SceneObject::Update() {
 	ColliderManager::GetInstance()->Update();
 
 	//縲繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(assetManager_->GetEntityManager()),uniqueIdManager_));
+	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(assetManager_->GetEntityManager()), uniqueIdManager_));
 	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(assetManager_->GetEntityManager())));
 	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(assetManager_->GetEntityManager())));
 	updateCommandInvoker_.AddCommand(std::make_unique<AllSpriteResizeCommand>(*(assetManager_->GetEntityManager())));
@@ -146,7 +147,7 @@ void SceneObject::EndFrame() {
 }
 
 void SceneObject::Finalize() {
-	
+
 }
 
 void SceneObject::LoadScene(const std::string& sceneName) {
@@ -172,7 +173,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	std::ifstream ifs(sceneFilePath + sceneNameCopy);
 	if (!ifs.is_open()) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Faild load scene: " + sceneNameCopy,LogLevel::Error);
+		DebugLog("Faild load scene: " + sceneNameCopy, LogLevel::Error);
 #endif // QFE_OPTIMIZE_OFF
 		CameraManager::GetInstance()->Initialize();
 		return;
@@ -501,8 +502,7 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	return entityId;
 }
 
-void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName)
-{
+void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName) {
 	AddLuaScript(entityId, scriptName);
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	if (entityManager->HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
@@ -516,8 +516,7 @@ void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scri
 	}
 }
 
-void SceneObject::DeleteEntity(uint32_t entityId)
-{
+void SceneObject::DeleteEntity(uint32_t entityId) {
 	frameStartCommandInvoker_.AddCommand(std::make_unique<DeleteSceneEntityCommand>(*(assetManager_->GetEntityManager()), entityId));
 }
 

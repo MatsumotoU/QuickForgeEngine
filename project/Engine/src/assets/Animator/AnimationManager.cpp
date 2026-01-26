@@ -7,6 +7,8 @@
 
 /** @brief 初期化 */
 void AnimationManager::Initialize() {
+	nextAnimationId_ = 0;
+	animationMap_.clear();
 }
 
 /** @brief 更新 */
@@ -17,12 +19,7 @@ void AnimationManager::Update() {
 void AnimationManager::Finalize() {
 }
 
-/**
- * @brief アニメーションによるトランスフォームの取得
- * TODO: 実装が必要
- */
-Transform AnimationManager::GetAnimationTransform(uint32_t animationId, float currentTime) {
-	animationId;
-	currentTime;
-	return Transform();
+uint32_t AnimationManager::CreateEmptyAnimationClip(const std::string& name) {
+	animationMap_.emplace(nextAnimationId_, AnimClip(name));
+	return nextAnimationId_++;
 }

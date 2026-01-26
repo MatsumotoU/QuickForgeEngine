@@ -223,7 +223,6 @@ std::vector<std::string> CsharpVirtualEnvironmentOnQFE::GetAvailableScriptClasse
 		const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 		const char* ns = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 
-		// 繝輔ぅ繝ｫ繧ｿ繝ｪ繝ｳ繧ｰ
 		if (!name || name[0] == '<' || strstr(name, "_AnonStorey")) {
 			continue;
 		}
@@ -237,8 +236,10 @@ std::vector<std::string> CsharpVirtualEnvironmentOnQFE::GetAvailableScriptClasse
 			full_name = name;
 		}
 
-		// QFELinker縺ｫ髢｢騾｣縺吶ｋ繧ｯ繝ｩ繧ｹ繧帝勁螟・
 		if (full_name.find("QuickForgeEngine") != std::string::npos) {
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog(std::format("Found QuickForgeEngine class: {}", full_name));
+#endif // QFE_OPTIMIZE_OFF
 			continue;
 		}
 #ifdef QFE_OPTIMIZE_OFF
@@ -293,7 +294,7 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, 
 	if (!assembly_) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Assembly not loaded. Cannot create script instance.");
-		//assert(false && "Assembly not loaded. Cannot create script instance.");
+		assert(false && "Assembly not loaded. Cannot create script instance.");
 #endif // QFE_OPTIMIZE_OFF
 		return 0;
 	}
@@ -311,7 +312,6 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, 
 	if (!monoClass) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Class not found: " + className);
-		//assert(false && "Class not found.");
 #endif // QFE_OPTIMIZE_OFF
 		return 0;
 	}
@@ -321,7 +321,6 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, 
 	if (!entityIdProperty) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Property 'EntityID' not found in class: " + className);
-		//assert(false && "Property 'EntityID' not found.");
 #endif // QFE_OPTIMIZE_OFF
 		return 0;
 	}
@@ -348,6 +347,19 @@ uint32_t CsharpVirtualEnvironmentOnQFE::CreateScriptInstance(uint32_t entityId, 
 #endif // QFE_OPTIMIZE_OFF
 
 	return static_cast<uint32_t>(scripts_.size()) - 1;
+}
+
+void CsharpVirtualEnvironmentOnQFE::DeleteScriptInstance(uint32_t index) {
+	if (index >= scripts_.size()) {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("Invalid script index: " + std::to_string(index));
+#endif // QFE_OPTIMIZE_OFF
+		return;
+	}
+	scripts_.erase(scripts_.begin() + index);
+#ifdef QFE_OPTIMIZE_OFF
+	DebugLog("Deleted script instance at index: " + std::to_string(index));
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void CsharpVirtualEnvironmentOnQFE::RunScriptFunction(uint32_t index, const std::string& functionName) {

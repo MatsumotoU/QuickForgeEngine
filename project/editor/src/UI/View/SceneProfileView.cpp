@@ -7,6 +7,9 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/AssetManager.h"
+#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
 
 SceneProfileView::SceneProfileView() {
 	name_ = "Scene Profile";
@@ -49,5 +52,16 @@ void SceneProfileView::Draw() {
 	ImGui::Text("PreDraw: %.2f ms", sceneManager->preDrawTime_ / 1'000'000.0f);
 	ImGui::Text("Draw: %.2f ms", sceneManager->drawTime_ / 1'000'000.0f);
 	ImGui::Text("PostDraw: %.2f ms", sceneManager->postDrawTime_ / 1'000'000.0f);
+	
+	ImGui::Separator();
+	if (ImGui::CollapsingHeader("Scripts")) {
+		ImGui::Text("Lua Scripts: %d", LuaScriptResourceManager::GetInstance()->GetScriptCount());
+		ImGui::Text("Lua UpdateTime: %.4f ms", LuaScriptResourceManager::GetInstance()->GetTotalUpdateTime() * 1000.0);
+		ImGui::Separator();
+		ImGui::Text("C# Scripts: %d", CsharpVirtualEnvironmentOnQFE::GetInstance()->GetScriptCount());
+	}
+	
 	ImGui::End();
+
+
 }

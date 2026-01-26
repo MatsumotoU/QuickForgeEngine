@@ -35,6 +35,8 @@ public:
 	uint32_t CreateScriptInstance(const std::string& className);
 	/// @brief スクリプトインスタンスの生成(エンティティID付き).
 	uint32_t CreateScriptInstance(uint32_t entityId, const std::string& className);
+	/// @brief スクリプトインスタンスの削除.
+	void DeleteScriptInstance(uint32_t index);
 	/// @brief スクリプト関数の実行.
 	void RunScriptFunction(uint32_t index,const std::string& functionName);
 	/// @brief アセンブリのリロード.
@@ -43,6 +45,8 @@ public:
 	void RunAllScriptsFunction(const std::string& functionName);
 	/// @brief 終了処理.
 	void Finalize();
+	/// @brief スクリプト数の取得.
+	int GetScriptCount() const { return static_cast<int>(scripts_.size()); }
 
 private:
 	MonoDomain* root_domain_ = nullptr;
