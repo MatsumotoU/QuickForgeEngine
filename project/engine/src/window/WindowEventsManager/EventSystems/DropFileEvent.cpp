@@ -4,7 +4,7 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 DropFileEvent::DropFileEvent(nlohmann::json& data):IEvent(data) {}
 
 void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {

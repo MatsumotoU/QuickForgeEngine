@@ -2,6 +2,8 @@
 #include <cmath>
 #include <assert.h>
 
+using namespace QFE;
+
 float Vector2::Length() const {
     return sqrt(this->x * this->x + this->y * this->y);
 }

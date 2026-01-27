@@ -4,16 +4,19 @@
 #include <memory>
 #include "EventSystems/IEvent.h"
 
-class WindowEventsManager final {
-public:
-	WindowEventsManager();
-	~WindowEventsManager() = default;
+namespace QFE {
 
-	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-	LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	class WindowEventsManager final {
+	public:
+		WindowEventsManager();
+		~WindowEventsManager() = default;
 
-private:
-	static inline constexpr int kEventSystemCount_ = 3;
-	nlohmann::json eventData_;
-	std::array<std::unique_ptr<IEvent>, kEventSystemCount_> eventSystems_;
-};
+		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+	private:
+		static inline constexpr int kEventSystemCount_ = 3;
+		nlohmann::json eventData_;
+		std::array<std::unique_ptr<IEvent>, kEventSystemCount_> eventSystems_;
+	};
+}

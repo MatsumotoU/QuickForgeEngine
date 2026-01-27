@@ -11,6 +11,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include <format>
 
+using namespace QFE;
+
 /**
  * @brief Windowsアプリケーションのエントリポイント
  */
@@ -18,7 +20,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     hPrevInstance; nCmdShow;
 
     // エンジンコアの生成（Windowsの実装を使用）
-    std::unique_ptr<IEngineCore> engineCore = std::make_unique<WindowsEngineCore>(hInstance, lpCmdLine);
+    std::unique_ptr<QFE::IEngineCore> engineCore = std::make_unique<QFE::WindowsEngineCore>(hInstance, lpCmdLine);
 
     try {
         engineCore->Initialize();

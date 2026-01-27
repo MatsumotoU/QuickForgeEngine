@@ -1,6 +1,6 @@
 #include "editor/include/Commands/LuaScriptReloadCommand.h"
 #include "assets/Script/LuaScriptResourceManager.h"
-
+using namespace QFE;
 LuaScriptReloadCommand::LuaScriptReloadCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "lua_reload" }) { }

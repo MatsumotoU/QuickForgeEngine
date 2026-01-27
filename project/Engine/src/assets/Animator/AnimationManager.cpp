@@ -5,6 +5,8 @@
 
 #include "engine/include/assets/Animator/AnimationManager.h"
 
+using namespace QFE;
+
 /** @brief 初期化 */
 void AnimationManager::Initialize() {
 	nextAnimationId_ = 0;

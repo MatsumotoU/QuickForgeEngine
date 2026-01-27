@@ -3,6 +3,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 AnimClip::AnimClip(const std::string& name) :
 	name_(name),
 	isLoop_(false) {
@@ -60,7 +62,7 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 			break;
 		}
 	}
-	// 譛蛻昴・繧ｭ繝ｼ繝輔Ξ繝ｼ繝繧医ｊ蜑阪・蝣ｴ蜷・
+	// 譛€蛻昴・繧ｭ繝ｼ繝輔Ξ繝ｼ繝繧医ｊ蜑阪・蝣ｴ蜷・
 	if (!previousKeyFrame) {
 		return keyframes_.front().transform;
 	}

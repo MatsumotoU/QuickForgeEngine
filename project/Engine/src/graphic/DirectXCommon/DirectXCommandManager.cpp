@@ -4,7 +4,7 @@
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 void DirectXCommandManager::Initialize(ID3D12Device* device) {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Initialize called.");

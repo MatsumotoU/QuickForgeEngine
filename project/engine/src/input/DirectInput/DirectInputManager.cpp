@@ -1,6 +1,6 @@
 #include "engine/include/input/DirectInput/DirectInputManager.h"
 #include <cassert>
-
+using namespace QFE;
 void DirectInputManager::Initialize(const HWND& hwnd,const HINSTANCE& hInstance) {
 	hInstance_ = hInstance;
 	// directInput縺ｮ逕滓・

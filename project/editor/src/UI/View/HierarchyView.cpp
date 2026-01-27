@@ -13,6 +13,8 @@
 #include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
+using namespace QFE;
+
 uint32_t HierarchyView::selectedEntityId_ = 0;
 
 HierarchyView::HierarchyView() {

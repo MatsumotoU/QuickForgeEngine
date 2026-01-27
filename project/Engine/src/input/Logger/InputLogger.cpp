@@ -1,5 +1,5 @@
 #include "Engine/include/input/Logger/InputLogger.h"
-
+using namespace QFE;
 InputLogger::InputLogger() :
 	isRecording_(false),
 	frameCounter_(0) {}

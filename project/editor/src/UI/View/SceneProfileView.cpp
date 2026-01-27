@@ -10,7 +10,7 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/assets/Script/LuaScriptResourceManager.h"
 #include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
-
+using namespace QFE;
 SceneProfileView::SceneProfileView() {
 	name_ = "Scene Profile";
 	isActive_ = false;

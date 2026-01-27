@@ -1,4 +1,5 @@
 #include "editor/include/Commands/EchoCommand.h"
+using namespace QFE;
 
 // コマンドの別名一覧の定義
 EchoCommand::EchoCommand(std::vector<std::string>& consoleLog, const char* command)

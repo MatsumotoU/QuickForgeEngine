@@ -41,6 +41,8 @@
 #include "engine/include/scene/SceneObject.h"
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
+using namespace QFE;
+
 SceneObject::SceneObject() {
 	assetManager_ = nullptr;
 	isRequestedExit_ = false;
@@ -82,7 +84,7 @@ void SceneObject::Update() {
 	// 蠖薙◆繧雁愛螳壽峩譁ｰ
 	ColliderManager::GetInstance()->Update();
 
-	//縲繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
+	//縲€繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
 	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(assetManager_->GetEntityManager()), uniqueIdManager_));
 	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(assetManager_->GetEntityManager())));
 	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(assetManager_->GetEntityManager())));
@@ -110,7 +112,7 @@ void SceneObject::PreDraw() {
 			}
 		}
 	}
-	
+
 	// WVP陦悟・譖ｴ譁ｰ
 	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(assetManager->GetEntityManager()), *cameraManager));
 	preDrawCommandInvoker_.AddCommand(std::make_unique<SpritePivotUpdateCommand>(*(assetManager->GetEntityManager())));
@@ -309,7 +311,7 @@ void SceneObject::AddModel(const std::string& modelName) {
 
 void SceneObject::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer, Vector2 pivot) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	// entityId隰悶・・ｮ螢ｹ窶ｲ邵ｺ繧・ｽ檎ｸｺ・ｰ邵ｺ譏ｴ・檎ｹｧ蜑・ｽｽ・ｿ邵ｺ繝ｻﾂ竏壺・邵ｺ莉｣・檎ｸｺ・ｰ隴・ｽｰ髫穂ｸ茨ｽｽ諛医・
+	// entityId隰悶・・ｮ螢ｹ窶ｲ邵ｺ繧・ｽ檎ｸｺ・ｰ邵ｺ譏ｴ・檎ｹｧ蜑・ｽｽ・ｿ邵ｺ繝ｻﾂ€竏壺・邵ｺ莉｣・檎ｸｺ・ｰ隴・ｽｰ髫穂ｸ茨ｽｽ諛医・
 	uint32_t entityId;
 	if (inEntityId != -1) {
 		entityId = static_cast<uint32_t>(inEntityId);
@@ -422,7 +424,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		entityManager->EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
 
 	} else {
-		// 隴鯉ｽ｢陝・･繝ｻ郢ｧ・ｳ郢晢ｽｳ郢晄亢繝ｻ郢晞亂ﾎｦ郢晏現竊馴恆・ｽ陷会｣ｰ
+		// 隴鯉ｽ｢陝・€･繝ｻ郢ｧ・ｳ郢晢ｽｳ郢晄亢繝ｻ郢晞亂ﾎｦ郢晏現竊馴恆・ｽ陷会｣ｰ
 		CsharpComponent& csharpComponent = entityManager->GetComponent<CsharpComponent>(entityId);
 		// 邵ｺ蜷ｶ縲堤ｸｺ・ｫ陷ｷ蠕個ｧ郢ｧ・ｯ郢晢ｽｩ郢ｧ・ｹ邵ｺ蠕後＞郢ｧ・ｿ郢昴・繝｡邵ｺ霈費ｽ檎ｸｺ・ｦ邵ｺ繝ｻ・玖撻・ｴ陷ｷ蛹ｻ繝ｻ髴托ｽｽ陷会｣ｰ邵ｺ蜉ｱ竊醍ｸｺ繝ｻ
 		for (const auto& handles : csharpComponent.csharpHandles_) {
@@ -457,7 +459,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	}
 #endif // _NODEBUG
 
-	// Entity邵ｺ・ｮ郢昜ｻ｣縺帷ｹｧ蝣､・ｵ繝ｻ竏ｩ驕ｶ荵昶ｻ
+	// Entity邵ｺ・ｮ郢昜ｻ｣縺帷ｹｧ蝣､・ｵ繝ｻ竏ｩ驕ｶ荵昶€ｻ
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
 	std::ifstream ifs(sceneFilePath + entityName);
 	if (!ifs.is_open()) {
@@ -804,5 +806,3 @@ uint32_t SceneObject::GetEntityByUniqeID(uint32_t uniqueId) const {
 	assert(false && "Entity Not Found");
 	return 0;
 }
-
-

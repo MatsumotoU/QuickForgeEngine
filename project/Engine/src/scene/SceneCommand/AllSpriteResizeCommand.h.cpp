@@ -4,6 +4,8 @@
 #include "engine/include/assets/AssetManager.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
 
+using namespace QFE;
+
 AllSpriteResizeCommand::AllSpriteResizeCommand(EntityManager& em) : ISceneEntityCommand(em) {}
 
 void AllSpriteResizeCommand::Execute()

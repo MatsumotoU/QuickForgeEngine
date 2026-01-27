@@ -1,4 +1,4 @@
-﻿#include "engine/include/graphic/DirectXCommon/Descriptors/RtvDescriptorHeap.h"
+#include "engine/include/graphic/DirectXCommon/Descriptors/RtvDescriptorHeap.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/DescriptorGenerator/DescriptorGenerator.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/CheckGenerateConfig/CheckGenerateConfig.h"
 #include "engine/include/utility/DirectX/GenerateDescriptorHandle.h"
@@ -6,7 +6,7 @@
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 void RtvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("-----RtvDescriptorHeap:Initialize-----");

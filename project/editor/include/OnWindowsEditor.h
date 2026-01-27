@@ -16,16 +16,18 @@
  * @class OnWindowsEditor
  * @brief Windowsプラットフォーム向けエディタの実装。ゲームウィンドウとは別にエディタUIを構成する。
 */
+namespace QFE {
 
-class OnWindowsEditor final : public IEditor {
-public:
-	OnWindowsEditor();
-	~OnWindowsEditor() override = default;
-	void Initialize() override;
-	void Update() override;
-	void Draw() override;
+	class OnWindowsEditor final : public IEditor {
+	public:
+		OnWindowsEditor();
+		~OnWindowsEditor() override = default;
+		void Initialize() override;
+		void Update() override;
+		void Draw() override;
 
-private:
-	UIManager uiManager_;
+	private:
+		UIManager uiManager_;
 
-};
+	};
+}

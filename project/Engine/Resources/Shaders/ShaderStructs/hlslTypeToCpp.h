@@ -9,13 +9,13 @@
 #include "engine/include/core/Math/Matrix/Matrix3x3.h"
 #include "engine/include/core/Math/Matrix/Matrix2x2.h"
 
-using float32_t4 = Vector4;
-using float32_t3 = Vector3;
-using float32_t2 = Vector2;
+using float32_t4 = QFE::Vector4;
+using float32_t3 = QFE::Vector3;
+using float32_t2 = QFE::Vector2;
 using float32_t = float;
-using float32_t4x4 = Matrix4x4;
-using float32_t3x3 = Matrix3x3;
-using float32_t2x2 = Matrix2x2;
+using float32_t4x4 = QFE::Matrix4x4;
+using float32_t3x3 = QFE::Matrix3x3;
+using float32_t2x2 = QFE::Matrix2x2;
 #endif
 
 struct CameraForGPU {
@@ -70,7 +70,7 @@ struct Material {
 		: color{ 1.0f, 1.0f, 1.0f, 1.0f }
 		, enableLighting(1)
 		, padding{ 0.0f, 0.0f, 0.0f }
-		, uvTransform(Matrix4x4::MakeIndentity4x4())
+		, uvTransform(QFE::Matrix4x4::MakeIndentity4x4())
 		, shininess(0.0f){
 	}
 #endif
@@ -110,8 +110,8 @@ struct PixcelOffset {
 struct ParticleForGPU {
 #ifdef __cplusplus
 	ParticleForGPU()
-		: WVP(Matrix4x4::MakeIndentity4x4())
-		, World(Matrix4x4::MakeIndentity4x4())
+		: WVP(QFE::Matrix4x4::MakeIndentity4x4())
+		, World(QFE::Matrix4x4::MakeIndentity4x4())
 		, color{ 1.0f,1.0f,1.0f,1.0f } {
 	}
 #endif 
@@ -138,8 +138,8 @@ struct PrimitiveVertexData {
 struct TransformationMatrix {
 #ifdef __cplusplus
 	TransformationMatrix()
-		: WVP(Matrix4x4::MakeIndentity4x4())
-		, World(Matrix4x4::MakeIndentity4x4()) {
+		: WVP(QFE::Matrix4x4::MakeIndentity4x4())
+		, World(QFE::Matrix4x4::MakeIndentity4x4()) {
 	}
 #endif
 

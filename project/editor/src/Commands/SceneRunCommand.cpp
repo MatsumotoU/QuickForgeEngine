@@ -1,6 +1,6 @@
 #include "editor/include/Commands/SceneRunCommand.h"
 #include "scene/SceneManager.h"
-
+using namespace QFE;
 SceneRunCommand::SceneRunCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "scene_run" }) { }

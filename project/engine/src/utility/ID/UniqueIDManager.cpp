@@ -1,5 +1,5 @@
 #include "engine/include/utility/ID/UniqueIDManager.h"
-
+using namespace QFE;
 void ListUniqueIDManager::Reset() {
 	currentID_ = 1;
 	usedIDSet_.clear();

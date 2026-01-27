@@ -1,6 +1,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/BuildInfo.h"
 
+using namespace QFE;
+
 void MyDebugLog::Initialize() {
 	try
 	{
@@ -86,7 +88,7 @@ void MyDebugLog::DebugLogClear() {
 	errorLog_.clear();
 }
 
-void DebugLog(const std::string& message, const LogLevel& logLevel, const std::source_location& location) {
+void QFE::DebugLog(const std::string& message, const LogLevel& logLevel, const std::source_location& location) {
 
 	MyDebugLog::GetInstance()->Log(message, location);
 	if (logLevel == LogLevel::EngineInfo) {
@@ -112,7 +114,7 @@ void DebugLog(const std::string& message, const LogLevel& logLevel, const std::s
 	}
 }
 
-void AppendLuaValueToString(const sol::object& v, std::string& msg) {
+void QFE::AppendLuaValueToString(const sol::object& v, std::string& msg) {
 	if (v.is<std::string>()) {
 		msg += v.as<std::string>();
 	} else if (v.is<double>()) {
@@ -128,7 +130,7 @@ void AppendLuaValueToString(const sol::object& v, std::string& msg) {
 	}
 }
 
-void DebugLogLua(sol::variadic_args va, uint32_t id, const std::string& scriptName) {
+void QFE::DebugLogLua(sol::variadic_args va, uint32_t id, const std::string& scriptName) {
 	std::string msg;
 	for (auto&& v : va) {
 		AppendLuaValueToString(v, msg);
@@ -141,6 +143,6 @@ void DebugLogLua(sol::variadic_args va, uint32_t id, const std::string& scriptNa
 	DebugLog(msg, LogLevel::EditorInfo);
 }
 
-void DebugLogCsharp(const std::string& message) {
+void QFE::DebugLogCsharp(const std::string& message) {
 	DebugLog(message, LogLevel::EditorInfo);
 }

@@ -27,6 +27,7 @@
 #include "editor/include/UI/Edit/KeyConfigEdit.h"
 #include "editor/include/UI/Edit/PostprocessEdit.h"
 #include "editor/include/UI/Edit/ColliderMaskEdit.h"
+using namespace QFE;
 
 /** @brief 初期化 */
 void UIManager::Initialize() {

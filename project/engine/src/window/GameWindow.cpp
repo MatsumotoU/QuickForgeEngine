@@ -1,37 +1,42 @@
 #include "engine/include/window/GameWindow.h"
 #include "engine/include/utility/String/MyString.h"
+#include <cassert>
 
-void GameWindow::Initialize(const uint32_t& width, const uint32_t& height, const std::string& windowName) {
-	configData_.clientWidth = width;
-	configData_.clientHeight = height;
-	configData_.windowName = Utf8ToUtf16(windowName);
-	configData_.isCanDropFiles = true;
+namespace QFE {
 
-	eventManagerPtr_ = std::make_unique<WindowEventsManager>();
-	WindowGenerater::CreateGameWindow(wc_, hwnd_, configData_, proc_, eventManagerPtr_.get());
-}
+	void GameWindow::Initialize(const uint32_t& width, const uint32_t& height, const std::string& windowName) {
+		configData_.clientWidth = width;
+		configData_.clientHeight = height;
+		configData_.windowName = Utf8ToUtf16(windowName);
+		configData_.isCanDropFiles = true;
 
-void GameWindow::Update() {
-}
-
-void GameWindow::Draw() {
-}
-
-void GameWindow::Shutdown() {
-}
-
-bool GameWindow::IsWindowActive() const {
-	if (hwnd_ && IsWindow(hwnd_)) {
-		return true;
+		eventManagerPtr_ = std::make_unique<WindowEventsManager>();
+		WindowGenerater::CreateGameWindow(wc_, hwnd_, configData_, proc_, eventManagerPtr_.get());
 	}
-	return false;
-}
 
-std::string GameWindow::GetWindowName() const {
-	assert(!configData_.windowName.empty() && "Window name is empty");
-	return ConvertString(configData_.windowName);
-}
+	void GameWindow::Update() {
+	}
 
-HWND GameWindow::GetHwnd() const {
-	return hwnd_;
+	void GameWindow::Draw() {
+	}
+
+	void GameWindow::Shutdown() {
+	}
+
+	bool GameWindow::IsWindowActive() const {
+		if (hwnd_ && IsWindow(hwnd_)) {
+			return true;
+		}
+		return false;
+	}
+
+	std::string GameWindow::GetWindowName() const {
+		assert(!configData_.windowName.empty() && "Window name is empty");
+		return ConvertString(configData_.windowName);
+	}
+
+	HWND GameWindow::GetHwnd() const {
+		return hwnd_;
+	}
+
 }

@@ -3,7 +3,7 @@
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 void DescriptorGenerator::GenerateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& heap, ID3D12Device* device, const DescriptorGenerateConfig& config) {
 	assert(!heap && "Already generated");
 #ifdef QFE_OPTIMIZE_OFF

@@ -11,33 +11,42 @@
 #include <cassert>
 
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
+#include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
-/**
- * @brief パーティクルの描画実行
- * @param particleHandle 描画するパーティクル(エンティティ等)のハンドル
- */
-void Render::Particle::DrawParticles(const uint32_t& particleHandle) {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
-    // TODO: particleHandle の有効性チェックが必要
-	ParticleComponent particleComponent = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(particleHandle);
+namespace QFE {
+	namespace Render {
+		namespace Particle {
 
-	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetParticlePso(kBlendModeNormal);
+			/**
+			 * @brief パーティクルの描画実行
+			 * @param particleHandle 描画するパーティクル(エンティティ等)のハンドル
+			 */
+			void DrawParticles(const uint32_t& particleHandle) {
+				AssetManager* assetManager = AssetManager::GetInstance();
+				GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
+				// TODO: particleHandle の有効性チェックが必要
+				ParticleComponent particleComponent = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(particleHandle);
 
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-	assert(dxCommon && "DirectXCommon is nullptr.");
-	ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT);
+				PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetParticlePso(kBlendModeNormal);
 
-	commandList->RSSetViewports(1, dxCommon->GetViewPort());
-	commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
-	commandList->SetGraphicsRootSignature(pso->GetRootSignature());
-	commandList->SetPipelineState(pso->GetPipelineState());
+				DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+				assert(dxCommon && "DirectXCommon is nullptr.");
+				ID3D12GraphicsCommandList* commandList = dxCommon->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
-	commandList->IASetVertexBuffers(0, 1, assetManager->GetModelVertexResourceManager()->GetVertexBufferView(particleComponent.vartexBufferHandle));
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, gpuBufferPool->GetConstantBufferAddress<Material>(particleComponent.materialHandle));
-	commandList->SetGraphicsRootDescriptorTable(1, assetManager->GetParticleGpuDataManager()->GetBufferPtr(particleComponent.particleGpuBufferHandle)->GetInstancingSrvHandles().gpuHandle_);
-	commandList->SetGraphicsRootDescriptorTable(2, assetManager->GetTextureManager()->GetTextureSrvHandleGPU(particleComponent.textureHandle));
-	commandList->DrawInstanced(static_cast<UINT>(
-		assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(particleComponent.vartexBufferHandle)), particleComponent.maxParticleCount, 0, 0);
+				commandList->RSSetViewports(1, dxCommon->GetViewPort());
+				commandList->RSSetScissorRects(1, dxCommon->GetScissorRect());
+				commandList->SetGraphicsRootSignature(pso->GetRootSignature());
+				commandList->SetPipelineState(pso->GetPipelineState());
+
+				commandList->IASetVertexBuffers(0, 1, assetManager->GetModelVertexResourceManager()->GetVertexBufferView(particleComponent.vartexBufferHandle));
+				commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+				commandList->SetGraphicsRootConstantBufferView(0, gpuBufferPool->GetConstantBufferAddress<Material>(particleComponent.materialHandle));
+				commandList->SetGraphicsRootDescriptorTable(1, assetManager->GetParticleGpuDataManager()->GetBufferPtr(particleComponent.particleGpuBufferHandle)->GetInstancingSrvHandles().gpuHandle_);
+				commandList->SetGraphicsRootDescriptorTable(2, assetManager->GetTextureManager()->GetTextureSrvHandleGPU(particleComponent.textureHandle));
+				commandList->DrawInstanced(static_cast<UINT>(
+					assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(particleComponent.vartexBufferHandle)), particleComponent.maxParticleCount, 0, 0);
+			}
+
+		}
+	}
 }

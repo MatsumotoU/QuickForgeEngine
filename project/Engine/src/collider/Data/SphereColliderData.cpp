@@ -1,5 +1,7 @@
 ﻿#include "engine/include/collider/Data/SphereColliderData.h"
 
+using namespace QFE;
+
 SphereColliderData::SphereColliderData() {
 	sphere = { {0.0f, 0.0f, 0.0f}, 1.0f };
 	isTrigger = false;
@@ -48,5 +50,3 @@ void SphereColliderData::Deserialize(const nlohmann::json& json) {
 #endif // QFE_OPTIMIZE_OFF
 
 }
-
-

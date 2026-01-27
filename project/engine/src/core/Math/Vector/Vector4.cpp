@@ -5,6 +5,8 @@
 #include "engine/include/core/Math/Vector/Vector3.h"
 #include "engine/include/core/Math/Matrix/Matrix4x4.h"
 
+using namespace QFE;
+
 float Vector4::Length() const {
 	return sqrt(x * x + y * y + z * z + w * w);
 }

@@ -5,7 +5,7 @@
 
 #include "editor/include/UI/Edit/DebugConsole.h"
 #include "editor/include/Commands/AllEditorCommands.h"
-
+using namespace QFE;
 void DebugConsole::Initialize() {
 	name_ = "DebugConsole";
 	isActive_ = false;

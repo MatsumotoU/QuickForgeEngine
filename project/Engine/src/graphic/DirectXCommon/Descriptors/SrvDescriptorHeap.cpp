@@ -1,4 +1,4 @@
-﻿#include "engine/include/graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
+#include "engine/include/graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
 
 #include "engine/include/graphic/DirectXCommon/Descriptors/DescriptorGenerator/DescriptorGenerator.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/CheckGenerateConfig/CheckGenerateConfig.h"
@@ -7,7 +7,7 @@
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 void SrvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("-----SrvDescriptorHeap:Initialize-----");

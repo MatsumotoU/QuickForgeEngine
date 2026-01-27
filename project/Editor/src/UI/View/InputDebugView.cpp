@@ -7,7 +7,7 @@
 #include "engine/include/input/InputInterface.h"
 #include "Engine/include/assets/AudioSource/Data/AudioData.h"
 #include <ksmedia.h> // オーディオフォーマットGUIDのために追加
-
+using namespace QFE;
 InputDebugView::InputDebugView()
 {
 	isActive_ = false;

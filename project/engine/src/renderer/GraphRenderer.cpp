@@ -16,6 +16,7 @@
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
+using namespace QFE::Render;
 
 /** @brief 初期化 */
 void GraphRenderer::Initialize() {

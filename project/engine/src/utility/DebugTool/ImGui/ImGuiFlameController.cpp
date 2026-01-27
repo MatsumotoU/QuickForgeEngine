@@ -3,7 +3,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // DEBUG
 #include <cassert>
-
+using namespace QFE;
 ImGuiFlameController::ImGuiFlameController() {
 #ifdef QFE_OPTIMIZE_OFF
 	stateCheck_ = 0;

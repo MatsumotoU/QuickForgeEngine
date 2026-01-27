@@ -1,5 +1,5 @@
 #include "editor/include/Commands/ClearCommand.h"
-
+using namespace QFE;
 ClearCommand::ClearCommand(std::vector<std::string>& consoleLog, const char* command) 
 	: IEditorCommand(consoleLog, command),
 	aliases_({"clear","cls"}) { }

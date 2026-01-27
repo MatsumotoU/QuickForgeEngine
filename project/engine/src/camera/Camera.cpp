@@ -11,6 +11,8 @@
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/camera/Data/CameraData.h"
 
+using namespace QFE;
+
 void Camera::Initialize() {
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	bindEntityId_ = entityManager->CreateEntity();
@@ -106,7 +108,7 @@ Matrix4x4 Camera::GetWorldViewProjectionMatrix(const Matrix4x4& worldMatrix, Cam
 		return Matrix4x4::Multiply(worldMatrix, viewProjectionMatrix_);
 		break;
 	case CameraType::Orthographic:
-		return Matrix4x4::Multiply(worldMatrix,viewOrthographicMatrix_);
+		return Matrix4x4::Multiply(worldMatrix, viewOrthographicMatrix_);
 		break;
 	default:
 		assert(false && "Unknown Camera Type.");

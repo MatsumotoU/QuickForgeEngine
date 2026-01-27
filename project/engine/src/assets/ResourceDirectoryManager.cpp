@@ -10,6 +10,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 /** @brief 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ縲よｨ呎ｺ也噪縺ｪ繝・ぅ繝ｬ繧ｯ繝医Μ繝代せ繧堤匳骭ｲ縺吶ｋ縲・*/
 ResourceDirectoryManager::ResourceDirectoryManager() {
 	resourceDirectories_["Model"] = "Resources/Models/";
@@ -44,5 +46,3 @@ std::string ResourceDirectoryManager::GetResourceDirectory(const std::string& re
 	assert(resourceDirectories_.find(resourceType) != resourceDirectories_.end() && "Resource type not found");
 	return resourceDirectories_.at(resourceType);
 }
-
-

@@ -5,7 +5,7 @@
 
 #include "editor/include/UI/Edit/ColliderMaskEdit.h"
 #include "collider/ColliderManager.h"
-
+using namespace QFE;
 ColliderMaskEdit::ColliderMaskEdit() {
 	name_ = "Collider Mask Edit";
 	isActive_ = false;

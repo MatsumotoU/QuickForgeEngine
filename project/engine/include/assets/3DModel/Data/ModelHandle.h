@@ -4,13 +4,17 @@
 #include "engine/include/core/Entity/Component/ComponentData.h"
 #include "engine/include/core/Math/Vector/Vector4.h"
 
-class ModelHandle final :public ComponentData {
-public:
-	uint32_t handle;
-	std::string modelName;
+namespace QFE {
 
-	nlohmann::json Serialize() const override;
-	void Deserialize(const nlohmann::json& json) override;
+	class ModelHandle final :public ComponentData {
+	public:
+		uint32_t handle;
+		std::string modelName;
 
-	std::string GetTypeName() const override { return "ModelHandle"; }
-};
+		nlohmann::json Serialize() const override;
+		void Deserialize(const nlohmann::json& json) override;
+
+		std::string GetTypeName() const override { return "ModelHandle"; }
+	};
+
+}

@@ -1,8 +1,9 @@
-#include "engine/include/utility/String/DirectXStructToString.h"
+#include "engine/include/utility/String/DirectInputToString.h"
 #include <string>
 #include <cstdint>
-std::string DirectInputToString(uint32_t dikCode) {
-    switch (dikCode) {
+
+std::string QFE::DirectInputToString(uint32_t keyCode) {
+    switch (keyCode) {
     case 0x01: return "Esc";
     case 0x02: return "1";
     case 0x03: return "2";

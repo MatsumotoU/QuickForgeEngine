@@ -6,7 +6,7 @@
 #include "editor/include/UI/View/InputLogView.h"
 #include "Engine/include/input/InputInterface.h"
 #include "Engine/include/utility/String/DirectInputToString.h"
-
+using namespace QFE;
 InputLogView::InputLogView()
 {
 	isActive_ = false;

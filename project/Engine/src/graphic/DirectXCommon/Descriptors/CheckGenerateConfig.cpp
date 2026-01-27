@@ -1,5 +1,5 @@
 #include "engine/include/graphic/DirectXCommon/Descriptors/CheckGenerateConfig/CheckGenerateConfig.h"
-
+using namespace QFE;
 bool CheckGenerateConfig::IsValid(const DescriptorGenerateConfig& config) {
 	// heapTypeが有効な値であることを確認
 	if (config.heapType != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV &&

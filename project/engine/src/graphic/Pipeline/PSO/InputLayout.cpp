@@ -1,5 +1,5 @@
 #include "engine/include/graphic/Pipeline/PSO/InputLayout.h"
-
+using namespace QFE;
 void InputLayout::Initialize() {
 	inputElementDescs_.clear();
 	inputLayoutDesc_ = {};

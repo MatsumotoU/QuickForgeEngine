@@ -1,6 +1,7 @@
 #include "engine/include/graphic/DirectXCommon/Descriptors/IDescriptorHeap.h"
 #include "engine/include/utility/DirectX/GenerateDescriptorHandle.h"
 #include <cassert>
+using namespace QFE;
 
 ID3D12DescriptorHeap* IDescriptorHeap::GetDescriptorHeap() const {
 	return descriptorHeap_.Get();

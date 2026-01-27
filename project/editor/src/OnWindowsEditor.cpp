@@ -10,6 +10,7 @@
 #include "engine/include/utility/FileSystems/FileUtility.h"
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
+using namespace QFE;
 
 OnWindowsEditor::OnWindowsEditor() {
 

@@ -16,43 +16,47 @@
 #include "Data/ModelData.h"
 #include "engine/include/graphic/ShaderBuffer/VertexBuffer.h"
 
-/**
- * @class ModelVertexResourceManager
- * @brief 複数の3Dモデルの頂点リソースをGPU上に確保・管理するクラス
- */
-class ModelVertexResourceManager final {
-public:
-    /** @brief 初期化 */
-	void Initialize();
+namespace QFE {
 
-    /**
-     * @brief モデルデータをリソースに割り当てる
-     * @param device DirectXデバイス
-     * @param modelData モデルデータ
-     * @param modelName モデル名
-     * @return モデルハンドル
-     */
-	uint32_t Assign(ID3D12Device* device,const ModelData& modelData,const std::string& modelName);
-    
-    /** @brief ハンドルから頂点バッファの数を取得 */
-	const uint32_t GetVertexBufferCount(uint32_t handle) const;
-    /** @brief ハンドルから頂点リソースを取得 */
-	ID3D12Resource* GetModelVertexBuffer(const uint32_t& handle);
-    /** @brief ハンドルから頂点データを取得 */
-	VertexData* GetModelVertexBufferData(const uint32_t& handle);
-    /** @brief ハンドルから頂点バッファビューを取得 */
-	const D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView(const uint32_t& handle);
-    
-    /** @brief 名前からハンドルを取得 */
-	uint32_t GetModelHandle(const std::string& modelName) const;
-    /** @brief 指定した名前のモデルが既に読み込まれているか */
-	bool HasModelHandle(const std::string& modelName) const;
+	/**
+	 * @class ModelVertexResourceManager
+	 * @brief 複数の3Dモデルの頂点リソースをGPU上に確保・管理するクラス
+	 */
+	class ModelVertexResourceManager final {
+	public:
+		/** @brief 初期化 */
+		void Initialize();
 
-    /** @brief 終了処理 */
-	void Finalize();
+		/**
+		 * @brief モデルデータをリソースに割り当てる
+		 * @param device DirectXデバイス
+		 * @param modelData モデルデータ
+		 * @param modelName モデル名
+		 * @return モデルハンドル
+		 */
+		uint32_t Assign(ID3D12Device* device, const ModelData& modelData, const std::string& modelName);
 
-private:
-	std::unordered_map<std::string, uint32_t> modelHandleMap_;
-	std::vector<ModelData> modelDatas_;
-	std::vector<VertexBuffer<VertexData>> modelVertexBuffers_;
-};
+		/** @brief ハンドルから頂点バッファの数を取得 */
+		const uint32_t GetVertexBufferCount(uint32_t handle) const;
+		/** @brief ハンドルから頂点リソースを取得 */
+		ID3D12Resource* GetModelVertexBuffer(const uint32_t& handle);
+		/** @brief ハンドルから頂点データを取得 */
+		VertexData* GetModelVertexBufferData(const uint32_t& handle);
+		/** @brief ハンドルから頂点バッファビューを取得 */
+		const D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView(const uint32_t& handle);
+
+		/** @brief 名前からハンドルを取得 */
+		uint32_t GetModelHandle(const std::string& modelName) const;
+		/** @brief 指定した名前のモデルが既に読み込まれているか */
+		bool HasModelHandle(const std::string& modelName) const;
+
+		/** @brief 終了処理 */
+		void Finalize();
+
+	private:
+		std::unordered_map<std::string, uint32_t> modelHandleMap_;
+		std::vector<ModelData> modelDatas_;
+		std::vector<VertexBuffer<VertexData>> modelVertexBuffers_;
+	};
+
+}

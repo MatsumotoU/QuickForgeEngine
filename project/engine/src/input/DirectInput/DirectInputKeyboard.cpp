@@ -1,7 +1,7 @@
 #include "engine/include/input/DirectInput/DirectInputKeyboard.h"
 
 #include <cassert>
-
+using namespace QFE;
 DirectInputKeyboard::DirectInputKeyboard() {
 	keyboard_ = nullptr;
 	directInput_ = nullptr;

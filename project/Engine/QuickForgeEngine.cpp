@@ -5,7 +5,10 @@
 
 #include "QuickForgeEngine.h"
 #include "engine/include/WindowsEngineCore.h"
+#include "engine/include/core/IEngineCore.h"
 #include <memory>
+
+using namespace QFE;
 
 /**
  * @brief Windows上でのエンジン実行

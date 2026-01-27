@@ -5,6 +5,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 void AudioSourceManager::Initialize() {
 	audioDataMap_.clear();
 	audioHandleMap_.clear();

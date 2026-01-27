@@ -1,5 +1,7 @@
 #include "engine/include/collider/Data/AABBColliderData.h"
 
+using namespace QFE;
+
 AABBColliderData::AABBColliderData() {
 	aabb.center = {0.0f, 0.0f, 0.0f};
 	aabb.size = {1.0f, 1.0f, 1.0f};

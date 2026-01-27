@@ -1,9 +1,9 @@
-﻿#include "Engine/include/input/Mic/WASAPIMicrophoneDevice.h"
+#include "Engine/include/input/Mic/WASAPIMicrophoneDevice.h"
 #include <assert.h>
 #include <vector>
 
 #include "Engine/include/assets/AudioSource/Data/AudioData.h"
-
+using namespace QFE;
 #ifdef QFE_OPTIMIZE_OFF
 
 #endif // QFE_OPTIMIZE_OFF

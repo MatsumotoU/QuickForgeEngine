@@ -11,6 +11,9 @@
 #include "Engine/include/renderer/ModelRenderer.h"
 #include "Engine/include/renderer/SpriteRenderer.h"
 #include "Engine/include/renderer/ParticleRenderer.h"
+
+using namespace QFE;
+
 AllEntityRenderingCommand::AllEntityRenderingCommand(EntityManager& entityManager) :
 	ISceneEntityCommand(entityManager){}
 

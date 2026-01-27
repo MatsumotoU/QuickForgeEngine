@@ -15,6 +15,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
@@ -167,7 +169,7 @@ void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
     // 螳溯｡後ヵ繧｡繧､繝ｫ縺ｮ繝・ぅ繝ｬ繧ｯ繝医Μ繧貞叙蠕・
     std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
 
-    // 隱ｭ縺ｿ霎ｼ繧DLL縺ｮ繝輔Ν繝代せ繧呈ｧ狗ｯ・(exe縺ｨ蜷後§髫主ｱ､)
+    // 隱ｭ縺ｿ霎ｼ繧€DLL縺ｮ繝輔Ν繝代せ繧呈ｧ狗ｯ・(exe縺ｨ蜷後§髫主ｱ､)
     std::filesystem::path dllPath = exeDir / "CSharpScripts.dll";
 
 	assembly_ = mono_domain_assembly_open(domain_, dllPath.string().c_str());

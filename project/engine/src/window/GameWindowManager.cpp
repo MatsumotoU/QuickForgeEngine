@@ -5,57 +5,61 @@
 
 #endif // QFE_OPTIMIZE_OFF
 
-GameWindowManager::GameWindowManager() {
-}
+namespace QFE {
 
-void GameWindowManager::Initialize() {
-	
-}
-
-void GameWindowManager::Update() {
-	for (auto& window : windows) {
-		window->Update();
+	GameWindowManager::GameWindowManager() {
 	}
-}
 
-void GameWindowManager::Draw() {
-	for (auto& window : windows) {
-		window->Draw();
+	void GameWindowManager::Initialize() {
+		
 	}
-}
 
-void GameWindowManager::Shutdown() {
-	for (auto& window : windows) {
-		window->Shutdown();
-	}
-	windows.clear();
-}
-
-void GameWindowManager::AddWindow(const uint32_t& width, const uint32_t& height, const std::string& windowName) {
-	auto window = std::make_unique<GameWindow>();
-	window->Initialize(width, height, windowName);
-	windows.push_back(std::move(window));
-}
-
-bool GameWindowManager::IsWindowActive() const {
-	for (const auto& window : windows) {
-		if (window->IsWindowActive()) {
-			return true;
+	void GameWindowManager::Update() {
+		for (auto& window : windows) {
+			window->Update();
 		}
 	}
-	
-	return false;
-}
 
-HWND GameWindowManager::GetWindow(const std::string windowName) const {
-	for (const auto& window : windows) {
-		if (window->GetWindowName() == windowName) {
-			// IGameWindow* 縺九ｉ GameWindow* 縺ｸ繧ｭ繝｣繧ｹ繝・
-			if (auto gameWindow = dynamic_cast<GameWindow*>(window.get())) {
-				return gameWindow->GetHwnd();
+	void GameWindowManager::Draw() {
+		for (auto& window : windows) {
+			window->Draw();
+		}
+	}
+
+	void GameWindowManager::Shutdown() {
+		for (auto& window : windows) {
+			window->Shutdown();
+		}
+		windows.clear();
+	}
+
+	void GameWindowManager::AddWindow(const uint32_t& width, const uint32_t& height, const std::string& windowName) {
+		auto window = std::make_unique<GameWindow>();
+		window->Initialize(width, height, windowName);
+		windows.push_back(std::move(window));
+	}
+
+	bool GameWindowManager::IsWindowActive() const {
+		for (const auto& window : windows) {
+			if (window->IsWindowActive()) {
+				return true;
 			}
 		}
+		
+		return false;
 	}
-	throw std::runtime_error("謖・ｮ壹＆繧後◆繧ｦ繧｣繝ｳ繝峨え蜷阪′隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆縲・+ windowName");
+
+	HWND GameWindowManager::GetWindow(const std::string windowName) const {
+		for (const auto& window : windows) {
+			if (window->GetWindowName() == windowName) {
+				// IGameWindow* から GameWindow* へキャスト
+				if (auto gameWindow = dynamic_cast<GameWindow*>(window.get())) {
+					return gameWindow->GetHwnd();
+				}
+			}
+		}
+		throw std::runtime_error("指定されたウィンドウ名が見つかりませんでした。" + windowName);
+
+	}
 
 }

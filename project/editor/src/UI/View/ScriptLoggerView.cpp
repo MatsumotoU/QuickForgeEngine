@@ -9,6 +9,7 @@
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
+using namespace QFE;
 
 ScriptLoggerView::ScriptLoggerView() {
 	isActive_ = true;

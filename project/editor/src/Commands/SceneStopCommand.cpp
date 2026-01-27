@@ -1,6 +1,6 @@
 #include "editor/include/Commands/SceneStopCommand.h"
 #include "scene/SceneManager.h"
-
+using namespace QFE;
 SceneStopCommand::SceneStopCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "scene_stop" }) { }

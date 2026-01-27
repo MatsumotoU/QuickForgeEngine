@@ -1,5 +1,7 @@
 #include "engine/include/core/Math/Transform.h"
 
+using namespace QFE;
+
 void Transform::FromMatrix(const Matrix4x4& mat) {
     // 平行移動
     translate.x = mat.m[3][0];

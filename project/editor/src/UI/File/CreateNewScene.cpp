@@ -5,7 +5,7 @@
 
 #include "editor/include/UI/File/CreateNewScene.h"
 #include "scene/SceneManager.h"
-
+using namespace QFE;
 void CreateNewScene::Initialize() {
 	name_ = "New Scene";
 	isActive_ = false;

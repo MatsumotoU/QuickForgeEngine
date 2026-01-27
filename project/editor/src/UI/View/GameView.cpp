@@ -7,7 +7,7 @@
 
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/camera/CameraManager.h"
-
+using namespace QFE;
 GameView::GameView() {
 	name_ = "Game View";
 	isActive_ = true;

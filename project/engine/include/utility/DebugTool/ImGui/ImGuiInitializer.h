@@ -3,17 +3,19 @@
 #include <d3d12.h>
 #include "ImGuiInclude.h"         
 
-class ImGuiInitializer final {
-private:
-	ImGuiInitializer() = delete;
-	~ImGuiInitializer() = delete;
+namespace QFE {
+	class ImGuiInitializer final {
+	private:
+		ImGuiInitializer() = delete;
+		~ImGuiInitializer() = delete;
 
-public:
-	/// <summary>
-	/// ImGuiを�E期化しまぁE
-	/// </summary>
-	/// <param name="hwnd"></param>
-	static void Initialize(
-		ID3D12Device* device,uint32_t bufferCount,DXGI_FORMAT rtvFormat,
-		ID3D12DescriptorHeap* srvHeap,const D3D12_CPU_DESCRIPTOR_HANDLE& cpuHandle,const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle);
-};
+	public:
+		/// <summary>
+		/// ImGuiを�E期化しまぁE
+		/// </summary>
+		/// <param name="hwnd"></param>
+		static void Initialize(
+			ID3D12Device* device, uint32_t bufferCount, DXGI_FORMAT rtvFormat,
+			ID3D12DescriptorHeap* srvHeap, const D3D12_CPU_DESCRIPTOR_HANDLE& cpuHandle, const D3D12_GPU_DESCRIPTOR_HANDLE& gpuHandle);
+	};
+}

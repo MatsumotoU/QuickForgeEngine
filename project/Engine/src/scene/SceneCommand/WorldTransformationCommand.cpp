@@ -7,6 +7,7 @@
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
 #include "Engine/include/assets/Particle/Data/ParticleComponent.h"
+using namespace QFE;
 WorldTransformationCommand::WorldTransformationCommand(EntityManager& em) : ISceneEntityCommand(em) {}
 
 void WorldTransformationCommand::Execute(){

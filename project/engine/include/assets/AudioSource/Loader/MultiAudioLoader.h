@@ -5,11 +5,12 @@
 #include <mfapi.h>
 #include <mfidl.h>
 #include <mfreadwrite.h>
+namespace QFE {
+	struct AudioData;
 
-struct AudioData;
-
-namespace Multiaudioloader {
-	void Initialize();
-	void Finalize();
-	AudioData LoadAudioData(const std::string& path);
+	namespace Multiaudioloader {
+		void Initialize();
+		void Finalize();
+		AudioData LoadAudioData(const std::string& path);
+	}
 }

@@ -10,6 +10,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 void SceneManager::Initialize() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
@@ -48,7 +50,7 @@ void SceneManager::Initialize() {
 void SceneManager::Update() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-	// 譛蠕後↓髢九＞縺溘す繝ｼ繝ｳ繧帝幕縺・
+	// 譛€蠕後↓髢九＞縺溘す繝ｼ繝ｳ繧帝幕縺・
 	if (!isFirstLoadScene_) {
 		if (sceneConfig_.contains("lastScene")) {
 			try {
@@ -178,7 +180,7 @@ void SceneManager::CopyEntity(uint32_t sourceEntityId) {
 
 void SceneManager::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
 	currentScene_->ChangeEntityModel(entityId, modelName);
-	
+
 }
 
 void SceneManager::ChangeEntityMesh(uint32_t entityId, const std::string& meshName)
@@ -188,7 +190,7 @@ void SceneManager::ChangeEntityMesh(uint32_t entityId, const std::string& meshNa
 
 void SceneManager::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
 	currentScene_->SaveEntity(entityId, entityFileName);
-	
+
 }
 
 void SceneManager::ParentChild(uint32_t parentId, uint32_t childId) {
@@ -252,5 +254,3 @@ void SceneManager::StartScript() {
 void SceneManager::StopScript() {
 	currentScene_->StopScene();
 }
-
-

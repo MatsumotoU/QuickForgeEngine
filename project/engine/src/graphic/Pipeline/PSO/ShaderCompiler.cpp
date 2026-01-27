@@ -13,7 +13,7 @@
 
 #include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
-
+using namespace QFE;
 ShaderCompiler::ShaderCompiler() {
 	iDxcBlobMap_.clear();
 }

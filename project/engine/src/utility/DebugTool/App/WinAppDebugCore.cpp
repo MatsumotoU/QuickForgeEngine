@@ -1,4 +1,4 @@
-﻿#include "engine/include/utility/DebugTool/App/WinAppDebugCore.h"
+#include "engine/include/utility/DebugTool/App/WinAppDebugCore.h"
 #include "engine/include/utility/String/MyString.h"
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -6,6 +6,7 @@
 
 
 #pragma comment(lib,"Dbghelp.lib")
+using namespace QFE;
 
 WinAppDebugCore::WinAppDebugCore(const LPSTR& lpCmdLine) {
 	SetUnhandledExceptionFilter(ExportDump);

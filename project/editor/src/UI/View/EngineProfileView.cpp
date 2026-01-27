@@ -7,7 +7,7 @@
 
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/BuildInfo.h"
-
+using namespace QFE;
 EngineProfileView::EngineProfileView() {
 	isActive_ = false;
 	name_ = "Engine Profile View";

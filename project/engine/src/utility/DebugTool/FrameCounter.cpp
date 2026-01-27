@@ -8,7 +8,7 @@
 #ifdef QFE_OPTIMIZE_OFF
 #include "Engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 namespace {
 	const std::chrono::microseconds kMinTime(static_cast<uint64_t>(1000000.0f / 60.0f));
 	const std::chrono::microseconds kMinCheckTime(static_cast<uint64_t>(1000000.0f / 65.0f));

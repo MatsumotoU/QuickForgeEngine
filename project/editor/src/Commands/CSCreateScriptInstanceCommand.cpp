@@ -1,6 +1,6 @@
 #include "editor/include/Commands/CSCreateScriptInstanceCommand.h"
 #include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
-
+using namespace QFE;
 CSCreateScriptInstanceCommand::CSCreateScriptInstanceCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "cs_ci" }) { }

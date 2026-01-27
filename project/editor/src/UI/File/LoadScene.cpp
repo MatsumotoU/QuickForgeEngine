@@ -5,7 +5,7 @@
 
 #include "editor/include/UI/File/LoadScene.h"
 #include "scene/SceneManager.h"
-
+using namespace QFE;
 void LoadScene::Initialize() {
 	currentScene_ = "";
 	name_ = "LoadScene";

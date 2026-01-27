@@ -1,5 +1,7 @@
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
+using namespace QFE;
+
 nlohmann::json ParticleComponent::Serialize() const {
 	nlohmann::json json;
 	json["modelName"] = modelName;

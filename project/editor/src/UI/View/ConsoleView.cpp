@@ -9,7 +9,7 @@
 #include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
-
+using namespace QFE;
 /**
  * @brief コンストラクタ
  */

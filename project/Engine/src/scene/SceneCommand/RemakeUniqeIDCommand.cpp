@@ -5,6 +5,7 @@
 #include "engine/include/utility/ID/UniqueIDManager.h"
 
 #include "engine/include/scene/Data/SceneObjectData.h"
+using namespace QFE;
 
 RemakeUniqeIDCommand::RemakeUniqeIDCommand(EntityManager& entityManager, ListUniqueIDManager& uidManager) 
 	: ISceneEntityCommand(entityManager) , uniqueIdManager_(uidManager){}

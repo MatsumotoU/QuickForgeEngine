@@ -8,6 +8,8 @@
 #include "engine/include/core/Math/Transform.h"
 #include <assert.h>
 
+using namespace QFE;
+
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
 	Matrix4x4 result = {};
 	for (int y = 0; y < 4; y++) {
@@ -81,7 +83,8 @@ Matrix4x4 Matrix4x4::Inverse() const {
 
 	// 零除算回避用
 	if (i == 0.0f) {
-		assert(false);
+		//assert(false);
+		return Matrix4x4::MakeIndentity4x4();
 	}
 
 	result.m[0][0] = (

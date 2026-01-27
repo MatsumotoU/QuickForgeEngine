@@ -7,6 +7,8 @@
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
 
+using namespace QFE;
+
 /** @brief 初期化 */
 void ModelVertexResourceManager::Initialize() {
 	modelDatas_.clear();

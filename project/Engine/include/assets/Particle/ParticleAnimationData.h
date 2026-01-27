@@ -4,11 +4,15 @@
 
 #include <vector>
 
-struct ParticleData {
-	Transform transform;
-	Vector4 color;
-};
+namespace QFE {
 
-struct ParticlesData {
-	std::vector<ParticleData> particles;
-};
+	struct ParticleData {
+		Transform transform;
+		Vector4 color;
+	};
+
+	struct ParticlesData {
+		std::vector<ParticleData> particles;
+	};
+
+}

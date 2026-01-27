@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace QFE;
+
 Vector3 Vector3::Zero() {
 	Vector3 result{};
 	result = { 0.0f,0.0f,0.0f };

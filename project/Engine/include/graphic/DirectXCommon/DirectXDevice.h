@@ -16,33 +16,35 @@
  * @class DirectXDevice
  * @brief ID3D12Deviceおよび関連するDXGIインターフェースを取得・生成するクラス
  */
-class DirectXDevice final {
-public:
-	DirectXDevice();
-	~DirectXDevice();
-    /** @brief デバイスの初期化 */
-	void Initialize();
-    /** @brief デバイスの解放 */
-	void Shutdown();
+namespace QFE {
+	class DirectXDevice final {
+	public:
+		DirectXDevice();
+		~DirectXDevice();
+		/** @brief デバイスの初期化 */
+		void Initialize();
+		/** @brief デバイスの解放 */
+		void Shutdown();
 
-	[[nodiscard]] IDXGIFactory7* GetDxgiFactory() const;
-	[[nodiscard]] ID3D12Device* GetDevice() const;
-	[[nodiscard]] IDXGIAdapter4* GetUseAdapter() const;
+		[[nodiscard]] IDXGIFactory7* GetDxgiFactory() const;
+		[[nodiscard]] ID3D12Device* GetDevice() const;
+		[[nodiscard]] IDXGIAdapter4* GetUseAdapter() const;
 #ifdef QFE_OPTIMIZE_OFF
-	void SetDisableError(bool disable);
-	void SetDisableWarning(bool disable);
+		void SetDisableError(bool disable);
+		void SetDisableWarning(bool disable);
 #endif // QFE_OPTIMIZE_OFF
 
-private:
-	void CreateDxgiFactory();
-	void FindAdapter();
-	void CreateDevice();
+	private:
+		void CreateDxgiFactory();
+		void FindAdapter();
+		void CreateDevice();
 
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
-	Microsoft::WRL::ComPtr<ID3D12Device> device_;
-	Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter_;
+		Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
+		Microsoft::WRL::ComPtr<ID3D12Device> device_;
+		Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter_;
 #ifdef QFE_OPTIMIZE_OFF
-	bool disableError_;
-	bool disableWarning_;
+		bool disableError_;
+		bool disableWarning_;
 #endif // QFE_OPTIMIZE_OFF
-};
+	};
+}

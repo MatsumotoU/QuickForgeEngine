@@ -9,6 +9,8 @@
 #include "engine/include/core/Math/Vector/Vector3.h"
 #include "engine/include/core/Math/Matrix/Matrix4x4.h"
 
+using namespace QFE;
+
 Quaternion::Quaternion() {
 	q = { 0.0f,0.0f,0.0f,0.0f };
 }

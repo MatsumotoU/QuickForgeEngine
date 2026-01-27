@@ -4,7 +4,7 @@
 #include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "utility/String/MyString.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 Microsoft::WRL::ComPtr<ID3D12Resource> BufferGenerator::Generate(ID3D12Device* device, size_t sizeInBytes) {
 	// * Resourceを生成する * //
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};

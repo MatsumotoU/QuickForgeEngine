@@ -4,7 +4,7 @@
 #endif // QFE_OPTIMIZE_OFF
 
 #include <cassert>
-
+using namespace QFE;
 ShaderReflection::ShaderReflection() {
 	HRESULT hr;
 	hr = DxcCreateInstance(CLSID_DxcContainerReflection, IID_PPV_ARGS(containerReflection_.GetAddressOf()));

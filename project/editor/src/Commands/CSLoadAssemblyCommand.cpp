@@ -1,6 +1,6 @@
 #include "editor/include/Commands/CSLoadAssemblyCommand.h"
 #include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
-
+using namespace QFE;
 CSLoadAssemblyCommand::CSLoadAssemblyCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "cs_load" }) { }

@@ -13,6 +13,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 static std::set<std::string> emptySet;
+using namespace QFE;
 
 LuaScriptResourceManager::LuaScriptResourceManager() :
 	isRunningScript_(false),
@@ -35,7 +36,7 @@ void LuaScriptResourceManager::Initialize() {
 	// QFE縺ｨ縺・≧蜷榊燕縺ｮ繧ｰ繝ｭ繝ｼ繝舌Ν繝・・繝悶Ν繧剃ｽ懈・
 	sharedLuaState_->create_named_table("QFE");
 
-	QFE::Script::SetQFEFunctions(sharedLuaState_.get());
+	Script::SetQFEFunctions(sharedLuaState_.get());
 
 	// Lua蛛ｴ縺ｮ繝ｬ繧ｸ繧ｹ繝医Μ繧剃ｽ懈・
 	sharedLuaState_->script(R"(
@@ -521,7 +522,7 @@ void LuaScriptResourceManager::CopyLuaTable(const sol::table& src, sol::table& d
 
 void LuaScriptResourceManager::CheckScriptEntity() {
 	for (auto& [handle, script] : scripts_) {
-		// 譛螟ｧ蜆ｪ蜈亥ｺｦ縺ｮ譖ｴ譁ｰ
+		// 譛€螟ｧ蜆ｪ蜈亥ｺｦ縺ｮ譖ｴ譁ｰ
 		if (maxPriority_ < script->GetPriority()) {
 			maxPriority_ = script->GetPriority();
 		}
@@ -535,5 +536,3 @@ void LuaScriptResourceManager::CheckScriptEntity() {
 		}
 	}
 }
-
-

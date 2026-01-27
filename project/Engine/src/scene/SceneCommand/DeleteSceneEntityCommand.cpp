@@ -12,6 +12,8 @@
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
 
+using namespace QFE;
+
 DeleteSceneEntityCommand::DeleteSceneEntityCommand(EntityManager& entityManager, uint32_t entityId)
 :ISceneEntityCommand(entityManager),entityId_(entityId){}
 
