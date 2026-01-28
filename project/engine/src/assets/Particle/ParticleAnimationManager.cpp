@@ -7,6 +7,8 @@
 #include "engine/include/assets/AssetManager.h" 
 #include <fstream>
 
+using namespace QFE;
+
 /**
  * @brief アニメーションデータの読み込み
  * TODO: 読み込んだデータを保持する実装が足りていない可能性が高い。

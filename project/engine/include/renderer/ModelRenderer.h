@@ -14,7 +14,7 @@
  * @namespace Render::Model
  * @brief モデルの描画に関する関数を含む名前空間
  */
-namespace Render::Model {
+namespace QFE::Render::Model {
     /**
      * @brief 3Dモデルを描画する
      * @param modelHandle 描画するモデルのハンドル

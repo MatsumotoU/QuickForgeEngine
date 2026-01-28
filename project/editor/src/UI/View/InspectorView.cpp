@@ -26,6 +26,8 @@
 #include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h" // C#環境のヘッダーをインクルード
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
+using namespace QFE;
+
 InspectorView::InspectorView() {
 	isActive_ = true;
 	name_ = "Inspector View";

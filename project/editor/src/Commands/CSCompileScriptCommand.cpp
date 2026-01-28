@@ -1,6 +1,6 @@
 #include "editor/include/Commands/CSCompileScriptCommand.h"
 #include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
-
+using namespace QFE;
 CSCompileScriptCommand::CSCompileScriptCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({"cs_compile"}) { }

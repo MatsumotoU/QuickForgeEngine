@@ -1,4 +1,5 @@
 #include "engine/include/scene/SceneCommand/SceneEntityCommandInvoker.h"
+using namespace QFE;
 void SceneEntityCommandInvoker::AddCommand(std::unique_ptr<ISceneEntityCommand> command){
 	commandQueue_.push(std::move(command));
 }

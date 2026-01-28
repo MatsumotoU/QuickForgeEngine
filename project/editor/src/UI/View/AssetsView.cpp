@@ -10,7 +10,7 @@
 #include "engine/include/utility/FileSystems/FileUtility.h"
 #include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-
+using namespace QFE;
 AssetsView::AssetsView() {
 	assetManager = nullptr;
 	isActive_ = true;

@@ -9,6 +9,9 @@
  //#include "engine/include/assets/Script/CsharpCmpiler.h"
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+
+using namespace QFE;
+
 /** @brief 初期化 */
 void AssetManager::Initialize(DirectXCommon* dxCommon) {
 	assert(dxCommon && "dxCommon is nullptr.");
@@ -77,11 +80,11 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		Material* materialData = gpuBufferPool_->GetConstantBufferData<Material>(meshRenderData.materialHandle);
 		materialData->color = { 1.0f,1.0f,1.0f,1.0f };
 		materialData->enableLighting = true;
-		materialData->uvTransform = Matrix4x4::MakeIndentity4x4();
+		materialData->uvTransform = QFE::Matrix4x4::MakeIndentity4x4();
 		materialData->shininess = 48.0f;
 		TransformationMatrix* transformData = gpuBufferPool_->GetConstantBufferData<TransformationMatrix>(meshRenderData.wpvBufferHandle);
-		transformData->World = Matrix4x4::MakeIndentity4x4();
-		transformData->WVP = Matrix4x4::MakeIndentity4x4();
+		transformData->World = QFE::Matrix4x4::MakeIndentity4x4();
+		transformData->WVP = QFE::Matrix4x4::MakeIndentity4x4();
 		DirectionalLight* lightData = gpuBufferPool_->GetConstantBufferData<DirectionalLight>(meshRenderData.lightBufferHandle);
 		lightData->color = { 1.0f,1.0f,1.0f,1.0f };
 		lightData->direction = { 0.0f,-1.0f,0.0f };

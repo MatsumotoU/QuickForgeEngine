@@ -1,6 +1,6 @@
 #include "editor/include/Commands/LuaScriptUpdateCommand.h"
 #include "assets/Script/LuaScriptResourceManager.h"
-
+using namespace QFE;
 LuaScriptUpdateCommand::LuaScriptUpdateCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "lua_update" }) { }

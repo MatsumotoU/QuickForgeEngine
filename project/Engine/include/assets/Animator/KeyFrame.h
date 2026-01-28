@@ -2,16 +2,20 @@
 #include <cstdint>
 #include "engine/include/core/Math/Transform.h"
 
-enum class KeyFrameInterpolationType : uint8_t {
-	LINEAR,
-	BEZIER,
-	STEP,
-	EASE_IN,
-	EASE_OUT
-};
+namespace QFE {
 
-struct KeyFrame {
-	float time;
-	Transform transform;
-	KeyFrameInterpolationType interpolationType;
-};
+	enum class KeyFrameInterpolationType : uint8_t {
+		LINEAR,
+		BEZIER,
+		STEP,
+		EASE_IN,
+		EASE_OUT
+	};
+
+	struct KeyFrame {
+		float time;
+		Transform transform;
+		KeyFrameInterpolationType interpolationType;
+	};
+
+}

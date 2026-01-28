@@ -1,6 +1,10 @@
 #pragma once
 #include <string>
 
-struct ModelMaterialData {
-	std::string textureFilePath;
-};
+namespace QFE {
+
+	struct ModelMaterialData {
+		std::string textureFilePath;
+	};
+
+}

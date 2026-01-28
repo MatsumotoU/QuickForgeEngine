@@ -1,20 +1,23 @@
 #pragma once
 #include "ISceneEntityCommand.h"
-class CameraManager;
 
-class WvpTransformationCommand final : public ISceneEntityCommand {
-public:
-	WvpTransformationCommand() = delete;
-	explicit WvpTransformationCommand(EntityManager& entityManager,CameraManager& cameraMana);
-	~WvpTransformationCommand() override = default;
+namespace QFE {
+	class CameraManager;
 
-	/// 全オブジェクトのワールド・ビュー・プロジェクション行列を更新する
-	void Execute() override;
-	/// ワールド・ビュー・プロジェクション行列の更新は元に戻せない
-	void Undo() override;
+	class WvpTransformationCommand final : public ISceneEntityCommand {
+	public:
+		WvpTransformationCommand() = delete;
+		explicit WvpTransformationCommand(EntityManager& entityManager, QFE::CameraManager& cameraMana);
+		~WvpTransformationCommand() override = default;
 
-	std::string GetCommandName() const override;
+		/// 全オブジェクトのワールド・ビュー・プロジェクション行列を更新する
+		void Execute() override;
+		/// ワールド・ビュー・プロジェクション行列の更新は元に戻せない
+		void Undo() override;
 
-private:
-	CameraManager& cameraManager_;
-};
+		std::string GetCommandName() const override;
+
+	private:
+		CameraManager& cameraManager_;
+	};
+}

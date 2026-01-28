@@ -9,6 +9,9 @@
 #include "Engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
+
+using namespace QFE;
+
 ParentUpdateCommand::ParentUpdateCommand(EntityManager& entityManager) : ISceneEntityCommand(entityManager) {}
 
 void ParentUpdateCommand::Execute()

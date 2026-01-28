@@ -1,6 +1,8 @@
 #include "engine/include/assets/Script/CsharpCompiler.h"
 
-void GenerateCsproj(const std::string& dir, const std::string& outputPath) {
+using namespace QFE;
+
+void QFE::GenerateCsproj(const std::string& dir, const std::string& outputPath) {
     std::vector<std::string> csFiles;
     for (const auto& entry : std::filesystem::directory_iterator(dir)) {
         if (entry.path().extension() == ".cs") {
@@ -24,7 +26,7 @@ void GenerateCsproj(const std::string& dir, const std::string& outputPath) {
     ofs.close();
 }
 
-void CompileCSharpProject(const std::string& csprojPath, const std::string& outputDllPath) {
+void QFE::CompileCSharpProject(const std::string& csprojPath, const std::string& outputDllPath) {
 	std::string command = "dotnet build " + csprojPath + " -c Release -o " + std::filesystem::path(outputDllPath).parent_path().string();
 	int result = system(command.c_str());
 	if (result != 0) {

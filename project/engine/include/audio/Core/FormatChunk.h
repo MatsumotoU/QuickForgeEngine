@@ -1,9 +1,10 @@
 #pragma once
 #include <xaudio2.h>
 #include "ChunkHeader.h"
-
-// フォーマットチャンクを表す構造佁E
-struct FormatChunk final {
-	ChunkHeader chunk;
-	WAVEFORMATEX fmt;
-};
+namespace QFE {
+	// フォーマットチャンクを表す構造佁E
+	struct FormatChunk final {
+		ChunkHeader chunk;
+		WAVEFORMATEX fmt;
+	};
+}

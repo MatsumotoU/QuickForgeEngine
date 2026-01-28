@@ -4,29 +4,30 @@
 #include <AudioClient.h>
 
 #include <vector>
+namespace QFE {
+	struct AudioData;
 
-struct AudioData;
+	class WASAPIMicrophoneDevice final {
+	public:
+		WASAPIMicrophoneDevice();
+		~WASAPIMicrophoneDevice() = default;
 
-class WASAPIMicrophoneDevice final{
-public:
-	WASAPIMicrophoneDevice();
-	~WASAPIMicrophoneDevice() = default;
+		void Initialize();
+		void Finalize();
 
-	void Initialize();
-	void Finalize();
+		void StartCapture();
+		void StopCapture();
 
-	void StartCapture();
-	void StopCapture();
+		AudioData GetAudioData();
+		bool IsCapturing() const { return isCapturing_; }
 
-	AudioData GetAudioData();
-	bool IsCapturing() const { return isCapturing_; }
+	private:
+		Microsoft::WRL::ComPtr<IMMDevice> microphoneDevice_;
+		Microsoft::WRL::ComPtr<IAudioClient> audioClient_;
+		Microsoft::WRL::ComPtr<IAudioCaptureClient> captureClient_;
 
-private:
-	Microsoft::WRL::ComPtr<IMMDevice> microphoneDevice_;
-	Microsoft::WRL::ComPtr<IAudioClient> audioClient_;
-	Microsoft::WRL::ComPtr<IAudioCaptureClient> captureClient_;
+		bool isCapturing_;
 
-	bool isCapturing_;
-
-	std::vector<UINT32> test;
-};
+		std::vector<UINT32> test;
+	};
+}  // namespace QFE

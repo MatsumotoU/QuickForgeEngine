@@ -4,7 +4,7 @@
 
 #include "engine/include/core/Math/Vector/Vector3.h"
 
-namespace CsharpOnQFELinker {
+namespace QFE::CsharpOnQFELinker {
     // Transform
     extern void GetTransformTranslate(uint32_t entityId, Vector3* outTranslate);
     extern void SetTransformTranslate(uint32_t entityId, Vector3* inTranslate);

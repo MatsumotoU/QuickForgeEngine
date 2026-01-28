@@ -1,6 +1,6 @@
 #include "editor/include/Commands/CSReloadAssemblyCommand.h"
 #include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
-
+using namespace QFE;
 CSReloadAssemblyCommand::CSReloadAssemblyCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "cs_reload" }) { }

@@ -1,0 +1,30 @@
+# Mono binaries (automatically downloaded by setup_mono.bat)
+externals/Mono/bin/
+externals/Mono/etc/
+externals/Mono/include/
+externals/Mono/lib/
+
+# Build artifacts and general IDE files
+.vs/
+*.sln
+*.vcxproj
+*.filters
+*.user
+../generated/
+logs/
+bin-int/
+bin/
+*.pdb
+*.obj
+*.log
+*.tlog
+*.lastbuildstate
+*.idb
+*.cache
+
+# ImGui settings
+imgui.ini
+
+# Premake
+premake5.exe
+premake.zip

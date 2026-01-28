@@ -7,11 +7,15 @@
 
 #include "../Data/ModelData.h"
 
-class AssimpModelLoader {
-public:
-	AssimpModelLoader() = default;
-	~AssimpModelLoader() = default;
-	// モチE��の読み込み
-	static void LoadModelData(
-		const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename,ModelData& modelData);
-};
+namespace QFE {
+
+	class AssimpModelLoader {
+	public:
+		AssimpModelLoader() = default;
+		~AssimpModelLoader() = default;
+		// モチEの読み込み
+		static void LoadModelData(
+			const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename, ModelData& modelData);
+	};
+
+}

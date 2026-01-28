@@ -1,6 +1,6 @@
 #include "editor/include/UI/Edit/PostprocessEdit.h"
 #include "graphic/PostEffect/RenderingPostprocess.h"
-
+using namespace QFE;
 void PostprocessEdit::Initialize() {
 	name_ = "PostprocessEdit";
 	isActive_ = false;

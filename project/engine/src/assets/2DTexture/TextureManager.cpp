@@ -16,6 +16,8 @@
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 /** @brief 蛻晄悄蛹・*/
 void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap) {
 	srvDescriptorHeap_ = srvDescriptorHeap;
@@ -58,7 +60,7 @@ void TextureManager::Finalize() {
 }
 
 DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
-	// 郢昴・縺醍ｹｧ・ｹ郢昶・ﾎ慕ｹ晁ｼ斐＜郢ｧ・､郢晢ｽｫ郢ｧ螳夲ｽｪ・ｭ邵ｺ・ｿ髴趣ｽｼ郢ｧ阮吶堤ｹ晏干ﾎ溽ｹｧ・ｰ郢晢ｽｩ郢晢｣ｰ邵ｺ・ｧ闖ｴ・ｿ邵ｺ蛹ｻ・狗ｹｧ蛹ｻ竕ｧ邵ｺ・ｫ邵ｺ蜷ｶ・・
+	// 郢昴・縺醍ｹｧ・ｹ郢昶・ﾎ慕ｹ晁ｼ斐＜郢ｧ・､郢晢ｽｫ郢ｧ螳夲ｽｪ・ｭ邵ｺ・ｿ髴趣ｽｼ郢ｧ阮吶€堤ｹ晏干ﾎ溽ｹｧ・ｰ郢晢ｽｩ郢晢｣ｰ邵ｺ・ｧ闖ｴ・ｿ邵ｺ蛹ｻ・狗ｹｧ蛹ｻ竕ｧ邵ｺ・ｫ邵ｺ蜷ｶ・・
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
@@ -74,7 +76,7 @@ DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
 }
 
 void TextureManager::LoadScratchImage(const std::string& filePath) {
-	// 郢昴・縺醍ｹｧ・ｹ郢昶・ﾎ慕ｹ晁ｼ斐＜郢ｧ・､郢晢ｽｫ郢ｧ螳夲ｽｪ・ｭ邵ｺ・ｿ髴趣ｽｼ郢ｧ阮吶堤ｹ晏干ﾎ溽ｹｧ・ｰ郢晢ｽｩ郢晢｣ｰ邵ｺ・ｧ闖ｴ・ｿ邵ｺ蛹ｻ・狗ｹｧ蛹ｻ竕ｧ邵ｺ・ｫ邵ｺ蜷ｶ・・
+	// 郢昴・縺醍ｹｧ・ｹ郢昶・ﾎ慕ｹ晁ｼ斐＜郢ｧ・､郢晢ｽｫ郢ｧ螳夲ｽｪ・ｭ邵ｺ・ｿ髴趣ｽｼ郢ｧ阮吶€堤ｹ晏干ﾎ溽ｹｧ・ｰ郢晢ｽｩ郢晢｣ｰ邵ｺ・ｧ闖ｴ・ｿ邵ｺ蛹ｻ・狗ｹｧ蛹ｻ竕ｧ邵ｺ・ｫ邵ｺ蜷ｶ・・
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
@@ -243,7 +245,3 @@ const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& TextureManager::GetTextureSrvHan
 const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>& TextureManager::GetTextureSrvHandleGPUList() const {
 	return textureSrvHandleGPU_;
 }
-
-
-
-

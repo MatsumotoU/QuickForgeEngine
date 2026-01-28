@@ -1,7 +1,7 @@
 #include "engine/include/graphic/Pipeline/PSO/PipelineStateObject.h"
 #include <cassert>
 #include <d3d12.h>
-
+using namespace QFE;
 namespace {
 	const std::string kVSFilePath = "engine/resources/shaders/vs/";
 	const std::string kPSFilePath = "engine/resources/shaders/ps/";

@@ -15,6 +15,9 @@
  * @brief スプライトの描画実行
  * @param spriteHandle 描画するスプライトのハンドル
  */
+
+using namespace QFE;
+
 void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();

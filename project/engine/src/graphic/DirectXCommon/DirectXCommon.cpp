@@ -15,6 +15,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 namespace {
 	float clearColor_[4] = { 0.1f, 0.25f, 0.5f, 1.0f };
 }

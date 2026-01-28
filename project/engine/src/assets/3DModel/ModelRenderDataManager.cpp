@@ -5,6 +5,8 @@
 
 #include "engine/include/assets/3DModel/ModelRenderDataManager.h"
 
+using namespace QFE;
+
 /** @brief 初期化 */
 void ModelRenderDataManager::Initialize() {
 	modelRenderDatas_.clear();

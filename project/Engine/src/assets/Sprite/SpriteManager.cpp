@@ -7,6 +7,8 @@
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
 
+using namespace QFE;
+
 void SpriteManager::Initialize() {
 	spriteVertexBuffers_.clear();
 }

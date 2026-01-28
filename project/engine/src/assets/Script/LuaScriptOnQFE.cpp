@@ -1,4 +1,4 @@
-﻿#include "engine/include/assets/Script/LuaScriptOnQFE.h"
+#include "engine/include/assets/Script/LuaScriptOnQFE.h"
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
@@ -16,6 +16,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 LuaScriptOnQFE::LuaScriptOnQFE() {
 	isCanRun_ = false;
 	scriptName_ = "";
@@ -29,7 +31,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 	try {
 		sol::state& luaState = LuaScriptResourceManager::GetInstance()->GetSharedState();
 		
-		// 1. 迺ｰ蠅・畑繝・・繝悶Ν繧剃ｽ懈・縺励√Γ繧ｿ繝・・繝悶Ν繧偵そ繝・ヨ
+		// 1. 迺ｰ蠅・畑繝・・繝悶Ν繧剃ｽ懈・縺励€√Γ繧ｿ繝・・繝悶Ν繧偵そ繝・ヨ
 		sol::table env_table = luaState.create_table();
 		sol::table mt = luaState.create_table();
 		mt["__index"] = [this, &luaState](sol::table t, sol::object key) -> sol::object {
@@ -67,7 +69,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 
 		environment_ = sol::environment(luaState, env_table);
 		// 迺ｰ蠅・・隕ｪ縺ｨ縺励※globals繧定ｨｭ螳夲ｼ・lobals縺九ｉ蛟､繧貞叙蠕励〒縺阪ｋ繧医≧縺ｫ縺吶ｋ・・
-		// 縺溘□縺励√Γ繧ｿ繝・・繝悶Ν縺ｮ__index縺ｧ謇句虚繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ縺励※縺・ｋ縺ｮ縺ｧ螳溯ｳｪ逧・↓縺ｯmt邨檎罰縺ｧ繧｢繧ｯ繧ｻ繧ｹ縺輔ｌ繧・
+		// 縺溘□縺励€√Γ繧ｿ繝・・繝悶Ν縺ｮ__index縺ｧ謇句虚繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ縺励※縺・ｋ縺ｮ縺ｧ螳溯ｳｪ逧・↓縺ｯmt邨檎罰縺ｧ繧｢繧ｯ繧ｻ繧ｹ縺輔ｌ繧・
 		
 		std::string filePath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + scriptName;
 		sol::load_result loadResult = luaState.load_file(filePath);
@@ -256,6 +258,3 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 		collider.aabb.size = size;
 		};
 }
-
-
-

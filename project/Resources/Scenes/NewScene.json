@@ -13,8 +13,8 @@
             },
             "Transform": {
                 "rotate": [
-                    0.35889190435409546,
-                    -0.3038690984249115,
+                    0.1563919186592102,
+                    0.0786304920911789,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    2.8328328132629395,
-                    3.5516490936279297,
-                    -9.033824920654297
+                    -0.7845856547355652,
+                    1.5749702453613281,
+                    -9.957562446594238
                 ]
             }
         },
@@ -81,47 +81,7 @@
             "SceneObjectData": {
                 "name": "ball.obj",
                 "tag": "Untagged",
-                "uniqueId": 3452816849
-            },
-            "Transform": {
-                "rotate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "CsharpComponent": {
-                "CsharpHandles": [
-                    {
-                        "ClassName": "testA"
-                    }
-                ]
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "0.obj"
-            },
-            "SceneObjectData": {
-                "name": "0.obj",
-                "tag": "Untagged",
-                "uniqueId": 3452816850
+                "uniqueId": 3452816851
             },
             "Transform": {
                 "rotate": [

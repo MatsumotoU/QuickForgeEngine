@@ -1,5 +1,5 @@
 #include "engine/include/utility/DirectX/GenerateDescriptorHandle.h"
-
+using namespace QFE;
 D3D12_CPU_DESCRIPTOR_HANDLE GenerateDescriptorHandle::GetCpuDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index) {
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	handleCPU.ptr += (descriptorSize * index);

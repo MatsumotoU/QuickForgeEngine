@@ -1,6 +1,6 @@
 #include "editor/include/Commands/CSRunScriptCommand.h"
 #include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
-
+using namespace QFE;
 CSRunScriptCommand::CSRunScriptCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "cs_run" }) { }

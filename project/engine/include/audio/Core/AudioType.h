@@ -1,7 +1,9 @@
 #pragma once
-enum class AudioType {
-	BGM,
-	SE,
-	AS,
-	Voice
-};
+namespace QFE {
+	enum class AudioType {
+		BGM,
+		SE,
+		AS,
+		Voice
+	};
+}

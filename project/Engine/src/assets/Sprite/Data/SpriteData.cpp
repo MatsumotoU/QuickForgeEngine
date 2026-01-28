@@ -1,5 +1,5 @@
 #include "engine/include/assets/Sprite/Data/SpriteData.h"
-
+using namespace QFE;
 SpriteData::SpriteData() {
 	textureName = "";
 	textureHandle = 0;

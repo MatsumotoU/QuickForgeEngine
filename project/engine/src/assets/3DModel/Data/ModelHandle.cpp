@@ -1,6 +1,8 @@
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/assets/AssetManager.h"
 
+using namespace QFE;
+
 nlohmann::json ModelHandle::Serialize() const {
 	nlohmann::json json;
 	json["modelName"] = modelName;

@@ -8,6 +8,8 @@
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/core/Math/Transform.h"
 
+using namespace QFE;
+
 /** @brief 初期化 */
 void PhysicsManager::Initialize() {
 }
@@ -28,17 +30,17 @@ void PhysicsManager::Update() {
 
 		// 重力
 		if (forceComp.isGravity) {
-			forceComp.acceleration.y += -9.8f * QFE::EngineGlobalValue::deltaTime * forceComp.gravityStrength; 
+			forceComp.acceleration.y += -9.8f * EngineGlobalValue::deltaTime * forceComp.gravityStrength; 
 		}
 		// 速度に力を加える
-		forceComp.velocity += forceComp.acceleration * QFE::EngineGlobalValue::deltaTime;
+		forceComp.velocity += forceComp.acceleration * EngineGlobalValue::deltaTime;
 		// 位置に速度を加える
 		if (entityManager->HasComponent<Transform>(entityId)) {
 			Transform& transform = entityManager->GetComponent<Transform>(entityId);
-			transform.translate += forceComp.velocity * QFE::EngineGlobalValue::deltaTime;
+			transform.translate += forceComp.velocity * EngineGlobalValue::deltaTime;
 		}
 		// 摩擦力の計算
-		float frictionFactor = std::exp(-forceComp.friction * QFE::EngineGlobalValue::deltaTime);
+		float frictionFactor = std::exp(-forceComp.friction * EngineGlobalValue::deltaTime);
 		forceComp.velocity = forceComp.velocity * frictionFactor;
 	}
 }

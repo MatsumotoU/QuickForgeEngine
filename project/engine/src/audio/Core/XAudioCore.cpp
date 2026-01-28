@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file XAudioCore.cpp
  * @brief XAudio2縺ｮ蝓ｺ逶､驛ｨ蛻・繝・ヰ繧､繧ｹ逕滓・遲・繧堤ｮ｡逅・☆繧九け繝ｩ繧ｹ縺ｮ螳溯｣・
  */
@@ -25,7 +25,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/MyString.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 /** @brief 繝・せ繝医Λ繧ｯ繧ｿ */
 XAudioCore::~XAudioCore() {
 	xAudio2_.Reset();

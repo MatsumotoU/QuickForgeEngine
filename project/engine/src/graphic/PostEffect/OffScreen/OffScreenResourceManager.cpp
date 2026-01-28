@@ -1,6 +1,6 @@
 #include"engine/include/graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include <assert.h>
-
+using namespace QFE;
 void OffScreenResourceManager::Initialize(ID3D12Device* device, int width, int height) {
 	offScreenDesc_ = {};
 	offScreenDesc_.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;

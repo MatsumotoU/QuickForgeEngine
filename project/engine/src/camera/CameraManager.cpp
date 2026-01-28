@@ -7,13 +7,15 @@
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/camera/Data/CameraData.h"
 
+using namespace QFE;
+
 void CameraManager::Initialize() {
 	nextCameraHandle_ = 0;
 	cameras_.clear();
 #ifdef QFE_OPTIMIZE_OFF
 	isActiveDebugCamera_ = false;
 #endif // QFE_OPTIMIZE_OFF
-	
+
 	AddCamera();
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	entityManager->GetComponent<SceneObjectData>(cameras_[0].GetBindEntityId()).name = "DebugCamera";

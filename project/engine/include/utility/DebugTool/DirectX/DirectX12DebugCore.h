@@ -5,15 +5,17 @@
 #include "D3DResourceLeakChecker.h"
 #include "DebugLayer.h"
 
-class D3DResourceLeakChecker;
-class DebugLayer;
+namespace QFE {
+	class D3DResourceLeakChecker;
+	class DebugLayer;
 
-class DirectX12DebugCore final {
-public:
-	DirectX12DebugCore();
+	class DirectX12DebugCore final {
+	public:
+		DirectX12DebugCore();
 
-private:
-	std::unique_ptr<DebugLayer> debugLayer_;
-	std::unique_ptr<D3DResourceLeakChecker> d3dResourceLeakChecker_;
-};
+	private:
+		std::unique_ptr<DebugLayer> debugLayer_;
+		std::unique_ptr<D3DResourceLeakChecker> d3dResourceLeakChecker_;
+	};
+}  // namespace QFE
 #endif // QFE_OPTIMIZE_OFF

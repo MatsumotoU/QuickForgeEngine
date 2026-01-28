@@ -1,4 +1,5 @@
 #include "engine/include/utility/DebugTool/DirectX/DebugLayer.h"
+using namespace QFE;
 #ifdef QFE_OPTIMIZE_OFF
 DebugLayer::DebugLayer() {
 	debugController_ = nullptr;

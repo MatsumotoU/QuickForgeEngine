@@ -54,20 +54,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)..\..\..\generated\outputs\Debug\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\generated\obj\DirectXTex\Debug\</IntDir>
+    <OutDir>..\..\..\generated\outputs\Debug\</OutDir>
+    <IntDir>..\..\..\generated\obj\DirectXTex\Debug\</IntDir>
     <TargetName>DirectXTex</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
-    <OutDir>$(ProjectDir)..\..\..\generated\outputs\Development\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\generated\obj\DirectXTex\Development\</IntDir>
+    <OutDir>..\..\..\generated\outputs\Development\</OutDir>
+    <IntDir>..\..\..\generated\obj\DirectXTex\Development\</IntDir>
     <TargetName>DirectXTex</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)..\..\..\generated\outputs\Release\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\generated\obj\DirectXTex\Release\</IntDir>
+    <OutDir>..\..\..\generated\outputs\Release\</OutDir>
+    <IntDir>..\..\..\generated\obj\DirectXTex\Release\</IntDir>
     <TargetName>DirectXTex</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -90,6 +90,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
     <PreBuildEvent>
       <Command>cd Shaders &amp;&amp; CompileShaders.cmd</Command>
     </PreBuildEvent>
@@ -113,6 +116,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
     <PreBuildEvent>
       <Command>cd Shaders &amp;&amp; CompileShaders.cmd</Command>
     </PreBuildEvent>
@@ -141,6 +147,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
     <PreBuildEvent>
       <Command>cd Shaders &amp;&amp; CompileShaders.cmd</Command>
     </PreBuildEvent>

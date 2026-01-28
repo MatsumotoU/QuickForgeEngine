@@ -1,5 +1,5 @@
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
-
+using namespace QFE;
 nlohmann::json CsharpComponent::Serialize() const {
 	nlohmann::json json;
 	json["CsharpHandles"] = nlohmann::json::array();

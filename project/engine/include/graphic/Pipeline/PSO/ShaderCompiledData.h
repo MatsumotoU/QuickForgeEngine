@@ -4,7 +4,9 @@
 #include <dxcapi.h>
 #include <wrl.h>
 
-struct ShaderCompiledData {
-	Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob;
-	Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection;
-};
+namespace QFE {
+	struct ShaderCompiledData {
+		Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob;
+		Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection;
+	};
+}

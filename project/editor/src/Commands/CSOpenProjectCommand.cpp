@@ -1,6 +1,6 @@
 #include "editor/include/Commands/CSOpenProjectCommand.h"
 #include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
-
+using namespace QFE;
 CSOpenProjectCommand::CSOpenProjectCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "cs_open" }) { }

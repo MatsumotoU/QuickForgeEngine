@@ -8,6 +8,8 @@
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
 #include "Engine/include/assets/Particle/Data/ParticleComponent.h"
+using namespace QFE;
+
 WvpTransformationCommand::WvpTransformationCommand(EntityManager& entityManager, CameraManager& cameraMana) :
 	ISceneEntityCommand(entityManager),
 	cameraManager_(cameraMana) {}

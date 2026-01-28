@@ -1,11 +1,11 @@
-﻿#include "engine/include/graphic/Pipeline/PSO/RootParameter.h"
+#include "engine/include/graphic/Pipeline/PSO/RootParameter.h"
 #include <cassert>
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/DirectXStructToString.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 
 void RootParameter::Initialize() {
 	// RootSignature

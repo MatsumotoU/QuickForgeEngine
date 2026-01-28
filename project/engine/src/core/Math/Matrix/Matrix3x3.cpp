@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <cmath>
 
+using namespace QFE;
+
 Matrix3x3 Matrix3x3::operator+(const Matrix3x3& other) {
 	Matrix3x3 returnMatrix;
 	for (int y = 0; y < 3; y++) {

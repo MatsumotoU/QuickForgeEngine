@@ -11,7 +11,7 @@
 #include <chrono>
 #include <nlohmann/json.hpp>
 
-// Core subsystems
+ // Core subsystems
 #include "engine/include/window/GameWindowManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
@@ -35,66 +35,70 @@
 #include "engine/include/collider/ColliderManager.h"
 #include "engine/include/utility/MultiThreadTaskExecutor.h"
 
-/**
- * @class WindowsEngineCore
- * @brief Windows OS上で動作するエンジンの中心クラス
- */
-class WindowsEngineCore final : public IEngineCore {
-public:
-    /**
-     * @brief コンストラクタ
-     * @param hInstance インスタンスハンドル
-     * @param lpCmdLine コマンドライン引数
-     */
-	WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
-	~WindowsEngineCore() override = default;
+namespace QFE {
 
-    /**
-     * @brief エンジンの初期化
-     */
-	void Initialize() override;
+	/**
+	 * @class WindowsEngineCore
+	 * @brief Windows OS上で動作するエンジンの中心クラス
+	 */
+	class WindowsEngineCore final : public IEngineCore {
+	public:
+		/**
+		 * @brief コンストラクタ
+		 * @param hInstance インスタンスハンドル
+		 * @param lpCmdLine コマンドライン引数
+		 */
+		WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
+		~WindowsEngineCore() override = default;
 
-    /**
-     * @brief メインループの実行
-     */
-	void MainLoop() override;
+		/**
+		 * @brief エンジンの初期化
+		 */
+		void Initialize() override;
 
-    /**
-     * @brief エンジンの終了処理
-     */
-	void Shutdown() override;
+		/**
+		 * @brief メインループの実行
+		 */
+		void MainLoop() override;
 
-private:
-	void Update();
-	void Draw();
+		/**
+		 * @brief エンジンの終了処理
+		 */
+		void Shutdown() override;
 
-	HINSTANCE& hInstance_;
-	LPSTR& lpCmdLine_;
+	private:
+		void Update();
+		void Draw();
 
-	std::unique_ptr<IGameWindowManager> gameWindowManager;
-	DirectXCommon* directXCommon_;
-	WinAppDebugCore debugCore_;
+		HINSTANCE& hInstance_;
+		LPSTR& lpCmdLine_;
 
-	OffScreenResourceManager offScreenResourceManager_;
+		std::unique_ptr<IGameWindowManager> gameWindowManager;
+		DirectXCommon* directXCommon_;
+		WinAppDebugCore debugCore_;
 
-	AssetManager* assetManager_;
-	RenderingPostprocess* renderingPostprocess_;
-	GraphRenderer* graphRenderer_;
+		OffScreenResourceManager offScreenResourceManager_;
 
-	GraphicPipelineManager* graphicPipelineManager_;
-	ImGuiFlameController imguiFrameController_;
+		AssetManager* assetManager_;
+		RenderingPostprocess* renderingPostprocess_;
+		Render::GraphRenderer* graphRenderer_;
 
-	std::unique_ptr<IEditor> editor_ = nullptr;
-	FrameCounter frameCounter_;
+		GraphicPipelineManager* graphicPipelineManager_;
+		ImGuiFlameController imguiFrameController_;
 
-	InputInterface* inputInterface_;
-	SceneManager* sceneManager_;
-	LuaScriptResourceManager* luaScriptResourceManager_;
-	CsharpVirtualEnvironmentOnQFE* csScriptManager_;
-	PhysicsManager* physicsManager_;
-	ColliderManager* colliderManager_;
-	IAudioInterface* audioInterface_;
+		std::unique_ptr<IEditor> editor_ = nullptr;
+		FrameCounter frameCounter_;
 
-	MultiThreadTaskExecutor* multiThreadTaskExecutor_;
-	nlohmann::json configJson_;
-};
+		InputInterface* inputInterface_;
+		SceneManager* sceneManager_;
+		LuaScriptResourceManager* luaScriptResourceManager_;
+		CsharpVirtualEnvironmentOnQFE* csScriptManager_;
+		PhysicsManager* physicsManager_;
+		ColliderManager* colliderManager_;
+		IAudioInterface* audioInterface_;
+
+		MultiThreadTaskExecutor* multiThreadTaskExecutor_;
+		nlohmann::json configJson_;
+	};
+
+}

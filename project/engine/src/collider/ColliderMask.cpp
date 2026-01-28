@@ -7,6 +7,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+using namespace QFE;
+
 void ColliderTagMask::Initialize(const std::string& maskTableFilePath)
 {
 	// コンフィグファイルパス設定

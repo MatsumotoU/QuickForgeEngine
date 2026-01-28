@@ -6,6 +6,8 @@
 #include "engine/include/core/Math/MyMath.h"
 #include <cassert>
 
+using namespace QFE;
+
 /**
  * @brief 線形補間
  */

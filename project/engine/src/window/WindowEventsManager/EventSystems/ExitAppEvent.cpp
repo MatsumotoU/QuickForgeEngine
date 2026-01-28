@@ -3,7 +3,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/MyString.h"
 #endif // QFE_OPTIMIZE_OFF
-
+using namespace QFE;
 ExitAppEvent::ExitAppEvent(nlohmann::json& data):IEvent(data) {}
 
 void ExitAppEvent::OnEvent(WPARAM wparam, LPARAM lparam) {

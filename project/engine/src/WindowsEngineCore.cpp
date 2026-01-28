@@ -15,6 +15,8 @@
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
+using namespace QFE;
+
 namespace {
 	uint32_t windowWidth = 1280;
 	uint32_t windowHeight = 720;
@@ -30,8 +32,8 @@ WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 }
 
 void WindowsEngineCore::Initialize() {
-	QFE::EngineGlobalValue::windowWidth = windowWidth;
-	QFE::EngineGlobalValue::windowHeight = windowHeight;
+	EngineGlobalValue::windowWidth = windowWidth;
+	EngineGlobalValue::windowHeight = windowHeight;
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -101,7 +103,7 @@ void WindowsEngineCore::Initialize() {
 #endif // QFE_OPTIMIZE_OFF
 
 	frameCounter_.Initialize();
-	graphRenderer_ = GraphRenderer::GetInstance();
+	graphRenderer_ = Render::GraphRenderer::GetInstance();
 	graphRenderer_->Initialize();
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -250,5 +252,3 @@ void WindowsEngineCore::Draw() {
 	sceneManager_->EndFrame();
 	multiThreadTaskExecutor_->FrameEnd();
 }
-
-

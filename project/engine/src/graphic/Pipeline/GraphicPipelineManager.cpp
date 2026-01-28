@@ -2,11 +2,12 @@
  * @file GraphicPipelineManager.cpp
  * @brief グラフィックスパイプラインおよびルートシグネチャの管理クラスの実装
  */
-
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 #include "engine/include/utility/String/MyString.h"
+
+using namespace QFE;
  /**
   * @brief 各種パイプラインの初期化
   * @param device ID3D12Deviceへのポインタ

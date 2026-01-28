@@ -2,7 +2,7 @@
 #include <cassert>
 #include <random>
 #include <algorithm>
-
+using namespace QFE;
 AudioPlayChip::~AudioPlayChip() {
 	Finalize();
 }

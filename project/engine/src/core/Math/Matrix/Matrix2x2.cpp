@@ -1,5 +1,7 @@
 #include "engine/include/core/Math/Matrix/Matrix2x2.h"
 
+using namespace QFE;
+
 Matrix2x2 Matrix2x2::Transpose() const {
 	Matrix2x2 result = *this;
 	result.m[0][1] = this->m[1][0];

@@ -17,7 +17,7 @@
 
 #include <cmath>
 #include <algorithm>
-
+using namespace QFE;
 SceneView::SceneView() {
 	name_ = "Scene View";
 	isActiveCamera_ = true;
@@ -89,7 +89,7 @@ void SceneView::Draw() {
 	ImGui::End();
 
 	if (isDrawGrid_) {
-		GraphRenderer::GetInstance()->DrawGrid();
+		QFE::Render::GraphRenderer::GetInstance()->DrawGrid();
 	}
 #endif // _DEBUG
 }
