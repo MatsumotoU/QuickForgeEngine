@@ -6,7 +6,7 @@
 #pragma once
 #include "../IEditorUI.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "utility/DebugTool/ImGui/DropDownFileList.h"
 #endif // _DEBUG
 namespace QFE {
@@ -33,7 +33,7 @@ namespace QFE {
 		/** @brief エンティティリストの描画 */
 		void DrawEntityList();
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		DropDownFileList modelDropDownFileList_; ///< モデル選択リスト
 		DropDownFileList spriteDropDownFileList_; ///< スプライト選択リスト
 		DropDownFileList entityDropDownFileList_; ///< エンティティテンプレート選択リスト

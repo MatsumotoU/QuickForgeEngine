@@ -19,14 +19,14 @@ void GameView::Initialize() {
 
 void GameView::Update() {
 	if (isSceneViewFocused_) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		CameraManager::GetInstance()->SetActiveDebugCamera(false);
 #endif // _DEBUG
 	}
 }
 
 void GameView::Draw() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (!isActive_) {
 		return;
 	}

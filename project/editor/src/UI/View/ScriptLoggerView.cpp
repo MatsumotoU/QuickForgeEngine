@@ -6,7 +6,7 @@
 #include "editor/include/UI/View/ScriptLoggerView.h"
 
 #include "editor/include/UI/View/HierarchyView.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 using namespace QFE;
@@ -32,12 +32,12 @@ void ScriptLoggerView::Draw() {
 	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	ImGui::Text("Selected Entity ID: %d", selectedEntityId_);
 	if (ImGui::Button("Clear Logs")) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		MyDebugLog::GetInstance()->scriptLogs_.clear();
 #endif // _DEBUG
 	}
 	
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	uint32_t id = selectedEntityId_;
 	auto it = MyDebugLog::GetInstance()->scriptLogs_.find(id);
 	if (it != MyDebugLog::GetInstance()->scriptLogs_.end()) {

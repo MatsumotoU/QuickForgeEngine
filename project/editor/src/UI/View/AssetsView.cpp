@@ -35,7 +35,7 @@ AssetsView::AssetsView() {
 	drawFunctions[ViewHierarchy::Shaders] = std::bind(&AssetsView::ShadersView, this);
 	drawFunctions[ViewHierarchy::Audio] = std::bind(&AssetsView::AudioView, this);
 	drawFunctions[ViewHierarchy::Others] = std::bind(&AssetsView::OthersView, this);
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	// アセット用UIの登録
 	fileGH_ = assetManager->LoadEditorTexture("file.png");
 	arrowGH_ = assetManager->LoadEditorTexture("arrow.png");

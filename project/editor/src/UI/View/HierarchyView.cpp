@@ -9,7 +9,7 @@
 #include "engine/include/camera/CameraManager.h"
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 
@@ -20,13 +20,13 @@ uint32_t HierarchyView::selectedEntityId_ = 0;
 HierarchyView::HierarchyView() {
 	isActive_ = true;
 	name_ = "Hierarchy View";
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	particleCount_ = 1;
 #endif // _DEBUG
 }
 
 void HierarchyView::Initialize() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	modelDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
 	spriteDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Image"), ".png");
 	entityDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Entities"), ".json");
@@ -39,7 +39,7 @@ void HierarchyView::Update() {
 
 /** @brief 描画 */
 void HierarchyView::Draw() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (!isActive_) {
 		return;
 	}
@@ -55,7 +55,7 @@ void HierarchyView::Draw() {
 }
 
 void HierarchyView::DrawPopupContextWindow() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (ImGui::BeginPopupContextWindow(nullptr, ImGuiPopupFlags_MouseButtonRight)) {
 		if (ImGui::MenuItem("Reload FileList")) {
 			Initialize();
@@ -105,7 +105,7 @@ void HierarchyView::DrawPopupContextWindow() {
 			}
 
 			if (ImGui::MenuItem("Camera")) {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 				DebugLog("Can not Add Camera");
 #endif // _DEBUG
 			}
@@ -118,7 +118,7 @@ void HierarchyView::DrawPopupContextWindow() {
 }
 
 void HierarchyView::DrawEntityList() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
 	auto entityIds = assetManager->GetEntityManager()->GetActiveEntityIds();
 	for (uint32_t id : entityIds) {
@@ -128,7 +128,7 @@ void HierarchyView::DrawEntityList() {
 		std::string label = name + "##" + std::to_string(id);
 
 		// デバッグカメラは表示しない
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		if (id == CameraManager::GetInstance()->GetCamera(0).GetBindEntityId()) {
 			continue;
 		}

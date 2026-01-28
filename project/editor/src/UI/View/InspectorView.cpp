@@ -351,7 +351,7 @@ void InspectorView::Draw() {
 					}
 				}
 			}
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			ImGui::Checkbox("Debug Draw", &sphereCollider.isDraw);
 #endif // _DEBUG
 		}
@@ -411,7 +411,7 @@ void InspectorView::Draw() {
 					}
 				}
 			}
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 			ImGui::Checkbox("Debug Draw", &aabbCollider.isDraw);
 #endif // _DEBUG
 		}

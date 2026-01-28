@@ -36,7 +36,7 @@ void SceneView::Initialize() {
 }
 
 void SceneView::Update() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	selectEntityId_ = HierarchyView::selectedEntityId_;
 
 	DebugCameraControl();
@@ -48,7 +48,7 @@ void SceneView::Draw() {
 	if (!isActive_) {
 		return;
 	}
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	RenderingPostprocess* render = RenderingPostprocess::GetInstance();
 	DescriptorHandles handle = render->GetCurrentSrvHandle();
 	ImGui::Begin("Scene View");
@@ -96,7 +96,7 @@ void SceneView::Draw() {
 
 /** @brief デバッグカメラの制御 */
 void SceneView::DebugCameraControl() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	if (!entityManager->HasComponent<Transform>(camera.GetBindEntityId())) {
@@ -198,7 +198,7 @@ void SceneView::DebugCameraControl() {
 
 /** @brief ギズモの更新 */
 void SceneView::UpdateGizmo() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	// ImGuizmoのセットアップ
 	bool is2D = AssetManager::GetInstance()->GetEntityManager()->HasComponent<SpriteData>(selectEntityId_);
 	ImGuizmo::SetOrthographic(is2D);
