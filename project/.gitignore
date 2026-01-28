@@ -21,6 +21,7 @@ bin/
 *.lastbuildstate
 *.idb
 *.cache
+*.txt
 
 # ImGui settings
 imgui.ini
