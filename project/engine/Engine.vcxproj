@@ -96,6 +96,7 @@
     <Lib>
       <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"
@@ -124,6 +125,7 @@ call "$(SolutionDir)/externals/Mono/setup_mono.bat"</Command>
     <Lib>
       <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"
@@ -157,6 +159,7 @@ call "$(SolutionDir)/externals/Mono/setup_mono.bat"</Command>
     <Lib>
       <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"

@@ -24,6 +24,7 @@ workspace "QuickForgeEngine"
             "/utf-8",
             "/openmp"
         }
+        linkoptions { "/ignore:4099" }
     filter ""
     
     filter "configurations:Debug"
@@ -61,7 +62,7 @@ group "QuickForge" -- MyMainProject
 
         -- 警告レベル4
         warnings "Extra"
-        fatalwarnings "All" --すべての警告をエラーとします
+        flags { "FatalWarnings" } --すべての警告をエラーとします
     
         -- 外部ファイルのインクルード
         externalincludedirs {
