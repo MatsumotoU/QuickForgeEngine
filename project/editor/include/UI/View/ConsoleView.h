@@ -5,7 +5,7 @@
 
 #pragma once
 #include "../IEditorUI.h"
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
 namespace QFE {
@@ -24,7 +24,7 @@ namespace QFE {
 		/** @brief 描画 */
 		void Draw() override;
 	private:
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 		LogLevel logLevel_; ///< 表示フィルタリング用のログレベル
 #endif // _DEBUG
 	};

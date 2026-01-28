@@ -13,7 +13,7 @@ if not exist "%PREMAKE_EXE%" (
     powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $url = 'https://github.com/premake/premake-core/releases/download/v5.0.0-beta2/premake-5.0.0-beta2-windows.zip'; $zip = 'premake.zip'; Invoke-WebRequest -Uri $url -OutFile $zip; $shell = New-Object -ComObject Shell.Application; $zipFile = $shell.NameSpace((Get-Item $zip).FullName); $dest = $shell.NameSpace((Get-Item .).FullName); $dest.CopyHere($zipFile.Items(), 16); Remove-Item $zip"
     if not exist "%PREMAKE_EXE%" (
         echo Error: Failed to download %PREMAKE_EXE%
-        pause
+        if not defined GITHUB_ACTIONS pause
         exit /b 1
     )
     echo Download Complete.
@@ -70,19 +70,12 @@ echo [2/2] Generate projects...
 
 
 if %errorlevel% neq 0 (
-
     echo.
-
     echo ------------------------------------
-
     echo Error:Faild generated file.
-
     echo ------------------------------------
-
-    pause
-
+    if not defined GITHUB_ACTIONS pause
     exit /b %errorlevel%
-
 )
 
 
@@ -96,8 +89,7 @@ echo Generate complete.
 echo %TARGET_IDE% 
 
 echo ------------------------------------
-
-pause
+if not defined GITHUB_ACTIONS pause
 
 endlocal
 

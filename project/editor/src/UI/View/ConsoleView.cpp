@@ -5,7 +5,7 @@
 
 #include "editor/include/UI/View/ConsoleView.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -16,7 +16,7 @@ using namespace QFE;
 ConsoleView::ConsoleView() {
 	name_ = "Console View";
 	isActive_ = true;
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	logLevel_ = LogLevel::EditorInfo;
 #endif // _DEBUG
 }
@@ -37,7 +37,7 @@ void ConsoleView::Update() {
  * @brief 描画処理
  */
 void ConsoleView::Draw() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	if (!isActive_) {
 		return;
 	}

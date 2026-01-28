@@ -34,9 +34,15 @@ workspace "QuickForgeEngine"
         runtime "Debug"
     filter "configurations:Development"
         defines { "NDEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEVELOPMENT" } 
-        optimize "Off"  -- 最適化を無効化（ステップ実行が正確になる）
+        optimize "Off"  -- プロジェクト全体設定は無効（VS上で最適化「無効」に見える）
         symbols "On"     -- デバッグ情報を出す
         runtime "Release"
+    filter ""
+
+    -- 個別のファイルを対象に最適化を有効化（Development構成のみ）
+    filter { "configurations:Development", "files:**.cpp" }
+        optimize "On"
+    filter ""
     filter "configurations:Release"
         defines { "NDEBUG", "QFE_OPTIMIZE_ON","QFE_MODE_RELEASE" }
         optimize "On"

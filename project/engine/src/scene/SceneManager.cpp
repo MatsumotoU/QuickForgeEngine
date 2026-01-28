@@ -56,7 +56,7 @@ void SceneManager::Update() {
 		if (sceneConfig_.contains("lastScene")) {
 			try {
 				LoadScene(sceneConfig_["lastScene"].get<std::string>());
-#ifdef NDEBUG
+#ifdef QFE_OPTIMIZE_ON
 				StartScript();
 #endif // _RELEASE
 

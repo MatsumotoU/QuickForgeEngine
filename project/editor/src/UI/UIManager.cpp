@@ -33,7 +33,7 @@ using namespace QFE;
 void UIManager::Initialize() {
 	isActiveUI_ = false;
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	isActiveUI_ = true;
 
 	// FileUIの初期化
@@ -73,7 +73,7 @@ void UIManager::Initialize() {
 }
 
 void UIManager::Update() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	for (auto& ui : fileUIs_) {
 		ui->Update();
 	}
@@ -91,7 +91,7 @@ void UIManager::Draw() {
 	if (!isActiveUI_) {
 		return;
 	}
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	// シーンが実行中は色を変える
 	bool isScriptRunning = SceneManager::GetInstance()->IsRunningScript();
 	if (isScriptRunning && RenderingPostprocess::GetInstance()->isImGuiEnabled_) {

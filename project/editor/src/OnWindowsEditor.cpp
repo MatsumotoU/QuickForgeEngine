@@ -5,7 +5,7 @@
 
 #include "editor/include/OnWindowsEditor.h"
 
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -18,20 +18,20 @@ OnWindowsEditor::OnWindowsEditor() {
 
 /** @brief 初期化 */
 void OnWindowsEditor::Initialize() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	// デバッグビルド時のみUIマネージャーを初期化
 	uiManager_.Initialize();
 #endif // _DEBUG
 }
 
 void OnWindowsEditor::Update() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	uiManager_.Update();
 #endif // _DEBUG
 }
 
 void OnWindowsEditor::Draw() {
-#ifdef _DEBUG
+#ifdef QFE_OPTIMIZE_OFF
 	uiManager_.Draw();
 #endif // _DEBUG
 }
