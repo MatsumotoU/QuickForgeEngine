@@ -17088,6 +17088,9 @@
     <None Include="Mono\lib\xsp\test\xsp.exe.config">
       <Filter>Mono\lib\xsp\test</Filter>
     </None>
+    <None Include="Mono\setup_mono.bat">
+      <Filter>Mono</Filter>
+    </None>
     <None Include="assimp\include\assimp\.editorconfig">
       <Filter>assimp\include\assimp</Filter>
     </None>

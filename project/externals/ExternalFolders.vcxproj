@@ -5107,6 +5107,7 @@
     <None Include="Mono\lib\xsp\test\sample.webapp" />
     <None Include="Mono\lib\xsp\test\web.config" />
     <None Include="Mono\lib\xsp\test\xsp.exe.config" />
+    <None Include="Mono\setup_mono.bat" />
     <None Include="assimp\include\assimp\.editorconfig" />
     <None Include="assimp\include\assimp\config.h.in" />
     <None Include="assimp\lib\Debug\assimp-vc143-mdd.lib" />

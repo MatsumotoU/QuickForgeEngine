@@ -134,7 +134,8 @@ group "QuickForge" -- MyMainProject
         }
 
         prebuildcommands {
-            'call "%{wks.location}/GenerateBuildInfo.bat"'
+            'call "%{wks.location}/GenerateBuildInfo.bat"',
+            'call "%{wks.location}/externals/Mono/setup_mono.bat"'
         }
 
         filter "configurations:Debug"

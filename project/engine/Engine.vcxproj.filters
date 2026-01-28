@@ -1344,11 +1344,4 @@
       <Filter>src\window</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Resources\Shaders\VS\Object2d.VS.hlsl" />
-    <FxCompile Include="Resources\Shaders\PS\Object2d.PS.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Shaders\ShaderStructs\Object2d.hlsli" />
-  </ItemGroup>
 </Project>
