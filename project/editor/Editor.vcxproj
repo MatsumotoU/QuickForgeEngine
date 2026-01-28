@@ -55,24 +55,24 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Debug\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Debug\</IntDir>
+    <OutDir>..\..\generated\outputs\Debug\</OutDir>
+    <IntDir>..\..\generated\obj\Editor\Debug\</IntDir>
     <TargetName>Editor</TargetName>
     <TargetExt>.exe</TargetExt>
     <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Development\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Development\</IntDir>
+    <OutDir>..\..\generated\outputs\Development\</OutDir>
+    <IntDir>..\..\generated\obj\Editor\Development\</IntDir>
     <TargetName>Editor</TargetName>
     <TargetExt>.exe</TargetExt>
     <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Release\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Editor\Release\</IntDir>
+    <OutDir>..\..\generated\outputs\Release\</OutDir>
+    <IntDir>..\..\generated\obj\Editor\Release\</IntDir>
     <TargetName>Editor</TargetName>
     <TargetExt>.exe</TargetExt>
     <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>
@@ -81,7 +81,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatSpecificWarningsAsErrors>All;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
       <PreprocessorDefinitions>_DEBUG;QFE_OPTIMIZE_OFF;QFE_MODE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..;..\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -110,7 +110,7 @@ exit /b 0</Command>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatSpecificWarningsAsErrors>All;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
       <PreprocessorDefinitions>NDEBUG;QFE_OPTIMIZE_OFF;QFE_MODE_DEVELOPMENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..;..\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -139,7 +139,7 @@ exit /b 0</Command>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatSpecificWarningsAsErrors>All;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
       <PreprocessorDefinitions>NDEBUG;QFE_OPTIMIZE_ON;QFE_MODE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..;..\engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>

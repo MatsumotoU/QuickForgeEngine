@@ -54,22 +54,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Debug\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Engine\Debug\</IntDir>
+    <OutDir>..\..\generated\outputs\Debug\</OutDir>
+    <IntDir>..\..\generated\obj\Engine\Debug\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.lib</TargetExt>
     <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Development\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Engine\Development\</IntDir>
+    <OutDir>..\..\generated\outputs\Development\</OutDir>
+    <IntDir>..\..\generated\obj\Engine\Development\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.lib</TargetExt>
     <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)..\..\generated\outputs\Release\</OutDir>
-    <IntDir>$(ProjectDir)..\..\generated\obj\Engine\Release\</IntDir>
+    <OutDir>..\..\generated\outputs\Release\</OutDir>
+    <IntDir>..\..\generated\obj\Engine\Release\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.lib</TargetExt>
     <ExternalIncludePath>..\externals;..\externals\sol2;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;$(ExternalIncludePath)</ExternalIncludePath>

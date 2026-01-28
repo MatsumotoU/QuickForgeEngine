@@ -24,3 +24,7 @@ bin/
 
 # ImGui settings
 imgui.ini
+
+# Premake
+premake5.exe
+premake.zip
