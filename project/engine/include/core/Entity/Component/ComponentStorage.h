@@ -1,5 +1,5 @@
 #pragma once
-#include "IComponentStrage.h"
+#include "IComponentStorage.h"
 #include <unordered_map>
 #include <memory>
 #include <stdexcept>
@@ -7,7 +7,7 @@
 namespace QFE {
 
 	template <typename T>
-	class ComponentStrage : public IComponentStrage {
+	class ComponentStorage : public IComponentStorage {
 	private:
 		std::unordered_map<uint32_t, T> components;
 
