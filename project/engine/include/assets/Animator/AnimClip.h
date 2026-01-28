@@ -7,7 +7,13 @@ namespace QFE {
 
 	class AnimClip final {
 	public:
+		~AnimClip() = default;
+		AnimClip() = delete;
 		explicit AnimClip(const std::string& name);
+		// コピーコンストラクタとコピー代入を再生成
+		AnimClip(const AnimClip&) noexcept = default;
+		AnimClip& operator=(const AnimClip&) noexcept = default;
+
 		void SetLoop(bool isLoop);
 		bool IsLoop() const;
 		void AddKeyFrame(const KeyFrame& keyframe);

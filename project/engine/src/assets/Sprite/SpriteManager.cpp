@@ -56,7 +56,7 @@ uint32_t SpriteManager::CreateVertexBuffer(float width, float height) {
 	tempVertices[5].position = { w, 0.0f, 0.0f ,1.0f }; // 右上
 	tempVertices[5].texcoord = { 1.0f, 0.0f };
 	tempVertices[5].normal = { 0.0f, 0.0f, 1.0f };
-	memcpy(vertexData, tempVertices.data(), sizeof(VertexData) * 6);
+	std::copy(tempVertices.begin(), tempVertices.end(), vertexData);
 	return static_cast<uint32_t>(spriteVertexBuffers_.size()) - 1;
 }
 

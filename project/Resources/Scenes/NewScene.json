@@ -9,39 +9,7 @@
             "SceneObjectData": {
                 "name": "DebugCamera",
                 "tag": "camera",
-                "uniqueId": 3452816845
-            },
-            "Transform": {
-                "rotate": [
-                    0.24919277429580688,
-                    -0.16136272251605988,
-                    -0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translate": [
-                    2.50860857963562,
-                    3.9735028743743896,
-                    -15.41122817993164
-                ]
-            }
-        },
-        {
-            "CameraData": {
-                "farZ": 100.0,
-                "fovY": 0.44999998807907104,
-                "nearZ": 0.10000000149011612
-            },
-            "ParentData": {
-                "parentId": 3452816848
-            },
-            "SceneObjectData": {
-                "name": "Camera",
-                "tag": "camera",
-                "uniqueId": 3452816846
+                "uniqueId": 2
             },
             "Transform": {
                 "rotate": [
@@ -62,30 +30,19 @@
             }
         },
         {
-            "CsharpComponent": {
-                "CsharpHandles": [
-                    {
-                        "ClassName": "testA"
-                    }
-                ]
-            },
-            "ModelHandle": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "modelName": "ball.obj"
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
             },
             "SceneObjectData": {
-                "name": "ball.obj",
-                "tag": "Untagged",
-                "uniqueId": 3452816851
+                "name": "Camera",
+                "tag": "camera",
+                "uniqueId": 1
             },
             "Transform": {
                 "rotate": [
-                    0.0,
+                    0.10000000149011612,
                     0.0,
                     0.0
                 ],
@@ -96,8 +53,8 @@
                 ],
                 "translate": [
                     0.0,
-                    0.0,
-                    0.0
+                    1.5,
+                    -10.0
                 ]
             }
         }

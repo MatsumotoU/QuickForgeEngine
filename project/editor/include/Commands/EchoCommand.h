@@ -7,7 +7,8 @@ namespace QFE {
 	class EchoCommand final : public IEditorCommand {
 	public:
 		// コンストラクタ
-		EchoCommand(std::vector<std::string>& consoleLog, const char* command = nullptr);
+		EchoCommand() = delete;
+		explicit EchoCommand(std::vector<std::string>& consoleLog, const char* command = nullptr);
 
 		// コンソールにメッセージを表示
 		void Execute() override;

@@ -3,9 +3,9 @@
 
 namespace QFE {
 
-	class IComponentStrage {
+	class IComponentStorage {
 	public:
-		virtual ~IComponentStrage() = default;
+		virtual ~IComponentStorage() = default;
 		virtual void RemoveComponent(uint32_t id) = 0;
 		virtual ComponentData* GetComponentDataPtr(uint32_t id) = 0;
 	};
