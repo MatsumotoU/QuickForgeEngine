@@ -50,7 +50,7 @@ namespace QFE {
 		mouseMoveDir_.x = static_cast<float>(mouseState_.lX);
 		mouseMoveDir_.y = static_cast<float>(mouseState_.lY);
 		wheelDir_ = static_cast<float>(mouseState_.lZ);
-		mouseMoveDir_ = mouseMoveDir_;
+		mouseMoveDir_ = mouseMoveDir_.Normalize();
 
 
 		deltaMouse_ = mouseScreenPos_ - preMouseScreenPos_;
