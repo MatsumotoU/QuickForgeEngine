@@ -50,6 +50,7 @@ void WASAPIMicrophoneDevice::Finalize()
 void WASAPIMicrophoneDevice::StartCapture()
 {
 	HRESULT hr = audioClient_->Start();
+    hr;
 	assert(SUCCEEDED(hr));
 	isCapturing_ = true;
 }
@@ -57,6 +58,7 @@ void WASAPIMicrophoneDevice::StartCapture()
 void WASAPIMicrophoneDevice::StopCapture()
 {
 	HRESULT hr = audioClient_->Stop();
+    hr;
 	assert(SUCCEEDED(hr));
 	isCapturing_ = false;
 }

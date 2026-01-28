@@ -26,7 +26,7 @@ void SceneProfileView::Draw() {
 	if (!isActive_) {
 		return;
 	}
-
+#ifdef QFE_OPTIMIZE_OFF
 	SceneManager* sceneManager = SceneManager::GetInstance();
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	ImGui::Begin("Scene Profile", &isActive_, ImGuiWindowFlags_AlwaysAutoResize);
@@ -62,6 +62,6 @@ void SceneProfileView::Draw() {
 	}
 	
 	ImGui::End();
-
+#endif
 
 }

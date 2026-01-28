@@ -303,6 +303,7 @@ void LuaScriptResourceManager::UpdateAllScripts() {
 		}
 	}
 	catch (const std::exception& e) {
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("Exception in UpdateAllAllScripts: " + std::string(e.what()), LogLevel::Error);
 #endif
@@ -388,7 +389,9 @@ void LuaScriptResourceManager::EndFrame() {
 	}
 	removeScriptHandles_.clear();
 
+#ifdef QFE_OPTIMIZE_OFF
 	viewUpdateTime_ = totalUpdateTime_;
+#endif // QFE_OPTIMIZE_OFF
 }
 
 void LuaScriptResourceManager::Finalize() {
