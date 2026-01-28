@@ -144,6 +144,7 @@ namespace QFE {
 			ofs.close();
 		}
 		catch (const std::exception& e) {
+			e;
 #ifdef QFE_OPTIMIZE_OFF
 			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF
@@ -171,6 +172,7 @@ namespace QFE {
 			}
 		}
 		catch (const std::exception& e) {
+			e;
 #ifdef QFE_OPTIMIZE_OFF
 			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF

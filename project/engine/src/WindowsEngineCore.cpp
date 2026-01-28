@@ -136,6 +136,7 @@ void WindowsEngineCore::Initialize() {
 		csScriptManager_->Initialize();
 	}
 	catch (const std::exception& e) {
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Error: ") + e.what());
 #endif // QFE_OPTIMIZE_OFF

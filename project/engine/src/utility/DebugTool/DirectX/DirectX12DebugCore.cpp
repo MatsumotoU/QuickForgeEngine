@@ -1,6 +1,8 @@
 #include "engine/include/utility/DebugTool/DirectX/DirectX12DebugCore.h"
-using namespace QFE;
+
 #ifdef QFE_OPTIMIZE_OFF
+using namespace QFE;
+
 DirectX12DebugCore::DirectX12DebugCore() {
 
 	debugLayer_ = std::make_unique<DebugLayer>();

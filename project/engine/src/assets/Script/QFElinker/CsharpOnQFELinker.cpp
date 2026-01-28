@@ -98,6 +98,7 @@ uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* className) {
 }
 
 void QFE::CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {
+    message;
 #ifdef QFE_OPTIMIZE_OFF
     char* utf8_message = mono_string_to_utf8(message);
 	DebugLogCsharp(utf8_message);

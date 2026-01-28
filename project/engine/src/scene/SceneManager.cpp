@@ -1,4 +1,4 @@
-﻿#include "engine/include/scene/SceneManager.h"
+#include "engine/include/scene/SceneManager.h"
 #include "engine/include/scene/SceneObject.h"
 
 #include "engine/include/assets/AssetManager.h"
@@ -32,6 +32,7 @@ void SceneManager::Initialize() {
 #endif // QFE_OPTIMIZE_OFF
 	}
 	catch (const std::exception& e) {
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF
@@ -61,6 +62,7 @@ void SceneManager::Update() {
 
 			}
 			catch (const std::exception& e) {
+				e;
 #ifdef QFE_OPTIMIZE_OFF
 				DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF

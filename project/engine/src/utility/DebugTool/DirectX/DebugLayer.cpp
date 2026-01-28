@@ -1,6 +1,8 @@
 #include "engine/include/utility/DebugTool/DirectX/DebugLayer.h"
-using namespace QFE;
+
 #ifdef QFE_OPTIMIZE_OFF
+using namespace QFE;
+
 DebugLayer::DebugLayer() {
 	debugController_ = nullptr;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_)))) {

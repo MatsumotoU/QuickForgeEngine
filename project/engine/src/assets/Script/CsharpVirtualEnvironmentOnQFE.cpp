@@ -50,6 +50,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	}
 	catch (const std::exception& e)
 	{
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to set Mono directories: ") + e.what());
 #endif // QFE_OPTIMIZE_OFF
@@ -71,6 +72,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	}
 	catch (const std::exception& e)
 	{
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to initialize Mono JIT: ") + e.what());
 #endif // QFE_OPTIMIZE_OFF
@@ -445,6 +447,7 @@ void CsharpVirtualEnvironmentOnQFE::ReloadAssembly() {
 #endif
 	}
 	catch (const std::filesystem::filesystem_error& e) {
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to copy C# artifacts: ") + e.what());
 #endif
