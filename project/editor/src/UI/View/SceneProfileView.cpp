@@ -8,8 +8,11 @@
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/assets/AssetManager.h"
-#include "engine/include/assets/Script/LuaScriptResourceManager.h"
-#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptExecutor.h"
+#include "engine/include/assets/Script/CsharpScriptExecutor.h"
+
 using namespace QFE;
 SceneProfileView::SceneProfileView() {
 	name_ = "Scene Profile";
@@ -28,7 +31,7 @@ void SceneProfileView::Draw() {
 	}
 #ifdef QFE_OPTIMIZE_OFF
 	SceneManager* sceneManager = SceneManager::GetInstance();
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	ImGui::Begin("Scene Profile", &isActive_, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::Separator();
 	ImGui::Text("Active Entities: %zu", entityManager->GetActiveEntityIds().size());
@@ -52,15 +55,14 @@ void SceneProfileView::Draw() {
 	ImGui::Text("PreDraw: %.2f ms", sceneManager->preDrawTime_ / 1'000'000.0f);
 	ImGui::Text("Draw: %.2f ms", sceneManager->drawTime_ / 1'000'000.0f);
 	ImGui::Text("PostDraw: %.2f ms", sceneManager->postDrawTime_ / 1'000'000.0f);
-	
+
 	ImGui::Separator();
 	if (ImGui::CollapsingHeader("Scripts")) {
-		ImGui::Text("Lua Scripts: %d", LuaScriptResourceManager::GetInstance()->GetScriptCount());
-		ImGui::Text("Lua UpdateTime: %.4f ms", LuaScriptResourceManager::GetInstance()->GetTotalUpdateTime() * 1000.0);
+		ImGui::Text("Lua Scripts: %d", SceneManager::GetInstance()->GetLuaScriptExecutor()->GetScriptCount());
 		ImGui::Separator();
-		ImGui::Text("C# Scripts: %d", CsharpVirtualEnvironmentOnQFE::GetInstance()->GetScriptCount());
+		ImGui::Text("C# Scripts: %d", SceneManager::GetInstance()->GetCsharpScriptExecutor()->GetScriptCount());
 	}
-	
+
 	ImGui::End();
 #endif
 

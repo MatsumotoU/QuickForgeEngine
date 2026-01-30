@@ -125,27 +125,6 @@ void WindowsEngineCore::Initialize() {
 	DebugLog("======================Initialized SceneManager======================");
 #endif // QFE_OPTIMIZE_OFF
 
-	luaScriptResourceManager_ = LuaScriptResourceManager::GetInstance();
-	luaScriptResourceManager_->Initialize();
-
-#ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized LuaScriptResourceManager======================");
-#endif // QFE_OPTIMIZE_OFF
-	try {
-		csScriptManager_ = CsharpVirtualEnvironmentOnQFE::GetInstance();
-		csScriptManager_->Initialize();
-	}
-	catch (const std::exception& e) {
-		e;
-#ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("Error: ") + e.what());
-#endif // QFE_OPTIMIZE_OFF
-	}
-
-#ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized CsharpVirtualEnvironmentOnQFE======================");
-#endif // QFE_OPTIMIZE_OFF
-
 	physicsManager_ = PhysicsManager::GetInstance();
 	physicsManager_->Initialize();
 
@@ -203,8 +182,6 @@ void WindowsEngineCore::Shutdown() {
 	multiThreadTaskExecutor_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();
-	csScriptManager_->Finalize();
-	luaScriptResourceManager_->Finalize();
 	sceneManager_->Finalize();
 	graphRenderer_->Finalize();
 	inputInterface_->Finalize();
@@ -225,7 +202,6 @@ void WindowsEngineCore::Update() {
 	gameWindowManager->Update();
 	editor_->Update();
 	sceneManager_->Update();
-
 	inputInterface_->EndFrame();
 }
 
@@ -249,7 +225,6 @@ void WindowsEngineCore::Draw() {
 	directXCommon_->PostDraw();
 
 	assetManager_->EndFrame();
-	luaScriptResourceManager_->EndFrame();
 	sceneManager_->EndFrame();
 	multiThreadTaskExecutor_->FrameEnd();
 }

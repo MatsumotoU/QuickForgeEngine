@@ -3,6 +3,7 @@
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #include <string>
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/camera/Data/CameraData.h"
@@ -17,7 +18,7 @@ void CameraManager::Initialize() {
 #endif // QFE_OPTIMIZE_OFF
 
 	AddCamera();
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	entityManager->GetComponent<SceneObjectData>(cameras_[0].GetBindEntityId()).name = "DebugCamera";
 
 	// 繝・ヵ繧ｩ繝ｫ繝医き繝｡繝ｩ繧定ｿｽ蜉
@@ -35,7 +36,7 @@ void CameraManager::Update() {
 }
 
 void CameraManager::Reset() {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	for (auto& [id, camera] : cameras_) {
 		entityManager->InstantRemoveEntity(camera.GetBindEntityId());
 	}
@@ -48,7 +49,7 @@ uint32_t CameraManager::AddCamera() {
 	cameras_.emplace(handle, Camera{});
 	cameras_.at(handle).Initialize();
 
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	entityManager->GetComponent<CameraData>(cameras_.at(handle).GetBindEntityId()).handle_ = handle;
 	return handle;
 }
@@ -78,7 +79,7 @@ void CameraManager::SnapToDebugCamera(uint32_t index) {
 	index;
 #ifdef QFE_OPTIMIZE_OFF
 	if (isActiveDebugCamera_ && cameras_.size() > 1) {
-		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 		Transform& debugCamTransform = entityManager->GetComponent<Transform>(cameras_[0].GetBindEntityId());
 		Transform& targetCamTransform = entityManager->GetComponent<Transform>(cameras_[index].GetBindEntityId());
 		targetCamTransform = debugCamTransform;

@@ -6,8 +6,7 @@
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/camera/CameraManager.h"
-#include "engine/include/assets/Script/LuaScriptResourceManager.h"
-#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
 #include "engine/include/collider/ColliderManager.h"
 #include "engine/include/audio/AudioInterface.h"
@@ -62,7 +61,11 @@ void SceneObject::Initialize() {
 	isRunningScript_ = false;
 	isPauseScript_ = false;
 
-	// 繧ｳ繝槭Φ繝峨け繝ｪ繧｢
+	// スクリプト実行環境を初期化
+	luaScriptExecutor_.Initialize(&entityManager_);
+	csharpScriptExecutor_.Initialize(&entityManager_);
+
+	// コマンドクリア
 	frameStartCommandInvoker_.ClearCommands();
 	updateCommandInvoker_.ClearCommands();
 	preDrawCommandInvoker_.ClearCommands();
@@ -73,24 +76,24 @@ void SceneObject::Initialize() {
 void SceneObject::Update() {
 	frameStartCommandInvoker_.ExecuteCommands();
 
-	// 繝ｩ繝ｳ繧ｿ繧､繝荳ｭ縺ｮ繧ｵ繝悶Δ繧ｸ繝･繝ｼ繝ｫ縺ｮ譖ｴ譁ｰ
+	// ランタイム中のサブモジュールの更新
 	if (isRunningScript_ && !isPauseScript_) {
-		LuaScriptResourceManager::GetInstance()->FrameStart();
-		LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
-		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Update");
+		luaScriptExecutor_.FrameStart();
+		luaScriptExecutor_.UpdateAllScripts();
+		csharpScriptExecutor_.RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();
 	}
 
-	// 蠖薙◆繧雁愛螳壽峩譁ｰ
+	// 当たり判定更新
 	ColliderManager::GetInstance()->Update();
 
-	//縲€繝ｯ繝ｼ繝ｫ繝芽｡悟・譖ｴ譁ｰ
-	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(assetManager_->GetEntityManager()), uniqueIdManager_));
-	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(assetManager_->GetEntityManager())));
-	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(assetManager_->GetEntityManager())));
-	updateCommandInvoker_.AddCommand(std::make_unique<AllSpriteResizeCommand>(*(assetManager_->GetEntityManager())));
+	//  ワールド行列更新
+	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(GetEntityManager()), uniqueIdManager_));
+	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(GetEntityManager())));
+	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(GetEntityManager())));
+	updateCommandInvoker_.AddCommand(std::make_unique<AllSpriteResizeCommand>(*(GetEntityManager())));
 
-	// 譖ｴ譁ｰ蠕後さ繝槭Φ繝牙ｮ溯｡・
+	// 更新後コマンド実行
 	updateCommandInvoker_.ExecuteCommands();
 }
 
@@ -101,8 +104,8 @@ void SceneObject::PreDraw() {
 	cameraManager->Update();
 
 	// 3Dモデルのカメラ位置更新
-	if (assetManager->GetEntityManager()->HasComponentStrage<ModelHandle>()) {
-		auto& modelStrage = assetManager->GetEntityManager()->GetComponentStrage<ModelHandle>();
+	if (entityManager_.HasComponentStrage<ModelHandle>()) {
+		auto& modelStrage = entityManager_.GetComponentStrage<ModelHandle>();
 		for (auto& model : modelStrage) {
 			const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(model.second.handle);
 			GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
@@ -114,8 +117,8 @@ void SceneObject::PreDraw() {
 	}
 
 	// WVP陦悟・譖ｴ譁ｰ
-	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(assetManager->GetEntityManager()), *cameraManager));
-	preDrawCommandInvoker_.AddCommand(std::make_unique<SpritePivotUpdateCommand>(*(assetManager->GetEntityManager())));
+	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(GetEntityManager()), *cameraManager));
+	preDrawCommandInvoker_.AddCommand(std::make_unique<SpritePivotUpdateCommand>(*(GetEntityManager())));
 
 	// 謠冗判蜑阪さ繝槭Φ繝牙ｮ溯｡・
 	preDrawCommandInvoker_.ExecuteCommands();
@@ -125,9 +128,7 @@ void SceneObject::Draw() {
 	// 蠖薙◆繧雁愛螳壹・謠冗判
 	ColliderManager::GetInstance()->Draw();
 
-	AssetManager* assetManager = AssetManager::GetInstance();
-	drawCommandInvoker_.AddCommand(std::make_unique<AllEntityRenderingCommand>(*(assetManager->GetEntityManager())));
-
+	drawCommandInvoker_.AddCommand(std::make_unique<AllEntityRenderingCommand>(*(GetEntityManager())));
 
 	// 謠冗判繧ｳ繝槭Φ繝牙ｮ溯｡・
 	drawCommandInvoker_.ExecuteCommands();
@@ -146,6 +147,7 @@ void SceneObject::EndFrame() {
 		}
 		isRequestStopScript_ = false;
 	}
+	entityManager_.EndFrame();
 }
 
 void SceneObject::Finalize() {
@@ -163,12 +165,13 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	DebugLog("LoadScene: " + sceneNameCopy);
 #endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
+
 	assetManager->GetGpuBufferPool()->ReleaseAllConstantBuffers();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	entityManager->ResetEntiry();
-	LuaScriptResourceManager::GetInstance()->Reset();
+
+	entityManager_.ResetEntiry();
+	luaScriptExecutor_.Reset();
 	AudioInterface::GetInstance()->StopAllSound();
-	CsharpVirtualEnvironmentOnQFE::GetInstance()->ResetScripts();
+	csharpScriptExecutor_.ResetScripts();
 
 	// 繧ｷ繝ｼ繝ｳ繝輔ぃ繧､繝ｫ繧帝幕縺・
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
@@ -195,7 +198,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	if (!sceneJson.contains("entities")) return;
 
 	for (const auto& entityJson : sceneJson["entities"]) {
-		uint32_t entityId = entityManager->CreateEntity();
+		uint32_t entityId = entityManager_.CreateEntity();
 		DeserializeEntity(entityId, entityJson);
 	}
 
@@ -206,8 +209,8 @@ void SceneObject::SaveScene(const std::string& sceneName) {
 	DebugLog("SaveScene: " + sceneName);
 #endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
+
+	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
 
 	nlohmann::json sceneJson;
 	sceneJson["sceneName"] = sceneName;
@@ -239,10 +242,10 @@ void SceneObject::RunScene() {
 		SaveScene(sceneName_);
 		LoadScene(sceneName_);
 		isRunningScript_ = true;
-		LuaScriptResourceManager::GetInstance()->InitializeAllScripts();
-		CsharpVirtualEnvironmentOnQFE::GetInstance()->RunAllScriptsFunction("Initialize");
+		luaScriptExecutor_.InitializeAllScripts();
+		csharpScriptExecutor_.RunAllScriptsFunction("Initialize");
 		ColliderManager::GetInstance()->isRunning = true;
-		LuaScriptResourceManager::GetInstance()->isRunningScript_ = true;
+		luaScriptExecutor_.isRunningScript_ = true;
 	}
 }
 
@@ -258,23 +261,23 @@ void SceneObject::StopScene() {
 	if (isRequestStopScript_) { return; }
 	isRequestStopScript_ = true;
 	ColliderManager::GetInstance()->isRunning = false;
-	LuaScriptResourceManager::GetInstance()->isRunningScript_ = false;
+	luaScriptExecutor_.isRunningScript_ = false;
 }
 
 void SceneObject::AddEmptyObject() {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
-	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
+
+	uint32_t entityId = entityManager_.CreateEntity();
+	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = "EmptyObject";
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
-	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
 void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxCount) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+	uint32_t entityId = entityManager_.CreateEntity();
 	// ParticleComponent髴托ｽｽ陷会｣ｰ
 	ParticleComponent particleComponent;
 	particleComponent.modelName = modelName;
@@ -283,30 +286,30 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	particleComponent.textureHandle = assetManager->LoadModelTexture(modelName);
 	particleComponent.materialHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<Material>();
 	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
-	assetManager->GetEntityManager()->EmplaceComponent<ParticleComponent>(entityId, particleComponent);
+	entityManager_.EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
 	// 邵ｺ繝ｻ笆ｽ郢ｧ繧・・郢ｧ繝ｻ笆ｽ髴托ｽｽ陷会｣ｰ
-	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = modelName + "_ParticleEmitter";
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
-	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
 void SceneObject::AddModel(const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+	uint32_t entityId = entityManager_.CreateEntity();
 	ModelHandle modelHandle;
 	modelHandle.modelName = modelName;
 	modelHandle.handle = assetManager->LoadModel(modelName);
-	assetManager->GetEntityManager()->EmplaceComponent<ModelHandle>(entityId, modelHandle);
-	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<ModelHandle>(entityId, modelHandle);
+	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = modelName;
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
-	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
 void SceneObject::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer, Vector2 pivot) {
@@ -316,15 +319,15 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	if (inEntityId != -1) {
 		entityId = static_cast<uint32_t>(inEntityId);
 	} else {
-		entityId = assetManager->GetEntityManager()->CreateEntity();
+		entityId = entityManager_.CreateEntity();
 	}
 	// SpriteData髴托ｽｽ陷会｣ｰ
 	SpriteData spriteData;
-	EntityManager* entityManager = assetManager->GetEntityManager();
+
 	spriteData.layer = 0;
 	spriteData.pivot = pivot;
-	if (entityManager->HasComponentStrage<SpriteData>()) {
-		spriteData.layer = static_cast<uint32_t>(entityManager->GetComponentStrage<SpriteData>().size());
+	if (entityManager_.HasComponentStrage<SpriteData>()) {
+		spriteData.layer = static_cast<uint32_t>(entityManager_.GetComponentStrage<SpriteData>().size());
 	}
 	if (layer != -1) {
 		spriteData.layer = static_cast<uint32_t>(layer);
@@ -356,26 +359,24 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	light->direction = { 0.0f,-1.0f,0.0f };
 	light->intensity = 1.0f;
 	// 郢ｧ・ｹ郢晏干ﾎ帷ｹｧ・､郢晏現繝ｧ郢晢ｽｼ郢ｧ・ｿ郢ｧ蛛ｵ縺顔ｹ晢ｽｳ郢昴・縺・ｹ昴・縺・ｸｺ・ｫ髴托ｽｽ陷会｣ｰ
-	assetManager->GetEntityManager()->EmplaceComponent<SpriteData>(entityId, spriteData);
+	entityManager_.EmplaceComponent<SpriteData>(entityId, spriteData);
 
 	// 邵ｺ繝ｻ笆ｽ郢ｧ繧・・郢ｧ繝ｻ笆ｽ髴托ｽｽ陷会｣ｰ
-	assetManager->GetEntityManager()->EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = spriteName;
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
-	assetManager->GetEntityManager()->EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
 void SceneObject::AddLuaScript(uint32_t entityId, const std::string& scriptName) {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	if (!entityManager->HasComponent<ScriptHandles>(entityId)) {
+	if (!entityManager_.HasComponent<ScriptHandles>(entityId)) {
 		ScriptHandles scriptHandles;
 		LuaHandle scriptHandle;
 		scriptHandle.scriptName_ = scriptName;
-		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
-		LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(scriptHandle.handle_);
+		scriptHandle.handle_ = luaScriptExecutor_.AddScript(entityId, scriptName);
+		LuaScriptOnQFE* script = luaScriptExecutor_.GetScript(scriptHandle.handle_);
 		for (std::string& val : script->GetGlobalValuesList()) {
 			sol::state* state = script->GetScript();
 			sol::object obj = (*state)[val];
@@ -394,10 +395,9 @@ void SceneObject::AddLuaScript(uint32_t entityId, const std::string& scriptName)
 			}
 		}
 		scriptHandles.scriptHandles_.push_back(scriptHandle);
-		entityManager->EmplaceComponent<ScriptHandles>(entityId, scriptHandles);
+		entityManager_.EmplaceComponent<ScriptHandles>(entityId, scriptHandles);
 	} else {
-		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
-		// 邵ｺ蜷ｶ縲堤ｸｺ・ｫ陷ｷ蠕個ｧ郢ｧ・ｹ郢ｧ・ｯ郢晢ｽｪ郢晏干繝ｨ邵ｺ蠕後＞郢ｧ・ｿ郢昴・繝｡邵ｺ霈費ｽ檎ｸｺ・ｦ邵ｺ繝ｻ・玖撻・ｴ陷ｷ蛹ｻ繝ｻ髴托ｽｽ陷会｣ｰ邵ｺ蜉ｱ竊醍ｸｺ繝ｻ
+		ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
 		for (const auto& sh : scriptHandles.scriptHandles_) {
 			if (sh.scriptName_ == scriptName) {
 				return;
@@ -405,28 +405,24 @@ void SceneObject::AddLuaScript(uint32_t entityId, const std::string& scriptName)
 		}
 		LuaHandle scriptHandle;
 		scriptHandle.scriptName_ = scriptName;
-		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
+		scriptHandle.handle_ = luaScriptExecutor_.AddScript(entityId, scriptName);
 		scriptHandles.scriptHandles_.push_back(scriptHandle);
 	}
 }
 
 void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& className) {
-	CsharpVirtualEnvironmentOnQFE* csharpEnv = CsharpVirtualEnvironmentOnQFE::GetInstance();
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	if (!entityManager->HasComponent<CsharpComponent>(entityId)) {
-		// 隴・ｽｰ髫募臆・ｿ・ｽ陷会｣ｰ
+
+
+	if (!entityManager_.HasComponent<CsharpComponent>(entityId)) {
 		CsharpComponent csharpComponent;
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
-		csharpHandle.scriptIndex_ = csharpEnv->CreateScriptInstance(entityId, className);
+		csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
 		csharpComponent.csharpHandles_.push_back(csharpHandle);
-		entityManager->EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
+		entityManager_.EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
 
 	} else {
-		// 隴鯉ｽ｢陝・€･繝ｻ郢ｧ・ｳ郢晢ｽｳ郢晄亢繝ｻ郢晞亂ﾎｦ郢晏現竊馴恆・ｽ陷会｣ｰ
-		CsharpComponent& csharpComponent = entityManager->GetComponent<CsharpComponent>(entityId);
-		// 邵ｺ蜷ｶ縲堤ｸｺ・ｫ陷ｷ蠕個ｧ郢ｧ・ｯ郢晢ｽｩ郢ｧ・ｹ邵ｺ蠕後＞郢ｧ・ｿ郢昴・繝｡邵ｺ霈費ｽ檎ｸｺ・ｦ邵ｺ繝ｻ・玖撻・ｴ陷ｷ蛹ｻ繝ｻ髴托ｽｽ陷会｣ｰ邵ｺ蜉ｱ竊醍ｸｺ繝ｻ
+		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
 		for (const auto& handles : csharpComponent.csharpHandles_) {
 			if (handles.className_ == className) {
 #ifdef QFE_OPTIMIZE_OFF
@@ -438,7 +434,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
-		csharpHandle.scriptIndex_ = csharpEnv->CreateScriptInstance(entityId, className);
+		csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
 		csharpComponent.csharpHandles_.push_back(csharpHandle);
 	}
 }
@@ -453,7 +449,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 #ifdef _NODEBUG
 	if (loadEntities_.find(entityName) != loadEntities_.end()) {
 		// Entity邵ｺ・ｮ騾墓ｻ薙・
-		uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+		uint32_t entityId = entityManager_.CreateEntity();
 		DeserializeEntity(entityId, loadEntities_[entityName]);
 		return entityId;
 	}
@@ -475,7 +471,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	ifs.close();
 
 	// Entity邵ｺ・ｮ騾墓ｻ薙・
-	uint32_t entityId = assetManager->GetEntityManager()->CreateEntity();
+	uint32_t entityId = entityManager_.CreateEntity();
 	DeserializeEntity(entityId, sceneJson);
 	return entityId;
 }
@@ -483,18 +479,17 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	uint32_t entityId = AddEntity(entityName);
-	// 郢ｧ・ｹ郢ｧ・ｯ郢晢ｽｪ郢晏干繝ｨ陋ｻ譎・ｄ陋ｹ繝ｻ
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
-	if (entityManager->HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
-		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+
+	if (entityManager_.HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
+		ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
 		for (const auto& sh : scriptHandles.scriptHandles_) {
-			LuaScriptResourceManager::GetInstance()->InitializeScript(sh.handle_);
+			luaScriptExecutor_.GetScript(sh.handle_)->RunFunction("Initialize");
 		}
 	}
-	if (entityManager->HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
-		CsharpComponent& csharpComponent = entityManager->GetComponent<CsharpComponent>(entityId);
+	if (entityManager_.HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
+		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
 		for (const auto& ch : csharpComponent.csharpHandles_) {
-			CsharpVirtualEnvironmentOnQFE::GetInstance()->RunScriptFunction(ch.scriptIndex_, "Initialize");
+			csharpScriptExecutor_.RunScriptFunction(ch.scriptIndex_, "Initialize");
 		}
 	}
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -506,12 +501,12 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 
 void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName) {
 	AddLuaScript(entityId, scriptName);
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
-	if (entityManager->HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
-		ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+
+	if (entityManager_.HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
+		ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
 		for (const auto& sh : scriptHandles.scriptHandles_) {
 			if (sh.scriptName_ == scriptName) {
-				LuaScriptResourceManager::GetInstance()->InitializeScript(sh.handle_);
+				luaScriptExecutor_.GetScript(sh.handle_)->RunFunction("Initialize");
 				break;
 			}
 		}
@@ -519,49 +514,48 @@ void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scri
 }
 
 void SceneObject::DeleteEntity(uint32_t entityId) {
-	frameStartCommandInvoker_.AddCommand(std::make_unique<DeleteSceneEntityCommand>(*(assetManager_->GetEntityManager()), entityId));
+	frameStartCommandInvoker_.AddCommand(std::make_unique<DeleteSceneEntityCommand>(*(GetEntityManager()), entityId));
 }
 
 void SceneObject::CopyEntity(uint32_t sourceEntityId) {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	if (!entityManager->IsActiveEntity(sourceEntityId)) {
+
+	if (!entityManager_.IsActiveEntity(sourceEntityId)) {
 		assert(false && "Entity is not active");
 		return;
 	}
 	nlohmann::json entityJson;
 	SerializeEntity(sourceEntityId, entityJson);
-	uint32_t newEntityId = entityManager->CreateEntity();
+	uint32_t newEntityId = entityManager_.CreateEntity();
 	DeserializeEntity(newEntityId, entityJson);
 }
 
 void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
+
 	// 郢ｧ・ｨ郢晢ｽｳ郢昴・縺・ｹ昴・縺・ｸｺ蠕湖皮ｹ昴・ﾎ晉ｹｧ蜻域亜邵ｺ・｣邵ｺ・ｦ邵ｺ繝ｻ竊醍ｸｺ莉｣・檎ｸｺ・ｰ闖ｴ霈費ｽらｸｺ蜉ｱ竊醍ｸｺ繝ｻ
-	if (!entityManager->HasComponent<ModelHandle>(entityId)) {
+	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ChangeModel entity does not have ModelRenderData", LogLevel::Warning);
 #endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 
-	ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
+	ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
 	modelHandle.modelName = modelName;
 	modelHandle.handle = assetManager->LoadModel(modelName);
 }
 
 void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
+
 	// 繧ｨ繝ｳ繝・ぅ繝・ぅ縺後Δ繝・Ν繧呈戟縺｣縺ｦ縺・↑縺代ｌ縺ｰ菴輔ｂ縺励↑縺・
-	if (!entityManager->HasComponent<ModelHandle>(entityId)) {
+	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ChangeMesh entity does not have ModelRenderData", LogLevel::Warning);
 #endif // QFE_OPTIMIZE_OFF
 		return;
 	}
-	ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
+	ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
 	ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 	// 繝｡繝・す繝･縺悟ｭ伜惠縺励↑縺代ｌ縺ｰ菴輔ｂ縺励↑縺・
 	if (modelData->meshRenderDataHandles.size() == 0) {
@@ -574,9 +568,9 @@ void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshNam
 }
 
 void SceneObject::SaveEntity(uint32_t entityId, const std::string& entityFileName) {
+
 	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	if (!entityManager->IsActiveEntity(entityId)) {
+	if (!entityManager_.IsActiveEntity(entityId)) {
 		assert(false && "Entity is not active");
 		return;
 	}
@@ -589,52 +583,46 @@ void SceneObject::SaveEntity(uint32_t entityId, const std::string& entityFileNam
 }
 
 void SceneObject::ParentChild(uint32_t parentId, uint32_t childId) {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	if (!entityManager->IsActiveEntity(parentId) || !entityManager->IsActiveEntity(childId)) {
+	if (!entityManager_.IsActiveEntity(parentId) || !entityManager_.IsActiveEntity(childId)) {
 		assert(false && "Entity is not active");
 		return;
 	}
-	if (!entityManager->HasComponent<SceneObjectData>(parentId) || !entityManager->HasComponent<SceneObjectData>(childId)) {
+	if (!entityManager_.HasComponent<SceneObjectData>(parentId) || !entityManager_.HasComponent<SceneObjectData>(childId)) {
 		assert(false && "Entity does not have SceneObjectData");
 		return;
 	}
-	SceneObjectData& parentSceneObjectData = entityManager->GetComponent<SceneObjectData>(parentId);
-	SceneObjectData& childSceneObjectData = entityManager->GetComponent<SceneObjectData>(childId);
+	SceneObjectData& parentSceneObjectData = entityManager_.GetComponent<SceneObjectData>(parentId);
+	SceneObjectData& childSceneObjectData = entityManager_.GetComponent<SceneObjectData>(childId);
 	if (parentSceneObjectData.uniqueId == 0 || childSceneObjectData.uniqueId == 0) {
 		assert(false && "Entity does not have uniqueId");
 		return;
 	}
-	if (!entityManager->HasComponent<ParentData>(childId)) {
+	if (!entityManager_.HasComponent<ParentData>(childId)) {
 		ParentData parentData;
 		parentData.parentId = parentSceneObjectData.uniqueId;
-		entityManager->EmplaceComponent<ParentData>(childId, parentData);
+		entityManager_.EmplaceComponent<ParentData>(childId, parentData);
 	} else {
-		ParentData& parentData = entityManager->GetComponent<ParentData>(childId);
+		ParentData& parentData = entityManager_.GetComponent<ParentData>(childId);
 		parentData.parentId = parentSceneObjectData.uniqueId;
 	}
 
-	if (!entityManager->HasComponent<Transform>(parentId) || !entityManager->HasComponent<Transform>(childId)) {
+	if (!entityManager_.HasComponent<Transform>(parentId) || !entityManager_.HasComponent<Transform>(childId)) {
 		return;
 	}
-	Transform& parentTransform = entityManager->GetComponent<Transform>(parentId);
-	Transform& childTransform = entityManager->GetComponent<Transform>(childId);
+	Transform& parentTransform = entityManager_.GetComponent<Transform>(parentId);
+	Transform& childTransform = entityManager_.GetComponent<Transform>(childId);
 	childTransform.translate -= parentTransform.translate;
 }
 
 void SceneObject::Unparent(uint32_t childId) {
-	if (!AssetManager::GetInstance()->GetEntityManager()->HasComponent<ParentData>(childId)) {
+	if (!entityManager_.HasComponent<ParentData>(childId)) {
 		return;
 	}
-
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-
-	ParentData& parentData = entityManager->GetComponent<ParentData>(childId);
+	ParentData& parentData = entityManager_.GetComponent<ParentData>(childId);
 	uint32_t parentId = 0;
 	bool isFound = false;
-	if (entityManager->HasComponentStrage<SceneObjectData>()) {
-		auto& strage = entityManager->GetComponentStrage<SceneObjectData>();
+	if (entityManager_.HasComponentStrage<SceneObjectData>()) {
+		auto& strage = entityManager_.GetComponentStrage<SceneObjectData>();
 		for (const auto& [id, sceneObjData] : strage) {
 			if (sceneObjData.uniqueId == parentData.parentId) {
 				parentId = id;
@@ -644,26 +632,22 @@ void SceneObject::Unparent(uint32_t childId) {
 		}
 	}
 	if (!isFound) { return; }
-	if (!entityManager->HasComponent<Transform>(parentId) || !entityManager->HasComponent<Transform>(childId)) {
-		entityManager->RemoveComponent<ParentData>(childId);
+	if (!entityManager_.HasComponent<Transform>(parentId) || !entityManager_.HasComponent<Transform>(childId)) {
+		entityManager_.RemoveComponent<ParentData>(childId);
 		return;
 	}
-	//Transform& parentTransform = entityManager->GetComponent<Transform>(parentId);
-	//Transform& childTransform = entityManager->GetComponent<Transform>(childId);
-	// childTransform.translate += parentTransform.translate;
 
-	entityManager->RemoveComponent<ParentData>(childId);
+	entityManager_.RemoveComponent<ParentData>(childId);
 }
 
 void SceneObject::SerializeEntity(uint32_t entityId, nlohmann::json& entityJson) {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	entityJson = entityManager->SerializeEntityComponents(entityId);
+
+	entityJson = entityManager_.SerializeEntityComponents(entityId);
 }
 
 void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
+
+
 	usedEntityId_.insert(entityId);
 
 	// 蜷・さ繝ｳ繝昴・繝阪Φ繝医・蠕ｩ蜈・
@@ -673,44 +657,44 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer), spriteData.pivot);
 	}
 	if (entityJson.contains("Transform")) {
-		entityManager->EmplaceComponent<Transform>(entityId);
-		Transform& transform = entityManager->GetComponent<Transform>(entityId);
+		entityManager_.EmplaceComponent<Transform>(entityId);
+		Transform& transform = entityManager_.GetComponent<Transform>(entityId);
 		transform.Deserialize(entityJson["Transform"]);
 	}
 	if (entityJson.contains("ParentData")) {
-		entityManager->EmplaceComponent<ParentData>(entityId);
-		ParentData& parentData = entityManager->GetComponent<ParentData>(entityId);
+		entityManager_.EmplaceComponent<ParentData>(entityId);
+		ParentData& parentData = entityManager_.GetComponent<ParentData>(entityId);
 		parentData.Deserialize(entityJson["ParentData"]);
 	}
 	if (entityJson.contains("CameraData")) {
-		entityManager->EmplaceComponent<CameraData>(entityId);
-		CameraData& cameraData = entityManager->GetComponent<CameraData>(entityId);
+		entityManager_.EmplaceComponent<CameraData>(entityId);
+		CameraData& cameraData = entityManager_.GetComponent<CameraData>(entityId);
 		cameraData.Deserialize(entityJson["CameraData"]);
 	}
 	if (entityJson.contains("ModelHandle")) {
-		entityManager->EmplaceComponent<ModelHandle>(entityId);
-		ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
+		entityManager_.EmplaceComponent<ModelHandle>(entityId);
+		ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
 		modelHandle.Deserialize(entityJson["ModelHandle"]);
 	}
 	if (entityJson.contains("SceneObjectData")) {
-		entityManager->EmplaceComponent<SceneObjectData>(entityId);
-		SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
+		entityManager_.EmplaceComponent<SceneObjectData>(entityId);
+		SceneObjectData& sceneObjectData = entityManager_.GetComponent<SceneObjectData>(entityId);
 		sceneObjectData.Deserialize(entityJson["SceneObjectData"]);
 		uniqueIdManager_.AddUsedID(sceneObjectData.uniqueId);
 	}
 	if (entityJson.contains("Force")) {
-		entityManager->EmplaceComponent<Force>(entityId);
-		Force& force = entityManager->GetComponent<Force>(entityId);
+		entityManager_.EmplaceComponent<Force>(entityId);
+		Force& force = entityManager_.GetComponent<Force>(entityId);
 		force.Deserialize(entityJson["Force"]);
 	}
 	if (entityJson.contains("SphereColliderData")) {
-		entityManager->EmplaceComponent<SphereColliderData>(entityId);
-		SphereColliderData& sphereColliderData = entityManager->GetComponent<SphereColliderData>(entityId);
+		entityManager_.EmplaceComponent<SphereColliderData>(entityId);
+		SphereColliderData& sphereColliderData = entityManager_.GetComponent<SphereColliderData>(entityId);
 		sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
 	}
 	if (entityJson.contains("AABBColliderData")) {
-		entityManager->EmplaceComponent<AABBColliderData>(entityId);
-		AABBColliderData& aabbColliderData = entityManager->GetComponent<AABBColliderData>(entityId);
+		entityManager_.EmplaceComponent<AABBColliderData>(entityId);
+		AABBColliderData& aabbColliderData = entityManager_.GetComponent<AABBColliderData>(entityId);
 		aabbColliderData.Deserialize(entityJson["AABBColliderData"]);
 	}
 	if (entityJson.contains("CsharpComponent")) {
@@ -740,7 +724,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 			}
 			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
 				if (handle.contains("scriptName")) {
-					ScriptHandles& scriptHandles = entityManager->GetComponent<ScriptHandles>(entityId);
+					ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
 					std::vector<uint32_t> luaHandles;
 					for (auto& sh : scriptHandles.scriptHandles_) {
 						luaHandles.push_back(sh.handle_);
@@ -750,7 +734,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 						scriptHandles.scriptHandles_[i].handle_ = luaHandles[i];
 					}
 					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
-						LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_);
+						LuaScriptOnQFE* script = luaScriptExecutor_.GetScript(hl.handle_);
 						sol::environment& env = script->GetEnvironment();
 						for (const auto& [key, val] : hl.intParams_) {
 							env[key] = val;
@@ -776,12 +760,11 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 }
 
 uint32_t SceneObject::GetEntityByName(const std::string& entityName) const {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
+
+	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
 	for (auto entityId : entities) {
-		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
-			const SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
+		if (entityManager_.HasComponent<SceneObjectData>(entityId)) {
+			const SceneObjectData& sceneObjectData = entityManager_.GetComponent<SceneObjectData>(entityId);
 			if (sceneObjectData.name == entityName) {
 				return entityId;
 			}
@@ -792,12 +775,11 @@ uint32_t SceneObject::GetEntityByName(const std::string& entityName) const {
 }
 
 uint32_t SceneObject::GetEntityByUniqeID(uint32_t uniqueId) const {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-	std::vector<uint32_t> entities = entityManager->GetActiveEntityIds();
+
+	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
 	for (auto entityId : entities) {
-		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
-			const SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);
+		if (entityManager_.HasComponent<SceneObjectData>(entityId)) {
+			const SceneObjectData& sceneObjectData = entityManager_.GetComponent<SceneObjectData>(entityId);
 			if (sceneObjectData.uniqueId == uniqueId) {
 				return entityId;
 			}

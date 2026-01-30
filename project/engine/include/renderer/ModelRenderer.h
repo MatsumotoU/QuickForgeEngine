@@ -10,6 +10,10 @@
 #include <list>
 #include <unordered_map>
 
+namespace QFE {
+	class EntityManager;
+}
+
 /**
  * @namespace Render::Model
  * @brief モデルの描画に関する関数を含む名前空間

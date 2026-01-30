@@ -1,5 +1,7 @@
 #include "engine/include/window/windowEventsManager/EventSystems/OnFocusEvent.h"
-#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptExecutor.h"
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -15,7 +17,7 @@ void OnFocusEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Whindow Focused");
 #endif // QFE_OPTIMIZE_OFF
-	LuaScriptResourceManager::GetInstance()->ReloadAllScripts();
+	//SceneManager::GetInstance()->GetLuaScriptExecutor()->ReloadAllScripts();
 }
 
 UINT OnFocusEvent::GetEventType() {

@@ -25,8 +25,6 @@
 
 // Scene and Scripts
 #include "engine/include/scene/SceneManager.h"
-#include "engine/include/assets/Script/LuaScriptResourceManager.h"
-#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
 
 // サブモジュール
 #include "engine/include/audio/AudioInterface.h"
@@ -91,8 +89,6 @@ namespace QFE {
 
 		InputInterface* inputInterface_;
 		SceneManager* sceneManager_;
-		LuaScriptResourceManager* luaScriptResourceManager_;
-		CsharpVirtualEnvironmentOnQFE* csScriptManager_;
 		PhysicsManager* physicsManager_;
 		ColliderManager* colliderManager_;
 		IAudioInterface* audioInterface_;

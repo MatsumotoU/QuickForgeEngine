@@ -119,11 +119,11 @@ void HierarchyView::DrawPopupContextWindow() {
 
 void HierarchyView::DrawEntityList() {
 #ifdef QFE_OPTIMIZE_OFF
-	AssetManager* assetManager = AssetManager::GetInstance();
-	auto entityIds = assetManager->GetEntityManager()->GetActiveEntityIds();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+	auto entityIds = entityManager->GetActiveEntityIds();
 	for (uint32_t id : entityIds) {
 		bool isSelected = (selectedEntityId_ == id);
-		SceneObjectData& data = assetManager->GetEntityManager()->GetComponent<SceneObjectData>(id);
+		SceneObjectData& data = entityManager->GetComponent<SceneObjectData>(id);
 		std::string& name = data.name;
 		std::string label = name + "##" + std::to_string(id);
 

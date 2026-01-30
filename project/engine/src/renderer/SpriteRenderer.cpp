@@ -5,26 +5,28 @@
 
 #include "engine/include/renderer/SpriteRenderer.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Entity/EntityManager.h"
+
 #include "engine/include/assets/3DModel/Data/ModelRenderData.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
 #include "engine/include/assets/Sprite/Data/SpriteData.h" 
 #include <cassert>
 
-/**
- * @brief スプライトの描画実行
- * @param spriteHandle 描画するスプライトのハンドル
- */
+ /**
+  * @brief スプライトの描画実行
+  * @param spriteHandle 描画するスプライトのハンドル
+  */
 
 using namespace QFE;
 
-void Render::Sprite::DrawSprite(const uint32_t& spriteHandle) {
+void QFE::Render::Sprite::DrawSprites(EntityManager* entityManager, const uint32_t& spriteHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 	assert(assetManager && "AssetManager is nullptr.");
-    
-    // TODO: spriteHandle の有効性チェックが必要
-	const SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(spriteHandle);
+
+	// TODO: spriteHandle の有効性チェックが必要
+	const SpriteData& spriteData = entityManager->GetComponent<SpriteData>(spriteHandle);
 
 	if (!spriteData.isDraw) {
 		return;

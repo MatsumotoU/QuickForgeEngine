@@ -5,17 +5,18 @@
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetSceneFunction.h"
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetUtilities.h"
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetMyMath.h"
+#include "engine/include/core/Entity/EntityManager.h"
 
-void QFE::Script::SetQFEFunctions(sol::state* luaState) {
-	// 蝙九ｒ逋ｻ骭ｲ
+void QFE::Script::SetQFEFunctions(sol::state* luaState, EntityManager* entityManager) {
+	// 型を登録
 	QFE::Script::Base::SetOnQFESetStructBase(luaState);
-	// 螟画焚蜿門ｾ鈴未謨ｰ繧堤匳骭ｲ
-	QFE::Script::Base::LuaScriptOnQFESetGetterBase(luaState);
-	// 繧ｵ繝悶Δ繧ｸ繝･繝ｼ繝ｫ髢｢謨ｰ繧堤匳骭ｲ
-	QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(luaState);
-	// 繧ｷ繝ｼ繝ｳ謫堺ｽ憺未謨ｰ繧堤匳骭ｲ
-	QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(luaState);
-	// 繝ｦ繝ｼ繝・ぅ繝ｪ繝・ぅ髢｢謨ｰ繧堤匳骭ｲ
+	// 変数取得関数を登録
+	QFE::Script::Base::LuaScriptOnQFESetGetterBase(luaState, entityManager);
+	// サブモジュール関数を登録
+	QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(luaState, entityManager);
+	// シーン操作関数を登録
+	QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(luaState, entityManager);
+	// ユーティリティ関数を登録
 	QFE::Script::MyLuaMath::LuaScriptOnQFESetMyMath(luaState);
-	QFE::Script::Utility::LuaScriptOnQFESetUtility(luaState);
+	QFE::Script::Utility::LuaScriptOnQFESetUtility(luaState, entityManager);
 }

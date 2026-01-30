@@ -1,11 +1,14 @@
 #include "editor/include/Commands/CSCreateBoundScriptInstanceCommand.h"
-#include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/CsharpScriptExecutor.h"
+
 using namespace QFE;
 CSCreateBoundScriptInstanceCommand::CSCreateBoundScriptInstanceCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
 	aliases_({ "cs_cie" }),
 	className_("null"),
-	entityId_(0){}
+	entityId_(0) {
+}
 
 void CSCreateBoundScriptInstanceCommand::Execute() {
 	if (!command_) return;
@@ -21,7 +24,7 @@ void CSCreateBoundScriptInstanceCommand::Execute() {
 				className_ = args.substr(spacePos + 1);
 				entityId_ = std::stoi(entityIdStr);
 				cons_.emplace_back("Create C# Script Instance: " + className_ + " BindEntity: " + std::to_string(entityId_));
-				CsharpVirtualEnvironmentOnQFE::GetInstance()->CreateScriptInstance(entityId_, className_);
+				SceneManager::GetInstance()->GetCsharpScriptExecutor()->CreateScriptInstance(entityId_, className_);
 			}
 			return;
 		}

@@ -161,7 +161,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 void SceneManager::ResetScene() {
 	currentScene_ = std::make_unique<SceneObject>();
 	currentScene_->Initialize();
-	AssetManager::GetInstance()->GetEntityManager()->ResetEntiry();
+	currentScene_->GetEntityManager()->ResetEntiry();
 	CameraManager::GetInstance()->Initialize();
 }
 

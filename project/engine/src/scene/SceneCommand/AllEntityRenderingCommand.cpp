@@ -23,7 +23,7 @@ void AllEntityRenderingCommand::Execute()
 	if (entityManager_.HasComponentStrage<ParticleComponent>()) {
 		const auto& particleStrage = entityManager_.GetComponentStrage<ParticleComponent>();
 		for (const auto& [entityId, particle] : particleStrage) {
-			Render::Particle::DrawParticles(entityId);
+			Render::Particle::DrawParticles(&entityManager_,entityId);
 		}
 	}
 	// モデルの描画
@@ -42,7 +42,7 @@ void AllEntityRenderingCommand::Execute()
 				return a.second.layer < b.second.layer;
 			});
 		for (const auto& [entityId, sprite] : sortedSprites) {
-			Render::Sprite::DrawSprite(entityId);
+			Render::Sprite::DrawSprites(&entityManager_, entityId);
 		}
 	}
 }

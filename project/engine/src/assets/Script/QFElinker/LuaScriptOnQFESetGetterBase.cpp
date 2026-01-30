@@ -1,7 +1,7 @@
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetGetterBase.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
-#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/core/Entity/EntityManager.h"
 
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/assets/Sprite/Data/SpriteData.h"
@@ -15,7 +15,7 @@
 
 #include "engine/include/core/EngineGlobalValue.h"
 
-void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
+void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState, EntityManager* entityManager) {
 	luaState->set_function("GetDeltaTime", []() {return QFE::EngineGlobalValue::deltaTime; });
 
 	luaState->set_function("GetEntity", [](const std::string& entityName) {
@@ -26,68 +26,57 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 		}
 	);
 
-	luaState->set_function("GetIsDraw", [](uint32_t entityId) {
-		AssetManager* assetManager = AssetManager::GetInstance();
-		EntityManager* entityManager = assetManager->GetEntityManager();
+	luaState->set_function("GetIsDraw", [entityManager](uint32_t entityId) {
 		if (entityManager->HasComponent<SpriteData>(entityId)) {
 			SpriteData& sprite = entityManager->GetComponent<SpriteData>(entityId);
 			return sprite.isDraw;
 		}
 		return false;
 		});
-	luaState->set_function("SetIsDraw", [](uint32_t entityId, bool isDraw) {
-		AssetManager* assetManager = AssetManager::GetInstance();
-		EntityManager* entityManager = assetManager->GetEntityManager();
+	luaState->set_function("SetIsDraw", [entityManager](uint32_t entityId, bool isDraw) {
 		if (entityManager->HasComponent<SpriteData>(entityId)) {
 			SpriteData& sprite = entityManager->GetComponent<SpriteData>(entityId);
 			sprite.isDraw = isDraw;
 		}
 		});
 
-	luaState->set_function("GetTransform", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		return em->HasComponent<Transform>(entityId) ? &em->GetComponent<Transform>(entityId) : nullptr;
+	luaState->set_function("GetTransform", [entityManager](uint32_t entityId) {
+		return entityManager->HasComponent<Transform>(entityId) ? &entityManager->GetComponent<Transform>(entityId) : nullptr;
 		});
-	luaState->set_function("SetTranslate", [](uint32_t entityId, Vector3 translate) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		if (em->HasComponent<Transform>(entityId)) {
-			Transform& t = em->GetComponent<Transform>(entityId);
+	luaState->set_function("SetTranslate", [entityManager](uint32_t entityId, Vector3 translate) {
+		if (entityManager->HasComponent<Transform>(entityId)) {
+			Transform& t = entityManager->GetComponent<Transform>(entityId);
 			t.translate = translate;
 		}
 		});
-	luaState->set_function("SetRotate", [](uint32_t entityId, Vector3 rotate) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		if (em->HasComponent<Transform>(entityId)) {
-			Transform& t = em->GetComponent<Transform>(entityId);
+	luaState->set_function("SetRotate", [entityManager](uint32_t entityId, Vector3 rotate) {
+		if (entityManager->HasComponent<Transform>(entityId)) {
+			Transform& t = entityManager->GetComponent<Transform>(entityId);
 			t.rotate = rotate;
 		}
 		});
-	luaState->set_function("SetScale", [](uint32_t entityId, Vector3 scale) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		if (em->HasComponent<Transform>(entityId)) {
-			Transform& t = em->GetComponent<Transform>(entityId);
+	luaState->set_function("SetScale", [entityManager](uint32_t entityId, Vector3 scale) {
+		if (entityManager->HasComponent<Transform>(entityId)) {
+			Transform& t = entityManager->GetComponent<Transform>(entityId);
 			t.scale = scale;
 		}
 		});
-	luaState->set_function("GetSceneObjectData", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		return em->HasComponent<SceneObjectData>(entityId) ? &em->GetComponent<SceneObjectData>(entityId) : nullptr;
+	luaState->set_function("GetSceneObjectData", [entityManager](uint32_t entityId) {
+		return entityManager->HasComponent<SceneObjectData>(entityId) ? &entityManager->GetComponent<SceneObjectData>(entityId) : nullptr;
 		});
-	luaState->set_function("GetForce", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		return em->HasComponent<Force>(entityId) ? &em->GetComponent<Force>(entityId) : nullptr;
+	luaState->set_function("GetForce", [entityManager](uint32_t entityId) {
+		return entityManager->HasComponent<Force>(entityId) ? &entityManager->GetComponent<Force>(entityId) : nullptr;
 		});
-	luaState->set_function("GetMaterial", [](uint32_t entityId) -> Material* {
+	luaState->set_function("GetMaterial", [entityManager](uint32_t entityId) -> Material* {
 		auto* am = AssetManager::GetInstance();
-		auto* em = am->GetEntityManager();
 		auto* gpuBufferPool = am->GetGpuBufferPool();
-		if (em->HasComponent<SpriteData>(entityId)) {
+		if (entityManager->HasComponent<SpriteData>(entityId)) {
 			return gpuBufferPool->GetConstantBuffer<Material>(
-				em->GetComponent<SpriteData>(entityId).materialBufferHandle
+				entityManager->GetComponent<SpriteData>(entityId).materialBufferHandle
 			)->GetData();
 		}
-		if (em->HasComponent<ModelHandle>(entityId)) {
-			ModelHandle& modelData = em->GetComponent<ModelHandle>(entityId);
+		if (entityManager->HasComponent<ModelHandle>(entityId)) {
+			ModelHandle& modelData = entityManager->GetComponent<ModelHandle>(entityId);
 			ModelRenderData* modelRenderData = am->GetModelRenderData(modelData.handle);
 			return gpuBufferPool->GetConstantBuffer<Material>(
 				modelRenderData->meshRenderDataHandles[0].materialHandle
@@ -99,45 +88,40 @@ void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 		return nullptr;
 		});
 
-	luaState->set_function("GetColliderIsTrigger", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		if (em->HasComponent<SphereColliderData>(entityId)) {
-			return em->GetComponent<SphereColliderData>(entityId).isTrigger;
+	luaState->set_function("GetColliderIsTrigger", [entityManager](uint32_t entityId) {
+		if (entityManager->HasComponent<SphereColliderData>(entityId)) {
+			return entityManager->GetComponent<SphereColliderData>(entityId).isTrigger;
 		}
-		if (em->HasComponent<AABBColliderData>(entityId)) {
-			return em->GetComponent<AABBColliderData>(entityId).isTrigger;
+		if (entityManager->HasComponent<AABBColliderData>(entityId)) {
+			return entityManager->GetComponent<AABBColliderData>(entityId).isTrigger;
 		}
 		return false;
 		});
-	luaState->set_function("SetColliderIsTrigger", [](uint32_t entityId, bool isTrigger) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		if (em->HasComponent<SphereColliderData>(entityId)) {
-			em->GetComponent<SphereColliderData>(entityId).isTrigger = isTrigger;
+	luaState->set_function("SetColliderIsTrigger", [entityManager](uint32_t entityId, bool isTrigger) {
+		if (entityManager->HasComponent<SphereColliderData>(entityId)) {
+			entityManager->GetComponent<SphereColliderData>(entityId).isTrigger = isTrigger;
 		}
-		if (em->HasComponent<AABBColliderData>(entityId)) {
-			em->GetComponent<AABBColliderData>(entityId).isTrigger = isTrigger;
+		if (entityManager->HasComponent<AABBColliderData>(entityId)) {
+			entityManager->GetComponent<AABBColliderData>(entityId).isTrigger = isTrigger;
 		}
 		});
 
-	luaState->set_function("GetEntityTag", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		if (em->HasComponent<SceneObjectData>(entityId)) {
-			return em->GetComponent<SceneObjectData>(entityId).tag;
+	luaState->set_function("GetEntityTag", [entityManager](uint32_t entityId) {
+		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
+			return entityManager->GetComponent<SceneObjectData>(entityId).tag;
 		}
 		return std::string{};
 		});
 
-	luaState->set_function("SetEntityTag", [](uint32_t entityId, const std::string& tag) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		if (em->HasComponent<SceneObjectData>(entityId)) {
-			em->GetComponent<SceneObjectData>(entityId).tag = tag;
+	luaState->set_function("SetEntityTag", [entityManager](uint32_t entityId, const std::string& tag) {
+		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
+			entityManager->GetComponent<SceneObjectData>(entityId).tag = tag;
 		}
 		});
 
-	luaState->set_function("GetEntityName", [](uint32_t entityId) {
-		auto* em = AssetManager::GetInstance()->GetEntityManager();
-		if (em->HasComponent<SceneObjectData>(entityId)) {
-			return em->GetComponent<SceneObjectData>(entityId).name;
+	luaState->set_function("GetEntityName", [entityManager](uint32_t entityId) {
+		if (entityManager->HasComponent<SceneObjectData>(entityId)) {
+			return entityManager->GetComponent<SceneObjectData>(entityId).name;
 		}
 		return std::string{};
 		});

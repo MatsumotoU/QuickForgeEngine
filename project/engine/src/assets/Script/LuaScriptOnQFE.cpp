@@ -3,8 +3,9 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "Engine/include/scene/SceneManager.h"
-#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/assets/Script/LuaScriptExecutor.h"
 
+#include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/physics/Force.h"
 #include "engine/include/assets/Script/Data/ScriptHandle.h"
@@ -18,61 +19,67 @@
 
 using namespace QFE;
 
-LuaScriptOnQFE::LuaScriptOnQFE() {
+LuaScriptOnQFE::LuaScriptOnQFE(EntityManager* entityManager) {
 	isCanRun_ = false;
 	scriptName_ = "";
 	bindEntityId_ = 0;
 	priority_ = 0;
 	defaultGlobals.clear();
+	entityManager_ = entityManager;
+	luaState_ = nullptr;
+}
+
+void QFE::LuaScriptOnQFE::Initialize(sol::state* state, const std::string& scriptPath, uint32_t bindId) {
+	luaState_ = state;
+	bindEntityId_ = bindId;
+	// スクリプト名をパスから抽出
+	size_t lastSlash = scriptPath.find_last_of("/\\");
+	std::string scriptName = (lastSlash == std::string::npos) ? scriptPath : scriptPath.substr(lastSlash + 1);
+	LoadScript(scriptName);
 }
 
 void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 	isCanRun_ = false;
 	try {
-		sol::state& luaState = LuaScriptResourceManager::GetInstance()->GetSharedState();
-		
 		// 1. 迺ｰ蠅・畑繝・・繝悶Ν繧剃ｽ懈・縺励€√Γ繧ｿ繝・・繝悶Ν繧偵そ繝・ヨ
-		sol::table env_table = luaState.create_table();
-		sol::table mt = luaState.create_table();
-		mt["__index"] = [this, &luaState](sol::table t, sol::object key) -> sol::object {
+		sol::table env_table = luaState_->create_table();
+		sol::table mt = luaState_->create_table();
+		mt["__index"] = [this](sol::table t, sol::object key) -> sol::object {
 			if (key.is<std::string>()) {
 				std::string k = key.as<std::string>();
-				auto* em = AssetManager::GetInstance()->GetEntityManager();
+				auto* em = SceneManager::GetInstance()->GetEntityManager();
 				if (k == "transform") {
 					if (em->HasComponent<Transform>(this->bindEntityId_)) {
-						return sol::make_object(luaState, &em->GetComponent<Transform>(this->bindEntityId_));
+						return sol::make_object(*luaState_, &em->GetComponent<Transform>(this->bindEntityId_));
 					}
-				}
-				else if (k == "force") {
+				} else if (k == "force") {
 					if (em->HasComponent<Force>(this->bindEntityId_)) {
-						return sol::make_object(luaState, &em->GetComponent<Force>(this->bindEntityId_));
+						return sol::make_object(*luaState_, &em->GetComponent<Force>(this->bindEntityId_));
 					}
-				}
-				else if (k == "aabbCollider") {
+				} else if (k == "aabbCollider") {
 					if (em->HasComponent<AABBColliderData>(this->bindEntityId_)) {
-						return sol::make_object(luaState, &em->GetComponent<AABBColliderData>(this->bindEntityId_));
+						return sol::make_object(*luaState_, &em->GetComponent<AABBColliderData>(this->bindEntityId_));
 					}
-				}
-				else if (k == "sphereCollider") {
+				} else if (k == "sphereCollider") {
 					if (em->HasComponent<SphereColliderData>(this->bindEntityId_)) {
-						return sol::make_object(luaState, &em->GetComponent<SphereColliderData>(this->bindEntityId_));
+						return sol::make_object(*luaState_, &em->GetComponent<SphereColliderData>(this->bindEntityId_));
 					}
 				}
 			}
 			// 迺ｰ蠅・・繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ・医げ繝ｭ繝ｼ繝舌Ν縺ｪ縺ｩ・峨ｒ繝√ぉ繝・け
-			return luaState.globals()[key];
-		};
+			return luaState_->globals()[key];
+			};
 		// sol::table::set_metatable 縺後↑縺・商縺・ヰ繝ｼ繧ｸ繝ｧ繝ｳ蜷代￠縺ｮ莠呈鋤險俶ｳ・
 		env_table[sol::metatable_key] = mt;
 
 		// 2. 菴懈・縺励◆繝・・繝悶Ν縺九ｉ迺ｰ蠅・ｒ蛻晄悄蛹・
 
-		environment_ = sol::environment(luaState, env_table);
+		environment_ = sol::environment(luaState_->lua_state(), env_table);
 		// 迺ｰ蠅・・隕ｪ縺ｨ縺励※globals繧定ｨｭ螳夲ｼ・lobals縺九ｉ蛟､繧貞叙蠕励〒縺阪ｋ繧医≧縺ｫ縺吶ｋ・・
 		// 縺溘□縺励€√Γ繧ｿ繝・・繝悶Ν縺ｮ__index縺ｧ謇句虚繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ縺励※縺・ｋ縺ｮ縺ｧ螳溯ｳｪ逧・↓縺ｯmt邨檎罰縺ｧ繧｢繧ｯ繧ｻ繧ｹ縺輔ｌ繧・
-		
+
 		std::string filePath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + scriptName;
-		sol::load_result loadResult = luaState.load_file(filePath);
+		sol::load_result loadResult = luaState_->load_file(filePath);
 
 		if (!loadResult.valid()) {
 			sol::error err = loadResult;
@@ -102,7 +109,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 
 		// Lua蛛ｴ縺ｮ繝ｬ繧ｸ繧ｹ繝医Μ縺ｫ逋ｻ骭ｲ
 		if (updateFunc_.valid()) {
-			luaState["QFE_Internal"]["RegisterUpdate"](handle_, updateFunc_, priority_);
+			(*luaState_)["QFE_Internal"]["RegisterUpdate"](handle_, updateFunc_, priority_);
 		}
 	}
 
@@ -143,7 +150,7 @@ std::vector<std::string> LuaScriptOnQFE::GetFunctionList() const {
 
 
 sol::state* LuaScriptOnQFE::GetScript() const {
-	return &LuaScriptResourceManager::GetInstance()->GetSharedState();
+	return &SceneManager::GetInstance()->GetLuaScriptExecutor()->GetSharedState();
 }
 
 
@@ -176,13 +183,10 @@ const bool& LuaScriptOnQFE::IsCanRun() const {
 }
 
 bool LuaScriptOnQFE::IsAliveEntity() {
-	AssetManager* assetManager = AssetManager::GetInstance();
-	EntityManager* entityManager = assetManager->GetEntityManager();
-
-	if (!entityManager->IsActiveEntity(bindEntityId_)) {
+	if (!entityManager_->IsActiveEntity(bindEntityId_)) {
 		return false;
 	}
-	if (entityManager->HasComponent<ScriptHandles>(bindEntityId_)) {
+	if (entityManager_->HasComponent<ScriptHandles>(bindEntityId_)) {
 		return true;
 	}
 	return false;
@@ -208,10 +212,10 @@ std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
 
 
 void LuaScriptOnQFE::SetQFEFunctions() {
-	sol::state& luaState = LuaScriptResourceManager::GetInstance()->GetSharedState();
+	// TODO: 関数の復帰
 
 	// this繧ｨ繝ｳ繝・ぅ繝・ぅ諠・ｱ逋ｻ骭ｲ
-	sol::table thisEntity = luaState.create_table();
+	sol::table thisEntity = luaState_->create_table();
 	thisEntity.set_function("GetEntityId", [this]() {
 		return bindEntityId_;
 		});
@@ -222,39 +226,39 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	environment_["DebugLog"] = [this](sol::variadic_args message) {
 		message;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLogLua(message,this->GetBindEntityId(),this->GetScriptName());
+		DebugLogLua(message, this->GetBindEntityId(), this->GetScriptName());
 #endif // QFE_OPTIMIZE_OFF
 		};
 	environment_["GetThisEntityId"] = [this]() {
 		return bindEntityId_;
 		};
-	environment_["RunEntityScriptFunction"] = 
+	/*environment_["RunEntityScriptFunction"] =
 		[](uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
-			LuaScriptResourceManager::GetInstance()->RunFunction(entityId, scriptName, functionName);
-		};
+			SceneManager::GetInstance()->GetLuaScriptExecutor()->RunFunction(entityId, scriptName, functionName);
+		};*/
 	environment_["destroy"] = [this]() {
 		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
 		};
 	environment_["delete"] = [this]() {
 		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
 		};
-	environment_["GetEntityScriptGlobal"] = 
+	/*environment_["GetEntityScriptGlobal"] =
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::this_state ts) {
 			sol::state_view callerState(ts);
-			return LuaScriptResourceManager::GetInstance()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
+			return SceneManager::GetInstance()->GetLuaScriptExecutor()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
 		};
-	environment_["SetEntityScriptGlobal"] = 
+	environment_["SetEntityScriptGlobal"] =
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value) {
-			LuaScriptResourceManager::GetInstance()->SetEntityScriptGlobal(entityId, scriptName, varName, value);
-		};
+			SceneManager::GetInstance()->GetLuaScriptExecutor()->SetEntityScriptGlobal(entityId, scriptName, varName, value);
+		};*/
 
-	environment_["SetAABBColiderSize"] = [this](const Vector3& size) {
-		AssetManager* assetManager = AssetManager::GetInstance();
-		EntityManager* entityManager = assetManager->GetEntityManager();
-		if (entityManager->HasComponent<AABBColliderData>(this->GetBindEntityId()) == false) {
-			return;
-		}
-		AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(this->GetBindEntityId());
-		collider.aabb.size = size;
-		};
+		/*environment_["SetAABBColiderSize"] = [this](const Vector3& size) {
+
+			EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+			if (entityManager_.HasComponent<AABBColliderData>(this->GetBindEntityId()) == false) {
+				return;
+			}
+			AABBColliderData& collider = entityManager_.GetComponent<AABBColliderData>(this->GetBindEntityId());
+			collider.aabb.size = size;
+			};*/
 }

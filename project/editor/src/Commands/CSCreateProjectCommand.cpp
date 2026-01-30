@@ -1,12 +1,16 @@
 #include "editor/include/Commands/CSCreateProjectCommand.h"
-#include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/CsharpScriptExecutor.h"
+
 using namespace QFE;
 CSCreateProjectCommand::CSCreateProjectCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
-	aliases_({ "cs_create" }) { }
+	aliases_({ "cs_create" }) {
+}
 
 void CSCreateProjectCommand::Execute() {
-	if (!command_) return;
+	// CreateProjectコマンドは現在無効化されています
+	/*if (!command_) return;
 	for (auto& alias : aliases_) {
 		if (strncmp(command_, alias.c_str(), alias.length()) == 0) {
 			projectName_ = command_ + alias.length();
@@ -14,10 +18,10 @@ void CSCreateProjectCommand::Execute() {
 				projectName_ = projectName_.substr(1);
 			}
 			cons_.emplace_back("Create C# Project: " + projectName_);
-			CsharpVirtualEnvironmentOnQFE::GetInstance()->CreateCSProject(projectName_);
+			SceneManager::GetInstance()->GetCsharpScriptExecutor()->CreateCSProject(projectName_);
 			return;
 		}
-	}
+	}*/
 }
 
 void CSCreateProjectCommand::Undo() {

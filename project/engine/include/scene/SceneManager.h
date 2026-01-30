@@ -48,6 +48,12 @@ namespace QFE {
 		/** @brief スクリプトが実行中かどうか */
 		bool IsRunningScript() const { return currentScene_->IsRunningScript(); }
 
+		/** @brief エンティティマネージャを取得 */
+		EntityManager* GetEntityManager() const { return currentScene_->GetEntityManager(); }
+		/** @brief スクリプト実行環境を取得 */
+		LuaScriptExecutor* GetLuaScriptExecutor() const { return currentScene_->GetLuaScriptExecutor(); }
+		CsharpScriptExecutor* GetCsharpScriptExecutor() const { return currentScene_->GetCsharpScriptExecutor(); }
+
 		/** @brief シーンの保存 */
 		void SaveScene(const std::string& sceneName);
 		/** @brief シーンの読み込み */

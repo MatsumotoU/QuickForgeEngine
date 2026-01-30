@@ -7,6 +7,7 @@ nlohmann::json ModelHandle::Serialize() const {
 	nlohmann::json json;
 	json["modelName"] = modelName;
 
+	
 	AssetManager* assetManager = AssetManager::GetInstance();
 	uint32_t materialHandle =
 	assetManager->GetModelRenderData(handle)->meshRenderDataHandles[0].materialHandle;
