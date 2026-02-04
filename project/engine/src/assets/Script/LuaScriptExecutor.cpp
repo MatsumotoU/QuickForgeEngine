@@ -93,7 +93,7 @@ void LuaScriptExecutor::RemoveScript(uint32_t handle) {
 void LuaScriptExecutor::InitializeAllScripts() {
 	for (auto& [handle, script] : scripts_) {
 		if (script) {
-			script->RunFunction("Initialize");
+			script->RunFunction("Init");
 		}
 	}
 #ifdef QFE_OPTIMIZE_OFF

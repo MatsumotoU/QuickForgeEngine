@@ -26,11 +26,11 @@ std::unique_ptr<sol::state> LuaRuntimeManager::CreateLuaState(EntityManager* ent
 	// 標準ライブラリの登録
 	RegisterStandardLibraries(luaState.get());
 
-	// QFE APIの登録
-	RegisterQFEAPI(luaState.get(), entityManager);
-
 	// QFEという名前のグローバルテーブルを作成
 	luaState->create_named_table("QFE");
+
+	// QFE APIの登録
+	RegisterQFEAPI(luaState.get(), entityManager);
 
 	// Lua側の更新リスト管理システムを登録
 	luaState->script(R"(

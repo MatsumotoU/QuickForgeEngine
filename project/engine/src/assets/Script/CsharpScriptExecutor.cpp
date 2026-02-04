@@ -28,7 +28,7 @@ void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
 	}
 
 	// このシーン専用のAppDomainを作成
-	//MonoDomain* rootDomain = MonoRuntimeManager::GetInstance()->GetRootDomain();
+	MonoDomain* rootDomain = MonoRuntimeManager::GetInstance()->GetRootDomain();
 
 	char domainName[] = "QuickForgeSceneDomain";
 	domain_ = mono_domain_create_appdomain(domainName, nullptr);
