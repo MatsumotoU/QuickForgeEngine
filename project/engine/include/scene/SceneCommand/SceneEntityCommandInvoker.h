@@ -6,6 +6,8 @@ namespace QFE {
 	class SceneEntityCommandInvoker final {
 	private:
 		std::queue<std::unique_ptr<ISceneEntityCommand>> commandQueue_;
+
+
 	public:
 		SceneEntityCommandInvoker() = default;
 		~SceneEntityCommandInvoker() = default;

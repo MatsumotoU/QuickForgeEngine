@@ -9,12 +9,12 @@
             "SceneObjectData": {
                 "name": "DebugCamera",
                 "tag": "camera",
-                "uniqueId": 2
+                "uniqueId": 3452816845
             },
             "Transform": {
                 "rotate": [
-                    0.5838903784751892,
-                    -0.11000068485736847,
+                    0.40138986706733704,
+                    0.21000005304813385,
                     -0.0
                 ],
                 "scale": [
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.9261595010757446,
-                    5.574412822723389,
-                    -8.385592460632324
+                    -1.9403823614120483,
+                    3.950693130493164,
+                    -9.10368537902832
                 ]
             }
         },
@@ -38,7 +38,7 @@
             "SceneObjectData": {
                 "name": "Camera",
                 "tag": "camera",
-                "uniqueId": 1
+                "uniqueId": 3452816846
             },
             "Transform": {
                 "rotate": [
@@ -59,13 +59,6 @@
             }
         },
         {
-            "CsharpComponent": {
-                "CsharpHandles": [
-                    {
-                        "ClassName": "testA"
-                    }
-                ]
-            },
             "ModelHandle": {
                 "color": [
                     1.0,
@@ -73,12 +66,24 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "0.obj"
             },
             "SceneObjectData": {
-                "name": "Box1x1.obj",
+                "name": "0.obj",
                 "tag": "Untagged",
-                "uniqueId": 3452816846
+                "uniqueId": 3452816847
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "test.lua",
+                        "stringParams": {}
+                    }
+                ]
             },
             "Transform": {
                 "rotate": [
