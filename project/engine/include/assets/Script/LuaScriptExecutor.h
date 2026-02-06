@@ -67,9 +67,38 @@ namespace QFE {
 			}
 		}
 
+		/// @brief 指定の関数を持つスクリプトの関数を実行
+		void RunFunctionIfExists(const std::string& functionName);
+
+		/// @brief 指定のエンティティの指定の関数を持つスクリプトの関数を実行
+		void RunEntityFunctionIfExists(uint32_t entityId, const std::string& functionName);
+
+		/// @brief 全スクリプトの指定関数を実行（引数付き）
+		template<typename... Args>
+		void RunAllFunctionWithArgs(const std::string& functionName, Args&&... args) {
+			for (auto& [handle, script] : scripts_) {
+				if (script) {
+					script->RunFunction(functionName, std::forward<Args>(args)...);
+				}
+			}
+		}
+		/// @brief 指定エンティティの指定関数の関数を実行（引数付き）
+		template<typename... Args>
+		void RunEntityFunctionWithArgsIfExists(uint32_t entityId, const std::string& functionName, Args&&... args) {
+			for (auto& [handle, script] : scripts_) {
+				if (script && script->GetBindEntityId() == entityId) {
+					sol::environment& env = script->GetEnvironment();
+					sol::object obj = env[functionName];
+					if (obj.is<sol::function>()) {
+						script->RunFunction(functionName, std::forward<Args>(args)...);
+					}
+				}
+			}
+		}
+
 		/// @brief 指定エンティティの指定スクリプトの関数を実行
 		void RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName);
-		
+
 		/// @brief 指定エンティティのスクリプトからグローバル変数を取得
 		sol::object GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::state_view& callerState);
 

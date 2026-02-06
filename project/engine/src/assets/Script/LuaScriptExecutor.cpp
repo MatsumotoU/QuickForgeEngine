@@ -148,6 +148,30 @@ void QFE::LuaScriptExecutor::RunEntityFunction(uint32_t entityId, const std::str
 	}
 }
 
+void QFE::LuaScriptExecutor::RunFunctionIfExists(const std::string& functionName) {
+	for (auto& [handle, script] : scripts_) {
+		if (script) {
+			sol::environment& env = script->GetEnvironment();
+			sol::object obj = env[functionName];
+			if (obj.is<sol::function>()) {
+				script->RunFunction(functionName);
+			}
+		}
+	}
+}
+
+void QFE::LuaScriptExecutor::RunEntityFunctionIfExists(uint32_t entityId, const std::string& functionName) {
+	for (auto& [handle, script] : scripts_) {
+		if (script && script->GetBindEntityId() == entityId) {
+			sol::environment& env = script->GetEnvironment();
+			sol::object obj = env[functionName];
+			if (obj.is<sol::function>()) {
+				script->RunFunction(functionName);
+			}
+		}
+	}
+}
+
 void QFE::LuaScriptExecutor::RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
 	for (auto& [handle, script] : scripts_) {
 		if (script && script->GetBindEntityId() == entityId && script->GetScriptName() == scriptName) {

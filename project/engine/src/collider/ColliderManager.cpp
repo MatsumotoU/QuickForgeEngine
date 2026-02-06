@@ -149,14 +149,14 @@ namespace QFE {
 					colliderA.isHit = true;
 					colliderB.isHit = true;
 
-					luaManager->RunEntityFunctionWithArgs(idA, "OnCollisionStay", idB, objB);
-					luaManager->RunEntityFunctionWithArgs(idB, "OnCollisionStay", idA, objA);
+					luaManager->RunEntityFunctionWithArgsIfExists(idA, "OnCollisionStay", idB, objB);
+					luaManager->RunEntityFunctionWithArgsIfExists(idB, "OnCollisionStay", idA, objA);
 					// Trigger繧､繝吶Φ繝・
 					if (!colliderA.isOldHit) {
-						luaManager->RunEntityFunctionWithArgs(idA, "OnCollisionEnter", idB, objB);
+						luaManager->RunEntityFunctionWithArgsIfExists(idA, "OnCollisionEnter", idB, objB);
 					}
 					if (!colliderB.isOldHit) {
-						luaManager->RunEntityFunctionWithArgs(idB, "OnCollisionEnter", idA, objA);
+						luaManager->RunEntityFunctionWithArgsIfExists(idB, "OnCollisionEnter", idA, objA);
 					}
 
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
@@ -256,14 +256,14 @@ namespace QFE {
 					colliderA.isHit = true;
 					colliderB.isHit = true;
 
-					luaManager->RunEntityFunctionWithArgs(idA, "OnCollisionStay", idB, objB);
-					luaManager->RunEntityFunctionWithArgs(idB, "OnCollisionStay", idA, objA);
+					luaManager->RunEntityFunctionWithArgsIfExists(idA, "OnCollisionStay", idB, objB);
+					luaManager->RunEntityFunctionWithArgsIfExists(idB, "OnCollisionStay", idA, objA);
 					// Trigger繧､繝吶Φ繝・
 					if (!colliderA.isOldHit) {
-						luaManager->RunEntityFunctionWithArgs(idA, "OnTriggerEnter", idB, objB);
+						luaManager->RunEntityFunctionWithArgsIfExists(idA, "OnCollisionEnter", idB, objB);
 					}
 					if (!colliderB.isOldHit) {
-						luaManager->RunEntityFunctionWithArgs(idB, "OnTriggerEnter", idA, objA);
+						luaManager->RunEntityFunctionWithArgsIfExists(idB, "OnCollisionEnter", idA, objA);
 					}
 
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
@@ -408,15 +408,15 @@ namespace QFE {
 					sphereCollider.isHit = true;
 					aabbCollider.isHit = true;
 
-					luaManager->RunEntityFunctionWithArgs(sphereId, "OnCollisionStay", aabbId, objB);
-					luaManager->RunEntityFunctionWithArgs(aabbId, "OnCollisionStay", sphereId, objA);
+					luaManager->RunEntityFunctionWithArgsIfExists(sphereId, "OnCollisionStay", aabbId, objB);
+					luaManager->RunEntityFunctionWithArgsIfExists(aabbId, "OnCollisionStay", sphereId, objA);
 
 					// Trigger繧､繝吶Φ繝・
 					if (!sphereCollider.isOldHit) {
-						luaManager->RunEntityFunctionWithArgs(sphereId, "OnTriggerEnter", aabbId, objB);
+						luaManager->RunEntityFunctionWithArgsIfExists(sphereId, "OnCollisionEnter", aabbId, objB);
 					}
 					if (!aabbCollider.isOldHit) {
-						luaManager->RunEntityFunctionWithArgs(aabbId, "OnTriggerEnter", sphereId, objA);
+						luaManager->RunEntityFunctionWithArgsIfExists(aabbId, "OnCollisionEnter", sphereId, objA);
 					}
 
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・

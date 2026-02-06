@@ -61,7 +61,7 @@ void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState, Entity
 	);
 
 	luaState->set_function("RunAllFunction", [luaScriptExecutor](const std::string& message) {
-		luaScriptExecutor->RunAllFunction(message);
+		luaScriptExecutor->RunFunctionIfExists(message);
 		});
 
 	luaState->set_function("GetMinLengthToEntityFromTag", [entityManager](const std::string& entityTag, const Vector3& fromPosition) {
