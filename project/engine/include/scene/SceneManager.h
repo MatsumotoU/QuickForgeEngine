@@ -51,7 +51,7 @@ namespace QFE {
 		/** @brief エンティティマネージャを取得 */
 		EntityManager* GetEntityManager() const { return currentScene_->GetEntityManager(); }
 		/** @brief スクリプト実行環境を取得 */
-		LuaScriptExecutor* GetLuaScriptExecutor() const { return currentScene_->GetLuaScriptExecutor(); }
+		LuaScriptExecutor* GetLuaScriptExecutor() const;
 		CsharpScriptExecutor* GetCsharpScriptExecutor() const { return currentScene_->GetCsharpScriptExecutor(); }
 
 		/** @brief シーンの保存 */

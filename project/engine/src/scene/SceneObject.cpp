@@ -151,7 +151,9 @@ void SceneObject::EndFrame() {
 }
 
 void SceneObject::Finalize() {
-
+	luaScriptExecutor_.Reset();
+	csharpScriptExecutor_.Finalize();
+	entityManager_.ResetEntiry();
 }
 
 void SceneObject::LoadScene(const std::string& sceneName) {
@@ -232,7 +234,6 @@ void SceneObject::ResetScene() {
 }
 
 void SceneObject::RunScene() {
-
 	if (!isRunningScript_) {
 #ifdef QFE_OPTIMIZE_OFF
 		MyDebugLog::GetInstance()->DebugLogClear();

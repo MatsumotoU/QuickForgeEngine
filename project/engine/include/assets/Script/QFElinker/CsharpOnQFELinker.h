@@ -7,14 +7,14 @@
 
 namespace QFE::CsharpOnQFELinker {
     // Transform
-    extern void GetTransformTranslate(uint32_t entityId, Vector3* outTranslate,EntityManager* entityManager);
-    extern void SetTransformTranslate(uint32_t entityId, Vector3* inTranslate, EntityManager* entityManager);
-    extern void GetTransformRotate(uint32_t entityId, Vector3* outRotate, EntityManager* entityManager);
-    extern void SetTransformRotate(uint32_t entityId, Vector3* inRotate, EntityManager* entityManager);
-    extern void GetTransformScale(uint32_t entityId, Vector3* outScale, EntityManager* entityManager);
-    extern void SetTransformScale(uint32_t entityId, Vector3* inScale, EntityManager* entityManager);
-    extern void Translate(uint32_t entityId, Vector3* translation, EntityManager* entityManager);
-    extern void Rotate(uint32_t entityId, Vector3* eulerAngles, EntityManager* entityManager);
+    extern void GetTransformTranslate(uint32_t entityId, Vector3* outTranslate);
+    extern void SetTransformTranslate(uint32_t entityId, Vector3* inTranslate);
+    extern void GetTransformRotate(uint32_t entityId, Vector3* outRotate);
+    extern void SetTransformRotate(uint32_t entityId, Vector3* inRotate);
+    extern void GetTransformScale(uint32_t entityId, Vector3* outScale);
+    extern void SetTransformScale(uint32_t entityId, Vector3* inScale);
+    extern void Translate(uint32_t entityId, Vector3* translation);
+    extern void Rotate(uint32_t entityId, Vector3* eulerAngles);
 
     // Time
 	extern float GetDeltaTime();

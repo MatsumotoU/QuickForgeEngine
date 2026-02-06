@@ -6,6 +6,7 @@
 namespace QFE {
 
 	class EntityManager;
+	class LuaScriptExecutor;
 
 	/**
 	 * @brief Luaランタイムのグローバル管理
@@ -23,8 +24,9 @@ namespace QFE {
 
 		/// @brief 新しいLua stateを作成し、標準ライブラリとQFE APIを登録
 		/// @param entityManager このstateで使用するEntityManager
+        /// @param luaScriptExecutor このstateで使用するLuaScriptExecutor
 		/// @return 初期化済みのLua state
-		std::unique_ptr<sol::state> CreateLuaState(EntityManager* entityManager);
+		std::unique_ptr<sol::state> CreateLuaState(EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor);
 
 	private:
 		LuaRuntimeManager() = default;
@@ -36,7 +38,7 @@ namespace QFE {
 		void RegisterStandardLibraries(sol::state* state);
 
 		/// @brief Lua stateにQFE APIを登録
-		void RegisterQFEAPI(sol::state* state, EntityManager* entityManager);
+		void RegisterQFEAPI(sol::state* state, EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor);
 	};
 
 }

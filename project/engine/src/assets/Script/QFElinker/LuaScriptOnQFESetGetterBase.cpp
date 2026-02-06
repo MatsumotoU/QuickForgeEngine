@@ -18,11 +18,25 @@
 void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState, EntityManager* entityManager) {
 	luaState->set_function("GetDeltaTime", []() {return QFE::EngineGlobalValue::deltaTime; });
 
-	luaState->set_function("GetEntity", [](const std::string& entityName) {
-		return SceneManager::GetInstance()->GetEntityByName(entityName);
+	luaState->set_function("GetEntity", [entityManager](const std::string& entityName) {
+		if (entityManager->HasComponentStrage<SceneObjectData>()) {
+			for (const auto& [id, sceneObjectData] : entityManager->GetComponentStrage<SceneObjectData>()) {
+				if (sceneObjectData.name == entityName) {
+					return id;
+				}
+			}
+		}
+		return (uint32_t)0;
 		});
-	luaState->set_function("GetEntityFromUniqeID", [](uint32_t uniqeId) {
-		return SceneManager::GetInstance()->GetEntityByUniqeID(uniqeId);
+	luaState->set_function("GetEntityFromUniqeID", [entityManager](uint32_t uniqeId) {
+		if (entityManager->HasComponentStrage<SceneObjectData>()) {
+			for (const auto& [id, sceneObjectData] : entityManager->GetComponentStrage<SceneObjectData>()) {
+				if (sceneObjectData.uniqueId == uniqeId) {
+					return id;
+				}
+			}
+		}
+		return (uint32_t)0;
 		}
 	);
 

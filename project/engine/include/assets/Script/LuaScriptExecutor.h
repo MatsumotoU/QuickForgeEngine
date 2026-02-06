@@ -64,6 +64,15 @@ namespace QFE {
 			}
 		}
 
+		/// @brief 指定エンティティの指定スクリプトの関数を実行
+		void RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName);
+		
+		/// @brief 指定エンティティのスクリプトからグローバル変数を取得
+		sol::object GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::state_view& callerState);
+
+		/// @brief 指定エンティティのスクリプトにグローバル変数を設定
+		void SetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, const sol::object& value);
+
 		/// @brief スクリプトを取得
 		/// @param handle スクリプトハンドル
 		/// @return スクリプトポインタ

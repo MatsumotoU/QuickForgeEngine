@@ -1,8 +1,9 @@
-﻿#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetUtilities.h"
+#include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetUtilities.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/core/Math/Transform.h"
+#include "engine/include/assets/Script/LuaScriptExecutor.h"
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -10,7 +11,7 @@
 
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
-void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState, EntityManager* entityManager) {
+void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState, EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor) {
 
 	// CSV読み込み
 	luaState->set_function("Load2DMap", [](const std::string& fileName) {
@@ -59,9 +60,8 @@ void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState, Entity
 		}
 	);
 
-	luaState->set_function("RunAllFunction", [](const std::string& message) {
-		// TODO: シーン固有のLuaScriptExecutorを使用する必要がある
-		// SceneManager::GetInstance()->GetLuaScriptExecutor()->RunAllFunction(message);
+	luaState->set_function("RunAllFunction", [luaScriptExecutor](const std::string& message) {
+		luaScriptExecutor->RunAllFunction(message);
 		});
 
 	luaState->set_function("GetMinLengthToEntityFromTag", [entityManager](const std::string& entityTag, const Vector3& fromPosition) {

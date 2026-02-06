@@ -83,6 +83,9 @@ void MonoRuntimeManager::Initialize() {
 	DebugLog("Success to initialize Mono JIT.");
 #endif
 
+	// C#スクリプトのコンパイル
+	CompileScripts();
+
 	// QFE APIの登録
 	RegisterQFEAPI();
 }
@@ -136,13 +139,29 @@ void MonoRuntimeManager::CompileScripts() {
 	if (!scriptsDir.empty() && scriptsDir.back() != '/' && scriptsDir.back() != '\\') {
 		scriptsDir += '/';
 	}
-	std::string batPath = scriptsDir + "build_scripts.bat";
-	std::string cmd = "call \"" + batPath + "\"";
-	system(cmd.c_str());
+	
+	// csproj縺ｮ逕o謌・
+	std::string csprojPath = scriptsDir + "MyGameScripts.csproj";
+	QFE::GenerateCsproj(scriptsDir, csprojPath);
 
+	// DLL縺ｮ蜃ｺ蜉帛5・
+	wchar_t path[MAX_PATH];
+	GetModuleFileNameW(NULL, path, MAX_PATH);
+	std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
+	std::string dllPath = (exeDir / "CSharpScripts.dll").string();
+
+	// 繧ｳ繝ｳ繝代ぅ繝ｫ
+	try {
+		QFE::CompileCSharpProject(csprojPath, dllPath);
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("C# scripts compiled.");
+		DebugLog("C# scripts compiled successfully.");
 #endif
+	}
+	catch (const std::exception& e) {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog(std::string("Failed to compile C# scripts: ") + e.what(), LogLevel::Error);
+#endif
+	}
 }
 
 std::string MonoRuntimeManager::GetAssemblyPath() const {

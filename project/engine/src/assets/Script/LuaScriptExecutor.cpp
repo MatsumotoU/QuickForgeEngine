@@ -15,7 +15,7 @@ void LuaScriptExecutor::Initialize(EntityManager* entityManager) {
 	entityManager_ = entityManager;
 
 	// LuaRuntimeManagerを使って新しいLua stateを作成
-	sharedLuaState_ = LuaRuntimeManager::GetInstance()->CreateLuaState(entityManager);
+	sharedLuaState_ = LuaRuntimeManager::GetInstance()->CreateLuaState(entityManager, this);
 
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("LuaScriptExecutor initialized with new Lua state.");
@@ -62,7 +62,7 @@ uint32_t LuaScriptExecutor::AddScript(uint32_t entityId, const std::string& scri
 	std::string scriptPath = scriptDir + scriptName;
 
 	// スクリプトを作成
-	auto script = std::make_unique<LuaScriptOnQFE>(entityManager_);
+	auto script = std::make_unique<LuaScriptOnQFE>(entityManager_, this);
 	script->Initialize(sharedLuaState_.get(), scriptPath, entityId);
 
 	uint32_t handle = nextScriptHandle_++;
@@ -129,6 +129,36 @@ void QFE::LuaScriptExecutor::RunEntityFunction(uint32_t entityId, const std::str
 	for (auto& [handle, script] : scripts_) {
 		if (script && script->GetBindEntityId() == entityId) {
 			script->RunFunction(functionName);
+		}
+	}
+}
+
+void QFE::LuaScriptExecutor::RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
+	for (auto& [handle, script] : scripts_) {
+		if (script && script->GetBindEntityId() == entityId && script->GetScriptName() == scriptName) {
+			script->RunFunction(functionName);
+		}
+	}
+}
+
+sol::object LuaScriptExecutor::GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::state_view& callerState) {
+	for (auto& [handle, script] : scripts_) {
+		if (script && script->GetBindEntityId() == entityId && script->GetScriptName() == scriptName) {
+			sol::environment& env = script->GetEnvironment();
+			sol::object val = env[varName];
+			if (val.valid()) {
+				return sol::object(callerState, val);
+			}
+		}
+	}
+	return sol::object(sol::nil);
+}
+
+void LuaScriptExecutor::SetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, const sol::object& value) {
+	for (auto& [handle, script] : scripts_) {
+		if (script && script->GetBindEntityId() == entityId && script->GetScriptName() == scriptName) {
+			sol::environment& env = script->GetEnvironment();
+			env[varName] = value;
 		}
 	}
 }

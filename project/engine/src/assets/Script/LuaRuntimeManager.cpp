@@ -20,7 +20,7 @@ void LuaRuntimeManager::Finalize() {
 #endif
 }
 
-std::unique_ptr<sol::state> LuaRuntimeManager::CreateLuaState(EntityManager* entityManager) {
+std::unique_ptr<sol::state> LuaRuntimeManager::CreateLuaState(EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor) {
 	auto luaState = std::make_unique<sol::state>();
 
 	// 標準ライブラリの登録
@@ -30,7 +30,7 @@ std::unique_ptr<sol::state> LuaRuntimeManager::CreateLuaState(EntityManager* ent
 	luaState->create_named_table("QFE");
 
 	// QFE APIの登録
-	RegisterQFEAPI(luaState.get(), entityManager);
+	RegisterQFEAPI(luaState.get(), entityManager, luaScriptExecutor);
 
 	// Lua側の更新リスト管理システムを登録
 	luaState->script(R"(
@@ -90,7 +90,7 @@ void LuaRuntimeManager::RegisterStandardLibraries(sol::state* state) {
 	);
 }
 
-void LuaRuntimeManager::RegisterQFEAPI(sol::state* state, EntityManager* entityManager) {
+void LuaRuntimeManager::RegisterQFEAPI(sol::state* state, EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor) {
 	// QFE APIの登録（EntityManagerを使用する関数群）
-	Script::SetQFEFunctions(state, entityManager);
+	Script::SetQFEFunctions(state, entityManager, luaScriptExecutor);
 }

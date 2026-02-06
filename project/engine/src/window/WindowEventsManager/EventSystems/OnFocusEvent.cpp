@@ -17,7 +17,15 @@ void OnFocusEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Whindow Focused");
 #endif // QFE_OPTIMIZE_OFF
-	//SceneManager::GetInstance()->GetLuaScriptExecutor()->ReloadAllScripts();
+
+	if (SceneManager::GetInstance()->GetLuaScriptExecutor() != nullptr) {
+		SceneManager::GetInstance()->GetLuaScriptExecutor()->ReloadAllScripts();
+	} else {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("LuaScriptExecutor is nullptr", LogLevel::Warning);
+#endif // QFE_OPTIMIZE_OFF
+	}
+	
 }
 
 UINT OnFocusEvent::GetEventType() {

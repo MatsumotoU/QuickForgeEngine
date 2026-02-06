@@ -16,11 +16,12 @@
 namespace QFE {
 
 	class SceneObjectData;
+	class LuaScriptExecutor;
 
 	class LuaScriptOnQFE {
 	public:
 		LuaScriptOnQFE() = delete;
-		explicit LuaScriptOnQFE(EntityManager* entityManager);
+		explicit LuaScriptOnQFE(EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor);
 		~LuaScriptOnQFE() = default;
 
 		// コピーコンストラクタとムーブコンストラクタを削除
@@ -122,6 +123,7 @@ namespace QFE {
 		sol::function onCollisionStayFunc_;
 
 		EntityManager* entityManager_;
+		LuaScriptExecutor* luaScriptExecutor_;
 		sol::state* luaState_;
 	};
 

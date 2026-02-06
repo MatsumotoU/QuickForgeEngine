@@ -19,13 +19,14 @@
 
 using namespace QFE;
 
-LuaScriptOnQFE::LuaScriptOnQFE(EntityManager* entityManager) {
+LuaScriptOnQFE::LuaScriptOnQFE(EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor) {
 	isCanRun_ = false;
 	scriptName_ = "";
 	bindEntityId_ = 0;
 	priority_ = 0;
 	defaultGlobals.clear();
 	entityManager_ = entityManager;
+	luaScriptExecutor_ = luaScriptExecutor;
 	luaState_ = nullptr;
 }
 
@@ -47,7 +48,7 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 		mt["__index"] = [this](sol::table t, sol::object key) -> sol::object {
 			if (key.is<std::string>()) {
 				std::string k = key.as<std::string>();
-				auto* em = SceneManager::GetInstance()->GetEntityManager();
+				auto* em = entityManager_;
 				if (k == "transform") {
 					if (em->HasComponent<Transform>(this->bindEntityId_)) {
 						return sol::make_object(*luaState_, &em->GetComponent<Transform>(this->bindEntityId_));
@@ -150,7 +151,7 @@ std::vector<std::string> LuaScriptOnQFE::GetFunctionList() const {
 
 
 sol::state* LuaScriptOnQFE::GetScript() const {
-	return &SceneManager::GetInstance()->GetLuaScriptExecutor()->GetSharedState();
+	return luaState_;
 }
 
 
@@ -232,33 +233,31 @@ void LuaScriptOnQFE::SetQFEFunctions() {
 	environment_["GetThisEntityId"] = [this]() {
 		return bindEntityId_;
 		};
-	/*environment_["RunEntityScriptFunction"] =
-		[](uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
-			SceneManager::GetInstance()->GetLuaScriptExecutor()->RunFunction(entityId, scriptName, functionName);
-		};*/
+	environment_["RunEntityScriptFunction"] =
+		[this](uint32_t entityId, const std::string& scriptName, const std::string& functionName) {
+			this->luaScriptExecutor_->RunFunction(entityId, scriptName, functionName);
+		};
 	environment_["destroy"] = [this]() {
-		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
+		entityManager_->RemoveEntity(this->GetBindEntityId());
 		};
 	environment_["delete"] = [this]() {
-		SceneManager::GetInstance()->DeleteEntity(this->GetBindEntityId());
+		entityManager_->RemoveEntity(this->GetBindEntityId());
 		};
-	/*environment_["GetEntityScriptGlobal"] =
+	environment_["GetEntityScriptGlobal"] =
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::this_state ts) {
 			sol::state_view callerState(ts);
-			return SceneManager::GetInstance()->GetLuaScriptExecutor()->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
+			return this->luaScriptExecutor_->GetEntityScriptGlobal(entityId, scriptName, varName, callerState);
 		};
 	environment_["SetEntityScriptGlobal"] =
 		[this](uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value) {
-			SceneManager::GetInstance()->GetLuaScriptExecutor()->SetEntityScriptGlobal(entityId, scriptName, varName, value);
-		};*/
+			this->luaScriptExecutor_->SetEntityScriptGlobal(entityId, scriptName, varName, value);
+		};
 
-		/*environment_["SetAABBColiderSize"] = [this](const Vector3& size) {
-
-			EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-			if (entityManager_.HasComponent<AABBColliderData>(this->GetBindEntityId()) == false) {
-				return;
-			}
-			AABBColliderData& collider = entityManager_.GetComponent<AABBColliderData>(this->GetBindEntityId());
-			collider.aabb.size = size;
-			};*/
+	environment_["SetAABBColiderSize"] = [this](const Vector3& size) {
+		if (entityManager_->HasComponent<AABBColliderData>(this->GetBindEntityId()) == false) {
+			return;
+		}
+		AABBColliderData& collider = entityManager_->GetComponent<AABBColliderData>(this->GetBindEntityId());
+		collider.aabb.size = size;
+		};
 }

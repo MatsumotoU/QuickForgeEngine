@@ -7,7 +7,7 @@
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQFESetMyMath.h"
 #include "engine/include/core/Entity/EntityManager.h"
 
-void QFE::Script::SetQFEFunctions(sol::state* luaState, EntityManager* entityManager) {
+void QFE::Script::SetQFEFunctions(sol::state* luaState, EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor) {
 	// 型を登録
 	QFE::Script::Base::SetOnQFESetStructBase(luaState);
 	// 変数取得関数を登録
@@ -15,8 +15,8 @@ void QFE::Script::SetQFEFunctions(sol::state* luaState, EntityManager* entityMan
 	// サブモジュール関数を登録
 	QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(luaState, entityManager);
 	// シーン操作関数を登録
-	QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(luaState, entityManager);
+	QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(luaState, entityManager, luaScriptExecutor);
 	// ユーティリティ関数を登録
 	QFE::Script::MyLuaMath::LuaScriptOnQFESetMyMath(luaState);
-	QFE::Script::Utility::LuaScriptOnQFESetUtility(luaState, entityManager);
+	QFE::Script::Utility::LuaScriptOnQFESetUtility(luaState, entityManager, luaScriptExecutor);
 }

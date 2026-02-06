@@ -347,10 +347,12 @@ void CsharpScriptExecutor::Finalize() {
 	assembly_ = nullptr;
 
 	if (domain_) {
-		MonoDomain* rootDomain = MonoRuntimeManager::GetInstance()->GetRootDomain();
-		if (domain_ != rootDomain) {
-			mono_domain_set(rootDomain, false);
-			mono_domain_unload(domain_);
+		if (MonoRuntimeManager::GetInstance()->IsInitialized()) {
+			MonoDomain* rootDomain = MonoRuntimeManager::GetInstance()->GetRootDomain();
+			if (rootDomain && domain_ != rootDomain) {
+				mono_domain_set(rootDomain, false);
+				mono_domain_unload(domain_);
+			}
 		}
 		domain_ = nullptr;
 	}
