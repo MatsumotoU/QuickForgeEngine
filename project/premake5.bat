@@ -17,6 +17,8 @@ if not exist "%PREMAKE_EXE%" (
         exit /b 1
     )
     echo Download Complete.
+    del example.* 2>nul
+    del luasocket.* 2>nul
 )
 
 
