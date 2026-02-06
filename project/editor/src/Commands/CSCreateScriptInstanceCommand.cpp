@@ -1,5 +1,7 @@
 #include "editor/include/Commands/CSCreateScriptInstanceCommand.h"
-#include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/CsharpScriptExecutor.h"
+
 using namespace QFE;
 CSCreateScriptInstanceCommand::CSCreateScriptInstanceCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
@@ -14,7 +16,7 @@ void CSCreateScriptInstanceCommand::Execute() {
 				className_ = className_.substr(1);
 			}
 			cons_.emplace_back("Create C# Script Instance: " + className_);
-			CsharpVirtualEnvironmentOnQFE::GetInstance()->CreateScriptInstance(className_);
+			SceneManager::GetInstance()->GetCsharpScriptExecutor()->CreateScriptInstance(className_);
 			return;
 		}
 	}

@@ -3,7 +3,7 @@
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/assets/AssetManager.h"
 #include "Engine/include/graphic/GpuBufferPool/GpuBufferPool.h"
-#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+
 
 #include "Engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
@@ -24,7 +24,8 @@ void DeleteSceneEntityCommand::Execute()
 
 	// GPUリソースの解放など、必要なクリーンアップ処理を行う
 	AssetManager* assetManager = AssetManager::GetInstance();
-	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
+	GpuBufferPool* gpuBufferPool = 
+		assetManager->GetGpuBufferPool();
 
 	// ModelコンポーネントのGPUリソース解放
 	if (entityManager_.HasComponent<ModelHandle>(entityId_)) {
@@ -43,13 +44,14 @@ void DeleteSceneEntityCommand::Execute()
 		gpuBufferPool->ReleaseConstantBuffer<Material>(spriteData.materialBufferHandle);
 	}
 
+	// TODO: 関数の復帰
 	// C#Scriptコンポーネントのインスタンス削除
-	if (entityManager_.HasComponent<CsharpComponent>(entityId_)) {
-		CsharpVirtualEnvironmentOnQFE* csharpEnv = CsharpVirtualEnvironmentOnQFE::GetInstance();
+	/*if (entityManager_.HasComponent<CsharpComponent>(entityId_)) {
+		CsharpVirtualEnvironmentOnQFE* csharpEnv = SceneManager::GetInstance()->GetCsharpScriptExecutor();
 		for (const auto& handle : entityManager_.GetComponent<CsharpComponent>(entityId_).csharpHandles_) {
 			csharpEnv->DeleteScriptInstance(handle.scriptIndex_);
 		}
-	}
+	}*/
 
 	// 指定されたエンティティをシーンから削除する
 	entityManager_.RemoveEntity(entityId_);

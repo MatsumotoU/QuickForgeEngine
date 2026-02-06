@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <sol/sol.hpp>
 #include <string>
 #include <memory>
@@ -9,17 +9,29 @@
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/Entity/EntityManager.h"
 
 #include <set>
 
 namespace QFE {
 
 	class SceneObjectData;
+	class LuaScriptExecutor;
 
 	class LuaScriptOnQFE {
 	public:
-		LuaScriptOnQFE();
+		LuaScriptOnQFE() = delete;
+		explicit LuaScriptOnQFE(EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor);
 		~LuaScriptOnQFE() = default;
+
+		// コピーコンストラクタとムーブコンストラクタを削除
+		LuaScriptOnQFE(const LuaScriptOnQFE&) = delete;
+		LuaScriptOnQFE(LuaScriptOnQFE&&) = delete;
+		LuaScriptOnQFE& operator=(const LuaScriptOnQFE&) = delete;
+		LuaScriptOnQFE& operator=(LuaScriptOnQFE&&) = delete;
+
+		void Initialize(sol::state* state, const std::string& scriptPath, uint32_t bindId);
+
 		void LoadScript(const std::string& scriptName);
 		void ReloadScript();
 		template<typename... Args>
@@ -109,6 +121,10 @@ namespace QFE {
 		sol::function updateFunc_;
 		sol::function onCollisionEnterFunc_;
 		sol::function onCollisionStayFunc_;
+
+		EntityManager* entityManager_;
+		LuaScriptExecutor* luaScriptExecutor_;
+		sol::state* luaState_;
 	};
 
 }

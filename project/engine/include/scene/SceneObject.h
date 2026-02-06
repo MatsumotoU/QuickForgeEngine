@@ -2,6 +2,8 @@
 #include "IScene.h"
 #include "Engine/include/scene/SceneCommand/SceneEntityCommandInvoker.h"
 #include "engine/include/utility/ID/UniqueIDManager.h"
+#include "engine/include/assets/Script/LuaScriptExecutor.h"
+#include "engine/include/assets/Script/CsharpScriptExecutor.h"
 
 #include "engine/include/core/Math/Vector/Vector2.h"
 #include <memory>
@@ -66,6 +68,10 @@ namespace QFE {
 		uint32_t GetEntityByUniqeID(uint32_t uniqueId) const override;
 		bool IsRunningScript() const override { return isRunningScript_; }
 
+		EntityManager* GetEntityManager() override { return &entityManager_; }
+		LuaScriptExecutor* GetLuaScriptExecutor() override { return &luaScriptExecutor_; }
+		CsharpScriptExecutor* GetCsharpScriptExecutor() override { return &csharpScriptExecutor_; }
+
 	private:
 		SceneEntityCommandInvoker frameStartCommandInvoker_;
 		SceneEntityCommandInvoker updateCommandInvoker_;
@@ -81,6 +87,11 @@ namespace QFE {
 		ListUniqueIDManager uniqueIdManager_;
 
 		std::set<uint32_t> usedEntityId_;
+		EntityManager entityManager_;
+		
+		// シーン固有のスクリプト実行環境
+		LuaScriptExecutor luaScriptExecutor_;
+		CsharpScriptExecutor csharpScriptExecutor_;
 	};
 
 }

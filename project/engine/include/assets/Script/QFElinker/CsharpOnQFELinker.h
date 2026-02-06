@@ -3,6 +3,7 @@
 #include <mono/jit/jit.h>
 
 #include "engine/include/core/Math/Vector/Vector3.h"
+#include "engine/include/core/Entity/EntityManager.h"
 
 namespace QFE::CsharpOnQFELinker {
     // Transform

@@ -1,5 +1,8 @@
 #include "editor/include/Commands/LuaScriptInitializeCommand.h"
-#include "assets/Script/LuaScriptResourceManager.h"
+
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptExecutor.h"
+
 using namespace QFE;
 LuaScriptInitializeCommand::LuaScriptInitializeCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
@@ -9,7 +12,7 @@ void LuaScriptInitializeCommand::Execute() {
 	for (auto& alias : aliases_) {
 		if (strcmp(command_, alias.c_str()) == 0) {
 			cons_.emplace_back("Run Init All Scripts.");
-			LuaScriptResourceManager::GetInstance()->InitializeAllScripts();
+			SceneManager::GetInstance()->GetLuaScriptExecutor()->InitializeAllScripts();
 			return;
 		}
 	}

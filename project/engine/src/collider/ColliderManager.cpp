@@ -1,7 +1,8 @@
 #include "engine/include/collider/ColliderManager.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
-#include "engine/include/assets/Script/LuaScriptResourceManager.h"
+
 #include "engine/include/core/Math/MyMath.h"
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
@@ -11,6 +12,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+#include "engine/include/assets/Script/LuaScriptExecutor.h"
 #include <algorithm>
 
 namespace QFE {
@@ -27,7 +29,7 @@ namespace QFE {
 
 	void ColliderManager::Draw() {
 #ifdef QFE_OPTIMIZE_OFF
-		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 		if (entityManager->HasComponentStrage<SphereColliderData>()) {
 
 
@@ -85,7 +87,7 @@ namespace QFE {
 	}
 
 	void ColliderManager::SphereToSphereUpdate() {
-		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 		if (!entityManager->HasComponentStrage<SphereColliderData>()) {
 			return;
 		}
@@ -116,7 +118,7 @@ namespace QFE {
 				if (idA == idB) continue;
 				SphereColliderData& colliderB = entityManager->GetComponent<SphereColliderData>(idB);
 				if (isCollision(colliderA.sphere, colliderB.sphere)) {
-					LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
+					LuaScriptExecutor* luaManager = SceneManager::GetInstance()->GetLuaScriptExecutor();
 					// SceneObjectData蜿門ｾ・
 					if (!entityManager->HasComponent<SceneObjectData>(idA) ||
 						!entityManager->HasComponent<SceneObjectData>(idB)) {
@@ -146,14 +148,15 @@ namespace QFE {
 					// OnCollisionStay繧､繝吶Φ繝・
 					colliderA.isHit = true;
 					colliderB.isHit = true;
-					luaManager->RunColliderStay(idA, idB, objB);
-					luaManager->RunColliderStay(idB, idA, objA);
+
+					luaManager->RunEntityFunctionWithArgs(idA, "OnCollisionStay", idB, objB);
+					luaManager->RunEntityFunctionWithArgs(idB, "OnCollisionStay", idA, objA);
 					// Trigger繧､繝吶Φ繝・
 					if (!colliderA.isOldHit) {
-						luaManager->RunTriggerEnter(idA, idB, objB);
+						luaManager->RunEntityFunctionWithArgs(idA, "OnTriggerEnter", idB, objB);
 					}
 					if (!colliderB.isOldHit) {
-						luaManager->RunTriggerEnter(idB, idA, objA);
+						luaManager->RunEntityFunctionWithArgs(idB, "OnTriggerEnter", idA, objA);
 					}
 
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
@@ -196,7 +199,7 @@ namespace QFE {
 	}
 
 	void ColliderManager::AABBToAABBUpdate() {
-		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 		if (!entityManager->HasComponentStrage<AABBColliderData>()) {
 			return;
 		}
@@ -224,7 +227,7 @@ namespace QFE {
 				if (idA == idB) continue;
 				AABBColliderData& colliderB = entityManager->GetComponent<AABBColliderData>(idB);
 				if (isCollision(colliderA.aabb, colliderB.aabb)) {
-					LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
+					LuaScriptExecutor* luaManager = SceneManager::GetInstance()->GetLuaScriptExecutor();
 					// SceneObjectData蜿門ｾ・
 					if (!entityManager->HasComponent<SceneObjectData>(idA) ||
 						!entityManager->HasComponent<SceneObjectData>(idB)) {
@@ -252,14 +255,15 @@ namespace QFE {
 					// OnCollisionStay繧､繝吶Φ繝・
 					colliderA.isHit = true;
 					colliderB.isHit = true;
-					luaManager->RunColliderStay(idA, idB, objB);
-					luaManager->RunColliderStay(idB, idA, objA);
+
+					luaManager->RunEntityFunctionWithArgs(idA, "OnCollisionStay", idB, objB);
+					luaManager->RunEntityFunctionWithArgs(idB, "OnCollisionStay", idA, objA);
 					// Trigger繧､繝吶Φ繝・
 					if (!colliderA.isOldHit) {
-						luaManager->RunTriggerEnter(idA, idB, objB);
+						luaManager->RunEntityFunctionWithArgs(idA, "OnTriggerEnter", idB, objB);
 					}
 					if (!colliderB.isOldHit) {
-						luaManager->RunTriggerEnter(idB, idA, objA);
+						luaManager->RunEntityFunctionWithArgs(idB, "OnTriggerEnter", idA, objA);
 					}
 
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
@@ -331,7 +335,7 @@ namespace QFE {
 	}
 
 	void ColliderManager::SphereToAABBUpdate() {
-		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 		if (!entityManager->HasComponentStrage<SphereColliderData>()) {
 			return;
 		}
@@ -375,7 +379,7 @@ namespace QFE {
 				if (sphereId == aabbId) continue;
 				AABBColliderData& aabbCollider = entityManager->GetComponent<AABBColliderData>(aabbId);
 				if (isCollision(sphereCollider.sphere, aabbCollider.aabb)) {
-					LuaScriptResourceManager* luaManager = LuaScriptResourceManager::GetInstance();
+					LuaScriptExecutor* luaManager = SceneManager::GetInstance()->GetLuaScriptExecutor();
 					// SceneObjectData蜿門ｾ・
 					if (!entityManager->HasComponent<SceneObjectData>(sphereId) ||
 						!entityManager->HasComponent<SceneObjectData>(aabbId)) {
@@ -403,14 +407,16 @@ namespace QFE {
 					// OnCollisionStay繧､繝吶Φ繝・
 					sphereCollider.isHit = true;
 					aabbCollider.isHit = true;
-					luaManager->RunColliderStay(sphereId, aabbId, objB);
-					luaManager->RunColliderStay(aabbId, sphereId, objA);
+
+					luaManager->RunEntityFunctionWithArgs(sphereId, "OnCollisionStay", aabbId, objB);
+					luaManager->RunEntityFunctionWithArgs(aabbId, "OnCollisionStay", sphereId, objA);
+
 					// Trigger繧､繝吶Φ繝・
 					if (!sphereCollider.isOldHit) {
-						luaManager->RunTriggerEnter(sphereId, aabbId, objB);
+						luaManager->RunEntityFunctionWithArgs(sphereId, "OnTriggerEnter", aabbId, objB);
 					}
 					if (!aabbCollider.isOldHit) {
-						luaManager->RunTriggerEnter(aabbId, sphereId, objA);
+						luaManager->RunEntityFunctionWithArgs(aabbId, "OnTriggerEnter", sphereId, objA);
 					}
 
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・

@@ -5,6 +5,7 @@
 
 #include "engine/include/renderer/ParticleRenderer.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Entity/EntityManager.h"
 
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/graphic/Pipeline/GraphicPipelineManager.h"
@@ -19,13 +20,13 @@ namespace QFE {
 
 			/**
 			 * @brief パーティクルの描画実行
+			 * @param entityManager エンティティマネージャーのポインタ
 			 * @param particleHandle 描画するパーティクル(エンティティ等)のハンドル
 			 */
-			void DrawParticles(const uint32_t& particleHandle) {
+			void DrawParticles(EntityManager* entityManager, const uint32_t& particleHandle) {
 				AssetManager* assetManager = AssetManager::GetInstance();
 				GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
-				// TODO: particleHandle の有効性チェックが必要
-				ParticleComponent particleComponent = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(particleHandle);
+				ParticleComponent particleComponent = entityManager->GetComponent<ParticleComponent>(particleHandle);
 
 				PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetParticlePso(kBlendModeNormal);
 

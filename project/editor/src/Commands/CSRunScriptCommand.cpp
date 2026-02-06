@@ -1,9 +1,12 @@
 #include "editor/include/Commands/CSRunScriptCommand.h"
-#include "assets/Script/CsharpVirtualEnvironmentOnQFE.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/CsharpScriptExecutor.h"
+
 using namespace QFE;
 CSRunScriptCommand::CSRunScriptCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
-	aliases_({ "cs_run" }) { }
+	aliases_({ "cs_run" }) {
+}
 
 void CSRunScriptCommand::Execute() {
 	if (!command_) return;
@@ -19,7 +22,7 @@ void CSRunScriptCommand::Execute() {
 				functionName_ = args.substr(spacePos + 1);
 				index_ = std::stoi(indexStr);
 				cons_.emplace_back("Run C# Script Function: " + functionName_ + " on Instance Index: " + std::to_string(index_));
-				CsharpVirtualEnvironmentOnQFE::GetInstance()->RunScriptFunction(index_, functionName_);
+				SceneManager::GetInstance()->GetCsharpScriptExecutor()->RunScriptFunction(index_, functionName_);
 			}
 			return;
 		}

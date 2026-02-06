@@ -9,6 +9,7 @@
 #include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
 #include "engine/include/camera/CameraManager.h"
 #include <cassert>
 #include <numbers>
@@ -324,7 +325,7 @@ void GraphRenderer::DrawSphere(Vector3 center, float radius, const Vector4& colo
 }
 
 void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision) {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	if (!entityManager->HasComponent<Transform>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId())) {
 		return;
 	}

@@ -32,8 +32,8 @@ void WorldTransformationCommand::Execute(){
 				}
 			}
 			// スプライトのワールド行列更新
-			if (assetManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
-				SpriteData& spriteData = assetManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
+			if (entityManager_.HasComponent<SpriteData>(entityId)) {
+				SpriteData& spriteData = entityManager_.GetComponent<SpriteData>(entityId);
 				TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(spriteData.wvpBufferHandle);
 				wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
 					transform.scale,
@@ -42,8 +42,8 @@ void WorldTransformationCommand::Execute(){
 				);
 			}
 			// パーティクルのワールド行列更新
-			if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
-				ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(entityId);
+			if (entityManager_.HasComponent<ParticleComponent>(entityId)) {
+				ParticleComponent& particleComp = entityManager_.GetComponent<ParticleComponent>(entityId);
 				ParticleForGPU* particleData = assetManager->GetParticleGpuDataManager()->GetDataPtr(particleComp.particleGpuBufferHandle);
 				for (uint32_t i = 0; i < particleComp.maxParticleCount; i++) {
 					particleData[i].World = Matrix4x4::MakeAffineMatrix(
