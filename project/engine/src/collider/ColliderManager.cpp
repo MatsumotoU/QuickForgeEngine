@@ -153,10 +153,10 @@ namespace QFE {
 					luaManager->RunEntityFunctionWithArgs(idB, "OnCollisionStay", idA, objA);
 					// Trigger繧､繝吶Φ繝・
 					if (!colliderA.isOldHit) {
-						luaManager->RunEntityFunctionWithArgs(idA, "OnTriggerEnter", idB, objB);
+						luaManager->RunEntityFunctionWithArgs(idA, "OnCollisionEnter", idB, objB);
 					}
 					if (!colliderB.isOldHit) {
-						luaManager->RunEntityFunctionWithArgs(idB, "OnTriggerEnter", idA, objA);
+						luaManager->RunEntityFunctionWithArgs(idB, "OnCollisionEnter", idA, objA);
 					}
 
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・

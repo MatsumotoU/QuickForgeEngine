@@ -61,7 +61,7 @@ namespace QFE {
 
 		// シーンにあるオブジェクトの情報を取得
 		virtual uint32_t GetEntityByName(const std::string& entityName) const = 0;
-		virtual uint32_t GetEntityByUniqeID(uint32_t uniqueId) const = 0;
+		virtual uint32_t GetEntityByUniqueID(uint32_t uniqueId) const = 0;
 
 		virtual bool IsRunningScript() const = 0;
 		std::string& GetSceneName() { return sceneName_; }

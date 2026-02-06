@@ -28,11 +28,27 @@ LuaScriptOnQFE::LuaScriptOnQFE(EntityManager* entityManager, LuaScriptExecutor* 
 	entityManager_ = entityManager;
 	luaScriptExecutor_ = luaScriptExecutor;
 	luaState_ = nullptr;
+	handle_ = 0;
 }
 
-void QFE::LuaScriptOnQFE::Initialize(sol::state* state, const std::string& scriptPath, uint32_t bindId) {
+LuaScriptOnQFE::~LuaScriptOnQFE() {
+	if (luaState_) {
+		try {
+			// Unregister update function
+			(*luaState_)["QFE_Internal"]["UnregisterUpdate"](handle_);
+		}
+		catch (const sol::error& e) {
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog(std::string("Lua Error in ~LuaScriptOnQFE: ") + e.what(), LogLevel::Error);
+#endif
+		}
+	}
+}
+
+void QFE::LuaScriptOnQFE::Initialize(sol::state* state, const std::string& scriptPath, uint32_t bindId, uint32_t handle) {
 	luaState_ = state;
 	bindEntityId_ = bindId;
+	handle_ = handle;
 	// スクリプト名をパスから抽出
 	size_t lastSlash = scriptPath.find_last_of("/\\");
 	std::string scriptName = (lastSlash == std::string::npos) ? scriptPath : scriptPath.substr(lastSlash + 1);

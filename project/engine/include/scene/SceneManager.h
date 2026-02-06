@@ -44,7 +44,7 @@ namespace QFE {
 		/** @brief 名前からエンティティIDを取得 */
 		uint32_t GetEntityByName(const std::string& entityName) const;
 		/** @brief 一意なIDからエンティティIDを取得 */
-		uint32_t GetEntityByUniqeID(uint32_t uniqueId) const;
+		uint32_t GetEntityByUniqueID(uint32_t uniqueId) const;
 		/** @brief スクリプトが実行中かどうか */
 		bool IsRunningScript() const { return currentScene_->IsRunningScript(); }
 

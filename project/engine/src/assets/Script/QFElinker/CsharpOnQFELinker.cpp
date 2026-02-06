@@ -10,7 +10,11 @@
 #include "engine/include/input/InputInterface.h"
 
 #include "engine/include/core/EngineGlobalValue.h"
+#include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/core/Math/Transform.h"
+#include "engine/include/audio/AudioInterface.h"
+#include "engine/include/assets/3DModel/Data/ModelHandle.h"
+#include "engine/include/renderer/ModelRenderer.h"
 
 using namespace QFE;
 
@@ -71,7 +75,11 @@ void QFE::CsharpOnQFELinker::Rotate(uint32_t entityId, Vector3* eulerAngles) {
 }
 
 float QFE::CsharpOnQFELinker::GetDeltaTime() {
-	return QFE::EngineGlobalValue::deltaTime;
+	return EngineGlobalValue::deltaTime;
+}
+
+Vector2 QFE::CsharpOnQFELinker::GetKeyMoveDir() {
+	return InputInterface::GetInstance()->GetKeyMoveDir();
 }
 
 bool QFE::CsharpOnQFELinker::IsKeyTrigger(MonoString* actionName) {
@@ -98,11 +106,82 @@ bool QFE::CsharpOnQFELinker::IsKeyRelease(MonoString* actionName) {
     return result;
 }
 
-uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* className) {
-	char* utf8_className = mono_string_to_utf8(className);
+bool QFE::CsharpOnQFELinker::GetMousePress(int8_t button) {
+	return InputInterface::GetInstance()->GetMousePress(button);
+}
+
+bool QFE::CsharpOnQFELinker::GetMouseTrigger(int8_t button) {
+	return InputInterface::GetInstance()->GetMouseTrigger(button);
+}
+
+bool QFE::CsharpOnQFELinker::GetMouseRelease(int8_t button) {
+	return InputInterface::GetInstance()->GetMouseRelease(button);
+}
+
+Vector2 QFE::CsharpOnQFELinker::GetMouseScreenPos() {
+	return InputInterface::GetInstance()->GetMouseScreenPos();
+}
+
+Vector2 QFE::CsharpOnQFELinker::GetMouseMoveDir() {
+	return InputInterface::GetInstance()->GetMouseMove();
+}
+
+float QFE::CsharpOnQFELinker::GetMouseWheelDir() {
+	return InputInterface::GetInstance()->GetMouseWheelDir();
+}
+
+uint32_t QFE::CsharpOnQFELinker::LoadSound(MonoString* soundName) {
+	char* utf8_soundName = mono_string_to_utf8(soundName);
+	uint32_t handle = AssetManager::GetInstance()->LoadAudio(utf8_soundName);
+	mono_free(utf8_soundName);
+	return handle;
+}
+
+uint32_t QFE::CsharpOnQFELinker::PlayQFESound(uint32_t soundHandle, bool isLoop, float volume) {
+	return AudioInterface::GetInstance()->PlaySoundForAudioData(soundHandle, isLoop, volume);
+}
+
+void QFE::CsharpOnQFELinker::StopSound(uint32_t playHandle) {
+	AudioInterface::GetInstance()->StopSound(playHandle);
+}
+
+uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* entityName) {
+	char* utf8_className = mono_string_to_utf8(entityName);
 	uint32_t entityId = SceneManager::GetInstance()->RunTimeAddEntity(utf8_className);
 	mono_free(utf8_className);
 	return entityId;
+}
+
+void QFE::CsharpOnQFELinker::LoadScene(MonoString* sceneName) {
+	char* utf8_sceneName = mono_string_to_utf8(sceneName);
+	SceneManager::GetInstance()->RunTimeSwapScene(utf8_sceneName);
+	mono_free(utf8_sceneName);
+}
+
+void QFE::CsharpOnQFELinker::ChangeModel(uint32_t entityId, MonoString* modelName) {
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+	if (!entityManager->HasComponent<ModelHandle>(entityId)) { return; }
+	
+	char* utf8_modelName = mono_string_to_utf8(modelName);
+	ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
+	modelHandle.modelName = utf8_modelName;
+	modelHandle.handle = AssetManager::GetInstance()->LoadModel(utf8_modelName);
+	mono_free(utf8_modelName);
+}
+
+void QFE::CsharpOnQFELinker::ChangeMesh(uint32_t entityId, MonoString* meshName) {
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+	if (!entityManager->HasComponent<ModelHandle>(entityId)) { return; }
+
+	AssetManager* assetManager = AssetManager::GetInstance();
+	ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
+	ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
+	
+	if (modelData->meshRenderDataHandles.size() == 0) { return; }
+	
+	char* utf8_meshName = mono_string_to_utf8(meshName);
+	modelData->meshRenderDataHandles[0].vertexBufferHandle = assetManager->LoadModelMesh(utf8_meshName);
+	mono_free(utf8_meshName);
 }
 
 void QFE::CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {

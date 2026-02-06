@@ -45,6 +45,9 @@ namespace QFE {
 		/// @brief 全スクリプトを更新
 		void UpdateAllScripts();
 
+		/// @brief 死亡したエンティティのスクリプトを削除
+		void RemoveDeadScripts();
+
 		/// @brief 全スクリプトの指定関数を実行
 		/// @param functionName 関数名
 		void RunAllFunction(const std::string& functionName);

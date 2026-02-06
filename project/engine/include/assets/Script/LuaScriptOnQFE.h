@@ -22,7 +22,7 @@ namespace QFE {
 	public:
 		LuaScriptOnQFE() = delete;
 		explicit LuaScriptOnQFE(EntityManager* entityManager, LuaScriptExecutor* luaScriptExecutor);
-		~LuaScriptOnQFE() = default;
+		~LuaScriptOnQFE();
 
 		// コピーコンストラクタとムーブコンストラクタを削除
 		LuaScriptOnQFE(const LuaScriptOnQFE&) = delete;
@@ -30,7 +30,7 @@ namespace QFE {
 		LuaScriptOnQFE& operator=(const LuaScriptOnQFE&) = delete;
 		LuaScriptOnQFE& operator=(LuaScriptOnQFE&&) = delete;
 
-		void Initialize(sol::state* state, const std::string& scriptPath, uint32_t bindId);
+		void Initialize(sol::state* state, const std::string& scriptPath, uint32_t bindId, uint32_t handle);
 
 		void LoadScript(const std::string& scriptName);
 		void ReloadScript();

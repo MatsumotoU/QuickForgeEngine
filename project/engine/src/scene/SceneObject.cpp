@@ -140,6 +140,7 @@ void SceneObject::PostDraw() {
 }
 
 void SceneObject::EndFrame() {
+	luaScriptExecutor_.RemoveDeadScripts(); // 死亡したスクリプトを削除
 	if (isRequestStopScript_) {
 		if (isRunningScript_) {
 			isRunningScript_ = false;
@@ -484,7 +485,7 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	if (entityManager_.HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
 		ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
 		for (const auto& sh : scriptHandles.scriptHandles_) {
-			luaScriptExecutor_.GetScript(sh.handle_)->RunFunction("Initialize");
+			luaScriptExecutor_.GetScript(sh.handle_)->RunFunction("Init");
 		}
 	}
 	if (entityManager_.HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
@@ -775,7 +776,7 @@ uint32_t SceneObject::GetEntityByName(const std::string& entityName) const {
 	return 0;
 }
 
-uint32_t SceneObject::GetEntityByUniqeID(uint32_t uniqueId) const {
+uint32_t SceneObject::GetEntityByUniqueID(uint32_t uniqueId) const {
 
 	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
 	for (auto entityId : entities) {
