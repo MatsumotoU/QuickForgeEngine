@@ -1,7 +1,11 @@
 #pragma once
 #include <sol/sol.hpp>
 
+namespace QFE {
+	class EntityManager;
+}
+
 namespace QFE::Script::Base {
 	// Inputなどのサブモジュール関数をLua状態に設定する
-	void LuaScriptOnQFESetSubModuleBase(sol::state* luaState);
+	void LuaScriptOnQFESetSubModuleBase(sol::state* luaState, EntityManager* entityManager);
 }

@@ -15,50 +15,58 @@
 using namespace QFE;
 
 void QFE::CsharpOnQFELinker::GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        *outTranslate = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate;
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+    if (entityManager->HasComponent<Transform>(entityId)) {
+        *outTranslate = entityManager->GetComponent<Transform>(entityId).translate;
     }
 }
 
 void QFE::CsharpOnQFELinker::SetTransformTranslate(uint32_t entityId, Vector3* inTranslate) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate = *inTranslate;
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+    if (entityManager->HasComponent<Transform>(entityId)) {
+        entityManager->GetComponent<Transform>(entityId).translate = *inTranslate;
     }
 }
 
 void QFE::CsharpOnQFELinker::GetTransformRotate(uint32_t entityId, Vector3* outRotate) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        *outRotate = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate;
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+    if (entityManager->HasComponent<Transform>(entityId)) {
+        *outRotate = entityManager->GetComponent<Transform>(entityId).rotate;
     }
 }
 
 void QFE::CsharpOnQFELinker::SetTransformRotate(uint32_t entityId, Vector3* inRotate) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate = *inRotate;
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+    if (entityManager->HasComponent<Transform>(entityId)) {
+        entityManager->GetComponent<Transform>(entityId).rotate = *inRotate;
     }
 }
 
 void QFE::CsharpOnQFELinker::GetTransformScale(uint32_t entityId, Vector3* outScale) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        *outScale = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).scale;
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+    if (entityManager->HasComponent<Transform>(entityId)) {
+        *outScale = entityManager->GetComponent<Transform>(entityId).scale;
     }
 }
 
 void QFE::CsharpOnQFELinker::SetTransformScale(uint32_t entityId, Vector3* inScale) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).scale = *inScale;
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+    if (entityManager->HasComponent<Transform>(entityId)) {
+        entityManager->GetComponent<Transform>(entityId).scale = *inScale;
     }
 }
 
 void QFE::CsharpOnQFELinker::Translate(uint32_t entityId, Vector3* translation) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).translate += *translation;
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+    if (entityManager->HasComponent<Transform>(entityId)) {
+        entityManager->GetComponent<Transform>(entityId).translate += *translation;
     }
 }
 
 void QFE::CsharpOnQFELinker::Rotate(uint32_t entityId, Vector3* eulerAngles) {
-    if (AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(entityId)) {
-        AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(entityId).rotate += *eulerAngles;
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+    if (entityManager->HasComponent<Transform>(entityId)) {
+        entityManager->GetComponent<Transform>(entityId).rotate += *eulerAngles;
     }
 }
 

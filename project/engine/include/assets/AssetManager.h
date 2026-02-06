@@ -14,7 +14,6 @@
 #include "ConstantBufferManager/ConstantBufferManager.h"
 #include "Particle/ParticleGpuDataManager.h"
 #include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
-#include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "AudioSource/AudioSourceManager.h"
 
@@ -79,7 +78,6 @@ namespace QFE {
 
 		ModelVertexResourceManager* GetModelVertexResourceManager() { return &modelVertexResourceManager_; }
 		GpuBufferPool* GetGpuBufferPool() { return gpuBufferPool_.get(); }
-		EntityManager* GetEntityManager() { return &entityManager_; }
 		SpriteManager* GetSpriteManager() { return &spriteManager_; }
 		const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
 		AudioSourceManager* GetAudioSourceManager() { return &audioSourceManager_; }
@@ -93,7 +91,6 @@ namespace QFE {
 		ModelRenderDataManager modelRenderDataManager_;
 		ModelVertexResourceManager modelVertexResourceManager_;
 		std::unique_ptr<GpuBufferPool> gpuBufferPool_;
-		EntityManager entityManager_;
 		SpriteManager spriteManager_;
 		ParticleGpuDataManager particleGpuDataManager_;
 	};

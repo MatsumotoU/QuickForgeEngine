@@ -150,6 +150,25 @@ uint32_t SceneManager::GetEntityByUniqeID(uint32_t uniqueId) const {
 	return currentScene_->GetEntityByUniqeID(uniqueId);
 }
 
+LuaScriptExecutor* QFE::SceneManager::GetLuaScriptExecutor() const {
+	// currentScene_がいない場合nullptrを返す
+	if (!currentScene_) {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("GetLuaScriptExecutor: currentScene_ is nullptr", LogLevel::EngineInfo);
+#endif // QFE_OPTIMIZE_OFF
+		return nullptr;
+	}
+	// LuaScriptExecutorがいない場合nullptrを返す
+	if (!currentScene_->GetLuaScriptExecutor()) {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("GetLuaScriptExecutor: LuaScriptExecutor is nullptr", LogLevel::EngineInfo);
+#endif // QFE_OPTIMIZE_OFF
+		return nullptr;
+	}
+
+	return currentScene_->GetLuaScriptExecutor();
+}
+
 void SceneManager::SaveScene(const std::string& sceneName) {
 	currentScene_->SaveScene(sceneName);
 }
@@ -161,7 +180,7 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 void SceneManager::ResetScene() {
 	currentScene_ = std::make_unique<SceneObject>();
 	currentScene_->Initialize();
-	AssetManager::GetInstance()->GetEntityManager()->ResetEntiry();
+	currentScene_->GetEntityManager()->ResetEntiry();
 	CameraManager::GetInstance()->Initialize();
 }
 

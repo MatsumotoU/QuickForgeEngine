@@ -6,6 +6,8 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
+#include "engine/include/assets/Script/MonoRuntimeManager.h"
+#include "engine/include/assets/Script/LuaRuntimeManager.h"
  //#include "engine/include/assets/Script/CsharpCmpiler.h"
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
@@ -28,12 +30,20 @@ void AssetManager::Initialize(DirectXCommon* dxCommon) {
 	audioSourceManager_.Initialize();
 	particleGpuDataManager_.Initialize();
 	gpuBufferPool_ = std::make_unique<GpuBufferPool>(dxCommon);
+
+	// スクリプトランタイムのグローバル初期化
+	MonoRuntimeManager::GetInstance()->Initialize();
+	LuaRuntimeManager::GetInstance()->Initialize();
 }
 
 void AssetManager::PreDraw() {
 
 }
 void AssetManager::Finalize() {
+	// スクリプトランタイムの終了処理
+	LuaRuntimeManager::GetInstance()->Finalize();
+	MonoRuntimeManager::GetInstance()->Finalize();
+
 	particleGpuDataManager_.Finalize();
 	audioSourceManager_.Finalize();
 	spriteManager_.Finalize();
@@ -147,5 +157,4 @@ ModelRenderData* AssetManager::GetModelRenderData(uint32_t modelHandle) {
 
 void AssetManager::EndFrame() {
 	textureManager_->ReleaseIntermediateResources();
-	entityManager_.EndFrame();
 }

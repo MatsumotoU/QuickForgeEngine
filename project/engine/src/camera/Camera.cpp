@@ -7,6 +7,7 @@
 #endif // QFE_OPTIMIZE_OFF
 
 #include "engine/include/assets/AssetManager.h" 
+#include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/camera/Data/CameraData.h"
@@ -14,7 +15,7 @@
 using namespace QFE;
 
 void Camera::Initialize() {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	bindEntityId_ = entityManager->CreateEntity();
 	entityManager->EmplaceComponent<Transform>(bindEntityId_);
 	entityManager->EmplaceComponent<SceneObjectData>(bindEntityId_);
@@ -78,7 +79,7 @@ Matrix4x4 Camera::GetViewMatrix() const {
 }
 
 Matrix4x4 Camera::GetPerspectiveMatrix() const {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	if (!entityManager->HasComponent<CameraData>(bindEntityId_)) {
 		return Matrix4x4::MakeIndentity4x4();
 	}
@@ -89,7 +90,7 @@ Matrix4x4 Camera::GetPerspectiveMatrix() const {
 }
 
 Matrix4x4 Camera::GetOrthographicMatrix() const {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	if (!entityManager->HasComponent<CameraData>(bindEntityId_)) {
 		return Matrix4x4::MakeIndentity4x4();
 	}
@@ -122,7 +123,7 @@ Matrix4x4 Camera::GetWorldViewProjectionMatrixOrthographic(const Matrix4x4& worl
 }
 
 Matrix4x4 Camera::GetWorldMatrix() const {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	if (!entityManager->HasComponent<Transform>(bindEntityId_)) {
 		return Matrix4x4::MakeIndentity4x4();
 	}
@@ -133,7 +134,7 @@ Matrix4x4 Camera::GetWorldMatrix() const {
 
 Vector3 Camera::GetPosition() const
 {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	Transform& transform = entityManager->GetComponent<Transform>(bindEntityId_);
 	return transform.translate;
 }

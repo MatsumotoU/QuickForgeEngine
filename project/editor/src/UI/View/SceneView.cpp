@@ -9,6 +9,7 @@
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/camera/CameraManager.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/Entity/EntityManager.h" 
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #include "engine/include/input/InputInterface.h"
@@ -98,7 +99,7 @@ void SceneView::Draw() {
 void SceneView::DebugCameraControl() {
 #ifdef QFE_OPTIMIZE_OFF
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	if (!entityManager->HasComponent<Transform>(camera.GetBindEntityId())) {
 		return;
 	}
@@ -200,14 +201,14 @@ void SceneView::DebugCameraControl() {
 void SceneView::UpdateGizmo() {
 #ifdef QFE_OPTIMIZE_OFF
 	// ImGuizmoのセットアップ
-	bool is2D = AssetManager::GetInstance()->GetEntityManager()->HasComponent<SpriteData>(selectEntityId_);
+	bool is2D = SceneManager::GetInstance()->GetEntityManager()->HasComponent<SpriteData>(selectEntityId_);
 	ImGuizmo::SetOrthographic(is2D);
 	ImGuizmo::SetDrawlist();
 
-	if (!AssetManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(selectEntityId_)) {
+	if (!SceneManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(selectEntityId_)) {
 		return;
 	}
-	Transform& transform = AssetManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(selectEntityId_);
+	Transform& transform = SceneManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(selectEntityId_);
 
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
 	Matrix4x4 view;

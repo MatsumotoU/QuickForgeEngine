@@ -3,8 +3,9 @@
 #include "engine/include/audio/AudioInterface.h"
 #include "engine/include/assets/AudioSource/AudioSourceManager.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Entity/EntityManager.h"
 
-void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
+void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState, EntityManager* entityManager) {
 	sol::table qfe = luaState->get<sol::table>("QFE");
 	sol::table input = qfe.create_named("Input");
 	sol::table audio = qfe.create_named("Audio");

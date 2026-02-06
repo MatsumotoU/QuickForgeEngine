@@ -8,11 +8,10 @@ using namespace QFE;
 
 AllSpriteResizeCommand::AllSpriteResizeCommand(EntityManager& em) : ISceneEntityCommand(em) {}
 
-void AllSpriteResizeCommand::Execute()
-{
+void AllSpriteResizeCommand::Execute() {
 	AssetManager* assetManager_ = AssetManager::GetInstance();
-	if (assetManager_->GetEntityManager()->HasComponentStrage<SpriteData>()) {
-		const auto& spriteStrage = assetManager_->GetEntityManager()->GetComponentStrage<SpriteData>();
+	if (entityManager_.HasComponentStrage<SpriteData>()) {
+		const auto& spriteStrage = entityManager_.GetComponentStrage<SpriteData>();
 		for (const auto& [entityId, sprite] : spriteStrage) {
 			Vector2 nowSize = assetManager_->GetSpriteManager()->GetSpriteSize(sprite.vertexBufferHandle);
 			if (sprite.width != nowSize.x || sprite.height != nowSize.y) {
@@ -22,7 +21,6 @@ void AllSpriteResizeCommand::Execute()
 	}
 }
 
-void AllSpriteResizeCommand::Undo()
-{
+void AllSpriteResizeCommand::Undo() {
 	/// スプライトのリサイズは元に戻せない
 }

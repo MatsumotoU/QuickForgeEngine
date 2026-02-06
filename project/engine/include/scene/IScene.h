@@ -2,8 +2,12 @@
 #include <string>
 #include <nlohmann/json.hpp>
 #include "engine/include/core/Math/Vector/Vector2.h"
+#include "engine/include/core/Entity/EntityManager.h"
 
 namespace QFE {
+
+	class LuaScriptExecutor;
+	class CsharpScriptExecutor;
 
 	class IScene {
 	public:
@@ -17,6 +21,10 @@ namespace QFE {
 		virtual void PostDraw() = 0;
 		virtual void EndFrame() = 0;
 		virtual void Finalize() = 0;
+
+		virtual EntityManager* GetEntityManager() = 0;
+		virtual LuaScriptExecutor* GetLuaScriptExecutor() = 0;
+		virtual CsharpScriptExecutor* GetCsharpScriptExecutor() = 0;
 
 		// シーンのロード、保存
 		virtual void LoadScene(const std::string& sceneName) = 0;

@@ -5,6 +5,7 @@
 
 #include "engine/include/physics/PhysicsManager.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/core/Math/Transform.h"
 
@@ -16,7 +17,7 @@ void PhysicsManager::Initialize() {
 
 /** @brief 更新 */
 void PhysicsManager::Update() {
-	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	if (!entityManager->HasComponentStrage<Force>()) {
 		return;
 	}

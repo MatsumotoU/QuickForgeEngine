@@ -1,5 +1,7 @@
 #include "editor/include/Commands/LuaScriptUpdateCommand.h"
-#include "assets/Script/LuaScriptResourceManager.h"
+#include "engine/include/scene/SceneManager.h"
+#include "engine/include/assets/Script/LuaScriptExecutor.h"
+
 using namespace QFE;
 LuaScriptUpdateCommand::LuaScriptUpdateCommand(std::vector<std::string>& consoleLog, const char* command)
 	: IEditorCommand(consoleLog, command),
@@ -9,7 +11,7 @@ void LuaScriptUpdateCommand::Execute() {
 	for (auto& alias : aliases_) {
 		if (strcmp(command_, alias.c_str()) == 0) {
 			cons_.emplace_back("Run Update All Scripts OneFrame.");
-			LuaScriptResourceManager::GetInstance()->UpdateAllScripts();
+			SceneManager::GetInstance()->GetLuaScriptExecutor()->UpdateAllScripts();
 			return;
 		}
 	}

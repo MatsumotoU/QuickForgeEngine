@@ -14,6 +14,7 @@ using namespace QFE;
  * TODO: 読み込んだデータを保持する実装が足りていない可能性が高い。
  */
 uint32_t ParticleAnimationManager::LoadAnimationData(const std::string& fileName) {
+	
 	AssetManager* assetManager = AssetManager::GetInstance();
 	// ファイルのパスを組み立て
 	std::string filePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("ParticleAnim");
