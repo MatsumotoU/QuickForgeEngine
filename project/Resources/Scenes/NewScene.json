@@ -13,9 +13,9 @@
             },
             "Transform": {
                 "rotate": [
-                    0.10000000149011612,
-                    0.0,
-                    0.0
+                    0.10388929396867752,
+                    -0.14749951660633087,
+                    -0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    0.0,
-                    1.5,
-                    -10.0
+                    1.4780811071395874,
+                    1.04862642288208,
+                    -9.94814395904541
                 ]
             }
         },
@@ -59,12 +59,14 @@
             }
         },
         {
-            "CsharpComponent": {
-                "CsharpHandles": [
-                    {
-                        "ClassName": "testA"
-                    }
-                ]
+            "BillboardComponent": {
+                "isActive": true,
+                "rotateOffset": [
+                    -1.6100000143051147,
+                    0.0,
+                    0.0
+                ],
+                "type": 1
             },
             "ModelHandle": {
                 "color": [
@@ -73,16 +75,16 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "Box1x1.obj"
+                "modelName": "whitePlane.obj"
             },
             "SceneObjectData": {
-                "name": "Box1x1.obj",
+                "name": "whitePlane.obj",
                 "tag": "Untagged",
-                "uniqueId": 3452816847
+                "uniqueId": 3452816849
             },
             "Transform": {
                 "rotate": [
-                    0.0,
+                    -1.5099999904632568,
                     0.0,
                     0.0
                 ],

@@ -18,6 +18,7 @@
 #include "engine/include/collider/Data/SphereColliderData.h"
 #include "engine/include/core/Math/ParentData.h"
 #include "engine/include/camera/Data/CameraData.h"
+#include "engine/include/camera/Data/BillboardComponent.h"
 
 #include <fstream>
 #include <execution>
@@ -122,6 +123,7 @@ void SceneObject::PreDraw() {
 	}
 
 	// WVP陦悟・譖ｴ譁ｰ
+	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<BillboardUpdateCommand>(*(GetEntityManager()), cameraManager->GetMainCameraTransform()));
 	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<WvpTransformationCommand>(*(GetEntityManager()), *cameraManager));
 	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<SpritePivotUpdateCommand>(*(GetEntityManager())));
 
@@ -653,11 +655,8 @@ void SceneObject::SerializeEntity(uint32_t entityId, nlohmann::json& entityJson)
 }
 
 void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) {
-
-
 	usedEntityId_.insert(entityId);
 
-	// 蜷・さ繝ｳ繝昴・繝阪Φ繝医・蠕ｩ蜈・
 	if (entityJson.contains("SpriteData")) {
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
@@ -677,6 +676,11 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		entityManager_.EmplaceComponent<CameraData>(entityId);
 		CameraData& cameraData = entityManager_.GetComponent<CameraData>(entityId);
 		cameraData.Deserialize(entityJson["CameraData"]);
+	}
+	if (entityJson.contains("BillboardComponent")) {
+		entityManager_.EmplaceComponent<Component::BillboardComponent>(entityId);
+		Component::BillboardComponent& billboardComponent = entityManager_.GetComponent<Component::BillboardComponent>(entityId);
+		billboardComponent.Deserialize(entityJson["BillboardComponent"]);
 	}
 	if (entityJson.contains("ModelHandle")) {
 		entityManager_.EmplaceComponent<ModelHandle>(entityId);

@@ -25,6 +25,7 @@
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
 #include "engine/include/assets/Script/CsharpScriptExecutor.h"
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
+#include "engine/include/camera/Data/BillboardComponent.h"
 
 using namespace QFE;
 
@@ -166,6 +167,20 @@ void InspectorView::Draw() {
 			ImGui::Text("This is Main Camera");
 		}
 	}
+	// Billboard
+	if (SceneManager::GetInstance()->GetEntityManager()->HasComponent<Component::BillboardComponent>(selectedEntityId_)) {
+		Component::BillboardComponent& billboardComponent = SceneManager::GetInstance()->GetEntityManager()->GetComponent<Component::BillboardComponent>(selectedEntityId_);
+		if (ImGui::CollapsingHeader("Billboard")) {
+			ImGui::Checkbox("Is Active", &billboardComponent.isActive_);
+			ImGui::DragFloat3("RotateOffset", &billboardComponent.rotateOffset_.x, 0.01f);
+			const char* billboardTypes[] = { "POINT","AXIAL" };
+			int currentType = static_cast<int>(billboardComponent.type_);
+			if (ImGui::Combo("Billboard Type", &currentType, billboardTypes, IM_ARRAYSIZE(billboardTypes))) {
+				billboardComponent.type_ = static_cast<Component::BillboardType>(currentType);
+			}
+		}
+	}
+
 	// CSスクリプト
 	if (SceneManager::GetInstance()->GetEntityManager()->HasComponent<CsharpComponent>(selectedEntityId_)) {
 		CsharpComponent& csharpComponent = SceneManager::GetInstance()->GetEntityManager()->GetComponent<CsharpComponent>(selectedEntityId_);
@@ -422,6 +437,21 @@ void InspectorView::Draw() {
 		ImGui::OpenPopup("AddComponentPopup");
 	}
 	if (ImGui::BeginPopup("AddComponentPopup")) {
+		// Utility
+		if (ImGui::BeginMenu("Utility")) {
+			if (ImGui::MenuItem("Parent")) {
+				if (!SceneManager::GetInstance()->GetEntityManager()->HasComponent<ParentData>(selectedEntityId_)) {
+					SceneManager::GetInstance()->GetEntityManager()->EmplaceComponent<ParentData>(selectedEntityId_);
+				}
+			}
+			if (ImGui::MenuItem("BillBorad")) {
+				if (!SceneManager::GetInstance()->GetEntityManager()->HasComponent<Component::BillboardComponent>(selectedEntityId_)) {
+					SceneManager::GetInstance()->GetEntityManager()->EmplaceComponent<Component::BillboardComponent>(selectedEntityId_);
+				}
+			}
+			ImGui::EndMenu();
+		}
+
 		// SphereCollider
 		if (ImGui::BeginMenu("Collider3D")) {
 			if (ImGui::MenuItem("SphereCollider")) {

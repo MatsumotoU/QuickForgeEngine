@@ -70,6 +70,17 @@ Camera& CameraManager::GetMainCamera() {
 	return cameras_[mainCameraIndex_];
 }
 
+const Transform& QFE::CameraManager::GetMainCameraTransform() const {
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+	uint32_t mainCameraEntityId = cameras_.at(mainCameraIndex_).GetBindEntityId();
+	if (entityManager->HasComponent<Transform>(mainCameraEntityId)) {
+		return entityManager->GetComponent<Transform>(mainCameraEntityId);
+	} else {
+		assert(false && "Main camera entity does not have Transform component.");
+		return Transform();
+	}
+}
+
 std::unordered_map<uint32_t, Camera>& CameraManager::GetAllCameras() {
 	return cameras_;
 }
