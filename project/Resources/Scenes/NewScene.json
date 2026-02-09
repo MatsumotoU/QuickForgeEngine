@@ -13,9 +13,9 @@
             },
             "Transform": {
                 "rotate": [
-                    0.14888925850391388,
-                    0.45000022649765015,
-                    -0.0
+                    0.10000000149011612,
+                    0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
@@ -23,9 +23,9 @@
                     1.0
                 ],
                 "translate": [
-                    -4.349662780761719,
-                    1.4999947547912598,
-                    -9.004481315612793
+                    0.0,
+                    1.5,
+                    -10.0
                 ]
             }
         },
@@ -59,6 +59,13 @@
             }
         },
         {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "testA"
+                    }
+                ]
+            },
             "ModelHandle": {
                 "color": [
                     1.0,
@@ -66,24 +73,12 @@
                     1.0,
                     1.0
                 ],
-                "modelName": "0.obj"
+                "modelName": "Box1x1.obj"
             },
             "SceneObjectData": {
-                "name": "0.obj",
+                "name": "Box1x1.obj",
                 "tag": "Untagged",
                 "uniqueId": 3452816847
-            },
-            "ScriptHandle": {
-                "scriptHandles": [
-                    {
-                        "boolParams": {},
-                        "floatParams": {},
-                        "intParams": {},
-                        "priority": 0,
-                        "scriptName": "test.lua",
-                        "stringParams": {}
-                    }
-                ]
             },
             "Transform": {
                 "rotate": [
