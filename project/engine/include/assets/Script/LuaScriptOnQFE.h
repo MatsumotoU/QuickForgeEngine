@@ -98,7 +98,6 @@ namespace QFE {
 		void SetHandle(uint32_t handle) { handle_ = handle; }
 		uint32_t GetHandle() const { return handle_; }
 
-
 	private:
 		/// QFE逕ｨ縺ｮ髢｢謨ｰ繧堤匳骭ｲ
 		void SetQFEFunctions();
