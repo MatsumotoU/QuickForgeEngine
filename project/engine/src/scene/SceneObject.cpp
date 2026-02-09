@@ -42,7 +42,12 @@
 
 using namespace QFE;
 
-SceneObject::SceneObject() {
+SceneObject::SceneObject() :
+	frameStartCommandInvoker_(1.0f),
+	updateCommandInvoker_(1.0f),
+	preDrawCommandInvoker_(1.0f),
+	drawCommandInvoker_(1.0f),
+	postDrawCommandInvoker_(1.0f) {
 	assetManager_ = nullptr;
 	isRequestedExit_ = false;
 	sceneName_ = "NewScene";
@@ -88,10 +93,10 @@ void SceneObject::Update() {
 	ColliderManager::GetInstance()->Update();
 
 	//  ワールド行列更新
-	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(GetEntityManager()), uniqueIdManager_));
-	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(GetEntityManager())));
-	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(GetEntityManager())));
-	updateCommandInvoker_.AddCommand(std::make_unique<AllSpriteResizeCommand>(*(GetEntityManager())));
+	updateCommandInvoker_.AddSystemCommand(std::make_unique<RemakeUniqeIDCommand>(*(GetEntityManager()), uniqueIdManager_));
+	updateCommandInvoker_.AddSystemCommand(std::make_unique<WorldTransformationCommand>(*(GetEntityManager())));
+	updateCommandInvoker_.AddSystemCommand(std::make_unique<ParentUpdateCommand>(*(GetEntityManager())));
+	updateCommandInvoker_.AddSystemCommand(std::make_unique<AllSpriteResizeCommand>(*(GetEntityManager())));
 
 	// 更新後コマンド実行
 	updateCommandInvoker_.ExecuteCommands();
@@ -117,8 +122,8 @@ void SceneObject::PreDraw() {
 	}
 
 	// WVP陦悟・譖ｴ譁ｰ
-	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(GetEntityManager()), *cameraManager));
-	preDrawCommandInvoker_.AddCommand(std::make_unique<SpritePivotUpdateCommand>(*(GetEntityManager())));
+	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<WvpTransformationCommand>(*(GetEntityManager()), *cameraManager));
+	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<SpritePivotUpdateCommand>(*(GetEntityManager())));
 
 	// 謠冗判蜑阪さ繝槭Φ繝牙ｮ溯｡・
 	preDrawCommandInvoker_.ExecuteCommands();
@@ -128,7 +133,7 @@ void SceneObject::Draw() {
 	// 蠖薙◆繧雁愛螳壹・謠冗判
 	ColliderManager::GetInstance()->Draw();
 
-	drawCommandInvoker_.AddCommand(std::make_unique<AllEntityRenderingCommand>(*(GetEntityManager())));
+	drawCommandInvoker_.AddSystemCommand(std::make_unique<AllEntityRenderingCommand>(*(GetEntityManager())));
 
 	// 謠冗判繧ｳ繝槭Φ繝牙ｮ溯｡・
 	drawCommandInvoker_.ExecuteCommands();
@@ -516,7 +521,7 @@ void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scri
 }
 
 void SceneObject::DeleteEntity(uint32_t entityId) {
-	frameStartCommandInvoker_.AddCommand(std::make_unique<DeleteSceneEntityCommand>(*(GetEntityManager()), entityId));
+	frameStartCommandInvoker_.AddSystemCommand(std::make_unique<DeleteSceneEntityCommand>(*(GetEntityManager()), entityId));
 }
 
 void SceneObject::CopyEntity(uint32_t sourceEntityId) {
