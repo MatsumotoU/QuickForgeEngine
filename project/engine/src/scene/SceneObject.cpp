@@ -145,7 +145,6 @@ void SceneObject::PostDraw() {
 }
 
 void SceneObject::EndFrame() {
-	luaScriptExecutor_.RemoveDeadScripts(); // 死亡したスクリプトを削除
 	if (isRequestStopScript_) {
 		if (isRunningScript_) {
 			isRunningScript_ = false;
@@ -154,6 +153,7 @@ void SceneObject::EndFrame() {
 		isRequestStopScript_ = false;
 	}
 	entityManager_.EndFrame();
+	luaScriptExecutor_.RemoveDeadScripts(); // 死亡したスクリプトを削除
 }
 
 void SceneObject::Finalize() {
