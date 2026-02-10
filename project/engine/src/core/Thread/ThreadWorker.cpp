@@ -29,3 +29,7 @@ void QFE::ThreadWorker::AddTask(const std::function<void()>& task) {
 	currentTask_ = task;
 	hasTask_ = true;
 }
+
+bool QFE::ThreadWorker::IsBusy() const {
+	return hasTask_;
+}

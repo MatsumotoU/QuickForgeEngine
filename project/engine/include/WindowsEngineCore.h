@@ -22,6 +22,7 @@
 #include "engine/include/graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Thread/ThreadPool.h"
 
 // Scene and Scripts
 #include "engine/include/scene/SceneManager.h"
@@ -92,8 +93,8 @@ namespace QFE {
 		PhysicsManager* physicsManager_;
 		ColliderManager* colliderManager_;
 		IAudioInterface* audioInterface_;
+		std::unique_ptr<ThreadPool> threadPool_;
 
-		MultiThreadTaskExecutor* multiThreadTaskExecutor_;
 		nlohmann::json configJson_;
 	};
 

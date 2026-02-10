@@ -36,6 +36,9 @@ void WindowsEngineCore::Initialize() {
 	EngineGlobalValue::windowHeight = windowHeight;
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
 
+	// スレッド立ち上げ
+	threadPool_ = std::make_unique<ThreadPool>();
+
 #ifdef QFE_OPTIMIZE_OFF
 	MyDebugLog::GetInstance()->Initialize();
 #endif // QFE_OPTIMIZE_OFF
@@ -139,13 +142,6 @@ void WindowsEngineCore::Initialize() {
 	DebugLog("======================Initialized ColliderManager======================");
 #endif // QFE_OPTIMIZE_OFF
 
-	multiThreadTaskExecutor_ = MultiThreadTaskExecutor::GetInstance();
-	multiThreadTaskExecutor_->Initialize();
-
-#ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized MultiThreadTaskExecutor======================");
-#endif // QFE_OPTIMIZE_OFF
-
 	audioInterface_ = AudioInterface::GetInstance();
 	audioInterface_->Initialize();
 
@@ -179,7 +175,6 @@ void WindowsEngineCore::MainLoop() {
 
 void WindowsEngineCore::Shutdown() {
 	audioInterface_->Finalize();
-	multiThreadTaskExecutor_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();
 	sceneManager_->Finalize();
@@ -226,5 +221,4 @@ void WindowsEngineCore::Draw() {
 
 	assetManager_->EndFrame();
 	sceneManager_->EndFrame();
-	multiThreadTaskExecutor_->FrameEnd();
 }

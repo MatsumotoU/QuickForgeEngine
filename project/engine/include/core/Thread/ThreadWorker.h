@@ -20,6 +20,9 @@ namespace QFE {
 		/// @brief タスクを追加する
 		void AddTask(const std::function<void()>& task);
 
+		/// @brief タスクが実行中かどうかを返す
+		bool IsBusy() const;
+
 	private:
 		std::thread workerThread_;
 		std::atomic<bool> isRunning_;

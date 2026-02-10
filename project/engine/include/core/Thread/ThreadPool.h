@@ -22,8 +22,13 @@ namespace QFE {
 		/// @return タスクの追加に成功したらtrueを返す
 		bool AddTask(const std::function<void()>& task);
 
+		/// @brief 空いているスレッドがあるかどうかを返す
+		bool HasIdleThread() const;
+		/// @brief スレッドの数を返す
+		size_t GetThreadCount() const;
+
 	private:
+		/// @brief ThreadWorkerのリスト
 		std::vector<std::unique_ptr<ThreadWorker>> workers_;
-		size_t nextWorkerIndex_;
 	};
 }

@@ -15,7 +15,6 @@
 #include <nlohmann/json.hpp>
 
 namespace QFE {
-
 	/**
 	 * @class SceneManager
 	 * @brief シーンの遷移、更新、描画、およびエンティティの生成・管理を行うシングルトンクラス
