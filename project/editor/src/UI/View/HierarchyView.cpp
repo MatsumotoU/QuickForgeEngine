@@ -6,12 +6,7 @@
 #include "editor/include/UI/View/HierarchyView.h"
 
 #include "engine/include/core/Bridge/EditorEngineBridge.h"
-#include "engine/include/assets/AssetManager.h"
-#include "engine/include/camera/CameraManager.h"
-#include "engine/include/core/Entity/EntityManager.h"
-#include "engine/include/scene/SceneManager.h"
 
-#include "engine/include/scene/Data/SceneObjectData.h"
 #ifdef QFE_OPTIMIZE_OFF
 #include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -30,9 +25,9 @@ HierarchyView::HierarchyView() {
 
 void HierarchyView::Initialize() {
 #ifdef QFE_OPTIMIZE_OFF
-	modelDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
-	spriteDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Image"), ".png");
-	entityDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Entities"), ".json");
+	modelDropDownFileList_.LoadFileList(EditorEngineBridge::GetModelDirectoryPath(), ".obj");
+	spriteDropDownFileList_.LoadFileList(EditorEngineBridge::GetImageDirectoryPath(), ".png");
+	entityDropDownFileList_.LoadFileList(EditorEngineBridge::GetEntityTemplateDirectoryPath(), ".json");
 #endif // _DEBUG
 }
 
@@ -129,7 +124,11 @@ void HierarchyView::DrawPopupContextWindow() {
 
 			if (ImGui::MenuItem("Camera")) {
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog("Can not Add Camera");
+				if (EditorEngineBridge::AddCameraEntity) {
+					EditorEngineBridge::AddCameraEntity();
+				} else {
+					DebugLog("Add CameraEntity function is not found.");
+				}
 #endif // _DEBUG
 			}
 
@@ -142,17 +141,20 @@ void HierarchyView::DrawPopupContextWindow() {
 
 void HierarchyView::DrawEntityList() {
 #ifdef QFE_OPTIMIZE_OFF
-	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	auto entityIds = entityManager->GetActiveEntityIds();
+	if (EditorEngineBridge::GetAllEntityIds == nullptr || EditorEngineBridge::GetEntityName == nullptr) {
+		DebugLog("GetAllEntityIds or GetEntityName function is not found.");
+		return;
+	}
+
+	auto entityIds = EditorEngineBridge::GetAllEntityIds();
 	for (uint32_t id : entityIds) {
 		bool isSelected = (selectedEntityId_ == id);
-		SceneObjectData& data = entityManager->GetComponent<SceneObjectData>(id);
-		std::string& name = data.name;
+		std::string name = EditorEngineBridge::GetEntityName(id);
 		std::string label = name + "##" + std::to_string(id);
 
 		// デバッグカメラは表示しない
 #ifdef QFE_OPTIMIZE_OFF
-		if (id == CameraManager::GetInstance()->GetCamera(0).GetBindEntityId()) {
+		if (EditorEngineBridge::GetDebugCameraEntityId && id == EditorEngineBridge::GetDebugCameraEntityId()) {
 			continue;
 		}
 #endif // _DEBUG

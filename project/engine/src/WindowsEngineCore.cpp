@@ -15,6 +15,8 @@
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
+#include "engine/include/core/Bridge/EditorEngineBridgeRegistry.h"
+
 using namespace QFE;
 
 namespace {
@@ -98,6 +100,11 @@ void WindowsEngineCore::Initialize() {
 	assetManager_ = AssetManager::GetInstance();
 	assetManager_->Initialize(directXCommon_);
 
+#ifdef QFE_OPTIMIZE_OFF
+	// エディタとエンジン間の橋渡し関数を登録
+	EditorEngineBridgeRegistry::RegisterFunctions(this);
+#endif // QFE_OPTIMIZE_OFF
+
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
 
@@ -148,61 +155,6 @@ void WindowsEngineCore::Initialize() {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized Engine======================");
 #endif // QFE_OPTIMIZE_OFF
-
-#ifdef QFE_OPTIMIZE_OFF
-	EditorEngineBridge::AddEmptyEntity = [this]() {
-		if (sceneManager_) {
-			sceneManager_->AddEmptyObject();
-		}
-		};
-	EditorEngineBridge::AddEntityFromFile = [this](const std::string& filePath) {
-		if (sceneManager_) {
-			sceneManager_->AddEntity(filePath);
-		}
-		};
-	EditorEngineBridge::AddModelEntity = [this](const std::string& modelPath) {
-		if (sceneManager_) {
-			sceneManager_->AddModel(modelPath);
-		}
-		};
-	EditorEngineBridge::AddSpriteEntity = [this](const std::string& spritePath) {
-		if (sceneManager_) {
-			sceneManager_->AddSprite(spritePath);
-		}
-		};
-	EditorEngineBridge::AddParticleEmitterEntity = [this](const std::string& particlePath, uint32_t count) {
-		if (sceneManager_) {
-			sceneManager_->AddParticleEmitter(particlePath, count);
-		}
-		};
-	EditorEngineBridge::AddCameraEntity = [this]() {
-		// カメラの機能がシングルトンであるため、複数カメラにすると不具合が起きる可能性があるため一時的に制限
-		DebugLog("Can not add Camera.");
-		};
-	EditorEngineBridge::CopyEntity = [this](uint32_t entityId) {
-		if (sceneManager_) {
-			sceneManager_->CopyEntity(entityId);
-		}
-		};
-	EditorEngineBridge::SaveEntity = [this](uint32_t entityId, std::string filePath) {
-		if (sceneManager_) {
-			sceneManager_->SaveEntity(entityId, filePath);
-		}
-		};
-	EditorEngineBridge::DeleteEntity = [this](uint32_t entityId) {
-		if (sceneManager_) {
-			sceneManager_->DeleteEntity(entityId);
-		}
-		};
-	EditorEngineBridge::ParentChild = [this](uint32_t parentId, uint32_t childId) {
-		if (sceneManager_) {
-			sceneManager_->ParentChild(parentId, childId);
-		}
-		};
-
-	// 登録漏れのチェック
-	editorEngineBridge_.CheckFunctionRegistration();
-#endif // QFE_OPTIMIZE_OFF
 }
 
 
@@ -229,7 +181,7 @@ void WindowsEngineCore::MainLoop() {
 
 
 void WindowsEngineCore::Shutdown() {
-	editorEngineBridge_.ClearFunctionRegistration();
+	EditorEngineBridgeRegistry::ClearFunctions();
 
 	audioInterface_->Finalize();
 	colliderManager_->Finalize();

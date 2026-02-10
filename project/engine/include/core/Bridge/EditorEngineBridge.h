@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 #include <string>
+#include <vector>
+#include <cstdint>
 
 namespace QFE {
 	/// @brief エディタとエンジン間の橋渡しを行うクラス
@@ -15,6 +17,15 @@ namespace QFE {
 		EditorEngineBridge& operator=(EditorEngineBridge&&) = delete;
 
 		// * エディタ側への機能の提供 * //
+		// ディレクトリ取得
+		static std::function<std::string()> GetModelDirectoryPath;
+		static std::function<std::string()> GetImageDirectoryPath;
+		static std::function<std::string()> GetEntityTemplateDirectoryPath;
+
+		// 現在のシーン情報を取得する関数群
+		static std::function<std::vector<uint32_t>()> GetAllEntityIds;
+		static std::function<std::string(uint32_t)> GetEntityName;
+		
 		// シーンにエンティティを追加する関数群
 		static std::function<void()> AddEmptyEntity;
 		static std::function<void(const std::string&)> AddEntityFromFile;
@@ -28,9 +39,7 @@ namespace QFE {
 		static std::function<void(uint32_t)> DeleteEntity;
 		static std::function<void(uint32_t, uint32_t)> ParentChild;
 
-		/// @brief 関数の登録を確認する
-		void CheckFunctionRegistration();
-		/// @brief 関数の登録を解除する
-		void ClearFunctionRegistration();
+		// デバッグ用の関数群
+		static std::function<uint32_t()> GetDebugCameraEntityId;
 	};
 }

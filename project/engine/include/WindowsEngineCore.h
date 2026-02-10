@@ -68,6 +68,11 @@ namespace QFE {
 		 */
 		void Shutdown() override;
 
+		/// @brief シーンマネージャーの取得
+		SceneManager* GetSceneManager() const { return sceneManager_; }
+		/// @brief アセットマネージャーの取得
+		AssetManager* GetAssetManager() const { return assetManager_; }
+
 	private:
 		void Update();
 		void Draw();

@@ -4,60 +4,25 @@
 #endif //  QFE_OPTIMIZE_OFF
 
 namespace QFE {
+	// * エディタ側への機能の提供 * //
+	// ディレクトリ取得
+	std::function<std::string()> EditorEngineBridge::GetModelDirectoryPath = nullptr;
+	std::function<std::string()> EditorEngineBridge::GetImageDirectoryPath = nullptr;
+	std::function<std::string()> EditorEngineBridge::GetEntityTemplateDirectoryPath = nullptr;
+	// 現在のシーン情報を取得する関数群
+	std::function<std::vector<uint32_t>()> EditorEngineBridge::GetAllEntityIds = nullptr;
+	std::function<std::string(uint32_t)> EditorEngineBridge::GetEntityName = nullptr;
+	// シーンにエンティティを追加する関数群
 	std::function<void(void)> EditorEngineBridge::AddEmptyEntity = nullptr;
 	std::function<void(const std::string&)> EditorEngineBridge::AddEntityFromFile = nullptr;
 	std::function<void(const std::string&)> EditorEngineBridge::AddModelEntity = nullptr;
 	std::function<void(const std::string&)> EditorEngineBridge::AddSpriteEntity = nullptr;
-	std::function<void(const std::string&, unsigned int)> EditorEngineBridge::AddParticleEmitterEntity = nullptr;
+	std::function<void(const std::string&, uint32_t)> EditorEngineBridge::AddParticleEmitterEntity = nullptr;
 	std::function<void(void)> EditorEngineBridge::AddCameraEntity = nullptr;
-	std::function<void(unsigned int)> EditorEngineBridge::CopyEntity = nullptr;
-	std::function<void(unsigned int, std::string)> EditorEngineBridge::SaveEntity = nullptr;
-	std::function<void(unsigned int)> EditorEngineBridge::DeleteEntity = nullptr;
-	std::function<void(unsigned int, unsigned int)> EditorEngineBridge::ParentChild = nullptr;
-}
-
-void QFE::EditorEngineBridge::CheckFunctionRegistration() {
-	if (!AddEmptyEntity) {
-		DebugLog("EditorEngineBridge::AddEmptyEntity is not registered.");
-	}
-	if (!AddEntityFromFile) {
-		DebugLog("EditorEngineBridge::AddEntityFromFile is not registered.");
-	}
-	if (!AddModelEntity) {
-		DebugLog("EditorEngineBridge::AddModelEntity is not registered.");
-	}
-	if (!AddSpriteEntity) {
-		DebugLog("EditorEngineBridge::AddSpriteEntity is not registered.");
-	}
-	if (!AddParticleEmitterEntity) {
-		DebugLog("EditorEngineBridge::AddParticleEmitterEntity is not registered.");
-	}
-	if (!AddCameraEntity) {
-		DebugLog("EditorEngineBridge::AddCameraEntity is not registered.");
-	}
-	if (!CopyEntity) {
-		DebugLog("EditorEngineBridge::CopyEntity is not registered.");
-	}
-	if (!SaveEntity) {
-		DebugLog("EditorEngineBridge::SaveEntity is not registered.");
-	}
-	if (!DeleteEntity) {
-		DebugLog("EditorEngineBridge::DeleteEntity is not registered.");
-	}
-	if (!ParentChild) {
-		DebugLog("EditorEngineBridge::ParentChild is not registered.");
-	}
-}
-
-void QFE::EditorEngineBridge::ClearFunctionRegistration() {
-	AddEmptyEntity = nullptr;
-	AddEntityFromFile = nullptr;
-	AddModelEntity = nullptr;
-	AddSpriteEntity = nullptr;
-	AddParticleEmitterEntity = nullptr;
-	AddCameraEntity = nullptr;
-	CopyEntity = nullptr;
-	SaveEntity = nullptr;
-	DeleteEntity = nullptr;
-	ParentChild = nullptr;
+	std::function<void(uint32_t)> EditorEngineBridge::CopyEntity = nullptr;
+	std::function<void(uint32_t, std::string)> EditorEngineBridge::SaveEntity = nullptr;
+	std::function<void(uint32_t)> EditorEngineBridge::DeleteEntity = nullptr;
+	std::function<void(uint32_t, uint32_t)> EditorEngineBridge::ParentChild = nullptr;
+	// デバッグ用の関数群
+	std::function<uint32_t()> EditorEngineBridge::GetDebugCameraEntityId = nullptr;
 }
