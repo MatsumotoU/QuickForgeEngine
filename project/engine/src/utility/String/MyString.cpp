@@ -7,13 +7,10 @@
 #include <winrt/base.h>
 
 namespace QFE {
-
-	/** @brief ログ出力関数 */
 	void Log(const std::string& message) {
 		OutputDebugStringA(message.c_str());
 	}
 
-	/** @brief stringからwstringに変換 */
 	std::wstring ConvertString(const std::string& str) {
 		if (str.empty()) {
 			return std::wstring();
@@ -28,7 +25,6 @@ namespace QFE {
 		return result;
 	}
 
-	/** @brief wstringからstringに変換 */
 	std::string ConvertString(const std::wstring& str) {
 		if (str.empty()) {
 			return std::string();
@@ -43,18 +39,11 @@ namespace QFE {
 		return result;
 	}
 
-	/**
-	 * @brief std::stringを書き換え可能な char* に変換する
-	 * TODO: 呼び出し側で delete[] buffer が必須。スマートポインタや std::vector<char> への移行を検討。
-	 */
-	char* StringToCharPtr(const std::string& str) {
-		if (str.empty()) {
-			return nullptr;
-		}
-		// ヌル終端を含めたバッファを確保
-		char* buffer = new char[str.size() + 1];
-		std::memcpy(buffer, str.c_str(), str.size() + 1); // ヌル終端もコピー
-		return buffer;
+	std::vector<char> StringToCharVector(const std::string& str)
+	{
+		std::vector<char> charVector(str.begin(), str.end());
+		charVector.push_back('\0'); // ヌル終端を追加
+		return charVector;
 	}
 
 	bool IsUnorderedPairEqual(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2) {

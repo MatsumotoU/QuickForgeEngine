@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdint>
 namespace QFE {
+	/// @brief スパースセットコンテナ
 	template<typename T>
 	class SparseSet {
 	public:

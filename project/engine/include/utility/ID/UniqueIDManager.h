@@ -3,6 +3,7 @@
 #include <set>
 
 namespace QFE {
+	/// @brief ユニークIDマネージャー
 	class ListUniqueIDManager {
 	public:
 		void Reset();

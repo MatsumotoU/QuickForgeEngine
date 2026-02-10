@@ -188,7 +188,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 #endif // QFE_OPTIMIZE_OFF
 
 	// 陷ｷ蠕個ｧ騾包ｽｻ陷剃ｸ翫Ψ郢ｧ・｡郢ｧ・､郢晢ｽｫ郢ｧ螳夲ｽｪ・ｭ邵ｺ・ｿ髴趣ｽｼ邵ｺ・ｾ邵ｺ・ｪ邵ｺ繝ｻ
-	int32_t fileIndex = filePathLiblary_.GetLiblaryIndex(filePath);
+	int32_t fileIndex = filePathLiblary_.GetLibraryIndex(filePath);
 	if (fileIndex >= 0) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(ConvertString(std::format(L"TextureManager: LoadedTheSameFile->return {}", fileIndex)));
@@ -215,7 +215,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width, metadata.height, textureHandle_ - 1)));
 #endif // QFE_OPTIMIZE_OFF
-	filePathLiblary_.AddStringToLiblary(filePath);
+	filePathLiblary_.AddStringToLibrary(filePath);
 	return textureHandle_ - 1;
 }
 

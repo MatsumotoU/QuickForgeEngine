@@ -6,46 +6,29 @@
 #include <unordered_map>
 
 namespace QFE {
-
+	/// @brief 文字列を管理する辞書クラス
 	class StringLibrary {
 	public:
 		StringLibrary();
 		~StringLibrary();
 
 	public:
-		/// <summary>
-		/// 辞書をE期化しまぁE
-		/// </summary>
+		/// @brief 辞書を特定の名前を付けて初期化します
 		void Init(const std::string& libraryFriendName);
 
 	public:
-		/// <summary>
-		/// 辞書に斁EEを登録しまぁE
-		/// </summary>
-		/// <param name="string"></param>
-		void AddStringToLiblary(const std::string& string);
-		/// <summary>
-		/// 斁EEが辞書冁EあるかどぁE判定しまぁE
-		/// </summary>
-		/// <param name="string"></param>
-		/// <returns></returns>
+		/// @brief 文字列を辞書に追加します
+		void AddStringToLibrary(const std::string& string);
+		/// @brief 文字列が辞書に存在するか探します
 		bool FindString(const std::string& string);
-		/// <summary>
-		/// 持EE斁EEを辞書から探して辞書の添え字を返します。無ぁE合E-1を返しまぁE
-		/// </summary>
-		/// <param name="string"></param>
-		/// <returns></returns>
-		int32_t GetLiblaryIndex(const std::string& string);
-		/// <summary>
-		/// チEEタの登録名をインチEクスから探しまぁE
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		std::string GetDatanameFromIndex(uint32_t index);
+		/// @brief 文字列のインデックスを取得します
+		int32_t GetLibraryIndex(const std::string& string);
+		/// @brief インデックスから文字列を取得します
+		std::string GetNameFromIndex(uint32_t index);
 
 	private:
-		std::string liblaryFriendryName_;
-		std::vector<std::string> liblary_;
+		std::string libraryFriendryName_;
+		std::vector<std::string> library_;
 	};
 
 }

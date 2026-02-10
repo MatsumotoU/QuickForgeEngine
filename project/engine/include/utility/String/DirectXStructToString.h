@@ -5,10 +5,9 @@
 
 namespace QFE {
 	namespace DirectXStructToString {
-		/// <summary>
-		/// RootParameterやDescriptorRangeの冁E��を文字�Eに変換します、E
-		/// </summary>
+		/// @brief D3D12_ROOT_PARAMETERを文字列に変換します。
 		std::string ToString(const D3D12_ROOT_PARAMETER& rootParameter);
+		/// @brief D3D12_DESCRIPTOR_RANGEを文字列に変換します。
 		std::string ToString(const D3D12_DESCRIPTOR_RANGE& descriptorRange);
 	}
 }
