@@ -7,6 +7,7 @@
 #include "RemakeUniqeIDCommand.h"
 #include "WvpTransformationCommand.h"
 #include "SpritePivotUpdateCommand.h"
+#include "BillboardUpdateCommand.h"
 
 #include "AllEntityRenderingCommand.h"
 #include "DeleteSceneEntityCommand.h"

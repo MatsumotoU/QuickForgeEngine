@@ -1,5 +1,5 @@
 #pragma once 
-#define BUILD_COMMIT "84bf6f7f" 
-#define BUILD_BRANCH "sceneObjOnEntityManager" 
-#define BUILD_DATE "2026/02/06" 
-#define BUILD_TIME "15:26:19.49" 
+#define BUILD_COMMIT "47663154" 
+#define BUILD_BRANCH "develop" 
+#define BUILD_DATE "2026/02/10" 
+#define BUILD_TIME "17:04:30.56" 

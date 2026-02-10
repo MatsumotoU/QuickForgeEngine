@@ -100,16 +100,46 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 		(const void*)CsharpOnQFELinker::GetDeltaTime);
 
 	// Input関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.Input::GetKeyMoveDir", 
+		(const void*)CsharpOnQFELinker::GetKeyMoveDir);
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyTrigger", 
 		(const void*)CsharpOnQFELinker::IsKeyTrigger);
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyPress", 
 		(const void*)CsharpOnQFELinker::IsKeyPress);
 	mono_add_internal_call("QuickForgeEngine.Input::GetKeyRelease", 
 		(const void*)CsharpOnQFELinker::IsKeyRelease);
+	mono_add_internal_call("QuickForgeEngine.Input::GetMousePress", 
+		(const void*)CsharpOnQFELinker::GetMousePress);
+	mono_add_internal_call("QuickForgeEngine.Input::GetMouseTrigger", 
+		(const void*)CsharpOnQFELinker::GetMouseTrigger);
+	mono_add_internal_call("QuickForgeEngine.Input::GetMouseRelease", 
+		(const void*)CsharpOnQFELinker::GetMouseRelease);
+	mono_add_internal_call("QuickForgeEngine.Input::GetMouseScreenPos", 
+		(const void*)CsharpOnQFELinker::GetMouseScreenPos);
+	mono_add_internal_call("QuickForgeEngine.Input::GetMouseMoveDir", 
+		(const void*)CsharpOnQFELinker::GetMouseMoveDir);
+	mono_add_internal_call("QuickForgeEngine.Input::GetMouseWheelDir", 
+		(const void*)CsharpOnQFELinker::GetMouseWheelDir);
+
+	// Scene関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.SceneManager::LoadScene", 
+		(const void*)CsharpOnQFELinker::LoadScene);
+
+	// Audio関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.Audio::LoadSound", 
+		(const void*)CsharpOnQFELinker::LoadSound);
+	mono_add_internal_call("QuickForgeEngine.Audio::PlaySound", 
+		(const void*)CsharpOnQFELinker::PlayQFESound);
+	mono_add_internal_call("QuickForgeEngine.Audio::StopSound", 
+		(const void*)CsharpOnQFELinker::StopSound);
 
 	// Entity関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Entity::Create", 
 		(const void*)CsharpOnQFELinker::CreateEntity);
+    mono_add_internal_call("QuickForgeEngine.Entity::ChangeModel", 
+		(const void*)CsharpOnQFELinker::ChangeModel);
+    mono_add_internal_call("QuickForgeEngine.Entity::ChangeMesh", 
+		(const void*)CsharpOnQFELinker::ChangeMesh);
 
 	// Transform関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", 

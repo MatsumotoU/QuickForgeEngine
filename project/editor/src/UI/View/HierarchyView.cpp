@@ -5,10 +5,8 @@
 
 #include "editor/include/UI/View/HierarchyView.h"
 
-#include "engine/include/assets/AssetManager.h"
-#include "engine/include/camera/CameraManager.h"
-#include "engine/include/scene/SceneManager.h"
-#include "engine/include/scene/Data/SceneObjectData.h"
+#include "engine/include/core/Bridge/EditorEngineBridge.h"
+
 #ifdef QFE_OPTIMIZE_OFF
 #include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -27,9 +25,9 @@ HierarchyView::HierarchyView() {
 
 void HierarchyView::Initialize() {
 #ifdef QFE_OPTIMIZE_OFF
-	modelDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Model"), ".obj");
-	spriteDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Image"), ".png");
-	entityDropDownFileList_.LoadFileList(AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Entities"), ".json");
+	modelDropDownFileList_.LoadFileList(EditorEngineBridge::GetModelDirectoryPath(), ".obj");
+	spriteDropDownFileList_.LoadFileList(EditorEngineBridge::GetImageDirectoryPath(), ".png");
+	entityDropDownFileList_.LoadFileList(EditorEngineBridge::GetEntityTemplateDirectoryPath(), ".json");
 #endif // _DEBUG
 }
 
@@ -63,14 +61,22 @@ void HierarchyView::DrawPopupContextWindow() {
 
 		if (ImGui::BeginMenu("Add")) {
 			if (ImGui::MenuItem("Empty Entity")) {
-				SceneManager::GetInstance()->AddEmptyObject();
+				if (EditorEngineBridge::AddEmptyEntity) {
+					EditorEngineBridge::AddEmptyEntity();
+				} else {
+					DebugLog("Add EmptyEntity function is not found.");
+				}
 			}
 
 			if (ImGui::BeginMenu("Entity")) {
 				entityDropDownFileList_.DrawMenuItem();
 				std::string selectedEntityFileName_;
 				if (entityDropDownFileList_.GetSelectedFileName(selectedEntityFileName_)) {
-					SceneManager::GetInstance()->AddEntity(selectedEntityFileName_);
+					if (EditorEngineBridge::AddEntityFromFile) {
+						EditorEngineBridge::AddEntityFromFile(selectedEntityFileName_);
+					} else {
+						DebugLog("Add EntityFromFile function is not found.");
+					}
 				}
 				ImGui::EndMenu();
 			}
@@ -79,7 +85,11 @@ void HierarchyView::DrawPopupContextWindow() {
 				modelDropDownFileList_.DrawMenuItem();
 				std::string selectedModelFileName_;
 				if (modelDropDownFileList_.GetSelectedFileName(selectedModelFileName_)) {
-					SceneManager::GetInstance()->AddModel(selectedModelFileName_);
+					if (EditorEngineBridge::AddModelEntity) {
+						EditorEngineBridge::AddModelEntity(selectedModelFileName_);
+					} else {
+						DebugLog("Add ModelEntity function is not found.");
+					}
 				}
 				ImGui::EndMenu();
 			}
@@ -88,25 +98,37 @@ void HierarchyView::DrawPopupContextWindow() {
 				spriteDropDownFileList_.DrawMenuItem();
 				std::string selectedSpriteFileName_;
 				if (spriteDropDownFileList_.GetSelectedFileName(selectedSpriteFileName_)) {
-					SceneManager::GetInstance()->AddSprite(selectedSpriteFileName_);
+					if (EditorEngineBridge::AddSpriteEntity) {
+						EditorEngineBridge::AddSpriteEntity(selectedSpriteFileName_);
+					} else {
+						DebugLog("Add SpriteEntity function is not found.");
+					}
 				}
 				ImGui::EndMenu();
 			}
-
+			
 			if (ImGui::BeginMenu("Particle Emitter")) {
 				ImGui::DragInt("Particle Count", &particleCount_);
 				ImGui::Separator();
 				modelDropDownFileList_.DrawMenuItem();
 				std::string selectedModelFileName_;
 				if (modelDropDownFileList_.GetSelectedFileName(selectedModelFileName_)) {
-					SceneManager::GetInstance()->AddParticleEmitter(selectedModelFileName_, static_cast<uint32_t> (particleCount_));
+					if (EditorEngineBridge::AddParticleEmitterEntity) {
+						EditorEngineBridge::AddParticleEmitterEntity(selectedModelFileName_, static_cast<uint32_t>(particleCount_));
+					} else {
+						DebugLog("Add ParticleEmitterEntity function is not found.");
+					}
 				}
 				ImGui::EndMenu();
 			}
 
 			if (ImGui::MenuItem("Camera")) {
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog("Can not Add Camera");
+				if (EditorEngineBridge::AddCameraEntity) {
+					EditorEngineBridge::AddCameraEntity();
+				} else {
+					DebugLog("Add CameraEntity function is not found.");
+				}
 #endif // _DEBUG
 			}
 
@@ -119,17 +141,20 @@ void HierarchyView::DrawPopupContextWindow() {
 
 void HierarchyView::DrawEntityList() {
 #ifdef QFE_OPTIMIZE_OFF
-	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	auto entityIds = entityManager->GetActiveEntityIds();
+	if (EditorEngineBridge::GetAllEntityIds == nullptr || EditorEngineBridge::GetEntityName == nullptr) {
+		DebugLog("GetAllEntityIds or GetEntityName function is not found.");
+		return;
+	}
+
+	auto entityIds = EditorEngineBridge::GetAllEntityIds();
 	for (uint32_t id : entityIds) {
 		bool isSelected = (selectedEntityId_ == id);
-		SceneObjectData& data = entityManager->GetComponent<SceneObjectData>(id);
-		std::string& name = data.name;
+		std::string name = EditorEngineBridge::GetEntityName(id);
 		std::string label = name + "##" + std::to_string(id);
 
 		// デバッグカメラは表示しない
 #ifdef QFE_OPTIMIZE_OFF
-		if (id == CameraManager::GetInstance()->GetCamera(0).GetBindEntityId()) {
+		if (EditorEngineBridge::GetDebugCameraEntityId && id == EditorEngineBridge::GetDebugCameraEntityId()) {
 			continue;
 		}
 #endif // _DEBUG
@@ -152,7 +177,11 @@ void HierarchyView::DrawEntityList() {
 				uint32_t draggedId = *(const uint32_t*)payload->Data;
 				if (draggedId != id) {
 					// 親子関係を設定
-					SceneManager::GetInstance()->ParentChild(id, draggedId);
+					if (EditorEngineBridge::ParentChild) {
+						EditorEngineBridge::ParentChild(id, draggedId);
+					} else {
+						DebugLog("ParentChild function is not found.");
+					}
 				}
 			}
 			ImGui::EndDragDropTarget();
@@ -165,15 +194,27 @@ void HierarchyView::DrawEntityList() {
 				ImGui::OpenPopup("Rename Entity");
 			}
 			if (ImGui::MenuItem("Copy")) {
-				SceneManager::GetInstance()->CopyEntity(id);
+				if (EditorEngineBridge::CopyEntity) {
+					EditorEngineBridge::CopyEntity(id);
+				} else {
+					DebugLog("Copy Entity function is not found.");
+				}
 			}
 			if (ImGui::MenuItem("Save")) {
 				// 保存処理
-				SceneManager::GetInstance()->SaveEntity(id, name);
+				if (EditorEngineBridge::SaveEntity) {
+					EditorEngineBridge::SaveEntity(id, name);
+				} else {
+					DebugLog("Save Entity function is not found.");
+				}
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("Delete")) {
-				SceneManager::GetInstance()->DeleteEntity(id);
+				if (EditorEngineBridge::DeleteEntity) {
+					EditorEngineBridge::DeleteEntity(id);
+				} else {
+					DebugLog("Delete Entity function is not found.");
+				}
 
 				// 選んでいるEntityが消された場合、選択解除
 				if (selectedEntityId_ == id) {

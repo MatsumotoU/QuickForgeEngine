@@ -28,11 +28,27 @@ LuaScriptOnQFE::LuaScriptOnQFE(EntityManager* entityManager, LuaScriptExecutor* 
 	entityManager_ = entityManager;
 	luaScriptExecutor_ = luaScriptExecutor;
 	luaState_ = nullptr;
+	handle_ = 0;
 }
 
-void QFE::LuaScriptOnQFE::Initialize(sol::state* state, const std::string& scriptPath, uint32_t bindId) {
+LuaScriptOnQFE::~LuaScriptOnQFE() {
+	if (luaState_) {
+		try {
+			// Unregister update function
+			(*luaState_)["QFE_Internal"]["UnregisterUpdate"](handle_);
+		}
+		catch (const sol::error& e) {
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog(std::string("Lua Error in ~LuaScriptOnQFE: ") + e.what(), LogLevel::Error);
+#endif
+		}
+	}
+}
+
+void QFE::LuaScriptOnQFE::Initialize(sol::state* state, const std::string& scriptPath, uint32_t bindId, uint32_t handle) {
 	luaState_ = state;
 	bindEntityId_ = bindId;
+	handle_ = handle;
 	// スクリプト名をパスから抽出
 	size_t lastSlash = scriptPath.find_last_of("/\\");
 	std::string scriptName = (lastSlash == std::string::npos) ? scriptPath : scriptPath.substr(lastSlash + 1);
@@ -42,7 +58,7 @@ void QFE::LuaScriptOnQFE::Initialize(sol::state* state, const std::string& scrip
 void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 	isCanRun_ = false;
 	try {
-		// 1. 迺ｰ蠅・畑繝・・繝悶Ν繧剃ｽ懈・縺励€√Γ繧ｿ繝・・繝悶Ν繧偵そ繝・ヨ
+		// 1. 小部屋に環境を作成
 		sol::table env_table = luaState_->create_table();
 		sol::table mt = luaState_->create_table();
 		mt["__index"] = [this](sol::table t, sol::object key) -> sol::object {
@@ -67,17 +83,13 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 					}
 				}
 			}
-			// 迺ｰ蠅・・繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ・医げ繝ｭ繝ｼ繝舌Ν縺ｪ縺ｩ・峨ｒ繝√ぉ繝・け
 			return luaState_->globals()[key];
 			};
-		// sol::table::set_metatable 縺後↑縺・商縺・ヰ繝ｼ繧ｸ繝ｧ繝ｳ蜷代￠縺ｮ莠呈鋤險俶ｳ・
+
 		env_table[sol::metatable_key] = mt;
 
-		// 2. 菴懈・縺励◆繝・・繝悶Ν縺九ｉ迺ｰ蠅・ｒ蛻晄悄蛹・
-
+		// 2. 
 		environment_ = sol::environment(luaState_->lua_state(), env_table);
-		// 迺ｰ蠅・・隕ｪ縺ｨ縺励※globals繧定ｨｭ螳夲ｼ・lobals縺九ｉ蛟､繧貞叙蠕励〒縺阪ｋ繧医≧縺ｫ縺吶ｋ・・
-		// 縺溘□縺励€√Γ繧ｿ繝・・繝悶Ν縺ｮ__index縺ｧ謇句虚繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ縺励※縺・ｋ縺ｮ縺ｧ螳溯ｳｪ逧・↓縺ｯmt邨檎罰縺ｧ繧｢繧ｯ繧ｻ繧ｹ縺輔ｌ繧・
 
 		std::string filePath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts") + scriptName;
 		sol::load_result loadResult = luaState_->load_file(filePath);
@@ -89,7 +101,6 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 
 		SetQFEFunctions();
 
-		// 繧ｹ繧ｯ繝ｪ繝励ヨ繧貞ｮ溯｡鯉ｼ育腸蠅・ｒ謖・ｮ夲ｼ・
 		sol::function scriptFunc = loadResult;
 		sol::set_environment(environment_, scriptFunc);
 
@@ -102,13 +113,13 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 		isCanRun_ = true;
 		scriptName_ = scriptName;
 
-		// 繧ｭ繝｣繝・す繝･縺吶ｋ髢｢謨ｰ繧貞叙蠕・
+
 		initFunc_ = environment_["Init"];
 		updateFunc_ = environment_["Update"];
 		onCollisionEnterFunc_ = environment_["OnCollisionEnter"];
 		onCollisionStayFunc_ = environment_["OnCollisionStay"];
 
-		// Lua蛛ｴ縺ｮ繝ｬ繧ｸ繧ｹ繝医Μ縺ｫ逋ｻ骭ｲ
+
 		if (updateFunc_.valid()) {
 			(*luaState_)["QFE_Internal"]["RegisterUpdate"](handle_, updateFunc_, priority_);
 		}

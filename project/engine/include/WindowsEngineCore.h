@@ -22,6 +22,7 @@
 #include "engine/include/graphic/PostEffect/OffScreen/OffScreenResourceManager.h"
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Thread/ThreadPool.h"
 
 // Scene and Scripts
 #include "engine/include/scene/SceneManager.h"
@@ -32,6 +33,9 @@
 #include "engine/include/physics/PhysicsManager.h"
 #include "engine/include/collider/ColliderManager.h"
 #include "engine/include/utility/MultiThreadTaskExecutor.h"
+
+// Interface
+#include "engine/include/core/Bridge/EditorEngineBridge.h"
 
 namespace QFE {
 
@@ -64,6 +68,11 @@ namespace QFE {
 		 */
 		void Shutdown() override;
 
+		/// @brief シーンマネージャーの取得
+		SceneManager* GetSceneManager() const { return sceneManager_; }
+		/// @brief アセットマネージャーの取得
+		AssetManager* GetAssetManager() const { return assetManager_; }
+
 	private:
 		void Update();
 		void Draw();
@@ -92,9 +101,11 @@ namespace QFE {
 		PhysicsManager* physicsManager_;
 		ColliderManager* colliderManager_;
 		IAudioInterface* audioInterface_;
+		std::unique_ptr<ThreadPool> threadPool_;
 
-		MultiThreadTaskExecutor* multiThreadTaskExecutor_;
 		nlohmann::json configJson_;
+
+		EditorEngineBridge editorEngineBridge_;
 	};
 
 }

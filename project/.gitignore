@@ -5,9 +5,16 @@ externals/Mono/include/
 externals/Mono/lib/
 
 # Build artifacts and general IDE files
+[Dd]ebug/
+[Rr]elease/
+!externals/assimp/lib/Debug/
+!externals/assimp/lib/Release/
+
 .vs/
+.vscode/
 *.sln
 *.vcxproj
+*.csproj
 *.filters
 *.user
 ../generated/

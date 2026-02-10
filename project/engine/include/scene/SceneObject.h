@@ -1,5 +1,6 @@
 #pragma once
 #include "IScene.h"
+#include "engine/include/core/Thread/PriorityTaskDispatcher.h"
 #include "Engine/include/scene/SceneCommand/SceneEntityCommandInvoker.h"
 #include "engine/include/utility/ID/UniqueIDManager.h"
 #include "engine/include/assets/Script/LuaScriptExecutor.h"
@@ -65,7 +66,7 @@ namespace QFE {
 
 		// シーンにあるオブジェクトの情報を取得
 		uint32_t GetEntityByName(const std::string& entityName) const override;
-		uint32_t GetEntityByUniqeID(uint32_t uniqueId) const override;
+		uint32_t GetEntityByUniqueID(uint32_t uniqueId) const override;
 		bool IsRunningScript() const override { return isRunningScript_; }
 
 		EntityManager* GetEntityManager() override { return &entityManager_; }

@@ -15,6 +15,8 @@
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
+#include "engine/include/core/Bridge/EditorEngineBridgeRegistry.h"
+
 using namespace QFE;
 
 namespace {
@@ -35,6 +37,9 @@ void WindowsEngineCore::Initialize() {
 	EngineGlobalValue::windowWidth = windowWidth;
 	EngineGlobalValue::windowHeight = windowHeight;
 	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
+
+	// スレッド立ち上げ
+	threadPool_ = std::make_unique<ThreadPool>();
 
 #ifdef QFE_OPTIMIZE_OFF
 	MyDebugLog::GetInstance()->Initialize();
@@ -95,6 +100,11 @@ void WindowsEngineCore::Initialize() {
 	assetManager_ = AssetManager::GetInstance();
 	assetManager_->Initialize(directXCommon_);
 
+#ifdef QFE_OPTIMIZE_OFF
+	// エディタとエンジン間の橋渡し関数を登録
+	EditorEngineBridgeRegistry::RegisterFunctions(this);
+#endif // QFE_OPTIMIZE_OFF
+
 	editor_ = std::make_unique<OnWindowsEditor>();
 	editor_->Initialize();
 
@@ -139,13 +149,6 @@ void WindowsEngineCore::Initialize() {
 	DebugLog("======================Initialized ColliderManager======================");
 #endif // QFE_OPTIMIZE_OFF
 
-	multiThreadTaskExecutor_ = MultiThreadTaskExecutor::GetInstance();
-	multiThreadTaskExecutor_->Initialize();
-
-#ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized MultiThreadTaskExecutor======================");
-#endif // QFE_OPTIMIZE_OFF
-
 	audioInterface_ = AudioInterface::GetInstance();
 	audioInterface_->Initialize();
 
@@ -178,8 +181,9 @@ void WindowsEngineCore::MainLoop() {
 
 
 void WindowsEngineCore::Shutdown() {
+	EditorEngineBridgeRegistry::ClearFunctions();
+
 	audioInterface_->Finalize();
-	multiThreadTaskExecutor_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();
 	sceneManager_->Finalize();
@@ -226,5 +230,4 @@ void WindowsEngineCore::Draw() {
 
 	assetManager_->EndFrame();
 	sceneManager_->EndFrame();
-	multiThreadTaskExecutor_->FrameEnd();
 }

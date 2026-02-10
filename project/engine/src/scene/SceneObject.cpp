@@ -18,6 +18,7 @@
 #include "engine/include/collider/Data/SphereColliderData.h"
 #include "engine/include/core/Math/ParentData.h"
 #include "engine/include/camera/Data/CameraData.h"
+#include "engine/include/camera/Data/BillboardComponent.h"
 
 #include <fstream>
 #include <execution>
@@ -42,7 +43,12 @@
 
 using namespace QFE;
 
-SceneObject::SceneObject() {
+SceneObject::SceneObject() :
+	frameStartCommandInvoker_(1.0f),
+	updateCommandInvoker_(1.0f),
+	preDrawCommandInvoker_(1.0f),
+	drawCommandInvoker_(1.0f),
+	postDrawCommandInvoker_(1.0f) {
 	assetManager_ = nullptr;
 	isRequestedExit_ = false;
 	sceneName_ = "NewScene";
@@ -88,17 +94,17 @@ void SceneObject::Update() {
 	ColliderManager::GetInstance()->Update();
 
 	//  ワールド行列更新
-	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(GetEntityManager()), uniqueIdManager_));
-	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(GetEntityManager())));
-	updateCommandInvoker_.AddCommand(std::make_unique<ParentUpdateCommand>(*(GetEntityManager())));
-	updateCommandInvoker_.AddCommand(std::make_unique<AllSpriteResizeCommand>(*(GetEntityManager())));
+	updateCommandInvoker_.AddSystemCommand(std::make_unique<RemakeUniqeIDCommand>(*(GetEntityManager()), uniqueIdManager_));
+	updateCommandInvoker_.AddSystemCommand(std::make_unique<WorldTransformationCommand>(*(GetEntityManager())));
+	updateCommandInvoker_.AddSystemCommand(std::make_unique<ParentUpdateCommand>(*(GetEntityManager())));
+	updateCommandInvoker_.AddSystemCommand(std::make_unique<AllSpriteResizeCommand>(*(GetEntityManager())));
 
 	// 更新後コマンド実行
 	updateCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::PreDraw() {
-	// 繧ｫ繝｡繝ｩ譖ｴ譁ｰ
+	// 3Dモデルのカメラ位置更新
 	AssetManager* assetManager = AssetManager::GetInstance();
 	CameraManager* cameraManager = CameraManager::GetInstance();
 	cameraManager->Update();
@@ -116,26 +122,28 @@ void SceneObject::PreDraw() {
 		}
 	}
 
-	// WVP陦悟・譖ｴ譁ｰ
-	preDrawCommandInvoker_.AddCommand(std::make_unique<WvpTransformationCommand>(*(GetEntityManager()), *cameraManager));
-	preDrawCommandInvoker_.AddCommand(std::make_unique<SpritePivotUpdateCommand>(*(GetEntityManager())));
+	// システム上絶対やるべき前描画コマンド
+	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<BillboardUpdateCommand>(*(GetEntityManager()), cameraManager->GetMainCameraTransform()));
+	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<WvpTransformationCommand>(*(GetEntityManager()), *cameraManager));
+	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<SpritePivotUpdateCommand>(*(GetEntityManager())));
 
-	// 謠冗判蜑阪さ繝槭Φ繝牙ｮ溯｡・
+	// 実行
 	preDrawCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::Draw() {
-	// 蠖薙◆繧雁愛螳壹・謠冗判
+	// 当たり判定の描画
 	ColliderManager::GetInstance()->Draw();
 
-	drawCommandInvoker_.AddCommand(std::make_unique<AllEntityRenderingCommand>(*(GetEntityManager())));
+	// 全描画コマンド追加
+	drawCommandInvoker_.AddSystemCommand(std::make_unique<AllEntityRenderingCommand>(*(GetEntityManager())));
 
-	// 謠冗判繧ｳ繝槭Φ繝牙ｮ溯｡・
+	// 描画コマンド実行
 	drawCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::PostDraw() {
-	// 謠冗判蠕後さ繝槭Φ繝牙ｮ溯｡・
+	// 後描画コマンド実行
 	postDrawCommandInvoker_.ExecuteCommands();
 }
 
@@ -148,6 +156,7 @@ void SceneObject::EndFrame() {
 		isRequestStopScript_ = false;
 	}
 	entityManager_.EndFrame();
+	luaScriptExecutor_.RemoveDeadScripts(); // 死亡したスクリプトを削除
 }
 
 void SceneObject::Finalize() {
@@ -175,7 +184,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	AudioInterface::GetInstance()->StopAllSound();
 	csharpScriptExecutor_.ResetScripts();
 
-	// 繧ｷ繝ｼ繝ｳ繝輔ぃ繧､繝ｫ繧帝幕縺・
+	// Sceneの読み込み
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
 	std::ifstream ifs(sceneFilePath + sceneNameCopy);
 	if (!ifs.is_open()) {
@@ -189,14 +198,14 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
 	ifs.close();
-	// 繧ｷ繝ｼ繝ｳ蜷阪・蜿門ｾ・
+	// Scene名の設定
 	if (sceneJson.contains("sceneName")) {
 		sceneName_ = sceneJson["sceneName"].get<std::string>();
 	} else {
 		sceneName_ = "NoNameScene";
 	}
 
-	// 繧ｨ繝ｳ繝・ぅ繝・ぅ縺ｮ逕滓・
+	//　Entityの読み込み
 	if (!sceneJson.contains("entities")) return;
 
 	for (const auto& entityJson : sceneJson["entities"]) {
@@ -279,7 +288,7 @@ void SceneObject::AddEmptyObject() {
 void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxCount) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	uint32_t entityId = entityManager_.CreateEntity();
-	// ParticleComponent髴托ｽｽ陷会｣ｰ
+	// Particleコンポーネントを追加
 	ParticleComponent particleComponent;
 	particleComponent.modelName = modelName;
 	particleComponent.maxParticleCount = maxCount;
@@ -289,7 +298,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
 	entityManager_.EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
-	// 邵ｺ繝ｻ笆ｽ郢ｧ繧・・郢ｧ繝ｻ笆ｽ髴托ｽｽ陷会｣ｰ
+	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
 	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = modelName + "_ParticleEmitter";
@@ -315,14 +324,14 @@ void SceneObject::AddModel(const std::string& modelName) {
 
 void SceneObject::AddSprite(const std::string& spriteName, float width, float height, int inEntityId, int layer, Vector2 pivot) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	// entityId隰悶・・ｮ螢ｹ窶ｲ邵ｺ繧・ｽ檎ｸｺ・ｰ邵ｺ譏ｴ・檎ｹｧ蜑・ｽｽ・ｿ邵ｺ繝ｻﾂ€竏壺・邵ｺ莉｣・檎ｸｺ・ｰ隴・ｽｰ髫穂ｸ茨ｽｽ諛医・
+	// EntityID決定
 	uint32_t entityId;
 	if (inEntityId != -1) {
 		entityId = static_cast<uint32_t>(inEntityId);
 	} else {
 		entityId = entityManager_.CreateEntity();
 	}
-	// SpriteData髴托ｽｽ陷会｣ｰ
+	// SpriteDataの生成
 	SpriteData spriteData;
 
 	spriteData.layer = 0;
@@ -359,10 +368,10 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	light->color = { 1.0f,1.0f,1.0f,1.0f };
 	light->direction = { 0.0f,-1.0f,0.0f };
 	light->intensity = 1.0f;
-	// 郢ｧ・ｹ郢晏干ﾎ帷ｹｧ・､郢晏現繝ｧ郢晢ｽｼ郢ｧ・ｿ郢ｧ蛛ｵ縺顔ｹ晢ｽｳ郢昴・縺・ｹ昴・縺・ｸｺ・ｫ髴托ｽｽ陷会｣ｰ
+	// SpriteDataコンポーネントを追加
 	entityManager_.EmplaceComponent<SpriteData>(entityId, spriteData);
 
-	// 邵ｺ繝ｻ笆ｽ郢ｧ繧・・郢ｧ繝ｻ笆ｽ髴托ｽｽ陷会｣ｰ
+	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
 	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = spriteName;
@@ -446,7 +455,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	DebugLog("AddEntity: " + entityName);
 #endif // QFE_OPTIMIZE_OFF
 
-	// 隴鯉ｽ｢邵ｺ・ｫ髫ｱ・ｭ邵ｺ・ｿ髴趣ｽｼ郢ｧ阮吮味邵ｺ阮吮・邵ｺ蠕娯旺郢ｧ荵昴♀郢晢ｽｳ郢昴・縺・ｹ昴・縺・惺髦ｪ竊醍ｹｧ蟲ｨ笳守ｹｧ蠕鯉ｽ帝恆譁絶・
+	// リリースビルド時はキャッシュからEntityを読み込む
 #ifdef _NODEBUG
 	if (loadEntities_.find(entityName) != loadEntities_.end()) {
 		// Entity邵ｺ・ｮ騾墓ｻ薙・
@@ -456,7 +465,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	}
 #endif // _NODEBUG
 
-	// Entity邵ｺ・ｮ郢昜ｻ｣縺帷ｹｧ蝣､・ｵ繝ｻ竏ｩ驕ｶ荵昶€ｻ
+	// Entityの読み込み
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
 	std::ifstream ifs(sceneFilePath + entityName);
 	if (!ifs.is_open()) {
@@ -466,12 +475,14 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 #endif // QFE_OPTIMIZE_OFF
 		assert(false && "Faild Open Entity File.");
 	}
-	// Entity邵ｺ・ｮ陟包ｽｩ陷医・
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
 	ifs.close();
 
-	// Entity邵ｺ・ｮ騾墓ｻ薙・
+	// キャッシュに保存
+#ifdef _NODEBUG
+	loadEntities_[entityName] = sceneJson;
+#endif
 	uint32_t entityId = entityManager_.CreateEntity();
 	DeserializeEntity(entityId, sceneJson);
 	return entityId;
@@ -484,7 +495,7 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	if (entityManager_.HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
 		ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
 		for (const auto& sh : scriptHandles.scriptHandles_) {
-			luaScriptExecutor_.GetScript(sh.handle_)->RunFunction("Initialize");
+			luaScriptExecutor_.GetScript(sh.handle_)->RunFunction("Init");
 		}
 	}
 	if (entityManager_.HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
@@ -515,7 +526,7 @@ void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scri
 }
 
 void SceneObject::DeleteEntity(uint32_t entityId) {
-	frameStartCommandInvoker_.AddCommand(std::make_unique<DeleteSceneEntityCommand>(*(GetEntityManager()), entityId));
+	frameStartCommandInvoker_.AddSystemCommand(std::make_unique<DeleteSceneEntityCommand>(*(GetEntityManager()), entityId));
 }
 
 void SceneObject::CopyEntity(uint32_t sourceEntityId) {
@@ -647,11 +658,8 @@ void SceneObject::SerializeEntity(uint32_t entityId, nlohmann::json& entityJson)
 }
 
 void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) {
-
-
 	usedEntityId_.insert(entityId);
 
-	// 蜷・さ繝ｳ繝昴・繝阪Φ繝医・蠕ｩ蜈・
 	if (entityJson.contains("SpriteData")) {
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
@@ -671,6 +679,11 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		entityManager_.EmplaceComponent<CameraData>(entityId);
 		CameraData& cameraData = entityManager_.GetComponent<CameraData>(entityId);
 		cameraData.Deserialize(entityJson["CameraData"]);
+	}
+	if (entityJson.contains("BillboardComponent")) {
+		entityManager_.EmplaceComponent<Component::BillboardComponent>(entityId);
+		Component::BillboardComponent& billboardComponent = entityManager_.GetComponent<Component::BillboardComponent>(entityId);
+		billboardComponent.Deserialize(entityJson["BillboardComponent"]);
 	}
 	if (entityJson.contains("ModelHandle")) {
 		entityManager_.EmplaceComponent<ModelHandle>(entityId);
@@ -775,7 +788,7 @@ uint32_t SceneObject::GetEntityByName(const std::string& entityName) const {
 	return 0;
 }
 
-uint32_t SceneObject::GetEntityByUniqeID(uint32_t uniqueId) const {
+uint32_t SceneObject::GetEntityByUniqueID(uint32_t uniqueId) const {
 
 	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
 	for (auto entityId : entities) {

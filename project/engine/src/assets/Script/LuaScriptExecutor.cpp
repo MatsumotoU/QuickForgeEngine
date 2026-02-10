@@ -61,11 +61,12 @@ uint32_t LuaScriptExecutor::AddScript(uint32_t entityId, const std::string& scri
 	std::string scriptDir = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
 	std::string scriptPath = scriptDir + scriptName;
 
+	uint32_t handle = nextScriptHandle_++;
+
 	// スクリプトを作成
 	auto script = std::make_unique<LuaScriptOnQFE>(entityManager_, this);
-	script->Initialize(sharedLuaState_.get(), scriptPath, entityId);
+	script->Initialize(sharedLuaState_.get(), scriptPath, entityId, handle);
 
-	uint32_t handle = nextScriptHandle_++;
 	scripts_[handle] = std::move(script);
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -117,6 +118,20 @@ void LuaScriptExecutor::UpdateAllScripts() {
 	}
 }
 
+void LuaScriptExecutor::RemoveDeadScripts() {
+	for (auto it = scripts_.begin(); it != scripts_.end();) {
+		if (it->second && !it->second->IsAliveEntity()) {
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog("Removing dead script: " + it->second->GetScriptName() + " (handle: " + std::to_string(it->first) + ")");
+#endif
+			it = scripts_.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+}
+
 void LuaScriptExecutor::RunAllFunction(const std::string& functionName) {
 	for (auto& [handle, script] : scripts_) {
 		if (script) {
@@ -129,6 +144,30 @@ void QFE::LuaScriptExecutor::RunEntityFunction(uint32_t entityId, const std::str
 	for (auto& [handle, script] : scripts_) {
 		if (script && script->GetBindEntityId() == entityId) {
 			script->RunFunction(functionName);
+		}
+	}
+}
+
+void QFE::LuaScriptExecutor::RunFunctionIfExists(const std::string& functionName) {
+	for (auto& [handle, script] : scripts_) {
+		if (script) {
+			sol::environment& env = script->GetEnvironment();
+			sol::object obj = env[functionName];
+			if (obj.is<sol::function>()) {
+				script->RunFunction(functionName);
+			}
+		}
+	}
+}
+
+void QFE::LuaScriptExecutor::RunEntityFunctionIfExists(uint32_t entityId, const std::string& functionName) {
+	for (auto& [handle, script] : scripts_) {
+		if (script && script->GetBindEntityId() == entityId) {
+			sol::environment& env = script->GetEnvironment();
+			sol::object obj = env[functionName];
+			if (obj.is<sol::function>()) {
+				script->RunFunction(functionName);
+			}
 		}
 	}
 }

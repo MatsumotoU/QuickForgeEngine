@@ -146,8 +146,8 @@ uint32_t SceneManager::GetEntityByName(const std::string& entityName) const {
 	return currentScene_->GetEntityByName(entityName);
 }
 
-uint32_t SceneManager::GetEntityByUniqeID(uint32_t uniqueId) const {
-	return currentScene_->GetEntityByUniqeID(uniqueId);
+uint32_t SceneManager::GetEntityByUniqueID(uint32_t uniqueId) const {
+	return currentScene_->GetEntityByUniqueID(uniqueId);
 }
 
 LuaScriptExecutor* QFE::SceneManager::GetLuaScriptExecutor() const {
