@@ -148,6 +148,61 @@ void WindowsEngineCore::Initialize() {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized Engine======================");
 #endif // QFE_OPTIMIZE_OFF
+
+#ifdef QFE_OPTIMIZE_OFF
+	EditorEngineBridge::AddEmptyEntity = [this]() {
+		if (sceneManager_) {
+			sceneManager_->AddEmptyObject();
+		}
+		};
+	EditorEngineBridge::AddEntityFromFile = [this](const std::string& filePath) {
+		if (sceneManager_) {
+			sceneManager_->AddEntity(filePath);
+		}
+		};
+	EditorEngineBridge::AddModelEntity = [this](const std::string& modelPath) {
+		if (sceneManager_) {
+			sceneManager_->AddModel(modelPath);
+		}
+		};
+	EditorEngineBridge::AddSpriteEntity = [this](const std::string& spritePath) {
+		if (sceneManager_) {
+			sceneManager_->AddSprite(spritePath);
+		}
+		};
+	EditorEngineBridge::AddParticleEmitterEntity = [this](const std::string& particlePath, uint32_t count) {
+		if (sceneManager_) {
+			sceneManager_->AddParticleEmitter(particlePath, count);
+		}
+		};
+	EditorEngineBridge::AddCameraEntity = [this]() {
+		// カメラの機能がシングルトンであるため、複数カメラにすると不具合が起きる可能性があるため一時的に制限
+		DebugLog("Can not add Camera.");
+		};
+	EditorEngineBridge::CopyEntity = [this](uint32_t entityId) {
+		if (sceneManager_) {
+			sceneManager_->CopyEntity(entityId);
+		}
+		};
+	EditorEngineBridge::SaveEntity = [this](uint32_t entityId, std::string filePath) {
+		if (sceneManager_) {
+			sceneManager_->SaveEntity(entityId, filePath);
+		}
+		};
+	EditorEngineBridge::DeleteEntity = [this](uint32_t entityId) {
+		if (sceneManager_) {
+			sceneManager_->DeleteEntity(entityId);
+		}
+		};
+	EditorEngineBridge::ParentChild = [this](uint32_t parentId, uint32_t childId) {
+		if (sceneManager_) {
+			sceneManager_->ParentChild(parentId, childId);
+		}
+		};
+
+	// 登録漏れのチェック
+	editorEngineBridge_.CheckFunctionRegistration();
+#endif // QFE_OPTIMIZE_OFF
 }
 
 
@@ -174,6 +229,8 @@ void WindowsEngineCore::MainLoop() {
 
 
 void WindowsEngineCore::Shutdown() {
+	editorEngineBridge_.ClearFunctionRegistration();
+
 	audioInterface_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();

@@ -34,6 +34,9 @@
 #include "engine/include/collider/ColliderManager.h"
 #include "engine/include/utility/MultiThreadTaskExecutor.h"
 
+// Interface
+#include "engine/include/core/Bridge/EditorEngineBridge.h"
+
 namespace QFE {
 
 	/**
@@ -96,6 +99,8 @@ namespace QFE {
 		std::unique_ptr<ThreadPool> threadPool_;
 
 		nlohmann::json configJson_;
+
+		EditorEngineBridge editorEngineBridge_;
 	};
 
 }
