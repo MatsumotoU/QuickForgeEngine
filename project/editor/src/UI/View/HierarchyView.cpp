@@ -106,7 +106,7 @@ void HierarchyView::DrawPopupContextWindow() {
 				}
 				ImGui::EndMenu();
 			}
-
+			
 			if (ImGui::BeginMenu("Particle Emitter")) {
 				ImGui::DragInt("Particle Count", &particleCount_);
 				ImGui::Separator();
