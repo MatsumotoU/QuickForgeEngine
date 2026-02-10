@@ -2,7 +2,7 @@
 
 namespace QFE {
 
-	void WindowGenerater::CreateGameWindow(WNDCLASS& wc, HWND& hwnd, WindowConfigData& config, WNDPROC& proc, WindowEventsManager* eventManager) {
+	void WindowGenerator::CreateGameWindow(WNDCLASS& wc, HWND& hwnd, WindowConfigData& config, WNDPROC& proc, WindowEventsManager* eventManager) {
 		// ウィンドウプロージャ
 		wc.lpfnWndProc = proc;
 		// ウィンドウクラス名

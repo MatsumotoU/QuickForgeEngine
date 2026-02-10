@@ -224,8 +224,6 @@ std::vector<std::string> LuaScriptOnQFE::GetGlobalValuesList() const {
 
 
 void LuaScriptOnQFE::SetQFEFunctions() {
-	// TODO: 関数の復帰
-
 	// this繧ｨ繝ｳ繝・ぅ繝・ぅ諠・ｱ逋ｻ骭ｲ
 	sol::table thisEntity = luaState_->create_table();
 	thisEntity.set_function("GetEntityId", [this]() {

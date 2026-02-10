@@ -18,6 +18,7 @@ void OnFocusEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 	DebugLog("Whindow Focused");
 #endif // QFE_OPTIMIZE_OFF
 
+	// TODO: 直接実行ではなく、関数をキューに入れてメインスレッドで実行するようにする
 	if (SceneManager::GetInstance()->GetLuaScriptExecutor() != nullptr) {
 		SceneManager::GetInstance()->GetLuaScriptExecutor()->ReloadAllScripts();
 	} else {
