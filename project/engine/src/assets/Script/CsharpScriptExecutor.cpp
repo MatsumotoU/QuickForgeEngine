@@ -115,17 +115,21 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 	for (int i = 0; i < num_types; i++) {
 		uint32_t cols[MONO_TYPEDEF_SIZE];
 		mono_metadata_decode_row(type_definitions_table, i, cols, MONO_TYPEDEF_SIZE);
+		
+		std::string name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+		std::string ns = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 
-		const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-		const char* ns = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-
-		if (!name || name[0] == '<' || strstr(name, "_AnonStorey")) {
+		// 無効なクラス名をスキップ
+		if (!name.empty() ||
+			name[0] == '<' ||
+			(name.find("_AnonStorey") != std::string::npos)) {
 			continue;
 		}
 
 		std::string full_name;
 
-		if (ns && strlen(ns) > 0) {
+		// 名前空間がある場合は結合
+		if (!ns.empty() && ns.length() > 0) {
 			full_name = std::string(ns) + "." + name;
 		} else {
 			full_name = name;

@@ -25,6 +25,13 @@ HierarchyView::HierarchyView() {
 
 void HierarchyView::Initialize() {
 #ifdef QFE_OPTIMIZE_OFF
+	if (EditorEngineBridge::GetModelDirectoryPath == nullptr ||
+		EditorEngineBridge::GetImageDirectoryPath == nullptr ||
+		EditorEngineBridge::GetEntityTemplateDirectoryPath == nullptr) {
+		DebugLog("GetModelDirectoryPath or GetImageDirectoryPath or GetEntityTemplateDirectoryPath function is not found.");
+		return;
+	}
+
 	modelDropDownFileList_.LoadFileList(EditorEngineBridge::GetModelDirectoryPath(), ".obj");
 	spriteDropDownFileList_.LoadFileList(EditorEngineBridge::GetImageDirectoryPath(), ".png");
 	entityDropDownFileList_.LoadFileList(EditorEngineBridge::GetEntityTemplateDirectoryPath(), ".json");

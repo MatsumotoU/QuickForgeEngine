@@ -3,6 +3,7 @@
 #include <vector>
 #include <stack>
 namespace QFE {
+	/// @brief 可変長オブジェクトプールコンテナ
 	template <typename T>
 	class VariableLengthPool final : public IVariableLengthPoolContainer {
 	public:

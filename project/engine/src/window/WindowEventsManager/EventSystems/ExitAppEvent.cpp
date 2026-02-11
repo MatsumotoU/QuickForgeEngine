@@ -12,7 +12,7 @@ void ExitAppEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Call ExitAppEvent");
 #endif
-	// 繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ邨ゆｺ・・逅・
+	// アプリケーション終了フラグを立てる
 	eventData_["DestroyWindow"] = true;
 }
 

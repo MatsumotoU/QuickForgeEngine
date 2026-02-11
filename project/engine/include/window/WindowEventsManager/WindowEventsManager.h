@@ -5,13 +5,15 @@
 #include "EventSystems/IEvent.h"
 
 namespace QFE {
-
+	/// @brief ウィンドウに対するアクションを管理するクラス
 	class WindowEventsManager final {
 	public:
 		WindowEventsManager();
 		~WindowEventsManager() = default;
 
+		/// @brief ウィンドウプロシージャ(OS呼び出し)
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		/// @brief メッセージを処理して適切なイベントシステムに渡す
 		LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	private:

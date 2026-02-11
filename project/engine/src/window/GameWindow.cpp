@@ -11,7 +11,7 @@ namespace QFE {
 		configData_.isCanDropFiles = true;
 
 		eventManagerPtr_ = std::make_unique<WindowEventsManager>();
-		WindowGenerater::CreateGameWindow(wc_, hwnd_, configData_, proc_, eventManagerPtr_.get());
+		WindowGenerator::CreateGameWindow(wc_, hwnd_, configData_, proc_, eventManagerPtr_.get());
 	}
 
 	void GameWindow::Update() {
