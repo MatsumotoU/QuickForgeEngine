@@ -27,10 +27,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         engineCore->MainLoop();
     }
     catch (const std::exception& e) {
+        e;
+#ifdef QFE_OPTIMIZE_OFF
         DebugLog(std::format("An exception occurred: {}\n", e.what()));
-    }
-    catch (...) {
-        DebugLog("An unknown exception occurred.\n");
+#endif // _DEBUG
     }
 
     engineCore->Shutdown();
