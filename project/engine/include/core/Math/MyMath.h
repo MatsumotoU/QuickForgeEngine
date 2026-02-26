@@ -58,6 +58,9 @@ namespace QFE {
 
 		/** @brief 球体に最も近いAABB上の点を取得 */
 		Vector3 ClosestPoint(const Sphere& sphere, const AABB& aabb);
+
+		/// @brief 大きな数の素数判定
+		bool IsPrime(uint64_t number);
 	}
 
 }

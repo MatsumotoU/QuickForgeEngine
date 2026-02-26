@@ -17,6 +17,8 @@
 
 #include "engine/include/core/Bridge/EditorEngineBridgeRegistry.h"
 
+#include "engine/include/core/Math/MyMath.h"
+
 using namespace QFE;
 
 namespace {
