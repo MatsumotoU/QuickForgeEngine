@@ -17,7 +17,7 @@ uint32_t HierarchyView::selectedEntityId_ = 0;
 
 HierarchyView::HierarchyView() {
 	isActive_ = true;
-	name_ = "Hierarchy View";
+	SetName("Hierarchy");
 #ifdef QFE_OPTIMIZE_OFF
 	particleCount_ = 1;
 #endif // _DEBUG
@@ -49,7 +49,7 @@ void HierarchyView::Draw() {
 		return;
 	}
 
-	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	// 右クリックでコンテキストメニュー
 	DrawPopupContextWindow();
 	// Entity一覧表示

@@ -11,7 +11,7 @@ using namespace QFE;
 InputDebugView::InputDebugView()
 {
 	isActive_ = false;
-	name_ = "Input Debug View";
+	SetName("Input Debug View");
 }
 void InputDebugView::Initialize()
 {
@@ -25,7 +25,7 @@ void InputDebugView::Update()
 void InputDebugView::Draw()
 {
     if (!isActive_) { return; }
-	ImGui::Begin("Input Debug View", &isActive_);
+	ImGui::Begin(GetName().c_str(), &isActive_);
     if (ImGui::CollapsingHeader("Mic State View", ImGuiTreeNodeFlags_DefaultOpen)) {
         InputInterface* input = InputInterface::GetInstance();
         if (input->GetMicrophoneDevice().IsCapturing()) {

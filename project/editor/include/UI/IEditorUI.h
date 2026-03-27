@@ -24,9 +24,11 @@ namespace QFE {
 		virtual void Run() {};
 		/** @brief UI名の取得 */
 		std::string GetName() const { return name_; }
+		/** @brief UI名の設定 */
+		void SetName(const std::string& name) { name_ = name; }
 
 		bool isActive_; ///< アクティブ状態
-	protected:
+	private:
 		std::string name_; ///< UI名
 	};
 }

@@ -15,7 +15,7 @@
 
 using namespace QFE;
 SceneProfileView::SceneProfileView() {
-	name_ = "Scene Profile";
+	SetName("Scene Profile");
 	isActive_ = false;
 }
 
@@ -32,7 +32,7 @@ void SceneProfileView::Draw() {
 #ifdef QFE_OPTIMIZE_OFF
 	SceneManager* sceneManager = SceneManager::GetInstance();
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	ImGui::Begin("Scene Profile", &isActive_, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::Separator();
 	ImGui::Text("Active Entities: %zu", entityManager->GetActiveEntityIds().size());
 	ImGui::Separator();

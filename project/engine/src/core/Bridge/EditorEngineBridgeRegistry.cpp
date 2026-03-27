@@ -403,6 +403,7 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		};
 
 	EditorEngineBridge::SetLuaScriptParam = [engineCore](uint32_t entityId, uint32_t handle, const std::string& paramName, const std::string& value) {
+		entityId; // TODO: 現状、handleでスクリプトを特定しているためentityIdは使用しないが、将来的に複数スクリプトを同一エンティティにアタッチできるようになった際に必要になる可能性があるため引数として残す
 		SceneManager* sceneManager_ = engineCore->GetSceneManager();
 		if (sceneManager_) {
 			LuaScriptOnQFE* script = sceneManager_->GetLuaScriptExecutor()->GetScript(handle);
@@ -440,6 +441,7 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		};
 
 	EditorEngineBridge::RemoveCsharpScript = [engineCore](uint32_t entityId, const std::string& className) {
+		className; // TODO: 現状、C#スクリプトはクラス名で特定しているためentityIdは使用しないが、将来的に複数スクリプトを同一エンティティにアタッチできるようになった際に必要になる可能性があるため引数として残す
 		SceneManager* sceneManager_ = engineCore->GetSceneManager();
 		if (sceneManager_) {
 			sceneManager_->GetEntityManager()->RemoveComponent<CsharpComponent>(entityId);

@@ -12,7 +12,7 @@ using namespace QFE;
 void KeyConfigEdit::Initialize() {
 	isActive_ = false;
 	inputBuf_[0] = '\0';
-	name_ = "KeyConfig Edit";
+	SetName("KeyConfig Edit");
 }
 
 void KeyConfigEdit::Update() {
