@@ -14,7 +14,7 @@ using namespace QFE;
  * @brief コンストラクタ
  */
 ConsoleView::ConsoleView() {
-	name_ = "Console View";
+	SetName("Console");
 	isActive_ = true;
 #ifdef QFE_OPTIMIZE_OFF
 	logLevel_ = LogLevel::EditorInfo;
@@ -41,7 +41,7 @@ void ConsoleView::Draw() {
 	if (!isActive_) {
 		return;
 	}
-	ImGui::Begin(name_.c_str(), &isActive_); // Removed &isActive_ from the instruction, but keeping it as the instruction's snippet was partial and this is a common pattern.
+	ImGui::Begin(GetName().c_str(), &isActive_); // Removed &isActive_ from the instruction, but keeping it as the instruction's snippet was partial and this is a common pattern.
 	// フォーカス判定
 	ImGui::Text("Log Level:");
 	ImGui::SameLine();

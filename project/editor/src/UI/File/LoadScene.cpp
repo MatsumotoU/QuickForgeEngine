@@ -8,7 +8,7 @@
 using namespace QFE;
 void LoadScene::Initialize() {
 	currentScene_ = "";
-	name_ = "LoadScene";
+	SetName("Load Scene");
 	isActive_ = false;
 	sceneList_.clear();
 	sceneList_ = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".json");
@@ -26,7 +26,7 @@ void LoadScene::Draw() {
 		return;
 	}
 
-	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoDocking);
+	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoDocking);
 	if (ImGui::Button("LoadFiles")) {
 		sceneList_ = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".json");
 	}

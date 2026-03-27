@@ -1,5 +1,5 @@
 #pragma once 
-#define BUILD_COMMIT "f4dbae7c" 
-#define BUILD_BRANCH "develop" 
-#define BUILD_DATE "2026/02/26" 
-#define BUILD_TIME "23:21:30.26" 
+#define BUILD_COMMIT "27a653f8" 
+#define BUILD_BRANCH "refacter-EditorUI" 
+#define BUILD_DATE "2026/03/27" 
+#define BUILD_TIME "10:40:37.39" 

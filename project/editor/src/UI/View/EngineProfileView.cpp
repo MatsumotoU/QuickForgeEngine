@@ -10,7 +10,7 @@
 using namespace QFE;
 EngineProfileView::EngineProfileView() {
 	isActive_ = false;
-	name_ = "Engine Profile View";
+	SetName("Engine Profile View");
 }
 
 void EngineProfileView::Initialize() {
@@ -24,7 +24,7 @@ void EngineProfileView::Draw() {
 		return;
 	}
 
-	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoDocking);
+	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoDocking);
 	ImGui::Text("Engine Profile");
 	ImGui::Separator();
 	
