@@ -5,14 +5,17 @@
 
 #include "editor/include/UI/File/LoadScene.h"
 #include "scene/SceneManager.h"
+#include "engine/include/assets/AssetManager.h"
+
 using namespace QFE;
 void LoadScene::Initialize() {
 	currentScene_ = "";
 	SetName("Load Scene");
 	isActive_ = false;
 	sceneList_.clear();
-	sceneList_ = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".json");
-	auto sceneFiles = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".scene");
+	std::string resourceDir = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
+	sceneList_ = QFE::FILE::GetFilesInDirectory(resourceDir, ".json");
+	auto sceneFiles = QFE::FILE::GetFilesInDirectory(resourceDir, ".scene");
 	sceneList_.insert(sceneList_.end(), sceneFiles.begin(), sceneFiles.end());
 	if (!sceneList_.empty()) {
 		currentScene_ = sceneList_[0];
@@ -30,8 +33,9 @@ void LoadScene::Draw() {
 
 	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoDocking);
 	if (ImGui::Button("LoadFiles")) {
-		sceneList_ = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".json");
-		auto sceneFiles = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".scene");
+		std::string resourceDir = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
+		sceneList_ = QFE::FILE::GetFilesInDirectory(resourceDir, ".json");
+		auto sceneFiles = QFE::FILE::GetFilesInDirectory(resourceDir, ".scene");
 		sceneList_.insert(sceneList_.end(), sceneFiles.begin(), sceneFiles.end());
 	}
 	ImGui::Separator();

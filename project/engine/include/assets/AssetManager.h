@@ -79,7 +79,7 @@ namespace QFE {
 		ModelVertexResourceManager* GetModelVertexResourceManager() { return &modelVertexResourceManager_; }
 		GpuBufferPool* GetGpuBufferPool() { return gpuBufferPool_.get(); }
 		SpriteManager* GetSpriteManager() { return &spriteManager_; }
-		const ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
+		ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
 		AudioSourceManager* GetAudioSourceManager() { return &audioSourceManager_; }
 		ParticleGpuDataManager* GetParticleGpuDataManager() { return &particleGpuDataManager_; }
 

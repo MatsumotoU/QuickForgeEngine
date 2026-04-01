@@ -10,10 +10,18 @@ using namespace QFE;
 
 void QFE::GenerateCsproj(const std::string& dir, const std::string& outputPath) {
     std::vector<std::string> csFiles;
-    for (const auto& entry : std::filesystem::directory_iterator(dir)) {
-        if (entry.path().extension() == ".cs") {
-            csFiles.push_back(entry.path().filename().string());
+    // ディレクトリが存在するか、かつディレクトリであるかをチェック
+    if (std::filesystem::exists(dir) && std::filesystem::is_directory(dir)) {
+        for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+            if (entry.path().extension() == ".cs") {
+                csFiles.push_back(entry.path().filename().string());
+            }
         }
+    } else {
+#ifdef QFE_OPTIMIZE_OFF
+        MyDebugLog::GetInstance()->Log("Directory does not exist or is not a directory: " + dir);
+#endif // QFE_OPTIMIZE_OFF
+        return; // ディレクトリが存在しない場合は処理を中断
     }
 
     std::ofstream ofs(outputPath);

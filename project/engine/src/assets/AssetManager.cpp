@@ -146,7 +146,7 @@ uint32_t AssetManager::LoadModelTexture(const std::string& modelName) {
 
 #ifdef QFE_OPTIMIZE_OFF
 uint32_t AssetManager::LoadEditorTexture(const std::string& imageName) {
-	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Editor") + imageName;
+	std::string filePath = resourceDirectoryManager_.GetEditorResourceDirectory() + imageName;
 	return textureManager_->LoadTexture(filePath);
 }
 #endif // QFE_OPTIMIZE_OFF

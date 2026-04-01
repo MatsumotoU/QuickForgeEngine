@@ -29,5 +29,6 @@ namespace QFE::FILE {
 	extern bool SaveJsonAsMsgPack(const nlohmann::json& jsonFile, const std::string& msgPackSavePath);
 	/// MsgPack形式のファイルをjson形式で読み込みます
 	extern bool LoadMsgPackToJson(const std::string& msgPackFilePath, nlohmann::json& json);
-
+	/// ディレクトリの存在を確認します
+	extern bool HasDirectory(const std::string& directoryPath);
 }

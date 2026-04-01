@@ -1,6 +1,6 @@
 /**
  * @file ResourceDirectoryManager.cpp
- * @brief 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ遞ｮ鬘槭＃縺ｨ縺ｮ繝・ぅ繝ｬ繧ｯ繝医Μ繝代せ繧堤ｮ｡逅・☆繧九け繝ｩ繧ｹ縺ｮ螳溯｣・
+ * @brief リソースタイプと対応するディレクトリを管理するクラスの実装
  */
 
 #include "engine/include/assets/ResourceDirectoryManager.h"
@@ -12,20 +12,21 @@
 
 using namespace QFE;
 
-/** @brief 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ縲よｨ呎ｺ也噪縺ｪ繝・ぅ繝ｬ繧ｯ繝医Μ繝代せ繧堤匳骭ｲ縺吶ｋ縲・*/
+/// @brief すべてのリソースタイプとそのディレクトリを初期化するコンストラクタ
 ResourceDirectoryManager::ResourceDirectoryManager() {
-	resourceDirectories_["Model"] = "Resources/Models/";
-	resourceDirectories_["Image"] = "Resources/Images/";
-	resourceDirectories_["Font"] = "Resources/Fonts/";
-	resourceDirectories_["Scenes"] = "Resources/Scenes/";
-	resourceDirectories_["Sounds"] = "Resources/Sounds/";
-	resourceDirectories_["Scripts"] = "Resources/Scripts/";
-	resourceDirectories_["Entities"] = "Resources/Entities/";
-	resourceDirectories_["Config"] = "Resources/Config/";
-	resourceDirectories_["2DMap"] = "Resources/2DMap/";
-	resourceDirectories_["Project"] = "Resources/Projects/";
-	resourceDirectories_["ParticleAnim"] = "Resources/ParticleAnimation/";
-	resourceDirectories_["Animation"] = "Resources/Animation/";
+	rootDirectory_ = "Resources/";
+
+	resourceDirectories_["Model"] = "Models/";
+	resourceDirectories_["Image"] = "Images/";
+	resourceDirectories_["Font"] = "Fonts/";
+	resourceDirectories_["Scenes"] = "Scenes/";
+	resourceDirectories_["Sounds"] = "Sounds/";
+	resourceDirectories_["Scripts"] = "Scripts/";
+	resourceDirectories_["Entities"] = "Entities/";
+	resourceDirectories_["Config"] = "Config/";
+	resourceDirectories_["2DMap"] = "2DMap/";
+	resourceDirectories_["ParticleAnim"] = "ParticleAnimation/";
+	resourceDirectories_["Animation"] = "Animation/";
 #ifdef QFE_OPTIMIZE_OFF
 	resourceDirectories_["Editor"] = "Editor/Resource/Images/";
 #endif // QFE_OPTIMIZE_OFF
@@ -35,14 +36,42 @@ ResourceDirectoryManager::ResourceDirectoryManager() {
 		DebugLog(std::format("Key: {},Directory: {}", key, value));
 	}
 #endif // QFE_OPTIMIZE_OFF
+
+	ProjectName_ = "NewGameProject";
 }
 
-/**
- * @brief 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ遞ｮ鬘槭↓蟇ｾ蠢懊☆繧九ョ繧｣繝ｬ繧ｯ繝医Μ繝代せ繧貞叙蠕・
- * @param resourceType 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ遞ｮ鬘・萓・ "Model", "Image")
- * @return 繝・ぅ繝ｬ繧ｯ繝医Μ繝代せ
- */
+void QFE::ResourceDirectoryManager::CreateProjectDirectory(const std::string& projectName) const {
+	std::string projectPath = rootDirectory_ + projectName + "/";
+	std::filesystem::create_directories(projectPath);
+	for (const auto& [key, value] : resourceDirectories_) {
+		std::filesystem::create_directories(projectPath + value);
+	}
+}
+
+void QFE::ResourceDirectoryManager::SetProjectDirectory(const std::string& projectName) {
+	std::string projectPath = rootDirectory_ + projectName + "/";
+	if (!std::filesystem::exists(projectPath)) {
+		CreateProjectDirectory(projectName);
+	}
+	ProjectName_ = projectName;
+}
+
+std::string QFE::ResourceDirectoryManager::GetProjectDirectory() const {
+	return rootDirectory_ + ProjectName_;
+}
+
+/// @brief 指定されたリソースタイプに対応するディレクトリを取得する関数
 std::string ResourceDirectoryManager::GetResourceDirectory(const std::string& resourceType) const {
 	assert(resourceDirectories_.find(resourceType) != resourceDirectories_.end() && "Resource type not found");
-	return resourceDirectories_.at(resourceType);
+	std::string directory = rootDirectory_ + ProjectName_ + "/" + resourceDirectories_.at(resourceType);
+
+#ifdef QFE_OPTIMIZE_OFF
+	DebugLog(std::format("GetResourceDirectory: ResourceType: {}, Directory: {}", resourceType, directory));
+#endif // QFE_OPTIMIZE_OFF
+
+	return directory;
+}
+
+std::string QFE::ResourceDirectoryManager::GetEditorResourceDirectory() const {
+	return "Editor/Resource/Images/";
 }
