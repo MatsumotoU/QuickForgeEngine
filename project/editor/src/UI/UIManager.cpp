@@ -4,6 +4,7 @@
  */
 
 #include "editor/include/UI/UIManager.h"
+#include "engine/include/assets/AssetManager.h"
 
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/scene/SceneManager.h"
@@ -138,6 +139,7 @@ void UIManager::Draw() {
 		}
 
 		// シーン名
+		ImGui::Text(("Project: " + AssetManager::GetInstance()->GetResourceDirectoryManager()->GetProjectName()).c_str());
 		ImGui::Text(("Scene: " + SceneManager::GetInstance()->GetCurrentSceneName()).c_str());
 		ImGui::EndMainMenuBar();
 	}

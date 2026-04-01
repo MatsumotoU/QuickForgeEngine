@@ -170,11 +170,11 @@ void MonoRuntimeManager::CompileScripts() {
 		scriptsDir += '/';
 	}
 	
-	// csproj縺ｮ逕o謌・
+	// csprojファイルの生成
 	std::string csprojPath = scriptsDir + "MyGameScripts.csproj";
 	QFE::GenerateCsproj(scriptsDir, csprojPath);
 
-	// DLL縺ｮ蜃ｺ蜉帛5・
+	// DLL出力パスの設定
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 	std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
