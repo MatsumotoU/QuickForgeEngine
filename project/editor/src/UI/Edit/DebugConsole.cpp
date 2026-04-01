@@ -26,6 +26,7 @@ void DebugConsole::Initialize() {
 	commandList_.emplace_back(std::make_unique<CSCreateBoundScriptInstanceCommand>(items_, inputBuf_));
 	commandList_.emplace_back(std::make_unique<CSRunScriptCommand>(items_, inputBuf_));
 	commandList_.emplace_back(std::make_unique<CSReloadAssemblyCommand>(items_, inputBuf_));
+	commandList_.emplace_back(std::make_unique<BinarizeSceneCommand>(items_, inputBuf_));
 }
 
 void DebugConsole::Update() {

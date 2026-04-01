@@ -14,3 +14,4 @@
 #include "CSCreateBoundScriptInstanceCommand.h"
 #include "CSRunScriptCommand.h"
 #include "CSReloadAssemblyCommand.h"
+#include "BinarizeSceneCommand.h"

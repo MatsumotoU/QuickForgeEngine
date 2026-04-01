@@ -40,6 +40,7 @@
 #include "Engine/include/scene/SceneCommand/SceneEntityCommands.h"
 #include "engine/include/scene/SceneObject.h"
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 
 using namespace QFE;
 
@@ -168,7 +169,7 @@ void SceneObject::Finalize() {
 void SceneObject::LoadScene(const std::string& sceneName) {
 	std::string sceneNameCopy = sceneName;
 	// jsonファイルでない場合は拡張子を付ける
-	if (!sceneNameCopy.ends_with(".json")) {
+	if (!sceneNameCopy.ends_with(".json") && !sceneNameCopy.ends_with(".scene")) {
 		sceneNameCopy += ".json";
 	}
 
@@ -195,9 +196,20 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 		return;
 	}
 
+	// シーンファイルの形式に応じて読み込み
 	nlohmann::json sceneJson;
-	ifs >> sceneJson;
-	ifs.close();
+	if (sceneNameCopy.ends_with(".scene")) {
+		// バイナリモードで読み込み、JSONに変換
+		if (!QFE::FILE::LoadMsgPackToJson(sceneFilePath + sceneNameCopy, sceneJson)) {
+			CameraManager::GetInstance()->Initialize();
+			return;
+		}
+	} else {
+		// 従来のJSON(テキスト)読み込み
+		ifs >> sceneJson;
+		ifs.close();
+	}
+
 	// Scene名の設定
 	if (sceneJson.contains("sceneName")) {
 		sceneName_ = sceneJson["sceneName"].get<std::string>();
@@ -236,6 +248,26 @@ void SceneObject::SaveScene(const std::string& sceneName) {
 	std::ofstream ofs(sceneFilePath + sceneName + ".json");
 	ofs << sceneJson.dump(4);
 	ofs.close();
+}
+
+void QFE::SceneObject::SaveSceneBinary(const std::string& sceneName) {
+#ifdef QFE_OPTIMIZE_OFF
+	DebugLog("BinarySaveScene: " + sceneName);
+#endif // QFE_OPTIMIZE_OFF
+	AssetManager* assetManager = AssetManager::GetInstance();
+
+	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
+
+	nlohmann::json sceneJson;
+	sceneJson["sceneName"] = sceneName;
+
+	for (auto entityId : entities) {
+		nlohmann::json entityJson;
+		SerializeEntity(entityId, entityJson);
+		sceneJson["entities"].push_back(entityJson);
+	}
+
+	QFE::FILE::SaveJsonAsMsgPack(sceneJson, assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes") + sceneName + ".scene");
 }
 
 void SceneObject::ResetScene() {

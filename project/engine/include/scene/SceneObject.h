@@ -32,6 +32,7 @@ namespace QFE {
 		// シーンのロード、保孁E
 		void LoadScene(const std::string& sceneName) override;
 		void SaveScene(const std::string& sceneName) override;
+		void SaveSceneBinary(const std::string& sceneName) override;
 		void ResetScene() override;
 
 		// シーンの再生、停止
