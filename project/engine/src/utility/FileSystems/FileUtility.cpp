@@ -103,4 +103,32 @@ namespace QFE::FILE {
 		return std::wstring(fullPath);
 	}
 
+	bool SaveJsonAsMsgPack(const nlohmann::json& jsonFile, const std::string& msgPackSavePath) {
+		nlohmann::json::binary_t msgPackData = nlohmann::json::to_msgpack(jsonFile);
+		std::ofstream ofs(msgPackSavePath, std::ios::binary);
+		if (ofs.is_open()) {
+			ofs.write(reinterpret_cast<const char*>(msgPackData.data()), msgPackData.size());
+			ofs.close();
+			return true;
+		}
+		return false;
+	}
+
+	bool LoadMsgPackToJson(const std::string& msgPackFilePath, nlohmann::json& json) {
+		std::ifstream ifs(msgPackFilePath, std::ios::binary);
+		if (ifs.is_open()) {
+			std::vector<uint8_t> buffer((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+			ifs.close();
+			try {
+				json = nlohmann::json::from_msgpack(buffer);
+				return true;
+			}
+			catch (const nlohmann::json::parse_error& e) {
+				e;
+				assert(false && e.what());
+			}
+		}
+		return false;
+	}
+
 }

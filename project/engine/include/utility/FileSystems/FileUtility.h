@@ -25,4 +25,9 @@ namespace QFE::FILE {
 	extern std::string WideToUTF8(const std::wstring& wstr);
 	/// ワイド文字列をUTF-8文字列に変換します
 	extern std::wstring GetAbsolutePath(const std::wstring& relativePath);
+	/// あるjsonファイルをMsgPack形式で指定のディレクトリに保存します
+	extern bool SaveJsonAsMsgPack(const nlohmann::json& jsonFile, const std::string& msgPackSavePath);
+	/// MsgPack形式のファイルをjson形式で読み込みます
+	extern bool LoadMsgPackToJson(const std::string& msgPackFilePath, nlohmann::json& json);
+
 }

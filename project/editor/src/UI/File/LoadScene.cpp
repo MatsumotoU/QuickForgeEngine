@@ -12,6 +12,8 @@ void LoadScene::Initialize() {
 	isActive_ = false;
 	sceneList_.clear();
 	sceneList_ = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".json");
+	auto sceneFiles = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".scene");
+	sceneList_.insert(sceneList_.end(), sceneFiles.begin(), sceneFiles.end());
 	if (!sceneList_.empty()) {
 		currentScene_ = sceneList_[0];
 	}
@@ -29,6 +31,8 @@ void LoadScene::Draw() {
 	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoDocking);
 	if (ImGui::Button("LoadFiles")) {
 		sceneList_ = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".json");
+		auto sceneFiles = QFE::FILE::GetFilesInDirectory("Resources/Scenes", ".scene");
+		sceneList_.insert(sceneList_.end(), sceneFiles.begin(), sceneFiles.end());
 	}
 	ImGui::Separator();
 	if (!sceneList_.empty()) {
