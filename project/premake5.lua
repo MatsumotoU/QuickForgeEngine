@@ -157,6 +157,13 @@ group "QuickForge" -- MyMainProject
                 "externals/assimp/lib/Release"
             }
         filter ""
+
+    project "Luncher" -- Luncher
+        location "luncher"
+        kind "StaticLib" 
+        language "C++"
+        
+        debugdir "%{wks.location}"
 group ""
 
 -- MySubProject

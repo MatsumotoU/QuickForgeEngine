@@ -61,9 +61,17 @@ namespace QFE {
 		/// 取得したハンドルから特定の型のバッファーデータを取得します
 		template<typename T>
 		T* GetConstantBufferData(uint32_t handle) {
-			auto typeIdx = std::type_index(typeid(T));
-			auto& pool = static_cast<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>> &>(*constantBufferPoolsMap_.at(typeIdx));
-			return pool.Get(handle)->GetData();
+			try
+			{
+				auto typeIdx = std::type_index(typeid(T));
+				auto& pool = static_cast<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>> &>(*constantBufferPoolsMap_.at(typeIdx));
+				return pool.Get(handle)->GetData();
+			}
+			catch (const std::exception&)
+			{
+				return nullptr;
+			}
+			return nullptr;
 		}
 
 		/// 取得したハンドルから特定の型のバッファーのGPU仮想アドレスを取得します
