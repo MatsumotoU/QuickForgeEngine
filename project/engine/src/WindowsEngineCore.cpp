@@ -38,9 +38,14 @@ WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 }
 
 void WindowsEngineCore::Initialize() {
+	// グローバル変数の初期化
 	EngineGlobalValue::windowWidth = windowWidth;
 	EngineGlobalValue::windowHeight = windowHeight;
-	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
+	std::string windowTitle = "QuickForgeEngine";
+
+	// エンジンの設定ファイルを読み込む
+	configFilePath_ = "engine/resources/EngineConfig.json";
+	QFE::FILE::LoadFileToJson(configFilePath_, configJson_);
 
 	// スレッド立ち上げ
 	threadPool_ = std::make_unique<ThreadPool>();
@@ -76,7 +81,6 @@ void WindowsEngineCore::Initialize() {
 	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
 	graphicPipelineManager_->Initialize(directXCommon_->GetDevice());
 
-
 	offScreenResourceManager_.Initialize(directXCommon_->GetDevice(), windowWidth, windowHeight);
 
 	for (uint32_t i = 0; i < offScreenResourceManager_.GetOffscreenCount(); i++) {
@@ -106,6 +110,16 @@ void WindowsEngineCore::Initialize() {
 	renderingPostprocess_->SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
 
 	assetManager_ = AssetManager::GetInstance();
+
+	// エンジンの設定ファイルに最後に開いたプロジェクトの名前が保存されていれば、そのプロジェクトのディレクトリを設定する
+	if (configJson_.contains("lastProjectName")) {
+		assetManager_->GetResourceDirectoryManager()->SetProjectDirectory(configJson_["lastProjectName"]);
+	} else {
+		std::string defaultProjectName = "NewGameProject";
+		assetManager_->GetResourceDirectoryManager()->SetProjectDirectory(defaultProjectName);
+		configJson_["lastProjectName"] = defaultProjectName;
+	}
+
 	assetManager_->Initialize(directXCommon_);
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -190,7 +204,14 @@ void WindowsEngineCore::MainLoop() {
 
 void WindowsEngineCore::Shutdown() {
 	EditorEngineBridgeRegistry::ClearFunctions();
+	// エンジンの設定ファイルに最後に開いたプロジェクトの名前を保存する
+#ifdef QFE_OPTIMIZE_OFF
+	DebugLog("Shutdown Engine");
+	configJson_["lastProjectName"] = assetManager_->GetResourceDirectoryManager()->GetProjectName();
+	QFE::FILE::SaveJSONToFile(configFilePath_, configJson_);
+#endif // QFE_OPTIMIZE_OFF
 
+	// 各マネージャーの終了処理
 	audioInterface_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();

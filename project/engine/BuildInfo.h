@@ -1,5 +1,5 @@
 #pragma once 
-#define BUILD_COMMIT "7b096969" 
-#define BUILD_BRANCH "develop" 
-#define BUILD_DATE "2026/04/02" 
-#define BUILD_TIME "17:20:21.59" 
+#define BUILD_COMMIT "d6532eeb" 
+#define BUILD_BRANCH "feat-GameResourceDirectory" 
+#define BUILD_DATE "2026/04/01" 
+#define BUILD_TIME "17:09:13.30" 

@@ -29,6 +29,7 @@ namespace QFE {
 		// シーンのロード、保存
 		virtual void LoadScene(const std::string& sceneName) = 0;
 		virtual void SaveScene(const std::string& sceneName) = 0;
+		virtual void SaveSceneBinary(const std::string& sceneName) = 0;
 		virtual void ResetScene() = 0;
 
 		// シーンの再生、停止
