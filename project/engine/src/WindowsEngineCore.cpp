@@ -35,6 +35,14 @@ namespace {
  */
 WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 	:debugCore_(lpCmdLine), hInstance_(hInstance), lpCmdLine_(lpCmdLine) {
+
+	audioInterface_ = nullptr;
+	colliderManager_ = nullptr;
+	physicsManager_ = nullptr;
+	sceneManager_ = nullptr;
+	graphRenderer_ = nullptr;
+	inputInterface_ = nullptr;
+	assetManager_ = nullptr;
 }
 
 void WindowsEngineCore::Initialize() {
@@ -212,13 +220,27 @@ void WindowsEngineCore::Shutdown() {
 #endif // QFE_OPTIMIZE_OFF
 
 	// 各マネージャーの終了処理
-	audioInterface_->Finalize();
-	colliderManager_->Finalize();
-	physicsManager_->Finalize();
-	sceneManager_->Finalize();
-	graphRenderer_->Finalize();
-	inputInterface_->Finalize();
-	assetManager_->Finalize();
+	if (audioInterface_) {
+		audioInterface_->Finalize();
+	}
+	if (colliderManager_) {
+		colliderManager_->Finalize();
+	}
+	if (physicsManager_) {
+		physicsManager_->Finalize();
+	}
+	if (sceneManager_) {
+		sceneManager_->Finalize();
+	}
+	if (graphRenderer_) {
+		graphRenderer_->Finalize();
+	}
+	if (inputInterface_) {
+		inputInterface_->Finalize();
+	}
+	if (assetManager_) {
+		assetManager_->Finalize();
+	}
 
 	imguiFrameController_.EndImGui();
 	directXCommon_->Shutdown();
