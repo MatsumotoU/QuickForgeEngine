@@ -69,6 +69,11 @@ std::string ResourceDirectoryManager::GetResourceDirectory(const std::string& re
 	DebugLog(std::format("GetResourceDirectory: ResourceType: {}, Directory: {}", resourceType, directory));
 #endif // QFE_OPTIMIZE_OFF
 
+	// ディレクトリが存在しない場合は作成する
+	if(!std::filesystem::exists(directory)) {
+		std::filesystem::create_directories(directory);
+	}
+
 	return directory;
 }
 
