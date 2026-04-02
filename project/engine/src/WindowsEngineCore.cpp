@@ -19,6 +19,8 @@
 
 #include "engine/include/core/Math/MyMath.h"
 
+#include <new>
+
 using namespace QFE;
 
 namespace {
@@ -45,7 +47,11 @@ void WindowsEngineCore::Initialize() {
 
 #ifdef QFE_OPTIMIZE_OFF
 	MyDebugLog::GetInstance()->Initialize();
+	// キャッシュラインサイズのログを出力
+	std::string logInitMessage = "Initialized MyDebugLog. Cache line size: " + std::to_string(std::hardware_destructive_interference_size) + " bytes.";
+	DebugLog(logInitMessage);
 #endif // QFE_OPTIMIZE_OFF
+
 	// Create Window
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
