@@ -6,6 +6,8 @@
 #include "engine/include/core/Entity/EntityManager.h"
 
 void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState, EntityManager* entityManager) {
+	entityManager;// TODO: 使っていない変数
+
 	sol::table qfe = luaState->get<sol::table>("QFE");
 	sol::table input = qfe.create_named("Input");
 	sol::table audio = qfe.create_named("Audio");

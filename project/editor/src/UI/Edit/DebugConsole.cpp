@@ -7,7 +7,7 @@
 #include "editor/include/Commands/AllEditorCommands.h"
 using namespace QFE;
 void DebugConsole::Initialize() {
-	name_ = "DebugConsole";
+	SetName("DebugConsole");
 	isActive_ = false;
 
 	commandList_.clear();
@@ -26,6 +26,7 @@ void DebugConsole::Initialize() {
 	commandList_.emplace_back(std::make_unique<CSCreateBoundScriptInstanceCommand>(items_, inputBuf_));
 	commandList_.emplace_back(std::make_unique<CSRunScriptCommand>(items_, inputBuf_));
 	commandList_.emplace_back(std::make_unique<CSReloadAssemblyCommand>(items_, inputBuf_));
+	commandList_.emplace_back(std::make_unique<BinarizeSceneCommand>(items_, inputBuf_));
 }
 
 void DebugConsole::Update() {

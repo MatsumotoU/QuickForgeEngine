@@ -7,7 +7,7 @@
 #include "scene/SceneManager.h"
 using namespace QFE;
 void SaveScene::Initialize() {
-	name_ = "SaveScene";
+	SetName("Save Scene");
 	isActive_ = false;
 	sceneName_ = "NewScene";
 }

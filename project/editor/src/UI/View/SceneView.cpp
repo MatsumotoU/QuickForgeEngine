@@ -20,7 +20,7 @@
 #include <algorithm>
 using namespace QFE;
 SceneView::SceneView() {
-	name_ = "Scene View";
+	SetName("Scene View");
 	isActiveCamera_ = true;
 	isDrawGrid_ = true;
 
@@ -52,7 +52,7 @@ void SceneView::Draw() {
 #ifdef QFE_OPTIMIZE_OFF
 	RenderingPostprocess* render = RenderingPostprocess::GetInstance();
 	DescriptorHandles handle = render->GetCurrentSrvHandle();
-	ImGui::Begin("Scene View");
+	ImGui::Begin(GetName().c_str());
 
 	// フォーカス判定
 	bool isSceneViewFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);

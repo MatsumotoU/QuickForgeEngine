@@ -13,7 +13,7 @@ using namespace QFE;
 
 InspectorView::InspectorView() {
 	isActive_ = true;
-	name_ = "Inspector View";
+	SetName("Inspector");
 	selectedEntityId_ = 0;
 
 	if (EditorEngineBridge::GetEntityTemplateDirectoryPath) {
@@ -39,7 +39,7 @@ void InspectorView::Draw() {
 		return;
 	}
 
-	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	// オブジェクトの名前
 	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::SceneObjectData)) {
 		std::string name = EditorEngineBridge::GetEntityName(selectedEntityId_);

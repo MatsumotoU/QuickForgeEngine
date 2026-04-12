@@ -177,6 +177,10 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 	currentScene_->LoadScene(sceneName);
 }
 
+void QFE::SceneManager::SaveSceneBinary(const std::string& sceneName) {
+	currentScene_->SaveSceneBinary(sceneName);
+}
+
 void SceneManager::ResetScene() {
 	currentScene_ = std::make_unique<SceneObject>();
 	currentScene_->Initialize();

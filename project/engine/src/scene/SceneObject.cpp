@@ -40,6 +40,7 @@
 #include "Engine/include/scene/SceneCommand/SceneEntityCommands.h"
 #include "engine/include/scene/SceneObject.h"
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 
 using namespace QFE;
 
@@ -167,8 +168,8 @@ void SceneObject::Finalize() {
 
 void SceneObject::LoadScene(const std::string& sceneName) {
 	std::string sceneNameCopy = sceneName;
-	// 諡｡蠑ｵ蟄千｢ｺ隱・
-	if (!sceneNameCopy.ends_with(".json")) {
+	// jsonファイルでない場合は拡張子を付ける
+	if (!sceneNameCopy.ends_with(".json") && !sceneNameCopy.ends_with(".scene")) {
 		sceneNameCopy += ".json";
 	}
 
@@ -176,7 +177,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	DebugLog("LoadScene: " + sceneNameCopy);
 #endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
-
+	// GPUバッファの解放
 	assetManager->GetGpuBufferPool()->ReleaseAllConstantBuffers();
 
 	entityManager_.ResetEntiry();
@@ -195,9 +196,20 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 		return;
 	}
 
+	// シーンファイルの形式に応じて読み込み
 	nlohmann::json sceneJson;
-	ifs >> sceneJson;
-	ifs.close();
+	if (sceneNameCopy.ends_with(".scene")) {
+		// バイナリモードで読み込み、JSONに変換
+		if (!QFE::FILE::LoadMsgPackToJson(sceneFilePath + sceneNameCopy, sceneJson)) {
+			CameraManager::GetInstance()->Initialize();
+			return;
+		}
+	} else {
+		// 従来のJSON(テキスト)読み込み
+		ifs >> sceneJson;
+		ifs.close();
+	}
+
 	// Scene名の設定
 	if (sceneJson.contains("sceneName")) {
 		sceneName_ = sceneJson["sceneName"].get<std::string>();
@@ -236,6 +248,26 @@ void SceneObject::SaveScene(const std::string& sceneName) {
 	std::ofstream ofs(sceneFilePath + sceneName + ".json");
 	ofs << sceneJson.dump(4);
 	ofs.close();
+}
+
+void QFE::SceneObject::SaveSceneBinary(const std::string& sceneName) {
+#ifdef QFE_OPTIMIZE_OFF
+	DebugLog("BinarySaveScene: " + sceneName);
+#endif // QFE_OPTIMIZE_OFF
+	AssetManager* assetManager = AssetManager::GetInstance();
+
+	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
+
+	nlohmann::json sceneJson;
+	sceneJson["sceneName"] = sceneName;
+
+	for (auto entityId : entities) {
+		nlohmann::json entityJson;
+		SerializeEntity(entityId, entityJson);
+		sceneJson["entities"].push_back(entityJson);
+	}
+
+	QFE::FILE::SaveJsonAsMsgPack(sceneJson, assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes") + sceneName + ".scene");
 }
 
 void SceneObject::ResetScene() {
@@ -544,7 +576,7 @@ void SceneObject::CopyEntity(uint32_t sourceEntityId) {
 void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 
-	// 郢ｧ・ｨ郢晢ｽｳ郢昴・縺・ｹ昴・縺・ｸｺ蠕湖皮ｹ昴・ﾎ晉ｹｧ蜻域亜邵ｺ・｣邵ｺ・ｦ邵ｺ繝ｻ竊醍ｸｺ莉｣・檎ｸｺ・ｰ闖ｴ霈費ｽらｸｺ蜉ｱ竊醍ｸｺ繝ｻ
+	// EntityがModelRenderDataを持っていない場合は処理しない
 	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ChangeModel entity does not have ModelRenderData", LogLevel::Warning);
@@ -560,7 +592,7 @@ void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelN
 void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 
-	// 繧ｨ繝ｳ繝・ぅ繝・ぅ縺後Δ繝・Ν繧呈戟縺｣縺ｦ縺・↑縺代ｌ縺ｰ菴輔ｂ縺励↑縺・
+	//　EntityがModelRenderDataを持っていない、もしくはMeshを持っていない場合は処理しない
 	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ChangeMesh entity does not have ModelRenderData", LogLevel::Warning);
@@ -569,7 +601,7 @@ void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshNam
 	}
 	ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
 	ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
-	// 繝｡繝・す繝･縺悟ｭ伜惠縺励↑縺代ｌ縺ｰ菴輔ｂ縺励↑縺・
+	//　Meshがない場合は処理しない
 	if (modelData->meshRenderDataHandles.size() == 0) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("ChangeMesh model does not have mesh", LogLevel::Warning);
@@ -714,7 +746,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	if (entityJson.contains("CsharpComponent")) {
 		std::vector<std::string> classNames;
 		if (entityJson["CsharpComponent"].contains("CsharpHandles")) {
-			// C#縺ｮ繧ｯ繝ｩ繧ｹ蜷阪°繧峨う繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繧堤函謌・
+			//　CsharpHandleからクラス名を取得してスクリプトを追加
 			for (const auto& handle : entityJson["CsharpComponent"]["CsharpHandles"]) {
 				if (handle.contains("ClassName")) {
 #ifdef QFE_OPTIMIZE_OFF

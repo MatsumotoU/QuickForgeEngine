@@ -17,6 +17,10 @@
 
 #include "engine/include/core/Bridge/EditorEngineBridgeRegistry.h"
 
+#include "engine/include/core/Math/MyMath.h"
+
+#include <new>
+
 using namespace QFE;
 
 namespace {
@@ -31,19 +35,36 @@ namespace {
  */
 WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 	:debugCore_(lpCmdLine), hInstance_(hInstance), lpCmdLine_(lpCmdLine) {
+
+	audioInterface_ = nullptr;
+	colliderManager_ = nullptr;
+	physicsManager_ = nullptr;
+	sceneManager_ = nullptr;
+	graphRenderer_ = nullptr;
+	inputInterface_ = nullptr;
+	assetManager_ = nullptr;
 }
 
 void WindowsEngineCore::Initialize() {
+	// グローバル変数の初期化
 	EngineGlobalValue::windowWidth = windowWidth;
 	EngineGlobalValue::windowHeight = windowHeight;
-	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
+	std::string windowTitle = "QuickForgeEngine";
+
+	// エンジンの設定ファイルを読み込む
+	configFilePath_ = "engine/resources/EngineConfig.json";
+	QFE::FILE::LoadFileToJson(configFilePath_, configJson_);
 
 	// スレッド立ち上げ
 	threadPool_ = std::make_unique<ThreadPool>();
 
 #ifdef QFE_OPTIMIZE_OFF
 	MyDebugLog::GetInstance()->Initialize();
+	// キャッシュラインサイズのログを出力
+	std::string logInitMessage = "Initialized MyDebugLog. Cache line size: " + std::to_string(std::hardware_destructive_interference_size) + " bytes.";
+	DebugLog(logInitMessage);
 #endif // QFE_OPTIMIZE_OFF
+
 	// Create Window
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
@@ -67,7 +88,6 @@ void WindowsEngineCore::Initialize() {
 	// Initialize Other Managers
 	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
 	graphicPipelineManager_->Initialize(directXCommon_->GetDevice());
-
 
 	offScreenResourceManager_.Initialize(directXCommon_->GetDevice(), windowWidth, windowHeight);
 
@@ -98,6 +118,16 @@ void WindowsEngineCore::Initialize() {
 	renderingPostprocess_->SetDsvHandle(directXCommon_->GetDepthStencilViewHandle()->cpuHandle_);
 
 	assetManager_ = AssetManager::GetInstance();
+
+	// エンジンの設定ファイルに最後に開いたプロジェクトの名前が保存されていれば、そのプロジェクトのディレクトリを設定する
+	if (configJson_.contains("lastProjectName")) {
+		assetManager_->GetResourceDirectoryManager()->SetProjectDirectory(configJson_["lastProjectName"]);
+	} else {
+		std::string defaultProjectName = "NewGameProject";
+		assetManager_->GetResourceDirectoryManager()->SetProjectDirectory(defaultProjectName);
+		configJson_["lastProjectName"] = defaultProjectName;
+	}
+
 	assetManager_->Initialize(directXCommon_);
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -182,14 +212,35 @@ void WindowsEngineCore::MainLoop() {
 
 void WindowsEngineCore::Shutdown() {
 	EditorEngineBridgeRegistry::ClearFunctions();
+	// エンジンの設定ファイルに最後に開いたプロジェクトの名前を保存する
+#ifdef QFE_OPTIMIZE_OFF
+	DebugLog("Shutdown Engine");
+	configJson_["lastProjectName"] = assetManager_->GetResourceDirectoryManager()->GetProjectName();
+	QFE::FILE::SaveJSONToFile(configFilePath_, configJson_);
+#endif // QFE_OPTIMIZE_OFF
 
-	audioInterface_->Finalize();
-	colliderManager_->Finalize();
-	physicsManager_->Finalize();
-	sceneManager_->Finalize();
-	graphRenderer_->Finalize();
-	inputInterface_->Finalize();
-	assetManager_->Finalize();
+	// 各マネージャーの終了処理
+	if (audioInterface_) {
+		audioInterface_->Finalize();
+	}
+	if (colliderManager_) {
+		colliderManager_->Finalize();
+	}
+	if (physicsManager_) {
+		physicsManager_->Finalize();
+	}
+	if (sceneManager_) {
+		sceneManager_->Finalize();
+	}
+	if (graphRenderer_) {
+		graphRenderer_->Finalize();
+	}
+	if (inputInterface_) {
+		inputInterface_->Finalize();
+	}
+	if (assetManager_) {
+		assetManager_->Finalize();
+	}
 
 	imguiFrameController_.EndImGui();
 	directXCommon_->Shutdown();

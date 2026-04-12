@@ -9,7 +9,7 @@
 #include "engine/include/camera/CameraManager.h"
 using namespace QFE;
 GameView::GameView() {
-	name_ = "Game View";
+	SetName("Game View");
 	isActive_ = true;
 	isSceneViewFocused_ = false;
 }
@@ -33,7 +33,7 @@ void GameView::Draw() {
 
 	RenderingPostprocess* render = RenderingPostprocess::GetInstance();
 	DescriptorHandles handle = render->GetCurrentSrvHandle();
-	ImGui::Begin(name_.c_str());
+	ImGui::Begin(GetName().c_str());
 
 	// フォーカス判定
 	isSceneViewFocused_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);

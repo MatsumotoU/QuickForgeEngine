@@ -13,7 +13,7 @@ using namespace QFE;
 
 ScriptLoggerView::ScriptLoggerView() {
 	isActive_ = true;
-	name_ = "Script Logger View";
+	SetName("Script Logger");
 	selectedEntityId_ = 0;
 }
 
@@ -29,7 +29,7 @@ void ScriptLoggerView::Draw() {
 	if (!isActive_) {
 		return;
 	}
-	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	ImGui::Text("Selected Entity ID: %d", selectedEntityId_);
 	if (ImGui::Button("Clear Logs")) {
 #ifdef QFE_OPTIMIZE_OFF

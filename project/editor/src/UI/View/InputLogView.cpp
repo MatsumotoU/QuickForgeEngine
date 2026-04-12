@@ -10,7 +10,7 @@ using namespace QFE;
 InputLogView::InputLogView()
 {
 	isActive_ = false;
-	name_ = "Input Log View";
+	SetName("Input Log View");
 }
 
 void InputLogView::Initialize()
@@ -26,7 +26,7 @@ void InputLogView::Draw()
 	if (!isActive_) { return; }
 	InputInterface* input = InputInterface::GetInstance();
 
-	ImGui::Begin("Input Log View", &isActive_);
+	ImGui::Begin(GetName().c_str(), &isActive_);
 	// キーの録画・停止のコントロール
 	if (input->GetInputLogger().IsRecording()) {
 		if (ImGui::Button("Stop Recording"))

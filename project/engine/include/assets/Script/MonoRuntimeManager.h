@@ -24,8 +24,11 @@ namespace QFE {
 		/// @brief QFE C# APIの登録（グローバルに1回のみ）
 		void RegisterQFEAPI();
 
-		/// @brief C#スクリプトのコンパイル
+		/// @brief C#スクリプトのプロジェクトを生成してコンパイル
 		void CompileScripts();
+
+		/// @brief C#プロジェクトの生成
+		void CreateCSProject(const std::string& projectName);
 
 		/// @brief ルートドメインの取得
 		MonoDomain* GetRootDomain() const { return rootDomain_; }

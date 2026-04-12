@@ -62,6 +62,8 @@ void LuaScriptOnQFE::LoadScript(const std::string& scriptName) {
 		sol::table env_table = luaState_->create_table();
 		sol::table mt = luaState_->create_table();
 		mt["__index"] = [this](sol::table t, sol::object key) -> sol::object {
+			t;// TODO: 使っていない変数
+
 			if (key.is<std::string>()) {
 				std::string k = key.as<std::string>();
 				auto* em = entityManager_;

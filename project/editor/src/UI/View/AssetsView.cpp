@@ -17,7 +17,7 @@ AssetsView::AssetsView() {
 	assetManager = AssetManager::GetInstance();
 	assert(assetManager);
 	currentHierarchy = ViewHierarchy::Root;
-	name_ = "Assets View";
+	SetName("Assets");
 	hierarchyNames = {
 		{ViewHierarchy::Root, "Root"},
 		{ViewHierarchy::Images, "Images"},
@@ -65,7 +65,7 @@ void AssetsView::Draw() {
 		return;
 	}
 
-	ImGui::Begin(name_.c_str(), &isActive_);
+	ImGui::Begin(GetName().c_str(), &isActive_);
 
 	// メモリ/ファイル表示の切り替えラジオボタン
 	if (ImGui::RadioButton("Memory", loadSpace_ == LoadSpace::Memory)) {

@@ -57,6 +57,9 @@ namespace QFE {
 		void SaveScene(const std::string& sceneName);
 		/** @brief シーンの読み込み */
 		void LoadScene(const std::string& sceneName);
+		/** @brief シーンのバイナリ化 */
+		void SaveSceneBinary(const std::string& sceneName);
+
 		/** @brief ザーンのリセット */
 		void ResetScene();
 		/** @brief 実行時のシーン切り替え */

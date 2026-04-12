@@ -2,7 +2,7 @@
 #include "graphic/PostEffect/RenderingPostprocess.h"
 using namespace QFE;
 void PostprocessEdit::Initialize() {
-	name_ = "PostprocessEdit";
+	SetName("Postprocess Edit");
 	isActive_ = false;
 }
 

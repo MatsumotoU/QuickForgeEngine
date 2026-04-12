@@ -103,6 +103,7 @@ namespace QFE {
 		std::unique_ptr<ThreadPool> threadPool_;
 
 		nlohmann::json configJson_;
+		std::string configFilePath_;
 
 		EditorEngineBridge editorEngineBridge_;
 	};

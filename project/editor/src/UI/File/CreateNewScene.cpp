@@ -7,7 +7,7 @@
 #include "scene/SceneManager.h"
 using namespace QFE;
 void CreateNewScene::Initialize() {
-	name_ = "New Scene";
+	SetName("Create New Scene");
 	isActive_ = false;
 }
 
@@ -18,9 +18,9 @@ void CreateNewScene::Draw() {
 	if (!isActive_) {
 		return;
 	}
-	ImGui::OpenPopup(name_.c_str());
+	ImGui::OpenPopup(GetName().c_str());
 	ImGui::SetNextWindowSize(ImVec2(300, 100), ImGuiCond_Once);
-	if (ImGui::BeginPopupModal(name_.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (ImGui::BeginPopupModal(GetName().c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::Text("Create a new scene?\n");
 		ImGui::Separator();
 		if (ImGui::Button("Create", ImVec2(120, 0))) {

@@ -2,6 +2,8 @@
 #include <thread>
 #include <functional>
 #include <atomic>
+#include <condition_variable>
+#include <mutex>
 
 namespace QFE {
 	/// @brief 1つのスレッドを占有してタスクを実行するクラス
@@ -28,5 +30,8 @@ namespace QFE {
 		std::atomic<bool> isRunning_;
 		std::atomic<bool> hasTask_;
 		std::function<void()> currentTask_;
+
+		std::mutex mutex_;
+		std::condition_variable condition_;
 	};
 }
