@@ -1,4 +1,4 @@
-#include "engine/include/utility/String/StringLiblary.h"
+#include "engine/include/utility/String/StringLibrary.h"
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -13,7 +13,7 @@ namespace QFE {
 
 	StringLibrary::~StringLibrary() {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("=====LiblaryListLog from {}=====", libraryFriendryName_));
+		DebugLog(std::format("=====LibraryListLog from {}=====", libraryFriendryName_));
 		uint32_t index = 0;
 		for (std::string& str : library_) {
 			DebugLog(std::format("Data[{}]: {}", index, str));
@@ -27,7 +27,7 @@ namespace QFE {
 		library_.clear();
 		libraryFriendryName_ = libraryFriendName;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("Create Liblary Name: {}", libraryFriendryName_));
+		DebugLog(std::format("Create Library Name: {}", libraryFriendryName_));
 #endif // QFE_OPTIMIZE_OFF
 	}
 
