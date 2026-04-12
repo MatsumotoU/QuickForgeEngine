@@ -5,6 +5,7 @@
 
 #include "engine/include/assets/ResourceDirectoryManager.h"
 #include <cassert>
+#include <filesystem>
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
