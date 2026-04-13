@@ -23,9 +23,16 @@ namespace QFE {
 		std::string GetProjectDirectory() const;
 		/// @brief 指定されたリソースタイプに対応するディレクトリを取得する関数
 		std::string GetResourceDirectory(const std::string& resourceType) const;
+		/// @brief ルートのディレクトリを取得する関数
+		std::string GetRootDirectory() const { return rootDirectory_; }
 
 		/// @brief エディタ用のリソースディレクトリを取得する関数
 		std::string GetEditorResourceDirectory() const;
+
+		/// @brief ファイルのディレクトリの整合性を確認する関数
+		bool CheckDirectoryIntegrity() const;
+		/// @brief ディレクトリの整合性を修復する関数
+		void RepairDirectoryIntegrity() const;
 
 	private:
 		std::string ProjectName_;

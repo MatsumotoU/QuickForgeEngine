@@ -21,8 +21,10 @@
 #include "editor/include/UI/View/InputLogView.h"
 
 #include "editor/include/UI/File/CreateNewScene.h"
+#include "editor/include/UI/File/LoadProject.h"
 #include "editor/include/UI/File/SaveScene.h"
 #include "editor/include/UI/File/LoadScene.h"
+#include "editor/include/UI/File/CreateNewProject.h"
 
 #include "editor/include/UI/Edit/DebugConsole.h"
 #include "editor/include/UI/Edit/KeyConfigEdit.h"
@@ -38,6 +40,8 @@ void UIManager::Initialize() {
 	isActiveUI_ = true;
 
 	// FileUIの初期化
+	fileUIs_.push_back(std::make_unique<CreateNewProject>());
+	fileUIs_.push_back(std::make_unique<LoadProject>());
 	fileUIs_.push_back(std::make_unique<CreateNewScene>());
 	fileUIs_.push_back(std::make_unique<SaveScene>());
 	fileUIs_.push_back(std::make_unique<LoadScene>());

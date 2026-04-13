@@ -15,10 +15,12 @@ using namespace QFE;
 void SceneManager::Initialize() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-	isRequestRunTimeLoadScene_ = false;
-	isFirstLoadScene_ = false;
+	// シーンの状態関数を登録
+	sceneState_.push_back([this]() { FirstLoadScene(); });
+	sceneState_.push_back([this]() { RunningScene(); });
+	sceneState_.push_back([this]() { TransitioningScene(); });
 
-	// SceneConfig.json縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
+	// sceneConfig.jsonを読み込む。存在しない場合は空のJSONオブジェクトを使用
 	sceneConfig_ = nlohmann::json::object();
 	try {
 		std::string path = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Config") + "SceneConfig.json";
@@ -51,34 +53,8 @@ void SceneManager::Initialize() {
 void SceneManager::Update() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-	// 譛€蠕後↓髢九＞縺溘す繝ｼ繝ｳ繧帝幕縺・
-	if (!isFirstLoadScene_) {
-		if (sceneConfig_.contains("lastScene")) {
-			try {
-				LoadScene(sceneConfig_["lastScene"].get<std::string>());
-#ifdef QFE_OPTIMIZE_ON
-				StartScript();
-#endif // _RELEASE
-
-			}
-			catch (const std::exception& e) {
-				e;
-#ifdef QFE_OPTIMIZE_OFF
-				DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // QFE_OPTIMIZE_OFF
-			}
-		}
-		isFirstLoadScene_ = true;
-	}
-
-	if (isRequestRunTimeLoadScene_) {
-		LoadScene(nextSceneName_);
-		StartScript();
-		isRequestRunTimeLoadScene_ = false;
-		nextSceneName_.clear();
-	}
-
-	currentScene_->Update();
+	// 現在のシーン状態に応じた処理を実行
+	sceneState_[static_cast<size_t>(currentSceneState_)]();
 
 	std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
 #ifdef QFE_OPTIMIZE_OFF
@@ -181,6 +157,12 @@ void QFE::SceneManager::SaveSceneBinary(const std::string& sceneName) {
 	currentScene_->SaveSceneBinary(sceneName);
 }
 
+void QFE::SceneManager::ResetProject(const std::string& projectName) {
+	ResetScene();
+	AssetManager* assetManager = AssetManager::GetInstance();
+	assetManager->GetResourceDirectoryManager()->SetProjectDirectory(projectName);
+}
+
 void SceneManager::ResetScene() {
 	currentScene_ = std::make_unique<SceneObject>();
 	currentScene_->Initialize();
@@ -190,7 +172,7 @@ void SceneManager::ResetScene() {
 
 void SceneManager::RunTimeSwapScene(const std::string& sceneName) {
 	StopScript();
-	isRequestRunTimeLoadScene_ = true;
+	currentSceneState_ = SceneState::Transitioning;
 	nextSceneName_ = sceneName;
 }
 
@@ -278,4 +260,33 @@ void SceneManager::StartScript() {
 
 void SceneManager::StopScript() {
 	currentScene_->StopScene();
+}
+
+void QFE::SceneManager::FirstLoadScene() {
+	if (sceneConfig_.contains("lastScene")) {
+		try {
+			LoadScene(sceneConfig_["lastScene"].get<std::string>());
+#ifdef QFE_OPTIMIZE_ON
+			StartScript();
+#endif // _RELEASE
+		}
+		catch (const std::exception& e) {
+			e;
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+#endif // QFE_OPTIMIZE_OFF
+		}
+	}
+	currentSceneState_ = SceneState::Running;
+}
+
+void QFE::SceneManager::RunningScene() {
+	currentScene_->Update();
+}
+
+void QFE::SceneManager::TransitioningScene() {
+	LoadScene(nextSceneName_);
+	StartScript();
+	currentSceneState_ = SceneState::Running;
+	nextSceneName_.clear();
 }

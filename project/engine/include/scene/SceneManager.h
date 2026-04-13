@@ -7,6 +7,7 @@
 #include "IScene.h"
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "engine/include/utility/ID/UniqueIDManager.h"
+#include "engine/include/scene/Data/SceneState.h"
 
 #include "engine/include/core/Math/Vector/Vector2.h"
 #include <memory>
@@ -60,7 +61,9 @@ namespace QFE {
 		/** @brief シーンのバイナリ化 */
 		void SaveSceneBinary(const std::string& sceneName);
 
-		/** @brief ザーンのリセット */
+		/** @brief プロジェクトごとリセット*/
+		void ResetProject(const std::string& projectName);
+		/** @brief シーンのリセット */
 		void ResetScene();
 		/** @brief 実行時のシーン切り替え */
 		void RunTimeSwapScene(const std::string& sceneName);
@@ -124,14 +127,21 @@ namespace QFE {
 
 	private:
 		int score_;
-		bool isFirstLoadScene_;
-		bool isRequestRunTimeLoadScene_;
 		nlohmann::json sceneConfig_;
 		nlohmann::json sceneGlobalData_;
 		std::unique_ptr<IScene> currentScene_;
 		std::unique_ptr<IScene> nextScene_;
 
 		std::string nextSceneName_;
+
+		SceneState currentSceneState_;
+		std::vector<std::function<void()>> sceneState_;
+		/// @brief はじめのシーンをロード
+		void FirstLoadScene();
+		/// @brief シーンの更新
+		void RunningScene();
+		/// @brief シーンの遷移
+		void TransitioningScene();
 	};
 
 }

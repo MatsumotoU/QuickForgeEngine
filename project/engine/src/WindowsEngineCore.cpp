@@ -121,8 +121,19 @@ void WindowsEngineCore::Initialize() {
 
 	// エンジンの設定ファイルに最後に開いたプロジェクトの名前が保存されていれば、そのプロジェクトのディレクトリを設定する
 	if (configJson_.contains("lastProjectName")) {
+		// プロジェクトのディレクトリの整合性を確認して、問題があれば修復する
+		if(assetManager_->GetResourceDirectoryManager()->CheckDirectoryIntegrity() == false) {
+			assetManager_->GetResourceDirectoryManager()->RepairDirectoryIntegrity();
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog("Repaired project directory integrity");
+#endif // QFE_OPTIMIZE_OFF
+		}
 		assetManager_->GetResourceDirectoryManager()->SetProjectDirectory(configJson_["lastProjectName"]);
 	} else {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("No last project name found, creating a new project directory");
+#endif // QFE_OPTIMIZE_OFF
+		// 最後に開いたプロジェクトの名前が保存されていない場合は、新しいプロジェクトのディレクトリを生成して設定する
 		std::string defaultProjectName = "NewGameProject";
 		assetManager_->GetResourceDirectoryManager()->SetProjectDirectory(defaultProjectName);
 		configJson_["lastProjectName"] = defaultProjectName;
