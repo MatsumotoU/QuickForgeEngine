@@ -18,7 +18,7 @@ void SceneManager::Initialize() {
 	isRequestRunTimeLoadScene_ = false;
 	isFirstLoadScene_ = false;
 
-	// SceneConfig.json縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
+	// sceneConfig.jsonを読み込む。存在しない場合は空のJSONオブジェクトを使用
 	sceneConfig_ = nlohmann::json::object();
 	try {
 		std::string path = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Config") + "SceneConfig.json";
@@ -51,7 +51,7 @@ void SceneManager::Initialize() {
 void SceneManager::Update() {
 	std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-	// 譛€蠕後↓髢九＞縺溘す繝ｼ繝ｳ繧帝幕縺・
+	// 最初のシーンロードは、前回終了時のシーンを自動で読み込む。これにより、エディタで作業しているシーンを継続して編集できるようにする。
 	if (!isFirstLoadScene_) {
 		if (sceneConfig_.contains("lastScene")) {
 			try {
@@ -179,6 +179,12 @@ void SceneManager::LoadScene(const std::string& sceneName) {
 
 void QFE::SceneManager::SaveSceneBinary(const std::string& sceneName) {
 	currentScene_->SaveSceneBinary(sceneName);
+}
+
+void QFE::SceneManager::ResetProject(const std::string& projectName) {
+	ResetScene();
+	AssetManager* assetManager = AssetManager::GetInstance();
+	assetManager->GetResourceDirectoryManager()->SetProjectDirectory(projectName);
 }
 
 void SceneManager::ResetScene() {

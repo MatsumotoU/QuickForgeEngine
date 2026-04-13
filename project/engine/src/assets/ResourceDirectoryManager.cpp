@@ -75,3 +75,28 @@ std::string ResourceDirectoryManager::GetResourceDirectory(const std::string& re
 std::string QFE::ResourceDirectoryManager::GetEditorResourceDirectory() const {
 	return "Editor/Resource/Images/";
 }
+
+bool QFE::ResourceDirectoryManager::CheckDirectoryIntegrity() const {
+	std::string projectPath = rootDirectory_ + ProjectName_ + "/";
+	if (!std::filesystem::exists(projectPath)) {
+		return false;
+	}
+	for (const auto& [key, value] : resourceDirectories_) {
+		if (!std::filesystem::exists(projectPath + value)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void QFE::ResourceDirectoryManager::RepairDirectoryIntegrity() const {
+	std::string projectPath = rootDirectory_ + ProjectName_ + "/";
+	if (!std::filesystem::exists(projectPath)) {
+		std::filesystem::create_directories(projectPath);
+	}
+	for (const auto& [key, value] : resourceDirectories_) {
+		if (!std::filesystem::exists(projectPath + value)) {
+			std::filesystem::create_directories(projectPath + value);
+		}
+	}
+}
