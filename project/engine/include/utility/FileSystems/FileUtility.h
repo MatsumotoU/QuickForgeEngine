@@ -11,6 +11,8 @@
 namespace QFE::FILE {
 	/// ある階層のディレクトリ内にある特定拡張子のファイル名一覧を取得します
 	extern std::vector<std::string> GetFilesInDirectory(const std::string& directoryPath, const std::string& extension = "");
+	/// ある階層にあるディレクトリの一覧を取得します
+	extern std::vector<std::string> GetDirectoriesInDirectory(const std::string& directoryPath);
 	/// 指定した実行ファイルで特定のファイルを開きます
 	extern bool OpenFileOnExe(const std::string& exePath, const std::string& filePath);
 	/// 指定したファイルをJSON形式で読み込みます

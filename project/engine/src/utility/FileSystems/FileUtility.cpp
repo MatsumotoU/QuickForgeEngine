@@ -18,6 +18,17 @@ namespace QFE::FILE {
 		return files;
 	}
 
+	std::vector<std::string> GetDirectoriesInDirectory(const std::string& directoryPath) {
+		std::vector<std::string> directories;
+		namespace fs = std::filesystem;
+		for (const auto& entry : fs::directory_iterator(directoryPath)) {
+			if (entry.is_directory()) {
+				directories.push_back(entry.path().filename().string());
+			}
+		}
+		return directories;
+	}
+
 	bool OpenFileOnExe(const std::string& exePath, const std::string& filePath) {
 		// ShellExecuteAの戻り値が32以下なら失敗
 		HINSTANCE result = ShellExecuteA(

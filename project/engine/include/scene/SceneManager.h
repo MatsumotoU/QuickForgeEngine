@@ -60,7 +60,9 @@ namespace QFE {
 		/** @brief シーンのバイナリ化 */
 		void SaveSceneBinary(const std::string& sceneName);
 
-		/** @brief ザーンのリセット */
+		/** @brief プロジェクトごとリセット*/
+		void ResetProject(const std::string& projectName);
+		/** @brief シーンのリセット */
 		void ResetScene();
 		/** @brief 実行時のシーン切り替え */
 		void RunTimeSwapScene(const std::string& sceneName);
