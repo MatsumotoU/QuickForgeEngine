@@ -9,7 +9,7 @@
 #include "engine/include/core/Math/Vector/Vector2.h"
 #include "Externals/DirectXTex/d3dx12.h"
 #include "Externals/DirectXTex/DirectXTex.h"
-#include "engine/include/utility/String/StringLiblary.h"
+#include "engine/include/utility/String/StringLibrary.h"
 
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 

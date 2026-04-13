@@ -5,6 +5,7 @@
 
 #include "engine/include/assets/ResourceDirectoryManager.h"
 #include <cassert>
+#include <filesystem>
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -68,6 +69,11 @@ std::string ResourceDirectoryManager::GetResourceDirectory(const std::string& re
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog(std::format("GetResourceDirectory: ResourceType: {}, Directory: {}", resourceType, directory));
 #endif // QFE_OPTIMIZE_OFF
+
+	// ディレクトリが存在しない場合は作成する
+	if(!std::filesystem::exists(directory)) {
+		std::filesystem::create_directories(directory);
+	}
 
 	return directory;
 }

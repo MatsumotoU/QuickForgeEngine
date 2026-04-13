@@ -1,5 +1,5 @@
 #pragma once 
-#define BUILD_COMMIT "b658a8b3" 
-#define BUILD_BRANCH "feat-GameResourceDirectory" 
-#define BUILD_DATE "2026/04/13" 
-#define BUILD_TIME "10:37:13.32" 
+#define BUILD_COMMIT "e62c4e2e" 
+#define BUILD_BRANCH "fix-rename" 
+#define BUILD_DATE "2026/04/12" 
+#define BUILD_TIME "14:28:29.51" 
