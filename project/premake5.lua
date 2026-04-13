@@ -158,8 +158,8 @@ group "QuickForge" -- MyMainProject
             }
         filter ""
 
-    project "Luncher" -- Luncher
-        location "luncher"
+    project "launcher" -- Launcher
+        location "launcher"
         kind "StaticLib" 
         language "C++"
         
