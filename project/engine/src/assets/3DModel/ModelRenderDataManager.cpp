@@ -20,6 +20,9 @@ uint32_t ModelRenderDataManager::Add(const ModelRenderData& data) {
 
 /** @brief データの取得 */
 ModelRenderData* ModelRenderDataManager::Get(uint32_t handle) {
+	if(modelRenderDatas_.size() <= handle) {
+		return nullptr;
+	}
 	return &modelRenderDatas_.at(handle);
 }
 

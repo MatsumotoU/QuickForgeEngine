@@ -1,6 +1,39 @@
 {
     "entities": [
         {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 8
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
             "CameraData": {
                 "farZ": 100.0,
                 "fovY": 0.44999998807907104,
@@ -9,7 +42,7 @@
             "SceneObjectData": {
                 "name": "DebugCamera",
                 "tag": "camera",
-                "uniqueId": 0
+                "uniqueId": 1
             },
             "Transform": {
                 "rotate": [
@@ -30,6 +63,39 @@
             }
         },
         {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 9
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
             "CameraData": {
                 "farZ": 100.0,
                 "fovY": 0.44999998807907104,
@@ -38,7 +104,7 @@
             "SceneObjectData": {
                 "name": "Camera",
                 "tag": "camera",
-                "uniqueId": 0
+                "uniqueId": 2
             },
             "Transform": {
                 "rotate": [
@@ -55,6 +121,305 @@
                     0.0,
                     1.5,
                     -10.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "White1x1.png",
+                "tag": "Untagged",
+                "uniqueId": 3
+            },
+            "SpriteData": {
+                "height": 1.0,
+                "isDraw": true,
+                "layer": 0,
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "textureName": "White1x1.png",
+                "width": 1.0
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    50.0,
+                    50.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 6
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 7
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 10
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 11
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 12
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 13
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 14
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "WhitePlate.obj",
+                "tag": "Untagged",
+                "uniqueId": 15
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.110856533050537,
+                    0.0
                 ]
             }
         }

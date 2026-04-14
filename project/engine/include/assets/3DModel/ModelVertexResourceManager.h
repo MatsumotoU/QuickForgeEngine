@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <deque>
 #include <list>
 #include <unordered_map>
 #include <d3d12.h>
@@ -55,8 +56,8 @@ namespace QFE {
 
 	private:
 		std::unordered_map<std::string, uint32_t> modelHandleMap_;
-		std::vector<ModelData> modelDatas_;
-		std::vector<VertexBuffer<VertexData>> modelVertexBuffers_;
+		std::deque<ModelData> modelDatas_;
+		std::deque<VertexBuffer<VertexData>> modelVertexBuffers_;
 	};
 
 }

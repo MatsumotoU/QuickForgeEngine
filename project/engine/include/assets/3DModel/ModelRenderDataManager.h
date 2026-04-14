@@ -5,6 +5,7 @@
 
 #pragma once
 #include <vector>
+#include <deque>
 #include "Data/ModelData.h"
 #include "Data/ModelRenderData.h"
 
@@ -33,7 +34,7 @@ namespace QFE {
 		void Finalize();
 
 	private:
-		std::vector<ModelRenderData> modelRenderDatas_;
+		std::deque<ModelRenderData> modelRenderDatas_;
 	};
 
 }

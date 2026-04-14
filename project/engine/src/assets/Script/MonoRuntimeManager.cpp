@@ -83,8 +83,10 @@ void MonoRuntimeManager::Initialize() {
 	DebugLog("Success to initialize Mono JIT.");
 #endif
 
+#ifdef QFE_OPTIMIZE_OFF
 	// C#スクリプトのコンパイル
 	CompileScripts();
+#endif // QFE_OPTIMIZE_OFF
 
 	// QFE APIの登録
 	RegisterQFEAPI();
