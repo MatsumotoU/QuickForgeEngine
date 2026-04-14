@@ -13,12 +13,14 @@ using namespace QFE;
 void ModelVertexResourceManager::Initialize() {
 	modelDatas_.clear();
 	modelVertexBuffers_.clear();
+	modelHandleMap_.clear();
 }
 
 /** @brief 終了処理 */
 void ModelVertexResourceManager::Finalize() {
 	modelDatas_.clear();
 	modelVertexBuffers_.clear();
+	modelHandleMap_.clear();
 }
 
 /**

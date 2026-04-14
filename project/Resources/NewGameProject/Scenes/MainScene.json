@@ -59,10 +59,19 @@
             }
         },
         {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "WhitePlate.obj"
+            },
             "SceneObjectData": {
-                "name": "This is Main",
+                "name": "WhitePlate.obj",
                 "tag": "Untagged",
-                "uniqueId": 749036980
+                "uniqueId": 749036981
             },
             "Transform": {
                 "rotate": [

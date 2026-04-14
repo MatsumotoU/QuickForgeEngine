@@ -12,6 +12,10 @@
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
+#ifdef QFE_OPTIMIZE_OFF
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
+#endif // QFE_OPTIMIZE_OFF
+
 namespace QFE {
 	namespace Render {
 		namespace Model {
@@ -26,6 +30,12 @@ namespace QFE {
 
 				// TODO: modelHandle の有効性チェック(範囲チェック)が欠けている
 				const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(modelHandle);
+				if(modelDataPtr == nullptr) {
+#ifdef QFE_OPTIMIZE_OFF
+					DebugLog(std::string("Error: ModelRenderData is nullptr for modelHandle ") + std::to_string(modelHandle));
+#endif // QFE_OPTIMIZE_OFF
+					return;
+				}
 				GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 
 				PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetTrianglePso(kBlendModeNormal);
