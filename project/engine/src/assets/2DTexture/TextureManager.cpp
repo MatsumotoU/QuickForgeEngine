@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file TextureManager.cpp
  * @brief 繝・け繧ｹ繝√Ε邂｡逅・け繝ｩ繧ｹ縺ｮ螳溯｣・
  */
@@ -18,22 +18,29 @@
 
 using namespace QFE;
 
-/** @brief 蛻晄悄蛹・*/
+TextureManager::TextureManager() :
+	device_(nullptr),
+	commandList_(nullptr),
+	srvDescriptorHeap_(nullptr),
+	textureHandle_(0) {
+}
+
+/// @brief 初期化処理
 void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap) {
 	srvDescriptorHeap_ = srvDescriptorHeap;
 
-	// COM縺ｮ蛻晄悄蛹・
+	// COMの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 	hr;
 
-	// 繝・ヰ繧､繧ｹ縺ｨ繧ｳ繝槭Φ繝峨Μ繧ｹ繝医ｒ蜿門ｾ・
+	// デバイスとコマンドリストの確認
 	assert(device);
 	device_ = device;
 	assert(commandList);
 	commandList_ = commandList;
 
-	// 蛻ｩ逕ｨ縺吶ｋHeap縺ｮ險ｭ螳・
+	// ヒーププロパティの設定
 	heapProperties_ = {};
 	heapProperties_.Type = D3D12_HEAP_TYPE_DEFAULT;
 
@@ -47,9 +54,9 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	textureHandle_ = 0;
 }
 
-/** @brief 邨ゆｺ・・逅・*/
+/// @brief 終了処理
 void TextureManager::Finalize() {
-	// 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ隗｣謾ｾ
+	// リソースの解放
 	textureSrvHandleCPU_.clear();
 	textureSrvHandleGPU_.clear();
 	textureResources_.clear();
@@ -89,7 +96,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 
 	// 郢晄ｺ倥Ε郢晏干繝ｻ郢昴・繝ｻ邵ｺ・ｮ闖ｴ諛医・
 	if (image.GetMetadata().width * image.GetMetadata().height != 1) {
-		scratchImages_.emplace_back();
+		scratchImages_.push_back(DirectX::ScratchImage());
 		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, scratchImages_.back());
 		assert(SUCCEEDED(hr));
 	} else {
@@ -199,7 +206,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	// 騾包ｽｻ陷貞臆・ｪ・ｭ邵ｺ・ｿ髴趣ｽｼ邵ｺ・ｿ陷・ｽｦ騾・・
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
-	textureResources_.emplace_back() = CreateTextureResource(metadata);
+	textureResources_.push_back(CreateTextureResource(metadata));
 #ifdef QFE_OPTIMIZE_OFF
 	const auto& resource = textureResources_.back();
 	if (resource) {
@@ -236,12 +243,4 @@ const D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleCPU(uint32_
 
 const D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetTextureSrvHandleGPU(uint32_t index) const {
 	return textureSrvHandleGPU_[index];
-}
-
-const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& TextureManager::GetTextureSrvHandleCPUList() const {
-	return textureSrvHandleCPU_;
-}
-
-const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>& TextureManager::GetTextureSrvHandleGPUList() const {
-	return textureSrvHandleGPU_;
 }

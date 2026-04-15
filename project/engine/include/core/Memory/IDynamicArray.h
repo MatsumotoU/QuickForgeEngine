@@ -11,6 +11,8 @@ namespace QFE {
 		virtual void clear() = 0;
 		/// @brief 追加する要素を指定して、配列の末尾に要素を追加する
 		virtual void push_back(const T& value) = 0;
+		/// @brief 追加する要素を指定して、配列の末尾に要素を追加する（ムーブセマンティクス対応版）
+		virtual void emplace_back(T&& value) = 0;
 		/// @brief 配列の末尾の要素を削除する
 		virtual void pop_back() = 0;
 		/// @brief ある要素を指定して削除する
@@ -27,6 +29,15 @@ namespace QFE {
 		virtual T* end() = 0;
 		/// @brief 配列の最後のイテレータを取得する（const版）
 		virtual const T* end() const = 0;
+
+		/// @brief 配列の先頭の要素にアクセスする
+		virtual T& front() = 0;
+		/// @brief 配列の先頭の要素にアクセスする（const版）
+		virtual const T& front() const = 0;
+		/// @brief 配列の末尾の要素にアクセスする
+		virtual T& back() = 0;
+		/// @brief 配列の末尾の要素にアクセスする（const版）
+		virtual const T& back() const = 0;
 
 		/// @brief 配列が空かどうかを判定する
 		virtual bool empty() const = 0;
