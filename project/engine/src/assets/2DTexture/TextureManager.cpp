@@ -96,12 +96,12 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 
 	// 郢晄ｺ倥Ε郢晏干繝ｻ郢昴・繝ｻ邵ｺ・ｮ闖ｴ諛医・
 	if (image.GetMetadata().width * image.GetMetadata().height != 1) {
-		scratchImages_.push_back(DirectX::ScratchImage());
-		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, scratchImages_.back());
+		scratchImages_.push_back(std::make_unique<DirectX::ScratchImage>());
+		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, *(scratchImages_.back().get()));
 		assert(SUCCEEDED(hr));
 	} else {
 		// 邵ｺ譏ｴ繝ｻ邵ｺ・ｾ邵ｺ・ｾ隴ｬ・ｼ驍上・
-		scratchImages_.push_back(std::move(image));
+		scratchImages_.push_back(std::make_unique<DirectX::ScratchImage>(std::move(image)));
 	}
 }
 
@@ -205,7 +205,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 
 	// 騾包ｽｻ陷貞臆・ｪ・ｭ邵ｺ・ｿ髴趣ｽｼ邵ｺ・ｿ陷・ｽｦ騾・・
 	LoadScratchImage(filePath);
-	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
+	const DirectX::TexMetadata& metadata = scratchImages_.back().get()->GetMetadata();
 	textureResources_.push_back(CreateTextureResource(metadata));
 #ifdef QFE_OPTIMIZE_OFF
 	const auto& resource = textureResources_.back();
@@ -218,7 +218,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	CreateShaderResourceView(metadata, textureResources_.back().Get());
 	textureHandle_++;
 	intermediateResource_.push_back(
-		UploadTextureData(textureResources_.back().Get(), scratchImages_.back(), commandList_));
+		UploadTextureData(textureResources_.back().Get(), *(scratchImages_.back().get()), commandList_));
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width, metadata.height, textureHandle_ - 1)));
 #endif // QFE_OPTIMIZE_OFF
@@ -233,7 +233,7 @@ Vector2 TextureManager::GetTextureSize(int32_t textureHandle) {
 #endif // QFE_OPTIMIZE_OFF
 		return Vector2(0.0f, 0.0f);
 	}
-	const DirectX::TexMetadata& metadata = scratchImages_[textureHandle].GetMetadata();
+	const DirectX::TexMetadata& metadata = scratchImages_[textureHandle].get()->GetMetadata();
 	return Vector2(static_cast<float>(metadata.width), static_cast<float>(metadata.height));
 }
 

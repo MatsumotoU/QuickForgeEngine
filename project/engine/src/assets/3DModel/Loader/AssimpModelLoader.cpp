@@ -1,4 +1,5 @@
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 #include <cassert>
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -11,6 +12,17 @@ using namespace QFE;
 void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename, ModelData& modelData) {
 	Assimp::Importer importer;
 	std::string filepath = modelResourceDirectory + filename;
+	
+	// ファイルの存在確認
+	if (!QFE::FILE::HasFile(filepath)) {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog(std::format("Model file not found: {}", filepath));
+#endif // QFE_OPTIMIZE_OFF
+		assert(false && "Model file not found");
+		return;
+	}
+
+	// モデルの読み込み
 	const aiScene* scene = importer.ReadFile(
 		filepath,
 		aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals

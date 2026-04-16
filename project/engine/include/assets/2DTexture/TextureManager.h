@@ -9,6 +9,7 @@
 #include "engine/include/core/Math/Vector/Vector2.h"
 #include "Externals/DirectXTex/d3dx12.h"
 #include "Externals/DirectXTex/DirectXTex.h"
+
 #include "engine/include/utility/String/StringLibrary.h"
 #include "engine/include/core/Memory/SafeVector.h"
 
@@ -59,6 +60,11 @@ namespace QFE {
 		/** @brief 指定インデックスのGPUディスクリプタハンドルを取得 */
 		[[nodiscard]] const D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index) const;
 
+#ifdef QFE_OPTIMIZE_OFF
+		/// @brief デバッグ用に次のテクスチャハンドルを取得
+		[[nodiscard]] const int32_t GetNextTextureHandle() const { return textureHandle_; }
+#endif // QFE_OPTIMIZE_OFF
+
 	private:
 		DirectX::ScratchImage Load(const std::string& filePath);
 		void LoadScratchImage(const std::string& filePath);
@@ -77,7 +83,7 @@ namespace QFE {
 		SafeVector<D3D12_CPU_DESCRIPTOR_HANDLE> textureSrvHandleCPU_;
 		SafeVector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPU_;
 		SafeVector<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResources_;
-		SafeVector<DirectX::ScratchImage> scratchImages_;
+		SafeVector<std::unique_ptr<DirectX::ScratchImage>> scratchImages_;
 
 		int32_t textureHandle_;
 		SafeVector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
