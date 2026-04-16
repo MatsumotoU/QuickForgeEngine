@@ -91,7 +91,6 @@ DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
 }
 
 void TextureManager::LoadScratchImage(const std::string& filePath) {
-	// 郢昴・縺醍ｹｧ・ｹ郢昶・ﾎ慕ｹ晁ｼ斐＜郢ｧ・､郢晢ｽｫ郢ｧ螳夲ｽｪ・ｭ邵ｺ・ｿ髴趣ｽｼ郢ｧ阮吶€堤ｹ晏干ﾎ溽ｹｧ・ｰ郢晢ｽｩ郢晢｣ｰ邵ｺ・ｧ闖ｴ・ｿ邵ｺ蛹ｻ・狗ｹｧ蛹ｻ竕ｧ邵ｺ・ｫ邵ｺ蜷ｶ・・
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
@@ -102,14 +101,15 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height, metadata.arraySize)));
 #endif // QFE_OPTIMIZE_OFF
 
-	// 郢晄ｺ倥Ε郢晏干繝ｻ郢昴・繝ｻ邵ｺ・ｮ闖ｴ諛医・
+	// ミップマップの生成
 	if (image.GetMetadata().width * image.GetMetadata().height != 1) {
 		scratchImages_.push_back(std::make_unique<DirectX::ScratchImage>());
 		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, *(scratchImages_.back().get()));
 		assert(SUCCEEDED(hr));
 	} else {
-		// 邵ｺ譏ｴ繝ｻ邵ｺ・ｾ邵ｺ・ｾ隴ｬ・ｼ驍上・
-		scratchImages_.push_back(std::make_unique<DirectX::ScratchImage>(std::move(image)));
+		// 1x1のテクスチャはミップマップを生成せず、そのまま保存する
+		scratchImages_.push_back(std::make_unique<DirectX::ScratchImage>());
+		*scratchImages_.back() = std::move(image);
 	}
 }
 
@@ -123,6 +123,10 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 	resourceDesc_.Format = metadata.format;
 	resourceDesc_.SampleDesc.Count = 1;
 	resourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
+
+#ifdef QFE_OPTIMIZE_PFF
+#endif // QFE_OPTIMIZE_PFF
+
 
 	// 郢晢ｽｪ郢ｧ・ｽ郢晢ｽｼ郢ｧ・ｹ邵ｺ・ｮ騾墓ｻ薙・
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
