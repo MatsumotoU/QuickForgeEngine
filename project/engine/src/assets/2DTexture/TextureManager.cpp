@@ -6,6 +6,8 @@
 #include "engine/include/assets/2DTexture/TextureManager.h"
 #include <cassert>
 
+#include "engine/include/core/EngineConstants.h"
+
 #include "engine/include/utility/String/MyString.h"
 #include "engine/include/Graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/Graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
@@ -22,7 +24,13 @@ TextureManager::TextureManager() :
 	device_(nullptr),
 	commandList_(nullptr),
 	srvDescriptorHeap_(nullptr),
-	textureHandle_(0) {
+	textureHandle_(0),
+	textureSrvHandleCPU_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxTextures),
+	textureSrvHandleGPU_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxTextures),
+	textureResources_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxTextures),
+	scratchImages_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxTextures),
+	intermediateResource_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxIntermediateResources)
+{
 }
 
 /// @brief 初期化処理
