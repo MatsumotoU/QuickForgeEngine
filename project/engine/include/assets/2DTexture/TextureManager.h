@@ -9,17 +9,11 @@
 #include "engine/include/core/Math/Vector/Vector2.h"
 #include "Externals/DirectXTex/d3dx12.h"
 #include "Externals/DirectXTex/DirectXTex.h"
+
 #include "engine/include/utility/String/StringLibrary.h"
+#include "engine/include/core/Memory/SafeVector.h"
 
 #include "engine/include/utility/DesignPatterns/Singleton.h"
-
-class SrvDescriptorHeap; // External or QFE? Assuming external/global if not QFE. But SrvDescriptorHeap is usually QFE.
-// Checking SrvDescriptorHeap: It's in 'engine/include/Graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h'
-// So it will be in QFE namespace soon.
-// For now, I will assume it will be QFE::SrvDescriptorHeap.
-namespace QFE {
-    class SrvDescriptorHeap;
-}
 
 namespace QFE {
 
@@ -31,7 +25,7 @@ namespace QFE {
 	 */
 	class TextureManager final :public Singleton<TextureManager> {
 		friend class Singleton<TextureManager>;
-		TextureManager() = default;
+		TextureManager();
 		TextureManager(const TextureManager&) = delete;
 		TextureManager& operator=(const TextureManager&) = delete;
 		TextureManager(TextureManager&&) = delete;
@@ -65,10 +59,11 @@ namespace QFE {
 		[[nodiscard]] const D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index) const;
 		/** @brief 指定インデックスのGPUディスクリプタハンドルを取得 */
 		[[nodiscard]] const D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index) const;
-		/** @brief CPUディスクリプタハンドルのリストを取得 */
-		[[nodiscard]] const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& GetTextureSrvHandleCPUList() const;
-		/** @brief GPUディスクリプタハンドルのリストを取得 */
-		[[nodiscard]] const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>& GetTextureSrvHandleGPUList() const;
+
+#ifdef QFE_OPTIMIZE_OFF
+		/// @brief デバッグ用に次のテクスチャハンドルを取得
+		[[nodiscard]] const int32_t GetNextTextureHandle() const { return textureHandle_; }
+#endif // QFE_OPTIMIZE_OFF
 
 	private:
 		DirectX::ScratchImage Load(const std::string& filePath);
@@ -84,13 +79,14 @@ namespace QFE {
 		SrvDescriptorHeap* srvDescriptorHeap_;
 		D3D12_HEAP_PROPERTIES heapProperties_;
 		D3D12_RESOURCE_DESC resourceDesc_;
-		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> textureSrvHandleCPU_;
-		std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPU_;
+
+		SafeVector<D3D12_CPU_DESCRIPTOR_HANDLE> textureSrvHandleCPU_;
+		SafeVector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPU_;
+		SafeVector<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResources_;
+		SafeVector<std::unique_ptr<DirectX::ScratchImage>> scratchImages_;
 
 		int32_t textureHandle_;
-		std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResources_;
-		std::vector<DirectX::ScratchImage> scratchImages_;
-		std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
+		SafeVector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
 		StringLibrary filePathLiblary_;
 	};
 

@@ -146,4 +146,9 @@ namespace QFE::FILE {
 		return std::filesystem::exists(directoryPath) && std::filesystem::is_directory(directoryPath);
 	}
 
+	bool HasFile(const std::string& filePath)
+	{
+		return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath);
+	}
+
 }

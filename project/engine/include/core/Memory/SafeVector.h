@@ -28,24 +28,16 @@ namespace QFE {
 			data_.clear();
 		}
 
-		/// @brief 追加する要素を指定して、配列の末尾に要素を追加する
-		virtual void push_back(const T& value) override {
+		/// @brief 要素を配列の末尾に追加する（コピーまたはムーブ）
+		virtual void push_back(T value) override {
 			assert(data_.size() < data_.capacity() && "SafeVector capacity exceeded. Consider increasing the reserved size.");
-			data_.push_back(value);
+			data_.push_back(std::move(value));
 		}
 
 		/// @brief 配列の末尾の要素を削除する
 		virtual void pop_back() override {
 			if (!data_.empty()) {
 				data_.pop_back();
-			}
-		}
-
-		/// @brief ある要素を指定して削除する
-		virtual void erase(const T& value) override {
-			auto it = std::find(data_.begin(), data_.end(), value);
-			if (it != data_.end()) {
-				data_.erase(it);
 			}
 		}
 
@@ -58,9 +50,13 @@ namespace QFE {
 
 		virtual T* begin() override { return data_.data(); }
 		virtual const T* begin() const override { return data_.data(); }
-
+		virtual T& front() override { return data_.front(); }
+		virtual const T& front() const override { return data_.front(); }
+		virtual T& back() override { return data_.back(); }
+		virtual const T& back() const override { return data_.back(); }
 		virtual T* end() override { return data_.data() + data_.size(); }
 		virtual const T* end() const override { return data_.data() + data_.size(); }
+
 		virtual bool empty() const override { return data_.empty(); }
 		virtual size_t size() const override { return data_.size(); }
 		virtual size_t capacity() const override { return data_.capacity(); }

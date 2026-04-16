@@ -33,4 +33,6 @@ namespace QFE::FILE {
 	extern bool LoadMsgPackToJson(const std::string& msgPackFilePath, nlohmann::json& json);
 	/// ディレクトリの存在を確認します
 	extern bool HasDirectory(const std::string& directoryPath);
+	/// ファイルの存在を確認します
+	extern bool HasFile(const std::string& filePath);
 }

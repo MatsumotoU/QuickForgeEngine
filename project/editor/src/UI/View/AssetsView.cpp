@@ -136,7 +136,13 @@ void AssetsView::ImagesView() {
 	}
 
 	// メモリ上のテクスチャを表示
-	const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> handles = assetManager->GetTextureManager()->GetTextureSrvHandleGPUList();
+	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> handles;
+	handles.reserve(static_cast<size_t>(assetManager->GetTextureManager()->GetNextTextureHandle()));
+	int nextTextureHandle = static_cast<int>(assetManager->GetTextureManager()->GetNextTextureHandle());
+	for(int i = 0; i < nextTextureHandle; i++) {
+		handles.push_back(assetManager->GetTextureManager()->GetTextureSrvHandleGPU(i));
+	}
+
 	const int buttonSize = 64;
 	const int buttonPadding = 8;
 	ImVec2 avail = ImGui::GetContentRegionAvail();
