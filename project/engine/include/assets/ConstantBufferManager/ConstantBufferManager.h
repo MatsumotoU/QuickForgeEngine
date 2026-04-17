@@ -7,6 +7,8 @@
 #include "engine/include/graphic/ShaderBuffer/ConstantBuffer.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 
+#include "engine/include/core/Memory/SafeVector.h"
+
 namespace QFE {
 
 	template<typename T>
@@ -14,7 +16,7 @@ namespace QFE {
 	public:
 		void Initialize() { buffers_.clear(); }
 		uint32_t CreateBuffer() {
-			buffers_.emplace_back();
+			buffers_.push_back(ConstantBuffer<T>());
 			buffers_.back().CreateResource(DirectXCommon::GetInstance()->GetDevice());
 			return static_cast<uint32_t>(buffers_.size() - 1);
 		}
@@ -30,7 +32,7 @@ namespace QFE {
 		void Finalize() { buffers_.clear(); }
 
 	private:
-		std::vector<ConstantBuffer<T>> buffers_;
+		SafeVector<ConstantBuffer<T>> buffers_;
 	};
 
 }

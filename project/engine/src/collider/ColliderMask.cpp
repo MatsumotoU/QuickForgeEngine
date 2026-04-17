@@ -28,7 +28,7 @@ void ColliderTagMask::Initialize(const std::string& maskTableFilePath)
 				if (pair.contains("tag1") && pair.contains("tag2")) {
 					std::string tag1 = pair["tag1"].get<std::string>();
 					std::string tag2 = pair["tag2"].get<std::string>();
-					tagMaskPairs_.emplace_back(tag1, tag2);
+					tagMaskPairs_.push_back(std::make_pair(tag1, tag2));
 				}
 			}
 		}
@@ -67,18 +67,24 @@ void ColliderTagMask::Finalize()
 }
 
 void ColliderTagMask::AddTagMaskPair(const std::string& tag1, const std::string& tag2) {
-	tagMaskPairs_.emplace_back(tag1, tag2);
+	tagMaskPairs_.push_back(std::make_pair(tag1, tag2));
 }
 
 void ColliderTagMask::EraseTagMaskPair(const std::string& tag1, const std::string& tag2) {
-    auto it = std::remove_if(
-        tagMaskPairs_.begin(),
-        tagMaskPairs_.end(),
-        [&](const std::pair<std::string, std::string>& pair) {
-            return IsUnorderedPairEqual(pair, std::make_pair(tag1, tag2));
-        }
-    );
-    tagMaskPairs_.erase(it, tagMaskPairs_.end());
+	size_t indexToErase = -1;
+	for (size_t i = 0; i < tagMaskPairs_.size(); ++i) {
+		if (IsUnorderedPairEqual(tagMaskPairs_[i], std::make_pair(tag1, tag2))) {
+			indexToErase = i;
+			break;
+		}
+	}
+    if (indexToErase != -1) {
+        tagMaskPairs_.erase(indexToErase);
+	} else {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("Tag mask pair not found: (" + tag1 + ", " + tag2 + ")", LogLevel::Error);
+#endif // QFE_OPTIMIZE_OFF
+	}
 }
 
 bool ColliderTagMask::IsCollidable(const std::string& tag1, const std::string& tag2) const {
@@ -90,6 +96,7 @@ bool ColliderTagMask::IsCollidable(const std::string& tag1, const std::string& t
 	return false;
 }
 
-const std::vector<std::pair<std::string, std::string>>& ColliderTagMask::GetTagMaskPairs() const {
-	return tagMaskPairs_;
+const std::vector<std::pair<std::string, std::string>> ColliderTagMask::GetTagMaskPairs() const {
+	std::vector<std::pair<std::string, std::string>> result(tagMaskPairs_.begin(), tagMaskPairs_.end());
+	return result;
 }

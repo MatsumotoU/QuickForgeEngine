@@ -24,7 +24,7 @@ void RootParameter::CreateRootParameter(const std::string& friendlyName, const D
 	rootParameters_[rootParameters_.size() - 1].ParameterType = parameterType;
 	rootParameters_[rootParameters_.size() - 1].ShaderVisibility = shaderVisibility;
 	rootParameters_[rootParameters_.size() - 1].Descriptor.ShaderRegister = shaderRegisterIndex;
-	descriptionRootSignature_.pParameters = rootParameters_.data();
+	descriptionRootSignature_.pParameters = rootParameters_.begin();
 	descriptionRootSignature_.NumParameters = static_cast<UINT>(rootParameters_.size());
 
 	// 郢晢ｽｫ郢晢ｽｼ郢晏現縺咏ｹｧ・ｰ郢晞亂繝｡郢晢ｽ｣邵ｺ・ｮ騾具ｽｻ鬪ｭ・ｲ陷ｷ髦ｪ・定将譎・亜
@@ -98,10 +98,6 @@ D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendl
 	}
 	assert(false && "RootParameter not found for the given friendly name.");
 	return result;
-}
-
-std::vector<D3D12_ROOT_PARAMETER>* RootParameter::GetRootParameters() {
-	return &rootParameters_;
 }
 
 D3D12_ROOT_SIGNATURE_DESC* RootParameter::GetDescriptionRootSignature() {

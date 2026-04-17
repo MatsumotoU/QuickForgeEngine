@@ -3,8 +3,9 @@
 #include <wrl.h>
 #include <dxgi1_6.h>
 #include <d3d12.h>
-#include <vector>
 #include "Descriptors/Data/DescriptorHandles.h"
+
+#include "engine/include/core/Memory/SafeVector.h"
 
 namespace QFE {
 
@@ -35,8 +36,8 @@ namespace QFE {
 		void AssignBackbuffer();
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
-		std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
-		std::vector<DescriptorHandles> backBufferViews_;
+		SafeVector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
+		SafeVector<DescriptorHandles> backBufferViews_;
 
 		uint32_t rtvDescriptorSize_;
 		uint32_t currentBackBufferIndex_;

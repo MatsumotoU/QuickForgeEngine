@@ -3,6 +3,8 @@
 #include <string>
 #include "KeyFrame.h"
 
+#include "engine/include/core/Memory/SafeVector.h"
+
 namespace QFE {
 
 	class AnimClip final {
@@ -24,7 +26,7 @@ namespace QFE {
 	private:
 		bool isLoop_;
 		const std::string name_;
-		std::vector<KeyFrame> keyframes_;
+		SafeVector<KeyFrame> keyframes_;
 	};
 
 }

@@ -1,4 +1,4 @@
-﻿#include "engine/include/graphic/DirectXCommon/SwapChain.h"
+#include "engine/include/graphic/DirectXCommon/SwapChain.h"
 #include <cassert>
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -66,12 +66,10 @@ namespace QFE {
 	}
 
 	void SwapChain::CreateDubleBuffering() {
-		backBuffers_.resize(2);
-		backBuffers_[0] = nullptr;
-		backBuffers_[1] = nullptr;
-		backBufferViews_.resize(2);
-		backBufferViews_[0] = {};
-		backBufferViews_[1] = {};
+		backBuffers_.push_back(nullptr);
+		backBuffers_.push_back(nullptr);
+		backBufferViews_.push_back({});
+		backBufferViews_.push_back({});
 	}
 
 	void SwapChain::Present() {

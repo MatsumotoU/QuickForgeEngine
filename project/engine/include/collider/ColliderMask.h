@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include "engine/include/core/Memory/SafeVector.h"
 
 namespace QFE {
 
@@ -24,12 +25,12 @@ namespace QFE {
 		bool IsCollidable(const std::string& tag1, const std::string& tag2) const;
 
 		/// @brief マスクするタグの組み合わせのリストを取得します.
-		const std::vector<std::pair<std::string, std::string>>& GetTagMaskPairs() const;
+		const std::vector<std::pair<std::string, std::string>> GetTagMaskPairs() const;
 	private:
 		/// @brief マスクするタグのテーブルのファイルパス
 		std::string configFilePath_;
 		/// @brief マスクするタグの組み合わせのリスト
-		std::vector<std::pair<std::string, std::string>> tagMaskPairs_;
+		SafeVector<std::pair<std::string, std::string>> tagMaskPairs_;
 	};
 
 }
