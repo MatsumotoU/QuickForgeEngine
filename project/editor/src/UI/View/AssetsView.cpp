@@ -206,7 +206,12 @@ void AssetsView::ShadersView() {
 		if (pool) {
 			if (ImGui::CollapsingHeader(pool->GetTypeName())) {
 				ImGui::Text("Used: %zu / %zu", pool->UsedSize(), pool->Size());
-				ImGui::ProgressBar(static_cast<float>(pool->UsedSize()) / static_cast<float>(pool->Size()));
+				if (pool->Size() > 0) {
+					ImGui::ProgressBar(static_cast<float>(pool->UsedSize()) / static_cast<float>(pool->Size()));
+				}
+				else {
+					ImGui::Text("Pool Error: Size is zero");
+				}
 			}
 		}
 	}

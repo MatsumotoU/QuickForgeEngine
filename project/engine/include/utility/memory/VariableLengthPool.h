@@ -13,6 +13,7 @@ namespace QFE {
 		VariableLengthPool(size_t initialSize = 10) : pool_(initialSize) {
 			// 初期状態では全てのインデックスが空いているとみなす
 			for (size_t i = 0; i < initialSize; ++i) {
+				pool_.push_back(T());
 				freeIndices_.push(i);
 			}
 		}
@@ -22,7 +23,7 @@ namespace QFE {
 		uint32_t Add(const T& obj) {
 			if (freeIndices_.empty()) {
 				size_t newIndex = pool_.size();
-				pool_.emplace_back(obj);
+				pool_.push_back(obj);
 				return static_cast<uint32_t>(newIndex);
 			} else {
 				size_t index = freeIndices_.top();
