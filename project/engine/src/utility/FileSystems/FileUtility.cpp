@@ -151,4 +151,13 @@ namespace QFE::FILE {
 		return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath);
 	}
 
+	bool HasObjModelFiles(const std::string& directoryPath, const std::string& modelName) {
+		std::string objFilePath = directoryPath + "/" + modelName + ".obj";
+		std::string mtlFilePath = directoryPath + "/" + modelName + ".mtl";
+		if (HasFile(objFilePath) && HasFile(mtlFilePath)) {
+			return true;
+		}
+		return false;
+	}
+
 }

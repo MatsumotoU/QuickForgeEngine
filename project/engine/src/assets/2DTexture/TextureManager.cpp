@@ -18,6 +18,8 @@
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #endif // QFE_OPTIMIZE_OFF
 
+#include "engine/include/utility/FileSystems/FileUtility.h"
+
 using namespace QFE;
 
 TextureManager::TextureManager() :
@@ -29,8 +31,7 @@ TextureManager::TextureManager() :
 	textureSrvHandleGPU_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxTextures),
 	textureResources_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxTextures),
 	scratchImages_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxTextures),
-	intermediateResource_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxIntermediateResources)
-{
+	intermediateResource_(QFE::CONSTANTS::TEXTURE_MANAGER::kMaxIntermediateResources) {
 }
 
 /// @brief 初期化処理
@@ -91,6 +92,11 @@ DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
 }
 
 void TextureManager::LoadScratchImage(const std::string& filePath) {
+	// ファイルパスにファイルがあるかどうかを確認
+	if (!QFE::FILE::HasFile(filePath)) {
+		throw std::runtime_error(std::format("Texture file not found: '{}'", filePath));
+	}
+
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
@@ -98,6 +104,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 
 #ifdef QFE_OPTIMIZE_OFF
 	const DirectX::TexMetadata& metadata = image.GetMetadata();
+	DebugLog(std::format("TextureManager: Loaded texture from '{}'", filePath));
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height, metadata.arraySize)));
 #endif // QFE_OPTIMIZE_OFF
 
@@ -106,29 +113,46 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 		scratchImages_.push_back(std::make_unique<DirectX::ScratchImage>());
 		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, *(scratchImages_.back().get()));
 		assert(SUCCEEDED(hr));
+		// ミップマップの生成に失敗した場合は例外をスロー
+		if (!SUCCEEDED(hr)) {
+			throw std::runtime_error("Failed to generate mipmaps for texture.");
+		}
+
 	} else {
 		// 1x1のテクスチャはミップマップを生成せず、そのまま保存する
 		scratchImages_.push_back(std::make_unique<DirectX::ScratchImage>());
-		*scratchImages_.back() = std::move(image);
+		hr = scratchImages_.back()->InitializeFromImage(*image.GetImage(0, 0, 0));
+		assert(SUCCEEDED(hr));
+		// 1x1テクスチャの初期化に失敗した場合は例外をスロー
+		if (!SUCCEEDED(hr)) {
+			throw std::runtime_error("Failed to initialize scratch image from 1x1 texture.");
+		}
 	}
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(const DirectX::TexMetadata& metadata) {
-	// metadata郢ｧ雋樊ｸ慕ｸｺ・ｫResource邵ｺ・ｮ髫ｪ・ｭ陞ｳ繝ｻ
+	// メタデータの内容をもとにリソース記述子を設定
 	resourceDesc_ = {};
-	resourceDesc_.Width = static_cast<UINT>(metadata.width); // 郢昴・縺醍ｹｧ・ｹ郢昶・ﾎ慕ｸｺ・ｮ陝ｷ繝ｻ
-	resourceDesc_.Height = static_cast<UINT>(metadata.height); // 郢昴・縺醍ｹｧ・ｹ郢昶・ﾎ慕ｸｺ・ｮ鬯ｮ蛟･・・
-	resourceDesc_.MipLevels = static_cast<UINT16>(metadata.mipLevels); // mipmap邵ｺ・ｮ隰ｨ・ｰ
-	resourceDesc_.DepthOrArraySize = static_cast<UINT16>(metadata.arraySize); // 陞ゑｽ･髯ｦ邨罫鬩滓ｦ翫・郢昴・縺醍ｹｧ・ｹ郢昶・ﾎ慕ｸｺ・ｮ鬩滓ｦ翫・隰ｨ・ｰ
-	resourceDesc_.Format = metadata.format;
-	resourceDesc_.SampleDesc.Count = 1;
-	resourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
+	resourceDesc_.Width = static_cast<UINT>(metadata.width); // 横幅
+	resourceDesc_.Height = static_cast<UINT>(metadata.height); // 縦幅
+	resourceDesc_.MipLevels = static_cast<UINT16>(metadata.mipLevels); // ミップマップのレベル数
+	resourceDesc_.DepthOrArraySize = static_cast<UINT16>(metadata.arraySize); // 配列サイズまたは深度
+	resourceDesc_.Format = metadata.format;// DXGI_FORMATで指定されたフォーマット
+	resourceDesc_.SampleDesc.Count = 1;// サンプル数（マルチサンプリングを使用しない場合は1）
+	resourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);// リソースの次元（1D、2D、3Dなど）
+
+	// メタデータの整合性を確認
+	if (resourceDesc_.Width == 0 || resourceDesc_.Height == 0 || resourceDesc_.MipLevels == 0 || resourceDesc_.DepthOrArraySize == 0) {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog(std::format("TextureManager: Invalid texture metadata - width={}, height={}, mipLevels={}, arraySize={}", resourceDesc_.Width, resourceDesc_.Height, resourceDesc_.MipLevels, resourceDesc_.DepthOrArraySize));
+#endif // QFE_OPTIMIZE_OFF
+		throw std::runtime_error("Invalid texture metadata.");
+	}
 
 #ifdef QFE_OPTIMIZE_PFF
 #endif // QFE_OPTIMIZE_PFF
 
-
-	// 郢晢ｽｪ郢ｧ・ｽ郢晢ｽｼ郢ｧ・ｹ邵ｺ・ｮ騾墓ｻ薙・
+	// リソースの作成
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 	HRESULT hr = device_->CreateCommittedResource(
 		&heapProperties_,
@@ -137,8 +161,12 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(resource.GetAddressOf()));
+
+	// COM関数の呼び出し結果を確認
 	assert(SUCCEEDED(hr));
-	hr;
+	if (!SUCCEEDED(hr)) {
+		throw std::runtime_error(std::format("Failed to create committed resource for texture. HRESULT: 0x{:X}", hr));
+	}
 	return resource;
 }
 

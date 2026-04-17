@@ -69,6 +69,17 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
 
+	// モデルのデータの整合性を確認
+	for(auto& mesh : modelData.meshes) {
+		// テクスチャファイルパスが空の場合は読み込めない事にする
+		if (mesh.material.textureFilePath.empty()) {
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog("Mesh " + mesh.material.textureFilePath + " in model " + modelName + " has no texture file path.", LogLevel::Warning);
+#endif // QFE_OPTIMIZE_OFF
+			throw std::runtime_error("Mesh " + mesh.material.textureFilePath + " in model " + modelName + " has no texture file path.");
+		}
+	}
+
 	// メッシュの数だけメッシュ描画データを確保
 	modelRenderData.meshRenderDataHandles.resize(modelData.meshes.size());
 	// TODO: modelData.meshes が空の場合、以下のアクセスでクラッシュする可能性がある
