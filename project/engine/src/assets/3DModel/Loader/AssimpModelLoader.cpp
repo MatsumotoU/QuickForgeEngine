@@ -59,7 +59,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		DebugLog(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
 #endif // QFE_OPTIMIZE_OFF
 
-		// 鬆らせ繝・・繧ｿ
+		// 頂点データの読み込み
 		std::vector<VertexData> tempVertices;
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			VertexData vtx;
@@ -91,7 +91,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			tempVertices.push_back(vtx);
 		}
 
-		// 繧､繝ｳ繝・ャ繧ｯ繧ｹ・井ｸ芽ｧ貞ｽ｢縺斐→縺ｫ鬆らせ繧定ｩｰ繧√ｋ・・
+		// 面データの読み込み（インデックスを使用して頂点を追加）
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			const aiFace& face = mesh->mFaces[i];
 			if (face.mNumIndices == 3) {
