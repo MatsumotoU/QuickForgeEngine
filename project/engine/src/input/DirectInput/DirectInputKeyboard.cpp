@@ -2,9 +2,8 @@
 
 #include <cassert>
 using namespace QFE;
-DirectInputKeyboard::DirectInputKeyboard() {
-	keyboard_ = nullptr;
-	directInput_ = nullptr;
+DirectInputKeyboard::DirectInputKeyboard(): 
+	keyboard_(nullptr), directInput_(nullptr), pressedKeys_(256) {
 }
 
 DirectInputKeyboard::~DirectInputKeyboard() {
@@ -48,11 +47,11 @@ bool DirectInputKeyboard::GetRelease(uint32_t DIK) {
 	return false;
 }
 
-const std::vector<uint32_t>& DirectInputKeyboard::GetPressedKeys()
+const SafeVector<uint32_t>& DirectInputKeyboard::GetPressedKeys()
 {
 	for (uint32_t keyCode = 0; keyCode < 256; keyCode++) {
 		if (key_[keyCode]) {
-			pressedKeys_.emplace_back(keyCode);
+			pressedKeys_.push_back(keyCode);
 		}
 	}
 	return pressedKeys_;
