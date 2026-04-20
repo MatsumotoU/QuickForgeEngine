@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include "engine/include/core/Memory/SafeVector.h"
 #include <cstdint>
 namespace QFE {
 	/// @brief スパースセットコンテナ
@@ -9,16 +9,10 @@ namespace QFE {
 		SparseSet() = default;
 		void push_back(const T& value) {
 			uint32_t key = static_cast<uint32_t>(dense_.size());
-			if (key >= sparse_.size()) {
-				sparse_.resize(key + 1, -1);
-			}
 			dense_.push_back(value);
 			sparse_[key] = static_cast<int32_t>(dense_.size() - 1);
 		}
 		void Insert(uint32_t key, const T& value) {
-			if (key >= sparse_.size()) {
-				sparse_.resize(key + 1, -1);
-			}
 			if (sparse_[key] == -1) {
 				dense_.push_back(value);
 				sparse_[key] = static_cast<int32_t>(dense_.size() - 1);
@@ -49,9 +43,6 @@ namespace QFE {
 		bool Contains(uint32_t key) const {
 			return key < sparse_.size() && sparse_[key] != -1;
 		}
-		const std::vector<T>& GetDenseArray() const {
-			return dense_;
-		}
 
 		// 標準ライブラリ風インターフェース
 		void clear() {
@@ -76,7 +67,7 @@ namespace QFE {
 			return dense_.at(sparse_.at(key));
 		}
 	private:
-		std::vector<int32_t> sparse_;
-		std::vector<T> dense_;
+		SafeVector<int32_t> sparse_;
+		SafeVector<T> dense_;
 	};
 } // namespace QFE
