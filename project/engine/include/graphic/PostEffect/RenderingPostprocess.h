@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "engine/include/graphic/DirectXCommon/Descriptors/Data/DescriptorHandles.h"
 #include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <string>
-#include <vector>
+#include "engine/include/core/Memory/SafeVector.h"
 #include <list>
 #include <unordered_map>
 #include <d3d12.h>
@@ -103,8 +103,8 @@ namespace QFE {
 		ID3D12GraphicsCommandList* list_;
 		PipelineStateObject* normalPso_;
 		std::array<ID3D12Resource*, 2> offScreenResources_;
-		std::vector<std::function<void() >> postProcessFunctions_;
-		std::vector<uint32_t> postProcessOrderForm_;
+		SafeVector<std::function<void() >> postProcessFunctions_;
+		SafeVector<uint32_t> postProcessOrderForm_;
 
 		D3D12_CPU_DESCRIPTOR_HANDLE backBufferRtvHandle_;
 		std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 2> offScreenRtvHandles_;

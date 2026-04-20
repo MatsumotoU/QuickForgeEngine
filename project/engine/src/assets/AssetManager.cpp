@@ -63,11 +63,22 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 	ModelRenderData modelRenderData;
 
 	// モデル自体の読み込み
-	ModelData modelData{};
+	ModelData modelData;
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
+
+	// モデルのデータの整合性を確認
+	for(auto& mesh : modelData.meshes) {
+		// テクスチャファイルパスが空の場合は読み込めない事にする
+		if (mesh.material.textureFilePath.empty()) {
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog("Mesh " + mesh.material.textureFilePath + " in model " + modelName + " has no texture file path.", LogLevel::Warning);
+#endif // QFE_OPTIMIZE_OFF
+			throw std::runtime_error("Mesh " + mesh.material.textureFilePath + " in model " + modelName + " has no texture file path.");
+		}
+	}
 
 	// メッシュの数だけメッシュ描画データを確保
 	modelRenderData.meshRenderDataHandles.resize(modelData.meshes.size());
@@ -120,7 +131,7 @@ uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
 	}
 
 	// モデル自体の読み込み
-	ModelData modelData{};
+	ModelData modelData;
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
@@ -130,7 +141,7 @@ uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
 
 uint32_t AssetManager::LoadModelTexture(const std::string& modelName) {
 	// 繝｢繝・Ν繝・・繧ｿ繧定ｪｭ縺ｿ霎ｼ縺ｿ
-	ModelData modelData{};
+	ModelData modelData;
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),

@@ -1,32 +1,3 @@
 {
-    "tagMaskPairs": [
-        {
-            "tag1": "bullet",
-            "tag2": "bullet"
-        },
-        {
-            "tag1": "Enemy",
-            "tag2": "Enemy"
-        },
-        {
-            "tag1": "player",
-            "tag2": "bullet"
-        },
-        {
-            "tag1": "ball",
-            "tag2": "enemyBullet"
-        },
-        {
-            "tag1": "enemy",
-            "tag2": "enemyBullet"
-        },
-        {
-            "tag1": "ball",
-            "tag2": "ball"
-        },
-        {
-            "tag1": "enemyBullet",
-            "tag2": "enemyBullet"
-        }
-    ]
+    "tagMaskPairs": []
 }

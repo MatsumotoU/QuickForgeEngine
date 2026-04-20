@@ -256,7 +256,7 @@ void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
 #endif
 		return;
 	}
-	scripts_.erase(scripts_.begin() + index);
+	scripts_.erase(static_cast<size_t>(index));
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("Deleted script instance at index: " + std::to_string(index));
 #endif

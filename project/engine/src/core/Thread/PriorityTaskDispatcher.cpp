@@ -22,7 +22,7 @@ void QFE::PriorityTaskDispatcher::ExecuteTasks() {
 	while (!tasks_.empty() && hasIdleWorker_()) {
 		// 最も優先度の高いタスクを取得
 		Task task = tasks_.front();
-		tasks_.erase(tasks_.begin());
+		tasks_.erase(0);
 		// タスクを追加
 		addTaskFunc_(task.func);
 	}

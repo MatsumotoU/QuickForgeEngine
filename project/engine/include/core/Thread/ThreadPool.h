@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include <deque>
 #include <memory>
 #include "engine/include/core/Thread/ThreadWorker.h"
 
@@ -29,6 +29,6 @@ namespace QFE {
 
 	private:
 		/// @brief ThreadWorkerのリスト
-		std::vector<std::unique_ptr<ThreadWorker>> workers_;
+		std::deque<std::unique_ptr<ThreadWorker>> workers_;
 	};
 }

@@ -2,16 +2,17 @@
 #include <vector>
 #include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "ModelMaterialData.h"
+#include "engine/include/core/Memory/SafeVector.h"
 
 namespace QFE {
 
 	struct MeshData {
-		std::vector<VertexData> vertices;
+		SafeVector<VertexData> vertices;
 		ModelMaterialData material;
 	};
 
 	struct ModelData {
-		std::vector<MeshData> meshes;
+		SafeVector<MeshData> meshes;
 	};
 
 }

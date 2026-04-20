@@ -22,7 +22,7 @@ uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
 	}
 
 	// 繝輔ぃ繧､繝ｫ繧帝幕縺・
-	AudioData soundData{};
+	AudioData soundData;
 	try{
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog("LoadSoundData: " + filePath);

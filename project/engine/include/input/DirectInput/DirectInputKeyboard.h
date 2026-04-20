@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include <vector>
+#include "engine/include/core/Memory/SafeVector.h"
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -37,12 +37,12 @@ namespace QFE {
 		/// <summary>
 		/// 押されているキーのリストを取得
 		/// </summary>
-		const std::vector<uint32_t>& GetPressedKeys();
+		const SafeVector<uint32_t>& GetPressedKeys();
 
 	public:// キーボード操作変数
 		BYTE key_[256];
 		BYTE preKey_[256];
-		std::vector<uint32_t> pressedKeys_;
+		SafeVector<uint32_t> pressedKeys_;
 
 	private:
 		IDirectInputDevice8* CreateKeyboard();

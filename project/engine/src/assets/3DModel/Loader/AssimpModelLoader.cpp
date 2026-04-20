@@ -7,6 +7,8 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 
+#include "engine/include/utility/FileSystems/FileUtility.h"
+
 using namespace QFE;
 
 void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename, ModelData& modelData) {
@@ -19,6 +21,16 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		DebugLog(std::format("Model file not found: {}", filepath));
 #endif // QFE_OPTIMIZE_OFF
 		assert(false && "Model file not found");
+		return;
+	}
+
+	// Obj形式である場合、mtlもあるか確認する
+	if (!QFE::FILE::HasObjModelFiles(modelResourceDirectory, filename)) {
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog(std::format("MTL file not found for OBJ model: {}", filename));
+#endif // QFE_OPTIMIZE_OFF
+		assert(false && "MTL file not found for OBJ model");
+		throw std::runtime_error("MTL file not found for OBJ model: " + filename);
 		return;
 	}
 
@@ -47,7 +59,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		DebugLog(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
 #endif // QFE_OPTIMIZE_OFF
 
-		// 鬆らせ繝・・繧ｿ
+		// 頂点データの読み込み
 		std::vector<VertexData> tempVertices;
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			VertexData vtx;
@@ -79,7 +91,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			tempVertices.push_back(vtx);
 		}
 
-		// 繧､繝ｳ繝・ャ繧ｯ繧ｹ・井ｸ芽ｧ貞ｽ｢縺斐→縺ｫ鬆らせ繧定ｩｰ繧√ｋ・・
+		// 面データの読み込み（インデックスを使用して頂点を追加）
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			const aiFace& face = mesh->mFaces[i];
 			if (face.mNumIndices == 3) {
@@ -95,6 +107,15 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			aiString texPath;
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
 				meshData.material.textureFilePath = imageResourceDirectory + std::string(texPath.C_Str());
+#ifdef QFE_OPTIMIZE_OFF
+				DebugLog(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureFilePath));
+#endif // QFE_OPTIMIZE_OFF
+
+			} else {
+				meshData.material.textureFilePath = "";
+#ifdef QFE_OPTIMIZE_OFF
+				DebugLog(std::format("No diffuse texture found for mesh {}. Setting empty texture path.", meshIdx));
+#endif // QFE_OPTIMIZE_OFF
 			}
 		}
 

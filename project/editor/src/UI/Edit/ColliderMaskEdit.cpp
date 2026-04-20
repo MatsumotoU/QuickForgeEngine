@@ -27,6 +27,8 @@ void ColliderMaskEdit::Draw() {
 	ColliderManager* colliderManager = ColliderManager::GetInstance();
 	ImGui::Begin("Collider Mask Edit", &isActive_, ImGuiWindowFlags_NoDocking);
 	ImGui::Text("Collider Tag Mask Pairs");
+	ImGui::Text("MaskPairs size: %d", colliderManager->colliderTagMask_.GetTagMaskPairs().size());
+
 	// 既存のタグマスクペア表示
 	for (const auto& pair : colliderManager->colliderTagMask_.GetTagMaskPairs()) {
 		ImGui::Text("%s - %s", pair.first.c_str(), pair.second.c_str());
