@@ -12,7 +12,7 @@ namespace QFE {
 	};
 
 	struct ParticlesData {
-		std::vector<ParticleData> particles;
+		SafeVector<ParticleData> particles;
 	};
 
 }
