@@ -63,7 +63,7 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 	ModelRenderData modelRenderData;
 
 	// モデル自体の読み込み
-	ModelData modelData{};
+	ModelData modelData;
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
@@ -131,7 +131,7 @@ uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
 	}
 
 	// モデル自体の読み込み
-	ModelData modelData{};
+	ModelData modelData;
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
@@ -141,7 +141,7 @@ uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
 
 uint32_t AssetManager::LoadModelTexture(const std::string& modelName) {
 	// 繝｢繝・Ν繝・・繧ｿ繧定ｪｭ縺ｿ霎ｼ縺ｿ
-	ModelData modelData{};
+	ModelData modelData;
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),

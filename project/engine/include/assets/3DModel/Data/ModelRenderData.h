@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <string>
-#include <vector>
+#include <deque>
 #include <list>
 #include <unordered_map>
 
@@ -17,7 +17,7 @@ namespace QFE {
 	};
 
 	struct ModelRenderData {
-		std::vector<MeshRenderDataHandle> meshRenderDataHandles;
+		std::deque<MeshRenderDataHandle> meshRenderDataHandles;
 	};
 
 }

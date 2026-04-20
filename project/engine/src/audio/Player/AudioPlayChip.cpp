@@ -39,7 +39,7 @@ void AudioPlayChip::PlaySoundForAudioData(const AudioData& audioData, bool loop,
 
 	XAUDIO2_BUFFER buffer = {};
 	buffer.AudioBytes = static_cast<UINT32>(audioData.buffer.size()); 
-	buffer.pAudioData = const_cast<BYTE*>(audioData.buffer.data()); 
+	buffer.pAudioData = const_cast<BYTE*>(audioData.buffer.begin()); 
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 	buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 	buffer.LoopBegin = 0;

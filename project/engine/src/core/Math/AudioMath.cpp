@@ -22,7 +22,7 @@ namespace QFE {
 			throw std::runtime_error("Unsupported audio format for FFT calculation: Only 16-bit PCM mono is supported.");
 		}
 
-		const auto* samples = reinterpret_cast<const int16_t*>(audioData.buffer.data());
+		const auto* samples = reinterpret_cast<const int16_t*>(audioData.buffer.begin());
 		size_t numSamples = audioData.buffer.size() / sizeof(int16_t);
 
 		if (numSamples == 0) {
