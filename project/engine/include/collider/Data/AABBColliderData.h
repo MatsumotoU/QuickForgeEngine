@@ -14,9 +14,8 @@ namespace QFE {
 		bool isStatic = false;
 		uint8_t colliderLayer = 0xFF;
 		uint8_t eventColliderLayer = 0xFF;
-	#ifdef QFE_OPTIMIZE_OFF
 		bool isDraw = true;
-	#endif // QFE_OPTIMIZE_OFF
+
 		AABBColliderData();
 		~AABBColliderData() override = default;
 		nlohmann::json Serialize() const override;

@@ -42,9 +42,8 @@ namespace QFE {
 		Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
 		Microsoft::WRL::ComPtr<ID3D12Device> device_;
 		Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter_;
-#ifdef QFE_OPTIMIZE_OFF
+
 		bool disableError_;
 		bool disableWarning_;
-#endif // QFE_OPTIMIZE_OFF
 	};
 }

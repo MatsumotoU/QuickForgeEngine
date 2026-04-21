@@ -33,9 +33,7 @@ namespace QFE {
 		void EndFrame(D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferCpuHandle);
 
 	private:
-#ifdef QFE_OPTIMIZE_OFF
 		int stateCheck_;
-#endif // QFE_OPTIMIZE_OFF
 		ID3D12GraphicsCommandList* commandList_;
 		ID3D12DescriptorHeap* const* srvDescriptorHeap_;
 	};
