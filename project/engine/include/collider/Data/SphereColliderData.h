@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "engine/include/core/Math/Shapes.h"
 #include "engine/include/core/Entity/Component/ComponentData.h"
 #include <nlohmann/json.hpp>
@@ -13,9 +13,8 @@ namespace QFE {
 
 		bool isTrigger = false;
 		bool isStatic = false; 
-	#ifdef QFE_OPTIMIZE_OFF
 		bool isDraw = true;
-	#endif // QFE_OPTIMIZE_OFF
+
 		uint8_t colliderLayer = 0xFF;
 		uint8_t eventColliderLayer = 0xFF;
 

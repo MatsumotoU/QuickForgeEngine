@@ -32,9 +32,7 @@ namespace QFE {
 		CameraManager() = default;
 		~CameraManager() = default;
 
-#ifdef QFE_OPTIMIZE_OFF
 		bool isActiveDebugCamera_;
-#endif // QFE_OPTIMIZE_OFF
 
 		uint32_t mainCameraIndex_;
 		std::unordered_map<uint32_t, Camera> cameras_;
