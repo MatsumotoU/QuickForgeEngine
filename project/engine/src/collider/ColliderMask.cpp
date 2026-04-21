@@ -39,6 +39,8 @@ void ColliderTagMask::Initialize(const std::string& maskTableFilePath)
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(e.what());
 #endif // QFE_OPTIMIZE_OFF
+		// 読み込み失敗時は空のテーブルで初期化
+		tagMaskPairs_.clear();
 	}
 	
 }
