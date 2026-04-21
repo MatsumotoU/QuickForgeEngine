@@ -60,10 +60,8 @@ namespace QFE {
 		/** @brief 指定インデックスのGPUディスクリプタハンドルを取得 */
 		[[nodiscard]] const D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index) const;
 
-#ifdef QFE_OPTIMIZE_OFF
 		/// @brief デバッグ用に次のテクスチャハンドルを取得
 		[[nodiscard]] const int32_t GetNextTextureHandle() const { return textureHandle_; }
-#endif // QFE_OPTIMIZE_OFF
 
 	private:
 		DirectX::ScratchImage Load(const std::string& filePath);

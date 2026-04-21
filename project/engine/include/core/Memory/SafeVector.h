@@ -2,6 +2,7 @@
 #include "IDynamicArray.h"
 #include <vector>
 #include <assert.h>
+#include <stdexcept>
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
