@@ -1,5 +1,4 @@
 #pragma once
-#ifdef QFE_OPTIMIZE_OFF
 #include <d3d12.h>
 #include <wrl.h>
 
@@ -12,4 +11,3 @@ namespace QFE {
 		Microsoft::WRL::ComPtr<ID3D12Debug1> debugController_;
 	};
 }  // namespace QFE
-#endif // QFE_OPTIMIZE_OFF

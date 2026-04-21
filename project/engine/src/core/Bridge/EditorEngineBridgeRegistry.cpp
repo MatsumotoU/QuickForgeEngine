@@ -24,6 +24,7 @@
 #include "engine/include/core/Math/ParentData.h"
 
 void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engineCore) {
+	engineCore;
 #ifdef QFE_OPTIMIZE_OFF
 	EditorEngineBridge::GetModelDirectoryPath = [engineCore]() -> std::string {
 		return engineCore->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Model");

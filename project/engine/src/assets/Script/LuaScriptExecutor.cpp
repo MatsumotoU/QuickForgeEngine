@@ -112,6 +112,7 @@ void LuaScriptExecutor::UpdateAllScripts() {
 		sharedLuaState_->script("QFE_Internal.UpdateAll()");
 	}
 	catch (const sol::error& e) {
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Lua Update Error: ") + e.what(), LogLevel::Error);
 #endif
