@@ -122,11 +122,10 @@ void GraphicPipelineManager::Initialize(
 #endif // QFE_OPTIMIZE_OFF
 
 	// インプットレイアウトの初期化
-	InputLayout normalInputLayout;
-	normalInputLayout.CreateNormalPresetInputLayout();
-
-	InputLayout primitiveInputLayout;
-	primitiveInputLayout.CreatePrimitivePresetInputLayout();
+	normalInputLayout_.Initialize();
+	normalInputLayout_.CreateNormalPresetInputLayout();
+	primitiveInputLayout_.Initialize();
+	primitiveInputLayout_.CreatePrimitivePresetInputLayout();
 
 	// リフレクション情報からインプットレイアウトを生成
 	// TODO: PSとVSの組み合わせによって変わる可能性があるため、もう一つ上のレイヤーが必要
@@ -136,62 +135,62 @@ void GraphicPipelineManager::Initialize(
 	for (int i = 0; i < kCountOfBlendMode; i++) {
 		trianglePso_[i].Initialize(&shaderCompiler_, device);
 		trianglePso_[i].CreatePipelineStateObject(
-			normalGameObjectRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+			normalGameObjectRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Object3d.PS.hlsl", "Object3d.VS.hlsl", static_cast<BlendMode>(i), false);
 
 		spritePso_[i].Initialize(&shaderCompiler_, device);
 		spritePso_[i].CreatePipelineStateObject(
-			spriteObjectRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+			spriteObjectRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Object2d.PS.hlsl", "Object2d.VS.hlsl", static_cast<BlendMode>(i), true);
 
 		linePso_[i].Initialize(&shaderCompiler_, device);
 		linePso_[i].CreatePipelineStateObject(
-			primitiveRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout,
+			primitiveRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout_,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Primitive.VS.hlsl", static_cast<BlendMode>(i), true);
 
 		pointPso_[i].Initialize(&shaderCompiler_, device);
 		pointPso_[i].CreatePipelineStateObject(
-			primitiveRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout,
+			primitiveRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout_,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Primitive.VS.hlsl", static_cast<BlendMode>(i), true);
 
 		primitivePso_[i].Initialize(&shaderCompiler_, device);
 		primitivePso_[i].CreatePipelineStateObject(
-			primitiveRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout,
+			primitiveRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout_,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Primitive.PS.hlsl", "Primitive.VS.hlsl", static_cast<BlendMode>(i), true);
 
 		particlePso_[i].Initialize(&shaderCompiler_, device);
 		particlePso_[i].CreatePipelineStateObject(
-			particleRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+			particleRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Particle.PS.hlsl", "Particle.VS.hlsl", static_cast<BlendMode>(i), false);
 	}
 
 	colorCorrectionPso_.Initialize(&shaderCompiler_, device);
 	colorCorrectionPso_.CreatePipelineStateObject(
-		colorCorrectionRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+		colorCorrectionRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "ColorCorrectionShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	grayScaleTrianglePso_.Initialize(&shaderCompiler_, device);
 	grayScaleTrianglePso_.CreatePipelineStateObject(
-		grayScaleRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+		grayScaleRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "GrayscaleShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	vignettePso_.Initialize(&shaderCompiler_, device);
 	vignettePso_.CreatePipelineStateObject(
-		vignetteRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+		vignetteRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "VignetteShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	normalPso_.Initialize(&shaderCompiler_, device);
 	normalPso_.CreatePipelineStateObject(
-		grayScaleRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+		grayScaleRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "Simple.PS.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	pixelPso_.Initialize(&shaderCompiler_, device);
 	pixelPso_.CreatePipelineStateObject(
-		pixelRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+		pixelRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "PixcelShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	fontPso_.Initialize(&shaderCompiler_, device);
 	fontPso_.CreatePipelineStateObject(
-		fontRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout,
+		fontRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "MSDF.PS.hlsl", "Font.VS.hlsl", kBlendModeNormal, false);
 }

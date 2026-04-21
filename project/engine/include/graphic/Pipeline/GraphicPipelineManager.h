@@ -49,6 +49,10 @@ namespace QFE {
 	private: // メンバ変数
 		ShaderCompiler shaderCompiler_;
 
+		// InputLayout
+		InputLayout normalInputLayout_;
+		InputLayout primitiveInputLayout_;
+
 		// ルートパラメータ
 		std::map<std::string, RootParameter> rootParameterMap_;
 		RootParameter normalGameObjectRootParameter_;

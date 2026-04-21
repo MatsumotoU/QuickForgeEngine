@@ -18,7 +18,7 @@ void RootParameter::Initialize() {
 }
 
 void RootParameter::CreateRootParameter(const std::string& friendlyName, const D3D12_ROOT_PARAMETER_TYPE& parameterType, const D3D12_SHADER_VISIBILITY& shaderVisibility, int shaderRegisterIndex) {
-	// RootParameter闖ｴ諛医・邵ｲ繝ｻ
+	// RootParameterの追加
 	D3D12_ROOT_PARAMETER rootParameters{};
 	rootParameters_.push_back(rootParameters);
 	rootParameters_[rootParameters_.size() - 1].ParameterType = parameterType;
@@ -27,7 +27,7 @@ void RootParameter::CreateRootParameter(const std::string& friendlyName, const D
 	descriptionRootSignature_.pParameters = rootParameters_.begin();
 	descriptionRootSignature_.NumParameters = static_cast<UINT>(rootParameters_.size());
 
-	// 郢晢ｽｫ郢晢ｽｼ郢晏現縺咏ｹｧ・ｰ郢晞亂繝｡郢晢ｽ｣邵ｺ・ｮ騾具ｽｻ鬪ｭ・ｲ陷ｷ髦ｪ・定将譎・亜
+	// RootParameterの名前を管理するためのベクターにfriendlyNameを追加
 	friendlyNames_.push_back(friendlyName);
 }
 

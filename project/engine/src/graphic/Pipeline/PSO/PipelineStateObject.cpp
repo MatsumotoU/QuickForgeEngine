@@ -1,6 +1,8 @@
 #include "engine/include/graphic/Pipeline/PSO/PipelineStateObject.h"
 #include <cassert>
 #include <d3d12.h>
+#include <stdexcept>
+
 using namespace QFE;
 namespace {
 	const std::string kVSFilePath = "engine/resources/shaders/vs/";
@@ -15,7 +17,7 @@ void PipelineStateObject::Initialize(ShaderCompiler* shaderCompiler, ID3D12Devic
 }
 
 void PipelineStateObject::CreatePipelineStateObject(
-	RootParameter rootParameter, D3D12_DEPTH_STENCIL_DESC depthStencilDesc, InputLayout inputLayout, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
+	RootParameter& rootParameter, D3D12_DEPTH_STENCIL_DESC depthStencilDesc, InputLayout inputLayout, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
 	D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack) {
 	HRESULT hr{};
 
@@ -48,6 +50,9 @@ void PipelineStateObject::CreatePipelineStateObject(
 		signatureBlob_.Get()->GetBufferPointer(), signatureBlob_.Get()->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr));
+	if (FAILED(hr)) {
+		throw std::runtime_error("Failed to create root signature");
+	}
 
 	// * BlendState * //
 	// 
@@ -155,12 +160,38 @@ void PipelineStateObject::CreatePipelineStateObject(
 	hr = dxDevice_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(graphicsPipelineState_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
+
+	isCreatedPipelineStateObject_ = true;
 }
 
 ID3D12PipelineState* PipelineStateObject::GetPipelineState() {
+	// そもそも生成されていない場合はエラー
+	if (!isCreatedPipelineStateObject_) {
+		assert(isCreatedPipelineStateObject_);
+		throw std::runtime_error("PipelineStateObject is not created.");
+	}
+
+	// PSOが作成されていない場合はエラー
+	if(graphicsPipelineState_ == nullptr) {
+		assert(graphicsPipelineState_ != nullptr);
+		throw std::runtime_error("PipelineState is not created.");
+	}
+
 	return graphicsPipelineState_.Get();
 }
 
 ID3D12RootSignature* PipelineStateObject::GetRootSignature() {
+	// そもそも生成されていない場合はエラー
+	if (!isCreatedPipelineStateObject_) {
+		assert(isCreatedPipelineStateObject_);
+		throw std::runtime_error("PipelineStateObject is not created.");
+	}
+
+	// RootSignatureが作成されていない場合はエラー
+	if(rootSignature_ == nullptr) {
+		assert(rootSignature_ != nullptr);
+		throw std::runtime_error("RootSignature is not created.");
+	}
+
 	return rootSignature_.Get();
 }
