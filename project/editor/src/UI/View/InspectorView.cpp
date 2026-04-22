@@ -158,6 +158,15 @@ void InspectorView::Draw() {
 			if (ImGui::Checkbox("Is Billboard", &info.isBillboard)) {
 				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
 			}
+			if (ImGui::DragFloat("Width", &info.width, 0.1f)) {
+				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+			}
+			if (ImGui::DragFloat("Height", &info.height, 0.1f)) {
+				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+			}
+			if (ImGui::DragFloat2("Pivot", info.pivot, 0.01f, 0.0f, 1.0f)) {
+				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+			}
 		}
 	}
 	// Camera

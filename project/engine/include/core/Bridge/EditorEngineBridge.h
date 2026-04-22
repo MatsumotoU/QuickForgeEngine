@@ -53,6 +53,9 @@ namespace QFE {
 	struct SpriteInfo {
 		std::string fileName;
 		bool isBillboard;
+		float width;
+		float height;
+		float pivot[2];
 	};
 
 	/// @brief カメラコンポーネントの情報

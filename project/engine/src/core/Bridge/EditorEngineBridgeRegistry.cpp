@@ -250,6 +250,9 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 			SpriteData& s = sceneManager_->GetEntityManager()->GetComponent<SpriteData>(entityId);
 			info.fileName = s.textureName;
 			info.isBillboard = sceneManager_->GetEntityManager()->HasComponent<Component::BillboardComponent>(entityId);
+			info.width = s.width;
+			info.height = s.height;
+			info.pivot[0] = s.pivot.x; info.pivot[1] = s.pivot.y;
 		}
 		return info;
 		};
@@ -266,6 +269,9 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 			} else if (!info.isBillboard && hasBillboard) {
 				sceneManager_->GetEntityManager()->RemoveComponent<Component::BillboardComponent>(entityId);
 			}
+			s.width = info.width;
+			s.height = info.height;
+			s.pivot = { info.pivot[0], info.pivot[1] };
 		}
 		};
 
