@@ -35,6 +35,9 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 	EditorEngineBridge::GetEntityTemplateDirectoryPath = [engineCore]() -> std::string {
 		return engineCore->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
 		};
+	EditorEngineBridge::GetLuaScriptDirectoryPath = [engineCore]() -> std::string {
+		return engineCore->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
+		};
 
 	EditorEngineBridge::GetAllEntityIds = [engineCore]() -> std::vector<uint32_t> {
 		SceneManager* sceneManager_ = engineCore->GetSceneManager();

@@ -5,10 +5,12 @@
 
 #include "engine/QuickForgeEngine.h"
 #include "engine/include/WindowsEngineCore.h"
-#include "engine/include/core/IEngineCore.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
+
+#include "editor/include/OnWindowsEditor.h"
+
 #include <memory>
 #include <exception>
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include <format>
 
 using namespace QFE;
@@ -23,7 +25,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     std::unique_ptr<QFE::IEngineCore> engineCore = std::make_unique<QFE::WindowsEngineCore>(hInstance, lpCmdLine);
 
     try {
-        engineCore->Initialize();
+		// エンジンの初期化とメインループの開始
+        engineCore->Initialize(std::make_unique<OnWindowsEditor>());
         engineCore->MainLoop();
     }
     catch (const std::exception& e) {
@@ -33,6 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif // _DEBUG
     }
 
+	// エンジンの終了処理
     engineCore->Shutdown();
 
     return 0;
