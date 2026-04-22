@@ -52,6 +52,7 @@ namespace QFE {
 	std::function<void(uint32_t, uint32_t, const std::string&, const std::string&)> EditorEngineBridge::SetLuaScriptParam = nullptr;
 	std::function<void(uint32_t, uint32_t)> EditorEngineBridge::RemoveLuaScript = nullptr;
 	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::AddLuaScript = nullptr;
+	std::function<void(const std::string&)> EditorEngineBridge::CreateLuaScript = nullptr;
 
 	std::function<std::vector<std::string>(uint32_t)> EditorEngineBridge::GetCsharpClassNames = nullptr;
 	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::RemoveCsharpScript = nullptr;

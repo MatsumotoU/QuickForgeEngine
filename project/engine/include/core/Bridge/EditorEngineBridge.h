@@ -176,6 +176,7 @@ namespace QFE {
 		static std::function<void(uint32_t, uint32_t, const std::string&, const std::string&)> SetLuaScriptParam;
 		static std::function<void(uint32_t, uint32_t)> RemoveLuaScript;
 		static std::function<void(uint32_t, const std::string&)> AddLuaScript;
+		static std::function<void(const std::string&)> CreateLuaScript;
 
 		static std::function<std::vector<std::string>(uint32_t)> GetCsharpClassNames;
 		static std::function<void(uint32_t, const std::string&)> RemoveCsharpScript;
