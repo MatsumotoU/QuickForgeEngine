@@ -419,6 +419,14 @@ void InspectorView::Draw() {
 			}
 
 			if (ImGui::BeginMenu("AddScript")) {
+				if(ImGui::MenuItem("Refresh List")) {
+					if (EditorEngineBridge::GetLuaScriptDirectoryPath) {
+						std::string scriptPath = EditorEngineBridge::GetLuaScriptDirectoryPath();
+						scriptList_.LoadFileList(scriptPath, ".lua");
+					}
+				}
+				ImGui::Separator();
+
 				scriptList_.DrawMenuItem();
 				ImGui::EndMenu();
 			}

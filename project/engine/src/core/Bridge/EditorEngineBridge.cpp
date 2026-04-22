@@ -9,6 +9,8 @@ namespace QFE {
 	std::function<std::string()> EditorEngineBridge::GetModelDirectoryPath = nullptr;
 	std::function<std::string()> EditorEngineBridge::GetImageDirectoryPath = nullptr;
 	std::function<std::string()> EditorEngineBridge::GetEntityTemplateDirectoryPath = nullptr;
+	std::function<std::string()> EditorEngineBridge::GetLuaScriptDirectoryPath = nullptr;
+
 	// 現在のシーン情報を取得する関数群
 	std::function<std::vector<uint32_t>()> EditorEngineBridge::GetAllEntityIds = nullptr;
 	std::function<std::string(uint32_t)> EditorEngineBridge::GetEntityName = nullptr;

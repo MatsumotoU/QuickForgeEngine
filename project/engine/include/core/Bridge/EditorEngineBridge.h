@@ -133,6 +133,7 @@ namespace QFE {
 		static std::function<std::string()> GetModelDirectoryPath;
 		static std::function<std::string()> GetImageDirectoryPath;
 		static std::function<std::string()> GetEntityTemplateDirectoryPath;
+		static std::function<std::string()> GetLuaScriptDirectoryPath;
 
 		static std::function<std::vector<uint32_t>()> GetAllEntityIds;
 		static std::function<std::string(uint32_t)> GetEntityName;
