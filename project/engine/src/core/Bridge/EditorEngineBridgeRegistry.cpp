@@ -432,6 +432,46 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		}
 		};
 
+	EditorEngineBridge::CreateLuaScript = [engineCore](const std::string& scriptName) {
+		// ディレクトリパス
+		const std::string dirPath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
+		// ディレクトリがなければ作成
+		std::filesystem::create_directories(dirPath);
+		// ファイルパス
+		const std::string filePath = dirPath + scriptName;
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("Create Lua Script: " + filePath, LogLevel::EditorInfo);
+#endif // _DEBUG
+		// Luaテンプレート
+		const char* luaTemplate =
+			"function Init()\n"
+			"\n"
+			"end\n"
+			"\n"
+			"function Update()\n"
+			"\n"
+			"end\n";
+		// ファイル書き込み
+		std::ofstream ofs(filePath);
+		if (!ofs) {
+			return;
+		}
+		ofs << luaTemplate;
+		ofs.close();
+		// 自動で開く
+		try {
+			std::filesystem::path absPath = std::filesystem::absolute(filePath);
+			ShellExecuteA(nullptr, "open", "code", absPath.string().c_str(), nullptr, SW_SHOWNORMAL);
+		}
+		catch (const std::exception& e) {
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog(e.what(), LogLevel::Error);
+#else
+			std::cerr << e.what() << std::endl;
+#endif
+		}
+		};
+
 	EditorEngineBridge::GetCsharpClassNames = [engineCore](uint32_t entityId) -> std::vector<std::string> {
 		SceneManager* sceneManager_ = engineCore->GetSceneManager();
 		std::vector<std::string> names;

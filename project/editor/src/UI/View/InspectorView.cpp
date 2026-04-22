@@ -445,6 +445,7 @@ void InspectorView::Draw() {
 		if (ImGui::BeginPopupModal("NewScript", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::InputText("Script Name", scriptBuffer_, IM_ARRAYSIZE(scriptBuffer_));
 			if (ImGui::Button("Create")) {
+				EditorEngineBridge::CreateLuaScript(scriptBuffer_);
 				EditorEngineBridge::AddLuaScript(selectedEntityId_, scriptBuffer_);
 				openScriptPopup_ = false;
 			}
