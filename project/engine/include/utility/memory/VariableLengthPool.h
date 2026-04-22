@@ -49,7 +49,7 @@ namespace QFE {
 		T* Acquire() {
 			if (freeIndices_.empty()) {
 				size_t newIndex = pool_.size();
-				pool_.emplace_back();
+				pool_.push_back(T());
 				return &pool_[newIndex];
 			} else {
 				size_t index = freeIndices_.top();
