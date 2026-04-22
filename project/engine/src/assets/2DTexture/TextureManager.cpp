@@ -58,7 +58,7 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	textureResources_.clear();
 	scratchImages_.clear();
 	intermediateResource_.clear();
-	filePathLiblary_.Init("TextureFileName");
+	filePathLibrary_.Init("TextureFileName");
 
 	textureHandle_ = 0;
 }
@@ -235,7 +235,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 #endif // QFE_OPTIMIZE_OFF
 
 	// 陷ｷ蠕個ｧ騾包ｽｻ陷剃ｸ翫Ψ郢ｧ・｡郢ｧ・､郢晢ｽｫ郢ｧ螳夲ｽｪ・ｭ邵ｺ・ｿ髴趣ｽｼ邵ｺ・ｾ邵ｺ・ｪ邵ｺ繝ｻ
-	int32_t fileIndex = filePathLiblary_.GetLibraryIndex(filePath);
+	int32_t fileIndex = filePathLibrary_.GetLibraryIndex(filePath);
 	if (fileIndex >= 0) {
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(ConvertString(std::format(L"TextureManager: LoadedTheSameFile->return {}", fileIndex)));
@@ -262,7 +262,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width, metadata.height, textureHandle_ - 1)));
 #endif // QFE_OPTIMIZE_OFF
-	filePathLiblary_.AddStringToLibrary(filePath);
+	filePathLibrary_.AddStringToLibrary(filePath);
 	return textureHandle_ - 1;
 }
 
