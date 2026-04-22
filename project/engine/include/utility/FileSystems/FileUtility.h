@@ -33,4 +33,9 @@ namespace QFE::FILE {
 	extern bool LoadMsgPackToJson(const std::string& msgPackFilePath, nlohmann::json& json);
 	/// ディレクトリの存在を確認します
 	extern bool HasDirectory(const std::string& directoryPath);
+	/// ファイルの存在を確認します
+	extern bool HasFile(const std::string& filePath);
+
+	/// Obj形式のモデルデータのobjファイルとmtlファイルが指定したディレクトリに存在するか確認します
+	extern bool HasObjModelFiles(const std::string& directoryPath, const std::string& modelName);
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <string>
-#include <vector>
+#include "engine/include/core/Memory/SafeVector.h"
 #include <list>
 #include <unordered_map>
 
@@ -28,7 +28,7 @@ namespace QFE {
 
 	private:
 		std::string libraryFriendryName_;
-		std::vector<std::string> library_;
+		SafeVector<std::string> library_;
 	};
 
 }

@@ -46,6 +46,7 @@ void MonoRuntimeManager::Initialize() {
 		mono_set_dirs(monoLibPathUtf8.c_str(), monoEtcPathUtf8.c_str());
 	}
 	catch (const std::exception& e) {
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to set Mono directories: ") + e.what());
 #endif
@@ -66,6 +67,7 @@ void MonoRuntimeManager::Initialize() {
 		rootDomain_ = mono_jit_init("QuickForgeRootDomain");
 	}
 	catch (const std::exception& e) {
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to initialize Mono JIT: ") + e.what());
 #endif
@@ -83,8 +85,10 @@ void MonoRuntimeManager::Initialize() {
 	DebugLog("Success to initialize Mono JIT.");
 #endif
 
+#ifdef QFE_OPTIMIZE_OFF
 	// C#スクリプトのコンパイル
 	CompileScripts();
+#endif // QFE_OPTIMIZE_OFF
 
 	// QFE APIの登録
 	RegisterQFEAPI();
@@ -190,6 +194,7 @@ void MonoRuntimeManager::CompileScripts() {
 #endif
 	}
 	catch (const std::exception& e) {
+		e;
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::string("Failed to compile C# scripts: ") + e.what(), LogLevel::Error);
 #endif

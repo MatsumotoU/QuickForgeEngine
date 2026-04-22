@@ -24,6 +24,7 @@
 #include "engine/include/core/Math/ParentData.h"
 
 void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engineCore) {
+	engineCore;
 #ifdef QFE_OPTIMIZE_OFF
 	EditorEngineBridge::GetModelDirectoryPath = [engineCore]() -> std::string {
 		return engineCore->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Model");
@@ -33,6 +34,9 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		};
 	EditorEngineBridge::GetEntityTemplateDirectoryPath = [engineCore]() -> std::string {
 		return engineCore->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
+		};
+	EditorEngineBridge::GetLuaScriptDirectoryPath = [engineCore]() -> std::string {
+		return engineCore->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
 		};
 
 	EditorEngineBridge::GetAllEntityIds = [engineCore]() -> std::vector<uint32_t> {
@@ -246,6 +250,9 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 			SpriteData& s = sceneManager_->GetEntityManager()->GetComponent<SpriteData>(entityId);
 			info.fileName = s.textureName;
 			info.isBillboard = sceneManager_->GetEntityManager()->HasComponent<Component::BillboardComponent>(entityId);
+			info.width = s.width;
+			info.height = s.height;
+			info.pivot[0] = s.pivot.x; info.pivot[1] = s.pivot.y;
 		}
 		return info;
 		};
@@ -262,6 +269,9 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 			} else if (!info.isBillboard && hasBillboard) {
 				sceneManager_->GetEntityManager()->RemoveComponent<Component::BillboardComponent>(entityId);
 			}
+			s.width = info.width;
+			s.height = info.height;
+			s.pivot = { info.pivot[0], info.pivot[1] };
 		}
 		};
 
@@ -425,6 +435,46 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		SceneManager* sceneManager_ = engineCore->GetSceneManager();
 		if (sceneManager_) {
 			sceneManager_->AddLuaScript(entityId, scriptName);
+		}
+		};
+
+	EditorEngineBridge::CreateLuaScript = [engineCore](const std::string& scriptName) {
+		// ディレクトリパス
+		const std::string dirPath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
+		// ディレクトリがなければ作成
+		std::filesystem::create_directories(dirPath);
+		// ファイルパス
+		const std::string filePath = dirPath + scriptName;
+#ifdef QFE_OPTIMIZE_OFF
+		DebugLog("Create Lua Script: " + filePath, LogLevel::EditorInfo);
+#endif // _DEBUG
+		// Luaテンプレート
+		const char* luaTemplate =
+			"function Init()\n"
+			"\n"
+			"end\n"
+			"\n"
+			"function Update()\n"
+			"\n"
+			"end\n";
+		// ファイル書き込み
+		std::ofstream ofs(filePath);
+		if (!ofs) {
+			return;
+		}
+		ofs << luaTemplate;
+		ofs.close();
+		// 自動で開く
+		try {
+			std::filesystem::path absPath = std::filesystem::absolute(filePath);
+			ShellExecuteA(nullptr, "open", "code", absPath.string().c_str(), nullptr, SW_SHOWNORMAL);
+		}
+		catch (const std::exception& e) {
+#ifdef QFE_OPTIMIZE_OFF
+			DebugLog(e.what(), LogLevel::Error);
+#else
+			std::cerr << e.what() << std::endl;
+#endif
 		}
 		};
 

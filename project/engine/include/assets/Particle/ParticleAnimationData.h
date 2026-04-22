@@ -2,7 +2,7 @@
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/core/Math/Vector/Vector4.h"
 
-#include <vector>
+#include "engine/include/core/Memory/SafeVector.h"
 
 namespace QFE {
 
@@ -12,7 +12,7 @@ namespace QFE {
 	};
 
 	struct ParticlesData {
-		std::vector<ParticleData> particles;
+		SafeVector<ParticleData> particles;
 	};
 
 }

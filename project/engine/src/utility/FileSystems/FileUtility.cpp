@@ -146,4 +146,25 @@ namespace QFE::FILE {
 		return std::filesystem::exists(directoryPath) && std::filesystem::is_directory(directoryPath);
 	}
 
+	bool HasFile(const std::string& filePath)
+	{
+		return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath);
+	}
+
+	bool HasObjModelFiles(const std::string& directoryPath, const std::string& modelName) {
+		// 既に拡張子がモデル名に含まれている場合はmodelNameから拡張子を取り除く
+		std::string baseModelName = modelName;
+		size_t lastDotPos = modelName.find_last_of('.');
+		if (lastDotPos != std::string::npos) {
+			baseModelName = modelName.substr(0, lastDotPos);
+		}
+
+		std::string objFilePath = directoryPath + baseModelName + ".obj";
+		std::string mtlFilePath = directoryPath + baseModelName + ".mtl";
+		if (HasFile(objFilePath) && HasFile(mtlFilePath)) {
+			return true;
+		}
+		return false;
+	}
+
 }

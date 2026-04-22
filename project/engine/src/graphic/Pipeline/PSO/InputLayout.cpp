@@ -28,7 +28,7 @@ void InputLayout::CreateInputElementDesc(const LPCSTR& semanticName, const UINT&
 	inputElementDescs_[index].Format = format;
 	inputElementDescs_[index].AlignedByteOffset = alignedByteOffset;
 
-	inputLayoutDesc_.pInputElementDescs = inputElementDescs_.data();
+	inputLayoutDesc_.pInputElementDescs = inputElementDescs_.begin();
 	inputLayoutDesc_.NumElements = static_cast<UINT>(inputElementDescs_.size());
 }
 

@@ -18,7 +18,14 @@
 namespace QFE {
 
 	void ColliderManager::Initialize() {
-		colliderTagMask_.Initialize("Resources/Config/ColliderTagMask.json");
+		AssetManager* assetManager = AssetManager::GetInstance();
+		if (assetManager == nullptr) {
+			throw std::runtime_error("ColliderManager::Initialize - AssetManager instance is null");
+		}
+		std::string configDir = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Config");
+		std::string maskTableFilePath = configDir + "ColliderTagMask.json";
+
+		colliderTagMask_.Initialize(maskTableFilePath);
 	}
 
 	void ColliderManager::Update() {

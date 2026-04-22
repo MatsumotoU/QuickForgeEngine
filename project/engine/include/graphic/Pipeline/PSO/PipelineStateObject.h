@@ -30,7 +30,7 @@ namespace QFE {
 		void Initialize(ShaderCompiler* shaderCompiler, ID3D12Device* device);
 
 		void CreatePipelineStateObject(
-			RootParameter rootParameter, D3D12_DEPTH_STENCIL_DESC depthStencilDesc, InputLayout inputLayout, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
+			RootParameter& rootParameter, D3D12_DEPTH_STENCIL_DESC depthStencilDesc, InputLayout inputLayout, const D3D12_PRIMITIVE_TOPOLOGY_TYPE& topologyType,
 			D3D12_FILL_MODE fillMode, const std::string& psFilepath, const std::string& vsFilepath, BlendMode blendMode, bool isDrawBack);
 
 		ID3D12PipelineState* GetPipelineState();
@@ -44,5 +44,7 @@ namespace QFE {
 		Microsoft::WRL::ComPtr<ID3D10Blob> errorBlob_;
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
+
+		bool isCreatedPipelineStateObject_ = false;
 	};
 }

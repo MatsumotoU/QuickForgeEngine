@@ -23,7 +23,8 @@ void AnimClip::AddKeyFrame(const KeyFrame& keyframe) {
 }
 
 const std::vector<KeyFrame>& AnimClip::GetKeyFrames() const {
-	return keyframes_;
+	std::vector<KeyFrame> result(keyframes_.begin(), keyframes_.end());
+	return result;
 }
 
 size_t AnimClip::GetKeyFrameCount() const {

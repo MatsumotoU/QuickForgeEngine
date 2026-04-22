@@ -10,6 +10,8 @@
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/graphic/ShaderBuffer/ConstantBuffer.h"
 #include "engine/include/utility/memory/IVariableLengthPoolContainer.h"
+#include "engine/include/core/EngineConstants.h"
+
 namespace QFE {
 	class GpuBufferPool final {
 	public:
@@ -25,7 +27,8 @@ namespace QFE {
 			auto typeIdx = std::type_index(typeid(T));
 			// 型ごとのプールが存在しない場合は新規作成
 			if (constantBufferPoolsMap_.count(typeIdx) == 0) {
-				constantBufferPoolsMap_[typeIdx] = std::make_unique<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>>>();
+				constantBufferPoolsMap_[typeIdx] = 
+					std::make_unique<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>>>(QFE::CONSTANTS::GPU_BUFFER_POOL::kMaxConstantBuffers);
 			}
 			// プールからバッファーを取得してハンドルを返す
 			auto& pool = static_cast<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>> &>(*constantBufferPoolsMap_[typeIdx]);

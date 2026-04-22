@@ -3,6 +3,7 @@
 #include <mono/metadata/assembly.h>
 #include <vector>
 #include <string>
+#include "engine/include/core/Memory/SafeVector.h"
 
 namespace QFE {
 
@@ -63,7 +64,7 @@ namespace QFE {
 		EntityManager* entityManager_ = nullptr;
 		MonoDomain* domain_ = nullptr;  // このシーン専用のAppDomain
 		MonoAssembly* assembly_ = nullptr;
-		std::vector<MonoObject*> scripts_;
+		SafeVector<MonoObject*> scripts_;
 
 		/// @brief アセンブリをロード
 		void LoadAssembly();

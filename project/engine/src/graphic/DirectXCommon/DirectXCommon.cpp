@@ -34,6 +34,10 @@ DirectXCommon* DirectXCommon::GetInstance() {
  * @param height ウィンドウの高さ
  */
 void DirectXCommon::Initialize(const HWND& hwnd, uint32_t width, uint32_t height) {
+	debugCore_ = nullptr;
+#ifdef QFE_OPTIMIZE_OFF
+	debugCore_ = std::make_unique<DirectX12DebugCore>();
+#endif // QFE_OPTIMIZE_OFF
 
 	// デバイスの初期化
 	directXDevice_.Initialize();

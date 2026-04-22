@@ -14,9 +14,7 @@
 #include "SwapChain.h"
 #include "Fence.h"
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DirectX/DirectX12DebugCore.h"
-#endif 
+#include "engine/include/utility/DebugTool/DirectX/DirectX12DebugCore.h" 
 
 namespace QFE {
 
@@ -75,9 +73,7 @@ namespace QFE {
 		D3D12_RECT* GetScissorRect();
 
 	private:
-#ifdef QFE_OPTIMIZE_OFF
-		DirectX12DebugCore directX12DebugCore_;
-#endif // QFE_OPTIMIZE_OFF
+		std::unique_ptr<DirectX12DebugCore> debugCore_;
 
 		void AssignSwapChainRenderTarget();
 

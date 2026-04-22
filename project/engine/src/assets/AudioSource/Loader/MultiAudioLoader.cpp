@@ -23,14 +23,12 @@ void Multiaudioloader::Finalize() {
 }
 
 AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
-	AudioData soundData{};
-
-	// 繧ｽ繝ｼ繧ｹ繝ｪ繝ｼ繝繝ｼ縺ｮ逕滓・
+	// MFSourceReaderの作成
 	Microsoft::WRL::ComPtr<IMFSourceReader> pMFSourceReader{ nullptr };
 	HRESULT hr = MFCreateSourceReaderFromURL(ConvertString(path).c_str(), nullptr, pMFSourceReader.GetAddressOf());
 	assert(SUCCEEDED(hr));
 
-	// 繝｡繝・ぅ繧｢繧ｿ繧､繝励・蜿門ｾ・
+	// メディアタイプの設定
 	IMFMediaType* pMFMediaType{ nullptr };
 	hr = MFCreateMediaType(&pMFMediaType);
 	assert(SUCCEEDED(hr));
@@ -46,24 +44,7 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 	hr = pMFSourceReader.Get()->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pMFMediaType);
 	assert(SUCCEEDED(hr));
 
-	// 繧ｪ繝ｼ繝・ぅ繧ｪ繝・・繧ｿ蠖｢蠑上・菴懈・
-	WAVEFORMATEX* waveFormat{ nullptr };
-	UINT32 waveFormatSize = 0;
-	hr = MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, &waveFormatSize);
-	assert(SUCCEEDED(hr));
-
-	ZeroMemory(&soundData.wfxEx, sizeof(WAVEFORMATEXTENSIBLE));
-    if (waveFormatSize == sizeof(WAVEFORMATEXTENSIBLE)) {
-        memcpy(&soundData.wfxEx, waveFormat, sizeof(WAVEFORMATEXTENSIBLE));
-    }
-    else {
-        assert(waveFormatSize == sizeof(WAVEFORMATEX));
-        memcpy(&soundData.wfxEx.Format, waveFormat, sizeof(WAVEFORMATEX));
-    }
-
-	CoTaskMemFree(waveFormat);
-
-	// 繝・・繧ｿ縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
+	// メディアデータの読み込み
 	std::vector<BYTE> mediaData;
 	while (true)
 	{
@@ -94,6 +75,30 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 		pMFMediaBuffer->Release();
 		pMFSample->Release();
 	}
-	soundData.buffer = std::move(mediaData);
+
+	// waveformatの取得
+	WAVEFORMATEX* waveFormat{ nullptr };
+	UINT32 waveFormatSize = 0;
+	hr = MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, &waveFormatSize);
+	assert(SUCCEEDED(hr));
+
+	AudioData soundData;
+	ZeroMemory(&soundData.wfxEx, sizeof(WAVEFORMATEXTENSIBLE));
+	if (waveFormatSize == sizeof(WAVEFORMATEXTENSIBLE)) {
+		memcpy(&soundData.wfxEx, waveFormat, sizeof(WAVEFORMATEXTENSIBLE));
+	}
+	else {
+		assert(waveFormatSize == sizeof(WAVEFORMATEX));
+		memcpy(&soundData.wfxEx.Format, waveFormat, sizeof(WAVEFORMATEX));
+	}
+	CoTaskMemFree(waveFormat);
+
+	// バッファのコピー
+	SafeVector<BYTE> buffer(static_cast<size_t>(mediaData.size()));
+	for (size_t i = 0; i < mediaData.size(); i++) {
+		buffer.push_back(mediaData.at(i));
+	}
+	soundData.buffer = std::move(buffer);
+	
 	return soundData;
 }

@@ -3,6 +3,7 @@
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/camera/CameraManager.h"
+#include "engine/include/collider/ColliderManager.h"
 #include <fstream>
 #include <string>
 
@@ -161,6 +162,9 @@ void QFE::SceneManager::ResetProject(const std::string& projectName) {
 	ResetScene();
 	AssetManager* assetManager = AssetManager::GetInstance();
 	assetManager->GetResourceDirectoryManager()->SetProjectDirectory(projectName);
+
+	ColliderManager* colliderManager = ColliderManager::GetInstance();
+	colliderManager->Initialize();
 }
 
 void SceneManager::ResetScene() {

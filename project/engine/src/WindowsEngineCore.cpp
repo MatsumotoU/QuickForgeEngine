@@ -4,7 +4,6 @@
  */
 
 #include "engine/include/WindowsEngineCore.h"
-#include "editor/include/OnWindowsEditor.h"
 
 #include <thread>
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInitializer.h"
@@ -43,9 +42,11 @@ WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 	graphRenderer_ = nullptr;
 	inputInterface_ = nullptr;
 	assetManager_ = nullptr;
+
+	engineApp_ = nullptr;
 }
 
-void WindowsEngineCore::Initialize() {
+void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 	// グローバル変数の初期化
 	EngineGlobalValue::windowWidth = windowWidth;
 	EngineGlobalValue::windowHeight = windowHeight;
@@ -122,7 +123,7 @@ void WindowsEngineCore::Initialize() {
 	// エンジンの設定ファイルに最後に開いたプロジェクトの名前が保存されていれば、そのプロジェクトのディレクトリを設定する
 	if (configJson_.contains("lastProjectName")) {
 		// プロジェクトのディレクトリの整合性を確認して、問題があれば修復する
-		if(assetManager_->GetResourceDirectoryManager()->CheckDirectoryIntegrity() == false) {
+		if (assetManager_->GetResourceDirectoryManager()->CheckDirectoryIntegrity() == false) {
 			assetManager_->GetResourceDirectoryManager()->RepairDirectoryIntegrity();
 #ifdef QFE_OPTIMIZE_OFF
 			DebugLog("Repaired project directory integrity");
@@ -146,8 +147,12 @@ void WindowsEngineCore::Initialize() {
 	EditorEngineBridgeRegistry::RegisterFunctions(this);
 #endif // QFE_OPTIMIZE_OFF
 
-	editor_ = std::make_unique<OnWindowsEditor>();
-	editor_->Initialize();
+	// エンジンアプリケーションの初期化
+	if (!app) {
+		throw std::runtime_error("IEngineApp implementation is required to initialize the engine.");
+	}
+	engineApp_ = std::move(app);
+	engineApp_->Initialize();
 
 #ifdef QFE_OPTIMIZE_OFF
 	DebugLog("======================Initialized OnWindowsEditor======================");
@@ -197,7 +202,6 @@ void WindowsEngineCore::Initialize() {
 	DebugLog("======================Initialized Engine======================");
 #endif // QFE_OPTIMIZE_OFF
 }
-
 
 void WindowsEngineCore::MainLoop() {
 	while (gameWindowManager->IsWindowActive())
@@ -266,7 +270,7 @@ void WindowsEngineCore::Shutdown() {
 void WindowsEngineCore::Update() {
 	inputInterface_->Update();
 	gameWindowManager->Update();
-	editor_->Update();
+	engineApp_->Update();
 	sceneManager_->Update();
 	inputInterface_->EndFrame();
 }
@@ -281,7 +285,7 @@ void WindowsEngineCore::Draw() {
 	sceneManager_->PreDraw();
 
 	gameWindowManager->Draw();
-	editor_->Draw();
+	engineApp_->Draw();
 	sceneManager_->Draw();
 
 	sceneManager_->PostDraw();

@@ -1,17 +1,20 @@
 #pragma once
 #include "IVariableLengthPoolContainer.h"
-#include <vector>
 #include <stack>
+
+#include "engine/include/core/Memory/SafeVector.h"
+
 namespace QFE {
 	/// @brief 可変長オブジェクトプールコンテナ
 	template <typename T>
 	class VariableLengthPool final : public IVariableLengthPoolContainer {
 	public:
 		// デフォルトだと10個のオブジェクトをプール
-		VariableLengthPool(size_t initialSize = 10) {
+		VariableLengthPool(size_t initialSize = 10) : pool_(initialSize) {
+			// 初期状態では全てのインデックスが空いているとみなす
 			for (size_t i = 0; i < initialSize; ++i) {
+				pool_.push_back(T());
 				freeIndices_.push(i);
-				pool_.emplace_back();
 			}
 		}
 
@@ -20,7 +23,7 @@ namespace QFE {
 		uint32_t Add(const T& obj) {
 			if (freeIndices_.empty()) {
 				size_t newIndex = pool_.size();
-				pool_.emplace_back(obj);
+				pool_.push_back(obj);
 				return static_cast<uint32_t>(newIndex);
 			} else {
 				size_t index = freeIndices_.top();
@@ -33,7 +36,7 @@ namespace QFE {
 		uint32_t Add(T&& obj) {
 			if (freeIndices_.empty()) {
 				size_t newIndex = pool_.size();
-				pool_.emplace_back(std::move(obj));
+				pool_.push_back(std::move(obj));
 				return static_cast<uint32_t>(newIndex);
 			} else {
 				size_t index = freeIndices_.top();
@@ -46,7 +49,7 @@ namespace QFE {
 		T* Acquire() {
 			if (freeIndices_.empty()) {
 				size_t newIndex = pool_.size();
-				pool_.emplace_back();
+				pool_.push_back(T());
 				return &pool_[newIndex];
 			} else {
 				size_t index = freeIndices_.top();
@@ -113,7 +116,7 @@ namespace QFE {
 		}
 
 	private:
-		std::vector<T> pool_;
+		SafeVector<T> pool_;
 		std::stack<size_t> freeIndices_;
 	};
 }

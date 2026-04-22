@@ -3,7 +3,8 @@
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 
-#include <vector>
+#include "engine/include/core/Memory/SafeVector.h"
+
 namespace QFE {
 	class InputLayout final {
 	public:
@@ -32,7 +33,7 @@ namespace QFE {
 		D3D12_INPUT_LAYOUT_DESC* GetInputLayoutDesc();
 
 	private:
-		std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs_;
+		SafeVector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs_;
 		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 
 	};

@@ -45,19 +45,19 @@ void InputDebugView::Draw()
 
         AudioData audio = input->GetMicrophoneDevice().GetAudioData();
 		ImGui::Text("FormatTag: %d, BitsPerSample: %d", audio.wfxEx.Format.wFormatTag, audio.wfxEx.Format.wBitsPerSample);
-        if (audio.buffer.data() && audio.buffer.size() > 0) {
+        if (audio.buffer.begin() && audio.buffer.size() > 0) {
             int sampleCount = static_cast<int>(audio.buffer.size()) / (audio.wfxEx.Format.wBitsPerSample / 8);
             std::vector<float> samples(sampleCount);
 
 			if (audio.wfxEx.Format.wBitsPerSample == 8) {
-				uint8_t* byteBuffer = static_cast<uint8_t*>(audio.buffer.data());
+				uint8_t* byteBuffer = static_cast<uint8_t*>(audio.buffer.begin());
 				for (int i = 0; i < sampleCount; ++i) {
 					samples[i] = static_cast<float>(byteBuffer[i]);
 				}
 				ImGui::PlotLines("Audio Waveform", samples.data(), static_cast<int>(sampleCount), 0, nullptr, 0.0f, 255.0f, ImVec2(0, 80));
 			}
             else if (audio.wfxEx.Format.wBitsPerSample == 16) {
-                int16_t* shortBuffer = reinterpret_cast<int16_t*>(audio.buffer.data());
+                int16_t* shortBuffer = reinterpret_cast<int16_t*>(audio.buffer.begin());
                 for (int i = 0; i < sampleCount; ++i) {
                     samples[i] = static_cast<float>(shortBuffer[i]);
                 }
@@ -76,13 +76,13 @@ void InputDebugView::Draw()
 
 				if (isFloat) {
 					// 32bit float の場合
-					float* floatBuffer = reinterpret_cast<float*>(audio.buffer.data());
+					float* floatBuffer = reinterpret_cast<float*>(audio.buffer.begin());
 					// この場合、samplesへのコピーは不要だが、PlotLinesがfloatの配列を要求するため、そのまま使う
 					ImGui::PlotLines("Audio Waveform (float)", floatBuffer, static_cast<int>(sampleCount), 0, nullptr, -1.0f, 1.0f, ImVec2(0, 80));
 				}
 				else {
 					// 32bit int の場合
-					int32_t* intBuffer = reinterpret_cast<int32_t*>(audio.buffer.data());
+					int32_t* intBuffer = reinterpret_cast<int32_t*>(audio.buffer.begin());
 					for (int i = 0; i < sampleCount; ++i) {
 						samples[i] = static_cast<float>(intBuffer[i]);
 					}

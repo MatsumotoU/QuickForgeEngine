@@ -3,6 +3,8 @@
 #include <mono/jit/jit.h>
 #include <Mono/metadata/object.h>
 #include <vector>
+#include "engine/include/core/Memory/SafeVector.h"
+
 namespace QFE {
 	struct CsharpHandle {
 		std::string className_;
@@ -17,6 +19,6 @@ namespace QFE {
 		void Deserialize(const nlohmann::json& json) override;
 		std::string GetTypeName() const override { return "CsharpComponent"; }
 
-		std::vector<CsharpHandle> csharpHandles_;
+		SafeVector<CsharpHandle> csharpHandles_;
 	};
 }

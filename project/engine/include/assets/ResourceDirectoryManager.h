@@ -34,6 +34,8 @@ namespace QFE {
 		/// @brief ディレクトリの整合性を修復する関数
 		void RepairDirectoryIntegrity() const;
 
+
+
 	private:
 		std::string ProjectName_;
 		std::string rootDirectory_;

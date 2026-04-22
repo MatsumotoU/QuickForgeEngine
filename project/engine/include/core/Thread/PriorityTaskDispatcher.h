@@ -1,6 +1,6 @@
 #pragma once
 #include <functional>
-#include <vector>
+#include "engine/include/core/Memory/SafeVector.h"
 
 namespace QFE {
 	/// @brief 優先度付きタスクを管理、並列実行するクラス
@@ -33,6 +33,6 @@ namespace QFE {
 			std::function<void()> func;
 			int priority;
 		};
-		std::vector<Task> tasks_;
+		SafeVector<Task> tasks_;
 	};
 }

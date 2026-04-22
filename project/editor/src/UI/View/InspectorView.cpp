@@ -158,6 +158,15 @@ void InspectorView::Draw() {
 			if (ImGui::Checkbox("Is Billboard", &info.isBillboard)) {
 				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
 			}
+			if (ImGui::DragFloat("Width", &info.width, 0.1f)) {
+				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+			}
+			if (ImGui::DragFloat("Height", &info.height, 0.1f)) {
+				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+			}
+			if (ImGui::DragFloat2("Pivot", info.pivot, 0.01f, 0.0f, 1.0f)) {
+				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+			}
 		}
 	}
 	// Camera
@@ -419,6 +428,14 @@ void InspectorView::Draw() {
 			}
 
 			if (ImGui::BeginMenu("AddScript")) {
+				if(ImGui::MenuItem("Refresh List")) {
+					if (EditorEngineBridge::GetLuaScriptDirectoryPath) {
+						std::string scriptPath = EditorEngineBridge::GetLuaScriptDirectoryPath();
+						scriptList_.LoadFileList(scriptPath, ".lua");
+					}
+				}
+				ImGui::Separator();
+
 				scriptList_.DrawMenuItem();
 				ImGui::EndMenu();
 			}
@@ -437,6 +454,7 @@ void InspectorView::Draw() {
 		if (ImGui::BeginPopupModal("NewScript", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::InputText("Script Name", scriptBuffer_, IM_ARRAYSIZE(scriptBuffer_));
 			if (ImGui::Button("Create")) {
+				EditorEngineBridge::CreateLuaScript(scriptBuffer_);
 				EditorEngineBridge::AddLuaScript(selectedEntityId_, scriptBuffer_);
 				openScriptPopup_ = false;
 			}

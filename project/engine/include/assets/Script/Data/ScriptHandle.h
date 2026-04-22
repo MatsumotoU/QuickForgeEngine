@@ -2,6 +2,8 @@
 #include "engine/include/core/Entity/Component/ComponentData.h"
 #include <vector>
 #include <unordered_map>
+#include "engine/include/core/Memory/SafeVector.h"
+
 namespace QFE {
 	// Luaスクリプトのハンドル情報
 	struct LuaHandle {
@@ -25,7 +27,7 @@ namespace QFE {
 
 	class ScriptHandles final :public ComponentData {
 	public:
-		std::vector<LuaHandle> scriptHandles_;
+		SafeVector<LuaHandle> scriptHandles_;
 
 		ScriptHandles() = default;
 		~ScriptHandles() override = default;

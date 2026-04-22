@@ -15,18 +15,16 @@ namespace QFE {
 	}
 
 	Spectrum MyAudioMath::CreateSpectrumFromAudioData(const AudioData& audioData) {
-		Spectrum result;
-
 		// 16bit PCM monoのみ対応
 		if (audioData.wfxEx.Format.wFormatTag != WAVE_FORMAT_PCM || audioData.wfxEx.Format.wBitsPerSample != 16) {
 			throw std::runtime_error("Unsupported audio format for FFT calculation: Only 16-bit PCM mono is supported.");
 		}
 
-		const auto* samples = reinterpret_cast<const int16_t*>(audioData.buffer.data());
+		const auto* samples = reinterpret_cast<const int16_t*>(audioData.buffer.begin());
 		size_t numSamples = audioData.buffer.size() / sizeof(int16_t);
 
 		if (numSamples == 0) {
-			return result;
+			return	Spectrum(); // 空のスペクトルを返す
 		}
 
 		// FFTの入力サイズは2のべき乗にする
@@ -40,10 +38,10 @@ namespace QFE {
 
 		fft(data);
 
+		// 周波数と振幅の計算
 		const float sampleRate = static_cast<float>(audioData.wfxEx.Format.nSamplesPerSec);
 		const size_t outputSize = fftSize / 2;
-		result.magnitudes.reserve(outputSize);
-		result.frequencies.reserve(outputSize);
+		Spectrum result(outputSize);
 
 		const float frequencyResolution = sampleRate / static_cast<float>(fftSize);
 
