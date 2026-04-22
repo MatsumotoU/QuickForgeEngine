@@ -15,9 +15,9 @@ using namespace QFE;
  * @param hInstance インスタンスハンドル
  * @param lpCmdLine コマンドライン引数
  */
-void QuickForgeEngine::RunOnWindows(HINSTANCE& hInstance, LPSTR& lpCmdLine) {
-	std::unique_ptr<IEngineCore> engineCore = std::make_unique<WindowsEngineCore>(hInstance, lpCmdLine);
-	engineCore->Initialize();
-	engineCore->MainLoop();
-	engineCore->Shutdown();
-}
+//void QuickForgeEngine::RunOnWindows(HINSTANCE& hInstance, LPSTR& lpCmdLine) {
+//	std::unique_ptr<IEngineCore> engineCore = std::make_unique<WindowsEngineCore>(hInstance, lpCmdLine);
+//	engineCore->Initialize();
+//	engineCore->MainLoop();
+//	engineCore->Shutdown();
+//}

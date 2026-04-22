@@ -4,6 +4,8 @@
  */
 
 #pragma once
+#include "engine/include/core/IEngineApp.h"
+#include <memory>
 
 namespace QFE {
 
@@ -19,7 +21,7 @@ namespace QFE {
 		/**
 		 * @brief エンジンの初期化処理
 		 */
-		virtual void Initialize() = 0;
+		virtual void Initialize(std::unique_ptr<IEngineApp> app) = 0;
 
 		/**
 		 * @brief エンジンのメインループ

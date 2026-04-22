@@ -9,7 +9,7 @@
 #include <vector>
 #include <list>
 #include <unordered_map>
-#include "editor/include/IEditor.h"
+#include "engine/include/core/IEngineApp.h"
 #include "editor/include/UI/UIManager.h"
 
 /** 
@@ -18,7 +18,7 @@
 */
 namespace QFE {
 
-	class OnWindowsEditor final : public IEditor {
+	class OnWindowsEditor final : public IEngineApp {
 	public:
 		OnWindowsEditor();
 		~OnWindowsEditor() override = default;
@@ -28,6 +28,5 @@ namespace QFE {
 
 	private:
 		UIManager uiManager_;
-
 	};
 }

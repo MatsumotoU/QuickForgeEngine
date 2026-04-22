@@ -6,7 +6,6 @@
 #pragma once
 #include "engine/include/core/IEngineCore.h"
 #include "engine/include/core/EngineGlobalValue.h"
-#include "editor/include/IEditor.h"
 #include <Windows.h>
 #include <chrono>
 #include <nlohmann/json.hpp>
@@ -49,13 +48,13 @@ namespace QFE {
 		 * @param hInstance インスタンスハンドル
 		 * @param lpCmdLine コマンドライン引数
 		 */
-		WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
+		explicit WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine);
 		~WindowsEngineCore() override = default;
 
 		/**
 		 * @brief エンジンの初期化
 		 */
-		void Initialize() override;
+		void Initialize(std::unique_ptr<IEngineApp> app) override;
 
 		/**
 		 * @brief メインループの実行
@@ -92,7 +91,7 @@ namespace QFE {
 		GraphicPipelineManager* graphicPipelineManager_;
 		ImGuiFlameController imguiFrameController_;
 
-		std::unique_ptr<IEditor> editor_ = nullptr;
+		std::unique_ptr<IEngineApp> engineApp_ = nullptr;
 		FrameCounter frameCounter_;
 
 		InputInterface* inputInterface_;
