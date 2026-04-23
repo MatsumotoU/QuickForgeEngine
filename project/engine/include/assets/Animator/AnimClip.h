@@ -19,7 +19,7 @@ namespace QFE {
 		void SetLoop(bool isLoop);
 		bool IsLoop() const;
 		void AddKeyFrame(const KeyFrame& keyframe);
-		const std::vector<KeyFrame>& GetKeyFrames() const;
+		std::vector<KeyFrame> GetKeyFrames() const;
 		size_t GetKeyFrameCount() const;
 		Transform GetTransformAtTime(float time) const;
 
