@@ -50,7 +50,6 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 
 	for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; ++meshIdx) {
 		const aiMesh* mesh = scene->mMeshes[meshIdx];
-		MeshData meshData;
 
 #ifdef QFE_OPTIMIZE_OFF
 		DebugLog(std::format("Loading Mesh {} / {}", meshIdx + 1, scene->mNumMeshes));
@@ -90,6 +89,9 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 
 			tempVertices.push_back(vtx);
 		}
+
+		// メッシュデータの初期化
+		MeshData meshData(tempVertices.size());
 
 		// 面データの読み込み（インデックスを使用して頂点を追加）
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
