@@ -7,8 +7,6 @@
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
 #include "engine/include/assets/Script/MonoRuntimeManager.h"
-#include "engine/include/assets/Script/LuaRuntimeManager.h"
- //#include "engine/include/assets/Script/CsharpCmpiler.h"
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
@@ -33,7 +31,6 @@ void AssetManager::Initialize(DirectXCommon* dxCommon) {
 
 	// スクリプトランタイムのグローバル初期化
 	MonoRuntimeManager::GetInstance()->Initialize();
-	LuaRuntimeManager::GetInstance()->Initialize();
 }
 
 void AssetManager::PreDraw() {
@@ -41,7 +38,6 @@ void AssetManager::PreDraw() {
 }
 void AssetManager::Finalize() {
 	// スクリプトランタイムの終了処理
-	LuaRuntimeManager::GetInstance()->Finalize();
 	MonoRuntimeManager::GetInstance()->Finalize();
 
 	particleGpuDataManager_.Finalize();

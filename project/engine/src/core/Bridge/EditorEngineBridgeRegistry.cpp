@@ -16,8 +16,6 @@
 #include "engine/include/physics/Force.h"
 #include "engine/include/collider/Data/SphereColliderData.h"
 #include "engine/include/collider/Data/AABBColliderData.h"
-#include "engine/include/assets/Script/Data/ScriptHandle.h"
-#include "engine/include/assets/Script/LuaScriptExecutor.h"
 #include "engine/include/assets/Script/CsharpScriptExecutor.h"
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
 #include "engine/include/camera/Data/BillboardComponent.h"
@@ -34,9 +32,6 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		};
 	EditorEngineBridge::GetEntityTemplateDirectoryPath = [engineCore]() -> std::string {
 		return engineCore->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
-		};
-	EditorEngineBridge::GetLuaScriptDirectoryPath = [engineCore]() -> std::string {
-		return engineCore->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
 		};
 
 	EditorEngineBridge::GetAllEntityIds = [engineCore]() -> std::vector<uint32_t> {
@@ -96,7 +91,6 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		case ComponentType::PhysicsForce: return em->HasComponent<Force>(entityId);
 		case ComponentType::SphereCollider: return em->HasComponent<SphereColliderData>(entityId);
 		case ComponentType::AABBCollider: return em->HasComponent<AABBColliderData>(entityId);
-		case ComponentType::LuaScript: return em->HasComponent<ScriptHandles>(entityId);
 		case ComponentType::CsharpScript: return em->HasComponent<CsharpComponent>(entityId);
 		case ComponentType::ParentData: return em->HasComponent<ParentData>(entityId);
 		}
@@ -134,7 +128,6 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		case ComponentType::PhysicsForce: em->RemoveComponent<Force>(entityId); break;
 		case ComponentType::SphereCollider: em->RemoveComponent<SphereColliderData>(entityId); break;
 		case ComponentType::AABBCollider: em->RemoveComponent<AABBColliderData>(entityId); break;
-		case ComponentType::LuaScript: em->RemoveComponent<ScriptHandles>(entityId); break;
 		case ComponentType::CsharpScript: em->RemoveComponent<CsharpComponent>(entityId); break;
 		case ComponentType::ParentData: em->RemoveComponent<ParentData>(entityId); break;
 		}
@@ -382,99 +375,6 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 			c.colliderLayer = info.colliderLayer;
 			c.eventColliderLayer = info.eventColliderLayer;
 			c.isDraw = info.isDraw;
-		}
-		};
-
-	EditorEngineBridge::GetLuaScripts = [engineCore](uint32_t entityId) -> std::vector<ScriptInfo> {
-		SceneManager* sceneManager_ = engineCore->GetSceneManager();
-		std::vector<ScriptInfo> scripts;
-		if (sceneManager_ && sceneManager_->GetEntityManager()->HasComponent<ScriptHandles>(entityId)) {
-			ScriptHandles& sh = sceneManager_->GetEntityManager()->GetComponent<ScriptHandles>(entityId);
-			for (auto& luaHandle : sh.scriptHandles_) {
-				ScriptInfo info;
-				info.name = luaHandle.scriptName_;
-				info.handle = luaHandle.handle_;
-				info.priority = (int)luaHandle.priority_;
-
-				LuaScriptOnQFE* script = sceneManager_->GetLuaScriptExecutor()->GetScript(luaHandle.handle_);
-				if (script) {
-					for (auto& valName : script->GetGlobalValuesList()) {
-						ScriptParamInfo p;
-						p.name = valName;
-						sol::object obj = script->GetEnvironment()[valName];
-						if (obj.is<int>()) { p.type = ScriptParamType::Int; p.value = std::to_string(obj.as<int>()); } else if (obj.is<float>()) { p.type = ScriptParamType::Float; p.value = std::to_string(obj.as<float>()); } else if (obj.is<bool>()) { p.type = ScriptParamType::Bool; p.value = obj.as<bool>() ? "true" : "false"; } else if (obj.is<std::string>()) { p.type = ScriptParamType::String; p.value = obj.as<std::string>(); } else { p.type = ScriptParamType::Unknown; }
-						info.params.push_back(p);
-					}
-				}
-				scripts.push_back(info);
-			}
-		}
-		return scripts;
-		};
-
-	EditorEngineBridge::SetLuaScriptParam = [engineCore](uint32_t entityId, uint32_t handle, const std::string& paramName, const std::string& value) {
-		entityId; // TODO: 現状、handleでスクリプトを特定しているためentityIdは使用しないが、将来的に複数スクリプトを同一エンティティにアタッチできるようになった際に必要になる可能性があるため引数として残す
-		SceneManager* sceneManager_ = engineCore->GetSceneManager();
-		if (sceneManager_) {
-			LuaScriptOnQFE* script = sceneManager_->GetLuaScriptExecutor()->GetScript(handle);
-			if (script) {
-				sol::object obj = script->GetEnvironment()[paramName];
-				if (obj.is<int>()) { script->GetEnvironment()[paramName] = std::stoi(value); } else if (obj.is<float>()) { script->GetEnvironment()[paramName] = std::stof(value); } else if (obj.is<bool>()) { script->GetEnvironment()[paramName] = (value == "true"); } else if (obj.is<std::string>()) { script->GetEnvironment()[paramName] = value; }
-			}
-		}
-		};
-
-	EditorEngineBridge::RemoveLuaScript = [engineCore](uint32_t entityId, uint32_t handle) {
-		SceneManager* sceneManager_ = engineCore->GetSceneManager();
-		if (sceneManager_) {
-			sceneManager_->GetLuaScriptExecutor()->RemoveScript(handle);
-		}
-		};
-
-	EditorEngineBridge::AddLuaScript = [engineCore](uint32_t entityId, const std::string& scriptName) {
-		SceneManager* sceneManager_ = engineCore->GetSceneManager();
-		if (sceneManager_) {
-			sceneManager_->AddLuaScript(entityId, scriptName);
-		}
-		};
-
-	EditorEngineBridge::CreateLuaScript = [engineCore](const std::string& scriptName) {
-		// ディレクトリパス
-		const std::string dirPath = AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
-		// ディレクトリがなければ作成
-		std::filesystem::create_directories(dirPath);
-		// ファイルパス
-		const std::string filePath = dirPath + scriptName;
-#ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Create Lua Script: " + filePath, LogLevel::EditorInfo);
-#endif // _DEBUG
-		// Luaテンプレート
-		const char* luaTemplate =
-			"function Init()\n"
-			"\n"
-			"end\n"
-			"\n"
-			"function Update()\n"
-			"\n"
-			"end\n";
-		// ファイル書き込み
-		std::ofstream ofs(filePath);
-		if (!ofs) {
-			return;
-		}
-		ofs << luaTemplate;
-		ofs.close();
-		// 自動で開く
-		try {
-			std::filesystem::path absPath = std::filesystem::absolute(filePath);
-			ShellExecuteA(nullptr, "open", "code", absPath.string().c_str(), nullptr, SW_SHOWNORMAL);
-		}
-		catch (const std::exception& e) {
-#ifdef QFE_OPTIMIZE_OFF
-			DebugLog(e.what(), LogLevel::Error);
-#else
-			std::cerr << e.what() << std::endl;
-#endif
 		}
 		};
 

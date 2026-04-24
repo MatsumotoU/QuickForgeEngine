@@ -23,7 +23,6 @@ namespace QFE {
 		virtual void Finalize() = 0;
 
 		virtual EntityManager* GetEntityManager() = 0;
-		virtual LuaScriptExecutor* GetLuaScriptExecutor() = 0;
 		virtual CsharpScriptExecutor* GetCsharpScriptExecutor() = 0;
 
 		// シーンのロード、保存
@@ -43,11 +42,9 @@ namespace QFE {
 		virtual void AddParticleEmitter(const std::string& modelName, uint32_t maxCount) = 0;
 		virtual void AddModel(const std::string& modelName) = 0;
 		virtual void AddSprite(const std::string& spriteName, float width = 0.0f, float height = 0.0f, int inEntityId = -1, int layer = -1, Vector2 pivot = { 0.0f,0.0f }) = 0;
-		virtual void AddLuaScript(uint32_t entityId, const std::string& scriptName) = 0;
 		virtual void AddCsharpScript(uint32_t entityId, const std::string& className) = 0;
 		virtual uint32_t AddEntity(const std::string& entityName) = 0;
 		virtual uint32_t RunTimeAddEntity(const std::string& entityName) = 0;
-		virtual void RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName) = 0;
 
 		// シーンにあるオブジェクトを保存、読み込み、変更
 		virtual void DeleteEntity(uint32_t entityId) = 0;

@@ -62,7 +62,6 @@ group "QuickForge" -- MyMainProject
         }
         links{
             "Engine",
-            "Lua",
             "ExternalFolders"
         }
 
@@ -78,7 +77,6 @@ group "QuickForge" -- MyMainProject
             "./externals/assimp/include/",
             "./externals/DirectXTex/",
             "./externals/imgui/",
-            "./externals/lua/",
             "./externals/Mono/",
             "./externals/Mono/include",
             "./externals/Mono/include/mono-2.0/",
@@ -108,7 +106,6 @@ group "QuickForge" -- MyMainProject
         links{
             "DirectXTex",
             "ImGui",
-            "Lua",
             "mono-2.0-sgen",
             "ExternalFolders"
         }
@@ -127,7 +124,6 @@ group "QuickForge" -- MyMainProject
             "./externals/assimp/include/",
             "./externals/DirectXTex/",
             "./externals/imgui/",
-            "./externals/lua/",
             "./externals/Mono/",
             "./externals/Mono/include",
             "./externals/Mono/include/mono-2.0/",
@@ -213,21 +209,3 @@ project "ImGui"
         "externals/imgui/**.h",
         "externals/imgui/**.cpp",
     }
-
-project "Lua"
-    location "externals/lua"
-    kind "StaticLib"
-    language "C"
-    
-    files {
-        "externals/lua/**.h",
-        "externals/lua/**.c"
-    }
-
-    removefiles {
-        "externals/lua/lua.c",
-        "externals/lua/luac.c"
-    }
-
-    filter "system:windows"
-        defines { "_CRT_SECURE_NO_WARNINGS" }

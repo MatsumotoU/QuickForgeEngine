@@ -9,7 +9,6 @@ namespace QFE {
 	std::function<std::string()> EditorEngineBridge::GetModelDirectoryPath = nullptr;
 	std::function<std::string()> EditorEngineBridge::GetImageDirectoryPath = nullptr;
 	std::function<std::string()> EditorEngineBridge::GetEntityTemplateDirectoryPath = nullptr;
-	std::function<std::string()> EditorEngineBridge::GetLuaScriptDirectoryPath = nullptr;
 
 	// 現在のシーン情報を取得する関数群
 	std::function<std::vector<uint32_t>()> EditorEngineBridge::GetAllEntityIds = nullptr;
@@ -50,12 +49,6 @@ namespace QFE {
 	std::function<void(uint32_t, const AABBColliderInfo&)> EditorEngineBridge::SetAABBColliderInfo = nullptr;
 
 	// スクリプト操作
-	std::function<std::vector<ScriptInfo>(uint32_t)> EditorEngineBridge::GetLuaScripts = nullptr;
-	std::function<void(uint32_t, uint32_t, const std::string&, const std::string&)> EditorEngineBridge::SetLuaScriptParam = nullptr;
-	std::function<void(uint32_t, uint32_t)> EditorEngineBridge::RemoveLuaScript = nullptr;
-	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::AddLuaScript = nullptr;
-	std::function<void(const std::string&)> EditorEngineBridge::CreateLuaScript = nullptr;
-
 	std::function<std::vector<std::string>(uint32_t)> EditorEngineBridge::GetCsharpClassNames = nullptr;
 	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::RemoveCsharpScript = nullptr;
 	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::AddCsharpScript = nullptr;

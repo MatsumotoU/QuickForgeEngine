@@ -60,7 +60,8 @@ void InspectorView::Draw() {
 		}
 
 		ImGui::Separator();
-	} else {
+	}
+	else {
 		ImGui::Text("No entity selected");
 		ImGui::End();
 		return;
@@ -209,55 +210,6 @@ void InspectorView::Draw() {
 		}
 	}
 
-	// スクリプト
-	std::vector<ScriptInfo> luaScripts = EditorEngineBridge::GetLuaScripts(selectedEntityId_);
-	if (!luaScripts.empty()) {
-		if (ImGui::CollapsingHeader("Scripts##ScriptProperties")) {
-			for (auto& sh : luaScripts) {
-				if (ImGui::TreeNode(sh.name.c_str())) {
-					ImGui::Text("Handle: %d", sh.handle);
-					ImGui::Text("Priority: %d", sh.priority);
-					ImGui::Separator();
-					for (auto& p : sh.params) {
-						std::string inputLabel = p.name + "##" + std::to_string(sh.handle);
-						if (p.type == ScriptParamType::Int) {
-							int v = std::stoi(p.value);
-							if (ImGui::InputInt(inputLabel.c_str(), &v)) {
-								EditorEngineBridge::SetLuaScriptParam(selectedEntityId_, sh.handle, p.name, std::to_string(v));
-							}
-						} else if (p.type == ScriptParamType::Float) {
-							float v = std::stof(p.value);
-							if (ImGui::InputFloat(inputLabel.c_str(), &v)) {
-								EditorEngineBridge::SetLuaScriptParam(selectedEntityId_, sh.handle, p.name, std::to_string(v));
-							}
-						} else if (p.type == ScriptParamType::Bool) {
-							bool v = (p.value == "true");
-							if (ImGui::Checkbox(inputLabel.c_str(), &v)) {
-								EditorEngineBridge::SetLuaScriptParam(selectedEntityId_, sh.handle, p.name, v ? "true" : "false");
-							}
-						} else if (p.type == ScriptParamType::String) {
-							char buf[256];
-							strncpy_s(buf, p.value.c_str(), sizeof(buf));
-							if (ImGui::InputText(inputLabel.c_str(), buf, sizeof(buf))) {
-								EditorEngineBridge::SetLuaScriptParam(selectedEntityId_, sh.handle, p.name, std::string(buf));
-							}
-						}
-					}
-
-					ImGui::TreePop();
-				}
-
-				// 右クリックでポップアップメニュー
-				std::string popupLabel = "ScriptPopup" + std::to_string(sh.handle);
-				if (ImGui::BeginPopupContextItem(popupLabel.c_str())) {
-					if (ImGui::MenuItem("Remove")) {
-						EditorEngineBridge::RemoveLuaScript(selectedEntityId_, sh.handle);
-					}
-					ImGui::EndPopup();
-				}
-			}
-		}
-	}
 	// Force
 	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::PhysicsForce)) {
 		ForceData force = EditorEngineBridge::GetForceData(selectedEntityId_);
@@ -420,51 +372,7 @@ void InspectorView::Draw() {
 			ImGui::EndMenu();
 		}
 
-		// LuaScript
-		if (ImGui::BeginMenu("LuaScript")) {
-			if (ImGui::MenuItem("NewScript")) {
-				openScriptPopup_ = true;
-				strcpy_s(scriptBuffer_, "NewScript.lua");
-			}
-
-			if (ImGui::BeginMenu("AddScript")) {
-				if(ImGui::MenuItem("Refresh List")) {
-					if (EditorEngineBridge::GetLuaScriptDirectoryPath) {
-						std::string scriptPath = EditorEngineBridge::GetLuaScriptDirectoryPath();
-						scriptList_.LoadFileList(scriptPath, ".lua");
-					}
-				}
-				ImGui::Separator();
-
-				scriptList_.DrawMenuItem();
-				ImGui::EndMenu();
-			}
-
-			std::string selectedScript;
-			if (scriptList_.GetSelectedFileName(selectedScript)) {
-				EditorEngineBridge::AddLuaScript(selectedEntityId_, selectedScript);
-			}
-
-			ImGui::EndMenu();
-		}
 		ImGui::EndPopup();
-	}
-	if (openScriptPopup_) {
-		ImGui::OpenPopup("NewScript");
-		if (ImGui::BeginPopupModal("NewScript", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-			ImGui::InputText("Script Name", scriptBuffer_, IM_ARRAYSIZE(scriptBuffer_));
-			if (ImGui::Button("Create")) {
-				EditorEngineBridge::CreateLuaScript(scriptBuffer_);
-				EditorEngineBridge::AddLuaScript(selectedEntityId_, scriptBuffer_);
-				openScriptPopup_ = false;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Cancel")) {
-				openScriptPopup_ = false;
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
 	}
 
 	ImGui::End();
