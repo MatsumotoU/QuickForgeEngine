@@ -17,7 +17,6 @@ namespace QFE {
 		PhysicsForce,
 		SphereCollider,
 		AABBCollider,
-		LuaScript,
 		CsharpScript,
 		ParentData
 	};
@@ -136,7 +135,6 @@ namespace QFE {
 		static std::function<std::string()> GetModelDirectoryPath;
 		static std::function<std::string()> GetImageDirectoryPath;
 		static std::function<std::string()> GetEntityTemplateDirectoryPath;
-		static std::function<std::string()> GetLuaScriptDirectoryPath;
 
 		static std::function<std::vector<uint32_t>()> GetAllEntityIds;
 		static std::function<std::string(uint32_t)> GetEntityName;
@@ -176,12 +174,6 @@ namespace QFE {
 		static std::function<void(uint32_t, const AABBColliderInfo&)> SetAABBColliderInfo;
 
 		// スクリプト操作
-		static std::function<std::vector<ScriptInfo>(uint32_t)> GetLuaScripts;
-		static std::function<void(uint32_t, uint32_t, const std::string&, const std::string&)> SetLuaScriptParam;
-		static std::function<void(uint32_t, uint32_t)> RemoveLuaScript;
-		static std::function<void(uint32_t, const std::string&)> AddLuaScript;
-		static std::function<void(const std::string&)> CreateLuaScript;
-
 		static std::function<std::vector<std::string>(uint32_t)> GetCsharpClassNames;
 		static std::function<void(uint32_t, const std::string&)> RemoveCsharpScript;
 		static std::function<void(uint32_t, const std::string&)> AddCsharpScript;

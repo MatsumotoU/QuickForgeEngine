@@ -51,7 +51,6 @@ namespace QFE {
 		/** @brief エンティティマネージャを取得 */
 		EntityManager* GetEntityManager() const { return currentScene_->GetEntityManager(); }
 		/** @brief スクリプト実行環境を取得 */
-		LuaScriptExecutor* GetLuaScriptExecutor() const;
 		CsharpScriptExecutor* GetCsharpScriptExecutor() const { return currentScene_->GetCsharpScriptExecutor(); }
 
 		/** @brief シーンの保存 */
@@ -96,16 +95,12 @@ namespace QFE {
 		void AddModel(const std::string& modelName);
 		/** @brief スプライトを追加 */
 		void AddSprite(const std::string& spriteName, float width = 0.0f, float height = 0.0f, int inEntityId = -1, int layer = -1, Vector2 pvot = { 0.0f,0.0f });
-		/** @brief Luaスクリプトを追加 */
-		void AddLuaScript(uint32_t entityId, const std::string& scriptName);
 		/** @brief C#スクリプトを追加 */
 		void AddCsharpScript(uint32_t entityId, const std::string& className);
 		/** @brief エンティティを追加 */
 		uint32_t AddEntity(const std::string& entityName);
 		/** @brief 実行時にエンティティを追加 */
 		uint32_t RunTimeAddEntity(const std::string& entityName);
-		/** @brief 実行時にLuaスクリプトを追加 */
-		void RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName);
 
 		/** @brief シングローバルのシーンデータを取得 */
 		nlohmann::json& GetSceneGlobalData() { return sceneGlobalData_; }

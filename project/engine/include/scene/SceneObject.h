@@ -3,7 +3,6 @@
 #include "engine/include/core/Thread/PriorityTaskDispatcher.h"
 #include "Engine/include/scene/SceneCommand/SceneEntityCommandInvoker.h"
 #include "engine/include/utility/ID/UniqueIDManager.h"
-#include "engine/include/assets/Script/LuaScriptExecutor.h"
 #include "engine/include/assets/Script/CsharpScriptExecutor.h"
 
 #include "engine/include/core/Math/Vector/Vector2.h"
@@ -48,11 +47,9 @@ namespace QFE {
 		void AddSprite(
 			const std::string& spriteName, float width = 0.0f, float height = 0.0f,
 			int inEntityId = -1, int layer = -1, Vector2 pivot = { 0.0f,0.0f }) override;
-		void AddLuaScript(uint32_t entityId, const std::string& scriptName) override;
 		void AddCsharpScript(uint32_t entityId, const std::string& className) override;
 		uint32_t AddEntity(const std::string& entityName) override;
 		uint32_t RunTimeAddEntity(const std::string& entityName) override;
-		void RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName) override;
 
 		// シーンにあるオブジェクトを保存、読み込み、変更
 		void DeleteEntity(uint32_t entityId) override;
@@ -71,7 +68,6 @@ namespace QFE {
 		bool IsRunningScript() const override { return isRunningScript_; }
 
 		EntityManager* GetEntityManager() override { return &entityManager_; }
-		LuaScriptExecutor* GetLuaScriptExecutor() override { return &luaScriptExecutor_; }
 		CsharpScriptExecutor* GetCsharpScriptExecutor() override { return &csharpScriptExecutor_; }
 
 	private:
@@ -92,7 +88,6 @@ namespace QFE {
 		EntityManager entityManager_;
 		
 		// シーン固有のスクリプト実行環境
-		LuaScriptExecutor luaScriptExecutor_;
 		CsharpScriptExecutor csharpScriptExecutor_;
 	};
 

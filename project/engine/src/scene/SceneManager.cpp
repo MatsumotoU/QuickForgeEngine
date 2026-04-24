@@ -127,25 +127,6 @@ uint32_t SceneManager::GetEntityByUniqueID(uint32_t uniqueId) const {
 	return currentScene_->GetEntityByUniqueID(uniqueId);
 }
 
-LuaScriptExecutor* QFE::SceneManager::GetLuaScriptExecutor() const {
-	// currentScene_がいない場合nullptrを返す
-	if (!currentScene_) {
-#ifdef QFE_OPTIMIZE_OFF
-		DebugLog("GetLuaScriptExecutor: currentScene_ is nullptr", LogLevel::EngineInfo);
-#endif // QFE_OPTIMIZE_OFF
-		return nullptr;
-	}
-	// LuaScriptExecutorがいない場合nullptrを返す
-	if (!currentScene_->GetLuaScriptExecutor()) {
-#ifdef QFE_OPTIMIZE_OFF
-		DebugLog("GetLuaScriptExecutor: LuaScriptExecutor is nullptr", LogLevel::EngineInfo);
-#endif // QFE_OPTIMIZE_OFF
-		return nullptr;
-	}
-
-	return currentScene_->GetLuaScriptExecutor();
-}
-
 void SceneManager::SaveScene(const std::string& sceneName) {
 	currentScene_->SaveScene(sceneName);
 }
@@ -237,10 +218,6 @@ void SceneManager::AddSprite(const std::string& spriteName, float width, float h
 	currentScene_->AddSprite(spriteName, width, height, inEntityId, layer, pvot);
 }
 
-void SceneManager::AddLuaScript(uint32_t entityId, const std::string& scriptName) {
-	currentScene_->AddLuaScript(entityId, scriptName);
-}
-
 void SceneManager::AddCsharpScript(uint32_t entityId, const std::string& className) {
 	currentScene_->AddCsharpScript(entityId, className);
 }
@@ -251,11 +228,6 @@ uint32_t SceneManager::AddEntity(const std::string& entityName) {
 
 uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {
 	return currentScene_->RunTimeAddEntity(entityName);
-}
-
-void SceneManager::RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName)
-{
-	currentScene_->RunTimeAddLuaScript(entityId, scriptName);
 }
 
 void SceneManager::StartScript() {

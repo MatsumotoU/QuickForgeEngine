@@ -13,7 +13,6 @@
 
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
-#include "engine/include/assets/Script/Data/ScriptHandle.h"
 #include "engine/include/physics/PhysicsManager.h"
 #include "engine/include/collider/Data/SphereColliderData.h"
 #include "engine/include/core/Math/ParentData.h"
@@ -69,7 +68,6 @@ void SceneObject::Initialize() {
 	isPauseScript_ = false;
 
 	// スクリプト実行環境を初期化
-	luaScriptExecutor_.Initialize(&entityManager_);
 	csharpScriptExecutor_.Initialize(&entityManager_);
 
 	// コマンドクリア
@@ -85,8 +83,6 @@ void SceneObject::Update() {
 
 	// ランタイム中のサブモジュールの更新
 	if (isRunningScript_ && !isPauseScript_) {
-		luaScriptExecutor_.FrameStart();
-		luaScriptExecutor_.UpdateAllScripts();
 		csharpScriptExecutor_.RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();
 	}
@@ -157,11 +153,9 @@ void SceneObject::EndFrame() {
 		isRequestStopScript_ = false;
 	}
 	entityManager_.EndFrame();
-	luaScriptExecutor_.RemoveDeadScripts(); // 死亡したスクリプトを削除
 }
 
 void SceneObject::Finalize() {
-	luaScriptExecutor_.Reset();
 	csharpScriptExecutor_.Finalize();
 	entityManager_.ResetEntiry();
 }
@@ -181,7 +175,6 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	assetManager->GetGpuBufferPool()->ReleaseAllConstantBuffers();
 
 	entityManager_.ResetEntiry();
-	luaScriptExecutor_.Reset();
 	AudioInterface::GetInstance()->StopAllSound();
 	csharpScriptExecutor_.ResetScripts();
 
@@ -284,10 +277,8 @@ void SceneObject::RunScene() {
 		SaveScene(sceneName_);
 		LoadScene(sceneName_);
 		isRunningScript_ = true;
-		luaScriptExecutor_.InitializeAllScripts();
 		csharpScriptExecutor_.RunAllScriptsFunction("Initialize");
 		ColliderManager::GetInstance()->isRunning = true;
-		luaScriptExecutor_.isRunningScript_ = true;
 	}
 }
 
@@ -303,7 +294,6 @@ void SceneObject::StopScene() {
 	if (isRequestStopScript_) { return; }
 	isRequestStopScript_ = true;
 	ColliderManager::GetInstance()->isRunning = false;
-	luaScriptExecutor_.isRunningScript_ = false;
 }
 
 void SceneObject::AddEmptyObject() {
@@ -412,46 +402,6 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
 }
 
-void SceneObject::AddLuaScript(uint32_t entityId, const std::string& scriptName) {
-	if (!entityManager_.HasComponent<ScriptHandles>(entityId)) {
-		ScriptHandles scriptHandles;
-		LuaHandle scriptHandle;
-		scriptHandle.scriptName_ = scriptName;
-		scriptHandle.handle_ = luaScriptExecutor_.AddScript(entityId, scriptName);
-		LuaScriptOnQFE* script = luaScriptExecutor_.GetScript(scriptHandle.handle_);
-		for (std::string& val : script->GetGlobalValuesList()) {
-			sol::state* state = script->GetScript();
-			sol::object obj = (*state)[val];
-			if (obj.is<int>()) {
-				int v = obj.as<int>();
-				scriptHandle.intParams_[val] = v;
-			} else if (obj.is<float>()) {
-				float v = obj.as<float>();
-				scriptHandle.floatParams_[val] = v;
-			} else if (obj.is<bool>()) {
-				bool v = obj.as<bool>();
-				scriptHandle.boolParams_[val] = v;
-			} else if (obj.is<std::string>()) {
-				std::string v = obj.as<std::string>();
-				scriptHandle.stringParams_[val] = v;
-			}
-		}
-		scriptHandles.scriptHandles_.push_back(scriptHandle);
-		entityManager_.EmplaceComponent<ScriptHandles>(entityId, scriptHandles);
-	} else {
-		ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
-		for (const auto& sh : scriptHandles.scriptHandles_) {
-			if (sh.scriptName_ == scriptName) {
-				return;
-			}
-		}
-		LuaHandle scriptHandle;
-		scriptHandle.scriptName_ = scriptName;
-		scriptHandle.handle_ = luaScriptExecutor_.AddScript(entityId, scriptName);
-		scriptHandles.scriptHandles_.push_back(scriptHandle);
-	}
-}
-
 void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& className) {
 
 
@@ -524,12 +474,6 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	uint32_t entityId = AddEntity(entityName);
 
-	if (entityManager_.HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
-		ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
-		for (const auto& sh : scriptHandles.scriptHandles_) {
-			luaScriptExecutor_.GetScript(sh.handle_)->RunFunction("Init");
-		}
-	}
 	if (entityManager_.HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
 		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
 		for (const auto& ch : csharpComponent.csharpHandles_) {
@@ -541,20 +485,6 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	DebugLog("RunTimeAddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
 #endif // QFE_OPTIMIZE_OFF
 	return entityId;
-}
-
-void SceneObject::RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName) {
-	AddLuaScript(entityId, scriptName);
-
-	if (entityManager_.HasComponent<ScriptHandles>(entityId) && isRunningScript_) {
-		ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
-		for (const auto& sh : scriptHandles.scriptHandles_) {
-			if (sh.scriptName_ == scriptName) {
-				luaScriptExecutor_.GetScript(sh.handle_)->RunFunction("Initialize");
-				break;
-			}
-		}
-	}
 }
 
 void SceneObject::DeleteEntity(uint32_t entityId) {
@@ -755,52 +685,6 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 					AddCsharpScript(entityId, handle["ClassName"].get<std::string>());
 				}
 			}
-		}
-	}
-	if (entityJson.contains("ScriptHandle")) {
-		std::vector<std::string> scriptNames;
-		if (entityJson.contains("ScriptHandle") && entityJson["ScriptHandle"].contains("scriptHandles")) {
-			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
-				if (handle.contains("scriptName")) {
-#ifdef QFE_OPTIMIZE_OFF
-					DebugLog("Load Script: " + handle["scriptName"].get<std::string>());
-#endif // QFE_OPTIMIZE_OFF
-					AddLuaScript(entityId, handle["scriptName"].get<std::string>());
-				}
-			}
-			for (const auto& handle : entityJson["ScriptHandle"]["scriptHandles"]) {
-				if (handle.contains("scriptName")) {
-					ScriptHandles& scriptHandles = entityManager_.GetComponent<ScriptHandles>(entityId);
-					std::vector<uint32_t> luaHandles;
-					for (auto& sh : scriptHandles.scriptHandles_) {
-						luaHandles.push_back(sh.handle_);
-					}
-					scriptHandles.Deserialize(entityJson["ScriptHandle"]);
-					for (size_t i = 0; i < luaHandles.size(); ++i) {
-						scriptHandles.scriptHandles_[i].handle_ = luaHandles[i];
-					}
-					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
-						LuaScriptOnQFE* script = luaScriptExecutor_.GetScript(hl.handle_);
-						sol::environment& env = script->GetEnvironment();
-						for (const auto& [key, val] : hl.intParams_) {
-							env[key] = val;
-						}
-						for (const auto& [key, val] : hl.floatParams_) {
-							env[key] = val;
-						}
-						for (const auto& [key, val] : hl.boolParams_) {
-							env[key] = val;
-						}
-						for (const auto& [key, val] : hl.stringParams_) {
-							env[key] = val;
-						}
-
-
-						script->SetPriority(hl.priority_);
-					}
-				}
-			}
-
 		}
 	}
 }

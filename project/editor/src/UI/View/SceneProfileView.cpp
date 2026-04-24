@@ -10,7 +10,6 @@
 #include "engine/include/assets/AssetManager.h"
 
 #include "engine/include/scene/SceneManager.h"
-#include "engine/include/assets/Script/LuaScriptExecutor.h"
 #include "engine/include/assets/Script/CsharpScriptExecutor.h"
 
 using namespace QFE;
@@ -58,8 +57,6 @@ void SceneProfileView::Draw() {
 
 	ImGui::Separator();
 	if (ImGui::CollapsingHeader("Scripts")) {
-		ImGui::Text("Lua Scripts: %d", SceneManager::GetInstance()->GetLuaScriptExecutor()->GetScriptCount());
-		ImGui::Separator();
 		ImGui::Text("C# Scripts: %d", SceneManager::GetInstance()->GetCsharpScriptExecutor()->GetScriptCount());
 	}
 
