@@ -6,7 +6,8 @@
 #include "editor/include/UI/View/InspectorView.h"
 #include "editor/include/UI/View/HierarchyView.h"
 
-#include "engine/include/core/Bridge/EditorEngineBridge.h"
+#include "engine/include/core/Bridge/EngineBridgeProvider.h"
+
 #include <format>
 
 using namespace QFE;
@@ -16,13 +17,13 @@ InspectorView::InspectorView() {
 	SetName("Inspector");
 	selectedEntityId_ = 0;
 
-	if (EditorEngineBridge::GetEntityTemplateDirectoryPath) {
-		std::string scriptPath = EditorEngineBridge::GetEntityTemplateDirectoryPath(); // Wait, script path?
+	QFE::IEngineBridge* bridge = QFE::BRIDGE::EngineBridgeProvider::GetInstance()->GetBridge();
+	if (bridge) {
+		std::string scriptPath = bridge->GetScriptDirectoryPath();
 	}
-	// Note: Directory paths are now handled via bridge where possible.
-	// For now, let's just make sure we don't call AssetManager directly if bridge exists.
-	if (EditorEngineBridge::GetModelDirectoryPath) {
-		modelList_.LoadFileList(EditorEngineBridge::GetModelDirectoryPath(), ".obj");
+
+	if (bridge) {
+		modelList_.LoadFileList(bridge->GetModelDirectoryPath(), ".obj");
 	}
 }
 
@@ -39,24 +40,34 @@ void InspectorView::Draw() {
 		return;
 	}
 
+	// エンジンブリッジの取得
+	QFE::IEngineBridge* bridge = QFE::BRIDGE::EngineBridgeProvider::GetInstance()->GetBridge();
+	if(bridge == nullptr) {
+		ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+		ImGui::Text("Engine bridge not available");
+		ImGui::End();
+		return;
+	}
+
+	// ウィンドウの開始
 	ImGui::Begin(GetName().c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	// オブジェクトの名前
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::SceneObjectData)) {
-		std::string name = EditorEngineBridge::GetEntityName(selectedEntityId_);
-		std::string tag = EditorEngineBridge::GetEntityTag(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::SceneObjectData)) {
+		std::string name = bridge->GetEntityName(selectedEntityId_);
+		std::string tag = bridge->GetEntityTag(selectedEntityId_);
 
 		ImGui::Text("Entity ID: %d", selectedEntityId_);
 		// name
 		char nameBuffer[256];
 		strncpy_s(nameBuffer, sizeof(nameBuffer), name.c_str(), sizeof(nameBuffer) - 1);
 		if (ImGui::InputText("Name", nameBuffer, sizeof(nameBuffer))) {
-			EditorEngineBridge::SetEntityName(selectedEntityId_, nameBuffer);
+			bridge->SetEntityName(selectedEntityId_, nameBuffer);
 		}
 		// tag
 		char tagBuffer[256];
 		strncpy_s(tagBuffer, sizeof(tagBuffer), tag.c_str(), sizeof(tagBuffer) - 1);
 		if (ImGui::InputText("Tag", tagBuffer, sizeof(tagBuffer))) {
-			EditorEngineBridge::SetEntityTag(selectedEntityId_, tagBuffer);
+			bridge->SetEntityTag(selectedEntityId_, tagBuffer);
 		}
 
 		ImGui::Separator();
@@ -68,19 +79,19 @@ void InspectorView::Draw() {
 	}
 
 	// Parent ID
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::ParentData)) {
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::ParentData)) {
 		if (ImGui::CollapsingHeader("Parent")) {
 			if (ImGui::Button("Delete")) {
-				if (EditorEngineBridge::Unparent) {
-					EditorEngineBridge::Unparent(selectedEntityId_);
+				if (bridge) {
+					bridge->Unparent(selectedEntityId_);
 				}
 			}
 		}
 	}
 
 	// Transform
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::Transform)) {
-		TransformData transform = EditorEngineBridge::GetTransform(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::Transform)) {
+		TransformData transform = bridge->GetTransform(selectedEntityId_);
 		if (ImGui::CollapsingHeader("Transform")) {
 			bool changed = false;
 			if (ImGui::DragFloat3("Transition", transform.translate, 0.1f)) changed = true;
@@ -88,14 +99,14 @@ void InspectorView::Draw() {
 			if (ImGui::DragFloat3("Scale", transform.scale, 0.1f)) changed = true;
 
 			if (changed) {
-				EditorEngineBridge::SetTransform(selectedEntityId_, transform);
+				bridge->SetTransform(selectedEntityId_, transform);
 			}
 		}
 	}
 
 	// Model
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::ModelHandle)) {
-		ModelRenderInfo info = EditorEngineBridge::GetModelRenderInfo(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::ModelHandle)) {
+		ModelRenderInfo info = bridge->GetModelRenderInfo(selectedEntityId_);
 		if (ImGui::CollapsingHeader("Model")) {
 			ImGui::Text("Model Name: %s", info.modelName.c_str());
 
@@ -111,7 +122,7 @@ void InspectorView::Draw() {
 						if (ImGui::ColorEdit4("Color", mesh.materialColor)) materialChanged = true;
 						if (ImGui::DragFloat("Shininess", &mesh.materialShininess, 1.0f, 1.0f, 128.0f)) materialChanged = true;
 						if (materialChanged) {
-							EditorEngineBridge::SetMeshMaterial(selectedEntityId_, i, mesh.materialColor, mesh.materialShininess);
+							bridge->SetMeshMaterial(selectedEntityId_, i, mesh.materialColor, mesh.materialShininess);
 						}
 						ImGui::TreePop();
 					}
@@ -122,7 +133,7 @@ void InspectorView::Draw() {
 						if (ImGui::ColorEdit4("Light Color", mesh.lightColor)) lightChanged = true;
 						if (ImGui::DragFloat3("Light Direction", mesh.lightDirection, 0.1f)) lightChanged = true;
 						if (lightChanged) {
-							EditorEngineBridge::SetMeshLight(selectedEntityId_, i, mesh.lightColor, mesh.lightDirection);
+							bridge->SetMeshLight(selectedEntityId_, i, mesh.lightColor, mesh.lightDirection);
 						}
 						ImGui::TreePop();
 					}
@@ -136,15 +147,15 @@ void InspectorView::Draw() {
 			modelList_.DrawCombo();
 			std::string selectedModel;
 			if (modelList_.GetSelectedFileName(selectedModel)) {
-				if (EditorEngineBridge::ChangeModel) {
-					EditorEngineBridge::ChangeModel(selectedEntityId_, selectedModel);
+				if (bridge) {
+					bridge->ChangeModel(selectedEntityId_, selectedModel);
 				}
 			}
 		}
 	}
 	// Particle
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::Particle)) {
-		ParticleInfo info = EditorEngineBridge::GetParticleInfo(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::Particle)) {
+		ParticleInfo info = bridge->GetParticleInfo(selectedEntityId_);
 		if (ImGui::CollapsingHeader("Particle")) {
 			ImGui::Text("Model Name: %s", info.modelName.c_str());
 			ImGui::Text("Max Particle Count: %d", info.maxParticleCount);
@@ -152,27 +163,27 @@ void InspectorView::Draw() {
 	}
 
 	// Sprite
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::SpriteData)) {
-		SpriteInfo info = EditorEngineBridge::GetSpriteInfo(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::SpriteData)) {
+		SpriteInfo info = bridge->GetSpriteInfo(selectedEntityId_);
 		if (ImGui::CollapsingHeader("Sprite")) {
 			ImGui::Text("Sprite Name: %s", info.fileName.c_str());
 			if (ImGui::Checkbox("Is Billboard", &info.isBillboard)) {
-				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+				bridge->SetSpriteInfo(selectedEntityId_, info);
 			}
 			if (ImGui::DragFloat("Width", &info.width, 0.1f)) {
-				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+				bridge->SetSpriteInfo(selectedEntityId_, info);
 			}
 			if (ImGui::DragFloat("Height", &info.height, 0.1f)) {
-				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+				bridge->SetSpriteInfo(selectedEntityId_, info);
 			}
 			if (ImGui::DragFloat2("Pivot", info.pivot, 0.01f, 0.0f, 1.0f)) {
-				EditorEngineBridge::SetSpriteInfo(selectedEntityId_, info);
+				bridge->SetSpriteInfo(selectedEntityId_, info);
 			}
 		}
 	}
 	// Camera
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::CameraData)) {
-		CameraInfo info = EditorEngineBridge::GetCameraInfo(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::CameraData)) {
+		CameraInfo info = bridge->GetCameraInfo(selectedEntityId_);
 		if (ImGui::CollapsingHeader("Camera")) {
 			bool changed = false;
 			if (ImGui::SliderFloat("FOV", &info.fov, 0.1f, 3.0f)) changed = true;
@@ -180,42 +191,42 @@ void InspectorView::Draw() {
 			if (ImGui::SliderFloat("FarZ", &info.farZ, 10.0f, 1000.0f)) changed = true;
 
 			if (changed) {
-				EditorEngineBridge::SetCameraInfo(selectedEntityId_, info);
+				bridge->SetCameraInfo(selectedEntityId_, info);
 			}
 		}
 
-		if (EditorEngineBridge::GetDebugCameraEntityId) {
-			if (EditorEngineBridge::GetDebugCameraEntityId() == selectedEntityId_) {
+		if (bridge) {
+			if (bridge->GetDebugCameraEntityId() == selectedEntityId_) {
 				ImGui::Text("This is Main Camera");
 			}
 		}
 	}
 	// Billboard (No data, just check)
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::Billboard)) {
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::Billboard)) {
 		if (ImGui::CollapsingHeader("Billboard")) {
 			if (ImGui::Button("Delete##Billboard")) {
-				EditorEngineBridge::RemoveComponent(selectedEntityId_, ComponentType::Billboard);
+				bridge->RemoveComponent(selectedEntityId_, ComponentType::Billboard);
 			}
 			ImGui::Text("Billboard Component is Enabled.");
 		}
 	}
 
 	// CSスクリプト
-	std::vector<std::string> csScripts = EditorEngineBridge::GetCsharpClassNames(selectedEntityId_);
+	std::vector<std::string> csScripts = bridge->GetCsharpClassNames(selectedEntityId_);
 	for (const auto& className : csScripts) {
 		if (ImGui::CollapsingHeader(className.c_str())) {
 			if (ImGui::Button("Delete##CSharpScript")) {
-				EditorEngineBridge::RemoveCsharpScript(selectedEntityId_, className);
+				bridge->RemoveCsharpScript(selectedEntityId_, className);
 			}
 		}
 	}
 
 	// Force
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::PhysicsForce)) {
-		ForceData force = EditorEngineBridge::GetForceData(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::PhysicsForce)) {
+		ForceData force = bridge->GetForceData(selectedEntityId_);
 		if (ImGui::CollapsingHeader("Force")) {
 			if (ImGui::Button("Delete##Force")) {
-				EditorEngineBridge::RemoveComponent(selectedEntityId_, ComponentType::PhysicsForce);
+				bridge->RemoveComponent(selectedEntityId_, ComponentType::PhysicsForce);
 			}
 			bool changed = false;
 			if (ImGui::DragFloat3("Velocity", force.velocity, 0.1f)) changed = true;
@@ -226,16 +237,16 @@ void InspectorView::Draw() {
 			if (ImGui::Checkbox("Use Gravity", &force.isGravity)) changed = true;
 
 			if (changed) {
-				EditorEngineBridge::SetForceData(selectedEntityId_, force);
+				bridge->SetForceData(selectedEntityId_, force);
 			}
 		}
 	}
 	// SphereColliderData
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::SphereCollider)) {
-		SphereColliderInfo info = EditorEngineBridge::GetSphereColliderInfo(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::SphereCollider)) {
+		SphereColliderInfo info = bridge->GetSphereColliderInfo(selectedEntityId_);
 		if (ImGui::CollapsingHeader("SphereCollider")) {
 			if (ImGui::Button("Delete##SphereCollider")) {
-				EditorEngineBridge::RemoveComponent(selectedEntityId_, ComponentType::SphereCollider);
+				bridge->RemoveComponent(selectedEntityId_, ComponentType::SphereCollider);
 			}
 			bool changed = false;
 			if (ImGui::DragFloat3("Center", info.center, 0.1f)) changed = true;
@@ -272,17 +283,17 @@ void InspectorView::Draw() {
 #endif // QFE_OPTIMIZE_OFF
 
 			if (changed) {
-				EditorEngineBridge::SetSphereColliderInfo(selectedEntityId_, info);
+				bridge->SetSphereColliderInfo(selectedEntityId_, info);
 			}
 		}
 	}
 
 	// AABBColliderData
-	if (EditorEngineBridge::HasComponent(selectedEntityId_, ComponentType::AABBCollider)) {
-		AABBColliderInfo info = EditorEngineBridge::GetAABBColliderInfo(selectedEntityId_);
+	if (bridge->HasComponent(selectedEntityId_, ComponentType::AABBCollider)) {
+		AABBColliderInfo info = bridge->GetAABBColliderInfo(selectedEntityId_);
 		if (ImGui::CollapsingHeader("AABBCollider")) {
 			if (ImGui::Button("Delete##AABBCollider")) {
-				EditorEngineBridge::RemoveComponent(selectedEntityId_, ComponentType::AABBCollider);
+				bridge->RemoveComponent(selectedEntityId_, ComponentType::AABBCollider);
 			}
 			bool changed = false;
 			if (ImGui::DragFloat3("Center", info.center, 0.1f)) changed = true;
@@ -319,7 +330,7 @@ void InspectorView::Draw() {
 #endif // QFE_OPTIMIZE_OFF
 
 			if (changed) {
-				EditorEngineBridge::SetAABBColliderInfo(selectedEntityId_, info);
+				bridge->SetAABBColliderInfo(selectedEntityId_, info);
 			}
 		}
 	}
@@ -332,10 +343,10 @@ void InspectorView::Draw() {
 		// Utility
 		if (ImGui::BeginMenu("Utility")) {
 			if (ImGui::MenuItem("Parent")) {
-				EditorEngineBridge::AddComponent(selectedEntityId_, ComponentType::ParentData);
+				bridge->AddComponent(selectedEntityId_, ComponentType::ParentData);
 			}
 			if (ImGui::MenuItem("BillBorad")) {
-				EditorEngineBridge::AddComponent(selectedEntityId_, ComponentType::Billboard);
+				bridge->AddComponent(selectedEntityId_, ComponentType::Billboard);
 			}
 			ImGui::EndMenu();
 		}
@@ -343,10 +354,10 @@ void InspectorView::Draw() {
 		// SphereCollider
 		if (ImGui::BeginMenu("Collider3D")) {
 			if (ImGui::MenuItem("SphereCollider")) {
-				EditorEngineBridge::AddComponent(selectedEntityId_, ComponentType::SphereCollider);
+				bridge->AddComponent(selectedEntityId_, ComponentType::SphereCollider);
 			}
 			if (ImGui::MenuItem("AABBCollider")) {
-				EditorEngineBridge::AddComponent(selectedEntityId_, ComponentType::AABBCollider);
+				bridge->AddComponent(selectedEntityId_, ComponentType::AABBCollider);
 			}
 
 			ImGui::EndMenu();
@@ -354,17 +365,17 @@ void InspectorView::Draw() {
 		// Force
 		if (ImGui::BeginMenu("Physics")) {
 			if (ImGui::MenuItem("Force")) {
-				EditorEngineBridge::AddComponent(selectedEntityId_, ComponentType::PhysicsForce);
+				bridge->AddComponent(selectedEntityId_, ComponentType::PhysicsForce);
 			}
 			ImGui::EndMenu();
 		}
 		// CsharpScript
 		if (ImGui::BeginMenu("CSharpScript")) {
 			if (ImGui::BeginMenu("AddScript")) {
-				std::vector<std::string> csClasses = EditorEngineBridge::GetAvailableCsharpClasses();
+				std::vector<std::string> csClasses = bridge->GetAvailableCsharpClasses();
 				for (const auto& className : csClasses) {
 					if (ImGui::MenuItem(className.c_str())) {
-						EditorEngineBridge::AddCsharpScript(selectedEntityId_, className);
+						bridge->AddCsharpScript(selectedEntityId_, className);
 					}
 				}
 				ImGui::EndMenu();

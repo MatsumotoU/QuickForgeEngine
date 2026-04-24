@@ -33,7 +33,7 @@
 #include "engine/include/collider/ColliderManager.h"
 
 // Interface
-#include "engine/include/core/Bridge/EditorEngineBridge.h"
+#include "engine/include/core/Bridge/EngineBridgeProvider.h"
 
 namespace QFE {
 
@@ -104,7 +104,7 @@ namespace QFE {
 		nlohmann::json configJson_;
 		std::string configFilePath_;
 
-		EditorEngineBridge editorEngineBridge_;
+		BRIDGE::EngineBridgeProvider* bridgeProvider_;
 	};
 
 }
