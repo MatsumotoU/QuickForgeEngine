@@ -32,7 +32,7 @@ namespace QFE {
 			hr = swapChain_.Get()->GetBuffer(i, IID_PPV_ARGS(backBuffers_.at(i).GetAddressOf()));
 			assert(SUCCEEDED(hr));
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::format("Assign BackBuffer: {}", i));
+			QFE_LOG(std::format("Assign BackBuffer: {}", i));
 #endif // QFE_OPTIMIZE_OFF
 		}
 	}
@@ -80,7 +80,7 @@ namespace QFE {
 
 	void SwapChain::AssignDescriptorHandles(const DescriptorHandles& rtvHandle, uint32_t index) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("Add DescriptorHandles to SwapChain: {}", index));
+		QFE_LOG(std::format("Add DescriptorHandles to SwapChain: {}", index));
 #endif // QFE_OPTIMIZE_OFF
 		assert(index < backBuffers_.size() && "Index out of range in AssignDescriptorHandles.");
 		backBufferViews_[index] = rtvHandle;
@@ -88,7 +88,7 @@ namespace QFE {
 
 	bool SwapChain::CheckBackBufferViews() const {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("Buffer: {} View: {}", backBuffers_.size(), backBufferViews_.size()));
+		QFE_LOG(std::format("Buffer: {} View: {}", backBuffers_.size(), backBufferViews_.size()));
 #endif // QFE_OPTIMIZE_OFF
 		// バックバッファがnullptrではないか確認
 		for (const auto& buffer : backBuffers_) {

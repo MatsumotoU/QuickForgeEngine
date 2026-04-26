@@ -445,7 +445,7 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		};
 	EditorEngineBridge::AddCameraEntity = [engineCore]() {
 		// カメラの機能がシングルトンであるため、複数カメラにすると不具合が起きる可能性があるため一時的に制限
-		DebugLog("Can not add Camera.");
+		QFE_LOG("Can not add Camera.");
 		};
 	EditorEngineBridge::CopyEntity = [engineCore](uint32_t entityId) {
 		SceneManager* sceneManager_ = engineCore->GetSceneManager();
@@ -480,7 +480,7 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 
 	EditorEngineBridge::GetDebugCameraEntityId = [engineCore]() -> uint32_t {
 		if (!CameraManager::GetInstance()) {
-			DebugLog("CameraManager is not initialized.");
+			QFE_LOG("CameraManager is not initialized.");
 			return UINT32_MAX;
 		}
 		return CameraManager::GetInstance()->GetCamera(0).GetBindEntityId();

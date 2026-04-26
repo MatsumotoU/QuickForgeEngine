@@ -22,7 +22,7 @@ void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
 	// MonoRuntimeManagerが初期化されているか確認
 	if (!MonoRuntimeManager::GetInstance()->IsInitialized()) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("MonoRuntimeManager is not initialized.", LogLevel::Error);
+		QFE_LOG("MonoRuntimeManager is not initialized.", LogLevel::Error);
 #endif
 		return;
 	}
@@ -38,7 +38,7 @@ void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
 
 	if (!domain_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Failed to create AppDomain for scene.", LogLevel::Error);
+		QFE_LOG("Failed to create AppDomain for scene.", LogLevel::Error);
 #endif
 		return;
 	}
@@ -46,13 +46,13 @@ void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
 	// ドメインを切り替え
 	if (!mono_domain_set(domain_, false)) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Failed to set AppDomain.", LogLevel::Error);
+		QFE_LOG("Failed to set AppDomain.", LogLevel::Error);
 #endif
 		return;
 	}
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("CsharpScriptExecutor initialized with new AppDomain.");
+	QFE_LOG("CsharpScriptExecutor initialized with new AppDomain.");
 #endif
 
 	// アセンブリをロード
@@ -62,7 +62,7 @@ void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
 void CsharpScriptExecutor::LoadAssembly() {
 	if (!domain_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Domain not initialized. Cannot load assembly.", LogLevel::Error);
+		QFE_LOG("Domain not initialized. Cannot load assembly.", LogLevel::Error);
 #endif
 		return;
 	}
@@ -72,11 +72,11 @@ void CsharpScriptExecutor::LoadAssembly() {
 
 	if (!assembly_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Failed to load assembly: " + assemblyPath, LogLevel::Error);
+		QFE_LOG("Failed to load assembly: " + assemblyPath, LogLevel::Error);
 #endif
 	} else {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Assembly loaded successfully: " + assemblyPath);
+		QFE_LOG("Assembly loaded successfully: " + assemblyPath);
 #endif
 	}
 }
@@ -86,7 +86,7 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 
 	if (!assembly_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Error: Assembly is not loaded. Cannot get script class names.", LogLevel::Error);
+		QFE_LOG("Error: Assembly is not loaded. Cannot get script class names.", LogLevel::Error);
 #endif
 		return classNames;
 	}
@@ -95,7 +95,7 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 
 	if (!image) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Error: Could not get image from assembly.", LogLevel::Error);
+		QFE_LOG("Error: Could not get image from assembly.", LogLevel::Error);
 #endif
 		return classNames;
 	}
@@ -104,7 +104,7 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 
 	if (!type_definitions_table) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Error: Could not get type definitions table from image.", LogLevel::Error);
+		QFE_LOG("Error: Could not get type definitions table from image.", LogLevel::Error);
 #endif
 		return classNames;
 	}
@@ -112,7 +112,7 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 	int num_types = mono_table_info_get_rows(type_definitions_table);
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(std::format("Scanning assembly for classes... Found {} type definitions.", num_types));
+	QFE_LOG(std::format("Scanning assembly for classes... Found {} type definitions.", num_types));
 #endif
 
 	for (int i = 0; i < num_types; i++) {
@@ -140,18 +140,18 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 
 		if (full_name.find("QuickForgeEngine") != std::string::npos) {
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::format("Found QuickForgeEngine class: {}", full_name));
+			QFE_LOG(std::format("Found QuickForgeEngine class: {}", full_name));
 #endif
 			continue;
 		}
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("Found valid class: {}", full_name));
+		QFE_LOG(std::format("Found valid class: {}", full_name));
 #endif
 		classNames.push_back(full_name);
 	}
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(std::format("Finished scanning. Returning {} valid classes.", classNames.size()));
+	QFE_LOG(std::format("Finished scanning. Returning {} valid classes.", classNames.size()));
 #endif
 	return classNames;
 }
@@ -159,7 +159,7 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::string& className) {
 	if (!assembly_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Assembly not loaded. Cannot create script instance.", LogLevel::Error);
+		QFE_LOG("Assembly not loaded. Cannot create script instance.", LogLevel::Error);
 #endif
 		return 0;
 	}
@@ -178,7 +178,7 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
 	if (!monoClass) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Class not found: " + className, LogLevel::Error);
+		QFE_LOG("Class not found: " + className, LogLevel::Error);
 #endif
 		return 0;
 	}
@@ -199,7 +199,7 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 			if (exceptionMsg) {
 				char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog(std::string("Mono Exception: ") + exceptionCStr, LogLevel::Error);
+				QFE_LOG(std::string("Mono Exception: ") + exceptionCStr, LogLevel::Error);
 #endif
 				mono_free(exceptionCStr);
 			}
@@ -209,7 +209,7 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 	scripts_.push_back(instance);
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(std::format("Created C# script instance: {} (index: {})", className, scripts_.size() - 1));
+	QFE_LOG(std::format("Created C# script instance: {} (index: {})", className, scripts_.size() - 1));
 #endif
 
 	return static_cast<uint32_t>(scripts_.size()) - 1;
@@ -218,7 +218,7 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& className) {
 	if (!assembly_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Assembly not loaded. Cannot create script instance.");
+		QFE_LOG("Assembly not loaded. Cannot create script instance.");
 #endif // QFE_OPTIMIZE_OFF
 		return;
 	}
@@ -235,7 +235,7 @@ void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& classNam
 	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
 	if (!monoClass) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Class not found: " + className);
+		QFE_LOG("Class not found: " + className);
 #endif // QFE_OPTIMIZE_OFF
 		return;
 	}
@@ -244,7 +244,7 @@ void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& classNam
 	scripts_.push_back(instance);
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
+	QFE_LOG(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
 #endif // QFE_OPTIMIZE_OFF
 	return;
 }
@@ -252,20 +252,20 @@ void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& classNam
 void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
 	if (index >= scripts_.size()) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Invalid script index: " + std::to_string(index), LogLevel::Error);
+		QFE_LOG("Invalid script index: " + std::to_string(index), LogLevel::Error);
 #endif
 		return;
 	}
 	scripts_.erase(static_cast<size_t>(index));
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Deleted script instance at index: " + std::to_string(index));
+	QFE_LOG("Deleted script instance at index: " + std::to_string(index));
 #endif
 }
 
 void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& functionName) {
 	if (index >= scripts_.size()) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Invalid script index: " + std::to_string(index), LogLevel::Error);
+		QFE_LOG("Invalid script index: " + std::to_string(index), LogLevel::Error);
 #endif
 		return;
 	}
@@ -276,7 +276,7 @@ void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& 
 
 	if (!method) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Method not found: " + functionName, LogLevel::Warning);
+		QFE_LOG("Method not found: " + functionName, LogLevel::Warning);
 #endif
 		return;
 	}
@@ -289,7 +289,7 @@ void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& 
 		if (exceptionMsg) {
 			char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog("C# Script[" + std::to_string(index) + "]: " + exceptionCStr, LogLevel::Error);
+			QFE_LOG("C# Script[" + std::to_string(index) + "]: " + exceptionCStr, LogLevel::Error);
 #endif
 			mono_free(exceptionCStr);
 		}
@@ -305,7 +305,7 @@ void CsharpScriptExecutor::RunAllScriptsFunction(const std::string& functionName
 void CsharpScriptExecutor::ResetScripts() {
 	scripts_.clear();
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("All C# scripts reset.");
+	QFE_LOG("All C# scripts reset.");
 #endif
 }
 
@@ -329,14 +329,14 @@ void CsharpScriptExecutor::ReloadAssembly() {
 	domain_ = mono_domain_create_appdomain(domainName, nullptr);
 	if (!domain_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Failed to create new app domain.", LogLevel::Error);
+		QFE_LOG("Failed to create new app domain.", LogLevel::Error);
 #endif
 		return;
 	}
 
 	if (!mono_domain_set(domain_, false)) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Failed to set app domain.", LogLevel::Error);
+		QFE_LOG("Failed to set app domain.", LogLevel::Error);
 #endif
 		return;
 	}
@@ -345,7 +345,7 @@ void CsharpScriptExecutor::ReloadAssembly() {
 	LoadAssembly();
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("C# assembly reloaded.");
+	QFE_LOG("C# assembly reloaded.");
 #endif
 }
 
@@ -365,6 +365,6 @@ void CsharpScriptExecutor::Finalize() {
 	}
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("CsharpScriptExecutor finalized.");
+	QFE_LOG("CsharpScriptExecutor finalized.");
 #endif
 }

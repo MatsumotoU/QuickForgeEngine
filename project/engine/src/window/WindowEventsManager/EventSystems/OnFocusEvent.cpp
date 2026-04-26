@@ -14,7 +14,7 @@ OnFocusEvent::OnFocusEvent(nlohmann::json& data) :IEvent(data) {}
 void OnFocusEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 	wparam; lparam;
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Whindow Focused");
+	QFE_LOG("Whindow Focused");
 #endif // QFE_OPTIMIZE_OFF
 	
 }

@@ -34,7 +34,7 @@ ResourceDirectoryManager::ResourceDirectoryManager() {
 
 #ifdef QFE_OPTIMIZE_OFF
 	for (const auto& [key, value] : resourceDirectories_) {
-		DebugLog(std::format("Key: {},Directory: {}", key, value));
+		QFE_LOG(std::format("Key: {},Directory: {}", key, value));
 	}
 #endif // QFE_OPTIMIZE_OFF
 
@@ -67,7 +67,7 @@ std::string ResourceDirectoryManager::GetResourceDirectory(const std::string& re
 	std::string directory = rootDirectory_ + ProjectName_ + "/" + resourceDirectories_.at(resourceType);
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(std::format("GetResourceDirectory: ResourceType: {}, Directory: {}", resourceType, directory));
+	QFE_LOG(std::format("GetResourceDirectory: ResourceType: {}, Directory: {}", resourceType, directory));
 #endif // QFE_OPTIMIZE_OFF
 
 	// ディレクトリが存在しない場合は作成する

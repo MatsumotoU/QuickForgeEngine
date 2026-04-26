@@ -63,7 +63,7 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 	MyDebugLog::GetInstance()->Initialize();
 	// キャッシュラインサイズのログを出力
 	std::string logInitMessage = "Initialized MyDebugLog. Cache line size: " + std::to_string(std::hardware_destructive_interference_size) + " bytes.";
-	DebugLog(logInitMessage);
+	QFE_LOG(logInitMessage);
 #endif // QFE_OPTIMIZE_OFF
 
 	// Create Window
@@ -126,13 +126,13 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 		if (assetManager_->GetResourceDirectoryManager()->CheckDirectoryIntegrity() == false) {
 			assetManager_->GetResourceDirectoryManager()->RepairDirectoryIntegrity();
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog("Repaired project directory integrity");
+			QFE_LOG("Repaired project directory integrity");
 #endif // QFE_OPTIMIZE_OFF
 		}
 		assetManager_->GetResourceDirectoryManager()->SetProjectDirectory(configJson_["lastProjectName"]);
 	} else {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("No last project name found, creating a new project directory");
+		QFE_LOG("No last project name found, creating a new project directory");
 #endif // QFE_OPTIMIZE_OFF
 		// 最後に開いたプロジェクトの名前が保存されていない場合は、新しいプロジェクトのディレクトリを生成して設定する
 		std::string defaultProjectName = "NewGameProject";
@@ -155,7 +155,7 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 	engineApp_->Initialize();
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized OnWindowsEditor======================");
+	QFE_LOG("======================Initialized OnWindowsEditor======================");
 #endif // QFE_OPTIMIZE_OFF
 
 	frameCounter_.Initialize();
@@ -163,7 +163,7 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 	graphRenderer_->Initialize();
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================InitializedGraphRenderer======================");
+	QFE_LOG("======================InitializedGraphRenderer======================");
 #endif // QFE_OPTIMIZE_OFF
 
 	inputInterface_ = InputInterface::GetInstance();
@@ -171,35 +171,35 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), hInstance_);
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized InputInterface======================");
+	QFE_LOG("======================Initialized InputInterface======================");
 #endif // QFE_OPTIMIZE_OFF
 
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->Initialize();
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized SceneManager======================");
+	QFE_LOG("======================Initialized SceneManager======================");
 #endif // QFE_OPTIMIZE_OFF
 
 	physicsManager_ = PhysicsManager::GetInstance();
 	physicsManager_->Initialize();
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized PhysicsManager======================");
+	QFE_LOG("======================Initialized PhysicsManager======================");
 #endif // QFE_OPTIMIZE_OFF
 
 	colliderManager_ = ColliderManager::GetInstance();
 	colliderManager_->Initialize();
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized ColliderManager======================");
+	QFE_LOG("======================Initialized ColliderManager======================");
 #endif // QFE_OPTIMIZE_OFF
 
 	audioInterface_ = AudioInterface::GetInstance();
 	audioInterface_->Initialize();
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("======================Initialized Engine======================");
+	QFE_LOG("======================Initialized Engine======================");
 #endif // QFE_OPTIMIZE_OFF
 }
 
@@ -229,7 +229,7 @@ void WindowsEngineCore::Shutdown() {
 	EditorEngineBridgeRegistry::ClearFunctions();
 	// エンジンの設定ファイルに最後に開いたプロジェクトの名前を保存する
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Shutdown Engine");
+	QFE_LOG("Shutdown Engine");
 	configJson_["lastProjectName"] = assetManager_->GetResourceDirectoryManager()->GetProjectName();
 	QFE::FILE::SaveJSONToFile(configFilePath_, configJson_);
 #endif // QFE_OPTIMIZE_OFF
@@ -261,7 +261,7 @@ void WindowsEngineCore::Shutdown() {
 	directXCommon_->Shutdown();
 	gameWindowManager->Shutdown();
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("FinalizeEngine");
+	QFE_LOG("FinalizeEngine");
 	MyDebugLog::GetInstance()->Finalize();
 #endif // QFE_OPTIMIZE_OFF
 }

@@ -6,7 +6,7 @@
 using namespace QFE;
 void DescriptorHeapManager::Initialize(ID3D12Device* device) {
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("-----DescriptorHeapManager:Initialize-----\n");
+	QFE_LOG("-----DescriptorHeapManager:Initialize-----\n");
 #endif // QFE_OPTIMIZE_OFF
 	rtvDescriptorHeap.Initialize(device, kMaxRtvDescriptors, false);
 	srvDescriptorHeap.Initialize(device, kMaxSrvDescriptors, true);

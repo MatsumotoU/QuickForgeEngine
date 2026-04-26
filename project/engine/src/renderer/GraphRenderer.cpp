@@ -162,7 +162,7 @@ void GraphRenderer::Finalize() {
 void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color) {
 	if (triangleCount_ >= kGraphRendererMaxTriangleCount) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Exceeded maximum triangle count.");
+		QFE_LOG("Exceeded maximum triangle count.");
 #endif // QFE_OPTIMIZE_OFF
 		return; // 譛螟ｧ謨ｰ繧定ｶ・∴縺溷ｴ蜷医・謠冗判縺励↑縺・
 	}
@@ -190,7 +190,7 @@ void GraphRenderer::DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3,
 void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& color) {
 	if (lineCount_ >= kGraphRendererMaxLineCount) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Exceeded maximum Line count.");
+		QFE_LOG("Exceeded maximum Line count.");
 #endif // QFE_OPTIMIZE_OFF
 		return; // 譛螟ｧ謨ｰ繧定ｶ・∴縺溷ｴ蜷医・謠冗判縺励↑縺・
 	}
@@ -210,7 +210,7 @@ void GraphRenderer::DrawLine(Vector3 point1, Vector3 point2, const Vector4& colo
 void GraphRenderer::DrawPoint(Vector3 point, const Vector4& color) {
 	if (pointCount_ >= kGraphRendererMaxPointCount) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Exceeded maximum Points count.");
+		QFE_LOG("Exceeded maximum Points count.");
 #endif // QFE_OPTIMIZE_OFF
 		return; // 譛螟ｧ謨ｰ繧定ｶ・∴縺溷ｴ蜷医・謠冗判縺励↑縺・
 	}

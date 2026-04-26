@@ -104,8 +104,8 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 
 #ifdef QFE_OPTIMIZE_OFF
 	const DirectX::TexMetadata& metadata = image.GetMetadata();
-	DebugLog(std::format("TextureManager: Loaded texture from '{}'", filePath));
-	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height, metadata.arraySize)));
+	QFE_LOG(std::format("TextureManager: Loaded texture from '{}'", filePath));
+	QFE_LOG(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height, metadata.arraySize)));
 #endif // QFE_OPTIMIZE_OFF
 
 	// ミップマップの生成
@@ -144,7 +144,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 	// メタデータの整合性を確認
 	if (resourceDesc_.Width == 0 || resourceDesc_.Height == 0 || resourceDesc_.MipLevels == 0 || resourceDesc_.DepthOrArraySize == 0) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("TextureManager: Invalid texture metadata - width={}, height={}, mipLevels={}, arraySize={}", resourceDesc_.Width, resourceDesc_.Height, resourceDesc_.MipLevels, resourceDesc_.DepthOrArraySize));
+		QFE_LOG(std::format("TextureManager: Invalid texture metadata - width={}, height={}, mipLevels={}, arraySize={}", resourceDesc_.Width, resourceDesc_.Height, resourceDesc_.MipLevels, resourceDesc_.DepthOrArraySize));
 #endif // QFE_OPTIMIZE_OFF
 		throw std::runtime_error("Invalid texture metadata.");
 	}
@@ -231,14 +231,14 @@ void TextureManager::ReleaseIntermediateResources() {
 int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	// 郢晁ｼ斐＜郢ｧ・､郢晢ｽｫ郢昜ｻ｣縺幃勗・ｨ驕会ｽｺ
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(std::format("TextureManager: LoadPath {}", filePath));
+	QFE_LOG(std::format("TextureManager: LoadPath {}", filePath));
 #endif // QFE_OPTIMIZE_OFF
 
 	// 陷ｷ蠕個ｧ騾包ｽｻ陷剃ｸ翫Ψ郢ｧ・｡郢ｧ・､郢晢ｽｫ郢ｧ螳夲ｽｪ・ｭ邵ｺ・ｿ髴趣ｽｼ邵ｺ・ｾ邵ｺ・ｪ邵ｺ繝ｻ
 	int32_t fileIndex = filePathLibrary_.GetLibraryIndex(filePath);
 	if (fileIndex >= 0) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(ConvertString(std::format(L"TextureManager: LoadedTheSameFile->return {}", fileIndex)));
+		QFE_LOG(ConvertString(std::format(L"TextureManager: LoadedTheSameFile->return {}", fileIndex)));
 #endif // QFE_OPTIMIZE_OFF
 		return fileIndex;
 	}
@@ -252,7 +252,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	if (resource) {
 		D3D12_RESOURCE_DESC desc = resource->GetDesc();
 		D3D12_RESOURCE_ALLOCATION_INFO allocInfo = device_->GetResourceAllocationInfo(0, 1, &desc);
-		DebugLog(std::format("ResourceSize: {}byte", allocInfo.SizeInBytes));
+		QFE_LOG(std::format("ResourceSize: {}byte", allocInfo.SizeInBytes));
 	}
 #endif // QFE_OPTIMIZE_OFF
 	CreateShaderResourceView(metadata, textureResources_.back().Get());
@@ -260,7 +260,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	intermediateResource_.push_back(
 		UploadTextureData(textureResources_.back().Get(), *(scratchImages_.back().get()), commandList_));
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width, metadata.height, textureHandle_ - 1)));
+	QFE_LOG(ConvertString(std::format(L"TextureManager: whidth={},height={},return->{}", metadata.width, metadata.height, textureHandle_ - 1)));
 #endif // QFE_OPTIMIZE_OFF
 	filePathLibrary_.AddStringToLibrary(filePath);
 	return textureHandle_ - 1;
@@ -269,7 +269,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 Vector2 TextureManager::GetTextureSize(int32_t textureHandle) {
 	if (textureHandle < 0 || textureHandle >= static_cast<int32_t>(textureResources_.size())) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("TextureManager: Invalid texture handle");
+		QFE_LOG("TextureManager: Invalid texture handle");
 #endif // QFE_OPTIMIZE_OFF
 		return Vector2(0.0f, 0.0f);
 	}

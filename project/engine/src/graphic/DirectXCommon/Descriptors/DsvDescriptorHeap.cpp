@@ -39,7 +39,7 @@ DescriptorHandles DsvDescriptorHeap::AssignHeap(ID3D12Resource* resource, const 
 	assert(!freeDescriptors_.empty() && "No free descriptors available.");
 	UINT index = freeDescriptors_.front();
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(std::format("AssignHeapIndex: {}", index));
+	QFE_LOG(std::format("AssignHeapIndex: {}", index));
 #endif // QFE_OPTIMIZE_OFF
 	freeDescriptors_.pop();
 	// ディスクリプタハンドルを取得

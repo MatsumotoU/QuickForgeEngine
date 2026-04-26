@@ -37,7 +37,7 @@ void AudioChipManager::StopSound(uint32_t soundHandle) {
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("StopSound error: ") + e.what());
+		QFE_LOG(std::string("StopSound error: ") + e.what());
 #endif // QFE_OPTIMIZE_OFF
 	}
 }
@@ -51,7 +51,7 @@ void AudioChipManager::PauseSound(uint32_t soundHandle) {
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("PauseSound error: ") + e.what());
+		QFE_LOG(std::string("PauseSound error: ") + e.what());
 #endif // QFE_OPTIMIZE_OFF
 	}
 }
@@ -65,7 +65,7 @@ void AudioChipManager::ResumeSound(uint32_t soundHandle) {
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("ResumeSound error: ") + e.what());
+		QFE_LOG(std::string("ResumeSound error: ") + e.what());
 #endif // QFE_OPTIMIZE_OFF
 	}
 }
@@ -99,7 +99,7 @@ void AudioChipManager::SetVolume(uint32_t soundHandle, float volume) {
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("SetVolume error: ") + e.what());
+		QFE_LOG(std::string("SetVolume error: ") + e.what());
 #endif // QFE_OPTIMIZE_OFF
 	}
 }
@@ -113,7 +113,7 @@ float AudioChipManager::GetVolume(uint32_t soundHandle) const {
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("GetVolume error: ") + e.what());
+		QFE_LOG(std::string("GetVolume error: ") + e.what());
 #endif // QFE_OPTIMIZE_OFF
 	}
 	return 0.0f;

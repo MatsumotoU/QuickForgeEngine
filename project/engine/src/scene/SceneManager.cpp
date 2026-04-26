@@ -31,13 +31,13 @@ void SceneManager::Initialize() {
 			ifs.close();
 		}
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Load SceneConfig.json");
+		QFE_LOG("Load SceneConfig.json");
 #endif // QFE_OPTIMIZE_OFF
 	}
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+		QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF
 	}
 
@@ -109,10 +109,10 @@ void SceneManager::Finalize() {
 		std::ofstream ofs(path);
 		ofs << sceneConfig_.dump(4);
 		ofs.close();
-		DebugLog("SaveSceneConfig");
+		QFE_LOG("SaveSceneConfig");
 	}
 	catch (const std::exception& e) {
-		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+		QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 
 	}
 #endif // QFE_OPTIMIZE_OFF
@@ -249,7 +249,7 @@ void QFE::SceneManager::FirstLoadScene() {
 		catch (const std::exception& e) {
 			e;
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+			QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF
 		}
 	}
