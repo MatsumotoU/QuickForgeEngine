@@ -10,7 +10,7 @@ DropFileEvent::DropFileEvent(nlohmann::json& data):IEvent(data) {}
 void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 	lparam;
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Call DropFileEvent");
+	QFE_LOG("Call DropFileEvent");
 #endif // QFE_OPTIMIZE_OFF
 
 	// ドロップされたファイルのパスを取得
@@ -22,7 +22,7 @@ void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 		// ファイルパスをイベントデータに格納
 		eventData_["DropFilePath"] = ConvertString(filePath);
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Drop File: " + ConvertString(filePath));
+		QFE_LOG("Drop File: " + ConvertString(filePath));
 #endif // QFE_OPTIMIZE_OFF
 	}
 	DragFinish(hDrop);

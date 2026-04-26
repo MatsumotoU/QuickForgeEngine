@@ -22,17 +22,17 @@ namespace QFE {
 
 	DirectXDevice::~DirectXDevice() {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("-----DirectXDevice:Shutdown-----\n");
-		DebugLog(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
-		DebugLog(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
+		QFE_LOG("-----DirectXDevice:Shutdown-----\n");
+		QFE_LOG(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
+		QFE_LOG(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
 #endif // QFE_OPTIMIZE_OFF
 	}
 
 	void DirectXDevice::Initialize() {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("-----DirectXDevice:Initialize-----\n");
-		DebugLog(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
-		DebugLog(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
+		QFE_LOG("-----DirectXDevice:Initialize-----\n");
+		QFE_LOG(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
+		QFE_LOG(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
 #endif // QFE_OPTIMIZE_OFF
 		// DXGIファクトリーの生成
 		CreateDxgiFactory();
@@ -41,7 +41,7 @@ namespace QFE {
 		// D3D12Deviceの生成
 		CreateDevice();
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("-----DirectXDevice:Initialize Complete-----\n");
+		QFE_LOG("-----DirectXDevice:Initialize Complete-----\n");
 #endif // QFE_OPTIMIZE_OFF
 	}
 
@@ -62,11 +62,11 @@ namespace QFE {
 #ifdef QFE_OPTIMIZE_OFF
 	void DirectXDevice::SetDisableError(bool disable) {
 		disableError_ = disable;
-		DebugLog(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
+		QFE_LOG(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
 	}
 	void DirectXDevice::SetDisableWarning(bool disable) {
 		disableWarning_ = disable;
-		DebugLog(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
+		QFE_LOG(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
 	}
 #endif // QFE_OPTIMIZE_OFF
 
@@ -98,7 +98,7 @@ namespace QFE {
 			if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 				// 採用したアダプタの情報をログに出力。
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+				QFE_LOG(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
 #endif // QFE_OPTIMIZE_OFF
 				break;
 			}
@@ -128,7 +128,7 @@ namespace QFE {
 			if (SUCCEEDED(hr)) {
 				// 生成できたのでログ出力してループ脱出
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
+				QFE_LOG(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
 #endif // QFE_OPTIMIZE_OFF
 				break;
 			}
@@ -137,31 +137,31 @@ namespace QFE {
 		assert(device_ != nullptr);
 
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Complete create D3D12Device");
+		QFE_LOG("Complete create D3D12Device");
 #endif // QFE_OPTIMIZE_OFF
 
 		// エラー落ち処理
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("---EnebleBreakOnSeverity---");
+		QFE_LOG("---EnebleBreakOnSeverity---");
 		ID3D12InfoQueue* infoQueue = nullptr;
 		if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 
 			// ヤバエラー落ち
 			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
-			DebugLog("EnebleBreakOnSeverity_CORRUPTION");
+			QFE_LOG("EnebleBreakOnSeverity_CORRUPTION");
 			// エラー落ち
 			if (disableError_) {
-				DebugLog("!!! DisableBreakOnSeverity_ERROR !!!");
+				QFE_LOG("!!! DisableBreakOnSeverity_ERROR !!!");
 			} else {
 				infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
-				DebugLog("EnebleBreakOnSeverity_ERROR");
+				QFE_LOG("EnebleBreakOnSeverity_ERROR");
 			}
 			// 警告
 			if (disableWarning_) {
-				DebugLog("!!! DisableBreakOnSeverity_WARNING !!!");
+				QFE_LOG("!!! DisableBreakOnSeverity_WARNING !!!");
 			} else {
 				infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
-				DebugLog("EnebleBreakOnSeverity_WARNING");
+				QFE_LOG("EnebleBreakOnSeverity_WARNING");
 			}
 
 			// エラー抑制

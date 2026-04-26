@@ -34,7 +34,7 @@ void SceneEntityCommandInvoker::ExecuteCommands() {
 		float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
 		if (elapsedTime >= commandTimeout_) {
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog("SceneEntityCommandInvoker: User command execution timed out.", LogLevel::Warning);
+			QFE_LOG("SceneEntityCommandInvoker: User command execution timed out.", LogLevel::Warning);
 #endif // QFE_OPTIMIZE_OFF
 			break;
 		}

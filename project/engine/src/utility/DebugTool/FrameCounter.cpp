@@ -6,7 +6,7 @@
 #pragma comment(lib,"winmm.lib") 
 
 #ifdef QFE_OPTIMIZE_OFF
-#include "Engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
+#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
 using namespace QFE;
 namespace {
@@ -22,7 +22,7 @@ void FrameCounter::Initialize() {
 	timeBeginPeriod(1);
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("FrameCounter Initialized");
+	QFE_LOG("FrameCounter Initialized");
 #endif // QFE_OPTIMIZE_OFF
 
 }

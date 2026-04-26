@@ -30,25 +30,25 @@ namespace QFE {
 				if (!gamepadStates[i].isConnected) {
 					gamepadStates[i].isConnected = true;
 #ifdef QFE_OPTIMIZE_OFF
-					DebugLog(std::format("Connected Controller! paletNumber: {}", gamepadStates[i].state.dwPacketNumber));
+					QFE_LOG(std::format("Connected Controller! paletNumber: {}", gamepadStates[i].state.dwPacketNumber));
 
 					// 機能情報を取得
 					XINPUT_CAPABILITIES cap;
 					if (XInputGetCapabilities(i, 0, &cap) == ERROR_SUCCESS) {
-						DebugLog(std::format("Type: {}", static_cast<int>(cap.Type)));
-						DebugLog(std::format("SubType: {}", static_cast<int>(cap.SubType)));
-						DebugLog(std::format("Flags: 0x{:X}", static_cast<unsigned int>(cap.Flags)));
+						QFE_LOG(std::format("Type: {}", static_cast<int>(cap.Type)));
+						QFE_LOG(std::format("SubType: {}", static_cast<int>(cap.SubType)));
+						QFE_LOG(std::format("Flags: 0x{:X}", static_cast<unsigned int>(cap.Flags)));
 					} else {
-						DebugLog("Failed to get capabilities.");
+						QFE_LOG("Failed to get capabilities.");
 					}
 
 					// バッテリー情報を取得
 					XINPUT_BATTERY_INFORMATION batteryInfo;
 					if (XInputGetBatteryInformation(i, BATTERY_DEVTYPE_GAMEPAD, &batteryInfo) == ERROR_SUCCESS) {
-						DebugLog(std::format("Battery Type: {}", static_cast<int>(batteryInfo.BatteryType)));
-						DebugLog(std::format("Battery Level: {}", static_cast<int>(batteryInfo.BatteryLevel)));
+						QFE_LOG(std::format("Battery Type: {}", static_cast<int>(batteryInfo.BatteryType)));
+						QFE_LOG(std::format("Battery Level: {}", static_cast<int>(batteryInfo.BatteryLevel)));
 					} else {
-						DebugLog("Failed to get battery information.");
+						QFE_LOG("Failed to get battery information.");
 					}
 #endif // QFE_OPTIMIZE_OFF
 				}

@@ -137,7 +137,7 @@ namespace QFE {
 					// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
 					if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
+						QFE_LOG(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
@@ -145,7 +145,7 @@ namespace QFE {
 					// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
 					if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
+						QFE_LOG(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
@@ -157,7 +157,7 @@ namespace QFE {
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
 					if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
+						QFE_LOG(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
@@ -233,7 +233,7 @@ namespace QFE {
 					// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
 					if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
+						QFE_LOG(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
@@ -241,7 +241,7 @@ namespace QFE {
 					// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
 					if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
+						QFE_LOG(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
@@ -253,7 +253,7 @@ namespace QFE {
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
 					if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
+						QFE_LOG(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
@@ -374,7 +374,7 @@ namespace QFE {
 					// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
 					if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Tag Mismatch between Entity {} and Entity {}", sphereId, aabbId));
+						QFE_LOG(std::format("Collider Tag Mismatch between Entity {} and Entity {}", sphereId, aabbId));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
@@ -382,7 +382,7 @@ namespace QFE {
 					// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
 					if ((sphereCollider.eventColliderLayer & aabbCollider.colliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", sphereId, aabbId));
+						QFE_LOG(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", sphereId, aabbId));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
@@ -394,7 +394,7 @@ namespace QFE {
 					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
 					if ((sphereCollider.colliderLayer & aabbCollider.eventColliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
-						DebugLog(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", sphereId, aabbId));
+						QFE_LOG(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", sphereId, aabbId));
 #endif // QFE_OPTIMIZE_OFF
 						continue;
 					}

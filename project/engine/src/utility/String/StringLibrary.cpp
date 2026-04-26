@@ -13,13 +13,13 @@ namespace QFE {
 
 	StringLibrary::~StringLibrary() {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("=====LibraryListLog from {}=====", libraryFriendryName_));
+		QFE_LOG(std::format("=====LibraryListLog from {}=====", libraryFriendryName_));
 		uint32_t index = 0;
 		for (std::string& str : library_) {
-			DebugLog(std::format("Data[{}]: {}", index, str));
+			QFE_LOG(std::format("Data[{}]: {}", index, str));
 			index++;
 		}
-		DebugLog("========================");
+		QFE_LOG("========================");
 #endif // QFE_OPTIMIZE_OFF
 	}
 
@@ -27,19 +27,19 @@ namespace QFE {
 		library_.clear();
 		libraryFriendryName_ = libraryFriendName;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("Create Library Name: {}", libraryFriendryName_));
+		QFE_LOG(std::format("Create Library Name: {}", libraryFriendryName_));
 #endif // QFE_OPTIMIZE_OFF
 	}
 
 	void StringLibrary::AddStringToLibrary(const std::string& string) {
 		if (FindString(string)) {
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::format("[{}] already loaded.", string));
+			QFE_LOG(std::format("[{}] already loaded.", string));
 #endif // QFE_OPTIMIZE_OFF
 
 		} else {
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::format("Add string to liblary [{}].", string));
+			QFE_LOG(std::format("Add string to liblary [{}].", string));
 #endif // QFE_OPTIMIZE_OFF
 			library_.push_back(string);
 		}
@@ -49,14 +49,14 @@ namespace QFE {
 		for (std::string& str : library_) {
 			if (str == string) {
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog(std::format("Find [{}].", string));
+				QFE_LOG(std::format("Find [{}].", string));
 #endif // QFE_OPTIMIZE_OFF
 				return true;
 			}
 		}
 
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("Not find [{}].", string));
+		QFE_LOG(std::format("Not find [{}].", string));
 #endif // QFE_OPTIMIZE_OFF
 		return false;
 	}
@@ -66,7 +66,7 @@ namespace QFE {
 		for (std::string& str : library_) {
 			if (str == string) {
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog(std::format("Find {} Index: [{}].", string, indexCount));
+				QFE_LOG(std::format("Find {} Index: [{}].", string, indexCount));
 #endif // QFE_OPTIMIZE_OFF
 				return indexCount;
 			}

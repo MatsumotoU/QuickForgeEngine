@@ -19,14 +19,14 @@ void MonoRuntimeManager::Initialize() {
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Initializing Mono JIT...");
+	QFE_LOG("Initializing Mono JIT...");
 #endif
 
 	std::filesystem::path exeDir(path);
 	exeDir = exeDir.parent_path();
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Executable Directory: " + exeDir.string());
+	QFE_LOG("Executable Directory: " + exeDir.string());
 #endif
 
 	// Monoディレクトリの設定
@@ -38,8 +38,8 @@ void MonoRuntimeManager::Initialize() {
 	std::string monoEtcPathUtf8 = ConvertString(monoEtcPath.wstring());
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Mono Lib Path: " + monoLibPath.string());
-	DebugLog("Mono Etc Path: " + monoEtcPath.string());
+	QFE_LOG("Mono Lib Path: " + monoLibPath.string());
+	QFE_LOG("Mono Etc Path: " + monoEtcPath.string());
 #endif
 
 	try {
@@ -48,7 +48,7 @@ void MonoRuntimeManager::Initialize() {
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("Failed to set Mono directories: ") + e.what());
+		QFE_LOG(std::string("Failed to set Mono directories: ") + e.what());
 #endif
 		return;
 	}
@@ -59,7 +59,7 @@ void MonoRuntimeManager::Initialize() {
 		"--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555,suspend=n"
 	};
 	mono_jit_parse_options(sizeof(options) / sizeof(char*), (char**)options);
-	DebugLog("Mono JIT options set for debugging.");
+	QFE_LOG("Mono JIT options set for debugging.");
 #endif
 
 	// JIT初期化（プロセスごとに1回のみ）
@@ -69,20 +69,20 @@ void MonoRuntimeManager::Initialize() {
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("Failed to initialize Mono JIT: ") + e.what());
+		QFE_LOG(std::string("Failed to initialize Mono JIT: ") + e.what());
 #endif
 		return;
 	}
 
 	if (!rootDomain_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Failed to initialize Mono JIT.");
+		QFE_LOG("Failed to initialize Mono JIT.");
 #endif
 		return;
 	}
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Success to initialize Mono JIT.");
+	QFE_LOG("Success to initialize Mono JIT.");
 #endif
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -164,7 +164,7 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 		(const void*)CsharpOnQFELinker::Rotate);
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("QFE C# API registered successfully.");
+	QFE_LOG("QFE C# API registered successfully.");
 #endif
 }
 
@@ -190,13 +190,13 @@ void MonoRuntimeManager::CompileScripts() {
 	try {
 		QFE::CompileCSharpProject(csprojPath, dllPath);
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("C# scripts compiled successfully.");
+		QFE_LOG("C# scripts compiled successfully.");
 #endif
 	}
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("Failed to compile C# scripts: ") + e.what(), LogLevel::Error);
+		QFE_LOG(std::string("Failed to compile C# scripts: ") + e.what(), LogLevel::Error);
 #endif
 	}
 }
@@ -225,7 +225,7 @@ void MonoRuntimeManager::Finalize() {
 	// Monoランタイム全体をクリーンアップ
 	if (rootDomain_) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Cleaning up Mono JIT...");
+		QFE_LOG("Cleaning up Mono JIT...");
 #endif
 		mono_jit_cleanup(rootDomain_);
 		rootDomain_ = nullptr;

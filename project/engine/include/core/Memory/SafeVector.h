@@ -18,7 +18,7 @@ namespace QFE {
 			// std::vectorで確保できるサイズを超えている場合は例外を投げる
 			if (size > data_.max_size()) {
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog(std::string("Data MaxSize: ") + std::to_string(data_.max_size()));
+				QFE_LOG(std::string("Data MaxSize: ") + std::to_string(data_.max_size()));
 #endif // QFE_OPTIMIZE_OFF
 				throw std::length_error("SafeVector size exceeds maximum allowed by std::vector.");
 			}
@@ -26,7 +26,7 @@ namespace QFE {
 			data_.clear();
 			data_.reserve(size);
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::string("SafeVector initialized with reserved size: ") + std::to_string(size));
+			QFE_LOG(std::string("SafeVector initialized with reserved size: ") + std::to_string(size));
 #endif // QFE_OPTIMIZE_OFF
 		}
 

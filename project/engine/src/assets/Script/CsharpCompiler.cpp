@@ -64,8 +64,8 @@ void QFE::CompileCSharpProject(const std::string& csprojPath, const std::string&
 		std::string logContent = buffer.str();
 		
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("C# Build Failed. Log output:", LogLevel::Error);
-		DebugLog(logContent, LogLevel::Error);
+		QFE_LOG("C# Build Failed. Log output:", LogLevel::Error);
+		QFE_LOG(logContent, LogLevel::Error);
 #else
 		std::cerr << "C# Build Failed:\n" << logContent << std::endl;
 #endif
