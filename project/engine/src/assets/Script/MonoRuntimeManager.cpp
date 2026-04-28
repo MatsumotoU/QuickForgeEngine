@@ -14,6 +14,8 @@
 using namespace QFE;
 
 void MonoRuntimeManager::Initialize() {
+	dllName_ = "MyGameScripts";
+
 	// 実行ファイルのパスを取得
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
@@ -175,8 +177,11 @@ void MonoRuntimeManager::CompileScripts() {
 		scriptsDir += '/';
 	}
 
+	// DLL名の設定
+	std::string dllName = dllName_;
+
 	// csprojファイルの生成
-	std::string projectName = "MyGameScripts.csproj";
+	std::string projectName = dllName + ".csproj";
 	std::string csprojPath = scriptsDir + projectName;
 	QFE::GenerateCsproj(scriptsDir, csprojPath);
 
@@ -184,7 +189,7 @@ void MonoRuntimeManager::CompileScripts() {
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 	std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
-	std::string dllPath = (exeDir / "CSharpScripts.dll").string();
+	std::string dllPath = (exeDir / (dllName + ".dll")).string();
 
 	// C#スクリプトのコンパイル
 	try {
@@ -218,7 +223,7 @@ std::string MonoRuntimeManager::GetAssemblyPath() const {
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 	std::filesystem::path exeDir = std::filesystem::path(path).parent_path();
-	return (exeDir / "CSharpScripts.dll").string();
+	return (exeDir / (dllName_ + ".dll")).string();
 }
 
 void MonoRuntimeManager::Finalize() {

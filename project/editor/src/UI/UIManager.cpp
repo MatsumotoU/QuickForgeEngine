@@ -5,6 +5,7 @@
 
 #include "editor/include/UI/UIManager.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/core/Bridge/EditorEngineBridge.h"
 
 #include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 #include "engine/include/scene/SceneManager.h"
@@ -145,6 +146,12 @@ void UIManager::Draw() {
 		// シーン名
 		ImGui::Text(("Project: " + AssetManager::GetInstance()->GetResourceDirectoryManager()->GetProjectName()).c_str());
 		ImGui::Text(("Scene: " + SceneManager::GetInstance()->GetCurrentSceneName()).c_str());
+
+		// C#を再コンパイルするボタン
+		if (ImGui::Button("Recompile C#")) {
+			EditorEngineBridge::ReCompileCsharpScripts();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 

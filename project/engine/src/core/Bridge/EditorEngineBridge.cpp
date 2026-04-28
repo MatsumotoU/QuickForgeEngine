@@ -53,6 +53,8 @@ namespace QFE {
 	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::RemoveCsharpScript = nullptr;
 	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::AddCsharpScript = nullptr;
 	std::function<std::vector<std::string>()> EditorEngineBridge::GetAvailableCsharpClasses = nullptr;
+	std::function<void()> EditorEngineBridge::ReCompileCsharpScripts = nullptr;
+
 	// シーンにエンティティを追加する関数群
 	std::function<void(void)> EditorEngineBridge::AddEmptyEntity = nullptr;
 	std::function<void(const std::string&)> EditorEngineBridge::AddEntityFromFile = nullptr;

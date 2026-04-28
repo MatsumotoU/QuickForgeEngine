@@ -46,6 +46,7 @@ namespace QFE {
 		MonoRuntimeManager& operator=(const MonoRuntimeManager&) = delete;
 
 		MonoDomain* rootDomain_ = nullptr;
+		std::string dllName_;
 	};
 
 }
