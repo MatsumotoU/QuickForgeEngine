@@ -85,36 +85,28 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 	std::vector<std::string> classNames;
 
 	if (!assembly_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Error: Assembly is not loaded. Cannot get script class names.", LogLevel::Error);
-#endif
 		return classNames;
 	}
 
 	MonoImage* image = mono_assembly_get_image(assembly_);
 
 	if (!image) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Error: Could not get image from assembly.", LogLevel::Error);
-#endif
 		return classNames;
 	}
 
 	const MonoTableInfo* type_definitions_table = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
 
 	if (!type_definitions_table) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Error: Could not get type definitions table from image.", LogLevel::Error);
-#endif
 		return classNames;
 	}
 
 	int num_types = mono_table_info_get_rows(type_definitions_table);
-
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG(std::format("Scanning assembly for classes... Found {} type definitions.", num_types));
-#endif
 
+	// クラス定義テーブルをループしてクラス名と名前空間を取得
 	for (int i = 0; i < num_types; i++) {
 		uint32_t cols[MONO_TYPEDEF_SIZE];
 		mono_metadata_decode_row(type_definitions_table, i, cols, MONO_TYPEDEF_SIZE);
@@ -122,45 +114,44 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 		std::string name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 		std::string ns = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 
-		// 無効なクラス名をスキップ
-		if (!name.empty() ||
+		// RoslynやMonoで自動生成された無効なクラスを除外
+		if (name.empty() ||
 			name[0] == '<' ||
 			(name.find("_AnonStorey") != std::string::npos)) {
+			QFE_LOG(std::format("Skipping invalid class: {}.{}", ns, name));
 			continue;
 		}
 
+		// クラス名を完全修飾名で保存
 		std::string full_name;
 
 		// 名前空間がある場合は結合
 		if (!ns.empty() && ns.length() > 0) {
+			// 名前空間とクラス名をドットで結合
 			full_name = std::string(ns) + "." + name;
+			QFE_LOG(std::format("Found class: {}.{}", ns, name));
 		} else {
+			// 名前空間がない場合はクラス名のみ
 			full_name = name;
+			QFE_LOG(std::format("Found class: {}", name));
 		}
 
+		// QuickForgeEngineクラスはスクリプトとしては利用しないため除外
 		if (full_name.find("QuickForgeEngine") != std::string::npos) {
-#ifdef QFE_OPTIMIZE_OFF
 			QFE_LOG(std::format("Found QuickForgeEngine class: {}", full_name));
-#endif
 			continue;
 		}
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::format("Found valid class: {}", full_name));
-#endif
 		classNames.push_back(full_name);
 	}
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG(std::format("Finished scanning. Returning {} valid classes.", classNames.size()));
-#endif
 	return classNames;
 }
 
 uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::string& className) {
 	if (!assembly_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Assembly not loaded. Cannot create script instance.", LogLevel::Error);
-#endif
 		return 0;
 	}
 
@@ -177,9 +168,7 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 
 	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
 	if (!monoClass) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Class not found: " + className, LogLevel::Error);
-#endif
 		return 0;
 	}
 
@@ -198,28 +187,21 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 			MonoString* exceptionMsg = mono_object_to_string(exception, nullptr);
 			if (exceptionMsg) {
 				char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
-#ifdef QFE_OPTIMIZE_OFF
 				QFE_LOG(std::string("Mono Exception: ") + exceptionCStr, LogLevel::Error);
-#endif
 				mono_free(exceptionCStr);
 			}
 		}
 	}
 
 	scripts_.push_back(instance);
-
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG(std::format("Created C# script instance: {} (index: {})", className, scripts_.size() - 1));
-#endif
 
 	return static_cast<uint32_t>(scripts_.size()) - 1;
 }
 
 void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& className) {
 	if (!assembly_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Assembly not loaded. Cannot create script instance.");
-#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	MonoImage* image = mono_assembly_get_image(assembly_);
@@ -234,39 +216,29 @@ void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& classNam
 
 	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
 	if (!monoClass) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Class not found: " + className);
-#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	MonoObject* instance = mono_object_new(domain_, monoClass);
 	mono_runtime_object_init(instance);
 	scripts_.push_back(instance);
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
-#endif // QFE_OPTIMIZE_OFF
 	return;
 }
 
 void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
 	if (index >= scripts_.size()) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Invalid script index: " + std::to_string(index), LogLevel::Error);
-#endif
 		return;
 	}
 	scripts_.erase(static_cast<size_t>(index));
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("Deleted script instance at index: " + std::to_string(index));
-#endif
 }
 
 void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& functionName) {
 	if (index >= scripts_.size()) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Invalid script index: " + std::to_string(index), LogLevel::Error);
-#endif
 		return;
 	}
 
@@ -275,9 +247,7 @@ void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& 
 	MonoMethod* method = mono_class_get_method_from_name(monoClass, functionName.c_str(), 0);
 
 	if (!method) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Method not found: " + functionName, LogLevel::Warning);
-#endif
 		return;
 	}
 
@@ -288,9 +258,7 @@ void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& 
 		MonoString* exceptionMsg = mono_object_to_string(exception, nullptr);
 		if (exceptionMsg) {
 			char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
-#ifdef QFE_OPTIMIZE_OFF
 			QFE_LOG("C# Script[" + std::to_string(index) + "]: " + exceptionCStr, LogLevel::Error);
-#endif
 			mono_free(exceptionCStr);
 		}
 	}
@@ -304,9 +272,7 @@ void CsharpScriptExecutor::RunAllScriptsFunction(const std::string& functionName
 
 void CsharpScriptExecutor::ResetScripts() {
 	scripts_.clear();
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("All C# scripts reset.");
-#endif
 }
 
 void CsharpScriptExecutor::ReloadAssembly() {
@@ -328,25 +294,19 @@ void CsharpScriptExecutor::ReloadAssembly() {
 	char domainName[] = "QuickForgeSceneDomain";
 	domain_ = mono_domain_create_appdomain(domainName, nullptr);
 	if (!domain_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Failed to create new app domain.", LogLevel::Error);
-#endif
 		return;
 	}
 
 	if (!mono_domain_set(domain_, false)) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Failed to set app domain.", LogLevel::Error);
-#endif
 		return;
 	}
 
 	// アセンブリをリロード
 	LoadAssembly();
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("C# assembly reloaded.");
-#endif
 }
 
 void CsharpScriptExecutor::Finalize() {
@@ -364,7 +324,5 @@ void CsharpScriptExecutor::Finalize() {
 		domain_ = nullptr;
 	}
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("CsharpScriptExecutor finalized.");
-#endif
 }

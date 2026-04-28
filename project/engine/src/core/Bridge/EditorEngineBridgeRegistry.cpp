@@ -7,6 +7,7 @@
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/camera/CameraManager.h"
+#include "engine/include/assets/Script/MonoRuntimeManager.h"
 
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
@@ -410,7 +411,20 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 		if (sceneManager_ && sceneManager_->GetCsharpScriptExecutor()) {
 			return sceneManager_->GetCsharpScriptExecutor()->GetAvailableScriptClasses();
 		}
+		QFE_LOG("SceneManager or CsharpScriptExecutor is not initialized.");
 		return {};
+		};
+
+	EditorEngineBridge::ReCompileCsharpScripts = [engineCore]() {
+		QFE_LOG("Recompiling C# scripts...");
+		SceneManager* sceneManager_ = engineCore->GetSceneManager();
+		if (sceneManager_ && sceneManager_->GetCsharpScriptExecutor()) {
+			MonoRuntimeManager::GetInstance()->CompileScripts();
+			sceneManager_->GetCsharpScriptExecutor()->ReloadAssembly();
+			QFE_LOG("C# scripts recompiled and reloaded.");
+		}else {
+			QFE_LOG("SceneManager or CsharpScriptExecutor is not initialized. Cannot recompile C# scripts.");
+		}
 		};
 
 	EditorEngineBridge::AddEmptyEntity = [engineCore]() {

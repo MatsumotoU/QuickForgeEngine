@@ -34,11 +34,6 @@ void QFE::GenerateCsproj(const std::string& dir, const std::string& outputPath) 
     ofs << "    <RootNamespace>MyGameScripts</RootNamespace>\n";
     ofs << "    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>\n";
     ofs << "  </PropertyGroup>\n";
-    ofs << "  <ItemGroup>\n";
-    ofs << "    <Reference Include=\"QuickForgeEngine\">\n";
-    ofs << "      <HintPath>..\\QuickForgeEngine.dll</HintPath>\n";
-    ofs << "    </Reference>\n";
-    ofs << "  </ItemGroup>\n";
 
     ofs << "  <ItemGroup>\n";
     for (const auto& file : csFiles) {
