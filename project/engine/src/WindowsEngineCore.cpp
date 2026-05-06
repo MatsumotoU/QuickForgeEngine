@@ -14,7 +14,7 @@
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
-#include "engine/include/core/Bridge/EditorEngineBridgeRegistry.h"
+#include "engine/include/core/Bridge/WindowsBridgeCore.h"
 
 #include "engine/include/core/Math/MyMath.h"
 
@@ -144,7 +144,8 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 
 #ifdef QFE_OPTIMIZE_OFF
 	// エディタとエンジン間の橋渡し関数を登録
-	EditorEngineBridgeRegistry::RegisterFunctions(this);
+	bridgeProvider_ = QFE::BRIDGE::EngineBridgeProvider::GetInstance();
+	bridgeProvider_->SetUpBridge(std::make_unique<QFE::WindowsBridgeCore>(this));
 #endif // QFE_OPTIMIZE_OFF
 
 	// エンジンアプリケーションの初期化
@@ -226,7 +227,11 @@ void WindowsEngineCore::MainLoop() {
 
 
 void WindowsEngineCore::Shutdown() {
-	EditorEngineBridgeRegistry::ClearFunctions();
+	// ブリッジの終了処理
+	if (bridgeProvider_) {
+		bridgeProvider_->FinalizeBridge();
+	}
+	
 	// エンジンの設定ファイルに最後に開いたプロジェクトの名前を保存する
 #ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("Shutdown Engine");
