@@ -153,7 +153,9 @@ void QFE::CsharpOnQFELinker::StopSound(uint32_t playHandle) {
 
 uint32_t QFE::CsharpOnQFELinker::GetEntity(MonoString* entityName)
 {
-	return SceneManager::GetInstance()-
+	std::string utf8_entityName = mono_string_to_utf8(entityName);
+	uint32_t entityId = SceneManager::GetInstance()->GetEntityByName(utf8_entityName.c_str());
+	return entityId;
 }
 
 uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* entityName) {
