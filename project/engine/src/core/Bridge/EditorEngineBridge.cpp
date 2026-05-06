@@ -49,6 +49,7 @@ namespace QFE {
 	std::function<void(uint32_t, const AABBColliderInfo&)> EditorEngineBridge::SetAABBColliderInfo = nullptr;
 
 	// スクリプト操作
+	std::function<void(const std::string&)> EditorEngineBridge::CreateCsharpScript = nullptr;
 	std::function<std::vector<std::string>(uint32_t)> EditorEngineBridge::GetCsharpClassNames = nullptr;
 	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::RemoveCsharpScript = nullptr;
 	std::function<void(uint32_t, const std::string&)> EditorEngineBridge::AddCsharpScript = nullptr;

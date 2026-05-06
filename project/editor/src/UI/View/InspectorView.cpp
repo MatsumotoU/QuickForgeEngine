@@ -360,6 +360,7 @@ void InspectorView::Draw() {
 		}
 		// CsharpScript
 		if (ImGui::BeginMenu("CSharpScript")) {
+			// 追加可能なスクリプトは、現在アタッチされていないものに限定
 			if (ImGui::BeginMenu("AddScript")) {
 				std::vector<std::string> csClasses = EditorEngineBridge::GetAvailableCsharpClasses();
 				for (const auto& className : csClasses) {

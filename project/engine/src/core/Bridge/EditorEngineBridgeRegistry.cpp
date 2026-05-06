@@ -3,6 +3,7 @@
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
+#include "engine/include/utility/script/ScriptUtility.h"
 
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/assets/AssetManager.h"
@@ -377,6 +378,11 @@ void QFE::EditorEngineBridgeRegistry::RegisterFunctions(WindowsEngineCore* engin
 			c.eventColliderLayer = info.eventColliderLayer;
 			c.isDraw = info.isDraw;
 		}
+		};
+
+	EditorEngineBridge::CreateCsharpScript = [engineCore](const std::string& className) {
+		QFE::Script::CreateScriptTemplate(className,
+			AssetManager::GetInstance()->GetResourceDirectoryManager()->GetResourceDirectory("Script"));
 		};
 
 	EditorEngineBridge::GetCsharpClassNames = [engineCore](uint32_t entityId) -> std::vector<std::string> {

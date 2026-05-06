@@ -58,6 +58,7 @@ namespace QFE {
 		static std::function<void(uint32_t, const AABBColliderInfo&)> SetAABBColliderInfo;
 
 		// スクリプト操作
+		static std::function < void(const std::string&)> CreateCsharpScript;
 		static std::function<std::vector<std::string>(uint32_t)> GetCsharpClassNames;
 		static std::function<void(uint32_t, const std::string&)> RemoveCsharpScript;
 		static std::function<void(uint32_t, const std::string&)> AddCsharpScript;
