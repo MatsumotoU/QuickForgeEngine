@@ -59,6 +59,7 @@ namespace QFE {
 		virtual void SetAABBColliderInfo(uint32_t entityId, const AABBColliderInfo& colliderInfo) = 0;
 
 		// スクリプト操作
+		virtual void ReCompileCsharpScripts() = 0;
 		virtual std::vector<std::string> GetCsharpClassNames(uint32_t entityId) = 0;
 		virtual void RemoveCsharpScript(uint32_t entityId, const std::string& className) = 0;
 		virtual void AddCsharpScript(uint32_t entityId, const std::string& className) = 0;

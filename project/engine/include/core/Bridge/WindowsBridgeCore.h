@@ -65,6 +65,7 @@ namespace QFE {
 		virtual std::vector<std::string> GetAvailableCsharpClasses() override;
 
 		// シーンにエンティティを追加する関数群
+		virtual void ReCompileCsharpScripts() override;
 		virtual void AddEmptyEntity() override;
 		virtual void AddEntityFromFile(const std::string& filepath) override;
 		virtual void AddModelEntity(const std::string& filepath) override;

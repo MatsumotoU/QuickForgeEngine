@@ -4,6 +4,7 @@
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/camera/CameraManager.h"
+#include "engine/include/assets/Script/MonoRuntimeManager.h"
 
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
@@ -421,6 +422,20 @@ namespace QFE {
 			return sceneManager->GetCsharpScriptExecutor()->GetAvailableScriptClasses();
 		}
 		return {};
+	}
+
+	void WindowsBridgeCore::ReCompileCsharpScripts()
+	{
+		QFE_LOG("Recompiling C# scripts...");
+		SceneManager* sceneManager_ = engineCore_->GetSceneManager();
+		if (sceneManager_ && sceneManager_->GetCsharpScriptExecutor()) {
+			MonoRuntimeManager::GetInstance()->CompileScripts();
+			sceneManager_->GetCsharpScriptExecutor()->ReloadAssembly();
+			QFE_LOG("C# scripts recompiled and reloaded.");
+		}
+		else {
+			QFE_LOG("SceneManager or CsharpScriptExecutor is not initialized. Cannot recompile C# scripts.");
+		}
 	}
 
 	void WindowsBridgeCore::AddEmptyEntity() {
