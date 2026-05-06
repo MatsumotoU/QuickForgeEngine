@@ -21,7 +21,7 @@ namespace QFE::CsharpOnQFELinker {
 	extern float GetDeltaTime();
 
     // Input
-	extern Vector2 GetKeyMoveDir();
+	extern void GetKeyMoveDir(Vector2* outDir);
 	extern bool IsKeyTrigger(MonoString* actionName);
 	extern bool IsKeyPress(MonoString* actionName);
 	extern bool IsKeyRelease(MonoString* actionName);
@@ -30,8 +30,8 @@ namespace QFE::CsharpOnQFELinker {
     extern bool GetMousePress(int8_t button);
     extern bool GetMouseTrigger(int8_t button);
     extern bool GetMouseRelease(int8_t button);
-    extern Vector2 GetMouseScreenPos();
-    extern Vector2 GetMouseMoveDir();
+    extern void GetMouseScreenPos(Vector2* outPos);
+    extern void GetMouseMoveDir(Vector2* outDir);
     extern float GetMouseWheelDir();
 
 	// Audio
@@ -40,6 +40,7 @@ namespace QFE::CsharpOnQFELinker {
 	extern void StopSound(uint32_t playHandle);
 
 	// SceneObject
+	extern uint32_t GetEntity(MonoString* entityName);
 	extern uint32_t CreateEntity(MonoString* entityName);
 	extern void LoadScene(MonoString* sceneName);
     extern void ChangeModel(uint32_t entityId, MonoString* modelName);

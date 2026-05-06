@@ -20,7 +20,7 @@ ShaderCompiler::ShaderCompiler() {
 
 ShaderCompiler::~ShaderCompiler() {
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("=====ShaderFiles=====");
+	QFE_LOG("=====ShaderFiles=====");
 #endif // QFE_OPTIMIZE_OFF
 
 	// iDxcBlobMap_縺ｫ譬ｼ邏阪＆繧後※縺・ｋIDxcBlob*繧坦elease縺励※隗｣謾ｾ
@@ -28,13 +28,13 @@ ShaderCompiler::~ShaderCompiler() {
 		if (blob) {
 			blob->Release();
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::format("Delete: {}", ConvertString(key)));
+			QFE_LOG(std::format("Delete: {}", ConvertString(key)));
 #endif // QFE_OPTIMIZE_OFF
 		}
 	}
 	iDxcBlobMap_.clear();
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("=====================");
+	QFE_LOG("=====================");
 #endif // QFE_OPTIMIZE_OFF
 }
 
@@ -57,7 +57,7 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	// 縺吶〒縺ｫ繧ｳ繝ｳ繝代う繝ｫ貂医∩縺ｪ繧峨く繝｣繝・す繝･縺九ｉ蜿門ｾ・
 	if (iDxcBlobMap_.contains(filePath)) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::format("Loaded file: {}", ConvertString(filePath)));
+		QFE_LOG(std::format("Loaded file: {}", ConvertString(filePath)));
 #endif // QFE_OPTIMIZE_OFF
 		return iDxcBlobMap_.at(filePath);
 	}

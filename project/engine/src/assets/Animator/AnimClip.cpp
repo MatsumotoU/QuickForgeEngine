@@ -36,7 +36,7 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 	// キーフレームが存在しない場合はデフォルトのTransformを返す
 	if (keyframes_.empty()) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("GetTransformAtTime: No keyframes available.");
+		QFE_LOG("GetTransformAtTime: No keyframes available.");
 #endif // QFE_OPTIMIZE_OFF
 		return result;
 	}

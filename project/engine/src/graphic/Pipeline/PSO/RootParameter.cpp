@@ -35,7 +35,7 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 	D3D12_ROOT_PARAMETER* rootParameter = GetRootParameter(friendlyName);
 	if (rootParameter == nullptr) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("RootParameter: RootParameter not found for the given friendly name.");
+		QFE_LOG("RootParameter: RootParameter not found for the given friendly name.");
 #endif // QFE_OPTIMIZE_OFF
 		assert(false && "RootParameter not found for the given friendly name.");
 		return;
@@ -51,7 +51,7 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 
 #ifdef QFE_OPTIMIZE_OFF
 	if (rootParameter->ParameterType != D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) {
-		DebugLog("RootParameter: ParameterType is Not TableType! ChangedType->D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE");
+		QFE_LOG("RootParameter: ParameterType is Not TableType! ChangedType->D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE");
 	}
 #endif // QFE_OPTIMIZE_OFF
 
@@ -63,19 +63,19 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 
 #ifdef QFE_OPTIMIZE_OFF
 void RootParameter::CheckIntegrityData() {
-	DebugLog("RootParameter: CheckIntegrityData");
+	QFE_LOG("RootParameter: CheckIntegrityData");
 
 	// 郢晢ｽｫ郢晢ｽｼ郢晏現繝ｱ郢晢ｽｩ郢晢ｽ｡郢晢ｽｼ郢ｧ・ｿ邵ｺ謔滂ｽｮ螟ゑｽｾ・ｩ邵ｺ霈費ｽ檎ｸｺ・ｦ邵ｺ繝ｻ竊醍ｸｺ繝ｻ・ｰ・ｴ陷ｷ蛹ｻ繝ｻ郢晢ｽｭ郢ｧ・ｰ郢ｧ雋槭・陷峨・
 	if (rootParameters_.empty()) {
-		DebugLog("RootParameter: No root parameters defined.");
+		QFE_LOG("RootParameter: No root parameters defined.");
 		return;
 	}
-	DebugLog("RootParameter: Integrity check completed successfully.");
+	QFE_LOG("RootParameter: Integrity check completed successfully.");
 
-	DebugLog("RootParameter: ===ParameterList===");
+	QFE_LOG("RootParameter: ===ParameterList===");
 	for (const std::string& name : friendlyNames_) {
 		D3D12_ROOT_PARAMETER* rootParameter = GetRootParameter(name);
-		DebugLog(DirectXStructToString::ToString(*rootParameter));
+		QFE_LOG(DirectXStructToString::ToString(*rootParameter));
 	}
 }
 #endif // QFE_OPTIMIZE_OFF
@@ -91,7 +91,7 @@ D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendl
 			assert(index < rootParameters_.size() && "Index out of bounds for root parameters.");
 			result = &rootParameters_[index];
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::format("RootParameter: Return {}", friendlyNames_[index]));
+			QFE_LOG(std::format("RootParameter: Return {}", friendlyNames_[index]));
 #endif // QFE_OPTIMIZE_OFF
 			return result;
 		} 

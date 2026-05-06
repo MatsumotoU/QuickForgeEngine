@@ -37,7 +37,7 @@ void ColliderTagMask::Initialize(const std::string& maskTableFilePath)
 	{
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(e.what());
+		QFE_LOG(e.what());
 #endif // QFE_OPTIMIZE_OFF
 		// 読み込み失敗時は空のテーブルで初期化
 		tagMaskPairs_.clear();
@@ -63,7 +63,7 @@ void ColliderTagMask::Finalize()
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(e.what());
+		QFE_LOG(e.what());
 #endif // QFE_OPTIMIZE_OFF
 	}
 }
@@ -84,7 +84,7 @@ void ColliderTagMask::EraseTagMaskPair(const std::string& tag1, const std::strin
         tagMaskPairs_.erase(indexToErase);
 	} else {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Tag mask pair not found: (" + tag1 + ", " + tag2 + ")", LogLevel::Error);
+		QFE_LOG("Tag mask pair not found: (" + tag1 + ", " + tag2 + ")", LogLevel::Error);
 #endif // QFE_OPTIMIZE_OFF
 	}
 }

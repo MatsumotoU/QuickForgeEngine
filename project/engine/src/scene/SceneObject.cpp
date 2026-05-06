@@ -168,7 +168,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	}
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("LoadScene: " + sceneNameCopy);
+	QFE_LOG("LoadScene: " + sceneNameCopy);
 #endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
 	// GPUバッファの解放
@@ -183,7 +183,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	std::ifstream ifs(sceneFilePath + sceneNameCopy);
 	if (!ifs.is_open()) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Faild load scene: " + sceneNameCopy, LogLevel::Error);
+		QFE_LOG("Faild load scene: " + sceneNameCopy, LogLevel::Error);
 #endif // QFE_OPTIMIZE_OFF
 		CameraManager::GetInstance()->Initialize();
 		return;
@@ -222,7 +222,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 
 void SceneObject::SaveScene(const std::string& sceneName) {
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("SaveScene: " + sceneName);
+	QFE_LOG("SaveScene: " + sceneName);
 #endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
 
@@ -245,7 +245,7 @@ void SceneObject::SaveScene(const std::string& sceneName) {
 
 void QFE::SceneObject::SaveSceneBinary(const std::string& sceneName) {
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("BinarySaveScene: " + sceneName);
+	QFE_LOG("BinarySaveScene: " + sceneName);
 #endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
 
@@ -418,7 +418,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		for (const auto& handles : csharpComponent.csharpHandles_) {
 			if (handles.className_ == className) {
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog("Csharp class " + className + " is already attached to entity " + std::to_string(entityId), LogLevel::Warning);
+				QFE_LOG("Csharp class " + className + " is already attached to entity " + std::to_string(entityId), LogLevel::Warning);
 #endif // QFE_OPTIMIZE_OFF
 				return;
 			}
@@ -434,7 +434,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("AddEntity: " + entityName);
+	QFE_LOG("AddEntity: " + entityName);
 #endif // QFE_OPTIMIZE_OFF
 
 	// リリースビルド時はキャッシュからEntityを読み込む
@@ -453,7 +453,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	if (!ifs.is_open()) {
 		std::string errorMsg = "FaildOpenFile: " + sceneFilePath + entityName;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(errorMsg, LogLevel::Error);
+		QFE_LOG(errorMsg, LogLevel::Error);
 #endif // QFE_OPTIMIZE_OFF
 		assert(false && "Faild Open Entity File.");
 	}
@@ -482,7 +482,7 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	}
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("RunTimeAddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
+	QFE_LOG("RunTimeAddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
 #endif // QFE_OPTIMIZE_OFF
 	return entityId;
 }
@@ -509,7 +509,7 @@ void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelN
 	// EntityがModelRenderDataを持っていない場合は処理しない
 	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("ChangeModel entity does not have ModelRenderData", LogLevel::Warning);
+		QFE_LOG("ChangeModel entity does not have ModelRenderData", LogLevel::Warning);
 #endif // QFE_OPTIMIZE_OFF
 		return;
 	}
@@ -525,7 +525,7 @@ void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshNam
 	//　EntityがModelRenderDataを持っていない、もしくはMeshを持っていない場合は処理しない
 	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("ChangeMesh entity does not have ModelRenderData", LogLevel::Warning);
+		QFE_LOG("ChangeMesh entity does not have ModelRenderData", LogLevel::Warning);
 #endif // QFE_OPTIMIZE_OFF
 		return;
 	}
@@ -534,7 +534,7 @@ void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshNam
 	//　Meshがない場合は処理しない
 	if (modelData->meshRenderDataHandles.size() == 0) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("ChangeMesh model does not have mesh", LogLevel::Warning);
+		QFE_LOG("ChangeMesh model does not have mesh", LogLevel::Warning);
 #endif // QFE_OPTIMIZE_OFF
 		return;
 	}
@@ -680,7 +680,7 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 			for (const auto& handle : entityJson["CsharpComponent"]["CsharpHandles"]) {
 				if (handle.contains("ClassName")) {
 #ifdef QFE_OPTIMIZE_OFF
-					DebugLog("Load Csharp Script: " + handle["ClassName"].get<std::string>());
+					QFE_LOG("Load Csharp Script: " + handle["ClassName"].get<std::string>());
 #endif // QFE_OPTIMIZE_OFF
 					AddCsharpScript(entityId, handle["ClassName"].get<std::string>());
 				}
