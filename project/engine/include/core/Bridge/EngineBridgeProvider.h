@@ -13,8 +13,13 @@ namespace QFE::BRIDGE {
 		void FinalizeBridge();
 		
 		/// @brief ブリッジインスタンスの取得
-		QFE::IEngineBridge* GetBridge() const;
+		QFE::IEngineBridge* Get() const;
 	private:
 		std::unique_ptr<QFE::IEngineBridge> bridgeInstance_;
 	};
+
+	/// @brief ブリッジインスタンスのグローバルアクセス関数
+	static inline QFE::IEngineBridge* GetBridge() {
+		return EngineBridgeProvider::GetInstance()->Get();
+	}
 }

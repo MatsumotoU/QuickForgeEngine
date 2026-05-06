@@ -9,7 +9,7 @@ void QFE::BRIDGE::EngineBridgeProvider::FinalizeBridge() {
 	bridgeInstance_.reset();
 }
 
-QFE::IEngineBridge* QFE::BRIDGE::EngineBridgeProvider::GetBridge() const { 
+QFE::IEngineBridge* QFE::BRIDGE::EngineBridgeProvider::Get() const { 
 	if(bridgeInstance_ == nullptr) {
 		throw std::runtime_error("EngineBridge instance is not set up.");
 	}
