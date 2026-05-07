@@ -6,7 +6,7 @@
 QFE::ThreadPool::ThreadPool() {
 	size_t threadCount = std::thread::hardware_concurrency();
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Hardware Concurrency: " + std::to_string(threadCount));
+	QFE_LOG("Hardware Concurrency: " + std::to_string(threadCount));
 #endif // QFE_OPTIMIZE_OFF
 
 	if (threadCount > 1) {

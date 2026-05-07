@@ -1,7 +1,6 @@
 #include "engine/include/window/windowEventsManager/EventSystems/OnFocusEvent.h"
 
 #include "engine/include/scene/SceneManager.h"
-#include "engine/include/assets/Script/LuaScriptExecutor.h"
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -15,17 +14,8 @@ OnFocusEvent::OnFocusEvent(nlohmann::json& data) :IEvent(data) {}
 void OnFocusEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 	wparam; lparam;
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Whindow Focused");
+	QFE_LOG("Whindow Focused");
 #endif // QFE_OPTIMIZE_OFF
-
-	// TODO: 直接実行ではなく、関数をキューに入れてメインスレッドで実行するようにする
-	if (SceneManager::GetInstance()->GetLuaScriptExecutor() != nullptr) {
-		SceneManager::GetInstance()->GetLuaScriptExecutor()->ReloadAllScripts();
-	} else {
-#ifdef QFE_OPTIMIZE_OFF
-		DebugLog("LuaScriptExecutor is nullptr", LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
-	}
 	
 }
 

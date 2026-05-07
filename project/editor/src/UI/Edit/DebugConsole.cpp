@@ -13,9 +13,6 @@ void DebugConsole::Initialize() {
 	commandList_.clear();
 	commandList_.emplace_back(std::make_unique<EchoCommand>(items_,inputBuf_));
 	commandList_.emplace_back(std::make_unique<ClearCommand>(items_, inputBuf_));
-	commandList_.emplace_back(std::make_unique<LuaScriptInitializeCommand>(items_, inputBuf_));
-	commandList_.emplace_back(std::make_unique<LuaScriptUpdateCommand>(items_, inputBuf_));
-	commandList_.emplace_back(std::make_unique<LuaScriptReloadCommand>(items_, inputBuf_));
 	commandList_.emplace_back(std::make_unique<SceneRunCommand>(items_, inputBuf_));
 	commandList_.emplace_back(std::make_unique<SceneStopCommand>(items_, inputBuf_));
 	commandList_.emplace_back(std::make_unique<CSCreateProjectCommand>(items_, inputBuf_));

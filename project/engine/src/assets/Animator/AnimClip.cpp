@@ -22,7 +22,7 @@ void AnimClip::AddKeyFrame(const KeyFrame& keyframe) {
 	keyframes_.push_back(keyframe);
 }
 
-const std::vector<KeyFrame>& AnimClip::GetKeyFrames() const {
+std::vector<KeyFrame> AnimClip::GetKeyFrames() const {
 	std::vector<KeyFrame> result(keyframes_.begin(), keyframes_.end());
 	return result;
 }
@@ -33,17 +33,17 @@ size_t AnimClip::GetKeyFrameCount() const {
 
 Transform AnimClip::GetTransformAtTime(float time) const {
 	Transform result;
-	// keyframe縺悟ｭ伜惠縺励↑縺・ｴ蜷医・繝・ヵ繧ｩ繝ｫ繝医・Transform繧定ｿ斐☆
+	// キーフレームが存在しない場合はデフォルトのTransformを返す
 	if (keyframes_.empty()) {
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("GetTransformAtTime: No keyframes available.");
+		QFE_LOG("GetTransformAtTime: No keyframes available.");
 #endif // QFE_OPTIMIZE_OFF
 		return result;
 	}
 
-	// 邱上い繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ譎る俣繧定ｨ育ｮ・
+	// アニメーションの総時間を取得
 	float totalDuration = keyframes_.back().time;
-	// 繝ｫ繝ｼ繝苓ｨｭ螳壹↓蝓ｺ縺･縺・※譎る俣繧定ｪｿ謨ｴ
+	// ループする場合は時間を総時間で割った余りにする
 	if (isLoop_) {
 		time = fmod(time, totalDuration);
 	} else {
@@ -51,7 +51,7 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 			return keyframes_.back().transform;
 		}
 	}
-	// 迴ｾ蝨ｨ縺ｮ譎る俣縺ｫ蟇ｾ蠢懊☆繧九く繝ｼ繝輔Ξ繝ｼ繝繧定ｦ九▽縺代ｋ
+	// 時間に基づいて前後のキーフレームを見つける
 	const KeyFrame* previousKeyFrame = nullptr;
 	const KeyFrame* nextKeyFrame = nullptr;
 	for (size_t i = 0; i < keyframes_.size(); ++i) {
@@ -63,11 +63,15 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 			break;
 		}
 	}
-	// 譛€蛻昴・繧ｭ繝ｼ繝輔Ξ繝ｼ繝繧医ｊ蜑阪・蝣ｴ蜷・
+	// 前のキーフレームが存在しない場合は次のキーフレームのTransformを返す
 	if (!previousKeyFrame) {
 		return keyframes_.front().transform;
 	}
-	// 繧ｭ繝ｼ繝輔Ξ繝ｼ繝髢薙・陬憺俣
+	// 次のキーフレームが存在しない場合は前のキーフレームのTransformを返す
+	if (!nextKeyFrame) {
+		return keyframes_.back().transform;
+	}
+	// 前後のキーフレームのTransformを線形補間する
 	float segmentDuration = nextKeyFrame->time - previousKeyFrame->time;
 	float t = (time - previousKeyFrame->time) / segmentDuration;
 	t;

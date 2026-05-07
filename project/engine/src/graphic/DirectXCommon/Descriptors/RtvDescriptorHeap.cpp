@@ -9,7 +9,7 @@
 using namespace QFE;
 void RtvDescriptorHeap::Initialize(ID3D12Device* device, UINT numDescriptors, bool shaderVisible) {
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("-----RtvDescriptorHeap:Initialize-----");
+	QFE_LOG("-----RtvDescriptorHeap:Initialize-----");
 #endif // QFE_OPTIMIZE_OFF
 	// 繝・ぅ繧ｹ繧ｯ繝ｪ繝励ち逕滓・險ｭ螳壹・蛻晄悄蛹・
 	descriptorGenerateConfig_.descriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -43,7 +43,7 @@ DescriptorHandles RtvDescriptorHeap::AssignHeap(ID3D12Resource* resource,const D
 	assert(!freeDescriptors_.empty() && "No free descriptors available.");
 	UINT index = freeDescriptors_.front();
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(std::format("AssignHeapIndex: {}", index));
+	QFE_LOG(std::format("AssignHeapIndex: {}", index));
 #endif // QFE_OPTIMIZE_OFF
 	freeDescriptors_.pop();
 	// 繝・ぅ繧ｹ繧ｯ繝ｪ繝励ち繝上Φ繝峨Ν繧貞叙蠕・

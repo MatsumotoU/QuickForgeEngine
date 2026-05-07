@@ -128,7 +128,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 	{
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("ShaderReflection::Serialize: Exception occurred - " + std::string(e.what()));
+		QFE_LOG("ShaderReflection::Serialize: Exception occurred - " + std::string(e.what()));
 #endif // =DEBUG
 
 	}

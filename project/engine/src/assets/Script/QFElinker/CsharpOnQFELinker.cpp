@@ -78,8 +78,10 @@ float QFE::CsharpOnQFELinker::GetDeltaTime() {
 	return EngineGlobalValue::deltaTime;
 }
 
-Vector2 QFE::CsharpOnQFELinker::GetKeyMoveDir() {
-	return InputInterface::GetInstance()->GetKeyMoveDir();
+void QFE::CsharpOnQFELinker::GetKeyMoveDir(Vector2* outDir) {
+	if (outDir) {
+		*outDir = InputInterface::GetInstance()->GetKeyMoveDir();
+	}
 }
 
 bool QFE::CsharpOnQFELinker::IsKeyTrigger(MonoString* actionName) {
@@ -118,12 +120,16 @@ bool QFE::CsharpOnQFELinker::GetMouseRelease(int8_t button) {
 	return InputInterface::GetInstance()->GetMouseRelease(button);
 }
 
-Vector2 QFE::CsharpOnQFELinker::GetMouseScreenPos() {
-	return InputInterface::GetInstance()->GetMouseScreenPos();
+void QFE::CsharpOnQFELinker::GetMouseScreenPos(Vector2* outPos) {
+	if (outPos) {
+		*outPos = InputInterface::GetInstance()->GetMouseScreenPos();
+	}
 }
 
-Vector2 QFE::CsharpOnQFELinker::GetMouseMoveDir() {
-	return InputInterface::GetInstance()->GetMouseMove();
+void QFE::CsharpOnQFELinker::GetMouseMoveDir(Vector2* outDir) {
+	if (outDir) {
+		*outDir = InputInterface::GetInstance()->GetMouseMove();
+	}
 }
 
 float QFE::CsharpOnQFELinker::GetMouseWheelDir() {
@@ -143,6 +149,13 @@ uint32_t QFE::CsharpOnQFELinker::PlayQFESound(uint32_t soundHandle, bool isLoop,
 
 void QFE::CsharpOnQFELinker::StopSound(uint32_t playHandle) {
 	AudioInterface::GetInstance()->StopSound(playHandle);
+}
+
+uint32_t QFE::CsharpOnQFELinker::GetEntity(MonoString* entityName)
+{
+	std::string utf8_entityName = mono_string_to_utf8(entityName);
+	uint32_t entityId = SceneManager::GetInstance()->GetEntityByName(utf8_entityName.c_str());
+	return entityId;
 }
 
 uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* entityName) {

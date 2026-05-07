@@ -91,7 +91,7 @@ namespace QFE {
 		}
 
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("GetKeys: No keys found for action '" + name + "'", LogLevel::Error);
+		QFE_LOG("GetKeys: No keys found for action '" + name + "'", LogLevel::Error);
 #endif // QFE_OPTIMIZE_OFF
 		return emptyVector;
 	}
@@ -146,7 +146,7 @@ namespace QFE {
 		catch (const std::exception& e) {
 			e;
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+			QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF
 		}
 	}
@@ -174,7 +174,7 @@ namespace QFE {
 		catch (const std::exception& e) {
 			e;
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+			QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF
 		}
 	}

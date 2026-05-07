@@ -7,7 +7,7 @@
 using namespace QFE;
 void DirectXCommandManager::Initialize(ID3D12Device* device) {
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("Initialize called.");
+	QFE_LOG("Initialize called.");
 #endif // QFE_OPTIMIZE_OFF
 
 	assert(device && "Device is not initialized.");

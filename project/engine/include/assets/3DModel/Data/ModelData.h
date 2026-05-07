@@ -9,6 +9,8 @@ namespace QFE {
 	struct MeshData {
 		SafeVector<VertexData> vertices;
 		ModelMaterialData material;
+
+		MeshData(size_t size) : vertices(size) {}
 	};
 
 	struct ModelData {

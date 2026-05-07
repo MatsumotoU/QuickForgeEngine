@@ -1,9 +1,6 @@
 #pragma once
 #include "EchoCommand.h"
 #include "ClearCommand.h"
-#include "LuaScriptInitializeCommand.h"
-#include "LuaScriptUpdateCommand.h"
-#include "LuaScriptReloadCommand.h"
 #include "SceneRunCommand.h"
 #include "SceneStopCommand.h"
 #include "CSCreateProjectCommand.h"

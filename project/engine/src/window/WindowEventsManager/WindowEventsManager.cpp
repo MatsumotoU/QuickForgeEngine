@@ -1,4 +1,4 @@
-﻿#include "engine/include/window/windowEventsManager/WindowEventsManager.h"
+#include "engine/include/window/windowEventsManager/WindowEventsManager.h"
 
 #include "engine/include/window/windowEventsManager/eventSystems/DropFileEvent.h"
 #include "engine/include/window/windowEventsManager/eventSystems/ExitAppEvent.h"
@@ -51,7 +51,7 @@ namespace QFE {
 		for (const auto& eventSystem : eventSystems_) {
 			if (eventSystem && msg == eventSystem->GetEventType()) {
 #ifdef QFE_OPTIMIZE_OFF
-				DebugLog("Call Event WindowName: " + ConvertString(HwndConvertString::HwndToString(hwnd)));
+				QFE_LOG("Call Event WindowName: " + ConvertString(HwndConvertString::HwndToString(hwnd)));
 #endif
 				eventSystem->OnEvent(wparam, lparam);
 				return 0;

@@ -7,14 +7,14 @@ using namespace QFE;
 ImGuiFlameController::ImGuiFlameController() {
 #ifdef QFE_OPTIMIZE_OFF
 	stateCheck_ = 0;
-	DebugLog("ImGuiManager : Generate Instance");
+	QFE_LOG("ImGuiManager : Generate Instance");
 #endif // DEBUG
 }
 
 ImGuiFlameController::~ImGuiFlameController() {
 #ifdef QFE_OPTIMIZE_OFF
 	if (stateCheck_ != 0) {
-		DebugLog(std::format("!!! ImGuiManager : Error{} !!!\n", stateCheck_));
+		QFE_LOG(std::format("!!! ImGuiManager : Error{} !!!\n", stateCheck_));
 	}
 #endif // QFE_OPTIMIZE_OFF
 }

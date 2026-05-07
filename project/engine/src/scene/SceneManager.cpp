@@ -31,13 +31,13 @@ void SceneManager::Initialize() {
 			ifs.close();
 		}
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Load SceneConfig.json");
+		QFE_LOG("Load SceneConfig.json");
 #endif // QFE_OPTIMIZE_OFF
 	}
 	catch (const std::exception& e) {
 		e;
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+		QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF
 	}
 
@@ -109,10 +109,10 @@ void SceneManager::Finalize() {
 		std::ofstream ofs(path);
 		ofs << sceneConfig_.dump(4);
 		ofs.close();
-		DebugLog("SaveSceneConfig");
+		QFE_LOG("SaveSceneConfig");
 	}
 	catch (const std::exception& e) {
-		DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+		QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 
 	}
 #endif // QFE_OPTIMIZE_OFF
@@ -125,25 +125,6 @@ uint32_t SceneManager::GetEntityByName(const std::string& entityName) const {
 
 uint32_t SceneManager::GetEntityByUniqueID(uint32_t uniqueId) const {
 	return currentScene_->GetEntityByUniqueID(uniqueId);
-}
-
-LuaScriptExecutor* QFE::SceneManager::GetLuaScriptExecutor() const {
-	// currentScene_がいない場合nullptrを返す
-	if (!currentScene_) {
-#ifdef QFE_OPTIMIZE_OFF
-		DebugLog("GetLuaScriptExecutor: currentScene_ is nullptr", LogLevel::EngineInfo);
-#endif // QFE_OPTIMIZE_OFF
-		return nullptr;
-	}
-	// LuaScriptExecutorがいない場合nullptrを返す
-	if (!currentScene_->GetLuaScriptExecutor()) {
-#ifdef QFE_OPTIMIZE_OFF
-		DebugLog("GetLuaScriptExecutor: LuaScriptExecutor is nullptr", LogLevel::EngineInfo);
-#endif // QFE_OPTIMIZE_OFF
-		return nullptr;
-	}
-
-	return currentScene_->GetLuaScriptExecutor();
 }
 
 void SceneManager::SaveScene(const std::string& sceneName) {
@@ -237,10 +218,6 @@ void SceneManager::AddSprite(const std::string& spriteName, float width, float h
 	currentScene_->AddSprite(spriteName, width, height, inEntityId, layer, pvot);
 }
 
-void SceneManager::AddLuaScript(uint32_t entityId, const std::string& scriptName) {
-	currentScene_->AddLuaScript(entityId, scriptName);
-}
-
 void SceneManager::AddCsharpScript(uint32_t entityId, const std::string& className) {
 	currentScene_->AddCsharpScript(entityId, className);
 }
@@ -251,11 +228,6 @@ uint32_t SceneManager::AddEntity(const std::string& entityName) {
 
 uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {
 	return currentScene_->RunTimeAddEntity(entityName);
-}
-
-void SceneManager::RunTimeAddLuaScript(uint32_t entityId, const std::string& scriptName)
-{
-	currentScene_->RunTimeAddLuaScript(entityId, scriptName);
 }
 
 void SceneManager::StartScript() {
@@ -277,7 +249,7 @@ void QFE::SceneManager::FirstLoadScene() {
 		catch (const std::exception& e) {
 			e;
 #ifdef QFE_OPTIMIZE_OFF
-			DebugLog(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
+			QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
 #endif // QFE_OPTIMIZE_OFF
 		}
 	}

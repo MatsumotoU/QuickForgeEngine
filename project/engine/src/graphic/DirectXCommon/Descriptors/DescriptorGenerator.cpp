@@ -7,8 +7,8 @@ using namespace QFE;
 void DescriptorGenerator::GenerateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& heap, ID3D12Device* device, const DescriptorGenerateConfig& config) {
 	assert(!heap && "Already generated");
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("CreateDescriptorHeap");
-	DebugLog(std::format("NumDescriptors: {}, ShaderVisible: {}",
+	QFE_LOG("CreateDescriptorHeap");
+	QFE_LOG(std::format("NumDescriptors: {}, ShaderVisible: {}",
 		config.numDescriptors, config.shaderVisible ? "true" : "false"));
 #endif // QFE_OPTIMIZE_OFF
 

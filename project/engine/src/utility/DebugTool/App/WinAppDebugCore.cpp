@@ -12,7 +12,7 @@ WinAppDebugCore::WinAppDebugCore(const LPSTR& lpCmdLine) {
 	SetUnhandledExceptionFilter(ExportDump);
 	lpCmdLine;
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("=====WinAppDebugCore=====");
+	QFE_LOG("=====WinAppDebugCore=====");
 #endif // QFE_OPTIMIZE_OFF
 
 	// exe繧定ｵｷ蜍輔＠縺溘ヱ繧ｹ
@@ -23,12 +23,12 @@ WinAppDebugCore::WinAppDebugCore(const LPSTR& lpCmdLine) {
 #ifdef QFE_OPTIMIZE_OFF
 	// 繧ｳ繝槭Φ繝牙ｼ墓焚遒ｺ隱・
 	if (std::strcmp(lpCmdLine, "\0") != 0) {
-		DebugLog("!!! EnebleCommandLineArguments !!!");
-		DebugLog(std::format("EnebleCommand : {}", lpCmdLine));	
+		QFE_LOG("!!! EnebleCommandLineArguments !!!");
+		QFE_LOG(std::format("EnebleCommand : {}", lpCmdLine));	
 	} else {
-		DebugLog("DisableCommandLineArguments");
+		QFE_LOG("DisableCommandLineArguments");
 	}
-	DebugLog("");
+	QFE_LOG("");
 #endif // QFE_OPTIMIZE_OFF
 }
 

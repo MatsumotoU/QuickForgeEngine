@@ -28,7 +28,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> BufferGenerator::Generate(ID3D12Device* d
 	assert(SUCCEEDED(hr));
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(ConvertString(std::format(L"CreateBufferResource Bytes = {}", sizeInBytes)));
+	QFE_LOG(ConvertString(std::format(L"CreateBufferResource Bytes = {}", sizeInBytes)));
 #endif // QFE_OPTIMIZE_OFF
 	return vertexResource;
 }

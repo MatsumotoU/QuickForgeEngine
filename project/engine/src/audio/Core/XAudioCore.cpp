@@ -45,7 +45,7 @@ void XAudioCore::Initialize() {
 	assert(SUCCEEDED(hr));
 
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog(ConvertString(std::format(L"MasterVoice->nChannels:{}", GetOutputChannels())));
+	QFE_LOG(ConvertString(std::format(L"MasterVoice->nChannels:{}", GetOutputChannels())));
 
 	// 髻ｳ螢ｰ繝・ヰ繧､繧ｹ繧定｡ｨ遉ｺ
 	IMMDeviceEnumerator* pEnumerator = NULL;
@@ -65,10 +65,10 @@ void XAudioCore::Initialize() {
 
 	if (count == 0)
 	{
-		DebugLog("No active rendering audio endpoints found.");
+		QFE_LOG("No active rendering audio endpoints found.");
 	} else
 	{
-		DebugLog("Active Rendering Audio Endpoints");
+		QFE_LOG("Active Rendering Audio Endpoints");
 		for (UINT i = 0; i < count; i++)
 		{
 			// 繧ｳ繝ｬ繧ｯ繧ｷ繝ｧ繝ｳ縺九ｉ蛟句挨縺ｮ繧ｨ繝ｳ繝峨・繧､繝ｳ繝医ｒ蜿門ｾ・
@@ -91,10 +91,10 @@ void XAudioCore::Initialize() {
 			// 蜿門ｾ励＠縺溘・繝ｭ繝代ユ繧｣蛟､繧定｡ｨ遉ｺ
 			if (varName.vt == VT_LPWSTR) // 蛟､縺ｮ蝙九′繝ｯ繧､繝画枚蟄怜・縺狗｢ｺ隱・
 			{
-				DebugLog("ActiveAudioDeviceName: " + ConvertString(varName.pwszVal));
+				QFE_LOG("ActiveAudioDeviceName: " + ConvertString(varName.pwszVal));
 			} else
 			{
-				DebugLog("ActiveAudioDeviceName = Unknown format");
+				QFE_LOG("ActiveAudioDeviceName = Unknown format");
 			}
 
 			// PROPVARIANT 縺ｮ隗｣謾ｾ

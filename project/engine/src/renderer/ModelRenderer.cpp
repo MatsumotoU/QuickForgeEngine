@@ -32,7 +32,7 @@ namespace QFE {
 				const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(modelHandle);
 				if(modelDataPtr == nullptr) {
 #ifdef QFE_OPTIMIZE_OFF
-					DebugLog(std::string("Error: ModelRenderData is nullptr for modelHandle ") + std::to_string(modelHandle));
+					QFE_LOG(std::string("Error: ModelRenderData is nullptr for modelHandle ") + std::to_string(modelHandle));
 #endif // QFE_OPTIMIZE_OFF
 					return;
 				}

@@ -25,13 +25,13 @@ uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
 	AudioData soundData;
 	try{
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("LoadSoundData: " + filePath);
+		QFE_LOG("LoadSoundData: " + filePath);
 #endif // QFE_OPTIMIZE_OFF
 		soundData = Multiaudioloader::LoadAudioData(filePath);
 	}
 	catch (const std::exception& e){
 #ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Faild LoadSoundData: " + filePath);
+		QFE_LOG("Faild LoadSoundData: " + filePath);
 #endif // QFE_OPTIMIZE_OFF
 		e;
 		return 0;
@@ -45,7 +45,7 @@ uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
 
 AudioData& AudioSourceManager::GetSoundData(uint32_t handle) {
 #ifdef QFE_OPTIMIZE_OFF
-	DebugLog("GetSoundData: " + std::to_string(handle));
+	QFE_LOG("GetSoundData: " + std::to_string(handle));
 #endif // QFE_OPTIMIZE_OFF
 	if (audioDataMap_.find(handle) == audioDataMap_.end()) {
 		assert(false && "Invalid handle");
