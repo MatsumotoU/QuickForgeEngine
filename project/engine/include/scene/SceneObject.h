@@ -71,6 +71,9 @@ namespace QFE {
 		CsharpScriptExecutor* GetCsharpScriptExecutor() override { return &csharpScriptExecutor_; }
 
 	private:
+		/// baseNameに（数字）を付与して、シーン内で一意な名前を生成する
+		std::string CheckUniqueEntityName(const std::string& baseName) const;
+
 		SceneEntityCommandInvoker frameStartCommandInvoker_;
 		SceneEntityCommandInvoker updateCommandInvoker_;
 		SceneEntityCommandInvoker preDrawCommandInvoker_;
