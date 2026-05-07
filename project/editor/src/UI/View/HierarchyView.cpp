@@ -127,18 +127,20 @@ namespace QFE {
 		QFE::IEngineBridge* bridge = QFE::BRIDGE::GetBridge();
 		if (!bridge) return;
 
-		auto entityIds = bridge->GetAllEntityIds();
+		// EntityIDを昇順で取得
+		std::vector<uint32_t> entityIds = bridge->GetAllEntityIds();
+		std::sort(entityIds.begin(), entityIds.end());
+
+		// EntityIDをドラッグ＆ドロップして親子関係を設定できるようにする
 		for (uint32_t id : entityIds) {
 			bool isSelected = (selectedEntityId_ == id);
 			std::string name = bridge->GetEntityName(id);
 			std::string label = name + "##" + std::to_string(id);
 
 			// デバッグカメラは表示しない
-#ifdef QFE_OPTIMIZE_OFF
 			if (id == bridge->GetDebugCameraEntityId()) {
 				continue;
 			}
-#endif // _DEBUG
 
 			// ドラッグソース
 			ImGui::PushID(id);
