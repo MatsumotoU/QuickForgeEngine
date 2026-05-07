@@ -129,7 +129,6 @@ namespace QFE {
 
 		// EntityIDを昇順で取得
 		std::vector<uint32_t> entityIds = bridge->GetAllEntityIds();
-		std::sort(entityIds.begin(), entityIds.end());
 
 		// EntityIDをドラッグ＆ドロップして親子関係を設定できるようにする
 		for (uint32_t id : entityIds) {

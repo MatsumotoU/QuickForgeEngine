@@ -146,7 +146,9 @@ namespace QFE {
 		}
 		/// @brief アクティブなエンティティID群を取得
 		std::vector<uint32_t> GetActiveEntityIds() const {
-			return std::vector<uint32_t>(activeEntityIds_.begin(), activeEntityIds_.end());
+			std::vector<uint32_t> sortedIds(activeEntityIds_.begin(), activeEntityIds_.end());
+			std::sort(sortedIds.begin(), sortedIds.end());
+			return sortedIds;
 		}
 	};
 
