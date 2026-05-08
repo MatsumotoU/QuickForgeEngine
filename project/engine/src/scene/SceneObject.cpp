@@ -301,7 +301,7 @@ void SceneObject::AddEmptyObject() {
 	uint32_t entityId = entityManager_.CreateEntity();
 	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
-	sceneObjectData.name = "EmptyObject";
+	sceneObjectData.name = CheckUniqueEntityName("EmptyObject");
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
@@ -323,7 +323,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
 	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
-	sceneObjectData.name = modelName + "_ParticleEmitter";
+	sceneObjectData.name = CheckUniqueEntityName(modelName + "_ParticleEmitter");
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
@@ -338,7 +338,7 @@ void SceneObject::AddModel(const std::string& modelName) {
 	entityManager_.EmplaceComponent<ModelHandle>(entityId, modelHandle);
 	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
-	sceneObjectData.name = modelName;
+	sceneObjectData.name = CheckUniqueEntityName(modelName);
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
@@ -396,7 +396,7 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
 	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 	SceneObjectData sceneObjectData;
-	sceneObjectData.name = spriteName;
+	sceneObjectData.name = CheckUniqueEntityName(spriteName);
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
@@ -450,9 +450,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	std::ifstream ifs(sceneFilePath + entityName);
 	if (!ifs.is_open()) {
 		std::string errorMsg = "FaildOpenFile: " + sceneFilePath + entityName;
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(errorMsg, LogLevel::Error);
-#endif // QFE_OPTIMIZE_OFF
 		assert(false && "Faild Open Entity File.");
 	}
 	nlohmann::json sceneJson;
@@ -716,4 +714,59 @@ uint32_t SceneObject::GetEntityByUniqueID(uint32_t uniqueId) const {
 	}
 	assert(false && "Entity Not Found");
 	return 0;
+}
+
+std::string QFE::SceneObject::CheckUniqueEntityName(const std::string& baseName) const
+{
+	QFE_LOG("CheckUniqueEntityName: " + baseName);
+	std::unordered_set<std::string> existingNames;
+	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
+
+	// 既存のエンティティ名をセットに収集
+	for (auto entityId : entities) {
+		if (entityManager_.HasComponent<SceneObjectData>(entityId)) {
+			const SceneObjectData& sceneObjectData = entityManager_.GetComponent<SceneObjectData>(entityId);
+			existingNames.insert(sceneObjectData.name);
+			QFE_LOG("Existing entity name: " + sceneObjectData.name);
+		}
+	}
+
+	// baseNameから末尾の " (数字)" を抽出して分離する
+	std::string prefix = baseName;
+	int counter = 0;
+
+	// ')' で終わり、かつ ' (' が存在するかチェック
+	if (baseName.size() > 3 && baseName.back() == ')') {
+		size_t openParen = baseName.find_last_of('(');
+		if (openParen != std::string::npos && openParen > 0 && baseName[openParen - 1] == ' ') {
+			// カッコの中身がすべて数字かチェック
+			std::string numStr = baseName.substr(openParen + 1, baseName.size() - openParen - 2);
+			bool isNumber = !numStr.empty() && std::all_of(numStr.begin(), numStr.end(), ::isdigit);
+
+			if (isNumber) {
+				prefix = baseName.substr(0, openParen - 1);
+				counter = std::stoi(numStr);
+			}
+		}
+	}
+
+	// 抽出されたprefixに対して、重複しない名前を探す
+	std::string uniqueName = baseName;
+
+	// 初回の counter == 0 (サフィックスなし) かつ、被りがない場合はそのまま
+	if (counter == 0 && existingNames.find(uniqueName) == existingNames.end()) {
+		return uniqueName;
+	}
+
+	// 被りがある、もしくはすでに連番が付いていた場合はループで探す
+	// 既に被っている場合は counter を 1 または次の数から開始
+	if (counter == 0) counter = 1;
+
+	while (existingNames.find(uniqueName) != existingNames.end()) {
+		uniqueName = prefix + " (" + std::to_string(counter) + ")";
+		counter++;
+	}
+
+	QFE_LOG("Unique name found: " + uniqueName);
+	return uniqueName;
 }
