@@ -3,7 +3,7 @@
 #include <mono/metadata/assembly.h>
 #include <vector>
 #include <string>
-#include "engine/include/core/Memory/SafeVector.h"
+#include "engine/include/utility/memory/SparseSets.h"
 
 namespace QFE {
 
@@ -55,7 +55,7 @@ namespace QFE {
 		std::vector<std::string> GetAvailableScriptClasses() const;
 
 		/// @brief スクリプト数を取得
-		int GetScriptCount() const { return static_cast<int>(scripts_.size()); }
+		int GetScriptCount() const { return static_cast<int>(scriptInstances_.size()); }
 
 		/// @brief アセンブリをリロード
 		void ReloadAssembly();
@@ -64,7 +64,7 @@ namespace QFE {
 		EntityManager* entityManager_ = nullptr;
 		MonoDomain* domain_ = nullptr;  // このシーン専用のAppDomain
 		MonoAssembly* assembly_ = nullptr;
-		SafeVector<MonoObject*> scripts_;
+		SparseSet<MonoObject*> scriptInstances_; 
 
 		/// @brief アセンブリをロード
 		void LoadAssembly();

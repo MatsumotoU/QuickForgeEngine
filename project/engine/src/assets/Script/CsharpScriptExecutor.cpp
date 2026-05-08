@@ -193,10 +193,10 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 		}
 	}
 
-	scripts_.push_back(instance);
-	QFE_LOG(std::format("Created C# script instance: {} (index: {})", className, scripts_.size() - 1));
+	uint32_t index = scriptInstances_.push_back(instance);
+	QFE_LOG(std::format("Created C# script instance: {} (index: {})", className, index));
 
-	return static_cast<uint32_t>(scripts_.size()) - 1;
+	return index;
 }
 
 void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& className) {
@@ -221,28 +221,28 @@ void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& classNam
 	}
 	MonoObject* instance = mono_object_new(domain_, monoClass);
 	mono_runtime_object_init(instance);
-	scripts_.push_back(instance);
+	uint32_t index = scriptInstances_.push_back(instance);
 
-	QFE_LOG(std::format("Create Instance index: {}", static_cast<uint32_t>(scripts_.size()) - 1));
+	QFE_LOG(std::format("Create Instance index: {}", index));
 	return;
 }
 
 void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
-	if (index >= scripts_.size()) {
-		QFE_LOG("Invalid script index: " + std::to_string(index), LogLevel::Error);
+	if (!scriptInstances_.Contains(index)) {
+		QFE_LOG("Script instance at index " + std::to_string(index) + " does not exist.", LogLevel::Warning);
 		return;
 	}
-	scripts_.erase(static_cast<size_t>(index));
+	scriptInstances_.erase(index);
 	QFE_LOG("Deleted script instance at index: " + std::to_string(index));
 }
 
 void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& functionName) {
-	if (index >= scripts_.size()) {
-		QFE_LOG("Invalid script index: " + std::to_string(index), LogLevel::Error);
+	if (!scriptInstances_.Contains(index)) {
+		QFE_LOG("Script instance at index " + std::to_string(index) + " does not exist.", LogLevel::Warning);
 		return;
 	}
 
-	MonoObject* scriptInstance = scripts_.at(index);
+	MonoObject* scriptInstance = scriptInstances_.at(index);
 	MonoClass* monoClass = mono_object_get_class(scriptInstance);
 	MonoMethod* method = mono_class_get_method_from_name(monoClass, functionName.c_str(), 0);
 
@@ -265,19 +265,20 @@ void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& 
 }
 
 void CsharpScriptExecutor::RunAllScriptsFunction(const std::string& functionName) {
-	for (size_t i = 0; i < scripts_.size(); ++i) {
-		RunScriptFunction(static_cast<uint32_t>(i), functionName);
-	}
+	std::vector<uint32_t> indices = scriptInstances_.Keys();
+	for (uint32_t index : indices) {
+		RunScriptFunction(index, functionName);
+	}	
 }
 
 void CsharpScriptExecutor::ResetScripts() {
-	scripts_.clear();
+	scriptInstances_.clear();
 	QFE_LOG("All C# scripts reset.");
 }
 
 void CsharpScriptExecutor::ReloadAssembly() {
 	// スクリプトインスタンスをクリア
-	scripts_.clear();
+	scriptInstances_.clear();
 	assembly_ = nullptr;
 
 	// 既存のドメインをアンロード
@@ -310,7 +311,7 @@ void CsharpScriptExecutor::ReloadAssembly() {
 }
 
 void CsharpScriptExecutor::Finalize() {
-	scripts_.clear();
+	scriptInstances_.clear();
 	assembly_ = nullptr;
 
 	if (domain_) {

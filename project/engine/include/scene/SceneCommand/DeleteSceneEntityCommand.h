@@ -1,12 +1,14 @@
 #pragma once
 #include "ISceneEntityCommand.h"
+#include "engine/include/assets/Script/CsharpScriptExecutor.h"
 #include <nlohmann/json.hpp>
+
 namespace QFE {
 	class DeleteSceneEntityCommand final : public ISceneEntityCommand {
 	public:
 		DeleteSceneEntityCommand() = delete;
 		/// 必ずシーン始めにコマンドを生成すること
-		explicit DeleteSceneEntityCommand(EntityManager& entityManager, uint32_t entityId);
+		explicit DeleteSceneEntityCommand(EntityManager& entityManager, CsharpScriptExecutor& scriptExecutor, uint32_t entityId);
 		~DeleteSceneEntityCommand() override = default;
 
 		/// 指定されたエンティティをシーンから削除する
@@ -18,5 +20,6 @@ namespace QFE {
 	private:
 		uint32_t entityId_;
 		nlohmann::json serializedEntityJson_;
+		CsharpScriptExecutor& scriptExecutor_;
 	};
 }
