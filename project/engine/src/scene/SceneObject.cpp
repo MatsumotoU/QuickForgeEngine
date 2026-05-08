@@ -76,6 +76,8 @@ void SceneObject::Initialize() {
 	preDrawCommandInvoker_.ClearCommands();
 	drawCommandInvoker_.ClearCommands();
 	postDrawCommandInvoker_.ClearCommands();
+
+	loadEntitiesBinary_.clear();
 }
 
 void SceneObject::Update() {
@@ -85,6 +87,9 @@ void SceneObject::Update() {
 	if (isRunningScript_ && !isPauseScript_) {
 		csharpScriptExecutor_.RunAllScriptsFunction("Update");
 		PhysicsManager::GetInstance()->Update();
+	} else {
+		// ランタイム出ない場合はassetManagerのキャッシュをクリアし続ける（ランタイム中はシーンのロードやエンティティの追加・削除が頻繁に行われるため、キャッシュを使用しない）
+		assetManager_->ResetCache();
 	}
 
 	// 当たり判定更新
@@ -167,9 +172,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 		sceneNameCopy += ".json";
 	}
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("LoadScene: " + sceneNameCopy);
-#endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
 	// GPUバッファの解放
 	assetManager->GetGpuBufferPool()->ReleaseAllConstantBuffers();
@@ -182,9 +185,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Scenes");
 	std::ifstream ifs(sceneFilePath + sceneNameCopy);
 	if (!ifs.is_open()) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Faild load scene: " + sceneNameCopy, LogLevel::Error);
-#endif // QFE_OPTIMIZE_OFF
 		CameraManager::GetInstance()->Initialize();
 		return;
 	}
@@ -221,9 +222,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 }
 
 void SceneObject::SaveScene(const std::string& sceneName) {
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("SaveScene: " + sceneName);
-#endif // QFE_OPTIMIZE_OFF
 	AssetManager* assetManager = AssetManager::GetInstance();
 
 	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
@@ -265,10 +264,13 @@ void QFE::SceneObject::SaveSceneBinary(const std::string& sceneName) {
 
 void SceneObject::ResetScene() {
 	uniqueIdManager_.Reset();
+	loadEntitiesBinary_.clear();
 }
 
 void SceneObject::RunScene() {
 	if (!isRunningScript_) {
+		loadEntitiesBinary_.clear();
+
 #ifdef QFE_OPTIMIZE_OFF
 		MyDebugLog::GetInstance()->DebugLogClear();
 		MyDebugLog::GetInstance()->scriptLogs_.clear();
@@ -429,21 +431,23 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 	}
 }
 
-uint32_t SceneObject::AddEntity(const std::string& entityName) {
-	AssetManager* assetManager = AssetManager::GetInstance();
-#ifdef QFE_OPTIMIZE_OFF
-	QFE_LOG("AddEntity: " + entityName);
-#endif // QFE_OPTIMIZE_OFF
+uint32_t SceneObject::AddEntity(const std::string& entityName, bool useCache) {
+	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-	// リリースビルド時はキャッシュからEntityを読み込む
-#ifdef _NODEBUG
-	if (loadEntities_.find(entityName) != loadEntities_.end()) {
-		// Entity邵ｺ・ｮ騾墓ｻ薙・
-		uint32_t entityId = entityManager_.CreateEntity();
-		DeserializeEntity(entityId, loadEntities_[entityName]);
-		return entityId;
+	AssetManager* assetManager = AssetManager::GetInstance();
+	QFE_LOG("AddEntity: " + entityName);
+
+	// キャッシュからEntityを読み込む
+	if (useCache) {
+		if (loadEntitiesBinary_.find(entityName) != loadEntitiesBinary_.end()) {
+			uint32_t entityId = entityManager_.CreateEntity();
+			DeserializeEntity(entityId, nlohmann::json::from_bson(loadEntitiesBinary_[entityName]));
+			QFE_LOG("Loaded Entity from cache: " + entityName);
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			QFE_LOG("AddEntity Time (Cache): " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
+			return entityId;
+		}
 	}
-#endif // _NODEBUG
 
 	// Entityの読み込み
 	std::string sceneFilePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
@@ -458,17 +462,22 @@ uint32_t SceneObject::AddEntity(const std::string& entityName) {
 	ifs.close();
 
 	// キャッシュに保存
-#ifdef _NODEBUG
-	loadEntities_[entityName] = sceneJson;
-#endif
+	if (useCache) {
+		loadEntitiesBinary_[entityName] = nlohmann::json::to_bson(sceneJson);
+	}
+	
 	uint32_t entityId = entityManager_.CreateEntity();
 	DeserializeEntity(entityId, sceneJson);
+	QFE_LOG("AddEntity: " + entityName + " (ID: " + std::to_string(entityId) + ")");
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	QFE_LOG("AddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
 	return entityId;
 }
 
 uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-	uint32_t entityId = AddEntity(entityName);
+	uint32_t entityId = AddEntity(entityName,true)
+		;
 
 	if (entityManager_.HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
 		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
@@ -489,9 +498,9 @@ void SceneObject::DeleteEntity(uint32_t entityId) {
 }
 
 void SceneObject::CopyEntity(uint32_t sourceEntityId) {
-
 	if (!entityManager_.IsActiveEntity(sourceEntityId)) {
 		assert(false && "Entity is not active");
+		QFE_LOG("CopyEntity failed: Entity " + std::to_string(sourceEntityId) + " is not active", LogLevel::Error);
 		return;
 	}
 	nlohmann::json entityJson;
@@ -505,9 +514,7 @@ void SceneObject::ChangeEntityModel(uint32_t entityId, const std::string& modelN
 
 	// EntityがModelRenderDataを持っていない場合は処理しない
 	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("ChangeModel entity does not have ModelRenderData", LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 
@@ -617,73 +624,110 @@ void SceneObject::SerializeEntity(uint32_t entityId, nlohmann::json& entityJson)
 }
 
 void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& entityJson) {
+	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
 	usedEntityId_.insert(entityId);
 
 	if (entityJson.contains("SpriteData")) {
+		std::chrono::steady_clock::time_point spriteStart = std::chrono::steady_clock::now();
 		SpriteData spriteData;
 		spriteData.Deserialize(entityJson["SpriteData"]);
 		AddSprite(spriteData.textureName, spriteData.width, spriteData.height, static_cast<int>(entityId), static_cast<int>(spriteData.layer), spriteData.pivot);
+		std::chrono::steady_clock::time_point spriteEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize SpriteData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(spriteEnd - spriteStart).count()) + " ms");
 	}
 	if (entityJson.contains("Transform")) {
+		std::chrono::steady_clock::time_point transformStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<Transform>(entityId);
 		Transform& transform = entityManager_.GetComponent<Transform>(entityId);
 		transform.Deserialize(entityJson["Transform"]);
+		std::chrono::steady_clock::time_point transformEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize Transform Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(transformEnd - transformStart).count()) + " ms");
 	}
 	if (entityJson.contains("ParentData")) {
+		std::chrono::steady_clock::time_point parentDataStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<ParentData>(entityId);
 		ParentData& parentData = entityManager_.GetComponent<ParentData>(entityId);
 		parentData.Deserialize(entityJson["ParentData"]);
+		std::chrono::steady_clock::time_point parentDataEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize ParentData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(parentDataEnd - parentDataStart).count()) + " ms");
 	}
 	if (entityJson.contains("CameraData")) {
+		std::chrono::steady_clock::time_point cameraDataStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<CameraData>(entityId);
 		CameraData& cameraData = entityManager_.GetComponent<CameraData>(entityId);
 		cameraData.Deserialize(entityJson["CameraData"]);
+		std::chrono::steady_clock::time_point cameraDataEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize CameraData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(cameraDataEnd - cameraDataStart).count()) + " ms");
 	}
 	if (entityJson.contains("BillboardComponent")) {
+		std::chrono::steady_clock::time_point billboardStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<Component::BillboardComponent>(entityId);
 		Component::BillboardComponent& billboardComponent = entityManager_.GetComponent<Component::BillboardComponent>(entityId);
 		billboardComponent.Deserialize(entityJson["BillboardComponent"]);
+		std::chrono::steady_clock::time_point billboardEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize BillboardComponent Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(billboardEnd - billboardStart).count()) + " ms");
 	}
 	if (entityJson.contains("ModelHandle")) {
+		std::chrono::steady_clock::time_point modelHandleStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<ModelHandle>(entityId);
 		ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
 		modelHandle.Deserialize(entityJson["ModelHandle"]);
+		std::chrono::steady_clock::time_point modelHandleEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize ModelHandle Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(modelHandleEnd - modelHandleStart).count()) + " ms");
 	}
 	if (entityJson.contains("SceneObjectData")) {
+		std::chrono::steady_clock::time_point sceneObjectDataStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<SceneObjectData>(entityId);
 		SceneObjectData& sceneObjectData = entityManager_.GetComponent<SceneObjectData>(entityId);
 		sceneObjectData.Deserialize(entityJson["SceneObjectData"]);
 		uniqueIdManager_.AddUsedID(sceneObjectData.uniqueId);
+		std::chrono::steady_clock::time_point sceneObjectDataEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize SceneObjectData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(sceneObjectDataEnd - sceneObjectDataStart).count()) + " ms");
 	}
 	if (entityJson.contains("Force")) {
+		std::chrono::steady_clock::time_point forceStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<Force>(entityId);
 		Force& force = entityManager_.GetComponent<Force>(entityId);
 		force.Deserialize(entityJson["Force"]);
+		std::chrono::steady_clock::time_point forceEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize Force Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(forceEnd - forceStart).count()) + " ms");
 	}
 	if (entityJson.contains("SphereColliderData")) {
+		std::chrono::steady_clock::time_point sphereColliderStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<SphereColliderData>(entityId);
 		SphereColliderData& sphereColliderData = entityManager_.GetComponent<SphereColliderData>(entityId);
 		sphereColliderData.Deserialize(entityJson["SphereColliderData"]);
+		std::chrono::steady_clock::time_point sphereColliderEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize SphereColliderData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(sphereColliderEnd - sphereColliderStart).count()) + " ms");
 	}
 	if (entityJson.contains("AABBColliderData")) {
+		std::chrono::steady_clock::time_point aabbColliderStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<AABBColliderData>(entityId);
 		AABBColliderData& aabbColliderData = entityManager_.GetComponent<AABBColliderData>(entityId);
 		aabbColliderData.Deserialize(entityJson["AABBColliderData"]);
+		std::chrono::steady_clock::time_point aabbColliderEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize AABBColliderData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(aabbColliderEnd - aabbColliderStart).count()) + " ms");
 	}
 	if (entityJson.contains("CsharpComponent")) {
+		std::chrono::steady_clock::time_point csharpComponentStart = std::chrono::steady_clock::now();
 		std::vector<std::string> classNames;
 		if (entityJson["CsharpComponent"].contains("CsharpHandles")) {
 			//　CsharpHandleからクラス名を取得してスクリプトを追加
 			for (const auto& handle : entityJson["CsharpComponent"]["CsharpHandles"]) {
 				if (handle.contains("ClassName")) {
-#ifdef QFE_OPTIMIZE_OFF
 					QFE_LOG("Load Csharp Script: " + handle["ClassName"].get<std::string>());
-#endif // QFE_OPTIMIZE_OFF
 					AddCsharpScript(entityId, handle["ClassName"].get<std::string>());
 				}
 			}
 		}
+		std::chrono::steady_clock::time_point csharpComponentEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize CsharpComponent Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(csharpComponentEnd - csharpComponentStart).count()) + " ms");
 	}
+
+	QFE_LOG("DeserializeEntity: Entity ID " + std::to_string(entityId) + " deserialized.");
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	QFE_LOG("DeserializeEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
 }
 
 uint32_t SceneObject::GetEntityByName(const std::string& entityName) const {
@@ -719,6 +763,8 @@ uint32_t SceneObject::GetEntityByUniqueID(uint32_t uniqueId) const {
 
 std::string QFE::SceneObject::CheckUniqueEntityName(const std::string& baseName) const
 {
+	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
 	QFE_LOG("CheckUniqueEntityName: " + baseName);
 	std::unordered_set<std::string> existingNames;
 	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
@@ -769,5 +815,7 @@ std::string QFE::SceneObject::CheckUniqueEntityName(const std::string& baseName)
 	}
 
 	QFE_LOG("Unique name found: " + uniqueName);
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	QFE_LOG("CheckUniqueEntityName Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
 	return uniqueName;
 }

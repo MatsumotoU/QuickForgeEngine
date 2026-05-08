@@ -98,7 +98,7 @@ namespace QFE {
 		/** @brief C#スクリプトを追加 */
 		void AddCsharpScript(uint32_t entityId, const std::string& className);
 		/** @brief エンティティを追加 */
-		uint32_t AddEntity(const std::string& entityName);
+		uint32_t AddEntity(const std::string& entityName,bool useCache = false);
 		/** @brief 実行時にエンティティを追加 */
 		uint32_t RunTimeAddEntity(const std::string& entityName);
 

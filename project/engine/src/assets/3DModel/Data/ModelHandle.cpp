@@ -20,7 +20,7 @@ nlohmann::json ModelHandle::Serialize() const {
 void ModelHandle::Deserialize(const nlohmann::json& json) {
 	if (json.contains("modelName") && json["modelName"].is_string()) {
 		modelName = json["modelName"].get<std::string>();
-		handle = AssetManager::GetInstance()->LoadModel(modelName);
+		handle = AssetManager::GetInstance()->LoadModel(modelName, true);
 
 		if (json.contains("color") && json["color"].is_array() && json["color"].size() == 4) {
 			AssetManager* assetManager = AssetManager::GetInstance();
