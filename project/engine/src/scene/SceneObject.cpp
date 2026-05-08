@@ -484,7 +484,8 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 }
 
 void SceneObject::DeleteEntity(uint32_t entityId) {
-	frameStartCommandInvoker_.AddSystemCommand(std::make_unique<DeleteSceneEntityCommand>(*(GetEntityManager()), entityId));
+	frameStartCommandInvoker_.AddSystemCommand(
+		std::make_unique<DeleteSceneEntityCommand>(entityManager_,csharpScriptExecutor_, entityId));
 }
 
 void SceneObject::CopyEntity(uint32_t sourceEntityId) {
