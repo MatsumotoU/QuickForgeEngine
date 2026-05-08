@@ -403,8 +403,6 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 }
 
 void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& className) {
-
-
 	if (!entityManager_.HasComponent<CsharpComponent>(entityId)) {
 		CsharpComponent csharpComponent;
 		CsharpHandle csharpHandle;
@@ -688,18 +686,19 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 }
 
 uint32_t SceneObject::GetEntityByName(const std::string& entityName) const {
-
 	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
 	for (auto entityId : entities) {
 		if (entityManager_.HasComponent<SceneObjectData>(entityId)) {
 			const SceneObjectData& sceneObjectData = entityManager_.GetComponent<SceneObjectData>(entityId);
 			if (sceneObjectData.name == entityName) {
+				QFE_LOG("GetEntityByName: Entity with name \"" + entityName + "\" found. Entity ID: " + std::to_string(entityId));
 				return entityId;
 			}
 		}
 	}
 	assert(false && "Entity Not Found");
-	return 0;
+	QFE_LOG("GetEntityByName: Entity with name \"" + entityName + "\" not found.", LogLevel::Error);
+	return UINT32_MAX;
 }
 
 uint32_t SceneObject::GetEntityByUniqueID(uint32_t uniqueId) const {

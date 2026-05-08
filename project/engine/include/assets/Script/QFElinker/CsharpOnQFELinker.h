@@ -40,11 +40,12 @@ namespace QFE::CsharpOnQFELinker {
 	extern void StopSound(uint32_t playHandle);
 
 	// SceneObject
-	extern uint32_t GetEntity(MonoString* entityName);
+	extern uint32_t GetEntityFromName(MonoString* entityName);
 	extern uint32_t CreateEntity(MonoString* entityName);
 	extern void LoadScene(MonoString* sceneName);
     extern void ChangeModel(uint32_t entityId, MonoString* modelName);
     extern void ChangeMesh(uint32_t entityId, MonoString* meshName);
+	extern void DeleteEntity(uint32_t entityId);
 
 	// debug
     extern void Native_Debug_Log(MonoString* message);

@@ -151,8 +151,7 @@ void QFE::CsharpOnQFELinker::StopSound(uint32_t playHandle) {
 	AudioInterface::GetInstance()->StopSound(playHandle);
 }
 
-uint32_t QFE::CsharpOnQFELinker::GetEntity(MonoString* entityName)
-{
+uint32_t QFE::CsharpOnQFELinker::GetEntityFromName(MonoString* entityName) {
 	std::string utf8_entityName = mono_string_to_utf8(entityName);
 	uint32_t entityId = SceneManager::GetInstance()->GetEntityByName(utf8_entityName.c_str());
 	return entityId;
@@ -195,6 +194,10 @@ void QFE::CsharpOnQFELinker::ChangeMesh(uint32_t entityId, MonoString* meshName)
 	char* utf8_meshName = mono_string_to_utf8(meshName);
 	modelData->meshRenderDataHandles[0].vertexBufferHandle = assetManager->LoadModelMesh(utf8_meshName);
 	mono_free(utf8_meshName);
+}
+
+void QFE::CsharpOnQFELinker::DeleteEntity(uint32_t entityId) {
+	SceneManager::GetInstance()->DeleteEntity(entityId);
 }
 
 void QFE::CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {
