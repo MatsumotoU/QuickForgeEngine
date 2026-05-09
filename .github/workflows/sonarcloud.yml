@@ -40,13 +40,25 @@ jobs:
 
       - name: SonarCloud Begin
         run: |
-          dotnet-sonarscanner begin /k:"MatsumotoU_QuickForgeEngine" /o:"matsumotou" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
-
+          dotnet-sonarscanner begin `
+            /k:"MatsumotoU_QuickForgeEngin" `
+            /o:"matsumotou" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /d:sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" `
+            /d:sonar.verbose=true
+            
       - name: Build with Wrapper
         run: |
-          ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} msbuild ${{ env.SOLUTION_FILE_PATH }} /t:Rebuild /p:Platform=x64 /p:Configuration=${{ env.CONFIGURATION }}
-
+          ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} `
+          msbuild project/QuickForgeEngine.sln `
+            /t:Rebuild `
+            /p:Platform=x64 `
+            /p:Configuration=${{ env.CONFIGURATION }} `
+            /verbosity:detailed
+            
       - name: SonarCloud End
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        run: |
+          dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.verbose=true
