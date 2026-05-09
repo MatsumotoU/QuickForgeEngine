@@ -26,7 +26,8 @@ jobs:
       - name: Install Build Wrapper
         shell: powershell
         run: |
-          curl -sSLo build-wrapper-win-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
+          curl.exe -sSLo build-wrapper-win-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
+          if (Test-Path build-wrapper-win-x86) { Remove-Item -Recurse -Force build-wrapper-win-x86 }
           Expand-Archive -Path build-wrapper-win-x86.zip -DestinationPath .
 
       - name: Run Premake
