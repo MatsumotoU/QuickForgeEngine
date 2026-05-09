@@ -5,6 +5,7 @@
 #include <chrono>
 #include <source_location>
 #include <vector>
+#include <deque>
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
@@ -12,7 +13,7 @@
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 
 namespace QFE {
-
+	// ログの種類を表す列挙型.
 	enum class LogLevel {
 		EngineInfo,
 		EditorInfo,
@@ -37,6 +38,8 @@ namespace QFE {
 		const std::vector<std::string>* GetLog();
 		/// @brief 一時的な分類わけされたログを放棄します
 		void DebugLogClear();
+		/// @brief ログの場所ごとに分類されたログを放棄します
+		void ClearLocationLogs();
 
 		// 分類わけされたログ
 		std::vector<std::string> engineLog_;
@@ -46,13 +49,15 @@ namespace QFE {
 
 		// Luaスクリプト別ログ
 		std::unordered_map<uint32_t, std::unordered_map<std::string, std::vector<std::string>>> scriptLogs_;
+
+		// ログの場所ごとに分類されたログ.クラス,関数で分類される.
+		std::unordered_map<std::string, std::unordered_map<std::string, std::deque<std::string>>> locationLogMap_;
 	private:
 		~MyDebugLog() override = default;
 
 		std::ofstream logStream_;
 		std::string logFilePath_;
 		std::vector<std::string> log_;
-
 	};
 
 	/// @brief ログを出力する関数. 最適化オフのときのみ有効.

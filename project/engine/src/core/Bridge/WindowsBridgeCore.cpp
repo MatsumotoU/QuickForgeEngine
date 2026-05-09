@@ -474,9 +474,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::AddCameraEntity() {
-#ifdef QFE_OPTIMIZE_OFF
-		DebugLog("Can not add Camera.");
-#endif
+		QFE_LOG("Can not add Camera.");
 	}
 
 	void WindowsBridgeCore::CopyEntity(uint32_t entityId) {
@@ -516,12 +514,19 @@ namespace QFE {
 
 	uint32_t WindowsBridgeCore::GetDebugCameraEntityId() {
 		if (!CameraManager::GetInstance()) {
-#ifdef QFE_OPTIMIZE_OFF
-			DebugLog("CameraManager is not initialized.");
-#endif
+			QFE_LOG("CameraManager is not initialized.");
 			return UINT32_MAX;
 		}
 		return CameraManager::GetInstance()->GetCamera(0).GetBindEntityId();
+	}
+
+	void WindowsBridgeCore::ClearRuntimeDebugLogs()
+	{
+#ifdef QFE_OPTIMIZE_OFF
+		QFE_LOG("Clearing runtime debug logs...");
+		MyDebugLog::GetInstance()->DebugLogClear();
+		MyDebugLog::GetInstance()->ClearLocationLogs();
+#endif
 	}
 
 }

@@ -82,6 +82,7 @@ namespace QFE {
 
 		// デバッグ用の関数群
 		virtual uint32_t GetDebugCameraEntityId() override;
+		virtual void ClearRuntimeDebugLogs() override;
 	private:
 		WindowsEngineCore* engineCore_ = nullptr;
 	};
