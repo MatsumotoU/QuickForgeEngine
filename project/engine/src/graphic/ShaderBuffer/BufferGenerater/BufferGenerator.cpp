@@ -1,7 +1,10 @@
 #include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 #include <cassert>
+
+#include <format>
+#include "engine/include/core/EngineDefines.h"
+
 #ifdef QFE_OPTIMIZE_OFF
-#include "utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "utility/String/MyString.h"
 #endif // QFE_OPTIMIZE_OFF
 using namespace QFE;
@@ -27,8 +30,6 @@ Microsoft::WRL::ComPtr<ID3D12Resource> BufferGenerator::Generate(ID3D12Device* d
 	hr;
 	assert(SUCCEEDED(hr));
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG(ConvertString(std::format(L"CreateBufferResource Bytes = {}", sizeInBytes)));
-#endif // QFE_OPTIMIZE_OFF
 	return vertexResource;
 }

@@ -1,7 +1,5 @@
 #include "engine/include/core/Thread/ThreadPool.h"
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 QFE::ThreadPool::ThreadPool() {
 	size_t threadCount = std::thread::hardware_concurrency();

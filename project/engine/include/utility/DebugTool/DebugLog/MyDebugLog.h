@@ -61,12 +61,4 @@ namespace QFE {
 
 	/// @brief C#側から呼び出すためのログ出力関数. 最適化オフのときのみ有効.
 	void DebugLogCsharp(const std::string& message);
-
-	// 最適化オフのときのみログを出力するマクロ. 最適化オンのときは何もしない.
-#ifdef QFE_OPTIMIZE_OFF
-#define QFE_LOG(...) DebugLog(__VA_ARGS__)
-#else
-#define QFE_LOG(...) ((void)0)
-#endif
-
 }

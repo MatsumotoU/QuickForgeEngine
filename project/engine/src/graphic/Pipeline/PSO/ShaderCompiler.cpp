@@ -7,9 +7,7 @@
 #include <format>
 
 #include "engine/include/utility/FileSystems/FileUtility.h"
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 #include "engine/include/graphic/Pipeline/PSO/ShaderReflection.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"

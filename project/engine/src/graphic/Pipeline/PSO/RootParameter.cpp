@@ -1,8 +1,9 @@
 #include "engine/include/graphic/Pipeline/PSO/RootParameter.h"
 #include <cassert>
 
+#include "engine/include/core/EngineDefines.h"
+
 #ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/DirectXStructToString.h"
 #endif // QFE_OPTIMIZE_OFF
 using namespace QFE;

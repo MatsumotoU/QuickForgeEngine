@@ -2,9 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif
+
+#include "engine/include/core/EngineDefines.h"
 
 using namespace QFE;
 

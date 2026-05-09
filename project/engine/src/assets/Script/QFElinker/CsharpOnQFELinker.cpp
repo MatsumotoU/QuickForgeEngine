@@ -1,8 +1,6 @@
 #include "engine/include/assets/Script/QFElinker/CsharpOnQFELinker.h"
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"

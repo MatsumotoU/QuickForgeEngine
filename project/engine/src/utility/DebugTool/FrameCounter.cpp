@@ -5,9 +5,7 @@
 #include <timeapi.h>
 #pragma comment(lib,"winmm.lib") 
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 using namespace QFE;
 namespace {
 	const std::chrono::microseconds kMinTime(static_cast<uint64_t>(1000000.0f / 60.0f));

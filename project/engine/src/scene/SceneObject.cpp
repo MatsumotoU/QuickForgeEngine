@@ -32,9 +32,7 @@
 #include "engine/include/renderer/SpriteRenderer.h"
 #include "engine/include/renderer/ParticleRenderer.h"
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 #include "Engine/include/scene/SceneCommand/SceneEntityCommands.h"
 #include "engine/include/scene/SceneObject.h"
@@ -58,6 +56,8 @@ SceneObject::~SceneObject() {
 }
 
 void SceneObject::Initialize() {
+	QFE_PROFILE_SCOPE;
+
 	assetManager_ = AssetManager::GetInstance();
 	assert(assetManager_);
 	isRequestedExit_ = false;
@@ -81,6 +81,8 @@ void SceneObject::Initialize() {
 }
 
 void SceneObject::Update() {
+	QFE_PROFILE_SCOPE;
+
 	frameStartCommandInvoker_.ExecuteCommands();
 
 	// ランタイム中のサブモジュールの更新
@@ -106,6 +108,8 @@ void SceneObject::Update() {
 }
 
 void SceneObject::PreDraw() {
+	QFE_PROFILE_SCOPE;
+
 	// 3Dモデルのカメラ位置更新
 	AssetManager* assetManager = AssetManager::GetInstance();
 	CameraManager* cameraManager = CameraManager::GetInstance();
@@ -134,6 +138,8 @@ void SceneObject::PreDraw() {
 }
 
 void SceneObject::Draw() {
+	QFE_PROFILE_SCOPE;
+
 	// 当たり判定の描画
 	ColliderManager::GetInstance()->Draw();
 
@@ -145,11 +151,15 @@ void SceneObject::Draw() {
 }
 
 void SceneObject::PostDraw() {
+	QFE_PROFILE_SCOPE;
+
 	// 後描画コマンド実行
 	postDrawCommandInvoker_.ExecuteCommands();
 }
 
 void SceneObject::EndFrame() {
+	QFE_PROFILE_SCOPE;
+
 	if (isRequestStopScript_) {
 		if (isRunningScript_) {
 			isRunningScript_ = false;
@@ -161,11 +171,15 @@ void SceneObject::EndFrame() {
 }
 
 void SceneObject::Finalize() {
+	QFE_PROFILE_SCOPE;
+
 	csharpScriptExecutor_.Finalize();
 	entityManager_.ResetEntiry();
 }
 
 void SceneObject::LoadScene(const std::string& sceneName) {
+	QFE_PROFILE_SCOPE;
+
 	std::string sceneNameCopy = sceneName;
 	// jsonファイルでない場合は拡張子を付ける
 	if (!sceneNameCopy.ends_with(".json") && !sceneNameCopy.ends_with(".scene")) {
@@ -222,6 +236,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 }
 
 void SceneObject::SaveScene(const std::string& sceneName) {
+
 	QFE_LOG("SaveScene: " + sceneName);
 	AssetManager* assetManager = AssetManager::GetInstance();
 
@@ -268,6 +283,8 @@ void SceneObject::ResetScene() {
 }
 
 void SceneObject::RunScene() {
+	QFE_PROFILE_SCOPE;
+
 	if (!isRunningScript_) {
 		loadEntitiesBinary_.clear();
 
@@ -293,6 +310,8 @@ void SceneObject::ResumeScene() {
 }
 
 void SceneObject::StopScene() {
+	QFE_PROFILE_SCOPE;
+
 	if (isRequestStopScript_) { return; }
 	isRequestStopScript_ = true;
 	ColliderManager::GetInstance()->isRunning = false;

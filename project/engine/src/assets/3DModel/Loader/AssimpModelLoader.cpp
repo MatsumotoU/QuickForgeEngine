@@ -1,11 +1,8 @@
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 #include <cassert>
-
-#ifdef QFE_OPTIMIZE_OFF
 #include <format>
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
