@@ -139,6 +139,9 @@ void UIManager::Draw() {
 			}
 		} else {
 			if (ImGui::Button(">")) {
+				IEngineBridge* engineBridge = QFE::BRIDGE::GetBridge();
+				engineBridge->ClearRuntimeDebugLogs();
+
 				SceneManager::GetInstance()->StartScript();
 			}
 		}

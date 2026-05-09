@@ -82,5 +82,6 @@ namespace QFE {
 
 		// デバッグ用の関数群
 		virtual uint32_t GetDebugCameraEntityId() = 0;
+		virtual void ClearRuntimeDebugLogs() = 0;
 	};
 }
