@@ -51,9 +51,10 @@ jobs:
             /d:sonar.verbose=true
             
       - name: Build with Wrapper
+        shell: powershell
         run: |
-          ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} `
-          msbuild project/QuickForgeEngine.sln `
+          .\build-wrapper-win-x86\build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} `
+          msbuild .\project\QuickForgeEngine.sln `
             /t:Rebuild `
             /p:Platform=x64 `
             /p:Configuration=${{ env.CONFIGURATION }} `
