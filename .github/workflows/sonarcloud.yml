@@ -23,12 +23,14 @@ jobs:
       - name: Install SonarCloud Scanner
         run: dotnet tool install --global dotnet-sonarscanner
 
-      - name: Install Build Wrapper
-        shell: powershell
+      - name: Build with Wrapper
         run: |
-          curl.exe -sSLo build-wrapper-win-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
-          if (Test-Path build-wrapper-win-x86) { Remove-Item -Recurse -Force build-wrapper-win-x86 }
-          Expand-Archive -Path build-wrapper-win-x86.zip -DestinationPath .
+          ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} `
+          msbuild .\project\QuickForgeEngine.sln `
+            /t:Rebuild `
+            /p:Platform=x64 `
+            /p:Configuration=${{ env.CONFIGURATION }} `
+            /verbosity:detailed
 
       - name: Run Premake
         shell: cmd
