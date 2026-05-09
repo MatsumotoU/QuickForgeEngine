@@ -1,0 +1,51 @@
+name: SonarCloud Analysis
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  SOLUTION_FILE_PATH: project/QuickForgeEngine.sln # Premakeで生成されるパス
+  CONFIGURATION: Development
+  BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory 
+
+jobs:
+  sonarcloud:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: Install SonarCloud Scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Install Build Wrapper
+        shell: powershell
+        run: |
+          curl -sSLo build-wrapper-win-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
+          Expand-Archive -Path build-wrapper-win-x86.zip -DestinationPath .
+
+      - name: Run Premake
+        shell: cmd
+        working-directory: project
+        run: premake5.bat
+
+      - name: Add MSBuild to Path
+        uses: microsoft/setup-msbuild@v2
+
+      - name: SonarCloud Begin
+        run: |
+          dotnet-sonarscanner begin /k:"MatsumotoU_QuickForgeEngine" /o:"matsumotou" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+
+      - name: Build with Wrapper
+        run: |
+          ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} msbuild ${{ env.SOLUTION_FILE_PATH }} /t:Rebuild /p:Platform=x64 /p:Configuration=${{ env.CONFIGURATION }}
+
+      - name: SonarCloud End
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
