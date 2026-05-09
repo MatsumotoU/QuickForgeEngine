@@ -53,7 +53,10 @@ jobs:
       - name: Build with Wrapper
         shell: powershell
         run: |
-          .\build-wrapper-win-x86\build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} `
+          $BW_PATH = (Get-ChildItem -Recurse -Filter "build-wrapper-win-x86-64.exe" | Select-Object -First 1).FullName
+          Write-Host "Found build-wrapper at: $BW_PATH"
+          
+          & $BW_PATH --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} `
           msbuild .\project\QuickForgeEngine.sln `
             /t:Rebuild `
             /p:Platform=x64 `
