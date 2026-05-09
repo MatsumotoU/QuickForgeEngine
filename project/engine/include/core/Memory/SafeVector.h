@@ -4,9 +4,7 @@
 #include <assert.h>
 #include <stdexcept>
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 namespace QFE {
 	/// @brief メモリの連続性とアドレスの不変性を保証するstd::vectorをラップしたクラス

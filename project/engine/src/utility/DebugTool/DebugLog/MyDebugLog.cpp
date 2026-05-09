@@ -1,5 +1,6 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/BuildInfo.h"
+#include "engine/include/core/EngineDefines.h"
 
 #include <cassert>
 

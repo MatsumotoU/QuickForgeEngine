@@ -10,8 +10,9 @@
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/renderer/GraphRenderer.h"
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
+
+#include "engine/include/core/EngineDefines.h"
 
 #include <algorithm>
 

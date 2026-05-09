@@ -14,9 +14,7 @@
 #include <cassert>
 #include <numbers>
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 using namespace QFE::Render;
 
 /** @brief 初期化 */

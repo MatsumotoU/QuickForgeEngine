@@ -13,8 +13,8 @@
 #include "engine/include/Graphic/DirectXCommon/Descriptors/SrvDescriptorHeap.h"
 #include "engine/include/Graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
+#include "engine/include/core/EngineDefines.h"
 #ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInclude.h"
 #endif // QFE_OPTIMIZE_OFF
 

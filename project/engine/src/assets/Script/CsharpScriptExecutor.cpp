@@ -2,9 +2,7 @@
 #include "engine/include/assets/Script/MonoRuntimeManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif
+#include "engine/include/core/EngineDefines.h"
 
 #include <format>
 

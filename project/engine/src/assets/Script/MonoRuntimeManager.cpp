@@ -4,9 +4,7 @@
 #include "engine/include/utility/String/MyString.h"
 #include "engine/include/assets/AssetManager.h"
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif
+#include "engine/include/core/EngineDefines.h"
 
 #include <Windows.h>
 #include <filesystem>

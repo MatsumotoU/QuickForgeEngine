@@ -19,29 +19,32 @@
 #include "engine/include/camera/Data/BillboardComponent.h"
 #include "engine/include/core/Math/ParentData.h"
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif
+#include "engine/include/core/EngineDefines.h"
 
 namespace QFE {
 
 	std::string WindowsBridgeCore::GetModelDirectoryPath() {
+		QFE_PROFILE_SCOPE;
 		return engineCore_->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Model");
 	}
 
 	std::string WindowsBridgeCore::GetImageDirectoryPath() {
+		QFE_PROFILE_SCOPE;
 		return engineCore_->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Image");
 	}
 
 	std::string WindowsBridgeCore::GetEntityTemplateDirectoryPath() {
+		QFE_PROFILE_SCOPE;
 		return engineCore_->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Entities");
 	}
 
 	std::string WindowsBridgeCore::GetScriptDirectoryPath() {
+		QFE_PROFILE_SCOPE;
 		return engineCore_->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
 	}
 
 	std::vector<uint32_t> WindowsBridgeCore::GetAllEntityIds() {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			return sceneManager->GetEntityManager()->GetActiveEntityIds();
@@ -50,6 +53,7 @@ namespace QFE {
 	}
 
 	std::string WindowsBridgeCore::GetEntityName(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			if (sceneManager->GetEntityManager()->HasComponent<SceneObjectData>(entityId)) {
@@ -60,6 +64,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetEntityName(uint32_t entityId, const std::string& name) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			if (sceneManager->GetEntityManager()->HasComponent<SceneObjectData>(entityId)) {
@@ -69,6 +74,7 @@ namespace QFE {
 	}
 
 	std::string WindowsBridgeCore::GetEntityTag(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			if (sceneManager->GetEntityManager()->HasComponent<SceneObjectData>(entityId)) {
@@ -79,6 +85,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetEntityTag(uint32_t entityId, const std::string& tag) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			if (sceneManager->GetEntityManager()->HasComponent<SceneObjectData>(entityId)) {
@@ -88,6 +95,7 @@ namespace QFE {
 	}
 
 	bool WindowsBridgeCore::HasComponent(uint32_t entityId, ComponentType type) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (!sceneManager) return false;
 		EntityManager* em = sceneManager->GetEntityManager();
@@ -109,6 +117,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::AddComponent(uint32_t entityId, ComponentType type) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (!sceneManager) return;
 		EntityManager* em = sceneManager->GetEntityManager();
@@ -125,6 +134,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::RemoveComponent(uint32_t entityId, ComponentType type) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (!sceneManager) return;
 		EntityManager* em = sceneManager->GetEntityManager();
@@ -145,6 +155,7 @@ namespace QFE {
 	}
 
 	TransformData WindowsBridgeCore::GetTransform(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		TransformData data = {};
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
@@ -157,6 +168,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetTransform(uint32_t entityId, const TransformData& data) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
 			Transform& t = sceneManager->GetEntityManager()->GetComponent<Transform>(entityId);
@@ -167,6 +179,7 @@ namespace QFE {
 	}
 
 	ModelRenderInfo WindowsBridgeCore::GetModelRenderInfo(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		AssetManager* assetManager = engineCore_->GetAssetManager();
 		ModelRenderInfo info = {};
@@ -198,6 +211,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetMeshMaterial(uint32_t entityId, int meshIndex, const float color[4], float shininess) {
+		QFE_PROFILE_SCOPE;
 		AssetManager* assetManager = engineCore_->GetAssetManager();
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && assetManager && sceneManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
@@ -214,6 +228,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetMeshLight(uint32_t entityId, int meshIndex, const float color[4], const float direction[3]) {
+		QFE_PROFILE_SCOPE;
 		AssetManager* assetManager = engineCore_->GetAssetManager();
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && assetManager && sceneManager->GetEntityManager()->HasComponent<ModelHandle>(entityId)) {
@@ -230,6 +245,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::ChangeModel(uint32_t entityId, const std::string& modelName) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->ChangeEntityModel(entityId, modelName);
@@ -237,6 +253,7 @@ namespace QFE {
 	}
 
 	ParticleInfo WindowsBridgeCore::GetParticleInfo(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		ParticleInfo info = {};
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
@@ -248,6 +265,7 @@ namespace QFE {
 	}
 
 	SpriteInfo WindowsBridgeCore::GetSpriteInfo(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		SpriteInfo info = {};
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
@@ -262,6 +280,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetSpriteInfo(uint32_t entityId, const SpriteInfo& info) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<SpriteData>(entityId)) {
 			SpriteData& s = sceneManager->GetEntityManager()->GetComponent<SpriteData>(entityId);
@@ -280,6 +299,7 @@ namespace QFE {
 	}
 
 	CameraInfo WindowsBridgeCore::GetCameraInfo(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		CameraInfo info = {};
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<CameraData>(entityId)) {
@@ -292,6 +312,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetCameraInfo(uint32_t entityId, const CameraInfo& info) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<CameraData>(entityId)) {
 			CameraData& c = sceneManager->GetEntityManager()->GetComponent<CameraData>(entityId);
@@ -302,6 +323,7 @@ namespace QFE {
 	}
 
 	ForceData WindowsBridgeCore::GetForceData(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		ForceData data = {};
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<Force>(entityId)) {
@@ -317,6 +339,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetForceData(uint32_t entityId, const ForceData& data) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<Force>(entityId)) {
 			Force& f = sceneManager->GetEntityManager()->GetComponent<Force>(entityId);
@@ -330,6 +353,7 @@ namespace QFE {
 	}
 
 	SphereColliderInfo WindowsBridgeCore::GetSphereColliderInfo(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		SphereColliderInfo info = {};
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<SphereColliderData>(entityId)) {
@@ -346,6 +370,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetSphereColliderInfo(uint32_t entityId, const SphereColliderInfo& info) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<SphereColliderData>(entityId)) {
 			SphereColliderData& c = sceneManager->GetEntityManager()->GetComponent<SphereColliderData>(entityId);
@@ -360,6 +385,7 @@ namespace QFE {
 	}
 
 	AABBColliderInfo WindowsBridgeCore::GetAABBColliderInfo(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		AABBColliderInfo info = {};
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<AABBColliderData>(entityId)) {
@@ -376,6 +402,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SetAABBColliderInfo(uint32_t entityId, const AABBColliderInfo& info) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<AABBColliderData>(entityId)) {
 			AABBColliderData& c = sceneManager->GetEntityManager()->GetComponent<AABBColliderData>(entityId);
@@ -390,6 +417,7 @@ namespace QFE {
 	}
 
 	std::vector<std::string> WindowsBridgeCore::GetCsharpClassNames(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		std::vector<std::string> names;
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<CsharpComponent>(entityId)) {
@@ -402,6 +430,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::RemoveCsharpScript(uint32_t entityId, const std::string& className) {
+		QFE_PROFILE_SCOPE;
 		(void)className;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
@@ -410,6 +439,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::AddCsharpScript(uint32_t entityId, const std::string& className) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->AddCsharpScript(entityId, className);
@@ -417,6 +447,7 @@ namespace QFE {
 	}
 
 	std::vector<std::string> WindowsBridgeCore::GetAvailableCsharpClasses() {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && sceneManager->GetCsharpScriptExecutor()) {
 			return sceneManager->GetCsharpScriptExecutor()->GetAvailableScriptClasses();
@@ -426,6 +457,7 @@ namespace QFE {
 
 	void WindowsBridgeCore::ReCompileCsharpScripts()
 	{
+		QFE_PROFILE_SCOPE;
 		QFE_LOG("Recompiling C# scripts...");
 		SceneManager* sceneManager_ = engineCore_->GetSceneManager();
 		if (sceneManager_ && sceneManager_->GetCsharpScriptExecutor()) {
@@ -439,6 +471,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::AddEmptyEntity() {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->AddEmptyObject();
@@ -446,6 +479,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::AddEntityFromFile(const std::string& filepath) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->AddEntity(filepath);
@@ -453,6 +487,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::AddModelEntity(const std::string& filepath) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->AddModel(filepath);
@@ -460,6 +495,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::AddSpriteEntity(const std::string& filepath) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->AddSprite(filepath);
@@ -467,6 +503,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::AddParticleEmitterEntity(const std::string& filepath, uint32_t particleCount) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->AddParticleEmitter(filepath, particleCount);
@@ -478,6 +515,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::CopyEntity(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->CopyEntity(entityId);
@@ -485,6 +523,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::SaveEntity(uint32_t entityId, std::string filename) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->SaveEntity(entityId, filename);
@@ -492,6 +531,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::DeleteEntity(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->DeleteEntity(entityId);
@@ -499,6 +539,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::ParentChild(uint32_t parentEntityId, uint32_t childEntityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->ParentChild(parentEntityId, childEntityId);
@@ -506,6 +547,7 @@ namespace QFE {
 	}
 
 	void WindowsBridgeCore::Unparent(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager) {
 			sceneManager->Unparent(entityId);
@@ -513,6 +555,7 @@ namespace QFE {
 	}
 
 	uint32_t WindowsBridgeCore::GetDebugCameraEntityId() {
+		QFE_PROFILE_SCOPE;
 		if (!CameraManager::GetInstance()) {
 			QFE_LOG("CameraManager is not initialized.");
 			return UINT32_MAX;

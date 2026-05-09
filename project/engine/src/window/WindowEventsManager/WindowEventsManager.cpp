@@ -4,9 +4,10 @@
 #include "engine/include/window/windowEventsManager/eventSystems/ExitAppEvent.h"
 #include "engine/include/window/windowEventsManager/eventSystems/OnFocusEvent.h"
 
+#include "engine/include/core/EngineDefines.h"
+
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/String/HwndConvertString.h"
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/MyString.h"
 #include "Externals/imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
