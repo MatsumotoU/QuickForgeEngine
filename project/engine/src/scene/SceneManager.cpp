@@ -222,8 +222,8 @@ void SceneManager::AddCsharpScript(uint32_t entityId, const std::string& classNa
 	currentScene_->AddCsharpScript(entityId, className);
 }
 
-uint32_t SceneManager::AddEntity(const std::string& entityName) {
-	return currentScene_->AddEntity(entityName);
+uint32_t QFE::SceneManager::AddEntity(const std::string& entityName, bool useCache) {
+	return currentScene_->AddEntity(entityName,useCache);
 }
 
 uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {

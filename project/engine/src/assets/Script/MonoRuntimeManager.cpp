@@ -146,6 +146,10 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 		(const void*)CsharpOnQFELinker::ChangeModel);
     mono_add_internal_call("QuickForgeEngine.Entity::ChangeMesh", 
 		(const void*)CsharpOnQFELinker::ChangeMesh);
+	mono_add_internal_call("QuickForgeEngine.Entity::GetEntityFromName", 
+		(const void*)CsharpOnQFELinker::GetEntityFromName);
+	mono_add_internal_call("QuickForgeEngine.Entity::Destroy",
+		(const void*)CsharpOnQFELinker::DeleteEntity);
 
 	// Transform関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", 

@@ -48,30 +48,44 @@ void AssetManager::Finalize() {
 	modelRenderDataManager_.Finalize();
 }
 
+void QFE::AssetManager::ResetCache() {
+	modelDataCache_.clear();
+}
+
 /** @brief テクスチャの読み込み */
 uint32_t AssetManager::LoadTexture(const std::string& imageName) {
 	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Image") + imageName;
 	return textureManager_->LoadTexture(filePath);
 }
 
-/** @brief 3Dモデルの読み込みとレンダリングデータのセットアップ */
-uint32_t AssetManager::LoadModel(const std::string& modelName) {
+uint32_t QFE::AssetManager::LoadModel(const std::string& modelName, bool useCache) {
 	ModelRenderData modelRenderData;
 
 	// モデル自体の読み込み
 	ModelData modelData;
-	AssimpModelLoader::LoadModelData(
-		resourceDirectoryManager_.GetResourceDirectory("Model"),
-		resourceDirectoryManager_.GetResourceDirectory("Image"),
-		modelName, modelData);
+	if(useCache) {
+		auto it = modelDataCache_.find(modelName);
+		if (it != modelDataCache_.end()) {
+			modelData = it->second;
+		} else {
+			AssimpModelLoader::LoadModelData(
+				resourceDirectoryManager_.GetResourceDirectory("Model"),
+				resourceDirectoryManager_.GetResourceDirectory("Image"),
+				modelName, modelData);
+			modelDataCache_[modelName] = modelData; // キャッシュに保存
+		}
+	} else {
+		AssimpModelLoader::LoadModelData(
+			resourceDirectoryManager_.GetResourceDirectory("Model"),
+			resourceDirectoryManager_.GetResourceDirectory("Image"),
+			modelName, modelData);
+	}
 
 	// モデルのデータの整合性を確認
-	for(auto& mesh : modelData.meshes) {
+	for (auto& mesh : modelData.meshes) {
 		// テクスチャファイルパスが空の場合は読み込めない事にする
 		if (mesh.material.textureFilePath.empty()) {
-#ifdef QFE_OPTIMIZE_OFF
 			QFE_LOG("Mesh " + mesh.material.textureFilePath + " in model " + modelName + " has no texture file path.", LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
 			throw std::runtime_error("Mesh " + mesh.material.textureFilePath + " in model " + modelName + " has no texture file path.");
 		}
 	}
