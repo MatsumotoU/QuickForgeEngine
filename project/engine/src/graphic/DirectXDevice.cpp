@@ -6,8 +6,9 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
+#include "engine/include/core/EngineDefines.h"
+
 #ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/utility/String/MyString.h"
 #endif // QFE_OPTIMIZE_OFF
 

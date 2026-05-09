@@ -1,11 +1,8 @@
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 #include <cassert>
-
-#ifdef QFE_OPTIMIZE_OFF
 #include <format>
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
@@ -17,18 +14,14 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 	
 	// ファイルの存在確認
 	if (!QFE::FILE::HasFile(filepath)) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::format("Model file not found: {}", filepath));
-#endif // QFE_OPTIMIZE_OFF
 		assert(false && "Model file not found");
 		return;
 	}
 
 	// Obj形式である場合、mtlもあるか確認する
 	if (!QFE::FILE::HasObjModelFiles(modelResourceDirectory, filename)) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::format("MTL file not found for OBJ model: {}", filename));
-#endif // QFE_OPTIMIZE_OFF
 		assert(false && "MTL file not found for OBJ model");
 		throw std::runtime_error("MTL file not found for OBJ model: " + filename);
 		return;
@@ -44,19 +37,15 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		return;
 	}
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG(std::format("Model Load Success: {}", filepath));
-#endif // QFE_OPTIMIZE_OFF
 
 	for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; ++meshIdx) {
 		const aiMesh* mesh = scene->mMeshes[meshIdx];
 
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::format("Loading Mesh {} / {}", meshIdx + 1, scene->mNumMeshes));
 		QFE_LOG(std::format("UVChannel: {}", mesh->GetNumUVChannels()));
 		QFE_LOG(std::format("ColorChannel: {}", mesh->GetNumColorChannels()));
 		QFE_LOG(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
-#endif // QFE_OPTIMIZE_OFF
 
 		// 頂点データの読み込み
 		std::vector<VertexData> tempVertices;
@@ -109,15 +98,11 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			aiString texPath;
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
 				meshData.material.textureFilePath = imageResourceDirectory + std::string(texPath.C_Str());
-#ifdef QFE_OPTIMIZE_OFF
 				QFE_LOG(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureFilePath));
-#endif // QFE_OPTIMIZE_OFF
 
 			} else {
 				meshData.material.textureFilePath = "";
-#ifdef QFE_OPTIMIZE_OFF
 				QFE_LOG(std::format("No diffuse texture found for mesh {}. Setting empty texture path.", meshIdx));
-#endif // QFE_OPTIMIZE_OFF
 			}
 		}
 

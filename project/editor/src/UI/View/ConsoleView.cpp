@@ -4,6 +4,7 @@
  */
 
 #include "editor/include/UI/View/ConsoleView.h"
+#include "engine/include/core/Bridge/EngineBridgeProvider.h"
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
@@ -25,6 +26,9 @@ ConsoleView::ConsoleView() {
  * @brief 初期化処理
  */
 void ConsoleView::Initialize() {
+	logDrawFunctions_[LogKind::ByLevel] = std::bind(&ConsoleView::DrawLogsByLevel, this);
+	logDrawFunctions_[LogKind::ByLocation] = std::bind(&ConsoleView::DrawLogsByLocation, this);
+	currentLogKind_ = LogKind::ByLevel;
 }
 
 /**
@@ -41,7 +45,33 @@ void ConsoleView::Draw() {
 	if (!isActive_) {
 		return;
 	}
-	ImGui::Begin(GetName().c_str(), &isActive_); // Removed &isActive_ from the instruction, but keeping it as the instruction's snippet was partial and this is a common pattern.
+	ImGui::Begin(GetName().c_str(), &isActive_);
+
+	// ログの表示方法切り替え用のコンボボックス
+	ImGui::Text("Display Mode:");
+	ImGui::SameLine();
+	if (ImGui::BeginCombo("##displaymode",
+		currentLogKind_ == LogKind::ByLevel ? "By Level" :
+		currentLogKind_ == LogKind::ByLocation ? "By Location" : "Unknown")) {
+		if (ImGui::Selectable("By Level", currentLogKind_ == LogKind::ByLevel)) {
+			currentLogKind_ = LogKind::ByLevel;
+		}
+		if (ImGui::Selectable("By Location", currentLogKind_ == LogKind::ByLocation)) {
+			currentLogKind_ = LogKind::ByLocation;
+		}
+		ImGui::EndCombo();
+	}
+
+	// 現在の表示方法に応じた描画関数を呼び出す
+	logDrawFunctions_[currentLogKind_]();
+	ImGui::End();
+
+#endif // _DEBUG
+}
+
+void QFE::ConsoleView::DrawLogsByLevel()
+{
+#ifdef QFE_OPTIMIZE_OFF
 	// フォーカス判定
 	ImGui::Text("Log Level:");
 	ImGui::SameLine();
@@ -66,10 +96,11 @@ void ConsoleView::Draw() {
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Clear")) {
-		MyDebugLog::GetInstance()->DebugLogClear();
+		IEngineBridge* engineBridge = QFE::BRIDGE::GetBridge();
+		engineBridge->ClearRuntimeDebugLogs();
 	}
 	ImGui::Separator();
-	
+
 	ImVec2 logAreaSize = ImGui::GetContentRegionAvail();
 	ImGui::BeginChild("LogArea", logAreaSize, false, ImGuiWindowFlags_HorizontalScrollbar);
 
@@ -110,7 +141,35 @@ void ConsoleView::Draw() {
 		}
 	}
 	ImGui::EndChild();
-	ImGui::End();
+#endif // _DEBUG
+}
 
+void QFE::ConsoleView::DrawLogsByLocation()
+{
+	#ifdef QFE_OPTIMIZE_OFF
+	ImGui::Text("Logs by Location:");
+	ImGui::Separator();
+	for (const auto& [className, funcMap] : MyDebugLog::GetInstance()->locationLogMap_) {
+		if (ImGui::TreeNode(className.c_str())) {
+			for (const auto& [funcName, logs] : funcMap) {
+				if (ImGui::TreeNode(funcName.c_str())) {
+					int logIndex = 0;
+					for (auto it = logs.rbegin(); it != logs.rend(); ++it, ++logIndex) {
+						std::string label = *it + "##log" + std::to_string(logIndex);
+						ImGui::Selectable(label.c_str(), false, ImGuiSelectableFlags_AllowDoubleClick);
+						// 右クリックメニュー追加
+						if (ImGui::BeginPopupContextItem()) {
+							if (ImGui::MenuItem("Copy")) {
+								ImGui::SetClipboardText(it->c_str());
+							}
+							ImGui::EndPopup();
+						}
+					}
+					ImGui::TreePop();
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
 #endif // _DEBUG
 }

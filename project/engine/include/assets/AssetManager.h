@@ -47,6 +47,9 @@ namespace QFE {
 		/** @brief 終了処理 */
 		void Finalize();
 
+		/// @brief モデルデータのキャッシュをリセットする（キャッシュを使用している場合に呼び出す）
+		void ResetCache();
+
 		/**
 		 * @brief テクスチャを読み込む
 		 * @param imageName ファイル名（拡張子を含む）
@@ -58,7 +61,7 @@ namespace QFE {
 		 * @param modelName ファイル名（拡張子を含む）
 		 * @return モデルハンドル
 		 */
-		uint32_t LoadModel(const std::string& modelName);
+		uint32_t LoadModel(const std::string& modelName,bool useCache = false);
 		/**
 		 * @brief 音声を読み込む
 		 * @param audioName ファイル名（拡張子を含む）
@@ -93,6 +96,9 @@ namespace QFE {
 		std::unique_ptr<GpuBufferPool> gpuBufferPool_;
 		SpriteManager spriteManager_;
 		ParticleGpuDataManager particleGpuDataManager_;
+
+		// モデルデータのキャッシュ（モデル名とモデルデータの対応）
+		std::unordered_map<std::string, ModelData> modelDataCache_;
 	};
 
 }

@@ -4,10 +4,7 @@
 #include <cassert>
 #include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "BufferGenerater/BufferGenerator.h"
-
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif
+#include "engine/include/core/EngineDefines.h"
 
 namespace QFE {
 	/// @class VertexBuffer

@@ -1,9 +1,8 @@
 #include "engine/include/graphic/DirectXCommon/Command/DirectXCommandManager.h"
 #include <cassert>
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
+
 using namespace QFE;
 void DirectXCommandManager::Initialize(ID3D12Device* device) {
 #ifdef QFE_OPTIMIZE_OFF

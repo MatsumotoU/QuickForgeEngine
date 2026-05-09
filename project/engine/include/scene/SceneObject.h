@@ -48,7 +48,7 @@ namespace QFE {
 			const std::string& spriteName, float width = 0.0f, float height = 0.0f,
 			int inEntityId = -1, int layer = -1, Vector2 pivot = { 0.0f,0.0f }) override;
 		void AddCsharpScript(uint32_t entityId, const std::string& className) override;
-		uint32_t AddEntity(const std::string& entityName) override;
+		uint32_t AddEntity(const std::string& entityName, bool useCache = false) override;
 		uint32_t RunTimeAddEntity(const std::string& entityName) override;
 
 		// シーンにあるオブジェクトを保存、読み込み、変更
@@ -89,6 +89,9 @@ namespace QFE {
 
 		std::set<uint32_t> usedEntityId_;
 		EntityManager entityManager_;
+
+		// シーンに存在するエンティティの情報をキャッシュ（エンティティ名 -> エンティティのJSONデータ）
+		std::unordered_map<std::string,std::vector<uint8_t>> loadEntitiesBinary_;
 		
 		// シーン固有のスクリプト実行環境
 		CsharpScriptExecutor csharpScriptExecutor_;

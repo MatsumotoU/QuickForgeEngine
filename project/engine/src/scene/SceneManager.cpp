@@ -7,9 +7,7 @@
 #include <fstream>
 #include <string>
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 using namespace QFE;
 
@@ -222,8 +220,8 @@ void SceneManager::AddCsharpScript(uint32_t entityId, const std::string& classNa
 	currentScene_->AddCsharpScript(entityId, className);
 }
 
-uint32_t SceneManager::AddEntity(const std::string& entityName) {
-	return currentScene_->AddEntity(entityName);
+uint32_t QFE::SceneManager::AddEntity(const std::string& entityName, bool useCache) {
+	return currentScene_->AddEntity(entityName,useCache);
 }
 
 uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {

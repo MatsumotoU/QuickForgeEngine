@@ -1,7 +1,5 @@
 #include "engine/include/utility/DebugTool/ImGui/ImGuiFlameController.h"
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // DEBUG
+#include "engine/include/core/EngineDefines.h"
 #include <cassert>
 using namespace QFE;
 ImGuiFlameController::ImGuiFlameController() {

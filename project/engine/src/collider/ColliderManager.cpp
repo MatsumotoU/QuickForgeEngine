@@ -1,4 +1,5 @@
 #include "engine/include/collider/ColliderManager.h"
+#include "engine/include/collider/CollisionDetection.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
@@ -9,8 +10,9 @@
 
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/renderer/GraphRenderer.h"
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
+
+#include "engine/include/core/EngineDefines.h"
 
 #include <algorithm>
 
@@ -69,29 +71,6 @@ namespace QFE {
 		colliderTagMask_.Finalize();
 	}
 
-	bool ColliderManager::isCollision(const Sphere& sphere1, const Sphere& sphere2) {
-		if ((sphere1.center - sphere2.center).Length() <= sphere1.radius + sphere2.radius) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	bool ColliderManager::isCollision(const AABB& aabb1, const AABB& aabb2) {
-		Vector3 halfSize1 = aabb1.size * 0.5f;
-		Vector3 halfSize2 = aabb2.size * 0.5f;
-		if (std::abs(aabb1.center.x - aabb2.center.x) > halfSize1.x + halfSize2.x) { return false; }
-		if (std::abs(aabb1.center.y - aabb2.center.y) > halfSize1.y + halfSize2.y) { return false; }
-		if (std::abs(aabb1.center.z - aabb2.center.z) > halfSize1.z + halfSize2.z) { return false; }
-		return true;
-	}
-
-	bool ColliderManager::isCollision(const Sphere& sphere, const AABB& aabb) {
-		Vector3 closestPoint = MyMath::ClosestPoint(sphere, aabb);
-		float distanceSquared = (closestPoint - sphere.center).LengthSq();
-		return distanceSquared <= (sphere.radius * sphere.radius);
-	}
-
 	void ColliderManager::SphereToSphereUpdate() {
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 		if (!entityManager->HasComponentStrage<SphereColliderData>()) {
@@ -111,7 +90,7 @@ namespace QFE {
 			}
 		}
 
-		// 繧ｨ繝ｳ繧ｸ繝ｳ縺悟●豁｢荳ｭ縺ｪ繧牙ｽ薙◆繧雁愛螳壹ｒ陦後ｏ縺ｪ縺・
+		// エンジンが停止中なら当たり判定を行わない
 		if (!isRunning) {
 			return;
 		}
@@ -123,8 +102,8 @@ namespace QFE {
 				uint32_t idB = entityIds[j];
 				if (idA == idB) continue;
 				SphereColliderData& colliderB = entityManager->GetComponent<SphereColliderData>(idB);
-				if (isCollision(colliderA.sphere, colliderB.sphere)) {
-					// SceneObjectData蜿門ｾ・
+				if (QFE::COLLIDER::isCollision(colliderA.sphere, colliderB.sphere)) {
+					// SceneObjectData取得
 					if (!entityManager->HasComponent<SceneObjectData>(idA) ||
 						!entityManager->HasComponent<SceneObjectData>(idB)) {
 
@@ -134,40 +113,34 @@ namespace QFE {
 					SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(idA);
 					SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(idB);
 
-					// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
+					// タグマスクが衝突不可か
 					if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
-					// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
+					// 衝突イベントを発生させるレイヤーか
 					if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
-					// OnCollisionStay繧､繝吶Φ繝・
+					// OnCollisionStayイベント
 					colliderA.isHit = true;
 					colliderB.isHit = true;
 
-					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
+					// 反発しうるレイヤーか
 					if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
-					// 蜿咲匱蜃ｦ逅・
-					// 縺ｩ縺｡繧峨°縺卦rigger縺ｪ繧牙渚逋ｺ縺励↑縺・
+					// 反発処理
+					// どちらかがTriggerなら反発しない
 					if (colliderA.isTrigger || colliderB.isTrigger) {
 						continue;
 					}
-					// Transform縺後↑縺・↑繧牙渚逋ｺ縺励↑縺・
+					// Transformがないなら反発しない
 					if (!entityManager->HasComponent<Transform>(idA) || !entityManager->HasComponent<Transform>(idB)) {
 						assert(false && "Entities do not have Transform");
 						continue;
@@ -175,14 +148,14 @@ namespace QFE {
 					Transform& transformA = entityManager->GetComponent<Transform>(idA);
 					Transform& transformB = entityManager->GetComponent<Transform>(idB);
 
-					// 縺ｩ縺｡繧峨ｂ蜍輔￥蝣ｴ蜷医・遲峨＠縺丞渚逋ｺ
+					// どちらも動く場合は等しく反発
 					Vector3 length = colliderB.sphere.center - colliderA.sphere.center;
 					length -= length.Normalize() * (colliderA.sphere.radius + colliderB.sphere.radius);
 					if (colliderA.isStatic == false && colliderB.isStatic == false) {
 						transformA.translate += length * 0.5f;
 						transformB.translate -= length * 0.5f;
 					}
-					// 迚・婿縺悟虚縺九↑縺・ｴ蜷医・蜍輔￥譁ｹ縺縺大渚逋ｺ
+					// 片方が動かない場合は動く方だけ反発
 					else if (colliderA.isStatic == false && colliderB.isStatic == true) {
 						transformA.translate += length;
 					} else if (colliderA.isStatic == true && colliderB.isStatic == false) {
@@ -210,7 +183,7 @@ namespace QFE {
 				collider.isHit = false;
 			}
 		}
-		// 繧ｨ繝ｳ繧ｸ繝ｳ縺悟●豁｢荳ｭ縺ｪ繧牙ｽ薙◆繧雁愛螳壹ｒ陦後ｏ縺ｪ縺・
+		// エンジンが停止中なら当たり判定を行わない
 		if (!isRunning) {
 			return;
 		}
@@ -221,8 +194,8 @@ namespace QFE {
 				uint32_t idB = entityIds[j];
 				if (idA == idB) continue;
 				AABBColliderData& colliderB = entityManager->GetComponent<AABBColliderData>(idB);
-				if (isCollision(colliderA.aabb, colliderB.aabb)) {
-					// SceneObjectData蜿門ｾ・
+				if (QFE::COLLIDER::isCollision(colliderA.aabb, colliderB.aabb)) {
+					// SceneObjectData取得
 					if (!entityManager->HasComponent<SceneObjectData>(idA) ||
 						!entityManager->HasComponent<SceneObjectData>(idB)) {
 						assert(false && "Entities do not have SceneObjectData");
@@ -230,7 +203,7 @@ namespace QFE {
 					SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(idA);
 					SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(idB);
 
-					// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
+					// タグマスクが衝突不可か
 					if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
 #ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
@@ -238,7 +211,7 @@ namespace QFE {
 						continue;
 					}
 
-					// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
+					// 衝突イベントを発生させるレイヤーか
 					if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
@@ -246,11 +219,11 @@ namespace QFE {
 						continue;
 					}
 
-					// OnCollisionStay繧､繝吶Φ繝・
+					// OnCollisionStayイベント
 					colliderA.isHit = true;
 					colliderB.isHit = true;
 
-					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
+					// 反発しうるレイヤーか
 					if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
@@ -258,27 +231,27 @@ namespace QFE {
 						continue;
 					}
 
-					// 蜿咲匱蜃ｦ逅・
-					// 縺ｩ縺｡繧峨°縺卦rigger縺ｪ繧牙渚逋ｺ縺励↑縺・
+					// 反発処理
+					// どちらかがTriggerなら反発しない
 					if (colliderA.isTrigger || colliderB.isTrigger) {
 						continue;
 					}
-					// Transform縺後↑縺・↑繧牙渚逋ｺ縺励↑縺・
+					// Transformがないなら反発しない
 					if (!entityManager->HasComponent<Transform>(idA) || !entityManager->HasComponent<Transform>(idB)) {
 						assert(false && "Entities do not have Transform");
 						continue;
 					}
 					Transform& transformA = entityManager->GetComponent<Transform>(idA);
 					Transform& transformB = entityManager->GetComponent<Transform>(idB);
-					// AABB縺ｮ荳ｭ蠢・ｺｧ讓・
+					// AABBの中心座標
 					Vector3 centerA = colliderA.aabb.center;
 					Vector3 centerB = colliderB.aabb.center;
 
-					// AABB縺ｮ蜊翫し繧､繧ｺ
+					// AABBの半サイズ
 					Vector3 halfA = colliderA.aabb.size * 0.5f;
 					Vector3 halfB = colliderB.aabb.size * 0.5f;
 
-					// 荳ｭ蠢・俣霍晞屬
+					// 中心間距離
 					Vector3 delta = centerB - centerA;
 					Vector3 overlap = {
 						(halfA.x + halfB.x) - std::abs(delta.x),
@@ -286,28 +259,28 @@ namespace QFE {
 						(halfA.z + halfB.z) - std::abs(delta.z)
 					};
 
-					// 譛€蟆上が繝ｼ繝舌・繝ｩ繝・・霆ｸ繧呈爾縺・
+					// 最小オーバーラップの軸を探す
 					float minOverlap = overlap.x;
 					int axis = 0; // 0:x, 1:y, 2:z
 					if (overlap.y < minOverlap) { minOverlap = overlap.y; axis = 1; }
 					if (overlap.z < minOverlap) { minOverlap = overlap.z; axis = 2; }
 
-					// 蜿咲匱繝吶け繝医Ν繧呈ｱｺ螳・
+					// 反発ベクトルを決定
 					Vector3 push(0, 0, 0);
-					if (axis == 0) { // x霆ｸ
+					if (axis == 0) { // x軸
 						push.x = (delta.x > 0) ? minOverlap : -minOverlap;
-					} else if (axis == 1) { // y霆ｸ
+					} else if (axis == 1) { // y軸
 						push.y = (delta.y > 0) ? minOverlap : -minOverlap;
-					} else { // z霆ｸ
+					} else { // z軸
 						push.z = (delta.z > 0) ? minOverlap : -minOverlap;
 					}
 
-					// 縺ｩ縺｡繧峨ｂ蜍輔￥蝣ｴ蜷医・遲峨＠縺丞渚逋ｺ
+					// どちらも動く場合は等しく反発
 					if (!colliderA.isStatic && !colliderB.isStatic) {
 						transformA.translate -= push * 0.5f;
 						transformB.translate += push * 0.5f;
 					}
-					// 迚・婿縺悟虚縺九↑縺・ｴ蜷医・蜍輔￥譁ｹ縺縺大渚逋ｺ
+					// 片方が動かない場合は動く方だけ反発
 					else if (!colliderA.isStatic && colliderB.isStatic) {
 						transformA.translate -= push;
 					} else if (colliderA.isStatic && !colliderB.isStatic) {
@@ -350,7 +323,7 @@ namespace QFE {
 				collider.isHit = false;
 			}
 		}
-		// 繧ｨ繝ｳ繧ｸ繝ｳ縺悟●豁｢荳ｭ縺ｪ繧牙ｽ薙◆繧雁愛螳壹ｒ陦後ｏ縺ｪ縺・
+		// エンジンが停止中なら当たり判定を行わない
 		if (!isRunning) {
 			return;
 		}
@@ -362,8 +335,8 @@ namespace QFE {
 				uint32_t aabbId = aabbEntityIds[j];
 				if (sphereId == aabbId) continue;
 				AABBColliderData& aabbCollider = entityManager->GetComponent<AABBColliderData>(aabbId);
-				if (isCollision(sphereCollider.sphere, aabbCollider.aabb)) {
-					// SceneObjectData蜿門ｾ・
+				if (QFE::COLLIDER::isCollision(sphereCollider.sphere, aabbCollider.aabb)) {
+					// SceneObjectData取得
 					if (!entityManager->HasComponent<SceneObjectData>(sphereId) ||
 						!entityManager->HasComponent<SceneObjectData>(aabbId)) {
 						assert(false && "Entities do not have SceneObjectData");
@@ -371,7 +344,7 @@ namespace QFE {
 					SceneObjectData* objA = &entityManager->GetComponent<SceneObjectData>(sphereId);
 					SceneObjectData* objB = &entityManager->GetComponent<SceneObjectData>(aabbId);
 
-					// 繧ｿ繧ｰ繝槭せ繧ｯ縺瑚｡晉ｪ∝庄閭ｽ縺・
+					// タグマスクが衝突不可か
 					if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
 #ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Tag Mismatch between Entity {} and Entity {}", sphereId, aabbId));
@@ -379,7 +352,7 @@ namespace QFE {
 						continue;
 					}
 
-					// 陦晉ｪ√う繝吶Φ繝医ｒ逋ｺ逕溘＆縺帙ｋ繝ｬ繧､繝､繝ｼ縺・
+					// 衝突イベントを発生させるレイヤーか
 					if ((sphereCollider.eventColliderLayer & aabbCollider.colliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", sphereId, aabbId));
@@ -387,11 +360,11 @@ namespace QFE {
 						continue;
 					}
 
-					// OnCollisionStay繧､繝吶Φ繝・
+					// OnCollisionStayイベント
 					sphereCollider.isHit = true;
 					aabbCollider.isHit = true;
 
-					// 蜿咲匱縺励≧繧九Ξ繧､繝､繝ｼ縺・
+					// 反発しうるレイヤーか
 					if ((sphereCollider.colliderLayer & aabbCollider.eventColliderLayer) == 0) {
 #ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", sphereId, aabbId));
@@ -399,12 +372,12 @@ namespace QFE {
 						continue;
 					}
 
-					// 蜿咲匱蜃ｦ逅・
-					// 縺ｩ縺｡繧峨°縺卦rigger縺ｪ繧牙渚逋ｺ縺励↑縺・
+					// 反発処理
+					// どちらかがTriggerなら反発しない
 					if (sphereCollider.isTrigger || aabbCollider.isTrigger) {
 						continue;
 					}
-					// Transform縺後↑縺・↑繧牙渚逋ｺ縺励↑縺・
+					// Transformがないなら反発しない
 					if (!entityManager->HasComponent<Transform>(sphereId) || !entityManager->HasComponent<Transform>(aabbId)) {
 						assert(false && "Entities do not have Transform");
 						continue;
@@ -412,21 +385,21 @@ namespace QFE {
 					Transform& transformA = entityManager->GetComponent<Transform>(sphereId);
 					Transform& transformB = entityManager->GetComponent<Transform>(aabbId);
 
-					// 譛€霑大ｍ轤ｹ繧貞叙蠕・
+					// 最近点を取得
 					Vector3 closestPoint = MyMath::ClosestPoint(sphereCollider.sphere, aabbCollider.aabb);
 					Vector3 direction = sphereCollider.sphere.center - closestPoint;
 					float distance = direction.Length();
 
-					// 逅・′AABB縺ｫ繧√ｊ霎ｼ繧薙□蛻・□縺第款縺玲綾縺・
+					// 球がAABBにめり込んだ分だけ押し戻す
 					float penetration = sphereCollider.sphere.radius - distance;
 					if (penetration > 0.0f && distance > 0.0f) {
 						Vector3 push = direction.Normalize() * penetration;
-						// 縺ｩ縺｡繧峨ｂ蜍輔￥蝣ｴ蜷医・遲峨＠縺丞渚逋ｺ
+						// どちらも動く場合は等しく反発
 						if (!sphereCollider.isStatic && !aabbCollider.isStatic) {
 							transformA.translate += push * 0.5f;
 							transformB.translate -= push * 0.5f;
 						}
-						// 迚・婿縺悟虚縺九↑縺・ｴ蜷医・蜍輔￥譁ｹ縺縺大渚逋ｺ
+						// 片方が動かない場合は動く方だけ反発
 						else if (!sphereCollider.isStatic && aabbCollider.isStatic) {
 							transformA.translate += push;
 						} else if (sphereCollider.isStatic && !aabbCollider.isStatic) {

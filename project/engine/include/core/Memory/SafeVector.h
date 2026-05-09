@@ -4,9 +4,7 @@
 #include <assert.h>
 #include <stdexcept>
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
 
 namespace QFE {
 	/// @brief メモリの連続性とアドレスの不変性を保証するstd::vectorをラップしたクラス
@@ -17,17 +15,13 @@ namespace QFE {
 		explicit SafeVector(size_t size = 50) {
 			// std::vectorで確保できるサイズを超えている場合は例外を投げる
 			if (size > data_.max_size()) {
-#ifdef QFE_OPTIMIZE_OFF
 				QFE_LOG(std::string("Data MaxSize: ") + std::to_string(data_.max_size()));
-#endif // QFE_OPTIMIZE_OFF
 				throw std::length_error("SafeVector size exceeds maximum allowed by std::vector.");
 			}
 
 			data_.clear();
 			data_.reserve(size);
-#ifdef QFE_OPTIMIZE_OFF
 			QFE_LOG(std::string("SafeVector initialized with reserved size: ") + std::to_string(size));
-#endif // QFE_OPTIMIZE_OFF
 		}
 
 		/// @brief デストラクタ
@@ -40,6 +34,7 @@ namespace QFE {
 		/// @brief 要素を配列の末尾に追加する（コピーまたはムーブ）
 		virtual void push_back(T value) override {
 			if (data_.size() >= data_.capacity()) {
+				__debugbreak();
 				throw std::overflow_error("SafeVector capacity exceeded. Consider increasing the reserved size.");
 			}
 			data_.push_back(std::move(value));
@@ -120,6 +115,7 @@ namespace QFE {
 			// インデックスが範囲内かどうかをチェック
 			if (index >= data_.size()) {
 				assert(false && "Index out of bounds in SafeVector.");
+				__debugbreak();
 				throw std::out_of_range("Index out of bounds in SafeVector.");
 			}
 		}

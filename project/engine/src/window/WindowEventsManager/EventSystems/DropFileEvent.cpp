@@ -2,8 +2,9 @@
 #include "engine/include/utility/String/MyString.h"
 #ifdef QFE_OPTIMIZE_OFF
 #include "engine/include/assets/AssetManager.h"
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/EngineDefines.h"
+
 using namespace QFE;
 DropFileEvent::DropFileEvent(nlohmann::json& data):IEvent(data) {}
 

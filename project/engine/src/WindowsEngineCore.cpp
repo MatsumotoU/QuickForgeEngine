@@ -7,10 +7,12 @@
 
 #include <thread>
 #include "engine/include/utility/DebugTool/ImGui/ImGuiInitializer.h"
+#include "engine/include/core/EngineDefines.h"
 #ifdef QFE_OPTIMIZE_OFF
-#include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #include "engine/include/renderer/ModelRenderer.h"
 #endif // QFE_OPTIMIZE_OFF
+#include "engine/include/core/Profiler.h"
+
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
@@ -65,6 +67,9 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 	std::string logInitMessage = "Initialized MyDebugLog. Cache line size: " + std::to_string(std::hardware_destructive_interference_size) + " bytes.";
 	QFE_LOG(logInitMessage);
 #endif // QFE_OPTIMIZE_OFF
+
+	// プロファイラーの初期化
+	Profiler::GetInstance()->Initialize();
 
 	// Create Window
 	gameWindowManager = std::make_unique<GameWindowManager>();
@@ -217,10 +222,12 @@ void WindowsEngineCore::MainLoop() {
 			DispatchMessage(&msg);
 
 		} else {
+			Profiler::GetInstance()->FrameStart();
 			frameCounter_.FrameStart();
 			Update();
 			Draw();
 			frameCounter_.FrameEnd();
+			Profiler::GetInstance()->FrameEnd();
 		}
 	}
 }
@@ -265,6 +272,9 @@ void WindowsEngineCore::Shutdown() {
 	imguiFrameController_.EndImGui();
 	directXCommon_->Shutdown();
 	gameWindowManager->Shutdown();
+
+	Profiler::GetInstance()->Finalize();
+
 #ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("FinalizeEngine");
 	MyDebugLog::GetInstance()->Finalize();
