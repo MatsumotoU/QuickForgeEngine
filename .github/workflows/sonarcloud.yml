@@ -51,13 +51,19 @@ jobs:
             /d:sonar.verbose=true
             
       - name: Build with Wrapper
+        working-directory: project
         shell: powershell
         run: |
-          $BW_PATH = (Get-ChildItem -Recurse -Filter "build-wrapper-win-x86-64.exe" | Select-Object -First 1).FullName
-          Write-Host "Found build-wrapper at: $BW_PATH"
+          # 1. ツールは「一つ上の階層」にあるので ..\ で指定
+          $BW_PATH = "..\build-wrapper-win-x86\build-wrapper-win-x86-64.exe"
           
-          & $BW_PATH --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} `
-          msbuild .\project\QuickForgeEngine.sln `
+          # 2. 実行（絶対パスに変換して確実に叩く）
+          $BW_FULL_PATH = Resolve-Path $BW_PATH
+          Write-Host "Using build-wrapper at: $BW_FULL_PATH"
+          
+          # 3. ビルド実行（カレントディレクトリが project なので .sln は目の前にある）
+          & $BW_FULL_PATH --out-dir ..\${{ env.BUILD_WRAPPER_OUT_DIR }} `
+          msbuild QuickForgeEngine.sln `
             /t:Rebuild `
             /p:Platform=x64 `
             /p:Configuration=${{ env.CONFIGURATION }} `
