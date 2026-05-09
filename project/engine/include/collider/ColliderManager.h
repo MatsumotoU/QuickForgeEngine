@@ -18,10 +18,6 @@ namespace QFE {
 		ColliderTagMask colliderTagMask_;
 
 	private:
-		bool isCollision(const Sphere& sphere1, const Sphere& sphere2);
-		bool isCollision(const AABB& aabb1, const AABB& aabb2);
-		bool isCollision(const Sphere& sphere, const AABB& aabb);
-
 		void SphereToSphereUpdate();
 		void AABBToAABBUpdate();
 		void SphereToAABBUpdate();
