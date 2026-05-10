@@ -18,6 +18,7 @@
 #include "engine/include/core/Math/ParentData.h"
 #include "engine/include/camera/Data/CameraData.h"
 #include "engine/include/camera/Data/BillboardComponent.h"
+#include "engine/include/assets/3DModel/Data/SkyboxComponent.h"
 
 #include <fstream>
 #include <execution>
@@ -31,6 +32,7 @@
 #include "engine/include/renderer/ModelRenderer.h"
 #include "engine/include/renderer/SpriteRenderer.h"
 #include "engine/include/renderer/ParticleRenderer.h"
+#include "engine/include/renderer/SkyboxRenderer.h"
 
 #include "engine/include/core/EngineDefines.h"
 
@@ -142,6 +144,14 @@ void SceneObject::Draw() {
 
 	// 当たり判定の描画
 	ColliderManager::GetInstance()->Draw();
+
+	// スカイボックスの描画
+	if (entityManager_.HasComponentStrage<SkyboxComponent>()) {
+		ComponentStorage<SkyboxComponent> skyboxCompStr = entityManager_.GetComponentStrage<SkyboxComponent>();
+		for (auto& skybox : skyboxCompStr) {
+			Render::Skybox::DrawSkybox(skybox.second);
+		}
+	}
 
 	// 全描画コマンド追加
 	drawCommandInvoker_.AddSystemCommand(std::make_unique<AllEntityRenderingCommand>(*(GetEntityManager())));
@@ -348,6 +358,33 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+}
+
+void QFE::SceneObject::AddSkybox(const std::string& skyboxName)
+{
+	AssetManager* assetManager = AssetManager::GetInstance();
+	uint32_t entityId = entityManager_.CreateEntity();
+	
+	SkyboxComponent skyboxComponent;
+	skyboxComponent.textureName = skyboxName;
+	skyboxComponent.textureHandle = assetManager->LoadTexture(skyboxName);
+	skyboxComponent.materialBufferHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<Material>();
+	skyboxComponent.wvpBufferHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<TransformationMatrix>();
+	skyboxComponent.vertexBufferHandle = 
+		assetManager->GetModelVertexResourceManager()->AssignBox(DirectXCommon::GetInstance()->GetDevice(), true);
+
+	Material* material = assetManager->GetGpuBufferPool()->GetConstantBufferData<Material>(skyboxComponent.materialBufferHandle);
+	material->color = { 1.0f,1.0f,1.0f,1.0f };
+	material->enableLighting = false;
+
+	entityManager_.EmplaceComponent<SkyboxComponent>(entityId, skyboxComponent);
+	
+	SceneObjectData sceneObjectData;
+	sceneObjectData.name = CheckUniqueEntityName(skyboxName + "_Skybox");
+	sceneObjectData.tag = "Untagged";
+	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
+	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
+	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
 }
 
 void SceneObject::AddModel(const std::string& modelName) {

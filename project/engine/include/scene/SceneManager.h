@@ -89,6 +89,8 @@ namespace QFE {
 
 		/** @brief 空のオブジェクトを追加 */
 		void AddEmptyObject();
+		/** @brief スカイボックスを追加 */
+		void AddSkybox(const std::string & skyboxName);
 		/** @brief パーティクルエミッタを追加 */
 		void AddParticleEmitter(const std::string& modelName, uint32_t maxCount);
 		/** @brief モデルを追加 */

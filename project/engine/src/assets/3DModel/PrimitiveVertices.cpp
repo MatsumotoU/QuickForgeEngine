@@ -3,6 +3,10 @@
 QFE::MeshData QFE::PRIMITIVE::CreateBox(bool invertFace)
 {
 	MeshData boxMesh(36);
+	for(int i = 0; i < 36; ++i) {
+		boxMesh.vertices.push_back(VertexData());
+	}
+
 	// 頂点データを設定
 	// Front face (Z = -0.5)
 	boxMesh.vertices[0].position = { -0.5f, -0.5f, -0.5f, 1.0f }; boxMesh.vertices[0].texcoord = { 0.0f, 1.0f }; boxMesh.vertices[0].normal = { 0.0f, 0.0f, -1.0f };
