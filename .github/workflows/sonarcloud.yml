@@ -32,8 +32,11 @@ jobs:
       # 1. 開始を宣言
       - name: SonarCloud Begin
         run: |
-          dotnet-sonarscanner begin /k:"MatsumotoU_QuickForgeEngin" /o:"matsumotou" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
-
+          dotnet-sonarscanner begin /k:"MatsumotoU_QuickForgeEngin" /o:"matsumotou" `
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+          /d:sonar.host.url="https://sonarcloud.io" `
+          /d:sonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}\compile_commands.json" `
+          /d:sonar.cfamily.ignoreUnknownCompilerOptions=true
       # 2. ソリューションを作る
       - name: Run Premake
         shell: cmd
