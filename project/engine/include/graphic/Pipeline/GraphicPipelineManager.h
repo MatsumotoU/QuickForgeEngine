@@ -65,6 +65,7 @@ namespace QFE {
 		RootParameter normalRootParameter_;
 		RootParameter fontRootParameter_;
 		RootParameter pixelRootParameter_;
+		RootParameter skyBoxRootParameter_;
 
 		// PSO
 		PipelineStateObject trianglePso_[kCountOfBlendMode];
@@ -85,5 +86,7 @@ namespace QFE {
 		PipelineStateObject fontPso_;
 
 		PipelineStateObject normalPso_;
+
+		PipelineStateObject skyBoxPso_;
 	};
 }

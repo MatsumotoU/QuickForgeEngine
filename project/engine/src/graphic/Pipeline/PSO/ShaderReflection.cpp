@@ -32,6 +32,10 @@ nlohmann::json ShaderReflection::Serialize() const {
 	{
 		// 繧ｷ繧ｧ繝ｼ繝繝ｼ縺ｮ隱ｬ譏弱ｒ蜿門ｾ・
 		D3D12_SHADER_DESC shaderDesc{};
+		if(shaderReflection_ == nullptr) {
+			assert(false && "Shader reflection is not initialized.");
+			throw std::runtime_error("Shader reflection is not initialized.");
+		}
 		HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
 		assert(SUCCEEDED(hr) && "Failed to get shader description.");
 		
