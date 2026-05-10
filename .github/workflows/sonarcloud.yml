@@ -23,42 +23,23 @@ jobs:
       - name: Install SonarCloud Scanner
         run: dotnet tool install --global dotnet-sonarscanner
 
-      - name: Build with Wrapper
+      - name: Install Build Wrapper
+        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v4
+
+      - name: SonarCloud Begin
         run: |
-          ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} `
-          msbuild .\project\QuickForgeEngine.sln `
-            /t:Rebuild `
-            /p:Platform=x64 `
-            /p:Configuration=${{ env.CONFIGURATION }} `
-            /verbosity:detailed
+          dotnet-sonarscanner begin /k:"MatsumotoU_QuickForgeEngin" /o:"matsumotou" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
 
       - name: Run Premake
         shell: cmd
         working-directory: project
         run: premake5.bat
 
-      - name: Add MSBuild to Path
-        uses: microsoft/setup-msbuild@v2
-
-      - name: SonarCloud Begin
-        run: |
-          dotnet-sonarscanner begin `
-            /k:"MatsumotoU_QuickForgeEngin" `
-            /o:"matsumotou" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" `
-            /d:sonar.verbose=true
-            
       - name: Build with Wrapper
-        shell: powershell
+        shell: cmd 
         run: |
-          $BW_EXE = "${{ github.workspace }}\build-wrapper-win-x86\build-wrapper-win-x86-64.exe"
-          $OUT_DIR = "${{ github.workspace }}\${{ env.BUILD_WRAPPER_OUT_DIR }}"
-          $SLN = "${{ github.workspace }}\project\QuickForgeEngine.sln"
-          if (!(Test-Path $BW_EXE)) { throw "Error: build-wrapperが見つかりません: $BW_EXE" }
-          & "$BW_EXE" --out-dir "$OUT_DIR" msbuild "$SLN" /t:Rebuild /p:Platform=x64 /p:Configuration=${{ env.CONFIGURATION }} /verbosity:minimal
-            
+          build-wrapper-win-x86-64.exe --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} msbuild project\QuickForgeEngine.sln /t:Rebuild /p:Platform=x64 /p:Configuration=${{ env.CONFIGURATION }}
+
       - name: SonarCloud End
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
