@@ -1,0 +1,165 @@
+{
+    "entities": [
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "DebugCamera",
+                "tag": "camera",
+                "uniqueId": 2
+            },
+            "Transform": {
+                "rotate": [
+                    0.3938903510570526,
+                    -0.4175003468990326,
+                    -0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    3.7861557006835938,
+                    3.88077449798584,
+                    -8.53549575805664
+                ]
+            }
+        },
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "Camera",
+                "tag": "camera",
+                "uniqueId": 1
+            },
+            "Transform": {
+                "rotate": [
+                    0.10000000149011612,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.5,
+                    -10.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "TitleText.obj"
+            },
+            "SceneObjectData": {
+                "name": "TitleText",
+                "tag": "Untagged",
+                "uniqueId": 2520398939
+            },
+            "Transform": {
+                "rotate": [
+                    0.20000000298023224,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    6.900000095367432
+                ],
+                "translate": [
+                    0.0,
+                    1.0130000114440918,
+                    -1.4459999799728394
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.08290153741836548,
+                    0.08290153741836548,
+                    0.08290153741836548,
+                    1.0
+                ],
+                "modelName": "whitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "BackGround",
+                "tag": "Untagged",
+                "uniqueId": 2520398940
+            },
+            "Transform": {
+                "rotate": [
+                    -1.600000023841858,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    11.5,
+                    1.0,
+                    9.5
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "SceneChanger",
+                "tag": "system",
+                "uniqueId": 2520398941
+            },
+            "ScriptHandle": {
+                "scriptHandles": [
+                    {
+                        "boolParams": {},
+                        "floatParams": {},
+                        "intParams": {},
+                        "priority": 0,
+                        "scriptName": "SceneChanger.lua",
+                        "stringParams": {}
+                    }
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    ],
+    "sceneName": "TitleScene"
+}

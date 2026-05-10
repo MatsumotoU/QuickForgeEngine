@@ -1,4 +1,5 @@
 import bpy
+import math
 
 bl_info = {
     "name": "LevelEditor",
@@ -12,6 +13,28 @@ bl_info = {
     "tracker_url": "",
     "category": "Object"
 }
+
+class MYDDON_OT_export_scene(bpy.types.Operator):
+    bl_idname = "object.myddon_ot_export_scene"
+    bl_label = "シーンをエクスポートします"
+    bl_description = "シーンをエクスポートします"
+
+    def execute(self,context):
+        print("シーンをエクスポートします")
+        for object in bpy.context.scene.objects:
+            print(object.type + "_" + object.name)
+            trans,rot,scale = object.matrix_world.decompose()
+            rot = rot.to_euler()
+            rot.x = math.degrees(rot.x)
+            rot.y = math.degrees(rot.y)
+            rot.z = math.degrees(rot.z)
+            print("Trans(%f,%f,%f) Rot(%f,%f,%f) Scale(%f,%f,%f)" % (trans.x, trans.y, trans.z, rot.x, rot.y, rot.z, scale.x, scale.y, scale.z))
+            if object.parent:
+                print("Parent(%s)" % object.parent.name)
+            print()
+        print("シーンをエクスポートしました")
+        self.report({'INFO'}, "シーンをエクスポートしました")
+        return {'FINISHED'}
 
 class MYDDON_OT_create_ico_sphere(bpy.types.Operator):
     bl_idname = "object.myddon_ot_create_object"
@@ -54,6 +77,7 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
         self.layout.menu(TOPBAR_MT_my_menu.bl_idname)
 
 classes = {
+    MYDDON_OT_export_scene,
     MYDDON_OT_create_ico_sphere,
     MYDDON_OT_stretch_vertex,
     TOPBAR_MT_my_menu,

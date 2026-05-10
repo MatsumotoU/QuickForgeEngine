@@ -1,0 +1,206 @@
+{
+    "entities": [
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "DebugCamera",
+                "tag": "camera",
+                "uniqueId": 2
+            },
+            "Transform": {
+                "rotate": [
+                    0.508895218372345,
+                    0.43710532784461975,
+                    -0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -11.292405128479004,
+                    14.882725715637207,
+                    -24.1678466796875
+                ]
+            }
+        },
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "Camera",
+                "tag": "camera",
+                "uniqueId": 1
+            },
+            "Transform": {
+                "rotate": [
+                    0.6000000238418579,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    20.0,
+                    -18.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.02067168802022934,
+                    0.36269432306289673,
+                    0.03839302435517311,
+                    1.0
+                ],
+                "modelName": "whitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "Ground",
+                "tag": "backGround",
+                "uniqueId": 4057590530
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    5.0,
+                    1.0,
+                    20.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    20.0
+                ]
+            }
+        },
+        {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "Player"
+                    }
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "box.obj"
+            },
+            "SceneObjectData": {
+                "name": "Player",
+                "tag": "player",
+                "uniqueId": 4057590531
+            },
+            "SphereColliderData": {
+                "colliderLayer": 255,
+                "eventColliderLayer": 255,
+                "isDraw": false,
+                "isStatic": false,
+                "isTrigger": false,
+                "sphere": [
+                    0.0,
+                    2.5,
+                    0.0,
+                    0.30000001192092896
+                ]
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.30000001192092896,
+                    0.10000000149011612,
+                    0.5
+                ],
+                "translate": [
+                    0.0,
+                    2.5,
+                    0.0
+                ]
+            }
+        },
+        {
+            "SceneObjectData": {
+                "name": "GameAreaManager",
+                "tag": "manager",
+                "uniqueId": 4294967295
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "whitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "PlayerReticle",
+                "tag": "ui",
+                "uniqueId": 6
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.4000000059604645,
+                    1.0,
+                    0.4000000059604645
+                ],
+                "translate": [
+                    0.0,
+                    0.10000000149011612,
+                    9.5
+                ]
+            }
+        }
+    ],
+    "sceneName": "GameScene"
+}
