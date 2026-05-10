@@ -37,6 +37,8 @@ jobs:
       - name: Run Premake
         shell: cmd
         working-directory: project
+        env:
+          SONAR_SCAN: "true"
         run: premake5.bat
 
       # 3. ビルドする
