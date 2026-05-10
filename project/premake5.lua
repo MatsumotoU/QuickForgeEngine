@@ -24,9 +24,8 @@ workspace "QuickForgeEngine"
             "/utf-8",
         }
 
-        -- 環境変数 SONAR_SCAN が設定されていない時だけ /openmp を追加する
-        if not os.getenv("SONAR_SCAN") then
-            table.insert(common_buildoptions, "/openmp")
+       if not os.getenv("SONAR_SCAN") then
+            buildoptions { "/openmp" }
         end
 
         linkoptions { "/ignore:4099" }
