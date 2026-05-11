@@ -13,7 +13,7 @@ void QFE::DebugBreak() {
 void QFE::ReportUserError(const std::string& message, UserError error)
 {
 	error; message;
-	QFE_LOG("User Error: " + message);
+	QFE_LOG("User Error: " + message, LogLevel::Error);
 }
 
 void QFE::ReportSystemError(const std::string& message, SystemError error){

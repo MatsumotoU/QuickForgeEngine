@@ -514,9 +514,10 @@ uint32_t SceneObject::AddEntity(const std::string& entityName, bool useCache) {
 	std::ifstream ifs(sceneFilePath + entityName);
 	if (!ifs.is_open()) {
 		std::string errorMsg = "FaildOpenFile: " + sceneFilePath + entityName;
-		QFE_LOG(errorMsg, LogLevel::Error);
-		assert(false && "Faild Open Entity File.");
+		QFE_REPORT_USER_ERROR(errorMsg.c_str(), UserError::DeveloperError);
+		return UINT32_MAX;
 	}
+
 	nlohmann::json sceneJson;
 	ifs >> sceneJson;
 	ifs.close();
@@ -536,8 +537,7 @@ uint32_t SceneObject::AddEntity(const std::string& entityName, bool useCache) {
 
 uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-	uint32_t entityId = AddEntity(entityName,true)
-		;
+	uint32_t entityId = AddEntity(entityName,true);
 
 	if (entityManager_.HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
 		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
@@ -546,9 +546,7 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 		}
 	}
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("RunTimeAddEntity Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + " ms");
-#endif // QFE_OPTIMIZE_OFF
 	return entityId;
 }
 
