@@ -14,6 +14,9 @@
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/renderer/ModelRenderer.h"
 
+#include "engine/include/assets/Script/Data/CsharpComponent.h"
+#include "engine/include/assets/Script/CsharpScriptExecutor.h"
+
 using namespace QFE;
 
 void QFE::CsharpOnQFELinker::GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
@@ -196,6 +199,22 @@ void QFE::CsharpOnQFELinker::ChangeMesh(uint32_t entityId, MonoString* meshName)
 
 void QFE::CsharpOnQFELinker::DeleteEntity(uint32_t entityId) {
 	SceneManager::GetInstance()->DeleteEntity(entityId);
+}
+
+void QFE::CsharpOnQFELinker::CallEntityMethod(uint32_t entityId, MonoString* methodName)
+{
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+	if (!entityManager->HasComponent<CsharpComponent>(entityId)) {
+		QFE_REPORT_USER_ERROR(std::format("Entity with ID {} does not have a CsharpComponent.", entityId),UserError::DeveloperError);
+		return;
+	}
+	char* utf8_methodName = mono_string_to_utf8(methodName);
+	CsharpComponent& scriptComponent = entityManager->GetComponent<CsharpComponent>(entityId);
+	for (const auto& handle : scriptComponent.csharpHandles_) {
+		SceneManager::GetInstance()->GetCsharpScriptExecutor()->RunScriptFunction(handle.scriptIndex_, utf8_methodName);
+	}
+	
+	mono_free(utf8_methodName);
 }
 
 void QFE::CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {

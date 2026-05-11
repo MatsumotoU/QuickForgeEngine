@@ -85,8 +85,7 @@ uint32_t QFE::AssetManager::LoadModel(const std::string& modelName, bool useCach
 	for (auto& mesh : modelData.meshes) {
 		// テクスチャファイルパスが空の場合は読み込めない事にする
 		if (mesh.material.textureFilePath.empty()) {
-			QFE_LOG("Mesh " + mesh.material.textureFilePath + " in model " + modelName + " has no texture file path.", LogLevel::Warning);
-			throw std::runtime_error("Mesh " + mesh.material.textureFilePath + " in model " + modelName + " has no texture file path.");
+			QFE_REPORT_SYSTEM_ERROR(std::format("Model '{}' has a mesh with an empty texture file path.", modelName), SystemError::Abort);
 		}
 	}
 

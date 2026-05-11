@@ -94,7 +94,7 @@ DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
 void TextureManager::LoadScratchImage(const std::string& filePath) {
 	// ファイルパスにファイルがあるかどうかを確認
 	if (!QFE::FILE::HasFile(filePath)) {
-		throw std::runtime_error(std::format("Texture file not found: '{}'", filePath));
+		QFE_REPORT_SYSTEM_ERROR(std::string("TextureManager: File not found - ") + filePath, SystemError::Abort);
 	}
 
 	// テクスチャファイルを読み込んでScratchImageを作成する
@@ -134,7 +134,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 		assert(SUCCEEDED(hr));
 		// ミップマップの生成に失敗した場合は例外をスロー
 		if (!SUCCEEDED(hr)) {
-			throw std::runtime_error("Failed to generate mipmaps for texture.");
+			QFE_REPORT_SYSTEM_ERROR(std::string("TextureManager: Failed to generate mipmaps for texture - ") + filePath, SystemError::Abort);
 		}
 
 	} else {
@@ -144,7 +144,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 		assert(SUCCEEDED(hr));
 		// 1x1テクスチャの初期化に失敗した場合は例外をスロー
 		if (!SUCCEEDED(hr)) {
-			throw std::runtime_error("Failed to initialize scratch image from 1x1 texture.");
+			QFE_REPORT_SYSTEM_ERROR(std::string("TextureManager: Failed to initialize 1x1 texture - ") + filePath, SystemError::Abort);
 		}
 	}
 }
@@ -162,10 +162,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 
 	// メタデータの整合性を確認
 	if (resourceDesc_.Width == 0 || resourceDesc_.Height == 0 || resourceDesc_.MipLevels == 0 || resourceDesc_.DepthOrArraySize == 0) {
-#ifdef QFE_OPTIMIZE_OFF
-		QFE_LOG(std::format("TextureManager: Invalid texture metadata - width={}, height={}, mipLevels={}, arraySize={}", resourceDesc_.Width, resourceDesc_.Height, resourceDesc_.MipLevels, resourceDesc_.DepthOrArraySize));
-#endif // QFE_OPTIMIZE_OFF
-		throw std::runtime_error("Invalid texture metadata.");
+		QFE_REPORT_SYSTEM_ERROR(std::string("TextureManager: Invalid texture metadata - width, height, mipLevels, and arraySize must be greater than 0"), SystemError::Abort);
 	}
 
 #ifdef QFE_OPTIMIZE_PFF
@@ -184,7 +181,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 	// COM関数の呼び出し結果を確認
 	assert(SUCCEEDED(hr));
 	if (!SUCCEEDED(hr)) {
-		throw std::runtime_error(std::format("Failed to create committed resource for texture. HRESULT: 0x{:X}", hr));
+		QFE_REPORT_SYSTEM_ERROR(std::string("TextureManager: Failed to create texture resource"), SystemError::Abort);
 	}
 	return resource;
 }

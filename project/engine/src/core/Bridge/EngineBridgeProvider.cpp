@@ -1,4 +1,6 @@
 #include "engine/include/core/Bridge/EngineBridgeProvider.h"
+#include "engine/include/core/EngineDefines.h"
+
 #include <stdexcept> 
 
 void QFE::BRIDGE::EngineBridgeProvider::SetUpBridge(std::unique_ptr<IEngineBridge> bridge) {
@@ -11,7 +13,7 @@ void QFE::BRIDGE::EngineBridgeProvider::FinalizeBridge() {
 
 QFE::IEngineBridge* QFE::BRIDGE::EngineBridgeProvider::Get() const { 
 	if(bridgeInstance_ == nullptr) {
-		throw std::runtime_error("EngineBridge instance is not set up.");
+		QFE_REPORT_SYSTEM_ERROR("EngineBridge instance is not set up.",SystemError::Abort);
 	}
 	return bridgeInstance_.get();
 }
