@@ -28,6 +28,9 @@ namespace QFE {
 		Abort
 	};
 
+	/// @brief コンパイラに合わせたブレークをする関数
+	void DebugBreak();
+
 	/// @brief ユーザーエラーを報告する関数
 	void ReportUserError(const std::string& message, UserError error);
 
