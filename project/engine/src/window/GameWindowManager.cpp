@@ -1,5 +1,6 @@
 #include "engine/include/window/GameWindowManager.h"
 #include "engine/include/window/GameWindow.h"
+#include "engine/include/core/engineDefines.h"
 
 #ifdef QFE_OPTIMIZE_OFF
 
@@ -58,8 +59,7 @@ namespace QFE {
 				}
 			}
 		}
-		throw std::runtime_error("指定されたウィンドウ名が見つかりませんでした。" + windowName);
-
+		QFE_REPORT_SYSTEM_ERROR(std::string("GameWindowManager: Window not found - ") + windowName, SystemError::Abort);
 	}
 
 }

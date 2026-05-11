@@ -51,7 +51,7 @@ void PipelineStateObject::CreatePipelineStateObject(
 		IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr));
 	if (FAILED(hr)) {
-		throw std::runtime_error("Failed to create root signature");
+		QFE_REPORT_SYSTEM_ERROR(std::string("PipelineStateObject: Failed to create root signature"), SystemError::Abort);
 	}
 
 	// * BlendState * //
@@ -167,14 +167,12 @@ void PipelineStateObject::CreatePipelineStateObject(
 ID3D12PipelineState* PipelineStateObject::GetPipelineState() {
 	// そもそも生成されていない場合はエラー
 	if (!isCreatedPipelineStateObject_) {
-		assert(isCreatedPipelineStateObject_);
-		throw std::runtime_error("PipelineStateObject is not created.");
+		QFE_REPORT_SYSTEM_ERROR(std::string("PipelineStateObject: PipelineStateObject is not created."), SystemError::Abort);
 	}
 
 	// PSOが作成されていない場合はエラー
 	if(graphicsPipelineState_ == nullptr) {
-		assert(graphicsPipelineState_ != nullptr);
-		throw std::runtime_error("PipelineState is not created.");
+		QFE_REPORT_SYSTEM_ERROR(std::string("PipelineStateObject: PipelineState is not created."), SystemError::Abort);
 	}
 
 	return graphicsPipelineState_.Get();
@@ -183,14 +181,12 @@ ID3D12PipelineState* PipelineStateObject::GetPipelineState() {
 ID3D12RootSignature* PipelineStateObject::GetRootSignature() {
 	// そもそも生成されていない場合はエラー
 	if (!isCreatedPipelineStateObject_) {
-		assert(isCreatedPipelineStateObject_);
-		throw std::runtime_error("PipelineStateObject is not created.");
+		QFE_REPORT_SYSTEM_ERROR(std::string("PipelineStateObject: PipelineStateObject is not created."), SystemError::Abort);
 	}
 
 	// RootSignatureが作成されていない場合はエラー
 	if(rootSignature_ == nullptr) {
-		assert(rootSignature_ != nullptr);
-		throw std::runtime_error("RootSignature is not created.");
+		QFE_REPORT_SYSTEM_ERROR(std::string("PipelineStateObject: RootSignature is not created."), SystemError::Abort);
 	}
 
 	return rootSignature_.Get();
