@@ -15,8 +15,7 @@ namespace QFE {
 		explicit SafeVector(size_t size = 50) {
 			// std::vectorで確保できるサイズを超えている場合は例外を投げる
 			if (size > data_.max_size()) {
-				QFE_LOG(std::string("Data MaxSize: ") + std::to_string(data_.max_size()));
-				throw std::length_error("SafeVector size exceeds maximum allowed by std::vector.");
+				QFE_REPORT_SYSTEM_ERROR("Requested size exceeds maximum capacity of SafeVector.", SystemError::Abort);
 			}
 
 			data_.clear();
@@ -34,8 +33,7 @@ namespace QFE {
 		/// @brief 要素を配列の末尾に追加する（コピーまたはムーブ）
 		virtual void push_back(T value) override {
 			if (data_.size() >= data_.capacity()) {
-				__debugbreak();
-				throw std::overflow_error("SafeVector capacity exceeded. Consider increasing the reserved size.");
+				QFE_REPORT_SYSTEM_ERROR("SafeVector capacity exceeded. Consider increasing the reserved size.", SystemError::Abort);
 			}
 			data_.push_back(std::move(value));
 		}
@@ -55,25 +53,25 @@ namespace QFE {
 
 		virtual T& front() override {
 			if (data_.empty()) {
-				throw std::out_of_range("SafeVector is empty. No elements to access.");
+				QFE_REPORT_SYSTEM_ERROR("SafeVector is empty. No elements to access.", SystemError::Abort);
 			}
 			return data_.front();
 		}
 		virtual const T& front() const override {
 			if (data_.empty()) {
-				throw std::out_of_range("SafeVector is empty. No elements to access.");
+				QFE_REPORT_SYSTEM_ERROR("SafeVector is empty. No elements to access.", SystemError::Abort);
 			}
 			return data_.front();
 		}
 		virtual T& back() override {
 			if (data_.empty()) {
-				throw std::out_of_range("SafeVector is empty. No elements to access.");
+				QFE_REPORT_SYSTEM_ERROR("SafeVector is empty. No elements to access.", SystemError::Abort);
 			}
 			return data_.back();
 		}
 		virtual const T& back() const override {
 			if (data_.empty()) {
-				throw std::out_of_range("SafeVector is empty. No elements to access.");
+				QFE_REPORT_SYSTEM_ERROR("SafeVector is empty. No elements to access.", SystemError::Abort);
 			}
 			return data_.back();
 		}
@@ -114,9 +112,9 @@ namespace QFE {
 		void CheckIndex(size_t index) const {
 			// インデックスが範囲内かどうかをチェック
 			if (index >= data_.size()) {
-				assert(false && "Index out of bounds in SafeVector.");
-				__debugbreak();
-				throw std::out_of_range("Index out of bounds in SafeVector.");
+				QFE_REPORT_SYSTEM_ERROR(
+					"Index out of bounds in SafeVector. Index: " +std::to_string(index) +
+					", Size: " + std::to_string(data_.size()), SystemError::Abort);
 			}
 		}
 		std::vector<T> data_;

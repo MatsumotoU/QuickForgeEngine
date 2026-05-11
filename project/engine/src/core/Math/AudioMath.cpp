@@ -17,7 +17,7 @@ namespace QFE {
 	Spectrum MyAudioMath::CreateSpectrumFromAudioData(const AudioData& audioData) {
 		// 16bit PCM monoのみ対応
 		if (audioData.wfxEx.Format.wFormatTag != WAVE_FORMAT_PCM || audioData.wfxEx.Format.wBitsPerSample != 16) {
-			throw std::runtime_error("Unsupported audio format for FFT calculation: Only 16-bit PCM mono is supported.");
+			QFE_REPORT_SYSTEM_ERROR("Unsupported audio format. Only 16-bit PCM is supported.", SystemError::Abort);
 		}
 
 		const auto* samples = reinterpret_cast<const int16_t*>(audioData.buffer.begin());
