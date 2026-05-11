@@ -38,9 +38,9 @@ void QFE::Render::Skybox::DrawSkybox(const SkyboxComponent& skyboxComponent)
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	commandList->SetGraphicsRootConstantBufferView(0,
-		assetManager->GetGpuBufferPool()->GetConstantBufferAddress<TransformationMatrix>(skyboxComponent.wvpBufferHandle));
-	commandList->SetGraphicsRootConstantBufferView(1,
 		assetManager->GetGpuBufferPool()->GetConstantBufferAddress<Material>(skyboxComponent.materialBufferHandle));
+	commandList->SetGraphicsRootConstantBufferView(1,
+		assetManager->GetGpuBufferPool()->GetConstantBufferAddress<TransformationMatrix>(skyboxComponent.wvpBufferHandle));
 	commandList->SetGraphicsRootDescriptorTable(2,
 		assetManager->GetTextureManager()->GetTextureSrvHandleGPU(skyboxComponent.textureHandle));
 

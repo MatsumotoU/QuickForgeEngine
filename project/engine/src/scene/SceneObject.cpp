@@ -377,6 +377,10 @@ void QFE::SceneObject::AddSkybox(const std::string& skyboxName)
 	material->color = { 1.0f,1.0f,1.0f,1.0f };
 	material->enableLighting = false;
 
+	TransformationMatrix* transformData = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(skyboxComponent.wvpBufferHandle);
+	transformData->World = QFE::Matrix4x4::MakeIndentity4x4();
+	transformData->WVP = QFE::Matrix4x4::MakeIndentity4x4();
+
 	entityManager_.EmplaceComponent<SkyboxComponent>(entityId, skyboxComponent);
 	
 	SceneObjectData sceneObjectData;
@@ -731,6 +735,31 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		modelHandle.Deserialize(entityJson["ModelHandle"]);
 		std::chrono::steady_clock::time_point modelHandleEnd = std::chrono::steady_clock::now();
 		QFE_LOG("Deserialize ModelHandle Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(modelHandleEnd - modelHandleStart).count()) + " ms");
+	}
+	if (entityJson.contains("SkyboxComponent")) {
+		std::chrono::steady_clock::time_point skyboxStart = std::chrono::steady_clock::now();
+
+		AssetManager* assetManager = AssetManager::GetInstance();
+		SkyboxComponent skyboxComponent;
+		skyboxComponent.textureName = entityJson["SkyboxComponent"]["textureName"].get<std::string>();
+		skyboxComponent.textureHandle = assetManager->LoadTexture(skyboxComponent.textureName);
+		skyboxComponent.materialBufferHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<Material>();
+		skyboxComponent.wvpBufferHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<TransformationMatrix>();
+		skyboxComponent.vertexBufferHandle = 
+			assetManager->GetModelVertexResourceManager()->AssignBox(DirectXCommon::GetInstance()->GetDevice(), true);
+
+		Material* material = assetManager->GetGpuBufferPool()->GetConstantBufferData<Material>(skyboxComponent.materialBufferHandle);
+		material->color = { 1.0f,1.0f,1.0f,1.0f };
+		material->enableLighting = false;
+
+		TransformationMatrix* transformData = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(skyboxComponent.wvpBufferHandle);
+		transformData->World = QFE::Matrix4x4::MakeIndentity4x4();
+		transformData->WVP = QFE::Matrix4x4::MakeIndentity4x4();
+
+		entityManager_.EmplaceComponent<SkyboxComponent>(entityId, skyboxComponent);
+
+		std::chrono::steady_clock::time_point skyboxEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize SkyboxComponent Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(skyboxEnd - skyboxStart).count()) + " ms");
 	}
 	if (entityJson.contains("SceneObjectData")) {
 		std::chrono::steady_clock::time_point sceneObjectDataStart = std::chrono::steady_clock::now();

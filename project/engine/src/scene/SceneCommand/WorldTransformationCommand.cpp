@@ -5,6 +5,7 @@
 #include "engine/include/core/Math/Transform.h"
 #include "Engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
+#include "Engine/include/assets/3DModel/Data/SkyboxComponent.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
 #include "Engine/include/assets/Particle/Data/ParticleComponent.h"
 using namespace QFE;
@@ -31,6 +32,17 @@ void WorldTransformationCommand::Execute(){
 					);
 				}
 			}
+			// スカイボックスのワールド行列更新
+			if (entityManager_.HasComponent<SkyboxComponent>(entityId)) {
+				SkyboxComponent& skyboxComp = entityManager_.GetComponent<SkyboxComponent>(entityId);
+				TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(skyboxComp.wvpBufferHandle);
+				wpvMatrix->World = Matrix4x4::MakeAffineMatrix(
+					transform.scale,
+					transform.rotate,
+					transform.translate
+				);
+			}
+
 			// スプライトのワールド行列更新
 			if (entityManager_.HasComponent<SpriteData>(entityId)) {
 				SpriteData& spriteData = entityManager_.GetComponent<SpriteData>(entityId);

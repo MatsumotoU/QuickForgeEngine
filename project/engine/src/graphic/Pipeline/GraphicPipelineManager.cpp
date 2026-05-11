@@ -203,8 +203,13 @@ void GraphicPipelineManager::Initialize(
 		fontRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "MSDF.PS.hlsl", "Font.VS.hlsl", kBlendModeNormal, false);
 
+	// Skybox用のDepthStencil設定(一番奥=1.0で描画されるようにLESS_EQUALにする)
+	D3D12_DEPTH_STENCIL_DESC skyboxDepthStencilDesc = dxCommon->GetDepthStencilDesc();
+	skyboxDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	skyboxDepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
 	skyBoxPso_.Initialize(&shaderCompiler_, device);
 	skyBoxPso_.CreatePipelineStateObject(
-		skyBoxRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
-		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "SkyBox.PS.hlsl", "SkyBox.VS.hlsl", kBlendModeNormal, false);
+		skyBoxRootParameter_, skyboxDepthStencilDesc, normalInputLayout_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "SkyBox.PS.hlsl", "SkyBox.VS.hlsl", kBlendModeNormal, true);
 }
