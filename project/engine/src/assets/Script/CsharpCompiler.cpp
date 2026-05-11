@@ -69,6 +69,6 @@ void QFE::CompileCSharpProject(const std::string& csprojPath, const std::string&
 		std::cerr << "C# Build Failed:\n" << logContent << std::endl;
 #endif
 
-		QFE_REPORT_SYSTEM_ERROR("C# Build Failed. Check log for details.", SystemError::Abort);
+		QFE_REPORT_USER_ERROR("C# Build Failed. Check log for details.", UserError::DeveloperError);
 	}
 }
