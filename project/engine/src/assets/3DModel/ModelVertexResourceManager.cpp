@@ -7,6 +7,8 @@
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include <cassert>
 
+#include "engine/include/assets/3DModel/PrimitiveVertices.h"
+
 using namespace QFE;
 
 /** @brief 初期化 */
@@ -57,6 +59,32 @@ uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelDat
 
 	modelHandleMap_.insert({ modelName, firstHandle });
     return firstHandle;
+}
+
+uint32_t QFE::ModelVertexResourceManager::AssignBox(ID3D12Device* device, bool invertFace)
+{
+	// 同じ名前のモデルが既に存在する場合はそのハンドルを返す
+	std::string modelName = "Box_" + std::to_string(modelVertexBuffers_.size());
+	auto it = modelHandleMap_.find(modelName);
+	if (it != modelHandleMap_.end()) {
+		return it->second;
+	}
+
+    // メッシュデータを作成する
+	MeshData boxMesh = PRIMITIVE::CreateBox(invertFace);
+	
+	// 頂点データを割り当てる
+	modelVertexBuffers_.emplace_back();
+	modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(boxMesh.vertices.size()));
+	for (size_t i = 0; i < boxMesh.vertices.size(); ++i) {
+		modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), boxMesh.vertices[i]);
+	}
+
+	// ハンドルを生成してマップに登録
+	modelHandleMap_.insert({ modelName, static_cast<uint32_t>(modelVertexBuffers_.size() - 1) });
+
+	// ハンドルを返す
+	return static_cast<uint32_t>(modelVertexBuffers_.size() - 1);
 }
 
 const uint32_t ModelVertexResourceManager::GetVertexBufferCount(uint32_t handle) const {

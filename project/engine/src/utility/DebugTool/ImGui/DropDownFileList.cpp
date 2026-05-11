@@ -14,6 +14,16 @@ void DropDownFileList::LoadFileList(const std::string& directoryPath, const std:
 	isSelected_ = false;
 }
 
+void QFE::DropDownFileList::AddFileList(const std::string& directoryPath, const std::string& extension)
+{
+	std::vector<std::string> newFiles = QFE::FILE::GetFilesInDirectory(directoryPath, extension);
+	for (const auto& file : newFiles) {
+		if (std::find(fileList_.begin(), fileList_.end(), file) == fileList_.end()) {
+			fileList_.push_back(file);
+		}
+	}
+}
+
 void DropDownFileList::DrawCombo() {
 	if (fileList_.empty()) {
 		ImGui::Text("No files found.");

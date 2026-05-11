@@ -46,6 +46,9 @@ namespace QFE {
 		/** @brief ピクセル化用のPSOを取得 */
 		PipelineStateObject* GetPixelPso() { return &pixelPso_; }
 
+		/// @brief スカイボックス描画用のPSOを取得
+		PipelineStateObject* GetSkyBoxPso() { return &skyBoxPso_; }
+
 	private: // メンバ変数
 		ShaderCompiler shaderCompiler_;
 
@@ -65,6 +68,7 @@ namespace QFE {
 		RootParameter normalRootParameter_;
 		RootParameter fontRootParameter_;
 		RootParameter pixelRootParameter_;
+		RootParameter skyBoxRootParameter_;
 
 		// PSO
 		PipelineStateObject trianglePso_[kCountOfBlendMode];
@@ -85,5 +89,7 @@ namespace QFE {
 		PipelineStateObject fontPso_;
 
 		PipelineStateObject normalPso_;
+
+		PipelineStateObject skyBoxPso_;
 	};
 }

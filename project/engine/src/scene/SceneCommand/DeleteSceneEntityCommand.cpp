@@ -7,6 +7,7 @@
 
 #include "Engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
+#include "engine/include/assets/3DModel/Data/SkyboxComponent.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
 #include "Engine/include/assets/Particle/Data/ParticleComponent.h"
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
@@ -44,6 +45,13 @@ void DeleteSceneEntityCommand::Execute()
 			gpuBufferPool->ReleaseConstantBuffer<Material>(meshData.materialHandle);
 			gpuBufferPool->ReleaseConstantBuffer<DirectionalLight>(meshData.lightBufferHandle);
 		}
+	}
+	// SkyboxコンポーネントのGPUリソース解放
+	if (entityManager_.HasComponent<SkyboxComponent>(entityId_)) {
+		QFE_LOG("Releasing GPU resources for Skybox component of entity " + std::to_string(entityId_));
+		SkyboxComponent& skyboxComponent = entityManager_.GetComponent<SkyboxComponent>(entityId_);
+		gpuBufferPool->ReleaseConstantBuffer<TransformationMatrix>(skyboxComponent.wvpBufferHandle);
+		gpuBufferPool->ReleaseConstantBuffer<Material>(skyboxComponent.materialBufferHandle);
 	}
 	// SpriteコンポーネントのGPUリソース解放
 	if (entityManager_.HasComponent<SpriteData>(entityId_)) {

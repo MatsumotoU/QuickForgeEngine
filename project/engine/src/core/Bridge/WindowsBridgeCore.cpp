@@ -478,6 +478,15 @@ namespace QFE {
 		}
 	}
 
+	void WindowsBridgeCore::AddSkyboxEntity(const std::string& filepath)
+	{
+		QFE_PROFILE_SCOPE;
+		SceneManager* sceneManager = engineCore_->GetSceneManager();
+		if (sceneManager) {
+			sceneManager->AddSkybox(filepath);
+		}
+	}
+
 	void WindowsBridgeCore::AddEntityFromFile(const std::string& filepath) {
 		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();

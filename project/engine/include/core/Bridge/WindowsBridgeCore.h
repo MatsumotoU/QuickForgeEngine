@@ -67,6 +67,7 @@ namespace QFE {
 		// シーンにエンティティを追加する関数群
 		virtual void ReCompileCsharpScripts() override;
 		virtual void AddEmptyEntity() override;
+		virtual void AddSkyboxEntity(const std::string& filepath) override;
 		virtual void AddEntityFromFile(const std::string& filepath) override;
 		virtual void AddModelEntity(const std::string& filepath) override;
 		virtual void AddSpriteEntity(const std::string& filepath) override;

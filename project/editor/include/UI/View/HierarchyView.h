@@ -37,6 +37,7 @@ namespace QFE {
 		DropDownFileList modelDropDownFileList_; ///< モデル選択リスト
 		DropDownFileList spriteDropDownFileList_; ///< スプライト選択リスト
 		DropDownFileList entityDropDownFileList_; ///< エンティティテンプレート選択リスト
+		DropDownFileList skyboxDropDownFileList_; ///< スカイボックス選択リスト
 		int particleCount_ = 0; ///< パーティクル数管理用
 #endif // _DEBUG
 	};

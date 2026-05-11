@@ -71,6 +71,7 @@ namespace QFE {
 		Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages, ID3D12GraphicsCommandList* commandList);
 		void EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList);
 		void CreateShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource);
+		void CreateSkyBoxShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource);
 
 		ID3D12Device* device_;
 		ID3D12GraphicsCommandList* commandList_;
