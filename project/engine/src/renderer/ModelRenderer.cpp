@@ -3,6 +3,7 @@
  * @brief 3Dモデルのレンダリング機能の実装
  */
 
+#include "engine/include/scene/SceneManager.h"
 #include "engine/include/renderer/ModelRenderer.h"
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/assets/3DModel/Data/ModelRenderData.h"
@@ -11,6 +12,7 @@
 #include <cassert>
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "engine/include/assets/3DModel/Data/SkyboxComponent.h"
 
 #include "engine/include/core/EngineDefines.h"
 
@@ -26,14 +28,27 @@ namespace QFE {
 				AssetManager* assetManager = AssetManager::GetInstance();
 				assert(assetManager && "AssetManager is nullptr.");
 
-				// TODO: modelHandle の有効性チェック(範囲チェック)が欠けている
+				// モデルハンドルから描画に必要なデータを取得
 				const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(modelHandle);
-				if(modelDataPtr == nullptr) {
-#ifdef QFE_OPTIMIZE_OFF
+				if (modelDataPtr == nullptr) {
 					QFE_LOG(std::string("Error: ModelRenderData is nullptr for modelHandle ") + std::to_string(modelHandle));
-#endif // QFE_OPTIMIZE_OFF
 					return;
 				}
+
+				// シーン上にキューブマップを持つエンティティが存在しない場合は、ダミーの黒いキューブマップを使用する
+				EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+				assert(entityManager && "EntityManager is nullptr.");
+				int32_t cubeMapHandle = assetManager->GetTextureManager()->GetDummyBlackCubeMapHandle();
+				if (entityManager->HasComponentStrage<SkyboxComponent>()) {
+					ComponentStorage<SkyboxComponent>& skyboxStorage = entityManager->GetComponentStrage<SkyboxComponent>();
+					for (const auto& [entityId, skyboxComponent] : skyboxStorage.GetAllComponents()) {
+						if (skyboxComponent.textureHandle != UINT32_MAX) {
+							cubeMapHandle = skyboxComponent.textureHandle;
+							break;
+						}
+					}
+				}
+				
 				GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 
 				PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetTrianglePso(kBlendModeNormal);
@@ -58,9 +73,13 @@ namespace QFE {
 						gpuBufferPool->GetConstantBufferAddress<TransformationMatrix>(handle.wpvBufferHandle));
 					commandList->SetGraphicsRootDescriptorTable(2,
 						assetManager->GetTextureManager()->GetTextureSrvHandleGPU(handle.textureHandle));
-					commandList->SetGraphicsRootConstantBufferView(3,
-						gpuBufferPool->GetConstantBufferAddress<DirectionalLight>(handle.lightBufferHandle));
+
+					commandList->SetGraphicsRootDescriptorTable(3,
+						assetManager->GetTextureManager()->GetTextureSrvHandleGPU(cubeMapHandle));
+
 					commandList->SetGraphicsRootConstantBufferView(4,
+						gpuBufferPool->GetConstantBufferAddress<DirectionalLight>(handle.lightBufferHandle));
+					commandList->SetGraphicsRootConstantBufferView(5,
 						gpuBufferPool->GetConstantBufferAddress<CameraForGPU>(handle.cameraPosBufferHandle));
 					commandList->DrawInstanced(static_cast<UINT>(
 						assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);

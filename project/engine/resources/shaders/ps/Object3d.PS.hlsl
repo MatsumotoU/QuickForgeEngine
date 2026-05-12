@@ -13,6 +13,7 @@ ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<CameraForGPU> gCamera : register(b2);
 Texture2D<float32_t4> gTexture : register(t0);
+TextureCube<float32_t4> gCubeTexture : register(t1);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput{
@@ -52,6 +53,11 @@ PixelShaderOutput main(VertexShaderOutput input)
             gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
         output.color.rgb = diffuse + specular;
         output.color.a = alpha;
+        
+        float32_t3 cameraToPosition = normalize(input.worldPosition - gCamera.cameraPosition);
+        float32_t3 reflection = reflect(-cameraToPosition, normalize(input.normal));
+        float32_t4 environmentColor = gCubeTexture.Sample(gSampler, reflection);
+        output.color.rgb += environmentColor.rgb;
     }
     else
     {
