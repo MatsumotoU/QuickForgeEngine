@@ -20,6 +20,10 @@
 
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
+namespace {
+	std::string kDummyBlackCubeMapKey = "DummyBlackCubeMap";
+}
+
 using namespace QFE;
 
 TextureManager::TextureManager() :
@@ -61,6 +65,9 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	filePathLibrary_.Init("TextureFileName");
 
 	textureHandle_ = 0;
+
+	dummyBlackCubeMapHandle_ = CreateDummyBlackCubeMap();
+	filePathLibrary_.AddStringToLibrary(kDummyBlackCubeMapKey);
 }
 
 /// @brief 終了処理
@@ -73,6 +80,11 @@ void TextureManager::Finalize() {
 	intermediateResource_.clear();
 
 	CoUninitialize();
+}
+
+const int32_t QFE::TextureManager::GetDummyBlackCubeMapHandle() const
+{
+	return dummyBlackCubeMapHandle_;
 }
 
 DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
@@ -248,6 +260,44 @@ void QFE::TextureManager::CreateSkyBoxShaderResourceView(const DirectX::TexMetad
 	DescriptorHandles handles = srvDescriptorHeap_->AssignHeap(textureResource, srvDesc);
 	textureSrvHandleCPU_.push_back(handles.cpuHandle_);
 	textureSrvHandleGPU_.push_back(handles.gpuHandle_);
+}
+
+int32_t QFE::TextureManager::CreateDummyBlackCubeMap()
+{
+	// 空のScratchImageを作成
+	auto scratchImage = std::make_unique<DirectX::ScratchImage>();
+
+	// 1x1サイズ、RGBA8ビット、1キューブ(6面)、ミップマップレベル1で初期化
+	HRESULT hr = scratchImage->InitializeCube(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, 1, 1);
+	if (!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR("TextureManager: Failed to initialize dummy cube map", SystemError::Abort);
+	}
+	
+	// 全ての面のピクセルデータを0（黒）で塗りつぶす
+	const DirectX::Image* images = scratchImage->GetImages();
+	for (size_t i = 0; i < scratchImage->GetImageCount(); ++i) {
+		memset(images[i].pixels, 0, images[i].rowPitch * images[i].height);
+	}
+
+	// 生成したScratchImageを管理リストに追加
+	scratchImages_.push_back(std::move(scratchImage));
+	const DirectX::TexMetadata& metadata = scratchImages_.back()->GetMetadata();
+
+	// リソース作成
+	textureResources_.push_back(CreateTextureResource(metadata));
+
+	// CubeMap用のSRV作成
+	CreateSkyBoxShaderResourceView(metadata, textureResources_.back().Get());
+
+	textureHandle_++;
+
+	// データ転送
+	intermediateResource_.push_back(
+		UploadTextureData(textureResources_.back().Get(), *(scratchImages_.back().get()), commandList_));
+
+	QFE_LOG("TextureManager: Created Dummy Black CubeMap");
+
+	return textureHandle_ - 1;
 }
 
 void TextureManager::ReleaseIntermediateResources() {

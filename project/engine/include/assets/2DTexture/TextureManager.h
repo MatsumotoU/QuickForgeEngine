@@ -63,6 +63,9 @@ namespace QFE {
 		/// @brief デバッグ用に次のテクスチャハンドルを取得
 		[[nodiscard]] const int32_t GetNextTextureHandle() const { return textureHandle_; }
 
+		/// @brief ダミーの黒いキューブマップのハンドルを取得
+		[[nodiscard]] const int32_t GetDummyBlackCubeMapHandle() const;
+
 	private:
 		DirectX::ScratchImage Load(const std::string& filePath);
 		void LoadScratchImage(const std::string& filePath);
@@ -72,6 +75,9 @@ namespace QFE {
 		void EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList);
 		void CreateShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource);
 		void CreateSkyBoxShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource);
+
+		/// @brief ダミーの黒いキューブマップを作成する
+		int32_t CreateDummyBlackCubeMap();
 
 		ID3D12Device* device_;
 		ID3D12GraphicsCommandList* commandList_;
@@ -89,6 +95,9 @@ namespace QFE {
 		int32_t textureHandle_;
 		SafeVector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
 		StringLibrary filePathLibrary_;
+
+		// エラー回避用テクスチャハンドル
+		int32_t dummyBlackCubeMapHandle_;
 	};
 
 }
