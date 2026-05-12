@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/include/utility/DesignPatterns/Singleton.h"
+
 #include <chrono>
 #include <string>
 #include <deque>
@@ -52,20 +53,8 @@ namespace QFE {
 	/// スコーププロファイルクラス.
 	class ScopeProfile {
 	public:
-		ScopeProfile(const std::string& scopeName) : scopeName_(scopeName) {
-			try {
-				startTime_ = std::chrono::high_resolution_clock::now();
-			}
-			catch (const std::exception&) {}
-		}
-		~ScopeProfile() {
-			try {
-				auto endTime = std::chrono::high_resolution_clock::now();
-				auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime_);
-				Profiler::GetInstance()->RecordScopeProfile(scopeName_, duration);
-			}
-			catch (const std::exception&) {}
-		}
+		ScopeProfile(const std::string& scopeName);
+		~ScopeProfile();
 
 	private:
 		std::string scopeName_;

@@ -21,10 +21,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 
 	// Obj形式である場合、mtlもあるか確認する
 	if (!QFE::FILE::HasObjModelFiles(modelResourceDirectory, filename)) {
-		QFE_LOG(std::format("MTL file not found for OBJ model: {}", filename));
-		assert(false && "MTL file not found for OBJ model");
-		throw std::runtime_error("MTL file not found for OBJ model: " + filename);
-		return;
+		QFE_REPORT_SYSTEM_ERROR(std::format("MTL file not found for OBJ model: {}", filename), SystemError::Abort);
 	}
 
 	// モデルの読み込み

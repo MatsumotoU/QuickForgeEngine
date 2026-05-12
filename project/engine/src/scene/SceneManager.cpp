@@ -204,6 +204,10 @@ void SceneManager::AddEmptyObject() {
 	currentScene_->AddEmptyObject();
 }
 
+void SceneManager::AddSkybox(const std::string& skyboxName) {
+	currentScene_->AddSkybox(skyboxName);
+}
+
 void SceneManager::AddParticleEmitter(const std::string& modelName, uint32_t maxCount) {
 	currentScene_->AddParticleEmitter(modelName, maxCount);
 }

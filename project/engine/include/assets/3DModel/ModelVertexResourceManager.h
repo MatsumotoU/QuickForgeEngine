@@ -37,6 +37,9 @@ namespace QFE {
 		 */
 		uint32_t Assign(ID3D12Device* device, const ModelData& modelData, const std::string& modelName);
 
+		/// @brief ボックス型の頂点データを生成してリソースに割り当てる
+		uint32_t AssignBox(ID3D12Device* device, bool invertFace = false);
+
 		/** @brief ハンドルから頂点バッファの数を取得 */
 		const uint32_t GetVertexBufferCount(uint32_t handle) const;
 		/** @brief ハンドルから頂点リソースを取得 */

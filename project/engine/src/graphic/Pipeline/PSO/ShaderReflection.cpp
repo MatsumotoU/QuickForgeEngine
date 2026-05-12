@@ -7,23 +7,32 @@ using namespace QFE;
 ShaderReflection::ShaderReflection() {
 	HRESULT hr;
 	hr = DxcCreateInstance(CLSID_DxcContainerReflection, IID_PPV_ARGS(containerReflection_.GetAddressOf()));
-	assert(SUCCEEDED(hr) && "Failed to create DxcContainerReflection instance.");
+	if (!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to create DxcContainerReflection instance.",SystemError::Abort);
+	}
 }
 
 void ShaderReflection::RunShaderReflection(IDxcBlob* shaderBlob) {
 	HRESULT hr;
 	hr = containerReflection_->Load(shaderBlob);
-	assert(SUCCEEDED(hr) && "Failed to load shader blob into container reflection.");
+	if(SUCCEEDED(hr)) {
+		QFE_LOG("Shader blob loaded successfully into container reflection.");
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to load shader blob into container reflection.", SystemError::Abort);
+	}
 	UINT32 partIndex;
 	hr = containerReflection_->FindFirstPartKind(DXC_PART_DXIL, &partIndex);
-	assert(SUCCEEDED(hr) && "Failed to find DXIL part in shader blob.");
+	if(SUCCEEDED(hr)) {
+		QFE_LOG(std::format("DXIL part found in container at index {}.", partIndex));
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to find DXIL part in container reflection.", SystemError::Abort);
+	}
 	hr = containerReflection_->GetPartReflection(partIndex, IID_PPV_ARGS(shaderReflection_.GetAddressOf()));
-	assert(SUCCEEDED(hr) && "Failed to get shader reflection from part.");
-
-#ifdef QFE_OPTIMIZE_OFF
-	
-#endif // QFE_OPTIMIZE_OFF
-
+	if(SUCCEEDED(hr)) {
+		QFE_LOG("Shader reflection interface obtained successfully.");
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to get shader reflection interface from container reflection.", SystemError::Abort);
+	}
 }
 
 nlohmann::json ShaderReflection::Serialize() const {
@@ -32,6 +41,10 @@ nlohmann::json ShaderReflection::Serialize() const {
 	{
 		// 繧ｷ繧ｧ繝ｼ繝繝ｼ縺ｮ隱ｬ譏弱ｒ蜿門ｾ・
 		D3D12_SHADER_DESC shaderDesc{};
+		if(shaderReflection_ == nullptr) {
+			QFE_REPORT_SYSTEM_ERROR("Shader reflection interface is not initialized.", SystemError::Abort);
+		}
+
 		HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
 		assert(SUCCEEDED(hr) && "Failed to get shader description.");
 		

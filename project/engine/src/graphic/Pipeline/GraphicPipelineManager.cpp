@@ -108,6 +108,14 @@ void GraphicPipelineManager::Initialize(
 	fontRootParameter_.SetDescriptorRange("VertexParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 	fontRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
+	// スカイボックスのルートパラメータ
+	skyBoxRootParameter_.Initialize();
+	skyBoxRootParameter_.CreateRootParameter("PixelParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	skyBoxRootParameter_.CreateRootParameter("VertexParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
+	skyBoxRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	
+	skyBoxRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
 	// パラメータの整合性チェック
 #ifdef QFE_OPTIMIZE_OFF
 	normalGameObjectRootParameter_.CheckIntegrityData();
@@ -119,6 +127,7 @@ void GraphicPipelineManager::Initialize(
 	normalRootParameter_.CheckIntegrityData();
 	colorCorrectionRootParameter_.CheckIntegrityData();
 	fontRootParameter_.CheckIntegrityData();
+	skyBoxRootParameter_.CheckIntegrityData();
 #endif // QFE_OPTIMIZE_OFF
 
 	// インプットレイアウトの初期化
@@ -193,4 +202,14 @@ void GraphicPipelineManager::Initialize(
 	fontPso_.CreatePipelineStateObject(
 		fontRootParameter_, dxCommon->GetDepthStencilDesc(), primitiveInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "MSDF.PS.hlsl", "Font.VS.hlsl", kBlendModeNormal, false);
+
+	// Skybox用のDepthStencil設定(一番奥=1.0で描画されるようにLESS_EQUALにする)
+	D3D12_DEPTH_STENCIL_DESC skyboxDepthStencilDesc = dxCommon->GetDepthStencilDesc();
+	skyboxDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	skyboxDepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+	skyBoxPso_.Initialize(&shaderCompiler_, device);
+	skyBoxPso_.CreatePipelineStateObject(
+		skyBoxRootParameter_, skyboxDepthStencilDesc, normalInputLayout_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "SkyBox.PS.hlsl", "SkyBox.VS.hlsl", kBlendModeNormal, true);
 }

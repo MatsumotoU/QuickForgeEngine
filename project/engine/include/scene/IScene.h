@@ -40,6 +40,7 @@ namespace QFE {
 		// シーンにオブジェクトを追加
 		virtual void AddEmptyObject() = 0;
 		virtual void AddParticleEmitter(const std::string& modelName, uint32_t maxCount) = 0;
+		virtual void AddSkybox(const std::string& skyboxName) = 0;
 		virtual void AddModel(const std::string& modelName) = 0;
 		virtual void AddSprite(const std::string& spriteName, float width = 0.0f, float height = 0.0f, int inEntityId = -1, int layer = -1, Vector2 pivot = { 0.0f,0.0f }) = 0;
 		virtual void AddCsharpScript(uint32_t entityId, const std::string& className) = 0;

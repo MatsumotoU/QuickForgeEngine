@@ -72,8 +72,7 @@ const Transform& QFE::CameraManager::GetMainCameraTransform() const {
 	if (entityManager->HasComponent<Transform>(mainCameraEntityId)) {
 		return entityManager->GetComponent<Transform>(mainCameraEntityId);
 	} else {
-		assert(false && "Main camera entity does not have Transform component.");
-		throw std::runtime_error("Main camera entity does not have Transform component.");
+		QFE_REPORT_SYSTEM_ERROR("Main camera entity does not have a Transform component.", SystemError::Abort);
 	}
 }
 

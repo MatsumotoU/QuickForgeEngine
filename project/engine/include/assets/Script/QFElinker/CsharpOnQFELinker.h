@@ -47,6 +47,9 @@ namespace QFE::CsharpOnQFELinker {
     extern void ChangeMesh(uint32_t entityId, MonoString* meshName);
 	extern void DeleteEntity(uint32_t entityId);
 
+	// Script
+	extern void CallEntityMethod(uint32_t entityId, MonoString* methodName);
+
 	// debug
     extern void Native_Debug_Log(MonoString* message);
 }

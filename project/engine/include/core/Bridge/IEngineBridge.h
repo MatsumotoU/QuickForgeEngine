@@ -67,6 +67,7 @@ namespace QFE {
 
 		// シーンにエンティティを追加する関数群
 		virtual void AddEmptyEntity() = 0;
+		virtual void AddSkyboxEntity(const std::string& filepath) = 0;
 		virtual void AddEntityFromFile(const std::string& filepath) = 0;
 		virtual void AddModelEntity(const std::string& filepath) = 0;
 		virtual void AddSpriteEntity(const std::string& filepath) = 0;

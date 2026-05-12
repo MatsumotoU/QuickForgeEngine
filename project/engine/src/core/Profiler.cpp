@@ -49,4 +49,21 @@ namespace QFE {
 		}
 		return totalDuration / static_cast<int>(it->second.size());
 	}
+
+	ScopeProfile::ScopeProfile(const std::string& scopeName) : scopeName_(scopeName) {
+		try {
+			startTime_ = std::chrono::high_resolution_clock::now();
+		}
+		catch (const std::exception&) {}
+	}
+	ScopeProfile::~ScopeProfile() {
+		try {
+			auto endTime = std::chrono::high_resolution_clock::now();
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime_);
+			Profiler::GetInstance()->RecordScopeProfile(scopeName_, duration);
+		}
+		catch (const std::exception& e) {
+			QFE_REPORT_SYSTEM_ERROR(std::string("Failed to record scope profile for ") + scopeName_ + ": " + e.what(), QFE::SystemError::Abort);
+		}
+	}
 }

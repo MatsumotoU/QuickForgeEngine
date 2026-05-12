@@ -26,18 +26,28 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 	// MFSourceReaderの作成
 	Microsoft::WRL::ComPtr<IMFSourceReader> pMFSourceReader{ nullptr };
 	HRESULT hr = MFCreateSourceReaderFromURL(ConvertString(path).c_str(), nullptr, pMFSourceReader.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	if(!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR(std::format("Failed to create source reader from URL: HRESULT = 0x{:08X}", hr),SystemError::Abort);
+	}
 
 	// メディアタイプの設定
 	IMFMediaType* pMFMediaType{ nullptr };
 	hr = MFCreateMediaType(&pMFMediaType);
-	assert(SUCCEEDED(hr));
+	if(!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR(std::format("Failed to create media type: HRESULT = 0x{:08X}", hr),SystemError::Abort);
+	}
 	hr = pMFMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
-	assert(SUCCEEDED(hr));
+	if(!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR(std::format("Failed to set major type: HRESULT = 0x{:08X}", hr),SystemError::Abort);
+	}
 	hr = pMFMediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
-	assert(SUCCEEDED(hr));
+	if(!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR(std::format("Failed to set subtype: HRESULT = 0x{:08X}", hr),SystemError::Abort);
+	}
 	hr = pMFSourceReader.Get()->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, pMFMediaType);
-	assert(SUCCEEDED(hr));
+	if(!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR(std::format("Failed to set current media type: HRESULT = 0x{:08X}", hr),SystemError::Abort);
+	}
 
 	pMFMediaType->Release();
 	pMFMediaType = nullptr;

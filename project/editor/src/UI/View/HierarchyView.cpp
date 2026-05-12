@@ -8,9 +8,7 @@
 #include "engine/include/core/Bridge/EngineBridgeProvider.h"
 #include "engine/include/core/Bridge/IEngineBridge.h"
 
-#ifdef QFE_OPTIMIZE_OFF
-#include "utility/DebugTool/DebugLog/MyDebugLog.h"
-#endif // _DEBUG
+#include "engine/include/core/EngineDefines.h"
 
 namespace QFE {
 
@@ -30,6 +28,7 @@ namespace QFE {
 		if (bridge) {
 			modelDropDownFileList_.LoadFileList(bridge->GetModelDirectoryPath(), ".obj");
 			spriteDropDownFileList_.LoadFileList(bridge->GetImageDirectoryPath(), ".png");
+			skyboxDropDownFileList_.LoadFileList(bridge->GetImageDirectoryPath(), ".dds");
 			entityDropDownFileList_.LoadFileList(bridge->GetEntityTemplateDirectoryPath(), ".json");
 		}
 #endif // _DEBUG
@@ -105,6 +104,15 @@ namespace QFE {
 					std::string selectedModelFileName_;
 					if (modelDropDownFileList_.GetSelectedFileName(selectedModelFileName_)) {
 						bridge->AddParticleEmitterEntity(selectedModelFileName_, static_cast<uint32_t>(particleCount_));
+					}
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("SkyBox")) {
+					skyboxDropDownFileList_.DrawMenuItem();
+					std::string selectedSpriteFileName_;
+					if (skyboxDropDownFileList_.GetSelectedFileName(selectedSpriteFileName_)) {
+						bridge->AddSkyboxEntity(selectedSpriteFileName_);
 					}
 					ImGui::EndMenu();
 				}

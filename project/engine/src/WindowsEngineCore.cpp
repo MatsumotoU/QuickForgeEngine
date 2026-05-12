@@ -155,7 +155,7 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 
 	// エンジンアプリケーションの初期化
 	if (!app) {
-		throw std::runtime_error("IEngineApp implementation is required to initialize the engine.");
+		QFE_REPORT_SYSTEM_ERROR("EngineApp instance is null during WindowsEngineCore initialization.", SystemError::Abort);
 	}
 	engineApp_ = std::move(app);
 	engineApp_->Initialize();

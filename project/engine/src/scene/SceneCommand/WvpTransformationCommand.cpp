@@ -6,8 +6,10 @@
 
 #include "Engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
+#include "engine/include/assets/3DModel/Data/SkyboxComponent.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
 #include "Engine/include/assets/Particle/Data/ParticleComponent.h"
+
 using namespace QFE;
 
 WvpTransformationCommand::WvpTransformationCommand(EntityManager& entityManager, CameraManager& cameraMana) :
@@ -29,6 +31,12 @@ void WvpTransformationCommand::Execute()
 					TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(meshData.wpvBufferHandle);
 					wpvMatrix->WVP = cameraManager_.GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
 				}
+			}
+			// SkyboxのWVP行列更新
+			if (entityManager_.HasComponent<SkyboxComponent>(entityId)) {
+				SkyboxComponent& skyboxComp = entityManager_.GetComponent<SkyboxComponent>(entityId);
+				TransformationMatrix* wpvMatrix = assetManager->GetGpuBufferPool()->GetConstantBufferData<TransformationMatrix>(skyboxComp.wvpBufferHandle);
+				wpvMatrix->WVP = cameraManager_.GetMainCamera().GetWorldViewProjectionMatrix(wpvMatrix->World, CameraType::Perspective);
 			}
 			// SpriteのWVP行列更新
 			if (entityManager_.HasComponent<SpriteData>(entityId)) {

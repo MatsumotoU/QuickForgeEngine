@@ -10,6 +10,7 @@ namespace QFE {
 		~DropDownFileList() = default;
 
 		void LoadFileList(const std::string& directoryPath, const std::string& extension);
+		void AddFileList(const std::string& directoryPath, const std::string& extension);
 		void DrawCombo();
 		void DrawMenuItem();
 		bool GetSelectedFileName(std::string& fileName);
