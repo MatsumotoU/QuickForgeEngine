@@ -12,13 +12,11 @@ void QFE::BillboardUpdateCommand::Execute() {
 		return;
 	}
 
-	auto& billboardStorage = entityManager_.GetComponentStrage<BillboardComponent>();
-	for (auto& [entityId, billboardComp] : billboardStorage.GetAllComponents()) {
+	entityManager_.GetComponentStrage<BillboardComponent>().Each([&](uint32_t entityId, BillboardComponent& billboardComp) {
 		// トランスフォームコンポーネントが存在しない場合はスキップ
 		if (!entityManager_.HasComponent<Transform>(entityId)) {
-			continue;
+			return;
 		}
-
 		// トランスフォームコンポーネントを取得
 		Transform& transform = entityManager_.GetComponent<Transform>(entityId);
 		// ビルボードタイプに応じた処理を実行
@@ -27,7 +25,7 @@ void QFE::BillboardUpdateCommand::Execute() {
 		} else if (billboardComp.type_ == BillboardType::POINT) {
 			CameraPointBillboard(transform, billboardComp.rotateOffset_); // カメラの位置を向く
 		}
-	}
+		});
 }
 
 void QFE::BillboardUpdateCommand::Undo() {

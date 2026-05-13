@@ -38,16 +38,13 @@ namespace QFE {
 				// シーン上にキューブマップを持つエンティティが存在しない場合は、ダミーの黒いキューブマップを使用する
 				EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 				assert(entityManager && "EntityManager is nullptr.");
+
+				// キューブマップのハンドルを初期化
 				int32_t cubeMapHandle = assetManager->GetTextureManager()->GetDummyBlackCubeMapHandle();
-				if (entityManager->HasComponentStrage<SkyboxComponent>()) {
-					ComponentStorage<SkyboxComponent>& skyboxStorage = entityManager->GetComponentStrage<SkyboxComponent>();
-					for (const auto& [entityId, skyboxComponent] : skyboxStorage.GetAllComponents()) {
-						if (skyboxComponent.textureHandle != UINT32_MAX) {
-							cubeMapHandle = skyboxComponent.textureHandle;
-							break;
-						}
-					}
-				}
+				entityManager->Each<SkyboxComponent>([&](uint32_t entityId, SkyboxComponent& skyboxComp) {
+					cubeMapHandle = skyboxComp.textureHandle;
+					QFE_LOG(std::string("SkyboxComponent found on entityId ") + std::to_string(entityId) + ", textureHandle: " + std::to_string(skyboxComp.textureHandle));
+					});
 				
 				GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
 

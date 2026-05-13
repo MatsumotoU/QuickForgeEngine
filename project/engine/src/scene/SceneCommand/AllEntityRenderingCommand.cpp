@@ -20,31 +20,22 @@ AllEntityRenderingCommand::AllEntityRenderingCommand(EntityManager& entityManage
 void AllEntityRenderingCommand::Execute()
 {
 	// Particleの描画
-	if (entityManager_.HasComponentStrage<ParticleComponent>()) {
-		const auto& particleStrage = entityManager_.GetComponentStrage<ParticleComponent>();
-		for (const auto& [entityId, particle] : particleStrage) {
-			Render::Particle::DrawParticles(&entityManager_,entityId);
-		}
-	}
+	entityManager_.Each<ParticleComponent>([&](uint32_t entityId, ParticleComponent& particle) {
+		particle;
+		Render::Particle::DrawParticles(&entityManager_, entityId);
+		});
+
 	// モデルの描画
-	if (entityManager_.HasComponentStrage<ModelHandle>()) {
-		const auto& modelStrage = entityManager_.GetComponentStrage<ModelHandle>();
-		for (const auto& [entityId, model] : modelStrage) {
-			Render::Model::DrawModel(model.handle);
-		}
-	}
-	// スプライトの描画（レイヤー順）
-	if (entityManager_.HasComponentStrage<SpriteData>()) {
-		const auto& spriteStrage = entityManager_.GetComponentStrage<SpriteData>();
-		std::vector<std::pair<uint32_t, SpriteData>> sortedSprites(spriteStrage.begin(), spriteStrage.end());
-		std::sort(sortedSprites.begin(), sortedSprites.end(),
-			[](const auto& a, const auto& b) {
-				return a.second.layer < b.second.layer;
-			});
-		for (const auto& [entityId, sprite] : sortedSprites) {
-			Render::Sprite::DrawSprites(&entityManager_, entityId);
-		}
-	}
+	entityManager_.Each<ModelHandle>([&](uint32_t entityId, ModelHandle& model) {
+		entityId; // 未使用
+		Render::Model::DrawModel(model.handle);
+		});
+
+	// スプライトの描画
+	entityManager_.Each<SpriteData>([&](uint32_t entityId, SpriteData& sprite) {
+		entityId; // 未使用
+		Render::Sprite::DrawSprites(&entityManager_, entityId);
+		});
 }
 
 void AllEntityRenderingCommand::Undo()

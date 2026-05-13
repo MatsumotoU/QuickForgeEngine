@@ -18,17 +18,10 @@ void PhysicsManager::Initialize() {
 /** @brief 更新 */
 void PhysicsManager::Update() {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	if (!entityManager->HasComponentStrage<Force>()) {
-		return;
-	}
 
-	const auto& forceStrage = entityManager->GetComponentStrage<Force>();
-	for (const auto& force : forceStrage) {
-		uint32_t entityId = force.first;
-		Force& forceComp = entityManager->GetComponent<Force>(entityId);
+	entityManager->Each<Force>([&](uint32_t entityId, Force& forceComp) {
 		// 加速度のリセット
 		forceComp.acceleration = Vector3::Zero();
-
 		// 重力
 		if (forceComp.isGravity) {
 			forceComp.acceleration.y += -9.8f * EngineGlobalValue::deltaTime * forceComp.gravityStrength; 
@@ -43,7 +36,7 @@ void PhysicsManager::Update() {
 		// 摩擦力の計算
 		float frictionFactor = std::exp(-forceComp.friction * EngineGlobalValue::deltaTime);
 		forceComp.velocity = forceComp.velocity * frictionFactor;
-	}
+		});
 }
 
 /** @brief 終了処理 */

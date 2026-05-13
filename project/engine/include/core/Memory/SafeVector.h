@@ -12,7 +12,7 @@ namespace QFE {
 	class SafeVector : public IDynamicArray<T> {
 	public:
 		/// @brief コンストラクタ
-		explicit SafeVector(size_t size = 50) {
+		explicit SafeVector(size_t size = 512) {
 			// std::vectorで確保できるサイズを超えている場合は例外を投げる
 			if (size > data_.max_size()) {
 				QFE_REPORT_SYSTEM_ERROR("Requested size exceeds maximum capacity of SafeVector.", SystemError::Abort);
