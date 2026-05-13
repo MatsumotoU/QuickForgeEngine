@@ -8,6 +8,7 @@
 namespace QFE {
 	struct CsharpHandle {
 		std::string className_;
+		std::string classFullName_;
 		uint32_t scriptIndex_;
 	};
 

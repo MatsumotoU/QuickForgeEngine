@@ -71,7 +71,9 @@ void QFE::CsharpScriptExecutor::InitializeGameLogic(EntityManager* entityManager
 	// エンティティマネージャからScriptComponentを持つものに対して、インスタンスを作成するように指示する
 	entityManager->Each<CsharpComponent>([this](uint32_t entityId, CsharpComponent& csharpComponent) {
 		if (!csharpComponent.csharpHandles_.empty()) {
-			CreateScriptInstance(entityId, csharpComponent.csharpHandles_[0].className_);
+			for(auto& handle : csharpComponent.csharpHandles_) {
+				CreateScriptInstance(entityId, handle.className_);
+			}
 		}
 		});
 
@@ -208,10 +210,22 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 		return 0;
 	}
 
+	if(domain_ == nullptr) {
+		QFE_LOG("AppDomain is not initialized. Cannot create script instance.", LogLevel::Error);
+		return 0;
+	}
+
 	MonoObject* exception = nullptr;
+	MonoString* monoClassName = mono_string_new(domain_, className.c_str());
+
+	if(monoClassName == nullptr) {
+		QFE_LOG(std::format("Failed to create MonoString for class name '{}'.", className), LogLevel::Error);
+		return 0;
+	}
+
 	void* args[2];
 	args[0] = &entityId;
-	args[1] = const_cast<char*>(className.c_str());
+	args[1] = monoClassName;
 	mono_runtime_invoke(gameLogicCreateScriptInstanceMethod_, gameLogicManagerInstance_, args, &exception);
 
 	if (exception) {
@@ -272,10 +286,24 @@ void QFE::CsharpScriptExecutor::ResetGameLogicManager()
 		mono_runtime_object_init(gameLogicManagerInstance_);
 
 		gameLogicInitializeMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "InitializeAll", 0);
-		gameLogicCreateScriptInstanceMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "CreateScriptInstance", 2);
+		gameLogicCreateScriptInstanceMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "CreateInstance", 2);
 		gameLogicUpdateMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "UpdateAll", 0);
 		gameLogicFrameStartMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "FrameStart", 0);
 		gameLogicFrameEndMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "FrameEnd", 0);
+
+		// メソッドが見つからない場合はエラーをログに出す
+		if (!gameLogicInitializeMethod_) {
+			QFE_LOG("Failed to find GameLogicManager.InitializeAll method.", LogLevel::Error);
+		}
+		if (!gameLogicCreateScriptInstanceMethod_) {
+			QFE_LOG("Failed to find GameLogicManager.CreateInstance method.", LogLevel::Error);
+		}
+		if (!gameLogicUpdateMethod_) {
+			QFE_LOG("Failed to find GameLogicManager.UpdateAll method.", LogLevel::Error);
+		}
+		if (!gameLogicFrameStartMethod_) {
+			QFE_LOG("Failed to find GameLogicManager.FrameStart method.", LogLevel::Error);
+		}
 
 		QFE_LOG("GameLogicManager instance created successfully.");
 	}

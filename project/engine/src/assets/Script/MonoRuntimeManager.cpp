@@ -236,9 +236,7 @@ std::string MonoRuntimeManager::GetAssemblyPath() const {
 void MonoRuntimeManager::Finalize() {
 	// Monoランタイム全体をクリーンアップ
 	if (rootDomain_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Cleaning up Mono JIT...");
-#endif
 		mono_jit_cleanup(rootDomain_);
 		rootDomain_ = nullptr;
 	}

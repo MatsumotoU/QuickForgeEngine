@@ -478,9 +478,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
 		for (const auto& handles : csharpComponent.csharpHandles_) {
 			if (handles.className_ == className) {
-#ifdef QFE_OPTIMIZE_OFF
 				QFE_LOG("Csharp class " + className + " is already attached to entity " + std::to_string(entityId), LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
 				return;
 			}
 		}

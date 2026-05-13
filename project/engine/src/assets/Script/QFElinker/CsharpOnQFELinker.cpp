@@ -38,9 +38,15 @@ void QFE::CsharpOnQFELinker::GetTransforms(MonoArray* entityIds, MonoArray* tran
 			Transform* dstTrans = mono_array_addr(transforms, Transform, 0);
 
 			// 3. C++側のデータをC#のメモリへコピー
-			// transformStorageの中身が連続したメモリ（std::vectorなど）なら memcpy が最速
-			std::memcpy(dstIds, transformStorage.GetEntityIds().data(), sizeof(uint32_t) * copyCount);
-			std::memcpy(dstTrans, transformStorage.GetComponents().data(), sizeof(Transform) * copyCount);
+			std::vector<uint32_t> entityIdsVec = transformStorage.GetEntityIds();
+			std::vector<Transform> transformsVec = transformStorage.GetComponents();
+
+			for(uint32_t i = 0; i < copyCount; ++i) {
+				dstIds[i] = entityIdsVec[i];
+
+				dstTrans[i].translate = transformsVec[i].translate;
+				dstTrans[i] = transformsVec[i];
+			}
 
 			// 4. C#側に「何個書いたか」を教える
 			*count = copyCount;
