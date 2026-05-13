@@ -118,17 +118,15 @@ void SceneObject::PreDraw() {
 	cameraManager->Update();
 
 	// 3Dモデルのカメラ位置更新
-	if (entityManager_.HasComponentStrage<ModelHandle>()) {
-		auto& modelStrage = entityManager_.GetComponentStrage<ModelHandle>();
-		for (auto& model : modelStrage) {
-			const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(model.second.handle);
-			GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
-			for (const auto& meshRenderDataHandle : modelDataPtr->meshRenderDataHandles) {
-				CameraForGPU* camera = gpuBufferPool->GetConstantBufferData<CameraForGPU>(meshRenderDataHandle.cameraPosBufferHandle);
-				camera->cameraPosition = cameraManager->GetMainCamera().GetPosition();
-			}
+	entityManager_.Each<ModelHandle>([&](uint32_t entityId, ModelHandle& model) {
+		entityId; // 未使用
+		const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(model.handle);
+		GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
+		for (const auto& meshRenderDataHandle : modelDataPtr->meshRenderDataHandles) {
+			CameraForGPU* camera = gpuBufferPool->GetConstantBufferData<CameraForGPU>(meshRenderDataHandle.cameraPosBufferHandle);
+			camera->cameraPosition = cameraManager->GetMainCamera().GetPosition();
 		}
-	}
+		});
 
 	// システム上絶対やるべき前描画コマンド
 	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<BillboardUpdateCommand>(*(GetEntityManager()), cameraManager->GetMainCameraTransform()));
@@ -146,12 +144,10 @@ void SceneObject::Draw() {
 	ColliderManager::GetInstance()->Draw();
 
 	// スカイボックスの描画
-	if (entityManager_.HasComponentStrage<SkyboxComponent>()) {
-		ComponentStorage<SkyboxComponent> skyboxCompStr = entityManager_.GetComponentStrage<SkyboxComponent>();
-		for (auto& skybox : skyboxCompStr) {
-			Render::Skybox::DrawSkybox(skybox.second);
-		}
-	}
+	entityManager_.Each<SkyboxComponent>([](uint32_t entityId, SkyboxComponent& skyboxComp) {
+		entityId; // 未使用
+		Render::Skybox::DrawSkybox(skyboxComp);
+		});
 
 	// 全描画コマンド追加
 	drawCommandInvoker_.AddSystemCommand(std::make_unique<AllEntityRenderingCommand>(*(GetEntityManager())));
@@ -654,25 +650,6 @@ void SceneObject::Unparent(uint32_t childId) {
 	if (!entityManager_.HasComponent<ParentData>(childId)) {
 		return;
 	}
-	ParentData& parentData = entityManager_.GetComponent<ParentData>(childId);
-	uint32_t parentId = 0;
-	bool isFound = false;
-	if (entityManager_.HasComponentStrage<SceneObjectData>()) {
-		auto& strage = entityManager_.GetComponentStrage<SceneObjectData>();
-		for (const auto& [id, sceneObjData] : strage) {
-			if (sceneObjData.uniqueId == parentData.parentId) {
-				parentId = id;
-				isFound = true;
-				break;
-			}
-		}
-	}
-	if (!isFound) { return; }
-	if (!entityManager_.HasComponent<Transform>(parentId) || !entityManager_.HasComponent<Transform>(childId)) {
-		entityManager_.RemoveComponent<ParentData>(childId);
-		return;
-	}
-
 	entityManager_.RemoveComponent<ParentData>(childId);
 }
 

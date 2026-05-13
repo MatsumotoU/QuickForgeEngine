@@ -11,24 +11,22 @@ SpritePivotUpdateCommand::SpritePivotUpdateCommand(EntityManager& entityManager)
 void SpritePivotUpdateCommand::Execute()
 {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	if (entityManager_.HasComponentStrage<SpriteData>()) {
-		auto& strage = entityManager_.GetComponentStrage<SpriteData>();
-		for (auto& [id, data] : strage) {
-			VertexData* vertexData = assetManager->GetSpriteManager()->GetVertexData(data.vertexBufferHandle);
-			float w = data.width;
-			float h = data.height;
-			// 中心を基準に頂点座標設定
-			Vector2 pivotOffset = Vector2(0.0f, 0.0f);
-			pivotOffset.x = -w * data.pivot.x;
-			pivotOffset.y = -h * data.pivot.y;
-			vertexData[0].position = { pivotOffset.x, pivotOffset.y, 0.0f,1.0f };
-			vertexData[1].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };
-			vertexData[2].position = { pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };
-			vertexData[3].position = { w + pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };
-			vertexData[4].position = { pivotOffset.x, h + pivotOffset.y, 0.0f,1.0f };
-			vertexData[5].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };
-		}
-	}
+	entityManager_.Each<SpriteData>([&](uint32_t entityId, SpriteData& spriteData) {
+		entityId; // 未使用
+		VertexData* vertexData = assetManager->GetSpriteManager()->GetVertexData(spriteData.vertexBufferHandle);
+		float w = spriteData.width;
+		float h = spriteData.height;
+		// 中心を基準に頂点座標設定
+		Vector2 pivotOffset = Vector2(0.0f, 0.0f);
+		pivotOffset.x = -w * spriteData.pivot.x;
+		pivotOffset.y = -h * spriteData.pivot.y;
+		vertexData[0].position = { pivotOffset.x, pivotOffset.y, 0.0f,1.0f };
+		vertexData[1].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };
+		vertexData[2].position = { pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };
+		vertexData[3].position = { w + pivotOffset.x, h + pivotOffset.y, 0.0f ,1.0f };
+		vertexData[4].position = { pivotOffset.x, h + pivotOffset.y, 0.0f,1.0f };
+		vertexData[5].position = { w + pivotOffset.x, pivotOffset.y, 0.0f ,1.0f };
+		});
 }
 
 void SpritePivotUpdateCommand::Undo()

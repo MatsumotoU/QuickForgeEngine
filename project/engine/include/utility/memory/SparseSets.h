@@ -1,27 +1,32 @@
 #pragma once
 #include "engine/include/core/Memory/SafeVector.h"
 #include <cstdint>
+#include <vector>
+#include <functional>
+
 namespace QFE {
 	/// @brief スパースセットコンテナ
 	template<typename T>
 	class SparseSet {
 	public:
 		SparseSet() = default;
+
 		/// @brief キーと値のペアを追加する。キーは自動的に割り当てられる。
 		uint32_t push_back(const T& value) {
-			// 未使用のキー（-1の場所）を探す
+			// 未使用のキー（UINT32_MAXの場所）を探す
 			uint32_t key = 0;
-			while (key < sparse_.size() && sparse_[key] != -1) {
+			while (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
 				key++;
 			}
 			
-			// key に到達するまで push_back でサイズを拡大（空きは -1 で埋める）
+			// key に到達するまで push_back でサイズを拡大（空きは UINT32_MAX で埋める）
 			while (key >= sparse_.size()) {
-				sparse_.push_back(-1);
+				sparse_.push_back(UINT32_MAX);
 			}
 
+			dense_keys_.push_back(key);
 			dense_.push_back(value);
-			sparse_[key] = static_cast<int32_t>(dense_.size() - 1);
+			sparse_[key] = static_cast<uint32_t>(dense_.size() - 1);
 			return key;
 		}
 
@@ -29,56 +34,77 @@ namespace QFE {
 		void Insert(uint32_t key, const T& value) {
 			// 指定された key にアクセスできるようになるまでサイズを広げる
 			while (key >= sparse_.size()) {
-				sparse_.push_back(-1);
+				sparse_.push_back(UINT32_MAX);
 			}
 
-			if (sparse_[key] == -1) {
+			if (sparse_[key] == UINT32_MAX) {
+				dense_keys_.push_back(key);
 				dense_.push_back(value);
-				sparse_[key] = static_cast<int32_t>(dense_.size() - 1);
+				sparse_[key] = static_cast<uint32_t>(dense_.size() - 1);
 			} else {
 				dense_[sparse_[key]] = value;
 			}
 		}
+
 		/// @brief キーに対応する値を削除する。キーが存在しない場合は何もしない。
 		void Remove(uint32_t key) {
-			if (key < sparse_.size() && sparse_[key] != -1) {
-				int32_t index = sparse_[key];
+			if (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
+				uint32_t index = sparse_[key];
+				
+				// O(1)削除：末尾の要素を削除対象の位置に移動する
 				dense_[index] = dense_.back();
+				dense_keys_[index] = dense_keys_.back();
+				
+				// 移動してきた要素の元のIDを引いて、sparse_の指す先を更新
+				uint32_t moved_key = dense_keys_[index];
+				sparse_[moved_key] = index;
+
+				// 末尾を削除
 				dense_.pop_back();
-				sparse_[key] = -1;
-				for (uint32_t i = 0; i < sparse_.size(); ++i) {
-					if (sparse_[i] == static_cast<int32_t>(dense_.size())) {
-						sparse_[i] = index;
-						break;
-					}
-				}
+				dense_keys_.pop_back();
+				sparse_[key] = UINT32_MAX;
 			}
 		}
+
 		/// @brief キーに対応する値へのポインタを取得する。キーが存在しない場合はnullptrを返す。
 		T* Get(uint32_t key) {
-			if (key < sparse_.size() && sparse_[key] != -1) {
+			if (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
 				return &dense_[sparse_[key]];
 			}
 			return nullptr;
 		}
+
 		/// @brief キーに対応する要素が存在するかどうかを確認する。
 		bool Contains(uint32_t key) const {
-			return key < sparse_.size() && sparse_[key] != -1;
+			return key < sparse_.size() && sparse_[key] != UINT32_MAX;
 		}
+
 		/// @brief キーの一覧を取得する。
 		std::vector<uint32_t> Keys() const {
-			std::vector<uint32_t> keys;
-			for (uint32_t i = 0; i < sparse_.size(); ++i) {
-				if (sparse_[i] != -1) {
-					keys.push_back(i);
-				}
+			// dense_keys_ を使うことで、重いループ検索を使わずに即座にキー一覧を生成可能
+			return std::vector<uint32_t>(dense_keys_.begin(), dense_keys_.end());
+		}
+
+		/// @brief 全ての有効なコンポーネントに対して関数を実行する。
+		/// @param func (uint32_t id, T& component) を引数に取る関数オブジェクトまたはラムダ式
+		void Each(const std::function<void(uint32_t, T&)>& func) {
+			for (size_t i = 0; i < dense_.size(); ++i) {
+				func(dense_keys_[i], dense_[i]);
 			}
-			return keys;
+		}
+
+		/// @brief 読み取り専用のEach
+		/// @param func (uint32_t id, const T& component) を引数に取る関数オブジェクトまたはラムダ式
+		void Each(const std::function<void(uint32_t, const T&)>& func) const {
+			for (size_t i = 0; i < dense_.size(); ++i) {
+				func(dense_keys_[i], dense_[i]);
+			}
 		}
 
 		// 標準ライブラリ風インターフェース
 		void clear() {
 			sparse_.clear();
+			dense_keys_.clear();
 			dense_.clear();
 		}
 		auto begin() { return dense_.begin(); }
@@ -99,7 +125,8 @@ namespace QFE {
 			return dense_.at(sparse_.at(key));
 		}
 	private:
-		SafeVector<int32_t> sparse_;
+		SafeVector<uint32_t> sparse_;
+		SafeVector<uint32_t> dense_keys_;
 		SafeVector<T> dense_;
 	};
 } // namespace QFE

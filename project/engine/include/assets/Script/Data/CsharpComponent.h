@@ -19,6 +19,6 @@ namespace QFE {
 		void Deserialize(const nlohmann::json& json) override;
 		std::string GetTypeName() const override { return "CsharpComponent"; }
 
-		SafeVector<CsharpHandle> csharpHandles_;
+		std::vector<CsharpHandle> csharpHandles_;
 	};
 }

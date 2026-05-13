@@ -10,15 +10,14 @@ AllSpriteResizeCommand::AllSpriteResizeCommand(EntityManager& em) : ISceneEntity
 
 void AllSpriteResizeCommand::Execute() {
 	AssetManager* assetManager_ = AssetManager::GetInstance();
-	if (entityManager_.HasComponentStrage<SpriteData>()) {
-		const auto& spriteStrage = entityManager_.GetComponentStrage<SpriteData>();
-		for (const auto& [entityId, sprite] : spriteStrage) {
-			Vector2 nowSize = assetManager_->GetSpriteManager()->GetSpriteSize(sprite.vertexBufferHandle);
-			if (sprite.width != nowSize.x || sprite.height != nowSize.y) {
-				assetManager_->GetSpriteManager()->ResizeSprite(sprite.vertexBufferHandle, sprite.width, sprite.height);
-			}
+
+	entityManager_.Each<SpriteData>([&](uint32_t entityId, SpriteData& spriteData) {
+		entityId; // 未使用
+		Vector2 nowSize = assetManager_->GetSpriteManager()->GetSpriteSize(spriteData.vertexBufferHandle);
+		if (spriteData.width != nowSize.x || spriteData.height != nowSize.y) {
+			assetManager_->GetSpriteManager()->ResizeSprite(spriteData.vertexBufferHandle, spriteData.width, spriteData.height);
 		}
-	}
+		});
 }
 
 void AllSpriteResizeCommand::Undo() {
