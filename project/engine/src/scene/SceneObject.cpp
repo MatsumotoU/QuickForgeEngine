@@ -89,7 +89,10 @@ void SceneObject::Update() {
 
 	// ランタイム中のサブモジュールの更新
 	if (isRunningScript_ && !isPauseScript_) {
-		csharpScriptExecutor_.RunAllScriptsFunction("Update");
+		csharpScriptExecutor_.FrameStart();
+		csharpScriptExecutor_.Update();
+		csharpScriptExecutor_.FrameEnd();
+
 		PhysicsManager::GetInstance()->Update();
 	} else {
 		// ランタイム出ない場合はassetManagerのキャッシュをクリアし続ける（ランタイム中はシーンのロードやエンティティの追加・削除が頻繁に行われるため、キャッシュを使用しない）
@@ -302,7 +305,7 @@ void SceneObject::RunScene() {
 		SaveScene(sceneName_);
 		LoadScene(sceneName_);
 		isRunningScript_ = true;
-		csharpScriptExecutor_.RunAllScriptsFunction("Initialize");
+		csharpScriptExecutor_.InitializeGameLogic(&entityManager_);
 		ColliderManager::GetInstance()->isRunning = true;
 	}
 }
@@ -465,7 +468,9 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		CsharpComponent csharpComponent;
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
-		csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
+		if (isRunningScript_) {
+			csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
+		}
 		csharpComponent.csharpHandles_.push_back(csharpHandle);
 		entityManager_.EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
 
@@ -482,8 +487,9 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
-		csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
-		csharpComponent.csharpHandles_.push_back(csharpHandle);
+		if(isRunningScript_) {
+			csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
+		}
 	}
 }
 
@@ -538,7 +544,7 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	if (entityManager_.HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
 		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
 		for (const auto& ch : csharpComponent.csharpHandles_) {
-			csharpScriptExecutor_.RunScriptFunction(ch.scriptIndex_, "Initialize");
+			csharpScriptExecutor_.CreateScriptInstance(entityId, ch.className_);
 		}
 	}
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();

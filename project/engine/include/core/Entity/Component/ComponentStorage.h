@@ -55,6 +55,15 @@ namespace QFE {
 		void Each(const std::function<void(uint32_t, const T&)>& func) const {
 			components.Each(func);
 		}
+
+		/// @brief コンポーネントIDの一覧を取得する。
+		std::vector<uint32_t> GetEntityIds() const {
+			return components.Keys();
+		}
+		/// @brief コンポーネントの一覧を取得する。
+		std::vector<T> GetComponents() const {
+			return components.Values();
+		}
 	};
 
 }

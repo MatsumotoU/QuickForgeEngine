@@ -19,6 +19,73 @@
 
 using namespace QFE;
 
+void QFE::CsharpOnQFELinker::GetTransforms(MonoArray* entityIds, MonoArray* transforms, uint32_t* count)
+{
+	try
+	{
+		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+
+		if (entityManager->HasComponentStrage<Transform>()) {
+			auto& transformStorage = entityManager->GetComponentStrage<Transform>();
+
+			// 1. 実際にコピーする数を決定（C#側の配列サイズを超えないように！）
+			uint32_t csharpBufLen = mono_array_length(entityIds);
+			uint32_t nativeCount = static_cast<uint32_t>(transformStorage.size());
+			uint32_t copyCount = (csharpBufLen < nativeCount) ? csharpBufLen : nativeCount;
+
+			// 2. C#配列の「生ポインタ」を取得
+			uint32_t* dstIds = mono_array_addr(entityIds, uint32_t, 0);
+			Transform* dstTrans = mono_array_addr(transforms, Transform, 0);
+
+			// 3. C++側のデータをC#のメモリへコピー
+			// transformStorageの中身が連続したメモリ（std::vectorなど）なら memcpy が最速
+			std::memcpy(dstIds, transformStorage.GetEntityIds().data(), sizeof(uint32_t) * copyCount);
+			std::memcpy(dstTrans, transformStorage.GetComponents().data(), sizeof(Transform) * copyCount);
+
+			// 4. C#側に「何個書いたか」を教える
+			*count = copyCount;
+		}
+		else {
+			*count = 0;
+		}
+	}
+	catch (const std::exception& e)
+	{
+		QFE_REPORT_SYSTEM_ERROR(std::string("Exception in GetTransforms: ") + e.what(), SystemError::Abort);
+	}
+}
+
+void QFE::CsharpOnQFELinker::SetTransforms(MonoArray* entityIds, MonoArray* transforms, uint32_t count)
+{
+	try
+	{
+		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+		if (entityManager->HasComponentStrage<Transform>()) {
+			auto& transformStorage = entityManager->GetComponentStrage<Transform>();
+			// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
+			uint32_t csharpBufLen = mono_array_length(entityIds);
+			uint32_t copyCount = (csharpBufLen < count) ? csharpBufLen : count;
+
+			// 2. C#配列の「生ポインタ」を取得
+			uint32_t* srcIds = mono_array_addr(entityIds, uint32_t, 0);
+			Transform* srcTrans = mono_array_addr(transforms, Transform, 0);
+
+			// 3. C#のデータをC++側へコピー
+			for (uint32_t i = 0; i < copyCount; ++i) {
+				uint32_t entityId = srcIds[i];
+				const Transform& transform = srcTrans[i];
+				if (entityManager->HasComponent<Transform>(entityId)) {
+					entityManager->GetComponent<Transform>(entityId) = transform;
+				}
+			}
+		}
+	}
+	catch (const std::exception& e)
+	{
+		QFE_REPORT_SYSTEM_ERROR(std::string("Exception in SetTransforms: ") + e.what(), SystemError::Abort);
+	}
+}
+
 void QFE::CsharpOnQFELinker::GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
     if (entityManager->HasComponent<Transform>(entityId)) {
@@ -199,22 +266,6 @@ void QFE::CsharpOnQFELinker::ChangeMesh(uint32_t entityId, MonoString* meshName)
 
 void QFE::CsharpOnQFELinker::DeleteEntity(uint32_t entityId) {
 	SceneManager::GetInstance()->DeleteEntity(entityId);
-}
-
-void QFE::CsharpOnQFELinker::CallEntityMethod(uint32_t entityId, MonoString* methodName)
-{
-	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	if (!entityManager->HasComponent<CsharpComponent>(entityId)) {
-		QFE_REPORT_USER_ERROR(std::format("Entity with ID {} does not have a CsharpComponent.", entityId),UserError::DeveloperError);
-		return;
-	}
-	char* utf8_methodName = mono_string_to_utf8(methodName);
-	CsharpComponent& scriptComponent = entityManager->GetComponent<CsharpComponent>(entityId);
-	for (const auto& handle : scriptComponent.csharpHandles_) {
-		SceneManager::GetInstance()->GetCsharpScriptExecutor()->RunScriptFunction(handle.scriptIndex_, utf8_methodName);
-	}
-	
-	mono_free(utf8_methodName);
 }
 
 void QFE::CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {
