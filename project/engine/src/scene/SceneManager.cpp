@@ -228,10 +228,6 @@ uint32_t QFE::SceneManager::AddEntity(const std::string& entityName, bool useCac
 	return currentScene_->AddEntity(entityName,useCache);
 }
 
-uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {
-	return currentScene_->RunTimeAddEntity(entityName);
-}
-
 void SceneManager::StartScript() {
 	currentScene_->RunScene();
 }

@@ -40,7 +40,7 @@ namespace QFE {
 		/// @param entityId バインドするエンティティID
 		/// @param className クラス名（名前空間含む）
 		/// @return スクリプトインスタンスのインデックス
-		uint32_t CreateScriptInstance(uint32_t entityId, const std::string& className);
+		void CreateScriptInstance(uint32_t entityId, const std::string& className);
 
 		/// @brief スクリプトインスタンスを削除
 		/// @param index スクリプトインスタンスのインデックス

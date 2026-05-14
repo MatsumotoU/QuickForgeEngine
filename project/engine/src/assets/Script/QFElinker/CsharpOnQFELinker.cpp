@@ -233,10 +233,17 @@ uint32_t QFE::CsharpOnQFELinker::GetEntityFromName(MonoString* entityName) {
 	return entityId;
 }
 
-uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* entityName) {
+uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* entityName, Transform transform)
+{
 	char* utf8_className = mono_string_to_utf8(entityName);
-	uint32_t entityId = SceneManager::GetInstance()->RunTimeAddEntity(utf8_className);
+	uint32_t entityId = SceneManager::GetInstance()->AddEntity(utf8_className);
 	mono_free(utf8_className);
+
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+	if (entityManager->HasComponent<TransformComponent>(entityId)) {
+		entityManager->GetComponent<TransformComponent>(entityId).transform = transform;
+	}
+
 	return entityId;
 }
 

@@ -470,7 +470,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
 		if (isRunningScript_) {
-			csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
+			csharpScriptExecutor_.CreateScriptInstance(entityId, className);
 		}
 		csharpComponent.csharpHandles_.push_back(csharpHandle);
 		entityManager_.EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
@@ -487,7 +487,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
 		if(isRunningScript_) {
-			csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
+			csharpScriptExecutor_.CreateScriptInstance(entityId, className);
 		}
 	}
 }

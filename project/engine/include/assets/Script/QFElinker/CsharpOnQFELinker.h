@@ -5,6 +5,7 @@
 #include "engine/include/core/Math/Vector/Vector3.h"
 #include "engine/include/core/Math/Vector/Vector2.h"
 #include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/core/Math/Transform.h"
 
 namespace QFE::CsharpOnQFELinker {
     // Transform
@@ -43,7 +44,7 @@ namespace QFE::CsharpOnQFELinker {
 
 	// SceneObject
 	extern uint32_t GetEntityFromName(MonoString* entityName);
-	extern uint32_t CreateEntity(MonoString* entityName);
+    extern uint32_t CreateEntity(MonoString* entityName,Transform transform);
 	extern void LoadScene(MonoString* sceneName);
     extern void ChangeModel(uint32_t entityId, MonoString* modelName);
     extern void ChangeMesh(uint32_t entityId, MonoString* meshName);

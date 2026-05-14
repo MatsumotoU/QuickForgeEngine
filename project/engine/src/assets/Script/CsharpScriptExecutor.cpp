@@ -199,20 +199,20 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 	return classNames;
 }
 
-uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::string& className) {
+void CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::string& className) {
 	if (!assembly_) {
 		QFE_LOG("Assembly not loaded. Cannot create script instance.", LogLevel::Error);
-		return 0;
+		return ;
 	}
 
 	if(!gameLogicManagerInstance_) {
 		QFE_LOG("GameLogicManager instance is not initialized. Cannot create script instance.", LogLevel::Error);
-		return 0;
+		return ;
 	}
 
 	if(domain_ == nullptr) {
 		QFE_LOG("AppDomain is not initialized. Cannot create script instance.", LogLevel::Error);
-		return 0;
+		return ;
 	}
 
 	MonoObject* exception = nullptr;
@@ -220,7 +220,7 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 
 	if(monoClassName == nullptr) {
 		QFE_LOG(std::format("Failed to create MonoString for class name '{}'.", className), LogLevel::Error);
-		return 0;
+		return ;
 	}
 
 	void* args[2];
@@ -230,10 +230,10 @@ uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std
 
 	if (exception) {
 		QFE_REPORT_USER_ERROR(std::format("Exception occurred while creating script instance for class '{}'.", className), UserError::DeveloperError);
-		return 0;
+		return ;
 	}
 
-	return 0;
+	return ;
 }
 
 void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
