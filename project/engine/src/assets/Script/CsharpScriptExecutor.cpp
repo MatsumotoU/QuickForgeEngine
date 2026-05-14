@@ -25,9 +25,7 @@ void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
 
 	// MonoRuntimeManagerが初期化されているか確認
 	if (!MonoRuntimeManager::GetInstance()->IsInitialized()) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("MonoRuntimeManager is not initialized.", LogLevel::Error);
-#endif
 		return;
 	}
 
@@ -41,23 +39,17 @@ void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
 	domain_ = mono_domain_create_appdomain(domainName, nullptr);
 
 	if (!domain_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Failed to create AppDomain for scene.", LogLevel::Error);
-#endif
 		return;
 	}
 
 	// ドメインを切り替え
 	if (!mono_domain_set(domain_, false)) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Failed to set AppDomain.", LogLevel::Error);
-#endif
 		return;
 	}
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("CsharpScriptExecutor initialized with new AppDomain.");
-#endif
 
 	// アセンブリをロード
 	LoadAssembly();
@@ -72,13 +64,19 @@ void QFE::CsharpScriptExecutor::InitializeGameLogic(EntityManager* entityManager
 	entityManager->Each<CsharpComponent>([this](uint32_t entityId, CsharpComponent& csharpComponent) {
 		if (!csharpComponent.csharpHandles_.empty()) {
 			for(auto& handle : csharpComponent.csharpHandles_) {
-				CreateScriptInstance(entityId, handle.className_);
+				ForceCreateScriptInstance(entityId, handle.className_);
 			}
 		}
 		});
 
 	if (gameLogicManagerInstance_ && gameLogicInitializeMethod_) {
-		mono_runtime_invoke(gameLogicInitializeMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+		try {
+			mono_runtime_invoke(gameLogicInitializeMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+		}
+		catch (const std::exception& e) {
+			QFE_REPORT_SYSTEM_ERROR(
+				std::format("Exception occurred while invoking GameLogicManager.Initialize: {}", e.what()), SystemError::Abort());
+		}
 	}
 	else {
 		QFE_LOG("GameLogicManager is not properly initialized. Cannot call Initialize.", LogLevel::Error);
@@ -87,7 +85,13 @@ void QFE::CsharpScriptExecutor::InitializeGameLogic(EntityManager* entityManager
 
 void CsharpScriptExecutor::FrameStart() {
 	if (gameLogicManagerInstance_ && gameLogicFrameStartMethod_) {
-		mono_runtime_invoke(gameLogicFrameStartMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+		try {
+			mono_runtime_invoke(gameLogicFrameStartMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+		}
+		catch (const std::exception& e) {
+			QFE_REPORT_SYSTEM_ERROR(
+				std::format("Exception occurred while invoking FrameStart: {}", e.what()), SystemError::Abort());
+		}
 	}
 	else {
 		QFE_LOG("GameLogicManager is not properly initialized. Cannot call FrameStart.", LogLevel::Error);
@@ -96,13 +100,25 @@ void CsharpScriptExecutor::FrameStart() {
 
 void CsharpScriptExecutor::Update() {
 	if (gameLogicManagerInstance_ && gameLogicUpdateMethod_) {
-		mono_runtime_invoke(gameLogicUpdateMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+		try {
+			mono_runtime_invoke(gameLogicUpdateMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+		}
+		catch (const std::exception& e) {
+			QFE_REPORT_SYSTEM_ERROR(
+				std::format("Exception occurred while invoking Update: {}", e.what()), SystemError::Abort());
+		}
 	}
 }
 
 void CsharpScriptExecutor::FrameEnd() {
 	if (gameLogicManagerInstance_ && gameLogicFrameEndMethod_) {
-		mono_runtime_invoke(gameLogicFrameEndMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+		try {
+			mono_runtime_invoke(gameLogicFrameEndMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+		}
+		catch (const std::exception& e) {
+			QFE_REPORT_SYSTEM_ERROR(
+				std::format("Exception occurred while invoking FrameEnd: {}", e.what()), SystemError::Abort());
+		}
 	}
 	else {
 		QFE_LOG("GameLogicManager is not properly initialized. Cannot call FrameEnd.", LogLevel::Error);
@@ -111,9 +127,7 @@ void CsharpScriptExecutor::FrameEnd() {
 
 void CsharpScriptExecutor::LoadAssembly() {
 	if (!domain_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Domain not initialized. Cannot load assembly.", LogLevel::Error);
-#endif
 		return;
 	}
 
@@ -121,13 +135,9 @@ void CsharpScriptExecutor::LoadAssembly() {
 	assembly_ = mono_domain_assembly_open(domain_, assemblyPath.c_str());
 
 	if (!assembly_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Failed to load assembly: " + assemblyPath, LogLevel::Error);
-#endif
 	} else {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Assembly loaded successfully: " + assemblyPath);
-#endif
 	}
 }
 
@@ -226,7 +236,15 @@ void CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::st
 	void* args[2];
 	args[0] = &entityId;
 	args[1] = monoClassName;
-	mono_runtime_invoke(gameLogicCreateScriptInstanceMethod_, gameLogicManagerInstance_, args, &exception);
+	try {
+		QFE_LOG(std::format("Creating script instance for class '{}', entity ID: {}.", className, entityId));
+		mono_runtime_invoke(gameLogicCreateScriptInstanceMethod_, gameLogicManagerInstance_, args, &exception);
+	}
+	catch (const std::exception& e) {
+		QFE_REPORT_SYSTEM_ERROR(
+			std::format("Exception occurred while creating script instance for class '{}': {}", className, e.what()), SystemError::Abort());
+		return ;
+	}
 
 	if (exception) {
 		QFE_REPORT_USER_ERROR(std::format("Exception occurred while creating script instance for class '{}'.", className), UserError::DeveloperError);
@@ -290,6 +308,7 @@ void QFE::CsharpScriptExecutor::ResetGameLogicManager()
 		gameLogicUpdateMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "UpdateAll", 0);
 		gameLogicFrameStartMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "FrameStart", 0);
 		gameLogicFrameEndMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "FrameEnd", 0);
+		gameLogicForceCreateScriptInstanceMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "ForceCreateInstance", 2);
 
 		// メソッドが見つからない場合はエラーをログに出す
 		if (!gameLogicInitializeMethod_) {
@@ -328,4 +347,34 @@ void CsharpScriptExecutor::Finalize() {
 	}
 
 	QFE_LOG("CsharpScriptExecutor finalized.");
+}
+
+void QFE::CsharpScriptExecutor::ForceCreateScriptInstance(uint32_t entityId, const std::string& className)
+{
+	if (!gameLogicForceCreateScriptInstanceMethod_ || !gameLogicManagerInstance_) {
+		QFE_LOG("GameLogicManager is not properly initialized. Cannot force create script instance.", LogLevel::Error);
+		return;
+	}
+	MonoObject* exception = nullptr;
+	MonoString* monoClassName = mono_string_new(domain_, className.c_str());
+	if (monoClassName == nullptr) {
+		QFE_LOG(std::format("Failed to create MonoString for class name '{}'.", className), LogLevel::Error);
+		return;
+	}
+	void* args[2];
+	args[0] = &entityId;
+	args[1] = monoClassName;
+	try {
+		QFE_LOG(std::format("Force creating script instance for class '{}', entity ID: {}.", className, entityId));
+		mono_runtime_invoke(gameLogicForceCreateScriptInstanceMethod_, gameLogicManagerInstance_, args, &exception);
+	}
+	catch (const std::exception& e) {
+		QFE_REPORT_SYSTEM_ERROR(
+			std::format("Exception occurred while force creating script instance for class '{}': {}", className, e.what()), SystemError::Abort());
+		return;
+	}
+	if (exception) {
+		QFE_REPORT_USER_ERROR(std::format("Exception occurred while force creating script instance for class '{}'.", className), UserError::DeveloperError);
+		return;
+	}
 }

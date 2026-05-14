@@ -44,7 +44,7 @@ namespace QFE::CsharpOnQFELinker {
 
 	// SceneObject
 	extern uint32_t GetEntityFromName(MonoString* entityName);
-    extern uint32_t CreateEntity(MonoString* entityName,Transform transform);
+    extern uint32_t CreateEntity(MonoString* entityName,Transform transform,uint32_t changeCount);
 	extern void LoadScene(MonoString* sceneName);
     extern void ChangeModel(uint32_t entityId, MonoString* modelName);
     extern void ChangeMesh(uint32_t entityId, MonoString* meshName);

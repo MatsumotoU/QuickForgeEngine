@@ -486,6 +486,7 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
+		csharpComponent.csharpHandles_.push_back(csharpHandle);
 		if(isRunningScript_) {
 			csharpScriptExecutor_.CreateScriptInstance(entityId, className);
 		}
