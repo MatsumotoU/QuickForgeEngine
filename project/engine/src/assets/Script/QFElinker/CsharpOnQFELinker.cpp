@@ -14,6 +14,7 @@
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/renderer/ModelRenderer.h"
 
+#include "engine/include/core/Math/TransformComponent.h"
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
 #include "engine/include/assets/Script/CsharpScriptExecutor.h"
 
@@ -25,8 +26,8 @@ void QFE::CsharpOnQFELinker::GetTransforms(MonoArray* entityIds, MonoArray* tran
 	{
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 
-		if (entityManager->HasComponentStrage<Transform>()) {
-			auto& transformStorage = entityManager->GetComponentStrage<Transform>();
+		if (entityManager->HasComponentStrage<TransformComponent>()) {
+			auto& transformStorage = entityManager->GetComponentStrage<TransformComponent>();
 
 			// 1. 実際にコピーする数を決定（C#側の配列サイズを超えないように！）
 			uint32_t csharpBufLen = mono_array_length(entityIds);
@@ -39,13 +40,14 @@ void QFE::CsharpOnQFELinker::GetTransforms(MonoArray* entityIds, MonoArray* tran
 
 			// 3. C++側のデータをC#のメモリへコピー
 			std::vector<uint32_t> entityIdsVec = transformStorage.GetEntityIds();
-			std::vector<Transform> transformsVec = transformStorage.GetComponents();
+			std::vector<TransformComponent> transformsVec = transformStorage.GetComponents();
 
 			for(uint32_t i = 0; i < copyCount; ++i) {
 				dstIds[i] = entityIdsVec[i];
 
-				dstTrans[i].translate = transformsVec[i].translate;
-				dstTrans[i] = transformsVec[i];
+				dstTrans[i].translate = transformsVec[i].transform.translate;
+				dstTrans[i].rotate = transformsVec[i].transform.rotate;
+				dstTrans[i].scale = transformsVec[i].transform.scale;
 			}
 
 			// 4. C#側に「何個書いたか」を教える
@@ -66,8 +68,8 @@ void QFE::CsharpOnQFELinker::SetTransforms(MonoArray* entityIds, MonoArray* tran
 	try
 	{
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-		if (entityManager->HasComponentStrage<Transform>()) {
-			auto& transformStorage = entityManager->GetComponentStrage<Transform>();
+		if (entityManager->HasComponentStrage<TransformComponent>()) {
+			auto& transformStorage = entityManager->GetComponentStrage<TransformComponent>();
 			// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
 			uint32_t csharpBufLen = mono_array_length(entityIds);
 			uint32_t copyCount = (csharpBufLen < count) ? csharpBufLen : count;
@@ -80,8 +82,8 @@ void QFE::CsharpOnQFELinker::SetTransforms(MonoArray* entityIds, MonoArray* tran
 			for (uint32_t i = 0; i < copyCount; ++i) {
 				uint32_t entityId = srcIds[i];
 				const Transform& transform = srcTrans[i];
-				if (entityManager->HasComponent<Transform>(entityId)) {
-					entityManager->GetComponent<Transform>(entityId) = transform;
+				if (entityManager->HasComponent<TransformComponent>(entityId)) {
+					entityManager->GetComponent<TransformComponent>(entityId).transform = transform;
 				}
 			}
 		}
@@ -94,57 +96,57 @@ void QFE::CsharpOnQFELinker::SetTransforms(MonoArray* entityIds, MonoArray* tran
 
 void QFE::CsharpOnQFELinker::GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-    if (entityManager->HasComponent<Transform>(entityId)) {
-        *outTranslate = entityManager->GetComponent<Transform>(entityId).translate;
+    if (entityManager->HasComponent<TransformComponent>(entityId)) {
+        *outTranslate = entityManager->GetComponent<TransformComponent>(entityId).transform.translate;
     }
 }
 
 void QFE::CsharpOnQFELinker::SetTransformTranslate(uint32_t entityId, Vector3* inTranslate) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-    if (entityManager->HasComponent<Transform>(entityId)) {
-        entityManager->GetComponent<Transform>(entityId).translate = *inTranslate;
+    if (entityManager->HasComponent<TransformComponent>(entityId)) {
+        entityManager->GetComponent<TransformComponent>(entityId).transform.translate = *inTranslate;
     }
 }
 
 void QFE::CsharpOnQFELinker::GetTransformRotate(uint32_t entityId, Vector3* outRotate) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-    if (entityManager->HasComponent<Transform>(entityId)) {
-        *outRotate = entityManager->GetComponent<Transform>(entityId).rotate;
+    if (entityManager->HasComponent<TransformComponent>(entityId)) {
+        *outRotate = entityManager->GetComponent<TransformComponent>(entityId).transform.rotate;
     }
 }
 
 void QFE::CsharpOnQFELinker::SetTransformRotate(uint32_t entityId, Vector3* inRotate) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-    if (entityManager->HasComponent<Transform>(entityId)) {
-        entityManager->GetComponent<Transform>(entityId).rotate = *inRotate;
+    if (entityManager->HasComponent<TransformComponent>(entityId)) {
+        entityManager->GetComponent<TransformComponent>(entityId).transform.rotate = *inRotate;
     }
 }
 
 void QFE::CsharpOnQFELinker::GetTransformScale(uint32_t entityId, Vector3* outScale) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-    if (entityManager->HasComponent<Transform>(entityId)) {
-        *outScale = entityManager->GetComponent<Transform>(entityId).scale;
+    if (entityManager->HasComponent<TransformComponent>(entityId)) {
+        *outScale = entityManager->GetComponent<TransformComponent>(entityId).transform.scale;
     }
 }
 
 void QFE::CsharpOnQFELinker::SetTransformScale(uint32_t entityId, Vector3* inScale) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-    if (entityManager->HasComponent<Transform>(entityId)) {
-        entityManager->GetComponent<Transform>(entityId).scale = *inScale;
+    if (entityManager->HasComponent<TransformComponent>(entityId)) {
+        entityManager->GetComponent<TransformComponent>(entityId).transform.scale = *inScale;
     }
 }
 
 void QFE::CsharpOnQFELinker::Translate(uint32_t entityId, Vector3* translation) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-    if (entityManager->HasComponent<Transform>(entityId)) {
-        entityManager->GetComponent<Transform>(entityId).translate += *translation;
+    if (entityManager->HasComponent<TransformComponent>(entityId)) {
+        entityManager->GetComponent<TransformComponent>(entityId).transform.translate += *translation;
     }
 }
 
 void QFE::CsharpOnQFELinker::Rotate(uint32_t entityId, Vector3* eulerAngles) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-    if (entityManager->HasComponent<Transform>(entityId)) {
-        entityManager->GetComponent<Transform>(entityId).rotate += *eulerAngles;
+    if (entityManager->HasComponent<TransformComponent>(entityId)) {
+        entityManager->GetComponent<TransformComponent>(entityId).transform.rotate += *eulerAngles;
     }
 }
 

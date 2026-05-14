@@ -7,7 +7,7 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/EngineGlobalValue.h"
-#include "engine/include/core/Math/Transform.h"
+#include "engine/include/core/Math/TransformComponent.h"
 
 using namespace QFE;
 
@@ -29,8 +29,8 @@ void PhysicsManager::Update() {
 		// 速度に力を加える
 		forceComp.velocity += forceComp.acceleration * EngineGlobalValue::deltaTime;
 		// 位置に速度を加える
-		if (entityManager->HasComponent<Transform>(entityId)) {
-			Transform& transform = entityManager->GetComponent<Transform>(entityId);
+		if (entityManager->HasComponent<TransformComponent>(entityId)) {
+			Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
 			transform.translate += forceComp.velocity * EngineGlobalValue::deltaTime;
 		}
 		// 摩擦力の計算

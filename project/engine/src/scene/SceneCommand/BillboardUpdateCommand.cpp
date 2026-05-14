@@ -1,24 +1,24 @@
 #include "engine/include/scene/SceneCommand/BillboardUpdateCommand.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/camera/Data/BillboardComponent.h"
-#include "engine/include/core/Math/Transform.h"
+#include "engine/include/core/Math/TransformComponent.h"
 
 using namespace QFE::Component;
 
 void QFE::BillboardUpdateCommand::Execute() {
 	// ビルボードコンポーネントとトランスフォームコンポーネントのストレージが存在しない場合は処理を抜ける
 	if (!entityManager_.HasComponentStrage<BillboardComponent>() ||
-		!entityManager_.HasComponentStrage<Transform>()) {
+		!entityManager_.HasComponentStrage<TransformComponent>()) {
 		return;
 	}
 
 	entityManager_.GetComponentStrage<BillboardComponent>().Each([&](uint32_t entityId, BillboardComponent& billboardComp) {
 		// トランスフォームコンポーネントが存在しない場合はスキップ
-		if (!entityManager_.HasComponent<Transform>(entityId)) {
+		if (!entityManager_.HasComponent<TransformComponent>(entityId)) {
 			return;
 		}
 		// トランスフォームコンポーネントを取得
-		Transform& transform = entityManager_.GetComponent<Transform>(entityId);
+		Transform& transform = entityManager_.GetComponent<TransformComponent>(entityId).transform;
 		// ビルボードタイプに応じた処理を実行
 		if (billboardComp.type_ == BillboardType::AXIAL) {
 			CameraAxisBillboard(transform, billboardComp.rotateOffset_); // カメラの向きに同期

@@ -11,6 +11,7 @@
 #include "engine/include/collider/ColliderManager.h"
 #include "engine/include/audio/AudioInterface.h"
 
+#include "engine/include/core/Math/TransformComponent.h"
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/physics/PhysicsManager.h"
@@ -329,7 +330,7 @@ void SceneObject::StopScene() {
 void SceneObject::AddEmptyObject() {
 
 	uint32_t entityId = entityManager_.CreateEntity();
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName("EmptyObject");
 	sceneObjectData.tag = "Untagged";
@@ -351,7 +352,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	entityManager_.EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
 	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName(modelName + "_ParticleEmitter");
 	sceneObjectData.tag = "Untagged";
@@ -387,7 +388,7 @@ void QFE::SceneObject::AddSkybox(const std::string& skyboxName)
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 }
 
 void SceneObject::AddModel(const std::string& modelName) {
@@ -397,7 +398,7 @@ void SceneObject::AddModel(const std::string& modelName) {
 	modelHandle.modelName = modelName;
 	modelHandle.handle = assetManager->LoadModel(modelName);
 	entityManager_.EmplaceComponent<ModelHandle>(entityId, modelHandle);
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName(modelName);
 	sceneObjectData.tag = "Untagged";
@@ -455,7 +456,7 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	entityManager_.EmplaceComponent<SpriteData>(entityId, spriteData);
 
 	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName(spriteName);
 	sceneObjectData.tag = "Untagged";
@@ -642,11 +643,11 @@ void SceneObject::ParentChild(uint32_t parentId, uint32_t childId) {
 		parentData.parentId = parentSceneObjectData.uniqueId;
 	}
 
-	if (!entityManager_.HasComponent<Transform>(parentId) || !entityManager_.HasComponent<Transform>(childId)) {
+	if (!entityManager_.HasComponent<TransformComponent>(parentId) || !entityManager_.HasComponent<TransformComponent>(childId)) {
 		return;
 	}
-	Transform& parentTransform = entityManager_.GetComponent<Transform>(parentId);
-	Transform& childTransform = entityManager_.GetComponent<Transform>(childId);
+	Transform& parentTransform = entityManager_.GetComponent<TransformComponent>(parentId).transform;
+	Transform& childTransform = entityManager_.GetComponent<TransformComponent>(childId).transform;
 	childTransform.translate -= parentTransform.translate;
 }
 
@@ -677,8 +678,8 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	}
 	if (entityJson.contains("Transform")) {
 		std::chrono::steady_clock::time_point transformStart = std::chrono::steady_clock::now();
-		entityManager_.EmplaceComponent<Transform>(entityId);
-		Transform& transform = entityManager_.GetComponent<Transform>(entityId);
+		entityManager_.EmplaceComponent<TransformComponent>(entityId);
+		TransformComponent& transform = entityManager_.GetComponent<TransformComponent>(entityId);
 		transform.Deserialize(entityJson["Transform"]);
 		std::chrono::steady_clock::time_point transformEnd = std::chrono::steady_clock::now();
 		QFE_LOG("Deserialize Transform Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(transformEnd - transformStart).count()) + " ms");
