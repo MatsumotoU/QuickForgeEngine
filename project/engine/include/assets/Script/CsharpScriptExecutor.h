@@ -36,6 +36,9 @@ namespace QFE {
 		/// @brief 終了処理（AppDomainをアンロード）
 		void Finalize();
 
+		/// @brief 即座にスクリプトインスタンスを作成,ランタイム中に呼び出すと仮想環境が壊れる可能性があるため、Userが直接呼び出すべきではない
+		void ForceCreateScriptInstance(uint32_t entityId, const std::string& className);
+
 		/// @brief スクリプトインスタンスを作成
 		/// @param entityId バインドするエンティティID
 		/// @param className クラス名（名前空間含む）
@@ -70,6 +73,7 @@ namespace QFE {
 		MonoMethod* gameLogicFrameStartMethod_ = nullptr; // GameLogicManagerのFrameStartメソッド
 		MonoMethod* gameLogicFrameEndMethod_ = nullptr; // GameLogicManagerのFrameEndメソッド
 		MonoMethod* gameLogicCreateScriptInstanceMethod_ = nullptr; // GameLogicManagerのCreateScriptInstanceメソッド
+		MonoMethod* gameLogicForceCreateScriptInstanceMethod_ = nullptr; // GameLogicManagerのForceCreateScriptInstanceメソッド
 
 		/// @brief アセンブリをロード
 		void LoadAssembly();
