@@ -6,6 +6,7 @@
 #include "engine/include/camera/CameraManager.h"
 #include "engine/include/assets/Script/MonoRuntimeManager.h"
 
+#include "engine/include/core/Math/TransformComponent.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
@@ -100,7 +101,7 @@ namespace QFE {
 		if (!sceneManager) return false;
 		EntityManager* em = sceneManager->GetEntityManager();
 		switch (type) {
-		case ComponentType::Transform: return em->HasComponent<Transform>(entityId);
+		case ComponentType::Transform: return em->HasComponent<TransformComponent>(entityId);
 		case ComponentType::SceneObjectData: return em->HasComponent<SceneObjectData>(entityId);
 		case ComponentType::ModelHandle: return em->HasComponent<ModelHandle>(entityId);
 		case ComponentType::SpriteData: return em->HasComponent<SpriteData>(entityId);
@@ -122,7 +123,7 @@ namespace QFE {
 		if (!sceneManager) return;
 		EntityManager* em = sceneManager->GetEntityManager();
 		switch (type) {
-		case ComponentType::Transform: em->EmplaceComponent<Transform>(entityId); break;
+		case ComponentType::Transform: em->EmplaceComponent<TransformComponent>(entityId); break;
 		case ComponentType::SceneObjectData: em->EmplaceComponent<SceneObjectData>(entityId); break;
 		case ComponentType::Billboard: em->EmplaceComponent<Component::BillboardComponent>(entityId); break;
 		case ComponentType::PhysicsForce: em->EmplaceComponent<Force>(entityId); break;
@@ -139,7 +140,7 @@ namespace QFE {
 		if (!sceneManager) return;
 		EntityManager* em = sceneManager->GetEntityManager();
 		switch (type) {
-		case ComponentType::Transform: em->RemoveComponent<Transform>(entityId); break;
+		case ComponentType::Transform: em->RemoveComponent<TransformComponent>(entityId); break;
 		case ComponentType::SceneObjectData: em->RemoveComponent<SceneObjectData>(entityId); break;
 		case ComponentType::ModelHandle: em->RemoveComponent<ModelHandle>(entityId); break;
 		case ComponentType::SpriteData: em->RemoveComponent<SpriteData>(entityId); break;
@@ -158,8 +159,8 @@ namespace QFE {
 		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		TransformData data = {};
-		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
-			Transform& t = sceneManager->GetEntityManager()->GetComponent<Transform>(entityId);
+		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<TransformComponent>(entityId)) {
+			Transform& t = sceneManager->GetEntityManager()->GetComponent<TransformComponent>(entityId).transform;
 			data.translate[0] = t.translate.x; data.translate[1] = t.translate.y; data.translate[2] = t.translate.z;
 			data.rotate[0] = t.rotate.x; data.rotate[1] = t.rotate.y; data.rotate[2] = t.rotate.z;
 			data.scale[0] = t.scale.x; data.scale[1] = t.scale.y; data.scale[2] = t.scale.z;
@@ -170,8 +171,8 @@ namespace QFE {
 	void WindowsBridgeCore::SetTransform(uint32_t entityId, const TransformData& data) {
 		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
-		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
-			Transform& t = sceneManager->GetEntityManager()->GetComponent<Transform>(entityId);
+		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<TransformComponent>(entityId)) {
+			Transform& t = sceneManager->GetEntityManager()->GetComponent<TransformComponent>(entityId).transform;
 			t.translate = { data.translate[0], data.translate[1], data.translate[2] };
 			t.rotate = { data.rotate[0], data.rotate[1], data.rotate[2] };
 			t.scale = { data.scale[0], data.scale[1], data.scale[2] };

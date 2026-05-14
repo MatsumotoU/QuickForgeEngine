@@ -8,7 +8,6 @@
 namespace QFE {
 	struct CsharpHandle {
 		std::string className_;
-		uint32_t scriptIndex_;
 	};
 
 	class CsharpComponent :public ComponentData {

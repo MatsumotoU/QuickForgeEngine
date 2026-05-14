@@ -85,6 +85,11 @@ namespace QFE {
 			return std::vector<uint32_t>(dense_keys_.begin(), dense_keys_.end());
 		}
 
+		/// @brief 値の一覧を取得する。
+		std::vector<T> Values() const {
+			return std::vector<T>(dense_.begin(), dense_.end());
+		}
+
 		/// @brief 全ての有効なコンポーネントに対して関数を実行する。
 		/// @param func (uint32_t id, T& component) を引数に取る関数オブジェクトまたはラムダ式
 		void Each(const std::function<void(uint32_t, T&)>& func) {

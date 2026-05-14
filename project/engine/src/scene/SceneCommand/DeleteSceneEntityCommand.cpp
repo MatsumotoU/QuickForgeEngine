@@ -61,16 +61,6 @@ void DeleteSceneEntityCommand::Execute()
 		gpuBufferPool->ReleaseConstantBuffer<Material>(spriteData.materialBufferHandle);
 	}
 
-	// C#Scriptコンポーネントのインスタンス削除
-	if(entityManager_.HasComponent<CsharpComponent>(entityId_)) {
-		QFE_LOG("Deleting C# script instances for entity " + std::to_string(entityId_));
-		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId_);
-		for (const auto& handle : csharpComponent.csharpHandles_) {
-			scriptExecutor_.DeleteScriptInstance(handle.scriptIndex_);
-			QFE_LOG("Deleted C# script instance: " + handle.className_ + " for entity " + std::to_string(entityId_));
-		}
-	}
-
 	// 指定されたエンティティをシーンから削除する
 	entityManager_.RemoveEntity(entityId_);
 	QFE_LOG("Entity " + std::to_string(entityId_) + " marked for deletion");

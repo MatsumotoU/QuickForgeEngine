@@ -1,5 +1,5 @@
 #pragma once 
-#define BUILD_COMMIT "242e370c" 
-#define BUILD_BRANCH "develop" 
-#define BUILD_DATE "2026/05/13" 
-#define BUILD_TIME "16:01:14.06" 
+#define BUILD_COMMIT "610727e3" 
+#define BUILD_BRANCH "refactor-CsLogic" 
+#define BUILD_DATE "2026/05/14" 
+#define BUILD_TIME "10:17:44.15" 

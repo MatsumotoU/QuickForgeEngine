@@ -2,7 +2,7 @@
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/assets/AssetManager.h"
 
-#include "engine/include/core/Math/Transform.h"
+#include "engine/include/core/Math/TransformComponent.h"
 #include "Engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
 #include "Engine/include/assets/3DModel/Data/SkyboxComponent.h"
@@ -16,8 +16,8 @@ void WorldTransformationCommand::Execute(){
 	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
 	//　ワールド行列更新
 	for (auto entityId : entities) {
-		if (entityManager_.HasComponent<Transform>(entityId)) {
-			Transform& transform = entityManager_.GetComponent<Transform>(entityId);
+		if (entityManager_.HasComponent<TransformComponent>(entityId)) {
+			Transform& transform = entityManager_.GetComponent<TransformComponent>(entityId).transform;
 			// モデルのワールド行列更新
 			if (entityManager_.HasComponent<ModelHandle>(entityId)) {
 				ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);

@@ -101,8 +101,6 @@ namespace QFE {
 		void AddCsharpScript(uint32_t entityId, const std::string& className);
 		/** @brief エンティティを追加 */
 		uint32_t AddEntity(const std::string& entityName,bool useCache = false);
-		/** @brief 実行時にエンティティを追加 */
-		uint32_t RunTimeAddEntity(const std::string& entityName);
 
 		/** @brief シングローバルのシーンデータを取得 */
 		nlohmann::json& GetSceneGlobalData() { return sceneGlobalData_; }

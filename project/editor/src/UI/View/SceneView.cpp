@@ -16,6 +16,8 @@
 #include "engine/include/renderer/GraphRenderer.h"
 #include "engine/include/core/Math/MyMath.h"
 
+#include "engine/include/core/Math/TransformComponent.h"
+
 #include <cmath>
 #include <algorithm>
 using namespace QFE;
@@ -100,10 +102,10 @@ void SceneView::DebugCameraControl() {
 #ifdef QFE_OPTIMIZE_OFF
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	if (!entityManager->HasComponent<Transform>(camera.GetBindEntityId())) {
+	if (!entityManager->HasComponent<TransformComponent>(camera.GetBindEntityId())) {
 		return;
 	}
-	Transform& cameraTransform = entityManager->GetComponent<Transform>(camera.GetBindEntityId());
+	Transform& cameraTransform = entityManager->GetComponent<TransformComponent>(camera.GetBindEntityId()).transform;
 
 	if (isActiveCamera_) {
 		CameraManager::GetInstance()->SetActiveDebugCamera(true);
@@ -205,10 +207,11 @@ void SceneView::UpdateGizmo() {
 	ImGuizmo::SetOrthographic(is2D);
 	ImGuizmo::SetDrawlist();
 
-	if (!SceneManager::GetInstance()->GetEntityManager()->HasComponent<Transform>(selectEntityId_)) {
+	if (!SceneManager::GetInstance()->GetEntityManager()->HasComponent<TransformComponent>(selectEntityId_)) {
 		return;
 	}
-	Transform& transform = SceneManager::GetInstance()->GetEntityManager()->GetComponent<Transform>(selectEntityId_);
+	TransformComponent& transformComp = SceneManager::GetInstance()->GetEntityManager()->GetComponent<TransformComponent>(selectEntityId_);
+	Transform& transform = transformComp.transform;
 
 	Camera& camera = CameraManager::GetInstance()->GetCamera(0);
 	Matrix4x4 view;

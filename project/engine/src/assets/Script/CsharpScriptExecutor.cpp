@@ -1,6 +1,7 @@
 #include "engine/include/assets/Script/CsharpScriptExecutor.h"
 #include "engine/include/assets/Script/MonoRuntimeManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/assets/Script/Data/CsharpComponent.h"
 
 #include "engine/include/core/EngineDefines.h"
 
@@ -12,6 +13,11 @@ CsharpScriptExecutor::CsharpScriptExecutor() {}
 
 CsharpScriptExecutor::~CsharpScriptExecutor() {
 	Finalize();
+}
+
+void CsharpScriptExecutor::ResetScripts() {
+	ResetGameLogicManager();
+	QFE_LOG("All C# scripts reset.");
 }
 
 void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
@@ -55,6 +61,52 @@ void CsharpScriptExecutor::Initialize(EntityManager* entityManager) {
 
 	// アセンブリをロード
 	LoadAssembly();
+
+	// GameLogicManagerのインスタンスを作成
+	ResetGameLogicManager();
+}
+
+void QFE::CsharpScriptExecutor::InitializeGameLogic(EntityManager* entityManager)
+{
+	// エンティティマネージャからScriptComponentを持つものに対して、インスタンスを作成するように指示する
+	entityManager->Each<CsharpComponent>([this](uint32_t entityId, CsharpComponent& csharpComponent) {
+		if (!csharpComponent.csharpHandles_.empty()) {
+			for(auto& handle : csharpComponent.csharpHandles_) {
+				CreateScriptInstance(entityId, handle.className_);
+			}
+		}
+		});
+
+	if (gameLogicManagerInstance_ && gameLogicInitializeMethod_) {
+		mono_runtime_invoke(gameLogicInitializeMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+	}
+	else {
+		QFE_LOG("GameLogicManager is not properly initialized. Cannot call Initialize.", LogLevel::Error);
+	}
+}
+
+void CsharpScriptExecutor::FrameStart() {
+	if (gameLogicManagerInstance_ && gameLogicFrameStartMethod_) {
+		mono_runtime_invoke(gameLogicFrameStartMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+	}
+	else {
+		QFE_LOG("GameLogicManager is not properly initialized. Cannot call FrameStart.", LogLevel::Error);
+	}
+}
+
+void CsharpScriptExecutor::Update() {
+	if (gameLogicManagerInstance_ && gameLogicUpdateMethod_) {
+		mono_runtime_invoke(gameLogicUpdateMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+	}
+}
+
+void CsharpScriptExecutor::FrameEnd() {
+	if (gameLogicManagerInstance_ && gameLogicFrameEndMethod_) {
+		mono_runtime_invoke(gameLogicFrameEndMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+	}
+	else {
+		QFE_LOG("GameLogicManager is not properly initialized. Cannot call FrameEnd.", LogLevel::Error);
+	}
 }
 
 void CsharpScriptExecutor::LoadAssembly() {
@@ -147,136 +199,50 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 	return classNames;
 }
 
-uint32_t CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::string& className) {
+void CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::string& className) {
 	if (!assembly_) {
 		QFE_LOG("Assembly not loaded. Cannot create script instance.", LogLevel::Error);
-		return 0;
+		return ;
 	}
 
-	MonoImage* image = mono_assembly_get_image(assembly_);
-
-	// クラス名をパース
-	std::string ns_name;
-	std::string class_name = className;
-	size_t pos = className.rfind('.');
-	if (pos != std::string::npos) {
-		ns_name = className.substr(0, pos);
-		class_name = className.substr(pos + 1);
+	if(!gameLogicManagerInstance_) {
+		QFE_LOG("GameLogicManager instance is not initialized. Cannot create script instance.", LogLevel::Error);
+		return ;
 	}
 
-	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
-	if (!monoClass) {
-		QFE_LOG("Class not found: " + className, LogLevel::Error);
-		return 0;
-	}
-
-	MonoObject* instance = mono_object_new(domain_, monoClass);
-	mono_runtime_object_init(instance);
-
-	// EntityIDプロパティを設定
-	MonoProperty* entityIdProperty = mono_class_get_property_from_name(monoClass, "EntityID");
-	if (entityIdProperty) {
-		void* args[1] = { &entityId };
-		MonoObject* exception = nullptr;
-		MonoMethod* setMethod = mono_property_get_set_method(entityIdProperty);
-		mono_runtime_invoke(setMethod, instance, args, &exception);
-
-		if (exception) {
-			MonoString* exceptionMsg = mono_object_to_string(exception, nullptr);
-			if (exceptionMsg) {
-				char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
-				QFE_LOG(std::string("Mono Exception: ") + exceptionCStr, LogLevel::Error);
-				mono_free(exceptionCStr);
-			}
-		}
-	}
-
-	uint32_t index = scriptInstances_.push_back(instance);
-	QFE_LOG(std::format("Created C# script instance: {} (index: {})", className, index));
-
-	return index;
-}
-
-void QFE::CsharpScriptExecutor::CreateScriptInstance(const std::string& className) {
-	if (!assembly_) {
-		QFE_LOG("Assembly not loaded. Cannot create script instance.");
-		return;
-	}
-	MonoImage* image = mono_assembly_get_image(assembly_);
-
-	std::string ns_name;
-	std::string class_name = className;
-	size_t pos = className.rfind('.');
-	if (pos != std::string::npos) {
-		ns_name = className.substr(0, pos);
-		class_name = className.substr(pos + 1);
-	}
-
-	MonoClass* monoClass = mono_class_from_name(image, ns_name.c_str(), class_name.c_str());
-	if (!monoClass) {
-		QFE_LOG("Class not found: " + className);
-		return;
-	}
-	MonoObject* instance = mono_object_new(domain_, monoClass);
-	mono_runtime_object_init(instance);
-	uint32_t index = scriptInstances_.push_back(instance);
-
-	QFE_LOG(std::format("Create Instance index: {}", index));
-	return;
-}
-
-void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
-	if (!scriptInstances_.Contains(index)) {
-		QFE_LOG("Script instance at index " + std::to_string(index) + " does not exist.", LogLevel::Warning);
-		return;
-	}
-	scriptInstances_.erase(index);
-	QFE_LOG("Deleted script instance at index: " + std::to_string(index));
-}
-
-void CsharpScriptExecutor::RunScriptFunction(uint32_t index, const std::string& functionName) {
-	if (!scriptInstances_.Contains(index)) {
-		QFE_LOG("Script instance at index " + std::to_string(index) + " does not exist.", LogLevel::Warning);
-		return;
-	}
-
-	MonoObject* scriptInstance = scriptInstances_.at(index);
-	MonoClass* monoClass = mono_object_get_class(scriptInstance);
-	MonoMethod* method = mono_class_get_method_from_name(monoClass, functionName.c_str(), 0);
-
-	if (!method) {
-		QFE_LOG("Method not found: " + functionName, LogLevel::Warning);
-		return;
+	if(domain_ == nullptr) {
+		QFE_LOG("AppDomain is not initialized. Cannot create script instance.", LogLevel::Error);
+		return ;
 	}
 
 	MonoObject* exception = nullptr;
-	mono_runtime_invoke(method, scriptInstance, nullptr, &exception);
+	MonoString* monoClassName = mono_string_new(domain_, className.c_str());
+
+	if(monoClassName == nullptr) {
+		QFE_LOG(std::format("Failed to create MonoString for class name '{}'.", className), LogLevel::Error);
+		return ;
+	}
+
+	void* args[2];
+	args[0] = &entityId;
+	args[1] = monoClassName;
+	mono_runtime_invoke(gameLogicCreateScriptInstanceMethod_, gameLogicManagerInstance_, args, &exception);
 
 	if (exception) {
-		MonoString* exceptionMsg = mono_object_to_string(exception, nullptr);
-		if (exceptionMsg) {
-			char* exceptionCStr = mono_string_to_utf8(exceptionMsg);
-			QFE_LOG("C# Script[" + std::to_string(index) + "]: " + exceptionCStr, LogLevel::Error);
-			mono_free(exceptionCStr);
-		}
+		QFE_REPORT_USER_ERROR(std::format("Exception occurred while creating script instance for class '{}'.", className), UserError::DeveloperError);
+		return ;
 	}
+
+	return ;
 }
 
-void CsharpScriptExecutor::RunAllScriptsFunction(const std::string& functionName) {
-	std::vector<uint32_t> indices = scriptInstances_.Keys();
-	for (uint32_t index : indices) {
-		RunScriptFunction(index, functionName);
-	}	
-}
-
-void CsharpScriptExecutor::ResetScripts() {
-	scriptInstances_.clear();
-	QFE_LOG("All C# scripts reset.");
+void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
+	
 }
 
 void CsharpScriptExecutor::ReloadAssembly() {
 	// スクリプトインスタンスをクリア
-	scriptInstances_.clear();
+	gameLogicManagerInstance_ = nullptr;
 	assembly_ = nullptr;
 
 	// 既存のドメインをアンロード
@@ -305,11 +271,49 @@ void CsharpScriptExecutor::ReloadAssembly() {
 	// アセンブリをリロード
 	LoadAssembly();
 
+	// GameLogicManagerのインスタンスを再作成
+	ResetGameLogicManager();
+
 	QFE_LOG("C# assembly reloaded.");
 }
 
+void QFE::CsharpScriptExecutor::ResetGameLogicManager()
+{
+	MonoImage* image = mono_assembly_get_image(assembly_);
+	gameLogicManagerClass_ = mono_class_from_name(image, "QuickForgeEngine", "GameLogicManager");
+	if (gameLogicManagerClass_) {
+		gameLogicManagerInstance_ = mono_object_new(domain_, gameLogicManagerClass_);
+		mono_runtime_object_init(gameLogicManagerInstance_);
+
+		gameLogicInitializeMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "InitializeAll", 0);
+		gameLogicCreateScriptInstanceMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "CreateInstance", 2);
+		gameLogicUpdateMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "UpdateAll", 0);
+		gameLogicFrameStartMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "FrameStart", 0);
+		gameLogicFrameEndMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "FrameEnd", 0);
+
+		// メソッドが見つからない場合はエラーをログに出す
+		if (!gameLogicInitializeMethod_) {
+			QFE_LOG("Failed to find GameLogicManager.InitializeAll method.", LogLevel::Error);
+		}
+		if (!gameLogicCreateScriptInstanceMethod_) {
+			QFE_LOG("Failed to find GameLogicManager.CreateInstance method.", LogLevel::Error);
+		}
+		if (!gameLogicUpdateMethod_) {
+			QFE_LOG("Failed to find GameLogicManager.UpdateAll method.", LogLevel::Error);
+		}
+		if (!gameLogicFrameStartMethod_) {
+			QFE_LOG("Failed to find GameLogicManager.FrameStart method.", LogLevel::Error);
+		}
+
+		QFE_LOG("GameLogicManager instance created successfully.");
+	}
+	else {
+		QFE_LOG("Failed to find GameLogicManager class in assembly.", LogLevel::Error);
+	}
+}
+
 void CsharpScriptExecutor::Finalize() {
-	scriptInstances_.clear();
+	gameLogicManagerInstance_ = nullptr;
 	assembly_ = nullptr;
 
 	if (domain_) {

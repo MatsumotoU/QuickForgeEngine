@@ -149,11 +149,12 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	mono_add_internal_call("QuickForgeEngine.Entity::Destroy",
 		(const void*)CsharpOnQFELinker::DeleteEntity);
 
-	// Script関連用APIの登録
-	mono_add_internal_call("QuickForgeEngine.Script::CallMethod",
-		(const void*)CsharpOnQFELinker::CallEntityMethod);
-
 	// Transform関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetTransforms", 
+		(const void*)CsharpOnQFELinker::GetTransforms);
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::SetTransforms",
+		(const void*)CsharpOnQFELinker::SetTransforms);
+
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", 
 		(const void*)CsharpOnQFELinker::GetTransformTranslate);
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetTranslate", 
@@ -235,9 +236,7 @@ std::string MonoRuntimeManager::GetAssemblyPath() const {
 void MonoRuntimeManager::Finalize() {
 	// Monoランタイム全体をクリーンアップ
 	if (rootDomain_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Cleaning up Mono JIT...");
-#endif
 		mono_jit_cleanup(rootDomain_);
 		rootDomain_ = nullptr;
 	}

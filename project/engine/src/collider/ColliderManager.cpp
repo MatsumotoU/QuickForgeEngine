@@ -6,6 +6,7 @@
 
 #include "engine/include/core/Math/MyMath.h"
 #include "engine/include/core/Math/Transform.h"
+#include "engine/include/core/Math/TransformComponent.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -71,8 +72,8 @@ namespace QFE {
 		std::vector<uint32_t> entityIds;
 		entityManager->Each<SphereColliderData>([&](uint32_t entityId, SphereColliderData& collider) {
 			entityIds.push_back(entityId);
-			if (entityManager->HasComponent<Transform>(entityId)) {
-				Transform& transform = entityManager->GetComponent<Transform>(entityId);
+			if (entityManager->HasComponent<TransformComponent>(entityId)) {
+				Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
 				collider.sphere.center = transform.translate;
 				collider.isOldHit = collider.isHit;
 				collider.isHit = false;
@@ -130,12 +131,12 @@ namespace QFE {
 						continue;
 					}
 					// Transformがないなら反発しない
-					if (!entityManager->HasComponent<Transform>(idA) || !entityManager->HasComponent<Transform>(idB)) {
+					if (!entityManager->HasComponent<TransformComponent>(idA) || !entityManager->HasComponent<TransformComponent>(idB)) {
 						assert(false && "Entities do not have Transform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<Transform>(idA);
-					Transform& transformB = entityManager->GetComponent<Transform>(idB);
+					Transform& transformA = entityManager->GetComponent<TransformComponent>(idA).transform;
+					Transform& transformB = entityManager->GetComponent<TransformComponent>(idB).transform;
 
 					// どちらも動く場合は等しく反発
 					Vector3 length = colliderB.sphere.center - colliderA.sphere.center;
@@ -164,8 +165,8 @@ namespace QFE {
 		std::vector<uint32_t> entityIds;
 		entityManager->Each<AABBColliderData>([&](uint32_t entityId, AABBColliderData& collider) {
 			entityIds.push_back(entityId);
-			if (entityManager->HasComponent<Transform>(entityId)) {
-				Transform& transform = entityManager->GetComponent<Transform>(entityId);
+			if (entityManager->HasComponent<TransformComponent>(entityId)) {
+				Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
 				collider.aabb.center = transform.translate;
 				collider.isOldHit = collider.isHit;
 				collider.isHit = false;
@@ -225,12 +226,12 @@ namespace QFE {
 						continue;
 					}
 					// Transformがないなら反発しない
-					if (!entityManager->HasComponent<Transform>(idA) || !entityManager->HasComponent<Transform>(idB)) {
+					if (!entityManager->HasComponent<TransformComponent>(idA) || !entityManager->HasComponent<TransformComponent>(idB)) {
 						assert(false && "Entities do not have Transform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<Transform>(idA);
-					Transform& transformB = entityManager->GetComponent<Transform>(idB);
+					Transform& transformA = entityManager->GetComponent<TransformComponent>(idA).transform;
+					Transform& transformB = entityManager->GetComponent<TransformComponent>(idB).transform;
 					// AABBの中心座標
 					Vector3 centerA = colliderA.aabb.center;
 					Vector3 centerB = colliderB.aabb.center;
@@ -283,8 +284,8 @@ namespace QFE {
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 		std::vector<uint32_t> sphereEntityIds;
 		entityManager->Each<SphereColliderData>([&](uint32_t entityId, SphereColliderData& collider) {
-			if (entityManager->HasComponent<Transform>(entityId)) {
-				Transform& transform = entityManager->GetComponent<Transform>(entityId);
+			if (entityManager->HasComponent<TransformComponent>(entityId)) {
+				Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
 				collider.sphere.center = transform.translate;
 				collider.isOldHit = collider.isHit;
 				collider.isHit = false;
@@ -293,8 +294,8 @@ namespace QFE {
 			});
 		std::vector<uint32_t> aabbEntityIds;
 		entityManager->Each<AABBColliderData>([&](uint32_t entityId, AABBColliderData& collider) {
-			if (entityManager->HasComponent<Transform>(entityId)) {
-				Transform& transform = entityManager->GetComponent<Transform>(entityId);
+			if (entityManager->HasComponent<TransformComponent>(entityId)) {
+				Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
 				collider.aabb.center = transform.translate;
 				collider.isOldHit = collider.isHit;
 				collider.isHit = false;
@@ -351,12 +352,12 @@ namespace QFE {
 						continue;
 					}
 					// Transformがないなら反発しない
-					if (!entityManager->HasComponent<Transform>(sphereId) || !entityManager->HasComponent<Transform>(aabbId)) {
+					if (!entityManager->HasComponent<TransformComponent>(sphereId) || !entityManager->HasComponent<TransformComponent>(aabbId)) {
 						assert(false && "Entities do not have Transform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<Transform>(sphereId);
-					Transform& transformB = entityManager->GetComponent<Transform>(aabbId);
+					Transform& transformA = entityManager->GetComponent<TransformComponent>(sphereId).transform;
+					Transform& transformB = entityManager->GetComponent<TransformComponent>(aabbId).transform;
 
 					// 最近点を取得
 					Vector3 closestPoint = MyMath::ClosestPoint(sphereCollider.sphere, aabbCollider.aabb);
