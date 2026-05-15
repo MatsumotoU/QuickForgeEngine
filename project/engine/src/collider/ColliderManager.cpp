@@ -31,9 +31,22 @@ namespace QFE {
 	}
 
 	void ColliderManager::Update() {
+		collisionEnterEntityIds_.clear();
+		collisionStayEntityIds_.clear();
+
 		SphereToSphereUpdate();
 		AABBToAABBUpdate();
 		SphereToAABBUpdate();
+
+		// collisionStayのEntity IDのペアを重複がないようにソートしてユニーク化
+		std::sort(collisionStayEntityIds_.begin(), collisionStayEntityIds_.end());
+		collisionStayEntityIds_.erase(std
+			::unique(collisionStayEntityIds_.begin(), collisionStayEntityIds_.end()), collisionStayEntityIds_.end());
+
+		// collisionEnterのEntity IDのペアを重複がないようにソートしてユニーク化
+		std::sort(collisionEnterEntityIds_.begin(), collisionEnterEntityIds_.end());
+		collisionEnterEntityIds_.erase(std
+			::unique(collisionEnterEntityIds_.begin(), collisionEnterEntityIds_.end()), collisionEnterEntityIds_.end());
 	}
 
 	void ColliderManager::Draw() {
@@ -118,6 +131,10 @@ namespace QFE {
 					// OnCollisionStayイベント
 					colliderA.isHit = true;
 					colliderB.isHit = true;
+					collisionStayEntityIds_.emplace_back(idA, idB);
+					if (!colliderA.isOldHit){
+						collisionEnterEntityIds_.emplace_back(idA, idB);
+					}
 
 					// 反発しうるレイヤーか
 					if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
@@ -211,6 +228,10 @@ namespace QFE {
 					// OnCollisionStayイベント
 					colliderA.isHit = true;
 					colliderB.isHit = true;
+					collisionStayEntityIds_.emplace_back(idA, idB);
+					if (!colliderA.isOldHit) {
+						collisionEnterEntityIds_.emplace_back(idA, idB);
+					}
 
 					// 反発しうるレイヤーか
 					if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
@@ -339,6 +360,10 @@ namespace QFE {
 					// OnCollisionStayイベント
 					sphereCollider.isHit = true;
 					aabbCollider.isHit = true;
+					collisionStayEntityIds_.emplace_back(sphereId, aabbId);
+					if (!sphereCollider.isOldHit) {
+						collisionEnterEntityIds_.emplace_back(sphereId, aabbId);
+					}
 
 					// 反発しうるレイヤーか
 					if ((sphereCollider.colliderLayer & aabbCollider.eventColliderLayer) == 0) {

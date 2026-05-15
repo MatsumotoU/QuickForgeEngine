@@ -103,6 +103,11 @@ void SceneObject::Update() {
 	// 当たり判定更新
 	ColliderManager::GetInstance()->Update();
 
+	// スクリプトの当たり判定更新
+	if (isRunningScript_ && !isPauseScript_) {
+		csharpScriptExecutor_.CollisionUpdate();
+	}
+
 	//  ワールド行列更新
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<RemakeUniqeIDCommand>(*(GetEntityManager()), uniqueIdManager_));
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<WorldTransformationCommand>(*(GetEntityManager())));
@@ -203,6 +208,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 
 	entityManager_.ResetEntiry();
 	AudioInterface::GetInstance()->StopAllSound();
+	csharpScriptExecutor_.ReloadAssembly();
 	csharpScriptExecutor_.ResetScripts();
 
 	// Sceneの読み込み

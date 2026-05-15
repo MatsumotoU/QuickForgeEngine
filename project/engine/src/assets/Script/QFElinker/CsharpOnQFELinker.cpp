@@ -6,6 +6,7 @@
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/input/InputInterface.h"
+#include "engine/include/collider/ColliderManager.h"
 
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/core/EngineGlobalValue.h"
@@ -14,6 +15,7 @@
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/renderer/ModelRenderer.h"
 
+#include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/core/Math/TransformComponent.h"
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
 #include "engine/include/assets/Script/CsharpScriptExecutor.h"
@@ -227,6 +229,33 @@ void QFE::CsharpOnQFELinker::StopSound(uint32_t playHandle) {
 	AudioInterface::GetInstance()->StopSound(playHandle);
 }
 
+void QFE::CsharpOnQFELinker::GetEntityTags(MonoArray* entityIds, MonoArray* tags, uint32_t* count)
+{
+	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+	std::vector<std::string> entityTags;
+	std::vector<uint32_t> entityIdsVec;
+	entityManager->GetComponentStrage<SceneObjectData>().Each([&](uint32_t entityId, const SceneObjectData& data) {
+		if (!data.tag.empty()) {
+			entityIdsVec.push_back(entityId);
+			entityTags.push_back(data.tag);
+		}
+		});
+	// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
+	uint32_t csharpBufLen = mono_array_length(entityIds);
+	uint32_t nativeCount = static_cast<uint32_t>(entityIdsVec.size());
+	uint32_t copyCount = (csharpBufLen < nativeCount) ? csharpBufLen : nativeCount;
+	// 2. C#配列の「生ポインタ」を取得
+	uint32_t* dstEntityIds = mono_array_addr(entityIds, uint32_t, 0);
+	MonoString** dstTags = mono_array_addr(tags, MonoString*, 0);
+	// 3. C++側のデータをC#のメモリへコピー
+	for (uint32_t i = 0; i < copyCount; ++i) {
+		dstEntityIds[i] = entityIdsVec[i];
+		dstTags[i] = mono_string_new(mono_domain_get(), entityTags[i].c_str());
+	}
+	// 4. C#側に「何個書いたか」を教える
+	*count = copyCount;
+}
+
 uint32_t QFE::CsharpOnQFELinker::GetEntityFromName(MonoString* entityName) {
 	std::string utf8_entityName = mono_string_to_utf8(entityName);
 	uint32_t entityId = SceneManager::GetInstance()->GetEntityByName(utf8_entityName.c_str());
@@ -235,7 +264,17 @@ uint32_t QFE::CsharpOnQFELinker::GetEntityFromName(MonoString* entityName) {
 
 uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* entityName, Transform transform, uint32_t changeCount)
 {
+	if (!entityName) {
+		QFE_REPORT_USER_ERROR("Entity name is null.", UserError::DeveloperError);
+		return UINT32_MAX;
+	}
+
 	char* utf8_className = mono_string_to_utf8(entityName);
+	if (!utf8_className) {
+		QFE_REPORT_USER_ERROR("Failed to convert entity name to UTF-8.", UserError::DeveloperError);
+		return UINT32_MAX;
+	}
+
 	uint32_t entityId = SceneManager::GetInstance()->AddEntity(utf8_className);
 	mono_free(utf8_className);
 
@@ -291,6 +330,52 @@ void QFE::CsharpOnQFELinker::ChangeMesh(uint32_t entityId, MonoString* meshName)
 
 void QFE::CsharpOnQFELinker::DeleteEntity(uint32_t entityId) {
 	SceneManager::GetInstance()->DeleteEntity(entityId);
+}
+
+void QFE::CsharpOnQFELinker::GetCollisionEnterEntityIds(MonoArray* aIds, MonoArray* bIds, uint32_t* count)
+{
+	ColliderManager* colliderManager = ColliderManager::GetInstance();
+	uint32_t collisionCount = static_cast<uint32_t>(colliderManager->collisionEnterEntityIds_.size());
+
+	// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
+	uint32_t csharpBufLen = mono_array_length(aIds);
+	uint32_t copyCount = (csharpBufLen < collisionCount) ? csharpBufLen : collisionCount;
+
+	// 2. C#配列の「生ポインタ」を取得
+	uint32_t* dstAIds = mono_array_addr(aIds, uint32_t, 0);
+	uint32_t* dstBIds = mono_array_addr(bIds, uint32_t, 0);
+
+	// 3. C++側のデータをC#のメモリへコピー
+	for (uint32_t i = 0; i < copyCount; ++i) {
+		dstAIds[i] = colliderManager->collisionEnterEntityIds_[i].first;
+		dstBIds[i] = colliderManager->collisionEnterEntityIds_[i].second;
+	}
+
+	// 4. C#側に「何個書いたか」を教える
+	*count = copyCount;
+}
+
+void QFE::CsharpOnQFELinker::GetCollisionStayEntityIds(MonoArray* aIds, MonoArray* bIds, uint32_t* count)
+{
+	ColliderManager* colliderManager = ColliderManager::GetInstance();
+	uint32_t collisionCount = static_cast<uint32_t>(colliderManager->collisionStayEntityIds_.size());
+
+	// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
+	uint32_t csharpBufLen = mono_array_length(aIds);
+	uint32_t copyCount = (csharpBufLen < collisionCount) ? csharpBufLen : collisionCount;
+
+	// 2. C#配列の「生ポインタ」を取得
+	uint32_t* dstAIds = mono_array_addr(aIds, uint32_t, 0);
+	uint32_t* dstBIds = mono_array_addr(bIds, uint32_t, 0);
+
+	// 3. C++側のデータをC#のメモリへコピー
+	for (uint32_t i = 0; i < copyCount; ++i) {
+		dstAIds[i] = colliderManager->collisionStayEntityIds_[i].first;
+		dstBIds[i] = colliderManager->collisionStayEntityIds_[i].second;
+	}
+
+	// 4. C#側に「何個書いたか」を教える
+	*count = copyCount;
 }
 
 void QFE::CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {

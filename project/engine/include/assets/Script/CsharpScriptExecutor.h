@@ -33,6 +33,9 @@ namespace QFE {
 		/// @brief 毎フレームの終了処理（GameLogicManagerのFrameEndを呼び出す）
 		void FrameEnd();
 
+		/// @brief 当たり判定の処理（GameLogicManagerのCollisionUpdateを呼び出す）
+		void CollisionUpdate();
+
 		/// @brief 終了処理（AppDomainをアンロード）
 		void Finalize();
 
@@ -74,6 +77,8 @@ namespace QFE {
 		MonoMethod* gameLogicFrameEndMethod_ = nullptr; // GameLogicManagerのFrameEndメソッド
 		MonoMethod* gameLogicCreateScriptInstanceMethod_ = nullptr; // GameLogicManagerのCreateScriptInstanceメソッド
 		MonoMethod* gameLogicForceCreateScriptInstanceMethod_ = nullptr; // GameLogicManagerのForceCreateScriptInstanceメソッド
+
+		MonoMethod* gameLogicCollisionUpdateMethod_ = nullptr; // GameLogicManagerのCollisionUpdateメソッド
 
 		/// @brief アセンブリをロード
 		void LoadAssembly();

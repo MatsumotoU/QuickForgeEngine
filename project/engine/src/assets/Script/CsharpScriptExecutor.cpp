@@ -63,7 +63,7 @@ void QFE::CsharpScriptExecutor::InitializeGameLogic(EntityManager* entityManager
 	// エンティティマネージャからScriptComponentを持つものに対して、インスタンスを作成するように指示する
 	entityManager->Each<CsharpComponent>([this](uint32_t entityId, CsharpComponent& csharpComponent) {
 		if (!csharpComponent.csharpHandles_.empty()) {
-			for(auto& handle : csharpComponent.csharpHandles_) {
+			for (auto& handle : csharpComponent.csharpHandles_) {
 				ForceCreateScriptInstance(entityId, handle.className_);
 			}
 		}
@@ -125,6 +125,20 @@ void CsharpScriptExecutor::FrameEnd() {
 	}
 }
 
+void QFE::CsharpScriptExecutor::CollisionUpdate()
+{
+	if (gameLogicManagerInstance_ && gameLogicCollisionUpdateMethod_) {
+		try {
+			mono_runtime_invoke(gameLogicCollisionUpdateMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+
+		}
+		catch (const std::exception& e) {
+			QFE_REPORT_SYSTEM_ERROR(
+				std::format("Exception occurred while invoking CollisionUpdate: {}", e.what()), SystemError::Abort());
+		}
+	}
+}
+
 void CsharpScriptExecutor::LoadAssembly() {
 	if (!domain_) {
 		QFE_LOG("Domain not initialized. Cannot load assembly.", LogLevel::Error);
@@ -136,7 +150,8 @@ void CsharpScriptExecutor::LoadAssembly() {
 
 	if (!assembly_) {
 		QFE_LOG("Failed to load assembly: " + assemblyPath, LogLevel::Error);
-	} else {
+	}
+	else {
 		QFE_LOG("Assembly loaded successfully: " + assemblyPath);
 	}
 }
@@ -170,7 +185,7 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 	for (int i = 0; i < num_types; i++) {
 		uint32_t cols[MONO_TYPEDEF_SIZE];
 		mono_metadata_decode_row(type_definitions_table, i, cols, MONO_TYPEDEF_SIZE);
-		
+
 		std::string name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 		std::string ns = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 
@@ -190,7 +205,8 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 			// 名前空間とクラス名をドットで結合
 			full_name = std::string(ns) + "." + name;
 			QFE_LOG(std::format("Found class: {}.{}", ns, name));
-		} else {
+		}
+		else {
 			// 名前空間がない場合はクラス名のみ
 			full_name = name;
 			QFE_LOG(std::format("Found class: {}", name));
@@ -212,25 +228,25 @@ std::vector<std::string> CsharpScriptExecutor::GetAvailableScriptClasses() const
 void CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::string& className) {
 	if (!assembly_) {
 		QFE_LOG("Assembly not loaded. Cannot create script instance.", LogLevel::Error);
-		return ;
+		return;
 	}
 
-	if(!gameLogicManagerInstance_) {
+	if (!gameLogicManagerInstance_) {
 		QFE_LOG("GameLogicManager instance is not initialized. Cannot create script instance.", LogLevel::Error);
-		return ;
+		return;
 	}
 
-	if(domain_ == nullptr) {
+	if (domain_ == nullptr) {
 		QFE_LOG("AppDomain is not initialized. Cannot create script instance.", LogLevel::Error);
-		return ;
+		return;
 	}
 
 	MonoObject* exception = nullptr;
 	MonoString* monoClassName = mono_string_new(domain_, className.c_str());
 
-	if(monoClassName == nullptr) {
+	if (monoClassName == nullptr) {
 		QFE_LOG(std::format("Failed to create MonoString for class name '{}'.", className), LogLevel::Error);
-		return ;
+		return;
 	}
 
 	void* args[2];
@@ -243,19 +259,19 @@ void CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::st
 	catch (const std::exception& e) {
 		QFE_REPORT_SYSTEM_ERROR(
 			std::format("Exception occurred while creating script instance for class '{}': {}", className, e.what()), SystemError::Abort());
-		return ;
+		return;
 	}
 
 	if (exception) {
 		QFE_REPORT_USER_ERROR(std::format("Exception occurred while creating script instance for class '{}'.", className), UserError::DeveloperError);
-		return ;
+		return;
 	}
 
-	return ;
+	return;
 }
 
 void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
-	
+
 }
 
 void CsharpScriptExecutor::ReloadAssembly() {
@@ -309,6 +325,7 @@ void QFE::CsharpScriptExecutor::ResetGameLogicManager()
 		gameLogicFrameStartMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "FrameStart", 0);
 		gameLogicFrameEndMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "FrameEnd", 0);
 		gameLogicForceCreateScriptInstanceMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "ForceCreateInstance", 2);
+		gameLogicCollisionUpdateMethod_ = mono_class_get_method_from_name(gameLogicManagerClass_, "CollisionUpdate", 0);
 
 		// メソッドが見つからない場合はエラーをログに出す
 		if (!gameLogicInitializeMethod_) {

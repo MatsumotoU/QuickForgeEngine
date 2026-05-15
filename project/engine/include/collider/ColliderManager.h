@@ -17,6 +17,9 @@ namespace QFE {
 		bool isRunning = false;
 		ColliderTagMask colliderTagMask_;
 
+		std::vector<std::pair<uint32_t, uint32_t>> collisionEnterEntityIds_;
+		std::vector<std::pair<uint32_t, uint32_t>> collisionStayEntityIds_;
+
 	private:
 		void SphereToSphereUpdate();
 		void AABBToAABBUpdate();
