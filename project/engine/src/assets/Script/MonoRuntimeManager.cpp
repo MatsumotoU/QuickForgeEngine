@@ -128,6 +128,8 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	// Scene関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.SceneManager::LoadScene", 
 		(const void*)CsharpOnQFELinker::LoadScene);
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetEntityTags",
+		(const void*)CsharpOnQFELinker::GetEntityTags);
 
 	// Audio関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Audio::LoadSound", 
@@ -172,9 +174,13 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::Rotate", 
 		(const void*)CsharpOnQFELinker::Rotate);
 
-#ifdef QFE_OPTIMIZE_OFF
+	// Collision関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetCollisionEnterEntityIDs", 
+		(const void*)CsharpOnQFELinker::GetCollisionEnterEntityIds);
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetCollisionStayEntityIDs", 
+		(const void*)CsharpOnQFELinker::GetCollisionStayEntityIds);
+
 	QFE_LOG("QFE C# API registered successfully.");
-#endif
 }
 
 void MonoRuntimeManager::CompileScripts() {

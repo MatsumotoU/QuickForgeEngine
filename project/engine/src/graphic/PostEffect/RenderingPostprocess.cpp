@@ -29,7 +29,7 @@ namespace QFE {
 		enableColorCorrection_ = true;
 		enableVignette_ = true;
 		enableNormal_ = true;
-		enablePixcel_ = false;
+		enablePixcel_ = true;
 
 		renderingRosourceIndex_ = 0;
 		readingResourceIndex_ = 0;
