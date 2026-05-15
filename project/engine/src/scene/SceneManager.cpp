@@ -28,15 +28,11 @@ void SceneManager::Initialize() {
 			ifs >> sceneConfig_;
 			ifs.close();
 		}
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Load SceneConfig.json");
-#endif // QFE_OPTIMIZE_OFF
 	}
 	catch (const std::exception& e) {
 		e;
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // QFE_OPTIMIZE_OFF
 	}
 
 	currentScene_ = std::make_unique<SceneObject>();

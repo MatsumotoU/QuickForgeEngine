@@ -147,5 +147,6 @@ void QFE::DebugLog(const std::string& message, const LogLevel& logLevel, const s
 }
 
 void QFE::DebugLogCsharp(const std::string& message) {
+	message;
 	QFE_LOG(message, LogLevel::EditorInfo);
 }
