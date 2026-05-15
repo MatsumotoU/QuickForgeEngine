@@ -1,6 +1,5 @@
 -- Solution
 workspace "QuickForgeEngine"
-    
     architecture "x64"
     configurations {"Debug","Development","Release"}
     startproject "Editor"
@@ -220,3 +219,17 @@ project "ImGui"
         "externals/imgui/**.h",
         "externals/imgui/**.cpp",
     }
+
+group "Docs"
+    project "DevelopmentRules"
+        kind "None" -- コンパイルしない設定
+        location "./" -- slnと同じ場所に置く
+   
+        files { 
+            "DEVELOPMENT_RULE.md", 
+        }
+
+    vpaths {
+        ["/*"] = { "**.md" } -- 全てのmdファイルをプロジェクト直下に表示
+    }
+group ""
