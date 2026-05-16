@@ -1,4 +1,5 @@
 import bpy
+import bpy_extras
 import math
 
 bl_info = {
@@ -19,19 +20,44 @@ class MYDDON_OT_export_scene(bpy.types.Operator):
     bl_label = "シーンをエクスポートします"
     bl_description = "シーンをエクスポートします"
 
+    filename_ext = ".scene"
+
+    def write_and_print(self, file, text):
+        print(text)
+
+        file.write(text)
+        file.write("\n")
+
+    def parse_scene_recursice(self,file,object,level):
+        indent = ''
+        for i in range(level):
+            indent += "\t"
+
+        self.write_and_print(file,indent + object.type + " - " + object.name)
+        trans,rot,scale = object.matrix_local.decompose()
+        rot = rot.to_euler()
+        rot.x = math.degrees(rot.x)
+        rot.y = math.degrees(rot.y)
+        rot.z = math.degrees(rot.z)
+        self.write_and_print(file,indent + "Trans(%f,%f,%f)" % (trans.x, trans.y, trans.z))
+        self.write_and_print(file,indent + "Rot(%f,%f,%f)" % (rot.x, rot.y, rot.z))
+        self.write_and_print(file,indent + "Scale(%f,%f,%f)" % (scale.x, scale.y, scale.z))
+        self.write_and_print(file,'')
+        for child in object.children:
+            self.parse_scene_recursice(file,child,level+1)
+
+    def export(self)
+        """ ファイルに出力 """
+        print("シーン情報出力開始... %r" % self.filepath)
+        for object in bpy.context.scene.objects:
+            
+
+        
+
     def execute(self,context):
         print("シーンをエクスポートします")
-        for object in bpy.context.scene.objects:
-            print(object.type + "_" + object.name)
-            trans,rot,scale = object.matrix_world.decompose()
-            rot = rot.to_euler()
-            rot.x = math.degrees(rot.x)
-            rot.y = math.degrees(rot.y)
-            rot.z = math.degrees(rot.z)
-            print("Trans(%f,%f,%f) Rot(%f,%f,%f) Scale(%f,%f,%f)" % (trans.x, trans.y, trans.z, rot.x, rot.y, rot.z, scale.x, scale.y, scale.z))
-            if object.parent:
-                print("Parent(%s)" % object.parent.name)
-            print()
+
+        self.export()
         print("シーンをエクスポートしました")
         self.report({'INFO'}, "シーンをエクスポートしました")
         return {'FINISHED'}
