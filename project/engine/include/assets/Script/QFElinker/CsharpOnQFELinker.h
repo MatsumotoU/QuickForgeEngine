@@ -57,4 +57,5 @@ namespace QFE::CsharpOnQFELinker {
 
 	// debug
     extern void Native_Debug_Log(MonoString* message);
+	extern void Native_Debug_SystemLog(MonoString* message);
 }

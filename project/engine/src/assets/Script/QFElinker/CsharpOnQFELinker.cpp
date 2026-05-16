@@ -386,3 +386,13 @@ void QFE::CsharpOnQFELinker::Native_Debug_Log(MonoString* message) {
     mono_free(utf8_message);
 #endif // QFE_OPTIMIZE_OFF
 }
+
+void QFE::CsharpOnQFELinker::Native_Debug_SystemLog(MonoString* message)
+{
+	message;
+#ifdef QFE_OPTIMIZE_OFF
+	char* utf8_message = mono_string_to_utf8(message);
+	QFE_LOG("QFE_C#System: " + std::string(utf8_message));
+	mono_free(utf8_message);
+#endif // QFE_OPTIMIZE_OFF
+}

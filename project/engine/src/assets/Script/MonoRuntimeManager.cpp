@@ -79,6 +79,9 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	// Debug用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Debug::Log", 
 		(const void*)CsharpOnQFELinker::Native_Debug_Log);
+	// SystemLog用APIの登録
+	mono_add_internal_call("QuickForgeEngine.Debug::SystemLog", 
+		(const void*)CsharpOnQFELinker::Native_Debug_SystemLog);
 
 	// Time関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Time::GetDeltaTime", 
