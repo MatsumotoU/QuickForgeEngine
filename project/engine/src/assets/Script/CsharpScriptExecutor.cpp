@@ -71,7 +71,12 @@ void QFE::CsharpScriptExecutor::InitializeGameLogic(EntityManager* entityManager
 
 	if (gameLogicManagerInstance_ && gameLogicInitializeMethod_) {
 		try {
-			mono_runtime_invoke(gameLogicInitializeMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+			MonoObject* exception = nullptr;
+			mono_runtime_invoke(gameLogicInitializeMethod_, gameLogicManagerInstance_, nullptr, &exception);
+			if (exception) {
+				std::string msg = mono_string_to_utf8(mono_object_to_string(exception, nullptr));
+				QFE_REPORT_SYSTEM_ERROR("Exception occurred while invoking GameLogicManager.Initialize: " + msg, SystemError::Abort());
+			}
 		}
 		catch (const std::exception& e) {
 			QFE_REPORT_SYSTEM_ERROR(
@@ -86,7 +91,12 @@ void QFE::CsharpScriptExecutor::InitializeGameLogic(EntityManager* entityManager
 void CsharpScriptExecutor::FrameStart() {
 	if (gameLogicManagerInstance_ && gameLogicFrameStartMethod_) {
 		try {
-			mono_runtime_invoke(gameLogicFrameStartMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+			MonoObject* exception = nullptr;
+			mono_runtime_invoke(gameLogicFrameStartMethod_, gameLogicManagerInstance_, nullptr, &exception);
+			if (exception) {
+				std::string msg = mono_string_to_utf8(mono_object_to_string(exception, nullptr));
+				QFE_REPORT_SYSTEM_ERROR("Exception occurred while invoking GameLogicManager.FrameStart: " + msg, SystemError::Abort());
+			}
 		}
 		catch (const std::exception& e) {
 			QFE_REPORT_SYSTEM_ERROR(
@@ -101,7 +111,12 @@ void CsharpScriptExecutor::FrameStart() {
 void CsharpScriptExecutor::Update() {
 	if (gameLogicManagerInstance_ && gameLogicUpdateMethod_) {
 		try {
-			mono_runtime_invoke(gameLogicUpdateMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+			MonoObject* exception = nullptr;
+			mono_runtime_invoke(gameLogicUpdateMethod_, gameLogicManagerInstance_, nullptr, &exception);
+			if (exception) {
+				std::string msg = mono_string_to_utf8(mono_object_to_string(exception, nullptr));
+				QFE_REPORT_SYSTEM_ERROR("Exception occurred while invoking GameLogicManager.Update: " + msg, SystemError::Abort());
+			}
 		}
 		catch (const std::exception& e) {
 			QFE_REPORT_SYSTEM_ERROR(
@@ -113,7 +128,12 @@ void CsharpScriptExecutor::Update() {
 void CsharpScriptExecutor::FrameEnd() {
 	if (gameLogicManagerInstance_ && gameLogicFrameEndMethod_) {
 		try {
-			mono_runtime_invoke(gameLogicFrameEndMethod_, gameLogicManagerInstance_, nullptr, nullptr);
+			MonoObject* exception = nullptr;
+			mono_runtime_invoke(gameLogicFrameEndMethod_, gameLogicManagerInstance_, nullptr, &exception);
+			if (exception) {
+				std::string msg = mono_string_to_utf8(mono_object_to_string(exception, nullptr));
+				QFE_REPORT_SYSTEM_ERROR("Exception occurred while invoking GameLogicManager.FrameEnd: " + msg, SystemError::Abort());
+			}
 		}
 		catch (const std::exception& e) {
 			QFE_REPORT_SYSTEM_ERROR(
@@ -129,8 +149,12 @@ void QFE::CsharpScriptExecutor::CollisionUpdate()
 {
 	if (gameLogicManagerInstance_ && gameLogicCollisionUpdateMethod_) {
 		try {
-			mono_runtime_invoke(gameLogicCollisionUpdateMethod_, gameLogicManagerInstance_, nullptr, nullptr);
-
+			MonoObject* exception = nullptr;
+			mono_runtime_invoke(gameLogicCollisionUpdateMethod_, gameLogicManagerInstance_, nullptr, &exception);
+			if (exception) {
+				std::string msg = mono_string_to_utf8(mono_object_to_string(exception, nullptr));
+				QFE_REPORT_SYSTEM_ERROR("Exception occurred while invoking GameLogicManager.CollisionUpdate: " + msg, SystemError::Abort());
+			}
 		}
 		catch (const std::exception& e) {
 			QFE_REPORT_SYSTEM_ERROR(
@@ -255,6 +279,10 @@ void CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::st
 	try {
 		QFE_LOG(std::format("Creating script instance for class '{}', entity ID: {}.", className, entityId));
 		mono_runtime_invoke(gameLogicCreateScriptInstanceMethod_, gameLogicManagerInstance_, args, &exception);
+		if(exception) {
+			std::string msg = mono_string_to_utf8(mono_object_to_string(exception, nullptr));
+			QFE_REPORT_SYSTEM_ERROR("Exception occurred while creating script instance for class '" + className + "': " + msg, SystemError::Abort());
+		}
 	}
 	catch (const std::exception& e) {
 		QFE_REPORT_SYSTEM_ERROR(
@@ -384,6 +412,10 @@ void QFE::CsharpScriptExecutor::ForceCreateScriptInstance(uint32_t entityId, con
 	try {
 		QFE_LOG(std::format("Force creating script instance for class '{}', entity ID: {}.", className, entityId));
 		mono_runtime_invoke(gameLogicForceCreateScriptInstanceMethod_, gameLogicManagerInstance_, args, &exception);
+		if(exception) {
+			std::string msg = mono_string_to_utf8(mono_object_to_string(exception, nullptr));
+			QFE_REPORT_SYSTEM_ERROR("Exception occurred while force creating script instance for class '" + className + "': " + msg, SystemError::Abort());
+		}
 	}
 	catch (const std::exception& e) {
 		QFE_REPORT_SYSTEM_ERROR(

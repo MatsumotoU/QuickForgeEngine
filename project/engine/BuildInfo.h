@@ -1,5 +1,5 @@
 #pragma once 
-#define BUILD_COMMIT "cfb5b801" 
-#define BUILD_BRANCH "develop" 
-#define BUILD_DATE "2026/05/15" 
-#define BUILD_TIME "14:50:59.20" 
+#define BUILD_COMMIT "5501cdfe" 
+#define BUILD_BRANCH "fix/issues-623-abort-csharp" 
+#define BUILD_DATE "2026/05/16" 
+#define BUILD_TIME "15:50:01.91" 
