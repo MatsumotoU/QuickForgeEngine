@@ -164,6 +164,12 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetCollisionStayEntityIDs", 
 		(const void*)CsharpOnQFELinker::GetCollisionStayEntityIds);
 
+	// PostEffect関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.PostEffect::SetGrayscale", 
+		(const void*)CsharpOnQFELinker::SetGrayScaleOffset);
+	mono_add_internal_call("QuickForgeEngine.PostEffect::SetColorCorrection", 
+		(const void*)CsharpOnQFELinker::SetColorCorrection);
+
 	QFE_LOG("QFE C# API registered successfully.");
 }
 
