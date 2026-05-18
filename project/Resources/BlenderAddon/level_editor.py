@@ -4,6 +4,7 @@ import math
 import gpu
 import gou_extras.batch
 import copy
+import mathutils
 
 bl_info = {
     "name": "LevelEditor",
@@ -39,12 +40,25 @@ class DrawCollider:
         indices = []
 
         for object in bpy.context.scene.objects:
+            if not "collider" in object:
+                continue
+
+            center = mathutils.Vector((0.0,0.0,0.0))
+            size = mathutils.Vector((2.0,2.0,2.0))
+            center[0] = object["collider_center"][0]
+            center[1] = object["collider_center"][1]
+            center[2] = object["collider_center"][2]
+            size[0] = object["collider_size"][0]
+            size[1] = object["collider_size"][1]
+            size[2] = object["collider_size"][2]
+
             start = len(vertices["pos"])
             for offset in offsets:
-                pos = copy.copy(object.location)
+                pos = copy.copy(center)
                 pos[0] += offset[0] * size[0]
                 pos[1] += offset[1] * size[1]
                 pos[2] += offset[2] * size[2]
+                pos = object.matrix_world @ pos
                 vertices["pos"].append(pos)
 
                 indices.append([start+0,start+1])
@@ -68,6 +82,32 @@ class DrawCollider:
         shader.bind()
         shader.uniform_float("color",color)
         batch.draw(shader)
+
+class OBJECT_PT_collider(bpy.types.Panel):
+    bl_idname = "OBJECT_PT_collider"
+    bl_label = "Collider"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "object"
+
+    def draw(self, context):
+        if "collideer" in context.object:
+            self.layout.prop(context.object, '["collider"]', text=self.bl_label)
+            self.layout.prop(context.object, '["collider_center"]', text="中心座標")
+            self.layout.prop(context.object, '["collider_size"]', text="サイズ")
+        else:
+            self.layout.operator(MYADDON_OT_add_collider.bl_idname)
+
+class MYADDON_OT_add_collider(bpy.types.Operator):
+    bl_idname = "object.myaddon_ot_add_collider"
+    bl_label = "コライダーを追加します"
+    bl_description = "コライダーを追加します"
+    bl_options = {'REGISTER','UNDO'}
+    def execute(self, context):
+        context.object["collider"] = "BOX"
+        context.object["collider_center"] = mathutils.Vector((0.0,0.0,0.0))
+        context.object["collider_size"] = mathutils.Vector((2.0,2.0,2.0))
+        return {'FINISHED'}
 
 class OBJECT_PT_file_name(bpy.types.Panel):
     bl_idname = "OBJECT_PT_file_name"
@@ -127,6 +167,14 @@ class MYDDON_OT_export_scene(bpy.types.Operator):
         self.write_and_print(file,indent + "Rot(%f,%f,%f)" % (rot.x, rot.y, rot.z))
         self.write_and_print(file,indent + "Scale(%f,%f,%f)" % (scale.x, scale.y, scale.z))
         
+        if "collider" in object:
+            self.write_and_print(file,indent + "Collider(%s)" % object["collider"])
+            temp_str = indent + "CC %f,%f,%f" % (object["collider_center"][0],object["collider_center"][1],object["collider_center"][2])
+            self.write_and_print(file,temp_str)
+            temp_str = indent + "CS %f,%f,%f" % (object["collider_size"][0],object["collider_size"][1],object["collider_size"][2])
+            temp_str %= (object["collider_size"][0],object["collider_size"][1],object["collider_size"][2])
+            self.write_and_print(file,temp_str)
+
         if "file_name" in object:
             self.write_and_print(file,indent + "FileName(%s)" % object["file_name"])
         self.write_and_print(file,indent+'END')
@@ -198,8 +246,9 @@ classes = {
     MYDDON_OT_stretch_vertex,
     TOPBAR_MT_my_menu,
     OBJECT_PT_file_name,
-    MYADDON_OT_add_filename
-
+    MYADDON_OT_add_filename,
+    MYADDON_OT_add_collider,
+    OBJECT_PT_collider
 }
 
 def register():
