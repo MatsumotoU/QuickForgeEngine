@@ -1,6 +1,9 @@
 import bpy
 import bpy_extras
 import math
+import gpu
+import gou_extras.batch
+import copy
 
 bl_info = {
     "name": "LevelEditor",
@@ -14,6 +17,57 @@ bl_info = {
     "tracker_url": "",
     "category": "Object"
 }
+
+class DrawCollider:
+    handle = None
+
+    offsets = [
+        [0.5,0.5,0.5],
+        [0.5,0.5,-0.5],
+        [0.5,-0.5,0.5],
+        [0.5,-0.5,-0.5],
+        [-0.5,0.5,0.5],
+        [-0.5,0.5,-0.5],
+        [-0.5,-0.5,0.5],
+        [-0.5,-0.5,-0.5]
+        ]
+
+        size = [2.0,2.0,2.0]
+
+    def draw_collider():
+        vertices = {"pos":[]}
+        indices = []
+
+        for object in bpy.context.scene.objects:
+            start = len(vertices["pos"])
+            for offset in offsets:
+                pos = copy.copy(object.location)
+                pos[0] += offset[0] * size[0]
+                pos[1] += offset[1] * size[1]
+                pos[2] += offset[2] * size[2]
+                vertices["pos"].append(pos)
+
+                indices.append([start+0,start+1])
+                indices.append([start+2,start+3])
+                indices.append([start+0,start+2])
+                indices.append([start+1,start+3])
+
+                indices.append([start+4,start+5])
+                indices.append([start+6,start+7])
+                indices.append([start+4,start+6])
+                indices.append([start+5,start+7])
+
+                indices.append([start+0,start+4])
+                indices.append([start+1,start+5])
+                indices.append([start+2,start+6])
+                indices.append([start+3,start+7])
+
+        shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+        batch = gpu_extras.batch.batch_for_shader(shader,'LINES',vertices,indices=indices)
+        color = [0.5,1.0,1.0,1.0]
+        shader.bind()
+        shader.uniform_float("color",color)
+        batch.draw(shader)
 
 class OBJECT_PT_file_name(bpy.types.Panel):
     bl_idname = "OBJECT_PT_file_name"
@@ -145,17 +199,22 @@ classes = {
     TOPBAR_MT_my_menu,
     OBJECT_PT_file_name,
     MYADDON_OT_add_filename
+
 }
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    DrawCollider.handle = bpy.types.SpaceView3D.draw_handler_add(DrawCollider.draw_collider,(), 'WINDOW', 'POST_VIEW')
+
     bpy.types.TOPBAR_MT_editor_menus.append(TOPBAR_MT_my_menu.submenu)
     print("enable LevelEditor")
     
 def unregister():
     bpy.types.TOPBAR_MT_editor_menus.remove(TOPBAR_MT_my_menu.submenu)
+
+    bpy.types.SpaceView3D.draw_handler_remove(DrawCollider.handle,'WINDOW')
     
     for cls in classes:
         bpy.utils.unregister_class(cls)
