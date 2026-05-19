@@ -133,12 +133,25 @@ void UIManager::Draw() {
 		}
 
 		// シーン再生ボタン
-		if (SceneManager::GetInstance()->IsRunningScript()) {
-			if (ImGui::Button("||")) {
-				SceneManager::GetInstance()->StopScript();
+		SceneManager* sceneManager = SceneManager::GetInstance();
+		if (sceneManager->IsRunningScript()) {
+			if (ImGui::Button("StopScene")) {
+				sceneManager->StopScript();
 			}
+
+			ImGui::SameLine();
+			if (sceneManager->IsPauseScript()) {
+				if (ImGui::Button("ResumeScene")) {
+					sceneManager->ResumeScene();
+				}
+			} else {
+				if (ImGui::Button("PauseScene")) {
+					sceneManager->PauseScene();
+				}
+			}
+
 		} else {
-			if (ImGui::Button(">")) {
+			if (ImGui::Button("StartScene")) {
 				IEngineBridge* engineBridge = QFE::BRIDGE::GetBridge();
 				engineBridge->ClearRuntimeDebugLogs();
 
