@@ -7,6 +7,7 @@
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/input/InputInterface.h"
 #include "engine/include/collider/ColliderManager.h"
+#include "engine/include/graphic/PostEffect/RenderingPostprocess.h"
 
 #include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/core/EngineGlobalValue.h"
@@ -395,4 +396,18 @@ void QFE::CsharpOnQFELinker::Native_Debug_SystemLog(MonoString* message)
 	QFE_LOG("QFE_C#System: " + std::string(utf8_message));
 	mono_free(utf8_message);
 #endif // QFE_OPTIMIZE_OFF
+}
+
+void QFE::CsharpOnQFELinker::SetGrayScaleOffset(float offset) {
+	offset = std::clamp(offset, 0.0f, 1.0f);
+	RenderingPostprocess::GetInstance()->GetGrayScaleOffset().offset.x = offset;
+}
+
+void QFE::CsharpOnQFELinker::SetColorCorrection(float exposure, float contrast, float saturation, float gamma, float hue) {
+	ColorCorrectionOffset& offset = RenderingPostprocess::GetInstance()->GetColorCorrectionOffset();
+	offset.exposure = exposure;
+	offset.contrast = contrast;
+	offset.saturation = saturation;
+	offset.gamma = gamma;
+	offset.hue = hue;
 }

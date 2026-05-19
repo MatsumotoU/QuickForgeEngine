@@ -51,11 +51,6 @@ namespace QFE {
 		void PreDraw();
 		void PostDraw();
 
-	public:// debug機能
-#ifdef QFE_OPTIMIZE_OFF
-		void DrawImGui();
-#endif // QFE_OPTIMIZE_OFF
-
 	private:
 		void ClearFirstRenderTarget();
 		void ClearSecondRenderTarget();
@@ -84,7 +79,6 @@ namespace QFE {
 	private:// グレースケール変数
 		PipelineStateObject* grayScalePso_;
 		ConstantBuffer<OffsetBuffer> grayScaleOffsetBuffer_;
-		float grayScaleOffset_;
 		int grayScaleProcessIndex_;
 
 	private:// ビネット変数

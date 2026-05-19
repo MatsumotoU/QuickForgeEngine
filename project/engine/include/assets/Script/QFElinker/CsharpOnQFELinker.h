@@ -58,4 +58,8 @@ namespace QFE::CsharpOnQFELinker {
 	// debug
     extern void Native_Debug_Log(MonoString* message);
 	extern void Native_Debug_SystemLog(MonoString* message);
+
+	// PostEffect
+	extern void SetGrayScaleOffset(float offset);
+	extern void SetColorCorrection(float exposure, float contrast, float saturation,float gamma,float hue);
 }
