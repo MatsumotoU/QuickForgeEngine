@@ -55,8 +55,6 @@ namespace QFE {
 
 		postProcessOrderForm_.clear();
 
-		grayScaleOffset_ = 0.0f;
-
 #ifdef QFE_OPTIMIZE_OFF
 		isImGuiEnabled_ = true;
 #endif // QFE_OPTIMIZE_OFF
@@ -122,6 +120,7 @@ namespace QFE {
 	void RenderingPostprocess::SetGrayScalePSO(PipelineStateObject* pso) {
 		grayScalePso_ = pso;
 		grayScaleOffsetBuffer_.CreateResource(device_);
+		grayScaleOffsetBuffer_.GetData()->offset = { 0.0f, 0.0f, 0.0f, 0.0f };
 	}
 
 	void RenderingPostprocess::SetVignettePSO(PipelineStateObject* pso) {
@@ -198,8 +197,6 @@ namespace QFE {
 		if (enableGrayscale_) {
 			postProcessOrderForm_.push_back(grayScaleProcessIndex_);
 			postProcessCount_++;
-
-			grayScaleOffsetBuffer_.GetData()->offset.x = grayScaleOffset_;
 		}
 
 		if (enableVignette_) {
@@ -269,56 +266,6 @@ namespace QFE {
 		list_->SetGraphicsRootDescriptorTable(0, offScreenSrvHandles_[readingResourceIndex_].gpuHandle_);
 		list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	}
-
-#ifdef QFE_OPTIMIZE_OFF
-	void RenderingPostprocess::DrawImGui() {
-		ImGui::Checkbox("Enable Postprocess", &isPostprocess_);
-		ImGui::Separator();
-		if (isPostprocess_) {
-			ImGui::Checkbox("Enable Grayscale", &enableGrayscale_);
-			ImGui::SameLine();
-			ImGui::InputInt("Grayscale Process Index", &grayScaleProcessIndex_);
-			if (enableGrayscale_) {
-				if (ImGui::TreeNode("Grayscale Offset")) {
-					ImGui::Text("Grayscale Offset: %.2f", grayScaleOffset_);
-					ImGui::SliderFloat("Grayscale Offset", &grayScaleOffset_, 0.0f, 1.0f);
-					ImGui::TreePop();
-				}
-				ImGui::Spacing();
-			}
-
-			ImGui::Checkbox("Enable Vignette", &enableVignette_);
-			ImGui::SameLine();
-			ImGui::InputInt("Vignette Process Index", &vignetteProcessIndex_);
-			if (enableVignette_) {
-				if (ImGui::TreeNode("Vignette Offset")) {
-					ImGui::DragFloat2("ScreenResolution", &vignetteOffsetBuffer_.GetData()->screenResolution.x, 0.1f);
-					ImGui::DragFloat("VignetteRadius", &vignetteOffsetBuffer_.GetData()->VignetteRadius, 0.1f);
-					ImGui::DragFloat("VignetteSoftness", &vignetteOffsetBuffer_.GetData()->VignetteSoftness, 0.1f);
-					ImGui::DragFloat("VignetteIntensity", &vignetteOffsetBuffer_.GetData()->VignetteIntensity, 0.1f);
-					ImGui::TreePop();
-				}
-				ImGui::Spacing();
-			}
-
-			ImGui::Checkbox("Enable ColorCorrection", &enableColorCorrection_);
-			ImGui::SameLine();
-			ImGui::InputInt("ColorCorrection Process Index", &colorCorrectionProcessIndex_);
-			if (enableColorCorrection_) {
-				if (ImGui::TreeNode("ColorCorrection Offset")) {
-					ImGui::DragFloat("Exposure", &colorCorrectionOffsetBuffer_.GetData()->exposure, 0.1f);
-					ImGui::DragFloat("Contrast", &colorCorrectionOffsetBuffer_.GetData()->contrast, 0.1f);
-					ImGui::DragFloat("Saturation", &colorCorrectionOffsetBuffer_.GetData()->saturation, 0.1f);
-					ImGui::DragFloat("Gamma", &colorCorrectionOffsetBuffer_.GetData()->gamma, 0.1f);
-					ImGui::DragFloat("Hue", &colorCorrectionOffsetBuffer_.GetData()->hue, 0.1f);
-					ImGui::TreePop();
-				}
-				ImGui::Spacing();
-			}
-		}
-	}
-#endif
-
 
 	void RenderingPostprocess::ClearFirstRenderTarget() {
 		list_->ClearRenderTargetView(offScreenRtvHandles_.at(0), offScreenClearColor, 0, nullptr);
