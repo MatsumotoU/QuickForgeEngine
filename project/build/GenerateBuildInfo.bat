@@ -1,6 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
+echo Generating BuildInfo.json...
+
 :: Git情報の取得
 set GIT_COMMIT=unknown
 set GIT_BRANCH=unknown
@@ -11,15 +13,21 @@ for /f "tokens=*" %%i in ('git rev-parse --abbrev-ref HEAD 2^>nul') do set GIT_B
 set CURRENT_DATE=%DATE%
 set CURRENT_TIME=%TIME: =0%
 
-:: ファイル書き出し
-echo #pragma once > BuildInfo.h
-echo #define BUILD_COMMIT "%GIT_COMMIT%" >> BuildInfo.h
-echo #define BUILD_BRANCH "%GIT_BRANCH%" >> BuildInfo.h
-echo #define BUILD_DATE "%CURRENT_DATE%" >> BuildInfo.h
-echo #define BUILD_TIME "%CURRENT_TIME%" >> BuildInfo.h
+:: 出力先をバッチファイル位置から相対指定（
+set "OUTFILE=%~dp0BuildInfo.json"
+
+:: ファイル書き出し（ブロックリダイレクトで上書き）
+(
+    echo {
+    echo     "commit": "%GIT_COMMIT%",
+    echo     "branch": "%GIT_BRANCH%",
+    echo     "date": "%CURRENT_DATE%",
+    echo     "time": "%CURRENT_TIME%"
+    echo }
+) > "%OUTFILE%"
 
 :WAIT_FILE
-if not exist "BuildInfo.h" (
+if not exist "%OUTFILE%" (
     timeout /t 1 /nobreak > nul
     goto WAIT_FILE
 )

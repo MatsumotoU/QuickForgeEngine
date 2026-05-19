@@ -147,9 +147,8 @@ group "QuickForge" -- MyMainProject
         }
 
         prebuildcommands {
-            'call "%{wks.location}/Resources/Scripts/setup_vscode_settings.bat" /silent',
-            'call "%{wks.location}/GenerateBuildInfo.bat"',
-            'call "%{wks.location}/externals/Mono/setup_mono.bat"'
+            'call "%{wks.location}\\build\\GenerateBuildInfo.bat"',
+            'call "%{wks.location}\\externals\\Mono\\setup_mono.bat"'
         }
 
         filter "configurations:Debug"
