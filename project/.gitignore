@@ -7,6 +7,9 @@ externals/Mono/etc/
 externals/Mono/include/
 externals/Mono/lib/
 
+# BuildInfo files
+build/BuildInfo.json
+
 # Build artifacts and general IDE files
 [Dd]ebug/
 [Rr]elease/

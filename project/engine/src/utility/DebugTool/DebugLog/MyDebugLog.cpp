@@ -1,7 +1,7 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#include "engine/BuildInfo.h"
 #include "engine/include/core/EngineDefines.h"
 
+#include <json.hpp>
 #include <cassert>
 
 using namespace QFE;
@@ -25,29 +25,38 @@ void MyDebugLog::Initialize() {
 		logFilePath_ = std::string("logs/") + dateString + ".logs";
 
 		logStream_.open(logFilePath_);
-
-		// 縺薙％縺ｧ繝薙Ν繝画ュ蝣ｱ繧貞・蜉・
-		logStream_ << "Build Date: " << __DATE__ << " " << __TIME__ << std::endl;
-#ifdef APP_VERSION
-		logStream_ << "App Version: " << APP_VERSION << std::endl;
-#endif
-#ifdef BUILD_USER
-		logStream_ << "Build User: " << BUILD_USER << std::endl;
-#endif
-#ifdef BUILD_BRANCH
-		logStream_ << "Build Branch: " << BUILD_BRANCH << std::endl;
-#endif
-#ifdef BUILD_COMMIT
-		logStream_ << "Build Commit: " << BUILD_COMMIT << std::endl;
-#endif
-#ifdef BUILD_PLATFORM
-		logStream_ << "Build Platform: " << BUILD_PLATFORM << std::endl;
-#endif
 		logStream_ << "CreateLog" << std::endl;
 	}
 	catch (const std::exception&)
 	{
-		assert(false && "faild to open logFile.");
+		QFE_REPORT_SYSTEM_ERROR("Failed to initialize MyDebugLog.",SystemError::Abort);
+	}
+
+	// ビルド情報をログに出力する
+	try
+	{
+		std::ifstream buildInfoFile("build/BuildInfo.json");
+		if (buildInfoFile.is_open())
+		{
+			nlohmann::json buildInfoJson;
+			buildInfoFile >> buildInfoJson;
+			std::string commit = buildInfoJson["commit"].get<std::string>();
+			std::string branch = buildInfoJson["branch"].get<std::string>();
+			std::string buildTime = buildInfoJson["time"].get<std::string>();
+			std::string buildDate = buildInfoJson["date"].get<std::string>();
+			Log("Build commit: " + commit);
+			Log("Build branch: " + branch);
+			Log("Build time: " + buildTime);
+			Log("Build date: " + buildDate);
+		}
+		else
+		{
+			Log("build_info.json not found. Build information will not be logged.");
+		}
+	}
+	catch (const std::exception&)
+	{
+		QFE_REPORT_SYSTEM_ERROR("Failed to read build_info.json.", SystemError::Abort);
 	}
 }
 

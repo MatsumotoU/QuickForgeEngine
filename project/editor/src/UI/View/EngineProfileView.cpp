@@ -9,7 +9,6 @@
 #include "engine/include/core/Profiler.h"
 #include <map>
 
-#include "engine/BuildInfo.h"
 using namespace QFE;
 EngineProfileView::EngineProfileView() {
 	isActive_ = false;
