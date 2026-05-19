@@ -91,7 +91,7 @@ class OBJECT_PT_collider(bpy.types.Panel):
     bl_context = "object"
 
     def draw(self, context):
-        if "collideer" in context.object:
+        if "collider" in context.object:
             self.layout.prop(context.object, '["collider"]', text=self.bl_label)
             self.layout.prop(context.object, '["collider_center"]', text="中心座標")
             self.layout.prop(context.object, '["collider_size"]', text="サイズ")
@@ -172,7 +172,6 @@ class MYDDON_OT_export_scene(bpy.types.Operator):
             temp_str = indent + "CC %f,%f,%f" % (object["collider_center"][0],object["collider_center"][1],object["collider_center"][2])
             self.write_and_print(file,temp_str)
             temp_str = indent + "CS %f,%f,%f" % (object["collider_size"][0],object["collider_size"][1],object["collider_size"][2])
-            temp_str %= (object["collider_size"][0],object["collider_size"][1],object["collider_size"][2])
             self.write_and_print(file,temp_str)
 
         if "file_name" in object:
@@ -184,13 +183,10 @@ class MYDDON_OT_export_scene(bpy.types.Operator):
         for child in object.children:
             self.parse_scene_recursice(file,child,level+1)
 
-    def export(self)
+    def export(self):
         """ ファイルに出力 """
         print("シーン情報出力開始... %r" % self.filepath)
         for object in bpy.context.scene.objects:
-            
-
-        
 
     def execute(self,context):
         print("シーンをエクスポートします")
