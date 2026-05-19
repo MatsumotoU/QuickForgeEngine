@@ -254,6 +254,14 @@ void QFE::SceneManager::RunningScene() {
 	currentScene_->Update();
 }
 
+void QFE::SceneManager::PauseScene() {
+	currentScene_->PauseScene();
+}
+
+void QFE::SceneManager::ResumeScene() {
+	currentScene_->ResumeScene();
+}
+
 void QFE::SceneManager::TransitioningScene() {
 	LoadScene(nextSceneName_);
 	StartScript();
