@@ -2,7 +2,7 @@ import bpy
 import bpy_extras
 import math
 import gpu
-import gou_extras.batch
+import gpu_extras.batch
 import copy
 import mathutils
 
@@ -33,8 +33,9 @@ class DrawCollider:
         [-0.5,-0.5,-0.5]
         ]
 
-        size = [2.0,2.0,2.0]
+    size = [2.0,2.0,2.0]
 
+    @staticmethod
     def draw_collider():
         vertices = {"pos":[]}
         indices = []
@@ -53,7 +54,7 @@ class DrawCollider:
             size[2] = object["collider_size"][2]
 
             start = len(vertices["pos"])
-            for offset in offsets:
+            for offset in DrawCollider.offsets:
                 pos = copy.copy(center)
                 pos[0] += offset[0] * size[0]
                 pos[1] += offset[1] * size[1]
@@ -121,12 +122,12 @@ class OBJECT_PT_file_name(bpy.types.Panel):
         else:
             self.layout.operator(MYADDON_OT_add_filename.bl_idname)
         
-        self.layout.label(texxt = "Hello")
+        self.layout.label(text = "Hello")
         self.layout.separator()
         self.layout.label(text="Hello2",icon="MESH_CUBE")
 
-        self.layout.operator(MYDOON_OT_stretch_vertex.bl_idname,text=MYDOON_OT_stretch_vertex.bl_label)
-        self.layout.operator(MYDOON_OT_create_ico_sphere.bl_idname,text=MYDOON_OT_create_ico_sphere.bl_label)
+        self.layout.operator(MYDDON_OT_stretch_vertex.bl_idname,text=MYDDON_OT_stretch_vertex.bl_label)
+        self.layout.operator(MYDDON_OT_create_ico_sphere.bl_idname,text=MYDDON_OT_create_ico_sphere.bl_label)
         self.layout.operator(MYDDON_OT_export_scene.bl_idname,text=MYDDON_OT_export_scene.bl_label)
 
 class MYADDON_OT_add_filename(bpy.types.Operator):
@@ -186,7 +187,10 @@ class MYDDON_OT_export_scene(bpy.types.Operator):
     def export(self):
         """ ファイルに出力 """
         print("シーン情報出力開始... %r" % self.filepath)
-        for object in bpy.context.scene.objects:
+        with open(self.filepath, "w", encoding="utf-8") as file:
+            for object in bpy.context.scene.objects:
+                if object.parent is None:
+                    self.parse_scene_recursice(file, object, 0)
 
     def execute(self,context):
         print("シーンをエクスポートします")
@@ -197,7 +201,7 @@ class MYDDON_OT_export_scene(bpy.types.Operator):
         return {'FINISHED'}
 
 class MYDDON_OT_create_ico_sphere(bpy.types.Operator):
-    bl_idname = "object.myddon_ot_create_object"
+    bl_idname = "object.myddon_ot_create_ico_sphere"
     bl_label = "ICO球を生成します"
     bl_description = "頂点座標を引っ張って伸ばします"
     bl_options = {'REGISTER','UNDO'}
