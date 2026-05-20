@@ -83,6 +83,13 @@ void GraphicPipelineManager::Initialize(
 
 	grayScaleRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
+	// ボックスフィルタのまとめ
+	boxFilterRootParameter_.Initialize();
+	boxFilterRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	boxFilterRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+
+	boxFilterRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
 	// ビネットのまとめ
 	vignetteRootParameter_.Initialize();
 	vignetteRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
@@ -125,6 +132,7 @@ void GraphicPipelineManager::Initialize(
 	particleRootParameter_.CheckIntegrityData();
 	primitiveRootParameter_.CheckIntegrityData();
 	grayScaleRootParameter_.CheckIntegrityData();
+	boxFilterRootParameter_.CheckIntegrityData();
 	vignetteRootParameter_.CheckIntegrityData();
 	normalRootParameter_.CheckIntegrityData();
 	colorCorrectionRootParameter_.CheckIntegrityData();
@@ -184,6 +192,11 @@ void GraphicPipelineManager::Initialize(
 	grayScaleTrianglePso_.CreatePipelineStateObject(
 		grayScaleRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "GrayscaleShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
+	
+	boxFilterPso_.Initialize(&shaderCompiler_, device);
+	boxFilterPso_.CreatePipelineStateObject(
+		boxFilterRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "BoxFilter.PS.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	vignettePso_.Initialize(&shaderCompiler_, device);
 	vignettePso_.CreatePipelineStateObject(

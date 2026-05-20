@@ -45,6 +45,8 @@ namespace QFE {
 		PipelineStateObject* GetFontPso() { return &fontPso_; }
 		/** @brief ピクセル化用のPSOを取得 */
 		PipelineStateObject* GetPixelPso() { return &pixelPso_; }
+		/** @brief ボックスフィルタ用のPSOを取得 */
+		PipelineStateObject* GetBoxFilterPso() { return &boxFilterPso_; }
 
 		/// @brief スカイボックス描画用のPSOを取得
 		PipelineStateObject* GetSkyBoxPso() { return &skyBoxPso_; }
@@ -63,6 +65,7 @@ namespace QFE {
 		RootParameter particleRootParameter_;
 		RootParameter primitiveRootParameter_;
 		RootParameter grayScaleRootParameter_;
+		RootParameter boxFilterRootParameter_;
 		RootParameter colorCorrectionRootParameter_;
 		RootParameter vignetteRootParameter_;
 		RootParameter normalRootParameter_;
@@ -81,6 +84,7 @@ namespace QFE {
 
 		PipelineStateObject particlePso_[kCountOfBlendMode];
 
+		PipelineStateObject boxFilterPso_;
 		PipelineStateObject colorCorrectionPso_;
 		PipelineStateObject grayScaleTrianglePso_;
 		PipelineStateObject vignettePso_;
