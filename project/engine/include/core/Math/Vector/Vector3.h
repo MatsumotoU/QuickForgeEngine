@@ -11,8 +11,6 @@ namespace QFE {
 	class Camera;
 	class Vector2;
 
-	// TODO: 使える座標系を増やぁE
-
 	class Vector3 final {
 	public:
 		float x;

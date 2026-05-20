@@ -31,6 +31,8 @@
 #include "editor/include/UI/Edit/KeyConfigEdit.h"
 #include "editor/include/UI/Edit/PostprocessEdit.h"
 #include "editor/include/UI/Edit/ColliderMaskEdit.h"
+#include "editor/include/UI/Edit/AnimationEditor.h"
+
 using namespace QFE;
 
 /** @brief 初期化 */
@@ -71,6 +73,7 @@ void UIManager::Initialize() {
 	editUIs_.push_back(std::make_unique<KeyConfigEdit>());
 	editUIs_.push_back(std::make_unique<PostprocessEdit>());
 	editUIs_.push_back(std::make_unique<ColliderMaskEdit>());
+	editUIs_.push_back(std::make_unique<AnimationEditor>());
 	for (auto& ui : editUIs_) {
 		ui->Initialize();
 	}

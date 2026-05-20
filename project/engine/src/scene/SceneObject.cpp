@@ -20,6 +20,7 @@
 #include "engine/include/camera/Data/CameraData.h"
 #include "engine/include/camera/Data/BillboardComponent.h"
 #include "engine/include/assets/3DModel/Data/SkyboxComponent.h"
+#include "engine/include/assets/Animator/AnimationCompornent.h"
 
 #include <fstream>
 #include <execution>
@@ -111,6 +112,49 @@ void SceneObject::Update() {
 	//  ワールド行列更新
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<RemakeUniqeIDCommand>(*(GetEntityManager()), uniqueIdManager_));
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<WorldTransformationCommand>(*(GetEntityManager())));
+
+	// ワールド行列の作成
+	entityManager_.Each<TransformComponent>([&](uint32_t entityId, TransformComponent& transform) {
+		transform.localMatrix = Matrix4x4::MakeAffineMatrix(transform.transform);
+		});
+
+	// 無効なアニメーションハンドルを削除
+	std::vector<uint32_t> invalidAnimHandles = assetManager_->GetAnimationPlayer()->GetDeleteAnimations();
+	if (invalidAnimHandles.size() > 0) {
+		std::unordered_set<uint32_t> invalidAnimHandleSet(invalidAnimHandles.begin(), invalidAnimHandles.end());
+		entityManager_.Each<AnimationComponent>([&](uint32_t entityId, AnimationComponent& animComp) {
+			entityId; // 未使用
+			animComp.playingAnimHandles.remove_if([&](uint32_t animHandle) {
+				return invalidAnimHandleSet.find(animHandle) != invalidAnimHandleSet.end();
+				});
+			});
+	}
+
+	// アニメーションの更新
+	AnimationPlayer* animPlayer = assetManager_->GetAnimationPlayer();
+	std::unordered_map<uint32_t, Matrix4x4> entityAnimMatrixMap;
+	entityManager_.Each<AnimationComponent>([&](uint32_t entityId, AnimationComponent& animComp) {
+		for (uint32_t& animHandle : animComp.playingAnimHandles) {
+			// アニメーションクリップからAffine行列を作成
+			AnimationPlayClip* animPlayClip = animPlayer->GetAnimationPlayClip(animHandle);
+			Transform animTransform = animPlayClip->animClip->GetTransformAtTime(animPlayClip->currentTime);
+			Matrix4x4 animMatrix = Matrix4x4::MakeAffineMatrix(animTransform);
+
+			// アニメーション行列を保存
+			if(entityAnimMatrixMap.find(entityId) != entityAnimMatrixMap.end()) {
+				entityAnimMatrixMap[entityId] = Matrix4x4::Multiply(entityAnimMatrixMap[entityId], animMatrix);
+			} else {
+				entityAnimMatrixMap[entityId] = animMatrix;
+			}
+		}
+		});
+	// アニメーション行列をワールド行列に反映
+	entityManager_.Each<TransformComponent>([&](uint32_t entityId, TransformComponent& transform) {
+		if (entityAnimMatrixMap.find(entityId) != entityAnimMatrixMap.end()) {
+			transform.localMatrix = Matrix4x4::Multiply(transform.localMatrix, entityAnimMatrixMap[entityId]);
+		}
+		});
+
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<ParentUpdateCommand>(*(GetEntityManager())));
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<AllSpriteResizeCommand>(*(GetEntityManager())));
 
@@ -594,18 +638,14 @@ void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshNam
 
 	//　EntityがModelRenderDataを持っていない、もしくはMeshを持っていない場合は処理しない
 	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("ChangeMesh entity does not have ModelRenderData", LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
 	ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 	//　Meshがない場合は処理しない
 	if (modelData->meshRenderDataHandles.size() == 0) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("ChangeMesh model does not have mesh", LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	modelData->meshRenderDataHandles[0].vertexBufferHandle = assetManager_->LoadModelMesh(meshName);
@@ -780,6 +820,16 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		aabbColliderData.Deserialize(entityJson["AABBColliderData"]);
 		std::chrono::steady_clock::time_point aabbColliderEnd = std::chrono::steady_clock::now();
 		QFE_LOG("Deserialize AABBColliderData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(aabbColliderEnd - aabbColliderStart).count()) + " ms");
+	}
+	if (entityJson.contains("AnimationComponent")) {
+		std::chrono::steady_clock::time_point animationComponentStart = std::chrono::steady_clock::now();
+		entityManager_.EmplaceComponent<AnimationComponent>(entityId);
+		AnimationComponent& animationComponentData = entityManager_.GetComponent<AnimationComponent>(entityId);
+		animationComponentData.Deserialize(entityJson["AnimationComponent"]);
+		animationComponentData.clipHandle = assetManager_->LoadAnimationClip(animationComponentData.clipName);
+		animationComponentData.playingAnimHandles.clear();
+		std::chrono::steady_clock::time_point animationComponentEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize AnimationComponent Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(animationComponentEnd - animationComponentStart).count()) + " ms");
 	}
 	if (entityJson.contains("CsharpComponent")) {
 		std::chrono::steady_clock::time_point csharpComponentStart = std::chrono::steady_clock::now();

@@ -7,8 +7,11 @@
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
 #include "engine/include/assets/Script/MonoRuntimeManager.h"
+#include "engine/include/assets/Animator/AnimationDataServices.h"
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+
+#include "engine/include/core/EngineGlobalValue.h"
 
 using namespace QFE;
 
@@ -28,9 +31,16 @@ void AssetManager::Initialize(DirectXCommon* dxCommon) {
 	audioSourceManager_.Initialize();
 	particleGpuDataManager_.Initialize();
 	gpuBufferPool_ = std::make_unique<GpuBufferPool>(dxCommon);
+	// アニメーション
+	animationClipContainer_.Initialize(100);
+	animationPlayer_.Initialize();
 
 	// スクリプトランタイムのグローバル初期化
 	MonoRuntimeManager::GetInstance()->Initialize();
+}
+
+void AssetManager::Update() {
+	animationPlayer_.Update(QFE::EngineGlobalValue::deltaTime);
 }
 
 void AssetManager::PreDraw() {
@@ -39,6 +49,10 @@ void AssetManager::PreDraw() {
 void AssetManager::Finalize() {
 	// スクリプトランタイムの終了処理
 	MonoRuntimeManager::GetInstance()->Finalize();
+
+	// アニメーション
+	animationPlayer_.Finalize();
+	animationClipContainer_.Finalize();
 
 	particleGpuDataManager_.Finalize();
 	audioSourceManager_.Finalize();
@@ -149,19 +163,23 @@ uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
 }
 
 uint32_t AssetManager::LoadModelTexture(const std::string& modelName) {
-	// 繝｢繝・Ν繝・・繧ｿ繧定ｪｭ縺ｿ霎ｼ縺ｿ
 	ModelData modelData;
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
-	// 蜈磯ｭ縺ｮ繝｡繝・す繝･縺ｮ繝・け繧ｹ繝√Ε繧定ｿ斐☆
 	if (!modelData.meshes.empty()) {
 		const auto& mesh = modelData.meshes.at(0);
 		return textureManager_->LoadTexture(mesh.material.textureFilePath);
 	}
 	assert(false && "Model has no meshes.");
-	return 0;
+	return UINT32_MAX;
+}
+
+uint32_t QFE::AssetManager::LoadAnimationClip(const std::string& animName) {
+	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Animation") + animName + ".anim";
+	return animationClipContainer_.RegisterAnimationClip(
+		QFE::ANIMATION::LoadAnimClipFromAnimFile(filePath));
 }
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -177,4 +195,5 @@ ModelRenderData* AssetManager::GetModelRenderData(uint32_t modelHandle) {
 
 void AssetManager::EndFrame() {
 	textureManager_->ReleaseIntermediateResources();
+	animationPlayer_.FrameEnd();
 }
