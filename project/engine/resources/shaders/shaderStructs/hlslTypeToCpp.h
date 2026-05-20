@@ -94,6 +94,15 @@ struct OffsetBuffer {
 	float32_t4 offset;
 };
 
+struct BoxFilterOffset {
+#ifdef __cplusplus
+	BoxFilterOffset()
+		: screenResolution{ 1280.0f, 720.0f } {
+	}
+#endif
+	float32_t2 screenResolution;
+};
+
 struct PixcelOffset {
 #ifdef __cplusplus
 	PixcelOffset()

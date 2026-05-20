@@ -29,7 +29,8 @@ namespace QFE {
 		enableColorCorrection_ = true;
 		enableVignette_ = true;
 		enableNormal_ = true;
-		enablePixcel_ = true;
+		enablePixcel_ = false;
+		enableBoxFilter_ = false;
 
 		renderingRosourceIndex_ = 0;
 		readingResourceIndex_ = 0;
@@ -47,11 +48,13 @@ namespace QFE {
 		postProcessFunctions_.push_back(std::bind(&RenderingPostprocess::ApplyVignette, this));
 		postProcessFunctions_.push_back(std::bind(&RenderingPostprocess::ApplyColorCorrection, this));
 		postProcessFunctions_.push_back(std::bind(&RenderingPostprocess::ApplyPixcel, this));
+		postProcessFunctions_.push_back(std::bind(&RenderingPostprocess::ApplyBoxFilter, this));
 
 		grayScaleProcessIndex_ = 0;
 		vignetteProcessIndex_ = 1;
 		colorCorrectionProcessIndex_ = 2;
 		pixcelProcessIndex_ = 3;
+		boxFilterProcessIndex_ = 4;
 
 		postProcessOrderForm_.clear();
 
@@ -105,6 +108,14 @@ namespace QFE {
 		indexData_[3] = 1;
 		indexData_[4] = 2;
 		indexData_[5] = 3;
+	}
+
+	void RenderingPostprocess::SetBoxFilterPSO(PipelineStateObject* pso)
+	{
+		boxFilterPso_ = pso;
+		boxFilterOffsetBuffer_.CreateResource(device_);
+		boxFilterOffsetBuffer_.GetData()->screenResolution.x = static_cast<float>(EngineGlobalValue::windowWidth);
+		boxFilterOffsetBuffer_.GetData()->screenResolution.y = static_cast<float>(EngineGlobalValue::windowHeight);
 	}
 
 	void RenderingPostprocess::SetColorCorrectionPSO(PipelineStateObject* pso) {
@@ -214,6 +225,11 @@ namespace QFE {
 			vignetteProcessIndex_ = std::clamp(vignetteProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
 		}
 
+		if (enableBoxFilter_) {
+			postProcessOrderForm_.push_back(boxFilterProcessIndex_);
+			postProcessCount_++;
+		}
+
 		if (!isFirstStateRenderTarget_) {
 			TransitionResourceBarrier::Transition(
 				list_, offScreenResources_[0], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -312,6 +328,20 @@ namespace QFE {
 
 		DirectXCommon::GetInstance()->ClearDepthStencil();
 		list_->OMSetRenderTargets(1, &offScreenRtvHandles_[renderingRosourceIndex_], false, &dsvHandle_);
+	}
+
+	void RenderingPostprocess::ApplyBoxFilter()
+	{
+		list_->RSSetViewports(1, dxCommon_->GetViewPort());
+		list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
+		list_->SetGraphicsRootSignature(boxFilterPso_->GetRootSignature());
+		list_->SetPipelineState(boxFilterPso_->GetPipelineState());
+		list_->IASetVertexBuffers(0, 1, &vertexBufferView_);
+		list_->IASetIndexBuffer(&indexBufferView_);
+		list_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		list_->SetGraphicsRootDescriptorTable(0, offScreenSrvHandles_.at(readingResourceIndex_).gpuHandle_);
+		list_->SetGraphicsRootConstantBufferView(1, boxFilterOffsetBuffer_.GetGPUVirtualAddress());
+		list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	}
 
 	void RenderingPostprocess::ApplyGrayScale() {

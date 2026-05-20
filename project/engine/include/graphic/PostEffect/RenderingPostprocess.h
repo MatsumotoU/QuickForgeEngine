@@ -30,11 +30,14 @@ namespace QFE {
 
 	public:
 		void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* list);
+
+		void SetBoxFilterPSO(PipelineStateObject* pso);
 		void SetColorCorrectionPSO(PipelineStateObject* pso);
 		void SetGrayScalePSO(PipelineStateObject* pso);
 		void SetVignettePSO(PipelineStateObject* pso);
 		void SetNormalPSO(PipelineStateObject* pso);
 		void SetPixelPSO(PipelineStateObject* pso);
+		
 		void SetOffscreenResource(ID3D12Resource* firstResource, ID3D12Resource* secondResource);
 		void SetOffscreenRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE firstHandle, D3D12_CPU_DESCRIPTOR_HANDLE secondHandle);
 		void SetOffscreenSrvHandle(DescriptorHandles firstHandle, DescriptorHandles secondHandle);
@@ -56,6 +59,7 @@ namespace QFE {
 		void ClearSecondRenderTarget();
 		void SwitchRenderTarget();
 
+		void ApplyBoxFilter();
 		void ApplyGrayScale();
 		void ApplyVignette();
 		void ApplyColorCorrection();
@@ -65,11 +69,17 @@ namespace QFE {
 		bool isPostprocess_;
 		bool isImGuiEnabled_;
 
+		bool enableBoxFilter_;
 		bool enableGrayscale_;
 		bool enableColorCorrection_;
 		bool enableVignette_;
 		bool enableNormal_;
 		bool enablePixcel_;
+
+	private:// ボックスフィルタ
+		PipelineStateObject* boxFilterPso_;
+		ConstantBuffer<BoxFilterOffset> boxFilterOffsetBuffer_;
+		int boxFilterProcessIndex_;
 
 	private:// 色調補正
 		PipelineStateObject* colorCorrectionPso_;
