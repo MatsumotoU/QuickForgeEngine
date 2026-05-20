@@ -80,6 +80,8 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 	float t = (time - previousKeyFrame->time) / segmentDuration;
 
 	result.translate = Vector3::Lerp(previousKeyFrame->transform.translate, nextKeyFrame->transform.translate, t);
+	result.rotate = Vector3::Lerp(previousKeyFrame->transform.rotate, nextKeyFrame->transform.rotate, t);
+	result.scale = Vector3::Lerp(previousKeyFrame->transform.scale, nextKeyFrame->transform.scale, t);
 
 	return result;
 }

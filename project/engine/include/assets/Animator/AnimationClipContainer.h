@@ -16,6 +16,8 @@ namespace QFE {
 		uint32_t RegisterAnimationClip(AnimClip animClip);
 		// アニメーションクリップを取得
 		const AnimClip& GetAnimationClip(uint32_t animationId) const;
+		/// @brief アニメーションクリップのポインタを取得。存在しない場合はnullptrを返す。
+		AnimClip* GetAnimationClipPtr(uint32_t animationId);
 
 	private:
 		AnimClip dummyClip_;

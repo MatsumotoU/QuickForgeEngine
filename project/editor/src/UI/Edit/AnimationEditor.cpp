@@ -3,6 +3,8 @@
 #include "engine/include/assets/Animator/AnimationDataServices.h"
 #include "engine/include/core/Bridge/EngineBridgeProvider.h"
 
+#include "engine/include/assets/AssetManager.h"
+
 #include "externals/imgui/im-neo-sequencer-main/imgui_neo_sequencer.h"
 #include <algorithm>
 
@@ -149,6 +151,13 @@ void QFE::AnimationEditor::Draw(){
 	}
 
 	ImGui::Separator();
+	if (ImGui::CollapsingHeader("PlayingAnimations", ImGuiTreeNodeFlags_DefaultOpen)) {
+		std::vector<AnimationPlayClip> playingClips = 
+			AssetManager::GetInstance()->GetAnimationPlayer()->GetActiveAnimations();
+		for (const auto& clip : playingClips) {
+			ImGui::Text("Playing Clip: %s, Time: %.2f / %.2f", clip.animClip->GetName().c_str(), clip.currentTime, clip.animClip->GetTotalDuration());
+		}
+	}
 	ImGui::Spacing();
 
 	// エクスポート / 反映機能 (Bake)

@@ -230,6 +230,9 @@ namespace QFE {
 			if (ImGui::CollapsingHeader("Animation")) {
 				ImGui::Text("Clip Name: %s", info.name.c_str());
 			}
+			if(ImGui::Button("Play##AnimationClip")) {
+				bridge->PlayAnimation(selectedEntityId_,info.handle);
+			}
 		}
 
 		// Force

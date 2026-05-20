@@ -118,6 +118,18 @@ void SceneObject::Update() {
 		transform.localMatrix = Matrix4x4::MakeAffineMatrix(transform.transform);
 		});
 
+	// 無効なアニメーションハンドルを削除
+	std::vector<uint32_t> invalidAnimHandles = assetManager_->GetAnimationPlayer()->GetDeleteAnimations();
+	if (invalidAnimHandles.size() > 0) {
+		std::unordered_set<uint32_t> invalidAnimHandleSet(invalidAnimHandles.begin(), invalidAnimHandles.end());
+		entityManager_.Each<AnimationComponent>([&](uint32_t entityId, AnimationComponent& animComp) {
+			entityId; // 未使用
+			animComp.playingAnimHandles.remove_if([&](uint32_t animHandle) {
+				return invalidAnimHandleSet.find(animHandle) != invalidAnimHandleSet.end();
+				});
+			});
+	}
+
 	// アニメーションの更新
 	AnimationPlayer* animPlayer = assetManager_->GetAnimationPlayer();
 	std::unordered_map<uint32_t, Matrix4x4> entityAnimMatrixMap;

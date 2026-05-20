@@ -124,5 +124,6 @@ namespace QFE {
 	/// @brief AnimationClipの情報
 	struct AnimationClipInfo {
 		std::string name;
+		uint32_t handle;
 	};
 }

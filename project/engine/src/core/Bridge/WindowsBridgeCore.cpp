@@ -431,6 +431,7 @@ namespace QFE {
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<AnimationComponent>(entityId)) {
 			AnimationComponent& a = sceneManager->GetEntityManager()->GetComponent<AnimationComponent>(entityId);
 			info.name = a.clipName;
+			info.handle = a.clipHandle;
 		}
 		return info;
 	}
@@ -476,11 +477,16 @@ namespace QFE {
 
 	void WindowsBridgeCore::PlayAnimation(uint32_t entityId, uint32_t animationHandle) {
 		QFE_PROFILE_SCOPE;
+		AssetManager* assetManager = engineCore_->GetAssetManager();
+		AnimationPlayer* player = assetManager->GetAnimationPlayer();
+		AnimationClipContainer* clipContainer = assetManager->GetAnimationClipContainer();
 
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<AnimationComponent>(entityId)) {
 			AnimationComponent& animationComponent = sceneManager->GetEntityManager()->GetComponent<AnimationComponent>(entityId);
-			animationComponent.playingAnimHandles.push_back();
+			uint32_t handle = player->PlayAnimation(clipContainer->GetAnimationClipPtr(animationComponent.clipHandle));
+			animationComponent.playingAnimHandles.push_back(handle);
+			QFE_LOG("Playing animation: " + animationComponent.clipName + " on entity " + std::to_string(entityId));
 		}
 	}
 

@@ -37,3 +37,14 @@ const AnimClip& QFE::AnimationClipContainer::GetAnimationClip(uint32_t animation
 		return dummyClip_;
 	}
 }
+
+AnimClip* QFE::AnimationClipContainer::GetAnimationClipPtr(uint32_t animationId)
+{
+	auto it = animationClips_.find(animationId);
+	if (it != animationClips_.end()) {
+		return &(it->second);
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("AnimationClipContainer: Animation ID " + std::to_string(animationId) + " not found. Returning nullptr.",SystemError::Abort);
+		return nullptr;
+	}
+}

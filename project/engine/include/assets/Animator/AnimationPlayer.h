@@ -23,8 +23,14 @@ namespace QFE {
 		bool HasAnimation(uint32_t animationId) const;
 		/// @brief 再生中のアニメーションの情報を取得する。引数はPlayAnimationの返り値であるアニメーションID。存在しない場合はnullptrを返す。
 		AnimationPlayClip* GetAnimationPlayClip(uint32_t animationId);
+		/// @brief 死んだアニメーションのIDを取得する。これらのアニメーションは次のFrameEndで停止される予定である。
+		std::vector<uint32_t> GetDeleteAnimations() const { return deleteAnimations_; }
+
+		/// @brief 現在再生中の全てのアニメーションの情報を取得する。返り値はアニメーションIDとアニメーション情報のペアのリストである。
+		std::vector<AnimationPlayClip> GetActiveAnimations() const { return activeAnimations_.Values(); }
 
 	private:
+		std::vector<uint32_t> deleteAnimations_;
 		SparseSet<AnimationPlayClip> activeAnimations_;
 	};
 } // namespace QFE
