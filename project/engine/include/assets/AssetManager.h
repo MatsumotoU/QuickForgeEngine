@@ -17,6 +17,9 @@
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "AudioSource/AudioSourceManager.h"
 
+#include "Animator/AnimationPlayer.h"
+#include "Animator/AnimationClipContainer.h"
+
 #include "Engine/include/graphic/GpuBufferPool/GpuBufferPool.h"
 
 #include <unordered_map>
@@ -96,6 +99,10 @@ namespace QFE {
 		std::unique_ptr<GpuBufferPool> gpuBufferPool_;
 		SpriteManager spriteManager_;
 		ParticleGpuDataManager particleGpuDataManager_;
+
+		// アニメーション
+		AnimationPlayer animationPlayer_;
+		AnimationClipContainer animationClipContainer_;
 
 		// モデルデータのキャッシュ（モデル名とモデルデータの対応）
 		std::unordered_map<std::string, ModelData> modelDataCache_;
