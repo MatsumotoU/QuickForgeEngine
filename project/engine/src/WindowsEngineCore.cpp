@@ -283,6 +283,7 @@ void WindowsEngineCore::Shutdown() {
 
 
 void WindowsEngineCore::Update() {
+	assetManager_->Update();
 	inputInterface_->Update();
 	gameWindowManager->Update();
 	engineApp_->Update();

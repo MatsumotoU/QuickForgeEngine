@@ -16,13 +16,13 @@ void QFE::AnimationPlayer::Update(float deltaTime)
 	activeAnimations_.Each([deltaTime](uint32_t id, AnimationPlayClip& playClip) {
 		if (playClip.isPlaying) {
 			// アニメーションの再生時間を更新
-			playClip.startTime += deltaTime * playClip.playSpeed;
+			playClip.currentTime += deltaTime * playClip.playSpeed;
 			// アニメーションクリップの総時間を取得
 			float totalDuration = playClip.animClip->GetTotalDuration();
 			// ループする場合は再生時間を総時間で割った余りにする
 			if (playClip.isLoop) {
-				playClip.startTime = fmod(playClip.startTime, totalDuration);
-			} else if (playClip.startTime >= totalDuration) {
+				playClip.currentTime = fmod(playClip.currentTime, totalDuration);
+			} else if (playClip.currentTime >= totalDuration) {
 				// ループしない場合は再生時間が総時間を超えたら停止する
 				playClip.isPlaying = false;
 				QFE_LOG("AnimationPlayer: Animation '" + playClip.animClip->GetName() + "' has finished playing and will be stopped.");
@@ -62,6 +62,7 @@ uint32_t QFE::AnimationPlayer::PlayAnimation(AnimClip* animClip, float playSpeed
 	playClip.animClip = animClip;
 	playClip.playSpeed = playSpeed;
 	playClip.startTime = startTime;
+	playClip.currentTime = startTime;
 
 	playClip.isLoop = animClip->IsLoop();
 	playClip.isPlaying = true;

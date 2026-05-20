@@ -14,6 +14,8 @@ namespace QFE {
 	public:
 		Transform transform;
 
+		Matrix4x4 localMatrix; ///< ローカル変換行列
+
 		/** @brief 行列から位置・回転・スケールを抽出 */
 		void FromMatrix(const Matrix4x4& mat);
 		/** @brief シリアライズ */

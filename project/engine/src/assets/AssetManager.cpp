@@ -7,8 +7,11 @@
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
 #include "engine/include/assets/Script/MonoRuntimeManager.h"
+#include "engine/include/assets/Animator/AnimationDataServices.h"
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+
+#include "engine/include/core/EngineGlobalValue.h"
 
 using namespace QFE;
 
@@ -34,6 +37,10 @@ void AssetManager::Initialize(DirectXCommon* dxCommon) {
 
 	// スクリプトランタイムのグローバル初期化
 	MonoRuntimeManager::GetInstance()->Initialize();
+}
+
+void AssetManager::Update() {
+	animationPlayer_.Update(QFE::EngineGlobalValue::deltaTime);
 }
 
 void AssetManager::PreDraw() {
@@ -167,6 +174,12 @@ uint32_t AssetManager::LoadModelTexture(const std::string& modelName) {
 	}
 	assert(false && "Model has no meshes.");
 	return UINT32_MAX;
+}
+
+uint32_t QFE::AssetManager::LoadAnimationClip(const std::string& animName) {
+	std::string filePath = resourceDirectoryManager_.GetResourceDirectory("Animation") + animName + ".anim";
+	return animationClipContainer_.RegisterAnimationClip(
+		QFE::ANIMATION::LoadAnimClipFromAnimFile(filePath));
 }
 
 #ifdef QFE_OPTIMIZE_OFF

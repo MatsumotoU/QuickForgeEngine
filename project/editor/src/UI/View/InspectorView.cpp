@@ -221,6 +221,17 @@ namespace QFE {
 			}
 		}
 
+		// アニメーションクリップ
+		if (bridge->HasComponent(selectedEntityId_, ComponentType::AnimationClip)) {
+			AnimationClipInfo info = bridge->GetAnimationInfo(selectedEntityId_);
+			if(ImGui::Button("Delete##AnimationClip")) {
+				bridge->RemoveComponent(selectedEntityId_, ComponentType::AnimationClip);
+			}
+			if (ImGui::CollapsingHeader("Animation")) {
+				ImGui::Text("Clip Name: %s", info.name.c_str());
+			}
+		}
+
 		// Force
 		if (bridge->HasComponent(selectedEntityId_, ComponentType::PhysicsForce)) {
 			ForceData force = bridge->GetForceData(selectedEntityId_);
@@ -376,6 +387,19 @@ namespace QFE {
 					for (const auto& className : csClasses) {
 						if (ImGui::MenuItem(className.c_str())) {
 							bridge->AddCsharpScript(selectedEntityId_, className);
+						}
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+			// Animation
+			if (ImGui::BeginMenu("Animation")) {
+				if (ImGui::BeginMenu("AddAnimationClip")) {
+					std::vector<std::string> animationClips = bridge->GetAvailableAnimationClips();
+					for (const auto& clipName : animationClips) {
+						if (ImGui::MenuItem(clipName.c_str())) {
+							bridge->BindAnimationClip(selectedEntityId_, clipName);
 						}
 					}
 					ImGui::EndMenu();

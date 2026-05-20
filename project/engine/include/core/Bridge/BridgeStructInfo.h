@@ -18,7 +18,8 @@ namespace QFE {
 		SphereCollider,
 		AABBCollider,
 		CsharpScript,
-		ParentData
+		ParentData,
+		AnimationClip
 	};
 
 	/// @brief Transformのデータ構造体
@@ -118,5 +119,10 @@ namespace QFE {
 		uint32_t handle;
 		int priority;
 		std::vector<ScriptParamInfo> params;
+	};
+
+	/// @brief AnimationClipの情報
+	struct AnimationClipInfo {
+		std::string name;
 	};
 }

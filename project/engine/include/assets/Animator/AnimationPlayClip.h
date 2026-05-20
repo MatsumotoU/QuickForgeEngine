@@ -8,6 +8,8 @@ namespace QFE {
         float playSpeed;
         float startTime;
 
+		float currentTime;
+
 		bool isLoop;
 		bool isPlaying;
     };

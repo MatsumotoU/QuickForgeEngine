@@ -19,6 +19,7 @@ namespace QFE {
 		virtual std::string GetImageDirectoryPath() override;
 		virtual std::string GetEntityTemplateDirectoryPath() override;
 		virtual std::string GetScriptDirectoryPath() override;
+		virtual std::string GetAnimationDirectoryPath() override;
 
 		// Entity情報の取得・設定
 		virtual std::vector<uint32_t> GetAllEntityIds() override;
@@ -58,11 +59,18 @@ namespace QFE {
 		virtual AABBColliderInfo GetAABBColliderInfo(uint32_t entityId) override;
 		virtual void SetAABBColliderInfo(uint32_t entityId, const AABBColliderInfo& colliderInfo) override;
 
+		virtual AnimationClipInfo GetAnimationInfo(uint32_t entityId) override;
+
 		// スクリプト操作
 		virtual std::vector<std::string> GetCsharpClassNames(uint32_t entityId) override;
 		virtual void RemoveCsharpScript(uint32_t entityId, const std::string& className) override;
 		virtual void AddCsharpScript(uint32_t entityId, const std::string& className) override;
 		virtual std::vector<std::string> GetAvailableCsharpClasses() override;
+
+		// アニメーション結び付け
+		virtual void PlayAnimation(uint32_t entityId,uint32_t animationHandle) override;
+		virtual void BindAnimationClip(uint32_t entityId, const std::string& clipName) override;
+		virtual std::vector<std::string> GetAvailableAnimationClips() override;
 
 		// シーンにエンティティを追加する関数群
 		virtual void ReCompileCsharpScripts() override;

@@ -9,6 +9,8 @@ namespace QFE {
 	/// @brief アニメーション全体を表すクラス。複数のキーフレームを持ち、時間に応じたTransformを提供する。
 	class AnimClip final {
 	public:
+		explicit AnimClip(size_t initialCapacity = 50);
+
 		/// @brief アニメーションクリップの名前を設定する
 		void SetName(const std::string& name);
 		/// @brief アニメーションクリップの名前を取得する

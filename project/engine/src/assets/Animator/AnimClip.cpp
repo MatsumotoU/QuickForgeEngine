@@ -3,6 +3,11 @@
 
 using namespace QFE;
 
+QFE::AnimClip::AnimClip(size_t initialCapacity) :
+	isLoop_(false),
+	name_(""),
+	keyframes_(initialCapacity) {}
+
 void AnimClip::SetName(const std::string& name) {
 	name_ = name;
 }
