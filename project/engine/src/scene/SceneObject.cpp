@@ -115,6 +115,7 @@ void SceneObject::Update() {
 
 	// ワールド行列の作成
 	entityManager_.Each<TransformComponent>([&](uint32_t entityId, TransformComponent& transform) {
+		entityId; // 未使用
 		transform.localMatrix = Matrix4x4::MakeAffineMatrix(transform.transform);
 		});
 

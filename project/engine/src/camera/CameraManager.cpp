@@ -75,6 +75,7 @@ const Transform& QFE::CameraManager::GetMainCameraTransform() const {
 	} else {
 		QFE_REPORT_SYSTEM_ERROR("Main camera entity does not have a Transform component.", SystemError::Abort);
 	}
+	return dummyCameraTransform_;
 }
 
 std::unordered_map<uint32_t, Camera>& CameraManager::GetAllCameras() {
