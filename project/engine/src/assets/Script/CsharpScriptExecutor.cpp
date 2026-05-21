@@ -298,10 +298,6 @@ void CsharpScriptExecutor::CreateScriptInstance(uint32_t entityId, const std::st
 	return;
 }
 
-void CsharpScriptExecutor::DeleteScriptInstance(uint32_t index) {
-
-}
-
 void CsharpScriptExecutor::ReloadAssembly() {
 	// スクリプトインスタンスをクリア
 	gameLogicManagerInstance_ = nullptr;

@@ -477,6 +477,7 @@ namespace QFE {
 
 	void WindowsBridgeCore::PlayAnimation(uint32_t entityId, uint32_t animationHandle) {
 		QFE_PROFILE_SCOPE;
+		animationHandle; // 未使用
 		AssetManager* assetManager = engineCore_->GetAssetManager();
 		AnimationPlayer* player = assetManager->GetAnimationPlayer();
 		AnimationClipContainer* clipContainer = assetManager->GetAnimationClipContainer();

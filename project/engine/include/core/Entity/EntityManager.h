@@ -141,6 +141,7 @@ namespace QFE {
 				return static_cast<ComponentStorage<T>&>(*componentStorages.at(typeId));
 			}
 			QFE_REPORT_SYSTEM_ERROR("Component storage not found for type: " + std::string(typeid(T).name()), SystemError::Abort);
+			return *static_cast<ComponentStorage<T>*>(nullptr);
 		}
 
 		/// @brief 指定コンポーネントストレージに対して関数を実行

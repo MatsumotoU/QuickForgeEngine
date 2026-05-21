@@ -20,10 +20,17 @@ namespace QFE {
 #define QFE_REPORT_SYSTEM_ERROR(message, error) ReportSystemError(message, error)
 
 #else // === 最適化 ===
-#define QFE_LOG(...) ((void)0)
-#define QFE_PROFILE_SCOPE ((void)0)
-#define QFE_DEBUG_BREAK() ((void)0)
-#define QFE_REPORT_USER_ERROR(message, error) ((void)0)
-#define QFE_REPORT_SYSTEM_ERROR(message, error) ((void)0)
+#if defined(_MSC_VER)
+
+#define QFE_NOOP(...) __noop(__VA_ARGS__)
+#else
+#define QFE_NOOP(...) ((void)0)
+#endif
+
+#define QFE_LOG(...) QFE_NOOP(__VA_ARGS__)
+#define QFE_PROFILE_SCOPE QFE_NOOP()
+#define QFE_DEBUG_BREAK() QFE_NOOP()
+#define QFE_REPORT_USER_ERROR(message, error) QFE_NOOP(message, error)
+#define QFE_REPORT_SYSTEM_ERROR(message, error) QFE_NOOP(message, error)
 #endif
 }

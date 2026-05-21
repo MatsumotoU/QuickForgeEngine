@@ -33,7 +33,7 @@ void AllEntityRenderingCommand::Execute()
 
 	// スプライトの描画
 	entityManager_.Each<SpriteData>([&](uint32_t entityId, SpriteData& sprite) {
-		entityId; // 未使用
+		sprite; // 未使用
 		Render::Sprite::DrawSprites(&entityManager_, entityId);
 		});
 }

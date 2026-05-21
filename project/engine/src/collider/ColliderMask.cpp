@@ -71,14 +71,14 @@ void ColliderTagMask::AddTagMaskPair(const std::string& tag1, const std::string&
 }
 
 void ColliderTagMask::EraseTagMaskPair(const std::string& tag1, const std::string& tag2) {
-	size_t indexToErase = -1;
+	size_t indexToErase = MAXSIZE_T;
 	for (size_t i = 0; i < tagMaskPairs_.size(); ++i) {
 		if (IsUnorderedPairEqual(tagMaskPairs_[i], std::make_pair(tag1, tag2))) {
 			indexToErase = i;
 			break;
 		}
 	}
-    if (indexToErase != -1) {
+    if (indexToErase != MAXSIZE_T) {
         tagMaskPairs_.erase(indexToErase);
 	} else {
 #ifdef QFE_OPTIMIZE_OFF

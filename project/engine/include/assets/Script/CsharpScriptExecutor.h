@@ -48,10 +48,6 @@ namespace QFE {
 		/// @return スクリプトインスタンスのインデックス
 		void CreateScriptInstance(uint32_t entityId, const std::string& className);
 
-		/// @brief スクリプトインスタンスを削除
-		/// @param index スクリプトインスタンスのインデックス
-		void DeleteScriptInstance(uint32_t index);
-
 		/// @brief 利用可能なクラス名を取得
 		/// @return クラス名のリスト
 		std::vector<std::string> GetAvailableScriptClasses() const;

@@ -60,6 +60,7 @@ namespace QFE {
 			}
 		}
 		QFE_REPORT_SYSTEM_ERROR(std::string("GameWindowManager: Window not found - ") + windowName, SystemError::Abort);
+		return nullptr;
 	}
 
 }

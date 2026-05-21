@@ -33,7 +33,7 @@ void QFE::CsharpOnQFELinker::GetTransforms(MonoArray* entityIds, MonoArray* tran
 			auto& transformStorage = entityManager->GetComponentStrage<TransformComponent>();
 
 			// 1. 実際にコピーする数を決定（C#側の配列サイズを超えないように！）
-			uint32_t csharpBufLen = mono_array_length(entityIds);
+			uint32_t csharpBufLen = static_cast<uint32_t>(mono_array_length(entityIds));
 			uint32_t nativeCount = static_cast<uint32_t>(transformStorage.size());
 			uint32_t copyCount = (csharpBufLen < nativeCount) ? csharpBufLen : nativeCount;
 
@@ -72,9 +72,8 @@ void QFE::CsharpOnQFELinker::SetTransforms(MonoArray* entityIds, MonoArray* tran
 	{
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 		if (entityManager->HasComponentStrage<TransformComponent>()) {
-			auto& transformStorage = entityManager->GetComponentStrage<TransformComponent>();
 			// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
-			uint32_t csharpBufLen = mono_array_length(entityIds);
+			uint32_t csharpBufLen = static_cast<uint32_t>(mono_array_length(entityIds));
 			uint32_t copyCount = (csharpBufLen < count) ? csharpBufLen : count;
 
 			// 2. C#配列の「生ポインタ」を取得
@@ -242,7 +241,7 @@ void QFE::CsharpOnQFELinker::GetEntityTags(MonoArray* entityIds, MonoArray* tags
 		}
 		});
 	// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
-	uint32_t csharpBufLen = mono_array_length(entityIds);
+	uint32_t csharpBufLen = static_cast<uint32_t>(mono_array_length(entityIds));
 	uint32_t nativeCount = static_cast<uint32_t>(entityIdsVec.size());
 	uint32_t copyCount = (csharpBufLen < nativeCount) ? csharpBufLen : nativeCount;
 	// 2. C#配列の「生ポインタ」を取得
@@ -339,7 +338,7 @@ void QFE::CsharpOnQFELinker::GetCollisionEnterEntityIds(MonoArray* aIds, MonoArr
 	uint32_t collisionCount = static_cast<uint32_t>(colliderManager->collisionEnterEntityIds_.size());
 
 	// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
-	uint32_t csharpBufLen = mono_array_length(aIds);
+	uint32_t csharpBufLen = static_cast<uint32_t>(mono_array_length(aIds));
 	uint32_t copyCount = (csharpBufLen < collisionCount) ? csharpBufLen : collisionCount;
 
 	// 2. C#配列の「生ポインタ」を取得
@@ -362,7 +361,7 @@ void QFE::CsharpOnQFELinker::GetCollisionStayEntityIds(MonoArray* aIds, MonoArra
 	uint32_t collisionCount = static_cast<uint32_t>(colliderManager->collisionStayEntityIds_.size());
 
 	// 1. C#側の配列サイズを確認（C++側のデータ数を超えないように！）
-	uint32_t csharpBufLen = mono_array_length(aIds);
+	uint32_t csharpBufLen = static_cast<uint32_t>(mono_array_length(aIds));
 	uint32_t copyCount = (csharpBufLen < collisionCount) ? csharpBufLen : collisionCount;
 
 	// 2. C#配列の「生ポインタ」を取得
