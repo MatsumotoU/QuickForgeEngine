@@ -22,9 +22,10 @@ jobs:
       - name: Run Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         with:
-          # 解析用のプラグイン（これだけは追加ダウンロードが必要なので残します）
+          # 【★ここに 3行目 を追加】 翻訳機（conventional-changelog-conventionalcommits）をダウンロードさせます
           extra_plugins: |
             @semantic-release/commit-analyzer
             @semantic-release/release-notes-generator
+            conventional-changelog-conventionalcommits
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
