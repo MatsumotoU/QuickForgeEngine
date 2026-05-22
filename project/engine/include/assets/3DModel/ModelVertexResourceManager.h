@@ -39,6 +39,8 @@ namespace QFE {
 
 		/// @brief ボックス型の頂点データを生成してリソースに割り当てる
 		uint32_t AssignBox(ID3D12Device* device, bool invertFace = false);
+		/// @brief リング型の頂点データを生成してリソースに割り当てる
+		uint32_t AssignRing(ID3D12Device* device, float innerRadius = 0.5f, float outerRadius = 1.0f, uint32_t segments = 32, bool invertFace = false);
 
 		/** @brief ハンドルから頂点バッファの数を取得 */
 		const uint32_t GetVertexBufferCount(uint32_t handle) const;

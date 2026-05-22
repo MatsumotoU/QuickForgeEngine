@@ -22,6 +22,7 @@
 
 namespace {
 	std::string kDummyBlackCubeMapKey = "DummyBlackCubeMap";
+	std::string kDummyDummyWhite1x1TextureMapKey = "DummyWhite1x1Texture";
 }
 
 using namespace QFE;
@@ -68,6 +69,8 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 	dummyBlackCubeMapHandle_ = CreateDummyBlackCubeMap();
 	filePathLibrary_.AddStringToLibrary(kDummyBlackCubeMapKey);
+	dummyWhite1x1TextureHandle_ = CreateDummyWhite1x1Texture();
+	filePathLibrary_.AddStringToLibrary(kDummyDummyWhite1x1TextureMapKey);
 }
 
 /// @brief 終了処理
@@ -82,9 +85,12 @@ void TextureManager::Finalize() {
 	CoUninitialize();
 }
 
-const int32_t QFE::TextureManager::GetDummyBlackCubeMapHandle() const
-{
+const int32_t QFE::TextureManager::GetDummyBlackCubeMapHandle() const {
 	return dummyBlackCubeMapHandle_;
+}
+
+const int32_t QFE::TextureManager::GetDummyWhite1x1TextureHandle() const {
+	return dummyWhite1x1TextureHandle_;
 }
 
 DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
@@ -114,7 +120,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 	std::wstring filePathW = ConvertString(filePath);
 	// ファイル拡張子がDDSかどうかを確認して適切なローダーを使用する
 	HRESULT hr;
-	if(filePathW.ends_with(L".dds") || filePathW.ends_with(L".DDS")) {
+	if (filePathW.ends_with(L".dds") || filePathW.ends_with(L".DDS")) {
 		QFE_LOG(std::format("TextureManager: Loading DDS file '{}'", filePath));
 		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
 	} else {
@@ -133,7 +139,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 	if (image.GetMetadata().width * image.GetMetadata().height != 1) {
 		scratchImages_.push_back(std::make_unique<DirectX::ScratchImage>());
 		// 圧縮テクスチャの場合は、ミップマップの生成に時間がかかるため、ログを出力してユーザーに知らせる
-		if(DirectX::IsCompressed(image.GetMetadata().format)) {
+		if (DirectX::IsCompressed(image.GetMetadata().format)) {
 			QFE_LOG(std::format("TextureManager: Generating mipmaps for compressed texture '{}'", filePath));
 			scratchImages_.back() = std::make_unique<DirectX::ScratchImage>(std::move(image));
 		} else {
@@ -142,7 +148,7 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 				image.GetImages(), image.GetImageCount(), image.GetMetadata(),
 				DirectX::TEX_FILTER_SRGB, 0, *(scratchImages_.back().get()));
 		}
-		
+
 		assert(SUCCEEDED(hr));
 		// ミップマップの生成に失敗した場合は例外をスロー
 		if (!SUCCEEDED(hr)) {
@@ -249,7 +255,7 @@ void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metada
 	textureSrvHandleGPU_.push_back(handles.gpuHandle_);
 }
 
-void QFE::TextureManager::CreateSkyBoxShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource){
+void QFE::TextureManager::CreateSkyBoxShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource) {
 	// メタデータを元にSRVの記述子を設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
@@ -262,8 +268,7 @@ void QFE::TextureManager::CreateSkyBoxShaderResourceView(const DirectX::TexMetad
 	textureSrvHandleGPU_.push_back(handles.gpuHandle_);
 }
 
-int32_t QFE::TextureManager::CreateDummyBlackCubeMap()
-{
+int32_t QFE::TextureManager::CreateDummyBlackCubeMap() {
 	// 空のScratchImageを作成
 	auto scratchImage = std::make_unique<DirectX::ScratchImage>();
 
@@ -272,7 +277,7 @@ int32_t QFE::TextureManager::CreateDummyBlackCubeMap()
 	if (!SUCCEEDED(hr)) {
 		QFE_REPORT_SYSTEM_ERROR("TextureManager: Failed to initialize dummy cube map", SystemError::Abort);
 	}
-	
+
 	// 全ての面のピクセルデータを0（黒）で塗りつぶす
 	const DirectX::Image* images = scratchImage->GetImages();
 	for (size_t i = 0; i < scratchImage->GetImageCount(); ++i) {
@@ -297,6 +302,33 @@ int32_t QFE::TextureManager::CreateDummyBlackCubeMap()
 
 	QFE_LOG("TextureManager: Created Dummy Black CubeMap");
 
+	return textureHandle_ - 1;
+}
+
+int32_t QFE::TextureManager::CreateDummyWhite1x1Texture() {
+	// 空のScratchImageを作成
+	auto scratchImage = std::make_unique<DirectX::ScratchImage>();
+	// 1x1サイズ、RGBA8ビット、ミップマップレベル1で初期化
+	HRESULT hr = scratchImage->Initialize2D(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, 1, 1);
+	if (!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR("TextureManager: Failed to initialize dummy white texture", SystemError::Abort);
+	}
+	// ピクセルデータを255（白）で塗りつぶす
+	const DirectX::Image* images = scratchImage->GetImages();
+	memset(images[0].pixels, 255, images[0].rowPitch * images[0].height);
+	// 生成したScratchImageを管理リストに追加
+	scratchImages_.push_back(std::move(scratchImage));
+	const DirectX::TexMetadata& metadata = scratchImages_.back()->GetMetadata();
+	// リソース作成
+	textureResources_.push_back(CreateTextureResource(metadata));
+	// SRV作成
+	CreateShaderResourceView(metadata, textureResources_.back().Get());
+	textureHandle_++;
+	// データ転送
+	intermediateResource_.push_back(
+		UploadTextureData(textureResources_.back().Get(), *(scratchImages_.back().get()), commandList_));
+
+	QFE_LOG("TextureManager: Created Dummy White 1x1 Texture");
 	return textureHandle_ - 1;
 }
 
@@ -331,10 +363,9 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 	}
 #endif // QFE_OPTIMIZE_OFF
 	// ファイル拡張子がDDSかどうかを確認して適切なSRVを作成する
-	if(filePath.ends_with(".dds") || filePath.ends_with(".DDS")) {
+	if (filePath.ends_with(".dds") || filePath.ends_with(".DDS")) {
 		CreateSkyBoxShaderResourceView(metadata, textureResources_.back().Get());
-	}
-	else {
+	} else {
 		CreateShaderResourceView(metadata, textureResources_.back().Get());
 	}
 

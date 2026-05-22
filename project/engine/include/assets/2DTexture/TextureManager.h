@@ -65,6 +65,8 @@ namespace QFE {
 
 		/// @brief ダミーの黒いキューブマップのハンドルを取得
 		[[nodiscard]] const int32_t GetDummyBlackCubeMapHandle() const;
+		/// @brief ダミーの白い1x1テクスチャのハンドルを取得
+		[[nodiscard]] const int32_t GetDummyWhite1x1TextureHandle() const;
 
 	private:
 		DirectX::ScratchImage Load(const std::string& filePath);
@@ -78,6 +80,8 @@ namespace QFE {
 
 		/// @brief ダミーの黒いキューブマップを作成する
 		int32_t CreateDummyBlackCubeMap();
+		/// @brief ダミーの白い1x1テクスチャを作成する
+		int32_t CreateDummyWhite1x1Texture();
 
 		ID3D12Device* device_;
 		ID3D12GraphicsCommandList* commandList_;
@@ -98,6 +102,8 @@ namespace QFE {
 
 		// エラー回避用テクスチャハンドル
 		int32_t dummyBlackCubeMapHandle_;
+		// エラー回避用のダミーwhite1x1テクスチャリソースハンドル
+		int32_t dummyWhite1x1TextureHandle_;
 	};
 
 }
