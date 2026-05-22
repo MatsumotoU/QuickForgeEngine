@@ -21,8 +21,12 @@ workspace "QuickForgeEngine"
             "/permissive-",
             "/Zc:__cplusplus",
             "/utf-8",
-            "/openmp"
         }
+
+       if not os.getenv("SONAR_SCAN") then
+            buildoptions { "/openmp" }
+        end
+
         linkoptions { "/ignore:4099" }
     filter ""
     
