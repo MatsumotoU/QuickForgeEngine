@@ -24,16 +24,13 @@ jobs:
       - name: Run Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         with:
-          # あなたの「DEVELOPMENT_RULE.md」の規約（Conventional Commits）を解析するプラグインを毎回DL
+          # 解析用のプラグインをダウンロード
           extra_plugins: |
             @semantic-release/commit-analyzer
             @semantic-release/release-notes-generator
           
-          # デフォルトのnpmプラグイン（package.jsonを探す処理）を無効化する
-          plugins: |
-            - '@semantic-release/commit-analyzer'
-            - '@semantic-release/release-notes-generator'
-            - '@semantic-release/github'
+          # 【★ここを修正】ハイフンを無くし、1行でカンマ区切りの文字列として指定します
+          plugins: '["@semantic-release/commit-analyzer", "@semantic-release/release-notes-generator", "@semantic-release/github"]'
             
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHubがその場で自動発行する一時的な鍵
