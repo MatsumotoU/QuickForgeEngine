@@ -1,0 +1,32 @@
+name: GenerateReleaseNote
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    name: Generate Release Notes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # リリースノートを作成・書き込みするために必須
+      issues: write   # 関連するIssueに「リリースされたよ」と自動コメントするために必須
+
+    steps:
+      # 1. 毎回、GitHub Actionsのサーバーへ最新のコードをチェックアウト（ダウンロード）する
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 過去のすべてのコミット履歴を解析するために必要
+
+      # 2. 毎回、GitHub Actions側でツール（semantic-release）をダウンロードして実行する
+      - name: Run Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          # DEVELOPMENT_RULE.mdの規約（Conventional Commits）を解析するプラグインを毎回DL
+          extra_plugins: |
+            @semantic-release/commit-analyzer
+            @semantic-release/release-notes-generator
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHubがその場で自動発行する一時的な鍵
