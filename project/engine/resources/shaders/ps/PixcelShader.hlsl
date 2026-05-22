@@ -61,7 +61,7 @@ PixelShaderOutput main(VertexShaderOutput input)
 
     float2 fisheyeUV = FisheyeUV(input.texcoord);
 
-    float pixelSize = 2.0;
+    float pixelSize = 3.0;
     float2 pixelatedUV = PixelateUV(fisheyeUV, textureSize, pixelSize);
 
     float chromaOffset = 0.003;

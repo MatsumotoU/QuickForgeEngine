@@ -17,6 +17,9 @@
 #include "engine/include/utility/DesignPatterns/Singleton.h"
 #include "AudioSource/AudioSourceManager.h"
 
+#include "Animator/AnimationPlayer.h"
+#include "Animator/AnimationClipContainer.h"
+
 #include "Engine/include/graphic/GpuBufferPool/GpuBufferPool.h"
 
 #include <unordered_map>
@@ -40,6 +43,8 @@ namespace QFE {
 	public:
 		/** @brief 初期化処理 */
 		void Initialize(DirectXCommon* dxCommon);
+		/// @brief 更新処理
+		void Update();
 		/** @brief 描画前処理 */
 		void PreDraw();
 		/** @brief フレーム終了時の処理 */
@@ -72,6 +77,8 @@ namespace QFE {
 		uint32_t LoadModelMesh(const std::string& modelName);
 		uint32_t LoadModelTexture(const std::string& modelName);
 
+		uint32_t LoadAnimationClip(const std::string& animName);
+
 #ifdef QFE_OPTIMIZE_OFF
 		uint32_t LoadEditorTexture(const std::string& imageName);
 #endif // QFE_OPTIMIZE_OFF
@@ -85,6 +92,8 @@ namespace QFE {
 		ResourceDirectoryManager* GetResourceDirectoryManager() { return &resourceDirectoryManager_; }
 		AudioSourceManager* GetAudioSourceManager() { return &audioSourceManager_; }
 		ParticleGpuDataManager* GetParticleGpuDataManager() { return &particleGpuDataManager_; }
+		AnimationPlayer* GetAnimationPlayer() { return &animationPlayer_; }	
+		AnimationClipContainer* GetAnimationClipContainer() { return &animationClipContainer_; }
 
 	private:
 		DirectXCommon* dxCommon_;
@@ -96,6 +105,10 @@ namespace QFE {
 		std::unique_ptr<GpuBufferPool> gpuBufferPool_;
 		SpriteManager spriteManager_;
 		ParticleGpuDataManager particleGpuDataManager_;
+
+		// アニメーション
+		AnimationPlayer animationPlayer_;
+		AnimationClipContainer animationClipContainer_;
 
 		// モデルデータのキャッシュ（モデル名とモデルデータの対応）
 		std::unordered_map<std::string, ModelData> modelDataCache_;

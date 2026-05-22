@@ -1,6 +1,5 @@
 -- Solution
 workspace "QuickForgeEngine"
-    
     architecture "x64"
     configurations {"Debug","Development","Release"}
     startproject "Editor"
@@ -92,14 +91,25 @@ group "QuickForge" -- MyMainProject
             "./engine/include/",
         }
 
+        -- リソースのコピー（Release構成のみ）
+        filter "configurations:Release"
+            postbuildcommands {
+                '{COPYDIR} "../Resources" "%{cfg.targetdir}/Resources"',
+            }
+        filter ""
+
+        -- MonoとWindows SDKのDLLをコピー
         postbuildcommands {
-            'robocopy "../engine/resources" "%{cfg.targetdir}/engine/resources" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
-            'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > "%{wks.location}/logs/postbuild.log"',
-            'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
-            'robocopy "..\\externals\\Mono\\etc" "%{cfg.targetdir}\\mono\\etc" /E /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
-            'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "%{cfg.targetdir}" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS >> "%{wks.location}/logs/postbuild.log"',
-            "exit /b 0"
-        }
+            -- フォルダのコピー
+            '{COPYDIR} "../engine/resources" "%{cfg.targetdir}/engine/resources"',
+            '{COPYDIR} "../externals/Mono/lib" "%{cfg.targetdir}/mono/lib"',
+            '{COPYDIR} "../externals/Mono/etc" "%{cfg.targetdir}/mono/etc"',
+    
+            -- ファイルのコピー
+            '{COPY} "../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"',
+            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxcompiler.dll" "%{cfg.targetdir}"',
+            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxil.dll" "%{cfg.targetdir}"'
+        }       
 
     project "Engine" -- Engine
         location "engine"
@@ -141,9 +151,8 @@ group "QuickForge" -- MyMainProject
         }
 
         prebuildcommands {
-            'call "%{wks.location}/Resources/Scripts/setup_vscode_settings.bat" /silent',
-            'call "%{wks.location}/GenerateBuildInfo.bat"',
-            'call "%{wks.location}/externals/Mono/setup_mono.bat"'
+            'call "%{wks.location}\\build\\GenerateBuildInfo.bat"',
+            'call "%{wks.location}\\externals\\Mono\\setup_mono.bat"'
         }
 
         filter "configurations:Debug"
@@ -213,3 +222,17 @@ project "ImGui"
         "externals/imgui/**.h",
         "externals/imgui/**.cpp",
     }
+
+group "Docs"
+    project "DevelopmentRules"
+        kind "None" -- コンパイルしない設定
+        location "./" -- slnと同じ場所に置く
+   
+        files { 
+            "DEVELOPMENT_RULE.md", 
+        }
+
+    vpaths {
+        ["/*"] = { "**.md" } -- 全てのmdファイルをプロジェクト直下に表示
+    }
+group ""

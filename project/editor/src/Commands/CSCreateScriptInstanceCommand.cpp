@@ -16,7 +16,6 @@ void CSCreateScriptInstanceCommand::Execute() {
 				className_ = className_.substr(1);
 			}
 			cons_.emplace_back("Create C# Script Instance: " + className_);
-			SceneManager::GetInstance()->GetCsharpScriptExecutor()->CreateScriptInstance(className_);
 			return;
 		}
 	}

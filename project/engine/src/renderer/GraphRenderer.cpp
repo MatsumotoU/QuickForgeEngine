@@ -15,6 +15,9 @@
 #include <numbers>
 
 #include "engine/include/core/EngineDefines.h"
+
+#include "engine/include/core/Math/TransformComponent.h"
+
 using namespace QFE::Render;
 
 /** @brief 初期化 */
@@ -324,11 +327,11 @@ void GraphRenderer::DrawSphere(Vector3 center, float radius, const Vector4& colo
 
 void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision) {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	if (!entityManager->HasComponent<Transform>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId())) {
+	if (!entityManager->HasComponent<TransformComponent>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId())) {
 		return;
 	}
 	Transform& camTransform = 
-		entityManager->GetComponent<Transform>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId());
+		entityManager->GetComponent<TransformComponent>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId()).transform;
 
 	Matrix4x4 matRot = Matrix4x4::MakeRotateXYZMatrix(camTransform.rotate);
 

@@ -9,6 +9,7 @@
 #include "engine/include/assets/3DModel/Data/SkyboxComponent.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
 #include "Engine/include/assets/Particle/Data/ParticleComponent.h"
+#include "engine/include/core/Math/TransformComponent.h"
 
 using namespace QFE;
 
@@ -21,7 +22,7 @@ void WvpTransformationCommand::Execute()
 	AssetManager* assetManager = AssetManager::GetInstance();
 	std::vector<uint32_t> entities = entityManager_.GetActiveEntityIds();
 	for (auto entityId : entities) {
-		if (entityManager_.HasComponent<Transform>(entityId)) {
+		if (entityManager_.HasComponent<TransformComponent>(entityId)) {
 			// ModelのWVP行列更新
 			if (entityManager_.HasComponent<ModelHandle>(entityId)) {
 				ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);

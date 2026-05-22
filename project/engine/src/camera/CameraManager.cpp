@@ -7,6 +7,7 @@
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/camera/Data/CameraData.h"
+#include "engine/include/core/Math/TransformComponent.h"
 
 using namespace QFE;
 
@@ -69,11 +70,12 @@ Camera& CameraManager::GetMainCamera() {
 const Transform& QFE::CameraManager::GetMainCameraTransform() const {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	uint32_t mainCameraEntityId = cameras_.at(mainCameraIndex_).GetBindEntityId();
-	if (entityManager->HasComponent<Transform>(mainCameraEntityId)) {
-		return entityManager->GetComponent<Transform>(mainCameraEntityId);
+	if (entityManager->HasComponent<TransformComponent>(mainCameraEntityId)) {
+		return entityManager->GetComponent<TransformComponent>(mainCameraEntityId).transform;
 	} else {
 		QFE_REPORT_SYSTEM_ERROR("Main camera entity does not have a Transform component.", SystemError::Abort);
 	}
+	return dummyCameraTransform_;
 }
 
 std::unordered_map<uint32_t, Camera>& CameraManager::GetAllCameras() {
@@ -86,8 +88,8 @@ void CameraManager::SnapToDebugCamera(uint32_t index) {
 
 	if (isActiveDebugCamera_ && cameras_.size() > 1) {
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-		Transform& debugCamTransform = entityManager->GetComponent<Transform>(cameras_[0].GetBindEntityId());
-		Transform& targetCamTransform = entityManager->GetComponent<Transform>(cameras_[index].GetBindEntityId());
+		Transform& debugCamTransform = entityManager->GetComponent<TransformComponent>(cameras_[0].GetBindEntityId()).transform;
+		Transform& targetCamTransform = entityManager->GetComponent<TransformComponent>(cameras_[index].GetBindEntityId()).transform;
 		targetCamTransform = debugCamTransform;
 
 		CameraData& debugCamData = entityManager->GetComponent<CameraData>(cameras_[0].GetBindEntityId());

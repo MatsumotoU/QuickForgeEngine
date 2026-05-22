@@ -111,10 +111,13 @@ void QFE::WindowsEngineCore::Initialize(std::unique_ptr<IEngineApp> app) {
 	renderingPostprocess_ = RenderingPostprocess::GetInstance();
 	renderingPostprocess_->Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	renderingPostprocess_->SetNormalPSO(graphicPipelineManager_->GetNormalPso());
+	
 	renderingPostprocess_->SetColorCorrectionPSO(graphicPipelineManager_->GetColorCorrectionPso());
 	renderingPostprocess_->SetGrayScalePSO(graphicPipelineManager_->GetGrayScalePso());
 	renderingPostprocess_->SetVignettePSO(graphicPipelineManager_->GetVignettePso());
 	renderingPostprocess_->SetPixelPSO(graphicPipelineManager_->GetPixelPso());
+	renderingPostprocess_->SetBoxFilterPSO(graphicPipelineManager_->GetBoxFilterPso());
+
 	renderingPostprocess_->SetOffscreenResource(
 		offScreenResourceManager_.GetOffscreenResource(0), offScreenResourceManager_.GetOffscreenResource(1));
 	renderingPostprocess_->SetOffscreenRtvHandle(
@@ -283,6 +286,7 @@ void WindowsEngineCore::Shutdown() {
 
 
 void WindowsEngineCore::Update() {
+	assetManager_->Update();
 	inputInterface_->Update();
 	gameWindowManager->Update();
 	engineApp_->Update();

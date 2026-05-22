@@ -3,9 +3,17 @@
 
 using namespace QFE;
 
-AnimClip::AnimClip(const std::string& name) :
-	name_(name),
-	isLoop_(false) {
+QFE::AnimClip::AnimClip(size_t initialCapacity) :
+	isLoop_(false),
+	name_(""),
+	keyframes_(initialCapacity) {}
+
+void AnimClip::SetName(const std::string& name) {
+	name_ = name;
+}
+
+const std::string& AnimClip::GetName() const {
+	return name_;
 }
 
 void AnimClip::SetLoop(bool isLoop) {
@@ -33,9 +41,7 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 	Transform result;
 	// キーフレームが存在しない場合はデフォルトのTransformを返す
 	if (keyframes_.empty()) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("GetTransformAtTime: No keyframes available.");
-#endif // QFE_OPTIMIZE_OFF
 		return result;
 	}
 
@@ -72,7 +78,18 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 	// 前後のキーフレームのTransformを線形補間する
 	float segmentDuration = nextKeyFrame->time - previousKeyFrame->time;
 	float t = (time - previousKeyFrame->time) / segmentDuration;
-	t;
+
+	result.translate = Vector3::Lerp(previousKeyFrame->transform.translate, nextKeyFrame->transform.translate, t);
+	result.rotate = Vector3::Lerp(previousKeyFrame->transform.rotate, nextKeyFrame->transform.rotate, t);
+	result.scale = Vector3::Lerp(previousKeyFrame->transform.scale, nextKeyFrame->transform.scale, t);
 
 	return result;
+}
+
+float QFE::AnimClip::GetTotalDuration() const
+{
+	if (keyframes_.empty()) {
+		return 0.0f;
+	}
+	return keyframes_.back().time;
 }

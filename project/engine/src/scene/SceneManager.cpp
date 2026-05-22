@@ -28,15 +28,11 @@ void SceneManager::Initialize() {
 			ifs >> sceneConfig_;
 			ifs.close();
 		}
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Load SceneConfig.json");
-#endif // QFE_OPTIMIZE_OFF
 	}
 	catch (const std::exception& e) {
 		e;
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::string("Error: ") + e.what(), LogLevel::EditorInfo);
-#endif // QFE_OPTIMIZE_OFF
 	}
 
 	currentScene_ = std::make_unique<SceneObject>();
@@ -228,10 +224,6 @@ uint32_t QFE::SceneManager::AddEntity(const std::string& entityName, bool useCac
 	return currentScene_->AddEntity(entityName,useCache);
 }
 
-uint32_t SceneManager::RunTimeAddEntity(const std::string& entityName) {
-	return currentScene_->RunTimeAddEntity(entityName);
-}
-
 void SceneManager::StartScript() {
 	currentScene_->RunScene();
 }
@@ -260,6 +252,14 @@ void QFE::SceneManager::FirstLoadScene() {
 
 void QFE::SceneManager::RunningScene() {
 	currentScene_->Update();
+}
+
+void QFE::SceneManager::PauseScene() {
+	currentScene_->PauseScene();
+}
+
+void QFE::SceneManager::ResumeScene() {
+	currentScene_->ResumeScene();
 }
 
 void QFE::SceneManager::TransitioningScene() {

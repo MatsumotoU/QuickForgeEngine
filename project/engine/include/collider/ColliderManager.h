@@ -17,7 +17,14 @@ namespace QFE {
 		bool isRunning = false;
 		ColliderTagMask colliderTagMask_;
 
+		std::vector<std::pair<uint32_t, uint32_t>> collisionEnterEntityIds_;
+		std::vector<std::pair<uint32_t, uint32_t>> collisionStayEntityIds_;
+
 	private:
+		/// @brief 衝突状態をリセットします.
+		/// @details 各コライダーデータのisOldHitをisHitに更新しisHitをfalseにリセットします.トランスフォームコンポーネントがある場合は、コライダーデータの中心をトランスフォームの位置に更新します.
+		void ResetCollisionStates();
+
 		void SphereToSphereUpdate();
 		void AABBToAABBUpdate();
 		void SphereToAABBUpdate();

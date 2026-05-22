@@ -31,6 +31,8 @@
 #include "editor/include/UI/Edit/KeyConfigEdit.h"
 #include "editor/include/UI/Edit/PostprocessEdit.h"
 #include "editor/include/UI/Edit/ColliderMaskEdit.h"
+#include "editor/include/UI/Edit/AnimationEditor.h"
+
 using namespace QFE;
 
 /** @brief 初期化 */
@@ -71,6 +73,7 @@ void UIManager::Initialize() {
 	editUIs_.push_back(std::make_unique<KeyConfigEdit>());
 	editUIs_.push_back(std::make_unique<PostprocessEdit>());
 	editUIs_.push_back(std::make_unique<ColliderMaskEdit>());
+	editUIs_.push_back(std::make_unique<AnimationEditor>());
 	for (auto& ui : editUIs_) {
 		ui->Initialize();
 	}
@@ -133,12 +136,25 @@ void UIManager::Draw() {
 		}
 
 		// シーン再生ボタン
-		if (SceneManager::GetInstance()->IsRunningScript()) {
-			if (ImGui::Button("||")) {
-				SceneManager::GetInstance()->StopScript();
+		SceneManager* sceneManager = SceneManager::GetInstance();
+		if (sceneManager->IsRunningScript()) {
+			if (ImGui::Button("StopScene")) {
+				sceneManager->StopScript();
 			}
+
+			ImGui::SameLine();
+			if (sceneManager->IsPauseScript()) {
+				if (ImGui::Button("ResumeScene")) {
+					sceneManager->ResumeScene();
+				}
+			} else {
+				if (ImGui::Button("PauseScene")) {
+					sceneManager->PauseScene();
+				}
+			}
+
 		} else {
-			if (ImGui::Button(">")) {
+			if (ImGui::Button("StartScene")) {
 				IEngineBridge* engineBridge = QFE::BRIDGE::GetBridge();
 				engineBridge->ClearRuntimeDebugLogs();
 

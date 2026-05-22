@@ -6,6 +6,7 @@
 #include "engine/include/camera/CameraManager.h"
 #include "engine/include/assets/Script/MonoRuntimeManager.h"
 
+#include "engine/include/core/Math/TransformComponent.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
@@ -18,8 +19,10 @@
 #include "engine/include/assets/Script/Data/CsharpComponent.h"
 #include "engine/include/camera/Data/BillboardComponent.h"
 #include "engine/include/core/Math/ParentData.h"
+#include "engine/include/assets/Animator/AnimationCompornent.h"
 
 #include "engine/include/core/EngineDefines.h"
+#include "engine/include/utility/FileSystems/FileUtility.h"
 
 namespace QFE {
 
@@ -41,6 +44,10 @@ namespace QFE {
 	std::string WindowsBridgeCore::GetScriptDirectoryPath() {
 		QFE_PROFILE_SCOPE;
 		return engineCore_->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Scripts");
+	}
+
+	std::string WindowsBridgeCore::GetAnimationDirectoryPath() {
+		return engineCore_->GetAssetManager()->GetResourceDirectoryManager()->GetResourceDirectory("Animation");
 	}
 
 	std::vector<uint32_t> WindowsBridgeCore::GetAllEntityIds() {
@@ -100,7 +107,7 @@ namespace QFE {
 		if (!sceneManager) return false;
 		EntityManager* em = sceneManager->GetEntityManager();
 		switch (type) {
-		case ComponentType::Transform: return em->HasComponent<Transform>(entityId);
+		case ComponentType::Transform: return em->HasComponent<TransformComponent>(entityId);
 		case ComponentType::SceneObjectData: return em->HasComponent<SceneObjectData>(entityId);
 		case ComponentType::ModelHandle: return em->HasComponent<ModelHandle>(entityId);
 		case ComponentType::SpriteData: return em->HasComponent<SpriteData>(entityId);
@@ -112,6 +119,7 @@ namespace QFE {
 		case ComponentType::AABBCollider: return em->HasComponent<AABBColliderData>(entityId);
 		case ComponentType::CsharpScript: return em->HasComponent<CsharpComponent>(entityId);
 		case ComponentType::ParentData: return em->HasComponent<ParentData>(entityId);
+		case ComponentType::AnimationClip: return em->HasComponent<AnimationComponent>(entityId);
 		}
 		return false;
 	}
@@ -122,14 +130,13 @@ namespace QFE {
 		if (!sceneManager) return;
 		EntityManager* em = sceneManager->GetEntityManager();
 		switch (type) {
-		case ComponentType::Transform: em->EmplaceComponent<Transform>(entityId); break;
+		case ComponentType::Transform: em->EmplaceComponent<TransformComponent>(entityId); break;
 		case ComponentType::SceneObjectData: em->EmplaceComponent<SceneObjectData>(entityId); break;
 		case ComponentType::Billboard: em->EmplaceComponent<Component::BillboardComponent>(entityId); break;
 		case ComponentType::PhysicsForce: em->EmplaceComponent<Force>(entityId); break;
 		case ComponentType::SphereCollider: em->EmplaceComponent<SphereColliderData>(entityId); break;
 		case ComponentType::AABBCollider: em->EmplaceComponent<AABBColliderData>(entityId); break;
 		case ComponentType::ParentData: em->EmplaceComponent<ParentData>(entityId); break;
-			// 他のコンポーネントは必要に応じて対応
 		}
 	}
 
@@ -139,7 +146,7 @@ namespace QFE {
 		if (!sceneManager) return;
 		EntityManager* em = sceneManager->GetEntityManager();
 		switch (type) {
-		case ComponentType::Transform: em->RemoveComponent<Transform>(entityId); break;
+		case ComponentType::Transform: em->RemoveComponent<TransformComponent>(entityId); break;
 		case ComponentType::SceneObjectData: em->RemoveComponent<SceneObjectData>(entityId); break;
 		case ComponentType::ModelHandle: em->RemoveComponent<ModelHandle>(entityId); break;
 		case ComponentType::SpriteData: em->RemoveComponent<SpriteData>(entityId); break;
@@ -151,6 +158,7 @@ namespace QFE {
 		case ComponentType::AABBCollider: em->RemoveComponent<AABBColliderData>(entityId); break;
 		case ComponentType::CsharpScript: em->RemoveComponent<CsharpComponent>(entityId); break;
 		case ComponentType::ParentData: em->RemoveComponent<ParentData>(entityId); break;
+		case ComponentType::AnimationClip: em->RemoveComponent<AnimationComponent>(entityId); break;
 		}
 	}
 
@@ -158,8 +166,8 @@ namespace QFE {
 		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
 		TransformData data = {};
-		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
-			Transform& t = sceneManager->GetEntityManager()->GetComponent<Transform>(entityId);
+		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<TransformComponent>(entityId)) {
+			Transform& t = sceneManager->GetEntityManager()->GetComponent<TransformComponent>(entityId).transform;
 			data.translate[0] = t.translate.x; data.translate[1] = t.translate.y; data.translate[2] = t.translate.z;
 			data.rotate[0] = t.rotate.x; data.rotate[1] = t.rotate.y; data.rotate[2] = t.rotate.z;
 			data.scale[0] = t.scale.x; data.scale[1] = t.scale.y; data.scale[2] = t.scale.z;
@@ -170,8 +178,8 @@ namespace QFE {
 	void WindowsBridgeCore::SetTransform(uint32_t entityId, const TransformData& data) {
 		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
-		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<Transform>(entityId)) {
-			Transform& t = sceneManager->GetEntityManager()->GetComponent<Transform>(entityId);
+		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<TransformComponent>(entityId)) {
+			Transform& t = sceneManager->GetEntityManager()->GetComponent<TransformComponent>(entityId).transform;
 			t.translate = { data.translate[0], data.translate[1], data.translate[2] };
 			t.rotate = { data.rotate[0], data.rotate[1], data.rotate[2] };
 			t.scale = { data.scale[0], data.scale[1], data.scale[2] };
@@ -416,6 +424,18 @@ namespace QFE {
 		}
 	}
 
+	AnimationClipInfo WindowsBridgeCore::GetAnimationInfo(uint32_t entityId) {
+		QFE_PROFILE_SCOPE;
+		SceneManager* sceneManager = engineCore_->GetSceneManager();
+		AnimationClipInfo info = {};
+		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<AnimationComponent>(entityId)) {
+			AnimationComponent& a = sceneManager->GetEntityManager()->GetComponent<AnimationComponent>(entityId);
+			info.name = a.clipName;
+			info.handle = a.clipHandle;
+		}
+		return info;
+	}
+
 	std::vector<std::string> WindowsBridgeCore::GetCsharpClassNames(uint32_t entityId) {
 		QFE_PROFILE_SCOPE;
 		SceneManager* sceneManager = engineCore_->GetSceneManager();
@@ -453,6 +473,52 @@ namespace QFE {
 			return sceneManager->GetCsharpScriptExecutor()->GetAvailableScriptClasses();
 		}
 		return {};
+	}
+
+	void WindowsBridgeCore::PlayAnimation(uint32_t entityId, uint32_t animationHandle) {
+		QFE_PROFILE_SCOPE;
+		animationHandle; // 未使用
+		AssetManager* assetManager = engineCore_->GetAssetManager();
+		AnimationPlayer* player = assetManager->GetAnimationPlayer();
+		AnimationClipContainer* clipContainer = assetManager->GetAnimationClipContainer();
+
+		SceneManager* sceneManager = engineCore_->GetSceneManager();
+		if (sceneManager && sceneManager->GetEntityManager()->HasComponent<AnimationComponent>(entityId)) {
+			AnimationComponent& animationComponent = sceneManager->GetEntityManager()->GetComponent<AnimationComponent>(entityId);
+			uint32_t handle = player->PlayAnimation(clipContainer->GetAnimationClipPtr(animationComponent.clipHandle));
+			animationComponent.playingAnimHandles.push_back(handle);
+			QFE_LOG("Playing animation: " + animationComponent.clipName + " on entity " + std::to_string(entityId));
+		}
+	}
+
+	void WindowsBridgeCore::BindAnimationClip(uint32_t entityId, const std::string& clipName) {
+		QFE_PROFILE_SCOPE;
+		
+		// 拡張子を除去してクリーンな名前を取得
+		std::string cleanClipName = clipName;
+		size_t lastSlashPos = cleanClipName.find_last_of("/\\");
+		if (lastSlashPos != std::string::npos) {
+			cleanClipName = cleanClipName.substr(lastSlashPos + 1);
+		}
+		size_t dotPos = cleanClipName.find_last_of('.');
+		if (dotPos != std::string::npos) {
+			cleanClipName = cleanClipName.substr(0, dotPos);
+		}
+
+		SceneManager* sceneManager = engineCore_->GetSceneManager();
+		EntityManager* em = sceneManager->GetEntityManager();
+		em->EmplaceComponent<AnimationComponent>(entityId);
+		AnimationComponent& animationComponent = em->GetComponent<AnimationComponent>(entityId);
+		animationComponent.clipName = cleanClipName;
+		animationComponent.clipHandle = AssetManager::GetInstance()->LoadAnimationClip(cleanClipName);
+		animationComponent.playingAnimHandles.clear();
+	}
+
+	std::vector<std::string> WindowsBridgeCore::GetAvailableAnimationClips() {
+		QFE_PROFILE_SCOPE;
+		std::vector<std::string> clipNames;
+		clipNames = FILE::GetFilesInDirectory(GetAnimationDirectoryPath(), ".anim");
+		return clipNames;
 	}
 
 	void WindowsBridgeCore::ReCompileCsharpScripts()

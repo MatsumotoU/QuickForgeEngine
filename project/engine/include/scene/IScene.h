@@ -63,6 +63,7 @@ namespace QFE {
 		virtual uint32_t GetEntityByUniqueID(uint32_t uniqueId) const = 0;
 
 		virtual bool IsRunningScript() const = 0;
+		virtual bool IsPauseScript() const = 0;
 		std::string& GetSceneName() { return sceneName_; }
 		void SetSceneName(const std::string& name) { sceneName_ = name; }
 		bool GetReqesytedExit() { return isRequestedExit_; }

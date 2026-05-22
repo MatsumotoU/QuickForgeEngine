@@ -11,6 +11,7 @@
 #include "engine/include/collider/ColliderManager.h"
 #include "engine/include/audio/AudioInterface.h"
 
+#include "engine/include/core/Math/TransformComponent.h"
 #include "engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/physics/PhysicsManager.h"
@@ -19,6 +20,7 @@
 #include "engine/include/camera/Data/CameraData.h"
 #include "engine/include/camera/Data/BillboardComponent.h"
 #include "engine/include/assets/3DModel/Data/SkyboxComponent.h"
+#include "engine/include/assets/Animator/AnimationCompornent.h"
 
 #include <fstream>
 #include <execution>
@@ -89,7 +91,10 @@ void SceneObject::Update() {
 
 	// ランタイム中のサブモジュールの更新
 	if (isRunningScript_ && !isPauseScript_) {
-		csharpScriptExecutor_.RunAllScriptsFunction("Update");
+		csharpScriptExecutor_.FrameStart();
+		csharpScriptExecutor_.Update();
+		csharpScriptExecutor_.FrameEnd();
+
 		PhysicsManager::GetInstance()->Update();
 	} else {
 		// ランタイム出ない場合はassetManagerのキャッシュをクリアし続ける（ランタイム中はシーンのロードやエンティティの追加・削除が頻繁に行われるため、キャッシュを使用しない）
@@ -99,9 +104,58 @@ void SceneObject::Update() {
 	// 当たり判定更新
 	ColliderManager::GetInstance()->Update();
 
+	// スクリプトの当たり判定更新
+	if (isRunningScript_ && !isPauseScript_) {
+		csharpScriptExecutor_.CollisionUpdate();
+	}
+
 	//  ワールド行列更新
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<RemakeUniqeIDCommand>(*(GetEntityManager()), uniqueIdManager_));
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<WorldTransformationCommand>(*(GetEntityManager())));
+
+	// ワールド行列の作成
+	entityManager_.Each<TransformComponent>([&](uint32_t entityId, TransformComponent& transform) {
+		entityId; // 未使用
+		transform.localMatrix = Matrix4x4::MakeAffineMatrix(transform.transform);
+		});
+
+	// 無効なアニメーションハンドルを削除
+	std::vector<uint32_t> invalidAnimHandles = assetManager_->GetAnimationPlayer()->GetDeleteAnimations();
+	if (invalidAnimHandles.size() > 0) {
+		std::unordered_set<uint32_t> invalidAnimHandleSet(invalidAnimHandles.begin(), invalidAnimHandles.end());
+		entityManager_.Each<AnimationComponent>([&](uint32_t entityId, AnimationComponent& animComp) {
+			entityId; // 未使用
+			animComp.playingAnimHandles.remove_if([&](uint32_t animHandle) {
+				return invalidAnimHandleSet.find(animHandle) != invalidAnimHandleSet.end();
+				});
+			});
+	}
+
+	// アニメーションの更新
+	AnimationPlayer* animPlayer = assetManager_->GetAnimationPlayer();
+	std::unordered_map<uint32_t, Matrix4x4> entityAnimMatrixMap;
+	entityManager_.Each<AnimationComponent>([&](uint32_t entityId, AnimationComponent& animComp) {
+		for (uint32_t& animHandle : animComp.playingAnimHandles) {
+			// アニメーションクリップからAffine行列を作成
+			AnimationPlayClip* animPlayClip = animPlayer->GetAnimationPlayClip(animHandle);
+			Transform animTransform = animPlayClip->animClip->GetTransformAtTime(animPlayClip->currentTime);
+			Matrix4x4 animMatrix = Matrix4x4::MakeAffineMatrix(animTransform);
+
+			// アニメーション行列を保存
+			if(entityAnimMatrixMap.find(entityId) != entityAnimMatrixMap.end()) {
+				entityAnimMatrixMap[entityId] = Matrix4x4::Multiply(entityAnimMatrixMap[entityId], animMatrix);
+			} else {
+				entityAnimMatrixMap[entityId] = animMatrix;
+			}
+		}
+		});
+	// アニメーション行列をワールド行列に反映
+	entityManager_.Each<TransformComponent>([&](uint32_t entityId, TransformComponent& transform) {
+		if (entityAnimMatrixMap.find(entityId) != entityAnimMatrixMap.end()) {
+			transform.localMatrix = Matrix4x4::Multiply(transform.localMatrix, entityAnimMatrixMap[entityId]);
+		}
+		});
+
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<ParentUpdateCommand>(*(GetEntityManager())));
 	updateCommandInvoker_.AddSystemCommand(std::make_unique<AllSpriteResizeCommand>(*(GetEntityManager())));
 
@@ -118,17 +172,15 @@ void SceneObject::PreDraw() {
 	cameraManager->Update();
 
 	// 3Dモデルのカメラ位置更新
-	if (entityManager_.HasComponentStrage<ModelHandle>()) {
-		auto& modelStrage = entityManager_.GetComponentStrage<ModelHandle>();
-		for (auto& model : modelStrage) {
-			const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(model.second.handle);
-			GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
-			for (const auto& meshRenderDataHandle : modelDataPtr->meshRenderDataHandles) {
-				CameraForGPU* camera = gpuBufferPool->GetConstantBufferData<CameraForGPU>(meshRenderDataHandle.cameraPosBufferHandle);
-				camera->cameraPosition = cameraManager->GetMainCamera().GetPosition();
-			}
+	entityManager_.Each<ModelHandle>([&](uint32_t entityId, ModelHandle& model) {
+		entityId; // 未使用
+		const ModelRenderData* modelDataPtr = assetManager->GetModelRenderData(model.handle);
+		GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
+		for (const auto& meshRenderDataHandle : modelDataPtr->meshRenderDataHandles) {
+			CameraForGPU* camera = gpuBufferPool->GetConstantBufferData<CameraForGPU>(meshRenderDataHandle.cameraPosBufferHandle);
+			camera->cameraPosition = cameraManager->GetMainCamera().GetPosition();
 		}
-	}
+		});
 
 	// システム上絶対やるべき前描画コマンド
 	preDrawCommandInvoker_.AddSystemCommand(std::make_unique<BillboardUpdateCommand>(*(GetEntityManager()), cameraManager->GetMainCameraTransform()));
@@ -146,12 +198,10 @@ void SceneObject::Draw() {
 	ColliderManager::GetInstance()->Draw();
 
 	// スカイボックスの描画
-	if (entityManager_.HasComponentStrage<SkyboxComponent>()) {
-		ComponentStorage<SkyboxComponent> skyboxCompStr = entityManager_.GetComponentStrage<SkyboxComponent>();
-		for (auto& skybox : skyboxCompStr) {
-			Render::Skybox::DrawSkybox(skybox.second);
-		}
-	}
+	entityManager_.Each<SkyboxComponent>([](uint32_t entityId, SkyboxComponent& skyboxComp) {
+		entityId; // 未使用
+		Render::Skybox::DrawSkybox(skyboxComp);
+		});
 
 	// 全描画コマンド追加
 	drawCommandInvoker_.AddSystemCommand(std::make_unique<AllEntityRenderingCommand>(*(GetEntityManager())));
@@ -203,6 +253,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 
 	entityManager_.ResetEntiry();
 	AudioInterface::GetInstance()->StopAllSound();
+	csharpScriptExecutor_.ReloadAssembly();
 	csharpScriptExecutor_.ResetScripts();
 
 	// Sceneの読み込み
@@ -306,7 +357,7 @@ void SceneObject::RunScene() {
 		SaveScene(sceneName_);
 		LoadScene(sceneName_);
 		isRunningScript_ = true;
-		csharpScriptExecutor_.RunAllScriptsFunction("Initialize");
+		csharpScriptExecutor_.InitializeGameLogic(&entityManager_);
 		ColliderManager::GetInstance()->isRunning = true;
 	}
 }
@@ -330,7 +381,7 @@ void SceneObject::StopScene() {
 void SceneObject::AddEmptyObject() {
 
 	uint32_t entityId = entityManager_.CreateEntity();
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName("EmptyObject");
 	sceneObjectData.tag = "Untagged";
@@ -352,7 +403,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	entityManager_.EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
 	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName(modelName + "_ParticleEmitter");
 	sceneObjectData.tag = "Untagged";
@@ -388,7 +439,7 @@ void QFE::SceneObject::AddSkybox(const std::string& skyboxName)
 	sceneObjectData.tag = "Untagged";
 	sceneObjectData.uniqueId = uniqueIdManager_.GenerateUniqueID();
 	entityManager_.EmplaceComponent<SceneObjectData>(entityId, sceneObjectData);
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 }
 
 void SceneObject::AddModel(const std::string& modelName) {
@@ -398,7 +449,7 @@ void SceneObject::AddModel(const std::string& modelName) {
 	modelHandle.modelName = modelName;
 	modelHandle.handle = assetManager->LoadModel(modelName);
 	entityManager_.EmplaceComponent<ModelHandle>(entityId, modelHandle);
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName(modelName);
 	sceneObjectData.tag = "Untagged";
@@ -456,7 +507,7 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	entityManager_.EmplaceComponent<SpriteData>(entityId, spriteData);
 
 	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
-	entityManager_.EmplaceComponent<Transform>(entityId, Transform());
+	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName(spriteName);
 	sceneObjectData.tag = "Untagged";
@@ -469,7 +520,9 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		CsharpComponent csharpComponent;
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
-		csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
+		if (isRunningScript_) {
+			csharpScriptExecutor_.CreateScriptInstance(entityId, className);
+		}
 		csharpComponent.csharpHandles_.push_back(csharpHandle);
 		entityManager_.EmplaceComponent<CsharpComponent>(entityId, csharpComponent);
 
@@ -477,17 +530,17 @@ void SceneObject::AddCsharpScript(uint32_t entityId, const std::string& classNam
 		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
 		for (const auto& handles : csharpComponent.csharpHandles_) {
 			if (handles.className_ == className) {
-#ifdef QFE_OPTIMIZE_OFF
 				QFE_LOG("Csharp class " + className + " is already attached to entity " + std::to_string(entityId), LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
 				return;
 			}
 		}
 
 		CsharpHandle csharpHandle;
 		csharpHandle.className_ = className;
-		csharpHandle.scriptIndex_ = csharpScriptExecutor_.CreateScriptInstance(entityId, className);
 		csharpComponent.csharpHandles_.push_back(csharpHandle);
+		if(isRunningScript_) {
+			csharpScriptExecutor_.CreateScriptInstance(entityId, className);
+		}
 	}
 }
 
@@ -542,7 +595,7 @@ uint32_t SceneObject::RunTimeAddEntity(const std::string& entityName) {
 	if (entityManager_.HasComponent<CsharpComponent>(entityId) && isRunningScript_) {
 		CsharpComponent& csharpComponent = entityManager_.GetComponent<CsharpComponent>(entityId);
 		for (const auto& ch : csharpComponent.csharpHandles_) {
-			csharpScriptExecutor_.RunScriptFunction(ch.scriptIndex_, "Initialize");
+			csharpScriptExecutor_.CreateScriptInstance(entityId, ch.className_);
 		}
 	}
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -586,18 +639,14 @@ void SceneObject::ChangeEntityMesh(uint32_t entityId, const std::string& meshNam
 
 	//　EntityがModelRenderDataを持っていない、もしくはMeshを持っていない場合は処理しない
 	if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("ChangeMesh entity does not have ModelRenderData", LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
 	ModelRenderData* modelData = assetManager->GetModelRenderData(modelHandle.handle);
 	//　Meshがない場合は処理しない
 	if (modelData->meshRenderDataHandles.size() == 0) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("ChangeMesh model does not have mesh", LogLevel::Warning);
-#endif // QFE_OPTIMIZE_OFF
 		return;
 	}
 	modelData->meshRenderDataHandles[0].vertexBufferHandle = assetManager_->LoadModelMesh(meshName);
@@ -642,11 +691,11 @@ void SceneObject::ParentChild(uint32_t parentId, uint32_t childId) {
 		parentData.parentId = parentSceneObjectData.uniqueId;
 	}
 
-	if (!entityManager_.HasComponent<Transform>(parentId) || !entityManager_.HasComponent<Transform>(childId)) {
+	if (!entityManager_.HasComponent<TransformComponent>(parentId) || !entityManager_.HasComponent<TransformComponent>(childId)) {
 		return;
 	}
-	Transform& parentTransform = entityManager_.GetComponent<Transform>(parentId);
-	Transform& childTransform = entityManager_.GetComponent<Transform>(childId);
+	Transform& parentTransform = entityManager_.GetComponent<TransformComponent>(parentId).transform;
+	Transform& childTransform = entityManager_.GetComponent<TransformComponent>(childId).transform;
 	childTransform.translate -= parentTransform.translate;
 }
 
@@ -654,25 +703,6 @@ void SceneObject::Unparent(uint32_t childId) {
 	if (!entityManager_.HasComponent<ParentData>(childId)) {
 		return;
 	}
-	ParentData& parentData = entityManager_.GetComponent<ParentData>(childId);
-	uint32_t parentId = 0;
-	bool isFound = false;
-	if (entityManager_.HasComponentStrage<SceneObjectData>()) {
-		auto& strage = entityManager_.GetComponentStrage<SceneObjectData>();
-		for (const auto& [id, sceneObjData] : strage) {
-			if (sceneObjData.uniqueId == parentData.parentId) {
-				parentId = id;
-				isFound = true;
-				break;
-			}
-		}
-	}
-	if (!isFound) { return; }
-	if (!entityManager_.HasComponent<Transform>(parentId) || !entityManager_.HasComponent<Transform>(childId)) {
-		entityManager_.RemoveComponent<ParentData>(childId);
-		return;
-	}
-
 	entityManager_.RemoveComponent<ParentData>(childId);
 }
 
@@ -696,8 +726,8 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 	}
 	if (entityJson.contains("Transform")) {
 		std::chrono::steady_clock::time_point transformStart = std::chrono::steady_clock::now();
-		entityManager_.EmplaceComponent<Transform>(entityId);
-		Transform& transform = entityManager_.GetComponent<Transform>(entityId);
+		entityManager_.EmplaceComponent<TransformComponent>(entityId);
+		TransformComponent& transform = entityManager_.GetComponent<TransformComponent>(entityId);
 		transform.Deserialize(entityJson["Transform"]);
 		std::chrono::steady_clock::time_point transformEnd = std::chrono::steady_clock::now();
 		QFE_LOG("Deserialize Transform Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(transformEnd - transformStart).count()) + " ms");
@@ -791,6 +821,16 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		aabbColliderData.Deserialize(entityJson["AABBColliderData"]);
 		std::chrono::steady_clock::time_point aabbColliderEnd = std::chrono::steady_clock::now();
 		QFE_LOG("Deserialize AABBColliderData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(aabbColliderEnd - aabbColliderStart).count()) + " ms");
+	}
+	if (entityJson.contains("AnimationComponent")) {
+		std::chrono::steady_clock::time_point animationComponentStart = std::chrono::steady_clock::now();
+		entityManager_.EmplaceComponent<AnimationComponent>(entityId);
+		AnimationComponent& animationComponentData = entityManager_.GetComponent<AnimationComponent>(entityId);
+		animationComponentData.Deserialize(entityJson["AnimationComponent"]);
+		animationComponentData.clipHandle = assetManager_->LoadAnimationClip(animationComponentData.clipName);
+		animationComponentData.playingAnimHandles.clear();
+		std::chrono::steady_clock::time_point animationComponentEnd = std::chrono::steady_clock::now();
+		QFE_LOG("Deserialize AnimationComponent Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(animationComponentEnd - animationComponentStart).count()) + " ms");
 	}
 	if (entityJson.contains("CsharpComponent")) {
 		std::chrono::steady_clock::time_point csharpComponentStart = std::chrono::steady_clock::now();

@@ -48,9 +48,17 @@ void QFE::CompileCSharpProject(const std::string& csprojPath, const std::string&
 	std::string logPath = std::filesystem::path(csprojPath).parent_path().string() + "/build_log.txt";
 	QFE_LOG("Compiling C# project. Log will be saved to: " + logPath);
 	
-	// コマンド実行（出力をログファイルにリダイレクト）
-	std::string command = "dotnet build \"" + csprojPath + "\" -c Release -o \"" + std::filesystem::path(outputDllPath).parent_path().string() + "\" > \"" + logPath + "\" 2>&1";
+#ifdef QFE_OPTIMIZE_ON
+    // 最適化オンのときは標準エラー出力をコンソールに表示するため、リダイレクトは標準出力のみ
+    std::string command = 
+        "dotnet build \"" + csprojPath + "\" -c Release -o \"" + std::filesystem::path(outputDllPath).parent_path().string() + "\" > \"" + logPath + "\"";
 	QFE_LOG("Executing command: " + command);
+#else
+	// 最適化オフのときは標準エラー出力もログファイルにリダイレクトする
+    std::string command = 
+		"dotnet build \"" + csprojPath + "\" -c Debug -o \"" + std::filesystem::path(outputDllPath).parent_path().string() + "\" > \"" + logPath + "\" 2>&1";
+    QFE_LOG("Executing command: " + command);
+#endif
 
 	int result = system(command.c_str());
 	QFE_LOG("Command executed with result code: " + std::to_string(result));

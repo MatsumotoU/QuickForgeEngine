@@ -64,9 +64,7 @@ std::string ResourceDirectoryManager::GetResourceDirectory(const std::string& re
 	assert(resourceDirectories_.find(resourceType) != resourceDirectories_.end() && "Resource type not found");
 	std::string directory = rootDirectory_ + ProjectName_ + "/" + resourceDirectories_.at(resourceType);
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG(std::format("GetResourceDirectory: ResourceType: {}, Directory: {}", resourceType, directory));
-#endif // QFE_OPTIMIZE_OFF
 
 	// ディレクトリが存在しない場合は作成する
 	if(!std::filesystem::exists(directory)) {

@@ -1,6 +1,6 @@
 #pragma once
 #include "IComponentStorage.h"
-#include <unordered_map>
+#include "engine/include/utility/memory/SparseSets.h"
 #include <memory>
 #include <stdexcept>
 
@@ -9,9 +9,11 @@ namespace QFE {
 	template <typename T>
 	class ComponentStorage : public IComponentStorage {
 	private:
-		std::unordered_map<uint32_t, T> components;
+		SparseSet<T> components;
 
 	public:
+		ComponentStorage() = default;
+
 		auto begin() const { return components.begin(); }
 		auto end() const { return components.end(); }
 		auto begin() { return components.begin(); }
@@ -23,18 +25,14 @@ namespace QFE {
 			components[id] = component;
 		}
 		T& GetComponent(uint32_t id) {
-			auto it = components.find(id);
-			if (it != components.end()) {
-				return it->second;
+			T* ptr = components.find(id);
+			if (ptr) {
+				return *ptr;
 			}
 			throw std::runtime_error("Component not found");
 		}
 		T* GetComponentPtr(uint32_t id) {
-			auto it = components.find(id);
-			if (it != components.end()) {
-				return &(it->second);
-			}
-			return nullptr;
+			return components.find(id);
 		}
 		void RemoveComponent(uint32_t id) override {
 			components.erase(id);
@@ -43,14 +41,28 @@ namespace QFE {
 			return components;
 		}
 		bool HasComponent(uint32_t id) const {
-			return components.find(id) != components.end();
+			return components.Contains(id);
 		}
 		ComponentData* GetComponentDataPtr(uint32_t id) override {
-			auto it = components.find(id);
-			if (it != components.end()) {
-				return &(it->second);
-			}
-			return nullptr;
+			return components.find(id);
+		}
+
+		/// @brief 全ての有効なコンポーネントに対して関数を実行する。
+		void Each(const std::function<void(uint32_t, T&)>& func) {
+			components.Each(func);
+		}
+		/// @brief 全ての有効なコンポーネントに対して関数を実行する（const版）。
+		void Each(const std::function<void(uint32_t, const T&)>& func) const {
+			components.Each(func);
+		}
+
+		/// @brief コンポーネントIDの一覧を取得する。
+		std::vector<uint32_t> GetEntityIds() const {
+			return components.Keys();
+		}
+		/// @brief コンポーネントの一覧を取得する。
+		std::vector<T> GetComponents() const {
+			return components.Values();
 		}
 	};
 

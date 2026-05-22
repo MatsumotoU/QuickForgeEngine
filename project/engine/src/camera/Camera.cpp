@@ -11,20 +11,21 @@
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 #include "engine/include/camera/Data/CameraData.h"
+#include "engine/include/core/Math/TransformComponent.h"
 
 using namespace QFE;
 
 void Camera::Initialize() {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
 	bindEntityId_ = entityManager->CreateEntity();
-	entityManager->EmplaceComponent<Transform>(bindEntityId_);
+	entityManager->EmplaceComponent<TransformComponent>(bindEntityId_);
 	entityManager->EmplaceComponent<SceneObjectData>(bindEntityId_);
 	entityManager->EmplaceComponent<CameraData>(bindEntityId_);
 
-	assert(entityManager->HasComponent<Transform>(bindEntityId_) && "Camera entity must have Transform component.");
+	assert(entityManager->HasComponent<TransformComponent>(bindEntityId_) && "Camera entity must have Transform component.");
 	assert(entityManager->HasComponent<SceneObjectData>(bindEntityId_) && "Camera entity must have SceneObjectData component.");
 	assert(entityManager->HasComponent<CameraData>(bindEntityId_) && "Camera entity must have CameraData component.");
-	Transform& transform = entityManager->GetComponent<Transform>(bindEntityId_);
+	Transform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
 	transform.scale = { 1.0f,1.0f,1.0f };
 	transform.rotate = { 0.1f,0.0f,0.0f };
 	transform.translate = { 0.0f,1.5f,-10.0f };
@@ -124,10 +125,10 @@ Matrix4x4 Camera::GetWorldViewProjectionMatrixOrthographic(const Matrix4x4& worl
 
 Matrix4x4 Camera::GetWorldMatrix() const {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	if (!entityManager->HasComponent<Transform>(bindEntityId_)) {
+	if (!entityManager->HasComponent<TransformComponent>(bindEntityId_)) {
 		return Matrix4x4::MakeIndentity4x4();
 	}
-	Transform& transform = entityManager->GetComponent<Transform>(bindEntityId_);
+	Transform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
 
 	return Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 }
@@ -135,6 +136,6 @@ Matrix4x4 Camera::GetWorldMatrix() const {
 Vector3 Camera::GetPosition() const
 {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	Transform& transform = entityManager->GetComponent<Transform>(bindEntityId_);
+	Transform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
 	return transform.translate;
 }

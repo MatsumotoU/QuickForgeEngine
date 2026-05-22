@@ -47,6 +47,8 @@ namespace QFE {
 		uint32_t GetEntityByUniqueID(uint32_t uniqueId) const;
 		/** @brief スクリプトが実行中かどうか */
 		bool IsRunningScript() const { return currentScene_->IsRunningScript(); }
+		/// @brief スクリプトが一時停止中かどうか
+		bool IsPauseScript() const { return currentScene_->IsPauseScript(); }
 
 		/** @brief エンティティマネージャを取得 */
 		EntityManager* GetEntityManager() const { return currentScene_->GetEntityManager(); }
@@ -101,8 +103,6 @@ namespace QFE {
 		void AddCsharpScript(uint32_t entityId, const std::string& className);
 		/** @brief エンティティを追加 */
 		uint32_t AddEntity(const std::string& entityName,bool useCache = false);
-		/** @brief 実行時にエンティティを追加 */
-		uint32_t RunTimeAddEntity(const std::string& entityName);
 
 		/** @brief シングローバルのシーンデータを取得 */
 		nlohmann::json& GetSceneGlobalData() { return sceneGlobalData_; }
@@ -115,6 +115,11 @@ namespace QFE {
 		void StartScript();
 		/** @brief スクリプトの停止 */
 		void StopScript();
+
+		/// @brief シーンの一時停止
+		void PauseScene();
+		/// @brief シーンの再開
+		void ResumeScene();
 
 		float initTime_;
 		float updateTime_;

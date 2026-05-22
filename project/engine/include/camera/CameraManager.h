@@ -37,6 +37,8 @@ namespace QFE {
 		uint32_t mainCameraIndex_;
 		std::unordered_map<uint32_t, Camera> cameras_;
 		uint32_t nextCameraHandle_;
+
+		Transform dummyCameraTransform_;
 	};
 
 }

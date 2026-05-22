@@ -8,7 +8,6 @@
 namespace QFE {
 	struct CsharpHandle {
 		std::string className_;
-		uint32_t scriptIndex_;
 	};
 
 	class CsharpComponent :public ComponentData {
@@ -19,6 +18,6 @@ namespace QFE {
 		void Deserialize(const nlohmann::json& json) override;
 		std::string GetTypeName() const override { return "CsharpComponent"; }
 
-		SafeVector<CsharpHandle> csharpHandles_;
+		std::vector<CsharpHandle> csharpHandles_;
 	};
 }

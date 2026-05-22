@@ -70,3 +70,62 @@ QFE::MeshData QFE::PRIMITIVE::CreateBox(bool invertFace)
 	
 	return boxMesh;
 }
+
+QFE::MeshData QFE::PRIMITIVE::CreateRing(float innerRadius, float outerRadius, uint32_t segments, bool invertFace) {
+	MeshData ringMesh(segments * 6);
+	for (uint32_t i = 0; i < segments * 6; ++i) {
+		ringMesh.vertices.push_back(VertexData());
+	}
+
+	// 頂点データを設定
+	for (uint32_t i = 0; i < segments; ++i) {
+		float angle = (2.0f * 3.14159265f * i) / segments;
+		float nextAngle = (2.0f * 3.14159265f * (i + 1)) / segments;
+
+		VertexData iCurr, iNext, oCurr, oNext;
+
+		// 内側の現在の頂点
+		iCurr.position = { innerRadius * cos(angle), innerRadius * sin(angle), 0.0f, 1.0f };
+		iCurr.texcoord = { static_cast<float>(i) / segments, 1.0f };
+		iCurr.normal = { 0.0f, 0.0f, -1.0f };
+
+		// 外側の現在の頂点
+		oCurr.position = { outerRadius * cos(angle), outerRadius * sin(angle), 0.0f, 1.0f };
+		oCurr.texcoord = { static_cast<float>(i) / segments, 0.0f };
+		oCurr.normal = { 0.0f, 0.0f, -1.0f };
+
+		// 内側の次の頂点
+		iNext.position = { innerRadius * cos(nextAngle), innerRadius * sin(nextAngle), 0.0f, 1.0f };
+		iNext.texcoord = { static_cast<float>(i + 1) / segments, 1.0f };
+		iNext.normal = { 0.0f, 0.0f, -1.0f };
+
+		// 外側の次の頂点
+		oNext.position = { outerRadius * cos(nextAngle), outerRadius * sin(nextAngle), 0.0f, 1.0f };
+		oNext.texcoord = { static_cast<float>(i + 1) / segments, 0.0f };
+		oNext.normal = { 0.0f, 0.0f, -1.0f };
+
+		// 三角形1 (内側現在、外側現在、内側次)
+		ringMesh.vertices[i * 6 + 0] = iCurr;
+		ringMesh.vertices[i * 6 + 1] = oCurr;
+		ringMesh.vertices[i * 6 + 2] = iNext;
+
+		// 三角形2 (内側次、外側現在、外側次)
+		ringMesh.vertices[i * 6 + 3] = iNext;
+		ringMesh.vertices[i * 6 + 4] = oCurr;
+		ringMesh.vertices[i * 6 + 5] = oNext;
+	}
+
+	// 面を反転させるかどうかの処理
+	if (invertFace) {
+		// 法線を反転させる
+		for (size_t i = 0; i < ringMesh.vertices.size(); ++i) {
+			ringMesh.vertices[i].normal = -ringMesh.vertices[i].normal;
+		}
+		// 頂点の順序を反転させる
+		for (size_t i = 0; i < ringMesh.vertices.size(); i += 3) {
+			std::swap(ringMesh.vertices[i], ringMesh.vertices[i + 2]);
+		}
+	}
+
+	return ringMesh;
+}

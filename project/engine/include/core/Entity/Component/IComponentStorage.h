@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/include/core/Entity/Component/ComponentData.h"
+#include <functional>
 
 namespace QFE {
 

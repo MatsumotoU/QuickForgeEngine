@@ -71,6 +71,28 @@ namespace QFE {
 		bool IsActiveEntity(uint32_t id) const {
 			return activeEntityIds_.find(id) != activeEntityIds_.end();
 		}
+
+		/// @brief 指定コンポーネントストレージの存在を確認
+		template <typename T>
+		bool HasComponentStrage() const {
+			size_t typeId = typeid(T).hash_code();
+			return componentStorages.find(typeId) != componentStorages.end();
+		}
+		/// @brief 指定エンティティが指定コンポーネントを持っているか判定
+		template <typename T>
+		bool HasComponent(uint32_t id) const {
+			if (id >= nextEntityId_) {
+				return false;
+			}
+
+			size_t typeId = typeid(T).hash_code();
+			if (componentStorages.find(typeId) != componentStorages.end()) {
+				const auto& storage = static_cast<const ComponentStorage<T>&>(*componentStorages.at(typeId));
+				return storage.HasComponent(id);
+			}
+			return false;
+		}
+
 		/// @brief 指定エンティティにコンポーネントを追加
 		template <typename T, typename... Args>
 		void EmplaceComponent(uint32_t id, Args&&... args) {
@@ -85,7 +107,7 @@ namespace QFE {
 		template <typename T>
 		T& GetComponent(uint32_t id) const {
 			size_t typeId = typeid(T).hash_code();
-			if (componentStorages.find(typeId) != componentStorages.end()) {
+			if (HasComponent<T>(id)) {
 				auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages.at(typeId));
 				return storage.GetComponent(id);
 			}
@@ -95,7 +117,7 @@ namespace QFE {
 		template <typename T>
 		T* GetComponentPtr(uint32_t id) const {
 			size_t typeId = typeid(T).hash_code();
-			if (componentStorages.find(typeId) != componentStorages.end()) {
+			if (HasComponent<T>(id)) {
 				auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages.at(typeId));
 				return storage.GetComponentPtr(id);
 			}
@@ -118,28 +140,27 @@ namespace QFE {
 			if (componentStorages.find(typeId) != componentStorages.end()) {
 				return static_cast<ComponentStorage<T>&>(*componentStorages.at(typeId));
 			}
-			throw std::runtime_error("Component strage not found");
+			QFE_REPORT_SYSTEM_ERROR("Component storage not found for type: " + std::string(typeid(T).name()), SystemError::Abort);
+			return *static_cast<ComponentStorage<T>*>(nullptr);
 		}
-		/// @brief 指定コンポーネントストレージの存在を確認
-		template <typename T>
-		bool HasComponentStrage() const {
-			size_t typeId = typeid(T).hash_code();
-			return componentStorages.find(typeId) != componentStorages.end();
-		}
-		/// @brief 指定エンティティが指定コンポーネントを持っているか判定
-		template <typename T>
-		bool HasComponent(uint32_t id) const {
-			if (id >= nextEntityId_) {
-				return false;
-			}
 
-			size_t typeId = typeid(T).hash_code();
-			if (componentStorages.find(typeId) != componentStorages.end()) {
-				const auto& storage = static_cast<const ComponentStorage<T>&>(*componentStorages.at(typeId));
-				return storage.HasComponent(id);
+		/// @brief 指定コンポーネントストレージに対して関数を実行
+		template <typename T>
+		void Each(const std::function<void(uint32_t, T&)>& func) {
+			if (HasComponentStrage<T>()) {
+				auto& storage = GetComponentStrage<T>();
+				storage.Each(func);
 			}
-			return false;
 		}
+		/// @brief 指定コンポーネントストレージに対して関数を実行（const版）
+		template <typename T>
+		void Each(const std::function<void(uint32_t, const T&)>& func) const {
+			if (HasComponentStrage<T>()) {
+				const auto& storage = GetComponentStrage<T>();
+				storage.Each(func);
+			}
+		}
+
 		/// @brief 次回生成エンティティIDを取得
 		uint32_t GetNextEntityId() const {
 			return nextEntityId_;

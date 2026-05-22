@@ -18,16 +18,12 @@ void MonoRuntimeManager::Initialize() {
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("Initializing Mono JIT...");
-#endif
 
 	std::filesystem::path exeDir(path);
 	exeDir = exeDir.parent_path();
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("Executable Directory: " + exeDir.string());
-#endif
 
 	// Monoディレクトリの設定
 	std::filesystem::path monoLibPath = exeDir / "mono" / "lib";
@@ -37,30 +33,23 @@ void MonoRuntimeManager::Initialize() {
 	std::string monoLibPathUtf8 = ConvertString(monoLibPath.wstring());
 	std::string monoEtcPathUtf8 = ConvertString(monoEtcPath.wstring());
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("Mono Lib Path: " + monoLibPath.string());
 	QFE_LOG("Mono Etc Path: " + monoEtcPath.string());
-#endif
 
 	try {
 		mono_set_dirs(monoLibPathUtf8.c_str(), monoEtcPathUtf8.c_str());
 	}
 	catch (const std::exception& e) {
-		e;
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::string("Failed to set Mono directories: ") + e.what());
-#endif
 		return;
 	}
 
-#ifdef QFE_OPTIMIZE_OFF
 	// デバッグオプションの設定
 	const char* options[] = {
 		"--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555,suspend=n"
 	};
 	mono_jit_parse_options(sizeof(options) / sizeof(char*), (char**)options);
 	QFE_LOG("Mono JIT options set for debugging.");
-#endif
 
 	// JIT初期化（プロセスごとに1回のみ）
 	try {
@@ -68,27 +57,19 @@ void MonoRuntimeManager::Initialize() {
 	}
 	catch (const std::exception& e) {
 		e;
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::string("Failed to initialize Mono JIT: ") + e.what());
-#endif
 		return;
 	}
 
 	if (!rootDomain_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Failed to initialize Mono JIT.");
-#endif
 		return;
 	}
 
-#ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("Success to initialize Mono JIT.");
-#endif
 
-#ifdef QFE_OPTIMIZE_OFF
 	// C#スクリプトのコンパイル
 	CompileScripts();
-#endif // QFE_OPTIMIZE_OFF
 
 	// QFE APIの登録
 	RegisterQFEAPI();
@@ -98,6 +79,9 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	// Debug用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Debug::Log", 
 		(const void*)CsharpOnQFELinker::Native_Debug_Log);
+	// SystemLog用APIの登録
+	mono_add_internal_call("QuickForgeEngine.Debug::SystemLog", 
+		(const void*)CsharpOnQFELinker::Native_Debug_SystemLog);
 
 	// Time関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Time::GetDeltaTime", 
@@ -128,6 +112,8 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	// Scene関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.SceneManager::LoadScene", 
 		(const void*)CsharpOnQFELinker::LoadScene);
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetEntityTags",
+		(const void*)CsharpOnQFELinker::GetEntityTags);
 
 	// Audio関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.Audio::LoadSound", 
@@ -149,11 +135,12 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	mono_add_internal_call("QuickForgeEngine.Entity::Destroy",
 		(const void*)CsharpOnQFELinker::DeleteEntity);
 
-	// Script関連用APIの登録
-	mono_add_internal_call("QuickForgeEngine.Script::CallMethod",
-		(const void*)CsharpOnQFELinker::CallEntityMethod);
-
 	// Transform関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetTransforms", 
+		(const void*)CsharpOnQFELinker::GetTransforms);
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::SetTransforms",
+		(const void*)CsharpOnQFELinker::SetTransforms);
+
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::GetTranslate", 
 		(const void*)CsharpOnQFELinker::GetTransformTranslate);
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::SetTranslate", 
@@ -171,9 +158,19 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	mono_add_internal_call("QuickForgeEngine.TransformInternal::Rotate", 
 		(const void*)CsharpOnQFELinker::Rotate);
 
-#ifdef QFE_OPTIMIZE_OFF
+	// Collision関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetCollisionEnterEntityIDs", 
+		(const void*)CsharpOnQFELinker::GetCollisionEnterEntityIds);
+	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetCollisionStayEntityIDs", 
+		(const void*)CsharpOnQFELinker::GetCollisionStayEntityIds);
+
+	// PostEffect関連用APIの登録
+	mono_add_internal_call("QuickForgeEngine.PostEffect::SetGrayscale", 
+		(const void*)CsharpOnQFELinker::SetGrayScaleOffset);
+	mono_add_internal_call("QuickForgeEngine.PostEffect::SetColorCorrection", 
+		(const void*)CsharpOnQFELinker::SetColorCorrection);
+
 	QFE_LOG("QFE C# API registered successfully.");
-#endif
 }
 
 void MonoRuntimeManager::CompileScripts() {
@@ -200,15 +197,11 @@ void MonoRuntimeManager::CompileScripts() {
 	// C#スクリプトのコンパイル
 	try {
 		QFE::CompileCSharpProject(csprojPath, dllPath);
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("C# scripts compiled successfully.");
-#endif
 	}
 	catch (const std::exception& e) {
 		e;
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::string("Failed to compile C# scripts: ") + e.what(), LogLevel::Error);
-#endif
 	}
 }
 
@@ -235,9 +228,7 @@ std::string MonoRuntimeManager::GetAssemblyPath() const {
 void MonoRuntimeManager::Finalize() {
 	// Monoランタイム全体をクリーンアップ
 	if (rootDomain_) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Cleaning up Mono JIT...");
-#endif
 		mono_jit_cleanup(rootDomain_);
 		rootDomain_ = nullptr;
 	}

@@ -67,6 +67,7 @@ namespace QFE {
 		uint32_t GetEntityByName(const std::string& entityName) const override;
 		uint32_t GetEntityByUniqueID(uint32_t uniqueId) const override;
 		bool IsRunningScript() const override { return isRunningScript_; }
+		bool IsPauseScript() const override { return isPauseScript_; }
 
 		EntityManager* GetEntityManager() override { return &entityManager_; }
 		CsharpScriptExecutor* GetCsharpScriptExecutor() override { return &csharpScriptExecutor_; }

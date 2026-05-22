@@ -14,10 +14,16 @@ void PostprocessEdit::Draw() {
 	if (!isActive_) {
 		return;
 	}
-	ImGui::Begin("Postprocess Edit", &isActive_, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Begin("Postprocess Edit", &isActive_);
 	RenderingPostprocess* postprocess = RenderingPostprocess::GetInstance();
 	ImGui::Checkbox("Enable Postprocess", &postprocess->isPostprocess_);
 	ImGui::Separator();
+	if (ImGui::BeginChild("Enable Grayscale", ImVec2(0, 150), true)) {
+		auto& grayScaleOffset = postprocess->GetGrayScaleOffset();
+		ImGui::SliderFloat("Grayscale Offset", &grayScaleOffset.offset.x, -1.0f, 1.0f);
+	}
+	ImGui::EndChild();
+
 	if (ImGui::BeginChild("ColorCorrection", ImVec2(0, 150), true)) {
 		auto& color = postprocess->GetColorCorrectionOffset();
 		ImGui::SliderFloat("Contrast", &color.contrast, 0.0f, 4.0f);

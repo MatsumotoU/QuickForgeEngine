@@ -6,6 +6,7 @@
 
 #include "engine/include/core/Math/MyMath.h"
 #include "engine/include/core/Math/Transform.h"
+#include "engine/include/core/Math/TransformComponent.h"
 #include "engine/include/scene/Data/SceneObjectData.h"
 
 #ifdef QFE_OPTIMIZE_OFF
@@ -30,45 +31,87 @@ namespace QFE {
 	}
 
 	void ColliderManager::Update() {
+		// 前フレームのcollisionEnterとcollisionStayのEntity IDのペアをクリア
+		collisionEnterEntityIds_.clear();
+		collisionStayEntityIds_.clear();
+
+		// 各コライダーデータの衝突状態をリセットし、トランスフォームコンポーネントがある場合はコライダーデータの中心を更新する
+		ResetCollisionStates();
+
+		// 衝突判定の更新
 		SphereToSphereUpdate();
 		AABBToAABBUpdate();
 		SphereToAABBUpdate();
+
+		// collisionStayのEntity IDのペアを重複がないようにソートしてユニーク化
+		std::sort(collisionStayEntityIds_.begin(), collisionStayEntityIds_.end());
+		collisionStayEntityIds_.erase(std
+			::unique(collisionStayEntityIds_.begin(), collisionStayEntityIds_.end()), collisionStayEntityIds_.end());
+
+		// collisionEnterのEntity IDのペアを重複がないようにソートしてユニーク化
+		std::sort(collisionEnterEntityIds_.begin(), collisionEnterEntityIds_.end());
+		collisionEnterEntityIds_.erase(std
+			::unique(collisionEnterEntityIds_.begin(), collisionEnterEntityIds_.end()), collisionEnterEntityIds_.end());
 	}
 
 	void ColliderManager::Draw() {
 #ifdef QFE_OPTIMIZE_OFF
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-		if (entityManager->HasComponentStrage<SphereColliderData>()) {
-
-
-			auto& sphereColliderStrage = entityManager->GetComponentStrage<SphereColliderData>();
-			for (const auto& pair : sphereColliderStrage) {
-
-				const SphereColliderData& collider = pair.second;
-				if (collider.isDraw) {
-					Render::GraphRenderer::GetInstance()->DrawCircle(collider.sphere.center, collider.sphere.radius, { 0.0f, 1.0f, 0.0f, 1.0f }, 12);
-				}
+		entityManager->Each<SphereColliderData>([&](uint32_t entityId, SphereColliderData& collider) {
+			entityId; // 未使用
+			if (collider.isDraw) {
+				Render::GraphRenderer::GetInstance()->DrawCircle(
+					collider.sphere.center, collider.sphere.radius, { 0.0f, 1.0f, 0.0f, 1.0f }, 12);
 			}
-		}
+			});
 
-		if (entityManager->HasComponentStrage<AABBColliderData>()) {
-
-			auto& aabbColliderStrage = entityManager->GetComponentStrage<AABBColliderData>();
-			for (const auto& pair : aabbColliderStrage) {
-				const AABBColliderData& collider = pair.second;
-				if (collider.isDraw) {
-					Vector3 min = collider.aabb.center - collider.aabb.size * 0.5f;
-					Vector3 max = collider.aabb.center + collider.aabb.size * 0.5f;
-					Render::GraphRenderer::GetInstance()->DrawBox(min, max, { 0.0f, 1.0f, 0.0f, 1.0f });
-				}
+		entityManager->Each<AABBColliderData>([&](uint32_t entityId, AABBColliderData& collider) {
+			entityId; // 未使用
+			if (collider.isDraw) {
+				Vector3 min = collider.aabb.center - collider.aabb.size * 0.5f;
+				Vector3 max = collider.aabb.center + collider.aabb.size * 0.5f;
+				Render::GraphRenderer::GetInstance()->DrawBox(min, max, { 0.0f, 1.0f, 0.0f, 1.0f });
 			}
-
-		}
+			});
 #endif // QFE_OPTIMIZE_OFF
 	}
 
 	void ColliderManager::Finalize() {
 		colliderTagMask_.Finalize();
+	}
+
+	void ColliderManager::ResetCollisionStates() {
+		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
+		// SphereColliderDataを持つ全エンティティのIDを取得し、Transformコンポーネントがある場合はSphereの中心を更新する
+		if (entityManager->HasComponentStrage<SphereColliderData>()) {
+			entityManager->Each<SphereColliderData>([&](uint32_t entityId, SphereColliderData& collider) {
+				// まずはisOldHitを更新してからisHitをリセットする
+				collider.isOldHit = collider.isHit;
+				collider.isHit = false;
+				// Transformコンポーネントがある場合は、コライダーデータの中心をトランスフォームの位置に更新する
+				if (entityManager->HasComponent<TransformComponent>(entityId)) {
+					Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
+					collider.sphere.center = transform.translate;
+				} else {
+					QFE_REPORT_SYSTEM_ERROR(std::format("Entity {} with SphereColliderData does not have TransformComponent.", entityId), SystemError::Abort);
+				}
+			});
+		}
+		// AABBColliderDataを持つ全エンティティのIDを取得し、Transformコンポーネントがある場合はAABBの中心を更新する
+		if (entityManager->HasComponentStrage<AABBColliderData>()) {
+			entityManager->Each<AABBColliderData>([&](uint32_t entityId, AABBColliderData& collider) {
+				// まずはisOldHitを更新してからisHitをリセットする
+				collider.isOldHit = collider.isHit;
+				collider.isHit = false;
+				// Transformコンポーネントがある場合は、コライダーデータの中心をトランスフォームの位置に更新する
+				if (entityManager->HasComponent<TransformComponent>(entityId)) {
+					Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
+					collider.aabb.center = transform.translate;
+				} else {
+					QFE_REPORT_SYSTEM_ERROR(std::format("Entity {} with AABBColliderData does not have TransformComponent.", entityId), SystemError::Abort);
+				}
+			});
+		}
 	}
 
 	void ColliderManager::SphereToSphereUpdate() {
@@ -77,18 +120,12 @@ namespace QFE {
 			return;
 		}
 
-		auto& sphereColliderStrage = entityManager->GetComponentStrage<SphereColliderData>();
+		// SphereColliderDataを持つ全エンティティのIDを取得し、Transformコンポーネントがある場合はSphereの中心を更新する
 		std::vector<uint32_t> entityIds;
-		for (auto& pair : sphereColliderStrage) {
-			entityIds.push_back(pair.first);
-			if (entityManager->HasComponent<Transform>(pair.first)) {
-				Transform& transform = entityManager->GetComponent<Transform>(pair.first);
-				SphereColliderData& collider = entityManager->GetComponent<SphereColliderData>(pair.first);
-				collider.sphere.center = transform.translate;
-				collider.isOldHit = collider.isHit;
-				collider.isHit = false;
-			}
-		}
+		entityManager->Each<SphereColliderData>([&](uint32_t entityId, SphereColliderData& collider) {
+			collider; // 未使用
+			entityIds.push_back(entityId);
+			});
 
 		// エンジンが停止中なら当たり判定を行わない
 		if (!isRunning) {
@@ -128,6 +165,10 @@ namespace QFE {
 					// OnCollisionStayイベント
 					colliderA.isHit = true;
 					colliderB.isHit = true;
+					collisionStayEntityIds_.emplace_back(idA, idB);
+					if (!colliderA.isOldHit){
+						collisionEnterEntityIds_.emplace_back(idA, idB);
+					}
 
 					// 反発しうるレイヤーか
 					if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
@@ -141,12 +182,12 @@ namespace QFE {
 						continue;
 					}
 					// Transformがないなら反発しない
-					if (!entityManager->HasComponent<Transform>(idA) || !entityManager->HasComponent<Transform>(idB)) {
+					if (!entityManager->HasComponent<TransformComponent>(idA) || !entityManager->HasComponent<TransformComponent>(idB)) {
 						assert(false && "Entities do not have Transform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<Transform>(idA);
-					Transform& transformB = entityManager->GetComponent<Transform>(idB);
+					Transform& transformA = entityManager->GetComponent<TransformComponent>(idA).transform;
+					Transform& transformB = entityManager->GetComponent<TransformComponent>(idB).transform;
 
 					// どちらも動く場合は等しく反発
 					Vector3 length = colliderB.sphere.center - colliderA.sphere.center;
@@ -171,18 +212,14 @@ namespace QFE {
 		if (!entityManager->HasComponentStrage<AABBColliderData>()) {
 			return;
 		}
-		auto& aabbColliderStrage = entityManager->GetComponentStrage<AABBColliderData>();
+
+		// AABBColliderDataを持つ全エンティティのIDを取得
 		std::vector<uint32_t> entityIds;
-		for (auto& pair : aabbColliderStrage) {
-			entityIds.push_back(pair.first);
-			if (entityManager->HasComponent<Transform>(pair.first)) {
-				Transform& transform = entityManager->GetComponent<Transform>(pair.first);
-				AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(pair.first);
-				collider.aabb.center = transform.translate;
-				collider.isOldHit = collider.isHit;
-				collider.isHit = false;
-			}
-		}
+		entityManager->Each<AABBColliderData>([&](uint32_t entityId, AABBColliderData& collider) {
+			collider; // 未使用
+			entityIds.push_back(entityId);
+			});
+
 		// エンジンが停止中なら当たり判定を行わない
 		if (!isRunning) {
 			return;
@@ -205,29 +242,27 @@ namespace QFE {
 
 					// タグマスクが衝突不可か
 					if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Tag Mismatch between Entity {} and Entity {}", idA, idB));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
 					// 衝突イベントを発生させるレイヤーか
 					if ((colliderA.eventColliderLayer & colliderB.colliderLayer) == 0) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", idA, idB));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
 					// OnCollisionStayイベント
 					colliderA.isHit = true;
 					colliderB.isHit = true;
+					collisionStayEntityIds_.emplace_back(idA, idB);
+					if (!colliderA.isOldHit) {
+						collisionEnterEntityIds_.emplace_back(idA, idB);
+					}
 
 					// 反発しうるレイヤーか
 					if ((colliderA.colliderLayer & colliderB.eventColliderLayer) == 0) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", idA, idB));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
@@ -237,12 +272,12 @@ namespace QFE {
 						continue;
 					}
 					// Transformがないなら反発しない
-					if (!entityManager->HasComponent<Transform>(idA) || !entityManager->HasComponent<Transform>(idB)) {
+					if (!entityManager->HasComponent<TransformComponent>(idA) || !entityManager->HasComponent<TransformComponent>(idB)) {
 						assert(false && "Entities do not have Transform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<Transform>(idA);
-					Transform& transformB = entityManager->GetComponent<Transform>(idB);
+					Transform& transformA = entityManager->GetComponent<TransformComponent>(idA).transform;
+					Transform& transformB = entityManager->GetComponent<TransformComponent>(idB).transform;
 					// AABBの中心座標
 					Vector3 centerA = colliderA.aabb.center;
 					Vector3 centerB = colliderB.aabb.center;
@@ -293,36 +328,21 @@ namespace QFE {
 
 	void ColliderManager::SphereToAABBUpdate() {
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-		if (!entityManager->HasComponentStrage<SphereColliderData>()) {
-			return;
-		}
-		if (!entityManager->HasComponentStrage<AABBColliderData>()) {
-			return;
-		}
-		auto& sphereColliderStrage = entityManager->GetComponentStrage<SphereColliderData>();
-		auto& aabbColliderStrage = entityManager->GetComponentStrage<AABBColliderData>();
 		std::vector<uint32_t> sphereEntityIds;
-		for (auto& pair : sphereColliderStrage) {
-			sphereEntityIds.push_back(pair.first);
-			if (entityManager->HasComponent<Transform>(pair.first)) {
-				Transform& transform = entityManager->GetComponent<Transform>(pair.first);
-				SphereColliderData& collider = entityManager->GetComponent<SphereColliderData>(pair.first);
-				collider.sphere.center = transform.translate;
-				collider.isOldHit = collider.isHit;
-				collider.isHit = false;
+		entityManager->Each<SphereColliderData>([&](uint32_t entityId, SphereColliderData& collider) {
+			collider; // 未使用
+			if (entityManager->HasComponent<TransformComponent>(entityId)) {
+				sphereEntityIds.push_back(entityId);
 			}
-		}
+			});
 		std::vector<uint32_t> aabbEntityIds;
-		for (auto& pair : aabbColliderStrage) {
-			aabbEntityIds.push_back(pair.first);
-			if (entityManager->HasComponent<Transform>(pair.first)) {
-				Transform& transform = entityManager->GetComponent<Transform>(pair.first);
-				AABBColliderData& collider = entityManager->GetComponent<AABBColliderData>(pair.first);
-				collider.aabb.center = transform.translate;
-				collider.isOldHit = collider.isHit;
-				collider.isHit = false;
+		entityManager->Each<AABBColliderData>([&](uint32_t entityId, AABBColliderData& collider) {
+			collider; // 未使用
+			if (entityManager->HasComponent<TransformComponent>(entityId)) {
+				aabbEntityIds.push_back(entityId);
 			}
-		}
+			});
+	
 		// エンジンが停止中なら当たり判定を行わない
 		if (!isRunning) {
 			return;
@@ -346,29 +366,27 @@ namespace QFE {
 
 					// タグマスクが衝突不可か
 					if (colliderTagMask_.IsCollidable(objA->tag, objB->tag)) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Tag Mismatch between Entity {} and Entity {}", sphereId, aabbId));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
 					// 衝突イベントを発生させるレイヤーか
 					if ((sphereCollider.eventColliderLayer & aabbCollider.colliderLayer) == 0) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Event Layer Mismatch between Entity {} and Entity {}", sphereId, aabbId));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
 					// OnCollisionStayイベント
 					sphereCollider.isHit = true;
 					aabbCollider.isHit = true;
+					collisionStayEntityIds_.emplace_back(sphereId, aabbId);
+					if (!sphereCollider.isOldHit) {
+						collisionEnterEntityIds_.emplace_back(sphereId, aabbId);
+					}
 
 					// 反発しうるレイヤーか
 					if ((sphereCollider.colliderLayer & aabbCollider.eventColliderLayer) == 0) {
-#ifdef QFE_OPTIMIZE_OFF
 						QFE_LOG(std::format("Collider Repulsion Layer Mismatch between Entity{} and Entity {}", sphereId, aabbId));
-#endif // QFE_OPTIMIZE_OFF
 						continue;
 					}
 
@@ -378,12 +396,12 @@ namespace QFE {
 						continue;
 					}
 					// Transformがないなら反発しない
-					if (!entityManager->HasComponent<Transform>(sphereId) || !entityManager->HasComponent<Transform>(aabbId)) {
+					if (!entityManager->HasComponent<TransformComponent>(sphereId) || !entityManager->HasComponent<TransformComponent>(aabbId)) {
 						assert(false && "Entities do not have Transform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<Transform>(sphereId);
-					Transform& transformB = entityManager->GetComponent<Transform>(aabbId);
+					Transform& transformA = entityManager->GetComponent<TransformComponent>(sphereId).transform;
+					Transform& transformB = entityManager->GetComponent<TransformComponent>(aabbId).transform;
 
 					// 最近点を取得
 					Vector3 closestPoint = MyMath::ClosestPoint(sphereCollider.sphere, aabbCollider.aabb);
