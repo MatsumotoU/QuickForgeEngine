@@ -4,9 +4,8 @@
 #include <format>
 #include "engine/include/core/EngineDefines.h"
 
-#ifdef QFE_OPTIMIZE_OFF
 #include "utility/String/MyString.h"
-#endif // QFE_OPTIMIZE_OFF
+
 using namespace QFE;
 Microsoft::WRL::ComPtr<ID3D12Resource> BufferGenerator::Generate(ID3D12Device* device, size_t sizeInBytes) {
 	// * Resourceを生成する * //
