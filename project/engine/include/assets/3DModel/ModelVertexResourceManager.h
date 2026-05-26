@@ -37,6 +37,8 @@ namespace QFE {
 		 */
 		uint32_t Assign(ID3D12Device* device, const ModelData& modelData, const std::string& modelName);
 
+		/// @brief 平面型の頂点データを生成してリソースに割り当てる
+		uint32_t AssignPlane(ID3D12Device* device, float width = 1.0f, float height = 1.0f, uint32_t segmentsX = 1, uint32_t segmentsY = 1, bool invertFace = false);
 		/// @brief ボックス型の頂点データを生成してリソースに割り当てる
 		uint32_t AssignBox(ID3D12Device* device, bool invertFace = false);
 		/// @brief リング型の頂点データを生成してリソースに割り当てる
