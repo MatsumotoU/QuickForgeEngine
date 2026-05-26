@@ -1,9 +1,42 @@
 #include "engine/include/assets/3DModel/PrimitiveVertices.h"
 
-QFE::MeshData QFE::PRIMITIVE::CreateBox(bool invertFace)
-{
+QFE::MeshData QFE::PRIMITIVE::CreatePlane(float width, float height, uint32_t segmentsX, uint32_t segmentsY, bool invertFace) {
+	MeshData planeMesh(segmentsX * segmentsY * 6);
+	for (uint32_t i = 0; i < segmentsX * segmentsY * 6; ++i) {
+		planeMesh.vertices.push_back(VertexData());
+	}
+
+	// 頂点データを設定
+	for (uint32_t y = 0; y < segmentsY; ++y) {
+		for (uint32_t x = 0; x < segmentsX; ++x) {
+			uint32_t index = (y * segmentsX + x) * 6;
+			float x0 = (x / static_cast<float>(segmentsX)) * width - width / 2.0f;
+			float x1 = ((x + 1) / static_cast<float>(segmentsX)) * width - width / 2.0f;
+			float y0 = (y / static_cast<float>(segmentsY)) * height - height / 2.0f;
+			float y1 = ((y + 1) / static_cast<float>(segmentsY)) * height - height / 2.0f;
+			// First triangle
+			planeMesh.vertices[index].position = { x0, y0, 0.0f, 1.0f }; planeMesh.vertices[index].texcoord = { 0.0f, 1.0f }; planeMesh.vertices[index].normal = { 0.0f, 0.0f, -1.0f };
+			planeMesh.vertices[index + 1].position = { x1, y1, 0.0f, 1.0f }; planeMesh.vertices[index + 1].texcoord = { 1.0f, 0.0f }; planeMesh.vertices[index + 1].normal = { 0.0f, 0.0f, -1.0f };
+			planeMesh.vertices[index + 2].position = { x1, y0, 0.0f, 1.0f }; planeMesh.vertices[index + 2].texcoord = { 1.0f, 1.0f }; planeMesh.vertices[index + 2].normal = { 0.0f, 0.0f, -1.0f };
+			// Second triangle
+			planeMesh.vertices[index + 3].position = { x0, y0, 0.0f, 1.0f }; planeMesh.vertices[index + 3].texcoord = { 0.0f, 1.0f }; planeMesh.vertices[index + 3].normal = { 0.0f, 0.0f, -1.0f };
+			planeMesh.vertices[index + 4].position = { x0, y1, 0.0f, 1.0f }; planeMesh.vertices[index + 4].texcoord = { 0.0f, 0.0f }; planeMesh.vertices[index + 4].normal = { 0.0f, 0.0f, -1.0f };
+			planeMesh.vertices[index + 5].position = { x1, y1, 0.0f, 1.0f }; planeMesh.vertices[index + 5].texcoord = { 1.0f, 0.0f }; planeMesh.vertices[index + 5].normal = { 0.0f, 0.0f, -1.0f };
+		}
+	}
+
+	// 法線を反転させる
+	if (invertFace) {
+		for (auto& vertex : planeMesh.vertices) {
+			vertex.normal = -vertex.normal;
+		}
+	}
+	return planeMesh;
+}
+
+QFE::MeshData QFE::PRIMITIVE::CreateBox(bool invertFace) {
 	MeshData boxMesh(36);
-	for(int i = 0; i < 36; ++i) {
+	for (int i = 0; i < 36; ++i) {
 		boxMesh.vertices.push_back(VertexData());
 	}
 
@@ -67,7 +100,7 @@ QFE::MeshData QFE::PRIMITIVE::CreateBox(bool invertFace)
 			std::swap(boxMesh.vertices[i], boxMesh.vertices[i + 2]);
 		}
 	}
-	
+
 	return boxMesh;
 }
 

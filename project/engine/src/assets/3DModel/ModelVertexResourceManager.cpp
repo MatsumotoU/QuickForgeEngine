@@ -61,6 +61,27 @@ uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelDat
     return firstHandle;
 }
 
+uint32_t QFE::ModelVertexResourceManager::AssignPlane(ID3D12Device* device, float width, float height, uint32_t segmentsX, uint32_t segmentsY, bool invertFace) {
+	// 同じ名前のモデルが既に存在する場合はそのハンドルを返す
+	std::string modelName = "Plane_" + std::to_string(width) + "_" + std::to_string(height) + "_" + std::to_string(segmentsX) + "_" + std::to_string(segmentsY) + "_" + std::to_string(invertFace);
+	auto it = modelHandleMap_.find(modelName);
+    if (it != modelHandleMap_.end()) {
+        return it->second;
+    }
+	// メッシュデータを作成する
+	MeshData planeMesh = PRIMITIVE::CreatePlane(width, height, segmentsX, segmentsY, invertFace);
+	// 頂点データを割り当てる
+	modelVertexBuffers_.emplace_back();
+	modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(planeMesh.vertices.size()));
+    for (size_t i = 0; i < planeMesh.vertices.size(); ++i) {
+        modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), planeMesh.vertices[i]);
+	}
+	// ハンドルを生成してマップに登録
+	modelHandleMap_.insert({ modelName, static_cast<uint32_t>(modelVertexBuffers_.size() - 1) });
+	// ハンドルを返す
+	return static_cast<uint32_t>(modelVertexBuffers_.size() - 1);
+}
+
 uint32_t QFE::ModelVertexResourceManager::AssignBox(ID3D12Device* device, bool invertFace)
 {
 	// 同じ名前のモデルが既に存在する場合はそのハンドルを返す
