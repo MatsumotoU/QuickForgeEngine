@@ -50,3 +50,5 @@ Resources/
 # Assimp Lib
 !externals/assimp/lib/Debug/
 !externals/assimp/lib/Release/
+!engine/resources/
+!engine/resources/shader/**
