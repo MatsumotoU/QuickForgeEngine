@@ -1,3 +1,6 @@
+-- include: サブフォルダの premake を workspace スコープ内で読み込む
+local _root = path.getdirectory(_SCRIPT)
+
 -- Solution
 workspace "QuickForgeEngine"
     architecture "x64"
@@ -53,7 +56,7 @@ workspace "QuickForgeEngine"
         runtime "Release"
     filter ""
     
-group "QuickForge" -- MyMainProject
+group "Applications" -- MyEngineProjects
     project "Editor" -- Editor
         location "editor"
         kind "WindowedApp"
@@ -83,7 +86,6 @@ group "QuickForge" -- MyMainProject
             "./externals/Mono/",
             "./externals/Mono/include",
             "./externals/Mono/include/mono-2.0/",
-            "./externals/nlohmann/",
         }
         -- 追加のインクルード
         includedirs{
@@ -109,79 +111,10 @@ group "QuickForge" -- MyMainProject
             '{COPY} "../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"',
             '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxcompiler.dll" "%{cfg.targetdir}"',
             '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxil.dll" "%{cfg.targetdir}"'
-        }       
+        }           
+group ""
 
-    project "SandBox"
-        location "sandbox"
-        kind "WindowedApp"
-        language "C++"
-        debugdir "%{wks.location}"
-        files {"sandbox/**.h","sandbox/**.cpp"}
-        links{
-            "Engine",
-            "ExternalFolders"
-        }
-        libdirs {
-            "externals/Mono/lib"
-        }
-
-        -- 警告レベル4
-        warnings "Extra"
-
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "./externals/",
-            "./externals/sol2",
-            "./externals/assimp/",
-            "./externals/assimp/include/",
-            "./externals/DirectXTex/",
-            "./externals/imgui/",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
-            "./externals/nlohmann/",
-        }
-
-        -- 追加のインクルード
-        includedirs{
-            "./",
-            "./engine/include/",
-        }
-
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "./externals/",
-            "./externals/sol2",
-            "./externals/assimp/",
-            "./externals/assimp/include/",
-            "./externals/DirectXTex/",
-            "./externals/imgui/",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
-            "./externals/nlohmann/",
-        }
-        
-        -- リソースのコピー（Release構成のみ）
-        filter "configurations:Release"
-            postbuildcommands {
-                '{COPYDIR} "../Resources" "%{cfg.targetdir}/Resources"',
-            }
-        filter ""
-
-        -- MonoとWindows SDKのDLLをコピー
-        postbuildcommands {
-            -- フォルダのコピー
-            '{COPYDIR} "../engine/resources" "%{cfg.targetdir}/engine/resources"',
-            '{COPYDIR} "../externals/Mono/lib" "%{cfg.targetdir}/mono/lib"',
-            '{COPYDIR} "../externals/Mono/etc" "%{cfg.targetdir}/mono/etc"',
-    
-            -- ファイルのコピー
-            '{COPY} "../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"',
-            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxcompiler.dll" "%{cfg.targetdir}"',
-            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxil.dll" "%{cfg.targetdir}"'
-        } 
-
+group "EngineProjects" -- EngineProjects
     project "Engine" -- Engine
         location "engine"
         kind "StaticLib" 
@@ -203,22 +136,15 @@ group "QuickForge" -- MyMainProject
 
         -- 外部ファイルのインクルード
         externalincludedirs {
-            "./externals/",
-            "./externals/sol2",
-            "./externals/assimp/",
-            "./externals/assimp/include/",
-            "./externals/DirectXTex/",
-            "./externals/imgui/",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
-            "./externals/nlohmann/",
-        }
-
-        -- 追加のインクルード
-        includedirs{
-            "./",
-            "./engine/include/",
+            "%{wks.location}/externals/",
+            "%{wks.location}/externals/sol2",
+            "%{wks.location}/externals/assimp/",
+            "%{wks.location}/externals/assimp/include/",
+            "%{wks.location}/externals/DirectXTex/",
+            "%{wks.location}/externals/imgui/",
+            "%{wks.location}/externals/Mono/",
+            "%{wks.location}/externals/Mono/include",
+            "%{wks.location}/externals/Mono/include/mono-2.0/",
         }
 
         prebuildcommands {
@@ -237,13 +163,12 @@ group "QuickForge" -- MyMainProject
                 "externals/assimp/lib/Release"
             }
         filter ""
+    
+    -- 異存なしのコアプロジェクトの読み込み
+    dofile(path.join(_root, "engine/core/premake5.lua"))
+    -- グラフィックエンジンプロジェクトの読み込み
+    dofile(path.join(_root, "engine/graphics/premake5.lua"))
 
-    project "launcher" -- Launcher
-        location "launcher"
-        kind "StaticLib" 
-        language "C++"
-        
-        debugdir "%{wks.location}"
 group ""
 
 -- MySubProject

@@ -1,0 +1,188 @@
+#include "DirectXDevice.h"
+#include <cassert>
+
+#pragma comment(lib,"d3d12.lib")
+#pragma comment(lib,"dxgi.lib")
+#pragma comment(lib,"dxguid.lib")
+#pragma comment(lib,"dxcompiler.lib")
+
+#include "EngineDefines.h"
+
+#ifdef QFE_OPTIMIZE_OFF
+#include "string/MyString.h"
+#endif // QFE_OPTIMIZE_OFF
+
+namespace QFE::GRAPHIC::INTERNAL {
+
+	DirectXDevice::DirectXDevice() {
+#ifdef QFE_OPTIMIZE_OFF
+		disableError_ = false;
+		disableWarning_ = false;
+#endif // QFE_OPTIMIZE_OFF
+	}
+
+	DirectXDevice::~DirectXDevice() {
+#ifdef QFE_OPTIMIZE_OFF
+		QFE_LOG("-----DirectXDevice:Shutdown-----\n");
+		QFE_LOG(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
+		QFE_LOG(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
+#endif // QFE_OPTIMIZE_OFF
+	}
+
+	void DirectXDevice::Initialize() {
+#ifdef QFE_OPTIMIZE_OFF
+		QFE_LOG("-----DirectXDevice:Initialize-----\n");
+		QFE_LOG(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
+		QFE_LOG(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
+#endif // QFE_OPTIMIZE_OFF
+		// DXGIファクトリーの生成
+		CreateDxgiFactory();
+		// アダプターの選定
+		FindAdapter();
+		// D3D12Deviceの生成
+		CreateDevice();
+#ifdef QFE_OPTIMIZE_OFF
+		QFE_LOG("-----DirectXDevice:Initialize Complete-----\n");
+#endif // QFE_OPTIMIZE_OFF
+	}
+
+	void DirectXDevice::Shutdown() {
+	}
+
+	IDXGIFactory7* DirectXDevice::GetDxgiFactory() const {
+		return dxgiFactory_.Get();
+	}
+
+	ID3D12Device* DirectXDevice::GetDevice() const {
+		return device_.Get();
+	}
+
+	IDXGIAdapter4* DirectXDevice::GetUseAdapter() const {
+		return useAdapter_.Get();
+	}
+#ifdef QFE_OPTIMIZE_OFF
+	void DirectXDevice::SetDisableError(bool disable) {
+		disableError_ = disable;
+		QFE_LOG(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
+	}
+	void DirectXDevice::SetDisableWarning(bool disable) {
+		disableWarning_ = disable;
+		QFE_LOG(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
+	}
+#endif // QFE_OPTIMIZE_OFF
+
+	void DirectXDevice::CreateDxgiFactory() {
+		assert(!dxgiFactory_);
+		// DXGIファクトリーの生成
+		HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory_));
+		hr;
+		assert(SUCCEEDED(hr));
+	}
+
+	void DirectXDevice::FindAdapter() {
+		// digiFactoryが生成できてないなら起動させない
+		assert(!useAdapter_);
+		assert(dxgiFactory_);
+
+		// * アダプタの選定* //
+		for (UINT i = 0; dxgiFactory_.Get()->EnumAdapterByGpuPreference(i,
+			DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_)) !=
+			DXGI_ERROR_NOT_FOUND; ++i) {
+
+			// アダプターの情報を取得する
+			DXGI_ADAPTER_DESC3 adapterDesc{};
+			HRESULT hr = useAdapter_.Get()->GetDesc3(&adapterDesc);
+			hr;
+			assert(SUCCEEDED(hr));
+
+			// ソフトウェアアダプタでなければ採用
+			if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
+				// 採用したアダプタの情報をログに出力。
+#ifdef QFE_OPTIMIZE_OFF
+				QFE_LOG(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+#endif // QFE_OPTIMIZE_OFF
+				break;
+			}
+			useAdapter_ = nullptr;
+		}
+
+		// 適切なアダプタを見つけられなかったので起動できない
+		assert(useAdapter_ != nullptr);
+	}
+
+	void DirectXDevice::CreateDevice() {
+		// digiFactoryが生成できてないなら起動させない
+		assert(!device_);
+		assert(useAdapter_);
+
+		// * D3D12Deviceの生成 * //
+		// 機能レベルとログ出力用の文字列
+		D3D_FEATURE_LEVEL featureLevels[] = {
+			D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0
+		};
+		const char* featureLevelStrings[] = { "12.2","12.1","12.0" };
+		// 高い順に生成できるか試す
+		for (size_t i = 0; i < _countof(featureLevels); ++i) {
+			// 採用したアダプターでデバイスを作成
+			HRESULT hr = D3D12CreateDevice(useAdapter_.Get(), featureLevels[i], IID_PPV_ARGS(&device_));
+			// 指定した機能レベルでデバイスが生成できたかを確認
+			if (SUCCEEDED(hr)) {
+				// 生成できたのでログ出力してループ脱出
+#ifdef QFE_OPTIMIZE_OFF
+				QFE_LOG(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
+#endif // QFE_OPTIMIZE_OFF
+				break;
+			}
+		}
+		// デバイス生成が上手くいかなかったので起動できない
+		assert(device_ != nullptr);
+
+#ifdef QFE_OPTIMIZE_OFF
+		QFE_LOG("Complete create D3D12Device");
+#endif // QFE_OPTIMIZE_OFF
+
+		// エラー落ち処理
+#ifdef QFE_OPTIMIZE_OFF
+		QFE_LOG("---EnebleBreakOnSeverity---");
+		ID3D12InfoQueue* infoQueue = nullptr;
+		if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+
+			// ヤバエラー落ち
+			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+			QFE_LOG("EnebleBreakOnSeverity_CORRUPTION");
+			// エラー落ち
+			if (disableError_) {
+				QFE_LOG("!!! DisableBreakOnSeverity_ERROR !!!");
+			} else {
+				infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+				QFE_LOG("EnebleBreakOnSeverity_ERROR");
+			}
+			// 警告
+			if (disableWarning_) {
+				QFE_LOG("!!! DisableBreakOnSeverity_WARNING !!!");
+			} else {
+				infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+				QFE_LOG("EnebleBreakOnSeverity_WARNING");
+			}
+
+			// エラー抑制
+			D3D12_MESSAGE_ID denyIds[] = {
+				D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+			};
+			// 抑制レベル
+			D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+			D3D12_INFO_QUEUE_FILTER filter{};
+			filter.DenyList.NumIDs = _countof(denyIds);
+			filter.DenyList.pIDList = denyIds;
+			filter.DenyList.NumSeverities = _countof(severities);
+			filter.DenyList.pSeverityList = severities;
+			// 指定メッセージを抑制
+			infoQueue->PushStorageFilter(&filter);
+
+			// 解放
+			infoQueue->Release();
+		}
+#endif // QFE_OPTIMIZE_OFF
+	}
+
+}

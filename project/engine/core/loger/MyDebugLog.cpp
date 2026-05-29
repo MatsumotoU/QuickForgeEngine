@@ -1,0 +1,133 @@
+#include "MyDebugLog.h"
+#include "../EngineDefines.h"
+
+#include <cassert>
+
+using namespace QFE;
+
+void MyDebugLog::Initialize() {
+	try
+	{
+		log_.clear();
+		engineLog_.clear();
+		editorLog_.clear();
+		warningLog_.clear();
+		errorLog_.clear();
+		locationLogMap_.clear();
+
+		std::filesystem::create_directory("logs");
+		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+		std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
+			nowSeconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
+		std::chrono::zoned_time localTime{ std::chrono::current_zone(),nowSeconds };
+		std::string dateString = std::format("{:%Y-%m-%d_%H%M%S}", localTime);
+		logFilePath_ = std::string("logs/") + dateString + ".logs";
+
+		logStream_.open(logFilePath_);
+		logStream_ << "CreateLog" << std::endl;
+	}
+	catch (const std::exception&)
+	{
+		QFE_REPORT_SYSTEM_ERROR("Failed to initialize MyDebugLog.",SystemError::Abort);
+	}
+}
+
+void MyDebugLog::Finalize() {
+	logStream_.close();
+}
+
+void MyDebugLog::Log(const std::string& message, const std::source_location& location) {
+	try
+	{
+		// ログ出力の際に、時間と関数名を付与する
+		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+		std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
+			nowSeconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
+		std::chrono::zoned_time localTime{ std::chrono::current_zone(),nowSeconds };
+		std::string timeStamp = std::format("{:%Y-%m-%d_%H-%M-%S}", localTime);
+
+		// ログの保存と、ログファイルへの出力
+		log_.push_back("[" + timeStamp + "] " + message);
+		if (log_.size() > 300) {
+			log_.erase(log_.begin());
+		}
+
+		// 関数名を取得
+		std::string funcName = location.function_name();
+
+		// ログファイルへの出力
+		logStream_ << "[" + timeStamp + "] " + funcName + ": " + message << std::endl;
+		std::string logMessage = message + "\n";
+		OutputDebugStringA(logMessage.c_str());
+
+		// ログの場所ごとに分類されたログに保存
+		std::string className = location.file_name();
+		locationLogMap_[className][funcName].push_back(message);
+		if (locationLogMap_[className][funcName].size() > 300) {
+			locationLogMap_[className][funcName].pop_front();
+		}
+	}
+	catch (const std::exception&)
+	{
+		assert(false && "faild to write logFile.");
+	}
+}
+
+const std::vector<std::string>* MyDebugLog::GetLog() {
+	return &log_;
+}
+
+void MyDebugLog::DebugLogClear() {
+	engineLog_.clear();
+	editorLog_.clear();
+	warningLog_.clear();
+	errorLog_.clear();
+}
+
+void QFE::MyDebugLog::ClearLocationLogs()
+{
+	// ログを消す前にどのくらい容量を使っているかを出力する
+	size_t totalSize = 0;
+	for (const auto& [className, funcMap] : locationLogMap_) {
+		for (const auto& [funcName, logs] : funcMap) {
+			totalSize += logs.size();
+		}
+	}
+	// ログを消す前の容量を出力する
+	std::string logMessage = "ClearLocationLogs: totalSize = " + std::to_string(totalSize) + "\n";
+	OutputDebugStringA(logMessage.c_str());
+
+	// ログを消す
+	locationLogMap_.clear();
+}
+
+void QFE::DebugLog(const std::string& message, const LogLevel& logLevel, const std::source_location& location) {
+
+	MyDebugLog::GetInstance()->Log(message, location);
+	if (logLevel == LogLevel::EngineInfo) {
+		MyDebugLog::GetInstance()->engineLog_.push_back(message);
+		if (MyDebugLog::GetInstance()->engineLog_.size() > 300) {
+			MyDebugLog::GetInstance()->engineLog_.erase(MyDebugLog::GetInstance()->engineLog_.begin());
+		}
+	} else if (logLevel == LogLevel::EditorInfo) {
+		MyDebugLog::GetInstance()->editorLog_.push_back(message);
+		if (MyDebugLog::GetInstance()->editorLog_.size() > 300) {
+			MyDebugLog::GetInstance()->editorLog_.erase(MyDebugLog::GetInstance()->editorLog_.begin());
+		}
+	} else if (logLevel == LogLevel::Warning) {
+		MyDebugLog::GetInstance()->warningLog_.push_back(message);
+		if (MyDebugLog::GetInstance()->warningLog_.size() > 300) {
+			MyDebugLog::GetInstance()->warningLog_.erase(MyDebugLog::GetInstance()->warningLog_.begin());
+		}
+	} else if (logLevel == LogLevel::Error) {
+		MyDebugLog::GetInstance()->errorLog_.push_back(message);
+		if (MyDebugLog::GetInstance()->errorLog_.size() > 300) {
+			MyDebugLog::GetInstance()->errorLog_.erase(MyDebugLog::GetInstance()->errorLog_.begin());
+		}
+	}
+}
+
+void QFE::DebugLogCsharp(const std::string& message) {
+	message;
+	QFE_LOG(message, LogLevel::EditorInfo);
+}
