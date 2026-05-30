@@ -111,7 +111,26 @@ group "Applications" -- MyEngineProjects
             '{COPY} "../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"',
             '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxcompiler.dll" "%{cfg.targetdir}"',
             '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxil.dll" "%{cfg.targetdir}"'
-        }           
+        }    
+        
+    project "Sandbox" -- Sandbox
+        location "sandbox"
+        kind "WindowedApp"
+        language "C++"
+        debugdir "%{wks.location}"
+        files {
+            "sandbox/**.h",
+            "sandbox/**.cpp"
+        }
+
+        -- 警告レベル4
+        warnings "Extra"
+
+        -- 外部ファイルのインクルード
+        externalincludedirs {
+            "./externals/",
+            "./engine/"
+        }
 group ""
 
 group "EngineProjects" -- EngineProjects

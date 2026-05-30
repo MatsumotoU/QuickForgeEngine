@@ -41,6 +41,41 @@ namespace QFE::GRAPHIC::INTERNAL {
 		AssignBackbuffer();
 	}
 
+	void SwapChain::ClearBackBuffer(ID3D12GraphicsCommandList* commandList, const FLOAT clearColor[4]) {
+		assert(commandList != nullptr && "CommandList is nullptr in ClearBackBuffer.");
+		assert(CheckBackBufferViews() && "BackBufferViews are not properly assigned in ClearBackBuffer.");
+		for (uint32_t i = 0; i < backBuffers_.size(); ++i) {
+			commandList->ClearRenderTargetView(backBufferViews_[i].cpuHandle_, clearColor, 0, nullptr);
+			QFE_LOG(std::format("Clear BackBuffer: {}", i));
+		}
+	}
+
+	void SwapChain::TransitionCurrentBackBufferToRenderTarget(ID3D12GraphicsCommandList* commandList) {
+		assert(commandList != nullptr && "CommandList is nullptr in TransitionCurrentBackBufferToRenderTarget.");
+		assert(CheckBackBufferViews() && "BackBufferViews are not properly assigned in TransitionCurrentBackBufferToRenderTarget.");
+		
+		D3D12_RESOURCE_BARRIER barrier = {};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Transition.pResource = GetCurrentBackBuffer();
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		commandList->ResourceBarrier(1, &barrier);
+	}
+
+	void SwapChain::TransitionCurrentBackBufferToPresent(ID3D12GraphicsCommandList* commandList) {
+		assert(commandList != nullptr && "CommandList is nullptr in TransitionCurrentBackBufferToPresent.");
+		assert(CheckBackBufferViews() && "BackBufferViews are not properly assigned in TransitionCurrentBackBufferToPresent.");
+
+		D3D12_RESOURCE_BARRIER barrier = {};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Transition.pResource = GetCurrentBackBuffer();
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		commandList->ResourceBarrier(1, &barrier);
+	}
+
 	ID3D12Resource* SwapChain::GetCurrentBackBuffer() const {
 		return backBuffers_[swapChain_->GetCurrentBackBufferIndex()].Get();
 	}
