@@ -185,6 +185,8 @@ group "EngineProjects" -- EngineProjects
     
     -- 異存なしのコアプロジェクトの読み込み
     dofile(path.join(_root, "engine/core/premake5.lua"))
+    -- ウィンドウシステムプロジェクトの読み込み
+    dofile(path.join(_root, "engine/window/premake5.lua"))
     -- グラフィックエンジンプロジェクトの読み込み
     dofile(path.join(_root, "engine/graphics/premake5.lua"))
 

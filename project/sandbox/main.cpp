@@ -1,15 +1,40 @@
 #define NOMINMAX
 #include <Windows.h>
 
+#include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-	hInstance; // 未使用の変数を明示的に無視する
-	hPrevInstance; // 未使用の変数を明示的に無視する
-	lpCmdLine; // 未使用の変数を明示的に無視する
-	nCmdShow; // 未使用の変数を明示的に無視する
+	// ゲームウィンドウマネージャの初期化とウィンドウの追加
+	std::unique_ptr<QFE::GameWindowManager> gameWindowManager = std::make_unique<QFE::GameWindowManager>();
+	gameWindowManager->Initialize();
+	gameWindowManager->AddWindow(1280, 720, "Test Window");
 
+	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
+	std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> graphicEngine = 
+		std::make_unique<QFE::GRAPHIC::D3D12GraphicEngine>(gameWindowManager->GetWindow("Test Window"));
+	graphicEngine->Initialize();
 
+	// メインループ
+	while (gameWindowManager->IsWindowActive()) {
+		MSG msg;
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+			// WM_QUITメッセージが来たらループを抜ける
+			if (msg.message == WM_QUIT) {
+				break;
+			}
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+
+		} else {
+			graphicEngine->PreDraw();
+			// 描画処理
+			graphicEngine->PostDraw();
+		}
+	}
+
+	graphicEngine->Shutdown();
+	gameWindowManager->Shutdown();
     return 0;
 }

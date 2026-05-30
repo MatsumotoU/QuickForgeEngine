@@ -1,6 +1,7 @@
 #include "D3D12GraphicEngine.h"
 #include "EngineDefines.h"
 
+#include "dx12/checker/DirectX12DebugCore.h"
 #include "dx12/DirectXDevice.h"
 #include "dx12/DirectXResourceContainer.h"
 #include "dx12/descriptors/DescriptorHeapManager.h"
@@ -16,6 +17,7 @@ namespace {
 
 QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	hwnd_(hwnd0),
+	debugCore_(std::make_unique<INTERNAL::DirectX12DebugCore>()),
 	directXDevice_(std::make_unique<INTERNAL::DirectXDevice>()),
 	resourceContainer_(std::make_unique<INTERNAL::DirectXResourceContainer>()),
 	descriptorHeapManager_(std::make_unique<INTERNAL::DescriptorHeapManager>()),
@@ -23,6 +25,8 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	swapChain_(std::make_unique<INTERNAL::SwapChain>()),
 	fence_(std::make_unique<INTERNAL::Fence>()) {
 }
+
+QFE::GRAPHIC::D3D12GraphicEngine::~D3D12GraphicEngine() = default;
 
 void QFE::GRAPHIC::D3D12GraphicEngine::Initialize() {
 	// ウィンドウのクライアント領域のサイズを取得

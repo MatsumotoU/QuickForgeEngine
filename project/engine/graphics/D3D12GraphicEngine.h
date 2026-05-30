@@ -11,6 +11,7 @@
 
 namespace QFE::GRAPHIC {
 	namespace INTERNAL {
+		class DirectX12DebugCore;
 		class DirectXDevice;
 		class DirectXResourceContainer;
 		class DescriptorHeapManager;
@@ -24,6 +25,7 @@ namespace QFE::GRAPHIC {
 	public:
 		/// @brief wndowsに依存したグラフィックエンジンです.描画ウィンドウのハンドルの引数に取ります.
 		explicit D3D12GraphicEngine(HWND hwnd);
+		~D3D12GraphicEngine() override;
 
 		void Initialize() override;
 		void PreDraw() override;
@@ -39,6 +41,7 @@ namespace QFE::GRAPHIC {
 		void ClearDepthStencil();
 
 		HWND hwnd_;// ウィンドウハンドル
+		std::unique_ptr<INTERNAL::DirectX12DebugCore> debugCore_;// DirectX12のデバッグコアクラス
 
 		std::unique_ptr<INTERNAL::DirectXDevice> directXDevice_;// DirectX12の共通管理クラス
 		std::unique_ptr<INTERNAL::DirectXResourceContainer> resourceContainer_;// DirectX12のリソース管理クラス
