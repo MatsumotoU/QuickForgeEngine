@@ -138,7 +138,7 @@ void SceneObject::Update() {
 		for (uint32_t& animHandle : animComp.playingAnimHandles) {
 			// アニメーションクリップからAffine行列を作成
 			AnimationPlayClip* animPlayClip = animPlayer->GetAnimationPlayClip(animHandle);
-			Transform animTransform = animPlayClip->animClip->GetTransformAtTime(animPlayClip->currentTime);
+			EulerTransform animTransform = animPlayClip->animClip->GetTransformAtTime(animPlayClip->currentTime);
 			Matrix4x4 animMatrix = Matrix4x4::MakeAffineMatrix(animTransform);
 
 			// アニメーション行列を保存
@@ -402,7 +402,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
 	entityManager_.EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
-	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
+	// EulerTransformコンポーネントとSceneObjectDataコンポーネントを追加
 	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName(modelName + "_ParticleEmitter");
@@ -506,7 +506,7 @@ void SceneObject::AddSprite(const std::string& spriteName, float width, float he
 	// SpriteDataコンポーネントを追加
 	entityManager_.EmplaceComponent<SpriteData>(entityId, spriteData);
 
-	// TransformコンポーネントとSceneObjectDataコンポーネントを追加
+	// EulerTransformコンポーネントとSceneObjectDataコンポーネントを追加
 	entityManager_.EmplaceComponent<TransformComponent>(entityId, TransformComponent());
 	SceneObjectData sceneObjectData;
 	sceneObjectData.name = CheckUniqueEntityName(spriteName);
@@ -694,8 +694,8 @@ void SceneObject::ParentChild(uint32_t parentId, uint32_t childId) {
 	if (!entityManager_.HasComponent<TransformComponent>(parentId) || !entityManager_.HasComponent<TransformComponent>(childId)) {
 		return;
 	}
-	Transform& parentTransform = entityManager_.GetComponent<TransformComponent>(parentId).transform;
-	Transform& childTransform = entityManager_.GetComponent<TransformComponent>(childId).transform;
+	EulerTransform& parentTransform = entityManager_.GetComponent<TransformComponent>(parentId).transform;
+	EulerTransform& childTransform = entityManager_.GetComponent<TransformComponent>(childId).transform;
 	childTransform.translate -= parentTransform.translate;
 }
 
@@ -724,13 +724,13 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		std::chrono::steady_clock::time_point spriteEnd = std::chrono::steady_clock::now();
 		QFE_LOG("Deserialize SpriteData Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(spriteEnd - spriteStart).count()) + " ms");
 	}
-	if (entityJson.contains("Transform")) {
+	if (entityJson.contains("EulerTransform")) {
 		std::chrono::steady_clock::time_point transformStart = std::chrono::steady_clock::now();
 		entityManager_.EmplaceComponent<TransformComponent>(entityId);
 		TransformComponent& transform = entityManager_.GetComponent<TransformComponent>(entityId);
-		transform.Deserialize(entityJson["Transform"]);
+		transform.Deserialize(entityJson["EulerTransform"]);
 		std::chrono::steady_clock::time_point transformEnd = std::chrono::steady_clock::now();
-		QFE_LOG("Deserialize Transform Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(transformEnd - transformStart).count()) + " ms");
+		QFE_LOG("Deserialize EulerTransform Time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(transformEnd - transformStart).count()) + " ms");
 	}
 	if (entityJson.contains("ParentData")) {
 		std::chrono::steady_clock::time_point parentDataStart = std::chrono::steady_clock::now();

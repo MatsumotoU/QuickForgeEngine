@@ -26,7 +26,7 @@ Vector4 Vector4::Normalize() const {
 	return result;
 }
 
-Vector4 Vector4::Transform(const Vector4& vector, const Matrix4x4& matrix) {
+Vector4 Vector4::EulerTransform(const Vector4& vector, const Matrix4x4& matrix) {
 	Vector4 result;
 	result.x = vector.x * matrix.Get(0, 0) + vector.y * matrix.Get(1, 0) + vector.z * matrix.Get(2, 0) + vector.w * matrix.Get(3, 0);
 	result.y = vector.x * matrix.Get(0, 1) + vector.y * matrix.Get(1, 1) + vector.z * matrix.Get(2, 1) + vector.w * matrix.Get(3, 1);

@@ -82,30 +82,30 @@ namespace QFE {
 
 	void ColliderManager::ResetCollisionStates() {
 		EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-		// SphereColliderDataを持つ全エンティティのIDを取得し、Transformコンポーネントがある場合はSphereの中心を更新する
+		// SphereColliderDataを持つ全エンティティのIDを取得し、EulerTransformコンポーネントがある場合はSphereの中心を更新する
 		if (entityManager->HasComponentStrage<SphereColliderData>()) {
 			entityManager->Each<SphereColliderData>([&](uint32_t entityId, SphereColliderData& collider) {
 				// まずはisOldHitを更新してからisHitをリセットする
 				collider.isOldHit = collider.isHit;
 				collider.isHit = false;
-				// Transformコンポーネントがある場合は、コライダーデータの中心をトランスフォームの位置に更新する
+				// EulerTransformコンポーネントがある場合は、コライダーデータの中心をトランスフォームの位置に更新する
 				if (entityManager->HasComponent<TransformComponent>(entityId)) {
-					Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
+					EulerTransform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
 					collider.sphere.center = transform.translate;
 				} else {
 					QFE_REPORT_SYSTEM_ERROR(std::format("Entity {} with SphereColliderData does not have TransformComponent.", entityId), SystemError::Abort);
 				}
 			});
 		}
-		// AABBColliderDataを持つ全エンティティのIDを取得し、Transformコンポーネントがある場合はAABBの中心を更新する
+		// AABBColliderDataを持つ全エンティティのIDを取得し、EulerTransformコンポーネントがある場合はAABBの中心を更新する
 		if (entityManager->HasComponentStrage<AABBColliderData>()) {
 			entityManager->Each<AABBColliderData>([&](uint32_t entityId, AABBColliderData& collider) {
 				// まずはisOldHitを更新してからisHitをリセットする
 				collider.isOldHit = collider.isHit;
 				collider.isHit = false;
-				// Transformコンポーネントがある場合は、コライダーデータの中心をトランスフォームの位置に更新する
+				// EulerTransformコンポーネントがある場合は、コライダーデータの中心をトランスフォームの位置に更新する
 				if (entityManager->HasComponent<TransformComponent>(entityId)) {
-					Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
+					EulerTransform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
 					collider.aabb.center = transform.translate;
 				} else {
 					QFE_REPORT_SYSTEM_ERROR(std::format("Entity {} with AABBColliderData does not have TransformComponent.", entityId), SystemError::Abort);
@@ -120,7 +120,7 @@ namespace QFE {
 			return;
 		}
 
-		// SphereColliderDataを持つ全エンティティのIDを取得し、Transformコンポーネントがある場合はSphereの中心を更新する
+		// SphereColliderDataを持つ全エンティティのIDを取得し、EulerTransformコンポーネントがある場合はSphereの中心を更新する
 		std::vector<uint32_t> entityIds;
 		entityManager->Each<SphereColliderData>([&](uint32_t entityId, SphereColliderData& collider) {
 			collider; // 未使用
@@ -181,13 +181,13 @@ namespace QFE {
 					if (colliderA.isTrigger || colliderB.isTrigger) {
 						continue;
 					}
-					// Transformがないなら反発しない
+					// EulerTransformがないなら反発しない
 					if (!entityManager->HasComponent<TransformComponent>(idA) || !entityManager->HasComponent<TransformComponent>(idB)) {
-						assert(false && "Entities do not have Transform");
+						assert(false && "Entities do not have EulerTransform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<TransformComponent>(idA).transform;
-					Transform& transformB = entityManager->GetComponent<TransformComponent>(idB).transform;
+					EulerTransform& transformA = entityManager->GetComponent<TransformComponent>(idA).transform;
+					EulerTransform& transformB = entityManager->GetComponent<TransformComponent>(idB).transform;
 
 					// どちらも動く場合は等しく反発
 					Vector3 length = colliderB.sphere.center - colliderA.sphere.center;
@@ -271,13 +271,13 @@ namespace QFE {
 					if (colliderA.isTrigger || colliderB.isTrigger) {
 						continue;
 					}
-					// Transformがないなら反発しない
+					// EulerTransformがないなら反発しない
 					if (!entityManager->HasComponent<TransformComponent>(idA) || !entityManager->HasComponent<TransformComponent>(idB)) {
-						assert(false && "Entities do not have Transform");
+						assert(false && "Entities do not have EulerTransform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<TransformComponent>(idA).transform;
-					Transform& transformB = entityManager->GetComponent<TransformComponent>(idB).transform;
+					EulerTransform& transformA = entityManager->GetComponent<TransformComponent>(idA).transform;
+					EulerTransform& transformB = entityManager->GetComponent<TransformComponent>(idB).transform;
 					// AABBの中心座標
 					Vector3 centerA = colliderA.aabb.center;
 					Vector3 centerB = colliderB.aabb.center;
@@ -395,13 +395,13 @@ namespace QFE {
 					if (sphereCollider.isTrigger || aabbCollider.isTrigger) {
 						continue;
 					}
-					// Transformがないなら反発しない
+					// EulerTransformがないなら反発しない
 					if (!entityManager->HasComponent<TransformComponent>(sphereId) || !entityManager->HasComponent<TransformComponent>(aabbId)) {
-						assert(false && "Entities do not have Transform");
+						assert(false && "Entities do not have EulerTransform");
 						continue;
 					}
-					Transform& transformA = entityManager->GetComponent<TransformComponent>(sphereId).transform;
-					Transform& transformB = entityManager->GetComponent<TransformComponent>(aabbId).transform;
+					EulerTransform& transformA = entityManager->GetComponent<TransformComponent>(sphereId).transform;
+					EulerTransform& transformB = entityManager->GetComponent<TransformComponent>(aabbId).transform;
 
 					// 最近点を取得
 					Vector3 closestPoint = MyMath::ClosestPoint(sphereCollider.sphere, aabbCollider.aabb);

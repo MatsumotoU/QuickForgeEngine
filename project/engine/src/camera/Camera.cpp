@@ -22,10 +22,10 @@ void Camera::Initialize() {
 	entityManager->EmplaceComponent<SceneObjectData>(bindEntityId_);
 	entityManager->EmplaceComponent<CameraData>(bindEntityId_);
 
-	assert(entityManager->HasComponent<TransformComponent>(bindEntityId_) && "Camera entity must have Transform component.");
+	assert(entityManager->HasComponent<TransformComponent>(bindEntityId_) && "Camera entity must have EulerTransform component.");
 	assert(entityManager->HasComponent<SceneObjectData>(bindEntityId_) && "Camera entity must have SceneObjectData component.");
 	assert(entityManager->HasComponent<CameraData>(bindEntityId_) && "Camera entity must have CameraData component.");
-	Transform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
+	EulerTransform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
 	transform.scale = { 1.0f,1.0f,1.0f };
 	transform.rotate = { 0.1f,0.0f,0.0f };
 	transform.translate = { 0.0f,1.5f,-10.0f };
@@ -55,10 +55,10 @@ void Camera::Update() {
 bool Camera::CheckVisible(const Matrix4x4& world) const {
 	// 繝ｯ繝ｼ繝ｫ繝牙ｺｧ讓吶・蜴溽せ繧貞叙蠕・
 	Vector4 pos4(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4 worldPos = Vector4::Transform(pos4, world);
+	Vector4 worldPos = Vector4::EulerTransform(pos4, world);
 
 	// 繧ｯ繝ｪ繝・・遨ｺ髢薙∈螟画鋤
-	Vector4 clipPos = Vector4::Transform(worldPos, viewProjectionMatrix_);
+	Vector4 clipPos = Vector4::EulerTransform(worldPos, viewProjectionMatrix_);
 
 	// w縺ｧ蜑ｲ縺｣縺ｦNDC縺ｸ
 	if (clipPos.w == 0.0f) return false;
@@ -128,7 +128,7 @@ Matrix4x4 Camera::GetWorldMatrix() const {
 	if (!entityManager->HasComponent<TransformComponent>(bindEntityId_)) {
 		return Matrix4x4::MakeIndentity4x4();
 	}
-	Transform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
+	EulerTransform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
 
 	return Matrix4x4::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 }
@@ -136,6 +136,6 @@ Matrix4x4 Camera::GetWorldMatrix() const {
 Vector3 Camera::GetPosition() const
 {
 	EntityManager* entityManager = SceneManager::GetInstance()->GetEntityManager();
-	Transform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
+	EulerTransform& transform = entityManager->GetComponent<TransformComponent>(bindEntityId_).transform;
 	return transform.translate;
 }

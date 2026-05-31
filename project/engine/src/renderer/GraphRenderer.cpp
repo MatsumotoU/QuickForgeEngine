@@ -330,7 +330,7 @@ void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& colo
 	if (!entityManager->HasComponent<TransformComponent>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId())) {
 		return;
 	}
-	Transform& camTransform = 
+	EulerTransform& camTransform = 
 		entityManager->GetComponent<TransformComponent>(CameraManager::GetInstance()->GetMainCamera().GetBindEntityId()).transform;
 
 	Matrix4x4 matRot = Matrix4x4::MakeRotateXYZMatrix(camTransform.rotate);
@@ -338,11 +338,11 @@ void GraphRenderer::DrawCircle(Vector3 center, float radius, const Vector4& colo
 	const float pi = std::numbers::pi_v<float>;
 	const float kAngleEvery = (pi * 2.0f) / static_cast<float>(subdivision);
 	Vector3 prevPoint = center + Vector3(radius, 0.0f, 0.0f);
-	prevPoint = Vector3::Transform(prevPoint - center, matRot) + center;
+	prevPoint = Vector3::EulerTransform(prevPoint - center, matRot) + center;
 	for (uint32_t i = 1; i <= subdivision; ++i) {
 		float angle = kAngleEvery * static_cast<float>(i);
 		Vector3 nextPoint = center + Vector3(cosf(angle) * radius, sinf(angle) * radius, 0.0f);
-		nextPoint = Vector3::Transform(nextPoint - center, matRot) + center;
+		nextPoint = Vector3::EulerTransform(nextPoint - center, matRot) + center;
 		DrawLine(prevPoint, nextPoint, color);
 		prevPoint = nextPoint;
 	}

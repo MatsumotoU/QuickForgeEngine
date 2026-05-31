@@ -6,7 +6,7 @@
 #include "engine/include/core/Memory/SafeVector.h"
 
 namespace QFE {
-	/// @brief アニメーション全体を表すクラス。複数のキーフレームを持ち、時間に応じたTransformを提供する。
+	/// @brief アニメーション全体を表すクラス。複数のキーフレームを持ち、時間に応じたEulerTransformを提供する。
 	class AnimClip final {
 	public:
 		explicit AnimClip(size_t initialCapacity = 50);
@@ -30,8 +30,8 @@ namespace QFE {
 		size_t GetKeyFrameCount() const;
 
 
-		/// @brief 指定した時間におけるTransformを取得する
-		Transform GetTransformAtTime(float time) const;
+		/// @brief 指定した時間におけるEulerTransformを取得する
+		EulerTransform GetTransformAtTime(float time) const;
 		/// @brief アニメーションクリップの総時間を取得する
 		float GetTotalDuration() const;
 

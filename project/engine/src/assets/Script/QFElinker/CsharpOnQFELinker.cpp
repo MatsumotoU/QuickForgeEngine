@@ -39,7 +39,7 @@ void QFE::CsharpOnQFELinker::GetTransforms(MonoArray* entityIds, MonoArray* tran
 
 			// 2. C#配列の「生ポインタ」を取得
 			uint32_t* dstIds = mono_array_addr(entityIds, uint32_t, 0);
-			Transform* dstTrans = mono_array_addr(transforms, Transform, 0);
+			EulerTransform* dstTrans = mono_array_addr(transforms, EulerTransform, 0);
 
 			// 3. C++側のデータをC#のメモリへコピー
 			std::vector<uint32_t> entityIdsVec = transformStorage.GetEntityIds();
@@ -78,12 +78,12 @@ void QFE::CsharpOnQFELinker::SetTransforms(MonoArray* entityIds, MonoArray* tran
 
 			// 2. C#配列の「生ポインタ」を取得
 			uint32_t* srcIds = mono_array_addr(entityIds, uint32_t, 0);
-			Transform* srcTrans = mono_array_addr(transforms, Transform, 0);
+			EulerTransform* srcTrans = mono_array_addr(transforms, EulerTransform, 0);
 
 			// 3. C#のデータをC++側へコピー
 			for (uint32_t i = 0; i < copyCount; ++i) {
 				uint32_t entityId = srcIds[i];
-				const Transform& transform = srcTrans[i];
+				const EulerTransform& transform = srcTrans[i];
 				if (entityManager->HasComponent<TransformComponent>(entityId)) {
 					entityManager->GetComponent<TransformComponent>(entityId).transform = transform;
 				}
@@ -262,7 +262,7 @@ uint32_t QFE::CsharpOnQFELinker::GetEntityFromName(MonoString* entityName) {
 	return entityId;
 }
 
-uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* entityName, Transform transform, uint32_t changeCount)
+uint32_t QFE::CsharpOnQFELinker::CreateEntity(MonoString* entityName, EulerTransform transform, uint32_t changeCount)
 {
 	if (!entityName) {
 		QFE_REPORT_USER_ERROR("Entity name is null.", UserError::DeveloperError);

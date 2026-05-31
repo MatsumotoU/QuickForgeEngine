@@ -37,9 +37,9 @@ size_t AnimClip::GetKeyFrameCount() const {
 	return keyframes_.size();
 }
 
-Transform AnimClip::GetTransformAtTime(float time) const {
-	Transform result;
-	// キーフレームが存在しない場合はデフォルトのTransformを返す
+EulerTransform AnimClip::GetTransformAtTime(float time) const {
+	EulerTransform result;
+	// キーフレームが存在しない場合はデフォルトのEulerTransformを返す
 	if (keyframes_.empty()) {
 		QFE_LOG("GetTransformAtTime: No keyframes available.");
 		return result;
@@ -67,15 +67,15 @@ Transform AnimClip::GetTransformAtTime(float time) const {
 			break;
 		}
 	}
-	// 前のキーフレームが存在しない場合は次のキーフレームのTransformを返す
+	// 前のキーフレームが存在しない場合は次のキーフレームのEulerTransformを返す
 	if (!previousKeyFrame) {
 		return keyframes_.front().transform;
 	}
-	// 次のキーフレームが存在しない場合は前のキーフレームのTransformを返す
+	// 次のキーフレームが存在しない場合は前のキーフレームのEulerTransformを返す
 	if (!nextKeyFrame) {
 		return keyframes_.back().transform;
 	}
-	// 前後のキーフレームのTransformを線形補間する
+	// 前後のキーフレームのEulerTransformを線形補間する
 	float segmentDuration = nextKeyFrame->time - previousKeyFrame->time;
 	float t = (time - previousKeyFrame->time) / segmentDuration;
 

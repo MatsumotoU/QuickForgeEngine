@@ -126,7 +126,7 @@ namespace QFE {
 		/// <param name="vector">変換允Eーカル座樁E/param>
 		/// <param name="matrix">変換に使用する行E</param>
 		/// <returns>ワールド座樁E/returns>
-		[[nodiscard]] static Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+		[[nodiscard]] static Vector3 EulerTransform(const Vector3& vector, const Matrix4x4& matrix);
 
 	public:
 		/// <summary>

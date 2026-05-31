@@ -30,7 +30,7 @@ void QFE::ANIMATION::SaveAnimClipToAnimFile(const AnimClip& animClip, const std:
 	uint32_t keyframeCount = static_cast<uint32_t>(keyframes.size());
 	outFile.write(reinterpret_cast<const char*>(&keyframeCount), sizeof(keyframeCount));
 
-	// 時間とTransformのペアをファイルに保存する
+	// 時間とEulerTransformのペアをファイルに保存する
 	for (const KeyFrame& keyframe : keyframes) {
 		outFile.write(reinterpret_cast<const char*>(&keyframe.time), sizeof(keyframe.time));
 

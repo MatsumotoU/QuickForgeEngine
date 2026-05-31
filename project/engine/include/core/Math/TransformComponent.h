@@ -12,7 +12,7 @@ namespace QFE {
 	 */
 	class TransformComponent final : public ComponentData {
 	public:
-		Transform transform;
+		EulerTransform transform;
 
 		Matrix4x4 localMatrix; ///< ローカル変換行列
 
@@ -23,7 +23,7 @@ namespace QFE {
 		/** @brief デシリアライズ */
 		void Deserialize(const nlohmann::json& json) override;
 		/** @brief コンポーネントの型名を取得 */
-		std::string GetTypeName() const override { return "Transform"; }
+		std::string GetTypeName() const override { return "EulerTransform"; }
 		/** @brief 前方に移動 */
 		void AddForward(float distance);
 		/** @brief 右方に移動 */
