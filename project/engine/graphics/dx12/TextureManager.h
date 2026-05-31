@@ -43,22 +43,22 @@ namespace QFE::GRAPHIC::INTERNAL {
 		 * @param filePath ファイルパス
 		 * @return テクスチャハンドル
 		 */
-		[[nodiscard]] int32_t LoadTexture(const std::string& filePath);
+		[[nodiscard]] uint32_t LoadTexture(const std::string& filePath);
 
 		/** @brief ハンドルからテクスチャサイズを取得 */
-		[[nodiscard]] QFE::MATH::Vector2 GetTextureSize(int32_t textureHandle);
+		[[nodiscard]] QFE::MATH::Vector2 GetTextureSize(uint32_t textureHandle);
 		/** @brief 指定インデックスのCPUディスクリプタハンドルを取得 */
 		[[nodiscard]] const D3D12_CPU_DESCRIPTOR_HANDLE GetTextureSrvHandleCPU(uint32_t index) const;
 		/** @brief 指定インデックスのGPUディスクリプタハンドルを取得 */
 		[[nodiscard]] const D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU(uint32_t index) const;
 
 		/// @brief デバッグ用に次のテクスチャハンドルを取得
-		[[nodiscard]] const int32_t GetNextTextureHandle() const { return textureHandle_; }
+		[[nodiscard]] const uint32_t GetNextTextureHandle() const { return textureHandle_; }
 
 		/// @brief ダミーの黒いキューブマップのハンドルを取得
-		[[nodiscard]] const int32_t GetDummyBlackCubeMapHandle() const;
+		[[nodiscard]] const uint32_t GetDummyBlackCubeMapHandle() const;
 		/// @brief ダミーの白い1x1テクスチャのハンドルを取得
-		[[nodiscard]] const int32_t GetDummyWhite1x1TextureHandle() const;
+		[[nodiscard]] const uint32_t GetDummyWhite1x1TextureHandle() const;
 
 	private:
 		DirectX::ScratchImage Load(const std::string& filePath);
@@ -71,9 +71,9 @@ namespace QFE::GRAPHIC::INTERNAL {
 		void CreateSkyBoxShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource);
 
 		/// @brief ダミーの黒いキューブマップを作成する
-		int32_t CreateDummyBlackCubeMap();
+		uint32_t CreateDummyBlackCubeMap();
 		/// @brief ダミーの白い1x1テクスチャを作成する
-		int32_t CreateDummyWhite1x1Texture();
+		uint32_t CreateDummyWhite1x1Texture();
 
 		ID3D12Device* device_;
 		ID3D12GraphicsCommandList* commandList_;
@@ -88,14 +88,14 @@ namespace QFE::GRAPHIC::INTERNAL {
 		SafeVector<std::unique_ptr<DirectX::ScratchImage>> scratchImages_;
 
 		// ファイルパスとハンドルの対応を管理するためのライブラリ
-		int32_t textureHandle_;
+		uint32_t textureHandle_;
 		SafeVector<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResource_;
 		StringLibrary filePathLibrary_;
 
 		// エラー回避用テクスチャハンドル
-		int32_t dummyBlackCubeMapHandle_;
+		uint32_t dummyBlackCubeMapHandle_;
 		// エラー回避用のダミーwhite1x1テクスチャリソースハンドル
-		int32_t dummyWhite1x1TextureHandle_;
+		uint32_t dummyWhite1x1TextureHandle_;
 	};
 
 }

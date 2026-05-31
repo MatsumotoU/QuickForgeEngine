@@ -3,6 +3,6 @@
 
 namespace QFE::GRAPHIC::INTERNAL {
 	struct ModelMaterialData {
-		std::string textureFilePath;
+		std::string textureName;
 	};
 }

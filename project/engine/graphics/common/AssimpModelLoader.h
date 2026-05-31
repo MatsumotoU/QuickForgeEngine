@@ -13,9 +13,9 @@ namespace QFE::GRAPHIC::INTERNAL {
 	public:
 		AssimpModelLoader() = default;
 		~AssimpModelLoader() = default;
-		// モチEの読み込み
+		// モデルの読み込み
 		static void LoadModelData(
-			const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename, ModelData& modelData);
+			const std::string& filePath, ModelData& modelData);
 	};
 
 }

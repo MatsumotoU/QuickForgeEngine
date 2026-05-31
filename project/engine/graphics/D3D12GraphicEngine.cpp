@@ -1,6 +1,8 @@
 #include "D3D12GraphicEngine.h"
 #include "EngineDefines.h"
 
+#include "common/AssimpModelLoader.h"
+
 #include "dx12/checker/DirectX12DebugCore.h"
 #include "dx12/DirectXDevice.h"
 #include "dx12/DirectXResourceContainer.h"
@@ -17,6 +19,7 @@
 
 namespace {
 	float clearColor[4] = { 0.1f, 0.25f, 0.5f, 1.0f };
+	const uint32_t kInvalidTextureHandle = UINT32_MAX;
 }
 
 QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
@@ -116,6 +119,25 @@ void QFE::GRAPHIC::D3D12GraphicEngine::Shutdown() {
 	textureManager_->Finalize();
 	fence_->Shutdown();
 	directXDevice_->Shutdown();
+}
+
+uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadTexture(const std::string& filePath) {
+	return textureManager_->LoadTexture(filePath);
+}
+
+std::pair<uint32_t, uint32_t> QFE::GRAPHIC::D3D12GraphicEngine::LoadModel(const std::string& filePath) {
+	uint32_t textureHandle = kInvalidTextureHandle;
+	uint32_t vertexBufferHandle = kInvalidTextureHandle;
+
+	INTERNAL::ModelData modelData;
+	INTERNAL::AssimpModelLoader::LoadModelData(filePath, modelData);
+	if (!modelData.meshes.empty()) {
+		const auto& material = modelData.meshes.front().material;
+		if (!material.textureName.empty()) {
+			textureHandle = textureManager_->LoadTexture(material.textureName);
+		}
+		vertexBufferHandle = modelVertexResourceManager_->Assign(directXDevice_->GetDevice(), modelData, filePath);
+	}
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {

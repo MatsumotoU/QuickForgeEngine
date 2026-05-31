@@ -7,25 +7,19 @@
 
 using namespace QFE::GRAPHIC::INTERNAL;
 
-void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory, const std::string& imageResourceDirectory, const std::string& filename, ModelData& modelData) {
+void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& modelData) {
 	Assimp::Importer importer;
-	std::string filepath = modelResourceDirectory + filename;
-	
+
 	// ファイルの存在確認
-	if (!QFE::FILE::HasFile(filepath)) {
-		QFE_LOG(std::format("Model file not found: {}", filepath));
+	if (!QFE::FILE::HasFile(filePath)) {
+		QFE_LOG(std::format("Model file not found: {}", filePath));
 		assert(false && "Model file not found");
 		return;
 	}
 
-	// Obj形式である場合、mtlもあるか確認する
-	if (!QFE::FILE::HasObjModelFiles(modelResourceDirectory, filename)) {
-		QFE_REPORT_SYSTEM_ERROR(std::format("MTL file not found for OBJ model: {}", filename), SystemError::Abort);
-	}
-
 	// モデルの読み込み
 	const aiScene* scene = importer.ReadFile(
-		filepath,
+		filePath,
 		aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals
 	);
 	if (!scene || !scene->HasMeshes()) {
@@ -33,7 +27,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		return;
 	}
 
-	QFE_LOG(std::format("Model Load Success: {}", filepath));
+	QFE_LOG(std::format("Model Load Success: {}", filePath));
 
 	for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; ++meshIdx) {
 		const aiMesh* mesh = scene->mMeshes[meshIdx];
@@ -88,16 +82,16 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			}
 		}
 
-		// 繝槭ユ繝ｪ繧｢繝ｫ繝ｻ繝・け繧ｹ繝√Ε
+		// マテリアルの読み込み
 		if (scene->HasMaterials() && mesh->mMaterialIndex < scene->mNumMaterials) {
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			aiString texPath;
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
-				meshData.material.textureFilePath = imageResourceDirectory + std::string(texPath.C_Str());
-				QFE_LOG(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureFilePath));
+				meshData.material.textureName = std::string(texPath.C_Str());
+				QFE_LOG(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureName));
 
 			} else {
-				meshData.material.textureFilePath = "";
+				meshData.material.textureName = "";
 				QFE_LOG(std::format("No diffuse texture found for mesh {}. Setting empty texture path.", meshIdx));
 			}
 		}

@@ -9,6 +9,10 @@
 #include <wrl.h>
 #include "dx12/descriptors/Data/DescriptorHandles.h"
 
+#include <stdint.h>
+#include <string>
+#include <utility>
+
 namespace QFE::GRAPHIC {
 	namespace INTERNAL {
 		class DirectX12DebugCore;
@@ -39,7 +43,11 @@ namespace QFE::GRAPHIC {
 		void Shutdown() override;
 
 		// ユーザーが任意のタイミングで呼び出す関数群
-
+		/// @brief 画像ファイルを読み込む.テクスチャハンドルを返す.
+		uint32_t LoadTexture(const std::string& filePath);
+		/// @brief モデルデータからテクスチャハンドルと頂点バッファハンドルを作成する.モデルデータはAssimpで読み込める形式であれば何でもいい.
+		/// @return textureHandle,vertexBufferHandleの順で返す.
+		std::pair<uint32_t, uint32_t> LoadModel(const std::string& filePath);
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
