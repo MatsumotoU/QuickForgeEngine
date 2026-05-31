@@ -11,6 +11,11 @@ project "GraphicEngine"
         -- 警告レベル4
         warnings "Extra"
 
+        -- 追加のインクルード
+        includedirs {
+            "%{wks.location}/engine/graphics/"
+        }
+
         -- 外部ファイルのインクルード
         externalincludedirs {
             "%{wks.location}/engine/core/",

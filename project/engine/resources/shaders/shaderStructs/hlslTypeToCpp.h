@@ -2,20 +2,20 @@
 
 #ifdef __cplusplus
 #include <stdint.h>
-#include "engine/include/core/Math/Vector/Vector4.h"
-#include "engine/include/core/Math/Vector/Vector3.h"
-#include "engine/include/core/Math/Vector/Vector2.h"
-#include "engine/include/core/Math/Matrix/Matrix4x4.h"
-#include "engine/include/core/Math/Matrix/Matrix3x3.h"
-#include "engine/include/core/Math/Matrix/Matrix2x2.h"
+#include "math/vector/Vector4.h"
+#include "math/vector/Vector3.h"
+#include "math/vector/Vector2.h"
+#include "math/matrix/Matrix4x4.h"
+#include "math/matrix/Matrix3x3.h"
+#include "math/matrix/Matrix2x2.h"
 
-using float32_t4 = QFE::Vector4;
-using float32_t3 = QFE::Vector3;
-using float32_t2 = QFE::Vector2;
+using float32_t4 = QFE::MATH::Vector4;
+using float32_t3 = QFE::MATH::Vector3;
+using float32_t2 = QFE::MATH::Vector2;
 using float32_t = float;
-using float32_t4x4 = QFE::Matrix4x4;
-using float32_t3x3 = QFE::Matrix3x3;
-using float32_t2x2 = QFE::Matrix2x2;
+using float32_t4x4 = QFE::MATH::Matrix4x4;
+using float32_t3x3 = QFE::MATH::Matrix3x3;
+using float32_t2x2 = QFE::MATH::Matrix2x2;
 #endif
 
 struct CameraForGPU {
@@ -70,7 +70,7 @@ struct Material {
 		: color{ 1.0f, 1.0f, 1.0f, 1.0f }
 		, enableLighting(1)
 		, padding{ 0.0f, 0.0f, 0.0f }
-		, uvTransform(QFE::Matrix4x4::MakeIndentity4x4())
+		, uvTransform(QFE::MATH::Matrix4x4::MakeIndentity4x4())
 		, shininess(0.0f){
 	}
 #endif
@@ -119,8 +119,8 @@ struct PixcelOffset {
 struct ParticleForGPU {
 #ifdef __cplusplus
 	ParticleForGPU()
-		: WVP(QFE::Matrix4x4::MakeIndentity4x4())
-		, World(QFE::Matrix4x4::MakeIndentity4x4())
+		: WVP(QFE::MATH::Matrix4x4::MakeIndentity4x4())
+		, World(QFE::MATH::Matrix4x4::MakeIndentity4x4())
 		, color{ 1.0f,1.0f,1.0f,1.0f } {
 	}
 #endif 
@@ -147,8 +147,8 @@ struct PrimitiveVertexData {
 struct TransformationMatrix {
 #ifdef __cplusplus
 	TransformationMatrix()
-		: WVP(QFE::Matrix4x4::MakeIndentity4x4())
-		, World(QFE::Matrix4x4::MakeIndentity4x4()) {
+		: WVP(QFE::MATH::Matrix4x4::MakeIndentity4x4())
+		, World(QFE::MATH::Matrix4x4::MakeIndentity4x4()) {
 	}
 #endif
 

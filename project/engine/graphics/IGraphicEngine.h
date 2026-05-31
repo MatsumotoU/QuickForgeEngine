@@ -14,6 +14,7 @@ namespace QFE::GRAPHIC {
 
 		virtual void Initialize() = 0;
 		virtual void PreDraw() = 0;
+		virtual void Draw() = 0;
 		virtual void PostDraw() = 0;
 		virtual void Shutdown() = 0;
 

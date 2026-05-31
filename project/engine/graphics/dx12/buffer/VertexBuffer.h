@@ -6,7 +6,7 @@
 #include "BufferGenerater/BufferGenerator.h"
 #include "EngineDefines.h"
 
-namespace QFE {
+namespace QFE::GRAPHIC::INTERNAL {
 	/// @class VertexBuffer
 	/// @brief 頂点バッファを管理するクラス
 	/// @tparam T 頂点データの構造体型

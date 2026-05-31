@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <cassert>
-namespace QFE {
+namespace QFE::GRAPHIC::INTERNAL {
 	template<class T>
 	class ConstantBuffer final {
 	public:

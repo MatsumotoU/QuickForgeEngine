@@ -11,7 +11,7 @@
 #include "memory/VariableLengthPool.h"
 #include "memory/IVariableLengthPoolContainer.h"
 
-namespace QFE {
+namespace QFE::GRAPHIC::INTERNAL {
 	class GpuBufferPool final {
 	public:
 		/// 特定の型のバッファーを登録してハンドルを取得します
@@ -22,7 +22,7 @@ namespace QFE {
 			// 型ごとのプールが存在しない場合は新規作成
 			if (constantBufferPoolsMap_.count(typeIdx) == 0) {
 				constantBufferPoolsMap_[typeIdx] = 
-					std::make_unique<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>>>(QFE::CONSTANTS::GPU_BUFFER_POOL::kMaxConstantBuffers);
+					std::make_unique<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>>>(50);
 			}
 			// プールからバッファーを取得してハンドルを返す
 			auto& pool = static_cast<VariableLengthPool<std::shared_ptr<ConstantBuffer<T>>> &>(*constantBufferPoolsMap_[typeIdx]);

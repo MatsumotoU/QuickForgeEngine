@@ -9,6 +9,10 @@
 #include "dx12/SwapChain.h"
 #include "dx12/Fence.h"
 
+#include "dx12/pipeline/GraphicPipelineManager.h"
+#include "dx12/TextureManager.h"
+#include "dx12/ModelVertexResourceManager.h"
+
 #include "dx12/descriptors/Data/DescriptorHandles.h"
 
 namespace {
@@ -23,8 +27,12 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	descriptorHeapManager_(std::make_unique<INTERNAL::DescriptorHeapManager>()),
 	commandManager_(std::make_unique<INTERNAL::DirectXCommandManager>()),
 	swapChain_(std::make_unique<INTERNAL::SwapChain>()),
-	fence_(std::make_unique<INTERNAL::Fence>()) {
-}
+	fence_(std::make_unique<INTERNAL::Fence>()),
+	graphicPipelineManager_(std::make_unique<INTERNAL::GraphicPipelineManager>()),
+	textureManager_(std::make_unique<INTERNAL::TextureManager>()),
+	modelVertexResourceManager_(std::make_unique<INTERNAL::ModelVertexResourceManager>())
+
+{}
 
 QFE::GRAPHIC::D3D12GraphicEngine::~D3D12GraphicEngine() = default;
 
@@ -51,6 +59,22 @@ void QFE::GRAPHIC::D3D12GraphicEngine::Initialize() {
 
 	// DirectXCommonの名残.フェンスの初期化以降の処理.
 	LegacyInitialize(width, height);
+
+	// グラフィックパイプラインの初期化
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
+	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	graphicPipelineManager_->Initialize(directXDevice_->GetDevice(), depthStencilDesc);
+
+	// テクスチャ管理クラスの初期化
+	textureManager_->Initialize(
+		directXDevice_->GetDevice(), 
+		commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), 
+		descriptorHeapManager_->GetSrvDescriptorHeap());
+
+	// モデル頂点リソース管理クラスの初期化
+	modelVertexResourceManager_->Initialize();
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::PreDraw() {
@@ -82,9 +106,14 @@ void QFE::GRAPHIC::D3D12GraphicEngine::PostDraw() {
 
 	// コマンドリストをリセット
 	commandManager_->ResetCommandList();
+
+	// テクスチャのアップロードに使用した中間リソースの解放
+	textureManager_->ReleaseIntermediateResources();
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::Shutdown() {
+	modelVertexResourceManager_->Finalize();
+	textureManager_->Finalize();
 	fence_->Shutdown();
 	directXDevice_->Shutdown();
 }

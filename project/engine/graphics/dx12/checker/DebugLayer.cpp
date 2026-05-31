@@ -1,8 +1,7 @@
 #include "DebugLayer.h"
 
-#ifdef QFE_OPTIMIZE_OFF
 using namespace QFE::GRAPHIC::INTERNAL;
-
+#ifdef QFE_OPTIMIZE_OFF
 DebugLayer::DebugLayer() {
 	debugController_ = nullptr;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_)))) {
@@ -11,4 +10,7 @@ DebugLayer::DebugLayer() {
 		debugController_->SetEnableSynchronizedCommandQueueValidation(TRUE);
 	}
 }
-#endif // QFE_OPTIMIZE_OFF
+#else
+DebugLayer::DebugLayer() {}
+#endif
+

@@ -1,4 +1,3 @@
-#pragma once
 #include "../ShaderStructs/Skybox.hlsli"
 #include "../ShaderStructs/hlslTypeToCpp.h"
 

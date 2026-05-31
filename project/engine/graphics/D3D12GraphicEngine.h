@@ -18,6 +18,10 @@ namespace QFE::GRAPHIC {
 		class DirectXCommandManager;
 		class SwapChain;
 		class Fence;
+
+		class GraphicPipelineManager;
+		class ModelVertexResourceManager;
+		class TextureManager;
 	}
 
 	/// @brief DirectX12を使用したグラフィックエンジンの実装クラス
@@ -27,10 +31,15 @@ namespace QFE::GRAPHIC {
 		explicit D3D12GraphicEngine(HWND hwnd);
 		~D3D12GraphicEngine() override;
 
+		// 一度は呼ぶ順番がある関数群
 		void Initialize() override;
 		void PreDraw() override;
+		void Draw() override {};
 		void PostDraw() override;
 		void Shutdown() override;
+
+		// ユーザーが任意のタイミングで呼び出す関数群
+
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
@@ -49,6 +58,10 @@ namespace QFE::GRAPHIC {
 		std::unique_ptr<INTERNAL::DirectXCommandManager> commandManager_;// コマンド管理クラス
 		std::unique_ptr<INTERNAL::SwapChain> swapChain_;// スワップチェーン管理クラス
 		std::unique_ptr<INTERNAL::Fence> fence_;// フェンス管理クラス
+
+		std::unique_ptr<INTERNAL::GraphicPipelineManager> graphicPipelineManager_;// グラフィックパイプライン管理クラス
+		std::unique_ptr<INTERNAL::TextureManager> textureManager_;// テクスチャ管理クラス
+		std::unique_ptr<INTERNAL::ModelVertexResourceManager> modelVertexResourceManager_;// モデル頂点リソース管理クラス
 
 		D3D12_VIEWPORT viewport_;
 		D3D12_RECT scissorRect_;
