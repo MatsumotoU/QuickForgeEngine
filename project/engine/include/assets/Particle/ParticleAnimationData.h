@@ -7,7 +7,7 @@
 namespace QFE {
 
 	struct ParticleData {
-		Transform transform;
+		EulerTransform transform;
 		Vector4 color;
 	};
 

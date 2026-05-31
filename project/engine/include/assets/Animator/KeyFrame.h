@@ -5,6 +5,6 @@
 namespace QFE {
 	struct KeyFrame {
 		float time;
-		Transform transform;
+		EulerTransform transform;
 	};
 }

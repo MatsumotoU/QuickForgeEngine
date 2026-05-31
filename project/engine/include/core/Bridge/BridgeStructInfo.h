@@ -7,7 +7,7 @@
 namespace QFE {
 	/// @brief コンポーネントの種類
 	enum class ComponentType {
-		Transform,
+		EulerTransform,
 		SceneObjectData,
 		ModelHandle,
 		SpriteData,
@@ -22,7 +22,7 @@ namespace QFE {
 		AnimationClip
 	};
 
-	/// @brief Transformのデータ構造体
+	/// @brief EulerTransformのデータ構造体
 	struct TransformData {
 		float translate[3];
 		float rotate[3];

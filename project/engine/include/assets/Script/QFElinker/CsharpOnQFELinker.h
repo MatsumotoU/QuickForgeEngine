@@ -8,7 +8,7 @@
 #include "engine/include/core/Math/Transform.h"
 
 namespace QFE::CsharpOnQFELinker {
-    // Transform
+    // EulerTransform
 	extern void GetTransforms(MonoArray* entityIds, MonoArray* transforms, uint32_t* count);
 	extern void SetTransforms(MonoArray* entityIds, MonoArray* transforms, uint32_t count);
     extern void GetTransformTranslate(uint32_t entityId, Vector3* outTranslate);
@@ -45,7 +45,7 @@ namespace QFE::CsharpOnQFELinker {
 	// SceneObject
     extern void GetEntityTags(MonoArray* entityIds, MonoArray* tags, uint32_t* count);
 	extern uint32_t GetEntityFromName(MonoString* entityName);
-    extern uint32_t CreateEntity(MonoString* entityName,Transform transform,uint32_t changeCount);
+    extern uint32_t CreateEntity(MonoString* entityName,EulerTransform transform,uint32_t changeCount);
 	extern void LoadScene(MonoString* sceneName);
     extern void ChangeModel(uint32_t entityId, MonoString* modelName);
     extern void ChangeMesh(uint32_t entityId, MonoString* meshName);

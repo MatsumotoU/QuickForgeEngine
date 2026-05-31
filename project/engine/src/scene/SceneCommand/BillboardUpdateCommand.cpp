@@ -18,7 +18,7 @@ void QFE::BillboardUpdateCommand::Execute() {
 			return;
 		}
 		// トランスフォームコンポーネントを取得
-		Transform& transform = entityManager_.GetComponent<TransformComponent>(entityId).transform;
+		EulerTransform& transform = entityManager_.GetComponent<TransformComponent>(entityId).transform;
 		// ビルボードタイプに応じた処理を実行
 		if (billboardComp.type_ == BillboardType::AXIAL) {
 			CameraAxisBillboard(transform, billboardComp.rotateOffset_); // カメラの向きに同期
@@ -32,12 +32,12 @@ void QFE::BillboardUpdateCommand::Undo() {
 	/// システム側で自動更新されるため、特に処理は不要
 }
 
-void QFE::BillboardUpdateCommand::CameraAxisBillboard(Transform& targetTransform, const Vector3& rotateOffset) {
+void QFE::BillboardUpdateCommand::CameraAxisBillboard(EulerTransform& targetTransform, const Vector3& rotateOffset) {
 	// カメラと同じ回転にする
 	targetTransform.rotate = cameraTransform_.rotate + rotateOffset;
 }
 
-void QFE::BillboardUpdateCommand::CameraPointBillboard(Transform& targetTransform, const Vector3& rotateOffset) {
+void QFE::BillboardUpdateCommand::CameraPointBillboard(EulerTransform& targetTransform, const Vector3& rotateOffset) {
 	// カメラの位置とターゲットの位置から向きを計算
 	Vector3 direction = (cameraTransform_.translate - targetTransform.translate).Normalize();
 	// Y軸を基準に向きを計算

@@ -51,7 +51,7 @@ namespace QFE {
 		/// <param name="vector">変換允Eーカル座樁E/param>
 		/// <param name="matrix">変換に使用する行E</param>
 		/// <returns>ワールド座樁E/returns>
-		[[nodiscard]] static Vector4 Transform(const Vector4& vector, const Matrix4x4& matrix);
+		[[nodiscard]] static Vector4 EulerTransform(const Vector4& vector, const Matrix4x4& matrix);
 
 		/// <summary>
 		/// XYZの要素を抜きEしまぁE

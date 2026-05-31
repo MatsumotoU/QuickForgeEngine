@@ -30,7 +30,7 @@ void PhysicsManager::Update() {
 		forceComp.velocity += forceComp.acceleration * EngineGlobalValue::deltaTime;
 		// 位置に速度を加える
 		if (entityManager->HasComponent<TransformComponent>(entityId)) {
-			Transform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
+			EulerTransform& transform = entityManager->GetComponent<TransformComponent>(entityId).transform;
 			transform.translate += forceComp.velocity * EngineGlobalValue::deltaTime;
 		}
 		// 摩擦力の計算

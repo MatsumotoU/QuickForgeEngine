@@ -135,7 +135,7 @@ void MonoRuntimeManager::RegisterQFEAPI() {
 	mono_add_internal_call("QuickForgeEngine.Entity::Destroy",
 		(const void*)CsharpOnQFELinker::DeleteEntity);
 
-	// Transform関連用APIの登録
+	// EulerTransform関連用APIの登録
 	mono_add_internal_call("QuickForgeEngine.InternalProperty::GetTransforms", 
 		(const void*)CsharpOnQFELinker::GetTransforms);
 	mono_add_internal_call("QuickForgeEngine.InternalProperty::SetTransforms",

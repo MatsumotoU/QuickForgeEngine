@@ -8,7 +8,7 @@ namespace QFE {
 	class BillboardUpdateCommand : public ISceneEntityCommand {
 	public:
 		BillboardUpdateCommand() = delete;
-		explicit BillboardUpdateCommand(EntityManager& em, const Transform& cameraTransform)
+		explicit BillboardUpdateCommand(EntityManager& em, const EulerTransform& cameraTransform)
 			: ISceneEntityCommand(em), cameraTransform_(cameraTransform) {
 		}
 		virtual ~BillboardUpdateCommand() = default;
@@ -23,10 +23,10 @@ namespace QFE {
 		virtual void Undo() override;
 		virtual std::string GetCommandName() const override { return "BillboardUpdateCommand"; }
 	private:
-		const Transform& cameraTransform_;
+		const EulerTransform& cameraTransform_;
 		// カメラ軸ビルボード処理
-		void CameraAxisBillboard(Transform& targetTransform,const Vector3& rotateOffset);
+		void CameraAxisBillboard(EulerTransform& targetTransform,const Vector3& rotateOffset);
 		// カメラポイントビルボード処理
-		void CameraPointBillboard(Transform& targetTransform, const Vector3& rotateOffset);
+		void CameraPointBillboard(EulerTransform& targetTransform, const Vector3& rotateOffset);
 	};
 }

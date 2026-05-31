@@ -18,7 +18,7 @@ namespace QFE {
 		uint32_t GetMainCameraIndex() const { return mainCameraIndex_; }
 		Camera& GetCamera(uint32_t index);
 		Camera& GetMainCamera();
-		const Transform& GetMainCameraTransform() const;
+		const EulerTransform& GetMainCameraTransform() const;
 		std::unordered_map<uint32_t, Camera>& GetAllCameras();
 		void SnapToDebugCamera(uint32_t index);
 
@@ -38,7 +38,7 @@ namespace QFE {
 		std::unordered_map<uint32_t, Camera> cameras_;
 		uint32_t nextCameraHandle_;
 
-		Transform dummyCameraTransform_;
+		EulerTransform dummyCameraTransform_;
 	};
 
 }
