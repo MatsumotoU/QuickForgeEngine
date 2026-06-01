@@ -24,10 +24,13 @@ struct PixelShaderOutput
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
-    
-    
-    
-    
-    
+    float32_t4 color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
+    for (int i = 0; i < 9; ++i)
+    {
+        int2 offset = offsets[i];
+        float32_t4 sample = gTexture.Sample(gSampler, input.texCoord + float2(offset) * gOffsetBuffer.offset);
+        color += sample * kernel[i];
+    }
+    output.color = color;
     return output;
 }
