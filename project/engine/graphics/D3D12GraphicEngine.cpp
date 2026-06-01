@@ -125,19 +125,16 @@ uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadTexture(const std::string& filePa
 	return textureManager_->LoadTexture(filePath);
 }
 
-std::pair<uint32_t, uint32_t> QFE::GRAPHIC::D3D12GraphicEngine::LoadModel(const std::string& filePath) {
-	uint32_t textureHandle = kInvalidTextureHandle;
+uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadModel(const std::string& filePath) {
 	uint32_t vertexBufferHandle = kInvalidTextureHandle;
 
 	INTERNAL::ModelData modelData;
 	INTERNAL::AssimpModelLoader::LoadModelData(filePath, modelData);
 	if (!modelData.meshes.empty()) {
-		const auto& material = modelData.meshes.front().material;
-		if (!material.textureName.empty()) {
-			textureHandle = textureManager_->LoadTexture(material.textureName);
-		}
 		vertexBufferHandle = modelVertexResourceManager_->Assign(directXDevice_->GetDevice(), modelData, filePath);
 	}
+
+	return vertexBufferHandle;
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
