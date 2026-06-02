@@ -28,17 +28,29 @@ struct PixelShaderOutput
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
-    
+
+    uint width;
+    uint height;
+    gTexture.GetDimensions(width, height);
+    float2 texelSize = rcp(float2(width, height));
+
     float32_t weight = 0.0f;
-    float32_t kernel[3][3];
-    for (int32_t x = 0; x < 3; ++x){
-        for (int32_t y = 0; y < 3; ++y){
-            kernel[x][y] = gauss(offsets[y][0], offsets[y][1], 2.0f);
-            weight += kernel[x][y];
-        }
+    float32_t kernel[9];
+    for (int i = 0; i < 9; ++i)
+    {
+        float2 offset = float2(offsets[i]);
+        kernel[i] = gauss(offset.x, offset.y, 2.0f);
+        weight += kernel[i];
     }
-    
-    output.color.rgb = rcp(weight);
-    
-        return output;
+
+    float32_t4 color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
+    for (int i = 0; i < 9; ++i)
+    {
+        float2 offset = float2(offsets[i]) * texelSize;
+        float32_t4 sample = gTexture.Sample(gSampler, input.texcoord + offset);
+        color += sample * kernel[i];
+    }
+
+    output.color = color * rcp(weight);
+    return output;
 }
