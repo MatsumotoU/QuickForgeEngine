@@ -107,6 +107,9 @@ namespace QFE {
 			return data_.at(index);
 		}
 
+		/// @brief 内部のstd::vectorへのアクセスを提供する関数
+		const std::vector<T>& GetInternalVector() const { return data_; }
+
 	private:
 		// @brief インデックスが範囲内かどうかをチェックする関数
 		void CheckIndex(size_t index) const {

@@ -133,6 +133,18 @@ uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadMesh(const std::vector<VertexData
 	return vertexBufferContainer_->Assign(directXDevice_->GetDevice(), vertexData, meshName);
 }
 
+std::vector<uint32_t> QFE::GRAPHIC::D3D12GraphicEngine::LoadMeshesFromModel(uint32_t modelHandle) {
+	const auto& modelData = modelDataContainer_->GetModelData(modelHandle);
+	std::vector<uint32_t> meshHandles;
+	for (size_t i = 0; i < modelData.meshes.size(); ++i) {
+		const auto& meshData = modelData.meshes[i];
+		std::string meshName = modelData.name + "_mesh_" + std::to_string(i);
+		uint32_t meshHandle = LoadMesh(meshData.vertices.GetInternalVector(), meshName);
+		meshHandles.push_back(meshHandle);
+	}
+	return meshHandles;
+}
+
 void QFE::GRAPHIC::D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
 	AssignSwapChainDescriptor();
 	CreateDepthStencilBuffer(width, height);

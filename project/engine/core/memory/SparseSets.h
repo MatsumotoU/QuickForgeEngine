@@ -106,7 +106,6 @@ namespace QFE {
 			}
 		}
 
-		// 標準ライブラリ風インターフェース
 		void clear() {
 			sparse_.clear();
 			dense_keys_.clear();

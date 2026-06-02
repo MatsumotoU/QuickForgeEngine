@@ -53,7 +53,11 @@ namespace QFE::GRAPHIC {
 		/// @return モデルデータのハンドルを返します.読み込みに失敗した場合はUINT32_MAXを返します.
 		uint32_t LoadModel(const std::string& filePath);
 		/// @brief 頂点データから頂点バッファハンドルを作成する.
+		/// @return 頂点バッファのハンドルを返します.読み込みに失敗した場合はUINT32_MAXを返します.
 		uint32_t LoadMesh(const std::vector<VertexData>& vertexData, const std::string& meshName);
+		/// @brief モデルデータのハンドルからモデルのメッシュの頂点バッファハンドルを取得する.
+		/// @return 頂点データのハンドル配列(モデルのメッシュ順).読み込み失敗した場合は空の配列を返します.
+		std::vector<uint32_t> LoadMeshesFromModel(uint32_t modelHandle);
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
