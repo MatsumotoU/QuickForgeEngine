@@ -13,7 +13,8 @@
 
 #include "dx12/pipeline/GraphicPipelineManager.h"
 #include "dx12/TextureManager.h"
-#include "dx12/ModelVertexResourceManager.h"
+#include "dx12/ModelDataContainer.h"
+#include "dx12/VertexBufferContainer.h"
 
 #include "dx12/descriptors/Data/DescriptorHandles.h"
 
@@ -33,7 +34,8 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	fence_(std::make_unique<INTERNAL::Fence>()),
 	graphicPipelineManager_(std::make_unique<INTERNAL::GraphicPipelineManager>()),
 	textureManager_(std::make_unique<INTERNAL::TextureManager>()),
-	modelVertexResourceManager_(std::make_unique<INTERNAL::ModelVertexResourceManager>())
+	modelDataContainer_(std::make_unique<INTERNAL::ModelDataContainer>()),
+	vertexBufferContainer_(std::make_unique<INTERNAL::VertexBufferContainer>())
 
 {}
 
@@ -77,7 +79,8 @@ void QFE::GRAPHIC::D3D12GraphicEngine::Initialize() {
 		descriptorHeapManager_->GetSrvDescriptorHeap());
 
 	// モデル頂点リソース管理クラスの初期化
-	modelVertexResourceManager_->Initialize();
+	modelDataContainer_->Initialize();
+	vertexBufferContainer_->Initialize();
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::PreDraw() {
@@ -115,7 +118,8 @@ void QFE::GRAPHIC::D3D12GraphicEngine::PostDraw() {
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::Shutdown() {
-	modelVertexResourceManager_->Finalize();
+	modelDataContainer_->Finalize();
+	vertexBufferContainer_->Finalize();
 	textureManager_->Finalize();
 	fence_->Shutdown();
 	directXDevice_->Shutdown();
@@ -125,16 +129,8 @@ uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadTexture(const std::string& filePa
 	return textureManager_->LoadTexture(filePath);
 }
 
-uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadModel(const std::string& filePath) {
-	uint32_t vertexBufferHandle = kInvalidTextureHandle;
-
-	INTERNAL::ModelData modelData;
-	INTERNAL::AssimpModelLoader::LoadModelData(filePath, modelData);
-	if (!modelData.meshes.empty()) {
-		vertexBufferHandle = modelVertexResourceManager_->Assign(directXDevice_->GetDevice(), modelData, filePath);
-	}
-
-	return vertexBufferHandle;
+uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadMesh(const std::vector<VertexData>& vertexData, const std::string& meshName) {
+	return vertexBufferContainer_->Assign(directXDevice_->GetDevice(), vertexData, meshName);
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {

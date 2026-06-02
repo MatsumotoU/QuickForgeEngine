@@ -151,6 +151,11 @@ namespace QFE::FILE {
 		return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath);
 	}
 
+	std::string GetFileName(const std::string& filePath) {
+		std::filesystem::path path(filePath);
+		return path.filename().string();
+	}
+
 	bool HasObjModelFiles(const std::string& directoryPath, const std::string& modelName) {
 		// 既に拡張子がモデル名に含まれている場合はmodelNameから拡張子を取り除く
 		std::string baseModelName = modelName;

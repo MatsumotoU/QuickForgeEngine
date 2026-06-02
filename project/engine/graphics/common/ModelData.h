@@ -14,6 +14,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 	};
 
 	struct ModelData {
+		std::string name;
 		SafeVector<MeshData> meshes;
 	};
 

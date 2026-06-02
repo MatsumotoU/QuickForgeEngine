@@ -129,6 +129,9 @@ namespace QFE {
 		T& at(uint32_t key) {
 			return dense_.at(sparse_.at(key));
 		}
+		const T& at(uint32_t key) const {
+			return dense_.at(sparse_.at(key));
+		}
 	private:
 		SafeVector<uint32_t> sparse_;
 		SafeVector<uint32_t> dense_keys_;

@@ -8,10 +8,12 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "dx12/descriptors/Data/DescriptorHandles.h"
+#include "common/ModelData.h"
 
 #include <stdint.h>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace QFE::GRAPHIC {
 	namespace INTERNAL {
@@ -24,7 +26,8 @@ namespace QFE::GRAPHIC {
 		class Fence;
 
 		class GraphicPipelineManager;
-		class ModelVertexResourceManager;
+		class ModelDataContainer;
+		class VertexBufferContainer;
 		class TextureManager;
 	}
 
@@ -43,10 +46,14 @@ namespace QFE::GRAPHIC {
 		void Shutdown() override;
 
 		// ユーザーが任意のタイミングで呼び出す関数群
-		/// @brief 画像ファイルを読み込む.テクスチャハンドルを返す.
+		/// @brief 画像ファイルを読み込む.
+		/// @return 読み込んだテクスチャのハンドルを返します.読み込みに失敗した場合はUINT32_MAXを返します.
 		uint32_t LoadTexture(const std::string& filePath);
-		/// @brief モデルデータから頂点バッファハンドルを作成する.モデルデータはAssimpで読み込める形式であれば何でもいい.
+		/// @brief モデルデータを読み込む.モデルデータから頂点バッファリソースを作成し、ハンドルを返す.
+		/// @return モデルデータのハンドルを返します.読み込みに失敗した場合はUINT32_MAXを返します.
 		uint32_t LoadModel(const std::string& filePath);
+		/// @brief 頂点データから頂点バッファハンドルを作成する.
+		uint32_t LoadMesh(const std::vector<VertexData>& vertexData, const std::string& meshName);
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
@@ -68,7 +75,8 @@ namespace QFE::GRAPHIC {
 
 		std::unique_ptr<INTERNAL::GraphicPipelineManager> graphicPipelineManager_;// グラフィックパイプライン管理クラス
 		std::unique_ptr<INTERNAL::TextureManager> textureManager_;// テクスチャ管理クラス
-		std::unique_ptr<INTERNAL::ModelVertexResourceManager> modelVertexResourceManager_;// モデル頂点リソース管理クラス
+		std::unique_ptr<INTERNAL::ModelDataContainer> modelDataContainer_;// モデル頂点リソース管理クラス
+		std::unique_ptr<INTERNAL::VertexBufferContainer> vertexBufferContainer_;// 頂点バッファ管理クラス
 
 		D3D12_VIEWPORT viewport_;
 		D3D12_RECT scissorRect_;
