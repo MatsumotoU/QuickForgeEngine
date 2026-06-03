@@ -129,60 +129,14 @@ group "Applications" -- MyEngineProjects
         -- 外部ファイルのインクルード
         externalincludedirs {
             "./externals/",
-            "./engine/"
+            "./engine/",
+            "./engine/core/"
         }
 group ""
 
 group "EngineProjects" -- EngineProjects
-    project "Engine" -- Engine
-        location "engine"
-        kind "StaticLib" 
-        language "C++"
-        debugdir "%{wks.location}"
-        files {"engine/**.h","engine/**.cpp"}
-        links{
-            "DirectXTex",
-            "ImGui",
-            "mono-2.0-sgen",
-            "ExternalFolders"
-        }
-        libdirs {
-            "externals/Mono/lib"
-        }
-
-        -- 警告レベル4
-        warnings "Extra"
-
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "%{wks.location}/externals/",
-            "%{wks.location}/externals/sol2",
-            "%{wks.location}/externals/assimp/",
-            "%{wks.location}/externals/assimp/include/",
-            "%{wks.location}/externals/DirectXTex/",
-            "%{wks.location}/externals/imgui/",
-            "%{wks.location}/externals/Mono/",
-            "%{wks.location}/externals/Mono/include",
-            "%{wks.location}/externals/Mono/include/mono-2.0/",
-        }
-
-        prebuildcommands {
-            'call "%{wks.location}\\build\\GenerateBuildInfo.bat"',
-            'call "%{wks.location}\\externals\\Mono\\setup_mono.bat"'
-        }
-
-        filter "configurations:Debug"
-            links { "assimp-vc143-mtd" }
-            libdirs {
-                "externals/assimp/lib/Debug"
-            }
-        filter "configurations:Release or configurations:Development"
-            links { "assimp-vc143-mt" }
-            libdirs {
-                "externals/assimp/lib/Release"
-            }
-        filter ""
-    
+    -- エンジンのリソースプロジェクトの読み込み
+    dofile(path.join(_root, "engine/resources/premake5.lua"))
     -- 異存なしのコアプロジェクトの読み込み
     dofile(path.join(_root, "engine/core/premake5.lua"))
     -- ウィンドウシステムプロジェクトの読み込み
