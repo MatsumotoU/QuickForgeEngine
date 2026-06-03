@@ -722,6 +722,17 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
 		modelHandle.Deserialize(entityJson["ModelHandle"]);
 	}
+	if (entityJson.contains("fileName") && entityJson["fileName"].is_string()) {
+		const std::string modelName = entityJson["fileName"].get<std::string>();
+		if (!modelName.empty()) {
+			if (!entityManager_.HasComponent<ModelHandle>(entityId)) {
+				entityManager_.EmplaceComponent<ModelHandle>(entityId);
+			}
+			ModelHandle& modelHandle = entityManager_.GetComponent<ModelHandle>(entityId);
+			modelHandle.modelName = modelName;
+			modelHandle.handle = AssetManager::GetInstance()->LoadModel(modelName);
+		}
+	}
 	if (entityJson.contains("SceneObjectData")) {
 		entityManager_.EmplaceComponent<SceneObjectData>(entityId);
 		SceneObjectData& sceneObjectData = entityManager_.GetComponent<SceneObjectData>(entityId);

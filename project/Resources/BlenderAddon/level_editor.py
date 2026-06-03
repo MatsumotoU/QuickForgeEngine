@@ -5,6 +5,8 @@ import gpu
 import gpu_extras.batch
 import copy
 import mathutils
+import json
+import os
 
 bl_info = {
     "name": "LevelEditor",
@@ -145,52 +147,63 @@ class MYDDON_OT_export_scene(bpy.types.Operator):
     bl_label = "シーンをエクスポートします"
     bl_description = "シーンをエクスポートします"
 
-    filename_ext = ".scene"
+    filename_ext = ".json"
 
-    def write_and_print(self, file, text):
-        print(text)
-
-        file.write(text)
-        file.write("\n")
-
-    def parse_scene_recursice(self,file,object,level):
-        indent = ''
-        for i in range(level):
-            indent += "\t"
-
-        self.write_and_print(file,indent + object.type)
-        trans,rot,scale = object.matrix_local.decompose()
+    def build_entity_json(self, object, object_id_map):
+        trans, rot, scale = object.matrix_local.decompose()
         rot = rot.to_euler()
-        rot.x = math.degrees(rot.x)
-        rot.y = math.degrees(rot.y)
-        rot.z = math.degrees(rot.z)
-        self.write_and_print(file,indent + "Trans(%f,%f,%f)" % (trans.x, trans.y, trans.z))
-        self.write_and_print(file,indent + "Rot(%f,%f,%f)" % (rot.x, rot.y, rot.z))
-        self.write_and_print(file,indent + "Scale(%f,%f,%f)" % (scale.x, scale.y, scale.z))
-        
-        if "collider" in object:
-            self.write_and_print(file,indent + "Collider(%s)" % object["collider"])
-            temp_str = indent + "CC %f,%f,%f" % (object["collider_center"][0],object["collider_center"][1],object["collider_center"][2])
-            self.write_and_print(file,temp_str)
-            temp_str = indent + "CS %f,%f,%f" % (object["collider_size"][0],object["collider_size"][1],object["collider_size"][2])
-            self.write_and_print(file,temp_str)
 
-        if "file_name" in object:
-            self.write_and_print(file,indent + "FileName(%s)" % object["file_name"])
-        self.write_and_print(file,indent+'END')
-        self.write_and_print(file,'')
-        
-        self.write_and_print(file,'')
-        for child in object.children:
-            self.parse_scene_recursice(file,child,level+1)
+        entity = {
+            "Transform": {
+                "translate": [trans.x, trans.y, trans.z],
+                "rotate": [rot.x, rot.y, rot.z],
+                "scale": [scale.x, scale.y, scale.z]
+            },
+            "SceneObjectData": {
+                "name": object.name,
+                "tag": "Untagged",
+                "uniqueId": object_id_map[object]
+            }
+        }
+
+        if object.parent in object_id_map:
+            entity["ParentData"] = {"parentId": object_id_map[object.parent]}
+
+        if "file_name" in object and object["file_name"]:
+            entity["fileName"] = object["file_name"]
+
+        if "collider" in object:
+            center = object["collider_center"]
+            size = object["collider_size"]
+            entity["AABBColliderData"] = {
+                "isTrigger": False,
+                "isStatic": False,
+                "aabb": [center[0], center[1], center[2], size[0], size[1], size[2]],
+                "colliderLayer": 255,
+                "eventColliderLayer": 255
+            }
+
+        return entity
+
+    def build_scene_json(self):
+        scene_name = os.path.splitext(os.path.basename(self.filepath))[0]
+        scene_json = {"sceneName": scene_name, "entities": []}
+
+        object_id_map = {}
+        for index, object in enumerate(bpy.context.scene.objects):
+            object_id_map[object] = index + 1
+
+        for object in bpy.context.scene.objects:
+            scene_json["entities"].append(self.build_entity_json(object, object_id_map))
+
+        return scene_json
 
     def export(self):
         """ ファイルに出力 """
         print("シーン情報出力開始... %r" % self.filepath)
+        scene_json = self.build_scene_json()
         with open(self.filepath, "w", encoding="utf-8") as file:
-            for object in bpy.context.scene.objects:
-                if object.parent is None:
-                    self.parse_scene_recursice(file, object, 0)
+            json.dump(scene_json, file, ensure_ascii=False, indent=4)
 
     def execute(self,context):
         print("シーンをエクスポートします")
