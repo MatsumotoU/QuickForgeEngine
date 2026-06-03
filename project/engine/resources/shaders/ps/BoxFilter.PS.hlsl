@@ -6,9 +6,10 @@ Texture2D<float32_t4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
 static const float kernel[9] = { 
-    1.0f / 16.0f, 2.0f / 16.0f, 1.0f / 16.0f,
-    2.0f / 16.0f, 4.0f / 16.0f, 2.0f / 16.0f,
-    1.0f / 16.0f, 2.0f / 16.0f, 1.0f / 16.0f};
+    1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f,
+    1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f,
+    1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f
+};
 
 static const int2 offsets[9] = {
     int2(-1, -1), int2(0, -1), int2(1, -1),
