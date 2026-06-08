@@ -18,6 +18,8 @@
 
 #include "dx12/descriptors/Data/DescriptorHandles.h"
 
+using namespace QFE::GRAPHIC;
+
 namespace {
 	float clearColor[4] = { 0.1f, 0.25f, 0.5f, 1.0f };
 	const uint32_t kInvalidTextureHandle = UINT32_MAX;
@@ -39,9 +41,9 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 
 {}
 
-QFE::GRAPHIC::D3D12GraphicEngine::~D3D12GraphicEngine() = default;
+D3D12GraphicEngine::~D3D12GraphicEngine() = default;
 
-void QFE::GRAPHIC::D3D12GraphicEngine::Initialize() {
+void D3D12GraphicEngine::Initialize() {
 	// ウィンドウのクライアント領域のサイズを取得
 	RECT rect;
 	GetClientRect(hwnd_, &rect);
@@ -83,7 +85,7 @@ void QFE::GRAPHIC::D3D12GraphicEngine::Initialize() {
 	vertexBufferContainer_->Initialize();
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::PreDraw() {
+void D3D12GraphicEngine::PreDraw() {
 	// スワップチェーンのリソース状態を描画可能に変更
 	swapChain_->TransitionCurrentBackBufferToRenderTarget(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
@@ -96,7 +98,7 @@ void QFE::GRAPHIC::D3D12GraphicEngine::PreDraw() {
 	ClearDepthStencil();
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::PostDraw() {
+void D3D12GraphicEngine::PostDraw() {
 	// スワップチェーンのリソース状態を表示可能に変更
 	swapChain_->TransitionCurrentBackBufferToPresent(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
@@ -117,7 +119,7 @@ void QFE::GRAPHIC::D3D12GraphicEngine::PostDraw() {
 	textureManager_->ReleaseIntermediateResources();
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::Shutdown() {
+void D3D12GraphicEngine::Shutdown() {
 	modelDataContainer_->Finalize();
 	vertexBufferContainer_->Finalize();
 	textureManager_->Finalize();
@@ -125,30 +127,53 @@ void QFE::GRAPHIC::D3D12GraphicEngine::Shutdown() {
 	directXDevice_->Shutdown();
 }
 
-uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadTexture(const std::string& filePath) {
-	return textureManager_->LoadTexture(filePath);
+TextureHandle D3D12GraphicEngine::LoadTexture(const std::string& filePath) {
+	return static_cast<TextureHandle>(textureManager_->LoadTexture(filePath));
 }
 
-uint32_t QFE::GRAPHIC::D3D12GraphicEngine::LoadMesh(const std::vector<VertexData>& vertexData, const std::string& meshName) {
-	return vertexBufferContainer_->Assign(directXDevice_->GetDevice(), vertexData, meshName);
+VertexBufferHandle D3D12GraphicEngine::LoadMesh(const std::vector<VertexData>& vertexData, const std::string& meshName) {
+	return static_cast<VertexBufferHandle>(vertexBufferContainer_->Assign(directXDevice_->GetDevice(), vertexData, meshName));
 }
 
-std::vector<uint32_t> QFE::GRAPHIC::D3D12GraphicEngine::LoadMeshesFromModel(uint32_t modelHandle) {
-	const auto& modelData = modelDataContainer_->GetModelData(modelHandle);
-	std::vector<uint32_t> meshHandles;
+std::vector<VertexBufferHandle> D3D12GraphicEngine::LoadMeshesFromModel(ModelHandle modelHandle) {
+	const auto& modelData = modelDataContainer_->GetModelData(static_cast<uint32_t>(modelHandle));
+	std::vector<VertexBufferHandle> meshHandles;
 	for (size_t i = 0; i < modelData.meshes.size(); ++i) {
 		const auto& meshData = modelData.meshes[i];
 		std::string meshName = modelData.name + "_mesh_" + std::to_string(i);
-		uint32_t meshHandle = LoadMesh(meshData.vertices.GetInternalVector(), meshName);
+		VertexBufferHandle meshHandle = LoadMesh(meshData.vertices.GetInternalVector(), meshName);
 		meshHandles.push_back(meshHandle);
 	}
 	return meshHandles;
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
+ViewPortHandle D3D12GraphicEngine::CreateViewPort(uint32_t width, uint32_t height) {
+	D3D12_VIEWPORT viewport{};
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+	viewport.Width = static_cast<float>(width);
+	viewport.Height = static_cast<float>(height);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+
+	uint32_t handle = viewports_.Add(std::to_string(width) + "x" + std::to_string(height), viewport);
+	return static_cast<ViewPortHandle>(handle);
+}
+
+ScissorRectHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateScissorRect(int left, int top, int right, int bottom) {
+	D3D12_RECT scissorRect{};
+	scissorRect.left = left;
+	scissorRect.top = top;
+	scissorRect.right = right;
+	scissorRect.bottom = bottom;
+
+	uint32_t handle = scissorRects_.Add(std::to_string(left) + "_" + std::to_string(top) + "_" + std::to_string(right) + "_" + std::to_string(bottom), scissorRect);
+	return static_cast<ScissorRectHandle>(handle);
+}
+
+void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
 	AssignSwapChainDescriptor();
 	CreateDepthStencilBuffer(width, height);
-	CreateViewportAndScissorRect(width, height);
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::AssignSwapChainDescriptor() {
@@ -195,19 +220,6 @@ void QFE::GRAPHIC::D3D12GraphicEngine::CreateDepthStencilBuffer(uint32_t width, 
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 	dsvHandle_ = descriptorHeapManager_->AssignDsvHeap(depthStencilBuffer_.Get(), &dsvDesc);
-}
-
-void QFE::GRAPHIC::D3D12GraphicEngine::CreateViewportAndScissorRect(uint32_t width, uint32_t height) {
-	viewport_.TopLeftX = 0.0f;
-	viewport_.TopLeftY = 0.0f;
-	viewport_.Width = static_cast<float>(width);
-	viewport_.Height = static_cast<float>(height);
-	viewport_.MinDepth = 0.0f;
-	viewport_.MaxDepth = 1.0f;
-	scissorRect_.left = 0;
-	scissorRect_.top = 0;
-	scissorRect_.right = static_cast<LONG>(width);
-	scissorRect_.bottom = static_cast<LONG>(height);
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::ClearDepthStencil() {

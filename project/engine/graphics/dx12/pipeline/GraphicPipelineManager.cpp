@@ -21,7 +21,7 @@ void GraphicPipelineManager::Initialize(
 	shaderCompiler_.InitializeDXC();
 	// シェーダーを格納しているディレクトリ内のファイル名一覧を取得
 	std::vector<std::string> vsFiles = QFE::FILE::GetFilesInDirectory(kVSFilePath);
-	std::vector<std::string> psFiles = QFE::FILE::GetFilesInDirectory("engine/resources/shaders/ps");
+	std::vector<std::string> psFiles = QFE::FILE::GetFilesInDirectory(kPSFilePath);
 	// シェーダーリフレクション情報を取得
 	for (const auto& vsFile : vsFiles) {
 		shaderCompiler_.CompileShader(ConvertString(kVSFilePath + vsFile), L"vs_6_0");
