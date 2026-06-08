@@ -8,25 +8,16 @@
 namespace QFE::GRAPHIC::INTERNAL {
 	class InputLayout final {
 	public:
-		/// <summary>
-		/// 初期匁E
-		/// </summary>
+		/// @brief 初期化
 		void Initialize();
-		/// <summary>
-		/// POSITION, TEXCOORD, NORMALのInputLayoutを生成しまぁE
-		/// </summary>
+
+		/// @brief POSITION, TEXCOORD, NORMALのInputLayoutを生成します
 		void CreateNormalPresetInputLayout();
-		/// <summary>
-		/// 
-		/// </summary>
+		
+		/// @brief POSITION, COLOR,TEXCOORDのInputLayoutを生成します
 		void CreatePrimitivePresetInputLayout();
-		/// <summary>
-		/// InputElementDescを生成しまぁE
-		/// </summary>
-		/// <param name="semanticName">ShaderInputの名前</param>
-		/// <param name="semanticIndex">そ�E後に続く数孁E/param>
-		/// <param name="format">format</param>
-		/// <param name="alignedByteOffset">offset</param>
+
+		/// @brief 頂点シェーダーへ送る要素を追加
 		void CreateInputElementDesc(const LPCSTR& semanticName, const UINT& semanticIndex, const DXGI_FORMAT& format, const UINT& alignedByteOffset);
 
 	public:
