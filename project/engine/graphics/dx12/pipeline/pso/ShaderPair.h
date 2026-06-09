@@ -1,14 +1,15 @@
 #pragma once
 #include <string>
+#include <memory>
+#include <d3d12.h>
 
 namespace QFE::GRAPHIC::INTERNAL {
+	/// @brief 頂点シェーダーとピクセルシェーダーのペアを表すクラス
 	class ShaderPair final {
 	public:
-		ShaderPair() = default;
-		ShaderPair(const std::wstring& vsPath, const std::wstring& psPath) : vsPath_(vsPath), psPath_(psPath) {}
-		~ShaderPair() = default;
+		/// @brief 頂点シェーダーとピクセルシェーダーのペアを作成する
+		void Create(ID3DBlob* vsBlob, ID3DBlob* psBlob);
+
 	public:
-		std::wstring vsPath_;
-		std::wstring psPath_;
 	};
 }

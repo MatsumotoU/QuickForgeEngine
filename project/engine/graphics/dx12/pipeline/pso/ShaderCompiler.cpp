@@ -112,13 +112,6 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	shaderSource->Release();
 	shaderResult->Release();
 
-	// シェーダーリフレクションを実行しJSON保存
-	ShaderReflection shaderReflection;
-	shaderReflection.RunShaderReflection(shaderBlob);
-	nlohmann::json shaderJson = shaderReflection.Serialize();
-	std::string savePath = "Resources/ShaderReflection/" + ConvertString(filePath.substr(filePath.find_last_of(L"/\\") + 1)) + ".json";
-	QFE::FILE::SaveJSONToFile(savePath, shaderJson);
-
 	// キャッシュに保存
 	iDxcBlobMap_.emplace(filePath, shaderBlob);
 	return shaderBlob;
