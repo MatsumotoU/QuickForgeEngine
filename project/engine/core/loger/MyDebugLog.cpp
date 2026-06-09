@@ -2,7 +2,6 @@
 #include "../EngineDefines.h"
 
 #include <cassert>
-#include "FileNameContainer.h"
 
 using namespace QFE;
 

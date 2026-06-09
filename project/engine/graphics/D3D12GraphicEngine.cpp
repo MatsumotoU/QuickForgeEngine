@@ -11,6 +11,8 @@
 #include "dx12/SwapChain.h"
 #include "dx12/Fence.h"
 
+#include "dx12/pipeline/pso/ShaderCompiler.h"
+
 #include "dx12/pipeline/GraphicPipelineManager.h"
 #include "dx12/TextureManager.h"
 #include "dx12/ModelDataContainer.h"
@@ -37,7 +39,8 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	graphicPipelineManager_(std::make_unique<INTERNAL::GraphicPipelineManager>()),
 	textureManager_(std::make_unique<INTERNAL::TextureManager>()),
 	modelDataContainer_(std::make_unique<INTERNAL::ModelDataContainer>()),
-	vertexBufferContainer_(std::make_unique<INTERNAL::VertexBufferContainer>())
+	vertexBufferContainer_(std::make_unique<INTERNAL::VertexBufferContainer>()),
+	shaderCompiler_(std::make_unique<INTERNAL::ShaderCompiler>())
 
 {}
 
@@ -52,6 +55,8 @@ void D3D12GraphicEngine::Initialize() {
 
 	// DirectXDeviceの初期化
 	directXDevice_->Initialize();
+	// シェーダーコンパイルに必要なDXCデバイスの初期化
+	shaderCompiler_->Initialize();
 	// DescriptorHeapManagerの初期化
 	descriptorHeapManager_->Initialize(directXDevice_->GetDevice());
 	// CommandManagerの初期化
@@ -67,13 +72,10 @@ void D3D12GraphicEngine::Initialize() {
 	// DirectXCommonの名残.フェンスの初期化以降の処理.
 	LegacyInitialize(width, height);
 
-	// グラフィックパイプラインの初期化
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
-	depthStencilDesc.DepthEnable = true;
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-	graphicPipelineManager_->Initialize(directXDevice_->GetDevice(), depthStencilDesc);
-
+	// グラフィックパイプラインマネージャの初期化
+	graphicPipelineManager_->Initialize(
+		[&](const std::wstring& filePath, const wchar_t* profile) {return shaderCompiler_->CompileShader(filePath, profile); });
+	
 	// テクスチャ管理クラスの初期化
 	textureManager_->Initialize(
 		directXDevice_->GetDevice(), 
@@ -124,6 +126,7 @@ void D3D12GraphicEngine::Shutdown() {
 	vertexBufferContainer_->Finalize();
 	textureManager_->Finalize();
 	fence_->Shutdown();
+	shaderCompiler_->Finalize();
 	directXDevice_->Shutdown();
 }
 

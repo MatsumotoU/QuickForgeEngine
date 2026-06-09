@@ -1,46 +1,29 @@
 #pragma once
+#include <string> 
+#include <map> 
+
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 #include <dxcapi.h>
-#include <map>
-
-#include <nlohmann/json.hpp>
-
-#include "ShaderCompiledData.h"
+#include "CompilerDevice.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
+	/// @brief シェーダーをバイナリ化するクラス
 	class ShaderCompiler final {
 	public:
-		ShaderCompiler();
-		~ShaderCompiler();
+		/// @brief デバイスを初期化します
+		void Initialize();
+		/// @brief デバイスを解放します
+		void Finalize();
 
-	public:
-		/// <summary>
-		/// DXCを�E期化しまぁE
-		/// </summary>
-		void InitializeDXC();
-
-		/// <summary>
-		/// シェーダーをコンパイルする
-		/// </summary>
-		/// <param name="filePath">コンパイル対象のhlslファイル吁E/param>
-		/// <param name="profile">コンパイラに使用するプロファイル</param>
-		/// <param name="dxUtils"></param>
-		/// <param name="dxcCompiler"></param>
-		/// <param name="includeHandler"></param>
-		/// <returns></returns>
+		/// @brief シェーダーをコンパイルします
 		IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
-
-		/// 指定のシェーダーのリフレクション情報をJSON形式で取得する
-		nlohmann::json GetShaderReflectionJson(const std::wstring& filePath) const;
-		/// 今までコンパイルしたシェーダーのリフレクション情報をJSON形式で取得する
-		std::map<std::string, nlohmann::json> GetAllShaderReflectionJson() const;
+		/// @brief シェーダーをキャッシュ関係なく強制的に再コンパイルします
+		IDxcBlob* ForceCompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 	private:
-		std::map<std::wstring, IDxcBlob*> iDxcBlobMap_;
-		IDxcUtils* dxcUtils_;
-		IDxcCompiler3* dxcCompiler_;
-		IDxcIncludeHandler* includeHandler_;
+		std::map<std::wstring, IDxcBlob*> iDxcBlobMap_;// 今までコンパイルしてきたシェーダーバイナリ
+		CompilerDevice dxcDevice_;// dxcデバイス
 	};
 }

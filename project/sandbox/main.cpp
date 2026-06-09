@@ -3,9 +3,13 @@
 
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
+#include "core/loger/MyDebugLog.h"
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	// デバッグログの初期化
+	QFE::MyDebugLog::GetInstance()->Initialize();
+
 	// ゲームウィンドウマネージャの初期化とウィンドウの追加
 	std::unique_ptr<QFE::GameWindowManager> gameWindowManager = std::make_unique<QFE::GameWindowManager>();
 	gameWindowManager->Initialize();

@@ -38,6 +38,8 @@ namespace QFE::GRAPHIC {
 		class SwapChain;
 		class Fence;
 
+		class ShaderCompiler;
+
 		class GraphicPipelineManager;
 		class ModelDataContainer;
 		class VertexBufferContainer;
@@ -88,6 +90,8 @@ namespace QFE::GRAPHIC {
 		std::unique_ptr<INTERNAL::DirectXCommandManager> commandManager_;// コマンド管理クラス
 		std::unique_ptr<INTERNAL::SwapChain> swapChain_;// スワップチェーン管理クラス
 		std::unique_ptr<INTERNAL::Fence> fence_;// フェンス管理クラス
+
+		std::unique_ptr<INTERNAL::ShaderCompiler> shaderCompiler_;// シェーダーコンパイルクラス
 
 		std::unique_ptr<INTERNAL::GraphicPipelineManager> graphicPipelineManager_;// グラフィックパイプライン管理クラス
 		std::unique_ptr<INTERNAL::TextureManager> textureManager_;// テクスチャ管理クラス

@@ -1,50 +1,18 @@
 #include "ShaderCompiler.h"
-#pragma comment(lib,"d3d12.lib")
-#pragma comment(lib,"dxgi.lib")
-#pragma comment(lib,"dxguid.lib")
-#pragma comment(lib,"dxcompiler.lib")
+#include "ShaderReflection.h"
+
 #include <cassert>
 #include <format>
 
 #include "EngineDefines.h"
-
-#include "ShaderReflection.h"
 #include "string/MyString.h"
 #include "file/FileUtility.h"
 
 using namespace QFE::GRAPHIC::INTERNAL;
-ShaderCompiler::ShaderCompiler() {
+
+void ShaderCompiler::Initialize() {
 	iDxcBlobMap_.clear();
-}
-
-ShaderCompiler::~ShaderCompiler() {
-	QFE_LOG("=====ShaderFiles=====");
-
-	// iDxcBlobMap_に格納されているIDxcBlob*をReleaseして解放
-	for (auto& [key, blob] : iDxcBlobMap_) {
-		if (blob) {
-			blob->Release();
-			QFE_LOG(std::format("Delete: {}", ConvertString(key)));
-		}
-	}
-	iDxcBlobMap_.clear();
-
-	QFE_LOG("=====================");
-}
-
-void ShaderCompiler::InitializeDXC() {
-	//// * DXCの初期化 * ////
-	dxcUtils_ = nullptr;
-	dxcCompiler_ = nullptr;
-	HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
-	assert(SUCCEEDED(hr));
-	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
-	assert(SUCCEEDED(hr));
-
-	// インクルード対応のためのハンドラ作成
-	includeHandler_ = nullptr;
-	hr = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
-	assert(SUCCEEDED(hr));
+	dxcDevice_.Initialize();
 }
 
 IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wchar_t* profile) {
@@ -54,17 +22,15 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 		return iDxcBlobMap_.at(filePath);
 	}
 
-	QFE_LOG(ConvertString(std::format(L"Begin CompileShader, path:{},profile:{}\n", filePath, profile)));
-
 	// 絶対パスを取得
 	std::wstring absPath = QFE::FILE::GetAbsolutePath(filePath);
 	QFE_LOG(ConvertString(std::format(L"Shader file absolute path: {}\n", absPath)));
 
 	// hlslファイルをロード
 	IDxcBlobEncoding* shaderSource = nullptr;
-	HRESULT hr = dxcUtils_->LoadFile(filePath.c_str(), nullptr, &shaderSource);
-	
-	if(!SUCCEEDED(hr)) {
+	HRESULT hr = dxcDevice_.GetDxcUtils()->LoadFile(filePath.c_str(), nullptr, &shaderSource);
+
+	if (!SUCCEEDED(hr)) {
 		QFE_REPORT_SYSTEM_ERROR(std::format("ShaderCompiler: Failed to load shader file: {}", ConvertString(filePath)), SystemError::Abort);
 	}
 
@@ -85,11 +51,11 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	};
 	// シェーダーをコンパイル
 	IDxcResult* shaderResult = nullptr;
-	hr = dxcCompiler_->Compile(
+	hr = dxcDevice_.GetDxcCompiler()->Compile(
 		&shaderSourceBuffer,		// 入力ファイル
 		arguments,					// 引数
 		_countof(arguments),		// 引数数
-		includeHandler_,			// インクルードハンドラ
+		dxcDevice_.GetIncludeHandler(),			// インクルードハンドラ
 		IID_PPV_ARGS(&shaderResult)	// 結果
 	);
 	assert(SUCCEEDED(hr));
@@ -117,27 +83,90 @@ IDxcBlob* ShaderCompiler::CompileShader(const std::wstring& filePath, const wcha
 	return shaderBlob;
 }
 
-nlohmann::json ShaderCompiler::GetShaderReflectionJson(const std::wstring& filePath) const {
-	if (!iDxcBlobMap_.contains(filePath)) {
-		QFE_LOG(ConvertString(std::format(L"Shader not compiled yet: {}", filePath)));
-		return nlohmann::json();
+IDxcBlob* ShaderCompiler::ForceCompileShader(const std::wstring& filePath, const wchar_t* profile) {
+
+	// 絶対パスを取得
+	std::wstring absPath = QFE::FILE::GetAbsolutePath(filePath);
+	QFE_LOG(ConvertString(std::format(L"Shader file absolute path: {}\n", absPath)));
+
+	// hlslファイルをロード
+	IDxcBlobEncoding* shaderSource = nullptr;
+	HRESULT hr = dxcDevice_.GetDxcUtils()->LoadFile(filePath.c_str(), nullptr, &shaderSource);
+
+	if (!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR(std::format("ShaderCompiler: Failed to load shader file: {}", ConvertString(filePath)), SystemError::Abort);
 	}
-	IDxcBlob* blob = iDxcBlobMap_.at(filePath);
-	ShaderReflection shaderReflection;
-	shaderReflection.RunShaderReflection(blob);
-	nlohmann::json shaderJson = shaderReflection.Serialize();
-	return shaderJson;
+
+	// バッファ作成
+	DxcBuffer shaderSourceBuffer;
+	shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
+	shaderSourceBuffer.Size = shaderSource->GetBufferSize();
+	shaderSourceBuffer.Encoding = DXC_CP_UTF8;
+
+	// コンパイル引数
+	LPCWSTR arguments[] = {
+		filePath.c_str(),		// 入力hlslファイル
+		L"-E",L"main",			// エントリーポイントmain
+		L"-T",profile,			// ShaderProfile
+		L"-Zi",L"-Qembed_debug",// デバッグ情報埋め込み
+		L"-Od",					// 最適化無効
+		L"-Zpr",				// 行優先パッキング
+	};
+	// シェーダーをコンパイル
+	IDxcResult* shaderResult = nullptr;
+	hr = dxcDevice_.GetDxcCompiler()->Compile(
+		&shaderSourceBuffer,		// 入力ファイル
+		arguments,					// 引数
+		_countof(arguments),		// 引数数
+		dxcDevice_.GetIncludeHandler(),			// インクルードハンドラ
+		IID_PPV_ARGS(&shaderResult)	// 結果
+	);
+	assert(SUCCEEDED(hr));
+
+	// エラー出力を取得
+	IDxcBlobUtf8* shaderError = nullptr;
+	hr = shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
+	if (SUCCEEDED(hr) && shaderError != nullptr && shaderError->GetStringLength() != 0) {
+		QFE_LOG(std::format(
+			"Shader compilation failed for file: {}, errors:\n{}",
+			ConvertString(filePath), shaderError->GetStringPointer()));
+		assert(false);
+	}
+
+	// バイナリ出力を取得
+	IDxcBlob* shaderBlob = nullptr;
+	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
+	assert(SUCCEEDED(hr));
+	QFE_LOG(ConvertString(std::format(L"Compile Succeded, path:{},profile:{}\n", filePath, profile)));
+	shaderSource->Release();
+	shaderResult->Release();
+
+	// キャッシュを更新
+	if (iDxcBlobMap_.contains(filePath)) {
+		iDxcBlobMap_.at(filePath)->Release();
+		iDxcBlobMap_[filePath] = shaderBlob;
+		QFE_LOG(std::format("Recompiled file: {}", ConvertString(filePath)));
+	}
+	else {
+		iDxcBlobMap_.emplace(filePath, shaderBlob);
+		QFE_LOG(std::format("Compiled file: {}", ConvertString(filePath)));
+	}
+	return shaderBlob;
 }
 
-std::map<std::string, nlohmann::json> ShaderCompiler::GetAllShaderReflectionJson() const {
-	std::map<std::string, nlohmann::json> shaderJsonMap;
-	for (const auto& [filePath, blob] : iDxcBlobMap_) {
-		ShaderReflection shaderReflection;
-		shaderReflection.RunShaderReflection(blob);
-		nlohmann::json shaderJson = shaderReflection.Serialize();
-		shaderJsonMap[ConvertString(filePath)] = shaderJson;
+void ShaderCompiler::Finalize() {
+	dxcDevice_.Finalize();
+
+	QFE_LOG("=====ShaderFiles=====");
+
+	// iDxcBlobMap_に格納されているIDxcBlob*をReleaseして解放
+	for (auto& [key, blob] : iDxcBlobMap_) {
+		if (blob) {
+			blob->Release();
+			QFE_LOG(std::format("Delete: {}", ConvertString(key)));
+		}
 	}
-	return shaderJsonMap;
+	iDxcBlobMap_.clear();
+
+	QFE_LOG("=====================");
 }
-
-
