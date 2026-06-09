@@ -3,7 +3,9 @@
 #include <dxcapi.h>
 #include <d3d12shader.h>
 #include <wrl.h>
-#include <nlohmann/json.hpp>
+#include <vector>
+
+#include "InputElement.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
 	class ShaderReflection final {
@@ -11,8 +13,11 @@ namespace QFE::GRAPHIC::INTERNAL {
 		ShaderReflection();
 		~ShaderReflection() = default;
 	public:
+		/// @brief シェーダーのリフレクションを実行します。shaderBlobはCompileShaderでコンパイルしたシェーダーバイナリを渡してください。
 		void RunShaderReflection(IDxcBlob* shaderBlob);
-		nlohmann::json Serialize() const;
+
+		/// @brief シェーダーの入力要素を取得します。呼び出す前にRunShaderReflectionを呼び出して、shaderBlobを渡しておく必要があります。
+		std::vector<InputElement> GetInputLayoutElement() const;
 
 	private:
 		Microsoft::WRL::ComPtr<IDxcContainerReflection> containerReflection_;

@@ -21,15 +21,20 @@ void QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::Initialize(std::function<ID
 	std::vector<std::string> vsFiles = QFE::FILE::GetFilesInDirectory(kVSFilePath);
 	std::vector<std::string> psFiles = QFE::FILE::GetFilesInDirectory(kPSFilePath);
 	// バイナリの一覧
-	std::vector<IDxcBlob*> vsBlobs;
-	std::vector<IDxcBlob*> psBlobs;
+	std::map<std::string, IDxcBlob*> vsBlobMap;
+	std::map<std::string, IDxcBlob*> psBlobMap;
+
 	// エンジンの付属シェーダーをコンパイル
 	for (const auto& vsFile : vsFiles) {
-		vsBlobs.push_back(compileFunc(ConvertString(kVSFilePath + vsFile), L"vs_6_0"));
+		vsBlobMap[vsFile] = compileFunc(ConvertString(kVSFilePath + vsFile), L"vs_6_0");
 	}
 	for (const auto& psFile : psFiles) {
-		psBlobs.push_back(compileFunc(ConvertString(kPSFilePath + psFile), L"ps_6_0"));
+		psBlobMap[psFile] = compileFunc(ConvertString(kPSFilePath + psFile), L"ps_6_0");
 	}
+
+	// エンジンの付属シェーダーペアを生成
+	shaderPairs_["Object3D"].Create(vsBlobMap["Object3d.VS.hlsl"], psBlobMap["Object3d.PS.hlsl"]);
+
 }
 
 void GraphicPipelineManager::Finalize() {

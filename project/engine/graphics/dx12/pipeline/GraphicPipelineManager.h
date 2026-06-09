@@ -6,13 +6,15 @@
 #include <dxcapi.h>
 #include <string>
 
+#include <map>
+
 #include "../Descriptors/DsvDescriptorHeap.h"
 
 #include "pso/PipelineStateObject.h"
 #include "pso/ShaderReflection.h"
+#include "pso/ShaderPair.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
-
 	/// @brief グラフィックスパイプラインおよびルートシグネチャの管理クラス
 	class GraphicPipelineManager final {
 	public:
@@ -22,5 +24,6 @@ namespace QFE::GRAPHIC::INTERNAL {
 		void Finalize();
 
 	private: // メンバ変数
+		std::map<std::string, ShaderPair> shaderPairs_;// シェーダーペアのマップ
 	};
 }

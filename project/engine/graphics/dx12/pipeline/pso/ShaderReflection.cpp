@@ -4,6 +4,22 @@
 
 #include <cassert>
 using namespace QFE::GRAPHIC::INTERNAL;
+
+namespace {
+	uint32_t GetBitCount(BYTE mask) {
+		unsigned long count;
+		_BitScanForward(&count, ~mask & 0xF);
+		return (mask == 0x0F) ? 4 : count;
+	};
+
+	const DXGI_FORMAT FormatTable[4][4] = {
+		{ DXGI_FORMAT_R32_FLOAT, DXGI_FORMAT_R32G32_FLOAT, DXGI_FORMAT_R32G32B32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT }, // FLOAT
+		{ DXGI_FORMAT_R32_UINT,  DXGI_FORMAT_R32G32_UINT,  DXGI_FORMAT_R32G32B32_UINT,  DXGI_FORMAT_R32G32B32A32_UINT  }, // UINT
+		{ DXGI_FORMAT_R32_SINT,  DXGI_FORMAT_R32G32_SINT,  DXGI_FORMAT_R32G32B32_SINT,  DXGI_FORMAT_R32G32B32A32_SINT  }, // SINT
+	};
+}
+
+
 ShaderReflection::ShaderReflection() {
 	HRESULT hr;
 	hr = DxcCreateInstance(CLSID_DxcContainerReflection, IID_PPV_ARGS(containerReflection_.GetAddressOf()));
@@ -35,110 +51,29 @@ void ShaderReflection::RunShaderReflection(IDxcBlob* shaderBlob) {
 	}
 }
 
-nlohmann::json ShaderReflection::Serialize() const {
-	nlohmann::json jsonData;
-	try
-	{
-		// shaderReflection_が有効かどうかを確認
-		D3D12_SHADER_DESC shaderDesc{};
-		if(shaderReflection_ == nullptr) {
-			QFE_REPORT_SYSTEM_ERROR("Shader reflection interface is not initialized.", SystemError::Abort);
-		}
-		// シェーダーの基本情報を取得
-		HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
-		assert(SUCCEEDED(hr) && "Failed to get shader description.");
-		
-		// シェーダーの基本情報をJSONに追加
-		jsonData["Inputs"] = nlohmann::json::array();
-		for (UINT i = 0; i < shaderDesc.InputParameters; ++i) {
-			D3D12_SIGNATURE_PARAMETER_DESC paramDesc{};
-			hr = shaderReflection_->GetInputParameterDesc(i, &paramDesc);
-			assert(SUCCEEDED(hr) && "Failed to get input parameter description.");
-			nlohmann::json inputJson;
-			inputJson["SemanticName"] = paramDesc.SemanticName;
-			inputJson["SemanticIndex"] = paramDesc.SemanticIndex;
-			inputJson["Mask"] = paramDesc.Mask;
-			inputJson["ComponentType"] = paramDesc.ComponentType;
-			jsonData["Inputs"].push_back(inputJson);
-		}
-		// シェーダーのリソース情報をJSONに追加
-		jsonData["Resources"] = nlohmann::json::array();
-		for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
-			D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
-			hr = shaderReflection_->GetResourceBindingDesc(i, &bindDesc);
-			assert(SUCCEEDED(hr) && "Failed to get resource binding description.");
-			nlohmann::json resourceJson;
-			resourceJson["Name"] = bindDesc.Name;
-			resourceJson["Type"] = bindDesc.Type;
-			resourceJson["BindPoint"] = bindDesc.BindPoint;
-			resourceJson["BindCount"] = bindDesc.BindCount;
-			resourceJson["Space"] = bindDesc.Space;
-			resourceJson["Flags"] = bindDesc.uFlags;
-			jsonData["Resources"].push_back(resourceJson);
-		}
-		// 定数バッファの情報をJSONに追加
-		jsonData["ConstantBuffers"] = nlohmann::json::array();
-		for (UINT i = 0; i < shaderDesc.ConstantBuffers; ++i) {
-			ID3D12ShaderReflectionConstantBuffer* constBuffer = shaderReflection_->GetConstantBufferByIndex(i);
-			D3D12_SHADER_BUFFER_DESC bufferDesc{};
-			hr = constBuffer->GetDesc(&bufferDesc);
-			assert(SUCCEEDED(hr) && "Failed to get constant buffer description.");
-			nlohmann::json bufferJson;
-			bufferJson["Name"] = bufferDesc.Name;
-			bufferJson["Size"] = bufferDesc.Size;
-			bufferJson["Variables"] = nlohmann::json::array();
-			for (UINT j = 0; j < bufferDesc.Variables; ++j) {
-				ID3D12ShaderReflectionVariable* variable = constBuffer->GetVariableByIndex(j);
-				D3D12_SHADER_VARIABLE_DESC varDesc{};
-				hr = variable->GetDesc(&varDesc);
-				assert(SUCCEEDED(hr) && "Failed to get variable description.");
-				nlohmann::json varJson;
-				varJson["Name"] = varDesc.Name;
-				varJson["StartOffset"] = varDesc.StartOffset;
-				varJson["Size"] = varDesc.Size;
-				bufferJson["Variables"].push_back(varJson);
-			}
-			jsonData["ConstantBuffers"].push_back(bufferJson);
-		}
-		// 構造化バッファの情報をJSONに追加
-		jsonData["StructuredBuffers"] = nlohmann::json::array();
-		for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
-			D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
-			hr = shaderReflection_->GetResourceBindingDesc(i, &bindDesc);
-			assert(SUCCEEDED(hr) && "Failed to get resource binding description.");
-			if (bindDesc.Type == D3D_SIT_STRUCTURED) {
-				nlohmann::json structuredBufferJson;
-				structuredBufferJson["Name"] = bindDesc.Name;
-				structuredBufferJson["BindPoint"] = bindDesc.BindPoint;
-				structuredBufferJson["BindCount"] = bindDesc.BindCount;
-				structuredBufferJson["Space"] = bindDesc.Space;
-				structuredBufferJson["Flags"] = bindDesc.uFlags;
-				jsonData["StructuredBuffers"].push_back(structuredBufferJson);
-			}
-		}
-		// テクスチャの情報をJSONに追加
-		jsonData["Textures"] = nlohmann::json::array();
-		for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
-			D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
-			hr = shaderReflection_->GetResourceBindingDesc(i, &bindDesc);
-			assert(SUCCEEDED(hr) && "Failed to get resource binding description.");
-			if (bindDesc.Type == D3D_SIT_TEXTURE) {
-				nlohmann::json textureJson;
-				textureJson["Name"] = bindDesc.Name;
-				textureJson["BindPoint"] = bindDesc.BindPoint;
-				textureJson["BindCount"] = bindDesc.BindCount;
-				textureJson["Space"] = bindDesc.Space;
-				textureJson["Flags"] = bindDesc.uFlags;
-				jsonData["Textures"].push_back(textureJson);
-			}
-		}
+std::vector<InputElement> QFE::GRAPHIC::INTERNAL::ShaderReflection::GetInputLayoutElement() const {
+	std::vector<InputElement> inputLayoutElements;
+
+	// shaderReflection_が有効かどうかを確認
+	D3D12_SHADER_DESC shaderDesc{};
+	if (shaderReflection_ == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader reflection interface is not initialized.", SystemError::Abort);
 	}
-	catch (const std::exception& e)
-	{
-		e;
-		QFE_LOG("ShaderReflection::Serialize: Exception occurred - " + std::string(e.what()));
+	// シェーダーの基本情報を取得
+	HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
+	assert(SUCCEEDED(hr) && "Failed to get shader description.");
+	// 入力パラメータの情報を取得して渡された引数に設定
+	for (UINT i = 0; i < shaderDesc.InputParameters; ++i) {
+		InputElement element{};
+		D3D12_SIGNATURE_PARAMETER_DESC paramDesc{};
+		hr = shaderReflection_->GetInputParameterDesc(i, &paramDesc);
+		assert(SUCCEEDED(hr) && "Failed to get input parameter description.");
+		element.semanticName = paramDesc.SemanticName;
+		element.semanticIndex = paramDesc.SemanticIndex;
+		element.format = FormatTable[paramDesc.ComponentType][GetBitCount(paramDesc.Mask) - 1];
+		element.alignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;// 入力要素のオフセットは自動で計算させるため、D3D12_APPEND_ALIGNED_ELEMENTを使用
+		inputLayoutElements.push_back(element);
 	}
-	return jsonData;
+
+	return inputLayoutElements;
 }
-
-

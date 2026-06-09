@@ -32,6 +32,12 @@ void InputLayout::CreateInputElementDesc(const LPCSTR& semanticName, const UINT&
 	inputLayoutDesc_.NumElements = static_cast<UINT>(inputElementDescs_.size());
 }
 
+void QFE::GRAPHIC::INTERNAL::InputLayout::CreateInputElementDesc(const InputElement& inputElement) {
+	CreateInputElementDesc(
+		inputElement.semanticName, inputElement.semanticIndex,
+		inputElement.format, inputElement.alignedByteOffset);
+}
+
 D3D12_INPUT_LAYOUT_DESC* InputLayout::GetInputLayoutDesc() {
 	return &inputLayoutDesc_;
 }

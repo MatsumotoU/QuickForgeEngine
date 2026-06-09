@@ -43,25 +43,24 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 	descriptorRange.BaseShaderRegister = baseShaderRegister;
 	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	descriptorRanges_[friendlyName] = descriptorRange; // 郢晄ｧｭ繝｣郢晏干竊馴具ｽｻ鬪ｭ・ｲ
+	descriptorRanges_[friendlyName] = descriptorRange;// friendlyNameをキーにして、対応するDescriptorRangeを保存
 
 	if (rootParameter->ParameterType != D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) {
 		QFE_LOG("RootParameter: ParameterType is Not TableType! ChangedType->D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE");
 	}
 
-	// 郢晢ｽｫ郢晢ｽｼ郢晏現繝ｱ郢晢ｽｩ郢晢ｽ｡郢晢ｽｼ郢ｧ・ｿ邵ｺ・ｮ郢ｧ・ｿ郢ｧ・､郢晏干・堤ｹ昴・繝ｻ郢晄じﾎ晉ｸｺ・ｫ髫ｪ・ｭ陞ｳ繝ｻ
+	// RootParameterのParameterTypeをD3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLEに設定し、DescriptorTableのNumDescriptorRangesとpDescriptorRangesを設定
 	rootParameter->ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameter->DescriptorTable.NumDescriptorRanges = 1; // 1邵ｺ・､邵ｺ・ｮ驕ｽ繝ｻ蟲・ｹｧ蜻域亜邵ｺ・､
+	rootParameter->DescriptorTable.NumDescriptorRanges = 1; // 1つのDescriptorRangeを設定するため、NumDescriptorRangesは1に設定
 	rootParameter->DescriptorTable.pDescriptorRanges = &descriptorRanges_[friendlyName];
 }
 
 D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendlyName) {
 	D3D12_ROOT_PARAMETER* result = nullptr;
-
-	// 郢晢ｽｫ郢晢ｽｼ郢晏現繝ｱ郢晢ｽｩ郢晢ｽ｡郢晢ｽｼ郢ｧ・ｿ邵ｺ・ｮ陷ｷ讎顔√郢ｧ蜻茨ｽ､諛・ｽｴ・｢
+	// friendlyNames_からfriendlyNameを検索して、対応するRootParameterを返す
 	for (std::string& name : friendlyNames_) {
 		if (name == friendlyName) {
-			// 陷ｷ讎顔√邵ｺ蠕｡・ｸﾂ髢ｾ・ｴ邵ｺ蜉ｱ笳・撻・ｴ陷ｷ蛹ｻﾂ竏晢ｽｯ・ｾ陟｢諛岩・郢ｧ荵斟晉ｹ晢ｽｼ郢晏現繝ｱ郢晢ｽｩ郢晢ｽ｡郢晢ｽｼ郢ｧ・ｿ郢ｧ雋槫徐陟輔・
+			// friendlyNameが見つかった場合、そのインデックスを使用してrootParameters_から対応するRootParameterを取得
 			size_t index = &name - &friendlyNames_[0];
 			assert(index < rootParameters_.size() && "Index out of bounds for root parameters.");
 			result = &rootParameters_[index];

@@ -1,15 +1,21 @@
 #pragma once
-#include <string>
-#include <memory>
 #include <d3d12.h>
+#include <dxgi1_6.h>
+#include <dxgidebug.h>
+#include <dxcapi.h>
+#include <string>
+
+#include "InputLayout.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
-	/// @brief 頂点シェーダーとピクセルシェーダーのペアを表すクラス
 	class ShaderPair final {
 	public:
-		/// @brief 頂点シェーダーとピクセルシェーダーのペアを作成する
-		void Create(ID3DBlob* vsBlob, ID3DBlob* psBlob);
+		/// @brief シェーダーペアを生成します.
+		void Create(IDxcBlob* vsBlob, IDxcBlob* psBlob);
 
 	public:
+		bool isCreated_ = false;
+
+		InputLayout inputLayout_;
 	};
 }
