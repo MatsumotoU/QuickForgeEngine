@@ -7,12 +7,10 @@
 #include <dxgidebug.h>
 
 #include "memory/SafeVector.h"
+#include "RootParameterElement.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
-	/**
-	 * @class RootParameter
-	 * @brief 
-	 */
+	/// @brief ルートパラメータを管理するクラス
 	class RootParameter final {
 	public:
 		/// @brief 初期化処理
@@ -29,6 +27,9 @@ namespace QFE::GRAPHIC::INTERNAL {
 			const std::string& friendlyName,
 			const D3D12_DESCRIPTOR_RANGE_TYPE& rangeType,
 			UINT numDescriptors, UINT baseShaderRegister);
+
+		/// @brief RootParameterをついかします
+		void CreateRootParameter(const RootParameterElement& rootParameterElement, const D3D12_SHADER_VISIBILITY& shaderVisibility);
 
 #ifdef QFE_OPTIMIZE_OFF
 		void CheckIntegrityData();

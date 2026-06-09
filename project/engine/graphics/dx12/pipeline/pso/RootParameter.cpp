@@ -55,6 +55,36 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 	rootParameter->DescriptorTable.pDescriptorRanges = &descriptorRanges_[friendlyName];
 }
 
+void QFE::GRAPHIC::INTERNAL::RootParameter::CreateRootParameter(const RootParameterElement& rootParameterElement, const D3D12_SHADER_VISIBILITY& shaderVisibility) {
+	if (rootParameterElement.shaderInputType == D3D_SIT_CBUFFER) {
+		CreateRootParameter(
+			rootParameterElement.friendlyName,
+			D3D12_ROOT_PARAMETER_TYPE_CBV,
+			shaderVisibility,
+			rootParameterElement.shaderRegisterIndex);
+	}else if (rootParameterElement.shaderInputType == D3D_SIT_TEXTURE || rootParameterElement.shaderInputType == D3D_SIT_SAMPLER) {
+		CreateRootParameter(
+			rootParameterElement.friendlyName,
+			D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+			shaderVisibility,
+			rootParameterElement.shaderRegisterIndex);
+		D3D12_DESCRIPTOR_RANGE_TYPE rangeType;
+		if (rootParameterElement.shaderInputType == D3D_SIT_TEXTURE) {
+			rangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		} else {
+			rangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
+		}
+		SetDescriptorRange(
+			rootParameterElement.friendlyName,
+			rangeType,
+			1, // numDescriptorsは1に設定
+			rootParameterElement.shaderRegisterIndex);
+	} else {
+		QFE_LOG(std::format("RootParameter: Unsupported shader input type for friendly name '{}'.", rootParameterElement.friendlyName));
+		assert(false && "Unsupported shader input type for the given friendly name.");
+	}
+}
+
 D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendlyName) {
 	D3D12_ROOT_PARAMETER* result = nullptr;
 	// friendlyNames_からfriendlyNameを検索して、対応するRootParameterを返す

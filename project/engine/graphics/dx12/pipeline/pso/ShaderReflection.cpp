@@ -77,3 +77,29 @@ std::vector<InputElement> QFE::GRAPHIC::INTERNAL::ShaderReflection::GetInputLayo
 
 	return inputLayoutElements;
 }
+
+std::vector<RootParameterElement> QFE::GRAPHIC::INTERNAL::ShaderReflection::GetRootParameterElement() const {
+	std::vector<RootParameterElement> rootParameterElements;
+
+	// shaderReflection_が有効かどうかを確認
+	D3D12_SHADER_DESC shaderDesc{};
+	if (shaderReflection_ == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader reflection interface is not initialized.", SystemError::Abort);
+	}
+	// シェーダーの基本情報を取得
+	HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
+	assert(SUCCEEDED(hr) && "Failed to get shader description.");
+	// バウンドリソースの情報を取得して渡された引数に設定
+	for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
+		RootParameterElement element;
+		D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
+		hr = shaderReflection_->GetResourceBindingDesc(i, &bindDesc);
+		assert(SUCCEEDED(hr) && "Failed to get resource binding description.");
+		element.friendlyName = bindDesc.Name;
+		element.shaderInputType = bindDesc.Type;
+		element.shaderRegisterIndex = bindDesc.BindPoint;
+		rootParameterElements.push_back(element);
+	}
+
+	return rootParameterElements;
+}

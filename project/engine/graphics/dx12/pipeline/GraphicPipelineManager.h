@@ -25,5 +25,6 @@ namespace QFE::GRAPHIC::INTERNAL {
 
 	private: // メンバ変数
 		std::map<std::string, ShaderPair> shaderPairs_;// シェーダーペアのマップ
+		ShaderReflection shaderReflection_;// シェーダーのリフレクションを行うためのクラス
 	};
 }
