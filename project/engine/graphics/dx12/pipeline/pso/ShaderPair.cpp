@@ -5,7 +5,9 @@
 
 using namespace QFE::GRAPHIC::INTERNAL;
 
-void QFE::GRAPHIC::INTERNAL::ShaderPair::Create(IDxcBlob* vsBlob, IDxcBlob* psBlob, const ShaderPairFunctions& funcs) {
+void QFE::GRAPHIC::INTERNAL::ShaderPair::Create(
+	IDxcBlob* vsBlob, IDxcBlob* psBlob, const ShaderPairFunctions& funcs) {
+
 	// シェーダーバイナリが有効かどうかを確認
 	if (vsBlob == nullptr || psBlob == nullptr) {
 		QFE_LOG("Invalid shader blob provided.");
@@ -35,6 +37,9 @@ void QFE::GRAPHIC::INTERNAL::ShaderPair::Create(IDxcBlob* vsBlob, IDxcBlob* psBl
 	for (const auto& element : psRootParameterElements) {
 		rootParameter_.CreateRootParameter(element, D3D12_SHADER_VISIBILITY_ALL);
 	}
+	
+	// 静的サンプラーの割り当て
+	rootParameter_.AssignStaticSampler(funcs.getStaticSamplerFunc(), funcs.getStaticSamplerSizeFunc());
 
 	isCreated_ = true;
 }

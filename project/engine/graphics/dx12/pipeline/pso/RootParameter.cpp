@@ -62,7 +62,7 @@ void QFE::GRAPHIC::INTERNAL::RootParameter::CreateRootParameter(const RootParame
 			D3D12_ROOT_PARAMETER_TYPE_CBV,
 			shaderVisibility,
 			rootParameterElement.shaderRegisterIndex);
-	}else if (rootParameterElement.shaderInputType == D3D_SIT_TEXTURE || rootParameterElement.shaderInputType == D3D_SIT_SAMPLER) {
+	} else if (rootParameterElement.shaderInputType == D3D_SIT_TEXTURE) {// サンプラーは静的サンプラーを使用するので、RootParameterはSRVとして追加する
 		CreateRootParameter(
 			rootParameterElement.friendlyName,
 			D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
@@ -83,6 +83,17 @@ void QFE::GRAPHIC::INTERNAL::RootParameter::CreateRootParameter(const RootParame
 		QFE_LOG(std::format("RootParameter: Unsupported shader input type for friendly name '{}'.", rootParameterElement.friendlyName));
 		assert(false && "Unsupported shader input type for the given friendly name.");
 	}
+}
+
+void QFE::GRAPHIC::INTERNAL::RootParameter::AssignStaticSampler(const D3D12_STATIC_SAMPLER_DESC* staticSamplerDescs, const UINT& size) {
+	if (size >= descriptionRootSignature_.NumStaticSamplers) {
+		QFE_LOG(std::format("RootParameter: Static sampler size {} is out of bounds. Max size is {}.", 
+			size, descriptionRootSignature_.NumStaticSamplers - 1));
+		assert(false && "Static sampler index is out of bounds.");
+		return;
+	}
+	descriptionRootSignature_.pStaticSamplers = staticSamplerDescs;
+	descriptionRootSignature_.NumStaticSamplers = size;
 }
 
 D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendlyName) {

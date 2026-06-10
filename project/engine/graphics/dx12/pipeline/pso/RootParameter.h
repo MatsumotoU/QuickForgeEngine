@@ -30,6 +30,8 @@ namespace QFE::GRAPHIC::INTERNAL {
 
 		/// @brief RootParameterをついかします
 		void CreateRootParameter(const RootParameterElement& rootParameterElement, const D3D12_SHADER_VISIBILITY& shaderVisibility);
+		/// @brief 静的サンプラーをルートシグネチャに割り当てます
+		void AssignStaticSampler(const D3D12_STATIC_SAMPLER_DESC* staticSamplerDescs,const UINT& size);
 
 #ifdef QFE_OPTIMIZE_OFF
 		void CheckIntegrityData();

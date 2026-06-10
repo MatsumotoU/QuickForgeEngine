@@ -15,13 +15,15 @@ namespace QFE::GRAPHIC::INTERNAL {
 		std::function<void(IDxcBlob* vsBlob)> reflectionFunc;
 		std::function<std::vector<InputElement>(IDxcBlob* vsBlob)> getInputLayoutFunc;
 		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc;
+		std::function<const D3D12_STATIC_SAMPLER_DESC* ()> getStaticSamplerFunc;
+		std::function<UINT()> getStaticSamplerSizeFunc;
 	};
 
 	/// @brief 頂点シェーダーとピクセルシェーダーのペアを管理するクラス
 	class ShaderPair final {
 	public:
 		/// @brief シェーダーペアを生成します.
-		void Create(IDxcBlob* vsBlob, IDxcBlob* psBlob,const ShaderPairFunctions& funcs);
+		void Create(IDxcBlob* vsBlob, IDxcBlob* psBlob, const ShaderPairFunctions& funcs);
 
 	public:
 		bool isCreated_ = false;
