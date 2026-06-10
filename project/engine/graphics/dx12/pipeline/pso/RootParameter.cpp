@@ -86,12 +86,6 @@ void QFE::GRAPHIC::INTERNAL::RootParameter::CreateRootParameter(const RootParame
 }
 
 void QFE::GRAPHIC::INTERNAL::RootParameter::AssignStaticSampler(const D3D12_STATIC_SAMPLER_DESC* staticSamplerDescs, const UINT& size) {
-	if (size >= descriptionRootSignature_.NumStaticSamplers) {
-		QFE_LOG(std::format("RootParameter: Static sampler size {} is out of bounds. Max size is {}.", 
-			size, descriptionRootSignature_.NumStaticSamplers - 1));
-		assert(false && "Static sampler index is out of bounds.");
-		return;
-	}
 	descriptionRootSignature_.pStaticSamplers = staticSamplerDescs;
 	descriptionRootSignature_.NumStaticSamplers = size;
 }

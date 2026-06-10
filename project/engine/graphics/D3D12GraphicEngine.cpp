@@ -74,7 +74,8 @@ void D3D12GraphicEngine::Initialize() {
 
 	// グラフィックパイプラインマネージャの初期化
 	graphicPipelineManager_->Initialize(
-		[&](const std::wstring& filePath, const wchar_t* profile) {return shaderCompiler_->CompileShader(filePath, profile); });
+		[&](const std::wstring& filePath, const wchar_t* profile) {return shaderCompiler_->CompileShader(filePath, profile); },
+		directXDevice_->GetDevice());
 	
 	// テクスチャ管理クラスの初期化
 	textureManager_->Initialize(

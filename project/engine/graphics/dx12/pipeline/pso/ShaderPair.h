@@ -25,10 +25,21 @@ namespace QFE::GRAPHIC::INTERNAL {
 		/// @brief シェーダーペアを生成します.
 		void Create(IDxcBlob* vsBlob, IDxcBlob* psBlob, const ShaderPairFunctions& funcs);
 
-	public:
+		/// @brief InputLayoutを取得します
+		D3D12_INPUT_LAYOUT_DESC* GetInputLayoutDesc() { return inputLayout_.GetInputLayoutDesc(); }
+		/// @brief RootSignatureの説明を取得します
+		D3D12_ROOT_SIGNATURE_DESC* GetRootSignatureDesc() { return rootParameter_.GetDescriptionRootSignature(); }
+		/// @brief 頂点シェーダーのバイナリを取得します
+		IDxcBlob* GetVSBlob() { return vsBlob_; }
+		/// @brief ピクセルシェーダーのバイナリを取得します
+		IDxcBlob* GetPSBlob() { return psBlob_; }
+
+	private:
 		bool isCreated_ = false;
 
 		InputLayout inputLayout_;
 		RootParameter rootParameter_;
+		IDxcBlob* vsBlob_ = nullptr;
+		IDxcBlob* psBlob_ = nullptr;
 	};
 }

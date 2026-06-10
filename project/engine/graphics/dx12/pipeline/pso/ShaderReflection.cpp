@@ -3,19 +3,28 @@
 #include "EngineDefines.h"
 
 #include <cassert>
+#include <bitset>
 using namespace QFE::GRAPHIC::INTERNAL;
 
 namespace {
 	uint32_t GetBitCount(BYTE mask) {
-		unsigned long count;
-		_BitScanForward(&count, ~mask & 0xF);
-		return (mask == 0x0F) ? 4 : count;
+		if(mask && 0x1) {
+			return 0;
+		} else if(mask && 0x3) {
+			return 1;
+		} else if(mask && 0x7) {
+			return 2;
+		} else if(mask && 0xf) {
+			return 3;
+		}
+		return UINT32_MAX;
 	};
 
 	const DXGI_FORMAT FormatTable[4][4] = {
-		{ DXGI_FORMAT_R32_FLOAT, DXGI_FORMAT_R32G32_FLOAT, DXGI_FORMAT_R32G32B32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT }, // FLOAT
+		{ DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN}, // UNKNOWN
 		{ DXGI_FORMAT_R32_UINT,  DXGI_FORMAT_R32G32_UINT,  DXGI_FORMAT_R32G32B32_UINT,  DXGI_FORMAT_R32G32B32A32_UINT  }, // UINT
 		{ DXGI_FORMAT_R32_SINT,  DXGI_FORMAT_R32G32_SINT,  DXGI_FORMAT_R32G32B32_SINT,  DXGI_FORMAT_R32G32B32A32_SINT  }, // SINT
+		{ DXGI_FORMAT_R32_FLOAT, DXGI_FORMAT_R32G32_FLOAT, DXGI_FORMAT_R32G32B32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT }, // FLOAT
 	};
 }
 
@@ -70,7 +79,7 @@ std::vector<InputElement> QFE::GRAPHIC::INTERNAL::ShaderReflection::GetInputLayo
 		assert(SUCCEEDED(hr) && "Failed to get input parameter description.");
 		element.semanticName = paramDesc.SemanticName;
 		element.semanticIndex = paramDesc.SemanticIndex;
-		element.format = FormatTable[paramDesc.ComponentType][GetBitCount(paramDesc.Mask) - 1];
+		element.format = FormatTable[paramDesc.ComponentType][GetBitCount(paramDesc.Mask)];
 		element.alignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;// 入力要素のオフセットは自動で計算させるため、D3D12_APPEND_ALIGNED_ELEMENTを使用
 		inputLayoutElements.push_back(element);
 	}

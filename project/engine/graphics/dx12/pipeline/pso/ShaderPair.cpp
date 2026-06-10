@@ -41,5 +41,9 @@ void QFE::GRAPHIC::INTERNAL::ShaderPair::Create(
 	// 静的サンプラーの割り当て
 	rootParameter_.AssignStaticSampler(funcs.getStaticSamplerFunc(), funcs.getStaticSamplerSizeFunc());
 
+	// シェーダーバイナリを保存
+	vsBlob_ = vsBlob;
+	psBlob_ = psBlob;
+
 	isCreated_ = true;
 }
