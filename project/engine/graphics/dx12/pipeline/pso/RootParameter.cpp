@@ -62,24 +62,24 @@ void QFE::GRAPHIC::INTERNAL::RootParameter::CreateRootParameter(const RootParame
 			D3D12_ROOT_PARAMETER_TYPE_CBV,
 			shaderVisibility,
 			rootParameterElement.shaderRegisterIndex);
-	} else if (rootParameterElement.shaderInputType == D3D_SIT_TEXTURE) {// サンプラーは静的サンプラーを使用するので、RootParameterはSRVとして追加する
+	} else if (rootParameterElement.shaderInputType == D3D_SIT_TEXTURE ||
+		rootParameterElement.shaderInputType == D3D_SIT_STRUCTURED) {
 		CreateRootParameter(
 			rootParameterElement.friendlyName,
 			D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
 			shaderVisibility,
 			rootParameterElement.shaderRegisterIndex);
+
 		D3D12_DESCRIPTOR_RANGE_TYPE rangeType;
-		if (rootParameterElement.shaderInputType == D3D_SIT_TEXTURE) {
-			rangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-		} else {
-			rangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
-		}
+		rangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 		SetDescriptorRange(
 			rootParameterElement.friendlyName,
 			rangeType,
 			1, // numDescriptorsは1に設定
 			rootParameterElement.shaderRegisterIndex);
-	} else {
+	} else if (rootParameterElement.shaderInputType == D3D_SIT_SAMPLER) {
+		// サンプラーは静的サンプラーを使用するので、なにもしません
+	}else {
 		QFE_LOG(std::format("RootParameter: Unsupported shader input type for friendly name '{}'.", rootParameterElement.friendlyName));
 		assert(false && "Unsupported shader input type for the given friendly name.");
 	}

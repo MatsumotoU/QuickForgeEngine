@@ -112,17 +112,15 @@ namespace QFE::GRAPHIC::INTERNAL {
 	}
 
 	void SwapChain::AssignDescriptorHandles(const DescriptorHandles& rtvHandle, uint32_t index) {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG(std::format("Add DescriptorHandles to SwapChain: {}", index));
-#endif // QFE_OPTIMIZE_OFF
+
 		assert(index < backBuffers_.size() && "Index out of range in AssignDescriptorHandles.");
 		backBufferViews_[index] = rtvHandle;
 	}
 
 	bool SwapChain::CheckBackBufferViews() const {
-#ifdef QFE_OPTIMIZE_OFF
-		QFE_LOG(std::format("Buffer: {} View: {}", backBuffers_.size(), backBufferViews_.size()));
-#endif // QFE_OPTIMIZE_OFF
+		// backBuffers_とbackBufferViews_のサイズをログに出力
+		QFE_LOG(std::format("SwapChain BufferSize: {} ViewSize: {}", backBuffers_.size(), backBufferViews_.size()));
 		// バックバッファがnullptrではないか確認
 		for (const auto& buffer : backBuffers_) {
 			if (buffer == nullptr) {

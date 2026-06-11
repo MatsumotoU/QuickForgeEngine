@@ -40,7 +40,7 @@ void QFE::GRAPHIC::INTERNAL::PipelineStateObject::CreatePipelineStateObject(
 	hr = D3D12SerializeRootSignature(element.rootParameter,
 		D3D_ROOT_SIGNATURE_VERSION_1, signatureBlob_.GetAddressOf(), errorBlob_.GetAddressOf());
 	if (FAILED(hr)) {
-		QFE_LOG(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
+		QFE_REPORT_SYSTEM_ERROR(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()), SystemError::Abort);
 		assert(false);
 	}
 	// RootSignatureを生成

@@ -1,10 +1,10 @@
-#include "StaticSamplers.h"
+#include "StaticSamplerTemplate.h"
 
 #include "EngineDefines.h"
 
 using namespace QFE::GRAPHIC::INTERNAL;
 
-void StaticSamplers::Initialize() {
+void StaticSamplerTemplate::Initialize() {
 	samplerDescs_.clear();
 	samplerDescs_.resize(6); // 6種類のサンプラーを用意
 
@@ -62,18 +62,18 @@ void StaticSamplers::Initialize() {
 	isInitialized_ = true;
 }
 
-const D3D12_STATIC_SAMPLER_DESC* QFE::GRAPHIC::INTERNAL::StaticSamplers::GetSamplerDescs() const {
+const D3D12_STATIC_SAMPLER_DESC* QFE::GRAPHIC::INTERNAL::StaticSamplerTemplate::GetSamplerDescs() const {
 	CheckInitialized();
 	return samplerDescs_.data();
 }
 
-UINT QFE::GRAPHIC::INTERNAL::StaticSamplers::GetSamplerCount() const {
+UINT QFE::GRAPHIC::INTERNAL::StaticSamplerTemplate::GetSamplerCount() const {
 	CheckInitialized();
 	return static_cast<UINT>(samplerDescs_.size());
 }
 
-void QFE::GRAPHIC::INTERNAL::StaticSamplers::CheckInitialized() const {
+void QFE::GRAPHIC::INTERNAL::StaticSamplerTemplate::CheckInitialized() const {
     if (!isInitialized_) {
-        QFE_REPORT_SYSTEM_ERROR(std::string("StaticSamplers: Sampler descriptions are not initialized. Call Initialize() before using."), SystemError::Abort);
+        QFE_REPORT_SYSTEM_ERROR(std::string("StaticSamplerTemplate: Sampler descriptions are not initialized. Call Initialize() before using."), SystemError::Abort);
 	}
 }

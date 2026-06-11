@@ -40,3 +40,11 @@ const D3D12_RASTERIZER_DESC& RasterizerTemplate::GetRasterizerDesc(RasterizerTyp
         return rasterizerDescs_.at(RasterizerType::Default);
 	}
 }
+
+std::unordered_map<RasterizerType, D3D12_RASTERIZER_DESC> QFE::GRAPHIC::INTERNAL::RasterizerTemplate::GetRasterizerDescMap() const {
+	return rasterizerDescs_;
+}
+
+uint32_t QFE::GRAPHIC::INTERNAL::RasterizerTemplate::GetRasterizerTypeCount() const {
+	return static_cast<uint32_t>(RasterizerType::kCount);
+}

@@ -7,10 +7,10 @@
 #include "string/MyString.h"
 
 #include "pso/ShaderPair.h"
-#include "pso/StaticSamplers.h"
+#include "pso/StaticSamplerTemplate.h"
 #include "pso/ShaderReflection.h"
 #include "pso/RasterizerTemplate.h"
-#include "pso/BlendStates.h"
+#include "pso/BlendStateTemplate.h"
 #include "pso/DepthStencilDescTemplate.h"
 #include "pso/PipelineStateObject.h"
 
@@ -31,9 +31,9 @@ QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::~GraphicPipelineManager() = defa
 void GraphicPipelineManager::Initialize(std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc, ID3D12Device* device) {
 	// 必要な機能のインスタンス生成
 	shaderReflection_ = std::make_unique<ShaderReflection>();
-	staticSamplers_ = std::make_unique<StaticSamplers>();
+	staticSamplers_ = std::make_unique<StaticSamplerTemplate>();
 	rasterizerState_ = std::make_unique<RasterizerTemplate>();
-	blendStates_ = std::make_unique<BlendStates>();
+	blendStates_ = std::make_unique<BlendStateTemplate>();
 	depthStencilDescTemplate_ = std::make_unique<DepthStencilDescTemplate>();
 
 	// 各機能の初期化
@@ -46,22 +46,10 @@ void GraphicPipelineManager::Initialize(std::function<IDxcBlob* (const std::wstr
 	std::vector<std::string> vsFiles = QFE::FILE::GetFilesInDirectory(kVSFilePath);
 	std::vector<std::string> psFiles = QFE::FILE::GetFilesInDirectory(kPSFilePath);
 
-	// * 既存のシェーダーペアの生成 * //
-	// 基本設定
-	ShaderPairElement element;
-	element.vsDirName = kVSFilePath;
-	element.psDirName = kPSFilePath;
-	// MiniShader用のシェーダーペアの生成
-	element.vsFileName = "MiniShader.VS.hlsl";
-	element.psFileName = "MiniShader.PS.hlsl";
-	GenerateShaderPair(element, compileFunc);
-
-	// シェーダーペアからPSOを生成する
-	GeneratePipelineStateObject(
-		static_cast<ShaderPairHandle>(0), device, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
-		rasterizerState_->GetRasterizerDesc(RasterizerType::Default),
-		blendStates_->GetBlendDesc(BlendMode::kBlendModeNormal),
-		depthStencilDescTemplate_->GetDesc(DepthStencilDescType::Default));
+	GenerateBuiltInShaderPairs(compileFunc);
+	// BuiltInのPSOを生成
+	GenerateBuiltInPSO(device);
+	
 }
 
 void GraphicPipelineManager::Finalize() {
@@ -93,7 +81,7 @@ ShaderPairHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GenerateShaderP
 	return static_cast<ShaderPairHandle>(shaderPairKeyCounter_++);
 }
 
-PipelineStateObjectHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GeneratePipelineStateObject(
+PSOHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GeneratePipelineStateObject(
 	const ShaderPairHandle& shaderHandle, ID3D12Device* device
 	, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType, D3D12_RASTERIZER_DESC rasterizerDesc,
 	D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc) {
@@ -113,5 +101,100 @@ PipelineStateObjectHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::Genera
 	pipelineStateObjects_[pipelineStateObjectKeyCounter_] = std::make_unique<PipelineStateObject>();
 	pipelineStateObjects_[pipelineStateObjectKeyCounter_]->CreatePipelineStateObject(element, device);
 
-	return static_cast<PipelineStateObjectHandle>(pipelineStateObjectKeyCounter_++);
+	return static_cast<PSOHandle>(pipelineStateObjectKeyCounter_++);
+}
+
+void QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GenerateBuiltInShaderPairs(
+	std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc) {
+	// 基本設定
+	ShaderPairElement element;
+	element.vsDirName = kVSFilePath;
+	element.psDirName = kPSFilePath;
+
+	// MiniShader用のシェーダーペアの生成
+	element.vsFileName = "MiniShader.VS.hlsl";
+	element.psFileName = "MiniShader.PS.hlsl";
+	builtInPairHandles_[BuiltInShaderPair::ObjectMini] = GenerateShaderPair(element, compileFunc);
+	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
+		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::ObjectMini]),
+		element.vsFileName, element.psFileName));
+
+	// Object2D用のシェーダーペアの生成
+	element.vsFileName = "Object2d.VS.hlsl";
+	element.psFileName = "Object2d.PS.hlsl";
+	builtInPairHandles_[BuiltInShaderPair::Object2D] = GenerateShaderPair(element, compileFunc);
+	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
+		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Object2D]),
+		element.vsFileName, element.psFileName));
+
+	// Object3D用のシェーダーペアの生成
+	element.vsFileName = "Object3d.VS.hlsl";
+	element.psFileName = "Object3d.PS.hlsl";
+	builtInPairHandles_[BuiltInShaderPair::Object3D] = GenerateShaderPair(element, compileFunc);
+	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
+		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Object3D]),
+		element.vsFileName, element.psFileName));
+
+	// Particle用のシェーダーペアの生成
+	element.vsFileName = "Particle.VS.hlsl";
+	element.psFileName = "Particle.PS.hlsl";
+	builtInPairHandles_[BuiltInShaderPair::Particle] = GenerateShaderPair(element, compileFunc);
+	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
+		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Particle]),
+		element.vsFileName, element.psFileName));
+
+	// Primitive用のシェーダーペアの生成
+	element.vsFileName = "Primitive.VS.hlsl";
+	element.psFileName = "Primitive.PS.hlsl";
+	builtInPairHandles_[BuiltInShaderPair::Primitive] = GenerateShaderPair(element, compileFunc);
+	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
+		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Primitive]),
+		element.vsFileName, element.psFileName));
+
+	// Skybox用のシェーダーペアの生成
+	element.vsFileName = "Skybox.VS.hlsl";
+	element.psFileName = "Skybox.PS.hlsl";
+	builtInPairHandles_[BuiltInShaderPair::Skybox] = GenerateShaderPair(element, compileFunc);
+	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
+		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Skybox]),
+		element.vsFileName, element.psFileName));
+}
+
+void QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GenerateBuiltInPSO(ID3D12Device* device) {
+
+	// BuiltInのPSOを管理する多次元配列のサイズを設定するために、各情報の数を取得して配列に格納する
+	std::array<size_t, 4> sizes = {
+		static_cast<size_t>(builtInPairHandles_.size()),
+		blendStates_->GetBlendDescMap().size(),
+		rasterizerState_->GetRasterizerDescMap().size(),
+		depthStencilDescTemplate_->GetDescMap().size()
+	};
+	BuiltInPSOs_.SetSize(sizes);
+
+	// シェーダーペアからPSOを生成する
+	for (const auto& [builtInShaderPair, shaderPairHandle] : builtInPairHandles_) {
+		for(const auto& [blendMode, blendDesc] : blendStates_->GetBlendDescMap()) {
+			for (const auto& [rasterizerType, rasterizerDesc] : rasterizerState_->GetRasterizerDescMap()) {
+				for (const auto& [depthStencilDescType, depthStencilDesc] : depthStencilDescTemplate_->GetDescMap()) {
+					// pairHandle,blend,rasterize,depthの順番で管理する多次元配列に格納するための情報をまとめる
+					std::array<uint32_t, 4> infoArray = {
+						static_cast<uint32_t>(shaderPairHandle),
+						static_cast<uint32_t>(blendMode),
+						static_cast<uint32_t>(rasterizerType),
+						static_cast<uint32_t>(depthStencilDescType)
+					};
+
+					// PSOの生成
+					BuiltInPSOs_.At(infoArray) = GeneratePipelineStateObject(
+						shaderPairHandle, device, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+						rasterizerDesc, blendDesc, depthStencilDesc);
+
+					QFE_LOG(std::format("BuiltIn PSO generated. ShaderPairHandle: {}, BlendMode: {}, RasterizerType: {}, DepthStencilDescType: {}",
+						static_cast<uint32_t>(shaderPairHandle), static_cast<uint32_t>(blendMode),
+						static_cast<uint32_t>(rasterizerType), static_cast<uint32_t>(depthStencilDescType)));
+					QFE_LOG(std::format("PSOHandle: {}", static_cast<uint32_t>(BuiltInPSOs_.At(infoArray))));
+				}
+			}
+		}
+	}
 }

@@ -29,13 +29,13 @@ void QFE::GRAPHIC::INTERNAL::ShaderPair::Create(
 	// シェーダーのリフレクションを使用して、頂点シェーダーからRootParameterを生成する
 	std::vector<RootParameterElement> rootParameterElements = funcs.getRootParameterFunc(vsBlob);
 	for (const auto& element : rootParameterElements) {
-		rootParameter_.CreateRootParameter(element, D3D12_SHADER_VISIBILITY_ALL);
+		rootParameter_.CreateRootParameter(element, D3D12_SHADER_VISIBILITY_VERTEX);
 	}
 	// シェーダーのリフレクションを使用して、ピクセルシェーダーからRootParameterを生成する
 	funcs.reflectionFunc(psBlob);
 	std::vector<RootParameterElement> psRootParameterElements = funcs.getRootParameterFunc(psBlob);
 	for (const auto& element : psRootParameterElements) {
-		rootParameter_.CreateRootParameter(element, D3D12_SHADER_VISIBILITY_ALL);
+		rootParameter_.CreateRootParameter(element, D3D12_SHADER_VISIBILITY_PIXEL);
 	}
 	
 	// 静的サンプラーの割り当て

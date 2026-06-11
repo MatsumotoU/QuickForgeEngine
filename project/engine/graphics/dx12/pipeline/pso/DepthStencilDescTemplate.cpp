@@ -36,3 +36,11 @@ const D3D12_DEPTH_STENCIL_DESC& DepthStencilDescTemplate::GetDesc(DepthStencilDe
 	}
     return descs.at(type);
 }
+
+std::unordered_map<DepthStencilDescType, D3D12_DEPTH_STENCIL_DESC> QFE::GRAPHIC::INTERNAL::DepthStencilDescTemplate::GetDescMap() const {
+	return descs;
+}
+
+uint32_t QFE::GRAPHIC::INTERNAL::DepthStencilDescTemplate::GetDepthStencilDescTypeCount() const {
+	return static_cast<uint32_t>(DepthStencilDescType::kCount);
+}

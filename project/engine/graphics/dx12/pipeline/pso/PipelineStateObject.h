@@ -3,7 +3,7 @@
 #include "InputLayout.h"
 #include "ShaderPair.h"
 #include "RasterizerTemplate.h"
-#include "BlendStates.h"
+#include "BlendStateTemplate.h"
 #include "DepthStencilDescTemplate.h"
 #include <wrl.h>
 

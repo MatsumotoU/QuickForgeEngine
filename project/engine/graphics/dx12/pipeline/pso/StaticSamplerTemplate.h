@@ -4,7 +4,7 @@
 
 namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief PSOのルートシグネチャで使用する静的サンプラーの定義クラス
-	class StaticSamplers final {
+	class StaticSamplerTemplate final {
 	public:
 		/// @brief 静的サンプラーの設定を生成します
 		void Initialize();
