@@ -5,7 +5,7 @@
 using namespace QFE::GRAPHIC::INTERNAL;
 
 bool DirectXResource::CreateResource(
-	ID3D12Device* device, const D3D12_RESOURCE_DESC& resourceDesc, D3D12_RESOURCE_STATES initialState, D3D12_HEAP_TYPE heapType) {
+	ID3D12Device* device, const D3D12_RESOURCE_DESC& resourceDesc, D3D12_RESOURCE_STATES initialState, D3D12_HEAP_TYPE heapType, const D3D12_CLEAR_VALUE* clearValue) {
 	// 引数の検査
 	if (!device) {
 		QFE_REPORT_SYSTEM_ERROR("Device is null in DirectXResource::CreateResource", SystemError::Abort);
@@ -31,7 +31,7 @@ bool DirectXResource::CreateResource(
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
 		initialState,
-		nullptr,
+		clearValue,
 		IID_PPV_ARGS(resource_.GetAddressOf())
 	);
 	if (FAILED(hr)) {

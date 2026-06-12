@@ -176,9 +176,6 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 		QFE_REPORT_SYSTEM_ERROR(std::string("TextureManager: Invalid texture metadata - width, height, mipLevels, and arraySize must be greater than 0"), SystemError::Abort);
 	}
 
-#ifdef QFE_OPTIMIZE_PFF
-#endif // QFE_OPTIMIZE_PFF
-
 	// リソースの作成
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 	HRESULT hr = device_->CreateCommittedResource(

@@ -84,6 +84,10 @@ namespace QFE::GRAPHIC::INTERNAL {
 		return backBufferViews_[swapChain_->GetCurrentBackBufferIndex()].cpuHandle_;
 	}
 
+	const D3D12_CPU_DESCRIPTOR_HANDLE* SwapChain::GetCurrentBackBufferViewPtr() const {
+		return &(backBufferViews_[swapChain_->GetCurrentBackBufferIndex()].cpuHandle_);
+	}
+
 	uint32_t SwapChain::GetCurrentBackBufferIndex() const {
 		return swapChain_->GetCurrentBackBufferIndex();
 	}

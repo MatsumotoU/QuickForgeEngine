@@ -5,10 +5,11 @@
 namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief DirectX12のリソースをラップしたクラス
 	class DirectXResource final {
+	public:
 		/// @brief リソースをVram上に作成する
 		bool CreateResource(
 			ID3D12Device* device, const D3D12_RESOURCE_DESC& resourceDesc, D3D12_RESOURCE_STATES initialState,
-			D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT);
+			D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT, const D3D12_CLEAR_VALUE* clearValue = nullptr);
 
 		/// @brief リソースをCPU側にマップする
 		bool MapResource(UINT subresource = 0, const D3D12_RANGE* readRange = nullptr);

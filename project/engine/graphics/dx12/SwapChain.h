@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include <windows.h>
 #include <wrl.h>
 #include <dxgi1_6.h>
@@ -25,6 +26,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 
 		ID3D12Resource* GetCurrentBackBuffer() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
+		const D3D12_CPU_DESCRIPTOR_HANDLE* GetCurrentBackBufferViewPtr() const;
 		uint32_t GetCurrentBackBufferIndex() const;
 		ID3D12Resource* GetBackBuffer(uint32_t index) const;
 		uint32_t GetBackBufferCount() const;
