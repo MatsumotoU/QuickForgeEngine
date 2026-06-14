@@ -1,0 +1,61 @@
+{
+    "AABBColliderData": {
+        "aabb": [
+            0.0,
+            2.5,
+            13.76105785369873,
+            1.7000000476837158,
+            1.7000000476837158,
+            1.0
+        ],
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": true
+    },
+    "CsharpComponent": {
+        "CsharpHandles": [
+            {
+                "ClassName": "GameAreaDelete"
+            },
+            {
+                "ClassName": "MoveZm"
+            },
+            {
+                "ClassName": "RotateX"
+            }
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "box.obj"
+    },
+    "SceneObjectData": {
+        "name": "EnemyPlate",
+        "tag": "plate",
+        "uniqueId": 8
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            0.800000011920929,
+            0.800000011920929,
+            0.10000000149011612
+        ],
+        "translate": [
+            0.0,
+            2.5,
+            13.76105785369873
+        ]
+    }
+}

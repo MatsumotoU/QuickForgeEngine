@@ -18,6 +18,10 @@ using float32_t3x3 = QFE::Matrix3x3;
 using float32_t2x2 = QFE::Matrix2x2;
 #endif
 
+struct OutlineOffset {
+	float32_t4x4 viewProjectionInverse;
+};
+
 struct CameraForGPU {
 #ifdef __cplusplus
 	CameraForGPU()

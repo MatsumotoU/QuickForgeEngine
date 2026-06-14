@@ -42,7 +42,6 @@ premake5.exe
 premake.zip
 
 # GameResources
-Resources/
 
 ########################################
 # Keep List
@@ -50,5 +49,3 @@ Resources/
 # Assimp Lib
 !externals/assimp/lib/Debug/
 !externals/assimp/lib/Release/
-!engine/resources/**
-!engine/resources/shaders/**

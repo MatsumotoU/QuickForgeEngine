@@ -1,0 +1,56 @@
+{
+    "CsharpComponent": {
+        "CsharpHandles": [
+            {
+                "ClassName": "Bom"
+            }
+        ]
+    },
+    "Force": {
+        "acceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "friction": 0.30000001192092896,
+        "gravityStrength": 5.0,
+        "isGravity": true,
+        "mass": 1.0,
+        "velocity": [
+            0.0,
+            0.0,
+            6.5
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            0.3212435245513916,
+            0.2249196171760559,
+            0.0665789470076561,
+            1.0
+        ],
+        "modelName": "box.obj"
+    },
+    "SceneObjectData": {
+        "name": "Bom",
+        "tag": "Untagged",
+        "uniqueId": 105
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.30000001192092896
+        ],
+        "translate": [
+            0.0,
+            2.6197609901428223,
+            0.0
+        ]
+    }
+}

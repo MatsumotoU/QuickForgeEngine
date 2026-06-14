@@ -1,0 +1,53 @@
+{
+    "CsharpComponent": {
+        "CsharpHandles": [
+            {
+                "ClassName": "Explosition"
+            }
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.3506940007209778,
+            0.0984455943107605,
+            1.0
+        ],
+        "modelName": "ico.obj"
+    },
+    "SceneObjectData": {
+        "name": "Explosition",
+        "tag": "PlayerAttack",
+        "uniqueId": 165
+    },
+    "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": false,
+        "isStatic": false,
+        "isTrigger": true,
+        "sphere": [
+            0.0,
+            1.6806522607803345,
+            3.333847761154175,
+            1.5
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            1.6806522607803345,
+            3.333847761154175
+        ]
+    }
+}

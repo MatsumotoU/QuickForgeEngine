@@ -1,0 +1,56 @@
+{
+    "CsharpComponent": {
+        "CsharpHandles": [
+            {
+                "ClassName": "EnemyBullet"
+            },
+            {
+                "ClassName": "MoveToPointY"
+            }
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "modelName": "box.obj"
+    },
+    "SceneObjectData": {
+        "name": "GroundEnemyBullet",
+        "tag": "enemyAttack",
+        "uniqueId": 144
+    },
+    "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": false,
+        "isStatic": false,
+        "isTrigger": true,
+        "sphere": [
+            0.0,
+            0.13300000131130219,
+            13.694599151611328,
+            0.30000001192092896
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            3.9000000953674316,
+            0.0
+        ],
+        "scale": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.20000000298023224
+        ],
+        "translate": [
+            0.0,
+            0.13300000131130219,
+            13.694599151611328
+        ]
+    }
+}
