@@ -105,7 +105,7 @@ void D3D12GraphicEngine::Initialize() {
 	textureLoaderInfo.device = directXDevice_->GetDevice();
 	// テクスチャのリソース作成に必要な関数をDirectXResourceContainerのCreateResource関数を呼び出すラムダ式で初期化
 	textureLoaderInfo.createResourceFunc = 
-		[&](const D3D12_RESOURCE_DESC& desc) { return resourceContainer_->CreateResource(desc, D3D12_RESOURCE_STATE_GENERIC_READ); };
+		[&](const D3D12_RESOURCE_DESC& desc) { return resourceContainer_->CreateResource(directXDevice_->GetDevice(), desc, D3D12_RESOURCE_STATE_GENERIC_READ); };
 	// テクスチャのSRV作成に必要な関数をDirectXResourceContainerのCreateResourceView関数を呼び出すラムダ式で初期化
 	textureLoaderInfo.createShaderResourceViewFunc = 
 		[&](INTERNAL::DirectXResourceHandle resourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
@@ -155,9 +155,6 @@ void D3D12GraphicEngine::PostDraw() {
 	commandManager_->ResetCommandList();
 	// 中間リソースの解放
 	resourceContainer_->EndFrame();
-
-	// テクスチャのアップロードに使用した中間リソースの解放
-	textureLoader_->ReleaseIntermediateResources();
 }
 
 void D3D12GraphicEngine::Shutdown() {

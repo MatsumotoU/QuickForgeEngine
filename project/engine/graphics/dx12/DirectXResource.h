@@ -38,6 +38,10 @@ namespace QFE::GRAPHIC::INTERNAL {
 		bool AddDescriptorHandle(ViewTypeFlags viewType, const DescriptorHandles& handles);
 		/// @brief あるビュータイプのデスクリプタハンドルを取得します
 		const DescriptorHandles* GetDescriptorHandle(ViewTypeFlags viewType) const;
+		/// @brief リソースに関連付けられたビューのタイプを管理するフラグを取得します
+		ViewTypeFlags GetViewTypes() const;
+		/// @brief あるビュータイプがリソースに関連付けられているかを確認します
+		bool HasTypeOfView(ViewTypeFlags viewType) const;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource_;// VRAM上のリソース
@@ -48,6 +52,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 
 		D3D12_RESOURCE_DESC resourceDesc_;// リソースの説明
 
+		ViewTypeFlags viewTypes_;// リソースに関連付けられたビューのタイプを管理するフラグ
 		std::unordered_map<ViewTypeFlags, DescriptorHandles> descriptorHandles_;// リソースに関連付けられたデスクリプタのハンドルを管理するマップ
 	};
 }

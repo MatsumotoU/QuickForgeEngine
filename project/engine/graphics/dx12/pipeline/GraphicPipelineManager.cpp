@@ -88,6 +88,7 @@ PSOHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GeneratePipelineStateO
 
 	PipelineStateObjectElement element{};
 
+	element.shaderPairHandle = static_cast<uint32_t>(shaderHandle);
 	element.rootParameter = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetRootSignatureDesc();
 	element.inputLayoutDesc = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetInputLayoutDesc();
 	element.psBlob = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetPSBlob();
@@ -104,7 +105,35 @@ PSOHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GeneratePipelineStateO
 	return static_cast<PSOHandle>(pipelineStateObjectKeyCounter_++);
 }
 
-void QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GenerateBuiltInShaderPairs(
+const PipelineStateObject* GraphicPipelineManager::GetPipelineStateObject(const PSOHandle& psoHandle) const {
+	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
+	if (it != pipelineStateObjects_.end()) {
+		return it->second.get();
+	}
+
+	QFE_LOG(std::format("PipelineStateObject not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)));
+	return nullptr;
+}
+
+const ID3D12RootSignature* GraphicPipelineManager::GetRootSignature(const PSOHandle& psoHandle) const {
+	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
+	if (it != pipelineStateObjects_.end()) {
+		return it->second->GetRootSignature();
+	}
+	QFE_LOG(std::format("RootSignature not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)));
+	return nullptr;
+}
+
+std::vector<D3D12_ROOT_PARAMETER_TYPE> GraphicPipelineManager::GetRootParameterTypes(const PSOHandle& psoHandle) const {
+	// PSOハンドルからPSOを取得し、そこからシェーダーペアのハンドルを取得して、シェーダーペアからルートパラメータのタイプを取得する
+	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
+	if (it != pipelineStateObjects_.end()) {
+		uint32_t shaderPairHandle = it->second->GetShaderPairHandle();
+		return shaderPairs_.at(shaderPairHandle)->GetRootParameterTypes();
+	}
+}
+
+void GraphicPipelineManager::GenerateBuiltInShaderPairs(
 	std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc) {
 	// 基本設定
 	ShaderPairElement element;

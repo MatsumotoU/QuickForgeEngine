@@ -15,18 +15,27 @@ namespace {
 }
 
 void TextureLoader::Initialize(TextureLoaderInitializeInfo info) {
+	initializeInfo_ = std::move(info);
+
 	// COMの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 	hr;
 
 	// ダミーの黒いキューブマップを作成して保存する
-	CreateTextureFromScratchImage(CreateDummyBlackCubeMap(), kDummyBlackCubeMapKey, D3D12_SRV_DIMENSION_TEXTURECUBE);
+	CreateTextureFromScratchImage(std::move(CreateDummyBlackCubeMap()), kDummyBlackCubeMapKey, D3D12_SRV_DIMENSION_TEXTURECUBE);
 	// ダミーの白い1x1テクスチャを作成して保存する
-	CreateTextureFromScratchImage(CreateDummyWhite1x1Texture(), kDummyDummyWhite1x1TextureMapKey, D3D12_SRV_DIMENSION_TEXTURE2D);
+	CreateTextureFromScratchImage(std::move(CreateDummyWhite1x1Texture()), kDummyDummyWhite1x1TextureMapKey, D3D12_SRV_DIMENSION_TEXTURE2D);
 }
 /// @brief 終了処理
 void TextureLoader::Finalize() {
+#ifdef QFE_OPTIMIZE_OFF
+	QFE_LOG("TextureLoader: Finalize, releasing all textures");
+	for (const auto& [name, data] : textureDataMap_) {
+		QFE_LOG(std::format("TextureLoader: Releasing texture '{}', handle {}", name, static_cast<uint32_t>(data.resourceHandle)));
+	}
+#endif
+
 	textureDataMap_.clear();	
 	CoUninitialize();
 }
@@ -38,12 +47,14 @@ DirectXResourceHandle TextureLoader::LoadTexture(const std::string& filePath) {
 	// 既に読み込み済みのファイルかどうかチェック（キーは一貫して fileName を使う）
 	if (textureDataMap_.contains(fileName)) {
 		DirectXResourceHandle existingHandle = textureDataMap_[fileName].resourceHandle;
-		QFE_LOG(std::format("TextureLoader: Texture '{}' already loaded, returning existing handle {}", filePath, existingHandle));
+		QFE_LOG(
+			std::format("TextureLoader: Texture '{}' already loaded, returning existing handle {}",
+			filePath, static_cast<uint32_t>(existingHandle)));
 		return existingHandle;
 	}
 
 	// ファイルからScratchImageをロードする
-	DirectX::ScratchImage scratchImage = LoadScratchImage(filePath);
+	DirectX::ScratchImage scratchImage = LoadScratchImageFromFile(filePath);
 
 	// DDSかそれ以外かでSRVの形を判定
 	D3D12_SRV_DIMENSION dimension = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -52,7 +63,7 @@ DirectXResourceHandle TextureLoader::LoadTexture(const std::string& filePath) {
 	}
 
 	// 内部でリソース作成、SRV作成、アップロード、マップ保存
-	return CreateTextureFromScratchImage(scratchImage, fileName, dimension);
+	return CreateTextureFromScratchImage(std::move(scratchImage), fileName, dimension);
 }
 
 const DirectXResourceHandle TextureLoader::GetDummyBlackCubeMapHandle() const {
@@ -63,7 +74,7 @@ const DirectXResourceHandle TextureLoader::GetDummyWhite1x1TextureHandle() const
 	return textureDataMap_.at(kDummyDummyWhite1x1TextureMapKey).resourceHandle;
 }
 
-DirectX::ScratchImage TextureLoader::LoadScratchImage(const std::string& filePath) {
+DirectX::ScratchImage QFE::GRAPHIC::INTERNAL::TextureLoader::LoadScratchImageFromFile(const std::string& filePath) {
 	// ファイルパスにファイルがあるかどうかを確認
 	if (!QFE::FILE::HasFile(filePath)) {
 		QFE_REPORT_SYSTEM_ERROR(std::string("TextureLoader: File not found - ") + filePath, SystemError::Abort);
@@ -156,7 +167,7 @@ void QFE::GRAPHIC::INTERNAL::TextureLoader::CreateShaderResourceView(
 }
 
 DirectXResourceHandle QFE::GRAPHIC::INTERNAL::TextureLoader::CreateTextureFromScratchImage(
-	const DirectX::ScratchImage& scratchImage, const std::string& name, D3D12_SRV_DIMENSION texture) {
+	DirectX::ScratchImage scratchImage, const std::string& name, D3D12_SRV_DIMENSION texture) {
 	// ScratchImageからメタデータを取得
 	const DirectX::TexMetadata& metadata = scratchImage.GetMetadata();
 	// リソースの作成
@@ -169,7 +180,7 @@ DirectXResourceHandle QFE::GRAPHIC::INTERNAL::TextureLoader::CreateTextureFromSc
 	// マップに保存
 	textureDataMap_[name] = ImageData{};
 	textureDataMap_[name].resourceHandle = resourceHandle;
-	textureDataMap_[name].scratchImage = std::make_unique<DirectX::ScratchImage>(scratchImage);
+	textureDataMap_[name].scratchImage = std::move(scratchImage);
 	return resourceHandle;
 }
 

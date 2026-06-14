@@ -41,6 +41,9 @@ namespace QFE::GRAPHIC::INTERNAL {
 		D3D12_ROOT_PARAMETER* GetRootParameter(const std::string& friendlyName);
 		D3D12_ROOT_SIGNATURE_DESC* GetDescriptionRootSignature();
 
+		/// @brief 登録順にRootParameterのタイプを取得します
+		std::vector< D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes() const;
+
 	private:
 
 		std::map<std::string, D3D12_DESCRIPTOR_RANGE> descriptorRanges_; // DescriptorRangeを管理するためのマップ。friendlyNameをキーにして、対応するDescriptorRangeを保存。

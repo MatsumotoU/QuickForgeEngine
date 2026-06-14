@@ -113,6 +113,15 @@ D3D12_ROOT_SIGNATURE_DESC* RootParameter::GetDescriptionRootSignature() {
 	return &descriptionRootSignature_;
 }
 
+std::vector<D3D12_ROOT_PARAMETER_TYPE> QFE::GRAPHIC::INTERNAL::RootParameter::GetRootParameterTypes() const {
+	std::vector<D3D12_ROOT_PARAMETER_TYPE> parameterTypes;
+	for (const auto& rootParameter : rootParameters_) {
+		parameterTypes.push_back(rootParameter.ParameterType);
+		QFE_LOG(std::format("RootParameter: RootParameterType is {}", static_cast<int>(rootParameter.ParameterType)));
+	}
+	return parameterTypes;
+}
+
 #ifdef QFE_OPTIMIZE_OFF
 void RootParameter::CheckIntegrityData() {
 	assert(descriptionRootSignature_.NumParameters == static_cast<UINT>(rootParameters_.size()));

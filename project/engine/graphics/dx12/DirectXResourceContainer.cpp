@@ -15,11 +15,11 @@ void DirectXResourceContainer::EndFrame() {
 }
 
 DirectXResourceHandle DirectXResourceContainer::CreateResource(
-	const D3D12_RESOURCE_DESC& resourceDesc, D3D12_RESOURCE_STATES initialState,
-	D3D12_HEAP_TYPE heapType, const D3D12_CLEAR_VALUE* clearValue) {
+	ID3D12Device* device,const D3D12_RESOURCE_DESC& resourceDesc,
+	D3D12_RESOURCE_STATES initialState,D3D12_HEAP_TYPE heapType, const D3D12_CLEAR_VALUE* clearValue) {
 
 	DirectXResource resource;
-	if (!resource.CreateResource(nullptr, resourceDesc, initialState, heapType, clearValue)) {
+	if (!resource.CreateResource(device, resourceDesc, initialState, heapType, clearValue)) {
 		QFE_REPORT_SYSTEM_ERROR("Failed to create resource in DirectXResourceContainer::CreateResource", SystemError::Abort);
 		return DirectXResourceHandle::Invalid;
 	}
@@ -102,7 +102,22 @@ void QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::UploadResource(
 	QFE_LOG("Resource uploaded successfully in DirectXResourceContainer::UploadResource");
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetDescriptorHandle(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
+bool DirectXResourceContainer::HasResourceType(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
+	if(handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::HasResourceType", SystemError::Abort);
+		return false;
+	}
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		const DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		return resource.HasTypeOfView(viewType);
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::HasResourceType", SystemError::Abort);
+	}
+
+	return false;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXResourceContainer::GetDescriptorHandle(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
 	// タイプが複数指定されている場合はエラー
 	uint32_t value = static_cast<uint32_t>(viewType);
 	if (value == 0 || std::has_single_bit(value) == false) {
@@ -169,6 +184,19 @@ ID3D12Resource* DirectXResourceContainer::GetResource(DirectXResourceHandle hand
 	} else {
 		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetResource", SystemError::Abort);
 		return nullptr;
+	}
+}
+
+ViewTypeFlags QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetResourceViewType(DirectXResourceHandle handle) const {
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetResourceViewType", SystemError::Abort);
+		return ViewTypeFlags::None;
+	}
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		return resources.at(static_cast<uint32_t>(handle)).GetViewTypes();
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetResourceViewType", SystemError::Abort);
+		return ViewTypeFlags::None;
 	}
 }
 

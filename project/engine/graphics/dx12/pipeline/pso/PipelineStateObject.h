@@ -10,6 +10,7 @@
 namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief パイプラインステートオブジェクトを生成するための情報をまとめた構造体
 	struct PipelineStateObjectElement {
+		uint32_t shaderPairHandle;
 		D3D12_ROOT_SIGNATURE_DESC* rootParameter;
 		D3D12_INPUT_LAYOUT_DESC* inputLayoutDesc;
 		D3D12_DEPTH_STENCIL_DESC depthStencilDesc;
@@ -28,12 +29,15 @@ namespace QFE::GRAPHIC::INTERNAL {
 
 		ID3D12PipelineState* GetPipelineState();
 		ID3D12RootSignature* GetRootSignature();
+		uint32_t GetShaderPairHandle() const;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D10Blob> signatureBlob_;
 		Microsoft::WRL::ComPtr<ID3D10Blob> errorBlob_;
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
+
+		uint32_t shaderPairHandle_ = 0;
 
 		bool isCreatedPipelineStateObject_ = false;
 	};

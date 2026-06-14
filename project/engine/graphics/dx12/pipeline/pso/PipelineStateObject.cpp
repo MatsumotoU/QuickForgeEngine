@@ -31,6 +31,8 @@ void QFE::GRAPHIC::INTERNAL::PipelineStateObject::CreatePipelineStateObject(
 		QFE_REPORT_SYSTEM_ERROR(std::string("Device is null"), SystemError::Abort);
 	}
 
+	shaderPairHandle_ = element.shaderPairHandle;
+
 	HRESULT hr;
 	// * RootSignature * //
 	// シェーダーとリソースをどのように繋ぐかを定義している
@@ -113,4 +115,8 @@ ID3D12RootSignature* PipelineStateObject::GetRootSignature() {
 	}
 
 	return rootSignature_.Get();
+}
+
+uint32_t QFE::GRAPHIC::INTERNAL::PipelineStateObject::GetShaderPairHandle() const {
+	return shaderPairHandle_;
 }

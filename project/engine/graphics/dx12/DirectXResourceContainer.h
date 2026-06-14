@@ -37,6 +37,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 
 		/// @brief 定数バッファを作成し、コンテナに追加する
 		DirectXResourceHandle CreateResource(
+			ID3D12Device* device,
 			const D3D12_RESOURCE_DESC& resourceDesc,
 			D3D12_RESOURCE_STATES initialState,
 			D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT,
@@ -47,14 +48,19 @@ namespace QFE::GRAPHIC::INTERNAL {
 		void UploadResource(
 			DirectXResourceHandle handle, std::vector<D3D12_SUBRESOURCE_DATA> subresources,
 			ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+
+		/// @brief あるハンドルがあるビュータイプのリソースを持っているか
+		bool HasResourceType(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
 		
 		/// @brief あるハンドルの対応するビューのCPUディスクリプタハンドルを取得します
 		D3D12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandle(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
 		/// @brief あるハンドルの対応するビューのGPUディスクリプタハンドルを取得します
 		D3D12_GPU_DESCRIPTOR_HANDLE GetDescriptorHandleGPU(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
-
 		/// @brief あるリソースハンドルに対応するリソースを取得する
 		ID3D12Resource* GetResource(DirectXResourceHandle handle) const;
+		/// @brief あるリソースハンドルに対応するビューのタイプを取得する
+		ViewTypeFlags GetResourceViewType(DirectXResourceHandle handle) const;
+
 	private:
 		/// @brief あるリソースハンドルに対応するDirectXResourceを取得する
 		DirectXResource* GetDirectXResource(DirectXResourceHandle handle);

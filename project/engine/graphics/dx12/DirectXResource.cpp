@@ -171,6 +171,8 @@ bool QFE::GRAPHIC::INTERNAL::DirectXResource::AddDescriptorHandle(ViewTypeFlags 
 
 	// デスクリプタハンドルを追加
 	descriptorHandles_[viewType] = handles;
+	// ビューフラグを更新
+	viewTypes_ = static_cast<ViewTypeFlags>(static_cast<uint32_t>(viewTypes_) | static_cast<uint32_t>(viewType));
 	return true;
 }
 
@@ -186,4 +188,22 @@ const DescriptorHandles* QFE::GRAPHIC::INTERNAL::DirectXResource::GetDescriptorH
 		return &it->second;
 	}
 	return nullptr;
+}
+
+ViewTypeFlags DirectXResource::GetViewTypes() const {
+	return viewTypes_;
+}
+
+bool DirectXResource::HasTypeOfView(ViewTypeFlags viewType) const {
+	// 引数の検査
+	if (viewType == ViewTypeFlags::None) {
+		QFE_REPORT_SYSTEM_ERROR("View type is None in DirectXResource::HasTypeOfView", SystemError::Abort);
+		return false;
+	}
+	// ビューフラグを確認
+	if (viewTypes_ == viewType) {
+		return true;
+	}
+	QFE_LOG("Resource does not have the specified view type in DirectXResource::HasTypeOfView");
+	return false;
 }

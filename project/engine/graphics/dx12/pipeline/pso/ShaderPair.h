@@ -33,6 +33,8 @@ namespace QFE::GRAPHIC::INTERNAL {
 		IDxcBlob* GetVSBlob() { return vsBlob_; }
 		/// @brief ピクセルシェーダーのバイナリを取得します
 		IDxcBlob* GetPSBlob() { return psBlob_; }
+		/// @brief 登録順にRootParameterのタイプを取得します
+		std::vector< D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes() const { return rootParameter_.GetRootParameterTypes(); }
 
 	private:
 		bool isCreated_ = false;

@@ -10,6 +10,7 @@
 #include <functional>
 
 #include "descriptors/Data/DescriptorHandles.h"
+#include "GraphicEngineHandleTypes.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
 	class SwapChain;
@@ -44,7 +45,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 		void Present();
 
 		/// @brief 描画先を決定します。0はスワップチェーンのバックバッファ、1以上はオフスクリーンバッファを指します。
-		void SetRenderTarget(ID3D12GraphicsCommandList* commandList, uint32_t renderTargetHandle = 0);
+		void SetRenderTarget(ID3D12GraphicsCommandList* commandList, RenderTargetHandle renderTargetHandle = RenderTargetHandle::SwapChain);
 
 	private:
 		/// @brief 描画先のリソースを描画用に変更するバリアを発行します。

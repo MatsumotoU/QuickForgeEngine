@@ -74,20 +74,18 @@ void RenderPass::Present() {
 	swapChain_->Present();
 }
 
-void RenderPass::SetRenderTarget(ID3D12GraphicsCommandList* commandList, uint32_t renderTargetHandle) {
-	if (renderTargetHandle == 0) {
+void RenderPass::SetRenderTarget(ID3D12GraphicsCommandList* commandList, RenderTargetHandle renderTargetHandle) {
+	if (renderTargetHandle == RenderTargetHandle::SwapChain) {
 		// バックバッファを描画先に設定
 		commandList->OMSetRenderTargets(1, swapChain_->GetCurrentBackBufferViewPtr(), FALSE, nullptr);
-	}
-	else {
+	} else {
 		// オフスクリーンを描画先に設定
-		uint32_t offscreenIndex = renderTargetHandle - 1;
+		uint32_t offscreenIndex = static_cast<uint32_t>(renderTargetHandle) - 1;
 		if (offscreenIndex < offscreenHandles_.size()) {
 			offscreenBuffer_->SetRenderTarget(commandList, offscreenHandles_[offscreenIndex]);
 			commandList->OMSetRenderTargets(1, offscreenBuffer_->GetRtvHandlePtr(offscreenHandles_[offscreenIndex]), FALSE, nullptr);
-		}
-		else {
-			QFE_REPORT_SYSTEM_ERROR(std::format("Invalid render target handle: {}", renderTargetHandle), SystemError::Abort);
+		} else {
+			QFE_REPORT_SYSTEM_ERROR(std::format("Invalid render target handle: {}", static_cast<uint32_t>(renderTargetHandle)), SystemError::Abort);
 		}
 	}
 }

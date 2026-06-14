@@ -13,6 +13,7 @@
 #include "memory/MultidimensionalArray.h"
 
 #include "../Descriptors/DsvDescriptorHeap.h"
+#include "../GraphicEngineHandleTypes.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief グラフィックスパイプラインを作るためのクラス群の前方宣言
@@ -31,10 +32,6 @@ namespace QFE::GRAPHIC::INTERNAL {
 		std::string vsFileName;
 		std::string psFileName;
 	};
-
-	/// @brief シェーダーペアとパイプラインステートオブジェクトのハンドルを定義
-	enum class ShaderPairHandle : uint32_t {};
-	enum class PSOHandle : uint32_t {};
 
 	/// @brief BuiltInのシェーダーペアのタイプを定義
 	enum class BuiltInShaderPair : uint32_t {
@@ -66,6 +63,13 @@ namespace QFE::GRAPHIC::INTERNAL {
 			const ShaderPairHandle& shaderHandle, ID3D12Device* device
 			, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType, D3D12_RASTERIZER_DESC rasterizerDesc,
 			D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc);
+
+		/// @brief PSOハンドルからパイプラインステートオブジェクトを取得します
+		const PipelineStateObject* GetPipelineStateObject(const PSOHandle& psoHandle) const;
+		/// @brief PSOハンドルからルートシグネチャを取得します
+		const ID3D12RootSignature* GetRootSignature(const PSOHandle& psoHandle) const;
+		/// @brief PSOハンドルからルートパラメータのタイプを取得します
+		std::vector<D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes(const PSOHandle& psoHandle) const;
 		
 	private: // メンバ変数
 		/// @brief BuiltInのシェーダーペアを生成します

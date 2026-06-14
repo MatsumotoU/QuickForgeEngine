@@ -30,14 +30,12 @@ namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief このクラスで保持する画像データ
 	struct ImageData {
 		DirectXResourceHandle resourceHandle = DirectXResourceHandle::Invalid;// 結びついているテクスチャリソースのハンドル
-		std::unique_ptr<DirectX::ScratchImage> scratchImage = nullptr;
+		DirectX::ScratchImage scratchImage;
 	};
 
 	/// @brief テクスチャの読み込み、リソースのハンドルとテクスチャ名を結び付けて保存するクラス
 	class TextureLoader final {
 	public:
-		explicit TextureLoader();
-		
 		/// @brief 初期化処理
 		void Initialize(TextureLoaderInitializeInfo info);
 		/** @brief 終了処理 */
@@ -52,7 +50,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 
 	private:
 		/// @brief 画像ファイルを読み込んでDirectX::ScratchImageを作成する関数
-		DirectX::ScratchImage LoadScratchImage(const std::string& filePath);
+		DirectX::ScratchImage LoadScratchImageFromFile(const std::string& filePath);
 		/// @brief metadataを元にテクスチャリソースを作成し、リソースハンドルを返す関数
 		DirectXResourceHandle CreateResourceFromMetadata(const DirectX::TexMetadata& metadata);
 		/// @brief テクスチャデータをGPUにアップロードする関数
@@ -62,7 +60,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 			const DirectX::TexMetadata& metadata, D3D12_SRV_DIMENSION texture, DirectXResourceHandle resourceHandle);
 		/// @brief ScratchImageと名前からテクスチャとして使えるようにする関数。SRVにも登録する
 		DirectXResourceHandle CreateTextureFromScratchImage(
-			const DirectX::ScratchImage& scratchImage, const std::string& name, D3D12_SRV_DIMENSION texture);
+			DirectX::ScratchImage scratchImage, const std::string& name, D3D12_SRV_DIMENSION texture);
 
 		/// @brief ダミーの黒いキューブマップを作成する
 		DirectX::ScratchImage CreateDummyBlackCubeMap();
