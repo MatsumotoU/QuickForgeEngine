@@ -63,6 +63,7 @@ namespace QFE {
 				for (auto& handle : modelDataPtr->meshRenderDataHandles) {
 					commandList->IASetVertexBuffers(0, 1,
 						assetManager->GetModelVertexResourceManager()->GetVertexBufferView(handle.vertexBufferHandle));
+					commandList->IASetIndexBuffer(&assetManager->GetModelVertexResourceManager()->GetIndexBufferView(handle.vertexBufferHandle));
 					commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 					commandList->SetGraphicsRootConstantBufferView(0,
 						gpuBufferPool->GetConstantBufferAddress<Material>(handle.materialHandle));
@@ -78,8 +79,9 @@ namespace QFE {
 						gpuBufferPool->GetConstantBufferAddress<DirectionalLight>(handle.lightBufferHandle));
 					commandList->SetGraphicsRootConstantBufferView(5,
 						gpuBufferPool->GetConstantBufferAddress<CameraForGPU>(handle.cameraPosBufferHandle));
-					commandList->DrawInstanced(static_cast<UINT>(
-						assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0);
+
+					commandList->DrawIndexedInstanced(static_cast<UINT>(
+						assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0, 0);
 				}
 			}
 

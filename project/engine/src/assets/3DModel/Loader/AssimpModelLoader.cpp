@@ -48,48 +48,32 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		std::vector<VertexData> tempVertices;
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			VertexData vtx;
-			vtx.position.x = mesh->mVertices[i].x;
-			vtx.position.y = mesh->mVertices[i].y;
-			vtx.position.z = mesh->mVertices[i].z;
-			vtx.position.w = 1.0f;
-
-			if (mesh->HasTextureCoords(0)) {
-				vtx.texcoord.x = mesh->mTextureCoords[0][i].x;
-				vtx.texcoord.y = mesh->mTextureCoords[0][i].y;
-			} else {
-				vtx.texcoord.x = 0.0f;
-				vtx.texcoord.y = 0.0f;
-			}
-			if (mesh->HasNormals()) {
-				vtx.normal.x = mesh->mNormals[i].x;
-				vtx.normal.y = mesh->mNormals[i].y;
-				vtx.normal.z = mesh->mNormals[i].z;
-			} else {
-				vtx.normal.x = 0.0f;
-				vtx.normal.y = 0.0f;
-				vtx.normal.z = 1.0f;
-			}
-			vtx.position.x *= -1.0f;
-			vtx.normal.x *= -1.0f;
-			vtx.texcoord.y = vtx.texcoord.y;
-
+			aiVector3D position = mesh->mVertices[i];
+			aiVector3D texcoord = mesh->mTextureCoords[0][i];
+			aiVector3D normal = mesh->mNormals[i];
+			// 頂点データの変換(右手系から左手系への変換)
+			vtx.position = { -position.x, position.y, position.z };
+			vtx.texcoord = { texcoord.x, texcoord.y };
+			vtx.normal = { -normal.x, normal.y, normal.z };
 			tempVertices.push_back(vtx);
 		}
 
-		// メッシュデータの初期化
-		MeshData meshData(tempVertices.size());
-
-		// 面データの読み込み（インデックスを使用して頂点を追加）
+		// インデックスデータの読み込み
+		std::vector<uint32_t> tempIndices;
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			const aiFace& face = mesh->mFaces[i];
-			if (face.mNumIndices == 3) {
-				meshData.vertices.push_back(tempVertices[face.mIndices[0]]);
-				meshData.vertices.push_back(tempVertices[face.mIndices[2]]);
-				meshData.vertices.push_back(tempVertices[face.mIndices[1]]);
+			for (unsigned int j = 0; j < face.mNumIndices; ++j) {
+				unsigned int vertexIndex = face.mIndices[j];
+				tempIndices.push_back(vertexIndex);
 			}
 		}
 
-		// 繝槭ユ繝ｪ繧｢繝ｫ繝ｻ繝・け繧ｹ繝√Ε
+		// メッシュデータの初期化
+		MeshData meshData(tempVertices.size(), tempIndices.size());
+		std::copy(tempVertices.begin(), tempVertices.end(), meshData.vertices.begin());
+		std::copy(tempIndices.begin(), tempIndices.end(), meshData.indices.begin());
+
+		// マテリアルとテクスチャの読み込み
 		if (scene->HasMaterials() && mesh->mMaterialIndex < scene->mNumMaterials) {
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			aiString texPath;

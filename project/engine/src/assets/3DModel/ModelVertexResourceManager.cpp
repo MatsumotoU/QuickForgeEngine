@@ -50,10 +50,14 @@ uint32_t ModelVertexResourceManager::Assign(ID3D12Device* device, const ModelDat
             continue; // 頂点がないメッシュはスキップ
         }
         modelVertexBuffers_.emplace_back();
-        modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(mesh.vertices.size()));
+        modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(mesh.vertices.size()), static_cast<uint32_t>(mesh.indices.size()));
         // 頂点データをセット
         for (size_t i = 0; i < mesh.vertices.size(); ++i) {
             modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), mesh.vertices[i]);
+        }
+        // インデックスデータをセット
+        for (size_t i = 0; i < mesh.indices.size(); ++i) {
+            modelVertexBuffers_.back().SetIndexData(static_cast<uint32_t>(i), mesh.indices[i]);
         }
     }
 
@@ -72,9 +76,13 @@ uint32_t QFE::ModelVertexResourceManager::AssignPlane(ID3D12Device* device, floa
 	MeshData planeMesh = PRIMITIVE::CreatePlane(width, height, segmentsX, segmentsY, invertFace);
 	// 頂点データを割り当てる
 	modelVertexBuffers_.emplace_back();
-	modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(planeMesh.vertices.size()));
+	modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(planeMesh.vertices.size()), static_cast<uint32_t>(planeMesh.indices.size()));
     for (size_t i = 0; i < planeMesh.vertices.size(); ++i) {
         modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), planeMesh.vertices[i]);
+	}
+	// インデックスデータをセット
+	for (size_t i = 0; i < planeMesh.indices.size(); ++i) {
+		modelVertexBuffers_.back().SetIndexData(static_cast<uint32_t>(i), planeMesh.indices[i]);
 	}
 	// ハンドルを生成してマップに登録
 	modelHandleMap_.insert({ modelName, static_cast<uint32_t>(modelVertexBuffers_.size() - 1) });
@@ -96,9 +104,13 @@ uint32_t QFE::ModelVertexResourceManager::AssignBox(ID3D12Device* device, bool i
 	
 	// 頂点データを割り当てる
 	modelVertexBuffers_.emplace_back();
-	modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(boxMesh.vertices.size()));
+	modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(boxMesh.vertices.size()), static_cast<uint32_t>(boxMesh.indices.size()));
 	for (size_t i = 0; i < boxMesh.vertices.size(); ++i) {
 		modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), boxMesh.vertices[i]);
+	}
+	// インデックスデータをセット
+	for (size_t i = 0; i < boxMesh.indices.size(); ++i) {
+		modelVertexBuffers_.back().SetIndexData(static_cast<uint32_t>(i), boxMesh.indices[i]);
 	}
 
 	// ハンドルを生成してマップに登録
@@ -119,9 +131,13 @@ uint32_t QFE::ModelVertexResourceManager::AssignRing(ID3D12Device* device, float
     MeshData ringMesh = PRIMITIVE::CreateRing(0.5f, 1.0f, 32, invertFace);
     // 頂点データを割り当てる
     modelVertexBuffers_.emplace_back();
-    modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(ringMesh.vertices.size()));
+    modelVertexBuffers_.back().CreateResource(device, static_cast<uint32_t>(ringMesh.vertices.size()), static_cast<uint32_t>(ringMesh.indices.size()));
     for (size_t i = 0; i < ringMesh.vertices.size(); ++i) {
         modelVertexBuffers_.back().SetData(static_cast<uint32_t>(i), ringMesh.vertices[i]);
+    }
+    // インデックスデータをセット
+    for (size_t i = 0; i < ringMesh.indices.size(); ++i) {
+        modelVertexBuffers_.back().SetIndexData(static_cast<uint32_t>(i), ringMesh.indices[i]);
     }
     // ハンドルを生成してマップに登録
     modelHandleMap_.insert({ modelName, static_cast<uint32_t>(modelVertexBuffers_.size() - 1) });
@@ -147,6 +163,10 @@ VertexData* ModelVertexResourceManager::GetModelVertexBufferData(const uint32_t&
 const D3D12_VERTEX_BUFFER_VIEW* ModelVertexResourceManager::GetVertexBufferView(const uint32_t& handle) {
 	assert(handle < modelVertexBuffers_.size() && "Model not found");
 	return modelVertexBuffers_.at(handle).GetVertexBufferView();
+}
+
+D3D12_INDEX_BUFFER_VIEW QFE::ModelVertexResourceManager::GetIndexBufferView(const uint32_t& handle) {
+	return modelVertexBuffers_.at(handle).GetIndexBufferView();
 }
 
 uint32_t ModelVertexResourceManager::GetModelHandle(const std::string& modelName) const {
