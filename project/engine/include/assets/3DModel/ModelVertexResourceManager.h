@@ -53,6 +53,8 @@ namespace QFE {
 		/** @brief ハンドルから頂点バッファビューを取得 */
 		const D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView(const uint32_t& handle);
 
+		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(const uint32_t& handle);
+
 		/** @brief 名前からハンドルを取得 */
 		uint32_t GetModelHandle(const std::string& modelName) const;
 		/** @brief 指定した名前のモデルが既に読み込まれているか */

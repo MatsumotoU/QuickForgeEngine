@@ -8,9 +8,10 @@ namespace QFE {
 
 	struct MeshData {
 		SafeVector<VertexData> vertices;
+		SafeVector<uint32_t> indices;
 		ModelMaterialData material;
 
-		MeshData(size_t size) : vertices(size) {}
+		MeshData(size_t vertexSize, size_t indexSize) : vertices(vertexSize), indices(indexSize) {}
 	};
 
 	struct ModelData {
