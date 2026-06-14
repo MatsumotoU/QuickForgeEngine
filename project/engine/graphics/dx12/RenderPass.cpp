@@ -12,6 +12,9 @@ namespace {
 	const uint32_t kOffscreenCount = 16;
 }
 
+QFE::GRAPHIC::INTERNAL::RenderPass::RenderPass() = default;
+QFE::GRAPHIC::INTERNAL::RenderPass::~RenderPass() = default;
+
 void RenderPass::Initialize(const RenderPassInitializeInfo& initializeInfo) {
 	// 引数の検査
 	if (!initializeInfo.device) {
@@ -33,6 +36,14 @@ void RenderPass::Initialize(const RenderPassInitializeInfo& initializeInfo) {
 	swapChain_->Initialize(
 		initializeInfo.hwnd, initializeInfo.width, initializeInfo.height,
 		initializeInfo.dxgiFactory, initializeInfo.commandQueue);
+	// バックバッファをRTVに割り当て
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_ = {};
+	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	for (uint32_t i = 0; i < swapChain_->GetBackBufferCount(); ++i) {
+		swapChain_->AssignDescriptorHandles(
+			initializeInfo.assignRtvFunc(swapChain_->GetBackBuffer(i), &rtvDesc_), i);
+	}
 
 	// OffscreenBufferの初期化
 	offscreenBuffer_ = std::make_unique<OffscreenBuffer>();
@@ -57,6 +68,10 @@ void RenderPass::PreDraw(ID3D12GraphicsCommandList* commandList) {
 
 void RenderPass::PostDraw(ID3D12GraphicsCommandList* commandList) {
 	TransitionRenderTargetToPresent(commandList);
+}
+
+void RenderPass::Present() {
+	swapChain_->Present();
 }
 
 void RenderPass::SetRenderTarget(ID3D12GraphicsCommandList* commandList, uint32_t renderTargetHandle) {

@@ -29,9 +29,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 		for (int i = 0; i < backBuffers_.size(); ++i) {
 			hr = swapChain_.Get()->GetBuffer(i, IID_PPV_ARGS(backBuffers_.at(i).GetAddressOf()));
 			assert(SUCCEEDED(hr));
-#ifdef QFE_OPTIMIZE_OFF
 			QFE_LOG(std::format("Assign BackBuffer: {}", i));
-#endif // QFE_OPTIMIZE_OFF
 		}
 	}
 
@@ -110,6 +108,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 	}
 
 	void SwapChain::Present() {
+		// スワップチェーンのPresent関数を呼び出す
 		HRESULT hr = swapChain_->Present(1, 0);
 		hr;
 		assert(SUCCEEDED(hr) && "Failed to present the swap chain.");

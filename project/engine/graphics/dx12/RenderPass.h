@@ -30,12 +30,18 @@ namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief 描画先のバリア、管理するクラス
 	class RenderPass final {
 	public:
+		RenderPass();
+		~RenderPass();
+
+	public:
 		/// @brief 描画先のリソースを生成し、描画先のバリアを管理するクラスを初期化します。
 		void Initialize(const RenderPassInitializeInfo& initializeInfo);
 		/// @brief 描画先のリソースを描画用に変更するバリアを発行します。
 		void PreDraw(ID3D12GraphicsCommandList* commandList);
 		/// @brief 描画先のリソースを読み込み用に変更するバリアを発行します。
 		void PostDraw(ID3D12GraphicsCommandList* commandList);
+		/// @brief バックバッファを画面に表示します。
+		void Present();
 
 		/// @brief 描画先を決定します。0はスワップチェーンのバックバッファ、1以上はオフスクリーンバッファを指します。
 		void SetRenderTarget(ID3D12GraphicsCommandList* commandList, uint32_t renderTargetHandle = 0);

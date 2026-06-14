@@ -1,0 +1,186 @@
+#include "DirectXResourceContainer.h"
+#include "buffer/BufferGenerater/BufferGenerator.h"
+
+#include <bit>
+using namespace QFE::GRAPHIC::INTERNAL;
+
+void DirectXResourceContainer::Initialize(
+	DirectXResourceContainerInitializeInfo initializeInfo) {
+
+	info_ = initializeInfo;
+}
+
+void DirectXResourceContainer::EndFrame() {
+	internalResources.clear();
+}
+
+DirectXResourceHandle DirectXResourceContainer::CreateResource(
+	const D3D12_RESOURCE_DESC& resourceDesc, D3D12_RESOURCE_STATES initialState,
+	D3D12_HEAP_TYPE heapType, const D3D12_CLEAR_VALUE* clearValue) {
+
+	DirectXResource resource;
+	if (!resource.CreateResource(nullptr, resourceDesc, initialState, heapType, clearValue)) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to create resource in DirectXResourceContainer::CreateResource", SystemError::Abort);
+		return DirectXResourceHandle::Invalid;
+	}
+
+	return static_cast<DirectXResourceHandle>(resources.push_back(std::move(resource)));
+}
+
+void QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::CreateResourceView(DirectXResourceHandle handle, CereateViewInfo createViewInfo) {
+	// 引数の検査
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::CreateResourceView", SystemError::Abort);
+		return;
+	}
+	// リソースが存在するかの確認
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		ID3D12Resource* d3dResource = resource.GetResource();
+		if (!d3dResource) {
+			QFE_REPORT_SYSTEM_ERROR("Failed to get D3D resource in DirectXResourceContainer::CreateResourceView", SystemError::Abort);
+			return;
+		}
+
+		// ビュータイプに応じてデスクリプタハンドルを割り当て、リソースに関連付けて保存
+		DescriptorHandles handles;
+		ViewTypeFlags viewType = createViewInfo.viewType;
+		// RTV
+		if ((viewType & ViewTypeFlags::RenderTargetView) != ViewTypeFlags::None) {
+			handles = info_.assignRtvFunc(d3dResource, &createViewInfo.rtvDesc);
+			resource.AddDescriptorHandle(ViewTypeFlags::RenderTargetView, handles);
+			QFE_LOG("RTV view created successfully in DirectXResourceContainer::CreateResourceView");
+		}
+		// SRV
+		if ((viewType & ViewTypeFlags::ShaderResourceView) != ViewTypeFlags::None) {
+			handles = info_.assignSrvFunc(d3dResource, &createViewInfo.srvDesc);
+			resource.AddDescriptorHandle(ViewTypeFlags::ShaderResourceView, handles);
+			QFE_LOG("SRV view created successfully in DirectXResourceContainer::CreateResourceView");
+		}
+		// DSV
+		if ((viewType & ViewTypeFlags::DepthStencilView) != ViewTypeFlags::None) {
+			handles = info_.assignDsvFunc(d3dResource, &createViewInfo.dsvDesc);
+			resource.AddDescriptorHandle(ViewTypeFlags::DepthStencilView, handles);
+			QFE_LOG("DSV view created successfully in DirectXResourceContainer::CreateResourceView");
+		}
+		// UAV
+		if ((viewType & ViewTypeFlags::UnorderedAccessView) != ViewTypeFlags::None) {
+			handles = info_.assignUavFunc(d3dResource, &createViewInfo.uavDesc);
+			resource.AddDescriptorHandle(ViewTypeFlags::UnorderedAccessView, handles);
+			QFE_LOG("UAV view created successfully in DirectXResourceContainer::CreateResourceView");
+		}
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::CreateResourceView", SystemError::Abort);
+		return;
+	}
+	QFE_LOG("Resource view created successfully in DirectXResourceContainer::CreateResourceView");
+}
+
+void QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::UploadResource(
+	DirectXResourceHandle handle, std::vector<D3D12_SUBRESOURCE_DATA> subresources,
+	ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
+
+	// 指定のリソースがあるか
+	DirectXResource* destinationResource = GetDirectXResource(handle);
+	// リソースのバリアをコピー可能な状態に変更
+	destinationResource->TransitionResource(commandList, D3D12_RESOURCE_STATE_COPY_DEST);
+
+	// コピーに必要な中間リソースのサイズを取得
+	UINT64 uploadBufferSize = GetRequiredIntermediateSize(destinationResource->GetResource(), 0, static_cast<UINT>(subresources.size()));
+
+	// 中間リソースを生成します
+	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = BufferGenerator::Generate(device, uploadBufferSize);
+	// アップロード用のリソースにサブリソースデータを書き込む
+	UpdateSubresources(commandList, GetResource(handle), intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
+
+	// アップロードに使ったリソースを保存して、EndFrameで解放できるようにする
+	internalResources.push_back(std::move(intermediateResource));
+
+	// リソースのバリアをコピー前の状態に変更
+	destinationResource->TransitionResourceToBeforeState(commandList);
+
+	QFE_LOG("Resource uploaded successfully in DirectXResourceContainer::UploadResource");
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetDescriptorHandle(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
+	// タイプが複数指定されている場合はエラー
+	uint32_t value = static_cast<uint32_t>(viewType);
+	if (value == 0 || std::has_single_bit(value) == false) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid view type in DirectXResourceContainer::GetDescriptorHandle", SystemError::Abort);
+		return D3D12_CPU_DESCRIPTOR_HANDLE();
+	}
+	// ハンドルが無効な場合はエラー
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetDescriptorHandle", SystemError::Abort);
+		return D3D12_CPU_DESCRIPTOR_HANDLE();
+	}
+	// リソースが存在するかの確認
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		const DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		const DescriptorHandles* handles = resource.GetDescriptorHandle(viewType);
+		if (handles) {
+			return handles->cpuHandle_;
+		} else {
+			QFE_REPORT_SYSTEM_ERROR("Descriptor handle for the specified view type not found in DirectXResourceContainer::GetDescriptorHandle", SystemError::Abort);
+			return D3D12_CPU_DESCRIPTOR_HANDLE();
+		}
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetDescriptorHandle", SystemError::Abort);
+		return D3D12_CPU_DESCRIPTOR_HANDLE();
+	}
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetDescriptorHandleGPU(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
+	// タイプが複数指定されている場合はエラー
+	uint32_t value = static_cast<uint32_t>(viewType);
+	if (value == 0 || std::has_single_bit(value) == false) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid view type in DirectXResourceContainer::GetDescriptorHandleGPU", SystemError::Abort);
+		return D3D12_GPU_DESCRIPTOR_HANDLE();
+	}
+	// ハンドルが無効な場合はエラー
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetDescriptorHandleGPU", SystemError::Abort);
+		return D3D12_GPU_DESCRIPTOR_HANDLE();
+	}
+	// リソースが存在するかの確認
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		const DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		const DescriptorHandles* handles = resource.GetDescriptorHandle(viewType);
+		if (handles) {
+			return handles->gpuHandle_;
+		} else {
+			QFE_REPORT_SYSTEM_ERROR("Descriptor handle for the specified view type not found in DirectXResourceContainer::GetDescriptorHandleGPU", SystemError::Abort);
+			return D3D12_GPU_DESCRIPTOR_HANDLE();
+		}
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetDescriptorHandleGPU", SystemError::Abort);
+		return D3D12_GPU_DESCRIPTOR_HANDLE();
+	}
+}
+
+ID3D12Resource* DirectXResourceContainer::GetResource(DirectXResourceHandle handle) const {
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetResource", SystemError::Abort);
+		return nullptr;
+	}
+
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		return resources.at(static_cast<uint32_t>(handle)).GetResource();
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetResource", SystemError::Abort);
+		return nullptr;
+	}
+}
+
+DirectXResource* DirectXResourceContainer::GetDirectXResource(DirectXResourceHandle handle) {
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetDirectXResource", SystemError::Abort);
+		return nullptr;
+	}
+	if(resources.Contains(static_cast<uint32_t>(handle))) {
+		return &resources.at(static_cast<uint32_t>(handle));
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetDirectXResource", SystemError::Abort);
+	}
+	return nullptr;
+}

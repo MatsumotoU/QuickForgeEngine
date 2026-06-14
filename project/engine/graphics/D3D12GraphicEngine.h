@@ -16,18 +16,9 @@
 #include <vector>
 #include <memory>
 
+#include "dx12/GraphicEngineHandleTypes.h"
+
 namespace QFE::GRAPHIC {
-	/// @brief 各ハンドルの定義.いずれもUINT32_MAXを無効値とする.
-	enum class TextureHandle : uint32_t;
-	enum class ModelHandle : uint32_t;
-	enum class VertexBufferHandle : uint32_t;
-
-	enum class ViewPortHandle : uint32_t;
-	enum class ScissorRectHandle : uint32_t;
-	enum class VSHandle : uint32_t;
-	enum class PSHandle : uint32_t;
-	enum class PSOHandle : uint32_t;
-
 	/// @brief DirectX12のグラフィックエンジンの実装クラスで使用しているクラス
 	namespace INTERNAL {
 		class DirectX12DebugCore;
@@ -43,7 +34,8 @@ namespace QFE::GRAPHIC {
 		class GraphicPipelineManager;
 		class ModelDataContainer;
 		class VertexBufferContainer;
-		class TextureManager;
+		class TextureLoader;
+		class RenderPass;
 	}
 
 	/// @brief DirectX12を使用したグラフィックエンジンの実装クラス
@@ -77,7 +69,6 @@ namespace QFE::GRAPHIC {
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
 		void LegacyInitialize(uint32_t width, uint32_t height);
-		void AssignSwapChainDescriptor();
 		void CreateDepthStencilBuffer(uint32_t width, uint32_t height);
 		void ClearDepthStencil();
 
@@ -88,13 +79,13 @@ namespace QFE::GRAPHIC {
 		std::unique_ptr<INTERNAL::DirectXResourceContainer> resourceContainer_;// DirectX12のリソース管理クラス
 		std::unique_ptr<INTERNAL::DescriptorHeapManager> descriptorHeapManager_;// デスクリプタヒープ管理クラス
 		std::unique_ptr<INTERNAL::DirectXCommandManager> commandManager_;// コマンド管理クラス
-		std::unique_ptr<INTERNAL::SwapChain> swapChain_;// スワップチェーン管理クラス
+		std::unique_ptr<INTERNAL::RenderPass> renderPass_;// 描画先管理クラス
 		std::unique_ptr<INTERNAL::Fence> fence_;// フェンス管理クラス
 
 		std::unique_ptr<INTERNAL::ShaderCompiler> shaderCompiler_;// シェーダーコンパイルクラス
 
 		std::unique_ptr<INTERNAL::GraphicPipelineManager> graphicPipelineManager_;// グラフィックパイプライン管理クラス
-		std::unique_ptr<INTERNAL::TextureManager> textureManager_;// テクスチャ管理クラス
+		std::unique_ptr<INTERNAL::TextureLoader> textureLoader_;// テクスチャ管理クラス
 		std::unique_ptr<INTERNAL::ModelDataContainer> modelDataContainer_;// モデル頂点リソース管理クラス
 		std::unique_ptr<INTERNAL::VertexBufferContainer> vertexBufferContainer_;// 頂点バッファ管理クラス
 

@@ -94,6 +94,11 @@ bool DirectXResource::TransitionResource(ID3D12GraphicsCommandList* commandList,
 		QFE_REPORT_SYSTEM_ERROR("Resource dimension is unknown in DirectXResource::TransitionResource", SystemError::Abort);
 		return false;
 	}
+	// 同じ状態への遷移は不要
+	if (currentState_ == newState) {
+		beforeState_ = currentState_;
+		return true;
+	}
 
 	// 状態の遷移
 	D3D12_RESOURCE_BARRIER barrier{};
@@ -121,6 +126,10 @@ bool DirectXResource::TransitionResourceToBeforeState(ID3D12GraphicsCommandList*
 		QFE_REPORT_SYSTEM_ERROR("Resource dimension is unknown in DirectXResource::TransitionResourceToBeforeState", SystemError::Abort);
 		return false;
 	}
+	// 同じ状態への遷移は不要
+	if (currentState_ == beforeState_) {
+		return true;
+	}
 
 	// 状態の遷移
 	D3D12_RESOURCE_BARRIER barrier{};
@@ -144,11 +153,37 @@ D3D12_GPU_VIRTUAL_ADDRESS DirectXResource::GetGpuVirtualAddress() const {
 	return resource_->GetGPUVirtualAddress();
 }
 
-ID3D12Resource* DirectXResource::GetResource() {
+ID3D12Resource* DirectXResource::GetResource() const {
 	// リソースが生成されているかの確認
 	if (resourceDesc_.Dimension == D3D12_RESOURCE_DIMENSION_UNKNOWN) {
 		QFE_REPORT_SYSTEM_ERROR("Resource dimension is unknown in DirectXResource::GetResource", SystemError::Abort);
 		return nullptr;
 	}
 	return resource_.Get();
+}
+
+bool QFE::GRAPHIC::INTERNAL::DirectXResource::AddDescriptorHandle(ViewTypeFlags viewType, const DescriptorHandles& handles) {
+	// 引数の検査
+	if (viewType == ViewTypeFlags::None) {
+		QFE_REPORT_SYSTEM_ERROR("View type is None in DirectXResource::AddDescriptorHandle", SystemError::Abort);
+		return false;
+	}
+
+	// デスクリプタハンドルを追加
+	descriptorHandles_[viewType] = handles;
+	return true;
+}
+
+const DescriptorHandles* QFE::GRAPHIC::INTERNAL::DirectXResource::GetDescriptorHandle(ViewTypeFlags viewType) const {
+	// 引数の検査
+	if (viewType == ViewTypeFlags::None) {
+		QFE_REPORT_SYSTEM_ERROR("View type is None in DirectXResource::GetDescriptorHandle", SystemError::Abort);
+		return nullptr;
+	}
+	// デスクリプタハンドルを取得
+	auto it = descriptorHandles_.find(viewType);
+	if (it != descriptorHandles_.end()) {
+		return &it->second;
+	}
+	return nullptr;
 }

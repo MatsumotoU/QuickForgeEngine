@@ -1,6 +1,9 @@
 #pragma once
 #include <wrl.h>
 #include <d3d12.h>
+#include <unordered_map>
+#include "ViewTypeFlags.h"
+#include "descriptors/Data/DescriptorHandles.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief DirectX12のリソースをラップしたクラス
@@ -29,7 +32,12 @@ namespace QFE::GRAPHIC::INTERNAL {
 		/// @brief リソースのGPU側のアドレスを取得する
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress() const;
 		/// @brief リソースそのものを取得する
-		ID3D12Resource* GetResource();
+		ID3D12Resource* GetResource() const;
+
+		/// @brief あるビュータイプのデスクリプタハンドルをリソースに関連付けて保存します
+		bool AddDescriptorHandle(ViewTypeFlags viewType, const DescriptorHandles& handles);
+		/// @brief あるビュータイプのデスクリプタハンドルを取得します
+		const DescriptorHandles* GetDescriptorHandle(ViewTypeFlags viewType) const;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource_;// VRAM上のリソース
@@ -39,5 +47,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 		D3D12_RESOURCE_STATES beforeState_;// リソースの前の状態
 
 		D3D12_RESOURCE_DESC resourceDesc_;// リソースの説明
+
+		std::unordered_map<ViewTypeFlags, DescriptorHandles> descriptorHandles_;// リソースに関連付けられたデスクリプタのハンドルを管理するマップ
 	};
 }

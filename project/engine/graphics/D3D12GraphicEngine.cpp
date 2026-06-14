@@ -8,13 +8,13 @@
 #include "dx12/DirectXResourceContainer.h"
 #include "dx12/descriptors/DescriptorHeapManager.h"
 #include "dx12/command/DirectXCommandManager.h"
-#include "dx12/SwapChain.h"
+#include "dx12/RenderPass.h"
 #include "dx12/Fence.h"
 
 #include "dx12/pipeline/pso/ShaderCompiler.h"
 
 #include "dx12/pipeline/GraphicPipelineManager.h"
-#include "dx12/TextureManager.h"
+#include "dx12/TextureLoader.h"
 #include "dx12/ModelDataContainer.h"
 #include "dx12/VertexBufferContainer.h"
 
@@ -34,10 +34,10 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	resourceContainer_(std::make_unique<INTERNAL::DirectXResourceContainer>()),
 	descriptorHeapManager_(std::make_unique<INTERNAL::DescriptorHeapManager>()),
 	commandManager_(std::make_unique<INTERNAL::DirectXCommandManager>()),
-	swapChain_(std::make_unique<INTERNAL::SwapChain>()),
+	renderPass_(std::make_unique<INTERNAL::RenderPass>()),
 	fence_(std::make_unique<INTERNAL::Fence>()),
 	graphicPipelineManager_(std::make_unique<INTERNAL::GraphicPipelineManager>()),
-	textureManager_(std::make_unique<INTERNAL::TextureManager>()),
+	textureLoader_(std::make_unique<INTERNAL::TextureLoader>()),
 	modelDataContainer_(std::make_unique<INTERNAL::ModelDataContainer>()),
 	vertexBufferContainer_(std::make_unique<INTERNAL::VertexBufferContainer>()),
 	shaderCompiler_(std::make_unique<INTERNAL::ShaderCompiler>())
@@ -61,11 +61,33 @@ void D3D12GraphicEngine::Initialize() {
 	descriptorHeapManager_->Initialize(directXDevice_->GetDevice());
 	// CommandManagerの初期化
 	commandManager_->Initialize(directXDevice_->GetDevice());
+
+	// ResourceContainerの初期化
+	INTERNAL::DirectXResourceContainerInitializeInfo resourceContainerInfo{};
+	resourceContainerInfo.assignRtvFunc = [&](ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc) 
+		{return descriptorHeapManager_->AssignRtvHeap(resource, desc); };
+	resourceContainerInfo.assignSrvFunc = [&](ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC* desc)
+		{return descriptorHeapManager_->AssignSrvHeap(resource, *desc); };
+	resourceContainerInfo.assignDsvFunc = [&](ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* desc)
+		{return descriptorHeapManager_->AssignDsvHeap(resource, desc); };
+	resourceContainerInfo.assignUavFunc = [&](ID3D12Resource* resource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* desc)
+		{return INTERNAL::DescriptorHandles{}; };
+	resourceContainer_->Initialize(resourceContainerInfo);
+
 	// SwapChainの初期化
-	swapChain_->Initialize(
-		hwnd_, width, height,
-		directXDevice_->GetDxgiFactory(),
-		commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	INTERNAL::RenderPassInitializeInfo renderPassInfo{};
+	renderPassInfo.width = width;
+	renderPassInfo.height = height;
+	renderPassInfo.hwnd = hwnd_;
+	renderPassInfo.device = directXDevice_->GetDevice();
+	renderPassInfo.dxgiFactory = directXDevice_->GetDxgiFactory();
+	renderPassInfo.commandQueue = commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	renderPassInfo.assignRtvFunc = [&](ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc) 
+		{return descriptorHeapManager_->AssignRtvHeap(resource, desc);};
+	renderPassInfo.assignSrvFunc = [&](ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC* desc) 
+		{return descriptorHeapManager_->AssignSrvHeap(resource, *desc); };
+
+	renderPass_->Initialize(renderPassInfo);
 	// Fenceの初期化
 	fence_->Initialize(directXDevice_->GetDevice());
 
@@ -78,10 +100,29 @@ void D3D12GraphicEngine::Initialize() {
 		directXDevice_->GetDevice());
 	
 	// テクスチャ管理クラスの初期化
-	textureManager_->Initialize(
-		directXDevice_->GetDevice(), 
-		commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), 
-		descriptorHeapManager_->GetSrvDescriptorHeap());
+	INTERNAL::TextureLoaderInitializeInfo textureLoaderInfo{};
+	// テクスチャのリソース作成やSRV作成、データアップロードに必要な情報をTextureLoaderInitializeInfo構造体にセット
+	textureLoaderInfo.device = directXDevice_->GetDevice();
+	// テクスチャのリソース作成に必要な関数をDirectXResourceContainerのCreateResource関数を呼び出すラムダ式で初期化
+	textureLoaderInfo.createResourceFunc = 
+		[&](const D3D12_RESOURCE_DESC& desc) { return resourceContainer_->CreateResource(desc, D3D12_RESOURCE_STATE_GENERIC_READ); };
+	// テクスチャのSRV作成に必要な関数をDirectXResourceContainerのCreateResourceView関数を呼び出すラムダ式で初期化
+	textureLoaderInfo.createShaderResourceViewFunc = 
+		[&](INTERNAL::DirectXResourceHandle resourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
+		INTERNAL::CereateViewInfo createViewInfo{};
+		createViewInfo.viewType = INTERNAL::ViewTypeFlags::ShaderResourceView;
+		createViewInfo.dsvDesc = {};
+		createViewInfo.rtvDesc = {};
+		createViewInfo.srvDesc = desc;
+		createViewInfo.uavDesc = {};
+		resourceContainer_->CreateResourceView(resourceHandle, createViewInfo);};
+	// テクスチャのアップロードに必要な関数をDirectXResourceContainerのUploadResource関数を呼び出すラムダ式で初期化
+	textureLoaderInfo.uploadTextureDataFunc = 
+		[&](INTERNAL::DirectXResourceHandle resourceHandle, const std::vector<D3D12_SUBRESOURCE_DATA>& subresources) {
+		resourceContainer_->UploadResource(resourceHandle, subresources, directXDevice_->GetDevice(), commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
+		};
+	// テクスチャローダーを初期化
+	textureLoader_->Initialize(textureLoaderInfo);
 
 	// モデル頂点リソース管理クラスの初期化
 	modelDataContainer_->Initialize();
@@ -90,12 +131,7 @@ void D3D12GraphicEngine::Initialize() {
 
 void D3D12GraphicEngine::PreDraw() {
 	// スワップチェーンのリソース状態を描画可能に変更
-	swapChain_->TransitionCurrentBackBufferToRenderTarget(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
-
-	{
-		float color[] = { clearColor[0], clearColor[1], clearColor[2], clearColor[3] };
-		commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ClearRenderTargetView(swapChain_->GetCurrentBackBufferView(), color, 0, nullptr);
-	}
+	renderPass_->PreDraw(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
 	// デプスステンシルのクリア
 	ClearDepthStencil();
@@ -103,13 +139,13 @@ void D3D12GraphicEngine::PreDraw() {
 
 void D3D12GraphicEngine::PostDraw() {
 	// スワップチェーンのリソース状態を表示可能に変更
-	swapChain_->TransitionCurrentBackBufferToPresent(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	renderPass_->PostDraw(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
 	// コマンドリストをクローズ、実行
 	commandManager_->ExecuteCommandList();
 
 	// スワップチェーンの画面への表示
-	swapChain_->Present();
+	renderPass_->Present();
 
 	// GPUとの同期
 	fence_->Signal(commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
@@ -117,22 +153,24 @@ void D3D12GraphicEngine::PostDraw() {
 
 	// コマンドリストをリセット
 	commandManager_->ResetCommandList();
+	// 中間リソースの解放
+	resourceContainer_->EndFrame();
 
 	// テクスチャのアップロードに使用した中間リソースの解放
-	textureManager_->ReleaseIntermediateResources();
+	textureLoader_->ReleaseIntermediateResources();
 }
 
 void D3D12GraphicEngine::Shutdown() {
 	modelDataContainer_->Finalize();
 	vertexBufferContainer_->Finalize();
-	textureManager_->Finalize();
+	textureLoader_->Finalize();
 	fence_->Shutdown();
 	shaderCompiler_->Finalize();
 	directXDevice_->Shutdown();
 }
 
 TextureHandle D3D12GraphicEngine::LoadTexture(const std::string& filePath) {
-	return static_cast<TextureHandle>(textureManager_->LoadTexture(filePath));
+	return static_cast<TextureHandle>(textureLoader_->LoadTexture(filePath));
 }
 
 VertexBufferHandle D3D12GraphicEngine::LoadMesh(const std::vector<VertexData>& vertexData, const std::string& meshName) {
@@ -176,21 +214,7 @@ ScissorRectHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateScissorRect(int left, 
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
-	AssignSwapChainDescriptor();
 	CreateDepthStencilBuffer(width, height);
-}
-
-void QFE::GRAPHIC::D3D12GraphicEngine::AssignSwapChainDescriptor() {
-	// スワップチェーンのリソース登録
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_ = {};
-	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	for (uint32_t i = 0; i < swapChain_->GetBackBufferCount(); ++i) {
-		INTERNAL::DescriptorHandles handles;
-		handles = descriptorHeapManager_->AssignRtvHeap(swapChain_->GetBackBuffer(i), &rtvDesc_);
-		swapChain_->AssignDescriptorHandles(handles, i);
-	}
-	assert(swapChain_->CheckBackBufferViews());
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::CreateDepthStencilBuffer(uint32_t width, uint32_t height) {
