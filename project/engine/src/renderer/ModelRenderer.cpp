@@ -81,7 +81,7 @@ namespace QFE {
 						gpuBufferPool->GetConstantBufferAddress<CameraForGPU>(handle.cameraPosBufferHandle));
 
 					commandList->DrawIndexedInstanced(static_cast<UINT>(
-						assetManager->GetModelVertexResourceManager()->GetVertexBufferCount(handle.vertexBufferHandle)), 1, 0, 0, 0);
+						assetManager->GetModelVertexResourceManager()->GetIndexCount(handle.vertexBufferHandle)), 1, 0, 0, 0);
 				}
 			}
 
