@@ -74,7 +74,9 @@ void RenderPass::Present() {
 	swapChain_->Present();
 }
 
-void RenderPass::SetRenderTarget(ID3D12GraphicsCommandList* commandList, RenderTargetHandle renderTargetHandle) {
+void QFE::GRAPHIC::INTERNAL::RenderPass::SetRenderTarget(
+	ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle, RenderTargetHandle renderTargetHandle) {
+
 	if (renderTargetHandle == RenderTargetHandle::SwapChain) {
 		// バックバッファを描画先に設定
 		commandList->OMSetRenderTargets(1, swapChain_->GetCurrentBackBufferViewPtr(), FALSE, nullptr);

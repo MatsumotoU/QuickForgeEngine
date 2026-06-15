@@ -69,8 +69,8 @@ namespace QFE::GRAPHIC {
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
 		void LegacyInitialize(uint32_t width, uint32_t height);
-		void CreateDepthStencilBuffer(uint32_t width, uint32_t height);
-		void ClearDepthStencil();
+		INTERNAL::DirectXResourceHandle CreateDepthStencilBuffer(uint32_t width, uint32_t height);
+		void ClearDepthStencil(INTERNAL::DirectXResourceHandle depthStencilHandle);
 
 		HWND hwnd_;// ウィンドウハンドル
 		std::unique_ptr<INTERNAL::DirectX12DebugCore> debugCore_;// DirectX12のデバッグコアクラス
@@ -92,7 +92,6 @@ namespace QFE::GRAPHIC {
 		QFE::UniqueContainer<D3D12_VIEWPORT> viewports_;// ビューポートのコンテナ
 		QFE::UniqueContainer<D3D12_RECT> scissorRects_;// シザリング矩形のコンテナ
 
-		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer_;
-		INTERNAL::DescriptorHandles dsvHandle_;
+		INTERNAL::DirectXResourceHandle depthStencilBufferHandle_;// 深度ステンシルバッファのリソースハンドル
 	};
 }

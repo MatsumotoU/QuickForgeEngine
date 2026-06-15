@@ -53,9 +53,14 @@ namespace QFE::GRAPHIC::INTERNAL {
 		bool HasResourceType(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
 		
 		/// @brief あるハンドルの対応するビューのCPUディスクリプタハンドルを取得します
-		D3D12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandle(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
+		D3D12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandleCPU(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
 		/// @brief あるハンドルの対応するビューのGPUディスクリプタハンドルを取得します
 		D3D12_GPU_DESCRIPTOR_HANDLE GetDescriptorHandleGPU(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
+		/// @brief あるハンドルの対応するビューのCPUディスクリプタハンドルへのポインタを取得します
+		const D3D12_CPU_DESCRIPTOR_HANDLE* GetDescriptorHandleCpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
+		/// @brief あるハンドルの対応するビューのGPUディスクリプタハンドルへのポインタを取得します
+		const D3D12_GPU_DESCRIPTOR_HANDLE* GetDescriptorHandleGpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
+
 		/// @brief あるリソースハンドルに対応するリソースを取得する
 		ID3D12Resource* GetResource(DirectXResourceHandle handle) const;
 		/// @brief あるリソースハンドルに対応するビューのタイプを取得する

@@ -117,7 +117,7 @@ bool DirectXResourceContainer::HasResourceType(DirectXResourceHandle handle, Vie
 	return false;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXResourceContainer::GetDescriptorHandle(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXResourceContainer::GetDescriptorHandleCPU(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
 	// タイプが複数指定されている場合はエラー
 	uint32_t value = static_cast<uint32_t>(viewType);
 	if (value == 0 || std::has_single_bit(value) == false) {
@@ -170,6 +170,50 @@ D3D12_GPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::Ge
 	} else {
 		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetDescriptorHandleGPU", SystemError::Abort);
 		return D3D12_GPU_DESCRIPTOR_HANDLE();
+	}
+}
+
+const D3D12_CPU_DESCRIPTOR_HANDLE* DirectXResourceContainer::GetDescriptorHandleCpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
+	// タイプが複数指定されている場合はエラー
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetDescriptorHandleCpuPtr", SystemError::Abort);
+		return nullptr;
+	}
+	// リソースが存在するかの確認
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		const DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		const DescriptorHandles* handles = resource.GetDescriptorHandle(viewType);
+		if (handles) {
+			return &(handles->cpuHandle_);
+		} else {
+			QFE_REPORT_SYSTEM_ERROR("Descriptor handle for the specified view type not found in DirectXResourceContainer::GetDescriptorHandleCpuPtr", SystemError::Abort);
+			return nullptr;
+		}
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetDescriptorHandleCpuPtr", SystemError::Abort);
+		return nullptr;
+	}
+}
+
+const D3D12_GPU_DESCRIPTOR_HANDLE* DirectXResourceContainer::GetDescriptorHandleGpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
+	// タイプが複数指定されている場合はエラー
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetDescriptorHandleGpuPtr", SystemError::Abort);
+		return nullptr;
+	}
+	// リソースが存在するかの確認
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		const DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		const DescriptorHandles* handles = resource.GetDescriptorHandle(viewType);
+		if (handles) {
+			return &(handles->gpuHandle_);
+		} else {
+			QFE_REPORT_SYSTEM_ERROR("Descriptor handle for the specified view type not found in DirectXResourceContainer::GetDescriptorHandleGpuPtr", SystemError::Abort);
+			return nullptr;
+		}
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetDescriptorHandleGpuPtr", SystemError::Abort);
+		return nullptr;
 	}
 }
 

@@ -86,6 +86,8 @@ void D3D12GraphicEngine::Initialize() {
 		{return descriptorHeapManager_->AssignRtvHeap(resource, desc);};
 	renderPassInfo.assignSrvFunc = [&](ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC* desc) 
 		{return descriptorHeapManager_->AssignSrvHeap(resource, *desc); };
+	renderPassInfo.getResourceDsvFunc = [&](INTERNAL::DirectXResourceHandle resourceHandle)
+		{return resourceContainer_->GetDescriptorHandleCpuPtr(resourceHandle, INTERNAL::ViewTypeFlags::DepthStencilView); };
 
 	renderPass_->Initialize(renderPassInfo);
 	// Fenceの初期化
@@ -134,7 +136,7 @@ void D3D12GraphicEngine::PreDraw() {
 	renderPass_->PreDraw(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
 	// デプスステンシルのクリア
-	ClearDepthStencil();
+	ClearDepthStencil(depthStencilBufferHandle_);
 }
 
 void D3D12GraphicEngine::PostDraw() {
@@ -211,10 +213,10 @@ ScissorRectHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateScissorRect(int left, 
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
-	CreateDepthStencilBuffer(width, height);
+	depthStencilBufferHandle_ = CreateDepthStencilBuffer(width, height);
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::CreateDepthStencilBuffer(uint32_t width, uint32_t height) {
+INTERNAL::DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateDepthStencilBuffer(uint32_t width, uint32_t height) {
 	// depthStencilBufferの生成
 	D3D12_RESOURCE_DESC depthResourceDesc{};
 	depthResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -231,23 +233,29 @@ void QFE::GRAPHIC::D3D12GraphicEngine::CreateDepthStencilBuffer(uint32_t width, 
 	D3D12_CLEAR_VALUE depthClearValue{};
 	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthClearValue.DepthStencil.Depth = 1.0f;
-	HRESULT hr = directXDevice_->GetDevice()->CreateCommittedResource(
-		&depthHeapProps,
-		D3D12_HEAP_FLAG_NONE,
-		&depthResourceDesc,
+
+	INTERNAL::DirectXResourceHandle handle = resourceContainer_->CreateResource(
+		directXDevice_->GetDevice(),
+		depthResourceDesc,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
-		&depthClearValue,
-		IID_PPV_ARGS(depthStencilBuffer_.GetAddressOf()));
-	assert(SUCCEEDED(hr));
-	hr;
+		D3D12_HEAP_TYPE_DEFAULT,
+		&depthClearValue);
+	
+	// DSVの生成
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
-	dsvHandle_ = descriptorHeapManager_->AssignDsvHeap(depthStencilBuffer_.Get(), &dsvDesc);
+	INTERNAL::CereateViewInfo createViewInfo{};
+	createViewInfo.viewType = INTERNAL::ViewTypeFlags::DepthStencilView;
+	createViewInfo.dsvDesc = dsvDesc;
+	resourceContainer_->CreateResourceView(handle, createViewInfo);
+
+	return handle;
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::ClearDepthStencil() {
+void D3D12GraphicEngine::ClearDepthStencil(INTERNAL::DirectXResourceHandle depthStencilHandle) {
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = resourceContainer_->GetDescriptorHandleCPU(depthStencilHandle, INTERNAL::ViewTypeFlags::DepthStencilView);
 	commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ClearDepthStencilView(
-		dsvHandle_.cpuHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+		dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }

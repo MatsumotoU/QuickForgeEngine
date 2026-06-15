@@ -26,6 +26,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 		ID3D12CommandQueue* commandQueue;
 		std::function<DescriptorHandles(ID3D12Resource*, const D3D12_RENDER_TARGET_VIEW_DESC*)> assignRtvFunc;// Rtvを割り当てる関数
 		std::function<DescriptorHandles(ID3D12Resource*, const D3D12_SHADER_RESOURCE_VIEW_DESC*)> assignSrvFunc;// Srvを割り当てる関数
+		std::function<const D3D12_CPU_DESCRIPTOR_HANDLE* (DirectXResourceHandle)> getResourceDsvFunc;// Dsvをリソースハンドルから取得する関数
 	};
 
 	/// @brief 描画先のバリア、管理するクラス
@@ -45,7 +46,9 @@ namespace QFE::GRAPHIC::INTERNAL {
 		void Present();
 
 		/// @brief 描画先を決定します。0はスワップチェーンのバックバッファ、1以上はオフスクリーンバッファを指します。
-		void SetRenderTarget(ID3D12GraphicsCommandList* commandList, RenderTargetHandle renderTargetHandle = RenderTargetHandle::SwapChain);
+		void SetRenderTarget(
+			ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
+			RenderTargetHandle renderTargetHandle = RenderTargetHandle::SwapChain);
 
 	private:
 		/// @brief 描画先のリソースを描画用に変更するバリアを発行します。
