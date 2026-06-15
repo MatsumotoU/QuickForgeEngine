@@ -55,6 +55,8 @@ namespace QFE {
 
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(const uint32_t& handle);
 
+		uint32_t GetIndexCount(const uint32_t& handle) const;
+
 		/** @brief 名前からハンドルを取得 */
 		uint32_t GetModelHandle(const std::string& modelName) const;
 		/** @brief 指定した名前のモデルが既に読み込まれているか */

@@ -89,6 +89,11 @@ namespace QFE {
 			return indexBufferView;
 		}
 
+		uint32_t GetIndexCount() const {
+			assert(isCreated_ && "Vertex buffer not created");
+			return indexCount_;
+		}
+
 	private:
 		// 頂点データを管理するためのメンバ変数
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;// GPU側の頂点バッファリソース本体

@@ -169,6 +169,10 @@ D3D12_INDEX_BUFFER_VIEW QFE::ModelVertexResourceManager::GetIndexBufferView(cons
 	return modelVertexBuffers_.at(handle).GetIndexBufferView();
 }
 
+uint32_t QFE::ModelVertexResourceManager::GetIndexCount(const uint32_t& handle) const {
+	return modelVertexBuffers_.at(handle).GetIndexCount();
+}
+
 uint32_t ModelVertexResourceManager::GetModelHandle(const std::string& modelName) const {
     auto it = modelHandleMap_.find(modelName);
     if (it != modelHandleMap_.end()) {
