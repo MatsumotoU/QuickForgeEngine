@@ -14,7 +14,7 @@ namespace QFE::GRAPHIC {
 			std::function<void(RenderTargetHandle, DepthStencilHandle)>setRenderTargetFunc);
 
 		/// @brief コマンドリストに描画コマンドを発行
-		void Execute() override;
+		void Execute(ID3D12GraphicsCommandList* commandList) override;
 
 	private:
 		RenderTargetHandle renderTargetHandle_;

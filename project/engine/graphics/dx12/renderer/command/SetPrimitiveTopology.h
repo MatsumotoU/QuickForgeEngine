@@ -3,7 +3,6 @@
 #include "../../GraphicEngineHandleTypes.h"
 
 #include <functional>
-#include <d3d12.h>
 
 namespace QFE::GRAPHIC {
 	/// @brief 描画のプリミティブトポロジーを設定するコマンド
@@ -11,13 +10,12 @@ namespace QFE::GRAPHIC {
 	public:
 		/// @brief 描画のプリミティブトポロジーを設定するコマンドを生成します。
 		explicit SetPrimitiveTopology(
-			D3D_PRIMITIVE_TOPOLOGY topology,std::function<void(D3D_PRIMITIVE_TOPOLOGY)> setPrimitiveTopologyFunc);
+			D3D_PRIMITIVE_TOPOLOGY topology);
 
 		/// @brief コマンドリストに描画コマンドを発行
-		void Execute() override;
+		void Execute(ID3D12GraphicsCommandList* commandList) override;
 
 	private:
 		D3D_PRIMITIVE_TOPOLOGY primitiveTopology_;
-		std::function<void(D3D_PRIMITIVE_TOPOLOGY)> setPrimitiveTopologyFunc_;
 	};
 }

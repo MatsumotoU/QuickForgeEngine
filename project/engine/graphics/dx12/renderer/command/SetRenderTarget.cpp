@@ -7,6 +7,6 @@ SetRenderTarget::SetRenderTarget(
 	renderTargetHandle_(renderTarget), depthStencilHandle_(depthStencil), 
 	setRenderTargetFunc_(std::move(setRenderTargetFunc)){ }
 
-void SetRenderTarget::Execute() {
+void SetRenderTarget::Execute(ID3D12GraphicsCommandList* commandList) {
 	setRenderTargetFunc_(renderTargetHandle_, depthStencilHandle_);
 }

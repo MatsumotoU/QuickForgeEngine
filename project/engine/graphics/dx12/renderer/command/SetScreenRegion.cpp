@@ -13,7 +13,7 @@ SetScreenRegion::SetScreenRegion(
 {
 }
 
-void SetScreenRegion::Execute() {
+void SetScreenRegion::Execute(ID3D12GraphicsCommandList* commandList) {
 	setViewportFunc_(viewportHandle_);
 	setScissorRectFunc_(scissorRectHandle_);
 }

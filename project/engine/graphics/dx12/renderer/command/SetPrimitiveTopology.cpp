@@ -3,10 +3,8 @@
 using namespace QFE::GRAPHIC;
 
 SetPrimitiveTopology::SetPrimitiveTopology(
-	D3D_PRIMITIVE_TOPOLOGY topology, std::function<void(D3D_PRIMITIVE_TOPOLOGY)> setPrimitiveTopologyFunc) :
-	setPrimitiveTopologyFunc_(setPrimitiveTopologyFunc),
-	primitiveTopology_(topology){ }
+	D3D_PRIMITIVE_TOPOLOGY topology) : primitiveTopology_(topology){ }
 
-void SetPrimitiveTopology::Execute() {
-	setPrimitiveTopologyFunc_(primitiveTopology_);
+void SetPrimitiveTopology::Execute(ID3D12GraphicsCommandList* commandList) {
+	commandList->IASetPrimitiveTopology(primitiveTopology_);
 }

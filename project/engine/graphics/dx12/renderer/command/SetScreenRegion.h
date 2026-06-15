@@ -15,7 +15,7 @@ namespace QFE::GRAPHIC {
 			std::function<void(ScissorRectHandle)>setScissorRectFunc);
 
 		/// @brief コマンドリストに描画コマンドを発行
-		void Execute() override;
+		void Execute(ID3D12GraphicsCommandList* commandList) override;
 
 	private:
 		ViewPortHandle viewportHandle_;

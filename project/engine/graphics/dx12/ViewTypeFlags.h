@@ -9,6 +9,7 @@ namespace QFE::GRAPHIC::INTERNAL {
         ShaderResourceView = 0x0002, // SRV
         DepthStencilView = 0x0004, // DSV
         UnorderedAccessView = 0x0008, // UAV
+		ConstantBufferView = 0x0010, // CBV
     };
 
     // ORビット演算子のオーバーロード
