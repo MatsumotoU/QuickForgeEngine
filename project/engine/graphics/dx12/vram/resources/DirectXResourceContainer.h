@@ -2,7 +2,7 @@
 #include "DirectXResource.h"
 #include "memory/SparseSets.h"
 
-#include "dx12/ViewTypeFlags.h"
+#include "dx12/vram/descriptors/ViewTypeFlags.h"
 #include <functional>
 // UploadResourceの引数でD3D12_RESOURCE_DESCを使うために必要
 #include "DirectXTex/d3dx12.h"
@@ -43,6 +43,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 			D3D12_RESOURCE_STATES initialState,
 			D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT,
 			const D3D12_CLEAR_VALUE* clearValue = nullptr);
+
 		/// @brief リソースのビューを生成します
 		void CreateResourceView(DirectXResourceHandle handle, CereateViewInfo createViewInfo);
 		/// @brief リソースをGPUにアップロードします
