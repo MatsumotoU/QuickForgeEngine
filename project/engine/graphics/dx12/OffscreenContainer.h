@@ -11,7 +11,7 @@
 
 namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief オフスクリーンバッファの生成に必要な情報と関数をまとめた構造体
-	struct OffscreenBufferInitializeInfo {
+	struct OffscreenContainerInitializeInfo {
 		ID3D12Device* device;
 		uint32_t width;
 		uint32_t height;
@@ -20,10 +20,10 @@ namespace QFE::GRAPHIC::INTERNAL {
 	};
 
 	/// @brief オフスクリーンを管理するクラス
-	class OffscreenBuffer final {
+	class OffscreenContainer final {
 	public:
 		/// @brief オフスクリーンバッファを作成する
-		uint32_t Create(OffscreenBufferInitializeInfo info);
+		uint32_t Create(OffscreenContainerInitializeInfo info);
 		/// @brief 指定のリソースをクリアします
 		void Clear(ID3D12GraphicsCommandList* commandList, uint32_t handle);
 

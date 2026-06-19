@@ -3,7 +3,7 @@
 #include "EngineDefines.h"
 
 using namespace QFE;
-void DescriptorGenerator::GenerateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& heap, ID3D12Device* device, const DescriptorGenerateConfig& config) {
+void DescriptorGenerator::GenerateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& heap, ID3D12Device* device, const DescriptorHeapInfo& config) {
 	assert(!heap && "Already generated");
 #ifdef QFE_OPTIMIZE_OFF
 	QFE_LOG("CreateDescriptorHeap");

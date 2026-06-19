@@ -1,7 +1,7 @@
 #include "RenderPass.h"
 
 #include "SwapChain.h"
-#include "OffscreenBuffer.h"
+#include "OffscreenContainer.h"
 
 #include "EngineDefines.h"
 
@@ -45,9 +45,9 @@ void RenderPass::Initialize(const RenderPassInitializeInfo& initializeInfo) {
 			initializeInfo.assignRtvFunc(swapChain_->GetBackBuffer(i), &rtvDesc_), i);
 	}
 
-	// OffscreenBufferの初期化
-	offscreenBuffer_ = std::make_unique<OffscreenBuffer>();
-	OffscreenBufferInitializeInfo offscreenInitializeInfo = {};
+	// OffscreenContainerの初期化
+	OffscreenContainer_ = std::make_unique<OffscreenContainer>();
+	OffscreenContainerInitializeInfo offscreenInitializeInfo = {};
 	offscreenInitializeInfo.device = initializeInfo.device;
 	offscreenInitializeInfo.width = initializeInfo.width;
 	offscreenInitializeInfo.height = initializeInfo.height;
@@ -55,7 +55,7 @@ void RenderPass::Initialize(const RenderPassInitializeInfo& initializeInfo) {
 	offscreenInitializeInfo.assignSrvFunc = initializeInfo.assignSrvFunc;
 	// kOffscreenCount個のオフスクリーンを生成し、ハンドルを保存
 	for (uint32_t i = 0; i < kOffscreenCount; ++i) {
-		offscreenHandles_.push_back(offscreenBuffer_->Create(offscreenInitializeInfo));
+		offscreenHandles_.push_back(OffscreenContainer_->Create(offscreenInitializeInfo));
 	}
 }
 
@@ -84,8 +84,8 @@ void QFE::GRAPHIC::INTERNAL::RenderPass::SetRenderTarget(
 		// オフスクリーンを描画先に設定
 		uint32_t offscreenIndex = static_cast<uint32_t>(renderTargetHandle) - 1;
 		if (offscreenIndex < offscreenHandles_.size()) {
-			offscreenBuffer_->SetRenderTarget(commandList, offscreenHandles_[offscreenIndex]);
-			commandList->OMSetRenderTargets(1, offscreenBuffer_->GetRtvHandlePtr(offscreenHandles_[offscreenIndex]), FALSE, nullptr);
+			OffscreenContainer_->SetRenderTarget(commandList, offscreenHandles_[offscreenIndex]);
+			commandList->OMSetRenderTargets(1, OffscreenContainer_->GetRtvHandlePtr(offscreenHandles_[offscreenIndex]), FALSE, nullptr);
 		} else {
 			QFE_REPORT_SYSTEM_ERROR(std::format("Invalid render target handle: {}", static_cast<uint32_t>(renderTargetHandle)), SystemError::Abort);
 		}
@@ -97,7 +97,7 @@ void RenderPass::TransitionRenderTargetToRenderTarget(ID3D12GraphicsCommandList*
 	swapChain_->TransitionCurrentBackBufferToRenderTarget(commandList);
 	// オフスクリーンを描画用に変更
 	for (uint32_t handle : offscreenHandles_) {
-		offscreenBuffer_->SetRenderTarget(commandList, handle);
+		OffscreenContainer_->SetRenderTarget(commandList, handle);
 	}
 }
 
@@ -106,7 +106,7 @@ void RenderPass::TransitionRenderTargetToPresent(ID3D12GraphicsCommandList* comm
 	swapChain_->TransitionCurrentBackBufferToPresent(commandList);
 	// オフスクリーンを描画用に変更
 	for (uint32_t handle : offscreenHandles_) {
-		offscreenBuffer_->SetTexture(commandList, handle);
+		OffscreenContainer_->SetTexture(commandList, handle);
 	}
 }
 
@@ -116,7 +116,7 @@ void RenderPass::ClearRenderTarget(ID3D12GraphicsCommandList* commandList, const
 	commandList->ClearRenderTargetView(swapChain_->GetCurrentBackBufferView(), color, 0, nullptr);
 	// オフスクリーンをクリア
 	for (uint32_t handle : offscreenHandles_) {
-		offscreenBuffer_->Clear(commandList, handle);
+		OffscreenContainer_->Clear(commandList, handle);
 	}
 
 }

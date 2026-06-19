@@ -7,10 +7,7 @@
 
 namespace QFE::GRAPHIC::INTERNAL {
 
-	/**
-	 * @class ModelDataContainer
-	 * @brief 複数の3Dモデルの頂点リソースをGPU上に確保・管理するクラス
-	 */
+	/// @brief 頂点バッファを生成、ハンドルを管理するクラス
 	class VertexBufferContainer final {
 	public:
 		/** @brief 初期化 */

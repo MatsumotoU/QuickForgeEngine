@@ -1,4 +1,4 @@
-#include "OffscreenBuffer.h"
+#include "OffscreenContainer.h"
 
 using namespace QFE::GRAPHIC::INTERNAL;
 
@@ -6,7 +6,7 @@ namespace {
 	const FLOAT kClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 }
 
-uint32_t QFE::GRAPHIC::INTERNAL::OffscreenBuffer::Create(OffscreenBufferInitializeInfo info) {
+uint32_t QFE::GRAPHIC::INTERNAL::OffscreenContainer::Create(OffscreenContainerInitializeInfo info) {
 	DirectXResource resource;
 	// リソースの説明を設定
 	D3D12_RESOURCE_DESC desc{};
@@ -53,29 +53,29 @@ uint32_t QFE::GRAPHIC::INTERNAL::OffscreenBuffer::Create(OffscreenBufferInitiali
 	return handle;
 }
 
-void QFE::GRAPHIC::INTERNAL::OffscreenBuffer::Clear(ID3D12GraphicsCommandList* commandList, uint32_t handle) {
+void QFE::GRAPHIC::INTERNAL::OffscreenContainer::Clear(ID3D12GraphicsCommandList* commandList, uint32_t handle) {
 	// Rtvのハンドルを取得
 	DescriptorHandles rtvHandle = rtvHandles_.at(handle);
 	// レンダーターゲットをクリア
 	commandList->ClearRenderTargetView(rtvHandle.cpuHandle_, kClearColor, 0, nullptr);
 }
 
-bool QFE::GRAPHIC::INTERNAL::OffscreenBuffer::SetRenderTarget(ID3D12GraphicsCommandList* commandList, uint32_t handle) {
+bool QFE::GRAPHIC::INTERNAL::OffscreenContainer::SetRenderTarget(ID3D12GraphicsCommandList* commandList, uint32_t handle) {
 	return offscreens_.at(handle).TransitionResource(commandList, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
-bool QFE::GRAPHIC::INTERNAL::OffscreenBuffer::SetTexture(ID3D12GraphicsCommandList* commandList, uint32_t handle) {
+bool QFE::GRAPHIC::INTERNAL::OffscreenContainer::SetTexture(ID3D12GraphicsCommandList* commandList, uint32_t handle) {
 	return offscreens_.at(handle).TransitionResource(commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
-DescriptorHandles QFE::GRAPHIC::INTERNAL::OffscreenBuffer::GetRtvHandle(uint32_t handle) const {
+DescriptorHandles QFE::GRAPHIC::INTERNAL::OffscreenContainer::GetRtvHandle(uint32_t handle) const {
 	return rtvHandles_.at(handle);
 }
 
-const D3D12_CPU_DESCRIPTOR_HANDLE* QFE::GRAPHIC::INTERNAL::OffscreenBuffer::GetRtvHandlePtr(uint32_t handle) const {
+const D3D12_CPU_DESCRIPTOR_HANDLE* QFE::GRAPHIC::INTERNAL::OffscreenContainer::GetRtvHandlePtr(uint32_t handle) const {
 	return &(rtvHandles_.at(handle).cpuHandle_);
 }
 
-DescriptorHandles QFE::GRAPHIC::INTERNAL::OffscreenBuffer::GetSrvHandle(uint32_t handle) const {
+DescriptorHandles QFE::GRAPHIC::INTERNAL::OffscreenContainer::GetSrvHandle(uint32_t handle) const {
 	return srvHandles_.at(handle);
 }

@@ -3,7 +3,7 @@
 #include <d3d12.h>
 #include <unordered_map>
 #include "ViewTypeFlags.h"
-#include "descriptors/Data/DescriptorHandles.h"
+#include "dx12/descriptors/Data/DescriptorHandles.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
 	/// @brief DirectX12のリソースをラップしたクラス

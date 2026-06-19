@@ -1,5 +1,5 @@
 #include "DirectXResourceContainer.h"
-#include "buffer/BufferGenerater/BufferGenerator.h"
+#include "BufferGenerator.h"
 
 #include <bit>
 using namespace QFE::GRAPHIC::INTERNAL;

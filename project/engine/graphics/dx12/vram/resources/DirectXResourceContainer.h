@@ -1,12 +1,13 @@
 #pragma once
 #include "DirectXResource.h"
 #include "memory/SparseSets.h"
-#include "ViewTypeFlags.h"
+
+#include "dx12/ViewTypeFlags.h"
 #include <functional>
 // UploadResourceの引数でD3D12_RESOURCE_DESCを使うために必要
 #include "DirectXTex/d3dx12.h"
 
-#include "GraphicEngineHandleTypes.h"
+#include "dx12/GraphicEngineHandleTypes.h"
 
 namespace QFE::GRAPHIC::INTERNAL {
 

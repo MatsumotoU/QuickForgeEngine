@@ -14,7 +14,7 @@
 
 namespace QFE::GRAPHIC::INTERNAL {
 	class SwapChain;
-	class OffscreenBuffer;
+	class OffscreenContainer;
 
 	/// @brief 描画パスの初期化に必要な情報をまとめた構造体
 	struct RenderPassInitializeInfo {
@@ -59,7 +59,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 		void ClearRenderTarget(ID3D12GraphicsCommandList* commandList, const float clearColor[4]);
 
 		std::unique_ptr<SwapChain> swapChain_;
-		std::unique_ptr<OffscreenBuffer> offscreenBuffer_;
+		std::unique_ptr<OffscreenContainer> OffscreenContainer_;
 
 		std::vector<uint32_t> offscreenHandles_;
 	};
