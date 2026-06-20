@@ -61,6 +61,7 @@ bool DirectXResource::MapResource(UINT subresource, const D3D12_RANGE* readRange
 	}
 
 	// リソースのマップ
+	mappedData_ = nullptr;
 	HRESULT hr = resource_->Map(subresource, readRange, &mappedData_);
 	if (FAILED(hr)) {
 		QFE_REPORT_SYSTEM_ERROR("Failed to map resource in DirectXResource::MapResource", SystemError::Abort);

@@ -43,6 +43,8 @@ namespace QFE::GRAPHIC::INTERNAL {
 			D3D12_RESOURCE_STATES initialState,
 			D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT,
 			const D3D12_CLEAR_VALUE* clearValue = nullptr);
+		/// @brief あるハンドルのリソースをマッピングする
+		void MapResource(DirectXResourceHandle handle, UINT subresource = 0, const D3D12_RANGE* readRange = nullptr);
 
 		/// @brief リソースのビューを生成します
 		void CreateResourceView(DirectXResourceHandle handle, CereateViewInfo createViewInfo);
@@ -62,6 +64,8 @@ namespace QFE::GRAPHIC::INTERNAL {
 		const D3D12_CPU_DESCRIPTOR_HANDLE* GetDescriptorHandleCpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
 		/// @brief あるハンドルの対応するビューのGPUディスクリプタハンドルへのポインタを取得します
 		const D3D12_GPU_DESCRIPTOR_HANDLE* GetDescriptorHandleGpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
+		/// @brief あるハンドルの対応するビューのGPU仮想アドレスを取得します
+		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(DirectXResourceHandle handle) const;
 
 		/// @brief あるリソースハンドルに対応するリソースを取得する
 		ID3D12Resource* GetResource(DirectXResourceHandle handle) const;

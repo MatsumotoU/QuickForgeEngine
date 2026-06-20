@@ -27,7 +27,28 @@ DirectXResourceHandle DirectXResourceContainer::CreateResource(
 	return static_cast<DirectXResourceHandle>(resources.push_back(std::move(resource)));
 }
 
-void QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::CreateResourceView(DirectXResourceHandle handle, CereateViewInfo createViewInfo) {
+void DirectXResourceContainer::MapResource(DirectXResourceHandle handle, UINT subresource, const D3D12_RANGE* readRange) {
+	// 引数の検査
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::MapResource", SystemError::Abort);
+		return;
+	}
+	// リソースが存在するかの確認
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		// リソースをマップする
+		if (!resource.MapResource(subresource, readRange)) {
+			QFE_REPORT_SYSTEM_ERROR("Failed to map resource in DirectXResourceContainer::MapResource", SystemError::Abort);
+			return;
+		}
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::MapResource", SystemError::Abort);
+		return;
+	}
+	QFE_LOG("Resource mapped successfully in DirectXResourceContainer::MapResource");
+}
+
+void DirectXResourceContainer::CreateResourceView(DirectXResourceHandle handle, CereateViewInfo createViewInfo) {
 	// 引数の検査
 	if (handle == DirectXResourceHandle::Invalid) {
 		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::CreateResourceView", SystemError::Abort);
@@ -215,6 +236,10 @@ const D3D12_GPU_DESCRIPTOR_HANDLE* DirectXResourceContainer::GetDescriptorHandle
 		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetDescriptorHandleGpuPtr", SystemError::Abort);
 		return nullptr;
 	}
+}
+
+D3D12_GPU_VIRTUAL_ADDRESS QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetGpuVirtualAddress(DirectXResourceHandle handle) const {	
+	return GetResource(handle)->GetGPUVirtualAddress();
 }
 
 ID3D12Resource* DirectXResourceContainer::GetResource(DirectXResourceHandle handle) const {

@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <vector>
+#include <functional>
 
 #include "memory/SparseSets.h"
 #include "buffer/VertexBuffer.h"
