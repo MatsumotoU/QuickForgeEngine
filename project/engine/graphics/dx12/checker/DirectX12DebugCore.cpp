@@ -1,6 +1,6 @@
 #include "DirectX12DebugCore.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 #ifdef QFE_OPTIMIZE_OFF
 DirectX12DebugCore::DirectX12DebugCore() {
 

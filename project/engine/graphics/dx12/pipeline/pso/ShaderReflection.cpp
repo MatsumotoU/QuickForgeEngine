@@ -4,21 +4,21 @@
 
 #include <cassert>
 #include <bitset>
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 namespace {
 	uint32_t GetBitCount(BYTE mask) {
-		if(mask && 0x1) {
-			return 0;
-		} else if(mask && 0x3) {
-			return 1;
-		} else if(mask && 0x7) {
-			return 2;
-		} else if(mask && 0xf) {
-			return 3;
+		if (mask == 0x1) {
+			return 0; // 1成分 (例: float)
+		} else if (mask == 0x3) {
+			return 1; // 2成分 (例: float2)
+		} else if (mask == 0x7) {
+			return 2; // 3成分 (例: float3)
+		} else if (mask == 0xf) {
+			return 3; // 4成分 (例: float4)
 		}
 		return UINT32_MAX;
-	};
+	}
 
 	const DXGI_FORMAT FormatTable[4][4] = {
 		{ DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN}, // UNKNOWN
@@ -60,7 +60,7 @@ void ShaderReflection::RunShaderReflection(IDxcBlob* shaderBlob) {
 	}
 }
 
-std::vector<InputElement> QFE::GRAPHIC::INTERNAL::ShaderReflection::GetInputLayoutElement() const {
+std::vector<InputElement> QFE::GRAPHIC::ShaderReflection::GetInputLayoutElement() const {
 	std::vector<InputElement> inputLayoutElements;
 
 	// shaderReflection_が有効かどうかを確認
@@ -87,7 +87,7 @@ std::vector<InputElement> QFE::GRAPHIC::INTERNAL::ShaderReflection::GetInputLayo
 	return inputLayoutElements;
 }
 
-std::vector<RootParameterElement> QFE::GRAPHIC::INTERNAL::ShaderReflection::GetRootParameterElement() const {
+std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParameterElement() const {
 	std::vector<RootParameterElement> rootParameterElements;
 
 	// shaderReflection_が有効かどうかを確認

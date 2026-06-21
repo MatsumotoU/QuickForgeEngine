@@ -5,7 +5,7 @@
 
 #include "EngineDefines.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	class D3DResourceLeakChecker final {
 	public:
 		~D3DResourceLeakChecker() {

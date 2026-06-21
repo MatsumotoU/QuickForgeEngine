@@ -1,7 +1,7 @@
 #include "DirectXCommandQueue.h"
 #include <cassert>
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 void DirectXCommandQueue::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type) {
 	assert(device != nullptr && "Device is null");
 	assert(!commandQueue_ && "CommandQueue is already generated");

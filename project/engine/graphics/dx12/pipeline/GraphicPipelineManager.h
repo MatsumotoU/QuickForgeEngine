@@ -12,10 +12,9 @@
 
 #include "memory/MultidimensionalArray.h"
 
-#include "../Descriptors/DsvDescriptorHeap.h"
 #include "../GraphicEngineHandleTypes.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief グラフィックスパイプラインを作るためのクラス群の前方宣言
 	class ShaderReflection;
 	class StaticSamplerTemplate;
@@ -65,11 +64,17 @@ namespace QFE::GRAPHIC::INTERNAL {
 			D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc);
 
 		/// @brief PSOハンドルからパイプラインステートオブジェクトを取得します
-		const PipelineStateObject* GetPipelineStateObject(const PSOHandle& psoHandle) const;
+		PipelineStateObject* GetPipelineStateObject(const PSOHandle& psoHandle) const;
+		/// @brief PSOハンドルからパイプラインステートを取得します
+		ID3D12PipelineState* GetPipelineState(const PSOHandle& psoHandle) const;
 		/// @brief PSOハンドルからルートシグネチャを取得します
-		const ID3D12RootSignature* GetRootSignature(const PSOHandle& psoHandle) const;
+		ID3D12RootSignature* GetRootSignature(const PSOHandle& psoHandle) const;
 		/// @brief PSOハンドルからルートパラメータのタイプを取得します
 		std::vector<D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes(const PSOHandle& psoHandle) const;
+		/// @brief BuiltInのシェーダーペアと各情報からPSOハンドルを取得します
+		PSOHandle GetBuiltInPSOHandle(
+			BuiltInShaderPair builtInShaderPair, uint32_t blendMode,
+			uint32_t rasterizerType, uint32_t depthStencilDescType) const;
 		
 	private: // メンバ変数
 		/// @brief BuiltInのシェーダーペアを生成します

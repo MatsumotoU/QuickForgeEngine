@@ -1,6 +1,6 @@
 #pragma once
 #include <d3d12.h>
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief ディスクリプタヒープの情報を保持する構造体
 	class DescriptorHeapInfo {
 	public:

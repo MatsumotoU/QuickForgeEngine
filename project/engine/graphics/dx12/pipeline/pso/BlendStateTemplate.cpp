@@ -1,6 +1,6 @@
 #include "BlendStateTemplate.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void BlendStateTemplate::Initialize() {
 	D3D12_BLEND_DESC blendDesc{};
@@ -57,10 +57,10 @@ D3D12_BLEND_DESC BlendStateTemplate::GetBlendDesc(BlendMode mode) const {
 	return blendDescMap_.at(BlendMode::kBlendModeNone);
 }
 
-std::unordered_map<BlendMode, D3D12_BLEND_DESC> QFE::GRAPHIC::INTERNAL::BlendStateTemplate::GetBlendDescMap() const {
+std::unordered_map<BlendMode, D3D12_BLEND_DESC> QFE::GRAPHIC::BlendStateTemplate::GetBlendDescMap() const {
 	return blendDescMap_;
 }
 
-uint32_t QFE::GRAPHIC::INTERNAL::BlendStateTemplate::GetBlendModeCount() const {
+uint32_t QFE::GRAPHIC::BlendStateTemplate::GetBlendModeCount() const {
 	return static_cast<uint32_t>(BlendMode::kCountOfBlendMode);
 }

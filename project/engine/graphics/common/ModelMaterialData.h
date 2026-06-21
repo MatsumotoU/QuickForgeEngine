@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	struct ModelMaterialData {
 		std::string textureName;
 	};

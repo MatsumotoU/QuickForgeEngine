@@ -5,7 +5,7 @@
 
 #include <memory>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief シェーダーのコンパイルに必要なDXCデバイスを管理するクラス
 	class CompilerDevice final {
 	public:

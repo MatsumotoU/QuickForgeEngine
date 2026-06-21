@@ -1,7 +1,7 @@
 #include "RasterizerTemplate.h"
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void RasterizerTemplate::Initialize() {
 	// Default(背面をカリングして、塗りつぶす)
@@ -41,10 +41,10 @@ const D3D12_RASTERIZER_DESC& RasterizerTemplate::GetRasterizerDesc(RasterizerTyp
 	}
 }
 
-std::unordered_map<RasterizerType, D3D12_RASTERIZER_DESC> QFE::GRAPHIC::INTERNAL::RasterizerTemplate::GetRasterizerDescMap() const {
+std::unordered_map<RasterizerType, D3D12_RASTERIZER_DESC> QFE::GRAPHIC::RasterizerTemplate::GetRasterizerDescMap() const {
 	return rasterizerDescs_;
 }
 
-uint32_t QFE::GRAPHIC::INTERNAL::RasterizerTemplate::GetRasterizerTypeCount() const {
+uint32_t QFE::GRAPHIC::RasterizerTemplate::GetRasterizerTypeCount() const {
 	return static_cast<uint32_t>(RasterizerType::kCount);
 }

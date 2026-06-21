@@ -16,7 +16,7 @@
  * @class DirectXDevice
  * @brief ID3D12Deviceおよび関連するDXGIインターフェースを取得・生成するクラス
  */
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	class DirectXDevice final {
 	public:
 		DirectXDevice();

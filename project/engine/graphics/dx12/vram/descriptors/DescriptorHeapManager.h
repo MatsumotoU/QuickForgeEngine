@@ -2,7 +2,7 @@
 #include "DescriptorHeap.h"
 #include <unordered_map>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief ディスクリタヒープの種類を表す列挙型
 	enum class DescriptorHeapType {
 		RTV,

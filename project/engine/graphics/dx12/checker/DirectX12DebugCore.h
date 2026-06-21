@@ -4,7 +4,7 @@
 #include "D3DResourceLeakChecker.h"
 #include "DebugLayer.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	class D3DResourceLeakChecker;
 	class DebugLayer;
 

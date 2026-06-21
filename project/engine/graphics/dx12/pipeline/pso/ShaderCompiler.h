@@ -8,7 +8,7 @@
 #include <dxcapi.h>
 #include "CompilerDevice.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief シェーダーをバイナリ化するクラス
 	class ShaderCompiler final {
 	public:

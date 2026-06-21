@@ -9,7 +9,7 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void CompilerDevice::Initialize() {
 	HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
@@ -45,22 +45,22 @@ void CompilerDevice::Finalize() {
 	createdDevice_ = false;
 }
 
-IDxcUtils* QFE::GRAPHIC::INTERNAL::CompilerDevice::GetDxcUtils() const {
+IDxcUtils* QFE::GRAPHIC::CompilerDevice::GetDxcUtils() const {
 	CheckDeviceCreated();
 	return dxcUtils_;
 }
 
-IDxcCompiler3* QFE::GRAPHIC::INTERNAL::CompilerDevice::GetDxcCompiler() const {
+IDxcCompiler3* QFE::GRAPHIC::CompilerDevice::GetDxcCompiler() const {
 	CheckDeviceCreated();
 	return dxcCompiler_;
 }
 
-IDxcIncludeHandler* QFE::GRAPHIC::INTERNAL::CompilerDevice::GetIncludeHandler() const {
+IDxcIncludeHandler* QFE::GRAPHIC::CompilerDevice::GetIncludeHandler() const {
 	CheckDeviceCreated();
 	return includeHandler_;
 }
 
-void QFE::GRAPHIC::INTERNAL::CompilerDevice::CheckDeviceCreated() const {
+void QFE::GRAPHIC::CompilerDevice::CheckDeviceCreated() const {
 	if (!createdDevice_) {
 		QFE_REPORT_SYSTEM_ERROR("CompilerDevice is not initialized. Call Initialize() before using.", SystemError::Abort);
 	}

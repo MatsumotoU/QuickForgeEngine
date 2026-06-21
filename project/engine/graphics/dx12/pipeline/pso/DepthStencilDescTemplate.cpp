@@ -1,7 +1,7 @@
 #include "DepthStencilDescTemplate.h"
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void DepthStencilDescTemplate::Initialize() {
 	// デフォルトの深度ステンシルステートを作成
@@ -37,10 +37,10 @@ const D3D12_DEPTH_STENCIL_DESC& DepthStencilDescTemplate::GetDesc(DepthStencilDe
     return descs.at(type);
 }
 
-std::unordered_map<DepthStencilDescType, D3D12_DEPTH_STENCIL_DESC> QFE::GRAPHIC::INTERNAL::DepthStencilDescTemplate::GetDescMap() const {
+std::unordered_map<DepthStencilDescType, D3D12_DEPTH_STENCIL_DESC> QFE::GRAPHIC::DepthStencilDescTemplate::GetDescMap() const {
 	return descs;
 }
 
-uint32_t QFE::GRAPHIC::INTERNAL::DepthStencilDescTemplate::GetDepthStencilDescTypeCount() const {
+uint32_t QFE::GRAPHIC::DepthStencilDescTemplate::GetDepthStencilDescTypeCount() const {
 	return static_cast<uint32_t>(DepthStencilDescType::kCount);
 }

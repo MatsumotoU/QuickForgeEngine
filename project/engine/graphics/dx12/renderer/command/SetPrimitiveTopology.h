@@ -6,7 +6,7 @@
 
 namespace QFE::GRAPHIC {
 	/// @brief 描画のプリミティブトポロジーを設定するコマンド
-	class SetPrimitiveTopology final : public INTERNAL::IRenderCommand {
+	class SetPrimitiveTopology final : public IRenderCommand {
 	public:
 		/// @brief 描画のプリミティブトポロジーを設定するコマンドを生成します。
 		explicit SetPrimitiveTopology(

@@ -2,12 +2,12 @@
 #include <cassert>
 
 #include "string/MyString.h"
-#include "buffer/BufferGenerater/BufferGenerator.h"
 
 #include "EngineDefines.h"
 #include "file/FileUtility.h"
+#include "D3D12GraphicEngine.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 namespace {
 	const std::string kDummyBlackCubeMapKey = "DummyBlackCubeMap";
@@ -74,7 +74,7 @@ const DirectXResourceHandle TextureLoader::GetDummyWhite1x1TextureHandle() const
 	return textureDataMap_.at(kDummyDummyWhite1x1TextureMapKey).resourceHandle;
 }
 
-DirectX::ScratchImage QFE::GRAPHIC::INTERNAL::TextureLoader::LoadScratchImageFromFile(const std::string& filePath) {
+DirectX::ScratchImage QFE::GRAPHIC::TextureLoader::LoadScratchImageFromFile(const std::string& filePath) {
 	// ファイルパスにファイルがあるかどうかを確認
 	if (!QFE::FILE::HasFile(filePath)) {
 		QFE_REPORT_SYSTEM_ERROR(std::string("TextureLoader: File not found - ") + filePath, SystemError::Abort);
@@ -153,7 +153,7 @@ void TextureLoader::UploadTextureData(DirectXResourceHandle resourceHandle, cons
 	initializeInfo_.uploadTextureDataFunc(resourceHandle, subresources);
 }
 
-void QFE::GRAPHIC::INTERNAL::TextureLoader::CreateShaderResourceView(
+void QFE::GRAPHIC::TextureLoader::CreateShaderResourceView(
 	const DirectX::TexMetadata& metadata, D3D12_SRV_DIMENSION texture, DirectXResourceHandle resourceHandle) {
 
 	// メタデータを元にSRVの記述子を設定
@@ -166,7 +166,7 @@ void QFE::GRAPHIC::INTERNAL::TextureLoader::CreateShaderResourceView(
 	initializeInfo_.createShaderResourceViewFunc(resourceHandle, srvDesc);
 }
 
-DirectXResourceHandle QFE::GRAPHIC::INTERNAL::TextureLoader::CreateTextureFromScratchImage(
+DirectXResourceHandle QFE::GRAPHIC::TextureLoader::CreateTextureFromScratchImage(
 	DirectX::ScratchImage scratchImage, const std::string& name, D3D12_SRV_DIMENSION texture) {
 	// ScratchImageからメタデータを取得
 	const DirectX::TexMetadata& metadata = scratchImage.GetMetadata();

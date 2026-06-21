@@ -1,7 +1,7 @@
 #include "Fence.h"
 #include <cassert>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 
 	void Fence::Initialize(ID3D12Device* device) {
 		// Fenceの生成

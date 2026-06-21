@@ -5,7 +5,7 @@
 #include "EngineDefines.h"
 #include "file/FileUtility.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& modelData) {
 	Assimp::Importer importer;

@@ -1,6 +1,6 @@
 #include "DirectXCommandList.h"
 #include <cassert>
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 void DirectCommandList::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type) {
 	assert(device && "Device is not initialized.");
 	assert(!commandAllocator_ && "CommandAllocator already generated");

@@ -8,7 +8,7 @@
 #include "string/MyString.h"
 #include "file/FileUtility.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void ShaderCompiler::Initialize() {
 	iDxcBlobMap_.clear();

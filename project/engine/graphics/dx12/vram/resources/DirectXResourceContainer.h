@@ -9,7 +9,7 @@
 
 #include "dx12/GraphicEngineHandleTypes.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 
 	/// @brief DirectX12のリソースをまとめて管理するクラスの初期化に必要な情報と関数をまとめた構造体
 	struct DirectXResourceContainerInitializeInfo {
@@ -43,9 +43,17 @@ namespace QFE::GRAPHIC::INTERNAL {
 			D3D12_RESOURCE_STATES initialState,
 			D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT,
 			const D3D12_CLEAR_VALUE* clearValue = nullptr);
+		/// @brief 定数バッファを作成し、コンテナに追加する
+		DirectXResourceHandle CreateBuffer(ID3D12Device* device, size_t bufferSize);
+		/// @brief 外部のリソースをコンテナに追加する
+		DirectXResourceHandle RegisterExternalResource(
+			Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES initialState);
+
+		/// @brief あるリソースハンドルに対応するリソースの状態を変更する
+		bool TransitionResource(DirectXResourceHandle handle, ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES newState);
 		/// @brief あるハンドルのリソースをマッピングする
 		void MapResource(DirectXResourceHandle handle, UINT subresource = 0, const D3D12_RANGE* readRange = nullptr);
-
+		
 		/// @brief リソースのビューを生成します
 		void CreateResourceView(DirectXResourceHandle handle, CereateViewInfo createViewInfo);
 		/// @brief リソースをGPUにアップロードします
@@ -66,11 +74,28 @@ namespace QFE::GRAPHIC::INTERNAL {
 		const D3D12_GPU_DESCRIPTOR_HANDLE* GetDescriptorHandleGpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
 		/// @brief あるハンドルの対応するビューのGPU仮想アドレスを取得します
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(DirectXResourceHandle handle) const;
+		
+		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(DirectXResourceHandle handle) const;
 
 		/// @brief あるリソースハンドルに対応するリソースを取得する
 		ID3D12Resource* GetResource(DirectXResourceHandle handle) const;
 		/// @brief あるリソースハンドルに対応するビューのタイプを取得する
 		ViewTypeFlags GetResourceViewType(DirectXResourceHandle handle) const;
+
+		/// @brief あるリソースハンドルに対応するリソースの1要素あたりのサイズ（バイト単位）を取得します。これは主にバッファリソースで使用されます。
+		size_t GetResourceStrideInBytes(DirectXResourceHandle handle) const;
+		/// @brief あるリソースハンドルに対応するリソースの1要素あたりのサイズ（バイト単位）を設定します。これは主にバッファリソースで使用されます。
+		void SetResourceStrideInBytes(DirectXResourceHandle handle, size_t strideInBytes);
+
+		/// @brief あるリソースハンドルに対応するリソースのマップされたCPU側のポインタを取得する
+		template<typename T>
+		T* GetMappedData(DirectXResourceHandle handle) {
+			DirectXResource* resource = GetDirectXResource(handle);
+			if (resource) {
+				return resource->GetMappedData<T>();
+			}
+			return nullptr;
+		}
 
 	private:
 		/// @brief あるリソースハンドルに対応するDirectXResourceを取得する

@@ -1,6 +1,6 @@
 #include "DebugLayer.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 #ifdef QFE_OPTIMIZE_OFF
 DebugLayer::DebugLayer() {
 	debugController_ = nullptr;

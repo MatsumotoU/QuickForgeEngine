@@ -1,6 +1,6 @@
 #include "DescriptorHeapInfo.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 bool DescriptorHeapInfo::CheckValid() const {
 	// heapTypeが有効な値であることを確認

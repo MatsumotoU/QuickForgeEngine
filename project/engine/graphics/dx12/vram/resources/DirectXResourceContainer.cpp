@@ -1,8 +1,7 @@
 #include "DirectXResourceContainer.h"
-#include "BufferGenerator.h"
 
 #include <bit>
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void DirectXResourceContainer::Initialize(
 	DirectXResourceContainerInitializeInfo initializeInfo) {
@@ -25,6 +24,35 @@ DirectXResourceHandle DirectXResourceContainer::CreateResource(
 	}
 
 	return static_cast<DirectXResourceHandle>(resources.push_back(std::move(resource)));
+}
+
+DirectXResourceHandle QFE::GRAPHIC::DirectXResourceContainer::CreateBuffer(ID3D12Device* device, size_t bufferSize) {
+	// * Resourceを生成する * //
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	D3D12_RESOURCE_DESC bufferDesc{};
+	// バッファリソース。テクスチャの場合はまた別の設定をする
+	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferDesc.Width = static_cast<UINT64>(bufferSize);
+	bufferDesc.Height = 1;
+	bufferDesc.DepthOrArraySize = 1;
+	bufferDesc.MipLevels = 1;
+	bufferDesc.SampleDesc.Count = 1;
+	// バッファの場合はこれにする決まり
+	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	// 実際に頂点リソースを作る
+	return CreateResource(device, bufferDesc, D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_HEAP_TYPE_UPLOAD);
+}
+
+DirectXResourceHandle QFE::GRAPHIC::DirectXResourceContainer::RegisterExternalResource(Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES initialState) {
+	DirectXResource tempResource;
+	if(tempResource.SetExternalResource(resource, initialState)) {
+		return static_cast<DirectXResourceHandle>(resources.push_back(std::move(tempResource)));
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to register external resource in DirectXResourceContainer::RegisterExternalResource", SystemError::Abort);
+		return DirectXResourceHandle::Invalid;
+	}
+	return DirectXResourceHandle::Invalid;
 }
 
 void DirectXResourceContainer::MapResource(DirectXResourceHandle handle, UINT subresource, const D3D12_RANGE* readRange) {
@@ -97,7 +125,7 @@ void DirectXResourceContainer::CreateResourceView(DirectXResourceHandle handle, 
 	QFE_LOG("Resource view created successfully in DirectXResourceContainer::CreateResourceView");
 }
 
-void QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::UploadResource(
+void QFE::GRAPHIC::DirectXResourceContainer::UploadResource(
 	DirectXResourceHandle handle, std::vector<D3D12_SUBRESOURCE_DATA> subresources,
 	ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 
@@ -110,7 +138,26 @@ void QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::UploadResource(
 	UINT64 uploadBufferSize = GetRequiredIntermediateSize(destinationResource->GetResource(), 0, static_cast<UINT>(subresources.size()));
 
 	// 中間リソースを生成します
-	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = BufferGenerator::Generate(device, uploadBufferSize);
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	D3D12_RESOURCE_DESC bufferDesc{};
+	// バッファリソース。テクスチャの場合はまた別の設定をする
+	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferDesc.Width = uploadBufferSize;
+	bufferDesc.Height = 1;
+	bufferDesc.DepthOrArraySize = 1;
+	bufferDesc.MipLevels = 1;
+	bufferDesc.SampleDesc.Count = 1;
+	// バッファの場合はこれにする決まり
+	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	// 実際に頂点リソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = nullptr;
+	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+		&bufferDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+		IID_PPV_ARGS(intermediateResource.GetAddressOf()));
+	hr;
+	assert(SUCCEEDED(hr));
+
 	// アップロード用のリソースにサブリソースデータを書き込む
 	UpdateSubresources(commandList, GetResource(handle), intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
 
@@ -166,7 +213,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectXResourceContainer::GetDescriptorHandleCPU(Dir
 	}
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetDescriptorHandleGPU(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
+D3D12_GPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::DirectXResourceContainer::GetDescriptorHandleGPU(DirectXResourceHandle handle, ViewTypeFlags viewType) const {
 	// タイプが複数指定されている場合はエラー
 	uint32_t value = static_cast<uint32_t>(viewType);
 	if (value == 0 || std::has_single_bit(value) == false) {
@@ -238,8 +285,23 @@ const D3D12_GPU_DESCRIPTOR_HANDLE* DirectXResourceContainer::GetDescriptorHandle
 	}
 }
 
-D3D12_GPU_VIRTUAL_ADDRESS QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetGpuVirtualAddress(DirectXResourceHandle handle) const {	
+D3D12_GPU_VIRTUAL_ADDRESS DirectXResourceContainer::GetGpuVirtualAddress(DirectXResourceHandle handle) const {	
 	return GetResource(handle)->GetGPUVirtualAddress();
+}
+
+D3D12_VERTEX_BUFFER_VIEW DirectXResourceContainer::GetVertexBufferView(DirectXResourceHandle handle) const {
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	vertexBufferView.BufferLocation = GetGpuVirtualAddress(handle);
+	ID3D12Resource* resource = GetResource(handle);
+	if (resource) {
+		D3D12_RESOURCE_DESC desc = resource->GetDesc();
+		vertexBufferView.SizeInBytes = static_cast<UINT>(desc.Width);
+		vertexBufferView.StrideInBytes = static_cast<UINT>(GetResourceStrideInBytes(handle));
+		return vertexBufferView;
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to get resource in DirectXResourceContainer::GetVertexBufferView", SystemError::Abort);
+	}
+	return vertexBufferView;
 }
 
 ID3D12Resource* DirectXResourceContainer::GetResource(DirectXResourceHandle handle) const {
@@ -256,7 +318,7 @@ ID3D12Resource* DirectXResourceContainer::GetResource(DirectXResourceHandle hand
 	}
 }
 
-ViewTypeFlags QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetResourceViewType(DirectXResourceHandle handle) const {
+ViewTypeFlags DirectXResourceContainer::GetResourceViewType(DirectXResourceHandle handle) const {
 	if (handle == DirectXResourceHandle::Invalid) {
 		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetResourceViewType", SystemError::Abort);
 		return ViewTypeFlags::None;
@@ -267,6 +329,35 @@ ViewTypeFlags QFE::GRAPHIC::INTERNAL::DirectXResourceContainer::GetResourceViewT
 		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::GetResourceViewType", SystemError::Abort);
 		return ViewTypeFlags::None;
 	}
+}
+
+size_t QFE::GRAPHIC::DirectXResourceContainer::GetResourceStrideInBytes(DirectXResourceHandle handle) const {
+	return resources.at(static_cast<uint32_t>(handle)).GetStrideInBytes();
+}
+
+void QFE::GRAPHIC::DirectXResourceContainer::SetResourceStrideInBytes(DirectXResourceHandle handle, size_t strideInBytes) {
+	resources.at(static_cast<uint32_t>(handle)).SetStrideInBytes(strideInBytes);
+}
+
+bool DirectXResourceContainer::TransitionResource(
+	DirectXResourceHandle handle, ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES newState) {
+	// 引数の検査
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::TransitionResource", SystemError::Abort);
+		return false;
+	}
+	// リソースが存在するかの確認
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		if (!resource.TransitionResource(commandList, newState)) {
+			QFE_LOG("Failed to transition resource in DirectXResourceContainer::TransitionResource");
+			return false;
+		}
+		return true;
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::TransitionResource", SystemError::Abort);
+	}
+	return false;
 }
 
 DirectXResource* DirectXResourceContainer::GetDirectXResource(DirectXResourceHandle handle) {

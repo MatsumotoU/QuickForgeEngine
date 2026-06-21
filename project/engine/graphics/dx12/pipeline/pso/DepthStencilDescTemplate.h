@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <unordered_map>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief 深度値比較方法
 	enum class DepthStencilDescType : uint32_t {
 		Default = 0,// 標準、比較あり、書き込みあり

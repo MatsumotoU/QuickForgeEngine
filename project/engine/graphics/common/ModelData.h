@@ -4,7 +4,7 @@
 #include "ModelMaterialData.h"
 #include "memory/SafeVector.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 
 	struct MeshData {
 		SafeVector<VertexData> vertices;

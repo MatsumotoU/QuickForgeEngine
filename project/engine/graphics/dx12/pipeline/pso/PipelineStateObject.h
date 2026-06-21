@@ -7,7 +7,7 @@
 #include "DepthStencilDescTemplate.h"
 #include <wrl.h>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief パイプラインステートオブジェクトを生成するための情報をまとめた構造体
 	struct PipelineStateObjectElement {
 		uint32_t shaderPairHandle;

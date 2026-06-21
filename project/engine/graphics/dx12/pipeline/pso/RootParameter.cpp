@@ -3,7 +3,7 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void RootParameter::Initialize() {
 	// RootSignature
@@ -55,7 +55,7 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 	rootParameter->DescriptorTable.pDescriptorRanges = &descriptorRanges_[friendlyName];
 }
 
-void QFE::GRAPHIC::INTERNAL::RootParameter::CreateRootParameter(const RootParameterElement& rootParameterElement, const D3D12_SHADER_VISIBILITY& shaderVisibility) {
+void QFE::GRAPHIC::RootParameter::CreateRootParameter(const RootParameterElement& rootParameterElement, const D3D12_SHADER_VISIBILITY& shaderVisibility) {
 	if (rootParameterElement.shaderInputType == D3D_SIT_CBUFFER) {
 		CreateRootParameter(
 			rootParameterElement.friendlyName,
@@ -85,7 +85,7 @@ void QFE::GRAPHIC::INTERNAL::RootParameter::CreateRootParameter(const RootParame
 	}
 }
 
-void QFE::GRAPHIC::INTERNAL::RootParameter::AssignStaticSampler(const D3D12_STATIC_SAMPLER_DESC* staticSamplerDescs, const UINT& size) {
+void QFE::GRAPHIC::RootParameter::AssignStaticSampler(const D3D12_STATIC_SAMPLER_DESC* staticSamplerDescs, const UINT& size) {
 	descriptionRootSignature_.pStaticSamplers = staticSamplerDescs;
 	descriptionRootSignature_.NumStaticSamplers = size;
 }
@@ -113,7 +113,7 @@ D3D12_ROOT_SIGNATURE_DESC* RootParameter::GetDescriptionRootSignature() {
 	return &descriptionRootSignature_;
 }
 
-std::vector<D3D12_ROOT_PARAMETER_TYPE> QFE::GRAPHIC::INTERNAL::RootParameter::GetRootParameterTypes() const {
+std::vector<D3D12_ROOT_PARAMETER_TYPE> QFE::GRAPHIC::RootParameter::GetRootParameterTypes() const {
 	std::vector<D3D12_ROOT_PARAMETER_TYPE> parameterTypes;
 	for (const auto& rootParameter : rootParameters_) {
 		parameterTypes.push_back(rootParameter.ParameterType);

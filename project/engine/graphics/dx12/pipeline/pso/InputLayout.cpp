@@ -1,5 +1,5 @@
 #include "InputLayout.h"
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 void InputLayout::Initialize() {
 	inputElementDescs_.clear();
 	inputLayoutDesc_ = {};
@@ -32,7 +32,7 @@ void InputLayout::CreateInputElementDesc(const LPCSTR& semanticName, const UINT&
 	inputLayoutDesc_.NumElements = static_cast<UINT>(inputElementDescs_.size());
 }
 
-void QFE::GRAPHIC::INTERNAL::InputLayout::CreateInputElementDesc(const InputElement& inputElement) {
+void QFE::GRAPHIC::InputLayout::CreateInputElementDesc(const InputElement& inputElement) {
 	CreateInputElementDesc(
 		inputElement.semanticName, inputElement.semanticIndex,
 		inputElement.format, inputElement.alignedByteOffset);

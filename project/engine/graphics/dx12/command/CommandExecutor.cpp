@@ -1,6 +1,6 @@
 #include "CommandExecutor.h"
 #include <d3d12.h>
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 void CommandExecutor::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type) {
 	commandList_.Initialize(device, type);
 	commandQueue_.Initialize(device, type);

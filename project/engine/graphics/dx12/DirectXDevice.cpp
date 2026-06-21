@@ -12,7 +12,7 @@
 #include "string/MyString.h"
 #endif // QFE_OPTIMIZE_OFF
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 
 	DirectXDevice::DirectXDevice() {
 #ifdef QFE_OPTIMIZE_OFF

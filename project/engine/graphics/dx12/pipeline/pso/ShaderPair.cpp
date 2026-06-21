@@ -3,9 +3,9 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
-void QFE::GRAPHIC::INTERNAL::ShaderPair::Create(
+void QFE::GRAPHIC::ShaderPair::Create(
 	IDxcBlob* vsBlob, IDxcBlob* psBlob, const ShaderPairFunctions& funcs) {
 
 	// シェーダーバイナリが有効かどうかを確認

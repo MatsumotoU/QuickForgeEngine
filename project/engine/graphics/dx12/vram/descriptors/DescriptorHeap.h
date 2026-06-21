@@ -6,7 +6,7 @@
 #include "DescriptorHeapInfo.h"
 #include "DescriptorHandles.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief ディスクリプタヒープ自体とヒープの空きスロットの管理を行うクラス
 	class DescriptorHeap {
 	public:

@@ -2,7 +2,7 @@
 #include <array>
 #include "CommandExecutor.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	class DirectXCommandManager final {
 	public:
 		DirectXCommandManager() = default;

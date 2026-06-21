@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <vector>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief PSOのルートシグネチャで使用する静的サンプラーの定義クラス
 	class StaticSamplerTemplate final {
 	public:

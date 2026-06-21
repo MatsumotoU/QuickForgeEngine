@@ -6,7 +6,7 @@
 
 namespace QFE::GRAPHIC {
 	/// @brief 描画ターゲットを設定するコマンド
-	class SetScreenRegion final : public INTERNAL::IRenderCommand {
+	class SetScreenRegion final : public IRenderCommand {
 	public:
 		/// @brief 描画ターゲットを設定するコマンドを生成します。
 		explicit SetScreenRegion(

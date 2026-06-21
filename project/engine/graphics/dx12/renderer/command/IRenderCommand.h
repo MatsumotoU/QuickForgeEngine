@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d12.h>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	class IRenderCommand {
 	public:
 		virtual ~IRenderCommand() = default;

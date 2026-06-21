@@ -1,5 +1,5 @@
 #pragma once
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief コマンドリストに描画コマンドを発行するクラス
 	class RenderCommandExecutor final {
 	public:

@@ -14,11 +14,11 @@
 #include "DirectXTex/DirectXTex.h"
 
 #include "math/vector/Vector2.h"
-#include "descriptors/Data/DescriptorHandles.h"
+#include "dx12/vram/descriptors/DescriptorHandles.h"
 
 #include "GraphicEngineHandleTypes.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief TextureLoaderクラスの初期化に必要な情報と関数をまとめた構造体
 	struct TextureLoaderInitializeInfo {
 		ID3D12Device* device;

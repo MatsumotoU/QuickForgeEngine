@@ -2,7 +2,7 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void StaticSamplerTemplate::Initialize() {
 	samplerDescs_.clear();
@@ -62,17 +62,17 @@ void StaticSamplerTemplate::Initialize() {
 	isInitialized_ = true;
 }
 
-const D3D12_STATIC_SAMPLER_DESC* QFE::GRAPHIC::INTERNAL::StaticSamplerTemplate::GetSamplerDescs() const {
+const D3D12_STATIC_SAMPLER_DESC* QFE::GRAPHIC::StaticSamplerTemplate::GetSamplerDescs() const {
 	CheckInitialized();
 	return samplerDescs_.data();
 }
 
-UINT QFE::GRAPHIC::INTERNAL::StaticSamplerTemplate::GetSamplerCount() const {
+UINT QFE::GRAPHIC::StaticSamplerTemplate::GetSamplerCount() const {
 	CheckInitialized();
 	return static_cast<UINT>(samplerDescs_.size());
 }
 
-void QFE::GRAPHIC::INTERNAL::StaticSamplerTemplate::CheckInitialized() const {
+void QFE::GRAPHIC::StaticSamplerTemplate::CheckInitialized() const {
     if (!isInitialized_) {
         QFE_REPORT_SYSTEM_ERROR(std::string("StaticSamplerTemplate: Sampler descriptions are not initialized. Call Initialize() before using."), SystemError::Abort);
 	}

@@ -8,7 +8,7 @@
 #include "InputElement.h"
 #include "RootParameterElement.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	class ShaderReflection final {
 	public:
 		ShaderReflection();

@@ -5,9 +5,9 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
-void QFE::GRAPHIC::INTERNAL::PipelineStateObject::CreatePipelineStateObject(
+void QFE::GRAPHIC::PipelineStateObject::CreatePipelineStateObject(
 	const PipelineStateObjectElement& element, ID3D12Device* device) {
 	// 既に生成されているならスキップ
 	if (isCreatedPipelineStateObject_) {
@@ -117,6 +117,6 @@ ID3D12RootSignature* PipelineStateObject::GetRootSignature() {
 	return rootSignature_.Get();
 }
 
-uint32_t QFE::GRAPHIC::INTERNAL::PipelineStateObject::GetShaderPairHandle() const {
+uint32_t QFE::GRAPHIC::PipelineStateObject::GetShaderPairHandle() const {
 	return shaderPairHandle_;
 }

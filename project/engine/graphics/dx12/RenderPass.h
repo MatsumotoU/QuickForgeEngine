@@ -9,12 +9,10 @@
 #include <vector>
 #include <functional>
 
-#include "descriptors/Data/DescriptorHandles.h"
 #include "GraphicEngineHandleTypes.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	class SwapChain;
-	class OffscreenContainer;
 
 	/// @brief 描画パスの初期化に必要な情報をまとめた構造体
 	struct RenderPassInitializeInfo {
@@ -24,9 +22,8 @@ namespace QFE::GRAPHIC::INTERNAL {
 		ID3D12Device* device;
 		IDXGIFactory7* dxgiFactory;
 		ID3D12CommandQueue* commandQueue;
-		std::function<DescriptorHandles(ID3D12Resource*, const D3D12_RENDER_TARGET_VIEW_DESC*)> assignRtvFunc;// Rtvを割り当てる関数
-		std::function<DescriptorHandles(ID3D12Resource*, const D3D12_SHADER_RESOURCE_VIEW_DESC*)> assignSrvFunc;// Srvを割り当てる関数
-		std::function<const D3D12_CPU_DESCRIPTOR_HANDLE* (DirectXResourceHandle)> getResourceDsvFunc;// Dsvをリソースハンドルから取得する関数
+		std::function<D3D12_CPU_DESCRIPTOR_HANDLE(ID3D12Resource*, const D3D12_RENDER_TARGET_VIEW_DESC*)>assginRtvFunc;
+		std::function<const D3D12_CPU_DESCRIPTOR_HANDLE*(DirectXResourceHandle)>getResourceDsvFunc;// Dsvをリソースハンドルから取得する関数
 	};
 
 	/// @brief 描画先のバリア、管理するクラス
@@ -51,16 +48,7 @@ namespace QFE::GRAPHIC::INTERNAL {
 			RenderTargetHandle renderTargetHandle = RenderTargetHandle::SwapChain);
 
 	private:
-		/// @brief 描画先のリソースを描画用に変更するバリアを発行します。
-		void TransitionRenderTargetToRenderTarget(ID3D12GraphicsCommandList* commandList);
-		/// @brief 描画先のリソースを読み込み用に変更するバリアを発行します。
-		void TransitionRenderTargetToPresent(ID3D12GraphicsCommandList* commandList);
-		/// @brief 全ての描画先をクリアします。
-		void ClearRenderTarget(ID3D12GraphicsCommandList* commandList, const float clearColor[4]);
-
 		std::unique_ptr<SwapChain> swapChain_;
-		std::unique_ptr<OffscreenContainer> OffscreenContainer_;
-
-		std::vector<uint32_t> offscreenHandles_;
+		RenderPassInitializeInfo initializeInfo_;
 	};
 }

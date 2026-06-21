@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <unordered_map>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	enum class BlendMode : uint32_t {
 		// ブレンドなし
 		kBlendModeNone = 0,

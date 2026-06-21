@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
     /// @brief ディスクリプタのビューを表すフラグ
     enum class ViewTypeFlags : uint32_t {
         None = 0x0000,

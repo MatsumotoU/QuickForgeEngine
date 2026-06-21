@@ -7,7 +7,7 @@
 
 #include "memory/SafeVector.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief 頂点シェーダーの入力レイアウトを管理するクラス
 	class InputLayout final {
 	public:

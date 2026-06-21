@@ -9,7 +9,7 @@
 #include "memory/SafeVector.h"
 #include "RootParameterElement.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief ルートパラメータを管理するクラス
 	class RootParameter final {
 	public:

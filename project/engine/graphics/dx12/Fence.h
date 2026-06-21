@@ -3,7 +3,7 @@
 #include <wrl.h>
 #include <cstdint>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 
 	class Fence final {
 	public:

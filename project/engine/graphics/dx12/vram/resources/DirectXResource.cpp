@@ -2,7 +2,7 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 bool DirectXResource::CreateResource(
 	ID3D12Device* device, const D3D12_RESOURCE_DESC& resourceDesc, D3D12_RESOURCE_STATES initialState, D3D12_HEAP_TYPE heapType, const D3D12_CLEAR_VALUE* clearValue) {
@@ -48,12 +48,20 @@ bool DirectXResource::CreateResource(
 	return true;
 }
 
-bool DirectXResource::MapResource(UINT subresource, const D3D12_RANGE* readRange) {
-	// 引数の検査
-	if(readRange == nullptr) {
-		QFE_REPORT_SYSTEM_ERROR("Read range is null in DirectXResource::MapResource", SystemError::Abort);
+bool DirectXResource::SetExternalResource(Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES initialState) {
+	if (!resource) {
+		QFE_REPORT_SYSTEM_ERROR("External resource is null in DirectXResource::SetExternalResource", SystemError::Abort);
 		return false;
 	}
+
+	resource_ = resource;
+	currentState_ = initialState;
+	beforeState_ = initialState;
+
+	return true;
+}
+
+bool DirectXResource::MapResource(UINT subresource, const D3D12_RANGE* readRange) {
 	// リソースが生成されているかの確認
 	if(resourceDesc_.Dimension == D3D12_RESOURCE_DIMENSION_UNKNOWN) {
 		QFE_REPORT_SYSTEM_ERROR("Resource dimension is unknown in DirectXResource::MapResource", SystemError::Abort);
@@ -163,7 +171,7 @@ ID3D12Resource* DirectXResource::GetResource() const {
 	return resource_.Get();
 }
 
-bool QFE::GRAPHIC::INTERNAL::DirectXResource::AddDescriptorHandle(ViewTypeFlags viewType, const DescriptorHandles& handles) {
+bool QFE::GRAPHIC::DirectXResource::AddDescriptorHandle(ViewTypeFlags viewType, const DescriptorHandles& handles) {
 	// 引数の検査
 	if (viewType == ViewTypeFlags::None) {
 		QFE_REPORT_SYSTEM_ERROR("View type is None in DirectXResource::AddDescriptorHandle", SystemError::Abort);
@@ -177,7 +185,7 @@ bool QFE::GRAPHIC::INTERNAL::DirectXResource::AddDescriptorHandle(ViewTypeFlags 
 	return true;
 }
 
-const DescriptorHandles* QFE::GRAPHIC::INTERNAL::DirectXResource::GetDescriptorHandle(ViewTypeFlags viewType) const {
+const DescriptorHandles* QFE::GRAPHIC::DirectXResource::GetDescriptorHandle(ViewTypeFlags viewType) const {
 	// 引数の検査
 	if (viewType == ViewTypeFlags::None) {
 		QFE_REPORT_SYSTEM_ERROR("View type is None in DirectXResource::GetDescriptorHandle", SystemError::Abort);
@@ -207,4 +215,17 @@ bool DirectXResource::HasTypeOfView(ViewTypeFlags viewType) const {
 	}
 	QFE_LOG("Resource does not have the specified view type in DirectXResource::HasTypeOfView");
 	return false;
+}
+
+size_t QFE::GRAPHIC::DirectXResource::GetStrideInBytes() const {
+	if(isSetStrideInBytes_ == false) {
+		QFE_REPORT_SYSTEM_ERROR("Stride in bytes is not set in DirectXResource::GetStrideInBytes", SystemError::Abort);
+		return 0;
+	}
+	return strideInBytes_;
+}
+
+void QFE::GRAPHIC::DirectXResource::SetStrideInBytes(size_t strideInBytes) {
+	strideInBytes_ = strideInBytes;
+	isSetStrideInBytes_ = true;
 }

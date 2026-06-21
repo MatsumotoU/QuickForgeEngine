@@ -7,7 +7,7 @@
 
 #include "ModelData.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 
 	class AssimpModelLoader {
 	public:

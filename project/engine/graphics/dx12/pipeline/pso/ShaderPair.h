@@ -9,7 +9,7 @@
 #include "InputLayout.h"
 #include "RootParameter.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief シェーダーペアに使う関数群をまとめた構造体
 	struct ShaderPairFunctions {
 		std::function<void(IDxcBlob* vsBlob)> reflectionFunc;

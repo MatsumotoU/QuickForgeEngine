@@ -2,7 +2,7 @@
 #include <string>
 #include <d3d12.h>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief ルートパラメーターの情報を管理する構造体
 	struct RootParameterElement {
 		std::string friendlyName;

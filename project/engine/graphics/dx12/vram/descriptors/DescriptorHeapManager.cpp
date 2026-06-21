@@ -2,7 +2,7 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void DescriptorHeapManager::Initialize(ID3D12Device* device) {
 	QFE_LOG("-----DescriptorHeapManager:Initialize-----\n");

@@ -3,7 +3,7 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 void DirectXCommandManager::Initialize(ID3D12Device* device) {
 	QFE_LOG("Initialize called.");
 

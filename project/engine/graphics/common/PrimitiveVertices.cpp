@@ -1,6 +1,6 @@
 #include "PrimitiveVertices.h"
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 
 MeshData CreatePlane(float width, float height, uint32_t segmentsX, uint32_t segmentsY, bool invertFace) {
 	MeshData planeMesh(segmentsX * segmentsY * 6);
@@ -165,4 +165,4 @@ MeshData CreateRing(float innerRadius, float outerRadius, uint32_t segments, boo
 	return ringMesh;
 }
 
-} // namespace QFE::GRAPHIC::INTERNAL
+} // namespace QFE::GRAPHIC

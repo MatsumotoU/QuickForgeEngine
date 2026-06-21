@@ -1,7 +1,7 @@
 #pragma once
 #include "DirectXCommandList.h"
 #include "DirectXCommandQueue.h"
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	class CommandExecutor final {
 	public:
 		CommandExecutor() = default;

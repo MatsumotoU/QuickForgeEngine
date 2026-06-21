@@ -14,7 +14,7 @@
 #include "pso/DepthStencilDescTemplate.h"
 #include "pso/PipelineStateObject.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
  /**
   * @brief 各種パイプラインの初期化
   * @param device ID3D12Deviceへのポインタ
@@ -24,9 +24,9 @@ namespace {
 	const std::string kPSFilePath = "engine/resources/shaders/ps/";
 }
 
-QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GraphicPipelineManager() = default;
+QFE::GRAPHIC::GraphicPipelineManager::GraphicPipelineManager() = default;
 
-QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::~GraphicPipelineManager() = default;
+QFE::GRAPHIC::GraphicPipelineManager::~GraphicPipelineManager() = default;
 
 void GraphicPipelineManager::Initialize(std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc, ID3D12Device* device) {
 	// 必要な機能のインスタンス生成
@@ -56,7 +56,7 @@ void GraphicPipelineManager::Finalize() {
 	
 }
 
-ShaderPairHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GenerateShaderPair(
+ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(
 	const ShaderPairElement& element, std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc) {
 
 	// バイナリの一覧(ファイル名をキーとして格納)
@@ -81,7 +81,7 @@ ShaderPairHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GenerateShaderP
 	return static_cast<ShaderPairHandle>(shaderPairKeyCounter_++);
 }
 
-PSOHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GeneratePipelineStateObject(
+PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 	const ShaderPairHandle& shaderHandle, ID3D12Device* device
 	, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType, D3D12_RASTERIZER_DESC rasterizerDesc,
 	D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc) {
@@ -105,7 +105,7 @@ PSOHandle QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GeneratePipelineStateO
 	return static_cast<PSOHandle>(pipelineStateObjectKeyCounter_++);
 }
 
-const PipelineStateObject* GraphicPipelineManager::GetPipelineStateObject(const PSOHandle& psoHandle) const {
+PipelineStateObject* GraphicPipelineManager::GetPipelineStateObject(const PSOHandle& psoHandle) const {
 	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
 	if (it != pipelineStateObjects_.end()) {
 		return it->second.get();
@@ -115,7 +115,16 @@ const PipelineStateObject* GraphicPipelineManager::GetPipelineStateObject(const 
 	return nullptr;
 }
 
-const ID3D12RootSignature* GraphicPipelineManager::GetRootSignature(const PSOHandle& psoHandle) const {
+ID3D12PipelineState* QFE::GRAPHIC::GraphicPipelineManager::GetPipelineState(const PSOHandle& psoHandle) const {
+	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
+	if (it != pipelineStateObjects_.end()) {
+		return it->second->GetPipelineState();
+	}
+	QFE_LOG(std::format("PipelineState not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)));
+	return nullptr;
+}
+
+ID3D12RootSignature* GraphicPipelineManager::GetRootSignature(const PSOHandle& psoHandle) const {
 	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
 	if (it != pipelineStateObjects_.end()) {
 		return it->second->GetRootSignature();
@@ -131,6 +140,19 @@ std::vector<D3D12_ROOT_PARAMETER_TYPE> GraphicPipelineManager::GetRootParameterT
 		uint32_t shaderPairHandle = it->second->GetShaderPairHandle();
 		return shaderPairs_.at(shaderPairHandle)->GetRootParameterTypes();
 	}
+}
+
+PSOHandle GraphicPipelineManager::GetBuiltInPSOHandle(
+	BuiltInShaderPair builtInShaderPair, uint32_t blendMode, uint32_t rasterizerType, uint32_t depthStencilDescType) const {
+
+	// BuiltInのPSOを管理する多次元配列から、引数で指定された情報をもとにPSOハンドルを取得する
+	std::array<uint32_t, 4> infoArray = {
+		static_cast<uint32_t>(builtInPairHandles_.at(builtInShaderPair)),
+		blendMode,
+		rasterizerType,
+		depthStencilDescType
+	};
+	return BuiltInPSOs_.At(infoArray);
 }
 
 void GraphicPipelineManager::GenerateBuiltInShaderPairs(
@@ -189,7 +211,7 @@ void GraphicPipelineManager::GenerateBuiltInShaderPairs(
 		element.vsFileName, element.psFileName));
 }
 
-void QFE::GRAPHIC::INTERNAL::GraphicPipelineManager::GenerateBuiltInPSO(ID3D12Device* device) {
+void QFE::GRAPHIC::GraphicPipelineManager::GenerateBuiltInPSO(ID3D12Device* device) {
 
 	// BuiltInのPSOを管理する多次元配列のサイズを設定するために、各情報の数を取得して配列に格納する
 	std::array<size_t, 4> sizes = {

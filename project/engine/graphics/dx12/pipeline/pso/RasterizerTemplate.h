@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <unordered_map>
 
-namespace QFE::GRAPHIC::INTERNAL {
+namespace QFE::GRAPHIC {
 	/// @brief RasterizerStateの設定の種類を表す列挙型
 	enum class RasterizerType : uint32_t {
 		Default = 0,

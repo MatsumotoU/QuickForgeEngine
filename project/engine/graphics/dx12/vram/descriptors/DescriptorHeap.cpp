@@ -1,7 +1,7 @@
 #include "DescriptorHeap.h"
 #include "EngineDefines.h"
 
-using namespace QFE::GRAPHIC::INTERNAL;
+using namespace QFE::GRAPHIC;
 
 void DescriptorHeap::Create(ID3D12Device* device, DescriptorHeapInfo info) {
 	// すでに生成されているかどうかの確認
