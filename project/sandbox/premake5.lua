@@ -12,7 +12,10 @@ project "Sandbox" -- Sandbox
 
         -- 外部ファイルのインクルード
         externalincludedirs {
-            "../externals/",
-            "../engine/",
-            "../engine/core/"
+            "%{wks.location}/externals/",
+            "%{wks.location}/engine/",
+            "%{wks.location}/engine/core/",
+            "%{wks.location}/externals/",
+            "%{wks.location}/externals/assimp/",
+            "%{wks.location}/externals/assimp/include/",
         }

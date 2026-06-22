@@ -27,6 +27,8 @@ namespace QFE::GRAPHIC {
 		[[nodiscard]] uint32_t GetNextFreeDescriptorIndex();
 		/// @brief ディスクリタヒープを取得する関数
 		[[nodiscard]] ID3D12DescriptorHeap* GetDescriptorHeap() const;
+		/// @brief ディスクリタヒープがシェーダーから参照可能かどうかを取得する関数
+		[[nodiscard]] const bool IsShaderVisible() const;
 
 	private:
 		/// @brief ディスクリタヒープが生成されているかどうかをチェックする関数
@@ -36,5 +38,6 @@ namespace QFE::GRAPHIC {
 		std::queue<uint32_t> freeDescriptors_;// ヒープの空きスロットのインデックスを管理するキュー
 		bool isCreated_ = false;// ディスクリタヒープが生成されているかどうか
 		DescriptorHeapInfo DescriptorHeapInfo_;// ディスクリタヒープの情報
+		bool isShaderVisible_ = false;// シェーダーから参照可能かどうか
 	};
 }

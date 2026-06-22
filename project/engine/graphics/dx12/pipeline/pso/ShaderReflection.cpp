@@ -60,6 +60,36 @@ void ShaderReflection::RunShaderReflection(IDxcBlob* shaderBlob) {
 	}
 }
 
+std::vector<InputElement> QFE::GRAPHIC::ShaderReflection::GetInputLayoutElement(IDxcBlob* shaderBlob) {
+	// shaderBlobが有効かどうかを確認
+	if (shaderBlob == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
+	}
+	// シェーダーのリフレクションを実行
+	RunShaderReflection(shaderBlob);
+	return GetInputLayoutElement();
+}
+
+std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParameterElement(IDxcBlob* shaderBlob) {
+	// shaderBlobが有効かどうかを確認
+	if (shaderBlob == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
+	}
+	// シェーダーのリフレクションを実行
+	RunShaderReflection(shaderBlob);
+	return GetRootParameterElement();
+}
+
+bool QFE::GRAPHIC::ShaderReflection::GetThreadGroupSize(IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ) {
+	// shaderBlobが有効かどうかを確認
+	if (shaderBlob == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
+	}
+	// シェーダーのリフレクションを実行
+	RunShaderReflection(shaderBlob);
+	return GetThreadGroupSize(sizeX, sizeY, sizeZ);
+}
+
 std::vector<InputElement> QFE::GRAPHIC::ShaderReflection::GetInputLayoutElement() const {
 	std::vector<InputElement> inputLayoutElements;
 
@@ -111,4 +141,12 @@ std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParamet
 	}
 
 	return rootParameterElements;
+}
+
+bool QFE::GRAPHIC::ShaderReflection::GetThreadGroupSize(UINT& sizeX, UINT& sizeY, UINT& sizeZ) const {
+	if (shaderReflection_ == nullptr) return false;
+
+	// スレッドグループサイズを取得
+	shaderReflection_->GetThreadGroupSize(&sizeX, &sizeY, &sizeZ);
+	return true;
 }

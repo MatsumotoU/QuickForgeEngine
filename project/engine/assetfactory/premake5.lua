@@ -6,6 +6,17 @@ project "EngineAssetsFactory"
 
         -- 警告レベル4
         warnings "Extra"
+        
+        -- リンク
+        links{
+            "EngineCore",
+            "ExternalFolders",
+        }
+
+        -- 追加のインクルード
+        includedirs {
+            "%{wks.location}/engine/core/",
+        }
 
         -- 外部ファイルのインクルード
         externalincludedirs {

@@ -5,7 +5,46 @@
 #include "EngineDefines.h"
 #include "file/FileUtility.h"
 
-using namespace QFE::GRAPHIC;
+using namespace QFE::ASSET;
+
+void AssimpModelLoader::Initialize() {
+	// キャッシュを初期化する
+	modelCache.clear();
+	invalidModelData = ModelData(); // 無効なモデルデータを初期化
+	QFE_LOG("AssimpModelLoader initialized, model cache cleared.");
+}	
+
+ModelData& AssimpModelLoader::LoadModel(const std::string& filePath) {
+	// キャッシュにモデルデータが存在する場合はキャッシュから返す
+	if (IsModelCached(filePath)) {
+		return modelCache[filePath];
+	} else {
+		LoadModelData(filePath, invalidModelData);
+		return invalidModelData;
+	}
+}
+
+ModelData& AssimpModelLoader::ForceLoadModel(const std::string& filePath) {
+	// キャッシュを無視した場合ログを出力する
+	if(IsModelCached(filePath)) {
+		QFE_LOG(std::format("Force loading model, but it is already cached: {}", filePath));
+	}
+
+	// キャッシュを無視して新たにモデルデータを読み込む,キャッシュに存在する場合は上書きする
+	LoadModelData(filePath, modelCache[filePath]);
+	return modelCache[filePath];
+}
+
+bool AssimpModelLoader::IsModelCached(const std::string& filePath) const {
+	// キャッシュにモデルデータが存在するかどうかを確認
+	if(modelCache.find(filePath) != modelCache.end()) {
+		QFE_LOG(std::format("Model found in cache: {}", filePath));
+		return true;
+	} else {
+		QFE_LOG(std::format("Model not found in cache: {}", filePath));
+		return false;
+	}
+}
 
 void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& modelData) {
 	Assimp::Importer importer;

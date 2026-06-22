@@ -37,6 +37,7 @@ void DescriptorHeap::Create(ID3D12Device* device, DescriptorHeapInfo info) {
 	}
 
 	isCreated_ = true;
+	isShaderVisible_ = info.shaderVisible;
 }	
 
 D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCpuDescriptorHandle(uint32_t index) const {
@@ -82,6 +83,11 @@ uint32_t DescriptorHeap::GetNextFreeDescriptorIndex() {
 ID3D12DescriptorHeap* DescriptorHeap::GetDescriptorHeap() const {
 	CheckCreated();
 	return descriptorHeap_.Get();
+}
+
+const bool QFE::GRAPHIC::DescriptorHeap::IsShaderVisible() const {
+	CheckCreated();	
+	return isShaderVisible_;
 }
 
 void DescriptorHeap::CheckCreated() const {

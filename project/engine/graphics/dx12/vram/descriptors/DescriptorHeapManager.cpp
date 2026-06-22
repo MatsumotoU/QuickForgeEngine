@@ -87,3 +87,42 @@ DescriptorHandles DescriptorHeapManager::AssignDsvHeap(
 	// DSVはGPUからアクセスできないため、GPUハンドルは無効にする
 	return handles;
 }
+
+DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::AssignUavHeap(
+	ID3D12Device* device, ID3D12Resource* resource, ID3D12Resource* counterResource,
+	const D3D12_UNORDERED_ACCESS_VIEW_DESC* desc) {
+
+	// UAVはSRVディスクリタヒープに割り当てる
+	
+	// 空いているディスクリタのインデックスを取得
+	uint32_t index = descriptorHeaps_[DescriptorHeapType::SRV].GetNextFreeDescriptorIndex();
+	// ヒープにディスクリタを割り当てる
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = descriptorHeaps_[DescriptorHeapType::SRV].GetCpuDescriptorHandle(index);
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = descriptorHeaps_[DescriptorHeapType::SRV].GetGpuDescriptorHandle(index);
+
+	// ディスクリタを作成
+	device->CreateUnorderedAccessView(resource, counterResource, desc, cpuHandle);
+
+	// DescriptorHandlesを作成
+	DescriptorHandles handles{};
+	handles.cpuHandle_ = cpuHandle;
+	handles.gpuHandle_ = gpuHandle;
+	return handles;
+}
+
+void QFE::GRAPHIC::DescriptorHeapManager::RegisterDescriptorHeaps(ID3D12GraphicsCommandList* commandList) const {
+	std::vector<ID3D12DescriptorHeap*> heaps;
+	for (const auto& [type, heap] : descriptorHeaps_) {
+		// ディスクリタヒープが生成されていない場合はスキップ
+		if (heap.GetDescriptorHeap() == nullptr) {
+			continue;
+		}
+		// シェーダーから参照可能なディスクリタヒープのみを登録
+		if (!heap.IsShaderVisible()){
+			continue;
+		}
+		// ディスクリタヒープを登録
+		heaps.push_back(heap.GetDescriptorHeap());
+	}
+	commandList->SetDescriptorHeaps(static_cast<UINT>(heaps.size()), heaps.data());
+}

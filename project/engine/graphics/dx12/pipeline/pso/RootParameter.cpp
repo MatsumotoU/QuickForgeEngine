@@ -5,11 +5,10 @@
 
 using namespace QFE::GRAPHIC;
 
-void RootParameter::Initialize() {
+void RootParameter::Initialize(D3D12_ROOT_SIGNATURE_FLAGS flags) {
 	// RootSignature
 	descriptionRootSignature_ = {};
-	descriptionRootSignature_.Flags =
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	descriptionRootSignature_.Flags = flags;
 
 	rootParameters_.clear();
 	friendlyNames_.clear();
@@ -57,19 +56,24 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 
 void QFE::GRAPHIC::RootParameter::CreateRootParameter(const RootParameterElement& rootParameterElement, const D3D12_SHADER_VISIBILITY& shaderVisibility) {
 	if (rootParameterElement.shaderInputType == D3D_SIT_CBUFFER) {
+
+		// ルート定数バッファとしてルートパラメータを作成
 		CreateRootParameter(
 			rootParameterElement.friendlyName,
 			D3D12_ROOT_PARAMETER_TYPE_CBV,
 			shaderVisibility,
 			rootParameterElement.shaderRegisterIndex);
+
 	} else if (rootParameterElement.shaderInputType == D3D_SIT_TEXTURE ||
 		rootParameterElement.shaderInputType == D3D_SIT_STRUCTURED) {
+
+		// ディスクリプタテーブルとしてルートパラメータを作成
 		CreateRootParameter(
 			rootParameterElement.friendlyName,
 			D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
 			shaderVisibility,
 			rootParameterElement.shaderRegisterIndex);
-
+		// SRVのディスクリプタレンジを設定
 		D3D12_DESCRIPTOR_RANGE_TYPE rangeType;
 		rangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 		SetDescriptorRange(
@@ -77,7 +81,25 @@ void QFE::GRAPHIC::RootParameter::CreateRootParameter(const RootParameterElement
 			rangeType,
 			1, // numDescriptorsは1に設定
 			rootParameterElement.shaderRegisterIndex);
-	} else if (rootParameterElement.shaderInputType == D3D_SIT_SAMPLER) {
+
+	} else if (rootParameterElement.shaderInputType == D3D_SIT_UAV_RWTYPED ||
+		rootParameterElement.shaderInputType == D3D_SIT_UAV_RWSTRUCTURED ||
+		rootParameterElement.shaderInputType == D3D_SIT_UAV_RWBYTEADDRESS) {
+
+		// ディスクリプタテーブルとしてルートパラメータを作成
+		CreateRootParameter(
+			rootParameterElement.friendlyName,
+			D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+			shaderVisibility,
+			rootParameterElement.shaderRegisterIndex);
+		// UAVのディスクリプタレンジを設定
+		SetDescriptorRange(
+			rootParameterElement.friendlyName,
+			D3D12_DESCRIPTOR_RANGE_TYPE_UAV,
+			1,
+			rootParameterElement.shaderRegisterIndex);
+
+	}else if (rootParameterElement.shaderInputType == D3D_SIT_SAMPLER) {
 		// サンプラーは静的サンプラーを使用するので、なにもしません
 	}else {
 		QFE_LOG(std::format("RootParameter: Unsupported shader input type for friendly name '{}'.", rootParameterElement.friendlyName));

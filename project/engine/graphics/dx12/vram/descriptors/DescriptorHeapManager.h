@@ -15,15 +15,22 @@ namespace QFE::GRAPHIC {
 	public:
 		/// @brief ディスクリタヒープを初期化する関数
 		void Initialize(ID3D12Device* device);
-		/// @brief ディスクリタヒープからディスクリタを割り当てる関数
+		/// @brief RTVディスクリタヒープからRTVディスクリタを割り当てる関数
 		[[nodiscard]] DescriptorHandles AssignRtvHeap(
 			ID3D12Device* device, ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc);
-		/// @brief ディスクリタヒープからディスクリタを割り当てる関数
+		/// @brief SRVディスクリタヒープからSRVディスクリタを割り当てる関数
 		[[nodiscard]] DescriptorHandles AssignSrvHeap(
 			ID3D12Device* device, ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc);
-		/// @brief ディスクリタヒープからディスクリタを割り当てる関数
+		/// @brief DSVディスクリタヒープからDSVディスクリタを割り当てる関数
 		[[nodiscard]] DescriptorHandles AssignDsvHeap(
 			ID3D12Device* device, ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* desc);
+		/// @brief SRVディスクリタヒープからUAVディスクリタを割り当てる関数,SRVディスクリプタヒープにUAVディスクリタを割り当てるため、SRVディスクリタヒープのハンドルを返す
+		[[nodiscard]] DescriptorHandles AssignUavHeap(
+			ID3D12Device* device, ID3D12Resource* resource, 
+			ID3D12Resource* counterResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* desc);
+
+		/// @brief コマンドリストにディスクリタヒープを登録する関数
+		void RegisterDescriptorHeaps(ID3D12GraphicsCommandList* commandList) const;
 
 	private:
 		const uint32_t kMaxRtvDescriptors = 128; // 最大RTVディスクリプタ数

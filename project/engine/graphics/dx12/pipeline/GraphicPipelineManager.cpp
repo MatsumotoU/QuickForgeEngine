@@ -30,13 +30,15 @@ QFE::GRAPHIC::GraphicPipelineManager::GraphicPipelineManager() = default;
 
 QFE::GRAPHIC::GraphicPipelineManager::~GraphicPipelineManager() = default;
 
-void GraphicPipelineManager::Initialize(std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc, ID3D12Device* device) {
+void GraphicPipelineManager::Initialize(GraphicPipelineManagerInitializeInfo initializeInfo) {
 	// 必要な機能のインスタンス生成
-	shaderReflection_ = std::make_unique<ShaderReflection>();
 	staticSamplers_ = std::make_unique<StaticSamplerTemplate>();
 	rasterizerState_ = std::make_unique<RasterizerTemplate>();
 	blendStates_ = std::make_unique<BlendStateTemplate>();
 	depthStencilDescTemplate_ = std::make_unique<DepthStencilDescTemplate>();
+
+	// 初期化情報を保持
+	initializeInfo_ = initializeInfo;
 
 	// 各機能の初期化
 	staticSamplers_->Initialize();
@@ -48,10 +50,9 @@ void GraphicPipelineManager::Initialize(std::function<IDxcBlob* (const std::wstr
 	std::vector<std::string> vsFiles = QFE::FILE::GetFilesInDirectory(kVSFilePath);
 	std::vector<std::string> psFiles = QFE::FILE::GetFilesInDirectory(kPSFilePath);
 
-	GenerateBuiltInShaderPairs(compileFunc);
+	GenerateBuiltInShaderPairs(initializeInfo.compileFunc);
 	// BuiltInのPSOを生成
-	GenerateBuiltInPSO(device);
-	
+	GenerateBuiltInPSO(initializeInfo.device);
 }
 
 void GraphicPipelineManager::Finalize() {
@@ -71,9 +72,9 @@ ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(
 
 	// シェーダーのリフレクションを行うための関数群
 	ShaderPairFunctions funcs;
-	funcs.reflectionFunc = [&](IDxcBlob* shaderBlob) { shaderReflection_->RunShaderReflection(shaderBlob); };
-	funcs.getInputLayoutFunc = [&](IDxcBlob* shaderBlob) { return shaderReflection_->GetInputLayoutElement(); };
-	funcs.getRootParameterFunc = [&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(); };
+	funcs.reflectionFunc = [&](IDxcBlob* shaderBlob) { initializeInfo_.reflectionFunc(shaderBlob); };
+	funcs.getInputLayoutFunc = [&](IDxcBlob* shaderBlob) { return initializeInfo_.getInputLayoutFunc(shaderBlob); };
+	funcs.getRootParameterFunc = [&](IDxcBlob* shaderBlob) { return initializeInfo_.getRootParameterFunc(shaderBlob); };
 	funcs.getStaticSamplerFunc = [&]() { return staticSamplers_->GetSamplerDescs(); };
 	funcs.getStaticSamplerSizeFunc = [&]() { return staticSamplers_->GetSamplerCount(); };
 

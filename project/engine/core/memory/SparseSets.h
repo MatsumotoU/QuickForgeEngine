@@ -29,6 +29,23 @@ namespace QFE {
 			sparse_[key] = static_cast<uint32_t>(dense_.size() - 1);
 			return key;
 		}
+		/// @brief キーと値のペアを追加する。キーは自動的に割り当てられる。
+		uint32_t push_back(T&& value) {
+			// 未使用のキー（UINT32_MAXの場所）を探す
+			uint32_t key = 0;
+			while (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
+				key++;
+			}
+			
+			// key に到達するまで push_back でサイズを拡大（空きは UINT32_MAX で埋める）
+			while (key >= sparse_.size()) {
+				sparse_.push_back(UINT32_MAX);
+			}
+			dense_keys_.push_back(key);
+			dense_.push_back(std::move(value));
+			sparse_[key] = static_cast<uint32_t>(dense_.size() - 1);
+			return key;
+		}
 
 		/// @brief キーと値のペアを追加または更新する。キーが存在しない場合は新しいペアを追加し、存在する場合は値を更新する。
 		void Insert(uint32_t key, const T& value) {

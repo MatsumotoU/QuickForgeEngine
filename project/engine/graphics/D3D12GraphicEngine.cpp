@@ -9,8 +9,10 @@
 #include "dx12/Fence.h"
 
 #include "dx12/pipeline/pso/ShaderCompiler.h"
+#include "dx12/pipeline/pso/ShaderReflection.h"
 
 #include "dx12/pipeline/GraphicPipelineManager.h"
+#include "dx12/pipeline/ComputePipelineManager.h"
 #include "dx12/TextureLoader.h"
 
 #include "dx12/vram/descriptors/DescriptorHandles.h"
@@ -33,7 +35,9 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	fence_(std::make_unique<Fence>()),
 	graphicPipelineManager_(std::make_unique<GraphicPipelineManager>()),
 	textureLoader_(std::make_unique<TextureLoader>()),
-	shaderCompiler_(std::make_unique<ShaderCompiler>())
+	shaderCompiler_(std::make_unique<ShaderCompiler>()),
+	shaderReflection_(std::make_unique<ShaderReflection>()),
+	computePipelineManager_(std::make_unique<ComputePipelineManager>())
 
 {}
 
@@ -91,9 +95,30 @@ void D3D12GraphicEngine::Initialize() {
 	LegacyInitialize(width, height);
 
 	// グラフィックパイプラインマネージャの初期化
-	graphicPipelineManager_->Initialize(
-		[&](const std::wstring& filePath, const wchar_t* profile) {return shaderCompiler_->CompileShader(filePath, profile); },
-		directXDevice_->GetDevice());
+	GraphicPipelineManagerInitializeInfo graphicPipelineManagerInfo{};
+	graphicPipelineManagerInfo.reflectionFunc = 
+		[&](IDxcBlob* shaderBlob) { shaderReflection_->RunShaderReflection(shaderBlob); };
+	graphicPipelineManagerInfo.getInputLayoutFunc = 
+		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetInputLayoutElement(shaderBlob); };
+	graphicPipelineManagerInfo.getRootParameterFunc = 
+		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob); };
+	graphicPipelineManagerInfo.compileFunc = 
+		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
+	graphicPipelineManagerInfo.device = directXDevice_->GetDevice();
+	graphicPipelineManager_->Initialize(graphicPipelineManagerInfo);
+
+	// Computeパイプラインマネージャの初期化
+	ComputePipelineManagerInitializeInfo computePipelineManagerInfo{};
+	computePipelineManagerInfo.reflectionFunc = 
+		[&](IDxcBlob* shaderBlob) { shaderReflection_->RunShaderReflection(shaderBlob); };
+	computePipelineManagerInfo.getRootParameterFunc = 
+		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob); };
+	computePipelineManagerInfo.getThreadGroupSizeFunc = 
+		[&](IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ) { return shaderReflection_->GetThreadGroupSize(shaderBlob, sizeX, sizeY, sizeZ); };
+	computePipelineManagerInfo.compileFunc = 
+		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
+	computePipelineManagerInfo.device = directXDevice_->GetDevice();
+	computePipelineManager_->Initialize(computePipelineManagerInfo);
 	
 	// テクスチャ管理クラスの初期化
 	TextureLoaderInitializeInfo textureLoaderInfo{};
@@ -122,6 +147,9 @@ void D3D12GraphicEngine::Initialize() {
 }
 
 void D3D12GraphicEngine::PreDraw() {
+	// ディスクリプタヒープの登録
+	descriptorHeapManager_->RegisterDescriptorHeaps(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
+
 	// スワップチェーンのリソース状態を描画可能に変更
 	renderPass_->PreDraw(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
@@ -182,6 +210,16 @@ ScissorRectHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateScissorRect(int left, 
 
 DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateTextureFromFile(const std::string& filePath) {
 	return textureLoader_->LoadTexture(filePath);
+}
+
+DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::GetBuiltInTextureHandle(BuiltInTextureType type) {
+	if(BuiltInTextureType::DummyBlackCubeMap == type) {
+		return textureLoader_->GetDummyBlackCubeMapHandle();
+	} else if(BuiltInTextureType::DummyWhite1x1Texture == type) {
+		return textureLoader_->GetDummyWhite1x1TextureHandle();
+	} else {
+		return DirectXResourceHandle::Invalid;
+	}
 }
 
 DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateVertexBuffer(const std::vector<VertexData>& vertexData, const std::string& meshName) {

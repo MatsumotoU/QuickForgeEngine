@@ -11,9 +11,12 @@
 #include <vector>
 
 #include "memory/MultidimensionalArray.h"
+#include "memory/SparseSets.h"
 
 #include "../GraphicEngineHandleTypes.h"
 #include "pso/PipelineDescTypes.h"
+#include "pso/InputElement.h"
+#include "pso/RootParameterElement.h"
 
 namespace QFE::GRAPHIC {
 	/// @brief グラフィックスパイプラインを作るためのクラス群の前方宣言
@@ -25,6 +28,15 @@ namespace QFE::GRAPHIC {
 	class DepthStencilDescTemplate;
 	class PipelineStateObject;
 
+	/// @brief グラフィックスパイプラインマネージャーの初期化情報をまとめた構造体
+	struct GraphicPipelineManagerInitializeInfo {
+		std::function<void(IDxcBlob* shaderBlob)> reflectionFunc;
+		std::function<std::vector<InputElement>(IDxcBlob* shaderBlob)> getInputLayoutFunc;
+		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc;
+		std::function<IDxcBlob*(const std::wstring&, const wchar_t*)> compileFunc;
+		ID3D12Device* device;
+	};
+
 	/// @brief グラフィックスパイプラインおよびルートシグネチャの管理クラス
 	class GraphicPipelineManager final {
 	public:
@@ -33,7 +45,7 @@ namespace QFE::GRAPHIC {
 
 	public:
 		/// @brief 初期化処理
-		void Initialize(std::function<IDxcBlob*(const std::wstring&, const wchar_t*)> compileFunc, ID3D12Device* device);
+		void Initialize(GraphicPipelineManagerInitializeInfo initializeInfo);
 		/// @brief 終了処理
 		void Finalize();
 
@@ -69,6 +81,9 @@ namespace QFE::GRAPHIC {
 		/// @brief BuiltInのPSOを各情報すべてから生成します
 		void GenerateBuiltInPSO(ID3D12Device* device);
 
+		GraphicPipelineManagerInitializeInfo initializeInfo_;// 初期化情報を保持する構造体
+
+		// グラフィックスパイプラインを管理するためのメンバ変数
 		uint32_t shaderPairKeyCounter_ = 0;// シェーダーペアのキーを管理するカウンター
 		std::map<uint32_t, std::unique_ptr<ShaderPair>> shaderPairs_;// シェーダーペアのマップ
 		uint32_t pipelineStateObjectKeyCounter_ = 0;// パイプラインステートオブジェクトのキーを管理するカウンター
@@ -78,7 +93,6 @@ namespace QFE::GRAPHIC {
 		// pairHandle,blend,rasterize,depthの順番
 		MultidimensionalArray<PSOHandle, 4> BuiltInPSOs_;// ビルトインのPSOを管理する多次元配列
 
-		std::unique_ptr<ShaderReflection> shaderReflection_;// シェーダーのリフレクションを行うためのクラス
 		std::unique_ptr<StaticSamplerTemplate> staticSamplers_;// 静的サンプラーの管理クラス
 		std::unique_ptr<RasterizerTemplate> rasterizerState_;// ラスタライザーステートの管理クラス
 		std::unique_ptr<BlendStateTemplate> blendStates_;// ブレンドステートの管理クラス

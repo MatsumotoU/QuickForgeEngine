@@ -13,8 +13,8 @@ namespace QFE::GRAPHIC {
 	/// @brief ルートパラメータを管理するクラス
 	class RootParameter final {
 	public:
-		/// @brief 初期化処理
-		void Initialize();
+		/// @brief 初期化処理.引数無しで呼び出すとVSが有効なルートシグネチャを作成します.
+		void Initialize(D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 		/// @brief RootParamaterを追加する
 		void CreateRootParameter(

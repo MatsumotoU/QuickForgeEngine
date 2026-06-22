@@ -13,12 +13,12 @@ project "GraphicEngine"
 
         -- 追加のインクルード
         includedirs {
+            "%{wks.location}/engine/core/",
             "%{wks.location}/engine/graphics/"
         }
 
         -- 外部ファイルのインクルード
         externalincludedirs {
-            "%{wks.location}/engine/core/",
             "%{wks.location}/externals/DirectXTex/",
             "%{wks.location}/externals/",
         }
