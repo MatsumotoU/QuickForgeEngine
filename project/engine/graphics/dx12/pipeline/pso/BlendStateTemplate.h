@@ -1,25 +1,9 @@
 #pragma once
 #include <d3d12.h>
 #include <unordered_map>
+#include "PipelineDescTypes.h"
 
 namespace QFE::GRAPHIC {
-	enum class BlendMode : uint32_t {
-		// ブレンドなし
-		kBlendModeNone = 0,
-		// 通常
-		kBlendModeNormal,
-		// 加算
-		kBlendModeAdd,
-		// 減算
-		kBlendModeSubtract,
-		// 乗算
-		kBlendModeMultiply,
-		// スクリーン
-		kBlendModeScreen,
-		// 利用禁止
-		kCountOfBlendMode,
-	};
-
 	/// @brief ブレンドモードを管理するクラス
 	class BlendStateTemplate final {
 	public:

@@ -2,6 +2,7 @@
 #include "IGraphicEngine.h"
 #include "dx12/vram/descriptors/DescriptorHandles.h"
 #include "dx12/GraphicEngineHandleTypes.h"
+#include "dx12/pipeline/pso/PipelineDescTypes.h"
 
 #include "memory/UniqueContainer.h"
 #include "../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
@@ -43,19 +44,26 @@ namespace QFE::GRAPHIC {
 		void PostDraw() override;
 		void Shutdown() override;
 
+		// ユーザーが任意のタイミングで呼び出す関数群
 		/// @brief ビューポートの作成.
 		ViewPortHandle CreateViewPort(uint32_t width, uint32_t height);
 		/// @brief シザリング矩形の作成.
 		ScissorRectHandle CreateScissorRect(int left, int top, int right, int bottom);
-
-		// ユーザーが任意のタイミングで呼び出す関数群
 		/// @brief 画像ファイルを読み込む.
-		DirectXResourceHandle LoadTexture(const std::string& filePath);
+		DirectXResourceHandle CreateTextureFromFile(const std::string& filePath);
 		/// @brief 頂点データから頂点バッファハンドルを作成する.
-		DirectXResourceHandle LoadMesh(const std::vector<VertexData>& vertexData, const std::string& meshName);
+		DirectXResourceHandle CreateVertexBuffer(const std::vector<VertexData>& vertexData, const std::string& meshName);
+		/// @brief シェーダーペアの作成.
+		ShaderPairHandle CreateShaderPair(const ShaderPairElement& element);
+		/// @brief シェーダーペアと各種情報からPSOハンドルを作成する.
+		PSOHandle CreatePipelineStateObject(
+			ShaderPairHandle shaderHandle, BlendMode blendMode,RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
+		PSOHandle GetBuiltInPipelineStateObject(
+			BuiltInShaderPair builtInShaderPair, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
+
 
 		void TestDraw(
-			ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
+			PSOHandle psoHandle,ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
 			DirectXResourceHandle vertexBufferHandle);
 
 	private:

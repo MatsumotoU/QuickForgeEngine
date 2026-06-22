@@ -14,6 +14,8 @@
 #include "pso/DepthStencilDescTemplate.h"
 #include "pso/PipelineStateObject.h"
 
+#include "EngineDefines.h"
+
 using namespace QFE::GRAPHIC;
  /**
   * @brief 各種パイプラインの初期化
@@ -105,6 +107,27 @@ PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 	return static_cast<PSOHandle>(pipelineStateObjectKeyCounter_++);
 }
 
+PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
+	ID3D12Device* device, const ShaderPairHandle& shaderHandle, BlendMode blendMode,
+	RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) {
+
+	PipelineStateObjectElement element{};
+	element.shaderPairHandle = static_cast<uint32_t>(shaderHandle);
+	element.rootParameter = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetRootSignatureDesc();
+	element.inputLayoutDesc = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetInputLayoutDesc();
+	element.psBlob = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetPSBlob();
+	element.vsBlob = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetVSBlob();
+	element.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	element.rasterizerDesc = rasterizerState_->GetRasterizerDesc(rasterizerType);
+	element.blendDesc = blendStates_->GetBlendDesc(blendMode);
+	element.depthStencilDesc = depthStencilDescTemplate_->GetDesc(depthStencilDescType);
+
+	// PSOの生成
+	pipelineStateObjects_[pipelineStateObjectKeyCounter_] = std::make_unique<PipelineStateObject>();
+	pipelineStateObjects_[pipelineStateObjectKeyCounter_]->CreatePipelineStateObject(element, device);
+	return static_cast<PSOHandle>(pipelineStateObjectKeyCounter_++);
+}
+
 PipelineStateObject* GraphicPipelineManager::GetPipelineStateObject(const PSOHandle& psoHandle) const {
 	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
 	if (it != pipelineStateObjects_.end()) {
@@ -140,17 +163,20 @@ std::vector<D3D12_ROOT_PARAMETER_TYPE> GraphicPipelineManager::GetRootParameterT
 		uint32_t shaderPairHandle = it->second->GetShaderPairHandle();
 		return shaderPairs_.at(shaderPairHandle)->GetRootParameterTypes();
 	}
+	QFE_REPORT_SYSTEM_ERROR(std::format("RootParameterTypes not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)),SystemError::Abort);
+	return {};
 }
 
 PSOHandle GraphicPipelineManager::GetBuiltInPSOHandle(
-	BuiltInShaderPair builtInShaderPair, uint32_t blendMode, uint32_t rasterizerType, uint32_t depthStencilDescType) const {
+	BuiltInShaderPair builtInShaderPair, BlendMode blendMode, 
+	RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) const {
 
 	// BuiltInのPSOを管理する多次元配列から、引数で指定された情報をもとにPSOハンドルを取得する
 	std::array<uint32_t, 4> infoArray = {
 		static_cast<uint32_t>(builtInPairHandles_.at(builtInShaderPair)),
-		blendMode,
-		rasterizerType,
-		depthStencilDescType
+		static_cast<uint32_t>(blendMode),
+		static_cast<uint32_t>(rasterizerType),
+		static_cast<uint32_t>(depthStencilDescType)
 	};
 	return BuiltInPSOs_.At(infoArray);
 }

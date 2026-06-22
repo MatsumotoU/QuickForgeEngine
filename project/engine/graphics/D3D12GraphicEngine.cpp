@@ -181,12 +181,12 @@ ScissorRectHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateScissorRect(int left, 
 	return static_cast<ScissorRectHandle>(handle);
 }
 
-DirectXResourceHandle D3D12GraphicEngine::LoadTexture(const std::string& filePath) {
+DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateTextureFromFile(const std::string& filePath) {
 	return textureLoader_->LoadTexture(filePath);
 }
 
-DirectXResourceHandle D3D12GraphicEngine::LoadMesh(const std::vector<VertexData>& vertexData, const std::string& meshName) {
-	DirectXResourceHandle handle = 
+DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateVertexBuffer(const std::vector<VertexData>& vertexData, const std::string& meshName) {
+	DirectXResourceHandle handle =
 		resourceContainer_->CreateBuffer(directXDevice_->GetDevice(), vertexData.size() * sizeof(VertexData));
 	// バッファのストライドを設定
 	resourceContainer_->SetResourceStrideInBytes(handle, sizeof(VertexData));
@@ -200,8 +200,30 @@ DirectXResourceHandle D3D12GraphicEngine::LoadMesh(const std::vector<VertexData>
 	return handle;
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::TestDraw(
-	ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle, DirectXResourceHandle vertexBufferHandle) {
+ShaderPairHandle D3D12GraphicEngine::CreateShaderPair(const ShaderPairElement& element) {
+	ShaderPairHandle shaderPairHandle =
+	graphicPipelineManager_->GenerateShaderPair(element, [&](const std::wstring& filePath, const wchar_t* profile) {
+		return shaderCompiler_->CompileShader(filePath, profile);
+		});
+	return shaderPairHandle;
+}
+
+PSOHandle D3D12GraphicEngine::CreatePipelineStateObject(ShaderPairHandle shaderHandle, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) {
+	PSOHandle psoHandle = graphicPipelineManager_->GeneratePipelineStateObject(
+		directXDevice_->GetDevice(),
+		shaderHandle, blendMode, rasterizerType, depthStencilDescType);
+	return psoHandle;
+}
+
+PSOHandle D3D12GraphicEngine::GetBuiltInPipelineStateObject(
+	BuiltInShaderPair builtInShaderPair, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) {
+
+	PSOHandle psoHandle = graphicPipelineManager_->GetBuiltInPSOHandle(builtInShaderPair, blendMode, rasterizerType, depthStencilDescType);
+	return psoHandle;
+}
+
+void D3D12GraphicEngine::TestDraw(
+	PSOHandle psoHandle,ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle, DirectXResourceHandle vertexBufferHandle) {
 	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 	renderPass_->SetRenderTarget(
@@ -210,7 +232,6 @@ void QFE::GRAPHIC::D3D12GraphicEngine::TestDraw(
 	commandList->RSSetViewports(1, viewports_.GetData(static_cast<uint32_t>(viewportHandle)));
 	commandList->RSSetScissorRects(1, scissorRects_.GetData(static_cast<uint32_t>(scissorRectHandle)));
 
-	PSOHandle psoHandle = graphicPipelineManager_->GetBuiltInPSOHandle(BuiltInShaderPair::ObjectMini, 0, 0, 0);
 	commandList->SetPipelineState(graphicPipelineManager_->GetPipelineState(psoHandle));
 	commandList->SetGraphicsRootSignature(graphicPipelineManager_->GetRootSignature(psoHandle));
 

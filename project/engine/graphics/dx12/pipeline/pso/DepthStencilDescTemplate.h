@@ -1,16 +1,9 @@
 #pragma once
 #include <d3d12.h>
 #include <unordered_map>
+#include "PipelineDescTypes.h"
 
 namespace QFE::GRAPHIC {
-	/// @brief 深度値比較方法
-	enum class DepthStencilDescType : uint32_t {
-		Default = 0,// 標準、比較あり、書き込みあり
-		Translucent,// 半透明につかう.比較あり、書きこみなし
-		None,// UIとかに使う.比較も書き込みもしない
-		kCount // タイプの数,使用しない
-	};
-
 	/// @brief 深度ステンシルステートのテンプレートクラス
 	class DepthStencilDescTemplate {
 	public:

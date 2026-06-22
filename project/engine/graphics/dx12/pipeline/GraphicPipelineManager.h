@@ -13,6 +13,7 @@
 #include "memory/MultidimensionalArray.h"
 
 #include "../GraphicEngineHandleTypes.h"
+#include "pso/PipelineDescTypes.h"
 
 namespace QFE::GRAPHIC {
 	/// @brief グラフィックスパイプラインを作るためのクラス群の前方宣言
@@ -23,24 +24,6 @@ namespace QFE::GRAPHIC {
 	class BlendStateTemplate;
 	class DepthStencilDescTemplate;
 	class PipelineStateObject;
-
-	/// @brief シェーダーペアを生成するための情報をまとめた構造体
-	struct ShaderPairElement {
-		std::string vsDirName;
-		std::string psDirName;
-		std::string vsFileName;
-		std::string psFileName;
-	};
-
-	/// @brief BuiltInのシェーダーペアのタイプを定義
-	enum class BuiltInShaderPair : uint32_t {
-		ObjectMini = 0,
-		Object2D,
-		Object3D,
-		Particle,
-		Primitive,
-		Skybox,
-	};
 
 	/// @brief グラフィックスパイプラインおよびルートシグネチャの管理クラス
 	class GraphicPipelineManager final {
@@ -62,6 +45,10 @@ namespace QFE::GRAPHIC {
 			const ShaderPairHandle& shaderHandle, ID3D12Device* device
 			, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType, D3D12_RASTERIZER_DESC rasterizerDesc,
 			D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc);
+		/// @brief シェーダーペアと各種情報からパイプラインステートオブジェクトを生成します
+		PSOHandle GeneratePipelineStateObject(
+			ID3D12Device* device, const ShaderPairHandle& shaderHandle, BlendMode blendMode,
+			RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
 
 		/// @brief PSOハンドルからパイプラインステートオブジェクトを取得します
 		PipelineStateObject* GetPipelineStateObject(const PSOHandle& psoHandle) const;
@@ -73,8 +60,8 @@ namespace QFE::GRAPHIC {
 		std::vector<D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes(const PSOHandle& psoHandle) const;
 		/// @brief BuiltInのシェーダーペアと各情報からPSOハンドルを取得します
 		PSOHandle GetBuiltInPSOHandle(
-			BuiltInShaderPair builtInShaderPair, uint32_t blendMode,
-			uint32_t rasterizerType, uint32_t depthStencilDescType) const;
+			BuiltInShaderPair builtInShaderPair, BlendMode blendMode,
+			RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) const;
 		
 	private: // メンバ変数
 		/// @brief BuiltInのシェーダーペアを生成します

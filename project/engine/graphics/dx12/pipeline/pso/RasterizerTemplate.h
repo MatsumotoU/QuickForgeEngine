@@ -1,16 +1,9 @@
 #pragma once
 #include <d3d12.h>
 #include <unordered_map>
+#include "PipelineDescTypes.h"
 
 namespace QFE::GRAPHIC {
-	/// @brief RasterizerStateの設定の種類を表す列挙型
-	enum class RasterizerType : uint32_t {
-		Default = 0,
-		Wireframe,
-		CullNone,
-		kCount // タイプの数,使用しない
-	};
-
 	/// @brief PSOのRasterizerStateの設定を生成するためのクラス
 	class RasterizerTemplate final {
 	public:
