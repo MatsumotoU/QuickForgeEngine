@@ -4,6 +4,9 @@
 #include "dx12/GraphicEngineHandleTypes.h"
 #include "dx12/pipeline/pso/PipelineDescTypes.h"
 
+#include "dx12/DirectXDevice.h"
+#include "dx12/vram/resources/DirectXResourceContainer.h"
+
 #include "memory/UniqueContainer.h"
 #include "../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
@@ -20,8 +23,8 @@
 namespace QFE::GRAPHIC {
 	/// @brief DirectX12のグラフィックエンジンの実装クラスで使用しているクラス
 	class DirectX12DebugCore;
-	class DirectXDevice;
-	class DirectXResourceContainer;
+	//class DirectXDevice;
+	//class DirectXResourceContainer;
 	class DescriptorHeapManager;
 	class DirectXCommandManager;
 	class Fence;
@@ -60,11 +63,31 @@ namespace QFE::GRAPHIC {
 			ShaderPairHandle shaderHandle, BlendMode blendMode,RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
 		PSOHandle GetBuiltInPipelineStateObject(
 			BuiltInShaderPair builtInShaderPair, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
+		
+		/// @brief あるリソースの配列の数を取得する.
+		size_t GetResourceArraySize(DirectXResourceHandle handle);
 
+		/// @brief 定数バッファを作成し、データをコピーする.データの型はテンプレートで指定する.
+		template<typename T>
+		DirectXResourceHandle CreateConstantBuffer(const T& data, const std::string& bufferName) {
+			DirectXResourceHandle handle = resourceContainer_->CreateBuffer(directXDevice_->GetDevice(), sizeof(T));
+			resourceContainer_->MapResource(handle);
+			T* mappedData = resourceContainer_->template GetMappedData<T>(handle);
+			if (mappedData) {
+				memcpy(mappedData, &data, sizeof(T));
+			}
+			resourceContainer_->SetResourceStrideInBytes(handle, sizeof(T));
+			return handle;
+		}
+		/// @brief 定数バッファのデータを取得する.データの型はテンプレートで指定する.
+		template<typename T>
+		T* GetConstantBufferData(DirectXResourceHandle handle) {
+			return resourceContainer_->template GetMappedData<T>(handle);
+		}
 
 		void TestDraw(
 			PSOHandle psoHandle,ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
-			DirectXResourceHandle vertexBufferHandle);
+			DirectXResourceHandle vertexBufferHandle,std::vector<DirectXResourceHandle> rootResources);
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.

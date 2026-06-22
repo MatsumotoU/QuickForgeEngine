@@ -1,4 +1,5 @@
 #include "../ShaderStructs/MiniShader.hlsli"
+#include "../ShaderStructs/hlslTypeToCpp.h"
 
 struct PixelShaderOutput
 {

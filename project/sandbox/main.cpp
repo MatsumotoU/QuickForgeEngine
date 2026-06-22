@@ -5,6 +5,8 @@
 #include "graphics/D3D12GraphicEngine.h"
 #include "core/loger/MyDebugLog.h"
 
+#include "core/math/transform/Transform.h"
+
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	// デバッグログの初期化
@@ -22,26 +24,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	QFE::GRAPHIC::ViewPortHandle viewPortHandle = graphicEngine->CreateViewPort(1280, 720);
 	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle = graphicEngine->CreateScissorRect(0, 0, 1280, 720);
-	std::vector<VertexData> vertexData;
-	VertexData v1;
-	v1.position = { 0.0f, 0.5f, 0.0f, 1.0f };
-	VertexData v2;
-	v2.position = { 0.5f, -0.5f, 0.0f, 1.0f };
-	VertexData v3;
-	v3.position = { -0.5f, -0.5f, 0.0f, 1.0f };
-	vertexData.push_back(v1);
-	vertexData.push_back(v2);
-	vertexData.push_back(v3);
 
-	QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle = graphicEngine->CreateVertexBuffer(vertexData, "Triangle");
+	//QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle = graphicEngine->CreateVertexBuffer(vertexData, "Triangle");
 
-	std::string vsDir = "engine/resources/shaders/vs/";
-	std::string psDir = "engine/resources/shaders/ps/";
-	QFE::GRAPHIC::ShaderPairHandle shaderPairHandle = graphicEngine->CreateShaderPair({ vsDir, "Object2d.VS.hlsl", psDir, "ObjectMini.hlsl" });
+	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->GetBuiltInPipelineStateObject(
+		QFE::GRAPHIC::BuiltInShaderPair::Object3D, QFE::GRAPHIC::BlendMode::kBlendModeNone,
+		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::None);
 
-	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->CreatePipelineStateObject(
-		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNone, QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::None);
-
+	std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources;
+	/*QFE::MATH::Transform transform = {};
+	transform.translate = { 0.0f, 0.0f, 0.0f };
+	transform.rotate = { 0.0f, 0.0f, 0.0f };
+	transform.scale = { 1.0f, 1.0f, 1.0f };
+	TransformationMatrix transformMatrix = {};
+	transformMatrix.World = QFE::MATH::Matrix4x4::MakeAffineMatrix(transform);
+	transformMatrix.WVP = QFE::MATH::Matrix4x4::MakeIndentity4x4();
+	QFE::GRAPHIC::DirectXResourceHandle constantBufferHandle = 
+		graphicEngine->CreateConstantBuffer<TransformationMatrix>(transformMatrix, "TransformMatrix");
+	rootResources.push_back(constantBufferHandle);*/
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -56,8 +56,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		} else {
 			graphicEngine->PreDraw();
+
 			// 描画処理
-			//graphicEngine->TestDraw(psoHandle,viewPortHandle, scissorRectHandle, vertexBufferHandle);
+			//graphicEngine->GetConstantBufferData<TransformationMatrix>(constantBufferHandle)->World = QFE::MATH::Matrix4x4::MakeAffineMatrix(transform);
+			//graphicEngine->TestDraw(psoHandle,viewPortHandle, scissorRectHandle, vertexBufferHandle, rootResources);
 
 			graphicEngine->PostDraw();
 		}

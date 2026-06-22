@@ -229,3 +229,14 @@ void QFE::GRAPHIC::DirectXResource::SetStrideInBytes(size_t strideInBytes) {
 	strideInBytes_ = strideInBytes;
 	isSetStrideInBytes_ = true;
 }
+
+size_t QFE::GRAPHIC::DirectXResource::GetResourceSizeInBytes() const {
+	if(isSetStrideInBytes_ == false) {
+		QFE_REPORT_SYSTEM_ERROR("Stride in bytes is not set in DirectXResource::GetResourceSizeInBytes", SystemError::Abort);
+		return 0;
+	}
+
+	D3D12_RESOURCE_DESC desc = resource_->GetDesc();
+	uint64_t resourceSize = desc.Width;
+	return static_cast<size_t>(resourceSize);
+}

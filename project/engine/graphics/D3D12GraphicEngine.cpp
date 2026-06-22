@@ -2,8 +2,7 @@
 #include "EngineDefines.h"
 
 #include "dx12/checker/DirectX12DebugCore.h"
-#include "dx12/DirectXDevice.h"
-#include "dx12/vram/resources/DirectXResourceContainer.h"
+
 #include "dx12/vram/descriptors/DescriptorHeapManager.h"
 #include "dx12/command/DirectXCommandManager.h"
 #include "dx12/RenderPass.h"
@@ -222,8 +221,20 @@ PSOHandle D3D12GraphicEngine::GetBuiltInPipelineStateObject(
 	return psoHandle;
 }
 
+size_t D3D12GraphicEngine::GetResourceArraySize(DirectXResourceHandle handle) {
+	size_t stride = resourceContainer_->GetResourceStrideInBytes(handle);
+	if (stride == 0) {
+		QFE_LOG("Resource stride is zero for handle: " + std::to_string(static_cast<uint32_t>(handle)));
+		return 0;
+	}
+	size_t size = resourceContainer_->GetResourceSizeInBytes(handle);
+	return size / stride;
+}
+
 void D3D12GraphicEngine::TestDraw(
-	PSOHandle psoHandle,ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle, DirectXResourceHandle vertexBufferHandle) {
+	PSOHandle psoHandle, ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
+	DirectXResourceHandle vertexBufferHandle, std::vector<DirectXResourceHandle> rootResources) {
+
 	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 	renderPass_->SetRenderTarget(
@@ -239,8 +250,41 @@ void D3D12GraphicEngine::TestDraw(
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = resourceContainer_->GetVertexBufferView(vertexBufferHandle);
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
-	commandList->DrawInstanced(3, 1, 0, 0);
+	std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes = graphicPipelineManager_->GetRootParameterTypes(psoHandle);
+	if(rootParameterTypes.size() != rootResources.size()) {
+		// PSOのルートパラメータの数と渡されたリソースの数が異なる場合はエラー
+		assert(false);
+		return;
+	}
 
+	for(int i = 0; i < rootParameterTypes.size(); ++i) {
+		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
+
+		if(rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer_->GetGpuVirtualAddress(rootResources[i]);
+			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
+		} else {
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
+			switch (rootParameterType) {
+			case D3D12_ROOT_PARAMETER_TYPE_SRV:
+				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+				break;
+			case D3D12_ROOT_PARAMETER_TYPE_UAV:
+				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
+				break;
+			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
+				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+				break;
+			default:
+				break;
+			}
+		}
+		
+		
+	}
+	 
+	UINT vertexCount = static_cast<UINT>(GetResourceArraySize(vertexBufferHandle));
+	commandList->DrawInstanced(vertexCount, 1, 0, 0);
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {

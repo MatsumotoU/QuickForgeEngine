@@ -3,6 +3,21 @@
 #include <bit>
 using namespace QFE::GRAPHIC;
 
+namespace {
+	ViewTypeFlags RootParameterTypeToViewType(D3D12_ROOT_PARAMETER_TYPE rootParamType) {
+		switch (rootParamType) {
+		case D3D12_ROOT_PARAMETER_TYPE_CBV:
+			return ViewTypeFlags::ConstantBufferView;
+		case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE: // SRV
+			return ViewTypeFlags::ShaderResourceView;
+		case D3D12_ROOT_PARAMETER_TYPE_UAV:
+			return ViewTypeFlags::UnorderedAccessView;
+		default:
+			return ViewTypeFlags::None;
+		}
+	}
+}
+
 void DirectXResourceContainer::Initialize(
 	DirectXResourceContainerInitializeInfo initializeInfo) {
 
@@ -285,6 +300,26 @@ const D3D12_GPU_DESCRIPTOR_HANDLE* DirectXResourceContainer::GetDescriptorHandle
 	}
 }
 
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXResourceContainer::GetDescriptorHandleCPU(
+	DirectXResourceHandle handle, D3D12_ROOT_PARAMETER_TYPE parameterType) const {
+	return GetDescriptorHandleCPU(handle, RootParameterTypeToViewType(parameterType));
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE DirectXResourceContainer::GetDescriptorHandleGPU(
+	DirectXResourceHandle handle, D3D12_ROOT_PARAMETER_TYPE parameterType) const {
+	return GetDescriptorHandleGPU(handle, RootParameterTypeToViewType(parameterType));
+}
+
+const D3D12_CPU_DESCRIPTOR_HANDLE* DirectXResourceContainer::GetDescriptorHandleCpuPtr(
+	DirectXResourceHandle handle, D3D12_ROOT_PARAMETER_TYPE parameterType) const {
+	return GetDescriptorHandleCpuPtr(handle, RootParameterTypeToViewType(parameterType));
+}
+
+const D3D12_GPU_DESCRIPTOR_HANDLE* DirectXResourceContainer::GetDescriptorHandleGpuPtr(
+	DirectXResourceHandle handle, D3D12_ROOT_PARAMETER_TYPE parameterType) const {
+	return GetDescriptorHandleGpuPtr(handle, RootParameterTypeToViewType(parameterType));
+}
+
 D3D12_GPU_VIRTUAL_ADDRESS DirectXResourceContainer::GetGpuVirtualAddress(DirectXResourceHandle handle) const {	
 	return GetResource(handle)->GetGPUVirtualAddress();
 }
@@ -337,6 +372,10 @@ size_t QFE::GRAPHIC::DirectXResourceContainer::GetResourceStrideInBytes(DirectXR
 
 void QFE::GRAPHIC::DirectXResourceContainer::SetResourceStrideInBytes(DirectXResourceHandle handle, size_t strideInBytes) {
 	resources.at(static_cast<uint32_t>(handle)).SetStrideInBytes(strideInBytes);
+}
+
+size_t QFE::GRAPHIC::DirectXResourceContainer::GetResourceSizeInBytes(DirectXResourceHandle handle) const {
+	return resources.at(static_cast<uint32_t>(handle)).GetResourceSizeInBytes();
 }
 
 bool DirectXResourceContainer::TransitionResource(

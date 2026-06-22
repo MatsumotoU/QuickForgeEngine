@@ -72,6 +72,15 @@ namespace QFE::GRAPHIC {
 		const D3D12_CPU_DESCRIPTOR_HANDLE* GetDescriptorHandleCpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
 		/// @brief あるハンドルの対応するビューのGPUディスクリプタハンドルへのポインタを取得します
 		const D3D12_GPU_DESCRIPTOR_HANDLE* GetDescriptorHandleGpuPtr(DirectXResourceHandle handle, ViewTypeFlags viewType) const;
+		/// @brief あるハンドルの対応するビューのCPUディスクリプタハンドルを取得します
+		D3D12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandleCPU(DirectXResourceHandle handle, D3D12_ROOT_PARAMETER_TYPE parameterType) const;
+		/// @brief あるハンドルの対応するビューのGPUディスクリプタハンドルを取得します
+		D3D12_GPU_DESCRIPTOR_HANDLE GetDescriptorHandleGPU(DirectXResourceHandle handle, D3D12_ROOT_PARAMETER_TYPE parameterType) const;
+		/// @brief あるハンドルの対応するビューのCPUディスクリプタハンドルへのポインタを取得します
+		const D3D12_CPU_DESCRIPTOR_HANDLE* GetDescriptorHandleCpuPtr(DirectXResourceHandle handle, D3D12_ROOT_PARAMETER_TYPE parameterType) const;
+		/// @brief あるハンドルの対応するビューのGPUディスクリプタハンドルへのポインタを取得します
+		const D3D12_GPU_DESCRIPTOR_HANDLE* GetDescriptorHandleGpuPtr(DirectXResourceHandle handle, D3D12_ROOT_PARAMETER_TYPE parameterType) const;
+
 		/// @brief あるハンドルの対応するビューのGPU仮想アドレスを取得します
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(DirectXResourceHandle handle) const;
 		
@@ -86,6 +95,8 @@ namespace QFE::GRAPHIC {
 		size_t GetResourceStrideInBytes(DirectXResourceHandle handle) const;
 		/// @brief あるリソースハンドルに対応するリソースの1要素あたりのサイズ（バイト単位）を設定します。これは主にバッファリソースで使用されます。
 		void SetResourceStrideInBytes(DirectXResourceHandle handle, size_t strideInBytes);
+		/// @brief あるリソースハンドルに対応するリソースのサイズ（バイト単位）を取得します。これは主にバッファリソースで使用されます。
+		size_t GetResourceSizeInBytes(DirectXResourceHandle handle) const;
 
 		/// @brief あるリソースハンドルに対応するリソースのマップされたCPU側のポインタを取得する
 		template<typename T>

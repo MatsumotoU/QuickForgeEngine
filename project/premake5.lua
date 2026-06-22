@@ -55,101 +55,32 @@ workspace "QuickForgeEngine"
         symbols "Off"
         runtime "Release"
     filter ""
-    
-group "Applications" -- MyEngineProjects
-    project "Editor" -- Editor
-        location "editor"
-        kind "WindowedApp"
-        language "C++"
-        debugdir "%{wks.location}"
-        files {
-            "editor/**.h",
-            "editor/**.cpp"
-        }
-        links{
-            "Engine",
-            "ExternalFolders"
-        }
 
-        -- 警告レベル4
-        warnings "Extra"
-        flags { "FatalWarnings" } --すべての警告をエラーとします
-    
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "./externals/",
-            "./externals/sol2",
-            "./externals/assimp/",
-            "./externals/assimp/include/",
-            "./externals/DirectXTex/",
-            "./externals/imgui/",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
-        }
-        -- 追加のインクルード
-        includedirs{
-            "./",
-            "./engine/include/",
-        }
-
-        -- リソースのコピー（Release構成のみ）
-        filter "configurations:Release"
-            postbuildcommands {
-                '{COPYDIR} "../Resources" "%{cfg.targetdir}/Resources"',
-            }
-        filter ""
-
-        -- MonoとWindows SDKのDLLをコピー
-        postbuildcommands {
-            -- フォルダのコピー
-            '{COPYDIR} "../engine/resources" "%{cfg.targetdir}/engine/resources"',
-            '{COPYDIR} "../externals/Mono/lib" "%{cfg.targetdir}/mono/lib"',
-            '{COPYDIR} "../externals/Mono/etc" "%{cfg.targetdir}/mono/etc"',
-    
-            -- ファイルのコピー
-            '{COPY} "../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"',
-            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxcompiler.dll" "%{cfg.targetdir}"',
-            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxil.dll" "%{cfg.targetdir}"'
-        }    
-        
-    project "Sandbox" -- Sandbox
-        location "sandbox"
-        kind "WindowedApp"
-        language "C++"
-        debugdir "%{wks.location}"
-        files {
-            "sandbox/**.h",
-            "sandbox/**.cpp"
-        }
-
-        -- 警告レベル4
-        warnings "Extra"
-
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "./externals/",
-            "./engine/",
-            "./engine/core/"
-        }
-group ""
-
-group "EngineProjects" -- EngineProjects
-    -- エンジンのリソースプロジェクトの読み込み
+group "00_System" -- すべての土台のプロジェクト
     dofile(path.join(_root, "engine/resources/premake5.lua"))
     -- 異存なしのコアプロジェクトの読み込み
     dofile(path.join(_root, "engine/core/premake5.lua"))
+group ""
+
+group "01_SubSystems" -- 独立した機能を提供するプロジェクト達
     -- ウィンドウシステムプロジェクトの読み込み
     dofile(path.join(_root, "engine/window/premake5.lua"))
     -- グラフィックエンジンプロジェクトの読み込み
     dofile(path.join(_root, "engine/graphics/premake5.lua"))
-
+    
 group ""
 
--- MySubProject
-project "Resource"
-    location "Resources"
-    kind "None"
+group "02_Middleware" -- アセットの読み込みや、サブシステムで使うデータを提供するプロジェクト達
+    -- アセットファクトリープロジェクトの読み込み
+    dofile(path.join(_root, "engine/assetfactory/premake5.lua"))
+group ""
+
+group "03_Applications" -- アプリケーションプロジェクト達
+    -- エディタープロジェクトの読み込み
+    dofile(path.join(_root, "editor/premake5.lua"))
+    -- サンドボックスプロジェクトの読み込み
+    dofile(path.join(_root, "sandbox/premake5.lua"))
+group ""
 
 group "External"
 project "ExternalFolders"
