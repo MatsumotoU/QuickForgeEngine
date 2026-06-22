@@ -40,6 +40,10 @@ namespace QFE::GRAPHIC {
 		ID3D12RootSignature* GetRootSignature(const ComputePSOHandle& handle) const;
 		/// @brief コンピュートパイプラインステートオブジェクトを取得します
 		ID3D12PipelineState* GetPipelineState(const ComputePSOHandle& handle) const;
+		/// @brief コンピュートパイプラインステートオブジェクトのルートパラメータタイプを取得します
+		std::vector<D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes(const ComputePSOHandle& handle) const;
+		/// @brief コンピュートパイプラインステートオブジェクトのスレッドグループサイズを取得します
+		bool GetThreadGroupSize(const ComputePSOHandle& handle, UINT& sizeX, UINT& sizeY, UINT& sizeZ) const;
 
 	private:
 		ComputePipelineManagerInitializeInfo initializeInfo_;// 初期化情報を保持

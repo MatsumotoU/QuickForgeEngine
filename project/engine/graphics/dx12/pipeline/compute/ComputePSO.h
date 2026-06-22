@@ -15,6 +15,13 @@ namespace QFE::GRAPHIC {
 		void CreatePipelineStateObject(IDxcBlob* csBlob, // コンピュートシェーダーのバイナリ
 			const D3D12_ROOT_SIGNATURE_DESC& rootSigDesc,ID3D12Device* device);
 
+		/// @brief スレッドグループサイズを設定する関数
+		void SetThreadGroupSize(UINT sizeX, UINT sizeY, UINT sizeZ);
+		/// @brief スレッドグループサイズを取得する関数
+		void GetThreadGroupSize(UINT& sizeX, UINT& sizeY, UINT& sizeZ);
+		/// @brief スレッドグループサイズが設定されているかを確認する関数
+		bool IsThreadGroupSizeSet() const { return isSetThreadGroupSize_; }
+
 		/// @brief コンピュートパイプラインステートオブジェクトを取得する関数
 		ID3D12PipelineState* GetPipelineState() const { return computePipelineState_.Get(); }
 		/// @brief ルートシグネチャを取得する関数
@@ -26,5 +33,10 @@ namespace QFE::GRAPHIC {
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> computePipelineState_;
 		RootParameter rootParameter_;
+
+		bool isSetThreadGroupSize_ = false;
+		UINT threadGroupSizeX_ = 0;
+		UINT threadGroupSizeY_ = 0;
+		UINT threadGroupSizeZ_ = 0;
 	};
 }

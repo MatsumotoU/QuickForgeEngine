@@ -378,6 +378,14 @@ size_t QFE::GRAPHIC::DirectXResourceContainer::GetResourceSizeInBytes(DirectXRes
 	return resources.at(static_cast<uint32_t>(handle)).GetResourceSizeInBytes();
 }
 
+UINT QFE::GRAPHIC::DirectXResourceContainer::GetResourceHeight(DirectXResourceHandle handle) const {
+	return resources.at(static_cast<uint32_t>(handle)).GetResourceHeight();
+}
+
+UINT QFE::GRAPHIC::DirectXResourceContainer::GetResourceWidth(DirectXResourceHandle handle) const {
+	return resources.at(static_cast<uint32_t>(handle)).GetResourceWidth();
+}
+
 bool DirectXResourceContainer::TransitionResource(
 	DirectXResourceHandle handle, ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES newState) {
 	// 引数の検査

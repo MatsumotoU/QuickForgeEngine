@@ -92,3 +92,18 @@ void QFE::GRAPHIC::RenderPass::SetRenderTarget(
 		QFE_REPORT_SYSTEM_ERROR("Offscreen render target is not implemented yet in RenderPass::SetRenderTarget", SystemError::Abort);
 	}
 }
+
+void RenderPass::TransitionCurrentBackBufferBarrier(ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState) {
+		D3D12_RESOURCE_BARRIER barrier{};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.pResource = swapChain_->GetCurrentBackBuffer();
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		barrier.Transition.StateBefore = beforeState;
+		barrier.Transition.StateAfter = afterState;
+		commandList->ResourceBarrier(1, &barrier);
+}
+
+ID3D12Resource* RenderPass::GetCurrentBackBuffer() const {
+	return swapChain_->GetCurrentBackBuffer();
+}

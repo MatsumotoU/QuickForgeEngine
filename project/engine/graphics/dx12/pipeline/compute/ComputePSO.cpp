@@ -29,3 +29,21 @@ void ComputePSO::CreatePipelineStateObject(
     hr = device->CreateComputePipelineState(&computePsoDesc, IID_PPV_ARGS(&computePipelineState_));
     if (FAILED(hr)) { QFE_REPORT_SYSTEM_ERROR("Failed to create compute pipeline state", SystemError::Abort); }
 }
+
+void QFE::GRAPHIC::ComputePSO::SetThreadGroupSize(UINT sizeX, UINT sizeY, UINT sizeZ) {
+    threadGroupSizeX_ = sizeX;
+    threadGroupSizeY_ = sizeY;
+	threadGroupSizeZ_ = sizeZ;
+	isSetThreadGroupSize_ = true;
+}
+
+void ComputePSO::GetThreadGroupSize(UINT& sizeX, UINT& sizeY, UINT& sizeZ) {
+    if (!isSetThreadGroupSize_) {
+        QFE_LOG("Thread group size has not been set in ComputePSO::GetThreadGroupSize");
+        sizeX = sizeY = sizeZ = 0;
+        return;
+    }
+    sizeX = threadGroupSizeX_;
+    sizeY = threadGroupSizeY_;
+	sizeZ = threadGroupSizeZ_;
+}

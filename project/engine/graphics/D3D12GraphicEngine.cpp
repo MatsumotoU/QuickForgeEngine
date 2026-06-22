@@ -68,7 +68,7 @@ void D3D12GraphicEngine::Initialize() {
 	resourceContainerInfo.assignDsvFunc = [&](ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* desc)
 		{return descriptorHeapManager_->AssignDsvHeap(directXDevice_->GetDevice(), resource, desc); };
 	resourceContainerInfo.assignUavFunc = [&](ID3D12Resource* resource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* desc)
-		{return DescriptorHandles{}; };
+		{return descriptorHeapManager_->AssignUavHeap(directXDevice_->GetDevice(), resource,nullptr, desc); };
 	resourceContainer_->Initialize(resourceContainerInfo);
 
 	// RenderPassの初期化設定
@@ -259,6 +259,14 @@ PSOHandle D3D12GraphicEngine::GetBuiltInPipelineStateObject(
 	return psoHandle;
 }
 
+ComputePSOHandle D3D12GraphicEngine::CreateComputePipelineStateObject(
+	const std::string& dirPath, const std::string& csFileName) {
+
+	ComputePSOHandle computePSOHandle = 
+		computePipelineManager_->GenerateComputePipelineStateObject(dirPath, csFileName);
+	return computePSOHandle;
+}
+
 size_t D3D12GraphicEngine::GetResourceArraySize(DirectXResourceHandle handle) {
 	size_t stride = resourceContainer_->GetResourceStrideInBytes(handle);
 	if (stride == 0) {
@@ -267,6 +275,34 @@ size_t D3D12GraphicEngine::GetResourceArraySize(DirectXResourceHandle handle) {
 	}
 	size_t size = resourceContainer_->GetResourceSizeInBytes(handle);
 	return size / stride;
+}
+
+DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateUAVBuffer(uint32_t width, uint32_t height) {
+	D3D12_RESOURCE_DESC texDesc{};
+	texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	texDesc.Width = static_cast<UINT>(width);                     // 画面の横幅
+	texDesc.Height = static_cast<UINT>(height);                    // 画面の縦幅
+	texDesc.DepthOrArraySize = 1;
+	texDesc.MipLevels = 1;                     // CSで直接塗るためミップマップは1でOK
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // バックバッファと合わせておく
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+	// リソースを生成
+	DirectXResourceHandle handle =
+		resourceContainer_->CreateResource(
+			directXDevice_->GetDevice(), texDesc, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_HEAP_TYPE_DEFAULT);
+
+	// UAVの生成
+	CereateViewInfo createViewInfo{};
+	createViewInfo.viewType = ViewTypeFlags::UnorderedAccessView;
+	createViewInfo.uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	createViewInfo.uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+	resourceContainer_->CreateResourceView(handle, createViewInfo);
+
+	return handle;
 }
 
 void D3D12GraphicEngine::TestDraw(
@@ -323,6 +359,36 @@ void D3D12GraphicEngine::TestDraw(
 	 
 	UINT vertexCount = static_cast<UINT>(GetResourceArraySize(vertexBufferHandle));
 	commandList->DrawInstanced(vertexCount, 1, 0, 0);
+}
+
+void D3D12GraphicEngine::TestCompute(ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle) {
+	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	resourceContainer_->TransitionResource( uavHandle, commandList,D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	commandList->SetPipelineState(computePipelineManager_->GetPipelineState(computePSOHandle));
+	commandList->SetComputeRootSignature(computePipelineManager_->GetRootSignature(computePSOHandle));
+
+	// UAVバッファをルートパラメータにバインド
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
+	commandList->SetComputeRootDescriptorTable(0, gpuHandle);
+
+	UINT threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ;
+	computePipelineManager_->GetThreadGroupSize(computePSOHandle, threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ);
+
+	UINT resourceWidth = resourceContainer_->GetResourceWidth(uavHandle);
+	UINT resourceHeight = resourceContainer_->GetResourceHeight(uavHandle);
+	commandList->Dispatch(resourceWidth/threadGroupSizeX, resourceHeight/threadGroupSizeY, threadGroupSizeZ);
+
+	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	renderPass_->TransitionCurrentBackBufferBarrier(
+		commandList, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
+
+	commandList->CopyResource(
+		renderPass_->GetCurrentBackBuffer(), resourceContainer_->GetResource(uavHandle));
+
+	renderPass_->TransitionCurrentBackBufferBarrier(
+		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {

@@ -47,6 +47,10 @@ namespace QFE::GRAPHIC {
 			ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
 			RenderTargetHandle renderTargetHandle = RenderTargetHandle::SwapChain);
 
+
+		void TransitionCurrentBackBufferBarrier(ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState);
+		ID3D12Resource* GetCurrentBackBuffer() const;
+
 	private:
 		std::unique_ptr<SwapChain> swapChain_;
 		RenderPassInitializeInfo initializeInfo_;

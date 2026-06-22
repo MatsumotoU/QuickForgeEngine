@@ -98,6 +98,11 @@ namespace QFE::GRAPHIC {
 		/// @brief あるリソースハンドルに対応するリソースのサイズ（バイト単位）を取得します。これは主にバッファリソースで使用されます。
 		size_t GetResourceSizeInBytes(DirectXResourceHandle handle) const;
 
+		/// @brief あるリソースハンドルに対応するリソースの幅を取得します。これは主にテクスチャリソースで使用されます。
+		UINT GetResourceWidth(DirectXResourceHandle handle) const;
+		/// @brief あるリソースハンドルに対応するリソースの高さを取得します。これは主にテクスチャリソースで使用されます。
+		UINT GetResourceHeight(DirectXResourceHandle handle) const;
+
 		/// @brief あるリソースハンドルに対応するリソースのマップされたCPU側のポインタを取得する
 		template<typename T>
 		T* GetMappedData(DirectXResourceHandle handle) {

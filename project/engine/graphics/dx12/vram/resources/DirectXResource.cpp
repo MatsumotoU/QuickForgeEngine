@@ -240,3 +240,15 @@ size_t QFE::GRAPHIC::DirectXResource::GetResourceSizeInBytes() const {
 	uint64_t resourceSize = desc.Width;
 	return static_cast<size_t>(resourceSize);
 }
+
+UINT QFE::GRAPHIC::DirectXResource::GetResourceWidth() const {
+	D3D12_RESOURCE_DESC desc = resource_->GetDesc();
+	uint64_t resourceSize = desc.Width;
+	return static_cast<UINT>(resourceSize);
+}
+
+UINT QFE::GRAPHIC::DirectXResource::GetResourceHeight() const {
+	D3D12_RESOURCE_DESC desc = resource_->GetDesc();
+	uint64_t resourceSize = desc.Height;
+	return static_cast<UINT>(resourceSize);
+}

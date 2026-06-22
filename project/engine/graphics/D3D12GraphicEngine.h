@@ -75,6 +75,9 @@ namespace QFE::GRAPHIC {
 		PSOHandle GetBuiltInPipelineStateObject(
 			BuiltInShaderPair builtInShaderPair, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
 		
+		/// @brief コンピュートシェーダーのPSOを生成します
+		ComputePSOHandle CreateComputePipelineStateObject(const std::string& dirPath, const std::string& csFileName);
+
 		/// @brief あるリソースの配列の数を取得する.
 		size_t GetResourceArraySize(DirectXResourceHandle handle);
 
@@ -96,9 +99,15 @@ namespace QFE::GRAPHIC {
 			return resourceContainer_->template GetMappedData<T>(handle);
 		}
 
+		/// @brief UAVバッファを作成
+		DirectXResourceHandle CreateUAVBuffer(uint32_t width, uint32_t height);
+		
 		void TestDraw(
 			PSOHandle psoHandle,ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
 			DirectXResourceHandle vertexBufferHandle,std::vector<DirectXResourceHandle> rootResources);
+
+		void TestCompute(
+			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle);
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.

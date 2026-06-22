@@ -51,6 +51,10 @@ namespace QFE::GRAPHIC {
 		void SetStrideInBytes(size_t strideInBytes);
 		/// @brief リソースのサイズをバイト単位で取得します。これは主にバッファリソースで使用されます。
 		size_t GetResourceSizeInBytes() const;
+		/// @brief リソースの幅を取得します。これは主にテクスチャリソースで使用されます。
+		UINT GetResourceWidth() const;
+		/// @brief リソースの高さを取得します。これは主にテクスチャリソースで使用されます。
+		UINT GetResourceHeight() const;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource_;// VRAM上のリソース

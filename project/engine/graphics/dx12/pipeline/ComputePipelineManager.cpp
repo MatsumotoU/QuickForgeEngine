@@ -21,6 +21,7 @@ ComputePSOHandle ComputePipelineManager::GenerateComputePipelineStateObject(cons
 
 	// ルートシグネチャの生成
 	std::vector<RootParameterElement> rootParameters = initializeInfo_.getRootParameterFunc(csBlobMap_[csFileName]);
+	computePSO->GetRootParameter().Initialize(D3D12_ROOT_SIGNATURE_FLAG_NONE);
 	for(RootParameterElement& rootParameter : rootParameters) {
 		computePSO->GetRootParameter().CreateRootParameter(rootParameter, D3D12_SHADER_VISIBILITY_ALL);
 	}
@@ -30,6 +31,11 @@ ComputePSOHandle ComputePipelineManager::GenerateComputePipelineStateObject(cons
 
 	// パイプラインステートオブジェクトの生成
 	computePSO->CreatePipelineStateObject(csBlobMap_[csFileName], *rootSigDesc, initializeInfo_.device);
+
+	// スレッドグループサイズの設定
+	UINT sizeX, sizeY, sizeZ;
+	initializeInfo_.getThreadGroupSizeFunc(csBlobMap_[csFileName], sizeX, sizeY, sizeZ);
+	computePSO->SetThreadGroupSize(sizeX, sizeY, sizeZ);
 
 	// ComputePSOを生成
 	uint32_t handle = computePSOs_.push_back(nullptr); // 一時的にnullptrを追加して、後でunique_ptrに置き換える
@@ -53,4 +59,24 @@ ID3D12PipelineState* QFE::GRAPHIC::ComputePipelineManager::GetPipelineState(cons
 		return nullptr;
 	}
 	return computePSOs_.at(static_cast<uint32_t>(handle))->GetPipelineState();
+}
+
+std::vector<D3D12_ROOT_PARAMETER_TYPE> QFE::GRAPHIC::ComputePipelineManager::GetRootParameterTypes(const ComputePSOHandle& handle) const {
+	if(!computePSOs_.Contains(static_cast<uint32_t>(handle))) {
+		QFE_LOG(std::format("ComputePSOHandle {} is invalid. Cannot retrieve root parameter types.", static_cast<uint32_t>(handle)));
+		assert(false && "Invalid ComputePSOHandle.");
+		return {};
+	}
+	return computePSOs_.at(static_cast<uint32_t>(handle))->GetRootParameter().GetRootParameterTypes();
+}
+
+bool ComputePipelineManager::GetThreadGroupSize(const ComputePSOHandle& handle, UINT& sizeX, UINT& sizeY, UINT& sizeZ) const {
+	if(!computePSOs_.Contains(static_cast<uint32_t>(handle))) {
+		QFE_LOG(std::format("ComputePSOHandle {} is invalid. Cannot retrieve thread group size.", static_cast<uint32_t>(handle)));
+		assert(false && "Invalid ComputePSOHandle.");
+		return false;
+	}
+
+	computePSOs_.at(static_cast<uint32_t>(handle))->GetThreadGroupSize(sizeX, sizeY, sizeZ);
+	return computePSOs_.at(static_cast<uint32_t>(handle))->IsThreadGroupSizeSet();
 }
