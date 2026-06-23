@@ -36,6 +36,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::GRAPHIC::ComputePSOHandle computePSOHandle = 
 		graphicEngine->CreateComputePipelineStateObject("engine/resources/shaders/cs/", "TestCompute.hlsl");
 
+	graphicEngine->CompileRaytracingShader("engine/resources/shaders/rt/", "MiniRaytracing.hlsl");
+
 	float time = 0.0f;
 
 	// メインループ

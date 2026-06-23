@@ -13,9 +13,13 @@
 
 #include "dx12/pipeline/GraphicPipelineManager.h"
 #include "dx12/pipeline/ComputePipelineManager.h"
+#include "dx12/pipeline/RayTracingPipelineManager.h"
+
 #include "dx12/TextureLoader.h"
 
 #include "dx12/vram/descriptors/DescriptorHandles.h"
+
+#include "string/MyString.h"
 
 using namespace QFE::GRAPHIC;
 
@@ -37,7 +41,8 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	textureLoader_(std::make_unique<TextureLoader>()),
 	shaderCompiler_(std::make_unique<ShaderCompiler>()),
 	shaderReflection_(std::make_unique<ShaderReflection>()),
-	computePipelineManager_(std::make_unique<ComputePipelineManager>())
+	computePipelineManager_(std::make_unique<ComputePipelineManager>()),
+	rayTracingPipelineManager_(std::make_unique<RaytracingPipelineManager>())
 
 {}
 
@@ -119,6 +124,13 @@ void D3D12GraphicEngine::Initialize() {
 		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
 	computePipelineManagerInfo.device = directXDevice_->GetDevice();
 	computePipelineManager_->Initialize(computePipelineManagerInfo);
+
+	// RayTracingパイプラインマネージャの初期化
+	RaytracingPipelineManagerInitializeInfo rayTracingPipelineManagerInfo{};
+	rayTracingPipelineManagerInfo.compileFunc = 
+		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
+	rayTracingPipelineManagerInfo.device = directXDevice_->GetDevice();
+	rayTracingPipelineManager_->Initialize(rayTracingPipelineManagerInfo);
 	
 	// テクスチャ管理クラスの初期化
 	TextureLoaderInitializeInfo textureLoaderInfo{};
@@ -178,6 +190,7 @@ void D3D12GraphicEngine::PostDraw() {
 }
 
 void D3D12GraphicEngine::Shutdown() {
+	rayTracingPipelineManager_->Finalize();
 	textureLoader_->Finalize();
 	fence_->Shutdown();
 	shaderCompiler_->Finalize();
@@ -392,6 +405,10 @@ void D3D12GraphicEngine::TestCompute(ComputePSOHandle computePSOHandle, DirectXR
 
 	renderPass_->TransitionCurrentBackBufferBarrier(
 		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
+void QFE::GRAPHIC::D3D12GraphicEngine::CompileRaytracingShader(const std::string& dirPath, const std::string& rchFileName) {
+	rayTracingPipelineManager_->CompileRaytracingShader(ConvertString(dirPath + rchFileName), L"lib_6_3");
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {

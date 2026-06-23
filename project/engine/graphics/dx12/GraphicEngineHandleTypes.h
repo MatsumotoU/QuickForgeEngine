@@ -9,6 +9,7 @@ namespace QFE::GRAPHIC {
 	enum class ShaderPairHandle : uint32_t { Invalid = UINT32_MAX };
 	enum class PSOHandle : uint32_t { Invalid = UINT32_MAX };
 	enum class ComputePSOHandle : uint32_t { Invalid = UINT32_MAX };
+	enum class RTPSOHandle : uint32_t { Invalid = UINT32_MAX };
 
 	enum class ViewPortHandle : uint32_t { Invalid = UINT32_MAX };
 	enum class ScissorRectHandle : uint32_t { Invalid = UINT32_MAX };

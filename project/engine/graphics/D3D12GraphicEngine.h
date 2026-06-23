@@ -32,6 +32,7 @@ namespace QFE::GRAPHIC {
 	class ShaderCompiler;
 	class GraphicPipelineManager;
 	class ComputePipelineManager;
+	class RaytracingPipelineManager;
 	class TextureLoader;
 	class RenderPass;
 
@@ -109,6 +110,8 @@ namespace QFE::GRAPHIC {
 		void TestCompute(
 			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle);
 
+		void CompileRaytracingShader(const std::string& dirPath, const std::string& rchFileName);
+
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
 		void LegacyInitialize(uint32_t width, uint32_t height);
@@ -129,6 +132,7 @@ namespace QFE::GRAPHIC {
 		std::unique_ptr<ShaderCompiler> shaderCompiler_;// シェーダーコンパイルクラス
 		std::unique_ptr<GraphicPipelineManager> graphicPipelineManager_;// グラフィックパイプライン管理クラス
 		std::unique_ptr<ComputePipelineManager> computePipelineManager_;// コンピュートパイプライン管理クラス
+		std::unique_ptr<RaytracingPipelineManager> rayTracingPipelineManager_;// レイトレーシングパイプライン管理クラス
 
 		std::unique_ptr<TextureLoader> textureLoader_;// テクスチャ管理クラス
 
