@@ -361,23 +361,26 @@ void D3D12GraphicEngine::TestDraw(
 	commandList->DrawInstanced(vertexCount, 1, 0, 0);
 }
 
-void D3D12GraphicEngine::TestCompute(ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle) {
+void D3D12GraphicEngine::TestCompute(ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle) {
 	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	resourceContainer_->TransitionResource( uavHandle, commandList,D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 	commandList->SetPipelineState(computePipelineManager_->GetPipelineState(computePSOHandle));
 	commandList->SetComputeRootSignature(computePipelineManager_->GetRootSignature(computePSOHandle));
 
 	// UAVバッファをルートパラメータにバインド
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
-	commandList->SetComputeRootDescriptorTable(0, gpuHandle);
+	commandList->SetComputeRootDescriptorTable(1, gpuHandle);
+
+	D3D12_GPU_VIRTUAL_ADDRESS constantBufferGPUAddress = resourceContainer_->GetGpuVirtualAddress(constantBufferHandle);
+	commandList->SetComputeRootConstantBufferView(0, constantBufferGPUAddress);
 
 	UINT threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ;
 	computePipelineManager_->GetThreadGroupSize(computePSOHandle, threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ);
 
 	UINT resourceWidth = resourceContainer_->GetResourceWidth(uavHandle);
 	UINT resourceHeight = resourceContainer_->GetResourceHeight(uavHandle);
-	commandList->Dispatch(resourceWidth/threadGroupSizeX, resourceHeight/threadGroupSizeY, threadGroupSizeZ);
+	commandList->Dispatch(resourceWidth / threadGroupSizeX, resourceHeight / threadGroupSizeY, threadGroupSizeZ);
 
 	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
 

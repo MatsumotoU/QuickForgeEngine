@@ -27,8 +27,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// UAVバッファの作成とルートリソースの設定
 	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720);
 
+	SphireForGPU sphereData;
+	sphereData.center = { 0.0f, 0.0f, 0.5f };
+	sphereData.radius = 1.0f;
+	QFE::GRAPHIC::DirectXResourceHandle constantBufferHandle = 
+		graphicEngine->CreateConstantBuffer<SphireForGPU>(sphereData, "TestConstantBuffer");
+
 	QFE::GRAPHIC::ComputePSOHandle computePSOHandle = 
 		graphicEngine->CreateComputePipelineStateObject("engine/resources/shaders/cs/", "TestCompute.hlsl");
+
+	float time = 0.0f;
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -44,7 +52,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		} else {
 			graphicEngine->PreDraw();
 
-			graphicEngine->TestCompute(computePSOHandle, uavBufferHandle);
+			time += 0.016f; // 仮の時間の更新
+			SphireForGPU* sphereDataPtr = graphicEngine->GetConstantBufferData<SphireForGPU>(constantBufferHandle);
+			sphereDataPtr->center.x = sinf(time) * 3.0f;
+			sphereDataPtr->center.z = cosf(time) * 3.0f;
+			sphereDataPtr->center.y = cosf(time) + 1.0f;
+
+			graphicEngine->TestCompute(computePSOHandle, uavBufferHandle, constantBufferHandle);
 
 			graphicEngine->PostDraw();
 		}

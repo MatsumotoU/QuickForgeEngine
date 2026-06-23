@@ -107,7 +107,7 @@ namespace QFE::GRAPHIC {
 			DirectXResourceHandle vertexBufferHandle,std::vector<DirectXResourceHandle> rootResources);
 
 		void TestCompute(
-			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle);
+			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle);
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.

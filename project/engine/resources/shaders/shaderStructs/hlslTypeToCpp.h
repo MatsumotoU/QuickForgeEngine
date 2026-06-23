@@ -18,6 +18,17 @@ using float32_t3x3 = QFE::MATH::Matrix3x3;
 using float32_t2x2 = QFE::MATH::Matrix2x2;
 #endif
 
+struct SphireForGPU {
+	#ifdef __cplusplus
+	SphireForGPU()
+		: center{ 0.0f, 0.0f, 0.0f }
+		, radius(1.0f) {
+	}
+#endif
+	float32_t3 center;
+	float32_t radius;
+};
+
 struct CameraForGPU {
 #ifdef __cplusplus
 	CameraForGPU()

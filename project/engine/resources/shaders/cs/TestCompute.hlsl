@@ -1,4 +1,7 @@
+#include "../ShaderStructs/hlslTypeToCpp.h"
+
 RWTexture2D<float4> g_outputTex : register(u0);
+ConstantBuffer<SphireForGPU> g_sphere : register(b0);
 
 // レイ（光線）の構造体
 struct Ray
@@ -66,8 +69,8 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
     // 1. 2つの物体を定義
     Sphere targetSphere; // 赤い球体
-    targetSphere.center = float3(0.0f, 0.5f, 0.0f); // 少し上に浮かせる
-    targetSphere.radius = 1.0f;
+    targetSphere.center = g_sphere.center; // 少し上に浮かせる
+    targetSphere.radius = g_sphere.radius;
     targetSphere.color = float3(0.9f, 0.2f, 0.2f);
 
     Sphere floorSphere; // 地面（めちゃくちゃデカい球体の一部分を床に見立てる）
