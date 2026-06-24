@@ -27,12 +27,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// UAVバッファの作成とルートリソースの設定
 	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720);
 
-	QFE::GRAPHIC::ShaderPairElement shaderPairElement;
-	shaderPairElement.vsDirName = "engine/resources/shaders/vs/";
-	shaderPairElement.psDirName = "engine/resources/shaders/ps/";
-	shaderPairElement.vsFileName = "MiniShader.VS.hlsl";
-	shaderPairElement.psFileName = "Random.PS.hlsl";
-	QFE::GRAPHIC::ShaderPairHandle randShader = graphicEngine->CreateShaderPair(shaderPairElement);
+	QFE::GRAPHIC::RTPSOHandle rtpsoHandle = graphicEngine->CreateRayTracingPipelineStateObject(
+		"engine/resources/shaders/rt/","MiniRaytracing.hlsl");
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {

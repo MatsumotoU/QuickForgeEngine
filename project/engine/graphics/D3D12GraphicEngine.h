@@ -102,6 +102,8 @@ namespace QFE::GRAPHIC {
 
 		/// @brief UAVバッファを作成
 		DirectXResourceHandle CreateUAVBuffer(uint32_t width, uint32_t height);
+
+		RTPSOHandle CreateRayTracingPipelineStateObject(const std::string& dirPath, const std::string& rgsFileName);
 		
 		void TestDraw(
 			PSOHandle psoHandle,ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
