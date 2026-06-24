@@ -27,10 +27,13 @@ namespace QFE::GRAPHIC {
 		/// @brief 終了処理
 		void Finalize();
 
-		void CompileRaytracingShader(const std::wstring& filePath, const wchar_t* profile);
+		
 
 		
 	private:
+		/// @brief レイトレーシングシェーダーをコンパイルする
+		IDxcBlob* CompileRaytracingShader(const std::wstring& filePath, const wchar_t* profile);
+
 		bool isActive_ = false;
 		Microsoft::WRL::ComPtr<ID3D12Device5> device_;
 		std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc;

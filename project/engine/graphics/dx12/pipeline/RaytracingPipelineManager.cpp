@@ -23,7 +23,7 @@ void RaytracingPipelineManager::Finalize() {
 	}
 }
 
-void QFE::GRAPHIC::RaytracingPipelineManager::CompileRaytracingShader(const std::wstring& filePath, const wchar_t* profile) {
+IDxcBlob* QFE::GRAPHIC::RaytracingPipelineManager::CompileRaytracingShader(const std::wstring& filePath, const wchar_t* profile) {
 	// シェーダーのコンパイルを実行
 	IDxcBlob* shaderBlob = nullptr;
 	if (compileFunc) {
@@ -34,9 +34,7 @@ void QFE::GRAPHIC::RaytracingPipelineManager::CompileRaytracingShader(const std:
 	if(shaderBlob) {
 		// シェーダーのコンパイルが成功した場合の処理
 		QFE_LOG("RaytracingPipelineManager: Shader compiled successfully.");
-		shaderBlob->Release(); // 使用後はリリース
-	} else {
-		// シェーダーのコンパイルが失敗した場合の処理
-		QFE_LOG("RaytracingPipelineManager: Shader compilation failed.");
+		return shaderBlob;
 	}
+	return shaderBlob;
 }

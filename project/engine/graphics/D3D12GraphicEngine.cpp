@@ -407,10 +407,6 @@ void D3D12GraphicEngine::TestCompute(ComputePSOHandle computePSOHandle, DirectXR
 		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::CompileRaytracingShader(const std::string& dirPath, const std::string& rchFileName) {
-	rayTracingPipelineManager_->CompileRaytracingShader(ConvertString(dirPath + rchFileName), L"lib_6_3");
-}
-
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
 	depthStencilBufferHandle_ = CreateDepthStencilBuffer(width, height);
 }

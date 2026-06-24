@@ -110,8 +110,6 @@ namespace QFE::GRAPHIC {
 		void TestCompute(
 			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle);
 
-		void CompileRaytracingShader(const std::string& dirPath, const std::string& rchFileName);
-
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
 		void LegacyInitialize(uint32_t width, uint32_t height);

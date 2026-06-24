@@ -27,18 +27,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// UAVバッファの作成とルートリソースの設定
 	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720);
 
-	SphireForGPU sphereData;
-	sphereData.center = { 0.0f, 0.0f, 0.5f };
-	sphereData.radius = 1.0f;
-	QFE::GRAPHIC::DirectXResourceHandle constantBufferHandle = 
-		graphicEngine->CreateConstantBuffer<SphireForGPU>(sphereData, "TestConstantBuffer");
-
-	QFE::GRAPHIC::ComputePSOHandle computePSOHandle = 
-		graphicEngine->CreateComputePipelineStateObject("engine/resources/shaders/cs/", "TestCompute.hlsl");
-
-	graphicEngine->CompileRaytracingShader("engine/resources/shaders/rt/", "MiniRaytracing.hlsl");
-
-	float time = 0.0f;
+	QFE::GRAPHIC::ShaderPairElement shaderPairElement;
+	shaderPairElement.vsDirName = "engine/resources/shaders/vs/";
+	shaderPairElement.psDirName = "engine/resources/shaders/ps/";
+	shaderPairElement.vsFileName = "MiniShader.VS.hlsl";
+	shaderPairElement.psFileName = "Random.PS.hlsl";
+	QFE::GRAPHIC::ShaderPairHandle randShader = graphicEngine->CreateShaderPair(shaderPairElement);
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -53,14 +47,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		} else {
 			graphicEngine->PreDraw();
-
-			time += 0.016f; // 仮の時間の更新
-			SphireForGPU* sphereDataPtr = graphicEngine->GetConstantBufferData<SphireForGPU>(constantBufferHandle);
-			sphereDataPtr->center.x = sinf(time) * 3.0f;
-			sphereDataPtr->center.z = cosf(time) * 3.0f;
-			sphereDataPtr->center.y = cosf(time) + 1.0f;
-
-			graphicEngine->TestCompute(computePSOHandle, uavBufferHandle, constantBufferHandle);
 
 			graphicEngine->PostDraw();
 		}
