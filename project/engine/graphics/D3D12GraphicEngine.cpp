@@ -10,6 +10,7 @@
 
 #include "dx12/pipeline/pso/ShaderCompiler.h"
 #include "dx12/pipeline/pso/ShaderReflection.h"
+#include "dx12/pipeline/rtpso/ShaderLibReflection.h"
 
 #include "dx12/pipeline/GraphicPipelineManager.h"
 #include "dx12/pipeline/ComputePipelineManager.h"
@@ -42,7 +43,8 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	shaderCompiler_(std::make_unique<ShaderCompiler>()),
 	shaderReflection_(std::make_unique<ShaderReflection>()),
 	computePipelineManager_(std::make_unique<ComputePipelineManager>()),
-	rayTracingPipelineManager_(std::make_unique<RaytracingPipelineManager>())
+	rayTracingPipelineManager_(std::make_unique<RaytracingPipelineManager>()),
+	shaderLibReflection_(std::make_unique<ShaderLibReflection>())
 
 {}
 
@@ -101,12 +103,10 @@ void D3D12GraphicEngine::Initialize() {
 
 	// グラフィックパイプラインマネージャの初期化
 	GraphicPipelineManagerInitializeInfo graphicPipelineManagerInfo{};
-	graphicPipelineManagerInfo.reflectionFunc = 
-		[&](IDxcBlob* shaderBlob) { shaderReflection_->RunShaderReflection(shaderBlob, ShaderCompileType::Default); };
 	graphicPipelineManagerInfo.getInputLayoutFunc = 
-		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetInputLayoutElement(shaderBlob, ShaderCompileType::Default); };
+		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetInputLayoutElement(shaderBlob); };
 	graphicPipelineManagerInfo.getRootParameterFunc = 
-		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob, ShaderCompileType::Default); };
+		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob); };
 	graphicPipelineManagerInfo.compileFunc = 
 		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
 	graphicPipelineManagerInfo.device = directXDevice_->GetDevice();
@@ -114,12 +114,10 @@ void D3D12GraphicEngine::Initialize() {
 
 	// Computeパイプラインマネージャの初期化
 	ComputePipelineManagerInitializeInfo computePipelineManagerInfo{};
-	computePipelineManagerInfo.reflectionFunc = 
-		[&](IDxcBlob* shaderBlob) { shaderReflection_->RunShaderReflection(shaderBlob, ShaderCompileType::Default); };
 	computePipelineManagerInfo.getRootParameterFunc = 
-		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob, ShaderCompileType::Default); };
+		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob); };
 	computePipelineManagerInfo.getThreadGroupSizeFunc = 
-		[&](IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ) { return shaderReflection_->GetThreadGroupSize(shaderBlob, sizeX, sizeY, sizeZ, ShaderCompileType::Default); };
+		[&](IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ) { return shaderReflection_->GetThreadGroupSize(shaderBlob, sizeX, sizeY, sizeZ); };
 	computePipelineManagerInfo.compileFunc = 
 		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
 	computePipelineManagerInfo.device = directXDevice_->GetDevice();
@@ -130,7 +128,7 @@ void D3D12GraphicEngine::Initialize() {
 	rayTracingPipelineManagerInfo.compileFunc = 
 		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
 	rayTracingPipelineManagerInfo.getRootParameterFunc = 
-		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob, ShaderCompileType::Library); };
+		[&](IDxcBlob* shaderBlob) { return shaderLibReflection_->GetRootParameterElement(shaderBlob); };
 	rayTracingPipelineManagerInfo.device = directXDevice_->GetDevice();
 	rayTracingPipelineManager_->Initialize(rayTracingPipelineManagerInfo);
 	

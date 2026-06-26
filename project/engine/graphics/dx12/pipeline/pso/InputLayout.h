@@ -20,7 +20,7 @@ namespace QFE::GRAPHIC {
 		void CreatePrimitivePresetInputLayout();
 
 		/// @brief 頂点シェーダーへ送る要素を追加
-		void CreateInputElementDesc(const LPCSTR& semanticName, const UINT& semanticIndex, const DXGI_FORMAT& format, const UINT& alignedByteOffset);
+		void CreateInputElementDesc(const std::string& semanticName, const UINT& semanticIndex, const DXGI_FORMAT& format, const UINT& alignedByteOffset);
 		/// @brief 頂点シェーダーへ送る要素を追加
 		void CreateInputElementDesc(const InputElement& inputElement);
 
@@ -28,6 +28,7 @@ namespace QFE::GRAPHIC {
 		D3D12_INPUT_LAYOUT_DESC* GetInputLayoutDesc();
 
 	private:
+		SafeVector<std::string> semanticNames_;
 		SafeVector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs_;
 		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 

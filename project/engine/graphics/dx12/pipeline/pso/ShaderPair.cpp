@@ -14,15 +14,18 @@ void QFE::GRAPHIC::ShaderPair::Create(
 		return;
 	}
 
-	// シェーダーのリフレクションを使用して、頂点シェーダーからInputLayoutを生成する
-	funcs.reflectionFunc(vsBlob);
-
 	// 頂点シェーダーの入力要素を取得
 	inputLayout_.Initialize();
 	std::vector<InputElement> inputElements = funcs.getInputLayoutFunc(vsBlob);
 	for (const auto& element : inputElements) {
 		inputLayout_.CreateInputElementDesc(element);
 	}
+	// 頂点シェーダーの入力要素をログに出力
+	 for(UINT i = 0; i < inputLayout_.GetInputLayoutDesc()->NumElements; ++i) {
+		 const D3D12_INPUT_ELEMENT_DESC& desc = inputLayout_.GetInputLayoutDesc()->pInputElementDescs[i];
+		 QFE_LOG(std::format("Input Element {}: SemanticName={}, SemanticIndex={}, AlignedByteOffset={}",
+			 i, desc.SemanticName, desc.SemanticIndex, desc.AlignedByteOffset));
+	 }
 
 	// ルートパラメーターの初期化
 	rootParameter_.Initialize();
@@ -32,7 +35,6 @@ void QFE::GRAPHIC::ShaderPair::Create(
 		rootParameter_.CreateRootParameter(element, D3D12_SHADER_VISIBILITY_VERTEX);
 	}
 	// シェーダーのリフレクションを使用して、ピクセルシェーダーからRootParameterを生成する
-	funcs.reflectionFunc(psBlob);
 	std::vector<RootParameterElement> psRootParameterElements = funcs.getRootParameterFunc(psBlob);
 	for (const auto& element : psRootParameterElements) {
 		rootParameter_.CreateRootParameter(element, D3D12_SHADER_VISIBILITY_PIXEL);

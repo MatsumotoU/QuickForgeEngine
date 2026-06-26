@@ -29,6 +29,7 @@ namespace QFE::GRAPHIC {
 	class DirectXCommandManager;
 	class Fence;
 	class ShaderReflection;
+	class ShaderLibReflection;
 	class ShaderCompiler;
 	class GraphicPipelineManager;
 	class ComputePipelineManager;
@@ -129,6 +130,7 @@ namespace QFE::GRAPHIC {
 		std::unique_ptr<Fence> fence_;// フェンス管理クラス
 
 		std::unique_ptr<ShaderReflection> shaderReflection_;// シェーダーリフレクションクラス
+		std::unique_ptr<ShaderLibReflection> shaderLibReflection_;// シェーダーライブラリリフレクションクラス
 		std::unique_ptr<ShaderCompiler> shaderCompiler_;// シェーダーコンパイルクラス
 		std::unique_ptr<GraphicPipelineManager> graphicPipelineManager_;// グラフィックパイプライン管理クラス
 		std::unique_ptr<ComputePipelineManager> computePipelineManager_;// コンピュートパイプライン管理クラス

@@ -12,7 +12,6 @@
 namespace QFE::GRAPHIC {
 	/// @brief シェーダーペアに使う関数群をまとめた構造体
 	struct ShaderPairFunctions {
-		std::function<void(IDxcBlob* vsBlob)> reflectionFunc;
 		std::function<std::vector<InputElement>(IDxcBlob* vsBlob)> getInputLayoutFunc;
 		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc;
 		std::function<const D3D12_STATIC_SAMPLER_DESC* ()> getStaticSamplerFunc;

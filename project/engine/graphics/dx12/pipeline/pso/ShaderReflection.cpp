@@ -28,111 +28,57 @@ namespace {
 	};
 }
 
-
-ShaderReflection::ShaderReflection() {
-	HRESULT hr;
-	hr = DxcCreateInstance(CLSID_DxcContainerReflection, IID_PPV_ARGS(containerReflection_.GetAddressOf()));
-	if (!SUCCEEDED(hr)) {
-		QFE_REPORT_SYSTEM_ERROR("Failed to create DxcContainerReflection instance.",SystemError::Abort);
-	}
-}
-
-void ShaderReflection::RunShaderReflection(IDxcBlob* shaderBlob) {
-	HRESULT hr;
-	hr = containerReflection_->Load(shaderBlob);
-	if(SUCCEEDED(hr)) {
-		QFE_LOG("Shader blob loaded successfully into container reflection.");
-	} else {
-		QFE_REPORT_SYSTEM_ERROR("Failed to load shader blob into container reflection.", SystemError::Abort);
-	}
-	UINT32 partIndex;
-	hr = containerReflection_->FindFirstPartKind(DXC_PART_DXIL, &partIndex);
-	if(SUCCEEDED(hr)) {
-		QFE_LOG(std::format("DXIL part found in container at index {}.", partIndex));
-	} else {
-		QFE_REPORT_SYSTEM_ERROR("Failed to find DXIL part in container reflection.", SystemError::Abort);
-	}
-	hr = containerReflection_->GetPartReflection(partIndex, IID_PPV_ARGS(shaderReflection_.GetAddressOf()));
-	if(SUCCEEDED(hr)) {
-		QFE_LOG("Shader reflection interface obtained successfully.");
-	} else {
-		QFE_REPORT_SYSTEM_ERROR("Failed to get shader reflection interface from container reflection.", SystemError::Abort);
-	}
-}
-
 std::vector<InputElement> QFE::GRAPHIC::ShaderReflection::GetInputLayoutElement(IDxcBlob* shaderBlob) {
-	// shaderBlobが有効かどうかを確認
-	if (shaderBlob == nullptr) {
-		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
-	}
-	// シェーダーのリフレクションを実行
-	RunShaderReflection(shaderBlob);
-	return GetInputLayoutElement();
-}
-
-std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParameterElement(IDxcBlob* shaderBlob) {
-	// shaderBlobが有効かどうかを確認
-	if (shaderBlob == nullptr) {
-		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
-	}
-	// シェーダーのリフレクションを実行
-	RunShaderReflection(shaderBlob);
-	return GetRootParameterElement();
-}
-
-bool QFE::GRAPHIC::ShaderReflection::GetThreadGroupSize(IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ) {
-	// shaderBlobが有効かどうかを確認
-	if (shaderBlob == nullptr) {
-		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
-	}
-	// シェーダーのリフレクションを実行
-	RunShaderReflection(shaderBlob);
-	return GetThreadGroupSize(sizeX, sizeY, sizeZ);
-}
-
-std::vector<InputElement> QFE::GRAPHIC::ShaderReflection::GetInputLayoutElement() const {
 	std::vector<InputElement> inputLayoutElements;
+
+	// shaderBlobが有効かどうかを確認
+	if (shaderBlob == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
+	}
+	
 
 	// shaderReflection_が有効かどうかを確認
 	D3D12_SHADER_DESC shaderDesc{};
-	if (shaderReflection_ == nullptr) {
-		QFE_REPORT_SYSTEM_ERROR("Shader reflection interface is not initialized.", SystemError::Abort);
-	}
+	Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection = CreateShaderReflection(shaderBlob);
+
 	// シェーダーの基本情報を取得
-	HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
+	HRESULT hr = shaderReflection->GetDesc(&shaderDesc);
 	assert(SUCCEEDED(hr) && "Failed to get shader description.");
 	// 入力パラメータの情報を取得して渡された引数に設定
 	for (UINT i = 0; i < shaderDesc.InputParameters; ++i) {
 		InputElement element{};
 		D3D12_SIGNATURE_PARAMETER_DESC paramDesc{};
-		hr = shaderReflection_->GetInputParameterDesc(i, &paramDesc);
+		hr = shaderReflection->GetInputParameterDesc(i, &paramDesc);
 		assert(SUCCEEDED(hr) && "Failed to get input parameter description.");
 		element.semanticName = paramDesc.SemanticName;
 		element.semanticIndex = paramDesc.SemanticIndex;
 		element.format = FormatTable[paramDesc.ComponentType][GetBitCount(paramDesc.Mask)];
-		element.alignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;// 入力要素のオフセットは自動で計算させるため、D3D12_APPEND_ALIGNED_ELEMENTを使用
+		element.alignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 		inputLayoutElements.push_back(element);
 	}
 
 	return inputLayoutElements;
 }
 
-std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParameterElement() const {
+std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParameterElement(IDxcBlob* shaderBlob) {
 	std::vector<RootParameterElement> rootParameterElements;
-
-	// shaderReflection_が有効かどうかを確認
 	D3D12_SHADER_DESC shaderDesc{};
-	if (shaderReflection_ == nullptr) {
-		QFE_REPORT_SYSTEM_ERROR("Shader reflection interface is not initialized.", SystemError::Abort);
+
+	// shaderBlobが有効かどうかを確認
+	if (shaderBlob == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
 	}
+
+	// シェーダーのリフレクションを実行
+	Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection = CreateShaderReflection(shaderBlob);
 	// シェーダーの基本情報を取得
-	HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
+	HRESULT hr = shaderReflection->GetDesc(&shaderDesc);
 	assert(SUCCEEDED(hr) && "Failed to get shader description.");
 	// バウンドリソースの情報を取得して渡された引数に設定
 	for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 		RootParameterElement element;
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
-		hr = shaderReflection_->GetResourceBindingDesc(i, &bindDesc);
+		hr = shaderReflection->GetResourceBindingDesc(i, &bindDesc);
 		assert(SUCCEEDED(hr) && "Failed to get resource binding description.");
 		element.friendlyName = bindDesc.Name;
 		element.shaderInputType = bindDesc.Type;
@@ -143,10 +89,58 @@ std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParamet
 	return rootParameterElements;
 }
 
-bool QFE::GRAPHIC::ShaderReflection::GetThreadGroupSize(UINT& sizeX, UINT& sizeY, UINT& sizeZ) const {
-	if (shaderReflection_ == nullptr) return false;
+bool QFE::GRAPHIC::ShaderReflection::GetThreadGroupSize(IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ) {
+	// shaderBlobが有効かどうかを確認
+	if (shaderBlob == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
+	}
 
+	// シェーダーのリフレクションを実行
+	Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection = CreateShaderReflection(shaderBlob);
 	// スレッドグループサイズを取得
-	shaderReflection_->GetThreadGroupSize(&sizeX, &sizeY, &sizeZ);
+	shaderReflection->GetThreadGroupSize(&sizeX, &sizeY, &sizeZ);
 	return true;
+}
+
+Microsoft::WRL::ComPtr<IDxcContainerReflection> QFE::GRAPHIC::ShaderReflection::CreateContainerReflection(IDxcBlob* shaderBlob) {
+	HRESULT hr;
+	Microsoft::WRL::ComPtr<IDxcContainerReflection> containerReflection;
+	// IDxcContainerReflectionのインスタンスを作成
+	hr = DxcCreateInstance(CLSID_DxcContainerReflection, IID_PPV_ARGS(containerReflection.GetAddressOf()));
+	if (!SUCCEEDED(hr)) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to create DxcContainerReflection instance.", SystemError::Abort);
+	}
+	return containerReflection;
+}
+
+Microsoft::WRL::ComPtr<ID3D12ShaderReflection> QFE::GRAPHIC::ShaderReflection::CreateShaderReflection(IDxcBlob* shaderBlob) {
+	Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection;
+
+	// 使用する機能の生成
+	Microsoft::WRL::ComPtr<IDxcContainerReflection> containerReflection = CreateContainerReflection(shaderBlob);
+
+	// シェーダーバイナリをコンテナにロード
+	HRESULT hr = containerReflection->Load(shaderBlob);
+	if (SUCCEEDED(hr)) {
+		QFE_LOG("Shader blob loaded successfully into container reflection.");
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to load shader blob into container reflection.", SystemError::Abort);
+	}
+	// リフレクションの情報の先頭の場所をコンテナから取得
+	UINT32 partIndex;
+	hr = containerReflection->FindFirstPartKind(DXC_PART_DXIL, &partIndex);
+	if (SUCCEEDED(hr)) {
+		QFE_LOG(std::format("DXIL part found in container at index {}.", partIndex));
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to find DXIL part in container reflection.", SystemError::Abort);
+	}
+	// シェーダーリフレクションのインターフェースをコンテナから取得
+	hr = containerReflection->GetPartReflection(partIndex, IID_PPV_ARGS(shaderReflection.GetAddressOf()));
+	if (SUCCEEDED(hr)) {
+		QFE_LOG("Shader reflection interface obtained successfully.");
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to get shader reflection interface from container reflection.", SystemError::Abort);
+	}
+
+	return shaderReflection;
 }

@@ -30,7 +30,6 @@ namespace QFE::GRAPHIC {
 
 	/// @brief グラフィックスパイプラインマネージャーの初期化情報をまとめた構造体
 	struct GraphicPipelineManagerInitializeInfo {
-		std::function<void(IDxcBlob* shaderBlob)> reflectionFunc;
 		std::function<std::vector<InputElement>(IDxcBlob* shaderBlob)> getInputLayoutFunc;
 		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc;
 		std::function<IDxcBlob*(const std::wstring&, const wchar_t*)> compileFunc;

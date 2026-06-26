@@ -9,14 +9,9 @@
 #include "RootParameterElement.h"
 
 namespace QFE::GRAPHIC {
+	/// @brief VS,PS, CSなどのシェーダーのリフレクション情報を取得するクラス
 	class ShaderReflection final {
 	public:
-		ShaderReflection();
-		~ShaderReflection() = default;
-	public:
-		/// @brief シェーダーのリフレクションを実行します。shaderBlobはCompileShaderでコンパイルしたシェーダーバイナリを渡してください。
-		void RunShaderReflection(IDxcBlob* shaderBlob);
-
 		/// @brief シェーダーの入力要素を取得します。shaderBlobはCompileShaderでコンパイルしたシェーダーバイナリを渡してください。
 		std::vector<InputElement> GetInputLayoutElement(IDxcBlob* shaderBlob);
 		/// @brief ルートパラメーターの要素を取得します。shaderBlobはCompileShaderでコンパイルしたシェーダーバイナリを渡してください。
@@ -24,15 +19,10 @@ namespace QFE::GRAPHIC {
 		/// @brief シェーダーのスレッドグループサイズを取得します。shaderBlobはCompileShaderでコンパイルしたシェーダーバイナリを渡してください。
 		bool GetThreadGroupSize(IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ);
 
-		/// @brief シェーダーの入力要素を取得します。呼び出す前にRunShaderReflectionを呼び出して、shaderBlobを渡しておく必要があります。
-		std::vector<InputElement> GetInputLayoutElement() const;
-		/// @brief ルートパラメーターの要素を取得します。呼び出す前にRunShaderReflectionを呼び出して、shaderBlobを渡しておく必要があります。
-		std::vector<RootParameterElement> GetRootParameterElement() const;
-		/// @brief シェーダーのスレッドグループサイズを取得します。呼び出す前にRunShaderReflectionを呼び出して、shaderBlobを渡しておく必要があります。
-		bool GetThreadGroupSize(UINT& sizeX, UINT& sizeY, UINT& sizeZ) const;
-
 	private:
-		Microsoft::WRL::ComPtr<IDxcContainerReflection> containerReflection_;
-		Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection_;
+		/// @brief IDxcContainerReflectionのインスタンスを作成します。
+		Microsoft::WRL::ComPtr<IDxcContainerReflection> CreateContainerReflection(IDxcBlob* shaderBlob);
+		/// @brief ID3D12ShaderReflectionのインスタンスを作成します。
+		Microsoft::WRL::ComPtr<ID3D12ShaderReflection> CreateShaderReflection(IDxcBlob* shaderBlob);
 	};
 }

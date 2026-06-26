@@ -72,7 +72,6 @@ ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(
 
 	// シェーダーのリフレクションを行うための関数群
 	ShaderPairFunctions funcs;
-	funcs.reflectionFunc = [&](IDxcBlob* shaderBlob) { initializeInfo_.reflectionFunc(shaderBlob); };
 	funcs.getInputLayoutFunc = [&](IDxcBlob* shaderBlob) { return initializeInfo_.getInputLayoutFunc(shaderBlob); };
 	funcs.getRootParameterFunc = [&](IDxcBlob* shaderBlob) { return initializeInfo_.getRootParameterFunc(shaderBlob); };
 	funcs.getStaticSamplerFunc = [&]() { return staticSamplers_->GetSamplerDescs(); };

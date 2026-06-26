@@ -3,6 +3,7 @@ using namespace QFE::GRAPHIC;
 void InputLayout::Initialize() {
 	inputElementDescs_.clear();
 	inputLayoutDesc_ = {};
+	semanticNames_.clear();
 }
 
 void InputLayout::CreateNormalPresetInputLayout() {
@@ -19,11 +20,12 @@ void InputLayout::CreatePrimitivePresetInputLayout() {
 	CreateInputElementDesc("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, D3D12_APPEND_ALIGNED_ELEMENT);
 }
 
-void InputLayout::CreateInputElementDesc(const LPCSTR& semanticName, const UINT& semanticIndex, const DXGI_FORMAT& format, const UINT& alignedByteOffset) {
+void InputLayout::CreateInputElementDesc(const std::string& semanticName, const UINT& semanticIndex, const DXGI_FORMAT& format, const UINT& alignedByteOffset) {
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs{};
 	inputElementDescs_.push_back(inputElementDescs);
 	int32_t index = static_cast<int32_t>(inputElementDescs_.size()) - 1;
-	inputElementDescs_[index].SemanticName = semanticName;
+	semanticNames_.push_back(semanticName);
+	inputElementDescs_[index].SemanticName = semanticNames_.back().c_str();
 	inputElementDescs_[index].SemanticIndex = semanticIndex;
 	inputElementDescs_[index].Format = format;
 	inputElementDescs_[index].AlignedByteOffset = alignedByteOffset;
