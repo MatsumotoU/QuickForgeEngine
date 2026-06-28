@@ -18,6 +18,11 @@ using float32_t3x3 = QFE::Matrix3x3;
 using float32_t2x2 = QFE::Matrix2x2;
 #endif
 
+struct Well {
+	float32_t4x4 skeletonSpaceMatrix;
+	float32_t4x4 skeletonSpaceInverseTransposeMatrix;
+};
+
 struct OutlineOffset {
 	float32_t4x4 viewProjectionInverse;
 };

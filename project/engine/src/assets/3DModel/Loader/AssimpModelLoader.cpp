@@ -68,6 +68,26 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			}
 		}
 
+		// スキンクラスターの読み込み
+		for(unsigned int boneIdx = 0; boneIdx < mesh->mNumBones; ++boneIdx) {
+			const aiBone* bone = mesh->mBones[boneIdx];
+			JointWeightData jointWeight;
+			jointWeight.inverseBindPoseMatrix = Matrix4x4(
+				bone->mOffsetMatrix.a1, bone->mOffsetMatrix.b1, bone->mOffsetMatrix.c1, bone->mOffsetMatrix.d1,
+				bone->mOffsetMatrix.a2, bone->mOffsetMatrix.b2, bone->mOffsetMatrix.c2, bone->mOffsetMatrix.d2,
+				bone->mOffsetMatrix.a3, bone->mOffsetMatrix.b3, bone->mOffsetMatrix.c3, bone->mOffsetMatrix.d3,
+				bone->mOffsetMatrix.a4, bone->mOffsetMatrix.b4, bone->mOffsetMatrix.c4, bone->mOffsetMatrix.d4
+			);
+			for (unsigned int weightIdx = 0; weightIdx < bone->mNumWeights; ++weightIdx) {
+				const aiVertexWeight& vertexWeight = bone->mWeights[weightIdx];
+				VertexWeightData vtxWeight;
+				vtxWeight.vertexIndex = vertexWeight.mVertexId;
+				vtxWeight.weight = vertexWeight.mWeight;
+				jointWeight.vertexWeights.push_back(vtxWeight);
+			}
+			modelData.skinClusterDara[bone->mName.C_Str()] = std::move(jointWeight);
+		}
+
 		// メッシュデータの初期化
 		MeshData meshData(tempVertices.size(), tempIndices.size());
 		std::copy(tempVertices.begin(), tempVertices.end(), meshData.vertices.begin());
