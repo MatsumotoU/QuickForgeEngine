@@ -101,7 +101,16 @@ void QFE::GRAPHIC::RootParameter::CreateRootParameter(const RootParameterElement
 
 	}else if (rootParameterElement.shaderInputType == D3D_SIT_SAMPLER) {
 		// サンプラーは静的サンプラーを使用するので、なにもしません
-	}else {
+	}else if (rootParameterElement.shaderInputType == D3D_SIT_RTACCELERATIONSTRUCTURE) { // ★追加：レイトレ加速構造の場合
+
+		// ルートSRV（Descriptor Tableではなく、Root Descriptor型）としてルートパラメータを作成
+		CreateRootParameter(
+			rootParameterElement.friendlyName,
+			D3D12_ROOT_PARAMETER_TYPE_SRV, // 直接GPUアドレスを渡せるSRVタイプ
+			shaderVisibility,
+			rootParameterElement.shaderRegisterIndex);
+
+	} else {
 		QFE_LOG(std::format("RootParameter: Unsupported shader input type for friendly name '{}'.", rootParameterElement.friendlyName));
 		assert(false && "Unsupported shader input type for the given friendly name.");
 	}

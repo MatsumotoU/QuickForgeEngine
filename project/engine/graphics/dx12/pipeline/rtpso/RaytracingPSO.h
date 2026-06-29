@@ -24,6 +24,10 @@ namespace QFE::GRAPHIC {
 
 		bool CreateShaderTables(ID3D12Device5* device);
 
+		ID3D12Resource* GetRayGenShaderTable() const { return rayGenShaderTable_.Get(); }
+		ID3D12Resource* GetMissShaderTable() const { return missShaderTable_.Get(); }
+		ID3D12Resource* GetHitGroupShaderTable() const { return hitGroupShaderTable_.Get(); }
+
 	private:
 		// レイトレーシングパイプラインステートオブジェクトとルートシグネチャの管理
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
@@ -34,5 +38,6 @@ namespace QFE::GRAPHIC {
 		// シェーダーテーブル用のバッファ（Upload Heapで作成します）
 		Microsoft::WRL::ComPtr<ID3D12Resource> rayGenShaderTable_;
 		Microsoft::WRL::ComPtr<ID3D12Resource> missShaderTable_;
+		Microsoft::WRL::ComPtr<ID3D12Resource> hitGroupShaderTable_;
 	};
 }

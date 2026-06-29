@@ -104,7 +104,7 @@ namespace QFE::GRAPHIC {
 		}
 
 		/// @brief UAVバッファを作成
-		DirectXResourceHandle CreateUAVBuffer(uint32_t width, uint32_t height);
+		DirectXResourceHandle CreateUAVBuffer(uint32_t width, uint32_t height,const std::wstring& name);
 
 		RTPSOHandle CreateRayTracingPipelineStateObject(const std::string& dirPath, const std::string& rgsFileName);
 		
@@ -115,7 +115,7 @@ namespace QFE::GRAPHIC {
 		void TestCompute(
 			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle);
 
-		void TestRayTracing(RTPSOHandle rtpso);
+		void TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle);
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.

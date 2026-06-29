@@ -158,8 +158,13 @@ void D3D12GraphicEngine::Initialize() {
 	textureLoader_->Initialize(textureLoaderInfo);
 
 
+	
 	testBLAS_.CreateTestBLAS(directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	testBLAS_.CreateTestTLAS(directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	commandManager_->ExecuteCommandList();
+	fence_->Signal(commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	fence_->Wait();
+	commandManager_->ResetCommandList();
 }
 
 void D3D12GraphicEngine::PreDraw() {
@@ -294,7 +299,7 @@ size_t D3D12GraphicEngine::GetResourceArraySize(DirectXResourceHandle handle) {
 	return size / stride;
 }
 
-DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateUAVBuffer(uint32_t width, uint32_t height) {
+DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateUAVBuffer(uint32_t width, uint32_t height, const std::wstring& name) {
 	D3D12_RESOURCE_DESC texDesc{};
 	texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	texDesc.Width = static_cast<UINT>(width);                     // 画面の横幅
@@ -318,6 +323,7 @@ DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateUAVBuffer(uint32_t
 	createViewInfo.uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	createViewInfo.uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
 	resourceContainer_->CreateResourceView(handle, createViewInfo);
+	resourceContainer_->SetResourceName(handle, name);
 
 	return handle;
 }
@@ -415,20 +421,28 @@ void D3D12GraphicEngine::TestCompute(ComputePSOHandle computePSOHandle, DirectXR
 		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpso) {
+void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle) {
 	ID3D12GraphicsCommandList4* commandList4 = commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	ID3D12RootSignature* globalRootSignature = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpso)->GetRootSignature();
-	ID3D12Srat
+	ID3D12RootSignature* globalRootSignature = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRootSignature();
+	ID3D12StateObject* rtpsoptr = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetPipelineState();
+	ID3D12Resource* rayGenShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRayGenShaderTable();
+	ID3D12Resource* missShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetMissShaderTable();
+	ID3D12Resource* hitGroupShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetHitGroupShaderTable();
+
+	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 	// 1. DXR用のパイプライン(RTPSO)とルートシグネチャをコマンドリストにセット
 	// (マネージャー等で生成したオブジェクトを設定します)
 	commandList4->SetComputeRootSignature(globalRootSignature);
-	commandList4->SetPipelineState1(rtpso_.Get()); // ★レイトレPSOはSetPipelineState1を使う
+	commandList4->SetPipelineState1(rtpsoptr); // ★レイトレPSOはSetPipelineState1を使う
 
 	// 2. 自動化されたルートシグネチャへのリソースバインド
-	// 例：出力先の UAV テクスチャ（g_output）のハンドルのセットや、
-	//     前段で作ったシーンの配置図（TLAS）のセットをここで行います
-	// commandList4->SetComputeRootDescriptorTable(...);
+	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = testBLAS_.GetTLASResultBuffer()->GetGPUVirtualAddress();
+	commandList4->SetComputeRootShaderResourceView(0,
+		tlasResultBufferGPUHandle);
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
+	commandList4->SetComputeRootDescriptorTable(1, gpuHandle);
 
 	// 3. シェーダーレコードのサイズ定義（前段で作った64バイトと同じ）
 	const UINT shaderRecordSize = (D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES + D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1)
@@ -447,9 +461,9 @@ void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpso) {
 	dispatchDesc.MissShaderTable.StrideInBytes = shaderRecordSize; // 1つあたりの歩進サイズ
 
 	// --- HitGroup テーブルの指定（今回はまだ空なので0） ---
-	dispatchDesc.HitGroupTable.StartAddress = 0;
-	dispatchDesc.HitGroupTable.SizeInBytes = 0;
-	dispatchDesc.HitGroupTable.StrideInBytes = 0;
+	dispatchDesc.HitGroupTable.StartAddress = hitGroupShaderTable_->GetGPUVirtualAddress();
+	dispatchDesc.HitGroupTable.SizeInBytes = shaderRecordSize; // 1つのレコードサイズ
+	dispatchDesc.HitGroupTable.StrideInBytes = shaderRecordSize;
 
 	// --- Callable テーブルの指定（使わないので0） ---
 	dispatchDesc.CallableShaderTable.StartAddress = 0;
@@ -457,12 +471,22 @@ void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpso) {
 	dispatchDesc.CallableShaderTable.StrideInBytes = 0;
 
 	// --- 追跡する画面の解像度を指定（このピクセル数分の光線が一斉に飛びます） ---
-	dispatchDesc.Width = windowWidth;  // 例: 1920
-	dispatchDesc.Height = windowHeight; // 例: 1080
+	dispatchDesc.Width = 1280;  // 例: 1920
+	dispatchDesc.Height = 720; // 例: 1080
 	dispatchDesc.Depth = 1;            // 2D画面なので 1
 
 	// 5. ★運命のコマンド発行！
 	commandList4->DispatchRays(&dispatchDesc);
+
+
+	// 6. スワップチェーンのバックバッファにコピー
+	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderPass_->TransitionCurrentBackBufferBarrier(
+		commandList, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
+	commandList->CopyResource(
+		renderPass_->GetCurrentBackBuffer(), resourceContainer_->GetResource(uavHandle));
+	renderPass_->TransitionCurrentBackBufferBarrier(
+		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {

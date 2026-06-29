@@ -18,6 +18,9 @@ namespace QFE::GRAPHIC {
 
 		bool CreateShaderTables(ID3D12Device5* device5);
 
+		ID3D12Resource* GetBLASResultBuffer() const { return blasResultBuffer_.Get(); }
+		ID3D12Resource* GetTLASResultBuffer() const { return tlasResultBuffer_.Get(); }
+
 	private:
 
 		// BLAS（ボトムレベル加速構造）の実体バッファ

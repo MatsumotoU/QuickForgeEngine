@@ -2,6 +2,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <unordered_map>
+#include <string>
 #include "dx12/vram/descriptors/ViewTypeFlags.h"
 #include "dx12/vram/descriptors/DescriptorHandles.h"
 
@@ -15,6 +16,8 @@ namespace QFE::GRAPHIC {
 			D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT, const D3D12_CLEAR_VALUE* clearValue = nullptr);
 		/// @brief 外部で作成されたリソースをこのクラスに関連付ける
 		bool SetExternalResource(Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES initialState);
+		/// @brief リソースの名前を設定する
+		bool SetName(const std::wstring& name);
 
 		/// @brief リソースをCPU側にマップする
 		bool MapResource(UINT subresource = 0, const D3D12_RANGE* readRange = nullptr);

@@ -35,6 +35,7 @@ bool RaytracingAccelerationStructure::CreateTestBLAS(ID3D12Device5* device5, ID3
 		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&testVertexBuffer)
 	);
 	if (FAILED(hr)) return false;
+	testVertexBuffer->SetName(L"Test-Vertex-Buffer");
 
 	// データをGPUメモリにコピー
 	void* pVertexDataBegin = nullptr;
@@ -96,6 +97,7 @@ bool RaytracingAccelerationStructure::CreateTestBLAS(ID3D12Device5* device5, ID3
 		D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, // 専用の状態
 		nullptr, IID_PPV_ARGS(&blasResultBuffer_)
 	);
+	blasResultBuffer_->SetName(L"BLAS-Result-Buffer");
 
 	// スクラッチ（作業用）バッファの作成
 	D3D12_RESOURCE_DESC scratchDesc = resultDesc;
@@ -106,6 +108,7 @@ bool RaytracingAccelerationStructure::CreateTestBLAS(ID3D12Device5* device5, ID3
 		D3D12_RESOURCE_STATE_COMMON, // 通常の状態
 		nullptr, IID_PPV_ARGS(&blasScratchBuffer_)
 	);
+	blasScratchBuffer_->SetName(L"BLAS-Scratch-Buffer");
 
 	// --- ステップ4: コマンドリストに構築コマンドを積む ---
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC buildDesc{};
@@ -140,6 +143,7 @@ bool QFE::GRAPHIC::RaytracingAccelerationStructure::CreateTestTLAS(ID3D12Device5
 	instanceDesc.InstanceContributionToHitGroupIndex = 0; // シェーダーテーブルのオフセット（今は0でOK）
 	instanceDesc.Flags = D3D12_RAYTRACING_INSTANCE_FLAG_NONE;
 
+
 	// ★最重要: 前段で作成した BLAS のGPUアドレスをここで紐付ける
 	if (!blasResultBuffer_) return false;
 	instanceDesc.AccelerationStructure = blasResultBuffer_->GetGPUVirtualAddress();
@@ -170,12 +174,15 @@ bool QFE::GRAPHIC::RaytracingAccelerationStructure::CreateTestTLAS(ID3D12Device5
 		QFE_LOG("Failed to create Instance Desc Buffer for TLAS.");
 		return false;
 	}
+	instanceDescBuffer_->SetName(L"TLAS-Instance-Desc-Buffer");
 
 	// CPU上のデータをGPUメモリ（Upload Heap）へ転送
 	void* pInstanceDataBegin = nullptr;
 	instanceDescBuffer_->Map(0, nullptr, &pInstanceDataBegin);
 	std::memcpy(pInstanceDataBegin, &instanceDesc, instanceBufferSize);
 	instanceDescBuffer_->Unmap(0, nullptr);
+
+	
 
 	// -------------------------------------------------------------------------
 	// 3. TLAS ビルドに必要なサイズ（Result / Scratch）を計算してもらう
@@ -207,6 +214,7 @@ bool QFE::GRAPHIC::RaytracingAccelerationStructure::CreateTestTLAS(ID3D12Device5
 		nullptr, IID_PPV_ARGS(&tlasResultBuffer_)
 	);
 	if (FAILED(hr)) return false;
+	tlasResultBuffer_->SetName(L"TLAS-Result-Buffer");
 
 	// TLAS作業用（スクラッチ）バッファの生成設定
 	D3D12_RESOURCE_DESC scratchDesc = bufferDesc;
@@ -219,6 +227,7 @@ bool QFE::GRAPHIC::RaytracingAccelerationStructure::CreateTestTLAS(ID3D12Device5
 		nullptr, IID_PPV_ARGS(&tlasScratchBuffer_)
 	);
 	if (FAILED(hr)) return false;
+	tlasScratchBuffer_->SetName(L"TLAS-Scratch-Buffer");
 
 	// -------------------------------------------------------------------------
 	// 5. コマンドリストに構築コマンドを記録

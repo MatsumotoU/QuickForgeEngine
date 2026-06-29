@@ -70,6 +70,20 @@ DirectXResourceHandle QFE::GRAPHIC::DirectXResourceContainer::RegisterExternalRe
 	return DirectXResourceHandle::Invalid;
 }
 
+bool QFE::GRAPHIC::DirectXResourceContainer::SetResourceName(DirectXResourceHandle handle, const std::wstring& name) {
+	if (handle == DirectXResourceHandle::Invalid) {
+		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::SetResourceName", SystemError::Abort);
+		return false;
+	}
+	if (resources.Contains(static_cast<uint32_t>(handle))) {
+		DirectXResource& resource = resources.at(static_cast<uint32_t>(handle));
+		return resource.SetName(name);
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Resource handle not found in DirectXResourceContainer::SetResourceName", SystemError::Abort);
+		return false;
+	}
+}
+
 void DirectXResourceContainer::MapResource(DirectXResourceHandle handle, UINT subresource, const D3D12_RANGE* readRange) {
 	// 引数の検査
 	if (handle == DirectXResourceHandle::Invalid) {

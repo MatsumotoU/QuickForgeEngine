@@ -49,6 +49,9 @@ namespace QFE::GRAPHIC {
 		DirectXResourceHandle RegisterExternalResource(
 			Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES initialState);
 
+		/// @brief あるリソースハンドルに対応するリソースの名前を設定する
+		bool SetResourceName(DirectXResourceHandle handle, const std::wstring& name);
+
 		/// @brief あるリソースハンドルに対応するリソースの状態を変更する
 		bool TransitionResource(DirectXResourceHandle handle, ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES newState);
 		/// @brief あるハンドルのリソースをマッピングする

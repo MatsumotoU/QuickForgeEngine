@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	graphicEngine->Initialize();
 
 	// UAVバッファの作成とルートリソースの設定
-	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720);
+	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720,L"UAVBuffer");
 
 	QFE::GRAPHIC::RTPSOHandle rtpsoHandle = graphicEngine->CreateRayTracingPipelineStateObject(
 		"engine/resources/shaders/rt/","MiniRaytracing.hlsl");
@@ -43,6 +43,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		} else {
 			graphicEngine->PreDraw();
+
+			graphicEngine->TestRayTracing(rtpsoHandle, uavBufferHandle);
 
 			graphicEngine->PostDraw();
 		}

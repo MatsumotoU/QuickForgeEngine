@@ -28,7 +28,7 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 	dxilLibraryDesc.DXILLibrary.BytecodeLength = csBlob->GetBufferSize();// バイナリデータのサイズ
 
 	// 2. エクスポートの設定
-	D3D12_EXPORT_DESC exports[2] = {};
+	D3D12_EXPORT_DESC exports[3] = {};
 	exports[0].Name = L"MyRayGen";
 	exports[0].ExportToRename = nullptr;
 	exports[0].Flags = D3D12_EXPORT_FLAG_NONE;
@@ -37,7 +37,11 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 	exports[1].ExportToRename = nullptr;
 	exports[1].Flags = D3D12_EXPORT_FLAG_NONE;
 
-	dxilLibraryDesc.NumExports = 2;
+	exports[2].Name = L"MyClosestHit";
+	exports[2].ExportToRename = nullptr;
+	exports[2].Flags = D3D12_EXPORT_FLAG_NONE;
+
+	dxilLibraryDesc.NumExports = 3;
 	dxilLibraryDesc.pExports = exports;
 
 	// 3. ShaderConfigの設定
@@ -50,7 +54,7 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 	pipelineConfig.MaxTraceRecursionDepth = 1; // 今回は反射させないので 1
 
 	// 5. サブオブジェクトの設定
-	D3D12_STATE_SUBOBJECT subobjects[4] = {};
+	D3D12_STATE_SUBOBJECT subobjects[5] = {};
 	UINT subobjectIndex = 0;
 
 	// 1. DXIL Library
@@ -72,6 +76,18 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 	subobjects[subobjectIndex].pDesc = &pipelineConfig;
 	subobjectIndex++;
 
+	// 5. Hit Groupの設定
+	D3D12_HIT_GROUP_DESC hitGroupDesc = {};
+	hitGroupDesc.HitGroupExport = L"MyHitGroup"; // C++側やShaderTableで参照するグループ名
+	hitGroupDesc.Type = D3D12_HIT_GROUP_TYPE_TRIANGLES;
+	hitGroupDesc.ClosestHitShaderImport = L"MyClosestHit"; // 上でエクスポートした名前
+	hitGroupDesc.AnyHitShaderImport = nullptr;
+	hitGroupDesc.IntersectionShaderImport = nullptr;
+
+	subobjects[subobjectIndex].Type = D3D12_STATE_SUBOBJECT_TYPE_HIT_GROUP;
+	subobjects[subobjectIndex].pDesc = &hitGroupDesc;
+	subobjectIndex++;
+
 	// 全体のパイプライン設定構造体にまとめる
 	D3D12_STATE_OBJECT_DESC stateObjectDesc = {};
 	stateObjectDesc.Type = D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE;
@@ -89,34 +105,30 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 bool RaytracingPSO::CreateShaderTables(ID3D12Device5* device) {
 	if (!raytracingPipelineState_) return false;
 
-	// 1. RTPSO から「ID3D12StateObjectProperties」インターフェースを引き出す
-	// これを介して、各関数の識別子（Shader Identifier）を取得します。
 	Microsoft::WRL::ComPtr<ID3D12StateObjectProperties> rtpsoProps;
 	HRESULT hr = raytracingPipelineState_->QueryInterface(IID_PPV_ARGS(&rtpsoProps));
 	if (FAILED(hr)) return false;
 
-	// 2. HLSLで定義した関数名を使って、それぞれの識別子（32バイトのポインタ）を取得
-	// ★マングリング名ではなく、HLSL側のプレーンな名前で取得できます
+	// 1. 各識別子の取得（★MyHitGroup を追加）
 	void* rayGenId = rtpsoProps->GetShaderIdentifier(L"MyRayGen");
 	void* missId = rtpsoProps->GetShaderIdentifier(L"MyMiss");
+	void* hitGroupId = rtpsoProps->GetShaderIdentifier(L"MyHitGroup"); // ⭕グループ名で取得します
 
-	if (!rayGenId || !missId) {
-		QFE_LOG("Failed to get Shader Identifiers. Check your shader function names.");
+	if (!rayGenId || !missId || !hitGroupId) {
+		QFE_LOG("Failed to get Shader Identifiers.");
 		return false;
 	}
 
-	// 3. サイズの計算（32バイトの実データを、64バイトアライメントに切り上げる）
+	// レコードサイズ（64バイト）と、安全なバッファ全体のサイズ（4096バイト）の計算
 	const UINT shaderIdSize = D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES; // 32
 	const UINT shaderRecordSize = (shaderIdSize + D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1)
-		& ~(D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1); // これで 64 バイトになる
+		& ~(D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1); // 64
+	const UINT safeBufferSize = (shaderRecordSize + 4095) & ~4095; // 4096
 
-	// -------------------------------------------------------------------------
-	// 4. RayGeneration テーブル（バッファ）の生成と書き込み
-	// -------------------------------------------------------------------------
 	D3D12_HEAP_PROPERTIES uploadHeapProps{ D3D12_HEAP_TYPE_UPLOAD };
 	D3D12_RESOURCE_DESC bufferDesc{};
 	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	bufferDesc.Width = shaderRecordSize; // 64バイト確保
+	bufferDesc.Width = safeBufferSize;
 	bufferDesc.Height = 1;
 	bufferDesc.DepthOrArraySize = 1;
 	bufferDesc.MipLevels = 1;
@@ -142,7 +154,7 @@ bool RaytracingPSO::CreateShaderTables(ID3D12Device5* device) {
 	// 5. Miss テーブル（バッファ）の生成と書き込み
 	// -------------------------------------------------------------------------
 	// 将来的に複数のMissシェーダーを持つ可能性を考慮して、今回は1つ分（64バイト）で作成
-	bufferDesc.Width = shaderRecordSize;
+	bufferDesc.Width = safeBufferSize;
 
 	hr = device->CreateCommittedResource(
 		&uploadHeapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
@@ -157,5 +169,23 @@ bool RaytracingPSO::CreateShaderTables(ID3D12Device5* device) {
 	missShaderTable_->Unmap(0, nullptr);
 
 	QFE_LOG("RayGeneration and Miss Shader Tables created successfully.");
+
+	// -------------------------------------------------------------------------
+	// 2. ★HitGroup テーブル（バッファ）の生成と書き込みを追加
+	// -------------------------------------------------------------------------
+	// メンバ変数、もしくは管理クラス内に hitGroupShaderTable_ (ComPtr<ID3D12Resource>) を用意してください
+	hr = device->CreateCommittedResource(
+		&uploadHeapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&hitGroupShaderTable_)
+	);
+	if (FAILED(hr)) return false;
+
+	// 識別子（バイナリデータ）をバッファに書き込む
+	void* pHitGroupData = nullptr;
+	hitGroupShaderTable_->Map(0, nullptr, &pHitGroupData);
+	std::memcpy(pHitGroupData, hitGroupId, shaderIdSize); // 32バイトコピー
+	hitGroupShaderTable_->Unmap(0, nullptr);
+
+	QFE_LOG("RayGeneration, Miss, and HitGroup Shader Tables created successfully.");
 	return true;
 }

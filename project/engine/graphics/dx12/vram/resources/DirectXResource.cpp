@@ -61,6 +61,21 @@ bool DirectXResource::SetExternalResource(Microsoft::WRL::ComPtr<ID3D12Resource>
 	return true;
 }
 
+bool QFE::GRAPHIC::DirectXResource::SetName(const std::wstring& name) {
+	if(!resource_) {
+		QFE_REPORT_SYSTEM_ERROR("Resource is null in DirectXResource::SetName", SystemError::Abort);
+		return false;
+	}
+
+	HRESULT hr = resource_->SetName(name.c_str());
+	if(hr != S_OK) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to set resource name in DirectXResource::SetName", SystemError::Abort);
+		return false;
+	}
+
+	return true;	
+}
+
 bool DirectXResource::MapResource(UINT subresource, const D3D12_RANGE* readRange) {
 	// リソースが生成されているかの確認
 	if(resourceDesc_.Dimension == D3D12_RESOURCE_DIMENSION_UNKNOWN) {
