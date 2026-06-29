@@ -18,6 +18,10 @@ ID3D12GraphicsCommandList* CommandExecutor::GetCommandList() const {
 	return commandList_.GetCommandList();
 }
 
+ID3D12GraphicsCommandList4* CommandExecutor::GetCommandList4() const {
+	return commandList_.GetCommandList4();
+}
+
 ID3D12CommandQueue* CommandExecutor::GetCommandQueue() const {
 	return commandQueue_.GetCommandQueue();
 }

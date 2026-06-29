@@ -17,7 +17,7 @@ namespace QFE::GRAPHIC {
 	struct RaytracingPipelineManagerInitializeInfo {
 		std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc;
 		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc;
-		ID3D12Device* device;
+		ID3D12Device5* device;
 	};
 
 	/// @brief レイトレーシングパイプラインの管理クラス
@@ -32,13 +32,18 @@ namespace QFE::GRAPHIC {
 		void Finalize();
 
 		RTPSOHandle CreateRaytracingPipelineStateObject(const std::wstring& shaderFilePath, const wchar_t* profile);
+
+		/// @brief レイトレーシングパイプラインステートオブジェクトを取得する
+		RaytracingPSO* GetRaytracingPipelineStateObject(RTPSOHandle handle);
 		
 	private:
+		/// @brief レイトレーシングパイプラインマネージャーが有効かどうかを確認する
+		bool CheckActive() const;
 		/// @brief レイトレーシングシェーダーをコンパイルする
 		IDxcBlob* CompileRaytracingShader(const std::wstring& filePath, const wchar_t* profile);
 
 		bool isActive_ = false;// レイトレーシングパイプラインマネージャーが有効かどうか
-		Microsoft::WRL::ComPtr<ID3D12Device5> device_;// DirectX12デバイスの保持
+		ID3D12Device5* device_ = nullptr;// レイトレーシングパイプラインマネージャーが使用するDirectX12デバイス
 		std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc;// レイトレーシングシェーダーのコンパイル関数
 		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc_;// レイトレーシングシェーダーのルートパラメータを取得する関数
 

@@ -10,6 +10,7 @@ namespace QFE::GRAPHIC {
 		void ResetCommandList();
 		void ExecuteCommandList();
 		ID3D12GraphicsCommandList* GetCommandList() const;
+		ID3D12GraphicsCommandList4* GetCommandList4() const;
 		ID3D12CommandQueue* GetCommandQueue() const;
 		const D3D12_COMMAND_LIST_TYPE& GetCommandType() const;
 

@@ -10,6 +10,14 @@ void DirectCommandList::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE
 	assert(SUCCEEDED(hr) && "Failed to create command allocator.");
 	hr = device->CreateCommandList(0, type, commandAllocator_.Get(), nullptr, IID_PPV_ARGS(&commandList_));
 	assert(SUCCEEDED(hr) && "Failed to create command list.");
+
+	// コマンドリスト4のインターフェースを取得
+	if(type == D3D12_COMMAND_LIST_TYPE_DIRECT || type == D3D12_COMMAND_LIST_TYPE_COMPUTE || type == D3D12_COMMAND_LIST_TYPE_COPY) {
+		hr = commandList_->QueryInterface(IID_PPV_ARGS(&commandList4_));
+		assert(SUCCEEDED(hr) && "Failed to get command list4 interface.");
+	} else {
+		commandList4_ = nullptr; // 他のタイプではコマンドリスト4は使用できない
+	}
 }
 
 void DirectCommandList::Reset() {
@@ -22,4 +30,8 @@ void DirectCommandList::Reset() {
 
 ID3D12GraphicsCommandList* DirectCommandList::GetCommandList() const {
 	return commandList_.Get();
+}
+
+ID3D12GraphicsCommandList4* QFE::GRAPHIC::DirectCommandList::GetCommandList4() const {
+	return commandList4_.Get();
 }

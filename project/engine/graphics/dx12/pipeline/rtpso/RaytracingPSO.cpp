@@ -85,3 +85,77 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 		return;
 	}
 }
+
+bool RaytracingPSO::CreateShaderTables(ID3D12Device5* device) {
+	if (!raytracingPipelineState_) return false;
+
+	// 1. RTPSO から「ID3D12StateObjectProperties」インターフェースを引き出す
+	// これを介して、各関数の識別子（Shader Identifier）を取得します。
+	Microsoft::WRL::ComPtr<ID3D12StateObjectProperties> rtpsoProps;
+	HRESULT hr = raytracingPipelineState_->QueryInterface(IID_PPV_ARGS(&rtpsoProps));
+	if (FAILED(hr)) return false;
+
+	// 2. HLSLで定義した関数名を使って、それぞれの識別子（32バイトのポインタ）を取得
+	// ★マングリング名ではなく、HLSL側のプレーンな名前で取得できます
+	void* rayGenId = rtpsoProps->GetShaderIdentifier(L"MyRayGen");
+	void* missId = rtpsoProps->GetShaderIdentifier(L"MyMiss");
+
+	if (!rayGenId || !missId) {
+		QFE_LOG("Failed to get Shader Identifiers. Check your shader function names.");
+		return false;
+	}
+
+	// 3. サイズの計算（32バイトの実データを、64バイトアライメントに切り上げる）
+	const UINT shaderIdSize = D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES; // 32
+	const UINT shaderRecordSize = (shaderIdSize + D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1)
+		& ~(D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1); // これで 64 バイトになる
+
+	// -------------------------------------------------------------------------
+	// 4. RayGeneration テーブル（バッファ）の生成と書き込み
+	// -------------------------------------------------------------------------
+	D3D12_HEAP_PROPERTIES uploadHeapProps{ D3D12_HEAP_TYPE_UPLOAD };
+	D3D12_RESOURCE_DESC bufferDesc{};
+	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferDesc.Width = shaderRecordSize; // 64バイト確保
+	bufferDesc.Height = 1;
+	bufferDesc.DepthOrArraySize = 1;
+	bufferDesc.MipLevels = 1;
+	bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+	bufferDesc.SampleDesc.Count = 1;
+	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	bufferDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+	// RayGenバッファ作成
+	hr = device->CreateCommittedResource(
+		&uploadHeapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&rayGenShaderTable_)
+	);
+	if (FAILED(hr)) return false;
+
+	// 識別子（バイナリデータ）をバッファに書き込む
+	void* pRayGenData = nullptr;
+	rayGenShaderTable_->Map(0, nullptr, &pRayGenData);
+	std::memcpy(pRayGenData, rayGenId, shaderIdSize); // 32バイト分コピー（残り32バイトはパディングとして放置）
+	rayGenShaderTable_->Unmap(0, nullptr);
+
+	// -------------------------------------------------------------------------
+	// 5. Miss テーブル（バッファ）の生成と書き込み
+	// -------------------------------------------------------------------------
+	// 将来的に複数のMissシェーダーを持つ可能性を考慮して、今回は1つ分（64バイト）で作成
+	bufferDesc.Width = shaderRecordSize;
+
+	hr = device->CreateCommittedResource(
+		&uploadHeapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&missShaderTable_)
+	);
+	if (FAILED(hr)) return false;
+
+	// 識別子をバッファに書き込む
+	void* pMissData = nullptr;
+	missShaderTable_->Map(0, nullptr, &pMissData);
+	std::memcpy(pMissData, missId, shaderIdSize);
+	missShaderTable_->Unmap(0, nullptr);
+
+	QFE_LOG("RayGeneration and Miss Shader Tables created successfully.");
+	return true;
+}

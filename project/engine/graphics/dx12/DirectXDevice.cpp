@@ -19,31 +19,38 @@ namespace QFE::GRAPHIC {
 		disableError_ = false;
 		disableWarning_ = false;
 #endif // QFE_OPTIMIZE_OFF
+
+		isDevice5Supported_ = false;
 	}
 
 	DirectXDevice::~DirectXDevice() {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("-----DirectXDevice:Shutdown-----\n");
 		QFE_LOG(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
 		QFE_LOG(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
-#endif // QFE_OPTIMIZE_OFF
 	}
 
 	void DirectXDevice::Initialize() {
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("-----DirectXDevice:Initialize-----\n");
 		QFE_LOG(std::format("Disable Error : {}\n", disableError_ ? "true" : "false"));
 		QFE_LOG(std::format("Disable Warning : {}\n", disableWarning_ ? "true" : "false"));
-#endif // QFE_OPTIMIZE_OFF
+
 		// DXGIファクトリーの生成
 		CreateDxgiFactory();
 		// アダプターの選定
 		FindAdapter();
 		// D3D12Deviceの生成
 		CreateDevice();
-#ifdef QFE_OPTIMIZE_OFF
+
+		// D3D12Device5のサポート確認
+		HRESULT hr = device_.Get()->QueryInterface(IID_PPV_ARGS(&device5_));
+		if (SUCCEEDED(hr)) {
+			isDevice5Supported_ = true;
+			QFE_LOG("D3D12Device5 is supported\n");
+		} else {
+			QFE_LOG("D3D12Device5 is not supported\n");
+		}
+
 		QFE_LOG("-----DirectXDevice:Initialize Complete-----\n");
-#endif // QFE_OPTIMIZE_OFF
 	}
 
 	void DirectXDevice::Shutdown() {
@@ -55,6 +62,13 @@ namespace QFE::GRAPHIC {
 
 	ID3D12Device* DirectXDevice::GetDevice() const {
 		return device_.Get();
+	}
+
+	ID3D12Device5* DirectXDevice::GetDevice5() const {
+		if(isDevice5Supported_) {
+			return device5_.Get();
+		}
+		return nullptr;
 	}
 
 	IDXGIAdapter4* DirectXDevice::GetUseAdapter() const {
@@ -98,9 +112,7 @@ namespace QFE::GRAPHIC {
 			// ソフトウェアアダプタでなければ採用
 			if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 				// 採用したアダプタの情報をログに出力。
-#ifdef QFE_OPTIMIZE_OFF
 				QFE_LOG(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
-#endif // QFE_OPTIMIZE_OFF
 				break;
 			}
 			useAdapter_ = nullptr;
@@ -128,18 +140,14 @@ namespace QFE::GRAPHIC {
 			// 指定した機能レベルでデバイスが生成できたかを確認
 			if (SUCCEEDED(hr)) {
 				// 生成できたのでログ出力してループ脱出
-#ifdef QFE_OPTIMIZE_OFF
 				QFE_LOG(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
-#endif // QFE_OPTIMIZE_OFF
 				break;
 			}
 		}
 		// デバイス生成が上手くいかなかったので起動できない
 		assert(device_ != nullptr);
 
-#ifdef QFE_OPTIMIZE_OFF
 		QFE_LOG("Complete create D3D12Device");
-#endif // QFE_OPTIMIZE_OFF
 
 		// エラー落ち処理
 #ifdef QFE_OPTIMIZE_OFF

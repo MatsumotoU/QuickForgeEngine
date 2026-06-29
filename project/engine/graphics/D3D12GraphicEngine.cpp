@@ -129,7 +129,7 @@ void D3D12GraphicEngine::Initialize() {
 		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
 	rayTracingPipelineManagerInfo.getRootParameterFunc = 
 		[&](IDxcBlob* shaderBlob) { return shaderLibReflection_->GetRootParameterElement(shaderBlob); };
-	rayTracingPipelineManagerInfo.device = directXDevice_->GetDevice();
+	rayTracingPipelineManagerInfo.device = directXDevice_->GetDevice5();
 	rayTracingPipelineManager_->Initialize(rayTracingPipelineManagerInfo);
 	
 	// テクスチャ管理クラスの初期化
@@ -156,6 +156,10 @@ void D3D12GraphicEngine::Initialize() {
 		};
 	// テクスチャローダーを初期化
 	textureLoader_->Initialize(textureLoaderInfo);
+
+
+	testBLAS_.CreateTestBLAS(directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	testBLAS_.CreateTestTLAS(directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
 }
 
 void D3D12GraphicEngine::PreDraw() {
@@ -409,6 +413,56 @@ void D3D12GraphicEngine::TestCompute(ComputePSOHandle computePSOHandle, DirectXR
 
 	renderPass_->TransitionCurrentBackBufferBarrier(
 		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
+void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpso) {
+	ID3D12GraphicsCommandList4* commandList4 = commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	ID3D12RootSignature* globalRootSignature = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpso)->GetRootSignature();
+	ID3D12Srat
+
+	// 1. DXR用のパイプライン(RTPSO)とルートシグネチャをコマンドリストにセット
+	// (マネージャー等で生成したオブジェクトを設定します)
+	commandList4->SetComputeRootSignature(globalRootSignature);
+	commandList4->SetPipelineState1(rtpso_.Get()); // ★レイトレPSOはSetPipelineState1を使う
+
+	// 2. 自動化されたルートシグネチャへのリソースバインド
+	// 例：出力先の UAV テクスチャ（g_output）のハンドルのセットや、
+	//     前段で作ったシーンの配置図（TLAS）のセットをここで行います
+	// commandList4->SetComputeRootDescriptorTable(...);
+
+	// 3. シェーダーレコードのサイズ定義（前段で作った64バイトと同じ）
+	const UINT shaderRecordSize = (D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES + D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1)
+		& ~(D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1); // 64
+
+	// 4. DispatchRays の設定構造体を埋める
+	D3D12_DISPATCH_RAYS_DESC dispatchDesc{};
+
+	// --- RayGeneration テーブルの指定 ---
+	dispatchDesc.RayGenerationShaderRecord.StartAddress = rayGenShaderTable_->GetGPUVirtualAddress();
+	dispatchDesc.RayGenerationShaderRecord.SizeInBytes = shaderRecordSize; // 64バイト
+
+	// --- Miss テーブルの指定 ---
+	dispatchDesc.MissShaderTable.StartAddress = missShaderTable_->GetGPUVirtualAddress();
+	dispatchDesc.MissShaderTable.SizeInBytes = shaderRecordSize; // 1つ分なので64バイト
+	dispatchDesc.MissShaderTable.StrideInBytes = shaderRecordSize; // 1つあたりの歩進サイズ
+
+	// --- HitGroup テーブルの指定（今回はまだ空なので0） ---
+	dispatchDesc.HitGroupTable.StartAddress = 0;
+	dispatchDesc.HitGroupTable.SizeInBytes = 0;
+	dispatchDesc.HitGroupTable.StrideInBytes = 0;
+
+	// --- Callable テーブルの指定（使わないので0） ---
+	dispatchDesc.CallableShaderTable.StartAddress = 0;
+	dispatchDesc.CallableShaderTable.SizeInBytes = 0;
+	dispatchDesc.CallableShaderTable.StrideInBytes = 0;
+
+	// --- 追跡する画面の解像度を指定（このピクセル数分の光線が一斉に飛びます） ---
+	dispatchDesc.Width = windowWidth;  // 例: 1920
+	dispatchDesc.Height = windowHeight; // 例: 1080
+	dispatchDesc.Depth = 1;            // 2D画面なので 1
+
+	// 5. ★運命のコマンド発行！
+	commandList4->DispatchRays(&dispatchDesc);
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {

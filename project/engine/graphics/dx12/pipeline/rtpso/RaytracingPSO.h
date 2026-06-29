@@ -22,9 +22,17 @@ namespace QFE::GRAPHIC {
 		/// @brief RootParameterを取得する関数
 		RootParameter& GetRootParameter() { return rootParameter_; }
 
+		bool CreateShaderTables(ID3D12Device5* device);
+
 	private:
+		// レイトレーシングパイプラインステートオブジェクトとルートシグネチャの管理
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
 		Microsoft::WRL::ComPtr<ID3D12StateObject> raytracingPipelineState_;
 		RootParameter rootParameter_;
+
+
+		// シェーダーテーブル用のバッファ（Upload Heapで作成します）
+		Microsoft::WRL::ComPtr<ID3D12Resource> rayGenShaderTable_;
+		Microsoft::WRL::ComPtr<ID3D12Resource> missShaderTable_;
 	};
 }

@@ -10,6 +10,8 @@
 #include "memory/UniqueContainer.h"
 #include "../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
+#include "dx12/pipeline/rtpso/RaytracingAccelerationStructure.h"
+
 #define NOMINMAX
 #include <windows.h>
 #include <d3d12.h>
@@ -113,6 +115,8 @@ namespace QFE::GRAPHIC {
 		void TestCompute(
 			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle);
 
+		void TestRayTracing(RTPSOHandle rtpso);
+
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
 		void LegacyInitialize(uint32_t width, uint32_t height);
@@ -142,5 +146,7 @@ namespace QFE::GRAPHIC {
 		QFE::UniqueContainer<D3D12_RECT> scissorRects_;// シザリング矩形のコンテナ
 
 		DirectXResourceHandle depthStencilBufferHandle_;// 深度ステンシルバッファのリソースハンドル
+
+		RaytracingAccelerationStructure testBLAS_;// テスト用のBLAS
 	};
 }

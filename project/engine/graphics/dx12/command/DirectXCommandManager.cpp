@@ -36,6 +36,15 @@ ID3D12GraphicsCommandList* DirectXCommandManager::GetCommandList(const D3D12_COM
 	return nullptr;
 }
 
+ID3D12GraphicsCommandList4* QFE::GRAPHIC::DirectXCommandManager::GetCommandList4(const D3D12_COMMAND_LIST_TYPE& type) const {
+	for (auto& executor : commandExecutors_) {
+		if (executor.GetCommandType() == type) {
+			return executor.GetCommandList4();
+		}
+	}
+	return nullptr;
+}
+
 ID3D12CommandQueue* DirectXCommandManager::GetCommandQueue(const D3D12_COMMAND_LIST_TYPE& type) const {
 	for (auto& executor : commandExecutors_) {
 		if (executor.GetCommandType() == type) {
