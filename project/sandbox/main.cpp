@@ -3,6 +3,7 @@
 
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
+#include "camera/CameraManager.h"
 #include "core/loger/MyDebugLog.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"
@@ -24,11 +25,66 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		std::make_unique<QFE::GRAPHIC::D3D12GraphicEngine>(gameWindowManager->GetWindow("Test Window"));
 	graphicEngine->Initialize();
 
-	// UAVバッファの作成とルートリソースの設定
-	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720,L"UAVBuffer");
+	QFE::CAMERA::CameraManager cameraManager;
+	cameraManager.Initialize();
+	QFE::CAMERA::CameraHandle cameraHandle = cameraManager.CreateCamera(0.0f, 1280.0f, 0.0f, 720.0f, 0.1f, 100.0f, 45.0f);
 
-	QFE::GRAPHIC::RTPSOHandle rtpsoHandle = graphicEngine->CreateRayTracingPipelineStateObject(
-		"engine/resources/shaders/rt/","MiniRaytracing.hlsl");
+	// ビルトインのパイプラインステートオブジェクトを取得
+	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->GetBuiltInPipelineStateObject(
+		QFE::GRAPHIC::BuiltInShaderPair::Object3D, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
+		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
+
+	QFE::MATH::Transform objTransform;
+	QFE::MATH::Transform cameraTransform;
+	cameraTransform.translate.z = -5.0f;
+
+	// Transform
+	TransformationMatrix transformMatrix;
+	transformMatrix.World = QFE::MATH::Matrix4x4::MakeAffineMatrix(objTransform);
+	transformMatrix.WVP = QFE::MATH::Matrix4x4::Multiply(transformMatrix.World, cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective));
+	QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle = graphicEngine->CreateConstantBuffer<TransformationMatrix>(
+		transformMatrix, "TransformMatrixBuffer");
+	// Material
+	Material material;
+	material.color = { 1.0f, 0.0f, 0.0f, 1.0f };
+	QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle = graphicEngine->CreateConstantBuffer<Material>(
+		material, "MaterialBuffer");
+	// DirectionalLight
+	DirectionalLight directionalLight;
+	directionalLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	directionalLight.direction = { 0.0f, -1.0f, 0.0f };
+	directionalLight.intensity = 1.0f;
+	QFE::GRAPHIC::DirectXResourceHandle directionalLightBufferHandle = graphicEngine->CreateConstantBuffer<DirectionalLight>(
+		directionalLight, "DirectionalLightBuffer");
+	//CameraForGPU;
+	CameraForGPU cameraForGPU;
+	cameraForGPU.cameraPosition = cameraTransform.translate;
+	QFE::GRAPHIC::DirectXResourceHandle cameraForGPUBufferHandle = graphicEngine->CreateConstantBuffer<CameraForGPU>(
+		cameraForGPU, "CameraForGPUBuffer");
+	//Texture2D<float32_t4> gTexture : register(t0);
+	QFE::GRAPHIC::DirectXResourceHandle textureHandle = 
+		graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyWhite1x1Texture);
+	//TextureCube<float32_t4> gCubeTexture : register(t1);
+	QFE::GRAPHIC::DirectXResourceHandle cubeTextureHandle = 
+		graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyBlackCubeMap);
+
+	// Vertexバッファの作成とモデルデータの読み込み
+	QFE::ASSET::AssimpModelLoader modelLoader;
+	modelLoader.Initialize();
+	QFE::ASSET::ModelData& modelData = modelLoader.LoadModel("resources/0.obj");
+	QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle = graphicEngine->CreateVertexBuffer(modelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
+
+	std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources = {
+		transformMatrixBufferHandle,
+		materialBufferHandle,
+		directionalLightBufferHandle,
+		cameraForGPUBufferHandle,
+		textureHandle,
+		cubeTextureHandle
+	};
+
+	QFE::GRAPHIC::ViewPortHandle viewportHandle = graphicEngine->CreateViewPort(1280, 720);
+	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle = graphicEngine->CreateScissorRect(0, 0, 1280, 720);
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -44,7 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		} else {
 			graphicEngine->PreDraw();
 
-			graphicEngine->TestRayTracing(rtpsoHandle, uavBufferHandle);
+			graphicEngine->TestDraw(psoHandle, viewportHandle, scissorRectHandle,vertexBufferHandle, rootResources);
 
 			graphicEngine->PostDraw();
 		}

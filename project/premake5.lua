@@ -73,6 +73,8 @@ group ""
 group "02_Middleware" -- アセットの読み込みや、サブシステムで使うデータを提供するプロジェクト達
     -- アセットファクトリープロジェクトの読み込み
     dofile(path.join(_root, "engine/assetfactory/premake5.lua"))
+    -- カメラプロジェクトの読み込み
+    dofile(path.join(_root, "engine/camera/premake5.lua"))
 group ""
 
 group "03_Applications" -- アプリケーションプロジェクト達

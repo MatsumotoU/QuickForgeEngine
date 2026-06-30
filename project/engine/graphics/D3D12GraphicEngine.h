@@ -12,6 +12,8 @@
 
 #include "dx12/pipeline/rtpso/RaytracingAccelerationStructure.h"
 
+#include "string/MyString.h"
+
 #define NOMINMAX
 #include <windows.h>
 #include <d3d12.h>
@@ -95,6 +97,7 @@ namespace QFE::GRAPHIC {
 				memcpy(mappedData, &data, sizeof(T));
 			}
 			resourceContainer_->SetResourceStrideInBytes(handle, sizeof(T));
+			resourceContainer_->SetResourceName(handle, ConvertString(bufferName));
 			return handle;
 		}
 		/// @brief 定数バッファのデータを取得する.データの型はテンプレートで指定する.
