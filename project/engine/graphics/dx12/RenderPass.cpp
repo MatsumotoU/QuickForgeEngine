@@ -82,7 +82,12 @@ void RenderPass::Present() {
 	swapChain_->Present();
 }
 
-void QFE::GRAPHIC::RenderPass::SetRenderTarget(
+RenderTargetHandle RenderPass::CreateOffscreenRenderTarget(uint32_t width, uint32_t height, DXGI_FORMAT format) {
+	offscreenRenderTargetsHandle_.push_back(initializeInfo_.createOffscreenFunc(width, height, format));
+	return static_cast<RenderTargetHandle>(offscreenRenderTargetsHandle_.size());
+}
+
+void RenderPass::SetRenderTarget(
 	ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle, RenderTargetHandle renderTargetHandle) {
 
 	if (renderTargetHandle == RenderTargetHandle::SwapChain) {
@@ -91,6 +96,10 @@ void QFE::GRAPHIC::RenderPass::SetRenderTarget(
 		// オフスクリーンは未実装
 		QFE_REPORT_SYSTEM_ERROR("Offscreen render target is not implemented yet in RenderPass::SetRenderTarget", SystemError::Abort);
 	}
+}
+
+UINT RenderPass::GetSwapChainBufferCount() const {
+	return swapChain_->GetBackBufferCount();
 }
 
 void RenderPass::TransitionCurrentBackBufferBarrier(ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState) {
@@ -106,4 +115,20 @@ void RenderPass::TransitionCurrentBackBufferBarrier(ID3D12GraphicsCommandList* c
 
 ID3D12Resource* RenderPass::GetCurrentBackBuffer() const {
 	return swapChain_->GetCurrentBackBuffer();
+}
+
+DirectXResourceHandle QFE::GRAPHIC::RenderPass::GetRenderTargetResourceHandle(RenderTargetHandle renderTargetHandle) const {
+	// スワップチェインのリソースは返さない
+	if (renderTargetHandle == RenderTargetHandle::SwapChain) {
+		QFE_REPORT_SYSTEM_ERROR("RenderTargetHandle::SwapChain is not supported in RenderPass::GetRenderTargetResourceHandle", SystemError::Abort);
+		return DirectXResourceHandle::Invalid;
+	}
+
+	// オフスクリーンのリソースを返す
+	if (static_cast<size_t>(renderTargetHandle) - 1 < offscreenRenderTargetsHandle_.size()) {
+		return offscreenRenderTargetsHandle_[static_cast<size_t>(renderTargetHandle) - 1];
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Invalid RenderTargetHandle in RenderPass::GetRenderTargetResourceHandle", SystemError::Abort);
+		return DirectXResourceHandle::Invalid;
+	}
 }

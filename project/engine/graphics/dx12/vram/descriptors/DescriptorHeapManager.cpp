@@ -110,6 +110,19 @@ DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::AssignUavHeap(
 	return handles;
 }
 
+DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::CreateEmptyHeapHandle(DescriptorHeapType type) {
+	// 空いているディスクリタのインデックスを取得
+	uint32_t index = descriptorHeaps_[DescriptorHeapType::SRV].GetNextFreeDescriptorIndex();
+	// ヒープにディスクリタを割り当てる
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = descriptorHeaps_[DescriptorHeapType::SRV].GetCpuDescriptorHandle(index);
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = descriptorHeaps_[DescriptorHeapType::SRV].GetGpuDescriptorHandle(index);
+
+	DescriptorHandles handles{};
+	handles.cpuHandle_ = cpuHandle;
+	handles.gpuHandle_ = gpuHandle;
+	return handles;
+}
+
 void QFE::GRAPHIC::DescriptorHeapManager::RegisterDescriptorHeaps(ID3D12GraphicsCommandList* commandList) const {
 	std::vector<ID3D12DescriptorHeap*> heaps;
 	for (const auto& [type, heap] : descriptorHeaps_) {
@@ -125,4 +138,12 @@ void QFE::GRAPHIC::DescriptorHeapManager::RegisterDescriptorHeaps(ID3D12Graphics
 		heaps.push_back(heap.GetDescriptorHeap());
 	}
 	commandList->SetDescriptorHeaps(static_cast<UINT>(heaps.size()), heaps.data());
+}
+
+ID3D12DescriptorHeap* QFE::GRAPHIC::DescriptorHeapManager::GetDescriptorHeap(DescriptorHeapType type) const {
+	auto it = descriptorHeaps_.find(type);
+	if (it != descriptorHeaps_.end()) {
+		return it->second.GetDescriptorHeap();
+	}
+	return nullptr;
 }

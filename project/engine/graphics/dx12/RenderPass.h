@@ -22,6 +22,9 @@ namespace QFE::GRAPHIC {
 		ID3D12Device* device;
 		IDXGIFactory7* dxgiFactory;
 		ID3D12CommandQueue* commandQueue;
+
+		std::function<DirectXResourceHandle(uint32_t, uint32_t, DXGI_FORMAT)> createOffscreenFunc;
+
 		std::function<D3D12_CPU_DESCRIPTOR_HANDLE(ID3D12Resource*, const D3D12_RENDER_TARGET_VIEW_DESC*)>assginRtvFunc;
 		std::function<const D3D12_CPU_DESCRIPTOR_HANDLE*(DirectXResourceHandle)>getResourceDsvFunc;// Dsvをリソースハンドルから取得する関数
 	};
@@ -42,17 +45,29 @@ namespace QFE::GRAPHIC {
 		/// @brief バックバッファを画面に表示します。
 		void Present();
 
+		/// @brief オフスクリーンのレンダーターゲットを生成します。戻り値はRenderTargetHandleです。
+		RenderTargetHandle CreateOffscreenRenderTarget(uint32_t width, uint32_t height, DXGI_FORMAT format);
+
 		/// @brief 描画先を決定します。0はスワップチェーンのバックバッファ、1以上はオフスクリーンバッファを指します。
 		void SetRenderTarget(
 			ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
 			RenderTargetHandle renderTargetHandle = RenderTargetHandle::SwapChain);
 
+		/// @brief スワップチェーンのバックバッファの数を取得します。
+		UINT GetSwapChainBufferCount() const;
+
 
 		void TransitionCurrentBackBufferBarrier(ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState);
 		ID3D12Resource* GetCurrentBackBuffer() const;
 
+		/// @brief RenderTargetHandleからDirectXResourceHandleを取得します。
+		DirectXResourceHandle GetRenderTargetResourceHandle(RenderTargetHandle renderTargetHandle) const;
+
 	private:
 		std::unique_ptr<SwapChain> swapChain_;
 		RenderPassInitializeInfo initializeInfo_;
+
+		// OffscreenRenderTargetのハンドルを管理するための配列
+		std::vector<DirectXResourceHandle> offscreenRenderTargetsHandle_;
 	};
 }

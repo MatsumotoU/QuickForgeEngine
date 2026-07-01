@@ -4,6 +4,13 @@
 #include "eventSystems/ExitAppEvent.h"
 #include "eventSystems/OnFocusEvent.h"
 
+#ifdef USE_IMGUI
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_dx12.h>
+#include <imgui/imgui_impl_win32.h>
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
+
 #include "EngineDefines.h"
 
 namespace QFE {
@@ -17,6 +24,13 @@ namespace QFE {
 	}
 
 	LRESULT CALLBACK WindowEventsManager::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+#ifdef USE_IMGUI
+		// ImGuiのイベント処理
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+			return true;
+		}
+#endif
+		
 		// WM_NCCREATEメッセージ、CREATESTRUCTからThisポインタを取り出して保持
 		if (msg == WM_NCCREATE) {
 			CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lparam);

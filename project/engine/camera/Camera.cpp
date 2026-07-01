@@ -25,7 +25,7 @@ void Camera::CreatePerspectiveMatrix(float fovY, float aspectRatio, float nearZ,
 
 void Camera::CreateOrthographicMatrix(float left, float right, float top, float bottom, float nearZ, float farZ) {
 	// 平行投影行列を作成
-	MATH::Matrix4x4 orthographicMatrix = MATH::Matrix4x4::MakeOrthographicMatrix(left, right, top, bottom, nearZ, farZ);
+	MATH::Matrix4x4 orthographicMatrix = MATH::Matrix4x4::MakeOrthographicMatrix(left,  top, right, bottom, nearZ, farZ);
 }
 
 QFE::MATH::Matrix4x4 Camera::GetViewProjectionMatrix(const MATH::Transform& cameraTranform, CameraType type) const {

@@ -120,6 +120,18 @@ namespace QFE::GRAPHIC {
 
 		void TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle);
 
+		/// @brief DirectX12のデバイスを取得する
+		ID3D12Device* GetDevice() const;
+		/// @brief DirectX12のコマンドリストを取得する
+		ID3D12GraphicsCommandList* GetCommandList(D3D12_COMMAND_LIST_TYPE type) const;
+		/// @brief SwapChainのバッファ数を取得する
+		UINT GetSwapChainBufferCount() const;
+		/// @brief DescriptorHeapを取得する
+		ID3D12DescriptorHeap* GetSRVDescriptorHeap() const;
+		/// @brief SRVディスクリプタヒープからSRVディスクリプタを割り当てる関数
+		DescriptorHandles CreateExternalSRVDescriptor();
+
+
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.
 		void LegacyInitialize(uint32_t width, uint32_t height);

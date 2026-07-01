@@ -29,8 +29,13 @@ namespace QFE::GRAPHIC {
 			ID3D12Device* device, ID3D12Resource* resource, 
 			ID3D12Resource* counterResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* desc);
 
+		/// @brief 空のディスクリタヒープを作成する関数
+		[[nodiscard]] DescriptorHandles CreateEmptyHeapHandle(DescriptorHeapType type);
 		/// @brief コマンドリストにディスクリタヒープを登録する関数
 		void RegisterDescriptorHeaps(ID3D12GraphicsCommandList* commandList) const;
+
+		/// @brief ディスクリタヒープを取得する関数
+		ID3D12DescriptorHeap* GetDescriptorHeap(DescriptorHeapType type) const;
 
 	private:
 		const uint32_t kMaxRtvDescriptors = 128; // 最大RTVディスクリプタ数

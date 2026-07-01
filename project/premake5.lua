@@ -34,26 +34,25 @@ workspace "QuickForgeEngine"
     filter ""
     
     filter "configurations:Debug"
-        defines { "_DEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEBUG"}
+        defines { "_DEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEBUG","USE_IMGUI"}
         optimize "Off"
         symbols "On"
         runtime "Debug"
     filter "configurations:Development"
-        defines { "NDEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEVELOPMENT" } 
+        defines { "NDEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEVELOPMENT","USE_IMGUI"} 
         optimize "Off"  -- プロジェクト全体設定は無効（VS上で最適化「無効」に見える）
         symbols "On"     -- デバッグ情報を出す
+        runtime "Release"
+    filter "configurations:Release"
+        defines { "NDEBUG", "QFE_OPTIMIZE_ON","QFE_MODE_RELEASE","NO_IMGUI" }
+        optimize "On"
+        symbols "Off"
         runtime "Release"
     filter ""
 
     -- 個別のファイルを対象に最適化を有効化（Development構成のみ）
     filter { "configurations:Development", "files:**.cpp" }
         optimize "On"
-    filter ""
-    filter "configurations:Release"
-        defines { "NDEBUG", "QFE_OPTIMIZE_ON","QFE_MODE_RELEASE" }
-        optimize "On"
-        symbols "Off"
-        runtime "Release"
     filter ""
 
 group "00_System" -- すべての土台のプロジェクト
@@ -67,6 +66,8 @@ group "01_SubSystems" -- 独立した機能を提供するプロジェクト達
     dofile(path.join(_root, "engine/window/premake5.lua"))
     -- グラフィックエンジンプロジェクトの読み込み
     dofile(path.join(_root, "engine/graphics/premake5.lua"))
+    -- GUIプロジェクトの読み込み
+    dofile(path.join(_root, "engine/gui/premake5.lua"))
     
 group ""
 
@@ -92,7 +93,21 @@ project "ExternalFolders"
         "externals/**"
     }
 
--- ExternalsProject
+-- ImGui
+project "ImGui"
+    location "externals/imgui"
+    kind "StaticLib" 
+    language "C++"
+    includedirs {
+        "externals/imgui", 
+    }
+
+    files {
+        "externals/imgui/**.h",
+        "externals/imgui/**.cpp",
+    }
+
+-- DirectXTex
 project "DirectXTex"
     location "externals/DirectXTex"
     kind "StaticLib" 
@@ -113,19 +128,6 @@ project "DirectXTex"
         prebuildcommands {
             "cd Shaders && CompileShaders.cmd"
         }
-
-project "ImGui"
-    location "externals/imgui"
-    kind "StaticLib" 
-    language "C++"
-    includedirs {
-        "externals/imgui", 
-    }
-
-    files {
-        "externals/imgui/**.h",
-        "externals/imgui/**.cpp",
-    }
 
 group "Docs"
     project "DevelopmentRules"

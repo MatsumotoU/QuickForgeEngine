@@ -92,6 +92,29 @@ void D3D12GraphicEngine::Initialize() {
 	// Rtvに割り当てる関数
 	renderPassInfo.assginRtvFunc = [&](ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc)
 		{return descriptorHeapManager_->AssignRtvHeap(directXDevice_->GetDevice(), resource, desc).cpuHandle_; };
+
+	renderPassInfo.createOffscreenFunc = [&](uint32_t width, uint32_t height, DXGI_FORMAT format){
+		D3D12_RESOURCE_DESC resourceDesc = {};
+		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		resourceDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		resourceDesc.Width = width;
+		resourceDesc.Height = height;
+		resourceDesc.DepthOrArraySize = 1;
+		resourceDesc.MipLevels = 1;
+		resourceDesc.SampleDesc.Count = 1;
+		resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+		clearValue = {};
+		offscreenClearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		offscreenClearValue_.Color[0] = 0.0f;
+		offscreenClearValue_.Color[1] = 0.0f;
+		offscreenClearValue_.Color[2] = 0.0f;
+		offscreenClearValue_.Color[3] = 0.0f;
+
+		return resourceContainer_->CreateResource(
+			directXDevice_->GetDevice(), resourceDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,D3D12_HEAP_TYPE_DEFAULT);
+		};
+
 	// RenderPassの初期化
 	renderPass_->Initialize(renderPassInfo);
 
@@ -158,7 +181,6 @@ void D3D12GraphicEngine::Initialize() {
 	textureLoader_->Initialize(textureLoaderInfo);
 
 
-	
 	testBLAS_.CreateTestBLAS(directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	testBLAS_.CreateTestTLAS(directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	commandManager_->ExecuteCommandList();
@@ -487,6 +509,26 @@ void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpsoHandle, D
 		renderPass_->GetCurrentBackBuffer(), resourceContainer_->GetResource(uavHandle));
 	renderPass_->TransitionCurrentBackBufferBarrier(
 		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
+ID3D12Device* QFE::GRAPHIC::D3D12GraphicEngine::GetDevice() const {
+	return directXDevice_->GetDevice();
+}
+
+ID3D12GraphicsCommandList* QFE::GRAPHIC::D3D12GraphicEngine::GetCommandList(D3D12_COMMAND_LIST_TYPE type) const {
+	return commandManager_->GetCommandList(type);
+}
+
+UINT QFE::GRAPHIC::D3D12GraphicEngine::GetSwapChainBufferCount() const {
+	return renderPass_->GetSwapChainBufferCount();
+}
+
+ID3D12DescriptorHeap* QFE::GRAPHIC::D3D12GraphicEngine::GetSRVDescriptorHeap() const {
+	return descriptorHeapManager_->GetDescriptorHeap(GRAPHIC::DescriptorHeapType::SRV);
+}
+
+DescriptorHandles QFE::GRAPHIC::D3D12GraphicEngine::CreateExternalSRVDescriptor() {
+	return descriptorHeapManager_->CreateEmptyHeapHandle(GRAPHIC::DescriptorHeapType::SRV);
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {

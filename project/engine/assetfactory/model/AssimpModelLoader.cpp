@@ -109,7 +109,7 @@ void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 		}
 
 		// メッシュデータの初期化
-		MeshData meshData(tempVertices.size());
+		MeshData meshData(tempVertices.size()*3);
 
 		// 面データの読み込み（インデックスを使用して頂点を追加）
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
