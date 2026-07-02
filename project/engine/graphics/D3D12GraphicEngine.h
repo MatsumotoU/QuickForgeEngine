@@ -80,9 +80,10 @@ namespace QFE::GRAPHIC {
 			ShaderPairHandle shaderHandle, BlendMode blendMode,RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
 		PSOHandle GetBuiltInPipelineStateObject(
 			BuiltInShaderPair builtInShaderPair, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
-		
 		/// @brief コンピュートシェーダーのPSOを生成します
 		ComputePSOHandle CreateComputePipelineStateObject(const std::string& dirPath, const std::string& csFileName);
+		/// @brief オフスクリーンのレンダーターゲットを生成します.
+		RenderTargetHandle CreateOffScreenRenderTarget(uint32_t width, uint32_t height);
 
 		/// @brief あるリソースの配列の数を取得する.
 		size_t GetResourceArraySize(DirectXResourceHandle handle);

@@ -86,13 +86,17 @@ void D3D12GraphicEngine::Initialize() {
 	renderPassInfo.device = directXDevice_->GetDevice();
 	renderPassInfo.dxgiFactory = directXDevice_->GetDxgiFactory();
 	renderPassInfo.commandQueue = commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	// リソースの状態を変更する関数
+	renderPassInfo.transitionFunc = [&](DirectXResourceHandle resourceHandle, ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES newState)
+		{return resourceContainer_->TransitionResource(resourceHandle, commandList, newState); };
+
 	// Dsvを取得する関数
 	renderPassInfo.getResourceDsvFunc = [&](DirectXResourceHandle resourceHandle)
 		{return resourceContainer_->GetDescriptorHandleCpuPtr(resourceHandle, ViewTypeFlags::DepthStencilView); };
 	// Rtvに割り当てる関数
 	renderPassInfo.assginRtvFunc = [&](ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc)
 		{return descriptorHeapManager_->AssignRtvHeap(directXDevice_->GetDevice(), resource, desc).cpuHandle_; };
-
+	// オフスクリーンレンダーターゲットを作成する関数
 	renderPassInfo.createOffscreenFunc = [&](uint32_t width, uint32_t height, DXGI_FORMAT format){
 		D3D12_RESOURCE_DESC resourceDesc = {};
 		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -103,16 +107,43 @@ void D3D12GraphicEngine::Initialize() {
 		resourceDesc.MipLevels = 1;
 		resourceDesc.SampleDesc.Count = 1;
 		resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
-
-		clearValue = {};
-		offscreenClearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-		offscreenClearValue_.Color[0] = 0.0f;
-		offscreenClearValue_.Color[1] = 0.0f;
-		offscreenClearValue_.Color[2] = 0.0f;
-		offscreenClearValue_.Color[3] = 0.0f;
-
-		return resourceContainer_->CreateResource(
-			directXDevice_->GetDevice(), resourceDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,D3D12_HEAP_TYPE_DEFAULT);
+		// クリア値の設定
+		D3D12_CLEAR_VALUE clearValue = {};
+		clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		clearValue.Color[0] = 0.0f;
+		clearValue.Color[1] = 0.0f;
+		clearValue.Color[2] = 0.0f;
+		clearValue.Color[3] = 0.0f;
+		// リソースを作成し、リソースハンドルを返す
+		DirectXResourceHandle handle = resourceContainer_->CreateResource(
+			directXDevice_->GetDevice(), resourceDesc, 
+			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_HEAP_TYPE_DEFAULT, &clearValue);
+		// RTVを作成
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+		CereateViewInfo rtvViewInfo{};
+		rtvViewInfo.viewType = ViewTypeFlags::RenderTargetView;
+		rtvViewInfo.rtvDesc = rtvDesc;
+		resourceContainer_->CreateResourceView(handle, rtvViewInfo);
+		// SRVを作成
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		CereateViewInfo srvViewInfo{};
+		srvViewInfo.viewType = ViewTypeFlags::ShaderResourceView;
+		srvViewInfo.srvDesc = srvDesc;
+		resourceContainer_->CreateResourceView(handle, srvViewInfo);
+		// DSVを作成
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+		dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+		CereateViewInfo dsvViewInfo{};
+		dsvViewInfo.viewType = ViewTypeFlags::DepthStencilView;
+		dsvViewInfo.dsvDesc = dsvDesc;
+		resourceContainer_->CreateResourceView(handle, dsvViewInfo);
+		return handle;
 		};
 
 	// RenderPassの初期化
@@ -309,6 +340,10 @@ ComputePSOHandle D3D12GraphicEngine::CreateComputePipelineStateObject(
 	ComputePSOHandle computePSOHandle = 
 		computePipelineManager_->GenerateComputePipelineStateObject(dirPath, csFileName);
 	return computePSOHandle;
+}
+
+RenderTargetHandle D3D12GraphicEngine::CreateOffScreenRenderTarget(uint32_t width, uint32_t height) {
+	return renderPass_->CreateOffscreenRenderTarget(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
 }
 
 size_t D3D12GraphicEngine::GetResourceArraySize(DirectXResourceHandle handle) {

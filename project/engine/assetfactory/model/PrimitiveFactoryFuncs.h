@@ -8,4 +8,6 @@ namespace QFE::ASSET {
 	std::vector<VertexData> CreateBox(bool invertFace = false);
 	/// @brief CreateRing 関数は、リング状のメッシュデータを生成します。
 	std::vector<VertexData> CreateRing(float innerRadius = 0.5f, float outerRadius = 1.0f, uint32_t segments = 32, bool invertFace = false);
+	/// @brief シリンダーのメッシュデータを生成します。
+	std::vector<VertexData> CreateCylinder(float radius = 0.5f, float height = 1.0f, uint32_t segments = 32, bool invertFace = false);
 }

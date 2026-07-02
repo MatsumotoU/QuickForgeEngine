@@ -165,4 +165,102 @@ std::vector<VertexData> CreateRing(float innerRadius, float outerRadius, uint32_
 	return ringMesh;
 }
 
+std::vector<VertexData> CreateCylinder(float radius, float height, uint32_t segments, bool invertFace) {
+	// 1セグメントあたり: 側面(6頂点) + 天面(3頂点) + 底面(3頂点) = 12頂点
+	std::vector<VertexData> cylinderMesh(segments * 12);
+	float halfHeight = height / 2.0f;
+
+	for (uint32_t i = 0; i < segments; ++i) {
+		float angle = (2.0f * 3.14159265f * i) / segments;
+		float nextAngle = (2.0f * 3.14159265f * (i + 1)) / segments;
+
+		float cosCurr = cos(angle);
+		float sinCurr = sin(angle);
+		float cosNext = cos(nextAngle);
+		float sinNext = sin(nextAngle);
+
+		// --- 頂点データの準備 ---
+
+		// 側面用の頂点（法線は外側を向く）
+		VertexData sideBotCurr, sideBotNext, sideTopCurr, sideTopNext;
+		sideBotCurr.position = { radius * cosCurr, -halfHeight, radius * sinCurr };
+		sideBotCurr.normal = { cosCurr, 0.0f, sinCurr };
+		sideBotCurr.texcoord = { static_cast<float>(i) / segments, 1.0f };
+
+		sideBotNext.position = { radius * cosNext, -halfHeight, radius * sinNext };
+		sideBotNext.normal = { cosNext, 0.0f, sinNext };
+		sideBotNext.texcoord = { static_cast<float>(i + 1) / segments, 1.0f };
+
+		sideTopCurr.position = { radius * cosCurr, halfHeight, radius * sinCurr };
+		sideTopCurr.normal = { cosCurr, 0.0f, sinCurr };
+		sideTopCurr.texcoord = { static_cast<float>(i) / segments, 0.0f };
+
+		sideTopNext.position = { radius * cosNext, halfHeight, radius * sinNext };
+		sideTopNext.normal = { cosNext, 0.0f, sinNext };
+		sideTopNext.texcoord = { static_cast<float>(i + 1) / segments, 0.0f };
+
+		// 天面用の頂点（法線は真上、UVは簡易的に0.5中心）
+		VertexData topCenter, topCurr, topNext;
+		topCenter.position = { 0.0f, halfHeight, 0.0f };
+		topCenter.normal = { 0.0f, 1.0f, 0.0f };
+		topCenter.texcoord = { 0.5f, 0.5f };
+
+		topCurr = sideTopCurr;
+		topCurr.normal = { 0.0f, 1.0f, 0.0f }; // 法線だけ真上に上書き
+
+		topNext = sideTopNext;
+		topNext.normal = { 0.0f, 1.0f, 0.0f }; // 法線だけ真上に上書き
+
+		// 底面用の頂点（法線は真下）
+		VertexData botCenter, botCurr, botNext;
+		botCenter.position = { 0.0f, -halfHeight, 0.0f };
+		botCenter.normal = { 0.0f, -1.0f, 0.0f };
+		botCenter.texcoord = { 0.5f, 0.5f };
+
+		botCurr = sideBotCurr;
+		botCurr.normal = { 0.0f, -1.0f, 0.0f }; // 法線だけ真下に上書き
+
+		botNext = sideBotNext;
+		botNext.normal = { 0.0f, -1.0f, 0.0f }; // 法線だけ真下に上書き
+
+
+		// --- メッシュへの代入 (1セグメント = 12頂点) ---
+		size_t offset = i * 12;
+
+		// 1. 側面 三角形1 (左下、右下、右上)
+		cylinderMesh[offset + 0] = sideBotCurr;
+		cylinderMesh[offset + 1] = sideBotNext;
+		cylinderMesh[offset + 2] = sideTopNext;
+
+		// 側面 三角形2 (左下、右上、左上)
+		cylinderMesh[offset + 3] = sideBotCurr;
+		cylinderMesh[offset + 4] = sideTopNext;
+		cylinderMesh[offset + 5] = sideTopCurr;
+
+		// 2. 天面 三角形 (中心、現在、次)
+		cylinderMesh[offset + 6] = topCenter;
+		cylinderMesh[offset + 7] = topCurr;
+		cylinderMesh[offset + 8] = topNext;
+
+		// 3. 底面 三角形 (中心、次、現在) ※裏から見て反時計回りになるよう制御
+		cylinderMesh[offset + 9] = botCenter;
+		cylinderMesh[offset + 10] = botNext;
+		cylinderMesh[offset + 11] = botCurr;
+	}
+
+	// --- 面を反転させるかどうかの処理（リングの実装と完全同一） ---
+	if (invertFace) {
+		// 法線を反転させる
+		for (size_t i = 0; i < cylinderMesh.size(); ++i) {
+			cylinderMesh[i].normal = { -cylinderMesh[i].normal.x, -cylinderMesh[i].normal.y, -cylinderMesh[i].normal.z };
+		}
+		// 頂点の順序を反転させる（巻き順を時計回りに）
+		for (size_t i = 0; i < cylinderMesh.size(); i += 3) {
+			std::swap(cylinderMesh[i], cylinderMesh[i + 2]);
+		}
+	}
+
+	return cylinderMesh;
+}
+
 } // namespace QFE::GRAPHIC

@@ -27,6 +27,7 @@ namespace QFE::GRAPHIC {
 
 		std::function<D3D12_CPU_DESCRIPTOR_HANDLE(ID3D12Resource*, const D3D12_RENDER_TARGET_VIEW_DESC*)>assginRtvFunc;
 		std::function<const D3D12_CPU_DESCRIPTOR_HANDLE*(DirectXResourceHandle)>getResourceDsvFunc;// Dsvをリソースハンドルから取得する関数
+		std::function<bool(DirectXResourceHandle, D3D12_RESOURCE_STATES, D3D12_RESOURCE_STATES)> transitionFunc;// リソースの状態を変更する関数
 	};
 
 	/// @brief 描画先のバリア、管理するクラス
@@ -52,6 +53,10 @@ namespace QFE::GRAPHIC {
 		void SetRenderTarget(
 			ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
 			RenderTargetHandle renderTargetHandle = RenderTargetHandle::SwapChain);
+		/// @brief 描画先を決定します。0はスワップチェーンのバックバッファ、1以上はオフスクリーンバッファを指します。
+		void SetRenderTarget(
+			ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
+			std::vector<RenderTargetHandle> renderTargetHandles);
 
 		/// @brief スワップチェーンのバックバッファの数を取得します。
 		UINT GetSwapChainBufferCount() const;

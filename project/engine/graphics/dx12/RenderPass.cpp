@@ -93,9 +93,15 @@ void RenderPass::SetRenderTarget(
 	if (renderTargetHandle == RenderTargetHandle::SwapChain) {
 		commandList->OMSetRenderTargets(1, swapChain_->GetCurrentBackBufferViewPtr(), FALSE, initializeInfo_.getResourceDsvFunc(depthStencilHandle));
 	} else {
-		// オフスクリーンは未実装
-		QFE_REPORT_SYSTEM_ERROR("Offscreen render target is not implemented yet in RenderPass::SetRenderTarget", SystemError::Abort);
+		
 	}
+}
+
+void RenderPass::SetRenderTarget(
+	ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
+	std::vector<RenderTargetHandle> renderTargetHandles) {
+
+
 }
 
 UINT RenderPass::GetSwapChainBufferCount() const {
