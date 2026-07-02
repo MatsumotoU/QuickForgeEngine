@@ -27,7 +27,8 @@ namespace QFE::GRAPHIC {
 
 		std::function<D3D12_CPU_DESCRIPTOR_HANDLE(ID3D12Resource*, const D3D12_RENDER_TARGET_VIEW_DESC*)>assginRtvFunc;
 		std::function<const D3D12_CPU_DESCRIPTOR_HANDLE*(DirectXResourceHandle)>getResourceDsvFunc;// Dsvをリソースハンドルから取得する関数
-		std::function<bool(DirectXResourceHandle, D3D12_RESOURCE_STATES, D3D12_RESOURCE_STATES)> transitionFunc;// リソースの状態を変更する関数
+		std::function<const D3D12_CPU_DESCRIPTOR_HANDLE* (DirectXResourceHandle)> getResourceRtvFunc;// Rtvをリソースハンドルから取得する関数
+		std::function<bool(DirectXResourceHandle, D3D12_RESOURCE_STATES)> transitionFunc;// リソースの状態を変更する関数
 	};
 
 	/// @brief 描画先のバリア、管理するクラス
@@ -61,12 +62,15 @@ namespace QFE::GRAPHIC {
 		/// @brief スワップチェーンのバックバッファの数を取得します。
 		UINT GetSwapChainBufferCount() const;
 
-
+		/// @brief スワップチェーンのバックバッファの状態を変更するバリアを発行します。
 		void TransitionCurrentBackBufferBarrier(ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState);
+		/// @brief スワップチェーンのバックバッファを取得します。
 		ID3D12Resource* GetCurrentBackBuffer() const;
 
 		/// @brief RenderTargetHandleからDirectXResourceHandleを取得します。
 		DirectXResourceHandle GetRenderTargetResourceHandle(RenderTargetHandle renderTargetHandle) const;
+		/// @brief RenderTargetHandleからDirectXResourceHandleをShaderで読み取れる形にして返します。
+		DirectXResourceHandle GetOffscreenBarrierShaderResourceHandle(RenderTargetHandle renderTargetHandle) const;
 
 	private:
 		std::unique_ptr<SwapChain> swapChain_;

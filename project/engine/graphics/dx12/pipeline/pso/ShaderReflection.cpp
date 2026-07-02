@@ -102,6 +102,23 @@ bool QFE::GRAPHIC::ShaderReflection::GetThreadGroupSize(IDxcBlob* shaderBlob, UI
 	return true;
 }
 
+UINT QFE::GRAPHIC::ShaderReflection::GetRenderTargetCount(IDxcBlob* shaderBlob) {
+	// shaderBlobが有効かどうかを確認
+	if (shaderBlob == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Shader blob is null.", SystemError::Abort);
+	}
+
+	// シェーダーのリフレクションを実行
+	Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection = CreateShaderReflection(shaderBlob);
+	// シェーダーの基本情報を取得
+	D3D12_SHADER_DESC shaderDesc{};
+	HRESULT hr = shaderReflection->GetDesc(&shaderDesc);
+	assert(SUCCEEDED(hr) && "Failed to get shader description.");
+
+	QFE_LOG(std::format("Shader has {} render target(s).", shaderDesc.OutputParameters));
+	return shaderDesc.OutputParameters;
+}
+
 Microsoft::WRL::ComPtr<IDxcContainerReflection> QFE::GRAPHIC::ShaderReflection::CreateContainerReflection(IDxcBlob* shaderBlob) {
 	HRESULT hr;
 	Microsoft::WRL::ComPtr<IDxcContainerReflection> containerReflection;

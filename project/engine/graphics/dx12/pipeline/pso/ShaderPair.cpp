@@ -39,6 +39,9 @@ void QFE::GRAPHIC::ShaderPair::Create(
 	for (const auto& element : psRootParameterElements) {
 		rootParameter_.CreateRootParameter(element, D3D12_SHADER_VISIBILITY_PIXEL);
 	}
+
+	// レンダーターゲットの数を取得
+	renderTargetCount_ = funcs.getRenderTargetCountFunc(psBlob);
 	
 	// 静的サンプラーの割り当て
 	rootParameter_.AssignStaticSampler(funcs.getStaticSamplerFunc(), funcs.getStaticSamplerSizeFunc());

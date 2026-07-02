@@ -111,10 +111,16 @@ namespace QFE::GRAPHIC {
 		DirectXResourceHandle CreateUAVBuffer(uint32_t width, uint32_t height,const std::wstring& name);
 
 		RTPSOHandle CreateRayTracingPipelineStateObject(const std::string& dirPath, const std::string& rgsFileName);
+
+		void SetRenderTarget(RenderTargetHandle renderTargetHandle);
 		
 		void TestDraw(
 			PSOHandle psoHandle,ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
 			DirectXResourceHandle vertexBufferHandle,std::vector<DirectXResourceHandle> rootResources);
+		void TestOffScreenDraw(
+			PSOHandle psoHandle, ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
+			DirectXResourceHandle vertexBufferHandle, std::vector<DirectXResourceHandle> rootResources,
+			std::vector<RenderTargetHandle> renderTargets);
 
 		void TestCompute(
 			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle);

@@ -47,9 +47,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	cameraManager.Initialize();
 	QFE::CAMERA::CameraHandle cameraHandle = cameraManager.CreateCamera(0.0f, 1280.0f, 0.0f, 720.0f, 0.1f, 100.0f, 45.0f);
 
-	// ビルトインのパイプラインステートオブジェクトを取得
-	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->GetBuiltInPipelineStateObject(
-		QFE::GRAPHIC::BuiltInShaderPair::Object3D, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
+	std::string psDirName = "engine/resources/shaders/ps/";
+	std::string vsDirName = "engine/resources/shaders/vs/";
+
+	// シェーダーペアを生成
+	QFE::GRAPHIC::ShaderPairElement shaderPairElement;
+	shaderPairElement.vsDirName = vsDirName;
+	shaderPairElement.psDirName = psDirName;
+	shaderPairElement.vsFileName = "Object3d.VS.hlsl";
+	shaderPairElement.psFileName = "Object3d.GBuffer.PS.hlsl";
+	QFE::GRAPHIC::ShaderPairHandle shaderPairHandle = graphicEngine->CreateShaderPair(shaderPairElement);
+	// パイプラインステートオブジェクトを生成
+	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->CreatePipelineStateObject(
+		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
 
 	QFE::MATH::Transform objTransform;
@@ -68,24 +78,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	material.color = { 1.0f, 0.0f, 0.0f, 1.0f };
 	QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle = graphicEngine->CreateConstantBuffer<Material>(
 		material, "MaterialBuffer");
-	// DirectionalLight
-	DirectionalLight directionalLight;
-	directionalLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	directionalLight.direction = { 0.0f, -1.0f, 0.0f };
-	directionalLight.intensity = 1.0f;
-	QFE::GRAPHIC::DirectXResourceHandle directionalLightBufferHandle = graphicEngine->CreateConstantBuffer<DirectionalLight>(
-		directionalLight, "DirectionalLightBuffer");
-	//CameraForGPU;
-	CameraForGPU cameraForGPU;
-	cameraForGPU.cameraPosition = cameraTransform.translate;
-	QFE::GRAPHIC::DirectXResourceHandle cameraForGPUBufferHandle = graphicEngine->CreateConstantBuffer<CameraForGPU>(
-		cameraForGPU, "CameraForGPUBuffer");
+	//// DirectionalLight
+	//DirectionalLight directionalLight;
+	//directionalLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//directionalLight.direction = { 0.0f, -1.0f, 0.0f };
+	//directionalLight.intensity = 1.0f;
+	//QFE::GRAPHIC::DirectXResourceHandle directionalLightBufferHandle = graphicEngine->CreateConstantBuffer<DirectionalLight>(
+	//	directionalLight, "DirectionalLightBuffer");
+	////CameraForGPU;
+	//CameraForGPU cameraForGPU;
+	//cameraForGPU.cameraPosition = cameraTransform.translate;
+	//QFE::GRAPHIC::DirectXResourceHandle cameraForGPUBufferHandle = graphicEngine->CreateConstantBuffer<CameraForGPU>(
+	//	cameraForGPU, "CameraForGPUBuffer");
 	//Texture
 	QFE::GRAPHIC::DirectXResourceHandle textureHandle = 
 		graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyWhite1x1Texture);
-	//gCubeTexture
-	QFE::GRAPHIC::DirectXResourceHandle cubeTextureHandle = 
-		graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyBlackCubeMap);
+	////gCubeTexture
+	//QFE::GRAPHIC::DirectXResourceHandle cubeTextureHandle = 
+	//	graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyBlackCubeMap);
 
 	// Vertexバッファの作成とモデルデータの読み込み
 	QFE::ASSET::AssimpModelLoader modelLoader;
@@ -96,14 +106,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources = {
 		transformMatrixBufferHandle,
 		materialBufferHandle,
-		directionalLightBufferHandle,
-		cameraForGPUBufferHandle,
-		textureHandle,
-		cubeTextureHandle
+		textureHandle
 	};
 
 	QFE::GRAPHIC::ViewPortHandle viewportHandle = graphicEngine->CreateViewPort(1280, 720);
 	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle = graphicEngine->CreateScissorRect(0, 0, 1280, 720);
+
+	// オフスクリーンレンダーターゲットの作成
+	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
+	for(int i = 0; i < 3; ++i) {
+		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle = graphicEngine->CreateOffScreenRenderTarget(1280, 720);
+		renderTargets.push_back(offScreenRenderTargetHandle);
+	}
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -132,8 +146,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			transformMatrixData->World = QFE::MATH::Matrix4x4::MakeAffineMatrix(objTransform);
 			transformMatrixData->WVP = QFE::MATH::Matrix4x4::Multiply(transformMatrixData->World, cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective));
 
-			graphicEngine->TestDraw(psoHandle, viewportHandle, scissorRectHandle,vertexBufferHandle, rootResources);
+			graphicEngine->TestOffScreenDraw(
+				psoHandle, viewportHandle, scissorRectHandle, vertexBufferHandle, rootResources, renderTargets);
+			//graphicEngine->TestDraw(psoHandle, viewportHandle, scissorRectHandle,vertexBufferHandle, rootResources);
 			
+			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager.PostDraw();
 			graphicEngine->PostDraw();
 		}

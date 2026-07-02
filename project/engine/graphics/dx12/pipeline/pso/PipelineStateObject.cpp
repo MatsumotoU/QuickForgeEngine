@@ -73,8 +73,10 @@ void QFE::GRAPHIC::PipelineStateObject::CreatePipelineStateObject(
 	graphicsPipelineStateDesc.BlendState = element.blendDesc;
 	graphicsPipelineStateDesc.RasterizerState = element.rasterizerDesc;
 	// 書き込むRTVの情報
-	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	graphicsPipelineStateDesc.NumRenderTargets = element.numRenderTarget;
+	for(UINT i = 0; i < element.numRenderTarget; ++i) {
+		graphicsPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	}
 	// 利用するトポロジ
 	graphicsPipelineStateDesc.PrimitiveTopologyType = element.topologyType;
 	// マルチサンプルの設定

@@ -87,9 +87,11 @@ void D3D12GraphicEngine::Initialize() {
 	renderPassInfo.dxgiFactory = directXDevice_->GetDxgiFactory();
 	renderPassInfo.commandQueue = commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT);
 	// リソースの状態を変更する関数
-	renderPassInfo.transitionFunc = [&](DirectXResourceHandle resourceHandle, ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES newState)
-		{return resourceContainer_->TransitionResource(resourceHandle, commandList, newState); };
-
+	renderPassInfo.transitionFunc = [&](DirectXResourceHandle resourceHandle, D3D12_RESOURCE_STATES newState)
+		{return resourceContainer_->TransitionResource(resourceHandle,commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), newState); };
+	// Rtvを取得する関数
+	renderPassInfo.getResourceRtvFunc = [&](DirectXResourceHandle resourceHandle)
+		{return resourceContainer_->GetDescriptorHandleCpuPtr(resourceHandle, ViewTypeFlags::RenderTargetView); };
 	// Dsvを取得する関数
 	renderPassInfo.getResourceDsvFunc = [&](DirectXResourceHandle resourceHandle)
 		{return resourceContainer_->GetDescriptorHandleCpuPtr(resourceHandle, ViewTypeFlags::DepthStencilView); };
@@ -122,27 +124,18 @@ void D3D12GraphicEngine::Initialize() {
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-		CereateViewInfo rtvViewInfo{};
-		rtvViewInfo.viewType = ViewTypeFlags::RenderTargetView;
-		rtvViewInfo.rtvDesc = rtvDesc;
-		resourceContainer_->CreateResourceView(handle, rtvViewInfo);
 		// SRVを作成
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		CereateViewInfo srvViewInfo{};
-		srvViewInfo.viewType = ViewTypeFlags::ShaderResourceView;
-		srvViewInfo.srvDesc = srvDesc;
-		resourceContainer_->CreateResourceView(handle, srvViewInfo);
-		// DSVを作成
-		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-		dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
-		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-		CereateViewInfo dsvViewInfo{};
-		dsvViewInfo.viewType = ViewTypeFlags::DepthStencilView;
-		dsvViewInfo.dsvDesc = dsvDesc;
-		resourceContainer_->CreateResourceView(handle, dsvViewInfo);
+		srvDesc.Texture2D.MipLevels = 1;
+		// ResourceViewを作成
+		CereateViewInfo viewInfo{};
+		viewInfo.viewType = ViewTypeFlags::RenderTargetView | ViewTypeFlags::ShaderResourceView;
+		viewInfo.rtvDesc = rtvDesc;
+		viewInfo.srvDesc = srvDesc;
+		resourceContainer_->CreateResourceView(handle, viewInfo);
 		return handle;
 		};
 
@@ -163,6 +156,8 @@ void D3D12GraphicEngine::Initialize() {
 		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob); };
 	graphicPipelineManagerInfo.compileFunc = 
 		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
+	graphicPipelineManagerInfo.getRenderTargetCountFunc = 
+		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRenderTargetCount(shaderBlob); };
 	graphicPipelineManagerInfo.device = directXDevice_->GetDevice();
 	graphicPipelineManager_->Initialize(graphicPipelineManagerInfo);
 
@@ -389,6 +384,10 @@ RTPSOHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateRayTracingPipelineStateObjec
 	return rayTracingPipelineManager_->CreateRaytracingPipelineStateObject(ConvertString(dirPath + rgsFileName), L"lib_6_3");
 }
 
+void QFE::GRAPHIC::D3D12GraphicEngine::SetRenderTarget(RenderTargetHandle renderTargetHandle) {
+	renderPass_->SetRenderTarget(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), depthStencilBufferHandle_, renderTargetHandle);
+}
+
 void D3D12GraphicEngine::TestDraw(
 	PSOHandle psoHandle, ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
 	DirectXResourceHandle vertexBufferHandle, std::vector<DirectXResourceHandle> rootResources) {
@@ -441,6 +440,61 @@ void D3D12GraphicEngine::TestDraw(
 		
 	}
 	 
+	UINT vertexCount = static_cast<UINT>(GetResourceArraySize(vertexBufferHandle));
+	commandList->DrawInstanced(vertexCount, 1, 0, 0);
+}
+
+void QFE::GRAPHIC::D3D12GraphicEngine::TestOffScreenDraw(
+	PSOHandle psoHandle, ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
+	DirectXResourceHandle vertexBufferHandle, std::vector<DirectXResourceHandle> rootResources, 
+	std::vector<RenderTargetHandle> renderTargets) {
+
+	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+	renderPass_->SetRenderTarget(
+		commandList, depthStencilBufferHandle_, renderTargets);
+
+	commandList->RSSetViewports(1, viewports_.GetData(static_cast<uint32_t>(viewportHandle)));
+	commandList->RSSetScissorRects(1, scissorRects_.GetData(static_cast<uint32_t>(scissorRectHandle)));
+
+	commandList->SetPipelineState(graphicPipelineManager_->GetPipelineState(psoHandle));
+	commandList->SetGraphicsRootSignature(graphicPipelineManager_->GetRootSignature(psoHandle));
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = resourceContainer_->GetVertexBufferView(vertexBufferHandle);
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes = graphicPipelineManager_->GetRootParameterTypes(psoHandle);
+	if (rootParameterTypes.size() != rootResources.size()) {
+		// PSOのルートパラメータの数と渡されたリソースの数が異なる場合はエラー
+		assert(false);
+		return;
+	}
+
+	for (int i = 0; i < rootParameterTypes.size(); ++i) {
+		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
+
+		if (rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer_->GetGpuVirtualAddress(rootResources[i]);
+			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
+		} else {
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
+			switch (rootParameterType) {
+			case D3D12_ROOT_PARAMETER_TYPE_SRV:
+				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+				break;
+			case D3D12_ROOT_PARAMETER_TYPE_UAV:
+				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
+				break;
+			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
+				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	UINT vertexCount = static_cast<UINT>(GetResourceArraySize(vertexBufferHandle));
 	commandList->DrawInstanced(vertexCount, 1, 0, 0);
 }

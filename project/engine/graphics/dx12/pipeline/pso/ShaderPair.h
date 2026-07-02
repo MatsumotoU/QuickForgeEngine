@@ -16,6 +16,7 @@ namespace QFE::GRAPHIC {
 		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc;
 		std::function<const D3D12_STATIC_SAMPLER_DESC* ()> getStaticSamplerFunc;
 		std::function<UINT()> getStaticSamplerSizeFunc;
+		std::function<UINT(IDxcBlob* shaderBlob)> getRenderTargetCountFunc;
 	};
 
 	/// @brief 頂点シェーダーとピクセルシェーダーのペアを管理するクラス
@@ -34,6 +35,8 @@ namespace QFE::GRAPHIC {
 		IDxcBlob* GetPSBlob() { return psBlob_; }
 		/// @brief 登録順にRootParameterのタイプを取得します
 		std::vector< D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes() const { return rootParameter_.GetRootParameterTypes(); }
+		/// @brief レンダーターゲットの数を取得します
+		UINT GetRenderTargetCount() const { return renderTargetCount_; }
 
 	private:
 		bool isCreated_ = false;
@@ -42,5 +45,6 @@ namespace QFE::GRAPHIC {
 		RootParameter rootParameter_;
 		IDxcBlob* vsBlob_ = nullptr;
 		IDxcBlob* psBlob_ = nullptr;
+		UINT renderTargetCount_;
 	};
 }

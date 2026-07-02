@@ -7,6 +7,7 @@ using namespace QFE::GRAPHIC;
 
 namespace {
 	const float kClearColor[4] = { 0.1f, 0.25f, 0.5f, 1.0f };
+	const float kOffscreenClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 }
 
 QFE::GRAPHIC::RenderPass::RenderPass() = default;
@@ -64,6 +65,17 @@ void RenderPass::PreDraw(ID3D12GraphicsCommandList* commandList) {
 	
 	// バックバッファをクリア
 	commandList->ClearRenderTargetView(swapChain_->GetCurrentBackBufferView(), kClearColor, 0, nullptr);
+
+	// オフスクリーンを描画用に変更するバリアを発行してクリア
+	for (const auto& offscreenHandle : offscreenRenderTargetsHandle_) {
+		if (!initializeInfo_.transitionFunc(offscreenHandle, D3D12_RESOURCE_STATE_RENDER_TARGET)) {
+			QFE_REPORT_SYSTEM_ERROR("Failed to transition offscreen render target to render target state", SystemError::Abort);
+			return;
+		}
+		// オフスクリーンのレンダーターゲットをクリア
+		const D3D12_CPU_DESCRIPTOR_HANDLE* rtvHandle = initializeInfo_.getResourceRtvFunc(offscreenHandle);
+		commandList->ClearRenderTargetView(*rtvHandle, kOffscreenClearColor, 0, nullptr);
+	}
 }
 
 void RenderPass::PostDraw(ID3D12GraphicsCommandList* commandList) {
@@ -76,6 +88,14 @@ void RenderPass::PostDraw(ID3D12GraphicsCommandList* commandList) {
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	commandList->ResourceBarrier(1, &barrier);
+
+	// オフスクリーン全てを読み込み用に変更するバリアを発行
+	for (const auto& offscreenHandle : offscreenRenderTargetsHandle_) {
+		if (!initializeInfo_.transitionFunc(offscreenHandle, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)) {
+			QFE_REPORT_SYSTEM_ERROR("Failed to transition offscreen render target to pixel shader resource state", SystemError::Abort);
+			return;
+		}
+	}
 }
 
 void RenderPass::Present() {
@@ -93,15 +113,45 @@ void RenderPass::SetRenderTarget(
 	if (renderTargetHandle == RenderTargetHandle::SwapChain) {
 		commandList->OMSetRenderTargets(1, swapChain_->GetCurrentBackBufferViewPtr(), FALSE, initializeInfo_.getResourceDsvFunc(depthStencilHandle));
 	} else {
-		
+		// オフスクリーンのバリアをレンダーターゲット用に変更するバリアを発行
+		if (!initializeInfo_.transitionFunc(GetRenderTargetResourceHandle(renderTargetHandle), D3D12_RESOURCE_STATE_RENDER_TARGET)) {
+			QFE_REPORT_SYSTEM_ERROR("Failed to transition offscreen render target to render target state", SystemError::Abort);
+			return;
+		}
+		// オフスクリーンのレンダーターゲットを設定
+		const D3D12_CPU_DESCRIPTOR_HANDLE* rtvHandle = initializeInfo_.getResourceRtvFunc(GetRenderTargetResourceHandle(renderTargetHandle));
+		commandList->OMSetRenderTargets(1, rtvHandle, FALSE, initializeInfo_.getResourceDsvFunc(depthStencilHandle));
 	}
 }
 
 void RenderPass::SetRenderTarget(
 	ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
 	std::vector<RenderTargetHandle> renderTargetHandles) {
+	// レンダーターゲットの数を取得
+	uint32_t numRenderTargets = static_cast<uint32_t>(renderTargetHandles.size());
+	// レンダーターゲットのハンドルを格納する配列の確認
+	if (numRenderTargets == 0) {
+		QFE_REPORT_SYSTEM_ERROR("No render targets provided in RenderPass::SetRenderTarget", SystemError::Abort);
+		return;
+	}
 
+	// RTVハンドルの配列を作成
+	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles;
+	for(RenderTargetHandle& handle : renderTargetHandles) {
+		if (handle == RenderTargetHandle::SwapChain) {
+			rtvHandles.push_back(*swapChain_->GetCurrentBackBufferViewPtr());
+		} else {
+			// オフスクリーンのバリアをレンダーターゲット用に変更するバリアを発行
+			if (!initializeInfo_.transitionFunc(GetRenderTargetResourceHandle(handle),  D3D12_RESOURCE_STATE_RENDER_TARGET)) {
+				QFE_REPORT_SYSTEM_ERROR("Failed to transition offscreen render target to render target state", SystemError::Abort);
+				return;
+			}
+			rtvHandles.push_back(*initializeInfo_.getResourceRtvFunc(GetRenderTargetResourceHandle(handle)));
+		}
+	}
 
+	// レンダーターゲットを設定
+	commandList->OMSetRenderTargets(numRenderTargets, rtvHandles.data(), FALSE, initializeInfo_.getResourceDsvFunc(depthStencilHandle));
 }
 
 UINT RenderPass::GetSwapChainBufferCount() const {
@@ -137,4 +187,17 @@ DirectXResourceHandle QFE::GRAPHIC::RenderPass::GetRenderTargetResourceHandle(Re
 		QFE_REPORT_SYSTEM_ERROR("Invalid RenderTargetHandle in RenderPass::GetRenderTargetResourceHandle", SystemError::Abort);
 		return DirectXResourceHandle::Invalid;
 	}
+}
+
+DirectXResourceHandle QFE::GRAPHIC::RenderPass::GetOffscreenBarrierShaderResourceHandle(RenderTargetHandle renderTargetHandle) const {
+	// スワップチェインのリソースは返さない
+	if(renderTargetHandle == RenderTargetHandle::SwapChain) {
+		QFE_REPORT_SYSTEM_ERROR("RenderTargetHandle::SwapChain is not supported in RenderPass::GetOffscreenBarrierShaderResourceHandle", SystemError::Abort);
+		return DirectXResourceHandle::Invalid;
+	}	
+	// オフスクリーンのリソースを返す
+	DirectXResourceHandle resourceHandle = GetRenderTargetResourceHandle(renderTargetHandle);
+	// オフスクリーンのバリアを読み込み用に変更するバリアを発行
+	initializeInfo_.transitionFunc(resourceHandle, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	return resourceHandle;
 }

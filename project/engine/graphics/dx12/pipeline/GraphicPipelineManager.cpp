@@ -76,6 +76,7 @@ ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(
 	funcs.getRootParameterFunc = [&](IDxcBlob* shaderBlob) { return initializeInfo_.getRootParameterFunc(shaderBlob); };
 	funcs.getStaticSamplerFunc = [&]() { return staticSamplers_->GetSamplerDescs(); };
 	funcs.getStaticSamplerSizeFunc = [&]() { return staticSamplers_->GetSamplerCount(); };
+	funcs.getRenderTargetCountFunc = [&](IDxcBlob* shaderBlob) { return initializeInfo_.getRenderTargetCountFunc(shaderBlob); };
 
 	// シェーダーペアの生成
 	shaderPairs_[shaderPairKeyCounter_] = std::make_unique<ShaderPair>();
@@ -99,6 +100,7 @@ PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 	element.rasterizerDesc = rasterizerDesc;
 	element.blendDesc = blendDesc;
 	element.depthStencilDesc = depthStencilDesc;
+	element.numRenderTarget = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetRenderTargetCount();
 
 	// PSOの生成
 	pipelineStateObjects_[pipelineStateObjectKeyCounter_] = std::make_unique<PipelineStateObject>();
@@ -121,6 +123,7 @@ PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
 	element.rasterizerDesc = rasterizerState_->GetRasterizerDesc(rasterizerType);
 	element.blendDesc = blendStates_->GetBlendDesc(blendMode);
 	element.depthStencilDesc = depthStencilDescTemplate_->GetDesc(depthStencilDescType);
+	element.numRenderTarget = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetRenderTargetCount();
 
 	// PSOの生成
 	pipelineStateObjects_[pipelineStateObjectKeyCounter_] = std::make_unique<PipelineStateObject>();

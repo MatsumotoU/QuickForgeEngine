@@ -18,6 +18,8 @@ namespace QFE::GRAPHIC {
 		std::vector<RootParameterElement> GetRootParameterElement(IDxcBlob* shaderBlob);
 		/// @brief シェーダーのスレッドグループサイズを取得します。shaderBlobはCompileShaderでコンパイルしたシェーダーバイナリを渡してください。
 		bool GetThreadGroupSize(IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ);
+		/// @brief シェーダーのレンダーターゲットの数を取得します。shaderBlobはCompileShaderでコンパイルしたシェーダーバイナリを渡してください。
+		UINT GetRenderTargetCount(IDxcBlob* shaderBlob);
 
 	private:
 		/// @brief IDxcContainerReflectionのインスタンスを作成します。

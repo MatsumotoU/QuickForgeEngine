@@ -19,6 +19,7 @@ namespace QFE::GRAPHIC {
 		D3D12_BLEND_DESC blendDesc;
 		IDxcBlob* psBlob;
 		IDxcBlob* vsBlob;
+		UINT numRenderTarget;
 	};
 
 	/// @brief パイプラインステートオブジェクトを管理するクラス

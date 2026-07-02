@@ -32,6 +32,7 @@ namespace QFE::GRAPHIC {
 	struct GraphicPipelineManagerInitializeInfo {
 		std::function<std::vector<InputElement>(IDxcBlob* shaderBlob)> getInputLayoutFunc;
 		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc;
+		std::function<UINT(IDxcBlob* shaderBlob)> getRenderTargetCountFunc;
 		std::function<IDxcBlob*(const std::wstring&, const wchar_t*)> compileFunc;
 		ID3D12Device* device;
 	};
