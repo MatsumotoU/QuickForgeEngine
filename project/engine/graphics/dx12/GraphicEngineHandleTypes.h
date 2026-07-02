@@ -18,4 +18,5 @@ namespace QFE::GRAPHIC {
 
 	// レイトレーシングで使うハンドルたち
 	enum class BLASHandle : uint32_t { Invalid = UINT32_MAX };
+	enum class BLASInstanceHandle : uint32_t { Invalid = UINT32_MAX };
 }

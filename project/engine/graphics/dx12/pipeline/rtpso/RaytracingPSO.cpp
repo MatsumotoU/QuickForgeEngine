@@ -103,12 +103,6 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 	}
 }
 
-BLASHandle QFE::GRAPHIC::RaytracingAccelerationStructure::CreateBLAS(
-	ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4, const std::vector<QFE::MATH::Vector3>& vertices, const std::string& name) {
-	
-	if(blasContainer_.)
-}
-
 bool RaytracingPSO::CreateShaderTables(ID3D12Device5* device) {
 	if (!raytracingPipelineState_) return false;
 

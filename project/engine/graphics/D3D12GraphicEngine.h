@@ -109,8 +109,14 @@ namespace QFE::GRAPHIC {
 
 		/// @brief UAVバッファを作成
 		DirectXResourceHandle CreateUAVBuffer(uint32_t width, uint32_t height,const std::wstring& name);
-
+		/// @brief レイトレ用のPSOを作成する.ディレクトリパスと.hlslファイル名を指定する.
 		RTPSOHandle CreateRayTracingPipelineStateObject(const std::string& dirPath, const std::string& rgsFileName);
+
+		/// @brief BLASを作成する.名前は任意で指定できる.
+		BLASHandle CreateBLAS(std::vector<QFE::MATH::Vector3> vertices, const std::string& name);
+		/// @brief BLASインスタンスを作成する.
+		BLASInstanceHandle CreateBLASInstance(
+			BLASHandle blasHandle, const QFE::MATH::Matrix4x4& transform);
 
 		void SetRenderTarget(RenderTargetHandle renderTargetHandle);
 		
@@ -169,6 +175,6 @@ namespace QFE::GRAPHIC {
 
 		DirectXResourceHandle depthStencilBufferHandle_;// 深度ステンシルバッファのリソースハンドル
 
-		RaytracingAccelerationStructure testBLAS_;// テスト用のBLAS
+		RaytracingAccelerationStructure accelerationStructure_; // レイトレーシング用の加速構造の管理クラス
 	};
 }

@@ -3,6 +3,7 @@
 #include <wrl.h>
 #include <vector>
 #include <string>
+#include <functional>
 
 #include "dx12/GraphicEngineHandleTypes.h"
 
@@ -13,7 +14,6 @@ namespace QFE::GRAPHIC {
     struct RaytracingInstance {
         BLASHandle blasHandle;          // 形状（どのBLASを使うか）
         QFE::MATH::Matrix4x4 worldMatrix; // 配置（どこに置くか）
-        UINT instanceID;                 // シェーダー側で識別するための任意ID
     };
 
 	/// @brief トップレベル加速構造（TLAS）を管理するクラス
@@ -21,6 +21,14 @@ namespace QFE::GRAPHIC {
     public:
 		/// @brief TLASを生成します,maxInstancesはTLASに登録するBLAS(インスタンス)の最大数です
         bool Create(ID3D12Device5* device5, UINT maxInstances);
+
+		/// @brief TLASにBLASを登録します,毎度Buildを呼ぶ必要があります
+        bool Build(
+            ID3D12GraphicsCommandList4* commandList, const std::vector<RaytracingInstance>& instances,
+            std::function<ID3D12Resource*(BLASHandle)> getResourceFunc);
+
+        /// @brief TLASリソースを取得します
+        ID3D12Resource* GetTLASResultBuffer() const { return tlasResultBuffer_.Get(); }
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D12Resource> tlasResultBuffer_;// TLASの結果バッファ

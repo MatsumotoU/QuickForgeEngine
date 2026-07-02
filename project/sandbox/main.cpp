@@ -49,75 +49,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	std::string psDirName = "engine/resources/shaders/ps/";
 	std::string vsDirName = "engine/resources/shaders/vs/";
+	std::string rtDirName = "engine/resources/shaders/rt/";
 
-	// シェーダーペアを生成
-	QFE::GRAPHIC::ShaderPairElement shaderPairElement;
-	shaderPairElement.vsDirName = vsDirName;
-	shaderPairElement.psDirName = psDirName;
-	shaderPairElement.vsFileName = "Object3d.VS.hlsl";
-	shaderPairElement.psFileName = "Object3d.GBuffer.PS.hlsl";
-	QFE::GRAPHIC::ShaderPairHandle shaderPairHandle = graphicEngine->CreateShaderPair(shaderPairElement);
-	// パイプラインステートオブジェクトを生成
-	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->CreatePipelineStateObject(
-		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
-		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
+	// UAVバッファの作成とルートリソースの設定
+	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720, L"UAVBuffer");
+	// レイトレーシングパイプラインステートオブジェクトの作成
+	QFE::GRAPHIC::RTPSOHandle rtpsoHandle = graphicEngine->CreateRayTracingPipelineStateObject(
+		rtDirName, "MiniRaytracing.hlsl");
 
-	QFE::MATH::Transform objTransform;
-	QFE::MATH::Transform cameraTransform;
-	cameraTransform.translate.z = -2.0f;
+	QFE::MATH::Transform transform;
+	transform.scale = { 1.0f, 1.0f, 1.0f };
+	QFE::MATH::Matrix4x4 transformMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(transform);
 
-	// Transform
-	TransformationMatrix transformMatrix;
-	transformMatrix.World = QFE::MATH::Matrix4x4::MakeAffineMatrix(objTransform);
-	transformMatrix.WVP = QFE::MATH::Matrix4x4::Multiply(transformMatrix.World, cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective));
-	QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle = graphicEngine->CreateConstantBuffer<TransformationMatrix>(
-		transformMatrix, "TransformMatrixBuffer");
-	// Material
-	Material material;
-	material.enableLighting = false;
-	material.color = { 1.0f, 0.0f, 0.0f, 1.0f };
-	QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle = graphicEngine->CreateConstantBuffer<Material>(
-		material, "MaterialBuffer");
-	//// DirectionalLight
-	//DirectionalLight directionalLight;
-	//directionalLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//directionalLight.direction = { 0.0f, -1.0f, 0.0f };
-	//directionalLight.intensity = 1.0f;
-	//QFE::GRAPHIC::DirectXResourceHandle directionalLightBufferHandle = graphicEngine->CreateConstantBuffer<DirectionalLight>(
-	//	directionalLight, "DirectionalLightBuffer");
-	////CameraForGPU;
-	//CameraForGPU cameraForGPU;
-	//cameraForGPU.cameraPosition = cameraTransform.translate;
-	//QFE::GRAPHIC::DirectXResourceHandle cameraForGPUBufferHandle = graphicEngine->CreateConstantBuffer<CameraForGPU>(
-	//	cameraForGPU, "CameraForGPUBuffer");
-	//Texture
-	QFE::GRAPHIC::DirectXResourceHandle textureHandle = 
-		graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyWhite1x1Texture);
-	////gCubeTexture
-	//QFE::GRAPHIC::DirectXResourceHandle cubeTextureHandle = 
-	//	graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyBlackCubeMap);
-
-	// Vertexバッファの作成とモデルデータの読み込み
-	QFE::ASSET::AssimpModelLoader modelLoader;
-	modelLoader.Initialize();
-	QFE::ASSET::ModelData& modelData = modelLoader.LoadModel("resources/0.obj");
-	QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle = graphicEngine->CreateVertexBuffer(modelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
-
-	std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources = {
-		transformMatrixBufferHandle,
-		materialBufferHandle,
-		textureHandle
-	};
-
-	QFE::GRAPHIC::ViewPortHandle viewportHandle = graphicEngine->CreateViewPort(1280, 720);
-	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle = graphicEngine->CreateScissorRect(0, 0, 1280, 720);
-
-	// オフスクリーンレンダーターゲットの作成
-	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
-	for(int i = 0; i < 3; ++i) {
-		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle = graphicEngine->CreateOffScreenRenderTarget(1280, 720);
-		renderTargets.push_back(offScreenRenderTargetHandle);
-	}
+	QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(
+		{ { -1.0f, -1.0f, 0.0f }, { 1.0f, -1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
+		"TriangleBLAS");
+	QFE::GRAPHIC::BLASHandle inverseBlasHandle = graphicEngine->CreateBLAS(
+		{ { -1.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f } },
+		"InverseTriangleBLAS");
+	QFE::GRAPHIC::BLASInstanceHandle blasInstanceHandle = graphicEngine->CreateBLASInstance(blasHandle, transformMatrix);
+	QFE::GRAPHIC::BLASInstanceHandle inverseBlasInstanceHandle = graphicEngine->CreateBLASInstance(inverseBlasHandle, transformMatrix);
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -134,21 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->PreDraw();
 			guiManager.PreDraw();
 
-			objTransform.rotate.y += 0.01f;
-
-#ifdef USE_IMGUI
-			ImGui::Begin("Test Window");
-			ImGui::Text("Hello, world!");
-			ImGui::SliderFloat3("Object Position", &objTransform.translate.x, -10.0f, 10.0f);
-			ImGui::End();
-#endif
-			TransformationMatrix* transformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(transformMatrixBufferHandle);
-			transformMatrixData->World = QFE::MATH::Matrix4x4::MakeAffineMatrix(objTransform);
-			transformMatrixData->WVP = QFE::MATH::Matrix4x4::Multiply(transformMatrixData->World, cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective));
-
-			graphicEngine->TestOffScreenDraw(
-				psoHandle, viewportHandle, scissorRectHandle, vertexBufferHandle, rootResources, renderTargets);
-			//graphicEngine->TestDraw(psoHandle, viewportHandle, scissorRectHandle,vertexBufferHandle, rootResources);
+			graphicEngine->TestRayTracing(rtpsoHandle, uavBufferHandle);
 			
 			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager.PostDraw();

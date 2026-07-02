@@ -206,16 +206,18 @@ void D3D12GraphicEngine::Initialize() {
 	// テクスチャローダーを初期化
 	textureLoader_->Initialize(textureLoaderInfo);
 
+	// レイトレーシング用のアクセラレーション構造体の初期化
+	accelerationStructure_.Initialize(directXDevice_->GetDevice5());
+}
 
-	testBLAS_.CreateTestBLAS(directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
-	testBLAS_.CreateTestTLAS(directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
+void D3D12GraphicEngine::PreDraw() {
+	// TLASの更新
+	accelerationStructure_.UpdateTLAS(commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	commandManager_->ExecuteCommandList();
 	fence_->Signal(commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	fence_->Wait();
 	commandManager_->ResetCommandList();
-}
 
-void D3D12GraphicEngine::PreDraw() {
 	// ディスクリプタヒープの登録
 	descriptorHeapManager_->RegisterDescriptorHeaps(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
@@ -239,9 +241,9 @@ void D3D12GraphicEngine::PostDraw() {
 	// GPUとの同期
 	fence_->Signal(commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	fence_->Wait();
-
 	// コマンドリストをリセット
 	commandManager_->ResetCommandList();
+
 	// 中間リソースの解放
 	resourceContainer_->EndFrame();
 }
@@ -382,6 +384,15 @@ DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateUAVBuffer(uint32_t
 
 RTPSOHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateRayTracingPipelineStateObject(const std::string& dirPath, const std::string& rgsFileName) {
 	return rayTracingPipelineManager_->CreateRaytracingPipelineStateObject(ConvertString(dirPath + rgsFileName), L"lib_6_3");
+}
+
+BLASHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateBLAS(std::vector<QFE::MATH::Vector3> vertices, const std::string& name) {
+	return accelerationStructure_.CreateBLAS(
+		directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT), vertices, name);
+}
+
+BLASInstanceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateBLASInstance(BLASHandle blasHandle, const QFE::MATH::Matrix4x4& transform) {
+	return accelerationStructure_.CreateBLASInstance(blasHandle, transform);
 }
 
 void QFE::GRAPHIC::D3D12GraphicEngine::SetRenderTarget(RenderTargetHandle renderTargetHandle) {
@@ -549,7 +560,7 @@ void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpsoHandle, D
 	commandList4->SetPipelineState1(rtpsoptr); // ★レイトレPSOはSetPipelineState1を使う
 
 	// 2. 自動化されたルートシグネチャへのリソースバインド
-	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = testBLAS_.GetTLASResultBuffer()->GetGPUVirtualAddress();
+	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = accelerationStructure_.GetTLASResultBuffer()->GetGPUVirtualAddress();
 	commandList4->SetComputeRootShaderResourceView(0,tlasResultBufferGPUHandle);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
 	commandList4->SetComputeRootDescriptorTable(1, gpuHandle);
