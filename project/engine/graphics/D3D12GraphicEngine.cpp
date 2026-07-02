@@ -550,8 +550,7 @@ void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpsoHandle, D
 
 	// 2. 自動化されたルートシグネチャへのリソースバインド
 	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = testBLAS_.GetTLASResultBuffer()->GetGPUVirtualAddress();
-	commandList4->SetComputeRootShaderResourceView(0,
-		tlasResultBufferGPUHandle);
+	commandList4->SetComputeRootShaderResourceView(0,tlasResultBufferGPUHandle);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
 	commandList4->SetComputeRootDescriptorTable(1, gpuHandle);
 

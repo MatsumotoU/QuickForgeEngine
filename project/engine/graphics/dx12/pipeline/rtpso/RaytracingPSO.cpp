@@ -1,4 +1,5 @@
 #include "RaytracingPSO.h"
+#include "RaytracingAccelerationStructure.h"
 
 using namespace QFE::GRAPHIC;
 
@@ -100,6 +101,12 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 		QFE_LOG("Failed to create Raytracing State Object.");
 		return;
 	}
+}
+
+BLASHandle QFE::GRAPHIC::RaytracingAccelerationStructure::CreateBLAS(
+	ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4, const std::vector<QFE::MATH::Vector3>& vertices, const std::string& name) {
+	
+	if(blasContainer_.)
 }
 
 bool RaytracingPSO::CreateShaderTables(ID3D12Device5* device) {

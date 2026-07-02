@@ -15,4 +15,7 @@ namespace QFE::GRAPHIC {
 	enum class ScissorRectHandle : uint32_t { Invalid = UINT32_MAX };
 	enum class RenderTargetHandle : uint32_t { Invalid = UINT32_MAX ,SwapChain = 0};
 	enum class DepthStencilHandle : uint32_t { Invalid = UINT32_MAX };
+
+	// レイトレーシングで使うハンドルたち
+	enum class BLASHandle : uint32_t { Invalid = UINT32_MAX };
 }

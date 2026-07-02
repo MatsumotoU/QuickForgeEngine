@@ -58,6 +58,15 @@ namespace QFE {
 			return nullptr; // Not found
 		}
 
+		/// @brief ある名前のデータが存在するかどうかを確認する
+		bool Contains(const std::string& name) const {
+			return dataMap_.find(name) != dataMap_.end();
+		}
+		/// @brief あるハンドルのデータが存在するかどうかを確認する
+		bool Contains(uint32_t handle) const {
+			return handleMap_.find(handle) != handleMap_.end();
+		}
+
 	private:
 		std::unordered_map<uint32_t, std::string> handleMap_;
 		std::unordered_map<std::string, T> dataMap_;
