@@ -23,4 +23,10 @@ namespace QFE::FRAMEWORK {
 	void CreateObject3dGBufferRootResources(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources);
+
+	/// @brief Object3dのワールド行列とワールドビュー射影行列を更新する関数
+	void UpdateObject3dWVPMatrix(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle,
+		const QFE::MATH::Transform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
 }

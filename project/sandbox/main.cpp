@@ -52,7 +52,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
 
 	QFE::MATH::Transform objTransform;
+	QFE::MATH::Transform floorTransform;
 	QFE::MATH::Transform cameraTransform;
+	cameraTransform.translate = { 0.0f, 0.0f, -20.0f };
 
 	// Vertexバッファの作成とモデルデータの読み込み
 	QFE::ASSET::AssimpModelLoader modelLoader;
@@ -62,6 +64,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ルートリソースの設定
 	std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources;
 	QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), rootResources);
+	std::vector<QFE::GRAPHIC::DirectXResourceHandle> floorRootResources;
+	QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), floorRootResources);
 
 	// オフスクリーンレンダーターゲットの作成
 	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
@@ -92,6 +96,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		objectVertices,"TriangleBLAS");
 
 	QFE::GRAPHIC::BLASInstanceHandle blasInstanceHandle = graphicEngine->CreateBLASInstance(blasHandle, QFE::MATH::Matrix4x4::MakeIndentity4x4());
+	QFE::GRAPHIC::BLASInstanceHandle floorBlasInstanceHandle = graphicEngine->CreateBLASInstance(blasHandle, QFE::MATH::Matrix4x4::MakeIndentity4x4());
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -115,18 +120,33 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ImGui::DragFloat3("Object Scale", &objTransform.scale.x, 0.1f);
 			ImGui::DragFloat3("Object Rotate", &objTransform.rotate.x, 0.1f);
 			ImGui::DragFloat3("Object Translate", &objTransform.translate.x, 0.1f);
+			ImGui::Separator();
+			ImGui::DragFloat3("Floor Scale", &floorTransform.scale.x, 0.1f);
+			ImGui::DragFloat3("Floor Rotate", &floorTransform.rotate.x, 0.1f);
+			ImGui::DragFloat3("Floor Translate", &floorTransform.translate.x, 0.1f);
+			ImGui::End();
+
+			ImGui::Begin("Camera Window");
+			ImGui::DragFloat3("Scale", &cameraTransform.scale.x, 0.1f);
+			ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
+			ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
 			ImGui::End();
 #endif
-			TransformationMatrix* transformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(rootResources[0]);
-			transformMatrixData->World = QFE::MATH::Matrix4x4::MakeAffineMatrix(objTransform);
-			QFE::MATH::Matrix4x4 viewProj = 
+			QFE::MATH::Matrix4x4 viewProj =
 				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
-			transformMatrixData->WVP = QFE::MATH::Matrix4x4::Multiply(transformMatrixData->World, viewProj);
 
+			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), rootResources[0], objTransform, viewProj);
+			TransformationMatrix* transformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(rootResources[0]);
 			graphicEngine->UpdateBLASInstanceTransform(blasInstanceHandle, transformMatrixData->World);
+
+			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), floorRootResources[0], floorTransform, viewProj);
+			TransformationMatrix* floorTransformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(floorRootResources[0]);
+			graphicEngine->UpdateBLASInstanceTransform(floorBlasInstanceHandle, floorTransformMatrixData->World);
 
 			graphicEngine->TestOffScreenDraw(
 				psoHandle, viewportHandle, scissorRectHandle, vertexBufferHandle, rootResources, renderTargets);
+			graphicEngine->TestOffScreenDraw(
+				psoHandle, viewportHandle, scissorRectHandle, vertexBufferHandle, floorRootResources, renderTargets);
 
 			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources = {
 				graphicEngine->GetRenderTargetTexture(renderTargets[0]),

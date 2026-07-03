@@ -49,10 +49,9 @@ void MyRayGen()
 
     // 5. 💡 レイを飛ばす
     // 影バッファ専用のフラグを設定して高速化
-    // (最初の衝突で打ち切る、ClosestHitをスキップ、不透明のみ強制)
     TraceRay(
         g_scene,
-        RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_SKIP_CLOSEST_HIT_SHADER | RAY_FLAG_FORCE_OPAQUE,
+        RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_FORCE_OPAQUE,
         0xFF, 0, 1, 0, ray, payload
     );
 
@@ -82,5 +81,5 @@ void MyMiss(inout ShadowPayload payload : SV_RayPayload)
 [shader("closesthit")]
 void MyClosestHit(inout ShadowPayload payload : SV_RayPayload, BuiltInTriangleIntersectionAttributes attribs)
 {
-    // 何もしない
+    payload.isHit = true;
 }

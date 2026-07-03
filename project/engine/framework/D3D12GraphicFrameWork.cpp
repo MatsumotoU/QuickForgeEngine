@@ -66,3 +66,13 @@ void QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 	rootResources.push_back(materialBufferHandle);
 	rootResources.push_back(textureHandle);
 }
+
+void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle,
+	const QFE::MATH::Transform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {
+
+	TransformationMatrix* transformMatrixData = 
+		graphicEngine->GetConstantBufferData<TransformationMatrix>(transformMatrixBufferHandle);
+	transformMatrixData->World = QFE::MATH::Matrix4x4::MakeAffineMatrix(transform);
+	transformMatrixData->WVP = QFE::MATH::Matrix4x4::Multiply(transformMatrixData->World, viewProjectionMatrix);
+}
