@@ -117,6 +117,10 @@ namespace QFE::GRAPHIC {
 		/// @brief BLASインスタンスを作成する.
 		BLASInstanceHandle CreateBLASInstance(
 			BLASHandle blasHandle, const QFE::MATH::Matrix4x4& transform);
+		/// @brief BLASインスタンスの変換行列を更新する.
+		void UpdateBLASInstanceTransform(BLASInstanceHandle instanceHandle, const QFE::MATH::Matrix4x4& transform);
+		/// @brief RenderTargetHandleからレンダーターゲットのテクスチャのリソースハンドルを取得する.
+		DirectXResourceHandle GetRenderTargetTexture(RenderTargetHandle renderTargetHandle);
 
 		void SetRenderTarget(RenderTargetHandle renderTargetHandle);
 		
@@ -132,6 +136,8 @@ namespace QFE::GRAPHIC {
 			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle);
 
 		void TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle);
+
+		void TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle, std::vector<DirectXResourceHandle> rootResources);
 
 		/// @brief DirectX12のデバイスを取得する
 		ID3D12Device* GetDevice() const;
