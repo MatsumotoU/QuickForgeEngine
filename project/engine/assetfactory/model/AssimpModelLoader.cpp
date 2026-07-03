@@ -61,8 +61,7 @@ void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 		filePath,
 		aiProcess_Triangulate |
 		aiProcess_FlipUVs |
-		aiProcess_GenNormals |
-		aiProcess_MakeLeftHanded
+		aiProcess_GenNormals
 	);
 	if (!scene || !scene->HasMeshes()) {
 		assert(false && "Faild Loaded Model");

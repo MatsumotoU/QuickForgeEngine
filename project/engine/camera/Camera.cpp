@@ -1,10 +1,12 @@
 #include "Camera.h"
+#include <cmath>
+
 using namespace QFE::CAMERA;
 
 void Camera::Initialize(float left, float right, float top, float bottom, float nearZ, float farZ, float fov) {
 	// カメラのパラメータを設定
 	fovY_ = fov;
-	aspectRatio_ = (right - left) / (top - bottom);
+	aspectRatio_ = std::abs((right - left) / (top - bottom));
 	nearZ_ = nearZ;
 	farZ_ = farZ;
 	// 画面の左、右、上、下の座標を設定
