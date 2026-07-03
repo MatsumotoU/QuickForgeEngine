@@ -13,13 +13,9 @@ namespace QFE::CAMERA {
 	public:
 		/// @brief カメラの初期化を行います
 		void Initialize(float left, float right, float top, float bottom, float nearZ, float farZ,float fov);
-		/// @brief 透視投影行列を作成します
-		void CreatePerspectiveMatrix(float fovY, float aspectRatio, float nearZ, float farZ);
-		/// @brief 平行投影行列を作成します
-		void CreateOrthographicMatrix(float left, float right, float top, float bottom, float nearZ, float farZ);
 
 		/// @brief ビュー行列と投影行列を掛け合わせた行列を取得します
-		MATH::Matrix4x4 GetViewProjectionMatrix(const MATH::Transform& cameraTranform, CameraType type) const;
+		MATH::Matrix4x4 GetViewProjectionMatrix(const MATH::Transform& cameraTransform, CameraType type) const;
 
 	private:
 		float fovY_;
