@@ -57,7 +57,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Vertexバッファの作成とモデルデータの読み込み
 	QFE::ASSET::AssimpModelLoader modelLoader;
 	modelLoader.Initialize();
-	QFE::ASSET::ModelData& modelData = modelLoader.LoadModel("resources/0.obj");
+	QFE::ASSET::ModelData& modelData = modelLoader.LoadModel("resources/box.obj");
 	QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle = graphicEngine->CreateVertexBuffer(modelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
 	// ルートリソースの設定
 	std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources;

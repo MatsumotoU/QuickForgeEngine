@@ -59,7 +59,10 @@ void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 	// モデルの読み込み
 	const aiScene* scene = importer.ReadFile(
 		filePath,
-		aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals
+		aiProcess_Triangulate |
+		aiProcess_FlipUVs |
+		aiProcess_GenNormals |
+		aiProcess_MakeLeftHanded
 	);
 	if (!scene || !scene->HasMeshes()) {
 		assert(false && "Faild Loaded Model");
@@ -101,23 +104,18 @@ void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 				vtx.normal.y = 0.0f;
 				vtx.normal.z = 1.0f;
 			}
-			vtx.position.x *= -1.0f;
-			vtx.normal.x *= -1.0f;
-			vtx.texcoord.y = vtx.texcoord.y;
-
 			tempVertices.push_back(vtx);
 		}
 
-		// メッシュデータの初期化
-		MeshData meshData(tempVertices.size()*3);
+		MeshData meshData(mesh->mNumFaces * 3);
 
-		// 面データの読み込み（インデックスを使用して頂点を追加）
+		// 面データの読み込み
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			const aiFace& face = mesh->mFaces[i];
 			if (face.mNumIndices == 3) {
 				meshData.vertices.push_back(tempVertices[face.mIndices[0]]);
-				meshData.vertices.push_back(tempVertices[face.mIndices[2]]);
 				meshData.vertices.push_back(tempVertices[face.mIndices[1]]);
+				meshData.vertices.push_back(tempVertices[face.mIndices[2]]);
 			}
 		}
 
