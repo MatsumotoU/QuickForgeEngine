@@ -1,4 +1,4 @@
-#include "../ShaderStructs/Object3d.hlsli"
+#include "../ShaderStructs/Object3d.GBuffer.hlsli"
 #include "../ShaderStructs/hlslTypeToCpp.h"
 
 ConstantBuffer<Material> gMaterial : register(b0);

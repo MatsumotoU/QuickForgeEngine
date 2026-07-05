@@ -16,7 +16,7 @@ void MyRayGen()
 {
     uint2 launchIndex = DispatchRaysIndex().xy;
 
-    // 1. 各種GBufferの情報を取得
+    // 1. 💡 画面のピクセル位置に対応するGBufferの情報を取得
     float4 rawPosition = g_position[launchIndex];
     float3 worldNormal = g_normal[launchIndex].xyz;
     float3 albedo = g_albedo[launchIndex].rgb;
@@ -25,21 +25,21 @@ void MyRayGen()
     // 2. 何もなければアルベドをそのまま出力する
     if (rawPosition.w == 0.0f)
     {
-        g_output[launchIndex] = float4(1.0f, 0.0f, 1.0f, 1.0f);
+        g_output[launchIndex] = float4(albedo, albedpAlpha);
         return;
     }
     float3 worldPosition = rawPosition.xyz;
 
     // 3. ライティング・光源の設定（仮の平行光源）
-    float3 lightDir = normalize(float3(0.0f, -1.0f, 0.0f));
+    float3 lightDir = normalize(float3(0.5f, -1.0f, -0.5f)); // 光が進む方向（ライト→サーフェス）
     float3 lightColor = float3(1.0f, 1.0f, 1.0f);
     float3 ambient = albedo * 0.2f; // 環境光（影の部分の暗さ）
 
-    // 4. シャドウレイの構築
+    // 4. 💡 シャドウレイ（影用光線）の構築
     RayDesc ray;
     // 始点はGBufferの位置。自分のポリゴンに誤衝突するのを防ぐため、法線方向に少し浮かせます（バイアス）
-    ray.Origin = worldPosition + worldNormal * 0.05f;
-    ray.Direction = -lightDir; // 光源への方向
+    ray.Origin = worldPosition + worldNormal * 0.001f;
+    ray.Direction = -lightDir; // 光源への方向（サーフェス→光源）
     ray.TMin = 0.001f;
     ray.TMax = 1000.0f; // 点光源なら光源までの距離
 
@@ -47,41 +47,38 @@ void MyRayGen()
     ShadowPayload payload;
     payload.isHit = false;
 
-    // 5. レイを飛ばす
+    // 5. 💡 レイを飛ばす
     // 影バッファ専用のフラグを設定して高速化
     TraceRay(
-    g_scene,
-    RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH |
-    RAY_FLAG_FORCE_OPAQUE |
-    RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
-    0xFF, 0, 1, 0, ray, payload
-);
+        g_scene,
+        RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_FORCE_OPAQUE,
+        0xFF, 0, 1, 0, ray, payload
+    );
 
-    // 6. ライティングの計算
-    float3 finalColor = albedo;
-    if (payload.isHit){
-        // 影にヒットしたら、環境光にする
-        finalColor = albedo * 0.15f;
-    }
-    else
+    // 6. 💡 最終的な色の計算
+    float3 finalColor = ambient;
+
+    if (!payload.isHit)
     {
-        // 光が当たっている場所は、簡単なライティングを計算
-        float dotNL = saturate(dot(worldNormal, -lightDir));
-        finalColor = albedo * (dotNL * 0.8f + 0.2f);
+        // ray.Direction はサーフェス→光源 を向いているので、
+        // 拡散項は法線と ray.Direction の内積で計算する（符号を統一）
+        float ndl = max(0.0f, dot(worldNormal, ray.Direction));
+        finalColor += albedo * lightColor * ndl;
     }
 
-    // 最終出力を書き込む
+    // 出力
     g_output[launchIndex] = float4(finalColor, albedpAlpha);
 }
 
-// 2. ミスシェーダー
+// 2. ミスシェーダー（外れたときの救済）
 [shader("miss")]
+// 🌟 2. 引数の型を自作した構造体（RayPayload）にする！
 void MyMiss(inout ShadowPayload payload : SV_RayPayload)
 {
     // 何にも当たらなかったので影ではない
     payload.isHit = false;
 }
-// 3. クローストヒットシェーダー
+
 [shader("closesthit")]
 void MyClosestHit(inout ShadowPayload payload : SV_RayPayload, BuiltInTriangleIntersectionAttributes attribs)
 {

@@ -29,4 +29,8 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle,
 		const QFE::MATH::Transform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
+
+	// 頂点のデータから頂点位置を取得する関数
+	std::vector<QFE::MATH::Vector3> GetModelVertexPositions(
+		const std::vector<VertexData>& vertices);
 }

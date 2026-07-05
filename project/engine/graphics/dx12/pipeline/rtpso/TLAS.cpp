@@ -99,9 +99,24 @@ bool TLAS::Build(
 		auto& dest = instanceDescs[i];
 
 		// ワールド行列を3x4形式でコピー
-		std::memcpy(dest.Transform, &src.worldMatrix, sizeof(float) * 12);
+		// 1行目: 元の行列の「1列目」を敷き詰める
+		dest.Transform[0][0] = src.worldMatrix.m[0][0];
+		dest.Transform[0][1] = src.worldMatrix.m[1][0];
+		dest.Transform[0][2] = src.worldMatrix.m[2][0];
+		dest.Transform[0][3] = src.worldMatrix.m[3][0];
+		// 2行目: 元の行列の「2列目」を敷き詰める
+		dest.Transform[1][0] = src.worldMatrix.m[0][1];
+		dest.Transform[1][1] = src.worldMatrix.m[1][1];
+		dest.Transform[1][2] = src.worldMatrix.m[2][1];
+		dest.Transform[1][3] = src.worldMatrix.m[3][1];
+		// 3行目: 元の行列の「3列目」を敷き詰める
+		dest.Transform[2][0] = src.worldMatrix.m[0][2];
+		dest.Transform[2][1] = src.worldMatrix.m[1][2];
+		dest.Transform[2][2] = src.worldMatrix.m[2][2];
+		dest.Transform[2][3] = src.worldMatrix.m[3][2];
 
-		dest.InstanceID = 0;                          // 今回は使わないので0
+		// インスタンスIDやマスクなどの設定
+		dest.InstanceID = 0;							// 今回は使わないので0
 		dest.InstanceMask = 0xFF;                       // すべてのレイと衝突するマスク
 		dest.InstanceContributionToHitGroupIndex = 0;   // 今回はオフセット0
 		dest.Flags = D3D12_RAYTRACING_INSTANCE_FLAG_NONE;
@@ -124,7 +139,7 @@ bool TLAS::Build(
 	std::memcpy(pInstanceData, instanceDescs.data(), copySize);
 	instanceDescBuffer_->Unmap(0, nullptr);
 
-	// 4. ビルド入力を設定（NumDescsに「現在の有効数」を指定するのがポイント）
+	// 4. ビルド入力を設定
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS buildInputs{};
 	buildInputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL;
 	buildInputs.Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;

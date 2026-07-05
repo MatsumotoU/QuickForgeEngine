@@ -75,7 +75,7 @@ void QFE::GRAPHIC::PipelineStateObject::CreatePipelineStateObject(
 	// 書き込むRTVの情報
 	graphicsPipelineStateDesc.NumRenderTargets = element.numRenderTarget;
 	for(UINT i = 0; i < element.numRenderTarget; ++i) {
-		graphicsPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		graphicsPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	}
 	// 利用するトポロジ
 	graphicsPipelineStateDesc.PrimitiveTopologyType = element.topologyType;

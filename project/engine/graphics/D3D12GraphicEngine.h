@@ -83,7 +83,7 @@ namespace QFE::GRAPHIC {
 		/// @brief コンピュートシェーダーのPSOを生成します
 		ComputePSOHandle CreateComputePipelineStateObject(const std::string& dirPath, const std::string& csFileName);
 		/// @brief オフスクリーンのレンダーターゲットを生成します.
-		RenderTargetHandle CreateOffScreenRenderTarget(uint32_t width, uint32_t height);
+		RenderTargetHandle CreateOffScreenRenderTarget(uint32_t width, uint32_t height, DXGI_FORMAT format);
 
 		/// @brief あるリソースの配列の数を取得する.
 		size_t GetResourceArraySize(DirectXResourceHandle handle);
@@ -150,6 +150,8 @@ namespace QFE::GRAPHIC {
 		/// @brief SRVディスクリプタヒープからSRVディスクリプタを割り当てる関数
 		DescriptorHandles CreateExternalSRVDescriptor();
 
+		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVDescriptorGPUHandle(DirectXResourceHandle handle) const;
+		D3D12_CPU_DESCRIPTOR_HANDLE GetSRVDescriptorCPUHandle(DirectXResourceHandle handle) const;
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.

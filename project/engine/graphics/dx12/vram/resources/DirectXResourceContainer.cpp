@@ -346,6 +346,7 @@ D3D12_VERTEX_BUFFER_VIEW DirectXResourceContainer::GetVertexBufferView(DirectXRe
 		D3D12_RESOURCE_DESC desc = resource->GetDesc();
 		vertexBufferView.SizeInBytes = static_cast<UINT>(desc.Width);
 		vertexBufferView.StrideInBytes = static_cast<UINT>(GetResourceStrideInBytes(handle));
+		QFE_LOG("Resource handle: " + std::to_string(static_cast<uint32_t>(handle)) + " VertexBufferView created successfully in DirectXResourceContainer::GetVertexBufferView");
 		return vertexBufferView;
 	} else {
 		QFE_REPORT_SYSTEM_ERROR("Failed to get resource in DirectXResourceContainer::GetVertexBufferView", SystemError::Abort);

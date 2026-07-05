@@ -102,7 +102,7 @@ void D3D12GraphicEngine::Initialize() {
 	renderPassInfo.createOffscreenFunc = [&](uint32_t width, uint32_t height, DXGI_FORMAT format){
 		D3D12_RESOURCE_DESC resourceDesc = {};
 		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-		resourceDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		resourceDesc.Format = format;
 		resourceDesc.Width = width;
 		resourceDesc.Height = height;
 		resourceDesc.DepthOrArraySize = 1;
@@ -111,7 +111,7 @@ void D3D12GraphicEngine::Initialize() {
 		resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 		// クリア値の設定
 		D3D12_CLEAR_VALUE clearValue = {};
-		clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		clearValue.Format = format;
 		clearValue.Color[0] = 0.0f;
 		clearValue.Color[1] = 0.0f;
 		clearValue.Color[2] = 0.0f;
@@ -122,11 +122,11 @@ void D3D12GraphicEngine::Initialize() {
 			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_HEAP_TYPE_DEFAULT, &clearValue);
 		// RTVを作成
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		rtvDesc.Format = format;
 		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 		// SRVを作成
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		srvDesc.Format = format;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		srvDesc.Texture2D.MipLevels = 1;
@@ -297,6 +297,8 @@ DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::GetBuiltInTextureHandle(
 DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateVertexBuffer(const std::vector<VertexData>& vertexData, const std::string& meshName) {
 	DirectXResourceHandle handle =
 		resourceContainer_->CreateBuffer(directXDevice_->GetDevice(), vertexData.size() * sizeof(VertexData));
+	QFE_LOG("VertexBuffer created for mesh: " + meshName + ", size: " + std::to_string(vertexData.size() * sizeof(VertexData)) + " bytes");
+
 	// バッファのストライドを設定
 	resourceContainer_->SetResourceStrideInBytes(handle, sizeof(VertexData));
 
@@ -305,6 +307,7 @@ DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateVertexBuffer(const
 	if (mappedData) {
 		memcpy(mappedData, vertexData.data(), vertexData.size() * sizeof(VertexData));
 	}
+	resourceContainer_->SetResourceName(handle, ConvertString(meshName));
 	resourceContainer_->SetResourceStrideInBytes(handle, sizeof(VertexData));
 	return handle;
 }
@@ -339,8 +342,8 @@ ComputePSOHandle D3D12GraphicEngine::CreateComputePipelineStateObject(
 	return computePSOHandle;
 }
 
-RenderTargetHandle D3D12GraphicEngine::CreateOffScreenRenderTarget(uint32_t width, uint32_t height) {
-	return renderPass_->CreateOffscreenRenderTarget(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+RenderTargetHandle D3D12GraphicEngine::CreateOffScreenRenderTarget(uint32_t width, uint32_t height, DXGI_FORMAT format) {
+	return renderPass_->CreateOffscreenRenderTarget(width, height, format);
 }
 
 size_t D3D12GraphicEngine::GetResourceArraySize(DirectXResourceHandle handle) {
@@ -644,7 +647,6 @@ void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(
 	commandList4->SetComputeRootDescriptorTable(1, resourceContainer_->GetDescriptorHandleGPU(rootResources[0], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
 	commandList4->SetComputeRootDescriptorTable(2, resourceContainer_->GetDescriptorHandleGPU(rootResources[1], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
 	commandList4->SetComputeRootDescriptorTable(3, resourceContainer_->GetDescriptorHandleGPU(rootResources[2], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-
 	commandList4->SetComputeRootDescriptorTable(4, gpuHandle);
 
 	// 3. シェーダーレコードのサイズ定義（前段で作った64バイトと同じ）
@@ -681,7 +683,6 @@ void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(
 	// 5. ★運命のコマンド発行！
 	commandList4->DispatchRays(&dispatchDesc);
 
-
 	// 6. スワップチェーンのバックバッファにコピー
 	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
 	renderPass_->TransitionCurrentBackBufferBarrier(
@@ -712,6 +713,14 @@ DescriptorHandles QFE::GRAPHIC::D3D12GraphicEngine::CreateExternalSRVDescriptor(
 	return descriptorHeapManager_->CreateEmptyHeapHandle(GRAPHIC::DescriptorHeapType::SRV);
 }
 
+D3D12_GPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::D3D12GraphicEngine::GetSRVDescriptorGPUHandle(DirectXResourceHandle handle) const {
+	return resourceContainer_->GetDescriptorHandleGPU(handle, ViewTypeFlags::ShaderResourceView);
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::D3D12GraphicEngine::GetSRVDescriptorCPUHandle(DirectXResourceHandle handle) const {
+	return resourceContainer_->GetDescriptorHandleCPU(handle, ViewTypeFlags::ShaderResourceView);
+}
+
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
 	depthStencilBufferHandle_ = CreateDepthStencilBuffer(width, height);
 }
@@ -725,14 +734,16 @@ DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateDepthStencilBuffer
 	depthResourceDesc.Height = height;
 	depthResourceDesc.DepthOrArraySize = 1;
 	depthResourceDesc.MipLevels = 1;
-	depthResourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	// ★テクスチャとしても扱えるよう、型無し(TYPELESS)フォーマットにする
+	depthResourceDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 	depthResourceDesc.SampleDesc.Count = 1;
 	depthResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-	D3D12_HEAP_PROPERTIES depthHeapProps{};
-	depthHeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+
 	D3D12_CLEAR_VALUE depthClearValue{};
+	// ★DSV用の明確なフォーマットを指定する
 	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthClearValue.DepthStencil.Depth = 1.0f;
+	depthClearValue.DepthStencil.Stencil = 0;
 
 	DirectXResourceHandle handle = resourceContainer_->CreateResource(
 		directXDevice_->GetDevice(),
@@ -740,15 +751,27 @@ DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateDepthStencilBuffer
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
 		D3D12_HEAP_TYPE_DEFAULT,
 		&depthClearValue);
-	
+
 	// DSVの生成
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // 完全なデプス用フォーマット
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+	// ★追加: SRV（テクスチャ読み込み用）の記述子設定
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	// 24bitのデプス値を赤(R)成分として読み込む
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	// ビューの生成情報を設定
 	CereateViewInfo createViewInfo{};
-	createViewInfo.viewType = ViewTypeFlags::DepthStencilView;
+	// ★DSVとSRVの両方のフラグを立てる
+	createViewInfo.viewType = ViewTypeFlags::DepthStencilView | ViewTypeFlags::ShaderResourceView;
 	createViewInfo.dsvDesc = dsvDesc;
+	createViewInfo.srvDesc = srvDesc; // ★セット
 	resourceContainer_->CreateResourceView(handle, createViewInfo);
 
 	return handle;

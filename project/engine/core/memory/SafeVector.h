@@ -109,6 +109,8 @@ namespace QFE {
 
 		/// @brief 内部のstd::vectorへのアクセスを提供する関数
 		const std::vector<T>& GetInternalVector() const { return data_; }
+		/// @brief 内部のstd::vectorへのアクセスを提供する関数（非const版）
+		std::vector<T>& GetInternalVector() { return data_; }
 
 	private:
 		// @brief インデックスが範囲内かどうかをチェックする関数

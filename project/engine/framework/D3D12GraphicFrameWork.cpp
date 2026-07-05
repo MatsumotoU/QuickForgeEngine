@@ -76,3 +76,12 @@ void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
 	transformMatrixData->World = QFE::MATH::Matrix4x4::MakeAffineMatrix(transform);
 	transformMatrixData->WVP = QFE::MATH::Matrix4x4::Multiply(transformMatrixData->World, viewProjectionMatrix);
 }
+
+std::vector<QFE::MATH::Vector3> QFE::FRAMEWORK::GetModelVertexPositions(const std::vector<VertexData>& vertices) {
+	std::vector<QFE::MATH::Vector3> vertexPositions;
+	for(VertexData vertex : vertices) {
+		vertexPositions.push_back({ vertex.position.x, vertex.position.y, vertex.position.z });
+	}
+	return vertexPositions;
+}
+

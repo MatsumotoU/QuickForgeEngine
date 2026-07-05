@@ -19,8 +19,8 @@ ModelData& AssimpModelLoader::LoadModel(const std::string& filePath) {
 	if (IsModelCached(filePath)) {
 		return modelCache[filePath];
 	} else {
-		LoadModelData(filePath, invalidModelData);
-		return invalidModelData;
+		LoadModelData(filePath, modelCache[filePath]);
+		return modelCache[filePath];
 	}
 }
 
@@ -48,13 +48,15 @@ bool AssimpModelLoader::IsModelCached(const std::string& filePath) const {
 
 void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& modelData) {
 	Assimp::Importer importer;
-
 	// ファイルの存在確認
 	if (!QFE::FILE::HasFile(filePath)) {
 		QFE_LOG(std::format("Model file not found: {}", filePath));
 		assert(false && "Model file not found");
 		return;
 	}
+
+	// モデルの名前を設定
+	modelData.name = QFE::FILE::GetFileName(filePath);
 
 	// モデルの読み込み
 	const aiScene* scene = importer.ReadFile(
