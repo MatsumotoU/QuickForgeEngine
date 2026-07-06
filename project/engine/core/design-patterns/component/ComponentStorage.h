@@ -21,6 +21,13 @@ namespace QFE {
 		auto size() const { return components.size(); }
 
 	public:
+		/// @brief デフォルトコンポーネントを追加する。既に存在する場合は上書きする。
+		void AddDefaultComponent(uint32_t entityId) override {
+			// T型（実際のコンポーネント型）をデフォルト構築して追加する
+			T newComponent{};
+			this->AddComponent(entityId, newComponent);
+		}
+
 		/// @brief コンポーネントを追加する。既に存在する場合は上書きする。
 		void AddComponent(uint32_t id, const T& component) {
 			components[id] = component;
@@ -74,6 +81,10 @@ namespace QFE {
 		/// @brief コンポーネントストレージの型名を取得する。
 		std::string GetStorageTypeName() const override {
 			return typeid(T).name();
+		}
+
+		void Clear() override {
+			components.clear();
 		}
 	};
 

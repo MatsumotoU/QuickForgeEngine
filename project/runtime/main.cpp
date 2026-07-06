@@ -44,6 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	sceneManager.Initialize();
 
 	// Entityの生成
+	//sceneManager.LoadCurrentSceneFromJson("resources/scene.json");
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 	uint32_t entity = QFE::FRAMEWORK::CreateEntityWithMaterial(sceneManager, "RingObject", {1.0f, 0.0f, 0.0f, 1.0f});
 	QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entity).transform;
@@ -192,24 +193,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			
 #ifdef USE_IMGUI
-			ImGui::Begin("Test Window");
-			ImGui::Text("Hello, world!");
-			ImGui::DragFloat3("Object Scale", &objTransform.scale.x, 0.1f);
-			ImGui::DragFloat3("Object Rotate", &objTransform.rotate.x, 0.1f);
-			ImGui::DragFloat3("Object Translate", &objTransform.translate.x, 0.1f);
-			ImGui::Separator();
-			ImGui::DragFloat3("Floor Scale", &floorTransform.scale.x, 0.1f);
-			ImGui::DragFloat3("Floor Rotate", &floorTransform.rotate.x, 0.1f);
-			ImGui::DragFloat3("Floor Translate", &floorTransform.translate.x, 0.1f);
-			ImGui::End();
-
-			objTransform.rotate.x += 0.01f;
-			objTransform.rotate.z += 0.01f;
-
 			ImGui::Begin("Camera Window");
 			ImGui::DragFloat3("Scale", &cameraTransform.scale.x, 0.1f);
 			ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
 			ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+			ImGui::End();
+
+			ImGui::Begin("Scene Window");
+			if(ImGui::Button("Save Scene")) {
+				sceneManager.SaveCurrentSceneToJson("resources/scene.json");
+			}
+			if(ImGui::Button("Load Scene")) {
+				sceneManager.LoadCurrentSceneFromJson("resources/scene.json");
+			}
+			ImGui::End();
+
+			ImGui::Begin("Entity Window");
+			
 			ImGui::End();
 #endif
 
@@ -247,7 +247,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
-	sceneManager.SaveCurrentSceneToJson("resources/scene.json");
+	
 
 	sceneManager.Shutdown();
 

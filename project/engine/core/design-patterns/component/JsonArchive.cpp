@@ -91,15 +91,26 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::Vector4& value) {
 void QFE::JsonArchive::Process(const std::string& name, MATH::Transform& value) {
     if (isLoading_) {
         // デシリアライズ
-        if (json_.contains(name)) {
-            Process(name + ".scale", value.scale);
-            Process(name + ".rotate", value.rotate);
-            Process(name + ".translate", value.translate);
+        if (json_.contains(name)) { 
+			json_[name]["scale"]["x"].get_to(value.scale.x);
+            json_[name]["scale"]["y"].get_to(value.scale.y);
+            json_[name]["scale"]["z"].get_to(value.scale.z);
+            json_[name]["rotate"]["x"].get_to(value.rotate.x);
+            json_[name]["rotate"]["y"].get_to(value.rotate.y);
+            json_[name]["rotate"]["z"].get_to(value.rotate.z);
+            json_[name]["translate"]["x"].get_to(value.translate.x);
+			json_[name]["translate"]["y"].get_to(value.translate.y);
         }
     } else {
         // シリアライズ
-        Process(name + ".scale", value.scale);
-        Process(name + ".rotate", value.rotate);
-        Process(name + ".translate", value.translate);
+		json_[name]["scale"]["x"] = value.scale.x;
+        json_[name]["scale"]["y"] = value.scale.y;
+        json_[name]["scale"]["z"] = value.scale.z;
+        json_[name]["rotate"]["x"] = value.rotate.x;
+        json_[name]["rotate"]["y"] = value.rotate.y;
+        json_[name]["rotate"]["z"] = value.rotate.z;
+        json_[name]["translate"]["x"] = value.translate.x;
+        json_[name]["translate"]["y"] = value.translate.y;
+		json_[name]["translate"]["z"] = value.translate.z;
 	}
 }

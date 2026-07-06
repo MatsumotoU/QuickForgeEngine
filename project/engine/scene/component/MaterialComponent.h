@@ -13,4 +13,7 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(albedoColor)
 			QFE_REFLECT_END()
 	};
+
+	QFE_COMPONENT(MaterialComponent)
 }
+

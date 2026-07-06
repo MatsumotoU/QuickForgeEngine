@@ -16,22 +16,20 @@
                 "name": "RingObject"
             },
             "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    }
+                "transform.rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "transform.scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "transform.translate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
                 }
             }
         },
@@ -51,22 +49,20 @@
                 "name": "FloorObject"
             },
             "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 10.0,
-                        "y": 1.0,
-                        "z": 10.0
-                    },
-                    "translate": {
-                        "x": 0.0,
-                        "y": -5.0,
-                        "z": 0.0
-                    }
+                "transform.rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "transform.scale": {
+                    "x": 10.0,
+                    "y": 1.0,
+                    "z": 10.0
+                },
+                "transform.translate": {
+                    "x": 0.0,
+                    "y": -5.0,
+                    "z": 0.0
                 }
             }
         }

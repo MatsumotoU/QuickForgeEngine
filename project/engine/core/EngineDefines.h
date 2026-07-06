@@ -45,4 +45,9 @@ namespace QFE {
 #define QFE_REFLECT_END() \
     }
 
+// コンポーネントの自動登録用マクロ
+/// @brief コンポーネントクラスを自動登録するマクロ. クラス定義の外で使用する必要があります.
+#define QFE_COMPONENT(ClassName) \
+    inline static QFE::ComponentRegisterer<ClassName> _autoReg##ClassName(#ClassName);
+
 }
