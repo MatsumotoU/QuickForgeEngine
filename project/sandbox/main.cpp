@@ -6,6 +6,7 @@
 #include "gui/D3D12GuiManager.h"
 #include "camera/CameraManager.h"
 #include "core/loger/MyDebugLog.h"
+#include "core/process/ProcessUtil.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"
 
@@ -142,6 +143,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ImGui::DragFloat3("Scale", &cameraTransform.scale.x, 0.1f);
 			ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
 			ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+			ImGui::End();
+
+
+			ImGui::Begin("Create Process Window");
+			if(ImGui::Button("Start EXE")) {
+				QFE::ProcessUtil::LaunchExe("Runtime.exe", "");
+			}
 			ImGui::End();
 #endif
 			QFE::MATH::Matrix4x4 viewProj =

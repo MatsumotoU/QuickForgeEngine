@@ -68,6 +68,8 @@ group "01_SubSystems" -- 独立した機能を提供するプロジェクト達
     dofile(path.join(_root, "engine/graphics/premake5.lua"))
     -- GUIプロジェクトの読み込み
     dofile(path.join(_root, "engine/gui/premake5.lua"))
+    -- Inputプロジェクトの読み込み
+    dofile(path.join(_root, "engine/input/premake5.lua"))
     
 group ""
 

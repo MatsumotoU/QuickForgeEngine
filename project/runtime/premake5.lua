@@ -12,8 +12,9 @@ project "Runtime" -- Runtime
             "DirectXTex",
             "GUIEngine",
             "WindowingSystem",
-            "GraphicsEngine",
-            "FrameWork"
+            "GraphicEngine",
+            "FrameWork",
+            "Camera",
         }
 
         -- 警告レベル4
@@ -27,5 +28,7 @@ project "Runtime" -- Runtime
 
         -- 外部ファイルのインクルード
         externalincludedirs {
-            "%{wks.location}/externals/"
+            "%{wks.location}/externals/",
+            "%{wks.location}/externals/assimp/",
+            "%{wks.location}/externals/assimp/include/",
         }

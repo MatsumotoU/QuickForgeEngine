@@ -21,14 +21,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ゲームウィンドウマネージャの初期化とウィンドウの追加
 	std::unique_ptr<QFE::GameWindowManager> gameWindowManager = std::make_unique<QFE::GameWindowManager>();
 	gameWindowManager->Initialize();
-	gameWindowManager->AddWindow(1280, 720, "Test Window");
+	std::string windowName = "Runtime Window";
+	gameWindowManager->AddWindow(1280, 720, windowName);
 
 	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
 	std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> graphicEngine =
-		QFE::FRAMEWORK::CreateGraphicEngine(gameWindowManager->GetWindow("Test Window"));
+		QFE::FRAMEWORK::CreateGraphicEngine(gameWindowManager->GetWindow(windowName));
 	// GUIマネージャの初期化
 	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager =
-		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), gameWindowManager->GetWindow("Test Window"));
+		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), gameWindowManager->GetWindow(windowName));
 
 	// カメラマネージャの初期化とカメラの作成
 	QFE::CAMERA::CameraManager cameraManager;
