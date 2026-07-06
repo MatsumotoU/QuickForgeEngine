@@ -9,14 +9,17 @@
                     "z": 0.0
                 }
             },
+            "struct QFE::SCENE::ModelRenderComponent": {
+                "modelName": "Ring"
+            },
             "struct QFE::SCENE::ObjectInfoComponent": {
                 "name": "RingObject"
             },
             "struct QFE::SCENE::TransformComponent": {
                 "transform.rotate": {
-                    "x": 27.440532684326172,
+                    "x": 12.990201950073242,
                     "y": 0.0,
-                    "z": 27.440532684326172
+                    "z": 12.990201950073242
                 },
                 "transform.scale": {
                     "x": 1.0,
@@ -24,9 +27,9 @@
                     "z": 1.0
                 },
                 "transform.translate": {
-                    "x": 4.5,
-                    "y": -1.7999999523162842,
-                    "z": 3.200000047683716
+                    "x": 6.900000095367432,
+                    "y": 0.0,
+                    "z": 0.0
                 }
             }
         },
@@ -38,6 +41,9 @@
                     "y": 0.5,
                     "z": 0.5
                 }
+            },
+            "struct QFE::SCENE::ModelRenderComponent": {
+                "modelName": "Box"
             },
             "struct QFE::SCENE::ObjectInfoComponent": {
                 "name": "FloorObject"
@@ -55,7 +61,7 @@
                 },
                 "transform.translate": {
                     "x": 0.0,
-                    "y": -5.0,
+                    "y": -5.300000190734863,
                     "z": 0.0
                 }
             }

@@ -16,15 +16,12 @@ void RaytracingAccelerationStructure::Initialize(ID3D12Device5* device5) {
 	}
 }
 
-void RaytracingAccelerationStructure::UpdateTLAS(ID3D12GraphicsCommandList4* commandList4) {
-	// TLASを構築するためのインスタンス情報を収集
-	std::vector<RaytracingInstance> instances;
-	for (const auto& instance : instanceSet_) {
-		instances.push_back(instance);
-	}
+void QFE::GRAPHIC::RaytracingAccelerationStructure::UpdateTLAS(
+	ID3D12GraphicsCommandList4* commandList4, const std::vector<RaytracingInstance>& instances) {
+
 	// TLASを構築に使うBLASの結果バッファを取得するための関数を定義
-	std::function<ID3D12Resource*(BLASHandle)> getResourceFunc = [this](BLASHandle handle) {
-		return this->GetBLASResultBuffer(handle);};
+	std::function<ID3D12Resource* (BLASHandle)> getResourceFunc = [this](BLASHandle handle) {
+		return this->GetBLASResultBuffer(handle); };
 	// TLASの構築
 	if (!tlas_->Build(commandList4, instances, getResourceFunc)) {
 		QFE_LOG("Failed to build TLAS.");
@@ -50,46 +47,6 @@ BLASHandle RaytracingAccelerationStructure::CreateBLAS(
 	// BLASをコンテナに追加し、ハンドルを取得
 	BLASHandle handle = static_cast<BLASHandle>(blasContainer_.Add(name, std::move(blas)));
 	return handle;
-}
-
-BLASInstanceHandle RaytracingAccelerationStructure::CreateBLASInstance(
-	BLASHandle handle, const QFE::MATH::Matrix4x4& transform) {
-
-	// BLASハンドルが有効かどうかを確認
-	if(handle == BLASHandle::Invalid) {
-		QFE_LOG("Invalid BLAS handle.");
-		return BLASInstanceHandle::Invalid;
-	}
-	// BLASコンテナにハンドルが存在するか確認
-	if(!blasContainer_.Contains(static_cast<uint32_t>(handle))) {
-		QFE_LOG("BLAS handle does not exist.");
-		return BLASInstanceHandle::Invalid;
-	}
-	// 新しいBLASインスタンスを作成し、インスタンスセットに追加
-	RaytracingInstance instance;
-	instance.blasHandle = handle;
-	instance.worldMatrix = transform;
-	uint32_t instanceKey = instanceSet_.push_back(instance);
-	return static_cast<BLASInstanceHandle>(instanceKey);
-}
-
-void RaytracingAccelerationStructure::RemoveBLASInstance(BLASInstanceHandle instanceHandle) {
-	// インスタンスハンドルが有効かどうかを確認
-	if(instanceSet_.Contains(static_cast<uint32_t>(instanceHandle))) {
-		instanceSet_.Remove(static_cast<uint32_t>(instanceHandle));
-	} else {
-		QFE_LOG("Invalid BLAS instance handle.");
-	}
-}
-
-void RaytracingAccelerationStructure::UpdateBLASInstanceTransform(BLASInstanceHandle instanceHandle, const QFE::MATH::Matrix4x4& transform) {
-	// インスタンスハンドルが有効かどうかを確認
-	if(instanceSet_.Contains(static_cast<uint32_t>(instanceHandle))) {
-		RaytracingInstance* instance = instanceSet_.Get(static_cast<uint32_t>(instanceHandle));
-		instance->worldMatrix = transform;
-	} else {
-		QFE_LOG("Invalid BLAS instance handle.");
-	}
 }
 
 ID3D12Resource* RaytracingAccelerationStructure::GetBLASResultBuffer(BLASHandle handle) const {

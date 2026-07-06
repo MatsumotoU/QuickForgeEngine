@@ -105,11 +105,8 @@ namespace QFE::GRAPHIC {
 
 		/// @brief BLASを作成する.名前は任意で指定できる.
 		BLASHandle CreateBLAS(std::vector<QFE::MATH::Vector3> vertices, const std::string& name);
-		/// @brief BLASインスタンスを作成する.
-		BLASInstanceHandle CreateBLASInstance(
-			BLASHandle blasHandle, const QFE::MATH::Matrix4x4& transform);
 		/// @brief BLASインスタンスの変換行列を更新する.
-		void UpdateBLASInstanceTransform(BLASInstanceHandle instanceHandle, const QFE::MATH::Matrix4x4& transform);
+		void UpdateBLASInstanceTransform(const std::vector<QFE::GRAPHIC::RaytracingInstance>& instances);
 		/// @brief RenderTargetHandleからレンダーターゲットのテクスチャのリソースハンドルを取得する.
 		DirectXResourceHandle GetRenderTargetTexture(RenderTargetHandle renderTargetHandle);
 

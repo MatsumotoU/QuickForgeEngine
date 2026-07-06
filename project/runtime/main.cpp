@@ -47,9 +47,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 	uint32_t entity = QFE::FRAMEWORK::CreateEntityWithMaterial(sceneManager, "RingObject", {1.0f, 0.0f, 0.0f, 1.0f});
 	QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entity).transform;
+	objTransform.scale = { 1.0f, 1.0f, 1.0f };
+	entityManager.EmplaceComponent<QFE::SCENE::ModelRenderComponent>(entity);
+	QFE::SCENE::ModelRenderComponent& modelRenderComponent = entityManager.GetComponent<QFE::SCENE::ModelRenderComponent>(entity);
+	modelRenderComponent.modelName = "Ring";
 
 	uint32_t floorEntity = QFE::FRAMEWORK::CreateEntityWithMaterial(sceneManager, "FloorObject", { 0.5f, 0.5f, 0.5f, 1.0f });
 	QFE::MATH::Transform& floorTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(floorEntity).transform;
+	entityManager.EmplaceComponent<QFE::SCENE::ModelRenderComponent>(floorEntity);
+	QFE::SCENE::ModelRenderComponent& floorModelRenderComponent = entityManager.GetComponent<QFE::SCENE::ModelRenderComponent>(floorEntity);
+	floorModelRenderComponent.modelName = "Box";
 	floorTransform.translate = { 0.0f, -5.0f, 0.0f };
 	floorTransform.scale = { 10.0f, 1.0f, 10.0f };
 
@@ -76,10 +83,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Vertexバッファの作成とモデルデータの読み込み
 	QFE::ASSET::AssimpModelLoader modelLoader;
 	modelLoader.Initialize();
+	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> vertexBufferMap;
 	QFE::ASSET::ModelData& modelData = modelLoader.LoadModel("resources/box.obj");
-	QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle = graphicEngine->CreateVertexBuffer(modelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
+	vertexBufferMap["Box"] = graphicEngine->CreateVertexBuffer(modelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
 	QFE::ASSET::ModelData& ringModelData = modelLoader.LoadModel("resources/ring.obj");
-	QFE::GRAPHIC::DirectXResourceHandle ringVertexBufferHandle = graphicEngine->CreateVertexBuffer(ringModelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
+	vertexBufferMap["Ring"] = graphicEngine->CreateVertexBuffer(ringModelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
 
 	// オフスクリーンレンダーターゲットの作成
 	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
@@ -104,13 +112,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::vector<QFE::MATH::Vector3> ringVertices;
 	ringVertices = QFE::FRAMEWORK::GetModelVertexPositions(ringModelData.meshes[0].vertices.GetInternalVector());
 
+	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
 	QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(
-		objectVertices, "TriangleBLAS");
+		objectVertices, "Box");
+	blasHandleMap["Box"] = blasHandle;
 	QFE::GRAPHIC::BLASHandle ringBlasHandle = graphicEngine->CreateBLAS(
-		ringVertices, "RingBLAS");
-
-	QFE::GRAPHIC::BLASInstanceHandle blasInstanceHandle = graphicEngine->CreateBLASInstance(ringBlasHandle, QFE::MATH::Matrix4x4::MakeIndentity4x4());
-	QFE::GRAPHIC::BLASInstanceHandle floorBlasInstanceHandle = graphicEngine->CreateBLASInstance(blasHandle, QFE::MATH::Matrix4x4::MakeIndentity4x4());
+		ringVertices, "Ring");
+	blasHandleMap["Ring"] = ringBlasHandle;
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -124,19 +132,60 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			DispatchMessage(&msg);
 
 		} else {
-
-			// ルートリソースの設定
-			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources;
-			QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), rootResources);
-			std::vector<QFE::GRAPHIC::DirectXResourceHandle> floorRootResources;
-			QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), floorRootResources);
-
 			QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
-			Material* ringMaterial = graphicEngine->GetConstantBufferData<Material>(rootResources[1]);
-			ringMaterial->color = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entity).albedoColor;
+			QFE::MATH::Matrix4x4 viewProj =
+				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
 
-			Material* floorMaterial = graphicEngine->GetConstantBufferData<Material>(floorRootResources[1]);
-			floorMaterial->color = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(floorEntity).albedoColor;
+			// 各エンティティのModelRenderComponentを更新
+			std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
+			entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
+				modelRenderComp.canRender = false;
+				// TransformComponentを取得して、Transformを更新する
+				if(entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId) == false) {
+					return;
+				}
+				QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+				QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetResourceAllocator();
+				QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
+					resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
+				QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, objTransform, viewProj);
+				modelRenderComp.transformMatrixBufferHandle = 
+					static_cast<uint32_t>(transformMatrixBufferHandle);
+
+				// マテリアルの更新
+				if(entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId) == false) {
+					return;
+				}
+				QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle = 
+					resourceAllocator->AllocateConstantBuffer<Material>();
+				Material* materialData = graphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
+				QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
+				materialData->color = materialComp.albedoColor;
+				modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
+
+				// 頂点バッファの更新
+				if (vertexBufferMap.find(modelRenderComp.modelName) != vertexBufferMap.end()) {
+					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(vertexBufferMap[modelRenderComp.modelName]);
+				} else {
+					return;
+				}
+
+				// テクスチャの更新
+				QFE::GRAPHIC::DirectXResourceHandle textureHandle =
+					graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyWhite1x1Texture);
+				modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
+
+				// レイトレーシングインスタンスの作成
+				raytracingInstances.push_back({
+					blasHandleMap[modelRenderComp.modelName],
+					QFE::MATH::Matrix4x4::MakeAffineMatrix(entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform)
+					});
+
+				// レンダリング可能
+				modelRenderComp.canRender = true;
+				});
+
+			graphicEngine->UpdateBLASInstanceTransform(raytracingInstances);
 
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
@@ -163,21 +212,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
 			ImGui::End();
 #endif
-			QFE::MATH::Matrix4x4 viewProj =
-				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
 
-			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), rootResources[0], objTransform, viewProj);
-			TransformationMatrix* transformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(rootResources[0]);
-			graphicEngine->UpdateBLASInstanceTransform(blasInstanceHandle, transformMatrixData->World);
+			// モデルのレンダリング
+			entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
+				if (modelRenderComp.canRender == false) {
+					return;
+				}
+				
 
-			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), floorRootResources[0], floorTransform, viewProj);
-			TransformationMatrix* floorTransformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(floorRootResources[0]);
-			graphicEngine->UpdateBLASInstanceTransform(floorBlasInstanceHandle, floorTransformMatrixData->World);
-
-			graphicEngine->TestOffScreenDraw(
-				psoHandle, viewportHandle, scissorRectHandle, ringVertexBufferHandle, rootResources, renderTargets);
-			graphicEngine->TestOffScreenDraw(
-				psoHandle, viewportHandle, scissorRectHandle, vertexBufferHandle, floorRootResources, renderTargets);
+				// ルートリソースの設定
+				std::vector<QFE::GRAPHIC::DirectXResourceHandle> modelRootResources = {
+					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.transformMatrixBufferHandle),
+					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.materialResourceHandle),
+					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.textureResourceHandle)
+				};
+				graphicEngine->TestOffScreenDraw(
+					psoHandle, viewportHandle, scissorRectHandle,
+					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.vertexResourceHandle),
+					modelRootResources, renderTargets);
+				});
 
 			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources = {
 				graphicEngine->GetRenderTargetTexture(renderTargets[0]),
