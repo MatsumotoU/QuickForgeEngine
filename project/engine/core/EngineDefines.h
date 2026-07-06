@@ -1,6 +1,7 @@
 #pragma once
 #include "loger/MyDebugLog.h"
 #include "error/ErrorList.h"
+#include "design-patterns/component/Archive.h"
 
 namespace QFE {
 	// デバッグ用マクロ.最適化オフのときのみログを出力するマクロ. 最適化オンのときは何もしない.
@@ -32,4 +33,16 @@ namespace QFE {
 #define QFE_REPORT_USER_ERROR(message, error) QFE_NOOP(message, error)
 #define QFE_REPORT_SYSTEM_ERROR(message, error) QFE_NOOP(message, error)
 #endif
+
+// リフレクション用マクロ
+#define QFE_REFLECT_BEGIN(ClassName) \
+    static std::string GetTypeName() { return #ClassName; } \
+    void Reflect(QFE::Archive& ar) {
+
+#define QFE_REFLECT_MEMBER(MemberName) \
+        ar.Process(#MemberName, MemberName);
+
+#define QFE_REFLECT_END() \
+    }
+
 }

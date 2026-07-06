@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <nlohmann/json.hpp>
+#include "component/JsonArchive.h"
 
 
 namespace QFE {
@@ -38,12 +39,31 @@ namespace QFE {
 		nlohmann::json SerializeEntityComponents(uint32_t entityId) const {
 			nlohmann::json componentsJson;
 			for (const auto& [typeId, storagePtr] : componentStorages) {
-				const ComponentData* comp = storagePtr->GetComponentDataPtr(entityId);
-				if (comp) {
-					componentsJson[comp->GetTypeName()] = comp->Serialize();
+				if (storagePtr->HasComponent(entityId)) {
+					nlohmann::json compJson;
+					JsonArchive archive(compJson, false); // 保存モード
+
+					storagePtr->ReflectComponent(entityId, archive);
+					componentsJson[storagePtr->GetStorageTypeName()] = compJson;
 				}
 			}
 			return componentsJson;
+		}
+
+		/// @brief 指定エンティティにJSONからコンポーネントを復元(デシリアライズ)
+		void DeserializeEntityComponents(uint32_t entityId, const nlohmann::json& componentsJson) {
+			for (auto& [typeId, storagePtr] : componentStorages) {
+				std::string typeName = storagePtr->GetStorageTypeName();
+				if (componentsJson.contains(typeName)) {
+					// もしエンティティがまだそのコンポーネントを持っていないなら空のものを追加する等の処理
+					// (※事前にEmplaceComponentされている前提、もしくは各ストレージに空生成関数を追加するとより強固になります)
+
+					nlohmann::json compJson = componentsJson[typeName];
+					JsonArchive archive(compJson, true); // 読み込みモード
+
+					storagePtr->ReflectComponent(entityId, archive);
+				}
+			}
 		}
 		
 		/// @brief エンティティマネージャーをリセット
