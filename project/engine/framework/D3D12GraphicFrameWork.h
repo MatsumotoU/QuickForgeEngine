@@ -14,7 +14,7 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, HWND hwnd);
 
 	/// @brief シェーダーペアを作成する関数
-	QFE::GRAPHIC::ShaderPairHandle CreateObject3dGBufferShaderPair(
+	QFE::GRAPHIC::ShaderPairHandle CreateShaderPair(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const std::string& vsDirName, const std::string& psDirName,
 		const std::string& vsFileName, const std::string& psFileName);

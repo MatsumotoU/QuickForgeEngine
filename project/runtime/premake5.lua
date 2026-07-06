@@ -15,6 +15,7 @@ project "Runtime" -- Runtime
             "GraphicEngine",
             "FrameWork",
             "Camera",
+            "EngineAssetsFactory",
         }
 
         -- 警告レベル4

@@ -62,6 +62,11 @@ void GraphicPipelineManager::Finalize() {
 ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(
 	const ShaderPairElement& element, std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc) {
 
+	// すでに同じシェーダーペアが存在する場合は、既存のハンドルを返す
+	if (shaderPairNameToKeyMap_.find(element.vsFileName + element.psFileName) != shaderPairNameToKeyMap_.end()) {
+		return static_cast<ShaderPairHandle>(shaderPairNameToKeyMap_[element.vsFileName + element.psFileName]);
+	}
+
 	// バイナリの一覧(ファイル名をキーとして格納)
 	std::map<std::string, IDxcBlob*> vsBlobMap;
 	std::map<std::string, IDxcBlob*> psBlobMap;
@@ -81,6 +86,9 @@ ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(
 	// シェーダーペアの生成
 	shaderPairs_[shaderPairKeyCounter_] = std::make_unique<ShaderPair>();
 	shaderPairs_[shaderPairKeyCounter_]->Create(vsBlobMap[element.vsFileName], psBlobMap[element.psFileName], funcs);
+
+	// シェーダーペアの名前とキーをマップに登録
+	shaderPairNameToKeyMap_[element.vsFileName + element.psFileName] = shaderPairKeyCounter_;
 	return static_cast<ShaderPairHandle>(shaderPairKeyCounter_++);
 }
 
@@ -88,6 +96,17 @@ PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 	const ShaderPairHandle& shaderHandle, ID3D12Device* device
 	, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType, D3D12_RASTERIZER_DESC rasterizerDesc,
 	D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc) {
+
+	// PSOの一意性を保証するためのキーを生成
+	std::string key = std::format("{}{}{}{}{}{}{}", 
+		static_cast<uint32_t>(shaderHandle), static_cast<uint32_t>(topologyType),
+		static_cast<uint32_t>(rasterizerDesc.CullMode), static_cast<uint32_t>(rasterizerDesc.FillMode),
+		static_cast<uint32_t>(blendDesc.AlphaToCoverageEnable), static_cast<uint32_t>(depthStencilDesc.DepthEnable),
+		static_cast<uint32_t>(depthStencilDesc.StencilEnable));
+	// すでに同じPSOが存在する場合は、既存のハンドルを返す
+	if (pipelineStateObjectNameToKeyMap_.find(key) != pipelineStateObjectNameToKeyMap_.end()) {
+		return static_cast<PSOHandle>(pipelineStateObjectNameToKeyMap_[key]);
+	}
 
 	PipelineStateObjectElement element{};
 
@@ -105,6 +124,9 @@ PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 	// PSOの生成
 	pipelineStateObjects_[pipelineStateObjectKeyCounter_] = std::make_unique<PipelineStateObject>();
 	pipelineStateObjects_[pipelineStateObjectKeyCounter_]->CreatePipelineStateObject(element, device);
+
+	// PSOの名前とキーをマップに登録
+	pipelineStateObjectNameToKeyMap_[key] = pipelineStateObjectKeyCounter_;
 
 	return static_cast<PSOHandle>(pipelineStateObjectKeyCounter_++);
 }

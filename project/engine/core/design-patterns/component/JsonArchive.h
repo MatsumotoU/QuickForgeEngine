@@ -18,6 +18,10 @@ namespace QFE {
 		void Process(const std::string& name, uint32_t& value) override;
         void Process(const std::string& name, std::string& value) override;
 
+		void Process(const std::string& name, MATH::Vector2& value) override;
+		void Process(const std::string& name, MATH::Vector3& value) override;
+		void Process(const std::string& name, MATH::Vector4& value) override;
+
     private:
         nlohmann::json& json_;
         bool isLoading_;

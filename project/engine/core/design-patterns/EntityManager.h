@@ -67,7 +67,7 @@ namespace QFE {
 		}
 		
 		/// @brief エンティティマネージャーをリセット
-		void ResetEntiry() {
+		void ResetEntity() {
 			componentStorages.clear();
 			activeEntityIds_.clear();
 			nextEntityId_ = 0;

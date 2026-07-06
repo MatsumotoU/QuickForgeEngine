@@ -27,7 +27,7 @@ std::unique_ptr<QFE::GUI::D3D12GuiManager> QFE::FRAMEWORK::CreateGuiManager(QFE:
 	return std::make_unique<QFE::GUI::D3D12GuiManager>(std::move(guiManager));
 }
 
-QFE::GRAPHIC::ShaderPairHandle QFE::FRAMEWORK::CreateObject3dGBufferShaderPair(
+QFE::GRAPHIC::ShaderPairHandle QFE::FRAMEWORK::CreateShaderPair(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::string& vsDirName,const std::string& psDirName,
 	const std::string& vsFileName, const std::string& psFileName) {
 

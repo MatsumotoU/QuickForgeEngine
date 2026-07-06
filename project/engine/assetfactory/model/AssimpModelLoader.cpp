@@ -1,6 +1,9 @@
 #include "AssimpModelLoader.h"
 #include <cassert>
 #include <format>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "EngineDefines.h"
 #include "file/FileUtility.h"

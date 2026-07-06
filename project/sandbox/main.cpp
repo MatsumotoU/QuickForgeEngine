@@ -36,78 +36,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	cameraManager.Initialize();
 	QFE::CAMERA::CameraHandle cameraHandle = cameraManager.CreateCamera(0.0f, 1280.0f, 0.0f, 720.0f, 0.1f, 100.0f, 0.45f);
 
-	std::string psDirName = "engine/resources/shaders/ps/";
-	std::string vsDirName = "engine/resources/shaders/vs/";
-	std::string rtDirName = "engine/resources/shaders/rt/";
-
-	//====================
-	// ここから描画の準備
-	//====================
-
-	// シェーダーペアを生成
-	QFE::GRAPHIC::ShaderPairHandle shaderPairHandle = 
-		QFE::FRAMEWORK::CreateObject3dGBufferShaderPair(graphicEngine.get(), vsDirName, psDirName, "Object3d.GBuffer.VS.hlsl", "Object3d.GBuffer.PS.hlsl");
-	// パイプラインステートオブジェクトを生成
-	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->CreatePipelineStateObject(
-		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
-		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
-
-	QFE::MATH::Transform objTransform;
-	QFE::MATH::Transform floorTransform;
-	floorTransform.translate = { 0.0f, -5.0f, 0.0f };
-	floorTransform.scale = { 10.0f, 1.0f, 10.0f };
-	QFE::MATH::Transform cameraTransform;
-	cameraTransform.translate = { 0.0f, 20.0f, -20.0f };
-	cameraTransform.rotate = { 0.8f, 0.0f, 0.0f };
-
-	// Vertexバッファの作成とモデルデータの読み込み
-	QFE::ASSET::AssimpModelLoader modelLoader;
-	modelLoader.Initialize();
-	QFE::ASSET::ModelData& modelData = modelLoader.LoadModel("resources/box.obj");
-	QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle = graphicEngine->CreateVertexBuffer(modelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
-	QFE::ASSET::ModelData& ringModelData = modelLoader.LoadModel("resources/ring.obj");
-	QFE::GRAPHIC::DirectXResourceHandle ringVertexBufferHandle = graphicEngine->CreateVertexBuffer(ringModelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
-	
-	// ルートリソースの設定
-	std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources;
-	QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), rootResources);
-	std::vector<QFE::GRAPHIC::DirectXResourceHandle> floorRootResources;
-	QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), floorRootResources);
-
-	Material* material = graphicEngine->GetConstantBufferData<Material>(rootResources[1]);
-	material->color = { 1.0f, 1.0f, 0.0f, 1.0f };
-
-	// オフスクリーンレンダーターゲットの作成
-	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
-	for (int i = 0; i < 3; ++i) {
-		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle = 
-			graphicEngine->CreateOffScreenRenderTarget(1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT);
-		renderTargets.push_back(offScreenRenderTargetHandle);
-	}
-	// ビューポートとシザー矩形の作成
-	QFE::GRAPHIC::ViewPortHandle viewportHandle = graphicEngine->CreateViewPort(1280, 720);
-	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle = graphicEngine->CreateScissorRect(0, 0, 1280, 720);
-
-	// UAVバッファの作成とルートリソースの設定
-	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720, L"UAVBuffer");
-	// レイトレーシングパイプラインステートオブジェクトの作成
-	QFE::GRAPHIC::RTPSOHandle rtpsoHandle = graphicEngine->CreateRayTracingPipelineStateObject(
-		rtDirName, "ShadowRaytracing.hlsl");
-
-	// BLASの作成とBLASインスタンスの作成
-	std::vector<QFE::MATH::Vector3> objectVertices;
-	objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(modelData.meshes[0].vertices.GetInternalVector());
-	std::vector<QFE::MATH::Vector3> ringVertices;
-	ringVertices = QFE::FRAMEWORK::GetModelVertexPositions(ringModelData.meshes[0].vertices.GetInternalVector());
-
-	QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(
-		objectVertices,"TriangleBLAS");
-	QFE::GRAPHIC::BLASHandle ringBlasHandle = graphicEngine->CreateBLAS(
-		ringVertices, "RingBLAS");
-
-	QFE::GRAPHIC::BLASInstanceHandle blasInstanceHandle = graphicEngine->CreateBLASInstance(ringBlasHandle, QFE::MATH::Matrix4x4::MakeIndentity4x4());
-	QFE::GRAPHIC::BLASInstanceHandle floorBlasInstanceHandle = graphicEngine->CreateBLASInstance(blasHandle, QFE::MATH::Matrix4x4::MakeIndentity4x4());
-
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
 		MSG msg;
@@ -123,58 +51,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
 
-
-#ifdef USE_IMGUI
 			ImGui::Begin("Test Window");
-			ImGui::Text("Hello, world!");
-			ImGui::DragFloat3("Object Scale", &objTransform.scale.x, 0.1f);
-			ImGui::DragFloat3("Object Rotate", &objTransform.rotate.x, 0.1f);
-			ImGui::DragFloat3("Object Translate", &objTransform.translate.x, 0.1f);
-			ImGui::Separator();
-			ImGui::DragFloat3("Floor Scale", &floorTransform.scale.x, 0.1f);
-			ImGui::DragFloat3("Floor Rotate", &floorTransform.rotate.x, 0.1f);
-			ImGui::DragFloat3("Floor Translate", &floorTransform.translate.x, 0.1f);
-			ImGui::End();
-
-			objTransform.rotate.x += 0.01f;
-			objTransform.rotate.z += 0.01f;
-
-			ImGui::Begin("Camera Window");
-			ImGui::DragFloat3("Scale", &cameraTransform.scale.x, 0.1f);
-			ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
-			ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
-			ImGui::End();
-
-
-			ImGui::Begin("Create Process Window");
-			if(ImGui::Button("Start EXE")) {
+			if(ImGui::Button("Launch Runtime")) {
 				QFE::ProcessUtil::LaunchExe("Runtime.exe", "");
 			}
 			ImGui::End();
-#endif
-			QFE::MATH::Matrix4x4 viewProj =
-				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
-
-			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), rootResources[0], objTransform, viewProj);
-			TransformationMatrix* transformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(rootResources[0]);
-			graphicEngine->UpdateBLASInstanceTransform(blasInstanceHandle, transformMatrixData->World);
-
-			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), floorRootResources[0], floorTransform, viewProj);
-			TransformationMatrix* floorTransformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(floorRootResources[0]);
-			graphicEngine->UpdateBLASInstanceTransform(floorBlasInstanceHandle, floorTransformMatrixData->World);
-
-			graphicEngine->TestOffScreenDraw(
-				psoHandle, viewportHandle, scissorRectHandle, ringVertexBufferHandle, rootResources, renderTargets);
-			graphicEngine->TestOffScreenDraw(
-				psoHandle, viewportHandle, scissorRectHandle, vertexBufferHandle, floorRootResources, renderTargets);
-
-			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources = {
-				graphicEngine->GetRenderTargetTexture(renderTargets[0]),
-				graphicEngine->GetRenderTargetTexture(renderTargets[1]),
-				graphicEngine->GetRenderTargetTexture(renderTargets[2])
-			};
-			
-			graphicEngine->TestRayTracing(rtpsoHandle, uavBufferHandle, rayTracingRootResources);
 			
 			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager->PostDraw();

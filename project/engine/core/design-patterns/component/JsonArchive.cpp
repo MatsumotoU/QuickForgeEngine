@@ -39,3 +39,51 @@ void QFE::JsonArchive::Process(const std::string& name, std::string& value) {
         json_[name] = value;
     }
 }
+
+void QFE::JsonArchive::Process(const std::string& name, MATH::Vector2& value) {
+    if (isLoading_) {
+        // デシリアライズ
+        if (json_.contains(name)) {
+            value.x = json_[name]["x"].get<float>();
+            value.y = json_[name]["y"].get<float>();
+        }
+    } else {
+        // シリアライズ
+        json_[name]["x"] = value.x;
+        json_[name]["y"] = value.y;
+	}
+}
+
+void QFE::JsonArchive::Process(const std::string& name, MATH::Vector3& value) {
+    if (isLoading_) {
+        // デシリアライズ
+        if (json_.contains(name)) {
+            value.x = json_[name]["x"].get<float>();
+            value.y = json_[name]["y"].get<float>();
+            value.z = json_[name]["z"].get<float>();
+        }
+    } else {
+        // シリアライズ
+        json_[name]["x"] = value.x;
+        json_[name]["y"] = value.y;
+        json_[name]["z"] = value.z;
+    }
+}
+
+void QFE::JsonArchive::Process(const std::string& name, MATH::Vector4& value) {
+    if (isLoading_) {
+        // デシリアライズ
+        if (json_.contains(name)) {
+            value.x = json_[name]["x"].get<float>();
+            value.y = json_[name]["y"].get<float>();
+            value.z = json_[name]["z"].get<float>();
+            value.w = json_[name]["w"].get<float>();
+        }
+    } else {
+        // シリアライズ
+        json_[name]["x"] = value.x;
+        json_[name]["y"] = value.y;
+        json_[name]["z"] = value.z;
+        json_[name]["w"] = value.w;
+    }
+}

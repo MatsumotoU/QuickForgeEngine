@@ -44,9 +44,6 @@ namespace QFE {
 		bool HasComponent(uint32_t id) const {
 			return components.Contains(id);
 		}
-		ComponentData* GetComponentDataPtr(uint32_t id) override {
-			return components.find(id);
-		}
 
 		/// @brief 全ての有効なコンポーネントに対して関数を実行する。
 		void Each(const std::function<void(uint32_t, T&)>& func) {

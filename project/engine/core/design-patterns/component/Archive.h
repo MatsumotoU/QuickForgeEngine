@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "../../math/MathInclude.h"
 
 namespace QFE {
     /// @brief 外部からコンポーネントのメンバにアクセスするためのインターフェース
@@ -13,5 +14,10 @@ namespace QFE {
         virtual void Process(const std::string& name, int32_t& value) = 0;
 		virtual void Process(const std::string& name, uint32_t& value) = 0;
         virtual void Process(const std::string& name, std::string& value) = 0;
+
+		// ベクトル型のバインディング
+        virtual void Process(const std::string& name, MATH::Vector2& value) = 0;
+        virtual void Process(const std::string& name, MATH::Vector3& value) = 0;
+		virtual void Process(const std::string& name, MATH::Vector4& value) = 0;
     };
 }
