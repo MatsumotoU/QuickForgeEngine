@@ -42,24 +42,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// シーンマネージャの初期化
 	QFE::SCENE::SceneManager sceneManager;
 	sceneManager.Initialize();
+	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
 	// Entityの生成
-	//sceneManager.LoadCurrentSceneFromJson("resources/scene.json");
-	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
-	uint32_t entity = QFE::FRAMEWORK::CreateEntityWithMaterial(sceneManager, "RingObject", {1.0f, 0.0f, 0.0f, 1.0f});
-	QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entity).transform;
-	objTransform.scale = { 1.0f, 1.0f, 1.0f };
-	entityManager.EmplaceComponent<QFE::SCENE::ModelRenderComponent>(entity);
-	QFE::SCENE::ModelRenderComponent& modelRenderComponent = entityManager.GetComponent<QFE::SCENE::ModelRenderComponent>(entity);
-	modelRenderComponent.modelName = "Ring";
-
-	uint32_t floorEntity = QFE::FRAMEWORK::CreateEntityWithMaterial(sceneManager, "FloorObject", { 0.5f, 0.5f, 0.5f, 1.0f });
-	QFE::MATH::Transform& floorTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(floorEntity).transform;
-	entityManager.EmplaceComponent<QFE::SCENE::ModelRenderComponent>(floorEntity);
-	QFE::SCENE::ModelRenderComponent& floorModelRenderComponent = entityManager.GetComponent<QFE::SCENE::ModelRenderComponent>(floorEntity);
-	floorModelRenderComponent.modelName = "Box";
-	floorTransform.translate = { 0.0f, -5.0f, 0.0f };
-	floorTransform.scale = { 10.0f, 1.0f, 10.0f };
+	sceneManager.LoadCurrentSceneFromJson("resources/scene.json");
 
 	std::string psDirName = "engine/resources/shaders/ps/";
 	std::string vsDirName = "engine/resources/shaders/vs/";
@@ -76,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->CreatePipelineStateObject(
 		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
-	
+
 	QFE::MATH::Transform cameraTransform;
 	cameraTransform.translate = { 0.0f, 20.0f, -20.0f };
 	cameraTransform.rotate = { 0.8f, 0.0f, 0.0f };
@@ -85,10 +71,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::ASSET::AssimpModelLoader modelLoader;
 	modelLoader.Initialize();
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> vertexBufferMap;
-	QFE::ASSET::ModelData& modelData = modelLoader.LoadModel("resources/box.obj");
-	vertexBufferMap["Box"] = graphicEngine->CreateVertexBuffer(modelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
-	QFE::ASSET::ModelData& ringModelData = modelLoader.LoadModel("resources/ring.obj");
-	vertexBufferMap["Ring"] = graphicEngine->CreateVertexBuffer(ringModelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
+	std::unordered_map<std::string, QFE::ASSET::ModelData> modelDataMap;
+	std::vector<std::string> modelNames;
+	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
+		modelNames.push_back(modelRenderComp.modelName);
+		});
+	std::string modelDir = "resources/";
+	for (std::string modelName : modelNames) {
+		modelDataMap[modelName] = modelLoader.LoadModel(modelDir + modelName + ".obj");
+		vertexBufferMap[modelName] = graphicEngine->CreateVertexBuffer(modelDataMap[modelName].meshes[0].vertices.GetInternalVector(), "VertexBuffer");
+	}
 
 	// オフスクリーンレンダーターゲットの作成
 	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
@@ -108,18 +100,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		rtDirName, "ShadowRaytracing.hlsl");
 
 	// BLASの作成とBLASインスタンスの作成
-	std::vector<QFE::MATH::Vector3> objectVertices;
-	objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(modelData.meshes[0].vertices.GetInternalVector());
-	std::vector<QFE::MATH::Vector3> ringVertices;
-	ringVertices = QFE::FRAMEWORK::GetModelVertexPositions(ringModelData.meshes[0].vertices.GetInternalVector());
-
 	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
-	QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(
-		objectVertices, "Box");
-	blasHandleMap["Box"] = blasHandle;
-	QFE::GRAPHIC::BLASHandle ringBlasHandle = graphicEngine->CreateBLAS(
-		ringVertices, "Ring");
-	blasHandleMap["Ring"] = ringBlasHandle;
+	for (const auto& [modelName, modelData] : modelDataMap) {
+		std::vector<QFE::MATH::Vector3> objectVertices;
+		objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(modelData.meshes[0].vertices.GetInternalVector());
+		QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(
+			objectVertices, modelName);
+		blasHandleMap[modelName] = blasHandle;
+	}
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
@@ -133,7 +121,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			DispatchMessage(&msg);
 
 		} else {
-			QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+
 			QFE::MATH::Matrix4x4 viewProj =
 				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
 
@@ -142,7 +130,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
 				modelRenderComp.canRender = false;
 				// TransformComponentを取得して、Transformを更新する
-				if(entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId) == false) {
+				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId) == false) {
 					return;
 				}
 				QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
@@ -150,14 +138,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 					resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
 				QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, objTransform, viewProj);
-				modelRenderComp.transformMatrixBufferHandle = 
+				modelRenderComp.transformMatrixBufferHandle =
 					static_cast<uint32_t>(transformMatrixBufferHandle);
 
 				// マテリアルの更新
-				if(entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId) == false) {
+				if (entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId) == false) {
 					return;
 				}
-				QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle = 
+				QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
 					resourceAllocator->AllocateConstantBuffer<Material>();
 				Material* materialData = graphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
 				QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
@@ -191,7 +179,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
 
-			
+
 #ifdef USE_IMGUI
 			ImGui::Begin("Camera Window");
 			ImGui::DragFloat3("Scale", &cameraTransform.scale.x, 0.1f);
@@ -200,16 +188,97 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ImGui::End();
 
 			ImGui::Begin("Scene Window");
-			if(ImGui::Button("Save Scene")) {
+			if (ImGui::Button("Save Scene")) {
 				sceneManager.SaveCurrentSceneToJson("resources/scene.json");
 			}
-			if(ImGui::Button("Load Scene")) {
+			if (ImGui::Button("Load Scene")) {
 				sceneManager.LoadCurrentSceneFromJson("resources/scene.json");
 			}
 			ImGui::End();
 
 			ImGui::Begin("Entity Window");
-			
+
+			// スタティック変数で「現在どのエンティティを選択しているか」を保持（未選択は-1）
+			static int selectedEntityId = -1;
+
+			// ==========================================
+			// 左側：エンティティ一覧（リスト）ペイン
+			// ==========================================
+			// 幅 180 ピクセル、高さは自動（0）の独立したスクロール領域を作る
+			ImGui::BeginChild("EntityList", ImVec2(180, 0), true);
+			ImGui::Text("Hierarchy");
+			ImGui::Separator();
+
+			std::vector<uint32_t> entityIds = entityManager.GetActiveEntityIds();
+			for (uint32_t entityId : entityIds) {
+				// 表示用ラベルの決定（ObjectInfoComponentがあればその名前、なければID）
+				std::string label = "Entity " + std::to_string(entityId);
+				if (entityManager.HasComponent<QFE::SCENE::ObjectInfoComponent>(entityId)) {
+					label = entityManager.GetComponent<QFE::SCENE::ObjectInfoComponent>(entityId).name;
+				}
+
+				// リストアイテム（Selectable）として描画。クリックされたら選択 ID を更新
+				bool isSelected = (selectedEntityId == static_cast<int>(entityId));
+				if (ImGui::Selectable(label.c_str(), isSelected)) {
+					selectedEntityId = static_cast<int>(entityId);
+				}
+			}
+			ImGui::EndChild();
+
+			// 横並びにするために SameLine を呼ぶ
+			ImGui::SameLine();
+
+			// ==========================================
+			// 右側：コンポーネント詳細（インスペクター）ペイン
+			// ==========================================
+			// 残りの領域すべてを使う（幅0, 高さ0）
+			ImGui::BeginChild("ComponentInspector", ImVec2(0, 0), true);
+			if (selectedEntityId != -1 && entityManager.IsActiveEntity(selectedEntityId)) {
+				uint32_t currentId = static_cast<uint32_t>(selectedEntityId);
+
+				// --- Object Info ---
+				if (entityManager.HasComponent<QFE::SCENE::ObjectInfoComponent>(currentId)) {
+					if (ImGui::CollapsingHeader("Object Info", ImGuiTreeNodeFlags_DefaultOpen)) {
+						QFE::SCENE::ObjectInfoComponent& objInfoComp = entityManager.GetComponent<QFE::SCENE::ObjectInfoComponent>(currentId);
+						ImGui::Text("Name: %s", objInfoComp.name.c_str());
+						ImGui::Text("Entity ID: %d", currentId);
+					}
+				}
+
+				// --- Transform ---
+				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(currentId)) {
+					if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
+						QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(currentId).transform;
+						// 選択が固定されているので、ラベルに毎回IDを埋め込まなくても被り（競合）が起きません
+						ImGui::DragFloat3("Scale", &objTransform.scale.x, 0.1f);
+						ImGui::DragFloat3("Rotate", &objTransform.rotate.x, 0.1f);
+						ImGui::DragFloat3("Translate", &objTransform.translate.x, 0.1f);
+					}
+				}
+
+				// --- Material ---
+				if (entityManager.HasComponent<QFE::SCENE::MaterialComponent>(currentId)) {
+					if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
+						QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(currentId);
+						ImGui::ColorEdit3("Albedo Color", &materialComp.albedoColor.x);
+					}
+				}
+
+				// --- Model Render ---
+				if (entityManager.HasComponent<QFE::SCENE::ModelRenderComponent>(currentId)) {
+					if (ImGui::CollapsingHeader("Model Render", ImGuiTreeNodeFlags_DefaultOpen)) {
+						QFE::SCENE::ModelRenderComponent& modelRenderComp = entityManager.GetComponent<QFE::SCENE::ModelRenderComponent>(currentId);
+						ImGui::Text("Model Name: %s", modelRenderComp.modelName.c_str());
+						ImGui::Text("Can Render: %s", modelRenderComp.canRender ? "True" : "False");
+					}
+				}
+
+			} else {
+				// 何も選択されていないときのプレースホルダー
+				ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "Select an entity from the hierarchy.");
+			}
+			ImGui::EndChild();
+
 			ImGui::End();
 #endif
 
@@ -218,7 +287,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				if (modelRenderComp.canRender == false) {
 					return;
 				}
-				
+
 
 				// ルートリソースの設定
 				std::vector<QFE::GRAPHIC::DirectXResourceHandle> modelRootResources = {
@@ -247,7 +316,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
-	
+
 
 	sceneManager.Shutdown();
 

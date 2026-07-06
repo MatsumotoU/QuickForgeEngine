@@ -17,6 +17,8 @@ namespace QFE {
 		std::vector<uint32_t> entitiesToRemove_;
 
 	public:
+
+
 		// ★コンストラクタを修正：初期化時にすべてのストレージを全自動で生成して登録する！
 		EntityManager() : nextEntityId_(0) {
 			for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
