@@ -8,7 +8,7 @@ namespace QFE::SCENE {
 		std::string vertexName; ///< 頂点の名前
 		uint32_t vertexHandle; ///< 頂点バッファのハンドル
 
-		QFE_REFLECT_BEGIN()
+		QFE_REFLECT_BEGIN(VertexComponent)
 			QFE_REFLECT_MEMBER(vertexName)
 		QFE_REFLECT_END()
 	};

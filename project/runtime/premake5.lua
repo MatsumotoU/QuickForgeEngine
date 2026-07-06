@@ -16,6 +16,8 @@ project "Runtime" -- Runtime
             "FrameWork",
             "Camera",
             "EngineAssetsFactory",
+            "Scene",
+            "ImGui",
         }
 
         -- 警告レベル4
@@ -32,4 +34,5 @@ project "Runtime" -- Runtime
             "%{wks.location}/externals/",
             "%{wks.location}/externals/assimp/",
             "%{wks.location}/externals/assimp/include/",
+            "%{wks.location}/externals/imgui/"
         }

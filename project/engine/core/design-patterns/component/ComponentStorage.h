@@ -62,6 +62,19 @@ namespace QFE {
 		std::vector<T> GetComponents() const {
 			return components.Values();
 		}
+
+		/// @brief 指定エンティティのコンポーネントに対してリフレクションを実行する。
+		void ReflectComponent(uint32_t id, Archive& ar) override {
+			T* componentPtr = GetComponentPtr(id);
+			if (componentPtr) {
+				componentPtr->Reflect(ar);
+			}
+		}
+
+		/// @brief コンポーネントストレージの型名を取得する。
+		std::string GetStorageTypeName() const override {
+			return typeid(T).name();
+		}
 	};
 
 }

@@ -1,0 +1,27 @@
+{
+    "entities": {
+        "0": {
+            "struct QFE::SCENE::ObjectInfoComponent": {
+                "name": "Ring"
+            },
+            "struct QFE::SCENE::TransformComponent": {
+                "transform.rotate": {
+                    "x": 19.69035530090332,
+                    "y": 0.0,
+                    "z": 19.69035530090332
+                },
+                "transform.scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "transform.translate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        }
+    },
+    "entity_count": 1
+}

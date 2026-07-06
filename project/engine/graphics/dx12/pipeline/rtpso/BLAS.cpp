@@ -27,7 +27,7 @@ bool QFE::GRAPHIC::BLAS::CreateVertexPositionBuffer(
 	}
 
 	// 頂点バッファのサイズを計算
-	vertexBufferSize_ = sizeof(QFE::MATH::Vector3) * vertices.size();
+	vertexBufferSize_ = static_cast<UINT>(sizeof(QFE::MATH::Vector3) * static_cast<UINT>(vertices.size()));
 	vertexCount_ = static_cast<UINT>(vertices.size());
 
 	// テスト用の頂点バッファをその場（アップロードヒープ）で作る

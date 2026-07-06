@@ -21,6 +21,7 @@ namespace QFE {
 		void Process(const std::string& name, MATH::Vector2& value) override;
 		void Process(const std::string& name, MATH::Vector3& value) override;
 		void Process(const std::string& name, MATH::Vector4& value) override;
+		void Process(const std::string& name, MATH::Transform& value) override;
 
     private:
         nlohmann::json& json_;

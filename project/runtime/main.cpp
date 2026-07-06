@@ -5,11 +5,15 @@
 #include "framework/D3D12GraphicFrameWork.h"
 #include "gui/D3D12GuiManager.h"
 #include "camera/CameraManager.h"
+#include "scene/SceneManager.h"
+#include "scene/component/AllComponent.h"
 #include "core/loger/MyDebugLog.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"
 
 #include "core/math/transform/Transform.h"
+
+#include <imgui/imgui.h>
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -34,6 +38,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	cameraManager.Initialize();
 	QFE::CAMERA::CameraHandle cameraHandle = cameraManager.CreateCamera(0.0f, 1280.0f, 0.0f, 720.0f, 0.1f, 100.0f, 0.45f);
 
+	// シーンマネージャの初期化
+	QFE::SCENE::SceneManager sceneManager;
+	sceneManager.Initialize();
+
+	// Entityの生成
+	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	uint32_t entity = entityManager.CreateEntity();
+	entityManager.EmplaceComponent<QFE::SCENE::ObjectInfoComponent>(entity);
+	entityManager.EmplaceComponent<QFE::SCENE::TransformComponent>(entity);
+	entityManager.GetComponent<QFE::SCENE::ObjectInfoComponent>(entity).name = "Ring";
+	QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entity).transform;
+
 	std::string psDirName = "engine/resources/shaders/ps/";
 	std::string vsDirName = "engine/resources/shaders/vs/";
 	std::string rtDirName = "engine/resources/shaders/rt/";
@@ -49,8 +65,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->CreatePipelineStateObject(
 		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
-
-	QFE::MATH::Transform objTransform;
+	
 	QFE::MATH::Transform floorTransform;
 	floorTransform.translate = { 0.0f, -5.0f, 0.0f };
 	floorTransform.scale = { 10.0f, 1.0f, 10.0f };
@@ -123,13 +138,60 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
 
-			
+#ifdef USE_IMGUI
+			ImGui::Begin("Test Window");
+			ImGui::Text("Hello, world!");
+			ImGui::DragFloat3("Object Scale", &objTransform.scale.x, 0.1f);
+			ImGui::DragFloat3("Object Rotate", &objTransform.rotate.x, 0.1f);
+			ImGui::DragFloat3("Object Translate", &objTransform.translate.x, 0.1f);
+			ImGui::Separator();
+			ImGui::DragFloat3("Floor Scale", &floorTransform.scale.x, 0.1f);
+			ImGui::DragFloat3("Floor Rotate", &floorTransform.rotate.x, 0.1f);
+			ImGui::DragFloat3("Floor Translate", &floorTransform.translate.x, 0.1f);
+			ImGui::End();
+
+			objTransform.rotate.x += 0.01f;
+			objTransform.rotate.z += 0.01f;
+
+			ImGui::Begin("Camera Window");
+			ImGui::DragFloat3("Scale", &cameraTransform.scale.x, 0.1f);
+			ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
+			ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+			ImGui::End();
+#endif
+			QFE::MATH::Matrix4x4 viewProj =
+				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
+
+			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), rootResources[0], objTransform, viewProj);
+			TransformationMatrix* transformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(rootResources[0]);
+			graphicEngine->UpdateBLASInstanceTransform(blasInstanceHandle, transformMatrixData->World);
+
+			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), floorRootResources[0], floorTransform, viewProj);
+			TransformationMatrix* floorTransformMatrixData = graphicEngine->GetConstantBufferData<TransformationMatrix>(floorRootResources[0]);
+			graphicEngine->UpdateBLASInstanceTransform(floorBlasInstanceHandle, floorTransformMatrixData->World);
+
+			graphicEngine->TestOffScreenDraw(
+				psoHandle, viewportHandle, scissorRectHandle, ringVertexBufferHandle, rootResources, renderTargets);
+			graphicEngine->TestOffScreenDraw(
+				psoHandle, viewportHandle, scissorRectHandle, vertexBufferHandle, floorRootResources, renderTargets);
+
+			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources = {
+				graphicEngine->GetRenderTargetTexture(renderTargets[0]),
+				graphicEngine->GetRenderTargetTexture(renderTargets[1]),
+				graphicEngine->GetRenderTargetTexture(renderTargets[2])
+			};
+
+			graphicEngine->TestRayTracing(rtpsoHandle, uavBufferHandle, rayTracingRootResources);
 
 			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager->PostDraw();
 			graphicEngine->PostDraw();
 		}
 	}
+
+	sceneManager.SaveCurrentSceneToJson("resources/scene.json");
+
+	sceneManager.Shutdown();
 
 	guiManager->Shutdown();
 	graphicEngine->Shutdown();

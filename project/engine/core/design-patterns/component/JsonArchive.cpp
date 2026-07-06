@@ -87,3 +87,19 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::Vector4& value) {
         json_[name]["w"] = value.w;
     }
 }
+
+void QFE::JsonArchive::Process(const std::string& name, MATH::Transform& value) {
+    if (isLoading_) {
+        // デシリアライズ
+        if (json_.contains(name)) {
+            Process(name + ".scale", value.scale);
+            Process(name + ".rotate", value.rotate);
+            Process(name + ".translate", value.translate);
+        }
+    } else {
+        // シリアライズ
+        Process(name + ".scale", value.scale);
+        Process(name + ".rotate", value.rotate);
+        Process(name + ".translate", value.translate);
+	}
+}
