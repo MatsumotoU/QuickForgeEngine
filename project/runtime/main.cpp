@@ -45,8 +45,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Entityの生成
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
-	uint32_t entity = QFE::FRAMEWORK::CreateEntity(sceneManager, "RingObject");
+	uint32_t entity = QFE::FRAMEWORK::CreateEntityWithMaterial(sceneManager, "RingObject", {1.0f, 0.0f, 0.0f, 1.0f});
 	QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entity).transform;
+
+	uint32_t floorEntity = QFE::FRAMEWORK::CreateEntityWithMaterial(sceneManager, "FloorObject", { 0.5f, 0.5f, 0.5f, 1.0f });
+	QFE::MATH::Transform& floorTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(floorEntity).transform;
+	floorTransform.translate = { 0.0f, -5.0f, 0.0f };
+	floorTransform.scale = { 10.0f, 1.0f, 10.0f };
 
 	std::string psDirName = "engine/resources/shaders/ps/";
 	std::string vsDirName = "engine/resources/shaders/vs/";
@@ -64,9 +69,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
 	
-	QFE::MATH::Transform floorTransform;
-	floorTransform.translate = { 0.0f, -5.0f, 0.0f };
-	floorTransform.scale = { 10.0f, 1.0f, 10.0f };
 	QFE::MATH::Transform cameraTransform;
 	cameraTransform.translate = { 0.0f, 20.0f, -20.0f };
 	cameraTransform.rotate = { 0.8f, 0.0f, 0.0f };
@@ -129,11 +131,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			std::vector<QFE::GRAPHIC::DirectXResourceHandle> floorRootResources;
 			QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), floorRootResources);
 
+			QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 			Material* ringMaterial = graphicEngine->GetConstantBufferData<Material>(rootResources[1]);
-			ringMaterial->color = { 1.0f, 0.0f, 0.0f, 1.0f };
+			ringMaterial->color = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entity).albedoColor;
 
 			Material* floorMaterial = graphicEngine->GetConstantBufferData<Material>(floorRootResources[1]);
-			floorMaterial->color = { 0.0f, 1.0f, 0.0f, 1.0f };
+			floorMaterial->color = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(floorEntity).albedoColor;
 
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
