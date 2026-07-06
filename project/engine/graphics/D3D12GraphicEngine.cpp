@@ -44,7 +44,8 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	shaderReflection_(std::make_unique<ShaderReflection>()),
 	computePipelineManager_(std::make_unique<ComputePipelineManager>()),
 	rayTracingPipelineManager_(std::make_unique<RaytracingPipelineManager>()),
-	shaderLibReflection_(std::make_unique<ShaderLibReflection>())
+	shaderLibReflection_(std::make_unique<ShaderLibReflection>()),
+	resourceAllocator_(std::make_unique<DirectXResourceAllocator>())
 
 {}
 
@@ -77,6 +78,9 @@ void D3D12GraphicEngine::Initialize() {
 	resourceContainerInfo.assignUavFunc = [&](ID3D12Resource* resource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* desc)
 		{return descriptorHeapManager_->AssignUavHeap(directXDevice_->GetDevice(), resource,nullptr, desc); };
 	resourceContainer_->Initialize(resourceContainerInfo);
+
+	// リソースアロケータの初期化
+	resourceAllocator_->Initialize(resourceContainer_.get(), directXDevice_->GetDevice());
 
 	// RenderPassの初期化設定
 	RenderPassInitializeInfo renderPassInfo{};
@@ -246,6 +250,9 @@ void D3D12GraphicEngine::PostDraw() {
 
 	// 中間リソースの解放
 	resourceContainer_->EndFrame();
+
+	// プールの解放
+	resourceAllocator_->ResetFrame();
 }
 
 void D3D12GraphicEngine::Shutdown() {
@@ -354,6 +361,10 @@ size_t D3D12GraphicEngine::GetResourceArraySize(DirectXResourceHandle handle) {
 	}
 	size_t size = resourceContainer_->GetResourceSizeInBytes(handle);
 	return size / stride;
+}
+
+DirectXResourceAllocator* QFE::GRAPHIC::D3D12GraphicEngine::GetResourceAllocator() {
+	return resourceAllocator_.get();
 }
 
 DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateUAVBuffer(uint32_t width, uint32_t height, const std::wstring& name) {

@@ -8,7 +8,9 @@ project "FrameWork"
             "DirectXTex",
             "GUIEngine",
             "ImGui",
-            "WindowingSystem"
+            "WindowingSystem",
+            "Scene",
+            "Camera",
         }
 
         -- 警告レベル4

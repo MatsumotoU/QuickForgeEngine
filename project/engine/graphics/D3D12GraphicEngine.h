@@ -6,6 +6,7 @@
 
 #include "dx12/DirectXDevice.h"
 #include "dx12/vram/resources/DirectXResourceContainer.h"
+#include "dx12/vram/DirectXResourceAllocator.h"
 
 #include "memory/UniqueContainer.h"
 #include "../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
@@ -88,19 +89,9 @@ namespace QFE::GRAPHIC {
 		/// @brief あるリソースの配列の数を取得する.
 		size_t GetResourceArraySize(DirectXResourceHandle handle);
 
-		/// @brief 定数バッファを作成し、データをコピーする.データの型はテンプレートで指定する.
-		template<typename T>
-		DirectXResourceHandle CreateConstantBuffer(const T& data, const std::string& bufferName) {
-			DirectXResourceHandle handle = resourceContainer_->CreateBuffer(directXDevice_->GetDevice(), sizeof(T));
-			resourceContainer_->MapResource(handle);
-			T* mappedData = resourceContainer_->template GetMappedData<T>(handle);
-			if (mappedData) {
-				memcpy(mappedData, &data, sizeof(T));
-			}
-			resourceContainer_->SetResourceStrideInBytes(handle, sizeof(T));
-			resourceContainer_->SetResourceName(handle, ConvertString(bufferName));
-			return handle;
-		}
+		/// @brief DirectXResourceAllocatorを取得する.
+		DirectXResourceAllocator* GetResourceAllocator();
+
 		/// @brief 定数バッファのデータを取得する.データの型はテンプレートで指定する.
 		template<typename T>
 		T* GetConstantBufferData(DirectXResourceHandle handle) {
@@ -164,6 +155,7 @@ namespace QFE::GRAPHIC {
 
 		std::unique_ptr<DirectXDevice> directXDevice_;// DirectX12の共通管理クラス
 		std::unique_ptr<DirectXResourceContainer> resourceContainer_;// DirectX12のリソース管理クラス
+		std::unique_ptr<DirectXResourceAllocator> resourceAllocator_;// DirectX12のリソース割り当てクラス
 		std::unique_ptr<DescriptorHeapManager> descriptorHeapManager_;// デスクリプタヒープ管理クラス
 		std::unique_ptr<DirectXCommandManager> commandManager_;// コマンド管理クラス
 		std::unique_ptr<RenderPass> renderPass_;// 描画先管理クラス

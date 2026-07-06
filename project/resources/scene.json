@@ -2,13 +2,13 @@
     "entities": {
         "0": {
             "struct QFE::SCENE::ObjectInfoComponent": {
-                "name": "Ring"
+                "name": "RingObject"
             },
             "struct QFE::SCENE::TransformComponent": {
                 "transform.rotate": {
-                    "x": 19.69035530090332,
+                    "x": 6.770060062408447,
                     "y": 0.0,
-                    "z": 19.69035530090332
+                    "z": 6.770060062408447
                 },
                 "transform.scale": {
                     "x": 1.0,

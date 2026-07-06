@@ -3,6 +3,7 @@
 
 #include "window/GameWindowManager.h"
 #include "framework/D3D12GraphicFrameWork.h"
+#include "framework/SceneFrameWork.h"
 #include "gui/D3D12GuiManager.h"
 #include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
@@ -44,10 +45,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Entityの生成
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
-	uint32_t entity = entityManager.CreateEntity();
-	entityManager.EmplaceComponent<QFE::SCENE::ObjectInfoComponent>(entity);
-	entityManager.EmplaceComponent<QFE::SCENE::TransformComponent>(entity);
-	entityManager.GetComponent<QFE::SCENE::ObjectInfoComponent>(entity).name = "Ring";
+	uint32_t entity = QFE::FRAMEWORK::CreateEntity(sceneManager, "RingObject");
 	QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entity).transform;
 
 	std::string psDirName = "engine/resources/shaders/ps/";
@@ -80,15 +78,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle = graphicEngine->CreateVertexBuffer(modelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
 	QFE::ASSET::ModelData& ringModelData = modelLoader.LoadModel("resources/ring.obj");
 	QFE::GRAPHIC::DirectXResourceHandle ringVertexBufferHandle = graphicEngine->CreateVertexBuffer(ringModelData.meshes[0].vertices.GetInternalVector(), "VertexBuffer");
-
-	// ルートリソースの設定
-	std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources;
-	QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), rootResources);
-	std::vector<QFE::GRAPHIC::DirectXResourceHandle> floorRootResources;
-	QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), floorRootResources);
-
-	Material* material = graphicEngine->GetConstantBufferData<Material>(rootResources[1]);
-	material->color = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 	// オフスクリーンレンダーターゲットの作成
 	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
@@ -134,10 +123,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		} else {
 
+			// ルートリソースの設定
+			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources;
+			QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), rootResources);
+			std::vector<QFE::GRAPHIC::DirectXResourceHandle> floorRootResources;
+			QFE::FRAMEWORK::CreateObject3dGBufferRootResources(graphicEngine.get(), floorRootResources);
+
+			Material* ringMaterial = graphicEngine->GetConstantBufferData<Material>(rootResources[1]);
+			ringMaterial->color = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+			Material* floorMaterial = graphicEngine->GetConstantBufferData<Material>(floorRootResources[1]);
+			floorMaterial->color = { 0.0f, 1.0f, 0.0f, 1.0f };
 
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
 
+			
 #ifdef USE_IMGUI
 			ImGui::Begin("Test Window");
 			ImGui::Text("Hello, world!");
@@ -186,6 +187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager->PostDraw();
 			graphicEngine->PostDraw();
+			sceneManager.EndFrame();
 		}
 	}
 

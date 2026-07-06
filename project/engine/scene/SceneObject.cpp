@@ -5,6 +5,10 @@ void QFE::SCENE::SceneObject::Initialize() {
 	entityManager_.ResetEntity();
 }
 
+void QFE::SCENE::SceneObject::EndFrame() {
+	entityManager_.EndFrame();
+}
+
 void QFE::SCENE::SceneObject::SaveSceneToJson(const std::string& filePath) {
 	// シーンの情報
 	nlohmann::json sceneJson;

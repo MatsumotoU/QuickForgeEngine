@@ -4,6 +4,10 @@ void QFE::SCENE::SceneManager::Initialize() {
 	currentScene_.Initialize();
 }
 
+void QFE::SCENE::SceneManager::EndFrame() {
+	currentScene_.EndFrame();
+}
+
 void QFE::SCENE::SceneManager::Shutdown() {
 	currentScene_.Initialize();
 }

@@ -7,6 +7,8 @@ namespace QFE::SCENE {
 	public:
 		/// @brief シーンの初期化を行います.
 		void Initialize();
+		/// @brief フレーム終了処理を行います.
+		void EndFrame();
 
 		/// @brief JSONファイルにシーンを保存します.
 		void SaveSceneToJson(const std::string& filePath);

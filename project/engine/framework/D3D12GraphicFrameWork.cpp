@@ -44,18 +44,20 @@ QFE::GRAPHIC::ShaderPairHandle QFE::FRAMEWORK::CreateShaderPair(
 void QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources) {
 
+	QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetResourceAllocator();
+
 	// Transform
 	TransformationMatrix transformMatrix;
 	transformMatrix.World = QFE::MATH::Matrix4x4::MakeIndentity4x4();
 	transformMatrix.WVP = QFE::MATH::Matrix4x4::MakeIndentity4x4();
-	QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle = graphicEngine->CreateConstantBuffer<TransformationMatrix>(
-		transformMatrix, "TransformMatrixBuffer");
+	QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle = 
+		resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("TransformMatrixBuffer");
 	// Material
 	Material material;
 	material.enableLighting = false;
 	material.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle = graphicEngine->CreateConstantBuffer<Material>(
-		material, "MaterialBuffer");
+	QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle = 
+		resourceAllocator->AllocateConstantBuffer<Material>("MaterialBuffer");
 	//Texture
 	QFE::GRAPHIC::DirectXResourceHandle textureHandle =
 		graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyWhite1x1Texture);
