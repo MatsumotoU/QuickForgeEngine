@@ -11,7 +11,7 @@
 namespace QFE {
 	class EntityManager final {
 	private:
-		std::unordered_map<size_t, std::unique_ptr<IComponentStorage>> componentStorages;
+		std::map<size_t, std::unique_ptr<IComponentStorage>> componentStorages;
 		uint32_t nextEntityId_;
 		std::unordered_set<uint32_t> activeEntityIds_;
 		std::vector<uint32_t> entitiesToRemove_;
@@ -55,10 +55,11 @@ namespace QFE {
 			return componentsJson;
 		}
 
-		// ★デシリアライズ側：初期化時にすべてのストレージが確実に存在しているので、JSONにあるキーだけを狙い撃ちで復元できる
+		/// @brief エンティティのコンポーネントをJSONから復元する。
 		void DeserializeEntityComponents(uint32_t entityId, const nlohmann::json& componentsJson) {
+			// 自動登録されたコンポーネントを走査する。
 			for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-				// JSONの中に、このコンポーネントの名前（例: "TransformComponent"）があるか？
+				// JSONの中に、このコンポーネントの名前があるか
 				if (componentsJson.contains(entry.name)) {
 					auto& storagePtr = componentStorages[entry.typeId];
 

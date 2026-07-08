@@ -214,7 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				// 表示用ラベルの決定（ObjectInfoComponentがあればその名前、なければID）
 				std::string label = "Entity " + std::to_string(entityId);
 				if (entityManager.HasComponent<QFE::SCENE::ObjectInfoComponent>(entityId)) {
-					label = entityManager.GetComponent<QFE::SCENE::ObjectInfoComponent>(entityId).name;
+					label = entityManager.GetComponent<QFE::SCENE::ObjectInfoComponent>(entityId).name + "##" + std::to_string(entityId);
 				}
 
 				// リストアイテム（Selectable）として描画。クリックされたら選択 ID を更新

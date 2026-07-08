@@ -1,6 +1,6 @@
 {
-    "entities": {
-        "0": {
+    "entities": [
+        {
             "ObjectInfoComponent": {
                 "name": "DebugCamera"
             },
@@ -24,7 +24,7 @@
                 }
             }
         },
-        "1": {
+        {
             "ObjectInfoComponent": {
                 "name": "Camera"
             },
@@ -48,346 +48,7 @@
                 }
             }
         },
-        "10": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 0.8259999752044678,
-                        "y": 1.0,
-                        "z": 0.7609999775886536
-                    },
-                    "translate": {
-                        "x": 5.890315055847168,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "11": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.1260000467300415,
-                        "y": 1.0,
-                        "z": 0.7609999775886536
-                    },
-                    "translate": {
-                        "x": -5.842942237854004,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "12": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 2.5260000228881836,
-                        "y": 1.0,
-                        "z": 1.6610000133514404
-                    },
-                    "translate": {
-                        "x": 1.1565232276916504,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "13": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.10000000149011612,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 0.5260000228881836,
-                        "y": 1.0,
-                        "z": 5.160999774932861
-                    },
-                    "translate": {
-                        "x": -0.5139999985694885,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "14": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 2.5260000228881836,
-                        "y": 1.0,
-                        "z": 1.6610000133514404
-                    },
-                    "translate": {
-                        "x": -2.8560891151428223,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "15": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 5.125999927520752,
-                        "y": 1.0,
-                        "z": 3.8610000610351563
-                    },
-                    "translate": {
-                        "x": -5.90315055847168,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "16": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.4000000059604645,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 0.4259999990463257,
-                        "y": 1.0,
-                        "z": 3.8610000610351563
-                    },
-                    "translate": {
-                        "x": -5.90315055847168,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "17": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.1260000467300415,
-                        "y": 1.0,
-                        "z": 0.7609999775886536
-                    },
-                    "translate": {
-                        "x": -6.771602153778076,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "18": {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.4715026021003723,
-                    "y": 0.4715026021003723,
-                    "z": 0.4715026021003723
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "box"
-            },
-            "ObjectInfoComponent": {
-                "name": "BaseGround"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.1260000467300415,
-                        "y": 1.0,
-                        "z": 0.7609999775886536
-                    },
-                    "translate": {
-                        "x": 6.860682487487793,
-                        "y": -0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "19": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 6.114436149597168,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "2": {
+        {
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
@@ -422,253 +83,13 @@
                 }
             }
         },
-        "20": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -5.245373725891113,
-                        "y": 0.6593971252441406,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "21": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -6.386846542358398,
-                        "y": 0.6589999794960022,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "22": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -5.9967570304870605,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "23": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 2.8185484409332275,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "24": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 2.78826904296875,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "25": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -4.941191673278809,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "26": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 6.8660078048706055,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "27": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -6.772648811340332,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "28": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -3.8079586029052734,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "29": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -1.0514583587646484,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "3": {
+        {
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
                     "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
+                    "y": 0.0,
+                    "z": 0.0
                 }
             },
             "ModelRenderComponent": {
@@ -692,228 +113,12 @@
                     "translate": {
                         "x": 0.0,
                         "y": 1.5,
-                        "z": -57.599998474121094
+                        "z": -6.199999809265137
                     }
                 }
             }
         },
-        "30": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 4.5674333572387695,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "31": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -5.71996545791626,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "32": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -5.929142951965332,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "33": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 5.9847540855407715,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "34": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -2.7800936698913574,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "35": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 4.35081148147583,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "36": {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 0.3659985065460205,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "37": {
-            "ObjectInfoComponent": {
-                "name": "TutorialUI"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 22.899999618530273,
-                        "y": -12.800000190734863,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "38": {
-            "ObjectInfoComponent": {
-                "name": "BgmPlayer"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        "4": {
+        {
             "ObjectInfoComponent": {
                 "name": "GameAreaManager"
             },
@@ -937,7 +142,7 @@
                 }
             }
         },
-        "5": {
+        {
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
@@ -972,7 +177,7 @@
                 }
             }
         },
-        "6": {
+        {
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
@@ -1007,7 +212,7 @@
                 }
             }
         },
-        "7": {
+        {
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
@@ -1042,7 +247,7 @@
                 }
             }
         },
-        "8": {
+        {
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
@@ -1077,7 +282,7 @@
                 }
             }
         },
-        "9": {
+        {
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
@@ -1111,7 +316,801 @@
                     }
                 }
             }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 0.8259999752044678,
+                        "y": 1.0,
+                        "z": 0.7609999775886536
+                    },
+                    "translate": {
+                        "x": 5.890315055847168,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.1260000467300415,
+                        "y": 1.0,
+                        "z": 0.7609999775886536
+                    },
+                    "translate": {
+                        "x": -5.842942237854004,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 2.5260000228881836,
+                        "y": 1.0,
+                        "z": 1.6610000133514404
+                    },
+                    "translate": {
+                        "x": 1.1565232276916504,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.10000000149011612,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 0.5260000228881836,
+                        "y": 1.0,
+                        "z": 5.160999774932861
+                    },
+                    "translate": {
+                        "x": -0.5139999985694885,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 2.5260000228881836,
+                        "y": 1.0,
+                        "z": 1.6610000133514404
+                    },
+                    "translate": {
+                        "x": -2.8560891151428223,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 5.125999927520752,
+                        "y": 1.0,
+                        "z": 3.8610000610351563
+                    },
+                    "translate": {
+                        "x": -5.90315055847168,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.4000000059604645,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 0.4259999990463257,
+                        "y": 1.0,
+                        "z": 3.8610000610351563
+                    },
+                    "translate": {
+                        "x": -5.90315055847168,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.1260000467300415,
+                        "y": 1.0,
+                        "z": 0.7609999775886536
+                    },
+                    "translate": {
+                        "x": -6.771602153778076,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.1260000467300415,
+                        "y": 1.0,
+                        "z": 0.7609999775886536
+                    },
+                    "translate": {
+                        "x": 6.860682487487793,
+                        "y": -0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 6.114436149597168,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -5.245373725891113,
+                        "y": 0.6593971252441406,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -6.386846542358398,
+                        "y": 0.6589999794960022,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -5.9967570304870605,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 2.8185484409332275,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 2.78826904296875,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -4.941191673278809,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 6.8660078048706055,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -6.772648811340332,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -3.8079586029052734,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -1.0514583587646484,
+                        "y": 0.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 4.5674333572387695,
+                        "y": 2.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -5.71996545791626,
+                        "y": 2.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -5.929142951965332,
+                        "y": 2.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 5.9847540855407715,
+                        "y": 2.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -2.7800936698913574,
+                        "y": 2.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 4.35081148147583,
+                        "y": 2.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "EnemySpawnPoint"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.3659985065460205,
+                        "y": 2.5,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "TutorialUI"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 22.899999618530273,
+                        "y": -12.800000190734863,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "BgmPlayer"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
         }
-    },
-    "entity_count": 39
+    ]
 }
