@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #include "window/GameWindowManager.h"
+#include "window/WindowsUtils.h"
 #include "framework/D3D12GraphicFrameWork.h"
 #include "gui/D3D12GuiManager.h"
 #include "camera/CameraManager.h"
@@ -20,16 +21,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::MyDebugLog::GetInstance()->Initialize();
 
 	// ゲームウィンドウマネージャの初期化とウィンドウの追加
+	std::string windowName = "Launcher Window";
 	std::unique_ptr<QFE::GameWindowManager> gameWindowManager = std::make_unique<QFE::GameWindowManager>();
 	gameWindowManager->Initialize();
-	gameWindowManager->AddWindow(1280, 720, "Test Window");
+	gameWindowManager->AddWindow(1280, 720, windowName);
 
 	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
-	std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> graphicEngine = 
-		QFE::FRAMEWORK::CreateGraphicEngine(gameWindowManager->GetWindow("Test Window"));
+	std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> graphicEngine =
+		QFE::FRAMEWORK::CreateGraphicEngine(gameWindowManager->GetWindow(windowName));
 	// GUIマネージャの初期化
-	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager = 
-		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), gameWindowManager->GetWindow("Test Window"));
+	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager =
+		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), gameWindowManager->GetWindow(windowName));
 
 	// カメラマネージャの初期化とカメラの作成
 	QFE::CAMERA::CameraManager cameraManager;
@@ -52,8 +54,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			guiManager->PreDraw();
 
 			ImGui::Begin("Test Window");
+			if (ImGui::Button("Launch Runtime")) {
+				std::wstring selectedFilePath;
+				if (QFE::WINDOW::RequestGetFilePathFromUser(
+					gameWindowManager->GetWindow(windowName),
+					L"Exe Files", L"*.exe",
+					selectedFilePath)) {
+				}
+				QFE::ProcessUtil::LaunchExe(QFE::ConvertString(selectedFilePath), "");
+			}
 			ImGui::End();
-			
+
 			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager->PostDraw();
 			graphicEngine->PostDraw();
@@ -63,5 +74,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	guiManager->Shutdown();
 	graphicEngine->Shutdown();
 	gameWindowManager->Shutdown();
-    return 0;
+	return 0;
 }

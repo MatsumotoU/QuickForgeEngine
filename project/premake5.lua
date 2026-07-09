@@ -91,6 +91,8 @@ group "03_Applications" -- アプリケーションプロジェクト達
     dofile(path.join(_root, "sandbox/premake5.lua"))
     -- Runtimeプロジェクトの読み込み
     dofile(path.join(_root, "runtime/premake5.lua"))
+    -- ランチャープロジェクトの読み込み
+    dofile(path.join(_root, "launcher/premake5.lua"))
 group ""
 
 group "External"
