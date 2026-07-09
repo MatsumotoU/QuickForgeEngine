@@ -14,9 +14,11 @@ namespace QFE {
 
 		virtual void Clear() = 0;
 
-        // ★新設：特定のエンティティのコンポーネントに対してリフレクションを実行する
+		/// @brief コンポーネントをシリアライズ/デシリアライズする
         virtual void ReflectComponent(uint32_t id, Archive& ar) = 0;
-        // ★新設：コンポーネントの型名を取得する
+		/// @brief コンポーネントストレージの型名を取得する
         virtual std::string GetStorageTypeName() const = 0;
+		/// @brief コンポーネントの生ポインタを取得する
+		virtual void* GetRawPtr(uint32_t id) = 0;
     };
 }

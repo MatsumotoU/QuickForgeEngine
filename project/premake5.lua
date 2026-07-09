@@ -82,6 +82,11 @@ group "02_Middleware" -- アセットの読み込みや、サブシステムで�
     dofile(path.join(_root, "engine/framework/premake5.lua"))
     -- シーンプロジェクトの読み込み
     dofile(path.join(_root, "engine/scene/premake5.lua"))
+    -- コンポーネントプロジェクトの読み込み
+    dofile(path.join(_root, "engine/components/premake5.lua"))
+    -- スクリプトプロジェクトの読み込み
+    dofile(path.join(_root, "engine/script/premake5.lua"))
+    
 group ""
 
 group "03_Applications" -- アプリケーションプロジェクト達
@@ -93,6 +98,8 @@ group "03_Applications" -- アプリケーションプロジェクト達
     dofile(path.join(_root, "runtime/premake5.lua"))
     -- ランチャープロジェクトの読み込み
     dofile(path.join(_root, "launcher/premake5.lua"))
+    -- ゲームロジック記述用のプロジェクトの読み込み
+    dofile(path.join(_root, "gamelogics/premake5.lua"))
 group ""
 
 group "External"

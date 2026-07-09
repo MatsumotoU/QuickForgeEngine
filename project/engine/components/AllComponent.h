@@ -4,3 +4,4 @@
 #include "VertexComponent.h"
 #include "MaterialComponent.h"
 #include "ModelRenderComponent.h"
+#include "ScriptComponent.h"

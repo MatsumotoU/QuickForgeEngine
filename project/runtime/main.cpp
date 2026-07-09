@@ -8,7 +8,7 @@
 #include "gui/D3D12GuiManager.h"
 #include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
-#include "scene/component/AllComponent.h"
+#include "components/AllComponent.h"
 #include "core/loger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"

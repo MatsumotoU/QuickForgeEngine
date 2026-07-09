@@ -21,6 +21,11 @@ namespace QFE {
 		auto size() const { return components.size(); }
 
 	public:
+		/// @brief コンポーネントの生ポインタを取得する。
+		void* GetRawPtr(uint32_t id) override {
+			return static_cast<void*>(GetComponentPtr(id));
+		}
+
 		/// @brief デフォルトコンポーネントを追加する。既に存在する場合は上書きする。
 		void AddDefaultComponent(uint32_t entityId) override {
 			// T型（実際のコンポーネント型）をデフォルト構築して追加する

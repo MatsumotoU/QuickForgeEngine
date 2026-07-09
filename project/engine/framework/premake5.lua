@@ -11,6 +11,7 @@ project "FrameWork"
             "WindowingSystem",
             "Scene",
             "Camera",
+            "Components",
         }
 
         -- 警告レベル4

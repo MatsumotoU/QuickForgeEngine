@@ -12,4 +12,6 @@ namespace QFE::WINDOW {
 	/// @return ファイルが選択され、パスが取得できた場合はtrue、キャンセルされた場合やエラーが発生した場合はfalse
     bool RequestGetFilePathFromUser(
         HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath);
+
+
 }

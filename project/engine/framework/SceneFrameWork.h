@@ -1,6 +1,6 @@
 #pragma once
 #include "scene/SceneManager.h"
-#include "scene/component/AllComponent.h"
+#include "components/AllComponent.h"
 
 namespace QFE::FRAMEWORK {
 	/// @brief シーンマネージャーを使用してエンティティを作成する関数

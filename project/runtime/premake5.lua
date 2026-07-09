@@ -18,6 +18,7 @@ project "Runtime" -- Runtime
             "EngineAssetsFactory",
             "Scene",
             "ImGui",
+            "Components",
         }
 
         -- 警告レベル4

@@ -1,22 +1,25 @@
-project "Scene"
-        kind "StaticLib" 
+project "GameLogics" -- GameLogics
+        kind "SharedLib"
         language "C++"
         debugdir "%{wks.location}"
-        files {"./**.h","./**.cpp"}
-
-        -- 警告レベル4
-        warnings "Extra"
+        files {
+            "./**.h",
+            "./**.cpp"
+        }
 
         links{
             "EngineCore",
             "Components",
+            "Script",
         }
+
+        -- 警告レベル4
+        warnings "Extra"
 
         -- 追加のインクルード
         includedirs {
+            "%{wks.location}/engine/",
             "%{wks.location}/engine/core/",
-            "%{wks.location}/engine/scene/",
-            "%{wks.location}/engine/components/",
         }
 
         -- 外部ファイルのインクルード
