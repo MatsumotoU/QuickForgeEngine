@@ -13,5 +13,10 @@ namespace QFE::WINDOW {
     bool RequestGetFilePathFromUser(
         HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath);
 
+	/// @brief プロジェクトをコンパイルする関数。dotnetを使用して指定されたプロジェクトをビルドする。
+	/// @param projectPath コンパイルするプロジェクトファイルのパス（例: "C:\\path\\to\\project.vcxproj"）
+	/// @param outputDir ビルド成果物を出力するディレクトリのパス（例: "C:\\path\\to\\output"）何も入れない場合同じ場所に出力されます
+	/// @param isRelease リリースビルドかデバッグビルドかを指定するフラグ。trueの場合はリリースビルド、falseの場合はデバッグビルド。
+	bool CompileProject(const std::wstring& projectPath, const std::wstring& outputDir, bool isRelease);
 
 }
