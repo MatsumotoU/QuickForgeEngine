@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #include "window/GameWindowManager.h"
+#include "window/WindowsUtils.h"
 #include "framework/D3D12GraphicFrameWork.h"
 #include "framework/SceneFrameWork.h"
 #include "gui/D3D12GuiManager.h"
@@ -9,6 +10,8 @@
 #include "scene/SceneManager.h"
 #include "scene/component/AllComponent.h"
 #include "core/loger/MyDebugLog.h"
+#include "core/string/MyString.h"
+#include "core/timer/FPSCounter.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"
 
@@ -34,6 +37,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager =
 		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), gameWindowManager->GetWindow(windowName));
 
+	// FPSカウンターの初期化
+	std::unique_ptr<QFE::FPSCounter> fpsCounter = std::make_unique<QFE::FPSCounter>();
+	fpsCounter->Reset();
+
 	// カメラマネージャの初期化とカメラの作成
 	QFE::CAMERA::CameraManager cameraManager;
 	cameraManager.Initialize();
@@ -44,8 +51,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	sceneManager.Initialize();
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
-	// Entityの生成
-	sceneManager.LoadCurrentSceneFromJson("resources/scene.json");
+	// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+	std::wstring selectedFilePath;
+	if (QFE::WINDOW::RequestGetFilePathFromUser(
+		gameWindowManager->GetWindow(windowName),
+		L"JSON Files", L"*.json",
+		selectedFilePath)){
+		// Entityの生成
+		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
+	}
+	
 
 	std::string psDirName = "engine/resources/shaders/ps/";
 	std::string vsDirName = "engine/resources/shaders/vs/";
@@ -121,6 +136,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			DispatchMessage(&msg);
 
 		} else {
+			fpsCounter->FrameStart();
 
 			QFE::MATH::Matrix4x4 viewProj =
 				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
@@ -188,11 +204,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ImGui::End();
 
 			ImGui::Begin("Scene Window");
+			ImGui::Text("SceneFPS: %.1f", fpsCounter->GetAverageFPS());
 			if (ImGui::Button("Save Scene")) {
-				sceneManager.SaveCurrentSceneToJson("resources/scene.json");
+				// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+				std::wstring selectedFilePath;
+				if (QFE::WINDOW::RequestGetFilePathFromUser(
+					gameWindowManager->GetWindow(windowName),
+					L"JSON Files", L"*.json",
+					selectedFilePath)) {
+					// Entityの生成
+					sceneManager.SaveCurrentSceneToJson(QFE::ConvertString(selectedFilePath));
+				}
 			}
 			if (ImGui::Button("Load Scene")) {
-				sceneManager.LoadCurrentSceneFromJson("resources/scene.json");
+				// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+				std::wstring selectedFilePath;
+				if (QFE::WINDOW::RequestGetFilePathFromUser(
+					gameWindowManager->GetWindow(windowName),
+					L"JSON Files", L"*.json",
+					selectedFilePath)) {
+					// Entityの生成
+					sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
+				}
 			}
 			ImGui::End();
 
@@ -217,10 +250,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					label = entityManager.GetComponent<QFE::SCENE::ObjectInfoComponent>(entityId).name + "##" + std::to_string(entityId);
 				}
 
-				// リストアイテム（Selectable）として描画。クリックされたら選択 ID を更新
+
 				bool isSelected = (selectedEntityId == static_cast<int>(entityId));
+
+				// 1. 通常のクリック選択処理
 				if (ImGui::Selectable(label.c_str(), isSelected)) {
 					selectedEntityId = static_cast<int>(entityId);
+				}
+
+				// 2. ダブルクリックの判定（Selectable の直後に書くことで、そのアイテムに対して判定する）
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+						selectedEntityId = static_cast<int>(entityId); // 念のため選択状態も更新
+
+						QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+						cameraTransform.translate = objTransform.translate + QFE::MATH::Vector3(0.0f, 5.0f, -10.0f);
+						cameraTransform.rotate = QFE::MATH::Vector3(0.5f, 0.0f, 0.0f);
+					}
 				}
 			}
 			ImGui::EndChild();
@@ -313,6 +359,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			guiManager->PostDraw();
 			graphicEngine->PostDraw();
 			sceneManager.EndFrame();
+
+			fpsCounter->FrameEnd();
 		}
 	}
 

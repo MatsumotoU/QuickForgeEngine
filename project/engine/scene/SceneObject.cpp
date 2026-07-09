@@ -58,8 +58,12 @@ void QFE::SCENE::SceneObject::LoadSceneFromJson(const std::string& filePath) {
 	entityManager_.ResetEntity();
 
 	// JSONに "entities" キーが存在し、かつそれが配列であることを確認
-	if (!sceneJson.contains(kEntityKey) || !sceneJson[kEntityKey].is_array()) {
-		QFE_LOG("Invalid scene JSON format: 'entities' key is missing or not an array.");
+	if (!sceneJson.contains(kEntityKey)) {
+		QFE_LOG("Invalid scene JSON format: 'entities' key is missing.");
+		return;
+	}
+	if (!sceneJson[kEntityKey].is_array()) {
+		QFE_LOG("Invalid scene JSON format: 'entities' is not an array.");
 		return;
 	}
 	// JSON配列を取得
