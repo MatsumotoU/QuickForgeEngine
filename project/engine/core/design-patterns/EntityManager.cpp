@@ -107,6 +107,22 @@ void* QFE::EntityManager::GetComponentRaw(uint32_t entityId, const char* compone
     return nullptr; // 見つからなければ安全にnullを返す
 }
 
+void QFE::EntityManager::RemoveComponent(uint32_t entityId, const char* componentTypeName) {
+    // 自動登録されたコンポーネントのエントリーを走査する
+    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
+        // 引数で渡された名前と、マクロで登録された名前が一致するかチェック
+        if (entry.name == componentTypeName) {
+            // 一致したら、EXE側の正しいレイアウトのハッシュマップからストレージを探す
+            auto it = componentStorages.find(entry.typeId);
+            if (it != componentStorages.end()) {
+                // ストレージが見つかったら、コンポーネントを削除する
+                it->second->RemoveComponent(entityId);
+                return; // 削除後はループを抜ける
+            }
+        }
+	}
+}
+
 uint32_t QFE::EntityManager::GetNextEntityId() const {
     return nextEntityId_;
 }

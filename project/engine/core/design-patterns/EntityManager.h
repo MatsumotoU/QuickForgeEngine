@@ -6,10 +6,11 @@
 #include <set>
 #include <nlohmann/json.hpp>
 #include "component/JsonArchive.h"
-#include "component/ComponentAutoRegistry.h" // 追加
+#include "component/ComponentAutoRegistry.h"
+#include "IEntityManager.h"
 
 namespace QFE {
-	class EntityManager final {
+	class EntityManager final: public IEntityManager {
 	private:
 		std::unordered_map<size_t, std::unique_ptr<IComponentStorage>> componentStorages;
 		uint32_t nextEntityId_;
@@ -17,6 +18,8 @@ namespace QFE {
 		std::vector<uint32_t> entitiesToRemove_;
 
 	public:
+		~EntityManager() = default;
+
 		/// @brief コンストラクタ。コンポーネントの自動登録を行う。
 		EntityManager();
 		/// @brief フレームの終了時に、削除予定のエンティティを削除する。
@@ -28,16 +31,18 @@ namespace QFE {
 		void DeserializeEntityComponents(uint32_t entityId, const nlohmann::json& componentsJson);
 
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントの生ポインタを取得する。
-		void* GetComponentRaw(uint32_t entityId, const char* componentTypeName);
+		void* GetComponentRaw(uint32_t entityId, const char* componentTypeName) override;
+		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを削除する。
+		void RemoveComponent(uint32_t entityId, const char* componentTypeName) override;
 
 		/// @brief エンティティマネージャをリセットする。全てのエンティティとコンポーネントを削除する。
 		void ResetEntity();
 		/// @brief エンティティを即座に削除する。フレーム終了時の削除予定リストには追加されない。
 		void InstantRemoveEntity(uint32_t id);
 		/// @brief 新しいエンティティを作成する。新しいエンティティIDを返す。
-		uint32_t CreateEntity();
+		uint32_t CreateEntity() override;
 		/// @brief エンティティを削除予定リストに追加する。フレーム終了時に削除される。
-		void RemoveEntity(uint32_t id);
+		void RemoveEntity(uint32_t id) override;
 		/// @brief エンティティが有効かどうかを判定する。
 		bool IsActiveEntity(uint32_t id) const;
 

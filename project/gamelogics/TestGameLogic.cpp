@@ -6,16 +6,19 @@ namespace {
 	std::vector<QFE::SCRIPT::ScriptFunctionInfo> s_manifestList;
 }
 
-void Script_PlayerMove(uint32_t entityId, float dt, QFE::EntityManager* entityManager) {
-	auto& transformComp = QFE::SCRIPT::GetComponent<QFE::SCENE::TransformComponent>(entityId, entityManager);
+void Script_PlayerMove(uint32_t entityId, float dt, QFE::IEntityManager* entityManager) {
+	auto* transformComp = 
+		static_cast<QFE::SCENE::TransformComponent*>(
+			entityManager->GetComponentRaw(entityId, QFE::SCENE::TransformComponent::GetTypeName().c_str()));
 
-	transformComp.transform.translate.x += 1.0f * dt;
+	transformComp->transform.translate.x += 1.0f * dt;
 }
 
-void Script_EnemyAI(uint32_t entityId, float dt, QFE::EntityManager* entityManager) {
-	auto& transformComp = QFE::SCRIPT::GetComponent<QFE::SCENE::TransformComponent>(entityId, entityManager);
-
-	transformComp.transform.translate.x -= 1.0f * dt;
+void Script_EnemyAI(uint32_t entityId, float dt, QFE::IEntityManager* entityManager) {
+	auto* transformComp = 
+		static_cast<QFE::SCENE::TransformComponent*>(
+			entityManager->GetComponentRaw(entityId, QFE::SCENE::TransformComponent::GetTypeName().c_str()));
+	transformComp->transform.translate.x -= 1.0f * dt;
 }
 extern "C" {
 	__declspec(dllexport) size_t GetManifest(QFE::SCRIPT::ScriptFunctionInfo** outArray) {
