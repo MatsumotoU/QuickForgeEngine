@@ -127,6 +127,9 @@ namespace QFE::GRAPHIC {
 
 		void TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle, std::vector<DirectXResourceHandle> rootResources);
 
+		void RayTracingDispatch(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle, 
+			std::vector<DirectXResourceHandle> rootResources, DirectXResourceHandle copyResourceHandle);
+
 		/// @brief DirectX12のデバイスを取得する
 		ID3D12Device* GetDevice() const;
 		/// @brief DirectX12のコマンドリストを取得する

@@ -30,6 +30,9 @@ namespace QFE {
 		/// @brief エンティティのコンポーネントをJSONから復元する。
 		void DeserializeEntityComponents(uint32_t entityId, const nlohmann::json& componentsJson);
 
+		/// @brief エンティティIDから、コンポーネント型名の一覧を取得する。
+		std::vector<std::string> GetComponentTypeNames(uint32_t entityId) const;
+
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントの生ポインタを取得する。
 		void* GetComponentRaw(uint32_t entityId, const char* componentTypeName) override;
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを削除する。

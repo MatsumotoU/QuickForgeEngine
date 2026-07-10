@@ -1,4 +1,4 @@
-project "InputFrameWork"
+project "InputFramework"
         kind "StaticLib" 
         language "C++"
         debugdir "%{wks.location}"

@@ -9,14 +9,13 @@ project "Runtime" -- Runtime
 
         links{
             "EngineCore",
-            "DirectXTex",
-            "GUIEngine",
-            "WindowingSystem",
-            "GraphicEngine",
-            "FrameWork",
-            "Camera",
+            "GuiFramework",
+            "GraphicFramework",
+            "WindowFramework",
             "EngineAssetsFactory",
-            "Scene",
+            "SceneFramework",
+            "ScriptFramework",
+            "Camera",
             "ImGui",
             "Components",
         }

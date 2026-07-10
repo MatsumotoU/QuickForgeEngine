@@ -1,4 +1,4 @@
-project "SceneFrameWork"
+project "SceneFramework"
         kind "StaticLib" 
         language "C++"
         debugdir "%{wks.location}"

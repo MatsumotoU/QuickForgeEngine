@@ -6,6 +6,7 @@
 #include "window/WindowsUtils.h"
 #include "framework/graphic/D3D12GraphicFrameWork.h"
 #include "framework/gui/D3D12GuiFrameWork.h"
+#include "framework/script/WindowsScriptWorkFrame.h"
 #include "gui/D3D12GuiManager.h"
 #include "core/loger/MyDebugLog.h"
 #include "core/process/ProcessUtil.h"
@@ -34,27 +35,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), hWnd);
 
 	// TestDll.dllをロードしてスクリプト関数の目録を取得
-	QFE::SCRIPT::WindowsScriptInstance scriptInstance;
+	std::unique_ptr<QFE::SCRIPT::WindowsScriptInstance> scriptInstance;
 	std::wstring filePath;
 	if (QFE::WINDOW::RequestGetFilePathFromUser(hWnd, L"GameLogic", L"*.dll", filePath)) {
-		testScript.gameDllHandle = LoadLibraryW(filePath.c_str());
-		assert(testScript.gameDllHandle != nullptr);
-
-		FARPROC getManifestFunc = GetProcAddress(testScript.gameDllHandle, "GetManifest");
-		assert(getManifestFunc != nullptr);
-
-		GetManifestFunc GetManifest = reinterpret_cast<GetManifestFunc>(getManifestFunc);
-		assert(GetManifest != nullptr);
-
-		QFE::SCRIPT::ScriptFunctionInfo* functionArray = nullptr;
-		// DLLから「ポインタ」と「個数」を受け取る
-		size_t functionCount = GetManifest(&functionArray);
-
-		// 安全にEXE側の管理するデータに詰め替える（これでDLLをアンロードしても安全！）
-		testScript.scripts.reserve(functionCount);
-		for (size_t i = 0; i < functionCount; ++i) {
-			testScript.scripts.push_back(functionArray[i]);
-		}
+		scriptInstance =QFE::FRAMEWORK::LoadWindowsScriptInstance(filePath, "GetManifest");
 	}
 
 	QFE::EntityManager entityManager;
@@ -63,7 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::SCENE::ScriptComponent& scriptComponent = entityManager.AddDefaultComponent<QFE::SCENE::ScriptComponent>(testEntityId);
 	// 関数の登録
 	uint32_t functionIndex = 0;
-	scriptComponent.scriptFunctionName = testScript.scripts[functionIndex].functionName;
+	scriptComponent.scriptFunctionName = scriptInstance->scripts[functionIndex].functionName;
 	scriptComponent.scriptFunctionIndex = functionIndex;
 
 	// メインループ
@@ -91,7 +75,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			// スクリプト関数の実行
 			entityManager.Each<QFE::SCENE::ScriptComponent>([&](uint32_t entityId, QFE::SCENE::ScriptComponent& scriptComp) {
-				testScript.scripts[scriptComp.scriptFunctionIndex].functionPtr(entityId, 0.016f, &entityManager);
+				scriptInstance->scripts[scriptComp.scriptFunctionIndex].functionPtr(entityId, 0.016f, &entityManager);
 				});
 
 			
@@ -102,7 +86,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	// DLLをアンロード
-	FreeLibrary(testScript.gameDllHandle);
+	QFE::FRAMEWORK::UnloadWindowsScriptInstance(scriptInstance.get());
 
 	guiManager->Shutdown();
 	graphicEngine->Shutdown();

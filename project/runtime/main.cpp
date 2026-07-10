@@ -5,7 +5,6 @@
 #include "framework/window/WindowsWindowFrameWork.h"
 #include "framework/gui/D3D12GuiFrameWork.h"
 
-#include "window/WindowsUtils.h"
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
 
@@ -42,7 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// GUIマネージャの初期化
 	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager =
 		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), mainWindow);
-
+	
 	// FPSカウンターの初期化
 	std::unique_ptr<QFE::FPSCounter> fpsCounter = std::make_unique<QFE::FPSCounter>();
 	fpsCounter->Reset();
@@ -59,7 +58,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
 	std::wstring selectedFilePath;
-	if (QFE::WINDOW::RequestGetFilePathFromUser(
+	if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
 		mainWindow,
 		L"JSON Files", L"*.json",
 		selectedFilePath)){
@@ -124,7 +123,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
 	for (const auto& [modelName, modelData] : modelDataMap) {
 		std::vector<QFE::MATH::Vector3> objectVertices;
-		objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(modelData.meshes[0].vertices.GetInternalVector());
+		objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(
+			modelData.meshes[0].vertices.GetInternalVector().data(), modelData.meshes[0].vertices.GetInternalVector().size());
 		QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(
 			objectVertices, modelName);
 		blasHandleMap[modelName] = blasHandle;
@@ -214,7 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (ImGui::Button("Save Scene")) {
 				// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
 				std::wstring selectedFilePath;
-				if (QFE::WINDOW::RequestGetFilePathFromUser(
+				if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
 					mainWindow,
 					L"JSON Files", L"*.json",
 					selectedFilePath)) {
@@ -225,7 +225,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (ImGui::Button("Load Scene")) {
 				// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
 				std::wstring selectedFilePath;
-				if (QFE::WINDOW::RequestGetFilePathFromUser(
+				if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
 					mainWindow,
 					L"JSON Files", L"*.json",
 					selectedFilePath)) {

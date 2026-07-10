@@ -57,6 +57,18 @@ void QFE::EntityManager::DeserializeEntityComponents(uint32_t entityId, const nl
     }
 }
 
+std::vector<std::string> QFE::EntityManager::GetComponentTypeNames(uint32_t entityId) const {
+    std::vector<std::string> componentNames;
+    // 自動登録されたコンポーネントのエントリーを走査する
+    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
+        auto it = componentStorages.find(entry.typeId);
+        if (it != componentStorages.end() && it->second->HasComponent(entityId)) {
+            componentNames.push_back(entry.name); // マクロで定義した綺麗な名前を返す
+        }
+    }
+	return componentNames;
+}
+
 void QFE::EntityManager::ResetEntity() {
     for (auto& [typeId, storage] : componentStorages) {
         storage->Clear();
