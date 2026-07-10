@@ -78,8 +78,6 @@ group "02_Middleware" -- アセットの読み込みや、サブシステムで�
     dofile(path.join(_root, "engine/assetfactory/premake5.lua"))
     -- カメラプロジェクトの読み込み
     dofile(path.join(_root, "engine/camera/premake5.lua"))
-    -- フレームワークプロジェクトの読み込み
-    dofile(path.join(_root, "engine/framework/premake5.lua"))
     -- シーンプロジェクトの読み込み
     dofile(path.join(_root, "engine/scene/premake5.lua"))
     -- コンポーネントプロジェクトの読み込み
@@ -89,7 +87,22 @@ group "02_Middleware" -- アセットの読み込みや、サブシステムで�
     
 group ""
 
-group "03_Applications" -- アプリケーションプロジェクト達
+group "03_Frameworks" -- 下層の処理をまとめるフレームワークプロジェクト達
+    -- グラフィックフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/graphic/premake5.lua"))
+    -- ウィンドウフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/window/premake5.lua"))
+    -- GUIフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/gui/premake5.lua"))
+    -- Inputフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/input/premake5.lua"))
+    -- Sceneフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/scene/premake5.lua"))
+    -- Scriptフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/script/premake5.lua"))
+group ""
+
+group "04_Applications" -- アプリケーションプロジェクト達
     -- エディタープロジェクトの読み込み
     dofile(path.join(_root, "editor/premake5.lua"))
     -- サンドボックスプロジェクトの読み込み

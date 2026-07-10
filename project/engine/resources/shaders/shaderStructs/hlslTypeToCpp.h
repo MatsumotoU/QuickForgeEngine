@@ -127,6 +127,32 @@ struct PixcelOffset {
 	float32_t time;
 };
 
+struct Particle {
+#ifdef __cplusplus
+	Particle()
+		: translate{ 0.0f, 0.0f, 0.0f }
+		, scale{ 1.0f, 1.0f, 1.0f } {
+	}
+#endif 
+	float32_t3 translate;
+	float32_t3 scale;
+	float32_t lifeTime;
+	float32_t3 velocity;
+	float32_t currentTime;
+	float32_t4 color;
+};
+
+struct ParView {
+#ifdef __cplusplus
+	ParView()
+		: viewProjection(QFE::MATH::Matrix4x4::MakeIndentity4x4())
+		, billboardMatrix(QFE::MATH::Matrix4x4::MakeIndentity4x4()) {
+	}
+#endif
+	float32_t4x4 viewProjection;
+	float32_t4x4 billboardMatrix;
+};
+
 struct ParticleForGPU {
 #ifdef __cplusplus
 	ParticleForGPU()

@@ -5,11 +5,7 @@ project "FrameWork"
         files {"./**.h","./**.cpp"}
         links{
             "EngineCore",
-            "GraphicFramework",
-            "GuiFramework",
-            "SceneFramework",
-            "ScriptFramework",
-            "WindowFramework",
+            "Input",
         }
 
         -- 警告レベル4

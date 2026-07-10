@@ -1,15 +1,12 @@
-project "FrameWork"
+project "SceneFrameWork"
         kind "StaticLib" 
         language "C++"
         debugdir "%{wks.location}"
         files {"./**.h","./**.cpp"}
         links{
             "EngineCore",
-            "GraphicFramework",
-            "GuiFramework",
-            "SceneFramework",
-            "ScriptFramework",
-            "WindowFramework",
+            "Scene",
+            "Components",
         }
 
         -- 警告レベル4
