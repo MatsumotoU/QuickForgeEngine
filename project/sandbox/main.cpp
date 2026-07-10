@@ -10,14 +10,10 @@
 #include "core/loger/MyDebugLog.h"
 #include "core/process/ProcessUtil.h"
 #include "script/ScriptFunctionList.h"
+#include "script/ScriptInstance.h"
 #include "components/AllComponent.h"
 
 #include <imgui/imgui.h>
-
-struct TestScript {
-	HMODULE gameDllHandle;
-	std::vector<QFE::SCRIPT::ScriptFunctionInfo> scripts;
-};
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -38,7 +34,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), hWnd);
 
 	// TestDll.dllをロードしてスクリプト関数の目録を取得
-	TestScript testScript;
+	QFE::SCRIPT::WindowsScriptInstance scriptInstance;
 	std::wstring filePath;
 	if (QFE::WINDOW::RequestGetFilePathFromUser(hWnd, L"GameLogic", L"*.dll", filePath)) {
 		testScript.gameDllHandle = LoadLibraryW(filePath.c_str());
