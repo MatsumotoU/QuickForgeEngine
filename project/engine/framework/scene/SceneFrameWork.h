@@ -1,6 +1,9 @@
 #pragma once
-#include "scene/SceneManager.h"
-#include "components/AllComponent.h"
+#include "math/MathInclude.h"
+
+namespace QFE::SCENE {
+	class SceneManager;
+}
 
 namespace QFE::FRAMEWORK {
 	/// @brief シーンマネージャーを使用してエンティティを作成する関数

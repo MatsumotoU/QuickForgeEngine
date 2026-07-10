@@ -24,6 +24,7 @@ workspace "QuickForgeEngine"
             "/permissive-",
             "/Zc:__cplusplus",
             "/utf-8",
+            "/std:c++20",
         }
 
        if not os.getenv("SONAR_SCAN") then

@@ -81,8 +81,8 @@ namespace QFE::INPUT {
 			return it->second;
 		}
 
-#ifdef QFE::INPUT_OPTIMIZE_OFF
-		QFE::INPUT_LOG("GetKeys: No keys found for action '" + name + "'", LogLevel::Error);
+#ifdef QFE_OPTIMIZE_OFF
+		QFE_LOG("GetKeys: No keys found for action '" + name + "'", LogLevel::Error);
 #endif // QFE::INPUT_OPTIMIZE_OFF
 		return emptyVector;
 	}

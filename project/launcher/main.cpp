@@ -3,7 +3,8 @@
 
 #include "window/GameWindowManager.h"
 #include "window/WindowsUtils.h"
-#include "framework/D3D12GraphicFrameWork.h"
+#include "framework/graphic/D3D12GraphicFrameWork.h"
+#include "framework/gui/D3D12GuiFrameWork.h"
 #include "gui/D3D12GuiManager.h"
 #include "camera/CameraManager.h"
 #include "core/loger/MyDebugLog.h"
