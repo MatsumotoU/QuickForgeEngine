@@ -62,6 +62,43 @@ bool QFE::FRAMEWORK::RequestGetFilePathFromUser(
     return false; // キャンセル、またはエラー
 }
 
+bool QFE::FRAMEWORK::RequestSaveFilePathFromUser(
+    HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath) {
+
+    OPENFILENAME ofn;            // 共通ダイアログボックスの構造体
+    wchar_t szFile[MAX_PATH] = { 0 }; // 選択（入力）されたファイル名を受け取るバッファ
+
+    // 1. 構造体の初期化
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hwnd;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile) / sizeof(*szFile);
+
+    // 2. 引数のフィルターを設定
+    std::wstring filterStr = filterName + L'\0' + filterSpec + L"\0All Files\0*.*\0";
+    ofn.lpstrFilter = filterStr.c_str();
+    ofn.nFilterIndex = 1;
+
+    ofn.lpstrFileTitle = nullptr;
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = nullptr;
+
+    // --- 保存用のフラグ設定 ---
+    // OFN_PATHMUSTEXIST: 存在するフォルダしか選べないようにする
+    // OFN_OVERWRITEPROMPT: 既に同名ファイルがある場合、「上書きしますか？」の警告を出す
+    // OFN_NOCHANGEDIR: 作業ディレクトリを変更しないようにする
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;
+
+    // 3. ダイアログを表示 (GetSaveFileName に変更)
+    if (GetSaveFileName(&ofn) == TRUE) {
+        outFilePath = ofn.lpstrFile; // 取得成功
+        return true;
+    }
+
+    return false; // キャンセル、またはエラー
+}
+
 bool QFE::FRAMEWORK::CompileProject(const std::wstring& projectPath, const std::wstring& outputDir, bool isRelease) {
     // 1. コマンドライン文字列の作成
     std::wstring configuration = isRelease ? L"Release" : L"Debug";

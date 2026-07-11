@@ -25,6 +25,9 @@ namespace QFE {
 		/// @brief フレームの終了時に、削除予定のエンティティを削除する。
 		void EndFrame();
 
+		/// @brief エンティティマネージャをJSONにシリアライズする。
+		nlohmann::json Serialize() const;
+
 		/// @brief エンティティのコンポーネントをJSONにシリアライズする。
 		nlohmann::json SerializeEntityComponents(uint32_t entityId) const;
 		/// @brief エンティティのコンポーネントをJSONから復元する。

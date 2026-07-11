@@ -1,5 +1,6 @@
 #pragma once
 #include "design-patterns/EntityManager.h"
+#include <nlohmann/json.hpp>
 
 namespace QFE::SCENE {
 	/// @brief シーンのEntityを保持、保存、ロードするクラスです.

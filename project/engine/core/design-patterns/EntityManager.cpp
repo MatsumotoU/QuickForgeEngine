@@ -19,6 +19,15 @@ void QFE::EntityManager::EndFrame() {
     entitiesToRemove_.clear();
 }
 
+nlohmann::json QFE::EntityManager::Serialize() const {
+    nlohmann::json entitiesJson;
+	uint32_t saveId = 0;
+    for (uint32_t entityId : activeEntityIds_) {
+        entitiesJson[saveId++] = SerializeEntityComponents(entityId);
+    }
+    return entitiesJson;
+}
+
 nlohmann::json QFE::EntityManager::SerializeEntityComponents(uint32_t entityId) const {
     nlohmann::json componentsJson;
 

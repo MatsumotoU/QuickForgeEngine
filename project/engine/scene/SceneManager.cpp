@@ -20,6 +20,12 @@ void QFE::SCENE::SceneManager::LoadCurrentSceneFromJson(const std::string& fileP
 	currentScene_.LoadSceneFromJson(filePath);
 }
 
+nlohmann::json QFE::SCENE::SceneManager::LoadCurrentSceneToJson(const std::string& filePath) {
+	SceneObject scene;
+	scene.LoadSceneFromJson(filePath);
+	return scene.GetEntityManager().Serialize();
+}
+
 QFE::EntityManager& QFE::SCENE::SceneManager::GetCurrentSceneEntityManager() {
 	return currentScene_.GetEntityManager();
 }

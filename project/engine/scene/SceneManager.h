@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneObject.h"
+#include <nlohmann/json.hpp>
 
 namespace QFE::SCENE {
 	/// @brief シーンの管理クラスです.
@@ -16,6 +17,9 @@ namespace QFE::SCENE {
 		void SaveCurrentSceneToJson(const std::string& filePath);
 		/// @brief JSONファイルから現在のシーンをロードします.
 		void LoadCurrentSceneFromJson(const std::string& filePath);
+
+		/// @brief JSONファイルから現在のシーンをロードし、JSONオブジェクトとして返します.
+		nlohmann::json LoadCurrentSceneToJson(const std::string& filePath);
 
 		/// @brief 現在のシーンのエンティティマネージャーの参照を取得します.
 		QFE::EntityManager& GetCurrentSceneEntityManager();

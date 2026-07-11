@@ -7,8 +7,11 @@
 
 #include <imgui/imgui.h>
 
-namespace QFE {
-	class EntityManager;
+#define NOMINMAX
+#include <Windows.h>
+
+namespace QFE::SCENE {
+	class SceneManager;
 }
 
 namespace QFE::EDITOR {
@@ -18,7 +21,7 @@ namespace QFE::EDITOR {
 	/// @brief エディタのウィンドウ管理クラス
 	class EditorWindowManager final{
 	public:
-		void Initialize(EntityManager* entityManager, ImTextureID sceneTextureId);
+		void Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow);
 		void Update();
 		void Draw(EditorCommandList& commandList);
 
@@ -26,5 +29,7 @@ namespace QFE::EDITOR {
 		// エディタで表示できるウィンドウたち
 		std::vector<std::unique_ptr<IEditorWindow>> editorWindows_;
 		std::set<uint32_t> selectedEntities_;
+		HWND mainWindow_;
+		SCENE::SceneManager* sceneManager_;
 	};
 }

@@ -1,13 +1,20 @@
 #include "EditorWindowManager.h"
 #include "AllEditorWindow.h"
 
+#include "framework/window/WindowsWindowFrameWork.h"
+
+#include "scene/SceneManager.h"
 #include "design-patterns/EntityManager.h"
 #include "command/EditorCommandList.h"
+#include "string/MyString.h"
 
 #include <imgui.h>
 
-void QFE::EDITOR::EditorWindowManager::Initialize(EntityManager* entityManager, ImTextureID sceneTextureId) {
-	editorWindows_.push_back(std::make_unique<Hierarchy>(entityManager));
+void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow) {
+	mainWindow_ = mainWindow;
+	sceneManager_ = sceneManager;
+    EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	editorWindows_.push_back(std::make_unique<Hierarchy>(&entityManager));
 	editorWindows_.push_back(std::make_unique<SceneViewer>(sceneTextureId));
 }
 
@@ -47,6 +54,35 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
 	// エディタのメインメニュー
     if (ImGui::BeginMenuBar()) {
+		// ファイルメニュー
+        if (ImGui::BeginMenu("File")) {
+            // ロード
+            if (ImGui::MenuItem("Load Scene", nullptr)) {
+                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+                std::wstring selectedFilePath;
+                if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
+                    mainWindow_,
+                    L"JSON Files", L"*.json",
+                    selectedFilePath)) {
+                    // Entityの生成
+                    sceneManager_->LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
+                }
+            }
+			// セーブ
+            if (ImGui::MenuItem("Save Scene", nullptr)) {
+                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+                std::wstring selectedFilePath;
+                if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
+                    mainWindow_,
+                    L"JSON Files", L"*.json",
+                    selectedFilePath)) {
+					// Entityの保存
+					sceneManager_->SaveCurrentSceneToJson(QFE::ConvertString(selectedFilePath));
+                }
+            }
+            ImGui::EndMenu();
+        }
+		// ウィンドウメニュー
         if (ImGui::BeginMenu("Window")) {
             for (auto& window : editorWindows_) {
                 bool isActive = window->GetIsActive();

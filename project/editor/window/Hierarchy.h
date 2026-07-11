@@ -1,5 +1,7 @@
 #pragma once
 #include "IEditorWindow.h"
+#include <set>
+#include <stdint.h>
 
 namespace QFE {
 	class EntityManager;
@@ -27,5 +29,6 @@ namespace QFE::EDITOR {
 	private:
 		EntityManager* entityManager_;
 		bool isActive_;
+		std::set<uint32_t> hierarchySelectedEntities_;
 	};
 }

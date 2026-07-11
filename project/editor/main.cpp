@@ -144,7 +144,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ImTextureID sceneTextureId = static_cast<ImTextureID>(static_cast<uintptr_t>(sceneTextureGPUHandle.ptr));
 
 	QFE::EDITOR::GameEditor gameEditor;
-	gameEditor.Initialize(&entityManager, sceneTextureId);
+	gameEditor.Initialize(&sceneManager, sceneTextureId, mainWindow);
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {

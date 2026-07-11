@@ -5,15 +5,15 @@
 
 #include <imgui/imgui.h>
 
-namespace QFE {
-	class EntityManager;
+namespace QFE::SCENE {
+	class SceneManager;
 }
 
 namespace QFE::EDITOR {
 	/// @brief ゲームエディタ
 	class GameEditor {
 	public:
-		void Initialize(QFE::EntityManager* entityManager, ImTextureID sceneTextureId);
+		void Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow);
 		void Update();
 		void Draw();
 		void PostDraw();
