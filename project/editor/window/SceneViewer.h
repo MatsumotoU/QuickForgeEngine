@@ -20,9 +20,12 @@ namespace QFE::EDITOR {
 		bool GetIsActive() override;
 		/// @brief ウィンドウのアクティブ状態を設定する
 		bool SetIsActive(bool isActive) override;
+		/// @brief ウィンドウがフォーカスされているかどうかを取得する
+		bool GetIsFocus() override;
 
 	private:
 		ImTextureID sceneTextureId_;
 		bool isActive_;
+		bool isFocus_;
 	};
 }

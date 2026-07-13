@@ -153,3 +153,23 @@ std::vector<uint32_t> QFE::EntityManager::GetActiveEntityIds() const {
     std::sort(sortedIds.begin(), sortedIds.end());
     return sortedIds;
 }
+
+void QFE::EntityManager::RefrectionComponent(uint32_t id, Archive& ar) {
+    // 自動登録されたコンポーネントを走査する。
+    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
+		auto& storagePtr = componentStorages[entry.typeId];
+        storagePtr->ReflectComponent(id, ar);
+    }
+}
+
+void QFE::EntityManager::ReflectionComponentByName(uint32_t entityId, const std::string& componentTypeName, QFE::Archive& archive) {
+    // 自動登録のエントリーを走査
+    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
+        if (entry.name == componentTypeName) {
+            auto it = componentStorages.find(entry.typeId);
+            if (it != componentStorages.end()) {
+				it->second->ReflectComponent(entityId, archive);
+            }
+        }
+    }
+}

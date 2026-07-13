@@ -1,6 +1,9 @@
 #include "SceneFrameWork.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
+#include "graphics/D3D12GraphicEngine.h"
+
+#include "framework/graphic/D3D12GraphicFrameWork.h"
 
 uint32_t QFE::FRAMEWORK::CreateEntity(QFE::SCENE::SceneManager& sceneManager, const std::string& name) {
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();

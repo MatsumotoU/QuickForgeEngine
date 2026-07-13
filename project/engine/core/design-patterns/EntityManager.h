@@ -151,5 +151,10 @@ namespace QFE {
 				storage.Each(func);
 			}
 		}
+
+		/// @brief 指定のIDのエンティティに対して、指定のアーカイブでコンポーネントのリフレクションを行う。
+		void RefrectionComponent(uint32_t id, Archive& ar);
+		/// @brief 指定のIDのエンティティに対して、指定のコンポーネント型名のコンポーネントのリフレクションを行う。
+		void ReflectionComponentByName(uint32_t entityId, const std::string& componentTypeName, QFE::Archive& archive);
 	};
 }

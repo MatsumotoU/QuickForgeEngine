@@ -12,6 +12,7 @@ void QFE::EDITOR::SceneViewer::Initialize() {
 void QFE::EDITOR::SceneViewer::Draw(std::set<uint32_t>& selectedEntities, EditorCommandList& commandList) {
 	ImGui::Begin(GetWindowName().c_str(), &isActive_);
 	const float targetAspectRatio = 16.0f / 9.0f;
+	isFocus_ = ImGui::IsWindowFocused();
 
 	// 2. ウィンドウ内で「実際に利用可能な最大サイズ」を取得
 	ImVec2 availSize = ImGui::GetContentRegionAvail();
@@ -57,4 +58,8 @@ bool QFE::EDITOR::SceneViewer::GetIsActive() {
 bool QFE::EDITOR::SceneViewer::SetIsActive(bool isActive) {
 	isActive_ = isActive;
 	return isActive_;
+}
+
+bool QFE::EDITOR::SceneViewer::GetIsFocus() {
+	return isFocus_;
 }

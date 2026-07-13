@@ -28,6 +28,12 @@ namespace QFE {
 
         // 修正：hash_codeも一緒に受け取る
         void Register(size_t typeId, const std::string& name, Creator creator) {
+            if (entries_.end() != std::find_if(entries_.begin(), entries_.end(), [&](const RegistryEntry& entry) {
+                return entry.typeId == typeId;
+                })) {
+				return; // すでに登録済みの場合は何もしない
+            }
+
             entries_.push_back({ typeId, name, creator });
         }
 

@@ -4,7 +4,7 @@
 #include "framework/window/WindowsWindowFrameWork.h"
 #include "design-patterns/EntityManager.h"
 
-QFE::EDITOR::LoadSceneCommand::LoadSceneCommand(const std::string& scenePath, SCENE::SceneManager* sceneManager):
+QFE::EDITOR::LoadSceneCommand::LoadSceneCommand(const std::string& scenePath, QFE::SCENE::SceneManager* sceneManager):
 	sceneManager_(sceneManager), scenePath_(scenePath) {
 }
 

@@ -17,5 +17,6 @@ namespace QFE::EDITOR{
 		virtual std::string GetWindowName() = 0;
 		virtual bool GetIsActive() = 0;
 		virtual bool SetIsActive(bool isActive) = 0;
+		virtual bool GetIsFocus() = 0;
 	};
 }

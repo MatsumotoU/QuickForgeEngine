@@ -13,6 +13,7 @@ namespace QFE::GRAPHIC {
 	class D3D12GraphicEngine;
 	enum class ShaderPairHandle : uint32_t;
 	enum class DirectXResourceHandle : uint32_t;
+	enum class BLASHandle : uint32_t;
 }
 
 namespace QFE::FRAMEWORK {
@@ -44,7 +45,21 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 		const QFE::MATH::Transform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
 
-	// 頂点のデータから頂点位置を取得する関数
+	/// @brief 頂点のデータから頂点位置を取得する関数
 	std::vector<QFE::MATH::Vector3> GetModelVertexPositions(
 		const VertexData* vertices, size_t vertexCount);
+
+	/// @brief 頂点バッファを作成する関数
+	bool CreateVertexBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::vector<VertexData>& vertexPositions,
+		const std::string& meshName,
+		QFE::GRAPHIC::DirectXResourceHandle& outVertexBufferHandle);
+
+	/// @brief BLASを作成する関数
+	bool CreateBLAS(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::vector<VertexData>& vertices,
+		const std::string& name,
+		QFE::GRAPHIC::BLASHandle& outBLASHandle);
 }

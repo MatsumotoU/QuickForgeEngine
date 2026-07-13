@@ -7,6 +7,7 @@
 #include "design-patterns/EntityManager.h"
 #include "command/EditorCommandList.h"
 #include "string/MyString.h"
+#include "command/AllCommands.h"
 
 #include <imgui.h>
 
@@ -14,8 +15,10 @@ void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* scen
 	mainWindow_ = mainWindow;
 	sceneManager_ = sceneManager;
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
-	editorWindows_.push_back(std::make_unique<Hierarchy>(&entityManager));
-	editorWindows_.push_back(std::make_unique<SceneViewer>(sceneTextureId));
+	editorWindowsMap_.clear();
+	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(&entityManager);
+	editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId);
+	editorWindowsMap_[EditorWindowType::Inspector] = std::make_unique<Inspector>(&entityManager);
 }
 
 void QFE::EDITOR::EditorWindowManager::Update() {
@@ -65,7 +68,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                     L"JSON Files", L"*.json",
                     selectedFilePath)) {
                     // Entityの生成
-                    sceneManager_->LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
+					commandList.AddCommand(std::make_unique<LoadSceneCommand>(QFE::ConvertString(selectedFilePath), sceneManager_));
                 }
             }
 			// セーブ
@@ -77,14 +80,14 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                     L"JSON Files", L"*.json",
                     selectedFilePath)) {
 					// Entityの保存
-					sceneManager_->SaveCurrentSceneToJson(QFE::ConvertString(selectedFilePath));
+					commandList.AddCommand(std::make_unique<SaveSceneCommand>(QFE::ConvertString(selectedFilePath), sceneManager_));
                 }
             }
             ImGui::EndMenu();
         }
 		// ウィンドウメニュー
         if (ImGui::BeginMenu("Window")) {
-            for (auto& window : editorWindows_) {
+            for(auto& [type, window] : editorWindowsMap_) {
                 bool isActive = window->GetIsActive();
                 if (ImGui::MenuItem(window->GetWindowName().c_str(), nullptr, isActive)) {
                     window->SetIsActive(!isActive);
@@ -97,10 +100,14 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
     ImGui::End();
 
-	for (auto& window : editorWindows_) {
+	for (auto& [type, window] : editorWindowsMap_) {
         if (!window->GetIsActive()) {
             continue;
 		}
 		window->Draw(selectedEntities_, commandList);
 	}
+}
+
+bool QFE::EDITOR::EditorWindowManager::IsWindowFocused(EditorWindowType windowType) {
+	return editorWindowsMap_[windowType]->GetIsFocus();
 }

@@ -110,3 +110,29 @@ std::vector<QFE::MATH::Vector3> QFE::FRAMEWORK::GetModelVertexPositions(const Ve
 	}
 	return vertexPositions;
 }
+
+bool QFE::FRAMEWORK::CreateVertexBuffer(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<VertexData>& vertexPositions,
+	const std::string& meshName, QFE::GRAPHIC::DirectXResourceHandle& outVertexBufferHandle) {
+
+	outVertexBufferHandle = graphicEngine->CreateVertexBuffer(vertexPositions, meshName);
+	if(outVertexBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		QFE_LOG("Failed to create vertex buffer for mesh: " + meshName);
+		return false;
+	}
+	return true;
+}
+
+bool QFE::FRAMEWORK::CreateBLAS(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<VertexData>& vertices,
+	const std::string& name, QFE::GRAPHIC::BLASHandle& outBLASHandle) {
+
+	std::vector<QFE::MATH::Vector3> vertexPositions = GetModelVertexPositions(vertices.data(), vertices.size());
+	outBLASHandle = graphicEngine->CreateBLAS(vertexPositions, name);
+
+	if(outBLASHandle == QFE::GRAPHIC::BLASHandle::Invalid) {
+		QFE_LOG("Failed to create BLAS for model: " + name);
+		return false;
+	}
+	return true;
+}

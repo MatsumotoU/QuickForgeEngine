@@ -18,6 +18,7 @@ void QFE::EDITOR::Hierarchy::Initialize() {
 void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCommandList& commandList) {
 	ImGui::Begin(GetWindowName().c_str(), &isActive_);
 	ImVec2 windowSize = ImGui::GetWindowSize();
+	isFocus_ = ImGui::IsWindowFocused();
 
 	// エンティティマネージャーが null の場合は、エラーメッセージを表示して終了する
 	if(entityManager_ == nullptr) {
@@ -116,4 +117,8 @@ bool QFE::EDITOR::Hierarchy::GetIsActive() {
 bool QFE::EDITOR::Hierarchy::SetIsActive(bool isActive) {
 	isActive_ = isActive;
 	return isActive_;
+}
+
+bool QFE::EDITOR::Hierarchy::GetIsFocus() {
+	return isFocus_;
 }

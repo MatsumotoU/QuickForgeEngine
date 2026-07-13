@@ -5,3 +5,4 @@
 #include "MaterialComponent.h"
 #include "ModelRenderComponent.h"
 #include "ScriptComponent.h"
+#include "CameraComponent.h"

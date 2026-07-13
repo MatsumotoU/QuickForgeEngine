@@ -8,10 +8,17 @@ void QFE::EDITOR::GameEditor::Initialize(QFE::SCENE::SceneManager* sceneManager,
 	windowManager_.Initialize(sceneManager, sceneTextureId, mainWindow);
 	commandExecutor_.Initialize();
 	commandList_.ClearCommands();
+
+	activeCameraType_ = EditorCameraType::DebugCamera;
 }
 
 void GameEditor::Update() {
 	commandList_.ClearCommands();
+
+	// シーンビューがアクティブになった場合デバッグカメラに切り替える
+	if(windowManager_.IsWindowFocused(EditorWindowType::SceneViewer)) {
+		activeCameraType_ = EditorCameraType::DebugCamera;
+	}
 }
 
 void GameEditor::Draw() {

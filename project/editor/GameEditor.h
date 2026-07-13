@@ -10,6 +10,11 @@ namespace QFE::SCENE {
 }
 
 namespace QFE::EDITOR {
+	enum class EditorCameraType {
+		DebugCamera,
+		MainCamera
+	};
+
 	/// @brief ゲームエディタ
 	class GameEditor {
 	public:
@@ -17,9 +22,14 @@ namespace QFE::EDITOR {
 		void Update();
 		void Draw();
 		void PostDraw();
+
+		EditorCameraType GetActiveCameraType() const { return activeCameraType_; }
+
+
 	private:
 		EditorWindowManager windowManager_;
 		EditorCommandExecutor commandExecutor_;
 		EditorCommandList commandList_;
+		EditorCameraType activeCameraType_;
 	};
 }

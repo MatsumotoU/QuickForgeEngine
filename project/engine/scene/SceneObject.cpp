@@ -1,5 +1,6 @@
 #include "SceneObject.h"
 #include "SceneManager.h"
+#include "file/FileUtility.h"
 
 namespace {
 	const std::string kEntityKey = "entities";
@@ -35,7 +36,8 @@ void QFE::SCENE::SceneObject::SaveSceneToJson(const std::string& filePath) {
 	}
 
 	// JSONをファイルに保存
-	std::ofstream file(filePath);
+	std::filesystem::path osPath(filePath);
+	std::ofstream file(osPath);
 	if (!file.is_open()) {
 		QFE_REPORT_SYSTEM_ERROR("Failed to open file for saving scene: " + filePath, SystemError::Abort);
 		return;

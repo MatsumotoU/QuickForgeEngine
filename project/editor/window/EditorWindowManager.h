@@ -6,6 +6,7 @@
 #include "IEditorWindow.h"
 
 #include <imgui/imgui.h>
+#include <unordered_map>
 
 #define NOMINMAX
 #include <Windows.h>
@@ -16,7 +17,16 @@ namespace QFE::SCENE {
 
 namespace QFE::EDITOR {
 	class EditorCommandList;
-	
+
+	enum class EditorWindowType {
+		Hierarchy,
+		SceneViewer,
+		Inspector,
+		Profiler,
+		Console,
+		AssetBrowser,
+		Logger,
+	};
 
 	/// @brief エディタのウィンドウ管理クラス
 	class EditorWindowManager final{
@@ -25,9 +35,13 @@ namespace QFE::EDITOR {
 		void Update();
 		void Draw(EditorCommandList& commandList);
 
+		/// @brief 指定されたウィンドウタイプのウィンドウにフォーカスがあるかどうかを返す
+		bool IsWindowFocused(EditorWindowType windowType);
+
 	private:
+
 		// エディタで表示できるウィンドウたち
-		std::vector<std::unique_ptr<IEditorWindow>> editorWindows_;
+		std::unordered_map<EditorWindowType, std::unique_ptr<IEditorWindow>> editorWindowsMap_;
 		std::set<uint32_t> selectedEntities_;
 		HWND mainWindow_;
 		SCENE::SceneManager* sceneManager_;

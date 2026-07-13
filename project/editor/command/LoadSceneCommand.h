@@ -13,7 +13,7 @@ namespace QFE::EDITOR {
 	/// @brief シーンのロードを行うコマンド
 	class LoadSceneCommand : public IEditorCommand {
 	public:
-		LoadSceneCommand(const std::string& scenePath, SCENE::SceneManager* sceneManager);
+		LoadSceneCommand(const std::string& scenePath, QFE::SCENE::SceneManager* sceneManager);
 
 		/// @brief シーンをロードする。
 		void Execute() override;
@@ -21,7 +21,7 @@ namespace QFE::EDITOR {
 		void Undo() override;
 
 	private:
-		SCENE::SceneManager* sceneManager_;
+		QFE::SCENE::SceneManager* sceneManager_;
 		std::string scenePath_;
 		nlohmann::json previousSceneData_;
 	};

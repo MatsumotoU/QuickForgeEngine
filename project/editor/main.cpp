@@ -58,17 +58,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	sceneManager.Initialize();
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
-	// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
-	std::wstring selectedFilePath;
-	if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-		mainWindow,
-		L"JSON Files", L"*.json",
-		selectedFilePath)) {
-		// Entityの生成
-		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
-	}
-
-
 	std::string psDirName = "engine/resources/shaders/ps/";
 	std::string vsDirName = "engine/resources/shaders/vs/";
 	std::string rtDirName = "engine/resources/shaders/rt/";
@@ -93,16 +82,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::ASSET::AssimpModelLoader modelLoader;
 	modelLoader.Initialize();
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> vertexBufferMap;
+	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
 	std::unordered_map<std::string, QFE::ASSET::ModelData> modelDataMap;
-	std::vector<std::string> modelNames;
-	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
-		modelNames.push_back(modelRenderComp.modelName);
-		});
 	std::string modelDir = "resources/";
-	for (std::string modelName : modelNames) {
+	// モデルの読み込みとBLASを作る関数
+	std::function<void(const std::string&)> loadModelVertexBufferFunc =
+		[&](const std::string& modelName) {
 		modelDataMap[modelName] = modelLoader.LoadModel(modelDir + modelName + ".obj");
 		vertexBufferMap[modelName] = graphicEngine->CreateVertexBuffer(modelDataMap[modelName].meshes[0].vertices.GetInternalVector(), "VertexBuffer");
-	}
+		};
+	std::function<void(const std::string&)> loadBlasFunc =
+		[&](const std::string& modelName) {
+		modelDataMap[modelName] = modelLoader.LoadModel(modelDir + modelName + ".obj");
+		std::vector<QFE::MATH::Vector3> objectVertices;
+		objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(
+			modelDataMap[modelName].meshes[0].vertices.GetInternalVector().data(),
+			modelDataMap[modelName].meshes[0].vertices.GetInternalVector().size());
+		QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(objectVertices, modelName);
+		blasHandleMap[modelName] = blasHandle;
+		};
 
 	// オフスクリーンレンダーターゲットの作成
 	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
@@ -122,17 +120,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// レイトレーシングパイプラインステートオブジェクトの作成
 	QFE::GRAPHIC::RTPSOHandle rtpsoHandle = graphicEngine->CreateRayTracingPipelineStateObject(
 		rtDirName, "ShadowRaytracing.hlsl");
-
-	// BLASの作成とBLASインスタンスの作成
-	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
-	for (const auto& [modelName, modelData] : modelDataMap) {
-		std::vector<QFE::MATH::Vector3> objectVertices;
-		objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(
-			modelData.meshes[0].vertices.GetInternalVector().data(), modelData.meshes[0].vertices.GetInternalVector().size());
-		QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(
-			objectVertices, modelName);
-		blasHandleMap[modelName] = blasHandle;
-	}
 
 	// エディタ用のシーンテクスチャの作成
 	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle =
@@ -162,8 +149,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			gameEditor.Update();
 
-			QFE::MATH::Matrix4x4 viewProj =
-				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
+			// カメラのビュー行列と投影行列を取得
+			QFE::MATH::Matrix4x4 viewProj;
+			if(gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
+				viewProj = cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
+			} else {
+				entityManager.Each<QFE::SCENE::CameraComponent>([&](uint32_t entityId, QFE::SCENE::CameraComponent& cameraComp) {
+					if(cameraComp.isMainCamera) {
+						if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+							QFE::MATH::Transform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+							cameraComp.viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
+							cameraComp.projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
+								cameraComp.fovY_, cameraComp.aspectRatio_, cameraComp.nearZ_, cameraComp.farZ_);
+
+							viewProj = QFE::MATH::Matrix4x4::Multiply(cameraComp.viewMatrix, cameraComp.projectionMatrix);
+						}
+					}
+					});
+
+				viewProj = cameraManager.GetViewProjectionMatrix(cameraHandle, QFE::MATH::Transform(), QFE::CAMERA::CameraType::Perspective);
+			}
+			
 
 			// 各エンティティのModelRenderComponentを更新
 			std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
@@ -196,7 +202,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				if (vertexBufferMap.find(modelRenderComp.modelName) != vertexBufferMap.end()) {
 					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(vertexBufferMap[modelRenderComp.modelName]);
 				} else {
-					return;
+					loadModelVertexBufferFunc(modelRenderComp.modelName);
+					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(vertexBufferMap[modelRenderComp.modelName]);
 				}
 
 				// テクスチャの更新
@@ -205,6 +212,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
 
 				// レイトレーシングインスタンスの作成
+				if(blasHandleMap.find(modelRenderComp.modelName) == blasHandleMap.end()) {
+					loadBlasFunc(modelRenderComp.modelName);
+				}
 				raytracingInstances.push_back({
 					blasHandleMap[modelRenderComp.modelName],
 					QFE::MATH::Matrix4x4::MakeAffineMatrix(entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform)
@@ -226,7 +236,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				if (modelRenderComp.canRender == false) {
 					return;
 				}
-
 
 				// ルートリソースの設定
 				std::vector<QFE::GRAPHIC::DirectXResourceHandle> modelRootResources = {
