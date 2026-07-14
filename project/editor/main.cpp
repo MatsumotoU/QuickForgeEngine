@@ -4,6 +4,7 @@
 #include "framework/graphic/D3D12GraphicFrameWork.h"
 #include "framework/window/WindowsWindowFrameWork.h"
 #include "framework/gui/D3D12GuiFrameWork.h"
+#include "framework/input/InputFrameWork.h"
 
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
@@ -29,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// デバッグログの初期化
 	QFE::MyDebugLog::GetInstance()->Initialize();
 
-	std::string mainWindowName = "Runtime";
+	std::string mainWindowName = "GameEditor";
 	uint32_t mainWindowHeight = 720;
 	uint32_t mainWindowWidth = 1280;
 	// ゲームウィンドウマネージャの初期化とウィンドウの追加
@@ -47,11 +48,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// FPSカウンターの初期化
 	std::unique_ptr<QFE::FPSCounter> fpsCounter = std::make_unique<QFE::FPSCounter>();
 	fpsCounter->Reset();
-
-	// カメラマネージャの初期化とカメラの作成
-	QFE::CAMERA::CameraManager cameraManager;
-	cameraManager.Initialize();
-	QFE::CAMERA::CameraHandle cameraHandle = cameraManager.CreateCamera(0.0f, 1280.0f, 0.0f, 720.0f, 0.1f, 100.0f, 0.45f);
 
 	// シーンマネージャの初期化
 	QFE::SCENE::SceneManager sceneManager;
@@ -163,7 +159,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// カメラのビュー行列と投影行列を取得
 			QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIndentity4x4();
 			if (gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
-				viewProj = cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
+				QFE::MATH::Matrix4x4 viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
+				QFE::MATH::Matrix4x4 projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
+					3.14159f / 4.0f, 1280.0f / 720.0f, 0.1f, 1000.0f);
+				viewProj = QFE::MATH::Matrix4x4::Multiply(viewMatrix, projectionMatrix);
 			} else {
 				entityManager.Each<QFE::SCENE::CameraComponent>([&](uint32_t entityId, QFE::SCENE::CameraComponent& cameraComp) {
 					if (cameraComp.isMainCamera) {

@@ -128,6 +128,14 @@ void QFE::EDITOR::Inspector::DrawObjectInfoComponent(uint32_t entityId, EditorCo
 			ImGui::DragFloat("Far Plane", &cameraComp.farZ_);
 		}
 	}
+
+	// ScriptComponentの表示
+	if (entityManager_->HasComponent<QFE::SCENE::ScriptComponent>(entityId)) {
+		auto& scriptComp = entityManager_->GetComponent<QFE::SCENE::ScriptComponent>(entityId);
+		if (ImGui::CollapsingHeader("Script")) {
+			ImGui::InputText("Script Function Name", &scriptComp.scriptFunctionName);
+		}
+	}
 }
 
 void QFE::EDITOR::Inspector::AddComponentUI(uint32_t entityId, EditorCommandList& commandList) {

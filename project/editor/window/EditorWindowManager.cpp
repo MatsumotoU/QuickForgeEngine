@@ -8,6 +8,7 @@
 #include "command/EditorCommandList.h"
 #include "string/MyString.h"
 #include "command/AllCommands.h"
+#include "process/ProcessUtil.h"
 
 #include <imgui.h>
 
@@ -96,6 +97,25 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 			}
             ImGui::EndMenu();
         }
+		// Debugメニュー
+        if (ImGui::BeginMenu("Debug")) {
+            // シーンを選ばせて開始する
+            if (ImGui::MenuItem("Launch Scene from File...")) {
+
+                // クリックされたらファイル選択ダイアログを開く
+                std::wstring selectedFilePath;
+                if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
+                    mainWindow_,
+                    L"Scene Files", L"*.json",
+                    selectedFilePath)) {
+
+                    // Entityの保存や、別プロセスの起動
+                    QFE::ProcessUtil::LaunchExe("Runtime.exe", "");
+                }
+            }
+
+            ImGui::EndMenu();
+		}
         ImGui::EndMenuBar();
     }
 

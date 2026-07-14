@@ -4,6 +4,7 @@
 #include "framework/graphic/D3D12GraphicFrameWork.h"
 #include "framework/window/WindowsWindowFrameWork.h"
 #include "framework/gui/D3D12GuiFrameWork.h"
+#include "framework/script/WindowsScriptWorkFrame.h"
 
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
@@ -15,6 +16,7 @@
 #include "core/loger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
+#include "script/ScriptInstance.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"
 
@@ -65,7 +67,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// Entityの生成
 		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
 	}
-	
+
+	// TestDll.dllをロードしてスクリプト関数の目録を取得
+	std::unique_ptr<QFE::SCRIPT::WindowsScriptInstance> scriptInstance;
+	std::wstring filePath;
+	scriptInstance = QFE::FRAMEWORK::LoadWindowsScriptInstance(L"GameLogics.dll", "GetManifest");
 
 	std::string psDirName = "engine/resources/shaders/ps/";
 	std::string vsDirName = "engine/resources/shaders/vs/";
@@ -143,6 +149,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		} else {
 			fpsCounter->FrameStart();
+
+			// スクリプト関数の実行
+			entityManager.Each<QFE::SCENE::ScriptComponent>([&](uint32_t entityId, QFE::SCENE::ScriptComponent& scriptComp) {
+				// 名前から関数を探す
+				for (auto& scripts : scriptInstance->scripts) {
+					if (scripts.functionName == scriptComp.scriptFunctionName) {
+						scriptComp.scriptFunctionIndex = &scripts - &scriptInstance->scripts[0];
+						break;
+					}
+				}
+				// もし関数が見つからなかった場合は、スクリプト関数の実行をスキップする
+				if (scriptComp.scriptFunctionIndex >= scriptInstance->scripts.size()) {
+					return;
+				}
+				// 関数の実行
+				scriptInstance->scripts[scriptComp.scriptFunctionIndex].functionPtr(entityId, 0.016f, &entityManager);
+				});
 
 			QFE::MATH::Matrix4x4 viewProj =
 				cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
