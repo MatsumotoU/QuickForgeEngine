@@ -2,16 +2,12 @@
 #include "IEditorWindow.h"
 #include <imgui/imgui.h>
 
-namespace QFE {
-	class EntityManager;
-}
-
 namespace QFE::EDITOR {
-	/// @brief Inspectorはエンティティの情報を表示します
-	class Inspector final : public IEditorWindow {
+	/// @brief GameViewerはシーンを表示します
+	class GameViewer final : public IEditorWindow {
 	public:
-		/// @brief Inspectorのコンストラクタ
-		Inspector(QFE::EntityManager* entityManager);
+		/// @brief GameViewerのコンストラクタ
+		GameViewer(ImTextureID sceneTextureId);
 
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -28,12 +24,7 @@ namespace QFE::EDITOR {
 		bool GetIsFocus() override;
 
 	private:
-		/// @brief コンポーネントの情報を描画する処理
-		void DrawObjectInfoComponent(uint32_t entityId, EditorCommandList& commandList);
-		/// @brief コンポーネント追加処理
-		void AddComponentUI(uint32_t entityId, EditorCommandList& commandList);
-
-		QFE::EntityManager* entityManager_;
+		ImTextureID sceneTextureId_;
 		bool isActive_;
 		bool isFocus_;
 	};

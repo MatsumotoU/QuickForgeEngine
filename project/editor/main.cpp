@@ -86,20 +86,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::unordered_map<std::string, QFE::ASSET::ModelData> modelDataMap;
 	std::string modelDir = "resources/";
 	// モデルの読み込みとBLASを作る関数
-	std::function<void(const std::string&)> loadModelVertexBufferFunc =
+	std::function<bool(const std::string&)> loadModelVertexBufferFunc =
 		[&](const std::string& modelName) {
-		modelDataMap[modelName] = modelLoader.LoadModel(modelDir + modelName + ".obj");
-		vertexBufferMap[modelName] = graphicEngine->CreateVertexBuffer(modelDataMap[modelName].meshes[0].vertices.GetInternalVector(), "VertexBuffer");
+		QFE::ASSET::ModelData modelData;
+		if (modelLoader.LoadModel(modelDir + modelName + ".obj", modelData)) {
+			modelDataMap[modelName] = modelData;
+			vertexBufferMap[modelName] = 
+				graphicEngine->CreateVertexBuffer(modelDataMap[modelName].meshes[0].vertices.GetInternalVector(), "VertexBuffer");
+			return true;
+		}
+		return false;
 		};
-	std::function<void(const std::string&)> loadBlasFunc =
+	std::function<bool(const std::string&)> loadBlasFunc =
 		[&](const std::string& modelName) {
-		modelDataMap[modelName] = modelLoader.LoadModel(modelDir + modelName + ".obj");
-		std::vector<QFE::MATH::Vector3> objectVertices;
-		objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(
-			modelDataMap[modelName].meshes[0].vertices.GetInternalVector().data(),
-			modelDataMap[modelName].meshes[0].vertices.GetInternalVector().size());
-		QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(objectVertices, modelName);
-		blasHandleMap[modelName] = blasHandle;
+		QFE::ASSET::ModelData modelData;
+		if (modelLoader.LoadModel(modelDir + modelName + ".obj", modelData)) {
+			modelDataMap[modelName] = modelData;
+			std::vector<QFE::MATH::Vector3> objectVertices;
+			objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(
+				modelDataMap[modelName].meshes[0].vertices.GetInternalVector().data(),
+				modelDataMap[modelName].meshes[0].vertices.GetInternalVector().size());
+			QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(objectVertices, modelName);
+			blasHandleMap[modelName] = blasHandle;
+			return true;
+		}
+		return false;
 		};
 
 	// オフスクリーンレンダーターゲットの作成
@@ -150,15 +161,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			gameEditor.Update();
 
 			// カメラのビュー行列と投影行列を取得
-			QFE::MATH::Matrix4x4 viewProj;
-			if(gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
+			QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIndentity4x4();
+			if (gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
 				viewProj = cameraManager.GetViewProjectionMatrix(cameraHandle, cameraTransform, QFE::CAMERA::CameraType::Perspective);
 			} else {
 				entityManager.Each<QFE::SCENE::CameraComponent>([&](uint32_t entityId, QFE::SCENE::CameraComponent& cameraComp) {
-					if(cameraComp.isMainCamera) {
+					if (cameraComp.isMainCamera) {
 						if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 							QFE::MATH::Transform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 							cameraComp.viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
+							if(cameraComp.top_ - cameraComp.bottom_ != 0.0f) {
+								cameraComp.aspectRatio_ = fabsf((cameraComp.right_ - cameraComp.left_) / (cameraComp.top_ - cameraComp.bottom_));
+							} else {
+								cameraComp.aspectRatio_ = 1.0f; // デフォルトのアスペクト比
+							}
 							cameraComp.projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
 								cameraComp.fovY_, cameraComp.aspectRatio_, cameraComp.nearZ_, cameraComp.farZ_);
 
@@ -166,10 +182,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						}
 					}
 					});
-
-				viewProj = cameraManager.GetViewProjectionMatrix(cameraHandle, QFE::MATH::Transform(), QFE::CAMERA::CameraType::Perspective);
 			}
-			
 
 			// 各エンティティのModelRenderComponentを更新
 			std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
@@ -177,6 +190,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				modelRenderComp.canRender = false;
 				// TransformComponentを取得して、Transformを更新する
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId) == false) {
+					modelRenderComp.renderErrorMessage = "Missing TransformComponent for entity: " + std::to_string(entityId);
 					return;
 				}
 				QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
@@ -189,6 +203,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 				// マテリアルの更新
 				if (entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId) == false) {
+					modelRenderComp.renderErrorMessage = "Missing MaterialComponent for entity: " + std::to_string(entityId);
 					return;
 				}
 				QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
@@ -202,8 +217,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				if (vertexBufferMap.find(modelRenderComp.modelName) != vertexBufferMap.end()) {
 					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(vertexBufferMap[modelRenderComp.modelName]);
 				} else {
-					loadModelVertexBufferFunc(modelRenderComp.modelName);
-					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(vertexBufferMap[modelRenderComp.modelName]);
+					if (loadModelVertexBufferFunc(modelRenderComp.modelName)) {
+						modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(vertexBufferMap[modelRenderComp.modelName]);
+					} else {
+						modelRenderComp.renderErrorMessage = "Failed to load vertex buffer for model: " + modelRenderComp.modelName;
+						return;
+					}
 				}
 
 				// テクスチャの更新
@@ -212,8 +231,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
 
 				// レイトレーシングインスタンスの作成
-				if(blasHandleMap.find(modelRenderComp.modelName) == blasHandleMap.end()) {
-					loadBlasFunc(modelRenderComp.modelName);
+				if (blasHandleMap.find(modelRenderComp.modelName) == blasHandleMap.end()) {
+					if (!loadBlasFunc(modelRenderComp.modelName)) {
+						modelRenderComp.renderErrorMessage = "Failed to load BLAS for model: " + modelRenderComp.modelName;
+						return;
+					}
 				}
 				raytracingInstances.push_back({
 					blasHandleMap[modelRenderComp.modelName],
@@ -222,6 +244,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 				// レンダリング可能
 				modelRenderComp.canRender = true;
+				modelRenderComp.renderErrorMessage = "";
 				});
 
 			graphicEngine->UpdateBLASInstanceTransform(raytracingInstances);
@@ -255,7 +278,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				graphicEngine->GetRenderTargetTexture(renderTargets[2])
 			};
 
-			graphicEngine->RayTracingDispatch(rtpsoHandle, uavBufferHandle, rayTracingRootResources,sceneTextureHandle);
+			graphicEngine->RayTracingDispatch(rtpsoHandle, uavBufferHandle, rayTracingRootResources, sceneTextureHandle);
 
 			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager->PostDraw();

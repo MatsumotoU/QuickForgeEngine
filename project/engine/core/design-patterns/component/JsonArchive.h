@@ -13,6 +13,7 @@ namespace QFE {
         bool IsLoading() const override { return isLoading_; }
 
 		// 各型のシリアライズ/デシリアライズ処理を実装
+		void Process(const std::string& name, bool& value) override;
         void Process(const std::string& name, float& value) override;
         void Process(const std::string& name, int32_t& value) override;
 		void Process(const std::string& name, uint32_t& value) override;

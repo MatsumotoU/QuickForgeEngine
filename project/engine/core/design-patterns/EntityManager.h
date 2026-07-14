@@ -32,9 +32,13 @@ namespace QFE {
 		nlohmann::json SerializeEntityComponents(uint32_t entityId) const;
 		/// @brief エンティティのコンポーネントをJSONから復元する。
 		void DeserializeEntityComponents(uint32_t entityId, const nlohmann::json& componentsJson);
+		/// @brief エンティティのコンポーネントをJSONから復元する。
+		nlohmann::json SerializeComponent(uint32_t entityId, const std::string& componentTypeName) const;
 
 		/// @brief エンティティIDから、コンポーネント型名の一覧を取得する。
 		std::vector<std::string> GetComponentTypeNames(uint32_t entityId) const;
+		/// @brief 登録されている全てのコンポーネント型名の一覧を取得する。
+		std::vector<std::string> GetAllComponentTypeNames() const;
 
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントの生ポインタを取得する。
 		void* GetComponentRaw(uint32_t entityId, const char* componentTypeName) override;
@@ -47,6 +51,8 @@ namespace QFE {
 		void InstantRemoveEntity(uint32_t id);
 		/// @brief 新しいエンティティを作成する。新しいエンティティIDを返す。
 		uint32_t CreateEntity() override;
+		/// @brief 指定したIDでエンティティを強制的に作成する。
+		bool ForceCreateEntity(uint32_t id);
 		/// @brief エンティティを削除予定リストに追加する。フレーム終了時に削除される。
 		void RemoveEntity(uint32_t id) override;
 		/// @brief エンティティが有効かどうかを判定する。
@@ -151,6 +157,10 @@ namespace QFE {
 				storage.Each(func);
 			}
 		}
+		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを追加する。既に存在する場合は上書きする。
+		void AddDefaultComponent(uint32_t id, const std::string& componentTypeName);
+		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを削除する。
+		void DeleteComponent(uint32_t id, const std::string& componentTypeName);
 
 		/// @brief 指定のIDのエンティティに対して、指定のアーカイブでコンポーネントのリフレクションを行う。
 		void RefrectionComponent(uint32_t id, Archive& ar);

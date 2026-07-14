@@ -5,15 +5,15 @@
 namespace QFE::SCENE {
 	/// @brief カメラの情報を表すコンポーネントです。
 	struct CameraComponent {
-		float fovY_;
-		float aspectRatio_;
-		float nearZ_;
-		float farZ_;
+		float fovY_ = 0.45f;
+		float aspectRatio_ = 1280.0f / 720.0f;
+		float nearZ_ = 0.1f;
+		float farZ_ = 1000.0f;
 		// 画面の左、右、上、下の座標
-		float left_;
-		float right_;
-		float top_;
-		float bottom_;
+		float left_ = 0.0f;
+		float right_ = 1280.0f;
+		float top_ = 720.0f;
+		float bottom_ = 0.0f;
 
 		MATH::Transform transform;
 		MATH::Matrix4x4 viewMatrix;
@@ -30,6 +30,7 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(top_)
 			QFE_REFLECT_MEMBER(bottom_)
 			QFE_REFLECT_MEMBER(transform)
+			QFE_REFLECT_MEMBER(isMainCamera)
 			QFE_REFLECT_END()
 	};
 

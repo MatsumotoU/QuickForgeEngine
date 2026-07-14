@@ -10,6 +10,7 @@ namespace QFE {
         virtual bool IsLoading() const = 0; // 読み込み(デシリアライズ)中か判定
 
         // 基本型のバインディング
+		virtual void Process(const std::string& name, bool& value) = 0;
         virtual void Process(const std::string& name, float& value) = 0;
         virtual void Process(const std::string& name, int32_t& value) = 0;
 		virtual void Process(const std::string& name, uint32_t& value) = 0;

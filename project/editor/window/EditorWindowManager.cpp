@@ -17,8 +17,9 @@ void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* scen
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	editorWindowsMap_.clear();
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(&entityManager);
-	editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId);
 	editorWindowsMap_[EditorWindowType::Inspector] = std::make_unique<Inspector>(&entityManager);
+	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId);
+    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId);
 }
 
 void QFE::EDITOR::EditorWindowManager::Update() {
@@ -106,6 +107,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 		}
 		window->Draw(selectedEntities_, commandList);
 	}
+	selectedEntities_.clear();
 }
 
 bool QFE::EDITOR::EditorWindowManager::IsWindowFocused(EditorWindowType windowType) {

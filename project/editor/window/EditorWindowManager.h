@@ -21,6 +21,7 @@ namespace QFE::EDITOR {
 	enum class EditorWindowType {
 		Hierarchy,
 		SceneViewer,
+		GameViewer,
 		Inspector,
 		Profiler,
 		Console,

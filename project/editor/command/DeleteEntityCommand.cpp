@@ -15,7 +15,7 @@ void QFE::EDITOR::DeleteEntityCommand::Execute() {
 
 void QFE::EDITOR::DeleteEntityCommand::Undo() {
 	// エンティティを再作成する
-	uint32_t newEntityId = entityManager_->CreateEntity();
+	entityManager_->ForceCreateEntity(entityId_);
 	// 保存しておいたコンポーネントの情報を復元する
-	entityManager_->DeserializeEntityComponents(newEntityId, removedComponents_);
+	entityManager_->DeserializeEntityComponents(entityId_, removedComponents_);
 }

@@ -1,5 +1,15 @@
 #include "JsonArchive.h"
 
+void QFE::JsonArchive::Process(const std::string& name, bool& value) {
+    if (isLoading_) {
+        // デシリアライズ
+        if (json_.contains(name)) value = json_[name].get<bool>();
+    } else {
+        // シリアライズ
+        json_[name] = value;
+	}
+}
+
 void QFE::JsonArchive::Process(const std::string& name, float& value) {
     if (isLoading_) {
 		// デシリアライズ

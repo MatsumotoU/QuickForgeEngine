@@ -15,7 +15,23 @@ void AssimpModelLoader::Initialize() {
 	modelCache.clear();
 	invalidModelData = ModelData(); // 無効なモデルデータを初期化
 	QFE_LOG("AssimpModelLoader initialized, model cache cleared.");
-}	
+}
+
+bool QFE::ASSET::AssimpModelLoader::LoadModel(const std::string& filePath, ModelData& modelData) {
+	if (IsModelCached(filePath)) {
+		modelData = modelCache[filePath];
+		return true;
+	} else {
+		if (LoadModelData(filePath, modelData)) {
+			modelCache[filePath] = modelData; // キャッシュに保存
+			return true;
+		} else {
+			QFE_LOG(std::format("Failed to load model: {}", filePath));
+			return false;
+		}
+	}
+	return false;
+}
 
 ModelData& AssimpModelLoader::LoadModel(const std::string& filePath) {
 	// キャッシュにモデルデータが存在する場合はキャッシュから返す
@@ -29,7 +45,7 @@ ModelData& AssimpModelLoader::LoadModel(const std::string& filePath) {
 
 ModelData& AssimpModelLoader::ForceLoadModel(const std::string& filePath) {
 	// キャッシュを無視した場合ログを出力する
-	if(IsModelCached(filePath)) {
+	if (IsModelCached(filePath)) {
 		QFE_LOG(std::format("Force loading model, but it is already cached: {}", filePath));
 	}
 
@@ -40,7 +56,7 @@ ModelData& AssimpModelLoader::ForceLoadModel(const std::string& filePath) {
 
 bool AssimpModelLoader::IsModelCached(const std::string& filePath) const {
 	// キャッシュにモデルデータが存在するかどうかを確認
-	if(modelCache.find(filePath) != modelCache.end()) {
+	if (modelCache.find(filePath) != modelCache.end()) {
 		QFE_LOG(std::format("Model found in cache: {}", filePath));
 		return true;
 	} else {
@@ -49,13 +65,13 @@ bool AssimpModelLoader::IsModelCached(const std::string& filePath) const {
 	}
 }
 
-void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& modelData) {
+bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& modelData) {
 	Assimp::Importer importer;
 	// ファイルの存在確認
 	if (!QFE::FILE::HasFile(filePath)) {
 		QFE_LOG(std::format("Model file not found: {}", filePath));
 		assert(false && "Model file not found");
-		return;
+		return false;
 	}
 
 	// モデルの名前を設定
@@ -70,7 +86,7 @@ void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 	);
 	if (!scene || !scene->HasMeshes()) {
 		assert(false && "Faild Loaded Model");
-		return;
+		return false;
 	}
 
 	QFE_LOG(std::format("Model Load Success: {}", filePath));
@@ -140,5 +156,5 @@ void AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 		modelData.meshes.push_back(std::move(meshData));
 	}
 
-	return;
+	return true;
 }

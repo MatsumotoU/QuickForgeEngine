@@ -66,6 +66,10 @@ void QFE::EntityManager::DeserializeEntityComponents(uint32_t entityId, const nl
     }
 }
 
+nlohmann::json QFE::EntityManager::SerializeComponent(uint32_t entityId, const std::string& componentTypeName) const {
+	return SerializeEntityComponents(entityId)[componentTypeName];
+}
+
 std::vector<std::string> QFE::EntityManager::GetComponentTypeNames(uint32_t entityId) const {
     std::vector<std::string> componentNames;
     // 自動登録されたコンポーネントのエントリーを走査する
@@ -76,6 +80,14 @@ std::vector<std::string> QFE::EntityManager::GetComponentTypeNames(uint32_t enti
         }
     }
 	return componentNames;
+}
+
+std::vector<std::string> QFE::EntityManager::GetAllComponentTypeNames() const {
+    std::vector<std::string> componentTypeNames;
+    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
+        componentTypeNames.push_back(entry.name);
+    }
+    return componentTypeNames;
 }
 
 void QFE::EntityManager::ResetEntity() {
@@ -97,6 +109,17 @@ uint32_t QFE::EntityManager::CreateEntity() {
     uint32_t id = nextEntityId_++;
     activeEntityIds_.insert(id);
     return id;
+}
+
+bool QFE::EntityManager::ForceCreateEntity(uint32_t id) {
+    if(activeEntityIds_.find(id) == activeEntityIds_.end()) {
+        activeEntityIds_.insert(id);
+        if (id >= nextEntityId_) {
+            nextEntityId_ = id + 1;
+        }
+        return true;
+	}
+    return false;
 }
 
 void QFE::EntityManager::RemoveEntity(uint32_t id) {
@@ -152,6 +175,30 @@ std::vector<uint32_t> QFE::EntityManager::GetActiveEntityIds() const {
     std::vector<uint32_t> sortedIds(activeEntityIds_.begin(), activeEntityIds_.end());
     std::sort(sortedIds.begin(), sortedIds.end());
     return sortedIds;
+}
+
+void QFE::EntityManager::AddDefaultComponent(uint32_t id, const std::string& componentTypeName) {
+    // 自動登録のエントリーを走査
+    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
+        if (entry.name == componentTypeName) {
+            auto it = componentStorages.find(entry.typeId);
+            if (it != componentStorages.end()) {
+                it->second->AddDefaultComponent(id);
+            }
+        }
+    }
+}
+
+void QFE::EntityManager::DeleteComponent(uint32_t id, const std::string& componentTypeName) {
+    // 自動登録のエントリーを走査
+    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
+        if (entry.name == componentTypeName) {
+            auto it = componentStorages.find(entry.typeId);
+            if (it != componentStorages.end()) {
+                it->second->RemoveComponent(id);
+            }
+        }
+	}
 }
 
 void QFE::EntityManager::RefrectionComponent(uint32_t id, Archive& ar) {

@@ -14,6 +14,8 @@ namespace QFE::SCENE {
 		uint32_t materialResourceHandle; ///< マテリアルリソースハンドル
 		uint32_t textureResourceHandle; ///< テクスチャリソースハンドル
 
+		std::string renderErrorMessage; ///< レンダリングエラーメッセージ
+
 		QFE_REFLECT_BEGIN(ModelRenderComponent)
 			QFE_REFLECT_MEMBER(modelName)
 		QFE_REFLECT_END()

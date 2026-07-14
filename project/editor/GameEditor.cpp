@@ -19,6 +19,10 @@ void GameEditor::Update() {
 	if(windowManager_.IsWindowFocused(EditorWindowType::SceneViewer)) {
 		activeCameraType_ = EditorCameraType::DebugCamera;
 	}
+	// ゲームビューがアクティブになった場合メインカメラに切り替える
+	if(windowManager_.IsWindowFocused(EditorWindowType::GameViewer)) {
+		activeCameraType_ = EditorCameraType::MainCamera;
+	}
 }
 
 void GameEditor::Draw() {
