@@ -90,23 +90,22 @@ namespace QFE::INPUT {
 	/** @brief デフォルトのキーコンフィグを設定 */
 	void KeyConfig::SettingDefaultKeyConfig() {
 		// 移動
-		AddKey("MoveRight", DIK_RIGHT);
-		AddKey("MoveRight", DIK_D);
-		AddKey("MoveLeft", DIK_LEFT);
-		AddKey("MoveLeft", DIK_A);
-		AddKey("MoveUp", DIK_UP);
-		AddKey("MoveUp", DIK_W);
-		AddKey("MoveDown", DIK_DOWN);
-		AddKey("MoveDown", DIK_S);
-		// ジャンプ
-		AddKey("Jump", DIK_SPACE);
-		// 攻撃
-		AddKey("Attack", DIK_LCONTROL);
+		AddKey("Right", DIK_RIGHT);
+		AddKey("Right", DIK_D);
+		AddKey("Left", DIK_LEFT);
+		AddKey("Left", DIK_A);
+		AddKey("Up", DIK_UP);
+		AddKey("Up", DIK_W);
+		AddKey("Down", DIK_DOWN);
+		AddKey("Down", DIK_S);
+		// Shot
+		AddKey("Shot", DIK_SPACE);
 		// メニュー
 		AddKey("Menu", DIK_ESCAPE);
 		// 決定
-		AddKey("Decide", DIK_RETURN);
-		AddKey("Decide", DIK_SPACE);
+		AddKey("Enter", DIK_RETURN);
+		AddKey("Enter", DIK_SPACE);
+		AddKey("Enter", DIK_RETURN);
 		// キャンセル
 		AddKey("Cancel", DIK_BACKSPACE);
 		AddKey("Cancel", DIK_ESCAPE);

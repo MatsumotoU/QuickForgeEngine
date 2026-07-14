@@ -1,4 +1,5 @@
 #pragma once
+// コアコンポーネント
 #include "TransformComponent.h"
 #include "ObjectInfoComponent.h"
 #include "VertexComponent.h"
@@ -6,3 +7,6 @@
 #include "ModelRenderComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
+#include "SphereColliderComponent.h"
+// シューティング用のコンポーネント
+#include "shooting/ShootingPlayerComponent.h"

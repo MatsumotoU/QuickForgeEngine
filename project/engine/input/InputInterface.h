@@ -4,80 +4,67 @@
  */
 
 #pragma once
-#include "DirectInput/DirectInputManager.h"
-#include "XInput/XInputController.h"
+#include "math/MathInclude.h"
+#include <string>
+#include <cstdint>
 
-#include "KeyConfig.h"
-#include "Logger/InputLogger.h"
 namespace QFE::INPUT {
 	/**
 	 * @class InputInterface
 	 * @brief 直観的な入力取得APIを提供し、内部でDirectInputやXInputを制御するシングルトンクラス
 	 */
-	class InputInterface final {
+	class InputInterface {
 	public:
-		/// @brief Windows用入力受付窓口
-		void Initialize(const HWND& hwnd, const HINSTANCE& hInstance);
-		/// @brief 終了処理
-		void Finalize();
-		/// @brief 更新処理（毎フレーム呼び出し）
-		void Update();
+		/// @brief 更新処理
+		virtual void Update() = 0;
 		/// @brief フレーム終了時の処理
-		void EndFrame();
+		virtual void EndFrame() = 0;
 
 		/// @brief 今フレームで押されたキーコードを取得（任意の一つのキー）
-		uint32_t GetKeyCodeTrigger();
+		virtual uint32_t GetKeyCodeTrigger() = 0;
 		/// @brief 何かキーが押されているか判定
-		bool IsAnyKeyPressed();
+		virtual bool IsAnyKeyPressed() = 0;
 
 		// --- キーボード入力 ---
+		/// @brief キーコードに対応するキーが押されているか
+		virtual bool GetKeyPress(uint32_t keyCode) = 0;
+		/// @brief キーコードに対応するキーが押された瞬間か
+		virtual bool GetKeyTrigger(uint32_t keyCode) = 0;
+		/// @brief キーコードに対応するキーが離された瞬間か
+		virtual bool GetKeyRelease(uint32_t keyCode) = 0;
 		/// @brief アクション名に対応するキーが押されているか
-		bool GetKeyPress(const std::string& actionName);
+		virtual bool GetKeyPress(const std::string& actionName) = 0;
 		/// @brief アクション名に対応するキーが押された瞬間か
-		bool GetKeyTrigger(const std::string& actionName);
+		virtual bool GetKeyTrigger(const std::string& actionName) = 0;
 		/// @brief アクション名に対応するキーが離された瞬間か
-		bool GetKeyRelease(const std::string& actionName);
+		virtual bool GetKeyRelease(const std::string& actionName) = 0;
 		/// @brief 移動操作（WASD等）の方向ベクトルを計算して取得
-		MATH::Vector2 GetKeyMoveDir();
+		virtual MATH::Vector2 GetKeyMoveDir() = 0;
 
 		// --- マウス入力 ---
 		/// @brief マウスボタンが押されているか
-		bool GetMousePress(int8_t button);
+		virtual bool GetMousePress(int8_t button) = 0;
 		/// @brief マウスボタンが押された瞬間か
-		bool GetMouseTrigger(int8_t button);
+		virtual bool GetMouseTrigger(int8_t button) = 0;
 		/// @brief マウスボタンが離された瞬間か
-		bool GetMouseRelease(int8_t button);
+		virtual bool GetMouseRelease(int8_t button) = 0;
 		/// @brief マウスの移動量を取得
-		MATH::Vector2 GetMouseMove();
+		virtual MATH::Vector2 GetMouseMove() = 0;
 		/// @brief マウスのスクリーン座標を取得
-		MATH::Vector2 GetMouseScreenPos();
+		virtual MATH::Vector2 GetMouseScreenPos() = 0;
 		/// @brief マウスホイールの回転量を取得
-		float GetMouseWheelDir();
+		virtual float GetMouseWheelDir() = 0;
 
 		// --- ゲームパッド入力 ---
 		/// @brief パッドのボタンが押されているか
-		bool GetGamePadPress(uint16_t button);
+		virtual bool GetGamePadPress(uint16_t button) = 0;
 		/// @brief パッドのボタンが押された瞬間か
-		bool GetGamePadTrigger(uint16_t button);
+		virtual bool GetGamePadTrigger(uint16_t button) = 0;
 		/// @brief パッドのボタンが離された瞬間か
-		bool GetGamePadRelease(uint16_t button);
+		virtual bool GetGamePadRelease(uint16_t button) = 0;
 		/// @brief 左スティックの入力を取得
-		MATH::Vector2 GetGamePadLeftStickDir();
+		virtual MATH::Vector2 GetGamePadLeftStickDir() = 0;
 		/// @brief 右スティックの入力を取得
-		MATH::Vector2 GetGamePadRightStickDir();
-
-		// --- キーコンフィグ ---
-		/// @brief アクション名にキーコードを紐付け
-		void AddKeyConfig(const std::string& actionName, uint32_t keyCorde);
-		/// @brief 指定したアクションのキー設定をクリア
-		void ClearKeyConfig(const std::string& actionName);
-		/// @brief アクションに紐付けられたキーコードリストを取得
-		const std::vector<uint32_t>& GetKeyConfig(const std::string& actionName);
-
-	private:
-		KeyConfig keyConfig_;
-		InputLogger inputLogger_;
-		DirectInputManager directInputManager_;
-		XInputController xInputController_;
+		virtual MATH::Vector2 GetGamePadRightStickDir() = 0;
 	};
 }  // namespace QFE::INPUT

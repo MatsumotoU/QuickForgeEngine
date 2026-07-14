@@ -44,3 +44,7 @@ float QFE::FPSCounter::GetAverageFPS() const {
 	// 平均FPSを返す
 	return sum / static_cast<float>(averageFPS_.size());
 }
+
+float QFE::FPSCounter::GetDeltaTime() const {
+	return elapsedTime_;
+}

@@ -1,6 +1,7 @@
 #pragma once
 #include "IEditorWindow.h"
 #include <imgui/imgui.h>
+#include <ImGuizmo-1.83/ImGuizmo.h>
 
 namespace QFE::EDITOR {
 	/// @brief SceneViewerはシーンを表示します

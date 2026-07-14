@@ -12,5 +12,6 @@ project "Input"
 
         -- 追加のインクルード
         includedirs {
+            "%{wks.location}/engine/",
             "%{wks.location}/engine/core/",
         }

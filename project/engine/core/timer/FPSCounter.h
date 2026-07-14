@@ -18,6 +18,8 @@ namespace QFE {
 		float GetCurrentFPS() const;
 		/// @brief 過去100フレームの平均FPSを取得します。
 		float GetAverageFPS() const;
+		/// @brief 現在のフレームインデックスを取得します。
+		float GetDeltaTime() const; // 前のフレームからの経過時間を取得
 
 	private:
 		std::chrono::microseconds frameStartTime_; // フレームの開始時間

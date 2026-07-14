@@ -30,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// デバッグログの初期化
 	QFE::MyDebugLog::GetInstance()->Initialize();
 
-	std::string mainWindowName = "GameEditor";
+	std::string mainWindowName = "ShootingGameEditor";
 	uint32_t mainWindowHeight = 720;
 	uint32_t mainWindowWidth = 1280;
 	// ゲームウィンドウマネージャの初期化とウィンドウの追加

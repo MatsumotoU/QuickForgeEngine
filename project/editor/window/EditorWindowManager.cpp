@@ -85,6 +85,22 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 					commandList.AddCommand(std::make_unique<SaveSceneCommand>(QFE::ConvertString(selectedFilePath), sceneManager_));
                 }
             }
+            // エンティティの保存
+            if (ImGui::MenuItem("Save Selected Entities", nullptr)) {
+                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+                std::wstring selectedFilePath;
+                if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
+                    mainWindow_,
+                    L"JSON Files", L"*.json",
+					selectedFilePath)) {
+					// 選択されたエンティティの保存
+                    for(uint32_t entityId : selectedEntities_) {
+						nlohmann::json entityJson =
+                            sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
+					}
+					
+                }
+			}
             ImGui::EndMenu();
         }
 		// ウィンドウメニュー
@@ -121,13 +137,13 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
     ImGui::End();
 
+    selectedEntities_.clear();
 	for (auto& [type, window] : editorWindowsMap_) {
         if (!window->GetIsActive()) {
             continue;
 		}
 		window->Draw(selectedEntities_, commandList);
 	}
-	selectedEntities_.clear();
 }
 
 bool QFE::EDITOR::EditorWindowManager::IsWindowFocused(EditorWindowType windowType) {

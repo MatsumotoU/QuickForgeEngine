@@ -15,9 +15,11 @@ project "Runtime" -- Runtime
             "EngineAssetsFactory",
             "SceneFramework",
             "ScriptFramework",
+            "InputFramework",
             "Camera",
             "ImGui",
             "Components",
+            "Input",
         }
 
         -- 警告レベル4

@@ -136,6 +136,16 @@ void QFE::EDITOR::Inspector::DrawObjectInfoComponent(uint32_t entityId, EditorCo
 			ImGui::InputText("Script Function Name", &scriptComp.scriptFunctionName);
 		}
 	}
+
+	// PlayerComponentの表示
+	if(entityManager_->HasComponent<QFE::STG::ShootingPlayerComponent>(entityId)) {
+		auto& playerComp = entityManager_->GetComponent<QFE::STG::ShootingPlayerComponent>(entityId);
+		if (ImGui::CollapsingHeader("Player")) {
+			ImGui::DragFloat("Speed", &playerComp.speed);
+			ImGui::DragFloat("Shoot Interval", &playerComp.shootInterval);
+			ImGui::DragFloat("Bomb Interval", &playerComp.bombInterval);
+		}
+	}
 }
 
 void QFE::EDITOR::Inspector::AddComponentUI(uint32_t entityId, EditorCommandList& commandList) {

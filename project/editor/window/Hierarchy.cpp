@@ -8,6 +8,8 @@
 
 #include <imgui/imgui.h>
 
+#include "framework/window/WindowsWindowFrameWork.h"
+
 QFE::EDITOR::Hierarchy::Hierarchy(EntityManager* entityManager)
 	: entityManager_(entityManager), isActive_(true) {}
 
