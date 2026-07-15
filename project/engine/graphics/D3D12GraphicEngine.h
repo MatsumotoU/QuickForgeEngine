@@ -48,7 +48,7 @@ namespace QFE::GRAPHIC {
 		DummyWhite1x1Texture
 	};
 
-	/// @brief DirectX12を使用したグラフィックエンジンの実装クラス
+	/// @brief DirectX12を使用したグラフィック機能のラッパー所持クラス
 	class D3D12GraphicEngine final : public IGraphicEngine {
 	public:
 		/// @brief wndowsに依存したグラフィックエンジンです.描画ウィンドウのハンドルの引数に取ります.
@@ -62,87 +62,50 @@ namespace QFE::GRAPHIC {
 		void PostDraw() override;
 		void Shutdown() override;
 
-		// ユーザーが任意のタイミングで呼び出す関数群
-		/// @brief ビューポートの作成.
-		ViewPortHandle CreateViewPort(uint32_t width, uint32_t height);
-		/// @brief シザリング矩形の作成.
-		ScissorRectHandle CreateScissorRect(int left, int top, int right, int bottom);
-		/// @brief 画像ファイルを読み込む.
-		DirectXResourceHandle CreateTextureFromFile(const std::string& filePath);
-		/// @brief ビルトインテクスチャのハンドルを取得する.
-		DirectXResourceHandle GetBuiltInTextureHandle(BuiltInTextureType type);
-
-		/// @brief 頂点データから頂点バッファハンドルを作成する.
-		DirectXResourceHandle CreateVertexBuffer(const std::vector<VertexData>& vertexData, const std::string& meshName);
-		/// @brief シェーダーペアの作成.
-		ShaderPairHandle CreateShaderPair(const ShaderPairElement& element);
-		/// @brief シェーダーペアと各種情報からPSOハンドルを作成する.
-		PSOHandle CreatePipelineStateObject(
-			ShaderPairHandle shaderHandle, BlendMode blendMode,RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
-		PSOHandle GetBuiltInPipelineStateObject(
-			BuiltInShaderPair builtInShaderPair, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
-		/// @brief コンピュートシェーダーのPSOを生成します
-		ComputePSOHandle CreateComputePipelineStateObject(const std::string& dirPath, const std::string& csFileName);
-		/// @brief オフスクリーンのレンダーターゲットを生成します.
-		RenderTargetHandle CreateOffScreenRenderTarget(uint32_t width, uint32_t height, DXGI_FORMAT format);
-
-		/// @brief あるリソースの配列の数を取得する.
-		size_t GetResourceArraySize(DirectXResourceHandle handle);
-
-		/// @brief DirectXResourceAllocatorを取得する.
-		DirectXResourceAllocator* GetResourceAllocator();
-
 		/// @brief 定数バッファのデータを取得する.データの型はテンプレートで指定する.
 		template<typename T>
 		T* GetConstantBufferData(DirectXResourceHandle handle) {
 			return resourceContainer_->template GetMappedData<T>(handle);
 		}
 
-		/// @brief UAVバッファを作成
-		DirectXResourceHandle CreateUAVBuffer(uint32_t width, uint32_t height,const std::wstring& name);
-		/// @brief レイトレ用のPSOを作成する.ディレクトリパスと.hlslファイル名を指定する.
-		RTPSOHandle CreateRayTracingPipelineStateObject(const std::string& dirPath, const std::string& rgsFileName);
+		// * 各機能の取得 * //
+		/// @brief DirectX12のデバイスラップクラスを取得する
+		DirectXDevice* GetDirectXDevice() const;
+		/// @brief DirectX12のリソースコンテナクラスを取得する
+		DirectXResourceContainer* GetDirectXResourceContainer() const;
+		/// @brief DirectX12のリソース割り当てクラスを取得する
+		DirectXResourceAllocator* GetDirectXResourceAllocator() const;
+		/// @brief DirectX12のデスクリプタヒープ管理クラスを取得する
+		DescriptorHeapManager* GetDescriptorHeapManager() const;
+		/// @brief DirectX12のコマンド管理クラスを取得する
+		DirectXCommandManager* GetDirectXCommandManager() const;
+		/// @brief DirectX12のフェンス管理クラスを取得する
+		Fence* GetFence() const;
+		/// @brief DirectX12のシェーダーリフレクションクラスを取得する
+		ShaderReflection* GetShaderReflection() const;
+		/// @brief DirectX12のシェーダーライブラリリフレクションクラスを取得する
+		ShaderLibReflection* GetShaderLibReflection() const;
+		/// @brief DirectX12のシェーダーコンパイルクラスを取得する
+		ShaderCompiler* GetShaderCompiler() const;
+		/// @brief DirectX12のグラフィックパイプライン管理クラスを取得する
+		GraphicPipelineManager* GetGraphicPipelineManager() const;
+		/// @brief DirectX12のコンピュートパイプライン管理クラスを取得する
+		ComputePipelineManager* GetComputePipelineManager() const;
+		/// @brief DirectX12のレイトレーシングパイプライン管理クラスを取得する
+		RaytracingPipelineManager* GetRayTracingPipelineManager() const;
+		/// @brief DirectX12のテクスチャ管理クラスを取得する
+		TextureLoader* GetTextureLoader() const;
+		/// @brief DirectX12のビューポートのコンテナを取得する
+		QFE::UniqueContainer<D3D12_VIEWPORT>& GetViewports();
+		/// @brief DirectX12のシザリング矩形のコンテナを取得する
+		QFE::UniqueContainer<D3D12_RECT>& GetScissorRects();
+		/// @brief DirectX12のレンダーターゲット管理クラスを取得する
+		RenderPass* GetRenderPass() const;
+		/// @brief DirectX12のレイトレーシング用の加速構造の管理クラスを取得する
+		RaytracingAccelerationStructure* GetRaytracingAccelerationStructure();
 
-		/// @brief BLASを作成する.名前は任意で指定できる.
-		BLASHandle CreateBLAS(std::vector<QFE::MATH::Vector3> vertices, const std::string& name);
-		/// @brief BLASインスタンスの変換行列を更新する.
-		void UpdateBLASInstanceTransform(const std::vector<QFE::GRAPHIC::RaytracingInstance>& instances);
-		/// @brief RenderTargetHandleからレンダーターゲットのテクスチャのリソースハンドルを取得する.
-		DirectXResourceHandle GetRenderTargetTexture(RenderTargetHandle renderTargetHandle);
-
-		void SetRenderTarget(RenderTargetHandle renderTargetHandle);
-		
-		void TestDraw(
-			PSOHandle psoHandle,ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
-			DirectXResourceHandle vertexBufferHandle,std::vector<DirectXResourceHandle> rootResources);
-		void TestOffScreenDraw(
-			PSOHandle psoHandle, ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
-			DirectXResourceHandle vertexBufferHandle, std::vector<DirectXResourceHandle> rootResources,
-			std::vector<RenderTargetHandle> renderTargets);
-
-		void TestCompute(
-			ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle);
-
-		void TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle);
-
-		void TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle, std::vector<DirectXResourceHandle> rootResources);
-
-		void RayTracingDispatch(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle, 
-			std::vector<DirectXResourceHandle> rootResources, DirectXResourceHandle copyResourceHandle);
-
-		/// @brief DirectX12のデバイスを取得する
-		ID3D12Device* GetDevice() const;
-		/// @brief DirectX12のコマンドリストを取得する
-		ID3D12GraphicsCommandList* GetCommandList(D3D12_COMMAND_LIST_TYPE type) const;
-		/// @brief SwapChainのバッファ数を取得する
-		UINT GetSwapChainBufferCount() const;
-		/// @brief DescriptorHeapを取得する
-		ID3D12DescriptorHeap* GetSRVDescriptorHeap() const;
-		/// @brief SRVディスクリプタヒープからSRVディスクリプタを割り当てる関数
-		DescriptorHandles CreateExternalSRVDescriptor();
-
-		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVDescriptorGPUHandle(DirectXResourceHandle handle) const;
-		D3D12_CPU_DESCRIPTOR_HANDLE GetSRVDescriptorCPUHandle(DirectXResourceHandle handle) const;
+		/// @brief DirectX12の深度ステンシルバッファのリソースハンドルを取得する
+		DirectXResourceHandle GetDepthStencilBufferHandle() const;
 
 	private:
 		/// @brief DirectXCommonの名残.fenceの初期化以降の処理.

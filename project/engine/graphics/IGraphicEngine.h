@@ -17,13 +17,5 @@ namespace QFE::GRAPHIC {
 		virtual void Draw() = 0;
 		virtual void PostDraw() = 0;
 		virtual void Shutdown() = 0;
-
-		/// @}
-
-		/// @name ユーザー関数
-		/// @brief ユーザーが任意のタイミングで呼び出す関数群
-		/// @{
-
-		/// @}
 	};
 }

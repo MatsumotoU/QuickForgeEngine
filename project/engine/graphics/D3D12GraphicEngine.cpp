@@ -259,6 +259,11 @@ void D3D12GraphicEngine::Shutdown() {
 	directXDevice_->Shutdown();
 }
 
+DirectXDevice* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXDevice() const {
+	assert(directXDevice_ != nullptr);
+	return directXDevice_.get();
+}
+
 ViewPortHandle D3D12GraphicEngine::CreateViewPort(uint32_t width, uint32_t height) {
 	D3D12_VIEWPORT viewport{};
 	viewport.TopLeftX = 0.0f;
