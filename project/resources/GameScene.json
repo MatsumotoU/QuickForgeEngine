@@ -3,7 +3,7 @@
         {
             "AutoScrollComponent": {
                 "distance": 100.0,
-                "speed": 2.0
+                "speed": 1.5
             },
             "CameraComponent": {
                 "aspectRatio_": 1.7777777910232544,
@@ -93,8 +93,8 @@
         },
         {
             "AutoScrollComponent": {
-                "distance": 89.0,
-                "speed": 2.0
+                "distance": 100.0,
+                "speed": 1.5
             },
             "HealthComponent": {
                 "health": 3,
@@ -116,7 +116,7 @@
                 "autoScrollSpeed": {
                     "x": 0.0,
                     "y": 0.0,
-                    "z": 2.0
+                    "z": 1.5
                 },
                 "center": {
                     "x": 0.0,
@@ -725,6 +725,55 @@
                         "x": 5.861000061035156,
                         "y": 7.5,
                         "z": 77.0
+                    }
+                }
+            }
+        },
+        {
+            "EnemyAIComponent": {
+                "bulletName": "EnemyBullet.json",
+                "shotInterval": 2.0,
+                "shotTimer": 0.0
+            },
+            "HealthComponent": {
+                "health": 3,
+                "maxHealth": 3
+            },
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "ico"
+            },
+            "ObjectInfoComponent": {
+                "name": "Enemy"
+            },
+            "SphereColliderComponent": {
+                "mask": 2,
+                "onCollisionEnterScriptFunctionName": "",
+                "radius": 1.0
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -4.0,
+                        "y": 2.5,
+                        "z": 26.0
                     }
                 }
             }

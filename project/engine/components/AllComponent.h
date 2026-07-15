@@ -16,3 +16,4 @@
 #include "shooting/MoveLimitComponent.h"
 #include "shooting/PlayerTrackingComponent.h"
 #include "shooting/AutoScrollComponent.h"
+#include "shooting/EnemyAIComponent.h"

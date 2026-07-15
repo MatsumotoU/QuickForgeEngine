@@ -263,6 +263,39 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				}
 				});
 
+			// 敵の処理
+			std::vector<QFE::MATH::Vector3> playerPositionsE;
+			entityManager.Each<QFE::STG::ShootingPlayerComponent>([&](uint32_t entityId, QFE::STG::ShootingPlayerComponent& shootingPlayerComp) {
+				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+					QFE::MATH::Transform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+					playerPositionsE.push_back(playerTransform.translate);
+				}
+				});
+			entityManager.Each<QFE::STG::EnemyAIComponent>([&](uint32_t entityId, QFE::STG::EnemyAIComponent& enemyAIComp) {
+				enemyAIComp.shotTimer -= deltaTime;
+				if (enemyAIComp.shotTimer <= 0.0f) {
+					enemyAIComp.shotTimer = enemyAIComp.shotInterval;
+					uint32_t bulletEntityId =
+						sceneManager.LoadEntityOnCurrentSceneFromJsonObject(assetDir + enemyAIComp.bulletName);
+					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId) &&
+						entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+						QFE::MATH::Transform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
+						QFE::MATH::Transform& enemyTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+						bulletTransform.translate = enemyTransform.translate;
+					}
+					// プレイヤーの位置に向かって弾丸を発射する
+					if (!playerPositionsE.empty()) {
+						QFE::MATH::Vector3 targetPosition = playerPositionsE[0]; // 最初のプレイヤーの位置をターゲットにする
+						if (entityManager.HasComponent<QFE::STG::BulletComponent>(bulletEntityId) &&
+							entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId)) {
+							QFE::STG::BulletComponent& bulletComp = entityManager.GetComponent<QFE::STG::BulletComponent>(bulletEntityId);
+							QFE::MATH::Transform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
+							bulletComp.dir = (targetPosition - bulletTransform.translate).Normalize();
+						}
+					}
+				}
+				});
+
 			// 弾丸の処理
 			entityManager.Each<QFE::STG::BulletComponent>([&](uint32_t entityId, QFE::STG::BulletComponent& bulletComp) {
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
@@ -411,7 +444,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						averagePosition.y /= static_cast<float>(playerPositions.size());
 						averagePosition.z /= static_cast<float>(playerPositions.size());
 						QFE::MATH::Vector3 directionToPlayer = averagePosition - transform.translate;
-						directionToPlayer.Normalize();
+						directionToPlayer = directionToPlayer.Normalize();
 						float targetYaw = atan2f(directionToPlayer.x, directionToPlayer.z);
 						float targetPitch = asinf(-directionToPlayer.y);
 						targetYaw = std::lerp(targetYaw, autoTrackComp.trackingRotationOffset.y, autoTrackComp.trackingRotationTranspose);

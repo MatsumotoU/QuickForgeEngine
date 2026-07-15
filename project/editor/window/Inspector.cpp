@@ -217,6 +217,15 @@ void QFE::EDITOR::Inspector::DrawObjectInfoComponent(uint32_t entityId, EditorCo
 			ImGui::DragFloat("Auto Scroll Distance", &autoScrollComp.distance);
 		}
 	}
+
+	// EnemyComponentの表示
+	if(entityManager_->HasComponent<QFE::STG::EnemyAIComponent>(entityId)) {
+		auto& enemyComp = entityManager_->GetComponent<QFE::STG::EnemyAIComponent>(entityId);
+		if (ImGui::CollapsingHeader("EnemyComponent")) {
+			ImGui::InputText("Bullet Name", &enemyComp.bulletName);
+			ImGui::DragFloat("Shot Interval", &enemyComp.shotInterval);
+		}
+	}
 }
 
 void QFE::EDITOR::Inspector::AddComponentUI(uint32_t entityId, EditorCommandList& commandList) {
