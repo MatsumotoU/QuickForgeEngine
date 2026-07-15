@@ -7,6 +7,10 @@ project "FrameworkCore"
             "EngineCore",
             "GraphicEngine",
             "WindowSystem",
+            "Input",
+            "GUIEngine",
+            "Components",
+            "EngineAssetsFactory",
         }
 
         -- 警告レベル4

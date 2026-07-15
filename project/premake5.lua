@@ -89,6 +89,8 @@ group "02_Middleware" -- アセットの読み込みや、サブシステムで�
 group ""
 
 group "03_Frameworks" -- 下層の処理をまとめるフレームワークプロジェクト達
+    -- コアフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/core/premake5.lua"))
     -- グラフィックフレームワークプロジェクトの読み込み
     dofile(path.join(_root, "engine/framework/graphic/premake5.lua"))
     -- ウィンドウフレームワークプロジェクトの読み込み
