@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <unordered_map>
+#include <stdint.h>
 #include "EngineDefines.h"
 
 namespace QFE::SCENE {

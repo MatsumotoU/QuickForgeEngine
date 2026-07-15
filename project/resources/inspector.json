@@ -1,30 +1,6 @@
 {
     "entities": [
         {
-            "ObjectInfoComponent": {
-                "name": "DebugCamera"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.4331267178058624,
-                        "y": 0.08468572050333023,
-                        "z": -0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -2.4754042625427246,
-                        "y": 13.532660484313965,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
             "CameraComponent": {
                 "aspectRatio_": 1.7777777910232544,
                 "bottom_": 0.0,
@@ -71,7 +47,7 @@
                     "translate": {
                         "x": 0.0,
                         "y": 17.0,
-                        "z": -27.0
+                        "z": 0.0
                     }
                 }
             }
@@ -106,7 +82,7 @@
                     "translate": {
                         "x": 0.0,
                         "y": -0.10000000149011612,
-                        "z": 0.0
+                        "z": 75.0
                     }
                 }
             }
@@ -126,6 +102,24 @@
             "ObjectInfoComponent": {
                 "name": "Player"
             },
+            "ShootingPlayerComponent": {
+                "bombInterval": 0.0,
+                "bombPrefabName": "Bomb.json",
+                "bombSpawnOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "bulletPrefabName": "Bullet.json",
+                "bulletSpawnOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "damping": 0.8500000238418579,
+                "shootInterval": 0.30000001192092896,
+                "speed": 3.0
+            },
             "TransformComponent": {
                 "transform": {
                     "rotate": {
@@ -140,8 +134,8 @@
                     },
                     "translate": {
                         "x": 0.0,
-                        "y": 1.5,
-                        "z": -5.199999809265137
+                        "y": 2.5,
+                        "z": 16.0
                     }
                 }
             }
@@ -305,7 +299,7 @@
                     "translate": {
                         "x": -4.032673358917236,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 24.0
                     }
                 }
             }
@@ -661,440 +655,29 @@
             }
         },
         {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
+            "BulletComponent": {
+                "dir": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                },
+                "lifeTime": 0.0,
+                "lifeTimeMax": 3.0,
+                "speed": 3.0
             },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 6.114436149597168,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 0.5882352590560913,
+                    "z": 0.0
                 }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
             },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -5.245373725891113,
-                        "y": 0.6593971252441406,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
+            "ModelRenderComponent": {
+                "modelName": "box"
             },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -6.386846542358398,
-                        "y": 0.6589999794960022,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
             "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -5.9967570304870605,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 2.8185484409332275,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 2.78826904296875,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -4.941191673278809,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 6.8660078048706055,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -6.772648811340332,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -3.8079586029052734,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -1.0514583587646484,
-                        "y": 0.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 4.5674333572387695,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -5.71996545791626,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -5.929142951965332,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 5.9847540855407715,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": -2.7800936698913574,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 4.35081148147583,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "EnemySpawnPoint"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": -0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 0.3659985065460205,
-                        "y": 2.5,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "TutorialUI"
+                "name": "Bullet"
             },
             "TransformComponent": {
                 "transform": {
@@ -1104,38 +687,14 @@
                         "z": 0.0
                     },
                     "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 22.899999618530273,
-                        "y": -12.800000190734863,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "BgmPlayer"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
+                        "x": 0.10000000149011612,
+                        "y": 0.10000000149011612,
+                        "z": 0.30000001192092896
                     },
                     "translate": {
                         "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
+                        "y": 8.0,
+                        "z": 12.0
                     }
                 }
             }

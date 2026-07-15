@@ -1,0 +1,53 @@
+{
+    "BulletComponent": {
+        "damage": 1,
+        "dir": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+        },
+        "isGravity": false,
+        "lifeTime": 0.0,
+        "lifeTimeMax": 3.0,
+        "mask": 1,
+        "speed": 7.0
+    },
+    "MaterialComponent": {
+        "albedoColor": {
+            "w": 1.0,
+            "x": 1.0,
+            "y": 0.5882352590560913,
+            "z": 0.0
+        }
+    },
+    "ModelRenderComponent": {
+        "modelName": "box"
+    },
+    "ObjectInfoComponent": {
+        "name": "Bullet"
+    },
+    "SphereColliderComponent": {
+        "mask": 1,
+        "onCollisionEnterScriptFunctionName": "",
+        "radius": 1.0
+    },
+    "TransformComponent": {
+        "transform": {
+            "rotate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.10000000149011612,
+                "y": 0.10000000149011612,
+                "z": 0.30000001192092896
+            },
+            "translate": {
+                "x": 0.0,
+                "y": 8.0,
+                "z": 12.0
+            }
+        }
+    }
+}

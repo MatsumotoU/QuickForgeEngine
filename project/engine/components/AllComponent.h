@@ -8,5 +8,11 @@
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
 #include "SphereColliderComponent.h"
+#include "AnimationComponent.h"
 // シューティング用のコンポーネント
 #include "shooting/ShootingPlayerComponent.h"
+#include "shooting/BulletComponent.h"
+#include "shooting/HealthComponent.h"
+#include "shooting/MoveLimitComponent.h"
+#include "shooting/PlayerTrackingComponent.h"
+#include "shooting/AutoScrollComponent.h"

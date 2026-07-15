@@ -2,6 +2,7 @@
 #include "SceneObject.h"
 #include <nlohmann/json.hpp>
 
+
 namespace QFE::SCENE {
 	/// @brief シーンの管理クラスです.
 	class SceneManager final {
@@ -21,11 +22,16 @@ namespace QFE::SCENE {
 		/// @brief JSONファイルから現在のシーンをロードし、JSONオブジェクトとして返します.
 		nlohmann::json LoadCurrentSceneToJson(const std::string& filePath);
 
+		/// @brief JSONオブジェクトから現在のシーンにエンティティをロードします.
+		uint32_t LoadEntityOnCurrentSceneFromJsonObject(const std::string& filePath);
+
 		/// @brief 現在のシーンのエンティティマネージャーの参照を取得します.
 		QFE::EntityManager& GetCurrentSceneEntityManager();
 
 	private:
 		/// @brief 現在のシーンオブジェクトです.
 		SceneObject currentScene_;
+
+		
 	};
 }

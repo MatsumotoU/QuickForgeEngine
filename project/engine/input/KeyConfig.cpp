@@ -98,6 +98,8 @@ namespace QFE::INPUT {
 		AddKey("Up", DIK_W);
 		AddKey("Down", DIK_DOWN);
 		AddKey("Down", DIK_S);
+		// 減速
+		AddKey("Slow", DIK_LSHIFT);
 		// Shot
 		AddKey("Shot", DIK_SPACE);
 		// メニュー

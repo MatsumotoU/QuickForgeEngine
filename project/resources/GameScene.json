@@ -1,6 +1,10 @@
 {
     "entities": [
         {
+            "AutoScrollComponent": {
+                "distance": 100.0,
+                "speed": 2.0
+            },
             "CameraComponent": {
                 "aspectRatio_": 1.7777777910232544,
                 "bottom_": 0.0,
@@ -88,6 +92,14 @@
             }
         },
         {
+            "AutoScrollComponent": {
+                "distance": 89.0,
+                "speed": 2.0
+            },
+            "HealthComponent": {
+                "health": 3,
+                "maxHealth": 3
+            },
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
@@ -99,13 +111,54 @@
             "ModelRenderComponent": {
                 "modelName": "box"
             },
+            "MoveLimitComponent": {
+                "autoScrollDistance": 100.0,
+                "autoScrollSpeed": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 2.0
+                },
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 15.0
+                },
+                "maxLimit": {
+                    "x": 7.0,
+                    "y": 20.0,
+                    "z": 20.0
+                },
+                "minLimit": {
+                    "x": -7.0,
+                    "y": -10.0,
+                    "z": 0.0
+                }
+            },
             "ObjectInfoComponent": {
                 "name": "Player"
             },
             "ShootingPlayerComponent": {
-                "shootInterval": 0.30000001192092896,
-                "shootTimer": 0.0,
-                "speed": 3.0
+                "bombInterval": 0.0,
+                "bombPrefabName": "Bomb.json",
+                "bombSpawnOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "bulletPrefabName": "Bullet.json",
+                "bulletSpawnOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                },
+                "damping": 0.8500000238418579,
+                "shootInterval": 0.20000000298023224,
+                "speed": 4.5
+            },
+            "SphereColliderComponent": {
+                "mask": 1,
+                "onCollisionEnterScriptFunctionName": "",
+                "radius": 0.5
             },
             "TransformComponent": {
                 "transform": {
@@ -122,7 +175,7 @@
                     "translate": {
                         "x": 0.0,
                         "y": 2.5,
-                        "z": 16.0
+                        "z": 15.0
                     }
                 }
             }
@@ -146,41 +199,6 @@
                     "translate": {
                         "x": 0.0,
                         "y": 0.0,
-                        "z": 0.0
-                    }
-                }
-            }
-        },
-        {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 1.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "whitePlate"
-            },
-            "ObjectInfoComponent": {
-                "name": "PlayerReticle"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 0.4000000059604645,
-                        "y": 1.0,
-                        "z": 0.4000000059604645
-                    },
-                    "translate": {
-                        "x": 0.0,
-                        "y": 1.100000023841858,
                         "z": 0.0
                     }
                 }
@@ -216,7 +234,7 @@
                     "translate": {
                         "x": 0.0,
                         "y": -0.699999988079071,
-                        "z": 0.0
+                        "z": 109.0
                     }
                 }
             }
@@ -240,8 +258,8 @@
                 "transform": {
                     "rotate": {
                         "x": 0.0,
-                        "y": 2.5,
-                        "z": 6.099999904632568
+                        "y": 0.0,
+                        "z": 0.0
                     },
                     "scale": {
                         "x": 4.5,
@@ -251,7 +269,7 @@
                     "translate": {
                         "x": 0.0,
                         "y": 2.5,
-                        "z": 0.0
+                        "z": 133.0
                     }
                 }
             }
@@ -286,7 +304,7 @@
                     "translate": {
                         "x": -4.032673358917236,
                         "y": -0.5,
-                        "z": 24.0
+                        "z": 26.0
                     }
                 }
             }
@@ -321,7 +339,7 @@
                     "translate": {
                         "x": -8.662727355957031,
                         "y": -0.8524200916290283,
-                        "z": 0.0
+                        "z": 26.0
                     }
                 }
             }
@@ -356,7 +374,7 @@
                     "translate": {
                         "x": 5.890315055847168,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 37.0
                     }
                 }
             }
@@ -391,7 +409,7 @@
                     "translate": {
                         "x": -5.842942237854004,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 39.0
                     }
                 }
             }
@@ -419,14 +437,14 @@
                         "z": 0.0
                     },
                     "scale": {
-                        "x": 2.5260000228881836,
+                        "x": 5.526000022888184,
                         "y": 1.0,
                         "z": 1.6610000133514404
                     },
                     "translate": {
-                        "x": 1.1565232276916504,
+                        "x": -3.8429999351501465,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 46.0
                     }
                 }
             }
@@ -461,7 +479,7 @@
                     "translate": {
                         "x": -0.5139999985694885,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 52.0
                     }
                 }
             }
@@ -494,9 +512,9 @@
                         "z": 1.6610000133514404
                     },
                     "translate": {
-                        "x": -2.8560891151428223,
+                        "x": -1.8559999465942383,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 57.0
                     }
                 }
             }
@@ -531,7 +549,7 @@
                     "translate": {
                         "x": -5.90315055847168,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 76.0
                     }
                 }
             }
@@ -566,7 +584,7 @@
                     "translate": {
                         "x": -5.90315055847168,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 81.0
                     }
                 }
             }
@@ -601,7 +619,7 @@
                     "translate": {
                         "x": -6.771602153778076,
                         "y": -0.5,
-                        "z": 0.0
+                        "z": 85.0
                     }
                 }
             }
@@ -636,7 +654,77 @@
                     "translate": {
                         "x": 6.860682487487793,
                         "y": -0.5,
+                        "z": 100.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.4715026021003723,
+                    "y": 0.4715026021003723,
+                    "z": 0.4715026021003723
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BaseGround"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
                         "z": 0.0
+                    },
+                    "scale": {
+                        "x": 2.125999927520752,
+                        "y": 3.0,
+                        "z": 1.7610000371932983
+                    },
+                    "translate": {
+                        "x": 6.860682487487793,
+                        "y": -0.5,
+                        "z": 77.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.11764705181121826,
+                    "y": 0.11764705181121826,
+                    "z": 0.11764705181121826
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "box"
+            },
+            "ObjectInfoComponent": {
+                "name": "BreakBuild"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.20000000298023224
+                    },
+                    "scale": {
+                        "x": 2.125999927520752,
+                        "y": 5.0,
+                        "z": 1.7610000371932983
+                    },
+                    "translate": {
+                        "x": 5.861000061035156,
+                        "y": 7.5,
+                        "z": 77.0
                     }
                 }
             }

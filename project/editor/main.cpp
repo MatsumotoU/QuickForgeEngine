@@ -49,6 +49,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::unique_ptr<QFE::FPSCounter> fpsCounter = std::make_unique<QFE::FPSCounter>();
 	fpsCounter->Reset();
 
+	// InputInterfaceの初期化
+	std::unique_ptr<QFE::INPUT::InputInterface> inputInterface = 
+		QFE::FRAMEWORK::CreateInputInterface(mainWindow, hInstance);
+
 	// シーンマネージャの初期化
 	QFE::SCENE::SceneManager sceneManager;
 	sceneManager.Initialize();
@@ -153,12 +157,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		} else {
 			fpsCounter->FrameStart();
+			inputInterface->Update();
 
 			gameEditor.Update();
+			// デバッグカメラ操作処理
+			if (gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
+				// デバッグカメラの操作
+				float moveSpeed = 0.5f;
+				float rotateSpeed = 0.01f;
+				// キーボード入力による移動
+				if (inputInterface->GetKeyPress("Up")) {
+					cameraTransform.translate.z += moveSpeed;
+				}
+				if (inputInterface->GetKeyPress("Down")) {
+					cameraTransform.translate.z -= moveSpeed;
+				}
+				if (inputInterface->GetKeyPress("Left")) {
+					cameraTransform.translate.x -= moveSpeed;
+				}
+				if (inputInterface->GetKeyPress("Right")) {
+					cameraTransform.translate.x += moveSpeed;
+				}
+			}
 
 			// カメラのビュー行列と投影行列を取得
 			QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIndentity4x4();
 			if (gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
+				
+
 				QFE::MATH::Matrix4x4 viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
 				QFE::MATH::Matrix4x4 projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
 					3.14159f / 4.0f, 1280.0f / 720.0f, 0.1f, 1000.0f);
@@ -285,6 +311,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			sceneManager.EndFrame();
 
 			fpsCounter->FrameEnd();
+			inputInterface->EndFrame();
 		}
 	}
 

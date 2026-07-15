@@ -9,6 +9,7 @@
 #include "string/MyString.h"
 #include "command/AllCommands.h"
 #include "process/ProcessUtil.h"
+#include "file/FileUtility.h"
 
 #include <imgui.h>
 
@@ -97,10 +98,24 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                     for(uint32_t entityId : selectedEntities_) {
 						nlohmann::json entityJson =
                             sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
+						QFE::FILE::SaveJSONToFile(QFE::ConvertString(selectedFilePath), entityJson);
 					}
 					
                 }
 			}
+			// エンティティのロード
+            if (ImGui::MenuItem("Load Entities", nullptr)) {
+                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+                std::wstring selectedFilePath;
+                if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
+                    mainWindow_,
+                    L"JSON Files", L"*.json",
+                    selectedFilePath)) {
+                    // 選択されたエンティティのロード
+                    uint32_t newEntityId = 
+                        sceneManager_->LoadEntityOnCurrentSceneFromJsonObject(QFE::ConvertString(selectedFilePath));
+                }
+            }
             ImGui::EndMenu();
         }
 		// ウィンドウメニュー

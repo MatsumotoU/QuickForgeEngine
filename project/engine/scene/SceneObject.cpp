@@ -81,6 +81,20 @@ void QFE::SCENE::SceneObject::LoadSceneFromJson(const std::string& filePath) {
 	}
 }
 
+uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& filePath) {
+	// JSONファイルをキャッシュしていない場合はロードする
+	if(objectJsonMap_.find(filePath) == objectJsonMap_.end()) {
+		if (!QFE::FILE::LoadFileToJson(filePath, objectJsonMap_[filePath])) {
+			QFE_REPORT_SYSTEM_ERROR("Failed to load JSON file: " + filePath, SystemError::Abort);
+			return UINT32_MAX;
+		}
+	}
+	// JSONから生成
+	uint32_t entityId = entityManager_.CreateEntity();
+	entityManager_.DeserializeEntityComponents(entityId, objectJsonMap_[filePath]);
+	return entityId;
+}
+
 QFE::EntityManager& QFE::SCENE::SceneObject::GetEntityManager() {
 	return entityManager_;
 }
