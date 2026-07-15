@@ -1,11 +1,7 @@
 @echo off
-
 setlocal
 
-
-
 set PREMAKE_EXE=premake5.exe
-
 set TARGET_IDE=vs2022
 
 if not exist "%PREMAKE_EXE%" (
@@ -16,83 +12,50 @@ if not exist "%PREMAKE_EXE%" (
         if not defined GITHUB_ACTIONS pause
         exit /b 1
     )
+ 
     echo Download Complete.
     del example.* 2>nul
     del luasocket.* 2>nul
 )
 
-
-
 echo ====================================
-
 echo Premake Build System Generator
-
 echo Target: %TARGET_IDE%
-
 echo ====================================
 
+:: ------------------------------------
+:: 1. 1日以上古いプロジェクトファイルのクリーンアップ
+:: ------------------------------------
+echo [1/2] Cleaning project files older than 1 day...
 
+:: サブディレクトリも含めて、1日以上前（/d -1）に更新された古いプロジェクトファイルを削除します
+forfiles /s /m *.sln /d -1 /c "cmd /c del /f /q @path" 2>nul
+forfiles /s /m *.vcxproj /d -1 /c "cmd /c del /f /q @path" 2>nul
+forfiles /s /m *.vcxproj.filters /d -1 /c "cmd /c del /f /q @path" 2>nul
+forfiles /s /m *.vcxproj.user /d -1 /c "cmd /c del /f /q @path" 2>nul
 
 :: ------------------------------------
-
-:: 1. 【自動クリーンアップ処理の追加】
-
-:: ------------------------------------
-
-echo [1/2] Delete old files...
-
-
-
-:: ソリューションファイル (.sln) の削除
-
-del *.sln 2>nul
-
-:: プロジェクトファイルの削除 (カレントディレクトリとそのサブディレクトリを検索 /s)
-
-del /s /q *.vcxproj *.vcxproj.filters *.vcxproj.user 2>nul
-
-
-
-echo Delete Complete.
-
-
-
-:: ------------------------------------
-
 :: 2. Premakeによるプロジェクトファイル生成
-
 :: ------------------------------------
-
 echo [2/2] Generate projects...
 
-
-
-"%PREMAKE_EXE%" %TARGET_IDE%
-
-
+"%PREMAKE_EXE%" %TARGET_IDE% 
 
 if %errorlevel% neq 0 (
     echo.
     echo ------------------------------------
-    echo Error:Faild generated file.
+    echo Error:Failed generated file.
     echo ------------------------------------
     if not defined GITHUB_ACTIONS pause
     exit /b %errorlevel%
 )
 
-
-
 echo.
-
 echo ------------------------------------
-
 echo Generate complete.
-
 echo %TARGET_IDE% 
-
 echo ------------------------------------
 if not defined GITHUB_ACTIONS pause
 
 endlocal
-
 exit /b 0
