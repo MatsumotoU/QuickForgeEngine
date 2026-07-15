@@ -1,0 +1,56 @@
+{
+    "CsharpComponent": {
+        "CsharpHandles": [
+            {
+                "ClassName": "GameAreaDelete"
+            },
+            {
+                "ClassName": "HitAndDeath"
+            }
+        ]
+    },
+    "ModelHandle": {
+        "color": [
+            0.2687700688838959,
+            0.19788451492786407,
+            0.4715026021003723,
+            1.0
+        ],
+        "modelName": "halfIco.obj"
+    },
+    "SceneObjectData": {
+        "name": "GroundEnemy",
+        "tag": "enemy",
+        "uniqueId": 139
+    },
+    "SphereColliderData": {
+        "colliderLayer": 255,
+        "eventColliderLayer": 255,
+        "isDraw": true,
+        "isStatic": false,
+        "isTrigger": true,
+        "sphere": [
+            0.0,
+            1.0400993824005127,
+            6.40487813949585,
+            0.5
+        ]
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            1.0400993824005127,
+            6.40487813949585
+        ]
+    }
+}

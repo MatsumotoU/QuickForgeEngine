@@ -539,7 +539,7 @@ Matrix4x4 Matrix4x4::MakeAffineMatrix(const Vector3& scale, const Vector3& rotat
 	return result;
 }
 
-Matrix4x4 Matrix4x4::MakeAffineMatrix(const Transform& transform) {
+Matrix4x4 Matrix4x4::MakeAffineMatrix(const EulerTransform& transform) {
 	Matrix4x4 result = MakeIndentity4x4();
 
 	result = Multiply(

@@ -2,7 +2,7 @@
 
 using namespace QFE::MATH;
 
-void Transform::FromMatrix(const Matrix4x4& mat) {
+void EulerTransform::FromMatrix(const Matrix4x4& mat) {
     // 平行移動
     translate.x = mat.m[3][0];
     translate.y = mat.m[3][1];

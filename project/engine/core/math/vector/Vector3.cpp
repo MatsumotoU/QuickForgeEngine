@@ -153,7 +153,7 @@ Vector3 Vector3::CatmullRom(const std::vector<Vector3>& controlPoints, float t) 
 	return result;
 }
 
-Vector3 Vector3::Transform(const Vector3& vector, const Matrix4x4& matrix) {
+Vector3 Vector3::EulerTransform(const Vector3& vector, const Matrix4x4& matrix) {
 	Vector3 result = {};
 
 	float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + matrix.m[3][3];

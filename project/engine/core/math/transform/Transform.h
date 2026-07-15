@@ -1,10 +1,15 @@
 #pragma once
 #include "../vector/Vector3.h"
 #include "../matrix/Matrix4x4.h"
+#include "../quaternion/Quaternion.h"
 
 namespace QFE::MATH {
-	/// @brief 位置、回転、スケールを表すクラス
-	class Transform final {
+
+	/**
+	 * @class EulerTransform
+	 * @brief 位置・回転・スケールのデータを保持し、行列変換などを行うコンポーネントクラス
+	 */
+	class EulerTransform final {
 	public:
 		/// @brief スケール
 		Vector3 scale{ 1.0f, 1.0f, 1.0f };
@@ -16,12 +21,21 @@ namespace QFE::MATH {
 		/** @brief 行列から位置・回転・スケールを抽出 */
 		void FromMatrix(const Matrix4x4& mat);
 
-		bool operator==(const Transform& other) const noexcept { return this == &other; }
-		bool operator!=(const Transform& other) const noexcept { return this != &other; }
-		bool operator<(const Transform& other) const noexcept { return this < &other; }
-		bool operator<=(const Transform& other) const noexcept { return this <= &other; }
-		bool operator>(const Transform& other) const noexcept { return this > &other; }
-		bool operator>=(const Transform& other) const noexcept { return this >= &other; }
+		bool operator==(const EulerTransform& other) const noexcept { return this == &other; }
+		bool operator!=(const EulerTransform& other) const noexcept { return this != &other; }
+		bool operator<(const EulerTransform& other) const noexcept { return this < &other; }
+		bool operator<=(const EulerTransform& other) const noexcept { return this <= &other; }
+		bool operator>(const EulerTransform& other) const noexcept { return this > &other; }
+		bool operator>=(const EulerTransform& other) const noexcept { return this >= &other; }
 	};
 
+	class QuaternionTransform final {
+	public:
+		/// @brief スケール
+		Vector3 scale;
+		/// @brief 回転
+		Quaternion rotate;
+		/// @brief 座標
+		Vector3 translate;
+	};
 }

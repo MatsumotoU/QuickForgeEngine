@@ -1,0 +1,203 @@
+{
+    "entities": [
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "DebugCamera",
+                "tag": "camera",
+                "uniqueId": 2
+            },
+            "Transform": {
+                "rotate": [
+                    0.5143334269523621,
+                    0.07280438393354416,
+                    -0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -0.43867358565330505,
+                    15.032462120056152,
+                    -18.38754653930664
+                ]
+            }
+        },
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "Camera",
+                "tag": "camera",
+                "uniqueId": 1
+            },
+            "Transform": {
+                "rotate": [
+                    0.6000000238418579,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    10.0,
+                    -15.199999809265137
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "GameOverText.obj"
+            },
+            "SceneObjectData": {
+                "name": "GameOverText",
+                "tag": "Untagged",
+                "uniqueId": 12
+            },
+            "Transform": {
+                "rotate": [
+                    0.5,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    7.300000190734863,
+                    -10.300000190734863
+                ]
+            }
+        },
+        {
+            "ModelHandle": {
+                "color": [
+                    0.08290153741836548,
+                    0.08290153741836548,
+                    0.08290153741836548,
+                    1.0
+                ],
+                "modelName": "whitePlate.obj"
+            },
+            "SceneObjectData": {
+                "name": "BackGround",
+                "tag": "Untagged",
+                "uniqueId": 2520398940
+            },
+            "Transform": {
+                "rotate": [
+                    -1.600000023841858,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    11.5,
+                    1.0,
+                    9.5
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "TimeScale"
+                    },
+                    {
+                        "ClassName": "TagSceneJump"
+                    }
+                ]
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "modelName": "PressSpaceText.obj"
+            },
+            "SceneObjectData": {
+                "name": "PressSpaceText",
+                "tag": "TitleScene",
+                "uniqueId": 2520398942
+            },
+            "Transform": {
+                "rotate": [
+                    0.800000011920929,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    4.0,
+                    -8.100000381469727
+                ]
+            }
+        },
+        {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "BgmPlayer"
+                    }
+                ]
+            },
+            "SceneObjectData": {
+                "name": "BgmPlayer",
+                "tag": "GameOverBgm.mp3",
+                "uniqueId": 718
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    ],
+    "sceneName": "GameOverScene"
+}
