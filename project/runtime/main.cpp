@@ -5,11 +5,12 @@
 #include "framework/window/WindowsWindowFrameWork.h"
 #include "framework/script/WindowsScriptWorkFrame.h"
 #include "framework/input/InputFrameWork.h"
+#include "framework/gui/D3D12GuiFrameWork.h"
 
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
-
 #include "gui/D3D12GuiManager.h"
+
 #include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
@@ -23,6 +24,8 @@
 #include "assetfactory/model/AssimpModelLoader.h"
 
 #include "core/math/transform/Transform.h"
+
+#include <imgui.h>
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -40,6 +43,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
 	std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> graphicEngine =
 		QFE::FRAMEWORK::CreateGraphicEngine(mainWindow);
+
+	// GUIマネージャの初期化
+	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager =
+		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), mainWindow);
 
 	// FPSカウンターの初期化
 	std::unique_ptr<QFE::FPSCounter> fpsCounter = std::make_unique<QFE::FPSCounter>();
@@ -549,6 +556,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->UpdateBLASInstanceTransform(raytracingInstances);
 
 			graphicEngine->PreDraw();
+			guiManager->PreDraw();
 
 			// モデルのレンダリング
 			entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
@@ -576,7 +584,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			graphicEngine->TestRayTracing(rtpsoHandle, uavBufferHandle, rayTracingRootResources);
 
+			ImGui::Begin("FPS Counter");
+			ImGui::Text("FPS: %.2f", fpsCounter->GetAverageFPS());
+			ImGui::End();
+
 			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
+			guiManager->PostDraw();
 			graphicEngine->PostDraw();
 			sceneManager.EndFrame();
 
@@ -586,6 +599,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	sceneManager.Shutdown();
+	guiManager->Shutdown();
 	graphicEngine->Shutdown();
 	gameWindowManager->Shutdown();
 	return 0;
