@@ -1,0 +1,62 @@
+{
+    "HealthComponent": {
+        "health": 3,
+        "maxHealth": 3
+    },
+    "MaterialComponent": {
+        "albedoColor": {
+            "w": 1.0,
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        }
+    },
+    "ModelRenderComponent": {
+        "modelName": "box"
+    },
+    "ObjectInfoComponent": {
+        "name": "Player"
+    },
+    "ShootingPlayerComponent": {
+        "bombInterval": 0.0,
+        "bombPrefabName": "Bomb.json",
+        "bombSpawnOffset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+        },
+        "bulletPrefabName": "Bullet.json",
+        "bulletSpawnOffset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+        },
+        "damping": 0.8500000238418579,
+        "shootInterval": 0.20000000298023224,
+        "speed": 3.0
+    },
+    "SphereColliderComponent": {
+        "mask": 1,
+        "onCollisionEnterScriptFunctionName": "",
+        "radius": 0.0
+    },
+    "TransformComponent": {
+        "transform": {
+            "rotate": {
+                "x": 0.0,
+                "y": -0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.30000001192092896,
+                "y": 0.10000000149011612,
+                "z": 0.5
+            },
+            "translate": {
+                "x": 0.0,
+                "y": 2.5,
+                "z": 16.0
+            }
+        }
+    }
+}

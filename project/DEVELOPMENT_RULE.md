@@ -31,3 +31,7 @@
 https://conventional-branch.github.io/ja/
 
 https://www.conventionalcommits.org/ja/v1.0.0/
+
+# 名前空間のルール
+## 名前空間の説明
+- 

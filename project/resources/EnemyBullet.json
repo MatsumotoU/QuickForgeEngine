@@ -1,0 +1,53 @@
+{
+    "BulletComponent": {
+        "damage": 1,
+        "dir": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -1.0
+        },
+        "isGravity": false,
+        "lifeTime": 0.0,
+        "lifeTimeMax": 8.0,
+        "mask": 1,
+        "speed": 5.0
+    },
+    "MaterialComponent": {
+        "albedoColor": {
+            "w": 1.0,
+            "x": 1.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "ModelRenderComponent": {
+        "modelName": "box"
+    },
+    "ObjectInfoComponent": {
+        "name": "EnemyBullet"
+    },
+    "SphereColliderComponent": {
+        "mask": 2,
+        "onCollisionEnterScriptFunctionName": "",
+        "radius": 0.30000001192092896
+    },
+    "TransformComponent": {
+        "transform": {
+            "rotate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.30000001192092896,
+                "y": 0.10000000149011612,
+                "z": 0.4000000059604645
+            },
+            "translate": {
+                "x": 0.0,
+                "y": 18.0,
+                "z": -16.0
+            }
+        }
+    }
+}

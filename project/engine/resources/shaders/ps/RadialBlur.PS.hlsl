@@ -24,6 +24,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         float32_t2 sampleCoord = input.texcoord - direction * t * kBlurWidth;
         outputColor += gTexture.Sample(gSampler, sampleCoord).rgb;
     }
+    output.color.rgb *= rcp(kNumSamples);
     
     output.color = float32_t4(outputColor, 1.0f);
     return output;
