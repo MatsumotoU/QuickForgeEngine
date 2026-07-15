@@ -72,7 +72,7 @@ void QFE::EDITOR::Inspector::DrawObjectInfoComponent(uint32_t entityId, EditorCo
 	// TransformComponentの表示
 	if (entityManager_->HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 		auto& transformComp = entityManager_->GetComponent<QFE::SCENE::TransformComponent>(entityId);
-		if (ImGui::CollapsingHeader("Transform")) {
+		if (ImGui::CollapsingHeader("EulerTransform")) {
 			ImGui::DragFloat3("Position", &transformComp.transform.translate.x);
 			ImGui::DragFloat3("Rotation", &transformComp.transform.rotate.x);
 			ImGui::DragFloat3("Scale", &transformComp.transform.scale.x);

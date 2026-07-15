@@ -15,7 +15,7 @@ namespace QFE::SCENE {
 		float top_ = 720.0f;
 		float bottom_ = 0.0f;
 
-		MATH::Transform transform;
+		MATH::EulerTransform transform;
 		MATH::Matrix4x4 viewMatrix;
 		MATH::Matrix4x4 projectionMatrix;
 		bool isMainCamera = false;

@@ -43,7 +43,7 @@ namespace QFE::FRAMEWORK {
 	void UpdateObject3dWVPMatrix(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
-		const QFE::MATH::Transform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
+		const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
 
 	/// @brief 頂点のデータから頂点位置を取得する関数
 	std::vector<QFE::MATH::Vector3> GetModelVertexPositions(

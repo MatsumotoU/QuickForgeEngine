@@ -65,13 +65,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
 
+#ifdef USE_IMGUI
 			ImGui::Begin("Test Window");
-			
-			QFE::MATH::Transform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(testEntityId).transform;
+			QFE::MATH::EulerTransform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(testEntityId).transform;
 			ImGui::Text("Position: (%.2f, %.2f, %.2f)", transform.translate.x, transform.translate.y, transform.translate.z);
 			ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", transform.rotate.x, transform.rotate.y, transform.rotate.z);
 			ImGui::Text("Scale: (%.2f, %.2f, %.2f)", transform.scale.x, transform.scale.y, transform.scale.z);
 			ImGui::End();
+#endif // USE_IMGUI
 
 			// スクリプト関数の実行
 			entityManager.Each<QFE::SCENE::ScriptComponent>([&](uint32_t entityId, QFE::SCENE::ScriptComponent& scriptComp) {
