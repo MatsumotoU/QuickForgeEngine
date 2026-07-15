@@ -5,7 +5,7 @@
 namespace QFE::SCENE {
 	/// @brief TransformComponentは、オブジェクトの位置、回転、スケールを表すコンポーネントです。
 	struct AnimationComponent {
-		MATH::Transform transform; ///< オブジェクトの位置、回転、スケールを表すTransform構造体
+		MATH::EulerTransform transform; ///< オブジェクトの位置、回転、スケールを表すEulerTransform構造体
 		MATH::Vector4 color; ///< オブジェクトの色を表すVector4構造体
 
 		QFE_REFLECT_BEGIN(AnimationComponent)

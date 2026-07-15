@@ -98,7 +98,7 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::Vector4& value) {
     }
 }
 
-void QFE::JsonArchive::Process(const std::string& name, MATH::Transform& value) {
+void QFE::JsonArchive::Process(const std::string& name, MATH::EulerTransform& value) {
     if (isLoading_) {
         // デシリアライズ
         if (json_.contains(name)) {

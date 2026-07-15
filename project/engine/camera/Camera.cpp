@@ -16,7 +16,7 @@ void Camera::Initialize(float left, float right, float top, float bottom, float 
 	bottom_ = bottom;
 }
 
-QFE::MATH::Matrix4x4 Camera::GetViewProjectionMatrix(const MATH::Transform& cameraTransform, CameraType type) const {
+QFE::MATH::Matrix4x4 Camera::GetViewProjectionMatrix(const MATH::EulerTransform& cameraTransform, CameraType type) const {
 	// カメラのワールド行列を作成
 	MATH::Matrix4x4 cameraWorldMatrix = MATH::Matrix4x4::MakeAffineMatrix(cameraTransform);
 

@@ -15,7 +15,7 @@ namespace QFE::CAMERA {
 		void Initialize(float left, float right, float top, float bottom, float nearZ, float farZ,float fov);
 
 		/// @brief ビュー行列と投影行列を掛け合わせた行列を取得します
-		MATH::Matrix4x4 GetViewProjectionMatrix(const MATH::Transform& cameraTransform, CameraType type) const;
+		MATH::Matrix4x4 GetViewProjectionMatrix(const MATH::EulerTransform& cameraTransform, CameraType type) const;
 
 	private:
 		float fovY_;

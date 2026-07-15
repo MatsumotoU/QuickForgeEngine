@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
 
-	QFE::MATH::Transform cameraTransform;
+	QFE::MATH::EulerTransform cameraTransform;
 	cameraTransform.translate = { 0.0f, 20.0f, -20.0f };
 	cameraTransform.rotate = { 0.8f, 0.0f, 0.0f };
 
@@ -193,7 +193,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				entityManager.Each<QFE::SCENE::CameraComponent>([&](uint32_t entityId, QFE::SCENE::CameraComponent& cameraComp) {
 					if (cameraComp.isMainCamera) {
 						if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-							QFE::MATH::Transform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+							QFE::MATH::EulerTransform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 							cameraComp.viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
 							if(cameraComp.top_ - cameraComp.bottom_ != 0.0f) {
 								cameraComp.aspectRatio_ = fabsf((cameraComp.right_ - cameraComp.left_) / (cameraComp.top_ - cameraComp.bottom_));
@@ -213,12 +213,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
 			entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
 				modelRenderComp.canRender = false;
-				// TransformComponentを取得して、Transformを更新する
+				// TransformComponentを取得して、EulerTransformを更新する
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId) == false) {
 					modelRenderComp.renderErrorMessage = "Missing TransformComponent for entity: " + std::to_string(entityId);
 					return;
 				}
-				QFE::MATH::Transform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+				QFE::MATH::EulerTransform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 				QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetResourceAllocator();
 				QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 					resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();

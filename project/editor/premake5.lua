@@ -18,6 +18,7 @@ project "GameEditor" -- GameEditor
             "Camera",
             "ImGui",
             "Components",
+            "InputFramework",
         }
 
         -- 警告レベル4

@@ -67,7 +67,7 @@ bool QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 	// リソースアロケータを取得
 	QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetResourceAllocator();
 
-	// Transform
+	// EulerTransform
 	TransformationMatrix transformMatrix;
 	transformMatrix.World = QFE::MATH::Matrix4x4::MakeIndentity4x4();
 	transformMatrix.WVP = QFE::MATH::Matrix4x4::MakeIndentity4x4();
@@ -93,7 +93,7 @@ bool QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 
 void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle, 
-	const QFE::MATH::Transform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {
+	const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {
 
 	TransformationMatrix* transformMatrixData =
 		graphicEngine->GetConstantBufferData<TransformationMatrix>(transformMatrixBufferHandle);

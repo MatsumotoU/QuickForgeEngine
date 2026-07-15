@@ -20,6 +20,6 @@ namespace QFE {
         virtual void Process(const std::string& name, MATH::Vector2& value) = 0;
         virtual void Process(const std::string& name, MATH::Vector3& value) = 0;
 		virtual void Process(const std::string& name, MATH::Vector4& value) = 0;
-		virtual void Process(const std::string& name, MATH::Transform& value) = 0;
+		virtual void Process(const std::string& name, MATH::EulerTransform& value) = 0;
     };
 }

@@ -8,9 +8,7 @@
 
 #include "EngineDefines.h"
 
-#ifdef QFE_OPTIMIZE_OFF
 #include "string/MyString.h"
-#endif // QFE_OPTIMIZE_OFF
 
 namespace QFE::GRAPHIC {
 

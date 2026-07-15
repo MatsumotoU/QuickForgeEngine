@@ -87,7 +87,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
 
-	QFE::MATH::Transform cameraTransform;
+	QFE::MATH::EulerTransform cameraTransform;
 	cameraTransform.translate = { 0.0f, 20.0f, -20.0f };
 	cameraTransform.rotate = { 0.8f, 0.0f, 0.0f };
 
@@ -173,7 +173,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// AutoScroll
 			entityManager.Each<QFE::STG::AutoScrollComponent>([&](uint32_t entityId, QFE::STG::AutoScrollComponent& autoScrollComp) {
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-					QFE::MATH::Transform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+					QFE::MATH::EulerTransform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 					if(autoScrollComp.distance > 0.0f) {
 						autoScrollComp.distance -= autoScrollComp.speed * deltaTime;
 						transform.translate.z += autoScrollComp.speed * deltaTime;
@@ -184,7 +184,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// シューティングプレイヤーの実行
 			entityManager.Each<QFE::STG::ShootingPlayerComponent>([&](uint32_t entityId, QFE::STG::ShootingPlayerComponent& shootingPlayerComp) {
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-					QFE::MATH::Transform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+					QFE::MATH::EulerTransform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 					float speed = shootingPlayerComp.speed;
 					float targetRotateZ = 0.0f;
 					float rotatePower = 1.0f;
@@ -251,7 +251,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 							sceneManager.LoadEntityOnCurrentSceneFromJsonObject(assetDir + shootingPlayerComp.bulletPrefabName);
 
 						if(entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId)){
-							QFE::MATH::Transform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
+							QFE::MATH::EulerTransform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
 							bulletTransform.translate = playerTransform.translate + shootingPlayerComp.bulletSpawnOffset;
 						}
 
@@ -263,7 +263,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 							sceneManager.LoadEntityOnCurrentSceneFromJsonObject(assetDir + shootingPlayerComp.bombPrefabName);
 
 						if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bombEntityId)) {
-							QFE::MATH::Transform& bombTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bombEntityId).transform;
+							QFE::MATH::EulerTransform& bombTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bombEntityId).transform;
 							bombTransform.translate = playerTransform.translate + shootingPlayerComp.bombSpawnOffset;
 						}
 					}
@@ -274,7 +274,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			std::vector<QFE::MATH::Vector3> playerPositionsE;
 			entityManager.Each<QFE::STG::ShootingPlayerComponent>([&](uint32_t entityId, QFE::STG::ShootingPlayerComponent& shootingPlayerComp) {
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-					QFE::MATH::Transform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+					QFE::MATH::EulerTransform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 					playerPositionsE.push_back(playerTransform.translate);
 				}
 				});
@@ -286,8 +286,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						sceneManager.LoadEntityOnCurrentSceneFromJsonObject(assetDir + enemyAIComp.bulletName);
 					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId) &&
 						entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-						QFE::MATH::Transform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
-						QFE::MATH::Transform& enemyTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+						QFE::MATH::EulerTransform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
+						QFE::MATH::EulerTransform& enemyTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 						bulletTransform.translate = enemyTransform.translate;
 					}
 					// プレイヤーの位置に向かって弾丸を発射する
@@ -296,7 +296,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						if (entityManager.HasComponent<QFE::STG::BulletComponent>(bulletEntityId) &&
 							entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId)) {
 							QFE::STG::BulletComponent& bulletComp = entityManager.GetComponent<QFE::STG::BulletComponent>(bulletEntityId);
-							QFE::MATH::Transform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
+							QFE::MATH::EulerTransform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
 							bulletComp.dir = (targetPosition - bulletTransform.translate).Normalize();
 						}
 					}
@@ -306,7 +306,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// 弾丸の処理
 			entityManager.Each<QFE::STG::BulletComponent>([&](uint32_t entityId, QFE::STG::BulletComponent& bulletComp) {
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-					QFE::MATH::Transform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+					QFE::MATH::EulerTransform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 					bulletTransform.translate += bulletComp.dir * bulletComp.speed * deltaTime;
 					bulletComp.lifeTimeMax -= deltaTime;
 					if (bulletComp.lifeTimeMax <= 0.0f) {
@@ -348,11 +348,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			for (size_t i = 0; i < colliderEntityIds.size(); ++i) {
 				uint32_t entityIdA = colliderEntityIds[i];
 				QFE::SCENE::SphereColliderComponent& colliderA = colliderComponents[entityIdA];
-				QFE::MATH::Transform& transformA = transformComponents[entityIdA].transform;
+				QFE::MATH::EulerTransform& transformA = transformComponents[entityIdA].transform;
 				for (size_t j = i + 1; j < colliderEntityIds.size(); ++j) {
 					uint32_t entityIdB = colliderEntityIds[j];
 					QFE::SCENE::SphereColliderComponent& colliderB = colliderComponents[entityIdB];
-					QFE::MATH::Transform& transformB = transformComponents[entityIdB].transform;
+					QFE::MATH::EulerTransform& transformB = transformComponents[entityIdB].transform;
 
 					// タグマスクの判定
 					if ((colliderA.mask & colliderB.mask) != 0) {
@@ -396,7 +396,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 					return;
 				}
-				QFE::MATH::Transform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+				QFE::MATH::EulerTransform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 				QFE::MATH::Vector3 minLimit = moveLimitComp.center + moveLimitComp.minLimit;
 				QFE::MATH::Vector3 maxLimit = moveLimitComp.center + moveLimitComp.maxLimit;
 				transform.translate.x = std::clamp(transform.translate.x, minLimit.x, maxLimit.x);
@@ -409,14 +409,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			std::vector<QFE::MATH::Vector3> playerPositions;
 			entityManager.Each<QFE::STG::ShootingPlayerComponent>([&](uint32_t entityId, QFE::STG::ShootingPlayerComponent& shootingPlayerComp) {
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-					QFE::MATH::Transform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+					QFE::MATH::EulerTransform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 					playerPositions.push_back(playerTransform.translate);
 					playerEntityIds.push_back(entityId);
 				}
 				});
 			entityManager.Each<QFE::STG::PlayerTrackingComponent>([&](uint32_t entityId, QFE::STG::PlayerTrackingComponent& autoTrackComp) {
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-					QFE::MATH::Transform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+					QFE::MATH::EulerTransform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 					if (!playerPositions.empty()) {
 						// プレイヤーの平均位置を計算
 						QFE::MATH::Vector3 averagePosition = { 0.0f, 0.0f, 0.0f };
@@ -467,7 +467,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			entityManager.Each<QFE::SCENE::CameraComponent>([&](uint32_t entityId, QFE::SCENE::CameraComponent& cameraComp) {
 				if (cameraComp.isMainCamera) {
 					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-						QFE::MATH::Transform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+						QFE::MATH::EulerTransform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 						cameraComp.viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
 						if (cameraComp.top_ - cameraComp.bottom_ != 0.0f) {
 							cameraComp.aspectRatio_ = fabsf((cameraComp.right_ - cameraComp.left_) / (cameraComp.top_ - cameraComp.bottom_));
@@ -486,12 +486,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
 			entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
 				modelRenderComp.canRender = false;
-				// TransformComponentを取得して、Transformを更新する
+				// TransformComponentを取得して、EulerTransformを更新する
 				if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId) == false) {
 					modelRenderComp.renderErrorMessage = "Missing TransformComponent for entity: " + std::to_string(entityId);
 					return;
 				}
-				QFE::MATH::Transform objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+				QFE::MATH::EulerTransform objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 
 				if(entityManager.HasComponent < QFE::SCENE::AnimationComponent>(entityId)) {
 					QFE::SCENE::AnimationComponent& animationComp = entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
