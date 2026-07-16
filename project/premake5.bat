@@ -28,11 +28,11 @@ echo ====================================
 :: ------------------------------------
 echo [1/2] Cleaning project files older than 1 day...
 
-:: サブディレクトリも含めて、1日以上前（/d -1）に更新された古いプロジェクトファイルを削除します
-forfiles /s /m *.sln /d -1 /c "cmd /c del /f /q @path" 2>nul
-forfiles /s /m *.vcxproj /d -1 /c "cmd /c del /f /q @path" 2>nul
-forfiles /s /m *.vcxproj.filters /d -1 /c "cmd /c del /f /q @path" 2>nul
-forfiles /s /m *.vcxproj.user /d -1 /c "cmd /c del /f /q @path" 2>nul
+:: 該当するファイルがあればパスを表示し、その後削除します（存在しない場合のエラーは非表示）
+forfiles /s /m *.sln /d -1 /c "cmd /c echo 削除中: @path && del /f /q @path" 2>nul
+forfiles /s /m *.vcxproj /d -1 /c "cmd /c echo 削除中: @path && del /f /q @path" 2>nul
+forfiles /s /m *.vcxproj.filters /d -1 /c "cmd /c echo 削除中: @path && del /f /q @path" 2>nul
+forfiles /s /m *.vcxproj.user /d -1 /c "cmd /c echo 削除中: @path && del /f /q @path" 2>nul
 
 :: ------------------------------------
 :: 2. Premakeによるプロジェクトファイル生成
