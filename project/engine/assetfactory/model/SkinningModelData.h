@@ -4,6 +4,7 @@
 #include "../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "memory/SafeVector.h"
 #include "ModelData.h"
+#include "math/MathInclude.h"
 
 namespace QFE::ASSET {
 	/// @brief モデルの頂点のウェイト情報を保持する構造体

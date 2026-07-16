@@ -5,6 +5,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <map>
+
 #include "EngineDefines.h"
 #include "file/FileUtility.h"
 
@@ -44,7 +46,13 @@ ModelData& AssimpModelLoader::LoadModel(const std::string& filePath) {
 }
 
 SkinningModelData& QFE::ASSET::AssimpModelLoader::LoadSkinningModel(const std::string& filePath) {
-	// TODO: return ステートメントをここに挿入します
+	// キャッシュにスキニングモデルデータが存在する場合はキャッシュから返す
+	if (skinningModelCache.find(filePath) != skinningModelCache.end()) {
+		return skinningModelCache[filePath];
+	} else {
+		LoadSkinningModelData(filePath, skinningModelCache[filePath]);
+		return skinningModelCache[filePath];
+	}
 }
 
 ModelData& AssimpModelLoader::ForceLoadModel(const std::string& filePath) {
@@ -241,7 +249,8 @@ bool QFE::ASSET::AssimpModelLoader::LoadSkinningModelData(const std::string& fil
 		for(uint32_t boneIndex = 0;boneIndex<mesh->mNumBones;++boneIndex) {
 			const aiBone* bone = mesh->mBones[boneIndex];
 			std::string jointName(bone->mName.C_Str());
-			JointWeightData& jointWeightData = meshData.jointWeights[jointName];
+			auto [it, inserted] = meshData.jointWeights.try_emplace(jointName, bone->mNumWeights);
+			JointWeightData& jointWeightData = it->second;
 
 			aiMatrix4x4 bindPoseMatrix = bone->mOffsetMatrix;
 			aiVector3D scale, translate;
@@ -256,7 +265,7 @@ bool QFE::ASSET::AssimpModelLoader::LoadSkinningModelData(const std::string& fil
 			jointWeightData.inverseBindPoseMatrix = bindPose.Inverse();
 			for(uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
 				const aiVertexWeight& vertexWeight = bone->mWeights[weightIndex];
-				VertexWeightData vtxWeight;
+				VertexWeightData vtxWeight(bone->mNumWeights);
 				vtxWeight.vertexIndex = vertexWeight.mVertexId;
 				vtxWeight.weight = vertexWeight.mWeight;
 				jointWeightData.vertexWeights.push_back(vtxWeight);

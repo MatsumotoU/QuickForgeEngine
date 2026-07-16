@@ -10,6 +10,7 @@ namespace QFE::MATH {
 
 	// 前方宣言
 	class Vector3;
+	class Vector4;
 	class EulerTransform;
 
 	class Matrix4x4 final {
