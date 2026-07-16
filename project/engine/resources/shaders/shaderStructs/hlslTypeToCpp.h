@@ -18,6 +18,20 @@ using float32_t3x3 = QFE::MATH::Matrix3x3;
 using float32_t2x2 = QFE::MATH::Matrix2x2;
 #endif
 
+struct PerFrame {
+	float32_t time;
+	float32_t deltaTime;
+};
+
+struct EmitterSphere {
+	float32_t3 translate;
+	float32_t radius;
+	uint32_t count;
+	float32_t frequency;
+	float32_t frequencyTime;
+	uint32_t emit;
+};
+
 struct Well {
 	float32_t4x4 skeletonSpaceMatrix;
 	float32_t4x4 skeletonSpaceInverseTransposeMatrix;
