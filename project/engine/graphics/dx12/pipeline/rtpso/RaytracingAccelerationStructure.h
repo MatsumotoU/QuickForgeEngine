@@ -10,7 +10,7 @@
 #include "memory/UniqueContainer.h"
 #include "memory/SparseSets.h"
 
-#include "dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 
 namespace QFE::GRAPHIC {
 	/// @brief レイトレーシング用の加速構造を管理するクラス

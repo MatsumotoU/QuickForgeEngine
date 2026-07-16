@@ -136,7 +136,7 @@ void D3D12GraphicEngine::Initialize() {
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		srvDesc.Texture2D.MipLevels = 1;
 		// ResourceViewを作成
-		CereateViewInfo viewInfo{};
+		CreateViewInfo viewInfo{};
 		viewInfo.viewType = ViewTypeFlags::RenderTargetView | ViewTypeFlags::ShaderResourceView;
 		viewInfo.rtvDesc = rtvDesc;
 		viewInfo.srvDesc = srvDesc;
@@ -196,7 +196,7 @@ void D3D12GraphicEngine::Initialize() {
 	// テクスチャのSRV作成に必要な関数をDirectXResourceContainerのCreateResourceView関数を呼び出すラムダ式で初期化
 	textureLoaderInfo.createShaderResourceViewFunc =
 		[&](DirectXResourceHandle resourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
-		CereateViewInfo createViewInfo{};
+		CreateViewInfo createViewInfo{};
 		createViewInfo.viewType = ViewTypeFlags::ShaderResourceView;
 		createViewInfo.dsvDesc = {};
 		createViewInfo.rtvDesc = {};
@@ -264,545 +264,86 @@ DirectXDevice* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXDevice() const {
 	return directXDevice_.get();
 }
 
-ViewPortHandle D3D12GraphicEngine::CreateViewPort(uint32_t width, uint32_t height) {
-	D3D12_VIEWPORT viewport{};
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
-	viewport.Width = static_cast<float>(width);
-	viewport.Height = static_cast<float>(height);
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-
-	uint32_t handle = viewports_.Add(std::to_string(width) + "x" + std::to_string(height), viewport);
-	return static_cast<ViewPortHandle>(handle);
+DirectXResourceContainer* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXResourceContainer() const {
+	assert(resourceContainer_ != nullptr);
+	return resourceContainer_.get();
 }
 
-ScissorRectHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateScissorRect(int left, int top, int right, int bottom) {
-	D3D12_RECT scissorRect{};
-	scissorRect.left = left;
-	scissorRect.top = top;
-	scissorRect.right = right;
-	scissorRect.bottom = bottom;
-
-	uint32_t handle = scissorRects_.Add(std::to_string(left) + "_" + std::to_string(top) + "_" + std::to_string(right) + "_" + std::to_string(bottom), scissorRect);
-	return static_cast<ScissorRectHandle>(handle);
-}
-
-DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateTextureFromFile(const std::string& filePath) {
-	return textureLoader_->LoadTexture(filePath);
-}
-
-DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::GetBuiltInTextureHandle(BuiltInTextureType type) {
-	if (BuiltInTextureType::DummyBlackCubeMap == type) {
-		return textureLoader_->GetDummyBlackCubeMapHandle();
-	} else if (BuiltInTextureType::DummyWhite1x1Texture == type) {
-		return textureLoader_->GetDummyWhite1x1TextureHandle();
-	} else {
-		return DirectXResourceHandle::Invalid;
-	}
-}
-
-DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateVertexBuffer(const std::vector<VertexData>& vertexData, const std::string& meshName) {
-	DirectXResourceHandle handle =
-		resourceContainer_->CreateBuffer(directXDevice_->GetDevice(), vertexData.size() * sizeof(VertexData));
-	QFE_LOG("VertexBuffer created for mesh: " + meshName + ", size: " + std::to_string(vertexData.size() * sizeof(VertexData)) + " bytes");
-	// バッファのストライドを設定
-	resourceContainer_->SetResourceStrideInBytes(handle, sizeof(VertexData));
-
-	resourceContainer_->MapResource(handle);
-	VertexData* mappedData = resourceContainer_->GetMappedData<VertexData>(handle);
-	if (mappedData) {
-		memcpy(mappedData, vertexData.data(), vertexData.size() * sizeof(VertexData));
-	}
-	resourceContainer_->SetResourceName(handle, ConvertString(meshName));
-	resourceContainer_->SetResourceStrideInBytes(handle, sizeof(VertexData));
-	return handle;
-}
-
-ShaderPairHandle D3D12GraphicEngine::CreateShaderPair(const ShaderPairElement& element) {
-	ShaderPairHandle shaderPairHandle =
-		graphicPipelineManager_->GenerateShaderPair(element, [&](const std::wstring& filePath, const wchar_t* profile) {
-		return shaderCompiler_->CompileShader(filePath, profile);
-			});
-	return shaderPairHandle;
-}
-
-PSOHandle D3D12GraphicEngine::CreatePipelineStateObject(ShaderPairHandle shaderHandle, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) {
-	PSOHandle psoHandle = graphicPipelineManager_->GeneratePipelineStateObject(
-		directXDevice_->GetDevice(),
-		shaderHandle, blendMode, rasterizerType, depthStencilDescType);
-	return psoHandle;
-}
-
-PSOHandle D3D12GraphicEngine::GetBuiltInPipelineStateObject(
-	BuiltInShaderPair builtInShaderPair, BlendMode blendMode, RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) {
-
-	PSOHandle psoHandle = graphicPipelineManager_->GetBuiltInPSOHandle(builtInShaderPair, blendMode, rasterizerType, depthStencilDescType);
-	return psoHandle;
-}
-
-ComputePSOHandle D3D12GraphicEngine::CreateComputePipelineStateObject(
-	const std::string& dirPath, const std::string& csFileName) {
-
-	ComputePSOHandle computePSOHandle =
-		computePipelineManager_->GenerateComputePipelineStateObject(dirPath, csFileName);
-	return computePSOHandle;
-}
-
-RenderTargetHandle D3D12GraphicEngine::CreateOffScreenRenderTarget(uint32_t width, uint32_t height, DXGI_FORMAT format) {
-	return renderPass_->CreateOffscreenRenderTarget(width, height, format);
-}
-
-size_t D3D12GraphicEngine::GetResourceArraySize(DirectXResourceHandle handle) {
-	size_t stride = resourceContainer_->GetResourceStrideInBytes(handle);
-	if (stride == 0) {
-		QFE_LOG("Resource stride is zero for handle: " + std::to_string(static_cast<uint32_t>(handle)));
-		return 0;
-	}
-	size_t size = resourceContainer_->GetResourceSizeInBytes(handle);
-	return size / stride;
-}
-
-DirectXResourceAllocator* QFE::GRAPHIC::D3D12GraphicEngine::GetResourceAllocator() {
+DirectXResourceAllocator* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXResourceAllocator() const {
+	assert(resourceAllocator_ != nullptr);
 	return resourceAllocator_.get();
 }
 
-DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateUAVBuffer(uint32_t width, uint32_t height, const std::wstring& name) {
-	D3D12_RESOURCE_DESC texDesc{};
-	texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	texDesc.Width = static_cast<UINT>(width);                     // 画面の横幅
-	texDesc.Height = static_cast<UINT>(height);                    // 画面の縦幅
-	texDesc.DepthOrArraySize = 1;
-	texDesc.MipLevels = 1;                     // CSで直接塗るためミップマップは1でOK
-	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // バックバッファと合わせておく
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-
-	// リソースを生成
-	DirectXResourceHandle handle =
-		resourceContainer_->CreateResource(
-			directXDevice_->GetDevice(), texDesc, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_HEAP_TYPE_DEFAULT);
-
-	// UAVの生成
-	CereateViewInfo createViewInfo{};
-	createViewInfo.viewType = ViewTypeFlags::UnorderedAccessView;
-	createViewInfo.uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	createViewInfo.uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-
-	resourceContainer_->CreateResourceView(handle, createViewInfo);
-	resourceContainer_->SetResourceName(handle, name);
-
-	return handle;
+DescriptorHeapManager* QFE::GRAPHIC::D3D12GraphicEngine::GetDescriptorHeapManager() const {
+	assert(descriptorHeapManager_ != nullptr);
+	return descriptorHeapManager_.get();
 }
 
-RTPSOHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateRayTracingPipelineStateObject(const std::string& dirPath, const std::string& rgsFileName) {
-	return rayTracingPipelineManager_->CreateRaytracingPipelineStateObject(ConvertString(dirPath + rgsFileName), L"lib_6_3");
+DirectXCommandManager* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXCommandManager() const {
+	assert(commandManager_ != nullptr);	
+	return commandManager_.get();
 }
 
-BLASHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateBLAS(std::vector<QFE::MATH::Vector3> vertices, const std::string& name) {
-	return accelerationStructure_.CreateBLAS(
-		directXDevice_->GetDevice5(), commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT), vertices, name);
+Fence* QFE::GRAPHIC::D3D12GraphicEngine::GetFence() const {
+	assert(fence_ != nullptr);
+	return fence_.get();
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::UpdateBLASInstanceTransform(const std::vector<QFE::GRAPHIC::RaytracingInstance>& instances) {
-	// TLASの更新
-	accelerationStructure_.UpdateTLAS(commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT), instances);
-	commandManager_->ExecuteCommandList();
-	fence_->Signal(commandManager_->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
-	fence_->Wait();
-	commandManager_->ResetCommandList();
+ShaderReflection* QFE::GRAPHIC::D3D12GraphicEngine::GetShaderReflection() const {
+	assert(shaderReflection_ != nullptr);
+	return shaderReflection_.get();
 }
 
-DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::GetRenderTargetTexture(RenderTargetHandle renderTargetHandle) {
-	return renderPass_->GetOffscreenBarrierShaderResourceHandle(renderTargetHandle);
+ShaderLibReflection* QFE::GRAPHIC::D3D12GraphicEngine::GetShaderLibReflection() const {
+	assert(shaderLibReflection_ != nullptr);
+	return shaderLibReflection_.get();
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::SetRenderTarget(RenderTargetHandle renderTargetHandle) {
-	renderPass_->SetRenderTarget(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), depthStencilBufferHandle_, renderTargetHandle);
+ShaderCompiler* QFE::GRAPHIC::D3D12GraphicEngine::GetShaderCompiler() const {
+	assert(shaderCompiler_ != nullptr);
+	return shaderCompiler_.get();
 }
 
-void D3D12GraphicEngine::TestDraw(
-	PSOHandle psoHandle, ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
-	DirectXResourceHandle vertexBufferHandle, std::vector<DirectXResourceHandle> rootResources) {
-
-	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-
-	renderPass_->SetRenderTarget(
-		commandList, depthStencilBufferHandle_, RenderTargetHandle::SwapChain);
-
-	commandList->RSSetViewports(1, viewports_.GetData(static_cast<uint32_t>(viewportHandle)));
-	commandList->RSSetScissorRects(1, scissorRects_.GetData(static_cast<uint32_t>(scissorRectHandle)));
-
-	commandList->SetPipelineState(graphicPipelineManager_->GetPipelineState(psoHandle));
-	commandList->SetGraphicsRootSignature(graphicPipelineManager_->GetRootSignature(psoHandle));
-
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = resourceContainer_->GetVertexBufferView(vertexBufferHandle);
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-
-	std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes = graphicPipelineManager_->GetRootParameterTypes(psoHandle);
-	if (rootParameterTypes.size() != rootResources.size()) {
-		// PSOのルートパラメータの数と渡されたリソースの数が異なる場合はエラー
-		assert(false);
-		return;
-	}
-
-	for (int i = 0; i < rootParameterTypes.size(); ++i) {
-		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
-
-		if (rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
-			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer_->GetGpuVirtualAddress(rootResources[i]);
-			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
-		} else {
-			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
-			switch (rootParameterType) {
-			case D3D12_ROOT_PARAMETER_TYPE_SRV:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_UAV:
-				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			default:
-				break;
-			}
-		}
-
-
-	}
-
-	UINT vertexCount = static_cast<UINT>(GetResourceArraySize(vertexBufferHandle));
-	commandList->DrawInstanced(vertexCount, 1, 0, 0);
+GraphicPipelineManager* QFE::GRAPHIC::D3D12GraphicEngine::GetGraphicPipelineManager() const {
+	assert(graphicPipelineManager_ != nullptr);
+	return graphicPipelineManager_.get();
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::TestOffScreenDraw(
-	PSOHandle psoHandle, ViewPortHandle viewportHandle, ScissorRectHandle scissorRectHandle,
-	DirectXResourceHandle vertexBufferHandle, std::vector<DirectXResourceHandle> rootResources,
-	std::vector<RenderTargetHandle> renderTargets) {
-
-	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-
-	renderPass_->SetRenderTarget(
-		commandList, depthStencilBufferHandle_, renderTargets);
-
-	commandList->RSSetViewports(1, viewports_.GetData(static_cast<uint32_t>(viewportHandle)));
-	commandList->RSSetScissorRects(1, scissorRects_.GetData(static_cast<uint32_t>(scissorRectHandle)));
-
-	commandList->SetPipelineState(graphicPipelineManager_->GetPipelineState(psoHandle));
-	commandList->SetGraphicsRootSignature(graphicPipelineManager_->GetRootSignature(psoHandle));
-
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = resourceContainer_->GetVertexBufferView(vertexBufferHandle);
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-
-	std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes = graphicPipelineManager_->GetRootParameterTypes(psoHandle);
-	if (rootParameterTypes.size() != rootResources.size()) {
-		// PSOのルートパラメータの数と渡されたリソースの数が異なる場合はエラー
-		assert(false);
-		return;
-	}
-
-	for (int i = 0; i < rootParameterTypes.size(); ++i) {
-		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
-
-		if (rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
-			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer_->GetGpuVirtualAddress(rootResources[i]);
-			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
-		} else {
-			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
-			switch (rootParameterType) {
-			case D3D12_ROOT_PARAMETER_TYPE_SRV:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_UAV:
-				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			default:
-				break;
-			}
-		}
-	}
-
-	UINT vertexCount = static_cast<UINT>(GetResourceArraySize(vertexBufferHandle));
-	commandList->DrawInstanced(vertexCount, 1, 0, 0);
+ComputePipelineManager* QFE::GRAPHIC::D3D12GraphicEngine::GetComputePipelineManager() const {
+	assert(computePipelineManager_ != nullptr);
+	return computePipelineManager_.get();
 }
 
-void D3D12GraphicEngine::TestCompute(ComputePSOHandle computePSOHandle, DirectXResourceHandle uavHandle, DirectXResourceHandle constantBufferHandle) {
-	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-
-	commandList->SetPipelineState(computePipelineManager_->GetPipelineState(computePSOHandle));
-	commandList->SetComputeRootSignature(computePipelineManager_->GetRootSignature(computePSOHandle));
-
-	// UAVバッファをルートパラメータにバインド
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
-	commandList->SetComputeRootDescriptorTable(1, gpuHandle);
-
-	D3D12_GPU_VIRTUAL_ADDRESS constantBufferGPUAddress = resourceContainer_->GetGpuVirtualAddress(constantBufferHandle);
-	commandList->SetComputeRootConstantBufferView(0, constantBufferGPUAddress);
-
-	UINT threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ;
-	computePipelineManager_->GetThreadGroupSize(computePSOHandle, threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ);
-
-	UINT resourceWidth = resourceContainer_->GetResourceWidth(uavHandle);
-	UINT resourceHeight = resourceContainer_->GetResourceHeight(uavHandle);
-	commandList->Dispatch(resourceWidth / threadGroupSizeX, resourceHeight / threadGroupSizeY, threadGroupSizeZ);
-
-	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
-
-	renderPass_->TransitionCurrentBackBufferBarrier(
-		commandList, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
-
-	commandList->CopyResource(
-		renderPass_->GetCurrentBackBuffer(), resourceContainer_->GetResource(uavHandle));
-
-	renderPass_->TransitionCurrentBackBufferBarrier(
-		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
+RaytracingPipelineManager* QFE::GRAPHIC::D3D12GraphicEngine::GetRayTracingPipelineManager() const {
+	assert(rayTracingPipelineManager_ != nullptr);
+	return rayTracingPipelineManager_.get();
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle) {
-	ID3D12GraphicsCommandList4* commandList4 = commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	ID3D12RootSignature* globalRootSignature = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRootSignature();
-	ID3D12StateObject* rtpsoptr = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetPipelineState();
-	ID3D12Resource* rayGenShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRayGenShaderTable();
-	ID3D12Resource* missShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetMissShaderTable();
-	ID3D12Resource* hitGroupShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetHitGroupShaderTable();
-
-	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-
-	// 1. DXR用のパイプライン(RTPSO)とルートシグネチャをコマンドリストにセット
-	// (マネージャー等で生成したオブジェクトを設定します)
-	commandList4->SetComputeRootSignature(globalRootSignature);
-	commandList4->SetPipelineState1(rtpsoptr); // ★レイトレPSOはSetPipelineState1を使う
-
-	// 2. 自動化されたルートシグネチャへのリソースバインド
-	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = accelerationStructure_.GetTLASResultBuffer()->GetGPUVirtualAddress();
-	commandList4->SetComputeRootShaderResourceView(0, tlasResultBufferGPUHandle);
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
-	commandList4->SetComputeRootDescriptorTable(1, gpuHandle);
-
-	// 3. シェーダーレコードのサイズ定義（前段で作った64バイトと同じ）
-	const UINT shaderRecordSize = (D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES + D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1)
-		& ~(D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1); // 64
-
-	// 4. DispatchRays の設定構造体を埋める
-	D3D12_DISPATCH_RAYS_DESC dispatchDesc{};
-
-	// --- RayGeneration テーブルの指定 ---
-	dispatchDesc.RayGenerationShaderRecord.StartAddress = rayGenShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.RayGenerationShaderRecord.SizeInBytes = shaderRecordSize; // 64バイト
-
-	// --- Miss テーブルの指定 ---
-	dispatchDesc.MissShaderTable.StartAddress = missShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.MissShaderTable.SizeInBytes = shaderRecordSize; // 1つ分なので64バイト
-	dispatchDesc.MissShaderTable.StrideInBytes = shaderRecordSize; // 1つあたりの歩進サイズ
-
-	// --- HitGroup テーブルの指定（今回はまだ空なので0） ---
-	dispatchDesc.HitGroupTable.StartAddress = hitGroupShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.HitGroupTable.SizeInBytes = shaderRecordSize; // 1つのレコードサイズ
-	dispatchDesc.HitGroupTable.StrideInBytes = shaderRecordSize;
-
-	// --- Callable テーブルの指定（使わないので0） ---
-	dispatchDesc.CallableShaderTable.StartAddress = 0;
-	dispatchDesc.CallableShaderTable.SizeInBytes = 0;
-	dispatchDesc.CallableShaderTable.StrideInBytes = 0;
-
-	// --- 追跡する画面の解像度を指定（このピクセル数分の光線が一斉に飛びます） ---
-	dispatchDesc.Width = 1280;  // 例: 1920
-	dispatchDesc.Height = 720; // 例: 1080
-	dispatchDesc.Depth = 1;            // 2D画面なので 1
-
-	// 5. ★運命のコマンド発行！
-	commandList4->DispatchRays(&dispatchDesc);
-
-
-	// 6. スワップチェーンのバックバッファにコピー
-	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
-	renderPass_->TransitionCurrentBackBufferBarrier(
-		commandList, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
-	commandList->CopyResource(
-		renderPass_->GetCurrentBackBuffer(), resourceContainer_->GetResource(uavHandle));
-	renderPass_->TransitionCurrentBackBufferBarrier(
-		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
+TextureLoader* QFE::GRAPHIC::D3D12GraphicEngine::GetTextureLoader() const {
+	assert(textureLoader_ != nullptr);
+	return textureLoader_.get();
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::TestRayTracing(
-	RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle, std::vector<DirectXResourceHandle> rootResources) {
-
-	ID3D12GraphicsCommandList4* commandList4 = commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	ID3D12RootSignature* globalRootSignature = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRootSignature();
-	ID3D12StateObject* rtpsoptr = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetPipelineState();
-	ID3D12Resource* rayGenShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRayGenShaderTable();
-	ID3D12Resource* missShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetMissShaderTable();
-	ID3D12Resource* hitGroupShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetHitGroupShaderTable();
-
-	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-
-	// 1. DXR用のパイプライン(RTPSO)とルートシグネチャをコマンドリストにセット
-	// (マネージャー等で生成したオブジェクトを設定します)
-	commandList4->SetComputeRootSignature(globalRootSignature);
-	commandList4->SetPipelineState1(rtpsoptr); // ★レイトレPSOはSetPipelineState1を使う
-
-	// 2. 自動化されたルートシグネチャへのリソースバインド
-	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = accelerationStructure_.GetTLASResultBuffer()->GetGPUVirtualAddress();
-	commandList4->SetComputeRootShaderResourceView(0, tlasResultBufferGPUHandle);
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
-
-	commandList4->SetComputeRootDescriptorTable(1, resourceContainer_->GetDescriptorHandleGPU(rootResources[0], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(2, resourceContainer_->GetDescriptorHandleGPU(rootResources[1], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(3, resourceContainer_->GetDescriptorHandleGPU(rootResources[2], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(4, gpuHandle);
-
-	// 3. シェーダーレコードのサイズ定義（前段で作った64バイトと同じ）
-	const UINT shaderRecordSize = (D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES + D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1)
-		& ~(D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1); // 64
-
-	// 4. DispatchRays の設定構造体を埋める
-	D3D12_DISPATCH_RAYS_DESC dispatchDesc{};
-
-	// --- RayGeneration テーブルの指定 ---
-	dispatchDesc.RayGenerationShaderRecord.StartAddress = rayGenShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.RayGenerationShaderRecord.SizeInBytes = shaderRecordSize; // 64バイト
-
-	// --- Miss テーブルの指定 ---
-	dispatchDesc.MissShaderTable.StartAddress = missShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.MissShaderTable.SizeInBytes = shaderRecordSize; // 1つ分なので64バイト
-	dispatchDesc.MissShaderTable.StrideInBytes = shaderRecordSize; // 1つあたりの歩進サイズ
-
-	// --- HitGroup テーブルの指定（今回はまだ空なので0） ---
-	dispatchDesc.HitGroupTable.StartAddress = hitGroupShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.HitGroupTable.SizeInBytes = shaderRecordSize; // 1つのレコードサイズ
-	dispatchDesc.HitGroupTable.StrideInBytes = shaderRecordSize;
-
-	// --- Callable テーブルの指定（使わないので0） ---
-	dispatchDesc.CallableShaderTable.StartAddress = 0;
-	dispatchDesc.CallableShaderTable.SizeInBytes = 0;
-	dispatchDesc.CallableShaderTable.StrideInBytes = 0;
-
-	// --- 追跡する画面の解像度を指定（このピクセル数分の光線が一斉に飛びます） ---
-	dispatchDesc.Width = 1280;  // 例: 1920
-	dispatchDesc.Height = 720; // 例: 1080
-	dispatchDesc.Depth = 1;            // 2D画面なので 1
-
-	// 5. ★運命のコマンド発行！
-	commandList4->DispatchRays(&dispatchDesc);
-
-	// 6. スワップチェーンのバックバッファにコピー
-	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
-	renderPass_->TransitionCurrentBackBufferBarrier(
-		commandList, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
-	commandList->CopyResource(
-		renderPass_->GetCurrentBackBuffer(), resourceContainer_->GetResource(uavHandle));
-	renderPass_->TransitionCurrentBackBufferBarrier(
-		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
+QFE::UniqueContainer<D3D12_VIEWPORT>& QFE::GRAPHIC::D3D12GraphicEngine::GetViewports() {
+	return viewports_;
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::RayTracingDispatch(
-	RTPSOHandle rtpsoHandle, DirectXResourceHandle uavHandle, 
-	std::vector<DirectXResourceHandle> rootResources, DirectXResourceHandle copyResourceHandle) {
-
-	ID3D12GraphicsCommandList4* commandList4 = commandManager_->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	ID3D12RootSignature* globalRootSignature = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRootSignature();
-	ID3D12StateObject* rtpsoptr = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetPipelineState();
-	ID3D12Resource* rayGenShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRayGenShaderTable();
-	ID3D12Resource* missShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetMissShaderTable();
-	ID3D12Resource* hitGroupShaderTable_ = rayTracingPipelineManager_->GetRaytracingPipelineStateObject(rtpsoHandle)->GetHitGroupShaderTable();
-
-	ID3D12GraphicsCommandList* commandList = commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-
-	// 1. DXR用のパイプライン(RTPSO)とルートシグネチャをコマンドリストにセット
-	// (マネージャー等で生成したオブジェクトを設定します)
-	commandList4->SetComputeRootSignature(globalRootSignature);
-	commandList4->SetPipelineState1(rtpsoptr); // ★レイトレPSOはSetPipelineState1を使う
-
-	// 2. 自動化されたルートシグネチャへのリソースバインド
-	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = accelerationStructure_.GetTLASResultBuffer()->GetGPUVirtualAddress();
-	commandList4->SetComputeRootShaderResourceView(0, tlasResultBufferGPUHandle);
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer_->GetDescriptorHandleGPU(uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
-
-	commandList4->SetComputeRootDescriptorTable(1, resourceContainer_->GetDescriptorHandleGPU(rootResources[0], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(2, resourceContainer_->GetDescriptorHandleGPU(rootResources[1], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(3, resourceContainer_->GetDescriptorHandleGPU(rootResources[2], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(4, gpuHandle);
-
-	// 3. シェーダーレコードのサイズ定義（前段で作った64バイトと同じ）
-	const UINT shaderRecordSize = (D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES + D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1)
-		& ~(D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT - 1); // 64
-
-	// 4. DispatchRays の設定構造体を埋める
-	D3D12_DISPATCH_RAYS_DESC dispatchDesc{};
-
-	// --- RayGeneration テーブルの指定 ---
-	dispatchDesc.RayGenerationShaderRecord.StartAddress = rayGenShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.RayGenerationShaderRecord.SizeInBytes = shaderRecordSize; // 64バイト
-
-	// --- Miss テーブルの指定 ---
-	dispatchDesc.MissShaderTable.StartAddress = missShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.MissShaderTable.SizeInBytes = shaderRecordSize; // 1つ分なので64バイト
-	dispatchDesc.MissShaderTable.StrideInBytes = shaderRecordSize; // 1つあたりの歩進サイズ
-
-	// --- HitGroup テーブルの指定（今回はまだ空なので0） ---
-	dispatchDesc.HitGroupTable.StartAddress = hitGroupShaderTable_->GetGPUVirtualAddress();
-	dispatchDesc.HitGroupTable.SizeInBytes = shaderRecordSize; // 1つのレコードサイズ
-	dispatchDesc.HitGroupTable.StrideInBytes = shaderRecordSize;
-
-	// --- Callable テーブルの指定（使わないので0） ---
-	dispatchDesc.CallableShaderTable.StartAddress = 0;
-	dispatchDesc.CallableShaderTable.SizeInBytes = 0;
-	dispatchDesc.CallableShaderTable.StrideInBytes = 0;
-
-	// --- 追跡する画面の解像度を指定（このピクセル数分の光線が一斉に飛びます） ---
-	dispatchDesc.Width = 1280;  // 例: 1920
-	dispatchDesc.Height = 720; // 例: 1080
-	dispatchDesc.Depth = 1;            // 2D画面なので 1
-
-	// 5. ★運命のコマンド発行！
-	commandList4->DispatchRays(&dispatchDesc);
-
-	// 6. コピー先リソースにコピー
-	resourceContainer_->TransitionResource(uavHandle, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
-	resourceContainer_->TransitionResource(copyResourceHandle, commandList, D3D12_RESOURCE_STATE_COPY_DEST);
-	commandList->CopyResource(
-		resourceContainer_->GetResource(copyResourceHandle), resourceContainer_->GetResource(uavHandle));
-	resourceContainer_->TransitionResource(copyResourceHandle, commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+QFE::UniqueContainer<D3D12_RECT>& QFE::GRAPHIC::D3D12GraphicEngine::GetScissorRects() {
+	return scissorRects_;
 }
 
-ID3D12Device* QFE::GRAPHIC::D3D12GraphicEngine::GetDevice() const {
-	return directXDevice_->GetDevice();
+RenderPass* QFE::GRAPHIC::D3D12GraphicEngine::GetRenderPass() const {
+	assert(renderPass_ != nullptr);
+	return renderPass_.get();
 }
 
-ID3D12GraphicsCommandList* QFE::GRAPHIC::D3D12GraphicEngine::GetCommandList(D3D12_COMMAND_LIST_TYPE type) const {
-	return commandManager_->GetCommandList(type);
+RaytracingAccelerationStructure* QFE::GRAPHIC::D3D12GraphicEngine::GetRaytracingAccelerationStructure() {
+	return &accelerationStructure_;
 }
 
-UINT QFE::GRAPHIC::D3D12GraphicEngine::GetSwapChainBufferCount() const {
-	return renderPass_->GetSwapChainBufferCount();
-}
-
-ID3D12DescriptorHeap* QFE::GRAPHIC::D3D12GraphicEngine::GetSRVDescriptorHeap() const {
-	return descriptorHeapManager_->GetDescriptorHeap(GRAPHIC::DescriptorHeapType::SRV);
-}
-
-DescriptorHandles QFE::GRAPHIC::D3D12GraphicEngine::CreateExternalSRVDescriptor() {
-	return descriptorHeapManager_->CreateEmptyHeapHandle(GRAPHIC::DescriptorHeapType::SRV);
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::D3D12GraphicEngine::GetSRVDescriptorGPUHandle(DirectXResourceHandle handle) const {
-	return resourceContainer_->GetDescriptorHandleGPU(handle, ViewTypeFlags::ShaderResourceView);
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE QFE::GRAPHIC::D3D12GraphicEngine::GetSRVDescriptorCPUHandle(DirectXResourceHandle handle) const {
-	return resourceContainer_->GetDescriptorHandleCPU(handle, ViewTypeFlags::ShaderResourceView);
+DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::GetDepthStencilBufferHandle() const {
+	assert(depthStencilBufferHandle_ != DirectXResourceHandle::Invalid);
+	return depthStencilBufferHandle_;
 }
 
 void D3D12GraphicEngine::LegacyInitialize(uint32_t width, uint32_t height) {
@@ -851,7 +392,7 @@ DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::CreateDepthStencilBuffer
 	srvDesc.Texture2D.MipLevels = 1;
 
 	// ビューの生成情報を設定
-	CereateViewInfo createViewInfo{};
+	CreateViewInfo createViewInfo{};
 	// ★DSVとSRVの両方のフラグを立てる
 	createViewInfo.viewType = ViewTypeFlags::DepthStencilView | ViewTypeFlags::ShaderResourceView;
 	createViewInfo.dsvDesc = dsvDesc;

@@ -14,9 +14,9 @@
 #include "DirectXTex/DirectXTex.h"
 
 #include "math/vector/Vector2.h"
-#include "dx12/vram/descriptors/DescriptorHandles.h"
+#include "graphics/dx12/vram/descriptors/DescriptorHandles.h"
 
-#include "GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 
 namespace QFE::GRAPHIC {
 	/// @brief TextureLoaderクラスの初期化に必要な情報と関数をまとめた構造体

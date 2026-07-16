@@ -13,8 +13,8 @@ project "GraphicEngine"
 
         -- 追加のインクルード
         includedirs {
+            "%{wks.location}/engine/",
             "%{wks.location}/engine/core/",
-            "%{wks.location}/engine/graphics/"
         }
 
         -- 外部ファイルのインクルード

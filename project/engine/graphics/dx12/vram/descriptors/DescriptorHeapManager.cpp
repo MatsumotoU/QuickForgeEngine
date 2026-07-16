@@ -112,10 +112,10 @@ DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::AssignUavHeap(
 
 DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::CreateEmptyHeapHandle(DescriptorHeapType type) {
 	// 空いているディスクリタのインデックスを取得
-	uint32_t index = descriptorHeaps_[DescriptorHeapType::SRV].GetNextFreeDescriptorIndex();
+	uint32_t index = descriptorHeaps_[type].GetNextFreeDescriptorIndex();
 	// ヒープにディスクリタを割り当てる
-	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = descriptorHeaps_[DescriptorHeapType::SRV].GetCpuDescriptorHandle(index);
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = descriptorHeaps_[DescriptorHeapType::SRV].GetGpuDescriptorHandle(index);
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = descriptorHeaps_[type].GetCpuDescriptorHandle(index);
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = descriptorHeaps_[type].GetGpuDescriptorHandle(index);
 
 	DescriptorHandles handles{};
 	handles.cpuHandle_ = cpuHandle;

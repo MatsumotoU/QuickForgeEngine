@@ -51,7 +51,7 @@ namespace QFE::GRAPHIC {
 
 		/// @brief シェーダーペアを生成します
 		ShaderPairHandle GenerateShaderPair(
-			const ShaderPairElement& element, std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc);
+			const ShaderPairElement& element);
 		/// @brief パイプラインステートオブジェクトを生成します
 		PSOHandle GeneratePipelineStateObject(
 			const ShaderPairHandle& shaderHandle, ID3D12Device* device
@@ -77,7 +77,7 @@ namespace QFE::GRAPHIC {
 		
 	private: // メンバ変数
 		/// @brief BuiltInのシェーダーペアを生成します
-		void GenerateBuiltInShaderPairs(std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc);
+		void GenerateBuiltInShaderPairs();
 		/// @brief BuiltInのPSOを各情報すべてから生成します
 		void GenerateBuiltInPSO(ID3D12Device* device);
 

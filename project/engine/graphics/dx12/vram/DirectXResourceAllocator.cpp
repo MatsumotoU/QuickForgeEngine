@@ -42,7 +42,7 @@ void QFE::GRAPHIC::DirectXResourceAllocator::Grow(
 
         // SRVが必要な場合のみ、初期生成時に1回だけビュー（SRV）を自動登録する
         if (isSRV) {
-            CereateViewInfo viewInfo{};
+            CreateViewInfo viewInfo{};
             viewInfo.viewType = ViewTypeFlags::ShaderResourceView;
             viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
             viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
