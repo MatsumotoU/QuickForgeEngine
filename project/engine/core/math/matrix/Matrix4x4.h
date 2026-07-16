@@ -10,6 +10,7 @@ namespace QFE::MATH {
 
 	// 前方宣言
 	class Vector3;
+	class Vector4;
 	class EulerTransform;
 
 	class Matrix4x4 final {
@@ -140,6 +141,7 @@ namespace QFE::MATH {
 		/// <param name="translate">移動E惁EE</param>
 		/// <returns>3次允EEアフィン行E</returns>
 		[[nodiscard]] static Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+		[[nodiscard]] static Matrix4x4 MakeAffineMatrix(const Vector3& translate, const Vector4& rotate, const Vector3& scale);
 		[[nodiscard]] static Matrix4x4 MakeAffineMatrix(const EulerTransform& transform);
 
 		/// <summary>

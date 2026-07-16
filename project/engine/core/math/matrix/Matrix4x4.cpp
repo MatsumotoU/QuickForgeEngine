@@ -5,6 +5,7 @@
 
 #include "Matrix4x4.h"
 #include "../vector/Vector3.h"
+#include "../vector/Vector4.h"
 #include "../transform/Transform.h"
 #include <assert.h>
 
@@ -536,6 +537,31 @@ Matrix4x4 Matrix4x4::MakeAffineMatrix(const Vector3& scale, const Vector3& rotat
 	result = MakeScaleMatrix(scale);
 	result = Multiply(result, MakeRotateXYZMatrix(rotate));
 	result = Multiply(result, MakeTranslateMatrix(translate));
+	return result;
+}
+
+Matrix4x4 QFE::MATH::Matrix4x4::MakeAffineMatrix(const Vector3& translate, const Vector4& rotate, const Vector3& scale) {
+	Matrix4x4 rotateMatrix{};
+	float x = rotate.x;
+	float y = rotate.y;
+	float z = rotate.z;
+	float w = rotate.w;
+	rotateMatrix.m[0][0] = std::powf(w, 2.0f) + std::powf(x, 2.0f) - std::powf(y, 2.0f) - std::powf(z, 2.0f);
+	rotateMatrix.m[0][1] = 2.0f * (x * y + w * z);
+	rotateMatrix.m[0][2] = 2.0f * (z * x - w * y);
+	rotateMatrix.m[1][0] = 2.0f * (x * y - w * z);
+	rotateMatrix.m[1][1] = std::powf(w, 2.0f) - std::powf(x, 2.0f) + std::powf(y, 2.0f) - std::powf(z, 2.0f);
+	rotateMatrix.m[1][2] = 2.0f * (z * y + w * x);
+	rotateMatrix.m[2][0] = 2.0f * (x * z + w * y);
+	rotateMatrix.m[2][1] = 2.0f * (y * z - w * x);
+	rotateMatrix.m[2][2] = std::powf(w, 2.0f) - std::powf(x, 2.0f) - std::powf(y, 2.0f) + std::powf(z, 2.0f);
+	rotateMatrix.m[3][3] = 1.0f;
+
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
+
+	Matrix4x4 result = Multiply(scaleMatrix, rotateMatrix);
+	result = Multiply(result, translateMatrix);
 	return result;
 }
 
