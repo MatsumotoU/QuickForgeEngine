@@ -17,6 +17,7 @@
 #include "pso/PipelineDescTypes.h"
 #include "pso/InputElement.h"
 #include "pso/RootParameterElement.h"
+#include "pso/PipelineStateObject.h"
 
 namespace QFE::GRAPHIC {
 	/// @brief グラフィックスパイプラインを作るためのクラス群の前方宣言
@@ -26,7 +27,6 @@ namespace QFE::GRAPHIC {
 	class RasterizerTemplate;
 	class BlendStateTemplate;
 	class DepthStencilDescTemplate;
-	class PipelineStateObject;
 
 	/// @brief グラフィックスパイプラインマネージャーの初期化情報をまとめた構造体
 	struct GraphicPipelineManagerInitializeInfo {
@@ -86,11 +86,10 @@ namespace QFE::GRAPHIC {
 		// グラフィックスパイプラインを管理するためのメンバ変数
 		uint32_t shaderPairKeyCounter_ = 0;// シェーダーペアのキーを管理するカウンター
 		std::map<std::string, uint32_t> shaderPairNameToKeyMap_;// シェーダーペアの名前からキーを取得するためのマップ
-		std::map<uint32_t, std::unique_ptr<ShaderPair>> shaderPairs_;// シェーダーペアのマップ
+		SparseSet<std::unique_ptr<ShaderPair>> shaderPairs_;// シェーダーペアのマップ
 		uint32_t pipelineStateObjectKeyCounter_ = 0;// パイプラインステートオブジェクトのキーを管理するカウンター
 		std::map<std::string, uint32_t> pipelineStateObjectNameToKeyMap_;// パイプラインステートオブジェクトの名前からキーを取得するためのマップ
-		std::map<uint32_t, std::unique_ptr<PipelineStateObject>> pipelineStateObjects_;// パイプラインステートオブジェクトのマップ
-
+		SparseSet<std::unique_ptr<PipelineStateObject>> pipelineStateObjects_;// パイプラインステートオブジェクトのマップ
 		std::map<BuiltInShaderPair, ShaderPairHandle> builtInPairHandles_;// BuiltInのPSOのハンドルを管理するマップ
 		// pairHandle,blend,rasterize,depthの順番
 		MultidimensionalArray<PSOHandle, 4> BuiltInPSOs_;// ビルトインのPSOを管理する多次元配列

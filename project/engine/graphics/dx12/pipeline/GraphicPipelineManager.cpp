@@ -12,7 +12,7 @@
 #include "pso/RasterizerTemplate.h"
 #include "pso/BlendStateTemplate.h"
 #include "pso/DepthStencilDescTemplate.h"
-#include "pso/PipelineStateObject.h"
+
 
 #include "EngineDefines.h"
 
@@ -153,9 +153,8 @@ PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
 }
 
 PipelineStateObject* GraphicPipelineManager::GetPipelineStateObject(const PSOHandle& psoHandle) const {
-	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
-	if (it != pipelineStateObjects_.end()) {
-		return it->second.get();
+	if (pipelineStateObjects_.Contains(static_cast<uint32_t>(psoHandle))) {
+		return pipelineStateObjects_.at(static_cast<uint32_t>(psoHandle)).get();
 	}
 
 	QFE_LOG(std::format("PipelineStateObject not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)));
@@ -163,18 +162,19 @@ PipelineStateObject* GraphicPipelineManager::GetPipelineStateObject(const PSOHan
 }
 
 ID3D12PipelineState* QFE::GRAPHIC::GraphicPipelineManager::GetPipelineState(const PSOHandle& psoHandle) const {
-	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
-	if (it != pipelineStateObjects_.end()) {
-		return it->second->GetPipelineState();
+	PipelineStateObject* pso = GetPipelineStateObject(psoHandle);
+	if(pso) {
+		return pso->GetPipelineState();
 	}
+
 	QFE_LOG(std::format("PipelineState not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)));
 	return nullptr;
 }
 
 ID3D12RootSignature* GraphicPipelineManager::GetRootSignature(const PSOHandle& psoHandle) const {
-	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
-	if (it != pipelineStateObjects_.end()) {
-		return it->second->GetRootSignature();
+	PipelineStateObject* pso = GetPipelineStateObject(psoHandle);
+	if(pso) {
+		return pso->GetRootSignature();
 	}
 	QFE_LOG(std::format("RootSignature not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)));
 	return nullptr;
@@ -182,9 +182,9 @@ ID3D12RootSignature* GraphicPipelineManager::GetRootSignature(const PSOHandle& p
 
 std::vector<D3D12_ROOT_PARAMETER_TYPE> GraphicPipelineManager::GetRootParameterTypes(const PSOHandle& psoHandle) const {
 	// PSOハンドルからPSOを取得し、そこからシェーダーペアのハンドルを取得して、シェーダーペアからルートパラメータのタイプを取得する
-	auto it = pipelineStateObjects_.find(static_cast<uint32_t>(psoHandle));
-	if (it != pipelineStateObjects_.end()) {
-		uint32_t shaderPairHandle = it->second->GetShaderPairHandle();
+	PipelineStateObject* pso = GetPipelineStateObject(psoHandle);
+	if (pso) {
+		uint32_t shaderPairHandle = pso->GetShaderPairHandle();
 		return shaderPairs_.at(shaderPairHandle)->GetRootParameterTypes();
 	}
 	QFE_REPORT_SYSTEM_ERROR(std::format("RootParameterTypes not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)),SystemError::Abort);
