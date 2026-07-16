@@ -2,6 +2,7 @@
 
 #ifdef __cplusplus
 #include <stdint.h>
+#include <cstdint>
 #include "math/vector/Vector4.h"
 #include "math/vector/Vector3.h"
 #include "math/vector/Vector2.h"
@@ -39,6 +40,21 @@ struct Well {
 
 struct OutlineOffset {
 	float32_t4x4 viewProjectionInverse;
+};
+
+struct Vertex {
+	float32_t4 position;
+	float32_t2 texcoord;
+	float32_t3 normal;
+};
+
+struct VertexInfluence {
+	float32_t weight;
+	int32_t index[4];
+};
+
+struct SkinningInformation {
+	uint32_t numVertices;
 };
 
 struct CameraForGPU {
