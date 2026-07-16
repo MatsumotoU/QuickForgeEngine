@@ -5,7 +5,6 @@
 
 #include "EngineDefines.h"
 #include "file/FileUtility.h"
-#include "D3D12GraphicEngine.h"
 
 using namespace QFE::GRAPHIC;
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "IRenderCommand.h"
-#include "dx12/GraphicEngineHandleTypes.h"
-#include "dx12/vram/descriptors/ViewTypeFlags.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/vram/descriptors/ViewTypeFlags.h"
 
 #include <functional>
 #include <vector>

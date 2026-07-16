@@ -2,12 +2,12 @@
 #include "DirectXResource.h"
 #include "memory/SparseSets.h"
 
-#include "dx12/vram/descriptors/ViewTypeFlags.h"
+#include "graphics/dx12/vram/descriptors/ViewTypeFlags.h"
 #include <functional>
 // UploadResourceの引数でD3D12_RESOURCE_DESCを使うために必要
 #include "DirectXTex/d3dx12.h"
 
-#include "dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 
 namespace QFE::GRAPHIC {
 
@@ -20,7 +20,7 @@ namespace QFE::GRAPHIC {
 	};
 
 	/// @brief ビューのタイプと説明をまとめた構造体
-	struct CereateViewInfo {
+	struct CreateViewInfo {
 		ViewTypeFlags viewType;// 作成するビューのタイプ
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;// 作るRTVの説明
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;// 作るSRVの説明
@@ -58,7 +58,7 @@ namespace QFE::GRAPHIC {
 		void MapResource(DirectXResourceHandle handle, UINT subresource = 0, const D3D12_RANGE* readRange = nullptr);
 		
 		/// @brief リソースのビューを生成します
-		void CreateResourceView(DirectXResourceHandle handle, CereateViewInfo createViewInfo);
+		void CreateResourceView(DirectXResourceHandle handle, CreateViewInfo createViewInfo);
 		/// @brief リソースをGPUにアップロードします
 		void UploadResource(
 			DirectXResourceHandle handle, std::vector<D3D12_SUBRESOURCE_DATA> subresources,

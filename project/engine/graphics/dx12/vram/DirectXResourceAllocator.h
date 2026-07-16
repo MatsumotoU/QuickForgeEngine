@@ -5,7 +5,7 @@
 #include <typeindex>
 #include <utility>
 #include <d3d12.h>
-#include "dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 #include "resources/DirectXResourceContainer.h"
 #include "string/MyString.h"
 

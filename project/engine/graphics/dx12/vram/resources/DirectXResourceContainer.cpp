@@ -105,7 +105,7 @@ void DirectXResourceContainer::MapResource(DirectXResourceHandle handle, UINT su
 	QFE_LOG("Resource mapped successfully in DirectXResourceContainer::MapResource");
 }
 
-void DirectXResourceContainer::CreateResourceView(DirectXResourceHandle handle, CereateViewInfo createViewInfo) {
+void DirectXResourceContainer::CreateResourceView(DirectXResourceHandle handle, CreateViewInfo createViewInfo) {
 	// 引数の検査
 	if (handle == DirectXResourceHandle::Invalid) {
 		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::CreateResourceView", SystemError::Abort);

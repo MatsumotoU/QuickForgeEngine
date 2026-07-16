@@ -50,7 +50,7 @@ void GraphicPipelineManager::Initialize(GraphicPipelineManagerInitializeInfo ini
 	std::vector<std::string> vsFiles = QFE::FILE::GetFilesInDirectory(kVSFilePath);
 	std::vector<std::string> psFiles = QFE::FILE::GetFilesInDirectory(kPSFilePath);
 
-	GenerateBuiltInShaderPairs(initializeInfo.compileFunc);
+	GenerateBuiltInShaderPairs();
 	// BuiltInのPSOを生成
 	GenerateBuiltInPSO(initializeInfo.device);
 }
@@ -59,8 +59,7 @@ void GraphicPipelineManager::Finalize() {
 	
 }
 
-ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(
-	const ShaderPairElement& element, std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc) {
+ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(const ShaderPairElement& element) {
 
 	// すでに同じシェーダーペアが存在する場合は、既存のハンドルを返す
 	if (shaderPairNameToKeyMap_.find(element.vsFileName + element.psFileName) != shaderPairNameToKeyMap_.end()) {
@@ -72,8 +71,8 @@ ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(
 	std::map<std::string, IDxcBlob*> psBlobMap;
 
 	// シェーダーをコンパイル
-	vsBlobMap[element.vsFileName] = compileFunc(ConvertString(element.vsDirName + element.vsFileName), L"vs_6_0");
-	psBlobMap[element.psFileName] = compileFunc(ConvertString(element.psDirName + element.psFileName), L"ps_6_0");
+	vsBlobMap[element.vsFileName] = initializeInfo_.compileFunc(ConvertString(element.vsDirName + element.vsFileName), L"vs_6_0");
+	psBlobMap[element.psFileName] = initializeInfo_.compileFunc(ConvertString(element.psDirName + element.psFileName), L"ps_6_0");
 
 	// シェーダーのリフレクションを行うための関数群
 	ShaderPairFunctions funcs;
@@ -206,8 +205,7 @@ PSOHandle GraphicPipelineManager::GetBuiltInPSOHandle(
 	return BuiltInPSOs_.At(infoArray);
 }
 
-void GraphicPipelineManager::GenerateBuiltInShaderPairs(
-	std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc) {
+void GraphicPipelineManager::GenerateBuiltInShaderPairs() {
 	// 基本設定
 	ShaderPairElement element;
 	element.vsDirName = kVSFilePath;
@@ -216,7 +214,7 @@ void GraphicPipelineManager::GenerateBuiltInShaderPairs(
 	// MiniShader用のシェーダーペアの生成
 	element.vsFileName = "MiniShader.VS.hlsl";
 	element.psFileName = "MiniShader.PS.hlsl";
-	builtInPairHandles_[BuiltInShaderPair::ObjectMini] = GenerateShaderPair(element, compileFunc);
+	builtInPairHandles_[BuiltInShaderPair::ObjectMini] = GenerateShaderPair(element);
 	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
 		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::ObjectMini]),
 		element.vsFileName, element.psFileName));
@@ -224,7 +222,7 @@ void GraphicPipelineManager::GenerateBuiltInShaderPairs(
 	// Object2D用のシェーダーペアの生成
 	element.vsFileName = "Object2d.VS.hlsl";
 	element.psFileName = "Object2d.PS.hlsl";
-	builtInPairHandles_[BuiltInShaderPair::Object2D] = GenerateShaderPair(element, compileFunc);
+	builtInPairHandles_[BuiltInShaderPair::Object2D] = GenerateShaderPair(element);
 	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
 		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Object2D]),
 		element.vsFileName, element.psFileName));
@@ -232,7 +230,7 @@ void GraphicPipelineManager::GenerateBuiltInShaderPairs(
 	// Object3D用のシェーダーペアの生成
 	element.vsFileName = "Object3d.VS.hlsl";
 	element.psFileName = "Object3d.PS.hlsl";
-	builtInPairHandles_[BuiltInShaderPair::Object3D] = GenerateShaderPair(element, compileFunc);
+	builtInPairHandles_[BuiltInShaderPair::Object3D] = GenerateShaderPair(element);
 	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
 		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Object3D]),
 		element.vsFileName, element.psFileName));
@@ -240,7 +238,7 @@ void GraphicPipelineManager::GenerateBuiltInShaderPairs(
 	// Particle用のシェーダーペアの生成
 	element.vsFileName = "Particle.VS.hlsl";
 	element.psFileName = "Particle.PS.hlsl";
-	builtInPairHandles_[BuiltInShaderPair::Particle] = GenerateShaderPair(element, compileFunc);
+	builtInPairHandles_[BuiltInShaderPair::Particle] = GenerateShaderPair(element);
 	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
 		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Particle]),
 		element.vsFileName, element.psFileName));
@@ -248,7 +246,7 @@ void GraphicPipelineManager::GenerateBuiltInShaderPairs(
 	// Primitive用のシェーダーペアの生成
 	element.vsFileName = "Primitive.VS.hlsl";
 	element.psFileName = "Primitive.PS.hlsl";
-	builtInPairHandles_[BuiltInShaderPair::Primitive] = GenerateShaderPair(element, compileFunc);
+	builtInPairHandles_[BuiltInShaderPair::Primitive] = GenerateShaderPair(element);
 	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
 		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Primitive]),
 		element.vsFileName, element.psFileName));
@@ -256,7 +254,7 @@ void GraphicPipelineManager::GenerateBuiltInShaderPairs(
 	// Skybox用のシェーダーペアの生成
 	element.vsFileName = "Skybox.VS.hlsl";
 	element.psFileName = "Skybox.PS.hlsl";
-	builtInPairHandles_[BuiltInShaderPair::Skybox] = GenerateShaderPair(element, compileFunc);
+	builtInPairHandles_[BuiltInShaderPair::Skybox] = GenerateShaderPair(element);
 	QFE_LOG(std::format("BuiltIn ShaderPair generated. ShaderPairHandle: {}, VS: {}, PS: {}",
 		static_cast<uint32_t>(builtInPairHandles_[BuiltInShaderPair::Skybox]),
 		element.vsFileName, element.psFileName));

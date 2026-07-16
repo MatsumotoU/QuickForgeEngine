@@ -1,5 +1,5 @@
 project "FrameworkCore"
-        kind "StaticLib" 
+        kind "Utility"
         language "C++"
         debugdir "%{wks.location}"
         files {"./**.h","./**.cpp"}

@@ -3,8 +3,8 @@
 #include <d3d12.h>
 #include <unordered_map>
 #include <string>
-#include "dx12/vram/descriptors/ViewTypeFlags.h"
-#include "dx12/vram/descriptors/DescriptorHandles.h"
+#include "graphics/dx12/vram/descriptors/ViewTypeFlags.h"
+#include "graphics/dx12/vram/descriptors/DescriptorHandles.h"
 
 namespace QFE::GRAPHIC {
 	/// @brief DirectX12のリソースをラップしたクラス

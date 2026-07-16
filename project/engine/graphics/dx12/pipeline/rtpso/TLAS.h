@@ -5,7 +5,7 @@
 #include <string>
 #include <functional>
 
-#include "dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 
 #include "math/matrix/Matrix4x4.h"
 

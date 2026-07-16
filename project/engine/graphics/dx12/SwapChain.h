@@ -4,7 +4,7 @@
 #include <dxgi1_6.h>
 #include <d3d12.h>
 #include <vector>
-#include "dx12/vram/descriptors/DescriptorHandles.h"
+#include "graphics/dx12/vram/descriptors/DescriptorHandles.h"
 
 namespace QFE::GRAPHIC {
 	class SwapChain {

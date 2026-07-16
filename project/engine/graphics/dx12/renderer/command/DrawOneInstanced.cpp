@@ -1,7 +1,7 @@
 #include "DrawOneInstanced.h"
 #include <unordered_map>
 
-#include "dx12/vram/descriptors/ViewTypeFlags.h"
+#include "graphics/dx12/vram/descriptors/ViewTypeFlags.h"
 
 using namespace QFE::GRAPHIC;
 
