@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	fpsCounter->Reset();
 
 	// InputInterfaceの初期化
-	std::unique_ptr<QFE::INPUT::InputInterface> inputInterface = 
+	std::unique_ptr<QFE::INPUT::InputInterface> inputInterface =
 		QFE::FRAMEWORK::CreateInputInterface(mainWindow, hInstance);
 
 	// シーンマネージャの初期化
@@ -70,9 +70,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::GRAPHIC::ShaderPairHandle shaderPairHandle;
 	QFE::FRAMEWORK::CreateShaderPair(graphicEngine.get(), vsDirName, psDirName, "Object3d.GBuffer.VS.hlsl", "Object3d.GBuffer.PS.hlsl", shaderPairHandle);
 	// パイプラインステートオブジェクトを生成
-	QFE::GRAPHIC::PSOHandle psoHandle = graphicEngine->CreatePipelineStateObject(
-		shaderPairHandle, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
-		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::DepthStencilDescType::Default);
+	QFE::GRAPHIC::PSOHandle psoHandle;
+	QFE::FRAMEWORK::CreateGraphicPSO(graphicEngine.get(), shaderPairHandle,
+		QFE::GRAPHIC::RasterizerType::Default,
+		QFE::GRAPHIC::BlendMode::kBlendModeNormal,
+		QFE::GRAPHIC::DepthStencilDescType::Default, psoHandle);
 
 	QFE::MATH::EulerTransform cameraTransform;
 	cameraTransform.translate = { 0.0f, 20.0f, -20.0f };
@@ -91,9 +93,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::ASSET::ModelData modelData;
 		if (modelLoader.LoadModel(modelDir + modelName + ".obj", modelData)) {
 			modelDataMap[modelName] = modelData;
-			vertexBufferMap[modelName] = 
-				graphicEngine->CreateVertexBuffer(modelDataMap[modelName].meshes[0].vertices.GetInternalVector(), "VertexBuffer");
-			return true;
+			bool result = QFE::FRAMEWORK::CreateVertexBuffer(
+				graphicEngine.get(),
+				modelDataMap[modelName].meshes[0].vertices.GetInternalVector(),
+				modelName, vertexBufferMap[modelName]);
+			return result;
 		}
 		return false;
 		};
@@ -102,13 +106,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::ASSET::ModelData modelData;
 		if (modelLoader.LoadModel(modelDir + modelName + ".obj", modelData)) {
 			modelDataMap[modelName] = modelData;
-			std::vector<QFE::MATH::Vector3> objectVertices;
-			objectVertices = QFE::FRAMEWORK::GetModelVertexPositions(
-				modelDataMap[modelName].meshes[0].vertices.GetInternalVector().data(),
-				modelDataMap[modelName].meshes[0].vertices.GetInternalVector().size());
-			QFE::GRAPHIC::BLASHandle blasHandle = graphicEngine->CreateBLAS(objectVertices, modelName);
-			blasHandleMap[modelName] = blasHandle;
-			return true;
+			bool result = QFE::FRAMEWORK::CreateBLAS(
+				graphicEngine.get(), modelDataMap[modelName].meshes[0].vertices.GetInternalVector(),
+				modelName, blasHandleMap[modelName]);
+			return result;
 		}
 		return false;
 		};
@@ -116,30 +117,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// オフスクリーンレンダーターゲットの作成
 	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
 	for (int i = 0; i < 3; ++i) {
-		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle =
-			graphicEngine->CreateOffScreenRenderTarget(1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT);
+		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle;
+		QFE::FRAMEWORK::CreateOffScreenRenderTarget(
+			graphicEngine.get(), offScreenRenderTargetHandle, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		renderTargets.push_back(offScreenRenderTargetHandle);
 	}
 
 	// ビューポートとシザー矩形の作成
-	QFE::GRAPHIC::ViewPortHandle viewportHandle = graphicEngine->CreateViewPort(1280, 720);
-	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle = graphicEngine->CreateScissorRect(0, 0, 1280, 720);
+	QFE::GRAPHIC::ViewPortHandle viewportHandle;
+	QFE::FRAMEWORK::CreateViewport(graphicEngine.get(), viewportHandle, 1280, 720);
+	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle;
+	QFE::FRAMEWORK::CreateScissorRect(graphicEngine.get(), scissorRectHandle, 0, 0, 1280, 720);
 
 	// UAVバッファの作成とルートリソースの設定
-	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle = graphicEngine->CreateUAVBuffer(1280, 720, L"UAVBuffer");
+	QFE::GRAPHIC::DirectXResourceHandle uavBufferHandle;
+	QFE::FRAMEWORK::CreateUAVBuffer(graphicEngine.get(), uavBufferHandle, 1280, 720, L"UAVBuffer");
 
 	// レイトレーシングパイプラインステートオブジェクトの作成
-	QFE::GRAPHIC::RTPSOHandle rtpsoHandle = graphicEngine->CreateRayTracingPipelineStateObject(
-		rtDirName, "ShadowRaytracing.hlsl");
+	QFE::GRAPHIC::RTPSOHandle rtpsoHandle;
+	QFE::FRAMEWORK::CreateRayTracingPSO(graphicEngine.get(), rtpsoHandle, rtDirName, "ShadowRaytracing.hlsl");
 
 	// エディタ用のシーンテクスチャの作成
-	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle =
-		graphicEngine->CreateOffScreenRenderTarget(1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM);
-	QFE::GRAPHIC::DirectXResourceHandle sceneTextureHandle =
-		graphicEngine->GetRenderTargetTexture(sceneRenderTargetHandle);
-	D3D12_GPU_DESCRIPTOR_HANDLE sceneTextureGPUHandle = graphicEngine->GetSRVDescriptorGPUHandle(sceneTextureHandle);
+	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
+	QFE::FRAMEWORK::CreateOffScreenRenderTarget(graphicEngine.get(), sceneRenderTargetHandle, 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM);
+	QFE::GRAPHIC::DirectXResourceHandle sceneTextureHandle;
+	QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), sceneRenderTargetHandle, sceneTextureHandle);
 
-	ImTextureID sceneTextureId = static_cast<ImTextureID>(static_cast<uintptr_t>(sceneTextureGPUHandle.ptr));
+	// シーン描画用のImGuiテクスチャIDを取得
+	ImTextureID sceneTextureId =
+		QFE::FRAMEWORK::GetImGuiTextureIdFromResourceHandle(graphicEngine.get(), sceneTextureHandle);
 
 	QFE::EDITOR::GameEditor gameEditor;
 	gameEditor.Initialize(&sceneManager, sceneTextureId, mainWindow);
@@ -183,7 +189,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// カメラのビュー行列と投影行列を取得
 			QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIndentity4x4();
 			if (gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
-				
+
 
 				QFE::MATH::Matrix4x4 viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
 				QFE::MATH::Matrix4x4 projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
@@ -195,7 +201,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 							QFE::MATH::EulerTransform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 							cameraComp.viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
-							if(cameraComp.top_ - cameraComp.bottom_ != 0.0f) {
+							if (cameraComp.top_ - cameraComp.bottom_ != 0.0f) {
 								cameraComp.aspectRatio_ = fabsf((cameraComp.right_ - cameraComp.left_) / (cameraComp.top_ - cameraComp.bottom_));
 							} else {
 								cameraComp.aspectRatio_ = 1.0f; // デフォルトのアスペクト比
@@ -210,7 +216,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 
 			// 各エンティティのModelRenderComponentを更新
-			std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
+			std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>> raytracingInstances;
 			entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
 				modelRenderComp.canRender = false;
 				// TransformComponentを取得して、EulerTransformを更新する
@@ -218,8 +224,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					modelRenderComp.renderErrorMessage = "Missing TransformComponent for entity: " + std::to_string(entityId);
 					return;
 				}
-				QFE::MATH::EulerTransform& objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
-				QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetResourceAllocator();
+				QFE::MATH::EulerTransform objTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+
+				if (entityManager.HasComponent < QFE::SCENE::AnimationComponent>(entityId)) {
+					QFE::SCENE::AnimationComponent& animationComp = entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
+					objTransform.translate += animationComp.transform.translate;
+					objTransform.rotate += animationComp.transform.rotate;
+					objTransform.scale += animationComp.transform.scale;
+				}
+
+				QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
 				QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 					resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
 				QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, objTransform, viewProj);
@@ -251,8 +265,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				}
 
 				// テクスチャの更新
-				QFE::GRAPHIC::DirectXResourceHandle textureHandle =
-					graphicEngine->GetBuiltInTextureHandle(QFE::GRAPHIC::BuiltInTextureType::DummyWhite1x1Texture);
+				QFE::GRAPHIC::DirectXResourceHandle textureHandle;
+				QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
 				modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
 
 				// レイトレーシングインスタンスの作成
@@ -272,7 +286,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				modelRenderComp.renderErrorMessage = "";
 				});
 
-			graphicEngine->UpdateBLASInstanceTransform(raytracingInstances);
+			QFE::FRAMEWORK::UpdateBLASInstanceBuffer(graphicEngine.get(), raytracingInstances);
 
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
@@ -291,21 +305,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.materialResourceHandle),
 					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.textureResourceHandle)
 				};
-				graphicEngine->TestOffScreenDraw(
-					psoHandle, viewportHandle, scissorRectHandle,
+				QFE::FRAMEWORK::DrawGraphicPSO(graphicEngine.get(), psoHandle, viewportHandle, scissorRectHandle,
 					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.vertexResourceHandle),
 					modelRootResources, renderTargets);
 				});
 
-			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources = {
-				graphicEngine->GetRenderTargetTexture(renderTargets[0]),
-				graphicEngine->GetRenderTargetTexture(renderTargets[1]),
-				graphicEngine->GetRenderTargetTexture(renderTargets[2])
-			};
+			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources(3);
+			for (int i = 0; i < 3; ++i) {
+				QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), renderTargets[i], rayTracingRootResources[i]);
+			}
+			QFE::FRAMEWORK::DrawRayTracingPSO(graphicEngine.get(), rtpsoHandle, uavBufferHandle, rayTracingRootResources);
 
-			graphicEngine->RayTracingDispatch(rtpsoHandle, uavBufferHandle, rayTracingRootResources, sceneTextureHandle);
+			QFE::GRAPHIC::DirectXResourceHandle depthStencilHandle;
+			if (QFE::FRAMEWORK::GetDepthStencilResourceHandle(graphicEngine.get(), depthStencilHandle)) {
+				QFE::FRAMEWORK::SetRenderTarget(graphicEngine.get(), depthStencilHandle, { QFE::GRAPHIC::RenderTargetHandle::SwapChain });
+			}
 
-			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager->PostDraw();
 			graphicEngine->PostDraw();
 			sceneManager.EndFrame();

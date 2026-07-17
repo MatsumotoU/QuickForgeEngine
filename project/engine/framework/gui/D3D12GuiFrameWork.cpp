@@ -2,6 +2,7 @@
 #include "graphics/D3D12GraphicEngine.h"
 #include "gui/D3D12GuiManager.h"
 
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 #include "graphics/dx12/DirectXDevice.h"
 #include "graphics/dx12/vram/descriptors/DescriptorHeapManager.h"
 #include "graphics/dx12/vram/resources/DirectXResourceContainer.h"
@@ -33,4 +34,16 @@ std::unique_ptr<QFE::GUI::D3D12GuiManager> QFE::FRAMEWORK::CreateGuiManager(QFE:
 	guiManager.Initialize(guiInitDesc);
 
 	return std::make_unique<QFE::GUI::D3D12GuiManager>(std::move(guiManager));
+}
+
+ImTextureID QFE::FRAMEWORK::GetImGuiTextureIdFromResourceHandle(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle resourceHandle) {
+
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
+	// リソースハンドルからGPUディスクリプタハンドルを取得
+	D3D12_GPU_DESCRIPTOR_HANDLE sceneTextureGPUHandle = 
+		resourceContainer->GetDescriptorHandleGPU(resourceHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView);
+	// ImGuiのテクスチャIDはvoid*型であり、D3D12のGPUディスクリプタハンドルのptrをreinterpret_castして渡す
+	ImTextureID sceneTextureId = static_cast<ImTextureID>(static_cast<uintptr_t>(sceneTextureGPUHandle.ptr));
+	return sceneTextureId;
 }
