@@ -325,7 +325,6 @@ bool QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 		resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("TransformMatrixBuffer");
 	// Material
 	Material material;
-	material.enableLighting = false;
 	material.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
 		resourceAllocator->AllocateConstantBuffer<Material>("MaterialBuffer");
