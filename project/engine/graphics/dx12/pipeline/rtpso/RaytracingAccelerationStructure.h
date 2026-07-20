@@ -42,7 +42,6 @@ namespace QFE::GRAPHIC {
 	private:
 		UniqueContainer<std::unique_ptr<BLAS>> blasContainer_; // BLASの管理用コンテナ
 		std::unique_ptr<TLAS> tlas_; // TLASの管理用インスタンス
-		Microsoft::WRL::ComPtr<ID3D12Resource> testVertexBuffer;
 	};
 
 }

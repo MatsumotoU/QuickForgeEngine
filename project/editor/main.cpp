@@ -120,7 +120,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return false;
 		};
 
-	// オフスクリーンレンダーターゲットの作成 (GBuffer用: 3面)
+	// オフスクリーンレンダーターゲットの作成 
 	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
 	for (int i = 0; i < 4; ++i) {
 		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle;

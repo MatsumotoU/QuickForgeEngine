@@ -658,11 +658,11 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(
 
 	// 2. ルートシグネチャへのリソースバインド
 	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = accelerationStructure->GetTLASResultBuffer()->GetGPUVirtualAddress();
-	commandList4->SetComputeRootShaderResourceView(0, tlasResultBufferGPUHandle);
+	commandList4->SetComputeRootShaderResourceView(1, tlasResultBufferGPUHandle);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(renderUavBuffer, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
 
 	D3D12_GPU_VIRTUAL_ADDRESS cameraGpuHandle = resourceContainer->GetGpuVirtualAddress(cameraPositionBufferHandle);
-	commandList4->SetComputeRootConstantBufferView(1, cameraGpuHandle);
+	commandList4->SetComputeRootConstantBufferView(0, cameraGpuHandle);
 
 	// レンダーターゲットのバリアをレンダーターゲットに設定する前に、必要に応じてリソースの状態を遷移させる
 	for (QFE::GRAPHIC::DirectXResourceHandle renderTargetHandle : rootResources) {
