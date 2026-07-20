@@ -47,7 +47,7 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 
 	// 3. ShaderConfigの設定
 	D3D12_RAYTRACING_SHADER_CONFIG shaderConfig = {};
-	shaderConfig.MaxPayloadSizeInBytes = 16; // ペイロードの最大サイズ
+	shaderConfig.MaxPayloadSizeInBytes = 32; // ペイロードの最大サイズ
 	shaderConfig.MaxAttributeSizeInBytes = 8; // 属性の最大サイズ
 
 	// 4. PipelineConfigの設定

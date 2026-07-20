@@ -109,6 +109,19 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle* rootResources,
 		size_t rootResourcesSize);
+
+	/// @brief リソースの状態を変更する関数
+	bool TransitionResourceToState(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle,
+		D3D12_RESOURCE_STATES newState);
+
+	/// @brief カメラ位置バッファを作成する関数
+	bool CreateCameraPosBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::wstring& name,
+		QFE::GRAPHIC::DirectXResourceHandle& outCameraPosBufferHandle);
+
 	/// @brief Object3dのワールド行列とワールドビュー射影行列を更新する関数
 	void UpdateObject3dWVPMatrix(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
@@ -166,5 +179,14 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
+		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources);
+	/// @brief レイトレーシングパイプラインを使用して描画.レンダーターゲットを指定するバージョン
+	bool DrawRayTracingPSO(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
+		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
+		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+		const QFE::GRAPHIC::DirectXResourceHandle& renderTargetResourceHandle);
 }

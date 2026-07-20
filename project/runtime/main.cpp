@@ -523,6 +523,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				Material* materialData = graphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
 				QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
 				materialData->color = materialComp.albedoColor;
+				materialData->metallic = materialComp.metallic;
+				materialData->smoothness = materialComp.smoothness;
 				modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
 
 				// 頂点バッファの更新
@@ -581,11 +583,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					modelRootResources,renderTargets, rootParameterTypes);
 				});
 
-			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources(3);
-			for (int i = 0; i < 3; ++i) {
+			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources(4);
+			for (int i = 0; i < 4; ++i) {
 				QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), renderTargets[i], rayTracingRootResources[i]);
 			}
-			QFE::FRAMEWORK::DrawRayTracingPSO(graphicEngine.get(), rtpsoHandle, uavBufferHandle,rayTracingRootResources);
+			QFE::GRAPHIC::DirectXResourceHandle cameraBufferHandle;
+			cameraBufferHandle = graphicEngine->GetDirectXResourceAllocator()->AllocateConstantBuffer<CameraForGPU>("CameraBuffer");
+			entityManager.Each<QFE::SCENE::CameraComponent>([&](uint32_t entityId, QFE::SCENE::CameraComponent& cameraComp) {
+				if (cameraComp.isMainCamera) {
+					CameraForGPU* cameraPos = graphicEngine->GetConstantBufferData<CameraForGPU>(cameraBufferHandle);
+					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+						QFE::MATH::EulerTransform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+						cameraPos->cameraPosition = cameraTransform.translate;
+					}
+				}
+				});
+
+			QFE::FRAMEWORK::DrawRayTracingPSO(
+				graphicEngine.get(), rtpsoHandle, uavBufferHandle, cameraBufferHandle, rayTracingRootResources);
 
 			ImGui::Begin("FPS Counter");
 			ImGui::Text("FPS: %.2f", fpsCounter->GetAverageFPS());

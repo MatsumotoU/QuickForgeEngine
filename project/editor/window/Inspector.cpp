@@ -84,6 +84,8 @@ void QFE::EDITOR::Inspector::DrawObjectInfoComponent(uint32_t entityId, EditorCo
 		auto& materialComp = entityManager_->GetComponent<QFE::SCENE::MaterialComponent>(entityId);
 		if (ImGui::CollapsingHeader("Material")) {
 			ImGui::ColorEdit4("Albedo Color", &materialComp.albedoColor.x);
+			ImGui::DragFloat("Metallic", &materialComp.metallic, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Smoothness", &materialComp.smoothness, 0.01f, 0.0f, 1.0f);
 		}
 	}
 
