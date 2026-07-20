@@ -10,6 +10,7 @@ namespace QFE::SCENE {
 		bool canRender; ///< レンダリング可能かどうかのフラグ
 
 		uint32_t vertexResourceHandle; ///< 頂点リソースハンドル
+		uint32_t indexResourceHandle; ///< インデックスリソースハンドル
 		uint32_t transformMatrixBufferHandle; ///< ワールド行列バッファハンドル
 		uint32_t materialResourceHandle; ///< マテリアルリソースハンドル
 		uint32_t textureResourceHandle; ///< テクスチャリソースハンドル

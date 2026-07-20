@@ -111,8 +111,9 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 		QFE_LOG(std::format("ColorChannel: {}", mesh->GetNumColorChannels()));
 		QFE_LOG(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
 
-		// 頂点データの読み込み
+		// 1) 元頂点配列を作る（mesh->mNumVertices 個）
 		std::vector<VertexData> tempVertices;
+		tempVertices.reserve(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			VertexData vtx;
 			vtx.position.x = mesh->mVertices[i].x;
@@ -139,26 +140,32 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 			tempVertices.push_back(vtx);
 		}
 
-		MeshData meshData(mesh->mNumFaces * 3);
+		// 2) MeshData を頂点数とインデックス数で初期化
+		MeshData meshData(mesh->mNumVertices, mesh->mNumFaces * 3);
 
-		// 面データの読み込み
+		// 3) tempVertices を meshData.vertices にコピー
+		{
+			auto& dst = meshData.vertices.GetInternalVector();
+			dst = std::move(tempVertices); // 所有権を移す（コピーでも可）
+		}
+
+		// 4) faces からインデックス配列を作成（Assimp の face.mIndices をそのまま使用）
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			const aiFace& face = mesh->mFaces[i];
 			if (face.mNumIndices == 3) {
-				meshData.vertices.push_back(tempVertices[face.mIndices[0]]);
-				meshData.vertices.push_back(tempVertices[face.mIndices[1]]);
-				meshData.vertices.push_back(tempVertices[face.mIndices[2]]);
+				meshData.indices.push_back(static_cast<uint32_t>(face.mIndices[0]));
+				meshData.indices.push_back(static_cast<uint32_t>(face.mIndices[1]));
+				meshData.indices.push_back(static_cast<uint32_t>(face.mIndices[2]));
 			}
 		}
 
-		// マテリアルの読み込み
+		// 5) マテリアルの読み込み（既存コード）
 		if (scene->HasMaterials() && mesh->mMaterialIndex < scene->mNumMaterials) {
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			aiString texPath;
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
 				meshData.material.textureName = std::string(texPath.C_Str());
 				QFE_LOG(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureName));
-
 			} else {
 				meshData.material.textureName = "";
 				QFE_LOG(std::format("No diffuse texture found for mesh {}. Setting empty texture path.", meshIdx));

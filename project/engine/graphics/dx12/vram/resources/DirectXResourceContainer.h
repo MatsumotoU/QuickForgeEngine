@@ -86,8 +86,10 @@ namespace QFE::GRAPHIC {
 
 		/// @brief あるハンドルの対応するビューのGPU仮想アドレスを取得します
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(DirectXResourceHandle handle) const;
-		
+		/// @brief あるハンドルの対応するビューの頂点バッファビューを取得します
 		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(DirectXResourceHandle handle) const;
+		/// @brief あるハンドルの対応するビューのインデックスバッファビューを取得します
+		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(DirectXResourceHandle handle) const;
 
 		/// @brief あるリソースハンドルに対応するリソースを取得する
 		ID3D12Resource* GetResource(DirectXResourceHandle handle) const;

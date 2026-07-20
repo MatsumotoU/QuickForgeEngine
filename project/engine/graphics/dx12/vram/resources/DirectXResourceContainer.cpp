@@ -354,6 +354,22 @@ D3D12_VERTEX_BUFFER_VIEW DirectXResourceContainer::GetVertexBufferView(DirectXRe
 	return vertexBufferView;
 }
 
+D3D12_INDEX_BUFFER_VIEW DirectXResourceContainer::GetIndexBufferView(DirectXResourceHandle handle) const {
+	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+	indexBufferView.BufferLocation = GetGpuVirtualAddress(handle);
+	ID3D12Resource* resource = GetResource(handle);
+	if (resource) {
+		D3D12_RESOURCE_DESC desc = resource->GetDesc();
+		indexBufferView.SizeInBytes = static_cast<UINT>(desc.Width);
+		indexBufferView.Format = DXGI_FORMAT_R32_UINT; // インデックスバッファのフォーマットは32ビット整数と仮定
+		QFE_LOG("Resource handle: " + std::to_string(static_cast<uint32_t>(handle)) + " IndexBufferView created successfully in DirectXResourceContainer::GetIndexBufferView");
+		return indexBufferView;
+	} else {
+		QFE_REPORT_SYSTEM_ERROR("Failed to get resource in DirectXResourceContainer::GetIndexBufferView", SystemError::Abort);
+	}
+	return indexBufferView;
+}
+
 ID3D12Resource* DirectXResourceContainer::GetResource(DirectXResourceHandle handle) const {
 	if (handle == DirectXResourceHandle::Invalid) {
 		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::GetResource", SystemError::Abort);

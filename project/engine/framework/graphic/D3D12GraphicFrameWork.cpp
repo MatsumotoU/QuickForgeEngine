@@ -421,6 +421,38 @@ bool QFE::FRAMEWORK::CreateVertexBuffer(
 	return true;
 }
 
+bool QFE::FRAMEWORK::CreateIndexBuffer(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<uint32_t>& indices, const std::string& meshName, QFE::GRAPHIC::DirectXResourceHandle& outIndexBufferHandle) {
+	// 使用機能の取得
+	QFE::GRAPHIC::DirectXDevice* directXDevice = graphicEngine->GetDirectXDevice();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
+
+	// バッファを作成（サイズはインデックス数 * 4 バイト）
+	QFE::GRAPHIC::DirectXResourceHandle handle =
+		resourceContainer->CreateBuffer(directXDevice->GetDevice(), indices.size() * sizeof(uint32_t));
+	QFE_LOG("IndexBuffer created for mesh: " + meshName + ", size: " + std::to_string(indices.size() * sizeof(uint32_t)) + " bytes");
+
+	// インデックスバッファのストライドを設定（uint32_t）
+	resourceContainer->SetResourceStrideInBytes(handle, sizeof(uint32_t));
+
+	// バッファにデータをコピー
+	resourceContainer->MapResource(handle);
+	uint32_t* mappedData = resourceContainer->GetMappedData<uint32_t>(handle);
+	if (mappedData) {
+		memcpy(mappedData, indices.data(), indices.size() * sizeof(uint32_t));
+	}
+	resourceContainer->SetResourceName(handle, ConvertString(meshName + "_idx"));
+	// 再設定（安全のため）
+	resourceContainer->SetResourceStrideInBytes(handle, sizeof(uint32_t));
+
+	// 出力ハンドル設定と成否判定
+	outIndexBufferHandle = handle;
+	if (outIndexBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		QFE_LOG("Failed to create index buffer for mesh: " + meshName);
+		return false;
+	}
+	return true;
+}
+
 bool QFE::FRAMEWORK::CreateBLAS(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<VertexData>& vertices,
 	const std::string& name, QFE::GRAPHIC::BLASHandle& outBLASHandle) {
@@ -627,6 +659,84 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 	}
 	UINT vertexCountUINT = static_cast<UINT>(vertexCount);
 	commandList->DrawInstanced(vertexCountUINT, 1, 0, 0);
+	return true;
+}
+
+bool QFE::FRAMEWORK::DrawGraphicPSO(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
+	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets, 
+	const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes) {
+	
+	// 使用機能の取得
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
+	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
+	QFE::GRAPHIC::GraphicPipelineManager* graphicPipelineManager = graphicEngine->GetGraphicPipelineManager();
+	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports = graphicEngine->GetViewports();
+	QFE::UniqueContainer<D3D12_RECT>& scissorRects = graphicEngine->GetScissorRects();
+
+	QFE::GRAPHIC::DirectXResourceHandle depthStencilBufferHandle = graphicEngine->GetDepthStencilBufferHandle();
+
+	ID3D12GraphicsCommandList* commandList = commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+	// 必要ならレンダーターゲットの状態遷移
+	for (QFE::GRAPHIC::RenderTargetHandle renderTargetHandle : renderTargets) {
+		QFE::GRAPHIC::DirectXResourceHandle renderTargetResourceHandle = renderPass->GetRenderTargetResourceHandle(renderTargetHandle);
+		resourceContainer->TransitionResource(renderTargetResourceHandle, commandList, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
+
+	renderPass->SetRenderTarget(
+		commandList, depthStencilBufferHandle, renderTargets);
+
+	commandList->RSSetViewports(1, viewports.GetData(static_cast<uint32_t>(viewportHandle)));
+	commandList->RSSetScissorRects(1, scissorRects.GetData(static_cast<uint32_t>(scissorRectHandle)));
+
+	commandList->SetPipelineState(graphicPipelineManager->GetPipelineState(psoHandle));
+	commandList->SetGraphicsRootSignature(graphicPipelineManager->GetRootSignature(psoHandle));
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = resourceContainer->GetVertexBufferView(vertexBufferHandle);
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	// IndexBufferView を取得してセット
+	D3D12_INDEX_BUFFER_VIEW indexBufferView = resourceContainer->GetIndexBufferView(indexBufferHandle);
+	commandList->IASetIndexBuffer(&indexBufferView);
+
+	for (int i = 0; i < rootParameterTypes.size(); ++i) {
+		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
+
+		if (rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer->GetGpuVirtualAddress(rootResources[i]);
+			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
+		} else {
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
+			switch (rootParameterType) {
+			case D3D12_ROOT_PARAMETER_TYPE_SRV:
+				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+				break;
+			case D3D12_ROOT_PARAMETER_TYPE_UAV:
+				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
+				break;
+			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
+				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	// インデックス数を取得して DrawIndexedInstanced を呼ぶ
+	size_t indexCount = 0;
+	if (!GetResourceArraySize(graphicEngine, indexBufferHandle, indexCount)) {
+		assert(false);
+		return false;
+	}
+	UINT indexCountUINT = static_cast<UINT>(indexCount);
+	commandList->DrawIndexedInstanced(indexCountUINT, 1, 0, 0, 0);
+
 	return true;
 }
 

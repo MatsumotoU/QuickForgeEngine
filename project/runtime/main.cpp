@@ -98,6 +98,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::ASSET::AssimpModelLoader modelLoader;
 	modelLoader.Initialize();
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> vertexBufferMap;
+	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> indexBufferMap;
 	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
 	std::unordered_map<std::string, QFE::ASSET::ModelData> modelDataMap;
 	std::string modelDir = "resources/";
@@ -111,6 +112,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				graphicEngine.get(),
 				modelDataMap[modelName].meshes[0].vertices.GetInternalVector(),
 				modelName, vertexBufferMap[modelName]);
+			return result;
+		}
+		return false;
+		};
+	std::function<bool(const std::string&)> loadModelIndexBufferFunc =
+		[&](const std::string& modelName) {
+		QFE::ASSET::ModelData modelData;
+		if (modelLoader.LoadModel(modelDir + modelName + ".obj", modelData)) {
+			modelDataMap[modelName] = modelData;
+			bool result = QFE::FRAMEWORK::CreateIndexBuffer(
+				graphicEngine.get(),
+				modelDataMap[modelName].meshes[0].indices.GetInternalVector(),
+				modelName, indexBufferMap[modelName]);
 			return result;
 		}
 		return false;
@@ -539,6 +553,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					}
 				}
 
+				// インデックスバッファの更新
+				if (indexBufferMap.find(modelRenderComp.modelName) != indexBufferMap.end()) {
+					modelRenderComp.indexResourceHandle = static_cast<uint32_t>(indexBufferMap[modelRenderComp.modelName]);
+				} else {
+					if (loadModelIndexBufferFunc(modelRenderComp.modelName)) {
+						modelRenderComp.indexResourceHandle = static_cast<uint32_t>(indexBufferMap[modelRenderComp.modelName]);
+					} else {
+						modelRenderComp.renderErrorMessage = "Failed to load index buffer for model: " + modelRenderComp.modelName;
+						return;
+					}
+				}
+
 				// テクスチャの更新
 				QFE::GRAPHIC::DirectXResourceHandle textureHandle;
 				QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
@@ -580,6 +606,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				};
 				QFE::FRAMEWORK::DrawGraphicPSO(graphicEngine.get(), psoHandle, viewportHandle, scissorRectHandle,
 					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.vertexResourceHandle),
+					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.indexResourceHandle),
 					modelRootResources,renderTargets, rootParameterTypes);
 				});
 

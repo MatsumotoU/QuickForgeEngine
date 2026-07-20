@@ -136,6 +136,13 @@ namespace QFE::FRAMEWORK {
 		const std::vector<VertexData>& vertexPositions,
 		const std::string& meshName,
 		QFE::GRAPHIC::DirectXResourceHandle& outVertexBufferHandle);
+	/// @brief インデックスバッファを作成する関数
+	bool CreateIndexBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::vector<uint32_t>& indices,
+		const std::string& meshName,
+		QFE::GRAPHIC::DirectXResourceHandle& outIndexBufferHandle);
+
 	/// @brief BLASを作成する関数
 	bool CreateBLAS(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
@@ -170,6 +177,17 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::ViewPortHandle& viewportHandle,
 		const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
+		const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes);
+	/// @brief グラフィックパイプラインステートオブジェクトを使用して描画する関数.ルートパラメータを直接指定するバージョン.インデックスバッファを指定するバージョン
+	bool DrawGraphicPSO(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::PSOHandle& psoHandle,
+		const QFE::GRAPHIC::ViewPortHandle& viewportHandle,
+		const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
 		const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes);
