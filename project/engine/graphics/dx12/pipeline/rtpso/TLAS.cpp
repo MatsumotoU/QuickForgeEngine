@@ -116,7 +116,7 @@ bool TLAS::Build(
 		dest.Transform[2][3] = src.worldMatrix.m[3][2];
 
 		// インスタンスIDやマスクなどの設定
-		dest.InstanceID = 0;							// 今回は使わないので0
+		dest.InstanceID = i;// インスタンスIDは0から順番に割り振る
 		dest.InstanceMask = 0xFF;                       // すべてのレイと衝突するマスク
 		dest.InstanceContributionToHitGroupIndex = 0;   // 今回はオフセット0
 		dest.Flags = D3D12_RAYTRACING_INSTANCE_FLAG_NONE;

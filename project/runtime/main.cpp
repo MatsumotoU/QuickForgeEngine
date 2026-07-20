@@ -27,6 +27,229 @@
 
 #include <imgui.h>
 
+#include <array>
+
+// GPU と共有するインスタンスメタ構造（HLSL 側の構造と合わせること）
+struct InstanceMetaCPU {
+	uint32_t materialIndex;
+	uint32_t vertexBase;     // global UV / vertex 配列の先頭オフセット（頂点単位）
+	uint32_t vertexCount;    // 頂点数（必要なら）
+	uint32_t primitiveBase;  // global primitive 配列の先頭オフセット（三角形単位）
+	// 必要であれば primitiveCount など追加可能（ここでは省略可）
+};
+
+// モデル群（modelDataMap）からグローバルバッファを平坦化する。
+// - globalUVs: [u0,v0, u1,v1, ...]
+// - globalTriIndices: flattened indices [i0,i1,i2, i3,i4,i5, ...] (各 tri は 3 要素)
+// - outInstanceMeta: メッシュ（またはメッシュ単位のエントリ）ごとのメタ情報（InstanceID と一致させること）
+static void BuildGlobalMeshBuffers(
+	const std::unordered_map<std::string, QFE::ASSET::ModelData>& modelDataMap,
+	std::vector<float>& outGlobalUVs,
+	std::vector<uint32_t>& outGlobalTriIndices,
+	std::unordered_map<std::string, InstanceMetaCPU>& outModelMeta) {
+	outGlobalUVs.clear();
+	outGlobalTriIndices.clear();
+	outModelMeta.clear();
+
+	// modelDataMap の全メッシュを順次連結（各モデル先頭メッシュ1つを想定）
+	for (const auto& kv : modelDataMap) {
+		const std::string& modelName = kv.first;
+		const QFE::ASSET::ModelData& model = kv.second;
+
+		// 今回のコードベースは各モデルの meshes[0] を使う前提が散見されるため
+		// ここでも meshes[0] を対象とする（必要なら mesh 単位で拡張してください）
+		if (model.meshes.empty()) continue;
+		const QFE::ASSET::MeshData& mesh = model.meshes[0];
+
+		uint32_t vertexBase = static_cast<uint32_t>(outGlobalUVs.size() / 2); // u,v ペアなので /2
+		uint32_t primitiveBase = static_cast<uint32_t>(outGlobalTriIndices.size() / 3);
+
+		// 頂点 UV を追加
+		const std::vector<VertexData>& verts = mesh.vertices.GetInternalVector();
+		for (const auto& v : verts) {
+			outGlobalUVs.push_back(v.texcoord.x);
+			outGlobalUVs.push_back(v.texcoord.y);
+		}
+
+		// インデックスをグローバル化して追加
+		const std::vector<uint32_t>& inds = mesh.indices.GetInternalVector();
+		for (uint32_t localIndex : inds) {
+			outGlobalTriIndices.push_back(localIndex + vertexBase);
+		}
+
+		// モデル単位のメタを記録（InstanceMeta は TLAS の InstanceID に合わせて後で並べ替える）
+		InstanceMetaCPU meta{};
+		meta.materialIndex = 0u; // TODO: materialIndex を適切に設定する
+		meta.vertexBase = vertexBase;
+		meta.vertexCount = static_cast<uint32_t>(verts.size());
+		meta.primitiveBase = primitiveBase;
+		outModelMeta[modelName] = meta;
+	}
+}
+
+static bool EnsureBufferCapacityAndUpload(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	QFE::GRAPHIC::DirectXResourceHandle& inOutHandle,
+	const void* data, size_t byteSize, UINT elementStride,
+	const std::string& name) {
+	if (!graphicEngine) return false;
+	auto* device = graphicEngine->GetDirectXDevice();
+	auto* rc = graphicEngine->GetDirectXResourceContainer();
+
+	// 新規作成 or 既存サイズ取得
+	bool needCreateView = false;
+	if (inOutHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		needCreateView = true;
+	} else {
+		size_t curSize = rc->GetResourceSizeInBytes(inOutHandle);
+		if (curSize < byteSize) {
+			// 既存バッファでは小さい -> 新規作成して差し替え
+			needCreateView = true;
+		}
+	}
+
+	if (needCreateView) {
+		// 新しいバッファを作成してハンドルを差し替える
+		QFE::GRAPHIC::DirectXResourceHandle newHandle = rc->CreateBuffer(device->GetDevice(), byteSize);
+		if (newHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
+
+		rc->MapResource(newHandle);
+		if (byteSize > 0 && data) {
+			void* mapped = rc->GetMappedData<void>(newHandle);
+			if (mapped) memcpy(mapped, data, byteSize);
+		}
+		rc->SetResourceName(newHandle, QFE::ConvertString(name));
+		rc->SetResourceStrideInBytes(newHandle, elementStride);
+
+		// SRV を作る（Shader4ComponentMapping を忘れずに）
+		QFE::GRAPHIC::CreateViewInfo viewInfo{};
+		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
+		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(byteSize / elementStride);
+		viewInfo.srvDesc.Buffer.StructureByteStride = elementStride;
+		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		rc->CreateResourceView(newHandle, viewInfo);
+
+		// 既存ハンドルがあれば置き換える（リソース解放は container に任せる想定）
+		inOutHandle = newHandle;
+		return true;
+	} else {
+		// 既存バッファを再利用してデータ更新だけ行う（Map + memcpy）
+		rc->MapResource(inOutHandle);
+		if (byteSize > 0 && data) {
+			void* mapped = rc->GetMappedData<void>(inOutHandle);
+			if (mapped) memcpy(mapped, data, byteSize);
+		}
+		// strideは念のため再設定
+		rc->SetResourceStrideInBytes(inOutHandle, elementStride);
+		return true;
+	}
+}
+
+// GPU に平坦化済データをアップロードして StructuredBuffer (SRV) を作る。
+// 成功時に outXXXHandle にリソースハンドルを格納する。
+// 注意: CreateResourceView の srvDesc のフィールド名はプロジェクト実装に合わせて調整してください。
+static bool UploadGlobalMeshBuffers(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	const std::vector<float>& globalUVs,
+	const std::vector<uint32_t>& globalTriIndices,
+	const std::vector<InstanceMetaCPU>& instanceMeta,
+	QFE::GRAPHIC::DirectXResourceHandle& outUVHandle,
+	QFE::GRAPHIC::DirectXResourceHandle& outTriHandle,
+	QFE::GRAPHIC::DirectXResourceHandle& outInstanceMetaHandle) {
+	if (!graphicEngine) return false;
+	auto* device = graphicEngine->GetDirectXDevice();
+	auto* rc = graphicEngine->GetDirectXResourceContainer();
+
+	// 1) UV バッファ
+	{
+		size_t byteSize = globalUVs.size() * sizeof(float);
+		auto handle = rc->CreateBuffer(device->GetDevice(), byteSize);
+		if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
+
+		rc->MapResource(handle);
+		float* mapped = rc->GetMappedData<float>(handle);
+		if (mapped && !globalUVs.empty()) {
+			memcpy(mapped, globalUVs.data(), byteSize);
+		}
+		rc->SetResourceName(handle, QFE::ConvertString(std::string("GlobalUVs")));
+		// 要素ストライドは float2
+		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(float) * 2));
+
+		// SRV 作成（Shader4ComponentMapping を明示的に設定）
+		QFE::GRAPHIC::CreateViewInfo viewInfo{};
+		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
+		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(globalUVs.size() / 2);
+		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(float) * 2;
+		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		rc->CreateResourceView(handle, viewInfo);
+
+		outUVHandle = handle;
+	}
+
+	// 2) TriIndices バッファ（flattened uint triplets）
+	{
+		size_t byteSize = globalTriIndices.size() * sizeof(uint32_t);
+		auto handle = rc->CreateBuffer(device->GetDevice(), byteSize);
+		if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
+
+		rc->MapResource(handle);
+		uint32_t* mapped = rc->GetMappedData<uint32_t>(handle);
+		if (mapped && !globalTriIndices.empty()) {
+			memcpy(mapped, globalTriIndices.data(), byteSize);
+		}
+		rc->SetResourceName(handle, QFE::ConvertString(std::string("GlobalTriIndices")));
+		// tri ごとの stride は 3 * uint32
+		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(uint32_t) * 3));
+
+		QFE::GRAPHIC::CreateViewInfo viewInfo{};
+		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
+		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(globalTriIndices.size() / 3);
+		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(uint32_t) * 3;
+		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		rc->CreateResourceView(handle, viewInfo);
+
+		outTriHandle = handle;
+	}
+
+	// 3) InstanceMeta バッファ
+	{
+		size_t byteSize = instanceMeta.size() * sizeof(InstanceMetaCPU);
+		auto handle = rc->CreateBuffer(device->GetDevice(), byteSize);
+		if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
+
+		rc->MapResource(handle);
+		InstanceMetaCPU* mapped = rc->GetMappedData<InstanceMetaCPU>(handle);
+		if (mapped && !instanceMeta.empty()) {
+			memcpy(mapped, instanceMeta.data(), byteSize);
+		}
+		rc->SetResourceName(handle, QFE::ConvertString(std::string("InstanceMeta")));
+		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(InstanceMetaCPU)));
+
+		QFE::GRAPHIC::CreateViewInfo viewInfo{};
+		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
+		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(instanceMeta.size());
+		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(InstanceMetaCPU);
+		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		rc->CreateResourceView(handle, viewInfo);
+
+		outInstanceMetaHandle = handle;
+	}
+
+	return true;
+}
+
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	// デバッグログの初期化
@@ -74,6 +297,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// Entityの生成
 		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
 	}
+
+	QFE::GRAPHIC::DirectXResourceHandle globalUVHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+	QFE::GRAPHIC::DirectXResourceHandle globalTriHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+	QFE::GRAPHIC::DirectXResourceHandle instanceMetaHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 
 	//====================
 	// ここから描画の準備
@@ -587,6 +814,61 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				modelRenderComp.renderErrorMessage = "";
 				});
 
+			// 1) global arrays とモデル→meta マップを作る
+			std::vector<float> globalUVs;
+			std::vector<uint32_t> globalTriIndices;
+			std::unordered_map<std::string, InstanceMetaCPU> modelMetaMap;
+
+			// modelDataMap に基づいて平坦化（models -> global arrays）
+			// BuildGlobalMeshBuffers は modelName -> InstanceMeta を返す
+			BuildGlobalMeshBuffers(modelDataMap, globalUVs, globalTriIndices, modelMetaMap);
+
+			// 2) raytracingInstances の順に合わせて instanceMeta を並べる
+			std::vector<InstanceMetaCPU> instanceMetaAligned;
+			instanceMetaAligned.reserve(raytracingInstances.size());
+
+			// 逆引きテーブル：BLASHandle -> modelName
+			std::unordered_map<QFE::GRAPHIC::BLASHandle, std::string> blasToModel;
+			for (const auto& kv : blasHandleMap) {
+				blasToModel[kv.second] = kv.first;
+			}
+
+			for (const auto& inst : raytracingInstances) {
+				QFE::GRAPHIC::BLASHandle blas = inst.first;
+				auto it = blasToModel.find(blas);
+				if (it == blasToModel.end()) {
+					// 見つからないなら安全なデフォルトを push（デバッグ用ログ推奨）
+					InstanceMetaCPU dummy{};
+					instanceMetaAligned.push_back(dummy);
+					continue;
+				}
+				const std::string& modelName = it->second;
+				auto mit = modelMetaMap.find(modelName);
+				if (mit == modelMetaMap.end()) {
+					InstanceMetaCPU dummy{};
+					instanceMetaAligned.push_back(dummy);
+					continue;
+				}
+				instanceMetaAligned.push_back(mit->second);
+			}
+
+			// 3) バッファのサイズ計算と EnsureBufferCapacityAndUpload による使い回しアップロード
+			size_t uvBytes = globalUVs.size() * sizeof(float);
+			size_t triBytes = globalTriIndices.size() * sizeof(uint32_t);
+			size_t metaBytes = instanceMetaAligned.size() * sizeof(InstanceMetaCPU);
+
+			if (!EnsureBufferCapacityAndUpload(graphicEngine.get(), globalUVHandle, globalUVs.data(), uvBytes, sizeof(float) * 2, "GlobalUVs")) {
+				assert(false && "Failed to ensure/upload GlobalUVs");
+			}
+			if (!EnsureBufferCapacityAndUpload(graphicEngine.get(), globalTriHandle, globalTriIndices.data(), triBytes, sizeof(uint32_t) * 3, "GlobalTriIndices")) {
+				assert(false && "Failed to ensure/upload GlobalTriIndices");
+			}
+			if (!EnsureBufferCapacityAndUpload(graphicEngine.get(), instanceMetaHandle, instanceMetaAligned.data(), metaBytes, sizeof(InstanceMetaCPU), "InstanceMeta")) {
+				assert(false && "Failed to ensure/upload InstanceMeta");
+			}
+
+			// （重要）既存の UploadGlobalMeshBuffers 呼び出しは削除してください（重複）。
+			// TLAS 更新、描画へ進む
 			QFE::FRAMEWORK::UpdateBLASInstanceBuffer(graphicEngine.get(), raytracingInstances);
 
 			graphicEngine->PreDraw();
