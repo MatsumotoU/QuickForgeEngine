@@ -764,8 +764,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				Material* materialData = graphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
 				QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
 				materialData->color = materialComp.albedoColor;
-				materialData->metallic = materialComp.metallic;
-				materialData->smoothness = materialComp.smoothness;
+				materialData->metallic = 1.0f;
+				materialData->smoothness = 1.0f;
 				modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
 
 				// 頂点バッファの更新
@@ -908,8 +908,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				}
 				});
 
-			QFE::FRAMEWORK::DrawRayTracingPSO(
-				graphicEngine.get(), rtpsoHandle, uavBufferHandle, cameraBufferHandle, rayTracingRootResources);
+			QFE::FRAMEWORK::TestRayTracingPSO(
+				graphicEngine.get(), rtpsoHandle, uavBufferHandle,
+				cameraBufferHandle,globalTriHandle,globalUVHandle,
+				instanceMetaHandle,rayTracingRootResources);
+
 
 			ImGui::Begin("FPS Counter");
 			ImGui::Text("FPS: %.2f", fpsCounter->GetAverageFPS());

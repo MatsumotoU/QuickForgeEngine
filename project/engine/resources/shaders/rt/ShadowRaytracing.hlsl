@@ -10,13 +10,29 @@ Texture2D<float4> g_material : register(t4);
 
 RWTexture2D<float4> g_output : register(u0);
 
-// 【変更】ひとつのペイロードに役割をまとめます
-struct ShadowPayload
+StructuredBuffer<uint3> g_globalTriIndices : register(t10);
+StructuredBuffer<float2> g_globalVertexUVs : register(t11);
+StructuredBuffer<uint3> g_instanceMeta : register(t12);
+
+struct RayPayload
 {
-    bool isHit; // 衝突したかどうか
-    bool isReflection; // true: 反射レイとして飛ばしている / false: シャドウレイとして飛ばしている
-    float3 color; // 反射レイの時に、結果の色を格納する場所
+    float3 color;
+    float2 debugUV; // デバッグ用 UV (R=U, G=V)
+    uint hit; // 0 = miss, 1 = hit
 };
+
+float2 ComputeHitUV_Global(uint primGlobal, uint vertexBase, float2 bary)
+{
+    uint3 tri = g_globalTriIndices[primGlobal];
+    float2 uv0 = g_globalVertexUVs[vertexBase + tri.x];
+    float2 uv1 = g_globalVertexUVs[vertexBase + tri.y];
+    float2 uv2 = g_globalVertexUVs[vertexBase + tri.z];
+
+    float u = bary.x;
+    float v = bary.y;
+    float w = 1.0f - u - v;
+    return uv0 * w + uv1 * u + uv2 * v;
+}
 
 [shader("raygeneration")]
 void MyRayGen()
@@ -44,10 +60,13 @@ void MyRayGen()
     shadowRay.TMin = 0.001f;
     shadowRay.TMax = 1000.0f;
 
-    ShadowPayload payload;
-    payload.isHit = false;
-    payload.isReflection = false; // これはシャドウ用のレイ
+    // ペイロード型を統一 (RayPayload)
+    RayPayload payload;
+    payload.hit = 0;
+    payload.debugUV = float2(0.0f, 0.0f);
     payload.color = float3(0.0f, 0.0f, 0.0f);
+    payload.hit = 0;
+    payload.debugUV = float2(0.0f, 0.0f);
 
     TraceRay(
         g_scene,
@@ -57,7 +76,7 @@ void MyRayGen()
         payload);
 
     float3 baseColor = albedo;
-    if (payload.isHit)
+    if (payload.hit != 0)
     {
         baseColor = albedo * 0.15f;
     }
@@ -67,18 +86,18 @@ void MyRayGen()
         baseColor = albedo * (dotNL * 0.8f + 0.2f);
     }
 
-    // --- ② 【新規】既存のTraceRayを使い回してスペキュラー（反射）を計算 ---
+    // --- ② 反射計算 ---
     float4 materialData = g_material[launchIndex];
-    float metallic = materialData.r; // メタリック度 (0.0 〜 1.0)
-    float smoothness = materialData.g; // スムースネス (0.0 〜 1.0)
+    float metallic = materialData.r;
+    float smoothness = materialData.g;
 
     float3 finalColor = baseColor;
 
-    // スムースネスが一定以上の（ツルツルしている）ピクセルだけ反射を計算する
     if (smoothness > 0.1f)
     {
-        float3 viewDir = normalize(worldPosition - g_camera.cameraPosition);
-        float3 reflectDir = reflect(viewDir, worldNormal);
+        // viewDir はカメラ位置 - サーフェス位置（サーフェスからカメラへのベクトル）
+        float3 viewDir = normalize(g_camera.cameraPosition - worldPosition);
+        float3 reflectDir = reflect(-viewDir, worldNormal); // incident = -viewDir (視線は surface->camera)
 
         RayDesc reflectRay;
         reflectRay.Origin = worldPosition + worldNormal * 0.05f;
@@ -86,21 +105,16 @@ void MyRayGen()
         reflectRay.TMin = 0.001f;
         reflectRay.TMax = 1000.0f;
 
-        ShadowPayload reflectPayload;
-        reflectPayload.isHit = false;
-        reflectPayload.isReflection = true;
+        RayPayload reflectPayload;
+        reflectPayload.hit = 0;
+        reflectPayload.debugUV = float2(0.0f, 0.0f);
         reflectPayload.color = float3(0.1f, 0.1f, 0.15f); // 背景色の初期値
 
-        // 反射レイを飛ばす
         TraceRay(g_scene, RAY_FLAG_FORCE_OPAQUE, 0xFF, 0, 1, 0, reflectRay, reflectPayload);
 
-        // --- ③ 元の色と反射した色を合成 ---
-        // スムースネスとメタリックを考慮した反射強度を計算
         float reflectionIntensity = smoothness * (0.1f + 0.9f * metallic);
-        
-        // PBRっぽい簡易ブレンド：金属なら反射色にベースカラーが乗り、非金属なら白寄りの反射になる
         float3 specularColor = lerp(float3(0.04f, 0.04f, 0.04f), albedo, metallic);
-        
+
         finalColor = lerp(baseColor, reflectPayload.color * specularColor, reflectionIntensity);
     }
 
@@ -109,24 +123,32 @@ void MyRayGen()
 
 // 2. ミスシェーダー
 [shader("miss")]
-void MyMiss(inout ShadowPayload payload : SV_RayPayload)
+void MyMiss(inout RayPayload payload : SV_RayPayload)
 {
-    // 影レイなら既存通り。反射レイなら何もしない（初期値の背景色のままになる）
-    payload.isHit = false;
+    payload.hit = 0;
+    payload.debugUV = float2(0.0f, 0.0f);
+    payload.color = float3(0.0f, 0.0f, 0.0f);
 }
 
 // 3. クローストヒットシェーダー
 [shader("closesthit")]
-void MyClosestHit(inout ShadowPayload payload : SV_RayPayload, BuiltInTriangleIntersectionAttributes attribs)
+void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleIntersectionAttributes attribs)
 {
-    // 💡 自分がどっちの目的で呼び出されたかで処理を分岐する！
-    if (payload.isReflection)
-    {
-        payload.isHit = true;
-    }
-    else
-    {
-        // 💡 既存の挙動：純粋な影レイとして当たった場合は、単に true にするだけ
-        payload.isHit = true;
-    }
+    uint localPrim = PrimitiveIndex();
+    uint instId = InstanceID();
+
+    uint3 meta = g_instanceMeta[instId];
+    uint vertexBase = meta.y;
+    uint primitiveBase = meta.z;
+
+    uint primGlobal = primitiveBase + localPrim;
+
+    float2 hitUV = ComputeHitUV_Global(primGlobal, vertexBase, attribs.barycentrics);
+
+    // デバッグ: UV を payload に入れる
+    payload.debugUV = hitUV;
+    payload.hit = 1;
+
+    // UV の可視化として color に入れておく（R=U, G=V）
+    payload.color = float3(hitUV.x, hitUV.y, 0.0f);
 }
