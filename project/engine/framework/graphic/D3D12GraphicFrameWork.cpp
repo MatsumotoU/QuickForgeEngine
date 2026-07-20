@@ -165,6 +165,24 @@ bool QFE::FRAMEWORK::CreateGraphicPSO(
 	return true;
 }
 
+bool QFE::FRAMEWORK::GetGraphicPSORootParameterTypeList(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle, 
+	std::vector<D3D12_ROOT_PARAMETER_TYPE>& outRootParameterTypeList) {
+
+
+	// 使用するパイプラインマネージャを取得
+	QFE::GRAPHIC::GraphicPipelineManager* pipelineManager = graphicEngine->GetGraphicPipelineManager();
+
+	// PSOハンドルからルートパラメータのタイプを取得
+	outRootParameterTypeList = pipelineManager->GetRootParameterTypes(psoHandle);
+	// 成否の確認
+	if(outRootParameterTypeList.empty()) {
+		QFE_LOG("Failed to get root parameter type list.");
+		return false;
+	}
+	return true;
+}
+
 bool QFE::FRAMEWORK::CreateRayTracingPSO(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::RTPSOHandle& outPSOHandle,
 	const std::string& dirPath, const std::string& rgsFileName) {
@@ -512,6 +530,74 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 	commandList->DrawInstanced(vertexCountUINT, 1, 0, 0);
 	return true;
 }
+
+bool QFE::FRAMEWORK::DrawGraphicPSO(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle, 
+	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, 
+	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets, const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes) {
+
+
+	// 使用機能の取得
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
+	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
+	QFE::GRAPHIC::GraphicPipelineManager* graphicPipelineManager = graphicEngine->GetGraphicPipelineManager();
+	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports = graphicEngine->GetViewports();
+	QFE::UniqueContainer<D3D12_RECT>& scissorRects = graphicEngine->GetScissorRects();
+
+	QFE::GRAPHIC::DirectXResourceHandle depthStencilBufferHandle = graphicEngine->GetDepthStencilBufferHandle();
+
+	ID3D12GraphicsCommandList* commandList = commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+	renderPass->SetRenderTarget(
+		commandList, depthStencilBufferHandle, renderTargets);
+
+	commandList->RSSetViewports(1, viewports.GetData(static_cast<uint32_t>(viewportHandle)));
+	commandList->RSSetScissorRects(1, scissorRects.GetData(static_cast<uint32_t>(scissorRectHandle)));
+
+	commandList->SetPipelineState(graphicPipelineManager->GetPipelineState(psoHandle));
+	commandList->SetGraphicsRootSignature(graphicPipelineManager->GetRootSignature(psoHandle));
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = resourceContainer->GetVertexBufferView(vertexBufferHandle);
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	for (int i = 0; i < rootParameterTypes.size(); ++i) {
+		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
+
+		if (rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer->GetGpuVirtualAddress(rootResources[i]);
+			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
+		} else {
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
+			switch (rootParameterType) {
+			case D3D12_ROOT_PARAMETER_TYPE_SRV:
+				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+				break;
+			case D3D12_ROOT_PARAMETER_TYPE_UAV:
+				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
+				break;
+			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
+				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	size_t vertexCount = 0;
+	if (!GetResourceArraySize(graphicEngine, vertexBufferHandle, vertexCount)) {
+		assert(false);
+		return false;
+	}
+	UINT vertexCountUINT = static_cast<UINT>(vertexCount);
+	commandList->DrawInstanced(vertexCountUINT, 1, 0, 0);
+	return true;
+}
+
+
 
 bool QFE::FRAMEWORK::DrawRayTracingPSO(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,

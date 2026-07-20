@@ -69,6 +69,13 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::BlendMode& blendMode,
 		const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType,
 		QFE::GRAPHIC::PSOHandle& outPSOHandle);
+
+	/// @brief パイプラインステートオブジェクトのルートパラメータの型を取得する関数
+	bool GetGraphicPSORootParameterTypeList(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::PSOHandle& psoHandle,
+		std::vector<D3D12_ROOT_PARAMETER_TYPE>& outRootParameterTypeList);
+
 	/// @brief レイトレーシングパイプラインステートオブジェクトを作成する関数
 	bool CreateRayTracingPSO(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
@@ -142,6 +149,18 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets);
+
+	/// @brief グラフィックパイプラインステートオブジェクトを使用して描画する関数.ルートパラメータを直接指定するバージョン
+	bool DrawGraphicPSO(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::PSOHandle& psoHandle,
+		const QFE::GRAPHIC::ViewPortHandle& viewportHandle,
+		const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
+		const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes);
+
 	/// @brief レイトレーシングパイプラインを使用して描画
 	bool DrawRayTracingPSO(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
