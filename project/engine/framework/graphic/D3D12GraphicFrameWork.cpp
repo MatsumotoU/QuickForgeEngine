@@ -916,7 +916,16 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(QFE::GRAPHIC::D3D12GraphicEngine* graphic
 	return true;
 }
 
-bool QFE::FRAMEWORK::TestRayTracingPSO(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle, QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle, const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle, const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources) {
+bool QFE::FRAMEWORK::TestRayTracingPSO(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
+	QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, 
+	const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, 
+	const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle, 
+	const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle, 
+	const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& firstTextureBufferHandle,
+	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources) {
 	// 使用機能の取得
 	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
@@ -940,26 +949,27 @@ bool QFE::FRAMEWORK::TestRayTracingPSO(QFE::GRAPHIC::D3D12GraphicEngine* graphic
 
 	// 2. ルートシグネチャへのリソースバインド
 	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = accelerationStructure->GetTLASResultBuffer()->GetGPUVirtualAddress();
-	commandList4->SetComputeRootShaderResourceView(4, tlasResultBufferGPUHandle);
+	commandList4->SetComputeRootShaderResourceView(5, tlasResultBufferGPUHandle);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(renderUavBuffer, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
 
 	commandList4->SetComputeRootDescriptorTable(0, resourceContainer->GetDescriptorHandleGPU(indexBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
 	commandList4->SetComputeRootDescriptorTable(1, resourceContainer->GetDescriptorHandleGPU(uvBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
 	commandList4->SetComputeRootDescriptorTable(2, resourceContainer->GetDescriptorHandleGPU(instanceMetaBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(3, resourceContainer->GetDescriptorHandleGPU(firstTextureBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cameraGpuHandle = resourceContainer->GetGpuVirtualAddress(cameraPositionBufferHandle);
-	commandList4->SetComputeRootConstantBufferView(3, cameraGpuHandle);
+	commandList4->SetComputeRootConstantBufferView(4, cameraGpuHandle);
 
 	// レンダーターゲットのバリアをレンダーターゲットに設定する前に、必要に応じてリソースの状態を遷移させる
 	for (QFE::GRAPHIC::DirectXResourceHandle renderTargetHandle : rootResources) {
 		resourceContainer->TransitionResource(renderTargetHandle, commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 	}
 
-	commandList4->SetComputeRootDescriptorTable(5, resourceContainer->GetDescriptorHandleGPU(rootResources[0], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(6, resourceContainer->GetDescriptorHandleGPU(rootResources[1], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(7, resourceContainer->GetDescriptorHandleGPU(rootResources[2], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(8, resourceContainer->GetDescriptorHandleGPU(rootResources[3], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(9, gpuHandle);
+	commandList4->SetComputeRootDescriptorTable(6, resourceContainer->GetDescriptorHandleGPU(rootResources[0], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(7, resourceContainer->GetDescriptorHandleGPU(rootResources[1], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(8, resourceContainer->GetDescriptorHandleGPU(rootResources[2], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(9, resourceContainer->GetDescriptorHandleGPU(rootResources[3], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(10, gpuHandle);
 	
 
 	// 3. シェーダーレコードのサイズ定義（前段で作った64バイトと同じ）

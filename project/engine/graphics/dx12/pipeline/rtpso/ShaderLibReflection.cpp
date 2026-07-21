@@ -59,21 +59,28 @@ std::vector<RootParameterElement> ShaderLibReflection::GetRootParameterElement(I
 			D3D12_SHADER_INPUT_BIND_DESC resourceDesc{};
 			funcReflection->GetResourceBindingDesc(r, &resourceDesc);
 
+			// サンプラーは静的サンプラーで扱うためルートパラメータから除外する
+			if (resourceDesc.Type == D3D_SIT_SAMPLER) {
+				QFE_LOG(std::format(
+					"Sampler resource found: {} at register {}. Skipping for static sampler.",
+					resourceDesc.Name, resourceDesc.BindPoint));
+				continue;
+			}
+
 			// RootParameterElement 構造体にデータを詰め替える
 			RootParameterElement param{};
-			// 前回の寿命問題を考慮し、安全に std::string にディープコピー
 			param.friendlyName = resourceDesc.Name;
 			param.shaderRegisterIndex = static_cast<int>(resourceDesc.BindPoint);
 			param.shaderInputType = resourceDesc.Type;
+			param.descriptorCount = static_cast<int>(resourceDesc.BindCount);
 
 			// サポート外のタイプ、あるいはすでに他の関数から抽出済みの重複リソースでなければ追加
 			if (!isAlreadyAdded(param)) {
 				totalParams.push_back(param);
+				QFE_LOG(std::format(
+					"Resource: {} at register {} added.",
+					param.friendlyName, param.shaderRegisterIndex));
 			}
-
-			QFE_LOG(std::format(
-				"Resource: {} at register {} added.",
-				param.friendlyName, param.shaderRegisterIndex));
 		}
 	}
 

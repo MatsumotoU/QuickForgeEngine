@@ -15,6 +15,8 @@ void RaytracingPipelineManager::Initialize(const RaytracingPipelineManagerInitia
 		return;
 	}
 
+	staticSamplerTemplate_.Initialize();
+
 	// 初期化完了フラグを設定
 	isActive_ = true;
 }
@@ -49,6 +51,8 @@ RTPSOHandle RaytracingPipelineManager::CreateRaytracingPipelineStateObject(const
 	for(RootParameterElement& param : rootParams) {
 		rootParam.CreateRootParameter(param, D3D12_SHADER_VISIBILITY_ALL);
 	}
+	raytracingPSO->GetRootParameter().AssignStaticSampler(
+		staticSamplerTemplate_.GetSamplerDescs(), staticSamplerTemplate_.GetSamplerCount());
 
 	// RaytracingPSOを作成
 	raytracingPSO->CreatePipelineStateObject(shaderBlob, *(raytracingPSO->GetRootParameter().GetDescriptionRootSignature()), device_);

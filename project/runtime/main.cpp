@@ -29,6 +29,8 @@
 
 #include <array>
 
+#include "EngineDefines.h"
+
 // GPU と共有するインスタンスメタ構造（HLSL 側の構造と合わせること）
 struct InstanceMetaCPU {
 	uint32_t materialIndex;
@@ -44,6 +46,7 @@ struct InstanceMetaCPU {
 // - outInstanceMeta: メッシュ（またはメッシュ単位のエントリ）ごとのメタ情報（InstanceID と一致させること）
 static void BuildGlobalMeshBuffers(
 	const std::unordered_map<std::string, QFE::ASSET::ModelData>& modelDataMap,
+	const std::map<std::string, uint32_t>& textureGpuIndexMap,
 	std::vector<float>& outGlobalUVs,
 	std::vector<uint32_t>& outGlobalTriIndices,
 	std::unordered_map<std::string, InstanceMetaCPU>& outModelMeta) {
@@ -79,7 +82,11 @@ static void BuildGlobalMeshBuffers(
 
 		// モデル単位のメタを記録（InstanceMeta は TLAS の InstanceID に合わせて後で並べ替える）
 		InstanceMetaCPU meta{};
-		meta.materialIndex = 0u; // TODO: materialIndex を適切に設定する
+
+		meta.materialIndex = 0u; // 仮に 0 としておく（必要に応じて textureGpuIndexMap から取得するなど拡張可能）
+		if(textureGpuIndexMap.find(mesh.material.textureName) != textureGpuIndexMap.end()) {
+			meta.materialIndex = textureGpuIndexMap.at(mesh.material.textureName);
+		}
 		meta.vertexBase = vertexBase;
 		meta.vertexCount = static_cast<uint32_t>(verts.size());
 		meta.primitiveBase = primitiveBase;
@@ -306,6 +313,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ここから描画の準備
 	//====================
 
+	float allObjectMetallic = 0.0f;
+	float allObjectSmoothness = 0.5f;
+
 	// シェーダーペアを生成
 	QFE::GRAPHIC::ShaderPairHandle shaderPairHandle;
 	QFE::FRAMEWORK::CreateShaderPair(graphicEngine.get(), vsDirName, psDirName, "Object3d.GBuffer.VS.hlsl", "Object3d.GBuffer.PS.hlsl", shaderPairHandle);
@@ -371,6 +381,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	// テクスチャを読み込む関数
 	std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle> textureHandleMap;
+	std::map<std::string, uint32_t> textureGpuIndexMap; // テクスチャ名 -> GPU側のインデックスマップ
+	uint32_t nextTextureGpuIndex = 2; // 0,1 は BlackCubeMap と White1x1 に予約されているので、次のインデックスは 2 から始める
+
+	QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), textureHandleMap["BlackCubeMap"]);
+	textureGpuIndexMap["BlackCubeMap"] = 0; // GPU側のインデックスを設定
+	QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandleMap["White1x1"]);
+	textureGpuIndexMap["white1x1"] = 1; // GPU側のインデックスを設定
+
 	std::function<bool(const std::string&)> loadTextureFunc =
 		[&](const std::string& textureName) {
 		if(textureHandleMap.find(textureName) != textureHandleMap.end()) {
@@ -383,6 +401,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		bool result = QFE::FRAMEWORK::LoadTextureFromFile(graphicEngine.get(), texturePath, textureHandle);
 		if(result) {
 			textureHandleMap[textureName] = textureHandle;
+			textureGpuIndexMap[textureName] = nextTextureGpuIndex;
+			++nextTextureGpuIndex;
 		}
 		return result;
 		};
@@ -782,8 +802,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				Material* materialData = graphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
 				QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
 				materialData->color = materialComp.albedoColor;
-				materialData->metallic = 1.0f;
-				materialData->smoothness = 1.0f;
+				materialData->metallic = allObjectMetallic;
+				materialData->smoothness = allObjectSmoothness;
 				modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
 
 				// 頂点バッファの更新
@@ -851,7 +871,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			// modelDataMap に基づいて平坦化（models -> global arrays）
 			// BuildGlobalMeshBuffers は modelName -> InstanceMeta を返す
-			BuildGlobalMeshBuffers(modelDataMap, globalUVs, globalTriIndices, modelMetaMap);
+			BuildGlobalMeshBuffers(modelDataMap,textureGpuIndexMap, globalUVs, globalTriIndices, modelMetaMap);
 
 			// 2) raytracingInstances の順に合わせて instanceMeta を並べる
 			std::vector<InstanceMetaCPU> instanceMetaAligned;
@@ -938,14 +958,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				}
 				});
 
+			QFE::GRAPHIC::DirectXResourceHandle textureFirstResourceHandle;
+			QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), textureFirstResourceHandle);
+
 			QFE::FRAMEWORK::TestRayTracingPSO(
 				graphicEngine.get(), rtpsoHandle, uavBufferHandle,
 				cameraBufferHandle,globalTriHandle,globalUVHandle,
-				instanceMetaHandle,rayTracingRootResources);
+				instanceMetaHandle, textureFirstResourceHandle,rayTracingRootResources);
 
 
 			ImGui::Begin("FPS Counter");
 			ImGui::Text("FPS: %.2f", fpsCounter->GetAverageFPS());
+			ImGui::DragFloat("All Object Metallic", &allObjectMetallic, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("All Object Smoothness", &allObjectSmoothness, 0.01f, 0.0f, 1.0f);	
 			ImGui::End();
 
 

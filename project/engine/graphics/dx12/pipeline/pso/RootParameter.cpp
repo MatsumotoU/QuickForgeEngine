@@ -79,7 +79,7 @@ void QFE::GRAPHIC::RootParameter::CreateRootParameter(const RootParameterElement
 		SetDescriptorRange(
 			rootParameterElement.friendlyName,
 			rangeType,
-			1, // numDescriptorsは1に設定
+			rootParameterElement.descriptorCount,
 			rootParameterElement.shaderRegisterIndex);
 
 	} else if (rootParameterElement.shaderInputType == D3D_SIT_UAV_RWTYPED ||
@@ -96,7 +96,7 @@ void QFE::GRAPHIC::RootParameter::CreateRootParameter(const RootParameterElement
 		SetDescriptorRange(
 			rootParameterElement.friendlyName,
 			D3D12_DESCRIPTOR_RANGE_TYPE_UAV,
-			1,
+			rootParameterElement.descriptorCount,
 			rootParameterElement.shaderRegisterIndex);
 
 	}else if (rootParameterElement.shaderInputType == D3D_SIT_SAMPLER) {

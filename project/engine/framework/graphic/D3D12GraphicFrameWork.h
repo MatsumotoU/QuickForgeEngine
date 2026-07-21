@@ -216,6 +216,7 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& firstTextureBufferHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources);
 
 	/// @brief ファイルからテクスチャを読み込む関数

@@ -83,6 +83,7 @@ std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParamet
 		element.friendlyName = bindDesc.Name;
 		element.shaderInputType = bindDesc.Type;
 		element.shaderRegisterIndex = bindDesc.BindPoint;
+		element.descriptorCount = bindDesc.BindCount;
 		rootParameterElements.push_back(element);
 	}
 

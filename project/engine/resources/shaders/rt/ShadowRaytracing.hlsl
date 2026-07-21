@@ -14,6 +14,9 @@ StructuredBuffer<uint3> g_globalTriIndices : register(t10);
 StructuredBuffer<float2> g_globalVertexUVs : register(t11);
 StructuredBuffer<uint3> g_instanceMeta : register(t12);
 
+Texture2D<float4> g_TextureArray[256] : register(t20);
+SamplerState g_sampler : register(s0);
+
 struct RayPayload
 {
     float3 color;
@@ -108,7 +111,7 @@ void MyRayGen()
         RayPayload reflectPayload;
         reflectPayload.hit = 0;
         reflectPayload.debugUV = float2(0.0f, 0.0f);
-        reflectPayload.color = float3(0.1f, 0.1f, 0.15f); // 背景色の初期値
+        reflectPayload.color = baseColor;
 
         TraceRay(g_scene, RAY_FLAG_FORCE_OPAQUE, 0xFF, 0, 1, 0, reflectRay, reflectPayload);
 
@@ -127,7 +130,6 @@ void MyMiss(inout RayPayload payload : SV_RayPayload)
 {
     payload.hit = 0;
     payload.debugUV = float2(0.0f, 0.0f);
-    payload.color = float3(0.0f, 0.0f, 0.0f);
 }
 
 // 3. クローストヒットシェーダー
@@ -138,6 +140,7 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
     uint instId = InstanceID();
 
     uint3 meta = g_instanceMeta[instId];
+    uint texID = meta.x;
     uint vertexBase = meta.y;
     uint primitiveBase = meta.z;
 
@@ -150,5 +153,5 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
     payload.hit = 1;
 
     // UV の可視化として color に入れておく（R=U, G=V）
-    payload.color = float3(hitUV.x, hitUV.y, 0.0f);
+    payload.color = g_TextureArray[texID].SampleLevel(g_sampler, hitUV, 0).rgb;
 }
