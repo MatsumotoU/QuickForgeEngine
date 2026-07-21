@@ -48,5 +48,6 @@ namespace QFE::GRAPHIC {
 		std::function<std::vector<RootParameterElement>(IDxcBlob* shaderBlob)> getRootParameterFunc_;// レイトレーシングシェーダーのルートパラメータを取得する関数
 
 		SparseSet<std::unique_ptr<RaytracingPSO>> raytracingPSOs_;// レイトレーシングパイプラインステートオブジェクトの管理
+
 	};
 }

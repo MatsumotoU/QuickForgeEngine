@@ -368,6 +368,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		return false;
 		};
+	
+	// テクスチャを読み込む関数
+	std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle> textureHandleMap;
+	std::function<bool(const std::string&)> loadTextureFunc =
+		[&](const std::string& textureName) {
+		if(textureHandleMap.find(textureName) != textureHandleMap.end()) {
+			// すでに読み込まれている場合はスキップ
+			return true;
+		}
+
+		std::string texturePath = modelDir + textureName;
+		QFE::GRAPHIC::DirectXResourceHandle textureHandle;
+		bool result = QFE::FRAMEWORK::LoadTextureFromFile(graphicEngine.get(), texturePath, textureHandle);
+		if(result) {
+			textureHandleMap[textureName] = textureHandle;
+		}
+		return result;
+		};
 
 	// オフスクリーンレンダーターゲットの作成
 	std::vector<QFE::GRAPHIC::RenderTargetHandle> renderTargets;
@@ -795,6 +813,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				// テクスチャの更新
 				QFE::GRAPHIC::DirectXResourceHandle textureHandle;
 				QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+				if(modelDataMap.find(modelRenderComp.modelName) != modelDataMap.end()) {
+					const QFE::ASSET::ModelData& modelData = modelDataMap[modelRenderComp.modelName];
+					if (!modelData.meshes.empty() && !modelData.meshes[0].material.textureName.empty()) {
+						const std::string& textureFileName = modelData.meshes[0].material.textureName;
+						if (loadTextureFunc(textureFileName)) {
+							textureHandle = textureHandleMap[textureFileName];
+						} else {
+							modelRenderComp.renderErrorMessage = "Failed to load texture: " + textureFileName;
+							return;
+						}
+					}
+				}
 				modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
 
 				// レイトレーシングインスタンスの作成

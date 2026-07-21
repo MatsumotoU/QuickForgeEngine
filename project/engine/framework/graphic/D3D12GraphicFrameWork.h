@@ -217,4 +217,10 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources);
+
+	/// @brief ファイルからテクスチャを読み込む関数
+	bool LoadTextureFromFile(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::string& filePath,
+		QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle);
 }

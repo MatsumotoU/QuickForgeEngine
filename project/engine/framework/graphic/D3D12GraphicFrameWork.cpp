@@ -1007,3 +1007,13 @@ bool QFE::FRAMEWORK::TestRayTracingPSO(QFE::GRAPHIC::D3D12GraphicEngine* graphic
 
 	return true;
 }
+
+bool QFE::FRAMEWORK::LoadTextureFromFile(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::string& filePath, QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle) {
+	QFE::GRAPHIC::TextureLoader* textureLoader = graphicEngine->GetTextureLoader();
+	
+	outTextureHandle = textureLoader->LoadTexture(filePath);
+	if(outTextureHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		return false;
+	}
+	return true;
+}

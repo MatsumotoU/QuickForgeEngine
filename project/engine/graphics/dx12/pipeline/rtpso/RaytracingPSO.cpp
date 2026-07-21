@@ -1,5 +1,6 @@
 #include "RaytracingPSO.h"
 #include "RaytracingAccelerationStructure.h"
+#include "../pso/StaticSamplerTemplate.h"
 
 using namespace QFE::GRAPHIC;
 
@@ -8,6 +9,7 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+
 	HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		if (errorBlob) {
