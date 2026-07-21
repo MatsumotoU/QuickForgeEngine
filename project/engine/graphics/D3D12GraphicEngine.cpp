@@ -78,6 +78,8 @@ void D3D12GraphicEngine::Initialize() {
 		{return descriptorHeapManager_->AssignDsvHeap(directXDevice_->GetDevice(), resource, desc); };
 	resourceContainerInfo.assignUavFunc = [&](ID3D12Resource* resource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* desc)
 		{return descriptorHeapManager_->AssignUavHeap(directXDevice_->GetDevice(), resource, nullptr, desc); };
+	resourceContainerInfo.assignTextureFunc = [&](ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC* desc)
+		{return descriptorHeapManager_->AssignTexture(directXDevice_->GetDevice(), resource, *desc); };
 	resourceContainer_->Initialize(resourceContainerInfo);
 
 	// リソースアロケータの初期化

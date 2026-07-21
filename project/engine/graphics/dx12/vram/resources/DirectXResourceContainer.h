@@ -17,6 +17,8 @@ namespace QFE::GRAPHIC {
 		std::function<DescriptorHandles(ID3D12Resource*, const D3D12_SHADER_RESOURCE_VIEW_DESC*)> assignSrvFunc;// Srvを割り当てる関数
 		std::function<DescriptorHandles(ID3D12Resource*, const D3D12_DEPTH_STENCIL_VIEW_DESC*)> assignDsvFunc;// Dsvを割り当てる関数
 		std::function<DescriptorHandles(ID3D12Resource*, const D3D12_UNORDERED_ACCESS_VIEW_DESC*)> assignUavFunc;// Uavを割り当てる関数
+
+		std::function<DescriptorHandles(ID3D12Resource*, const D3D12_SHADER_RESOURCE_VIEW_DESC*)> assignTextureFunc;// Textureを割り当てる関数
 	};
 
 	/// @brief ビューのタイプと説明をまとめた構造体
@@ -43,6 +45,7 @@ namespace QFE::GRAPHIC {
 			D3D12_RESOURCE_STATES initialState,
 			D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT,
 			const D3D12_CLEAR_VALUE* clearValue = nullptr);
+
 		/// @brief 定数バッファを作成し、コンテナに追加する
 		DirectXResourceHandle CreateBuffer(ID3D12Device* device, size_t bufferSize);
 		/// @brief 外部のリソースをコンテナに追加する
@@ -59,6 +62,10 @@ namespace QFE::GRAPHIC {
 		
 		/// @brief リソースのビューを生成します
 		void CreateResourceView(DirectXResourceHandle handle, CreateViewInfo createViewInfo);
+
+		/// @brief テクスチャ用のビューを生成します。連続的な配置をするための関数
+		void CreateTextureResourceView(DirectXResourceHandle handle, const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc);
+
 		/// @brief リソースをGPUにアップロードします
 		void UploadResource(
 			DirectXResourceHandle handle, std::vector<D3D12_SUBRESOURCE_DATA> subresources,

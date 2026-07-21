@@ -30,6 +30,11 @@ void DescriptorHeapManager::Initialize(ID3D12Device* device) {
 	descriptorHeaps_[DescriptorHeapType::RTV].Create(device, rtvHeapInfo);
 	descriptorHeaps_[DescriptorHeapType::SRV].Create(device, srvHeapInfo);
 	descriptorHeaps_[DescriptorHeapType::DSV].Create(device, dsvHeapInfo);
+
+	// テクスチャ用の連続したディスクリタブロックを作成
+	DescriptorBlock textureBlock{};
+	textureBlock.handles_ = descriptorHeaps_[DescriptorHeapType::SRV].CreateDescriptorHandles(256);
+	descriptorBlocks_.emplace(DescriptorBlockType::Texture2D, textureBlock);
 }
 
 DescriptorHandles DescriptorHeapManager::AssignRtvHeap(
@@ -107,6 +112,14 @@ DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::AssignUavHeap(
 	DescriptorHandles handles{};
 	handles.cpuHandle_ = cpuHandle;
 	handles.gpuHandle_ = gpuHandle;
+	return handles;
+}
+
+DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::AssignTexture(ID3D12Device* device, ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
+	uint32_t index = descriptorBlocks_.at(DescriptorBlockType::Texture2D).nextFreeIndex++;
+	DescriptorHandles& handles = descriptorBlocks_.at(DescriptorBlockType::Texture2D).handles_[index];
+	// ディスクリタを作成
+	device->CreateShaderResourceView(resource, &desc, handles.cpuHandle_);
 	return handles;
 }
 
