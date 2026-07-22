@@ -109,6 +109,19 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle* rootResources,
 		size_t rootResourcesSize);
+
+	/// @brief リソースの状態を変更する関数
+	bool TransitionResourceToState(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle,
+		D3D12_RESOURCE_STATES newState);
+
+	/// @brief カメラ位置バッファを作成する関数
+	bool CreateCameraPosBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::wstring& name,
+		QFE::GRAPHIC::DirectXResourceHandle& outCameraPosBufferHandle);
+
 	/// @brief Object3dのワールド行列とワールドビュー射影行列を更新する関数
 	void UpdateObject3dWVPMatrix(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
@@ -123,10 +136,18 @@ namespace QFE::FRAMEWORK {
 		const std::vector<VertexData>& vertexPositions,
 		const std::string& meshName,
 		QFE::GRAPHIC::DirectXResourceHandle& outVertexBufferHandle);
+	/// @brief インデックスバッファを作成する関数
+	bool CreateIndexBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::vector<uint32_t>& indices,
+		const std::string& meshName,
+		QFE::GRAPHIC::DirectXResourceHandle& outIndexBufferHandle);
+
 	/// @brief BLASを作成する関数
 	bool CreateBLAS(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const std::vector<VertexData>& vertices,
+		const std::vector<uint32_t>& indices,
 		const std::string& name,
 		QFE::GRAPHIC::BLASHandle& outBLASHandle);
 	/// @brief BLASのインスタンスバッファを更新する関数
@@ -160,11 +181,48 @@ namespace QFE::FRAMEWORK {
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
 		const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes);
+	/// @brief グラフィックパイプラインステートオブジェクトを使用して描画する関数.ルートパラメータを直接指定するバージョン.インデックスバッファを指定するバージョン
+	bool DrawGraphicPSO(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::PSOHandle& psoHandle,
+		const QFE::GRAPHIC::ViewPortHandle& viewportHandle,
+		const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
+		const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes);
 
 	/// @brief レイトレーシングパイプラインを使用して描画
 	bool DrawRayTracingPSO(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
+		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources);
+	/// @brief レイトレーシングパイプラインを使用して描画.レンダーターゲットを指定するバージョン
+	bool DrawRayTracingPSO(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
+		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
+		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+		const QFE::GRAPHIC::DirectXResourceHandle& renderTargetResourceHandle);
+
+	bool TestRayTracingPSO(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
+		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
+		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& firstTextureBufferHandle,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources);
+
+	/// @brief ファイルからテクスチャを読み込む関数
+	bool LoadTextureFromFile(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::string& filePath,
+		QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle);
 }

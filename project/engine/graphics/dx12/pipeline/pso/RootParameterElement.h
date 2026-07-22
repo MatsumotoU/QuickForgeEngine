@@ -8,6 +8,7 @@ namespace QFE::GRAPHIC {
 		std::string friendlyName;// ルートパラメータのフレンドリ名を保持するメンバ変数
 
 		int shaderRegisterIndex;// ルートパラメータのシェーダーレジスタインデックスを保持するメンバ変数
+		int descriptorCount;// ルートパラメータのデスクリプタ数を保持するメンバ変数
 		D3D_SHADER_INPUT_TYPE shaderInputType;// ルートパラメータのシェーダー入力タイプを保持するメンバ変数
 	};
 }

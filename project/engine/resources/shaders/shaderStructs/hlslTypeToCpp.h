@@ -107,20 +107,16 @@ struct Material {
 #ifdef __cplusplus
 	Material()
 		: color{ 1.0f, 1.0f, 1.0f, 1.0f }
-		, enableLighting(1)
-		, padding{ 0.0f, 0.0f, 0.0f }
 		, uvTransform(QFE::MATH::Matrix4x4::MakeIndentity4x4())
-		, shininess(0.0f){
+		, smoothness(0.0f)
+		, metallic(0.0f) {
 	}
 #endif
 
 	float32_t4 color;
-	int32_t enableLighting;
-#ifdef __cplusplus
-	float32_t padding[3];
-#endif
 	float32_t4x4 uvTransform;
-	float32_t shininess;
+	float32_t smoothness;
+	float32_t metallic;
 };
 
 struct OffsetBuffer {

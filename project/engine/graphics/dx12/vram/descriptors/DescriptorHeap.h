@@ -13,6 +13,9 @@ namespace QFE::GRAPHIC {
 		/// @brief ディスクリタヒープを生成する関数
 		void Create(ID3D12Device* device, DescriptorHeapInfo info);
 
+		/// @brief ディスクリタヒープからディスクリタハンドルを複数作成する関数
+		[[nodiscard]] std::vector<DescriptorHandles> CreateDescriptorHandles(uint32_t count);
+
 		/// @brief ある位置のディスクリタハンドルを取得する
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetCpuDescriptorHandle(uint32_t index) const;
 		/// @brief ある位置のディスクリタハンドルを取得する
@@ -35,7 +38,7 @@ namespace QFE::GRAPHIC {
 		void CheckCreated() const;
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_;// ディスクリタヒープ
-		std::queue<uint32_t> freeDescriptors_;// ヒープの空きスロットのインデックスを管理するキュー
+		uint32_t nextFreeDescriptorIndex_ = 0;// 次に割り当てるディスクリタのインデックス
 		bool isCreated_ = false;// ディスクリタヒープが生成されているかどうか
 		DescriptorHeapInfo DescriptorHeapInfo_;// ディスクリタヒープの情報
 		bool isShaderVisible_ = false;// シェーダーから参照可能かどうか

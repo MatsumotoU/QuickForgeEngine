@@ -32,13 +32,31 @@ void DescriptorHeap::Create(ID3D12Device* device, DescriptorHeapInfo info) {
 		return;
 	}
 	// ヒープの空きスロットを初期化
-	for (UINT i = 0; i < DescriptorHeapInfo_.numDescriptors; ++i) {
-		freeDescriptors_.push(i);
-	}
+	nextFreeDescriptorIndex_ = 0;
 
 	isCreated_ = true;
 	isShaderVisible_ = info.shaderVisible;
-}	
+}
+std::vector<DescriptorHandles> QFE::GRAPHIC::DescriptorHeap::CreateDescriptorHandles(uint32_t count) {
+	std::vector<DescriptorHandles> handles;
+	handles.reserve(count);
+	for(uint32_t i = 0; i < count; ++i) {
+		if (nextFreeDescriptorIndex_ >= DescriptorHeapInfo_.numDescriptors) {
+			QFE_REPORT_SYSTEM_ERROR("DescriptorHeap::CreateDescriptorHandles failed: no free descriptors available", SystemError::Abort);
+			return {};
+		}
+		uint32_t index = nextFreeDescriptorIndex_;
+		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuDescriptorHandle(index);
+		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle {};
+		if (DescriptorHeapInfo_.shaderVisible) {
+			gpuHandle = GetGpuDescriptorHandle(index);
+		}
+		handles.push_back({ cpuHandle, gpuHandle });
+		++nextFreeDescriptorIndex_;
+	}
+	return handles;
+}
+
 
 D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCpuDescriptorHandle(uint32_t index) const {
 	CheckCreated();
@@ -71,12 +89,12 @@ UINT DescriptorHeap::GetDescriptorSize() const {
 
 uint32_t DescriptorHeap::GetNextFreeDescriptorIndex() {
 	CheckCreated();
-	if (freeDescriptors_.empty()) {
+	if (nextFreeDescriptorIndex_ >= DescriptorHeapInfo_.numDescriptors) {
 		QFE_REPORT_SYSTEM_ERROR("DescriptorHeap::GetNextFreeDescriptorIndex failed: no free descriptors available", SystemError::Abort);
 		return UINT32_MAX;
 	}
-	uint32_t index = freeDescriptors_.front();
-	freeDescriptors_.pop();
+	uint32_t index = nextFreeDescriptorIndex_;
+	++nextFreeDescriptorIndex_;
 	return index;
 }
 

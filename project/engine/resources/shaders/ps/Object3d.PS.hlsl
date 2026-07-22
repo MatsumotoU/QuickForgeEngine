@@ -32,37 +32,30 @@ PixelShaderOutput main(VertexShaderOutput input)
         discard;
     }
 
-    if (gMaterial.enableLighting != 0)
-    {
-        float NdotL = dot(normalize(input.normal), -normalize(gDirectionalLight.direction));
-        NdotL = max(NdotL, 0.0f);
-        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-        output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
-        output.color.a = alpha;
+    float NdotL = dot(normalize(input.normal), -normalize(gDirectionalLight.direction));
+    NdotL = max(NdotL, 0.0f);
+    float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+    output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+    output.color.a = alpha;
         
-        float32_t3 toEye = normalize(gCamera.cameraPosition - input.worldPosition);
-        float32_t3 reflectLight = reflect(gDirectionalLight.direction, normalize(input.normal));
-        float32_t3 halfVector = normalize(-normalize(gDirectionalLight.direction) + toEye);
-        float32_t NDotH = dot(normalize(input.normal), halfVector);
-        float32_t specularPow = pow(saturate(NDotH), gMaterial.shininess);
+    float32_t3 toEye = normalize(gCamera.cameraPosition - input.worldPosition);
+    float32_t3 reflectLight = reflect(gDirectionalLight.direction, normalize(input.normal));
+    float32_t3 halfVector = normalize(-normalize(gDirectionalLight.direction) + toEye);
+    float32_t NDotH = dot(normalize(input.normal), halfVector);
+    float32_t specularPow = pow(saturate(NDotH), 0.5f);
         
         
-        float32_t3 diffuse =
+    float32_t3 diffuse =
              gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
-        float32_t3 specular = 
+    float32_t3 specular =
             gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
-        output.color.rgb = diffuse + specular;
-        output.color.a = alpha;
+    output.color.rgb = diffuse + specular;
+    output.color.a = alpha;
         
-        float32_t3 cameraToPosition = normalize(input.worldPosition - gCamera.cameraPosition);
-        float32_t3 reflection = reflect(-cameraToPosition, normalize(input.normal));
-        float32_t4 environmentColor = gCubeTexture.Sample(gSampler, reflection);
-        output.color.rgb += environmentColor.rgb;
-    }
-    else
-    {
-        output.color = gMaterial.color * textureColor;
-    }
+    float32_t3 cameraToPosition = normalize(input.worldPosition - gCamera.cameraPosition);
+    float32_t3 reflection = reflect(-cameraToPosition, normalize(input.normal));
+    float32_t4 environmentColor = gCubeTexture.Sample(gSampler, reflection);
+    output.color.rgb += environmentColor.rgb;
 
     return output;
 }

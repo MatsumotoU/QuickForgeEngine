@@ -10,6 +10,7 @@ struct PixelShaderOutput
     float32_t4 position : SV_Target0;
     float32_t4 normal : SV_Target1;
     float32_t4 color : SV_Target2;
+    float32_t4 packedTexture : SV_Target3;
 };
 PixelShaderOutput main(VertexShaderOutput input)
 {
@@ -27,5 +28,6 @@ PixelShaderOutput main(VertexShaderOutput input)
     output.position = float32_t4(input.worldPosition, 1.0f);
     output.normal = float32_t4(normalize(input.normal), 1.0f);
     output.color = float32_t4(gMaterial.color.rgb * textureColor.rgb, alpha);
+    output.packedTexture = float32_t4(gMaterial.metallic, gMaterial.smoothness, 0.0f, alpha);
     return output;
 }

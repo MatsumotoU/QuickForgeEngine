@@ -30,7 +30,9 @@ void QFE::GRAPHIC::RaytracingAccelerationStructure::UpdateTLAS(
 
 BLASHandle RaytracingAccelerationStructure::CreateBLAS(
 	ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4,
-	const std::vector<QFE::MATH::Vector3>& vertices, const std::string& name) {
+	const std::vector<QFE::MATH::Vector3>& vertices,
+	const std::vector<uint32_t>& indices,
+	const std::string& name) {
 
 	// すでに同じ名前のBLASが存在する場合は、既存のハンドルを返す
 	if(blasContainer_.Contains(name)) {
@@ -40,7 +42,7 @@ BLASHandle RaytracingAccelerationStructure::CreateBLAS(
 
 	// BLASのインスタンスを作成
 	std::unique_ptr<BLAS> blas = std::make_unique<BLAS>();
-	if (!blas->Create(device5, commandList4, vertices)) {
+	if (!blas->Create(device5, commandList4, vertices, indices)) {
 		QFE_LOG("Failed to create BLAS for " + name);
 		return BLASHandle::Invalid;
 	}
