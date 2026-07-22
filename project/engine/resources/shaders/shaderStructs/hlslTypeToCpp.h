@@ -19,6 +19,14 @@ using float32_t3x3 = QFE::MATH::Matrix3x3;
 using float32_t2x2 = QFE::MATH::Matrix2x2;
 #endif
 
+// レイトレーシング反射のためのインスタンス情報
+struct InstanceMetaCPU {
+	uint32_t materialIndex;
+	uint32_t vertexBase;     // global UV / vertex 配列の先頭オフセット（頂点単位）
+	uint32_t vertexCount;    // 頂点数（必要なら）
+	uint32_t primitiveBase;  // global primitive 配列の先頭オフセット（三角形単位）
+};
+
 struct PerFrame {
 	float32_t time;
 	float32_t deltaTime;

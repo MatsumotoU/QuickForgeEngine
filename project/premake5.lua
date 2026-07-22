@@ -33,14 +33,14 @@ workspace "QuickForgeEngine"
 
         linkoptions { "/ignore:4099" }
     filter ""
-    
+
     filter "configurations:Debug"
         defines { "_DEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEBUG","USE_IMGUI"}
         optimize "Off"
         symbols "On"
         runtime "Debug"
     filter "configurations:Development"
-        defines { "NDEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEVELOPMENT","USE_IMGUI"} 
+        defines { "NDEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEVELOPMENT","USE_IMGUI"}
         optimize "Off"  -- プロジェクト全体設定は無効（VS上で最適化「無効」に見える）
         symbols "On"     -- デバッグ情報を出す
         runtime "Release"
@@ -71,7 +71,7 @@ group "01_SubSystems" -- 独立した機能を提供するプロジェクト達
     dofile(path.join(_root, "engine/gui/premake5.lua"))
     -- Inputプロジェクトの読み込み
     dofile(path.join(_root, "engine/input/premake5.lua"))
-    
+
 group ""
 
 group "02_Middleware" -- アセットの読み込みや、サブシステムで使うデータを提供するプロジェクト達
@@ -85,12 +85,12 @@ group "02_Middleware" -- アセットの読み込みや、サブシステムで�
     dofile(path.join(_root, "engine/components/premake5.lua"))
     -- スクリプトプロジェクトの読み込み
     dofile(path.join(_root, "engine/script/premake5.lua"))
-    
+
 group ""
 
 group "03_Frameworks" -- 下層の処理をまとめるフレームワークプロジェクト達
-    -- コアフレームワークプロジェクトの読み込み
-    dofile(path.join(_root, "engine/framework/core/premake5.lua"))
+    -- アプリケーションフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/application/premake5.lua"))
     -- グラフィックフレームワークプロジェクトの読み込み
     dofile(path.join(_root, "engine/framework/graphic/premake5.lua"))
     -- ウィンドウフレームワークプロジェクトの読み込み
@@ -129,10 +129,10 @@ project "ExternalFolders"
 -- ImGui
 project "ImGui"
     location "externals/imgui"
-    kind "StaticLib" 
+    kind "StaticLib"
     language "C++"
     includedirs {
-        "externals/imgui", 
+        "externals/imgui",
     }
 
     files {
@@ -143,11 +143,11 @@ project "ImGui"
 -- DirectXTex
 project "DirectXTex"
     location "externals/DirectXTex"
-    kind "StaticLib" 
+    kind "StaticLib"
     language "C++"
 
     includedirs {
-        "externals/DirectXTex", 
+        "externals/DirectXTex",
         "externals/DirectXTex/Shaders/Compiled"
     }
 
@@ -166,9 +166,9 @@ group "Docs"
     project "DevelopmentRules"
         kind "None" -- コンパイルしない設定
         location "./" -- slnと同じ場所に置く
-   
-        files { 
-            "DEVELOPMENT_RULE.md", 
+
+        files {
+            "DEVELOPMENT_RULE.md",
         }
 
     vpaths {

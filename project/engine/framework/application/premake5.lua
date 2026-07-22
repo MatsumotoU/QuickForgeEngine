@@ -1,16 +1,17 @@
-project "FrameworkCore"
-        kind "Utility"
+project "ApplicationFramework"
+        kind "StaticLib"
         language "C++"
         debugdir "%{wks.location}"
         files {"./**.h","./**.cpp"}
         links{
             "EngineCore",
-            "GraphicEngine",
-            "WindowSystem",
-            "Input",
-            "GUIEngine",
             "Components",
-            "EngineAssetsFactory",
+            "GraphicFramework",
+            "GuiFramework",
+            "InputFramework",
+            "SceneFramework",
+            "ScriptFramework",
+            "WindowFramework",
         }
 
         -- 警告レベル4

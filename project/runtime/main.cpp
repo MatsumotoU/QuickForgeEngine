@@ -1,11 +1,7 @@
 #define NOMINMAX
 #include <Windows.h>
 
-#include "framework/graphic/D3D12GraphicFrameWork.h"
-#include "framework/window/WindowsWindowFrameWork.h"
-#include "framework/script/WindowsScriptWorkFrame.h"
-#include "framework/input/InputFrameWork.h"
-#include "framework/gui/D3D12GuiFrameWork.h"
+#include "framework/application/WindowsEngineFramework.h"
 
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
@@ -31,72 +27,16 @@
 
 #include "EngineDefines.h"
 
+#include "../resources/shaders/shaderStructs/hlslTypeToCpp.h"
+
 // GPU と共有するインスタンスメタ構造（HLSL 側の構造と合わせること）
-struct InstanceMetaCPU {
-	uint32_t materialIndex;
-	uint32_t vertexBase;     // global UV / vertex 配列の先頭オフセット（頂点単位）
-	uint32_t vertexCount;    // 頂点数（必要なら）
-	uint32_t primitiveBase;  // global primitive 配列の先頭オフセット（三角形単位）
-	// 必要であれば primitiveCount など追加可能（ここでは省略可）
-};
+
 static_assert(sizeof(InstanceMetaCPU) == sizeof(uint32_t) * 4);
 
 // モデル群（modelDataMap）からグローバルバッファを平坦化する。
 // - globalUVs: [u0,v0, u1,v1, ...]
 // - globalTriIndices: flattened indices [i0,i1,i2, i3,i4,i5, ...] (各 tri は 3 要素)
 // - outInstanceMeta: メッシュ（またはメッシュ単位のエントリ）ごとのメタ情報（InstanceID と一致させること）
-static void BuildGlobalMeshBuffers(
-	const std::unordered_map<std::string, QFE::ASSET::ModelData>& modelDataMap,
-	const std::map<std::string, uint32_t>& textureGpuIndexMap,
-	std::vector<float>& outGlobalUVs,
-	std::vector<uint32_t>& outGlobalTriIndices,
-	std::unordered_map<std::string, InstanceMetaCPU>& outModelMeta) {
-	outGlobalUVs.clear();
-	outGlobalTriIndices.clear();
-	outModelMeta.clear();
-
-	// modelDataMap の全メッシュを順次連結（各モデル先頭メッシュ1つを想定）
-	for (const auto& kv : modelDataMap) {
-		const std::string& modelName = kv.first;
-		const QFE::ASSET::ModelData& model = kv.second;
-
-		// 今回のコードベースは各モデルの meshes[0] を使う前提が散見されるため
-		// ここでも meshes[0] を対象とする（必要なら mesh 単位で拡張してください）
-		if (model.meshes.empty()) continue;
-		const QFE::ASSET::MeshData& mesh = model.meshes[0];
-
-		uint32_t vertexBase = static_cast<uint32_t>(outGlobalUVs.size() / 2); // u,v ペアなので /2
-		uint32_t primitiveBase = static_cast<uint32_t>(outGlobalTriIndices.size() / 3);
-
-		// 頂点 UV を追加
-		const std::vector<VertexData>& verts = mesh.vertices.GetInternalVector();
-		for (const auto& v : verts) {
-			outGlobalUVs.push_back(v.texcoord.x);
-			outGlobalUVs.push_back(v.texcoord.y);
-		}
-
-		// モデルごとのローカルインデックスを追加する。
-		// HLSL 側で InstanceMeta::vertexBase を加算してグローバルUV配列を参照する。
-		const std::vector<uint32_t>& inds = mesh.indices.GetInternalVector();
-		for (uint32_t localIndex : inds) {
-			outGlobalTriIndices.push_back(localIndex);
-		}
-
-		// モデル単位のメタを記録（InstanceMeta は TLAS の InstanceID に合わせて後で並べ替える）
-		InstanceMetaCPU meta{};
-
-		// テクスチャ未指定時は Texture2D として有効な白1x1を使用する。
-		// index 0 はTextureCubeなので Texture2D配列からは参照しない。
-		meta.materialIndex = 1u;
-		if(textureGpuIndexMap.find(mesh.material.textureName) != textureGpuIndexMap.end()) {
-			meta.materialIndex = textureGpuIndexMap.at(mesh.material.textureName);
-		}
-		meta.vertexBase = vertexBase;
-		meta.vertexCount = static_cast<uint32_t>(verts.size());
-		meta.primitiveBase = primitiveBase;
-		outModelMeta[modelName] = meta;
-	}
-}
 
 static bool EnsureBufferCapacityAndUpload(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
@@ -263,41 +203,36 @@ static bool UploadGlobalMeshBuffers(
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-	// デバッグログの初期化
-	QFE::MyDebugLog::GetInstance()->Initialize();
 
-	std::string mainWindowName = "ShootingGameRuntime";
-	uint32_t mainWindowHeight = 720;
-	uint32_t mainWindowWidth = 1280;
-	// ゲームウィンドウマネージャの初期化とウィンドウの追加
-	std::unique_ptr<QFE::GameWindowManager> gameWindowManager =
-		QFE::FRAMEWORK::CreateWindowManager(mainWindowName, mainWindowWidth, mainWindowHeight);
-	HWND mainWindow = QFE::FRAMEWORK::GetWindowHandle(gameWindowManager.get(), mainWindowName);
+	std::string windowName = "ShootingGameRuntime";
+	uint32_t windowWidth = 1280;
+	uint32_t windowHeight = 720;
 
-	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
-	std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> graphicEngine =
-		QFE::FRAMEWORK::CreateGraphicEngine(mainWindow);
-
-	// GUIマネージャの初期化
-	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager =
-		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), mainWindow);
-
-	// FPSカウンターの初期化
-	std::unique_ptr<QFE::FPSCounter> fpsCounter = std::make_unique<QFE::FPSCounter>();
-	fpsCounter->Reset();
-
-	// シーンマネージャの初期化
-	QFE::SCENE::SceneManager sceneManager;
-	sceneManager.Initialize();
+	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems engineSystems;
+	if (!QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
+		hInstance,
+		windowName,
+		windowWidth, windowHeight,
+		engineSystems)) {
+		return -1;
+	}
+	auto& gameWindowManager = engineSystems.windowManager;
+	auto& graphicEngine = engineSystems.graphicEngine;
+	auto& guiManager = engineSystems.guiManager;
+	auto& inputInterface = engineSystems.inputInterface;
+	auto& fpsCounter = engineSystems.fpsCounter;
+	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
-	// InputInterfaceの初期化
-	std::unique_ptr<QFE::INPUT::InputInterface> inputInterface =
-		QFE::FRAMEWORK::CreateInputInterface(mainWindow, hInstance);
+	HWND mainWindow = QFE::FRAMEWORK::GetWindowHandle(engineSystems.windowManager.get(), windowName);
 
 	std::string psDirName = "engine/resources/shaders/ps/";
 	std::string vsDirName = "engine/resources/shaders/vs/";
 	std::string rtDirName = "engine/resources/shaders/rt/";
+
+	QFE::GRAPHIC::DirectXResourceHandle globalUVHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+	QFE::GRAPHIC::DirectXResourceHandle globalTriHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+	QFE::GRAPHIC::DirectXResourceHandle instanceMetaHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 
 	// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
 	std::wstring selectedFilePath;
@@ -306,12 +241,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		L"JSON Files", L"*.json",
 		selectedFilePath)) {
 		// Entityの生成
-		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
+		engineSystems.sceneManager->LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
 	}
-
-	QFE::GRAPHIC::DirectXResourceHandle globalUVHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
-	QFE::GRAPHIC::DirectXResourceHandle globalTriHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
-	QFE::GRAPHIC::DirectXResourceHandle instanceMetaHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 
 	//====================
 	// ここから描画の準備
@@ -445,18 +376,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
-		MSG msg;
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-			// WM_QUITメッセージが来たらループを抜ける
-			if (msg.message == WM_QUIT) {
-				break;
-			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-
-		} else {
-			fpsCounter->FrameStart();
-			inputInterface->Update();
+		if (!QFE::FRAMEWORK::ProcessWindowsApplicationMessage()) {
+			break;
+		}
+		if (!QFE::FRAMEWORK::BeginWindowsEngineFrame(engineSystems)) {
+			break;
+		}
 
 			float deltaTime = fpsCounter->GetDeltaTime();
 
@@ -752,25 +677,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				}
 				});
 
-			// カメラのビュー行列と投影行列を取得
-			QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIndentity4x4();
-			entityManager.Each<QFE::SCENE::CameraComponent>([&](uint32_t entityId, QFE::SCENE::CameraComponent& cameraComp) {
-				if (cameraComp.isMainCamera) {
-					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-						QFE::MATH::EulerTransform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
-						cameraComp.viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(cameraTransform).Inverse();
-						if (cameraComp.top_ - cameraComp.bottom_ != 0.0f) {
-							cameraComp.aspectRatio_ = fabsf((cameraComp.right_ - cameraComp.left_) / (cameraComp.top_ - cameraComp.bottom_));
-						} else {
-							cameraComp.aspectRatio_ = 1.0f; // デフォルトのアスペクト比
-						}
-						cameraComp.projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
-							cameraComp.fovY_, cameraComp.aspectRatio_, cameraComp.nearZ_, cameraComp.farZ_);
-
-						viewProj = QFE::MATH::Matrix4x4::Multiply(cameraComp.viewMatrix, cameraComp.projectionMatrix);
-					}
-				}
-				});
+			// ゲームに依存しないカメラ更新はSceneFrameworkへ委譲する。
+			QFE::MATH::Matrix4x4 viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager);
 
 			// 各エンティティのModelRenderComponentを更新
 			std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>> raytracingInstances;
@@ -877,7 +785,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			// modelDataMap に基づいて平坦化（models -> global arrays）
 			// BuildGlobalMeshBuffers は modelName -> InstanceMeta を返す
-			BuildGlobalMeshBuffers(modelDataMap,textureGpuIndexMap, globalUVs, globalTriIndices, modelMetaMap);
+			QFE::FRAMEWORK::BuildGlobalMeshBuffers(
+				modelDataMap, textureGpuIndexMap, globalUVs, globalTriIndices, modelMetaMap);
 
 			// 2) raytracingInstances の順に合わせて instanceMeta を並べる
 			std::vector<InstanceMetaCPU> instanceMetaAligned;
@@ -930,23 +839,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
 
-			// モデルのレンダリング
-			entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
-				if (modelRenderComp.canRender == false) {
-					return;
-				}
-
-				// ルートリソースの設定
-				std::vector<QFE::GRAPHIC::DirectXResourceHandle> modelRootResources = {
-					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.transformMatrixBufferHandle),
-					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.materialResourceHandle),
-					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.textureResourceHandle)
-				};
-				QFE::FRAMEWORK::DrawGraphicPSO(graphicEngine.get(), psoHandle, viewportHandle, scissorRectHandle,
-					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.vertexResourceHandle),
-					static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.indexResourceHandle),
-					modelRootResources,renderTargets, rootParameterTypes);
-				});
+			QFE::FRAMEWORK::DrawSceneModels(
+				sceneManager, graphicEngine.get(), psoHandle, viewportHandle,
+				scissorRectHandle, renderTargets, rootParameterTypes);
 
 			std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources(4);
 			for (int i = 0; i < 4; ++i) {
@@ -984,18 +879,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (QFE::FRAMEWORK::GetDepthStencilResourceHandle(graphicEngine.get(), depthStencilHandle)) {
 				QFE::FRAMEWORK::SetRenderTarget(graphicEngine.get(), depthStencilHandle,{QFE::GRAPHIC::RenderTargetHandle::SwapChain});
 			}
-			guiManager->PostDraw();
-			graphicEngine->PostDraw();
-			sceneManager.EndFrame();
-
-			fpsCounter->FrameEnd();
-			inputInterface->EndFrame();
-		}
+			QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems);
 	}
 
-	sceneManager.Shutdown();
-	guiManager->Shutdown();
-	graphicEngine->Shutdown();
-	gameWindowManager->Shutdown();
+	QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 	return 0;
 }
