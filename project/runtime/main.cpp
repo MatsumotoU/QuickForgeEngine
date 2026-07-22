@@ -804,6 +804,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				materialData->color = materialComp.albedoColor;
 				materialData->metallic = allObjectMetallic;
 				materialData->smoothness = allObjectSmoothness;
+				materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(materialComp.uvTransform);
 				modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
 
 				// 頂点バッファの更新

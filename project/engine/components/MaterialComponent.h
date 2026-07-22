@@ -8,6 +8,7 @@ namespace QFE::SCENE {
 		MATH::Vector4 albedoColor; ///< アルベドカラー
 		float metallic; ///< 金属度
 		float smoothness; ///< 光沢度
+		QFE::MATH::EulerTransform uvTransform; ///< UV
 
 		uint32_t materialResourceHandle; ///< マテリアルリソースハンドル
 
@@ -15,6 +16,7 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(albedoColor)
 			QFE_REFLECT_MEMBER(metallic)
 			QFE_REFLECT_MEMBER(smoothness)
+			QFE_REFLECT_MEMBER(uvTransform)
 			QFE_REFLECT_END()
 	};
 
