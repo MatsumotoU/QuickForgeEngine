@@ -114,6 +114,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			modelDataMap[modelName] = modelData;
 			bool result = QFE::FRAMEWORK::CreateBLAS(
 				graphicEngine.get(), modelDataMap[modelName].meshes[0].vertices.GetInternalVector(),
+				modelDataMap[modelName].meshes[0].indices.GetInternalVector(),
 				modelName, blasHandleMap[modelName]);
 			return result;
 		}

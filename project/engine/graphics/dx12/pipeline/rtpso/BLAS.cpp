@@ -3,14 +3,31 @@
 
 using namespace QFE::GRAPHIC;
 
-bool QFE::GRAPHIC::BLAS::Create(ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4, std::vector<QFE::MATH::Vector3> vertices) {
+bool QFE::GRAPHIC::BLAS::Create(
+	ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4,
+	const std::vector<QFE::MATH::Vector3>& vertices,
+	const std::vector<uint32_t>& indices) {
+	if (vertices.empty() || indices.empty() || indices.size() % 3 != 0) {
+		QFE_LOG("BLAS requires non-empty triangle-list vertices and indices.");
+		return false;
+	}
+	for (uint32_t index : indices) {
+		if (index >= vertices.size()) {
+			QFE_LOG("BLAS index is outside the vertex buffer.");
+			return false;
+		}
+	}
 	// 頂点バッファを作る
 	if (!CreateVertexPositionBuffer(device5, vertices)) {
 		QFE_LOG("Failed to create vertex position buffer for BLAS.");
 		return false;
 	}
+	if (!CreateIndexBuffer(device5, indices)) {
+		QFE_LOG("Failed to create index buffer for BLAS.");
+		return false;
+	}
 	// BLASリソースを作る
-	if (!CreateBLASResource(device5, commandList4, vertices)) {
+	if (!CreateBLASResource(device5, commandList4)) {
 		QFE_LOG("Failed to create BLAS resource.");
 		return false;
 	}
@@ -19,7 +36,7 @@ bool QFE::GRAPHIC::BLAS::Create(ID3D12Device5* device5, ID3D12GraphicsCommandLis
 }
 
 bool QFE::GRAPHIC::BLAS::CreateVertexPositionBuffer(
-	ID3D12Device5* device5, std::vector<QFE::MATH::Vector3> vertices) {
+	ID3D12Device5* device5, const std::vector<QFE::MATH::Vector3>& vertices) {
 	// すでに作成済みなら作らない
 	if(isCreated_) {
 		QFE_LOG("BLAS is already created. Cannot create vertex position buffer again.");
@@ -59,8 +76,38 @@ bool QFE::GRAPHIC::BLAS::CreateVertexPositionBuffer(
 	return true;
 }
 
+bool QFE::GRAPHIC::BLAS::CreateIndexBuffer(
+	ID3D12Device5* device5, const std::vector<uint32_t>& indices) {
+	indexBufferSize_ = static_cast<UINT>(sizeof(uint32_t) * indices.size());
+	indexCount_ = static_cast<UINT>(indices.size());
+
+	D3D12_HEAP_PROPERTIES uploadHeapProps{ D3D12_HEAP_TYPE_UPLOAD };
+	D3D12_RESOURCE_DESC bufferDesc{};
+	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferDesc.Width = indexBufferSize_;
+	bufferDesc.Height = 1;
+	bufferDesc.DepthOrArraySize = 1;
+	bufferDesc.MipLevels = 1;
+	bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+	bufferDesc.SampleDesc.Count = 1;
+	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	HRESULT hr = device5->CreateCommittedResource(
+		&uploadHeapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&indexBuffer_));
+	if (FAILED(hr)) return false;
+	indexBuffer_->SetName(L"BLAS-Index-Buffer");
+
+	void* mappedData = nullptr;
+	hr = indexBuffer_->Map(0, nullptr, &mappedData);
+	if (FAILED(hr)) return false;
+	memcpy(mappedData, indices.data(), indexBufferSize_);
+	indexBuffer_->Unmap(0, nullptr);
+	return true;
+}
+
 bool BLAS::CreateBLASResource(
-	ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4, std::vector<QFE::MATH::Vector3> vertices) {
+	ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4) {
 
 	// すでに作成済みなら作らない
 	if(isCreated_) {
@@ -79,7 +126,9 @@ bool BLAS::CreateBLASResource(
 	triangles.VertexBuffer.StrideInBytes = sizeof(QFE::MATH::Vector3); // Vector3 (Position)
 	triangles.VertexCount = vertexCount_;                              // 頂点の数
 	triangles.VertexFormat = DXGI_FORMAT_R32G32B32_FLOAT;     // float3
-	triangles.IndexCount = 0;                                 // インデックスなし（順番に描く）
+	triangles.IndexBuffer = indexBuffer_->GetGPUVirtualAddress();
+	triangles.IndexCount = indexCount_;
+	triangles.IndexFormat = DXGI_FORMAT_R32_UINT;
 	triangles.Transform3x4 = 0;								// 変換行列なし（ワールド座標系のまま）                   
 
 	// --- ステップ2: 構築に必要なサイズをDX12に計算してもらう ---

@@ -147,6 +147,7 @@ namespace QFE::FRAMEWORK {
 	bool CreateBLAS(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const std::vector<VertexData>& vertices,
+		const std::vector<uint32_t>& indices,
 		const std::string& name,
 		QFE::GRAPHIC::BLASHandle& outBLASHandle);
 	/// @brief BLASのインスタンスバッファを更新する関数

@@ -39,6 +39,7 @@ struct InstanceMetaCPU {
 	uint32_t primitiveBase;  // global primitive 配列の先頭オフセット（三角形単位）
 	// 必要であれば primitiveCount など追加可能（ここでは省略可）
 };
+static_assert(sizeof(InstanceMetaCPU) == sizeof(uint32_t) * 4);
 
 // モデル群（modelDataMap）からグローバルバッファを平坦化する。
 // - globalUVs: [u0,v0, u1,v1, ...]
@@ -74,16 +75,19 @@ static void BuildGlobalMeshBuffers(
 			outGlobalUVs.push_back(v.texcoord.y);
 		}
 
-		// インデックスをグローバル化して追加
+		// モデルごとのローカルインデックスを追加する。
+		// HLSL 側で InstanceMeta::vertexBase を加算してグローバルUV配列を参照する。
 		const std::vector<uint32_t>& inds = mesh.indices.GetInternalVector();
 		for (uint32_t localIndex : inds) {
-			outGlobalTriIndices.push_back(localIndex + vertexBase);
+			outGlobalTriIndices.push_back(localIndex);
 		}
 
 		// モデル単位のメタを記録（InstanceMeta は TLAS の InstanceID に合わせて後で並べ替える）
 		InstanceMetaCPU meta{};
 
-		meta.materialIndex = 0u; // 仮に 0 としておく（必要に応じて textureGpuIndexMap から取得するなど拡張可能）
+		// テクスチャ未指定時は Texture2D として有効な白1x1を使用する。
+		// index 0 はTextureCubeなので Texture2D配列からは参照しない。
+		meta.materialIndex = 1u;
 		if(textureGpuIndexMap.find(mesh.material.textureName) != textureGpuIndexMap.end()) {
 			meta.materialIndex = textureGpuIndexMap.at(mesh.material.textureName);
 		}
@@ -373,6 +377,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			modelDataMap[modelName] = modelData;
 			bool result = QFE::FRAMEWORK::CreateBLAS(
 				graphicEngine.get(), modelDataMap[modelName].meshes[0].vertices.GetInternalVector(),
+				modelDataMap[modelName].meshes[0].indices.GetInternalVector(),
 				modelName, blasHandleMap[modelName]);
 			return result;
 		}

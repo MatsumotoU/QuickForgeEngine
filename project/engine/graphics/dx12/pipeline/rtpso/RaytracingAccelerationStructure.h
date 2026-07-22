@@ -29,7 +29,9 @@ namespace QFE::GRAPHIC {
 		/// @brief BLASを構築するためのリソースを作成します
 		BLASHandle CreateBLAS(
 			ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4,
-			const std::vector<QFE::MATH::Vector3>& vertices, const std::string& name);
+			const std::vector<QFE::MATH::Vector3>& vertices,
+			const std::vector<uint32_t>& indices,
+			const std::string& name);
 
 		/// @brief レイトレーシング用のシェーダーテーブルを作成します
 		bool CreateShaderTables(ID3D12Device5* device5);

@@ -198,13 +198,9 @@ void D3D12GraphicEngine::Initialize() {
 	// テクスチャのSRV作成に必要な関数をDirectXResourceContainerのCreateResourceView関数を呼び出すラムダ式で初期化
 	textureLoaderInfo.createShaderResourceViewFunc =
 		[&](DirectXResourceHandle resourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
-		CreateViewInfo createViewInfo{};
-		createViewInfo.viewType = ViewTypeFlags::ShaderResourceView;
-		createViewInfo.dsvDesc = {};
-		createViewInfo.rtvDesc = {};
-		createViewInfo.srvDesc = desc;
-		createViewInfo.uavDesc = {};
-		resourceContainer_->CreateResourceView(resourceHandle, createViewInfo); };
+		// Texture2D 配列からインデックス参照できるよう、全テクスチャを
+		// DescriptorHeapManager の連続したTextureブロックへ登録する。
+		resourceContainer_->CreateTextureResourceView(resourceHandle, desc); };
 	// テクスチャのアップロードに必要な関数をDirectXResourceContainerのUploadResource関数を呼び出すラムダ式で初期化
 	textureLoaderInfo.uploadTextureDataFunc =
 		[&](DirectXResourceHandle resourceHandle, const std::vector<D3D12_SUBRESOURCE_DATA>& subresources) {

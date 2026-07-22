@@ -12,7 +12,15 @@ RWTexture2D<float4> g_output : register(u0);
 
 StructuredBuffer<uint3> g_globalTriIndices : register(t10);
 StructuredBuffer<float2> g_globalVertexUVs : register(t11);
-StructuredBuffer<uint3> g_instanceMeta : register(t12);
+struct InstanceMeta
+{
+    uint materialIndex;
+    uint vertexBase;
+    uint vertexCount;
+    uint primitiveBase;
+};
+
+StructuredBuffer<InstanceMeta> g_instanceMeta : register(t12);
 
 Texture2D<float4> g_TextureArray[256] : register(t20);
 SamplerState g_sampler : register(s0);
@@ -111,14 +119,17 @@ void MyRayGen()
         RayPayload reflectPayload;
         reflectPayload.hit = 0;
         reflectPayload.debugUV = float2(0.0f, 0.0f);
-        reflectPayload.color = baseColor;
+        reflectPayload.color = float3(0.1f, 0.1f, 0.15f);
 
         TraceRay(g_scene, RAY_FLAG_FORCE_OPAQUE, 0xFF, 0, 1, 0, reflectRay, reflectPayload);
 
-        float reflectionIntensity = smoothness * (0.1f + 0.9f * metallic);
-        float3 specularColor = lerp(float3(0.04f, 0.04f, 0.04f), albedo, metallic);
-
-        finalColor = lerp(baseColor, reflectPayload.color * specularColor, reflectionIntensity);
+        // Fresnelを反射色への乗算ではなく、ベース色と反射色の混合率として使う。
+        // これによりmetallic=1で「反射色 * 暗いalbedo」だけになる過度な暗化を防ぐ。
+        float3 f0 = lerp(float3(0.04f, 0.04f, 0.04f), albedo, metallic);
+        float nDotV = saturate(dot(worldNormal, viewDir));
+        float3 fresnel = f0 + (1.0f - f0) * pow(1.0f - nDotV, 5.0f);
+        float3 reflectionWeight = saturate(fresnel * smoothness);
+        finalColor = lerp(baseColor, reflectPayload.color, reflectionWeight);
     }
 
     g_output[launchIndex] = float4(finalColor, albedpAlpha);
@@ -130,6 +141,7 @@ void MyMiss(inout RayPayload payload : SV_RayPayload)
 {
     payload.hit = 0;
     payload.debugUV = float2(0.0f, 0.0f);
+    payload.color = float3(0.1f, 0.1f, 0.15f);
 }
 
 // 3. クローストヒットシェーダー
@@ -139,10 +151,10 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
     uint localPrim = PrimitiveIndex();
     uint instId = InstanceID();
 
-    uint3 meta = g_instanceMeta[instId];
-    uint texID = meta.x;
-    uint vertexBase = meta.y;
-    uint primitiveBase = meta.z;
+    InstanceMeta meta = g_instanceMeta[instId];
+	uint texID = meta.materialIndex;
+	uint vertexBase = meta.vertexBase;
+	uint primitiveBase = meta.primitiveBase;
 
     uint primGlobal = primitiveBase + localPrim;
 

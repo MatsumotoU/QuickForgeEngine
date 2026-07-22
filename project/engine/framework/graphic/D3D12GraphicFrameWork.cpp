@@ -455,6 +455,7 @@ bool QFE::FRAMEWORK::CreateIndexBuffer(QFE::GRAPHIC::D3D12GraphicEngine* graphic
 
 bool QFE::FRAMEWORK::CreateBLAS(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<VertexData>& vertices,
+	const std::vector<uint32_t>& indices,
 	const std::string& name, QFE::GRAPHIC::BLASHandle& outBLASHandle) {
 
 	// 使用機能の取得
@@ -466,7 +467,7 @@ bool QFE::FRAMEWORK::CreateBLAS(
 	outBLASHandle = accelerationStructure->CreateBLAS(
 		directXDevice->GetDevice5(),
 		graphicEngine->GetDirectXCommandManager()->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT),
-		vertexPositions, name);
+		vertexPositions, indices, name);
 	// BLASの作成に失敗した場合はログを出力してfalseを返す
 	if(outBLASHandle == QFE::GRAPHIC::BLASHandle::Invalid) {
 		QFE_LOG("Failed to create BLAS for model: " + name);
