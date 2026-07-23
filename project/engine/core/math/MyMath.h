@@ -55,4 +55,9 @@ namespace QFE::MATH {
 
 	/// @brief 大きな数の素数判定
 	bool IsPrime(uint64_t number);
+
+	/// @brief オイラー角から前方向ベクトルを取得(回転がない状態では+Z方向)
+	QFE::MATH::Vector3 TransformForwardDirection(const QFE::MATH::EulerTransform& transform);
+	/// @brief オイラー角から右方向ベクトルを取得(回転がない状態では+X方向)
+	QFE::MATH::Vector3 TransformRightDirection(const QFE::MATH::EulerTransform& transform);
 }

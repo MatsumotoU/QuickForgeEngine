@@ -33,18 +33,33 @@ void QFE::EDITOR::GameEditor::Update(
 	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
 	// デバッグカメラ操作処理
 	if (windowManager_.IsWindowFocused(EditorWindowType::SceneViewer)) {
-		float moveSpeed = 0.5f;
+		float moveSpeed = 0.3f;
+
+		// 移動処理
 		if (inputInterface->GetKeyPress("Up")) {
-			resources.cameraTransform.translate.z += moveSpeed;
+			QFE::MATH::Vector3 forward = { 0.0f, 0.0f, 1.0f };
+			QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
+			resources.cameraTransform.translate += rotatedForward * moveSpeed;
 		}
 		if (inputInterface->GetKeyPress("Down")) {
-			resources.cameraTransform.translate.z -= moveSpeed;
+			QFE::MATH::Vector3 forward = { 0.0f, 0.0f, 1.0f };
+			QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
+			resources.cameraTransform.translate -= rotatedForward * moveSpeed;
 		}
 		if (inputInterface->GetKeyPress("Left")) {
-			resources.cameraTransform.translate.x -= moveSpeed;
+			QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
+			resources.cameraTransform.translate -= right * moveSpeed;
 		}
 		if (inputInterface->GetKeyPress("Right")) {
-			resources.cameraTransform.translate.x += moveSpeed;
+			QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
+			resources.cameraTransform.translate += right * moveSpeed;
+		}
+
+		// 回転処理
+		if(inputInterface->GetMousePress(1)) {
+			QFE::MATH::Vector2 mouseMove = inputInterface->GetMouseMove();
+			resources.cameraTransform.rotate.y += mouseMove.x * 0.02f;
+			resources.cameraTransform.rotate.x += mouseMove.y * 0.02f;
 		}
 	}
 

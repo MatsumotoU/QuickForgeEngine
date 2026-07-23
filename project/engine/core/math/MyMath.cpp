@@ -65,3 +65,22 @@ bool QFE::MATH::IsPrime(uint64_t number)
 	}
 	return true;
 }
+
+QFE::MATH::Vector3 QFE::MATH::TransformForwardDirection(const QFE::MATH::EulerTransform& transform) {
+	float pitch = transform.rotate.x;
+	float yaw = transform.rotate.y;
+	Vector3 forward;
+	forward.x = cosf(pitch) * sinf(yaw);
+	forward.y = -sinf(pitch);
+	forward.z = cosf(pitch) * cosf(yaw);
+	return forward;
+}
+
+QFE::MATH::Vector3 QFE::MATH::TransformRightDirection(const QFE::MATH::EulerTransform& transform) {
+	float yaw = transform.rotate.y;
+	Vector3 right;
+	right.x = sinf(yaw + 3.14159265358979323846f / 2.0f);
+	right.y = 0.0f;
+	right.z = cosf(yaw + 3.14159265358979323846f / 2.0f);
+	return right;
+}
