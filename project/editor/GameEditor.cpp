@@ -3,6 +3,8 @@
 #include "scene/SceneManager.h"
 #include "framework/input/InputFrameWork.h"
 
+#include <algorithm>
+
 using namespace QFE::EDITOR;
 
 void QFE::EDITOR::GameEditor::Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow) {
@@ -31,6 +33,18 @@ void QFE::EDITOR::GameEditor::Update(
 	}
 
 	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
+
+	// Hierarchyでダブルクリックされたオブジェクトを画面中央に収める
+	QFE::MATH::Vector3 focusPosition{};
+	float focusRadius = 1.0f;
+	if (windowManager_.ConsumeCameraFocusTarget(focusPosition, focusRadius)) {
+		activeCameraType_ = EditorCameraType::DebugCamera;
+		const QFE::MATH::Vector3 forward =
+			QFE::MATH::TransformForwardDirection(resources.cameraTransform);
+		const float focusDistance = std::max(5.0f, focusRadius * 2.5f);
+		resources.cameraTransform.translate = focusPosition - forward * focusDistance;
+	}
+
 	// デバッグカメラ操作処理
 	if (windowManager_.IsWindowFocused(EditorWindowType::SceneViewer)) {
 		float moveSpeed = 0.3f;

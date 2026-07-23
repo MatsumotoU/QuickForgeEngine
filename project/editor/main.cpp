@@ -58,7 +58,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
 	QFE::FRAMEWORK::CreateOffScreenRenderTarget(
 		graphicEngine.get(), sceneRenderTargetHandle, 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM);
-
 	QFE::GRAPHIC::DirectXResourceHandle sceneTextureHandle;
 	QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), sceneRenderTargetHandle, sceneTextureHandle);
 

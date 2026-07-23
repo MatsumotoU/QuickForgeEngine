@@ -54,6 +54,10 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 						hierarchySelectedEntities_.insert(entityId);
 					}
 				}
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					cameraFocusRequest_ = entityId;
+				}
 			});
 
 		// このChildウィンドウがクリックされた、かつ、どのSelectable（アイテム）もホバーされていない場合
@@ -123,4 +127,10 @@ bool QFE::EDITOR::Hierarchy::SetIsActive(bool isActive) {
 
 bool QFE::EDITOR::Hierarchy::GetIsFocus() {
 	return isFocus_;
+}
+
+std::optional<uint32_t> QFE::EDITOR::Hierarchy::ConsumeCameraFocusRequest() {
+	std::optional<uint32_t> request = cameraFocusRequest_;
+	cameraFocusRequest_.reset();
+	return request;
 }

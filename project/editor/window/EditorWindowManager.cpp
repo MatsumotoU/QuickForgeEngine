@@ -5,6 +5,7 @@
 
 #include "scene/SceneManager.h"
 #include "design-patterns/EntityManager.h"
+#include "components/TransformComponent.h"
 #include "command/EditorCommandList.h"
 #include "string/MyString.h"
 #include "command/AllCommands.h"
@@ -12,6 +13,8 @@
 #include "file/FileUtility.h"
 
 #include <imgui.h>
+#include <algorithm>
+#include <cmath>
 
 void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow) {
 	mainWindow_ = mainWindow;
@@ -163,4 +166,29 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
 bool QFE::EDITOR::EditorWindowManager::IsWindowFocused(EditorWindowType windowType) {
 	return editorWindowsMap_[windowType]->GetIsFocus();
+}
+
+bool QFE::EDITOR::EditorWindowManager::ConsumeCameraFocusTarget(
+	QFE::MATH::Vector3& position, float& radius) {
+	auto* hierarchy = static_cast<Hierarchy*>(editorWindowsMap_[EditorWindowType::Hierarchy].get());
+	const std::optional<uint32_t> entityId = hierarchy->ConsumeCameraFocusRequest();
+	if (!entityId.has_value()) {
+		return false;
+	}
+
+	EntityManager& entityManager = sceneManager_->GetCurrentSceneEntityManager();
+	if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(*entityId)) {
+		return false;
+	}
+
+	const QFE::MATH::EulerTransform& transform =
+		entityManager.GetComponent<QFE::SCENE::TransformComponent>(*entityId).transform;
+	position = transform.translate;
+	radius = std::max({
+		std::abs(transform.scale.x),
+		std::abs(transform.scale.y),
+		std::abs(transform.scale.z),
+		1.0f
+	});
+	return true;
 }
