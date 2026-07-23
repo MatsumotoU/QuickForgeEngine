@@ -199,3 +199,7 @@ bool QFE::FRAMEWORK::CompileProject(const std::wstring& projectPath, const std::
         return false;
     }
 }
+
+bool QFE::FRAMEWORK::IsMainWindowActive(const GameWindowManager* windowManager) {
+    return windowManager->IsWindowActive();
+}
