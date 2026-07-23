@@ -52,5 +52,7 @@ namespace QFE::FRAMEWORK {
 		std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes;
 
 		QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle = QFE::GRAPHIC::RenderTargetHandle::SwapChain;
+
+		QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIndentity4x4();
 	};
 }

@@ -667,9 +667,15 @@ bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 	// 5. コマンド発行
 	commandList4->DispatchRays(&dispatchDesc);
 
-	// 6. スワップチェーンのバックバッファにコピー
+	// 6. 出力先へコピー
+	if (finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::Invalid) {
+		return false;
+	}
+
+	resourceContainer->TransitionResource(
+		renderUavBuffer, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
 	if (finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain) {
-		resourceContainer->TransitionResource(renderUavBuffer, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
 		renderPass->TransitionCurrentBackBufferBarrier(
 			commandList, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
 		commandList->CopyResource(
@@ -678,7 +684,7 @@ bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 			commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 		return true;
-	}else if(finalRenderTargetHandle != QFE::GRAPHIC::RenderTargetHandle::Invalid) {
+	} else {
 		QFE::GRAPHIC::DirectXResourceHandle finalRenderTargetResourceHandle = renderPass->GetRenderTargetResourceHandle(finalRenderTargetHandle);
 		resourceContainer->TransitionResource(finalRenderTargetResourceHandle, commandList, D3D12_RESOURCE_STATE_COPY_DEST);
 		commandList->CopyResource(
@@ -687,6 +693,4 @@ bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 
 		return true;
 	}
-	
-	return false;
 }

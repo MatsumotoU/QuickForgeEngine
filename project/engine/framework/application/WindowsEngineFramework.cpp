@@ -177,9 +177,6 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
-	// ゲームに依存しないカメラ更新はSceneFrameworkへ委譲する。
-	QFE::MATH::Matrix4x4 viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager);
-
 	// 各エンティティのModelRenderComponentを更新
 	std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>> raytracingInstances;
 	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
@@ -201,7 +198,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
 		QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 			resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
-		QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, objTransform, viewProj);
+		QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, objTransform, resources.viewProj);
 		modelRenderComp.transformMatrixBufferHandle =
 			static_cast<uint32_t>(transformMatrixBufferHandle);
 

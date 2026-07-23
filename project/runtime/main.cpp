@@ -369,6 +369,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				}
 				});
 
+			// カメラの更新
+			engineResources.viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager);
+
 			// エンジンの描画前処理（フレーム開始時の共通処理）
 			QFE::FRAMEWORK::EnginePreDraw(engineSystems,engineResources);
 
