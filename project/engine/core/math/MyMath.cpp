@@ -2,14 +2,14 @@
 #include <cassert>
 
 float QFE::MATH::Lerp(float a, float b, float t) {
-    return a * t + b * (1.0f - t);
+    return a * (1.0f - t) + b * t;
 }
 
 float QFE::MATH::Slerp(float from, float to, float t) {
 	if (fabsf(from - to) > 0.0001f) {
 		return (from * (1.0f - t)) + (to * t);
 	}
-	return 0.0f;
+	return from;
 }
 
 

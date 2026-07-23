@@ -97,7 +97,7 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 		aiProcess_GenNormals
 	);
 	if (!scene || !scene->HasMeshes()) {
-		assert(false && "Faild Loaded Model");
+		assert(false && "Failed to load model");
 		return false;
 	}
 
@@ -198,7 +198,7 @@ bool QFE::ASSET::AssimpModelLoader::LoadSkinningModelData(const std::string& fil
 		aiProcess_GenNormals
 	);
 	if (!scene || !scene->HasMeshes()) {
-		assert(false && "Faild Loaded Model");
+		assert(false && "Failed to load model");
 		return false;
 	}
 

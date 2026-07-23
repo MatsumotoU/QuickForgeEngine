@@ -35,7 +35,7 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 	ImGuiChildFlags child_flags = ImGuiChildFlags_Border | ImGuiChildFlags_ResizeY;
 	if (ImGui::BeginChild("EntityList", ImVec2(0, 0), child_flags)) {
 
-		entityManager_->GetComponentStrage<QFE::SCENE::ObjectInfoComponent>().Each([&](
+		entityManager_->GetComponentStorage<QFE::SCENE::ObjectInfoComponent>().Each([&](
 			uint32_t entityId, QFE::SCENE::ObjectInfoComponent& objectInfoComp) {
 
 				bool currentSelected = hierarchySelectedEntities_.contains(entityId);

@@ -7,7 +7,7 @@
 #include "framework/gui/D3D12GuiFrameWork.h"
 #include "gui/D3D12GuiManager.h"
 #include "camera/CameraManager.h"
-#include "core/loger/MyDebugLog.h"
+#include "core/logger/MyDebugLog.h"
 #include "core/process/ProcessUtil.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"

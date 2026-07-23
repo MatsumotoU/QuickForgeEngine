@@ -5,7 +5,7 @@ int32_t QFE::GRAPHIC::CreateJoint(const Node& node, const std::optional<int32_t>
 	Joint joint;
 	joint.name = node.name;
 	joint.localMatrix = node.localMatrix;
-	joint.skeletonSpaceMatrix = QFE::MATH::Matrix4x4::MakeIndentity4x4(); // 初期化
+	joint.skeletonSpaceMatrix = QFE::MATH::Matrix4x4::MakeIdentity4x4(); // 初期化
 	joint.transform = node.transform;
 	joint.index = static_cast<int32_t>(joints.size());
 	joint.parentIndex = parentIndex;

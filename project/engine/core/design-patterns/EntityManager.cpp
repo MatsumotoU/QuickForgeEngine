@@ -201,7 +201,7 @@ void QFE::EntityManager::DeleteComponent(uint32_t id, const std::string& compone
 	}
 }
 
-void QFE::EntityManager::RefrectionComponent(uint32_t id, Archive& ar) {
+void QFE::EntityManager::ReflectionComponent(uint32_t id, Archive& ar) {
     // 自動登録されたコンポーネントを走査する。
     for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
 		auto& storagePtr = componentStorages[entry.typeId];

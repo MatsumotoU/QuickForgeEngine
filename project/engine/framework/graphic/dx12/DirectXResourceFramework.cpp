@@ -157,8 +157,8 @@ bool QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 
 	// EulerTransform
 	TransformationMatrix transformMatrix;
-	transformMatrix.World = QFE::MATH::Matrix4x4::MakeIndentity4x4();
-	transformMatrix.WVP = QFE::MATH::Matrix4x4::MakeIndentity4x4();
+	transformMatrix.World = QFE::MATH::Matrix4x4::MakeIdentity4x4();
+	transformMatrix.WVP = QFE::MATH::Matrix4x4::MakeIdentity4x4();
 	QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 		resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("TransformMatrixBuffer");
 	// Material

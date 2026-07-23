@@ -275,7 +275,7 @@ void QFE::EDITOR::Inspector::DrawBitmaskUI(uint32_t& value) {
 
 		// チェックボックスのラベルを非表示にしつつ、内部的な識別子としてビット番号を使う
 		char label[16];
-		sprintf(label, "##bit_%d", i);
+		sprintf_s(label, "##bit_%d", i);
 
 		// 各ビットのチェックボックスを描画
 		if (ImGui::Checkbox(label, &bit))

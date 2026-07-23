@@ -12,10 +12,10 @@
 std::unique_ptr<QFE::GameWindowManager> QFE::FRAMEWORK::CreateWindowManager(
 	const std::string& mainWindowName, uint32_t width, uint32_t height) {
 
-	std::unique_ptr<QFE::GameWindowManager> windowManger = std::make_unique<QFE::GameWindowManager>();
-	windowManger->Initialize();
-	windowManger->AddWindow(width, height, mainWindowName);
-	return windowManger;
+	std::unique_ptr<QFE::GameWindowManager> windowManager = std::make_unique<QFE::GameWindowManager>();
+	windowManager->Initialize();
+	windowManager->AddWindow(width, height, mainWindowName);
+	return windowManager;
 }
 
 HWND QFE::FRAMEWORK::GetWindowHandle(const GameWindowManager* windowManager, const std::string& windowName) {

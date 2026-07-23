@@ -3,7 +3,33 @@
 #define NOMINMAX
 #include <windows.h>
 #include <iostream>
+#include <mutex>
 #include <vector>
+
+namespace {
+	class JobHandleRegistry {
+	public:
+		~JobHandleRegistry() {
+			for (HANDLE handle : handles_) {
+				CloseHandle(handle);
+			}
+		}
+
+		void Add(HANDLE handle) {
+			std::scoped_lock lock(mutex_);
+			handles_.push_back(handle);
+		}
+
+	private:
+		std::mutex mutex_;
+		std::vector<HANDLE> handles_;
+	};
+
+	JobHandleRegistry& GetJobHandleRegistry() {
+		static JobHandleRegistry registry;
+		return registry;
+	}
+}
 
 bool QFE::ProcessUtil::LaunchExe(const std::string& exePath, const std::string& arguments) {
     std::string commandLine = exePath + " " + arguments;
@@ -31,23 +57,30 @@ bool QFE::ProcessUtil::LaunchExe(const std::string& exePath, const std::string& 
         return false;
     }
 
-    // 3. 子プロセスを起動する
-    // (※まだこの時点ではジョブに登録されていないので、一時停止状態で起動するのが安全ですが、
-    //  個人開発の単純な構成ならこのフラグ0のままで割と動きます)
-    if (!CreateProcessA(nullptr, buffer.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi)) {
+    // ジョブへ登録する前に子プロセスが終了しないよう、一時停止状態で起動する。
+    if (!CreateProcessA(nullptr, buffer.data(), nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, nullptr, &si, &pi)) {
         CloseHandle(hJob);
         return false;
     }
 
-    // 4. 起動した子プロセスをジョブオブジェクトに割り当てる
-    AssignProcessToJobObject(hJob, pi.hProcess);
+    if (!AssignProcessToJobObject(hJob, pi.hProcess)) {
+        TerminateProcess(pi.hProcess, 1);
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+        CloseHandle(hJob);
+        return false;
+    }
 
-    // 5. 後片付け
-    // ジョブオブジェクトのハンドル自体は、エディタ（親）が生きている間保持する必要があります。
-    // ここで CloseHandle(hJob) してしまうと、制限が解除されてしまうため、
-    // 本来はクラスのメンバ変数などに保持してエディタ終了時に閉じるか、
-    // 面倒なら「リーク」させてOSにエディタ終了時に自動解放してもらう技が使えます。
-    // 今回は最も確実な「リークさせてエディタ終了時にOSに殺してもらう」方法をとるため、CloseHandle(hJob) はあえてしません。
+    if (ResumeThread(pi.hThread) == static_cast<DWORD>(-1)) {
+        TerminateProcess(pi.hProcess, 1);
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+        CloseHandle(hJob);
+        return false;
+    }
+
+    // 親プロセスの終了までJob Objectを所有し、その後RAIIで解放する。
+    GetJobHandleRegistry().Add(hJob);
 
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);

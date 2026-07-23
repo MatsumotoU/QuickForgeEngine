@@ -29,24 +29,24 @@ float Vector3::LengthSq() const {
 
 Vector3 Vector3::Normalize() const {
 	Vector3 result = {};
-
-	if (this->Length() == 0.0f) {
+	const float length = Length();
+	if (length == 0.0f) {
 		return result;
 	}
-	result.x = this->x / this->Length();
-	result.y = this->y / this->Length();
-	result.z = this->z / this->Length();
+	result.x = x / length;
+	result.y = y / length;
+	result.z = z / length;
 
 	return result;
 }
 
 Vector3 Vector3::Normalize(const Vector3& vector) {
 	Vector3 result = {};
-
-	if (vector.Length() != 0.0f) {
-		result.x = vector.x / vector.Length();
-		result.y = vector.y / vector.Length();
-		result.z = vector.z / vector.Length();
+	const float length = vector.Length();
+	if (length != 0.0f) {
+		result.x = vector.x / length;
+		result.y = vector.y / length;
+		result.z = vector.z / length;
 	}
 
 	return result;
@@ -79,7 +79,7 @@ Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 from = v1.Normalize();
 	Vector3 to = v2.Normalize();
 
-	// 2繝吶け繝医Ν髢薙・隗貞ｺｦ繧呈ｱゅａ繧・
+	// 2ベクトル間の角度を求める
 	float dot = std::clamp(Vector3::Dot(from, to), -1.0f, 1.0f);
 	float theta = std::acosf(dot);
 
@@ -93,7 +93,7 @@ Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 		normalizeVector.y = (from.y * sinThetaFrom + to.y * sinThetaTo) / sinTheta;
 		normalizeVector.z = (from.z * sinThetaFrom + to.z * sinThetaTo) / sinTheta;
 	} else {
-		normalizeVector = from; // 隗貞ｺｦ縺・縺ｮ蝣ｴ蜷医・縺昴・縺ｾ縺ｾ
+		normalizeVector = from; // 角度が0の場合は開始方向を維持する
 	}
 
 	float length1 = v1.Length();
@@ -170,11 +170,11 @@ Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPositio
 	Vector3 diff = (targetPosition - eyePosition).Normalize();
     Vector3 result{};
 
-    // yaw・医Κ繝ｼ, y霆ｸ蝗槭ｊ・・
-    result.y = atan2f(diff.x, -diff.z);
-    // pitch・医ヴ繝・メ, x霆ｸ蝗槭ｊ・・
+    // yaw（ヨー、Y軸回り）
+    result.y = atan2f(diff.x, diff.z);
+    // pitch（ピッチ、X軸回り）
     result.x = atan2f(-diff.y, sqrtf(diff.x * diff.x + diff.z * diff.z));
-    // roll・医Ο繝ｼ繝ｫ, z霆ｸ蝗槭ｊ
+    // roll（ロール、Z軸回り）
     result.z = 0.0f;
 
     return result;
@@ -182,8 +182,9 @@ Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPositio
 
 Vector3 Vector3::Project(const Vector3& v1, const Vector3& v2) {
 	Vector3 result{};
-	if (powf(v2.Length(), 2) != 0.0f) {
-		float t = Dot(v1, v2) / powf(v2.Length(), 2);
+	const float lengthSquared = v2.LengthSq();
+	if (lengthSquared != 0.0f) {
+		float t = Dot(v1, v2) / lengthSquared;
 		result = v2 * t;
 	}
 	return result;

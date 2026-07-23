@@ -1,4 +1,4 @@
-#include "WindowGenerater.h"
+#include "WindowGenerator.h"
 
 namespace QFE {
 

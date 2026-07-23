@@ -11,7 +11,7 @@
 #include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
-#include "core/loger/MyDebugLog.h"
+#include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
 #include "script/ScriptInstance.h"
@@ -225,9 +225,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// スクリプト関数の実行
 			entityManager.Each<QFE::SCENE::ScriptComponent>([&](uint32_t entityId, QFE::SCENE::ScriptComponent& scriptComp) {
 				// 名前から関数を探す
-				for (auto& scripts : scriptInstance->scripts) {
-					if (scripts.functionName == scriptComp.scriptFunctionName) {
-						scriptComp.scriptFunctionIndex = &scripts - &scriptInstance->scripts[0];
+				for (size_t scriptIndex = 0; scriptIndex < scriptInstance->scripts.size(); ++scriptIndex) {
+					if (scriptInstance->scripts[scriptIndex].functionName == scriptComp.scriptFunctionName) {
+						scriptComp.scriptFunctionIndex = static_cast<uint32_t>(scriptIndex);
 						break;
 					}
 				}

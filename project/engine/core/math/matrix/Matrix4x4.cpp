@@ -85,7 +85,7 @@ Matrix4x4 Matrix4x4::Inverse() const {
 	// 零除算回避用
 	if (i == 0.0f) {
 		//assert(false);
-		return Matrix4x4::MakeIndentity4x4();
+		return Matrix4x4::MakeIdentity4x4();
 	}
 
 	result.m[0][0] = (
@@ -272,7 +272,7 @@ Matrix4x4 Matrix4x4::Inverse(const Matrix4x4& m) {
 
 	// 零除算回避用
 	if (i == 0.0f) {
-		return Matrix4x4::MakeIndentity4x4();
+		return Matrix4x4::MakeIdentity4x4();
 	}
 
 	result.m[0][0] = (
@@ -460,7 +460,7 @@ Matrix4x4 Matrix4x4::Multiply(const Matrix4x4& m1, const Matrix4x4& m2)  {
 	return result;
 }
 
-Matrix4x4 Matrix4x4::MakeIndentity4x4() {
+Matrix4x4 Matrix4x4::MakeIdentity4x4() {
 	Matrix4x4 result = {};
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {
@@ -476,7 +476,7 @@ Matrix4x4 Matrix4x4::MakeIndentity4x4() {
 }
 
 Matrix4x4 Matrix4x4::MakeScaleMatrix(const Vector3& translate) {
-	Matrix4x4 result = MakeIndentity4x4();
+	Matrix4x4 result = MakeIdentity4x4();
 
 	result.m[0][0] = translate.x;
 	result.m[1][1] = translate.y;
@@ -486,7 +486,7 @@ Matrix4x4 Matrix4x4::MakeScaleMatrix(const Vector3& translate) {
 }
 
 Matrix4x4 Matrix4x4::MakeTranslateMatrix(const Vector3& translate) {
-	Matrix4x4 result = MakeIndentity4x4();
+	Matrix4x4 result = MakeIdentity4x4();
 
 	result.m[3][0] = translate.x;
 	result.m[3][1] = translate.y;
@@ -496,7 +496,7 @@ Matrix4x4 Matrix4x4::MakeTranslateMatrix(const Vector3& translate) {
 }
 
 Matrix4x4 Matrix4x4::MakeRotateXMatrix(const float& radian) {
-	Matrix4x4 result = MakeIndentity4x4();
+	Matrix4x4 result = MakeIdentity4x4();
 
 	result.m[1][1] = std::cos(radian);
 	result.m[2][1] = -std::sin(radian);
@@ -507,7 +507,7 @@ Matrix4x4 Matrix4x4::MakeRotateXMatrix(const float& radian) {
 }
 
 Matrix4x4 Matrix4x4::MakeRotateYMatrix(const float& radian) {
-	Matrix4x4 result = MakeIndentity4x4();
+	Matrix4x4 result = MakeIdentity4x4();
 
 	result.m[0][0] = std::cos(radian);
 	result.m[2][0] = std::sin(radian);
@@ -518,7 +518,7 @@ Matrix4x4 Matrix4x4::MakeRotateYMatrix(const float& radian) {
 }
 
 Matrix4x4 Matrix4x4::MakeRotateZMatrix(const float& radian) {
-	Matrix4x4 result = MakeIndentity4x4();
+	Matrix4x4 result = MakeIdentity4x4();
 
 	result.m[0][0] = std::cos(radian);
 	result.m[1][0] = -std::sin(radian);
@@ -533,7 +533,7 @@ Matrix4x4 Matrix4x4::MakeRotateXYZMatrix(const Vector3& rotate) {
 }
 
 Matrix4x4 Matrix4x4::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
-	Matrix4x4 result = MakeIndentity4x4();
+	Matrix4x4 result = MakeIdentity4x4();
 	result = MakeScaleMatrix(scale);
 	result = Multiply(result, MakeRotateXYZMatrix(rotate));
 	result = Multiply(result, MakeTranslateMatrix(translate));
@@ -566,7 +566,7 @@ Matrix4x4 QFE::MATH::Matrix4x4::MakeAffineMatrix(const Vector3& translate, const
 }
 
 Matrix4x4 Matrix4x4::MakeAffineMatrix(const EulerTransform& transform) {
-	Matrix4x4 result = MakeIndentity4x4();
+	Matrix4x4 result = MakeIdentity4x4();
 
 	result = Multiply(
 		MakeScaleMatrix(transform.scale),
@@ -610,7 +610,7 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 
 	// ほぼ同じ方向の場合
 	if (std::abs(dot - 1.0f) < 1e-6f) {
-		return Matrix4x4::MakeIndentity4x4();
+		return Matrix4x4::MakeIdentity4x4();
 	}
 
 	// ほぼ逆方向の場合。180度回転、任意の垂直軸で回転させる

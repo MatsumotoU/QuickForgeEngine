@@ -1,7 +1,4 @@
 #pragma once
-#ifndef VECTOR3_H
-#define VECTOR3_H
-
 #include <vector>
 
 namespace QFE::MATH {
@@ -24,11 +21,13 @@ namespace QFE::MATH {
 		Vector3 operator-(const Vector3& other) const { return { x - other.x, y - other.y, z - other.z }; }
 		Vector3 operator*(const Vector3& other) const { return { x * other.x, y * other.y, z * other.z }; }
 		Vector3 operator/(const Vector3& other) const { return { x / other.x, y / other.y, z / other.z }; }
-		Vector3 operator=(const Vector3& other) { return { x = other.x, y = other.y, z = other.z }; }
-		Vector3 operator+=(const Vector3& other) { return { x += other.x, y += other.y, z += other.z }; }
-		Vector3 operator-=(const Vector3& other) { return { x -= other.x, y -= other.y, z -= other.z }; }
-		Vector3 operator*=(const Vector3& other) { return { x *= other.x, y *= other.y, z *= other.z }; }
-		Vector3 operator/=(const Vector3& other) { return { x /= other.x, y /= other.y, z /= other.z }; }
+		Vector3& operator=(const Vector3& other) = default;
+		Vector3& operator+=(const Vector3& other) { x += other.x; y += other.y; z += other.z; return *this; }
+		Vector3& operator-=(const Vector3& other) { x -= other.x; y -= other.y; z -= other.z; return *this; }
+		Vector3& operator*=(const Vector3& other) { x *= other.x; y *= other.y; z *= other.z; return *this; }
+		Vector3& operator/=(const Vector3& other) { x /= other.x; y /= other.y; z /= other.z; return *this; }
+
+		bool operator==(const Vector3& other) const = default;
 
 		Vector3 operator+(const float& other) const { return { x + other,y + other,z + other }; };
 		Vector3 operator-(const float& other) const { return { x - other,y - other,z - other }; };
@@ -42,52 +41,52 @@ namespace QFE::MATH {
 
 	public:
 		/// <summary>
-		/// 3次允Eクトル長さを求めめE
+		/// 3次元ベクトルの長さを求める
 		/// </summary>
-		/// <returns>3次允Eクトル長ぁE/returns>
+		/// <returns>3次元ベクトルの長さ</returns>
 		[[nodiscard]] float Length() const;
 
 		/// <summary>
-		/// ベクトル長さ二乗を求めめE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <returns></returns>
 		[[nodiscard]] float LengthSq() const;
 
 		/// <summary>
-		/// 正規化されぁE次允Eクトルを求めめE
+		/// 正規化された3次元ベクトルを求める
 		/// </summary>
-		/// <returns>正規化されぁE次允Eクトル</returns>
+		/// <returns>正規化された3次元ベクトル</returns>
 		[[nodiscard]] Vector3 Normalize() const;
 
 	public:
 		/// <summary>
-		/// 正規化されぁE次允Eクトルを求めめE
+		/// 正規化された3次元ベクトルを求める
 		/// </summary>
-		/// <returns>正規化されぁE次允Eクトル</returns>
+		/// <returns>正規化された3次元ベクトル</returns>
 		[[nodiscard]] static Vector3 Normalize(const Vector3& vector);
 
 	public:
 		/// <summary>
-		/// 2つの3次允Eクトル冁Eを求めめE
+		/// 2つの3次元ベクトルの内積を求める
 		/// </summary>
-		/// <param name="v1">1つ目の3次允Eクトル</param>
-		/// <param name="v2">2つ目の3次允Eクトル</param>
-		/// <returns>2つの3次允Eクトル冁EE/returns>
+		/// <param name="v1">1つ目の3次元ベクトル</param>
+		/// <param name="v2">2つ目の3次元ベクトル</param>
+		/// <returns>2つの3次元ベクトルの内積</returns>
 		[[nodiscard]] static float Dot(const Vector3& v1, const Vector3& v2);
 
 		/// <summary>
-		/// 2つの3次允Eクトル外積を求めめE
+		/// 2つの3次元ベクトルの外積を求める
 		/// </summary>
-		/// <param name="v1">1つ目の3次允Eクトル</param>
-		/// <param name="v2">2つ目の3次允Eクトル</param>
-		/// <returns>2つの3次允Eクトル外穁E/returns>
+		/// <param name="v1">1つ目の3次元ベクトル</param>
+		/// <param name="v2">2つ目の3次元ベクトル</param>
+		/// <returns>2つの3次元ベクトルの外積</returns>
 		[[nodiscard]] static Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
 		/// <summary>
-		/// 線形補完を求めめE
+		/// 数学演算を行う。
 		/// </summary>
-		/// <param name="v1">1つ目の3次允Eクトル(t=0)</param>
-		/// <param name="v2">2つ目の3次允Eクトル(t=1)</param>
+		/// <param name="v1">1つ目の3次元ベクトル(t=0)</param>
+		/// <param name="v2">2つ目の3次元ベクトル(t=1)</param>
 		/// <param name="t">補間に使用する値(0~1)</param>
 		/// <returns>線形補宁E/returns>
 		[[nodiscard]] static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
@@ -102,7 +101,7 @@ namespace QFE::MATH {
 		[[nodiscard]] static Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
 		/// <summary>
-		/// ベジェ曲線を求めめE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="p0">始点</param>
 		/// <param name="p1">制御点</param>
@@ -112,7 +111,7 @@ namespace QFE::MATH {
 		[[nodiscard]] static Vector3 BezierCurve(const Vector3& p0, const Vector3& p1, const Vector3& p2, float t);
 
 		/// <summary>
-		/// スプライン曲線を求めめE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="controlPoints"></param>
 		/// <param name="t"></param>
@@ -123,14 +122,14 @@ namespace QFE::MATH {
 		/// <summary>
 		/// ワールド座標に変換する
 		/// </summary>
-		/// <param name="vector">変換允Eーカル座樁E/param>
-		/// <param name="matrix">変換に使用する行E</param>
+		/// <param name="vector">変換するローカル座標</param>
+		/// <param name="matrix">入力値</param>
 		/// <returns>ワールド座樁E/returns>
 		[[nodiscard]] static Vector3 EulerTransform(const Vector3& vector, const Matrix4x4& matrix);
 
 	public:
 		/// <summary>
-		/// ある点からある点を見るrotationを返しまぁEラジアン)
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="eyePosition">見る地点</param>
 		/// <param name="targetPosition">見る対象</param>
@@ -138,15 +137,15 @@ namespace QFE::MATH {
 		[[nodiscard]] static Vector3 LookAt(const Vector3& eyePosition, const Vector3& targetPosition);
 
 		/// <summary>
-		/// 正封Eベクトルを求めめE
+		/// 数学演算を行う。
 		/// </summary>
-		/// <param name="v1">1つ目の3次允Eクトル</param>
-		/// <param name="v2">2つ目の3次允Eクトル</param>
-		/// <returns>正封Eベクトル</returns>
+		/// <param name="v1">1つ目の3次元ベクトル</param>
+		/// <param name="v2">2つ目の3次元ベクトル</param>
+		/// <returns>計算結果</returns>
 		[[nodiscard]] static Vector3 Project(const Vector3& v1, const Vector3& v2);
 
 		/// <summary>
-		/// あるベクトルの垂直なベクトルを求めめE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="vector">あるベクトル</param>
 		/// <returns>あるベクトルの垂直なベクトル</returns>
@@ -168,5 +167,3 @@ namespace QFE::MATH {
 	};
 
 }
-
-#endif // !VECTOR3_H

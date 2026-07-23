@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef VECTOR2_H
-#define VECTOR2_H
-
 namespace QFE::MATH {
 
 	class Vector2 final {
@@ -20,11 +17,11 @@ namespace QFE::MATH {
 		Vector2 operator-(const Vector2& other) const { return { x - other.x, y - other.y }; }
 		Vector2 operator*(const Vector2& other) const { return { x * other.x, y * other.y }; }
 		Vector2 operator/(const Vector2& other) const { return { x / other.x, y / other.y }; }
-		Vector2 operator=(const Vector2& other) { return { x = other.x, y = other.y }; }
-		Vector2 operator+=(const Vector2& other) { return *this = *this + other; }
-		Vector2 operator-=(const Vector2& other) { return *this = *this - other; }
-		Vector2 operator*=(const Vector2& other) { return *this = *this * other; }
-		Vector2 operator/=(const Vector2& other) { return *this = *this / other; }
+		Vector2& operator=(const Vector2& other) = default;
+		Vector2& operator+=(const Vector2& other) { x += other.x; y += other.y; return *this; }
+		Vector2& operator-=(const Vector2& other) { x -= other.x; y -= other.y; return *this; }
+		Vector2& operator*=(const Vector2& other) { x *= other.x; y *= other.y; return *this; }
+		Vector2& operator/=(const Vector2& other) { x /= other.x; y /= other.y; return *this; }
 
 		Vector2 operator+(const float& other) const { return { x + other,y + other }; };
 		Vector2 operator-(const float& other) const { return { x - other,y - other }; };
@@ -33,28 +30,28 @@ namespace QFE::MATH {
 
 	public:
 		/// <summary>
-		/// 2次允Eクトル長さを求めめE
+		/// 2次元ベクトルの長さを求める
 		/// </summary>
-		/// <returns>2次允Eクトル長ぁE/returns>
+		/// <returns>2次元ベクトルの長さ</returns>
 		[[nodiscard]] float Length() const;
 
 		/// <summary>
-		/// 正規化されぁE次允Eクトルを求めめE
+		/// 正規化された2次元ベクトルを求める
 		/// </summary>
-		/// <returns>正規化されぁE次允Eクトル</returns>
+		/// <returns>正規化された2次元ベクトル</returns>
 		[[nodiscard]] Vector2 Normalize() const;
 
 	public:
 		/// <summary>
-		/// 2つのベクトルの冁Eを求めめE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="v1">1つ目のベクトル</param>
 		/// <param name="v2">2つ目のベクトル</param>
-		/// <returns>2つのベクトルの冁EE/returns>
+		/// <returns>計算結果</returns>
 		[[nodiscard]] static float Dot(const Vector2& v1, const Vector2& v2);
 
 		/// <summary>
-		/// 2つのベクトルの外積を求めめE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="v1">1つ目のベクトル</param>
 		/// <param name="v2">2つ目のベクトル</param>
@@ -62,7 +59,7 @@ namespace QFE::MATH {
 		[[nodiscard]] static float Cross(const Vector2& v1, const Vector2& v2);
 
 		/// <summary>
-		/// 2つのベクトルの距離を整数で求めめE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="v1">1つ目のベクトル</param>
 		/// <param name="v2">2つ目のベクトル</param>
@@ -71,5 +68,3 @@ namespace QFE::MATH {
 	};
 
 }
-
-#endif // !VECTOR2.H

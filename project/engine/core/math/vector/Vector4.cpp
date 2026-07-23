@@ -13,15 +13,15 @@ float Vector4::Length() const {
 
 Vector4 Vector4::Normalize() const {
 	Vector4 result = {};
-
-	if (this->Length() == 0.0f) {
-		assert(false);
+	const float length = Length();
+	if (length == 0.0f) {
+		return result;
 	}
 
-	result.x = x / this->Length();
-	result.y = y / this->Length();
-	result.z = z / this->Length();
-	result.w = w / this->Length();
+	result.x = x / length;
+	result.y = y / length;
+	result.z = z / length;
+	result.w = w / length;
 
 	return result;
 }
@@ -43,7 +43,7 @@ Vector3 Vector4::xyz() const {
 	return result;
 }
 
-Vector4 Vector4::Leap(const Vector4& v1, const Vector4& v2, float t) {
+Vector4 Vector4::Lerp(const Vector4& v1, const Vector4& v2, float t) {
 	Vector4 result{};
 	result.x = v1.x * (1.0f - t) + v2.x * t;
 	result.y = v1.y * (1.0f - t) + v2.y * t;

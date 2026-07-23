@@ -16,7 +16,7 @@
 #include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
-#include "core/loger/MyDebugLog.h"
+#include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
 
