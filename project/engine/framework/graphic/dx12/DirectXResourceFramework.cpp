@@ -44,6 +44,18 @@ bool QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(
 	return true;
 }
 
+bool QFE::FRAMEWORK::UAVBarrierTransition(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle) {
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
+
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.UAV.pResource = resourceContainer->GetResource(resourceHandle);
+	commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ResourceBarrier(1, &barrier);
+	return true;	
+}
+
 bool QFE::FRAMEWORK::GetResourceArraySize(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle resourceHandle, size_t& outResourceArraySize) {
 

@@ -3,6 +3,8 @@
 #include "command/EditorCommandExecutor.h"
 #include "command/EditorCommandList.h"
 
+#include "framework/application/WindowsEngineFramework.h"
+
 #include <imgui/imgui.h>
 
 namespace QFE::SCENE {
@@ -19,7 +21,7 @@ namespace QFE::EDITOR {
 	class GameEditor {
 	public:
 		void Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow);
-		void Update();
+		void Update(QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,QFE::FRAMEWORK::WindowsEngineResources& resources);
 		void Draw();
 		void PostDraw();
 
