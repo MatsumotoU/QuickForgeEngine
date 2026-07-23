@@ -575,16 +575,18 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(QFE::GRAPHIC::D3D12GraphicEngine* graphic
 	return true;
 }
 
-bool QFE::FRAMEWORK::TestRayTracingPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, 
 	const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 	QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
-	const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, 
 	const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
-	const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle, 
 	const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& firstTextureBufferHandle,
-	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources) {
+	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+	QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle) {
+	
 	// 使用機能の取得
 	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
@@ -666,13 +668,25 @@ bool QFE::FRAMEWORK::TestRayTracingPSO(
 	commandList4->DispatchRays(&dispatchDesc);
 
 	// 6. スワップチェーンのバックバッファにコピー
-	resourceContainer->TransitionResource(renderUavBuffer, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
-	renderPass->TransitionCurrentBackBufferBarrier(
-		commandList, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
-	commandList->CopyResource(
-		renderPass->GetCurrentBackBuffer(), resourceContainer->GetResource(renderUavBuffer));
-	renderPass->TransitionCurrentBackBufferBarrier(
-		commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	if (finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain) {
+		resourceContainer->TransitionResource(renderUavBuffer, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
+		renderPass->TransitionCurrentBackBufferBarrier(
+			commandList, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
+		commandList->CopyResource(
+			renderPass->GetCurrentBackBuffer(), resourceContainer->GetResource(renderUavBuffer));
+		renderPass->TransitionCurrentBackBufferBarrier(
+			commandList, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	return true;
+		return true;
+	}else if(finalRenderTargetHandle != QFE::GRAPHIC::RenderTargetHandle::Invalid) {
+		QFE::GRAPHIC::DirectXResourceHandle finalRenderTargetResourceHandle = renderPass->GetRenderTargetResourceHandle(finalRenderTargetHandle);
+		resourceContainer->TransitionResource(finalRenderTargetResourceHandle, commandList, D3D12_RESOURCE_STATE_COPY_DEST);
+		commandList->CopyResource(
+			resourceContainer->GetResource(finalRenderTargetResourceHandle), resourceContainer->GetResource(renderUavBuffer));
+		resourceContainer->TransitionResource(finalRenderTargetResourceHandle, commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+
+		return true;
+	}
+	
+	return false;
 }

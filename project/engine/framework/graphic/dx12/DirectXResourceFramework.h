@@ -15,6 +15,7 @@
 #include <utility>
 
 struct VertexData;
+struct InstanceMetaCPU;	
 
 namespace QFE::GRAPHIC {
 	class D3D12GraphicEngine;
@@ -108,5 +109,27 @@ namespace QFE::FRAMEWORK {
 	std::vector<QFE::MATH::Vector3> GetModelVertexPositions(
 		const VertexData* vertices, size_t vertexCount);
 
+	/// @brief バッファの容量を確保し、データをアップロードする関数
+	// モデル群（modelDataMap）からグローバルバッファを平坦化する。
+	// - globalUVs: [u0,v0, u1,v1, ...]
+	// - globalTriIndices: flattened indices [i0,i1,i2, i3,i4,i5, ...] (各 tri は 3 要素)
+	// - outInstanceMeta: メッシュ（またはメッシュ単位のエントリ）ごとのメタ情報（InstanceID と一致させること）
+	bool EnsureBufferCapacityAndUpload(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		QFE::GRAPHIC::DirectXResourceHandle& inOutHandle,
+		const void* data, size_t byteSize, UINT elementStride,
+		const std::string& name);
 
+	/// @brief グローバルメッシュバッファをアップロードする関数
+	// GPU に平坦化済データをアップロードして StructuredBuffer (SRV) を作る。
+	// 成功時に outXXXHandle にリソースハンドルを格納する。
+	// 注意: CreateResourceView の srvDesc のフィールド名はプロジェクト実装に合わせて調整してください。
+	bool UploadGlobalMeshBuffers(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::vector<float>& globalUVs,
+		const std::vector<uint32_t>& globalTriIndices,
+		const std::vector<InstanceMetaCPU>& instanceMeta,
+		QFE::GRAPHIC::DirectXResourceHandle& outUVHandle,
+		QFE::GRAPHIC::DirectXResourceHandle& outTriHandle,
+		QFE::GRAPHIC::DirectXResourceHandle& outInstanceMetaHandle);
 }

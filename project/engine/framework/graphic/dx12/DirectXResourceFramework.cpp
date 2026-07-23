@@ -312,6 +312,166 @@ std::vector<QFE::MATH::Vector3> QFE::FRAMEWORK::GetModelVertexPositions(const Ve
 	return vertexPositions;
 }
 
+bool QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& inOutHandle,
+	const void* data, size_t byteSize, UINT elementStride, const std::string& name) {
+
+	if (!graphicEngine) {
+		return false;
+	}
+	auto* device = graphicEngine->GetDirectXDevice();
+	auto* rc = graphicEngine->GetDirectXResourceContainer();
+
+	// 新規作成 or 既存サイズ取得
+	bool needCreateView = false;
+	if (inOutHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		needCreateView = true;
+	} else {
+		size_t curSize = rc->GetResourceSizeInBytes(inOutHandle);
+		if (curSize < byteSize) {
+			// 既存バッファでは小さい -> 新規作成して差し替え
+			needCreateView = true;
+		}
+	}
+
+	if (needCreateView) {
+		// 新しいバッファを作成してハンドルを差し替える
+		QFE::GRAPHIC::DirectXResourceHandle newHandle = rc->CreateBuffer(device->GetDevice(), byteSize);
+		if (newHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
+
+		rc->MapResource(newHandle);
+		if (byteSize > 0 && data) {
+			void* mapped = rc->GetMappedData<void>(newHandle);
+			if (mapped) memcpy(mapped, data, byteSize);
+		}
+		rc->SetResourceName(newHandle, QFE::ConvertString(name));
+		rc->SetResourceStrideInBytes(newHandle, elementStride);
+
+		// SRV を作る（Shader4ComponentMapping を忘れずに）
+		QFE::GRAPHIC::CreateViewInfo viewInfo{};
+		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
+		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(byteSize / elementStride);
+		viewInfo.srvDesc.Buffer.StructureByteStride = elementStride;
+		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		rc->CreateResourceView(newHandle, viewInfo);
+
+		// 既存ハンドルがあれば置き換える（リソース解放は container に任せる想定）
+		inOutHandle = newHandle;
+		return true;
+	} else {
+		// 既存バッファを再利用してデータ更新だけ行う（Map + memcpy）
+		rc->MapResource(inOutHandle);
+		if (byteSize > 0 && data) {
+			void* mapped = rc->GetMappedData<void>(inOutHandle);
+			if (mapped) memcpy(mapped, data, byteSize);
+		}
+		// strideは念のため再設定
+		rc->SetResourceStrideInBytes(inOutHandle, elementStride);
+		return true;
+	}
+	
+}
+
+bool QFE::FRAMEWORK::UploadGlobalMeshBuffers(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<float>& globalUVs,
+	const std::vector<uint32_t>& globalTriIndices, const std::vector<InstanceMetaCPU>& instanceMeta,
+	QFE::GRAPHIC::DirectXResourceHandle& outUVHandle, QFE::GRAPHIC::DirectXResourceHandle& outTriHandle, 
+	QFE::GRAPHIC::DirectXResourceHandle& outInstanceMetaHandle) {
+
+	if (!graphicEngine) return false;
+	auto* device = graphicEngine->GetDirectXDevice();
+	auto* rc = graphicEngine->GetDirectXResourceContainer();
+
+	// 1) UV バッファ
+	{
+		size_t byteSize = globalUVs.size() * sizeof(float);
+		auto handle = rc->CreateBuffer(device->GetDevice(), byteSize);
+		if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
+
+		rc->MapResource(handle);
+		float* mapped = rc->GetMappedData<float>(handle);
+		if (mapped && !globalUVs.empty()) {
+			memcpy(mapped, globalUVs.data(), byteSize);
+		}
+		rc->SetResourceName(handle, QFE::ConvertString(std::string("GlobalUVs")));
+		// 要素ストライドは float2
+		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(float) * 2));
+
+		// SRV 作成（Shader4ComponentMapping を明示的に設定）
+		QFE::GRAPHIC::CreateViewInfo viewInfo{};
+		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
+		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(globalUVs.size() / 2);
+		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(float) * 2;
+		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		rc->CreateResourceView(handle, viewInfo);
+
+		outUVHandle = handle;
+	}
+
+	// 2) TriIndices バッファ（flattened uint triplets）
+	{
+		size_t byteSize = globalTriIndices.size() * sizeof(uint32_t);
+		auto handle = rc->CreateBuffer(device->GetDevice(), byteSize);
+		if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
+
+		rc->MapResource(handle);
+		uint32_t* mapped = rc->GetMappedData<uint32_t>(handle);
+		if (mapped && !globalTriIndices.empty()) {
+			memcpy(mapped, globalTriIndices.data(), byteSize);
+		}
+		rc->SetResourceName(handle, QFE::ConvertString(std::string("GlobalTriIndices")));
+		// tri ごとの stride は 3 * uint32
+		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(uint32_t) * 3));
+
+		QFE::GRAPHIC::CreateViewInfo viewInfo{};
+		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
+		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(globalTriIndices.size() / 3);
+		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(uint32_t) * 3;
+		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		rc->CreateResourceView(handle, viewInfo);
+
+		outTriHandle = handle;
+	}
+
+	// 3) InstanceMeta バッファ
+	{
+		size_t byteSize = instanceMeta.size() * sizeof(InstanceMetaCPU);
+		auto handle = rc->CreateBuffer(device->GetDevice(), byteSize);
+		if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
+
+		rc->MapResource(handle);
+		InstanceMetaCPU* mapped = rc->GetMappedData<InstanceMetaCPU>(handle);
+		if (mapped && !instanceMeta.empty()) {
+			memcpy(mapped, instanceMeta.data(), byteSize);
+		}
+		rc->SetResourceName(handle, QFE::ConvertString(std::string("InstanceMeta")));
+		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(InstanceMetaCPU)));
+
+		QFE::GRAPHIC::CreateViewInfo viewInfo{};
+		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
+		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(instanceMeta.size());
+		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(InstanceMetaCPU);
+		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		rc->CreateResourceView(handle, viewInfo);
+
+		outInstanceMetaHandle = handle;
+	}
+
+	return true;
+}
+
 bool QFE::FRAMEWORK::UpdateBLASInstanceBuffer(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>>& instances) {
 

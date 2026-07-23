@@ -103,6 +103,8 @@ group "03_Frameworks" -- 下層の処理をまとめるフレームワークプ�
     dofile(path.join(_root, "engine/framework/scene/premake5.lua"))
     -- Scriptフレームワークプロジェクトの読み込み
     dofile(path.join(_root, "engine/framework/script/premake5.lua"))
+    -- AssetFactoryフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/assets/premake5.lua"))
 group ""
 
 group "04_Applications" -- アプリケーションプロジェクト達

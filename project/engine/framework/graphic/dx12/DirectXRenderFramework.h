@@ -120,7 +120,8 @@ namespace QFE::FRAMEWORK {
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 		const QFE::GRAPHIC::DirectXResourceHandle& renderTargetResourceHandle);
 
-	bool TestRayTracingPSO(
+	/// @brief レイトレーシングパイプラインを使用して描画.レンダーターゲットを指定するバージョン.インデックスバッファとUVバッファを指定するバージョン
+	bool ShadowSpecularRayTracingPSO(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
@@ -129,5 +130,6 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& firstTextureBufferHandle,
-		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources);
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+		QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle);
 }

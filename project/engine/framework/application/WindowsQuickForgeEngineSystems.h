@@ -7,6 +7,8 @@
 #include "framework/script/WindowsScriptWorkFrame.h"
 #include "framework/scene/SceneFrameWork.h"
 
+#include "assetfactory/model/AssimpModelLoader.h"
+
 #include "core/timer/FPSCounter.h"
 
 namespace QFE::FRAMEWORK{
@@ -20,6 +22,7 @@ namespace QFE::FRAMEWORK{
 		std::unique_ptr<QFE::SCRIPT::WindowsScriptInstance> scriptInstance;// スクリプトインスタンス
 		std::unique_ptr<QFE::SCENE::SceneManager> sceneManager;// シーンマネージャ
 		std::unique_ptr<QFE::FPSCounter> fpsCounter;// FPSカウンター
+		std::unique_ptr<QFE::ASSET::AssimpModelLoader> modelLoader;// モデルローダー
 
 		// 所有権を一意に保つため、コピーを禁止する。
 		WindowsQuickForgeEngineSystems();
