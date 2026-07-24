@@ -8,6 +8,48 @@
 
 #include <imgui_stdlib.h>
 
+namespace {
+	class ImGuiComponentArchive final : public QFE::Archive {
+	public:
+		bool IsLoading() const override { return false; }
+		void Process(const std::string& name, bool& value) override {
+			ImGui::Checkbox(name.c_str(), &value);
+		}
+		void Process(const std::string& name, float& value) override {
+			ImGui::DragFloat(name.c_str(), &value, 0.01f);
+		}
+		void Process(const std::string& name, int32_t& value) override {
+			ImGui::DragInt(name.c_str(), &value);
+		}
+		void Process(const std::string& name, uint32_t& value) override {
+			int edited = static_cast<int>(value);
+			if (ImGui::DragInt(name.c_str(), &edited, 1.0f, 0)) {
+				value = static_cast<uint32_t>(edited);
+			}
+		}
+		void Process(const std::string& name, std::string& value) override {
+			ImGui::InputText(name.c_str(), &value);
+		}
+		void Process(const std::string& name, QFE::MATH::Vector2& value) override {
+			ImGui::DragFloat2(name.c_str(), &value.x, 0.01f);
+		}
+		void Process(const std::string& name, QFE::MATH::Vector3& value) override {
+			ImGui::DragFloat3(name.c_str(), &value.x, 0.01f);
+		}
+		void Process(const std::string& name, QFE::MATH::Vector4& value) override {
+			ImGui::DragFloat4(name.c_str(), &value.x, 0.01f);
+		}
+		void Process(const std::string& name, QFE::MATH::EulerTransform& value) override {
+			if (ImGui::TreeNode(name.c_str())) {
+				ImGui::DragFloat3("Position", &value.translate.x, 0.01f);
+				ImGui::DragFloat3("Rotation", &value.rotate.x, 0.01f);
+				ImGui::DragFloat3("Scale", &value.scale.x, 0.01f);
+				ImGui::TreePop();
+			}
+		}
+	};
+}
+
 QFE::EDITOR::Inspector::Inspector(QFE::EntityManager* entityManager) :
 	entityManager_(entityManager), isActive_(true), isFocus_(false) {
 }
@@ -60,6 +102,19 @@ bool QFE::EDITOR::Inspector::GetIsFocus() {
 }
 
 void QFE::EDITOR::Inspector::DrawObjectInfoComponent(uint32_t entityId, EditorCommandList& commandList) {
+	// DLLコンポーネントは型を知らなくても登録されたリフレクション関数で描画できる。
+	for (const std::string& componentName : entityManager_->GetComponentTypeNames(entityId)) {
+		if (!entityManager_->IsDynamicComponentType(componentName)) {
+			continue;
+		}
+		if (ImGui::CollapsingHeader(componentName.c_str())) {
+			ImGui::PushID(componentName.c_str());
+			ImGuiComponentArchive archive;
+			entityManager_->ReflectionComponentByName(entityId, componentName, archive);
+			ImGui::PopID();
+		}
+	}
+
 	// ObjectInfoComponentの表示
 	if (entityManager_->HasComponent<QFE::SCENE::ObjectInfoComponent>(entityId)) {
 		auto& objectInfoComp = entityManager_->GetComponent<QFE::SCENE::ObjectInfoComponent>(entityId);
