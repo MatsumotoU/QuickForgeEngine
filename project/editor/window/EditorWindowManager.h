@@ -42,6 +42,13 @@ namespace QFE::EDITOR {
 
 		/// @brief Hierarchyからのカメラフォーカス要求を取得する
 		bool ConsumeCameraFocusTarget(QFE::MATH::Vector3& position, float& radius);
+		/// @brief SceneViewerで使用するカメラ行列を設定する
+		void SetSceneViewerCamera(
+			const QFE::MATH::Matrix4x4& viewMatrix,
+			const QFE::MATH::Matrix4x4& projectionMatrix,
+			bool isOrthographic = false);
+		/// @brief SceneViewerのギズモがマウス入力を使用しているかを返す
+		bool IsSceneGizmoCapturingMouse() const;
 
 	private:
 

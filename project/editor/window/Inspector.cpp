@@ -73,9 +73,9 @@ void QFE::EDITOR::Inspector::DrawObjectInfoComponent(uint32_t entityId, EditorCo
 	if (entityManager_->HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 		auto& transformComp = entityManager_->GetComponent<QFE::SCENE::TransformComponent>(entityId);
 		if (ImGui::CollapsingHeader("EulerTransform")) {
-			ImGui::DragFloat3("Position", &transformComp.transform.translate.x);
-			ImGui::DragFloat3("Rotation", &transformComp.transform.rotate.x);
-			ImGui::DragFloat3("Scale", &transformComp.transform.scale.x);
+			ImGui::DragFloat3("Position", &transformComp.transform.translate.x, 0.1f);
+			ImGui::DragFloat3("Rotation", &transformComp.transform.rotate.x, 0.1f);
+			ImGui::DragFloat3("Scale", &transformComp.transform.scale.x, 0.1f);
 		}
 	}
 

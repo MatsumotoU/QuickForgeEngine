@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
+#include <ImGuizmo-1.83/ImGuizmo.h>
 
 #include <filesystem>
 
@@ -47,6 +48,7 @@ void D3D12GuiManager::PreDraw() {
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 }
 
 void D3D12GuiManager::PostDraw() {

@@ -334,6 +334,12 @@ bool QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
 	auto* device = graphicEngine->GetDirectXDevice();
 	auto* rc = graphicEngine->GetDirectXResourceContainer();
 
+	// サイズが0の場合は、無効化する
+	if (byteSize == 0) {
+		QFE::GRAPHIC::DirectXResourceHandle invalidHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		return true;
+	}
+
 	// 新規作成 or 既存サイズ取得
 	bool needCreateView = false;
 	if (inOutHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {

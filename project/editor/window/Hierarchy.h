@@ -31,6 +31,8 @@ namespace QFE::EDITOR {
 
 		/// @brief カメラフォーカスが要求されたEntity IDを取得し、要求をクリアする
 		std::optional<uint32_t> ConsumeCameraFocusRequest();
+		/// @brief Hierarchyで現在選択されているEntity IDを取得する
+		const std::set<uint32_t>& GetSelectedEntities() const;
 
 	private:
 		EntityManager* entityManager_;

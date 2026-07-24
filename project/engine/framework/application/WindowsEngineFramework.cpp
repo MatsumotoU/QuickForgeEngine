@@ -353,17 +353,21 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 	for (int i = 0; i < 4; ++i) {
 		QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), resources.renderTargets[i], rayTracingRootResources[i]);
 	}
+
+	// カメラの位置をGPUに送るための定数バッファを作成
 	QFE::GRAPHIC::DirectXResourceHandle cameraBufferHandle;
 	cameraBufferHandle = graphicEngine->GetDirectXResourceAllocator()->AllocateConstantBuffer<CameraForGPU>("CameraBuffer");
-	entityManager.Each<QFE::SCENE::CameraComponent>([&](uint32_t entityId, QFE::SCENE::CameraComponent& cameraComp) {
-		if (cameraComp.isMainCamera) {
-			CameraForGPU* cameraPos = graphicEngine->GetConstantBufferData<CameraForGPU>(cameraBufferHandle);
-			if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-				QFE::MATH::EulerTransform& cameraTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
-				cameraPos->cameraPosition = cameraTransform.translate;
-			}
-		}
-		});
+	CameraForGPU* cameraPos = graphicEngine->GetConstantBufferData<CameraForGPU>(cameraBufferHandle);
+	if(cameraPos == nullptr) {
+		assert(false && "Failed to get CameraForGPU constant buffer data.");
+		return;
+	}
+	resources.cameraTransform.translate;
+	cameraPos->cameraPosition = 
+		QFE::MATH::Vector3(
+			resources.cameraTransform.translate.x,
+			resources.cameraTransform.translate.y,
+			resources.cameraTransform.translate.z);
 
 	QFE::GRAPHIC::DirectXResourceHandle textureFirstResourceHandle;
 	QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), textureFirstResourceHandle);

@@ -24,7 +24,7 @@ void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* scen
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(&entityManager);
 	editorWindowsMap_[EditorWindowType::Inspector] = std::make_unique<Inspector>(&entityManager);
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId);
-    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId);
+    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager);
 }
 
 void QFE::EDITOR::EditorWindowManager::Update() {
@@ -65,6 +65,11 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
     if (ImGui::BeginMenuBar()) {
 		// ファイルメニュー
         if (ImGui::BeginMenu("File")) {
+            // 新規シーン
+            if (ImGui::MenuItem("New Scene", nullptr)) {
+                sceneManager_->Initialize();
+            }
+
             // ロード
             if (ImGui::MenuItem("Load Scene", nullptr)) {
                 // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
@@ -155,9 +160,15 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
     ImGui::End();
 
-    selectedEntities_.clear();
+	// 6. 各エディタウィンドウの描画
+    auto* hierarchy = static_cast<Hierarchy*>(editorWindowsMap_[EditorWindowType::Hierarchy].get());
+    if (hierarchy->GetIsActive()) {
+        selectedEntities_.clear();
+        hierarchy->Draw(selectedEntities_, commandList);
+    }
+    selectedEntities_ = hierarchy->GetSelectedEntities();
 	for (auto& [type, window] : editorWindowsMap_) {
-        if (!window->GetIsActive()) {
+        if (type == EditorWindowType::Hierarchy || !window->GetIsActive()) {
             continue;
 		}
 		window->Draw(selectedEntities_, commandList);
@@ -191,4 +202,21 @@ bool QFE::EDITOR::EditorWindowManager::ConsumeCameraFocusTarget(
 		1.0f
 	});
 	return true;
+}
+
+void QFE::EDITOR::EditorWindowManager::SetSceneViewerCamera(
+	const QFE::MATH::Matrix4x4& viewMatrix,
+	const QFE::MATH::Matrix4x4& projectionMatrix,
+	bool isOrthographic) {
+	auto* sceneViewer = static_cast<SceneViewer*>(editorWindowsMap_[EditorWindowType::SceneViewer].get());
+	sceneViewer->SetCameraMatrices(viewMatrix, projectionMatrix, isOrthographic);
+}
+
+bool QFE::EDITOR::EditorWindowManager::IsSceneGizmoCapturingMouse() const {
+	const auto it = editorWindowsMap_.find(EditorWindowType::SceneViewer);
+	if (it == editorWindowsMap_.end()) {
+		return false;
+	}
+	const auto* sceneViewer = static_cast<const SceneViewer*>(it->second.get());
+	return sceneViewer->IsGizmoCapturingMouse();
 }

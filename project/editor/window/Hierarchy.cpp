@@ -134,3 +134,7 @@ std::optional<uint32_t> QFE::EDITOR::Hierarchy::ConsumeCameraFocusRequest() {
 	cameraFocusRequest_.reset();
 	return request;
 }
+
+const std::set<uint32_t>& QFE::EDITOR::Hierarchy::GetSelectedEntities() const {
+	return hierarchySelectedEntities_;
+}

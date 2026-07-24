@@ -46,27 +46,30 @@ void QFE::EDITOR::GameEditor::Update(
 	}
 
 	// デバッグカメラ操作処理
-	if (windowManager_.IsWindowFocused(EditorWindowType::SceneViewer)) {
+	if (windowManager_.IsWindowFocused(EditorWindowType::SceneViewer) &&
+		!windowManager_.IsSceneGizmoCapturingMouse()) {
 		float moveSpeed = 0.3f;
 
-		// 移動処理
-		if (inputInterface->GetKeyPress("Up")) {
-			QFE::MATH::Vector3 forward = { 0.0f, 0.0f, 1.0f };
-			QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
-			resources.cameraTransform.translate += rotatedForward * moveSpeed;
-		}
-		if (inputInterface->GetKeyPress("Down")) {
-			QFE::MATH::Vector3 forward = { 0.0f, 0.0f, 1.0f };
-			QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
-			resources.cameraTransform.translate -= rotatedForward * moveSpeed;
-		}
-		if (inputInterface->GetKeyPress("Left")) {
-			QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
-			resources.cameraTransform.translate -= right * moveSpeed;
-		}
-		if (inputInterface->GetKeyPress("Right")) {
-			QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
-			resources.cameraTransform.translate += right * moveSpeed;
+		if (inputInterface->GetMousePress(1)) {
+			// 移動処理
+			if (inputInterface->GetKeyPress("Up")) {
+				QFE::MATH::Vector3 forward = { 0.0f, 0.0f, 1.0f };
+				QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
+				resources.cameraTransform.translate += rotatedForward * moveSpeed;
+			}
+			if (inputInterface->GetKeyPress("Down")) {
+				QFE::MATH::Vector3 forward = { 0.0f, 0.0f, 1.0f };
+				QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
+				resources.cameraTransform.translate -= rotatedForward * moveSpeed;
+			}
+			if (inputInterface->GetKeyPress("Left")) {
+				QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
+				resources.cameraTransform.translate -= right * moveSpeed;
+			}
+			if (inputInterface->GetKeyPress("Right")) {
+				QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
+				resources.cameraTransform.translate += right * moveSpeed;
+			}
 		}
 
 		// 回転処理
@@ -80,10 +83,13 @@ void QFE::EDITOR::GameEditor::Update(
 	// カメラのビュー行列と投影行列を取得
 	QFE::MATH::Matrix4x4& viewProj = resources.viewProj;
 	QFE::MATH::Vector3 currentCameraPos = { 0.0f, 0.0f, 0.0f };
+	QFE::MATH::Matrix4x4 viewMatrix =
+		QFE::MATH::Matrix4x4::MakeAffineMatrix(resources.cameraTransform).Inverse();
+	QFE::MATH::Matrix4x4 projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
+		3.14159f / 4.0f, 1280.0f / 720.0f, 0.1f, 1000.0f);
+	windowManager_.SetSceneViewerCamera(viewMatrix, projectionMatrix);
+
 	if (activeCameraType_ == QFE::EDITOR::EditorCameraType::DebugCamera) {
-		QFE::MATH::Matrix4x4 viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(resources.cameraTransform).Inverse();
-		QFE::MATH::Matrix4x4 projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
-			3.14159f / 4.0f, 1280.0f / 720.0f, 0.1f, 1000.0f);
 		viewProj = QFE::MATH::Matrix4x4::Multiply(viewMatrix, projectionMatrix);
 		currentCameraPos = resources.cameraTransform.translate;
 	} else {
@@ -93,5 +99,12 @@ void QFE::EDITOR::GameEditor::Update(
 
 void GameEditor::Draw() {
 	windowManager_.Draw(commandList_);
+
+	if(ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_Z)) {
+		commandExecutor_.Undo();
+	}
+	if(ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_Y)) {
+		commandExecutor_.Redo();
+	}
 	commandExecutor_.ExecuteCommand(&commandList_);
 }
