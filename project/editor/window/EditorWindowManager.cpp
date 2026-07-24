@@ -5,6 +5,7 @@
 
 #include "scene/SceneManager.h"
 #include "design-patterns/EntityManager.h"
+#include "components/TransformComponent.h"
 #include "command/EditorCommandList.h"
 #include "string/MyString.h"
 #include "command/AllCommands.h"
@@ -12,6 +13,8 @@
 #include "file/FileUtility.h"
 
 #include <imgui.h>
+#include <algorithm>
+#include <cmath>
 
 void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow) {
 	mainWindow_ = mainWindow;
@@ -21,7 +24,7 @@ void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* scen
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(&entityManager);
 	editorWindowsMap_[EditorWindowType::Inspector] = std::make_unique<Inspector>(&entityManager);
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId);
-    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId);
+    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager);
 }
 
 void QFE::EDITOR::EditorWindowManager::Update() {
@@ -62,6 +65,11 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
     if (ImGui::BeginMenuBar()) {
 		// ファイルメニュー
         if (ImGui::BeginMenu("File")) {
+            // 新規シーン
+            if (ImGui::MenuItem("New Scene", nullptr)) {
+                sceneManager_->Initialize();
+            }
+
             // ロード
             if (ImGui::MenuItem("Load Scene", nullptr)) {
                 // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
@@ -152,9 +160,15 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
     ImGui::End();
 
-    selectedEntities_.clear();
+	// 6. 各エディタウィンドウの描画
+    auto* hierarchy = static_cast<Hierarchy*>(editorWindowsMap_[EditorWindowType::Hierarchy].get());
+    if (hierarchy->GetIsActive()) {
+        selectedEntities_.clear();
+        hierarchy->Draw(selectedEntities_, commandList);
+    }
+    selectedEntities_ = hierarchy->GetSelectedEntities();
 	for (auto& [type, window] : editorWindowsMap_) {
-        if (!window->GetIsActive()) {
+        if (type == EditorWindowType::Hierarchy || !window->GetIsActive()) {
             continue;
 		}
 		window->Draw(selectedEntities_, commandList);
@@ -163,4 +177,46 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
 bool QFE::EDITOR::EditorWindowManager::IsWindowFocused(EditorWindowType windowType) {
 	return editorWindowsMap_[windowType]->GetIsFocus();
+}
+
+bool QFE::EDITOR::EditorWindowManager::ConsumeCameraFocusTarget(
+	QFE::MATH::Vector3& position, float& radius) {
+	auto* hierarchy = static_cast<Hierarchy*>(editorWindowsMap_[EditorWindowType::Hierarchy].get());
+	const std::optional<uint32_t> entityId = hierarchy->ConsumeCameraFocusRequest();
+	if (!entityId.has_value()) {
+		return false;
+	}
+
+	EntityManager& entityManager = sceneManager_->GetCurrentSceneEntityManager();
+	if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(*entityId)) {
+		return false;
+	}
+
+	const QFE::MATH::EulerTransform& transform =
+		entityManager.GetComponent<QFE::SCENE::TransformComponent>(*entityId).transform;
+	position = transform.translate;
+	radius = std::max({
+		std::abs(transform.scale.x),
+		std::abs(transform.scale.y),
+		std::abs(transform.scale.z),
+		1.0f
+	});
+	return true;
+}
+
+void QFE::EDITOR::EditorWindowManager::SetSceneViewerCamera(
+	const QFE::MATH::Matrix4x4& viewMatrix,
+	const QFE::MATH::Matrix4x4& projectionMatrix,
+	bool isOrthographic) {
+	auto* sceneViewer = static_cast<SceneViewer*>(editorWindowsMap_[EditorWindowType::SceneViewer].get());
+	sceneViewer->SetCameraMatrices(viewMatrix, projectionMatrix, isOrthographic);
+}
+
+bool QFE::EDITOR::EditorWindowManager::IsSceneGizmoCapturingMouse() const {
+	const auto it = editorWindowsMap_.find(EditorWindowType::SceneViewer);
+	if (it == editorWindowsMap_.end()) {
+		return false;
+	}
+	const auto* sceneViewer = static_cast<const SceneViewer*>(it->second.get());
+	return sceneViewer->IsGizmoCapturingMouse();
 }

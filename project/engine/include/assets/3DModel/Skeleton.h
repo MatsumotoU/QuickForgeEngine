@@ -11,9 +11,9 @@ namespace QFE::SKELETON {
 	struct Joint {
 		std::string name;
 		int32_t parentIndex = -1;
-		Matrix4x4 localMatrix = Matrix4x4::MakeIndentity4x4();
-		Matrix4x4 globalMatrix = Matrix4x4::MakeIndentity4x4();
-		Matrix4x4 inverseBindMatrix = Matrix4x4::MakeIndentity4x4();
+		Matrix4x4 localMatrix = Matrix4x4::MakeIdentity4x4();
+		Matrix4x4 globalMatrix = Matrix4x4::MakeIdentity4x4();
+		Matrix4x4 inverseBindMatrix = Matrix4x4::MakeIdentity4x4();
 		std::vector<int32_t> children;
 	};
 

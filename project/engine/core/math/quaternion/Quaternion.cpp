@@ -68,7 +68,7 @@ Quaternion Quaternion::Multiply(const Quaternion& lhs, const Quaternion& rhs) {
 	return result;
 }
 
-Quaternion Quaternion::IndentityQuaternion() {
+Quaternion Quaternion::IdentityQuaternion() {
 	Quaternion result{};
 	result.q.w = 1.0f;
 	return result;

@@ -15,27 +15,27 @@ namespace QFE::MATH {
 
 	public:
 		/// <summary>
-		/// 虚数部を取得しまぁEx,y,z)
+		/// 数学演算を行う。
 		/// </summary>
 		/// <returns></returns>
 		[[nodiscard]] Vector3 ImaginaryPart() const;
 		/// <summary>
-		/// 実部を取得しまぁEw)
+		/// 数学演算を行う。
 		/// </summary>
 		/// <returns></returns>
 		[[nodiscard]] float RealPart() const;
 		/// <summary>
-		/// 共役を取得しまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <returns></returns>
 		[[nodiscard]] Quaternion Conjugation() const;
 		/// <summary>
-		/// ノルムを取得しまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <returns></returns>
 		[[nodiscard]] float Norm() const;
 		/// <summary>
-		/// 正規化クオータニオンを取得しまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <returns></returns>
 		[[nodiscard]] Quaternion Normalize() const;
@@ -49,36 +49,36 @@ namespace QFE::MATH {
 		/// <returns></returns>
 		[[nodiscard]] static Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs);
 		/// <summary>
-		/// 単位クオータニオンを返しまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <returns></returns>
-		[[nodiscard]] static Quaternion IndentityQuaternion();
+		[[nodiscard]] static Quaternion IdentityQuaternion();
 		/// <summary>
-		/// 共役クオータニオンを返しまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="quaternion"></param>
 		/// <returns></returns>
 		[[nodiscard]] static Quaternion ConjugationQuaternion(const Quaternion& quaternion);
 		/// <summary>
-		/// クオータニオンのノルムを返しまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="quaternion"></param>
 		/// <returns></returns>
 		[[nodiscard]] static float Norm(const Quaternion& quaternion);
 		/// <summary>
-		/// 正規化したクオータニオンを返しまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="quaternion"></param>
 		/// <returns></returns>
 		[[nodiscard]] static Quaternion Normalize(const Quaternion& quaternion);
 		/// <summary>
-		/// 送Eオータニオンを返しまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="quaternion"></param>
 		/// <returns></returns>
 		[[nodiscard]] static Quaternion Inverse(const Quaternion& quaternion);
 		/// <summary>
-		/// 任意E軸からクオータニオンを作EしまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="axis"></param>
 		/// <param name="angle"></param>
@@ -92,7 +92,7 @@ namespace QFE::MATH {
 		/// <returns></returns>
 		[[nodiscard]] static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 		/// <summary>
-		/// クオータニオンから回転行Eを作EしまぁE
+		/// 数学演算を行う。
 		/// </summary>
 		/// <param name="quaternion"></param>
 		/// <returns></returns>

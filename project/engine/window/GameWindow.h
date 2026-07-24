@@ -7,7 +7,7 @@
 #include <Windows.h>
 #include <memory>
 #include "IGameWindow.h"
-#include "WindowGenerater/WindowGenerater.h"
+#include "WindowGenerator/WindowGenerator.h"
 #include "WindowEventsManager/WindowEventsManager.h"
 
 namespace QFE {

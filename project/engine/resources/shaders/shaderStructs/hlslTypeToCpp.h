@@ -115,7 +115,7 @@ struct Material {
 #ifdef __cplusplus
 	Material()
 		: color{ 1.0f, 1.0f, 1.0f, 1.0f }
-		, uvTransform(QFE::MATH::Matrix4x4::MakeIndentity4x4())
+		, uvTransform(QFE::MATH::Matrix4x4::MakeIdentity4x4())
 		, smoothness(0.0f)
 		, metallic(0.0f) {
 	}
@@ -177,8 +177,8 @@ struct Particle {
 struct ParView {
 #ifdef __cplusplus
 	ParView()
-		: viewProjection(QFE::MATH::Matrix4x4::MakeIndentity4x4())
-		, billboardMatrix(QFE::MATH::Matrix4x4::MakeIndentity4x4()) {
+		: viewProjection(QFE::MATH::Matrix4x4::MakeIdentity4x4())
+		, billboardMatrix(QFE::MATH::Matrix4x4::MakeIdentity4x4()) {
 	}
 #endif
 	float32_t4x4 viewProjection;
@@ -188,8 +188,8 @@ struct ParView {
 struct ParticleForGPU {
 #ifdef __cplusplus
 	ParticleForGPU()
-		: WVP(QFE::MATH::Matrix4x4::MakeIndentity4x4())
-		, World(QFE::MATH::Matrix4x4::MakeIndentity4x4())
+		: WVP(QFE::MATH::Matrix4x4::MakeIdentity4x4())
+		, World(QFE::MATH::Matrix4x4::MakeIdentity4x4())
 		, color{ 1.0f,1.0f,1.0f,1.0f } {
 	}
 #endif 
@@ -216,8 +216,8 @@ struct PrimitiveVertexData {
 struct TransformationMatrix {
 #ifdef __cplusplus
 	TransformationMatrix()
-		: WVP(QFE::MATH::Matrix4x4::MakeIndentity4x4())
-		, World(QFE::MATH::Matrix4x4::MakeIndentity4x4()) {
+		: WVP(QFE::MATH::Matrix4x4::MakeIdentity4x4())
+		, World(QFE::MATH::Matrix4x4::MakeIdentity4x4()) {
 	}
 #endif
 

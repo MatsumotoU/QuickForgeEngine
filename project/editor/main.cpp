@@ -16,7 +16,7 @@
 #include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
-#include "core/loger/MyDebugLog.h"
+#include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
 
@@ -58,7 +58,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
 	QFE::FRAMEWORK::CreateOffScreenRenderTarget(
 		graphicEngine.get(), sceneRenderTargetHandle, 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM);
-
 	QFE::GRAPHIC::DirectXResourceHandle sceneTextureHandle;
 	QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), sceneRenderTargetHandle, sceneTextureHandle);
 
@@ -85,36 +84,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			break;
 		}
 
-		gameEditor.Update();
-		// デバッグカメラ操作処理
-		if (gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
-			float moveSpeed = 0.5f;
-			if (inputInterface->GetKeyPress("Up")) {
-				engineResources.cameraTransform.translate.z += moveSpeed;
-			}
-			if (inputInterface->GetKeyPress("Down")) {
-				engineResources.cameraTransform.translate.z -= moveSpeed;
-			}
-			if (inputInterface->GetKeyPress("Left")) {
-				engineResources.cameraTransform.translate.x -= moveSpeed;
-			}
-			if (inputInterface->GetKeyPress("Right")) {
-				engineResources.cameraTransform.translate.x += moveSpeed;
-			}
-		}
-
-		// カメラのビュー行列と投影行列を取得
-		QFE::MATH::Matrix4x4& viewProj = engineResources.viewProj;
-		QFE::MATH::Vector3 currentCameraPos = { 0.0f, 0.0f, 0.0f };
-		if (gameEditor.GetActiveCameraType() == QFE::EDITOR::EditorCameraType::DebugCamera) {
-			QFE::MATH::Matrix4x4 viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(engineResources.cameraTransform).Inverse();
-			QFE::MATH::Matrix4x4 projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
-				3.14159f / 4.0f, 1280.0f / 720.0f, 0.1f, 1000.0f);
-			viewProj = QFE::MATH::Matrix4x4::Multiply(viewMatrix, projectionMatrix);
-			currentCameraPos = engineResources.cameraTransform.translate;
-		} else {
-			viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager);
-		}
+		// エディタの更新処理
+		gameEditor.Update(engineSystems, engineResources);
 
 		// エンジンの描画前処理（フレーム開始時の共通処理）
 		QFE::FRAMEWORK::EnginePreDraw(engineSystems, engineResources);

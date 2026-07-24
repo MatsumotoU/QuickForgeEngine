@@ -6,6 +6,7 @@
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 #include <dxcapi.h>
+#include <wrl/client.h>
 #include "CompilerDevice.h"
 
 namespace QFE::GRAPHIC {
@@ -23,7 +24,7 @@ namespace QFE::GRAPHIC {
 		IDxcBlob* ForceCompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 	private:
-		std::map<std::wstring, IDxcBlob*> iDxcBlobMap_;// 今までコンパイルしてきたシェーダーバイナリ
+		std::map<std::wstring, Microsoft::WRL::ComPtr<IDxcBlob>> dxcBlobMap_;
 		CompilerDevice dxcDevice_;// dxcデバイス
 	};
 }

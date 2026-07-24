@@ -20,9 +20,9 @@ namespace QFE::CAMERA {
 		CameraHandle CreateCamera(float left, float right, float top, float bottom, float nearZ, float farZ, float fov);
 
 		/// @brief あるカメラのあるトランスフォームからビュー行列と投影行列を掛け合わせた行列を取得します
-		MATH::Matrix4x4 GetViewProjectionMatrix(CameraHandle handle, const MATH::EulerTransform& cameraTranform, CameraType type);
+		MATH::Matrix4x4 GetViewProjectionMatrix(CameraHandle handle, const MATH::EulerTransform& cameraTransform, CameraType type);
 		/// @brief あるカメラのWVP行列を取得します
-		MATH::Matrix4x4 GetWVPMatrix(CameraHandle handle, const MATH::Matrix4x4& worldMatrix, const MATH::EulerTransform& cameraTranform, CameraType type);
+		MATH::Matrix4x4 GetWVPMatrix(CameraHandle handle, const MATH::Matrix4x4& worldMatrix, const MATH::EulerTransform& cameraTransform, CameraType type);
 
 	private:
 		QFE::SparseSet<Camera> cameras_;

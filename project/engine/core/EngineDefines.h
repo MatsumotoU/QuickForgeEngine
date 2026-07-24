@@ -1,5 +1,5 @@
 #pragma once
-#include "loger/MyDebugLog.h"
+#include "logger/MyDebugLog.h"
 #include "error/ErrorList.h"
 #include "design-patterns/component/Archive.h"
 

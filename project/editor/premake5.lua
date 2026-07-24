@@ -15,6 +15,7 @@ project "GameEditor" -- GameEditor
             "EngineAssetsFactory",
             "SceneFramework",
             "ScriptFramework",
+            "ApplicationFramework",
             "Camera",
             "ImGui",
             "Components",

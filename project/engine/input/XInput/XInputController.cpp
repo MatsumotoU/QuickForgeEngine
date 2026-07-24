@@ -53,7 +53,10 @@ namespace QFE::INPUT {
 	}
 
 	/** @brief コントローラーが接続されているか */
-	bool XInputController::GetIsActiveController(uint32_t padId) {
+	bool XInputController::GetIsActiveController(uint32_t padId) const {
+		if (padId >= XUSER_MAX_COUNT) {
+			return false;
+		}
 		return gamepadStates[padId].isConnected;
 	}
 
@@ -64,8 +67,8 @@ namespace QFE::INPUT {
 	 * @return 押されているか
 	 */
 	bool XInputController::GetPressButton(WORD type, uint32_t padId) {
-		if (padId >= 4) {
-			assert(false && padId >= 4);
+		if (padId >= XUSER_MAX_COUNT) {
+			return false;
 		}
 
 		if ((gamepadStates[padId].state.Gamepad.wButtons & type) != 0) {
@@ -76,8 +79,8 @@ namespace QFE::INPUT {
 
 	/** @brief ボタンが押された瞬間か */
 	bool XInputController::GetTriggerButton(WORD type, uint32_t padId) {
-		if (padId >= 4) {
-			assert(false && padId >= 4);
+		if (padId >= XUSER_MAX_COUNT) {
+			return false;
 		}
 
 		if ((prevGamepadStates[padId].state.Gamepad.wButtons & type) == 0 &&
@@ -89,8 +92,8 @@ namespace QFE::INPUT {
 
 	/** @brief ボタンが離された瞬間か */
 	bool XInputController::GetReleaseButton(WORD type, uint32_t padId) {
-		if (padId >= 4) {
-			assert(false && padId >= 4);
+		if (padId >= XUSER_MAX_COUNT) {
+			return false;
 		}
 
 		if ((prevGamepadStates[padId].state.Gamepad.wButtons & type) != 0 &&
@@ -106,8 +109,8 @@ namespace QFE::INPUT {
 			stickDeadZone_ = 32767.0f;
 		}
 
-		if (padId >= 4) {
-			assert(false && padId >= 4);
+		if (padId >= XUSER_MAX_COUNT) {
+			return {};
 		}
 		MATH::Vector2 result{};
 		result.x = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbRX);
@@ -133,8 +136,8 @@ namespace QFE::INPUT {
 			stickDeadZone_ = 32767.0f;
 		}
 
-		if (padId >= 4) {
-			assert(false && padId >= 4);
+		if (padId >= XUSER_MAX_COUNT) {
+			return {};
 		}
 		MATH::Vector2 result{};
 		result.x = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbLX);

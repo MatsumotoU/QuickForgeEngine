@@ -16,6 +16,7 @@ project "Runtime" -- Runtime
             "SceneFramework",
             "ScriptFramework",
             "InputFramework",
+            "ApplicationFramework",
             "Camera",
             "ImGui",
             "Components",

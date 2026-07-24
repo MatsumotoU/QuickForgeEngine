@@ -39,6 +39,11 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle);
 
+	/// @brief UAVバリアの状態遷移を行う関数
+	bool UAVBarrierTransition(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle);
+
 	/// @brief リソースの状態を変更する関数
 	bool TransitionResourceToState(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,

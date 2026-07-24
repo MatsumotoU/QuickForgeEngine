@@ -19,7 +19,7 @@ namespace QFE::INPUT {
 		void Update();
 
 	public:
-		bool GetIsActiveController(uint32_t padId);
+		bool GetIsActiveController(uint32_t padId) const;
 
 		/// <summary>
 		///	XINPUT_GAMEPAD_DPAD_UP			0x0001
@@ -89,7 +89,7 @@ namespace QFE::INPUT {
 		float stickDeadZone_;
 
 	private:
-		std::array<GamepadState, XUSER_MAX_COUNT> gamepadStates;
-		std::array<GamepadState, XUSER_MAX_COUNT> prevGamepadStates;
+		std::array<GamepadState, XUSER_MAX_COUNT> gamepadStates{};
+		std::array<GamepadState, XUSER_MAX_COUNT> prevGamepadStates{};
 	};
 }  // namespace QFE::INPUT

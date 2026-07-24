@@ -23,7 +23,7 @@ uint32_t QFE::FRAMEWORK::CreateEntityWithMaterial(QFE::SCENE::SceneManager& scen
 }
 
 QFE::MATH::Matrix4x4 QFE::FRAMEWORK::UpdateMainCamera(QFE::SCENE::SceneManager& sceneManager) {
-	QFE::MATH::Matrix4x4 viewProjection = QFE::MATH::Matrix4x4::MakeIndentity4x4();
+	QFE::MATH::Matrix4x4 viewProjection = QFE::MATH::Matrix4x4::MakeIdentity4x4();
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 	entityManager.Each<QFE::SCENE::CameraComponent>(
 		[&](uint32_t entityId, QFE::SCENE::CameraComponent& camera) {

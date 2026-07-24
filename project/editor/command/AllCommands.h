@@ -6,3 +6,4 @@
 #include "SaveSceneCommand.h"
 #include "AddComponentCommand.h"
 #include "DeleteComponentCommand.h"
+#include "ChangeTransformCommand.h"

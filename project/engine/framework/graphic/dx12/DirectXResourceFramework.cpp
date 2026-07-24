@@ -44,6 +44,18 @@ bool QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(
 	return true;
 }
 
+bool QFE::FRAMEWORK::UAVBarrierTransition(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle) {
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
+
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.UAV.pResource = resourceContainer->GetResource(resourceHandle);
+	commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ResourceBarrier(1, &barrier);
+	return true;	
+}
+
 bool QFE::FRAMEWORK::GetResourceArraySize(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle resourceHandle, size_t& outResourceArraySize) {
 
@@ -145,8 +157,8 @@ bool QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 
 	// EulerTransform
 	TransformationMatrix transformMatrix;
-	transformMatrix.World = QFE::MATH::Matrix4x4::MakeIndentity4x4();
-	transformMatrix.WVP = QFE::MATH::Matrix4x4::MakeIndentity4x4();
+	transformMatrix.World = QFE::MATH::Matrix4x4::MakeIdentity4x4();
+	transformMatrix.WVP = QFE::MATH::Matrix4x4::MakeIdentity4x4();
 	QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 		resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("TransformMatrixBuffer");
 	// Material
@@ -321,6 +333,12 @@ bool QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
 	}
 	auto* device = graphicEngine->GetDirectXDevice();
 	auto* rc = graphicEngine->GetDirectXResourceContainer();
+
+	// サイズが0の場合は、無効化する
+	if (byteSize == 0) {
+		QFE::GRAPHIC::DirectXResourceHandle invalidHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		return true;
+	}
 
 	// 新規作成 or 既存サイズ取得
 	bool needCreateView = false;

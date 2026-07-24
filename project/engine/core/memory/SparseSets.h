@@ -108,6 +108,12 @@ namespace QFE {
 			}
 			return nullptr;
 		}
+		const T* Get(uint32_t key) const {
+			if (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
+				return &dense_[sparse_[key]];
+			}
+			return nullptr;
+		}
 
 		/// @brief キーに対応する要素が存在するかどうかを確認する。
 		bool Contains(uint32_t key) const {
@@ -154,6 +160,7 @@ namespace QFE {
 		bool empty() const { return dense_.empty(); }
 		void erase(uint32_t key) { Remove(key); }
 		T* find(uint32_t key) { return Get(key); }
+		const T* find(uint32_t key) const { return Get(key); }
 		T& operator[](uint32_t key) {
 			if (!Contains(key)) {
 				Insert(key, T{});

@@ -21,12 +21,7 @@ namespace QFE::MATH {
 		/** @brief 行列から位置・回転・スケールを抽出 */
 		void FromMatrix(const Matrix4x4& mat);
 
-		bool operator==(const EulerTransform& other) const noexcept { return this == &other; }
-		bool operator!=(const EulerTransform& other) const noexcept { return this != &other; }
-		bool operator<(const EulerTransform& other) const noexcept { return this < &other; }
-		bool operator<=(const EulerTransform& other) const noexcept { return this <= &other; }
-		bool operator>(const EulerTransform& other) const noexcept { return this > &other; }
-		bool operator>=(const EulerTransform& other) const noexcept { return this >= &other; }
+		bool operator==(const EulerTransform& other) const noexcept = default;
 	};
 
 	class QuaternionTransform final {

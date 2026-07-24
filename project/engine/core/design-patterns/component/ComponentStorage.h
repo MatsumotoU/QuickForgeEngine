@@ -44,7 +44,17 @@ namespace QFE {
 			}
 			throw std::runtime_error("Component not found");
 		}
+		const T& GetComponent(uint32_t id) const {
+			const T* ptr = components.find(id);
+			if (ptr) {
+				return *ptr;
+			}
+			throw std::runtime_error("Component not found");
+		}
 		T* GetComponentPtr(uint32_t id) {
+			return components.find(id);
+		}
+		const T* GetComponentPtr(uint32_t id) const {
 			return components.find(id);
 		}
 		void RemoveComponent(uint32_t id) override {

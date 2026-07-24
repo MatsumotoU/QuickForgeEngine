@@ -1,5 +1,6 @@
 #pragma once
 #include "IEditorWindow.h"
+#include <optional>
 #include <set>
 #include <stdint.h>
 
@@ -28,10 +29,16 @@ namespace QFE::EDITOR {
 		/// @brief ウィンドウがフォーカスされているかどうかを取得する
 		bool GetIsFocus() override;
 
+		/// @brief カメラフォーカスが要求されたEntity IDを取得し、要求をクリアする
+		std::optional<uint32_t> ConsumeCameraFocusRequest();
+		/// @brief Hierarchyで現在選択されているEntity IDを取得する
+		const std::set<uint32_t>& GetSelectedEntities() const;
+
 	private:
 		EntityManager* entityManager_;
 		bool isActive_;
 		std::set<uint32_t> hierarchySelectedEntities_;
 		bool isFocus_;
+		std::optional<uint32_t> cameraFocusRequest_;
 	};
 }

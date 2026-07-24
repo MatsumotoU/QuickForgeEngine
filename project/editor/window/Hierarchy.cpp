@@ -35,7 +35,7 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 	ImGuiChildFlags child_flags = ImGuiChildFlags_Border | ImGuiChildFlags_ResizeY;
 	if (ImGui::BeginChild("EntityList", ImVec2(0, 0), child_flags)) {
 
-		entityManager_->GetComponentStrage<QFE::SCENE::ObjectInfoComponent>().Each([&](
+		entityManager_->GetComponentStorage<QFE::SCENE::ObjectInfoComponent>().Each([&](
 			uint32_t entityId, QFE::SCENE::ObjectInfoComponent& objectInfoComp) {
 
 				bool currentSelected = hierarchySelectedEntities_.contains(entityId);
@@ -53,6 +53,10 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 						hierarchySelectedEntities_.clear();
 						hierarchySelectedEntities_.insert(entityId);
 					}
+				}
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					cameraFocusRequest_ = entityId;
 				}
 			});
 
@@ -123,4 +127,14 @@ bool QFE::EDITOR::Hierarchy::SetIsActive(bool isActive) {
 
 bool QFE::EDITOR::Hierarchy::GetIsFocus() {
 	return isFocus_;
+}
+
+std::optional<uint32_t> QFE::EDITOR::Hierarchy::ConsumeCameraFocusRequest() {
+	std::optional<uint32_t> request = cameraFocusRequest_;
+	cameraFocusRequest_.reset();
+	return request;
+}
+
+const std::set<uint32_t>& QFE::EDITOR::Hierarchy::GetSelectedEntities() const {
+	return hierarchySelectedEntities_;
 }

@@ -6,7 +6,7 @@ OnFocusEvent::OnFocusEvent(nlohmann::json& data) :IEvent(data) {}
 
 void OnFocusEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 	wparam; lparam;
-	QFE_LOG("Whindow Focused");
+	QFE_LOG("Window Focused");
 }
 
 UINT OnFocusEvent::GetEventType() {
