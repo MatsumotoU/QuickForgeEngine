@@ -7,14 +7,12 @@
 #include <nlohmann/json.hpp>
 #include "component/JsonArchive.h"
 #include "component/ComponentAutoRegistry.h"
-#include "component/DynamicComponent.h"
 #include "IEntityManager.h"
 
 namespace QFE {
 	class EntityManager final: public IEntityManager {
 	private:
 		std::unordered_map<size_t, std::unique_ptr<IComponentStorage>> componentStorages;
-		std::unordered_map<std::string, std::unique_ptr<DynamicComponentStorage>> dynamicComponentStorages_;
 		uint32_t nextEntityId_;
 		std::unordered_set<uint32_t> activeEntityIds_;
 		std::vector<uint32_t> entitiesToRemove_;
@@ -41,14 +39,6 @@ namespace QFE {
 		std::vector<std::string> GetComponentTypeNames(uint32_t entityId) const;
 		/// @brief 登録されている全てのコンポーネント型名の一覧を取得する。
 		std::vector<std::string> GetAllComponentTypeNames() const;
-		/// @brief DLLが公開したコンポーネント型を登録する。
-		bool RegisterDynamicComponent(const DynamicComponentDescriptor& descriptor);
-		/// @brief DLLコンポーネント型と、その型の全インスタンスを登録解除する。
-		bool UnregisterDynamicComponent(const std::string& componentTypeName);
-		/// @brief DLLコンポーネントかどうかを判定する。
-		bool IsDynamicComponentType(const std::string& componentTypeName) const;
-		/// @brief 登録済みDLLコンポーネントの更新関数を実行する。
-		void UpdateDynamicComponents(float deltaTime);
 
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントの生ポインタを取得する。
 		void* GetComponentRaw(uint32_t entityId, const char* componentTypeName) override;

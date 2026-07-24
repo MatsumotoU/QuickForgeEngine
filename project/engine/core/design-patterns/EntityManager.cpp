@@ -14,9 +14,6 @@ void QFE::EntityManager::EndFrame() {
         for (auto& [typeId, storage] : componentStorages) {
             storage->RemoveComponent(id);
         }
-		for (auto& [name, storage] : dynamicComponentStorages_) {
-			storage->RemoveComponent(id);
-		}
         activeEntityIds_.erase(id);
     }
     entitiesToRemove_.clear();
@@ -45,14 +42,6 @@ nlohmann::json QFE::EntityManager::SerializeEntityComponents(uint32_t entityId) 
             componentsJson[entry.name] = compJson; // マクロで定義した綺麗な名前がJSONのキーになる
         }
     }
-	for (const auto& [name, storage] : dynamicComponentStorages_) {
-		if (storage->HasComponent(entityId)) {
-			nlohmann::json compJson;
-			JsonArchive archive(compJson, false);
-			storage->ReflectComponent(entityId, archive);
-			componentsJson[name] = compJson;
-		}
-	}
     return componentsJson;
 }
 
@@ -75,17 +64,6 @@ void QFE::EntityManager::DeserializeEntityComponents(uint32_t entityId, const nl
             storagePtr->ReflectComponent(entityId, archive);
         }
     }
-	for (const auto& [name, storage] : dynamicComponentStorages_) {
-		if (!componentsJson.contains(name)) {
-			continue;
-		}
-		if (!storage->HasComponent(entityId)) {
-			storage->AddDefaultComponent(entityId);
-		}
-		nlohmann::json compJson = componentsJson[name];
-		JsonArchive archive(compJson, true);
-		storage->ReflectComponent(entityId, archive);
-	}
 }
 
 nlohmann::json QFE::EntityManager::SerializeComponent(uint32_t entityId, const std::string& componentTypeName) const {
@@ -101,11 +79,6 @@ std::vector<std::string> QFE::EntityManager::GetComponentTypeNames(uint32_t enti
             componentNames.push_back(entry.name); // マクロで定義した綺麗な名前を返す
         }
     }
-	for (const auto& [name, storage] : dynamicComponentStorages_) {
-		if (storage->HasComponent(entityId)) {
-			componentNames.push_back(name);
-		}
-	}
 	return componentNames;
 }
 
@@ -114,61 +87,13 @@ std::vector<std::string> QFE::EntityManager::GetAllComponentTypeNames() const {
     for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
         componentTypeNames.push_back(entry.name);
     }
-	for (const auto& [name, storage] : dynamicComponentStorages_) {
-		(void)storage;
-		componentTypeNames.push_back(name);
-	}
     return componentTypeNames;
-}
-
-bool QFE::EntityManager::RegisterDynamicComponent(const DynamicComponentDescriptor& descriptor) {
-	if (descriptor.stableName == nullptr || descriptor.stableName[0] == '\0' ||
-		dynamicComponentStorages_.contains(descriptor.stableName)) {
-		return false;
-	}
-	try {
-		dynamicComponentStorages_.emplace(
-			descriptor.stableName,
-			std::make_unique<DynamicComponentStorage>(descriptor));
-		return true;
-	} catch (...) {
-		return false;
-	}
-}
-
-bool QFE::EntityManager::UnregisterDynamicComponent(const std::string& componentTypeName) {
-	auto it = dynamicComponentStorages_.find(componentTypeName);
-	if (it == dynamicComponentStorages_.end()) {
-		return false;
-	}
-	// erase時にDynamicComponentStorageのデストラクタがDLL側destroyを呼ぶ。
-	// DLLがロードされている間に実行する必要がある。
-	dynamicComponentStorages_.erase(it);
-	return true;
-}
-
-bool QFE::EntityManager::IsDynamicComponentType(const std::string& componentTypeName) const {
-	return dynamicComponentStorages_.contains(componentTypeName);
-}
-
-void QFE::EntityManager::UpdateDynamicComponents(float deltaTime) {
-	for (auto& [name, storage] : dynamicComponentStorages_) {
-		(void)name;
-		for (uint32_t entityId : activeEntityIds_) {
-			if (storage->HasComponent(entityId)) {
-				storage->Update(entityId, deltaTime, this);
-			}
-		}
-	}
 }
 
 void QFE::EntityManager::ResetEntity() {
     for (auto& [typeId, storage] : componentStorages) {
         storage->Clear();
     }
-	for (auto& [name, storage] : dynamicComponentStorages_) {
-		storage->Clear();
-	}
     activeEntityIds_.clear();
     nextEntityId_ = 0;
 }
@@ -177,9 +102,6 @@ void QFE::EntityManager::InstantRemoveEntity(uint32_t id) {
     for (auto& [typeId, storage] : componentStorages) {
         storage->RemoveComponent(id);
     }
-	for (auto& [name, storage] : dynamicComponentStorages_) {
-		storage->RemoveComponent(id);
-	}
     activeEntityIds_.erase(id);
 }
 
@@ -209,13 +131,6 @@ bool QFE::EntityManager::IsActiveEntity(uint32_t id) const {
 }
 
 void* QFE::EntityManager::GetComponentRaw(uint32_t entityId, const char* componentTypeName) {
-	if (componentTypeName == nullptr) {
-		return nullptr;
-	}
-	auto dynamicIt = dynamicComponentStorages_.find(componentTypeName);
-	if (dynamicIt != dynamicComponentStorages_.end()) {
-		return dynamicIt->second->GetRawPtr(entityId);
-	}
 
 	// 自動登録されたコンポーネントのエントリーを走査する
     for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
@@ -237,14 +152,6 @@ void* QFE::EntityManager::GetComponentRaw(uint32_t entityId, const char* compone
 }
 
 void QFE::EntityManager::RemoveComponent(uint32_t entityId, const char* componentTypeName) {
-	if (componentTypeName == nullptr) {
-		return;
-	}
-	auto dynamicIt = dynamicComponentStorages_.find(componentTypeName);
-	if (dynamicIt != dynamicComponentStorages_.end()) {
-		dynamicIt->second->RemoveComponent(entityId);
-		return;
-	}
     // 自動登録されたコンポーネントのエントリーを走査する
     for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
         // 引数で渡された名前と、マクロで登録された名前が一致するかチェック
@@ -271,11 +178,6 @@ std::vector<uint32_t> QFE::EntityManager::GetActiveEntityIds() const {
 }
 
 void QFE::EntityManager::AddDefaultComponent(uint32_t id, const std::string& componentTypeName) {
-	auto dynamicIt = dynamicComponentStorages_.find(componentTypeName);
-	if (dynamicIt != dynamicComponentStorages_.end()) {
-		dynamicIt->second->AddDefaultComponent(id);
-		return;
-	}
     // 自動登録のエントリーを走査
     for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
         if (entry.name == componentTypeName) {
@@ -288,11 +190,6 @@ void QFE::EntityManager::AddDefaultComponent(uint32_t id, const std::string& com
 }
 
 void QFE::EntityManager::DeleteComponent(uint32_t id, const std::string& componentTypeName) {
-	auto dynamicIt = dynamicComponentStorages_.find(componentTypeName);
-	if (dynamicIt != dynamicComponentStorages_.end()) {
-		dynamicIt->second->RemoveComponent(id);
-		return;
-	}
     // 自動登録のエントリーを走査
     for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
         if (entry.name == componentTypeName) {
@@ -310,18 +207,9 @@ void QFE::EntityManager::ReflectionComponent(uint32_t id, Archive& ar) {
 		auto& storagePtr = componentStorages[entry.typeId];
         storagePtr->ReflectComponent(id, ar);
     }
-	for (auto& [name, storage] : dynamicComponentStorages_) {
-		(void)name;
-		storage->ReflectComponent(id, ar);
-	}
 }
 
 void QFE::EntityManager::ReflectionComponentByName(uint32_t entityId, const std::string& componentTypeName, QFE::Archive& archive) {
-	auto dynamicIt = dynamicComponentStorages_.find(componentTypeName);
-	if (dynamicIt != dynamicComponentStorages_.end()) {
-		dynamicIt->second->ReflectComponent(entityId, archive);
-		return;
-	}
     // 自動登録のエントリーを走査
     for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
         if (entry.name == componentTypeName) {

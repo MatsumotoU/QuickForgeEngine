@@ -51,6 +51,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		engineSystems)) {
 		return -1;
 	}
+	// QuickForgeエンジンの初期化
+	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
 	auto& gameWindowManager = engineSystems.windowManager;
 	auto& graphicEngine = engineSystems.graphicEngine;
 	auto& guiManager = engineSystems.guiManager;
@@ -62,14 +64,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// TestDll.dllをロードしてスクリプト関数の目録を取得
 	std::unique_ptr<QFE::SCRIPT::WindowsScriptInstance> scriptInstance;
 	std::wstring filePath;
-	scriptInstance = QFE::FRAMEWORK::LoadWindowsScriptInstance(
-		L"GameLogics.dll", "GetManifest", &entityManager);
-	if (!scriptInstance) {
-		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
-		return -1;
-	}
-	// シーンのデシリアライズより先にDLLコンポーネント型を登録する。
-	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
+	scriptInstance = QFE::FRAMEWORK::LoadWindowsScriptInstance(L"GameLogics.dll", "GetManifest");
 
 	// メインループ
 	while (QFE::FRAMEWORK::IsMainWindowActive(engineSystems.windowManager.get())) {
@@ -80,9 +75,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			break;
 		}
 
-			float deltaTime = fpsCounter->GetDeltaTime();
-			// DLLから登録されたコンポーネントのランタイム処理を実行する。
-			entityManager.UpdateDynamicComponents(deltaTime);
+		float deltaTime = fpsCounter->GetDeltaTime();
 
 			// AutoScroll
 			entityManager.Each<QFE::STG::AutoScrollComponent>([&](uint32_t entityId, QFE::STG::AutoScrollComponent& autoScrollComp) {
@@ -391,7 +384,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems);
 	}
 
-	QFE::FRAMEWORK::UnloadWindowsScriptInstance(scriptInstance.get(), &entityManager);
 	QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 	return 0;
 }
