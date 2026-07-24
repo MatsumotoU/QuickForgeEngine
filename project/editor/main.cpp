@@ -19,6 +19,8 @@
 #include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
+#include "framework/script/WindowsScriptWorkFrame.h"
+#include "script/ScriptInstance.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"
 
@@ -44,8 +46,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		engineSystems)) {
 		return -1;
 	}
-	// QuickForgeエンジンの初期化
-	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
 	auto& gameWindowManager = engineSystems.windowManager;
 	auto& graphicEngine = engineSystems.graphicEngine;
 	auto& guiManager = engineSystems.guiManager;
@@ -53,6 +53,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	auto& fpsCounter = engineSystems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	// DLLのコンポーネント目録をエディタにも登録する。
+	// DLLが存在しない場合も、エディタ自体は通常どおり起動できる。
+	std::unique_ptr<QFE::SCRIPT::WindowsScriptInstance> gamePlugin =
+		QFE::FRAMEWORK::LoadWindowsScriptInstance(
+			L"GameLogics.dll", "GetManifest", &entityManager);
+	// シーンを読む前にDLL型を登録しておく必要がある。
+	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
 
 	// エディタ用のシーンテクスチャ（レンダーターゲット）の作成
 	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
@@ -98,6 +105,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems);
 	}
 
+	QFE::FRAMEWORK::UnloadWindowsScriptInstance(gamePlugin.get(), &entityManager);
 	QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 	return 0;
 }
