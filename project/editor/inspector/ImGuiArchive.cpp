@@ -2,6 +2,9 @@
 #include "design-patterns/EntityManager.h"
 #include "components/ObjectInfoComponent.h"
 #include "components/TransformHierarchy.h"
+#include "assetfactory/model/PrimitiveFactoryFuncs.h"
+
+#include <filesystem>
 
 namespace {
 	const float kDragSpeed = 0.1f;
@@ -30,6 +33,81 @@ namespace {
 			[](unsigned char character) { return static_cast<char>(std::tolower(character)); });
 		return lowerName.find("color") != std::string::npos;
 	}
+
+	std::vector<std::string> FindResourceFiles(const std::vector<std::string>& extensions, bool removeExtension) {
+		std::vector<std::string> results;
+		std::error_code error;
+		const std::filesystem::path resourceRoot = "resources";
+		if (!std::filesystem::exists(resourceRoot, error)) {
+			return results;
+		}
+
+		for (std::filesystem::recursive_directory_iterator iterator(
+			resourceRoot,
+			std::filesystem::directory_options::skip_permission_denied,
+			error), end;
+			iterator != end;
+			iterator.increment(error)) {
+			if (error) {
+				error.clear();
+				continue;
+			}
+			if (!iterator->is_regular_file(error)) {
+				continue;
+			}
+
+			std::string extension = iterator->path().extension().string();
+			std::transform(extension.begin(), extension.end(), extension.begin(),
+				[](unsigned char character) { return static_cast<char>(std::tolower(character)); });
+			if (std::find(extensions.begin(), extensions.end(), extension) == extensions.end()) {
+				continue;
+			}
+
+			std::filesystem::path relativePath =
+				std::filesystem::relative(iterator->path(), resourceRoot, error);
+			if (error) {
+				error.clear();
+				continue;
+			}
+			if (removeExtension) {
+				relativePath.replace_extension();
+			}
+			results.push_back(relativePath.generic_string());
+		}
+
+		std::sort(results.begin(), results.end());
+		results.erase(std::unique(results.begin(), results.end()), results.end());
+		return results;
+	}
+
+	void DrawResourceCombo(
+		const std::string& label,
+		std::string& value,
+		const std::vector<std::string>& builtInOptions,
+		const std::vector<std::string>& extensions,
+		bool removeExtension,
+		const char* emptyLabel = nullptr) {
+		const char* preview = value.empty() && emptyLabel != nullptr ? emptyLabel : value.c_str();
+		if (!ImGui::BeginCombo(label.c_str(), preview)) {
+			return;
+		}
+		if (emptyLabel != nullptr && ImGui::Selectable(emptyLabel, value.empty())) {
+			value.clear();
+		}
+		std::vector<std::string> options = builtInOptions;
+		std::vector<std::string> resourceFiles = FindResourceFiles(extensions, removeExtension);
+		options.insert(options.end(), resourceFiles.begin(), resourceFiles.end());
+		for (const std::string& option : options) {
+			const bool selected = value == option;
+			if (ImGui::Selectable(option.c_str(), selected)) {
+				value = option;
+			}
+			if (selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
 }
 
 QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId) :
@@ -53,6 +131,19 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, uint32_t& value
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& value) {
+	if (name == "modelName") {
+		DrawResourceCombo(
+			MakeLabel(name), value, QFE::ASSET::GetPrimitiveMeshNames(), { ".obj" }, true);
+		return;
+	}
+	if (name == "textureName") {
+		DrawResourceCombo(
+			MakeLabel(name), value, {},
+			{ ".png", ".jpg", ".jpeg", ".dds", ".tga", ".bmp" },
+			false, "Auto (Embedded / White1x1)");
+		return;
+	}
+
 	const ImGuiInputTextFlags flags =
 		name == "uuid" ? ImGuiInputTextFlags_ReadOnly : ImGuiInputTextFlags_None;
 	ImGui::InputText(MakeLabel(name).c_str(), &value, flags);

@@ -10,6 +10,42 @@
 #include "script/ScriptInstance.h"
 #include "components/AllComponent.h"
 #include "components/TransformHierarchy.h"
+#include "assetfactory/model/PrimitiveFactoryFuncs.h"
+
+namespace {
+	bool EnsureModelData(
+		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+		const std::string& modelDir,
+		const std::string& modelName,
+		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelDataMap) {
+		const auto existing = modelDataMap.find(modelName);
+		if (existing != modelDataMap.end() && !existing->second.meshes.empty()) {
+			return true;
+		}
+
+		if (QFE::ASSET::IsPrimitiveMeshName(modelName)) {
+			std::vector<VertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(modelName);
+			if (vertices.empty()) {
+				return false;
+			}
+
+			QFE::ASSET::ModelData& modelData = modelDataMap[modelName];
+			modelData.name = modelName;
+			modelData.meshes.clear();
+			QFE::ASSET::MeshData mesh(vertices.size(), vertices.size());
+			mesh.vertices.GetInternalVector() = std::move(vertices);
+			std::vector<uint32_t>& indices = mesh.indices.GetInternalVector();
+			indices.resize(mesh.vertices.size());
+			for (uint32_t index = 0; index < indices.size(); ++index) {
+				indices[index] = index;
+			}
+			modelData.meshes.push_back(std::move(mesh));
+			return true;
+		}
+
+		return systems.modelLoader->LoadModel(modelDir + modelName + ".obj", modelDataMap[modelName]);
+	}
+}
 
 bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	HINSTANCE hInstance, 
@@ -181,6 +217,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	// 各エンティティのModelRenderComponentを更新
 	std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>> raytracingInstances;
 	std::vector<Material> raytracingMaterials;
+	std::vector<uint32_t> raytracingTextureIndices;
 	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
 		modelRenderComp.canRender = false;
 		// TransformComponentを取得して、EulerTransformを更新する
@@ -245,19 +282,25 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			}
 		}
 
-		// テクスチャの更新
+		// テクスチャの更新: White1x1 < モデル内蔵 < 明示指定
 		QFE::GRAPHIC::DirectXResourceHandle textureHandle;
 		QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+		std::string effectiveTextureName;
 		if (resources.modelDataMap.find(modelRenderComp.modelName) != resources.modelDataMap.end()) {
 			const QFE::ASSET::ModelData& modelData = resources.modelDataMap[modelRenderComp.modelName];
 			if (!modelData.meshes.empty() && !modelData.meshes[0].material.textureName.empty()) {
-				const std::string& textureFileName = modelData.meshes[0].material.textureName;
-				if (QFE::FRAMEWORK::LoadTexture(systems, resources.assetDir, textureFileName, resources.textureHandleMap, resources.textureGpuIndexMap, resources.nextTextureGpuIndex)) {
-					textureHandle = resources.textureHandleMap[textureFileName];
-				} else {
-					modelRenderComp.renderErrorMessage = "Failed to load texture: " + textureFileName;
-					return;
-				}
+				effectiveTextureName = modelData.meshes[0].material.textureName;
+			}
+		}
+		if (!modelRenderComp.textureName.empty()) {
+			effectiveTextureName = modelRenderComp.textureName;
+		}
+		if (!effectiveTextureName.empty()) {
+			if (QFE::FRAMEWORK::LoadTexture(systems, resources.assetDir, effectiveTextureName, resources.textureHandleMap, resources.textureGpuIndexMap, resources.nextTextureGpuIndex)) {
+				textureHandle = resources.textureHandleMap[effectiveTextureName];
+			} else {
+				modelRenderComp.renderErrorMessage = "Failed to load texture: " + effectiveTextureName;
+				return;
 			}
 		}
 		modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
@@ -274,6 +317,9 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			worldMatrix
 			});
 		raytracingMaterials.push_back(*materialData);
+		const auto textureIndex = resources.textureGpuIndexMap.find(effectiveTextureName);
+		raytracingTextureIndices.push_back(
+			textureIndex != resources.textureGpuIndexMap.end() ? textureIndex->second : 1u);
 
 		// レンダリング可能
 		modelRenderComp.canRender = true;
@@ -324,6 +370,9 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			instanceMeta.uvTransform = material.uvTransform;
 			instanceMeta.metallic = material.metallic;
 			instanceMeta.smoothness = material.smoothness;
+		}
+		if (instanceIndex < raytracingTextureIndices.size()) {
+			instanceMeta.materialIndex = raytracingTextureIndices[instanceIndex];
 		}
 		instanceMetaAligned.push_back(instanceMeta);
 	}
@@ -406,9 +455,7 @@ bool QFE::FRAMEWORK::LoadModelVertexData(
 	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& vertexBuffers) {
 
-	QFE::ASSET::AssimpModelLoader* modelLoader = systems.modelLoader.get();
-
-	if (modelLoader->LoadModel(modelDir + modelName + ".obj", modelData[modelName])) {
+	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
 		bool result = QFE::FRAMEWORK::CreateVertexBuffer(
 			systems.graphicEngine.get(),
 			modelData[modelName].meshes[0].vertices.GetInternalVector(),
@@ -424,8 +471,7 @@ bool QFE::FRAMEWORK::LoadModelIndexBuffer(
 	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& indexBuffers) {
 
-	QFE::ASSET::AssimpModelLoader* modelLoader = systems.modelLoader.get();
-	if (modelLoader->LoadModel(modelDir + modelName + ".obj", modelData[modelName])) {
+	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
 		bool result = QFE::FRAMEWORK::CreateIndexBuffer(
 			systems.graphicEngine.get(),
 			modelData[modelName].meshes[0].indices.GetInternalVector(),
@@ -441,8 +487,7 @@ bool QFE::FRAMEWORK::LoadModelAndCreateBLAS(
 	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle>& blasHandles) {
 
-	QFE::ASSET::AssimpModelLoader* modelLoader = systems.modelLoader.get();
-	if (modelLoader->LoadModel(modelDir + modelName + ".obj", modelData[modelName])) {
+	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
 		bool result = QFE::FRAMEWORK::CreateBLAS(
 			systems.graphicEngine.get(), modelData[modelName].meshes[0].vertices.GetInternalVector(),
 			modelData[modelName].meshes[0].indices.GetInternalVector(),
