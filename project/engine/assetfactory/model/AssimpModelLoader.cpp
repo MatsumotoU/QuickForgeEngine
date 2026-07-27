@@ -1,0 +1,300 @@
+#include "AssimpModelLoader.h"
+#include <cassert>
+#include <format>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include <map>
+
+#include "EngineDefines.h"
+#include "file/FileUtility.h"
+
+using namespace QFE::ASSET;
+
+void AssimpModelLoader::Initialize() {
+	// キャッシュを初期化する
+	modelCache.clear();
+	invalidModelData = ModelData(); // 無効なモデルデータを初期化
+	QFE_LOG("AssimpModelLoader initialized, model cache cleared.");
+}
+
+bool QFE::ASSET::AssimpModelLoader::LoadModel(const std::string& filePath, ModelData& modelData) {
+	if (IsModelCached(filePath)) {
+		modelData = modelCache[filePath];
+		return true;
+	} else {
+		if (LoadModelData(filePath, modelData)) {
+			modelCache[filePath] = modelData; // キャッシュに保存
+			return true;
+		} else {
+			QFE_LOG(std::format("Failed to load model: {}", filePath));
+			return false;
+		}
+	}
+	return false;
+}
+
+ModelData& AssimpModelLoader::LoadModel(const std::string& filePath) {
+	// キャッシュにモデルデータが存在する場合はキャッシュから返す
+	if (IsModelCached(filePath)) {
+		return modelCache[filePath];
+	} else {
+		LoadModelData(filePath, modelCache[filePath]);
+		return modelCache[filePath];
+	}
+}
+
+SkinningModelData& QFE::ASSET::AssimpModelLoader::LoadSkinningModel(const std::string& filePath) {
+	// キャッシュにスキニングモデルデータが存在する場合はキャッシュから返す
+	if (skinningModelCache.find(filePath) != skinningModelCache.end()) {
+		return skinningModelCache[filePath];
+	} else {
+		LoadSkinningModelData(filePath, skinningModelCache[filePath]);
+		return skinningModelCache[filePath];
+	}
+}
+
+ModelData& AssimpModelLoader::ForceLoadModel(const std::string& filePath) {
+	// キャッシュを無視した場合ログを出力する
+	if (IsModelCached(filePath)) {
+		QFE_LOG(std::format("Force loading model, but it is already cached: {}", filePath));
+	}
+
+	// キャッシュを無視して新たにモデルデータを読み込む,キャッシュに存在する場合は上書きする
+	LoadModelData(filePath, modelCache[filePath]);
+	return modelCache[filePath];
+}
+
+bool AssimpModelLoader::IsModelCached(const std::string& filePath) const {
+	// キャッシュにモデルデータが存在するかどうかを確認
+	if (modelCache.find(filePath) != modelCache.end()) {
+		QFE_LOG(std::format("Model found in cache: {}", filePath));
+		return true;
+	} else {
+		QFE_LOG(std::format("Model not found in cache: {}", filePath));
+		return false;
+	}
+}
+
+bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& modelData) {
+	Assimp::Importer importer;
+	// ファイルの存在確認
+	if (!QFE::FILE::HasFile(filePath)) {
+		QFE_LOG(std::format("Model file not found: {}", filePath));
+		assert(false && "Model file not found");
+		return false;
+	}
+
+	// モデルの名前を設定
+	modelData.name = QFE::FILE::GetFileName(filePath);
+
+	// モデルの読み込み
+	const aiScene* scene = importer.ReadFile(
+		filePath,
+		aiProcess_Triangulate |
+		aiProcess_FlipUVs |
+		aiProcess_GenNormals
+	);
+	if (!scene || !scene->HasMeshes()) {
+		assert(false && "Failed to load model");
+		return false;
+	}
+
+	QFE_LOG(std::format("Model Load Success: {}", filePath));
+
+	for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; ++meshIdx) {
+		const aiMesh* mesh = scene->mMeshes[meshIdx];
+
+		QFE_LOG(std::format("Loading Mesh {} / {}", meshIdx + 1, scene->mNumMeshes));
+		QFE_LOG(std::format("UVChannel: {}", mesh->GetNumUVChannels()));
+		QFE_LOG(std::format("ColorChannel: {}", mesh->GetNumColorChannels()));
+		QFE_LOG(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
+
+		// 1) 元頂点配列を作る（mesh->mNumVertices 個）
+		std::vector<VertexData> tempVertices;
+		tempVertices.reserve(mesh->mNumVertices);
+		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+			VertexData vtx;
+			vtx.position.x = mesh->mVertices[i].x;
+			vtx.position.y = mesh->mVertices[i].y;
+			vtx.position.z = mesh->mVertices[i].z;
+			vtx.position.w = 1.0f;
+
+			if (mesh->HasTextureCoords(0)) {
+				vtx.texcoord.x = mesh->mTextureCoords[0][i].x;
+				vtx.texcoord.y = mesh->mTextureCoords[0][i].y;
+			} else {
+				vtx.texcoord.x = 0.0f;
+				vtx.texcoord.y = 0.0f;
+			}
+			if (mesh->HasNormals()) {
+				vtx.normal.x = mesh->mNormals[i].x;
+				vtx.normal.y = mesh->mNormals[i].y;
+				vtx.normal.z = mesh->mNormals[i].z;
+			} else {
+				vtx.normal.x = 0.0f;
+				vtx.normal.y = 0.0f;
+				vtx.normal.z = 1.0f;
+			}
+			tempVertices.push_back(vtx);
+		}
+
+		// 2) MeshData を頂点数とインデックス数で初期化
+		MeshData meshData(mesh->mNumVertices, mesh->mNumFaces * 3);
+
+		// 3) tempVertices を meshData.vertices にコピー
+		{
+			auto& dst = meshData.vertices.GetInternalVector();
+			dst = std::move(tempVertices); // 所有権を移す（コピーでも可）
+		}
+
+		// 4) faces からインデックス配列を作成（Assimp の face.mIndices をそのまま使用）
+		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
+			const aiFace& face = mesh->mFaces[i];
+			if (face.mNumIndices == 3) {
+				meshData.indices.push_back(static_cast<uint32_t>(face.mIndices[0]));
+				meshData.indices.push_back(static_cast<uint32_t>(face.mIndices[1]));
+				meshData.indices.push_back(static_cast<uint32_t>(face.mIndices[2]));
+			}
+		}
+
+		// 5) マテリアルの読み込み（既存コード）
+		if (scene->HasMaterials() && mesh->mMaterialIndex < scene->mNumMaterials) {
+			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+			aiString texPath;
+			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
+				meshData.material.textureName = std::string(texPath.C_Str());
+				QFE_LOG(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureName));
+			} else {
+				meshData.material.textureName = "";
+				QFE_LOG(std::format("No diffuse texture found for mesh {}. Setting empty texture path.", meshIdx));
+			}
+		}
+
+		modelData.meshes.push_back(std::move(meshData));
+	}
+
+	return true;
+}
+
+bool QFE::ASSET::AssimpModelLoader::LoadSkinningModelData(const std::string& filePath, SkinningModelData& skinningModelData) {
+	Assimp::Importer importer;
+	// ファイルの存在確認
+	if (!QFE::FILE::HasFile(filePath)) {
+		QFE_LOG(std::format("Model file not found: {}", filePath));
+		assert(false && "Model file not found");
+		return false;
+	}
+
+	// モデルの名前を設定
+	skinningModelData.name = QFE::FILE::GetFileName(filePath);
+
+	// モデルの読み込み
+	const aiScene* scene = importer.ReadFile(
+		filePath,
+		aiProcess_Triangulate |
+		aiProcess_FlipUVs |
+		aiProcess_GenNormals
+	);
+	if (!scene || !scene->HasMeshes()) {
+		assert(false && "Failed to load model");
+		return false;
+	}
+
+	QFE_LOG(std::format("Model Load Success: {}", filePath));
+
+	for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; ++meshIdx) {
+		const aiMesh* mesh = scene->mMeshes[meshIdx];
+
+		QFE_LOG(std::format("Loading Mesh {} / {}", meshIdx + 1, scene->mNumMeshes));
+		QFE_LOG(std::format("UVChannel: {}", mesh->GetNumUVChannels()));
+		QFE_LOG(std::format("ColorChannel: {}", mesh->GetNumColorChannels()));
+		QFE_LOG(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
+
+		// 頂点データの読み込み
+		std::vector<VertexData> tempVertices;
+		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+			VertexData vtx;
+			vtx.position.x = mesh->mVertices[i].x;
+			vtx.position.y = mesh->mVertices[i].y;
+			vtx.position.z = mesh->mVertices[i].z;
+			vtx.position.w = 1.0f;
+
+			if (mesh->HasTextureCoords(0)) {
+				vtx.texcoord.x = mesh->mTextureCoords[0][i].x;
+				vtx.texcoord.y = mesh->mTextureCoords[0][i].y;
+			} else {
+				vtx.texcoord.x = 0.0f;
+				vtx.texcoord.y = 0.0f;
+			}
+			if (mesh->HasNormals()) {
+				vtx.normal.x = mesh->mNormals[i].x;
+				vtx.normal.y = mesh->mNormals[i].y;
+				vtx.normal.z = mesh->mNormals[i].z;
+			} else {
+				vtx.normal.x = 0.0f;
+				vtx.normal.y = 0.0f;
+				vtx.normal.z = 1.0f;
+			}
+			tempVertices.push_back(vtx);
+		}
+
+		SkinningMeshData meshData(mesh->mNumFaces * 3);
+
+		// 面データの読み込み
+		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
+			const aiFace& face = mesh->mFaces[i];
+			if (face.mNumIndices == 3) {
+				meshData.vertices.push_back(tempVertices[face.mIndices[0]]);
+				meshData.vertices.push_back(tempVertices[face.mIndices[1]]);
+				meshData.vertices.push_back(tempVertices[face.mIndices[2]]);
+			}
+		}
+
+		//Skinning情報の読み込み
+		for(uint32_t boneIndex = 0;boneIndex<mesh->mNumBones;++boneIndex) {
+			const aiBone* bone = mesh->mBones[boneIndex];
+			std::string jointName(bone->mName.C_Str());
+			auto [it, inserted] = meshData.jointWeights.try_emplace(jointName, bone->mNumWeights);
+			JointWeightData& jointWeightData = it->second;
+
+			aiMatrix4x4 bindPoseMatrix = bone->mOffsetMatrix;
+			aiVector3D scale, translate;
+			aiQuaternion rotation;
+			bindPoseMatrix.Decompose(scale, rotation, translate);
+			QFE::MATH::Matrix4x4 bindPose = 
+				QFE::MATH::Matrix4x4::MakeAffineMatrix(
+					{ translate.x, translate.y, translate.z }, 
+					{ rotation.x, rotation.y, rotation.z, rotation.w }, 
+					{ scale.x, scale.y, scale.z }
+				);
+			jointWeightData.inverseBindPoseMatrix = bindPose.Inverse();
+			for(uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
+				const aiVertexWeight& vertexWeight = bone->mWeights[weightIndex];
+				VertexWeightData vtxWeight(bone->mNumWeights);
+				vtxWeight.vertexIndex = vertexWeight.mVertexId;
+				vtxWeight.weight = vertexWeight.mWeight;
+				jointWeightData.vertexWeights.push_back(vtxWeight);
+			}
+		}
+
+		// マテリアルの読み込み
+		if (scene->HasMaterials() && mesh->mMaterialIndex < scene->mNumMaterials) {
+			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+			aiString texPath;
+			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
+				meshData.material.textureName = std::string(texPath.C_Str());
+				QFE_LOG(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureName));
+
+			} else {
+				meshData.material.textureName = "";
+				QFE_LOG(std::format("No diffuse texture found for mesh {}. Setting empty texture path.", meshIdx));
+			}
+		}
+
+		skinningModelData.meshes.push_back(std::move(meshData));
+	}
+
+	return true;
+}

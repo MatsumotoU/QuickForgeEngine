@@ -254,8 +254,8 @@ namespace ImGuizmo
          return (x * v.x) + (y * v.y) + (z * v.z);
       }
 
-      void Transform(const matrix_t& matrix);
-      void Transform(const vec_t& s, const matrix_t& matrix);
+      void EulerTransform(const matrix_t& matrix);
+      void EulerTransform(const vec_t& s, const matrix_t& matrix);
 
       void TransformVector(const matrix_t& matrix);
       void TransformPoint(const matrix_t& matrix);
@@ -407,7 +407,7 @@ namespace ImGuizmo
       }
    };
 
-   void vec_t::Transform(const matrix_t& matrix)
+   void vec_t::EulerTransform(const matrix_t& matrix)
    {
       vec_t out;
 
@@ -422,10 +422,10 @@ namespace ImGuizmo
       w = out.w;
    }
 
-   void vec_t::Transform(const vec_t& s, const matrix_t& matrix)
+   void vec_t::EulerTransform(const vec_t& s, const matrix_t& matrix)
    {
       *this = s;
-      Transform(matrix);
+      EulerTransform(matrix);
    }
 
    void vec_t::TransformPoint(const matrix_t& matrix)
@@ -785,10 +785,10 @@ namespace ImGuizmo
       const float zNear = gContext.mReversed ? (1.f - FLT_EPSILON) : 0.f;
       const float zFar = gContext.mReversed ? 0.f : (1.f - FLT_EPSILON);
 
-      rayOrigin.Transform(makeVect(mox, moy, zNear, 1.f), mViewProjInverse);
+      rayOrigin.EulerTransform(makeVect(mox, moy, zNear, 1.f), mViewProjInverse);
       rayOrigin *= 1.f / rayOrigin.w;
       vec_t rayEnd;
-      rayEnd.Transform(makeVect(mox, moy, zFar, 1.f), mViewProjInverse);
+      rayEnd.EulerTransform(makeVect(mox, moy, zFar, 1.f), mViewProjInverse);
       rayEnd *= 1.f / rayEnd.w;
       rayDir = Normalized(rayEnd - rayOrigin);
    }
@@ -1007,8 +1007,8 @@ namespace ImGuizmo
 
       // projection reverse
        vec_t nearPos, farPos;
-       nearPos.Transform(makeVect(0, 0, 1.f, 1.f), gContext.mProjectionMat);
-       farPos.Transform(makeVect(0, 0, 2.f, 1.f), gContext.mProjectionMat);
+       nearPos.EulerTransform(makeVect(0, 0, 1.f, 1.f), gContext.mProjectionMat);
+       farPos.EulerTransform(makeVect(0, 0, 2.f, 1.f), gContext.mProjectionMat);
 
        gContext.mReversed = (nearPos.z/nearPos.w) > (farPos.z / farPos.w);
 

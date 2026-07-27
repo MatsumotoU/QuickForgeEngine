@@ -98,7 +98,7 @@ public:
     /// @brief  The copy constructor.
     const aiVector3t& operator /= (TReal f);
 
-    /// @brief  Transform vector by matrix
+    /// @brief  EulerTransform vector by matrix
     aiVector3t& operator *= (const aiMatrix3x3t<TReal>& mat);
     aiVector3t& operator *= (const aiMatrix4x4t<TReal>& mat);
 

@@ -1,0 +1,31 @@
+{
+    "CsharpComponent": {
+        "CsharpHandles": [
+            {
+                "ClassName": "AreaSpawnEntity"
+            }
+        ]
+    },
+    "SceneObjectData": {
+        "name": "EnemySpawnPoint",
+        "tag": "SkySingleShotEnemy.json",
+        "uniqueId": 136
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            -0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            -3.770810127258301,
+            2.9040889739990234,
+            27.524749755859375
+        ]
+    }
+}

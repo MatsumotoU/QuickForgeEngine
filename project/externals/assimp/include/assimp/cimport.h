@@ -496,7 +496,7 @@ ASSIMP_API void aiTransposeMatrix3(
         C_STRUCT aiMatrix3x3 *mat);
 
 // --------------------------------------------------------------------------------
-/** Transform a vector by a 3x3 matrix
+/** EulerTransform a vector by a 3x3 matrix
  *  @param vec Vector to be transformed.
  *  @param mat Matrix to transform the vector with.
  */
@@ -505,7 +505,7 @@ ASSIMP_API void aiTransformVecByMatrix3(
         const C_STRUCT aiMatrix3x3 *mat);
 
 // --------------------------------------------------------------------------------
-/** Transform a vector by a 4x4 matrix
+/** EulerTransform a vector by a 4x4 matrix
  *  @param vec Vector to be transformed.
  *  @param mat Matrix to transform the vector with.
  */

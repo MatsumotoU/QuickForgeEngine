@@ -5224,7 +5224,7 @@ void ShowAxisMetrics(const ImPlotPlot& plot, const ImPlotAxis& axis) {
     ImGui::BulletText("Hovered: %s", axis.Hovered ? "true" : "false");
     ImGui::BulletText("Held: %s", axis.Held ? "true" : "false");
 
-    if (ImGui::TreeNode("Transform")) {
+    if (ImGui::TreeNode("EulerTransform")) {
         ImGui::BulletText("PixelMin: %f", axis.PixelMin);
         ImGui::BulletText("PixelMax: %f", axis.PixelMax);
         ImGui::BulletText("ScaleToPixel: %f", axis.ScaleToPixel);

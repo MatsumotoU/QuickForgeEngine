@@ -41,9 +41,6 @@ imgui.ini
 premake5.exe
 premake.zip
 
-# GameResources
-Resources/
-
 ########################################
 # Keep List
 ########################################

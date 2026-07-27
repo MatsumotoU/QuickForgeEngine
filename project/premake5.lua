@@ -1,3 +1,6 @@
+-- include: サブフォルダの premake を workspace スコープ内で読み込む
+local _root = path.getdirectory(_SCRIPT)
+
 -- Solution
 workspace "QuickForgeEngine"
     architecture "x64"
@@ -21,6 +24,7 @@ workspace "QuickForgeEngine"
             "/permissive-",
             "/Zc:__cplusplus",
             "/utf-8",
+            "/std:c++20",
         }
 
        if not os.getenv("SONAR_SCAN") then
@@ -29,16 +33,21 @@ workspace "QuickForgeEngine"
 
         linkoptions { "/ignore:4099" }
     filter ""
-    
+
     filter "configurations:Debug"
-        defines { "_DEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEBUG"}
+        defines { "_DEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEBUG","USE_IMGUI"}
         optimize "Off"
         symbols "On"
         runtime "Debug"
     filter "configurations:Development"
-        defines { "NDEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEVELOPMENT" } 
+        defines { "NDEBUG", "QFE_OPTIMIZE_OFF","QFE_MODE_DEVELOPMENT","USE_IMGUI"}
         optimize "Off"  -- プロジェクト全体設定は無効（VS上で最適化「無効」に見える）
         symbols "On"     -- デバッグ情報を出す
+        runtime "Release"
+    filter "configurations:Release"
+        defines { "NDEBUG", "QFE_OPTIMIZE_ON","QFE_MODE_RELEASE","NO_IMGUI" }
+        optimize "On"
+        symbols "Off"
         runtime "Release"
     filter ""
 
@@ -46,210 +55,70 @@ workspace "QuickForgeEngine"
     filter { "configurations:Development", "files:**.cpp" }
         optimize "On"
     filter ""
-    filter "configurations:Release"
-        defines { "NDEBUG", "QFE_OPTIMIZE_ON","QFE_MODE_RELEASE" }
-        optimize "On"
-        symbols "Off"
-        runtime "Release"
-    filter ""
-    
-group "QuickForge" -- MyMainProject
-    project "Editor" -- Editor
-        location "editor"
-        kind "WindowedApp"
-        language "C++"
-        debugdir "%{wks.location}"
-        files {
-            "editor/**.h",
-            "editor/**.cpp"
-        }
-        links{
-            "Engine",
-            "ExternalFolders"
-        }
 
-        -- 警告レベル4
-        warnings "Extra"
-        flags { "FatalWarnings" } --すべての警告をエラーとします
-    
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "./externals/",
-            "./externals/sol2",
-            "./externals/assimp/",
-            "./externals/assimp/include/",
-            "./externals/DirectXTex/",
-            "./externals/imgui/",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
-            "./externals/nlohmann/",
-        }
-        -- 追加のインクルード
-        includedirs{
-            "./",
-            "./engine/include/",
-        }
-
-        -- リソースのコピー（Release構成のみ）
-        filter "configurations:Release"
-            postbuildcommands {
-                '{COPYDIR} "../Resources" "%{cfg.targetdir}/Resources"',
-            }
-        filter ""
-
-        -- MonoとWindows SDKのDLLをコピー
-        postbuildcommands {
-            -- フォルダのコピー
-            '{COPYDIR} "../engine/resources" "%{cfg.targetdir}/engine/resources"',
-            '{COPYDIR} "../externals/Mono/lib" "%{cfg.targetdir}/mono/lib"',
-            '{COPYDIR} "../externals/Mono/etc" "%{cfg.targetdir}/mono/etc"',
-    
-            -- ファイルのコピー
-            '{COPY} "../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"',
-            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxcompiler.dll" "%{cfg.targetdir}"',
-            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxil.dll" "%{cfg.targetdir}"'
-        }       
-
-    project "SandBox"
-        location "sandbox"
-        kind "WindowedApp"
-        language "C++"
-        debugdir "%{wks.location}"
-        files {"sandbox/**.h","sandbox/**.cpp"}
-        links{
-            "Engine",
-            "ExternalFolders"
-        }
-        libdirs {
-            "externals/Mono/lib"
-        }
-
-        -- 警告レベル4
-        warnings "Extra"
-
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "./externals/",
-            "./externals/sol2",
-            "./externals/assimp/",
-            "./externals/assimp/include/",
-            "./externals/DirectXTex/",
-            "./externals/imgui/",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
-            "./externals/nlohmann/",
-        }
-
-        -- 追加のインクルード
-        includedirs{
-            "./",
-            "./engine/include/",
-        }
-
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "./externals/",
-            "./externals/sol2",
-            "./externals/assimp/",
-            "./externals/assimp/include/",
-            "./externals/DirectXTex/",
-            "./externals/imgui/",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
-            "./externals/nlohmann/",
-        }
-        
-        -- リソースのコピー（Release構成のみ）
-        filter "configurations:Release"
-            postbuildcommands {
-                '{COPYDIR} "../Resources" "%{cfg.targetdir}/Resources"',
-            }
-        filter ""
-
-        -- MonoとWindows SDKのDLLをコピー
-        postbuildcommands {
-            -- フォルダのコピー
-            '{COPYDIR} "../engine/resources" "%{cfg.targetdir}/engine/resources"',
-            '{COPYDIR} "../externals/Mono/lib" "%{cfg.targetdir}/mono/lib"',
-            '{COPYDIR} "../externals/Mono/etc" "%{cfg.targetdir}/mono/etc"',
-    
-            -- ファイルのコピー
-            '{COPY} "../externals/Mono/bin/mono-2.0-sgen.dll" "%{cfg.targetdir}"',
-            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxcompiler.dll" "%{cfg.targetdir}"',
-            '{COPY} "$(WindowsSdkDir)bin/$(TargetPlatformVersion)/x64/dxil.dll" "%{cfg.targetdir}"'
-        } 
-
-    project "Engine" -- Engine
-        location "engine"
-        kind "StaticLib" 
-        language "C++"
-        debugdir "%{wks.location}"
-        files {"engine/**.h","engine/**.cpp"}
-        links{
-            "DirectXTex",
-            "ImGui",
-            "mono-2.0-sgen",
-            "ExternalFolders"
-        }
-        libdirs {
-            "externals/Mono/lib"
-        }
-
-        -- 警告レベル4
-        warnings "Extra"
-
-        -- 外部ファイルのインクルード
-        externalincludedirs {
-            "./externals/",
-            "./externals/sol2",
-            "./externals/assimp/",
-            "./externals/assimp/include/",
-            "./externals/DirectXTex/",
-            "./externals/imgui/",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
-            "./externals/nlohmann/",
-        }
-
-        -- 追加のインクルード
-        includedirs{
-            "./",
-            "./engine/include/",
-        }
-
-        prebuildcommands {
-            'call "%{wks.location}\\build\\GenerateBuildInfo.bat"',
-            'call "%{wks.location}\\externals\\Mono\\setup_mono.bat"'
-        }
-
-        filter "configurations:Debug"
-            links { "assimp-vc143-mtd" }
-            libdirs {
-                "externals/assimp/lib/Debug"
-            }
-        filter "configurations:Release or configurations:Development"
-            links { "assimp-vc143-mt" }
-            libdirs {
-                "externals/assimp/lib/Release"
-            }
-        filter ""
-
-    project "launcher" -- Launcher
-        location "launcher"
-        kind "StaticLib" 
-        language "C++"
-        
-        debugdir "%{wks.location}"
+group "00_System" -- すべての土台のプロジェクト
+    dofile(path.join(_root, "engine/resources/premake5.lua"))
+    -- 異存なしのコアプロジェクトの読み込み
+    dofile(path.join(_root, "engine/core/premake5.lua"))
 group ""
 
--- MySubProject
-project "Resource"
-    location "Resources"
-    kind "None"
+group "01_SubSystems" -- 独立した機能を提供するプロジェクト達
+    -- ウィンドウシステムプロジェクトの読み込み
+    dofile(path.join(_root, "engine/window/premake5.lua"))
+    -- グラフィックエンジンプロジェクトの読み込み
+    dofile(path.join(_root, "engine/graphics/premake5.lua"))
+    -- GUIプロジェクトの読み込み
+    dofile(path.join(_root, "engine/gui/premake5.lua"))
+    -- Inputプロジェクトの読み込み
+    dofile(path.join(_root, "engine/input/premake5.lua"))
+
+group ""
+
+group "02_Middleware" -- アセットの読み込みや、サブシステムで使うデータを提供するプロジェクト達
+    -- アセットファクトリープロジェクトの読み込み
+    dofile(path.join(_root, "engine/assetfactory/premake5.lua"))
+    -- カメラプロジェクトの読み込み
+    dofile(path.join(_root, "engine/camera/premake5.lua"))
+    -- シーンプロジェクトの読み込み
+    dofile(path.join(_root, "engine/scene/premake5.lua"))
+    -- コンポーネントプロジェクトの読み込み
+    dofile(path.join(_root, "engine/components/premake5.lua"))
+    -- スクリプトプロジェクトの読み込み
+    dofile(path.join(_root, "engine/script/premake5.lua"))
+
+group ""
+
+group "03_Frameworks" -- 下層の処理をまとめるフレームワークプロジェクト達
+    -- アプリケーションフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/application/premake5.lua"))
+    -- グラフィックフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/graphic/premake5.lua"))
+    -- ウィンドウフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/window/premake5.lua"))
+    -- GUIフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/gui/premake5.lua"))
+    -- Inputフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/input/premake5.lua"))
+    -- Sceneフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/scene/premake5.lua"))
+    -- Scriptフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/script/premake5.lua"))
+    -- AssetFactoryフレームワークプロジェクトの読み込み
+    dofile(path.join(_root, "engine/framework/assets/premake5.lua"))
+group ""
+
+group "04_Applications" -- アプリケーションプロジェクト達
+    -- エディタープロジェクトの読み込み
+    dofile(path.join(_root, "editor/premake5.lua"))
+    -- サンドボックスプロジェクトの読み込み
+    dofile(path.join(_root, "sandbox/premake5.lua"))
+    -- Runtimeプロジェクトの読み込み
+    dofile(path.join(_root, "runtime/premake5.lua"))
+    -- ランチャープロジェクトの読み込み
+    dofile(path.join(_root, "launcher/premake5.lua"))
+    -- ゲームロジック記述用のプロジェクトの読み込み
+    dofile(path.join(_root, "gamelogics/premake5.lua"))
+group ""
 
 group "External"
 project "ExternalFolders"
@@ -259,14 +128,28 @@ project "ExternalFolders"
         "externals/**"
     }
 
--- ExternalsProject
+-- ImGui
+project "ImGui"
+    location "externals/imgui"
+    kind "StaticLib"
+    language "C++"
+    includedirs {
+        "externals/imgui",
+    }
+
+    files {
+        "externals/imgui/**.h",
+        "externals/imgui/**.cpp",
+    }
+
+-- DirectXTex
 project "DirectXTex"
     location "externals/DirectXTex"
-    kind "StaticLib" 
+    kind "StaticLib"
     language "C++"
 
     includedirs {
-        "externals/DirectXTex", 
+        "externals/DirectXTex",
         "externals/DirectXTex/Shaders/Compiled"
     }
 
@@ -281,26 +164,13 @@ project "DirectXTex"
             "cd Shaders && CompileShaders.cmd"
         }
 
-project "ImGui"
-    location "externals/imgui"
-    kind "StaticLib" 
-    language "C++"
-    includedirs {
-        "externals/imgui", 
-    }
-
-    files {
-        "externals/imgui/**.h",
-        "externals/imgui/**.cpp",
-    }
-
 group "Docs"
     project "DevelopmentRules"
         kind "None" -- コンパイルしない設定
         location "./" -- slnと同じ場所に置く
-   
-        files { 
-            "DEVELOPMENT_RULE.md", 
+
+        files {
+            "DEVELOPMENT_RULE.md",
         }
 
     vpaths {

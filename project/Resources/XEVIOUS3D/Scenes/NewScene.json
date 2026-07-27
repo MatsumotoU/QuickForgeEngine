@@ -1,0 +1,130 @@
+{
+    "entities": [
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "DebugCamera",
+                "tag": "camera",
+                "uniqueId": 3716547978
+            },
+            "Transform": {
+                "rotate": [
+                    0.34389063715934753,
+                    0.29250019788742065,
+                    -0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    -5.351076602935791,
+                    6.6459126472473145,
+                    -17.7695369720459
+                ]
+            }
+        },
+        {
+            "CameraData": {
+                "farZ": 100.0,
+                "fovY": 0.44999998807907104,
+                "nearZ": 0.10000000149011612
+            },
+            "SceneObjectData": {
+                "name": "Camera",
+                "tag": "camera",
+                "uniqueId": 3716547979
+            },
+            "Transform": {
+                "rotate": [
+                    0.10000000149011612,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    1.5,
+                    -10.0
+                ]
+            }
+        },
+        {
+            "AnimationComponent": {
+                "clipName": "test"
+            },
+            "ModelHandle": {
+                "color": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "modelName": "box.obj"
+            },
+            "SceneObjectData": {
+                "name": "box.obj",
+                "tag": "Untagged",
+                "uniqueId": 3716547980
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "CsharpComponent": {
+                "CsharpHandles": [
+                    {
+                        "ClassName": "GrayScaleTest"
+                    }
+                ]
+            },
+            "SceneObjectData": {
+                "name": "EmptyObject",
+                "tag": "Untagged",
+                "uniqueId": 3716547981
+            },
+            "Transform": {
+                "rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    ],
+    "sceneName": "NewScene"
+}

@@ -1,0 +1,53 @@
+{
+    "BulletComponent": {
+        "damage": 1,
+        "dir": {
+            "x": 0.0,
+            "y": -0.4000000059604645,
+            "z": 0.6000000238418579
+        },
+        "isGravity": false,
+        "lifeTime": 0.0,
+        "lifeTimeMax": 3.0,
+        "mask": 1,
+        "speed": 3.0
+    },
+    "MaterialComponent": {
+        "albedoColor": {
+            "w": 1.0,
+            "x": 1.0,
+            "y": 0.29411762952804565,
+            "z": 0.0
+        }
+    },
+    "ModelRenderComponent": {
+        "modelName": "box"
+    },
+    "ObjectInfoComponent": {
+        "name": "Bomb"
+    },
+    "SphereColliderComponent": {
+        "mask": 1,
+        "onCollisionEnterScriptFunctionName": "",
+        "radius": 1.0
+    },
+    "TransformComponent": {
+        "transform": {
+            "rotate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.30000001192092896,
+                "y": 0.30000001192092896,
+                "z": 0.5
+            },
+            "translate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        }
+    }
+}
