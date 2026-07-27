@@ -179,6 +179,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 
 	// 各エンティティのModelRenderComponentを更新
 	std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>> raytracingInstances;
+	std::vector<Material> raytracingMaterials;
 	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
 		modelRenderComp.canRender = false;
 		// TransformComponentを取得して、EulerTransformを更新する
@@ -269,6 +270,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			resources.blasHandleMap[modelRenderComp.modelName],
 			QFE::MATH::Matrix4x4::MakeAffineMatrix(entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform)
 			});
+		raytracingMaterials.push_back(*materialData);
 
 		// レンダリング可能
 		modelRenderComp.canRender = true;
@@ -276,14 +278,14 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		});
 
 	// 1) global arrays とモデル→meta マップを作る
-	std::vector<float> globalUVs;
+	std::vector<RaytracingVertexAttribute> globalVertexAttributes;
 	std::vector<uint32_t> globalTriIndices;
 	std::unordered_map<std::string, InstanceMetaCPU> modelMetaMap;
 
 	// modelDataMap に基づいて平坦化（models -> global arrays）
 	// BuildGlobalMeshBuffers は modelName -> InstanceMeta を返す
 	QFE::FRAMEWORK::BuildGlobalMeshBuffers(
-		resources.modelDataMap, resources.textureGpuIndexMap, globalUVs, globalTriIndices, modelMetaMap);
+		resources.modelDataMap, resources.textureGpuIndexMap, globalVertexAttributes, globalTriIndices, modelMetaMap);
 
 	// 2) raytracingInstances の順に合わせて instanceMeta を並べる
 	std::vector<InstanceMetaCPU> instanceMetaAligned;
@@ -295,7 +297,8 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		blasToModel[kv.second] = kv.first;
 	}
 
-	for (const auto& inst : raytracingInstances) {
+	for (size_t instanceIndex = 0; instanceIndex < raytracingInstances.size(); ++instanceIndex) {
+		const auto& inst = raytracingInstances[instanceIndex];
 		QFE::GRAPHIC::BLASHandle blas = inst.first;
 		auto it = blasToModel.find(blas);
 		if (it == blasToModel.end()) {
@@ -311,16 +314,26 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			instanceMetaAligned.push_back(dummy);
 			continue;
 		}
-		instanceMetaAligned.push_back(mit->second);
+		InstanceMetaCPU instanceMeta = mit->second;
+		if (instanceIndex < raytracingMaterials.size()) {
+			const Material& material = raytracingMaterials[instanceIndex];
+			instanceMeta.baseColor = material.color;
+			instanceMeta.uvTransform = material.uvTransform;
+			instanceMeta.metallic = material.metallic;
+			instanceMeta.smoothness = material.smoothness;
+		}
+		instanceMetaAligned.push_back(instanceMeta);
 	}
 
 	// 3) バッファのサイズ計算と EnsureBufferCapacityAndUpload による使い回しアップロード
-	size_t uvBytes = globalUVs.size() * sizeof(float);
+	size_t vertexAttributeBytes = globalVertexAttributes.size() * sizeof(RaytracingVertexAttribute);
 	size_t triBytes = globalTriIndices.size() * sizeof(uint32_t);
 	size_t metaBytes = instanceMetaAligned.size() * sizeof(InstanceMetaCPU);
 
-	if (!QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.globalUVHandle, globalUVs.data(), uvBytes, sizeof(float) * 2, "GlobalUVs")) {
-		assert(false && "Failed to ensure/upload GlobalUVs");
+	if (!QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
+		graphicEngine.get(), resources.globalUVHandle, globalVertexAttributes.data(),
+		vertexAttributeBytes, sizeof(RaytracingVertexAttribute), "GlobalVertexAttributes")) {
+		assert(false && "Failed to ensure/upload GlobalVertexAttributes");
 	}
 	if (!QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.globalTriHandle, globalTriIndices.data(), triBytes, sizeof(uint32_t) * 3, "GlobalTriIndices")) {
 		assert(false && "Failed to ensure/upload GlobalTriIndices");

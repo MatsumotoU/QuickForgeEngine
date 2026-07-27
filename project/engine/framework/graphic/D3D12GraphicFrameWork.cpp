@@ -57,22 +57,24 @@ bool QFE::FRAMEWORK::ShutdownGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* gra
 void QFE::FRAMEWORK::BuildGlobalMeshBuffers(
 	const std::unordered_map<std::string, QFE::ASSET::ModelData>& modelDataMap,
 	const std::map<std::string, uint32_t>& textureGpuIndexMap,
-	std::vector<float>& outGlobalUVs,
+	std::vector<RaytracingVertexAttribute>& outGlobalVertexAttributes,
 	std::vector<uint32_t>& outGlobalTriIndices,
 	std::unordered_map<std::string, InstanceMetaCPU>& outModelMeta) {
-	outGlobalUVs.clear();
+	outGlobalVertexAttributes.clear();
 	outGlobalTriIndices.clear();
 	outModelMeta.clear();
 
 	for (const auto& [modelName, model] : modelDataMap) {
 		if (model.meshes.empty()) continue;
 		const QFE::ASSET::MeshData& mesh = model.meshes[0];
-		const uint32_t vertexBase = static_cast<uint32_t>(outGlobalUVs.size() / 2);
+		const uint32_t vertexBase = static_cast<uint32_t>(outGlobalVertexAttributes.size());
 		const uint32_t primitiveBase = static_cast<uint32_t>(outGlobalTriIndices.size() / 3);
 		const auto& vertices = mesh.vertices.GetInternalVector();
 		for (const auto& vertex : vertices) {
-			outGlobalUVs.push_back(vertex.texcoord.x);
-			outGlobalUVs.push_back(vertex.texcoord.y);
+			RaytracingVertexAttribute attribute{};
+			attribute.texcoord = vertex.texcoord;
+			attribute.normal = vertex.normal;
+			outGlobalVertexAttributes.push_back(attribute);
 		}
 		const auto& indices = mesh.indices.GetInternalVector();
 		outGlobalTriIndices.insert(outGlobalTriIndices.end(), indices.begin(), indices.end());

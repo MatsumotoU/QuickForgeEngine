@@ -39,6 +39,8 @@ namespace QFE::GRAPHIC {
 
 	public:
 		D3D12_ROOT_PARAMETER* GetRootParameter(const std::string& friendlyName);
+		/// @brief シェーダーリフレクションで登録された名前からルートインデックスを取得します。
+		UINT GetRootParameterIndex(const std::string& friendlyName) const;
 		D3D12_ROOT_SIGNATURE_DESC* GetDescriptionRootSignature();
 
 		/// @brief 登録順にRootParameterのタイプを取得します

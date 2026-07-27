@@ -9,16 +9,15 @@ namespace QFE {
 
 // === デバッグ用マクロの定義 ===
 /// @brief デバッグログを出力するマクロ.
-#define QFE_LOG(...) DebugLog(__VA_ARGS__)
+#define QFE_LOG(...) QFE::DebugLog(__VA_ARGS__)
 /// @brief スコーププロファイルを記録するマクロ.
-#define QFE_PROFILE_SCOPE ScopeProfile scopeProfile##__LINE__(__FUNCTION__)
+#define QFE_PROFILE_SCOPE QFE::ScopeProfile scopeProfile##__LINE__(__FUNCTION__)
 /// @brief デバッグブレークを行うマクロ.
-#define QFE_DEBUG_BREAK() DebugBreak()
+#define QFE_DEBUG_BREAK() QFE::DebugBreak()
 /// @brief デバッグブレークを行うマクロ.
-#define QFE_REPORT_USER_ERROR(message, error) ReportUserError(message, error)
+#define QFE_REPORT_USER_ERROR(message, error) QFE::ReportUserError(message, error)
 /// @brief システムエラーを報告してデバッグブレークするマクロ.
-#define QFE_REPORT_SYSTEM_ERROR(message, error) ReportSystemError(message, error)
-
+#define QFE_REPORT_SYSTEM_ERROR(message, error) QFE::ReportSystemError(message, error)
 #else // === 最適化 ===
 #if defined(_MSC_VER)
 
