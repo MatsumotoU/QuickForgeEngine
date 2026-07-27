@@ -4,6 +4,8 @@
 
 namespace {
 	const std::string kEntityKey = "entities";
+	const std::string kEntityIdKey = "id";
+	const std::string kComponentsKey = "components";
 }
 
 void QFE::SCENE::SceneObject::Initialize() {
@@ -72,12 +74,17 @@ void QFE::SCENE::SceneObject::LoadSceneFromJson(const std::string& filePath) {
 	const auto& entitiesArrayJson = sceneJson[kEntityKey];
 
 	// JSON配列のエンティティの数だけ、上から順番にループを回す
-	for (const auto& componentsJson : entitiesArrayJson) {
-
-		// 新しいエンティティを作成し、そのIDを取得
-		uint32_t newEntityId = entityManager_.CreateEntity();
-		// JSONからコンポーネントを復元する
-		entityManager_.DeserializeEntityComponents(newEntityId, componentsJson);
+	for (const auto& entityJson : entitiesArrayJson) {
+		// 新形式ではIDを保存して親参照を維持する。旧形式も引き続き読み込める。
+		if (entityJson.contains(kEntityIdKey) && entityJson.contains(kComponentsKey)) {
+			const uint32_t entityId = entityJson[kEntityIdKey].get<uint32_t>();
+			if (entityManager_.ForceCreateEntity(entityId)) {
+				entityManager_.DeserializeEntityComponents(entityId, entityJson[kComponentsKey]);
+			}
+		} else {
+			const uint32_t newEntityId = entityManager_.CreateEntity();
+			entityManager_.DeserializeEntityComponents(newEntityId, entityJson);
+		}
 	}
 }
 

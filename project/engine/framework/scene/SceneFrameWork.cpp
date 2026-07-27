@@ -1,6 +1,7 @@
 #include "SceneFrameWork.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
+#include "components/TransformHierarchy.h"
 #include "graphics/D3D12GraphicEngine.h"
 
 #include "framework/graphic/D3D12GraphicFrameWork.h"
@@ -30,9 +31,7 @@ QFE::MATH::Matrix4x4 QFE::FRAMEWORK::UpdateMainCamera(QFE::SCENE::SceneManager& 
 			if (!camera.isMainCamera || !entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 				return;
 			}
-			const QFE::MATH::EulerTransform& transform =
-				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
-			camera.viewMatrix = QFE::MATH::Matrix4x4::MakeAffineMatrix(transform).Inverse();
+			camera.viewMatrix = QFE::SCENE::GetWorldMatrix(entityManager, entityId).Inverse();
 			const float height = camera.top_ - camera.bottom_;
 			camera.aspectRatio_ = height != 0.0f
 				? fabsf((camera.right_ - camera.left_) / height)

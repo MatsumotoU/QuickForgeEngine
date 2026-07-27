@@ -7,10 +7,16 @@
 #include <imgui/imgui.h>
 #include <imgui_stdlib.h>
 
+namespace QFE {
+	class EntityManager;
+}
+
 namespace QFE::EDITOR {
 	/// @brief Archive のリフレクション情報から ImGui の編集UIを生成する。
 	class ImGuiArchive final : public Archive {
 	public:
+		ImGuiArchive(EntityManager* entityManager, uint32_t entityId);
+
 		bool IsLoading() const override {
 			return false;
 		}
@@ -28,5 +34,10 @@ namespace QFE::EDITOR {
 		void Process(const std::string& name, MATH::EulerTransform& value) override;
 		void Process(const std::string& name, MATH::Matrix4x4& value) override;
 		void Process(const std::string& name, MATH::Bit32& value) override;
+		void Process(const std::string& name, EntityReference& value) override;
+
+	private:
+		EntityManager* entityManager_;
+		uint32_t entityId_;
 	};
 }

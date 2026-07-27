@@ -1,4 +1,7 @@
 #include "ImGuiArchive.h"
+#include "design-patterns/EntityManager.h"
+#include "components/ObjectInfoComponent.h"
+#include "components/TransformHierarchy.h"
 
 namespace {
 	const float kDragSpeed = 0.1f;
@@ -29,6 +32,10 @@ namespace {
 	}
 }
 
+QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId) :
+	entityManager_(entityManager), entityId_(entityId) {
+}
+
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, bool& value) {
 	ImGui::Checkbox(MakeLabel(name).c_str(), &value);
 }
@@ -46,7 +53,9 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, uint32_t& value
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& value) {
-	ImGui::InputText(MakeLabel(name).c_str(), &value);
+	const ImGuiInputTextFlags flags =
+		name == "uuid" ? ImGuiInputTextFlags_ReadOnly : ImGuiInputTextFlags_None;
+	ImGui::InputText(MakeLabel(name).c_str(), &value, flags);
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, MATH::Vector2& value) {
@@ -127,4 +136,61 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, MATH::Bit32& va
 	ImGui::NewLine();
 	ImGui::Unindent();
 	ImGui::PopID();
+}
+
+void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, EntityReference& value) {
+	std::string preview = "None";
+	bool referenceResolved = value.IsEmpty();
+
+	if (entityManager_ != nullptr && !value.IsEmpty()) {
+		uint32_t referencedEntityId = 0;
+		if (QFE::SCENE::TryGetEntityIdByUuid(*entityManager_, value.uuid, referencedEntityId) &&
+			entityManager_->HasComponent<QFE::SCENE::ObjectInfoComponent>(referencedEntityId)) {
+			const auto& info =
+				entityManager_->GetComponent<QFE::SCENE::ObjectInfoComponent>(referencedEntityId);
+			preview = info.name.empty() ? "Unnamed Entity" : info.name;
+			referenceResolved = true;
+		}
+	}
+	if (!referenceResolved) {
+		preview = "Missing (" + value.uuid.substr(0, 8) + ")";
+	}
+
+	if (!ImGui::BeginCombo(MakeLabel(name).c_str(), preview.c_str())) {
+		return;
+	}
+
+	const bool hasNoParent = value.IsEmpty();
+	if (ImGui::Selectable("None", hasNoParent)) {
+		value.Clear();
+	}
+
+	if (entityManager_ != nullptr) {
+		for (const uint32_t candidateId : entityManager_->GetActiveEntityIds()) {
+			if (candidateId == entityId_ ||
+				!entityManager_->HasComponent<QFE::SCENE::ObjectInfoComponent>(candidateId) ||
+				QFE::SCENE::WouldCreateParentCycle(*entityManager_, entityId_, candidateId)) {
+				continue;
+			}
+
+			const auto& candidate =
+				entityManager_->GetComponent<QFE::SCENE::ObjectInfoComponent>(candidateId);
+			if (candidate.uuid.empty()) {
+				continue;
+			}
+
+			const std::string visibleName =
+				candidate.name.empty() ? "Unnamed Entity" : candidate.name;
+			const std::string itemLabel =
+				visibleName + " (" + candidate.uuid.substr(0, 8) + ")##" + candidate.uuid;
+			const bool isSelected = value.uuid == candidate.uuid;
+			if (ImGui::Selectable(itemLabel.c_str(), isSelected)) {
+				value.uuid = candidate.uuid;
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+	}
+	ImGui::EndCombo();
 }

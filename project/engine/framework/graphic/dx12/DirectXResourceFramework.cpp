@@ -209,11 +209,20 @@ bool QFE::FRAMEWORK::CreateCameraPosBuffer(
 void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 	const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {
+	UpdateObject3dWVPMatrix(
+		graphicEngine,
+		transformMatrixBufferHandle,
+		QFE::MATH::Matrix4x4::MakeAffineMatrix(transform),
+		viewProjectionMatrix);
+}
 
+void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
+	const QFE::MATH::Matrix4x4& worldMatrix, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {
 	TransformationMatrix* transformMatrixData =
 		graphicEngine->GetConstantBufferData<TransformationMatrix>(transformMatrixBufferHandle);
-	transformMatrixData->World = QFE::MATH::Matrix4x4::MakeAffineMatrix(transform);
-	transformMatrixData->WVP = QFE::MATH::Matrix4x4::Multiply(transformMatrixData->World, viewProjectionMatrix);
+	transformMatrixData->World = worldMatrix;
+	transformMatrixData->WVP = QFE::MATH::Matrix4x4::Multiply(worldMatrix, viewProjectionMatrix);
 }
 
 bool QFE::FRAMEWORK::CreateVertexBuffer(

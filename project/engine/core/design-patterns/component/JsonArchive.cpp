@@ -155,3 +155,11 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::Bit32& value) {
         json_[name] = value.value;
 	}
 }
+
+void QFE::JsonArchive::Process(const std::string& name, EntityReference& value) {
+	if (isLoading_) {
+		if (json_.contains(name)) value.uuid = json_[name].get<std::string>();
+	} else {
+		json_[name] = value.uuid;
+	}
+}

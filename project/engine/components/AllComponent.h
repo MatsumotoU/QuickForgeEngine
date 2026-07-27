@@ -1,6 +1,7 @@
 #pragma once
 // コアコンポーネント
 #include "TransformComponent.h"
+#include "ParentComponent.h"
 #include "ObjectInfoComponent.h"
 #include "VertexComponent.h"
 #include "MaterialComponent.h"

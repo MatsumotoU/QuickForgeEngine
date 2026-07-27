@@ -54,7 +54,7 @@ bool QFE::EDITOR::Inspector::GetIsFocus() {
 void QFE::EDITOR::Inspector::DrawComponents(uint32_t entityId) {
 	ImGui::Text("Entity ID: %u", entityId);
 
-	ImGuiArchive archive;
+	ImGuiArchive archive(entityManager_, entityId);
 	std::vector<std::string> componentTypeNames = entityManager_->GetComponentTypeNames(entityId);
 	std::sort(componentTypeNames.begin(), componentTypeNames.end());
 	for (const std::string& componentTypeName : componentTypeNames) {

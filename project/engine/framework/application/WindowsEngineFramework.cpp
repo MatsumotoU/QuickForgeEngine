@@ -9,6 +9,7 @@
 #include "scene/SceneManager.h"
 #include "script/ScriptInstance.h"
 #include "components/AllComponent.h"
+#include "components/TransformHierarchy.h"
 
 bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	HINSTANCE hInstance, 
@@ -195,11 +196,13 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			objTransform.rotate += animationComp.transform.rotate;
 			objTransform.scale += animationComp.transform.scale;
 		}
+		const QFE::MATH::Matrix4x4 worldMatrix =
+			QFE::SCENE::GetWorldMatrix(entityManager, entityId, &objTransform);
 
 		QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
 		QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 			resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
-		QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, objTransform, resources.viewProj);
+		QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, worldMatrix, resources.viewProj);
 		modelRenderComp.transformMatrixBufferHandle =
 			static_cast<uint32_t>(transformMatrixBufferHandle);
 
@@ -268,7 +271,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		}
 		raytracingInstances.push_back({
 			resources.blasHandleMap[modelRenderComp.modelName],
-			QFE::MATH::Matrix4x4::MakeAffineMatrix(entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform)
+			worldMatrix
 			});
 		raytracingMaterials.push_back(*materialData);
 

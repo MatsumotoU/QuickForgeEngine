@@ -106,6 +106,11 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 		const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
+	/// @brief Object3dのワールド行列とワールドビュー射影行列を更新する関数
+	void UpdateObject3dWVPMatrix(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
+		const QFE::MATH::Matrix4x4& worldMatrix, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
 	/// @brief BLASのインスタンスバッファを更新する関数
 	bool UpdateBLASInstanceBuffer(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
