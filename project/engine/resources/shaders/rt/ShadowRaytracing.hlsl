@@ -81,13 +81,21 @@ float3 EvaluateDirectLighting(float3 albedo, float3 worldNormal)
 float ComputeRayEpsilon(float3 worldPosition)
 {
     float maxPosition = max(abs(worldPosition.x), max(abs(worldPosition.y), abs(worldPosition.z)));
-    return max(0.0001f, maxPosition * 0.00001f);
+    // 16-bit G-buffer と TLAS の丸め誤差より十分大きくしつつ、
+    // 以前の固定 0.05 より小さくして接触影を維持する。
+    return max(0.001f, maxPosition * 0.00002f);
 }
 
 float3 OffsetRayOrigin(float3 worldPosition, float3 worldNormal, float3 rayDirection)
 {
     float normalSide = dot(worldNormal, rayDirection) >= 0.0f ? 1.0f : -1.0f;
-    return worldPosition + worldNormal * normalSide * ComputeRayEpsilon(worldPosition);
+    float epsilon = ComputeRayEpsilon(worldPosition);
+
+    // 補間法線だけでずらすと、曲面や三角形境界で原点が面の内側に入る場合がある。
+    // レイ方向にも少し進めて、同一面への再ヒットを抑える。
+    return worldPosition
+        + worldNormal * normalSide * epsilon
+        + rayDirection * epsilon * 0.25f;
 }
 
 [shader("raygeneration")]
@@ -122,12 +130,14 @@ void MyRayGen()
         RayDesc shadowRay;
         shadowRay.Origin = OffsetRayOrigin(worldPosition, worldNormal, lightVector);
         shadowRay.Direction = lightVector;
-        shadowRay.TMin = 0.0f;
+        shadowRay.TMin = ComputeRayEpsilon(worldPosition) * 0.25f;
         shadowRay.TMax = 1000.0f;
 
         TraceRay(
             g_scene,
-            RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_FORCE_OPAQUE,
+            RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH |
+                RAY_FLAG_FORCE_OPAQUE |
+                RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
             0xFF, 0, 1, 0,
             shadowRay,
             payload);
@@ -155,7 +165,7 @@ void MyRayGen()
         RayDesc reflectRay;
         reflectRay.Origin = OffsetRayOrigin(worldPosition, worldNormal, reflectDir);
         reflectRay.Direction = reflectDir;
-        reflectRay.TMin = 0.0f;
+        reflectRay.TMin = ComputeRayEpsilon(worldPosition) * 0.25f;
         reflectRay.TMax = 1000.0f;
 
         RayPayload reflectPayload;
@@ -163,7 +173,12 @@ void MyRayGen()
         reflectPayload.rayType = kReflectionRay;
         reflectPayload.color = float3(0.1f, 0.1f, 0.15f);
 
-        TraceRay(g_scene, RAY_FLAG_FORCE_OPAQUE, 0xFF, 0, 1, 0, reflectRay, reflectPayload);
+        TraceRay(
+            g_scene,
+            RAY_FLAG_FORCE_OPAQUE | RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
+            0xFF, 0, 1, 0,
+            reflectRay,
+            reflectPayload);
 
         // Fresnelを反射色への乗算ではなく、ベース色と反射色の混合率として使う。
         // これによりmetallic=1で「反射色 * 暗いalbedo」だけになる過度な暗化を防ぐ。
@@ -243,7 +258,7 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
         RayDesc shadowRay;
         shadowRay.Origin = OffsetRayOrigin(hitPosition, worldNormal, lightVector);
         shadowRay.Direction = lightVector;
-        shadowRay.TMin = 0.0f;
+        shadowRay.TMin = ComputeRayEpsilon(hitPosition) * 0.25f;
         shadowRay.TMax = 1000.0f;
 
         RayPayload shadowPayload;
@@ -253,7 +268,9 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
 
         TraceRay(
             g_scene,
-            RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_FORCE_OPAQUE,
+            RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH |
+                RAY_FLAG_FORCE_OPAQUE |
+                RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
             0xFF, 0, 1, 0,
             shadowRay,
             shadowPayload);
