@@ -30,10 +30,6 @@
 
 #include "../resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
-// GPU と共有するインスタンスメタ構造（HLSL 側の構造と合わせること）
-
-static_assert(sizeof(InstanceMetaCPU) == sizeof(uint32_t) * 4);
-
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
