@@ -54,7 +54,8 @@ void RaytracingPSO::CreatePipelineStateObject(IDxcBlob* csBlob, const D3D12_ROOT
 
 	// 4. PipelineConfigの設定
 	D3D12_RAYTRACING_PIPELINE_CONFIG pipelineConfig = {};
-	pipelineConfig.MaxTraceRecursionDepth = 1; // 今回は反射させないので 1
+	// RayGen -> reflection -> shadow。反射の追加バウンスは行わない。
+	pipelineConfig.MaxTraceRecursionDepth = 2;
 
 	// 5. サブオブジェクトの設定
 	D3D12_STATE_SUBOBJECT subobjects[5] = {};

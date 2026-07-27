@@ -7,6 +7,7 @@
 #include <vector>
 
 struct InstanceMetaCPU;
+struct RaytracingVertexAttribute;
 
 namespace QFE::ASSET {
 	struct ModelData;
@@ -30,7 +31,7 @@ namespace QFE::FRAMEWORK {
 	void BuildGlobalMeshBuffers(
 		const std::unordered_map<std::string, QFE::ASSET::ModelData>& modelDataMap,
 		const std::map<std::string, uint32_t>& textureGpuIndexMap,
-		std::vector<float>& outGlobalUVs,
+		std::vector<RaytracingVertexAttribute>& outGlobalVertexAttributes,
 		std::vector<uint32_t>& outGlobalTriIndices,
 		std::unordered_map<std::string, InstanceMetaCPU>& outModelMeta);
 }

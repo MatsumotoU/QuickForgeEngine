@@ -15,7 +15,8 @@
 #include <utility>
 
 struct VertexData;
-struct InstanceMetaCPU;	
+struct InstanceMetaCPU;
+struct RaytracingVertexAttribute;
 
 namespace QFE::GRAPHIC {
 	class D3D12GraphicEngine;
@@ -116,7 +117,7 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief バッファの容量を確保し、データをアップロードする関数
 	// モデル群（modelDataMap）からグローバルバッファを平坦化する。
-	// - globalUVs: [u0,v0, u1,v1, ...]
+	// - globalVertexAttributes: UV と法線を頂点順に格納
 	// - globalTriIndices: flattened indices [i0,i1,i2, i3,i4,i5, ...] (各 tri は 3 要素)
 	// - outInstanceMeta: メッシュ（またはメッシュ単位のエントリ）ごとのメタ情報（InstanceID と一致させること）
 	bool EnsureBufferCapacityAndUpload(
@@ -131,7 +132,7 @@ namespace QFE::FRAMEWORK {
 	// 注意: CreateResourceView の srvDesc のフィールド名はプロジェクト実装に合わせて調整してください。
 	bool UploadGlobalMeshBuffers(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
-		const std::vector<float>& globalUVs,
+		const std::vector<RaytracingVertexAttribute>& globalVertexAttributes,
 		const std::vector<uint32_t>& globalTriIndices,
 		const std::vector<InstanceMetaCPU>& instanceMeta,
 		QFE::GRAPHIC::DirectXResourceHandle& outUVHandle,

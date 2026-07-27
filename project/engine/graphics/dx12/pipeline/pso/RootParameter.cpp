@@ -140,6 +140,18 @@ D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendl
 	return result;
 }
 
+UINT RootParameter::GetRootParameterIndex(const std::string& friendlyName) const {
+	for (size_t index = 0; index < friendlyNames_.size(); ++index) {
+		if (friendlyNames_[index] == friendlyName) {
+			return static_cast<UINT>(index);
+		}
+	}
+
+	QFE_LOG(std::format("RootParameter: '{}' was not found.", friendlyName));
+	assert(false && "RootParameter not found for the given friendly name.");
+	return static_cast<UINT>(-1);
+}
+
 D3D12_ROOT_SIGNATURE_DESC* RootParameter::GetDescriptionRootSignature() {
 	return &descriptionRootSignature_;
 }

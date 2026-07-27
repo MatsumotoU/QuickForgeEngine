@@ -394,7 +394,8 @@ bool QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
 }
 
 bool QFE::FRAMEWORK::UploadGlobalMeshBuffers(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<float>& globalUVs,
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	const std::vector<RaytracingVertexAttribute>& globalVertexAttributes,
 	const std::vector<uint32_t>& globalTriIndices, const std::vector<InstanceMetaCPU>& instanceMeta,
 	QFE::GRAPHIC::DirectXResourceHandle& outUVHandle, QFE::GRAPHIC::DirectXResourceHandle& outTriHandle, 
 	QFE::GRAPHIC::DirectXResourceHandle& outInstanceMetaHandle) {
@@ -403,20 +404,19 @@ bool QFE::FRAMEWORK::UploadGlobalMeshBuffers(
 	auto* device = graphicEngine->GetDirectXDevice();
 	auto* rc = graphicEngine->GetDirectXResourceContainer();
 
-	// 1) UV バッファ
+	// 1) 頂点属性バッファ
 	{
-		size_t byteSize = globalUVs.size() * sizeof(float);
+		size_t byteSize = globalVertexAttributes.size() * sizeof(RaytracingVertexAttribute);
 		auto handle = rc->CreateBuffer(device->GetDevice(), byteSize);
 		if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
 
 		rc->MapResource(handle);
-		float* mapped = rc->GetMappedData<float>(handle);
-		if (mapped && !globalUVs.empty()) {
-			memcpy(mapped, globalUVs.data(), byteSize);
+		RaytracingVertexAttribute* mapped = rc->GetMappedData<RaytracingVertexAttribute>(handle);
+		if (mapped && !globalVertexAttributes.empty()) {
+			memcpy(mapped, globalVertexAttributes.data(), byteSize);
 		}
-		rc->SetResourceName(handle, QFE::ConvertString(std::string("GlobalUVs")));
-		// 要素ストライドは float2
-		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(float) * 2));
+		rc->SetResourceName(handle, QFE::ConvertString(std::string("GlobalVertexAttributes")));
+		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(RaytracingVertexAttribute)));
 
 		// SRV 作成（Shader4ComponentMapping を明示的に設定）
 		QFE::GRAPHIC::CreateViewInfo viewInfo{};
@@ -424,8 +424,8 @@ bool QFE::FRAMEWORK::UploadGlobalMeshBuffers(
 		viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(globalUVs.size() / 2);
-		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(float) * 2;
+		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(globalVertexAttributes.size());
+		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(RaytracingVertexAttribute);
 		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 		rc->CreateResourceView(handle, viewInfo);
 

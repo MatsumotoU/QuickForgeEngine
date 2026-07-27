@@ -410,13 +410,15 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(
 	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = graphicEngine->GetRayTracingPipelineManager();
 	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
 	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = graphicEngine->GetRaytracingAccelerationStructure();
+	QFE::GRAPHIC::RaytracingPSO* raytracingPSO =
+		raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle);
 
 	ID3D12GraphicsCommandList4* commandList4 = commandManager->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	ID3D12RootSignature* globalRootSignature = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRootSignature();
-	ID3D12StateObject* rtpsoptr = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetPipelineState();
-	ID3D12Resource* rayGenShaderTable_ = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRayGenShaderTable();
-	ID3D12Resource* missShaderTable_ = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetMissShaderTable();
-	ID3D12Resource* hitGroupShaderTable_ = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetHitGroupShaderTable();
+	ID3D12RootSignature* globalRootSignature = raytracingPSO->GetRootSignature();
+	ID3D12StateObject* rtpsoptr = raytracingPSO->GetPipelineState();
+	ID3D12Resource* rayGenShaderTable_ = raytracingPSO->GetRayGenShaderTable();
+	ID3D12Resource* missShaderTable_ = raytracingPSO->GetMissShaderTable();
+	ID3D12Resource* hitGroupShaderTable_ = raytracingPSO->GetHitGroupShaderTable();
 
 	ID3D12GraphicsCommandList* commandList = commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 	resourceContainer->TransitionResource(renderUavBuffer, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
@@ -593,13 +595,16 @@ bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = graphicEngine->GetRayTracingPipelineManager();
 	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
 	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = graphicEngine->GetRaytracingAccelerationStructure();
+	QFE::GRAPHIC::RaytracingPSO* raytracingPSO =
+		raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle);
+	QFE::GRAPHIC::RootParameter& rootParameters = raytracingPSO->GetRootParameter();
 
 	ID3D12GraphicsCommandList4* commandList4 = commandManager->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	ID3D12RootSignature* globalRootSignature = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRootSignature();
-	ID3D12StateObject* rtpsoptr = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetPipelineState();
-	ID3D12Resource* rayGenShaderTable_ = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRayGenShaderTable();
-	ID3D12Resource* missShaderTable_ = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetMissShaderTable();
-	ID3D12Resource* hitGroupShaderTable_ = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetHitGroupShaderTable();
+	ID3D12RootSignature* globalRootSignature = raytracingPSO->GetRootSignature();
+	ID3D12StateObject* rtpsoptr = raytracingPSO->GetPipelineState();
+	ID3D12Resource* rayGenShaderTable_ = raytracingPSO->GetRayGenShaderTable();
+	ID3D12Resource* missShaderTable_ = raytracingPSO->GetMissShaderTable();
+	ID3D12Resource* hitGroupShaderTable_ = raytracingPSO->GetHitGroupShaderTable();
 
 	ID3D12GraphicsCommandList* commandList = commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 	resourceContainer->TransitionResource(renderUavBuffer, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
@@ -610,27 +615,46 @@ bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 
 	// 2. ルートシグネチャへのリソースバインド
 	D3D12_GPU_VIRTUAL_ADDRESS tlasResultBufferGPUHandle = accelerationStructure->GetTLASResultBuffer()->GetGPUVirtualAddress();
-	commandList4->SetComputeRootShaderResourceView(5, tlasResultBufferGPUHandle);
+	commandList4->SetComputeRootShaderResourceView(
+		rootParameters.GetRootParameterIndex("g_scene"), tlasResultBufferGPUHandle);
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(renderUavBuffer, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
 
-	commandList4->SetComputeRootDescriptorTable(0, resourceContainer->GetDescriptorHandleGPU(indexBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(1, resourceContainer->GetDescriptorHandleGPU(uvBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(2, resourceContainer->GetDescriptorHandleGPU(instanceMetaBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(3, resourceContainer->GetDescriptorHandleGPU(firstTextureBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_globalTriIndices"),
+		resourceContainer->GetDescriptorHandleGPU(indexBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_globalVertexAttributes"),
+		resourceContainer->GetDescriptorHandleGPU(uvBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_instanceMeta"),
+		resourceContainer->GetDescriptorHandleGPU(instanceMetaBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_TextureArray"),
+		resourceContainer->GetDescriptorHandleGPU(firstTextureBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cameraGpuHandle = resourceContainer->GetGpuVirtualAddress(cameraPositionBufferHandle);
-	commandList4->SetComputeRootConstantBufferView(4, cameraGpuHandle);
+	commandList4->SetComputeRootConstantBufferView(
+		rootParameters.GetRootParameterIndex("g_camera"), cameraGpuHandle);
 
 	// レンダーターゲットのバリアをレンダーターゲットに設定する前に、必要に応じてリソースの状態を遷移させる
 	for (QFE::GRAPHIC::DirectXResourceHandle renderTargetHandle : rootResources) {
 		resourceContainer->TransitionResource(renderTargetHandle, commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 	}
 
-	commandList4->SetComputeRootDescriptorTable(6, resourceContainer->GetDescriptorHandleGPU(rootResources[0], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(7, resourceContainer->GetDescriptorHandleGPU(rootResources[1], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(8, resourceContainer->GetDescriptorHandleGPU(rootResources[2], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(9, resourceContainer->GetDescriptorHandleGPU(rootResources[3], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
-	commandList4->SetComputeRootDescriptorTable(10, gpuHandle);
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_position"),
+		resourceContainer->GetDescriptorHandleGPU(rootResources[0], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_normal"),
+		resourceContainer->GetDescriptorHandleGPU(rootResources[1], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_albedo"),
+		resourceContainer->GetDescriptorHandleGPU(rootResources[2], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_material"),
+		resourceContainer->GetDescriptorHandleGPU(rootResources[3], QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_output"), gpuHandle);
 
 
 	// 3. シェーダーレコードのサイズ定義（前段で作った64バイトと同じ）

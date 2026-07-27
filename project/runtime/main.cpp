@@ -36,6 +36,8 @@ static_assert(sizeof(InstanceMetaCPU) == sizeof(uint32_t) * 4);
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
+	std::vector<int> objectNums;
 	
 	// QuickForgeエンジンのリソースを初期化
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
@@ -60,11 +62,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	auto& fpsCounter = engineSystems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
-
-	// TestDll.dllをロードしてスクリプト関数の目録を取得
-	std::unique_ptr<QFE::SCRIPT::WindowsScriptInstance> scriptInstance;
-	std::wstring filePath;
-	scriptInstance = QFE::FRAMEWORK::LoadWindowsScriptInstance(L"GameLogics.dll", "GetManifest");
 
 	// メインループ
 	while (QFE::FRAMEWORK::IsMainWindowActive(engineSystems.windowManager.get())) {
@@ -150,9 +147,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					}
 
 					if (inputInterface->GetKeyPress("Shot")) {
-						if (shootingPlayerComp.shootTimer > 0.0f) {
-							return;
-						}
+						
 
 						uint32_t bulletEntityId =
 							sceneManager.LoadEntityOnCurrentSceneFromJsonObject(engineResources.assetDir + shootingPlayerComp.bulletPrefabName);
@@ -220,23 +215,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						entityManager.RemoveEntity(entityId);
 					}
 				}
-				});
-
-			// スクリプト関数の実行
-			entityManager.Each<QFE::SCENE::ScriptComponent>([&](uint32_t entityId, QFE::SCENE::ScriptComponent& scriptComp) {
-				// 名前から関数を探す
-				for (size_t scriptIndex = 0; scriptIndex < scriptInstance->scripts.size(); ++scriptIndex) {
-					if (scriptInstance->scripts[scriptIndex].functionName == scriptComp.scriptFunctionName) {
-						scriptComp.scriptFunctionIndex = static_cast<uint32_t>(scriptIndex);
-						break;
-					}
-				}
-				// もし関数が見つからなかった場合は、スクリプト関数の実行をスキップする
-				if (scriptComp.scriptFunctionIndex >= scriptInstance->scripts.size()) {
-					return;
-				}
-				// 関数の実行
-				scriptInstance->scripts[scriptComp.scriptFunctionIndex].functionPtr(entityId, 0.016f, &entityManager);
 				});
 
 			// コライダーの処理
@@ -377,11 +355,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			ImGui::Begin("Debug Info");
 			ImGui::Text("FPS: %.2f", fpsCounter->GetAverageFPS());
+			ImGui::Text("Object Count: %zu", entityManager.GetActiveEntityIds().size());
 			ImGui::End();
 
 			// エンジンの描画後処理（フレーム終了時の共通処理）
 			QFE::FRAMEWORK::EnginePostDraw(engineSystems, engineResources);
 			QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems);
+
+			// FPSが60fps付近のオブジェクト数をカウント
+			if(fpsCounter->GetAverageFPS() > 59.0f && fpsCounter->GetAverageFPS() < 61.0f) {
+				objectNums.push_back(static_cast<int>(entityManager.GetActiveEntityIds().size()));
+			}
 	}
 
 	QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);

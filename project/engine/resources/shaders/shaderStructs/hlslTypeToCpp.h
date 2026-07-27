@@ -21,11 +21,42 @@ using float32_t2x2 = QFE::MATH::Matrix2x2;
 
 // レイトレーシング反射のためのインスタンス情報
 struct InstanceMetaCPU {
+#ifdef __cplusplus
+	InstanceMetaCPU()
+		: materialIndex(1u)
+		, vertexBase(0u)
+		, vertexCount(0u)
+		, primitiveBase(0u)
+		, baseColor{ 1.0f, 1.0f, 1.0f, 1.0f }
+		, uvTransform(QFE::MATH::Matrix4x4::MakeIdentity4x4())
+		, metallic(0.0f)
+		, smoothness(0.0f) {
+		padding[0] = 0.0f;
+		padding[1] = 0.0f;
+	}
+#endif
 	uint32_t materialIndex;
 	uint32_t vertexBase;     // global UV / vertex 配列の先頭オフセット（頂点単位）
 	uint32_t vertexCount;    // 頂点数（必要なら）
 	uint32_t primitiveBase;  // global primitive 配列の先頭オフセット（三角形単位）
+	float32_t4 baseColor;
+	float32_t4x4 uvTransform;
+	float32_t metallic;
+	float32_t smoothness;
+	float32_t padding[2];
 };
+
+// レイトレーシングのヒット点で補間する頂点属性。
+// StructuredBuffer のストライドを C++ / HLSL 間で一致させる。
+struct RaytracingVertexAttribute {
+	float32_t2 texcoord;
+	float32_t3 normal;
+};
+
+#ifdef __cplusplus
+static_assert(sizeof(RaytracingVertexAttribute) == 20);
+static_assert(sizeof(InstanceMetaCPU) == 112);
+#endif
 
 struct PerFrame {
 	float32_t time;
