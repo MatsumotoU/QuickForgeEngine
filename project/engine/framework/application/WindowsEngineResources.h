@@ -23,6 +23,17 @@ namespace QFE::FRAMEWORK {
 		std::string psDirName = "engine/resources/shaders/ps/";
 		std::string vsDirName = "engine/resources/shaders/vs/";
 		std::string rtDirName = "engine/resources/shaders/rt/";
+		std::string csDirName = "engine/resources/shaders/cs/";
+
+		static constexpr uint32_t kParticleCount = 1024;
+		QFE::GRAPHIC::ComputePSOHandle emitParticlePSOHandle = QFE::GRAPHIC::ComputePSOHandle::Invalid;
+		QFE::GRAPHIC::ComputePSOHandle updateParticlePSOHandle = QFE::GRAPHIC::ComputePSOHandle::Invalid;
+		QFE::GRAPHIC::DirectXResourceHandle particleBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		QFE::GRAPHIC::DirectXResourceHandle freeCounterBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		QFE::GRAPHIC::DirectXResourceHandle particleCountBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		QFE::GRAPHIC::DirectXResourceHandle emitterBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		QFE::GRAPHIC::DirectXResourceHandle particlePerFrameBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		float particleElapsedTime = 0.0f;
 
 		QFE::GRAPHIC::DirectXResourceHandle globalUVHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		QFE::GRAPHIC::DirectXResourceHandle globalTriHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;

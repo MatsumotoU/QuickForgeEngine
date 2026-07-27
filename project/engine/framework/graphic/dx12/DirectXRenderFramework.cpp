@@ -80,6 +80,70 @@ bool QFE::FRAMEWORK::GetGraphicPSORootParameterTypeList(
 	return true;
 }
 
+bool QFE::FRAMEWORK::CreateComputePSO(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::string& csDirName,
+	const std::string& csFileName, QFE::GRAPHIC::ComputePSOHandle& outPSOHandle) {
+
+	// 使用するコンピュートパイプラインマネージャを取得
+	QFE::GRAPHIC::ComputePipelineManager* computePipelineManager = graphicEngine->GetComputePipelineManager();
+	outPSOHandle = computePipelineManager->GenerateComputePipelineStateObject(csDirName, csFileName);
+	if(outPSOHandle == QFE::GRAPHIC::ComputePSOHandle::Invalid) {
+		QFE_LOG("Failed to create compute PSO.");
+		return false;
+	}
+	return true;
+}
+
+bool QFE::FRAMEWORK::DispatchCompute(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	const QFE::GRAPHIC::ComputePSOHandle& psoHandle,
+	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+	const std::vector<QFE::GRAPHIC::ViewTypeFlags>& rootResourceViewTypes,
+	uint32_t threadCountX, uint32_t threadCountY, uint32_t threadCountZ) {
+	if (graphicEngine == nullptr || rootResources.size() != rootResourceViewTypes.size()) {
+		return false;
+	}
+
+	auto* pipelineManager = graphicEngine->GetComputePipelineManager();
+	auto* resourceContainer = graphicEngine->GetDirectXResourceContainer();
+	auto* commandList = graphicEngine->GetDirectXCommandManager()->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	const auto rootParameterTypes = pipelineManager->GetRootParameterTypes(psoHandle);
+	if (rootParameterTypes.size() != rootResources.size()) {
+		QFE_LOG("The number of compute root resources does not match the root signature.");
+		return false;
+	}
+
+	commandList->SetPipelineState(pipelineManager->GetPipelineState(psoHandle));
+	commandList->SetComputeRootSignature(pipelineManager->GetRootSignature(psoHandle));
+	for (UINT i = 0; i < static_cast<UINT>(rootResources.size()); ++i) {
+		if (rootParameterTypes[i] == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+			commandList->SetComputeRootConstantBufferView(i, resourceContainer->GetGpuVirtualAddress(rootResources[i]));
+		} else if (rootParameterTypes[i] == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) {
+			commandList->SetComputeRootDescriptorTable(
+				i, resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootResourceViewTypes[i]));
+		} else {
+			QFE_LOG("Unsupported compute root parameter type.");
+			return false;
+		}
+	}
+
+	UINT groupSizeX = 0;
+	UINT groupSizeY = 0;
+	UINT groupSizeZ = 0;
+	if (!pipelineManager->GetThreadGroupSize(psoHandle, groupSizeX, groupSizeY, groupSizeZ) ||
+		groupSizeX == 0 || groupSizeY == 0 || groupSizeZ == 0) {
+		return false;
+	}
+	const auto divideRoundUp = [](uint32_t value, uint32_t divisor) {
+		return (value + divisor - 1) / divisor;
+	};
+	commandList->Dispatch(
+		divideRoundUp(threadCountX, groupSizeX),
+		divideRoundUp(threadCountY, groupSizeY),
+		divideRoundUp(threadCountZ, groupSizeZ));
+	return true;
+}
+
 bool QFE::FRAMEWORK::CreateRayTracingPSO(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::RTPSOHandle& outPSOHandle,
 	const std::string& dirPath, const std::string& rgsFileName) {

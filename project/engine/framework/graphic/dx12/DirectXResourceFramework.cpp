@@ -141,6 +141,51 @@ bool QFE::FRAMEWORK::CreateUAVBuffer(
 	return true;
 }
 
+bool QFE::FRAMEWORK::CreateStructuredUAVBuffer(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	QFE::GRAPHIC::DirectXResourceHandle& outHandle,
+	size_t elementCount, size_t elementStride, const std::wstring& name) {
+	if (graphicEngine == nullptr || elementCount == 0 || elementStride == 0) {
+		return false;
+	}
+	auto* resourceContainer = graphicEngine->GetDirectXResourceContainer();
+	D3D12_RESOURCE_DESC desc{};
+	desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	desc.Width = static_cast<UINT64>(elementCount * elementStride);
+	desc.Height = 1;
+	desc.DepthOrArraySize = 1;
+	desc.MipLevels = 1;
+	desc.SampleDesc.Count = 1;
+	desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	outHandle = resourceContainer->CreateResource(
+		graphicEngine->GetDirectXDevice()->GetDevice(), desc,
+		D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_HEAP_TYPE_DEFAULT);
+	if (outHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		return false;
+	}
+	QFE::GRAPHIC::CreateViewInfo viewInfo{};
+	viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView;
+	viewInfo.uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	viewInfo.uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+	viewInfo.uavDesc.Buffer.NumElements = static_cast<UINT>(elementCount);
+	viewInfo.uavDesc.Buffer.StructureByteStride = static_cast<UINT>(elementStride);
+	resourceContainer->CreateResourceView(outHandle, viewInfo);
+	resourceContainer->SetResourceStrideInBytes(outHandle, elementStride);
+	resourceContainer->SetResourceName(outHandle, name);
+
+	// Default heapの初期値は未定義なので、空のパーティクル/カウンターとして0初期化する。
+	std::vector<uint8_t> initialData(elementCount * elementStride, 0);
+	D3D12_SUBRESOURCE_DATA subresource{};
+	subresource.pData = initialData.data();
+	subresource.RowPitch = static_cast<LONG_PTR>(initialData.size());
+	subresource.SlicePitch = subresource.RowPitch;
+	resourceContainer->UploadResource(
+		outHandle, { subresource }, graphicEngine->GetDirectXDevice()->GetDevice(),
+		graphicEngine->GetDirectXCommandManager()->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
+	return true;
+}
+
 bool QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle* rootResources, size_t rootResourcesSize) {
 

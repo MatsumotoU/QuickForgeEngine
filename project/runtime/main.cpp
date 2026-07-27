@@ -61,11 +61,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
-	// TestDll.dllをロードしてスクリプト関数の目録を取得
-	std::unique_ptr<QFE::SCRIPT::WindowsScriptInstance> scriptInstance;
-	std::wstring filePath;
-	scriptInstance = QFE::FRAMEWORK::LoadWindowsScriptInstance(L"GameLogics.dll", "GetManifest");
-
 	// メインループ
 	while (QFE::FRAMEWORK::IsMainWindowActive(engineSystems.windowManager.get())) {
 		if (!QFE::FRAMEWORK::ProcessWindowsApplicationMessage()) {
@@ -220,23 +215,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						entityManager.RemoveEntity(entityId);
 					}
 				}
-				});
-
-			// スクリプト関数の実行
-			entityManager.Each<QFE::SCENE::ScriptComponent>([&](uint32_t entityId, QFE::SCENE::ScriptComponent& scriptComp) {
-				// 名前から関数を探す
-				for (size_t scriptIndex = 0; scriptIndex < scriptInstance->scripts.size(); ++scriptIndex) {
-					if (scriptInstance->scripts[scriptIndex].functionName == scriptComp.scriptFunctionName) {
-						scriptComp.scriptFunctionIndex = static_cast<uint32_t>(scriptIndex);
-						break;
-					}
-				}
-				// もし関数が見つからなかった場合は、スクリプト関数の実行をスキップする
-				if (scriptComp.scriptFunctionIndex >= scriptInstance->scripts.size()) {
-					return;
-				}
-				// 関数の実行
-				scriptInstance->scripts[scriptComp.scriptFunctionIndex].functionPtr(entityId, 0.016f, &entityManager);
 				});
 
 			// コライダーの処理

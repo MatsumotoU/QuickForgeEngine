@@ -99,6 +99,11 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle& outUAVBufferHandle,
 		uint32_t width, uint32_t height, const std::wstring& name);
+	/// @brief Compute Shaderから読み書きする構造化UAVバッファを作成する関数
+	bool CreateStructuredUAVBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		QFE::GRAPHIC::DirectXResourceHandle& outHandle,
+		size_t elementCount, size_t elementStride, const std::wstring& name);
 
 	/// @brief Object3dのワールド行列とワールドビュー射影行列を更新する関数
 	void UpdateObject3dWVPMatrix(

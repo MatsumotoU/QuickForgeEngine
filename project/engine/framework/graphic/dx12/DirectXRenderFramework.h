@@ -37,12 +37,24 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::BlendMode& blendMode,
 		const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType,
 		QFE::GRAPHIC::PSOHandle& outPSOHandle);
-
 	/// @brief パイプラインステートオブジェクトのルートパラメータの型を取得する関数
 	bool GetGraphicPSORootParameterTypeList(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::PSOHandle& psoHandle,
 		std::vector<D3D12_ROOT_PARAMETER_TYPE>& outRootParameterTypeList);
+
+	/// @brief コンピュートパイプラインステートオブジェクトを作成する関数
+	bool CreateComputePSO(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::string& csDirName, const std::string& csFileName,
+		QFE::GRAPHIC::ComputePSOHandle& outPSOHandle);
+	/// @brief Compute Shaderを実行する。rootResourcesはシェーダーの宣言順に指定する。
+	bool DispatchCompute(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::ComputePSOHandle& psoHandle,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+		const std::vector<QFE::GRAPHIC::ViewTypeFlags>& rootResourceViewTypes,
+		uint32_t threadCountX, uint32_t threadCountY = 1, uint32_t threadCountZ = 1);
 
 	/// @brief レイトレーシングパイプラインステートオブジェクトを作成する関数
 	bool CreateRayTracingPSO(

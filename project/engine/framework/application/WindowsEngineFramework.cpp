@@ -117,6 +117,7 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 	std::string psDirName = resources.psDirName;
 	std::string vsDirName = resources.vsDirName;
 	std::string rtDirName = resources.rtDirName;
+	std::string csDirName = resources.csDirName;
 
 	// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
 	std::wstring selectedFilePath;
@@ -163,6 +164,17 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 
 	// UAVバッファの作成とルートリソースの設定
 	QFE::FRAMEWORK::CreateUAVBuffer(graphicEngine.get(), resources.uavBufferHandle, 1280, 720, L"UAVBuffer");
+
+	// GPUパーティクル用Compute PSOと、両シェーダーで共有するUAVを作成
+	QFE::FRAMEWORK::CreateComputePSO(
+		graphicEngine.get(), csDirName, "EmitParticle.CS.hlsl", resources.emitParticlePSOHandle);
+	QFE::FRAMEWORK::CreateComputePSO(
+		graphicEngine.get(), csDirName, "ParticleUpdate.CS.hlsl", resources.updateParticlePSOHandle);
+	QFE::FRAMEWORK::CreateStructuredUAVBuffer(
+		graphicEngine.get(), resources.particleBufferHandle,
+		WindowsEngineResources::kParticleCount, sizeof(Particle), L"ParticleBuffer");
+	QFE::FRAMEWORK::CreateStructuredUAVBuffer(
+		graphicEngine.get(), resources.freeCounterBufferHandle, 1, sizeof(int32_t), L"ParticleFreeCounter");
 
 	// レイトレーシングパイプラインステートオブジェクトの作成
 	QFE::FRAMEWORK::CreateRayTracingPSO(graphicEngine.get(), resources.rtpsoHandle, rtDirName, "ShadowRaytracing.hlsl");
@@ -334,6 +346,44 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 
 	graphicEngine->PreDraw();
 	guiManager->PreDraw();
+
+	// Compute用CBVはフレームアロケータから毎フレーム確保する。
+	auto* allocator = graphicEngine->GetDirectXResourceAllocator();
+	resources.particleCountBufferHandle = allocator->AllocateConstantBuffer<uint32_t>("ParticleCount");
+	resources.emitterBufferHandle = allocator->AllocateConstantBuffer<EmitterSphere>("ParticleEmitter");
+	resources.particlePerFrameBufferHandle = allocator->AllocateConstantBuffer<PerFrame>("ParticlePerFrame");
+
+	*graphicEngine->GetConstantBufferData<uint32_t>(resources.particleCountBufferHandle) =
+		WindowsEngineResources::kParticleCount;
+	auto* emitter = graphicEngine->GetConstantBufferData<EmitterSphere>(resources.emitterBufferHandle);
+	*emitter = {};
+	emitter->translate = { 0.0f, 0.0f, 0.0f };
+	emitter->radius = 1.0f;
+	emitter->count = 8;
+	emitter->emit = 1;
+	auto* perFrame = graphicEngine->GetConstantBufferData<PerFrame>(resources.particlePerFrameBufferHandle);
+	*perFrame = {};
+	perFrame->deltaTime = fpsCounter->GetDeltaTime();
+	resources.particleElapsedTime += perFrame->deltaTime;
+	perFrame->time = resources.particleElapsedTime;
+
+	using QFE::GRAPHIC::ViewTypeFlags;
+	const ViewTypeFlags cbv = ViewTypeFlags::ConstantBufferView;
+	const ViewTypeFlags uav = ViewTypeFlags::UnorderedAccessView;
+	QFE::FRAMEWORK::DispatchCompute(
+		graphicEngine.get(), resources.emitParticlePSOHandle,
+		{ resources.emitterBufferHandle, resources.particlePerFrameBufferHandle,
+		  resources.particleBufferHandle, resources.freeCounterBufferHandle },
+		{ cbv, cbv, uav, uav }, 1);
+
+	// Emitが書き込んだParticleをUpdateが同じフレームで読むため、UAVアクセスを順序付ける。
+	QFE::FRAMEWORK::UAVBarrierTransition(graphicEngine.get(), resources.particleBufferHandle);
+
+	QFE::FRAMEWORK::DispatchCompute(
+		graphicEngine.get(), resources.updateParticlePSOHandle,
+		{ resources.particleCountBufferHandle, resources.particlePerFrameBufferHandle,
+		  resources.particleBufferHandle },
+		{ cbv, cbv, uav }, WindowsEngineResources::kParticleCount);
 }
 
 void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
