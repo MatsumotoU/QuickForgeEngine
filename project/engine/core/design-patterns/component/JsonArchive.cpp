@@ -125,3 +125,33 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::EulerTransform& va
 		json_[name]["translate"]["z"] = value.translate.z;
 	}
 }
+
+void QFE::JsonArchive::Process(const std::string& name, MATH::Matrix4x4& value) {
+    if (isLoading_) {
+        // デシリアライズ
+        if (json_.contains(name)) {
+            for (int row = 0; row < 4; ++row) {
+                for (int col = 0; col < 4; ++col) {
+                    value.Set(row, col, json_[name][row][col].get<float>());
+                }
+            }
+        }
+    } else {
+        // シリアライズ
+        for (int row = 0; row < 4; ++row) {
+            for (int col = 0; col < 4; ++col) {
+                json_[name][row][col] = value.Get(row, col);
+            }
+        }
+	}
+}
+
+void QFE::JsonArchive::Process(const std::string& name, MATH::Bit32& value) {
+    if (isLoading_) {
+        // デシリアライズ
+        if (json_.contains(name)) value.value = json_[name].get<uint32_t>();
+    } else {
+        // シリアライズ
+        json_[name] = value.value;
+	}
+}

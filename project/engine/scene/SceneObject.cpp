@@ -85,7 +85,7 @@ uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& fi
 	// JSONファイルをキャッシュしていない場合はロードする
 	if(objectJsonMap_.find(filePath) == objectJsonMap_.end()) {
 		if (!QFE::FILE::LoadFileToJson(filePath, objectJsonMap_[filePath])) {
-			QFE_REPORT_SYSTEM_ERROR("Failed to load JSON file: " + filePath, SystemError::Abort);
+			QFE_LOG("Failed to load JSON file: " + filePath);
 			return UINT32_MAX;
 		}
 	}

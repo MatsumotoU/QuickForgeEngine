@@ -3,7 +3,6 @@
 
 #include "graphics/D3D12GraphicEngine.h"
 #include "window/GameWindowManager.h"
-#include "window/WindowsUtils.h"
 #include "framework/graphic/D3D12GraphicFrameWork.h"
 #include "framework/gui/D3D12GuiFrameWork.h"
 #include "framework/script/WindowsScriptWorkFrame.h"
@@ -34,22 +33,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager = 
 		QFE::FRAMEWORK::CreateGuiManager(graphicEngine.get(), hWnd);
 
-	// TestDll.dllをロードしてスクリプト関数の目録を取得
-	std::unique_ptr<QFE::SCRIPT::WindowsScriptInstance> scriptInstance;
-	std::wstring filePath;
-	if (QFE::WINDOW::RequestGetFilePathFromUser(hWnd, L"GameLogic", L"*.dll", filePath)) {
-		scriptInstance =QFE::FRAMEWORK::LoadWindowsScriptInstance(filePath, "GetManifest");
-	}
-
-	QFE::EntityManager entityManager;
-	uint32_t testEntityId = entityManager.CreateEntity();
-	entityManager.AddDefaultComponent<QFE::SCENE::TransformComponent>(testEntityId);
-	QFE::SCENE::ScriptComponent& scriptComponent = entityManager.AddDefaultComponent<QFE::SCENE::ScriptComponent>(testEntityId);
-	// 関数の登録
-	uint32_t functionIndex = 0;
-	scriptComponent.scriptFunctionName = scriptInstance->scripts[functionIndex].functionName;
-	scriptComponent.scriptFunctionIndex = functionIndex;
-
 	// メインループ
 	while (gameWindowManager->IsWindowActive()) {
 		MSG msg;
@@ -65,29 +48,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			graphicEngine->PreDraw();
 			guiManager->PreDraw();
 
-#ifdef USE_IMGUI
-			ImGui::Begin("Test Window");
-			QFE::MATH::EulerTransform& transform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(testEntityId).transform;
-			ImGui::Text("Position: (%.2f, %.2f, %.2f)", transform.translate.x, transform.translate.y, transform.translate.z);
-			ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", transform.rotate.x, transform.rotate.y, transform.rotate.z);
-			ImGui::Text("Scale: (%.2f, %.2f, %.2f)", transform.scale.x, transform.scale.y, transform.scale.z);
-			ImGui::End();
-#endif // USE_IMGUI
-
-			// スクリプト関数の実行
-			entityManager.Each<QFE::SCENE::ScriptComponent>([&](uint32_t entityId, QFE::SCENE::ScriptComponent& scriptComp) {
-				scriptInstance->scripts[scriptComp.scriptFunctionIndex].functionPtr(entityId, 0.016f, &entityManager);
-				});
-
-			
-			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
 			guiManager->PostDraw();
 			graphicEngine->PostDraw();
 		}
 	}
-
-	// DLLをアンロード
-	QFE::FRAMEWORK::UnloadWindowsScriptInstance(scriptInstance.get());
 
 	guiManager->Shutdown();
 	graphicEngine->Shutdown();

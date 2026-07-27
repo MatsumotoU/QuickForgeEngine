@@ -15,6 +15,7 @@
 #include "MyMath.h"
 #include "Shapes.h"
 #include "Random.h"
+#include "MyBit.h"
 
 #include <cmath>
 #include <vector>

@@ -2,7 +2,6 @@
 #include <Windows.h>
 
 #include "window/GameWindowManager.h"
-#include "window/WindowsUtils.h"
 #include "framework/graphic/D3D12GraphicFrameWork.h"
 #include "framework/gui/D3D12GuiFrameWork.h"
 #include "gui/D3D12GuiManager.h"
@@ -39,41 +38,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	cameraManager.Initialize();
 	QFE::CAMERA::CameraHandle cameraHandle = cameraManager.CreateCamera(0.0f, 1280.0f, 0.0f, 720.0f, 0.1f, 100.0f, 0.45f);
 
-	// メインループ
-	while (gameWindowManager->IsWindowActive()) {
-		MSG msg;
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-			// WM_QUITメッセージが来たらループを抜ける
-			if (msg.message == WM_QUIT) {
-				break;
-			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-
-		} else {
-			graphicEngine->PreDraw();
-			guiManager->PreDraw();
-
-			ImGui::Begin("Test Window");
-			if (ImGui::Button("Launch Runtime")) {
-				std::wstring selectedFilePath;
-				if (QFE::WINDOW::RequestGetFilePathFromUser(
-					gameWindowManager->GetWindow(windowName),
-					L"Exe Files", L"*.exe",
-					selectedFilePath)) {
-				}
-				QFE::ProcessUtil::LaunchExe(QFE::ConvertString(selectedFilePath), "");
-			}
-			ImGui::End();
-
-			graphicEngine->SetRenderTarget(QFE::GRAPHIC::RenderTargetHandle::SwapChain);
-			guiManager->PostDraw();
-			graphicEngine->PostDraw();
-		}
-	}
-
-	guiManager->Shutdown();
-	graphicEngine->Shutdown();
-	gameWindowManager->Shutdown();
 	return 0;
 }

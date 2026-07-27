@@ -29,11 +29,9 @@ namespace QFE::EDITOR {
 
 	private:
 		/// @brief コンポーネントの情報を描画する処理
-		void DrawObjectInfoComponent(uint32_t entityId, EditorCommandList& commandList);
+		void DrawComponents(uint32_t entityId);
 		/// @brief コンポーネント追加処理
 		void AddComponentUI(uint32_t entityId, EditorCommandList& commandList);
-
-		void DrawBitmaskUI(uint32_t& value);
 
 		QFE::EntityManager* entityManager_;
 		bool isActive_;

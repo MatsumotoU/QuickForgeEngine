@@ -17,3 +17,5 @@
 #include "shooting/PlayerTrackingComponent.h"
 #include "shooting/AutoScrollComponent.h"
 #include "shooting/EnemyAIComponent.h"
+#include "shooting/EntitySpawnerComponent.h"
+#include "shooting/SpawnTriggerComponent.h"
