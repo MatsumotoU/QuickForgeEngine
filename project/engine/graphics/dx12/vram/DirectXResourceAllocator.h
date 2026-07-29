@@ -62,6 +62,11 @@ namespace QFE::GRAPHIC {
             return bucket.resources[bucket.currentOffset++];
         }
 
+		/// @brief 生のバイトサイズでCBVを割り当てる関数。
+		DirectXResourceHandle AllocateRawConstantBuffer(size_t byteSize, const std::string& name = "RawBuffer");
+		/// @brief 生のバイトサイズでSRV（構造化バッファ）を割り当てる関数。
+		DirectXResourceHandle AllocateRawStructuredBuffer(size_t byteSize, size_t stride, const std::string& name = "RawStructuredBuffer");
+
         void ResetFrame();
 
     private:

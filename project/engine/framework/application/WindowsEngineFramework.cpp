@@ -7,7 +7,6 @@
 #include "gui/D3D12GuiManager.h"
 #include "input/InputInterface.h"
 #include "scene/SceneManager.h"
-#include "script/ScriptInstance.h"
 #include "components/AllComponent.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"

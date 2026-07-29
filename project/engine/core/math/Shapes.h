@@ -3,30 +3,30 @@
 
 namespace QFE::MATH {
 
-	/// 琁EE
+	/// @brief 球
 	struct Sphere
 	{
 		Vector3 center;
 		float radius;
 		int subdivision;
 	};
-	/// 軸並行墁EEボックス
+	/// @brief 軸並行境界ボックス
 	struct AABB
 	{
 		Vector3 center;
 		Vector3 size;
 	};
-	/// 有向墁EEボックス
+	/// @brief 任意方向境界ボックス
 	struct OBB
 	{
 		Vector3 center;
 		Vector3 orientations[3];
 		Vector3 size;
 	};
-	/// 板
+	/// @brief 平面
 	struct Plane
 	{
-		Vector3 normal; // 法緁E
+		Vector3 normal; // 法線
 		float distance; // 距離
 
 		float DistanceToPoint(const Vector3& point);

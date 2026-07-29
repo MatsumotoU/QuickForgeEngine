@@ -16,8 +16,6 @@
 #include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
-#include "script/ScriptInstance.h"
-#include "script/EngineContextForScript.h"
 #include "input/InputInterface.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"

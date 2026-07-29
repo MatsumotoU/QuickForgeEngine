@@ -19,6 +19,12 @@ using float32_t3x3 = QFE::MATH::Matrix3x3;
 using float32_t2x2 = QFE::MATH::Matrix2x2;
 #endif
 
+struct Line {
+	float32_t4x4 worldMatrix;
+	float32_t4 color;
+	float32_t width;
+};
+
 // レイトレーシング反射のためのインスタンス情報
 struct InstanceMetaCPU {
 #ifdef __cplusplus

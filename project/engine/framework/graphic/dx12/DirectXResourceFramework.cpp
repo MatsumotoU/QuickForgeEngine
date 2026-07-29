@@ -206,6 +206,40 @@ bool QFE::FRAMEWORK::CreateCameraPosBuffer(
 	return true;
 }
 
+bool QFE::FRAMEWORK::AllocateConstantBuffer(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, 
+	const std::wstring& name, size_t bufferSize, 
+	QFE::GRAPHIC::DirectXResourceHandle& outConstantBufferHandle) {
+
+	// リソースアロケータを取得
+	QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
+	// 定数バッファを作成
+	outConstantBufferHandle = resourceAllocator->AllocateRawConstantBuffer(bufferSize, ConvertString(name));
+	// 成否の確認
+	if (outConstantBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		QFE_LOG("Failed to allocate constant buffer: " + std::string(name.begin(), name.end()));
+		return false;
+	}
+	return true;
+}
+
+bool QFE::FRAMEWORK::AllocateStructuredBuffer(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	const std::wstring& name, size_t elementCount, size_t elementStride,
+	QFE::GRAPHIC::DirectXResourceHandle& outStructuredBufferHandle) {
+
+	// リソースアロケータを取得
+	QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
+	// 構造化バッファを作成
+	outStructuredBufferHandle = resourceAllocator->AllocateRawStructuredBuffer(elementCount * elementStride, elementStride, ConvertString(name));
+	// 成否の確認
+	if (outStructuredBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		QFE_LOG("Failed to allocate structured buffer: " + std::string(name.begin(), name.end()));
+		return false;
+	}
+	return true;
+}
+
 void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 	const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {

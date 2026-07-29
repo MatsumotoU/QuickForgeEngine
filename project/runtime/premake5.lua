@@ -17,10 +17,12 @@ project "Runtime" -- Runtime
             "ScriptFramework",
             "InputFramework",
             "ApplicationFramework",
+            "PhysicsFramework",
             "Camera",
             "ImGui",
             "Components",
             "Input",
+            "PhysicsEngine",
         }
 
         -- 警告レベル4

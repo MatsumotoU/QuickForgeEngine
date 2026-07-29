@@ -76,6 +76,20 @@ namespace QFE::FRAMEWORK {
 		const std::wstring& name,
 		QFE::GRAPHIC::DirectXResourceHandle& outCameraPosBufferHandle);
 
+	/// @brief 定数バッファを割り当てる関数
+	bool AllocateConstantBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::wstring& name,
+		size_t bufferSize,
+		QFE::GRAPHIC::DirectXResourceHandle& outConstantBufferHandle);
+	/// @brief 構造化バッファを割り当てる関数
+	bool AllocateStructuredBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::wstring& name,
+		size_t elementCount,
+		size_t elementStride,
+		QFE::GRAPHIC::DirectXResourceHandle& outStructuredBufferHandle);
+
 	/// @brief 頂点バッファを作成する関数
 	bool CreateVertexBuffer(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,

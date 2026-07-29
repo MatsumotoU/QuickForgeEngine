@@ -10,6 +10,7 @@
 #include "CameraComponent.h"
 #include "SphereColliderComponent.h"
 #include "AnimationComponent.h"
+#include "PhysicsComponent.h"
 // シューティング用のコンポーネント
 #include "shooting/ShootingPlayerComponent.h"
 #include "shooting/BulletComponent.h"
