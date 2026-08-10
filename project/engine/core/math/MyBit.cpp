@@ -20,4 +20,16 @@ namespace QFE::MATH {
 			value &= ~(1u << bitIndex);
 		}
 	}
+	bool Bit32::HasAnyBits(const Bit32& other) const {
+		return (value & other.value) != 0;
+	}
+	bool Bit32::HasAllBits(const Bit32& other) const {
+		return (value & other.value) == other.value;
+	}
+	bool HasAnyBits(const Bit32& a, const Bit32& b) {
+		return (a.value & b.value) != 0;
+	}
+	bool HasAllBits(const Bit32& a, const Bit32& b) {
+		return (a.value & b.value) == b.value;
+	}
 }

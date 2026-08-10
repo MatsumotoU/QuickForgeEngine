@@ -3,6 +3,7 @@
 #include "design-patterns/component/EntityReference.h"
 
 namespace QFE::COMPONENTS {
+	/// @brief 物理演算用のコンポーネント
 	struct PhysicsComponent {
 		QFE::MATH::Vector3 velocity;
 		QFE::MATH::Vector3 acceleration;

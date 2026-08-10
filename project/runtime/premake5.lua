@@ -14,7 +14,6 @@ project "Runtime" -- Runtime
             "WindowFramework",
             "EngineAssetsFactory",
             "SceneFramework",
-            "ScriptFramework",
             "InputFramework",
             "ApplicationFramework",
             "PhysicsFramework",
