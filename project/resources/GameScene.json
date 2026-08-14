@@ -63,6 +63,25 @@
                     "x": 0.08096861839294434,
                     "y": 0.2694300413131714,
                     "z": 0.09635321795940399
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -106,6 +125,25 @@
                     "x": 1.0,
                     "y": 1.0,
                     "z": 1.0
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -155,6 +193,9 @@
                 "shootInterval": 0.20000000298023224,
                 "speed": 4.5
             },
+            "SpawnTriggerComponent": {
+                "spawnMask": 4294967295
+            },
             "SphereColliderComponent": {
                 "mask": 1,
                 "onCollisionEnterScriptFunctionName": "",
@@ -181,11 +222,16 @@
             }
         },
         {
-            "ObjectInfoComponent": {
-                "name": "GameAreaManager"
-            },
-            "TransformComponent": {
-                "transform": {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.1717093139886856,
+                    "y": 0.35797300934791565,
+                    "z": 0.42487049102783203
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
                     "rotate": {
                         "x": 0.0,
                         "y": 0.0,
@@ -201,16 +247,6 @@
                         "y": 0.0,
                         "z": 0.0
                     }
-                }
-            }
-        },
-        {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.1717093139886856,
-                    "y": 0.35797300934791565,
-                    "z": 0.42487049102783203
                 }
             },
             "ModelRenderComponent": {
@@ -246,6 +282,25 @@
                     "x": 0.3847721517086029,
                     "y": 0.16961531341075897,
                     "z": 0.8393782377243042
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -281,6 +336,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -316,6 +390,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -351,6 +444,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -386,6 +498,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -421,6 +552,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -456,6 +606,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -491,6 +660,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -526,6 +714,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -561,6 +768,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -596,6 +822,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -631,6 +876,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -666,6 +930,25 @@
                     "x": 0.4715026021003723,
                     "y": 0.4715026021003723,
                     "z": 0.4715026021003723
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -701,6 +984,25 @@
                     "x": 0.11764705181121826,
                     "y": 0.11764705181121826,
                     "z": 0.11764705181121826
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
                 }
             },
             "ModelRenderComponent": {
@@ -730,39 +1032,19 @@
             }
         },
         {
-            "EnemyAIComponent": {
-                "bulletName": "EnemyBullet.json",
-                "shotInterval": 2.0,
-                "shotTimer": 0.0
-            },
-            "HealthComponent": {
-                "health": 3,
-                "maxHealth": 3
-            },
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 1.0,
-                    "y": 0.0,
-                    "z": 0.0
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "ico"
+            "EntitySpawnerComponent": {
+                "entityPrefabName": "Enemy.json",
+                "spawnMask": 4294967295,
+                "spawnTriggerDistance": 10.0
             },
             "ObjectInfoComponent": {
-                "name": "Enemy"
-            },
-            "SphereColliderComponent": {
-                "mask": 2,
-                "onCollisionEnterScriptFunctionName": "",
-                "radius": 1.0
+                "name": "EnemySpawnPoint"
             },
             "TransformComponent": {
                 "transform": {
                     "rotate": {
                         "x": 0.0,
-                        "y": 0.0,
+                        "y": -0.0,
                         "z": 0.0
                     },
                     "scale": {
@@ -771,9 +1053,9 @@
                         "z": 1.0
                     },
                     "translate": {
-                        "x": -4.0,
+                        "x": -6.50936222076416,
                         "y": 2.5,
-                        "z": 26.0
+                        "z": 44.36476135253906
                     }
                 }
             }

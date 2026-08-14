@@ -76,6 +76,20 @@ namespace QFE::FRAMEWORK {
 		const std::wstring& name,
 		QFE::GRAPHIC::DirectXResourceHandle& outCameraPosBufferHandle);
 
+	/// @brief 定数バッファを割り当てる関数
+	bool AllocateConstantBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::wstring& name,
+		size_t bufferSize,
+		QFE::GRAPHIC::DirectXResourceHandle& outConstantBufferHandle);
+	/// @brief 構造化バッファを割り当てる関数
+	bool AllocateStructuredBuffer(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const std::wstring& name,
+		size_t elementCount,
+		size_t elementStride,
+		QFE::GRAPHIC::DirectXResourceHandle& outStructuredBufferHandle);
+
 	/// @brief 頂点バッファを作成する関数
 	bool CreateVertexBuffer(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
@@ -106,6 +120,11 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 		const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
+	/// @brief Object3dのワールド行列とワールドビュー射影行列を更新する関数
+	void UpdateObject3dWVPMatrix(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
+		const QFE::MATH::Matrix4x4& worldMatrix, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
 	/// @brief BLASのインスタンスバッファを更新する関数
 	bool UpdateBLASInstanceBuffer(
 		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,

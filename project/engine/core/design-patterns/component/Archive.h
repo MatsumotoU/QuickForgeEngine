@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "../../math/MathInclude.h"
+#include "EntityReference.h"
 
 namespace QFE {
     /// @brief 外部からコンポーネントのメンバにアクセスするためのインターフェース
@@ -20,6 +21,11 @@ namespace QFE {
         virtual void Process(const std::string& name, MATH::Vector2& value) = 0;
         virtual void Process(const std::string& name, MATH::Vector3& value) = 0;
 		virtual void Process(const std::string& name, MATH::Vector4& value) = 0;
+
+		// 数学系の型のバインディング
 		virtual void Process(const std::string& name, MATH::EulerTransform& value) = 0;
+        virtual void Process(const std::string& name, MATH::Matrix4x4& value) = 0;
+        virtual void Process(const std::string& name, MATH::Bit32& value) = 0;
+        virtual void Process(const std::string& name, EntityReference& value) = 0;
     };
 }

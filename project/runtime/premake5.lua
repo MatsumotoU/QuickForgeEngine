@@ -14,13 +14,14 @@ project "Runtime" -- Runtime
             "WindowFramework",
             "EngineAssetsFactory",
             "SceneFramework",
-            "ScriptFramework",
             "InputFramework",
             "ApplicationFramework",
+            "PhysicsFramework",
             "Camera",
             "ImGui",
             "Components",
             "Input",
+            "PhysicsEngine",
         }
 
         -- 警告レベル4

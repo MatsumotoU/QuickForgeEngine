@@ -4,7 +4,8 @@
 ConstantBuffer<EmitterSphere> gEmitter : register(b0);
 ConstantBuffer<PerFrame> gPerFrame : register(b1);
 RWStructuredBuffer<Particle> gParticles : register(u0);
-RWStructuredBuffer<int32_t> gFreeCounter : register(u1);
+RWStructuredBuffer<int32_t> gFreeListIndex : register(u1);
+RWStructuredBuffer<uin32_t> gFreeList : register(u2);
 
 [numthreads(1,1,1)]
 void main(uint3 dispatchThreadID : SV_DispatchThreadID)
@@ -17,9 +18,10 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
         for(uint32_t countIndex = 0; countIndex < gEmitter.count; ++countIndex)
         {
             int32_t particleIndex;
-            InterlockedAdd(gFreeCounter[0], 1, particleIndex);
+            InterlockedAdd(gFreeListIndex[0], -1, particleIndex);
             if(particleIndex >= gParticles.Length)
             {
+                InterlockedAdd(gFreeListIndex[0], 1, particleIndex);
                 break;
             }
             gParticles[particleIndex].scale = randomGenerator.Generate3d();
