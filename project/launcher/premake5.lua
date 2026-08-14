@@ -13,7 +13,6 @@ project "Launcher" -- Launcher
             "GUIEngine",
             "WindowingSystem",
             "GraphicEngine",
-            "FrameWork",
             "Camera",
             "EngineAssetsFactory",
             "Scene",
