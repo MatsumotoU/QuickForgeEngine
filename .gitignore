@@ -9,8 +9,25 @@
 project/docs/html/
 project/docs/latex/
 
-project/Resources/Scripts/bin/
-project/Resources/Scripts/obj/
+# Project-generated files
+project/build/BuildInfo.json
+project/**/[Dd]ebug/
+project/**/[Rr]elease/
+project/**/.vscode/
+project/**/*.sln
+project/**/*.vcxproj
+project/**/*.csproj
+project/**/*.filters
+project/**/*.tlog
+project/**/*.lastbuildstate
+project/**/*.idb
+project/**/*.txt
+project/premake5.exe
+project/premake.zip
+
+# Keep Assimp libraries
+!project/externals/assimp/lib/Debug/
+!project/externals/assimp/lib/Release/
 
 #DumpFile
 Dumps/

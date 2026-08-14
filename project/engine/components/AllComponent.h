@@ -1,6 +1,7 @@
 #pragma once
 // コアコンポーネント
 #include "TransformComponent.h"
+#include "ParentComponent.h"
 #include "ObjectInfoComponent.h"
 #include "VertexComponent.h"
 #include "MaterialComponent.h"
@@ -9,6 +10,7 @@
 #include "CameraComponent.h"
 #include "SphereColliderComponent.h"
 #include "AnimationComponent.h"
+#include "PhysicsComponent.h"
 // シューティング用のコンポーネント
 #include "shooting/ShootingPlayerComponent.h"
 #include "shooting/BulletComponent.h"
@@ -17,3 +19,5 @@
 #include "shooting/PlayerTrackingComponent.h"
 #include "shooting/AutoScrollComponent.h"
 #include "shooting/EnemyAIComponent.h"
+#include "shooting/EntitySpawnerComponent.h"
+#include "shooting/SpawnTriggerComponent.h"

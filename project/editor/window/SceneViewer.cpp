@@ -3,6 +3,7 @@
 #include "command/EditorCommandList.h"
 #include "design-patterns/EntityManager.h"
 #include "components/TransformComponent.h"
+#include "components/TransformHierarchy.h"
 #include "scene/SceneManager.h"
 
 QFE::EDITOR::SceneViewer::SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager) :
@@ -153,7 +154,7 @@ void QFE::EDITOR::SceneViewer::DrawGizmo(
 	auto& transformComponent =
 		entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId);
 	QFE::MATH::Matrix4x4 transformMatrix =
-		QFE::MATH::Matrix4x4::MakeAffineMatrix(transformComponent.transform);
+		QFE::SCENE::GetWorldMatrix(entityManager, entityId);
 
 	ImGuizmo::SetID(static_cast<int>(entityId));
 	const bool changed = ImGuizmo::Manipulate(
@@ -170,7 +171,11 @@ void QFE::EDITOR::SceneViewer::DrawGizmo(
 	}
 
 	if (changed && isUsingGizmo) {
-		transformComponent.transform.FromMatrix(transformMatrix);
+		const QFE::MATH::Matrix4x4 parentWorldMatrix =
+			QFE::SCENE::GetParentWorldMatrix(entityManager, entityId);
+		const QFE::MATH::Matrix4x4 localMatrix =
+			QFE::MATH::Matrix4x4::Multiply(transformMatrix, parentWorldMatrix.Inverse());
+		transformComponent.transform.FromMatrix(localMatrix);
 	}
 
 	if (!isUsingGizmo && wasUsingGizmo_ && editingEntityId_ == entityId) {

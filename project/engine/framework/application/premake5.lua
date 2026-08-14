@@ -10,8 +10,8 @@ project "ApplicationFramework"
             "GuiFramework",
             "InputFramework",
             "SceneFramework",
-            "ScriptFramework",
             "WindowFramework",
+            "PhysicsFramework",
         }
 
         -- 警告レベル4

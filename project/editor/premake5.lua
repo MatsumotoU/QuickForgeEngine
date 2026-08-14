@@ -14,11 +14,12 @@ project "GameEditor" -- GameEditor
             "WindowFramework",
             "EngineAssetsFactory",
             "SceneFramework",
-            "ScriptFramework",
             "ApplicationFramework",
+            "PhysicsFramework",
             "Camera",
             "ImGui",
             "Components",
+            "PhysicsEngine",
             "InputFramework",
         }
 
