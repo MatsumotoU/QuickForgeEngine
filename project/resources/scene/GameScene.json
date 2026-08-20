@@ -1,0 +1,286 @@
+{
+    "entities": [
+        {
+            "AutoScrollComponent": {
+                "distance": 100.0,
+                "speed": 1.5
+            },
+            "CameraComponent": {
+                "aspectRatio_": 1.7777777910232544,
+                "bottom_": 0.0,
+                "farZ_": 1000.0,
+                "fovY_": 0.44999998807907104,
+                "isMainCamera": true,
+                "left_": 0.0,
+                "nearZ_": 0.10000000149011612,
+                "right_": 1280.0,
+                "top_": 720.0,
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ObjectInfoComponent": {
+                "name": "Camera",
+                "uuid": "4da1c537-5c5d-4a92-aa6e-ee1c1f1e16f5"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.6000000238418579,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 107.80000305175781,
+                        "z": -100.80000305175781
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.08096861839294434,
+                    "y": 0.2694300413131714,
+                    "z": 0.09635321795940399
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "ground",
+                "textureName": ""
+            },
+            "ObjectInfoComponent": {
+                "name": "Ground",
+                "uuid": "2aa52fce-da75-4d48-8ea6-451b6f8e6db5"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 20.700000762939453,
+                        "y": 12.600000381469727,
+                        "z": 10.5
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": -0.10000000149011612,
+                        "z": 75.0
+                    }
+                }
+            }
+        },
+        {
+            "AutoScrollComponent": {
+                "distance": 100.0,
+                "speed": 1.5
+            },
+            "HealthComponent": {
+                "health": 3,
+                "maxHealth": 3
+            },
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.6225490570068359,
+                    "y": 0.5920319557189941,
+                    "z": 0.5920319557189941
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "player",
+                "textureName": ""
+            },
+            "MoveLimitComponent": {
+                "autoScrollDistance": 100.0,
+                "autoScrollSpeed": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.5
+                },
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 15.0
+                },
+                "maxLimit": {
+                    "x": 7.0,
+                    "y": 20.0,
+                    "z": 20.0
+                },
+                "minLimit": {
+                    "x": -7.0,
+                    "y": -10.0,
+                    "z": 0.0
+                }
+            },
+            "ObjectInfoComponent": {
+                "name": "Player",
+                "uuid": "eda80b94-1dd1-4f87-b5b2-7ab0b60c8c69"
+            },
+            "ShootingPlayerComponent": {
+                "bombInterval": 0.0,
+                "bombPrefabName": "Bomb.json",
+                "bombSpawnOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "bulletPrefabName": "Bullet.json",
+                "bulletSpawnOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                },
+                "damping": 0.8500000238418579,
+                "shootInterval": 0.20000000298023224,
+                "speed": 4.5
+            },
+            "SpawnTriggerComponent": {
+                "spawnMask": 4294967295
+            },
+            "SphereColliderComponent": {
+                "mask": 1,
+                "onCollisionEnterScriptFunctionName": "",
+                "radius": 0.5
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 2.5,
+                        "z": 15.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.1717093139886856,
+                    "y": 0.35797300934791565,
+                    "z": 0.42487049102783203
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "whitePlate",
+                "textureName": ""
+            },
+            "ObjectInfoComponent": {
+                "name": "Sea",
+                "uuid": "f3ba08e0-90bf-47f8-8b54-92766a9c3c9a"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 125.4000015258789,
+                        "y": 1.0,
+                        "z": 196.6999969482422
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": -2.299999952316284,
+                        "z": 109.0
+                    }
+                }
+            }
+        }
+    ]
+}

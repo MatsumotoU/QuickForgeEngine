@@ -14,7 +14,8 @@ namespace QFE::EDITOR {
 	class CreateEntityCommand : public IEditorCommand {
 	public:
 		CreateEntityCommand(std::string entityName, 
-			QFE::MATH::Vector3 position, EntityManager* entityManager);
+			QFE::MATH::Vector3 position, EntityManager* entityManager,
+			std::string modelName = {});
 
 		/// @brief エンティティを作成する。
 		void Execute() override;
@@ -25,6 +26,7 @@ namespace QFE::EDITOR {
 		EntityManager* entityManager_;
 		uint32_t entityId_;
 		std::string entityName_;
+		std::string modelName_;
 		QFE::MATH::Vector3 position_;
 	};
 }

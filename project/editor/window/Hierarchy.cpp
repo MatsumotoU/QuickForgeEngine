@@ -5,10 +5,66 @@
 
 #include "command/AllCommands.h"
 #include "command/EditorCommandList.h"
+#include "assetfactory/model/PrimitiveFactoryFuncs.h"
 
 #include <imgui/imgui.h>
 
 #include "framework/window/WindowsWindowFrameWork.h"
+
+#include <algorithm>
+#include <cctype>
+#include <filesystem>
+#include <vector>
+
+namespace {
+	std::vector<std::string> FindObjModels() {
+		std::vector<std::string> models;
+		std::error_code error;
+		const std::filesystem::path resourceRoot = "resources";
+		if (!std::filesystem::exists(resourceRoot, error)) {
+			return models;
+		}
+
+		for (std::filesystem::recursive_directory_iterator iterator(
+			resourceRoot,
+			std::filesystem::directory_options::skip_permission_denied,
+			error), end;
+			iterator != end;
+			iterator.increment(error)) {
+			if (error) {
+				error.clear();
+				continue;
+			}
+			if (!iterator->is_regular_file(error)) {
+				continue;
+			}
+
+			std::string extension = iterator->path().extension().string();
+			std::transform(extension.begin(), extension.end(), extension.begin(),
+				[](unsigned char character) { return static_cast<char>(std::tolower(character)); });
+			if (extension != ".obj") {
+				continue;
+			}
+
+			std::filesystem::path relativePath =
+				std::filesystem::relative(iterator->path(), resourceRoot, error);
+			if (error) {
+				error.clear();
+				continue;
+			}
+			relativePath.replace_extension();
+			models.push_back(relativePath.generic_string());
+		}
+
+		std::sort(models.begin(), models.end());
+		models.erase(std::unique(models.begin(), models.end()), models.end());
+		return models;
+	}
+
+	std::string MakeEntityName(const std::string& modelName) {
+		return std::filesystem::path(modelName).filename().string();
+	}
+}
 
 QFE::EDITOR::Hierarchy::Hierarchy(EntityManager* entityManager)
 	: entityManager_(entityManager), isActive_(true) {}
@@ -80,9 +136,34 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 
 	// ポップアップの描画処理（BeginPopupContextWindow ではなく BeginPopup を使う）
 	if (ImGui::BeginPopup("EntityContextMenu")) {
-		// 新しいエンティティを作成する
-		if (ImGui::MenuItem("CreateEmptyEntity")) {
-			commandList.AddCommand(std::make_unique<CreateEntityCommand>("NewEntity", QFE::MATH::Vector3(0, 0, 0), entityManager_));
+		if (ImGui::BeginMenu("Create")) {
+			if (ImGui::MenuItem("Empty Object")) {
+				commandList.AddCommand(std::make_unique<CreateEntityCommand>(
+					"New Object", QFE::MATH::Vector3(0, 0, 0), entityManager_));
+			}
+
+			if (ImGui::BeginMenu("3D Object")) {
+				for (const std::string& modelName : QFE::ASSET::GetPrimitiveMeshNames()) {
+					const std::string entityName = MakeEntityName(modelName);
+					if (ImGui::MenuItem(entityName.c_str())) {
+						commandList.AddCommand(std::make_unique<CreateEntityCommand>(
+							entityName, QFE::MATH::Vector3(0, 0, 0), entityManager_, modelName));
+					}
+				}
+				ImGui::EndMenu();
+			}
+
+			const std::vector<std::string> modelNames = FindObjModels();
+			if (ImGui::BeginMenu("Model", !modelNames.empty())) {
+				for (const std::string& modelName : modelNames) {
+					if (ImGui::MenuItem(modelName.c_str())) {
+						commandList.AddCommand(std::make_unique<CreateEntityCommand>(
+							MakeEntityName(modelName), QFE::MATH::Vector3(0, 0, 0), entityManager_, modelName));
+					}
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
 		}
 
 		// 選択されたエンティティがある場合のみ、コピーと削除のメニューを表示する
