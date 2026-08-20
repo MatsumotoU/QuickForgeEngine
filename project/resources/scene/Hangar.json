@@ -1,0 +1,169 @@
+{
+    "entities": [
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 0.07843136787414551,
+                    "y": 0.07843136787414551,
+                    "z": 0.07843136787414551
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "hangar",
+                "textureName": ""
+            },
+            "ObjectInfoComponent": {
+                "name": "HangarWall",
+                "uuid": "873a6400-ef15-4ae8-9fc8-21beb47368f0"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "CameraComponent": {
+                "aspectRatio_": 1.7777777910232544,
+                "bottom_": 0.0,
+                "farZ_": 1000.0,
+                "fovY_": 0.8999999761581421,
+                "isMainCamera": true,
+                "left_": 0.0,
+                "nearZ_": 0.10000000149011612,
+                "right_": 1280.0,
+                "top_": 720.0,
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ObjectInfoComponent": {
+                "name": "Camera",
+                "uuid": "1ecbb647-868c-44a3-91bf-9363b7445e95"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.4000000059604645,
+                        "y": 0.6831853985786438,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": -22.85099983215332,
+                        "y": 19.209999084472656,
+                        "z": -16.079999923706055
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 0.9960784316062927,
+                    "z": 1.0
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "player",
+                "textureName": ""
+            },
+            "ObjectInfoComponent": {
+                "name": "player",
+                "uuid": "fa3a2c12-5f2b-484c-babe-52e66b8bccde"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        }
+    ]
+}

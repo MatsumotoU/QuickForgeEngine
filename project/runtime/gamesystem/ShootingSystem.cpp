@@ -63,12 +63,12 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 
 			if (inputInterface->GetKeyTrigger("Left")) {
 				if (playerTransform.rotate.z < -0.6f) {
-					playerTransform.rotate.z = -5.0f;
+					playerTransform.rotate.z = -3.0f;
 				}
 			}
 			if (inputInterface->GetKeyTrigger("Right")) {
 				if (playerTransform.rotate.z > 0.6f) {
-					playerTransform.rotate.z = 5.0f;
+					playerTransform.rotate.z = 3.0f;
 				}
 			}
 
