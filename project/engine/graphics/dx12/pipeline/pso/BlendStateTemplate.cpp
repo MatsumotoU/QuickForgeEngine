@@ -24,6 +24,7 @@ void BlendStateTemplate::Initialize() {
 	rtbd.LogicOpEnable = FALSE; // 論理演算は通常FALSE
 	blendDescMap_[BlendMode::kBlendModeNone] = blendDesc;
 	// 通常
+	rtbd.BlendEnable = TRUE;
 	rtbd.SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値を使用
 	rtbd.DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デスティネーションの (1 - ソースアルファ) を使用
 	rtbd.BlendOp = D3D12_BLEND_OP_ADD; // 加算

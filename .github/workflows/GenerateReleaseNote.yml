@@ -22,10 +22,9 @@ jobs:
       - name: Run Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         with:
-          # 【★ここに 3行目 を追加】 翻訳機（conventional-changelog-conventionalcommits）をダウンロードさせます
+          # v10 requires writer v9, while semantic-release-action@v4 currently uses writer v8.
+          # Pin the compatible preset instead of allowing an incompatible major upgrade.
           extra_plugins: |
-            @semantic-release/commit-analyzer
-            @semantic-release/release-notes-generator
-            conventional-changelog-conventionalcommits
+            conventional-changelog-conventionalcommits@9.3.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

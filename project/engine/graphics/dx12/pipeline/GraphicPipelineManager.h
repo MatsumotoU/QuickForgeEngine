@@ -56,11 +56,13 @@ namespace QFE::GRAPHIC {
 		PSOHandle GeneratePipelineStateObject(
 			const ShaderPairHandle& shaderHandle, ID3D12Device* device
 			, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType, D3D12_RASTERIZER_DESC rasterizerDesc,
-			D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc);
+			D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc,
+			DXGI_FORMAT renderTargetFormat = DXGI_FORMAT_R16G16B16A16_FLOAT);
 		/// @brief シェーダーペアと各種情報からパイプラインステートオブジェクトを生成します
 		PSOHandle GeneratePipelineStateObject(
 			ID3D12Device* device, const ShaderPairHandle& shaderHandle, BlendMode blendMode,
-			RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType);
+			RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType,
+			DXGI_FORMAT renderTargetFormat = DXGI_FORMAT_R16G16B16A16_FLOAT);
 
 		/// @brief PSOハンドルからパイプラインステートオブジェクトを取得します
 		PipelineStateObject* GetPipelineStateObject(const PSOHandle& psoHandle) const;

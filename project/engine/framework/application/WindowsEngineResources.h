@@ -51,6 +51,11 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::PSOHandle psoHandle;
 		std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes;
 
+		QFE::GRAPHIC::ShaderPairHandle spriteShaderPairHandle = QFE::GRAPHIC::ShaderPairHandle::Invalid;
+		QFE::GRAPHIC::PSOHandle spriteUnormPsoHandle = QFE::GRAPHIC::PSOHandle::Invalid;
+		QFE::GRAPHIC::PSOHandle spriteSrgbPsoHandle = QFE::GRAPHIC::PSOHandle::Invalid;
+		QFE::GRAPHIC::DirectXResourceHandle spriteVertexBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+
 		QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle = QFE::GRAPHIC::RenderTargetHandle::SwapChain;
 
 		QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIdentity4x4();

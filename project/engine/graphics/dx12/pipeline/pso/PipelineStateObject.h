@@ -20,6 +20,7 @@ namespace QFE::GRAPHIC {
 		IDxcBlob* psBlob;
 		IDxcBlob* vsBlob;
 		UINT numRenderTarget;
+		DXGI_FORMAT renderTargetFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	};
 
 	/// @brief パイプラインステートオブジェクトを管理するクラス

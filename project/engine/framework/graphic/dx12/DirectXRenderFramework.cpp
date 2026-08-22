@@ -42,6 +42,16 @@ bool QFE::FRAMEWORK::CreateGraphicPSO(
 	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
 	const QFE::GRAPHIC::RasterizerType& rasterizerType, const QFE::GRAPHIC::BlendMode& blendMode,
 	const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType, QFE::GRAPHIC::PSOHandle& outPSOHandle) {
+	return CreateGraphicPSO(
+		graphicEngine, shaderPairHandle, rasterizerType, blendMode, depthStencilDescType,
+		DXGI_FORMAT_R16G16B16A16_FLOAT, outPSOHandle);
+}
+
+bool QFE::FRAMEWORK::CreateGraphicPSO(
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
+	const QFE::GRAPHIC::RasterizerType& rasterizerType, const QFE::GRAPHIC::BlendMode& blendMode,
+	const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType, DXGI_FORMAT renderTargetFormat,
+	QFE::GRAPHIC::PSOHandle& outPSOHandle) {
 
 	// 使用するパイプラインマネージャを取得
 	QFE::GRAPHIC::GraphicPipelineManager* pipelineManager = graphicEngine->GetGraphicPipelineManager();
@@ -51,7 +61,8 @@ bool QFE::FRAMEWORK::CreateGraphicPSO(
 		shaderPairHandle,
 		blendMode,
 		rasterizerType,
-		depthStencilDescType
+		depthStencilDescType,
+		renderTargetFormat
 	);
 	// 生成したPSOハンドルを出力引数に設定
 	outPSOHandle = psoHandle;

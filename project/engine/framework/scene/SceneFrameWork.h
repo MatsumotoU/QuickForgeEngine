@@ -33,4 +33,14 @@ namespace QFE::FRAMEWORK {
 		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
 		const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes);
 
+	/// @brief 描画可能なSpriteRenderComponentを描画順に最終ターゲットへ描画する。
+	void DrawSceneSprites(
+		QFE::SCENE::SceneManager& sceneManager,
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		QFE::GRAPHIC::PSOHandle psoHandle,
+		QFE::GRAPHIC::ViewPortHandle viewportHandle,
+		QFE::GRAPHIC::ScissorRectHandle scissorRectHandle,
+		QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle,
+		QFE::GRAPHIC::RenderTargetHandle renderTarget);
+
 }

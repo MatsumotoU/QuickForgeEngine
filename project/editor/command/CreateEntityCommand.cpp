@@ -2,15 +2,17 @@
 #include "design-patterns/EntityManager.h"
 #include "components/MaterialComponent.h"
 #include "components/ModelRenderComponent.h"
+#include "components/SpriteRenderComponent.h"
 #include "components/ObjectInfoComponent.h"
 #include "components/TransformComponent.h"
 
 #include <utility>
 
 QFE::EDITOR::CreateEntityCommand::CreateEntityCommand(std::string entityName,
-	QFE::MATH::Vector3 position, EntityManager* entityManager, std::string modelName) :
+	QFE::MATH::Vector3 position, EntityManager* entityManager, std::string modelName, bool createSprite) :
 		entityManager_(entityManager), entityId_(UINT32_MAX),
-		entityName_(std::move(entityName)), modelName_(std::move(modelName)), position_(position) {
+		entityName_(std::move(entityName)), modelName_(std::move(modelName)),
+		createSprite_(createSprite), position_(position) {
 }
 
 void QFE::EDITOR::CreateEntityCommand::Execute() {
@@ -35,6 +37,15 @@ void QFE::EDITOR::CreateEntityCommand::Execute() {
 		materialComp.metallic = 0.0f;
 		materialComp.smoothness = 0.5f;
 		entityManager_->EmplaceComponent<QFE::SCENE::MaterialComponent>(entityId_, materialComp);
+	}
+
+	if (createSprite_) {
+		transformComp.transform.scale = { 100.0f, 100.0f, 1.0f };
+		entityManager_->GetComponent<QFE::SCENE::TransformComponent>(entityId_) = transformComp;
+		entityManager_->EmplaceComponent<QFE::SCENE::SpriteRenderComponent>(
+			entityId_, QFE::SCENE::SpriteRenderComponent{});
+		entityManager_->EmplaceComponent<QFE::SCENE::MaterialComponent>(
+			entityId_, QFE::SCENE::MaterialComponent{});
 	}
 }
 

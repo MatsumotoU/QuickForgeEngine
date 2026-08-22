@@ -6,6 +6,8 @@
 
 #include "framework/graphic/D3D12GraphicFrameWork.h"
 
+#include <algorithm>
+
 uint32_t QFE::FRAMEWORK::CreateEntity(QFE::SCENE::SceneManager& sceneManager, const std::string& name) {
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 	uint32_t entity = entityManager.CreateEntity();
@@ -67,4 +69,49 @@ void QFE::FRAMEWORK::DrawSceneModels(
 				static_cast<QFE::GRAPHIC::DirectXResourceHandle>(model.indexResourceHandle),
 				rootResources, renderTargets, rootParameterTypes);
 		});
+}
+
+void QFE::FRAMEWORK::DrawSceneSprites(
+	QFE::SCENE::SceneManager& sceneManager,
+	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	QFE::GRAPHIC::PSOHandle psoHandle,
+	QFE::GRAPHIC::ViewPortHandle viewportHandle,
+	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle,
+	QFE::GRAPHIC::DirectXResourceHandle vertexBufferHandle,
+	QFE::GRAPHIC::RenderTargetHandle renderTarget) {
+	if (!graphicEngine || vertexBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return;
+
+	struct SpriteDrawItem {
+		uint32_t entityId;
+		QFE::SCENE::SpriteRenderComponent* sprite;
+	};
+
+	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	std::vector<SpriteDrawItem> drawItems;
+	entityManager.Each<QFE::SCENE::SpriteRenderComponent>(
+		[&](uint32_t entityId, QFE::SCENE::SpriteRenderComponent& sprite) {
+			if (sprite.visible && sprite.canRender) {
+				drawItems.push_back({ entityId, &sprite });
+			}
+		});
+
+	std::stable_sort(drawItems.begin(), drawItems.end(),
+		[](const SpriteDrawItem& lhs, const SpriteDrawItem& rhs) {
+			if (lhs.sprite->drawOrder != rhs.sprite->drawOrder) {
+				return lhs.sprite->drawOrder < rhs.sprite->drawOrder;
+			}
+			return lhs.entityId < rhs.entityId;
+		});
+
+	for (const SpriteDrawItem& item : drawItems) {
+		const QFE::SCENE::SpriteRenderComponent& sprite = *item.sprite;
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle> rootResources = {
+			static_cast<QFE::GRAPHIC::DirectXResourceHandle>(sprite.transformMatrixBufferHandle),
+			static_cast<QFE::GRAPHIC::DirectXResourceHandle>(sprite.materialResourceHandle),
+			static_cast<QFE::GRAPHIC::DirectXResourceHandle>(sprite.textureResourceHandle)
+		};
+		QFE::FRAMEWORK::DrawGraphicPSO(
+			graphicEngine, psoHandle, viewportHandle, scissorRectHandle,
+			vertexBufferHandle, rootResources, { renderTarget });
+	}
 }
