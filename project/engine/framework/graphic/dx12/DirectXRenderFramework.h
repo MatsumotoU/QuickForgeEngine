@@ -37,6 +37,15 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::BlendMode& blendMode,
 		const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType,
 		QFE::GRAPHIC::PSOHandle& outPSOHandle);
+	/// @brief 出力先のRTVフォーマットを指定してパイプラインステートオブジェクトを作成する関数
+	bool CreateGraphicPSO(
+		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
+		const QFE::GRAPHIC::RasterizerType& rasterizerType,
+		const QFE::GRAPHIC::BlendMode& blendMode,
+		const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType,
+		DXGI_FORMAT renderTargetFormat,
+		QFE::GRAPHIC::PSOHandle& outPSOHandle);
 
 	/// @brief パイプラインステートオブジェクトのルートパラメータの型を取得する関数
 	bool GetGraphicPSORootParameterTypeList(

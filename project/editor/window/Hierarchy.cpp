@@ -142,6 +142,12 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 					"New Object", QFE::MATH::Vector3(0, 0, 0), entityManager_));
 			}
 
+			if (ImGui::MenuItem("Sprite")) {
+				commandList.AddCommand(std::make_unique<CreateEntityCommand>(
+					"New Sprite", QFE::MATH::Vector3(640.0f, 360.0f, 0.0f),
+					entityManager_, std::string{}, true));
+			}
+
 			if (ImGui::BeginMenu("3D Object")) {
 				for (const std::string& modelName : QFE::ASSET::GetPrimitiveMeshNames()) {
 					const std::string entityName = MakeEntityName(modelName);

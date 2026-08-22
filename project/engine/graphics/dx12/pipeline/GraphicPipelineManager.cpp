@@ -94,14 +94,15 @@ ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(const 
 PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 	const ShaderPairHandle& shaderHandle, ID3D12Device* device
 	, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType, D3D12_RASTERIZER_DESC rasterizerDesc,
-	D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc) {
+	D3D12_BLEND_DESC blendDesc, D3D12_DEPTH_STENCIL_DESC depthStencilDesc,
+	DXGI_FORMAT renderTargetFormat) {
 
 	// PSOの一意性を保証するためのキーを生成
-	std::string key = std::format("{}{}{}{}{}{}{}", 
+	std::string key = std::format("{}{}{}{}{}{}{}{}",
 		static_cast<uint32_t>(shaderHandle), static_cast<uint32_t>(topologyType),
 		static_cast<uint32_t>(rasterizerDesc.CullMode), static_cast<uint32_t>(rasterizerDesc.FillMode),
 		static_cast<uint32_t>(blendDesc.AlphaToCoverageEnable), static_cast<uint32_t>(depthStencilDesc.DepthEnable),
-		static_cast<uint32_t>(depthStencilDesc.StencilEnable));
+		static_cast<uint32_t>(depthStencilDesc.StencilEnable), static_cast<uint32_t>(renderTargetFormat));
 	// すでに同じPSOが存在する場合は、既存のハンドルを返す
 	if (pipelineStateObjectNameToKeyMap_.find(key) != pipelineStateObjectNameToKeyMap_.end()) {
 		return static_cast<PSOHandle>(pipelineStateObjectNameToKeyMap_[key]);
@@ -119,6 +120,7 @@ PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 	element.blendDesc = blendDesc;
 	element.depthStencilDesc = depthStencilDesc;
 	element.numRenderTarget = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetRenderTargetCount();
+	element.renderTargetFormat = renderTargetFormat;
 
 	// PSOの生成
 	pipelineStateObjects_[pipelineStateObjectKeyCounter_] = std::make_unique<PipelineStateObject>();
@@ -132,7 +134,8 @@ PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 
 PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
 	ID3D12Device* device, const ShaderPairHandle& shaderHandle, BlendMode blendMode,
-	RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) {
+	RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType,
+	DXGI_FORMAT renderTargetFormat) {
 
 	PipelineStateObjectElement element{};
 	element.shaderPairHandle = static_cast<uint32_t>(shaderHandle);
@@ -145,6 +148,7 @@ PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
 	element.blendDesc = blendStates_->GetBlendDesc(blendMode);
 	element.depthStencilDesc = depthStencilDescTemplate_->GetDesc(depthStencilDescType);
 	element.numRenderTarget = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetRenderTargetCount();
+	element.renderTargetFormat = renderTargetFormat;
 
 	// PSOの生成
 	pipelineStateObjects_[pipelineStateObjectKeyCounter_] = std::make_unique<PipelineStateObject>();

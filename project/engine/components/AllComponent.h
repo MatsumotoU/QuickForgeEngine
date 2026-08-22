@@ -6,6 +6,7 @@
 #include "VertexComponent.h"
 #include "MaterialComponent.h"
 #include "ModelRenderComponent.h"
+#include "SpriteRenderComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
 #include "SphereColliderComponent.h"

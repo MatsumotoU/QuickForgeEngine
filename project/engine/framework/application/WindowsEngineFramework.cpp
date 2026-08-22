@@ -182,6 +182,25 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 		QFE::GRAPHIC::DepthStencilDescType::Default, resources.psoHandle);
 	QFE::FRAMEWORK::GetGraphicPSORootParameterTypeList(graphicEngine.get(), resources.psoHandle, resources.rootParameterTypes);
 
+	// 画面合成用スプライトのシェーダーとPSOを準備する。
+	QFE::FRAMEWORK::CreateShaderPair(
+		graphicEngine.get(), vsDirName, psDirName,
+		"Object2d.VS.hlsl", "Object2d.PS.hlsl", resources.spriteShaderPairHandle);
+	QFE::FRAMEWORK::CreateGraphicPSO(
+		graphicEngine.get(), resources.spriteShaderPairHandle,
+		QFE::GRAPHIC::RasterizerType::CullNone, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
+		QFE::GRAPHIC::DepthStencilDescType::None, DXGI_FORMAT_R8G8B8A8_UNORM,
+		resources.spriteUnormPsoHandle);
+	QFE::FRAMEWORK::CreateGraphicPSO(
+		graphicEngine.get(), resources.spriteShaderPairHandle,
+		QFE::GRAPHIC::RasterizerType::CullNone, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
+		QFE::GRAPHIC::DepthStencilDescType::None, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+		resources.spriteSrgbPsoHandle);
+
+	const std::vector<VertexData> spriteVertices = QFE::ASSET::CreatePrimitiveMesh("Primitive/Quad");
+	QFE::FRAMEWORK::CreateVertexBuffer(
+		graphicEngine.get(), spriteVertices, "SpriteQuad", resources.spriteVertexBufferHandle);
+
 	QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.textureHandleMap["BlackCubeMap"]);
 	resources.textureGpuIndexMap["BlackCubeMap"] = 0; // GPU側のインデックスを設定
 	QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), resources.textureHandleMap["White1x1"]);
@@ -327,6 +346,78 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		modelRenderComp.renderErrorMessage = "";
 		});
 
+	// スプライトは3Dモデルと異なり、G-bufferやBLASへ登録せず最終映像へ直接重ねる。
+	const QFE::MATH::Matrix4x4 spriteProjection = QFE::MATH::Matrix4x4::MakeOrthographicMatrix(
+		0.0f, 0.0f,
+		static_cast<float>(resources.windowWidth), static_cast<float>(resources.windowHeight),
+		0.0f, 1.0f);
+	entityManager.Each<QFE::SCENE::SpriteRenderComponent>(
+		[&](uint32_t entityId, QFE::SCENE::SpriteRenderComponent& sprite) {
+			sprite.canRender = false;
+			if (!sprite.visible) {
+				sprite.renderErrorMessage.clear();
+				return;
+			}
+			if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+				sprite.renderErrorMessage = "Missing TransformComponent for entity: " + std::to_string(entityId);
+				return;
+			}
+			if (!entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId)) {
+				sprite.renderErrorMessage = "Missing MaterialComponent for entity: " + std::to_string(entityId);
+				return;
+			}
+
+			QFE::MATH::EulerTransform spriteTransform =
+				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+			if (entityManager.HasComponent<QFE::SCENE::AnimationComponent>(entityId)) {
+				const QFE::SCENE::AnimationComponent& animation =
+					entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
+				spriteTransform.translate += animation.transform.translate;
+				spriteTransform.rotate += animation.transform.rotate;
+				spriteTransform.scale += animation.transform.scale;
+			}
+			const QFE::MATH::Matrix4x4 worldMatrix =
+				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &spriteTransform);
+
+			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
+				graphicEngine->GetDirectXResourceAllocator();
+			const QFE::GRAPHIC::DirectXResourceHandle transformHandle =
+				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("SpriteTransform");
+			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
+				graphicEngine.get(), transformHandle, worldMatrix, spriteProjection);
+			sprite.transformMatrixBufferHandle = static_cast<uint32_t>(transformHandle);
+
+			const QFE::GRAPHIC::DirectXResourceHandle materialHandle =
+				resourceAllocator->AllocateConstantBuffer<Material>("SpriteMaterial");
+			Material* materialData = graphicEngine->GetConstantBufferData<Material>(materialHandle);
+			if (!materialData) {
+				sprite.renderErrorMessage = "Failed to allocate sprite material for entity: " + std::to_string(entityId);
+				return;
+			}
+			const QFE::SCENE::MaterialComponent& material =
+				entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
+			materialData->color = material.albedoColor;
+			materialData->metallic = material.metallic;
+			materialData->smoothness = material.smoothness;
+			materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(material.uvTransform);
+			sprite.materialResourceHandle = static_cast<uint32_t>(materialHandle);
+
+			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
+			QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+			if (!sprite.textureName.empty()) {
+				if (!QFE::FRAMEWORK::LoadTexture(
+					systems, resources.assetDir, sprite.textureName,
+					resources.textureHandleMap, resources.textureGpuIndexMap, resources.nextTextureGpuIndex)) {
+					sprite.renderErrorMessage = "Failed to load texture: " + sprite.textureName;
+					return;
+				}
+				textureHandle = resources.textureHandleMap[sprite.textureName];
+			}
+			sprite.textureResourceHandle = static_cast<uint32_t>(textureHandle);
+			sprite.canRender = true;
+			sprite.renderErrorMessage.clear();
+		});
+
 	// 1) global arrays とモデル→meta マップを作る
 	std::vector<RaytracingVertexAttribute> globalVertexAttributes;
 	std::vector<uint32_t> globalTriIndices;
@@ -443,6 +534,26 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		cameraBufferHandle, resources.globalTriHandle, resources.globalUVHandle,
 		resources.instanceMetaHandle, textureFirstResourceHandle, rayTracingRootResources,
 		resources.finalRenderTargetHandle);
+
+	const QFE::GRAPHIC::PSOHandle spritePsoHandle =
+		resources.finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain
+		? resources.spriteSrgbPsoHandle
+		: resources.spriteUnormPsoHandle;
+	QFE::FRAMEWORK::DrawSceneSprites(
+		sceneManager, graphicEngine.get(), spritePsoHandle,
+		resources.viewportHandle, resources.scissorRectHandle,
+		resources.spriteVertexBufferHandle, resources.finalRenderTargetHandle);
+
+	// Editorの最終映像はImGuiからSRVとして読むため、スプライト描画後に読み取り状態へ戻す。
+	if (resources.finalRenderTargetHandle != QFE::GRAPHIC::RenderTargetHandle::SwapChain) {
+		QFE::GRAPHIC::DirectXResourceHandle finalRenderTargetResourceHandle;
+		if (QFE::FRAMEWORK::GetRenderResourceHandle(
+			graphicEngine.get(), resources.finalRenderTargetHandle, finalRenderTargetResourceHandle)) {
+			QFE::FRAMEWORK::TransitionResourceToState(
+				graphicEngine.get(), finalRenderTargetResourceHandle,
+				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		}
+	}
 
 	QFE::GRAPHIC::DirectXResourceHandle depthStencilHandle;
 	if (QFE::FRAMEWORK::GetDepthStencilResourceHandle(graphicEngine.get(), depthStencilHandle)) {
