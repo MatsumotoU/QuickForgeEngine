@@ -18,6 +18,8 @@ namespace QFE::SCENE {
 		void SaveCurrentSceneToJson(const std::string& filePath);
 		/// @brief JSONファイルから現在のシーンをロードします.
 		void LoadCurrentSceneFromJson(const std::string& filePath);
+		/// @brief 現在のシーンが読み書きされているファイルパスを取得します.
+		const std::string& GetCurrentScenePath() const;
 
 		/// @brief JSONファイルから現在のシーンをロードし、JSONオブジェクトとして返します.
 		nlohmann::json LoadCurrentSceneToJson(const std::string& filePath);
@@ -31,7 +33,7 @@ namespace QFE::SCENE {
 	private:
 		/// @brief 現在のシーンオブジェクトです.
 		SceneObject currentScene_;
-
-		
+		/// @brief 現在のシーンの保存先です. 未保存の場合は空文字列です.
+		std::string currentScenePath_;
 	};
 }

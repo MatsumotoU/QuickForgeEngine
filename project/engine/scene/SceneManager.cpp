@@ -2,6 +2,7 @@
 
 void QFE::SCENE::SceneManager::Initialize() {
 	currentScene_.Initialize();
+	currentScenePath_.clear();
 }
 
 void QFE::SCENE::SceneManager::EndFrame() {
@@ -14,10 +15,16 @@ void QFE::SCENE::SceneManager::Shutdown() {
 
 void QFE::SCENE::SceneManager::SaveCurrentSceneToJson(const std::string& filePath) {
 	currentScene_.SaveSceneToJson(filePath);
+	currentScenePath_ = filePath;
 }
 
 void QFE::SCENE::SceneManager::LoadCurrentSceneFromJson(const std::string& filePath) {
 	currentScene_.LoadSceneFromJson(filePath);
+	currentScenePath_ = filePath;
+}
+
+const std::string& QFE::SCENE::SceneManager::GetCurrentScenePath() const {
+	return currentScenePath_;
 }
 
 nlohmann::json QFE::SCENE::SceneManager::LoadCurrentSceneToJson(const std::string& filePath) {
