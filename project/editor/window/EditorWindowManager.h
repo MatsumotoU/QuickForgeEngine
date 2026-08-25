@@ -28,6 +28,7 @@ namespace QFE::EDITOR {
 		Console,
 		AssetBrowser,
 		Logger,
+		AnimationEditor,
 	};
 
 	/// @brief エディタのウィンドウ管理クラス
