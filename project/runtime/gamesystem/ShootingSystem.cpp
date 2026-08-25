@@ -2,6 +2,7 @@
 
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
+#include "framework/scene/CollisionTriggerSystem.h"
 
 bool QFE::GAMESYSTEM::AutoScrollSystem(
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
@@ -238,6 +239,8 @@ bool QFE::GAMESYSTEM::CollisionSystem(
 
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
 	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::FRAMEWORK::BeginCollisionTriggerFrame(entityManager);
+	std::vector<QFE::FRAMEWORK::ComponentParameterCommand> parameterCommands;
 
 	// コライダーの処理
 	std::vector<uint32_t>colliderEntityIds;
@@ -269,28 +272,15 @@ bool QFE::GAMESYSTEM::CollisionSystem(
 			// 衝突判定
 			float distance = (transformA.translate - transformB.translate).Length();
 			if (distance < (colliderA.radius + colliderB.radius)) {
-				// 衝突が発生した場合の処理
-				if (entityManager.HasComponent<QFE::STG::HealthComponent>(entityIdA)) {
-					QFE::STG::HealthComponent& healthCompA = entityManager.GetComponent<QFE::STG::HealthComponent>(entityIdA);
-					healthCompA.health -= 1;
-					if (healthCompA.health <= 0) {
-						entityManager.RemoveEntity(entityIdA);
-					}
-				} else {
-					entityManager.RemoveEntity(entityIdA);
-				}
-				if (entityManager.HasComponent<QFE::STG::HealthComponent>(entityIdB)) {
-					QFE::STG::HealthComponent& healthCompB = entityManager.GetComponent<QFE::STG::HealthComponent>(entityIdB);
-					healthCompB.health -= 1;
-					if (healthCompB.health <= 0) {
-						entityManager.RemoveEntity(entityIdB);
-					}
-				} else {
-					entityManager.RemoveEntity(entityIdB);
-				}
+				QFE::FRAMEWORK::NotifyCollisionTrigger(
+					entityManager, entityIdA, entityIdB, colliderB.mask, parameterCommands);
+				QFE::FRAMEWORK::NotifyCollisionTrigger(
+					entityManager, entityIdB, entityIdA, colliderA.mask, parameterCommands);
 			}
 		}
 	}
+	QFE::FRAMEWORK::EndCollisionTriggerFrame(entityManager, parameterCommands);
+	QFE::FRAMEWORK::ApplyComponentParameterCommands(entityManager, parameterCommands);
 	return true;
 }
 

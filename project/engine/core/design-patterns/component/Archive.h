@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "../../../../externals/nlohmann/json_fwd.hpp"
 #include "../../math/MathInclude.h"
 #include "EntityReference.h"
 
@@ -27,5 +28,8 @@ namespace QFE {
         virtual void Process(const std::string& name, MATH::Matrix4x4& value) = 0;
         virtual void Process(const std::string& name, MATH::Bit32& value) = 0;
         virtual void Process(const std::string& name, EntityReference& value) = 0;
+
+		// 可変長・構造化データのバインディング
+		virtual void Process(const std::string& name, nlohmann::json& value) = 0;
     };
 }
