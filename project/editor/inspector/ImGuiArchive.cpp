@@ -322,6 +322,11 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& va
 			false, "Auto (Embedded / White1x1)");
 		return;
 	}
+	if (name == "clipName") {
+		DrawResourceCombo(
+			MakeLabel(name), value, {}, { ".anim" }, true, "None");
+		return;
+	}
 
 	const ImGuiInputTextFlags flags =
 		name == "uuid" ? ImGuiInputTextFlags_ReadOnly : ImGuiInputTextFlags_None;

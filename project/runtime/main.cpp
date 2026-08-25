@@ -6,6 +6,7 @@
 #include "framework/application/WindowsEngineFramework.h"
 #include "framework/application/WindowsEngineResources.h"
 #include "framework/scene/EventSystem.h"
+#include "framework/scene/AnimationSystem.h"
 
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
@@ -83,6 +84,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::GAMESYSTEM::CollisionSystem(engineSystems, engineResources, deltaTime);
 		// イベントコンポーネントのタイムラインを更新
 		QFE::FRAMEWORK::UpdateEventComponents(entityManager, deltaTime);
+		// Transformアニメーションクリップを更新
+		QFE::FRAMEWORK::UpdateAnimationComponents(entityManager, deltaTime);
 		// 移動制限コンポーネントの処理
 		QFE::GAMESYSTEM::MoveLimitSystem(engineSystems, engineResources, deltaTime);
 		// プレイヤー自動トラッキング処理

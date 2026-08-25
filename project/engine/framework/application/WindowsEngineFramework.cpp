@@ -251,7 +251,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			QFE::SCENE::AnimationComponent& animationComp = entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
 			objTransform.translate += animationComp.transform.translate;
 			objTransform.rotate += animationComp.transform.rotate;
-			objTransform.scale += animationComp.transform.scale;
+			objTransform.scale *= animationComp.transform.scale;
 		}
 		const QFE::MATH::Matrix4x4 worldMatrix =
 			QFE::SCENE::GetWorldMatrix(entityManager, entityId, &objTransform);
@@ -374,7 +374,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 					entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
 				spriteTransform.translate += animation.transform.translate;
 				spriteTransform.rotate += animation.transform.rotate;
-				spriteTransform.scale += animation.transform.scale;
+				spriteTransform.scale *= animation.transform.scale;
 			}
 			const QFE::MATH::Matrix4x4 worldMatrix =
 				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &spriteTransform);
