@@ -108,6 +108,185 @@ namespace {
 		}
 		ImGui::EndCombo();
 	}
+
+	void DrawJsonValue(const char* label, nlohmann::json& value) {
+		if (value.is_boolean()) {
+			bool edited = value.get<bool>();
+			if (ImGui::Checkbox(label, &edited)) value = edited;
+			return;
+		}
+		if (value.is_number()) {
+			float edited = value.get<float>();
+			if (ImGui::DragFloat(label, &edited, kDragSpeed)) value = edited;
+			return;
+		}
+		if (value.is_string()) {
+			std::string edited = value.get<std::string>();
+			if (ImGui::InputText(label, &edited)) value = edited;
+			return;
+		}
+
+		std::string edited = value.dump();
+		ImGui::SetNextItemWidth(-1.0f);
+		if (ImGui::InputText(label, &edited, ImGuiInputTextFlags_EnterReturnsTrue)) {
+			nlohmann::json parsed = nlohmann::json::parse(edited, nullptr, false);
+			if (!parsed.is_discarded()) value = std::move(parsed);
+		}
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetTooltip("JSON value. Press Enter to apply.");
+		}
+	}
+
+	nlohmann::json MakeDefaultEventTrack() {
+		return {
+			{ "targetUuid", "" },
+			{ "component", "TransformComponent" },
+			{ "property", "transform.translate.x" },
+			{ "interpolation", "Linear" },
+			{ "keyframes", nlohmann::json::array({
+				{ { "time", 0.0f }, { "value", 0.0f } },
+				{ { "time", 1.0f }, { "value", 1.0f } }
+			}) }
+		};
+	}
+
+	void DrawEventTracks(nlohmann::json& tracks) {
+		if (!tracks.is_array()) tracks = nlohmann::json::array();
+		ImGui::TextUnformatted("Tracks");
+		int trackToRemove = -1;
+		for (size_t trackIndex = 0; trackIndex < tracks.size(); ++trackIndex) {
+			auto& track = tracks[trackIndex];
+			if (!track.is_object()) track = MakeDefaultEventTrack();
+			ImGui::PushID(static_cast<int>(trackIndex));
+			const std::string header = "Track " + std::to_string(trackIndex);
+			if (ImGui::TreeNode(header.c_str())) {
+				std::string targetUuid = track.value("targetUuid", std::string{});
+				std::string component = track.value("component", std::string{});
+				std::string property = track.value("property", std::string{});
+				if (ImGui::InputText("Target UUID", &targetUuid)) track["targetUuid"] = targetUuid;
+				if (ImGui::IsItemHovered()) ImGui::SetTooltip("Leave empty to target this entity.");
+				if (ImGui::InputText("Component", &component)) track["component"] = component;
+				if (ImGui::InputText("Property Path", &property)) track["property"] = property;
+
+				std::string interpolation = track.value("interpolation", std::string("Linear"));
+				if (ImGui::BeginCombo("Interpolation", interpolation.c_str())) {
+					for (const char* option : { "Linear", "Step" }) {
+						if (ImGui::Selectable(option, interpolation == option)) track["interpolation"] = option;
+					}
+					ImGui::EndCombo();
+				}
+
+				auto& keyframes = track["keyframes"];
+				if (!keyframes.is_array()) keyframes = nlohmann::json::array();
+				int keyframeToRemove = -1;
+				for (size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex) {
+					auto& keyframe = keyframes[keyIndex];
+					if (!keyframe.is_object()) keyframe = { { "time", 0.0f }, { "value", 0.0f } };
+					ImGui::PushID(static_cast<int>(keyIndex));
+					float time = keyframe.value("time", 0.0f);
+					ImGui::SetNextItemWidth(100.0f);
+					if (ImGui::DragFloat("Time", &time, 0.01f, 0.0f)) keyframe["time"] = time;
+					ImGui::SameLine();
+					if (!keyframe.contains("value")) keyframe["value"] = 0.0f;
+					ImGui::SetNextItemWidth(180.0f);
+					DrawJsonValue("Value", keyframe["value"]);
+					ImGui::SameLine();
+					if (ImGui::SmallButton("Remove")) keyframeToRemove = static_cast<int>(keyIndex);
+					ImGui::PopID();
+				}
+				if (keyframeToRemove >= 0) keyframes.erase(keyframes.begin() + keyframeToRemove);
+				if (ImGui::Button("Add Keyframe")) {
+					const float time = keyframes.empty() ? 0.0f : keyframes.back().value("time", 0.0f) + 1.0f;
+					const nlohmann::json value = keyframes.empty() ? nlohmann::json(0.0f) : keyframes.back()["value"];
+					keyframes.push_back({ { "time", time }, { "value", value } });
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Remove Track")) trackToRemove = static_cast<int>(trackIndex);
+				ImGui::TreePop();
+			}
+			ImGui::PopID();
+		}
+		if (trackToRemove >= 0) tracks.erase(tracks.begin() + trackToRemove);
+		if (ImGui::Button("Add Track")) tracks.push_back(MakeDefaultEventTrack());
+	}
+
+	nlohmann::json MakeDefaultCollisionAction() {
+		return {
+			{ "timing", "Enter" },
+			{ "target", "Self" },
+			{ "targetUuid", "" },
+			{ "component", "EventComponent" },
+			{ "property", "requestFlags" },
+			{ "operation", "SetBits" },
+			{ "value", 1u }
+		};
+	}
+
+	void DrawStringCombo(const char* label, nlohmann::json& object, const char* key,
+		const std::initializer_list<const char*>& options, const char* defaultValue) {
+		std::string value = object.value(key, std::string(defaultValue));
+		if (!ImGui::BeginCombo(label, value.c_str())) return;
+		for (const char* option : options) {
+			const bool selected = value == option;
+			if (ImGui::Selectable(option, selected)) object[key] = option;
+			if (selected) ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	void DrawComponentTypeCombo(QFE::EntityManager* entityManager, nlohmann::json& action) {
+		std::string component = action.value("component", std::string{});
+		const char* preview = component.empty() ? "Select Component" : component.c_str();
+		if (!ImGui::BeginCombo("Component", preview)) return;
+
+		if (entityManager != nullptr) {
+			std::vector<std::string> componentTypes = entityManager->GetAllComponentTypeNames();
+			std::sort(componentTypes.begin(), componentTypes.end());
+			for (const std::string& componentType : componentTypes) {
+				const bool selected = component == componentType;
+				if (ImGui::Selectable(componentType.c_str(), selected)) {
+					action["component"] = componentType;
+				}
+				if (selected) ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	void DrawCollisionActions(QFE::EntityManager* entityManager, nlohmann::json& actions) {
+		if (!actions.is_array()) actions = nlohmann::json::array();
+		ImGui::TextUnformatted("Collision Actions");
+		int actionToRemove = -1;
+		for (size_t actionIndex = 0; actionIndex < actions.size(); ++actionIndex) {
+			auto& action = actions[actionIndex];
+			if (!action.is_object()) action = MakeDefaultCollisionAction();
+			ImGui::PushID(static_cast<int>(actionIndex));
+			const std::string header = "Action " + std::to_string(actionIndex);
+			if (ImGui::TreeNode(header.c_str())) {
+				DrawStringCombo("Timing", action, "timing", { "Enter", "Stay", "Exit" }, "Enter");
+				DrawStringCombo("Target", action, "target",
+					{ "Self", "Other", "EntityReference" }, "Self");
+				if (action.value("target", std::string("Self")) == "EntityReference") {
+					std::string targetUuid = action.value("targetUuid", std::string{});
+					if (ImGui::InputText("Target UUID", &targetUuid)) action["targetUuid"] = targetUuid;
+				}
+
+				std::string property = action.value("property", std::string{});
+				DrawComponentTypeCombo(entityManager, action);
+				if (ImGui::InputText("Property Path", &property)) action["property"] = property;
+				DrawStringCombo("Operation", action, "operation",
+					{ "Set", "Add", "Multiply", "Toggle", "SetBits", "ClearBits" }, "Set");
+				if (!action.contains("value")) action["value"] = 0.0f;
+				DrawJsonValue("Value", action["value"]);
+
+				if (ImGui::Button("Remove Action")) actionToRemove = static_cast<int>(actionIndex);
+				ImGui::TreePop();
+			}
+			ImGui::PopID();
+		}
+		if (actionToRemove >= 0) actions.erase(actions.begin() + actionToRemove);
+		if (ImGui::Button("Add Action")) actions.push_back(MakeDefaultCollisionAction());
+	}
 }
 
 QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId) :
@@ -141,6 +320,11 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& va
 			MakeLabel(name), value, {},
 			{ ".png", ".jpg", ".jpeg", ".dds", ".tga", ".bmp" },
 			false, "Auto (Embedded / White1x1)");
+		return;
+	}
+	if (name == "clipName") {
+		DrawResourceCombo(
+			MakeLabel(name), value, {}, { ".anim" }, true, "None");
 		return;
 	}
 
@@ -284,4 +468,16 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, EntityReference
 		}
 	}
 	ImGui::EndCombo();
+}
+
+void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, nlohmann::json& value) {
+	if (name == "tracks") {
+		DrawEventTracks(value);
+		return;
+	}
+	if (name == "actions") {
+		DrawCollisionActions(entityManager_, value);
+		return;
+	}
+	DrawJsonValue(MakeLabel(name).c_str(), value);
 }
