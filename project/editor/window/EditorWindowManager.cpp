@@ -32,6 +32,9 @@ void QFE::EDITOR::EditorWindowManager::Update() {
 }
 
 void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
+	bool saveSceneRequested = false;
+	bool saveSceneAsRequested = false;
+
     // 1. 画面全体のフラグを設定（タイトルバーやリサイズ、移動などをすべて無効化）
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
@@ -56,6 +59,9 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
     // 5. ドックスペース（ドッキングの土台）を設置
     ImGuiIO& io = ImGui::GetIO();
+	if (io.KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_S, false)) {
+		saveSceneRequested = true;
+	}
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
         ImGuiID dockspace_id = ImGui::GetID("MyMainDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
@@ -83,16 +89,11 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                 }
             }
 			// セーブ
-            if (ImGui::MenuItem("Save Scene", nullptr)) {
-                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
-                std::wstring selectedFilePath;
-                if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-                    mainWindow_,
-                    L"JSON Files", L"*.json",
-                    selectedFilePath)) {
-					// Entityの保存
-					commandList.AddCommand(std::make_unique<SaveSceneCommand>(QFE::ConvertString(selectedFilePath), sceneManager_));
-                }
+            if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {
+				saveSceneRequested = true;
+            }
+			if (ImGui::MenuItem("Save Scene As...", nullptr)) {
+				saveSceneAsRequested = true;
             }
             // エンティティの保存
             if (ImGui::MenuItem("Save Selected Entities", nullptr)) {
@@ -160,6 +161,12 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
     ImGui::End();
 
+	if (saveSceneAsRequested) {
+		QueueSceneSave(commandList, true);
+	} else if (saveSceneRequested) {
+		QueueSceneSave(commandList, false);
+	}
+
 	// 6. 各エディタウィンドウの描画
     auto* hierarchy = static_cast<Hierarchy*>(editorWindowsMap_[EditorWindowType::Hierarchy].get());
     if (hierarchy->GetIsActive()) {
@@ -173,6 +180,23 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 		}
 		window->Draw(selectedEntities_, commandList);
 	}
+}
+
+void QFE::EDITOR::EditorWindowManager::QueueSceneSave(
+	EditorCommandList& commandList, bool selectSavePath) {
+	std::string savePath = sceneManager_->GetCurrentScenePath();
+	if (selectSavePath || savePath.empty()) {
+		std::wstring selectedFilePath;
+		if (!QFE::FRAMEWORK::RequestSaveFilePathFromUser(
+			mainWindow_,
+			L"JSON Files", L"*.json",
+			selectedFilePath)) {
+			return;
+		}
+		savePath = QFE::ConvertString(selectedFilePath);
+	}
+
+	commandList.AddCommand(std::make_unique<SaveSceneCommand>(savePath, sceneManager_));
 }
 
 bool QFE::EDITOR::EditorWindowManager::IsWindowFocused(EditorWindowType windowType) {

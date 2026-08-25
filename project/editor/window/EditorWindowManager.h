@@ -51,6 +51,8 @@ namespace QFE::EDITOR {
 		bool IsSceneGizmoCapturingMouse() const;
 
 	private:
+		/// @brief 現在の保存先、またはユーザーが選択した保存先へシーン保存を追加する
+		void QueueSceneSave(EditorCommandList& commandList, bool selectSavePath);
 
 		// エディタで表示できるウィンドウたち
 		std::unordered_map<EditorWindowType, std::unique_ptr<IEditorWindow>> editorWindowsMap_;
