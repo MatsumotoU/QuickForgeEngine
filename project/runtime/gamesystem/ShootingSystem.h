@@ -44,4 +44,14 @@ namespace QFE::GAMESYSTEM {
 	bool MoveLimitSystem(
 		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 		QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime);
+
+	/// @brief 弾丸エミッターの処理を行うシステム関数。
+	bool BulletEmitterSystem(
+		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+		QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime);
+
+	/// @brief 入力または一定間隔で弾丸エミッターへ発射要求を送る。
+	bool BulletEmitterTriggerSystem(
+		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+		QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime);
 }

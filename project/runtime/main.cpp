@@ -78,6 +78,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::GAMESYSTEM::ShootingPlayerSystem(engineSystems, engineResources, deltaTime);
 		// 敵の処理
 		QFE::GAMESYSTEM::ShootingEnemySystem(engineSystems, engineResources, deltaTime);
+		// 入力・定周期によるエミッター起動処理
+		QFE::GAMESYSTEM::BulletEmitterTriggerSystem(engineSystems, engineResources, deltaTime);
+		// 弾丸エミッターの処理
+		QFE::GAMESYSTEM::BulletEmitterSystem(engineSystems, engineResources, deltaTime);
 		// 弾丸の処理
 		QFE::GAMESYSTEM::BulletUpdateSystem(engineSystems, engineResources, deltaTime);
 		// コライダーの処理

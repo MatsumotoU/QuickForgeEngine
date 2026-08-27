@@ -118,9 +118,35 @@
                 "distance": 100.0,
                 "speed": 1.5
             },
+            "BulletEmitterComponent": {
+                "bulletAngleX": 0.4487989544868469,
+                "bulletAngleY": 2.399963140487671,
+                "emitBulletName": "Bullet.json",
+                "emitCount": 8,
+                "emitDir": {
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "emitPos": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                },
+                "emitRadius": 1.0,
+                "emitRequest": false
+            },
             "HealthComponent": {
                 "health": 3,
                 "maxHealth": 3
+            },
+            "InputBulletEmitterTriggerComponent": {
+                "enabled": true,
+                "gamePadButton": 4096,
+                "inputActionName": "Shot",
+                "mouseButton": -1,
+                "repeatInterval": 0.20000000298023224,
+                "triggerMode": 0
             },
             "MaterialComponent": {
                 "albedoColor": {
@@ -152,29 +178,6 @@
             "ModelRenderComponent": {
                 "modelName": "player",
                 "textureName": ""
-            },
-            "MoveLimitComponent": {
-                "autoScrollDistance": 100.0,
-                "autoScrollSpeed": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 1.5
-                },
-                "center": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 15.0
-                },
-                "maxLimit": {
-                    "x": 7.0,
-                    "y": 20.0,
-                    "z": 20.0
-                },
-                "minLimit": {
-                    "x": -7.0,
-                    "y": -10.0,
-                    "z": 0.0
-                }
             },
             "ObjectInfoComponent": {
                 "name": "Player",
