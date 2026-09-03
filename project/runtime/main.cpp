@@ -74,6 +74,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		// AutoScroll
 		QFE::GAMESYSTEM::AutoScrollSystem(engineSystems, engineResources, deltaTime);
+		// 入力による位置移動・力の加算
+		QFE::GAMESYSTEM::InputMovementSystem(engineSystems, engineResources, deltaTime);
+		// PhysicsComponentの積分
+		QFE::GAMESYSTEM::PhysicsComponentSystem(engineSystems, engineResources, deltaTime);
 		// シューティングプレイヤーの実行
 		QFE::GAMESYSTEM::ShootingPlayerSystem(engineSystems, engineResources, deltaTime);
 		// 敵の処理

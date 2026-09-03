@@ -5,10 +5,10 @@
 namespace QFE::COMPONENTS {
 	/// @brief 物理演算用のコンポーネント
 	struct PhysicsComponent {
-		QFE::MATH::Vector3 velocity;
-		QFE::MATH::Vector3 acceleration;
-		float mass;
-		float friction;
+		QFE::MATH::Vector3 velocity{};
+		QFE::MATH::Vector3 acceleration{};
+		float mass = 1.0f;
+		float friction = 0.0f;
 
 		QFE_REFLECT_BEGIN(PhysicsComponent)
 			QFE_REFLECT_MEMBER(velocity)

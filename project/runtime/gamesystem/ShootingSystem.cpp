@@ -5,6 +5,106 @@
 #include "components/TransformHierarchy.h"
 #include "framework/scene/CollisionTriggerSystem.h"
 
+#include <algorithm>
+
+bool QFE::GAMESYSTEM::InputMovementSystem(
+	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
+	(void)resources;
+
+	QFE::EntityManager& entityManager = systems.sceneManager->GetCurrentSceneEntityManager();
+	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
+	if (inputInterface == nullptr || deltaTime <= 0.0f) {
+		return false;
+	}
+
+	entityManager.Each<QFE::COMPONENTS::InputMovementComponent>(
+		[&](uint32_t entityId, QFE::COMPONENTS::InputMovementComponent& movement) {
+			if (!movement.enabled || movement.amount == 0.0f) {
+				return;
+			}
+
+			float horizontalInput = 0.0f;
+			float verticalInput = 0.0f;
+			if (!movement.rightActionName.empty() && inputInterface->GetKeyPress(movement.rightActionName)) {
+				horizontalInput += 1.0f;
+			}
+			if (!movement.leftActionName.empty() && inputInterface->GetKeyPress(movement.leftActionName)) {
+				horizontalInput -= 1.0f;
+			}
+			if (!movement.forwardActionName.empty() && inputInterface->GetKeyPress(movement.forwardActionName)) {
+				verticalInput += 1.0f;
+			}
+			if (!movement.backwardActionName.empty() && inputInterface->GetKeyPress(movement.backwardActionName)) {
+				verticalInput -= 1.0f;
+			}
+			if (movement.useGamePadLeftStick) {
+				const QFE::MATH::Vector2 stickInput = inputInterface->GetGamePadLeftStickDir();
+				horizontalInput += stickInput.x;
+				verticalInput += stickInput.y;
+			}
+
+			horizontalInput = std::clamp(horizontalInput, -1.0f, 1.0f);
+			verticalInput = std::clamp(verticalInput, -1.0f, 1.0f);
+			QFE::MATH::Vector3 direction =
+				movement.horizontalAxis * horizontalInput + movement.verticalAxis * verticalInput;
+			if (direction.LengthSq() == 0.0f) {
+				return;
+			}
+			if (movement.normalizeInput && direction.LengthSq() > 1.0f) {
+				direction = direction.Normalize();
+			}
+
+			if (movement.applyMode == QFE::COMPONENTS::InputMovementForce) {
+				if (!entityManager.HasComponent<QFE::COMPONENTS::PhysicsComponent>(entityId)) {
+					return;
+				}
+				QFE::COMPONENTS::PhysicsComponent& physics =
+					entityManager.GetComponent<QFE::COMPONENTS::PhysicsComponent>(entityId);
+				if (physics.mass > 0.0f) {
+					physics.acceleration += direction * (movement.amount / physics.mass);
+				}
+				return;
+			}
+
+			if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform.translate +=
+					direction * movement.amount * deltaTime;
+			}
+		});
+
+	return true;
+}
+
+bool QFE::GAMESYSTEM::PhysicsComponentSystem(
+	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
+	(void)resources;
+
+	QFE::EntityManager& entityManager = systems.sceneManager->GetCurrentSceneEntityManager();
+	if (deltaTime <= 0.0f) {
+		return false;
+	}
+
+	entityManager.Each<QFE::COMPONENTS::PhysicsComponent>(
+		[&](uint32_t entityId, QFE::COMPONENTS::PhysicsComponent& physics) {
+			if (physics.mass <= 0.0f ||
+				!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+				physics.acceleration = QFE::MATH::Vector3::Zero();
+				return;
+			}
+
+			physics.velocity += physics.acceleration * deltaTime;
+			const float damping = std::clamp(1.0f - physics.friction * deltaTime, 0.0f, 1.0f);
+			physics.velocity = physics.velocity * damping;
+			entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform.translate +=
+				physics.velocity * deltaTime;
+			physics.acceleration = QFE::MATH::Vector3::Zero();
+		});
+
+	return true;
+}
+
 bool QFE::GAMESYSTEM::AutoScrollSystem(
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
