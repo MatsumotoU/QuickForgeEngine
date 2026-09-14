@@ -34,3 +34,12 @@ std::unique_ptr<QFE::GUI::D3D12GuiManager> QFE::FRAMEWORK::CreateGuiManager(QFE:
 
 	return std::make_unique<QFE::GUI::D3D12GuiManager>(std::move(guiManager));
 }
+
+bool QFE::FRAMEWORK::ShutdownGui(QFE::GUI::D3D12GuiManager* guiManager)
+{
+	if(QFE::GUI::D3D12GuiManager* manager = guiManager) {
+		manager->Shutdown();
+		return true;
+	}
+	return false;
+}

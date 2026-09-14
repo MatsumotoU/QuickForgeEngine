@@ -44,4 +44,7 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief メインウィンドウがアクティブかどうかを判定する関数
 	bool IsMainWindowActive(const GameWindowManager* windowManager);
+
+	/// @brief Windowsアプリケーションのメッセージを処理する関数。メインループ内で呼び出す必要があります。
+	bool ProcessWindowsApplicationMessage();
 }

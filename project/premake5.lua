@@ -118,6 +118,11 @@ group "04_Applications" -- アプリケーションプロジェクト達
     dofile(path.join(_root, "launcher/premake5.lua"))
 group ""
 
+group "Tools"
+    --プロジェクト生成ツールの読み込み
+    dofile(path.join(_root, "tools/project-generator/premake5.lua"))
+group ""
+
 group "External"
 project "ExternalFolders"
     location "externals"
