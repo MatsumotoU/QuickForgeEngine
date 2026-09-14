@@ -23,14 +23,12 @@ project "GraphicFramework"
             "%{wks.location}/externals/",
         }
 
-
--- Premake 5.0.0-beta2ではusage/usesが利用できないため、
--- GraphicFrameworkの利用に必要なリンク設定をこの機能側へ集約する。
-function QFE_UseGraphicFramework()
-        links {
-                "GraphicFramework",
-                "GraphicEngine",
-                "EngineCore",
-                "DirectXTex",
-        }
-end
+        -- GraphicFrameworkを利用するプロジェクトへ伝播させるリンク設定。
+        -- アプリケーション側はuses { "GraphicFramework" }だけを指定する。
+        usage "INTERFACE"
+                links {
+                        "GraphicFramework",
+                        "GraphicEngine",
+                        "EngineCore",
+                        "DirectXTex",
+                }

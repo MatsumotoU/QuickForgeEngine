@@ -1,6 +1,6 @@
 #include "D3D12GraphicFrameWork.h"
 
-#include "graphics/D3D12GraphicEngine.h"
+#include "GraphicContext.h"
 #include "graphics/dx12/pipeline/GraphicPipelineManager.h"
 #include "graphics/dx12/pipeline/RaytracingPipelineManager.h"
 #include "graphics/dx12/pipeline/ComputePipelineManager.h"
@@ -19,15 +19,15 @@
 #include "assetfactory/model/ModelData.h"
 #include "../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
-std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> QFE::FRAMEWORK::CreateGraphicEngine(HWND hwnd) {
+std::unique_ptr<QFE::FRAMEWORK::GraphicContext> QFE::FRAMEWORK::CreateGraphicEngine(HWND hwnd) {
 	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
-	std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> graphicEngine =
-		std::make_unique<QFE::GRAPHIC::D3D12GraphicEngine>(hwnd);
+	std::unique_ptr<QFE::FRAMEWORK::GraphicContext> graphicEngine =
+		std::make_unique<QFE::FRAMEWORK::GraphicContext>(hwnd);
 	graphicEngine->Initialize();
 	return graphicEngine;
 }
 
-bool QFE::FRAMEWORK::PreDrawGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine) {
+bool QFE::FRAMEWORK::PreDrawGraphicEngine(QFE::FRAMEWORK::GraphicContext* graphicEngine) {
 	if(graphicEngine == nullptr) {
 		QFE_LOG("graphicEngine is null");
 		return false;
@@ -36,7 +36,7 @@ bool QFE::FRAMEWORK::PreDrawGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* grap
 	return true;
 }
 
-bool QFE::FRAMEWORK::PostDrawGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine) {
+bool QFE::FRAMEWORK::PostDrawGraphicEngine(QFE::FRAMEWORK::GraphicContext* graphicEngine) {
 	if(graphicEngine == nullptr) {
 		QFE_LOG("graphicEngine is null");
 		return false;
@@ -45,12 +45,54 @@ bool QFE::FRAMEWORK::PostDrawGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* gra
 	return true;
 }
 
-bool QFE::FRAMEWORK::ShutdownGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine) {
+bool QFE::FRAMEWORK::ShutdownGraphicEngine(QFE::FRAMEWORK::GraphicContext* graphicEngine) {
 	if(graphicEngine == nullptr) {
 		QFE_LOG("graphicEngine is null");
 		return false;
 	}
 	graphicEngine->Shutdown();
+	return true;
+}
+
+bool QFE::FRAMEWORK::CreateEditorSceneTexture(
+	GraphicContext* graphicEngine,
+	QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
+	QFE::GRAPHIC::DirectXResourceHandle& outResourceHandle,
+	uintptr_t& outGuiTextureId,
+	uint32_t width,
+	uint32_t height) {
+	if (graphicEngine == nullptr) {
+		QFE_LOG("graphicEngine is null");
+		return false;
+	}
+
+	if (!CreateOffScreenRenderTarget(
+		graphicEngine,
+		outRenderTargetHandle,
+		width,
+		height,
+		DXGI_FORMAT_R8G8B8A8_UNORM)) {
+		return false;
+	}
+
+	if (!GetRenderResourceHandle(
+		graphicEngine,
+		outRenderTargetHandle,
+		outResourceHandle)) {
+		return false;
+	}
+
+	if (!TransitionResourceToState(
+		graphicEngine,
+		outResourceHandle,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)) {
+		return false;
+	}
+
+	const auto gpuHandle = graphicEngine->GetDirectXResourceContainer()->GetDescriptorHandleGPU(
+		outResourceHandle,
+		D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE);
+	outGuiTextureId = static_cast<uintptr_t>(gpuHandle.ptr);
 	return true;
 }
 

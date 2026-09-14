@@ -10,7 +10,6 @@
 #include "framework/input/InputFrameWork.h"
 
 #include "window/GameWindowManager.h"
-#include "graphics/D3D12GraphicEngine.h"
 
 #include "gui/D3D12GuiManager.h"
 #include "camera/CameraManager.h"
@@ -56,21 +55,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// エディタ用のシーンテクスチャ（レンダーターゲット）の作成
 	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
-	QFE::FRAMEWORK::CreateOffScreenRenderTarget(
-		graphicEngine.get(), sceneRenderTargetHandle, 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM);
 	QFE::GRAPHIC::DirectXResourceHandle sceneTextureHandle;
-	QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), sceneRenderTargetHandle, sceneTextureHandle);
+	uintptr_t sceneTextureGuiId = 0;
+	if (!QFE::FRAMEWORK::CreateEditorSceneTexture(
+		graphicEngine.get(),
+		sceneRenderTargetHandle,
+		sceneTextureHandle,
+		sceneTextureGuiId,
+		1280,
+		720)) {
+		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
+		return -1;
+	}
 
 	// レイトレーシング結果をEditorのシーンテクスチャへ出力する。
 	engineResources.finalRenderTargetHandle = sceneRenderTargetHandle;
-
-	// 初回フレームでもImGuiからSRVとして参照できる状態にしておく。
-	QFE::FRAMEWORK::TransitionResourceToState(
-		graphicEngine.get(), sceneTextureHandle, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-
-	D3D12_GPU_DESCRIPTOR_HANDLE sceneTextureGPUHandle = 
-		graphicEngine->GetDirectXResourceContainer()->GetDescriptorHandleGPU(sceneTextureHandle, D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE);
-	ImTextureID sceneTextureId = static_cast<ImTextureID>(static_cast<uintptr_t>(sceneTextureGPUHandle.ptr));
+	ImTextureID sceneTextureId = static_cast<ImTextureID>(sceneTextureGuiId);
 
 	QFE::EDITOR::GameEditor gameEditor;
 	gameEditor.Initialize(&sceneManager, sceneTextureId, engineSystems.windowManager->GetWindow(engineResources.windowName));

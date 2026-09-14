@@ -1,6 +1,6 @@
 #include "DirectXRenderFramework.h"
 
-#include "graphics/D3D12GraphicEngine.h"
+#include "framework/graphic/GraphicContext.h"
 #include "graphics/dx12/pipeline/GraphicPipelineManager.h"
 #include "graphics/dx12/pipeline/RaytracingPipelineManager.h"
 #include "graphics/dx12/pipeline/ComputePipelineManager.h"
@@ -21,7 +21,7 @@
 #include "DirectXResourceFramework.h"
 
 bool QFE::FRAMEWORK::CreateShaderPair(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::string& vsDirName, const std::string& psDirName, const std::string& vsFileName, const std::string& psFileName, QFE::GRAPHIC::ShaderPairHandle& outShaderPairHandle) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::string& vsDirName, const std::string& psDirName, const std::string& vsFileName, const std::string& psFileName, QFE::GRAPHIC::ShaderPairHandle& outShaderPairHandle) {
 	// シェーダーペア生成の設定
 	QFE::GRAPHIC::ShaderPairElement shaderPairElement;
 	shaderPairElement.vsDirName = vsDirName;
@@ -39,7 +39,7 @@ bool QFE::FRAMEWORK::CreateShaderPair(
 }
 
 bool QFE::FRAMEWORK::CreateGraphicPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
 	const QFE::GRAPHIC::RasterizerType& rasterizerType, const QFE::GRAPHIC::BlendMode& blendMode,
 	const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType, QFE::GRAPHIC::PSOHandle& outPSOHandle) {
 	return CreateGraphicPSO(
@@ -48,7 +48,7 @@ bool QFE::FRAMEWORK::CreateGraphicPSO(
 }
 
 bool QFE::FRAMEWORK::CreateGraphicPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
 	const QFE::GRAPHIC::RasterizerType& rasterizerType, const QFE::GRAPHIC::BlendMode& blendMode,
 	const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType, DXGI_FORMAT renderTargetFormat,
 	QFE::GRAPHIC::PSOHandle& outPSOHandle) {
@@ -74,7 +74,7 @@ bool QFE::FRAMEWORK::CreateGraphicPSO(
 }
 
 bool QFE::FRAMEWORK::GetGraphicPSORootParameterTypeList(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	std::vector<D3D12_ROOT_PARAMETER_TYPE>& outRootParameterTypeList) {
 
 
@@ -92,7 +92,7 @@ bool QFE::FRAMEWORK::GetGraphicPSORootParameterTypeList(
 }
 
 bool QFE::FRAMEWORK::CreateRayTracingPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::RTPSOHandle& outPSOHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::RTPSOHandle& outPSOHandle,
 	const std::string& dirPath, const std::string& rgsFileName) {
 
 	// 使用するレイトレーシングパイプラインマネージャを取得
@@ -108,7 +108,7 @@ bool QFE::FRAMEWORK::CreateRayTracingPSO(
 }
 
 bool QFE::FRAMEWORK::CreateOffScreenRenderTarget(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine,
 	QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
 	uint32_t width, uint32_t height, DXGI_FORMAT format) {
 
@@ -124,7 +124,7 @@ bool QFE::FRAMEWORK::CreateOffScreenRenderTarget(
 }
 
 bool QFE::FRAMEWORK::CreateViewport(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::ViewPortHandle& outViewportHandle, uint32_t width, uint32_t height) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::ViewPortHandle& outViewportHandle, uint32_t width, uint32_t height) {
 
 	// ビューポートコンテナを取得
 	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports_ = graphicEngine->GetViewports();
@@ -148,7 +148,7 @@ bool QFE::FRAMEWORK::CreateViewport(
 }
 
 bool QFE::FRAMEWORK::CreateScissorRect(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::ScissorRectHandle& outScissorRectHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::ScissorRectHandle& outScissorRectHandle,
 	int32_t left, int32_t top, int32_t right, int32_t bottom) {
 
 	// シザリング矩形コンテナを取得
@@ -172,7 +172,7 @@ bool QFE::FRAMEWORK::CreateScissorRect(
 
 
 bool QFE::FRAMEWORK::SetRenderTarget(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& depthStencilBufferHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& depthStencilBufferHandle,
 	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets) {
 
 	// 使用機能の取得
@@ -189,7 +189,7 @@ bool QFE::FRAMEWORK::SetRenderTarget(
 }
 
 bool QFE::FRAMEWORK::DrawGraphicPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets) {
@@ -261,7 +261,7 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 }
 
 bool QFE::FRAMEWORK::DrawGraphicPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets, const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes) {
@@ -333,7 +333,7 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 }
 
 bool QFE::FRAMEWORK::DrawGraphicPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
 	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
@@ -411,7 +411,7 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 }
 
 bool QFE::FRAMEWORK::DrawRayTracingPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 	QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
 	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources) {
 
@@ -503,7 +503,7 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(
 	return true;
 }
 
-bool QFE::FRAMEWORK::DrawRayTracingPSO(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle, QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, const QFE::GRAPHIC::DirectXResourceHandle& renderTargetResourceHandle) {
+bool QFE::FRAMEWORK::DrawRayTracingPSO(QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle, QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, const QFE::GRAPHIC::DirectXResourceHandle& renderTargetResourceHandle) {
 	// 使用機能の取得
 	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
@@ -589,17 +589,17 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(QFE::GRAPHIC::D3D12GraphicEngine* graphic
 }
 
 bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, 
+	QFE::FRAMEWORK::GraphicContext* graphicEngine,
 	const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 	QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
-	const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, 
+	const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
-	const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle, 
+	const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& firstTextureBufferHandle,
 	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 	QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle) {
-	
+
 	// 使用機能の取得
 	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();

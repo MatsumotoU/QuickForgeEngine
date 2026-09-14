@@ -1,6 +1,6 @@
 #include "DirectXResourceFramework.h"
 
-#include "graphics/D3D12GraphicEngine.h"
+#include "framework/graphic/GraphicContext.h"
 #include "graphics/dx12/pipeline/GraphicPipelineManager.h"
 #include "graphics/dx12/pipeline/RaytracingPipelineManager.h"
 #include "graphics/dx12/pipeline/ComputePipelineManager.h"
@@ -19,7 +19,7 @@
 #include "../../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 bool QFE::FRAMEWORK::GetWhite1x1TextureHandle(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle) {
 
 	QFE::GRAPHIC::TextureLoader* textureLoader = graphicEngine->GetTextureLoader();
 	outTextureHandle = textureLoader->GetDummyWhite1x1TextureHandle();
@@ -32,7 +32,7 @@ bool QFE::FRAMEWORK::GetWhite1x1TextureHandle(
 }
 
 bool QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle) {
 
 	QFE::GRAPHIC::TextureLoader* textureLoader = graphicEngine->GetTextureLoader();
 	outTextureHandle = textureLoader->GetDummyBlackCubeMapHandle();
@@ -44,7 +44,7 @@ bool QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(
 	return true;
 }
 
-bool QFE::FRAMEWORK::UAVBarrierTransition(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle) {
+bool QFE::FRAMEWORK::UAVBarrierTransition(QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle) {
 	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
 
@@ -53,11 +53,11 @@ bool QFE::FRAMEWORK::UAVBarrierTransition(QFE::GRAPHIC::D3D12GraphicEngine* grap
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	barrier.UAV.pResource = resourceContainer->GetResource(resourceHandle);
 	commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT)->ResourceBarrier(1, &barrier);
-	return true;	
+	return true;
 }
 
 bool QFE::FRAMEWORK::GetResourceArraySize(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle resourceHandle, size_t& outResourceArraySize) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle resourceHandle, size_t& outResourceArraySize) {
 
 	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
 
@@ -75,7 +75,7 @@ bool QFE::FRAMEWORK::GetResourceArraySize(
 }
 
 bool QFE::FRAMEWORK::GetRenderResourceHandle(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::RenderTargetHandle renderTargetHandle, QFE::GRAPHIC::DirectXResourceHandle& outResourceHandle) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::RenderTargetHandle renderTargetHandle, QFE::GRAPHIC::DirectXResourceHandle& outResourceHandle) {
 
 	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
 	outResourceHandle = renderPass->GetRenderTargetResourceHandle(renderTargetHandle);
@@ -88,7 +88,7 @@ bool QFE::FRAMEWORK::GetRenderResourceHandle(
 }
 
 bool QFE::FRAMEWORK::GetDepthStencilResourceHandle(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outDepthStencilHandle) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outDepthStencilHandle) {
 
 	QFE::GRAPHIC::DirectXResourceHandle depthStencilHandle = graphicEngine->GetDepthStencilBufferHandle();
 	outDepthStencilHandle = depthStencilHandle;
@@ -101,7 +101,7 @@ bool QFE::FRAMEWORK::GetDepthStencilResourceHandle(
 }
 
 bool QFE::FRAMEWORK::CreateUAVBuffer(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outUAVBufferHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outUAVBufferHandle,
 	uint32_t width, uint32_t height, const std::wstring& name) {
 
 	QFE::GRAPHIC::DirectXDevice* directXDevice = graphicEngine->GetDirectXDevice();
@@ -142,7 +142,7 @@ bool QFE::FRAMEWORK::CreateUAVBuffer(
 }
 
 bool QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle* rootResources, size_t rootResourcesSize) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle* rootResources, size_t rootResourcesSize) {
 
 	// ルートリソースの数を確認
 	if (rootResourcesSize < 3) {
@@ -179,7 +179,7 @@ bool QFE::FRAMEWORK::CreateObject3dGBufferRootResources(
 }
 
 bool QFE::FRAMEWORK::TransitionResourceToState(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine,
 	const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle,
 	D3D12_RESOURCE_STATES newState) {
 
@@ -192,7 +192,7 @@ bool QFE::FRAMEWORK::TransitionResourceToState(
 }
 
 bool QFE::FRAMEWORK::CreateCameraPosBuffer(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::wstring& name, QFE::GRAPHIC::DirectXResourceHandle& outCameraPosBufferHandle) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::wstring& name, QFE::GRAPHIC::DirectXResourceHandle& outCameraPosBufferHandle) {
 
 	// リソースアロケータを取得
 	QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
@@ -207,8 +207,8 @@ bool QFE::FRAMEWORK::CreateCameraPosBuffer(
 }
 
 bool QFE::FRAMEWORK::AllocateConstantBuffer(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, 
-	const std::wstring& name, size_t bufferSize, 
+	QFE::FRAMEWORK::GraphicContext* graphicEngine,
+	const std::wstring& name, size_t bufferSize,
 	QFE::GRAPHIC::DirectXResourceHandle& outConstantBufferHandle) {
 
 	// リソースアロケータを取得
@@ -224,7 +224,7 @@ bool QFE::FRAMEWORK::AllocateConstantBuffer(
 }
 
 bool QFE::FRAMEWORK::AllocateStructuredBuffer(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine,
 	const std::wstring& name, size_t elementCount, size_t elementStride,
 	QFE::GRAPHIC::DirectXResourceHandle& outStructuredBufferHandle) {
 
@@ -241,7 +241,7 @@ bool QFE::FRAMEWORK::AllocateStructuredBuffer(
 }
 
 void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 	const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {
 	UpdateObject3dWVPMatrix(
 		graphicEngine,
@@ -251,7 +251,7 @@ void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
 }
 
 void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 	const QFE::MATH::Matrix4x4& worldMatrix, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {
 	TransformationMatrix* transformMatrixData =
 		graphicEngine->GetConstantBufferData<TransformationMatrix>(transformMatrixBufferHandle);
@@ -260,7 +260,7 @@ void QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
 }
 
 bool QFE::FRAMEWORK::CreateVertexBuffer(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<VertexData>& vertexPositions,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::vector<VertexData>& vertexPositions,
 	const std::string& meshName, QFE::GRAPHIC::DirectXResourceHandle& outVertexBufferHandle) {
 
 	// 使用機能の取得
@@ -292,7 +292,7 @@ bool QFE::FRAMEWORK::CreateVertexBuffer(
 	return true;
 }
 
-bool QFE::FRAMEWORK::CreateIndexBuffer(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<uint32_t>& indices, const std::string& meshName, QFE::GRAPHIC::DirectXResourceHandle& outIndexBufferHandle) {
+bool QFE::FRAMEWORK::CreateIndexBuffer(QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::vector<uint32_t>& indices, const std::string& meshName, QFE::GRAPHIC::DirectXResourceHandle& outIndexBufferHandle) {
 	// 使用機能の取得
 	QFE::GRAPHIC::DirectXDevice* directXDevice = graphicEngine->GetDirectXDevice();
 	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
@@ -325,7 +325,7 @@ bool QFE::FRAMEWORK::CreateIndexBuffer(QFE::GRAPHIC::D3D12GraphicEngine* graphic
 }
 
 bool QFE::FRAMEWORK::CreateBLAS(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<VertexData>& vertices,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::vector<VertexData>& vertices,
 	const std::vector<uint32_t>& indices,
 	const std::string& name, QFE::GRAPHIC::BLASHandle& outBLASHandle) {
 
@@ -347,7 +347,7 @@ bool QFE::FRAMEWORK::CreateBLAS(
 	return true;
 }
 
-bool QFE::FRAMEWORK::LoadTextureFromFile(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::string& filePath, QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle) {
+bool QFE::FRAMEWORK::LoadTextureFromFile(QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::string& filePath, QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle) {
 	QFE::GRAPHIC::TextureLoader* textureLoader = graphicEngine->GetTextureLoader();
 
 	outTextureHandle = textureLoader->LoadTexture(filePath);
@@ -368,7 +368,7 @@ std::vector<QFE::MATH::Vector3> QFE::FRAMEWORK::GetModelVertexPositions(const Ve
 }
 
 bool QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& inOutHandle,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& inOutHandle,
 	const void* data, size_t byteSize, UINT elementStride, const std::string& name) {
 
 	if (!graphicEngine) {
@@ -433,14 +433,14 @@ bool QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
 		rc->SetResourceStrideInBytes(inOutHandle, elementStride);
 		return true;
 	}
-	
+
 }
 
 bool QFE::FRAMEWORK::UploadGlobalMeshBuffers(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+	QFE::FRAMEWORK::GraphicContext* graphicEngine,
 	const std::vector<RaytracingVertexAttribute>& globalVertexAttributes,
 	const std::vector<uint32_t>& globalTriIndices, const std::vector<InstanceMetaCPU>& instanceMeta,
-	QFE::GRAPHIC::DirectXResourceHandle& outUVHandle, QFE::GRAPHIC::DirectXResourceHandle& outTriHandle, 
+	QFE::GRAPHIC::DirectXResourceHandle& outUVHandle, QFE::GRAPHIC::DirectXResourceHandle& outTriHandle,
 	QFE::GRAPHIC::DirectXResourceHandle& outInstanceMetaHandle) {
 
 	if (!graphicEngine) return false;
@@ -534,7 +534,7 @@ bool QFE::FRAMEWORK::UploadGlobalMeshBuffers(
 }
 
 bool QFE::FRAMEWORK::UpdateBLASInstanceBuffer(
-	QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, const std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>>& instances) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>>& instances) {
 
 	// 使用機能の取得
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();

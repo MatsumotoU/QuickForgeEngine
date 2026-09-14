@@ -1,5 +1,5 @@
 #include "D3D12GuiFrameWork.h"
-#include "graphics/D3D12GraphicEngine.h"
+#include "framework/graphic/GraphicContext.h"
 #include "gui/D3D12GuiManager.h"
 
 #include "graphics/dx12/DirectXDevice.h"
@@ -8,7 +8,7 @@
 #include "graphics/dx12/command/DirectXCommandManager.h"
 #include "graphics/dx12/RenderPass.h"
 
-std::unique_ptr<QFE::GUI::D3D12GuiManager> QFE::FRAMEWORK::CreateGuiManager(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine, HWND hwnd) {
+std::unique_ptr<QFE::GUI::D3D12GuiManager> QFE::FRAMEWORK::CreateGuiManager(QFE::FRAMEWORK::GraphicContext* graphicEngine, HWND hwnd) {
 	// 必要な機能の取得
 	QFE::GRAPHIC::DirectXDevice* device = graphicEngine->GetDirectXDevice();
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
