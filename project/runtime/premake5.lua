@@ -23,8 +23,10 @@ project "Runtime" -- Runtime
             "PhysicsEngine",
         }
 
-        -- グラフィック関連の内部ライブラリはGraphicFramework側で管理する。
-        QFE_UseGraphicFramework()
+        -- グラフィック関連の内部ライブラリはGraphicFramework側から伝播する。
+        uses {
+            "GraphicFramework",
+        }
 
         -- 警告レベル4
         warnings "Extra"

@@ -49,7 +49,7 @@ namespace QFE::GRAPHIC {
 	};
 
 	/// @brief DirectX12を使用したグラフィック機能のラッパー所持クラス
-	class D3D12GraphicEngine final : public IGraphicEngine {
+	class D3D12GraphicEngine : public IGraphicEngine {
 	public:
 		/// @brief wndowsに依存したグラフィックエンジンです.描画ウィンドウのハンドルの引数に取ります.
 		explicit D3D12GraphicEngine(HWND hwnd);

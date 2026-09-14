@@ -7,7 +7,9 @@
 #include <vector>
 
 #include "math/MathInclude.h"
-#include "graphics/D3D12GraphicEngine.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/pipeline/pso/PipelineDescTypes.h"
+#include <d3d12.h>
 #include "assetfactory/model/ModelData.h"
 
 namespace QFE::FRAMEWORK {

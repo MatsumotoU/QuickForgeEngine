@@ -9,7 +9,6 @@ namespace QFE::SCENE {
 }
 
 namespace QFE::GRAPHIC {
-	class D3D12GraphicEngine;
 	enum class DirectXResourceHandle : uint32_t;
 	enum class BLASHandle : uint32_t;
 }
@@ -26,7 +25,7 @@ namespace QFE::FRAMEWORK {
 	/// @brief 描画可能なModelRenderComponentを持つエンティティを描画する。
 	void DrawSceneModels(
 		QFE::SCENE::SceneManager& sceneManager,
-		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		QFE::FRAMEWORK::GraphicContext* graphicEngine,
 		QFE::GRAPHIC::PSOHandle psoHandle,
 		QFE::GRAPHIC::ViewPortHandle viewportHandle,
 		QFE::GRAPHIC::ScissorRectHandle scissorRectHandle,
@@ -36,7 +35,7 @@ namespace QFE::FRAMEWORK {
 	/// @brief 描画可能なSpriteRenderComponentを描画順に最終ターゲットへ描画する。
 	void DrawSceneSprites(
 		QFE::SCENE::SceneManager& sceneManager,
-		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		QFE::FRAMEWORK::GraphicContext* graphicEngine,
 		QFE::GRAPHIC::PSOHandle psoHandle,
 		QFE::GRAPHIC::ViewPortHandle viewportHandle,
 		QFE::GRAPHIC::ScissorRectHandle scissorRectHandle,

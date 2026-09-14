@@ -2,6 +2,8 @@
 #include "dx12/DirectXResourceFramework.h"
 #include "dx12/DirectXRenderFramework.h"
 #include <map>
+#include <cstdint>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -13,19 +15,26 @@ namespace QFE::ASSET {
 	struct ModelData;
 }
 
-namespace QFE::GRAPHIC {
-	class D3D12GraphicEngine;
-}
-
 namespace QFE::FRAMEWORK {
+	class GraphicContext;
+
 	/// @brief グラフィックエンジンを生成する関数.ウィンドウのハンドルを引数に取ります.
-	std::unique_ptr<QFE::GRAPHIC::D3D12GraphicEngine> CreateGraphicEngine(HWND hwnd);
+	std::unique_ptr<GraphicContext> CreateGraphicEngine(HWND hwnd);
 	/// @brief グラフィックエンジンで描画する前の処理を行う関数
-	bool PreDrawGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine);
+	bool PreDrawGraphicEngine(GraphicContext* graphicEngine);
 	/// @brief グラフィックエンジンで描画した後の処理を行う関数
-	bool PostDrawGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine);
+	bool PostDrawGraphicEngine(GraphicContext* graphicEngine);
 	/// @brief グラフィックエンジンを終了する関数
-	bool ShutdownGraphicEngine(QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine);
+	bool ShutdownGraphicEngine(GraphicContext* graphicEngine);
+
+	/// @brief Editor用のシーンテクスチャを作成し、ImGuiで参照できるIDを返す。
+	bool CreateEditorSceneTexture(
+		GraphicContext* graphicEngine,
+		QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
+		QFE::GRAPHIC::DirectXResourceHandle& outResourceHandle,
+		uintptr_t& outGuiTextureId,
+		uint32_t width,
+		uint32_t height);
 
 	/// @brief モデルデータをレイトレーシング用の連続UV・三角形・メタデータへ変換する。
 	void BuildGlobalMeshBuffers(
