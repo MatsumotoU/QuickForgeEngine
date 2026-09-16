@@ -1,4 +1,4 @@
-project "GameEditor" -- GameEditor
+project "ProjectGenerator"
         kind "WindowedApp"
         language "C++"
         debugdir "%{wks.location}"
@@ -12,9 +12,14 @@ project "GameEditor" -- GameEditor
             "GuiFramework",
             "WindowFramework",
             "EngineAssetsFactory",
+            "SceneFramework",
+            "ApplicationFramework",
+            "PhysicsFramework",
             "Camera",
             "ImGui",
             "Components",
+            "PhysicsEngine",
+            "InputFramework",
         }
 
         -- グラフィック関連の内部ライブラリはGraphicFramework側から伝播する。
@@ -37,5 +42,6 @@ project "GameEditor" -- GameEditor
             "%{wks.location}/externals/",
             "%{wks.location}/externals/assimp/",
             "%{wks.location}/externals/assimp/include/",
-            "%{wks.location}/externals/imgui/"
+            "%{wks.location}/externals/imgui/",
+            "%{wks.location}/externals/imgui/imgui-node-editor-0.9.3"
         }

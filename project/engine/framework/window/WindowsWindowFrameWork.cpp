@@ -3,6 +3,7 @@
 
 #include "EngineDefines.h"
 
+#include <shlobj.h>
 #include <shobjidl.h>
 #include <thread>
 #include <iostream>
@@ -60,6 +61,26 @@ bool QFE::FRAMEWORK::RequestGetFilePathFromUser(
     }
 
     return false; // キャンセル、またはエラー
+}
+
+bool QFE::FRAMEWORK::RequestGetDirectoryPathFromUser(
+    HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outDirectoryPath)
+{
+    BROWSEINFO bi = { 0 };
+    bi.hwndOwner = hwnd;
+    bi.lpszTitle = filterName.c_str();
+    bi.ulFlags = BIF_RETURNONLYFSDIRS;
+    LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+    if (pidl != nullptr) {
+        wchar_t path[MAX_PATH];
+        if (SHGetPathFromIDList(pidl, path)) {
+            outDirectoryPath = path;
+            CoTaskMemFree(pidl);
+            return true;
+        }
+        CoTaskMemFree(pidl);
+    }
+	return false; // キャンセル、またはエラー
 }
 
 bool QFE::FRAMEWORK::RequestSaveFilePathFromUser(
@@ -202,4 +223,16 @@ bool QFE::FRAMEWORK::CompileProject(const std::wstring& projectPath, const std::
 
 bool QFE::FRAMEWORK::IsMainWindowActive(const GameWindowManager* windowManager) {
     return windowManager->IsWindowActive();
+}
+
+bool QFE::FRAMEWORK::ProcessWindowsApplicationMessage() {
+	MSG msg{};
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+        if (msg.message == WM_QUIT) {
+            return false;
+        }
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+    return true;
 }

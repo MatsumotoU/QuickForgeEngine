@@ -27,6 +27,15 @@ namespace QFE::FRAMEWORK {
 	bool RequestGetFilePathFromUser(
 		HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath);
 
+	/// @brief ユーザーにディレクトリを選択させるダイアログを表示し、選択されたディレクトリパスを取得する関数,スレッドをブロックするので注意してください
+	/// @param hwnd ダイアログを表示する親ウィンドウのハンドル
+	/// @param filterName ダイアログで表示するディレクトリタイプの名前（例: "Select Directory"）ここはfilterSpecの説明文のようなもの
+	/// @param filterSpec ダイアログで表示するディレクトリタイプの拡張子（例: "*.*"）ここは絞り込みのための拡張子
+	/// @param outDirectoryPath 選択されたディレクトリパスを格納する変数
+	/// @return ディレクトリが選択され、パスが取得できた場合はtrue、キャンセルされた場合やエラーが発生した場合はfalse
+	bool RequestGetDirectoryPathFromUser(
+		HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outDirectoryPath);
+
 	/// @brief ユーザーにファイルを保存するダイアログを表示し、選択されたファイルパスを取得する関数,スレッドをブロックするので注意してください
 	/// @param hwnd ダイアログを表示する親ウィンドウのハンドル
 	/// @param filterName ダイアログで表示するファイルタイプの名前（例: "Text Files"）ここはfilterSpecの説明文のようなもの
@@ -44,4 +53,7 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief メインウィンドウがアクティブかどうかを判定する関数
 	bool IsMainWindowActive(const GameWindowManager* windowManager);
+
+	/// @brief Windowsアプリケーションのメッセージを処理する関数。メインループ内で呼び出す必要があります。
+	bool ProcessWindowsApplicationMessage();
 }

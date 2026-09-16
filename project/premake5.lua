@@ -118,6 +118,11 @@ group "04_Applications" -- アプリケーションプロジェクト達
     dofile(path.join(_root, "launcher/premake5.lua"))
 group ""
 
+group "Tools"
+    --プロジェクト生成ツールの読み込み
+    dofile(path.join(_root, "tools/project-generator/premake5.lua"))
+group ""
+
 group "External"
 project "ExternalFolders"
     location "externals"
@@ -138,6 +143,15 @@ project "ImGui"
     files {
         "externals/imgui/**.h",
         "externals/imgui/**.cpp",
+    }
+
+    -- Node Editor本体だけをImGuiライブラリに含め、サンプルと同梱依存物は除外する。
+    -- releaseに含まれるexternal/imguiはホスト側のImGuiと重複するため使用しない。
+    removefiles {
+        "externals/imgui/imgui-node-editor-0.9.3/examples/**.h",
+        "externals/imgui/imgui-node-editor-0.9.3/examples/**.cpp",
+        "externals/imgui/imgui-node-editor-0.9.3/external/**.h",
+        "externals/imgui/imgui-node-editor-0.9.3/external/**.cpp",
     }
 
 -- DirectXTex
