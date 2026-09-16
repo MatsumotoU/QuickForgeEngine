@@ -145,6 +145,15 @@ project "ImGui"
         "externals/imgui/**.cpp",
     }
 
+    -- Node Editor本体だけをImGuiライブラリに含め、サンプルと同梱依存物は除外する。
+    -- releaseに含まれるexternal/imguiはホスト側のImGuiと重複するため使用しない。
+    removefiles {
+        "externals/imgui/imgui-node-editor-0.9.3/examples/**.h",
+        "externals/imgui/imgui-node-editor-0.9.3/examples/**.cpp",
+        "externals/imgui/imgui-node-editor-0.9.3/external/**.h",
+        "externals/imgui/imgui-node-editor-0.9.3/external/**.cpp",
+    }
+
 -- DirectXTex
 project "DirectXTex"
     location "externals/DirectXTex"

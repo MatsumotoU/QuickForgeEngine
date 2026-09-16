@@ -47,8 +47,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::FRAMEWORK::CreateGuiManager(
 			engineSystems.graphicEngine.get(), hwnd);
 
+
 	QFE::APPLICATION::ProjectGenerator projectGenerator;
-	projectGenerator.Initialize();
+	QFE::APPLICATION::ImGuiContext imguiContext;
+	imguiContext.hwnd = hwnd;
+	projectGenerator.Initialize(imguiContext);
 
 	// メインループ
 	while (QFE::FRAMEWORK::IsMainWindowActive(
@@ -66,13 +69,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		projectGenerator.Update();
 		projectGenerator.Draw();
 
-		engineSystems.guiManager->PostDraw();
+		QFE::GRAPHIC::DirectXResourceHandle depthStencilHandle;
+		if (QFE::FRAMEWORK::GetDepthStencilResourceHandle(
+			engineSystems.graphicEngine.get(),
+			depthStencilHandle)) {
+			QFE::FRAMEWORK::SetRenderTarget(
+				engineSystems.graphicEngine.get(),
+				depthStencilHandle,
+				{ QFE::GRAPHIC::RenderTargetHandle::SwapChain });
+		}
 
+		engineSystems.guiManager->PostDraw();
 		QFE::FRAMEWORK::PostDrawGraphicEngine(
 			engineSystems.graphicEngine.get());
 	}
 
 	// 終了処理
+	projectGenerator.Shutdown();
 	QFE::FRAMEWORK::ShutdownGui(
 		engineSystems.guiManager.get());
 	QFE::FRAMEWORK::ShutdownGraphicEngine(

@@ -42,5 +42,6 @@ project "ProjectGenerator"
             "%{wks.location}/externals/",
             "%{wks.location}/externals/assimp/",
             "%{wks.location}/externals/assimp/include/",
-            "%{wks.location}/externals/imgui/"
+            "%{wks.location}/externals/imgui/",
+            "%{wks.location}/externals/imgui/imgui-node-editor-0.9.3"
         }
