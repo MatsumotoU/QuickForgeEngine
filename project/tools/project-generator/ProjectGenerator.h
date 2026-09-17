@@ -27,8 +27,12 @@ namespace QFE::APPLICATION {
 	struct ProjectNode {
 		std::uint64_t id = 0;
 		std::string name;
+		std::string projectName;
 		std::filesystem::path directoryPath;
 		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
+		std::string includePaths;
+		std::string preBuildEvent;
+		std::string postBuildEvent;
 		ImVec2 initialPosition = ImVec2(0.0f, 0.0f);
 		bool positionInitialized = false;
 	};
@@ -51,11 +55,13 @@ namespace QFE::APPLICATION {
 		void MainMenuBar();
 		void MainWindow();
 		void NodeEditorWindow();
+		void NodeSettingsWindow();
 		void DrawDirectoryTree(const std::vector<DirectoryEntry>& directories,
 			std::size_t& index, std::uint32_t depth);
 		void AddNodeForDirectory(const DirectoryEntry& directory);
 		void AddAllDirectoryNodes();
 		bool HasNodeForDirectory(const std::filesystem::path& directoryPath) const;
+		ProjectNode* FindNode(std::uint64_t nodeId);
 		void RemoveNode(std::uint64_t nodeId);
 		void DrawProjectNode(ProjectNode& node);
 		void HandleNewLinks();
@@ -67,6 +73,10 @@ namespace QFE::APPLICATION {
 			std::uint64_t targetNodeId) const;
 		bool HasPath(std::uint64_t startNodeId, std::uint64_t targetNodeId) const;
 		void ArrangeNodesLeftToRight();
+		void LoadRootPremake();
+		void GenerateCentralPremake();
+		void SaveConfiguration();
+		void LoadConfiguration();
 		static const char* GetPremakeKindName(PremakeProjectKind kind);
 
 		ImGuiContext imguiContext_;
@@ -77,5 +87,8 @@ namespace QFE::APPLICATION {
 		std::uint64_t nextNodeId_ = 1;
 		std::uint64_t nextLinkId_ = 1;
 		std::uint64_t pendingNodeRemovalId_ = 0;
+		std::uint64_t selectedNodeId_ = 0;
+		bool nodeSettingsOpen_ = false;
+		std::string premakeStatus_;
 	};
 }
