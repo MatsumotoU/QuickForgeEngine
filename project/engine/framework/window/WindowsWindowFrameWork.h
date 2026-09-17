@@ -25,7 +25,9 @@ namespace QFE::FRAMEWORK {
 	/// @param outFilePath 選択されたファイルパスを格納する変数
 	/// @return ファイルが選択され、パスが取得できた場合はtrue、キャンセルされた場合やエラーが発生した場合はfalse
 	bool RequestGetFilePathFromUser(
-		HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath);
+		HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec,
+		std::wstring& outFilePath,
+		const std::wstring& initialDirectory = std::wstring());
 
 	/// @brief ユーザーにディレクトリを選択させるダイアログを表示し、選択されたディレクトリパスを取得する関数,スレッドをブロックするので注意してください
 	/// @param hwnd ダイアログを表示する親ウィンドウのハンドル
@@ -43,7 +45,10 @@ namespace QFE::FRAMEWORK {
 	/// @param outFilePath 選択されたファイルパスを格納する変数
 	/// @return ファイルが選択され、パスが取得できた場合はtrue、キャンセルされた場合やエラーが発生した場合はfalse
 	bool RequestSaveFilePathFromUser(
-		HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath);
+		HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec,
+		std::wstring& outFilePath,
+		const std::wstring& initialDirectory = std::wstring(),
+		const std::wstring& defaultExtension = std::wstring());
 
 	/// @brief プロジェクトをコンパイルする関数。dotnetを使用して指定されたプロジェクトをビルドする。
 	/// @param projectPath コンパイルするプロジェクトファイルのパス（例: "C:\\path\\to\\project.vcxproj"）
