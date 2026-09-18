@@ -23,6 +23,7 @@ namespace QFE::APPLICATION {
 		ConsoleApp,
 		WindowedApp,
 		None,
+		Utility,
 	};
 
 	struct ProjectNode {
@@ -34,6 +35,16 @@ namespace QFE::APPLICATION {
 		std::string includePaths;
 		std::string preBuildEvent;
 		std::string postBuildEvent;
+		struct ExternalLink {
+			std::string filter;
+			std::string name;
+		};
+		struct LibraryDirectory {
+			std::string filter;
+			std::string path;
+		};
+		std::vector<ExternalLink> externalLinks;
+		std::vector<LibraryDirectory> libraryDirectories;
 		ImVec2 initialPosition = ImVec2(0.0f, 0.0f);
 		bool positionInitialized = false;
 	};
@@ -54,6 +65,21 @@ namespace QFE::APPLICATION {
 		bool needsBoundsUpdate = false;
 	};
 
+	struct PremakeCommonSettings {
+		std::string workspaceName = "QuickForgeEngine";
+		std::string architecture = "x64";
+		std::string configurations = "Debug\nDevelopment\nRelease";
+		std::string cppDialect = "C++20";
+		bool staticRuntime = true;
+		std::string flags = "MultiProcessorCompile";
+		std::string buildOptions = "/utf-8";
+		// Premake debugdir path, normally relative to QFE_PROJECT_ROOT.
+		// Premake tokens such as %{cfg.buildcfg} are allowed.
+		std::string debugDirectory = "../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}";
+		std::string includePaths;
+		std::string defines;
+	};
+
 	class ProjectGenerator {
 	public:
 		~ProjectGenerator();
@@ -65,12 +91,15 @@ namespace QFE::APPLICATION {
 	private:
 		void MainMenuBar();
 		void MainWindow();
+		void SelectRootDirectory();
 		void NodeEditorWindow();
 		void NodeSettingsWindow();
 		void GroupSettingsWindow();
+		void CommonPremakeSettingsWindow();
 		void DrawDirectoryTree(const std::vector<DirectoryEntry>& directories,
 			std::size_t& index, std::uint32_t depth);
-		void AddNodeForDirectory(const DirectoryEntry& directory);
+		void AddNodeForDirectory(const DirectoryEntry& directory,
+			bool placeAtVisibleCenter = true);
 		void AddAllDirectoryNodes();
 		bool HasNodeForDirectory(const std::filesystem::path& directoryPath) const;
 		ProjectNode* FindNode(std::uint64_t nodeId);
@@ -119,6 +148,13 @@ namespace QFE::APPLICATION {
 		std::uint64_t selectedGroupId_ = 0;
 		bool nodeSettingsOpen_ = false;
 		bool groupSettingsOpen_ = false;
+		bool commonPremakeSettingsOpen_ = false;
+		// Cached in NodeEditorWindow so directory-tree actions, which are drawn
+		// before the node editor in the same frame, can place new nodes in the
+		// currently visible canvas area.
+		ImVec2 nodeEditorVisibleCenter_ = ImVec2(0.0f, 0.0f);
+		bool nodeEditorVisibleCenterInitialized_ = false;
+		PremakeCommonSettings commonPremakeSettings_;
 		std::string premakeStatus_;
 	};
 }

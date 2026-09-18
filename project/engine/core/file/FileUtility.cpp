@@ -8,7 +8,17 @@ namespace QFE::FILE {
 		std::vector<std::string> files;
 		namespace fs = std::filesystem;
 
-		for (const auto& entry : fs::directory_iterator(directoryPath)) {
+		std::error_code error;
+		const fs::directory_iterator end;
+		for (fs::directory_iterator iterator(
+			directoryPath, fs::directory_options::skip_permission_denied, error);
+			iterator != end;
+			iterator.increment(error)) {
+			if (error) {
+				error.clear();
+				continue;
+			}
+			const auto& entry = *iterator;
 			if (entry.is_regular_file()) {
 				if (extension.empty() || entry.path().extension() == extension) {
 					files.push_back(entry.path().filename().string());
@@ -21,7 +31,18 @@ namespace QFE::FILE {
 	std::vector<std::string> GetDirectoriesInDirectory(const std::string& directoryPath) {
 		std::vector<std::string> directories;
 		namespace fs = std::filesystem;
-		for (const auto& entry : fs::directory_iterator(directoryPath)) {
+
+		std::error_code error;
+		const fs::directory_iterator end;
+		for (fs::directory_iterator iterator(
+			directoryPath, fs::directory_options::skip_permission_denied, error);
+			iterator != end;
+			iterator.increment(error)) {
+			if (error) {
+				error.clear();
+				continue;
+			}
+			const auto& entry = *iterator;
 			if (entry.is_directory()) {
 				directories.push_back(entry.path().filename().string());
 			}

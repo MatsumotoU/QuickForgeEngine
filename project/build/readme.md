@@ -2,10 +2,9 @@
 
 このディレクトリはQuickForgeEngine ProjectGeneratorが生成しました。
 
-- エディタのルートディレクトリ名: `project`
-- その一つ上のディレクトリ名: `QuickForgeEngine`
-
 このエディタのルートディレクトリは、`QuickForgeEngine/project` に配置してください。
+
+別の場所へ移動する場合は、`premake5.lua` の `_sourceRootOverride` だけを変更してください。各プロジェクトのPremakeは変更不要です。
 
 Premakeを実行するときは、この `build` ディレクトリをカレントディレクトリにしてください。
 
@@ -13,5 +12,5 @@ Premakeを実行するときは、この `build` ディレクトリをカレン�
 
 ```text
 cd project/build
-premake5 --file=premake.lua vs2022
+premake5 vs2022
 ```

@@ -61,4 +61,5 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief Windowsアプリケーションのメッセージを処理する関数。メインループ内で呼び出す必要があります。
 	bool ProcessWindowsApplicationMessage();
+
 }
