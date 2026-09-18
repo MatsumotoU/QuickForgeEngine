@@ -28,7 +28,8 @@ HWND QFE::FRAMEWORK::GetWindowHandle(const GameWindowManager* windowManager, con
 }
 
 bool QFE::FRAMEWORK::RequestGetFilePathFromUser(
-    HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath) {
+    HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec,
+    std::wstring& outFilePath, const std::wstring& initialDirectory) {
 
     OPENFILENAME ofn;            // 共通ダイアログボックスの構造体
     wchar_t szFile[MAX_PATH] = { 0 }; // 選択されたファイル名を受け取るバッファ
@@ -47,7 +48,9 @@ bool QFE::FRAMEWORK::RequestGetFilePathFromUser(
 
     ofn.lpstrFileTitle = nullptr;
     ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = nullptr;
+    ofn.lpstrInitialDir = initialDirectory.empty()
+        ? nullptr
+        : initialDirectory.c_str();
 
     // OFN_FILEMUSTEXIST: 存在するファイルしか選べないようにする
     // OFN_PATHMUSTEXIST: 存在するフォルダしか選べないようにする
@@ -84,7 +87,9 @@ bool QFE::FRAMEWORK::RequestGetDirectoryPathFromUser(
 }
 
 bool QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-    HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath) {
+    HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec,
+    std::wstring& outFilePath, const std::wstring& initialDirectory,
+    const std::wstring& defaultExtension) {
 
     OPENFILENAME ofn;            // 共通ダイアログボックスの構造体
     wchar_t szFile[MAX_PATH] = { 0 }; // 選択（入力）されたファイル名を受け取るバッファ
@@ -103,7 +108,12 @@ bool QFE::FRAMEWORK::RequestSaveFilePathFromUser(
 
     ofn.lpstrFileTitle = nullptr;
     ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = nullptr;
+    ofn.lpstrInitialDir = initialDirectory.empty()
+        ? nullptr
+        : initialDirectory.c_str();
+    ofn.lpstrDefExt = defaultExtension.empty()
+        ? nullptr
+        : defaultExtension.c_str();
 
     // --- 保存用のフラグ設定 ---
     // OFN_PATHMUSTEXIST: 存在するフォルダしか選べないようにする
@@ -223,16 +233,4 @@ bool QFE::FRAMEWORK::CompileProject(const std::wstring& projectPath, const std::
 
 bool QFE::FRAMEWORK::IsMainWindowActive(const GameWindowManager* windowManager) {
     return windowManager->IsWindowActive();
-}
-
-bool QFE::FRAMEWORK::ProcessWindowsApplicationMessage() {
-	MSG msg{};
-    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-        if (msg.message == WM_QUIT) {
-            return false;
-        }
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    return true;
 }
