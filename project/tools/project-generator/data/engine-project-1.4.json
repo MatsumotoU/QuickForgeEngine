@@ -18,7 +18,8 @@
             "nodeIds": [
                 1,
                 2,
-                3
+                3,
+                28
             ],
             "position": {
                 "x": -160.0,
@@ -348,11 +349,16 @@
             "id": 87,
             "sourceNodeId": 15,
             "targetNodeId": 23
+        },
+        {
+            "id": 88,
+            "sourceNodeId": 28,
+            "targetNodeId": 11
         }
     ],
     "nextGroupId": 8,
-    "nextLinkId": 88,
-    "nextNodeId": 28,
+    "nextLinkId": 89,
+    "nextNodeId": 29,
     "nodes": [
         {
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals",
@@ -516,29 +522,11 @@
         },
         {
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\assetfactory",
-            "externalLinks": [
-                {
-                    "filter": "configurations:Debug",
-                    "name": "assimp-vc143-mtd"
-                },
-                {
-                    "filter": "configurations:Release or configurations:Development",
-                    "name": "assimp-vc143-mt"
-                }
-            ],
+            "externalLinks": [],
             "id": 11,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
             "kind": 0,
-            "libraryDirectories": [
-                {
-                    "filter": "configurations:Debug",
-                    "path": "%{wks.location}/../externals/assimp/lib/Debug"
-                },
-                {
-                    "filter": "configurations:Release or configurations:Development",
-                    "path": "%{wks.location}/../externals/assimp/lib/Release"
-                }
-            ],
+            "libraryDirectories": [],
             "name": "assetfactory",
             "position": {
                 "x": 1040.0,
@@ -803,6 +791,56 @@
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "ProjectGenerator"
+        },
+        {
+            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals\\assimp",
+            "externalLinks": [
+                {
+                    "filter": "configurations:Debug",
+                    "name": "assimp-vc143-mtd"
+                },
+                {
+                    "filter": "configurations:Debug",
+                    "name": "zlibstaticd"
+                },
+                {
+                    "filter": "configurations:Release or configurations:Development",
+                    "name": "assimp-vc143-mt"
+                },
+                {
+                    "filter": "configurations:Release or configurations:Development",
+                    "name": "zlibstatic"
+                }
+            ],
+            "id": 28,
+            "includePaths": "%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+            "kind": 5,
+            "libraryDirectories": [
+                {
+                    "filter": "configurations:Debug",
+                    "path": "%{wks.location}/../generated/assimp/lib/Debug"
+                },
+                {
+                    "filter": "configurations:Debug",
+                    "path": "%{wks.location}/../generated/assimp/contrib/zlib/Debug"
+                },
+                {
+                    "filter": "configurations:Release or configurations:Development",
+                    "path": "%{wks.location}/../generated/assimp/lib/Release"
+                },
+                {
+                    "filter": "configurations:Release or configurations:Development",
+                    "path": "%{wks.location}/../generated/assimp/contrib/zlib/Release"
+                }
+            ],
+            "name": "assimp",
+            "position": {
+                "x": 148.0,
+                "y": 412.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "call \"%{prj.location}/build-assimp.bat\" \"%{cfg.buildcfg}\"",
+            "projectName": "Assimp"
         }
     ],
     "rootDirectory": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project",
