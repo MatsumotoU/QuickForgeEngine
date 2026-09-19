@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -24,6 +25,16 @@ namespace QFE::APPLICATION {
 		WindowedApp,
 		None,
 		Utility,
+	};
+
+	struct ProjectConfigurationSettings {
+		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
+		std::string includePaths;
+		std::string defines;
+		std::string preBuildEvent;
+		std::string postBuildEvent;
+		std::string externalLinks;
+		std::string libraryDirectories;
 	};
 
 	struct ProjectNode {
@@ -45,8 +56,25 @@ namespace QFE::APPLICATION {
 		};
 		std::vector<ExternalLink> externalLinks;
 		std::vector<LibraryDirectory> libraryDirectories;
+		std::unordered_map<std::string, ProjectConfigurationSettings>
+			configurationSettings;
 		ImVec2 initialPosition = ImVec2(0.0f, 0.0f);
 		bool positionInitialized = false;
+	};
+
+	struct PremakeConfigurationSettings {
+		std::string architecture = "x64";
+		std::string cppDialect = "C++20";
+		bool staticRuntime = true;
+		std::string flags = "MultiProcessorCompile";
+		std::string buildOptions = "/utf-8";
+		std::string debugDirectory =
+			"../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}";
+		std::string includePaths;
+		std::string defines;
+		std::string runtime = "Release";
+		std::string optimize = "Off";
+		std::string symbols = "On";
 	};
 
 	struct ProjectLink {
@@ -78,6 +106,8 @@ namespace QFE::APPLICATION {
 		std::string debugDirectory = "../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}";
 		std::string includePaths;
 		std::string defines;
+		std::unordered_map<std::string, PremakeConfigurationSettings>
+			configurationSettings;
 	};
 
 	class ProjectGenerator {
@@ -87,6 +117,8 @@ namespace QFE::APPLICATION {
 		void Shutdown();
 		void Update();
 		void Draw();
+		bool GenerateFromConfiguration(
+			const std::filesystem::path& configurationPath);
 
 	private:
 		void MainMenuBar();
@@ -96,6 +128,9 @@ namespace QFE::APPLICATION {
 		void NodeSettingsWindow();
 		void GroupSettingsWindow();
 		void CommonPremakeSettingsWindow();
+		void EnsureConfigurationData();
+		void AddConfiguration(const std::string& name);
+		void RemoveConfiguration(const std::string& name);
 		void DrawDirectoryTree(const std::vector<DirectoryEntry>& directories,
 			std::size_t& index, std::uint32_t depth);
 		void AddNodeForDirectory(const DirectoryEntry& directory,
@@ -131,7 +166,8 @@ namespace QFE::APPLICATION {
 		void LoadRootPremake();
 		void GenerateCentralPremake();
 		void SaveConfiguration();
-		void LoadConfiguration();
+		void LoadConfiguration(
+			const std::filesystem::path& configurationPath = {});
 		static const char* GetPremakeKindName(PremakeProjectKind kind);
 
 		ImGuiContext imguiContext_;

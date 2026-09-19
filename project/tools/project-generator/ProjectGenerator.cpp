@@ -82,13 +82,17 @@ namespace
 		return false;
 	}
 
-	PremakeProjectKind GetGeneratedProjectKind(const ProjectNode& node)
+	PremakeProjectKind GetGeneratedProjectKind(const ProjectNode& node,
+		const ProjectConfigurationSettings& settings)
 	{
-		if (IsLibraryKind(node.kind) &&
+		if (settings.kind == PremakeProjectKind::None) {
+			return PremakeProjectKind::Utility;
+		}
+		if (IsLibraryKind(settings.kind) &&
 			!HasCompileSourceFile(node.directoryPath)) {
 			return PremakeProjectKind::Utility;
 		}
-		return node.kind;
+		return settings.kind;
 	}
 
 	// Node EditorはNodeId/PinId/LinkIdを最終的に同じImGuiのヒットテスト
@@ -159,6 +163,10 @@ namespace
 	}
 
 	struct ParsedPremakeProject {
+		struct FilteredValue {
+			std::string filter;
+			std::string value;
+		};
 		std::string name;
 		std::filesystem::path directoryPath;
 		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
@@ -166,10 +174,11 @@ namespace
 		std::vector<std::string> includePaths;
 		std::vector<std::string> preBuildCommands;
 		std::vector<std::string> postBuildCommands;
-		struct FilteredValue {
-			std::string filter;
-			std::string value;
-		};
+		std::vector<FilteredValue> kinds;
+		std::vector<FilteredValue> filteredIncludePaths;
+		std::vector<FilteredValue> defines;
+		std::vector<FilteredValue> filteredPreBuildCommands;
+		std::vector<FilteredValue> filteredPostBuildCommands;
 		std::vector<FilteredValue> links;
 		std::vector<FilteredValue> libraryDirectories;
 	};
@@ -342,8 +351,10 @@ namespace
 				continue;
 			}
 			if (IsLuaCall(line, "filter")) {
-				TryExtractQuotedString(line, std::string_view("filter").size(),
-					currentFilter);
+				if (!TryExtractQuotedString(line,
+					std::string_view("filter").size(), currentFilter)) {
+					currentFilter.clear();
+				}
 				continue;
 			}
 			if (IsLuaCall(line, "project")) {
@@ -365,7 +376,10 @@ namespace
 			std::string value;
 			if (IsLuaCall(line, "kind") &&
 				TryExtractQuotedString(line, std::string_view("kind").size(), value)) {
-				currentProject.kind = ParsePremakeKind(value);
+				currentProject.kinds.push_back({ currentFilter, value });
+				if (Trim(currentFilter).empty()) {
+					currentProject.kind = ParsePremakeKind(value);
+				}
 				continue;
 			}
 			if (IsLuaCall(line, "location") &&
@@ -380,12 +394,13 @@ namespace
 
 			const bool isIncludeList = IsLuaCall(line, "includedirs") ||
 				IsLuaCall(line, "externalincludedirs");
+			const bool isDefineList = IsLuaCall(line, "defines");
 			const bool isBuildEventList = IsLuaCall(line, "prebuildcommands") ||
 				IsLuaCall(line, "postbuildcommands");
 			const bool isLinkList = IsLuaCall(line, "links") ||
 				IsLuaCall(line, "uses");
 			const bool isLibraryDirectoryList = IsLuaCall(line, "libdirs");
-			if (!isIncludeList && !isBuildEventList && !isLinkList &&
+			if (!isIncludeList && !isDefineList && !isBuildEventList && !isLinkList &&
 				!isLibraryDirectoryList) {
 				continue;
 			}
@@ -393,13 +408,30 @@ namespace
 			const std::string table = CollectLuaTable(lines, lineIndex);
 			const std::vector<std::string> values = ExtractQuotedStrings(table);
 			if (isIncludeList) {
-				currentProject.includePaths.insert(
-					currentProject.includePaths.end(), values.begin(), values.end());
+				for (const std::string& includePath : values) {
+					currentProject.filteredIncludePaths.push_back(
+						{ currentFilter, includePath });
+					if (Trim(currentFilter).empty()) {
+						currentProject.includePaths.push_back(includePath);
+					}
+				}
+			} else if (isDefineList) {
+				for (const std::string& define : values) {
+					currentProject.defines.push_back({ currentFilter, define });
+				}
 			} else if (isBuildEventList) {
 				auto& destination = IsLuaCall(line, "prebuildcommands")
 					? currentProject.preBuildCommands
 					: currentProject.postBuildCommands;
-				destination.insert(destination.end(), values.begin(), values.end());
+				auto& filteredDestination = IsLuaCall(line, "prebuildcommands")
+					? currentProject.filteredPreBuildCommands
+					: currentProject.filteredPostBuildCommands;
+				for (const std::string& command : values) {
+					filteredDestination.push_back({ currentFilter, command });
+					if (Trim(currentFilter).empty()) {
+						destination.push_back(command);
+					}
+				}
 			} else if (isLinkList) {
 				for (const std::string& link : values) {
 					currentProject.links.push_back({ currentFilter, link });
@@ -590,6 +622,73 @@ namespace
 		}
 		return escaped;
 	}
+
+	void AppendLine(std::string& destination, const std::string& value)
+	{
+		const std::string trimmed = Trim(value);
+		if (trimmed.empty()) {
+			return;
+		}
+		if (!destination.empty()) {
+			destination.push_back('\n');
+		}
+		destination += trimmed;
+	}
+
+	PremakeConfigurationSettings MakeDefaultCommonConfiguration(
+		const std::string& name, const PremakeCommonSettings& legacy)
+	{
+		PremakeConfigurationSettings settings;
+		settings.architecture = legacy.architecture;
+		settings.cppDialect = legacy.cppDialect;
+		settings.staticRuntime = legacy.staticRuntime;
+		settings.flags = legacy.flags;
+		settings.buildOptions = legacy.buildOptions;
+		settings.debugDirectory = legacy.debugDirectory;
+		settings.includePaths = legacy.includePaths;
+		settings.defines = legacy.defines;
+		if (Trim(settings.includePaths).empty()) {
+			settings.includePaths =
+				"engine\n"
+				"engine/core\n"
+				"externals\n"
+				"externals/imgui\n"
+				"externals/assimp\n"
+				"externals/assimp/include\n"
+				"externals/imgui/imgui-node-editor-0.9.3";
+		}
+
+		if (name == "Debug") {
+			settings.runtime = "Debug";
+			settings.optimize = "Off";
+			settings.symbols = "On";
+			AppendLine(settings.defines,
+				"_DEBUG\nQFE_OPTIMIZE_OFF\nQFE_MODE_DEBUG\nUSE_IMGUI");
+		} else if (name == "Development") {
+			settings.runtime = "Release";
+			settings.optimize = "Off";
+			settings.symbols = "On";
+			AppendLine(settings.defines,
+				"NDEBUG\nQFE_OPTIMIZE_OFF\nQFE_MODE_DEVELOPMENT\nUSE_IMGUI");
+		} else if (name == "Release") {
+			settings.runtime = "Release";
+			settings.optimize = "On";
+			settings.symbols = "Off";
+			AppendLine(settings.defines,
+				"NDEBUG\nQFE_OPTIMIZE_ON\nQFE_MODE_RELEASE\nNO_IMGUI");
+		}
+		return settings;
+	}
+
+	bool IsConfigurationFilterFor(std::string_view filter,
+		std::string_view configuration)
+	{
+		const std::string normalized = Trim(filter);
+		const std::string needle = "configurations:" + std::string(configuration);
+		return normalized == needle ||
+			normalized.find(needle + " ") != std::string::npos ||
+			normalized.find(" or " + needle) != std::string::npos;
+	}
 }
 
 ProjectGenerator::~ProjectGenerator()
@@ -601,6 +700,7 @@ void ProjectGenerator::Initialize(ImGuiContext context) {
 	Shutdown();
 	imguiContext_ = context;
 	directoryManager_.Initialize();
+	EnsureConfigurationData();
 
 	ax::NodeEditor::Config config;
 	// Node positions and links belong to the current project model.  Do not
@@ -614,6 +714,115 @@ void ProjectGenerator::Initialize(ImGuiContext context) {
 		style.TargetDirection = ImVec2(-1.0f, 0.0f);
 		ax::NodeEditor::SetCurrentEditor(nullptr);
 	}
+}
+
+void QFE::APPLICATION::ProjectGenerator::EnsureConfigurationData()
+{
+	std::vector<std::string> configurations =
+		SplitLines(commonPremakeSettings_.configurations);
+	configurations.erase(
+		std::remove_if(configurations.begin(), configurations.end(),
+			[](const std::string& value) { return value.empty(); }),
+		configurations.end());
+	std::vector<std::string> uniqueConfigurations;
+	for (const std::string& configuration : configurations) {
+		if (std::find(uniqueConfigurations.begin(), uniqueConfigurations.end(),
+			configuration) == uniqueConfigurations.end()) {
+			uniqueConfigurations.push_back(configuration);
+		}
+	}
+	if (uniqueConfigurations.empty()) {
+		uniqueConfigurations = { "Debug", "Development", "Release" };
+	}
+	commonPremakeSettings_.configurations = JoinLines(uniqueConfigurations);
+
+	for (const std::string& configuration : uniqueConfigurations) {
+		if (!commonPremakeSettings_.configurationSettings.contains(configuration)) {
+			commonPremakeSettings_.configurationSettings.emplace(configuration,
+				MakeDefaultCommonConfiguration(configuration,
+					commonPremakeSettings_));
+		}
+		for (ProjectNode& node : nodes_) {
+			if (node.configurationSettings.contains(configuration)) {
+				continue;
+			}
+			ProjectConfigurationSettings settings;
+			settings.kind = node.kind;
+			settings.includePaths = node.includePaths;
+			settings.preBuildEvent = node.preBuildEvent;
+			settings.postBuildEvent = node.postBuildEvent;
+			for (const ProjectNode::ExternalLink& link : node.externalLinks) {
+				if (Trim(link.filter).empty() ||
+					IsConfigurationFilterFor(link.filter, configuration)) {
+					AppendLine(settings.externalLinks, link.name);
+				}
+			}
+			for (const ProjectNode::LibraryDirectory& directory :
+				node.libraryDirectories) {
+				if (Trim(directory.filter).empty() ||
+					IsConfigurationFilterFor(directory.filter, configuration)) {
+					AppendLine(settings.libraryDirectories, directory.path);
+				}
+			}
+			node.configurationSettings.emplace(configuration,
+				std::move(settings));
+		}
+	}
+}
+
+void QFE::APPLICATION::ProjectGenerator::AddConfiguration(
+	const std::string& name)
+{
+	const std::string trimmedName = Trim(name);
+	if (trimmedName.empty()) {
+		return;
+	}
+	EnsureConfigurationData();
+	std::vector<std::string> configurations =
+		SplitLines(commonPremakeSettings_.configurations);
+	if (std::find(configurations.begin(), configurations.end(), trimmedName) !=
+		configurations.end()) {
+		premakeStatus_ = "Configuration already exists: " + trimmedName;
+		return;
+	}
+
+	PremakeConfigurationSettings commonSettings =
+		MakeDefaultCommonConfiguration(trimmedName, commonPremakeSettings_);
+	if (!configurations.empty()) {
+		commonSettings = commonPremakeSettings_.configurationSettings.at(
+			configurations.front());
+	}
+	commonPremakeSettings_.configurationSettings[trimmedName] = commonSettings;
+	for (ProjectNode& node : nodes_) {
+		ProjectConfigurationSettings settings;
+		if (!configurations.empty()) {
+			settings = node.configurationSettings.at(configurations.front());
+		}
+		node.configurationSettings[trimmedName] = std::move(settings);
+	}
+	configurations.push_back(trimmedName);
+	commonPremakeSettings_.configurations = JoinLines(configurations);
+	premakeStatus_ = "Added configuration: " + trimmedName;
+}
+
+void QFE::APPLICATION::ProjectGenerator::RemoveConfiguration(
+	const std::string& name)
+{
+	std::vector<std::string> configurations =
+		SplitLines(commonPremakeSettings_.configurations);
+	if (configurations.size() <= 1) {
+		premakeStatus_ = "At least one configuration is required.";
+		return;
+	}
+	configurations.erase(
+		std::remove(configurations.begin(), configurations.end(), name),
+		configurations.end());
+	commonPremakeSettings_.configurations = JoinLines(configurations);
+	commonPremakeSettings_.configurationSettings.erase(name);
+	for (ProjectNode& node : nodes_) {
+		node.configurationSettings.erase(name);
+	}
+	premakeStatus_ = "Removed configuration: " + name;
 }
 
 void ProjectGenerator::Shutdown()
@@ -681,6 +890,11 @@ void ProjectGenerator::Draw() {
 
 void QFE::APPLICATION::ProjectGenerator::MainMenuBar()
 {
+	EnsureConfigurationData();
+	static std::string newConfigurationName;
+	static std::string configurationPendingRemoval;
+	bool openAddConfigurationPopup = false;
+	bool openRemoveConfigurationPopup = false;
 	ImGui::BeginMenuBar();
 
 	    if(ImGui::BeginMenu("File"))
@@ -696,7 +910,7 @@ void QFE::APPLICATION::ProjectGenerator::MainMenuBar()
 			LoadRootPremake();
 		}
 		if (ImGui::MenuItem(
-			"Generate Central Premake", nullptr, false, !nodes_.empty())) {
+			"Generate Premake Hierarchy", nullptr, false, !nodes_.empty())) {
 			GenerateCentralPremake();
 		}
 		ImGui::Separator();
@@ -719,7 +933,71 @@ void QFE::APPLICATION::ProjectGenerator::MainMenuBar()
 		}
 		ImGui::EndMenu();
 	}
+	if (ImGui::BeginMenu("Configurations"))
+	{
+		if (ImGui::MenuItem("Add...")) {
+			newConfigurationName.clear();
+			openAddConfigurationPopup = true;
+		}
+		if (ImGui::BeginMenu("Remove")) {
+			const std::vector<std::string> configurations =
+				SplitLines(commonPremakeSettings_.configurations);
+			for (const std::string& configuration : configurations) {
+				if (ImGui::MenuItem(configuration.c_str(), nullptr, false,
+					configurations.size() > 1)) {
+					configurationPendingRemoval = configuration;
+					openRemoveConfigurationPopup = true;
+				}
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::Separator();
+		ImGui::TextDisabled("Current configurations");
+		for (const std::string& configuration :
+			SplitLines(commonPremakeSettings_.configurations)) {
+			ImGui::MenuItem(configuration.c_str(), nullptr, false, false);
+		}
+		ImGui::EndMenu();
+	}
 	ImGui::EndMenuBar();
+	if (openAddConfigurationPopup) {
+		ImGui::OpenPopup("Add Configuration");
+	}
+	if (openRemoveConfigurationPopup) {
+		ImGui::OpenPopup("Remove Configuration");
+	}
+
+	if (ImGui::BeginPopupModal("Add Configuration", nullptr,
+		ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::TextUnformatted("Configuration name");
+		ImGui::SetNextItemWidth(280.0f);
+		const bool submitted = ImGui::InputText("##NewConfigurationName",
+			&newConfigurationName, ImGuiInputTextFlags_EnterReturnsTrue);
+		if ((submitted || ImGui::Button("Add")) &&
+			!Trim(newConfigurationName).empty()) {
+			AddConfiguration(newConfigurationName);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	if (ImGui::BeginPopupModal("Remove Configuration", nullptr,
+		ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text("Remove configuration '%s'?",
+			configurationPendingRemoval.c_str());
+		if (ImGui::Button("Remove")) {
+			RemoveConfiguration(configurationPendingRemoval);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }
 
 void QFE::APPLICATION::ProjectGenerator::MainWindow()
@@ -904,6 +1182,7 @@ void QFE::APPLICATION::ProjectGenerator::AddNodeForDirectory(
 			static_cast<float>(nodes_.size()) * 180.0f);
 	}
 	nodes_.emplace_back(std::move(node));
+	EnsureConfigurationData();
 }
 
 void QFE::APPLICATION::ProjectGenerator::AddAllDirectoryNodes()
@@ -1218,93 +1497,128 @@ void QFE::APPLICATION::ProjectGenerator::CommonPremakeSettingsWindow()
 	if (!commonPremakeSettingsOpen_) {
 		return;
 	}
+	EnsureConfigurationData();
 
-	ImGui::SetNextWindowSize(ImVec2(520.0f, 680.0f), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(620.0f, 760.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSizeConstraints(
-		ImVec2(380.0f, 420.0f), ImVec2(FLT_MAX, FLT_MAX));
+		ImVec2(440.0f, 460.0f), ImVec2(FLT_MAX, FLT_MAX));
 	bool isOpen = commonPremakeSettingsOpen_;
 	if (ImGui::Begin("Common Premake Settings", &isOpen)) {
 		ImGui::TextWrapped(
-			"These settings are written to the root premake5.lua and inherited by every project.");
+			"Workspace settings are written to the root premake5.lua. "
+			"Editing the All Configurations tab applies the value to every configuration.");
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Workspace name");
 		ImGui::InputText("##CommonWorkspaceName",
 			&commonPremakeSettings_.workspaceName);
 
-		ImGui::TextUnformatted("Architecture");
-		ImGui::InputText("##CommonArchitecture",
-			&commonPremakeSettings_.architecture);
-
-		ImGui::TextUnformatted("C++ dialect");
-		ImGui::InputText("##CommonCppDialect",
-			&commonPremakeSettings_.cppDialect);
-
-		ImGui::Checkbox("Static runtime",
-			&commonPremakeSettings_.staticRuntime);
-
-		ImGui::Separator();
-		ImGui::TextUnformatted("Debug working directory");
-		ImGui::PushItemWidth(-110.0f);
-		ImGui::InputText("##CommonDebugDirectory",
-			&commonPremakeSettings_.debugDirectory);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-		if (ImGui::Button("Browse##CommonDebugDirectory")) {
-			std::wstring selectedDirectory;
-			if (QFE::FRAMEWORK::RequestGetDirectoryPathFromUser(
-				imguiContext_.hwnd, L"Select debug working directory", L"*.*",
-				selectedDirectory)) {
-				const std::filesystem::path selectedPath = NormalizePath(
-					QFE::ConvertString(selectedDirectory));
-				const std::filesystem::path rootPath = NormalizePath(
-					QFE::ConvertString(directoryManager_.GetLootDirectory()));
-				std::error_code relativeError;
-				const std::filesystem::path relativePath =
-					std::filesystem::relative(selectedPath, rootPath, relativeError);
-				if (!relativeError && !relativePath.empty()) {
-					commonPremakeSettings_.debugDirectory =
-						relativePath.generic_string();
+		const std::vector<std::string> configurations =
+			SplitLines(commonPremakeSettings_.configurations);
+		auto drawSettings = [&](const char* id,
+			const std::vector<PremakeConfigurationSettings*>& targets) {
+			if (targets.empty()) {
+				return;
+			}
+			ImGui::PushID(id);
+			auto drawText = [&](const char* label, const char* widgetId,
+				std::string PremakeConfigurationSettings::* member,
+				bool multiline = false, float height = 64.0f) {
+				bool mixed = false;
+				for (std::size_t index = 1; index < targets.size(); ++index) {
+					if (targets[index]->*member != targets.front()->*member) {
+						mixed = true;
+						break;
+					}
+				}
+				std::string value = mixed ? std::string{} : targets.front()->*member;
+				ImGui::TextUnformatted(label);
+				bool changed = false;
+				if (multiline) {
+					if (mixed) {
+						ImGui::TextDisabled("<個別の設定>");
+					}
+					changed = ImGui::InputTextMultiline(widgetId, &value,
+						ImVec2(-FLT_MIN, height), ImGuiInputTextFlags_AllowTabInput);
 				} else {
-					commonPremakeSettings_.debugDirectory =
-						selectedPath.generic_string();
+					changed = ImGui::InputTextWithHint(widgetId,
+						mixed ? "<個別の設定>" : "", &value);
+				}
+				if (changed) {
+					for (PremakeConfigurationSettings* target : targets) {
+						target->*member = value;
+					}
+				}
+			};
+
+			drawText("Architecture", "##Architecture",
+				&PremakeConfigurationSettings::architecture);
+			drawText("C++ dialect", "##CppDialect",
+				&PremakeConfigurationSettings::cppDialect);
+
+			bool staticRuntimeMixed = false;
+			for (std::size_t index = 1; index < targets.size(); ++index) {
+				staticRuntimeMixed |= targets[index]->staticRuntime !=
+					targets.front()->staticRuntime;
+			}
+			const char* staticRuntimePreview = staticRuntimeMixed
+				? "<個別の設定>"
+				: (targets.front()->staticRuntime ? "On" : "Off");
+			ImGui::TextUnformatted("Static runtime");
+			if (ImGui::BeginCombo("##StaticRuntime", staticRuntimePreview)) {
+				for (const bool value : { true, false }) {
+					if (ImGui::Selectable(value ? "On" : "Off")) {
+						for (PremakeConfigurationSettings* target : targets) {
+							target->staticRuntime = value;
+						}
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			drawText("Runtime", "##Runtime",
+				&PremakeConfigurationSettings::runtime);
+			drawText("Optimize", "##Optimize",
+				&PremakeConfigurationSettings::optimize);
+			drawText("Symbols", "##Symbols",
+				&PremakeConfigurationSettings::symbols);
+			drawText("Debug working directory", "##DebugDirectory",
+				&PremakeConfigurationSettings::debugDirectory);
+			ImGui::TextWrapped(
+				"Premake tokens such as %%{cfg.buildcfg} and %%{cfg.platform} are supported.");
+			drawText("Flags (one per line)", "##Flags",
+				&PremakeConfigurationSettings::flags, true);
+			drawText("Build options (one per line)", "##BuildOptions",
+				&PremakeConfigurationSettings::buildOptions, true);
+			drawText("Common include paths (one per line)", "##IncludePaths",
+				&PremakeConfigurationSettings::includePaths, true, 88.0f);
+			drawText("Global defines (one definition per line)", "##Defines",
+				&PremakeConfigurationSettings::defines, true, 88.0f);
+			ImGui::PopID();
+		};
+
+		if (ImGui::BeginTabBar("CommonConfigurationTabs")) {
+			if (ImGui::BeginTabItem("すべての構成")) {
+				std::vector<PremakeConfigurationSettings*> targets;
+				for (const std::string& configuration : configurations) {
+					targets.push_back(
+						&commonPremakeSettings_.configurationSettings.at(configuration));
+				}
+				drawSettings("AllConfigurations", targets);
+				ImGui::EndTabItem();
+			}
+			for (const std::string& configuration : configurations) {
+				if (ImGui::BeginTabItem(configuration.c_str())) {
+					drawSettings(configuration.c_str(), {
+						&commonPremakeSettings_.configurationSettings.at(configuration) });
+					ImGui::EndTabItem();
 				}
 			}
+			ImGui::EndTabBar();
 		}
-		ImGui::TextWrapped(
-			"Path relative to the root directory. Premake tokens such as "
-			"%%{cfg.buildcfg} and %%{cfg.platform} are supported.");
-
-		ImGui::TextUnformatted("Configurations (one per line)");
-		ImGui::InputTextMultiline(
-			"##CommonConfigurations", &commonPremakeSettings_.configurations,
-			ImVec2(-FLT_MIN, 72.0f), ImGuiInputTextFlags_AllowTabInput);
-
-		ImGui::TextUnformatted("Flags (one per line)");
-		ImGui::InputTextMultiline(
-			"##CommonFlags", &commonPremakeSettings_.flags,
-			ImVec2(-FLT_MIN, 64.0f), ImGuiInputTextFlags_AllowTabInput);
-
-		ImGui::TextUnformatted("Build options (one option per line)");
-		ImGui::InputTextMultiline(
-			"##CommonBuildOptions", &commonPremakeSettings_.buildOptions,
-			ImVec2(-FLT_MIN, 72.0f), ImGuiInputTextFlags_AllowTabInput);
-
-		ImGui::TextUnformatted("Common include paths (one path per line)");
-		ImGui::InputTextMultiline(
-			"##CommonIncludePaths", &commonPremakeSettings_.includePaths,
-			ImVec2(-FLT_MIN, 88.0f), ImGuiInputTextFlags_AllowTabInput);
 
 		ImGui::Separator();
-		ImGui::TextUnformatted("Global defines (one definition per line)");
-		ImGui::TextWrapped(
-			"These definitions are written to the root Premake workspace and every generated project. Examples: QFE_FEATURE_X or QFE_VERSION=1.");
-		ImGui::InputTextMultiline(
-			"##CommonDefines", &commonPremakeSettings_.defines,
-			ImVec2(-FLT_MIN, 72.0f), ImGuiInputTextFlags_AllowTabInput);
-
-		ImGui::Separator();
-		if (ImGui::Button("Generate Central Premake")) {
+		if (ImGui::Button("Generate Premake Hierarchy")) {
 			GenerateCentralPremake();
 		}
 		ImGui::SameLine();
@@ -1527,8 +1841,9 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 		nodeSettingsOpen_ = false;
 		return;
 	}
+	EnsureConfigurationData();
 
-	ImGui::SetNextWindowSize(ImVec2(420.0f, 560.0f), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(540.0f, 720.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSizeConstraints(
 		ImVec2(320.0f, 320.0f), ImVec2(FLT_MAX, FLT_MAX));
 	bool isOpen = nodeSettingsOpen_;
@@ -1542,28 +1857,88 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 		ImGui::TextUnformatted("Premake project name");
 		ImGui::InputText("##PremakeProjectName", &node->projectName);
 
-		int kind = static_cast<int>(node->kind);
-		ImGui::TextUnformatted("Premake kind");
-		ImGui::SetNextItemWidth(-FLT_MIN);
-		if (ImGui::Combo("##PremakeKind", &kind, kPremakeProjectKinds,
-			IM_ARRAYSIZE(kPremakeProjectKinds))) {
-			node->kind = static_cast<PremakeProjectKind>(kind);
+		const std::vector<std::string> configurations =
+			SplitLines(commonPremakeSettings_.configurations);
+		auto drawSettings = [&](const char* id,
+			const std::vector<ProjectConfigurationSettings*>& targets) {
+			if (targets.empty()) {
+				return;
+			}
+			ImGui::PushID(id);
+			bool kindMixed = false;
+			for (std::size_t index = 1; index < targets.size(); ++index) {
+				kindMixed |= targets[index]->kind != targets.front()->kind;
+			}
+			const char* kindPreview = kindMixed
+				? "<個別の設定>"
+				: GetPremakeKindName(targets.front()->kind);
+			ImGui::TextUnformatted("Premake kind");
+			if (ImGui::BeginCombo("##PremakeKind", kindPreview)) {
+				for (int kind = 0; kind < IM_ARRAYSIZE(kPremakeProjectKinds); ++kind) {
+					if (ImGui::Selectable(kPremakeProjectKinds[kind])) {
+						for (ProjectConfigurationSettings* target : targets) {
+							target->kind = static_cast<PremakeProjectKind>(kind);
+						}
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			auto drawText = [&](const char* label, const char* widgetId,
+				std::string ProjectConfigurationSettings::* member,
+				float height) {
+				bool mixed = false;
+				for (std::size_t index = 1; index < targets.size(); ++index) {
+					if (targets[index]->*member != targets.front()->*member) {
+						mixed = true;
+						break;
+					}
+				}
+				std::string value = mixed ? std::string{} : targets.front()->*member;
+				ImGui::TextUnformatted(label);
+				if (mixed) {
+					ImGui::TextDisabled("<個別の設定>");
+				}
+				if (ImGui::InputTextMultiline(widgetId, &value,
+					ImVec2(-FLT_MIN, height), ImGuiInputTextFlags_AllowTabInput)) {
+					for (ProjectConfigurationSettings* target : targets) {
+						target->*member = value;
+					}
+				}
+			};
+			drawText("Include paths (one path per line)", "##IncludePaths",
+				&ProjectConfigurationSettings::includePaths, 82.0f);
+			drawText("Defines (one definition per line)", "##Defines",
+				&ProjectConfigurationSettings::defines, 72.0f);
+			drawText("External links (one library per line)", "##ExternalLinks",
+				&ProjectConfigurationSettings::externalLinks, 72.0f);
+			drawText("Library directories (one path per line)", "##LibraryDirectories",
+				&ProjectConfigurationSettings::libraryDirectories, 72.0f);
+			drawText("Pre-build event (one command per line)", "##PreBuildEvent",
+				&ProjectConfigurationSettings::preBuildEvent, 82.0f);
+			drawText("Post-build event (one command per line)", "##PostBuildEvent",
+				&ProjectConfigurationSettings::postBuildEvent, 82.0f);
+			ImGui::PopID();
+		};
+
+		if (ImGui::BeginTabBar("NodeConfigurationTabs")) {
+			if (ImGui::BeginTabItem("すべての構成")) {
+				std::vector<ProjectConfigurationSettings*> targets;
+				for (const std::string& configuration : configurations) {
+					targets.push_back(&node->configurationSettings.at(configuration));
+				}
+				drawSettings("AllConfigurations", targets);
+				ImGui::EndTabItem();
+			}
+			for (const std::string& configuration : configurations) {
+				if (ImGui::BeginTabItem(configuration.c_str())) {
+					drawSettings(configuration.c_str(), {
+						&node->configurationSettings.at(configuration) });
+					ImGui::EndTabItem();
+				}
+			}
+			ImGui::EndTabBar();
 		}
-
-		ImGui::TextUnformatted("Include paths (one path per line)");
-		ImGui::InputTextMultiline(
-			"##NodeIncludePaths", &node->includePaths,
-			ImVec2(-FLT_MIN, 96.0f), ImGuiInputTextFlags_AllowTabInput);
-
-		ImGui::TextUnformatted("Pre-build event (one command per line)");
-		ImGui::InputTextMultiline(
-			"##NodePreBuildEvent", &node->preBuildEvent,
-			ImVec2(-FLT_MIN, 88.0f), ImGuiInputTextFlags_AllowTabInput);
-
-		ImGui::TextUnformatted("Post-build event (one command per line)");
-		ImGui::InputTextMultiline(
-			"##NodePostBuildEvent", &node->postBuildEvent,
-			ImVec2(-FLT_MIN, 88.0f), ImGuiInputTextFlags_AllowTabInput);
 	}
 	ImGui::End();
 
@@ -1928,6 +2303,49 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 			}
 		}
 	}
+	for (ProjectNode& node : nodes_) {
+		node.configurationSettings.clear();
+	}
+	EnsureConfigurationData();
+	for (const ParsedPremakeProject& project : projects) {
+		const auto nodeId = nodeIdsByPath.find(
+			NormalizePath(project.directoryPath).generic_string());
+		if (nodeId == nodeIdsByPath.end()) {
+			continue;
+		}
+		ProjectNode* node = FindNode(nodeId->second);
+		if (node == nullptr) {
+			continue;
+		}
+		for (const std::string& configuration :
+			SplitLines(commonPremakeSettings_.configurations)) {
+			ProjectConfigurationSettings& settings =
+				node->configurationSettings.at(configuration);
+			settings.kind = project.kind;
+			for (const ParsedPremakeProject::FilteredValue& kind : project.kinds) {
+				if (Trim(kind.filter).empty() ||
+					IsConfigurationFilterFor(kind.filter, configuration)) {
+					settings.kind = ParsePremakeKind(kind.value);
+				}
+			}
+			auto collectFiltered = [&](const auto& values) {
+				std::vector<std::string> matchingValues;
+				for (const ParsedPremakeProject::FilteredValue& value : values) {
+					if (Trim(value.filter).empty() ||
+						IsConfigurationFilterFor(value.filter, configuration)) {
+						matchingValues.push_back(value.value);
+					}
+				}
+				return JoinLines(matchingValues);
+			};
+			settings.includePaths = collectFiltered(project.filteredIncludePaths);
+			settings.defines = collectFiltered(project.defines);
+			settings.preBuildEvent =
+				collectFiltered(project.filteredPreBuildCommands);
+			settings.postBuildEvent =
+				collectFiltered(project.filteredPostBuildCommands);
+		}
+	}
 	const std::size_t importedLinkCountBeforeSimplification = links_.size();
 	SimplifyDependencyLinks();
 	const std::size_t simplifiedLinkCount =
@@ -1947,6 +2365,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 	premakeStatus_ = status.str();
 }
 
+
 void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 {
 	if (directoryManager_.GetLootDirectory().empty()) {
@@ -1957,386 +2376,492 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		premakeStatus_ = "Add at least one node before generating Premake.";
 		return;
 	}
+	EnsureConfigurationData();
 
-	const std::filesystem::path rootPath =
-		NormalizePath(QFE::ConvertString(directoryManager_.GetLootDirectory()));
-	const std::filesystem::path buildPath = rootPath / "build";
-	const std::filesystem::path projectsPath = buildPath / "projects";
-	std::error_code directoryError;
-	std::filesystem::create_directories(projectsPath, directoryError);
-	if (directoryError) {
-		premakeStatus_ = "Could not create the build/projects directory.";
-		return;
-	}
-
-	std::unordered_map<std::uint64_t, std::string> generatedNames;
-	std::unordered_set<std::string> usedNames;
+	const std::filesystem::path rootPath = NormalizePath(
+		QFE::ConvertString(directoryManager_.GetLootDirectory()));
+	const std::vector<std::string> configurations =
+		SplitLines(commonPremakeSettings_.configurations);
+	std::unordered_map<std::uint64_t, std::string> projectNames;
+	std::unordered_set<std::string> usedProjectNames;
 	for (const ProjectNode& node : nodes_) {
-		std::string projectName = node.projectName.empty() ? node.name : node.projectName;
-		if (!usedNames.insert(projectName).second) {
-			projectName += "_" + std::to_string(node.id);
-			usedNames.insert(projectName);
+		std::string name = Trim(node.projectName).empty() ? node.name :
+			Trim(node.projectName);
+		if (!usedProjectNames.insert(name).second) {
+			name += "_" + std::to_string(node.id);
+			usedProjectNames.insert(name);
 		}
-		generatedNames[node.id] = std::move(projectName);
+		projectNames[node.id] = std::move(name);
 	}
 
-	std::unordered_map<std::uint64_t, std::string> generatedProjectDirectories;
-	std::unordered_set<std::string> usedProjectDirectories;
-	for (const ProjectNode& node : nodes_) {
-		std::string directoryName = generatedNames[node.id];
-		for (char& character : directoryName) {
-			const bool isForbidden =
-				static_cast<unsigned char>(character) < 0x20 ||
-				std::string_view("<>:\"/\\|?*").find(character) !=
-				std::string_view::npos;
-			if (isForbidden) {
-				character = '_';
-			}
-		}
-		while (!directoryName.empty() &&
-			(directoryName.back() == '.' || directoryName.back() == ' ')) {
-			directoryName.pop_back();
-		}
-		if (directoryName.empty() || directoryName == "." || directoryName == "..") {
-			directoryName = "Project";
-		}
-		if (!usedProjectDirectories.insert(directoryName).second) {
-			directoryName += "_" + std::to_string(node.id);
-			usedProjectDirectories.insert(directoryName);
-		}
-		generatedProjectDirectories[node.id] = std::move(directoryName);
-	}
-
-	auto relativeDirectory = [&rootPath](const std::filesystem::path& directory) {
+	auto relativeToRoot = [&rootPath](const std::filesystem::path& pathValue) {
 		std::error_code error;
-		std::filesystem::path relative =
-			std::filesystem::relative(NormalizePath(directory), rootPath, error);
+		const std::filesystem::path relative = std::filesystem::relative(
+			NormalizePath(pathValue), rootPath, error);
 		if (error || relative.empty()) {
 			return std::string(".");
 		}
 		return relative.generic_string();
 	};
-
 	auto writeStringList = [](std::ostream& output, const char* setting,
-		const std::vector<std::string>& values) {
-		std::vector<std::string> nonEmptyValues;
+		const std::vector<std::string>& values, const char* indent = "    ") {
+		std::vector<std::string> nonEmpty;
 		for (const std::string& value : values) {
 			if (!Trim(value).empty()) {
-				nonEmptyValues.push_back(Trim(value));
+				nonEmpty.push_back(Trim(value));
 			}
 		}
-		if (nonEmptyValues.empty()) {
+		if (nonEmpty.empty()) {
 			return;
 		}
-		output << "    " << setting << " {\n";
-		for (const std::string& value : nonEmptyValues) {
-			output << "        \"" << EscapeLuaString(value) << "\",\n";
+		output << indent << setting << " {\n";
+		for (const std::string& value : nonEmpty) {
+			output << indent << "    \"" << EscapeLuaString(value) << "\",\n";
 		}
-		output << "    }\n";
+		output << indent << "}\n";
 	};
-	auto writeLuaExpressionList = [](std::ostream& output, const char* setting,
-		const std::vector<std::string>& expressions) {
-		if (expressions.empty()) {
-			return;
-		}
-		output << "    " << setting << " {\n";
-		for (const std::string& expression : expressions) {
-			if (!Trim(expression).empty()) {
-				output << "        " << expression << ",\n";
+	auto writeExpressionList = [](std::ostream& output, const char* setting,
+		const std::vector<std::string>& values, const char* indent = "    ") {
+		std::vector<std::string> nonEmpty;
+		for (const std::string& value : values) {
+			if (!Trim(value).empty()) {
+				nonEmpty.push_back(Trim(value));
 			}
 		}
-		output << "    }\n";
+		if (nonEmpty.empty()) {
+			return;
+		}
+		output << indent << setting << " {\n";
+		for (const std::string& value : nonEmpty) {
+			output << indent << "    " << value << ",\n";
+		}
+		output << indent << "}\n";
 	};
-
-	const std::string buildRootString = buildPath.generic_string();
-	auto resolveIncludePath = [&rootPath, &buildRootString](const std::string& value) {
-		std::string resolved = Trim(value);
+	const std::string legacyBuildRoot = (rootPath / "build").generic_string();
+	auto resolvePath = [&rootPath, &legacyBuildRoot](const std::string& value) {
+		const std::string trimmed = Trim(value);
+		if (trimmed.empty()) {
+			return std::string{};
+		}
+		if (trimmed.find("path.") != std::string::npos) {
+			return trimmed;
+		}
+		std::string resolved = trimmed;
 		const std::string workspaceToken = "%{wks.location}";
 		std::size_t tokenPosition = resolved.find(workspaceToken);
 		while (tokenPosition != std::string::npos) {
-			// 既存の構成ファイルには、元のworkspaceがsource rootを指して
-			// いた時の "%{wks.location}/engine" と、workspaceがbuildを
-			// 指していた時の "%{wks.location}/../engine" が混在している。
-			// 実在する候補を優先して、生成後のパスを壊さないようにする。
 			std::string sourceCandidate = resolved;
-			sourceCandidate.replace(
-				tokenPosition, workspaceToken.size(), rootPath.generic_string());
-			std::string buildCandidate = resolved;
-			buildCandidate.replace(
-				tokenPosition, workspaceToken.size(), buildRootString);
+			sourceCandidate.replace(tokenPosition, workspaceToken.size(),
+				rootPath.generic_string());
+			std::string legacyBuildCandidate = resolved;
+			legacyBuildCandidate.replace(tokenPosition, workspaceToken.size(),
+				legacyBuildRoot);
 			std::error_code sourceError;
-			std::error_code buildError;
+			std::error_code legacyBuildError;
 			const bool sourceExists = std::filesystem::exists(
 				NormalizePath(QFE::ConvertString(sourceCandidate)), sourceError);
-			const bool buildExists = std::filesystem::exists(
-				NormalizePath(QFE::ConvertString(buildCandidate)), buildError);
-			const std::string& replacement = sourceExists && !buildExists
-				? rootPath.generic_string()
-				: buildRootString;
+			const bool legacyBuildExists = std::filesystem::exists(
+				NormalizePath(QFE::ConvertString(legacyBuildCandidate)),
+				legacyBuildError);
+			const std::string& replacement =
+				legacyBuildExists && !sourceExists
+				? legacyBuildRoot
+				: rootPath.generic_string();
 			resolved.replace(tokenPosition, workspaceToken.size(), replacement);
 			tokenPosition = resolved.find(workspaceToken,
 				tokenPosition + replacement.size());
 		}
-
-		// 生成スクリプトはbuildをworkspace locationにするため、ルート相対の
-		// include pathを共通ルート変数から解決する。
-		if (resolved.find("%{") == std::string::npos &&
-			resolved.find("$(") == std::string::npos) {
-			std::filesystem::path includePath = QFE::ConvertString(resolved);
-			if (!includePath.is_absolute()) {
-				includePath = rootPath / includePath;
-			}
-
-			const std::filesystem::path normalizedIncludePath =
-				NormalizePath(includePath);
-			std::error_code relativeError;
-			const std::filesystem::path relativePath =
-				std::filesystem::relative(normalizedIncludePath, rootPath, relativeError);
-			const std::string relativePathString = relativePath.generic_string();
-			const bool isRootRelative = !relativeError &&
-				!relativePathString.empty() && relativePathString != ".." &&
-				relativePathString.rfind("../", 0) != 0;
-			if (isRootRelative) {
-				return "path.join(QFE_PROJECT_ROOT, \"" +
-					EscapeLuaString(relativePathString) + "\")";
-			}
-			resolved = normalizedIncludePath.generic_string();
-		} else {
-			// Premakeの変数式は文字列リテラルにせず、そのまま評価させる。
-			return resolved;
+		if (resolved.find("%{") != std::string::npos) {
+			return "\"" + EscapeLuaString(resolved) + "\"";
 		}
-		return "\"" + EscapeLuaString(resolved) + "\"";
-	};
-	// Convert the editor's global debug directory setting into a Premake
-	// expression.  A path containing configuration tokens must stay inside
-	// path.join so %{cfg.*} is evaluated by Premake later.
-	auto resolveDebugDirectory = [&resolveIncludePath](const std::string& value) {
-		const std::string resolved = Trim(value);
-		if (resolved.empty()) {
-			return std::string{};
+		if (resolved.find("$(") != std::string::npos) {
+			return "\"" + EscapeLuaString(resolved) + "\"";
 		}
-		if (resolved.find("%{") != std::string::npos ||
-			resolved.find("$(") != std::string::npos) {
+		std::filesystem::path path = QFE::ConvertString(resolved);
+		if (!path.is_absolute()) {
+			path = rootPath / path;
+		}
+		std::error_code error;
+		const std::filesystem::path relative = std::filesystem::relative(
+			NormalizePath(path), rootPath, error);
+		const std::string relativeString = relative.generic_string();
+		if (!error && !relativeString.empty() && relativeString != ".." &&
+			relativeString.rfind("../", 0) != 0) {
 			return "path.join(QFE_PROJECT_ROOT, \"" +
-				EscapeLuaString(resolved) + "\")";
+				EscapeLuaString(relativeString) + "\")";
 		}
-		return resolveIncludePath(resolved);
+		return "\"" + EscapeLuaString(NormalizePath(path).generic_string()) + "\"";
 	};
+	auto resolvePaths = [&resolvePath](const std::string& values) {
+		std::vector<std::string> result;
+		for (const std::string& value : SplitLines(values)) {
+			const std::string expression = resolvePath(value);
+			if (!expression.empty()) {
+				result.push_back(expression);
+			}
+		}
+		return result;
+	};
+	auto beginFilter = [](std::ostream& output, const std::string& configuration) {
+		output << "    filter \"configurations:"
+			<< EscapeLuaString(configuration) << "\"\n";
+	};
+	auto endFilters = [](std::ostream& output) { output << "    filter {}\n"; };
+	auto commonSameString = [&](std::string PremakeConfigurationSettings::* member) {
+		const std::string& first = commonPremakeSettings_.configurationSettings.at(
+			configurations.front()).*member;
+		return std::all_of(configurations.begin() + 1, configurations.end(),
+			[&](const std::string& configuration) {
+				return commonPremakeSettings_.configurationSettings.at(
+					configuration).*member == first;
+			});
+	};
+	auto emitCommonConfigurationSettings = [&](std::ostream& destination) {
+		auto emitScalar = [&](const char* setting,
+			std::string PremakeConfigurationSettings::* member,
+			bool pathExpression = false) {
+			auto valueFor = [&](const std::string& configuration) {
+				const std::string& value =
+					commonPremakeSettings_.configurationSettings.at(
+						configuration).*member;
+				return pathExpression ? resolvePath(value) :
+					("\"" + EscapeLuaString(Trim(value)) + "\"");
+			};
+			if (commonSameString(member)) {
+				const std::string value = valueFor(configurations.front());
+				if (!value.empty() && value != "\"\"") {
+					destination << "    " << setting << " (" << value << ")\n";
+				}
+				return;
+			}
+			for (const std::string& configuration : configurations) {
+				beginFilter(destination, configuration);
+				const std::string value = valueFor(configuration);
+				if (!value.empty() && value != "\"\"") {
+					destination << "        " << setting << " (" << value << ")\n";
+				}
+			}
+			endFilters(destination);
+		};
+		auto emitList = [&](const char* setting,
+			std::string PremakeConfigurationSettings::* member,
+			bool paths = false) {
+			auto valuesFor = [&](const std::string& configuration) {
+				const std::string& values =
+					commonPremakeSettings_.configurationSettings.at(
+						configuration).*member;
+				return paths ? resolvePaths(values) : SplitLines(values);
+			};
+			if (commonSameString(member)) {
+				const auto values = valuesFor(configurations.front());
+				if (paths) writeExpressionList(destination, setting, values);
+				else writeStringList(destination, setting, values);
+				return;
+			}
+			for (const std::string& configuration : configurations) {
+				beginFilter(destination, configuration);
+				const auto values = valuesFor(configuration);
+				if (paths) writeExpressionList(destination, setting, values, "        ");
+				else writeStringList(destination, setting, values, "        ");
+			}
+			endFilters(destination);
+		};
+		auto emitFlags = [&]() {
+			auto valuesFor = [&](const std::string& configuration) {
+				return SplitLines(commonPremakeSettings_.configurationSettings.at(
+					configuration).flags);
+			};
+			auto emitValues = [&](const std::vector<std::string>& values,
+				const char* indent) {
+				std::vector<std::string> legacyFlags;
+				bool multiProcessorCompile = false;
+				for (const std::string& value : values) {
+					std::string normalizedValue = Trim(value);
+					std::transform(normalizedValue.begin(), normalizedValue.end(),
+						normalizedValue.begin(), [](unsigned char character) {
+							return static_cast<char>(std::tolower(character));
+						});
+					if (normalizedValue == "multiprocessorcompile") {
+						multiProcessorCompile = true;
+					} else {
+						legacyFlags.push_back(value);
+					}
+				}
+				if (multiProcessorCompile) {
+					destination << indent <<
+						"multiprocessorcompile \"On\"\n";
+				}
+				writeStringList(destination, "flags", legacyFlags, indent);
+			};
+			if (commonSameString(&PremakeConfigurationSettings::flags)) {
+				emitValues(valuesFor(configurations.front()), "    ");
+				return;
+			}
+			for (const std::string& configuration : configurations) {
+				beginFilter(destination, configuration);
+				emitValues(valuesFor(configuration), "        ");
+			}
+			endFilters(destination);
+		};
 
-	std::vector<std::string> commonConfigurations =
-		SplitLines(commonPremakeSettings_.configurations);
-	if (commonConfigurations.empty()) {
-		commonConfigurations = { "Debug", "Development", "Release" };
-	}
-	const std::string commonWorkspaceName =
-		Trim(commonPremakeSettings_.workspaceName).empty()
-		? "QuickForgeEngine"
-		: Trim(commonPremakeSettings_.workspaceName);
-	const std::string commonArchitecture =
-		Trim(commonPremakeSettings_.architecture).empty()
-		? "x64"
-		: Trim(commonPremakeSettings_.architecture);
-	const std::string commonCppDialect =
-		Trim(commonPremakeSettings_.cppDialect).empty()
-		? "C++20"
-		: Trim(commonPremakeSettings_.cppDialect);
-	// These are the include roots shared by the engine projects.  They are
-	// emitted at project scope because Premake workspace-level include dirs do
-	// not reliably propagate to every generated Visual Studio project.
-	std::vector<std::string> commonIncludePathExpressions = {
-		"path.join(QFE_PROJECT_ROOT, \"engine\")",
-		"path.join(QFE_PROJECT_ROOT, \"engine/core\")",
-		"path.join(QFE_PROJECT_ROOT, \"externals\")",
-		"path.join(QFE_PROJECT_ROOT, \"externals/imgui\")",
-		"path.join(QFE_PROJECT_ROOT, \"externals/assimp\")",
-		"path.join(QFE_PROJECT_ROOT, \"externals/assimp/include\")",
-		"path.join(QFE_PROJECT_ROOT, \"externals/imgui/imgui-node-editor-0.9.3\")",
+		emitScalar("architecture", &PremakeConfigurationSettings::architecture);
+		emitScalar("cppdialect", &PremakeConfigurationSettings::cppDialect);
+		const bool staticRuntimeSame = std::all_of(
+			configurations.begin() + 1, configurations.end(),
+			[&](const std::string& configuration) {
+				return commonPremakeSettings_.configurationSettings.at(
+					configuration).staticRuntime ==
+					commonPremakeSettings_.configurationSettings.at(
+						configurations.front()).staticRuntime;
+			});
+		if (staticRuntimeSame) {
+			destination << "    staticruntime \"" <<
+				(commonPremakeSettings_.configurationSettings.at(
+					configurations.front()).staticRuntime ? "on" : "off") << "\"\n";
+		} else {
+			for (const std::string& configuration : configurations) {
+				beginFilter(destination, configuration);
+				destination << "        staticruntime \"" <<
+					(commonPremakeSettings_.configurationSettings.at(
+						configuration).staticRuntime ? "on" : "off") << "\"\n";
+			}
+			endFilters(destination);
+		}
+		emitScalar("runtime", &PremakeConfigurationSettings::runtime);
+		emitScalar("optimize", &PremakeConfigurationSettings::optimize);
+		emitScalar("symbols", &PremakeConfigurationSettings::symbols);
+		emitScalar("debugdir", &PremakeConfigurationSettings::debugDirectory, true);
+		emitFlags();
+		emitList("buildoptions", &PremakeConfigurationSettings::buildOptions);
+		emitList("includedirs", &PremakeConfigurationSettings::includePaths, true);
+		emitList("defines", &PremakeConfigurationSettings::defines);
 	};
-	for (const std::string& includePath :
-		SplitLines(commonPremakeSettings_.includePaths)) {
-		commonIncludePathExpressions.push_back(resolveIncludePath(includePath));
-	}
-	const std::vector<std::string> commonFlags =
-		SplitLines(commonPremakeSettings_.flags);
-	const std::vector<std::string> commonBuildOptions =
-		SplitLines(commonPremakeSettings_.buildOptions);
-	const std::vector<std::string> commonDefines =
-		SplitLines(commonPremakeSettings_.defines);
-	const std::string commonDebugDirectoryExpression =
-		resolveDebugDirectory(commonPremakeSettings_.debugDirectory);
 
 	auto writeProject = [&](const ProjectNode& node) {
-		const std::filesystem::path projectScriptDirectory =
-			projectsPath / generatedProjectDirectories[node.id];
-		std::error_code projectDirectoryError;
-		std::filesystem::create_directories(
-			projectScriptDirectory, projectDirectoryError);
-		if (projectDirectoryError) {
+		std::error_code directoryError;
+		std::filesystem::create_directories(node.directoryPath, directoryError);
+		if (directoryError) {
 			return false;
 		}
-
-		const std::filesystem::path projectScriptPath =
-			projectScriptDirectory / "premake.lua";
-		std::ofstream output(projectScriptPath, std::ios::trunc);
+		std::ofstream output(node.directoryPath / "premake.lua", std::ios::trunc);
 		if (!output) {
 			return false;
 		}
-
-		const std::string& projectName = generatedNames[node.id];
-		const std::string projectRelativeDirectory =
-			relativeDirectory(node.directoryPath);
-		const PremakeProjectKind generatedKind = GetGeneratedProjectKind(node);
-
 		output << "-- Generated by QuickForgeEngine ProjectGenerator.\n";
-		output << "local _sourceDirectory = path.getabsolute(path.join("
-			<< "QFE_PROJECT_ROOT, \""
-			<< EscapeLuaString(projectRelativeDirectory) << "\"))\n";
-		output << "local _projectDirectory = path.getabsolute(path.join("
-			<< "QFE_BUILD_ROOT, \"projects/"
-			<< EscapeLuaString(generatedProjectDirectories[node.id])
-			<< "\"))\n\n";
-		output << "project \"" << EscapeLuaString(projectName) << "\"\n";
-		output << "    location (_projectDirectory)\n";
-		output << "    kind \"" << EscapeLuaString(GetPremakeKindName(generatedKind)) << "\"\n";
+		output << "local _sourceDirectory = path.getabsolute(path.getdirectory(_SCRIPT))\n\n";
+		output << "project \"" << EscapeLuaString(projectNames.at(node.id)) << "\"\n";
+		output << "    location (_sourceDirectory)\n";
 		output << "    language \"C++\"\n";
 		output << "    objdir (path.join(QFE_PROJECT_ROOT, \"../generated/obj/%{prj.name}/%{cfg.buildcfg}/%{cfg.platform}\"))\n";
 		output << "    targetdir (path.join(QFE_PROJECT_ROOT, \"../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}\"))\n";
-		if (IsExecutableKind(generatedKind) &&
-			!commonDebugDirectoryExpression.empty()) {
-			output << "    debugdir (" << commonDebugDirectoryExpression << ")\n";
-		}
 		output << "    files {\n";
 		output << "        path.join(_sourceDirectory, \"**.h\"),\n";
+		output << "        path.join(_sourceDirectory, \"**.hpp\"),\n";
+		output << "        path.join(_sourceDirectory, \"**.c\"),\n";
 		output << "        path.join(_sourceDirectory, \"**.cpp\"),\n";
 		output << "    }\n";
-
-		std::vector<std::string> includePathExpressions;
-		for (const std::string& includePath : SplitLines(node.includePaths)) {
-			includePathExpressions.push_back(resolveIncludePath(includePath));
+		std::vector<std::string> nestedProjectDirectories;
+		for (const ProjectNode& other : nodes_) {
+			if (other.id == node.id) {
+				continue;
+			}
+			std::error_code relativeError;
+			const std::filesystem::path relative = std::filesystem::relative(
+				NormalizePath(other.directoryPath), NormalizePath(node.directoryPath),
+				relativeError);
+			const std::string relativeString = relative.generic_string();
+			if (!relativeError && !relativeString.empty() &&
+				relativeString != "." && relativeString != ".." &&
+				relativeString.rfind("../", 0) != 0) {
+				nestedProjectDirectories.push_back(relativeString);
+			}
 		}
-		includePathExpressions.insert(
-			includePathExpressions.end(), commonIncludePathExpressions.begin(),
-			commonIncludePathExpressions.end());
-		writeLuaExpressionList(output, "includedirs", includePathExpressions);
-		// Premakeのworkspace設定だけでは、生成した各プロジェクトへ
-		// 伝播しない項目があるため、共通設定はprojectスコープにも出力する。
-		writeStringList(output, "flags", commonFlags);
-		writeStringList(output, "buildoptions", commonBuildOptions);
-		writeStringList(output, "defines", commonDefines);
+		if (!nestedProjectDirectories.empty()) {
+			output << "    removefiles {\n";
+			for (const std::string& directory : nestedProjectDirectories) {
+				output << "        path.join(_sourceDirectory, \""
+					<< EscapeLuaString(directory) << "/**\"),\n";
+			}
+			output << "    }\n";
+		}
+		// Premake does not propagate every workspace-level setting to generated
+		// Visual Studio projects. Emit the effective global configuration at
+		// project scope as well so build options such as /utf-8 are preserved.
+		emitCommonConfigurationSettings(output);
+
+		auto sameString = [&](std::string ProjectConfigurationSettings::* member) {
+			const std::string& first = node.configurationSettings.at(
+				configurations.front()).*member;
+			return std::all_of(configurations.begin() + 1, configurations.end(),
+				[&](const std::string& configuration) {
+					return node.configurationSettings.at(configuration).*member == first;
+				});
+		};
+		auto emitStringList = [&](const char* setting,
+			std::string ProjectConfigurationSettings::* member,
+			bool paths = false) {
+			auto valuesFor = [&](const std::string& configuration) {
+				const std::string& value =
+					node.configurationSettings.at(configuration).*member;
+				return paths ? resolvePaths(value) : SplitLines(value);
+			};
+			if (sameString(member)) {
+				const auto values = valuesFor(configurations.front());
+				if (paths) writeExpressionList(output, setting, values);
+				else writeStringList(output, setting, values);
+				return;
+			}
+			for (const std::string& configuration : configurations) {
+				beginFilter(output, configuration);
+				const auto values = valuesFor(configuration);
+				if (paths) writeExpressionList(output, setting, values, "        ");
+				else writeStringList(output, setting, values, "        ");
+			}
+			endFilters(output);
+		};
+
+		std::vector<PremakeProjectKind> kinds;
+		for (const std::string& configuration : configurations) {
+			kinds.push_back(GetGeneratedProjectKind(node,
+				node.configurationSettings.at(configuration)));
+		}
+		if (std::all_of(kinds.begin() + 1, kinds.end(),
+			[&](PremakeProjectKind value) { return value == kinds.front(); })) {
+			output << "    kind \"" << GetPremakeKindName(kinds.front()) << "\"\n";
+		} else {
+			for (std::size_t index = 0; index < configurations.size(); ++index) {
+				beginFilter(output, configurations[index]);
+				output << "        kind \"" << GetPremakeKindName(kinds[index]) << "\"\n";
+			}
+			endFilters(output);
+		}
+
+		emitStringList("includedirs", &ProjectConfigurationSettings::includePaths, true);
+		emitStringList("defines", &ProjectConfigurationSettings::defines);
+
 		std::vector<std::uint64_t> dependencyNodeIds;
 		std::unordered_set<std::uint64_t> visitedDependencyIds;
 		CollectDependencyClosure(node.id, dependencyNodeIds, visitedDependencyIds);
-		std::vector<std::string> nodeLinks;
-		for (const std::uint64_t dependencyNodeId : dependencyNodeIds) {
-			const ProjectNode* dependencyNode = FindNode(dependencyNodeId);
-			if (dependencyNode == nullptr ||
-				!IsLibraryKind(GetGeneratedProjectKind(*dependencyNode))) {
-				// Utility/None/実行ファイルはリンク入力にならないため、
-				// Premakeのlinksには出力しない。
+		std::vector<std::string> internalLinks;
+		for (const std::uint64_t dependencyId : dependencyNodeIds) {
+			const ProjectNode* dependency = FindNode(dependencyId);
+			if (dependency == nullptr) {
 				continue;
 			}
-			const auto sourceName = generatedNames.find(dependencyNodeId);
-			if (sourceName != generatedNames.end()) {
-				nodeLinks.push_back(sourceName->second);
+			bool isLibrary = false;
+			for (const std::string& configuration : configurations) {
+				isLibrary |= IsLibraryKind(GetGeneratedProjectKind(*dependency,
+					dependency->configurationSettings.at(configuration)));
+			}
+			if (isLibrary) {
+				internalLinks.push_back(projectNames.at(dependencyId));
 			}
 		}
-		if (CanHaveLinkInputs(generatedKind)) {
-			writeStringList(output, "links", nodeLinks);
+		writeStringList(output, "links", internalLinks);
 
-			// 静的ライブラリの外部リンクは、そのライブラリを使う最終
-			// ターゲットにも必要になる。依存関係をたどって設定を集約する。
-			std::vector<const ProjectNode*> dependencySettingsNodes{ &node };
-			for (const std::uint64_t dependencyNodeId : dependencyNodeIds) {
-				const ProjectNode* dependencyNode = FindNode(dependencyNodeId);
-				if (dependencyNode != nullptr) {
-					dependencySettingsNodes.push_back(dependencyNode);
-				}
+		// Non-library nodes can still produce files required by a consuming
+		// project (for example a utility project which drives an external CMake
+		// build). Keep those direct edges as explicit build-order dependencies.
+		std::vector<std::string> buildDependencies;
+		for (const ProjectLink& link : links_) {
+			if (link.targetNodeId != node.id) {
+				continue;
 			}
-
-			std::vector<ProjectNode::ExternalLink> externalLinks;
-			std::unordered_set<std::string> externalLinkKeys;
-			std::vector<ProjectNode::LibraryDirectory> libraryDirectories;
-			std::unordered_set<std::string> libraryDirectoryKeys;
-			for (const ProjectNode* settingsNode : dependencySettingsNodes) {
-				for (const ProjectNode::ExternalLink& externalLink :
-					settingsNode->externalLinks) {
-					const std::string key = externalLink.filter + "\n" + externalLink.name;
-					if (externalLinkKeys.insert(key).second) {
-						externalLinks.push_back(externalLink);
-					}
-				}
-				for (const ProjectNode::LibraryDirectory& libraryDirectory :
-					settingsNode->libraryDirectories) {
-					const std::string key = libraryDirectory.filter + "\n" +
-						libraryDirectory.path;
-					if (libraryDirectoryKeys.insert(key).second) {
-						libraryDirectories.push_back(libraryDirectory);
-					}
-				}
+			const ProjectNode* dependency = FindNode(link.sourceNodeId);
+			if (dependency == nullptr) {
+				continue;
 			}
-
-			auto writeFilteredLists =
-				[&output](const auto& entries, const char* setting,
-					auto getFilter, auto getValue, auto writeValues) {
-					std::vector<std::string> filters;
-					std::unordered_map<std::string, std::vector<std::string>> valuesByFilter;
-					for (const auto& entry : entries) {
-						const std::string filter = getFilter(entry);
-						const std::string value = getValue(entry);
-						if (Trim(value).empty()) {
-							continue;
-						}
-						if (!valuesByFilter.contains(filter)) {
-							filters.push_back(filter);
-						}
-						valuesByFilter[filter].push_back(value);
-					}
-
-					for (const std::string& filter : filters) {
-						if (!Trim(filter).empty()) {
-							output << "    filter \""
-								<< EscapeLuaString(filter) << "\"\n";
-						}
-						writeValues(output, setting, valuesByFilter[filter]);
-						if (!Trim(filter).empty()) {
-							output << "    filter \"\"\n";
-						}
-					}
-				};
-
-			writeFilteredLists(externalLinks, "links",
-				[](const ProjectNode::ExternalLink& entry) { return entry.filter; },
-				[](const ProjectNode::ExternalLink& entry) { return entry.name; },
-				writeStringList);
-			writeFilteredLists(libraryDirectories, "libdirs",
-				[](const ProjectNode::LibraryDirectory& entry) {
-					return entry.filter;
-				},
-				[&resolveIncludePath](const ProjectNode::LibraryDirectory& entry) {
-					return resolveIncludePath(entry.path);
-				},
-				writeLuaExpressionList);
+			bool isLibrary = false;
+			for (const std::string& configuration : configurations) {
+				isLibrary |= IsLibraryKind(GetGeneratedProjectKind(*dependency,
+					dependency->configurationSettings.at(configuration)));
+			}
+			if (!isLibrary) {
+				buildDependencies.push_back(projectNames.at(dependency->id));
+			}
 		}
+		writeStringList(output, "dependson", buildDependencies);
 
-		auto resolveBuildCommand = [&node](const std::string& value) {
-			const std::string command = Trim(value);
-			if (command == "cd Shaders && CompileShaders.cmd") {
-				return std::string("cd /d \"") +
-					NormalizePath(node.directoryPath / "Shaders").generic_string() +
-					"\" && CompileShaders.cmd";
+		auto collectDependencySetting = [&](const std::string& configuration,
+			std::string ProjectConfigurationSettings::* member, bool paths) {
+			std::vector<std::string> values;
+			std::unordered_set<std::string> seen;
+			std::vector<const ProjectNode*> settingsNodes{ &node };
+			for (const std::uint64_t dependencyId : dependencyNodeIds) {
+				if (const ProjectNode* dependency = FindNode(dependencyId)) {
+					settingsNodes.push_back(dependency);
+				}
 			}
-			return command;
+			for (const ProjectNode* settingsNode : settingsNodes) {
+				for (const std::string& value : SplitLines(
+					settingsNode->configurationSettings.at(configuration).*member)) {
+					const std::string emitted = paths ? resolvePath(value) : Trim(value);
+					if (!emitted.empty() && seen.insert(emitted).second) {
+						values.push_back(emitted);
+					}
+				}
+			}
+			return values;
 		};
-		std::vector<std::string> preBuildCommands;
-		for (const std::string& command : SplitLines(node.preBuildEvent)) {
-			preBuildCommands.push_back(resolveBuildCommand(command));
-		}
-		std::vector<std::string> postBuildCommands;
-		for (const std::string& command : SplitLines(node.postBuildEvent)) {
-			postBuildCommands.push_back(resolveBuildCommand(command));
-		}
-		writeStringList(output, "prebuildcommands", preBuildCommands);
-		writeStringList(output, "postbuildcommands", postBuildCommands);
+		auto emitCollectedSetting = [&](const char* setting,
+			std::string ProjectConfigurationSettings::* member, bool paths) {
+			std::vector<std::vector<std::string>> valuesByConfiguration;
+			for (const std::string& configuration : configurations) {
+				valuesByConfiguration.push_back(
+					collectDependencySetting(configuration, member, paths));
+			}
+			const bool same = std::all_of(valuesByConfiguration.begin() + 1,
+				valuesByConfiguration.end(), [&](const auto& value) {
+					return value == valuesByConfiguration.front();
+				});
+			if (same) {
+				if (paths) writeExpressionList(output, setting,
+					valuesByConfiguration.front());
+				else writeStringList(output, setting, valuesByConfiguration.front());
+				return;
+			}
+			for (std::size_t index = 0; index < configurations.size(); ++index) {
+				beginFilter(output, configurations[index]);
+				if (paths) writeExpressionList(output, setting,
+					valuesByConfiguration[index], "        ");
+				else writeStringList(output, setting,
+					valuesByConfiguration[index], "        ");
+			}
+			endFilters(output);
+		};
+		emitCollectedSetting("links",
+			&ProjectConfigurationSettings::externalLinks, false);
+		emitCollectedSetting("libdirs",
+			&ProjectConfigurationSettings::libraryDirectories, true);
+
+		auto emitCommands = [&](const char* setting,
+			std::string ProjectConfigurationSettings::* member) {
+			auto commandsFor = [&](const std::string& configuration) {
+				std::vector<std::string> commands;
+				for (const std::string& command : SplitLines(
+					node.configurationSettings.at(configuration).*member)) {
+					if (command == "cd Shaders && CompileShaders.cmd") {
+						commands.push_back("cd /d \"" +
+							NormalizePath(node.directoryPath / "Shaders").generic_string() +
+							"\" && CompileShaders.cmd");
+					} else {
+						commands.push_back(command);
+					}
+				}
+				return commands;
+			};
+			if (sameString(member)) {
+				writeStringList(output, setting, commandsFor(configurations.front()));
+				return;
+			}
+			for (const std::string& configuration : configurations) {
+				beginFilter(output, configuration);
+				writeStringList(output, setting, commandsFor(configuration), "        ");
+			}
+			endFilters(output);
+		};
+		emitCommands("prebuildcommands", &ProjectConfigurationSettings::preBuildEvent);
+		emitCommands("postbuildcommands", &ProjectConfigurationSettings::postBuildEvent);
 		output << "\n";
 		output.flush();
 		return static_cast<bool>(output);
@@ -2344,150 +2869,70 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 
 	for (const ProjectNode& node : nodes_) {
 		if (!writeProject(node)) {
-			premakeStatus_ = "Could not write a project Premake script.";
+			premakeStatus_ = "Could not write premake.lua in: " +
+				QFE::ConvertString(node.directoryPath.wstring());
 			return;
 		}
 	}
 
-	const std::filesystem::path rootPremakePath = buildPath / "premake5.lua";
-	std::ofstream output(rootPremakePath, std::ios::trunc);
+	std::ofstream output(rootPath / "premake5.lua", std::ios::trunc);
 	if (!output) {
-		premakeStatus_ = "Could not write build/premake5.lua.";
+		premakeStatus_ = "Could not write root premake5.lua.";
 		return;
 	}
-
 	output << "-- Generated by QuickForgeEngine ProjectGenerator.\n";
-	output << "-- Run Premake from this build directory.\n";
-	output << "local _buildRoot = path.getabsolute(path.getdirectory(_SCRIPT))\n";
-	output << "-- Change only this value when the source root is moved separately.\n";
-	output << "local _sourceRootOverride = \"\"\n";
-	output << "local _sourceRoot = _sourceRootOverride ~= \"\" and "
-		<< "path.getabsolute(_sourceRootOverride) or "
-		<< "path.getabsolute(path.join(_buildRoot, \"..\"))\n";
-	output << "QFE_BUILD_ROOT = _buildRoot\n";
-	output << "QFE_PROJECT_ROOT = _sourceRoot\n\n";
-	output << "workspace \"" << EscapeLuaString(commonWorkspaceName) << "\"\n";
-	output << "    location (_buildRoot)\n";
-	output << "    architecture \"" << EscapeLuaString(commonArchitecture) << "\"\n";
-	writeStringList(output, "configurations", commonConfigurations);
-	output << "    cppdialect \"" << EscapeLuaString(commonCppDialect) << "\"\n";
-	output << "    staticruntime \""
-		<< (commonPremakeSettings_.staticRuntime ? "on" : "off") << "\"\n";
-	// WindowEventsManager forwards Windows input messages to ImGui when
-	// USE_IMGUI is enabled.  Keep the configuration defines from the original
-	// workspace in generated Premake so generated projects remain interactive.
-	output << "    filter \"configurations:Debug\"\n";
-	output << "        defines { \"_DEBUG\", \"QFE_OPTIMIZE_OFF\", "
-		<< "\"QFE_MODE_DEBUG\", \"USE_IMGUI\" }\n";
-	output << "    filter \"configurations:Development\"\n";
-	output << "        defines { \"NDEBUG\", \"QFE_OPTIMIZE_OFF\", "
-		<< "\"QFE_MODE_DEVELOPMENT\", \"USE_IMGUI\" }\n";
-	output << "    filter \"configurations:Release\"\n";
-	output << "        defines { \"NDEBUG\", \"QFE_OPTIMIZE_ON\", "
-		<< "\"QFE_MODE_RELEASE\", \"NO_IMGUI\" }\n";
-	output << "    filter \"configurations:Debug\"\n";
-	output << "        runtime \"Debug\"\n";
-	output << "        optimize \"Off\"\n";
-	output << "        symbols \"On\"\n";
-	output << "    filter \"configurations:Development\"\n";
-	output << "        runtime \"Release\"\n";
-	output << "        optimize \"Off\"\n";
-	output << "        symbols \"On\"\n";
-	output << "    filter \"configurations:Release\"\n";
-	output << "        runtime \"Release\"\n";
-	output << "        optimize \"On\"\n";
-	output << "        symbols \"Off\"\n";
-	output << "    filter \"\"\n";
-	writeStringList(output, "flags", commonFlags);
-	writeStringList(output, "buildoptions", commonBuildOptions);
-	writeLuaExpressionList(output, "includedirs", commonIncludePathExpressions);
-	writeStringList(output, "defines", commonDefines);
+	output << "local _root = path.getabsolute(path.getdirectory(_SCRIPT))\n";
+	output << "QFE_PROJECT_ROOT = _root\n\n";
+	output << "workspace \"" << EscapeLuaString(
+		Trim(commonPremakeSettings_.workspaceName).empty() ? "QuickForgeEngine" :
+		Trim(commonPremakeSettings_.workspaceName)) << "\"\n";
+	output << "    location (QFE_PROJECT_ROOT)\n";
+	writeStringList(output, "configurations", configurations);
 	output << "    objdir (path.join(QFE_PROJECT_ROOT, \"../generated/obj/%{prj.name}/%{cfg.buildcfg}/%{cfg.platform}\"))\n";
-	output << "    targetdir (path.join(QFE_PROJECT_ROOT, \"../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}\"))\n\n";
-	if (!commonDebugDirectoryExpression.empty()) {
-		output << "    debugdir (" << commonDebugDirectoryExpression << ")\n\n";
-	}
+	output << "    targetdir (path.join(QFE_PROJECT_ROOT, \"../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}\"))\n";
+
+	emitCommonConfigurationSettings(output);
+	output << "\n";
 
 	std::unordered_set<std::uint64_t> groupedNodeIds;
+	auto writeDofile = [&](const ProjectNode& node) {
+		const std::string relativeDirectory = relativeToRoot(node.directoryPath);
+		output << "dofile(path.join(_root, \"";
+		if (relativeDirectory != ".") {
+			output << EscapeLuaString(relativeDirectory) << "/";
+		}
+		output << "premake.lua\"))\n";
+	};
 	for (const ProjectGroup& group : groups_) {
-		const std::string groupName = Trim(group.name);
-		if (groupName.empty()) {
+		if (Trim(group.name).empty()) {
 			continue;
 		}
-
-		std::vector<const ProjectNode*> members;
-		for (const ProjectNode& node : nodes_) {
-			if (std::find(group.nodeIds.begin(), group.nodeIds.end(), node.id) !=
-				group.nodeIds.end()) {
-				members.push_back(&node);
+		output << "group \"" << EscapeLuaString(Trim(group.name)) << "\"\n";
+		for (const std::uint64_t nodeId : group.nodeIds) {
+			if (const ProjectNode* node = FindNode(nodeId)) {
+				writeDofile(*node);
+				groupedNodeIds.insert(nodeId);
 			}
-		}
-		if (members.empty()) {
-			continue;
-		}
-
-		output << "group \"" << EscapeLuaString(groupName) << "\"\n";
-		for (const ProjectNode* node : members) {
-			output << "dofile(path.join(_buildRoot, \"projects/"
-				<< EscapeLuaString(generatedProjectDirectories[node->id])
-				<< "/premake.lua\"))\n";
-			groupedNodeIds.insert(node->id);
 		}
 		output << "group \"\"\n\n";
 	}
-
 	for (const ProjectNode& node : nodes_) {
 		if (!groupedNodeIds.contains(node.id)) {
-			output << "dofile(path.join(_buildRoot, \"projects/"
-				<< EscapeLuaString(generatedProjectDirectories[node.id])
-				<< "/premake.lua\"))\n";
+			writeDofile(node);
 		}
 	}
-
 	output.flush();
 	if (!output) {
-		premakeStatus_ = "Failed while writing build/premake5.lua.";
+		premakeStatus_ = "Failed while writing root premake5.lua.";
 		return;
 	}
-
-	const std::filesystem::path readmePath = buildPath / "readme.md";
-	std::ofstream readme(readmePath, std::ios::trunc);
-	if (!readme) {
-		premakeStatus_ = "Could not write build/readme.md.";
-		return;
-	}
-	const std::string rootDirectoryName = rootPath.filename().empty()
-		? rootPath.generic_string()
-		: QFE::ConvertString(rootPath.filename().wstring());
-	const std::filesystem::path parentPath = rootPath.parent_path();
-	const std::string parentDirectoryName = parentPath.filename().empty()
-		? parentPath.generic_string()
-		: QFE::ConvertString(parentPath.filename().wstring());
-	readme << "# ProjectGenerator build\n\n";
-	readme << "このディレクトリはQuickForgeEngine ProjectGeneratorが生成しました。\n\n";
-	readme << "このエディタのルートディレクトリは、`"
-		<< parentDirectoryName << "/" << rootDirectoryName
-		<< "` に配置してください。\n\n";
-	readme << "別の場所へ移動する場合は、`premake5.lua` の "
-		<< "`_sourceRootOverride` だけを変更してください。"
-		<< "各プロジェクトのPremakeは変更不要です。\n\n";
-	readme << "Premakeを実行するときは、この `build` ディレクトリをカレントディレクトリにしてください。\n\n";
-	readme << "例:\n\n";
-	readme << "```text\n";
-	readme << "cd " << rootDirectoryName << "/build\n";
-	readme << "premake5 vs2022\n";
-	readme << "```\n";
-	readme.flush();
-	if (!readme) {
-		premakeStatus_ = "Failed while writing build/readme.md.";
-		return;
-	}
-	premakeStatus_ = "Generated build Premake: " +
-		QFE::ConvertString(buildPath.wstring());
+	premakeStatus_ = "Generated root and per-directory Premake files: " +
+		QFE::ConvertString(rootPath.wstring());
 }
 
 void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 {
+	EnsureConfigurationData();
 	const std::filesystem::path dataDirectory = GetProjectGeneratorDataDirectory();
 	std::error_code error;
 	std::filesystem::create_directories(dataDirectory, error);
@@ -2509,7 +2954,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 		NormalizePath(QFE::ConvertString(selectedConfigurationPath));
 
 	nlohmann::json configuration = nlohmann::json::object();
-	configuration["version"] = 4;
+	configuration["version"] = 5;
 	configuration["rootDirectory"] = directoryManager_.GetLootDirectory();
 	configuration["nextNodeId"] = nextNodeId_;
 	configuration["nextLinkId"] = nextLinkId_;
@@ -2526,6 +2971,27 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 		{ "includePaths", commonPremakeSettings_.includePaths },
 		{ "defines", commonPremakeSettings_.defines },
 	};
+	configuration["commonPremakeSettings"]["configurationSettings"] =
+		nlohmann::json::object();
+	for (const std::string& configurationName :
+		SplitLines(commonPremakeSettings_.configurations)) {
+		const PremakeConfigurationSettings& settings =
+			commonPremakeSettings_.configurationSettings.at(configurationName);
+		configuration["commonPremakeSettings"]["configurationSettings"]
+			[configurationName] = {
+				{ "architecture", settings.architecture },
+				{ "cppDialect", settings.cppDialect },
+				{ "staticRuntime", settings.staticRuntime },
+				{ "flags", settings.flags },
+				{ "buildOptions", settings.buildOptions },
+				{ "debugDirectory", settings.debugDirectory },
+				{ "includePaths", settings.includePaths },
+				{ "defines", settings.defines },
+				{ "runtime", settings.runtime },
+				{ "optimize", settings.optimize },
+				{ "symbols", settings.symbols },
+			};
+	}
 	configuration["nodes"] = nlohmann::json::array();
 	if (nodeEditorContext_ != nullptr) {
 		ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
@@ -2558,6 +3024,21 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 				{ "filter", libraryDirectory.filter },
 				{ "path", libraryDirectory.path },
 			});
+		}
+		nodeJson["configurationSettings"] = nlohmann::json::object();
+		for (const std::string& configurationName :
+			SplitLines(commonPremakeSettings_.configurations)) {
+			const ProjectConfigurationSettings& settings =
+				node.configurationSettings.at(configurationName);
+			nodeJson["configurationSettings"][configurationName] = {
+				{ "kind", static_cast<int>(settings.kind) },
+				{ "includePaths", settings.includePaths },
+				{ "defines", settings.defines },
+				{ "preBuildEvent", settings.preBuildEvent },
+				{ "postBuildEvent", settings.postBuildEvent },
+				{ "externalLinks", settings.externalLinks },
+				{ "libraryDirectories", settings.libraryDirectories },
+			};
 		}
 		nodeJson["position"] = {
 			{ "x", currentPosition.x },
@@ -2617,28 +3098,34 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 	premakeStatus_ = "Saved configuration: " + configurationPathString;
 }
 
-void QFE::APPLICATION::ProjectGenerator::LoadConfiguration()
+void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
+	const std::filesystem::path& configurationPath)
 {
-	const std::filesystem::path dataDirectory = GetProjectGeneratorDataDirectory();
-	std::error_code directoryError;
-	std::filesystem::create_directories(dataDirectory, directoryError);
-	if (directoryError) {
-		premakeStatus_ = "Could not access the ProjectGenerator data directory.";
-		return;
-	}
+	std::filesystem::path resolvedConfigurationPath = configurationPath;
+	if (resolvedConfigurationPath.empty()) {
+		const std::filesystem::path dataDirectory =
+			GetProjectGeneratorDataDirectory();
+		std::error_code directoryError;
+		std::filesystem::create_directories(dataDirectory, directoryError);
+		if (directoryError) {
+			premakeStatus_ =
+				"Could not access the ProjectGenerator data directory.";
+			return;
+		}
 
-	std::wstring selectedConfigurationPath;
-	if (!QFE::FRAMEWORK::RequestGetFilePathFromUser(
-		imguiContext_.hwnd,
-		L"ProjectGenerator Configuration (*.json)", L"*.json",
-		selectedConfigurationPath,
-		dataDirectory.wstring())) {
-		premakeStatus_ = "Load configuration was cancelled.";
-		return;
+		std::wstring selectedConfigurationPath;
+		if (!QFE::FRAMEWORK::RequestGetFilePathFromUser(
+			imguiContext_.hwnd,
+			L"ProjectGenerator Configuration (*.json)", L"*.json",
+			selectedConfigurationPath,
+			dataDirectory.wstring())) {
+			premakeStatus_ = "Load configuration was cancelled.";
+			return;
+		}
+		resolvedConfigurationPath = QFE::ConvertString(selectedConfigurationPath);
 	}
-	const std::filesystem::path configurationPath =
-		NormalizePath(QFE::ConvertString(selectedConfigurationPath));
-	std::ifstream input(configurationPath);
+	resolvedConfigurationPath = NormalizePath(resolvedConfigurationPath);
+	std::ifstream input(resolvedConfigurationPath);
 	if (!input) {
 		premakeStatus_ = "ProjectGenerator configuration was not found.";
 		return;
@@ -2656,6 +3143,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration()
 		premakeStatus_ = "ProjectGenerator configuration has an invalid format.";
 		return;
 	}
+	commonPremakeSettings_ = PremakeCommonSettings{};
 	if (configuration.contains("commonPremakeSettings")) {
 		if (!configuration["commonPremakeSettings"].is_object()) {
 			premakeStatus_ =
@@ -2685,6 +3173,35 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration()
 				"includePaths", commonPremakeSettings_.includePaths);
 			commonPremakeSettings_.defines = commonSettings.value(
 				"defines", commonPremakeSettings_.defines);
+			commonPremakeSettings_.configurationSettings.clear();
+			if (commonSettings.contains("configurationSettings") &&
+				commonSettings["configurationSettings"].is_object()) {
+				for (auto iterator =
+					commonSettings["configurationSettings"].begin();
+					iterator != commonSettings["configurationSettings"].end();
+					++iterator) {
+					const nlohmann::json& value = iterator.value();
+					if (!value.is_object()) {
+						continue;
+					}
+					PremakeConfigurationSettings settings =
+						MakeDefaultCommonConfiguration(iterator.key(),
+							commonPremakeSettings_);
+					settings.architecture = value.value("architecture", settings.architecture);
+					settings.cppDialect = value.value("cppDialect", settings.cppDialect);
+					settings.staticRuntime = value.value("staticRuntime", settings.staticRuntime);
+					settings.flags = value.value("flags", settings.flags);
+					settings.buildOptions = value.value("buildOptions", settings.buildOptions);
+					settings.debugDirectory = value.value("debugDirectory", settings.debugDirectory);
+					settings.includePaths = value.value("includePaths", settings.includePaths);
+					settings.defines = value.value("defines", settings.defines);
+					settings.runtime = value.value("runtime", settings.runtime);
+					settings.optimize = value.value("optimize", settings.optimize);
+					settings.symbols = value.value("symbols", settings.symbols);
+					commonPremakeSettings_.configurationSettings.emplace(
+						iterator.key(), std::move(settings));
+				}
+			}
 		} catch (const nlohmann::json::exception&) {
 			premakeStatus_ =
 				"ProjectGenerator common Premake settings contain invalid values.";
@@ -2755,6 +3272,30 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration()
 			node.includePaths = nodeJson.value("includePaths", "");
 			node.preBuildEvent = nodeJson.value("preBuildEvent", "");
 			node.postBuildEvent = nodeJson.value("postBuildEvent", "");
+			if (nodeJson.contains("configurationSettings") &&
+				nodeJson["configurationSettings"].is_object()) {
+				for (auto iterator = nodeJson["configurationSettings"].begin();
+					iterator != nodeJson["configurationSettings"].end(); ++iterator) {
+					const nlohmann::json& value = iterator.value();
+					if (!value.is_object()) {
+						continue;
+					}
+					ProjectConfigurationSettings settings;
+					const int configurationKind = value.value("kind", 0);
+					if (configurationKind >= 0 &&
+						configurationKind < IM_ARRAYSIZE(kPremakeProjectKinds)) {
+						settings.kind = static_cast<PremakeProjectKind>(configurationKind);
+					}
+					settings.includePaths = value.value("includePaths", "");
+					settings.defines = value.value("defines", "");
+					settings.preBuildEvent = value.value("preBuildEvent", "");
+					settings.postBuildEvent = value.value("postBuildEvent", "");
+					settings.externalLinks = value.value("externalLinks", "");
+					settings.libraryDirectories = value.value("libraryDirectories", "");
+					node.configurationSettings.emplace(iterator.key(),
+						std::move(settings));
+				}
+			}
 			if (nodeJson.contains("externalLinks") &&
 				nodeJson["externalLinks"].is_array()) {
 				for (const nlohmann::json& externalLinkJson :
@@ -2795,6 +3336,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration()
 			++invalidNodeCount;
 		}
 	}
+	EnsureConfigurationData();
 
 	std::unordered_set<std::uint64_t> knownNodeIds;
 	for (const ProjectNode& node : nodes_) {
@@ -2900,7 +3442,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration()
 	}
 
 	const std::string configurationPathString =
-		QFE::ConvertString(configurationPath.wstring());
+		QFE::ConvertString(resolvedConfigurationPath.wstring());
 	std::ostringstream status;
 	status << "Loaded configuration: " << configurationPathString << " ("
 		<< nodes_.size() << " node(s), " << links_.size() << " link(s), "
@@ -2912,6 +3454,18 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration()
 	}
 	status << rootLoadStatus;
 	premakeStatus_ = status.str();
+}
+
+bool QFE::APPLICATION::ProjectGenerator::GenerateFromConfiguration(
+	const std::filesystem::path& configurationPath)
+{
+	LoadConfiguration(configurationPath);
+	if (premakeStatus_.rfind("Loaded configuration:", 0) != 0) {
+		return false;
+	}
+	GenerateCentralPremake();
+	return premakeStatus_.rfind(
+		"Generated root and per-directory Premake files:", 0) == 0;
 }
 
 void QFE::APPLICATION::ProjectGenerator::ArrangeNodesLeftToRight()

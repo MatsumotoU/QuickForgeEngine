@@ -29,6 +29,9 @@ project/premake.zip
 !project/externals/assimp/lib/Debug/
 !project/externals/assimp/lib/Release/
 
+# Assimp source is restored at a fixed version by build-assimp.bat.
+project/externals/assimp/source/
+
 #DumpFile
 Dumps/
 

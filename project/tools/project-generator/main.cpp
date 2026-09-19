@@ -1,5 +1,9 @@
 #define NOMINMAX
 #include <Windows.h>
+#include <shellapi.h>
+
+#include <filesystem>
+#include <string_view>
 
 #include "framework/graphic/D3D12GraphicFrameWork.h"
 #include "framework/window/WindowsWindowFrameWork.h"
@@ -29,6 +33,20 @@ struct WindowsGuiToolSystems {
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	int argumentCount = 0;
+	LPWSTR* arguments = CommandLineToArgvW(GetCommandLineW(), &argumentCount);
+	if (arguments != nullptr && argumentCount >= 3 &&
+		std::wstring_view(arguments[1]) == L"--generate-config") {
+		QFE::APPLICATION::ProjectGenerator batchGenerator;
+		const bool generated = batchGenerator.GenerateFromConfiguration(
+			std::filesystem::path(arguments[2]));
+		LocalFree(arguments);
+		return generated ? 0 : 1;
+	}
+	if (arguments != nullptr) {
+		LocalFree(arguments);
+	}
+
 	// エンジンのリソースを保持する構造体
 	WindowsGuiToolSystems engineSystems;
 	// エンジンのリソースを保持する構造体
