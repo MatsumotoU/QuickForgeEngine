@@ -2,6 +2,47 @@
     "commonPremakeSettings": {
         "architecture": "x64",
         "buildOptions": "/utf-8",
+        "configurationSettings": {
+            "Debug": {
+                "architecture": "x64",
+                "buildOptions": "/utf-8",
+                "cppDialect": "C++20",
+                "debugDirectory": ".",
+                "defines": "_DEBUG\nQFE_OPTIMIZE_OFF\nQFE_MODE_DEBUG\nUSE_IMGUI",
+                "flags": "MultiProcessorCompile",
+                "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/include\nexternals/imgui/imgui-node-editor-0.9.3",
+                "optimize": "Off",
+                "runtime": "Debug",
+                "staticRuntime": true,
+                "symbols": "On"
+            },
+            "Development": {
+                "architecture": "x64",
+                "buildOptions": "/utf-8",
+                "cppDialect": "C++20",
+                "debugDirectory": ".",
+                "defines": "NDEBUG\nQFE_OPTIMIZE_OFF\nQFE_MODE_DEVELOPMENT\nUSE_IMGUI",
+                "flags": "MultiProcessorCompile",
+                "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/include\nexternals/imgui/imgui-node-editor-0.9.3",
+                "optimize": "Off",
+                "runtime": "Release",
+                "staticRuntime": true,
+                "symbols": "On"
+            },
+            "Release": {
+                "architecture": "x64",
+                "buildOptions": "/utf-8",
+                "cppDialect": "C++20",
+                "debugDirectory": ".",
+                "defines": "NDEBUG\nQFE_OPTIMIZE_ON\nQFE_MODE_RELEASE\nNO_IMGUI",
+                "flags": "MultiProcessorCompile",
+                "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/include\nexternals/imgui/imgui-node-editor-0.9.3",
+                "optimize": "On",
+                "runtime": "Release",
+                "staticRuntime": true,
+                "symbols": "Off"
+            }
+        },
         "configurations": "Debug\nDevelopment\nRelease",
         "cppDialect": "C++20",
         "debugDirectory": ".",
@@ -26,8 +67,8 @@
                 "y": -176.0
             },
             "size": {
-                "x": 586.0,
-                "y": 589.0
+                "x": 602.0,
+                "y": 624.0
             }
         },
         {
@@ -39,11 +80,11 @@
             ],
             "position": {
                 "x": 96.0,
-                "y": 416.0
+                "y": 480.0
             },
             "size": {
-                "x": 326.0,
-                "y": 426.0
+                "x": 342.0,
+                "y": 442.0
             }
         },
         {
@@ -61,8 +102,8 @@
                 "y": -176.0
             },
             "size": {
-                "x": 326.0,
-                "y": 966.0
+                "x": 342.0,
+                "y": 982.0
             }
         },
         {
@@ -79,8 +120,8 @@
                 "y": 1008.0
             },
             "size": {
-                "x": 566.0,
-                "y": 928.0
+                "x": 582.0,
+                "y": 944.0
             }
         },
         {
@@ -101,8 +142,8 @@
                 "y": -160.0
             },
             "size": {
-                "x": 768.0,
-                "y": 1506.0
+                "x": 784.0,
+                "y": 1522.0
             }
         },
         {
@@ -115,12 +156,12 @@
                 26
             ],
             "position": {
-                "x": 2224.0,
-                "y": 1200.0
+                "x": 2240.0,
+                "y": 560.0
             },
             "size": {
-                "x": 326.0,
-                "y": 786.0
+                "x": 342.0,
+                "y": 802.0
             }
         },
         {
@@ -130,12 +171,12 @@
                 27
             ],
             "position": {
-                "x": 2192.0,
+                "x": 2224.0,
                 "y": -144.0
             },
             "size": {
-                "x": 326.0,
-                "y": 246.0
+                "x": 342.0,
+                "y": 262.0
             }
         }
     ],
@@ -361,6 +402,35 @@
     "nextNodeId": 29,
     "nodes": [
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals",
             "externalLinks": [],
             "id": 1,
@@ -377,6 +447,35 @@
             "projectName": "ExternalFolders"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/imgui",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/imgui",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/imgui",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals\\imgui",
             "externalLinks": [],
             "id": 2,
@@ -385,14 +484,43 @@
             "libraryDirectories": [],
             "name": "imgui",
             "position": {
-                "x": 148.0,
-                "y": 52.0
+                "x": 144.0,
+                "y": 47.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "ImGui"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals\\DirectXTex",
             "externalLinks": [],
             "id": 3,
@@ -401,14 +529,43 @@
             "libraryDirectories": [],
             "name": "DirectXTex",
             "position": {
-                "x": 148.0,
-                "y": 232.0
+                "x": 144.0,
+                "y": 192.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd",
             "projectName": "DirectXTex"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\resources",
             "externalLinks": [],
             "id": 4,
@@ -418,13 +575,42 @@
             "name": "resources",
             "position": {
                 "x": 144.0,
-                "y": 464.0
+                "y": 528.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "EngineResources"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\core",
             "externalLinks": [],
             "id": 5,
@@ -434,13 +620,42 @@
             "name": "core",
             "position": {
                 "x": 144.0,
-                "y": 644.0
+                "y": 708.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "EngineCore"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\window",
             "externalLinks": [],
             "id": 6,
@@ -457,6 +672,35 @@
             "projectName": "WindowingSystem"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\graphics",
             "externalLinks": [],
             "id": 7,
@@ -473,6 +717,35 @@
             "projectName": "GraphicEngine"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\gui",
             "externalLinks": [],
             "id": 8,
@@ -489,6 +762,35 @@
             "projectName": "GUIEngine"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\input",
             "externalLinks": [],
             "id": 9,
@@ -505,6 +807,35 @@
             "projectName": "Input"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\physics",
             "externalLinks": [],
             "id": 10,
@@ -521,6 +852,35 @@
             "projectName": "PhysicsEngine"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\assetfactory",
             "externalLinks": [],
             "id": 11,
@@ -537,6 +897,35 @@
             "projectName": "EngineAssetsFactory"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\camera",
             "externalLinks": [],
             "id": 12,
@@ -553,6 +942,35 @@
             "projectName": "Camera"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\scene",
             "externalLinks": [],
             "id": 13,
@@ -569,6 +987,35 @@
             "projectName": "Scene"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\components",
             "externalLinks": [],
             "id": 14,
@@ -585,6 +1032,35 @@
             "projectName": "Components"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\application",
             "externalLinks": [],
             "id": 15,
@@ -601,6 +1077,35 @@
             "projectName": "ApplicationFramework"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\graphic",
             "externalLinks": [],
             "id": 16,
@@ -617,6 +1122,35 @@
             "projectName": "GraphicFramework"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\window",
             "externalLinks": [],
             "id": 17,
@@ -633,6 +1167,35 @@
             "projectName": "WindowFramework"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\gui",
             "externalLinks": [],
             "id": 18,
@@ -649,6 +1212,35 @@
             "projectName": "GuiFramework"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\input",
             "externalLinks": [],
             "id": 19,
@@ -665,6 +1257,35 @@
             "projectName": "InputFramework"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\physics",
             "externalLinks": [],
             "id": 20,
@@ -681,6 +1302,35 @@
             "projectName": "PhysicsFramework"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\scene",
             "externalLinks": [],
             "id": 21,
@@ -697,6 +1347,35 @@
             "projectName": "SceneFramework"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\assets",
             "externalLinks": [],
             "id": 22,
@@ -713,6 +1392,35 @@
             "projectName": "AssetsFramework"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\editor",
             "externalLinks": [],
             "id": 23,
@@ -721,14 +1429,43 @@
             "libraryDirectories": [],
             "name": "editor",
             "position": {
-                "x": 2272.0,
-                "y": 1280.0
+                "x": 2288.0,
+                "y": 640.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "GameEditor"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\sandbox",
             "externalLinks": [],
             "id": 24,
@@ -737,14 +1474,43 @@
             "libraryDirectories": [],
             "name": "sandbox",
             "position": {
-                "x": 2272.0,
-                "y": 1460.0
+                "x": 2288.0,
+                "y": 820.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "Sandbox"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\runtime",
             "externalLinks": [],
             "id": 25,
@@ -753,14 +1519,43 @@
             "libraryDirectories": [],
             "name": "runtime",
             "position": {
-                "x": 2272.0,
-                "y": 1640.0
+                "x": 2288.0,
+                "y": 1000.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "Runtime"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\launcher",
             "externalLinks": [],
             "id": 26,
@@ -769,14 +1564,43 @@
             "libraryDirectories": [],
             "name": "launcher",
             "position": {
-                "x": 2272.0,
-                "y": 1820.0
+                "x": 2288.0,
+                "y": 1180.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "Launcher"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\tools\\project-generator",
             "externalLinks": [],
             "id": 27,
@@ -785,7 +1609,7 @@
             "libraryDirectories": [],
             "name": "project-generator",
             "position": {
-                "x": 2224.0,
+                "x": 2256.0,
                 "y": -97.0
             },
             "postBuildEvent": "",
@@ -793,6 +1617,35 @@
             "projectName": "ProjectGenerator"
         },
         {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "assimp-vc143-mtd\nzlibstaticd",
+                    "includePaths": "%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 5,
+                    "libraryDirectories": "%{wks.location}/../generated/assimp/lib/Debug\n%{wks.location}/../generated/assimp/contrib/zlib/Debug",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "call \"%{prj.location}/build-assimp.bat\" \"%{cfg.buildcfg}\""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "assimp-vc143-mt\nzlibstatic",
+                    "includePaths": "%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 5,
+                    "libraryDirectories": "%{wks.location}/../generated/assimp/lib/Release\n%{wks.location}/../generated/assimp/contrib/zlib/Release",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "call \"%{prj.location}/build-assimp.bat\" \"%{cfg.buildcfg}\""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "assimp-vc143-mt\nzlibstatic",
+                    "includePaths": "%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
+                    "kind": 5,
+                    "libraryDirectories": "%{wks.location}/../generated/assimp/lib/Release\n%{wks.location}/../generated/assimp/contrib/zlib/Release",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "call \"%{prj.location}/build-assimp.bat\" \"%{cfg.buildcfg}\""
+                }
+            },
             "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals\\assimp",
             "externalLinks": [
                 {
@@ -835,8 +1688,8 @@
             ],
             "name": "assimp",
             "position": {
-                "x": 148.0,
-                "y": 412.0
+                "x": 144.0,
+                "y": 319.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "call \"%{prj.location}/build-assimp.bat\" \"%{cfg.buildcfg}\"",
@@ -844,5 +1697,5 @@
         }
     ],
     "rootDirectory": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project",
-    "version": 4
+    "version": 5
 }

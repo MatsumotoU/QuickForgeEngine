@@ -137,6 +137,15 @@ namespace
 		return static_cast<std::uint64_t>(encoded & kNodeEditorIdPayloadMask);
 	}
 
+	std::uint64_t DecodeNodeEditorLinkId(ed::LinkId id)
+	{
+		const std::uintptr_t encoded = static_cast<std::uintptr_t>(id);
+		if ((encoded & ~kNodeEditorIdPayloadMask) != kNodeEditorLinkIdTag) {
+			return 0;
+		}
+		return static_cast<std::uint64_t>(encoded & kNodeEditorIdPayloadMask);
+	}
+
 	ed::NodeId ToEditorNodeId(std::uint64_t id)
 	{
 		return ed::NodeId(EncodeNodeEditorId(kNodeEditorNodeIdTag, id));
@@ -838,6 +847,12 @@ void ProjectGenerator::Shutdown()
 
 void ProjectGenerator::Update() {
 	directoryManager_.Update();
+	if (directoryRefreshPending_ &&
+		directoryManager_.GetScanState() != DirectoryScanState::Scanning) {
+		const std::string rootDirectory = directoryManager_.GetLootDirectory();
+		directoryRefreshPending_ =
+			!directoryManager_.SetLootDirectory(rootDirectory);
+	}
 }
 
 void ProjectGenerator::Draw() {
@@ -1433,9 +1448,12 @@ void QFE::APPLICATION::ProjectGenerator::DeleteSelectedNodes(
 }
 
 void QFE::APPLICATION::ProjectGenerator::DrawNodeContextMenu(
-	const std::vector<std::uint64_t>& selectedNodeIds)
+	const std::vector<std::uint64_t>& selectedNodeIds,
+	const std::vector<std::uint64_t>& selectedLinkIds,
+	const std::vector<std::uint64_t>& selectedGroupIds)
 {
-	if (selectedNodeIds.empty()) {
+	if (selectedNodeIds.empty() && selectedLinkIds.empty() &&
+		selectedGroupIds.empty()) {
 		return;
 	}
 	if (!ImGui::BeginPopupContextWindow(
@@ -1443,17 +1461,297 @@ void QFE::APPLICATION::ProjectGenerator::DrawNodeContextMenu(
 		return;
 	}
 
-	ImGui::Text("Selected nodes: %d",
-		static_cast<int>(selectedNodeIds.size()));
-	ImGui::Separator();
-	if (ImGui::MenuItem(
-		"Group Selected Nodes", nullptr, false, selectedNodeIds.size() >= 2)) {
-		GroupSelectedNodes(selectedNodeIds);
+	if (!selectedNodeIds.empty()) {
+		ImGui::Text("Selected nodes: %d",
+			static_cast<int>(selectedNodeIds.size()));
+		ImGui::Separator();
+		if (ImGui::MenuItem(
+			"Group Selected Nodes", nullptr, false, selectedNodeIds.size() >= 2)) {
+			GroupSelectedNodes(selectedNodeIds);
+		}
+		if (ImGui::MenuItem("Delete Selected Nodes")) {
+			DeleteSelectedNodes(selectedNodeIds);
+		}
 	}
-	if (ImGui::MenuItem("Delete Selected Nodes")) {
-		DeleteSelectedNodes(selectedNodeIds);
+	if (!selectedLinkIds.empty()) {
+		if (!selectedNodeIds.empty()) {
+			ImGui::Separator();
+		}
+		ImGui::Text("Selected links: %d",
+			static_cast<int>(selectedLinkIds.size()));
+		ImGui::Separator();
+		if (ImGui::MenuItem("Delete Selected Links")) {
+			DeleteSelectedLinks(selectedLinkIds);
+		}
+	}
+	if (!selectedGroupIds.empty()) {
+		if (!selectedNodeIds.empty() || !selectedLinkIds.empty()) {
+			ImGui::Separator();
+		}
+		ImGui::Text("Selected groups: %d",
+			static_cast<int>(selectedGroupIds.size()));
+		ImGui::Separator();
+		if (ImGui::MenuItem("Create Directory and Add Project...", nullptr,
+			false, selectedGroupIds.size() == 1)) {
+			createProjectGroupId_ = selectedGroupIds.front();
+			newProjectRelativeDirectory_.clear();
+			newProjectName_.clear();
+			createProjectError_.clear();
+			openCreateProjectPopupRequested_ = true;
+		}
 	}
 	ImGui::EndPopup();
+}
+
+void QFE::APPLICATION::ProjectGenerator::DrawCreateProjectInGroupPopup()
+{
+	constexpr const char* popupName = "Create Directory and Add Project";
+	if (openCreateProjectPopupRequested_) {
+		ImGui::OpenPopup(popupName);
+		openCreateProjectPopupRequested_ = false;
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(520.0f, 0.0f), ImGuiCond_Appearing);
+	if (!ImGui::BeginPopupModal(
+		popupName, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		return;
+	}
+
+	const ProjectGroup* group = FindGroup(createProjectGroupId_);
+	if (group == nullptr) {
+		ImGui::TextUnformatted("The selected group no longer exists.");
+		if (ImGui::Button("Close")) {
+			ImGui::CloseCurrentPopup();
+			createProjectGroupId_ = 0;
+		}
+		ImGui::EndPopup();
+		return;
+	}
+
+	ImGui::Text("Group: %s", group->name.empty() ? "Group" : group->name.c_str());
+	ImGui::TextWrapped(
+		"Create a directory below the project root, add it as a project node, "
+		"and place that node in the selected group.");
+	ImGui::Separator();
+	ImGui::TextUnformatted("Relative directory");
+	ImGui::SetNextItemWidth(-FLT_MIN);
+	const bool submitted = ImGui::InputTextWithHint(
+		"##NewProjectRelativeDirectory", "example: engine/network",
+		&newProjectRelativeDirectory_, ImGuiInputTextFlags_EnterReturnsTrue);
+	ImGui::TextUnformatted("Premake project name");
+	ImGui::SetNextItemWidth(-FLT_MIN);
+	ImGui::InputTextWithHint(
+		"##NewProjectName", "empty: use the directory name", &newProjectName_);
+	if (!directoryManager_.GetLootDirectory().empty()) {
+		ImGui::TextDisabled("Root: %s",
+			directoryManager_.GetLootDirectory().c_str());
+	}
+	if (!createProjectError_.empty()) {
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.35f, 0.35f, 1.0f));
+		ImGui::TextWrapped("%s", createProjectError_.c_str());
+		ImGui::PopStyleColor();
+	}
+
+	const bool canCreate = !Trim(newProjectRelativeDirectory_).empty();
+	if (ImGui::Button("Create", ImVec2(100.0f, 0.0f)) || submitted) {
+		if (!canCreate) {
+			createProjectError_ = "Enter a relative directory.";
+		} else if (CreateDirectoryProjectInGroup(
+			createProjectGroupId_, newProjectRelativeDirectory_, newProjectName_)) {
+			ImGui::CloseCurrentPopup();
+			createProjectGroupId_ = 0;
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel", ImVec2(100.0f, 0.0f))) {
+		ImGui::CloseCurrentPopup();
+		createProjectGroupId_ = 0;
+		createProjectError_.clear();
+	}
+	ImGui::EndPopup();
+}
+
+bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
+	std::uint64_t groupId, const std::string& relativeDirectory,
+	const std::string& projectName)
+{
+	ProjectGroup* group = FindGroup(groupId);
+	if (group == nullptr) {
+		createProjectError_ = "The selected group no longer exists.";
+		return false;
+	}
+	if (directoryManager_.GetLootDirectory().empty()) {
+		createProjectError_ = "Select a project root directory first.";
+		return false;
+	}
+
+	const std::string trimmedDirectory = Trim(relativeDirectory);
+	const std::filesystem::path requestedPath(
+		QFE::ConvertString(trimmedDirectory));
+	if (requestedPath.empty() || requestedPath.has_root_name() ||
+		requestedPath.has_root_directory()) {
+		createProjectError_ =
+			"Enter a relative directory below the project root.";
+		return false;
+	}
+	const std::filesystem::path normalizedRelativePath =
+		requestedPath.lexically_normal();
+	if (normalizedRelativePath.empty() || normalizedRelativePath == L".") {
+		createProjectError_ = "Enter a directory below the project root.";
+		return false;
+	}
+	for (const std::filesystem::path& component : normalizedRelativePath) {
+		if (component == L"..") {
+			createProjectError_ =
+				"The directory must stay below the project root.";
+			return false;
+		}
+	}
+
+	const std::filesystem::path rootPath = NormalizePath(
+		QFE::ConvertString(directoryManager_.GetLootDirectory()));
+	const std::filesystem::path directoryPath = NormalizePath(
+		rootPath / normalizedRelativePath);
+	const std::filesystem::path pathBelowRoot =
+		directoryPath.lexically_relative(rootPath);
+	if (pathBelowRoot.empty() || pathBelowRoot == L".") {
+		createProjectError_ = "Enter a directory below the project root.";
+		return false;
+	}
+	for (const std::filesystem::path& component : pathBelowRoot) {
+		if (component == L"..") {
+			createProjectError_ =
+				"The directory must stay below the project root.";
+			return false;
+		}
+	}
+	if (HasNodeForDirectory(directoryPath)) {
+		createProjectError_ =
+			"A project node already exists for this directory.";
+		return false;
+	}
+
+	const std::string directoryName =
+		QFE::ConvertString(directoryPath.filename().wstring());
+	const std::string resolvedProjectName = Trim(projectName).empty()
+		? directoryName
+		: Trim(projectName);
+	if (directoryName.empty() || resolvedProjectName.empty()) {
+		createProjectError_ = "The directory and project name cannot be empty.";
+		return false;
+	}
+	const auto namesEqual = [](std::string_view left, std::string_view right) {
+		return left.size() == right.size() && std::equal(
+			left.begin(), left.end(), right.begin(),
+			[](char leftCharacter, char rightCharacter) {
+				return std::tolower(static_cast<unsigned char>(leftCharacter)) ==
+					std::tolower(static_cast<unsigned char>(rightCharacter));
+			});
+	};
+	if (std::any_of(nodes_.begin(), nodes_.end(),
+		[&resolvedProjectName, &namesEqual](const ProjectNode& node) {
+			const std::string existingName = Trim(node.projectName).empty()
+				? node.name
+				: Trim(node.projectName);
+			return namesEqual(existingName, resolvedProjectName);
+		})) {
+		createProjectError_ =
+			"A project with this Premake project name already exists.";
+		return false;
+	}
+
+	std::error_code createError;
+	std::filesystem::create_directories(directoryPath, createError);
+	if (createError || !std::filesystem::is_directory(directoryPath, createError)) {
+		createProjectError_ = "Could not create the project directory.";
+		if (createError) {
+			createProjectError_ += " " + createError.message();
+		}
+		return false;
+	}
+
+	ImVec2 groupPosition = group->initialPosition;
+	if (nodeEditorContext_ != nullptr &&
+		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
+		const ImVec2 editorPosition = ax::NodeEditor::GetNodePosition(
+			ToEditorGroupId(group->id));
+		if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
+			groupPosition = editorPosition;
+		}
+	}
+
+	float nextNodeY = groupPosition.y + 56.0f;
+	for (const std::uint64_t memberNodeId : group->nodeIds) {
+		const ProjectNode* memberNode = FindNode(memberNodeId);
+		if (memberNode == nullptr) {
+			continue;
+		}
+		ImVec2 memberPosition = memberNode->initialPosition;
+		float memberHeight = 100.0f;
+		if (nodeEditorContext_ != nullptr &&
+			ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
+			const ImVec2 editorPosition = ax::NodeEditor::GetNodePosition(
+				ToEditorNodeId(memberNodeId));
+			const ImVec2 editorSize = ax::NodeEditor::GetNodeSize(
+				ToEditorNodeId(memberNodeId));
+			if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
+				memberPosition = editorPosition;
+			}
+			if (editorSize.y > 0.0f) {
+				memberHeight = editorSize.y;
+			}
+		}
+		nextNodeY = std::max(nextNodeY,
+			memberPosition.y + memberHeight + 32.0f);
+	}
+
+	ProjectNode node;
+	node.id = nextNodeId_++;
+	node.name = directoryName;
+	node.projectName = resolvedProjectName;
+	node.directoryPath = directoryPath;
+	node.initialPosition = ImVec2(
+		groupPosition.x + 48.0f,
+		nextNodeY);
+	const std::uint64_t createdNodeId = node.id;
+	nodes_.emplace_back(std::move(node));
+	group->nodeIds.push_back(createdNodeId);
+	group->needsBoundsUpdate = true;
+	EnsureConfigurationData();
+
+	// Refresh the directory tree. If a previous asynchronous scan is still
+	// running, Update() starts the refresh as soon as that scan has completed.
+	const std::string rootDirectory = directoryManager_.GetLootDirectory();
+	directoryRefreshPending_ =
+		!directoryManager_.SetLootDirectory(rootDirectory);
+	createProjectError_.clear();
+	premakeStatus_ = "Created directory and added project '" +
+		resolvedProjectName + "' to group '" +
+		(group->name.empty() ? std::string("Group") : group->name) + "'.";
+	return true;
+}
+
+void QFE::APPLICATION::ProjectGenerator::DeleteSelectedLinks(
+	const std::vector<std::uint64_t>& selectedLinkIds)
+{
+	std::unordered_set<std::uint64_t> linkIds(
+		selectedLinkIds.begin(), selectedLinkIds.end());
+	const std::size_t previousLinkCount = links_.size();
+	links_.erase(
+		std::remove_if(
+			links_.begin(), links_.end(),
+			[&linkIds](const ProjectLink& link) {
+				return linkIds.contains(link.id);
+			}),
+		links_.end());
+	const std::size_t deletedLinkCount = previousLinkCount - links_.size();
+
+	if (nodeEditorContext_ != nullptr &&
+		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
+		ax::NodeEditor::ClearSelection();
+	}
+	premakeStatus_ = "Deleted " + std::to_string(deletedLinkCount) +
+		" selected link(s).";
 }
 
 void QFE::APPLICATION::ProjectGenerator::GroupSettingsWindow()
@@ -1732,6 +2030,22 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 			selectedGroupIds.push_back(groupId);
 		}
 	}
+	const int selectedLinkCount = ax::NodeEditor::GetSelectedLinks(nullptr, 0);
+	std::vector<ax::NodeEditor::LinkId> selectedEditorLinks(
+		static_cast<std::size_t>(std::max(selectedLinkCount, 0)));
+	if (!selectedEditorLinks.empty()) {
+		ax::NodeEditor::GetSelectedLinks(
+			selectedEditorLinks.data(), selectedLinkCount);
+	}
+	std::vector<std::uint64_t> selectedLinkIds;
+	for (const ax::NodeEditor::LinkId selectedEditorLink : selectedEditorLinks) {
+		const std::uint64_t linkId = DecodeNodeEditorLinkId(selectedEditorLink);
+		if (linkId != 0 && std::any_of(
+			links_.begin(), links_.end(),
+			[linkId](const ProjectLink& link) { return link.id == linkId; })) {
+			selectedLinkIds.push_back(linkId);
+		}
+	}
 
 	if (!selectedGroupIds.empty()) {
 		selectedGroupId_ = selectedGroupIds.front();
@@ -1752,7 +2066,8 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 		groupSettingsOpen_ = false;
 	}
 
-	DrawNodeContextMenu(selectedNodeIds);
+	DrawNodeContextMenu(selectedNodeIds, selectedLinkIds, selectedGroupIds);
+	DrawCreateProjectInGroupPopup();
 
 	ax::NodeEditor::SetCurrentEditor(nullptr);
 

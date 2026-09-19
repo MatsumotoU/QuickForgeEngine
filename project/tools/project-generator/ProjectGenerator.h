@@ -142,11 +142,19 @@ namespace QFE::APPLICATION {
 		void DrawProjectGroup(ProjectGroup& group);
 		void DrawProjectNode(ProjectNode& node);
 		void DrawNodeContextMenu(
-			const std::vector<std::uint64_t>& selectedNodeIds);
+			const std::vector<std::uint64_t>& selectedNodeIds,
+			const std::vector<std::uint64_t>& selectedLinkIds,
+			const std::vector<std::uint64_t>& selectedGroupIds);
+		void DrawCreateProjectInGroupPopup();
+		bool CreateDirectoryProjectInGroup(std::uint64_t groupId,
+			const std::string& relativeDirectory,
+			const std::string& projectName);
 		void GroupSelectedNodes(
 			const std::vector<std::uint64_t>& selectedNodeIds);
 		void DeleteSelectedNodes(
 			const std::vector<std::uint64_t>& selectedNodeIds);
+		void DeleteSelectedLinks(
+			const std::vector<std::uint64_t>& selectedLinkIds);
 		void UpdateGroupBounds(ProjectGroup& group);
 		ProjectGroup* FindGroup(std::uint64_t groupId);
 		void RemoveGroup(std::uint64_t groupId);
@@ -190,6 +198,12 @@ namespace QFE::APPLICATION {
 		// currently visible canvas area.
 		ImVec2 nodeEditorVisibleCenter_ = ImVec2(0.0f, 0.0f);
 		bool nodeEditorVisibleCenterInitialized_ = false;
+		std::uint64_t createProjectGroupId_ = 0;
+		bool openCreateProjectPopupRequested_ = false;
+		std::string newProjectRelativeDirectory_;
+		std::string newProjectName_;
+		std::string createProjectError_;
+		bool directoryRefreshPending_ = false;
 		PremakeCommonSettings commonPremakeSettings_;
 		std::string premakeStatus_;
 	};
