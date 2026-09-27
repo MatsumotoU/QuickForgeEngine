@@ -63,6 +63,9 @@ namespace {
 	}
 
 	std::string MakeEntityName(const std::string& modelName) {
+		if (modelName == "Primitive/PlaneHorizontal") {
+			return "Horizontal Plane";
+		}
 		return std::filesystem::path(modelName).filename().string();
 	}
 }

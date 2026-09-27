@@ -14,6 +14,8 @@ namespace QFE::ASSET {
 
 	/// @brief プリミティブ形状のメッシュデータを生成する関数群
 	std::vector<VertexData> CreatePlane(float width = 1.0f, float height = 1.0f, uint32_t segmentsX = 1, uint32_t segmentsY = 1, bool invertFace = false);
+	/// @brief XZ平面上に上向きの法線を持つ水平な平面を生成します。
+	std::vector<VertexData> CreateHorizontalPlane(float width = 1.0f, float depth = 1.0f, uint32_t segmentsX = 1, uint32_t segmentsZ = 1, bool invertFace = false);
 	/// @brief CreateBox 関数は、単位立方体のメッシュデータを生成します。
 	std::vector<VertexData> CreateBox(bool invertFace = false);
 	/// @brief CreateRing 関数は、リング状のメッシュデータを生成します。

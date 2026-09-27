@@ -23,8 +23,14 @@ namespace {
 			return true;
 		}
 
-		if (QFE::ASSET::IsPrimitiveMeshName(modelName)) {
-			std::vector<VertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(modelName);
+		// Older scene and prefab files use "box" for the built-in box mesh.
+		// Keep those assets renderable even though the engine now names built-in
+		// primitives with the "Primitive/" prefix.
+		const std::string primitiveName = modelName == "box"
+			? "Primitive/Box"
+			: modelName;
+		if (QFE::ASSET::IsPrimitiveMeshName(primitiveName)) {
+			std::vector<VertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(primitiveName);
 			if (vertices.empty()) {
 				return false;
 			}
