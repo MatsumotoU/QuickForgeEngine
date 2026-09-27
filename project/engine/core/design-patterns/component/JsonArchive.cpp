@@ -126,6 +126,46 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::EulerTransform& va
 	}
 }
 
+void QFE::JsonArchive::Process(const std::string& name, std::vector<MATH::EulerTransform>& value) {
+    if (isLoading_) {
+        if (!json_.contains(name) || !json_[name].is_array()) {
+            return;
+        }
+
+        std::vector<MATH::EulerTransform> loadedPoints;
+        loadedPoints.reserve(json_[name].size());
+        for (const nlohmann::json& pointJson : json_[name]) {
+            MATH::EulerTransform point;
+            if (pointJson.is_object()) {
+                const auto readVector = [&pointJson](const char* key, MATH::Vector3& vector) {
+                    const auto field = pointJson.find(key);
+                    if (field == pointJson.end() || !field->is_object()) {
+                        return;
+                    }
+                    vector.x = field->value("x", vector.x);
+                    vector.y = field->value("y", vector.y);
+                    vector.z = field->value("z", vector.z);
+                };
+                readVector("scale", point.scale);
+                readVector("rotate", point.rotate);
+                readVector("translate", point.translate);
+            }
+            loadedPoints.push_back(point);
+        }
+        value = std::move(loadedPoints);
+    } else {
+        nlohmann::json points = nlohmann::json::array();
+        for (const MATH::EulerTransform& point : value) {
+            points.push_back({
+                { "scale", { { "x", point.scale.x }, { "y", point.scale.y }, { "z", point.scale.z } } },
+                { "rotate", { { "x", point.rotate.x }, { "y", point.rotate.y }, { "z", point.rotate.z } } },
+                { "translate", { { "x", point.translate.x }, { "y", point.translate.y }, { "z", point.translate.z } } }
+            });
+        }
+        json_[name] = std::move(points);
+    }
+}
+
 void QFE::JsonArchive::Process(const std::string& name, MATH::Matrix4x4& value) {
     if (isLoading_) {
         // デシリアライズ

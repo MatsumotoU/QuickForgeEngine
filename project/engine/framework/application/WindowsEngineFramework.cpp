@@ -10,6 +10,7 @@
 #include "components/AllComponent.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
+#include "framework/scene/SplineMovementSystem.h"
 
 namespace {
 	bool EnsureModelData(
@@ -233,6 +234,14 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	auto& fpsCounter = systems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	QFE::FRAMEWORK::DrawSplineMovementPaths(
+		entityManager,
+		[graphicEngine = graphicEngine.get()](
+			const QFE::MATH::Vector3& start,
+			const QFE::MATH::Vector3& end,
+			const QFE::MATH::Vector4& color) {
+			graphicEngine->DrawLine(start, end, color);
+		});
 
 	// 各エンティティのModelRenderComponentを更新
 	std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>> raytracingInstances;
@@ -533,6 +542,11 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		graphicEngine.get(), resources.rtpsoHandle, resources.uavBufferHandle,
 		cameraBufferHandle, resources.globalTriHandle, resources.globalUVHandle,
 		resources.instanceMetaHandle, textureFirstResourceHandle, rayTracingRootResources,
+		resources.finalRenderTargetHandle);
+
+	// 線はレイトレーシングの影計算には含めず、3D深度テスト付きで結果に重ねる。
+	graphicEngine->RenderLines(
+		resources.viewProj, resources.viewportHandle, resources.scissorRectHandle,
 		resources.finalRenderTargetHandle);
 
 	const QFE::GRAPHIC::PSOHandle spritePsoHandle =

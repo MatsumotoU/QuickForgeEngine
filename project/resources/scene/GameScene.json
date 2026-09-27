@@ -1,10 +1,6 @@
 {
     "entities": [
         {
-            "AutoScrollComponent": {
-                "distance": 100.0,
-                "speed": 1.5
-            },
             "CameraComponent": {
                 "aspectRatio_": 1.7777777910232544,
                 "bottom_": 0.0,
@@ -37,6 +33,9 @@
                 "name": "Camera",
                 "uuid": "4da1c537-5c5d-4a92-aa6e-ee1c1f1e16f5"
             },
+            "ParentComponent": {
+                "parent": "005ed824-e9af-44c7-9b5f-9468b9ee5a2d"
+            },
             "TransformComponent": {
                 "transform": {
                     "rotate": {
@@ -51,8 +50,8 @@
                     },
                     "translate": {
                         "x": 0.0,
-                        "y": 107.80000305175781,
-                        "z": -100.80000305175781
+                        "y": 24.0,
+                        "z": -9.699999809265137
                     }
                 }
             }
@@ -114,10 +113,6 @@
             }
         },
         {
-            "AutoScrollComponent": {
-                "distance": 100.0,
-                "speed": 1.5
-            },
             "BulletEmitterComponent": {
                 "bulletAngleX": 0.4487989544868469,
                 "bulletAngleY": 2.399963140487671,
@@ -148,6 +143,27 @@
                 "repeatInterval": 0.20000000298023224,
                 "triggerMode": 0
             },
+            "InputMovementComponent": {
+                "amount": 5.0,
+                "applyMode": 0,
+                "backwardActionName": "Down",
+                "enabled": true,
+                "forwardActionName": "Up",
+                "horizontalAxis": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "leftActionName": "Left",
+                "normalizeInput": true,
+                "rightActionName": "Right",
+                "useGamePadLeftStick": true,
+                "verticalAxis": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                }
+            },
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
@@ -176,12 +192,15 @@
                 }
             },
             "ModelRenderComponent": {
-                "modelName": "player",
-                "textureName": ""
+                "modelName": "ship",
+                "textureName": "ship.png"
             },
             "ObjectInfoComponent": {
                 "name": "Player",
                 "uuid": "eda80b94-1dd1-4f87-b5b2-7ab0b60c8c69"
+            },
+            "ParentComponent": {
+                "parent": "005ed824-e9af-44c7-9b5f-9468b9ee5a2d"
             },
             "ShootingPlayerComponent": {
                 "bombInterval": 0.0,
@@ -195,11 +214,11 @@
                 "bulletSpawnOffset": {
                     "x": 0.0,
                     "y": 0.0,
-                    "z": 1.0
+                    "z": 0.0
                 },
                 "damping": 0.8500000238418579,
-                "shootInterval": 0.20000000298023224,
-                "speed": 4.5
+                "shootInterval": 0.0,
+                "speed": 0.0
             },
             "SpawnTriggerComponent": {
                 "spawnMask": 4294967295
@@ -281,6 +300,78 @@
                         "x": 0.0,
                         "y": -2.299999952316284,
                         "z": 109.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "GameAreaManager",
+                "uuid": "005ed824-e9af-44c7-9b5f-9468b9ee5a2d"
+            },
+            "SplineMovementComponent": {
+                "controlPoints": [
+                    {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 2.5,
+                            "z": 15.0
+                        }
+                    },
+                    {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 2.5,
+                            "z": 40.400001525878906
+                        }
+                    }
+                ],
+                "drawPath": true,
+                "enabled": true,
+                "pathColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "speed": 1.0
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
                     }
                 }
             }

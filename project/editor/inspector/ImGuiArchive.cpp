@@ -360,6 +360,40 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, MATH::EulerTran
 	ImGui::PopID();
 }
 
+void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::vector<MATH::EulerTransform>& value) {
+	ImGui::PushID(name.c_str());
+	ImGui::TextUnformatted(MakeLabel(name).c_str());
+	int pointToRemove = -1;
+	for (size_t index = 0; index < value.size(); ++index) {
+		ImGui::PushID(static_cast<int>(index));
+		const std::string header = "Point " + std::to_string(index + 1);
+		const bool expanded = ImGui::TreeNode(header.c_str());
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Remove")) {
+			pointToRemove = static_cast<int>(index);
+		}
+		if (expanded) {
+			MATH::EulerTransform& point = value[index];
+			ImGui::DragFloat3("Position", &point.translate.x, kDragSpeed);
+			ImGui::DragFloat3("Rotation", &point.rotate.x, kDragSpeed);
+			ImGui::DragFloat3("Scale", &point.scale.x, kDragSpeed);
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
+	if (pointToRemove >= 0) {
+		value.erase(value.begin() + pointToRemove);
+	}
+	if (ImGui::Button("Add Point")) {
+		MATH::EulerTransform point;
+		if (!value.empty()) {
+			point.translate = value.back().translate + MATH::Vector3{ 0.0f, 0.0f, 1.0f };
+		}
+		value.push_back(point);
+	}
+	ImGui::PopID();
+}
+
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, MATH::Matrix4x4& value) {
 	ImGui::PushID(name.c_str());
 	ImGui::TextUnformatted(MakeLabel(name).c_str());

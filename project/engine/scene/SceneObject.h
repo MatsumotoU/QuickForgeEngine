@@ -1,5 +1,6 @@
 #pragma once
 #include "design-patterns/EntityManager.h"
+#include <filesystem>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 
@@ -29,5 +30,6 @@ namespace QFE::SCENE {
 		QFE::EntityManager entityManager_;
 
 		std::unordered_map<std::string, nlohmann::json> objectJsonMap_;
+		std::unordered_map<std::string, std::filesystem::file_time_type> objectJsonLastWriteTimeMap_;
 	};
 }

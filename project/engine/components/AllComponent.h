@@ -13,6 +13,7 @@
 #include "AnimationComponent.h"
 #include "PhysicsComponent.h"
 #include "InputMovementComponent.h"
+#include "SplineMovementComponent.h"
 #include "EventComponent.h"
 #include "CollisionTriggerComponent.h"
 // シューティング用のコンポーネント
