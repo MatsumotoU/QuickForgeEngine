@@ -3,9 +3,13 @@
 #include "components/ObjectInfoComponent.h"
 #include "components/SplineControlPoint.h"
 #include "components/TransformHierarchy.h"
+#include "components/shooting/BulletEmitterComponent.h"
+#include "components/shooting/InputBulletEmitterTriggerComponent.h"
+#include "components/shooting/PeriodicBulletEmitterTriggerComponent.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
 
 #include <filesystem>
+#include <utility>
 
 namespace {
 	const float kDragSpeed = 0.1f;
@@ -108,6 +112,83 @@ namespace {
 			}
 		}
 		ImGui::EndCombo();
+	}
+
+	void DrawEmitterPatternCombo(
+		const char* label,
+		uint32_t& patternIndex,
+		QFE::EntityManager* entityManager,
+		uint32_t entityId) {
+		const QFE::STG::BulletEmitterComponent* emitter = nullptr;
+		if (entityManager != nullptr &&
+			entityManager->HasComponent<QFE::STG::BulletEmitterComponent>(entityId)) {
+			emitter = &entityManager->GetComponent<QFE::STG::BulletEmitterComponent>(entityId);
+		}
+
+		if (emitter == nullptr) {
+			ImGui::DragScalar(label, ImGuiDataType_U32, &patternIndex, 1.0f);
+			return;
+		}
+
+		std::string preview = "Missing Pattern " + std::to_string(patternIndex + 1);
+		if (patternIndex < emitter->patterns.size()) {
+			const std::string& patternName = emitter->patterns[patternIndex].name;
+			preview = patternName.empty() ? "Pattern " + std::to_string(patternIndex + 1) : patternName;
+		}
+		if (!ImGui::BeginCombo(label, preview.c_str())) {
+			return;
+		}
+		for (size_t index = 0; index < emitter->patterns.size(); ++index) {
+			const std::string& patternName = emitter->patterns[index].name;
+			const std::string option = (patternName.empty()
+				? "Pattern " + std::to_string(index + 1)
+				: patternName) + " (" + std::to_string(index + 1) + ")";
+			const bool selected = patternIndex == index;
+			if (ImGui::Selectable(option.c_str(), selected)) {
+				patternIndex = static_cast<uint32_t>(index);
+			}
+			if (selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		if (emitter->patterns.empty()) {
+			ImGui::TextDisabled("No patterns registered");
+		}
+		ImGui::EndCombo();
+	}
+
+	void RemapEmitterPatternReferences(
+		QFE::EntityManager* entityManager,
+		uint32_t entityId,
+		uint32_t removedIndex,
+		uint32_t remainingPatternCount) {
+		const auto remap = [removedIndex, remainingPatternCount](uint32_t& patternIndex) {
+			if (remainingPatternCount == 0) {
+				patternIndex = 0;
+			} else if (patternIndex == removedIndex) {
+				patternIndex = removedIndex < remainingPatternCount
+					? removedIndex
+					: remainingPatternCount - 1;
+			} else if (patternIndex > removedIndex) {
+				--patternIndex;
+			}
+		};
+
+		if (entityManager == nullptr) {
+			return;
+		}
+		if (entityManager->HasComponent<QFE::STG::InputBulletEmitterTriggerComponent>(entityId)) {
+			for (QFE::STG::InputBulletEmitterTriggerSetting& trigger :
+				entityManager->GetComponent<QFE::STG::InputBulletEmitterTriggerComponent>(entityId).triggers) {
+				remap(trigger.patternIndex);
+			}
+		}
+		if (entityManager->HasComponent<QFE::STG::PeriodicBulletEmitterTriggerComponent>(entityId)) {
+			for (QFE::STG::PeriodicBulletEmitterTriggerSetting& trigger :
+				entityManager->GetComponent<QFE::STG::PeriodicBulletEmitterTriggerComponent>(entityId).triggers) {
+				remap(trigger.patternIndex);
+			}
+		}
 	}
 
 	void DrawJsonValue(const char* label, nlohmann::json& value) {
@@ -334,6 +415,29 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& va
 	ImGui::InputText(MakeLabel(name).c_str(), &value, flags);
 }
 
+void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::vector<std::string>& value) {
+	ImGui::PushID(name.c_str());
+	ImGui::TextUnformatted(MakeLabel(name).c_str());
+	int sceneToRemove = -1;
+	for (size_t index = 0; index < value.size(); ++index) {
+		ImGui::PushID(static_cast<int>(index));
+		const std::string label = "Scene " + std::to_string(index);
+		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::InputText(label.c_str(), &value[index]);
+		if (ImGui::SmallButton("Remove")) {
+			sceneToRemove = static_cast<int>(index);
+		}
+		ImGui::PopID();
+	}
+	if (sceneToRemove >= 0) {
+		value.erase(value.begin() + sceneToRemove);
+	}
+	if (ImGui::Button("Add Scene")) {
+		value.emplace_back();
+	}
+	ImGui::PopID();
+}
+
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, MATH::Vector2& value) {
 	ImGui::DragFloat2(MakeLabel(name).c_str(), &value.x, kDragSpeed);
 }
@@ -430,6 +534,136 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::vector<SCE
 			point = value.back();
 		}
 		value.push_back(point);
+	}
+	ImGui::PopID();
+}
+
+void QFE::EDITOR::ImGuiArchive::Process(
+	const std::string& name,
+	std::vector<STG::BulletEmitterPattern>& value) {
+	ImGui::PushID(name.c_str());
+	ImGui::TextUnformatted(MakeLabel(name).c_str());
+	int patternToRemove = -1;
+	for (size_t index = 0; index < value.size(); ++index) {
+		ImGui::PushID(static_cast<int>(index));
+		const std::string header = value[index].name.empty()
+			? "Pattern " + std::to_string(index + 1)
+			: value[index].name;
+		const bool expanded = ImGui::TreeNode(header.c_str());
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Remove")) {
+			patternToRemove = static_cast<int>(index);
+		}
+		if (expanded) {
+			STG::BulletEmitterPattern& pattern = value[index];
+			ImGui::InputText("Name", &pattern.name);
+			ImGui::InputText("Bullet Prefab", &pattern.emitBulletName);
+			ImGui::DragFloat3("Position Offset", &pattern.emitPos.x, kDragSpeed);
+			ImGui::DragFloat3("Base Direction", &pattern.emitDir.x, kDragSpeed);
+			ImGui::DragFloat("Radius", &pattern.emitRadius, kDragSpeed, 0.0f);
+			ImGui::DragScalar("Bullet Count", ImGuiDataType_U32, &pattern.emitCount, 1.0f);
+			ImGui::DragFloat("Polar Angle Step", &pattern.bulletAngleX, kDragSpeed);
+			ImGui::DragFloat("Azimuth Angle Step", &pattern.bulletAngleY, kDragSpeed);
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
+	if (patternToRemove >= 0) {
+		value.erase(value.begin() + patternToRemove);
+		RemapEmitterPatternReferences(
+			entityManager_, entityId_, static_cast<uint32_t>(patternToRemove),
+			static_cast<uint32_t>(value.size()));
+	}
+	if (ImGui::Button("Add Pattern")) {
+		STG::BulletEmitterPattern pattern{};
+		if (!value.empty()) {
+			pattern = value.back();
+		}
+		pattern.name = "Pattern " + std::to_string(value.size() + 1);
+		value.push_back(std::move(pattern));
+	}
+	ImGui::PopID();
+}
+
+void QFE::EDITOR::ImGuiArchive::Process(
+	const std::string& name,
+	std::vector<STG::InputBulletEmitterTriggerSetting>& value) {
+	ImGui::PushID(name.c_str());
+	ImGui::TextUnformatted(MakeLabel(name).c_str());
+	int triggerToRemove = -1;
+	for (size_t index = 0; index < value.size(); ++index) {
+		ImGui::PushID(static_cast<int>(index));
+		const std::string header = "Input Trigger " + std::to_string(index + 1);
+		const bool expanded = ImGui::TreeNode(header.c_str());
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Remove")) {
+			triggerToRemove = static_cast<int>(index);
+		}
+		if (expanded) {
+			STG::InputBulletEmitterTriggerSetting& trigger = value[index];
+			ImGui::Checkbox("Enabled", &trigger.enabled);
+			ImGui::InputText("Input Action", &trigger.inputActionName);
+			ImGui::DragScalar("Mouse Button", ImGuiDataType_S32, &trigger.mouseButton, 1.0f);
+			ImGui::DragScalar("Gamepad Button Mask", ImGuiDataType_U32, &trigger.gamePadButton, 1.0f);
+
+			const char* triggerModeNames[] = { "Press (repeat)", "Trigger", "Release" };
+			const char* triggerModePreview = trigger.triggerMode < 3
+				? triggerModeNames[trigger.triggerMode]
+				: "Unknown";
+			if (ImGui::BeginCombo("Trigger Mode", triggerModePreview)) {
+				for (uint32_t mode = 0; mode < 3; ++mode) {
+					const bool selected = trigger.triggerMode == mode;
+					if (ImGui::Selectable(triggerModeNames[mode], selected)) {
+						trigger.triggerMode = mode;
+					}
+					if (selected) ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::DragFloat("Repeat Interval", &trigger.repeatInterval, kDragSpeed, 0.0f);
+			DrawEmitterPatternCombo("Emitter Pattern", trigger.patternIndex, entityManager_, entityId_);
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
+	if (triggerToRemove >= 0) {
+		value.erase(value.begin() + triggerToRemove);
+	}
+	if (ImGui::Button("Add Input Trigger")) {
+		value.emplace_back();
+	}
+	ImGui::PopID();
+}
+
+void QFE::EDITOR::ImGuiArchive::Process(
+	const std::string& name,
+	std::vector<STG::PeriodicBulletEmitterTriggerSetting>& value) {
+	ImGui::PushID(name.c_str());
+	ImGui::TextUnformatted(MakeLabel(name).c_str());
+	int triggerToRemove = -1;
+	for (size_t index = 0; index < value.size(); ++index) {
+		ImGui::PushID(static_cast<int>(index));
+		const std::string header = "Periodic Trigger " + std::to_string(index + 1);
+		const bool expanded = ImGui::TreeNode(header.c_str());
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Remove")) {
+			triggerToRemove = static_cast<int>(index);
+		}
+		if (expanded) {
+			STG::PeriodicBulletEmitterTriggerSetting& trigger = value[index];
+			ImGui::Checkbox("Enabled", &trigger.enabled);
+			ImGui::Checkbox("Emit On Start", &trigger.emitOnStart);
+			ImGui::DragFloat("Interval", &trigger.interval, kDragSpeed, 0.0f);
+			DrawEmitterPatternCombo("Emitter Pattern", trigger.patternIndex, entityManager_, entityId_);
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
+	if (triggerToRemove >= 0) {
+		value.erase(value.begin() + triggerToRemove);
+	}
+	if (ImGui::Button("Add Periodic Trigger")) {
+		value.emplace_back();
 	}
 	ImGui::PopID();
 }

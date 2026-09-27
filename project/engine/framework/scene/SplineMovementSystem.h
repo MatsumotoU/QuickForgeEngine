@@ -20,7 +20,7 @@ namespace QFE::FRAMEWORK {
 		QFE::EntityManager& entityManager,
 		float deltaTime);
 
-	/// @brief Draws spline control points as world-space line segments.
+	/// @brief Draws spline paths and their looping triangle movement preview.
 	void DrawSplineMovementPaths(
 		const QFE::EntityManager& entityManager,
 		const SplineLineDrawer& drawLine);

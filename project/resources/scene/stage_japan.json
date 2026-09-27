@@ -51,42 +51,79 @@
                     },
                     "translate": {
                         "x": 0.0,
-                        "y": 24.0,
-                        "z": -9.699999809265137
+                        "y": 22.200000762939453,
+                        "z": -15.199999809265137
                     }
                 }
             }
         },
         {
             "BulletEmitterComponent": {
-                "bulletAngleX": 0.0,
-                "bulletAngleY": 0.0,
-                "emitBulletName": "Bullet.json",
-                "emitCount": 1,
-                "emitDir": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 1.0
-                },
-                "emitPos": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.5
-                },
-                "emitRadius": 1.0,
-                "emitRequest": false
+                "emitRequest": false,
+                "patterns": [
+                    {
+                        "bulletAngleX": 0.0,
+                        "bulletAngleY": 0.0,
+                        "emitBulletName": "Bullet.json",
+                        "emitCount": 1,
+                        "emitDir": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 1.0
+                        },
+                        "emitPos": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.5
+                        },
+                        "emitRadius": 1.0,
+                        "name": "Pattern 1"
+                    },
+                    {
+                        "bulletAngleX": 0.0,
+                        "bulletAngleY": 0.0,
+                        "emitBulletName": "Bomb.json",
+                        "emitCount": 1,
+                        "emitDir": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 1.0
+                        },
+                        "emitPos": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.5
+                        },
+                        "emitRadius": 1.0,
+                        "name": "Pattern 2"
+                    }
+                ]
             },
             "HealthComponent": {
                 "health": 3,
                 "maxHealth": 3
             },
             "InputBulletEmitterTriggerComponent": {
-                "enabled": true,
-                "gamePadButton": 4096,
-                "inputActionName": "Shot",
-                "mouseButton": -1,
-                "repeatInterval": 0.10000000149011612,
-                "triggerMode": 0
+                "triggers": [
+                    {
+                        "enabled": true,
+                        "gamePadButton": 4096,
+                        "inputActionName": "Shot",
+                        "mouseButton": -1,
+                        "patternIndex": 0,
+                        "repeatInterval": 0.10000000149011612,
+                        "triggerMode": 0
+                    },
+                    {
+                        "enabled": true,
+                        "gamePadButton": 0,
+                        "inputActionName": "Shot",
+                        "mouseButton": -1,
+                        "patternIndex": 1,
+                        "repeatInterval": 1.0,
+                        "triggerMode": 2
+                    }
+                ]
             },
             "InputMovementComponent": {
                 "amount": 5.0,
@@ -112,9 +149,9 @@
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
-                    "x": 0.6225490570068359,
-                    "y": 0.5920319557189941,
-                    "z": 0.5920319557189941
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
                 },
                 "metallic": 0.0,
                 "smoothness": 0.0,
@@ -186,6 +223,7 @@
                     "z": 0.0
                 },
                 "damping": 0.8500000238418579,
+                "inputEnabled": true,
                 "shootInterval": 0.0,
                 "speed": 0.0
             },
@@ -226,7 +264,7 @@
             "SplineMovementComponent": {
                 "controlPoints": [
                     {
-                        "secondsToNextPoint": 2.0,
+                        "secondsToNextPoint": 3.0,
                         "transform": {
                             "rotate": {
                                 "x": 1.0,
@@ -239,29 +277,9 @@
                                 "z": 1.0
                             },
                             "translate": {
-                                "x": 0.0,
-                                "y": 40.29999923706055,
-                                "z": 4.400000095367432
-                            }
-                        }
-                    },
-                    {
-                        "secondsToNextPoint": 15.0,
-                        "transform": {
-                            "rotate": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0,
-                                "z": 1.0
-                            },
-                            "translate": {
-                                "x": 0.0,
-                                "y": 2.5,
-                                "z": 21.0
+                                "x": -32.099998474121094,
+                                "y": 17.600000381469727,
+                                "z": 41.20000076293945
                             }
                         }
                     },
@@ -269,7 +287,7 @@
                         "secondsToNextPoint": 30.0,
                         "transform": {
                             "rotate": {
-                                "x": 0.0,
+                                "x": 1.0,
                                 "y": 0.0,
                                 "z": 0.0
                             },
@@ -279,27 +297,189 @@
                                 "z": 1.0
                             },
                             "translate": {
-                                "x": 0.0,
-                                "y": 2.5,
-                                "z": 116.5
+                                "x": -32.099998474121094,
+                                "y": 14.199999809265137,
+                                "z": 26.299999237060547
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 10.0,
+                        "transform": {
+                            "rotate": {
+                                "x": 1.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -32.099998474121094,
+                                "y": 16.200000762939453,
+                                "z": -19.899999618530273
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 5.5,
+                        "transform": {
+                            "rotate": {
+                                "x": 1.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -26.5,
+                                "y": 2.299999952316284,
+                                "z": -29.100000381469727
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 17.700000762939453,
+                        "transform": {
+                            "rotate": {
+                                "x": 1.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": 26.100000381469727,
+                                "y": 10.699999809265137,
+                                "z": -29.5
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 15.5,
+                        "transform": {
+                            "rotate": {
+                                "x": 1.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": 18.799999237060547,
+                                "y": 5.199999809265137,
+                                "z": -6.0
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 17.399999618530273,
+                        "transform": {
+                            "rotate": {
+                                "x": 1.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": 10.600000381469727,
+                                "y": 5.199999809265137,
+                                "z": 24.700000762939453
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 15.300000190734863,
+                        "transform": {
+                            "rotate": {
+                                "x": 1.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -21.799999237060547,
+                                "y": 8.5,
+                                "z": 24.700000762939453
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 16.399999618530273,
+                        "transform": {
+                            "rotate": {
+                                "x": 1.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -15.399999618530273,
+                                "y": 8.5,
+                                "z": 0.699999988079071
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 8.5,
+                        "transform": {
+                            "rotate": {
+                                "x": 1.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -4.199999809265137,
+                                "y": 18.600000381469727,
+                                "z": 0.20000000298023224
                             }
                         }
                     }
                 ],
                 "drawPath": true,
                 "enabled": true,
+                "loop": false,
                 "pathColor": {
                     "w": 1.0,
                     "x": 1.0,
                     "y": 0.0,
                     "z": 0.0
-                }
+                },
+                "paused": false
             },
             "TransformComponent": {
                 "transform": {
                     "rotate": {
                         "x": 0.0,
-                        "y": 0.0,
+                        "y": -0.0,
                         "z": 0.0
                     },
                     "scale": {
@@ -355,7 +535,7 @@
                 "uuid": "cae55e53-e8dd-4286-ac1a-011d0013a861"
             },
             "SkyBoxComponent": {
-                "textureName": "skybox/rostock_laage_airport_4k.dds",
+                "textureName": "skybox/sky_06_2k.dds",
                 "visible": true
             },
             "TransformComponent": {
@@ -369,6 +549,67 @@
                         "x": 1.0,
                         "y": 1.0,
                         "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "metallic": 0.0,
+                "smoothness": 0.30000001192092896,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "static_ground_tokyo",
+                "textureName": ""
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "StaticGround",
+                "name": "static_ground_tokyo",
+                "uuid": "35ed12ee-cf31-4baa-8d4e-75503e388ba2"
+            },
+            "ShaderComponent": {
+                "castShadow": true,
+                "receiveShadow": true
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 3.0,
+                        "y": 3.0,
+                        "z": 3.0
                     },
                     "translate": {
                         "x": 0.0,

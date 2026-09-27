@@ -9,6 +9,11 @@ namespace QFE {
 	namespace SCENE {
 		struct SplineControlPoint;
 	}
+	namespace STG {
+		struct BulletEmitterPattern;
+		struct InputBulletEmitterTriggerSetting;
+		struct PeriodicBulletEmitterTriggerSetting;
+	}
 
     /// @brief 外部からコンポーネントのメンバにアクセスするためのインターフェース
     class Archive {
@@ -22,6 +27,7 @@ namespace QFE {
         virtual void Process(const std::string& name, int32_t& value) = 0;
 		virtual void Process(const std::string& name, uint32_t& value) = 0;
         virtual void Process(const std::string& name, std::string& value) = 0;
+		virtual void Process(const std::string& name, std::vector<std::string>& value) = 0;
 
 		// ベクトル型のバインディング
         virtual void Process(const std::string& name, MATH::Vector2& value) = 0;
@@ -32,6 +38,9 @@ namespace QFE {
 		virtual void Process(const std::string& name, MATH::EulerTransform& value) = 0;
 		virtual void Process(const std::string& name, std::vector<MATH::EulerTransform>& value) = 0;
 		virtual void Process(const std::string& name, std::vector<SCENE::SplineControlPoint>& value) = 0;
+		virtual void Process(const std::string& name, std::vector<STG::BulletEmitterPattern>& value) = 0;
+		virtual void Process(const std::string& name, std::vector<STG::InputBulletEmitterTriggerSetting>& value) = 0;
+		virtual void Process(const std::string& name, std::vector<STG::PeriodicBulletEmitterTriggerSetting>& value) = 0;
         virtual void Process(const std::string& name, MATH::Matrix4x4& value) = 0;
         virtual void Process(const std::string& name, MATH::Bit32& value) = 0;
         virtual void Process(const std::string& name, EntityReference& value) = 0;

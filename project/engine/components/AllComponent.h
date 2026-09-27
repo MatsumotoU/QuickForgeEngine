@@ -20,6 +20,7 @@
 #include "CollisionTriggerComponent.h"
 #include "BGMComponent.h"
 #include "SEComponent.h"
+#include "SceneChangeComponent.h"
 // シューティング用のコンポーネント
 #include "shooting/BulletEmitterComponent.h"
 #include "shooting/InputBulletEmitterTriggerComponent.h"

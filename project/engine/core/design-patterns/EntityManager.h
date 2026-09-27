@@ -55,6 +55,10 @@ namespace QFE {
 		bool ForceCreateEntity(uint32_t id);
 		/// @brief エンティティを削除予定リストに追加する。フレーム終了時に削除される。
 		void RemoveEntity(uint32_t id) override;
+		/// @brief エンティティの削除予定を取り消す。
+		void CancelEntityRemoval(uint32_t id);
+		/// @brief 指定したエンティティの子孫エンティティIDを取得する。
+		std::vector<uint32_t> GetDescendantEntityIds(uint32_t id) const;
 		/// @brief エンティティが有効かどうかを判定する。
 		bool IsActiveEntity(uint32_t id) const;
 

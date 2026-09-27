@@ -9,6 +9,9 @@ namespace QFE::SCENE {
 	/// @brief 制御点のTransformに沿ってエンティティを移動させるスプライン設定。
 	struct SplineMovementComponent {
 		bool enabled = true;
+		bool paused = false;
+		bool loop = false;
+		bool syncRotationToPath = true;
 		bool drawPath = true;
 		QFE::MATH::Vector4 pathColor{ 0.15f, 1.0f, 0.3f, 1.0f };
 		std::vector<SplineControlPoint> controlPoints{ SplineControlPoint{} };
@@ -20,6 +23,9 @@ namespace QFE::SCENE {
 
 		QFE_REFLECT_BEGIN(SplineMovementComponent)
 			QFE_REFLECT_MEMBER(enabled)
+			QFE_REFLECT_MEMBER(paused)
+			QFE_REFLECT_MEMBER(loop)
+			QFE_REFLECT_MEMBER(syncRotationToPath)
 			QFE_REFLECT_MEMBER(drawPath)
 			QFE_REFLECT_MEMBER(pathColor)
 			QFE_REFLECT_MEMBER(controlPoints)

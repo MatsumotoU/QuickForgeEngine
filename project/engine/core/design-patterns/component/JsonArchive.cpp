@@ -1,5 +1,58 @@
 #include "JsonArchive.h"
+#include "design-patterns/component/ComponentAutoRegistry.h"
 #include "components/SplineControlPoint.h"
+#include "components/shooting/BulletEmitterComponent.h"
+#include "components/shooting/InputBulletEmitterTriggerComponent.h"
+#include "components/shooting/PeriodicBulletEmitterTriggerComponent.h"
+
+#include <algorithm>
+#include <initializer_list>
+#include <utility>
+
+namespace {
+	template <typename T>
+	void ProcessReflectedArray(
+		nlohmann::json& json,
+		bool isLoading,
+		const std::string& name,
+		std::vector<T>& value) {
+		if (isLoading) {
+			const auto field = json.find(name);
+			if (field == json.end() || !field->is_array()) {
+				return;
+			}
+
+			std::vector<T> loadedValues;
+			loadedValues.reserve(field->size());
+			for (nlohmann::json& item : *field) {
+				if (!item.is_object()) {
+					continue;
+				}
+				T valueItem{};
+				QFE::JsonArchive itemArchive(item, true);
+				valueItem.Reflect(itemArchive);
+				loadedValues.push_back(std::move(valueItem));
+			}
+			value = std::move(loadedValues);
+			return;
+		}
+
+		nlohmann::json serializedValues = nlohmann::json::array();
+		for (T& valueItem : value) {
+			nlohmann::json item = nlohmann::json::object();
+			QFE::JsonArchive itemArchive(item, false);
+			valueItem.Reflect(itemArchive);
+			serializedValues.push_back(std::move(item));
+		}
+		json[name] = std::move(serializedValues);
+	}
+
+	bool HasAnyKey(const nlohmann::json& json, std::initializer_list<const char*> keys) {
+		return std::any_of(keys.begin(), keys.end(), [&](const char* key) {
+			return json.contains(key);
+		});
+	}
+}
 
 void QFE::JsonArchive::Process(const std::string& name, bool& value) {
     if (isLoading_) {
@@ -49,6 +102,22 @@ void QFE::JsonArchive::Process(const std::string& name, std::string& value) {
 		// シリアライズ
         json_[name] = value;
     }
+}
+
+void QFE::JsonArchive::Process(const std::string& name, std::vector<std::string>& value) {
+	if (isLoading_) {
+		const auto field = json_.find(name);
+		if (field == json_.end() || !field->is_array()) return;
+
+		std::vector<std::string> loadedValues;
+		loadedValues.reserve(field->size());
+		for (const nlohmann::json& item : *field) {
+			if (item.is_string()) loadedValues.push_back(item.get<std::string>());
+		}
+		value = std::move(loadedValues);
+	} else {
+		json_[name] = value;
+	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, MATH::Vector2& value) {
@@ -224,6 +293,44 @@ void QFE::JsonArchive::Process(const std::string& name, std::vector<SCENE::Splin
 		}
 		json_[name] = std::move(points);
 	}
+}
+
+void QFE::JsonArchive::Process(const std::string& name, std::vector<STG::BulletEmitterPattern>& value) {
+	if (isLoading_ && (!json_.contains(name) || !json_[name].is_array()) &&
+		HasAnyKey(json_, { "emitBulletName", "emitPos", "emitDir", "emitRadius", "emitCount", "bulletAngleX", "bulletAngleY" })) {
+		STG::BulletEmitterPattern legacyPattern{};
+		legacyPattern.name = "Pattern 1";
+		legacyPattern.Reflect(*this);
+		value = { std::move(legacyPattern) };
+		return;
+	}
+	ProcessReflectedArray(json_, isLoading_, name, value);
+}
+
+void QFE::JsonArchive::Process(
+	const std::string& name,
+	std::vector<STG::InputBulletEmitterTriggerSetting>& value) {
+	if (isLoading_ && (!json_.contains(name) || !json_[name].is_array()) &&
+		HasAnyKey(json_, { "enabled", "inputActionName", "mouseButton", "gamePadButton", "triggerMode", "repeatInterval" })) {
+		STG::InputBulletEmitterTriggerSetting legacyTrigger{};
+		legacyTrigger.Reflect(*this);
+		value = { std::move(legacyTrigger) };
+		return;
+	}
+	ProcessReflectedArray(json_, isLoading_, name, value);
+}
+
+void QFE::JsonArchive::Process(
+	const std::string& name,
+	std::vector<STG::PeriodicBulletEmitterTriggerSetting>& value) {
+	if (isLoading_ && (!json_.contains(name) || !json_[name].is_array()) &&
+		HasAnyKey(json_, { "enabled", "emitOnStart", "interval" })) {
+		STG::PeriodicBulletEmitterTriggerSetting legacyTrigger{};
+		legacyTrigger.Reflect(*this);
+		value = { std::move(legacyTrigger) };
+		return;
+	}
+	ProcessReflectedArray(json_, isLoading_, name, value);
 }
 
 void QFE::JsonArchive::Process(const std::string& name, MATH::Matrix4x4& value) {

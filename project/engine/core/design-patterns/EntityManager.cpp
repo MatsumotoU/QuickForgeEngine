@@ -1,4 +1,11 @@
 #include "EntityManager.h"
+#include "components/ObjectInfoComponent.h"
+#include "components/ParentComponent.h"
+
+#include <algorithm>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 using namespace QFE;
 
@@ -99,10 +106,23 @@ void QFE::EntityManager::ResetEntity() {
 }
 
 void QFE::EntityManager::InstantRemoveEntity(uint32_t id) {
-    for (auto& [typeId, storage] : componentStorages) {
-        storage->RemoveComponent(id);
-    }
-    activeEntityIds_.erase(id);
+	std::vector<uint32_t> entityIds{ id };
+	const std::vector<uint32_t> descendants = GetDescendantEntityIds(id);
+	entityIds.insert(entityIds.end(), descendants.begin(), descendants.end());
+
+	for (const uint32_t entityId : entityIds) {
+		for (auto& [typeId, storage] : componentStorages) {
+			storage->RemoveComponent(entityId);
+		}
+		activeEntityIds_.erase(entityId);
+	}
+
+	entitiesToRemove_.erase(
+		std::remove_if(entitiesToRemove_.begin(), entitiesToRemove_.end(),
+			[&entityIds](uint32_t queuedId) {
+				return std::find(entityIds.begin(), entityIds.end(), queuedId) != entityIds.end();
+			}),
+		entitiesToRemove_.end());
 }
 
 uint32_t QFE::EntityManager::CreateEntity() {
@@ -123,7 +143,67 @@ bool QFE::EntityManager::ForceCreateEntity(uint32_t id) {
 }
 
 void QFE::EntityManager::RemoveEntity(uint32_t id) {
-    entitiesToRemove_.push_back(id);
+	std::vector<uint32_t> entityIds{ id };
+	const std::vector<uint32_t> descendants = GetDescendantEntityIds(id);
+	entityIds.insert(entityIds.end(), descendants.begin(), descendants.end());
+
+	for (const uint32_t entityId : entityIds) {
+		if (std::find(entitiesToRemove_.begin(), entitiesToRemove_.end(), entityId) ==
+			entitiesToRemove_.end()) {
+			entitiesToRemove_.push_back(entityId);
+		}
+	}
+}
+
+void QFE::EntityManager::CancelEntityRemoval(uint32_t id) {
+	entitiesToRemove_.erase(
+		std::remove(entitiesToRemove_.begin(), entitiesToRemove_.end(), id),
+		entitiesToRemove_.end());
+}
+
+std::vector<uint32_t> QFE::EntityManager::GetDescendantEntityIds(uint32_t id) const {
+	std::vector<uint32_t> descendants;
+	if (!IsActiveEntity(id) || !HasComponent<QFE::SCENE::ObjectInfoComponent>(id)) {
+		return descendants;
+	}
+
+	const std::vector<uint32_t> activeEntityIds = GetActiveEntityIds();
+	std::unordered_map<std::string, std::vector<uint32_t>> childrenByParentUuid;
+	for (const uint32_t candidateId : activeEntityIds) {
+		if (!HasComponent<QFE::SCENE::ParentComponent>(candidateId)) {
+			continue;
+		}
+		const std::string& parentUuid =
+			GetComponent<QFE::SCENE::ParentComponent>(candidateId).parent.uuid;
+		if (!parentUuid.empty()) {
+			childrenByParentUuid[parentUuid].push_back(candidateId);
+		}
+	}
+
+	std::vector<uint32_t> pendingEntityIds{ id };
+	std::unordered_set<uint32_t> visitedEntityIds{ id };
+
+	for (size_t pendingIndex = 0; pendingIndex < pendingEntityIds.size(); ++pendingIndex) {
+		const uint32_t parentEntityId = pendingEntityIds[pendingIndex];
+		if (!HasComponent<QFE::SCENE::ObjectInfoComponent>(parentEntityId)) {
+			continue;
+		}
+		const std::string& parentUuid =
+			GetComponent<QFE::SCENE::ObjectInfoComponent>(parentEntityId).uuid;
+		const auto childrenIt = childrenByParentUuid.find(parentUuid);
+		if (parentUuid.empty() || childrenIt == childrenByParentUuid.end()) {
+			continue;
+		}
+
+		for (const uint32_t candidateId : childrenIt->second) {
+			if (visitedEntityIds.insert(candidateId).second) {
+				descendants.push_back(candidateId);
+				pendingEntityIds.push_back(candidateId);
+			}
+		}
+	}
+
+	return descendants;
 }
 
 bool QFE::EntityManager::IsActiveEntity(uint32_t id) const {

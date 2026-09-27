@@ -6,6 +6,7 @@
 #include "framework/scene/CollisionTriggerSystem.h"
 
 #include <algorithm>
+#include <vector>
 
 namespace {
 	QFE::MATH::Vector3 GetWorldPositionFromMatrix(const QFE::MATH::Matrix4x4& worldMatrix) {
@@ -44,6 +45,16 @@ namespace {
 			worldAxisY * localOffset.y +
 			worldAxisZ * localOffset.z;
 	}
+
+	void RequestBulletEmitterPattern(
+		QFE::EntityManager& entityManager,
+		uint32_t entityId,
+		uint32_t patternIndex) {
+		if (entityManager.HasComponent<QFE::STG::BulletEmitterComponent>(entityId)) {
+			entityManager.GetComponent<QFE::STG::BulletEmitterComponent>(entityId)
+				.RequestEmit(patternIndex);
+		}
+	}
 }
 
 bool QFE::GAMESYSTEM::InputMovementSystem(
@@ -59,7 +70,9 @@ bool QFE::GAMESYSTEM::InputMovementSystem(
 
 	entityManager.Each<QFE::COMPONENTS::InputMovementComponent>(
 		[&](uint32_t entityId, QFE::COMPONENTS::InputMovementComponent& movement) {
-			if (!movement.enabled || movement.amount == 0.0f) {
+			if (!movement.enabled || movement.amount == 0.0f ||
+				(entityManager.HasComponent<QFE::STG::ShootingPlayerComponent>(entityId) &&
+					!entityManager.GetComponent<QFE::STG::ShootingPlayerComponent>(entityId).inputEnabled)) {
 				return;
 			}
 
@@ -174,6 +187,10 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 
 	// シューティングプレイヤーの実行
 	entityManager.Each<QFE::STG::ShootingPlayerComponent>([&](uint32_t entityId, QFE::STG::ShootingPlayerComponent& shootingPlayerComp) {
+		if (!shootingPlayerComp.inputEnabled) {
+			shootingPlayerComp.velocity = QFE::MATH::Vector3::Zero();
+			return;
+		}
 		if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 			QFE::MATH::EulerTransform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
 			float speed = shootingPlayerComp.speed;
@@ -222,53 +239,6 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 			playerTransform.rotate.z = QFE::MATH::SimpleEaseIn(playerTransform.rotate.z, targetRotateZ * rotatePower, 0.1f);
 			const QFE::MATH::Matrix4x4 playerWorldMatrix =
 				QFE::SCENE::GetWorldMatrix(entityManager, entityId);
-
-			// プレイヤーの射撃処理
-			if (shootingPlayerComp.shootTimer > 0.0f) {
-				shootingPlayerComp.shootTimer -= deltaTime;
-			} else {
-				shootingPlayerComp.shootTimer = 0.0f;
-			}
-			if (shootingPlayerComp.bombTimer > 0.0f) {
-				shootingPlayerComp.bombTimer -= deltaTime;
-			} else {
-				shootingPlayerComp.bombTimer = 0.0f;
-			}
-
-			// 入力トリガーコンポーネントがない古いシーンだけ、従来の射撃処理を使う。
-			if (!entityManager.HasComponent<QFE::STG::InputBulletEmitterTriggerComponent>(entityId) &&
-				inputInterface->GetKeyPress("Shot")) {
-				if (shootingPlayerComp.shootTimer <= 0.0f) {
-					if (entityManager.HasComponent<QFE::STG::BulletEmitterComponent>(entityId)) {
-						entityManager.GetComponent<QFE::STG::BulletEmitterComponent>(entityId).emitRequest = true;
-					} else {
-						uint32_t bulletEntityId =
-							sceneManager->LoadEntityOnCurrentSceneFromJsonObject(resources.assetDir + shootingPlayerComp.bulletPrefabName);
-
-						if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId)) {
-							QFE::MATH::EulerTransform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
-							bulletTransform.translate = GetWorldPositionWithOffset(
-								playerWorldMatrix, shootingPlayerComp.bulletSpawnOffset);
-						}
-					}
-					shootingPlayerComp.shootTimer = shootingPlayerComp.shootInterval;
-				}
-			}
-			// プレイヤーのボム処理
-			if (inputInterface->GetKeyRelease("Shot")) {
-				if(shootingPlayerComp.bombTimer <= 0.0f) {
-					shootingPlayerComp.bombTimer = shootingPlayerComp.bombInterval;
-
-					uint32_t bombEntityId =
-						sceneManager->LoadEntityOnCurrentSceneFromJsonObject(resources.assetDir + shootingPlayerComp.bombPrefabName);
-
-					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bombEntityId)) {
-						QFE::MATH::EulerTransform& bombTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bombEntityId).transform;
-						bombTransform.translate = GetWorldPositionWithOffset(
-							playerWorldMatrix, shootingPlayerComp.bombSpawnOffset);
-					}
-				}
-			}
 		}
 		});
 	return false;
@@ -535,86 +505,100 @@ bool QFE::GAMESYSTEM::BulletEmitterSystem(
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
 	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 
-	entityManager.Each<QFE::STG::BulletEmitterComponent>([&](uint32_t entityId, QFE::STG::BulletEmitterComponent& bulletEmitterComp) {
-		if (!bulletEmitterComp.emitRequest) {
-			return;
-		}
-		bulletEmitterComp.emitRequest = false;
+	entityManager.Each<QFE::STG::BulletEmitterComponent>(
+		[&](uint32_t entityId, QFE::STG::BulletEmitterComponent& bulletEmitterComp) {
+			std::vector<uint32_t> requestedPatterns;
+			requestedPatterns.swap(bulletEmitterComp.requestedPatternIndices);
+			if (bulletEmitterComp.emitRequest) {
+				requestedPatterns.push_back(0);
+				bulletEmitterComp.emitRequest = false;
+			}
+			if (requestedPatterns.empty()) {
+				return;
+			}
 
-		if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId) ||
-			bulletEmitterComp.emitBulletName.empty() || bulletEmitterComp.emitCount == 0) {
-			return;
-		}
+			if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+				return;
+			}
 
-		const QFE::MATH::Matrix4x4 emitterWorldMatrix =
-			QFE::SCENE::GetWorldMatrix(entityManager, entityId);
-		QFE::MATH::Vector3 worldAxisX = {
-			emitterWorldMatrix.m[0][0], emitterWorldMatrix.m[0][1], emitterWorldMatrix.m[0][2]
-		};
-		QFE::MATH::Vector3 worldAxisY = {
-			emitterWorldMatrix.m[1][0], emitterWorldMatrix.m[1][1], emitterWorldMatrix.m[1][2]
-		};
-		QFE::MATH::Vector3 worldAxisZ = {
-			emitterWorldMatrix.m[2][0], emitterWorldMatrix.m[2][1], emitterWorldMatrix.m[2][2]
-		};
-		worldAxisX = worldAxisX.Normalize();
-		worldAxisY = worldAxisY.Normalize();
-		worldAxisZ = worldAxisZ.Normalize();
-		const QFE::MATH::Vector3 emitterWorldPosition = {
-			emitterWorldMatrix.m[3][0], emitterWorldMatrix.m[3][1], emitterWorldMatrix.m[3][2]
-		};
-		// エミッターや親の拡縮率は、発射半径とオフセットへ影響させない。
-		const QFE::MATH::Vector3 sphereCenter = emitterWorldPosition +
-			worldAxisX * bulletEmitterComp.emitPos.x +
-			worldAxisY * bulletEmitterComp.emitPos.y +
-			worldAxisZ * bulletEmitterComp.emitPos.z;
-
-		QFE::MATH::Vector3 localBaseDirection = bulletEmitterComp.emitDir;
-		if (localBaseDirection.LengthSq() == 0.0f) {
-			localBaseDirection = { 0.0f, 0.0f, 1.0f };
-		}
-		QFE::MATH::Vector3 worldBaseDirection =
-			(worldAxisX * localBaseDirection.x +
-			 worldAxisY * localBaseDirection.y +
-			 worldAxisZ * localBaseDirection.z).Normalize();
-		if (worldBaseDirection.LengthSq() == 0.0f) {
-			worldBaseDirection = { 0.0f, 0.0f, 1.0f };
-		}
-
-		const QFE::MATH::Vector3 baseSpherical =
-			QFE::MATH::Vector3::CartesianToSpherical(worldBaseDirection);
-		const float radius = bulletEmitterComp.emitRadius > 0.0f
-			? bulletEmitterComp.emitRadius
-			: 0.0f;
-
-		for (uint32_t bulletIndex = 0; bulletIndex < bulletEmitterComp.emitCount; ++bulletIndex) {
-			// 球座標は x=半径、y=極角theta、z=方位角phi。
-			const QFE::MATH::Vector3 bulletSpherical = {
-				1.0f,
-				baseSpherical.y + bulletEmitterComp.bulletAngleX * static_cast<float>(bulletIndex),
-				baseSpherical.z + bulletEmitterComp.bulletAngleY * static_cast<float>(bulletIndex)
+			const QFE::MATH::Matrix4x4 emitterWorldMatrix =
+				QFE::SCENE::GetWorldMatrix(entityManager, entityId);
+			QFE::MATH::Vector3 worldAxisX = {
+				emitterWorldMatrix.m[0][0], emitterWorldMatrix.m[0][1], emitterWorldMatrix.m[0][2]
 			};
-			const QFE::MATH::Vector3 bulletDirection =
-				QFE::MATH::Vector3::SphericalToCartesian(bulletSpherical).Normalize();
-			const QFE::MATH::Vector3 bulletPosition = sphereCenter + bulletDirection * radius;
+			QFE::MATH::Vector3 worldAxisY = {
+				emitterWorldMatrix.m[1][0], emitterWorldMatrix.m[1][1], emitterWorldMatrix.m[1][2]
+			};
+			QFE::MATH::Vector3 worldAxisZ = {
+				emitterWorldMatrix.m[2][0], emitterWorldMatrix.m[2][1], emitterWorldMatrix.m[2][2]
+			};
+			worldAxisX = worldAxisX.Normalize();
+			worldAxisY = worldAxisY.Normalize();
+			worldAxisZ = worldAxisZ.Normalize();
+			const QFE::MATH::Vector3 emitterWorldPosition = {
+				emitterWorldMatrix.m[3][0], emitterWorldMatrix.m[3][1], emitterWorldMatrix.m[3][2]
+			};
 
-			const uint32_t bulletEntityId = sceneManager->LoadEntityOnCurrentSceneFromJsonObject(
-				resources.assetDir + bulletEmitterComp.emitBulletName);
-			if (bulletEntityId == UINT32_MAX) {
-				continue;
-			}
+			for (const uint32_t patternIndex : requestedPatterns) {
+				if (patternIndex >= bulletEmitterComp.patterns.size()) {
+					continue;
+				}
+				const QFE::STG::BulletEmitterPattern& pattern = bulletEmitterComp.patterns[patternIndex];
+				if (pattern.emitBulletName.empty() || pattern.emitCount == 0) {
+					continue;
+				}
 
-			if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId)) {
-				QFE::MATH::EulerTransform& bulletTransform =
-					entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
-				bulletTransform.translate = bulletPosition;
-				bulletTransform.rotate = QFE::MATH::Vector3::LookAt(
-					bulletPosition, bulletPosition + bulletDirection);
+				// エミッターや親の拡縮率は、発射半径とオフセットへ影響させない。
+				const QFE::MATH::Vector3 sphereCenter = emitterWorldPosition +
+					worldAxisX * pattern.emitPos.x +
+					worldAxisY * pattern.emitPos.y +
+					worldAxisZ * pattern.emitPos.z;
+
+				QFE::MATH::Vector3 localBaseDirection = pattern.emitDir;
+				if (localBaseDirection.LengthSq() == 0.0f) {
+					localBaseDirection = { 0.0f, 0.0f, 1.0f };
+				}
+				QFE::MATH::Vector3 worldBaseDirection =
+					(worldAxisX * localBaseDirection.x +
+					 worldAxisY * localBaseDirection.y +
+					 worldAxisZ * localBaseDirection.z).Normalize();
+				if (worldBaseDirection.LengthSq() == 0.0f) {
+					worldBaseDirection = { 0.0f, 0.0f, 1.0f };
+				}
+
+				const QFE::MATH::Vector3 baseSpherical =
+					QFE::MATH::Vector3::CartesianToSpherical(worldBaseDirection);
+				const float radius = pattern.emitRadius > 0.0f ? pattern.emitRadius : 0.0f;
+
+				for (uint32_t bulletIndex = 0; bulletIndex < pattern.emitCount; ++bulletIndex) {
+					// 球座標は x=半径、y=極角theta、z=方位角phi。
+					const QFE::MATH::Vector3 bulletSpherical = {
+						1.0f,
+						baseSpherical.y + pattern.bulletAngleX * static_cast<float>(bulletIndex),
+						baseSpherical.z + pattern.bulletAngleY * static_cast<float>(bulletIndex)
+					};
+					const QFE::MATH::Vector3 bulletDirection =
+						QFE::MATH::Vector3::SphericalToCartesian(bulletSpherical).Normalize();
+					const QFE::MATH::Vector3 bulletPosition = sphereCenter + bulletDirection * radius;
+
+					const uint32_t bulletEntityId = sceneManager->LoadEntityOnCurrentSceneFromJsonObject(
+						resources.assetDir + pattern.emitBulletName);
+					if (bulletEntityId == UINT32_MAX) {
+						continue;
+					}
+
+					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId)) {
+						QFE::MATH::EulerTransform& bulletTransform =
+							entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
+						bulletTransform.translate = bulletPosition;
+						bulletTransform.rotate = QFE::MATH::Vector3::LookAt(
+							bulletPosition, bulletPosition + bulletDirection);
+					}
+					if (entityManager.HasComponent<QFE::STG::BulletComponent>(bulletEntityId)) {
+						entityManager.GetComponent<QFE::STG::BulletComponent>(bulletEntityId).dir = bulletDirection;
+					}
+				}
 			}
-			if (entityManager.HasComponent<QFE::STG::BulletComponent>(bulletEntityId)) {
-				entityManager.GetComponent<QFE::STG::BulletComponent>(bulletEntityId).dir = bulletDirection;
-			}
-		}
 		});
 
 	return false;
@@ -631,104 +615,125 @@ bool QFE::GAMESYSTEM::BulletEmitterTriggerSystem(
 
 	entityManager.Each<QFE::STG::InputBulletEmitterTriggerComponent>(
 		[&](uint32_t entityId, QFE::STG::InputBulletEmitterTriggerComponent& triggerComp) {
-			if (!triggerComp.enabled ||
-				!entityManager.HasComponent<QFE::STG::BulletEmitterComponent>(entityId)) {
-				triggerComp.repeatTimer = 0.0f;
+			if (entityManager.HasComponent<QFE::STG::ShootingPlayerComponent>(entityId) &&
+				!entityManager.GetComponent<QFE::STG::ShootingPlayerComponent>(entityId).inputEnabled) {
+				for (QFE::STG::InputBulletEmitterTriggerSetting& trigger : triggerComp.triggers) {
+					trigger.repeatTimer = 0.0f;
+				}
 				return;
 			}
 
-			auto getInput = [&](uint32_t triggerMode) {
-				bool active = false;
-				if (!triggerComp.inputActionName.empty()) {
-					switch (triggerMode) {
-					case QFE::STG::BulletEmitterInputTrigger:
-						active |= inputInterface->GetKeyTrigger(triggerComp.inputActionName);
-						break;
-					case QFE::STG::BulletEmitterInputRelease:
-						active |= inputInterface->GetKeyRelease(triggerComp.inputActionName);
-						break;
-					default:
-						active |= inputInterface->GetKeyPress(triggerComp.inputActionName);
-						break;
-					}
+			if (!entityManager.HasComponent<QFE::STG::BulletEmitterComponent>(entityId)) {
+				for (QFE::STG::InputBulletEmitterTriggerSetting& trigger : triggerComp.triggers) {
+					trigger.repeatTimer = 0.0f;
 				}
-				if (triggerComp.mouseButton >= 0 && triggerComp.mouseButton <= INT8_MAX) {
-					const int8_t mouseButton = static_cast<int8_t>(triggerComp.mouseButton);
-					switch (triggerMode) {
-					case QFE::STG::BulletEmitterInputTrigger:
-						active |= inputInterface->GetMouseTrigger(mouseButton);
-						break;
-					case QFE::STG::BulletEmitterInputRelease:
-						active |= inputInterface->GetMouseRelease(mouseButton);
-						break;
-					default:
-						active |= inputInterface->GetMousePress(mouseButton);
-						break;
-					}
-				}
-				if (triggerComp.gamePadButton != 0 && triggerComp.gamePadButton <= UINT16_MAX) {
-					const uint16_t gamePadButton = static_cast<uint16_t>(triggerComp.gamePadButton);
-					switch (triggerMode) {
-					case QFE::STG::BulletEmitterInputTrigger:
-						active |= inputInterface->GetGamePadTrigger(gamePadButton);
-						break;
-					case QFE::STG::BulletEmitterInputRelease:
-						active |= inputInterface->GetGamePadRelease(gamePadButton);
-						break;
-					default:
-						active |= inputInterface->GetGamePadPress(gamePadButton);
-						break;
-					}
-				}
-				return active;
-			};
-
-			const uint32_t triggerMode = triggerComp.triggerMode;
-			const bool inputActive = getInput(triggerMode);
-			bool requestEmit = false;
-			if (triggerMode == QFE::STG::BulletEmitterInputPress) {
-				if (!inputActive) {
-					triggerComp.repeatTimer = 0.0f;
-					return;
-				}
-				triggerComp.repeatTimer -= deltaTime;
-				if (triggerComp.repeatTimer <= 0.0f) {
-					requestEmit = true;
-					triggerComp.repeatTimer = triggerComp.repeatInterval > 0.0f
-						? triggerComp.repeatInterval
-						: 0.0f;
-				}
-			} else {
-				requestEmit = inputActive;
+				return;
 			}
 
-			if (requestEmit) {
-				entityManager.GetComponent<QFE::STG::BulletEmitterComponent>(entityId).emitRequest = true;
+			for (QFE::STG::InputBulletEmitterTriggerSetting& trigger : triggerComp.triggers) {
+				if (!trigger.enabled) {
+					trigger.repeatTimer = 0.0f;
+					continue;
+				}
+
+				auto getInput = [&](uint32_t triggerMode) {
+					bool active = false;
+					if (!trigger.inputActionName.empty()) {
+						switch (triggerMode) {
+						case QFE::STG::BulletEmitterInputTrigger:
+							active |= inputInterface->GetKeyTrigger(trigger.inputActionName);
+							break;
+						case QFE::STG::BulletEmitterInputRelease:
+							active |= inputInterface->GetKeyRelease(trigger.inputActionName);
+							break;
+						default:
+							active |= inputInterface->GetKeyPress(trigger.inputActionName);
+							break;
+						}
+					}
+					if (trigger.mouseButton >= 0 && trigger.mouseButton <= INT8_MAX) {
+						const int8_t mouseButton = static_cast<int8_t>(trigger.mouseButton);
+						switch (triggerMode) {
+						case QFE::STG::BulletEmitterInputTrigger:
+							active |= inputInterface->GetMouseTrigger(mouseButton);
+							break;
+						case QFE::STG::BulletEmitterInputRelease:
+							active |= inputInterface->GetMouseRelease(mouseButton);
+							break;
+						default:
+							active |= inputInterface->GetMousePress(mouseButton);
+							break;
+						}
+					}
+					if (trigger.gamePadButton != 0 && trigger.gamePadButton <= UINT16_MAX) {
+						const uint16_t gamePadButton = static_cast<uint16_t>(trigger.gamePadButton);
+						switch (triggerMode) {
+						case QFE::STG::BulletEmitterInputTrigger:
+							active |= inputInterface->GetGamePadTrigger(gamePadButton);
+							break;
+						case QFE::STG::BulletEmitterInputRelease:
+							active |= inputInterface->GetGamePadRelease(gamePadButton);
+							break;
+						default:
+							active |= inputInterface->GetGamePadPress(gamePadButton);
+							break;
+						}
+					}
+					return active;
+				};
+
+				const uint32_t triggerMode = trigger.triggerMode;
+				const bool inputActive = getInput(triggerMode);
+				bool requestEmit = false;
+				if (triggerMode == QFE::STG::BulletEmitterInputPress) {
+					if (!inputActive) {
+						trigger.repeatTimer = 0.0f;
+						continue;
+					}
+					trigger.repeatTimer -= deltaTime;
+					if (trigger.repeatTimer <= 0.0f) {
+						requestEmit = true;
+						trigger.repeatTimer = trigger.repeatInterval > 0.0f
+							? trigger.repeatInterval
+							: 0.0f;
+					}
+				} else {
+					requestEmit = inputActive;
+				}
+
+				if (requestEmit) {
+					RequestBulletEmitterPattern(entityManager, entityId, trigger.patternIndex);
+				}
 			}
 		});
 
 	entityManager.Each<QFE::STG::PeriodicBulletEmitterTriggerComponent>(
 		[&](uint32_t entityId, QFE::STG::PeriodicBulletEmitterTriggerComponent& triggerComp) {
-			if (!triggerComp.enabled ||
-				!entityManager.HasComponent<QFE::STG::BulletEmitterComponent>(entityId)) {
-				triggerComp.initialized = false;
-				triggerComp.remainingTime = 0.0f;
+			if (!entityManager.HasComponent<QFE::STG::BulletEmitterComponent>(entityId)) {
+				for (QFE::STG::PeriodicBulletEmitterTriggerSetting& trigger : triggerComp.triggers) {
+					trigger.initialized = false;
+					trigger.remainingTime = 0.0f;
+				}
 				return;
 			}
 
-			if (!triggerComp.initialized) {
-				triggerComp.initialized = true;
-				triggerComp.remainingTime = triggerComp.emitOnStart
-					? 0.0f
-					: triggerComp.interval;
-			}
+			for (QFE::STG::PeriodicBulletEmitterTriggerSetting& trigger : triggerComp.triggers) {
+				if (!trigger.enabled) {
+					trigger.initialized = false;
+					trigger.remainingTime = 0.0f;
+					continue;
+				}
 
-			triggerComp.remainingTime -= deltaTime;
-			if (triggerComp.remainingTime <= 0.0f) {
-				entityManager.GetComponent<QFE::STG::BulletEmitterComponent>(entityId).emitRequest = true;
-				triggerComp.remainingTime = triggerComp.interval > 0.0f
-					? triggerComp.interval
-					: 0.0f;
+				if (!trigger.initialized) {
+					trigger.initialized = true;
+					trigger.remainingTime = trigger.emitOnStart ? 0.0f : trigger.interval;
+				}
+
+				trigger.remainingTime -= deltaTime;
+				if (trigger.remainingTime <= 0.0f) {
+					RequestBulletEmitterPattern(entityManager, entityId, trigger.patternIndex);
+					trigger.remainingTime = trigger.interval > 0.0f ? trigger.interval : 0.0f;
+				}
 			}
 		});
 

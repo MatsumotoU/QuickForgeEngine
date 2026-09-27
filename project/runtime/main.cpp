@@ -7,6 +7,7 @@
 #include "framework/application/WindowsEngineResources.h"
 #include "framework/scene/EventSystem.h"
 #include "framework/scene/AnimationSystem.h"
+#include "framework/scene/SceneChangeSystem.h"
 #include "framework/scene/SplineMovementSystem.h"
 
 #include "window/GameWindowManager.h"
@@ -102,6 +103,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::GAMESYSTEM::EnemySpawnerSystem(engineSystems, engineResources, deltaTime);
 		// スプライン移動
 		QFE::FRAMEWORK::UpdateSplineMovement(entityManager, deltaTime);
+		// シーン切り替えリクエスト
+		QFE::FRAMEWORK::UpdateSceneChangeComponents(sceneManager);
 
 		// カメラの更新
 		engineResources.viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager, &engineResources.cameraPosition);
