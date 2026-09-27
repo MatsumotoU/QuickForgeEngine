@@ -1,4 +1,5 @@
 #include "JsonArchive.h"
+#include "components/SplineControlPoint.h"
 
 void QFE::JsonArchive::Process(const std::string& name, bool& value) {
     if (isLoading_) {
@@ -164,6 +165,65 @@ void QFE::JsonArchive::Process(const std::string& name, std::vector<MATH::EulerT
         }
         json_[name] = std::move(points);
     }
+}
+
+void QFE::JsonArchive::Process(const std::string& name, std::vector<SCENE::SplineControlPoint>& value) {
+	if (isLoading_) {
+		if (!json_.contains(name) || !json_[name].is_array()) {
+			return;
+		}
+
+		// 旧形式のスプラインには全体のspeedしかないため、その値を各区間の初期値として引き継ぐ。
+		const float legacySecondsToNextPoint = json_.value("speed", 1.0f);
+		std::vector<SCENE::SplineControlPoint> loadedPoints;
+		loadedPoints.reserve(json_[name].size());
+		for (const nlohmann::json& pointJson : json_[name]) {
+			SCENE::SplineControlPoint point{};
+			point.secondsToNextPoint = pointJson.is_object()
+				? pointJson.value("secondsToNextPoint", legacySecondsToNextPoint)
+				: legacySecondsToNextPoint;
+
+			if (pointJson.is_object()) {
+				const nlohmann::json* transformJson = &pointJson;
+				const auto transform = pointJson.find("transform");
+				if (transform != pointJson.end() && transform->is_object()) {
+					transformJson = &*transform;
+				}
+
+				const auto readVector = [transformJson](const char* key, MATH::Vector3& vector) {
+					const auto field = transformJson->find(key);
+					if (field == transformJson->end() || !field->is_object()) {
+						return;
+					}
+					vector.x = field->value("x", vector.x);
+					vector.y = field->value("y", vector.y);
+					vector.z = field->value("z", vector.z);
+				};
+				readVector("scale", point.transform.scale);
+				readVector("rotate", point.transform.rotate);
+				readVector("translate", point.transform.translate);
+			}
+			loadedPoints.push_back(point);
+		}
+		value = std::move(loadedPoints);
+	} else {
+		nlohmann::json points = nlohmann::json::array();
+		for (const SCENE::SplineControlPoint& point : value) {
+			nlohmann::json pointJson;
+			pointJson["transform"]["scale"] = {
+				{ "x", point.transform.scale.x }, { "y", point.transform.scale.y }, { "z", point.transform.scale.z }
+			};
+			pointJson["transform"]["rotate"] = {
+				{ "x", point.transform.rotate.x }, { "y", point.transform.rotate.y }, { "z", point.transform.rotate.z }
+			};
+			pointJson["transform"]["translate"] = {
+				{ "x", point.transform.translate.x }, { "y", point.transform.translate.y }, { "z", point.transform.translate.z }
+			};
+			pointJson["secondsToNextPoint"] = point.secondsToNextPoint;
+			points.push_back(std::move(pointJson));
+		}
+		json_[name] = std::move(points);
+	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, MATH::Matrix4x4& value) {

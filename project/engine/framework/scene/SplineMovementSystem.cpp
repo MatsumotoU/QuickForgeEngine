@@ -1,7 +1,7 @@
 #include "SplineMovementSystem.h"
 
 #include "design-patterns/EntityManager.h"
-#include "components/AllComponent.h"
+#include "components/SplineMovementComponent.h"
 #include "components/TransformHierarchy.h"
 
 #include <algorithm>
@@ -13,7 +13,6 @@ namespace {
 	struct SplineSample {
 		QFE::MATH::EulerTransform transform;
 		QFE::MATH::Vector3 worldPosition;
-		float distance = 0.0f;
 	};
 
 	QFE::MATH::Vector3 CatmullRom(
@@ -30,15 +29,15 @@ namespace {
 	}
 
 	QFE::MATH::EulerTransform EvaluateSegment(
-		const std::vector<QFE::MATH::EulerTransform>& points,
+		const std::vector<QFE::SCENE::SplineControlPoint>& points,
 		size_t segmentIndex,
 		float t) {
 		const size_t startIndex = segmentIndex;
 		const size_t endIndex = segmentIndex + 1;
-		const auto& p1 = points[startIndex];
-		const auto& p2 = points[endIndex];
-		const auto& p0 = points[startIndex == 0 ? startIndex : startIndex - 1];
-		const auto& p3 = points[endIndex + 1 < points.size() ? endIndex + 1 : endIndex];
+		const auto& p1 = points[startIndex].transform;
+		const auto& p2 = points[endIndex].transform;
+		const auto& p0 = points[startIndex == 0 ? startIndex : startIndex - 1].transform;
+		const auto& p3 = points[endIndex + 1 < points.size() ? endIndex + 1 : endIndex].transform;
 
 		QFE::MATH::EulerTransform result;
 		result.translate = CatmullRom(p0.translate, p1.translate, p2.translate, p3.translate, t);
@@ -56,7 +55,7 @@ namespace {
 	}
 
 	std::vector<SplineSample> BuildSamples(
-		const std::vector<QFE::MATH::EulerTransform>& points,
+		const std::vector<QFE::SCENE::SplineControlPoint>& points,
 		const QFE::MATH::Matrix4x4& parentWorldMatrix) {
 		std::vector<SplineSample> samples;
 		if (points.size() < 2) {
@@ -76,41 +75,50 @@ namespace {
 				SplineSample sample;
 				sample.transform = EvaluateSegment(points, segment, t);
 				sample.worldPosition = ToWorldPosition(sample.transform.translate, parentWorldMatrix);
-				sample.distance = samples.back().distance +
-					(sample.worldPosition - samples.back().worldPosition).Length();
 				samples.push_back(sample);
 			}
 		}
 		return samples;
 	}
 
-	QFE::MATH::EulerTransform FindTransformAtDistance(
-		const std::vector<SplineSample>& samples,
-		float distance) {
-		if (distance <= 0.0f || samples.size() < 2) {
-			return samples.front().transform;
+	float GetSegmentDurationSeconds(const QFE::SCENE::SplineControlPoint& point) {
+		constexpr float kMinimumSegmentDurationSeconds = 0.01f;
+		return point.secondsToNextPoint < kMinimumSegmentDurationSeconds
+			? kMinimumSegmentDurationSeconds
+			: point.secondsToNextPoint;
+	}
+
+	float GetTotalDurationSeconds(const std::vector<QFE::SCENE::SplineControlPoint>& points) {
+		float totalDuration = 0.0f;
+		for (size_t segment = 0; segment + 1 < points.size(); ++segment) {
+			totalDuration += GetSegmentDurationSeconds(points[segment]);
 		}
-		if (distance >= samples.back().distance) {
-			return samples.back().transform;
+		return totalDuration;
+	}
+
+	QFE::MATH::EulerTransform FindTransformAtTime(
+		const std::vector<QFE::SCENE::SplineControlPoint>& points,
+		float elapsedTimeSeconds) {
+		if (points.size() < 2) {
+			return points.front().transform;
 		}
 
-		const auto end = std::lower_bound(
-			samples.begin() + 1, samples.end(), distance,
-			[](const SplineSample& sample, float targetDistance) {
-				return sample.distance < targetDistance;
-			});
-		const SplineSample& next = *end;
-		const SplineSample& previous = *(end - 1);
-		const float sectionLength = next.distance - previous.distance;
-		const float t = sectionLength > 0.0f
-			? (distance - previous.distance) / sectionLength
-			: 0.0f;
-
-		QFE::MATH::EulerTransform result;
-		result.translate = QFE::MATH::Vector3::Lerp(previous.transform.translate, next.transform.translate, t);
-		result.rotate = QFE::MATH::Vector3::Lerp(previous.transform.rotate, next.transform.rotate, t);
-		result.scale = QFE::MATH::Vector3::Lerp(previous.transform.scale, next.transform.scale, t);
-		return result;
+		float remainingTime = elapsedTimeSeconds < 0.0f ? 0.0f : elapsedTimeSeconds;
+		const size_t segmentCount = points.size() - 1;
+		for (size_t segment = 0; segment < segmentCount; ++segment) {
+			const float segmentDuration = GetSegmentDurationSeconds(points[segment]);
+			if (remainingTime < segmentDuration || segment + 1 == segmentCount) {
+				float t = remainingTime / segmentDuration;
+				if (t < 0.0f) {
+					t = 0.0f;
+				} else if (t > 1.0f) {
+					t = 1.0f;
+				}
+				return EvaluateSegment(points, segment, t);
+			}
+			remainingTime -= segmentDuration;
+		}
+		return EvaluateSegment(points, segmentCount - 1, 1.0f);
 	}
 }
 
@@ -119,37 +127,28 @@ void QFE::FRAMEWORK::UpdateSplineMovement(
 	float deltaTime) {
 	entityManager.Each<QFE::SCENE::SplineMovementComponent>(
 		[&](uint32_t entityId, QFE::SCENE::SplineMovementComponent& spline) {
-			if (spline.controlPoints.size() < 2) {
-				return;
-			}
-
-			const QFE::MATH::Matrix4x4 parentWorldMatrix =
-				QFE::SCENE::GetParentWorldMatrix(entityManager, entityId);
-			const std::vector<SplineSample> samples = BuildSamples(spline.controlPoints, parentWorldMatrix);
-			if (samples.size() < 2) {
-				return;
-			}
-
-			if (!spline.enabled || !entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+			if (!spline.enabled || spline.finished || spline.controlPoints.size() < 2 ||
+				!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 				return;
 			}
 
 			QFE::SCENE::TransformComponent& transform =
 				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId);
 			if (!spline.movementStarted) {
-				spline.distanceAlongPath = 0.0f;
+				spline.elapsedTimeSeconds = 0.0f;
 				spline.movementStarted = true;
-				transform.transform = samples.front().transform;
+				transform.transform = EvaluateSegment(spline.controlPoints, 0, 0.0f);
 			}
 
-			if (!spline.finished && spline.speed > 0.0f && deltaTime > 0.0f) {
-				spline.distanceAlongPath += spline.speed * deltaTime;
-				if (spline.distanceAlongPath >= samples.back().distance) {
-					spline.distanceAlongPath = samples.back().distance;
+			const float totalDuration = GetTotalDurationSeconds(spline.controlPoints);
+			if (!spline.finished && deltaTime > 0.0f) {
+				spline.elapsedTimeSeconds += deltaTime;
+				if (spline.elapsedTimeSeconds >= totalDuration) {
+					spline.elapsedTimeSeconds = totalDuration;
 					spline.finished = true;
 				}
 			}
-			transform.transform = FindTransformAtDistance(samples, spline.distanceAlongPath);
+			transform.transform = FindTransformAtTime(spline.controlPoints, spline.elapsedTimeSeconds);
 		});
 }
 

@@ -332,7 +332,7 @@
                         }
                     },
                     {
-                        "secondsToNextPoint": 1.0,
+                        "secondsToNextPoint": 15.0,
                         "transform": {
                             "rotate": {
                                 "x": 0.0,

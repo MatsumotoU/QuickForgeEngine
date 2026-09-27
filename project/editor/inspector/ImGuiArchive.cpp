@@ -1,6 +1,7 @@
 #include "ImGuiArchive.h"
 #include "design-patterns/EntityManager.h"
 #include "components/ObjectInfoComponent.h"
+#include "components/SplineControlPoint.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
 
@@ -385,9 +386,48 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::vector<MAT
 		value.erase(value.begin() + pointToRemove);
 	}
 	if (ImGui::Button("Add Point")) {
-		MATH::EulerTransform point;
+		MATH::EulerTransform point{};
 		if (!value.empty()) {
-			point.translate = value.back().translate + MATH::Vector3{ 0.0f, 0.0f, 1.0f };
+			point = value.back();
+		}
+		value.push_back(point);
+	}
+	ImGui::PopID();
+}
+
+void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::vector<SCENE::SplineControlPoint>& value) {
+	ImGui::PushID(name.c_str());
+	ImGui::TextUnformatted(MakeLabel(name).c_str());
+	int pointToRemove = -1;
+	for (size_t index = 0; index < value.size(); ++index) {
+		ImGui::PushID(static_cast<int>(index));
+		const std::string header = "Point " + std::to_string(index + 1);
+		const bool expanded = ImGui::TreeNode(header.c_str());
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Remove")) {
+			pointToRemove = static_cast<int>(index);
+		}
+		if (expanded) {
+			SCENE::SplineControlPoint& point = value[index];
+			ImGui::DragFloat3("Position", &point.transform.translate.x, kDragSpeed);
+			ImGui::DragFloat3("Rotation", &point.transform.rotate.x, kDragSpeed);
+			ImGui::DragFloat3("Scale", &point.transform.scale.x, kDragSpeed);
+			const char* durationLabel = index + 1 < value.size()
+				? "Seconds to next point"
+				: "Seconds for next segment";
+			ImGui::DragFloat(durationLabel, &point.secondsToNextPoint,
+				kDragSpeed, 0.01f, 100000.0f, "%.2f s");
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
+	if (pointToRemove >= 0) {
+		value.erase(value.begin() + pointToRemove);
+	}
+	if (ImGui::Button("Add Point")) {
+		SCENE::SplineControlPoint point{};
+		if (!value.empty()) {
+			point = value.back();
 		}
 		value.push_back(point);
 	}

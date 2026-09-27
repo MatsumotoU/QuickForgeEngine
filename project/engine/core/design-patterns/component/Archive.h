@@ -6,6 +6,10 @@
 #include "EntityReference.h"
 
 namespace QFE {
+	namespace SCENE {
+		struct SplineControlPoint;
+	}
+
     /// @brief 外部からコンポーネントのメンバにアクセスするためのインターフェース
     class Archive {
     public:
@@ -27,6 +31,7 @@ namespace QFE {
 		// 数学系の型のバインディング
 		virtual void Process(const std::string& name, MATH::EulerTransform& value) = 0;
 		virtual void Process(const std::string& name, std::vector<MATH::EulerTransform>& value) = 0;
+		virtual void Process(const std::string& name, std::vector<SCENE::SplineControlPoint>& value) = 0;
         virtual void Process(const std::string& name, MATH::Matrix4x4& value) = 0;
         virtual void Process(const std::string& name, MATH::Bit32& value) = 0;
         virtual void Process(const std::string& name, EntityReference& value) = 0;

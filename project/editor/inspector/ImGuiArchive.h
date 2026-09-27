@@ -33,6 +33,7 @@ namespace QFE::EDITOR {
 
 		void Process(const std::string& name, MATH::EulerTransform& value) override;
 		void Process(const std::string& name, std::vector<MATH::EulerTransform>& value) override;
+		void Process(const std::string& name, std::vector<SCENE::SplineControlPoint>& value) override;
 		void Process(const std::string& name, MATH::Matrix4x4& value) override;
 		void Process(const std::string& name, MATH::Bit32& value) override;
 		void Process(const std::string& name, EntityReference& value) override;

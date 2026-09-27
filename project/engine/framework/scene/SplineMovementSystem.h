@@ -15,12 +15,12 @@ namespace QFE::FRAMEWORK {
 		const QFE::MATH::Vector3&,
 		const QFE::MATH::Vector4&)>;
 
-	/// @brief エンティティを制御点に沿って移動させる。
+	/// @brief Moves an entity along its spline control points.
 	void UpdateSplineMovement(
 		QFE::EntityManager& entityManager,
 		float deltaTime);
 
-	/// @brief スプラインの制御点をワールド空間の線として描画する。
+	/// @brief Draws spline control points as world-space line segments.
 	void DrawSplineMovementPaths(
 		const QFE::EntityManager& entityManager,
 		const SplineLineDrawer& drawLine);
