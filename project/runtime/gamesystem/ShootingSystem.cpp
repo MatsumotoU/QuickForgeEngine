@@ -7,6 +7,45 @@
 
 #include <algorithm>
 
+namespace {
+	QFE::MATH::Vector3 GetWorldPositionFromMatrix(const QFE::MATH::Matrix4x4& worldMatrix) {
+		return {
+			worldMatrix.m[3][0],
+			worldMatrix.m[3][1],
+			worldMatrix.m[3][2]
+		};
+	}
+
+	QFE::MATH::Vector3 GetWorldPosition(
+		const QFE::EntityManager& entityManager,
+		uint32_t entityId) {
+		return GetWorldPositionFromMatrix(QFE::SCENE::GetWorldMatrix(entityManager, entityId));
+	}
+
+	QFE::MATH::Vector3 GetWorldPositionWithOffset(
+		const QFE::MATH::Matrix4x4& worldMatrix,
+		const QFE::MATH::Vector3& localOffset) {
+		QFE::MATH::Vector3 worldAxisX = {
+			worldMatrix.m[0][0], worldMatrix.m[0][1], worldMatrix.m[0][2]
+		};
+		QFE::MATH::Vector3 worldAxisY = {
+			worldMatrix.m[1][0], worldMatrix.m[1][1], worldMatrix.m[1][2]
+		};
+		QFE::MATH::Vector3 worldAxisZ = {
+			worldMatrix.m[2][0], worldMatrix.m[2][1], worldMatrix.m[2][2]
+		};
+		// Follow the parent's rotation without letting scale change the configured spawn offset.
+		worldAxisX = worldAxisX.Normalize();
+		worldAxisY = worldAxisY.Normalize();
+		worldAxisZ = worldAxisZ.Normalize();
+
+		return GetWorldPositionFromMatrix(worldMatrix) +
+			worldAxisX * localOffset.x +
+			worldAxisY * localOffset.y +
+			worldAxisZ * localOffset.z;
+	}
+}
+
 bool QFE::GAMESYSTEM::InputMovementSystem(
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
@@ -181,6 +220,8 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 
 			// プレイヤーの回転処理（Z軸回転）
 			playerTransform.rotate.z = QFE::MATH::SimpleEaseIn(playerTransform.rotate.z, targetRotateZ * rotatePower, 0.1f);
+			const QFE::MATH::Matrix4x4 playerWorldMatrix =
+				QFE::SCENE::GetWorldMatrix(entityManager, entityId);
 
 			// プレイヤーの射撃処理
 			if (shootingPlayerComp.shootTimer > 0.0f) {
@@ -206,7 +247,8 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 
 						if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId)) {
 							QFE::MATH::EulerTransform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
-							bulletTransform.translate = playerTransform.translate + shootingPlayerComp.bulletSpawnOffset;
+							bulletTransform.translate = GetWorldPositionWithOffset(
+								playerWorldMatrix, shootingPlayerComp.bulletSpawnOffset);
 						}
 					}
 					shootingPlayerComp.shootTimer = shootingPlayerComp.shootInterval;
@@ -222,7 +264,8 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 
 					if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bombEntityId)) {
 						QFE::MATH::EulerTransform& bombTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bombEntityId).transform;
-						bombTransform.translate = playerTransform.translate + shootingPlayerComp.bombSpawnOffset;
+						bombTransform.translate = GetWorldPositionWithOffset(
+							playerWorldMatrix, shootingPlayerComp.bombSpawnOffset);
 					}
 				}
 			}
@@ -287,8 +330,7 @@ bool QFE::GAMESYSTEM::ShootingEnemySystem(
 	std::vector<QFE::MATH::Vector3> playerPositionsE;
 	entityManager.Each<QFE::STG::ShootingPlayerComponent>([&](uint32_t entityId, QFE::STG::ShootingPlayerComponent& shootingPlayerComp) {
 		if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-			QFE::MATH::EulerTransform& playerTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
-			playerPositionsE.push_back(playerTransform.translate);
+			playerPositionsE.push_back(GetWorldPosition(entityManager, entityId));
 		}
 		});
 	entityManager.Each<QFE::STG::EnemyAIComponent>([&](uint32_t entityId, QFE::STG::EnemyAIComponent& enemyAIComp) {
@@ -297,11 +339,11 @@ bool QFE::GAMESYSTEM::ShootingEnemySystem(
 			enemyAIComp.shotTimer = enemyAIComp.shotInterval;
 			uint32_t bulletEntityId =
 				sceneManager->LoadEntityOnCurrentSceneFromJsonObject(resources.assetDir + enemyAIComp.bulletName);
+			const QFE::MATH::Vector3 enemyWorldPosition = GetWorldPosition(entityManager, entityId);
 			if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId) &&
 				entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 				QFE::MATH::EulerTransform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
-				QFE::MATH::EulerTransform& enemyTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
-				bulletTransform.translate = enemyTransform.translate;
+				bulletTransform.translate = enemyWorldPosition;
 			}
 			// プレイヤーの位置に向かって弾丸を発射する
 			if (!playerPositionsE.empty()) {
@@ -309,8 +351,7 @@ bool QFE::GAMESYSTEM::ShootingEnemySystem(
 				if (entityManager.HasComponent<QFE::STG::BulletComponent>(bulletEntityId) &&
 					entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId)) {
 					QFE::STG::BulletComponent& bulletComp = entityManager.GetComponent<QFE::STG::BulletComponent>(bulletEntityId);
-					QFE::MATH::EulerTransform& bulletTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(bulletEntityId).transform;
-					bulletComp.dir = (targetPosition - bulletTransform.translate).Normalize();
+					bulletComp.dir = (targetPosition - enemyWorldPosition).Normalize();
 				}
 			}
 		}

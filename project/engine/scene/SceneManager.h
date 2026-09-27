@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneObject.h"
+#include <cstdint>
 #include <nlohmann/json.hpp>
 
 
@@ -23,6 +24,7 @@ namespace QFE::SCENE {
 		void LoadCurrentSceneFromJson(const std::string& filePath);
 		/// @brief 現在のシーンが読み書きされているファイルパスを取得します.
 		const std::string& GetCurrentScenePath() const;
+		uint64_t GetSceneRevision() const { return sceneRevision_; }
 
 		/// @brief JSONファイルから現在のシーンをロードし、JSONオブジェクトとして返します.
 		nlohmann::json LoadCurrentSceneToJson(const std::string& filePath);
@@ -38,5 +40,6 @@ namespace QFE::SCENE {
 		SceneObject currentScene_;
 		/// @brief 現在のシーンの保存先です. 未保存の場合は空文字列です.
 		std::string currentScenePath_;
+		uint64_t sceneRevision_ = 0;
 	};
 }

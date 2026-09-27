@@ -2,7 +2,6 @@
 local _root = path.getabsolute(path.getdirectory(_SCRIPT))
 QFE_PROJECT_ROOT = _root
 
--- Keep Utility-project IntelliSense aligned with the configured C++ dialect.
 if _ACTION and _ACTION:match("^vs%d+") then
     require "vstudio"
     local vc2010 = premake.vstudio.vc2010
@@ -104,6 +103,7 @@ dofile(path.join(_root, "engine/graphics/premake.lua"))
 dofile(path.join(_root, "engine/gui/premake.lua"))
 dofile(path.join(_root, "engine/input/premake.lua"))
 dofile(path.join(_root, "engine/physics/premake.lua"))
+dofile(path.join(_root, "engine/audio/premake.lua"))
 group ""
 
 group "02_Middleware"
@@ -122,6 +122,7 @@ dofile(path.join(_root, "engine/framework/input/premake.lua"))
 dofile(path.join(_root, "engine/framework/physics/premake.lua"))
 dofile(path.join(_root, "engine/framework/scene/premake.lua"))
 dofile(path.join(_root, "engine/framework/assets/premake.lua"))
+dofile(path.join(_root, "engine/framework/audio/premake.lua"))
 group ""
 
 group "04_Applications"

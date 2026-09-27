@@ -534,24 +534,15 @@ bool QFE::FRAMEWORK::UploadGlobalMeshBuffers(
 }
 
 bool QFE::FRAMEWORK::UpdateBLASInstanceBuffer(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>>& instances) {
+	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::vector<QFE::GRAPHIC::RaytracingInstance>& instances) {
 
 	// 使用機能の取得
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
 	QFE::GRAPHIC::Fence* fence = graphicEngine->GetFence();
 	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = graphicEngine->GetRaytracingAccelerationStructure();
 
-	// インスタンスを更新するために構造体に変換
-	std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
-	for (const auto& instance : instances) {
-		QFE::GRAPHIC::RaytracingInstance raytracingInstance;
-		raytracingInstance.blasHandle = instance.first;
-		raytracingInstance.worldMatrix = instance.second;
-		raytracingInstances.push_back(raytracingInstance);
-	}
-
 	// TLASの更新
-	accelerationStructure->UpdateTLAS(commandManager->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT), raytracingInstances);
+	accelerationStructure->UpdateTLAS(commandManager->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT), instances);
 	commandManager->ExecuteCommandList();
 	fence->Signal(commandManager->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	fence->Wait();

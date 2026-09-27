@@ -101,6 +101,8 @@ project "ProjectGenerator"
         "WindowingSystem",
         "PhysicsFramework",
         "PhysicsEngine",
+        "AudioFramework",
+        "Audio",
         "Camera",
     }
     filter "configurations:Debug"

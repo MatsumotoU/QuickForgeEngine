@@ -20,7 +20,8 @@ namespace QFE::FRAMEWORK {
 	uint32_t CreateEntityWithMaterial(QFE::SCENE::SceneManager& sceneManager, const std::string& name, const QFE::MATH::Vector4& albedoColor);
 
 	/// @brief メインカメラの行列を更新してview-projection行列を返す。
-	QFE::MATH::Matrix4x4 UpdateMainCamera(QFE::SCENE::SceneManager& sceneManager);
+	QFE::MATH::Matrix4x4 UpdateMainCamera(
+		QFE::SCENE::SceneManager& sceneManager, QFE::MATH::Vector3* outCameraPosition = nullptr);
 
 	/// @brief 描画可能なModelRenderComponentを持つエンティティを描画する。
 	void DrawSceneModels(

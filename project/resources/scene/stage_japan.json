@@ -30,6 +30,7 @@
                 }
             },
             "ObjectInfoComponent": {
+                "hierarchyGroup": "",
                 "name": "Camera",
                 "uuid": "4da1c537-5c5d-4a92-aa6e-ee1c1f1e16f5"
             },
@@ -57,76 +58,20 @@
             }
         },
         {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.08096861839294434,
-                    "y": 0.2694300413131714,
-                    "z": 0.09635321795940399
-                },
-                "metallic": 0.0,
-                "smoothness": 0.0,
-                "uvTransform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    }
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "ground",
-                "textureName": ""
-            },
-            "ObjectInfoComponent": {
-                "name": "Ground",
-                "uuid": "2aa52fce-da75-4d48-8ea6-451b6f8e6db5"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 20.700000762939453,
-                        "y": 12.600000381469727,
-                        "z": 10.5
-                    },
-                    "translate": {
-                        "x": 0.0,
-                        "y": -0.10000000149011612,
-                        "z": 75.0
-                    }
-                }
-            }
-        },
-        {
             "BulletEmitterComponent": {
-                "bulletAngleX": 0.4487989544868469,
-                "bulletAngleY": 2.399963140487671,
+                "bulletAngleX": 0.0,
+                "bulletAngleY": 0.0,
                 "emitBulletName": "Bullet.json",
-                "emitCount": 8,
+                "emitCount": 1,
                 "emitDir": {
                     "x": 0.0,
-                    "y": 1.0,
-                    "z": 0.0
+                    "y": 0.0,
+                    "z": 1.0
                 },
                 "emitPos": {
                     "x": 0.0,
                     "y": 0.0,
-                    "z": 1.0
+                    "z": 0.5
                 },
                 "emitRadius": 1.0,
                 "emitRequest": false
@@ -140,7 +85,7 @@
                 "gamePadButton": 4096,
                 "inputActionName": "Shot",
                 "mouseButton": -1,
-                "repeatInterval": 0.20000000298023224,
+                "repeatInterval": 0.10000000149011612,
                 "triggerMode": 0
             },
             "InputMovementComponent": {
@@ -150,7 +95,7 @@
                 "enabled": true,
                 "forwardActionName": "Up",
                 "horizontalAxis": {
-                    "x": 0.800000011920929,
+                    "x": 2.0,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -161,7 +106,7 @@
                 "verticalAxis": {
                     "x": 0.0,
                     "y": 0.0,
-                    "z": 0.800000011920929
+                    "z": 2.0
                 }
             },
             "MaterialComponent": {
@@ -195,7 +140,31 @@
                 "modelName": "ship",
                 "textureName": "ship.png"
             },
+            "MoveLimitComponent": {
+                "autoScrollDistance": 0.0,
+                "autoScrollSpeed": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "maxLimit": {
+                    "x": 10.0,
+                    "y": 0.0,
+                    "z": 30.0
+                },
+                "minLimit": {
+                    "x": -10.0,
+                    "y": 0.0,
+                    "z": 15.0
+                }
+            },
             "ObjectInfoComponent": {
+                "hierarchyGroup": "",
                 "name": "Player",
                 "uuid": "eda80b94-1dd1-4f87-b5b2-7ab0b60c8c69"
             },
@@ -243,69 +212,14 @@
                     "translate": {
                         "x": 0.0,
                         "y": 2.5,
-                        "z": 15.0
-                    }
-                }
-            }
-        },
-        {
-            "MaterialComponent": {
-                "albedoColor": {
-                    "w": 1.0,
-                    "x": 0.1717093139886856,
-                    "y": 0.35797300934791565,
-                    "z": 0.42487049102783203
-                },
-                "metallic": 0.0,
-                "smoothness": 0.0,
-                "uvTransform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "translate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    }
-                }
-            },
-            "ModelRenderComponent": {
-                "modelName": "whitePlate",
-                "textureName": ""
-            },
-            "ObjectInfoComponent": {
-                "name": "Sea",
-                "uuid": "f3ba08e0-90bf-47f8-8b54-92766a9c3c9a"
-            },
-            "TransformComponent": {
-                "transform": {
-                    "rotate": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 125.4000015258789,
-                        "y": 1.0,
-                        "z": 196.6999969482422
-                    },
-                    "translate": {
-                        "x": 0.0,
-                        "y": -2.299999952316284,
-                        "z": 109.0
+                        "z": 12.899999618530273
                     }
                 }
             }
         },
         {
             "ObjectInfoComponent": {
+                "hierarchyGroup": "GameSystems",
                 "name": "GameAreaManager",
                 "uuid": "005ed824-e9af-44c7-9b5f-9468b9ee5a2d"
             },
@@ -352,7 +266,7 @@
                         }
                     },
                     {
-                        "secondsToNextPoint": 1.0,
+                        "secondsToNextPoint": 30.0,
                         "transform": {
                             "rotate": {
                                 "x": 0.0,
@@ -367,7 +281,7 @@
                             "translate": {
                                 "x": 0.0,
                                 "y": 2.5,
-                                "z": 72.5
+                                "z": 116.5
                             }
                         }
                     }
@@ -380,6 +294,69 @@
                     "y": 0.0,
                     "z": 0.0
                 }
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "BGMComponent": {
+                "audioPath": "resource/bgm/game.mp3",
+                "isLoop": true,
+                "isPlayReqest": false,
+                "playOnSceneStart": true,
+                "volume": 1.0
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "GameSystems",
+                "name": "GameBgmSterter",
+                "uuid": "67541883-fa92-4dd4-8b93-0f7797320780"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "StaticGround",
+                "name": "Sky Box",
+                "uuid": "cae55e53-e8dd-4286-ac1a-011d0013a861"
+            },
+            "SkyBoxComponent": {
+                "textureName": "skybox/rostock_laage_airport_4k.dds",
+                "visible": true
             },
             "TransformComponent": {
                 "transform": {

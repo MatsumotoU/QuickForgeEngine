@@ -101,6 +101,8 @@ project "GameEditor"
         "WindowingSystem",
         "PhysicsFramework",
         "PhysicsEngine",
+        "AudioFramework",
+        "Audio",
     }
     filter "configurations:Debug"
         links {

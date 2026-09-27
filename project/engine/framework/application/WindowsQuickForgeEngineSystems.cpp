@@ -5,6 +5,7 @@
 #include "gui/D3D12GuiManager.h"
 #include "input/InputInterface.h"
 #include "scene/SceneManager.h"
+#include "audio/AudioEngine.h"
 
 QFE::FRAMEWORK::WindowsQuickForgeEngineSystems::WindowsQuickForgeEngineSystems() = default;
 QFE::FRAMEWORK::WindowsQuickForgeEngineSystems::~WindowsQuickForgeEngineSystems() = default;

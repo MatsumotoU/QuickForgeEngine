@@ -15,7 +15,7 @@ namespace QFE::EDITOR {
 	public:
 		CreateEntityCommand(std::string entityName, 
 			QFE::MATH::Vector3 position, EntityManager* entityManager,
-			std::string modelName = {}, bool createSprite = false);
+			std::string modelName = {}, bool createSprite = false, bool createSkyBox = false);
 
 		/// @brief エンティティを作成する。
 		void Execute() override;
@@ -28,6 +28,7 @@ namespace QFE::EDITOR {
 		std::string entityName_;
 		std::string modelName_;
 		bool createSprite_;
+		bool createSkyBox_;
 		QFE::MATH::Vector3 position_;
 	};
 }

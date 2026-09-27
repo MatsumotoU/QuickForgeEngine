@@ -29,8 +29,11 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::DirectXResourceHandle globalUVHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		QFE::GRAPHIC::DirectXResourceHandle globalTriHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		QFE::GRAPHIC::DirectXResourceHandle instanceMetaHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		QFE::GRAPHIC::DirectXResourceHandle skyBoxTextureHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		bool skyBoxVisible = false;
 
 		QFE::MATH::EulerTransform cameraTransform;
+		QFE::MATH::Vector3 cameraPosition{ 0.0f, 0.0f, 0.0f };
 
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> vertexBufferMap;
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> indexBufferMap;

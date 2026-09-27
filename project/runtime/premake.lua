@@ -99,6 +99,8 @@ project "Runtime"
         "WindowingSystem",
         "PhysicsFramework",
         "PhysicsEngine",
+        "AudioFramework",
+        "Audio",
         "Camera",
     }
     filter "configurations:Debug"

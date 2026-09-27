@@ -25,7 +25,8 @@ uint32_t QFE::FRAMEWORK::CreateEntityWithMaterial(QFE::SCENE::SceneManager& scen
 	return entity;
 }
 
-QFE::MATH::Matrix4x4 QFE::FRAMEWORK::UpdateMainCamera(QFE::SCENE::SceneManager& sceneManager) {
+QFE::MATH::Matrix4x4 QFE::FRAMEWORK::UpdateMainCamera(
+	QFE::SCENE::SceneManager& sceneManager, QFE::MATH::Vector3* outCameraPosition) {
 	QFE::MATH::Matrix4x4 viewProjection = QFE::MATH::Matrix4x4::MakeIdentity4x4();
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 	entityManager.Each<QFE::SCENE::CameraComponent>(
@@ -33,7 +34,11 @@ QFE::MATH::Matrix4x4 QFE::FRAMEWORK::UpdateMainCamera(QFE::SCENE::SceneManager& 
 			if (!camera.isMainCamera || !entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 				return;
 			}
-			camera.viewMatrix = QFE::SCENE::GetWorldMatrix(entityManager, entityId).Inverse();
+			const QFE::MATH::Matrix4x4 cameraWorld = QFE::SCENE::GetWorldMatrix(entityManager, entityId);
+			camera.viewMatrix = cameraWorld.Inverse();
+			if (outCameraPosition != nullptr) {
+				*outCameraPosition = { cameraWorld.m[3][0], cameraWorld.m[3][1], cameraWorld.m[3][2] };
+			}
 			const float height = camera.top_ - camera.bottom_;
 			camera.aspectRatio_ = height != 0.0f
 				? fabsf((camera.right_ - camera.left_) / height)

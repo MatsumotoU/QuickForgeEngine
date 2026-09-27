@@ -6,6 +6,8 @@
 #include "VertexComponent.h"
 #include "MaterialComponent.h"
 #include "ModelRenderComponent.h"
+#include "ShaderComponent.h"
+#include "SkyBoxComponent.h"
 #include "SpriteRenderComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
@@ -16,6 +18,8 @@
 #include "SplineMovementComponent.h"
 #include "EventComponent.h"
 #include "CollisionTriggerComponent.h"
+#include "BGMComponent.h"
+#include "SEComponent.h"
 // シューティング用のコンポーネント
 #include "shooting/BulletEmitterComponent.h"
 #include "shooting/InputBulletEmitterTriggerComponent.h"
