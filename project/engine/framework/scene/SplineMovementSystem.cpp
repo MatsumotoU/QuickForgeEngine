@@ -70,21 +70,25 @@ namespace {
 
 		QFE::MATH::EulerTransform result;
 		result.translate = CatmullRom(p0.translate, p1.translate, p2.translate, p3.translate, t);
-		QFE::MATH::Vector3 tangent = CatmullRomTangent(
-			p0.translate, p1.translate, p2.translate, p3.translate, t);
-		if (tangent.LengthSq() <= 1.0e-6f) {
-			tangent = t >= 1.0f
+		// Aim at the next control point, falling back to the curve tangent at the endpoint.
+		QFE::MATH::Vector3 facingDirection = p2.translate - result.translate;
+		if (facingDirection.LengthSq() <= 1.0e-6f) {
+			facingDirection = CatmullRomTangent(
+				p0.translate, p1.translate, p2.translate, p3.translate, t);
+		}
+		if (facingDirection.LengthSq() <= 1.0e-6f) {
+			facingDirection = t >= 1.0f
 				? p3.translate - p2.translate
 				: p2.translate - p1.translate;
 		}
-		if (tangent.LengthSq() <= 1.0e-6f) {
-			tangent = p3.translate - p1.translate;
+		if (facingDirection.LengthSq() <= 1.0e-6f) {
+			facingDirection = p3.translate - p1.translate;
 		}
-		if (tangent.LengthSq() <= 1.0e-6f) {
-			tangent = { 0.0f, 0.0f, 1.0f };
+		if (facingDirection.LengthSq() <= 1.0e-6f) {
+			facingDirection = { 0.0f, 0.0f, 1.0f };
 		}
 		const QFE::MATH::Vector3 facingRotation = QFE::MATH::Vector3::LookAt(
-			QFE::MATH::Vector3::Zero(), tangent);
+			QFE::MATH::Vector3::Zero(), facingDirection);
 		const QFE::MATH::Vector3 rotationOffset = QFE::MATH::Vector3::Lerp(
 			p1.rotate, p2.rotate, t);
 		result.rotate = facingRotation + rotationOffset;
