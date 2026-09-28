@@ -6,6 +6,7 @@ public:
 	virtual ~IAudioInterface() = default;
 	virtual void Initialize() = 0;
 	virtual void Finalize() = 0;
+	virtual void Update(float deltaTime) = 0;
 
 	// 全体�E音声操佁E
 	/// 全音声停止

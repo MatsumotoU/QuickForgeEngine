@@ -8,6 +8,7 @@
 #include "engine/include/renderer/ModelRenderer.h"
 #endif // _DEBUG
 #include "engine/include/core/EngineGlobalValue.h"
+#include "engine/include/core/TimeManager.h"
 #include "engine/include/utility/FileSystems/FileUtility.h"
 
 namespace {
@@ -207,6 +208,7 @@ void WindowsEngineCore::Update() {
 	inputInterface_->Update();
 	gameWindowManager->Update();
 	editor_->Update();
+	audioInterface_->Update(TimeManager::GetInstance()->GetUnscaledDeltaTime());
 	sceneManager_->Update();
 }
 
