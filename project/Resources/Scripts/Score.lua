@@ -10,3 +10,9 @@ end
 function UpdateScore()
     SetEntityScriptGlobal(this.GetEntityId(),"Numbers.lua","num",GetScore())
 end
+
+function OnUpGradeScoreUpCard()
+    DebugLog("ScoreUpCard")
+    SetScore(GetScore() * 2)
+    UpdateScore()
+end

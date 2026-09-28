@@ -8,6 +8,7 @@ local ballsId = {}
 
 local timer =0.0
 local isEnd =false
+local startTimer = 0.0
 
 local wallHitSE = QFE.Audio.LoadSound("WallHit.wav")
 local deathSE = QFE.Audio.LoadSound("damage.wav")
@@ -29,8 +30,8 @@ function Update()
     local delta = GetDeltaTime()
     timer = timer + delta
 
-    if speed > 10.0 then
-        speed = 10.0
+    if speed > 6.0 then
+        speed = 6.0
     end
 
     speed = QFE.Math.SimpleEaseIn(speed,baseSpeed,0.01)
@@ -51,11 +52,15 @@ function Update()
         
     else
         if QFE.Input.GetKeyTrigger("Jump") then
-            
+            startTimer = 0.5
+        end
+
+        if startTimer > 0.0 then
             if CountEntityTag("card") <= 0 then
                 isStart =true
                 dirY = 1.0
             end
+            startTimer = startTimer - delta
         end
     end
 

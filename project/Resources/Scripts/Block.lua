@@ -45,5 +45,5 @@ function OnCollisionEnter(id,obj)
         local a = SimpleCreateEntity("SmallSlash.json")
         SetTranslate(a,transform.translate)
     end
-    hitInterval = 0.5
+    hitInterval = 0.1
 end
