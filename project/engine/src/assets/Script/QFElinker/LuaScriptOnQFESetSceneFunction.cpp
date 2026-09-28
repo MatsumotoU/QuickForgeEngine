@@ -35,6 +35,13 @@ void QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(sol::state* luaState) {
 		return SceneManager::GetInstance()->RunTimeAddEntity(entityName);
 		});
 
+	luaState->set_function("DeleteEntityById", [](uint32_t entityId) {
+		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		if (entityManager->IsActiveEntity(entityId)) {
+			SceneManager::GetInstance()->DeleteEntity(entityId);
+		}
+		});
+
 	luaState->set_function("EmitParticles", [](uint32_t emitterId, const Vector3& position, uint32_t count, const Vector3& direction) {
 		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 		if (!entityManager->HasComponent<ParticleComponent>(emitterId)) {

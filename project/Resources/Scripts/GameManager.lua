@@ -17,7 +17,7 @@ local playerStartPosition = Vector3.new(0.0, 0.0, 0.0)
 local cameraFollowRotationX = 0.0
 local cameraFollowRotationY = 0.0
 local cameraFollowSmoothing = 0.08
-local cameraAngleFollowAmount = 0.006
+local cameraAngleFollowAmount = 0.003
 local cameraShakeTimer = 0.0
 local cameraShakeDuration = 0.28
 local cameraShakeStrength = 0.22
@@ -142,6 +142,10 @@ end
 
 function OnPlayerDamage()
     isTakeFirstDamagePlayer = true
+    cameraShakeTimer = cameraShakeDuration
+end
+
+function OnPlayerDash()
     cameraShakeTimer = cameraShakeDuration
 end
 

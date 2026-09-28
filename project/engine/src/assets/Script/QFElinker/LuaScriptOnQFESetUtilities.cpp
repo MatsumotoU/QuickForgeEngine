@@ -8,6 +8,7 @@
 #include "Engine/include/scene/Data/SceneObjectData.h"
 #include "Engine/include/assets/Script/LuaScriptResourceManager.h"
 #include "Engine/include/core/Math/Transform.h"
+#include <algorithm>
 
 void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 
@@ -60,6 +61,27 @@ void QFE::Script::Utility::LuaScriptOnQFESetUtility(sol::state* luaState) {
 		return count;
 		}
 	);
+
+	luaState->set_function("GetEntitiesByTag", [](const std::string& entityTag, sol::this_state ts) {
+		sol::state_view lua(ts);
+		sol::table result = lua.create_table();
+		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		if (entityManager->HasComponentStrage<SceneObjectData>() == false) {
+			return result;
+		}
+
+		std::vector<uint32_t> entityIds;
+		for (const auto& [id, sceneObjectData] : entityManager->GetComponentStrage<SceneObjectData>()) {
+			if (sceneObjectData.tag == entityTag && entityManager->IsActiveEntity(id) && entityManager->HasComponent<Transform>(id)) {
+				entityIds.push_back(id);
+			}
+		}
+		std::sort(entityIds.begin(), entityIds.end());
+		for (size_t index = 0; index < entityIds.size(); ++index) {
+			result[index + 1] = entityIds[index];
+		}
+		return result;
+		});
 
 	luaState->set_function("RunAllFunction", [](const std::string& message) {
 		LuaScriptResourceManager::GetInstance()->RunAllFunction(message);

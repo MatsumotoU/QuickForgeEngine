@@ -1,17 +1,18 @@
 cardName = "brankCard"
 
-local spawnTransform = Transform.new()
+local spawnY = 0.0
 local time = 0.0
 
 local selectSE = QFE.Audio.LoadSound("Slash.wav")
 
 function Init()
-    spawnTransform = transform
+    spawnY = transform.translate.y
+    time = 0.0
 end
 
 function Update()
     time = time + 0.3
-    transform.translate.y = spawnTransform.translate.y + (math.sin(time) * 0.3)
+    transform.translate.y = spawnY + (math.sin(time) * 0.3)
 
 end
 

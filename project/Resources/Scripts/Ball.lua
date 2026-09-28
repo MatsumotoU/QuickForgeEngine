@@ -14,6 +14,49 @@ local deathSE = QFE.Audio.LoadSound("damage.wav")
 local BarSE = QFE.Audio.LoadSound("line.wav")
 local collisionsLastFrame = {}
 local collisionsThisFrame = {}
+local enemyAimRange = 10.0
+local enemyAimDotThreshold = math.cos(math.rad(10.0))
+
+local function AimAtNearbyEnemy()
+    local directionLength = math.sqrt(dirX * dirX + dirY * dirY)
+    if directionLength <= 0.0001 then
+        return
+    end
+
+    local bounceDirectionX = dirX / directionLength
+    local bounceDirectionZ = dirY / directionLength
+    local bestDot = enemyAimDotThreshold
+    local bestDistance = math.huge
+    local bestDirectionX = nil
+    local bestDirectionZ = nil
+
+    for _, enemyId in ipairs(GetEntitiesByTag("enemy")) do
+        local enemyTransform = GetTransform(enemyId)
+        if enemyTransform ~= nil then
+            local toEnemyX = enemyTransform.translate.x - transform.translate.x
+            local toEnemyZ = enemyTransform.translate.z - transform.translate.z
+            local distanceSquared = toEnemyX * toEnemyX + toEnemyZ * toEnemyZ
+
+            if distanceSquared > 0.0001 and distanceSquared <= enemyAimRange * enemyAimRange then
+                local distance = math.sqrt(distanceSquared)
+                local directionDot = (bounceDirectionX * toEnemyX + bounceDirectionZ * toEnemyZ) / distance
+                if directionDot >= enemyAimDotThreshold and
+                    (bestDirectionX == nil or directionDot > bestDot or
+                        (math.abs(directionDot - bestDot) <= 0.000001 and distance < bestDistance)) then
+                    bestDot = directionDot
+                    bestDistance = distance
+                    bestDirectionX = toEnemyX / distance
+                    bestDirectionZ = toEnemyZ / distance
+                end
+            end
+        end
+    end
+
+    if bestDirectionX ~= nil then
+        dirX = bestDirectionX
+        dirY = bestDirectionZ
+    end
+end
 
 function Init()
     isStart = false
@@ -88,11 +131,18 @@ function OnCollisionStay(id,obj)
     collisionsThisFrame[id] = true
 
     if obj.tag == "player" then
-        dirX = deltaX
-        if dirY < 0.0 then
-            speed = speed + 3.5
+        if isNewCollision then
+            dirX = deltaX
+            if dirY < 0.0 then
+                speed = speed + 3.5
+            end
+            if deltaZ < 0.0 then
+                dirY = -math.abs(dirY)
+            else
+                dirY = math.abs(dirY)
+            end
+            AimAtNearbyEnemy()
         end
-        dirY = math.abs(dirY)
     elseif obj.tag == "sideWall" then
         if deltaX < 0.0 then
             dirX = -math.abs(dirX)

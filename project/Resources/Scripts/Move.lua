@@ -4,6 +4,8 @@ local dashSpeed = 12.0
 local damageInterval = 0.0
 local invincibilityTimer = 0.0
 local enemyKillInvincibilityDuration = 0.3
+local dashBombRange = 3.0
+local dashClearedEnemyBullets = {}
 
 local moveTime = 0.0
 local isStart = false
@@ -15,10 +17,56 @@ local isMeshHeart = false
 
 local strongBeatSE = QFE.Audio.LoadSound("StrongBeat.wav")
 local damageSE = QFE.Audio.LoadSound("Bassdrum.wav")
+local dashSE = QFE.Audio.LoadSound("Slash.wav")
+local enemyBulletDestroySE = QFE.Audio.LoadSound("Down.wav")
 local moveRotateY = 0.0
 
 local beatId = 0
 local startTime = 0.0
+
+local function ClearEnemyBulletsAroundPlayer()
+    local playerPosition = Vector3.new(
+        transform.translate.x,
+        transform.translate.y,
+        transform.translate.z)
+    local rangeSquared = dashBombRange * dashBombRange
+    local explosionEmitterId = GetEntity("ExplosionParticleEmitter")
+
+    for _, bulletId in ipairs(GetEntitiesByTag("enemyBullet")) do
+        local bulletTransform = GetTransform(bulletId)
+        if bulletTransform ~= nil then
+            local bulletPosition = Vector3.new(
+                bulletTransform.translate.x,
+                bulletTransform.translate.y,
+                bulletTransform.translate.z)
+            local deltaX = bulletPosition.x - playerPosition.x
+            local deltaY = bulletPosition.y - playerPosition.y
+            local deltaZ = bulletPosition.z - playerPosition.z
+            local distanceSquared = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ
+            if distanceSquared <= rangeSquared then
+                dashClearedEnemyBullets[bulletId] = true
+                if explosionEmitterId ~= -1 then
+                    EmitParticles(explosionEmitterId, bulletPosition, 16, Vector3.new())
+                end
+                QFE.Audio.PlaySound(enemyBulletDestroySE, false, 0.3)
+                DeleteEntityById(bulletId)
+            end
+        end
+    end
+
+    local bombEffectId = SimpleCreateEntity("BigHitCircleParticle.json")
+    SetTranslate(bombEffectId, playerPosition)
+    SetScale(bombEffectId, Vector3.new(dashBombRange, 1.0, dashBombRange))
+    RunAllFunction("OnPlayerDash")
+end
+
+local function PerformDash(direction)
+    force.velocity.x = dashSpeed * direction
+    local dashDirection = Vector3.new(-direction, 0.0, 0.0)
+    EmitParticles(GetEntity("DashParticleEmitter"), transform.translate, 12, dashDirection)
+    QFE.Audio.PlaySound(dashSE, false, 0.5)
+    ClearEnemyBulletsAroundPlayer()
+end
 
 function Init()
     scaleX = transform.scale.x
@@ -27,6 +75,8 @@ function Init()
 end
 
 function Update()
+    dashClearedEnemyBullets = {}
+
     if invincibilityTimer > 0.0 then
         invincibilityTimer = math.max(0.0, invincibilityTimer - GetDeltaTime())
     end
@@ -88,14 +138,9 @@ function Update()
     -- ダッシュ
     if QFE.Input.GetKeyTrigger("Jump") then
         if QFE.Input.GetKeyPress("MoveRight") then
-        force.velocity.x = dashSpeed
-        local dashDirection = Vector3.new(-1.0, 0.0, 0.0)
-        EmitParticles(GetEntity("DashParticleEmitter"), transform.translate, 12, dashDirection)
-
+            PerformDash(1.0)
         elseif QFE.Input.GetKeyPress("MoveLeft") then
-        force.velocity.x = -dashSpeed
-        local dashDirection = Vector3.new(1.0, 0.0, 0.0)
-        EmitParticles(GetEntity("DashParticleEmitter"), transform.translate, 12, dashDirection)
+            PerformDash(-1.0)
         end
     end
 
@@ -166,6 +211,9 @@ end
 
 function OnCollisionStay(id,obj)
     if obj.tag == "enemyBullet" or obj.tag == "Enemy" then
+        if dashClearedEnemyBullets[id] then
+            return
+        end
         if damageInterval > 0.0 or invincibilityTimer > 0.0 then
             return
         end
