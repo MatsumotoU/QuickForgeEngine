@@ -42,26 +42,52 @@ namespace {
 	}
 }
 
-void QFE::FRAMEWORK::UpdateSceneChangeComponents(SCENE::SceneManager& sceneManager) {
-	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
-	std::string requestedSceneName;
-	bool hasRequest = false;
+void QFE::FRAMEWORK::SceneChangeTransitionSystem::Update(
+	SCENE::SceneManager& sceneManager,
+	float deltaTime) {
+	if (state_ == State::Idle) {
+		QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+		std::string requestedSceneName;
+		bool hasRequest = false;
+		entityManager.Each<SCENE::SceneChangeComponent>(
+			[&](uint32_t, SCENE::SceneChangeComponent& sceneChange) {
+				if (hasRequest || !sceneChange.request) return;
+				sceneChange.request = false;
+				hasRequest = true;
+				if (sceneChange.nextSceneNumber < sceneChange.sceneNames.size()) {
+					requestedSceneName = sceneChange.sceneNames[sceneChange.nextSceneNumber];
+				}
+			});
 
-	entityManager.Each<SCENE::SceneChangeComponent>(
-		[&](uint32_t, SCENE::SceneChangeComponent& sceneChange) {
-			if (hasRequest || !sceneChange.request) return;
-			sceneChange.request = false;
-			hasRequest = true;
-			if (sceneChange.nextSceneNumber < sceneChange.sceneNames.size()) {
-				requestedSceneName = sceneChange.sceneNames[sceneChange.nextSceneNumber];
+		if (hasRequest && !requestedSceneName.empty()) {
+			const std::filesystem::path sceneFile = FindSceneFile(
+				requestedSceneName, sceneManager.GetCurrentScenePath());
+			if (!sceneFile.empty()) {
+				targetScenePath_ = sceneFile.string();
+				elapsedSeconds_ = 0.0f;
+				state_ = State::FadeOut;
 			}
-		});
+		}
+	}
 
-	if (!hasRequest || requestedSceneName.empty()) return;
-
-	const std::filesystem::path sceneFile = FindSceneFile(
-		requestedSceneName, sceneManager.GetCurrentScenePath());
-	if (sceneFile.empty()) return;
-
-	sceneManager.LoadCurrentSceneFromJson(sceneFile.string());
+	const float safeDeltaTime = deltaTime > 0.0f ? deltaTime : 0.0f;
+	if (state_ == State::FadeOut) {
+		elapsedSeconds_ += safeDeltaTime;
+		fadeAlpha_ = elapsedSeconds_ / fadeDurationSeconds_;
+		if (fadeAlpha_ > 1.0f) fadeAlpha_ = 1.0f;
+		if (fadeAlpha_ >= 1.0f) {
+			sceneManager.LoadCurrentSceneFromJson(targetScenePath_);
+			elapsedSeconds_ = 0.0f;
+			state_ = State::FadeIn;
+		}
+	} else if (state_ == State::FadeIn) {
+		elapsedSeconds_ += safeDeltaTime;
+		fadeAlpha_ = 1.0f - elapsedSeconds_ / fadeDurationSeconds_;
+		if (fadeAlpha_ < 0.0f) fadeAlpha_ = 0.0f;
+		if (fadeAlpha_ <= 0.0f) {
+			state_ = State::Idle;
+			targetScenePath_.clear();
+			elapsedSeconds_ = 0.0f;
+		}
+	}
 }

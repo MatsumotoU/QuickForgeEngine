@@ -13,6 +13,7 @@
 #include "framework/scene/SplineMovementSystem.h"
 #include "audio/AudioEngine.h"
 #include <filesystem>
+#include <imgui.h>
 
 namespace {
 	bool EnsureModelData(
@@ -609,6 +610,14 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		sceneManager, graphicEngine.get(), spritePsoHandle,
 		resources.viewportHandle, resources.scissorRectHandle,
 		resources.spriteVertexBufferHandle, resources.finalRenderTargetHandle);
+
+	const float sceneFadeAlpha = systems.sceneChangeTransition.GetFadeAlpha();
+	if (sceneFadeAlpha > 0.0f) {
+		const ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+		const ImU32 fadeColor = IM_COL32(0, 0, 0, static_cast<int>(sceneFadeAlpha * 255.0f));
+		ImGui::GetForegroundDrawList()->AddRectFilled(
+			ImVec2(0.0f, 0.0f), displaySize, fadeColor);
+	}
 
 	// Editorの最終映像はImGuiからSRVとして読むため、スプライト描画後に読み取り状態へ戻す。
 	if (resources.finalRenderTargetHandle != QFE::GRAPHIC::RenderTargetHandle::SwapChain) {

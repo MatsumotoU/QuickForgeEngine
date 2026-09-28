@@ -104,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// スプライン移動
 		QFE::FRAMEWORK::UpdateSplineMovement(entityManager, deltaTime);
 		// シーン切り替えリクエスト
-		QFE::FRAMEWORK::UpdateSceneChangeComponents(sceneManager);
+		engineSystems.sceneChangeTransition.Update(sceneManager, deltaTime);
 
 		// カメラの更新
 		engineResources.viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager, &engineResources.cameraPosition);

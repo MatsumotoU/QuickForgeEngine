@@ -256,10 +256,41 @@
             }
         },
         {
+            "EventComponent": {
+                "loop": false,
+                "playOnStart": false,
+                "playbackSpeed": 1.0,
+                "requestFlags": 0,
+                "tracks": [
+                    {
+                        "component": "SceneChangeComponent",
+                        "interpolation": "Step",
+                        "keyframes": [
+                            {
+                                "time": 0.0,
+                                "value": true
+                            }
+                        ],
+                        "property": "request",
+                        "targetUuid": ""
+                    }
+                ]
+            },
             "ObjectInfoComponent": {
                 "hierarchyGroup": "GameSystems",
-                "name": "GameAreaManager",
+                "name": "GameManager",
                 "uuid": "005ed824-e9af-44c7-9b5f-9468b9ee5a2d"
+            },
+            "SceneChangeComponent": {
+                "nextSceneNumber": 0,
+                "request": false,
+                "sceneNames": [
+                    "ResultScene.json"
+                ]
+            },
+            "SplineMoveToPointComponent": {
+                "requestMoveToControlPoint": false,
+                "targetControlPointIndex": 0
             },
             "SplineMovementComponent": {
                 "controlPoints": [
@@ -466,6 +497,8 @@
                 ],
                 "drawPath": true,
                 "enabled": true,
+                "autoPlay": true,
+                "eventDelayAfterEndSeconds": 30.0,
                 "loop": false,
                 "pathColor": {
                     "w": 1.0,
@@ -474,7 +507,8 @@
                     "z": 0.0
                 },
                 "paused": false,
-                "syncRotationToPath": true
+                "syncRotationToPath": true,
+                "triggerEventAfterEnd": true
             },
             "TransformComponent": {
                 "transform": {

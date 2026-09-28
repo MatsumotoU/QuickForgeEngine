@@ -232,7 +232,291 @@ namespace {
 		};
 	}
 
-	void DrawEventTracks(nlohmann::json& tracks) {
+	void DrawEventTargetUuidCombo(
+		std::string& targetUuid,
+		QFE::EntityManager* entityManager) {
+		std::string preview = "This Entity (empty UUID)";
+		if (!targetUuid.empty()) {
+			preview = "Missing (" + targetUuid + ")";
+			if (entityManager != nullptr) {
+				uint32_t targetEntityId = 0;
+				if (QFE::SCENE::TryGetEntityIdByUuid(*entityManager, targetUuid, targetEntityId) &&
+					entityManager->HasComponent<QFE::SCENE::ObjectInfoComponent>(targetEntityId)) {
+					const auto& objectInfo =
+						entityManager->GetComponent<QFE::SCENE::ObjectInfoComponent>(targetEntityId);
+					const std::string objectName = objectInfo.name.empty()
+						? "Unnamed Object"
+						: objectInfo.name;
+					preview = objectName + " (" + targetUuid + ")";
+				}
+			}
+		}
+
+		if (entityManager == nullptr) {
+			ImGui::InputText("Target UUID", &targetUuid);
+			return;
+		}
+		const bool isComboOpen = ImGui::BeginCombo("Target UUID", preview.c_str());
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetTooltip("Leave empty to target this entity.");
+		}
+		if (!isComboOpen) {
+			return;
+		}
+
+		if (ImGui::Selectable("This Entity (empty UUID)", targetUuid.empty())) {
+			targetUuid.clear();
+		}
+		if (targetUuid.empty()) {
+			ImGui::SetItemDefaultFocus();
+		}
+
+		for (const uint32_t candidateId : entityManager->GetActiveEntityIds()) {
+			if (!entityManager->HasComponent<QFE::SCENE::ObjectInfoComponent>(candidateId)) {
+				continue;
+			}
+			const auto& objectInfo =
+				entityManager->GetComponent<QFE::SCENE::ObjectInfoComponent>(candidateId);
+			if (objectInfo.uuid.empty()) {
+				continue;
+			}
+
+			const std::string objectName = objectInfo.name.empty()
+				? "Unnamed Object"
+				: objectInfo.name;
+			const std::string itemLabel =
+				objectName + " (" + objectInfo.uuid + ")##" + objectInfo.uuid;
+			const bool selected = targetUuid == objectInfo.uuid;
+			if (ImGui::Selectable(itemLabel.c_str(), selected)) {
+				targetUuid = objectInfo.uuid;
+			}
+			if (selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	void DrawEventComponentCombo(
+		std::string& component,
+		const std::string& targetUuid,
+		QFE::EntityManager* entityManager,
+		uint32_t currentEntityId) {
+		if (entityManager == nullptr) {
+			ImGui::InputText("Component", &component);
+			return;
+		}
+
+		uint32_t targetEntityId = currentEntityId;
+		bool targetResolved = targetUuid.empty() && entityManager->IsActiveEntity(currentEntityId);
+		if (!targetUuid.empty()) {
+			targetResolved = QFE::SCENE::TryGetEntityIdByUuid(
+				*entityManager, targetUuid, targetEntityId);
+		}
+
+		std::vector<std::string> componentTypes;
+		if (targetResolved) {
+			componentTypes = entityManager->GetComponentTypeNames(targetEntityId);
+			std::sort(componentTypes.begin(), componentTypes.end());
+		}
+
+		std::string preview = component.empty() ? "Select Component" : component;
+		if (!component.empty() &&
+			std::find(componentTypes.begin(), componentTypes.end(), component) == componentTypes.end()) {
+			preview = "Missing Component (" + component + ")";
+		}
+		if (!ImGui::BeginCombo("Component", preview.c_str())) {
+			return;
+		}
+		for (const std::string& componentType : componentTypes) {
+			const bool selected = component == componentType;
+			if (ImGui::Selectable(componentType.c_str(), selected)) {
+				component = componentType;
+			}
+			if (selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		if (componentTypes.empty()) {
+			ImGui::TextDisabled(targetResolved ? "No components on target object" : "Target object not found");
+		}
+		ImGui::EndCombo();
+	}
+
+	bool ResolveEventTargetEntityId(
+		QFE::EntityManager* entityManager,
+		const std::string& targetUuid,
+		uint32_t currentEntityId,
+		uint32_t& targetEntityId) {
+		if (entityManager == nullptr) {
+			return false;
+		}
+		if (targetUuid.empty()) {
+			targetEntityId = currentEntityId;
+			return entityManager->IsActiveEntity(currentEntityId);
+		}
+		return QFE::SCENE::TryGetEntityIdByUuid(*entityManager, targetUuid, targetEntityId);
+	}
+
+	void CollectEventPropertyPaths(
+		const nlohmann::json& value,
+		const std::string& parentPath,
+		std::vector<std::string>& propertyPaths) {
+		if (!parentPath.empty()) {
+			propertyPaths.push_back(parentPath);
+		}
+		if (!value.is_object()) {
+			return;
+		}
+		for (auto iterator = value.begin(); iterator != value.end(); ++iterator) {
+			const std::string memberPath = parentPath.empty()
+				? iterator.key()
+				: parentPath + "." + iterator.key();
+			CollectEventPropertyPaths(iterator.value(), memberPath, propertyPaths);
+		}
+	}
+
+	const nlohmann::json* FindEventPropertyValue(
+		const nlohmann::json& componentData,
+		const std::string& propertyPath) {
+		const nlohmann::json* current = &componentData;
+		size_t begin = 0;
+		while (begin <= propertyPath.size()) {
+			const size_t end = propertyPath.find('.', begin);
+			const std::string memberName = propertyPath.substr(begin, end - begin);
+			if (memberName.empty() || !current->is_object()) {
+				return nullptr;
+			}
+			const auto member = current->find(memberName);
+			if (member == current->end()) {
+				return nullptr;
+			}
+			current = &*member;
+			if (end == std::string::npos) {
+				return current;
+			}
+			begin = end + 1;
+		}
+		return nullptr;
+	}
+
+	bool TryGetEventPropertyValue(
+		const std::string& targetUuid,
+		const std::string& component,
+		const std::string& propertyPath,
+		QFE::EntityManager* entityManager,
+		uint32_t currentEntityId,
+		nlohmann::json& value) {
+		uint32_t targetEntityId = 0;
+		if (propertyPath.empty() || component.empty() ||
+			!ResolveEventTargetEntityId(
+				entityManager, targetUuid, currentEntityId, targetEntityId) ||
+			entityManager->GetComponentRaw(targetEntityId, component.c_str()) == nullptr) {
+			return false;
+		}
+
+		const nlohmann::json componentData = entityManager->SerializeComponent(
+			targetEntityId, component);
+		const nlohmann::json* property = FindEventPropertyValue(componentData, propertyPath);
+		if (property == nullptr) {
+			return false;
+		}
+		value = *property;
+		return true;
+	}
+
+	nlohmann::json CoerceEventValueToMemberType(
+		const nlohmann::json& keyframeValue,
+		const nlohmann::json& memberValue) {
+		if (memberValue.is_boolean()) {
+			if (keyframeValue.is_boolean()) {
+				return keyframeValue;
+			}
+			if (keyframeValue.is_number()) {
+				return keyframeValue.get<double>() != 0.0;
+			}
+			return memberValue;
+		}
+		if (memberValue.is_number()) {
+			if (keyframeValue.is_number()) {
+				return keyframeValue;
+			}
+			if (keyframeValue.is_boolean()) {
+				return keyframeValue.get<bool>() ? 1.0 : 0.0;
+			}
+			return memberValue;
+		}
+		if (memberValue.is_string()) {
+			return keyframeValue.is_string() ? keyframeValue : memberValue;
+		}
+		if (memberValue.is_object()) {
+			return keyframeValue.is_object() ? keyframeValue : memberValue;
+		}
+		if (memberValue.is_array()) {
+			return keyframeValue.is_array() ? keyframeValue : memberValue;
+		}
+		return memberValue;
+	}
+
+	const char* GetEventMemberTypeName(const nlohmann::json& value) {
+		if (value.is_boolean()) return "Boolean";
+		if (value.is_number_unsigned()) return "Unsigned Integer";
+		if (value.is_number_integer()) return "Integer";
+		if (value.is_number_float()) return "Float";
+		if (value.is_string()) return "String";
+		if (value.is_object()) return "Object";
+		if (value.is_array()) return "Array";
+		return "Unknown";
+	}
+
+	void DrawEventPropertyPathCombo(
+		std::string& propertyPath,
+		const std::string& targetUuid,
+		const std::string& component,
+		QFE::EntityManager* entityManager,
+		uint32_t currentEntityId) {
+		if (entityManager == nullptr) {
+			ImGui::Text("Property Path");
+			ImGui::SameLine();
+			ImGui::TextDisabled("Entity manager unavailable");
+			return;
+		}
+
+		const std::string preview = propertyPath.empty() ? "Select Member" : propertyPath;
+		if (!ImGui::BeginCombo("Property Path", preview.c_str())) {
+			return;
+		}
+
+		uint32_t targetEntityId = 0;
+		std::vector<std::string> propertyPaths;
+		if (ResolveEventTargetEntityId(
+			entityManager, targetUuid, currentEntityId, targetEntityId) &&
+			!component.empty() &&
+			entityManager->GetComponentRaw(targetEntityId, component.c_str()) != nullptr) {
+			const nlohmann::json componentData = entityManager->SerializeComponent(
+				targetEntityId, component);
+			CollectEventPropertyPaths(componentData, {}, propertyPaths);
+		}
+
+		for (const std::string& candidatePath : propertyPaths) {
+			const bool selected = propertyPath == candidatePath;
+			if (ImGui::Selectable(candidatePath.c_str(), selected)) {
+				propertyPath = candidatePath;
+			}
+			if (selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		if (propertyPaths.empty()) {
+			ImGui::TextDisabled("No members available for the selected component");
+		}
+		ImGui::EndCombo();
+	}
+
+	void DrawEventTracks(
+		nlohmann::json& tracks,
+		QFE::EntityManager* entityManager,
+		uint32_t entityId) {
 		if (!tracks.is_array()) tracks = nlohmann::json::array();
 		ImGui::TextUnformatted("Tracks");
 		int trackToRemove = -1;
@@ -245,17 +529,32 @@ namespace {
 				std::string targetUuid = track.value("targetUuid", std::string{});
 				std::string component = track.value("component", std::string{});
 				std::string property = track.value("property", std::string{});
-				if (ImGui::InputText("Target UUID", &targetUuid)) track["targetUuid"] = targetUuid;
-				if (ImGui::IsItemHovered()) ImGui::SetTooltip("Leave empty to target this entity.");
-				if (ImGui::InputText("Component", &component)) track["component"] = component;
-				if (ImGui::InputText("Property Path", &property)) track["property"] = property;
+				DrawEventTargetUuidCombo(targetUuid, entityManager);
+				track["targetUuid"] = targetUuid;
+				DrawEventComponentCombo(component, targetUuid, entityManager, entityId);
+				track["component"] = component;
+				DrawEventPropertyPathCombo(property, targetUuid, component, entityManager, entityId);
+				track["property"] = property;
+
+				nlohmann::json memberValue;
+				const bool hasMemberType = TryGetEventPropertyValue(
+					targetUuid, component, property, entityManager, entityId, memberValue);
+				const bool isBooleanTrack = hasMemberType && memberValue.is_boolean();
+				if (hasMemberType) {
+					ImGui::Text("Member Type: %s", GetEventMemberTypeName(memberValue));
+				}
 
 				std::string interpolation = track.value("interpolation", std::string("Linear"));
-				if (ImGui::BeginCombo("Interpolation", interpolation.c_str())) {
-					for (const char* option : { "Linear", "Step" }) {
-						if (ImGui::Selectable(option, interpolation == option)) track["interpolation"] = option;
+				if (isBooleanTrack) {
+					track["interpolation"] = "Step";
+					ImGui::TextDisabled("Boolean / Flag Track (Step)");
+				} else {
+					if (ImGui::BeginCombo("Interpolation", interpolation.c_str())) {
+						for (const char* option : { "Linear", "Step" }) {
+							if (ImGui::Selectable(option, interpolation == option)) track["interpolation"] = option;
+						}
+						ImGui::EndCombo();
 					}
-					ImGui::EndCombo();
 				}
 
 				auto& keyframes = track["keyframes"];
@@ -264,6 +563,10 @@ namespace {
 				for (size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex) {
 					auto& keyframe = keyframes[keyIndex];
 					if (!keyframe.is_object()) keyframe = { { "time", 0.0f }, { "value", 0.0f } };
+					if (hasMemberType) {
+						const nlohmann::json currentValue = keyframe.value("value", memberValue);
+						keyframe["value"] = CoerceEventValueToMemberType(currentValue, memberValue);
+					}
 					ImGui::PushID(static_cast<int>(keyIndex));
 					float time = keyframe.value("time", 0.0f);
 					ImGui::SetNextItemWidth(100.0f);
@@ -279,7 +582,9 @@ namespace {
 				if (keyframeToRemove >= 0) keyframes.erase(keyframes.begin() + keyframeToRemove);
 				if (ImGui::Button("Add Keyframe")) {
 					const float time = keyframes.empty() ? 0.0f : keyframes.back().value("time", 0.0f) + 1.0f;
-					const nlohmann::json value = keyframes.empty() ? nlohmann::json(0.0f) : keyframes.back()["value"];
+					const nlohmann::json value = keyframes.empty()
+						? (hasMemberType ? memberValue : nlohmann::json(0.0f))
+						: keyframes.back()["value"];
 					keyframes.push_back({ { "time", time }, { "value", value } });
 				}
 				ImGui::SameLine();
@@ -780,7 +1085,7 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, EntityReference
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, nlohmann::json& value) {
 	if (name == "tracks") {
-		DrawEventTracks(value);
+		DrawEventTracks(value, entityManager_, entityId_);
 		return;
 	}
 	if (name == "actions") {

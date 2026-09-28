@@ -2,7 +2,9 @@
 
 #include "design-patterns/EntityManager.h"
 #include "components/SplineMovementComponent.h"
+#include "components/SplineMoveToPointComponent.h"
 #include "components/TransformHierarchy.h"
+#include "EventSystem.h"
 
 #include <algorithm>
 #include <chrono>
@@ -24,68 +26,115 @@ namespace {
 		std::chrono::steady_clock::time_point lastUpdated;
 	};
 
-	QFE::MATH::Vector3 CatmullRom(
-		const QFE::MATH::Vector3& p0,
-		const QFE::MATH::Vector3& p1,
-		const QFE::MATH::Vector3& p2,
-		const QFE::MATH::Vector3& p3,
-		float t) {
-		const float t2 = t * t;
-		const float t3 = t2 * t;
-		return (p1 * 2.0f + (p2 - p0) * t +
-			(p0 * 2.0f - p1 * 5.0f + p2 * 4.0f - p3) * t2 +
-			(-p0 + p1 * 3.0f - p2 * 3.0f + p3) * t3) * 0.5f;
+	float GetSegmentDurationSeconds(const QFE::SCENE::SplineControlPoint& point) {
+		constexpr float kMinimumSegmentDurationSeconds = 0.01f;
+		return point.secondsToNextPoint < kMinimumSegmentDurationSeconds
+			? kMinimumSegmentDurationSeconds
+			: point.secondsToNextPoint;
 	}
 
-	QFE::MATH::Vector3 CatmullRomTangent(
-		const QFE::MATH::Vector3& p0,
-		const QFE::MATH::Vector3& p1,
-		const QFE::MATH::Vector3& p2,
-		const QFE::MATH::Vector3& p3,
-		float t) {
+	QFE::MATH::Vector3 GetControlPointTimeTangent(
+		const std::vector<QFE::SCENE::SplineControlPoint>& points,
+		size_t pointIndex,
+		bool loop) {
+		const size_t pointCount = points.size();
+		const size_t previousIndex = loop
+			? (pointIndex + pointCount - 1) % pointCount
+			: (pointIndex == 0 ? pointIndex : pointIndex - 1);
+		const size_t nextIndex = loop
+			? (pointIndex + 1) % pointCount
+			: (pointIndex + 1 < pointCount ? pointIndex + 1 : pointIndex);
+
+		if (!loop && pointIndex == 0) {
+			return (points[nextIndex].transform.translate - points[pointIndex].transform.translate) /
+				GetSegmentDurationSeconds(points[pointIndex]);
+		}
+		if (!loop && pointIndex + 1 == pointCount) {
+			return (points[pointIndex].transform.translate - points[previousIndex].transform.translate) /
+				GetSegmentDurationSeconds(points[previousIndex]);
+		}
+
+		const float previousDuration = GetSegmentDurationSeconds(points[previousIndex]);
+		const float nextDuration = GetSegmentDurationSeconds(points[pointIndex]);
+		return (points[nextIndex].transform.translate - points[previousIndex].transform.translate) /
+			(previousDuration + nextDuration);
+	}
+
+	QFE::MATH::Vector3 EvaluateSplineSegmentPosition(
+		const std::vector<QFE::SCENE::SplineControlPoint>& points,
+		size_t startIndex,
+		size_t endIndex,
+		float t,
+		bool loop) {
 		const float t2 = t * t;
-		return ((p2 - p0) +
-			(p0 * 2.0f - p1 * 5.0f + p2 * 4.0f - p3) * (2.0f * t) +
-			(-p0 + p1 * 3.0f - p2 * 3.0f + p3) * (3.0f * t2)) * 0.5f;
+		const float t3 = t2 * t;
+		const float segmentDuration = GetSegmentDurationSeconds(points[startIndex]);
+		const QFE::MATH::Vector3& p1 = points[startIndex].transform.translate;
+		const QFE::MATH::Vector3& p2 = points[endIndex].transform.translate;
+		const QFE::MATH::Vector3 tangent1 =
+			GetControlPointTimeTangent(points, startIndex, loop) * segmentDuration;
+		const QFE::MATH::Vector3 tangent2 =
+			GetControlPointTimeTangent(points, endIndex, loop) * segmentDuration;
+		const float h00 = 2.0f * t3 - 3.0f * t2 + 1.0f;
+		const float h10 = t3 - 2.0f * t2 + t;
+		const float h01 = -2.0f * t3 + 3.0f * t2;
+		const float h11 = t3 - t2;
+		return p1 * h00 + tangent1 * h10 + p2 * h01 + tangent2 * h11;
+	}
+
+	QFE::MATH::Vector3 EvaluateSplineSegmentTangent(
+		const std::vector<QFE::SCENE::SplineControlPoint>& points,
+		size_t startIndex,
+		size_t endIndex,
+		float t,
+		bool loop) {
+		const float t2 = t * t;
+		const float segmentDuration = GetSegmentDurationSeconds(points[startIndex]);
+		const QFE::MATH::Vector3& p1 = points[startIndex].transform.translate;
+		const QFE::MATH::Vector3& p2 = points[endIndex].transform.translate;
+		const QFE::MATH::Vector3 tangent1 =
+			GetControlPointTimeTangent(points, startIndex, loop) * segmentDuration;
+		const QFE::MATH::Vector3 tangent2 =
+			GetControlPointTimeTangent(points, endIndex, loop) * segmentDuration;
+		return p1 * (6.0f * t2 - 6.0f * t) +
+			tangent1 * (3.0f * t2 - 4.0f * t + 1.0f) +
+			p2 * (-6.0f * t2 + 6.0f * t) +
+			tangent2 * (3.0f * t2 - 2.0f * t);
 	}
 
 	QFE::MATH::EulerTransform EvaluateSegment(
 		const std::vector<QFE::SCENE::SplineControlPoint>& points,
 		size_t segmentIndex,
 		float t,
-		bool loop) {
+		bool loop,
+		bool reverseFacing = false) {
 		const size_t pointCount = points.size();
 		const size_t startIndex = loop ? segmentIndex % pointCount : segmentIndex;
 		const size_t endIndex = loop ? (startIndex + 1) % pointCount : startIndex + 1;
-		const size_t previousIndex = loop
-			? (startIndex + pointCount - 1) % pointCount
-			: (startIndex == 0 ? startIndex : startIndex - 1);
 		const size_t nextIndex = loop
 			? (endIndex + 1) % pointCount
 			: (endIndex + 1 < pointCount ? endIndex + 1 : endIndex);
-		const auto& p0 = points[previousIndex].transform;
 		const auto& p1 = points[startIndex].transform;
 		const auto& p2 = points[endIndex].transform;
 		const auto& p3 = points[nextIndex].transform;
 
 		QFE::MATH::EulerTransform result;
-		result.translate = CatmullRom(p0.translate, p1.translate, p2.translate, p3.translate, t);
-		// Aim at the next control point, falling back to the curve tangent at the endpoint.
-		QFE::MATH::Vector3 facingDirection = p2.translate - result.translate;
+		result.translate = EvaluateSplineSegmentPosition(
+			points, startIndex, endIndex, t, loop);
+		// Use the time-aware curve tangent so position and facing remain smooth across knots.
+		QFE::MATH::Vector3 facingDirection = EvaluateSplineSegmentTangent(
+			points, startIndex, endIndex, t, loop);
 		if (facingDirection.LengthSq() <= 1.0e-6f) {
-			facingDirection = CatmullRomTangent(
-				p0.translate, p1.translate, p2.translate, p3.translate, t);
-		}
-		if (facingDirection.LengthSq() <= 1.0e-6f) {
-			facingDirection = t >= 1.0f
-				? p3.translate - p2.translate
-				: p2.translate - p1.translate;
+			facingDirection = p2.translate - p1.translate;
 		}
 		if (facingDirection.LengthSq() <= 1.0e-6f) {
 			facingDirection = p3.translate - p1.translate;
 		}
 		if (facingDirection.LengthSq() <= 1.0e-6f) {
 			facingDirection = { 0.0f, 0.0f, 1.0f };
+		}
+		if (reverseFacing) {
+			facingDirection = -facingDirection;
 		}
 		const QFE::MATH::Vector3 facingRotation = QFE::MATH::Vector3::LookAt(
 			QFE::MATH::Vector3::Zero(), facingDirection);
@@ -132,13 +181,6 @@ namespace {
 		return samples;
 	}
 
-	float GetSegmentDurationSeconds(const QFE::SCENE::SplineControlPoint& point) {
-		constexpr float kMinimumSegmentDurationSeconds = 0.01f;
-		return point.secondsToNextPoint < kMinimumSegmentDurationSeconds
-			? kMinimumSegmentDurationSeconds
-			: point.secondsToNextPoint;
-	}
-
 	float GetTotalDurationSeconds(
 		const std::vector<QFE::SCENE::SplineControlPoint>& points,
 		bool loop) {
@@ -150,10 +192,33 @@ namespace {
 		return totalDuration;
 	}
 
+	float GetControlPointTimeSeconds(
+		const std::vector<QFE::SCENE::SplineControlPoint>& points,
+		size_t controlPointIndex) {
+		float timeSeconds = 0.0f;
+		const size_t segmentCount = (std::min)(controlPointIndex, points.size() - 1);
+		for (size_t segment = 0; segment < segmentCount; ++segment) {
+			timeSeconds += GetSegmentDurationSeconds(points[segment]);
+		}
+		return timeSeconds;
+	}
+
+	float WrapTimeSeconds(float timeSeconds, float totalDurationSeconds) {
+		if (totalDurationSeconds <= 0.0f) {
+			return 0.0f;
+		}
+		float wrappedTime = std::fmod(timeSeconds, totalDurationSeconds);
+		if (wrappedTime < 0.0f) {
+			wrappedTime += totalDurationSeconds;
+		}
+		return wrappedTime;
+	}
+
 	QFE::MATH::EulerTransform FindTransformAtTime(
 		const std::vector<QFE::SCENE::SplineControlPoint>& points,
 		float elapsedTimeSeconds,
-		bool loop) {
+		bool loop,
+		bool reverseFacing = false) {
 		if (points.size() < 2) {
 			return points.front().transform;
 		}
@@ -175,11 +240,11 @@ namespace {
 				} else if (t > 1.0f) {
 					t = 1.0f;
 				}
-				return EvaluateSegment(points, segment, t, loop);
+				return EvaluateSegment(points, segment, t, loop, reverseFacing);
 			}
 			remainingTime -= segmentDuration;
 		}
-		return EvaluateSegment(points, segmentCount - 1, 1.0f, loop);
+		return EvaluateSegment(points, segmentCount - 1, 1.0f, loop, reverseFacing);
 	}
 }
 
@@ -188,17 +253,24 @@ void QFE::FRAMEWORK::UpdateSplineMovement(
 	float deltaTime) {
 	entityManager.Each<QFE::SCENE::SplineMovementComponent>(
 		[&](uint32_t entityId, QFE::SCENE::SplineMovementComponent& spline) {
-			if (!spline.enabled || spline.paused || (spline.finished && !spline.loop) ||
+			if (!spline.enabled || spline.paused ||
 				spline.controlPoints.size() < 2 ||
 				!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 				return;
 			}
 
+			QFE::SCENE::SplineMoveToPointComponent* moveToPoint =
+				entityManager.HasComponent<QFE::SCENE::SplineMoveToPointComponent>(entityId)
+				? &entityManager.GetComponent<QFE::SCENE::SplineMoveToPointComponent>(entityId)
+				: nullptr;
 			QFE::SCENE::TransformComponent& transform =
 				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId);
 			if (!spline.movementStarted) {
 				spline.elapsedTimeSeconds = 0.0f;
+				spline.elapsedAfterEndSeconds = 0.0f;
 				spline.movementStarted = true;
+				spline.finished = false;
+				spline.endEventTriggered = false;
 				const QFE::MATH::EulerTransform startTransform = EvaluateSegment(
 					spline.controlPoints, 0, 0.0f, spline.loop);
 				transform.transform.translate = startTransform.translate;
@@ -209,21 +281,122 @@ void QFE::FRAMEWORK::UpdateSplineMovement(
 			}
 
 			const float totalDuration = GetTotalDurationSeconds(spline.controlPoints, spline.loop);
+			if (moveToPoint != nullptr && moveToPoint->requestMoveToControlPoint) {
+				moveToPoint->requestMoveToControlPoint = false;
+				const size_t destinationIndex = (std::min)(
+					static_cast<size_t>(moveToPoint->targetControlPointIndex),
+					spline.controlPoints.size() - 1);
+				moveToPoint->requestedTargetTimeSeconds = GetControlPointTimeSeconds(
+					spline.controlPoints, destinationIndex);
+
+				const float currentTime = spline.loop
+					? WrapTimeSeconds(spline.elapsedTimeSeconds, totalDuration)
+					: spline.elapsedTimeSeconds;
+				float timeToDestination = moveToPoint->requestedTargetTimeSeconds - currentTime;
+				if (spline.loop) {
+					float forwardTime = timeToDestination;
+					if (forwardTime < 0.0f) {
+						forwardTime += totalDuration;
+					}
+					const float backwardTime = forwardTime - totalDuration;
+					if (forwardTime <= -backwardTime) {
+						moveToPoint->requestedTravelDirection = 1;
+						moveToPoint->requestedTravelTimeRemainingSeconds = forwardTime;
+					} else {
+						moveToPoint->requestedTravelDirection = -1;
+						moveToPoint->requestedTravelTimeRemainingSeconds = -backwardTime;
+					}
+				} else {
+					moveToPoint->requestedTravelDirection = timeToDestination < 0.0f ? -1 : 1;
+					moveToPoint->requestedTravelTimeRemainingSeconds = std::abs(timeToDestination);
+				}
+
+				moveToPoint->movingToRequestedPoint =
+					moveToPoint->requestedTravelTimeRemainingSeconds > 1.0e-6f;
+				moveToPoint->stoppedAtRequestedPoint = !moveToPoint->movingToRequestedPoint;
+				spline.finished = !spline.loop && !moveToPoint->movingToRequestedPoint &&
+					destinationIndex + 1 == spline.controlPoints.size();
+				spline.elapsedAfterEndSeconds = 0.0f;
+				spline.endEventTriggered = false;
+			}
+
+			bool reachedEndThisFrame = false;
+			float timePastEndThisFrame = 0.0f;
 			if (spline.loop) {
 				spline.finished = false;
-				if (deltaTime > 0.0f && totalDuration > 0.0f) {
-					spline.elapsedTimeSeconds = std::fmod(
+				if (moveToPoint != nullptr && moveToPoint->movingToRequestedPoint) {
+					const float timeStep = (std::min)(
+						(std::max)(0.0f, deltaTime),
+						moveToPoint->requestedTravelTimeRemainingSeconds);
+					spline.elapsedTimeSeconds = WrapTimeSeconds(
+						spline.elapsedTimeSeconds +
+							static_cast<float>(moveToPoint->requestedTravelDirection) * timeStep,
+						totalDuration);
+					moveToPoint->requestedTravelTimeRemainingSeconds -= timeStep;
+					if (moveToPoint->requestedTravelTimeRemainingSeconds <= 1.0e-6f) {
+						spline.elapsedTimeSeconds = WrapTimeSeconds(
+							moveToPoint->requestedTargetTimeSeconds, totalDuration);
+						moveToPoint->requestedTravelTimeRemainingSeconds = 0.0f;
+						moveToPoint->movingToRequestedPoint = false;
+						moveToPoint->stoppedAtRequestedPoint = true;
+					}
+				} else if (spline.autoPlay &&
+					!(moveToPoint != nullptr && moveToPoint->stoppedAtRequestedPoint) &&
+					deltaTime > 0.0f && totalDuration > 0.0f) {
+					spline.elapsedTimeSeconds = WrapTimeSeconds(
 						spline.elapsedTimeSeconds + deltaTime, totalDuration);
 				}
-			} else if (!spline.finished && deltaTime > 0.0f) {
-				spline.elapsedTimeSeconds += deltaTime;
-				if (spline.elapsedTimeSeconds >= totalDuration) {
-					spline.elapsedTimeSeconds = totalDuration;
-					spline.finished = true;
+			} else {
+				if (moveToPoint != nullptr && moveToPoint->movingToRequestedPoint) {
+					const float timeStep = (std::min)(
+						(std::max)(0.0f, deltaTime),
+						moveToPoint->requestedTravelTimeRemainingSeconds);
+					spline.elapsedTimeSeconds +=
+						static_cast<float>(moveToPoint->requestedTravelDirection) * timeStep;
+					moveToPoint->requestedTravelTimeRemainingSeconds -= timeStep;
+					if (moveToPoint->requestedTravelTimeRemainingSeconds <= 1.0e-6f) {
+						spline.elapsedTimeSeconds = moveToPoint->requestedTargetTimeSeconds;
+						moveToPoint->requestedTravelTimeRemainingSeconds = 0.0f;
+						moveToPoint->movingToRequestedPoint = false;
+						const bool reachedSplineEnd = moveToPoint->requestedTargetTimeSeconds >= totalDuration;
+						spline.finished = reachedSplineEnd;
+						moveToPoint->stoppedAtRequestedPoint = !reachedSplineEnd;
+						if (reachedSplineEnd) {
+							reachedEndThisFrame = true;
+							timePastEndThisFrame = (std::max)(0.0f, deltaTime - timeStep);
+						}
+					}
+				} else if (spline.autoPlay &&
+					!(moveToPoint != nullptr && moveToPoint->stoppedAtRequestedPoint) &&
+					!spline.finished && deltaTime > 0.0f) {
+					const float nextElapsedTime = spline.elapsedTimeSeconds + deltaTime;
+					if (nextElapsedTime >= totalDuration) {
+						timePastEndThisFrame = nextElapsedTime - totalDuration;
+						spline.elapsedTimeSeconds = totalDuration;
+						spline.finished = true;
+						reachedEndThisFrame = true;
+					} else {
+						spline.elapsedTimeSeconds = nextElapsedTime;
+					}
+				}
+				if (spline.finished) {
+					if (reachedEndThisFrame) {
+						spline.elapsedAfterEndSeconds += timePastEndThisFrame;
+					} else if (!spline.endEventTriggered) {
+						spline.elapsedAfterEndSeconds += (std::max)(0.0f, deltaTime);
+					}
+					if (spline.triggerEventAfterEnd && !spline.endEventTriggered &&
+						spline.elapsedAfterEndSeconds >= (std::max)(0.0f, spline.eventDelayAfterEndSeconds)) {
+						spline.endEventTriggered = QFE::FRAMEWORK::PlayEvent(entityManager, entityId);
+					}
 				}
 			}
 			const QFE::MATH::EulerTransform splineTransform = FindTransformAtTime(
-				spline.controlPoints, spline.elapsedTimeSeconds, spline.loop);
+				spline.controlPoints,
+				spline.elapsedTimeSeconds,
+				spline.loop,
+				moveToPoint != nullptr && moveToPoint->movingToRequestedPoint &&
+				moveToPoint->requestedTravelDirection < 0);
 			transform.transform.translate = splineTransform.translate;
 			if (spline.syncRotationToPath) {
 				transform.transform.rotate = splineTransform.rotate;

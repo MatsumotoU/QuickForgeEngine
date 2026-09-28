@@ -16,6 +16,7 @@
 #include "PhysicsComponent.h"
 #include "InputMovementComponent.h"
 #include "SplineMovementComponent.h"
+#include "SplineMoveToPointComponent.h"
 #include "EventComponent.h"
 #include "CollisionTriggerComponent.h"
 #include "BGMComponent.h"

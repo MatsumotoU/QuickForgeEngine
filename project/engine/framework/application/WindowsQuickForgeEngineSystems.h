@@ -6,6 +6,7 @@
 #include "framework/gui/D3D12GuiFrameWork.h"
 #include "framework/scene/SceneFrameWork.h"
 #include "framework/scene/AudioComponentSystem.h"
+#include "framework/scene/SceneChangeSystem.h"
 
 #include "assetfactory/model/AssimpModelLoader.h"
 
@@ -22,6 +23,7 @@ namespace QFE::FRAMEWORK{
 		std::unique_ptr<QFE::SCENE::SceneManager> sceneManager;// シーンマネージャ
 		std::unique_ptr<QFE::AUDIO::AudioEngine> audioEngine;
 		AudioComponentSystem audioComponents;
+		SceneChangeTransitionSystem sceneChangeTransition;
 		std::unique_ptr<QFE::FPSCounter> fpsCounter;// FPSカウンター
 		std::unique_ptr<QFE::ASSET::AssimpModelLoader> modelLoader;// モデルローダー
 
