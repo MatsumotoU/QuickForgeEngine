@@ -8,7 +8,6 @@ local ballsId = {}
 
 local timer =0.0
 local isEnd =false
-local startTimer = 0.0
 
 local wallHitSE = QFE.Audio.LoadSound("WallHit.wav")
 local deathSE = QFE.Audio.LoadSound("damage.wav")
@@ -49,19 +48,6 @@ function Update()
     if isStart then
         transform.translate.z = transform.translate.z + dirY * delta*speed
         transform.translate.x = transform.translate.x + dirX * delta*speed
-        
-    else
-        if QFE.Input.GetKeyTrigger("Jump") then
-            startTimer = 0.5
-        end
-
-        if startTimer > 0.0 then
-            if CountEntityTag("card") <= 0 then
-                isStart =true
-                dirY = 1.0
-            end
-            startTimer = startTimer - delta
-        end
     end
 
     if math.abs(dirX) + math.abs(dirY) > 2.0 then
@@ -74,6 +60,16 @@ function Update()
         --EchoForAudio(transform.translate,deathSE,0.5)
         destroy()
     end
+end
+
+function StartBall()
+    if isStart or isEnd or CountEntityTag("card") > 0 then
+        return
+    end
+
+    isStart = true
+    dirX = 0.0
+    dirY = 1.0
 end
 
 function OnCollisionEnter(id,obj)
@@ -141,7 +137,7 @@ function OnNextStage()
     isStart = false
     isEnd = false
 
-    dirY = 1.0
+    dirY = 0.0
     dirX = 0.0
 end
 

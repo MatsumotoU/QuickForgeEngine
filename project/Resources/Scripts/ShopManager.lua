@@ -52,6 +52,7 @@ function Update()
                 RunEntityScriptFunction(cardId[i],"Card.lua","NoSelect")
             end
         end
+        RunAllFunction("OnShopClosed")
         destroy()
     end
 

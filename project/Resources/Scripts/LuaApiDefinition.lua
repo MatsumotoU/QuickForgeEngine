@@ -44,6 +44,10 @@ function SetSceneGlobalData(key,value)end
 ---@return string
 function GetEntityTag(entityId)end
 
+---@param entityId number
+---@param tag string
+function SetEntityTag(entityId, tag)end
+
 ---@param tagNeme string
 ---@param pos Vector3
 ---@return number

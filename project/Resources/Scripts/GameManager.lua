@@ -22,6 +22,7 @@ function Init()
     SimpleCreateEntity("ExplosionParticleEmitter.json")
     SimpleCreateEntity("DashParticleEmitter.json")
     SimpleCreateEntity("HitParticleEmitter.json")
+    SimpleCreateEntity("EnemyBulletTrailEmitter.json")
 end
 
 function Update()

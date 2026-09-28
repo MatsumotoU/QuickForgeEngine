@@ -4,12 +4,21 @@ bulletName = "EnemyBullet.json"
 
 local shotSE = QFE.Audio.LoadSound("byau.mp3")
 
+local function IsDamageMotionActive()
+    return GetEntityScriptGlobal(GetThisEntityId(), "Block.lua", "isDamageMotion") == true
+end
+
 function Init()
     timer = 0.0
 end
 
 function Update()
     if CountEntityTag("StageStop") > 0 then
+        return
+    end
+
+    if IsDamageMotionActive() then
+        timer = 0.0
         return
     end
 
@@ -26,6 +35,10 @@ function Update()
 end
 
 function Shoot()
+    if IsDamageMotionActive() then
+        return
+    end
+
     QFE.Audio.PlaySound(shotSE,false,0.3)
 
     -- Get Player Position

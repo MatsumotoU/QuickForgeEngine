@@ -1,12 +1,21 @@
 shotInterval = 1.0
 timer = 0.0
 
+local function IsDamageMotionActive()
+    return GetEntityScriptGlobal(GetThisEntityId(), "Block.lua", "isDamageMotion") == true
+end
+
 function Init()
     timer = 0.0
 end
 
 function Update()
     if CountEntityTag("StageStop") > 0 then
+        return
+    end
+
+    if IsDamageMotionActive() then
+        timer = 0.0
         return
     end
 
@@ -20,6 +29,10 @@ function Update()
 end
 
 function Shoot()
+    if IsDamageMotionActive() then
+        return
+    end
+
     -- Base direction is -Z
     -- We want 3-way: Center, Left, Right
     -- Assuming Y is up, rotate around Y.

@@ -1,0 +1,49 @@
+{
+    "ParticleComponent": {
+        "directionSpread": 0.3,
+        "endColor": [
+            1.0,
+            0.28,
+            0.04,
+            0.0
+        ],
+        "endScale": 0.015,
+        "gravity": 0.0,
+        "maxLifetime": 0.28,
+        "maxParticleCount": 256,
+        "maxSpeed": 1.8,
+        "minLifetime": 0.12,
+        "minSpeed": 0.4,
+        "modelName": "Box1x1.obj",
+        "scaleVariation": 0.35,
+        "startColor": [
+            1.0,
+            0.12,
+            0.02,
+            0.9
+        ],
+        "startScale": 0.12
+    },
+    "SceneObjectData": {
+        "name": "EnemyBulletTrailEmitter",
+        "tag": "Untagged",
+        "uniqueId": 3452819004
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}
