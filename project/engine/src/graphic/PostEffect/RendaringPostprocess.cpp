@@ -129,7 +129,7 @@ void RendaringPostprosecess::SetVignettePSO(PipelineStateObject* pso) {
 	vignetteOffsetBuffer_.CreateResource(device_);
 	vignetteOffsetBuffer_.GetData()->VignetteRadius = 0.3f; // 繝薙ロ繝・ヨ縺ｮ蜊雁ｾ・
 	vignetteOffsetBuffer_.GetData()->VignetteSoftness = 0.5f; // 繝薙ロ繝・ヨ縺ｮ譟斐ｉ縺九＆
-	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.2f; // 繝薙ロ繝・ヨ縺ｮ蠑ｷ縺・
+	vignetteOffsetBuffer_.GetData()->VignetteIntensity = 0.5f; // ビネットの強さ
 }
 
 void RendaringPostprosecess::SetNormalPSO(PipelineStateObject* pso) {

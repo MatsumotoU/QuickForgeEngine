@@ -5,6 +5,9 @@ local damageInterval = 0.0
 local invincibilityTimer = 0.0
 local enemyKillInvincibilityDuration = 0.3
 local dashBombRange = 3.0
+local dashCooldownDuration = 5.0
+local dashCooldownTimer = 0.0
+canDash = true
 local dashClearedEnemyBullets = {}
 
 local moveTime = 0.0
@@ -62,6 +65,10 @@ end
 
 local function PerformDash(direction)
     force.velocity.x = dashSpeed * direction
+    transform.scale.x = transform.scale.x * 1.25
+    transform.scale.z = transform.scale.z * 0.8
+    dashCooldownTimer = dashCooldownDuration
+    canDash = false
     local dashDirection = Vector3.new(-direction, 0.0, 0.0)
     EmitParticles(GetEntity("DashParticleEmitter"), transform.translate, 12, dashDirection)
     QFE.Audio.PlaySound(dashSE, false, 0.5)
@@ -76,6 +83,11 @@ end
 
 function Update()
     dashClearedEnemyBullets = {}
+
+    if dashCooldownTimer > 0.0 then
+        dashCooldownTimer = math.max(0.0, dashCooldownTimer - GetDeltaTime())
+    end
+    canDash = dashCooldownTimer <= 0.0
 
     if invincibilityTimer > 0.0 then
         invincibilityTimer = math.max(0.0, invincibilityTimer - GetDeltaTime())
@@ -136,7 +148,7 @@ function Update()
         return
     end
     -- ダッシュ
-    if QFE.Input.GetKeyTrigger("Jump") then
+    if QFE.Input.GetKeyTrigger("Jump") and dashCooldownTimer <= 0.0 then
         if QFE.Input.GetKeyPress("MoveRight") then
             PerformDash(1.0)
         elseif QFE.Input.GetKeyPress("MoveLeft") then

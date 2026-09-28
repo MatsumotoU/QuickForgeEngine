@@ -63,6 +63,16 @@
             {
                 "boolParams": {},
                 "floatParams": {
+                    "shotInterval": 3.0
+                },
+                "intParams": {},
+                "priority": 0,
+                "scriptName": "BossEightWayShot.lua",
+                "stringParams": {}
+            },
+            {
+                "boolParams": {},
+                "floatParams": {
                     "shotInterval": 4.0
                 },
                 "intParams": {},
