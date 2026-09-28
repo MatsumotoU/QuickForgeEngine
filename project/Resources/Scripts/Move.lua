@@ -220,6 +220,17 @@ function OnNextStage()
     force.acceleration.z = 0.0
 end
 
+function OnStageClear()
+    isStart = false
+    startTime = 0.0
+    force.velocity.x = 0.0
+    force.velocity.y = 0.0
+    force.velocity.z = 0.0
+    force.acceleration.x = 0.0
+    force.acceleration.y = 0.0
+    force.acceleration.z = 0.0
+end
+
 function OnUpGradeSizeDownCard()
     DebugLog("PlayerSizeDown")
     scaleX = scaleX * 0.6

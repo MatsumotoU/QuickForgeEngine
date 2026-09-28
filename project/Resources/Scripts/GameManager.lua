@@ -10,7 +10,14 @@ local isTakeFirstDamagePlayer = false
 
 local gameEndTimer = 0.0
 local cameraId = -1
+local playerId = -1
 local cameraBasePosition = Vector3.new(0.0, 0.0, 0.0)
+local cameraBaseRotation = Vector3.new(0.0, 0.0, 0.0)
+local playerStartPosition = Vector3.new(0.0, 0.0, 0.0)
+local cameraFollowRotationX = 0.0
+local cameraFollowRotationY = 0.0
+local cameraFollowSmoothing = 0.08
+local cameraAngleFollowAmount = 0.006
 local cameraShakeTimer = 0.0
 local cameraShakeDuration = 0.28
 local cameraShakeStrength = 0.22
@@ -24,12 +31,26 @@ function Init()
     ballCount = CountEntityTag("ball")
     beatId = GetEntity("Pacemaker")
     cameraId = GetEntity("Camera")
+    playerId = GetEntity("PlayerBar")
     if cameraId ~= -1 then
         local cameraTransform = GetTransform(cameraId)
         cameraBasePosition = Vector3.new(
             cameraTransform.translate.x,
             cameraTransform.translate.y,
             cameraTransform.translate.z)
+        cameraBaseRotation = Vector3.new(
+            cameraTransform.rotate.x,
+            cameraTransform.rotate.y,
+            cameraTransform.rotate.z)
+        cameraFollowRotationX = cameraBaseRotation.x
+        cameraFollowRotationY = cameraBaseRotation.y
+    end
+    if playerId ~= -1 then
+        local playerTransform = GetTransform(playerId)
+        playerStartPosition = Vector3.new(
+            playerTransform.translate.x,
+            playerTransform.translate.y,
+            playerTransform.translate.z)
     end
     cameraShakeTimer = 0.0
     gameEndTimer = 0.0
@@ -42,6 +63,22 @@ end
 function Update()
     if cameraId ~= -1 then
         local cameraTransform = GetTransform(cameraId)
+        if playerId ~= -1 then
+            local playerTransform = GetTransform(playerId)
+            local playerDeltaX = playerTransform.translate.x - playerStartPosition.x
+            local playerDeltaZ = playerTransform.translate.z - playerStartPosition.z
+            local targetRotationX = cameraBaseRotation.x - playerDeltaZ * cameraAngleFollowAmount
+            local targetRotationY = cameraBaseRotation.y + playerDeltaX * cameraAngleFollowAmount
+            cameraFollowRotationX = QFE.Math.SimpleEaseIn(
+                cameraFollowRotationX, targetRotationX, cameraFollowSmoothing)
+            cameraFollowRotationY = QFE.Math.SimpleEaseIn(
+                cameraFollowRotationY, targetRotationY, cameraFollowSmoothing)
+        end
+
+        cameraTransform.rotate.x = cameraFollowRotationX
+        cameraTransform.rotate.y = cameraFollowRotationY
+        cameraTransform.rotate.z = cameraBaseRotation.z
+
         if cameraShakeTimer > 0.0 then
             cameraShakeTimer = math.max(0.0, cameraShakeTimer - GetDeltaTime())
             local strength = cameraShakeStrength * (cameraShakeTimer / cameraShakeDuration)
@@ -83,6 +120,7 @@ function Update()
         if blockCount <= 0 and CountEntityTag("enemy") <= 0 then
             isGameEnd = true
             isNextStage = true
+            RunAllFunction("OnStageClear")
             DeleteAllTagEntity("enemyBullet")
             DebugLog("Play")
             QFE.Audio.PlaySound(fanfareSE,false,0.2)
