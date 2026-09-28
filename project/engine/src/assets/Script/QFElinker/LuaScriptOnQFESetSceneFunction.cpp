@@ -5,10 +5,15 @@
 
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/core/TimeManager.h"
 #include "engine/include/assets/Script/Data/ScriptHandle.h"
 #include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
 void QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(sol::state* luaState) {
+	luaState->set_function("StartHitStop", []() {
+		TimeManager::GetInstance()->StartHitStop();
+		});
+
 	luaState->set_function("CreateEntity", [](const std::string& entityName, const Transform& transform) {
 		uint32_t id = SceneManager::GetInstance()->RunTimeAddEntity(entityName);
 		AssetManager* assetManager = AssetManager::GetInstance();

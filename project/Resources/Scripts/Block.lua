@@ -95,6 +95,10 @@ function OnCollisionEnter(id,obj)
     local hitEmitterId = GetEntity("HitParticleEmitter")
     EmitParticles(hitEmitterId, transform.translate, 8, Vector3.new())
     if hp <= 0 then
+        if isEnemy then
+            StartHitStop()
+            RunAllFunction("OnEnemyKilled")
+        end
         local explosionEmitterId = GetEntity("ExplosionParticleEmitter")
         EmitParticles(explosionEmitterId, transform.translate, 32, Vector3.new())
         SetSceneGlobalData("Score",GetSceneGlobalData("Score") + 100 * baseHp)

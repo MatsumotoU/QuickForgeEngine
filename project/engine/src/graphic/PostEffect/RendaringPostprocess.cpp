@@ -4,6 +4,7 @@
 #include "engine/include/graphic/ShaderBuffer/BufferGenerater/BufferGenerator.h"
 
 #include "engine/include/core/EngineGlobalValue.h"
+#include "engine/include/core/TimeManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 
 #include <cassert>
@@ -193,7 +194,7 @@ void RendaringPostprosecess::PreDraw() {
 		postProcessOrderForm_.push_back(pixcelProcessIndex_); // 繝斐け繧ｻ繝ｫ蛹・
 		postProcessCount_++;
 
-		pixcelOffsetBuffer_.GetData()->time += QFE::EngineGlobalValue::deltaTime;
+		pixcelOffsetBuffer_.GetData()->time += TimeManager::GetInstance()->GetDeltaTime();
 	}
 	// 繧ｰ繝ｬ繝ｼ繧ｹ繧ｱ繝ｼ繝ｫ
 	if (enableGrayscale_) {

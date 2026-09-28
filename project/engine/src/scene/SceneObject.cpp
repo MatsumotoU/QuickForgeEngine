@@ -2,7 +2,7 @@
 #include "engine/include/assets/AssetManager.h"
 #include <cassert>
 
-#include "engine/include/core/EngineGlobalValue.h"
+#include "engine/include/core/TimeManager.h"
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/camera/CameraManager.h"
@@ -88,7 +88,7 @@ void SceneObject::Update() {
 			}
 			ParticleComponent& particle = entityManager->GetComponent<ParticleComponent>(entityId);
 			ParticleForGPU* gpuData = assetManager_->GetParticleGpuDataManager()->GetDataPtr(particle.particleGpuBufferHandle);
-			particle.Update(QFE::EngineGlobalValue::deltaTime, gpuData);
+			particle.Update(TimeManager::GetInstance()->GetDeltaTime(), gpuData);
 		}
 	}
 

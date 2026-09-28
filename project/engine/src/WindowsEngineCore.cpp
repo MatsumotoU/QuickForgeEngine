@@ -22,7 +22,7 @@ WindowsEngineCore::WindowsEngineCore(HINSTANCE& hInstance, LPSTR& lpCmdLine)
 void WindowsEngineCore::Initialize() {
 	QFE::EngineGlobalValue::windowWidth = windowWidth;
 	QFE::EngineGlobalValue::windowHeight = windowHeight;
-	std::string windowTitle = "LE2A_14_マツモト_ユウタ";
+	std::string windowTitle = "Boom";
 
 	// * ウィンドウマネージャー初期匁E* //
 	gameWindowManager = std::make_unique<GameWindowManager>();

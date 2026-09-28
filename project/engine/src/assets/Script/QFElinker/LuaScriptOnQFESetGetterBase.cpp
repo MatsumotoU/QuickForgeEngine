@@ -10,13 +10,12 @@
 #include "engine/include/collider/Data/AABBColliderData.h"
 #include "engine/include/collider/Data/SphereColliderData.h"
 #include "engine/include/core/Math/Transform.h"
+#include "engine/include/core/TimeManager.h"
 #include "engine/include/physics/Force.h"
 #include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
-#include "engine/include/core/EngineGlobalValue.h"
-
 void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
-	luaState->set_function("GetDeltaTime", []() {return QFE::EngineGlobalValue::deltaTime; });
+	luaState->set_function("GetDeltaTime", []() {return TimeManager::GetInstance()->GetDeltaTime(); });
 
 	luaState->set_function("GetEntity", [](const std::string& entityName) {
 		return SceneManager::GetInstance()->GetEntityByName(entityName);

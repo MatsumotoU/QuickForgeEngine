@@ -1,6 +1,7 @@
 #include "editor/include/UI/View/EngineProfileView.h"
 
 #include "engine/include/core/EngineGlobalValue.h"
+#include "engine/include/core/TimeManager.h"
 
 EngineProfileView::EngineProfileView() {
 	isActive_ = false;
@@ -23,6 +24,6 @@ void EngineProfileView::Draw() {
 	ImGui::Separator();
 	
 	ImGui::Text("FPS: %.1f", QFE::EngineGlobalValue::fps);
-	ImGui::Text("DeltaTime: %.3f", QFE::EngineGlobalValue::deltaTime);
+	ImGui::Text("DeltaTime: %.3f", TimeManager::GetInstance()->GetDeltaTime());
 	ImGui::End();
 }

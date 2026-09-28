@@ -67,6 +67,9 @@ function CountEntityTag(tagName) end
 ---@return number
 function GetDeltaTime() end
 
+--- Temporarily stops game time for 0.1 seconds.
+function StartHitStop() end
+
 --- Gets an entity by its name.
 ---@param entityName string
 ---@return number

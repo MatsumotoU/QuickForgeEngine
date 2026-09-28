@@ -7,9 +7,9 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/core/Entity/EntityManager.h"
+#include "engine/include/core/TimeManager.h"
 #include "engine/include/input/InputInterface.h"
 
-#include "engine/include/core/EngineGlobalValue.h"
 #include "engine/include/core/Math/Transform.h"
 
 void CsharpOnQFELinker::GetTransformTranslate(uint32_t entityId, Vector3* outTranslate) {
@@ -61,7 +61,7 @@ void CsharpOnQFELinker::Rotate(uint32_t entityId, Vector3* eulerAngles) {
 }
 
 float CsharpOnQFELinker::GetDeltaTime() {
-	return QFE::EngineGlobalValue::deltaTime;
+	return TimeManager::GetInstance()->GetDeltaTime();
 }
 
 bool CsharpOnQFELinker::IsKeyTrigger(MonoString* actionName) {

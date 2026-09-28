@@ -212,6 +212,7 @@
     <ClInclude Include="include\collider\Data\AABBColliderData.h" />
     <ClInclude Include="include\collider\Data\SphereColliderData.h" />
     <ClInclude Include="include\core\EngineGlobalValue.h" />
+    <ClInclude Include="include\core\TimeManager.h" />
     <ClInclude Include="include\core\Entity\Component\ComponentData.h" />
     <ClInclude Include="include\core\Entity\Component\ComponentStrage.h" />
     <ClInclude Include="include\core\Entity\Component\IComponentStrage.h" />
@@ -378,6 +379,7 @@
     <ClCompile Include="src\collider\Data\AABBColliderData.cpp" />
     <ClCompile Include="src\collider\Data\SphereColliderData.cpp" />
     <ClCompile Include="src\core\EngineGlobalValue.cpp" />
+    <ClCompile Include="src\core\TimeManager.cpp" />
     <ClCompile Include="src\core\Math\AudioMath.cpp" />
     <ClCompile Include="src\core\Math\Matrix\Matrix2x2.cpp" />
     <ClCompile Include="src\core\Math\Matrix\Matrix3x3.cpp" />

@@ -580,6 +580,9 @@
     <ClInclude Include="include\core\EngineGlobalValue.h">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="include\core\TimeManager.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
     <ClInclude Include="include\core\Entity\Component\ComponentData.h">
       <Filter>include\core\Entity\Component</Filter>
     </ClInclude>
@@ -1070,6 +1073,9 @@
       <Filter>src\collider\Data</Filter>
     </ClCompile>
     <ClCompile Include="src\core\EngineGlobalValue.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\TimeManager.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Math\AudioMath.cpp">

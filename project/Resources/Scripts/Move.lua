@@ -2,6 +2,8 @@ local moveSpeed = 4.5
 local moveAcc = 0.7
 local dashSpeed = 12.0
 local damageInterval = 0.0
+local invincibilityTimer = 0.0
+local enemyKillInvincibilityDuration = 0.3
 
 local moveTime = 0.0
 local isStart = false
@@ -25,6 +27,10 @@ function Init()
 end
 
 function Update()
+    if invincibilityTimer > 0.0 then
+        invincibilityTimer = math.max(0.0, invincibilityTimer - GetDeltaTime())
+    end
+
     if GetEntityScriptGlobal(beatId,"Pacemaker.lua","bpm") <= 0 then
         transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,0.0,0.02)
         transform.scale.y = QFE.Math.SimpleEaseIn(transform.scale.x,0.0,0.02)
@@ -160,7 +166,7 @@ end
 
 function OnCollisionStay(id,obj)
     if obj.tag == "enemyBullet" or obj.tag == "Enemy" then
-        if damageInterval > 0.0 then
+        if damageInterval > 0.0 or invincibilityTimer > 0.0 then
             return
         end
         QFE.Audio.PlaySound(damageSE,false,0.8)
@@ -187,6 +193,10 @@ function OnCollisionStay(id,obj)
 
         RunAllFunction("OnPlayerDamage")
     end
+end
+
+function OnEnemyKilled()
+    invincibilityTimer = enemyKillInvincibilityDuration
 end
 
 function OnStrongBeat()
