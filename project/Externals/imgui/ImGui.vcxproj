@@ -82,7 +82,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /wd5321 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -105,7 +105,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /wd5321 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -130,7 +130,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /wd5321 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>

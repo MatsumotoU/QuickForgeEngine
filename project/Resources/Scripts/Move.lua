@@ -34,7 +34,7 @@ function Update()
 
     if damageInterval > 0.0 then
         damageInterval = damageInterval - GetDeltaTime()
-        transform.scale.x = math.abs(math.sin(damageInterval*10.0)) 
+        transform.scale.x = math.abs(math.sin(damageInterval*10.0))
         transform.scale.z = math.abs(math.cos(damageInterval*10.0))
     end
 
@@ -45,12 +45,12 @@ function Update()
     end
 
     if isNearBall then
-        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,scaleX*0.2,0.3)
-    else
         transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,scaleX,0.3)
+    else
+        transform.scale.x = QFE.Math.SimpleEaseIn(transform.scale.x,scaleX*0.2,0.3)
     end
     aabbCollider.aabb.size.x = transform.scale.x*0.8
-    
+
     transform.scale.z = QFE.Math.SimpleEaseIn(transform.scale.z,scaleY,0.1)
     transform.rotate.y = QFE.Math.SimpleEaseIn(transform.rotate.y+moveRotateY,3.14,0.1)
 
@@ -60,7 +60,7 @@ function Update()
             isMeshHeart = true
             local a = SimpleCreateEntity("BigHitCircleParticle.json")
             SetTranslate(a,transform.translate)
-        end        
+        end
     else
         if isMeshHeart then
             ChangeMesh(GetThisEntityId(),"Box1x1.obj")
@@ -71,13 +71,13 @@ function Update()
     end
 
     if not isStart then
-        return 
+        return
     end
     -- ダッシュ
     if QFE.Input.GetKeyTrigger("Jump") then
         if QFE.Input.GetKeyPress("MoveRight") then
         force.velocity.x = dashSpeed
-        
+
         elseif QFE.Input.GetKeyPress("MoveLeft") then
         force.velocity.x = -dashSpeed
         end
@@ -133,7 +133,7 @@ function Update()
     end
 
 
-    if GetMinLengthToEntityFromTag("ball",transform.translate) >= 2.5 then
+    if GetMinLengthToEntityFromTag("ball",transform.translate) <= 2.0 then
         isNearBall = true
     else
         isNearBall = false

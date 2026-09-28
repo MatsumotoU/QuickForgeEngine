@@ -57,15 +57,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakeOutput>$(OutDir)Resource</NMakeOutput>
-    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /wd5321 /std:c++latest %(AdditionalOptions)</AdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <NMakeOutput>$(OutDir)Resource</NMakeOutput>
-    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /wd5321 /std:c++latest %(AdditionalOptions)</AdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeOutput>$(OutDir)Resource</NMakeOutput>
-    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+    <AdditionalOptions>/permissive- /Zc:__cplusplus /utf-8 /openmp /wd5321 /std:c++latest %(AdditionalOptions)</AdditionalOptions>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

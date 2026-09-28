@@ -1,10 +1,11 @@
 name: DebugBuild
 on:
   push:
+  pull_request:
     branches:
       - master
 env:
-  SOLUTION_FILE_PATH: project/MyGameEngine.sln
+  SOLUTION_FILE_PATH: project/QuickForgeEngine.sln
   CONFIGURATION: Debug
 jobs:
   build:

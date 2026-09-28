@@ -1,6 +1,6 @@
 -- Solution
 workspace "QuickForgeEngine"
-    
+
     architecture "x64"
     configurations {"Debug","Development","Release"}
     startproject "Editor"
@@ -22,7 +22,8 @@ workspace "QuickForgeEngine"
             "/permissive-",
             "/Zc:__cplusplus",
             "/utf-8",
-            "/openmp"
+            "/openmp",
+            "/wd5321"
         }
     filter ""
 
@@ -37,7 +38,7 @@ workspace "QuickForgeEngine"
         symbols "Off"
         runtime "Release"
     filter ""
-    
+
 group "QuickForge" -- MyMainProject
     project "Editor" -- Editor
         location "editor"
@@ -57,7 +58,7 @@ group "QuickForge" -- MyMainProject
         -- 警告レベル4
         warnings "Extra"
         fatalwarnings "All" --すべての警告をエラーとします
-    
+
         -- 追加のインクルード
         includedirs{
             "./",
@@ -95,7 +96,7 @@ group "QuickForge" -- MyMainProject
 
     project "Engine" -- Engine
         location "engine"
-        kind "StaticLib" 
+        kind "StaticLib"
         language "C++"
         files {"engine/**.h","engine/**.cpp"}
         links{
@@ -160,11 +161,11 @@ project "ExternalFolders"
 -- ExternalsProject
 project "DirectXTex"
     location "externals/DirectXTex"
-    kind "StaticLib" 
+    kind "StaticLib"
     language "C++"
 
     includedirs {
-        "externals/DirectXTex", 
+        "externals/DirectXTex",
         "externals/DirectXTex/Shaders/Compiled"
     }
 
@@ -175,10 +176,10 @@ project "DirectXTex"
 
 project "ImGui"
     location "externals/imgui"
-    kind "StaticLib" 
+    kind "StaticLib"
     language "C++"
     includedirs {
-        "externals/imgui", 
+        "externals/imgui",
     }
 
     files {
@@ -186,4 +187,18 @@ project "ImGui"
         "externals/imgui/**.cpp",
     }
 
-
+project "Lua"
+    location "externals/lua"
+    kind "StaticLib"
+    language "C"
+    files {
+        "externals/lua/**.h",
+        "externals/lua/**.c"
+    }
+    removefiles {
+        "externals/lua/lua.c",
+        "externals/lua/luac.c"
+    }
+    filter "system:windows"
+        defines { "_CRT_SECURE_NO_WARNINGS" }
+    filter ""

@@ -12,6 +12,8 @@ local isEnd =false
 local wallHitSE = QFE.Audio.LoadSound("WallHit.wav")
 local deathSE = QFE.Audio.LoadSound("damage.wav")
 local BarSE = QFE.Audio.LoadSound("line.wav")
+local collisionsLastFrame = {}
+local collisionsThisFrame = {}
 
 function Init()
     isStart = false
@@ -21,6 +23,9 @@ function Init()
 end
 
 function Update()
+    collisionsLastFrame = collisionsThisFrame
+    collisionsThisFrame = {}
+
     local delta = GetDeltaTime()
     timer = timer + delta
 
@@ -74,22 +79,54 @@ function OnCollisionEnter(id,obj)
 end
 
 function OnCollisionStay(id,obj)
+    local otherPosition = GetTransform(id).translate
+    local deltaX = transform.translate.x - otherPosition.x
+    local deltaZ = transform.translate.z - otherPosition.z
+    local isNewCollision = collisionsLastFrame[id] ~= true and collisionsThisFrame[id] ~= true
+    collisionsThisFrame[id] = true
+
     if obj.tag == "player" then
-        local x = -(GetTransform(id).translate.x - transform.translate.x)
-        dirX = x
+        dirX = deltaX
+        if dirY < 0.0 then
+            speed = speed + 3.5
+        end
         dirY = math.abs(dirY)
-        speed =speed+3.5
     elseif obj.tag == "sideWall" then
-        dirX =-dirX
+        if deltaX < 0.0 then
+            dirX = -math.abs(dirX)
+        elseif deltaX > 0.0 then
+            dirX = math.abs(dirX)
+        end
     elseif obj.tag == "topWall" then
-        dirY =-dirY
+        if deltaZ < 0.0 then
+            dirY = -math.abs(dirY)
+        elseif deltaZ > 0.0 then
+            dirY = math.abs(dirY)
+        end
     else
-        local x = math.abs(GetTransform(id).translate.x - transform.translate.x) 
-        local z = math.abs(GetTransform(id).translate.z - transform.translate.z) 
-        if x > z then
-            dirX =-dirX
+        if deltaX == 0.0 and deltaZ == 0.0 then
+            if isNewCollision then
+                if math.abs(dirX) >= math.abs(dirY) then
+                    dirX = -dirX
+                else
+                    dirY = -dirY
+                end
+            end
+            return
+        end
+
+        if math.abs(deltaX) > math.abs(deltaZ) then
+            if deltaX < 0.0 then
+                dirX = -math.abs(dirX)
+            elseif deltaX > 0.0 then
+                dirX = math.abs(dirX)
+            end
         else
-            dirY =-dirY
+            if deltaZ < 0.0 then
+                dirY = -math.abs(dirY)
+            elseif deltaZ > 0.0 then
+                dirY = math.abs(dirY)
+            end
         end
     end
 end

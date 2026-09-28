@@ -1,5 +1,4 @@
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
-#include "BuildInfo.h"
 
 MyDebugLog::MyDebugLog() {
 	Initialize();
@@ -28,21 +27,6 @@ void MyDebugLog::Initialize() {
 
 	// 縺薙％縺ｧ繝薙Ν繝画ュ蝣ｱ繧貞・蜉・
 	logStream_ << "Build Date: " << __DATE__ << " " << __TIME__ << std::endl;
-#ifdef APP_VERSION
-	logStream_ << "App Version: " << APP_VERSION << std::endl;
-#endif
-#ifdef BUILD_USER
-	logStream_ << "Build User: " << BUILD_USER << std::endl;
-#endif
-#ifdef BUILD_BRANCH
-	logStream_ << "Build Branch: " << BUILD_BRANCH << std::endl;
-#endif
-#ifdef BUILD_COMMIT
-	logStream_ << "Build Commit: " << BUILD_COMMIT << std::endl;
-#endif
-#ifdef BUILD_PLATFORM
-	logStream_ << "Build Platform: " << BUILD_PLATFORM << std::endl;
-#endif
 	logStream_ << "CreateLog" << std::endl;
 }
 

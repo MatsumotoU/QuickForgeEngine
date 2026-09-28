@@ -1,15 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{000BCD17-6C75-818E-B5B3-3234215D5FE3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resources\Shaders">
-      <UniqueIdentifier>{D92F8C3C-4546-8AD2-8EBD-15F4FA125B5A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resources\Shaders\ShaderStructs">
-      <UniqueIdentifier>{57B26A98-C395-79D8-CC98-A71438FB3F29}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
@@ -235,6 +226,15 @@
     <Filter Include="include\window\WindowGenerater\Data">
       <UniqueIdentifier>{BDE2B2AD-299C-1D58-B2FB-37321EB4D3C7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{202B5BA7-8C95-0F1E-D5D3-C0C3417DED72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\Shaders">
+      <UniqueIdentifier>{F96FC897-6586-C62D-AEFD-514F1A5397B5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\Shaders\ShaderStructs">
+      <UniqueIdentifier>{77AA0431-E38D-1371-EC90-41AD58F3D9C1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -408,11 +408,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="QuickForgeEngine.h" />
-    <ClInclude Include="Resources\Shaders\ShaderStructs\hlslTypeToCpp.h">
-      <Filter>Resources\Shaders\ShaderStructs</Filter>
-    </ClInclude>
     <ClInclude Include="include\WindowsEngineCore.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -456,6 +452,9 @@
       <Filter>include\assets\AudioSource</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\AudioSource\Data\AudioData.h">
+      <Filter>include\assets\AudioSource\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets\AudioSource\Data\Spectrum.h">
       <Filter>include\assets\AudioSource\Data</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\AudioSource\Loader\MultiAudioLoader.h">
@@ -788,7 +787,22 @@
     <ClInclude Include="include\scene\IScene.h">
       <Filter>include\scene</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\AllEntityRenderingCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\AllSpriteResizeCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\DeleteSceneEntityCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
     <ClInclude Include="include\scene\SceneCommand\ISceneEntityCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\ParentUpdateCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\RemakeUniqeIDCommand.h">
       <Filter>include\scene\SceneCommand</Filter>
     </ClInclude>
     <ClInclude Include="include\scene\SceneCommand\SceneEntityCommandInvoker.h">
@@ -797,7 +811,13 @@
     <ClInclude Include="include\scene\SceneCommand\SceneEntityCommands.h">
       <Filter>include\scene\SceneCommand</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\SpritePivotUpdateCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
     <ClInclude Include="include\scene\SceneCommand\WorldTransformationCommand.h">
+      <Filter>include\scene\SceneCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\SceneCommand\WvpTransformationCommand.h">
       <Filter>include\scene\SceneCommand</Filter>
     </ClInclude>
     <ClInclude Include="include\scene\SceneManager.h">
@@ -884,6 +904,9 @@
     <ClInclude Include="include\utility\String\StringLiblary.h">
       <Filter>include\utility\String</Filter>
     </ClInclude>
+    <ClInclude Include="include\utility\memory\IVariableLengthPoolContainer.h">
+      <Filter>include\utility\memory</Filter>
+    </ClInclude>
     <ClInclude Include="include\utility\memory\SparseSets.h">
       <Filter>include\utility\memory</Filter>
     </ClInclude>
@@ -917,15 +940,9 @@
     <ClInclude Include="include\window\WindowGenerater\WindowGenerater.h">
       <Filter>include\window\WindowGenerater</Filter>
     </ClInclude>
-    <ClInclude Include="include\scene\SceneCommand\ParentUpdateCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\AllSpriteResizeCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\RemakeUniqeIDCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\WvpTransformationCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\SpritePivotUpdateCommand.h" />
-    <ClInclude Include="include\scene\SceneCommand\AllEntityRenderingCommand.h" />
-    <ClInclude Include="include\utility\memory\IVariableLengthPoolContainer.h" />
-    <ClInclude Include="include\assets\AudioSource\Data\Spectrum.h" />
-    <ClInclude Include="include\scene\SceneCommand\DeleteSceneEntityCommand.h" />
+    <ClInclude Include="resources\Shaders\ShaderStructs\hlslTypeToCpp.h">
+      <Filter>resources\Shaders\ShaderStructs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QuickForgeEngine.cpp" />
@@ -1202,10 +1219,31 @@
     <ClCompile Include="src\renderer\SpriteRenderer.cpp">
       <Filter>src\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\AllEntityRenderingCommand.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\AllSpriteResizeCommand.h.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\DeleteSceneEntityCommand.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\ParentUpdateCommand.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\RemakeUniqeIDCommand.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
+    </ClCompile>
     <ClCompile Include="src\scene\SceneCommand\SceneEntityCommandInvoker.cpp">
       <Filter>src\scene\SceneCommand</Filter>
     </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\SpritePivotUpdateCommand.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
+    </ClCompile>
     <ClCompile Include="src\scene\SceneCommand\WorldTransformationCommand.cpp">
+      <Filter>src\scene\SceneCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\SceneCommand\WvpTransformationCommand.cpp">
       <Filter>src\scene\SceneCommand</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\SceneManager.cpp">
@@ -1298,12 +1336,5 @@
     <ClCompile Include="src\window\WindowGenerater.cpp">
       <Filter>src\window</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\SceneCommand\ParentUpdateCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\AllSpriteResizeCommand.h.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\RemakeUniqeIDCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\WvpTransformationCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\SpritePivotUpdateCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\AllEntityRenderingCommand.cpp" />
-    <ClCompile Include="src\scene\SceneCommand\DeleteSceneEntityCommand.cpp" />
   </ItemGroup>
 </Project>
