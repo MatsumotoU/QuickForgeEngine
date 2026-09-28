@@ -17,6 +17,8 @@ class ParticleGpuDataManager final {
 public:
 	void Initialize();
 	uint32_t CreateParticleBuffer(uint32_t maxParticleCount);
+	void ReleaseParticleBuffer(uint32_t bufferId);
+	void Reset();
 	ID3D12Resource* GetResourcePtr(uint32_t bufferId);
 	ParticleForGPU* GetDataPtr(uint32_t bufferId);
 	StructuredBuffer<ParticleForGPU>* GetBufferPtr(uint32_t bufferId);

@@ -83,9 +83,13 @@ function Update()
     if QFE.Input.GetKeyTrigger("Jump") then
         if QFE.Input.GetKeyPress("MoveRight") then
         force.velocity.x = dashSpeed
+        local dashDirection = Vector3.new(-1.0, 0.0, 0.0)
+        EmitParticles(GetEntity("DashParticleEmitter"), transform.translate, 12, dashDirection)
 
         elseif QFE.Input.GetKeyPress("MoveLeft") then
         force.velocity.x = -dashSpeed
+        local dashDirection = Vector3.new(1.0, 0.0, 0.0)
+        EmitParticles(GetEntity("DashParticleEmitter"), transform.translate, 12, dashDirection)
         end
     end
 
@@ -172,6 +176,11 @@ function OnCollisionStay(id,obj)
         end
         force.velocity.x = (transform.translate.x - GetTransform(id).translate.x)*5.0
         force.velocity.z = (transform.translate.z - GetTransform(id).translate.z)*5.0
+		local hitDirection = Vector3.new(
+			transform.translate.x - GetTransform(id).translate.x,
+			0.0,
+			transform.translate.z - GetTransform(id).translate.z)
+		EmitParticles(GetEntity("HitParticleEmitter"), transform.translate, 16, hitDirection)
 
         local a = SimpleCreateEntity("BigHitCircleParticle.json")
         SetTranslate(a,transform.translate)

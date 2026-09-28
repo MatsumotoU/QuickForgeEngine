@@ -1,5 +1,13 @@
 #include "engine/include/core/Math/MyMath.h"
 
+// Windows.h may define min/max macros that expand inside std::min/std::max.
+#ifdef max
+#undef max
+#endif
+#ifdef min
+#undef min
+#endif
+
 float MyMath::Leap(float a, float b, float t) {
     return a * t + b * (1.0f - t);
 }

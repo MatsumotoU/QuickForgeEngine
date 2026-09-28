@@ -26,6 +26,13 @@ sphereCollider = {}
 ---@param tagName string
 function DeleteAllTagEntity(tagName)end
 
+---@param emitterId number Particle emitter entity ID
+---@param position Vector3 Burst position in world coordinates
+---@param count number Number of particles to emit
+---@param direction Vector3 Zero for a radial burst, otherwise the center direction
+---@return boolean Whether the entity has a particle emitter
+function EmitParticles(emitterId, position, count, direction)end
+
 ---@param key string
 function GetSceneGlobalData(key)end
 

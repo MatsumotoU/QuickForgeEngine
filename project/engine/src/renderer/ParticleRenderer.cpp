@@ -10,7 +10,7 @@
 void Render::Particle::DrawParticles(const uint32_t& particleHandle) {
 	AssetManager* assetManager = AssetManager::GetInstance();
 	GpuBufferPool* gpuBufferPool = assetManager->GetGpuBufferPool();
-	ParticleComponent particleComponent = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(particleHandle);
+	const ParticleComponent& particleComponent = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(particleHandle);
 
 	PipelineStateObject* pso = GraphicPipelineManager::GetInstance()->GetParticlePso(kBlendModeNormal);
 

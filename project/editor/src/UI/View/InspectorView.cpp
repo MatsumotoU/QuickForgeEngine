@@ -117,6 +117,17 @@ void InspectorView::Draw() {
 		if (ImGui::CollapsingHeader("Particle")) {
 			ImGui::Text("Model Name: %s", particleComp.modelName.c_str());
 			ImGui::Text("Max Particle Count: %d", particleComp.maxParticleCount);
+			ImGui::DragFloat("Min Lifetime", &particleComp.minLifetime, 0.01f, 0.01f, 10.0f);
+			ImGui::DragFloat("Max Lifetime", &particleComp.maxLifetime, 0.01f, 0.01f, 10.0f);
+			ImGui::DragFloat("Min Speed", &particleComp.minSpeed, 0.05f, 0.0f, 50.0f);
+			ImGui::DragFloat("Max Speed", &particleComp.maxSpeed, 0.05f, 0.0f, 50.0f);
+			ImGui::DragFloat("Start Scale", &particleComp.startScale, 0.01f, 0.0f, 10.0f);
+			ImGui::DragFloat("End Scale", &particleComp.endScale, 0.01f, 0.0f, 10.0f);
+			ImGui::DragFloat("Scale Variation", &particleComp.scaleVariation, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Gravity", &particleComp.gravity, 0.05f, 0.0f, 50.0f);
+			ImGui::DragFloat("Direction Spread", &particleComp.directionSpread, 0.01f, 0.0f, 5.0f);
+			ImGui::ColorEdit4("Start Color", &particleComp.startColor.x);
+			ImGui::ColorEdit4("End Color", &particleComp.endColor.x);
 		}
 	}
 

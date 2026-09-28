@@ -80,6 +80,18 @@ void SceneObject::Update() {
 	// 当たり判定更新
 	ColliderManager::GetInstance()->Update();
 
+	if (isRunningScript_ && !isPauseScript_) {
+		EntityManager* entityManager = assetManager_->GetEntityManager();
+		for (uint32_t entityId : entityManager->GetActiveEntityIds()) {
+			if (!entityManager->HasComponent<ParticleComponent>(entityId)) {
+				continue;
+			}
+			ParticleComponent& particle = entityManager->GetComponent<ParticleComponent>(entityId);
+			ParticleForGPU* gpuData = assetManager_->GetParticleGpuDataManager()->GetDataPtr(particle.particleGpuBufferHandle);
+			particle.Update(QFE::EngineGlobalValue::deltaTime, gpuData);
+		}
+	}
+
 	//　ワールド行列更新
 	updateCommandInvoker_.AddCommand(std::make_unique<RemakeUniqeIDCommand>(*(assetManager_->GetEntityManager()),uniqueIdManager_));
 	updateCommandInvoker_.AddCommand(std::make_unique<WorldTransformationCommand>(*(assetManager_->GetEntityManager())));
@@ -147,6 +159,7 @@ void SceneObject::LoadScene(const std::string& sceneName) {
 #endif // _DEBUG
 	AssetManager* assetManager = AssetManager::GetInstance();
 	assetManager->GetGpuBufferPool()->ReleaseAllConstantBuffers();
+	assetManager->GetParticleGpuDataManager()->Reset();
 	EntityManager* entityManager = assetManager->GetEntityManager();
 	entityManager->ResetEntiry();
 	LuaScriptResourceManager::GetInstance()->Reset();
@@ -262,10 +275,7 @@ void SceneObject::AddParticleEmitter(const std::string& modelName, uint32_t maxC
 	ParticleComponent particleComponent;
 	particleComponent.modelName = modelName;
 	particleComponent.maxParticleCount = maxCount;
-	particleComponent.vartexBufferHandle = assetManager->LoadModelMesh(modelName);
-	particleComponent.textureHandle = assetManager->LoadModelTexture(modelName);
-	particleComponent.materialHandle = assetManager->GetGpuBufferPool()->AcquireConstantBuffer<Material>();
-	particleComponent.particleGpuBufferHandle = assetManager->GetParticleGpuDataManager()->CreateParticleBuffer(maxCount);
+	particleComponent.InitializeResources(*assetManager);
 	assetManager->GetEntityManager()->EmplaceComponent<ParticleComponent>(entityId, particleComponent);
 
 	// 縺・▽繧ゅ・繧・▽霑ｽ蜉
@@ -662,11 +672,12 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 		ModelHandle& modelHandle = entityManager->GetComponent<ModelHandle>(entityId);
 		modelHandle.Deserialize(entityJson["ModelHandle"]);
 	}
-	/*if (entityJson.contains("ParticleComponent")) {
+	if (entityJson.contains("ParticleComponent")) {
 		entityManager->EmplaceComponent<ParticleComponent>(entityId);
 		ParticleComponent& particleComponent = entityManager->GetComponent<ParticleComponent>(entityId);
 		particleComponent.Deserialize(entityJson["ParticleComponent"]);
-	}*/
+		particleComponent.InitializeResources(*assetManager);
+	}
 	if (entityJson.contains("SceneObjectData")) {
 		entityManager->EmplaceComponent<SceneObjectData>(entityId);
 		SceneObjectData& sceneObjectData = entityManager->GetComponent<SceneObjectData>(entityId);

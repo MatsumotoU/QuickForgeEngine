@@ -1,0 +1,49 @@
+{
+    "ParticleComponent": {
+        "directionSpread": 1.0,
+        "endColor": [
+            1.0,
+            0.12,
+            0.03,
+            0.0
+        ],
+        "endScale": 0.02,
+        "gravity": 1.0,
+        "maxLifetime": 0.45,
+        "maxParticleCount": 40,
+        "maxSpeed": 5.0,
+        "minLifetime": 0.18,
+        "minSpeed": 1.5,
+        "modelName": "Box1x1.obj",
+        "scaleVariation": 0.45,
+        "startColor": [
+            1.0,
+            0.95,
+            0.72,
+            1.0
+        ],
+        "startScale": 0.22
+    },
+    "SceneObjectData": {
+        "name": "HitParticleEmitter",
+        "tag": "Untagged",
+        "uniqueId": 3452819003
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

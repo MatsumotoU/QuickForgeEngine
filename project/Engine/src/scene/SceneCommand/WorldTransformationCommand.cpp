@@ -6,7 +6,6 @@
 #include "Engine/include/assets/3DModel/Data/ModelHandle.h"
 #include "Engine/include/assets/3DModel/Data/ModelRenderData.h"
 #include "Engine/include/assets/Sprite/Data/SpriteData.h"
-#include "Engine/include/assets/Particle/Data/ParticleComponent.h"
 WorldTransformationCommand::WorldTransformationCommand(EntityManager& em) : ISceneEntityCommand(em) {}
 
 void WorldTransformationCommand::Execute(){
@@ -39,18 +38,6 @@ void WorldTransformationCommand::Execute(){
 					transform.rotate,
 					transform.translate
 				);
-			}
-			// パーティクルのワールド行列更新
-			if (assetManager->GetEntityManager()->HasComponent<ParticleComponent>(entityId)) {
-				ParticleComponent& particleComp = assetManager->GetEntityManager()->GetComponent<ParticleComponent>(entityId);
-				ParticleForGPU* particleData = assetManager->GetParticleGpuDataManager()->GetDataPtr(particleComp.particleGpuBufferHandle);
-				for (uint32_t i = 0; i < particleComp.maxParticleCount; i++) {
-					particleData[i].World = Matrix4x4::MakeAffineMatrix(
-						transform.scale,
-						transform.rotate,
-						transform.translate
-					);
-				}
 			}
 		}
 	}

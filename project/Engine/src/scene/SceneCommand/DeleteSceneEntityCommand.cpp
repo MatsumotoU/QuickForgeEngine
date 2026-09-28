@@ -38,6 +38,12 @@ void DeleteSceneEntityCommand::Execute()
 		gpuBufferPool->ReleaseConstantBuffer<TransformationMatrix>(spriteData.wvpBufferHandle);
 		gpuBufferPool->ReleaseConstantBuffer<Material>(spriteData.materialBufferHandle);
 	}
+	// ParticleコンポーネントのGPUリソース解放
+	if (entityManager_.HasComponent<ParticleComponent>(entityId_)) {
+		ParticleComponent& particleComponent = entityManager_.GetComponent<ParticleComponent>(entityId_);
+		assetManager->GetParticleGpuDataManager()->ReleaseParticleBuffer(particleComponent.particleGpuBufferHandle);
+		gpuBufferPool->ReleaseConstantBuffer<Material>(particleComponent.materialHandle);
+	}
 
 	// 指定されたエンティティをシーンから削除する
 	entityManager_.RemoveEntity(entityId_);

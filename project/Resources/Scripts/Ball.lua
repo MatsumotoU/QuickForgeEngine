@@ -80,6 +80,7 @@ function OnCollisionEnter(id,obj)
     QFE.Audio.PlaySound(wallHitSE,false,0.2)
     local a = SimpleCreateEntity("HitCircleParticle.json")
     SetTranslate(a,transform.translate)
+    EmitParticles(GetEntity("HitParticleEmitter"), transform.translate, 8, Vector3.new())
     --EchoForAudio(transform.translate,wallHitSE,0.2)
 end
 

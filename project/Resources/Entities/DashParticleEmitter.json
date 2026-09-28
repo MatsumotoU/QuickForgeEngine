@@ -1,0 +1,49 @@
+{
+    "ParticleComponent": {
+        "directionSpread": 0.35,
+        "endColor": [
+            0.16,
+            0.55,
+            1.0,
+            0.0
+        ],
+        "endScale": 0.015,
+        "gravity": 0.0,
+        "maxLifetime": 0.4,
+        "maxParticleCount": 40,
+        "maxSpeed": 3.0,
+        "minLifetime": 0.2,
+        "minSpeed": 1.2,
+        "modelName": "Box1x1.obj",
+        "scaleVariation": 0.4,
+        "startColor": [
+            0.25,
+            0.85,
+            1.0,
+            0.95
+        ],
+        "startScale": 0.2
+    },
+    "SceneObjectData": {
+        "name": "DashParticleEmitter",
+        "tag": "Untagged",
+        "uniqueId": 3452819002
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

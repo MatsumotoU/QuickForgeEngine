@@ -12,12 +12,24 @@ uint32_t ParticleGpuDataManager::CreateParticleBuffer(uint32_t maxParticleCount)
 	StructuredBuffer<ParticleForGPU> particleBuffer;
 	particleBuffer.CreateResource(dxCommon_, srvDescriptorHeap_, maxParticleCount);
 	for (uint32_t i = 0; i < maxParticleCount; i++) {
-		particleBuffer.GetData()[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		particleBuffer.GetData()[i].World = Matrix4x4::MakeIndentity4x4();
+		particleBuffer.GetData()[i].color = Vector4{ 1.0f, 1.0f, 1.0f, 0.0f };
+		particleBuffer.GetData()[i].World = Matrix4x4::MakeAffineMatrix(
+			Vector3{ 0.0f, 0.0f, 0.0f },
+			Vector3{ 0.0f, 0.0f, 0.0f },
+			Vector3{ 0.0f, 0.0f, 0.0f });
 		particleBuffer.GetData()[i].WVP = Matrix4x4::MakeIndentity4x4();
 	}
 	particleBuffers_.Insert(nextBufferId_, std::move(particleBuffer));
 	return nextBufferId_++;
+}
+
+void ParticleGpuDataManager::ReleaseParticleBuffer(uint32_t bufferId) {
+	particleBuffers_.Remove(bufferId);
+}
+
+void ParticleGpuDataManager::Reset() {
+	particleBuffers_.clear();
+	nextBufferId_ = 0;
 }
 
 ID3D12Resource* ParticleGpuDataManager::GetResourcePtr(uint32_t bufferId) {
@@ -33,5 +45,5 @@ StructuredBuffer<ParticleForGPU>* ParticleGpuDataManager::GetBufferPtr(uint32_t 
 }
 
 void ParticleGpuDataManager::Finalize() {
-	particleBuffers_.clear();
+	Reset();
 }

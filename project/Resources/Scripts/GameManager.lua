@@ -19,6 +19,9 @@ function Init()
     ballCount = CountEntityTag("ball")
     beatId = GetEntity("Pacemaker")
     gameEndTimer = 0.0
+    SimpleCreateEntity("ExplosionParticleEmitter.json")
+    SimpleCreateEntity("DashParticleEmitter.json")
+    SimpleCreateEntity("HitParticleEmitter.json")
 end
 
 function Update()

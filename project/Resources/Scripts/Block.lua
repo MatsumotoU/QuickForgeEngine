@@ -32,7 +32,11 @@ function OnCollisionEnter(id,obj)
     hp = hp-1
     transform.scale.x = scaleX * 1.3
     transform.scale.z = scaleZ * 1.3
+    local hitEmitterId = GetEntity("HitParticleEmitter")
+    EmitParticles(hitEmitterId, transform.translate, 8, Vector3.new())
     if hp <= 0 then
+        local explosionEmitterId = GetEntity("ExplosionParticleEmitter")
+        EmitParticles(explosionEmitterId, transform.translate, 32, Vector3.new())
         SetSceneGlobalData("Score",GetSceneGlobalData("Score") + 100 * baseHp)
         SetScore(GetScore() + 100 * baseHp)
         RunAllFunction("UpdateScore")

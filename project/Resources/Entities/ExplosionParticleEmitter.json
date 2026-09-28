@@ -1,0 +1,49 @@
+{
+    "ParticleComponent": {
+        "directionSpread": 1.0,
+        "endColor": [
+            1.0,
+            0.08,
+            0.0,
+            0.0
+        ],
+        "endScale": 0.02,
+        "gravity": 3.0,
+        "maxLifetime": 0.8,
+        "maxParticleCount": 64,
+        "maxSpeed": 7.0,
+        "minLifetime": 0.35,
+        "minSpeed": 2.0,
+        "modelName": "Box1x1.obj",
+        "scaleVariation": 0.55,
+        "startColor": [
+            1.0,
+            0.72,
+            0.12,
+            1.0
+        ],
+        "startScale": 0.32
+    },
+    "SceneObjectData": {
+        "name": "ExplosionParticleEmitter",
+        "tag": "Untagged",
+        "uniqueId": 3452819001
+    },
+    "Transform": {
+        "rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

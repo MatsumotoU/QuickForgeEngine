@@ -6,6 +6,7 @@
 #include "engine/include/core/Math/Transform.h"
 #include "engine/include/core/Entity/EntityManager.h"
 #include "engine/include/assets/Script/Data/ScriptHandle.h"
+#include "engine/include/assets/Particle/Data/ParticleComponent.h"
 
 void QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(sol::state* luaState) {
 	luaState->set_function("CreateEntity", [](const std::string& entityName, const Transform& transform) {
@@ -27,6 +28,15 @@ void QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(sol::state* luaState) {
 
 	luaState->set_function("SimpleCreateEntity", [](const std::string& entityName) {
 		return SceneManager::GetInstance()->RunTimeAddEntity(entityName);
+		});
+
+	luaState->set_function("EmitParticles", [](uint32_t emitterId, const Vector3& position, uint32_t count, const Vector3& direction) {
+		EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
+		if (!entityManager->HasComponent<ParticleComponent>(emitterId)) {
+			return false;
+		}
+		entityManager->GetComponent<ParticleComponent>(emitterId).EmitBurst(position, count, direction);
+		return true;
 		});
 
 	luaState->set_function("LoadScene", [](const std::string& sceneName) {
