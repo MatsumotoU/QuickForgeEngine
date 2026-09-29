@@ -80,7 +80,7 @@
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -99,10 +99,7 @@
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Debug" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Debug\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Debug\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Debug" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Debug" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -112,7 +109,7 @@ exit /b 0</Command>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -136,10 +133,7 @@ exit /b 0</Command>
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Development" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Development\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Development\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Development" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Development" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -149,7 +143,7 @@ exit /b 0</Command>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\engine\include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -173,15 +167,11 @@ exit /b 0</Command>
       <Command>call "$(SolutionDir)/GenerateBuildInfo.bat"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>robocopy "..\externals\Mono\bin" "../../generated/outputs/Release" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\lib" "../../generated/outputs/Release\mono\lib" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "..\externals\Mono\etc" "../../generated/outputs/Release\mono\etc" /E /XO /R:0 /W:0 /NJH /NJS &gt; nul
-robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Release" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
+      <Command>robocopy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64" "../../generated/outputs/Release" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS &gt; nul
 exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BuildInfo.h" />
     <ClInclude Include="include\IEditor.h" />
     <ClInclude Include="include\OnWindowsEditor.h" />
     <ClInclude Include="include\UI\Edit\ColliderMaskEdit.h" />
