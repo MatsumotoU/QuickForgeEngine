@@ -25,7 +25,7 @@ void MyDebugLog::Initialize() {
 
 	logStream_.open(logFilePath_);
 
-	// 縺薙％縺ｧ繝薙Ν繝画ュ蝣ｱ繧貞・蜉・
+	// ここでビルド情報を出力
 	logStream_ << "Build Date: " << __DATE__ << " " << __TIME__ << std::endl;
 	logStream_ << "CreateLog" << std::endl;
 }
@@ -117,8 +117,4 @@ void DebugLogLua(sol::variadic_args va, uint32_t id, const std::string& scriptNa
 		}
 	}
 	DebugLog(msg, LogLevel::EditorInfo);
-}
-
-void DebugLogCsharp(const std::string& message) {
-	DebugLog(message, LogLevel::EditorInfo);
 }

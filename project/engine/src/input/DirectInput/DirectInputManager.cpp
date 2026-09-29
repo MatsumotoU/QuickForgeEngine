@@ -3,13 +3,13 @@
 
 void DirectInputManager::Initialize(const HWND& hwnd,const HINSTANCE& hInstance) {
 	hInstance_ = hInstance;
-	// directInput縺ｮ逕滓・
+	// directInputの生成
 	directInput_ = nullptr;
 	HRESULT hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr);
 	assert(SUCCEEDED(hr));
 	hr;
 
-	// Device縺ｮ逕滓・
+	// Deviceの生成
 	keyboard_.Initialize(hwnd,directInput_);
 	mouse_.Initialize(hwnd,directInput_);
 }
@@ -19,7 +19,7 @@ void DirectInputManager::Finalize() {
 }
 
 void DirectInputManager::Update() {
-	// 繧ｭ繝ｼ繝懊・繝峨・蜃ｦ逅・
+	// キーボードの処理
 	keyboard_.Update();
 	mouse_.Update();
 }

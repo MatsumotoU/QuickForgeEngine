@@ -1,7 +1,6 @@
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/graphic/DirectXCommon/DirectXCommon.h"
 #include "engine/include/assets/3DModel/Loader/AssimpModelLoader.h"
-//#include "engine/include/assets/Script/CsharpCmpiler.h"
 
 #include "Engine/Resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 void AssetManager::Initalize(DirectXCommon* dxCommon) {
@@ -41,18 +40,18 @@ uint32_t AssetManager::LoadTexture(const std::string& imageName) {
 uint32_t AssetManager::LoadModel(const std::string& modelName) {
 	ModelRenderData modelRenderData;
 
-	// 繝｢繝・Ν閾ｪ菴薙・隱ｭ縺ｿ霎ｼ縺ｿ
+	// モデル自体の読み込み
 	ModelData modelData{};
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
 
-	// 繝｡繝・す繝･縺ｮ謨ｰ縺縺代Γ繝・す繝･謠冗判繝・・繧ｿ繧堤｢ｺ菫・
+	// メッシュの数だけメッシュ描画データを確保
 	modelRenderData.meshRenderDataHandles.resize(modelData.meshes.size());
 	modelRenderData.meshRenderDataHandles.at(0).vertexBufferHandle = modelVertexResourceManager_.Assign(dxCommon_->GetDevice(), modelData, modelName);
 
-	// 蜷・Γ繝・す繝･縺ｮ謠冗判繝・・繧ｿ繧剃ｽ懈・
+	// 各メッシュの描画データを作成
 	for (size_t i = 0; i < modelData.meshes.size(); i++) {
 		auto& mesh = modelData.meshes.at(i);
 		auto& meshRenderData = modelRenderData.meshRenderDataHandles.at(i);
@@ -75,7 +74,7 @@ uint32_t AssetManager::LoadModel(const std::string& modelName) {
 		lightData->intensity = 1.0f;
 	}
 
-	// 繝｢繝・Ν謠冗判繝・・繧ｿ繧堤匳骭ｲ
+	// モデル描画データを登録
 	return modelRenderDataManager_.Add(modelRenderData);
 }
 
@@ -101,13 +100,13 @@ uint32_t AssetManager::LoadModelMesh(const std::string& modelName) {
 }
 
 uint32_t AssetManager::LoadModelTexture(const std::string& modelName) {
-	// 繝｢繝・Ν繝・・繧ｿ繧定ｪｭ縺ｿ霎ｼ縺ｿ
+	// モデルデータを読み込み
 	ModelData modelData{};
 	AssimpModelLoader::LoadModelData(
 		resourceDirectoryManager_.GetResourceDirectory("Model"),
 		resourceDirectoryManager_.GetResourceDirectory("Image"),
 		modelName, modelData);
-	// 蜈磯ｭ縺ｮ繝｡繝・す繝･縺ｮ繝・け繧ｹ繝√Ε繧定ｿ斐☆
+	// 先頭のメッシュのテクスチャを返す
 	if (!modelData.meshes.empty()) {
 		const auto& mesh = modelData.meshes.at(0);
 		return textureManager_->LoadTexture(mesh.material.textureFilePath);

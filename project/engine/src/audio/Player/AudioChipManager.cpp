@@ -10,7 +10,7 @@ AudioChipManager::~AudioChipManager() {
 void AudioChipManager::Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* masterVoice) {
 	xAudio2_ = xAudio2;
 	masterVoice_ = masterVoice;
-	nextHandle_ = 1; // エラーハンドルを避けるため1から開姁E
+	nextHandle_ = 1; // エラーハンドルを避けるため1から開始
 	audioChips_.clear();
 }
 

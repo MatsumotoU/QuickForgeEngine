@@ -22,7 +22,7 @@ void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
 
 	fence_.Initialize(directXDevice_.GetDevice());
 
-	// depthStencilBuffer縺ｮ逕滂ｿｽE
+	// depthStencilBufferの生成
 	D3D12_RESOURCE_DESC depthResourceDesc{};
 	depthResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	depthResourceDesc.Alignment = 0;
@@ -53,7 +53,7 @@ void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
 	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 	dsvHandle_ = descriptorHeapManager_.AssignDsvHeap(depthStencilBuffer_.Get(), &dsvDesc);
 
-	// 繝薙Η繝ｼ繝晢ｿｽE繝医→繧ｷ繧ｶ繝ｼ遏ｩ蠖｢縺ｮ險ｭ螳・
+	// ビューポートとシザー矩形の設定
 	viewport_ = {};
 	viewport_.TopLeftX = 0.0f;
 	viewport_.TopLeftY = 0.0f;
@@ -69,7 +69,7 @@ void DirectXCommon::Initialize(HWND hwnd, uint32_t width, uint32_t height) {
 }
 
 void DirectXCommon::PreDraw() {
-	// 繧ｹ繝ｯ繝・・ｽE繝√ぉ繧､繝ｳ縺ｮ繝ｪ繧ｽ繝ｼ繧ｹ迥ｶ諷九ｒ謠冗判蜿ｯ閭ｽ縺ｫ螟画峩
+	// スワップチェーンのリソース状態を描画可能に変更
 	TransitionResourceBarrier::Transition(
 		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		swapChain_.GetCurrentBackBuffer(),
@@ -84,24 +84,24 @@ void DirectXCommon::PreDraw() {
 }
 
 void DirectXCommon::PostDraw() {
-	// 繧ｹ繝ｯ繝・・ｽE繝√ぉ繧､繝ｳ縺ｮ繝ｪ繧ｽ繝ｼ繧ｹ迥ｶ諷九ｒ隱ｭ縺ｿ蜿悶ｊ縺ｫ螟画峩
+	// スワップチェーンのリソース状態を表示可能に変更
 	TransitionResourceBarrier::Transition(
 		commandManager_.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT),
 		swapChain_.GetCurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT);
 
-	// 繧ｳ繝槭Φ繝峨Μ繧ｹ繝茨ｿｽE繧ｯ繝ｭ繝ｼ繧ｺ縲∝ｮ溯｡・
+	// コマンドリストをクローズ、実行
 	commandManager_.ExecuteCommandList();
 
-	// 繧ｹ繝ｯ繝・・ｽE繝√ぉ繧､繝ｳ縺ｮ逕ｻ髱｢縺ｸ縺ｮ陦ｨ遉ｺ
+	// スワップチェーンの画面への表示
 	swapChain_.Present();
 
-	// GPU縺ｨ縺ｮ蜷梧悄
+	// GPUとの同期
 	fence_.Signal(commandManager_.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	fence_.Wait();
 
-	// 繧ｳ繝槭Φ繝峨Μ繧ｹ繝茨ｿｽE繝ｪ繧ｻ繝・・ｽ・ｽ
+	// コマンドリストをリセット
 	commandManager_.ResetCommandList();
 }
 
@@ -127,7 +127,7 @@ void DirectXCommon::ClearDepthStencil() {
 }
 
 void DirectXCommon::AssignSwapChainRenderTarget() {
-	// 繧ｹ繝ｯ繝・・ｽE繝√ぉ繧､繝ｳ縺ｮ繝ｪ繧ｽ繝ｼ繧ｹ逋ｻ骭ｲ
+	// スワップチェーンのリソース登録
 	rtvDesc_ = {};
 	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;

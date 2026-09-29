@@ -13,7 +13,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #endif // _DEBUG
 
 WindowEventsManager::WindowEventsManager() {
-	// 繧､繝吶Φ繝医す繧ｹ繝・Β縺ｮ蛻晄悄蛹・
+	// イベントシステムの初期化
 	eventData_ = nlohmann::json::object();
 	eventSystems_[0] = std::make_unique<DropFileEvent>(eventData_);
 	eventSystems_[1] = std::make_unique<ExitAppEvent>(eventData_);
@@ -21,14 +21,14 @@ WindowEventsManager::WindowEventsManager() {
 }
 
 LRESULT CALLBACK WindowEventsManager::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-	// TODO: ImGui縺ｯImGui縺ｮ譁ｹ縺ｫ遘ｻ蜍輔＆縺帙ｋ
+	// TODO: ImGuiはImGuiの方に移動させる
 #ifdef _DEBUG
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
 		return true;
 	}
 #endif // _DEBUG
 
-	// WM_NCCREATE譎ゅ・縺ｿCREATESTRUCT縺九ｉthis繧貞叙蠕励＠縺ｦ菫晏ｭ・
+	// WM_NCCREATE時のみCREATESTRUCTからthisを取得して保存
 	if (msg == WM_NCCREATE) {
 		CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lparam);
 		auto* pThis = static_cast<WindowEventsManager*>(cs->lpCreateParams);
@@ -36,7 +36,7 @@ LRESULT CALLBACK WindowEventsManager::WindowProc(HWND hwnd, UINT msg, WPARAM wpa
 		return DefWindowProc(hwnd, msg, wparam, lparam);
 	}
 
-	// 莉･髯阪・USERDATA縺九ｉ蜿門ｾ・
+	// 以降はUSERDATAから取得
 	auto* pThis = reinterpret_cast<WindowEventsManager*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 	if (pThis) {
 		return pThis->HandleMessage(hwnd, msg, wparam, lparam);

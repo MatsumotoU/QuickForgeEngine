@@ -8,7 +8,7 @@ AudioPlayChip::~AudioPlayChip() {
 }
 
 void AudioPlayChip::Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* masterVoice) {
-	// 蛻晄悄蛹・
+	// 初期化
 	volume_ = 1.0f;
 	isPaused_ = false;
 	isPlaying_ = false;

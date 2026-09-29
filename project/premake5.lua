@@ -70,9 +70,6 @@ group "QuickForge" -- MyMainProject
             "./externals/imgui/",
             "./externals/lua/",
             "./externals/sol2",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
             "./externals/nlohmann/",
         }
 
@@ -81,9 +78,6 @@ group "QuickForge" -- MyMainProject
         }
 
         postbuildcommands {
-            'robocopy "..\\externals\\Mono\\bin" "%{cfg.targetdir}" "mono-2.0-sgen.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
-            'robocopy "..\\externals\\Mono\\lib" "%{cfg.targetdir}\\mono\\lib" /E /XO /R:0 /W:0 /NJH /NJS > nul',
-            'robocopy "..\\externals\\Mono\\etc" "%{cfg.targetdir}\\mono\\etc" /E /XO /R:0 /W:0 /NJH /NJS > nul',
             'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "%{cfg.targetdir}" "dxcompiler.dll" "dxil.dll" /XO /R:0 /W:0 /NJH /NJS > nul',
             "exit /b 0"
         }
@@ -99,17 +93,16 @@ group "QuickForge" -- MyMainProject
         kind "StaticLib"
         language "C++"
         files {"engine/**.h","engine/**.cpp"}
+        removefiles {
+            "engine/**/Csharp*.h",
+            "engine/**/Csharp*.cpp"
+        }
         links{
             "DirectXTex",
             "ImGui",
             "Lua",
-            "mono-2.0-sgen",
             "ExternalFolders"
         }
-        libdirs {
-            "externals/Mono/lib"
-        }
-
         -- 警告レベル4
         warnings "Extra"
 
@@ -124,9 +117,6 @@ group "QuickForge" -- MyMainProject
             "./externals/imgui/",
             "./externals/lua/",
             "./externals/sol2",
-            "./externals/Mono/",
-            "./externals/Mono/include",
-            "./externals/Mono/include/mono-2.0/",
             "./externals/nlohmann/",
         }
 
@@ -157,6 +147,7 @@ project "ExternalFolders"
     files {
         "externals/**"
     }
+    removefiles { "externals/Mono/**" }
 
 -- ExternalsProject
 project "DirectXTex"

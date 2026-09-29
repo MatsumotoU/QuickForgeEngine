@@ -76,7 +76,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -91,8 +91,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Debug;..\externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\externals\lua\bin\Debug;..\externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
@@ -100,7 +100,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -120,8 +120,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Release;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\externals\lua\bin\Release;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,7 +129,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..;include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\Mono;..\externals\Mono\include;..\externals\Mono\include\mono-2.0;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;include;..\externals;..\externals\assimp;..\externals\assimp\include;..\externals\DirectXTex;..\externals\imgui;..\externals\lua;..\externals\sol2;..\externals\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -149,8 +149,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>mono-2.0-sgen.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\externals\Mono\lib;..\externals\lua\bin\Release;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\externals\lua\bin\Release;..\externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -178,14 +178,9 @@
     <ClInclude Include="include\assets\Particle\ParticleAnimationManager.h" />
     <ClInclude Include="include\assets\Particle\ParticleGpuDataManager.h" />
     <ClInclude Include="include\assets\ResourceDirectoryManager.h" />
-    <ClInclude Include="include\assets\Script\CsharpCmpiler.h" />
-    <ClInclude Include="include\assets\Script\CsharpVirtualEnvironmentOnQFE.h" />
-    <ClInclude Include="include\assets\Script\Data\CsharpComponent.h" />
     <ClInclude Include="include\assets\Script\Data\ScriptHandle.h" />
     <ClInclude Include="include\assets\Script\LuaScriptOnQFE.h" />
     <ClInclude Include="include\assets\Script\LuaScriptResourceManager.h" />
-    <ClInclude Include="include\assets\Script\QFElinker\CsharpOnQFELinker.h" />
-    <ClInclude Include="include\assets\Script\QFElinker\CsharpProjectManager.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.h" />
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.h" />
@@ -212,7 +207,6 @@
     <ClInclude Include="include\collider\Data\AABBColliderData.h" />
     <ClInclude Include="include\collider\Data\SphereColliderData.h" />
     <ClInclude Include="include\core\EngineGlobalValue.h" />
-    <ClInclude Include="include\core\TimeManager.h" />
     <ClInclude Include="include\core\Entity\Component\ComponentData.h" />
     <ClInclude Include="include\core\Entity\Component\ComponentStrage.h" />
     <ClInclude Include="include\core\Entity\Component\IComponentStrage.h" />
@@ -234,6 +228,7 @@
     <ClInclude Include="include\core\Math\Vector\Vector2.h" />
     <ClInclude Include="include\core\Math\Vector\Vector3.h" />
     <ClInclude Include="include\core\Math\Vector\Vector4.h" />
+    <ClInclude Include="include\core\TimeManager.h" />
     <ClInclude Include="include\core\Window\IGameWindow.h" />
     <ClInclude Include="include\core\Window\IGameWindowManager.h" />
     <ClInclude Include="include\graphic\DirectXCommon\Command\CommandExecutor.h" />
@@ -352,13 +347,8 @@
     <ClCompile Include="src\assets\Particle\ParticleAnimationManager.cpp" />
     <ClCompile Include="src\assets\Particle\ParticleGpuDataManager.cpp" />
     <ClCompile Include="src\assets\ResourceDirectoryManager.cpp" />
-    <ClCompile Include="src\assets\Script\CsharpCmpiler.cpp" />
-    <ClCompile Include="src\assets\Script\CsharpScriptOnQFE.cpp" />
-    <ClCompile Include="src\assets\Script\CsharpVirtualEnvironmentOnQFE.cpp" />
-    <ClCompile Include="src\assets\Script\Data\CsharpComponent.cpp" />
     <ClCompile Include="src\assets\Script\LuaScriptOnQFE.cpp" />
     <ClCompile Include="src\assets\Script\LuaScriptResourceManager.cpp" />
-    <ClCompile Include="src\assets\Script\QFElinker\CsharpOnQFELinker.cpp" />
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp" />
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetGetterBase.cpp" />
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQFESetSceneFunction.cpp" />
@@ -379,7 +369,6 @@
     <ClCompile Include="src\collider\Data\AABBColliderData.cpp" />
     <ClCompile Include="src\collider\Data\SphereColliderData.cpp" />
     <ClCompile Include="src\core\EngineGlobalValue.cpp" />
-    <ClCompile Include="src\core\TimeManager.cpp" />
     <ClCompile Include="src\core\Math\AudioMath.cpp" />
     <ClCompile Include="src\core\Math\Matrix\Matrix2x2.cpp" />
     <ClCompile Include="src\core\Math\Matrix\Matrix3x3.cpp" />
@@ -392,6 +381,7 @@
     <ClCompile Include="src\core\Math\Vector\Vector2.cpp" />
     <ClCompile Include="src\core\Math\Vector\Vector3.cpp" />
     <ClCompile Include="src\core\Math\Vector\Vector4.cpp" />
+    <ClCompile Include="src\core\TimeManager.cpp" />
     <ClCompile Include="src\graphic\DirectXCommon\CommandExecutor.cpp" />
     <ClCompile Include="src\graphic\DirectXCommon\Descriptors\CheckGenerateConfig.cpp" />
     <ClCompile Include="src\graphic\DirectXCommon\Descriptors\DescriptorGenerator.cpp" />

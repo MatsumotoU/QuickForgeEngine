@@ -39,9 +39,9 @@ void FrameCounter::FrameEnd() {
 
 	// FPS下限制御
 	if (maxFps_ <= 0.0f) {
-		maxFps_ = 60.0f; // 無効な値を防ぁE
+		maxFps_ = 60.0f; // 無効な値を防い
 	}
-	// 60fpsで固宁E
+	// 60fpsで固定
 	while (std::chrono::high_resolution_clock::now() - startTime_ < kMinTime) {
 		std::this_thread::sleep_for(std::chrono::microseconds(1));
 	}
@@ -49,7 +49,7 @@ void FrameCounter::FrameEnd() {
 	elapsedTime = endTime_ - startTime_;
 	const float unscaledDeltaTime = elapsedTime.count();
 
-	// FPS計箁E
+	// FPS計算
 	if (unscaledDeltaTime > 0.0f) {
 		fps_ = 1.0f / unscaledDeltaTime;
 	} else {

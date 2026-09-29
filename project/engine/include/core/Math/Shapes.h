@@ -1,20 +1,20 @@
 #pragma once
 #include "Vector/Vector3.h"
 
-/// 琁E��E
+/// 球体
 struct Sphere
 {
 	Vector3 center;
 	float radius;
 	int subdivision;
 };
-/// 軸並行墁E��ボックス
+/// 軸平行境界ボックス
 struct AABB
 {
 	Vector3 center;
 	Vector3 size;
 };
-/// 有向墁E��ボックス
+/// 有向境界ボックス
 struct OBB
 {
 	Vector3 center;
@@ -24,7 +24,7 @@ struct OBB
 /// 板
 struct Plane
 {
-	Vector3 normal; // 法緁E
+	Vector3 normal; // 法線
 	float distance; // 距離
 
 	float DistanceToPoint(const Vector3& point);
@@ -33,23 +33,23 @@ struct Plane
 struct Triangle {
 	Vector3 vertices[3];
 };
-/// 直緁E
+/// 直線
 struct Line
 {
 	Vector3 origin; // 始点
-	Vector3 diff; // 終点への差刁E�Eクトル
+	Vector3 diff; // 終点への差分ベクトル
 };
-/// 半直緁E
+/// 半直線
 struct Ray
 {
 	Vector3 origin; //!< 始点
-	Vector3 diff; //!< 終点への差刁E�Eクトル
+	Vector3 diff; //!< 終点への差分ベクトル
 };
-/// 線�E
+/// 線分
 struct Segment
 {
 	Vector3 origin; //!< 始点
-	Vector3 diff; //!< 終点への差刁E�Eクトル
+	Vector3 diff; //!< 終点への差分ベクトル
 };
 /// カプセル
 struct Capsule

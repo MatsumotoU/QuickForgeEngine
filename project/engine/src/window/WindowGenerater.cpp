@@ -1,28 +1,28 @@
 #include "engine/include/window/WindowGenerater/WindowGenerater.h"
 
 void WindowGenerater::CreateGameWindow(WNDCLASS& wc, HWND& hwnd, WindowConfigData& config, WNDPROC& proc, WindowEventsManager* eventManager) {
-	// 繧ｦ繧｣繝ｳ繝峨え繝励Ο繝ｼ繧ｸ繝｣繝ｼ
+	// ウィンドウプロージャー
 	wc.lpfnWndProc = proc;
-	// 繧ｦ繧｣繝ｳ繝峨え繧ｯ繝ｩ繧ｹ蜷・
+	// ウィンドウクラス名
 	wc.lpszClassName = L"CG2WindowClass";
-	// 繧､繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ繝上Φ繝峨Ν
+	// インスタンスハンドル
 	wc.hInstance = GetModuleHandle(nullptr);
-	// 繧ｫ繝ｼ繧ｽ繝ｫ
+	// カーソル
 	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 
-	// 繧ｦ繧｣繝ｳ繝峨え繧ｯ繝ｩ繧ｹ繧堤匳骭ｲ縺吶ｋ
+	// ウィンドウクラスを登録する
 	RegisterClass(&wc);
 
-	// 繧ｦ繧｣繝ｳ繝峨え繧ｵ繧､繧ｺ繧定｡ｨ縺呎ｧ矩菴薙↓繧ｯ繝ｩ繧､繧｢繝ｳ繝磯伜沺繧貞・繧後ｋ
+	// ウィンドウサイズを表す構造体にクライアント領域を入れる
 	RECT wrc = { 0,0,config.clientWidth,config.clientHeight };
 
-	// 繧ｯ繝ｩ繧､繧｢繝ｳ繝磯伜沺繧貞・縺ｫ螳滄圀縺ｮ繧ｵ繧､繧ｺ縺ｫwrc繧呈峩譁ｰ縺励※繧ゅｉ縺・
+	// クライアント領域を基に実際のサイズへwrcを更新する
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
-	// 繝ｪ繧ｵ繧､繧ｺ遖∵ｭ｢
+	// リサイズ禁止
 	DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 	
-	// 繧ｦ繧｣繝ｳ繝峨え縺ｮ逕滓・
+	// ウィンドウの生成
 	hwnd = CreateWindow(
 		wc.lpszClassName,
 		config.windowName.c_str(),
@@ -39,9 +39,9 @@ void WindowGenerater::CreateGameWindow(WNDCLASS& wc, HWND& hwnd, WindowConfigDat
 
 	ShowWindow(hwnd, SW_SHOW);
 
-	// 繧ｦ繧｣繝ｳ繝峨え縺ｮ讖溯・隗｣謾ｾ
+	// ウィンドウの機能解放
 	if (config.isCanDropFiles) {
-		// 繧ｦ繧｣繝ｳ繝峨え縺ｫ蟇ｾ縺励※縲√ラ繝ｩ繝・げ・・ラ繝ｭ繝・・繧呈怏蜉ｹ縺ｫ縺吶ｋ
+		// ウィンドウに対して、ドラッグアンドドロップを有効にする
 		DragAcceptFiles(hwnd, TRUE);
 	}
 

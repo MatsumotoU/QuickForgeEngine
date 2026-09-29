@@ -7,7 +7,7 @@
 class D3DResourceLeakChecker final {
 public:
 	~D3DResourceLeakChecker() {
-		// * 終亁E��のエラー処琁E* //
+		// * 終了時のエラー処理 * //
 		Log("=====D3DResourceLeakCheck=====\n");
 		IDXGIDebug1* debug;
 		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {

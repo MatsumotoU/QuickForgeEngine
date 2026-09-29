@@ -18,7 +18,7 @@ void CameraManager::Initialize() {
 	EntityManager* entityManager = AssetManager::GetInstance()->GetEntityManager();
 	entityManager->GetComponent<SceneObjectData>(cameras_[0].GetBindEntityId()).name = "DebugCamera";
 
-	// 繝・ヵ繧ｩ繝ｫ繝医き繝｡繝ｩ繧定ｿｽ蜉
+	// デフォルトカメラを追加
 	mainCameraIndex_ = AddCamera();
 }
 
@@ -94,9 +94,9 @@ void CameraManager::SnapToDebugCamera(uint32_t index) {
 //	}
 //
 //#ifdef _DEBUG
-//	// 0逡ｪ莉･螟悶・繧ｫ繝｡繝ｩ縺縺代ｒ霑斐☆
+//	// 0番以外のカメラだけを返す
 //	if (cameras_.size() > 1) {
-//		// 0逡ｪ莉･螟悶・繧ｫ繝｡繝ｩ縺縺代ｒ譬ｼ邏阪☆繧虐tatic縺ｪvector繧堤畑諢・
+//		// 0番以外のカメラだけを格納するstaticなvectorを用意
 //		static std::vector<Camera> nonDebugCameras;
 //		nonDebugCameras.clear();
 //		for (size_t i = 1; i < cameras_.size(); ++i) {
@@ -104,7 +104,7 @@ void CameraManager::SnapToDebugCamera(uint32_t index) {
 //		}
 //		return nonDebugCameras;
 //	}
-//	// 0逡ｪ縺励°縺ｪ縺・ｴ蜷医・遨ｺ縺ｮvector繧定ｿ斐☆
+//	// 0番しかない場合は空のvectorを返す
 //	static std::vector<Camera> emptyCameras;
 //	emptyCameras.clear();
 //	return emptyCameras;

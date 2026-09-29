@@ -37,9 +37,9 @@ void HierarchyView::Draw() {
 	}
 
 	ImGui::Begin(name_.c_str(), &isActive_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	// 蜿ｳ繧ｯ繝ｪ繝・け縺ｧ繧ｳ繝ｳ繝・く繧ｹ繝医Γ繝九Η繝ｼ
+	// 右クリックでコンテキストメニュー
 	DrawPopupContextWindow();
-	// Entity荳隕ｧ陦ｨ遉ｺ
+	// Entity一覧表示
 	DrawEntityList();
 
 	ImGui::End();
@@ -121,14 +121,14 @@ void HierarchyView::DrawEntityList() {
 		std::string& name = data.name;
 		std::string label = name + "##" + std::to_string(id);
 
-		// 繝・ヰ繝・げ繧ｫ繝｡繝ｩ縺ｯ陦ｨ遉ｺ縺励↑縺・
+		// デバッグカメラは表示しない
 #ifdef _DEBUG
 		if (id == CameraManager::GetInstance()->GetCamera(0).GetBindEntityId()) {
 			continue;
 		}
 #endif // _DEBUG
 
-		// 繝峨Λ繝・げ繧ｽ繝ｼ繧ｹ
+		// ドラッグソース
 		ImGui::PushID(id);
 		if (ImGui::Selectable(label.c_str(), isSelected)) {
 			selectedEntityId_ = id;
@@ -140,12 +140,12 @@ void HierarchyView::DrawEntityList() {
 			ImGui::EndDragDropSource();
 		}
 
-		// 繝峨Ο繝・・繧ｿ繝ｼ繧ｲ繝・ヨ
+		// ドロップターゲット
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_ID")) {
 				uint32_t draggedId = *(const uint32_t*)payload->Data;
 				if (draggedId != id) {
-					// 隕ｪ蟄宣未菫ゅｒ險ｭ螳・
+					// 親子関係を設定
 					SceneManager::GetInstance()->ParentChild(id, draggedId);
 				}
 			}
@@ -153,7 +153,7 @@ void HierarchyView::DrawEntityList() {
 		}
 		ImGui::PopID();
 
-		// 蜿ｳ繧ｯ繝ｪ繝・け縺ｧ繧ｳ繝ｳ繝・く繧ｹ繝医Γ繝九Η繝ｼ
+		// 右クリックでコンテキストメニュー
 		if (ImGui::BeginPopupContextItem(label.c_str())) {
 			if (ImGui::MenuItem("Rename")) {
 				ImGui::OpenPopup("Rename Entity");
@@ -162,7 +162,7 @@ void HierarchyView::DrawEntityList() {
 				SceneManager::GetInstance()->CopyEntity(id);
 			}
 			if (ImGui::MenuItem("Save")) {
-				// 菫晏ｭ伜・逅・
+				// 保存処理
 				SceneManager::GetInstance()->SaveEntity(id, name);
 				ImGui::CloseCurrentPopup();
 			}

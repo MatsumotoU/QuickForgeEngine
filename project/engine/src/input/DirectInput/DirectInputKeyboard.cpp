@@ -19,7 +19,7 @@ void DirectInputKeyboard::Initialize(const HWND& hwnd, IDirectInput8* directInpu
 }
 
 void DirectInputKeyboard::Update() {
-	// 繧ｭ繝ｼ繝懊・繝峨・蜃ｦ逅・
+	// キーボードの処理
 	memcpy(prekey_, key_, sizeof(key_));
 	keyboard_->Acquire();
 	keyboard_->GetDeviceState(sizeof(key_), key_);

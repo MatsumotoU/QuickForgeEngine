@@ -48,7 +48,7 @@ void DropDownFileList::DrawMenuItem() {
 bool DropDownFileList::GetSelectedFileName(std::string& fileName) {
 	if (isSelected_) {
 		fileName = selectedFileName_;
-		isSelected_ = false; // 荳蠎ｦ蜿門ｾ励＠縺溘ｉ繝ｪ繧ｻ繝・ヨ
+		isSelected_ = false; // 一度取得したらリセット
 		return true;
 	}
 	return false;

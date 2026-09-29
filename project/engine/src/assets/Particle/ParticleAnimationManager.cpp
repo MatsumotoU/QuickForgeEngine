@@ -4,7 +4,7 @@
 
 uint32_t ParticleAnimationManager::LoadAnimationData(const std::string& fileName) {
 	AssetManager* assetManager = AssetManager::GetInstance();
-	// 繧ｷ繝ｼ繝ｳ繝輔ぃ繧､繝ｫ縺ｮ繝代せ繧堤ｵ・∩遶九※
+	// ファイルのパスを組み立て
 	std::string filePath = assetManager->GetResourceDirectoryManager()->GetResourceDirectory("ParticleAnim");
 	std::ifstream ifs(filePath + fileName);
 	if (!ifs.is_open()) {

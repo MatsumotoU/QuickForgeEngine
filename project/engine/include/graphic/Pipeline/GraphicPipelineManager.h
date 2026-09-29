@@ -12,21 +12,21 @@ public:
 	void Initialize(ID3D12Device* device);
 public:
 	/// <summary>
-	/// 一般皁E��三角形のPSOを取得しまぁE
+	/// 一般的な三角形のPSOを取得します
 	/// </summary>
-	/// <param name="blendmode">ブレンドモーチE/param>
+	/// <param name="blendmode">ブレンドモード</param>
 	/// <returns></returns>
 	PipelineStateObject* GetTrianglePso(BlendMode blendmode) { return &trianglePso_[static_cast<uint32_t>(blendmode)]; }
 	/// <summary>
-	/// 一般皁E��三角形のPSOを取得しまぁE
+	/// 一般的な三角形のPSOを取得します
 	/// </summary>
-	/// <param name="blendmode">ブレンドモーチE/param>
+	/// <param name="blendmode">ブレンドモード</param>
 	/// <returns></returns>
 	PipelineStateObject* GetLinePso(BlendMode blendmode) { return &linePso_[static_cast<uint32_t>(blendmode)]; }
 	/// <summary>
-	/// 一般皁E��三角形のPSOを取得しまぁE
+	/// 一般的な三角形のPSOを取得します
 	/// </summary>
-	/// <param name="blendmode">ブレンドモーチE/param>
+	/// <param name="blendmode">ブレンドモード</param>
 	/// <returns></returns>
 	PipelineStateObject* GetPointPso(BlendMode blendmode) { return &pointPso_[static_cast<uint32_t>(blendmode)]; }
 	PipelineStateObject* GetPrimitivePso(BlendMode blendmode) { return &primitivePso_[static_cast<uint32_t>(blendmode)]; }

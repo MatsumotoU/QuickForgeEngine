@@ -45,15 +45,13 @@ private:
 };
 
 /// <summary>
-/// 縺薙・繝倥ャ繝繝ｼ繧定ｪｭ縺ｿ霎ｼ繧薙〒縺・ｌ縺ｰ菴ｿ縺医ｋ繧・▽
+/// このヘッダーを読み込めば使える
 /// </summary>
 /// <param name="message"></param>
 void DebugLog(const std::string& message,const LogLevel& logLevel = LogLevel::EngineInfo, const std::source_location& location = std::source_location::current());
 
-// Lua縺ｮ蛟､繧呈枚蟄怜・縺ｫ螟画鋤縺励※霑ｽ蜉縺吶ｋ髢｢謨ｰ
+// Luaの値を文字列に変換して追加する関数
 void AppendLuaValueToString(const sol::object& v, std::string& msg);
 
-// 譁・ｭ怜・繝ｻ謨ｰ蛟､縺ｩ縺｡繧峨ｂ蜿励￠蜿悶ｌ繧九Λ繝・ヱ繝ｼ髢｢謨ｰ
+// 文字列・数値どちらも受け取れるラッパー関数
 void DebugLogLua(sol::variadic_args va,uint32_t id,const std::string& scriptName);
-
-void DebugLogCsharp(const std::string& message);

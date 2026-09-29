@@ -10,13 +10,13 @@ public:
 	~XAudioCore();
 	
 public:
-	/// xAudio2を作�EしまぁE
+	/// xAudio2を作成します
 	void Initialize();
-	/// xAudio2を終亁E��まぁE
+	/// xAudio2を終了します
 	void Finalize();
 
 public:
-	/// 全体�E音量を調節しまぁE1.0が標溁E
+	/// 全体の音量を調節します1.0が標準
 	void SetMasterVolume(float volume);
 	uint32_t GetOutputChannels();
 	IXAudio2MasteringVoice* GetMasterVoice();

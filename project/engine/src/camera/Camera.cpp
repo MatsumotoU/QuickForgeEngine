@@ -49,18 +49,18 @@ void Camera::Update() {
 }
 
 bool Camera::CheckVisible(const Matrix4x4& world) const {
-	// 繝ｯ繝ｼ繝ｫ繝牙ｺｧ讓吶・蜴溽せ繧貞叙蠕・
+	// ワールド座標の原点を取得
 	Vector4 pos4(0.0f, 0.0f, 0.0f, 1.0f);
 	Vector4 worldPos = Vector4::Transform(pos4, world);
 
-	// 繧ｯ繝ｪ繝・・遨ｺ髢薙∈螟画鋤
+	// クリップ空間へ変換
 	Vector4 clipPos = Vector4::Transform(worldPos, viewProjectionMatrix_);
 
-	// w縺ｧ蜑ｲ縺｣縺ｦNDC縺ｸ
+	// wで割ってNDCへ
 	if (clipPos.w == 0.0f) return false;
 	Vector3 ndcPos = { clipPos.x / clipPos.w, clipPos.y / clipPos.w, clipPos.z / clipPos.w };
 
-	// NDC遽・峇蜀・°蛻､螳夲ｼ・irectX: z縺ｯ0・・, OpenGL: z縺ｯ-1・・・・
+	// NDC範囲内か判定（DirectX: zは0～1、OpenGL: zは-1～1）
 	return
 		ndcPos.x >= -1.0f && ndcPos.x <= 1.0f &&
 		ndcPos.y >= -1.0f && ndcPos.y <= 1.0f &&

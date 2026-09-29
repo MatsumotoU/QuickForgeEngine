@@ -30,7 +30,7 @@ void GameView::Draw() {
 	DescriptorHandles handle = render->GetCurrentSrvHandle();
 	ImGui::Begin(name_.c_str());
 
-	// フォーカス判宁E
+	// フォーカス判定
 	isSceneViewFocused_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
 	ImVec2 windowPos = ImGui::GetWindowPos();

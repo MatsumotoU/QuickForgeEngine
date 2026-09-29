@@ -13,13 +13,13 @@ void AudioSourceManager::Initialize() {
 }
 
 uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
-	// 縺吶〒縺ｫ隱ｭ縺ｿ霎ｼ縺ｾ繧後※縺・ｋ蝣ｴ蜷医・繝上Φ繝峨Ν繧定ｿ斐☆
+	// すでに読み込まれている場合はハンドルを返す
 	auto it = audioHandleMap_.find(filePath);
 	if (it != audioHandleMap_.end()) {
 		return it->second;
 	}
 
-	// 繝輔ぃ繧､繝ｫ繧帝幕縺・
+	// ファイルを開い
 	AudioData soundData{};
 	try{
 #ifdef _DEBUG
@@ -34,7 +34,7 @@ uint32_t AudioSourceManager::LoadSoundData(const std::string& filePath) {
 		e;
 		return 0;
 	}
-	// 繝上Φ繝峨Ν繧堤函謌舌＠縺ｦ菫晏ｭ・
+	// ハンドルを生成して保存
 	uint32_t handle = nextHandle_++;
 	audioDataMap_[handle] = soundData;
 	audioHandleMap_[filePath] = handle;

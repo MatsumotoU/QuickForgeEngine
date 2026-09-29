@@ -17,7 +17,7 @@ void KeyConfig::Initialize() {
 }
 
 void KeyConfig::AddKey(const std::string& name, uint32_t key) {
-	// 蜷後§繧ｭ繝ｼ縺檎匳骭ｲ縺輔ｌ縺ｦ縺・↑縺・°遒ｺ隱・
+	// 同じキーが登録されていないか確認
 	for (const auto& existingKey : keyMap_[name]) {
 		if (existingKey == key) {
 			return;
@@ -64,7 +64,7 @@ const std::vector<uint32_t>& KeyConfig::GetKeys(const std::string& name) const {
 }
 
 void KeyConfig::SettingDefaultKeyConfig() {
-	// 遘ｻ蜍・
+	// 移動
 	AddKey("MoveRight", DIK_RIGHT);
 	AddKey("MoveRight", DIK_D);
 	AddKey("MoveLeft", DIK_LEFT);
@@ -73,16 +73,16 @@ void KeyConfig::SettingDefaultKeyConfig() {
 	AddKey("MoveUp", DIK_W);
 	AddKey("MoveDown", DIK_DOWN);
 	AddKey("MoveDown", DIK_S);
-	// 繧ｸ繝｣繝ｳ繝・
+	// ジャンプ
 	AddKey("Jump", DIK_SPACE);
-	// 謾ｻ謦・
+	// 攻撃
 	AddKey("Attack", DIK_LCONTROL);
-	// 繝｡繝九Η繝ｼ
+	// メニュー
 	AddKey("Menu", DIK_ESCAPE);
-	// 豎ｺ螳・
+	// 決定
 	AddKey("Decide", DIK_RETURN);
 	AddKey("Decide", DIK_SPACE);
-	// 繧ｭ繝｣繝ｳ繧ｻ繝ｫ
+	// キャンセル
 	AddKey("Cancel", DIK_BACKSPACE);
 	AddKey("Cancel", DIK_ESCAPE);
 }

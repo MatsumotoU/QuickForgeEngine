@@ -17,46 +17,46 @@ public:
 	void Finalize() override;
 	void Update(float deltaTime) override;
 
-	// 蜈ｨ菴薙・髻ｳ螢ｰ謫堺ｽ・
-	/// 蜈ｨ髻ｳ螢ｰ蛛懈ｭ｢
+	// 全体の音声操作
+	/// 全音声停止
 	void StopAllSound() override;
-	/// 蜈ｨ髻ｳ螢ｰ荳譎ょ●豁｢
+	/// 全音声一時停止
 	void PauseAllSound() override;
-	/// 蜈ｨ髻ｳ螢ｰ蜀埼幕
+	/// 全音声再開
 	void ResumeAllSound() override;
 
-	// 蛟句挨縺ｮ髻ｳ螢ｰ謫堺ｽ・
-	/// 髻ｳ螢ｰ蜀咲函(volume: 0.0 ~ 1.0縺ｮ遽・峇)
+	// 個別の音声操作
+	/// 音声再生(volume: 0.0 ~ 1.0の範囲)
 	uint32_t PlaySoundForAudioData(uint32_t audioDataHandle, bool loop, float volume) override;
-	/// 髻ｳ螢ｰ蛛懈ｭ｢
+	/// 音声停止
 	void StopSound(uint32_t soundHandle) override;
-	/// 髻ｳ螢ｰ荳譎ょ●豁｢
+	/// 音声一時停止
 	void PauseSound(uint32_t soundHandle) override;
-	/// 髻ｳ螢ｰ蜀埼幕
+	/// 音声再開
 	void ResumeSound(uint32_t soundHandle) override;
 
-	// 蜷・浹驥剰ｨｭ螳・
-	/// 荳ｻ髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	// 各音量設定
+	/// 主音量設定(0.0 ~ 1.0の範囲)
 	void SetMasterVolume(float volume) override;
-	/// BGM髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	/// BGM音量設定(0.0 ~ 1.0の範囲)
 	void SetBGMVolume(float volume) override;
-	/// SE髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	/// SE音量設定(0.0 ~ 1.0の範囲)
 	void SetSEVolume(float volume) override;
-	/// 繝懊う繧ｹ髻ｳ驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	/// ボイス音量設定(0.0 ~ 1.0の範囲)
 	void SetVoiceVolume(float volume) override;
-	/// 迺ｰ蠅・浹驥剰ｨｭ螳・0.0 ~ 1.0縺ｮ遽・峇)
+	/// 環境音量設定(0.0 ~ 1.0の範囲)
 	void SetASVolume(float volume) override;
 
-	// 蜷・浹驥丞叙蠕・
-	/// 荳ｻ髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	// 各音量取得
+	/// 主音量取得(0.0 ~ 1.0の範囲)
 	float GetMasterVolume() override;
-	/// BGM髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	/// BGM音量取得(0.0 ~ 1.0の範囲)
 	float GetBGMVolume() override;
-	/// SE髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	/// SE音量取得(0.0 ~ 1.0の範囲)
 	float GetSEVolume() override;
-	/// 繝懊う繧ｹ髻ｳ驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	/// ボイス音量取得(0.0 ~ 1.0の範囲)
 	float GetVoiceVolume() override;
-	/// 迺ｰ蠅・浹驥丞叙蠕・0.0 ~ 1.0縺ｮ遽・峇)
+	/// 環境音量取得(0.0 ~ 1.0の範囲)
 	float GetASVolume() override;
 
 private:

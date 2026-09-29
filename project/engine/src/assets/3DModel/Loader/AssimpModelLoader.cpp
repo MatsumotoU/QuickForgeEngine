@@ -33,7 +33,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 		DebugLog(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
 #endif // _DEBUG
 
-		// 鬆らせ繝・・繧ｿ
+		// 頂点データ
 		std::vector<VertexData> tempVertices;
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			VertexData vtx;
@@ -65,7 +65,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			tempVertices.push_back(vtx);
 		}
 
-		// 繧､繝ｳ繝・ャ繧ｯ繧ｹ・井ｸ芽ｧ貞ｽ｢縺斐→縺ｫ鬆らせ繧定ｩｰ繧√ｋ・・
+		// インデックス（三角形ごとに頂点を詰める）
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			const aiFace& face = mesh->mFaces[i];
 			if (face.mNumIndices == 3) {
@@ -75,7 +75,7 @@ void AssimpModelLoader::LoadModelData(const std::string& modelResourceDirectory,
 			}
 		}
 
-		// 繝槭ユ繝ｪ繧｢繝ｫ繝ｻ繝・け繧ｹ繝√Ε
+		// マテリアル・テクスチャ
 		if (scene->HasMaterials() && mesh->mMaterialIndex < scene->mNumMaterials) {
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			aiString texPath;

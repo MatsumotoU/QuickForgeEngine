@@ -24,7 +24,7 @@ void XInputController::Update() {
         #ifdef _DEBUG
                 DebugLog(std::format("Connected Controller! paletNumber: {}", gamepadStates[i].state.dwPacketNumber));
 
-                // 讖溯・諠・ｱ繧貞叙蠕・
+                // 機能情報を取得
                 XINPUT_CAPABILITIES cap;
                 if (XInputGetCapabilities(i, 0, &cap) == ERROR_SUCCESS) {
                     DebugLog(std::format("Type: {}", static_cast<int>(cap.Type)));
@@ -34,7 +34,7 @@ void XInputController::Update() {
                     DebugLog("Failed to get capabilities.");
                 }
 
-                // 繝舌ャ繝・Μ繝ｼ諠・ｱ繧貞叙蠕・
+                // バッテリー情報を取得
                 XINPUT_BATTERY_INFORMATION batteryInfo;
                 if (XInputGetBatteryInformation(i, BATTERY_DEVTYPE_GAMEPAD, &batteryInfo) == ERROR_SUCCESS) {
                     DebugLog(std::format("Battery Type: {}", static_cast<int>(batteryInfo.BatteryType)));
@@ -101,7 +101,7 @@ Vector2 XInputController::GetRightStick(uint32_t padId) {
     result.x = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbRX);
     result.y = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbRY);
 
-    // 雜ｳ蛻・ｊ
+    // デッドゾーン処理
     if (std::fabsf(result.x) <= stickDeadZone_) {
         result.x = 0.0f;
     }
@@ -129,7 +129,7 @@ Vector2 XInputController::GetLeftStick(uint32_t padId) {
     result.x = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbLX);
     result.y = static_cast<float>(gamepadStates[padId].state.Gamepad.sThumbLY);
 
-    // 雜ｳ蛻・ｊ
+    // デッドゾーン処理
     if (std::fabsf(result.x) <= stickDeadZone_) {
         result.x = 0.0f;
     }

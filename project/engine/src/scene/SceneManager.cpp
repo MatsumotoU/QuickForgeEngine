@@ -228,10 +228,6 @@ void SceneManager::AddLuaScript(uint32_t entityId, const std::string& scriptName
 	currentScene_->AddLuaScript(entityId, scriptName);
 }
 
-void SceneManager::AddCsharpScript(uint32_t entityId, const std::string& className) {
-	currentScene_->AddCsharpScript(entityId, className);
-}
-
 uint32_t SceneManager::AddEntity(const std::string& entityName) {
 	return currentScene_->AddEntity(entityName);
 }

@@ -18,21 +18,21 @@ class TextureManager final :public Singleton<TextureManager> {
 	TextureManager(TextureManager&&) = delete;
 	TextureManager& operator=(TextureManager&&) = delete;
 
-public:// 一回�E絶対に呼び出さなぁE��バグるやつ
+public:// 一回は絶対に呼び出さないバグるやつ
 	/// <summary>
-	/// 初期匁E
+	/// 初期化
 	/// </summary>
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap);
 	/// <summary>
-	/// 終亁E�E琁E
+	/// 終了処理
 	/// </summary>
 	void Finalize();
 	/// <summary>
-	/// 中間リソースを削除しまぁE
+	/// 中間リソースを削除します
 	/// </summary>
 	void ReleaseIntermediateResources();
 	/// <summary>
-	/// 持E���Eパスの画像ファイルを読み取りまぁE
+	/// 指定したパスの画像ファイルを読み取ります
 	/// </summary>
 	/// <param name="filePath"></param>
 	/// <returns></returns>

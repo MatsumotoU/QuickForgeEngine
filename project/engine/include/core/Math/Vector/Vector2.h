@@ -31,36 +31,36 @@ public:
 
 public:
 	/// <summary>
-	/// 2次允E�Eクトルの長さを求めめE
+	/// 2次元ベクトルの長さを求める
 	/// </summary>
-	/// <returns>2次允E�Eクトルの長ぁE/returns>
+	/// <returns>2次元ベクトルの長さ</returns>
 	[[nodiscard]] float Length() const;
 
 	/// <summary>
-	/// 正規化されぁE次允E�Eクトルを求めめE
+	/// 正規化されたベクトルを求める
 	/// </summary>
-	/// <returns>正規化されぁE次允E�Eクトル</returns>
+	/// <returns>正規化されたベクトル</returns>
 	[[nodiscard]] Vector2 Normalize() const;
 
 public:
 	/// <summary>
-	/// 2つのベクトルの冁E��を求めめE
+	/// 2つのベクトルの内容を求める
 	/// </summary>
 	/// <param name="v1">1つ目のベクトル</param>
 	/// <param name="v2">2つ目のベクトル</param>
-	/// <returns>2つのベクトルの冁E��E/returns>
+	/// <returns>2つのベクトルの内積</returns>
 	[[nodiscard]] static float Dot(const Vector2& v1, const Vector2& v2);
 
 	/// <summary>
-	/// 2つのベクトルの外積を求めめE
+	/// 2つのベクトルの外積を求める
 	/// </summary>
 	/// <param name="v1">1つ目のベクトル</param>
 	/// <param name="v2">2つ目のベクトル</param>
-	/// <returns>2つのベクトルの外穁E/returns>
+	/// <returns>2つのベクトルの外積</returns>
 	[[nodiscard]] static float Cross(const Vector2& v1, const Vector2& v2);
 
 	/// <summary>
-	/// 2つのベクトルの距離を整数で求めめE
+	/// 2つのベクトルの距離を整数で求める
 	/// </summary>
 	/// <param name="v1">1つ目のベクトル</param>
 	/// <param name="v2">2つ目のベクトル</param>

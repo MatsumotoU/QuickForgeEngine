@@ -25,15 +25,15 @@ void WindowsEngineCore::Initialize() {
 	QFE::EngineGlobalValue::windowHeight = windowHeight;
 	std::string windowTitle = "Boom";
 
-	// * ウィンドウマネージャー初期匁E* //
+	// * ウィンドウマネージャー初期化 * //
 	gameWindowManager = std::make_unique<GameWindowManager>();
 	gameWindowManager->Initialize();
 	gameWindowManager->AddWindow(windowWidth, windowHeight, windowTitle);
-	// * DirectX初期匁E* //
+	// * DirectX初期化 * //
 	directXCommon_ = DirectXCommon::GetInstance();
 	directXCommon_->Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle), windowWidth, windowHeight);
-	// * ImGuiの初期匁E* //
+	// * ImGuiの初期化 * //
 	imguiFrameController_.Initialize(
 		dynamic_cast<GameWindowManager*>(gameWindowManager.get())->GetWindow(windowTitle),
 		directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT),
@@ -46,24 +46,24 @@ void WindowsEngineCore::Initialize() {
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetCPUDescriptorHandleForHeapStart(),
 		directXCommon_->GetSrvDescriptorHeapAddress()->GetGPUDescriptorHandleForHeapStart());
 
-	// * パイプライン管琁E�E��E�ラス初期匁E* //
+	// * パイプライン管理クラス初期化 * //
 	graphicPipelineManager_ = GraphicPipelineManager::GetInstance();
 	graphicPipelineManager_->Initialize(directXCommon_->GetDevice());
 
-	// * オフスクリーンリソースマネージャー初期匁E* //
+	// * オフスクリーンリソースマネージャー初期化 * //
 	offScreenResourceManager_.Initialize(directXCommon_->GetDevice(), windowWidth, windowHeight);
-	// オフスクリーンRTVヒ�Eプ割り当て & SRVヒ�Eプ割り当て
+	// オフスクリーンRTVヒープ割り当て & SRVヒープ割り当て
 	for (uint32_t i = 0; i < offScreenResourceManager_.GetOffscreenCount(); i++) {
-		// RTVヒ�Eプ割り当て
+		// RTVヒープ割り当て
 		DescriptorHandles rtvHandles = 
 			directXCommon_->AssignRtvHeap(offScreenResourceManager_.GetOffscreenResource(i), &directXCommon_->GetSwapChainRtvDesc());
 		offScreenResourceManager_.SetRtvHandle(rtvHandles.cpuHandle_, i);
-		// SRVヒ�Eプ割り当て
+		// SRVヒープ割り当て
 		DescriptorHandles srvHandles =
 			directXCommon_->AssignSrvHeap(offScreenResourceManager_.GetOffscreenResource(i), offScreenResourceManager_.GetOffscreenSrvDesc());
 		offScreenResourceManager_.SetSrvHandle(srvHandles, i);
 	}
-	// * ポスト�Eロセスマネージャー初期匁E* //
+	// * ポストプロセスマネージャー初期化 * //
 	rendaringPostprocess_ = RendaringPostprosecess::GetInstance();
 	rendaringPostprocess_->Initialize(directXCommon_->GetDevice(), directXCommon_->GetCommandManager(D3D12_COMMAND_LIST_TYPE_DIRECT));
 	rendaringPostprocess_->SetNormalPSO(graphicPipelineManager_->GetNormalPso());
@@ -118,20 +118,6 @@ void WindowsEngineCore::Initialize() {
 #ifdef _DEBUG
 	DebugLog("======================Initialized LuaScriptResourceManager======================");
 #endif // _DEBUG
-	try {
-		csScriptManager_ = CsharpVirtualEnvironmentOnQFE::GetInstance();
-		csScriptManager_->Initialize();
-	}
-	catch (const std::exception& e) {
-#ifdef _DEBUG
-		DebugLog(std::string("Error: ") + e.what());
-#endif // _DEBUG
-	}
-
-#ifdef _DEBUG
-	DebugLog("======================Initialized CsharpVirtualEnvironmentOnQFE======================");
-#endif // _DEBUG
-
 	physicsManager_ = PhysicsManager::GetInstance();
 	physicsManager_->Initialize();
 
@@ -165,7 +151,7 @@ void WindowsEngineCore::MainLoop() {
 	while (gameWindowManager->IsWindowActive())
 	{
 		
-		// アプリケーション安�E終亁E�E�E琁E
+		// アプリケーション安全終了用
 		MSG msg;
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
@@ -188,7 +174,6 @@ void WindowsEngineCore::Shutdown() {
 	multiThreadTaskExecutor_->Finalize();
 	colliderManager_->Finalize();
 	physicsManager_->Finalize();
-	csScriptManager_->Finalize();
 	luaScriptResourceManager_->Finalize();
 	sceneManager_->Finalize();
 	graphRenderer_->Finalize();
@@ -203,7 +188,7 @@ void WindowsEngineCore::Shutdown() {
 #endif // _DEBUG
 }
 
-// こ�E先�Eプライベ�Eト関数
+// この先はプライベート関数
 void WindowsEngineCore::Update() {
 	inputInterface_->Update();
 	gameWindowManager->Update();

@@ -73,11 +73,11 @@ Vector3 Vector3::Lerp(const Vector3& v1, const Vector3& v2, float t) {
 Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 result{};
 
-	// 豁｣隕丞喧
+	// 正規化
 	Vector3 from = v1.Normalize();
 	Vector3 to = v2.Normalize();
 
-	// 2繝吶け繝医Ν髢薙・隗貞ｺｦ繧呈ｱゅａ繧・
+	// 2ベクトル間の角度を求める
 	float dot = std::clamp(Vector3::Dot(from, to), -1.0f, 1.0f);
 	float theta = std::acosf(dot);
 
@@ -91,7 +91,7 @@ Vector3 Vector3::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 		normalizeVector.y = (from.y * sinThetaFrom + to.y * sinThetaTo) / sinTheta;
 		normalizeVector.z = (from.z * sinThetaFrom + to.z * sinThetaTo) / sinTheta;
 	} else {
-		normalizeVector = from; // 隗貞ｺｦ縺・縺ｮ蝣ｴ蜷医・縺昴・縺ｾ縺ｾ
+		normalizeVector = from; // sinThetaが0の場合はそのまま
 	}
 
 	float length1 = v1.Length();
@@ -168,11 +168,11 @@ Vector3 Vector3::LookAt(const Vector3& eyePosition, const Vector3& targetPositio
 	Vector3 diff = (targetPosition - eyePosition).Normalize();
     Vector3 result{};
 
-    // yaw・医Κ繝ｼ, y霆ｸ蝗槭ｊ・・
+    // yaw（ヨー、y軸回り）
     result.y = atan2f(diff.x, -diff.z);
-    // pitch・医ヴ繝・メ, x霆ｸ蝗槭ｊ・・
+    // pitch（ピッチ、x軸回り）
     result.x = atan2f(-diff.y, sqrtf(diff.x * diff.x + diff.z * diff.z));
-    // roll・医Ο繝ｼ繝ｫ, z霆ｸ蝗槭ｊ
+    // roll（ロール、z軸回り）
     result.z = 0.0f;
 
     return result;

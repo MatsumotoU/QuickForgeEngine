@@ -14,18 +14,18 @@
 void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, SrvDescriptorHeap* srvDescriptorHeap) {
 	srvDescriptorHeap_ = srvDescriptorHeap;
 
-	// Com縺ｮ蛻晄悄蛹・
+	// COMの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 	hr;
 
-	// 繝・ヰ繧､繧ｹ繧貞叙蠕・
+	// デバイスを取得
 	assert(device);
 	device_ = device;
 	assert(commandList);
 	commandList_ = commandList;
 
-	// 蛻ｩ逕ｨ縺吶ｋHeap縺ｮ險ｭ螳・
+	// 利用するHeapの設定
 	heapProperties_ = {};
 	heapProperties_.Type = D3D12_HEAP_TYPE_DEFAULT;
 
@@ -40,7 +40,7 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 }
 
 void TextureManager::Finalize() {
-	// 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ隗｣謾ｾ
+	// リソースの解放
 	textureSrvHandleCPU_.clear();
 	textureSrvHandleGPU_.clear();
 	textureResources_.clear();
@@ -51,23 +51,23 @@ void TextureManager::Finalize() {
 }
 
 DirectX::ScratchImage TextureManager::Load(const std::string& filePath) {
-	// 繝・け繧ｹ繝√Ε繝輔ぃ繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ繧薙〒繝励Ο繧ｰ繝ｩ繝縺ｧ菴ｿ縺医ｋ繧医≧縺ｫ縺吶ｋ
+	// テクスチャファイルを読み込んでプログラムで使えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	assert(SUCCEEDED(hr));
 
-	// 繝溘ャ繝励・繝・・縺ｮ菴懈・
+	// ミップレベルの作成
 	DirectX::ScratchImage mipImages{};
 	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
 	assert(SUCCEEDED(hr));
 
-	// 繝溘ャ繝嶺ｻ倥″縺ｮ繝・・繧ｿ繧定ｿ斐☆
+	// ミップ付きのデータを返す
 	return mipImages;
 }
 
 void TextureManager::LoadScratchImage(const std::string& filePath) {
-	// 繝・け繧ｹ繝√Ε繝輔ぃ繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ繧薙〒繝励Ο繧ｰ繝ｩ繝縺ｧ菴ｿ縺医ｋ繧医≧縺ｫ縺吶ｋ
+	// テクスチャファイルを読み込んでプログラムで使えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
@@ -78,29 +78,29 @@ void TextureManager::LoadScratchImage(const std::string& filePath) {
 	DebugLog(ConvertString(std::format(L"TextureManager: whidth={},height={},arraySize={}", metadata.width, metadata.height, metadata.arraySize)));
 #endif // _DEBUG
 
-	// 繝溘ャ繝励・繝・・縺ｮ菴懈・
+	// ミップレベルの作成
 	if (image.GetMetadata().width * image.GetMetadata().height != 1) {
 		scratchImages_.emplace_back();
 		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, scratchImages_.back());
 		assert(SUCCEEDED(hr));
 	} else {
-		// 縺昴・縺ｾ縺ｾ譬ｼ邏・
+		// そのまま格納
 		scratchImages_.push_back(std::move(image));
 	}
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(const DirectX::TexMetadata& metadata) {
-	// metadata繧貞渕縺ｫResource縺ｮ險ｭ螳・
+	// metadataを基にResourceの設定
 	resourceDesc_ = {};
-	resourceDesc_.Width = static_cast<UINT>(metadata.width); // 繝・け繧ｹ繝√Ε縺ｮ蟷・
-	resourceDesc_.Height = static_cast<UINT>(metadata.height); // 繝・け繧ｹ繝√Ε縺ｮ鬮倥＆
-	resourceDesc_.MipLevels = static_cast<UINT16>(metadata.mipLevels); // mipmap縺ｮ謨ｰ
-	resourceDesc_.DepthOrArraySize = static_cast<UINT16>(metadata.arraySize); // 螂･陦経r驟榊・繝・け繧ｹ繝√Ε縺ｮ驟榊・謨ｰ
+	resourceDesc_.Width = static_cast<UINT>(metadata.width); // テクスチャの幅
+	resourceDesc_.Height = static_cast<UINT>(metadata.height); // テクスチャの高さ
+	resourceDesc_.MipLevels = static_cast<UINT16>(metadata.mipLevels); // mipmapの数
+	resourceDesc_.DepthOrArraySize = static_cast<UINT16>(metadata.arraySize); // 奥行き、または配列テクスチャの配列数
 	resourceDesc_.Format = metadata.format;
 	resourceDesc_.SampleDesc.Count = 1;
 	resourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
 
-	// 繝ｪ繧ｽ繝ｼ繧ｹ縺ｮ逕滓・
+	// リソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 	HRESULT hr = device_->CreateCommittedResource(
 		&heapProperties_,
@@ -140,7 +140,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(ID3D12R
 }
 
 void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12GraphicsCommandList* commandList) {
-	// Texture縺ｸ縺ｮ霆｢騾∝ｾ後・蛻ｩ逕ｨ縺ｧ縺阪ｋ繧医≧縺ｫD3D12_RESOURCE_STATE_COPY_DEST縺九ｉD3D12_RESOURCE_STATE_GENERIC_READ縺ｸResouceState繧貞､画峩縺吶ｋ
+	// Textureへの転送後に利用できるよう、リソース状態をCOPY_DESTからGENERIC_READへ変更する
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -152,14 +152,14 @@ void TextureManager::EndUploadTextureData(ID3D12Resource* texture, ID3D12Graphic
 }
 
 void TextureManager::CreateShaderResourceView(const DirectX::TexMetadata& metadata, ID3D12Resource* textureResource) {
-	// metaData繧貞渕縺ｫSRV縺ｮ險ｭ螳・
+	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;// 2D繝・け繧ｹ繝√Ε
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;// 2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = static_cast<UINT>(metadata.mipLevels);
 
-	// SRV縺ｮ菴懈・
+	// SRVの作成
 	DescriptorHandles handles = srvDescriptorHeap_->AssignHeap(textureResource, srvDesc);
 	textureSrvHandleCPU_.push_back(handles.cpuHandle_);
 	textureSrvHandleGPU_.push_back(handles.gpuHandle_);
@@ -173,12 +173,12 @@ void TextureManager::ReleaseIntermediateResources() {
 }
 
 int32_t TextureManager::LoadTexture(const std::string& filePath) {
-	// 繝輔ぃ繧､繝ｫ繝代せ陦ｨ遉ｺ
+	// ファイルパス表示
 #ifdef _DEBUG
 	DebugLog(std::format("TextureManager: LoadPath {}", filePath));
 #endif // _DEBUG
 
-	// 蜷後§逕ｻ蜒上ヵ繧｡繧､繝ｫ繧定ｪｭ縺ｿ霎ｼ縺ｾ縺ｪ縺・
+	// 同じ画像ファイルを読み込まない
 	int32_t fileIndex = filePathLiblary_.GetLiblaryIndex(filePath);
 	if (fileIndex >= 0) {
 #ifdef _DEBUG
@@ -187,7 +187,7 @@ int32_t TextureManager::LoadTexture(const std::string& filePath) {
 		return fileIndex;
 	}
 
-	// 逕ｻ蜒剰ｪｭ縺ｿ霎ｼ縺ｿ蜃ｦ逅・
+	// 画像読み込み処理
 	LoadScratchImage(filePath);
 	const DirectX::TexMetadata& metadata = scratchImages_.back().GetMetadata();
 	textureResources_.emplace_back() = CreateTextureResource(metadata);

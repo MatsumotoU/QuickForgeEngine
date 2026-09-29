@@ -18,9 +18,9 @@ public:
 	friend class Singleton<GraphRenderer>;
 	~GraphRenderer() override = default;
 
-public:// 一回�E呼び出さなぁE��バグるやつめE
+public:// 一回は呼び出さないと不具合が起こる
 	/// <summary>
-	/// 初期匁E
+	/// 初期化
 	/// </summary>
 	/// <param name="engineCore"></param>
 	void Initialize();
@@ -29,35 +29,35 @@ public:// 一回�E呼び出さなぁE��バグるやつめE
 	/// </summary>
 	void PreDraw();
 	/// <summary>
-	/// 描画コマンドを発行しまぁE
+	/// 描画コマンドを発行します
 	/// </summary>
 	void PostDraw();
 	/// <summary>
-	/// リソースを解放しまぁE
+	/// リソースを解放します
 	/// </summary>
 	void Finalize();
 
 public:// 描画関数
-	/// 三角形を描画しまぁE
+	/// 三角形を描画します
 	void DrawTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const Vector4& color);
-	/// 線�Eを描画しまぁE
+	/// 線分を描画します
 	void DrawLine(Vector3 point1, Vector3 point2,const Vector4& color);
-	/// 点を描画しまぁE
+	/// 点を描画します
 	void DrawPoint(Vector3 point, const Vector4& color);
-	/// グリチE��を描画しまぁE
+	/// グリッドを描画します
 	void DrawGrid(float size = 10.0f, int32_t gridCount = 10);
-	/// 琁E��描画しまぁE
+	/// 球体を描画します
 	void DrawSphere(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
-	/// 冁E��描画しまぁE
+	/// 内容描画します
 	void DrawCircle(Vector3 center, float radius, const Vector4& color, uint32_t subdivision = 10);
-	/// 箱を描画しまぁE
+	/// 箱を描画します
 	void DrawBox(Vector3 min, Vector3 max, const Vector4& color);
 
-	/// 何回三角形を描画するかを取得しまぁE
+	/// 何回三角形を描画するかを取得します
 	void GetDrawTriangleCount(uint32_t* triangleCount) { *triangleCount = triangleCount_; };
-	/// 何回ラインを描画するかを取得しまぁE
+	/// 何回ラインを描画するかを取得します
 	void GetDrawLineCount(uint32_t* lineCount) { *lineCount = lineCount_; };
-	/// 何回点を描画するかを取得しまぁE
+	/// 何回点を描画するかを取得します
 	void GetDrawPointCount(uint32_t* pointCount) { *pointCount = pointCount_; };
 
 private:
@@ -70,15 +70,15 @@ private:
 	ConstantBuffer<Material> material_;
 
 private:
-	// 三角形の頂点チE�Eタ
+	// 三角形の頂点データ
 	PrimitiveVertexData* triangleVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> triangleVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW triangleVertexBufferView_;
-	// 線�E頂点チE�Eタ
+	// 線分頂点データ
 	PrimitiveVertexData* lineVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> lineVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW lineVertexBufferView_;
-	// 点の頂点チE�Eタ
+	// 点の頂点データ
 	PrimitiveVertexData* pointVertexData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointVertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW pointVertexBufferView_;

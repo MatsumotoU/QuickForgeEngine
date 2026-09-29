@@ -20,7 +20,7 @@ WinAppDebugCore::WinAppDebugCore(const LPSTR& lpCmdLine) {
 	std::string exeName(ConvertString(fileName));
 	
 #ifdef _DEBUG
-	// コマンド引数確誁E
+	// コマンド引数確認
 	if (std::strcmp(lpCmdLine, "\0") != 0) {
 		DebugLog("!!! EnebleCommandLineArguments !!!");
 		DebugLog(std::format("EnebleCommand : {}", lpCmdLine));	

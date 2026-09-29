@@ -7,7 +7,7 @@ public:
 	DropFileEvent(nlohmann::json& data);
 	~DropFileEvent() override = default;
 	/// <summary>
-	/// ドロチE�Eされたファイルのイベント�E琁E
+	/// ドロップされたファイルのイベント処理
 	/// </summary>
 	/// <param name="wparam">WPARAM</param>
 	/// <param name="lparam">LPARAM</param>

@@ -10,7 +10,7 @@
 void RootParameter::Initialize() {
 	rootParameters_.clear();
 
-	// RootSignature縺ｮ逕滓・
+	// RootSignatureの生成
 	descriptionRootSignature_ = {};
 	descriptionRootSignature_.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -28,7 +28,7 @@ void RootParameter::CreateRootParameter(const std::string& friendlyName, const D
 	descriptionRootSignature_.pParameters = rootParameters_.data();
 	descriptionRootSignature_.NumParameters = static_cast<UINT>(rootParameters_.size());
 
-	// 繝ｫ繝ｼ繝医す繧ｰ繝阪メ繝｣縺ｮ逋ｻ骭ｲ蜷阪ｒ菫晄戟
+	// ルートシグネチャの登録名を保持
 	friendlyNames_.push_back(friendlyName);
 }
 
@@ -48,7 +48,7 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 	descriptorRange.BaseShaderRegister = baseShaderRegister;
 	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	descriptorRanges_[friendlyName] = descriptorRange; // 繝槭ャ繝励↓逋ｻ骭ｲ
+	descriptorRanges_[friendlyName] = descriptorRange; // マップに登録
 
 #ifdef _DEBUG
 	if (rootParameter->ParameterType != D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) {
@@ -56,9 +56,9 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 	}
 #endif // _DEBUG
 
-	// 繝ｫ繝ｼ繝医ヱ繝ｩ繝｡繝ｼ繧ｿ縺ｮ繧ｿ繧､繝励ｒ繝・・繝悶Ν縺ｫ險ｭ螳・
+	// ルートパラメータのタイプをテーブルに設定
 	rootParameter->ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameter->DescriptorTable.NumDescriptorRanges = 1; // 1縺､縺ｮ遽・峇繧呈戟縺､
+	rootParameter->DescriptorTable.NumDescriptorRanges = 1; // 1つの範囲を持つ
 	rootParameter->DescriptorTable.pDescriptorRanges = &descriptorRanges_[friendlyName];
 }
 
@@ -66,7 +66,7 @@ void RootParameter::SetDescriptorRange(const std::string& friendlyName, const D3
 void RootParameter::CheckIntegrityData() {
 	DebugLog("RootParameter: CheckIntegrityData");
 
-	// 繝ｫ繝ｼ繝医ヱ繝ｩ繝｡繝ｼ繧ｿ縺悟ｮ夂ｾｩ縺輔ｌ縺ｦ縺・↑縺・ｴ蜷医・繝ｭ繧ｰ繧貞・蜉・
+	// ルートパラメータが定義されていない場合はログを出力
 	if (rootParameters_.empty()) {
 		DebugLog("RootParameter: No root parameters defined.");
 		return;
@@ -84,10 +84,10 @@ void RootParameter::CheckIntegrityData() {
 D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendlyName) {
 	D3D12_ROOT_PARAMETER* result = nullptr;
 
-	// 繝ｫ繝ｼ繝医ヱ繝ｩ繝｡繝ｼ繧ｿ縺ｮ蜷榊燕繧呈､懃ｴ｢
+	// ルートパラメータの名前を検索
 	for (std::string& name : friendlyNames_) {
 		if (name == friendlyName) {
-			// 蜷榊燕縺御ｸ閾ｴ縺励◆蝣ｴ蜷医∝ｯｾ蠢懊☆繧九Ν繝ｼ繝医ヱ繝ｩ繝｡繝ｼ繧ｿ繧貞叙蠕・
+			// 名前が一致した場合、対応するルートパラメータを取得
 			size_t index = &name - &friendlyNames_[0];
 			assert(index < rootParameters_.size() && "Index out of bounds for root parameters.");
 			result = &rootParameters_[index];

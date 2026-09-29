@@ -2019,6 +2019,9 @@
     <None Include="DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS.pdb" />
     <None Include="DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS_cs40.inc" />
     <None Include="DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS_cs40.pdb" />
+    <None Include="DirectXTex\bin\Development\DirectXTex.idb" />
+    <None Include="DirectXTex\bin\Development\DirectXTex.lib" />
+    <None Include="DirectXTex\bin\Development\DirectXTex.pdb" />
     <None Include="Mono\etc\mono\2.0\Browsers\Compat.browser" />
     <None Include="Mono\etc\mono\2.0\DefaultWsdlHelpGenerator.aspx" />
     <None Include="Mono\etc\mono\2.0\machine.config" />
@@ -6940,7 +6943,6 @@
     <None Include="assimp\source\samples\SimpleAssimpViewX\SimpleAssimpViewX.xcodeproj\project.pbxproj" />
     <None Include="assimp\source\samples\SimpleAssimpViewX\SimpleAssimpViewX.xcodeproj\vade.mode1v3" />
     <None Include="assimp\source\samples\SimpleAssimpViewX\SimpleAssimpViewX.xcodeproj\vade.pbxuser" />
-    <None Include="assimp\source\samples\SimpleAssimpViewX\SimpleAssimpViewX_Prefix.pch" />
     <None Include="assimp\source\samples\SimpleAssimpViewX\include\copy_assimp_headers_here.txt" />
     <None Include="assimp\source\samples\SimpleOpenGL\CMakeLists.txt" />
     <None Include="assimp\source\samples\SimpleOpenGL\SimpleOpenGL.vcproj" />
@@ -7700,6 +7702,9 @@
     <None Include="assimp\source\tools\shared\default_icon.xcf" />
     <None Include="imgui\ImGuizmo-1.83\.editorconfig" />
     <None Include="imgui\ImGuizmo-1.83\Makefile" />
+    <None Include="imgui\bin\Development\ImGui.idb" />
+    <None Include="imgui\bin\Development\ImGui.lib" />
+    <None Include="imgui\bin\Development\ImGui.pdb" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="assimp\source\code\res\assimp.rc" />

@@ -3,7 +3,7 @@
 
 #include "ChunkHeader.h"
 
-// RIFFヘッダを表す構造佁E
+// RIFFヘッダを表す構造体
 struct RiffHeader final {
 	ChunkHeader chunk;
 	char type[4];

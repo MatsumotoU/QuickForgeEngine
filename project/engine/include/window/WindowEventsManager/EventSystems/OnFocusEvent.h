@@ -6,7 +6,7 @@ public:
 	OnFocusEvent(nlohmann::json& data);
 	~OnFocusEvent() override = default;
 	/// <summary>
-	/// アプリケーションの終亁E��ベント�E琁E
+	/// アプリケーションのフォーカスイベント処理
 	/// </summary>
 	/// <param name="wparam">WPARAM</param>
 	/// <param name="lparam">LPARAM</param>

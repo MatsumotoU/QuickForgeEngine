@@ -9,12 +9,12 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 	sol::table input = qfe.create_named("Input");
 	sol::table audio = qfe.create_named("Audio");
 
-	// 蜈･蜉・
+	// 入力
 	InputInterface* inputManager = InputInterface::GetInstance();
 	input.set_function("GetKeyMoveDir", [inputManager]() {
 		return inputManager->GetKeyMoveDir();
 		});
-	// 繧ｭ繝ｼ繝懊・繝・
+	// キーボード
 	input.set_function("GetKeyPress", [inputManager](std::string actionName) {
 		return inputManager->GetKeyPress(actionName);
 		});
@@ -24,7 +24,7 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 	input.set_function("GetKeyRelease", [inputManager](std::string actionName) {
 		return inputManager->GetKeyRelease(actionName);
 		});
-	// 繝槭え繧ｹ
+	// マウス
 	input.set_function("GetMousePress", [inputManager](int8_t button) {
 		return inputManager->GetMousePress(button);
 		});
@@ -43,7 +43,7 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 	input.set_function("GetMouseWheelDir", [inputManager]() {
 		return inputManager->GetMouseWheelDir();
 		});
-	// 繧ｲ繝ｼ繝繝代ャ繝・
+	// ゲームパッド
 	input.set_function("GetGamePadPress", [inputManager](uint16_t button) {
 		return inputManager->GetGamePadPress(button);
 		});
@@ -60,7 +60,7 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 		return inputManager->GetGamePadRightStickDir();
 		});
 
-	// 繧ｪ繝ｼ繝・ぅ繧ｪ
+	// オーディオ
 	audio.set_function("LoadSound", [](const std::string& soundName) {
 		return AssetManager::GetInstance()->LoadAudio(soundName);
 		});

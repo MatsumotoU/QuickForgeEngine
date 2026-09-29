@@ -83,7 +83,7 @@ void ConsoleView::Draw() {
 		std::string label = *it + "##log" + std::to_string(logIndex);
 		ImGui::Selectable(label.c_str(), false, ImGuiSelectableFlags_AllowDoubleClick);
 
-		// 蜿ｳ繧ｯ繝ｪ繝・け繝｡繝九Η繝ｼ霑ｽ蜉
+		// 右クリックメニュー追加
 		if (ImGui::BeginPopupContextItem()) {
 			if (ImGui::MenuItem("Copy")) {
 				ImGui::SetClipboardText(it->c_str());

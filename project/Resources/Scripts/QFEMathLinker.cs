@@ -37,7 +37,7 @@ namespace QuickForgeEngine
         public static Vector2 operator /(Vector2 a, float b) => new Vector2 { x = a.x / b, y = a.y / b };
     }
 
-    // C++����API���Ăяo�����߂̓����N���X
+    // C++のAPIを呼び出すための内部クラス
     internal static class TransformInternal
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -56,7 +56,7 @@ namespace QuickForgeEngine
         internal static extern void SetScale(uint entityId, ref QuickForgeEngine.Vector3 scale);
     }
 
-    // �X�N���v�g����A�N�Z�X���邽�߂�Transform�N���X
+    // スクリプトからアクセスするためのTransformクラス
     public class Transform
     {
         private readonly uint entityId;

@@ -29,12 +29,12 @@ void ShaderReflection::RunShaderReflection(IDxcBlob* shaderBlob) {
 
 nlohmann::json ShaderReflection::Serialize() const {
 	nlohmann::json jsonData;
-	// 繧ｷ繧ｧ繝ｼ繝繝ｼ縺ｮ蝓ｺ譛ｬ諠・ｱ縺ｮ蜿門ｾ・
+	// シェーダーの基本情報の取得
 	D3D12_SHADER_DESC shaderDesc{};
 	HRESULT hr = shaderReflection_->GetDesc(&shaderDesc);
 	assert(SUCCEEDED(hr) && "Failed to get shader description.");
 
-	// 蜈･蜉帙Ξ繧､繧｢繧ｦ繝域ュ蝣ｱ縺ｮ蜿門ｾ・
+	// 入力レイアウト情報の取得
 	jsonData["Inputs"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.InputParameters; ++i) {
 		D3D12_SIGNATURE_PARAMETER_DESC paramDesc{};
@@ -51,7 +51,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 		jsonData["Inputs"].push_back(inputJson);
 	}
 
-	// 繝ｪ繧ｽ繝ｼ繧ｹ諠・ｱ縺ｮ蜿門ｾ・
+	// リソース情報の取得
 	jsonData["Resources"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -67,7 +67,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 		jsonData["Resources"].push_back(resourceJson);
 	}
 
-	// 螳壽焚繝舌ャ繝輔ぃ諠・ｱ縺ｮ蜿門ｾ・
+	// 定数バッファ情報の取得
 	jsonData["ConstantBuffers"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.ConstantBuffers; ++i) {
 		ID3D12ShaderReflectionConstantBuffer* constBuffer = shaderReflection_->GetConstantBufferByIndex(i);
@@ -92,7 +92,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 		jsonData["ConstantBuffers"].push_back(bufferJson);
 	}
 
-	// StructuredBuffer諠・ｱ縺ｮ蜿門ｾ・
+	// StructuredBuffer情報の取得
 	jsonData["StructuredBuffers"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -109,7 +109,7 @@ nlohmann::json ShaderReflection::Serialize() const {
 		}
 	}
 
-	// 繝・け繧ｹ繝√Ε諠・ｱ縺ｮ蜿門ｾ・
+	// テクスチャ情報の取得
 	jsonData["Textures"] = nlohmann::json::array();
 	for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc{};

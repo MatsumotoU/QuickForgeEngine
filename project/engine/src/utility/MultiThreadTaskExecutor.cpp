@@ -7,14 +7,14 @@ void MultiThreadTaskExecutor::Initialize() {
 }
 
 void MultiThreadTaskExecutor::FrameEnd() {
-	// 螳御ｺ・＠縺溘ち繧ｹ繧ｯ縺ｮID繧貞庶髮・
+	// 完了したタスクのIDを収集
 	std::vector<uint32_t> completedTasks;
 	for (auto& [id, task] : taskMap_) {
 		if (task.IsSuccess()) {
 			completedTasks.push_back(id);
 		}
 	}
-	// 螳御ｺ・＠縺溘ち繧ｹ繧ｯ繧貞炎髯､
+	// 完了したタスクを削除
 	for (auto id : completedTasks) {
 		taskMap_.erase(id);
 	}

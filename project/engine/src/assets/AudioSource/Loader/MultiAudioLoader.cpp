@@ -24,12 +24,12 @@ void Multiaudioloader::Finalize() {
 AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 	AudioData soundData{};
 
-	// 繧ｽ繝ｼ繧ｹ繝ｪ繝ｼ繝繝ｼ縺ｮ逕滓・
+	// ソースリーダーの生成
 	Microsoft::WRL::ComPtr<IMFSourceReader> pMFSourceReader{ nullptr };
 	HRESULT hr = MFCreateSourceReaderFromURL(ConvertString(path).c_str(), nullptr, pMFSourceReader.GetAddressOf());
 	assert(SUCCEEDED(hr));
 
-	// 繝｡繝・ぅ繧｢繧ｿ繧､繝励・蜿門ｾ・
+	// メディアタイプを取得
 	IMFMediaType* pMFMediaType{ nullptr };
 	hr = MFCreateMediaType(&pMFMediaType);
 	assert(SUCCEEDED(hr));
@@ -45,7 +45,7 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 	hr = pMFSourceReader.Get()->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pMFMediaType);
 	assert(SUCCEEDED(hr));
 
-	// 繧ｪ繝ｼ繝・ぅ繧ｪ繝・・繧ｿ蠖｢蠑上・菴懈・
+	// オーディオデータ形式を作成
 	WAVEFORMATEX* waveFormat{ nullptr };
 	UINT32 waveFormatSize = 0;
 	hr = MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, &waveFormatSize);
@@ -62,7 +62,7 @@ AudioData Multiaudioloader::LoadAudioData(const std::string& path) {
 
 	CoTaskMemFree(waveFormat);
 
-	// 繝・・繧ｿ縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
+	// データの読み込み
 	std::vector<BYTE> mediaData;
 	while (true)
 	{

@@ -87,7 +87,7 @@ std::string DirectInputToString(uint32_t dikCode) {
     case 0x9C: return "Numpad Enter";
     case 0xE0: return "Right Ctrl";
     case 0xE1: return "Right Alt";
-        // 蠢・ｦ√↓蠢懊§縺ｦ霑ｽ蜉
+        // 必要に応じて追加
     default:   return "Unknown";
     }
 }

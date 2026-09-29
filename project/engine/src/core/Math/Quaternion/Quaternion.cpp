@@ -123,7 +123,7 @@ Quaternion Quaternion::MakeRotateAxisAngleQuaternion(const Vector3& axis, float 
 }
 
 Vector3 Quaternion::RotateVector(const Vector3& vector, const Quaternion& quaternion) {
-	// 繝吶け繝医Ν繧偵け繧ｪ繝ｼ繧ｿ繝九が繝ｳ縺ｫ螟画鋤・郁劒驛ｨ縺ｮ縺ｿ縲∝ｮ滄Κ0・・
+	// ベクトルをクォータニオンに変換（虚部のみ、実部0）
 	Quaternion p;
 	p.q.x = vector.x;
 	p.q.y = vector.y;
@@ -136,7 +136,7 @@ Vector3 Quaternion::RotateVector(const Vector3& vector, const Quaternion& quater
 	Quaternion qConj = quaternion.Conjugation();
 	Quaternion rotated = Quaternion::Multiply(qp, qConj);
 
-	// 蝗櫁ｻ｢蠕後・繝吶け繝医Ν・郁劒驛ｨ・・
+	// 回転後のベクトル（虚部）
 	Vector3 result;
 	result.x = rotated.q.x;
 	result.y = rotated.q.y;

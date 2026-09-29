@@ -478,15 +478,6 @@
     <ClInclude Include="include\assets\ResourceDirectoryManager.h">
       <Filter>include\assets</Filter>
     </ClInclude>
-    <ClInclude Include="include\assets\Script\CsharpCmpiler.h">
-      <Filter>include\assets\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="include\assets\Script\CsharpVirtualEnvironmentOnQFE.h">
-      <Filter>include\assets\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="include\assets\Script\Data\CsharpComponent.h">
-      <Filter>include\assets\Script\Data</Filter>
-    </ClInclude>
     <ClInclude Include="include\assets\Script\Data\ScriptHandle.h">
       <Filter>include\assets\Script\Data</Filter>
     </ClInclude>
@@ -495,12 +486,6 @@
     </ClInclude>
     <ClInclude Include="include\assets\Script\LuaScriptResourceManager.h">
       <Filter>include\assets\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="include\assets\Script\QFElinker\CsharpOnQFELinker.h">
-      <Filter>include\assets\Script\QFElinker</Filter>
-    </ClInclude>
-    <ClInclude Include="include\assets\Script\QFElinker\CsharpProjectManager.h">
-      <Filter>include\assets\Script\QFElinker</Filter>
     </ClInclude>
     <ClInclude Include="include\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.h">
       <Filter>include\assets\Script\QFElinker</Filter>
@@ -580,9 +565,6 @@
     <ClInclude Include="include\core\EngineGlobalValue.h">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\TimeManager.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
     <ClInclude Include="include\core\Entity\Component\ComponentData.h">
       <Filter>include\core\Entity\Component</Filter>
     </ClInclude>
@@ -645,6 +627,9 @@
     </ClInclude>
     <ClInclude Include="include\core\Math\Vector\Vector4.h">
       <Filter>include\core\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\TimeManager.h">
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="include\core\Window\IGameWindow.h">
       <Filter>include\core\Window</Filter>
@@ -994,26 +979,11 @@
     <ClCompile Include="src\assets\ResourceDirectoryManager.cpp">
       <Filter>src\assets</Filter>
     </ClCompile>
-    <ClCompile Include="src\assets\Script\CsharpCmpiler.cpp">
-      <Filter>src\assets\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="src\assets\Script\CsharpScriptOnQFE.cpp">
-      <Filter>src\assets\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="src\assets\Script\CsharpVirtualEnvironmentOnQFE.cpp">
-      <Filter>src\assets\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="src\assets\Script\Data\CsharpComponent.cpp">
-      <Filter>src\assets\Script\Data</Filter>
-    </ClCompile>
     <ClCompile Include="src\assets\Script\LuaScriptOnQFE.cpp">
       <Filter>src\assets\Script</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\Script\LuaScriptResourceManager.cpp">
       <Filter>src\assets\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="src\assets\Script\QFElinker\CsharpOnQFELinker.cpp">
-      <Filter>src\assets\Script\QFElinker</Filter>
     </ClCompile>
     <ClCompile Include="src\assets\Script\QFElinker\LuaScriptOnQEFSetMyMath.cpp">
       <Filter>src\assets\Script\QFElinker</Filter>
@@ -1075,9 +1045,6 @@
     <ClCompile Include="src\core\EngineGlobalValue.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\TimeManager.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\Math\AudioMath.cpp">
       <Filter>src\core\Math</Filter>
     </ClCompile>
@@ -1113,6 +1080,9 @@
     </ClCompile>
     <ClCompile Include="src\core\Math\Vector\Vector4.cpp">
       <Filter>src\core\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\TimeManager.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="src\graphic\DirectXCommon\CommandExecutor.cpp">
       <Filter>src\graphic\DirectXCommon</Filter>

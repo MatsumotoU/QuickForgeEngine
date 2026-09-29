@@ -10,6 +10,12 @@
     <Filter Include="DirectXTex\Shaders\Compiled">
       <UniqueIdentifier>{1E3EBD93-8A4B-EB79-1332-E7647F3EB730}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DirectXTex\bin">
+      <UniqueIdentifier>{D1AFC986-BD7D-BD8C-A611-2EB3927E99F1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DirectXTex\bin\Development">
+      <UniqueIdentifier>{E309D42D-CF19-80FE-38D3-E41C24026F97}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Mono">
       <UniqueIdentifier>{7E2F897C-6A66-8A0D-1353-7010FF68060F}</UniqueIdentifier>
     </Filter>
@@ -3240,6 +3246,12 @@
     </Filter>
     <Filter Include="imgui\Images">
       <UniqueIdentifier>{A5B832CD-911B-C271-3AA1-FA2726E38DF4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui\bin">
+      <UniqueIdentifier>{A80C5062-1477-04D9-5DB5-B57EC95EE22D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui\bin\Development">
+      <UniqueIdentifier>{3A619552-A6CD-504D-6FC1-E8AADBEC72B5}</UniqueIdentifier>
     </Filter>
     <Filter Include="imgui\imgui-knobs-main">
       <UniqueIdentifier>{26D16C4E-12CB-95A0-FB37-2CB1E7D0FB0C}</UniqueIdentifier>
@@ -9017,6 +9029,15 @@
     </None>
     <None Include="DirectXTex\Shaders\Compiled\BC7Encode_TryMode456CS_cs40.pdb">
       <Filter>DirectXTex\Shaders\Compiled</Filter>
+    </None>
+    <None Include="DirectXTex\bin\Development\DirectXTex.idb">
+      <Filter>DirectXTex\bin\Development</Filter>
+    </None>
+    <None Include="DirectXTex\bin\Development\DirectXTex.lib">
+      <Filter>DirectXTex\bin\Development</Filter>
+    </None>
+    <None Include="DirectXTex\bin\Development\DirectXTex.pdb">
+      <Filter>DirectXTex\bin\Development</Filter>
     </None>
     <None Include="Mono\etc\mono\2.0\Browsers\Compat.browser">
       <Filter>Mono\etc\mono\2.0\Browsers</Filter>
@@ -23781,9 +23802,6 @@
     <None Include="assimp\source\samples\SimpleAssimpViewX\SimpleAssimpViewX.xcodeproj\vade.pbxuser">
       <Filter>assimp\source\samples\SimpleAssimpViewX\SimpleAssimpViewX.xcodeproj</Filter>
     </None>
-    <None Include="assimp\source\samples\SimpleAssimpViewX\SimpleAssimpViewX_Prefix.pch">
-      <Filter>assimp\source\samples\SimpleAssimpViewX</Filter>
-    </None>
     <None Include="assimp\source\samples\SimpleAssimpViewX\include\copy_assimp_headers_here.txt">
       <Filter>assimp\source\samples\SimpleAssimpViewX\include</Filter>
     </None>
@@ -26060,6 +26078,15 @@
     </None>
     <None Include="imgui\ImGuizmo-1.83\Makefile">
       <Filter>imgui\ImGuizmo-1.83</Filter>
+    </None>
+    <None Include="imgui\bin\Development\ImGui.idb">
+      <Filter>imgui\bin\Development</Filter>
+    </None>
+    <None Include="imgui\bin\Development\ImGui.lib">
+      <Filter>imgui\bin\Development</Filter>
+    </None>
+    <None Include="imgui\bin\Development\ImGui.pdb">
+      <Filter>imgui\bin\Development</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

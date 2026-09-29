@@ -12,7 +12,7 @@
 #include "engine/resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 
 void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
-	// 繧ｷ繝ｼ繝ｳ荳翫・繧ｪ繝悶ず繧ｧ繧ｯ繝医ョ繝ｼ繧ｿ
+	// シーン上のオブジェクトデータ
 	luaState->new_usertype<SceneObjectData>("SceneObjectData",
 		"name", &SceneObjectData::name,
 		"tag", &SceneObjectData::tag
@@ -93,7 +93,7 @@ void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 	);
 
 
-	// 迚ｩ逅・鴨
+	// 物理演算
 	luaState->new_usertype<Force>("Force",
 		sol::constructors<Force()>(),
 		"velocity", &Force::velocity,
@@ -104,7 +104,7 @@ void QFE::Script::Base::SetOnQFESetStructBase(sol::state* luaState) {
 		"isGravity", &Force::isGravity
 	);
 
-	// 繝槭ユ繝ｪ繧｢繝ｫ
+	// マテリアル
 	luaState->new_usertype<Material>("Material",
 		sol::constructors<Material()>(),
 		"color", &Material::color,

@@ -9,7 +9,7 @@ class Matrix4x4;
 class Camera;
 class Vector2;
 
-// TODO: 使える座標系を増やぁE
+// TODO: 使える座標系を増やい
 
 class Vector3 final {
 public:
@@ -42,54 +42,54 @@ public:
 
 public:
 	/// <summary>
-	/// 3次允E�Eクトルの長さを求めめE
+	/// 3次元ベクトルの長さを求める
 	/// </summary>
-	/// <returns>3次允E�Eクトルの長ぁE/returns>
+	/// <returns>3次元ベクトルの長さ</returns>
 	[[nodiscard]] float Length() const;
 
 	/// <summary>
-	/// ベクトルの長さ�E二乗を求めめE
+	/// ベクトルの長さの二乗を求める
 	/// </summary>
 	/// <returns></returns>
 	[[nodiscard]] float LengthSq() const;
 
 	/// <summary>
-	/// 正規化されぁE次允E�Eクトルを求めめE
+	/// 正規化されたベクトルを求める
 	/// </summary>
-	/// <returns>正規化されぁE次允E�Eクトル</returns>
+	/// <returns>正規化されたベクトル</returns>
 	[[nodiscard]] Vector3 Normalize() const;
 
 public:
 	/// <summary>
-	/// 正規化されぁE次允E�Eクトルを求めめE
+	/// 正規化されたベクトルを求める
 	/// </summary>
-	/// <returns>正規化されぁE次允E�Eクトル</returns>
+	/// <returns>正規化されたベクトル</returns>
 	[[nodiscard]] static Vector3 Normalize(const Vector3& vector);
 
 public:
 	/// <summary>
-	/// 2つの3次允E�Eクトルの冁E��を求めめE
+	/// 2つの3次元ベクトルの内容を求める
 	/// </summary>
-	/// <param name="v1">1つ目の3次允E�Eクトル</param>
-	/// <param name="v2">2つ目の3次允E�Eクトル</param>
-	/// <returns>2つの3次允E�Eクトルの冁E��E/returns>
+	/// <param name="v1">1つ目の3次元ベクトル</param>
+	/// <param name="v2">2つ目の3次元ベクトル</param>
+	/// <returns>2つの3次元ベクトルの内積</returns>
 	[[nodiscard]] static float Dot(const Vector3& v1, const Vector3& v2);
 
 	/// <summary>
-	/// 2つの3次允E�Eクトルの外積を求めめE
+	/// 2つの3次元ベクトルの外積を求める
 	/// </summary>
-	/// <param name="v1">1つ目の3次允E�Eクトル</param>
-	/// <param name="v2">2つ目の3次允E�Eクトル</param>
-	/// <returns>2つの3次允E�Eクトルの外穁E/returns>
+	/// <param name="v1">1つ目の3次元ベクトル</param>
+	/// <param name="v2">2つ目の3次元ベクトル</param>
+	/// <returns>2つの3次元ベクトルの外積</returns>
 	[[nodiscard]] static Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
 	/// <summary>
-	/// 線形補完を求めめE
+	/// 線形補完を求める
 	/// </summary>
-	/// <param name="v1">1つ目の3次允E�Eクトル(t=0)</param>
-	/// <param name="v2">2つ目の3次允E�Eクトル(t=1)</param>
+	/// <param name="v1">1つ目の3次元ベクトル(t=0)</param>
+	/// <param name="v2">2つ目の3次元ベクトル(t=1)</param>
 	/// <param name="t">補間に使用する値(0~1)</param>
-	/// <returns>線形補宁E/returns>
+	/// <returns>線形補間</returns>
 	[[nodiscard]] static Vector3 Lerp(const Vector3& v1, const Vector3& v2,float t);
 
 	/// <summary>
@@ -102,17 +102,17 @@ public:
 	[[nodiscard]] static Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
 	/// <summary>
-	/// ベジェ曲線を求めめE
+	/// ベジェ曲線を求める
 	/// </summary>
 	/// <param name="p0">始点</param>
 	/// <param name="p1">制御点</param>
 	/// <param name="p2">終点</param>
 	/// <param name="t">媒介変数</param>
-	/// <returns>ベジェ曲緁E/returns>
+	/// <returns>ベジェ曲線/returns>
 	[[nodiscard]] static Vector3 BezierCurve(const Vector3& p0, const Vector3& p1, const Vector3& p2, float t);
 
 	/// <summary>
-	/// スプライン曲線を求めめE
+	/// スプライン曲線を求める
 	/// </summary>
 	/// <param name="controlPoints"></param>
 	/// <param name="t"></param>
@@ -123,14 +123,14 @@ public:
 	/// <summary>
 	/// ワールド座標に変換する
 	/// </summary>
-	/// <param name="vector">変換允E��ーカル座樁E/param>
-	/// <param name="matrix">変換に使用する行�E</param>
-	/// <returns>ワールド座樁E/returns>
+	/// <param name="vector">変換するローカル座標</param>
+	/// <param name="matrix">変換に使用する行列</param>
+	/// <returns>ワールド座標/returns>
 	[[nodiscard]] static Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
 public:
 	/// <summary>
-	/// ある点からある点を見るrotationを返しまぁEラジアン)
+	/// ある点からある点を見るrotationを返しますラジアン)
 	/// </summary>
 	/// <param name="eyePosition">見る地点</param>
 	/// <param name="targetPosition">見る対象</param>
@@ -138,15 +138,15 @@ public:
 	[[nodiscard]] static Vector3 LookAt(const Vector3& eyePosition, const Vector3& targetPosition);
 
 	/// <summary>
-	/// 正封E��ベクトルを求めめE
+	/// 正射影ベクトルを求める
 	/// </summary>
-	/// <param name="v1">1つ目の3次允E�Eクトル</param>
-	/// <param name="v2">2つ目の3次允E�Eクトル</param>
-	/// <returns>正封E��ベクトル</returns>
+	/// <param name="v1">1つ目の3次元ベクトル</param>
+	/// <param name="v2">2つ目の3次元ベクトル</param>
+	/// <returns>正射影ベクトル</returns>
 	[[nodiscard]] static Vector3 Project(const Vector3& v1, const Vector3& v2);
 
 	/// <summary>
-	/// あるベクトルの垂直なベクトルを求めめE
+	/// あるベクトルの垂直なベクトルを求める
 	/// </summary>
 	/// <param name="vector">あるベクトル</param>
 	/// <returns>あるベクトルの垂直なベクトル</returns>
@@ -154,13 +154,13 @@ public:
 
 public:
 	/// <summary>
-	/// 琁E��座標系から直交座標系に変換する
+	/// 球面座標系から直交座標系に変換する
 	/// </summary>
-	/// <param name="rtp">x=半征Ey=シータ,z=ファイ</param>
+	/// <param name="rtp">x=半径y=シータ,z=ファイ</param>
 	/// <returns></returns>
 	[[nodiscard]] static Vector3 SphericalToCartesian(const Vector3& rtp);
 	/// <summary>
-	/// チE��ルト座標系から琁E��座標系に変換する
+	/// デカルト座標系から球面座標系に変換する
 	/// </summary>
 	/// <param name="xyz"></param>
 	/// <returns></returns>

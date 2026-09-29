@@ -8,11 +8,11 @@ class AudioPlayChip final {
 public:
 	AudioPlayChip() = default;
 	~AudioPlayChip();
-	// 初期匁E
+	// 初期化
 	void Initialize(IXAudio2* xAudio2, IXAudio2MasteringVoice* masterVoice);
-	// 終亁E
+	// 終了
 	void Finalize();
-	// 音声再生(volume: 0.0 ~ 1.0の篁E��)
+	// 音声再生(volume: 0.0 ~ 1.0の範囲)
 	void PlaySoundForAudioData(const AudioData& audioData, bool loop, float volume);
 	// 音声停止
 	void StopSound();
@@ -20,9 +20,9 @@ public:
 	void PauseSound();
 	// 音声再開
 	void ResumeSound();
-	// 音量設宁E0.0 ~ 1.0の篁E��)
+	// 音量設定(0.0 ~ 1.0の範囲)
 	void SetVolume(float volume);
-	// 音量取征E0.0 ~ 1.0の篁E��)
+	// 音量取得(0.0 ~ 1.0の範囲)
 	float GetVolume() const;
 
 private:

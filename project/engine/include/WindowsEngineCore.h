@@ -18,10 +18,9 @@
 #include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
 #include "engine/include/assets/AssetManager.h"
 
-// なんかAssetsではなさそぁE�E��E�めE�E��E�めE
+// シーンとスクリプト関連
 #include "engine/include/scene/SceneManager.h"
 #include "engine/include/assets/Script/LuaScriptResourceManager.h"
-#include "engine/include/assets/Script/CsharpVirtualEnvironmentOnQFE.h"
 
 // サブモジュール
 #include "engine/include/audio/AudioInterface.h"
@@ -64,7 +63,6 @@ private:
 	InputInterface* inputInterface_;
 	SceneManager* sceneManager_;
 	LuaScriptResourceManager* luaScriptResourceManager_;
-	CsharpVirtualEnvironmentOnQFE* csScriptManager_;
 	PhysicsManager* physicsManager_;
 	ColliderManager* colliderManager_;
 	IAudioInterface* audioInterface_;

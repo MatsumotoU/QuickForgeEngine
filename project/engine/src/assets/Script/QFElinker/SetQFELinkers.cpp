@@ -7,15 +7,15 @@
 #include "engine/include/assets/Script/QFElinker/LuaScriptOnQEFSetMyMath.h"
 
 void QFE::Script::SetQFEFunctions(sol::state* luaState) {
-	// 蝙九ｒ逋ｻ骭ｲ
+	// 型を登録
 	QFE::Script::Base::SetOnQFESetStructBase(luaState);
-	// 螟画焚蜿門ｾ鈴未謨ｰ繧堤匳骭ｲ
+	// 変数取得関数を登録
 	QFE::Script::Base::LuaScriptOnQFESetGetterBase(luaState);
-	// 繧ｵ繝悶Δ繧ｸ繝･繝ｼ繝ｫ髢｢謨ｰ繧堤匳骭ｲ
+	// サブモジュール関数を登録
 	QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(luaState);
-	// 繧ｷ繝ｼ繝ｳ謫堺ｽ憺未謨ｰ繧堤匳骭ｲ
+	// シーン操作関数を登録
 	QFE::Script::Scene::LuaScriptOnQFESetSceneFunction(luaState);
-	// 繝ｦ繝ｼ繝・ぅ繝ｪ繝・ぅ髢｢謨ｰ繧堤匳骭ｲ
+	// ユーティリティ関数を登録
 	QFE::Script::MyLuaMath::LuaScriptOnQEFSetMyMath(luaState);
 	QFE::Script::Utility::LuaScriptOnQFESetUtility(luaState);
 }

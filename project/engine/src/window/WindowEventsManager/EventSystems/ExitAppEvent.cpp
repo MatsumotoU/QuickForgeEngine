@@ -12,7 +12,7 @@ void ExitAppEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 #ifdef _DEBUG
 	DebugLog("Call ExitAppEvent");
 #endif
-	// 繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ邨ゆｺ・・逅・
+	// アプリケーションの終了処理
 	eventData_["DestroyWindow"] = true;
 }
 

@@ -13,7 +13,7 @@
 #include "engine/include/utility/DebugTool/DirectX/DirectX12DebugCore.h"
 #endif // _DEBUG
 
-// TODO: DepthStencilをここに置かなぁE
+// TODO: DepthStencilをここに置かない
 
 class DirectXCommon final : public Singleton<DirectXCommon> {
 	friend class Singleton<DirectXCommon>;
