@@ -14,6 +14,16 @@ local isEnemy = false
 local enemyMaterial = nil
 local damageMotionColor = Vector4.new(1.0, 1.0, 1.0, 1.0)
 isDamageMotion = false
+isBallDamageReaction = false
+local damageOriginX = 0.0
+local damageOriginZ = 0.0
+local damageBaseRotationX = 0.0
+local damageBaseRotationZ = 0.0
+local damageDirectionX = 0.0
+local damageDirectionZ = 0.0
+local damageKnockbackDistance = 0.0
+local damageTiltX = 0.0
+local damageTiltZ = 0.0
 
 local function ApplyDamageMotionColor(isWhite)
     if enemyMaterial == nil then
@@ -27,6 +37,41 @@ local function ApplyDamageMotionColor(isWhite)
     end
 end
 
+local function StartBallDamageReaction(ballId)
+    local velocityX = GetEntityScriptGlobal(ballId, "Ball.lua", "collisionVelocityX") or 0.0
+    local velocityZ = GetEntityScriptGlobal(ballId, "Ball.lua", "collisionVelocityZ") or 0.0
+    local ballSpeed = math.sqrt(velocityX * velocityX + velocityZ * velocityZ)
+    if ballSpeed <= 0.0001 then
+        isBallDamageReaction = false
+        return
+    end
+
+    isBallDamageReaction = true
+    damageOriginX = transform.translate.x
+    damageOriginZ = transform.translate.z
+    damageBaseRotationX = transform.rotate.x
+    damageBaseRotationZ = transform.rotate.z
+    damageDirectionX = velocityX / ballSpeed
+    damageDirectionZ = velocityZ / ballSpeed
+    damageKnockbackDistance = math.min(ballSpeed * 0.05, 0.35)
+    local tiltAngle = math.rad(15.0) * math.min(math.max(ballSpeed / 6.0, 0.5), 1.0)
+    damageTiltX = damageDirectionZ * tiltAngle
+    damageTiltZ = -damageDirectionX * tiltAngle
+    transform.rotate.x = damageBaseRotationX + damageTiltX
+    transform.rotate.z = damageBaseRotationZ + damageTiltZ
+end
+
+local function FinishBallDamageReaction()
+    if not isBallDamageReaction then
+        return
+    end
+    transform.translate.x = damageOriginX
+    transform.translate.z = damageOriginZ
+    transform.rotate.x = damageBaseRotationX
+    transform.rotate.z = damageBaseRotationZ
+    isBallDamageReaction = false
+end
+
 function Init()
     baseHp = hp
     scaleX = transform.scale.x
@@ -34,6 +79,7 @@ function Init()
     scaleZ= transform.scale.z
     isEnemy = GetEntityTag(GetThisEntityId()) == "enemy"
     isDamageMotion = false
+    isBallDamageReaction = false
 
     if isEnemy then
         enemyMaterial = GetMaterial(GetThisEntityId())
@@ -56,6 +102,7 @@ function Update()
         if damageMotionElapsed >= damageMotionDuration then
             isDamageMotion = false
             damageMotionElapsed = 0.0
+            FinishBallDamageReaction()
             transform.scale.x = scaleX
             transform.scale.y = scaleY
             transform.scale.z = scaleZ
@@ -66,6 +113,16 @@ function Update()
             transform.scale.x = scaleX * scalePulse
             transform.scale.y = scaleY * scalePulse
             transform.scale.z = scaleZ * scalePulse
+
+            if isBallDamageReaction then
+                local outward = math.sin(progress * math.pi)
+                local displacement = damageKnockbackDistance * outward * outward
+                local rotationRecovery = (1.0 - progress) * (1.0 - progress)
+                transform.translate.x = damageOriginX + damageDirectionX * displacement
+                transform.translate.z = damageOriginZ + damageDirectionZ * displacement
+                transform.rotate.x = damageBaseRotationX + damageTiltX * rotationRecovery
+                transform.rotate.z = damageBaseRotationZ + damageTiltZ * rotationRecovery
+            end
 
             local flashWhite = math.floor(damageMotionElapsed / 0.055) % 2 == 0
             ApplyDamageMotionColor(flashWhite)
@@ -82,11 +139,16 @@ function OnCollisionEnter(id,obj)
         return
     end
 
+    FinishBallDamageReaction()
+
     
     hp = hp-1
     if isEnemy then
         isDamageMotion = true
         damageMotionElapsed = 0.0
+        if obj.tag == "ball" then
+            StartBallDamageReaction(id)
+        end
         ApplyDamageMotionColor(true)
     else
         transform.scale.x = scaleX * 1.3

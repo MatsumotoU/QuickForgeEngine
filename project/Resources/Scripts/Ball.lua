@@ -2,6 +2,8 @@ isStart = false
 dirX = 0.0
 dirY = 0.0
 speed = 2.0
+collisionVelocityX = 0.0
+collisionVelocityZ = 0.0
 
 local baseSpeed = speed
 local ballsId = {}
@@ -15,7 +17,7 @@ local BarSE = QFE.Audio.LoadSound("line.wav")
 local collisionsLastFrame = {}
 local collisionsThisFrame = {}
 local enemyAimRange = 10.0
-local enemyAimDotThreshold = math.cos(math.rad(10.0))
+local enemyAimDotThreshold = math.cos(math.rad(15.0))
 
 local function AimAtNearbyEnemy()
     local directionLength = math.sqrt(dirX * dirX + dirY * dirY)
@@ -62,6 +64,8 @@ function Init()
     isStart = false
     dirX = 0.0
     dirY = 0.0
+    collisionVelocityX = 0.0
+    collisionVelocityZ = 0.0
     baseSpeed = speed
 end
 
@@ -78,6 +82,15 @@ function Update()
 
     speed = QFE.Math.SimpleEaseIn(speed,baseSpeed,0.01)
     transform.rotate.y = transform.rotate.y + (speed *dirX* 0.05)
+
+    -- 衝突判定より前の進行速度を保持する（反射後の dirX/dirY とは別）
+    if isStart and not isEnd then
+        collisionVelocityX = dirX * speed
+        collisionVelocityZ = dirY * speed
+    else
+        collisionVelocityX = 0.0
+        collisionVelocityZ = 0.0
+    end
 
     if isEnd then
         --Echo(transform.translate,0.5)
@@ -186,6 +199,8 @@ end
 function OnNextStage()
     isStart = false
     isEnd = false
+    collisionVelocityX = 0.0
+    collisionVelocityZ = 0.0
 
     dirY = 0.0
     dirX = 0.0

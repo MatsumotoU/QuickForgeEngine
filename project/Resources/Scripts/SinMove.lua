@@ -15,6 +15,9 @@ end
 
 function Update()
     local deltaTime = GetDeltaTime()
+    if GetEntityScriptGlobal(bossId, "Block.lua", "isBallDamageReaction") then
+        return
+    end
     local currentHealth = GetEntityScriptGlobal(bossId, "Block.lua", "hp")
 
     if maxHealth <= 0.0 and currentHealth ~= nil then

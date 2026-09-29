@@ -23,6 +23,7 @@ local damageSE = QFE.Audio.LoadSound("Bassdrum.wav")
 local dashSE = QFE.Audio.LoadSound("Slash.wav")
 local enemyBulletDestroySE = QFE.Audio.LoadSound("Down.wav")
 local moveRotateY = 0.0
+local ballReturnRotationOffset = 0.0
 
 local beatId = 0
 local startTime = 0.0
@@ -79,6 +80,7 @@ function Init()
     scaleX = transform.scale.x
     scaleY = transform.scale.z
     beatId = GetEntity("Pacemaker")
+    ballReturnRotationOffset = 0.0
 end
 
 function Update()
@@ -91,6 +93,9 @@ function Update()
 
     if invincibilityTimer > 0.0 then
         invincibilityTimer = math.max(0.0, invincibilityTimer - GetDeltaTime())
+    end
+    if ballReturnRotationOffset > 0.0 then
+        ballReturnRotationOffset = QFE.Math.SimpleEaseIn(ballReturnRotationOffset, 0.0, 0.1)
     end
 
     if GetEntityScriptGlobal(beatId,"Pacemaker.lua","bpm") <= 0 then
@@ -160,7 +165,7 @@ function Update()
     local isMove = false
     if QFE.Input.GetKeyPress("MoveRight") then
         if force.velocity.x < moveSpeed then
-            force.velocity.x = force.velocity.x + moveAcc
+            force.velocity.x = math.min(force.velocity.x + moveAcc, moveSpeed)
         end
         moveTime = moveTime + 1.0
         moveRotateY = 0.05
@@ -168,7 +173,7 @@ function Update()
     end
     if QFE.Input.GetKeyPress("MoveLeft") then
         if force.velocity.x > -moveSpeed then
-            force.velocity.x = force.velocity.x - moveAcc
+            force.velocity.x = math.max(force.velocity.x - moveAcc, -moveSpeed)
         end
         moveTime = moveTime + 1.0
         moveRotateY = -0.05
@@ -176,7 +181,7 @@ function Update()
     end
     if QFE.Input.GetKeyPress("MoveDown") then
         if force.velocity.z > -moveSpeed * 0.8 then
-            force.velocity.z = force.velocity.z - moveAcc * 0.5
+            force.velocity.z = math.max(force.velocity.z - moveAcc * 0.5, -moveSpeed * 0.8)
         end
         moveTime = moveTime + 1.0
         moveRotateY = -0.05
@@ -184,7 +189,7 @@ function Update()
     end
     if QFE.Input.GetKeyPress("MoveUp") then
         if force.velocity.z < moveSpeed * 0.8 then
-            force.velocity.z = force.velocity.z + moveAcc * 0.5
+            force.velocity.z = math.min(force.velocity.z + moveAcc * 0.5, moveSpeed * 0.8)
         end
         moveTime = moveTime + 1.0
         moveRotateY = -0.05
@@ -218,6 +223,7 @@ function OnCollisionEnter(id,obj)
         force.velocity.x = 0.0
         local x = (GetTransform(id).translate.x - transform.translate.x)
         transform.rotate.y = x * 10.0;
+        ballReturnRotationOffset = math.abs(transform.rotate.y - 3.14)
     end
 end
 
@@ -226,7 +232,8 @@ function OnCollisionStay(id,obj)
         if dashClearedEnemyBullets[id] then
             return
         end
-        if damageInterval > 0.0 or invincibilityTimer > 0.0 then
+        -- ボールを打ち返す見た目と回転の演出中は無敵
+        if damageInterval > 0.0 or invincibilityTimer > 0.0 or isNearBall or not isMeshHeart or ballReturnRotationOffset > 0.0 then
             return
         end
         QFE.Audio.PlaySound(damageSE,false,0.8)
@@ -272,6 +279,7 @@ end
 
 function OnNextStage()
     isStart = false
+    ballReturnRotationOffset = 0.0
     transform.translate.x = 0.0
     transform.translate.z = -4.0
     force.velocity.x = 0.0
@@ -283,6 +291,7 @@ end
 function OnStageClear()
     isStart = false
     startTime = 0.0
+    ballReturnRotationOffset = 0.0
     force.velocity.x = 0.0
     force.velocity.y = 0.0
     force.velocity.z = 0.0
