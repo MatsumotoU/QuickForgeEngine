@@ -30,6 +30,7 @@ const std::vector<std::string>& GetPrimitiveMeshNames() {
 	static const std::vector<std::string> names{
 		"Primitive/Quad",
 		"Primitive/Plane",
+		"Primitive/PlaneHorizontal",
 		"Primitive/Box",
 		"Primitive/Sphere",
 		"Primitive/Cylinder",
@@ -49,6 +50,7 @@ bool IsPrimitiveMeshName(const std::string& name) {
 
 std::vector<VertexData> CreatePrimitiveMesh(const std::string& name) {
 	if (name == "Primitive/Quad" || name == "Primitive/Plane") return CreatePlane();
+	if (name == "Primitive/PlaneHorizontal") return CreateHorizontalPlane();
 	if (name == "Primitive/Box") return CreateBox();
 	if (name == "Primitive/Sphere") return CreateSphere();
 	if (name == "Primitive/Cylinder") return CreateCylinder();
@@ -83,6 +85,17 @@ std::vector<VertexData> CreatePlane(float width, float height, uint32_t segments
 	}
 
 	ApplyFaceDirection(planeMesh, invertFace);
+	return planeMesh;
+}
+
+std::vector<VertexData> CreateHorizontalPlane(
+	float width, float depth, uint32_t segmentsX, uint32_t segmentsZ, bool invertFace) {
+	std::vector<VertexData> planeMesh = CreatePlane(width, depth, segmentsX, segmentsZ, invertFace);
+	for (VertexData& vertex : planeMesh) {
+		// XY平面をXZ平面へ回転し、法線を上方向へ向ける。
+		vertex.position = { vertex.position.x, 0.0f, vertex.position.y, 1.0f };
+		vertex.normal = { vertex.normal.x, -vertex.normal.z, vertex.normal.y };
+	}
 	return planeMesh;
 }
 

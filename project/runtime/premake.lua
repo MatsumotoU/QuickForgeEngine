@@ -99,6 +99,8 @@ project "Runtime"
         "WindowingSystem",
         "PhysicsFramework",
         "PhysicsEngine",
+        "AudioFramework",
+        "Audio",
         "Camera",
     }
     filter "configurations:Debug"
@@ -119,18 +121,18 @@ project "Runtime"
     filter {}
     filter "configurations:Debug"
         libdirs {
-            "C:/Users/yutam/source/repos/QuickForgeEngine/generated/assimp/lib/Debug",
-            "C:/Users/yutam/source/repos/QuickForgeEngine/generated/assimp/contrib/zlib/Debug",
+            path.join(QFE_PROJECT_ROOT, "../generated/assimp/lib/Debug"),
+            path.join(QFE_PROJECT_ROOT, "../generated/assimp/contrib/zlib/Debug"),
         }
     filter "configurations:Development"
         libdirs {
-            "C:/Users/yutam/source/repos/QuickForgeEngine/generated/assimp/lib/Release",
-            "C:/Users/yutam/source/repos/QuickForgeEngine/generated/assimp/contrib/zlib/Release",
+            path.join(QFE_PROJECT_ROOT, "../generated/assimp/lib/Release"),
+            path.join(QFE_PROJECT_ROOT, "../generated/assimp/contrib/zlib/Release"),
         }
     filter "configurations:Release"
         libdirs {
-            "C:/Users/yutam/source/repos/QuickForgeEngine/generated/assimp/lib/Release",
-            "C:/Users/yutam/source/repos/QuickForgeEngine/generated/assimp/contrib/zlib/Release",
+            path.join(QFE_PROJECT_ROOT, "../generated/assimp/lib/Release"),
+            path.join(QFE_PROJECT_ROOT, "../generated/assimp/contrib/zlib/Release"),
         }
     filter {}
 

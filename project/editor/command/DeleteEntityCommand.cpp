@@ -3,19 +3,29 @@
 
 QFE::EDITOR::DeleteEntityCommand::DeleteEntityCommand(uint32_t entityId, QFE::EntityManager* entityManager) :
 	entityId_(entityId), entityManager_(entityManager) {
-	removedComponents_.clear();
+	removedEntities_.clear();
 }
 
 void QFE::EDITOR::DeleteEntityCommand::Execute() {
-	// エンティティが持っているコンポーネントの情報を取得して保存する
-	removedComponents_ = entityManager_->SerializeEntityComponents(entityId_);
+	removedEntities_.clear();
+	std::vector<uint32_t> entityIds{ entityId_ };
+	const std::vector<uint32_t> descendants = entityManager_->GetDescendantEntityIds(entityId_);
+	entityIds.insert(entityIds.end(), descendants.begin(), descendants.end());
+
+	for (const uint32_t entityId : entityIds) {
+		removedEntities_.emplace_back(entityId, entityManager_->SerializeEntityComponents(entityId));
+	}
+
 	// エンティティを削除する
 	entityManager_->RemoveEntity(entityId_);
 }
 
 void QFE::EDITOR::DeleteEntityCommand::Undo() {
-	// エンティティを再作成する
-	entityManager_->ForceCreateEntity(entityId_);
-	// 保存しておいたコンポーネントの情報を復元する
-	entityManager_->DeserializeEntityComponents(entityId_, removedComponents_);
+	for (const auto& removedEntity : removedEntities_) {
+		entityManager_->CancelEntityRemoval(removedEntity.first);
+		entityManager_->ForceCreateEntity(removedEntity.first);
+	}
+	for (const auto& removedEntity : removedEntities_) {
+		entityManager_->DeserializeEntityComponents(removedEntity.first, removedEntity.second);
+	}
 }

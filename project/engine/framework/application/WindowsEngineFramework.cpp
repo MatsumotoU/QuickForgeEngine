@@ -10,6 +10,10 @@
 #include "components/AllComponent.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
+#include "framework/scene/SplineMovementSystem.h"
+#include "audio/AudioEngine.h"
+#include <filesystem>
+#include <imgui.h>
 
 namespace {
 	bool EnsureModelData(
@@ -22,8 +26,14 @@ namespace {
 			return true;
 		}
 
-		if (QFE::ASSET::IsPrimitiveMeshName(modelName)) {
-			std::vector<VertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(modelName);
+		// Older scene and prefab files use "box" for the built-in box mesh.
+		// Keep those assets renderable even though the engine now names built-in
+		// primitives with the "Primitive/" prefix.
+		const std::string primitiveName = modelName == "box"
+			? "Primitive/Box"
+			: modelName;
+		if (QFE::ASSET::IsPrimitiveMeshName(primitiveName)) {
+			std::vector<VertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(primitiveName);
 			if (vertices.empty()) {
 				return false;
 			}
@@ -95,6 +105,10 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	// シーンマネージャの初期化
 	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>();
 	outSystems.sceneManager->Initialize();
+	outSystems.audioEngine = std::make_unique<QFE::AUDIO::AudioEngine>();
+	if (!outSystems.audioEngine->Initialize()) {
+		QFE_LOG("Audio initialization failed; sound playback is unavailable.");
+	}
 
 	// モデルローダーの初期化
 	outSystems.modelLoader = std::make_unique<QFE::ASSET::AssimpModelLoader>();
@@ -128,6 +142,9 @@ bool QFE::FRAMEWORK::BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& sys
 }
 
 void QFE::FRAMEWORK::EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems) {
+	if (systems.sceneManager && systems.audioEngine) {
+		systems.audioComponents.Update(*systems.sceneManager, *systems.audioEngine);
+	}
 	if (systems.guiManager) systems.guiManager->PostDraw();
 	if (systems.graphicEngine) systems.graphicEngine->PostDraw();
 	if (systems.sceneManager) systems.sceneManager->EndFrame();
@@ -136,6 +153,10 @@ void QFE::FRAMEWORK::EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& syste
 }
 
 void QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEngineSystems& systems) {
+	if (systems.audioEngine) {
+		systems.audioComponents.Reset(*systems.audioEngine);
+		systems.audioEngine->Shutdown();
+	}
 	if (systems.sceneManager) systems.sceneManager->Shutdown();
 	if (systems.guiManager) systems.guiManager->Shutdown();
 	if (systems.graphicEngine) systems.graphicEngine->Shutdown();
@@ -233,11 +254,46 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	auto& fpsCounter = systems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	QFE::FRAMEWORK::DrawSplineMovementPaths(
+		entityManager,
+		[graphicEngine = graphicEngine.get()](
+			const QFE::MATH::Vector3& start,
+			const QFE::MATH::Vector3& end,
+			const QFE::MATH::Vector4& color) {
+			graphicEngine->DrawLine(start, end, color);
+		});
+
+	// 旧スカイボックスと同様、シーン内の最初の可視キューブマップを背景に使う。
+	QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.skyBoxTextureHandle);
+	resources.skyBoxVisible = false;
+	entityManager.Each<QFE::SCENE::SkyBoxComponent>(
+		[&](uint32_t, QFE::SCENE::SkyBoxComponent& skyBox) {
+			if (!skyBox.visible || resources.skyBoxVisible) return;
+			if (skyBox.textureName.empty()) {
+				skyBox.renderErrorMessage = "Select a cubemap DDS texture.";
+				return;
+			}
+			const std::filesystem::path texturePath =
+				std::filesystem::path(resources.assetDir) / skyBox.textureName;
+			if (texturePath.extension() != ".dds" || !std::filesystem::exists(texturePath)) {
+				skyBox.renderErrorMessage = "Cubemap DDS not found: " + texturePath.generic_string();
+				return;
+			}
+			if (!QFE::FRAMEWORK::LoadTexture(systems, resources.assetDir, skyBox.textureName,
+				resources.textureHandleMap, resources.textureGpuIndexMap, resources.nextTextureGpuIndex)) {
+				skyBox.renderErrorMessage = "Failed to load cubemap: " + skyBox.textureName;
+				return;
+			}
+			resources.skyBoxTextureHandle = resources.textureHandleMap.at(skyBox.textureName);
+			resources.skyBoxVisible = true;
+			skyBox.renderErrorMessage.clear();
+		});
 
 	// 各エンティティのModelRenderComponentを更新
-	std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>> raytracingInstances;
+	std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
 	std::vector<Material> raytracingMaterials;
 	std::vector<uint32_t> raytracingTextureIndices;
+	std::vector<bool> raytracingReceiveShadows;
 	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp) {
 		modelRenderComp.canRender = false;
 		// TransformComponentを取得して、EulerTransformを更新する
@@ -276,6 +332,9 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		materialData->metallic = materialComp.metallic;
 		materialData->smoothness = materialComp.smoothness;
 		materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(materialComp.uvTransform);
+		const QFE::SCENE::ShaderComponent* shader = entityManager.HasComponent<QFE::SCENE::ShaderComponent>(entityId)
+			? &entityManager.GetComponent<QFE::SCENE::ShaderComponent>(entityId) : nullptr;
+		materialData->receiveShadow = shader == nullptr || shader->receiveShadow ? 1.0f : 0.0f;
 		modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
 
 		// 頂点バッファの更新
@@ -334,9 +393,11 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		}
 		raytracingInstances.push_back({
 			resources.blasHandleMap[modelRenderComp.modelName],
-			worldMatrix
+			worldMatrix,
+			static_cast<uint8_t>(shader == nullptr || shader->castShadow ? 0x03 : 0x01)
 			});
 		raytracingMaterials.push_back(*materialData);
+		raytracingReceiveShadows.push_back(shader == nullptr || shader->receiveShadow);
 		const auto textureIndex = resources.textureGpuIndexMap.find(effectiveTextureName);
 		raytracingTextureIndices.push_back(
 			textureIndex != resources.textureGpuIndexMap.end() ? textureIndex->second : 1u);
@@ -440,7 +501,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 
 	for (size_t instanceIndex = 0; instanceIndex < raytracingInstances.size(); ++instanceIndex) {
 		const auto& inst = raytracingInstances[instanceIndex];
-		QFE::GRAPHIC::BLASHandle blas = inst.first;
+		QFE::GRAPHIC::BLASHandle blas = inst.blasHandle;
 		auto it = blasToModel.find(blas);
 		if (it == blasToModel.end()) {
 			// 見つからないなら安全なデフォルトを push（デバッグ用ログ推奨）
@@ -462,6 +523,9 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			instanceMeta.uvTransform = material.uvTransform;
 			instanceMeta.metallic = material.metallic;
 			instanceMeta.smoothness = material.smoothness;
+		}
+		if (instanceIndex < raytracingReceiveShadows.size()) {
+			instanceMeta.padding[0] = raytracingReceiveShadows[instanceIndex] ? 1.0f : 0.0f;
 		}
 		if (instanceIndex < raytracingTextureIndices.size()) {
 			instanceMeta.materialIndex = raytracingTextureIndices[instanceIndex];
@@ -519,12 +583,9 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		assert(false && "Failed to get CameraForGPU constant buffer data.");
 		return;
 	}
-	resources.cameraTransform.translate;
-	cameraPos->cameraPosition = 
-		QFE::MATH::Vector3(
-			resources.cameraTransform.translate.x,
-			resources.cameraTransform.translate.y,
-			resources.cameraTransform.translate.z);
+	cameraPos->cameraPosition = resources.cameraPosition;
+	cameraPos->inverseViewProjection = resources.viewProj.Inverse();
+	cameraPos->padding = resources.skyBoxVisible ? 1.0f : 0.0f;
 
 	QFE::GRAPHIC::DirectXResourceHandle textureFirstResourceHandle;
 	QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), textureFirstResourceHandle);
@@ -532,7 +593,13 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 	QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 		graphicEngine.get(), resources.rtpsoHandle, resources.uavBufferHandle,
 		cameraBufferHandle, resources.globalTriHandle, resources.globalUVHandle,
-		resources.instanceMetaHandle, textureFirstResourceHandle, rayTracingRootResources,
+		resources.instanceMetaHandle, textureFirstResourceHandle, resources.skyBoxTextureHandle,
+		rayTracingRootResources,
+		resources.finalRenderTargetHandle);
+
+	// 線はレイトレーシングの影計算には含めず、3D深度テスト付きで結果に重ねる。
+	graphicEngine->RenderLines(
+		resources.viewProj, resources.viewportHandle, resources.scissorRectHandle,
 		resources.finalRenderTargetHandle);
 
 	const QFE::GRAPHIC::PSOHandle spritePsoHandle =
@@ -543,6 +610,14 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		sceneManager, graphicEngine.get(), spritePsoHandle,
 		resources.viewportHandle, resources.scissorRectHandle,
 		resources.spriteVertexBufferHandle, resources.finalRenderTargetHandle);
+
+	const float sceneFadeAlpha = systems.sceneChangeTransition.GetFadeAlpha();
+	if (sceneFadeAlpha > 0.0f) {
+		const ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+		const ImU32 fadeColor = IM_COL32(0, 0, 0, static_cast<int>(sceneFadeAlpha * 255.0f));
+		ImGui::GetForegroundDrawList()->AddRectFilled(
+			ImVec2(0.0f, 0.0f), displaySize, fadeColor);
+	}
 
 	// Editorの最終映像はImGuiからSRVとして読むため、スプライト描画後に読み取り状態へ戻す。
 	if (resources.finalRenderTargetHandle != QFE::GRAPHIC::RenderTargetHandle::SwapChain) {

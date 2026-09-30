@@ -37,7 +37,7 @@ struct InstanceMetaCPU {
 		, uvTransform(QFE::MATH::Matrix4x4::MakeIdentity4x4())
 		, metallic(0.0f)
 		, smoothness(0.0f) {
-		padding[0] = 0.0f;
+		padding[0] = 1.0f;
 		padding[1] = 0.0f;
 	}
 #endif
@@ -106,11 +106,17 @@ struct CameraForGPU {
 #ifdef __cplusplus
 	CameraForGPU()
 		: cameraPosition{ 0.0f, 0.0f, 0.0f }
-		, padding(0.0f) {
+		, padding(0.0f)
+		, inverseViewProjection(QFE::MATH::Matrix4x4::MakeIdentity4x4()) {
 	}
 #endif
 	float32_t3 cameraPosition;
 	float32_t padding;
+#ifdef __cplusplus
+	float32_t4x4 inverseViewProjection;
+#else
+	row_major float32_t4x4 inverseViewProjection;
+#endif
 };
 
 struct ColorCorrectionOffset {
@@ -154,7 +160,8 @@ struct Material {
 		: color{ 1.0f, 1.0f, 1.0f, 1.0f }
 		, uvTransform(QFE::MATH::Matrix4x4::MakeIdentity4x4())
 		, smoothness(0.0f)
-		, metallic(0.0f) {
+		, metallic(0.0f)
+		, receiveShadow(1.0f) {
 	}
 #endif
 
@@ -162,6 +169,7 @@ struct Material {
 	float32_t4x4 uvTransform;
 	float32_t smoothness;
 	float32_t metallic;
+	float32_t receiveShadow;
 };
 
 struct OffsetBuffer {

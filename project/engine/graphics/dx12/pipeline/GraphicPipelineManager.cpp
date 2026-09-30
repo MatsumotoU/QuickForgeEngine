@@ -135,7 +135,7 @@ PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
 	ID3D12Device* device, const ShaderPairHandle& shaderHandle, BlendMode blendMode,
 	RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType,
-	DXGI_FORMAT renderTargetFormat) {
+	DXGI_FORMAT renderTargetFormat, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType) {
 
 	PipelineStateObjectElement element{};
 	element.shaderPairHandle = static_cast<uint32_t>(shaderHandle);
@@ -143,7 +143,7 @@ PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
 	element.inputLayoutDesc = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetInputLayoutDesc();
 	element.psBlob = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetPSBlob();
 	element.vsBlob = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetVSBlob();
-	element.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	element.topologyType = topologyType;
 	element.rasterizerDesc = rasterizerState_->GetRasterizerDesc(rasterizerType);
 	element.blendDesc = blendStates_->GetBlendDesc(blendMode);
 	element.depthStencilDesc = depthStencilDescTemplate_->GetDesc(depthStencilDescType);

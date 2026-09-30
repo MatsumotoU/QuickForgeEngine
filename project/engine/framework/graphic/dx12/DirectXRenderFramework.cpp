@@ -597,6 +597,7 @@ bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 	const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& firstTextureBufferHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& skyBoxTextureHandle,
 	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 	QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle) {
 
@@ -642,6 +643,9 @@ bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 	commandList4->SetComputeRootDescriptorTable(
 		rootParameters.GetRootParameterIndex("g_TextureArray"),
 		resourceContainer->GetDescriptorHandleGPU(firstTextureBufferHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_skybox"),
+		resourceContainer->GetDescriptorHandleGPU(skyBoxTextureHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cameraGpuHandle = resourceContainer->GetGpuVirtualAddress(cameraPositionBufferHandle);
 	commandList4->SetComputeRootConstantBufferView(

@@ -139,6 +139,7 @@ namespace QFE::FRAMEWORK {
 		const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& firstTextureBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& skyBoxTextureHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 		QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle);
 }

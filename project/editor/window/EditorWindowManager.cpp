@@ -15,6 +15,7 @@
 #include <imgui.h>
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
 void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow) {
 	mainWindow_ = mainWindow;
@@ -97,33 +98,49 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 				saveSceneAsRequested = true;
             }
             // エンティティの保存
-            if (ImGui::MenuItem("Save Selected Entities", nullptr)) {
-                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
-                std::wstring selectedFilePath;
-                if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-                    mainWindow_,
-                    L"JSON Files", L"*.json",
-					selectedFilePath)) {
-					// 選択されたエンティティの保存
-                    for(uint32_t entityId : selectedEntities_) {
-						nlohmann::json entityJson =
-                            sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
-						QFE::FILE::SaveJSONToFile(QFE::ConvertString(selectedFilePath), entityJson);
+            if (ImGui::MenuItem("Save Selected Entities...", nullptr)) {
+                if (selectedEntities_.empty()) {
+                    QFE_LOG("No entities selected for saving.");
+                } else {
+					// JSONファイルの保存先を選択させる
+					std::wstring selectedFilePath;
+					if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
+						mainWindow_,
+						L"JSON Files", L"*.json",
+						selectedFilePath)) {
+						nlohmann::json savedEntities;
+						savedEntities["entities"] = nlohmann::json::array();
+						// 選択されたエンティティを1つのファイルに保存する
+						for (uint32_t entityId : selectedEntities_) {
+							nlohmann::json entityComponents =
+								sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
+							if (!entityComponents.empty()) {
+								savedEntities["entities"].push_back(std::move(entityComponents));
+							}
+						}
+
+						if (savedEntities["entities"].empty()) {
+							QFE_LOG("No serializable entities selected for saving.");
+						} else if (!QFE::FILE::SaveJSONToFile(
+							QFE::ConvertString(selectedFilePath), savedEntities)) {
+							QFE_LOG("Failed to save selected entities.");
+						}
 					}
-					
-                }
+				}
 			}
 			// エンティティのロード
-            if (ImGui::MenuItem("Load Entities", nullptr)) {
-                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+            if (ImGui::MenuItem("Add Saved Entities...", nullptr)) {
+                // 保存済みエンティティを現在のシーンへ追加するファイルを選択させる
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
                     mainWindow_,
                     L"JSON Files", L"*.json",
                     selectedFilePath)) {
-                    // 選択されたエンティティのロード
-                    uint32_t newEntityId = 
+                    const uint32_t firstEntityId =
                         sceneManager_->LoadEntityOnCurrentSceneFromJsonObject(QFE::ConvertString(selectedFilePath));
+                    if (firstEntityId == UINT32_MAX) {
+                        QFE_LOG("Failed to add saved entities to the current scene.");
+                    }
                 }
             }
             ImGui::EndMenu();

@@ -1,5 +1,6 @@
 #pragma once
 #include "WindowsQuickForgeEngineSystems.h"
+#include "framework/audio/AudioFrameWork.h"
 #include "WindowsEngineResources.h"
 
 

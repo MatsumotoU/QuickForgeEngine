@@ -7,6 +7,8 @@
 #include "framework/application/WindowsEngineResources.h"
 #include "framework/scene/EventSystem.h"
 #include "framework/scene/AnimationSystem.h"
+#include "framework/scene/SceneChangeSystem.h"
+#include "framework/scene/SplineMovementSystem.h"
 
 #include "window/GameWindowManager.h"
 #include "gui/D3D12GuiManager.h"
@@ -99,9 +101,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		QFE::GAMESYSTEM::PlayerTrackingSystem(engineSystems, engineResources, deltaTime);
 		// 敵のスポーン処理
 		QFE::GAMESYSTEM::EnemySpawnerSystem(engineSystems, engineResources, deltaTime);
+		// スプライン移動
+		QFE::FRAMEWORK::UpdateSplineMovement(entityManager, deltaTime);
+		// シーン切り替えリクエスト
+		engineSystems.sceneChangeTransition.Update(sceneManager, deltaTime);
 
 		// カメラの更新
-		engineResources.viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager);
+		engineResources.viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager, &engineResources.cameraPosition);
 
 		// エンジンの描画前処理（フレーム開始時の共通処理）
 		QFE::FRAMEWORK::EnginePreDraw(engineSystems, engineResources);

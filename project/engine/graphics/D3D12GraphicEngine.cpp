@@ -22,6 +22,8 @@
 
 #include "string/MyString.h"
 
+#include <algorithm>
+
 using namespace QFE::GRAPHIC;
 
 namespace {
@@ -168,6 +170,34 @@ void D3D12GraphicEngine::Initialize() {
 	graphicPipelineManagerInfo.device = directXDevice_->GetDevice();
 	graphicPipelineManager_->Initialize(graphicPipelineManagerInfo);
 
+	// ワールド空間の線は、通常のラスタライズ描画用PSOで作成する。
+	ShaderPairElement lineShaderPairElement{};
+	lineShaderPairElement.vsDirName = "engine/resources/shaders/vs/";
+	lineShaderPairElement.psDirName = "engine/resources/shaders/ps/";
+	lineShaderPairElement.vsFileName = "Line.VS.hlsl";
+	lineShaderPairElement.psFileName = "Line.PS.hlsl";
+	const ShaderPairHandle lineShaderPairHandle = graphicPipelineManager_->GenerateShaderPair(lineShaderPairElement);
+	linePsoHdrHandle_ = graphicPipelineManager_->GeneratePipelineStateObject(
+		directXDevice_->GetDevice(), lineShaderPairHandle,
+		BlendMode::kBlendModeNormal, RasterizerType::Default,
+		DepthStencilDescType::Translucent, DXGI_FORMAT_R16G16B16A16_FLOAT,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+	linePsoSrgbHandle_ = graphicPipelineManager_->GeneratePipelineStateObject(
+		directXDevice_->GetDevice(), lineShaderPairHandle,
+		BlendMode::kBlendModeNormal, RasterizerType::Default,
+		DepthStencilDescType::Translucent, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+	linePsoUnormHandle_ = graphicPipelineManager_->GeneratePipelineStateObject(
+		directXDevice_->GetDevice(), lineShaderPairHandle,
+		BlendMode::kBlendModeNormal, RasterizerType::Default,
+		DepthStencilDescType::Translucent, DXGI_FORMAT_R8G8B8A8_UNORM,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+
+	lineVertexBufferHandle_ = resourceContainer_->CreateBuffer(
+		directXDevice_->GetDevice(), kMaxLineCount_ * 2 * sizeof(LineVertex));
+	resourceContainer_->SetResourceStrideInBytes(lineVertexBufferHandle_, sizeof(LineVertex));
+	resourceContainer_->MapResource(lineVertexBufferHandle_);
+
 	// Computeパイプラインマネージャの初期化
 	ComputePipelineManagerInitializeInfo computePipelineManagerInfo{};
 	computePipelineManagerInfo.getRootParameterFunc =
@@ -247,6 +277,102 @@ void D3D12GraphicEngine::PostDraw() {
 
 	// プールの解放
 	resourceAllocator_->ResetFrame();
+}
+
+void D3D12GraphicEngine::DrawLine(
+	const QFE::MATH::Vector3& start,
+	const QFE::MATH::Vector3& end,
+	const QFE::MATH::Vector4& color) {
+	if (lineVertices_.size() >= kMaxLineCount_ * 2) {
+		return;
+	}
+
+	LineVertex startVertex{};
+	startVertex.position = { start.x, start.y, start.z, 1.0f };
+	startVertex.color = color;
+	lineVertices_.push_back(startVertex);
+
+	LineVertex endVertex{};
+	endVertex.position = { end.x, end.y, end.z, 1.0f };
+	endVertex.color = color;
+	lineVertices_.push_back(endVertex);
+}
+
+void D3D12GraphicEngine::RenderLines(
+	const QFE::MATH::Matrix4x4& viewProjection,
+	ViewPortHandle viewportHandle,
+	ScissorRectHandle scissorRectHandle,
+	RenderTargetHandle renderTargetHandle) {
+	if (lineVertices_.empty()) {
+		return;
+	}
+
+	LineVertex* mappedVertices = resourceContainer_->GetMappedData<LineVertex>(lineVertexBufferHandle_);
+	if (mappedVertices == nullptr) {
+		lineVertices_.clear();
+		return;
+	}
+	std::copy(lineVertices_.begin(), lineVertices_.end(), mappedVertices);
+
+	const DirectXResourceHandle transformBufferHandle =
+		resourceAllocator_->AllocateConstantBuffer<TransformationMatrix>("LineTransform");
+	TransformationMatrix* transform = resourceContainer_->GetMappedData<TransformationMatrix>(transformBufferHandle);
+	if (transform == nullptr) {
+		lineVertices_.clear();
+		return;
+	}
+	transform->World = QFE::MATH::Matrix4x4::MakeIdentity4x4();
+	transform->WVP = viewProjection;
+
+	ID3D12GraphicsCommandList* commandList =
+		commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	renderPass_->SetRenderTarget(commandList, depthStencilBufferHandle_, renderTargetHandle);
+	commandList->RSSetViewports(1, viewports_.GetData(static_cast<uint32_t>(viewportHandle)));
+	commandList->RSSetScissorRects(1, scissorRects_.GetData(static_cast<uint32_t>(scissorRectHandle)));
+
+	DXGI_FORMAT renderTargetFormat = DXGI_FORMAT_UNKNOWN;
+	if (renderTargetHandle == RenderTargetHandle::SwapChain) {
+		// SwapChainのRTVはバックバッファ本体と異なりsRGB形式で作成されている。
+		renderTargetFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	} else {
+		const DirectXResourceHandle renderTargetResourceHandle =
+			renderPass_->GetRenderTargetResourceHandle(renderTargetHandle);
+		ID3D12Resource* renderTargetResource = resourceContainer_->GetResource(renderTargetResourceHandle);
+		if (renderTargetResource == nullptr) {
+			lineVertices_.clear();
+			QFE_REPORT_SYSTEM_ERROR("Failed to get the line render target resource.", SystemError::Abort);
+			return;
+		}
+		renderTargetFormat = renderTargetResource->GetDesc().Format;
+	}
+
+	PSOHandle linePsoHandle = PSOHandle::Invalid;
+	switch (renderTargetFormat) {
+	case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+		linePsoHandle = linePsoSrgbHandle_;
+		break;
+	case DXGI_FORMAT_R8G8B8A8_UNORM:
+		linePsoHandle = linePsoUnormHandle_;
+		break;
+	case DXGI_FORMAT_R16G16B16A16_FLOAT:
+		linePsoHandle = linePsoHdrHandle_;
+		break;
+	default:
+		lineVertices_.clear();
+		QFE_REPORT_SYSTEM_ERROR("No line pipeline state object exists for the render target format.", SystemError::Abort);
+		return;
+	}
+	commandList->SetPipelineState(graphicPipelineManager_->GetPipelineState(linePsoHandle));
+	commandList->SetGraphicsRootSignature(graphicPipelineManager_->GetRootSignature(linePsoHandle));
+	commandList->SetGraphicsRootConstantBufferView(
+		0, resourceContainer_->GetGpuVirtualAddress(transformBufferHandle));
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	const D3D12_VERTEX_BUFFER_VIEW vertexBufferView =
+		resourceContainer_->GetVertexBufferView(lineVertexBufferHandle_);
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+	commandList->DrawInstanced(static_cast<UINT>(lineVertices_.size()), 1, 0, 0);
+
+	lineVertices_.clear();
 }
 
 void D3D12GraphicEngine::Shutdown() {

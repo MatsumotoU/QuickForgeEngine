@@ -2,6 +2,18 @@
 local _root = path.getabsolute(path.getdirectory(_SCRIPT))
 QFE_PROJECT_ROOT = _root
 
+if _ACTION and _ACTION:match("^vs%d+") then
+    require "vstudio"
+    local vc2010 = premake.vstudio.vc2010
+    premake.override(vc2010.elements, "itemDefinitionGroup", function(base, cfg)
+        local calls = base(cfg)
+        if cfg.kind == premake.UTILITY then
+            table.insert(calls, 1, vc2010.clCompile)
+        end
+        return calls
+    end)
+end
+
 workspace "QuickForgeEngine"
     location (QFE_PROJECT_ROOT)
     configurations {
@@ -82,6 +94,7 @@ group ""
 group "00_System"
 dofile(path.join(_root, "engine/resources/premake.lua"))
 dofile(path.join(_root, "engine/core/premake.lua"))
+dofile(path.join(_root, "engine/ecs/premake.lua"))
 group ""
 
 group "01_SubSystems"
@@ -90,6 +103,7 @@ dofile(path.join(_root, "engine/graphics/premake.lua"))
 dofile(path.join(_root, "engine/gui/premake.lua"))
 dofile(path.join(_root, "engine/input/premake.lua"))
 dofile(path.join(_root, "engine/physics/premake.lua"))
+dofile(path.join(_root, "engine/audio/premake.lua"))
 group ""
 
 group "02_Middleware"
@@ -108,6 +122,7 @@ dofile(path.join(_root, "engine/framework/input/premake.lua"))
 dofile(path.join(_root, "engine/framework/physics/premake.lua"))
 dofile(path.join(_root, "engine/framework/scene/premake.lua"))
 dofile(path.join(_root, "engine/framework/assets/premake.lua"))
+dofile(path.join(_root, "engine/framework/audio/premake.lua"))
 group ""
 
 group "04_Applications"

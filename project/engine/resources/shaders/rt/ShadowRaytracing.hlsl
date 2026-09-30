@@ -7,6 +7,7 @@ Texture2D<float4> g_position : register(t1);
 Texture2D<float4> g_normal : register(t2);
 Texture2D<float4> g_albedo : register(t3);
 Texture2D<float4> g_material : register(t4);
+TextureCube<float4> g_skybox : register(t5);
 
 RWTexture2D<float4> g_output : register(u0);
 
@@ -39,6 +40,8 @@ struct RayPayload
 
 static const uint kShadowRay = 0;
 static const uint kReflectionRay = 1;
+static const uint kReflectionMask = 0x01;
+static const uint kShadowMask = 0x02;
 static const float3 kLightDirection = float3(0.0f, -1.0f, 0.0f);
 static const float3 kLightColor = float3(1.0f, 1.0f, 1.0f);
 static const float kLightIntensity = 1.0f;
@@ -110,7 +113,19 @@ void MyRayGen()
 
     if (rawPosition.w == 0.0f)
     {
-        g_output[launchIndex] = float4(0.1f, 0.1f, 0.15f, 1.0f);
+        float3 background = float3(0.1f, 0.1f, 0.15f);
+        if (g_camera.padding > 0.5f)
+        {
+            uint width, height;
+            g_output.GetDimensions(width, height);
+            float2 ndc = float2(
+                (float(launchIndex.x) + 0.5f) * 2.0f / float(width) - 1.0f,
+                1.0f - (float(launchIndex.y) + 0.5f) * 2.0f / float(height));
+            float4 worldFar = mul(float4(ndc, 1.0f, 1.0f), g_camera.inverseViewProjection);
+            float3 direction = normalize(worldFar.xyz / worldFar.w - g_camera.cameraPosition);
+            background = g_skybox.SampleLevel(g_sampler, direction, 0).rgb;
+        }
+        g_output[launchIndex] = float4(background, 1.0f);
         return;
     }
 
@@ -125,7 +140,7 @@ void MyRayGen()
     payload.color = float3(0.0f, 0.0f, 0.0f);
 
     // 光が表面側にある場合だけシャドウレイを飛ばす。
-    if (nDotL > 0.0f)
+    if (nDotL > 0.0f && g_material[launchIndex].b > 0.5f)
     {
         RayDesc shadowRay;
         shadowRay.Origin = OffsetRayOrigin(worldPosition, worldNormal, lightVector);
@@ -138,7 +153,7 @@ void MyRayGen()
             RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH |
                 RAY_FLAG_FORCE_OPAQUE |
                 RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
-            0xFF, 0, 1, 0,
+            kShadowMask, 0, 1, 0,
             shadowRay,
             payload);
     }
@@ -176,7 +191,7 @@ void MyRayGen()
         TraceRay(
             g_scene,
             RAY_FLAG_FORCE_OPAQUE | RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
-            0xFF, 0, 1, 0,
+            kReflectionMask, 0, 1, 0,
             reflectRay,
             reflectPayload);
 
@@ -202,7 +217,9 @@ void MyRayGen()
 void MyMiss(inout RayPayload payload : SV_RayPayload)
 {
     payload.hit = 0;
-    payload.color = float3(0.1f, 0.1f, 0.15f);
+    payload.color = g_camera.padding > 0.5f
+        ? g_skybox.SampleLevel(g_sampler, WorldRayDirection(), 0).rgb
+        : float3(0.1f, 0.1f, 0.15f);
 }
 
 // 3. クローストヒットシェーダー
@@ -253,7 +270,11 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
     float nDotL = saturate(dot(worldNormal, lightVector));
     payload.color = hitAlbedo * kAmbientIntensity;
 
-    if (nDotL > 0.0f)
+    if (meta.padding.x <= 0.5f)
+    {
+        payload.color = EvaluateDirectLighting(hitAlbedo, worldNormal);
+    }
+    else if (nDotL > 0.0f)
     {
         RayDesc shadowRay;
         shadowRay.Origin = OffsetRayOrigin(hitPosition, worldNormal, lightVector);
@@ -271,7 +292,7 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
             RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH |
                 RAY_FLAG_FORCE_OPAQUE |
                 RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
-            0xFF, 0, 1, 0,
+            kShadowMask, 0, 1, 0,
             shadowRay,
             shadowPayload);
 

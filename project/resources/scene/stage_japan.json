@@ -1,0 +1,658 @@
+{
+    "entities": [
+        {
+            "CameraComponent": {
+                "aspectRatio_": 1.7777777910232544,
+                "bottom_": 0.0,
+                "farZ_": 1000.0,
+                "fovY_": 0.44999998807907104,
+                "isMainCamera": true,
+                "left_": 0.0,
+                "nearZ_": 0.10000000149011612,
+                "right_": 1280.0,
+                "top_": 720.0,
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "",
+                "name": "Camera",
+                "uuid": "4da1c537-5c5d-4a92-aa6e-ee1c1f1e16f5"
+            },
+            "ParentComponent": {
+                "parent": "005ed824-e9af-44c7-9b5f-9468b9ee5a2d"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.4000000059604645,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 13.800000190734863,
+                        "z": -20.200000762939453
+                    }
+                }
+            }
+        },
+        {
+            "BulletEmitterComponent": {
+                "emitRequest": false,
+                "patterns": [
+                    {
+                        "bulletAngleX": 0.0,
+                        "bulletAngleY": 0.0,
+                        "emitBulletName": "Bullet.json",
+                        "emitCount": 1,
+                        "emitDir": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 1.0
+                        },
+                        "emitPos": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.5
+                        },
+                        "emitRadius": 1.0,
+                        "name": "Pattern 1"
+                    },
+                    {
+                        "bulletAngleX": 0.0,
+                        "bulletAngleY": 0.0,
+                        "emitBulletName": "Bomb.json",
+                        "emitCount": 1,
+                        "emitDir": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 1.0
+                        },
+                        "emitPos": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.5
+                        },
+                        "emitRadius": 1.0,
+                        "name": "Pattern 2"
+                    }
+                ]
+            },
+            "HealthComponent": {
+                "health": 3,
+                "maxHealth": 3
+            },
+            "InputBulletEmitterTriggerComponent": {
+                "triggers": [
+                    {
+                        "enabled": true,
+                        "gamePadButton": 4096,
+                        "inputActionName": "Shot",
+                        "mouseButton": -1,
+                        "patternIndex": 0,
+                        "repeatInterval": 0.10000000149011612,
+                        "triggerMode": 0
+                    },
+                    {
+                        "enabled": true,
+                        "gamePadButton": 0,
+                        "inputActionName": "Shot",
+                        "mouseButton": -1,
+                        "patternIndex": 1,
+                        "repeatInterval": 1.0,
+                        "triggerMode": 2
+                    }
+                ]
+            },
+            "InputMovementComponent": {
+                "amount": 5.0,
+                "applyMode": 0,
+                "backwardActionName": "Down",
+                "enabled": true,
+                "forwardActionName": "Up",
+                "horizontalAxis": {
+                    "x": 2.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "leftActionName": "Left",
+                "normalizeInput": true,
+                "rightActionName": "Right",
+                "useGamePadLeftStick": true,
+                "verticalAxis": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 2.0
+                }
+            },
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "metallic": 0.0,
+                "smoothness": 0.0,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "ship",
+                "textureName": "ship.png"
+            },
+            "MoveLimitComponent": {
+                "autoScrollDistance": 0.0,
+                "autoScrollSpeed": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "center": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "maxLimit": {
+                    "x": 15.0,
+                    "y": 0.0,
+                    "z": 30.0
+                },
+                "minLimit": {
+                    "x": -15.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "",
+                "name": "Player",
+                "uuid": "eda80b94-1dd1-4f87-b5b2-7ab0b60c8c69"
+            },
+            "ParentComponent": {
+                "parent": "005ed824-e9af-44c7-9b5f-9468b9ee5a2d"
+            },
+            "ShootingPlayerComponent": {
+                "bombInterval": 0.0,
+                "bombPrefabName": "Bomb.json",
+                "bombSpawnOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "bulletPrefabName": "Bullet.json",
+                "bulletSpawnOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "damping": 0.8500000238418579,
+                "inputEnabled": true,
+                "shootInterval": 0.0,
+                "speed": 0.0
+            },
+            "SpawnTriggerComponent": {
+                "spawnMask": 4294967295
+            },
+            "SphereColliderComponent": {
+                "mask": 1,
+                "onCollisionEnterScriptFunctionName": "",
+                "radius": 0.5
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "EventComponent": {
+                "loop": false,
+                "playOnStart": false,
+                "playbackSpeed": 1.0,
+                "requestFlags": 0,
+                "tracks": [
+                    {
+                        "component": "SceneChangeComponent",
+                        "interpolation": "Step",
+                        "keyframes": [
+                            {
+                                "time": 0.0,
+                                "value": true
+                            }
+                        ],
+                        "property": "request",
+                        "targetUuid": ""
+                    }
+                ]
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "GameSystems",
+                "name": "GameManager",
+                "uuid": "005ed824-e9af-44c7-9b5f-9468b9ee5a2d"
+            },
+            "SceneChangeComponent": {
+                "nextSceneNumber": 0,
+                "request": false,
+                "sceneNames": [
+                    "ResultScene.json"
+                ]
+            },
+            "SplineMoveToPointComponent": {
+                "requestMoveToControlPoint": false,
+                "targetControlPointIndex": 0
+            },
+            "SplineMovementComponent": {
+                "controlPoints": [
+                    {
+                        "secondsToNextPoint": 2.5,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -32.099998474121094,
+                                "y": 23.100000381469727,
+                                "z": 41.20000076293945
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 16.799999237060547,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -32.099998474121094,
+                                "y": 14.199999809265137,
+                                "z": 26.299999237060547
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 5.099999904632568,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -32.099998474121094,
+                                "y": 16.200000762939453,
+                                "z": -13.699999809265137
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 5.5,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -26.5,
+                                "y": 6.0,
+                                "z": -29.100000381469727
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 9.699999809265137,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": 26.100000381469727,
+                                "y": 10.699999809265137,
+                                "z": -29.5
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 10.100000381469727,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": 22.600000381469727,
+                                "y": 5.199999809265137,
+                                "z": -6.0
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 8.699999809265137,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -8.300000190734863,
+                                "y": 5.199999809265137,
+                                "z": 24.700000762939453
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 15.300000190734863,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -21.799999237060547,
+                                "y": 8.5,
+                                "z": 24.700000762939453
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 7.5,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -20.5,
+                                "y": 8.5,
+                                "z": 0.699999988079071
+                            }
+                        }
+                    },
+                    {
+                        "secondsToNextPoint": 20.0,
+                        "transform": {
+                            "rotate": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "translate": {
+                                "x": -12.899999618530273,
+                                "y": 10.899999618530273,
+                                "z": 0.6000000238418579
+                            }
+                        }
+                    }
+                ],
+                "drawPath": true,
+                "enabled": true,
+                "autoPlay": true,
+                "eventDelayAfterEndSeconds": 30.0,
+                "loop": false,
+                "pathColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "paused": false,
+                "syncRotationToPath": true,
+                "triggerEventAfterEnd": true
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": -0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "BGMComponent": {
+                "audioPath": "resource/bgm/game.mp3",
+                "isLoop": true,
+                "isPlayReqest": false,
+                "playOnSceneStart": true,
+                "volume": 1.0
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "GameSystems",
+                "name": "GameBgmSterter",
+                "uuid": "67541883-fa92-4dd4-8b93-0f7797320780"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "StaticGround",
+                "name": "Sky Box",
+                "uuid": "cae55e53-e8dd-4286-ac1a-011d0013a861"
+            },
+            "SkyBoxComponent": {
+                "textureName": "skybox/sky_06_2k.dds",
+                "visible": true
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "metallic": 0.0,
+                "smoothness": 0.30000001192092896,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "static_ground_tokyo",
+                "textureName": ""
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "StaticGround",
+                "name": "static_ground_tokyo",
+                "uuid": "35ed12ee-cf31-4baa-8d4e-75503e388ba2"
+            },
+            "ShaderComponent": {
+                "castShadow": true,
+                "receiveShadow": true
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 3.0,
+                        "y": 3.0,
+                        "z": 3.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -128,7 +128,7 @@ namespace QFE::FRAMEWORK {
 	/// @brief BLASのインスタンスバッファを更新する関数
 	bool UpdateBLASInstanceBuffer(
 		QFE::FRAMEWORK::GraphicContext* graphicEngine,
-		const std::vector<std::pair<QFE::GRAPHIC::BLASHandle, QFE::MATH::Matrix4x4>>& instances);
+		const std::vector<QFE::GRAPHIC::RaytracingInstance>& instances);
 
 	/// @brief 頂点のデータから頂点位置を取得する関数
 	std::vector<QFE::MATH::Vector3> GetModelVertexPositions(

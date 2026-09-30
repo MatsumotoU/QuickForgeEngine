@@ -94,5 +94,7 @@ project "ApplicationFramework"
         "WindowingSystem",
         "PhysicsFramework",
         "PhysicsEngine",
+        "AudioFramework",
+        "Audio",
     }
 

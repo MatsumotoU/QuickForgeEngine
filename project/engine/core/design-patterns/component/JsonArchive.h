@@ -18,12 +18,18 @@ namespace QFE {
         void Process(const std::string& name, int32_t& value) override;
 		void Process(const std::string& name, uint32_t& value) override;
         void Process(const std::string& name, std::string& value) override;
+		void Process(const std::string& name, std::vector<std::string>& value) override;
 
 		void Process(const std::string& name, MATH::Vector2& value) override;
 		void Process(const std::string& name, MATH::Vector3& value) override;
 		void Process(const std::string& name, MATH::Vector4& value) override;
 
 		void Process(const std::string& name, MATH::EulerTransform& value) override;
+		void Process(const std::string& name, std::vector<MATH::EulerTransform>& value) override;
+		void Process(const std::string& name, std::vector<SCENE::SplineControlPoint>& value) override;
+		void Process(const std::string& name, std::vector<STG::BulletEmitterPattern>& value) override;
+		void Process(const std::string& name, std::vector<STG::InputBulletEmitterTriggerSetting>& value) override;
+		void Process(const std::string& name, std::vector<STG::PeriodicBulletEmitterTriggerSetting>& value) override;
         void Process(const std::string& name, MATH::Matrix4x4& value) override;
 		void Process(const std::string& name, MATH::Bit32& value) override;
 		void Process(const std::string& name, EntityReference& value) override;

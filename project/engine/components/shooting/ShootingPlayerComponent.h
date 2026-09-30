@@ -16,6 +16,7 @@ namespace QFE::STG {
 		QFE::MATH::Vector3 velocity;
 		std::string bulletPrefabName = "Bullet.json";
 		std::string bombPrefabName = "Bomb.json";
+		bool inputEnabled = true;
 		// 止まりやすさ
 		float damping = 0.85f;
 
@@ -28,6 +29,7 @@ namespace QFE::STG {
 			QFE_REFLECT_MEMBER(damping)
 			QFE_REFLECT_MEMBER(bulletPrefabName)
 			QFE_REFLECT_MEMBER(bombPrefabName)
+			QFE_REFLECT_MEMBER(inputEnabled)
 			QFE_REFLECT_END()
 	};
 	QFE_COMPONENT(ShootingPlayerComponent)

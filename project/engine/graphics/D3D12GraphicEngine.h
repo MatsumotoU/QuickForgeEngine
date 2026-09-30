@@ -24,6 +24,7 @@
 #include <utility>
 #include <vector>
 #include <memory>
+#include <cstddef>
 
 namespace QFE::GRAPHIC {
 	/// @brief DirectX12のグラフィックエンジンの実装クラスで使用しているクラス
@@ -61,6 +62,18 @@ namespace QFE::GRAPHIC {
 		void Draw() override {};
 		void PostDraw() override;
 		void Shutdown() override;
+
+		/// @brief 次のフレームに描画するワールド空間の線を追加します。
+		void DrawLine(
+			const QFE::MATH::Vector3& start,
+			const QFE::MATH::Vector3& end,
+			const QFE::MATH::Vector4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+		/// @brief キューに追加された線を現在のフレームに描画します。
+		void RenderLines(
+			const QFE::MATH::Matrix4x4& viewProjection,
+			ViewPortHandle viewportHandle,
+			ScissorRectHandle scissorRectHandle,
+			RenderTargetHandle renderTargetHandle);
 
 		/// @brief 定数バッファのデータを取得する.データの型はテンプレートで指定する.
 		template<typename T>
@@ -139,5 +152,16 @@ namespace QFE::GRAPHIC {
 		DirectXResourceHandle depthStencilBufferHandle_;// 深度ステンシルバッファのリソースハンドル
 
 		RaytracingAccelerationStructure accelerationStructure_; // レイトレーシング用の加速構造の管理クラス
+
+		struct LineVertex {
+			QFE::MATH::Vector4 position;
+			QFE::MATH::Vector4 color;
+		};
+		static constexpr std::size_t kMaxLineCount_ = 1024;
+		std::vector<LineVertex> lineVertices_;
+		DirectXResourceHandle lineVertexBufferHandle_ = DirectXResourceHandle::Invalid;
+		PSOHandle linePsoHdrHandle_ = PSOHandle::Invalid;
+		PSOHandle linePsoSrgbHandle_ = PSOHandle::Invalid;
+		PSOHandle linePsoUnormHandle_ = PSOHandle::Invalid;
 	};
 }

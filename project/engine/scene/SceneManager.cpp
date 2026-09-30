@@ -6,6 +6,7 @@
 
 void QFE::SCENE::SceneManager::Initialize() {
 	currentScene_.Initialize();
+	++sceneRevision_;
 	currentScenePath_.clear();
 	CreateCameraEntity();
 }
@@ -38,6 +39,7 @@ void QFE::SCENE::SceneManager::EndFrame() {
 
 void QFE::SCENE::SceneManager::Shutdown() {
 	currentScene_.Initialize();
+	++sceneRevision_;
 }
 
 void QFE::SCENE::SceneManager::SaveCurrentSceneToJson(const std::string& filePath) {
@@ -47,6 +49,7 @@ void QFE::SCENE::SceneManager::SaveCurrentSceneToJson(const std::string& filePat
 
 void QFE::SCENE::SceneManager::LoadCurrentSceneFromJson(const std::string& filePath) {
 	currentScene_.LoadSceneFromJson(filePath);
+	++sceneRevision_;
 	currentScenePath_ = filePath;
 }
 
