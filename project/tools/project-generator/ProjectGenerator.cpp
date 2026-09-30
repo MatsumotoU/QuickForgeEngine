@@ -2802,8 +2802,7 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		const std::filesystem::path relative = std::filesystem::relative(
 			NormalizePath(path), rootPath, error);
 		const std::string relativeString = relative.generic_string();
-		if (!error && !relativeString.empty() && relativeString != ".." &&
-			relativeString.rfind("../", 0) != 0) {
+		if (!error && !relativeString.empty()) {
 			return "path.join(QFE_PROJECT_ROOT, \"" +
 				EscapeLuaString(relativeString) + "\")";
 		}
@@ -3158,9 +3157,8 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 				for (const std::string& command : SplitLines(
 					node.configurationSettings.at(configuration).*member)) {
 					if (command == "cd Shaders && CompileShaders.cmd") {
-						commands.push_back("cd /d \"" +
-							NormalizePath(node.directoryPath / "Shaders").generic_string() +
-							"\" && CompileShaders.cmd");
+						commands.push_back(
+							"cd /d \"$(ProjectDir)Shaders\" && CompileShaders.cmd");
 					} else {
 						commands.push_back(command);
 					}
@@ -3284,10 +3282,15 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 	}
 	const std::filesystem::path configurationPath =
 		NormalizePath(QFE::ConvertString(selectedConfigurationPath));
+	const std::filesystem::path rootPath = NormalizePath(
+		QFE::ConvertString(directoryManager_.GetLootDirectory()));
+	const std::filesystem::path relativeRoot =
+		rootPath.lexically_relative(configurationPath.parent_path());
 
 	nlohmann::json configuration = nlohmann::json::object();
 	configuration["version"] = 5;
-	configuration["rootDirectory"] = directoryManager_.GetLootDirectory();
+	configuration["rootDirectory"] = QFE::ConvertString(
+		(relativeRoot.empty() ? rootPath : relativeRoot).generic_wstring());
 	configuration["nextNodeId"] = nextNodeId_;
 	configuration["nextLinkId"] = nextLinkId_;
 	configuration["nextGroupId"] = nextGroupId_;
@@ -3336,8 +3339,10 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 		nodeJson["id"] = node.id;
 		nodeJson["name"] = node.name;
 		nodeJson["projectName"] = node.projectName;
-		nodeJson["directoryPath"] =
-			QFE::ConvertString(node.directoryPath.wstring());
+		const std::filesystem::path relativeNode =
+			NormalizePath(node.directoryPath).lexically_relative(rootPath);
+		nodeJson["directoryPath"] = QFE::ConvertString(
+			(relativeNode.empty() ? node.directoryPath : relativeNode).generic_wstring());
 		nodeJson["kind"] = static_cast<int>(node.kind);
 		nodeJson["includePaths"] = node.includePaths;
 		nodeJson["preBuildEvent"] = node.preBuildEvent;
@@ -3543,12 +3548,19 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 
 	std::string rootLoadStatus;
 	const std::string rootDirectory = configuration.value("rootDirectory", "");
+	std::filesystem::path loadedRootPath;
 	if (!rootDirectory.empty()) {
-		const std::filesystem::path rootPath = QFE::ConvertString(rootDirectory);
+		loadedRootPath = QFE::ConvertString(rootDirectory);
+		if (!loadedRootPath.is_absolute()) {
+			loadedRootPath = resolvedConfigurationPath.parent_path() /
+				loadedRootPath;
+		}
+		loadedRootPath = NormalizePath(loadedRootPath);
 		std::error_code error;
-		if (!std::filesystem::is_directory(rootPath, error)) {
+		if (!std::filesystem::is_directory(loadedRootPath, error)) {
 			rootLoadStatus = " Saved root directory was not found.";
-		} else if (!directoryManager_.SetLootDirectory(rootDirectory)) {
+		} else if (!directoryManager_.SetLootDirectory(
+			QFE::ConvertString(loadedRootPath.wstring()))) {
 			rootLoadStatus = " Could not start the saved root directory scan.";
 		}
 	}
@@ -3597,6 +3609,10 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 				node.projectName = node.name;
 			}
 			node.directoryPath = QFE::ConvertString(directoryPath);
+			if (!node.directoryPath.is_absolute() && !loadedRootPath.empty()) {
+				node.directoryPath = loadedRootPath / node.directoryPath;
+			}
+			node.directoryPath = NormalizePath(node.directoryPath);
 			const int kind = nodeJson.value("kind", 0);
 			if (kind >= 0 && kind < IM_ARRAYSIZE(kPremakeProjectKinds)) {
 				node.kind = static_cast<PremakeProjectKind>(kind);

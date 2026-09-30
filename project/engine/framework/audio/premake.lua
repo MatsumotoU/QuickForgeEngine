@@ -73,10 +73,6 @@ project "AudioFramework"
         }
     filter {}
     kind "StaticLib"
-    includedirs {
-        path.join(QFE_PROJECT_ROOT, "engine"),
-        path.join(QFE_PROJECT_ROOT, "engine/core"),
-    }
     links {
         "Audio",
         "EngineCore",

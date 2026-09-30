@@ -96,7 +96,8 @@
                 7,
                 8,
                 9,
-                10
+                10,
+                30
             ],
             "position": {
                 "x": 672.0,
@@ -136,7 +137,8 @@
                 19,
                 20,
                 21,
-                22
+                22,
+                31
             ],
             "position": {
                 "x": 1376.0,
@@ -401,11 +403,26 @@
             "id": 89,
             "sourceNodeId": 5,
             "targetNodeId": 29
+        },
+        {
+            "id": 90,
+            "sourceNodeId": 5,
+            "targetNodeId": 30
+        },
+        {
+            "id": 91,
+            "sourceNodeId": 30,
+            "targetNodeId": 31
+        },
+        {
+            "id": 92,
+            "sourceNodeId": 31,
+            "targetNodeId": 15
         }
     ],
     "nextGroupId": 8,
-    "nextLinkId": 90,
-    "nextNodeId": 30,
+    "nextLinkId": 93,
+    "nextNodeId": 32,
     "nodes": [
         {
             "configurationSettings": {
@@ -437,7 +454,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals",
+            "directoryPath": "externals",
             "externalLinks": [],
             "id": 1,
             "includePaths": "",
@@ -482,7 +499,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals\\imgui",
+            "directoryPath": "externals\\imgui",
             "externalLinks": [],
             "id": 2,
             "includePaths": "externals/imgui",
@@ -506,7 +523,7 @@
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
-                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                    "preBuildEvent": "cd Shaders && CompileShaders.cmd"
                 },
                 "Development": {
                     "defines": "",
@@ -515,7 +532,7 @@
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
-                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                    "preBuildEvent": "cd Shaders && CompileShaders.cmd"
                 },
                 "Release": {
                     "defines": "",
@@ -524,10 +541,10 @@
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
-                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                    "preBuildEvent": "cd Shaders && CompileShaders.cmd"
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals\\DirectXTex",
+            "directoryPath": "externals\\DirectXTex",
             "externalLinks": [],
             "id": 3,
             "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
@@ -539,7 +556,7 @@
                 "y": 192.0
             },
             "postBuildEvent": "",
-            "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd",
+            "preBuildEvent": "cd Shaders && CompileShaders.cmd",
             "projectName": "DirectXTex"
         },
         {
@@ -572,7 +589,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\resources",
+            "directoryPath": "engine\\resources",
             "externalLinks": [],
             "id": 4,
             "includePaths": "",
@@ -617,7 +634,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\core",
+            "directoryPath": "engine\\core",
             "externalLinks": [],
             "id": 5,
             "includePaths": "%{wks.location}/externals/",
@@ -662,7 +679,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\window",
+            "directoryPath": "engine\\window",
             "externalLinks": [],
             "id": 6,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -707,7 +724,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\graphics",
+            "directoryPath": "engine\\graphics",
             "externalLinks": [],
             "id": 7,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
@@ -752,7 +769,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\gui",
+            "directoryPath": "engine\\gui",
             "externalLinks": [],
             "id": 8,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
@@ -797,7 +814,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\input",
+            "directoryPath": "engine\\input",
             "externalLinks": [],
             "id": 9,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
@@ -842,7 +859,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\physics",
+            "directoryPath": "engine\\physics",
             "externalLinks": [],
             "id": 10,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
@@ -887,7 +904,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\assetfactory",
+            "directoryPath": "engine\\assetfactory",
             "externalLinks": [],
             "id": 11,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
@@ -932,7 +949,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\camera",
+            "directoryPath": "engine\\camera",
             "externalLinks": [],
             "id": 12,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -977,7 +994,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\scene",
+            "directoryPath": "engine\\scene",
             "externalLinks": [],
             "id": 13,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
@@ -1022,7 +1039,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\components",
+            "directoryPath": "engine\\components",
             "externalLinks": [],
             "id": 14,
             "includePaths": "%{wks.location}/engine/core/",
@@ -1067,7 +1084,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\application",
+            "directoryPath": "engine\\framework\\application",
             "externalLinks": [],
             "id": 15,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1112,7 +1129,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\graphic",
+            "directoryPath": "engine\\framework\\graphic",
             "externalLinks": [],
             "id": 16,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1157,7 +1174,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\window",
+            "directoryPath": "engine\\framework\\window",
             "externalLinks": [],
             "id": 17,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1202,7 +1219,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\gui",
+            "directoryPath": "engine\\framework\\gui",
             "externalLinks": [],
             "id": 18,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1247,7 +1264,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\input",
+            "directoryPath": "engine\\framework\\input",
             "externalLinks": [],
             "id": 19,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1292,7 +1309,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\physics",
+            "directoryPath": "engine\\framework\\physics",
             "externalLinks": [],
             "id": 20,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1337,7 +1354,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\scene",
+            "directoryPath": "engine\\framework\\scene",
             "externalLinks": [],
             "id": 21,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1382,7 +1399,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\framework\\assets",
+            "directoryPath": "engine\\framework\\assets",
             "externalLinks": [],
             "id": 22,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
@@ -1427,7 +1444,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\editor",
+            "directoryPath": "editor",
             "externalLinks": [],
             "id": 23,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
@@ -1472,7 +1489,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\sandbox",
+            "directoryPath": "sandbox",
             "externalLinks": [],
             "id": 24,
             "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/",
@@ -1517,7 +1534,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\runtime",
+            "directoryPath": "runtime",
             "externalLinks": [],
             "id": 25,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
@@ -1562,7 +1579,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\launcher",
+            "directoryPath": "launcher",
             "externalLinks": [],
             "id": 26,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/",
@@ -1607,7 +1624,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\tools\\project-generator",
+            "directoryPath": "tools\\project-generator",
             "externalLinks": [],
             "id": 27,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
@@ -1652,7 +1669,7 @@
                     "preBuildEvent": "call \"%{prj.location}/build-assimp.bat\" \"%{cfg.buildcfg}\""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\externals\\assimp",
+            "directoryPath": "externals\\assimp",
             "externalLinks": [
                 {
                     "filter": "configurations:Debug",
@@ -1731,7 +1748,7 @@
                     "preBuildEvent": ""
                 }
             },
-            "directoryPath": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project\\engine\\ecs",
+            "directoryPath": "engine\\ecs",
             "externalLinks": [],
             "id": 29,
             "includePaths": "",
@@ -1745,8 +1762,98 @@
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "EcsCore"
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/audio",
+            "externalLinks": [],
+            "id": 30,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "audio",
+            "position": {
+                "x": 720,
+                "y": 710
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Audio"
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/audio",
+            "externalLinks": [],
+            "id": 31,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "audio",
+            "position": {
+                "x": 1424,
+                "y": 597
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "AudioFramework"
         }
     ],
-    "rootDirectory": "C:\\Users\\yutam\\source\\repos\\QuickForgeEngine\\project",
+    "rootDirectory": "../../..",
     "version": 5
 }
