@@ -49,6 +49,9 @@ namespace QFE::GRAPHIC {
 		/// @brief 終了処理
 		void Finalize();
 
+		/// @brief BuiltInのPSOを生成します
+		void CreateBuiltInPipelineStateObjects(ID3D12Device* device);
+
 		/// @brief シェーダーペアを生成します
 		ShaderPairHandle GenerateShaderPair(
 			const ShaderPairElement& element);

@@ -54,7 +54,7 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 
 D3D12GraphicEngine::~D3D12GraphicEngine() = default;
 
-void D3D12GraphicEngine::Initialize() {
+void QFE::GRAPHIC::D3D12GraphicEngine::SetUpCoreSystem() {
 	// ウィンドウのクライアント領域のサイズを取得
 	RECT rect;
 	GetClientRect(hwnd_, &rect);
@@ -169,6 +169,20 @@ void D3D12GraphicEngine::Initialize() {
 		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRenderTargetCount(shaderBlob); };
 	graphicPipelineManagerInfo.device = directXDevice_->GetDevice();
 	graphicPipelineManager_->Initialize(graphicPipelineManagerInfo);
+}
+
+void QFE::GRAPHIC::D3D12GraphicEngine::SetUpBuildInPipelineStateObjects() {
+	// BuiltInのPSOを生成する
+	if (graphicPipelineManager_ && directXDevice_) {
+		graphicPipelineManager_->CreateBuiltInPipelineStateObjects(directXDevice_->GetDevice());
+	}
+}
+
+void D3D12GraphicEngine::Initialize() {
+	SetUpCoreSystem();
+	SetUpBuildInPipelineStateObjects();
+
+	
 
 	// ワールド空間の線は、通常のラスタライズ描画用PSOで作成する。
 	ShaderPairElement lineShaderPairElement{};
@@ -381,6 +395,14 @@ void D3D12GraphicEngine::Shutdown() {
 	fence_->Shutdown();
 	shaderCompiler_->Finalize();
 	directXDevice_->Shutdown();
+}
+
+QFE::GRAPHIC::InternalApiType QFE::GRAPHIC::D3D12GraphicEngine::GetInternalApiType() const {
+	return QFE::GRAPHIC::InternalApiType::DirectX12;
+}
+
+QFE::GRAPHIC::FeatureState QFE::GRAPHIC::D3D12GraphicEngine::GetFeatureState() const {
+	return QFE::GRAPHIC::FeatureState();
 }
 
 DirectXDevice* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXDevice() const {

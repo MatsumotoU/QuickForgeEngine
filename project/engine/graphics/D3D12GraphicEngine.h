@@ -56,12 +56,24 @@ namespace QFE::GRAPHIC {
 		explicit D3D12GraphicEngine(HWND hwnd);
 		~D3D12GraphicEngine() override;
 
+		/// @brief どんな機能を使うにも必要な機能を立ち上げます
+		void SetUpCoreSystem();
+		/// @brief ビルトインのパイプラインステートオブジェクトを生成します
+		void SetUpBuildInPipelineStateObjects();
+
+		void SetUp
+
 		// 一度は呼ぶ順番がある関数群
 		void Initialize() override;
 		void PreDraw() override;
 		void Draw() override {};
 		void PostDraw() override;
 		void Shutdown() override;
+
+		/// @brief サポートしている内部グラフィックAPIの種類を取得します。
+		QFE::GRAPHIC::InternalApiType GetInternalApiType() const override;
+		/// @brief グラフィックエンジンの機能が有効かどうかを取得します。
+		QFE::GRAPHIC::FeatureState GetFeatureState() const override;
 
 		/// @brief 次のフレームに描画するワールド空間の線を追加します。
 		void DrawLine(
@@ -163,5 +175,7 @@ namespace QFE::GRAPHIC {
 		PSOHandle linePsoHdrHandle_ = PSOHandle::Invalid;
 		PSOHandle linePsoSrgbHandle_ = PSOHandle::Invalid;
 		PSOHandle linePsoUnormHandle_ = PSOHandle::Invalid;
+
+		FeatureState featureState_;// グラフィックエンジンの機能が有効かどうかを表す構造体
 	};
 }
