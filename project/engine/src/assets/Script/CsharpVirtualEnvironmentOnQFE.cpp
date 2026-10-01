@@ -10,6 +10,7 @@
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/assets/Script/QFElinker/CsharpOnQFELinker.h"
+#include "engine/include/utility/String/MyString.h"
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
 #endif // _DEBUG
@@ -26,7 +27,7 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	exeDir = exeDir.parent_path();
 
 #ifdef _DEBUG
-	DebugLog("Executable Directory: " + exeDir.string());
+	DebugLog("Executable Directory: " + ConvertString(exeDir.wstring()));
 #endif // _DEBUG
 
 	std::filesystem::path monoLibPath = exeDir / "mono" / "lib";
@@ -38,8 +39,8 @@ void CsharpVirtualEnvironmentOnQFE::Initialize() {
 	std::string monoEtcPathUtf8 = conv.to_bytes(monoEtcPath.wstring());
 
 #ifdef _DEBUG
-	DebugLog("Mono Lib Path: " + monoLibPath.string());
-	DebugLog("Mono Etc Path: " + monoEtcPath.string());
+	DebugLog("Mono Lib Path: " + ConvertString(monoLibPath.wstring()));
+	DebugLog("Mono Etc Path: " + ConvertString(monoEtcPath.wstring()));
 #endif // _DEBUG
 
 	try
@@ -170,10 +171,11 @@ void CsharpVirtualEnvironmentOnQFE::LoadAssembly() {
     // 読み込むDLLのフルパスを構築(exeと同じ階層)
     std::filesystem::path dllPath = exeDir / "CSharpScripts.dll";
 
-	assembly_ = mono_domain_assembly_open(domain_, dllPath.string().c_str());
+	const std::string dllPathUtf8 = ConvertString(dllPath.wstring());
+	assembly_ = mono_domain_assembly_open(domain_, dllPathUtf8.c_str());
 	if (!assembly_) {
 #ifdef _DEBUG
-		DebugLog("Failed to load assembly: " + dllPath.string());
+		DebugLog("Failed to load assembly: " + dllPathUtf8);
 #endif // _DEBUG
 	}
 	return;

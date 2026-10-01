@@ -9,7 +9,7 @@
 
 class LuaScriptResourceManager final :public Singleton<LuaScriptResourceManager> {
 	friend class Singleton<LuaScriptResourceManager>;
-	LuaScriptResourceManager() = default;
+	LuaScriptResourceManager();
 	LuaScriptResourceManager(const LuaScriptResourceManager&) = delete;
 	LuaScriptResourceManager& operator=(const LuaScriptResourceManager&) = delete;
 	LuaScriptResourceManager(LuaScriptResourceManager&&) = delete;
@@ -38,6 +38,7 @@ public:
 	sol::object GetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName,sol::state_view callScriptState);
 	void SetEntityScriptGlobal(uint32_t entityId, const std::string& scriptName, const std::string& varName, sol::object value);
 	void RunFunction(uint32_t entityId, const std::string& scriptName, const std::string& functionName);
+	sol::state& GetSharedState() { return *sharedLuaState_; }
 
 	bool isRunningScript_;
 private:
@@ -46,5 +47,7 @@ private:
 	void CheckScriptEntity();
 	std::vector<uint32_t> removeScriptHandles_;
 	std::unordered_map<uint32_t, std::unique_ptr<LuaScriptOnQFE>> scripts_;
+	std::unique_ptr<sol::state> sharedLuaState_;
 	uint32_t nextScriptHandle_;
+
 };

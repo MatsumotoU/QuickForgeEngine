@@ -23,10 +23,23 @@ local damageSE = QFE.Audio.LoadSound("Bassdrum.wav")
 local dashSE = QFE.Audio.LoadSound("Slash.wav")
 local enemyBulletDestroySE = QFE.Audio.LoadSound("Down.wav")
 local moveRotateY = 0.0
-local ballReturnRotationOffset = 0.0
 
 local beatId = 0
 local startTime = 0.0
+local transformAriaMaterial = nil
+local transformAriaColor = nil
+
+local function UpdateTransformAriaColor()
+    if transformAriaMaterial == nil then
+        return
+    end
+
+    if damageInterval > 0.0 or invincibilityTimer > 0.0 then
+        transformAriaMaterial.color = Vector4.new(1.0, 1.0, 1.0, transformAriaColor.w)
+    else
+        transformAriaMaterial.color = transformAriaColor
+    end
+end
 
 local function ClearEnemyBulletsAroundPlayer()
     local playerPosition = Vector3.new(
@@ -81,6 +94,11 @@ function Init()
     scaleY = transform.scale.z
     beatId = GetEntity("Pacemaker")
     ballReturnRotationOffset = 0.0
+    transformAriaMaterial = GetMaterial(GetEntity("TransformAria"))
+    if transformAriaMaterial ~= nil then
+        local color = transformAriaMaterial.color
+        transformAriaColor = Vector4.new(color.x, color.y, color.z, color.w)
+    end
 end
 
 function Update()
@@ -94,6 +112,10 @@ function Update()
     if invincibilityTimer > 0.0 then
         invincibilityTimer = math.max(0.0, invincibilityTimer - GetDeltaTime())
     end
+    if damageInterval > 0.0 then
+        damageInterval = math.max(0.0, damageInterval - GetDeltaTime())
+    end
+    UpdateTransformAriaColor()
     if ballReturnRotationOffset > 0.0 then
         ballReturnRotationOffset = QFE.Math.SimpleEaseIn(ballReturnRotationOffset, 0.0, 0.1)
     end
@@ -107,7 +129,6 @@ function Update()
     end
 
     if damageInterval > 0.0 then
-        damageInterval = damageInterval - GetDeltaTime()
         transform.scale.x = math.abs(math.sin(damageInterval*10.0))
         transform.scale.z = math.abs(math.cos(damageInterval*10.0))
     end
@@ -202,7 +223,6 @@ function Update()
     end
 
     if moveTime > 20 then
-        --Echo(transform.translate,0.8)
         moveTime = 0.0
     end
 
@@ -223,7 +243,8 @@ function OnCollisionEnter(id,obj)
         force.velocity.x = 0.0
         local x = (GetTransform(id).translate.x - transform.translate.x)
         transform.rotate.y = x * 10.0;
-        ballReturnRotationOffset = math.abs(transform.rotate.y - 3.14)
+        invincibilityTimer = math.abs(transform.rotate.y - 3.14) * GetDeltaTime()
+        UpdateTransformAriaColor()
     end
 end
 
@@ -233,7 +254,7 @@ function OnCollisionStay(id,obj)
             return
         end
         -- ボールを打ち返す見た目と回転の演出中は無敵
-        if damageInterval > 0.0 or invincibilityTimer > 0.0 or isNearBall or not isMeshHeart or ballReturnRotationOffset > 0.0 then
+        if damageInterval > 0.0 or invincibilityTimer > 0.0 then
             return
         end
         QFE.Audio.PlaySound(damageSE,false,0.8)
@@ -245,6 +266,7 @@ function OnCollisionStay(id,obj)
                 SetEntityScriptGlobal(pacemakerId, "Pacemaker.lua", "bpm", currentBpm - 10)
                 DebugLog("Player Hit! BPM Reduced to: " .. tostring(currentBpm - 30))
                 damageInterval = 2.5
+                UpdateTransformAriaColor()
             end
         end
         force.velocity.x = (transform.translate.x - GetTransform(id).translate.x)*5.0
@@ -264,6 +286,7 @@ end
 
 function OnEnemyKilled()
     invincibilityTimer = enemyKillInvincibilityDuration
+    UpdateTransformAriaColor()
 end
 
 function OnStrongBeat()

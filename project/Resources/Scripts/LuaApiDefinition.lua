@@ -67,6 +67,10 @@ function CountEntityTag(tagName) end
 ---@return number
 function GetDeltaTime() end
 
+--- Gets the delta time unaffected by hit stop.
+---@return number
+function GetUnscaledDeltaTime() end
+
 --- Temporarily stops game time for 0.1 seconds.
 function StartHitStop() end
 

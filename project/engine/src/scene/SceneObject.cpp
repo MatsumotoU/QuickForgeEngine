@@ -365,8 +365,7 @@ void SceneObject::AddLuaScript(uint32_t entityId, const std::string& scriptName)
 		scriptHandle.handle_ = LuaScriptResourceManager::GetInstance()->AddScript(entityId, scriptName);
 		LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(scriptHandle.handle_);
 		for (std::string& val : script->GetGlobalValuesList()) {
-			sol::state* state = script->GetScript();
-			sol::object obj = (*state)[val];
+			sol::object obj = script->GetEnvironment()[val];
 			if (obj.is<int>()) {
 				int v = obj.as<int>();
 				scriptHandle.intParams_[val] = v;
@@ -679,18 +678,18 @@ void SceneObject::DeserializeEntity(uint32_t entityId, const nlohmann::json& ent
 					}
 					for (LuaHandle& hl : scriptHandles.scriptHandles_) {
 						LuaScriptOnQFE* script = LuaScriptResourceManager::GetInstance()->GetScript(hl.handle_);
-						sol::state* state = script->GetScript();
+						sol::environment& env = script->GetEnvironment();
 						for (const auto& [key, val] : hl.intParams_) {
-							(*state)[key] = val;
+							env[key] = val;
 						}
 						for (const auto& [key, val] : hl.floatParams_) {
-							(*state)[key] = val;
+							env[key] = val;
 						}
 						for (const auto& [key, val] : hl.boolParams_) {
-							(*state)[key] = val;
+							env[key] = val;
 						}
 						for (const auto& [key, val] : hl.stringParams_) {
-							(*state)[key] = val;
+							env[key] = val;
 						}
 
 						script->SetPriority(hl.priority_);

@@ -16,6 +16,7 @@
 
 void QFE::Script::Base::LuaScriptOnQFESetGetterBase(sol::state* luaState) {
 	luaState->set_function("GetDeltaTime", []() {return TimeManager::GetInstance()->GetDeltaTime(); });
+	luaState->set_function("GetUnscaledDeltaTime", []() {return TimeManager::GetInstance()->GetUnscaledDeltaTime(); });
 
 	luaState->set_function("GetEntity", [](const std::string& entityName) {
 		return SceneManager::GetInstance()->GetEntityByName(entityName);

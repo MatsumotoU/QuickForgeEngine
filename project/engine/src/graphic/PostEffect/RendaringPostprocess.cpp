@@ -35,6 +35,8 @@ RendaringPostprosecess::RendaringPostprosecess() {
 
 	isFirstStateRenderTarget_ = false;
 	isSecondStateRenderTarget_ = false;
+	useOffscreenThisFrame_ = false;
+	applyPostprocessThisFrame_ = false;
 
 	offScreenClearColor[0] = 0.0f;
 	offScreenClearColor[1] = 0.0f;
@@ -185,6 +187,10 @@ DescriptorHandles RendaringPostprosecess::GetCurrentSrvHandle() const  {
 }
 
 void RendaringPostprosecess::PreDraw() {
+	// UI で設定が変わっても、このフレームの描画先と後処理を一致させる。
+	applyPostprocessThisFrame_ = isPostprocess_;
+	useOffscreenThisFrame_ = applyPostprocessThisFrame_ || isImGuiEnabled_;
+
 	// ポストプロセスが何回適用されたか調べる
 	postProcessCount_ = 0;
 	postProcessOrderForm_.clear();
@@ -219,21 +225,23 @@ void RendaringPostprosecess::PreDraw() {
 		grayScaleProcessIndex_ = std::clamp(grayScaleProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
 		vignetteProcessIndex_ = std::clamp(vignetteProcessIndex_, 0, static_cast<int>(postProcessCount_) - 1);
 	}
-
-	// オフスクリーンのバリアを設定
-	if (!isFirstStateRenderTarget_) {
-		TransitionResourceBarrier::Transition(
-			list_, offScreenResources_[0], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
-		isFirstStateRenderTarget_ = true;
-	}
-	if (!isSecondStateRenderTarget_) {
-		TransitionResourceBarrier::Transition(
-			list_, offScreenResources_[1], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
-		isSecondStateRenderTarget_ = true;
-	}
+	// ImGui は PostDraw より先に SRV を選ぶので、最終的な描画先を先に確定する。
+	readingResourceIndex_ = applyPostprocessThisFrame_ ? postProcessCount_ % 2 : 0;
 
 	// ImGuiのレンダリング用に絶対にバックバッファに描画する必要があるので残す
-	if (isPostprocess_ || isImGuiEnabled_) {
+	if (useOffscreenThisFrame_) {
+		// オフスクリーンのバリアを設定
+		if (!isFirstStateRenderTarget_) {
+			TransitionResourceBarrier::Transition(
+				list_, offScreenResources_[0], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			isFirstStateRenderTarget_ = true;
+		}
+		if (!isSecondStateRenderTarget_) {
+			TransitionResourceBarrier::Transition(
+				list_, offScreenResources_[1], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			isSecondStateRenderTarget_ = true;
+		}
+
 		// オフスクリーンに描画
 		renderingRosourceIndex_ = 0;
 		list_->OMSetRenderTargets(1,&offScreenRtvHandles_[renderingRosourceIndex_], false, &dsvHandle_);
@@ -249,10 +257,15 @@ void RendaringPostprosecess::PreDraw() {
 }
 
 void RendaringPostprosecess::PostDraw() {
-	// ポストプロセスが有効でないなら何もしない
-	if (!isPostprocess_) {
+	if (!useOffscreenThisFrame_) {
 		return;
-	} 
+	}
+	if (!applyPostprocessThisFrame_) {
+		// エディタは後処理を無効にしてもオフスクリーンを SRV として表示する。
+		list_->OMSetRenderTargets(1, &backBufferRtvHandle_, false, &dsvHandle_);
+		MakeOffscreenShaderReadable();
+		return;
+	}
 	// オフスクリーンのバリア
 	SwitchRenderTarget();
 	for (uint32_t i = 0; i < postProcessCount_; i++) {
@@ -268,6 +281,7 @@ void RendaringPostprosecess::PostDraw() {
 	list_->RSSetViewports(1, dxCommon_->GetViewPort());
 	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
 	list_->OMSetRenderTargets(1, &backBufferRtvHandle_, false, &dsvHandle_);
+	MakeOffscreenShaderReadable();
 #ifdef _DEBUG
 	if (isImGuiEnabled_) {
 		return;
@@ -341,9 +355,22 @@ void RendaringPostprosecess::ClearSecondRenderTarget() {
 	list_->ClearRenderTargetView(offScreenRtvHandles_.at(1), offScreenClearColor, 0, nullptr);
 }
 
+void RendaringPostprosecess::MakeOffscreenShaderReadable() {
+	if (isFirstStateRenderTarget_) {
+		TransitionResourceBarrier::Transition(
+			list_, offScreenResources_[0], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		isFirstStateRenderTarget_ = false;
+	}
+	if (isSecondStateRenderTarget_) {
+		TransitionResourceBarrier::Transition(
+			list_, offScreenResources_[1], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		isSecondStateRenderTarget_ = false;
+	}
+}
+
 void RendaringPostprosecess::SwitchRenderTarget() {
 	// ポストプロセスが有効でないなら何もしない
-	if (!isPostprocess_) {
+	if (!applyPostprocessThisFrame_) {
 		return;
 	}
 

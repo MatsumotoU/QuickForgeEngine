@@ -17,13 +17,12 @@ isDamageMotion = false
 isBallDamageReaction = false
 local damageOriginX = 0.0
 local damageOriginZ = 0.0
-local damageBaseRotationX = 0.0
-local damageBaseRotationZ = 0.0
+local damageBaseRotationY = 0.0
 local damageDirectionX = 0.0
 local damageDirectionZ = 0.0
 local damageKnockbackDistance = 0.0
-local damageTiltX = 0.0
-local damageTiltZ = 0.0
+local damageSpinY = 0.0
+local damageRotationReturnSpeed = 0.3
 
 local function ApplyDamageMotionColor(isWhite)
     if enemyMaterial == nil then
@@ -49,16 +48,34 @@ local function StartBallDamageReaction(ballId)
     isBallDamageReaction = true
     damageOriginX = transform.translate.x
     damageOriginZ = transform.translate.z
-    damageBaseRotationX = transform.rotate.x
-    damageBaseRotationZ = transform.rotate.z
+    damageBaseRotationY = transform.rotate.y
     damageDirectionX = velocityX / ballSpeed
     damageDirectionZ = velocityZ / ballSpeed
     damageKnockbackDistance = math.min(ballSpeed * 0.05, 0.35)
-    local tiltAngle = math.rad(15.0) * math.min(math.max(ballSpeed / 6.0, 0.5), 1.0)
-    damageTiltX = damageDirectionZ * tiltAngle
-    damageTiltZ = -damageDirectionX * tiltAngle
-    transform.rotate.x = damageBaseRotationX + damageTiltX
-    transform.rotate.z = damageBaseRotationZ + damageTiltZ
+    -- 当たった位置と進行方向の外積から、Y軸まわりの回転方向を求める。
+    local ballTransform = GetTransform(ballId)
+    local hitX = -damageDirectionX
+    local hitZ = -damageDirectionZ
+    local spinFactor = 0.0
+    if ballTransform ~= nil then
+        hitX = ballTransform.translate.x - damageOriginX
+        hitZ = ballTransform.translate.z - damageOriginZ
+        local hitDistance = math.sqrt(hitX * hitX + hitZ * hitZ)
+        if hitDistance > 0.0001 then
+            spinFactor = (hitZ * damageDirectionX - hitX * damageDirectionZ) / hitDistance
+        end
+    end
+    -- 中心を狙った衝突でも回転が見えるよう、当たった側で最低限の向きを決める。
+    if math.abs(spinFactor) < 0.5 then
+        local spinSide = spinFactor
+        if math.abs(spinSide) <= 0.0001 then
+            spinSide = math.abs(hitX) >= math.abs(hitZ) and hitX or hitZ
+        end
+        spinFactor = spinSide < 0.0 and -0.5 or 0.5
+    end
+    local spinStrength = math.min(math.max(ballSpeed / 6.0, 0.5), 1.0)
+    damageSpinY = math.rad(90.0) * spinStrength * spinFactor
+    transform.rotate.y = damageBaseRotationY + damageSpinY
 end
 
 local function FinishBallDamageReaction()
@@ -67,8 +84,7 @@ local function FinishBallDamageReaction()
     end
     transform.translate.x = damageOriginX
     transform.translate.z = damageOriginZ
-    transform.rotate.x = damageBaseRotationX
-    transform.rotate.z = damageBaseRotationZ
+    transform.rotate.y = damageBaseRotationY
     isBallDamageReaction = false
 end
 
@@ -117,11 +133,9 @@ function Update()
             if isBallDamageReaction then
                 local outward = math.sin(progress * math.pi)
                 local displacement = damageKnockbackDistance * outward * outward
-                local rotationRecovery = (1.0 - progress) * (1.0 - progress)
                 transform.translate.x = damageOriginX + damageDirectionX * displacement
                 transform.translate.z = damageOriginZ + damageDirectionZ * displacement
-                transform.rotate.x = damageBaseRotationX + damageTiltX * rotationRecovery
-                transform.rotate.z = damageBaseRotationZ + damageTiltZ * rotationRecovery
+                transform.rotate.y = QFE.Math.SimpleEaseIn(transform.rotate.y, damageBaseRotationY, damageRotationReturnSpeed)
             end
 
             local flashWhite = math.floor(damageMotionElapsed / 0.055) % 2 == 0

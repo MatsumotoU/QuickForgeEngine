@@ -63,6 +63,7 @@ private:
 	void ClearFirstRenderTarget();
 	void ClearSecondRenderTarget();
 	void SwitchRenderTarget();
+	void MakeOffscreenShaderReadable();
 
 	void ApplyGrayScale();
 	void ApplyVignette();
@@ -119,6 +120,8 @@ private:// メンバ変数
 	uint32_t readingResourceIndex_;
 	bool isFirstStateRenderTarget_;
 	bool isSecondStateRenderTarget_;
+	bool useOffscreenThisFrame_;
+	bool applyPostprocessThisFrame_;
 
 private:// 画面用
 	float offScreenClearColor[4];

@@ -1,4 +1,5 @@
 #include "engine/include/utility/FileSystems/FileUtility.h"
+#include "engine/include/utility/String/MyString.h"
 #include <cassert>
 #include <windows.h>
 
@@ -6,10 +7,10 @@ std::vector<std::string> QFE::FILE::GetFilesInDirectory(const std::string& direc
     std::vector<std::string> files;
     namespace fs = std::filesystem;
 
-    for (const auto& entry : fs::directory_iterator(directoryPath)) {
+    for (const auto& entry : fs::directory_iterator(fs::path(ConvertString(directoryPath)))) {
         if (entry.is_regular_file()) {
-            if (extension.empty() || entry.path().extension() == extension) {
-                files.push_back(entry.path().filename().string());
+            if (extension.empty() || entry.path().extension() == fs::path(ConvertString(extension))) {
+                files.push_back(WideToUTF8(entry.path().filename().wstring()));
             }
         }
     }
@@ -17,12 +18,13 @@ std::vector<std::string> QFE::FILE::GetFilesInDirectory(const std::string& direc
 }
 
 bool QFE::FILE::OpenFileOnExe(const std::string& exePath, const std::string& filePath) {
-    // ShellExecuteAの戻り値い2以下なら失敗
-    HINSTANCE result = ShellExecuteA(
+    const std::wstring executable = ConvertString(exePath);
+    const std::wstring file = L"\"" + ConvertString(filePath) + L"\"";
+    HINSTANCE result = ShellExecuteW(
         NULL,           // ウィンドウハンドル
-        "open",         // 操作
-        exePath.c_str(),// 実行するexe
-        filePath.c_str(),// 引数（ここでは開きたいファイルパス）
+        L"open",        // 操作
+        executable.c_str(), // 実行するexe
+        file.c_str(),    // 引数（ここでは開きたいファイルパス）
         NULL,           // カレントディレクトリ
         SW_SHOWNORMAL   // ウィンドウ表示方法
     );
@@ -30,7 +32,7 @@ bool QFE::FILE::OpenFileOnExe(const std::string& exePath, const std::string& fil
 }
 
 bool QFE::FILE::LoadFileToJson(const std::string& filePath, nlohmann::json& json) {
-	std::ifstream ifs(filePath);
+	std::ifstream ifs(std::filesystem::path(ConvertString(filePath)));
     if (ifs.is_open()) {
         try {
             ifs >> json;
@@ -55,7 +57,7 @@ bool QFE::FILE::HasExtension(const std::string& fileName, const std::string& ext
 }
 
 bool QFE::FILE::LoadCSVToVector(const std::string& filePath, std::vector<std::vector<uint32_t>>& map) {
-	std::ifstream ifs(filePath);
+	std::ifstream ifs(std::filesystem::path(ConvertString(filePath)));
 	if (ifs.is_open()) {
 		std::string line;
 		while (std::getline(ifs, line)) {
@@ -74,7 +76,7 @@ bool QFE::FILE::LoadCSVToVector(const std::string& filePath, std::vector<std::ve
 }
 
 bool QFE::FILE::SaveJSONToFile(const std::string& filePath, const nlohmann::json& json) {
-	std::ofstream ofs(filePath);
+	std::ofstream ofs(std::filesystem::path(ConvertString(filePath)));
 	if (ofs.is_open()) {
 		ofs << json.dump(4); // インデント幅4で整形して保存
 		ofs.close();
