@@ -45,18 +45,20 @@ void GraphicPipelineManager::Initialize(GraphicPipelineManagerInitializeInfo ini
 	rasterizerState_->Initialize();
 	blendStates_->Initialize();
 	depthStencilDescTemplate_->Initialize();
+}
 
+void GraphicPipelineManager::Finalize() {
+	
+}
+
+void QFE::GRAPHIC::GraphicPipelineManager::CreateBuiltInPipelineStateObjects(ID3D12Device* device) {
 	// シェーダーを格納しているディレクトリ内のファイル名一覧を取得
 	std::vector<std::string> vsFiles = QFE::FILE::GetFilesInDirectory(kVSFilePath);
 	std::vector<std::string> psFiles = QFE::FILE::GetFilesInDirectory(kPSFilePath);
 
 	GenerateBuiltInShaderPairs();
 	// BuiltInのPSOを生成
-	GenerateBuiltInPSO(initializeInfo.device);
-}
-
-void GraphicPipelineManager::Finalize() {
-	
+	GenerateBuiltInPSO(device);
 }
 
 ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(const ShaderPairElement& element) {

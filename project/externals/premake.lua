@@ -10,7 +10,9 @@ project "ExternalFolders"
         path.join(_sourceDirectory, "**.h"),
         path.join(_sourceDirectory, "**.hpp"),
         path.join(_sourceDirectory, "**.c"),
+        path.join(_sourceDirectory, "**.cc"),
         path.join(_sourceDirectory, "**.cpp"),
+        path.join(_sourceDirectory, "**.cxx"),
     }
     removefiles {
         path.join(_sourceDirectory, "imgui/**"),
@@ -52,7 +54,7 @@ project "ExternalFolders"
         path.join(QFE_PROJECT_ROOT, "externals"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
-        path.join(QFE_PROJECT_ROOT, "externals/assimp/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     filter "configurations:Debug"

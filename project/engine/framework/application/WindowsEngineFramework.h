@@ -28,8 +28,6 @@ namespace QFE::FRAMEWORK {
 		uint32_t mainWindowHeight,
 		WindowsQuickForgeEngineSystems& outSystems);
 
-	/// @brief OSメッセージを1件処理する。終了要求を受けた場合はfalseを返す。
-	bool ProcessWindowsApplicationMessage();
 	/// @brief 入力とフレーム計測を開始する。
 	bool BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
 	/// @brief シーン、入力、描画、フレーム計測の終了処理を行う。

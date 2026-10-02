@@ -117,21 +117,6 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	return true;
 }
 
-bool QFE::FRAMEWORK::ProcessWindowsApplicationMessage() {
-	MSG msg{};
-	// 1フレームに1件だけ処理すると、マウス移動など高頻度のメッセージが
-	// キューに滞留し、ImGuiが過去の入力を追いかけるように反応してしまう。
-	// 現在キューにあるメッセージをすべて処理して、最新の入力状態で描画する。
-	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-		if (msg.message == WM_QUIT) {
-			return false;
-		}
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-	return true;
-}
-
 bool QFE::FRAMEWORK::BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems) {
 	if (!systems.fpsCounter || !systems.inputInterface) {
 		return false;

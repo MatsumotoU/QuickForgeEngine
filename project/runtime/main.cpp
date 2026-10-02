@@ -4,6 +4,7 @@
 #include "gamesystem/ShootingSystem.h"
 
 #include "framework/application/WindowsEngineFramework.h"
+#include "framework/window/WindowsWindowFrameWork.h"
 #include "framework/application/WindowsEngineResources.h"
 #include "framework/scene/EventSystem.h"
 #include "framework/scene/AnimationSystem.h"
