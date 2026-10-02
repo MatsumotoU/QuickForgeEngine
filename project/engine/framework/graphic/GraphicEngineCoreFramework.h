@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 namespace QFE::GRAPHIC {
 	enum class InternalApiType;
@@ -9,6 +10,7 @@ namespace QFE::GRAPHIC {
 namespace QFE::FRAMEWORK {
 	/// @brief グラフィックエンジンを生成する関数.ウィンドウのハンドルを引数に取ります.
 	bool CreateGraphicEngine(QFE::GRAPHIC::IGraphicEngine* engine, QFE::GRAPHIC::InternalApiType apiType);
-	/// @brief DirectX12グラフィックエンジンを生成する関数.ウィンドウのハンドルを引数に取ります.
-	bool CreateD3D12GraphicEngine(QFE::GRAPHIC::IGraphicEngine* engine, QFE::GRAPHIC::FeatureState featureState);
+
+	/// @brief グラフィックエンジンを生成する関数.ウィンドウのハンドルを引数に取ります.
+	std::unique_ptr<QFE::GRAPHIC::IGraphicEngine> CreateGraphicEngine(QFE::GRAPHIC::InternalApiType apiType);
 }

@@ -41,6 +41,7 @@ namespace QFE::APPLICATION {
 		std::uint64_t id = 0;
 		std::string name;
 		std::string projectName;
+		std::string sourcePatterns;
 		std::filesystem::path directoryPath;
 		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
 		std::string includePaths;

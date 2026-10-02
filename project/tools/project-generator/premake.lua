@@ -10,7 +10,9 @@ project "ProjectGenerator"
         path.join(_sourceDirectory, "**.h"),
         path.join(_sourceDirectory, "**.hpp"),
         path.join(_sourceDirectory, "**.c"),
+        path.join(_sourceDirectory, "**.cc"),
         path.join(_sourceDirectory, "**.cpp"),
+        path.join(_sourceDirectory, "**.cxx"),
     }
     architecture ("x64")
     cppdialect ("C++20")
@@ -47,7 +49,7 @@ project "ProjectGenerator"
         path.join(QFE_PROJECT_ROOT, "externals"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
-        path.join(QFE_PROJECT_ROOT, "externals/assimp/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     filter "configurations:Debug"
@@ -79,62 +81,19 @@ project "ProjectGenerator"
         path.join(QFE_PROJECT_ROOT, "engine/core"),
         path.join(QFE_PROJECT_ROOT, "externals"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
-        path.join(QFE_PROJECT_ROOT, "externals/assimp/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     links {
-        "EngineAssetsFactory",
-        "EngineCore",
-        "ApplicationFramework",
         "GraphicFramework",
         "GraphicEngine",
+        "EngineCore",
         "DirectXTex",
-        "GuiFramework",
-        "GUIEngine",
-        "ImGui",
-        "InputFramework",
-        "Input",
-        "SceneFramework",
-        "Scene",
         "WindowFramework",
         "WindowingSystem",
-        "PhysicsFramework",
-        "PhysicsEngine",
-        "AudioFramework",
-        "Audio",
-        "Camera",
+        "ImGui",
+        "GuiFramework",
+        "GUIEngine",
     }
-    filter "configurations:Debug"
-        links {
-            "assimp-vc143-mtd",
-            "zlibstaticd",
-        }
-    filter "configurations:Development"
-        links {
-            "assimp-vc143-mt",
-            "zlibstatic",
-        }
-    filter "configurations:Release"
-        links {
-            "assimp-vc143-mt",
-            "zlibstatic",
-        }
-    filter {}
-    filter "configurations:Debug"
-        libdirs {
-            path.join(QFE_PROJECT_ROOT, "../generated/assimp/lib/Debug"),
-            path.join(QFE_PROJECT_ROOT, "../generated/assimp/contrib/zlib/Debug"),
-        }
-    filter "configurations:Development"
-        libdirs {
-            path.join(QFE_PROJECT_ROOT, "../generated/assimp/lib/Release"),
-            path.join(QFE_PROJECT_ROOT, "../generated/assimp/contrib/zlib/Release"),
-        }
-    filter "configurations:Release"
-        libdirs {
-            path.join(QFE_PROJECT_ROOT, "../generated/assimp/lib/Release"),
-            path.join(QFE_PROJECT_ROOT, "../generated/assimp/contrib/zlib/Release"),
-        }
-    filter {}
 

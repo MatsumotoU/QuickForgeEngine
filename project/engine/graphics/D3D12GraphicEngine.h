@@ -61,8 +61,6 @@ namespace QFE::GRAPHIC {
 		/// @brief ビルトインのパイプラインステートオブジェクトを生成します
 		void SetUpBuildInPipelineStateObjects();
 
-		void SetUp
-
 		// 一度は呼ぶ順番がある関数群
 		void Initialize() override;
 		void PreDraw() override;

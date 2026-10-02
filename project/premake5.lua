@@ -58,7 +58,7 @@ workspace "QuickForgeEngine"
         path.join(QFE_PROJECT_ROOT, "externals"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
-        path.join(QFE_PROJECT_ROOT, "externals/assimp/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     filter "configurations:Debug"
@@ -104,6 +104,7 @@ dofile(path.join(_root, "engine/gui/premake.lua"))
 dofile(path.join(_root, "engine/input/premake.lua"))
 dofile(path.join(_root, "engine/physics/premake.lua"))
 dofile(path.join(_root, "engine/audio/premake.lua"))
+dofile(path.join(_root, "engine/network/premake.lua"))
 group ""
 
 group "02_Middleware"
@@ -123,6 +124,7 @@ dofile(path.join(_root, "engine/framework/physics/premake.lua"))
 dofile(path.join(_root, "engine/framework/scene/premake.lua"))
 dofile(path.join(_root, "engine/framework/assets/premake.lua"))
 dofile(path.join(_root, "engine/framework/audio/premake.lua"))
+dofile(path.join(_root, "engine/framework/network/premake.lua"))
 group ""
 
 group "04_Applications"

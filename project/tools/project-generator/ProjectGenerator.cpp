@@ -663,7 +663,7 @@ namespace
 				"externals\n"
 				"externals/imgui\n"
 				"externals/assimp\n"
-				"externals/assimp/include\n"
+				"externals/assimp/upstream/include\n"
 				"externals/imgui/imgui-node-editor-0.9.3";
 		}
 
@@ -2173,6 +2173,9 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 
 		ImGui::TextUnformatted("Premake project name");
 		ImGui::InputText("##PremakeProjectName", &node->projectName);
+		ImGui::TextUnformatted("Source files and patterns (relative to project, one per line)");
+		ImGui::InputTextMultiline("##SourcePatterns", &node->sourcePatterns,
+			ImVec2(-FLT_MIN, 110.0f), ImGuiInputTextFlags_AllowTabInput);
 
 		const std::vector<std::string> configurations =
 			SplitLines(commonPremakeSettings_.configurations);
@@ -2970,11 +2973,16 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		output << "    language \"C++\"\n";
 		output << "    objdir (path.join(QFE_PROJECT_ROOT, \"../generated/obj/%{prj.name}/%{cfg.buildcfg}/%{cfg.platform}\"))\n";
 		output << "    targetdir (path.join(QFE_PROJECT_ROOT, \"../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}\"))\n";
+		std::vector<std::string> sourcePatterns = SplitLines(node.sourcePatterns);
+		if (sourcePatterns.empty()) {
+			sourcePatterns = { "**.h", "**.hpp", "**.c", "**.cc",
+				"**.cpp", "**.cxx" };
+		}
 		output << "    files {\n";
-		output << "        path.join(_sourceDirectory, \"**.h\"),\n";
-		output << "        path.join(_sourceDirectory, \"**.hpp\"),\n";
-		output << "        path.join(_sourceDirectory, \"**.c\"),\n";
-		output << "        path.join(_sourceDirectory, \"**.cpp\"),\n";
+		for (const std::string& pattern : sourcePatterns) {
+			output << "        path.join(_sourceDirectory, \""
+				<< EscapeLuaString(Trim(pattern)) << "\"),\n";
+		}
 		output << "    }\n";
 		std::vector<std::string> nestedProjectDirectories;
 		for (const ProjectNode& other : nodes_) {
@@ -3339,6 +3347,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 		nodeJson["id"] = node.id;
 		nodeJson["name"] = node.name;
 		nodeJson["projectName"] = node.projectName;
+		nodeJson["sourcePatterns"] = node.sourcePatterns;
 		const std::filesystem::path relativeNode =
 			NormalizePath(node.directoryPath).lexically_relative(rootPath);
 		nodeJson["directoryPath"] = QFE::ConvertString(
@@ -3601,6 +3610,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 			node.id = nodeId;
 			node.name = nodeJson.value("name", "");
 			node.projectName = nodeJson.value("projectName", node.name);
+			node.sourcePatterns = nodeJson.value("sourcePatterns", "");
 			if (node.name.empty()) {
 				node.name = QFE::ConvertString(
 					std::filesystem::path(QFE::ConvertString(directoryPath)).filename().wstring());
