@@ -25,16 +25,16 @@ bool QFE::FRAMEWORK::ProcessWindowsApplicationMessage() {
 	return true;
 }
 
-std::unique_ptr<QFE::GameWindowManager> QFE::FRAMEWORK::CreateWindowManager(
+std::unique_ptr<QFE::WINDOW::GameWindowManager> QFE::FRAMEWORK::CreateWindowManager(
 	const std::string& mainWindowName, uint32_t width, uint32_t height) {
 
-	std::unique_ptr<QFE::GameWindowManager> windowManager = std::make_unique<QFE::GameWindowManager>();
+	std::unique_ptr<QFE::WINDOW::GameWindowManager> windowManager = std::make_unique<QFE::WINDOW::GameWindowManager>();
 	windowManager->Initialize();
 	windowManager->AddWindow(width, height, mainWindowName);
 	return windowManager;
 }
 
-HWND QFE::FRAMEWORK::GetWindowHandle(const GameWindowManager* windowManager, const std::string& windowName) {
+HWND QFE::FRAMEWORK::GetWindowHandle(const QFE::WINDOW::GameWindowManager* windowManager, const std::string& windowName) {
 	if(windowManager == nullptr) {
 		QFE_LOG("windowManager is null");
 		return nullptr;
@@ -246,6 +246,6 @@ bool QFE::FRAMEWORK::CompileProject(const std::wstring& projectPath, const std::
     }
 }
 
-bool QFE::FRAMEWORK::IsMainWindowActive(const GameWindowManager* windowManager) {
+bool QFE::FRAMEWORK::IsMainWindowActive(const QFE::WINDOW::GameWindowManager* windowManager) {
     return windowManager->IsWindowActive();
 }

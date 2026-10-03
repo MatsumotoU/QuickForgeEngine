@@ -13,7 +13,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 #include "EngineDefines.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	WindowEventsManager::WindowEventsManager() {
 		// イベントシステムの初期化

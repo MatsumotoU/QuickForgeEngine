@@ -2,7 +2,7 @@
 #include "string/MyString.h"
 #include <cassert>
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	void GameWindow::Initialize(const uint32_t& width, const uint32_t& height, const std::string& windowName) {
 		configData_.clientWidth = width;

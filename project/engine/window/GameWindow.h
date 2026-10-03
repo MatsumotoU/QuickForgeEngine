@@ -10,7 +10,7 @@
 #include "WindowGenerator/WindowGenerator.h"
 #include "WindowEventsManager/WindowEventsManager.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	/**
 	 * @class GameWindow

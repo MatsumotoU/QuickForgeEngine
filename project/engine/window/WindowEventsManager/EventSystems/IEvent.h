@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <nlohmann/json.hpp>
 
-namespace QFE {
+namespace QFE::WINDOW {
 	/// @brief ウィンドウイベントシステムのインターフェース
 	class IEvent {
 	public:

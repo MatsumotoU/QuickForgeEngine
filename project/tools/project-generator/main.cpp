@@ -26,7 +26,7 @@
 #include "ProjectGenerator.h"
 
 struct WindowsGuiToolSystems {
-	std::unique_ptr<QFE::GameWindowManager> windowManager;
+	std::unique_ptr<QFE::WINDOW::GameWindowManager> windowManager;
 	std::unique_ptr<QFE::FRAMEWORK::GraphicContext> graphicEngine;
 	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager;
 };

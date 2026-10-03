@@ -1,7 +1,8 @@
 #include "ExitAppEvent.h"
 #include "EngineDefines.h"
 
-using namespace QFE;
+namespace QFE::WINDOW {
+
 ExitAppEvent::ExitAppEvent(nlohmann::json& data):IEvent(data) {}
 
 void ExitAppEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
@@ -15,4 +16,6 @@ void ExitAppEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 
 UINT ExitAppEvent::GetEventType() {
 	return WM_DESTROY;
+}
+
 }

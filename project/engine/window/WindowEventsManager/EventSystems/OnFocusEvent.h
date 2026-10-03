@@ -1,6 +1,6 @@
 #pragma once
 #include "IEvent.h"
-namespace QFE {
+namespace QFE::WINDOW {
 	/// @brief ウィンドウがフォーカスを得たときのイベントシステム
 	class OnFocusEvent final : public IEvent {
 	public:

@@ -1,5 +1,8 @@
 #include "IEvent.h"
 #include <cassert>
 
-using namespace QFE;
+namespace QFE::WINDOW {
+
 IEvent::IEvent(nlohmann::json& eventData) :eventData_(eventData){}
+
+}
