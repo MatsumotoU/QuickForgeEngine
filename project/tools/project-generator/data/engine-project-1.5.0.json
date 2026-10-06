@@ -67,8 +67,8 @@
                 "y": -176.0
             },
             "size": {
-                "x": 666.0,
-                "y": 688.0
+                "x": 682.0,
+                "y": 704.0
             }
         },
         {
@@ -84,8 +84,8 @@
                 "y": 560.0
             },
             "size": {
-                "x": 592.0,
-                "y": 544.0
+                "x": 608.0,
+                "y": 560.0
             }
         },
         {
@@ -98,15 +98,16 @@
                 9,
                 10,
                 30,
-                32
+                32,
+                34
             ],
             "position": {
-                "x": 672.0,
+                "x": 666.0,
                 "y": -176.0
             },
             "size": {
-                "x": 544.0,
-                "y": 1280.0
+                "x": 284.0,
+                "y": 1297.0
             }
         },
         {
@@ -123,8 +124,8 @@
                 "y": 1232.0
             },
             "size": {
-                "x": 646.0,
-                "y": 1008.0
+                "x": 662.0,
+                "y": 1024.0
             }
         },
         {
@@ -140,15 +141,16 @@
                 21,
                 22,
                 31,
-                33
+                33,
+                35
             ],
             "position": {
                 "x": 1376.0,
                 "y": -145.0
             },
             "size": {
-                "x": 758.0,
-                "y": 1020.0
+                "x": 742.0,
+                "y": 1084.0
             }
         },
         {
@@ -165,8 +167,8 @@
                 "y": 560.0
             },
             "size": {
-                "x": 406.0,
-                "y": 866.0
+                "x": 422.0,
+                "y": 882.0
             }
         },
         {
@@ -180,8 +182,8 @@
                 "y": -144.0
             },
             "size": {
-                "x": 406.0,
-                "y": 326.0
+                "x": 422.0,
+                "y": 342.0
             }
         }
     ],
@@ -435,11 +437,26 @@
             "id": 98,
             "sourceNodeId": 33,
             "targetNodeId": 15
+        },
+        {
+            "id": 99,
+            "sourceNodeId": 5,
+            "targetNodeId": 34
+        },
+        {
+            "id": 100,
+            "sourceNodeId": 34,
+            "targetNodeId": 35
+        },
+        {
+            "id": 101,
+            "sourceNodeId": 35,
+            "targetNodeId": 15
         }
     ],
     "nextGroupId": 8,
-    "nextLinkId": 99,
-    "nextNodeId": 34,
+    "nextLinkId": 102,
+    "nextNodeId": 36,
     "nodes": [
         {
             "configurationSettings": {
@@ -756,7 +773,7 @@
             "name": "graphics",
             "position": {
                 "x": 720.0,
-                "y": 52.0
+                "y": 31.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -802,7 +819,7 @@
             "name": "gui",
             "position": {
                 "x": 720.0,
-                "y": 223.0
+                "y": 175.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -848,7 +865,7 @@
             "name": "input",
             "position": {
                 "x": 720.0,
-                "y": 412.0
+                "y": 303.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -894,7 +911,7 @@
             "name": "physics",
             "position": {
                 "x": 720.0,
-                "y": 592.0
+                "y": 415.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1813,8 +1830,8 @@
             "libraryDirectories": [],
             "name": "audio",
             "position": {
-                "x": 720.0,
-                "y": 735.0
+                "x": 714.0,
+                "y": 527.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1906,7 +1923,7 @@
             "name": "network",
             "position": {
                 "x": 720.0,
-                "y": 853.0
+                "y": 671.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1957,6 +1974,98 @@
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "NetworkFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/animation",
+            "externalLinks": [],
+            "id": 34,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "animation",
+            "position": {
+                "x": 720.0,
+                "y": 799.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Animation",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/animation",
+            "externalLinks": [],
+            "id": 35,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "animation",
+            "position": {
+                "x": 1424.0,
+                "y": 789.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "AnimationFramework",
             "sourcePatterns": ""
         }
     ],

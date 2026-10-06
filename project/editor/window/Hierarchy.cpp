@@ -22,7 +22,7 @@
 #include <vector>
 
 namespace {
-	std::vector<std::string> FindObjModels() {
+	std::vector<std::string> FindModelAssets() {
 		std::vector<std::string> models;
 		std::error_code error;
 		const std::filesystem::path resourceRoot = "resources";
@@ -47,7 +47,7 @@ namespace {
 			std::string extension = iterator->path().extension().string();
 			std::transform(extension.begin(), extension.end(), extension.begin(),
 				[](unsigned char character) { return static_cast<char>(std::tolower(character)); });
-			if (extension != ".obj") {
+			if (extension != ".obj" && extension != ".glb") {
 				continue;
 			}
 
@@ -57,7 +57,8 @@ namespace {
 				error.clear();
 				continue;
 			}
-			relativePath.replace_extension();
+			// Keep the extension so an OBJ with the same stem remains selectable.
+			if (extension == ".obj") relativePath.replace_extension();
 			models.push_back(relativePath.generic_string());
 		}
 
@@ -315,7 +316,7 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 					}
 					ImGui::EndMenu();
 				}
-				const std::vector<std::string> modelNames = FindObjModels();
+				const std::vector<std::string> modelNames = FindModelAssets();
 				if (ImGui::BeginMenu("Model", !modelNames.empty())) {
 					for (const std::string& modelName : modelNames) {
 						if (ImGui::MenuItem(modelName.c_str())) {

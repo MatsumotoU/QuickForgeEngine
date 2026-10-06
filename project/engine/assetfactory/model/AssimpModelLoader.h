@@ -1,12 +1,15 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
+#include <unordered_map>
 
 
 #include "ModelData.h"
 #include "SkinningModelData.h"
 
 namespace QFE::ASSET {
+	struct AnimatedGlbScene;
 	/// @brief Assimpを使用してモデルデータを読み込むクラス,基本はモデルをキャッシュする
 	class AssimpModelLoader {
 	public:
@@ -24,6 +27,12 @@ namespace QFE::ASSET {
 		ModelData& ForceLoadModel(const std::string& filePath);
 		/// @brief キャッシュにモデルデータが存在するかどうかを確認する関数
 		bool IsModelCached(const std::string& filePath) const;
+		/// @brief GLB に含まれるクリップ名をファイル順で返す。名前が空なら生成名を返す。
+		std::vector<std::string> GetGlbAnimationNames(const std::string& filePath) const;
+		double GetGlbAnimationDuration(const std::string& filePath, const std::string& clipName) const;
+		/// @brief 指定時刻のボーン/ノード変形を頂点へ適用する。空の名前は先頭クリップ。
+		bool SampleGlbAnimation(const std::string& filePath, const std::string& clipName,
+			double timeSeconds, std::vector<VertexData>& outVertices) const;
 
 	private:
 		/// @brief 指定されたファイルパスからモデルデータを読み込む関数
@@ -33,6 +42,7 @@ namespace QFE::ASSET {
 
 		std::unordered_map<std::string, ModelData> modelCache; // モデルデータのキャッシュ
 		std::unordered_map<std::string, SkinningModelData> skinningModelCache; // スキニングモデルデータのキャッシュ
+		std::unordered_map<std::string, std::shared_ptr<AnimatedGlbScene>> animatedGlbCache;
 		ModelData invalidModelData; // 無効なモデルデータを返すためのメンバ変数
 	};
 

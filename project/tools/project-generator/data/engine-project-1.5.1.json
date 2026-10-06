@@ -67,8 +67,8 @@
                 "y": -176.0
             },
             "size": {
-                "x": 666.0,
-                "y": 688.0
+                "x": 698.0,
+                "y": 720.0
             }
         },
         {
@@ -84,13 +84,13 @@
                 "y": 560.0
             },
             "size": {
-                "x": 592.0,
-                "y": 544.0
+                "x": 624.0,
+                "y": 576.0
             }
         },
         {
             "id": 3,
-            "name": "01_SubSystems",
+            "name": "01_Modulars",
             "nodeIds": [
                 6,
                 7,
@@ -98,38 +98,21 @@
                 9,
                 10,
                 30,
-                32
+                32,
+                34
             ],
             "position": {
-                "x": 672.0,
+                "x": 666.0,
                 "y": -176.0
             },
             "size": {
-                "x": 544.0,
-                "y": 1280.0
-            }
-        },
-        {
-            "id": 4,
-            "name": "02_Middleware",
-            "nodeIds": [
-                11,
-                12,
-                13,
-                14
-            ],
-            "position": {
-                "x": 704.0,
-                "y": 1232.0
-            },
-            "size": {
-                "x": 646.0,
-                "y": 1008.0
+                "x": 502.0,
+                "y": 1728.0
             }
         },
         {
             "id": 5,
-            "name": "03_Frameworks",
+            "name": "02_Frameworks",
             "nodeIds": [
                 15,
                 16,
@@ -140,7 +123,8 @@
                 21,
                 22,
                 31,
-                33
+                33,
+                35
             ],
             "position": {
                 "x": 1376.0,
@@ -148,12 +132,12 @@
             },
             "size": {
                 "x": 758.0,
-                "y": 1020.0
+                "y": 1100.0
             }
         },
         {
             "id": 6,
-            "name": "04_Applications",
+            "name": "03_Applications",
             "nodeIds": [
                 23,
                 24,
@@ -165,8 +149,8 @@
                 "y": 560.0
             },
             "size": {
-                "x": 406.0,
-                "y": 866.0
+                "x": 438.0,
+                "y": 898.0
             }
         },
         {
@@ -180,8 +164,8 @@
                 "y": -144.0
             },
             "size": {
-                "x": 406.0,
-                "y": 326.0
+                "x": 438.0,
+                "y": 358.0
             }
         }
     ],
@@ -235,11 +219,6 @@
             "id": 10,
             "sourceNodeId": 1,
             "targetNodeId": 11
-        },
-        {
-            "id": 11,
-            "sourceNodeId": 5,
-            "targetNodeId": 12
         },
         {
             "id": 13,
@@ -327,11 +306,6 @@
             "targetNodeId": 23
         },
         {
-            "id": 46,
-            "sourceNodeId": 12,
-            "targetNodeId": 23
-        },
-        {
             "id": 53,
             "sourceNodeId": 11,
             "targetNodeId": 25
@@ -339,11 +313,6 @@
         {
             "id": 56,
             "sourceNodeId": 15,
-            "targetNodeId": 25
-        },
-        {
-            "id": 58,
-            "sourceNodeId": 12,
             "targetNodeId": 25
         },
         {
@@ -359,11 +328,6 @@
         {
             "id": 68,
             "sourceNodeId": 7,
-            "targetNodeId": 26
-        },
-        {
-            "id": 69,
-            "sourceNodeId": 12,
             "targetNodeId": 26
         },
         {
@@ -435,11 +399,36 @@
             "id": 98,
             "sourceNodeId": 33,
             "targetNodeId": 15
+        },
+        {
+            "id": 99,
+            "sourceNodeId": 5,
+            "targetNodeId": 34
+        },
+        {
+            "id": 100,
+            "sourceNodeId": 34,
+            "targetNodeId": 35
+        },
+        {
+            "id": 101,
+            "sourceNodeId": 35,
+            "targetNodeId": 15
+        },
+        {
+            "id": 102,
+            "sourceNodeId": 35,
+            "targetNodeId": 23
+        },
+        {
+            "id": 103,
+            "sourceNodeId": 35,
+            "targetNodeId": 25
         }
     ],
     "nextGroupId": 8,
-    "nextLinkId": 99,
-    "nextNodeId": 34,
+    "nextLinkId": 104,
+    "nextNodeId": 36,
     "nodes": [
         {
             "configurationSettings": {
@@ -756,7 +745,7 @@
             "name": "graphics",
             "position": {
                 "x": 720.0,
-                "y": 52.0
+                "y": 31.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -802,7 +791,7 @@
             "name": "gui",
             "position": {
                 "x": 720.0,
-                "y": 223.0
+                "y": 175.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -848,7 +837,7 @@
             "name": "input",
             "position": {
                 "x": 720.0,
-                "y": 412.0
+                "y": 303.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -894,7 +883,7 @@
             "name": "physics",
             "position": {
                 "x": 720.0,
-                "y": 592.0
+                "y": 415.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -939,58 +928,12 @@
             "libraryDirectories": [],
             "name": "assetfactory",
             "position": {
-                "x": 992.0,
-                "y": 1456.0
+                "x": 720.0,
+                "y": 927.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "EngineAssetsFactory",
-            "sourcePatterns": ""
-        },
-        {
-            "configurationSettings": {
-                "Debug": {
-                    "defines": "",
-                    "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
-                    "kind": 0,
-                    "libraryDirectories": "",
-                    "postBuildEvent": "",
-                    "preBuildEvent": ""
-                },
-                "Development": {
-                    "defines": "",
-                    "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
-                    "kind": 0,
-                    "libraryDirectories": "",
-                    "postBuildEvent": "",
-                    "preBuildEvent": ""
-                },
-                "Release": {
-                    "defines": "",
-                    "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
-                    "kind": 0,
-                    "libraryDirectories": "",
-                    "postBuildEvent": "",
-                    "preBuildEvent": ""
-                }
-            },
-            "directoryPath": "engine/camera",
-            "externalLinks": [],
-            "id": 12,
-            "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
-            "kind": 0,
-            "libraryDirectories": [],
-            "name": "camera",
-            "position": {
-                "x": 992.0,
-                "y": 1636.0
-            },
-            "postBuildEvent": "",
-            "preBuildEvent": "",
-            "projectName": "Camera",
             "sourcePatterns": ""
         },
         {
@@ -1031,8 +974,8 @@
             "libraryDirectories": [],
             "name": "scene",
             "position": {
-                "x": 992.0,
-                "y": 1816.0
+                "x": 954.0,
+                "y": 1039.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1077,8 +1020,8 @@
             "libraryDirectories": [],
             "name": "components",
             "position": {
-                "x": 730.0,
-                "y": 2015.0
+                "x": 720.0,
+                "y": 1151.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1813,8 +1756,8 @@
             "libraryDirectories": [],
             "name": "audio",
             "position": {
-                "x": 720.0,
-                "y": 735.0
+                "x": 714.0,
+                "y": 527.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1906,7 +1849,7 @@
             "name": "network",
             "position": {
                 "x": 720.0,
-                "y": 853.0
+                "y": 671.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1957,6 +1900,98 @@
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "NetworkFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/animation",
+            "externalLinks": [],
+            "id": 34,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "animation",
+            "position": {
+                "x": 720.0,
+                "y": 799.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Animation",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/animation",
+            "externalLinks": [],
+            "id": 35,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "animation",
+            "position": {
+                "x": 1424.0,
+                "y": 789.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "AnimationFramework",
             "sourcePatterns": ""
         }
     ],

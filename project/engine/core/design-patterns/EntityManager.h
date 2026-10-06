@@ -178,7 +178,7 @@ namespace QFE {
 				storage.Each(func);
 			}
 		}
-		/// @brief コンポーネントストレージを取得する。
+		/// @brief コンポーネントストレージを取得する。const版。
 		template <typename T>
 		void Each(const std::function<void(uint32_t, const T&)>& func) const {
 			if (HasComponentStorage<T>()) {
@@ -186,6 +186,58 @@ namespace QFE {
 				storage.Each(func);
 			}
 		}
+		
+		/// @brief 2つのコンポーネントストレージを取得し、両方に存在するエンティティIDに対して関数を実行する。
+		template <typename T1, typename T2>
+		void Each(const std::function<void(uint32_t, T1&, T2&)>& func) {
+			if (HasComponentStorage<T1>() && HasComponentStorage<T2>()) {
+				// 2つのコンポーネントストレージを取得する
+				auto& storage1 = GetComponentStorage<T1>();
+				auto& storage2 = GetComponentStorage<T2>();
+				// 少ない方を基点にしてループする
+				if(storage1.size() < storage2.size()) {
+					storage1.Each([&](uint32_t id, T1& comp1) {
+						if (storage2.HasComponent(id)) {
+							T2& comp2 = storage2.GetComponent(id);
+							func(id, comp1, comp2);
+						}
+					});
+				} else {
+					storage2.Each([&](uint32_t id, T2& comp2) {
+						if (storage1.HasComponent(id)) {
+							T1& comp1 = storage1.GetComponent(id);
+							func(id, comp1, comp2);
+						}
+					});
+				}
+			}
+		}
+		/// @brief 2つのコンポーネントストレージを取得し、両方に存在するエンティティIDに対して関数を実行する。const版。
+		template <typename T1, typename T2>
+		void Each(const std::function<void(uint32_t, const T1&, const T2&)>& func) const {
+			if (HasComponentStorage<T1>() && HasComponentStorage<T2>()) {
+				// 2つのコンポーネントストレージを取得する
+				const auto& storage1 = GetComponentStorage<T1>();
+				const auto& storage2 = GetComponentStorage<T2>();
+				// 少ない方を基点にしてループする
+				if(storage1.size() < storage2.size()) {
+					storage1.Each([&](uint32_t id, const T1& comp1) {
+						if (storage2.HasComponent(id)) {
+							const T2& comp2 = storage2.GetComponent(id);
+							func(id, comp1, comp2);
+						}
+					});
+				} else {
+					storage2.Each([&](uint32_t id, const T2& comp2) {
+						if (storage1.HasComponent(id)) {
+							const T1& comp1 = storage1.GetComponent(id);
+							func(id, comp1, comp2);
+						}
+					});
+				}
+			}
+		}
+
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを追加する。既に存在する場合は上書きする。
 		void AddDefaultComponent(uint32_t id, const std::string& componentTypeName);
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを削除する。

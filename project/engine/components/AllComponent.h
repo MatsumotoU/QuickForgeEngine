@@ -12,7 +12,7 @@
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
 #include "SphereColliderComponent.h"
-#include "AnimationComponent.h"
+#include "animation/AnimationComponent.h"
 #include "PhysicsComponent.h"
 #include "InputMovementComponent.h"
 #include "SplineMovementComponent.h"

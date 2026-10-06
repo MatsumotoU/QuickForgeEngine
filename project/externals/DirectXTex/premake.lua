@@ -80,6 +80,6 @@ project "DirectXTex"
         path.join(QFE_PROJECT_ROOT, "externals/DirectXTex/Shaders/Compiled"),
     }
     prebuildcommands {
-        "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd",
+        "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd",
     }
 

@@ -88,7 +88,6 @@ project "GameEditor"
         "EngineAssetsFactory",
         "EngineCore",
         "Assimp",
-        "Camera",
         "ApplicationFramework",
         "GraphicFramework",
         "GraphicEngine",
@@ -106,5 +105,8 @@ project "GameEditor"
         "PhysicsEngine",
         "AudioFramework",
         "Audio",
+        "Network",
+        "AnimationFramework",
+        "Animation",
     }
 

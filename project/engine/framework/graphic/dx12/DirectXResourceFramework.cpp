@@ -377,9 +377,8 @@ bool QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
 	auto* device = graphicEngine->GetDirectXDevice();
 	auto* rc = graphicEngine->GetDirectXResourceContainer();
 
-	// サイズが0の場合は、無効化する
+	// 空データではアップロードせず、既存のバッファは再利用可能なまま保持する。
 	if (byteSize == 0) {
-		QFE::GRAPHIC::DirectXResourceHandle invalidHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		return true;
 	}
 

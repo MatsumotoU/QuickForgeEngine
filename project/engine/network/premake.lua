@@ -74,7 +74,7 @@ project "Network"
             "NO_IMGUI",
         }
     filter {}
-    kind "Utility"
+    kind "StaticLib"
     links {
         "EngineCore",
     }

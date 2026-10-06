@@ -29,6 +29,7 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::DirectXResourceHandle globalUVHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		QFE::GRAPHIC::DirectXResourceHandle globalTriHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		QFE::GRAPHIC::DirectXResourceHandle instanceMetaHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		bool hasRayTracingGeometry = false;
 		QFE::GRAPHIC::DirectXResourceHandle skyBoxTextureHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		bool skyBoxVisible = false;
 

@@ -28,15 +28,15 @@ namespace QFE::APPLICATION
 	public:
 		void Initialize();
 
-		/// @brief Lootディレクトリのパスをセットする
+		/// @brief Set the root directory path.
 		bool SetLootDirectory(const std::string& path);
-		/// @brief 前回開始したディレクトリ走査の完了を確認し、結果を反映する
+		/// @brief Apply results from the most recent directory scan when it completes.
 		void Update();
-		/// @brief Lootディレクトリのパスを取得する
+		/// @brief Get the root directory path.
 		const std::string& GetLootDirectory() const;
-		/// @brief ルート配下のディレクトリ一覧を取得する
+		/// @brief Get the directories below the root.
 		const std::vector<DirectoryEntry>& GetDirectories() const;
-		/// @brief ディレクトリ走査の状態を取得する
+		/// @brief Get the directory scan state.
 		DirectoryScanState GetScanState() const;
 
 

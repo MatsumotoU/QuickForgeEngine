@@ -90,7 +90,6 @@ project "Launcher"
         "WindowingSystem",
         "GraphicEngine",
         "DirectXTex",
-        "Camera",
         "EngineAssetsFactory",
         "Assimp",
         "Scene",

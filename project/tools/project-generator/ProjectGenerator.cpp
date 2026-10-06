@@ -95,10 +95,9 @@ namespace
 		return settings.kind;
 	}
 
-	// Node EditorはNodeId/PinId/LinkIdを最終的に同じImGuiのヒットテスト
-	// IDとして扱うため、種別ごとに上位ビットを分ける。例えば、単純に
-	// nodeId * 2 + 1 とすると、nodeId=3とnodeId=1のinput pinが同じ
-	// IDになり、ノードのドラッグがリンク作成として扱われる。
+	// Node Editor treats node, pin, and link IDs as the same ImGui hit-test ID.
+	// Reserve distinct high bits for each type. A simple nodeId * 2 + 1
+	// can collide with another node's input pin and turn dragging into linking.
 	constexpr std::uintptr_t kNodeEditorIdPayloadMask =
 		(std::uintptr_t(1) << 60) - 1;
 	constexpr std::uintptr_t kNodeEditorNodeIdTag =
@@ -169,6 +168,23 @@ namespace
 	ed::NodeId ToEditorGroupId(std::uint64_t id)
 	{
 		return ed::NodeId(EncodeNodeEditorId(kNodeEditorGroupIdTag, id));
+	}
+
+	bool GetGroupContentBounds(const ProjectGroup& group,
+		ImVec2& minimum, ImVec2& maximum)
+	{
+		const ed::NodeId groupId = ToEditorGroupId(group.id);
+		const ImVec2 position = ed::GetNodePosition(groupId);
+		const ImVec2 size = ed::GetNodeSize(groupId);
+		if (position.x == FLT_MAX || position.y == FLT_MAX ||
+			size.x <= 0.0f || size.y <= 0.0f) {
+			return false;
+		}
+		const ImVec4 padding = ed::GetStyle().NodePadding;
+		minimum = ImVec2(position.x + padding.x, position.y + padding.y);
+		maximum = ImVec2(position.x + size.x - padding.z,
+			position.y + size.y - padding.w);
+		return minimum.x < maximum.x && minimum.y < maximum.y;
 	}
 
 	struct ParsedPremakeProject {
@@ -489,8 +505,8 @@ namespace
 		std::error_code error;
 		addAncestors(std::filesystem::current_path(error));
 
-		// Visual Studioから起動した場合はSolutionDirが作業ディレクトリだが、
-		// exeを直接起動した場合はgenerated/outputs/...になるため、両方を探す。
+		// Visual Studio starts in SolutionDir, while the executable starts in
+		// generated/outputs/...; search both locations.
 		wchar_t modulePath[MAX_PATH] = {};
 		const DWORD modulePathLength = GetModuleFileNameW(
 			nullptr, modulePath, static_cast<DWORD>(std::size(modulePath)));
@@ -856,50 +872,50 @@ void ProjectGenerator::Update() {
 }
 
 void ProjectGenerator::Draw() {
-    // 1. 画面全体のフラグを設定（タイトルバーやリサイズ、移動などをすべて無効化）
+    // 1. Configure the full-screen host window without title or movement controls.
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-    // 2. メインビューポート（画面全体）のサイズと位置を取得して、ウィンドウをそこに合わせる
+    // 2. Fit the host window to the main viewport.
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
     ImGui::SetNextWindowViewport(viewport->ID);
 
-    // 3. ウィンドウのパディング（内側の余白）を一時的にゼロにする（ドックスペースを画面端まで広げるため）
+    // 3. Remove padding so the dock space reaches the viewport edges.
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    // 4. 透明な背景ウィンドウの開始
+    // 4. Begin the transparent host window.
     ImGui::Begin("MainDockSpaceWindow", nullptr, window_flags);
 
-    // スタイル変数を元に戻す
+    // Restore the style variables.
     ImGui::PopStyleVar(3);
 
-    // 5. ドックスペース（ドッキングの土台）を設置
+    // 5. Create the dock space.
     ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
         ImGuiID dockspace_id = ImGui::GetID("MyMainDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     }
 
-	// メインメニューバーの描画
+	// Draw the main menu bar.
 	MainMenuBar();
 
-    // MainDockSpaceWindowの終了
+    // End MainDockSpaceWindow.
 	ImGui::End();
 
-	// メインウィンドウの描画
+	// Draw the main window.
 	MainWindow();
-	// ノードエディタウィンドウの描画
+	// Draw the node editor window.
 	NodeEditorWindow();
-	// 選択中ノードの設定ウィンドウ
+	// Draw the selected node's settings.
 	NodeSettingsWindow();
-	// 選択中グループの設定ウィンドウ
+	// Draw the selected group's settings.
 	GroupSettingsWindow();
-	// ルートPremakeの共通設定ウィンドウ
+	// Draw shared root Premake settings.
 	CommonPremakeSettingsWindow();
 }
 
@@ -1101,7 +1117,7 @@ void QFE::APPLICATION::ProjectGenerator::SelectRootDirectory()
 		return;
 	}
 
-	// ルート変更ではディレクトリ一覧だけを更新し、作成済みの構成は保持する。
+	// Changing the root refreshes directories while preserving the graph.
 	std::error_code premakeError;
 	const bool hasRootPremake = std::filesystem::is_regular_file(
 		selectedRoot / "premake5.lua", premakeError);
@@ -1272,6 +1288,94 @@ ProjectGroup* QFE::APPLICATION::ProjectGenerator::FindGroup(
 		groups_.begin(), groups_.end(),
 		[groupId](const ProjectGroup& value) { return value.id == groupId; });
 	return group == groups_.end() ? nullptr : &(*group);
+}
+
+const ProjectGroup* QFE::APPLICATION::ProjectGenerator::FindGroupForNode(
+	std::uint64_t nodeId) const
+{
+	const auto group = std::find_if(groups_.begin(), groups_.end(),
+		[nodeId](const ProjectGroup& value) {
+			return std::find(value.nodeIds.begin(), value.nodeIds.end(), nodeId) !=
+				value.nodeIds.end();
+		});
+	return group == groups_.end() ? nullptr : &(*group);
+}
+
+void QFE::APPLICATION::ProjectGenerator::SynchronizeGroupMembership()
+{
+	if (nodeEditorContext_ == nullptr || groups_.empty() ||
+		std::any_of(nodes_.begin(), nodes_.end(),
+			[](const ProjectNode& node) { return !node.positionInitialized; }) ||
+		std::any_of(groups_.begin(), groups_.end(),
+			[](const ProjectGroup& group) { return !group.positionInitialized; })) {
+		return;
+	}
+
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
+	struct GroupBounds {
+		ImVec2 minimum;
+		ImVec2 maximum;
+		ImVec2 position;
+	};
+	std::vector<GroupBounds> bounds;
+	bounds.reserve(groups_.size());
+	for (const ProjectGroup& group : groups_) {
+		ImVec2 minimum, maximum;
+		if (!GetGroupContentBounds(group, minimum, maximum)) {
+			ax::NodeEditor::SetCurrentEditor(previousEditor);
+			return;
+		}
+		bounds.push_back({ minimum, maximum,
+			ax::NodeEditor::GetNodePosition(ToEditorGroupId(group.id)) });
+	}
+
+	std::vector<std::vector<std::uint64_t>> memberships(groups_.size());
+	std::vector<ImVec2> nodePositions;
+	nodePositions.reserve(nodes_.size());
+	for (const ProjectNode& node : nodes_) {
+		const ImVec2 position = ax::NodeEditor::GetNodePosition(ToEditorNodeId(node.id));
+		const ImVec2 size = ax::NodeEditor::GetNodeSize(ToEditorNodeId(node.id));
+		if (position.x == FLT_MAX || position.y == FLT_MAX ||
+			size.x <= 0.0f || size.y <= 0.0f) {
+			ax::NodeEditor::SetCurrentEditor(previousEditor);
+			return;
+		}
+		nodePositions.push_back(position);
+		const ProjectGroup* previousGroup = FindGroupForNode(node.id);
+		std::size_t chosenIndex = groups_.size();
+		float chosenArea = FLT_MAX;
+		for (std::size_t index = 0; index < groups_.size(); ++index) {
+			const GroupBounds& group = bounds[index];
+			if (position.x < group.minimum.x - 1.0f ||
+				position.y < group.minimum.y - 1.0f ||
+				position.x + size.x > group.maximum.x + 1.0f ||
+				position.y + size.y > group.maximum.y + 1.0f) {
+				continue;
+			}
+			const float area = (group.maximum.x - group.minimum.x) *
+				(group.maximum.y - group.minimum.y);
+			if (area < chosenArea ||
+				(area == chosenArea && previousGroup == &groups_[index])) {
+				chosenIndex = index;
+				chosenArea = area;
+			}
+		}
+		if (chosenIndex != groups_.size()) {
+			memberships[chosenIndex].push_back(node.id);
+		}
+	}
+	for (std::size_t index = 0; index < groups_.size(); ++index) {
+		groups_[index].nodeIds = std::move(memberships[index]);
+		groups_[index].initialPosition = bounds[index].position;
+		groups_[index].size = ImVec2(
+			bounds[index].maximum.x - bounds[index].minimum.x,
+			bounds[index].maximum.y - bounds[index].minimum.y);
+	}
+	for (std::size_t index = 0; index < nodes_.size(); ++index) {
+		nodes_[index].initialPosition = nodePositions[index];
+	}
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
 }
 
 void QFE::APPLICATION::ProjectGenerator::RemoveGroup(std::uint64_t groupId)
@@ -1660,6 +1764,63 @@ bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
 		return false;
 	}
 
+	ImVec2 groupMinimum, groupMaximum;
+	if (nodeEditorContext_ == nullptr ||
+		ax::NodeEditor::GetCurrentEditor() != nodeEditorContext_ ||
+		!GetGroupContentBounds(*group, groupMinimum, groupMaximum)) {
+		createProjectError_ = "The group is not available in the node editor.";
+		return false;
+	}
+	const auto& editorStyle = ax::NodeEditor::GetStyle();
+	const float contentWidth = std::max(150.0f,
+		std::max(ImGui::CalcTextSize(directoryName.c_str()).x,
+			std::max(ImGui::CalcTextSize(resolvedProjectName.c_str()).x,
+				ImGui::CalcTextSize("in").x + ImGui::CalcTextSize("out").x + 64.0f)));
+	const bool hasSecondLabel = resolvedProjectName != directoryName;
+	const ImVec2 nodeSize(
+		contentWidth + editorStyle.NodePadding.x + editorStyle.NodePadding.z + 8.0f,
+		ImGui::GetTextLineHeight() * (hasSecondLabel ? 3.0f : 2.0f) +
+		ImGui::GetFrameHeight() +
+		ImGui::GetStyle().ItemSpacing.y * (hasSecondLabel ? 3.0f : 2.0f) +
+		editorStyle.NodePadding.y + editorStyle.NodePadding.w + 8.0f);
+	constexpr float margin = 8.0f;
+	if (groupMaximum.x - groupMinimum.x < nodeSize.x + margin * 2.0f ||
+		groupMaximum.y - groupMinimum.y < nodeSize.y + margin * 2.0f) {
+		createProjectError_ = "Resize the group to fit the new node.";
+		return false;
+	}
+	ImVec2 newNodePosition(groupMinimum.x + margin, groupMinimum.y + margin);
+	bool foundFreeSpace = false;
+	for (float y = newNodePosition.y;
+		y + nodeSize.y <= groupMaximum.y - margin && !foundFreeSpace;
+		y += 24.0f) {
+		for (float x = newNodePosition.x;
+			x + nodeSize.x <= groupMaximum.x - margin;
+			x += 24.0f) {
+			bool overlaps = false;
+			for (const std::uint64_t memberNodeId : group->nodeIds) {
+				const ImVec2 memberPosition = ax::NodeEditor::GetNodePosition(
+					ToEditorNodeId(memberNodeId));
+				const ImVec2 memberSize = ax::NodeEditor::GetNodeSize(
+					ToEditorNodeId(memberNodeId));
+				if (memberPosition.x != FLT_MAX && memberPosition.y != FLT_MAX &&
+					memberSize.x > 0.0f && memberSize.y > 0.0f &&
+					x < memberPosition.x + memberSize.x + margin &&
+					x + nodeSize.x + margin > memberPosition.x &&
+					y < memberPosition.y + memberSize.y + margin &&
+					y + nodeSize.y + margin > memberPosition.y) {
+					overlaps = true;
+					break;
+				}
+			}
+			if (!overlaps) {
+				newNodePosition = ImVec2(x, y);
+				foundFreeSpace = true;
+				break;
+			}
+		}
+	}
+
 	std::error_code createError;
 	std::filesystem::create_directories(directoryPath, createError);
 	if (createError || !std::filesystem::is_directory(directoryPath, createError)) {
@@ -1670,53 +1831,15 @@ bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
 		return false;
 	}
 
-	ImVec2 groupPosition = group->initialPosition;
-	if (nodeEditorContext_ != nullptr &&
-		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
-		const ImVec2 editorPosition = ax::NodeEditor::GetNodePosition(
-			ToEditorGroupId(group->id));
-		if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
-			groupPosition = editorPosition;
-		}
-	}
-
-	float nextNodeY = groupPosition.y + 56.0f;
-	for (const std::uint64_t memberNodeId : group->nodeIds) {
-		const ProjectNode* memberNode = FindNode(memberNodeId);
-		if (memberNode == nullptr) {
-			continue;
-		}
-		ImVec2 memberPosition = memberNode->initialPosition;
-		float memberHeight = 100.0f;
-		if (nodeEditorContext_ != nullptr &&
-			ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
-			const ImVec2 editorPosition = ax::NodeEditor::GetNodePosition(
-				ToEditorNodeId(memberNodeId));
-			const ImVec2 editorSize = ax::NodeEditor::GetNodeSize(
-				ToEditorNodeId(memberNodeId));
-			if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
-				memberPosition = editorPosition;
-			}
-			if (editorSize.y > 0.0f) {
-				memberHeight = editorSize.y;
-			}
-		}
-		nextNodeY = std::max(nextNodeY,
-			memberPosition.y + memberHeight + 32.0f);
-	}
-
 	ProjectNode node;
 	node.id = nextNodeId_++;
 	node.name = directoryName;
 	node.projectName = resolvedProjectName;
 	node.directoryPath = directoryPath;
-	node.initialPosition = ImVec2(
-		groupPosition.x + 48.0f,
-		nextNodeY);
+	node.initialPosition = newNodePosition;
 	const std::uint64_t createdNodeId = node.id;
 	nodes_.emplace_back(std::move(node));
 	group->nodeIds.push_back(createdNodeId);
-	group->needsBoundsUpdate = true;
 	EnsureConfigurationData();
 
 	// Refresh the directory tree. If a previous asynchronous scan is still
@@ -1727,7 +1850,8 @@ bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
 	createProjectError_.clear();
 	premakeStatus_ = "Created directory and added project '" +
 		resolvedProjectName + "' to group '" +
-		(group->name.empty() ? std::string("Group") : group->name) + "'.";
+		(group->name.empty() ? std::string("Group") : group->name) +
+		(foundFreeSpace ? "'." : "'. Move the overlapping node as needed.");
 	return true;
 }
 
@@ -1834,13 +1958,13 @@ void QFE::APPLICATION::ProjectGenerator::CommonPremakeSettingsWindow()
 				bool changed = false;
 				if (multiline) {
 					if (mixed) {
-						ImGui::TextDisabled("<個別の設定>");
+						ImGui::TextDisabled("<Mixed values>");
 					}
 					changed = ImGui::InputTextMultiline(widgetId, &value,
 						ImVec2(-FLT_MIN, height), ImGuiInputTextFlags_AllowTabInput);
 				} else {
 					changed = ImGui::InputTextWithHint(widgetId,
-						mixed ? "<個別の設定>" : "", &value);
+						mixed ? "<Mixed values>" : "", &value);
 				}
 				if (changed) {
 					for (PremakeConfigurationSettings* target : targets) {
@@ -1862,7 +1986,7 @@ void QFE::APPLICATION::ProjectGenerator::CommonPremakeSettingsWindow()
 					targets.front()->staticRuntime;
 			}
 			const char* staticRuntimePreview = staticRuntimeMixed
-				? "<個別の設定>"
+				? "<Mixed values>"
 				: (targets.front()->staticRuntime ? "On" : "Off");
 			ImGui::TextUnformatted("Static runtime");
 			if (ImGui::BeginCombo("##StaticRuntime", staticRuntimePreview)) {
@@ -1898,7 +2022,7 @@ void QFE::APPLICATION::ProjectGenerator::CommonPremakeSettingsWindow()
 		};
 
 		if (ImGui::BeginTabBar("CommonConfigurationTabs")) {
-			if (ImGui::BeginTabItem("すべての構成")) {
+			if (ImGui::BeginTabItem("All Configurations")) {
 				std::vector<PremakeConfigurationSettings*> targets;
 				for (const std::string& configuration : configurations) {
 					targets.push_back(
@@ -2006,10 +2130,10 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 	HandleDeletedItems();
 
 	ax::NodeEditor::End();
+	SynchronizeGroupMembership();
 
-	// Node Editorの選択状態をモデルIDへ変換する。グループと通常ノードは
-	// ID領域が異なるため、右クリックメニューと設定ウィンドウで安全に
-	// 別扱いできる。
+	// Convert Node Editor selections to model IDs. Groups and ordinary nodes
+	// use distinct ID ranges so menus and settings can handle them separately.
 	const int selectedObjectCount = ax::NodeEditor::GetSelectedNodes(nullptr, 0);
 	std::vector<ax::NodeEditor::NodeId> selectedEditorNodes(
 		static_cast<std::size_t>(std::max(selectedObjectCount, 0)));
@@ -2098,16 +2222,16 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 				inputPinWidth + outputPinWidth + 64.0f)));
 
 	ax::NodeEditor::BeginNode(editorNodeId);
-	// Node EditorはノードごとにImGuiのIDスコープを作らないため、
-	// ノード内の通常のImGuiウィジェットを明示的に分離する。
+	// Node Editor does not create an ImGui ID scope for each node, so isolate
+	// regular ImGui widgets inside each node explicitly.
 	ImGui::PushID(reinterpret_cast<void*>(static_cast<std::uintptr_t>(node.id)));
 	ImGui::TextUnformatted(node.name.c_str());
 	if (projectLabel != node.name) {
 		ImGui::TextDisabled("%s", projectLabel.c_str());
 	}
 
-	// PinPivotRect()とDrawListは画面座標を受け取る。GetCursorPos()は
-	// ウィンドウ内ローカル座標なので、ズーム・ドッキング時に使わない。
+	// PinPivotRect() and DrawList use screen coordinates. GetCursorPos() is
+	// window-local and would drift under zooming or docking.
 	const ImVec2 pinRowStart = ImGui::GetCursorScreenPos();
 	const float pinCenterY = pinRowStart.y + ImGui::GetTextLineHeight() * 0.5f;
 	const auto& nodeStyle = ax::NodeEditor::GetStyle();
@@ -2169,6 +2293,9 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 		const std::string directoryPath =
 			QFE::ConvertString(node->directoryPath.wstring());
 		ImGui::TextWrapped("Path: %s", directoryPath.c_str());
+		const ProjectGroup* group = FindGroupForNode(node->id);
+		ImGui::TextWrapped("Group: %s", group == nullptr
+			? "None" : (group->name.empty() ? "Group" : group->name.c_str()));
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Premake project name");
@@ -2190,7 +2317,7 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 				kindMixed |= targets[index]->kind != targets.front()->kind;
 			}
 			const char* kindPreview = kindMixed
-				? "<個別の設定>"
+				? "<Mixed values>"
 				: GetPremakeKindName(targets.front()->kind);
 			ImGui::TextUnformatted("Premake kind");
 			if (ImGui::BeginCombo("##PremakeKind", kindPreview)) {
@@ -2217,7 +2344,7 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 				std::string value = mixed ? std::string{} : targets.front()->*member;
 				ImGui::TextUnformatted(label);
 				if (mixed) {
-					ImGui::TextDisabled("<個別の設定>");
+					ImGui::TextDisabled("<Mixed values>");
 				}
 				if (ImGui::InputTextMultiline(widgetId, &value,
 					ImVec2(-FLT_MIN, height), ImGuiInputTextFlags_AllowTabInput)) {
@@ -2242,7 +2369,7 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 		};
 
 		if (ImGui::BeginTabBar("NodeConfigurationTabs")) {
-			if (ImGui::BeginTabItem("すべての構成")) {
+			if (ImGui::BeginTabItem("All Configurations")) {
 				std::vector<ProjectConfigurationSettings*> targets;
 				for (const std::string& configuration : configurations) {
 					targets.push_back(&node->configurationSettings.at(configuration));
@@ -2495,8 +2622,8 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 		return;
 	}
 
-	// ルートから参照される各スクリプトの location を、走査済みの
-	// ディレクトリノードへ対応付ける。未追加のプロジェクトはここで追加する。
+	// Match scripts referenced by the root to scanned directory nodes and add
+	// projects that have not yet been added.
 	for (const ParsedPremakeProject& project : projects) {
 		const std::filesystem::path projectPath = NormalizePath(project.directoryPath);
 		for (const DirectoryEntry& directory : directoryManager_.GetDirectories()) {
@@ -2536,8 +2663,8 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 		++matchedProjectCount;
 	}
 
-	// Premakeのgroup宣言をグループモデルへ反映する。読み込み時は
-	// Premakeを正とし、存在しないgroupやメンバーは構成から外す。
+	// Import Premake group declarations. During import, Premake is authoritative;
+	// remove groups and members that no longer exist there.
 	groups_.clear();
 	nextGroupId_ = 1;
 	for (const ParsedPremakeProject& project : projects) {
@@ -2577,9 +2704,8 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 	selectedGroupId_ = 0;
 	groupSettingsOpen_ = false;
 
-	// project.links { "Provider" } は「このプロジェクトが Provider に依存」
-	// という意味なので、Provider の出力ピンから対象プロジェクトの入力ピンへ
-	// エッジを作る。
+	// project.links { "Provider" } means this project depends on Provider.
+	// Connect Provider's output pin to this project's input pin.
 	std::unordered_map<std::string, std::uint64_t> nodeIdsByProjectName;
 	for (const ProjectNode& node : nodes_) {
 		const std::string projectName = node.projectName.empty()
@@ -2697,6 +2823,7 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		return;
 	}
 	EnsureConfigurationData();
+	SynchronizeGroupMembership();
 
 	const std::filesystem::path rootPath = NormalizePath(
 		QFE::ConvertString(directoryManager_.GetLootDirectory()));
@@ -3242,7 +3369,7 @@ end
 		output << "premake.lua\"))\n";
 	};
 	for (const ProjectGroup& group : groups_) {
-		if (Trim(group.name).empty()) {
+		if (Trim(group.name).empty() || group.nodeIds.empty()) {
 			continue;
 		}
 		output << "group \"" << EscapeLuaString(Trim(group.name)) << "\"\n";
@@ -3271,6 +3398,7 @@ end
 void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 {
 	EnsureConfigurationData();
+	SynchronizeGroupMembership();
 	const std::filesystem::path dataDirectory = GetProjectGeneratorDataDirectory();
 	std::error_code error;
 	std::filesystem::create_directories(dataDirectory, error);
@@ -3394,31 +3522,17 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 	}
 	configuration["groups"] = nlohmann::json::array();
 	for (const ProjectGroup& group : groups_) {
-		ImVec2 currentPosition = group.initialPosition;
-		ImVec2 currentSize = group.size;
-		if (nodeEditorContext_ != nullptr) {
-			const ImVec2 editorPosition =
-				ax::NodeEditor::GetNodePosition(ToEditorGroupId(group.id));
-			if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
-				currentPosition = editorPosition;
-			}
-			const ImVec2 editorSize =
-				ax::NodeEditor::GetNodeSize(ToEditorGroupId(group.id));
-			if (editorSize.x > 0.0f && editorSize.y > 0.0f) {
-				currentSize = editorSize;
-			}
-		}
 		nlohmann::json groupJson = nlohmann::json::object();
 		groupJson["id"] = group.id;
 		groupJson["name"] = group.name;
 		groupJson["nodeIds"] = group.nodeIds;
 		groupJson["position"] = {
-			{ "x", currentPosition.x },
-			{ "y", currentPosition.y },
+			{ "x", group.initialPosition.x },
+			{ "y", group.initialPosition.y },
 		};
 		groupJson["size"] = {
-			{ "x", currentSize.x },
-			{ "y", currentSize.y },
+			{ "x", group.size.x },
+			{ "y", group.size.y },
 		};
 		configuration["groups"].push_back(std::move(groupJson));
 	}
@@ -3681,8 +3795,8 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 				node.initialPosition.x = position.value("x", 0.0f);
 				node.initialPosition.y = position.value("y", 0.0f);
 			}
-			// Node Editor側のノードは次のBeginNodeで生成されるため、そこで
-			// 保存した座標を適用する。
+			// The editor node is created at the next BeginNode; apply its saved
+			// position there.
 			node.positionInitialized = false;
 			nodes_.push_back(std::move(node));
 
@@ -3724,10 +3838,6 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 							group.nodeIds.push_back(nodeId);
 						}
 					}
-				}
-				if (group.nodeIds.empty()) {
-					++invalidGroupCount;
-					continue;
 				}
 
 				if (groupJson.contains("position") &&
