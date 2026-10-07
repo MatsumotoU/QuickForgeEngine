@@ -22,9 +22,14 @@ namespace QFE::ASSET {
 	std::vector<VertexData> CreateRing(float innerRadius = 0.5f, float outerRadius = 1.0f, uint32_t segments = 32, bool invertFace = false);
 	/// @brief シリンダーのメッシュデータを生成します。
 	std::vector<VertexData> CreateCylinder(float radius = 0.5f, float height = 1.0f, uint32_t segments = 32, bool invertFace = false);
+	/// @brief 球のメッシュデータを生成します。
 	std::vector<VertexData> CreateSphere(float radius = 0.5f, uint32_t slices = 32, uint32_t stacks = 16, bool invertFace = false);
+	/// @brief 円錐のメッシュデータを生成します。
 	std::vector<VertexData> CreateCone(float radius = 0.5f, float height = 1.0f, uint32_t segments = 32, bool invertFace = false);
+	/// @brief 円盤のメッシュデータを生成します。
 	std::vector<VertexData> CreateDisk(float radius = 0.5f, uint32_t segments = 32, bool invertFace = false);
+	/// @brief トーラスのメッシュデータを生成します。
 	std::vector<VertexData> CreateTorus(float majorRadius = 0.35f, float minorRadius = 0.15f, uint32_t majorSegments = 32, uint32_t minorSegments = 16, bool invertFace = false);
+	/// @brief カプセルのメッシュデータを生成します。
 	std::vector<VertexData> CreateCapsule(float radius = 0.25f, float cylinderHeight = 0.5f, uint32_t slices = 32, uint32_t hemisphereStacks = 8, bool invertFace = false);
 }

@@ -1,8 +1,8 @@
 #include "AnimationSystem.h"
 
-#include "animation/AnimationDataServices.h"
+#include "AnimationDataServices.h"
 #include "design-patterns/EntityManager.h"
-#include "components/AnimationComponent.h"
+#include "animation/AnimationComponent.h"
 
 #include <algorithm>
 #include <cmath>
@@ -18,7 +18,7 @@ namespace {
 
 	const QFE::ANIMATION::AnimationClip* GetClip(const std::string& clipName) {
 		static std::unordered_map<std::string, CachedClip> cache;
-		const std::string path = QFE::ANIMATION::ResolveAnimationClipPath(clipName);
+		const std::string path = QFE::FRAMEWORK::ResolveAnimationClipPath(clipName);
 		if (path.empty()) return nullptr;
 
 		std::error_code error;
@@ -27,7 +27,7 @@ namespace {
 		CachedClip& entry = cache[path];
 		if (!entry.loaded || entry.lastWriteTime != writeTime) {
 			QFE::ANIMATION::AnimationClip loaded;
-			if (!QFE::ANIMATION::LoadAnimationClip(path, loaded)) return nullptr;
+			if (!QFE::FRAMEWORK::LoadAnimationClip(path, loaded)) return nullptr;
 			entry.clip = std::move(loaded);
 			entry.lastWriteTime = writeTime;
 			entry.loaded = true;

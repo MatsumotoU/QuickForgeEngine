@@ -7,14 +7,13 @@
 #include "framework/window/WindowsWindowFrameWork.h"
 #include "framework/application/WindowsEngineResources.h"
 #include "framework/scene/EventSystem.h"
-#include "framework/scene/AnimationSystem.h"
+#include "framework/animation/AnimationSystem.h"
 #include "framework/scene/SceneChangeSystem.h"
 #include "framework/scene/SplineMovementSystem.h"
 
 #include "window/GameWindowManager.h"
 #include "gui/D3D12GuiManager.h"
 
-#include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
 #include "core/logger/MyDebugLog.h"

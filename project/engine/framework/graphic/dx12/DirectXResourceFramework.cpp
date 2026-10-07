@@ -327,7 +327,7 @@ bool QFE::FRAMEWORK::CreateIndexBuffer(QFE::FRAMEWORK::GraphicContext* graphicEn
 bool QFE::FRAMEWORK::CreateBLAS(
 	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::vector<VertexData>& vertices,
 	const std::vector<uint32_t>& indices,
-	const std::string& name, QFE::GRAPHIC::BLASHandle& outBLASHandle) {
+	const std::string& name, QFE::GRAPHIC::BLASHandle& outBLASHandle, bool allowUpdate) {
 
 	// 使用機能の取得
 	QFE::GRAPHIC::DirectXDevice* directXDevice = graphicEngine->GetDirectXDevice();
@@ -338,7 +338,7 @@ bool QFE::FRAMEWORK::CreateBLAS(
 	outBLASHandle = accelerationStructure->CreateBLAS(
 		directXDevice->GetDevice5(),
 		graphicEngine->GetDirectXCommandManager()->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT),
-		vertexPositions, indices, name);
+		vertexPositions, indices, name, allowUpdate);
 	// BLASの作成に失敗した場合はログを出力してfalseを返す
 	if (outBLASHandle == QFE::GRAPHIC::BLASHandle::Invalid) {
 		QFE_LOG("Failed to create BLAS for model: " + name);
@@ -377,9 +377,8 @@ bool QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
 	auto* device = graphicEngine->GetDirectXDevice();
 	auto* rc = graphicEngine->GetDirectXResourceContainer();
 
-	// サイズが0の場合は、無効化する
+	// 空データではアップロードせず、既存のバッファは再利用可能なまま保持する。
 	if (byteSize == 0) {
-		QFE::GRAPHIC::DirectXResourceHandle invalidHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		return true;
 	}
 

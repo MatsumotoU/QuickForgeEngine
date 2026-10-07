@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <cstdint>
 #include "../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
 #include "memory/SafeVector.h"
 
@@ -7,6 +8,8 @@ namespace QFE::ASSET {
 	/// @brief モデルに使用されているテクスチャの名前を保持する構造体
 	struct ModelMaterialData {
 		std::string textureName;
+		std::vector<uint8_t> embeddedTextureData; // GLB に格納された画像ファイルのバイト列
+		QFE::MATH::Vector4 baseColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 	};
 
 	/// @brief モデルのメッシュデータを保持する構造体

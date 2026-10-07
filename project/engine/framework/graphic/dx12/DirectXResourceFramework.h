@@ -108,7 +108,8 @@ namespace QFE::FRAMEWORK {
 		const std::vector<VertexData>& vertices,
 		const std::vector<uint32_t>& indices,
 		const std::string& name,
-		QFE::GRAPHIC::BLASHandle& outBLASHandle);
+		QFE::GRAPHIC::BLASHandle& outBLASHandle,
+		bool allowUpdate = false);
 	/// @brief UAVバッファを作成する関数
 	bool CreateUAVBuffer(
 		QFE::FRAMEWORK::GraphicContext* graphicEngine,

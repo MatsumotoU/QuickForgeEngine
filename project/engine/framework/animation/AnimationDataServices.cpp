@@ -21,7 +21,7 @@ namespace {
 	}
 }
 
-bool QFE::ANIMATION::SaveAnimationClip(const AnimationClip& clip, const std::string& filePath) {
+bool QFE::FRAMEWORK::SaveAnimationClip(const ANIMATION::AnimationClip& clip, const std::string& filePath) {
 	const std::filesystem::path path(filePath);
 	std::error_code error;
 	if (path.has_parent_path()) std::filesystem::create_directories(path.parent_path(), error);
@@ -37,7 +37,7 @@ bool QFE::ANIMATION::SaveAnimationClip(const AnimationClip& clip, const std::str
 	const auto& keyFrames = clip.GetKeyFrames();
 	const uint32_t keyFrameCount = static_cast<uint32_t>(keyFrames.size());
 	if (!Write(stream, keyFrameCount)) return false;
-	for (const AnimationKeyFrame& keyFrame : keyFrames) {
+	for (const ANIMATION::AnimationKeyFrame& keyFrame : keyFrames) {
 		if (!Write(stream, keyFrame.time) ||
 			!Write(stream, keyFrame.transform.translate.x) ||
 			!Write(stream, keyFrame.transform.translate.y) ||
@@ -52,7 +52,7 @@ bool QFE::ANIMATION::SaveAnimationClip(const AnimationClip& clip, const std::str
 	return stream.good();
 }
 
-bool QFE::ANIMATION::LoadAnimationClip(const std::string& filePath, AnimationClip& clip) {
+bool QFE::FRAMEWORK::LoadAnimationClip(const std::string& filePath, ANIMATION::AnimationClip& clip) {
 	std::ifstream stream(filePath, std::ios::binary);
 	if (!stream) return false;
 
@@ -65,11 +65,11 @@ bool QFE::ANIMATION::LoadAnimationClip(const std::string& filePath, AnimationCli
 	if (!stream.good() || !Read(stream, loop) || !Read(stream, keyFrameCount) ||
 		keyFrameCount > kMaximumKeyFrames) return false;
 
-	AnimationClip loaded;
+	ANIMATION::AnimationClip loaded;
 	loaded.SetName(name);
 	loaded.SetLoop(loop != 0);
 	for (uint32_t index = 0; index < keyFrameCount; ++index) {
-		AnimationKeyFrame keyFrame;
+		ANIMATION::AnimationKeyFrame keyFrame;
 		if (!Read(stream, keyFrame.time) ||
 			!Read(stream, keyFrame.transform.translate.x) ||
 			!Read(stream, keyFrame.transform.translate.y) ||
@@ -86,7 +86,7 @@ bool QFE::ANIMATION::LoadAnimationClip(const std::string& filePath, AnimationCli
 	return true;
 }
 
-std::string QFE::ANIMATION::ResolveAnimationClipPath(const std::string& clipName) {
+std::string QFE::FRAMEWORK::ResolveAnimationClipPath(const std::string& clipName) {
 	if (clipName.empty()) return {};
 	std::filesystem::path path(clipName);
 	if (path.extension().empty()) path.replace_extension(".anim");

@@ -157,7 +157,9 @@ namespace QFE::APPLICATION {
 		void DeleteSelectedLinks(
 			const std::vector<std::uint64_t>& selectedLinkIds);
 		void UpdateGroupBounds(ProjectGroup& group);
+		void SynchronizeGroupMembership();
 		ProjectGroup* FindGroup(std::uint64_t groupId);
+		const ProjectGroup* FindGroupForNode(std::uint64_t nodeId) const;
 		void RemoveGroup(std::uint64_t groupId);
 		void HandleNewLinks();
 		void HandleDeletedItems();

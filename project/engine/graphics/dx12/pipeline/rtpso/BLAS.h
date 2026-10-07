@@ -14,7 +14,10 @@ namespace QFE::GRAPHIC {
 		bool Create(
 			ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4,
 			const std::vector<QFE::MATH::Vector3>& vertices,
-			const std::vector<uint32_t>& indices);
+			const std::vector<uint32_t>& indices, bool allowUpdate = false);
+		/// @brief 頂点位置が変わったBLASを同じトポロジーで更新します
+		bool Update(ID3D12GraphicsCommandList4* commandList4,
+			const std::vector<QFE::MATH::Vector3>& vertices);
 		/// @brief BLASの結果バッファを取得します
 		ID3D12Resource* GetBLASResultBuffer() const { return blasResultBuffer_.Get(); }
 
@@ -28,6 +31,7 @@ namespace QFE::GRAPHIC {
 			ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4);
 
 		bool isCreated_ = false; // BLASが作成済みかどうか
+		bool allowUpdate_ = false;
 
 		// 頂点位置バッファ
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertexPositionBuffer_; 

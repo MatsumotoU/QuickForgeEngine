@@ -104,6 +104,8 @@ project "Runtime"
         "PhysicsEngine",
         "AudioFramework",
         "Audio",
-        "Camera",
+        "Network",
+        "AnimationFramework",
+        "Animation",
     }
 

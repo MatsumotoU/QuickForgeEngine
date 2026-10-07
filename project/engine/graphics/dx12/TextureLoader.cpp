@@ -1,5 +1,6 @@
 #include "TextureLoader.h"
 #include <cassert>
+#include <filesystem>
 
 #include "string/MyString.h"
 
@@ -41,7 +42,7 @@ void TextureLoader::Finalize() {
 
 DirectXResourceHandle TextureLoader::LoadTexture(const std::string& filePath) {
 	QFE_LOG(std::format("TextureLoader: LoadPath {}", filePath));
-	std::string fileName = QFE::FILE::GetFileName(filePath);
+	std::string fileName = std::filesystem::path(filePath).lexically_normal().generic_string();
 
 	// 既に読み込み済みのファイルかどうかチェック（キーは一貫して fileName を使う）
 	if (textureDataMap_.contains(fileName)) {
@@ -63,6 +64,37 @@ DirectXResourceHandle TextureLoader::LoadTexture(const std::string& filePath) {
 
 	// 内部でリソース作成、SRV作成、アップロード、マップ保存
 	return CreateTextureFromScratchImage(std::move(scratchImage), fileName, dimension);
+}
+
+DirectXResourceHandle TextureLoader::LoadTextureFromMemory(
+	const std::string& key, const uint8_t* data, size_t size) {
+	if (const auto existing = textureDataMap_.find(key); existing != textureDataMap_.end()) {
+		return existing->second.resourceHandle;
+	}
+	if (data == nullptr || size == 0) return DirectXResourceHandle::Invalid;
+
+	DirectX::ScratchImage image;
+	HRESULT hr = DirectX::LoadFromWICMemory(
+		data, size, DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	if (FAILED(hr)) {
+		QFE_LOG(std::format("TextureLoader: Failed to decode embedded texture '{}'", key));
+		return DirectXResourceHandle::Invalid;
+	}
+
+	DirectX::ScratchImage finalImage;
+	if (image.GetMetadata().width * image.GetMetadata().height == 1) {
+		hr = finalImage.InitializeFromImage(*image.GetImage(0, 0, 0));
+	} else {
+		hr = DirectX::GenerateMipMaps(
+			image.GetImages(), image.GetImageCount(), image.GetMetadata(),
+			DirectX::TEX_FILTER_SRGB, 0, finalImage);
+	}
+	if (FAILED(hr)) {
+		QFE_LOG(std::format("TextureLoader: Failed to prepare embedded texture '{}'", key));
+		return DirectXResourceHandle::Invalid;
+	}
+	return CreateTextureFromScratchImage(
+		std::move(finalImage), key, D3D12_SRV_DIMENSION_TEXTURE2D);
 }
 
 const DirectXResourceHandle TextureLoader::GetDummyBlackCubeMapHandle() const {

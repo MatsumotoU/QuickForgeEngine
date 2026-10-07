@@ -1,8 +1,8 @@
 #include "AnimationEditor.h"
 
 #include "design-patterns/EntityManager.h"
-#include "components/AnimationComponent.h"
-#include "framework/scene/animation/AnimationDataServices.h"
+#include "animation/AnimationComponent.h"
+#include "framework/animation/AnimationDataServices.h"
 
 #include <imgui/imgui.h>
 #include <imgui_stdlib.h>
@@ -49,7 +49,7 @@ QFE::ANIMATION::AnimationClip QFE::EDITOR::AnimationEditor::BuildClip() const {
 
 bool QFE::EDITOR::AnimationEditor::LoadClip(const std::string& clipName) {
 	ANIMATION::AnimationClip clip;
-	if (!ANIMATION::LoadAnimationClip(ANIMATION::ResolveAnimationClipPath(clipName), clip)) {
+	if (!FRAMEWORK::LoadAnimationClip(FRAMEWORK::ResolveAnimationClipPath(clipName), clip)) {
 		statusMessage_ = "Failed to load animation clip.";
 		return false;
 	}
@@ -76,7 +76,7 @@ bool QFE::EDITOR::AnimationEditor::SaveClip(uint32_t selectedEntityId) {
 		return false;
 	}
 	const ANIMATION::AnimationClip clip = BuildClip();
-	if (!ANIMATION::SaveAnimationClip(clip, ANIMATION::ResolveAnimationClipPath(clipName_))) {
+	if (!FRAMEWORK::SaveAnimationClip(clip, FRAMEWORK::ResolveAnimationClipPath(clipName_))) {
 		statusMessage_ = "Failed to save animation clip.";
 		return false;
 	}

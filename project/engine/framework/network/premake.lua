@@ -76,9 +76,7 @@ project "NetworkFramework"
     filter {}
     kind "Utility"
     links {
-        "EngineCore",
-    }
-    dependson {
         "Network",
+        "EngineCore",
     }
 

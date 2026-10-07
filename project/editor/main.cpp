@@ -12,7 +12,6 @@
 #include "window/GameWindowManager.h"
 
 #include "gui/D3D12GuiManager.h"
-#include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
 #include "core/logger/MyDebugLog.h"

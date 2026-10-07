@@ -97,24 +97,21 @@ dofile(path.join(_root, "engine/core/premake.lua"))
 dofile(path.join(_root, "engine/ecs/premake.lua"))
 group ""
 
-group "01_SubSystems"
+group "01_Modulars"
 dofile(path.join(_root, "engine/window/premake.lua"))
 dofile(path.join(_root, "engine/graphics/premake.lua"))
 dofile(path.join(_root, "engine/gui/premake.lua"))
 dofile(path.join(_root, "engine/input/premake.lua"))
 dofile(path.join(_root, "engine/physics/premake.lua"))
-dofile(path.join(_root, "engine/audio/premake.lua"))
-dofile(path.join(_root, "engine/network/premake.lua"))
-group ""
-
-group "02_Middleware"
 dofile(path.join(_root, "engine/assetfactory/premake.lua"))
-dofile(path.join(_root, "engine/camera/premake.lua"))
 dofile(path.join(_root, "engine/scene/premake.lua"))
 dofile(path.join(_root, "engine/components/premake.lua"))
+dofile(path.join(_root, "engine/audio/premake.lua"))
+dofile(path.join(_root, "engine/network/premake.lua"))
+dofile(path.join(_root, "engine/animation/premake.lua"))
 group ""
 
-group "03_Frameworks"
+group "02_Frameworks"
 dofile(path.join(_root, "engine/framework/application/premake.lua"))
 dofile(path.join(_root, "engine/framework/graphic/premake.lua"))
 dofile(path.join(_root, "engine/framework/window/premake.lua"))
@@ -125,9 +122,10 @@ dofile(path.join(_root, "engine/framework/scene/premake.lua"))
 dofile(path.join(_root, "engine/framework/assets/premake.lua"))
 dofile(path.join(_root, "engine/framework/audio/premake.lua"))
 dofile(path.join(_root, "engine/framework/network/premake.lua"))
+dofile(path.join(_root, "engine/framework/animation/premake.lua"))
 group ""
 
-group "04_Applications"
+group "03_Applications"
 dofile(path.join(_root, "editor/premake.lua"))
 dofile(path.join(_root, "sandbox/premake.lua"))
 dofile(path.join(_root, "runtime/premake.lua"))
