@@ -37,5 +37,6 @@ namespace QFE::GRAPHIC {
         Microsoft::WRL::ComPtr<ID3D12Resource> instanceDescBuffer_; // インスタンス情報を載せるバッファ
 
 		UINT maxInstances_ = 0; // TLASに登録するBLAS(インスタンス)の最大数
+		bool scratchReady_ = false;
     };
 }

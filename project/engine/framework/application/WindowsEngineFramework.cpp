@@ -11,6 +11,8 @@
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
 #include "graphics/dx12/TextureLoader.h"
+#include "graphics/dx12/command/DirectXCommandManager.h"
+#include "graphics/dx12/pipeline/rtpso/RaytracingAccelerationStructure.h"
 #include "framework/scene/SplineMovementSystem.h"
 #include "audio/AudioEngine.h"
 #include <algorithm>
@@ -18,6 +20,7 @@
 #include <filesystem>
 #include <cmath>
 #include <cstring>
+#include <unordered_set>
 #include <imgui.h>
 
 namespace {
@@ -249,6 +252,14 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	auto& fpsCounter = systems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	auto* accelerationStructure = graphicEngine->GetRaytracingAccelerationStructure();
+	if (resources.animatedBlasSceneRevision != sceneManager.GetSceneRevision()) {
+		for (const auto& [entityId, blas] : resources.animatedBlasByEntity) {
+			accelerationStructure->RemoveBLAS(blas.handle);
+		}
+		resources.animatedBlasByEntity.clear();
+		resources.animatedBlasSceneRevision = sceneManager.GetSceneRevision();
+	}
 	QFE::FRAMEWORK::DrawSplineMovementPaths(
 		entityManager,
 		[graphicEngine = graphicEngine.get()](
@@ -286,9 +297,11 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 
 	// 各エンティティのModelRenderComponentを更新
 	std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
-	std::vector<Material> raytracingMaterials;
-	std::vector<uint32_t> raytracingTextureIndices;
-	std::vector<bool> raytracingReceiveShadows;
+	std::vector<RaytracingVertexAttribute> globalVertexAttributes;
+	std::vector<uint32_t> globalTriIndices;
+	std::vector<InstanceMetaCPU> instanceMetaAligned;
+	std::unordered_map<std::string, InstanceMetaCPU> staticModelMeta;
+	std::unordered_set<uint32_t> activeAnimatedEntities;
 
 	entityManager.Each<QFE::SCENE::ModelRenderComponent, QFE::SCENE::TransformComponent>(
 		[&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp, QFE::SCENE::TransformComponent& transformComp) {
@@ -344,6 +357,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			std::transform(extension.begin(), extension.end(), extension.begin(),
 				[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
 			bool animatedGlb = false;
+			std::vector<VertexData> sampledVertices;
 			if (extension == ".glb") {
 				const std::string filePath = resources.modelDir + modelRenderComp.modelName;
 				const auto clipNames = systems.modelLoader->GetGlbAnimationNames(filePath);
@@ -373,7 +387,6 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 								: (std::min)(modelRenderComp.glbAnimationTime, duration);
 						}
 					}
-					std::vector<VertexData> sampledVertices;
 					if (!systems.modelLoader->SampleGlbAnimation(
 						filePath, modelRenderComp.glbAnimationName, modelRenderComp.glbAnimationTime, sampledVertices)) {
 						modelRenderComp.renderErrorMessage = "Failed to sample GLB animation: " + modelRenderComp.glbAnimationName;
@@ -466,25 +479,71 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			}
 			modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
 
-			// レイトレーシングインスタンスの作成
-			if (!animatedGlb && resources.blasHandleMap.find(modelRenderComp.modelName) == resources.blasHandleMap.end()) {
-				if (!QFE::FRAMEWORK::LoadModelAndCreateBLAS(systems, resources.modelDir, modelRenderComp.modelName, resources.modelDataMap, resources.blasHandleMap)) {
+			// 頂点変形のあるGLBはエンティティごとに更新可能なBLASを所有する。
+			const auto& mesh = resources.modelDataMap.at(modelRenderComp.modelName).meshes[0];
+			const auto& indices = mesh.indices.GetInternalVector();
+			const auto& vertices = animatedGlb ? sampledVertices : mesh.vertices.GetInternalVector();
+			QFE::GRAPHIC::BLASHandle blasHandle = QFE::GRAPHIC::BLASHandle::Invalid;
+			if (animatedGlb) {
+				auto existing = resources.animatedBlasByEntity.find(entityId);
+				if (existing != resources.animatedBlasByEntity.end() && existing->second.modelName != modelRenderComp.modelName) {
+					accelerationStructure->RemoveBLAS(existing->second.handle);
+					resources.animatedBlasByEntity.erase(existing);
+					existing = resources.animatedBlasByEntity.end();
+				}
+				if (existing == resources.animatedBlasByEntity.end()) {
+					if (!QFE::FRAMEWORK::CreateBLAS(graphicEngine.get(), vertices, indices,
+						"animated_entity_" + std::to_string(entityId), blasHandle, true)) {
+						modelRenderComp.renderErrorMessage = "Failed to create animated BLAS";
+						return;
+					}
+					resources.animatedBlasByEntity[entityId] = { modelRenderComp.modelName, blasHandle };
+				} else {
+					blasHandle = existing->second.handle;
+					const auto positions = QFE::FRAMEWORK::GetModelVertexPositions(vertices.data(), vertices.size());
+					if (!accelerationStructure->UpdateBLAS(blasHandle,
+						graphicEngine->GetDirectXCommandManager()->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT), positions)) {
+						modelRenderComp.renderErrorMessage = "Failed to update animated BLAS";
+						return;
+					}
+				}
+				activeAnimatedEntities.insert(entityId);
+			} else {
+				if (!resources.blasHandleMap.contains(modelRenderComp.modelName) &&
+					!QFE::FRAMEWORK::LoadModelAndCreateBLAS(systems, resources.modelDir,
+						modelRenderComp.modelName, resources.modelDataMap, resources.blasHandleMap)) {
 					modelRenderComp.renderErrorMessage = "Failed to load BLAS for model: " + modelRenderComp.modelName;
 					return;
 				}
+				blasHandle = resources.blasHandleMap.at(modelRenderComp.modelName);
 			}
-			if (!animatedGlb) {
-				raytracingInstances.push_back({
-					resources.blasHandleMap[modelRenderComp.modelName],
-					worldMatrix,
-					static_cast<uint8_t>(shader == nullptr || shader->castShadow ? 0x03 : 0x01)
-					});
-				raytracingMaterials.push_back(*materialData);
-				raytracingReceiveShadows.push_back(shader == nullptr || shader->receiveShadow);
-				const auto textureIndex = resources.textureGpuIndexMap.find(effectiveTextureName);
-				raytracingTextureIndices.push_back(
-					textureIndex != resources.textureGpuIndexMap.end() ? textureIndex->second : 1u);
+
+			InstanceMetaCPU instanceMeta{};
+			if (!animatedGlb && staticModelMeta.contains(modelRenderComp.modelName)) {
+				instanceMeta = staticModelMeta.at(modelRenderComp.modelName);
+			} else {
+				instanceMeta.vertexBase = static_cast<uint32_t>(globalVertexAttributes.size());
+				instanceMeta.vertexCount = static_cast<uint32_t>(vertices.size());
+				instanceMeta.primitiveBase = static_cast<uint32_t>(globalTriIndices.size() / 3);
+				for (const auto& vertex : vertices) {
+					RaytracingVertexAttribute attribute{};
+					attribute.texcoord = vertex.texcoord;
+					attribute.normal = vertex.normal;
+					globalVertexAttributes.push_back(attribute);
+				}
+				globalTriIndices.insert(globalTriIndices.end(), indices.begin(), indices.end());
+				if (!animatedGlb) staticModelMeta[modelRenderComp.modelName] = instanceMeta;
 			}
+			instanceMeta.baseColor = materialData->color;
+			instanceMeta.uvTransform = materialData->uvTransform;
+			instanceMeta.metallic = materialData->metallic;
+			instanceMeta.smoothness = materialData->smoothness;
+			instanceMeta.padding[0] = shader == nullptr || shader->receiveShadow ? 1.0f : 0.0f;
+			const auto textureIndex = resources.textureGpuIndexMap.find(effectiveTextureName);
+			instanceMeta.materialIndex = textureIndex != resources.textureGpuIndexMap.end() ? textureIndex->second : 1u;
+			instanceMetaAligned.push_back(instanceMeta);
+			raytracingInstances.push_back({ blasHandle, worldMatrix,
+				static_cast<uint8_t>(shader == nullptr || shader->castShadow ? 0x03 : 0x01) });
 
 			// レンダリング可能
 			modelRenderComp.canRender = true;
@@ -563,61 +622,17 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			sprite.renderErrorMessage.clear();
 		});
 
-	// 1) global arrays とモデル→meta マップを作る
-	std::vector<RaytracingVertexAttribute> globalVertexAttributes;
-	std::vector<uint32_t> globalTriIndices;
-	std::unordered_map<std::string, InstanceMetaCPU> modelMetaMap;
-
-	// modelDataMap に基づいて平坦化（models -> global arrays）
-	// BuildGlobalMeshBuffers は modelName -> InstanceMeta を返す
-	QFE::FRAMEWORK::BuildGlobalMeshBuffers(
-		resources.modelDataMap, resources.textureGpuIndexMap, globalVertexAttributes, globalTriIndices, modelMetaMap);
-
-	// 2) raytracingInstances の順に合わせて instanceMeta を並べる
-	std::vector<InstanceMetaCPU> instanceMetaAligned;
-	instanceMetaAligned.reserve(raytracingInstances.size());
-
-	// 逆引きテーブル：BLASHandle -> modelName
-	std::unordered_map<QFE::GRAPHIC::BLASHandle, std::string> blasToModel;
-	for (const auto& kv : resources.blasHandleMap) {
-		blasToModel[kv.second] = kv.first;
+	// シーンから消えたモデルやアニメーションを外したモデルのBLASを解放する。
+	for (auto it = resources.animatedBlasByEntity.begin(); it != resources.animatedBlasByEntity.end();) {
+		if (!activeAnimatedEntities.contains(it->first)) {
+			accelerationStructure->RemoveBLAS(it->second.handle);
+			it = resources.animatedBlasByEntity.erase(it);
+		} else {
+			++it;
+		}
 	}
 
-	for (size_t instanceIndex = 0; instanceIndex < raytracingInstances.size(); ++instanceIndex) {
-		const auto& inst = raytracingInstances[instanceIndex];
-		QFE::GRAPHIC::BLASHandle blas = inst.blasHandle;
-		auto it = blasToModel.find(blas);
-		if (it == blasToModel.end()) {
-			// 見つからないなら安全なデフォルトを push（デバッグ用ログ推奨）
-			InstanceMetaCPU dummy{};
-			instanceMetaAligned.push_back(dummy);
-			continue;
-		}
-		const std::string& modelName = it->second;
-		auto mit = modelMetaMap.find(modelName);
-		if (mit == modelMetaMap.end()) {
-			InstanceMetaCPU dummy{};
-			instanceMetaAligned.push_back(dummy);
-			continue;
-		}
-		InstanceMetaCPU instanceMeta = mit->second;
-		if (instanceIndex < raytracingMaterials.size()) {
-			const Material& material = raytracingMaterials[instanceIndex];
-			instanceMeta.baseColor = material.color;
-			instanceMeta.uvTransform = material.uvTransform;
-			instanceMeta.metallic = material.metallic;
-			instanceMeta.smoothness = material.smoothness;
-		}
-		if (instanceIndex < raytracingReceiveShadows.size()) {
-			instanceMeta.padding[0] = raytracingReceiveShadows[instanceIndex] ? 1.0f : 0.0f;
-		}
-		if (instanceIndex < raytracingTextureIndices.size()) {
-			instanceMeta.materialIndex = raytracingTextureIndices[instanceIndex];
-		}
-		instanceMetaAligned.push_back(instanceMeta);
-	}
-
-	// 3) バッファのサイズ計算と EnsureBufferCapacityAndUpload による使い回しアップロード
+	// BLASインスタンスと同じ順序で属性、インデックス、マテリアルをアップロードする。
 	size_t vertexAttributeBytes = globalVertexAttributes.size() * sizeof(RaytracingVertexAttribute);
 	size_t triBytes = globalTriIndices.size() * sizeof(uint32_t);
 	size_t metaBytes = instanceMetaAligned.size() * sizeof(InstanceMetaCPU);

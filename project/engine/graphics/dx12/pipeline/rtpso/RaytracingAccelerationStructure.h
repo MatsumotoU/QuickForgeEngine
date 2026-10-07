@@ -31,7 +31,10 @@ namespace QFE::GRAPHIC {
 			ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4,
 			const std::vector<QFE::MATH::Vector3>& vertices,
 			const std::vector<uint32_t>& indices,
-			const std::string& name);
+			const std::string& name, bool allowUpdate = false);
+		bool UpdateBLAS(BLASHandle handle, ID3D12GraphicsCommandList4* commandList4,
+			const std::vector<QFE::MATH::Vector3>& vertices);
+		void RemoveBLAS(BLASHandle handle);
 
 		/// @brief レイトレーシング用のシェーダーテーブルを作成します
 		bool CreateShaderTables(ID3D12Device5* device5);

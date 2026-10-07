@@ -1,0 +1,71 @@
+{
+    "entities": [
+        {
+            "CameraComponent": {
+                "isMainCamera": true,
+                "fovY_": 0.72
+            },
+            "ObjectInfoComponent": {
+                "name": "Camera",
+                "uuid": "a81254fc-9dbe-4e81-9a89-62097da097f8"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "translate": { "x": 0.0, "y": 0.0, "z": 0.0 },
+                    "rotate": { "x": 0.0, "y": 0.0, "z": 0.0 },
+                    "scale": { "x": 1.0, "y": 1.0, "z": 1.0 }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": { "x": 1.0, "y": 1.0, "z": 1.0, "w": 1.0 },
+                "metallic": 0.0,
+                "smoothness": 0.25
+            },
+            "ModelRenderComponent": {
+                "modelName": "TwistBoxTwoBones.glb",
+                "glbAnimationName": "Twist",
+                "playGlbAnimation": true,
+                "loopGlbAnimation": true,
+                "glbAnimationSpeed": 1.0
+            },
+            "ObjectInfoComponent": {
+                "name": "Twist Box (2 Bones)",
+                "uuid": "be8ddba6-c84f-4e91-973e-85ba8f824bc3"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "translate": { "x": 0.0, "y": 0.0, "z": 5.0 },
+                    "rotate": { "x": 0.0, "y": 0.0, "z": 0.0 },
+                    "scale": { "x": 1.0, "y": 1.0, "z": 1.0 }
+                }
+            }
+        },
+        {
+            "MaterialComponent": {
+                "albedoColor": { "x": 0.75, "y": 0.8, "z": 0.85, "w": 1.0 },
+                "metallic": 0.35,
+                "smoothness": 0.85
+            },
+            "ModelRenderComponent": {
+                "modelName": "Primitive/PlaneHorizontal"
+            },
+            "ObjectInfoComponent": {
+                "name": "Shadow and reflection floor",
+                "uuid": "c01c37a9-f1d0-47ee-aaf6-ef7b15340ed6"
+            },
+            "ShaderComponent": {
+                "castShadow": true,
+                "receiveShadow": true
+            },
+            "TransformComponent": {
+                "transform": {
+                    "translate": { "x": 0.0, "y": -1.6, "z": 5.0 },
+                    "rotate": { "x": 0.0, "y": 0.0, "z": 0.0 },
+                    "scale": { "x": 8.0, "y": 1.0, "z": 8.0 }
+                }
+            }
+        }
+    ]
+}
