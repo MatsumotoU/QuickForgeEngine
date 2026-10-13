@@ -48,22 +48,16 @@ workspace "QuickForgeEngine"
         symbols ("Off")
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
-    multiprocessorcompile "On"
     warnings "Everything"
-    -- ImGui, Node Editor, stb, Assimp, and the Windows SDK are external code.
-    -- Keep the engine at maximum warnings without treating third-party headers
-    -- as project-owned code.
     externalwarnings "Off"
     fatalwarnings "All"
+    multiprocessorcompile "On"
     buildoptions {
         "/utf-8",
-        -- These two /Wall diagnostics are intentional for this engine:
-        -- C4514 reports inline header-only APIs that are unused in one TU,
-        -- and C4820 reports ABI/layout padding in many CPU/GPU data types.
+    }
+    buildoptions {
         "/wd4514",
         "/wd4820",
-        -- These /Wall diagnostics describe optimizer/code-generation choices,
-        -- not source correctness, and are especially noisy in Release builds.
         "/wd4710",
         "/wd4711",
         "/wd5045",
@@ -73,21 +67,7 @@ workspace "QuickForgeEngine"
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
-
--- DXC is linked by GraphicEngine and is loaded by the final executable.
--- Keep both DLLs beside every generated executable so the Windows loader can
--- resolve dxcompiler.dll and its dxil.dll dependency without manual copying.
-function qfeAddDxcRuntime()
-    postbuildcommands {
-        'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "$(TargetDir)." "dxcompiler.dll" "dxil.dll" /R:0 /W:0 /NJH /NJS /NFL /NDL /NP',
-        'if not exist "$(TargetDir)dxcompiler.dll" (echo Error: dxcompiler.dll was not copied from the Windows SDK. & exit /b 1)',
-        'if not exist "$(TargetDir)dxil.dll" (echo Error: dxil.dll was not copied from the Windows SDK. & exit /b 1)',
-        'exit /b 0',
-    }
-end
-
     includedirs {
-        path.join(QFE_PROJECT_ROOT, "."),
         path.join(QFE_PROJECT_ROOT, "engine"),
         path.join(QFE_PROJECT_ROOT, "engine/core"),
         path.join(QFE_PROJECT_ROOT, "externals"),
@@ -96,12 +76,8 @@ end
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
-    externalincludedirs {
-        path.join(QFE_PROJECT_ROOT, "externals"),
-        path.join(QFE_PROJECT_ROOT, "externals/imgui"),
-        path.join(QFE_PROJECT_ROOT, "externals/assimp"),
-        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
-        path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    includedirs {
+        path.join(QFE_PROJECT_ROOT, "."),
     }
     filter "configurations:Debug"
         defines {
@@ -125,6 +101,22 @@ end
             "NO_IMGUI",
         }
     filter {}
+externalincludedirs {
+    path.join(QFE_PROJECT_ROOT, "externals"),
+    path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+    path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+    path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+    path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+}
+function qfeAddDxcRuntime()
+    postbuildcommands {
+        'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "$(TargetDir)." "dxcompiler.dll" "dxil.dll" /R:0 /W:0 /NJH /NJS /NFL /NDL /NP',
+        'if not exist "$(TargetDir)dxcompiler.dll" (echo Error: dxcompiler.dll was not copied from the Windows SDK. & exit /b 1)',
+        'if not exist "$(TargetDir)dxil.dll" (echo Error: dxil.dll was not copied from the Windows SDK. & exit /b 1)',
+        'exit /b 0',
+    }
+end
+
 
 group "External"
 dofile(path.join(_root, "externals/premake.lua"))

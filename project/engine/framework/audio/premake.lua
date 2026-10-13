@@ -2,6 +2,7 @@
 local _sourceDirectory = path.getabsolute(path.getdirectory(_SCRIPT))
 
 project "AudioFramework"
+    -- QFE: framework-layer
     location (_sourceDirectory)
     language "C++"
     objdir (path.join(QFE_PROJECT_ROOT, "../generated/obj/%{prj.name}/%{cfg.buildcfg}/%{cfg.platform}"))
@@ -14,6 +15,7 @@ project "AudioFramework"
         path.join(_sourceDirectory, "**.cpp"),
         path.join(_sourceDirectory, "**.cxx"),
     }
+    filter {}
     architecture ("x64")
     cppdialect ("C++20")
     staticruntime "on"
@@ -39,9 +41,24 @@ project "AudioFramework"
         symbols ("Off")
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
+    warnings "Everything"
+    externalwarnings "Off"
+    fatalwarnings "All"
     multiprocessorcompile "On"
     buildoptions {
         "/utf-8",
+    }
+    buildoptions {
+        "/wd4514",
+        "/wd4820",
+        "/wd4710",
+        "/wd4711",
+        "/wd5045",
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     includedirs {
         path.join(QFE_PROJECT_ROOT, "engine"),
@@ -51,6 +68,9 @@ project "AudioFramework"
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    }
+    includedirs {
+        path.join(QFE_PROJECT_ROOT, "."),
     }
     filter "configurations:Debug"
         defines {
@@ -74,6 +94,13 @@ project "AudioFramework"
             "NO_IMGUI",
         }
     filter {}
+    externalincludedirs {
+        path.join(QFE_PROJECT_ROOT, "externals"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    }
     kind "StaticLib"
     links {
         "Audio",

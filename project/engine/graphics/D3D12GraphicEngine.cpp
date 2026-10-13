@@ -30,7 +30,8 @@ namespace {
 	float clearColor[4] = { 0.1f, 0.25f, 0.5f, 1.0f };
 }
 
-QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
+QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(
+	HWND hwnd0, FeatureState featureState) :
 	hwnd_(hwnd0),
 	debugCore_(std::make_unique<DirectX12DebugCore>()),
 	directXDevice_(std::make_unique<DirectXDevice>()),
@@ -46,7 +47,8 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	graphicPipelineManager_(std::make_unique<GraphicPipelineManager>()),
 	computePipelineManager_(std::make_unique<ComputePipelineManager>()),
 	rayTracingPipelineManager_(std::make_unique<RaytracingPipelineManager>()),
-	textureLoader_(std::make_unique<TextureLoader>())
+	textureLoader_(std::make_unique<TextureLoader>()),
+	featureState_(featureState)
 
 {
 }
@@ -397,7 +399,7 @@ QFE::GRAPHIC::InternalApiType QFE::GRAPHIC::D3D12GraphicEngine::GetInternalApiTy
 }
 
 QFE::GRAPHIC::FeatureState QFE::GRAPHIC::D3D12GraphicEngine::GetFeatureState() const {
-	return QFE::GRAPHIC::FeatureState();
+	return featureState_;
 }
 
 DirectXDevice* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXDevice() const {

@@ -53,7 +53,7 @@ namespace QFE::GRAPHIC {
 	class D3D12GraphicEngine : public IGraphicEngine {
 	public:
 		/// @brief wndowsに依存したグラフィックエンジンです.描画ウィンドウのハンドルの引数に取ります.
-		explicit D3D12GraphicEngine(HWND hwnd);
+		explicit D3D12GraphicEngine(HWND hwnd, FeatureState featureState = {});
 		~D3D12GraphicEngine() override;
 		D3D12GraphicEngine(const D3D12GraphicEngine&) = delete;
 		D3D12GraphicEngine& operator=(const D3D12GraphicEngine&) = delete;

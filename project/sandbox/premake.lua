@@ -39,9 +39,24 @@ project "Sandbox"
         symbols ("Off")
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
+    warnings "Everything"
+    externalwarnings "Off"
+    fatalwarnings "All"
     multiprocessorcompile "On"
     buildoptions {
         "/utf-8",
+    }
+    buildoptions {
+        "/wd4514",
+        "/wd4820",
+        "/wd4710",
+        "/wd4711",
+        "/wd5045",
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     includedirs {
         path.join(QFE_PROJECT_ROOT, "engine"),
@@ -51,6 +66,9 @@ project "Sandbox"
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    }
+    includedirs {
+        path.join(QFE_PROJECT_ROOT, "."),
     }
     filter "configurations:Debug"
         defines {
@@ -74,6 +92,13 @@ project "Sandbox"
             "NO_IMGUI",
         }
     filter {}
+    externalincludedirs {
+        path.join(QFE_PROJECT_ROOT, "externals"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    }
     kind "WindowedApp"
     includedirs {
         path.join(QFE_PROJECT_ROOT, "externals"),
@@ -83,4 +108,5 @@ project "Sandbox"
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
     }
+    qfeAddDxcRuntime()
 

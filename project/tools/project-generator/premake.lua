@@ -39,9 +39,19 @@ project "ProjectGenerator"
         symbols ("Off")
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
+    warnings "Everything"
+    externalwarnings "Off"
+    fatalwarnings "All"
     multiprocessorcompile "On"
     buildoptions {
         "/utf-8",
+    }
+    buildoptions {
+        "/wd4514",
+        "/wd4820",
+        "/wd4710",
+        "/wd4711",
+        "/wd5045",
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals"),
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui"),
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp"),
@@ -49,7 +59,6 @@ project "ProjectGenerator"
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     includedirs {
-        path.join(QFE_PROJECT_ROOT, "."),
         path.join(QFE_PROJECT_ROOT, "engine"),
         path.join(QFE_PROJECT_ROOT, "engine/core"),
         path.join(QFE_PROJECT_ROOT, "externals"),
@@ -57,6 +66,9 @@ project "ProjectGenerator"
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    }
+    includedirs {
+        path.join(QFE_PROJECT_ROOT, "."),
     }
     filter "configurations:Debug"
         defines {
@@ -80,6 +92,13 @@ project "ProjectGenerator"
             "NO_IMGUI",
         }
     filter {}
+    externalincludedirs {
+        path.join(QFE_PROJECT_ROOT, "externals"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    }
     kind "WindowedApp"
     includedirs {
         path.join(QFE_PROJECT_ROOT, "engine"),
@@ -89,13 +108,6 @@ project "ProjectGenerator"
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
-        path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
-    }
-    externalincludedirs {
-        path.join(QFE_PROJECT_ROOT, "externals"),
-        path.join(QFE_PROJECT_ROOT, "externals/imgui"),
-        path.join(QFE_PROJECT_ROOT, "externals/assimp"),
-        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     links {
@@ -109,6 +121,5 @@ project "ProjectGenerator"
         "GuiFramework",
         "GUIEngine",
     }
-
-qfeAddDxcRuntime()
+    qfeAddDxcRuntime()
 

@@ -47,6 +47,9 @@ namespace QFE::WINDOW {
 		 */
 		HWND GetWindow(const std::string windowName) const;
 
+		/** @brief 最初に追加されたメインウィンドウのハンドルを取得 */
+		HWND GetMainWindow() const;
+
 		/// @brief ゲームウィンドウマネージャのサポートOSを取得します.
 		QFE::INFO::SupportedOs GetSupportedOs() const override;
 	};

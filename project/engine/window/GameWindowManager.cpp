@@ -59,6 +59,14 @@ namespace QFE::WINDOW {
 		return nullptr;
 	}
 
+	HWND GameWindowManager::GetMainWindow() const {
+		if (windows.empty()) {
+			return nullptr;
+		}
+		const auto* gameWindow = dynamic_cast<const GameWindow*>(windows.front().get());
+		return gameWindow != nullptr ? gameWindow->GetHwnd() : nullptr;
+	}
+
 	QFE::INFO::SupportedOs GameWindowManager::GetSupportedOs() const
 	{
 		return QFE::INFO::SupportedOs::Windows;

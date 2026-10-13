@@ -97,6 +97,9 @@
                 8,
                 9,
                 10,
+                11,
+                13,
+                14,
                 30,
                 32,
                 34
@@ -171,259 +174,298 @@
     ],
     "links": [
         {
+            "dependencyMode": "transitive",
             "id": 1,
             "sourceNodeId": 5,
             "targetNodeId": 6
         },
         {
+            "dependencyMode": "transitive",
             "id": 2,
             "sourceNodeId": 2,
             "targetNodeId": 6
         },
         {
+            "dependencyMode": "transitive",
             "id": 3,
             "sourceNodeId": 5,
             "targetNodeId": 7
         },
         {
+            "dependencyMode": "transitive",
             "id": 4,
             "sourceNodeId": 3,
             "targetNodeId": 7
         },
         {
+            "dependencyMode": "transitive",
             "id": 5,
             "sourceNodeId": 5,
             "targetNodeId": 8
         },
         {
+            "dependencyMode": "transitive",
             "id": 6,
             "sourceNodeId": 2,
             "targetNodeId": 8
         },
         {
+            "dependencyMode": "transitive",
             "id": 7,
             "sourceNodeId": 5,
             "targetNodeId": 9
         },
         {
+            "dependencyMode": "transitive",
             "id": 8,
             "sourceNodeId": 5,
             "targetNodeId": 10
         },
         {
+            "dependencyMode": "transitive",
             "id": 9,
             "sourceNodeId": 5,
             "targetNodeId": 11
         },
         {
+            "dependencyMode": "transitive",
             "id": 10,
             "sourceNodeId": 1,
             "targetNodeId": 11
         },
         {
+            "dependencyMode": "transitive",
             "id": 13,
             "sourceNodeId": 14,
             "targetNodeId": 13
         },
         {
+            "dependencyMode": "transitive",
             "id": 14,
             "sourceNodeId": 5,
             "targetNodeId": 14
         },
         {
+            "dependencyMode": "transitive",
             "id": 17,
             "sourceNodeId": 16,
             "targetNodeId": 15
         },
         {
+            "dependencyMode": "transitive",
             "id": 18,
             "sourceNodeId": 18,
             "targetNodeId": 15
         },
         {
+            "dependencyMode": "transitive",
             "id": 19,
             "sourceNodeId": 19,
             "targetNodeId": 15
         },
         {
+            "dependencyMode": "transitive",
             "id": 20,
             "sourceNodeId": 21,
             "targetNodeId": 15
         },
         {
+            "dependencyMode": "transitive",
             "id": 21,
             "sourceNodeId": 17,
             "targetNodeId": 15
         },
         {
+            "dependencyMode": "transitive",
             "id": 22,
             "sourceNodeId": 20,
             "targetNodeId": 15
         },
         {
+            "dependencyMode": "transitive",
             "id": 25,
             "sourceNodeId": 7,
             "targetNodeId": 16
         },
         {
+            "dependencyMode": "transitive",
             "id": 27,
             "sourceNodeId": 6,
             "targetNodeId": 17
         },
         {
+            "dependencyMode": "transitive",
             "id": 30,
             "sourceNodeId": 7,
             "targetNodeId": 18
         },
         {
+            "dependencyMode": "transitive",
             "id": 31,
             "sourceNodeId": 8,
             "targetNodeId": 18
         },
         {
+            "dependencyMode": "transitive",
             "id": 34,
             "sourceNodeId": 9,
             "targetNodeId": 19
         },
         {
+            "dependencyMode": "transitive",
             "id": 36,
             "sourceNodeId": 10,
             "targetNodeId": 20
         },
         {
+            "dependencyMode": "transitive",
             "id": 38,
             "sourceNodeId": 13,
             "targetNodeId": 21
         },
         {
+            "dependencyMode": "transitive",
             "id": 41,
             "sourceNodeId": 11,
             "targetNodeId": 22
         },
         {
+            "dependencyMode": "transitive",
             "id": 45,
             "sourceNodeId": 11,
             "targetNodeId": 23
         },
         {
+            "dependencyMode": "transitive",
             "id": 53,
             "sourceNodeId": 11,
             "targetNodeId": 25
         },
         {
+            "dependencyMode": "transitive",
             "id": 56,
             "sourceNodeId": 15,
             "targetNodeId": 25
         },
         {
+            "dependencyMode": "transitive",
             "id": 66,
             "sourceNodeId": 8,
             "targetNodeId": 26
         },
         {
+            "dependencyMode": "transitive",
             "id": 67,
             "sourceNodeId": 6,
             "targetNodeId": 26
         },
         {
+            "dependencyMode": "transitive",
             "id": 68,
             "sourceNodeId": 7,
             "targetNodeId": 26
         },
         {
+            "dependencyMode": "transitive",
             "id": 70,
             "sourceNodeId": 11,
             "targetNodeId": 26
         },
         {
+            "dependencyMode": "transitive",
             "id": 71,
             "sourceNodeId": 13,
             "targetNodeId": 26
         },
         {
+            "dependencyMode": "transitive",
             "id": 87,
             "sourceNodeId": 15,
             "targetNodeId": 23
         },
         {
+            "dependencyMode": "transitive",
             "id": 88,
             "sourceNodeId": 28,
             "targetNodeId": 11
         },
         {
+            "dependencyMode": "direct",
             "id": 89,
             "sourceNodeId": 5,
             "targetNodeId": 29
         },
         {
+            "dependencyMode": "transitive",
             "id": 90,
             "sourceNodeId": 5,
             "targetNodeId": 30
         },
         {
+            "dependencyMode": "transitive",
             "id": 91,
             "sourceNodeId": 30,
             "targetNodeId": 31
         },
         {
+            "dependencyMode": "transitive",
             "id": 92,
             "sourceNodeId": 31,
             "targetNodeId": 15
         },
         {
+            "dependencyMode": "transitive",
             "id": 93,
             "sourceNodeId": 16,
             "targetNodeId": 27
         },
         {
+            "dependencyMode": "transitive",
             "id": 94,
             "sourceNodeId": 17,
             "targetNodeId": 27
         },
         {
+            "dependencyMode": "transitive",
             "id": 95,
             "sourceNodeId": 18,
             "targetNodeId": 27
         },
         {
+            "dependencyMode": "transitive",
             "id": 96,
             "sourceNodeId": 5,
             "targetNodeId": 32
         },
         {
+            "dependencyMode": "transitive",
             "id": 97,
             "sourceNodeId": 32,
             "targetNodeId": 33
         },
         {
+            "dependencyMode": "transitive",
             "id": 98,
             "sourceNodeId": 33,
             "targetNodeId": 15
         },
         {
+            "dependencyMode": "transitive",
             "id": 99,
             "sourceNodeId": 5,
             "targetNodeId": 34
         },
         {
+            "dependencyMode": "transitive",
             "id": 100,
             "sourceNodeId": 34,
             "targetNodeId": 35
         },
         {
+            "dependencyMode": "transitive",
             "id": 101,
             "sourceNodeId": 35,
             "targetNodeId": 15
-        },
-        {
-            "id": 102,
-            "sourceNodeId": 35,
-            "targetNodeId": 23
-        },
-        {
-            "id": 103,
-            "sourceNodeId": 35,
-            "targetNodeId": 25
         }
     ],
     "nextGroupId": 8,
@@ -461,9 +503,11 @@
                 }
             },
             "directoryPath": "externals",
+            "externalLibrary": true,
             "externalLinks": [],
             "id": 1,
             "includePaths": "",
+            "isFrameworkLayer": false,
             "kind": 4,
             "libraryDirectories": [],
             "name": "externals",
@@ -507,9 +551,11 @@
                 }
             },
             "directoryPath": "externals/imgui",
+            "externalLibrary": true,
             "externalLinks": [],
             "id": 2,
             "includePaths": "externals/imgui",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "imgui",
@@ -553,9 +599,11 @@
                 }
             },
             "directoryPath": "externals/DirectXTex",
+            "externalLibrary": true,
             "externalLinks": [],
             "id": 3,
             "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "DirectXTex",
@@ -599,9 +647,11 @@
                 }
             },
             "directoryPath": "engine/resources",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 4,
             "includePaths": "",
+            "isFrameworkLayer": false,
             "kind": 4,
             "libraryDirectories": [],
             "name": "resources",
@@ -645,9 +695,11 @@
                 }
             },
             "directoryPath": "engine/core",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 5,
             "includePaths": "%{wks.location}/externals/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "core",
@@ -691,9 +743,11 @@
                 }
             },
             "directoryPath": "engine/window",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 6,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "window",
@@ -737,9 +791,11 @@
                 }
             },
             "directoryPath": "engine/graphics",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 7,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "graphics",
@@ -783,9 +839,11 @@
                 }
             },
             "directoryPath": "engine/gui",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 8,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "gui",
@@ -829,9 +887,11 @@
                 }
             },
             "directoryPath": "engine/input",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 9,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "input",
@@ -875,9 +935,11 @@
                 }
             },
             "directoryPath": "engine/physics",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 10,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "physics",
@@ -921,9 +983,11 @@
                 }
             },
             "directoryPath": "engine/assetfactory",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 11,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "assetfactory",
@@ -967,9 +1031,11 @@
                 }
             },
             "directoryPath": "engine/scene",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 13,
             "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "scene",
@@ -1013,9 +1079,11 @@
                 }
             },
             "directoryPath": "engine/components",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 14,
             "includePaths": "%{wks.location}/engine/core/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "components",
@@ -1059,9 +1127,11 @@
                 }
             },
             "directoryPath": "engine/framework/application",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 15,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "application",
@@ -1105,9 +1175,11 @@
                 }
             },
             "directoryPath": "engine/framework/graphic",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 16,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "graphic",
@@ -1151,9 +1223,11 @@
                 }
             },
             "directoryPath": "engine/framework/window",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 17,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "window",
@@ -1197,9 +1271,11 @@
                 }
             },
             "directoryPath": "engine/framework/gui",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 18,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "gui",
@@ -1243,9 +1319,11 @@
                 }
             },
             "directoryPath": "engine/framework/input",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 19,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "input",
@@ -1289,9 +1367,11 @@
                 }
             },
             "directoryPath": "engine/framework/physics",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 20,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "physics",
@@ -1335,9 +1415,11 @@
                 }
             },
             "directoryPath": "engine/framework/scene",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 21,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "scene",
@@ -1381,9 +1463,11 @@
                 }
             },
             "directoryPath": "engine/framework/assets",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 22,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "assets",
@@ -1427,9 +1511,11 @@
                 }
             },
             "directoryPath": "editor",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 23,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+            "isFrameworkLayer": false,
             "kind": 3,
             "libraryDirectories": [],
             "name": "editor",
@@ -1473,9 +1559,11 @@
                 }
             },
             "directoryPath": "sandbox",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 24,
             "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+            "isFrameworkLayer": false,
             "kind": 3,
             "libraryDirectories": [],
             "name": "sandbox",
@@ -1519,9 +1607,11 @@
                 }
             },
             "directoryPath": "runtime",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 25,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+            "isFrameworkLayer": false,
             "kind": 3,
             "libraryDirectories": [],
             "name": "runtime",
@@ -1565,9 +1655,11 @@
                 }
             },
             "directoryPath": "launcher",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 26,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+            "isFrameworkLayer": false,
             "kind": 3,
             "libraryDirectories": [],
             "name": "launcher",
@@ -1611,9 +1703,11 @@
                 }
             },
             "directoryPath": "tools/project-generator",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 27,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
+            "isFrameworkLayer": false,
             "kind": 3,
             "libraryDirectories": [],
             "name": "project-generator",
@@ -1657,9 +1751,11 @@
                 }
             },
             "directoryPath": "externals/assimp",
+            "externalLibrary": true,
             "externalLinks": [],
             "id": 28,
             "includePaths": "%{wks.location}/externals/assimp/upstream/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/assimp/upstream/code/\n%{wks.location}/externals/assimp/upstream/contrib/\n%{wks.location}/externals/assimp/upstream/contrib/zlib/\n%{wks.location}/externals/assimp/upstream/contrib/pugixml/src/\n%{wks.location}/externals/assimp/upstream/contrib/rapidjson/include/\n%{wks.location}/externals/assimp/upstream/contrib/unzip/\n%{wks.location}/externals/assimp/upstream/contrib/openddlparser/include/",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "assimp",
@@ -1703,9 +1799,11 @@
                 }
             },
             "directoryPath": "engine/ecs",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 29,
             "includePaths": "",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "ecs",
@@ -1749,9 +1847,11 @@
                 }
             },
             "directoryPath": "engine/audio",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 30,
             "includePaths": "",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "audio",
@@ -1795,9 +1895,11 @@
                 }
             },
             "directoryPath": "engine/framework/audio",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 31,
             "includePaths": "",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "audio",
@@ -1841,9 +1943,11 @@
                 }
             },
             "directoryPath": "engine/network",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 32,
             "includePaths": "",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "network",
@@ -1887,9 +1991,11 @@
                 }
             },
             "directoryPath": "engine/framework/network",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 33,
             "includePaths": "",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "network",
@@ -1933,9 +2039,11 @@
                 }
             },
             "directoryPath": "engine/animation",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 34,
             "includePaths": "",
+            "isFrameworkLayer": false,
             "kind": 0,
             "libraryDirectories": [],
             "name": "animation",
@@ -1979,9 +2087,11 @@
                 }
             },
             "directoryPath": "engine/framework/animation",
+            "externalLibrary": false,
             "externalLinks": [],
             "id": 35,
             "includePaths": "",
+            "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
             "name": "animation",
@@ -1996,5 +2106,5 @@
         }
     ],
     "rootDirectory": "../../..",
-    "version": 5
+    "version": 6
 }
