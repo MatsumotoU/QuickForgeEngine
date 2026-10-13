@@ -7,6 +7,10 @@ namespace QFE {
 		OnFocusEvent() = delete;
 		OnFocusEvent(nlohmann::json& data);
 		~OnFocusEvent() override = default;
+		OnFocusEvent(const OnFocusEvent&) = default;
+		OnFocusEvent(OnFocusEvent&&) noexcept = default;
+		OnFocusEvent& operator=(const OnFocusEvent&) = delete;
+		OnFocusEvent& operator=(OnFocusEvent&&) = delete;
 		
 		/// @brief ウィンドウがフォーカスを得たときのイベント処理
 		void OnEvent(WPARAM wparam, LPARAM lparam) override;

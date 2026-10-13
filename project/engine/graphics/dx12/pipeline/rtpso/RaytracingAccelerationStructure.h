@@ -18,6 +18,10 @@ namespace QFE::GRAPHIC {
 	public:
 		RaytracingAccelerationStructure() = default;
 		~RaytracingAccelerationStructure() = default;
+		RaytracingAccelerationStructure(const RaytracingAccelerationStructure&) = delete;
+		RaytracingAccelerationStructure& operator=(const RaytracingAccelerationStructure&) = delete;
+		RaytracingAccelerationStructure(RaytracingAccelerationStructure&&) = delete;
+		RaytracingAccelerationStructure& operator=(RaytracingAccelerationStructure&&) = delete;
 
 		/// @brief レイトレーシング用の加速構造を初期化します
 		void Initialize(ID3D12Device5* device5);

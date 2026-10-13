@@ -26,6 +26,12 @@ namespace QFE::APPLICATION
 	class DirectoryManager
 	{
 	public:
+		DirectoryManager() = default;
+		DirectoryManager(const DirectoryManager&) = delete;
+		DirectoryManager& operator=(const DirectoryManager&) = delete;
+		DirectoryManager(DirectoryManager&&) noexcept = default;
+		DirectoryManager& operator=(DirectoryManager&&) noexcept = default;
+
 		void Initialize();
 
 		/// @brief Set the root directory path.

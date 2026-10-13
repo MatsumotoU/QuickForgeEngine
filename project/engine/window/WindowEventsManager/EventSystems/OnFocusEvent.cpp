@@ -4,8 +4,7 @@
 using namespace QFE;
 OnFocusEvent::OnFocusEvent(nlohmann::json& data) :IEvent(data) {}
 
-void OnFocusEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
-	wparam; lparam;
+void OnFocusEvent::OnEvent(WPARAM, LPARAM) {
 	QFE_LOG("Window Focused");
 }
 

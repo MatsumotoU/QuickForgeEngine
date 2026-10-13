@@ -8,7 +8,7 @@ namespace QFE::GRAPHIC {
 		currentValue_ = 0;
 		HRESULT result = device->CreateFence(currentValue_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
 		assert(SUCCEEDED(result) && "Fence creation failed.");
-		result;
+		static_cast<void>(result);
 		// Eventの生成
 		fenceEvent_ = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 		assert(fenceEvent_ && "Failed to create fence event.");
@@ -25,7 +25,7 @@ namespace QFE::GRAPHIC {
 		// コマンドキューにシグナルを送る
 		HRESULT result = queue->Signal(fence_.Get(), ++currentValue_);
 		assert(SUCCEEDED(result) && "Failed to signal the command queue.");
-		result;
+		static_cast<void>(result);
 	}
 
 	void Fence::Wait() {
@@ -33,7 +33,7 @@ namespace QFE::GRAPHIC {
 		if (fence_->GetCompletedValue() < currentValue_) {
 			HRESULT result = fence_->SetEventOnCompletion(currentValue_, fenceEvent_);
 			assert(SUCCEEDED(result) && "Failed to set event on fence completion.");
-			result;
+			static_cast<void>(result);
 			WaitForSingleObject(fenceEvent_, INFINITE);
 		}
 	}

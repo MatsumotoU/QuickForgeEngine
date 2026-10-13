@@ -162,13 +162,7 @@ void QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEng
 }
 
 void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
-	auto& gameWindowManager = systems.windowManager;
 	auto& graphicEngine = systems.graphicEngine;
-	auto& guiManager = systems.guiManager;
-	auto& inputInterface = systems.inputInterface;
-	auto& fpsCounter = systems.fpsCounter;
-	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
-	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
 	HWND mainWindow = QFE::FRAMEWORK::GetWindowHandle(systems.windowManager.get(), resources.windowName);
 	std::string psDirName = resources.psDirName;
@@ -188,9 +182,6 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 	//====================
 	// ここから描画の準備
 	//====================
-
-	float allObjectMetallic = 0.0f;
-	float allObjectSmoothness = 0.5f;
 
 	// シェーダーペアを生成
 	QFE::FRAMEWORK::CreateShaderPair(graphicEngine.get(), vsDirName, psDirName, "Object3d.GBuffer.VS.hlsl", "Object3d.GBuffer.PS.hlsl", resources.shaderPairHandle);
@@ -245,10 +236,8 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 }
 
 void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
-	auto& gameWindowManager = systems.windowManager;
 	auto& graphicEngine = systems.graphicEngine;
 	auto& guiManager = systems.guiManager;
-	auto& inputInterface = systems.inputInterface;
 	auto& fpsCounter = systems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
@@ -667,13 +656,8 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 }
 
 void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
-	auto& gameWindowManager = systems.windowManager;
 	auto& graphicEngine = systems.graphicEngine;
-	auto& guiManager = systems.guiManager;
-	auto& inputInterface = systems.inputInterface;
-	auto& fpsCounter = systems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
-	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
 	QFE::FRAMEWORK::DrawSceneModels(
 		sceneManager, graphicEngine.get(), resources.psoHandle, resources.viewportHandle,
@@ -681,7 +665,7 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 
 	if (resources.hasRayTracingGeometry) {
 		std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources(4);
-		for (int i = 0; i < 4; ++i) {
+		for (std::size_t i = 0; i < 4; ++i) {
 			QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), resources.renderTargets[i], rayTracingRootResources[i]);
 		}
 

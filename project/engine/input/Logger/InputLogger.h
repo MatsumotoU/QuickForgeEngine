@@ -25,7 +25,7 @@ namespace QFE::INPUT {
 		// 録画された入力ログデータを取得する
 		const std::vector<InputLogData>& GetInputLogDataList() const;
 
-		const bool IsRecording() const { return isRecording_; }
+		bool IsRecording() const { return isRecording_; }
 
 	private:
 		bool isRecording_;

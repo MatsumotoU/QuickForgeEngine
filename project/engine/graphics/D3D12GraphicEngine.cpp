@@ -28,7 +28,6 @@ using namespace QFE::GRAPHIC;
 
 namespace {
 	float clearColor[4] = { 0.1f, 0.25f, 0.5f, 1.0f };
-	const uint32_t kInvalidTextureHandle = UINT32_MAX;
 }
 
 QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
@@ -36,18 +35,18 @@ QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(HWND hwnd0) :
 	debugCore_(std::make_unique<DirectX12DebugCore>()),
 	directXDevice_(std::make_unique<DirectXDevice>()),
 	resourceContainer_(std::make_unique<DirectXResourceContainer>()),
+	resourceAllocator_(std::make_unique<DirectXResourceAllocator>()),
 	descriptorHeapManager_(std::make_unique<DescriptorHeapManager>()),
 	commandManager_(std::make_unique<DirectXCommandManager>()),
 	renderPass_(std::make_unique<RenderPass>()),
 	fence_(std::make_unique<Fence>()),
-	graphicPipelineManager_(std::make_unique<GraphicPipelineManager>()),
-	textureLoader_(std::make_unique<TextureLoader>()),
-	shaderCompiler_(std::make_unique<ShaderCompiler>()),
 	shaderReflection_(std::make_unique<ShaderReflection>()),
+	shaderLibReflection_(std::make_unique<ShaderLibReflection>()),
+	shaderCompiler_(std::make_unique<ShaderCompiler>()),
+	graphicPipelineManager_(std::make_unique<GraphicPipelineManager>()),
 	computePipelineManager_(std::make_unique<ComputePipelineManager>()),
 	rayTracingPipelineManager_(std::make_unique<RaytracingPipelineManager>()),
-	shaderLibReflection_(std::make_unique<ShaderLibReflection>()),
-	resourceAllocator_(std::make_unique<DirectXResourceAllocator>())
+	textureLoader_(std::make_unique<TextureLoader>())
 
 {
 }
@@ -361,17 +360,13 @@ void D3D12GraphicEngine::RenderLines(
 	}
 
 	PSOHandle linePsoHandle = PSOHandle::Invalid;
-	switch (renderTargetFormat) {
-	case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+	if (renderTargetFormat == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB) {
 		linePsoHandle = linePsoSrgbHandle_;
-		break;
-	case DXGI_FORMAT_R8G8B8A8_UNORM:
+	} else if (renderTargetFormat == DXGI_FORMAT_R8G8B8A8_UNORM) {
 		linePsoHandle = linePsoUnormHandle_;
-		break;
-	case DXGI_FORMAT_R16G16B16A16_FLOAT:
+	} else if (renderTargetFormat == DXGI_FORMAT_R16G16B16A16_FLOAT) {
 		linePsoHandle = linePsoHdrHandle_;
-		break;
-	default:
+	} else {
 		lineVertices_.clear();
 		QFE_REPORT_SYSTEM_ERROR("No line pipeline state object exists for the render target format.", SystemError::Abort);
 		return;

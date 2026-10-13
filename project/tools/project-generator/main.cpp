@@ -25,13 +25,19 @@
 #include "ProjectGenerator.h"
 
 struct WindowsGuiToolSystems {
+	WindowsGuiToolSystems() = default;
+	WindowsGuiToolSystems(const WindowsGuiToolSystems&) = delete;
+	WindowsGuiToolSystems& operator=(const WindowsGuiToolSystems&) = delete;
+	WindowsGuiToolSystems(WindowsGuiToolSystems&&) = delete;
+	WindowsGuiToolSystems& operator=(WindowsGuiToolSystems&&) = delete;
+
 	std::unique_ptr<QFE::GameWindowManager> windowManager;
 	std::unique_ptr<QFE::FRAMEWORK::GraphicContext> graphicEngine;
 	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager;
 };
 
 /// @brief Windows project generator entry point.
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int argumentCount = 0;
 	LPWSTR* arguments = CommandLineToArgvW(GetCommandLineW(), &argumentCount);
 	if (arguments != nullptr && argumentCount >= 3 &&

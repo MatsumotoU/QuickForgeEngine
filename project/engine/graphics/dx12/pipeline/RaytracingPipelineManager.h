@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "memory/SparseSets.h"
-#include "../GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 #include "rtpso/RaytracingPSO.h"
 #include "pso/StaticSamplerTemplate.h"
 

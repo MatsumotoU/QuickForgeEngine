@@ -20,12 +20,12 @@ void TextureLoader::Initialize(TextureLoaderInitializeInfo info) {
 	// COMの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
-	hr;
+	static_cast<void>(hr);
 
 	// ダミーの黒いキューブマップを作成して保存する
-	CreateTextureFromScratchImage(std::move(CreateDummyBlackCubeMap()), kDummyBlackCubeMapKey, D3D12_SRV_DIMENSION_TEXTURECUBE);
+	CreateTextureFromScratchImage(CreateDummyBlackCubeMap(), kDummyBlackCubeMapKey, D3D12_SRV_DIMENSION_TEXTURECUBE);
 	// ダミーの白い1x1テクスチャを作成して保存する
-	CreateTextureFromScratchImage(std::move(CreateDummyWhite1x1Texture()), kDummyDummyWhite1x1TextureMapKey, D3D12_SRV_DIMENSION_TEXTURE2D);
+	CreateTextureFromScratchImage(CreateDummyWhite1x1Texture(), kDummyDummyWhite1x1TextureMapKey, D3D12_SRV_DIMENSION_TEXTURE2D);
 }
 /// @brief 終了処理
 void TextureLoader::Finalize() {
@@ -97,11 +97,11 @@ DirectXResourceHandle TextureLoader::LoadTextureFromMemory(
 		std::move(finalImage), key, D3D12_SRV_DIMENSION_TEXTURE2D);
 }
 
-const DirectXResourceHandle TextureLoader::GetDummyBlackCubeMapHandle() const {
+DirectXResourceHandle TextureLoader::GetDummyBlackCubeMapHandle() const {
 	return textureDataMap_.at(kDummyBlackCubeMapKey).resourceHandle;
 }
 
-const DirectXResourceHandle TextureLoader::GetDummyWhite1x1TextureHandle() const {
+DirectXResourceHandle TextureLoader::GetDummyWhite1x1TextureHandle() const {
 	return textureDataMap_.at(kDummyDummyWhite1x1TextureMapKey).resourceHandle;
 }
 

@@ -2,7 +2,7 @@
 #include "design-patterns/EntityManager.h"
 
 QFE::EDITOR::DeleteComponentCommand::DeleteComponentCommand(uint32_t entityId, EntityManager* entityManager, const std::string& componentName) :
-	entityId_(entityId), entityManager_(entityManager), deleteComponentName_(componentName) {
+	entityManager_(entityManager), entityId_(entityId), deleteComponentName_(componentName) {
 }
 
 void QFE::EDITOR::DeleteComponentCommand::Execute() {

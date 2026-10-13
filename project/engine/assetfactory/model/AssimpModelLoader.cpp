@@ -22,6 +22,12 @@ using namespace QFE::ASSET;
 
 namespace QFE::ASSET {
 	struct AnimatedGlbScene {
+		AnimatedGlbScene() = default;
+		AnimatedGlbScene(const AnimatedGlbScene&) = delete;
+		AnimatedGlbScene& operator=(const AnimatedGlbScene&) = delete;
+		AnimatedGlbScene(AnimatedGlbScene&&) = default;
+		AnimatedGlbScene& operator=(AnimatedGlbScene&&) = default;
+
 		struct Influence {
 			const aiNode* node = nullptr;
 			aiMatrix4x4 offset;
@@ -311,7 +317,6 @@ bool QFE::ASSET::AssimpModelLoader::LoadModel(const std::string& filePath, Model
 			return false;
 		}
 	}
-	return false;
 }
 
 ModelData& AssimpModelLoader::LoadModel(const std::string& filePath) {
@@ -610,7 +615,7 @@ bool QFE::ASSET::AssimpModelLoader::LoadSkinningModelData(const std::string& fil
 			jointWeightData.inverseBindPoseMatrix = bindPose.Inverse();
 			for(uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
 				const aiVertexWeight& vertexWeight = bone->mWeights[weightIndex];
-				VertexWeightData vtxWeight(bone->mNumWeights);
+				VertexWeightData vtxWeight{};
 				vtxWeight.vertexIndex = vertexWeight.mVertexId;
 				vtxWeight.weight = vertexWeight.mWeight;
 				jointWeightData.vertexWeights.push_back(vtxWeight);

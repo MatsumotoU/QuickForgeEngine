@@ -46,7 +46,7 @@ nlohmann::json QFE::EntityManager::SerializeEntityComponents(uint32_t entityId) 
             JsonArchive archive(compJson, false);
 
             it->second->ReflectComponent(entityId, archive);
-            componentsJson[entry.name] = compJson; // マクロで定義した綺麗な名前がJSONのキーになる
+            componentsJson.emplace(entry.name, compJson); // マクロで定義した綺麗な名前がJSONのキーになる
         }
     }
     return componentsJson;
@@ -74,7 +74,8 @@ void QFE::EntityManager::DeserializeEntityComponents(uint32_t entityId, const nl
 }
 
 nlohmann::json QFE::EntityManager::SerializeComponent(uint32_t entityId, const std::string& componentTypeName) const {
-	return SerializeEntityComponents(entityId)[componentTypeName];
+	const nlohmann::json componentsJson = SerializeEntityComponents(entityId);
+	return componentsJson.at(componentTypeName);
 }
 
 std::vector<std::string> QFE::EntityManager::GetComponentTypeNames(uint32_t entityId) const {

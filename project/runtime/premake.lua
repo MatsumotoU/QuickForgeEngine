@@ -109,3 +109,5 @@ project "Runtime"
         "Animation",
     }
 
+qfeAddDxcRuntime()
+

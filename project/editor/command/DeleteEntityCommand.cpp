@@ -2,7 +2,7 @@
 #include "design-patterns/EntityManager.h"
 
 QFE::EDITOR::DeleteEntityCommand::DeleteEntityCommand(uint32_t entityId, QFE::EntityManager* entityManager) :
-	entityId_(entityId), entityManager_(entityManager) {
+	entityManager_(entityManager), entityId_(entityId) {
 	removedEntities_.clear();
 }
 

@@ -9,6 +9,12 @@
 namespace {
 	class JobHandleRegistry {
 	public:
+		JobHandleRegistry() = default;
+		JobHandleRegistry(const JobHandleRegistry&) = delete;
+		JobHandleRegistry& operator=(const JobHandleRegistry&) = delete;
+		JobHandleRegistry(JobHandleRegistry&&) = delete;
+		JobHandleRegistry& operator=(JobHandleRegistry&&) = delete;
+
 		~JobHandleRegistry() {
 			for (HANDLE handle : handles_) {
 				CloseHandle(handle);
@@ -49,7 +55,7 @@ bool QFE::ProcessUtil::LaunchExe(const std::string& exePath, const std::string& 
     }
 
     // 2. 「親が死んだら子も道連れにする」という制限を設定する
-    JOBOBJECT_EXTENDED_LIMIT_INFORMATION jeli = { 0 };
+    JOBOBJECT_EXTENDED_LIMIT_INFORMATION jeli = {};
     jeli.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
 
     if (!SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, &jeli, sizeof(jeli))) {

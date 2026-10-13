@@ -27,7 +27,7 @@
 #include "GameEditor.h"
 
 /// /// @brief Windowsアプリケーションのテスト
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	// QuickForgeエンジンのリソースを初期化
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
 	engineResources.windowName = "ShootingGameRuntime";
@@ -44,13 +44,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	// QuickForgeエンジンの初期化
 	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
-	auto& gameWindowManager = engineSystems.windowManager;
 	auto& graphicEngine = engineSystems.graphicEngine;
-	auto& guiManager = engineSystems.guiManager;
-	auto& inputInterface = engineSystems.inputInterface;
-	auto& fpsCounter = engineSystems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
-	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
 	// エディタ用のシーンテクスチャ（レンダーターゲット）の作成
 	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;

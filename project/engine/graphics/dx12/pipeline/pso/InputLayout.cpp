@@ -25,10 +25,10 @@ void InputLayout::CreateInputElementDesc(const std::string& semanticName, const 
 	inputElementDescs_.push_back(inputElementDescs);
 	int32_t index = static_cast<int32_t>(inputElementDescs_.size()) - 1;
 	semanticNames_.push_back(semanticName);
-	inputElementDescs_[index].SemanticName = semanticNames_.back().c_str();
-	inputElementDescs_[index].SemanticIndex = semanticIndex;
-	inputElementDescs_[index].Format = format;
-	inputElementDescs_[index].AlignedByteOffset = alignedByteOffset;
+	inputElementDescs_[static_cast<size_t>(index)].SemanticName = semanticNames_.back().c_str();
+	inputElementDescs_[static_cast<size_t>(index)].SemanticIndex = semanticIndex;
+	inputElementDescs_[static_cast<size_t>(index)].Format = format;
+	inputElementDescs_[static_cast<size_t>(index)].AlignedByteOffset = alignedByteOffset;
 
 	inputLayoutDesc_.pInputElementDescs = inputElementDescs_.begin();
 	inputLayoutDesc_.NumElements = static_cast<UINT>(inputElementDescs_.size());

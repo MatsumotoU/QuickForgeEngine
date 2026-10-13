@@ -282,8 +282,12 @@ project "Assimp"
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
     multiprocessorcompile "On"
+    -- Assimp is third-party code; do not include it in the engine warning budget.
+    warnings "Off"
+    externalwarnings "Off"
     buildoptions {
         "/utf-8",
+        "/WX-",
     }
     includedirs {
         path.join(QFE_PROJECT_ROOT, "engine"),

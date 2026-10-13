@@ -1,6 +1,6 @@
 #pragma once
 #include "memory/SparseSets.h"
-#include "../GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 #include "pso/RootParameterElement.h"
 #include "compute/ComputePSO.h"
 

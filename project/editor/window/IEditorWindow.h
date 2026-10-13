@@ -9,6 +9,8 @@ namespace QFE::EDITOR{
 	/// @brief エディタのウィンドウ基礎クラス
 	class IEditorWindow {
 	public:
+		virtual ~IEditorWindow() = default;
+
 		/// @brief ウィンドウのメンバ変数の初期化を行う
 		virtual void Initialize() = 0;
 		/// @brief ウィンドウの描画処理を行う,引数は毎フレーム初期化されている前提	

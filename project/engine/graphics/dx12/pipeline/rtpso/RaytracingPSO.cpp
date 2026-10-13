@@ -1,6 +1,6 @@
 #include "RaytracingPSO.h"
 #include "RaytracingAccelerationStructure.h"
-#include "../pso/StaticSamplerTemplate.h"
+#include "graphics/dx12/pipeline/pso/StaticSamplerTemplate.h"
 
 using namespace QFE::GRAPHIC;
 

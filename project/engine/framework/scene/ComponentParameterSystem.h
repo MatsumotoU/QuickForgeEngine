@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "design-patterns/component/EntityReference.h"
-#include "../../../externals/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 namespace QFE {
 	class EntityManager;

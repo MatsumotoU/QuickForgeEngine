@@ -9,9 +9,12 @@ namespace {
 		case D3D12_ROOT_PARAMETER_TYPE_CBV:
 			return ViewTypeFlags::ConstantBufferView;
 		case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE: // SRV
+		case D3D12_ROOT_PARAMETER_TYPE_SRV:
 			return ViewTypeFlags::ShaderResourceView;
 		case D3D12_ROOT_PARAMETER_TYPE_UAV:
 			return ViewTypeFlags::UnorderedAccessView;
+		case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS:
+			return ViewTypeFlags::None;
 		default:
 			return ViewTypeFlags::None;
 		}
@@ -203,8 +206,8 @@ void QFE::GRAPHIC::DirectXResourceContainer::UploadResource(
 	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&bufferDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(intermediateResource.GetAddressOf()));
-	hr;
 	assert(SUCCEEDED(hr));
+	static_cast<void>(hr);
 
 	// アップロード用のリソースにサブリソースデータを書き込む
 	UpdateSubresources(commandList, GetResource(handle), intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());

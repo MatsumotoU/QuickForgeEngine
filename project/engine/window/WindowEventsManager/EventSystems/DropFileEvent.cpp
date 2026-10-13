@@ -6,8 +6,7 @@
 using namespace QFE;
 DropFileEvent::DropFileEvent(nlohmann::json& data):IEvent(data) {}
 
-void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
-	lparam;
+void DropFileEvent::OnEvent(WPARAM wparam, LPARAM) {
 	QFE_LOG("Call DropFileEvent");
 
 	// ドロップされたファイルのパスを取得

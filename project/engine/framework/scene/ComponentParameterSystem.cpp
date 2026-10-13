@@ -42,6 +42,9 @@ namespace {
 		case QFE::FRAMEWORK::ParameterOperation::ClearBits:
 			target = target.get<uint32_t>() & ~operand.get<uint32_t>();
 			return true;
+		case QFE::FRAMEWORK::ParameterOperation::Set:
+		case QFE::FRAMEWORK::ParameterOperation::Toggle:
+			return false;
 		default:
 			return false;
 		}
@@ -142,6 +145,7 @@ QFE::FRAMEWORK::ParameterOperation QFE::FRAMEWORK::ParameterOperationFromString(
 
 const char* QFE::FRAMEWORK::ToString(ParameterTarget value) {
 	switch (value) {
+	case ParameterTarget::Self: return "Self";
 	case ParameterTarget::Other: return "Other";
 	case ParameterTarget::EntityReference: return "EntityReference";
 	default: return "Self";
@@ -150,6 +154,7 @@ const char* QFE::FRAMEWORK::ToString(ParameterTarget value) {
 
 const char* QFE::FRAMEWORK::ToString(ParameterOperation value) {
 	switch (value) {
+	case ParameterOperation::Set: return "Set";
 	case ParameterOperation::Add: return "Add";
 	case ParameterOperation::Multiply: return "Multiply";
 	case ParameterOperation::Toggle: return "Toggle";

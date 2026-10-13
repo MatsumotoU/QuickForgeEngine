@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "../../externals/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 #include "EngineDefines.h"
 

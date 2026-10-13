@@ -18,6 +18,13 @@ namespace QFE {
 	 */
 	class GameWindow final : public IGameWindow {
 	public:
+		GameWindow() = default;
+		~GameWindow() override = default;
+		GameWindow(const GameWindow&) = delete;
+		GameWindow& operator=(const GameWindow&) = delete;
+		GameWindow(GameWindow&&) = delete;
+		GameWindow& operator=(GameWindow&&) = delete;
+
 		/**
 		 * @brief ウィンドウの初期化と生成
 		 * @param width ウィンドウの横幅

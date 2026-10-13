@@ -6,8 +6,8 @@
 #include "file/FileUtility.h"
 
 QFE::EDITOR::SaveSceneCommand::SaveSceneCommand(const std::string& savePath, QFE::SCENE::SceneManager* sceneManager) :
-	scenePath_(savePath),
 	sceneManager_(sceneManager),
+	scenePath_(savePath),
 	previousSceneData_() {
 }
 

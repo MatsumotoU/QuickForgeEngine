@@ -4,9 +4,7 @@
 using namespace QFE;
 ExitAppEvent::ExitAppEvent(nlohmann::json& data):IEvent(data) {}
 
-void ExitAppEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
-	wparam; // Unused parameter
-	lparam; // Unused parameter
+void ExitAppEvent::OnEvent(WPARAM, LPARAM) {
 	QFE_LOG("Call ExitAppEvent");
 
 	// アプリケーション終了フラグを立てる

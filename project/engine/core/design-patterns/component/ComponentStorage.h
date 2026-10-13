@@ -1,6 +1,6 @@
 #pragma once
 #include "IComponentStorage.h"
-#include "../../memory/SparseSets.h"
+#include "memory/SparseSets.h"
 #include <memory>
 #include <stdexcept>
 

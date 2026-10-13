@@ -1,5 +1,5 @@
 #pragma once
-#include "../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
 #include <string>
 #include <vector>

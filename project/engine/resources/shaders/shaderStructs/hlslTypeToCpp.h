@@ -248,8 +248,8 @@ struct PrimitiveVertexData {
 #ifdef __cplusplus
 	PrimitiveVertexData()
 		: position{ 0.0f, 0.0f, 0.0f, 1.0f }
-		, texcoord{ 0.0f, 0.0f }
-		, color{ 1.0f, 1.0f, 1.0f, 1.0f } {
+		, color{ 1.0f, 1.0f, 1.0f, 1.0f }
+		, texcoord{ 0.0f, 0.0f } {
 	}
 #endif
 

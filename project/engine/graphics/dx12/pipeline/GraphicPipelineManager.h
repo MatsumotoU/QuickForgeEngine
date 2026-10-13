@@ -13,7 +13,7 @@
 #include "memory/MultidimensionalArray.h"
 #include "memory/SparseSets.h"
 
-#include "../GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 #include "pso/PipelineDescTypes.h"
 #include "pso/InputElement.h"
 #include "pso/RootParameterElement.h"
@@ -42,6 +42,10 @@ namespace QFE::GRAPHIC {
 	public:
 		explicit GraphicPipelineManager();
 		~GraphicPipelineManager();
+		GraphicPipelineManager(const GraphicPipelineManager&) = delete;
+		GraphicPipelineManager& operator=(const GraphicPipelineManager&) = delete;
+		GraphicPipelineManager(GraphicPipelineManager&&) = delete;
+		GraphicPipelineManager& operator=(GraphicPipelineManager&&) = delete;
 
 	public:
 		/// @brief 初期化処理

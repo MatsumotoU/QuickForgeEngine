@@ -16,7 +16,8 @@
 #include "graphics/dx12/pipeline/rtpso/TLAS.h"
 
 #include "core/math/transform/Transform.h"
-#include "../../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "core/string/MyString.h"
+#include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
 bool QFE::FRAMEWORK::GetWhite1x1TextureHandle(
 	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle) {
@@ -217,7 +218,7 @@ bool QFE::FRAMEWORK::AllocateConstantBuffer(
 	outConstantBufferHandle = resourceAllocator->AllocateRawConstantBuffer(bufferSize, ConvertString(name));
 	// 成否の確認
 	if (outConstantBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
-		QFE_LOG("Failed to allocate constant buffer: " + std::string(name.begin(), name.end()));
+		QFE_LOG("Failed to allocate constant buffer: " + QFE::ConvertString(name));
 		return false;
 	}
 	return true;
@@ -234,7 +235,7 @@ bool QFE::FRAMEWORK::AllocateStructuredBuffer(
 	outStructuredBufferHandle = resourceAllocator->AllocateRawStructuredBuffer(elementCount * elementStride, elementStride, ConvertString(name));
 	// 成否の確認
 	if (outStructuredBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
-		QFE_LOG("Failed to allocate structured buffer: " + std::string(name.begin(), name.end()));
+		QFE_LOG("Failed to allocate structured buffer: " + QFE::ConvertString(name));
 		return false;
 	}
 	return true;
@@ -265,7 +266,6 @@ bool QFE::FRAMEWORK::CreateVertexBuffer(
 
 	// 使用機能の取得
 	QFE::GRAPHIC::DirectXDevice* directXDevice = graphicEngine->GetDirectXDevice();
-	QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
 	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
 
 	// バッファを作成

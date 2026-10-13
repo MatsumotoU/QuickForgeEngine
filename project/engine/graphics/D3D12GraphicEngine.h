@@ -9,7 +9,7 @@
 #include "dx12/vram/DirectXResourceAllocator.h"
 
 #include "memory/UniqueContainer.h"
-#include "../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
 #include "dx12/pipeline/rtpso/RaytracingAccelerationStructure.h"
 
@@ -55,6 +55,10 @@ namespace QFE::GRAPHIC {
 		/// @brief wndowsに依存したグラフィックエンジンです.描画ウィンドウのハンドルの引数に取ります.
 		explicit D3D12GraphicEngine(HWND hwnd);
 		~D3D12GraphicEngine() override;
+		D3D12GraphicEngine(const D3D12GraphicEngine&) = delete;
+		D3D12GraphicEngine& operator=(const D3D12GraphicEngine&) = delete;
+		D3D12GraphicEngine(D3D12GraphicEngine&&) = delete;
+		D3D12GraphicEngine& operator=(D3D12GraphicEngine&&) = delete;
 
 		/// @brief どんな機能を使うにも必要な機能を立ち上げます
 		void SetUpCoreSystem();

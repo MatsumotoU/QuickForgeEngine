@@ -15,6 +15,8 @@ namespace QFE::INPUT {
 	 */
 	class InputInterface {
 	public:
+		virtual ~InputInterface() = default;
+
 		/// @brief 更新処理
 		virtual void Update() = 0;
 		/// @brief フレーム終了時の処理

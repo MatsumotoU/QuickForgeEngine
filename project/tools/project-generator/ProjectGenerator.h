@@ -44,6 +44,8 @@ namespace QFE::APPLICATION {
 		std::string sourcePatterns;
 		std::filesystem::path directoryPath;
 		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
+		// External library projects are generated without warning diagnostics.
+		bool externalLibrary = false;
 		std::string includePaths;
 		std::string preBuildEvent;
 		std::string postBuildEvent;
@@ -78,10 +80,19 @@ namespace QFE::APPLICATION {
 		std::string symbols = "On";
 	};
 
+	enum class ProjectLinkDependencyMode : std::uint8_t {
+		// Include the source project and its dependency closure.
+		Transitive,
+		// Include only the directly connected source project.
+		DirectOnly,
+	};
+
 	struct ProjectLink {
 		std::uint64_t id = 0;
 		std::uint64_t sourceNodeId = 0;
 		std::uint64_t targetNodeId = 0;
+		ProjectLinkDependencyMode dependencyMode =
+			ProjectLinkDependencyMode::Transitive;
 	};
 
 	struct ProjectGroup {
@@ -113,6 +124,11 @@ namespace QFE::APPLICATION {
 
 	class ProjectGenerator {
 	public:
+		ProjectGenerator() = default;
+		ProjectGenerator(const ProjectGenerator&) = delete;
+		ProjectGenerator& operator=(const ProjectGenerator&) = delete;
+		ProjectGenerator(ProjectGenerator&&) = delete;
+		ProjectGenerator& operator=(ProjectGenerator&&) = delete;
 		~ProjectGenerator();
 		void Initialize(ImGuiContext context);
 		void Shutdown();
@@ -139,6 +155,7 @@ namespace QFE::APPLICATION {
 		void AddAllDirectoryNodes();
 		bool HasNodeForDirectory(const std::filesystem::path& directoryPath) const;
 		ProjectNode* FindNode(std::uint64_t nodeId);
+		ProjectLink* FindLink(std::uint64_t linkId);
 		void RemoveNode(std::uint64_t nodeId);
 		void DrawProjectGroup(ProjectGroup& group);
 		void DrawProjectNode(ProjectNode& node);
@@ -156,6 +173,7 @@ namespace QFE::APPLICATION {
 			const std::vector<std::uint64_t>& selectedNodeIds);
 		void DeleteSelectedLinks(
 			const std::vector<std::uint64_t>& selectedLinkIds);
+		void LinkSettingsWindow();
 		void UpdateGroupBounds(ProjectGroup& group);
 		void SynchronizeGroupMembership();
 		ProjectGroup* FindGroup(std::uint64_t groupId);
@@ -192,8 +210,10 @@ namespace QFE::APPLICATION {
 		std::uint64_t nextGroupId_ = 1;
 		std::uint64_t pendingNodeRemovalId_ = 0;
 		std::uint64_t selectedNodeId_ = 0;
+		std::uint64_t selectedLinkId_ = 0;
 		std::uint64_t selectedGroupId_ = 0;
 		bool nodeSettingsOpen_ = false;
+		bool linkSettingsOpen_ = false;
 		bool groupSettingsOpen_ = false;
 		bool commonPremakeSettingsOpen_ = false;
 		// Cached in NodeEditorWindow so directory-tree actions, which are drawn

@@ -8,6 +8,10 @@ namespace QFE {
 		DropFileEvent() = delete;
 		DropFileEvent(nlohmann::json& data);
 		~DropFileEvent() override = default;
+		DropFileEvent(const DropFileEvent&) = default;
+		DropFileEvent(DropFileEvent&&) noexcept = default;
+		DropFileEvent& operator=(const DropFileEvent&) = delete;
+		DropFileEvent& operator=(DropFileEvent&&) = delete;
 
 		/// @brief ファイルがウィンドウにドロップされたときのイベント処理
 		void OnEvent(WPARAM wparam, LPARAM lparam) override;

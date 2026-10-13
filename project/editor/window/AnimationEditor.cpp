@@ -213,7 +213,7 @@ void QFE::EDITOR::AnimationEditor::Draw(
 	ImGui::TextUnformatted("Keyframe Inspector");
 	ImGui::Separator();
 	if (selectedKeyIndex_ >= 0 && selectedKeyIndex_ < static_cast<int>(keyFrames_.size())) {
-		EditorAnimationKeyFrame& key = keyFrames_[selectedKeyIndex_];
+		EditorAnimationKeyFrame& key = keyFrames_[static_cast<size_t>(selectedKeyIndex_)];
 		ImGui::DragInt("Frame", &key.frame, 1.0f, 0, frameEnd_);
 		ImGui::DragFloat3("Translate", &key.transform.translate.x, 0.1f);
 		ImGui::DragFloat3("Rotate", &key.transform.rotate.x, 0.01f);

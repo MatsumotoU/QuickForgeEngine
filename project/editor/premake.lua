@@ -110,3 +110,5 @@ project "GameEditor"
         "Animation",
     }
 
+qfeAddDxcRuntime()
+

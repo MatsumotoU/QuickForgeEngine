@@ -1,7 +1,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Vector2.h"
-#include "../matrix/Matrix4x4.h"
+#include "math/matrix/Matrix4x4.h"
 #include <math.h>
 #include <assert.h>
 #include <algorithm>
@@ -121,10 +121,10 @@ Vector3 Vector3::CatmullRom(const std::vector<Vector3>& controlPoints, float t) 
 	float spritT = 1.0f / static_cast<float>(arraySize);
 	int beginIndex = static_cast<int>(t / spritT);
 
-	Vector3 p0 = controlPoints[std::clamp(beginIndex - 1, 0, arraySize)];
-	Vector3 p1 = controlPoints[std::clamp(beginIndex, 0, arraySize)];
-	Vector3 p2 = controlPoints[std::clamp(beginIndex + 1, 0, arraySize)];
-	Vector3 p3 = controlPoints[std::clamp(beginIndex + 2, 0, arraySize)];
+	Vector3 p0 = controlPoints[static_cast<std::size_t>(std::clamp(beginIndex - 1, 0, arraySize))];
+	Vector3 p1 = controlPoints[static_cast<std::size_t>(std::clamp(beginIndex, 0, arraySize))];
+	Vector3 p2 = controlPoints[static_cast<std::size_t>(std::clamp(beginIndex + 1, 0, arraySize))];
+	Vector3 p3 = controlPoints[static_cast<std::size_t>(std::clamp(beginIndex + 2, 0, arraySize))];
 
 	float nowT = t / spritT;
 	nowT = fmodf(nowT, 1.0f);

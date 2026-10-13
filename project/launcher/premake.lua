@@ -95,3 +95,5 @@ project "Launcher"
         "Scene",
     }
 
+qfeAddDxcRuntime()
+
