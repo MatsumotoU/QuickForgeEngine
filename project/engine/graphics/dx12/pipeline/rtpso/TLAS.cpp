@@ -5,6 +5,7 @@ using namespace QFE::GRAPHIC;
 
 bool TLAS::Create(ID3D12Device5* device5, UINT maxInstances) {
 	maxInstances_ = maxInstances;
+	scratchReady_ = false;
 
 	// -------------------------------------------------------------------------
 	// 1. 最大数分のインスタンス記述（配置図）を載せるための GPU バッファを計算・確保
@@ -151,6 +152,16 @@ bool TLAS::Build(
 	buildDesc.Inputs = buildInputs;
 	buildDesc.DestAccelerationStructureData = tlasResultBuffer_->GetGPUVirtualAddress();
 	buildDesc.ScratchAccelerationStructureData = tlasScratchBuffer_->GetGPUVirtualAddress();
+	if (!scratchReady_) {
+		D3D12_RESOURCE_BARRIER scratchBarrier{};
+		scratchBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		scratchBarrier.Transition.pResource = tlasScratchBuffer_.Get();
+		scratchBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		scratchBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
+		scratchBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		commandList->ResourceBarrier(1, &scratchBarrier);
+		scratchReady_ = true;
+	}
 
 	commandList->BuildRaytracingAccelerationStructure(&buildDesc, 0, nullptr);
 

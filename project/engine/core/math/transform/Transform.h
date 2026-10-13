@@ -1,7 +1,7 @@
 #pragma once
-#include "../vector/Vector3.h"
-#include "../matrix/Matrix4x4.h"
-#include "../quaternion/Quaternion.h"
+#include "math/vector/Vector3.h"
+#include "math/matrix/Matrix4x4.h"
+#include "math/quaternion/Quaternion.h"
 
 namespace QFE::MATH {
 

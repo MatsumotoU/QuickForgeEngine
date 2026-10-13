@@ -10,6 +10,10 @@ namespace QFE::WINDOW {
 	public:
 		WindowEventsManager();
 		~WindowEventsManager() = default;
+		WindowEventsManager(const WindowEventsManager&) = delete;
+		WindowEventsManager& operator=(const WindowEventsManager&) = delete;
+		WindowEventsManager(WindowEventsManager&&) = delete;
+		WindowEventsManager& operator=(WindowEventsManager&&) = delete;
 
 		/// @brief ウィンドウプロシージャ(OS呼び出し)
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

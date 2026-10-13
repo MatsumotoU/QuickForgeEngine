@@ -24,10 +24,6 @@ namespace QFE::GRAPHIC {
 
 		void Present();
 		void AssignDescriptorHandles(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle, uint32_t index);
-		/// <summary>
-		/// 繝舌ャ繧ｯ繝舌ャ繝輔ぃ縺ｨ繝薙Η繝ｼ縺ｮ謨ｰ縺御ｸ閾ｴ縺励※縺・ｋ縺狗｢ｺ隱・
-		/// </summary>
-		/// <returns></returns>
 		bool CheckBackBufferViews() const;
 
 	private:

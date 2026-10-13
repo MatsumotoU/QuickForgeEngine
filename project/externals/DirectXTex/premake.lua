@@ -40,8 +40,12 @@ project "DirectXTex"
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
     multiprocessorcompile "On"
+    -- DirectXTex is third-party code; do not include it in the engine warning budget.
+    warnings "Off"
+    externalwarnings "Off"
     buildoptions {
         "/utf-8",
+        "/WX-",
     }
     includedirs {
         path.join(QFE_PROJECT_ROOT, "engine"),
@@ -80,6 +84,6 @@ project "DirectXTex"
         path.join(QFE_PROJECT_ROOT, "externals/DirectXTex/Shaders/Compiled"),
     }
     prebuildcommands {
-        "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd",
+        "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd",
     }
 

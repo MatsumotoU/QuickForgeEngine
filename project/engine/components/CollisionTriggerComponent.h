@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <unordered_map>
 
-#include "../../externals/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 #include "EngineDefines.h"
 
 namespace QFE::SCENE {

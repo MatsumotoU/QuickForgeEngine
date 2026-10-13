@@ -16,7 +16,7 @@ namespace QFE {
 				}
 			}
 			// データが存在しない場合は、新しいハンドルを生成して追加
-			uint32_t handle = static_cast<uint32_t>(handleMap_.size() + 1);
+			uint32_t handle = nextHandle_++;
 			handleMap_[handle] = name;
 			dataMap_[name] = data;
 			return handle;
@@ -30,7 +30,7 @@ namespace QFE {
 				}
 			}
 			// データが存在しない場合は、新しいハンドルを生成して追加
-			uint32_t handle = static_cast<uint32_t>(handleMap_.size() + 1);
+			uint32_t handle = nextHandle_++;
 			handleMap_[handle] = name;
 			dataMap_[name] = std::move(data);
 			return handle;
@@ -66,8 +66,17 @@ namespace QFE {
 		bool Contains(uint32_t handle) const {
 			return handleMap_.find(handle) != handleMap_.end();
 		}
+		/// @brief ハンドルと名前を解放します。既存ハンドルは再利用しません。
+		bool Remove(uint32_t handle) {
+			auto it = handleMap_.find(handle);
+			if (it == handleMap_.end()) return false;
+			dataMap_.erase(it->second);
+			handleMap_.erase(it);
+			return true;
+		}
 
 	private:
+		uint32_t nextHandle_ = 1;
 		std::unordered_map<uint32_t, std::string> handleMap_;
 		std::unordered_map<std::string, T> dataMap_;
 	};

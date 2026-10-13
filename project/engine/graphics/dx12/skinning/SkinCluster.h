@@ -5,7 +5,7 @@
 #include <utility>
 #include <d3d12.h>
 #include <wrl.h>
-#include "../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
 namespace QFE::GRAPHIC {
 	struct SkinCluster {

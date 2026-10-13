@@ -1,10 +1,11 @@
 #pragma once
 #include "IDynamicArray.h"
 #include <vector>
+#include <cstddef>
 #include <assert.h>
 #include <stdexcept>
 
-#include "../EngineDefines.h"
+#include "EngineDefines.h"
 
 namespace QFE {
 	/// @brief メモリの連続性とアドレスの不変性を保証するstd::vectorをラップしたクラス
@@ -25,6 +26,11 @@ namespace QFE {
 
 		/// @brief デストラクタ
 		virtual ~SafeVector() = default;
+		SafeVector(const SafeVector&) = default;
+		SafeVector& operator=(const SafeVector&) = default;
+		SafeVector(SafeVector&&) noexcept = default;
+		SafeVector& operator=(SafeVector&&) noexcept = default;
+
 		/// @brief 配列の全ての要素を削除して、配列を空にする
 		virtual void clear() override {
 			data_.clear();
@@ -48,7 +54,7 @@ namespace QFE {
 		/// @brief あるインデックスの要素を削除する
 		virtual void erase(size_t index) override {
 			CheckIndex(index);
-			data_.erase(data_.begin() + index);
+			data_.erase(data_.begin() + static_cast<std::ptrdiff_t>(index));
 		}
 
 		virtual T& front() override {

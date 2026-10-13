@@ -9,6 +9,11 @@ namespace QFE {
         JsonArchive(nlohmann::json& json, bool isLoading)
             : json_(json), isLoading_(isLoading) {
         }
+		JsonArchive(const JsonArchive&) = delete;
+		JsonArchive& operator=(const JsonArchive&) = delete;
+		JsonArchive(JsonArchive&&) = delete;
+		JsonArchive& operator=(JsonArchive&&) = delete;
+
 		// 読み込みモードか判定するための関数
         bool IsLoading() const override { return isLoading_; }
 

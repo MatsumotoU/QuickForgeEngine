@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <unordered_map>
 
-#include "../design-patterns/Singleton.h"
+#include "design-patterns/Singleton.h"
 
 namespace QFE {
 	// ログの種類を表す列挙型.
@@ -53,7 +53,16 @@ namespace QFE {
 		// ログの場所ごとに分類されたログ.クラス,関数で分類される.
 		std::unordered_map<std::string, std::unordered_map<std::string, std::deque<std::string>>> locationLogMap_;
 	private:
+		MyDebugLog() = default;
 		~MyDebugLog() override = default;
+		// コピーコンストラクタを削除
+		MyDebugLog(const MyDebugLog&) = delete;
+		// コピー代入演算子を削除
+		MyDebugLog& operator=(const MyDebugLog&) = delete;
+		// ムーブコンストラクタを削除
+		MyDebugLog(MyDebugLog&&) = delete;
+		// ムーブ代入演算子を削除
+		MyDebugLog& operator=(MyDebugLog&&) = delete;
 
 		std::ofstream logStream_;
 		std::string logFilePath_;

@@ -1,6 +1,6 @@
 #include "StringLibrary.h"
 
-#include "../EngineDefines.h"
+#include "EngineDefines.h"
 
 namespace QFE {
 
@@ -52,7 +52,7 @@ namespace QFE {
 		for (std::string& str : library_) {
 			if (str == string) {
 				QFE_LOG(std::format("Find {} Index: [{}].", string, indexCount));
-				return indexCount;
+				return static_cast<int32_t>(indexCount);
 			}
 			indexCount++;
 		}

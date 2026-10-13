@@ -44,10 +44,3 @@ void FileNameContainer::AddFileNamesByExtension(const std::string& directoryPath
 		AddFileName(file);
 	}
 }
-
-void FileNameContainer::AddFileNamesByDirectoryRecursively(const std::string& directoryPath) {
-
-}
-
-void FileNameContainer::AddFileNamesByExtensionRecursively(const std::string& directoryPath, const std::string& extension) {
-}

@@ -9,6 +9,10 @@ namespace QFE::WINDOW {
 		IEvent() = delete;
 		IEvent(nlohmann::json& eventData);
 		virtual ~IEvent() = default;
+		IEvent(const IEvent&) = default;
+		IEvent& operator=(const IEvent&) = delete;
+		IEvent(IEvent&&) = default;
+		IEvent& operator=(IEvent&&) = delete;
 
 		/// @brief イベント発生時の処理
 		virtual void OnEvent(WPARAM wparam, LPARAM lparam) = 0;

@@ -12,7 +12,6 @@
 
 #include "window/GameWindowManager.h"
 #include "gui/D3D12GuiManager.h"
-#include "camera/CameraManager.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
 #include "core/logger/MyDebugLog.h"
@@ -26,13 +25,19 @@
 #include "ProjectGenerator.h"
 
 struct WindowsGuiToolSystems {
-	std::unique_ptr<QFE::WINDOW::GameWindowManager> windowManager;
+	WindowsGuiToolSystems() = default;
+	WindowsGuiToolSystems(const WindowsGuiToolSystems&) = delete;
+	WindowsGuiToolSystems& operator=(const WindowsGuiToolSystems&) = delete;
+	WindowsGuiToolSystems(WindowsGuiToolSystems&&) = delete;
+	WindowsGuiToolSystems& operator=(WindowsGuiToolSystems&&) = delete;
+
+	std::unique_ptr<QFE::GameWindowManager> windowManager;
 	std::unique_ptr<QFE::FRAMEWORK::GraphicContext> graphicEngine;
 	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager;
 };
 
-/// /// @brief Windowsアプリケーションのテスト
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+/// @brief Windows project generator entry point.
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int argumentCount = 0;
 	LPWSTR* arguments = CommandLineToArgvW(GetCommandLineW(), &argumentCount);
 	if (arguments != nullptr && argumentCount >= 3 &&
@@ -47,20 +52,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		LocalFree(arguments);
 	}
 
-	// エンジンのリソースを保持する構造体
+	// Store engine resources.
 	WindowsGuiToolSystems engineSystems;
-	// エンジンのリソースを保持する構造体
+	// Create engine systems.
 	engineSystems.windowManager =
 		QFE::FRAMEWORK::CreateWindowManager(
 			"Project Generator", 1280, 720);
-	// ウィンドウハンドルを取得
+	// Get the window handle.
 	HWND hwnd = QFE::FRAMEWORK::GetWindowHandle(
 		engineSystems.windowManager.get(),
 		"Project Generator");
-	// グラフィックエンジンを作成
+	// Create the graphics engine.
 	engineSystems.graphicEngine =
 		QFE::FRAMEWORK::CreateGraphicEngine(hwnd);
-	// GUIマネージャを作成
+	// Create the GUI manager.
 	engineSystems.guiManager =
 		QFE::FRAMEWORK::CreateGuiManager(
 			engineSystems.graphicEngine.get(), hwnd);
@@ -71,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	imguiContext.hwnd = hwnd;
 	projectGenerator.Initialize(imguiContext);
 
-	// メインループ
+	// Main loop.
 	while (QFE::FRAMEWORK::IsMainWindowActive(
 		engineSystems.windowManager.get())) {
 
@@ -102,7 +107,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			engineSystems.graphicEngine.get());
 	}
 
-	// 終了処理
+	// Shutdown.
 	projectGenerator.Shutdown();
 	QFE::FRAMEWORK::ShutdownGui(
 		engineSystems.guiManager.get());

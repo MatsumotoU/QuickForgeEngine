@@ -117,7 +117,7 @@ QFE::APPLICATION::DirectoryManager::ScanDirectoryTree(
 
 	while (!error && iterator != end) {
 		if (IsHiddenPath(iterator->path())) {
-			// 隠しディレクトリは一覧に出さず、その配下も走査しない。
+			// Skip hidden directories and do not scan their descendants.
 			iterator.disable_recursion_pending();
 			error.clear();
 			iterator.increment(error);

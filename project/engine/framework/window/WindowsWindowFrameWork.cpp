@@ -82,7 +82,7 @@ bool QFE::FRAMEWORK::RequestGetFilePathFromUser(
 }
 
 bool QFE::FRAMEWORK::RequestGetDirectoryPathFromUser(
-    HWND hwnd, const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outDirectoryPath)
+    HWND hwnd, const std::wstring& filterName, const std::wstring&, std::wstring& outDirectoryPath)
 {
     BROWSEINFO bi = { 0 };
     bi.hwndOwner = hwnd;

@@ -17,7 +17,7 @@
 
 #include "core/math/transform/Transform.h"
 #include "assetfactory/model/ModelData.h"
-#include "../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
 std::unique_ptr<QFE::FRAMEWORK::GraphicContext> QFE::FRAMEWORK::CreateGraphicEngine(HWND hwnd) {
 	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化

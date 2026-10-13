@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "../../../../externals/nlohmann/json_fwd.hpp"
-#include "../../math/MathInclude.h"
+#include <nlohmann/json_fwd.hpp>
+#include "math/MathInclude.h"
 #include "EntityReference.h"
 
 namespace QFE {

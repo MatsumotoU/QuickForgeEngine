@@ -5,6 +5,8 @@
 
 #pragma once
 #include <string>
+#include <cstddef>
+#include <cstdint>
 #include <vector>
 #include <functional>
 #include <unordered_map>
@@ -29,6 +31,12 @@ namespace QFE::GRAPHIC {
 
 	/// @brief このクラスで保持する画像データ
 	struct ImageData {
+		ImageData() = default;
+		ImageData(const ImageData&) = delete;
+		ImageData& operator=(const ImageData&) = delete;
+		ImageData(ImageData&&) = default;
+		ImageData& operator=(ImageData&&) = default;
+
 		DirectXResourceHandle resourceHandle = DirectXResourceHandle::Invalid;// 結びついているテクスチャリソースのハンドル
 		DirectX::ScratchImage scratchImage;
 	};
@@ -43,10 +51,13 @@ namespace QFE::GRAPHIC {
 
 		/// @brief 画像ファイルを読み込む、返り値はリソースハンドル
 		[[nodiscard]] DirectXResourceHandle LoadTexture(const std::string& filePath);
+		/// @brief PNG/JPEG 等の画像ファイルをメモリから読み込む
+		[[nodiscard]] DirectXResourceHandle LoadTextureFromMemory(
+			const std::string& key, const uint8_t* data, size_t size);
 		/// @brief ダミーの黒いキューブマップのハンドルを取得
-		[[nodiscard]] const DirectXResourceHandle GetDummyBlackCubeMapHandle() const;
+		[[nodiscard]] DirectXResourceHandle GetDummyBlackCubeMapHandle() const;
 		/// @brief ダミーの白い1x1テクスチャのハンドルを取得
-		[[nodiscard]] const DirectXResourceHandle GetDummyWhite1x1TextureHandle() const;
+		[[nodiscard]] DirectXResourceHandle GetDummyWhite1x1TextureHandle() const;
 
 	private:
 		/// @brief 画像ファイルを読み込んでDirectX::ScratchImageを作成する関数

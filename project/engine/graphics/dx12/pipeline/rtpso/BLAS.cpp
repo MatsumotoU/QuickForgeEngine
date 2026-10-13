@@ -1,16 +1,19 @@
 #include "BLAS.h"
 #include "EngineDefines.h"
+#include <algorithm>
+#include <cstring>
 
 using namespace QFE::GRAPHIC;
 
 bool QFE::GRAPHIC::BLAS::Create(
 	ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4,
 	const std::vector<QFE::MATH::Vector3>& vertices,
-	const std::vector<uint32_t>& indices) {
+	const std::vector<uint32_t>& indices, bool allowUpdate) {
 	if (vertices.empty() || indices.empty() || indices.size() % 3 != 0) {
 		QFE_LOG("BLAS requires non-empty triangle-list vertices and indices.");
 		return false;
 	}
+	allowUpdate_ = allowUpdate;
 	for (uint32_t index : indices) {
 		if (index >= vertices.size()) {
 			QFE_LOG("BLAS index is outside the vertex buffer.");
@@ -32,6 +35,45 @@ bool QFE::GRAPHIC::BLAS::Create(
 		return false;
 	}
 	isCreated_ = true;
+	return true;
+}
+
+bool BLAS::Update(ID3D12GraphicsCommandList4* commandList4,
+	const std::vector<QFE::MATH::Vector3>& vertices) {
+	if (!isCreated_ || !allowUpdate_ || vertices.size() != vertexCount_ || !commandList4) {
+		return false;
+	}
+	void* mapped = nullptr;
+	if (FAILED(vertexPositionBuffer_->Map(0, nullptr, &mapped))) return false;
+	std::memcpy(mapped, vertices.data(), vertexBufferSize_);
+	vertexPositionBuffer_->Unmap(0, nullptr);
+
+	D3D12_RAYTRACING_GEOMETRY_DESC geometry{};
+	geometry.Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
+	geometry.Flags = D3D12_RAYTRACING_GEOMETRY_FLAG_OPAQUE;
+	geometry.Triangles.VertexBuffer.StartAddress = vertexPositionBuffer_->GetGPUVirtualAddress();
+	geometry.Triangles.VertexBuffer.StrideInBytes = sizeof(QFE::MATH::Vector3);
+	geometry.Triangles.VertexCount = vertexCount_;
+	geometry.Triangles.VertexFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+	geometry.Triangles.IndexBuffer = indexBuffer_->GetGPUVirtualAddress();
+	geometry.Triangles.IndexCount = indexCount_;
+	geometry.Triangles.IndexFormat = DXGI_FORMAT_R32_UINT;
+
+	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC build{};
+	build.Inputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL;
+	build.Inputs.Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE |
+		D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE |
+		D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PERFORM_UPDATE;
+	build.Inputs.NumDescs = 1;
+	build.Inputs.pGeometryDescs = &geometry;
+	build.SourceAccelerationStructureData = blasResultBuffer_->GetGPUVirtualAddress();
+	build.DestAccelerationStructureData = blasResultBuffer_->GetGPUVirtualAddress();
+	build.ScratchAccelerationStructureData = blasScratchBuffer_->GetGPUVirtualAddress();
+	commandList4->BuildRaytracingAccelerationStructure(&build, 0, nullptr);
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+	barrier.UAV.pResource = blasResultBuffer_.Get();
+	commandList4->ResourceBarrier(1, &barrier);
 	return true;
 }
 
@@ -134,7 +176,8 @@ bool BLAS::CreateBLASResource(
 	// --- ステップ2: 構築に必要なサイズをDX12に計算してもらう ---
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS buildInputs{};
 	buildInputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL; // BLASを指定
-	buildInputs.Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE; // 描画最速モード
+	buildInputs.Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE |
+		(allowUpdate_ ? D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE : D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_NONE);
 	buildInputs.NumDescs = 1;
 	buildInputs.pGeometryDescs = &geometryDesc;
 
@@ -163,23 +206,32 @@ bool BLAS::CreateBLASResource(
 	resultDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	resultDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS; // UAV必須
 
-	device5->CreateCommittedResource(
+	HRESULT hr = device5->CreateCommittedResource(
 		&defaultHeapProps, D3D12_HEAP_FLAG_NONE, &resultDesc,
 		D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, // 専用の状態
 		nullptr, IID_PPV_ARGS(&blasResultBuffer_)
 	);
+	if (FAILED(hr)) return false;
 	blasResultBuffer_->SetName(L"BLAS-Result-Buffer");
 
 	// スクラッチ（作業用）バッファの作成
 	D3D12_RESOURCE_DESC scratchDesc = resultDesc;
-	scratchDesc.Width = prebuildInfo.ScratchDataSizeInBytes;
+	scratchDesc.Width = (std::max)(prebuildInfo.ScratchDataSizeInBytes, prebuildInfo.UpdateScratchDataSizeInBytes);
 
-	device5->CreateCommittedResource(
+	hr = device5->CreateCommittedResource(
 		&defaultHeapProps, D3D12_HEAP_FLAG_NONE, &scratchDesc,
-		D3D12_RESOURCE_STATE_COMMON, // 通常の状態
+		D3D12_RESOURCE_STATE_COMMON,
 		nullptr, IID_PPV_ARGS(&blasScratchBuffer_)
 	);
+	if (FAILED(hr)) return false;
 	blasScratchBuffer_->SetName(L"BLAS-Scratch-Buffer");
+	D3D12_RESOURCE_BARRIER scratchBarrier{};
+	scratchBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	scratchBarrier.Transition.pResource = blasScratchBuffer_.Get();
+	scratchBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	scratchBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
+	scratchBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+	commandList4->ResourceBarrier(1, &scratchBarrier);
 
 	// --- ステップ4: コマンドリストに構築コマンドを積む ---
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC buildDesc{};

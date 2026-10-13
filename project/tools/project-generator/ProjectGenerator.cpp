@@ -41,10 +41,41 @@ namespace
 			kind == PremakeProjectKind::SharedLib;
 	}
 
-	bool CanHaveLinkInputs(PremakeProjectKind kind)
+	bool InheritsDependencies(ProjectLinkDependencyMode mode)
 	{
-		return kind != PremakeProjectKind::None &&
-			kind != PremakeProjectKind::Utility;
+		return mode == ProjectLinkDependencyMode::Transitive;
+	}
+
+	ImVec4 GetLinkColor(ProjectLinkDependencyMode mode)
+	{
+		switch (mode) {
+		case ProjectLinkDependencyMode::Transitive:
+			return ImVec4(0.95f, 0.20f, 0.20f, 1.0f);
+		case ProjectLinkDependencyMode::DirectOnly:
+			return ImVec4(0.20f, 0.85f, 0.35f, 1.0f);
+		default:
+			return ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+	}
+
+	ImVec4 GetExternalNodeBackgroundColor()
+	{
+		return ImVec4(0.30f, 0.10f, 0.40f, 0.95f);
+	}
+
+	ImVec4 GetExternalNodeBorderColor()
+	{
+		return ImVec4(0.78f, 0.35f, 0.95f, 1.0f);
+	}
+
+	ImVec4 GetExternalNodeTextColor()
+	{
+		return ImVec4(0.88f, 0.65f, 1.0f, 1.0f);
+	}
+
+	float GetLinkThickness()
+	{
+		return 2.5f;
 	}
 
 	bool IsExecutableKind(PremakeProjectKind kind)
@@ -201,10 +232,9 @@ namespace
 		return settings.kind;
 	}
 
-	// Node EditorはNodeId/PinId/LinkIdを最終的に同じImGuiのヒットテスト
-	// IDとして扱うため、種別ごとに上位ビットを分ける。例えば、単純に
-	// nodeId * 2 + 1 とすると、nodeId=3とnodeId=1のinput pinが同じ
-	// IDになり、ノードのドラッグがリンク作成として扱われる。
+	// Node Editor treats node, pin, and link IDs as the same ImGui hit-test ID.
+	// Reserve distinct high bits for each type. A simple nodeId * 2 + 1
+	// can collide with another node's input pin and turn dragging into linking.
 	constexpr std::uintptr_t kNodeEditorIdPayloadMask =
 		(std::uintptr_t(1) << 60) - 1;
 	constexpr std::uintptr_t kNodeEditorNodeIdTag =
@@ -275,6 +305,23 @@ namespace
 	ed::NodeId ToEditorGroupId(std::uint64_t id)
 	{
 		return ed::NodeId(EncodeNodeEditorId(kNodeEditorGroupIdTag, id));
+	}
+
+	bool GetGroupContentBounds(const ProjectGroup& group,
+		ImVec2& minimum, ImVec2& maximum)
+	{
+		const ed::NodeId groupId = ToEditorGroupId(group.id);
+		const ImVec2 position = ed::GetNodePosition(groupId);
+		const ImVec2 size = ed::GetNodeSize(groupId);
+		if (position.x == FLT_MAX || position.y == FLT_MAX ||
+			size.x <= 0.0f || size.y <= 0.0f) {
+			return false;
+		}
+		const ImVec4 padding = ed::GetStyle().NodePadding;
+		minimum = ImVec2(position.x + padding.x, position.y + padding.y);
+		maximum = ImVec2(position.x + size.x - padding.z,
+			position.y + size.y - padding.w);
+		return minimum.x < maximum.x && minimum.y < maximum.y;
 	}
 
 	struct ParsedPremakeProject {
@@ -600,8 +647,8 @@ namespace
 		std::error_code error;
 		addAncestors(std::filesystem::current_path(error));
 
-		// Visual Studioから起動した場合はSolutionDirが作業ディレクトリだが、
-		// exeを直接起動した場合はgenerated/outputs/...になるため、両方を探す。
+		// Visual Studio starts in SolutionDir, while the executable starts in
+		// generated/outputs/...; search both locations.
 		wchar_t modulePath[MAX_PATH] = {};
 		const DWORD modulePathLength = GetModuleFileNameW(
 			nullptr, modulePath, static_cast<DWORD>(std::size(modulePath)));
@@ -967,50 +1014,52 @@ void ProjectGenerator::Update() {
 }
 
 void ProjectGenerator::Draw() {
-    // 1. 画面全体のフラグを設定（タイトルバーやリサイズ、移動などをすべて無効化）
+    // 1. Configure the full-screen host window without title or movement controls.
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-    // 2. メインビューポート（画面全体）のサイズと位置を取得して、ウィンドウをそこに合わせる
+    // 2. Fit the host window to the main viewport.
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
     ImGui::SetNextWindowViewport(viewport->ID);
 
-    // 3. ウィンドウのパディング（内側の余白）を一時的にゼロにする（ドックスペースを画面端まで広げるため）
+    // 3. Remove padding so the dock space reaches the viewport edges.
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    // 4. 透明な背景ウィンドウの開始
+    // 4. Begin the transparent host window.
     ImGui::Begin("MainDockSpaceWindow", nullptr, window_flags);
 
-    // スタイル変数を元に戻す
+    // Restore the style variables.
     ImGui::PopStyleVar(3);
 
-    // 5. ドックスペース（ドッキングの土台）を設置
+    // 5. Create the dock space.
     ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
         ImGuiID dockspace_id = ImGui::GetID("MyMainDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     }
 
-	// メインメニューバーの描画
+	// Draw the main menu bar.
 	MainMenuBar();
 
-    // MainDockSpaceWindowの終了
+    // End MainDockSpaceWindow.
 	ImGui::End();
 
-	// メインウィンドウの描画
+	// Draw the main window.
 	MainWindow();
-	// ノードエディタウィンドウの描画
+	// Draw the node editor window.
 	NodeEditorWindow();
-	// 選択中ノードの設定ウィンドウ
+	// Draw the selected node's settings.
 	NodeSettingsWindow();
-	// 選択中グループの設定ウィンドウ
+	// Draw the selected link's settings.
+	LinkSettingsWindow();
+	// Draw the selected group's settings.
 	GroupSettingsWindow();
-	// ルートPremakeの共通設定ウィンドウ
+	// Draw shared root Premake settings.
 	CommonPremakeSettingsWindow();
 }
 
@@ -1212,7 +1261,7 @@ void QFE::APPLICATION::ProjectGenerator::SelectRootDirectory()
 		return;
 	}
 
-	// ルート変更ではディレクトリ一覧だけを更新し、作成済みの構成は保持する。
+	// Changing the root refreshes directories while preserving the graph.
 	std::error_code premakeError;
 	const bool hasRootPremake = std::filesystem::is_regular_file(
 		selectedRoot / "premake5.lua", premakeError);
@@ -1337,6 +1386,14 @@ ProjectNode* QFE::APPLICATION::ProjectGenerator::FindNode(std::uint64_t nodeId)
 	return node == nodes_.end() ? nullptr : &(*node);
 }
 
+ProjectLink* QFE::APPLICATION::ProjectGenerator::FindLink(std::uint64_t linkId)
+{
+	const auto link = std::find_if(
+		links_.begin(), links_.end(),
+		[linkId](const ProjectLink& value) { return value.id == linkId; });
+	return link == links_.end() ? nullptr : &(*link);
+}
+
 void QFE::APPLICATION::ProjectGenerator::RemoveNode(std::uint64_t nodeId)
 {
 	if (selectedNodeId_ == nodeId) {
@@ -1355,6 +1412,10 @@ void QFE::APPLICATION::ProjectGenerator::RemoveNode(std::uint64_t nodeId)
 				return link.sourceNodeId == nodeId || link.targetNodeId == nodeId;
 			}),
 		links_.end());
+	if (selectedLinkId_ != 0 && FindLink(selectedLinkId_) == nullptr) {
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
+	}
 	for (ProjectGroup& group : groups_) {
 		group.nodeIds.erase(
 			std::remove(group.nodeIds.begin(), group.nodeIds.end(), nodeId),
@@ -1383,6 +1444,94 @@ ProjectGroup* QFE::APPLICATION::ProjectGenerator::FindGroup(
 		groups_.begin(), groups_.end(),
 		[groupId](const ProjectGroup& value) { return value.id == groupId; });
 	return group == groups_.end() ? nullptr : &(*group);
+}
+
+const ProjectGroup* QFE::APPLICATION::ProjectGenerator::FindGroupForNode(
+	std::uint64_t nodeId) const
+{
+	const auto group = std::find_if(groups_.begin(), groups_.end(),
+		[nodeId](const ProjectGroup& value) {
+			return std::find(value.nodeIds.begin(), value.nodeIds.end(), nodeId) !=
+				value.nodeIds.end();
+		});
+	return group == groups_.end() ? nullptr : &(*group);
+}
+
+void QFE::APPLICATION::ProjectGenerator::SynchronizeGroupMembership()
+{
+	if (nodeEditorContext_ == nullptr || groups_.empty() ||
+		std::any_of(nodes_.begin(), nodes_.end(),
+			[](const ProjectNode& node) { return !node.positionInitialized; }) ||
+		std::any_of(groups_.begin(), groups_.end(),
+			[](const ProjectGroup& group) { return !group.positionInitialized; })) {
+		return;
+	}
+
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
+	struct GroupBounds {
+		ImVec2 minimum;
+		ImVec2 maximum;
+		ImVec2 position;
+	};
+	std::vector<GroupBounds> bounds;
+	bounds.reserve(groups_.size());
+	for (const ProjectGroup& group : groups_) {
+		ImVec2 minimum, maximum;
+		if (!GetGroupContentBounds(group, minimum, maximum)) {
+			ax::NodeEditor::SetCurrentEditor(previousEditor);
+			return;
+		}
+		bounds.push_back({ minimum, maximum,
+			ax::NodeEditor::GetNodePosition(ToEditorGroupId(group.id)) });
+	}
+
+	std::vector<std::vector<std::uint64_t>> memberships(groups_.size());
+	std::vector<ImVec2> nodePositions;
+	nodePositions.reserve(nodes_.size());
+	for (const ProjectNode& node : nodes_) {
+		const ImVec2 position = ax::NodeEditor::GetNodePosition(ToEditorNodeId(node.id));
+		const ImVec2 size = ax::NodeEditor::GetNodeSize(ToEditorNodeId(node.id));
+		if (position.x == FLT_MAX || position.y == FLT_MAX ||
+			size.x <= 0.0f || size.y <= 0.0f) {
+			ax::NodeEditor::SetCurrentEditor(previousEditor);
+			return;
+		}
+		nodePositions.push_back(position);
+		const ProjectGroup* previousGroup = FindGroupForNode(node.id);
+		std::size_t chosenIndex = groups_.size();
+		float chosenArea = FLT_MAX;
+		for (std::size_t index = 0; index < groups_.size(); ++index) {
+			const GroupBounds& group = bounds[index];
+			if (position.x < group.minimum.x - 1.0f ||
+				position.y < group.minimum.y - 1.0f ||
+				position.x + size.x > group.maximum.x + 1.0f ||
+				position.y + size.y > group.maximum.y + 1.0f) {
+				continue;
+			}
+			const float area = (group.maximum.x - group.minimum.x) *
+				(group.maximum.y - group.minimum.y);
+			if (area < chosenArea ||
+				(area == chosenArea && previousGroup == &groups_[index])) {
+				chosenIndex = index;
+				chosenArea = area;
+			}
+		}
+		if (chosenIndex != groups_.size()) {
+			memberships[chosenIndex].push_back(node.id);
+		}
+	}
+	for (std::size_t index = 0; index < groups_.size(); ++index) {
+		groups_[index].nodeIds = std::move(memberships[index]);
+		groups_[index].initialPosition = bounds[index].position;
+		groups_[index].size = ImVec2(
+			bounds[index].maximum.x - bounds[index].minimum.x,
+			bounds[index].maximum.y - bounds[index].minimum.y);
+	}
+	for (std::size_t index = 0; index < nodes_.size(); ++index) {
+		nodes_[index].initialPosition = nodePositions[index];
+	}
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
 }
 
 void QFE::APPLICATION::ProjectGenerator::RemoveGroup(std::uint64_t groupId)
@@ -1591,6 +1740,10 @@ void QFE::APPLICATION::ProjectGenerator::DrawNodeContextMenu(
 		ImGui::Text("Selected links: %d",
 			static_cast<int>(selectedLinkIds.size()));
 		ImGui::Separator();
+		if (ImGui::MenuItem("Link Settings...")) {
+			selectedLinkId_ = selectedLinkIds.front();
+			linkSettingsOpen_ = true;
+		}
 		if (ImGui::MenuItem("Delete Selected Links")) {
 			DeleteSelectedLinks(selectedLinkIds);
 		}
@@ -1771,6 +1924,63 @@ bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
 		return false;
 	}
 
+	ImVec2 groupMinimum, groupMaximum;
+	if (nodeEditorContext_ == nullptr ||
+		ax::NodeEditor::GetCurrentEditor() != nodeEditorContext_ ||
+		!GetGroupContentBounds(*group, groupMinimum, groupMaximum)) {
+		createProjectError_ = "The group is not available in the node editor.";
+		return false;
+	}
+	const auto& editorStyle = ax::NodeEditor::GetStyle();
+	const float contentWidth = std::max(150.0f,
+		std::max(ImGui::CalcTextSize(directoryName.c_str()).x,
+			std::max(ImGui::CalcTextSize(resolvedProjectName.c_str()).x,
+				ImGui::CalcTextSize("in").x + ImGui::CalcTextSize("out").x + 64.0f)));
+	const bool hasSecondLabel = resolvedProjectName != directoryName;
+	const ImVec2 nodeSize(
+		contentWidth + editorStyle.NodePadding.x + editorStyle.NodePadding.z + 8.0f,
+		ImGui::GetTextLineHeight() * (hasSecondLabel ? 3.0f : 2.0f) +
+		ImGui::GetFrameHeight() +
+		ImGui::GetStyle().ItemSpacing.y * (hasSecondLabel ? 3.0f : 2.0f) +
+		editorStyle.NodePadding.y + editorStyle.NodePadding.w + 8.0f);
+	constexpr float margin = 8.0f;
+	if (groupMaximum.x - groupMinimum.x < nodeSize.x + margin * 2.0f ||
+		groupMaximum.y - groupMinimum.y < nodeSize.y + margin * 2.0f) {
+		createProjectError_ = "Resize the group to fit the new node.";
+		return false;
+	}
+	ImVec2 newNodePosition(groupMinimum.x + margin, groupMinimum.y + margin);
+	bool foundFreeSpace = false;
+	for (float y = newNodePosition.y;
+		y + nodeSize.y <= groupMaximum.y - margin && !foundFreeSpace;
+		y += 24.0f) {
+		for (float x = newNodePosition.x;
+			x + nodeSize.x <= groupMaximum.x - margin;
+			x += 24.0f) {
+			bool overlaps = false;
+			for (const std::uint64_t memberNodeId : group->nodeIds) {
+				const ImVec2 memberPosition = ax::NodeEditor::GetNodePosition(
+					ToEditorNodeId(memberNodeId));
+				const ImVec2 memberSize = ax::NodeEditor::GetNodeSize(
+					ToEditorNodeId(memberNodeId));
+				if (memberPosition.x != FLT_MAX && memberPosition.y != FLT_MAX &&
+					memberSize.x > 0.0f && memberSize.y > 0.0f &&
+					x < memberPosition.x + memberSize.x + margin &&
+					x + nodeSize.x + margin > memberPosition.x &&
+					y < memberPosition.y + memberSize.y + margin &&
+					y + nodeSize.y + margin > memberPosition.y) {
+					overlaps = true;
+					break;
+				}
+			}
+			if (!overlaps) {
+				newNodePosition = ImVec2(x, y);
+				foundFreeSpace = true;
+				break;
+			}
+		}
+	}
+
 	std::error_code createError;
 	std::filesystem::create_directories(directoryPath, createError);
 	if (createError || !std::filesystem::is_directory(directoryPath, createError)) {
@@ -1781,53 +1991,15 @@ bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
 		return false;
 	}
 
-	ImVec2 groupPosition = group->initialPosition;
-	if (nodeEditorContext_ != nullptr &&
-		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
-		const ImVec2 editorPosition = ax::NodeEditor::GetNodePosition(
-			ToEditorGroupId(group->id));
-		if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
-			groupPosition = editorPosition;
-		}
-	}
-
-	float nextNodeY = groupPosition.y + 56.0f;
-	for (const std::uint64_t memberNodeId : group->nodeIds) {
-		const ProjectNode* memberNode = FindNode(memberNodeId);
-		if (memberNode == nullptr) {
-			continue;
-		}
-		ImVec2 memberPosition = memberNode->initialPosition;
-		float memberHeight = 100.0f;
-		if (nodeEditorContext_ != nullptr &&
-			ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
-			const ImVec2 editorPosition = ax::NodeEditor::GetNodePosition(
-				ToEditorNodeId(memberNodeId));
-			const ImVec2 editorSize = ax::NodeEditor::GetNodeSize(
-				ToEditorNodeId(memberNodeId));
-			if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
-				memberPosition = editorPosition;
-			}
-			if (editorSize.y > 0.0f) {
-				memberHeight = editorSize.y;
-			}
-		}
-		nextNodeY = std::max(nextNodeY,
-			memberPosition.y + memberHeight + 32.0f);
-	}
-
 	ProjectNode node;
 	node.id = nextNodeId_++;
 	node.name = directoryName;
 	node.projectName = resolvedProjectName;
 	node.directoryPath = directoryPath;
-	node.initialPosition = ImVec2(
-		groupPosition.x + 48.0f,
-		nextNodeY);
+	node.initialPosition = newNodePosition;
 	const std::uint64_t createdNodeId = node.id;
 	nodes_.emplace_back(std::move(node));
 	group->nodeIds.push_back(createdNodeId);
-	group->needsBoundsUpdate = true;
 	EnsureConfigurationData();
 
 	// Refresh the directory tree. If a previous asynchronous scan is still
@@ -1838,7 +2010,8 @@ bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
 	createProjectError_.clear();
 	premakeStatus_ = "Created directory and added project '" +
 		resolvedProjectName + "' to group '" +
-		(group->name.empty() ? std::string("Group") : group->name) + "'.";
+		(group->name.empty() ? std::string("Group") : group->name) +
+		(foundFreeSpace ? "'." : "'. Move the overlapping node as needed.");
 	return true;
 }
 
@@ -1861,8 +2034,91 @@ void QFE::APPLICATION::ProjectGenerator::DeleteSelectedLinks(
 		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
 		ax::NodeEditor::ClearSelection();
 	}
+	if (selectedLinkId_ != 0 && FindLink(selectedLinkId_) == nullptr) {
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
+	}
 	premakeStatus_ = "Deleted " + std::to_string(deletedLinkCount) +
 		" selected link(s).";
+}
+
+void QFE::APPLICATION::ProjectGenerator::LinkSettingsWindow()
+{
+	if (!linkSettingsOpen_ || selectedLinkId_ == 0) {
+		return;
+	}
+
+	ProjectLink* link = FindLink(selectedLinkId_);
+	if (link == nullptr) {
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
+		return;
+	}
+
+	const ProjectNode* sourceNode = FindNode(link->sourceNodeId);
+	const ProjectNode* targetNode = FindNode(link->targetNodeId);
+	if (sourceNode == nullptr || targetNode == nullptr) {
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
+		return;
+	}
+
+	const std::string sourceLabel = sourceNode->projectName.empty()
+		? sourceNode->name : sourceNode->projectName;
+	const std::string targetLabel = targetNode->projectName.empty()
+		? targetNode->name : targetNode->projectName;
+
+	ImGui::SetNextWindowSize(ImVec2(420.0f, 260.0f), ImGuiCond_FirstUseEver);
+	bool isOpen = linkSettingsOpen_;
+	bool deleteRequested = false;
+	if (ImGui::Begin("Link Settings", &isOpen)) {
+		ImGui::TextUnformatted("Project relationship");
+		ImGui::Text("Source: %s", sourceLabel.c_str());
+		ImGui::Text("Target: %s", targetLabel.c_str());
+		ImGui::TextWrapped(
+			"The target project is the downstream project. Choose whether it "
+			"should depend on the source project.");
+		ImGui::Separator();
+
+		ImGui::TextUnformatted("Dependency scope");
+		ProjectLinkDependencyMode requestedMode = link->dependencyMode;
+		if (ImGui::RadioButton("Include lower dependencies (red)",
+			requestedMode == ProjectLinkDependencyMode::Transitive)) {
+			requestedMode = ProjectLinkDependencyMode::Transitive;
+		}
+		if (ImGui::RadioButton("Direct project only (green)",
+			requestedMode == ProjectLinkDependencyMode::DirectOnly)) {
+			requestedMode = ProjectLinkDependencyMode::DirectOnly;
+		}
+		if (requestedMode != link->dependencyMode) {
+			link->dependencyMode = requestedMode;
+			premakeStatus_ = requestedMode ==
+				ProjectLinkDependencyMode::Transitive
+				? "Link includes lower project dependencies."
+				: "Link depends on the direct project only.";
+		}
+		ImGui::TextColored(GetLinkColor(link->dependencyMode),
+			link->dependencyMode == ProjectLinkDependencyMode::Transitive
+				? "Target depends on this project and its lower dependencies."
+				: "Target depends on this project only.");
+
+		if (ImGui::Button("Delete Link")) {
+			deleteRequested = true;
+		}
+	}
+	ImGui::End();
+
+	if (deleteRequested) {
+		DeleteSelectedLinks({ selectedLinkId_ });
+	} else if (!isOpen) {
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
+		if (nodeEditorContext_ != nullptr) {
+			ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
+			ax::NodeEditor::ClearSelection();
+			ax::NodeEditor::SetCurrentEditor(nullptr);
+		}
+	}
 }
 
 void QFE::APPLICATION::ProjectGenerator::GroupSettingsWindow()
@@ -1945,13 +2201,13 @@ void QFE::APPLICATION::ProjectGenerator::CommonPremakeSettingsWindow()
 				bool changed = false;
 				if (multiline) {
 					if (mixed) {
-						ImGui::TextDisabled("<個別の設定>");
+						ImGui::TextDisabled("<Mixed values>");
 					}
 					changed = ImGui::InputTextMultiline(widgetId, &value,
 						ImVec2(-FLT_MIN, height), ImGuiInputTextFlags_AllowTabInput);
 				} else {
 					changed = ImGui::InputTextWithHint(widgetId,
-						mixed ? "<個別の設定>" : "", &value);
+						mixed ? "<Mixed values>" : "", &value);
 				}
 				if (changed) {
 					for (PremakeConfigurationSettings* target : targets) {
@@ -1973,7 +2229,7 @@ void QFE::APPLICATION::ProjectGenerator::CommonPremakeSettingsWindow()
 					targets.front()->staticRuntime;
 			}
 			const char* staticRuntimePreview = staticRuntimeMixed
-				? "<個別の設定>"
+				? "<Mixed values>"
 				: (targets.front()->staticRuntime ? "On" : "Off");
 			ImGui::TextUnformatted("Static runtime");
 			if (ImGui::BeginCombo("##StaticRuntime", staticRuntimePreview)) {
@@ -2009,7 +2265,7 @@ void QFE::APPLICATION::ProjectGenerator::CommonPremakeSettingsWindow()
 		};
 
 		if (ImGui::BeginTabBar("CommonConfigurationTabs")) {
-			if (ImGui::BeginTabItem("すべての構成")) {
+			if (ImGui::BeginTabItem("All Configurations")) {
 				std::vector<PremakeConfigurationSettings*> targets;
 				for (const std::string& configuration : configurations) {
 					targets.push_back(
@@ -2069,6 +2325,14 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 	// this also gives the editor a stable content origin after docking/resizing.
 	ImGui::TextDisabled("Project Dependency Graph");
 	ImGui::Separator();
+	ImGui::TextColored(GetLinkColor(ProjectLinkDependencyMode::Transitive),
+		"Red: includes lower project dependencies");
+	ImGui::SameLine();
+	ImGui::TextColored(GetLinkColor(ProjectLinkDependencyMode::DirectOnly),
+		"Green: direct project only");
+	ImGui::SameLine();
+	ImGui::TextColored(GetExternalNodeTextColor(),
+		"Purple: external library (warnings disabled)");
 	const ImVec2 canvasSize = ImGui::GetContentRegionAvail();
 	if (canvasSize.x <= 0.0f || canvasSize.y <= 0.0f) {
 		ImGui::End();
@@ -2110,17 +2374,19 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 		ax::NodeEditor::Link(
 			ToEditorLinkId(link.id),
 			ToInputPinId(link.targetNodeId),
-			ToOutputPinId(link.sourceNodeId));
+			ToOutputPinId(link.sourceNodeId),
+			GetLinkColor(link.dependencyMode),
+			GetLinkThickness());
 	}
 
 	HandleNewLinks();
 	HandleDeletedItems();
 
 	ax::NodeEditor::End();
+	SynchronizeGroupMembership();
 
-	// Node Editorの選択状態をモデルIDへ変換する。グループと通常ノードは
-	// ID領域が異なるため、右クリックメニューと設定ウィンドウで安全に
-	// 別扱いできる。
+	// Convert Node Editor selections to model IDs. Groups and ordinary nodes
+	// use distinct ID ranges so menus and settings can handle them separately.
 	const int selectedObjectCount = ax::NodeEditor::GetSelectedNodes(nullptr, 0);
 	std::vector<ax::NodeEditor::NodeId> selectedEditorNodes(
 		static_cast<std::size_t>(std::max(selectedObjectCount, 0)));
@@ -2164,17 +2430,30 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 		selectedGroupId_ = selectedGroupIds.front();
 		groupSettingsOpen_ = true;
 		selectedNodeId_ = 0;
+		selectedLinkId_ = 0;
 		nodeSettingsOpen_ = false;
+		linkSettingsOpen_ = false;
 	} else if (!selectedNodeIds.empty()) {
 		selectedGroupId_ = 0;
 		groupSettingsOpen_ = false;
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
 		if (selectedNodeId_ != selectedNodeIds.front()) {
 			selectedNodeId_ = selectedNodeIds.front();
 		}
 		nodeSettingsOpen_ = true;
+	} else if (!selectedLinkIds.empty()) {
+		selectedGroupId_ = 0;
+		groupSettingsOpen_ = false;
+		selectedNodeId_ = 0;
+		nodeSettingsOpen_ = false;
+		selectedLinkId_ = selectedLinkIds.front();
+		linkSettingsOpen_ = true;
 	} else {
 		selectedNodeId_ = 0;
 		nodeSettingsOpen_ = false;
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
 		selectedGroupId_ = 0;
 		groupSettingsOpen_ = false;
 	}
@@ -2217,10 +2496,16 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 			ImVec4(0.16f, 0.52f, 0.68f, 0.94f));
 		ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_NodeBorder,
 			ImVec4(0.55f, 0.88f, 1.0f, 0.95f));
+  }
+	if (node.externalLibrary) {
+		ed::PushStyleColor(ed::StyleColor_NodeBg,
+			GetExternalNodeBackgroundColor());
+		ed::PushStyleColor(ed::StyleColor_NodeBorder,
+			GetExternalNodeBorderColor());
 	}
 	ax::NodeEditor::BeginNode(editorNodeId);
-	// Node EditorはノードごとにImGuiのIDスコープを作らないため、
-	// ノード内の通常のImGuiウィジェットを明示的に分離する。
+	// Node Editor does not create an ImGui ID scope for each node, so isolate
+	// regular ImGui widgets inside each node explicitly.
 	ImGui::PushID(reinterpret_cast<void*>(static_cast<std::uintptr_t>(node.id)));
 	ImGui::TextUnformatted(node.name.c_str());
 	if (projectLabel != node.name) {
@@ -2228,10 +2513,13 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 	}
 	if (node.isFrameworkLayer) {
 		ImGui::TextUnformatted(operatingSystemsLabel.c_str());
+  }
+	if (node.externalLibrary) {
+		ImGui::TextColored(GetExternalNodeTextColor(), "External library");
 	}
 
-	// PinPivotRect()とDrawListは画面座標を受け取る。GetCursorPos()は
-	// ウィンドウ内ローカル座標なので、ズーム・ドッキング時に使わない。
+	// PinPivotRect() and DrawList use screen coordinates. GetCursorPos() is
+	// window-local and would drift under zooming or docking.
 	const ImVec2 pinRowStart = ImGui::GetCursorScreenPos();
 	const float pinCenterY = pinRowStart.y + ImGui::GetTextLineHeight() * 0.5f;
 	const auto& nodeStyle = ax::NodeEditor::GetStyle();
@@ -2269,6 +2557,9 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 	ax::NodeEditor::EndNode();
 	if (node.isFrameworkLayer) {
 		ax::NodeEditor::PopStyleColor(2);
+  }
+	if (node.externalLibrary) {
+		ed::PopStyleColor(2);
 	}
 	ImGui::PopID();
 }
@@ -2296,6 +2587,9 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 		const std::string directoryPath =
 			QFE::ConvertString(node->directoryPath.wstring());
 		ImGui::TextWrapped("Path: %s", directoryPath.c_str());
+		const ProjectGroup* group = FindGroupForNode(node->id);
+		ImGui::TextWrapped("Group: %s", group == nullptr
+			? "None" : (group->name.empty() ? "Group" : group->name.c_str()));
 		ImGui::Separator();
 
 		if (ImGui::Checkbox("Framework layer", &node->isFrameworkLayer)) {
@@ -2311,6 +2605,16 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 			}
 		}
 		ImGui::Separator();
+		bool externalLibrary = node->externalLibrary;
+		if (ImGui::Checkbox("External library", &externalLibrary)) {
+			node->externalLibrary = externalLibrary;
+			premakeStatus_ = externalLibrary
+				? "External library enabled: warnings are disabled for this node."
+				: "External library disabled: strict warnings are enabled for this node.";
+		}
+		ImGui::SameLine();
+		ImGui::TextColored(GetExternalNodeTextColor(),
+			"(purple node, warnings disabled)");
 
 		ImGui::TextUnformatted("Premake project name");
 		ImGui::InputText("##PremakeProjectName", &node->projectName);
@@ -2331,7 +2635,7 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 				kindMixed |= targets[index]->kind != targets.front()->kind;
 			}
 			const char* kindPreview = kindMixed
-				? "<個別の設定>"
+				? "<Mixed values>"
 				: GetPremakeKindName(targets.front()->kind);
 			ImGui::TextUnformatted("Premake kind");
 			if (ImGui::BeginCombo("##PremakeKind", kindPreview)) {
@@ -2358,7 +2662,7 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 				std::string value = mixed ? std::string{} : targets.front()->*member;
 				ImGui::TextUnformatted(label);
 				if (mixed) {
-					ImGui::TextDisabled("<個別の設定>");
+					ImGui::TextDisabled("<Mixed values>");
 				}
 				if (ImGui::InputTextMultiline(widgetId, &value,
 					ImVec2(-FLT_MIN, height), ImGuiInputTextFlags_AllowTabInput)) {
@@ -2383,7 +2687,7 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 		};
 
 		if (ImGui::BeginTabBar("NodeConfigurationTabs")) {
-			if (ImGui::BeginTabItem("すべての構成")) {
+			if (ImGui::BeginTabItem("All Configurations")) {
 				std::vector<ProjectConfigurationSettings*> targets;
 				for (const std::string& configuration : configurations) {
 					targets.push_back(&node->configurationSettings.at(configuration));
@@ -2559,8 +2863,10 @@ void QFE::APPLICATION::ProjectGenerator::CollectDependencyClosure(
 		}
 
 		dependencyNodeIds.push_back(link.sourceNodeId);
-		CollectDependencyClosure(link.sourceNodeId, dependencyNodeIds,
-			visitedNodeIds);
+		if (InheritsDependencies(link.dependencyMode)) {
+			CollectDependencyClosure(link.sourceNodeId, dependencyNodeIds,
+				visitedNodeIds);
+		}
 	}
 }
 
@@ -2588,7 +2894,9 @@ void QFE::APPLICATION::ProjectGenerator::SimplifyDependencyLinks()
 					hasAlternatePath = true;
 					break;
 				}
-				pendingNodes.push_back(link.targetNodeId);
+				if (InheritsDependencies(link.dependencyMode)) {
+					pendingNodes.push_back(link.targetNodeId);
+				}
 			}
 		}
 
@@ -2636,8 +2944,8 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 		return;
 	}
 
-	// ルートから参照される各スクリプトの location を、走査済みの
-	// ディレクトリノードへ対応付ける。未追加のプロジェクトはここで追加する。
+	// Match scripts referenced by the root to scanned directory nodes and add
+	// projects that have not yet been added.
 	for (const ParsedPremakeProject& project : projects) {
 		const std::filesystem::path projectPath = NormalizePath(project.directoryPath);
 		for (const DirectoryEntry& directory : directoryManager_.GetDirectories()) {
@@ -2680,8 +2988,8 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 		++matchedProjectCount;
 	}
 
-	// Premakeのgroup宣言をグループモデルへ反映する。読み込み時は
-	// Premakeを正とし、存在しないgroupやメンバーは構成から外す。
+	// Import Premake group declarations. During import, Premake is authoritative;
+	// remove groups and members that no longer exist there.
 	groups_.clear();
 	nextGroupId_ = 1;
 	for (const ParsedPremakeProject& project : projects) {
@@ -2721,9 +3029,8 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 	selectedGroupId_ = 0;
 	groupSettingsOpen_ = false;
 
-	// project.links { "Provider" } は「このプロジェクトが Provider に依存」
-	// という意味なので、Provider の出力ピンから対象プロジェクトの入力ピンへ
-	// エッジを作る。
+	// project.links { "Provider" } means this project depends on Provider.
+	// Connect Provider's output pin to this project's input pin.
 	std::unordered_map<std::string, std::uint64_t> nodeIdsByProjectName;
 	for (const ProjectNode& node : nodes_) {
 		const std::string projectName = node.projectName.empty()
@@ -2844,6 +3151,7 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		return;
 	}
 	EnsureConfigurationData();
+	SynchronizeGroupMembership();
 
 	const std::filesystem::path rootPath = NormalizePath(
 		QFE::ConvertString(directoryManager_.GetLootDirectory()));
@@ -3097,9 +3405,38 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		emitScalar("optimize", &PremakeConfigurationSettings::optimize);
 		emitScalar("symbols", &PremakeConfigurationSettings::symbols);
 		emitScalar("debugdir", &PremakeConfigurationSettings::debugDirectory, true);
+		// Keep generated projects strict and consistent. These are emitted at
+		// project scope as well as workspace scope so every generated target
+		// keeps the policy when Premake creates the Visual Studio projects.
+		destination << "    warnings \"Everything\"\n";
+		destination << "    externalwarnings \"Off\"\n";
+		destination << "    fatalwarnings \"All\"\n";
 		emitFlags();
 		emitList("buildoptions", &PremakeConfigurationSettings::buildOptions);
+		// Premake exposes ExternalIncludePath to Visual Studio project metadata,
+		// but MSBuild does not pass it to cl.exe as /external:I on all toolset
+		// versions. Add the compiler options explicitly so bundled headers are
+		// actually classified as external during compilation.
+		destination << "    buildoptions {\n";
+		destination << "        \"/wd4514\",\n";
+		destination << "        \"/wd4820\",\n";
+		destination << "        \"/wd4710\",\n";
+		destination << "        \"/wd4711\",\n";
+		destination << "        \"/wd5045\",\n";
+		destination << "        \"/external:I\" .. path.join(QFE_PROJECT_ROOT, \"externals\"),\n";
+		destination << "        \"/external:I\" .. path.join(QFE_PROJECT_ROOT, \"externals/imgui\"),\n";
+		destination << "        \"/external:I\" .. path.join(QFE_PROJECT_ROOT, \"externals/assimp\"),\n";
+		destination << "        \"/external:I\" .. path.join(QFE_PROJECT_ROOT, \"externals/assimp/upstream/include\"),\n";
+		destination << "        \"/external:I\" .. path.join(QFE_PROJECT_ROOT, \"externals/imgui/imgui-node-editor-0.9.3\"),\n";
+		destination << "    }\n";
 		emitList("includedirs", &PremakeConfigurationSettings::includePaths, true);
+		// Every generated project can include headers relative to the solution
+		// root. Emit this at project scope too because Premake does not reliably
+		// propagate workspace-level include directories to all Visual Studio
+		// projects and configurations.
+		destination << "    includedirs {\n";
+		destination << "        path.join(QFE_PROJECT_ROOT, \".\"),\n";
+		destination << "    }\n";
 		emitList("defines", &PremakeConfigurationSettings::defines);
 	};
 
@@ -3181,6 +3518,20 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		// Visual Studio projects. Emit the effective global configuration at
 		// project scope as well so build options such as /utf-8 are preserved.
 		emitCommonConfigurationSettings(output);
+		output << "    externalincludedirs {\n";
+		output << "        path.join(QFE_PROJECT_ROOT, \"externals\"),\n";
+		output << "        path.join(QFE_PROJECT_ROOT, \"externals/imgui\"),\n";
+		output << "        path.join(QFE_PROJECT_ROOT, \"externals/assimp\"),\n";
+		output << "        path.join(QFE_PROJECT_ROOT, \"externals/assimp/upstream/include\"),\n";
+		output << "        path.join(QFE_PROJECT_ROOT, \"externals/imgui/imgui-node-editor-0.9.3\"),\n";
+		output << "    }\n";
+		if (node.externalLibrary) {
+			// External library sources are third-party code. Keep the generated
+			// target out of the project's warning budget entirely.
+			output << "    warnings \"Off\"\n";
+			output << "    externalwarnings \"Off\"\n";
+			output << "    buildoptions { \"/WX-\" }\n";
+		}
 
 		auto sameString = [&](std::string ProjectConfigurationSettings::* member) {
 			const std::string& first = node.configurationSettings.at(
@@ -3354,6 +3705,11 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		};
 		emitCommands("prebuildcommands", &ProjectConfigurationSettings::preBuildEvent);
 		emitCommands("postbuildcommands", &ProjectConfigurationSettings::postBuildEvent);
+		const bool hasExecutableKind = std::any_of(kinds.begin(), kinds.end(),
+			[](PremakeProjectKind kind) { return IsExecutableKind(kind); });
+		if (hasExecutableKind) {
+			output << "    qfeAddDxcRuntime()\n";
+		}
 		output << "\n";
 		output.flush();
 		return static_cast<bool>(output);
@@ -3399,6 +3755,26 @@ end
 	output << "    targetdir (path.join(QFE_PROJECT_ROOT, \"../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}\"))\n";
 
 	emitCommonConfigurationSettings(output);
+	// Mark bundled third-party headers as external so /Wall /WX applies to
+	// engine and application code without making ImGui, stb, Assimp, and other
+	// vendor headers part of the project's warning budget.
+	output << "externalincludedirs {\n";
+	output << "    path.join(QFE_PROJECT_ROOT, \"externals\"),\n";
+	output << "    path.join(QFE_PROJECT_ROOT, \"externals/imgui\"),\n";
+	output << "    path.join(QFE_PROJECT_ROOT, \"externals/assimp\"),\n";
+	output << "    path.join(QFE_PROJECT_ROOT, \"externals/assimp/upstream/include\"),\n";
+	output << "    path.join(QFE_PROJECT_ROOT, \"externals/imgui/imgui-node-editor-0.9.3\"),\n";
+	output << "}\n";
+	output << R"lua(function qfeAddDxcRuntime()
+    postbuildcommands {
+        'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "$(TargetDir)." "dxcompiler.dll" "dxil.dll" /R:0 /W:0 /NJH /NJS /NFL /NDL /NP',
+        'if not exist "$(TargetDir)dxcompiler.dll" (echo Error: dxcompiler.dll was not copied from the Windows SDK. & exit /b 1)',
+        'if not exist "$(TargetDir)dxil.dll" (echo Error: dxil.dll was not copied from the Windows SDK. & exit /b 1)',
+        'exit /b 0',
+    }
+end
+
+)lua";
 	output << "\n";
 
 	std::unordered_set<std::uint64_t> groupedNodeIds;
@@ -3411,7 +3787,7 @@ end
 		output << "premake.lua\"))\n";
 	};
 	for (const ProjectGroup& group : groups_) {
-		if (Trim(group.name).empty()) {
+		if (Trim(group.name).empty() || group.nodeIds.empty()) {
 			continue;
 		}
 		output << "group \"" << EscapeLuaString(Trim(group.name)) << "\"\n";
@@ -3440,6 +3816,7 @@ end
 void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 {
 	EnsureConfigurationData();
+	SynchronizeGroupMembership();
 	const std::filesystem::path dataDirectory = GetProjectGeneratorDataDirectory();
 	std::error_code error;
 	std::filesystem::create_directories(dataDirectory, error);
@@ -3483,14 +3860,14 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 		{ "includePaths", commonPremakeSettings_.includePaths },
 		{ "defines", commonPremakeSettings_.defines },
 	};
-	configuration["commonPremakeSettings"]["configurationSettings"] =
-		nlohmann::json::object();
+	nlohmann::json& commonPremakeSettingsJson = configuration.at("commonPremakeSettings");
+	commonPremakeSettingsJson.emplace("configurationSettings", nlohmann::json::object());
+	nlohmann::json& commonConfigurationSettings = commonPremakeSettingsJson.at("configurationSettings");
 	for (const std::string& configurationName :
 		SplitLines(commonPremakeSettings_.configurations)) {
 		const PremakeConfigurationSettings& settings =
 			commonPremakeSettings_.configurationSettings.at(configurationName);
-		configuration["commonPremakeSettings"]["configurationSettings"]
-			[configurationName] = {
+		commonConfigurationSettings.emplace(configurationName, nlohmann::json{
 				{ "architecture", settings.architecture },
 				{ "cppDialect", settings.cppDialect },
 				{ "staticRuntime", settings.staticRuntime },
@@ -3502,7 +3879,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 				{ "runtime", settings.runtime },
 				{ "optimize", settings.optimize },
 				{ "symbols", settings.symbols },
-			};
+			});
 	}
 	configuration["nodes"] = nlohmann::json::array();
 	if (nodeEditorContext_ != nullptr) {
@@ -3523,6 +3900,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 		nodeJson["directoryPath"] = QFE::ConvertString(
 			(relativeNode.empty() ? node.directoryPath : relativeNode).generic_wstring());
 		nodeJson["kind"] = static_cast<int>(node.kind);
+		nodeJson["externalLibrary"] = node.externalLibrary;
 		nodeJson["includePaths"] = node.includePaths;
 		nodeJson["preBuildEvent"] = node.preBuildEvent;
 		nodeJson["postBuildEvent"] = node.postBuildEvent;
@@ -3542,11 +3920,12 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 			});
 		}
 		nodeJson["configurationSettings"] = nlohmann::json::object();
+		nlohmann::json& nodeConfigurationSettings = nodeJson.at("configurationSettings");
 		for (const std::string& configurationName :
 			SplitLines(commonPremakeSettings_.configurations)) {
 			const ProjectConfigurationSettings& settings =
 				node.configurationSettings.at(configurationName);
-			nodeJson["configurationSettings"][configurationName] = {
+			nodeConfigurationSettings.emplace(configurationName, nlohmann::json{
 				{ "kind", static_cast<int>(settings.kind) },
 				{ "includePaths", settings.includePaths },
 				{ "defines", settings.defines },
@@ -3554,7 +3933,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 				{ "postBuildEvent", settings.postBuildEvent },
 				{ "externalLinks", settings.externalLinks },
 				{ "libraryDirectories", settings.libraryDirectories },
-			};
+			});
 		}
 		nodeJson["position"] = {
 			{ "x", currentPosition.x },
@@ -3564,31 +3943,17 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 	}
 	configuration["groups"] = nlohmann::json::array();
 	for (const ProjectGroup& group : groups_) {
-		ImVec2 currentPosition = group.initialPosition;
-		ImVec2 currentSize = group.size;
-		if (nodeEditorContext_ != nullptr) {
-			const ImVec2 editorPosition =
-				ax::NodeEditor::GetNodePosition(ToEditorGroupId(group.id));
-			if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
-				currentPosition = editorPosition;
-			}
-			const ImVec2 editorSize =
-				ax::NodeEditor::GetNodeSize(ToEditorGroupId(group.id));
-			if (editorSize.x > 0.0f && editorSize.y > 0.0f) {
-				currentSize = editorSize;
-			}
-		}
 		nlohmann::json groupJson = nlohmann::json::object();
 		groupJson["id"] = group.id;
 		groupJson["name"] = group.name;
 		groupJson["nodeIds"] = group.nodeIds;
 		groupJson["position"] = {
-			{ "x", currentPosition.x },
-			{ "y", currentPosition.y },
+			{ "x", group.initialPosition.x },
+			{ "y", group.initialPosition.y },
 		};
 		groupJson["size"] = {
-			{ "x", currentSize.x },
-			{ "y", currentSize.y },
+			{ "x", group.size.x },
+			{ "y", group.size.y },
 		};
 		configuration["groups"].push_back(std::move(groupJson));
 	}
@@ -3598,10 +3963,15 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 
 	configuration["links"] = nlohmann::json::array();
 	for (const ProjectLink& link : links_) {
+		const char* dependencyMode =
+			link.dependencyMode == ProjectLinkDependencyMode::Transitive
+			? "transitive"
+			: "direct";
 		configuration["links"].push_back({
 			{ "id", link.id },
 			{ "sourceNodeId", link.sourceNodeId },
 			{ "targetNodeId", link.targetNodeId },
+			{ "dependencyMode", dependencyMode },
 		});
 	}
 
@@ -3799,6 +4169,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 				node.kind = static_cast<PremakeProjectKind>(kind);
 			}
 			node.includePaths = nodeJson.value("includePaths", "");
+			node.externalLibrary = nodeJson.value("externalLibrary", false);
 			node.preBuildEvent = nodeJson.value("preBuildEvent", "");
 			node.postBuildEvent = nodeJson.value("postBuildEvent", "");
 			if (nodeJson.contains("configurationSettings") &&
@@ -3852,8 +4223,8 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 				node.initialPosition.x = position.value("x", 0.0f);
 				node.initialPosition.y = position.value("y", 0.0f);
 			}
-			// Node Editor側のノードは次のBeginNodeで生成されるため、そこで
-			// 保存した座標を適用する。
+			// The editor node is created at the next BeginNode; apply its saved
+			// position there.
 			node.positionInitialized = false;
 			RefreshFrameworkOperatingSystems(node);
 			nodes_.push_back(std::move(node));
@@ -3897,10 +4268,6 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 						}
 					}
 				}
-				if (group.nodeIds.empty()) {
-					++invalidGroupCount;
-					continue;
-				}
 
 				if (groupJson.contains("position") &&
 					groupJson["position"].is_object()) {
@@ -3936,6 +4303,29 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 				link.id = linkJson.value("id", std::uint64_t(0));
 				link.sourceNodeId = linkJson.value("sourceNodeId", std::uint64_t(0));
 				link.targetNodeId = linkJson.value("targetNodeId", std::uint64_t(0));
+				if (linkJson.contains("dependencyMode") &&
+					linkJson["dependencyMode"].is_string()) {
+					const std::string mode =
+						linkJson["dependencyMode"].get<std::string>();
+					if (mode == "direct") {
+						link.dependencyMode =
+							ProjectLinkDependencyMode::DirectOnly;
+					} else if (mode == "visual") {
+						// The former visual-only mode is now a direct dependency.
+						link.dependencyMode =
+							ProjectLinkDependencyMode::DirectOnly;
+					} else {
+						link.dependencyMode =
+							ProjectLinkDependencyMode::Transitive;
+					}
+				} else {
+					// Configurations saved before dependencyMode was introduced
+					// used false for a visual-only relationship. Visual-only links
+					// are now migrated to direct-only dependencies.
+					link.dependencyMode = linkJson.value("dependency", true)
+						? ProjectLinkDependencyMode::Transitive
+						: ProjectLinkDependencyMode::DirectOnly;
+				}
 				if (link.id == 0 || !knownNodeIds.contains(link.sourceNodeId) ||
 					!knownNodeIds.contains(link.targetNodeId) ||
 					LinkExists(link.sourceNodeId, link.targetNodeId)) {

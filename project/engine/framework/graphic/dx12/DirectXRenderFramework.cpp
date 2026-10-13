@@ -16,7 +16,7 @@
 #include "graphics/dx12/pipeline/rtpso/TLAS.h"
 
 #include "core/math/transform/Transform.h"
-#include "../../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
 #include "DirectXResourceFramework.h"
 
@@ -176,8 +176,8 @@ bool QFE::FRAMEWORK::SetRenderTarget(
 	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets) {
 
 	// 使用機能の取得
-	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
 	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
 
 	// レンダーターゲットを設定
 	// TODO: ここでレンダーターゲットを設定する際に、レンダーターゲットの数が0の場合は深度ステンシルバッファのみを設定するようにする必要がある
@@ -226,27 +226,32 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 		return false;
 	}
 
-	for (int i = 0; i < rootParameterTypes.size(); ++i) {
+	for (std::size_t i = 0; i < rootParameterTypes.size(); ++i) {
 		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
 
-		if (rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+		switch (rootParameterType) {
+		case D3D12_ROOT_PARAMETER_TYPE_CBV: {
 			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer->GetGpuVirtualAddress(rootResources[i]);
 			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
-		} else {
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_SRV:
+		case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE: {
 			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
-			switch (rootParameterType) {
-			case D3D12_ROOT_PARAMETER_TYPE_SRV:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_UAV:
-				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			default:
-				break;
-			}
+			commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_UAV: {
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
+			commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS:
+			assert(false);
+			break;
+		default:
+			assert(false);
+			break;
 		}
 	}
 
@@ -298,27 +303,32 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = resourceContainer->GetVertexBufferView(vertexBufferHandle);
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
-	for (int i = 0; i < rootParameterTypes.size(); ++i) {
+	for (std::size_t i = 0; i < rootParameterTypes.size(); ++i) {
 		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
 
-		if (rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+		switch (rootParameterType) {
+		case D3D12_ROOT_PARAMETER_TYPE_CBV: {
 			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer->GetGpuVirtualAddress(rootResources[i]);
 			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
-		} else {
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_SRV:
+		case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE: {
 			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
-			switch (rootParameterType) {
-			case D3D12_ROOT_PARAMETER_TYPE_SRV:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_UAV:
-				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			default:
-				break;
-			}
+			commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_UAV: {
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
+			commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS:
+			assert(false);
+			break;
+		default:
+			assert(false);
+			break;
 		}
 	}
 
@@ -374,27 +384,32 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 	D3D12_INDEX_BUFFER_VIEW indexBufferView = resourceContainer->GetIndexBufferView(indexBufferHandle);
 	commandList->IASetIndexBuffer(&indexBufferView);
 
-	for (int i = 0; i < rootParameterTypes.size(); ++i) {
+	for (std::size_t i = 0; i < rootParameterTypes.size(); ++i) {
 		D3D12_ROOT_PARAMETER_TYPE rootParameterType = rootParameterTypes[i];
 
-		if (rootParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+		switch (rootParameterType) {
+		case D3D12_ROOT_PARAMETER_TYPE_CBV: {
 			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer->GetGpuVirtualAddress(rootResources[i]);
 			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
-		} else {
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_SRV:
+		case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE: {
 			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
-			switch (rootParameterType) {
-			case D3D12_ROOT_PARAMETER_TYPE_SRV:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_UAV:
-				commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
-				break;
-			case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
-				commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
-				break;
-			default:
-				break;
-			}
+			commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_UAV: {
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
+			commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
+			break;
+		}
+		case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS:
+			assert(false);
+			break;
+		default:
+			assert(false);
+			break;
 		}
 	}
 
@@ -505,7 +520,6 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(
 
 bool QFE::FRAMEWORK::DrawRayTracingPSO(QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle, QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, const QFE::GRAPHIC::DirectXResourceHandle& renderTargetResourceHandle) {
 	// 使用機能の取得
-	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
 	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = graphicEngine->GetRayTracingPipelineManager();
 	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();

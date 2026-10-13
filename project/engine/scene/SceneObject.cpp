@@ -24,7 +24,7 @@ void QFE::SCENE::SceneObject::EndFrame() {
 void QFE::SCENE::SceneObject::SaveSceneToJson(const std::string& filePath) {
 	nlohmann::json sceneJson;
 	// 配列として初期化する
-	sceneJson[kEntityKey] = nlohmann::json::array();
+	sceneJson.emplace(kEntityKey, nlohmann::json::array());
 
 	// EntityManagerの状態をJSONにシリアライズしてファイルに保存する
 	std::vector<uint32_t> activeEntityIds = entityManager_.GetActiveEntityIds();
@@ -38,7 +38,7 @@ void QFE::SCENE::SceneObject::SaveSceneToJson(const std::string& filePath) {
 
 		// 空っぽのエンティティでなければ、配列の末尾に追加（push_back）していく
 		if (!entityComponentsJson.empty()) {
-			sceneJson[kEntityKey].push_back(entityComponentsJson);
+			sceneJson.at(kEntityKey).push_back(entityComponentsJson);
 		}
 	}
 
@@ -71,20 +71,20 @@ void QFE::SCENE::SceneObject::LoadSceneFromJson(const std::string& filePath) {
 		QFE_LOG("Invalid scene JSON format: 'entities' key is missing.");
 		return;
 	}
-	if (!sceneJson[kEntityKey].is_array()) {
+	if (!sceneJson.at(kEntityKey).is_array()) {
 		QFE_LOG("Invalid scene JSON format: 'entities' is not an array.");
 		return;
 	}
 	// JSON配列を取得
-	const auto& entitiesArrayJson = sceneJson[kEntityKey];
+	const auto& entitiesArrayJson = sceneJson.at(kEntityKey);
 
 	// JSON配列のエンティティの数だけ、上から順番にループを回す
 	for (const auto& entityJson : entitiesArrayJson) {
 		// 新形式ではIDを保存して親参照を維持する。旧形式も引き続き読み込める。
 		if (entityJson.contains(kEntityIdKey) && entityJson.contains(kComponentsKey)) {
-			const uint32_t entityId = entityJson[kEntityIdKey].get<uint32_t>();
+			const uint32_t entityId = entityJson.at(kEntityIdKey).get<uint32_t>();
 			if (entityManager_.ForceCreateEntity(entityId)) {
-				entityManager_.DeserializeEntityComponents(entityId, entityJson[kComponentsKey]);
+				entityManager_.DeserializeEntityComponents(entityId, entityJson.at(kComponentsKey));
 			}
 		} else {
 			const uint32_t newEntityId = entityManager_.CreateEntity();

@@ -45,8 +45,12 @@ project "ExternalFolders"
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
     multiprocessorcompile "On"
+    -- This is the external-code container project.
+    warnings "Off"
+    externalwarnings "Off"
     buildoptions {
         "/utf-8",
+        "/WX-",
     }
     includedirs {
         path.join(QFE_PROJECT_ROOT, "engine"),

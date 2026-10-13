@@ -12,5 +12,10 @@ namespace QFE::FRAMEWORK {
 	class GraphicContext final : public QFE::GRAPHIC::D3D12GraphicEngine {
 	public:
 		using QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine;
+		GraphicContext() = delete;
+		GraphicContext(const GraphicContext&) = delete;
+		GraphicContext& operator=(const GraphicContext&) = delete;
+		GraphicContext(GraphicContext&&) = delete;
+		GraphicContext& operator=(GraphicContext&&) = delete;
 	};
 }

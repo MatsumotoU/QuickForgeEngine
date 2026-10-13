@@ -2,7 +2,7 @@
 #include "framework/application/WindowsEngineFramework.h"
 #include "framework/application/WindowsEngineResources.h"
 
-#include "../resources/shaders/shaderStructs/hlslTypeToCpp.h"
+#include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
 namespace QFE::GAMESYSTEM {
 	/// @brief 入力に応じて位置を移動するか、PhysicsComponentへ力を加える。

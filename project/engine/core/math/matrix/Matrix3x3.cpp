@@ -1,5 +1,5 @@
 #include "Matrix3x3.h"
-#include "../vector/Vector2.h"
+#include "math/vector/Vector2.h"
 #include <assert.h>
 #include <cmath>
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <map>
-#include "../../resources/Shaders/ShaderStructs/hlslTypeToCpp.h"
+#include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 #include "memory/SafeVector.h"
 #include "ModelData.h"
 #include "math/MathInclude.h"

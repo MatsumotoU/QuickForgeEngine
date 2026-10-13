@@ -5,7 +5,7 @@ using namespace QFE;
 using namespace QFE::INPUT;
 
 DirectInputKeyboard::DirectInputKeyboard(): 
-	keyboard_(nullptr), directInput_(nullptr), pressedKeys_(256) {
+	key_{}, preKey_{}, pressedKeys_(256), keyboard_(nullptr), directInput_(nullptr), hwnd_(nullptr) {
 }
 
 DirectInputKeyboard::~DirectInputKeyboard() {

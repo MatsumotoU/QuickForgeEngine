@@ -42,8 +42,14 @@ project "ProjectGenerator"
     multiprocessorcompile "On"
     buildoptions {
         "/utf-8",
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
     includedirs {
+        path.join(QFE_PROJECT_ROOT, "."),
         path.join(QFE_PROJECT_ROOT, "engine"),
         path.join(QFE_PROJECT_ROOT, "engine/core"),
         path.join(QFE_PROJECT_ROOT, "externals"),
@@ -85,6 +91,13 @@ project "ProjectGenerator"
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
+    externalincludedirs {
+        path.join(QFE_PROJECT_ROOT, "externals"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    }
     links {
         "GraphicFramework",
         "GraphicEngine",
@@ -96,4 +109,6 @@ project "ProjectGenerator"
         "GuiFramework",
         "GUIEngine",
     }
+
+qfeAddDxcRuntime()
 

@@ -45,10 +45,10 @@ namespace {
 		if (FAILED(MFCreateMediaType(requestedType.GetAddressOf())) ||
 			FAILED(requestedType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio)) ||
 			FAILED(requestedType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM)) ||
-			FAILED(reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, requestedType.Get()))) return {};
+			FAILED(reader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, requestedType.Get()))) return {};
 
 		ComPtr<IMFMediaType> currentType;
-		if (FAILED(reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, currentType.GetAddressOf()))) return {};
+		if (FAILED(reader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), currentType.GetAddressOf()))) return {};
 		WAVEFORMATEX* waveFormat = nullptr;
 		UINT32 formatSize = 0;
 		if (FAILED(MFCreateWaveFormatExFromMFMediaType(currentType.Get(), &waveFormat, &formatSize))) return {};
@@ -61,7 +61,7 @@ namespace {
 		for (;;) {
 			ComPtr<IMFSample> sample;
 			DWORD flags = 0;
-			if (FAILED(reader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, nullptr, &flags, nullptr, sample.GetAddressOf()))) return {};
+			if (FAILED(reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, nullptr, &flags, nullptr, sample.GetAddressOf()))) return {};
 			if (flags & MF_SOURCE_READERF_ENDOFSTREAM) break;
 			if (!sample) continue; // ストリームの通知など、データがない場合
 			ComPtr<IMFMediaBuffer> buffer;
@@ -102,7 +102,7 @@ struct QFE::AUDIO::AudioEngine::Impl {
 	uint32_t nextHandle = 1;
 	uint32_t nextDataHandle = 1;
 	float masterVolume = 1.0f;
-	std::array<float, 4> categoryVolumes{ 1.0f, 1.0f, 1.0f, 1.0f };
+	std::array<float, 4> categoryVolumes{{ 1.0f, 1.0f, 1.0f, 1.0f }};
 	std::unordered_map<std::wstring, uint32_t> pathHandles;
 	std::unordered_map<uint32_t, std::shared_ptr<AudioData>> loadedData;
 	std::unordered_map<uint32_t, std::unique_ptr<PlayingVoice>> voices;

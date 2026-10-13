@@ -49,12 +49,54 @@ workspace "QuickForgeEngine"
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
     multiprocessorcompile "On"
+    warnings "Everything"
+    -- ImGui, Node Editor, stb, Assimp, and the Windows SDK are external code.
+    -- Keep the engine at maximum warnings without treating third-party headers
+    -- as project-owned code.
+    externalwarnings "Off"
+    fatalwarnings "All"
     buildoptions {
         "/utf-8",
+        -- These two /Wall diagnostics are intentional for this engine:
+        -- C4514 reports inline header-only APIs that are unused in one TU,
+        -- and C4820 reports ABI/layout padding in many CPU/GPU data types.
+        "/wd4514",
+        "/wd4820",
+        -- These /Wall diagnostics describe optimizer/code-generation choices,
+        -- not source correctness, and are especially noisy in Release builds.
+        "/wd4710",
+        "/wd4711",
+        "/wd5045",
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
+
+-- DXC is linked by GraphicEngine and is loaded by the final executable.
+-- Keep both DLLs beside every generated executable so the Windows loader can
+-- resolve dxcompiler.dll and its dxil.dll dependency without manual copying.
+function qfeAddDxcRuntime()
+    postbuildcommands {
+        'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "$(TargetDir)." "dxcompiler.dll" "dxil.dll" /R:0 /W:0 /NJH /NJS /NFL /NDL /NP',
+        'if not exist "$(TargetDir)dxcompiler.dll" (echo Error: dxcompiler.dll was not copied from the Windows SDK. & exit /b 1)',
+        'if not exist "$(TargetDir)dxil.dll" (echo Error: dxil.dll was not copied from the Windows SDK. & exit /b 1)',
+        'exit /b 0',
+    }
+end
+
     includedirs {
+        path.join(QFE_PROJECT_ROOT, "."),
         path.join(QFE_PROJECT_ROOT, "engine"),
         path.join(QFE_PROJECT_ROOT, "engine/core"),
+        path.join(QFE_PROJECT_ROOT, "externals"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp"),
+        path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
+        path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
+    }
+    externalincludedirs {
         path.join(QFE_PROJECT_ROOT, "externals"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
         path.join(QFE_PROJECT_ROOT, "externals/assimp"),
@@ -97,24 +139,21 @@ dofile(path.join(_root, "engine/core/premake.lua"))
 dofile(path.join(_root, "engine/ecs/premake.lua"))
 group ""
 
-group "01_SubSystems"
+group "01_Modulars"
 dofile(path.join(_root, "engine/window/premake.lua"))
 dofile(path.join(_root, "engine/graphics/premake.lua"))
 dofile(path.join(_root, "engine/gui/premake.lua"))
 dofile(path.join(_root, "engine/input/premake.lua"))
 dofile(path.join(_root, "engine/physics/premake.lua"))
-dofile(path.join(_root, "engine/audio/premake.lua"))
-dofile(path.join(_root, "engine/network/premake.lua"))
-group ""
-
-group "02_Middleware"
 dofile(path.join(_root, "engine/assetfactory/premake.lua"))
-dofile(path.join(_root, "engine/camera/premake.lua"))
 dofile(path.join(_root, "engine/scene/premake.lua"))
 dofile(path.join(_root, "engine/components/premake.lua"))
+dofile(path.join(_root, "engine/audio/premake.lua"))
+dofile(path.join(_root, "engine/network/premake.lua"))
+dofile(path.join(_root, "engine/animation/premake.lua"))
 group ""
 
-group "03_Frameworks"
+group "02_Frameworks"
 dofile(path.join(_root, "engine/framework/application/premake.lua"))
 dofile(path.join(_root, "engine/framework/graphic/premake.lua"))
 dofile(path.join(_root, "engine/framework/window/premake.lua"))
@@ -125,9 +164,10 @@ dofile(path.join(_root, "engine/framework/scene/premake.lua"))
 dofile(path.join(_root, "engine/framework/assets/premake.lua"))
 dofile(path.join(_root, "engine/framework/audio/premake.lua"))
 dofile(path.join(_root, "engine/framework/network/premake.lua"))
+dofile(path.join(_root, "engine/framework/animation/premake.lua"))
 group ""
 
-group "04_Applications"
+group "03_Applications"
 dofile(path.join(_root, "editor/premake.lua"))
 dofile(path.join(_root, "sandbox/premake.lua"))
 dofile(path.join(_root, "runtime/premake.lua"))

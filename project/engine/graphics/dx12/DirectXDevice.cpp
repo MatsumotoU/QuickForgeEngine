@@ -87,8 +87,8 @@ namespace QFE::GRAPHIC {
 		assert(!dxgiFactory_);
 		// DXGIファクトリーの生成
 		HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory_));
-		hr;
 		assert(SUCCEEDED(hr));
+		static_cast<void>(hr);
 	}
 
 	void DirectXDevice::FindAdapter() {
@@ -104,8 +104,8 @@ namespace QFE::GRAPHIC {
 			// アダプターの情報を取得する
 			DXGI_ADAPTER_DESC3 adapterDesc{};
 			HRESULT hr = useAdapter_.Get()->GetDesc3(&adapterDesc);
-			hr;
 			assert(SUCCEEDED(hr));
+			static_cast<void>(hr);
 
 			// ソフトウェアアダプタでなければ採用
 			if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {

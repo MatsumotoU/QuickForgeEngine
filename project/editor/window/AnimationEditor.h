@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IEditorWindow.h"
-#include "framework/scene/animation/AnimationClip.h"
+#include "animation/AnimationClip.h"
 
 #include <cstdint>
 #include <string>

@@ -5,7 +5,7 @@
 #include <wrl.h>
 #include <vector>
 
-#include "../pso/RootParameterElement.h"
+#include "graphics/dx12/pipeline/pso/RootParameterElement.h"
 
 namespace QFE::GRAPHIC {
 	/// @brief シェーダーのリフレクション情報を取得するためのクラス

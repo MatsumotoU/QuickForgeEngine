@@ -11,6 +11,12 @@
 
 namespace {
 	template <typename T>
+	void SetField(nlohmann::json& json, const std::string& name, T&& value) {
+		json.erase(name);
+		json.emplace(name, std::forward<T>(value));
+	}
+
+	template <typename T>
 	void ProcessReflectedArray(
 		nlohmann::json& json,
 		bool isLoading,
@@ -44,7 +50,7 @@ namespace {
 			valueItem.Reflect(itemArchive);
 			serializedValues.push_back(std::move(item));
 		}
-		json[name] = std::move(serializedValues);
+		SetField(json, name, std::move(serializedValues));
 	}
 
 	bool HasAnyKey(const nlohmann::json& json, std::initializer_list<const char*> keys) {
@@ -52,55 +58,63 @@ namespace {
 			return json.contains(key);
 		});
 	}
+
+	nlohmann::json& GetOrCreateObject(nlohmann::json& json, const std::string& name) {
+		auto field = json.find(name);
+		if (field == json.end()) {
+			field = json.emplace(name, nlohmann::json::object()).first;
+		}
+		return field.value();
+	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, bool& value) {
     if (isLoading_) {
         // デシリアライズ
-        if (json_.contains(name)) value = json_[name].get<bool>();
+        if (json_.contains(name)) value = json_.at(name).get<bool>();
     } else {
         // シリアライズ
-        json_[name] = value;
+        SetField(json_, name, value);
 	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, float& value) {
     if (isLoading_) {
 		// デシリアライズ
-        if (json_.contains(name)) value = json_[name].get<float>();
+        if (json_.contains(name)) value = json_.at(name).get<float>();
     } else {
 		// シリアライズ
-        json_[name] = value;
+        SetField(json_, name, value);
     }
 }
 
 void QFE::JsonArchive::Process(const std::string& name, int32_t& value) {
     if (isLoading_) {
 		// デシリアライズ
-        if (json_.contains(name)) value = json_[name].get<int32_t>();
+        if (json_.contains(name)) value = json_.at(name).get<int32_t>();
     } else {
 		// シリアライズ
-        json_[name] = value;
+        SetField(json_, name, value);
     }
 }
 
 void QFE::JsonArchive::Process(const std::string& name, uint32_t& value) {
     if (isLoading_) {
         // デシリアライズ
-        if (json_.contains(name)) value = json_[name].get<uint32_t>();
+        if (json_.contains(name)) value = json_.at(name).get<uint32_t>();
     } else {
         // シリアライズ
-        json_[name] = value;
+        SetField(json_, name, value);
 	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, std::string& value) {
     if (isLoading_) {
 		// デシリアライズ
-        if (json_.contains(name)) value = json_[name].get<std::string>();
+        if (json_.contains(name)) value = json_.at(name).get<std::string>();
     } else {
 		// シリアライズ
-        json_[name] = value;
+        SetField(json_, name, value);
     }
 }
 
@@ -116,7 +130,7 @@ void QFE::JsonArchive::Process(const std::string& name, std::vector<std::string>
 		}
 		value = std::move(loadedValues);
 	} else {
-		json_[name] = value;
+		SetField(json_, name, value);
 	}
 }
 
@@ -124,13 +138,15 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::Vector2& value) {
     if (isLoading_) {
         // デシリアライズ
         if (json_.contains(name)) {
-            value.x = json_[name]["x"].get<float>();
-            value.y = json_[name]["y"].get<float>();
+            const auto& vectorJson = json_.at(name);
+            value.x = vectorJson.at("x").get<float>();
+            value.y = vectorJson.at("y").get<float>();
         }
     } else {
         // シリアライズ
-        json_[name]["x"] = value.x;
-        json_[name]["y"] = value.y;
+		auto& vectorJson = GetOrCreateObject(json_, name);
+		SetField(vectorJson, "x", value.x);
+		SetField(vectorJson, "y", value.y);
 	}
 }
 
@@ -138,15 +154,17 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::Vector3& value) {
     if (isLoading_) {
         // デシリアライズ
         if (json_.contains(name)) {
-            value.x = json_[name]["x"].get<float>();
-            value.y = json_[name]["y"].get<float>();
-            value.z = json_[name]["z"].get<float>();
+            const auto& vectorJson = json_.at(name);
+            value.x = vectorJson.at("x").get<float>();
+            value.y = vectorJson.at("y").get<float>();
+            value.z = vectorJson.at("z").get<float>();
         }
     } else {
         // シリアライズ
-        json_[name]["x"] = value.x;
-        json_[name]["y"] = value.y;
-        json_[name]["z"] = value.z;
+        auto& vectorJson = GetOrCreateObject(json_, name);
+        SetField(vectorJson, "x", value.x);
+        SetField(vectorJson, "y", value.y);
+        SetField(vectorJson, "z", value.z);
     }
 }
 
@@ -154,17 +172,19 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::Vector4& value) {
     if (isLoading_) {
         // デシリアライズ
         if (json_.contains(name)) {
-            value.x = json_[name]["x"].get<float>();
-            value.y = json_[name]["y"].get<float>();
-            value.z = json_[name]["z"].get<float>();
-            value.w = json_[name]["w"].get<float>();
+            const auto& vectorJson = json_.at(name);
+            value.x = vectorJson.at("x").get<float>();
+            value.y = vectorJson.at("y").get<float>();
+            value.z = vectorJson.at("z").get<float>();
+            value.w = vectorJson.at("w").get<float>();
         }
     } else {
         // シリアライズ
-        json_[name]["x"] = value.x;
-        json_[name]["y"] = value.y;
-        json_[name]["z"] = value.z;
-        json_[name]["w"] = value.w;
+        auto& vectorJson = GetOrCreateObject(json_, name);
+        SetField(vectorJson, "x", value.x);
+        SetField(vectorJson, "y", value.y);
+        SetField(vectorJson, "z", value.z);
+        SetField(vectorJson, "w", value.w);
     }
 }
 
@@ -172,39 +192,48 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::EulerTransform& va
     if (isLoading_) {
         // デシリアライズ
         if (json_.contains(name)) {
-			json_[name]["scale"]["x"].get_to(value.scale.x);
-            json_[name]["scale"]["y"].get_to(value.scale.y);
-            json_[name]["scale"]["z"].get_to(value.scale.z);
-            json_[name]["rotate"]["x"].get_to(value.rotate.x);
-            json_[name]["rotate"]["y"].get_to(value.rotate.y);
-            json_[name]["rotate"]["z"].get_to(value.rotate.z);
-            json_[name]["translate"]["x"].get_to(value.translate.x);
-			json_[name]["translate"]["y"].get_to(value.translate.y);
-			json_[name]["translate"]["z"].get_to(value.translate.z);
+			const auto& transformJson = json_.at(name);
+			const auto& scaleJson = transformJson.at("scale");
+			const auto& rotateJson = transformJson.at("rotate");
+			const auto& translateJson = transformJson.at("translate");
+			scaleJson.at("x").get_to(value.scale.x);
+			scaleJson.at("y").get_to(value.scale.y);
+			scaleJson.at("z").get_to(value.scale.z);
+			rotateJson.at("x").get_to(value.rotate.x);
+			rotateJson.at("y").get_to(value.rotate.y);
+			rotateJson.at("z").get_to(value.rotate.z);
+			translateJson.at("x").get_to(value.translate.x);
+			translateJson.at("y").get_to(value.translate.y);
+			translateJson.at("z").get_to(value.translate.z);
         }
     } else {
         // シリアライズ
-		json_[name]["scale"]["x"] = value.scale.x;
-        json_[name]["scale"]["y"] = value.scale.y;
-        json_[name]["scale"]["z"] = value.scale.z;
-        json_[name]["rotate"]["x"] = value.rotate.x;
-        json_[name]["rotate"]["y"] = value.rotate.y;
-        json_[name]["rotate"]["z"] = value.rotate.z;
-        json_[name]["translate"]["x"] = value.translate.x;
-        json_[name]["translate"]["y"] = value.translate.y;
-		json_[name]["translate"]["z"] = value.translate.z;
+		auto& transformJson = GetOrCreateObject(json_, name);
+		auto& scaleJson = GetOrCreateObject(transformJson, "scale");
+		auto& rotateJson = GetOrCreateObject(transformJson, "rotate");
+		auto& translateJson = GetOrCreateObject(transformJson, "translate");
+		SetField(scaleJson, "x", value.scale.x);
+		SetField(scaleJson, "y", value.scale.y);
+		SetField(scaleJson, "z", value.scale.z);
+		SetField(rotateJson, "x", value.rotate.x);
+		SetField(rotateJson, "y", value.rotate.y);
+		SetField(rotateJson, "z", value.rotate.z);
+		SetField(translateJson, "x", value.translate.x);
+		SetField(translateJson, "y", value.translate.y);
+		SetField(translateJson, "z", value.translate.z);
 	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, std::vector<MATH::EulerTransform>& value) {
     if (isLoading_) {
-        if (!json_.contains(name) || !json_[name].is_array()) {
+        const auto field = json_.find(name);
+        if (field == json_.end() || !field->is_array()) {
             return;
         }
 
         std::vector<MATH::EulerTransform> loadedPoints;
-        loadedPoints.reserve(json_[name].size());
-        for (const nlohmann::json& pointJson : json_[name]) {
+        loadedPoints.reserve(field->size());
+        for (const nlohmann::json& pointJson : *field) {
             MATH::EulerTransform point;
             if (pointJson.is_object()) {
                 const auto readVector = [&pointJson](const char* key, MATH::Vector3& vector) {
@@ -232,21 +261,22 @@ void QFE::JsonArchive::Process(const std::string& name, std::vector<MATH::EulerT
                 { "translate", { { "x", point.translate.x }, { "y", point.translate.y }, { "z", point.translate.z } } }
             });
         }
-        json_[name] = std::move(points);
+        SetField(json_, name, std::move(points));
     }
 }
 
 void QFE::JsonArchive::Process(const std::string& name, std::vector<SCENE::SplineControlPoint>& value) {
 	if (isLoading_) {
-		if (!json_.contains(name) || !json_[name].is_array()) {
+		const auto field = json_.find(name);
+		if (field == json_.end() || !field->is_array()) {
 			return;
 		}
 
 		// 旧形式のスプラインには全体のspeedしかないため、その値を各区間の初期値として引き継ぐ。
 		const float legacySecondsToNextPoint = json_.value("speed", 1.0f);
 		std::vector<SCENE::SplineControlPoint> loadedPoints;
-		loadedPoints.reserve(json_[name].size());
-		for (const nlohmann::json& pointJson : json_[name]) {
+		loadedPoints.reserve(field->size());
+		for (const nlohmann::json& pointJson : *field) {
 			SCENE::SplineControlPoint point{};
 			point.secondsToNextPoint = pointJson.is_object()
 				? pointJson.value("secondsToNextPoint", legacySecondsToNextPoint)
@@ -279,24 +309,26 @@ void QFE::JsonArchive::Process(const std::string& name, std::vector<SCENE::Splin
 		nlohmann::json points = nlohmann::json::array();
 		for (const SCENE::SplineControlPoint& point : value) {
 			nlohmann::json pointJson;
-			pointJson["transform"]["scale"] = {
+			auto& transformJson = GetOrCreateObject(pointJson, "transform");
+			SetField(transformJson, "scale", nlohmann::json{
 				{ "x", point.transform.scale.x }, { "y", point.transform.scale.y }, { "z", point.transform.scale.z }
-			};
-			pointJson["transform"]["rotate"] = {
+			});
+			SetField(transformJson, "rotate", nlohmann::json{
 				{ "x", point.transform.rotate.x }, { "y", point.transform.rotate.y }, { "z", point.transform.rotate.z }
-			};
-			pointJson["transform"]["translate"] = {
+			});
+			SetField(transformJson, "translate", nlohmann::json{
 				{ "x", point.transform.translate.x }, { "y", point.transform.translate.y }, { "z", point.transform.translate.z }
-			};
-			pointJson["secondsToNextPoint"] = point.secondsToNextPoint;
+			});
+			SetField(pointJson, "secondsToNextPoint", point.secondsToNextPoint);
 			points.push_back(std::move(pointJson));
 		}
-		json_[name] = std::move(points);
+		SetField(json_, name, std::move(points));
 	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, std::vector<STG::BulletEmitterPattern>& value) {
-	if (isLoading_ && (!json_.contains(name) || !json_[name].is_array()) &&
+	const auto field = json_.find(name);
+	if (isLoading_ && (field == json_.end() || !field->is_array()) &&
 		HasAnyKey(json_, { "emitBulletName", "emitPos", "emitDir", "emitRadius", "emitCount", "bulletAngleX", "bulletAngleY" })) {
 		STG::BulletEmitterPattern legacyPattern{};
 		legacyPattern.name = "Pattern 1";
@@ -310,7 +342,8 @@ void QFE::JsonArchive::Process(const std::string& name, std::vector<STG::BulletE
 void QFE::JsonArchive::Process(
 	const std::string& name,
 	std::vector<STG::InputBulletEmitterTriggerSetting>& value) {
-	if (isLoading_ && (!json_.contains(name) || !json_[name].is_array()) &&
+	const auto field = json_.find(name);
+	if (isLoading_ && (field == json_.end() || !field->is_array()) &&
 		HasAnyKey(json_, { "enabled", "inputActionName", "mouseButton", "gamePadButton", "triggerMode", "repeatInterval" })) {
 		STG::InputBulletEmitterTriggerSetting legacyTrigger{};
 		legacyTrigger.Reflect(*this);
@@ -323,7 +356,8 @@ void QFE::JsonArchive::Process(
 void QFE::JsonArchive::Process(
 	const std::string& name,
 	std::vector<STG::PeriodicBulletEmitterTriggerSetting>& value) {
-	if (isLoading_ && (!json_.contains(name) || !json_[name].is_array()) &&
+	const auto field = json_.find(name);
+	if (isLoading_ && (field == json_.end() || !field->is_array()) &&
 		HasAnyKey(json_, { "enabled", "emitOnStart", "interval" })) {
 		STG::PeriodicBulletEmitterTriggerSetting legacyTrigger{};
 		legacyTrigger.Reflect(*this);
@@ -337,44 +371,51 @@ void QFE::JsonArchive::Process(const std::string& name, MATH::Matrix4x4& value) 
     if (isLoading_) {
         // デシリアライズ
         if (json_.contains(name)) {
+			const auto& matrixJson = json_.at(name);
             for (int row = 0; row < 4; ++row) {
                 for (int col = 0; col < 4; ++col) {
-                    value.Set(row, col, json_[name][row][col].get<float>());
+                    value.Set(row, col,
+                        matrixJson.at(static_cast<nlohmann::json::size_type>(row))
+                            .at(static_cast<nlohmann::json::size_type>(col)).get<float>());
                 }
             }
         }
     } else {
         // シリアライズ
+		nlohmann::json matrixJson = nlohmann::json::array();
         for (int row = 0; row < 4; ++row) {
+			nlohmann::json rowJson = nlohmann::json::array();
             for (int col = 0; col < 4; ++col) {
-                json_[name][row][col] = value.Get(row, col);
+				rowJson.push_back(value.Get(row, col));
             }
+			matrixJson.push_back(std::move(rowJson));
         }
+		SetField(json_, name, std::move(matrixJson));
 	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, MATH::Bit32& value) {
     if (isLoading_) {
         // デシリアライズ
-        if (json_.contains(name)) value.value = json_[name].get<uint32_t>();
+        if (json_.contains(name)) value.value = json_.at(name).get<uint32_t>();
     } else {
         // シリアライズ
-        json_[name] = value.value;
+        SetField(json_, name, value.value);
 	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, EntityReference& value) {
 	if (isLoading_) {
-		if (json_.contains(name)) value.uuid = json_[name].get<std::string>();
+		if (json_.contains(name)) value.uuid = json_.at(name).get<std::string>();
 	} else {
-		json_[name] = value.uuid;
+		SetField(json_, name, value.uuid);
 	}
 }
 
 void QFE::JsonArchive::Process(const std::string& name, nlohmann::json& value) {
 	if (isLoading_) {
-		if (json_.contains(name)) value = json_[name];
+		if (json_.contains(name)) value = json_.at(name);
 	} else {
-		json_[name] = value;
+		SetField(json_, name, value);
 	}
 }

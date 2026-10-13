@@ -542,7 +542,7 @@
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
-                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                    "preBuildEvent": "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd"
                 },
                 "Development": {
                     "defines": "",
@@ -551,7 +551,7 @@
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
-                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                    "preBuildEvent": "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd"
                 },
                 "Release": {
                     "defines": "",
@@ -560,7 +560,7 @@
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
-                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                    "preBuildEvent": "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd"
                 }
             },
             "directoryPath": "externals/DirectXTex",
@@ -575,7 +575,7 @@
                 "y": 192.0
             },
             "postBuildEvent": "",
-            "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd",
+            "preBuildEvent": "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd",
             "projectName": "DirectXTex",
             "sourcePatterns": ""
         },

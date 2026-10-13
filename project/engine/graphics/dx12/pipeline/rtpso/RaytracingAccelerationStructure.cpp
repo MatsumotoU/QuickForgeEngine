@@ -32,7 +32,7 @@ BLASHandle RaytracingAccelerationStructure::CreateBLAS(
 	ID3D12Device5* device5, ID3D12GraphicsCommandList4* commandList4,
 	const std::vector<QFE::MATH::Vector3>& vertices,
 	const std::vector<uint32_t>& indices,
-	const std::string& name) {
+	const std::string& name, bool allowUpdate) {
 
 	// すでに同じ名前のBLASが存在する場合は、既存のハンドルを返す
 	if(blasContainer_.Contains(name)) {
@@ -42,13 +42,24 @@ BLASHandle RaytracingAccelerationStructure::CreateBLAS(
 
 	// BLASのインスタンスを作成
 	std::unique_ptr<BLAS> blas = std::make_unique<BLAS>();
-	if (!blas->Create(device5, commandList4, vertices, indices)) {
+	if (!blas->Create(device5, commandList4, vertices, indices, allowUpdate)) {
 		QFE_LOG("Failed to create BLAS for " + name);
 		return BLASHandle::Invalid;
 	}
 	// BLASをコンテナに追加し、ハンドルを取得
 	BLASHandle handle = static_cast<BLASHandle>(blasContainer_.Add(name, std::move(blas)));
 	return handle;
+}
+
+bool RaytracingAccelerationStructure::UpdateBLAS(
+	BLASHandle handle, ID3D12GraphicsCommandList4* commandList4,
+	const std::vector<QFE::MATH::Vector3>& vertices) {
+	const auto* entry = blasContainer_.GetData(static_cast<uint32_t>(handle));
+	return entry && (*entry)->Update(commandList4, vertices);
+}
+
+void RaytracingAccelerationStructure::RemoveBLAS(BLASHandle handle) {
+	blasContainer_.Remove(static_cast<uint32_t>(handle));
 }
 
 ID3D12Resource* RaytracingAccelerationStructure::GetBLASResultBuffer(BLASHandle handle) const {

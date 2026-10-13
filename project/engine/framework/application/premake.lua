@@ -98,6 +98,9 @@ project "ApplicationFramework"
         "PhysicsEngine",
         "AudioFramework",
         "Audio",
+        "Network",
+        "AnimationFramework",
+        "Animation",
     }
     dependson {
         "NetworkFramework",

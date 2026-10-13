@@ -4,6 +4,12 @@ namespace QFE {
 	template<typename T>
 	class IDynamicArray {
 	public:
+		IDynamicArray() = default;
+		IDynamicArray(const IDynamicArray&) = default;
+		IDynamicArray& operator=(const IDynamicArray&) = default;
+		IDynamicArray(IDynamicArray&&) noexcept = default;
+		IDynamicArray& operator=(IDynamicArray&&) noexcept = default;
+
 		/// @brief デストラクタ
 		virtual ~IDynamicArray() = default;
 

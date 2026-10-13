@@ -5,8 +5,8 @@
 namespace QFE::WINDOW {
 
 	void GameWindow::Initialize(const uint32_t& width, const uint32_t& height, const std::string& windowName) {
-		configData_.clientWidth = width;
-		configData_.clientHeight = height;
+		configData_.clientWidth = static_cast<int32_t>(width);
+		configData_.clientHeight = static_cast<int32_t>(height);
 		configData_.windowName = Utf8ToUtf16(windowName);
 		configData_.isCanDropFiles = true;
 

@@ -17,8 +17,8 @@ void SwapChain::CreateSwapChain(HWND hwnd, uint32_t width, uint32_t height, IDXG
 	swapChainDesc_.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	// 郢ｧ・ｳ郢晄ｧｭﾎｦ郢晏ｳｨ縺冗ｹ晢ｽ･郢晢ｽｼ邵ｲ竏壹∴郢ｧ・｣郢晢ｽｳ郢晏ｳｨ縺育ｹ昜ｸ莞ｦ郢晏ｳｨﾎ晉ｸｲ竏ｬ・ｨ・ｭ陞ｳ螢ｹ・定ｲゑｽ｡邵ｺ蜉ｱ窶ｻ騾墓ｻ薙・
 	HRESULT hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue, hwnd, &swapChainDesc_, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
-	hr;
 	assert(SUCCEEDED(hr));
+	static_cast<void>(hr);
 }
 
 void SwapChain::AssignBackbuffer() {
@@ -26,9 +26,10 @@ void SwapChain::AssignBackbuffer() {
 	assert(!backBuffers_.empty() && "BackBuffer is not empty");
 
 	HRESULT hr;
-	for (int i = 0; i < backBuffers_.size(); ++i) {
-		hr = swapChain_.Get()->GetBuffer(i, IID_PPV_ARGS(backBuffers_.at(i).GetAddressOf()));
+	for (std::size_t i = 0; i < backBuffers_.size(); ++i) {
+		hr = swapChain_.Get()->GetBuffer(static_cast<UINT>(i), IID_PPV_ARGS(backBuffers_.at(i).GetAddressOf()));
 		assert(SUCCEEDED(hr));
+		static_cast<void>(hr);
 		QFE_LOG(std::format("Assign BackBuffer: {}", i));
 	}
 }
@@ -76,8 +77,8 @@ void SwapChain::CreateDubleBuffering() {
 
 void SwapChain::Present() {
 	HRESULT hr = swapChain_->Present(1, 0);
-	hr;
 	assert(SUCCEEDED(hr) && "Failed to present the swap chain.");
+	static_cast<void>(hr);
 }
 
 void SwapChain::AssignDescriptorHandles(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle, uint32_t index) {
