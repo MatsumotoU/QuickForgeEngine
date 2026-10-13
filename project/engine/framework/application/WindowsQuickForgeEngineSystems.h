@@ -16,7 +16,7 @@ namespace QFE::FRAMEWORK{
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンシステムを保持する構造体。
 	class WindowsQuickForgeEngineSystems final {
 	public:
-		std::unique_ptr<QFE::GameWindowManager> windowManager;// ウィンドウマネージャ
+		std::unique_ptr<QFE::WINDOW::GameWindowManager> windowManager;// ウィンドウマネージャ
 		std::unique_ptr<GraphicContext> graphicEngine;// グラフィック機能の公開コンテキスト
 		std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager;// GUIマネージャ
 		std::unique_ptr<QFE::INPUT::InputInterface> inputInterface;// 入力インターフェース

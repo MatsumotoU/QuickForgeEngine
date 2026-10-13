@@ -1,7 +1,7 @@
 #pragma once
 #include "IEvent.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 	/// @brief ファイルがウィンドウにドロップされたときのイベントシステム
 	class DropFileEvent final : public IEvent {
 	public:

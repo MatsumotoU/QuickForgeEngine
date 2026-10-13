@@ -3,9 +3,9 @@
 #include <cstdint>
 #include <string>
 #include <memory>
-class IGameWindow;
+#include "info/SupportedOs.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	class IGameWindow;
 
@@ -18,6 +18,9 @@ namespace QFE {
 		virtual void Shutdown() = 0;
 		virtual void AddWindow(const uint32_t& width, const uint32_t& height, const std::string& windowName) = 0;
 		virtual bool IsWindowActive() const = 0;
+
+		/// @brief ゲームウィンドウマネージャのサポートOSを取得します.
+		virtual QFE::INFO::SupportedOs GetSupportedOs() const = 0;
 
 	protected:
 		std::vector<std::unique_ptr<IGameWindow>> windows;

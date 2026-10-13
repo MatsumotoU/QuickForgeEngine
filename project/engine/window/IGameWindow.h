@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <string>
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	class IGameWindow {
 	public:

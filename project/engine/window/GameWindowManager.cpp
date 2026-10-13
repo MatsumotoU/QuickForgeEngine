@@ -2,7 +2,7 @@
 #include "GameWindow.h"
 #include "EngineDefines.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	GameWindowManager::GameWindowManager() {
 	}
@@ -57,6 +57,11 @@ namespace QFE {
 		}
 		QFE_REPORT_SYSTEM_ERROR(std::string("GameWindowManager: Window not found - ") + windowName, SystemError::Abort);
 		return nullptr;
+	}
+
+	QFE::INFO::SupportedOs GameWindowManager::GetSupportedOs() const
+	{
+		return QFE::INFO::SupportedOs::Windows;
 	}
 
 }

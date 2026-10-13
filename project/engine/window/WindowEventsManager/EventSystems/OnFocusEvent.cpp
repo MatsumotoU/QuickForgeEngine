@@ -1,7 +1,8 @@
 #include "OnFocusEvent.h"
 #include "EngineDefines.h"
 
-using namespace QFE;
+namespace QFE::WINDOW {
+
 OnFocusEvent::OnFocusEvent(nlohmann::json& data) :IEvent(data) {}
 
 void OnFocusEvent::OnEvent(WPARAM, LPARAM) {
@@ -12,4 +13,5 @@ UINT OnFocusEvent::GetEventType() {
 	return WM_SETFOCUS;
 }
 
+}
 

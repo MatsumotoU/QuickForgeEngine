@@ -1,6 +1,6 @@
 #include "WindowGenerator.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	void WindowGenerator::CreateGameWindow(WNDCLASS& wc, HWND& hwnd, WindowConfigData& config, WNDPROC& proc, WindowEventsManager* eventManager) {
 		// ウィンドウプロージャ

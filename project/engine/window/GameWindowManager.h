@@ -9,7 +9,7 @@
 #include "IGameWindowManager.h"
 #include "IGameWindow.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	/**
 	 * @class GameWindowManager
@@ -46,6 +46,9 @@ namespace QFE {
 		 * @return HWND ウィンドウハンドル
 		 */
 		HWND GetWindow(const std::string windowName) const;
+
+		/// @brief ゲームウィンドウマネージャのサポートOSを取得します.
+		QFE::INFO::SupportedOs GetSupportedOs() const override;
 	};
 
 }

@@ -3,7 +3,7 @@
 #include <cstdint>
 #include "Data/WindowConfigData.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 	class WindowEventsManager;
 	/// @brief ゲームウィンドウを生成するクラス
 	class WindowGenerator {

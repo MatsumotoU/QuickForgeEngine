@@ -43,6 +43,8 @@ namespace QFE::APPLICATION {
 		std::string projectName;
 		std::string sourcePatterns;
 		std::filesystem::path directoryPath;
+		bool isFrameworkLayer = false;
+		std::vector<std::string> supportedOperatingSystems;
 		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
 		// External library projects are generated without warning diagnostics.
 		bool externalLibrary = false;

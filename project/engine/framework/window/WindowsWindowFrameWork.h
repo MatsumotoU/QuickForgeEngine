@@ -6,17 +6,18 @@
 #define NOMINMAX
 #include <Windows.h>
 
-namespace QFE {
+namespace QFE::WINDOW {
 	class GameWindowManager;
 }
 
 namespace QFE::FRAMEWORK {
+
 	///  @brief WindowManagerを作りながらメインウィンドウを表示する
-	std::unique_ptr<QFE::GameWindowManager> CreateWindowManager(
+	std::unique_ptr<QFE::WINDOW::GameWindowManager> CreateWindowManager(
 		const std::string& mainWindowName, uint32_t width, uint32_t height);
 
 	/// @brief WindowManagerからウィンドウハンドルを取得する
-	HWND GetWindowHandle(const GameWindowManager* windowManager, const std::string& windowName);
+	HWND GetWindowHandle(const QFE::WINDOW::GameWindowManager* windowManager, const std::string& windowName);
 
 	/// @brief ユーザーにファイルパスを選択させるダイアログを表示し、選択されたファイルパスを取得する関数,スレッドをブロックするので注意してください
 	/// @param hwnd ダイアログを表示する親ウィンドウのハンドル
@@ -57,7 +58,7 @@ namespace QFE::FRAMEWORK {
 	bool CompileProject(const std::wstring& projectPath, const std::wstring& outputDir, bool isRelease);
 
 	/// @brief メインウィンドウがアクティブかどうかを判定する関数
-	bool IsMainWindowActive(const GameWindowManager* windowManager);
+	bool IsMainWindowActive(const QFE::WINDOW::GameWindowManager* windowManager);
 
 	/// @brief Windowsアプリケーションのメッセージを処理する関数。メインループ内で呼び出す必要があります。
 	bool ProcessWindowsApplicationMessage();

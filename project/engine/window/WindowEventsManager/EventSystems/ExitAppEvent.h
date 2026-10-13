@@ -1,7 +1,7 @@
 #pragma once
 #include "IEvent.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 	/// @brief アプリケーション終了時のイベントシステム
 	class ExitAppEvent final : public IEvent {
 	public:

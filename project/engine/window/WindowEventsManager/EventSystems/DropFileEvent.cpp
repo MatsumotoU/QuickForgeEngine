@@ -3,7 +3,8 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE;
+namespace QFE::WINDOW {
+
 DropFileEvent::DropFileEvent(nlohmann::json& data):IEvent(data) {}
 
 void DropFileEvent::OnEvent(WPARAM wparam, LPARAM) {
@@ -24,4 +25,6 @@ void DropFileEvent::OnEvent(WPARAM wparam, LPARAM) {
 
  UINT DropFileEvent::GetEventType() {
 	return WM_DROPFILES;
+}
+
 }

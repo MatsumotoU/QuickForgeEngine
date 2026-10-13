@@ -4,7 +4,7 @@
 #include <memory>
 #include "EventSystems/IEvent.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 	/// @brief ウィンドウに対するアクションを管理するクラス
 	class WindowEventsManager final {
 	public:
