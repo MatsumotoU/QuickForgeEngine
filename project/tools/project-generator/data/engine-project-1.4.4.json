@@ -1116,6 +1116,7 @@
                 }
             },
             "directoryPath": "engine/framework/application",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 15,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1162,6 +1163,7 @@
                 }
             },
             "directoryPath": "engine/framework/graphic",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 16,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1208,6 +1210,7 @@
                 }
             },
             "directoryPath": "engine/framework/window",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 17,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1254,6 +1257,7 @@
                 }
             },
             "directoryPath": "engine/framework/gui",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 18,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1300,6 +1304,7 @@
                 }
             },
             "directoryPath": "engine/framework/input",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 19,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1346,6 +1351,7 @@
                 }
             },
             "directoryPath": "engine/framework/physics",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 20,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1392,6 +1398,7 @@
                 }
             },
             "directoryPath": "engine/framework/scene",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 21,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1438,6 +1445,7 @@
                 }
             },
             "directoryPath": "engine/framework/assets",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 22,
             "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
@@ -1852,6 +1860,7 @@
                 }
             },
             "directoryPath": "engine/framework/audio",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 31,
             "includePaths": "",
@@ -1944,6 +1953,7 @@
                 }
             },
             "directoryPath": "engine/framework/network",
+            "isFrameworkLayer": true,
             "externalLinks": [],
             "id": 33,
             "includePaths": "",
@@ -1961,5 +1971,5 @@
         }
     ],
     "rootDirectory": "../../..",
-    "version": 5
+    "version": 6
 }

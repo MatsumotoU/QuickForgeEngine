@@ -82,6 +82,112 @@ namespace
 		return false;
 	}
 
+	struct FrameworkPlatformSources {
+		const char* displayName;
+		const char* premakeSystem;
+		std::vector<std::filesystem::path> sourceFiles;
+	};
+
+	bool IsCompileSourceFile(const std::filesystem::path& path)
+	{
+		std::string extension = path.extension().generic_string();
+		std::transform(extension.begin(), extension.end(), extension.begin(),
+			[](unsigned char character) {
+				return static_cast<char>(std::tolower(character));
+			});
+		return extension == ".c" || extension == ".cc" ||
+			extension == ".cpp" || extension == ".cxx" ||
+			extension == ".m" || extension == ".mm";
+	}
+
+	std::vector<FrameworkPlatformSources> FindFrameworkPlatformSources(
+		const std::filesystem::path& directoryPath)
+	{
+		std::vector<FrameworkPlatformSources> platforms = {
+			{ "Windows", "windows", {} },
+			{ "Linux", "linux", {} },
+			{ "macOS", "macosx", {} },
+		};
+
+		std::error_code error;
+		if (!std::filesystem::is_directory(directoryPath, error)) {
+			return platforms;
+		}
+
+		std::filesystem::recursive_directory_iterator iterator(
+			directoryPath, std::filesystem::directory_options::skip_permission_denied,
+			error);
+		const std::filesystem::recursive_directory_iterator end;
+		while (iterator != end) {
+			if (iterator->is_regular_file(error) &&
+				IsCompileSourceFile(iterator->path())) {
+				std::error_code relativeError;
+				const std::filesystem::path relativePath = std::filesystem::relative(
+					iterator->path(), directoryPath, relativeError);
+				if (!relativeError) {
+					std::string searchablePath = relativePath.generic_string();
+					std::transform(searchablePath.begin(), searchablePath.end(),
+						searchablePath.begin(), [](unsigned char character) {
+							return static_cast<char>(std::tolower(character));
+						});
+					if (searchablePath.find("windows") != std::string::npos ||
+						searchablePath.find("win32") != std::string::npos) {
+						platforms[0].sourceFiles.push_back(relativePath);
+					}
+					if (searchablePath.find("linux") != std::string::npos) {
+						platforms[1].sourceFiles.push_back(relativePath);
+					}
+					if (searchablePath.find("macos") != std::string::npos ||
+						searchablePath.find("macosx") != std::string::npos) {
+						platforms[2].sourceFiles.push_back(relativePath);
+					}
+				}
+			}
+			error.clear();
+			iterator.increment(error);
+			if (error) {
+				error.clear();
+			}
+		}
+
+		for (FrameworkPlatformSources& platform : platforms) {
+			std::sort(platform.sourceFiles.begin(), platform.sourceFiles.end());
+			platform.sourceFiles.erase(std::unique(platform.sourceFiles.begin(),
+				platform.sourceFiles.end()), platform.sourceFiles.end());
+		}
+		return platforms;
+	}
+
+	void RefreshFrameworkOperatingSystems(ProjectNode& node)
+	{
+		node.supportedOperatingSystems.clear();
+		if (!node.isFrameworkLayer) {
+			return;
+		}
+		for (const FrameworkPlatformSources& platform :
+			FindFrameworkPlatformSources(node.directoryPath)) {
+			if (!platform.sourceFiles.empty()) {
+				node.supportedOperatingSystems.emplace_back(platform.displayName);
+			}
+		}
+	}
+
+	std::string GetSupportedOperatingSystemsLabel(const ProjectNode& node)
+	{
+		if (node.supportedOperatingSystems.empty()) {
+			return "Supported OS: (not detected)";
+		}
+		std::string label = "Supported OS: ";
+		for (std::size_t index = 0;
+			index < node.supportedOperatingSystems.size(); ++index) {
+			if (index != 0) {
+				label += ", ";
+			}
+			label += node.supportedOperatingSystems[index];
+		}
+		return label;
+	}
+
 	PremakeProjectKind GetGeneratedProjectKind(const ProjectNode& node,
 		const ProjectConfigurationSettings& settings)
 	{
@@ -179,6 +285,7 @@ namespace
 		std::string name;
 		std::filesystem::path directoryPath;
 		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
+		bool isFrameworkLayer = false;
 		std::string groupName;
 		std::vector<std::string> includePaths;
 		std::vector<std::string> preBuildCommands;
@@ -379,6 +486,10 @@ namespace
 				continue;
 			}
 			if (!hasProject) {
+				continue;
+			}
+			if (Trim(line) == "-- QFE: framework-layer") {
+				currentProject.isFrameworkLayer = true;
 				continue;
 			}
 
@@ -2089,14 +2200,24 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 	const std::string projectLabel = node.projectName.empty()
 		? node.name
 		: node.projectName;
+	const std::string operatingSystemsLabel = node.isFrameworkLayer
+		? GetSupportedOperatingSystemsLabel(node)
+		: std::string{};
 	const float inputPinWidth = ImGui::CalcTextSize("in").x;
 	const float outputPinWidth = ImGui::CalcTextSize("out").x;
 	const float contentWidth = std::max(
 		150.0f,
 		std::max(ImGui::CalcTextSize(node.name.c_str()).x,
 			std::max(ImGui::CalcTextSize(projectLabel.c_str()).x,
-				inputPinWidth + outputPinWidth + 64.0f)));
+				std::max(ImGui::CalcTextSize(operatingSystemsLabel.c_str()).x,
+					inputPinWidth + outputPinWidth + 64.0f))));
 
+	if (node.isFrameworkLayer) {
+		ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_NodeBg,
+			ImVec4(0.16f, 0.52f, 0.68f, 0.94f));
+		ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_NodeBorder,
+			ImVec4(0.55f, 0.88f, 1.0f, 0.95f));
+	}
 	ax::NodeEditor::BeginNode(editorNodeId);
 	// Node EditorはノードごとにImGuiのIDスコープを作らないため、
 	// ノード内の通常のImGuiウィジェットを明示的に分離する。
@@ -2104,6 +2225,9 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 	ImGui::TextUnformatted(node.name.c_str());
 	if (projectLabel != node.name) {
 		ImGui::TextDisabled("%s", projectLabel.c_str());
+	}
+	if (node.isFrameworkLayer) {
+		ImGui::TextUnformatted(operatingSystemsLabel.c_str());
 	}
 
 	// PinPivotRect()とDrawListは画面座標を受け取る。GetCursorPos()は
@@ -2143,6 +2267,9 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 		pendingNodeRemovalId_ = node.id;
 	}
 	ax::NodeEditor::EndNode();
+	if (node.isFrameworkLayer) {
+		ax::NodeEditor::PopStyleColor(2);
+	}
 	ImGui::PopID();
 }
 
@@ -2169,6 +2296,20 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 		const std::string directoryPath =
 			QFE::ConvertString(node->directoryPath.wstring());
 		ImGui::TextWrapped("Path: %s", directoryPath.c_str());
+		ImGui::Separator();
+
+		if (ImGui::Checkbox("Framework layer", &node->isFrameworkLayer)) {
+			RefreshFrameworkOperatingSystems(*node);
+		}
+		if (node->isFrameworkLayer) {
+			const std::string operatingSystemsLabel =
+				GetSupportedOperatingSystemsLabel(*node);
+			ImGui::TextWrapped("%s", operatingSystemsLabel.c_str());
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Rescan OS sources")) {
+				RefreshFrameworkOperatingSystems(*node);
+			}
+		}
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Premake project name");
@@ -2528,6 +2669,9 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 		}
 		node->projectName = project.name;
 		node->kind = project.kind;
+		if (project.isFrameworkLayer) {
+			node->isFrameworkLayer = true;
+		}
 		node->includePaths = JoinLines(project.includePaths);
 		node->preBuildEvent = JoinLines(project.preBuildCommands);
 		node->postBuildEvent = JoinLines(project.postBuildCommands);
@@ -2670,6 +2814,9 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 	SimplifyDependencyLinks();
 	const std::size_t simplifiedLinkCount =
 		importedLinkCountBeforeSimplification - links_.size();
+	for (ProjectNode& node : nodes_) {
+		RefreshFrameworkOperatingSystems(node);
+	}
 
 	std::ostringstream status;
 	status << "Loaded " << visitedFiles.size() << " Premake file(s), matched "
@@ -2969,6 +3116,9 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		output << "-- Generated by QuickForgeEngine ProjectGenerator.\n";
 		output << "local _sourceDirectory = path.getabsolute(path.getdirectory(_SCRIPT))\n\n";
 		output << "project \"" << EscapeLuaString(projectNames.at(node.id)) << "\"\n";
+		if (node.isFrameworkLayer) {
+			output << "    -- QFE: framework-layer\n";
+		}
 		output << "    location (_sourceDirectory)\n";
 		output << "    language \"C++\"\n";
 		output << "    objdir (path.join(QFE_PROJECT_ROOT, \"../generated/obj/%{prj.name}/%{cfg.buildcfg}/%{cfg.platform}\"))\n";
@@ -2984,6 +3134,25 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 				<< EscapeLuaString(Trim(pattern)) << "\"),\n";
 		}
 		output << "    }\n";
+		if (node.isFrameworkLayer) {
+			const std::vector<FrameworkPlatformSources> platformSources =
+				FindFrameworkPlatformSources(node.directoryPath);
+			for (const FrameworkPlatformSources& platform : platformSources) {
+				if (platform.sourceFiles.empty()) {
+					continue;
+				}
+				output << "    -- Exclude " << platform.displayName
+					<< " framework sources from other operating systems.\n";
+				output << "    filter \"system:not " << platform.premakeSystem << "\"\n";
+				output << "        removefiles {\n";
+				for (const std::filesystem::path& sourceFile : platform.sourceFiles) {
+					output << "            path.join(_sourceDirectory, \""
+						<< EscapeLuaString(sourceFile.generic_string()) << "\"),\n";
+				}
+				output << "        }\n";
+			}
+			output << "    filter {}\n";
+		}
 		std::vector<std::string> nestedProjectDirectories;
 		for (const ProjectNode& other : nodes_) {
 			if (other.id == node.id) {
@@ -3296,7 +3465,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 		rootPath.lexically_relative(configurationPath.parent_path());
 
 	nlohmann::json configuration = nlohmann::json::object();
-	configuration["version"] = 5;
+	configuration["version"] = 6;
 	configuration["rootDirectory"] = QFE::ConvertString(
 		(relativeRoot.empty() ? rootPath : relativeRoot).generic_wstring());
 	configuration["nextNodeId"] = nextNodeId_;
@@ -3348,6 +3517,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 		nodeJson["name"] = node.name;
 		nodeJson["projectName"] = node.projectName;
 		nodeJson["sourcePatterns"] = node.sourcePatterns;
+		nodeJson["isFrameworkLayer"] = node.isFrameworkLayer;
 		const std::filesystem::path relativeNode =
 			NormalizePath(node.directoryPath).lexically_relative(rootPath);
 		nodeJson["directoryPath"] = QFE::ConvertString(
@@ -3611,6 +3781,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 			node.name = nodeJson.value("name", "");
 			node.projectName = nodeJson.value("projectName", node.name);
 			node.sourcePatterns = nodeJson.value("sourcePatterns", "");
+			node.isFrameworkLayer = nodeJson.value("isFrameworkLayer", false);
 			if (node.name.empty()) {
 				node.name = QFE::ConvertString(
 					std::filesystem::path(QFE::ConvertString(directoryPath)).filename().wstring());
@@ -3684,6 +3855,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 			// Node Editor側のノードは次のBeginNodeで生成されるため、そこで
 			// 保存した座標を適用する。
 			node.positionInitialized = false;
+			RefreshFrameworkOperatingSystems(node);
 			nodes_.push_back(std::move(node));
 
 			if (nodeId < std::numeric_limits<std::uint64_t>::max() &&
