@@ -37,6 +37,7 @@ public:
 	PipelineStateObject* GetNormalPso() { return &normalPso_; }
 	PipelineStateObject* GetFontPso() { return &fontPso_; }
 	PipelineStateObject* GetPixcelPso() { return &pixcelPso_; }
+	PipelineStateObject* GetGlitchPso() { return &glitchPso_; }
 
 private: // メンバ変数
 	ShaderCompiler shaderCompiler_;
@@ -51,6 +52,7 @@ private: // メンバ変数
 	RootParameter normalRootParameter_;
 	RootParameter fontRootParameter_;
 	RootParameter pixcelRootParameter_;
+	RootParameter glitchRootParameter_;
 
 	// PSO
 	PipelineStateObject trianglePso_[kCountOfBlendMode];
@@ -65,6 +67,7 @@ private: // メンバ変数
 	PipelineStateObject grayScaleTrianglePso_;
 	PipelineStateObject vignettePso_;
 	PipelineStateObject pixcelPso_;
+	PipelineStateObject glitchPso_;
 
 	PipelineStateObject fontPso_;
 

@@ -3,11 +3,13 @@
 #include "engine/include/audio/AudioInterface.h"
 #include "engine/include/assets/AudioSource/AudioSourceManager.h"
 #include "engine/include/assets/AssetManager.h"
+#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
 
 void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 	sol::table qfe = luaState->get<sol::table>("QFE");
 	sol::table input = qfe.create_named("Input");
 	sol::table audio = qfe.create_named("Audio");
+	sol::table postProcess = qfe.create_named("PostProcess");
 
 	// 入力
 	InputInterface* inputManager = InputInterface::GetInstance();
@@ -69,5 +71,25 @@ void QFE::Script::Base::LuaScriptOnQFESetSubModuleBase(sol::state* luaState) {
 		});
 	audio.set_function("StopSound", [](const uint32_t& playHandle) {
 		AudioInterface::GetInstance()->StopSound(playHandle);
+		});
+
+	// シーン遷移用ポストプロセス
+	postProcess.set_function("BeginTransition", [](bool debugMode) {
+		RendaringPostprosecess::GetInstance()->BeginTransitionEffect(debugMode);
+		});
+	postProcess.set_function("SetTransitionProgress", [](float progress) {
+		RendaringPostprosecess::GetInstance()->SetTransitionEffectProgress(progress);
+		});
+	postProcess.set_function("EndTransition", []() {
+		RendaringPostprosecess::GetInstance()->EndTransitionEffect();
+		});
+	postProcess.set_function("ResetTransition", []() {
+		RendaringPostprosecess::GetInstance()->ResetTransitionEffect();
+		});
+	postProcess.set_function("SetTransitionDebugMode", [](bool enabled) {
+		RendaringPostprosecess::GetInstance()->SetTransitionDebugMode(enabled);
+		});
+	postProcess.set_function("IsTransitionDebugMode", []() {
+		return RendaringPostprosecess::GetInstance()->IsTransitionDebugMode();
 		});
 }

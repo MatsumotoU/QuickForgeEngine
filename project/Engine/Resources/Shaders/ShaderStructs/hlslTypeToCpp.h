@@ -94,6 +94,21 @@ struct PixcelOffset {
 	float32_t time;
 };
 
+// シーン遷移用のグリッチポストプロセスのパラメータです。
+// screenTime: xy = 画面サイズ、z = 経過時間、w = スキャンライン強度
+// parameters: x = グリッチ強度、y = ノイズ量、z = 横ずれ量、w = 色ずれ量
+struct GlitchOffset {
+#ifdef __cplusplus
+	GlitchOffset()
+		: screenTime{ 1280.0f, 720.0f, 0.0f, 0.0f }
+		, parameters{ 0.0f, 0.0f, 0.0f, 0.0f } {
+	}
+#endif
+
+	float32_t4 screenTime;
+	float32_t4 parameters;
+};
+
 struct ParticleForGPU {
 #ifdef __cplusplus
 	ParticleForGPU()

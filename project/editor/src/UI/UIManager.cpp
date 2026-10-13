@@ -132,6 +132,19 @@ void UIManager::Draw() {
 		ImGui::EndMainMenuBar();
 	}
 
+	// F2 のシーン遷移デバッグ中は上下にシネマティックな黒帯を表示する
+	if (RendaringPostprosecess::GetInstance()->IsTransitionDebugMode()) {
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		const float barHeight = viewport->Size.y * 0.10f;
+		const ImVec2 topBarMin = viewport->Pos;
+		const ImVec2 topBarMax(viewport->Pos.x + viewport->Size.x, viewport->Pos.y + barHeight);
+		const ImVec2 bottomBarMin(viewport->Pos.x, viewport->Pos.y + viewport->Size.y - barHeight);
+		const ImVec2 bottomBarMax(viewport->Pos.x + viewport->Size.x, viewport->Pos.y + viewport->Size.y);
+		ImDrawList* foregroundDrawList = ImGui::GetForegroundDrawList(viewport);
+		foregroundDrawList->AddRectFilled(topBarMin, topBarMax, IM_COL32(0, 0, 0, 255));
+		foregroundDrawList->AddRectFilled(bottomBarMin, bottomBarMax, IM_COL32(0, 0, 0, 255));
+	}
+
 	if (!RendaringPostprosecess::GetInstance()->isImGuiEnabled_) {
 		return;
 	}

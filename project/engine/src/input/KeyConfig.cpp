@@ -85,6 +85,8 @@ void KeyConfig::SettingDefaultKeyConfig() {
 	// キャンセル
 	AddKey("Cancel", DIK_BACKSPACE);
 	AddKey("Cancel", DIK_ESCAPE);
+	// シーン遷移デバッグ
+	AddKey("TransitionDebug", DIK_F2);
 }
 
 void KeyConfig::Finalize() {

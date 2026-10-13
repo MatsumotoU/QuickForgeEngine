@@ -1,31 +1,16 @@
-reqestClose = false
-isEnd = false
-
-local t = 0.0
+-- 旧来の白フェード用エンティティとの互換スクリプトです。
+-- シーン遷移の見た目は PostProcess のグリッチへ移行しています。
 
 function Init()
-    isEnd = false
-    reqestClose = false
     local mat = GetMaterial(GetThisEntityId())
-    mat.color.w = 1.0
+    mat.color.w = 0.0
 end
 
 function Update()
     local mat = GetMaterial(GetThisEntityId())
-    if not reqestClose then
-        mat.color.w = QFE.Math.SimpleEaseIn(mat.color.w,0.0,0.1)
-        return
-    end
-
-    if t < 1.0 then
-        t = t + GetDeltaTime()*3.0
-    else
-        t = 1.0
-        isEnd = true
-    end
-    mat.color.w = t
+    mat.color.w = 0.0
 end
 
 function ReqestClose()
-    reqestClose = true
+    -- 互換用。実際の遷移開始は QFE.PostProcess.BeginTransition で行います。
 end

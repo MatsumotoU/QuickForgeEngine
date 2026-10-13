@@ -368,6 +368,19 @@ function QFE.Input.GetKeyTrigger(actionName) end
 ---@param actionName string
 ---@return boolean
 function QFE.Input.GetKeyRelease(actionName) end
+
+---@class QFE.PostProcess
+QFE.PostProcess = {}
+---@param debugMode boolean
+function QFE.PostProcess.BeginTransition(debugMode) end
+---@param progress number # 0.0 to 1.0
+function QFE.PostProcess.SetTransitionProgress(progress) end
+function QFE.PostProcess.EndTransition() end
+function QFE.PostProcess.ResetTransition() end
+---@param enabled boolean
+function QFE.PostProcess.SetTransitionDebugMode(enabled) end
+---@return boolean
+function QFE.PostProcess.IsTransitionDebugMode() end
 ---@param button number # 0 for Left, 1 for Right, 2 for Middle
 ---@return boolean
 function QFE.Input.GetMousePress(button) end

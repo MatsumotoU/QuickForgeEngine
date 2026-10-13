@@ -71,6 +71,7 @@ void WindowsEngineCore::Initialize() {
 	rendaringPostprocess_->SetGrayScalePSO(graphicPipelineManager_->GetGrayScalePso());
 	rendaringPostprocess_->SetVignettePSO(graphicPipelineManager_->GetVignettePso());
 	rendaringPostprocess_->SetPixcelPSO(graphicPipelineManager_->GetPixcelPso());
+	rendaringPostprocess_->SetGlitchPSO(graphicPipelineManager_->GetGlitchPso());
 	rendaringPostprocess_->SetOffscreenResource(
 		offScreenResourceManager_.GetOffscreenResource(0), offScreenResourceManager_.GetOffscreenResource(1));
 	rendaringPostprocess_->SetOffscreenRtvHandle(

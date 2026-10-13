@@ -271,9 +271,6 @@
     <Filter Include="src\assets\Script">
       <UniqueIdentifier>{F3F8194A-5F0F-18E0-A886-A30114DCE867}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\assets\Script\Data">
-      <UniqueIdentifier>{3CFE633B-28F8-8C8D-1165-239EFDFDF2F9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\assets\Script\QFElinker">
       <UniqueIdentifier>{C3574ADA-2F65-78C0-B84B-74AB24584477}</UniqueIdentifier>
     </Filter>

@@ -3,6 +3,7 @@
 
 #include "engine/include/assets/AssetManager.h"
 #include "engine/include/camera/CameraManager.h"
+#include "engine/include/graphic/PostEffect/RendaringPostprocess.h"
 #include <fstream>
 #include <string>
 
@@ -70,6 +71,8 @@ void SceneManager::Update() {
 	if (isRequestRunTimeLoadScene_) {
 		LoadScene(nextSceneName_);
 		StartScript();
+		// 遷移先の最初のフレームにもグリッチを残し、読み込み後にゆっくり収束させる。
+		RendaringPostprosecess::GetInstance()->StartTransitionSettle();
 		isRequestRunTimeLoadScene_ = false;
 		nextSceneName_.clear();
 	}

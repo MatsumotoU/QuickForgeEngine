@@ -56,6 +56,12 @@ void GraphicPipelineManager::Initialize(
 	
 	pixcelRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
+	// シーン遷移用グリッチのまとめ
+	glitchRootParameter_.Initialize();
+	glitchRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	glitchRootParameter_.CreateRootParameter("OffsetParameter", D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	glitchRootParameter_.SetDescriptorRange("TextureParameter", D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
 	// 何もしないPSOを1つ作成
 	normalRootParameter_.Initialize();
 	normalRootParameter_.CreateRootParameter("TextureParameter", D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
@@ -79,6 +85,7 @@ void GraphicPipelineManager::Initialize(
 	normalRootParameter_.CheckIntegrityData();
 	colorCorrectionRootParameter_.CheckIntegrityData();
 	fontRootParameter_.CheckIntegrityData();
+	glitchRootParameter_.CheckIntegrityData();
 #endif // _DEBUG
 
 	// インプットレイアウトの初期化
@@ -141,6 +148,11 @@ void GraphicPipelineManager::Initialize(
 	pixcelPso_.CreatePipelineStateObject(
 		pixcelRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "PixcelShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
+
+	glitchPso_.Initialize(&shaderCompiler_, device);
+	glitchPso_.CreatePipelineStateObject(
+		glitchRootParameter_, dxCommon->GetDepthStencilDesc(), normalInputLayout,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, D3D12_FILL_MODE_SOLID, "GlitchTransitionShader.hlsl", "Simple.VS.hlsl", kBlendModeNormal, false);
 
 	fontPso_.Initialize(&shaderCompiler_, device);
 	fontPso_.CreatePipelineStateObject(

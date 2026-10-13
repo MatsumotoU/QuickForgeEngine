@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <cmath>
 
 #ifdef _DEBUG
 #include "engine/include/utility/DebugTool/DebugLog/MyDebugLog.h"
@@ -20,6 +21,7 @@ RendaringPostprosecess::RendaringPostprosecess() {
 
 	device_ = nullptr;
 	list_ = nullptr;
+	glitchPso_ = nullptr;
 
 	isPostprocess_ = true;
 
@@ -29,6 +31,10 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	enableVignette_ = true;
 	enableNormal_ = true;
 	enablePixcel_ = true;
+	enableGlitch_ = false;
+	transitionDebugMode_ = false;
+	transitionSettling_ = false;
+	transitionSettleTime_ = 0.0f;
 
 	renderingRosourceIndex_ = 0;
 	readingResourceIndex_ = 0;
@@ -47,11 +53,13 @@ RendaringPostprosecess::RendaringPostprosecess() {
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyVignette, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyColorCorrection, this));
 	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyPixcel, this));
+	postProcessFunctions_.push_back(std::bind(&RendaringPostprosecess::ApplyGlitch, this));
 	// 固定のインデックスを設定
 	grayScaleProcessIndex_ = 0; // グレースケールのインデックス
 	vignetteProcessIndex_ = 1; // ビネットのインデックス
 	colorCorrectionProcessIndex_ = 2; // 色調補正のインデックス
 	pixcelProcessIndex_ = 3; // ピクセル化のインデックス
+	glitchProcessIndex_ = 4; // グリッチのインデックス
 
 	postProcessOrderForm_.clear();
 
@@ -146,6 +154,63 @@ void RendaringPostprosecess::SetPixcelPSO(PipelineStateObject* pso) {
 	pixcelOffsetBuffer_.GetData()->screenResolution.y = static_cast<float>(QFE::EngineGlobalValue::windowHeight);
 }
 
+void RendaringPostprosecess::SetGlitchPSO(PipelineStateObject* pso) {
+	assert(pso);
+	glitchPso_ = pso;
+	glitchOffsetBuffer_.CreateResource(device_);
+	glitchOffsetBuffer_.GetData()->screenTime.x = static_cast<float>(QFE::EngineGlobalValue::windowWidth);
+	glitchOffsetBuffer_.GetData()->screenTime.y = static_cast<float>(QFE::EngineGlobalValue::windowHeight);
+}
+
+void RendaringPostprosecess::BeginTransitionEffect(bool debugMode) {
+	if (!glitchPso_) {
+		return;
+	}
+	enableGlitch_ = true;
+	transitionDebugMode_ = transitionDebugMode_ || debugMode;
+	transitionSettling_ = false;
+	transitionSettleTime_ = 0.0f;
+	glitchOffsetBuffer_.GetData()->screenTime.z = 0.0f;
+	SetTransitionEffectProgress(0.0f);
+}
+
+void RendaringPostprosecess::SetTransitionEffectProgress(float progress) {
+	if (!glitchPso_) {
+		return;
+	}
+
+	progress = std::clamp(progress, 0.0f, 1.0f);
+	// 遷移先を読み込むまではグリッチを増幅し、読み込み後に別途ゆっくり収束させます。
+	const float intensity = std::clamp(progress * 1.5f, 0.0f, 1.0f);
+	GlitchOffset& offset = *glitchOffsetBuffer_.GetData();
+	offset.parameters.x = intensity;
+	offset.parameters.y = 0.02f + intensity * 0.72f;
+	offset.parameters.z = 0.0015f + intensity * 0.045f;
+	offset.parameters.w = 0.001f + intensity * 0.035f;
+	enableGlitch_ = true;
+}
+
+void RendaringPostprosecess::EndTransitionEffect() {
+	enableGlitch_ = false;
+	transitionSettling_ = false;
+	transitionSettleTime_ = 0.0f;
+	GlitchOffset& offset = *glitchOffsetBuffer_.GetData();
+	offset.parameters = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+}
+
+void RendaringPostprosecess::StartTransitionSettle() {
+	if (!glitchPso_ || !enableGlitch_) {
+		return;
+	}
+	transitionSettling_ = true;
+	transitionSettleTime_ = 0.0f;
+}
+
+void RendaringPostprosecess::ResetTransitionEffect() {
+	EndTransitionEffect();
+	glitchOffsetBuffer_.GetData()->screenTime.z = 0.0f;
+}
+
 void RendaringPostprosecess::SetOffscreenResource(ID3D12Resource* firstResource, ID3D12Resource* secondResource) {
 	assert(firstResource);
 	assert(secondResource);
@@ -185,6 +250,19 @@ DescriptorHandles RendaringPostprosecess::GetCurrentSrvHandle() const  {
 }
 
 void RendaringPostprosecess::PreDraw() {
+	if (transitionSettling_) {
+		constexpr float kTransitionSettleDuration = 0.75f;
+		transitionSettleTime_ += TimeManager::GetInstance()->GetDeltaTime();
+		const float settleProgress = std::clamp(
+			transitionSettleTime_ / kTransitionSettleDuration, 0.0f, 1.0f);
+		const float remaining = 1.0f - settleProgress;
+		const float easedRemaining = remaining * remaining * (3.0f - 2.0f * remaining);
+		SetTransitionEffectProgress(easedRemaining);
+		if (settleProgress >= 1.0f) {
+			EndTransitionEffect();
+		}
+	}
+
 	// ポストプロセスが何回適用されたか調べる
 	postProcessCount_ = 0;
 	postProcessOrderForm_.clear();
@@ -212,6 +290,12 @@ void RendaringPostprosecess::PreDraw() {
 	if (enableColorCorrection_) {
 		postProcessOrderForm_.push_back(colorCorrectionProcessIndex_); // 色調補正
 		postProcessCount_++;
+	}
+	// シーン遷移用グリッチは最後に適用し、色ずれとノイズを画面全体へ残す
+	if (enableGlitch_) {
+		postProcessOrderForm_.push_back(glitchProcessIndex_);
+		postProcessCount_++;
+		glitchOffsetBuffer_.GetData()->screenTime.z += TimeManager::GetInstance()->GetDeltaTime();
 	}
 
 	// ポストプロセスの順序を並び替える
@@ -431,5 +515,18 @@ void RendaringPostprosecess::ApplyPixcel() {
 	list_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	list_->SetGraphicsRootDescriptorTable(0, offScreenSrvHandles_.at(readingResourceIndex_).gpuHandle_);
 	list_->SetGraphicsRootConstantBufferView(1, pixcelOffsetBuffer_.GetGPUVirtualAddress());
+	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+void RendaringPostprosecess::ApplyGlitch() {
+	list_->RSSetViewports(1, dxCommon_->GetViewPort());
+	list_->RSSetScissorRects(1, dxCommon_->GetScissorRect());
+	list_->SetGraphicsRootSignature(glitchPso_->GetRootSignature());
+	list_->SetPipelineState(glitchPso_->GetPipelineState());
+	list_->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	list_->IASetIndexBuffer(&indexBufferView_);
+	list_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	list_->SetGraphicsRootDescriptorTable(0, offScreenSrvHandles_.at(readingResourceIndex_).gpuHandle_);
+	list_->SetGraphicsRootConstantBufferView(1, glitchOffsetBuffer_.GetGPUVirtualAddress());
 	list_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }

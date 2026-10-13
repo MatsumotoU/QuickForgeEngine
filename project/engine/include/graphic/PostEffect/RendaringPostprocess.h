@@ -38,6 +38,7 @@ public:
 	void SetVignettePSO(PipelineStateObject* pso);
 	void SetNormalPSO(PipelineStateObject* pso);
 	void SetPixcelPSO(PipelineStateObject* pso);
+	void SetGlitchPSO(PipelineStateObject* pso);
 	void SetOffscreenResource(ID3D12Resource* firstResource, ID3D12Resource* secondResource);
 	void SetOffscreenRtvHandle(D3D12_CPU_DESCRIPTOR_HANDLE firstHandle, D3D12_CPU_DESCRIPTOR_HANDLE secondHandle);
 	void SetOffscreenSrvHandle(DescriptorHandles firstHandle, DescriptorHandles secondHandle);
@@ -49,6 +50,16 @@ public:
 	OffsetBuffer& GetGrayScaleOffset() { return *grayScaleOffsetBuffer_.GetData(); }
 	VignetteOffset& GetVignetteOffset() { return *vignetteOffsetBuffer_.GetData(); }
 	PixcelOffset& GetPixcelOffset() { return *pixcelOffsetBuffer_.GetData(); }
+	GlitchOffset& GetGlitchOffset() { return *glitchOffsetBuffer_.GetData(); }
+
+	// シーン遷移用グリッチの制御。progress は 0.0 ～ 1.0 です。
+	void BeginTransitionEffect(bool debugMode);
+	void SetTransitionEffectProgress(float progress);
+	void EndTransitionEffect();
+	void StartTransitionSettle();
+	void ResetTransitionEffect();
+	void SetTransitionDebugMode(bool enabled) { transitionDebugMode_ = enabled; }
+	bool IsTransitionDebugMode() const { return transitionDebugMode_; }
 
 public:
 	void PreDraw();
@@ -68,6 +79,7 @@ private:
 	void ApplyVignette();
 	void ApplyColorCorrection();
 	void ApplyPixcel();
+	void ApplyGlitch();
 
 public:// パブリック変数
 	bool isPostprocess_;
@@ -99,6 +111,15 @@ private:// ピクセル化変数
 	PipelineStateObject* pixcelPso_;
 	ConstantBuffer<PixcelOffset> pixcelOffsetBuffer_;
 	int pixcelProcessIndex_;
+
+private:// シーン遷移用グリッチ変数
+	PipelineStateObject* glitchPso_;
+	ConstantBuffer<GlitchOffset> glitchOffsetBuffer_;
+	int glitchProcessIndex_;
+	bool enableGlitch_;
+	bool transitionDebugMode_;
+	bool transitionSettling_;
+	float transitionSettleTime_;
 
 private:// メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
