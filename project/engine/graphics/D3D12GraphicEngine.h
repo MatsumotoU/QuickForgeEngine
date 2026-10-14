@@ -53,29 +53,41 @@ namespace QFE::GRAPHIC {
 	class D3D12GraphicEngine : public IGraphicEngine {
 	public:
 		/// @brief wndowsに依存したグラフィックエンジンです.描画ウィンドウのハンドルの引数に取ります.
-		explicit D3D12GraphicEngine(HWND hwnd, FeatureState featureState = {});
+		explicit D3D12GraphicEngine(HWND hwnd);
 		~D3D12GraphicEngine() override;
 		D3D12GraphicEngine(const D3D12GraphicEngine&) = delete;
 		D3D12GraphicEngine& operator=(const D3D12GraphicEngine&) = delete;
 		D3D12GraphicEngine(D3D12GraphicEngine&&) = delete;
 		D3D12GraphicEngine& operator=(D3D12GraphicEngine&&) = delete;
 
-		/// @brief どんな機能を使うにも必要な機能を立ち上げます
-		void SetUpCoreSystem();
+		/// @brief どんな機能を使うにも必要な機能をたちあげます.
+		bool SetUpCoreSystem();
+		/// @brief テクスチャローダーをたちあげます.
+		bool SetUpTextureLoader();
+		/// @brief コンピュートパイプラインをたちあげます.
+		bool SetUpComputePipeline();
+		/// @brief レイトレーシングパイプラインをたちあげます.
+		bool SetUpRayTracingPipeline();
 		/// @brief ビルトインのパイプラインステートオブジェクトを生成します
-		void SetUpBuildInPipelineStateObjects();
+		bool SetUpBuildInPipelineStateObjects();
+		/// @brief 線描画用のパイプラインをたちあげます.
+		bool SetUpLineRenderingPipeline();
 
-		// 一度は呼ぶ順番がある関数群
-		void Initialize() override;
-		void PreDraw() override;
-		void Draw() override {};
-		void PostDraw() override;
-		void Shutdown() override;
+		/// @brief 描画の前処理を行います.描画の前に呼び出してください.
+		void PreDraw();
+		/// @brief 描画の後処理を行います.描画の後に呼び出してください.
+		void PostDraw();
+		/// @brief 終了処理を行います.グラフィックエンジンの終了時に呼び出してください.
+		void Shutdown();
 
 		/// @brief サポートしている内部グラフィックAPIの種類を取得します。
 		QFE::GRAPHIC::InternalApiType GetInternalApiType() const override;
-		/// @brief グラフィックエンジンの機能が有効かどうかを取得します。
-		QFE::GRAPHIC::FeatureState GetFeatureState() const override;
+		[[nodiscard]] bool IsCoreSystemAvailable() const noexcept override;
+		[[nodiscard]] bool IsTextureLoaderAvailable() const noexcept override;
+		[[nodiscard]] bool IsComputePipelineAvailable() const noexcept override;
+		[[nodiscard]] bool IsRayTracingPipelineAvailable() const noexcept override;
+		[[nodiscard]] bool AreBuiltInPipelineStateObjectsAvailable() const noexcept override;
+		[[nodiscard]] bool IsLineRenderingAvailable() const noexcept override;
 
 		/// @brief 次のフレームに描画するワールド空間の線を追加します。
 		void DrawLine(
@@ -163,9 +175,16 @@ namespace QFE::GRAPHIC {
 		QFE::UniqueContainer<D3D12_VIEWPORT> viewports_;// ビューポートのコンテナ
 		QFE::UniqueContainer<D3D12_RECT> scissorRects_;// シザリング矩形のコンテナ
 
-		DirectXResourceHandle depthStencilBufferHandle_;// 深度ステンシルバッファのリソースハンドル
+		DirectXResourceHandle depthStencilBufferHandle_ = DirectXResourceHandle::Invalid;// 深度ステンシルバッファのリソースハンドル
 
-		RaytracingAccelerationStructure accelerationStructure_; // レイトレーシング用の加速構造の管理クラス
+		std::unique_ptr<RaytracingAccelerationStructure> accelerationStructure_; // レイトレーシング用の加速構造の管理クラス
+
+		bool isCoreSystemAvailable_ = false;
+		bool isTextureLoaderAvailable_ = false;
+		bool isComputePipelineAvailable_ = false;
+		bool isRayTracingPipelineAvailable_ = false;
+		bool areBuiltInPipelineStateObjectsAvailable_ = false;
+		bool isLineRenderingAvailable_ = false;
 
 		struct LineVertex {
 			QFE::MATH::Vector4 position;
@@ -177,7 +196,5 @@ namespace QFE::GRAPHIC {
 		PSOHandle linePsoHdrHandle_ = PSOHandle::Invalid;
 		PSOHandle linePsoSrgbHandle_ = PSOHandle::Invalid;
 		PSOHandle linePsoUnormHandle_ = PSOHandle::Invalid;
-
-		FeatureState featureState_;// グラフィックエンジンの機能が有効かどうかを表す構造体
 	};
 }

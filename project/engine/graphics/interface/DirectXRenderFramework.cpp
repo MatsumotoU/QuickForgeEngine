@@ -1,6 +1,6 @@
 #include "DirectXRenderFramework.h"
 
-#include "framework/graphic/GraphicContext.h"
+#include "graphics/D3D12GraphicEngine.h"
 #include "graphics/dx12/pipeline/GraphicPipelineManager.h"
 #include "graphics/dx12/pipeline/RaytracingPipelineManager.h"
 #include "graphics/dx12/pipeline/ComputePipelineManager.h"
@@ -20,8 +20,21 @@
 
 #include "DirectXResourceFramework.h"
 
-bool QFE::FRAMEWORK::CreateShaderPair(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const std::string& vsDirName, const std::string& psDirName, const std::string& vsFileName, const std::string& psFileName, QFE::GRAPHIC::ShaderPairHandle& outShaderPairHandle) {
+namespace {
+	[[nodiscard]] QFE::GRAPHIC::D3D12GraphicEngine* ResolveD3D12GraphicEngine(
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine) {
+		auto* d3d12GraphicEngine =
+			dynamic_cast<QFE::GRAPHIC::D3D12GraphicEngine*>(graphicEngine);
+		if (d3d12GraphicEngine == nullptr || !d3d12GraphicEngine->IsCoreSystemAvailable()) {
+			QFE_LOG("A DirectX 12 graphic engine with an initialized core system is required.");
+			return nullptr;
+		}
+		return d3d12GraphicEngine;
+	}
+}
+
+bool QFE::GRAPHIC::CreateShaderPair(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const std::string& vsDirName, const std::string& psDirName, const std::string& vsFileName, const std::string& psFileName, QFE::GRAPHIC::ShaderPairHandle& outShaderPairHandle) {
 	// シェーダーペア生成の設定
 	QFE::GRAPHIC::ShaderPairElement shaderPairElement;
 	shaderPairElement.vsDirName = vsDirName;
@@ -30,7 +43,7 @@ bool QFE::FRAMEWORK::CreateShaderPair(
 	shaderPairElement.psFileName = psFileName;
 
 	// シェーダーペアを生成
-	QFE::GRAPHIC::GraphicPipelineManager* pipelineManager = graphicEngine->GetGraphicPipelineManager();
+	QFE::GRAPHIC::GraphicPipelineManager* pipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetGraphicPipelineManager();
 	QFE::GRAPHIC::ShaderPairHandle shaderPairHandle = pipelineManager->GenerateShaderPair(shaderPairElement);
 	outShaderPairHandle = shaderPairHandle;
 
@@ -38,8 +51,8 @@ bool QFE::FRAMEWORK::CreateShaderPair(
 	return outShaderPairHandle != QFE::GRAPHIC::ShaderPairHandle::Invalid;
 }
 
-bool QFE::FRAMEWORK::CreateGraphicPSO(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
+bool QFE::GRAPHIC::CreateGraphicPSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
 	const QFE::GRAPHIC::RasterizerType& rasterizerType, const QFE::GRAPHIC::BlendMode& blendMode,
 	const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType, QFE::GRAPHIC::PSOHandle& outPSOHandle) {
 	return CreateGraphicPSO(
@@ -47,17 +60,17 @@ bool QFE::FRAMEWORK::CreateGraphicPSO(
 		DXGI_FORMAT_R16G16B16A16_FLOAT, outPSOHandle);
 }
 
-bool QFE::FRAMEWORK::CreateGraphicPSO(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
+bool QFE::GRAPHIC::CreateGraphicPSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
 	const QFE::GRAPHIC::RasterizerType& rasterizerType, const QFE::GRAPHIC::BlendMode& blendMode,
 	const QFE::GRAPHIC::DepthStencilDescType& depthStencilDescType, DXGI_FORMAT renderTargetFormat,
 	QFE::GRAPHIC::PSOHandle& outPSOHandle) {
 
 	// 使用するパイプラインマネージャを取得
-	QFE::GRAPHIC::GraphicPipelineManager* pipelineManager = graphicEngine->GetGraphicPipelineManager();
+	QFE::GRAPHIC::GraphicPipelineManager* pipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetGraphicPipelineManager();
 	// パイプラインステートオブジェクトを生成
 	QFE::GRAPHIC::PSOHandle psoHandle = pipelineManager->GeneratePipelineStateObject(
-		graphicEngine->GetDirectXDevice()->GetDevice(),
+		ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXDevice()->GetDevice(),
 		shaderPairHandle,
 		blendMode,
 		rasterizerType,
@@ -73,13 +86,13 @@ bool QFE::FRAMEWORK::CreateGraphicPSO(
 	return true;
 }
 
-bool QFE::FRAMEWORK::GetGraphicPSORootParameterTypeList(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+bool QFE::GRAPHIC::GetGraphicPSORootParameterTypeList(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	std::vector<D3D12_ROOT_PARAMETER_TYPE>& outRootParameterTypeList) {
 
 
 	// 使用するパイプラインマネージャを取得
-	QFE::GRAPHIC::GraphicPipelineManager* pipelineManager = graphicEngine->GetGraphicPipelineManager();
+	QFE::GRAPHIC::GraphicPipelineManager* pipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetGraphicPipelineManager();
 
 	// PSOハンドルからルートパラメータのタイプを取得
 	outRootParameterTypeList = pipelineManager->GetRootParameterTypes(psoHandle);
@@ -91,12 +104,12 @@ bool QFE::FRAMEWORK::GetGraphicPSORootParameterTypeList(
 	return true;
 }
 
-bool QFE::FRAMEWORK::CreateRayTracingPSO(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::RTPSOHandle& outPSOHandle,
+bool QFE::GRAPHIC::CreateRayTracingPSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, QFE::GRAPHIC::RTPSOHandle& outPSOHandle,
 	const std::string& dirPath, const std::string& rgsFileName) {
 
 	// 使用するレイトレーシングパイプラインマネージャを取得
-	QFE::GRAPHIC::RaytracingPipelineManager* rayTracingPipelineManager_ = graphicEngine->GetRayTracingPipelineManager();
+	QFE::GRAPHIC::RaytracingPipelineManager* rayTracingPipelineManager_ = ResolveD3D12GraphicEngine(graphicEngine)->GetRayTracingPipelineManager();
 	// レイトレーシングパイプラインステートオブジェクトを生成
 	outPSOHandle = rayTracingPipelineManager_->CreateRaytracingPipelineStateObject(ConvertString(dirPath + rgsFileName), L"lib_6_3");
 	// 成否の確認
@@ -107,13 +120,13 @@ bool QFE::FRAMEWORK::CreateRayTracingPSO(
 	return true;
 }
 
-bool QFE::FRAMEWORK::CreateOffScreenRenderTarget(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine,
+bool QFE::GRAPHIC::CreateOffScreenRenderTarget(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 	QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
 	uint32_t width, uint32_t height, DXGI_FORMAT format) {
 
 	// 使用するレンダーパスを取得
-	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
+	QFE::GRAPHIC::RenderPass* renderPass = ResolveD3D12GraphicEngine(graphicEngine)->GetRenderPass();
 	outRenderTargetHandle = renderPass->CreateOffscreenRenderTarget(width, height, format);
 	// 成否の確認
 	if (outRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::Invalid) {
@@ -123,11 +136,11 @@ bool QFE::FRAMEWORK::CreateOffScreenRenderTarget(
 	return true;
 }
 
-bool QFE::FRAMEWORK::CreateViewport(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::ViewPortHandle& outViewportHandle, uint32_t width, uint32_t height) {
+bool QFE::GRAPHIC::CreateViewport(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, QFE::GRAPHIC::ViewPortHandle& outViewportHandle, uint32_t width, uint32_t height) {
 
 	// ビューポートコンテナを取得
-	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports_ = graphicEngine->GetViewports();
+	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports_ = ResolveD3D12GraphicEngine(graphicEngine)->GetViewports();
 	// ビューポートを作成
 	D3D12_VIEWPORT viewport{};
 	viewport.TopLeftX = 0.0f;
@@ -147,12 +160,12 @@ bool QFE::FRAMEWORK::CreateViewport(
 	return true;
 }
 
-bool QFE::FRAMEWORK::CreateScissorRect(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, QFE::GRAPHIC::ScissorRectHandle& outScissorRectHandle,
+bool QFE::GRAPHIC::CreateScissorRect(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, QFE::GRAPHIC::ScissorRectHandle& outScissorRectHandle,
 	int32_t left, int32_t top, int32_t right, int32_t bottom) {
 
 	// シザリング矩形コンテナを取得
-	QFE::UniqueContainer<D3D12_RECT>& scissorRects_ = graphicEngine->GetScissorRects();
+	QFE::UniqueContainer<D3D12_RECT>& scissorRects_ = ResolveD3D12GraphicEngine(graphicEngine)->GetScissorRects();
 	// シザリング矩形を作成
 	D3D12_RECT scissorRect{};
 	scissorRect.left = left;
@@ -171,13 +184,13 @@ bool QFE::FRAMEWORK::CreateScissorRect(
 }
 
 
-bool QFE::FRAMEWORK::SetRenderTarget(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& depthStencilBufferHandle,
+bool QFE::GRAPHIC::SetRenderTarget(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& depthStencilBufferHandle,
 	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets) {
 
 	// 使用機能の取得
-	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
-	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
+	QFE::GRAPHIC::RenderPass* renderPass = ResolveD3D12GraphicEngine(graphicEngine)->GetRenderPass();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXCommandManager();
 
 	// レンダーターゲットを設定
 	// TODO: ここでレンダーターゲットを設定する際に、レンダーターゲットの数が0の場合は深度ステンシルバッファのみを設定するようにする必要がある
@@ -188,21 +201,21 @@ bool QFE::FRAMEWORK::SetRenderTarget(
 	return true;
 }
 
-bool QFE::FRAMEWORK::DrawGraphicPSO(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+bool QFE::GRAPHIC::DrawGraphicPSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets) {
 
 	// 使用機能の取得
-	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
-	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
-	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
-	QFE::GRAPHIC::GraphicPipelineManager* graphicPipelineManager = graphicEngine->GetGraphicPipelineManager();
-	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports = graphicEngine->GetViewports();
-	QFE::UniqueContainer<D3D12_RECT>& scissorRects = graphicEngine->GetScissorRects();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXCommandManager();
+	QFE::GRAPHIC::RenderPass* renderPass = ResolveD3D12GraphicEngine(graphicEngine)->GetRenderPass();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXResourceContainer();
+	QFE::GRAPHIC::GraphicPipelineManager* graphicPipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetGraphicPipelineManager();
+	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports = ResolveD3D12GraphicEngine(graphicEngine)->GetViewports();
+	QFE::UniqueContainer<D3D12_RECT>& scissorRects = ResolveD3D12GraphicEngine(graphicEngine)->GetScissorRects();
 
-	QFE::GRAPHIC::DirectXResourceHandle depthStencilBufferHandle = graphicEngine->GetDepthStencilBufferHandle();
+	QFE::GRAPHIC::DirectXResourceHandle depthStencilBufferHandle = ResolveD3D12GraphicEngine(graphicEngine)->GetDepthStencilBufferHandle();
 
 	ID3D12GraphicsCommandList* commandList = commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
@@ -265,22 +278,22 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 	return true;
 }
 
-bool QFE::FRAMEWORK::DrawGraphicPSO(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+bool QFE::GRAPHIC::DrawGraphicPSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
 	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets, const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes) {
 
 
 	// 使用機能の取得
-	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
-	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
-	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
-	QFE::GRAPHIC::GraphicPipelineManager* graphicPipelineManager = graphicEngine->GetGraphicPipelineManager();
-	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports = graphicEngine->GetViewports();
-	QFE::UniqueContainer<D3D12_RECT>& scissorRects = graphicEngine->GetScissorRects();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXCommandManager();
+	QFE::GRAPHIC::RenderPass* renderPass = ResolveD3D12GraphicEngine(graphicEngine)->GetRenderPass();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXResourceContainer();
+	QFE::GRAPHIC::GraphicPipelineManager* graphicPipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetGraphicPipelineManager();
+	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports = ResolveD3D12GraphicEngine(graphicEngine)->GetViewports();
+	QFE::UniqueContainer<D3D12_RECT>& scissorRects = ResolveD3D12GraphicEngine(graphicEngine)->GetScissorRects();
 
-	QFE::GRAPHIC::DirectXResourceHandle depthStencilBufferHandle = graphicEngine->GetDepthStencilBufferHandle();
+	QFE::GRAPHIC::DirectXResourceHandle depthStencilBufferHandle = ResolveD3D12GraphicEngine(graphicEngine)->GetDepthStencilBufferHandle();
 
 	ID3D12GraphicsCommandList* commandList = commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
@@ -342,22 +355,22 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 	return true;
 }
 
-bool QFE::FRAMEWORK::DrawGraphicPSO(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
+bool QFE::GRAPHIC::DrawGraphicPSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
 	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
 	const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes) {
 
 	// 使用機能の取得
-	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
-	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
-	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
-	QFE::GRAPHIC::GraphicPipelineManager* graphicPipelineManager = graphicEngine->GetGraphicPipelineManager();
-	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports = graphicEngine->GetViewports();
-	QFE::UniqueContainer<D3D12_RECT>& scissorRects = graphicEngine->GetScissorRects();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXCommandManager();
+	QFE::GRAPHIC::RenderPass* renderPass = ResolveD3D12GraphicEngine(graphicEngine)->GetRenderPass();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXResourceContainer();
+	QFE::GRAPHIC::GraphicPipelineManager* graphicPipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetGraphicPipelineManager();
+	QFE::UniqueContainer<D3D12_VIEWPORT>& viewports = ResolveD3D12GraphicEngine(graphicEngine)->GetViewports();
+	QFE::UniqueContainer<D3D12_RECT>& scissorRects = ResolveD3D12GraphicEngine(graphicEngine)->GetScissorRects();
 
-	QFE::GRAPHIC::DirectXResourceHandle depthStencilBufferHandle = graphicEngine->GetDepthStencilBufferHandle();
+	QFE::GRAPHIC::DirectXResourceHandle depthStencilBufferHandle = ResolveD3D12GraphicEngine(graphicEngine)->GetDepthStencilBufferHandle();
 
 	ID3D12GraphicsCommandList* commandList = commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
@@ -425,17 +438,17 @@ bool QFE::FRAMEWORK::DrawGraphicPSO(
 	return true;
 }
 
-bool QFE::FRAMEWORK::DrawRayTracingPSO(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
+bool QFE::GRAPHIC::DrawRayTracingPSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 	QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
 	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources) {
 
 	// 使用機能の取得
-	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
-	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
-	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = graphicEngine->GetRayTracingPipelineManager();
-	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
-	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = graphicEngine->GetRaytracingAccelerationStructure();
+	QFE::GRAPHIC::RenderPass* renderPass = ResolveD3D12GraphicEngine(graphicEngine)->GetRenderPass();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXCommandManager();
+	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetRayTracingPipelineManager();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXResourceContainer();
+	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = ResolveD3D12GraphicEngine(graphicEngine)->GetRaytracingAccelerationStructure();
 	QFE::GRAPHIC::RaytracingPSO* raytracingPSO =
 		raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle);
 
@@ -518,12 +531,12 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(
 	return true;
 }
 
-bool QFE::FRAMEWORK::DrawRayTracingPSO(QFE::FRAMEWORK::GraphicContext* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle, QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, const QFE::GRAPHIC::DirectXResourceHandle& renderTargetResourceHandle) {
+bool QFE::GRAPHIC::DrawRayTracingPSO(QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle, QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer, const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources, const QFE::GRAPHIC::DirectXResourceHandle& renderTargetResourceHandle) {
 	// 使用機能の取得
-	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
-	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = graphicEngine->GetRayTracingPipelineManager();
-	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
-	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = graphicEngine->GetRaytracingAccelerationStructure();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXCommandManager();
+	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetRayTracingPipelineManager();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXResourceContainer();
+	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = ResolveD3D12GraphicEngine(graphicEngine)->GetRaytracingAccelerationStructure();
 
 	ID3D12GraphicsCommandList4* commandList4 = commandManager->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT);
 	ID3D12RootSignature* globalRootSignature = raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle)->GetRootSignature();
@@ -602,8 +615,8 @@ bool QFE::FRAMEWORK::DrawRayTracingPSO(QFE::FRAMEWORK::GraphicContext* graphicEn
 	return true;
 }
 
-bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
-	QFE::FRAMEWORK::GraphicContext* graphicEngine,
+bool QFE::GRAPHIC::ShadowSpecularRayTracingPSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 	const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 	QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
 	const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
@@ -616,11 +629,11 @@ bool QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
 	QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle) {
 
 	// 使用機能の取得
-	QFE::GRAPHIC::RenderPass* renderPass = graphicEngine->GetRenderPass();
-	QFE::GRAPHIC::DirectXCommandManager* commandManager = graphicEngine->GetDirectXCommandManager();
-	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = graphicEngine->GetRayTracingPipelineManager();
-	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = graphicEngine->GetDirectXResourceContainer();
-	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = graphicEngine->GetRaytracingAccelerationStructure();
+	QFE::GRAPHIC::RenderPass* renderPass = ResolveD3D12GraphicEngine(graphicEngine)->GetRenderPass();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXCommandManager();
+	QFE::GRAPHIC::RaytracingPipelineManager* raytracingPipelineManager = ResolveD3D12GraphicEngine(graphicEngine)->GetRayTracingPipelineManager();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXResourceContainer();
+	QFE::GRAPHIC::RaytracingAccelerationStructure* accelerationStructure = ResolveD3D12GraphicEngine(graphicEngine)->GetRaytracingAccelerationStructure();
 	QFE::GRAPHIC::RaytracingPSO* raytracingPSO =
 		raytracingPipelineManager->GetRaytracingPipelineStateObject(rtpsoHandle);
 	QFE::GRAPHIC::RootParameter& rootParameters = raytracingPSO->GetRootParameter();

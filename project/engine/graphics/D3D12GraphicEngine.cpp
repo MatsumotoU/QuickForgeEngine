@@ -31,36 +31,49 @@ namespace {
 }
 
 QFE::GRAPHIC::D3D12GraphicEngine::D3D12GraphicEngine(
-	HWND hwnd0, FeatureState featureState) :
-	hwnd_(hwnd0),
-	debugCore_(std::make_unique<DirectX12DebugCore>()),
-	directXDevice_(std::make_unique<DirectXDevice>()),
-	resourceContainer_(std::make_unique<DirectXResourceContainer>()),
-	resourceAllocator_(std::make_unique<DirectXResourceAllocator>()),
-	descriptorHeapManager_(std::make_unique<DescriptorHeapManager>()),
-	commandManager_(std::make_unique<DirectXCommandManager>()),
-	renderPass_(std::make_unique<RenderPass>()),
-	fence_(std::make_unique<Fence>()),
-	shaderReflection_(std::make_unique<ShaderReflection>()),
-	shaderLibReflection_(std::make_unique<ShaderLibReflection>()),
-	shaderCompiler_(std::make_unique<ShaderCompiler>()),
-	graphicPipelineManager_(std::make_unique<GraphicPipelineManager>()),
-	computePipelineManager_(std::make_unique<ComputePipelineManager>()),
-	rayTracingPipelineManager_(std::make_unique<RaytracingPipelineManager>()),
-	textureLoader_(std::make_unique<TextureLoader>()),
-	featureState_(featureState)
-
+	HWND hwnd0) :
+	hwnd_(hwnd0)
 {
 }
 
-D3D12GraphicEngine::~D3D12GraphicEngine() = default;
+D3D12GraphicEngine::~D3D12GraphicEngine() {
+	Shutdown();
+}
 
-void QFE::GRAPHIC::D3D12GraphicEngine::SetUpCoreSystem() {
+bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpCoreSystem() {
+	if (IsCoreSystemAvailable()) {
+		return true;
+	}
+	if (hwnd_ == nullptr) {
+		QFE_LOG("D3D12GraphicEngine: A valid window is required to set up the core system.");
+		return false;
+	}
+
 	// ウィンドウのクライアント領域のサイズを取得
-	RECT rect;
-	GetClientRect(hwnd_, &rect);
+	RECT rect{};
+	if (GetClientRect(hwnd_, &rect) == FALSE) {
+		QFE_LOG("D3D12GraphicEngine: Failed to get the client area of the window.");
+		return false;
+	}
 	uint32_t width = static_cast<uint32_t>(rect.right - rect.left);
 	uint32_t height = static_cast<uint32_t>(rect.bottom - rect.top);
+	if (width == 0 || height == 0) {
+		QFE_LOG("D3D12GraphicEngine: The window client area must not be empty.");
+		return false;
+	}
+
+	// コアシステムに属する機能だけを、このセットアップ時に生成する。
+	debugCore_ = std::make_unique<DirectX12DebugCore>();
+	directXDevice_ = std::make_unique<DirectXDevice>();
+	resourceContainer_ = std::make_unique<DirectXResourceContainer>();
+	resourceAllocator_ = std::make_unique<DirectXResourceAllocator>();
+	descriptorHeapManager_ = std::make_unique<DescriptorHeapManager>();
+	commandManager_ = std::make_unique<DirectXCommandManager>();
+	renderPass_ = std::make_unique<RenderPass>();
+	fence_ = std::make_unique<Fence>();
+	shaderReflection_ = std::make_unique<ShaderReflection>();
+	shaderCompiler_ = std::make_unique<ShaderCompiler>();
+	graphicPipelineManager_ = std::make_unique<GraphicPipelineManager>();
 
 	// DirectXDeviceの初期化
 	directXDevice_->Initialize();
@@ -170,20 +183,130 @@ void QFE::GRAPHIC::D3D12GraphicEngine::SetUpCoreSystem() {
 		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRenderTargetCount(shaderBlob); };
 	graphicPipelineManagerInfo.device = directXDevice_->GetDevice();
 	graphicPipelineManager_->Initialize(graphicPipelineManagerInfo);
+
+	isCoreSystemAvailable_ = true;
+	return true;
 }
 
-void QFE::GRAPHIC::D3D12GraphicEngine::SetUpBuildInPipelineStateObjects() {
-	// BuiltInのPSOを生成する
-	if (graphicPipelineManager_ && directXDevice_) {
-		graphicPipelineManager_->CreateBuiltInPipelineStateObjects(directXDevice_->GetDevice());
+bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpTextureLoader() {
+	if (IsTextureLoaderAvailable()) {
+		return true;
 	}
+	if (!IsCoreSystemAvailable()) {
+		QFE_LOG("D3D12GraphicEngine: Set up the core system before the texture loader.");
+		return false;
+	}
+
+	auto textureLoader = std::make_unique<TextureLoader>();
+	// テクスチャ管理クラスの初期化
+	TextureLoaderInitializeInfo textureLoaderInfo{};
+	// テクスチャのリソース作成やSRV作成、データアップロードに必要な情報をTextureLoaderInitializeInfo構造体にセット
+	textureLoaderInfo.device = directXDevice_->GetDevice();
+	// テクスチャのリソース作成に必要な関数をDirectXResourceContainerのCreateResource関数を呼び出すラムダ式で初期化
+	textureLoaderInfo.createResourceFunc =
+		[&](const D3D12_RESOURCE_DESC& desc) { return resourceContainer_->CreateResource(directXDevice_->GetDevice(), desc, D3D12_RESOURCE_STATE_GENERIC_READ); };
+	// テクスチャのSRV作成に必要な関数をDirectXResourceContainerのCreateResourceView関数を呼び出すラムダ式で初期化
+	textureLoaderInfo.createShaderResourceViewFunc =
+		[&](DirectXResourceHandle resourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
+		// Texture2D 配列からインデックス参照できるよう、全テクスチャを
+		// DescriptorHeapManager の連続したTextureブロックへ登録する。
+		resourceContainer_->CreateTextureResourceView(resourceHandle, desc); };
+	// テクスチャのアップロードに必要な関数をDirectXResourceContainerのUploadResource関数を呼び出すラムダ式で初期化
+	textureLoaderInfo.uploadTextureDataFunc =
+		[&](DirectXResourceHandle resourceHandle, const std::vector<D3D12_SUBRESOURCE_DATA>& subresources) {
+		resourceContainer_->UploadResource(resourceHandle, subresources, directXDevice_->GetDevice(), commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
+		};
+	// テクスチャローダーを初期化
+	textureLoader->Initialize(textureLoaderInfo);
+	textureLoader_ = std::move(textureLoader);
+	isTextureLoaderAvailable_ = true;
+	return true;
 }
 
-void D3D12GraphicEngine::Initialize() {
-	SetUpCoreSystem();
-	SetUpBuildInPipelineStateObjects();
+bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpComputePipeline() {
+	if (IsComputePipelineAvailable()) {
+		return true;
+	}
+	if (!IsCoreSystemAvailable()) {
+		QFE_LOG("D3D12GraphicEngine: Set up the core system before the compute pipeline.");
+		return false;
+	}
 
-	
+	auto computePipelineManager = std::make_unique<ComputePipelineManager>();
+	// Computeパイプラインマネージャの初期化
+	ComputePipelineManagerInitializeInfo computePipelineManagerInfo{};
+	computePipelineManagerInfo.getRootParameterFunc =
+		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob); };
+	computePipelineManagerInfo.getThreadGroupSizeFunc =
+		[&](IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ) { return shaderReflection_->GetThreadGroupSize(shaderBlob, sizeX, sizeY, sizeZ); };
+	computePipelineManagerInfo.compileFunc =
+		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
+	computePipelineManagerInfo.device = directXDevice_->GetDevice();
+	computePipelineManager->Initialize(computePipelineManagerInfo);
+	computePipelineManager_ = std::move(computePipelineManager);
+	isComputePipelineAvailable_ = true;
+
+	return true;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpRayTracingPipeline() {
+	if (IsRayTracingPipelineAvailable()) {
+		return true;
+	}
+	if (!IsCoreSystemAvailable()) {
+		QFE_LOG("D3D12GraphicEngine: Set up the core system before the ray tracing pipeline.");
+		return false;
+	}
+
+	// 使えるかどうか確認
+	if(directXDevice_->GetDevice5() == nullptr) {
+		return false;
+	}
+	auto shaderLibReflection = std::make_unique<ShaderLibReflection>();
+	auto rayTracingPipelineManager = std::make_unique<RaytracingPipelineManager>();
+	auto accelerationStructure = std::make_unique<RaytracingAccelerationStructure>();
+
+	// RayTracingパイプラインマネージャの初期化
+	RaytracingPipelineManagerInitializeInfo rayTracingPipelineManagerInfo{};
+	rayTracingPipelineManagerInfo.compileFunc =
+		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
+	rayTracingPipelineManagerInfo.getRootParameterFunc =
+		[shaderLibReflectionPtr = shaderLibReflection.get()](IDxcBlob* shaderBlob) {
+			return shaderLibReflectionPtr->GetRootParameterElement(shaderBlob);
+		};
+	rayTracingPipelineManagerInfo.device = directXDevice_->GetDevice5();
+	rayTracingPipelineManager->Initialize(rayTracingPipelineManagerInfo);
+
+	// レイトレーシング用のアクセラレーション構造体の初期化
+	accelerationStructure->Initialize(directXDevice_->GetDevice5());
+	shaderLibReflection_ = std::move(shaderLibReflection);
+	rayTracingPipelineManager_ = std::move(rayTracingPipelineManager);
+	accelerationStructure_ = std::move(accelerationStructure);
+	isRayTracingPipelineAvailable_ = true;
+	return true;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpBuildInPipelineStateObjects() {
+	if (AreBuiltInPipelineStateObjectsAvailable()) {
+		return true;
+	}
+	// BuiltInのPSOを生成する
+	if (IsCoreSystemAvailable()) {
+		graphicPipelineManager_->CreateBuiltInPipelineStateObjects(directXDevice_->GetDevice());
+		areBuiltInPipelineStateObjectsAvailable_ = true;
+		return true;
+	}
+	return false;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpLineRenderingPipeline() {
+	if (IsLineRenderingAvailable()) {
+		return true;
+	}
+	if (!IsCoreSystemAvailable()) {
+		QFE_LOG("D3D12GraphicEngine: Set up the core system before the line rendering pipeline.");
+		return false;
+	}
 
 	// ワールド空間の線は、通常のラスタライズ描画用PSOで作成する。
 	ShaderPairElement lineShaderPairElement{};
@@ -212,54 +335,15 @@ void D3D12GraphicEngine::Initialize() {
 		directXDevice_->GetDevice(), kMaxLineCount_ * 2 * sizeof(LineVertex));
 	resourceContainer_->SetResourceStrideInBytes(lineVertexBufferHandle_, sizeof(LineVertex));
 	resourceContainer_->MapResource(lineVertexBufferHandle_);
-
-	// Computeパイプラインマネージャの初期化
-	ComputePipelineManagerInitializeInfo computePipelineManagerInfo{};
-	computePipelineManagerInfo.getRootParameterFunc =
-		[&](IDxcBlob* shaderBlob) { return shaderReflection_->GetRootParameterElement(shaderBlob); };
-	computePipelineManagerInfo.getThreadGroupSizeFunc =
-		[&](IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ) { return shaderReflection_->GetThreadGroupSize(shaderBlob, sizeX, sizeY, sizeZ); };
-	computePipelineManagerInfo.compileFunc =
-		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
-	computePipelineManagerInfo.device = directXDevice_->GetDevice();
-	computePipelineManager_->Initialize(computePipelineManagerInfo);
-
-	// RayTracingパイプラインマネージャの初期化
-	RaytracingPipelineManagerInitializeInfo rayTracingPipelineManagerInfo{};
-	rayTracingPipelineManagerInfo.compileFunc =
-		[&](const std::wstring& filePath, const wchar_t* profile) { return shaderCompiler_->CompileShader(filePath, profile); };
-	rayTracingPipelineManagerInfo.getRootParameterFunc =
-		[&](IDxcBlob* shaderBlob) { return shaderLibReflection_->GetRootParameterElement(shaderBlob); };
-	rayTracingPipelineManagerInfo.device = directXDevice_->GetDevice5();
-	rayTracingPipelineManager_->Initialize(rayTracingPipelineManagerInfo);
-
-	// テクスチャ管理クラスの初期化
-	TextureLoaderInitializeInfo textureLoaderInfo{};
-	// テクスチャのリソース作成やSRV作成、データアップロードに必要な情報をTextureLoaderInitializeInfo構造体にセット
-	textureLoaderInfo.device = directXDevice_->GetDevice();
-	// テクスチャのリソース作成に必要な関数をDirectXResourceContainerのCreateResource関数を呼び出すラムダ式で初期化
-	textureLoaderInfo.createResourceFunc =
-		[&](const D3D12_RESOURCE_DESC& desc) { return resourceContainer_->CreateResource(directXDevice_->GetDevice(), desc, D3D12_RESOURCE_STATE_GENERIC_READ); };
-	// テクスチャのSRV作成に必要な関数をDirectXResourceContainerのCreateResourceView関数を呼び出すラムダ式で初期化
-	textureLoaderInfo.createShaderResourceViewFunc =
-		[&](DirectXResourceHandle resourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
-		// Texture2D 配列からインデックス参照できるよう、全テクスチャを
-		// DescriptorHeapManager の連続したTextureブロックへ登録する。
-		resourceContainer_->CreateTextureResourceView(resourceHandle, desc); };
-	// テクスチャのアップロードに必要な関数をDirectXResourceContainerのUploadResource関数を呼び出すラムダ式で初期化
-	textureLoaderInfo.uploadTextureDataFunc =
-		[&](DirectXResourceHandle resourceHandle, const std::vector<D3D12_SUBRESOURCE_DATA>& subresources) {
-		resourceContainer_->UploadResource(resourceHandle, subresources, directXDevice_->GetDevice(), commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
-		};
-	// テクスチャローダーを初期化
-	textureLoader_->Initialize(textureLoaderInfo);
-
-	// レイトレーシング用のアクセラレーション構造体の初期化
-	accelerationStructure_.Initialize(directXDevice_->GetDevice5());
+	isLineRenderingAvailable_ = true;
+	return true;
 }
 
 void D3D12GraphicEngine::PreDraw() {
-	
+	if (!IsCoreSystemAvailable()) {
+		QFE_LOG("D3D12GraphicEngine: PreDraw requires the core system.");
+		return;
+	}
 
 	// ディスクリプタヒープの登録
 	descriptorHeapManager_->RegisterDescriptorHeaps(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
@@ -272,6 +356,11 @@ void D3D12GraphicEngine::PreDraw() {
 }
 
 void D3D12GraphicEngine::PostDraw() {
+	if (!IsCoreSystemAvailable()) {
+		QFE_LOG("D3D12GraphicEngine: PostDraw requires the core system.");
+		return;
+	}
+
 	// スワップチェーンのリソース状態を表示可能に変更
 	renderPass_->PostDraw(commandManager_->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT));
 
@@ -298,6 +387,9 @@ void D3D12GraphicEngine::DrawLine(
 	const QFE::MATH::Vector3& start,
 	const QFE::MATH::Vector3& end,
 	const QFE::MATH::Vector4& color) {
+	if (!IsLineRenderingAvailable()) {
+		return;
+	}
 	if (lineVertices_.size() >= kMaxLineCount_ * 2) {
 		return;
 	}
@@ -318,7 +410,7 @@ void D3D12GraphicEngine::RenderLines(
 	ViewPortHandle viewportHandle,
 	ScissorRectHandle scissorRectHandle,
 	RenderTargetHandle renderTargetHandle) {
-	if (lineVertices_.empty()) {
+	if (!IsLineRenderingAvailable() || lineVertices_.empty()) {
 		return;
 	}
 
@@ -387,19 +479,82 @@ void D3D12GraphicEngine::RenderLines(
 }
 
 void D3D12GraphicEngine::Shutdown() {
-	rayTracingPipelineManager_->Finalize();
-	textureLoader_->Finalize();
-	fence_->Shutdown();
-	shaderCompiler_->Finalize();
-	directXDevice_->Shutdown();
+	if (rayTracingPipelineManager_ != nullptr) {
+		rayTracingPipelineManager_->Finalize();
+	}
+	if (textureLoader_ != nullptr) {
+		textureLoader_->Finalize();
+	}
+	if (graphicPipelineManager_ != nullptr) {
+		graphicPipelineManager_->Finalize();
+	}
+	if (fence_ != nullptr) {
+		fence_->Shutdown();
+	}
+	if (shaderCompiler_ != nullptr) {
+		shaderCompiler_->Finalize();
+	}
+	if (directXDevice_ != nullptr) {
+		directXDevice_->Shutdown();
+	}
+
+	isLineRenderingAvailable_ = false;
+	areBuiltInPipelineStateObjectsAvailable_ = false;
+	isRayTracingPipelineAvailable_ = false;
+	isComputePipelineAvailable_ = false;
+	isTextureLoaderAvailable_ = false;
+	isCoreSystemAvailable_ = false;
+	lineVertices_.clear();
+	lineVertexBufferHandle_ = DirectXResourceHandle::Invalid;
+	linePsoHdrHandle_ = PSOHandle::Invalid;
+	linePsoSrgbHandle_ = PSOHandle::Invalid;
+	linePsoUnormHandle_ = PSOHandle::Invalid;
+	depthStencilBufferHandle_ = DirectXResourceHandle::Invalid;
+
+	accelerationStructure_.reset();
+	rayTracingPipelineManager_.reset();
+	shaderLibReflection_.reset();
+	computePipelineManager_.reset();
+	textureLoader_.reset();
+	graphicPipelineManager_.reset();
+	shaderCompiler_.reset();
+	shaderReflection_.reset();
+	fence_.reset();
+	renderPass_.reset();
+	commandManager_.reset();
+	descriptorHeapManager_.reset();
+	resourceAllocator_.reset();
+	resourceContainer_.reset();
+	directXDevice_.reset();
+	debugCore_.reset();
 }
 
 QFE::GRAPHIC::InternalApiType QFE::GRAPHIC::D3D12GraphicEngine::GetInternalApiType() const {
 	return QFE::GRAPHIC::InternalApiType::DirectX12;
 }
 
-QFE::GRAPHIC::FeatureState QFE::GRAPHIC::D3D12GraphicEngine::GetFeatureState() const {
-	return featureState_;
+bool QFE::GRAPHIC::D3D12GraphicEngine::IsCoreSystemAvailable() const noexcept {
+	return isCoreSystemAvailable_;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::IsTextureLoaderAvailable() const noexcept {
+	return isTextureLoaderAvailable_;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::IsComputePipelineAvailable() const noexcept {
+	return isComputePipelineAvailable_;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::IsRayTracingPipelineAvailable() const noexcept {
+	return isRayTracingPipelineAvailable_;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::AreBuiltInPipelineStateObjectsAvailable() const noexcept {
+	return areBuiltInPipelineStateObjectsAvailable_;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::IsLineRenderingAvailable() const noexcept {
+	return isLineRenderingAvailable_;
 }
 
 DirectXDevice* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXDevice() const {
@@ -481,7 +636,8 @@ RenderPass* QFE::GRAPHIC::D3D12GraphicEngine::GetRenderPass() const {
 }
 
 RaytracingAccelerationStructure* QFE::GRAPHIC::D3D12GraphicEngine::GetRaytracingAccelerationStructure() {
-	return &accelerationStructure_;
+	assert(accelerationStructure_ != nullptr);
+	return accelerationStructure_.get();
 }
 
 DirectXResourceHandle QFE::GRAPHIC::D3D12GraphicEngine::GetDepthStencilBufferHandle() const {

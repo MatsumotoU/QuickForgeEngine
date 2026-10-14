@@ -68,7 +68,7 @@ void QFE::FRAMEWORK::DrawSceneModels(
 				static_cast<QFE::GRAPHIC::DirectXResourceHandle>(model.materialResourceHandle),
 				static_cast<QFE::GRAPHIC::DirectXResourceHandle>(model.textureResourceHandle)
 			};
-			QFE::FRAMEWORK::DrawGraphicPSO(
+			QFE::GRAPHIC::DrawGraphicPSO(
 				graphicEngine, psoHandle, viewportHandle, scissorRectHandle,
 				static_cast<QFE::GRAPHIC::DirectXResourceHandle>(model.vertexResourceHandle),
 				static_cast<QFE::GRAPHIC::DirectXResourceHandle>(model.indexResourceHandle),
@@ -115,7 +115,7 @@ void QFE::FRAMEWORK::DrawSceneSprites(
 			static_cast<QFE::GRAPHIC::DirectXResourceHandle>(sprite.materialResourceHandle),
 			static_cast<QFE::GRAPHIC::DirectXResourceHandle>(sprite.textureResourceHandle)
 		};
-		QFE::FRAMEWORK::DrawGraphicPSO(
+		QFE::GRAPHIC::DrawGraphicPSO(
 			graphicEngine, psoHandle, viewportHandle, scissorRectHandle,
 			vertexBufferHandle, rootResources, { renderTarget });
 	}

@@ -5,22 +5,9 @@
 #include <filesystem>
 #include <string_view>
 
-#include "framework/graphic/D3D12GraphicFrameWork.h"
-#include "framework/window/WindowsWindowFrameWork.h"
-#include "framework/gui/D3D12GuiFrameWork.h"
-#include "framework/graphic/GraphicContext.h"
-
-#include "window/GameWindowManager.h"
-#include "gui/D3D12GuiManager.h"
-#include "scene/SceneManager.h"
-#include "components/AllComponent.h"
-#include "core/logger/MyDebugLog.h"
-#include "core/string/MyString.h"
-#include "core/timer/FPSCounter.h"
-#include "assetfactory/model/AssimpModelLoader.h"
-#include "core/math/transform/Transform.h"
-
-#include <imgui/imgui.h>
+#include "ProjectGeneratorSystemCore.h"
+#include "graphics/interface/DirectXRenderFramework.h"
+#include "graphics/interface/DirectXResourceFramework.h"
 
 #include "ProjectGenerator.h"
 
@@ -31,12 +18,12 @@ struct WindowsGuiToolSystems {
 	WindowsGuiToolSystems(WindowsGuiToolSystems&&) = delete;
 	WindowsGuiToolSystems& operator=(WindowsGuiToolSystems&&) = delete;
 
-	std::unique_ptr<QFE::WINDOW::GameWindowManager> windowManager;
-	std::unique_ptr<QFE::FRAMEWORK::GraphicContext> graphicEngine;
+	std::unique_ptr<QFE::WINDOW::IGameWindowManager> windowManager;
+	std::unique_ptr<QFE::GRAPHIC::IGraphicEngine> graphicEngine;
 	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager;
 };
 
-/// @brief Windows project generator entry point.
+/// @brief アプリケーションのエントリーポイント
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int argumentCount = 0;
 	LPWSTR* arguments = CommandLineToArgvW(GetCommandLineW(), &argumentCount);
@@ -52,20 +39,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		LocalFree(arguments);
 	}
 
-	// Store engine resources.
-	WindowsGuiToolSystems engineSystems;
-	// Create engine systems.
-	engineSystems.windowManager =
-		QFE::FRAMEWORK::CreateWindowManager(
-			"Project Generator", 1280, 720);
-	// Get the window handle.
-	HWND hwnd = QFE::FRAMEWORK::GetWindowHandle(
-		engineSystems.windowManager.get(),
-		"Project Generator");
-	// Create the graphics engine.
-	engineSystems.graphicEngine =
-		QFE::FRAMEWORK::CreateGraphicEngine(hwnd);
-	// Create the GUI manager.
+	// エンジンの機能生成
+	QFE::APPLICATION::ProjectGeneratorSystemCore engineSystems;
+	engineSystems.windowManager = QFE::FRAMEWORK::CreateWindowManager(
+		"Project Generator", 1280, 720);
+	engineSystems.graphicEngine = QFE::FRAMEWORK::CreateGraphicEngine(
+		*engineSystems.windowManager,
+		QFE::INFO::SupportedOs::Windows,
+		QFE::GRAPHIC::FeatureState());
 	engineSystems.guiManager =
 		QFE::FRAMEWORK::CreateGuiManager(
 			engineSystems.graphicEngine.get(), hwnd);
@@ -93,10 +74,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		projectGenerator.Draw();
 
 		QFE::GRAPHIC::DirectXResourceHandle depthStencilHandle;
-		if (QFE::FRAMEWORK::GetDepthStencilResourceHandle(
+		if (QFE::GRAPHIC::GetDepthStencilResourceHandle(
 			engineSystems.graphicEngine.get(),
 			depthStencilHandle)) {
-			QFE::FRAMEWORK::SetRenderTarget(
+			QFE::GRAPHIC::SetRenderTarget(
 				engineSystems.graphicEngine.get(),
 				depthStencilHandle,
 				{ QFE::GRAPHIC::RenderTargetHandle::SwapChain });

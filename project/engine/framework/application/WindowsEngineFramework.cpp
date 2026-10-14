@@ -184,55 +184,55 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 	//====================
 
 	// シェーダーペアを生成
-	QFE::FRAMEWORK::CreateShaderPair(graphicEngine.get(), vsDirName, psDirName, "Object3d.GBuffer.VS.hlsl", "Object3d.GBuffer.PS.hlsl", resources.shaderPairHandle);
+	QFE::GRAPHIC::CreateShaderPair(graphicEngine.get(), vsDirName, psDirName, "Object3d.GBuffer.VS.hlsl", "Object3d.GBuffer.PS.hlsl", resources.shaderPairHandle);
 	// パイプラインステートオブジェクトを生成
 	
-	QFE::FRAMEWORK::CreateGraphicPSO(graphicEngine.get(), resources.shaderPairHandle,
+	QFE::GRAPHIC::CreateGraphicPSO(graphicEngine.get(), resources.shaderPairHandle,
 		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::DepthStencilDescType::Default, resources.psoHandle);
-	QFE::FRAMEWORK::GetGraphicPSORootParameterTypeList(graphicEngine.get(), resources.psoHandle, resources.rootParameterTypes);
+	QFE::GRAPHIC::GetGraphicPSORootParameterTypeList(graphicEngine.get(), resources.psoHandle, resources.rootParameterTypes);
 
 	// 画面合成用スプライトのシェーダーとPSOを準備する。
-	QFE::FRAMEWORK::CreateShaderPair(
+	QFE::GRAPHIC::CreateShaderPair(
 		graphicEngine.get(), vsDirName, psDirName,
 		"Object2d.VS.hlsl", "Object2d.PS.hlsl", resources.spriteShaderPairHandle);
-	QFE::FRAMEWORK::CreateGraphicPSO(
+	QFE::GRAPHIC::CreateGraphicPSO(
 		graphicEngine.get(), resources.spriteShaderPairHandle,
 		QFE::GRAPHIC::RasterizerType::CullNone, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::DepthStencilDescType::None, DXGI_FORMAT_R8G8B8A8_UNORM,
 		resources.spriteUnormPsoHandle);
-	QFE::FRAMEWORK::CreateGraphicPSO(
+	QFE::GRAPHIC::CreateGraphicPSO(
 		graphicEngine.get(), resources.spriteShaderPairHandle,
 		QFE::GRAPHIC::RasterizerType::CullNone, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
 		QFE::GRAPHIC::DepthStencilDescType::None, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 		resources.spriteSrgbPsoHandle);
 
 	const std::vector<VertexData> spriteVertices = QFE::ASSET::CreatePrimitiveMesh("Primitive/Quad");
-	QFE::FRAMEWORK::CreateVertexBuffer(
+	QFE::GRAPHIC::CreateVertexBuffer(
 		graphicEngine.get(), spriteVertices, "SpriteQuad", resources.spriteVertexBufferHandle);
 
-	QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.textureHandleMap["BlackCubeMap"]);
+	QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.textureHandleMap["BlackCubeMap"]);
 	resources.textureGpuIndexMap["BlackCubeMap"] = 0; // GPU側のインデックスを設定
-	QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), resources.textureHandleMap["White1x1"]);
+	QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), resources.textureHandleMap["White1x1"]);
 	resources.textureGpuIndexMap["White1x1"] = 1; // GPU側のインデックスを設定
 
 	// オフスクリーンレンダーターゲットの作成
 	for (int i = 0; i < 4; ++i) {
 		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle;
-		QFE::FRAMEWORK::CreateOffScreenRenderTarget(
+		QFE::GRAPHIC::CreateOffScreenRenderTarget(
 			graphicEngine.get(), offScreenRenderTargetHandle, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		resources.renderTargets.push_back(offScreenRenderTargetHandle);
 	}
 
 	// ビューポートとシザー矩形の作成
-	QFE::FRAMEWORK::CreateViewport(graphicEngine.get(), resources.viewportHandle, 1280, 720);
-	QFE::FRAMEWORK::CreateScissorRect(graphicEngine.get(), resources.scissorRectHandle, 0, 0, 1280, 720);
+	QFE::GRAPHIC::CreateViewport(graphicEngine.get(), resources.viewportHandle, 1280, 720);
+	QFE::GRAPHIC::CreateScissorRect(graphicEngine.get(), resources.scissorRectHandle, 0, 0, 1280, 720);
 
 	// UAVバッファの作成とルートリソースの設定
-	QFE::FRAMEWORK::CreateUAVBuffer(graphicEngine.get(), resources.uavBufferHandle, 1280, 720, L"UAVBuffer");
+	QFE::GRAPHIC::CreateUAVBuffer(graphicEngine.get(), resources.uavBufferHandle, 1280, 720, L"UAVBuffer");
 
 	// レイトレーシングパイプラインステートオブジェクトの作成
-	QFE::FRAMEWORK::CreateRayTracingPSO(graphicEngine.get(), resources.rtpsoHandle, rtDirName, "ShadowRaytracing.hlsl");
+	QFE::GRAPHIC::CreateRayTracingPSO(graphicEngine.get(), resources.rtpsoHandle, rtDirName, "ShadowRaytracing.hlsl");
 }
 
 void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
@@ -259,7 +259,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		});
 
 	// 旧スカイボックスと同様、シーン内の最初の可視キューブマップを背景に使う。
-	QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.skyBoxTextureHandle);
+	QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.skyBoxTextureHandle);
 	resources.skyBoxVisible = false;
 	entityManager.Each<QFE::SCENE::SkyBoxComponent>(
 		[&](uint32_t, QFE::SCENE::SkyBoxComponent& skyBox) {
@@ -309,7 +309,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
 			QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
-			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, worldMatrix, resources.viewProj);
+			QFE::GRAPHIC::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, worldMatrix, resources.viewProj);
 			modelRenderComp.transformMatrixBufferHandle =
 				static_cast<uint32_t>(transformMatrixBufferHandle);
 
@@ -387,7 +387,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 					}
 					if (modelRenderComp.animatedVertexResourceHandle == UINT32_MAX) {
 						QFE::GRAPHIC::DirectXResourceHandle handle;
-						if (!QFE::FRAMEWORK::CreateVertexBuffer(graphicEngine.get(), sampledVertices,
+						if (!QFE::GRAPHIC::CreateVertexBuffer(graphicEngine.get(), sampledVertices,
 							modelRenderComp.modelName + "_animated", handle)) {
 							modelRenderComp.renderErrorMessage = "Failed to create animated vertex buffer";
 							return;
@@ -426,7 +426,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 
 			// テクスチャの更新: White1x1 < モデル内蔵 < 明示指定
 			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
-			QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
 			std::string effectiveTextureName;
 			const QFE::ASSET::ModelMaterialData* modelMaterial = nullptr;
 			if (resources.modelDataMap.find(modelRenderComp.modelName) != resources.modelDataMap.end()) {
@@ -481,7 +481,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 					existing = resources.animatedBlasByEntity.end();
 				}
 				if (existing == resources.animatedBlasByEntity.end()) {
-					if (!QFE::FRAMEWORK::CreateBLAS(graphicEngine.get(), vertices, indices,
+					if (!QFE::GRAPHIC::CreateBLAS(graphicEngine.get(), vertices, indices,
 						"animated_entity_" + std::to_string(entityId), blasHandle, true)) {
 						modelRenderComp.renderErrorMessage = "Failed to create animated BLAS";
 						return;
@@ -489,7 +489,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 					resources.animatedBlasByEntity[entityId] = { modelRenderComp.modelName, blasHandle };
 				} else {
 					blasHandle = existing->second.handle;
-					const auto positions = QFE::FRAMEWORK::GetModelVertexPositions(vertices.data(), vertices.size());
+					const auto positions = QFE::GRAPHIC::GetModelVertexPositions(vertices.data(), vertices.size());
 					if (!accelerationStructure->UpdateBLAS(blasHandle,
 						graphicEngine->GetDirectXCommandManager()->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT), positions)) {
 						modelRenderComp.renderErrorMessage = "Failed to update animated BLAS";
@@ -576,7 +576,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 				graphicEngine->GetDirectXResourceAllocator();
 			const QFE::GRAPHIC::DirectXResourceHandle transformHandle =
 				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("SpriteTransform");
-			QFE::FRAMEWORK::UpdateObject3dWVPMatrix(
+			QFE::GRAPHIC::UpdateObject3dWVPMatrix(
 				graphicEngine.get(), transformHandle, worldMatrix, spriteProjection);
 			sprite.transformMatrixBufferHandle = static_cast<uint32_t>(transformHandle);
 
@@ -596,7 +596,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			sprite.materialResourceHandle = static_cast<uint32_t>(materialHandle);
 
 			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
-			QFE::FRAMEWORK::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
 			if (!sprite.textureName.empty()) {
 				if (!QFE::FRAMEWORK::LoadTexture(
 					systems, resources.assetDir, sprite.textureName,
@@ -631,23 +631,23 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		!globalVertexAttributes.empty() && !globalTriIndices.empty() &&
 		instanceMetaAligned.size() == raytracingInstances.size();
 	if (resources.hasRayTracingGeometry) {
-		if (!QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(
+		if (!QFE::GRAPHIC::EnsureBufferCapacityAndUpload(
 			graphicEngine.get(), resources.globalUVHandle, globalVertexAttributes.data(),
 			vertexAttributeBytes, sizeof(RaytracingVertexAttribute), "GlobalVertexAttributes")) {
 			assert(false && "Failed to ensure/upload GlobalVertexAttributes");
 			resources.hasRayTracingGeometry = false;
 		}
-		if (!QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.globalTriHandle, globalTriIndices.data(), triBytes, sizeof(uint32_t) * 3, "GlobalTriIndices")) {
+		if (!QFE::GRAPHIC::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.globalTriHandle, globalTriIndices.data(), triBytes, sizeof(uint32_t) * 3, "GlobalTriIndices")) {
 			assert(false && "Failed to ensure/upload GlobalTriIndices");
 			resources.hasRayTracingGeometry = false;
 		}
-		if (!QFE::FRAMEWORK::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.instanceMetaHandle, instanceMetaAligned.data(), metaBytes, sizeof(InstanceMetaCPU), "InstanceMeta")) {
+		if (!QFE::GRAPHIC::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.instanceMetaHandle, instanceMetaAligned.data(), metaBytes, sizeof(InstanceMetaCPU), "InstanceMeta")) {
 			assert(false && "Failed to ensure/upload InstanceMeta");
 			resources.hasRayTracingGeometry = false;
 		}
 
 		if (resources.hasRayTracingGeometry) {
-			QFE::FRAMEWORK::UpdateBLASInstanceBuffer(graphicEngine.get(), raytracingInstances);
+			QFE::GRAPHIC::UpdateBLASInstanceBuffer(graphicEngine.get(), raytracingInstances);
 		}
 	}
 
@@ -666,7 +666,7 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 	if (resources.hasRayTracingGeometry) {
 		std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources(4);
 		for (std::size_t i = 0; i < 4; ++i) {
-			QFE::FRAMEWORK::GetRenderResourceHandle(graphicEngine.get(), resources.renderTargets[i], rayTracingRootResources[i]);
+			QFE::GRAPHIC::GetRenderResourceHandle(graphicEngine.get(), resources.renderTargets[i], rayTracingRootResources[i]);
 		}
 
 		// カメラの位置をGPUに送るための定数バッファを作成
@@ -682,9 +682,9 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		cameraPos->padding = resources.skyBoxVisible ? 1.0f : 0.0f;
 
 		QFE::GRAPHIC::DirectXResourceHandle textureFirstResourceHandle;
-		QFE::FRAMEWORK::GetBlackCubeMapTextureHandle(graphicEngine.get(), textureFirstResourceHandle);
+		QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), textureFirstResourceHandle);
 
-		QFE::FRAMEWORK::ShadowSpecularRayTracingPSO(
+		QFE::GRAPHIC::ShadowSpecularRayTracingPSO(
 			graphicEngine.get(), resources.rtpsoHandle, resources.uavBufferHandle,
 			cameraBufferHandle, resources.globalTriHandle, resources.globalUVHandle,
 			resources.instanceMetaHandle, textureFirstResourceHandle, resources.skyBoxTextureHandle,
@@ -717,17 +717,17 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 	// Editorの最終映像はImGuiからSRVとして読むため、スプライト描画後に読み取り状態へ戻す。
 	if (resources.finalRenderTargetHandle != QFE::GRAPHIC::RenderTargetHandle::SwapChain) {
 		QFE::GRAPHIC::DirectXResourceHandle finalRenderTargetResourceHandle;
-		if (QFE::FRAMEWORK::GetRenderResourceHandle(
+		if (QFE::GRAPHIC::GetRenderResourceHandle(
 			graphicEngine.get(), resources.finalRenderTargetHandle, finalRenderTargetResourceHandle)) {
-			QFE::FRAMEWORK::TransitionResourceToState(
+			QFE::GRAPHIC::TransitionResourceToState(
 				graphicEngine.get(), finalRenderTargetResourceHandle,
 				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 		}
 	}
 
 	QFE::GRAPHIC::DirectXResourceHandle depthStencilHandle;
-	if (QFE::FRAMEWORK::GetDepthStencilResourceHandle(graphicEngine.get(), depthStencilHandle)) {
-		QFE::FRAMEWORK::SetRenderTarget(graphicEngine.get(), depthStencilHandle, { QFE::GRAPHIC::RenderTargetHandle::SwapChain });
+	if (QFE::GRAPHIC::GetDepthStencilResourceHandle(graphicEngine.get(), depthStencilHandle)) {
+		QFE::GRAPHIC::SetRenderTarget(graphicEngine.get(), depthStencilHandle, { QFE::GRAPHIC::RenderTargetHandle::SwapChain });
 	}
 }
 
@@ -738,7 +738,7 @@ bool QFE::FRAMEWORK::LoadModelVertexData(
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& vertexBuffers) {
 
 	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
-		bool result = QFE::FRAMEWORK::CreateVertexBuffer(
+		bool result = QFE::GRAPHIC::CreateVertexBuffer(
 			systems.graphicEngine.get(),
 			modelData[modelName].meshes[0].vertices.GetInternalVector(),
 			modelName, vertexBuffers[modelName]);
@@ -754,7 +754,7 @@ bool QFE::FRAMEWORK::LoadModelIndexBuffer(
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& indexBuffers) {
 
 	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
-		bool result = QFE::FRAMEWORK::CreateIndexBuffer(
+		bool result = QFE::GRAPHIC::CreateIndexBuffer(
 			systems.graphicEngine.get(),
 			modelData[modelName].meshes[0].indices.GetInternalVector(),
 			modelName, indexBuffers[modelName]);
@@ -770,7 +770,7 @@ bool QFE::FRAMEWORK::LoadModelAndCreateBLAS(
 	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle>& blasHandles) {
 
 	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
-		bool result = QFE::FRAMEWORK::CreateBLAS(
+		bool result = QFE::GRAPHIC::CreateBLAS(
 			systems.graphicEngine.get(), modelData[modelName].meshes[0].vertices.GetInternalVector(),
 			modelData[modelName].meshes[0].indices.GetInternalVector(),
 			modelName, blasHandles[modelName]);
@@ -793,7 +793,7 @@ bool QFE::FRAMEWORK::LoadTexture(
 	std::string texturePath = std::filesystem::exists(textureName)
 		? textureName : textureDir + textureName;
 	QFE::GRAPHIC::DirectXResourceHandle textureHandle;
-	bool result = QFE::FRAMEWORK::LoadTextureFromFile(systems.graphicEngine.get(), texturePath, textureHandle);
+	bool result = QFE::GRAPHIC::LoadTextureFromFile(systems.graphicEngine.get(), texturePath, textureHandle);
 	if (result) {
 		textureHandles[textureName] = textureHandle;
 		textureGpuIndexMap[textureName] = nextTextureGpuIndex;

@@ -1,6 +1,6 @@
 #pragma once
-#include "dx12/DirectXResourceFramework.h"
-#include "dx12/DirectXRenderFramework.h"
+#include "graphics/interface/DirectXResourceFramework.h"
+#include "graphics/interface/DirectXRenderFramework.h"
 #include <map>
 #include <cstdint>
 #include <memory>

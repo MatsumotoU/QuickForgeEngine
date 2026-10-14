@@ -18,73 +18,73 @@ struct VertexData;
 struct InstanceMetaCPU;
 struct RaytracingVertexAttribute;
 
-namespace QFE::FRAMEWORK {
-	class GraphicContext;
+namespace QFE::GRAPHIC {
+	class IGraphicEngine;
 }
 
 /// @file DirectXResourceFramework.h
-/// @brief DirectXリソースに関するフレームワーク関数を提供するヘッダーファイル
-namespace QFE::FRAMEWORK {
+/// @brief DirectXリソースに関するグラフィックエンジンAPIを提供するヘッダーファイル
+namespace QFE::GRAPHIC {
 
 	/// @brief ファイルからテクスチャを読み込む関数
 	bool LoadTextureFromFile(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::string& filePath,
 		QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle);
 	/// @brief 1x1の白色テクスチャのリソースハンドルを取得する関数
 	bool GetWhite1x1TextureHandle(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle);
 	/// @brief 1x1の黒色キューブマップテクスチャのリソースハンドルを取得する関数
 	bool GetBlackCubeMapTextureHandle(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle& outTextureHandle);
 
 	/// @brief UAVバリアの状態遷移を行う関数
 	bool UAVBarrierTransition(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle);
 
 	/// @brief リソースの状態を変更する関数
 	bool TransitionResourceToState(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& resourceHandle,
 		D3D12_RESOURCE_STATES newState);
 	/// @brief リソースの配列サイズを取得する関数
 	bool GetResourceArraySize(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle resourceHandle,
 		size_t& outResourceArraySize);
 	/// @brief レンダーターゲットのリソースハンドルを取得する関数
 	bool GetRenderResourceHandle(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::RenderTargetHandle renderTargetHandle,
 		QFE::GRAPHIC::DirectXResourceHandle& outResourceHandle);
 	/// @brief 深度ステンシルバッファのリソースハンドルを取得する関数
 	bool GetDepthStencilResourceHandle(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle& outDepthStencilHandle);
 
 	/// @brief Object3d.GBuffer.PS用のルートリソースを作成する関数
 	bool CreateObject3dGBufferRootResources(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle* rootResources,
 		size_t rootResourcesSize);
 	/// @brief カメラ位置バッファを作成する関数
 	bool CreateCameraPosBuffer(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::wstring& name,
 		QFE::GRAPHIC::DirectXResourceHandle& outCameraPosBufferHandle);
 
 	/// @brief 定数バッファを割り当てる関数
 	bool AllocateConstantBuffer(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::wstring& name,
 		size_t bufferSize,
 		QFE::GRAPHIC::DirectXResourceHandle& outConstantBufferHandle);
 	/// @brief 構造化バッファを割り当てる関数
 	bool AllocateStructuredBuffer(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::wstring& name,
 		size_t elementCount,
 		size_t elementStride,
@@ -92,19 +92,19 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief 頂点バッファを作成する関数
 	bool CreateVertexBuffer(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::vector<VertexData>& vertexPositions,
 		const std::string& meshName,
 		QFE::GRAPHIC::DirectXResourceHandle& outVertexBufferHandle);
 	/// @brief インデックスバッファを作成する関数
 	bool CreateIndexBuffer(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::vector<uint32_t>& indices,
 		const std::string& meshName,
 		QFE::GRAPHIC::DirectXResourceHandle& outIndexBufferHandle);
 	/// @brief BLASを作成する関数
 	bool CreateBLAS(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::vector<VertexData>& vertices,
 		const std::vector<uint32_t>& indices,
 		const std::string& name,
@@ -112,23 +112,23 @@ namespace QFE::FRAMEWORK {
 		bool allowUpdate = false);
 	/// @brief UAVバッファを作成する関数
 	bool CreateUAVBuffer(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle& outUAVBufferHandle,
 		uint32_t width, uint32_t height, const std::wstring& name);
 
 	/// @brief Object3dのワールド行列とワールドビュー射影行列を更新する関数
 	void UpdateObject3dWVPMatrix(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 		const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
 	/// @brief Object3dのワールド行列とワールドビュー射影行列を更新する関数
 	void UpdateObject3dWVPMatrix(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 		const QFE::MATH::Matrix4x4& worldMatrix, const QFE::MATH::Matrix4x4& viewProjectionMatrix);
 	/// @brief BLASのインスタンスバッファを更新する関数
 	bool UpdateBLASInstanceBuffer(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::vector<QFE::GRAPHIC::RaytracingInstance>& instances);
 
 	/// @brief 頂点のデータから頂点位置を取得する関数
@@ -141,7 +141,7 @@ namespace QFE::FRAMEWORK {
 	// - globalTriIndices: flattened indices [i0,i1,i2, i3,i4,i5, ...] (各 tri は 3 要素)
 	// - outInstanceMeta: メッシュ（またはメッシュ単位のエントリ）ごとのメタ情報（InstanceID と一致させること）
 	bool EnsureBufferCapacityAndUpload(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle& inOutHandle,
 		const void* data, size_t byteSize, UINT elementStride,
 		const std::string& name);
@@ -151,7 +151,7 @@ namespace QFE::FRAMEWORK {
 	// 成功時に outXXXHandle にリソースハンドルを格納する。
 	// 注意: CreateResourceView の srvDesc のフィールド名はプロジェクト実装に合わせて調整してください。
 	bool UploadGlobalMeshBuffers(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::vector<RaytracingVertexAttribute>& globalVertexAttributes,
 		const std::vector<uint32_t>& globalTriIndices,
 		const std::vector<InstanceMetaCPU>& instanceMeta,

@@ -1,6 +1,5 @@
 #include "D3D12GraphicFrameWork.h"
 
-#include "GraphicContext.h"
 #include "graphics/dx12/pipeline/GraphicPipelineManager.h"
 #include "graphics/dx12/pipeline/RaytracingPipelineManager.h"
 #include "graphics/dx12/pipeline/ComputePipelineManager.h"
@@ -66,7 +65,7 @@ bool QFE::FRAMEWORK::CreateEditorSceneTexture(
 		return false;
 	}
 
-	if (!CreateOffScreenRenderTarget(
+	if (!QFE::GRAPHIC::CreateOffScreenRenderTarget(
 		graphicEngine,
 		outRenderTargetHandle,
 		width,
@@ -75,14 +74,14 @@ bool QFE::FRAMEWORK::CreateEditorSceneTexture(
 		return false;
 	}
 
-	if (!GetRenderResourceHandle(
+	if (!QFE::GRAPHIC::GetRenderResourceHandle(
 		graphicEngine,
 		outRenderTargetHandle,
 		outResourceHandle)) {
 		return false;
 	}
 
-	if (!TransitionResourceToState(
+	if (!QFE::GRAPHIC::TransitionResourceToState(
 		graphicEngine,
 		outResourceHandle,
 		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)) {

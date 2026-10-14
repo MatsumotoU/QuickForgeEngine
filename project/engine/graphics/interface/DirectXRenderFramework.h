@@ -16,22 +16,22 @@
 
 struct VertexData;
 
-namespace QFE::FRAMEWORK {
-	class GraphicContext;
+namespace QFE::GRAPHIC {
+	class IGraphicEngine;
 }
 
 /// @file DirectXRenderFramework.h
-/// @brief DirectXレンダリングに関するフレームワーク関数を提供するヘッダーファイル
-namespace QFE::FRAMEWORK {
+/// @brief DirectXレンダリングに関するグラフィックエンジンAPIを提供するヘッダーファイル
+namespace QFE::GRAPHIC {
 	/// @brief シェーダーペアを作成する関数
 	bool CreateShaderPair(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::string& vsDirName, const std::string& psDirName,
 		const std::string& vsFileName, const std::string& psFileName,
 		QFE::GRAPHIC::ShaderPairHandle& outShaderPairHandle);
 	/// @brief パイプラインステートオブジェクトを作成する関数
 	bool CreateGraphicPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
 		const QFE::GRAPHIC::RasterizerType& rasterizerType,
 		const QFE::GRAPHIC::BlendMode& blendMode,
@@ -39,7 +39,7 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::PSOHandle& outPSOHandle);
 	/// @brief 出力先のRTVフォーマットを指定してパイプラインステートオブジェクトを作成する関数
 	bool CreateGraphicPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::ShaderPairHandle& shaderPairHandle,
 		const QFE::GRAPHIC::RasterizerType& rasterizerType,
 		const QFE::GRAPHIC::BlendMode& blendMode,
@@ -49,41 +49,41 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief パイプラインステートオブジェクトのルートパラメータの型を取得する関数
 	bool GetGraphicPSORootParameterTypeList(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::PSOHandle& psoHandle,
 		std::vector<D3D12_ROOT_PARAMETER_TYPE>& outRootParameterTypeList);
 
 	/// @brief レイトレーシングパイプラインステートオブジェクトを作成する関数
 	bool CreateRayTracingPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::RTPSOHandle& outPSOHandle,
 		const std::string& dirPath, const std::string& rgsFileName);
 
 	/// @brief オフスクリーンレンダーターゲットを作成する関数
 	bool CreateOffScreenRenderTarget(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
 		uint32_t width, uint32_t height, DXGI_FORMAT format);
 	/// @brief ビューポートを作成する関数
 	bool CreateViewport(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::ViewPortHandle& outViewportHandle,
 		uint32_t width, uint32_t height);
 	/// @brief シザリング矩形を作成する関数
 	bool CreateScissorRect(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::ScissorRectHandle& outScissorRectHandle,
 		int32_t left, int32_t top, int32_t right, int32_t bottom);
 
 	/// @brief レンダーターゲットを設定する関数
 	bool SetRenderTarget(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& depthStencilBufferHandle,
 		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets);
 
 	/// @brief グラフィックパイプラインステートオブジェクトを使用して描画する関数
 	bool DrawGraphicPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::PSOHandle& psoHandle,
 		const QFE::GRAPHIC::ViewPortHandle& viewportHandle,
 		const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
@@ -93,7 +93,7 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief グラフィックパイプラインステートオブジェクトを使用して描画する関数.ルートパラメータを直接指定するバージョン
 	bool DrawGraphicPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::PSOHandle& psoHandle,
 		const QFE::GRAPHIC::ViewPortHandle& viewportHandle,
 		const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
@@ -103,7 +103,7 @@ namespace QFE::FRAMEWORK {
 		const std::vector<D3D12_ROOT_PARAMETER_TYPE>& rootParameterTypes);
 	/// @brief グラフィックパイプラインステートオブジェクトを使用して描画する関数.ルートパラメータを直接指定するバージョン.インデックスバッファを指定するバージョン
 	bool DrawGraphicPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::PSOHandle& psoHandle,
 		const QFE::GRAPHIC::ViewPortHandle& viewportHandle,
 		const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
@@ -115,14 +115,14 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief レイトレーシングパイプラインを使用して描画
 	bool DrawRayTracingPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
 		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources);
 	/// @brief レイトレーシングパイプラインを使用して描画.レンダーターゲットを指定するバージョン
 	bool DrawRayTracingPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
 		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
@@ -131,7 +131,7 @@ namespace QFE::FRAMEWORK {
 
 	/// @brief レイトレーシングパイプラインを使用して描画.レンダーターゲットを指定するバージョン.インデックスバッファとUVバッファを指定するバージョン
 	bool ShadowSpecularRayTracingPSO(
-		QFE::FRAMEWORK::GraphicContext* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
 		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
