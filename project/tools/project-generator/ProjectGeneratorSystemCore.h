@@ -2,6 +2,9 @@
 #include "framework/window/WindowCoreFrameWork.h"
 #include "framework/graphic/GraphicEngineCoreFramework.h"
 #include "framework/gui/GuiCoreFramework.h"
+#include "window/IGameWindowManager.h"
+#include "graphics/IGraphicEngine.h"
+#include "gui/IGuiManager.h"
 
 namespace QFE::APPLICATION {
 	/// @brief このアプリケーションで使うエンジンシステムをまとめるクラス

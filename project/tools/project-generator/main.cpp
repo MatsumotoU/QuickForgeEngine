@@ -6,22 +6,8 @@
 #include <string_view>
 
 #include "ProjectGeneratorSystemCore.h"
-#include "graphics/interface/DirectXRenderFramework.h"
-#include "graphics/interface/DirectXResourceFramework.h"
 
 #include "ProjectGenerator.h"
-
-struct WindowsGuiToolSystems {
-	WindowsGuiToolSystems() = default;
-	WindowsGuiToolSystems(const WindowsGuiToolSystems&) = delete;
-	WindowsGuiToolSystems& operator=(const WindowsGuiToolSystems&) = delete;
-	WindowsGuiToolSystems(WindowsGuiToolSystems&&) = delete;
-	WindowsGuiToolSystems& operator=(WindowsGuiToolSystems&&) = delete;
-
-	std::unique_ptr<QFE::WINDOW::IGameWindowManager> windowManager;
-	std::unique_ptr<QFE::GRAPHIC::IGraphicEngine> graphicEngine;
-	std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager;
-};
 
 /// @brief アプリケーションのエントリーポイント
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -43,47 +29,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	QFE::APPLICATION::ProjectGeneratorSystemCore engineSystems;
 	engineSystems.windowManager = QFE::FRAMEWORK::CreateWindowManager(
 		"Project Generator", 1280, 720);
+	QFE::FRAMEWORK::GraphicEngineFeatureState featureState;
 	engineSystems.graphicEngine = QFE::FRAMEWORK::CreateGraphicEngine(
 		*engineSystems.windowManager,
-		QFE::INFO::SupportedOs::Windows,
-		QFE::GRAPHIC::FeatureState());
+		featureState);
 	engineSystems.guiManager =
 		QFE::FRAMEWORK::CreateGuiManager(
-			engineSystems.graphicEngine.get(), hwnd);
-
+			*engineSystems.graphicEngine, *engineSystems.windowManager);
 
 	QFE::APPLICATION::ProjectGenerator projectGenerator;
-	QFE::APPLICATION::ImGuiContext imguiContext;
-	imguiContext.hwnd = hwnd;
-	projectGenerator.Initialize(imguiContext);
+	projectGenerator.Initialize();
 
 	// Main loop.
-	while (QFE::FRAMEWORK::IsMainWindowActive(
-		engineSystems.windowManager.get())) {
+	while (QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {
+		// アプリケーション更新
+		projectGenerator.Update();
 
-		if (!QFE::FRAMEWORK::ProcessWindowsApplicationMessage()) {
-			break;
-		}
-
+		// 描画前処理
 		QFE::FRAMEWORK::PreDrawGraphicEngine(
 			engineSystems.graphicEngine.get());
+		QFE::FRAMEWORK::PreDrawGui(*engineSystems.guiManager);
 
-		engineSystems.guiManager->PreDraw();
+		// アプリケーション描画
+		projectGenerator.Draw(engineSystems);
 
-		projectGenerator.Update();
-		projectGenerator.Draw();
+		// 描画先をスワップチェーンに設定
+		QFE::FRAMEWORK::SetSwapChainRenderTarget(
+			*engineSystems.graphicEngine);
 
-		QFE::GRAPHIC::DirectXResourceHandle depthStencilHandle;
-		if (QFE::GRAPHIC::GetDepthStencilResourceHandle(
-			engineSystems.graphicEngine.get(),
-			depthStencilHandle)) {
-			QFE::GRAPHIC::SetRenderTarget(
-				engineSystems.graphicEngine.get(),
-				depthStencilHandle,
-				{ QFE::GRAPHIC::RenderTargetHandle::SwapChain });
-		}
-
-		engineSystems.guiManager->PostDraw();
+		// 描画後処理
+		QFE::FRAMEWORK::PostDrawGui(
+			*engineSystems.guiManager);
 		QFE::FRAMEWORK::PostDrawGraphicEngine(
 			engineSystems.graphicEngine.get());
 	}
@@ -91,7 +67,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Shutdown.
 	projectGenerator.Shutdown();
 	QFE::FRAMEWORK::ShutdownGui(
-		engineSystems.guiManager.get());
+		*engineSystems.guiManager);
 	QFE::FRAMEWORK::ShutdownGraphicEngine(
 		engineSystems.graphicEngine.get());
 	return 0;

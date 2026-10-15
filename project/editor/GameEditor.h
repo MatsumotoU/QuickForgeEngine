@@ -10,6 +10,9 @@
 namespace QFE::SCENE {
 	class SceneManager;
 }
+namespace QFE::WINDOW {
+	class IGameWindowManager;
+}
 
 namespace QFE::EDITOR {
 	enum class EditorCameraType {
@@ -20,7 +23,10 @@ namespace QFE::EDITOR {
 	/// @brief ゲームエディタ
 	class GameEditor {
 	public:
-		void Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow);
+		void Initialize(
+			QFE::SCENE::SceneManager* sceneManager,
+			ImTextureID sceneTextureId,
+			QFE::WINDOW::IGameWindowManager& windowManager);
 		void Update(QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,QFE::FRAMEWORK::WindowsEngineResources& resources);
 		void Draw();
 		void PostDraw();

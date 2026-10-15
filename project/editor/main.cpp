@@ -4,14 +4,12 @@
 #include "framework/application/WindowsEngineFramework.h"
 #include "framework/application/WindowsEngineResources.h"
 
-#include "framework/graphic/D3D12GraphicFrameWork.h"
-#include "framework/window/WindowsWindowFrameWork.h"
-#include "framework/gui/D3D12GuiFrameWork.h"
+#include "framework/graphic/GraphicEngineCoreFramework.h"
+#include "framework/window/WindowCoreFrameWork.h"
+#include "framework/gui/GuiCoreFramework.h"
 #include "framework/input/InputFrameWork.h"
 
-#include "window/GameWindowManager.h"
 
-#include "gui/D3D12GuiManager.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
 #include "core/logger/MyDebugLog.h"
@@ -51,7 +49,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
 	QFE::GRAPHIC::DirectXResourceHandle sceneTextureHandle;
 	uintptr_t sceneTextureGuiId = 0;
-	if (!QFE::FRAMEWORK::CreateEditorSceneTexture(
+	if (!QFE::GRAPHIC::CreateEditorSceneTexture(
 		graphicEngine.get(),
 		sceneRenderTargetHandle,
 		sceneTextureHandle,
@@ -67,13 +65,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	ImTextureID sceneTextureId = static_cast<ImTextureID>(sceneTextureGuiId);
 
 	QFE::EDITOR::GameEditor gameEditor;
-	gameEditor.Initialize(&sceneManager, sceneTextureId, engineSystems.windowManager->GetWindow(engineResources.windowName));
+	gameEditor.Initialize(&sceneManager, sceneTextureId, *engineSystems.windowManager);
 
 	// メインループ
-	while (QFE::FRAMEWORK::IsMainWindowActive(engineSystems.windowManager.get())) {
-		if (!QFE::FRAMEWORK::ProcessWindowsApplicationMessage()) {
-			break;
-		}
+	while (QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {
 		if (!QFE::FRAMEWORK::BeginWindowsEngineFrame(engineSystems)) {
 			break;
 		}

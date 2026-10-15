@@ -12,8 +12,11 @@
 
 using namespace QFE::EDITOR;
 
-void QFE::EDITOR::GameEditor::Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow) {
-	windowManager_.Initialize(sceneManager, sceneTextureId, mainWindow);
+void QFE::EDITOR::GameEditor::Initialize(
+	QFE::SCENE::SceneManager* sceneManager,
+	ImTextureID sceneTextureId,
+	QFE::WINDOW::IGameWindowManager& windowManager) {
+	windowManager_.Initialize(sceneManager, sceneTextureId, windowManager);
 	commandExecutor_.Initialize();
 	commandList_.ClearCommands();
 

@@ -4,13 +4,12 @@
 #include "framework/window/WindowCoreFrameWork.h"
 #include "window/GameWindowManager.h"
 #include "EngineDefines.h"
-#include <unordered_map>
-#include <functional>
+#define NOMINMAX
+#include <Windows.h>
 using namespace QFE::FRAMEWORK;
 
 std::unique_ptr<QFE::WINDOW::IGameWindowManager> QFE::FRAMEWORK::CreateWindowManager(
 	const std::string& mainWindowName, uint32_t width, uint32_t height) {
-	// ウィンドウマネージャの作成
 	auto windowManager = std::make_unique<QFE::WINDOW::GameWindowManager>();
 	windowManager->Initialize();
 	windowManager->AddWindow(width, height, mainWindowName);
@@ -32,4 +31,9 @@ bool QFE::FRAMEWORK::ProcessWindowsApplicationMessage() {
 		DispatchMessage(&msg);
 	}
 	return true;
+}
+
+bool QFE::FRAMEWORK::CanLoopWindowManager(const QFE::WINDOW::IGameWindowManager& windowManager)
+{
+	return QFE::FRAMEWORK::IsMainWindowActive(windowManager) && QFE::FRAMEWORK::ProcessWindowsApplicationMessage();
 }

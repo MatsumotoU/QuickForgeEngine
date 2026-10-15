@@ -1,8 +1,14 @@
 #include "ProjectGenerator.h"
+#include "ProjectGeneratorSystemCore.h"
+
+#define NOMINMAX
+#include <Windows.h>
+
 #include <imgui.h>
 #include "core/file/FileUtility.h"
 #include "core/string/MyString.h"
-#include "framework/window/WindowsWindowFrameWork.h"
+#include "framework/window/WindowCoreFrameWork.h"
+#include "framework/window/WindowDialogFramework.h"
 
 #include <imgui_stdlib.h>
 #include <nlohmann/json.hpp>
@@ -863,26 +869,6 @@ ProjectGenerator::~ProjectGenerator()
 	Shutdown();
 }
 
-void ProjectGenerator::Initialize(ImGuiContext context) {
-	Shutdown();
-	imguiContext_ = context;
-	directoryManager_.Initialize();
-	EnsureConfigurationData();
-
-	ax::NodeEditor::Config config;
-	// Node positions and links belong to the current project model.  Do not
-	// restore a stale canvas viewport from a previous window size.
-	config.SettingsFile = nullptr;
-	nodeEditorContext_ = ax::NodeEditor::CreateEditor(&config);
-	if (nodeEditorContext_ != nullptr) {
-		ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
-		auto& style = ax::NodeEditor::GetStyle();
-		style.SourceDirection = ImVec2(1.0f, 0.0f);
-		style.TargetDirection = ImVec2(-1.0f, 0.0f);
-		ax::NodeEditor::SetCurrentEditor(nullptr);
-	}
-}
-
 void QFE::APPLICATION::ProjectGenerator::EnsureConfigurationData()
 {
 	std::vector<std::string> configurations =
@@ -992,6 +978,24 @@ void QFE::APPLICATION::ProjectGenerator::RemoveConfiguration(
 	premakeStatus_ = "Removed configuration: " + name;
 }
 
+void QFE::APPLICATION::ProjectGenerator::Initialize() {
+	Shutdown();
+	directoryManager_.Initialize();
+	EnsureConfigurationData();
+
+	ax::NodeEditor::Config config;
+
+	config.SettingsFile = nullptr;
+	nodeEditorContext_ = ax::NodeEditor::CreateEditor(&config);
+	if (nodeEditorContext_ != nullptr) {
+		ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
+		auto& style = ax::NodeEditor::GetStyle();
+		style.SourceDirection = ImVec2(1.0f, 0.0f);
+		style.TargetDirection = ImVec2(-1.0f, 0.0f);
+		ax::NodeEditor::SetCurrentEditor(nullptr);
+	}
+}
+
 void ProjectGenerator::Shutdown()
 {
 	if (nodeEditorContext_ != nullptr) {
@@ -1013,7 +1017,7 @@ void ProjectGenerator::Update() {
 	}
 }
 
-void ProjectGenerator::Draw() {
+void ProjectGenerator::Draw(const ProjectGeneratorSystemCore& coreSystem) {
     // 1. Configure the full-screen host window without title or movement controls.
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
@@ -1044,13 +1048,13 @@ void ProjectGenerator::Draw() {
     }
 
 	// Draw the main menu bar.
-	MainMenuBar();
+	MainMenuBar(coreSystem);
 
     // End MainDockSpaceWindow.
 	ImGui::End();
 
 	// Draw the main window.
-	MainWindow();
+	MainWindow(coreSystem);
 	// Draw the node editor window.
 	NodeEditorWindow();
 	// Draw the selected node's settings.
@@ -1063,7 +1067,8 @@ void ProjectGenerator::Draw() {
 	CommonPremakeSettingsWindow();
 }
 
-void QFE::APPLICATION::ProjectGenerator::MainMenuBar()
+void QFE::APPLICATION::ProjectGenerator::MainMenuBar(
+	const ProjectGeneratorSystemCore& coreSystem)
 {
 	EnsureConfigurationData();
 	static std::string newConfigurationName;
@@ -1076,7 +1081,7 @@ void QFE::APPLICATION::ProjectGenerator::MainMenuBar()
     {
         if(ImGui::MenuItem("Open Root Directory"))
         {
-			SelectRootDirectory();
+			SelectRootDirectory(coreSystem);
         }
 
         if (ImGui::MenuItem(
@@ -1090,10 +1095,10 @@ void QFE::APPLICATION::ProjectGenerator::MainMenuBar()
 		}
 		ImGui::Separator();
 		if (ImGui::MenuItem("Save Configuration As...")) {
-			SaveConfiguration();
+			SaveConfiguration(coreSystem);
 		}
 		if (ImGui::MenuItem("Load Configuration...")) {
-			LoadConfiguration();
+			LoadConfiguration(coreSystem);
 		}
 
         ImGui::EndMenu();
@@ -1175,7 +1180,8 @@ void QFE::APPLICATION::ProjectGenerator::MainMenuBar()
 	}
 }
 
-void QFE::APPLICATION::ProjectGenerator::MainWindow()
+void QFE::APPLICATION::ProjectGenerator::MainWindow(
+	const ProjectGeneratorSystemCore& coreSystem)
 {
 	ImGui::SetNextWindowSize(ImVec2(480.0f, 640.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSizeConstraints(
@@ -1184,7 +1190,7 @@ void QFE::APPLICATION::ProjectGenerator::MainWindow()
 	ImGui::Text("Welcome to the Project Generator!");
 	ImGui::Text("Root Directory: %s", directoryManager_.GetLootDirectory().c_str());
 	if (ImGui::Button("Change Root Directory")) {
-		SelectRootDirectory();
+		SelectRootDirectory(coreSystem);
 	}
 
 	const char* scanState = "Idle";
@@ -1237,11 +1243,16 @@ void QFE::APPLICATION::ProjectGenerator::MainWindow()
 	ImGui::End();
 }
 
-void QFE::APPLICATION::ProjectGenerator::SelectRootDirectory()
+void QFE::APPLICATION::ProjectGenerator::SelectRootDirectory(
+	const ProjectGeneratorSystemCore& coreSystem)
 {
+	if (coreSystem.windowManager == nullptr) {
+		premakeStatus_ = "Window manager is not available.";
+		return;
+	}
 	std::wstring selectedDirectory;
 	if (!QFE::FRAMEWORK::RequestGetDirectoryPathFromUser(
-		imguiContext_.hwnd, L"Select a project root directory", L"*.*",
+		*coreSystem.windowManager, L"Select a project root directory",
 		selectedDirectory)) {
 		return;
 	}
@@ -1299,7 +1310,7 @@ void QFE::APPLICATION::ProjectGenerator::DrawDirectoryTree(
 			ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 			const std::wstring directoryPath = directory.absolutePath.wstring();
 			const HINSTANCE result = ShellExecuteW(
-				imguiContext_.hwnd, L"open", directoryPath.c_str(), nullptr,
+				nullptr, L"open", directoryPath.c_str(), nullptr,
 				nullptr, SW_SHOWNORMAL);
 			if (reinterpret_cast<INT_PTR>(result) <= 32) {
 				premakeStatus_ = "Could not open the selected directory in Explorer.";
@@ -3813,8 +3824,13 @@ end
 		QFE::ConvertString(rootPath.wstring());
 }
 
-void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
+void QFE::APPLICATION::ProjectGenerator::SaveConfiguration(
+	const ProjectGeneratorSystemCore& coreSystem)
 {
+	if (coreSystem.windowManager == nullptr) {
+		premakeStatus_ = "Window manager is not available.";
+		return;
+	}
 	EnsureConfigurationData();
 	SynchronizeGroupMembership();
 	const std::filesystem::path dataDirectory = GetProjectGeneratorDataDirectory();
@@ -3827,7 +3843,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 
 	std::wstring selectedConfigurationPath;
 	if (!QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-		imguiContext_.hwnd,
+		*coreSystem.windowManager,
 		L"ProjectGenerator Configuration (*.json)", L"*.json",
 		selectedConfigurationPath,
 		dataDirectory.wstring(), L"json")) {
@@ -3985,31 +4001,38 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration()
 }
 
 void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
+	const ProjectGeneratorSystemCore& coreSystem)
+{
+	if (coreSystem.windowManager == nullptr) {
+		premakeStatus_ = "Window manager is not available.";
+		return;
+	}
+	const std::filesystem::path dataDirectory =
+		GetProjectGeneratorDataDirectory();
+	std::error_code directoryError;
+	std::filesystem::create_directories(dataDirectory, directoryError);
+	if (directoryError) {
+		premakeStatus_ =
+			"Could not access the ProjectGenerator data directory.";
+		return;
+	}
+
+	std::wstring selectedConfigurationPath;
+	if (!QFE::FRAMEWORK::RequestGetFilePathFromUser(
+		*coreSystem.windowManager,
+		L"ProjectGenerator Configuration (*.json)", L"*.json",
+		selectedConfigurationPath,
+		dataDirectory.wstring())) {
+		premakeStatus_ = "Load configuration was cancelled.";
+		return;
+	}
+	LoadConfiguration(QFE::ConvertString(selectedConfigurationPath));
+}
+
+void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 	const std::filesystem::path& configurationPath)
 {
 	std::filesystem::path resolvedConfigurationPath = configurationPath;
-	if (resolvedConfigurationPath.empty()) {
-		const std::filesystem::path dataDirectory =
-			GetProjectGeneratorDataDirectory();
-		std::error_code directoryError;
-		std::filesystem::create_directories(dataDirectory, directoryError);
-		if (directoryError) {
-			premakeStatus_ =
-				"Could not access the ProjectGenerator data directory.";
-			return;
-		}
-
-		std::wstring selectedConfigurationPath;
-		if (!QFE::FRAMEWORK::RequestGetFilePathFromUser(
-			imguiContext_.hwnd,
-			L"ProjectGenerator Configuration (*.json)", L"*.json",
-			selectedConfigurationPath,
-			dataDirectory.wstring())) {
-			premakeStatus_ = "Load configuration was cancelled.";
-			return;
-		}
-		resolvedConfigurationPath = QFE::ConvertString(selectedConfigurationPath);
-	}
 	resolvedConfigurationPath = NormalizePath(resolvedConfigurationPath);
 	std::ifstream input(resolvedConfigurationPath);
 	if (!input) {

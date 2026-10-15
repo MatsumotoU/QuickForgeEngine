@@ -15,4 +15,6 @@ namespace QFE::FRAMEWORK {
 	bool IsMainWindowActive(const QFE::WINDOW::IGameWindowManager& windowManager);
 	/// @brief ウィンドウのメッセージを処理する
 	bool ProcessWindowsApplicationMessage();
+	/// @brief メインウィンドウの状態を確認しながら、ウィンドウのメッセージを処理する
+	bool CanLoopWindowManager(const QFE::WINDOW::IGameWindowManager& windowManager);
 }

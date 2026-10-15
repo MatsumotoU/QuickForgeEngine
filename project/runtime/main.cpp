@@ -4,15 +4,13 @@
 #include "gamesystem/ShootingSystem.h"
 
 #include "framework/application/WindowsEngineFramework.h"
-#include "framework/window/WindowsWindowFrameWork.h"
+#include "framework/window/WindowCoreFrameWork.h"
 #include "framework/application/WindowsEngineResources.h"
 #include "framework/scene/EventSystem.h"
 #include "framework/animation/AnimationSystem.h"
 #include "framework/scene/SceneChangeSystem.h"
 #include "framework/scene/SplineMovementSystem.h"
 
-#include "window/GameWindowManager.h"
-#include "gui/D3D12GuiManager.h"
 
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
@@ -59,10 +57,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 
 	// メインループ
-	while (QFE::FRAMEWORK::IsMainWindowActive(engineSystems.windowManager.get())) {
-		if (!QFE::FRAMEWORK::ProcessWindowsApplicationMessage()) {
-			break;
-		}
+	while (QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {
 		if (!QFE::FRAMEWORK::BeginWindowsEngineFrame(engineSystems)) {
 			break;
 		}

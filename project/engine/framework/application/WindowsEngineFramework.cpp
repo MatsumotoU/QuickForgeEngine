@@ -1,10 +1,15 @@
 #include "WindowsEngineFramework.h"
 #include "EngineDefines.h"
 
-// 機能をunique_ptrをつかって管理するために必要なヘッダーファイル
 #include "window/GameWindowManager.h"
-#include "framework/graphic/GraphicContext.h"
-#include "gui/D3D12GuiManager.h"
+#include "graphics/D3D12GraphicEngine.h"
+#include "graphics/interface/DirectXResourceFramework.h"
+#include "graphics/interface/DirectXRenderFramework.h"
+#include "gui/IGuiManager.h"
+#include "framework/window/WindowCoreFrameWork.h"
+#include "framework/window/WindowDialogFramework.h"
+#include "framework/graphic/GraphicEngineCoreFramework.h"
+#include "framework/gui/GuiCoreFramework.h"
 #include "input/InputInterface.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
@@ -15,6 +20,7 @@
 #include "graphics/dx12/pipeline/rtpso/RaytracingAccelerationStructure.h"
 #include "framework/scene/SplineMovementSystem.h"
 #include "audio/AudioEngine.h"
+#include "string/MyString.h"
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
@@ -86,18 +92,31 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 		return false;
 	}
 	// メインウィンドウのハンドルを取得
-	HWND mainWindow = QFE::FRAMEWORK::GetWindowHandle(outSystems.windowManager.get(), mainWindowName);
+	const auto* gameWindowManager =
+		dynamic_cast<const QFE::WINDOW::GameWindowManager*>(outSystems.windowManager.get());
+	if (gameWindowManager == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to access the Windows game window manager.", QFE::SystemError::Abort);
+		return false;
+	}
+	const HWND mainWindow = gameWindowManager->GetMainWindow();
 
 	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
+	QFE::FRAMEWORK::GraphicEngineFeatureState graphicFeatures;
+	graphicFeatures.isTextureLoaderEnabled = true;
+	graphicFeatures.isComputeEnabled = true;
+	graphicFeatures.isRaytracingEnabled = true;
+	graphicFeatures.isBuildInPipelineStateObjectsEnabled = true;
+	graphicFeatures.isLineRenderingEnabled = true;
 	outSystems.graphicEngine =
-		QFE::FRAMEWORK::CreateGraphicEngine(mainWindow);
+		QFE::FRAMEWORK::CreateGraphicEngine(*outSystems.windowManager, graphicFeatures);
 	// グラフィックエンジンの初期化に失敗した場合はエラーを報告して終了
 	if(outSystems.graphicEngine == nullptr) {
 		QFE_REPORT_SYSTEM_ERROR("Failed to create D3D12GraphicEngine.",QFE::SystemError::Abort);
 		return false;
 	}
 
-	outSystems.guiManager = QFE::FRAMEWORK::CreateGuiManager(outSystems.graphicEngine.get(), mainWindow);
+	outSystems.guiManager = QFE::FRAMEWORK::CreateGuiManager(
+		*outSystems.graphicEngine, *outSystems.windowManager);
 	if (outSystems.guiManager == nullptr) {
 		QFE_REPORT_SYSTEM_ERROR("Failed to create D3D12GuiManager.", QFE::SystemError::Abort);
 		return false;
@@ -143,8 +162,8 @@ void QFE::FRAMEWORK::EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& syste
 	if (systems.sceneManager && systems.audioEngine) {
 		systems.audioComponents.Update(*systems.sceneManager, *systems.audioEngine);
 	}
-	if (systems.guiManager) systems.guiManager->PostDraw();
-	if (systems.graphicEngine) systems.graphicEngine->PostDraw();
+	if (systems.guiManager) QFE::FRAMEWORK::PostDrawGui(*systems.guiManager);
+	if (systems.graphicEngine) QFE::FRAMEWORK::PostDrawGraphicEngine(systems.graphicEngine.get());
 	if (systems.sceneManager) systems.sceneManager->EndFrame();
 	if (systems.fpsCounter) systems.fpsCounter->FrameEnd();
 	if (systems.inputInterface) systems.inputInterface->EndFrame();
@@ -156,15 +175,14 @@ void QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEng
 		systems.audioEngine->Shutdown();
 	}
 	if (systems.sceneManager) systems.sceneManager->Shutdown();
-	if (systems.guiManager) systems.guiManager->Shutdown();
-	if (systems.graphicEngine) systems.graphicEngine->Shutdown();
+	if (systems.guiManager) QFE::FRAMEWORK::ShutdownGui(*systems.guiManager);
+	if (systems.graphicEngine) QFE::FRAMEWORK::ShutdownGraphicEngine(systems.graphicEngine.get());
 	if (systems.windowManager) systems.windowManager->Shutdown();
 }
 
 void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
 	auto& graphicEngine = systems.graphicEngine;
 
-	HWND mainWindow = QFE::FRAMEWORK::GetWindowHandle(systems.windowManager.get(), resources.windowName);
 	std::string psDirName = resources.psDirName;
 	std::string vsDirName = resources.vsDirName;
 	std::string rtDirName = resources.rtDirName;
@@ -172,7 +190,7 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 	// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
 	std::wstring selectedFilePath;
 	if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-		mainWindow,
+		*systems.windowManager,
 		L"JSON Files", L"*.json",
 		selectedFilePath)) {
 		// Entityの生成
@@ -239,9 +257,14 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	auto& graphicEngine = systems.graphicEngine;
 	auto& guiManager = systems.guiManager;
 	auto& fpsCounter = systems.fpsCounter;
+	auto* d3d12GraphicEngine =
+		dynamic_cast<QFE::GRAPHIC::D3D12GraphicEngine*>(graphicEngine.get());
+	if (d3d12GraphicEngine == nullptr || guiManager == nullptr) {
+		return;
+	}
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
-	auto* accelerationStructure = graphicEngine->GetRaytracingAccelerationStructure();
+	auto* accelerationStructure = d3d12GraphicEngine->GetRaytracingAccelerationStructure();
 	if (resources.animatedBlasSceneRevision != sceneManager.GetSceneRevision()) {
 		for (const auto& [entityId, blas] : resources.animatedBlasByEntity) {
 			accelerationStructure->RemoveBLAS(blas.handle);
@@ -251,11 +274,11 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	}
 	QFE::FRAMEWORK::DrawSplineMovementPaths(
 		entityManager,
-		[graphicEngine = graphicEngine.get()](
+		[d3d12GraphicEngine](
 			const QFE::MATH::Vector3& start,
 			const QFE::MATH::Vector3& end,
 			const QFE::MATH::Vector4& color) {
-			graphicEngine->DrawLine(start, end, color);
+			d3d12GraphicEngine->DrawLine(start, end, color);
 		});
 
 	// 旧スカイボックスと同様、シーン内の最初の可視キューブマップを背景に使う。
@@ -306,7 +329,8 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			const QFE::MATH::Matrix4x4 worldMatrix =
 				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &objTransform);
 
-			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator = graphicEngine->GetDirectXResourceAllocator();
+			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
+				d3d12GraphicEngine->GetDirectXResourceAllocator();
 			QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
 				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
 			QFE::GRAPHIC::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, worldMatrix, resources.viewProj);
@@ -320,7 +344,8 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			}
 			QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
 				resourceAllocator->AllocateConstantBuffer<Material>();
-			Material* materialData = graphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
+			Material* materialData =
+				d3d12GraphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
 			QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
 			materialData->color = materialComp.albedoColor;
 			materialData->metallic = materialComp.metallic;
@@ -394,8 +419,10 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 						}
 						modelRenderComp.animatedVertexResourceHandle = static_cast<uint32_t>(handle);
 					} else {
-						VertexData* mapped = graphicEngine->GetDirectXResourceContainer()->GetMappedData<VertexData>(
-							static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.animatedVertexResourceHandle));
+						VertexData* mapped =
+							d3d12GraphicEngine->GetDirectXResourceContainer()->GetMappedData<VertexData>(
+								static_cast<QFE::GRAPHIC::DirectXResourceHandle>(
+									modelRenderComp.animatedVertexResourceHandle));
 						if (!mapped) {
 							modelRenderComp.renderErrorMessage = "Animated vertex buffer is not mapped";
 							return;
@@ -447,7 +474,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 					!modelMaterial->embeddedTextureData.empty()) {
 					if (!resources.textureHandleMap.contains(effectiveTextureName)) {
 						const auto& bytes = modelMaterial->embeddedTextureData;
-						const auto loaded = graphicEngine->GetTextureLoader()->LoadTextureFromMemory(
+						const auto loaded = d3d12GraphicEngine->GetTextureLoader()->LoadTextureFromMemory(
 							effectiveTextureName, bytes.data(), bytes.size());
 						if (loaded == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
 							modelRenderComp.renderErrorMessage = "Failed to load embedded texture: " + effectiveTextureName;
@@ -490,8 +517,11 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 				} else {
 					blasHandle = existing->second.handle;
 					const auto positions = QFE::GRAPHIC::GetModelVertexPositions(vertices.data(), vertices.size());
-					if (!accelerationStructure->UpdateBLAS(blasHandle,
-						graphicEngine->GetDirectXCommandManager()->GetCommandList4(D3D12_COMMAND_LIST_TYPE_DIRECT), positions)) {
+					if (!accelerationStructure->UpdateBLAS(
+						blasHandle,
+						d3d12GraphicEngine->GetDirectXCommandManager()->GetCommandList4(
+							D3D12_COMMAND_LIST_TYPE_DIRECT),
+						positions)) {
 						modelRenderComp.renderErrorMessage = "Failed to update animated BLAS";
 						return;
 					}
@@ -573,7 +603,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &spriteTransform);
 
 			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
-				graphicEngine->GetDirectXResourceAllocator();
+				d3d12GraphicEngine->GetDirectXResourceAllocator();
 			const QFE::GRAPHIC::DirectXResourceHandle transformHandle =
 				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("SpriteTransform");
 			QFE::GRAPHIC::UpdateObject3dWVPMatrix(
@@ -582,7 +612,8 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 
 			const QFE::GRAPHIC::DirectXResourceHandle materialHandle =
 				resourceAllocator->AllocateConstantBuffer<Material>("SpriteMaterial");
-			Material* materialData = graphicEngine->GetConstantBufferData<Material>(materialHandle);
+			Material* materialData =
+				d3d12GraphicEngine->GetConstantBufferData<Material>(materialHandle);
 			if (!materialData) {
 				sprite.renderErrorMessage = "Failed to allocate sprite material for entity: " + std::to_string(entityId);
 				return;
@@ -651,12 +682,17 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		}
 	}
 
-	graphicEngine->PreDraw();
-	guiManager->PreDraw();
+	QFE::FRAMEWORK::PreDrawGraphicEngine(graphicEngine.get());
+	QFE::FRAMEWORK::PreDrawGui(*guiManager);
 }
 
 void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
 	auto& graphicEngine = systems.graphicEngine;
+	auto* d3d12GraphicEngine =
+		dynamic_cast<QFE::GRAPHIC::D3D12GraphicEngine*>(graphicEngine.get());
+	if (d3d12GraphicEngine == nullptr) {
+		return;
+	}
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 
 	QFE::FRAMEWORK::DrawSceneModels(
@@ -671,8 +707,10 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 
 		// カメラの位置をGPUに送るための定数バッファを作成
 		QFE::GRAPHIC::DirectXResourceHandle cameraBufferHandle;
-		cameraBufferHandle = graphicEngine->GetDirectXResourceAllocator()->AllocateConstantBuffer<CameraForGPU>("CameraBuffer");
-		CameraForGPU* cameraPos = graphicEngine->GetConstantBufferData<CameraForGPU>(cameraBufferHandle);
+		cameraBufferHandle = d3d12GraphicEngine->GetDirectXResourceAllocator()
+			->AllocateConstantBuffer<CameraForGPU>("CameraBuffer");
+		CameraForGPU* cameraPos =
+			d3d12GraphicEngine->GetConstantBufferData<CameraForGPU>(cameraBufferHandle);
 		if(cameraPos == nullptr) {
 			assert(false && "Failed to get CameraForGPU constant buffer data.");
 			return;
@@ -693,7 +731,7 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 	}
 
 	// 線はレイトレーシングの影計算には含めず、3D深度テスト付きで結果に重ねる。
-	graphicEngine->RenderLines(
+	d3d12GraphicEngine->RenderLines(
 		resources.viewProj, resources.viewportHandle, resources.scissorRectHandle,
 		resources.finalRenderTargetHandle);
 
@@ -725,10 +763,7 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		}
 	}
 
-	QFE::GRAPHIC::DirectXResourceHandle depthStencilHandle;
-	if (QFE::GRAPHIC::GetDepthStencilResourceHandle(graphicEngine.get(), depthStencilHandle)) {
-		QFE::GRAPHIC::SetRenderTarget(graphicEngine.get(), depthStencilHandle, { QFE::GRAPHIC::RenderTargetHandle::SwapChain });
-	}
+	QFE::FRAMEWORK::SetSwapChainRenderTarget(*graphicEngine);
 }
 
 bool QFE::FRAMEWORK::LoadModelVertexData(

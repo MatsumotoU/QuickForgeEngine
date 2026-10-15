@@ -1,7 +1,7 @@
 #include "EditorWindowManager.h"
 #include "AllEditorWindow.h"
 
-#include "framework/window/WindowsWindowFrameWork.h"
+#include "framework/window/WindowDialogFramework.h"
 
 #include "scene/SceneManager.h"
 #include "design-patterns/EntityManager.h"
@@ -17,8 +17,11 @@
 #include <cmath>
 #include <utility>
 
-void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow) {
-	mainWindow_ = mainWindow;
+void QFE::EDITOR::EditorWindowManager::Initialize(
+	QFE::SCENE::SceneManager* sceneManager,
+	ImTextureID sceneTextureId,
+	QFE::WINDOW::IGameWindowManager& windowManager) {
+	windowManager_ = &windowManager;
 	sceneManager_ = sceneManager;
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	editorWindowsMap_.clear();
@@ -83,7 +86,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                 // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-                    mainWindow_,
+                    *windowManager_,
                     L"JSON Files", L"*.json",
                     selectedFilePath)) {
                     // Entityの生成
@@ -105,7 +108,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 					// JSONファイルの保存先を選択させる
 					std::wstring selectedFilePath;
 					if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-						mainWindow_,
+						*windowManager_,
 						L"JSON Files", L"*.json",
 						selectedFilePath)) {
 						nlohmann::json savedEntities;
@@ -133,7 +136,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                 // 保存済みエンティティを現在のシーンへ追加するファイルを選択させる
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-                    mainWindow_,
+                    *windowManager_,
                     L"JSON Files", L"*.json",
                     selectedFilePath)) {
                     const uint32_t firstEntityId =
@@ -163,7 +166,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                 // クリックされたらファイル選択ダイアログを開く
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-                    mainWindow_,
+                    *windowManager_,
                     L"Scene Files", L"*.json",
                     selectedFilePath)) {
 
@@ -206,7 +209,7 @@ void QFE::EDITOR::EditorWindowManager::QueueSceneSave(
 	if (selectSavePath || savePath.empty()) {
 		std::wstring selectedFilePath;
 		if (!QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-			mainWindow_,
+			*windowManager_,
 			L"JSON Files", L"*.json",
 			selectedFilePath)) {
 			return;
@@ -237,7 +240,7 @@ bool QFE::EDITOR::EditorWindowManager::ConsumeCameraFocusTarget(
 	const QFE::MATH::EulerTransform& transform =
 		entityManager.GetComponent<QFE::SCENE::TransformComponent>(*entityId).transform;
 	position = transform.translate;
-	radius = std::max({
+	radius = (std::max)({
 		std::abs(transform.scale.x),
 		std::abs(transform.scale.y),
 		std::abs(transform.scale.z),

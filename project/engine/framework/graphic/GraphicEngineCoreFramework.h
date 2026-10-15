@@ -26,6 +26,8 @@ namespace QFE::FRAMEWORK {
 	bool PreDrawGraphicEngine(QFE::GRAPHIC::IGraphicEngine* graphicEngine);
 	/// @brief グラフィックエンジンで描画した後の処理を行う関数
 	bool PostDrawGraphicEngine(QFE::GRAPHIC::IGraphicEngine* graphicEngine);
+	/// @brief 深度ステンシルを使用せずにスワップチェーンを描画先へ設定する関数
+	bool SetSwapChainRenderTarget(QFE::GRAPHIC::IGraphicEngine& graphicEngine);
 	/// @brief グラフィックエンジンを終了する関数
 	bool ShutdownGraphicEngine(QFE::GRAPHIC::IGraphicEngine* graphicEngine);
 }

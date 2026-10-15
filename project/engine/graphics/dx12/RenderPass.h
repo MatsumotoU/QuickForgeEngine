@@ -61,7 +61,11 @@ namespace QFE::GRAPHIC {
 		/// @brief 描画先を決定します。0はスワップチェーンのバックバッファ、1以上はオフスクリーンバッファを指します。
 		void SetRenderTarget(
 			ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
-			std::vector<RenderTargetHandle> renderTargetHandles);
+			const std::vector<RenderTargetHandle>& renderTargetHandles);
+		/// @brief 深度ステンシルを使用せずに描画先を決定します。
+		void SetRenderTarget(
+			ID3D12GraphicsCommandList* commandList,
+			const std::vector<RenderTargetHandle>& renderTargetHandles);
 
 		/// @brief スワップチェーンのバックバッファの数を取得します。
 		UINT GetSwapChainBufferCount() const;
@@ -77,6 +81,11 @@ namespace QFE::GRAPHIC {
 		DirectXResourceHandle GetOffscreenBarrierShaderResourceHandle(RenderTargetHandle renderTargetHandle) const;
 
 	private:
+		void SetRenderTargets(
+			ID3D12GraphicsCommandList* commandList,
+			const std::vector<RenderTargetHandle>& renderTargetHandles,
+			const D3D12_CPU_DESCRIPTOR_HANDLE* depthStencilView);
+
 		std::unique_ptr<SwapChain> swapChain_;
 		RenderPassInitializeInfo initializeInfo_;
 

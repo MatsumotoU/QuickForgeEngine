@@ -1,9 +1,6 @@
 #pragma once
 #include <memory>
-#include "framework/graphic/D3D12GraphicFrameWork.h"
-#include "framework/window/WindowsWindowFrameWork.h"
 #include "framework/input/InputFrameWork.h"
-#include "framework/gui/D3D12GuiFrameWork.h"
 #include "framework/scene/SceneFrameWork.h"
 #include "framework/scene/AudioComponentSystem.h"
 #include "framework/scene/SceneChangeSystem.h"
@@ -12,13 +9,23 @@
 
 #include "core/timer/FPSCounter.h"
 
+namespace QFE::WINDOW {
+	class IGameWindowManager;
+}
+namespace QFE::GRAPHIC {
+	class IGraphicEngine;
+}
+namespace QFE::GUI {
+	class IGuiManager;
+}
+
 namespace QFE::FRAMEWORK{
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンシステムを保持する構造体。
 	class WindowsQuickForgeEngineSystems final {
 	public:
-		std::unique_ptr<QFE::WINDOW::GameWindowManager> windowManager;// ウィンドウマネージャ
-		std::unique_ptr<GraphicContext> graphicEngine;// グラフィック機能の公開コンテキスト
-		std::unique_ptr<QFE::GUI::D3D12GuiManager> guiManager;// GUIマネージャ
+		std::unique_ptr<QFE::WINDOW::IGameWindowManager> windowManager;// ウィンドウマネージャ
+		std::unique_ptr<QFE::GRAPHIC::IGraphicEngine> graphicEngine;// グラフィック機能の公開インターフェース
+		std::unique_ptr<QFE::GUI::IGuiManager> guiManager;// GUIマネージャ
 		std::unique_ptr<QFE::INPUT::InputInterface> inputInterface;// 入力インターフェース
 		std::unique_ptr<QFE::SCENE::SceneManager> sceneManager;// シーンマネージャ
 		std::unique_ptr<QFE::AUDIO::AudioEngine> audioEngine;

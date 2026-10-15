@@ -2,9 +2,6 @@
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
 #include "components/TransformHierarchy.h"
-#include "framework/graphic/GraphicContext.h"
-
-#include "framework/graphic/D3D12GraphicFrameWork.h"
 
 #include <algorithm>
 
@@ -52,7 +49,7 @@ QFE::MATH::Matrix4x4 QFE::FRAMEWORK::UpdateMainCamera(
 
 void QFE::FRAMEWORK::DrawSceneModels(
 	QFE::SCENE::SceneManager& sceneManager,
-	QFE::FRAMEWORK::GraphicContext* graphicEngine,
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 	QFE::GRAPHIC::PSOHandle psoHandle,
 	QFE::GRAPHIC::ViewPortHandle viewportHandle,
 	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle,
@@ -78,7 +75,7 @@ void QFE::FRAMEWORK::DrawSceneModels(
 
 void QFE::FRAMEWORK::DrawSceneSprites(
 	QFE::SCENE::SceneManager& sceneManager,
-	QFE::FRAMEWORK::GraphicContext* graphicEngine,
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 	QFE::GRAPHIC::PSOHandle psoHandle,
 	QFE::GRAPHIC::ViewPortHandle viewportHandle,
 	QFE::GRAPHIC::ScissorRectHandle scissorRectHandle,

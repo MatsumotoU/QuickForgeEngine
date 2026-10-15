@@ -1,9 +1,6 @@
 #pragma once
 #include "DirectoryManager.h"
 
-#define NOMINMAX
-#include <Windows.h>
-
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -14,9 +11,7 @@
 #include <imgui_node_editor.h>
 
 namespace QFE::APPLICATION {
-	struct ImGuiContext {
-		HWND hwnd;
-	};
+	class ProjectGeneratorSystemCore;
 
 	enum class PremakeProjectKind : std::int32_t {
 		StaticLib,
@@ -132,17 +127,18 @@ namespace QFE::APPLICATION {
 		ProjectGenerator(ProjectGenerator&&) = delete;
 		ProjectGenerator& operator=(ProjectGenerator&&) = delete;
 		~ProjectGenerator();
-		void Initialize(ImGuiContext context);
+
+		void Initialize();
 		void Shutdown();
 		void Update();
-		void Draw();
+		void Draw(const ProjectGeneratorSystemCore& coreSystem);
 		bool GenerateFromConfiguration(
 			const std::filesystem::path& configurationPath);
 
 	private:
-		void MainMenuBar();
-		void MainWindow();
-		void SelectRootDirectory();
+		void MainMenuBar(const ProjectGeneratorSystemCore& coreSystem);
+		void MainWindow(const ProjectGeneratorSystemCore& coreSystem);
+		void SelectRootDirectory(const ProjectGeneratorSystemCore& coreSystem);
 		void NodeEditorWindow();
 		void NodeSettingsWindow();
 		void GroupSettingsWindow();
@@ -196,12 +192,11 @@ namespace QFE::APPLICATION {
 		void ArrangeNodesLeftToRight();
 		void LoadRootPremake();
 		void GenerateCentralPremake();
-		void SaveConfiguration();
-		void LoadConfiguration(
-			const std::filesystem::path& configurationPath = {});
+		void SaveConfiguration(const ProjectGeneratorSystemCore& coreSystem);
+		void LoadConfiguration(const ProjectGeneratorSystemCore& coreSystem);
+		void LoadConfiguration(const std::filesystem::path& configurationPath);
 		static const char* GetPremakeKindName(PremakeProjectKind kind);
 
-		ImGuiContext imguiContext_;
 		DirectoryManager directoryManager_;
 		ax::NodeEditor::EditorContext* nodeEditorContext_ = nullptr;
 		std::vector<ProjectNode> nodes_;

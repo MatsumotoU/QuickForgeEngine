@@ -1,6 +1,5 @@
 #include "SaveSceneCommand.h"
 #include "scene/SceneManager.h"
-#include "framework/window/WindowsWindowFrameWork.h"
 #include "design-patterns/EntityManager.h"
 
 #include "file/FileUtility.h"

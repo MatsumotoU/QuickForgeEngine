@@ -136,6 +136,39 @@ bool QFE::GRAPHIC::CreateOffScreenRenderTarget(
 	return true;
 }
 
+bool QFE::GRAPHIC::CreateEditorSceneTexture(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+	QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
+	QFE::GRAPHIC::DirectXResourceHandle& outResourceHandle,
+	uintptr_t& outGuiTextureId,
+	uint32_t width,
+	uint32_t height) {
+	auto* d3d12GraphicEngine = ResolveD3D12GraphicEngine(graphicEngine);
+	if (d3d12GraphicEngine == nullptr) {
+		return false;
+	}
+	if (!QFE::GRAPHIC::CreateOffScreenRenderTarget(
+		graphicEngine, outRenderTargetHandle, width, height,
+		DXGI_FORMAT_R8G8B8A8_UNORM)) {
+		return false;
+	}
+	if (!QFE::GRAPHIC::GetRenderResourceHandle(
+		graphicEngine, outRenderTargetHandle, outResourceHandle)) {
+		return false;
+	}
+	if (!QFE::GRAPHIC::TransitionResourceToState(
+		graphicEngine, outResourceHandle,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)) {
+		return false;
+	}
+
+	const D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle =
+		d3d12GraphicEngine->GetDirectXResourceContainer()->GetDescriptorHandleGPU(
+			outResourceHandle, D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE);
+	outGuiTextureId = static_cast<uintptr_t>(gpuHandle.ptr);
+	return true;
+}
+
 bool QFE::GRAPHIC::CreateViewport(
 	QFE::GRAPHIC::IGraphicEngine* graphicEngine, QFE::GRAPHIC::ViewPortHandle& outViewportHandle, uint32_t width, uint32_t height) {
 
@@ -198,6 +231,29 @@ bool QFE::GRAPHIC::SetRenderTarget(
 	renderPass->SetRenderTarget(
 		commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT), depthStencilBufferHandle, renderTargets);
 
+	return true;
+}
+
+bool QFE::GRAPHIC::SetRenderTarget(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets) {
+	QFE::GRAPHIC::D3D12GraphicEngine* d3d12GraphicEngine =
+		ResolveD3D12GraphicEngine(graphicEngine);
+	if (d3d12GraphicEngine == nullptr || renderTargets.empty()) {
+		return false;
+	}
+
+	QFE::GRAPHIC::RenderPass* renderPass =
+		d3d12GraphicEngine->GetRenderPass();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager =
+		d3d12GraphicEngine->GetDirectXCommandManager();
+	if (renderPass == nullptr || commandManager == nullptr) {
+		return false;
+	}
+
+	renderPass->SetRenderTarget(
+		commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT),
+		renderTargets);
 	return true;
 }
 

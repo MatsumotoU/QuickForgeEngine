@@ -64,6 +64,14 @@ namespace QFE::GRAPHIC {
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
 		uint32_t width, uint32_t height, DXGI_FORMAT format);
+	/// @brief Editor用のシーンテクスチャを作成し、GUIで参照できるIDを返す。
+	bool CreateEditorSceneTexture(
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+		QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
+		QFE::GRAPHIC::DirectXResourceHandle& outResourceHandle,
+		uintptr_t& outGuiTextureId,
+		uint32_t width,
+		uint32_t height);
 	/// @brief ビューポートを作成する関数
 	bool CreateViewport(
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
@@ -79,6 +87,10 @@ namespace QFE::GRAPHIC {
 	bool SetRenderTarget(
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::DirectXResourceHandle& depthStencilBufferHandle,
+		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets);
+	/// @brief 深度ステンシルを使用せずにレンダーターゲットを設定する関数
+	bool SetRenderTarget(
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets);
 
 	/// @brief グラフィックパイプラインステートオブジェクトを使用して描画する関数
