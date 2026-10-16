@@ -190,6 +190,8 @@ namespace QFE::APPLICATION {
 			std::unordered_set<std::uint64_t>& visitedNodeIds) const;
 		void SimplifyDependencyLinks();
 		void ArrangeNodesLeftToRight();
+		void LoadSolution(const ProjectGeneratorSystemCore& coreSystem);
+		void LoadSolution(const std::filesystem::path& solutionPath);
 		void LoadRootPremake();
 		void GenerateCentralPremake();
 		void SaveConfiguration(const ProjectGeneratorSystemCore& coreSystem);

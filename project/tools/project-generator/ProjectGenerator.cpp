@@ -630,6 +630,492 @@ namespace
 		return (error ? path : absolutePath).lexically_normal();
 	}
 
+	std::string ToLowerAscii(std::string value)
+	{
+		std::transform(value.begin(), value.end(), value.begin(),
+			[](unsigned char character) {
+				return static_cast<char>(std::tolower(character));
+			});
+		return value;
+	}
+
+	std::string NormalizeGuid(std::string_view value)
+	{
+		std::string result;
+		result.reserve(value.size());
+		for (const char character : value) {
+			if (character != '{' && character != '}' &&
+				std::isspace(static_cast<unsigned char>(character)) == 0) {
+				result.push_back(static_cast<char>(
+					std::tolower(static_cast<unsigned char>(character))));
+			}
+		}
+		return result;
+	}
+
+	std::string NormalizePathKey(const std::filesystem::path& path)
+	{
+		return ToLowerAscii(NormalizePath(path).generic_string());
+	}
+
+	std::vector<std::string> ExtractSolutionQuotedStrings(std::string_view value)
+	{
+		std::vector<std::string> strings;
+		std::size_t position = 0;
+		while ((position = value.find('"', position)) != std::string_view::npos) {
+			const std::size_t end = value.find('"', position + 1);
+			if (end == std::string_view::npos) {
+				break;
+			}
+			strings.emplace_back(value.substr(position + 1, end - position - 1));
+			position = end + 1;
+		}
+		return strings;
+	}
+
+	bool ReadTextFile(const std::filesystem::path& path, std::string& source)
+	{
+		std::ifstream input(path, std::ios::binary);
+		if (!input) {
+			return false;
+		}
+		source.assign(std::istreambuf_iterator<char>(input),
+			std::istreambuf_iterator<char>());
+		return true;
+	}
+
+	std::string ExtractXmlElementText(std::string_view source,
+		std::string_view elementName)
+	{
+		const std::string opening = "<" + std::string(elementName);
+		const std::size_t openingPosition = source.find(opening);
+		if (openingPosition == std::string_view::npos) {
+			return {};
+		}
+		const std::size_t contentBegin = source.find('>', openingPosition);
+		if (contentBegin == std::string_view::npos) {
+			return {};
+		}
+		const std::string closing = "</" + std::string(elementName) + ">";
+		const std::size_t contentEnd = source.find(closing, contentBegin + 1);
+		if (contentEnd == std::string_view::npos) {
+			return {};
+		}
+		return Trim(source.substr(contentBegin + 1,
+			contentEnd - contentBegin - 1));
+	}
+
+	std::string ExtractXmlAttribute(std::string_view openingTag,
+		std::string_view attributeName)
+	{
+		const std::string prefix = std::string(attributeName) + "=";
+		const std::size_t attributePosition = openingTag.find(prefix);
+		if (attributePosition == std::string_view::npos) {
+			return {};
+		}
+		const std::size_t quotePosition = attributePosition + prefix.size();
+		if (quotePosition >= openingTag.size() ||
+			(openingTag[quotePosition] != '"' && openingTag[quotePosition] != '\'')) {
+			return {};
+		}
+		const char quote = openingTag[quotePosition];
+		const std::size_t end = openingTag.find(quote, quotePosition + 1);
+		if (end == std::string_view::npos) {
+			return {};
+		}
+		return std::string(openingTag.substr(
+			quotePosition + 1, end - quotePosition - 1));
+	}
+
+	struct ParsedSolutionProject {
+		std::string typeGuid;
+		std::string name;
+		std::filesystem::path relativePath;
+		std::string guid;
+		bool isSolutionFolder = false;
+		std::vector<std::string> dependencies;
+	};
+
+	struct ParsedSolution {
+		std::vector<ParsedSolutionProject> projects;
+		std::unordered_map<std::string, std::string> parentFolderByProject;
+		std::vector<std::string> configurations;
+	};
+
+	bool ParseSolution(const std::filesystem::path& solutionPath,
+		ParsedSolution& solution)
+	{
+		std::string source;
+		if (!ReadTextFile(solutionPath, source)) {
+			return false;
+		}
+
+		constexpr std::string_view solutionFolderTypeGuid =
+			"2150e333-8fdc-42a3-9474-1a3956d46de8";
+		std::size_t currentProject = std::numeric_limits<std::size_t>::max();
+		bool inProjectDependencies = false;
+		bool inNestedProjects = false;
+		bool inSolutionConfigurations = false;
+
+		std::istringstream stream(source);
+		for (std::string line; std::getline(stream, line);) {
+			const std::string trimmed = Trim(line);
+			if (trimmed.starts_with("Project(")) {
+				const std::vector<std::string> values =
+					ExtractSolutionQuotedStrings(trimmed);
+				if (values.size() >= 4) {
+					ParsedSolutionProject project;
+					project.typeGuid = NormalizeGuid(values[0]);
+					project.name = values[1];
+					project.relativePath = QFE::ConvertString(values[2]);
+					project.guid = NormalizeGuid(values[3]);
+					project.isSolutionFolder =
+						project.typeGuid == solutionFolderTypeGuid;
+					solution.projects.push_back(std::move(project));
+					currentProject = solution.projects.size() - 1;
+				}
+				continue;
+			}
+			if (trimmed == "EndProject") {
+				currentProject = std::numeric_limits<std::size_t>::max();
+				inProjectDependencies = false;
+				continue;
+			}
+			if (currentProject != std::numeric_limits<std::size_t>::max()) {
+				if (trimmed.starts_with("ProjectSection(ProjectDependencies)")) {
+					inProjectDependencies = true;
+					continue;
+				}
+				if (trimmed == "EndProjectSection") {
+					inProjectDependencies = false;
+					continue;
+				}
+				if (inProjectDependencies) {
+					const std::size_t equals = trimmed.find('=');
+					if (equals != std::string::npos) {
+						const std::string dependency =
+							NormalizeGuid(trimmed.substr(0, equals));
+						if (!dependency.empty()) {
+							solution.projects[currentProject].dependencies.push_back(
+								dependency);
+						}
+					}
+				}
+				continue;
+			}
+
+			if (trimmed.starts_with("GlobalSection(NestedProjects)")) {
+				inNestedProjects = true;
+				continue;
+			}
+			if (trimmed.starts_with("GlobalSection(SolutionConfigurationPlatforms)")) {
+				inSolutionConfigurations = true;
+				continue;
+			}
+			if (trimmed == "EndGlobalSection") {
+				inNestedProjects = false;
+				inSolutionConfigurations = false;
+				continue;
+			}
+			const std::size_t equals = trimmed.find('=');
+			if (equals == std::string::npos) {
+				continue;
+			}
+			if (inNestedProjects) {
+				const std::string child = NormalizeGuid(trimmed.substr(0, equals));
+				const std::string parent = NormalizeGuid(trimmed.substr(equals + 1));
+				if (!child.empty() && !parent.empty()) {
+					solution.parentFolderByProject[child] = parent;
+				}
+			} else if (inSolutionConfigurations) {
+				const std::string configurationAndPlatform =
+					Trim(trimmed.substr(0, equals));
+				const std::size_t separator = configurationAndPlatform.find('|');
+				const std::string configuration = Trim(
+					configurationAndPlatform.substr(0, separator));
+				if (!configuration.empty() && std::find(solution.configurations.begin(),
+					solution.configurations.end(), configuration) ==
+					solution.configurations.end()) {
+					solution.configurations.push_back(configuration);
+				}
+			}
+		}
+		return !solution.projects.empty();
+	}
+
+	struct ParsedVisualStudioProject {
+		struct ConfigurationSettings {
+			std::string includePaths;
+			std::string defines;
+		};
+		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
+		std::vector<std::string> referencedProjectGuids;
+		std::vector<std::filesystem::path> referencedProjectPaths;
+		std::unordered_map<std::string, ConfigurationSettings>
+			configurationSettings;
+	};
+
+	void ReplaceAll(std::string& value, std::string_view token,
+		std::string_view replacement)
+	{
+		std::size_t position = 0;
+		while ((position = value.find(token, position)) != std::string::npos) {
+			value.replace(position, token.size(), replacement);
+			position += replacement.size();
+		}
+	}
+
+	std::string DecodeXmlEntities(std::string value)
+	{
+		ReplaceAll(value, "&quot;", "\"");
+		ReplaceAll(value, "&apos;", "'");
+		ReplaceAll(value, "&lt;", "<");
+		ReplaceAll(value, "&gt;", ">");
+		ReplaceAll(value, "&amp;", "&");
+		return value;
+	}
+
+	std::vector<std::string> SplitMsBuildList(std::string_view value)
+	{
+		std::vector<std::string> values;
+		std::size_t begin = 0;
+		while (begin <= value.size()) {
+			const std::size_t end = value.find(';', begin);
+			const std::string item = Trim(value.substr(begin,
+				end == std::string_view::npos ? value.size() - begin : end - begin));
+			if (!item.empty()) {
+				values.push_back(item);
+			}
+			if (end == std::string_view::npos) {
+				break;
+			}
+			begin = end + 1;
+		}
+		return values;
+	}
+
+	std::string JoinImportedValues(const std::vector<std::string>& values)
+	{
+		std::string result;
+		for (const std::string& value : values) {
+			if (!result.empty()) {
+				result.push_back('\n');
+			}
+			result += value;
+		}
+		return result;
+	}
+
+	std::string ExtractConfigurationFromCondition(std::string condition)
+	{
+		condition = DecodeXmlEntities(std::move(condition));
+		const std::size_t equals = condition.find("==");
+		if (equals == std::string::npos) {
+			return {};
+		}
+		std::string value = Trim(condition.substr(equals + 2));
+		if (value.empty()) {
+			return {};
+		}
+		if (value.front() == '\'' || value.front() == '"') {
+			const char quote = value.front();
+			const std::size_t end = value.find(quote, 1);
+			value = end == std::string::npos
+				? value.substr(1)
+				: value.substr(1, end - 1);
+		} else {
+			const std::size_t end = value.find_first_of(" \t");
+			value = value.substr(0, end);
+		}
+		const std::size_t platformSeparator = value.find('|');
+		return Trim(value.substr(0, platformSeparator));
+	}
+
+	std::string ImportMsBuildIncludePaths(std::string value,
+		const std::filesystem::path& projectDirectory,
+		const std::filesystem::path& solutionDirectory)
+	{
+		value = DecodeXmlEntities(std::move(value));
+		const std::string projectDirectoryValue =
+			NormalizePath(projectDirectory).generic_string() + "/";
+		const std::string solutionDirectoryValue =
+			NormalizePath(solutionDirectory).generic_string() + "/";
+		ReplaceAll(value, "$(ProjectDir)", projectDirectoryValue);
+		ReplaceAll(value, "$(SolutionDir)", solutionDirectoryValue);
+
+		std::vector<std::string> importedPaths;
+		std::unordered_set<std::string> seen;
+		for (std::string pathValue : SplitMsBuildList(value)) {
+			if (pathValue == "%(AdditionalIncludeDirectories)" ||
+				pathValue.find("$(") != std::string::npos ||
+				pathValue.find("%(") != std::string::npos) {
+				continue;
+			}
+			if (pathValue.size() >= 2 && pathValue.front() == '"' &&
+				pathValue.back() == '"') {
+				pathValue = pathValue.substr(1, pathValue.size() - 2);
+			}
+			std::filesystem::path path = QFE::ConvertString(pathValue);
+			if (!path.is_absolute()) {
+				path = projectDirectory / path;
+			}
+			pathValue = NormalizePath(path).generic_string();
+			if (seen.insert(ToLowerAscii(pathValue)).second) {
+				importedPaths.push_back(std::move(pathValue));
+			}
+		}
+		return JoinImportedValues(importedPaths);
+	}
+
+	std::string ImportMsBuildDefines(std::string value)
+	{
+		value = DecodeXmlEntities(std::move(value));
+		std::vector<std::string> importedDefines;
+		std::unordered_set<std::string> seen;
+		for (std::string define : SplitMsBuildList(value)) {
+			if (define == "%(PreprocessorDefinitions)" ||
+				define.find("%(") != std::string::npos) {
+				continue;
+			}
+			if (seen.insert(define).second) {
+				importedDefines.push_back(std::move(define));
+			}
+		}
+		return JoinImportedValues(importedDefines);
+	}
+
+	ParsedVisualStudioProject ParseVisualStudioProject(
+		const std::filesystem::path& projectPath,
+		const std::filesystem::path& solutionDirectory)
+	{
+		ParsedVisualStudioProject project;
+		std::string source;
+		if (!ReadTextFile(projectPath, source)) {
+			return project;
+		}
+
+		const std::string configurationType =
+			ToLowerAscii(ExtractXmlElementText(source, "ConfigurationType"));
+		if (configurationType == "dynamiclibrary") {
+			project.kind = PremakeProjectKind::SharedLib;
+		} else if (configurationType == "application") {
+			const std::string subsystem =
+				ToLowerAscii(ExtractXmlElementText(source, "SubSystem"));
+			project.kind = subsystem == "windows"
+				? PremakeProjectKind::WindowedApp
+				: PremakeProjectKind::ConsoleApp;
+		} else if (configurationType == "utility" ||
+			configurationType == "makefile") {
+			project.kind = PremakeProjectKind::Utility;
+		}
+
+		constexpr std::string_view definitionGroupOpening =
+			"<ItemDefinitionGroup";
+		constexpr std::string_view definitionGroupClosing =
+			"</ItemDefinitionGroup>";
+		std::size_t definitionPosition = 0;
+		while ((definitionPosition = source.find(definitionGroupOpening,
+			definitionPosition)) != std::string::npos) {
+			const std::size_t openingEnd = source.find('>', definitionPosition);
+			if (openingEnd == std::string::npos) {
+				break;
+			}
+			const std::size_t closing = source.find(
+				definitionGroupClosing, openingEnd + 1);
+			if (closing == std::string::npos) {
+				break;
+			}
+			const std::string_view openingTag(source.data() + definitionPosition,
+				openingEnd - definitionPosition + 1);
+			const std::string configuration = ExtractConfigurationFromCondition(
+				ExtractXmlAttribute(openingTag, "Condition"));
+			if (!configuration.empty()) {
+				const std::string_view body(source.data() + openingEnd + 1,
+					closing - openingEnd - 1);
+				const std::size_t compileBegin = body.find("<ClCompile>");
+				const std::size_t compileEnd = body.find("</ClCompile>");
+				if (compileBegin != std::string_view::npos &&
+					compileEnd != std::string_view::npos &&
+					compileBegin < compileEnd) {
+					const std::string_view compileSettings(
+						body.data() + compileBegin,
+						compileEnd + std::string_view("</ClCompile>").size() -
+						compileBegin);
+					auto& settings = project.configurationSettings[configuration];
+					settings.includePaths = ImportMsBuildIncludePaths(
+						ExtractXmlElementText(compileSettings,
+							"AdditionalIncludeDirectories"),
+						projectPath.parent_path(), solutionDirectory);
+					settings.defines = ImportMsBuildDefines(
+						ExtractXmlElementText(compileSettings,
+							"PreprocessorDefinitions"));
+				}
+			}
+			definitionPosition = closing + definitionGroupClosing.size();
+		}
+
+		constexpr std::string_view openingName = "<ProjectReference";
+		constexpr std::string_view closingName = "</ProjectReference>";
+		std::size_t position = 0;
+		while ((position = source.find(openingName, position)) != std::string::npos) {
+			const std::size_t openingEnd = source.find('>', position);
+			if (openingEnd == std::string::npos) {
+				break;
+			}
+			const std::size_t closing = source.find(closingName, openingEnd + 1);
+			if (closing == std::string::npos) {
+				break;
+			}
+			const std::string_view openingTag(source.data() + position,
+				openingEnd - position + 1);
+			const std::string include = ExtractXmlAttribute(openingTag, "Include");
+			if (!include.empty()) {
+				project.referencedProjectPaths.push_back(NormalizePath(
+					projectPath.parent_path() / QFE::ConvertString(include)));
+			}
+			const std::string_view body(source.data() + openingEnd + 1,
+				closing - openingEnd - 1);
+			const std::string guid = NormalizeGuid(
+				ExtractXmlElementText(body, "Project"));
+			if (!guid.empty()) {
+				project.referencedProjectGuids.push_back(guid);
+			}
+			position = closing + closingName.size();
+		}
+		return project;
+	}
+
+	std::string GetSolutionFolderPath(const std::string& projectGuid,
+		const ParsedSolution& solution,
+		const std::unordered_map<std::string, const ParsedSolutionProject*>&
+			projectsByGuid)
+	{
+		std::vector<std::string> names;
+		std::unordered_set<std::string> visited;
+		std::string child = projectGuid;
+		while (visited.insert(child).second) {
+			const auto parent = solution.parentFolderByProject.find(child);
+			if (parent == solution.parentFolderByProject.end()) {
+				break;
+			}
+			const auto folder = projectsByGuid.find(parent->second);
+			if (folder == projectsByGuid.end() || !folder->second->isSolutionFolder) {
+				break;
+			}
+			names.push_back(folder->second->name);
+			child = parent->second;
+		}
+		std::reverse(names.begin(), names.end());
+		std::string path;
+		for (const std::string& name : names) {
+			if (!path.empty()) {
+				path.push_back('/');
+			}
+			path += name;
+		}
+		return path;
+	}
+
 	std::filesystem::path GetProjectGeneratorDataDirectory()
 	{
 		std::vector<std::filesystem::path> candidates;
@@ -1088,6 +1574,9 @@ void QFE::APPLICATION::ProjectGenerator::MainMenuBar(
 			"Load Root Premake", nullptr, false,
 			!directoryManager_.GetLootDirectory().empty())) {
 			LoadRootPremake();
+		}
+		if (ImGui::MenuItem("Load Visual Studio Solution...")) {
+			LoadSolution(coreSystem);
 		}
 		if (ImGui::MenuItem(
 			"Generate Premake Hierarchy", nullptr, false, !nodes_.empty())) {
@@ -3150,6 +3639,321 @@ void QFE::APPLICATION::ProjectGenerator::LoadRootPremake()
 	premakeStatus_ = status.str();
 }
 
+void QFE::APPLICATION::ProjectGenerator::LoadSolution(
+	const ProjectGeneratorSystemCore& coreSystem)
+{
+	if (coreSystem.windowManager == nullptr) {
+		premakeStatus_ = "Window manager is not available.";
+		return;
+	}
+
+	std::wstring selectedSolutionPath;
+	const std::wstring initialDirectory = directoryManager_.GetLootDirectory().empty()
+		? std::wstring()
+		: QFE::ConvertString(directoryManager_.GetLootDirectory());
+	if (!QFE::FRAMEWORK::RequestGetFilePathFromUser(
+		*coreSystem.windowManager, L"Visual Studio Solution (*.sln)", L"*.sln",
+		selectedSolutionPath, initialDirectory)) {
+		return;
+	}
+	LoadSolution(QFE::ConvertString(selectedSolutionPath));
+}
+
+void QFE::APPLICATION::ProjectGenerator::LoadSolution(
+	const std::filesystem::path& solutionPath)
+{
+	const std::filesystem::path normalizedSolutionPath = NormalizePath(solutionPath);
+	if (ToLowerAscii(normalizedSolutionPath.extension().generic_string()) != ".sln") {
+		premakeStatus_ = "The selected file is not a .sln solution.";
+		return;
+	}
+
+	ParsedSolution solution;
+	if (!ParseSolution(normalizedSolutionPath, solution)) {
+		premakeStatus_ = "Could not parse the selected Visual Studio solution.";
+		return;
+	}
+
+	const std::filesystem::path solutionDirectory =
+		normalizedSolutionPath.parent_path();
+	std::unordered_map<std::string, const ParsedSolutionProject*> projectsByGuid;
+	for (const ParsedSolutionProject& project : solution.projects) {
+		projectsByGuid[project.guid] = &project;
+	}
+
+	std::vector<ProjectNode> importedNodes;
+	std::unordered_map<std::string, std::uint64_t> nodeIdsByGuid;
+	std::unordered_map<std::string, std::uint64_t> nodeIdsByPath;
+	std::unordered_map<std::string, ParsedVisualStudioProject> detailsByGuid;
+	std::unordered_map<std::string, std::string> folderByGuid;
+	std::size_t skippedProjectCount = 0;
+	for (const ParsedSolutionProject& project : solution.projects) {
+		if (project.isSolutionFolder) {
+			continue;
+		}
+		const std::filesystem::path projectPath = NormalizePath(
+			solutionDirectory / project.relativePath);
+		if (ToLowerAscii(projectPath.extension().generic_string()) != ".vcxproj") {
+			++skippedProjectCount;
+			continue;
+		}
+		std::error_code error;
+		if (!std::filesystem::is_regular_file(projectPath, error)) {
+			++skippedProjectCount;
+			continue;
+		}
+
+		const ParsedVisualStudioProject details =
+			ParseVisualStudioProject(projectPath, solutionDirectory);
+		ProjectNode node;
+		node.id = static_cast<std::uint64_t>(importedNodes.size()) + 1;
+		node.name = project.name;
+		node.projectName = project.name;
+		node.directoryPath = projectPath.parent_path();
+		node.kind = details.kind;
+		const std::string relativeDirectory = ToLowerAscii(
+			project.relativePath.parent_path().generic_string());
+		node.isFrameworkLayer = relativeDirectory.starts_with("engine/framework/") ||
+			relativeDirectory == "engine/framework";
+		const std::string folderPath = GetSolutionFolderPath(
+			project.guid, solution, projectsByGuid);
+		node.externalLibrary =
+			ToLowerAscii(folderPath).starts_with("external") ||
+			relativeDirectory.starts_with("externals/") ||
+			relativeDirectory == "externals";
+		node.initialPosition = ImVec2(
+			40.0f + static_cast<float>(importedNodes.size() % 6) * 260.0f,
+			40.0f + static_cast<float>(importedNodes.size() / 6) * 180.0f);
+		RefreshFrameworkOperatingSystems(node);
+
+		nodeIdsByGuid[project.guid] = node.id;
+		nodeIdsByPath[NormalizePathKey(projectPath)] = node.id;
+		detailsByGuid.emplace(project.guid, details);
+		folderByGuid[project.guid] = folderPath;
+		importedNodes.push_back(std::move(node));
+	}
+
+	if (importedNodes.empty()) {
+		premakeStatus_ = "The solution contains no loadable C++ projects.";
+		return;
+	}
+
+	struct ImportedDependency {
+		std::uint64_t nodeId = 0;
+		std::string projectName;
+	};
+	struct ImportedProjectDependencies {
+		std::uint64_t targetNodeId = 0;
+		std::string projectName;
+		std::vector<ImportedDependency> dependencies;
+	};
+	std::unordered_map<std::uint64_t, std::string> projectNamesByNodeId;
+	for (const ProjectNode& node : importedNodes) {
+		projectNamesByNodeId[node.id] = node.projectName;
+	}
+
+	// First collect every dependency name and ID for every project. Generated
+	// Visual Studio projects can contain both direct and transitive references,
+	// so link creation must wait until the complete dependency sets are known.
+	std::vector<ImportedProjectDependencies> importedDependencySets;
+	for (const ParsedSolutionProject& project : solution.projects) {
+		const auto target = nodeIdsByGuid.find(project.guid);
+		if (target == nodeIdsByGuid.end()) {
+			continue;
+		}
+		ImportedProjectDependencies dependencySet;
+		dependencySet.targetNodeId = target->second;
+		dependencySet.projectName = project.name;
+		std::unordered_set<std::uint64_t> knownDependencyIds;
+		auto addDependency = [&](std::uint64_t sourceNodeId) {
+			if (sourceNodeId == 0 || sourceNodeId == target->second ||
+				!knownDependencyIds.insert(sourceNodeId).second) {
+				return;
+			}
+			dependencySet.dependencies.push_back({
+				sourceNodeId, projectNamesByNodeId[sourceNodeId] });
+		};
+		for (const std::string& dependencyGuid : project.dependencies) {
+			const auto source = nodeIdsByGuid.find(dependencyGuid);
+			if (source != nodeIdsByGuid.end()) {
+				addDependency(source->second);
+			}
+		}
+
+		const auto details = detailsByGuid.find(project.guid);
+		if (details != detailsByGuid.end()) {
+			for (const std::string& dependencyGuid :
+				details->second.referencedProjectGuids) {
+				const auto source = nodeIdsByGuid.find(dependencyGuid);
+				if (source != nodeIdsByGuid.end()) {
+					addDependency(source->second);
+				}
+			}
+			for (const std::filesystem::path& dependencyPath :
+				details->second.referencedProjectPaths) {
+				const auto source = nodeIdsByPath.find(
+					NormalizePathKey(dependencyPath));
+				if (source != nodeIdsByPath.end()) {
+					addDependency(source->second);
+				}
+			}
+		}
+		importedDependencySets.push_back(std::move(dependencySet));
+	}
+
+	std::unordered_map<std::uint64_t, std::size_t> dependencyCounts;
+	for (const ImportedProjectDependencies& dependencySet :
+		importedDependencySets) {
+		dependencyCounts[dependencySet.targetNodeId] =
+			dependencySet.dependencies.size();
+	}
+	std::sort(importedDependencySets.begin(), importedDependencySets.end(),
+		[](const ImportedProjectDependencies& left,
+			const ImportedProjectDependencies& right) {
+			if (left.dependencies.size() != right.dependencies.size()) {
+				return left.dependencies.size() < right.dependencies.size();
+			}
+			return ToLowerAscii(left.projectName) < ToLowerAscii(right.projectName);
+		});
+
+	std::vector<ProjectLink> importedLinks;
+	for (ImportedProjectDependencies& dependencySet : importedDependencySets) {
+		std::sort(dependencySet.dependencies.begin(),
+			dependencySet.dependencies.end(),
+			[&dependencyCounts](const ImportedDependency& left,
+				const ImportedDependency& right) {
+				const std::size_t leftCount = dependencyCounts.at(left.nodeId);
+				const std::size_t rightCount = dependencyCounts.at(right.nodeId);
+				if (leftCount != rightCount) {
+					return leftCount < rightCount;
+				}
+				return ToLowerAscii(left.projectName) <
+					ToLowerAscii(right.projectName);
+			});
+		for (const ImportedDependency& dependency : dependencySet.dependencies) {
+			importedLinks.push_back({
+				static_cast<std::uint64_t>(importedLinks.size()) + 1,
+				dependency.nodeId, dependencySet.targetNodeId });
+		}
+	}
+
+	std::vector<ProjectGroup> importedGroups;
+	std::unordered_map<std::string, std::size_t> groupIndexByName;
+	for (const ParsedSolutionProject& project : solution.projects) {
+		const auto nodeId = nodeIdsByGuid.find(project.guid);
+		if (nodeId == nodeIdsByGuid.end()) {
+			continue;
+		}
+		const std::string& folderName = folderByGuid[project.guid];
+		if (folderName.empty()) {
+			continue;
+		}
+		auto [iterator, inserted] = groupIndexByName.emplace(
+			folderName, importedGroups.size());
+		if (inserted) {
+			ProjectGroup group;
+			group.id = static_cast<std::uint64_t>(importedGroups.size()) + 1;
+			group.name = folderName;
+			group.needsBoundsUpdate = true;
+			importedGroups.push_back(std::move(group));
+		}
+		importedGroups[iterator->second].nodeIds.push_back(nodeId->second);
+	}
+
+	if (directoryManager_.GetScanState() == DirectoryScanState::Scanning) {
+		premakeStatus_ =
+			"Wait for the current directory scan to finish before loading a solution.";
+		return;
+	}
+	const std::string solutionDirectoryString =
+		QFE::ConvertString(solutionDirectory.wstring());
+	const bool solutionDirectoryChanged =
+		directoryManager_.GetLootDirectory().empty() ||
+		NormalizePathKey(QFE::ConvertString(directoryManager_.GetLootDirectory())) !=
+		NormalizePathKey(solutionDirectory);
+	if (solutionDirectoryChanged &&
+		!directoryManager_.SetLootDirectory(solutionDirectoryString)) {
+		premakeStatus_ = "Could not scan the solution directory.";
+		return;
+	}
+
+	nodes_ = std::move(importedNodes);
+	links_ = std::move(importedLinks);
+	groups_ = std::move(importedGroups);
+	const std::size_t importedLinkCountBeforeSimplification = links_.size();
+	SimplifyDependencyLinks();
+	const std::size_t simplifiedLinkCount =
+		importedLinkCountBeforeSimplification - links_.size();
+	nextNodeId_ = static_cast<std::uint64_t>(nodes_.size()) + 1;
+	nextLinkId_ = 1;
+	for (const ProjectLink& link : links_) {
+		nextLinkId_ = std::max(nextLinkId_, link.id + 1);
+	}
+	nextGroupId_ = static_cast<std::uint64_t>(groups_.size()) + 1;
+	selectedNodeId_ = 0;
+	selectedLinkId_ = 0;
+	selectedGroupId_ = 0;
+	nodeSettingsOpen_ = false;
+	linkSettingsOpen_ = false;
+	groupSettingsOpen_ = false;
+	commonPremakeSettings_.workspaceName =
+		QFE::ConvertString(normalizedSolutionPath.stem().wstring());
+	if (!solution.configurations.empty()) {
+		commonPremakeSettings_.configurations = JoinLines(solution.configurations);
+	}
+	commonPremakeSettings_.configurationSettings.clear();
+	for (ProjectNode& node : nodes_) {
+		node.configurationSettings.clear();
+	}
+	EnsureConfigurationData();
+	for (const ParsedSolutionProject& project : solution.projects) {
+		const auto nodeId = nodeIdsByGuid.find(project.guid);
+		const auto details = detailsByGuid.find(project.guid);
+		if (nodeId == nodeIdsByGuid.end() || details == detailsByGuid.end()) {
+			continue;
+		}
+		ProjectNode* node = FindNode(nodeId->second);
+		if (node == nullptr) {
+			continue;
+		}
+		for (const auto& [configuration, importedSettings] :
+			details->second.configurationSettings) {
+			auto settings = node->configurationSettings.find(configuration);
+			if (settings == node->configurationSettings.end()) {
+				settings = std::find_if(node->configurationSettings.begin(),
+					node->configurationSettings.end(),
+					[&configuration](const auto& candidate) {
+						return ToLowerAscii(candidate.first) ==
+							ToLowerAscii(configuration);
+					});
+			}
+			if (settings == node->configurationSettings.end()) {
+				continue;
+			}
+			settings->second.includePaths = importedSettings.includePaths;
+			settings->second.defines = importedSettings.defines;
+		}
+	}
+	ArrangeNodesLeftToRight();
+	for (ProjectGroup& group : groups_) {
+		UpdateGroupBounds(group);
+	}
+
+	std::ostringstream status;
+	status << "Loaded solution " << normalizedSolutionPath.filename().string()
+		<< ": " << nodes_.size() << " C++ project(s), " << links_.size()
+		<< " dependency link(s), " << groups_.size() << " solution folder(s).";
+	if (simplifiedLinkCount != 0) {
+		status << " Omitted " << simplifiedLinkCount
+			<< " redundant transitive link(s).";
+	}
+	if (skippedProjectCount != 0) {
+		status << " Skipped " << skippedProjectCount
+			<< " missing or non-C++ project(s).";
+	}
+	premakeStatus_ = status.str();
+}
+
 
 void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 {
@@ -4431,17 +5235,66 @@ void QFE::APPLICATION::ProjectGenerator::ArrangeNodesLeftToRight()
 		}
 	}
 
-	std::unordered_map<std::uint32_t, std::uint32_t> rows;
-	ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
+	std::unordered_map<std::uint64_t, std::size_t> dependencyCounts;
+	for (const ProjectNode& node : nodes_) {
+		std::vector<std::uint64_t> dependencies;
+		std::unordered_set<std::uint64_t> visited;
+		CollectDependencyClosure(node.id, dependencies, visited);
+		dependencyCounts[node.id] = dependencies.size();
+	}
+
+	std::vector<ProjectNode*> orderedNodes;
+	orderedNodes.reserve(nodes_.size());
 	for (ProjectNode& node : nodes_) {
-		const std::uint32_t level = levels[node.id];
-		const std::uint32_t row = rows[level]++;
-		node.initialPosition = ImVec2(
+		orderedNodes.push_back(&node);
+	}
+	std::sort(orderedNodes.begin(), orderedNodes.end(),
+		[&levels, &dependencyCounts](const ProjectNode* left,
+			const ProjectNode* right) {
+			if (levels[left->id] != levels[right->id]) {
+				return levels[left->id] < levels[right->id];
+			}
+			if (dependencyCounts[left->id] != dependencyCounts[right->id]) {
+				return dependencyCounts[left->id] < dependencyCounts[right->id];
+			}
+			return ToLowerAscii(left->projectName) <
+				ToLowerAscii(right->projectName);
+		});
+
+	std::unordered_map<std::uint32_t, std::unordered_set<std::uint32_t>>
+		usedRowsByLevel;
+	std::unordered_map<std::uint64_t, std::uint32_t> rowByNodeId;
+	ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
+	for (ProjectNode* node : orderedNodes) {
+		const std::uint32_t level = levels[node->id];
+		std::uint64_t dependencyRowTotal = 0;
+		std::uint32_t positionedDependencyCount = 0;
+		for (const ProjectLink& link : links_) {
+			if (link.targetNodeId != node->id) {
+				continue;
+			}
+			const auto dependencyRow = rowByNodeId.find(link.sourceNodeId);
+			if (dependencyRow != rowByNodeId.end()) {
+				dependencyRowTotal += dependencyRow->second;
+				++positionedDependencyCount;
+			}
+		}
+		std::uint32_t row = positionedDependencyCount == 0
+			? 0
+			: static_cast<std::uint32_t>(
+				dependencyRowTotal / positionedDependencyCount);
+		auto& usedRows = usedRowsByLevel[level];
+		while (usedRows.contains(row)) {
+			++row;
+		}
+		usedRows.insert(row);
+		rowByNodeId[node->id] = row;
+		node->initialPosition = ImVec2(
 			static_cast<float>(level) * 260.0f,
 			static_cast<float>(row) * 180.0f);
-		node.positionInitialized = true;
+		node->positionInitialized = true;
 		ax::NodeEditor::SetNodePosition(
-			ToEditorNodeId(node.id), node.initialPosition);
+			ToEditorNodeId(node->id), node->initialPosition);
 	}
 	ax::NodeEditor::SetCurrentEditor(nullptr);
 }
