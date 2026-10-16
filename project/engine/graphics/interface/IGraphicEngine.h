@@ -1,5 +1,5 @@
 #pragma once
-#include "InternalApiType.h"
+#include "graphics/InternalApiType.h"
 
 /// @namespace QFE::GRAPHIC
 /// @brief 描画に使用する関数が定義されている名前空間

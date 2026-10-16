@@ -1,10 +1,10 @@
-#include "SplineMovementSystem.h"
+#include "framework/scene/SplineMovementSystem.h"
 
 #include "design-patterns/EntityManager.h"
 #include "components/SplineMovementComponent.h"
 #include "components/SplineMoveToPointComponent.h"
 #include "components/TransformHierarchy.h"
-#include "EventSystem.h"
+#include "framework/scene/EventSystem.h"
 
 #include <algorithm>
 #include <chrono>

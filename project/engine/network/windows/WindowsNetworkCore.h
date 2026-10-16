@@ -1,5 +1,5 @@
 #pragma once
-#include "network/INetworkCore.h"
+#include "network/interface/INetworkCore.h"
 
 namespace QFE::NETWORK {
 	class WindowsNetworkCore : public INetworkCore {

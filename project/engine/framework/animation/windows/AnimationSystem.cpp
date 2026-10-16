@@ -1,6 +1,6 @@
-#include "AnimationSystem.h"
+#include "framework/animation/AnimationSystem.h"
 
-#include "AnimationDataServices.h"
+#include "framework/animation/AnimationDataServices.h"
 #include "design-patterns/EntityManager.h"
 #include "animation/AnimationComponent.h"
 

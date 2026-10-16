@@ -1,5 +1,5 @@
-#include "EventSystem.h"
-#include "ComponentParameterSystem.h"
+#include "framework/scene/EventSystem.h"
+#include "framework/scene/ComponentParameterSystem.h"
 
 #include "design-patterns/EntityManager.h"
 #include "components/EventComponent.h"

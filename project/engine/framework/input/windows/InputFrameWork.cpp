@@ -1,4 +1,4 @@
-#include "InputFrameWork.h"
+#include "framework/input/InputFrameWork.h"
 #include "input/WindowsInput.h"
 
 std::unique_ptr<QFE::INPUT::InputInterface> QFE::FRAMEWORK::CreateInputInterface(HWND hwnd, HINSTANCE hInstance) {

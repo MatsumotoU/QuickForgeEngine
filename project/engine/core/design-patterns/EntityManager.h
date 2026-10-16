@@ -7,7 +7,7 @@
 #include <nlohmann/json.hpp>
 #include "component/JsonArchive.h"
 #include "component/ComponentAutoRegistry.h"
-#include "IEntityManager.h"
+#include "core/interface/IEntityManager.h"
 
 namespace QFE {
 	class EntityManager final: public IEntityManager {

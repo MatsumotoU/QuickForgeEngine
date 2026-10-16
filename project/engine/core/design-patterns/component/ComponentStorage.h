@@ -1,5 +1,5 @@
 #pragma once
-#include "IComponentStorage.h"
+#include "core/interface/IComponentStorage.h"
 #include "memory/SparseSets.h"
 #include <memory>
 #include <stdexcept>

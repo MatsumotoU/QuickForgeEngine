@@ -1,5 +1,5 @@
 #pragma once
-#include "IGuiManager.h"
+#include "gui/interface/IGuiManager.h"
 
 #define NOMINMAX
 #include <Windows.h>

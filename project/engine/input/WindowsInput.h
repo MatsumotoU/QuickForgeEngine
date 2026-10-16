@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include "InputInterface.h"
+#include "input/interface/InputInterface.h"
 #include "DirectInput/DirectInputManager.h"
 #include "XInput/XInputController.h"
 

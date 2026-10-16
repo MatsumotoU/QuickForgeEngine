@@ -1,6 +1,6 @@
 /// @file GraphicEngineCoreFramework.cpp
 /// @brief Windows用のDirectX12グラフィックエンジンを生成する関数の実装ファイル
-#include "GraphicEngineCoreFramework.h"
+#include "framework/graphic/GraphicEngineCoreFramework.h"
 
 #include "EngineDefines.h"
 #include "graphics/D3D12GraphicEngine.h"

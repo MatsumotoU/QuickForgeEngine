@@ -1,9 +1,9 @@
-#include "WindowsQuickForgeEngineSystems.h"
+#include "framework/application/WindowsQuickForgeEngineSystems.h"
 // 機能をunique_ptrをつかって管理するために必要なヘッダーファイル
-#include "window/IGameWindowManager.h"
-#include "graphics/IGraphicEngine.h"
-#include "gui/IGuiManager.h"
-#include "input/InputInterface.h"
+#include "window/interface/IGameWindowManager.h"
+#include "graphics/interface/IGraphicEngine.h"
+#include "gui/interface/IGuiManager.h"
+#include "input/interface/InputInterface.h"
 #include "scene/SceneManager.h"
 #include "audio/AudioEngine.h"
 

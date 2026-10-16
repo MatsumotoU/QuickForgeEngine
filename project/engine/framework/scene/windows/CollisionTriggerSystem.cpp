@@ -1,4 +1,4 @@
-#include "CollisionTriggerSystem.h"
+#include "framework/scene/CollisionTriggerSystem.h"
 
 #include "design-patterns/EntityManager.h"
 #include "components/CollisionTriggerComponent.h"

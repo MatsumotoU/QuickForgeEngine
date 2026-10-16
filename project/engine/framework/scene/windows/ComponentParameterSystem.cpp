@@ -1,4 +1,4 @@
-#include "ComponentParameterSystem.h"
+#include "framework/scene/ComponentParameterSystem.h"
 
 #include "design-patterns/EntityManager.h"
 #include "components/TransformHierarchy.h"

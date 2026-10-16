@@ -6,8 +6,8 @@
 #pragma once
 #include <string>
 #include <Windows.h>
-#include "IGameWindowManager.h"
-#include "IGameWindow.h"
+#include "window/interface/IGameWindowManager.h"
+#include "window/interface/IGameWindow.h"
 
 namespace QFE::WINDOW {
 

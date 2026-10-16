@@ -1,4 +1,4 @@
-#include "SceneChangeSystem.h"
+#include "framework/scene/SceneChangeSystem.h"
 
 #include "components/SceneChangeComponent.h"
 #include "design-patterns/EntityManager.h"

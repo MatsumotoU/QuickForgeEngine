@@ -3,7 +3,7 @@
 
 #define NOMINMAX
 #include <Windows.h>
-#include "input/InputInterface.h"
+#include "input/interface/InputInterface.h"
 
 // Inputのフレームワーク
 namespace QFE::FRAMEWORK {

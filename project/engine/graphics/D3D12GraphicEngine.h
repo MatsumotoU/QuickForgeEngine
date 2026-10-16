@@ -1,5 +1,5 @@
 #pragma once
-#include "IGraphicEngine.h"
+#include "graphics/interface/IGraphicEngine.h"
 #include "dx12/vram/descriptors/DescriptorHandles.h"
 #include "dx12/GraphicEngineHandleTypes.h"
 #include "dx12/pipeline/pso/PipelineDescTypes.h"

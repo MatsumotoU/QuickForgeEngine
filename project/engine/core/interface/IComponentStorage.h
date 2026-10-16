@@ -1,5 +1,5 @@
 #pragma once
-#include "Archive.h"
+#include "design-patterns/component/Archive.h"
 #include <functional>
 
 namespace QFE {

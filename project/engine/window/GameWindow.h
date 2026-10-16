@@ -6,7 +6,7 @@
 #pragma once
 #include <Windows.h>
 #include <memory>
-#include "IGameWindow.h"
+#include "window/interface/IGameWindow.h"
 #include "WindowGenerator/WindowGenerator.h"
 #include "WindowEventsManager/WindowEventsManager.h"
 

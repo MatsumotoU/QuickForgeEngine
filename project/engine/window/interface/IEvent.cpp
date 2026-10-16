@@ -1,4 +1,4 @@
-#include "IEvent.h"
+#include "window/interface/IEvent.h"
 #include <cassert>
 
 namespace QFE::WINDOW {

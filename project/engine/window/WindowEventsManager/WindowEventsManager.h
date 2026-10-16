@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <array>
 #include <memory>
-#include "EventSystems/IEvent.h"
+#include "window/interface/IEvent.h"
 
 namespace QFE::WINDOW {
 	/// @brief ウィンドウに対するアクションを管理するクラス
