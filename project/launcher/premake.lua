@@ -120,4 +120,5 @@ project "Launcher"
         "Scene",
     }
     qfeAddDxcRuntime()
+    qfeAddPortableMsvcRuntime()
 

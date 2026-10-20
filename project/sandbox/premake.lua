@@ -109,4 +109,5 @@ project "Sandbox"
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
     }
     qfeAddDxcRuntime()
+    qfeAddPortableMsvcRuntime()
 

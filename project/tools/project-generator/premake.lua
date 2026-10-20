@@ -122,4 +122,5 @@ project "ProjectGenerator"
         "GUIEngine",
     }
     qfeAddDxcRuntime()
+    qfeAddPortableMsvcRuntime()
 

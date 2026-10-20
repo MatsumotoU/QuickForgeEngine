@@ -113,8 +113,20 @@ function qfeAddDxcRuntime()
         'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "$(TargetDir)." "dxcompiler.dll" "dxil.dll" /R:0 /W:0 /NJH /NJS /NFL /NDL /NP',
         'if not exist "$(TargetDir)dxcompiler.dll" (echo Error: dxcompiler.dll was not copied from the Windows SDK. & exit /b 1)',
         'if not exist "$(TargetDir)dxil.dll" (echo Error: dxil.dll was not copied from the Windows SDK. & exit /b 1)',
-        'exit /b 0',
+        'cmd /c exit 0',
     }
+end
+
+function qfeAddPortableMsvcRuntime()
+    filter { "system:windows", "configurations:Development or Release" }
+        postbuildcommands {
+            'if not exist "$(VCToolsRedistInstallDir)x64\\Microsoft.VC143.CRT\\vcruntime140.dll" (echo Error: The x64 MSVC redistributable runtime was not found. & exit /b 1)',
+            'robocopy "$(VCToolsRedistInstallDir)x64\\Microsoft.VC143.CRT" "$(TargetDir)." "*.dll" /R:0 /W:0 /NJH /NJS /NFL /NDL /NP',
+            'if not exist "$(TargetDir)vcruntime140.dll" (echo Error: vcruntime140.dll was not copied. & exit /b 1)',
+            'if not exist "$(TargetDir)msvcp140.dll" (echo Error: msvcp140.dll was not copied. & exit /b 1)',
+            'exit /b 0',
+        }
+    filter {}
 end
 
 

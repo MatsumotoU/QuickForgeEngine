@@ -134,4 +134,5 @@ project "Runtime"
         "Animation",
     }
     qfeAddDxcRuntime()
+    qfeAddPortableMsvcRuntime()
 

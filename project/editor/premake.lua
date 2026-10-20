@@ -136,4 +136,5 @@ project "GameEditor"
         "Animation",
     }
     qfeAddDxcRuntime()
+    qfeAddPortableMsvcRuntime()
 
