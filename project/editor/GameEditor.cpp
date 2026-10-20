@@ -16,7 +16,8 @@ void QFE::EDITOR::GameEditor::Initialize(
 	QFE::SCENE::SceneManager* sceneManager,
 	ImTextureID sceneTextureId,
 	QFE::WINDOW::IGameWindowManager& windowManager) {
-	windowManager_.Initialize(sceneManager, sceneTextureId, windowManager);
+	windowManager_.Initialize(
+		sceneManager, sceneTextureId, windowManager, &componentInspectorRegistry_);
 	commandExecutor_.Initialize();
 	commandList_.ClearCommands();
 
@@ -118,4 +119,8 @@ void GameEditor::Draw() {
 		commandExecutor_.Redo();
 	}
 	commandExecutor_.ExecuteCommand(&commandList_);
+}
+
+bool GameEditor::ConsumeGameModuleBuildAndReloadRequest() {
+	return windowManager_.ConsumeGameModuleBuildAndReloadRequest();
 }

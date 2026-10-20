@@ -20,13 +20,15 @@
 void QFE::EDITOR::EditorWindowManager::Initialize(
 	QFE::SCENE::SceneManager* sceneManager,
 	ImTextureID sceneTextureId,
-	QFE::WINDOW::IGameWindowManager& windowManager) {
+	QFE::WINDOW::IGameWindowManager& windowManager,
+	ComponentInspectorRegistry* componentInspectorRegistry) {
 	windowManager_ = &windowManager;
 	sceneManager_ = sceneManager;
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	editorWindowsMap_.clear();
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager);
-	editorWindowsMap_[EditorWindowType::Inspector] = std::make_unique<Inspector>(&entityManager);
+	editorWindowsMap_[EditorWindowType::Inspector] =
+		std::make_unique<Inspector>(&entityManager, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId);
     editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager);
@@ -146,6 +148,10 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                     }
                 }
             }
+			ImGui::Separator();
+			if (ImGui::MenuItem("Build and Reload DLL", nullptr)) {
+				gameModuleBuildAndReloadRequested_ = true;
+			}
             ImGui::EndMenu();
         }
 		// ウィンドウメニュー
@@ -201,6 +207,10 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 		}
 		window->Draw(selectedEntities_, commandList);
 	}
+}
+
+bool QFE::EDITOR::EditorWindowManager::ConsumeGameModuleBuildAndReloadRequest() {
+	return std::exchange(gameModuleBuildAndReloadRequested_, false);
 }
 
 void QFE::EDITOR::EditorWindowManager::QueueSceneSave(

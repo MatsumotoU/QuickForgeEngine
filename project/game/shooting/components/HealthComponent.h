@@ -14,5 +14,4 @@ namespace QFE::STG {
 			QFE_REFLECT_MEMBER(maxHealth)
 			QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(HealthComponent)
 }

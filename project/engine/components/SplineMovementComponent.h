@@ -41,5 +41,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(controlPoints)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(SplineMovementComponent)
 }

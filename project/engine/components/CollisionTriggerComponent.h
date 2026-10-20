@@ -21,5 +21,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(actions)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(CollisionTriggerComponent)
 }

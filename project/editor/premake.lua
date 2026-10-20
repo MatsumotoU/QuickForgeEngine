@@ -16,7 +16,7 @@ project "GameEditor"
     }
     architecture ("x64")
     cppdialect ("C++20")
-    staticruntime "on"
+    staticruntime "off"
     filter "configurations:Debug"
         runtime ("Debug")
     filter "configurations:Development"
@@ -110,6 +110,7 @@ project "GameEditor"
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
     }
     links {
+		"ShootingGameEditor",
         "EngineAssetsFactory",
         "EngineCore",
         "Assimp",
@@ -135,4 +136,5 @@ project "GameEditor"
         "Animation",
     }
     qfeAddDxcRuntime()
+    qfeAddPortableMsvcRuntime()
 

@@ -17,16 +17,25 @@ namespace QFE::GRAPHIC {
 	enum class BLASHandle : uint32_t;
 }
 
+namespace QFE {
+	class StaticComponentRegistry;
+}
+
 /// @file WindowsEngineFramework.h
 /// @brief Windowsアプリケーション用のQuickForgeエンジンフレームワークを提供するヘッダーファイル。
 namespace QFE::FRAMEWORK {
+	class WindowsGameModule;
+
+	using ComponentRegistrationCallback = bool (*)(QFE::StaticComponentRegistry& registry);
+
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンシステムを作成する関数。
 	bool CreateWindowsQuickForgeEngineSystems(
 		HINSTANCE hInstance,
 		const std::string& mainWindowName,
 		uint32_t mainWindowWidth,
 		uint32_t mainWindowHeight,
-		WindowsQuickForgeEngineSystems& outSystems);
+		WindowsQuickForgeEngineSystems& outSystems,
+		ComponentRegistrationCallback registerApplicationComponents = nullptr);
 
 	/// @brief 入力とフレーム計測を開始する。
 	bool BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
@@ -34,6 +43,11 @@ namespace QFE::FRAMEWORK {
 	void EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
 	/// @brief 各エンジンシステムを依存関係の逆順で終了する。
 	void ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEngineSystems& systems);
+	/// @brief GameModule DLLを差し替え、現在のシーンをメモリ退避から復元する。
+	/// @note SceneManagerとEntityManagerのアドレスは維持されるが、Componentへの参照は無効になる。
+	bool ReloadWindowsGameModule(
+		WindowsGameModule& gameModule,
+		WindowsQuickForgeEngineSystems& systems);
 
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンを初期化する関数。
 	void EngineInitialize(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources);

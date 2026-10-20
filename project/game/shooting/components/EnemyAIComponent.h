@@ -17,5 +17,4 @@ namespace QFE::STG {
 			QFE_REFLECT_MEMBER(shotTimer)
 			QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(EnemyAIComponent)
 }

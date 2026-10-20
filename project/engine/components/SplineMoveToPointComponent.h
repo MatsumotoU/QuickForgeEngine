@@ -23,5 +23,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(targetControlPointIndex)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(SplineMoveToPointComponent)
 }

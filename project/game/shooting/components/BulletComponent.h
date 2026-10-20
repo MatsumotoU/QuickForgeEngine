@@ -25,5 +25,4 @@ namespace QFE::STG {
 			QFE_REFLECT_MEMBER(damage)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(BulletComponent)
 }

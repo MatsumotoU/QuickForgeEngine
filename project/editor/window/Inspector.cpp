@@ -1,12 +1,18 @@
 #include "Inspector.h"
 #include "design-patterns/EntityManager.h"
+#include "inspector/ComponentInspectorRegistry.h"
 #include "inspector/ImGuiArchive.h"
 
 #include "command/AllCommands.h"
 #include "command/EditorCommandList.h"
 
-QFE::EDITOR::Inspector::Inspector(QFE::EntityManager* entityManager) :
-	entityManager_(entityManager), isActive_(true), isFocus_(false) {
+QFE::EDITOR::Inspector::Inspector(
+	QFE::EntityManager* entityManager,
+	const ComponentInspectorRegistry* componentInspectorRegistry) :
+	entityManager_(entityManager),
+	componentInspectorRegistry_(componentInspectorRegistry),
+	isActive_(true),
+	isFocus_(false) {
 }
 
 void QFE::EDITOR::Inspector::Initialize() {
@@ -60,7 +66,12 @@ void QFE::EDITOR::Inspector::DrawComponents(uint32_t entityId) {
 	for (const std::string& componentTypeName : componentTypeNames) {
 		ImGui::PushID(componentTypeName.c_str());
 		if (ImGui::CollapsingHeader(componentTypeName.c_str())) {
-			entityManager_->ReflectionComponentByName(entityId, componentTypeName, archive);
+			const bool wasDrawnByCustomInspector =
+				componentInspectorRegistry_ != nullptr &&
+				componentInspectorRegistry_->Draw(componentTypeName, *entityManager_, entityId);
+			if (!wasDrawnByCustomInspector) {
+				entityManager_->ReflectionComponentByName(entityId, componentTypeName, archive);
+			}
 		}
 		ImGui::PopID();
 	}

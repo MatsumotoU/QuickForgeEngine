@@ -9,18 +9,65 @@
 
 using namespace QFE;
 
-QFE::EntityManager::EntityManager() : nextEntityId_(0) {
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        // 起動時に QFE_COMPONENT マクロで集まった全コンポーネントのストレージをここで一発生成
-        componentStorages[entry.typeId] = entry.creator();
-    }
+QFE::EntityManager::EntityManager(std::weak_ptr<const StaticComponentRegistry> registry) :
+	nextEntityId_(0), registry_(std::move(registry)) {
+	CreateComponentStorages();
+}
+
+void QFE::EntityManager::CreateComponentStorages() {
+	const std::shared_ptr<const StaticComponentRegistry> lockedRegistry = LockRegistry();
+	if (!lockedRegistry->IsFrozen()) {
+		throw std::runtime_error("Component registry must be frozen before EntityManager construction");
+	}
+    for(const auto& descriptor : lockedRegistry->GetComponentDescriptors()) {
+		// ストレージインデックスの整合性を確認する
+        if(descriptor.storageIndex != componentStorages.size()) {
+			throw std::runtime_error("Component storage index mismatch");
+        }
+        // 静的レジストリに登録されたコンポーネントのストレージを生成
+		std::unique_ptr<IComponentStorage> storage = descriptor.createStorageFunc();
+		if (!storage) {
+			throw std::runtime_error("Component storage factory returned null");
+		}
+		componentStorages.push_back(std::move(storage));
+	}
+}
+
+void QFE::EntityManager::ReleaseComponentRegistryForReload() {
+	// Storageの仮想関数とデストラクタはGameModule DLL内に存在し得るため、
+	// DLLをアンロードする前に必ず破棄する。
+	componentStorages.clear();
+	registry_.reset();
+	activeEntityIds_.clear();
+	entitiesToRemove_.clear();
+	nextEntityId_ = 0;
+}
+
+void QFE::EntityManager::BindComponentRegistryAfterReload(
+	std::weak_ptr<const StaticComponentRegistry> registry) {
+	if (!componentStorages.empty()) {
+		throw std::runtime_error("Component storages must be released before rebinding the registry");
+	}
+	registry_ = std::move(registry);
+	CreateComponentStorages();
+}
+
+std::shared_ptr<const QFE::StaticComponentRegistry> QFE::EntityManager::LockRegistry() const {
+	std::shared_ptr<const StaticComponentRegistry> registry = registry_.lock();
+	if (!registry) {
+		throw std::runtime_error("Component registry lifetime ended before EntityManager");
+	}
+	return registry;
 }
 
 void QFE::EntityManager::EndFrame() {
+	// 削除予定のエンティティを削除する
     for (uint32_t id : entitiesToRemove_) {
-        for (auto& [typeId, storage] : componentStorages) {
+		// 子孫エンティティも含めて削除する
+        for(auto& storage : componentStorages) {
             storage->RemoveComponent(id);
-        }
+		}
+		// 有効なエンティティIDのセットから削除する
         activeEntityIds_.erase(id);
     }
     entitiesToRemove_.clear();
@@ -37,40 +84,40 @@ nlohmann::json QFE::EntityManager::Serialize() const {
 
 nlohmann::json QFE::EntityManager::SerializeEntityComponents(uint32_t entityId) const {
     nlohmann::json componentsJson;
-
-    // 自動登録のエントリーを基準に回すことで、環境依存の typeid().name() を回避する
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        auto it = componentStorages.find(entry.typeId);
-        if (it != componentStorages.end() && it->second->HasComponent(entityId)) {
+	const std::shared_ptr<const StaticComponentRegistry> registry = LockRegistry();
+	for(const ComponentDescriptor& descriptor : registry->GetComponentDescriptors()) {
+		if (descriptor.storageIndex >= componentStorages.size()) {
+			continue;
+		}
+		const auto& storage = componentStorages[descriptor.storageIndex];
+        if (storage->HasComponent(entityId)) {
             nlohmann::json compJson;
             JsonArchive archive(compJson, false);
-
-            it->second->ReflectComponent(entityId, archive);
-            componentsJson.emplace(entry.name, compJson); // マクロで定義した綺麗な名前がJSONのキーになる
+            storage->ReflectComponent(entityId, archive);
+			componentsJson.emplace(descriptor.key, std::move(compJson));
         }
-    }
+	}
     return componentsJson;
 }
 
 void QFE::EntityManager::DeserializeEntityComponents(uint32_t entityId, const nlohmann::json& componentsJson) {
-    // 自動登録されたコンポーネントを走査する。
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        // JSONの中に、このコンポーネントの名前があるか
-        if (componentsJson.contains(entry.name)) {
-            auto& storagePtr = componentStorages[entry.typeId];
+	const std::shared_ptr<const StaticComponentRegistry> registry = LockRegistry();
+	for (auto component = componentsJson.begin(); component != componentsJson.end(); ++component) {
+		const uint32_t storageIndex = registry->GetComponentStorageIndex(component.key());
+		if (storageIndex == StaticComponentRegistry::InvalidStorageIndex ||
+			storageIndex >= componentStorages.size()) {
+			continue;
+		}
 
-            // もしエンティティにまだコンポーネントが割り当てられていなければ、ここでデフォルト構築
-            if (!storagePtr->HasComponent(entityId)) {
-                storagePtr->AddDefaultComponent(entityId);
-            }
+		auto& storage = componentStorages[storageIndex];
+		if (!storage->HasComponent(entityId)) {
+			storage->AddDefaultComponent(entityId);
+		}
 
-            // JSONからコンポーネントを復元
-            nlohmann::json compJson = componentsJson[entry.name];
-            JsonArchive archive(compJson, true);
-
-            storagePtr->ReflectComponent(entityId, archive);
-        }
-    }
+		nlohmann::json componentJson = component.value();
+		JsonArchive archive(componentJson, true);
+		storage->ReflectComponent(entityId, archive);
+	}
 }
 
 nlohmann::json QFE::EntityManager::SerializeComponent(uint32_t entityId, const std::string& componentTypeName) const {
@@ -79,29 +126,68 @@ nlohmann::json QFE::EntityManager::SerializeComponent(uint32_t entityId, const s
 }
 
 std::vector<std::string> QFE::EntityManager::GetComponentTypeNames(uint32_t entityId) const {
-    std::vector<std::string> componentNames;
-    // 自動登録されたコンポーネントのエントリーを走査する
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        auto it = componentStorages.find(entry.typeId);
-        if (it != componentStorages.end() && it->second->HasComponent(entityId)) {
-            componentNames.push_back(entry.name); // マクロで定義した綺麗な名前を返す
-        }
-    }
+	std::vector<std::string> componentNames;
+	const std::shared_ptr<const StaticComponentRegistry> registry = LockRegistry();
+	for (const ComponentDescriptor& descriptor : registry->GetComponentDescriptors()) {
+		if (descriptor.storageIndex < componentStorages.size() &&
+			componentStorages[descriptor.storageIndex]->HasComponent(entityId)) {
+			componentNames.push_back(descriptor.key);
+		}
+	}
 	return componentNames;
 }
 
 std::vector<std::string> QFE::EntityManager::GetAllComponentTypeNames() const {
-    std::vector<std::string> componentTypeNames;
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        componentTypeNames.push_back(entry.name);
+	std::vector<std::string> componentNames;
+	const std::shared_ptr<const StaticComponentRegistry> registry = LockRegistry();
+	componentNames.reserve(registry->GetComponentDescriptors().size());
+	for (const ComponentDescriptor& descriptor : registry->GetComponentDescriptors()) {
+		componentNames.push_back(descriptor.key);
+	}
+	return componentNames;
+}
+
+void* QFE::EntityManager::GetComponentRaw(uint32_t entityId, const char* componentTypeName) {
+	// 静的レジストリから、コンポーネント型名に対応するストレージインデックスを取得する
+	const uint32_t storageIndex = LockRegistry()->GetComponentStorageIndex(componentTypeName);
+	// ストレージインデックスが見つからなければ、nullptrを返す
+    if(storageIndex == StaticComponentRegistry::InvalidStorageIndex) {
+        return nullptr;
+	}
+	// ストレージインデックスが範囲外であれば、nullptrを返す
+    if (componentStorages.size() <= storageIndex) {
+        return nullptr;
     }
-    return componentTypeNames;
+	// ストレージにコンポーネントが存在するか確認し、存在すれば生ポインタを返す
+    if(componentStorages[storageIndex]->HasComponent(entityId)) {
+        return componentStorages[storageIndex]->GetRawPtr(entityId);
+	}
+	return nullptr;
+}
+
+void QFE::EntityManager::RemoveComponent(uint32_t entityId, const char* componentTypeName) {
+	// 静的レジストリから、コンポーネント型名に対応するストレージインデックスを取得する
+	const uint32_t storageIndex = LockRegistry()->GetComponentStorageIndex(componentTypeName);
+
+	// ストレージインデックスが見つからなければ、何もしない
+    if (storageIndex == StaticComponentRegistry::InvalidStorageIndex) {
+        return;
+	}
+
+    // ストレージインデックスが範囲外であれば、何もしない
+    if (componentStorages.size() <= storageIndex) {
+        return;
+	}
+
+    if (componentStorages[storageIndex]->HasComponent(entityId)) {
+        componentStorages[storageIndex]->RemoveComponent(entityId);
+    }
 }
 
 void QFE::EntityManager::ResetEntity() {
-    for (auto& [typeId, storage] : componentStorages) {
+    for(auto& storage : componentStorages) {
         storage->Clear();
-    }
+	}
     activeEntityIds_.clear();
     nextEntityId_ = 0;
 }
@@ -112,7 +198,7 @@ void QFE::EntityManager::InstantRemoveEntity(uint32_t id) {
 	entityIds.insert(entityIds.end(), descendants.begin(), descendants.end());
 
 	for (const uint32_t entityId : entityIds) {
-		for (auto& [typeId, storage] : componentStorages) {
+		for (auto& storage : componentStorages) {
 			storage->RemoveComponent(entityId);
 		}
 		activeEntityIds_.erase(entityId);
@@ -211,43 +297,6 @@ bool QFE::EntityManager::IsActiveEntity(uint32_t id) const {
     return activeEntityIds_.find(id) != activeEntityIds_.end();
 }
 
-void* QFE::EntityManager::GetComponentRaw(uint32_t entityId, const char* componentTypeName) {
-
-	// 自動登録されたコンポーネントのエントリーを走査する
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-
-        // 引数で渡された名前と、マクロで登録された名前が一致するかチェック
-        if (entry.name == componentTypeName) {
-
-            // 一致したら、EXE側の正しいレイアウトのハッシュマップからストレージを探す
-            auto it = componentStorages.find(entry.typeId);
-            if (it != componentStorages.end()) {
-
-                // 先ほど追加した GetRawPtr を使って、安全に生ポインタ（void*）を引き出して返す！
-                return it->second->GetRawPtr(entityId);
-            }
-        }
-    }
-
-    return nullptr; // 見つからなければ安全にnullを返す
-}
-
-void QFE::EntityManager::RemoveComponent(uint32_t entityId, const char* componentTypeName) {
-    // 自動登録されたコンポーネントのエントリーを走査する
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        // 引数で渡された名前と、マクロで登録された名前が一致するかチェック
-        if (entry.name == componentTypeName) {
-            // 一致したら、EXE側の正しいレイアウトのハッシュマップからストレージを探す
-            auto it = componentStorages.find(entry.typeId);
-            if (it != componentStorages.end()) {
-                // ストレージが見つかったら、コンポーネントを削除する
-                it->second->RemoveComponent(entityId);
-                return; // 削除後はループを抜ける
-            }
-        }
-	}
-}
-
 uint32_t QFE::EntityManager::GetNextEntityId() const {
     return nextEntityId_;
 }
@@ -259,45 +308,27 @@ std::vector<uint32_t> QFE::EntityManager::GetActiveEntityIds() const {
 }
 
 void QFE::EntityManager::AddDefaultComponent(uint32_t id, const std::string& componentTypeName) {
-    // 自動登録のエントリーを走査
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        if (entry.name == componentTypeName) {
-            auto it = componentStorages.find(entry.typeId);
-            if (it != componentStorages.end()) {
-                it->second->AddDefaultComponent(id);
-            }
-        }
+	const uint32_t storageIndex = LockRegistry()->GetComponentStorageIndex(componentTypeName);
+	if (storageIndex != StaticComponentRegistry::InvalidStorageIndex &&
+		storageIndex < componentStorages.size()) {
+		componentStorages[storageIndex]->AddDefaultComponent(id);
     }
 }
 
 void QFE::EntityManager::DeleteComponent(uint32_t id, const std::string& componentTypeName) {
-    // 自動登録のエントリーを走査
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        if (entry.name == componentTypeName) {
-            auto it = componentStorages.find(entry.typeId);
-            if (it != componentStorages.end()) {
-                it->second->RemoveComponent(id);
-            }
-        }
-	}
+	RemoveComponent(id, componentTypeName.c_str());
 }
 
 void QFE::EntityManager::ReflectionComponent(uint32_t id, Archive& ar) {
-    // 自動登録されたコンポーネントを走査する。
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-		auto& storagePtr = componentStorages[entry.typeId];
-        storagePtr->ReflectComponent(id, ar);
+	for (auto& storage : componentStorages) {
+		storage->ReflectComponent(id, ar);
     }
 }
 
 void QFE::EntityManager::ReflectionComponentByName(uint32_t entityId, const std::string& componentTypeName, QFE::Archive& archive) {
-    // 自動登録のエントリーを走査
-    for (const auto& entry : ComponentAutoRegistry::Instance().GetEntries()) {
-        if (entry.name == componentTypeName) {
-            auto it = componentStorages.find(entry.typeId);
-            if (it != componentStorages.end()) {
-				it->second->ReflectComponent(entityId, archive);
-            }
-        }
+	const uint32_t storageIndex = LockRegistry()->GetComponentStorageIndex(componentTypeName);
+	if (storageIndex != StaticComponentRegistry::InvalidStorageIndex &&
+		storageIndex < componentStorages.size()) {
+		componentStorages[storageIndex]->ReflectComponent(entityId, archive);
     }
 }

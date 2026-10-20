@@ -13,6 +13,11 @@ namespace {
 	const std::string kComponentsKey = "components";
 }
 
+QFE::SCENE::SceneObject::SceneObject(
+	std::shared_ptr<const QFE::StaticComponentRegistry> registry) :
+	entityManager_(std::move(registry)) {
+}
+
 void QFE::SCENE::SceneObject::Initialize() {
 	entityManager_.ResetEntity();
 }
@@ -22,27 +27,7 @@ void QFE::SCENE::SceneObject::EndFrame() {
 }
 
 void QFE::SCENE::SceneObject::SaveSceneToJson(const std::string& filePath) {
-	nlohmann::json sceneJson;
-	// 配列として初期化する
-	sceneJson.emplace(kEntityKey, nlohmann::json::array());
-
-	// EntityManagerの状態をJSONにシリアライズしてファイルに保存する
-	std::vector<uint32_t> activeEntityIds = entityManager_.GetActiveEntityIds();
-	std::sort(activeEntityIds.begin(), activeEntityIds.end());
-
-	// 全アクティブエンティティをループ（EntityManagerの管理順、またはID順）
-	for (uint32_t id : activeEntityIds) {
-
-		// 1つのエンティティのコンポーネント群をシリアライズ
-		nlohmann::json entityComponentsJson = entityManager_.SerializeEntityComponents(id);
-
-		// 空っぽのエンティティでなければ、配列の末尾に追加（push_back）していく
-		if (!entityComponentsJson.empty()) {
-			sceneJson.at(kEntityKey).push_back(entityComponentsJson);
-		}
-	}
-
-	// JSONをファイルに保存
+	const nlohmann::json sceneJson = SerializeToJson();
 	std::filesystem::path osPath(filePath);
 	std::ofstream file(osPath);
 	if (!file.is_open()) {
@@ -62,19 +47,41 @@ void QFE::SCENE::SceneObject::LoadSceneFromJson(const std::string& filePath) {
 	}
 	nlohmann::json sceneJson;
 	file >> sceneJson;
+	LoadSceneFromJson(sceneJson);
+}
 
-	// EntityManagerをリセットしてからロードする
-	entityManager_.ResetEntity();
+nlohmann::json QFE::SCENE::SceneObject::SerializeToJson() const {
+	nlohmann::json sceneJson;
+	sceneJson.emplace(kEntityKey, nlohmann::json::array());
+
+	const std::vector<uint32_t> activeEntityIds = entityManager_.GetActiveEntityIds();
+	for (const uint32_t entityId : activeEntityIds) {
+		nlohmann::json entityJson;
+		entityJson.emplace(kEntityIdKey, entityId);
+		entityJson.emplace(kComponentsKey, entityManager_.SerializeEntityComponents(entityId));
+		sceneJson.at(kEntityKey).push_back(std::move(entityJson));
+	}
+	return sceneJson;
+}
+
+bool QFE::SCENE::SceneObject::LoadSceneFromJson(const nlohmann::json& sceneJson) {
+	if (!sceneJson.is_object()) {
+		QFE_LOG("Invalid scene JSON format: root is not an object.");
+		return false;
+	}
 
 	// JSONに "entities" キーが存在し、かつそれが配列であることを確認
 	if (!sceneJson.contains(kEntityKey)) {
 		QFE_LOG("Invalid scene JSON format: 'entities' key is missing.");
-		return;
+		return false;
 	}
 	if (!sceneJson.at(kEntityKey).is_array()) {
 		QFE_LOG("Invalid scene JSON format: 'entities' is not an array.");
-		return;
+		return false;
 	}
+
+	// 形式を検証してから現在のシーンを破棄する。
+	entityManager_.ResetEntity();
 	// JSON配列を取得
 	const auto& entitiesArrayJson = sceneJson.at(kEntityKey);
 
@@ -91,6 +98,16 @@ void QFE::SCENE::SceneObject::LoadSceneFromJson(const std::string& filePath) {
 			entityManager_.DeserializeEntityComponents(newEntityId, entityJson);
 		}
 	}
+	return true;
+}
+
+void QFE::SCENE::SceneObject::ReleaseComponentRegistryForReload() {
+	entityManager_.ReleaseComponentRegistryForReload();
+}
+
+void QFE::SCENE::SceneObject::BindComponentRegistryAfterReload(
+	std::shared_ptr<const QFE::StaticComponentRegistry> registry) {
+	entityManager_.BindComponentRegistryAfterReload(std::move(registry));
 }
 
 uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& filePath) {

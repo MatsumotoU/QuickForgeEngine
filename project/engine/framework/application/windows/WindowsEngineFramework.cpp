@@ -1,4 +1,5 @@
 #include "framework/application/WindowsEngineFramework.h"
+#include "framework/application/WindowsGameModule.h"
 #include "EngineDefines.h"
 
 #include "window/GameWindowManager.h"
@@ -12,7 +13,8 @@
 #include "framework/gui/GuiCoreFramework.h"
 #include "input/interface/InputInterface.h"
 #include "scene/SceneManager.h"
-#include "components/AllComponent.h"
+#include "components/EngineComponentRegistration.h"
+#include "core/design-patterns/component/StaticComponentRegistry.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
 #include "graphics/dx12/TextureLoader.h"
@@ -78,7 +80,8 @@ namespace {
 bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	HINSTANCE hInstance, 
 	const std::string& mainWindowName, uint32_t mainWindowWidth, uint32_t mainWindowHeight,
-	WindowsQuickForgeEngineSystems& outSystems) {
+	WindowsQuickForgeEngineSystems& outSystems,
+	ComponentRegistrationCallback registerApplicationComponents) {
 
 	// デバッグログの初期化
 	QFE::MyDebugLog::GetInstance()->Initialize();
@@ -134,8 +137,19 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	outSystems.fpsCounter = std::make_unique<QFE::FPSCounter>();
 	outSystems.fpsCounter->Reset();
 
-	// シーンマネージャの初期化
-	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>();
+	// エンジン標準とアプリケーション固有のコンポーネントを明示登録してから固定する。
+	outSystems.componentRegistry = std::make_shared<QFE::StaticComponentRegistry>();
+	if (!QFE::RegisterEngineComponents(*outSystems.componentRegistry)) {
+		return false;
+	}
+	if (registerApplicationComponents != nullptr &&
+		!registerApplicationComponents(*outSystems.componentRegistry)) {
+		return false;
+	}
+	outSystems.componentRegistry->Freeze();
+
+	// シーンマネージャの初期化。Registryの所有権はSystemsに残す。
+	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>(outSystems.componentRegistry);
 	outSystems.sceneManager->Initialize();
 	outSystems.audioEngine = std::make_unique<QFE::AUDIO::AudioEngine>();
 	if (!outSystems.audioEngine->Initialize()) {
@@ -146,6 +160,76 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	outSystems.modelLoader = std::make_unique<QFE::ASSET::AssimpModelLoader>();
 	outSystems.modelLoader->Initialize();
 
+	return true;
+}
+
+bool QFE::FRAMEWORK::ReloadWindowsGameModule(
+	WindowsGameModule& gameModule,
+	WindowsQuickForgeEngineSystems& systems) {
+	if (!gameModule.IsLoaded() || gameModule.GetSourcePath().empty() ||
+		!systems.sceneManager || !systems.componentRegistry) {
+		return false;
+	}
+
+	// 旧DLLを残したまま、新しいshadow copyのexportとAPIバージョンを先に検証する。
+	WindowsGameModule candidateModule;
+	if (!candidateModule.Load(gameModule.GetSourcePath().wstring())) {
+		return false;
+	}
+
+	auto candidateRegistry = std::make_shared<QFE::StaticComponentRegistry>();
+	if (!QFE::RegisterEngineComponents(*candidateRegistry)) {
+		return false;
+	}
+	const ComponentRegistrationCallback registerComponents =
+		candidateModule.GetComponentRegistrationFunction();
+	if (registerComponents == nullptr || !registerComponents(*candidateRegistry)) {
+		return false;
+	}
+	candidateRegistry->Freeze();
+
+	QFE::SCENE::SceneSnapshot snapshot;
+	try {
+		snapshot = systems.sceneManager->CreateSnapshot();
+	}
+	catch (const std::exception& exception) {
+		QFE_LOG(std::string("Failed to snapshot scene before GameModule reload: ") + exception.what());
+		return false;
+	}
+
+	const std::shared_ptr<QFE::StaticComponentRegistry> oldRegistry = systems.componentRegistry;
+	systems.sceneManager->ReleaseComponentRegistryForReload();
+	systems.componentRegistry = candidateRegistry;
+
+	try {
+		if (!systems.sceneManager->RestoreAfterComponentReload(candidateRegistry, snapshot)) {
+			throw std::runtime_error("Failed to restore scene with the new component registry");
+		}
+	}
+	catch (const std::exception& exception) {
+		QFE_LOG(std::string("GameModule reload was rolled back: ") + exception.what());
+
+		// 新DLL由来のStorageとfactoryを、新DLLをアンロードする前に破棄する。
+		systems.sceneManager->ReleaseComponentRegistryForReload();
+		systems.componentRegistry = oldRegistry;
+		candidateRegistry.reset();
+		try {
+			systems.sceneManager->RestoreAfterComponentReload(oldRegistry, snapshot);
+		}
+		catch (const std::exception& rollbackException) {
+			QFE_LOG(std::string("Failed to restore the previous GameModule state: ") +
+				rollbackException.what());
+		}
+		return false;
+	}
+
+	if (systems.audioEngine) {
+		systems.audioComponents.Reset(*systems.audioEngine);
+	}
+
+	// swap後はcandidateModuleが旧DLLを所有する。旧Registryを先に破棄してから
+	// candidateModuleのデストラクタで旧DLLをアンロードする。
+	gameModule.Swap(candidateModule);
 	return true;
 }
 

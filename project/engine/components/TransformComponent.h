@@ -11,5 +11,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(transform)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(TransformComponent)
 }

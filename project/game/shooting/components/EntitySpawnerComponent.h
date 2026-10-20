@@ -16,5 +16,4 @@ namespace QFE::STG {
 			QFE_REFLECT_MEMBER(spawnMask)
 			QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(EntitySpawnerComponent)
 }

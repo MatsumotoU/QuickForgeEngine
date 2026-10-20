@@ -1,19 +1,13 @@
 #define NOMINMAX
 #include <Windows.h>
 
-#include "gamesystem/ShootingSystem.h"
-
 #include "framework/application/WindowsEngineFramework.h"
+#include "framework/application/WindowsGameModule.h"
 #include "framework/window/WindowCoreFrameWork.h"
 #include "framework/application/WindowsEngineResources.h"
-#include "framework/scene/EventSystem.h"
-#include "framework/animation/AnimationSystem.h"
-#include "framework/scene/SceneChangeSystem.h"
-#include "framework/scene/SplineMovementSystem.h"
 
 
 #include "scene/SceneManager.h"
-#include "components/AllComponent.h"
 #include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
@@ -41,13 +35,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	engineResources.windowName = "ShootingGameRuntime";
 	engineResources.windowWidth = 1280;
 	engineResources.windowHeight = 720;
+	QFE::FRAMEWORK::WindowsGameModule gameModule;
+	if (!gameModule.Load(L"ShootingGame.dll")) {
+		return -1;
+	}
 	// QuickForgeエンジンのシステムを生成
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems engineSystems;
 	if (!QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 		hInstance,
 		engineResources.windowName,
 		engineResources.windowWidth, engineResources.windowHeight,
-		engineSystems)) {
+		engineSystems,
+		gameModule.GetComponentRegistrationFunction())) {
 		return -1;
 	}
 	// QuickForgeエンジンの初期化
@@ -64,38 +63,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 		float deltaTime = fpsCounter->GetDeltaTime();
 
-		// AutoScroll
-		QFE::GAMESYSTEM::AutoScrollSystem(engineSystems, engineResources, deltaTime);
-		// 入力による位置移動・力の加算
-		QFE::GAMESYSTEM::InputMovementSystem(engineSystems, engineResources, deltaTime);
-		// PhysicsComponentの積分
-		QFE::GAMESYSTEM::PhysicsComponentSystem(engineSystems, engineResources, deltaTime);
-		// シューティングプレイヤーの実行
-		QFE::GAMESYSTEM::ShootingPlayerSystem(engineSystems, engineResources, deltaTime);
-		// 敵の処理
-		QFE::GAMESYSTEM::ShootingEnemySystem(engineSystems, engineResources, deltaTime);
-		// 入力・定周期によるエミッター起動処理
-		QFE::GAMESYSTEM::BulletEmitterTriggerSystem(engineSystems, engineResources, deltaTime);
-		// 弾丸エミッターの処理
-		QFE::GAMESYSTEM::BulletEmitterSystem(engineSystems, engineResources, deltaTime);
-		// 弾丸の処理
-		QFE::GAMESYSTEM::BulletUpdateSystem(engineSystems, engineResources, deltaTime);
-		// コライダーの処理
-		QFE::GAMESYSTEM::CollisionSystem(engineSystems, engineResources, deltaTime);
-		// イベントコンポーネントのタイムラインを更新
-		QFE::FRAMEWORK::UpdateEventComponents(entityManager, deltaTime);
-		// Transformアニメーションクリップを更新
-		QFE::FRAMEWORK::UpdateAnimationComponents(entityManager, deltaTime);
-		// 移動制限コンポーネントの処理
-		QFE::GAMESYSTEM::MoveLimitSystem(engineSystems, engineResources, deltaTime);
-		// プレイヤー自動トラッキング処理
-		QFE::GAMESYSTEM::PlayerTrackingSystem(engineSystems, engineResources, deltaTime);
-		// 敵のスポーン処理
-		QFE::GAMESYSTEM::EnemySpawnerSystem(engineSystems, engineResources, deltaTime);
-		// スプライン移動
-		QFE::FRAMEWORK::UpdateSplineMovement(entityManager, deltaTime);
-		// シーン切り替えリクエスト
-		engineSystems.sceneChangeTransition.Update(sceneManager, deltaTime);
+		if (!gameModule.Update(engineSystems, engineResources, deltaTime)) {
+			break;
+		}
 
 		// カメラの更新
 		engineResources.viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager, &engineResources.cameraPosition);

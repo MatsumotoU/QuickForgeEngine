@@ -18,6 +18,7 @@ namespace QFE::WINDOW {
 
 namespace QFE::EDITOR {
 	class EditorCommandList;
+	class ComponentInspectorRegistry;
 
 	enum class EditorWindowType {
 		Hierarchy,
@@ -37,9 +38,12 @@ namespace QFE::EDITOR {
 		void Initialize(
 			QFE::SCENE::SceneManager* sceneManager,
 			ImTextureID sceneTextureId,
-			QFE::WINDOW::IGameWindowManager& windowManager);
+			QFE::WINDOW::IGameWindowManager& windowManager,
+			ComponentInspectorRegistry* componentInspectorRegistry);
 		void Update();
 		void Draw(EditorCommandList& commandList);
+		/// @brief Fileメニューから要求されたGameModule DLLのビルドとリロードを取得する。
+		bool ConsumeGameModuleBuildAndReloadRequest();
 
 		/// @brief 指定されたウィンドウタイプのウィンドウにフォーカスがあるかどうかを返す
 		bool IsWindowFocused(EditorWindowType windowType);
@@ -63,5 +67,6 @@ namespace QFE::EDITOR {
 		std::set<uint32_t> selectedEntities_;
 		QFE::WINDOW::IGameWindowManager* windowManager_ = nullptr;
 		SCENE::SceneManager* sceneManager_;
+		bool gameModuleBuildAndReloadRequested_ = false;
 	};
 }

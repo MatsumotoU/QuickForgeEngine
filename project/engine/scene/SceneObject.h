@@ -8,6 +8,12 @@ namespace QFE::SCENE {
 	/// @brief シーンのEntityを保持、保存、ロードするクラスです.
 	class SceneObject final {
 	public:
+		explicit SceneObject(std::shared_ptr<const QFE::StaticComponentRegistry> registry);
+		SceneObject(const SceneObject&) = delete;
+		SceneObject& operator=(const SceneObject&) = delete;
+		SceneObject(SceneObject&&) = delete;
+		SceneObject& operator=(SceneObject&&) = delete;
+
 		/// @brief シーンの初期化を行います.
 		void Initialize();
 		/// @brief フレーム終了処理を行います.
@@ -17,6 +23,15 @@ namespace QFE::SCENE {
 		void SaveSceneToJson(const std::string& filePath);
 		/// @brief JSONファイルからシーンをロードします.
 		void LoadSceneFromJson(const std::string& filePath);
+		/// @brief ホットリロードなどのため、現在のシーンをメモリ上のJSONへ保存します.
+		nlohmann::json SerializeToJson() const;
+		/// @brief メモリ上のJSONから現在のシーンを復元します.
+		bool LoadSceneFromJson(const nlohmann::json& sceneJson);
+		/// @brief DLLのアンロード前に、DLL由来のComponentStorageを破棄します.
+		void ReleaseComponentRegistryForReload();
+		/// @brief DLL更新後のRegistryへEntityManagerを再接続します.
+		void BindComponentRegistryAfterReload(
+			std::shared_ptr<const QFE::StaticComponentRegistry> registry);
 		/// @brief JSONオブジェクトからエンティティをロードします.
 		uint32_t LoadEntityFromJsonObject(const std::string& filePath);
 

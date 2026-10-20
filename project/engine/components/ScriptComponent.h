@@ -13,5 +13,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(scriptFunctionName)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(ScriptComponent)
 }
