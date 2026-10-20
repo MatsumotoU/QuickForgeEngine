@@ -95,7 +95,7 @@ namespace QFE {
 
 		/// @brief コンポーネントストレージの型名を取得する。
 		std::string GetStorageTypeName() const override {
-			return typeid(T).name();
+			return T::GetTypeName();
 		}
 
 		void Clear() override {

@@ -20,5 +20,4 @@ namespace QFE::STG {
 			QFE_REFLECT_MEMBER(autoScrollDistance)
 			QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(MoveLimitComponent)
 }

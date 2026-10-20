@@ -18,5 +18,4 @@ namespace QFE::COMPONENTS {
 		QFE_REFLECT_END()
 	};
 
-	QFE_COMPONENT(PhysicsComponent)
 }

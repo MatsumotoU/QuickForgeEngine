@@ -13,6 +13,11 @@ namespace {
 	const std::string kComponentsKey = "components";
 }
 
+QFE::SCENE::SceneObject::SceneObject(
+	std::shared_ptr<const QFE::StaticComponentRegistry> registry) :
+	entityManager_(std::move(registry)) {
+}
+
 void QFE::SCENE::SceneObject::Initialize() {
 	entityManager_.ResetEntity();
 }

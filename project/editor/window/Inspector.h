@@ -7,11 +7,15 @@ namespace QFE {
 }
 
 namespace QFE::EDITOR {
+	class ComponentInspectorRegistry;
+
 	/// @brief Inspectorはエンティティの情報を表示します
 	class Inspector final : public IEditorWindow {
 	public:
 		/// @brief Inspectorのコンストラクタ
-		Inspector(QFE::EntityManager* entityManager);
+		Inspector(
+			QFE::EntityManager* entityManager,
+			const ComponentInspectorRegistry* componentInspectorRegistry);
 
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -34,6 +38,7 @@ namespace QFE::EDITOR {
 		void AddComponentUI(uint32_t entityId, EditorCommandList& commandList);
 
 		QFE::EntityManager* entityManager_;
+		const ComponentInspectorRegistry* componentInspectorRegistry_;
 		bool isActive_;
 		bool isFocus_;
 	};

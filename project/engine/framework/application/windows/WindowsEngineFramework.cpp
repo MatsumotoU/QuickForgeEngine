@@ -12,7 +12,8 @@
 #include "framework/gui/GuiCoreFramework.h"
 #include "input/interface/InputInterface.h"
 #include "scene/SceneManager.h"
-#include "components/AllComponent.h"
+#include "components/EngineComponentRegistration.h"
+#include "core/design-patterns/component/StaticComponentRegistry.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
 #include "graphics/dx12/TextureLoader.h"
@@ -78,7 +79,8 @@ namespace {
 bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	HINSTANCE hInstance, 
 	const std::string& mainWindowName, uint32_t mainWindowWidth, uint32_t mainWindowHeight,
-	WindowsQuickForgeEngineSystems& outSystems) {
+	WindowsQuickForgeEngineSystems& outSystems,
+	ComponentRegistrationCallback registerApplicationComponents) {
 
 	// デバッグログの初期化
 	QFE::MyDebugLog::GetInstance()->Initialize();
@@ -134,8 +136,19 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	outSystems.fpsCounter = std::make_unique<QFE::FPSCounter>();
 	outSystems.fpsCounter->Reset();
 
-	// シーンマネージャの初期化
-	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>();
+	// エンジン標準とアプリケーション固有のコンポーネントを明示登録してから固定する。
+	outSystems.componentRegistry = std::make_shared<QFE::StaticComponentRegistry>();
+	if (!QFE::RegisterEngineComponents(*outSystems.componentRegistry)) {
+		return false;
+	}
+	if (registerApplicationComponents != nullptr &&
+		!registerApplicationComponents(*outSystems.componentRegistry)) {
+		return false;
+	}
+	outSystems.componentRegistry->Freeze();
+
+	// シーンマネージャの初期化。Registryの所有権はSystemsに残す。
+	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>(outSystems.componentRegistry);
 	outSystems.sceneManager->Initialize();
 	outSystems.audioEngine = std::make_unique<QFE::AUDIO::AudioEngine>();
 	if (!outSystems.audioEngine->Initialize()) {

@@ -18,11 +18,16 @@ namespace QFE::GRAPHIC {
 namespace QFE::GUI {
 	class IGuiManager;
 }
+namespace QFE {
+	class StaticComponentRegistry;
+}
 
 namespace QFE::FRAMEWORK{
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンシステムを保持する構造体。
 	class WindowsQuickForgeEngineSystems final {
 	public:
+		// SceneManagerより後まで生存し、各EntityManagerからはweak_ptrで参照される。
+		std::shared_ptr<QFE::StaticComponentRegistry> componentRegistry;
 		std::unique_ptr<QFE::WINDOW::IGameWindowManager> windowManager;// ウィンドウマネージャ
 		std::unique_ptr<QFE::GRAPHIC::IGraphicEngine> graphicEngine;// グラフィック機能の公開インターフェース
 		std::unique_ptr<QFE::GUI::IGuiManager> guiManager;// GUIマネージャ

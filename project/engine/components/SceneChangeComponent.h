@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "EngineDefines.h"
-#include "design-patterns/component/ComponentAutoRegistry.h"
 
 namespace QFE::SCENE {
 	/// @brief シーン切り替え先と切り替えリクエストを保持するコンポーネント。
@@ -20,5 +19,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(request)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(SceneChangeComponent)
 }

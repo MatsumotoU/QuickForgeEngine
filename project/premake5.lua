@@ -25,7 +25,7 @@ workspace "QuickForgeEngine"
     targetdir (path.join(QFE_PROJECT_ROOT, "../generated/outputs/%{cfg.buildcfg}/%{cfg.platform}"))
     architecture ("x64")
     cppdialect ("C++20")
-    staticruntime "on"
+    staticruntime "off"
     filter "configurations:Debug"
         runtime ("Debug")
     filter "configurations:Development"
@@ -159,7 +159,12 @@ dofile(path.join(_root, "engine/framework/network/premake.lua"))
 dofile(path.join(_root, "engine/framework/animation/premake.lua"))
 group ""
 
-group "03_Applications"
+group "03_Game"
+dofile(path.join(_root, "game/shooting/premake.lua"))
+dofile(path.join(_root, "game/shooting-editor/premake.lua"))
+group ""
+
+group "04_Applications"
 dofile(path.join(_root, "editor/premake.lua"))
 dofile(path.join(_root, "sandbox/premake.lua"))
 dofile(path.join(_root, "runtime/premake.lua"))

@@ -18,6 +18,7 @@ namespace QFE::WINDOW {
 
 namespace QFE::EDITOR {
 	class EditorCommandList;
+	class ComponentInspectorRegistry;
 
 	enum class EditorWindowType {
 		Hierarchy,
@@ -37,7 +38,8 @@ namespace QFE::EDITOR {
 		void Initialize(
 			QFE::SCENE::SceneManager* sceneManager,
 			ImTextureID sceneTextureId,
-			QFE::WINDOW::IGameWindowManager& windowManager);
+			QFE::WINDOW::IGameWindowManager& windowManager,
+			ComponentInspectorRegistry* componentInspectorRegistry);
 		void Update();
 		void Draw(EditorCommandList& commandList);
 

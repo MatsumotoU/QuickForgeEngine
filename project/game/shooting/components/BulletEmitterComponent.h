@@ -43,10 +43,23 @@ namespace QFE::STG {
 			requestedPatternIndices.push_back(patternIndex);
 		}
 
-		QFE_REFLECT_BEGIN(BulletEmitterComponent)
-			QFE_REFLECT_MEMBER(patterns)
-			QFE_REFLECT_MEMBER(emitRequest)
-		QFE_REFLECT_END()
+		static std::string GetTypeName() { return "BulletEmitterComponent"; }
+
+		void Reflect(QFE::Archive& ar) {
+			const bool hasLegacyPattern =
+				ar.HasField("emitBulletName") || ar.HasField("emitPos") ||
+				ar.HasField("emitDir") || ar.HasField("emitRadius") ||
+				ar.HasField("emitCount") || ar.HasField("bulletAngleX") ||
+				ar.HasField("bulletAngleY");
+			if (ar.IsLoading() && !ar.HasField("patterns") && hasLegacyPattern) {
+				BulletEmitterPattern legacyPattern{};
+				legacyPattern.name = "Pattern 1";
+				legacyPattern.Reflect(ar);
+				patterns = { legacyPattern };
+			} else {
+				ar.Process("patterns", patterns);
+			}
+			ar.Process("emitRequest", emitRequest);
+		}
 	};
-	QFE_COMPONENT(BulletEmitterComponent)
 }

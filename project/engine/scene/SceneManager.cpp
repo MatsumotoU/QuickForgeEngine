@@ -4,6 +4,11 @@
 #include "ObjectInfoComponent.h"
 #include "TransformComponent.h"
 
+QFE::SCENE::SceneManager::SceneManager(
+	std::shared_ptr<const QFE::StaticComponentRegistry> registry) :
+	registry_(std::move(registry)), currentScene_(registry_) {
+}
+
 void QFE::SCENE::SceneManager::Initialize() {
 	currentScene_.Initialize();
 	++sceneRevision_;
@@ -58,7 +63,7 @@ const std::string& QFE::SCENE::SceneManager::GetCurrentScenePath() const {
 }
 
 nlohmann::json QFE::SCENE::SceneManager::LoadCurrentSceneToJson(const std::string& filePath) {
-	SceneObject scene;
+	SceneObject scene(registry_);
 	scene.LoadSceneFromJson(filePath);
 	return scene.GetEntityManager().Serialize();
 }

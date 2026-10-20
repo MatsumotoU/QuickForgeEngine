@@ -16,7 +16,8 @@ void QFE::EDITOR::GameEditor::Initialize(
 	QFE::SCENE::SceneManager* sceneManager,
 	ImTextureID sceneTextureId,
 	QFE::WINDOW::IGameWindowManager& windowManager) {
-	windowManager_.Initialize(sceneManager, sceneTextureId, windowManager);
+	windowManager_.Initialize(
+		sceneManager, sceneTextureId, windowManager, &componentInspectorRegistry_);
 	commandExecutor_.Initialize();
 	commandList_.ClearCommands();
 

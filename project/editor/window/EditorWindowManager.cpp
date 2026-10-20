@@ -20,13 +20,15 @@
 void QFE::EDITOR::EditorWindowManager::Initialize(
 	QFE::SCENE::SceneManager* sceneManager,
 	ImTextureID sceneTextureId,
-	QFE::WINDOW::IGameWindowManager& windowManager) {
+	QFE::WINDOW::IGameWindowManager& windowManager,
+	ComponentInspectorRegistry* componentInspectorRegistry) {
 	windowManager_ = &windowManager;
 	sceneManager_ = sceneManager;
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	editorWindowsMap_.clear();
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager);
-	editorWindowsMap_[EditorWindowType::Inspector] = std::make_unique<Inspector>(&entityManager);
+	editorWindowsMap_[EditorWindowType::Inspector] =
+		std::make_unique<Inspector>(&entityManager, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId);
     editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager);

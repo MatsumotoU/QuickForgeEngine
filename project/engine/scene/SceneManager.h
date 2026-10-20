@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneObject.h"
 #include <cstdint>
+#include <memory>
 #include <nlohmann/json.hpp>
 
 
@@ -8,6 +9,12 @@ namespace QFE::SCENE {
 	/// @brief シーンの管理クラスです.
 	class SceneManager final {
 	public:
+		explicit SceneManager(std::shared_ptr<const QFE::StaticComponentRegistry> registry);
+		SceneManager(const SceneManager&) = delete;
+		SceneManager& operator=(const SceneManager&) = delete;
+		SceneManager(SceneManager&&) = delete;
+		SceneManager& operator=(SceneManager&&) = delete;
+
 		/// @brief シーンの初期化を行います.
 		void Initialize();
 		/// @brief 現在のシーンにカメラエンティティを作成します.
@@ -36,6 +43,7 @@ namespace QFE::SCENE {
 		QFE::EntityManager& GetCurrentSceneEntityManager();
 
 	private:
+		std::shared_ptr<const QFE::StaticComponentRegistry> registry_;
 		/// @brief 現在のシーンオブジェクトです.
 		SceneObject currentScene_;
 		/// @brief 現在のシーンの保存先です. 未保存の場合は空文字列です.

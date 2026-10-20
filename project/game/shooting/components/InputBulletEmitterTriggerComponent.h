@@ -41,9 +41,20 @@ namespace QFE::STG {
 	struct InputBulletEmitterTriggerComponent {
 		std::vector<InputBulletEmitterTriggerSetting> triggers{ InputBulletEmitterTriggerSetting{} };
 
-		QFE_REFLECT_BEGIN(InputBulletEmitterTriggerComponent)
-			QFE_REFLECT_MEMBER(triggers)
-		QFE_REFLECT_END()
+		static std::string GetTypeName() { return "InputBulletEmitterTriggerComponent"; }
+
+		void Reflect(QFE::Archive& ar) {
+			const bool hasLegacyTrigger =
+				ar.HasField("enabled") || ar.HasField("inputActionName") ||
+				ar.HasField("mouseButton") || ar.HasField("gamePadButton") ||
+				ar.HasField("triggerMode") || ar.HasField("repeatInterval");
+			if (ar.IsLoading() && !ar.HasField("triggers") && hasLegacyTrigger) {
+				InputBulletEmitterTriggerSetting legacyTrigger{};
+				legacyTrigger.Reflect(ar);
+				triggers = { legacyTrigger };
+			} else {
+				ar.Process("triggers", triggers);
+			}
+		}
 	};
-	QFE_COMPONENT(InputBulletEmitterTriggerComponent)
 }

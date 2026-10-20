@@ -16,7 +16,7 @@ project "Audio"
     }
     architecture ("x64")
     cppdialect ("C++20")
-    staticruntime "on"
+    staticruntime "off"
     filter "configurations:Debug"
         runtime ("Debug")
     filter "configurations:Development"

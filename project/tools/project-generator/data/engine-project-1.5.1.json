@@ -13,7 +13,7 @@
                 "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/upstream/include\nexternals/imgui/imgui-node-editor-0.9.3",
                 "optimize": "Off",
                 "runtime": "Debug",
-                "staticRuntime": true,
+                "staticRuntime": false,
                 "symbols": "On"
             },
             "Development": {
@@ -26,7 +26,7 @@
                 "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/upstream/include\nexternals/imgui/imgui-node-editor-0.9.3",
                 "optimize": "Off",
                 "runtime": "Release",
-                "staticRuntime": true,
+                "staticRuntime": false,
                 "symbols": "On"
             },
             "Release": {
@@ -39,7 +39,7 @@
                 "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/upstream/include\nexternals/imgui/imgui-node-editor-0.9.3",
                 "optimize": "On",
                 "runtime": "Release",
-                "staticRuntime": true,
+                "staticRuntime": false,
                 "symbols": "Off"
             }
         },
@@ -49,7 +49,7 @@
         "defines": "",
         "flags": "MultiProcessorCompile",
         "includePaths": "",
-        "staticRuntime": true,
+        "staticRuntime": false,
         "workspaceName": "QuickForgeEngine"
     },
     "groups": [
@@ -139,8 +139,24 @@
             }
         },
         {
+            "id": 8,
+            "name": "03_Game",
+            "nodeIds": [
+                36,
+                37
+            ],
+            "position": {
+                "x": 2180.0,
+                "y": 300.0
+            },
+            "size": {
+                "x": 438.0,
+                "y": 220.0
+            }
+        },
+        {
             "id": 6,
-            "name": "03_Applications",
+            "name": "04_Applications",
             "nodeIds": [
                 23,
                 24,
@@ -390,7 +406,7 @@
             "targetNodeId": 11
         },
         {
-            "dependencyMode": "direct",
+            "dependencyMode": "transitive",
             "id": 89,
             "sourceNodeId": 5,
             "targetNodeId": 29
@@ -466,11 +482,29 @@
             "id": 101,
             "sourceNodeId": 35,
             "targetNodeId": 15
+        },
+        {
+            "dependencyMode": "transitive",
+            "id": 104,
+            "sourceNodeId": 11,
+            "targetNodeId": 36
+        },
+        {
+            "dependencyMode": "transitive",
+            "id": 105,
+            "sourceNodeId": 15,
+            "targetNodeId": 36
+        },
+        {
+            "dependencyMode": "transitive",
+            "id": 106,
+            "sourceNodeId": 37,
+            "targetNodeId": 23
         }
     ],
-    "nextGroupId": 8,
-    "nextLinkId": 104,
-    "nextNodeId": 36,
+    "nextGroupId": 9,
+    "nextLinkId": 107,
+    "nextNodeId": 38,
     "nodes": [
         {
             "configurationSettings": {
@@ -2102,6 +2136,102 @@
             "postBuildEvent": "",
             "preBuildEvent": "",
             "projectName": "AnimationFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 1,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 1,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 1,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "game/shooting",
+            "externalLibrary": false,
+            "externalLinks": [],
+            "id": 36,
+            "includePaths": "",
+            "isFrameworkLayer": false,
+            "kind": 1,
+            "libraryDirectories": [],
+            "name": "shooting-game",
+            "position": {
+                "x": 2240.0,
+                "y": 340.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "ShootingGame",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/editor/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/editor/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/editor/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "game/shooting-editor",
+            "externalLibrary": false,
+            "externalLinks": [],
+            "id": 37,
+            "includePaths": "%{wks.location}/editor/",
+            "isFrameworkLayer": false,
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "shooting-game-editor",
+            "position": {
+                "x": 2240.0,
+                "y": 440.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "ShootingGameEditor",
             "sourcePatterns": ""
         }
     ],

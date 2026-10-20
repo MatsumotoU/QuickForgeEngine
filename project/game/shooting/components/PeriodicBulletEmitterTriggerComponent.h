@@ -29,9 +29,19 @@ namespace QFE::STG {
 	struct PeriodicBulletEmitterTriggerComponent {
 		std::vector<PeriodicBulletEmitterTriggerSetting> triggers{ PeriodicBulletEmitterTriggerSetting{} };
 
-		QFE_REFLECT_BEGIN(PeriodicBulletEmitterTriggerComponent)
-			QFE_REFLECT_MEMBER(triggers)
-		QFE_REFLECT_END()
+		static std::string GetTypeName() { return "PeriodicBulletEmitterTriggerComponent"; }
+
+		void Reflect(QFE::Archive& ar) {
+			const bool hasLegacyTrigger =
+				ar.HasField("enabled") || ar.HasField("emitOnStart") ||
+				ar.HasField("interval");
+			if (ar.IsLoading() && !ar.HasField("triggers") && hasLegacyTrigger) {
+				PeriodicBulletEmitterTriggerSetting legacyTrigger{};
+				legacyTrigger.Reflect(ar);
+				triggers = { legacyTrigger };
+			} else {
+				ar.Process("triggers", triggers);
+			}
+		}
 	};
-	QFE_COMPONENT(PeriodicBulletEmitterTriggerComponent)
 }

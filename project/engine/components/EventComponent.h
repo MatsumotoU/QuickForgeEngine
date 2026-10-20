@@ -36,5 +36,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(tracks)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(EventComponent)
 }

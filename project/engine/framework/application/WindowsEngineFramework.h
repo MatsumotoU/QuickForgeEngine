@@ -17,16 +17,23 @@ namespace QFE::GRAPHIC {
 	enum class BLASHandle : uint32_t;
 }
 
+namespace QFE {
+	class StaticComponentRegistry;
+}
+
 /// @file WindowsEngineFramework.h
 /// @brief Windowsアプリケーション用のQuickForgeエンジンフレームワークを提供するヘッダーファイル。
 namespace QFE::FRAMEWORK {
+	using ComponentRegistrationCallback = bool (*)(QFE::StaticComponentRegistry& registry);
+
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンシステムを作成する関数。
 	bool CreateWindowsQuickForgeEngineSystems(
 		HINSTANCE hInstance,
 		const std::string& mainWindowName,
 		uint32_t mainWindowWidth,
 		uint32_t mainWindowHeight,
-		WindowsQuickForgeEngineSystems& outSystems);
+		WindowsQuickForgeEngineSystems& outSystems,
+		ComponentRegistrationCallback registerApplicationComponents = nullptr);
 
 	/// @brief 入力とフレーム計測を開始する。
 	bool BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);

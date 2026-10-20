@@ -6,6 +6,8 @@ namespace QFE {
 	/// @brief JSON形式でのシリアライズ/デシリアライズを行うアーカイブクラス
     class JsonArchive : public Archive {
     public:
+		using Archive::Process;
+
         JsonArchive(nlohmann::json& json, bool isLoading)
             : json_(json), isLoading_(isLoading) {
         }
@@ -16,6 +18,7 @@ namespace QFE {
 
 		// 読み込みモードか判定するための関数
         bool IsLoading() const override { return isLoading_; }
+		bool HasField(const std::string& name) const override { return json_.contains(name); }
 
 		// 各型のシリアライズ/デシリアライズ処理を実装
 		void Process(const std::string& name, bool& value) override;
@@ -32,15 +35,20 @@ namespace QFE {
 		void Process(const std::string& name, MATH::EulerTransform& value) override;
 		void Process(const std::string& name, std::vector<MATH::EulerTransform>& value) override;
 		void Process(const std::string& name, std::vector<SCENE::SplineControlPoint>& value) override;
-		void Process(const std::string& name, std::vector<STG::BulletEmitterPattern>& value) override;
-		void Process(const std::string& name, std::vector<STG::InputBulletEmitterTriggerSetting>& value) override;
-		void Process(const std::string& name, std::vector<STG::PeriodicBulletEmitterTriggerSetting>& value) override;
         void Process(const std::string& name, MATH::Matrix4x4& value) override;
 		void Process(const std::string& name, MATH::Bit32& value) override;
 		void Process(const std::string& name, EntityReference& value) override;
 		void Process(const std::string& name, nlohmann::json& value) override;
 
     private:
+		void ProcessReflectedArray(
+			const std::string& name,
+			const std::string& itemTypeName,
+			std::size_t size,
+			const ResizeReflectedArray& resize,
+			const EraseReflectedArrayItem& erase,
+			const ReflectArrayItem& reflect) override;
+
         nlohmann::json& json_;
         bool isLoading_;
     };

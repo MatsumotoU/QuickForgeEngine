@@ -22,5 +22,4 @@ namespace QFE::STG {
 			QFE_REFLECT_MEMBER(isTrackingRotation)
 			QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(PlayerTrackingComponent)
 }

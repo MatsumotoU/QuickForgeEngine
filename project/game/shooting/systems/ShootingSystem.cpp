@@ -2,6 +2,7 @@
 
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
+#include "game/shooting/components/AllShootingComponents.h"
 #include "components/TransformHierarchy.h"
 #include "framework/scene/CollisionTriggerSystem.h"
 

@@ -2,7 +2,6 @@
 
 #include <string>
 #include "EngineDefines.h"
-#include "design-patterns/component/ComponentAutoRegistry.h"
 
 namespace QFE::SCENE {
 	struct SEComponent {
@@ -18,5 +17,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(volume)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(SEComponent)
 }

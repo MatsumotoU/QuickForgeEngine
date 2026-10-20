@@ -32,5 +32,4 @@ namespace QFE::STG {
 			QFE_REFLECT_MEMBER(inputEnabled)
 			QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(ShootingPlayerComponent)
 }

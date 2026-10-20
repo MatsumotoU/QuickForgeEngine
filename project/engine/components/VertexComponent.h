@@ -12,5 +12,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(vertexName)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(VertexComponent)
 }

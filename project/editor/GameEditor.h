@@ -2,6 +2,7 @@
 #include "window/EditorWindowManager.h"
 #include "command/EditorCommandExecutor.h"
 #include "command/EditorCommandList.h"
+#include "inspector/ComponentInspectorRegistry.h"
 
 #include "framework/application/WindowsEngineFramework.h"
 
@@ -32,9 +33,11 @@ namespace QFE::EDITOR {
 		void PostDraw();
 
 		EditorCameraType GetActiveCameraType() const { return activeCameraType_; }
-
+		ComponentInspectorRegistry& GetComponentInspectorRegistry() { return componentInspectorRegistry_; }
 
 	private:
+		// WindowManagerが保持するInspectorより長く生存させる。
+		ComponentInspectorRegistry componentInspectorRegistry_;
 		EditorWindowManager windowManager_;
 		EditorCommandExecutor commandExecutor_;
 		EditorCommandList commandList_;

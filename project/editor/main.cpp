@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #include "framework/application/WindowsEngineFramework.h"
+#include "framework/application/WindowsGameModule.h"
 #include "framework/application/WindowsEngineResources.h"
 
 #include "framework/graphic/GraphicEngineCoreFramework.h"
@@ -11,7 +12,7 @@
 
 
 #include "scene/SceneManager.h"
-#include "components/AllComponent.h"
+#include "game/shooting-editor/ShootingInspectorRegistration.h"
 #include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
@@ -31,13 +32,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	engineResources.windowName = "ShootingGameRuntime";
 	engineResources.windowWidth = 1280;
 	engineResources.windowHeight = 720;
+	QFE::FRAMEWORK::WindowsGameModule gameModule;
+	if (!gameModule.Load(L"ShootingGame.dll")) {
+		return -1;
+	}
 	// QuickForgeエンジンのシステムを生成
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems engineSystems;
 	if (!QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 		hInstance,
 		engineResources.windowName,
 		engineResources.windowWidth, engineResources.windowHeight,
-		engineSystems)) {
+		engineSystems,
+		gameModule.GetComponentRegistrationFunction())) {
 		return -1;
 	}
 	// QuickForgeエンジンの初期化
@@ -65,6 +71,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	ImTextureID sceneTextureId = static_cast<ImTextureID>(sceneTextureGuiId);
 
 	QFE::EDITOR::GameEditor gameEditor;
+	if (!QFE::GAME::RegisterShootingGameInspectors(
+		gameEditor.GetComponentInspectorRegistry())) {
+		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
+		return -1;
+	}
 	gameEditor.Initialize(&sceneManager, sceneTextureId, *engineSystems.windowManager);
 
 	// メインループ
