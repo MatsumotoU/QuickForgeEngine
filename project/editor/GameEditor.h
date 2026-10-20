@@ -31,6 +31,7 @@ namespace QFE::EDITOR {
 		void Update(QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,QFE::FRAMEWORK::WindowsEngineResources& resources);
 		void Draw();
 		void PostDraw();
+		bool ConsumeGameModuleBuildAndReloadRequest();
 
 		EditorCameraType GetActiveCameraType() const { return activeCameraType_; }
 		ComponentInspectorRegistry& GetComponentInspectorRegistry() { return componentInspectorRegistry_; }

@@ -58,6 +58,46 @@ void QFE::SCENE::SceneManager::LoadCurrentSceneFromJson(const std::string& fileP
 	currentScenePath_ = filePath;
 }
 
+bool QFE::SCENE::SceneManager::LoadCurrentSceneFromJson(const nlohmann::json& sceneJson) {
+	if (!currentScene_.LoadSceneFromJson(sceneJson)) {
+		return false;
+	}
+	++sceneRevision_;
+	return true;
+}
+
+QFE::SCENE::SceneSnapshot QFE::SCENE::SceneManager::CreateSnapshot() const {
+	return SceneSnapshot{
+		.sceneJson = currentScene_.SerializeToJson(),
+		.scenePath = currentScenePath_,
+	};
+}
+
+void QFE::SCENE::SceneManager::ReleaseComponentRegistryForReload() {
+	currentScene_.ReleaseComponentRegistryForReload();
+	registry_.reset();
+}
+
+bool QFE::SCENE::SceneManager::RestoreAfterComponentReload(
+	std::shared_ptr<const QFE::StaticComponentRegistry> registry,
+	const SceneSnapshot& snapshot) {
+	if (!registry || !registry->IsFrozen()) {
+		return false;
+	}
+
+	registry_ = std::move(registry);
+	currentScene_.BindComponentRegistryAfterReload(registry_);
+	if (!currentScene_.LoadSceneFromJson(snapshot.sceneJson)) {
+		currentScene_.ReleaseComponentRegistryForReload();
+		registry_.reset();
+		return false;
+	}
+
+	currentScenePath_ = snapshot.scenePath;
+	++sceneRevision_;
+	return true;
+}
+
 const std::string& QFE::SCENE::SceneManager::GetCurrentScenePath() const {
 	return currentScenePath_;
 }
@@ -65,7 +105,7 @@ const std::string& QFE::SCENE::SceneManager::GetCurrentScenePath() const {
 nlohmann::json QFE::SCENE::SceneManager::LoadCurrentSceneToJson(const std::string& filePath) {
 	SceneObject scene(registry_);
 	scene.LoadSceneFromJson(filePath);
-	return scene.GetEntityManager().Serialize();
+	return scene.SerializeToJson();
 }
 
 uint32_t QFE::SCENE::SceneManager::LoadEntityOnCurrentSceneFromJsonObject(const std::string& filePath) {

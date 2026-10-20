@@ -1,4 +1,5 @@
 #include "framework/application/WindowsEngineFramework.h"
+#include "framework/application/WindowsGameModule.h"
 #include "EngineDefines.h"
 
 #include "window/GameWindowManager.h"
@@ -159,6 +160,76 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	outSystems.modelLoader = std::make_unique<QFE::ASSET::AssimpModelLoader>();
 	outSystems.modelLoader->Initialize();
 
+	return true;
+}
+
+bool QFE::FRAMEWORK::ReloadWindowsGameModule(
+	WindowsGameModule& gameModule,
+	WindowsQuickForgeEngineSystems& systems) {
+	if (!gameModule.IsLoaded() || gameModule.GetSourcePath().empty() ||
+		!systems.sceneManager || !systems.componentRegistry) {
+		return false;
+	}
+
+	// 旧DLLを残したまま、新しいshadow copyのexportとAPIバージョンを先に検証する。
+	WindowsGameModule candidateModule;
+	if (!candidateModule.Load(gameModule.GetSourcePath().wstring())) {
+		return false;
+	}
+
+	auto candidateRegistry = std::make_shared<QFE::StaticComponentRegistry>();
+	if (!QFE::RegisterEngineComponents(*candidateRegistry)) {
+		return false;
+	}
+	const ComponentRegistrationCallback registerComponents =
+		candidateModule.GetComponentRegistrationFunction();
+	if (registerComponents == nullptr || !registerComponents(*candidateRegistry)) {
+		return false;
+	}
+	candidateRegistry->Freeze();
+
+	QFE::SCENE::SceneSnapshot snapshot;
+	try {
+		snapshot = systems.sceneManager->CreateSnapshot();
+	}
+	catch (const std::exception& exception) {
+		QFE_LOG(std::string("Failed to snapshot scene before GameModule reload: ") + exception.what());
+		return false;
+	}
+
+	const std::shared_ptr<QFE::StaticComponentRegistry> oldRegistry = systems.componentRegistry;
+	systems.sceneManager->ReleaseComponentRegistryForReload();
+	systems.componentRegistry = candidateRegistry;
+
+	try {
+		if (!systems.sceneManager->RestoreAfterComponentReload(candidateRegistry, snapshot)) {
+			throw std::runtime_error("Failed to restore scene with the new component registry");
+		}
+	}
+	catch (const std::exception& exception) {
+		QFE_LOG(std::string("GameModule reload was rolled back: ") + exception.what());
+
+		// 新DLL由来のStorageとfactoryを、新DLLをアンロードする前に破棄する。
+		systems.sceneManager->ReleaseComponentRegistryForReload();
+		systems.componentRegistry = oldRegistry;
+		candidateRegistry.reset();
+		try {
+			systems.sceneManager->RestoreAfterComponentReload(oldRegistry, snapshot);
+		}
+		catch (const std::exception& rollbackException) {
+			QFE_LOG(std::string("Failed to restore the previous GameModule state: ") +
+				rollbackException.what());
+		}
+		return false;
+	}
+
+	if (systems.audioEngine) {
+		systems.audioComponents.Reset(*systems.audioEngine);
+	}
+
+	// swap後はcandidateModuleが旧DLLを所有する。旧Registryを先に破棄してから
+	// candidateModuleのデストラクタで旧DLLをアンロードする。
+	gameModule.Swap(candidateModule);
 	return true;
 }
 

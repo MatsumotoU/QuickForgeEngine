@@ -42,6 +42,8 @@ namespace QFE::EDITOR {
 			ComponentInspectorRegistry* componentInspectorRegistry);
 		void Update();
 		void Draw(EditorCommandList& commandList);
+		/// @brief Fileメニューから要求されたGameModule DLLのビルドとリロードを取得する。
+		bool ConsumeGameModuleBuildAndReloadRequest();
 
 		/// @brief 指定されたウィンドウタイプのウィンドウにフォーカスがあるかどうかを返す
 		bool IsWindowFocused(EditorWindowType windowType);
@@ -65,5 +67,6 @@ namespace QFE::EDITOR {
 		std::set<uint32_t> selectedEntities_;
 		QFE::WINDOW::IGameWindowManager* windowManager_ = nullptr;
 		SCENE::SceneManager* sceneManager_;
+		bool gameModuleBuildAndReloadRequested_ = false;
 	};
 }

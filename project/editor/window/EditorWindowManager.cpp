@@ -148,6 +148,10 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                     }
                 }
             }
+			ImGui::Separator();
+			if (ImGui::MenuItem("Build and Reload DLL", nullptr)) {
+				gameModuleBuildAndReloadRequested_ = true;
+			}
             ImGui::EndMenu();
         }
 		// ウィンドウメニュー
@@ -203,6 +207,10 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 		}
 		window->Draw(selectedEntities_, commandList);
 	}
+}
+
+bool QFE::EDITOR::EditorWindowManager::ConsumeGameModuleBuildAndReloadRequest() {
+	return std::exchange(gameModuleBuildAndReloadRequested_, false);
 }
 
 void QFE::EDITOR::EditorWindowManager::QueueSceneSave(

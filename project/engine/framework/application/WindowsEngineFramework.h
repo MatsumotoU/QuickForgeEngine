@@ -24,6 +24,8 @@ namespace QFE {
 /// @file WindowsEngineFramework.h
 /// @brief Windowsアプリケーション用のQuickForgeエンジンフレームワークを提供するヘッダーファイル。
 namespace QFE::FRAMEWORK {
+	class WindowsGameModule;
+
 	using ComponentRegistrationCallback = bool (*)(QFE::StaticComponentRegistry& registry);
 
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンシステムを作成する関数。
@@ -41,6 +43,11 @@ namespace QFE::FRAMEWORK {
 	void EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
 	/// @brief 各エンジンシステムを依存関係の逆順で終了する。
 	void ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEngineSystems& systems);
+	/// @brief GameModule DLLを差し替え、現在のシーンをメモリ退避から復元する。
+	/// @note SceneManagerとEntityManagerのアドレスは維持されるが、Componentへの参照は無効になる。
+	bool ReloadWindowsGameModule(
+		WindowsGameModule& gameModule,
+		WindowsQuickForgeEngineSystems& systems);
 
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンを初期化する関数。
 	void EngineInitialize(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources);

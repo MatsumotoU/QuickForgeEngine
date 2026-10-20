@@ -120,3 +120,7 @@ void GameEditor::Draw() {
 	}
 	commandExecutor_.ExecuteCommand(&commandList_);
 }
+
+bool GameEditor::ConsumeGameModuleBuildAndReloadRequest() {
+	return windowManager_.ConsumeGameModuleBuildAndReloadRequest();
+}

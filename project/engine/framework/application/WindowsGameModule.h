@@ -2,6 +2,7 @@
 
 #include "GameModuleApi.h"
 
+#include <filesystem>
 #include <string>
 
 namespace QFE::FRAMEWORK {
@@ -16,6 +17,8 @@ namespace QFE::FRAMEWORK {
 
 		bool Load(const std::wstring& path);
 		bool IsLoaded() const;
+		const std::filesystem::path& GetSourcePath() const;
+		void Swap(WindowsGameModule& other) noexcept;
 		RegisterGameComponentsFunction GetComponentRegistrationFunction() const;
 		bool Update(
 			WindowsQuickForgeEngineSystems& systems,
@@ -28,5 +31,8 @@ namespace QFE::FRAMEWORK {
 		void* nativeModule_ = nullptr;
 		RegisterGameComponentsFunction registerComponents_ = nullptr;
 		UpdateGameFunction updateGame_ = nullptr;
+		std::filesystem::path sourcePath_;
+		std::filesystem::path loadedPath_;
+		std::filesystem::path loadedPdbPath_;
 	};
 }

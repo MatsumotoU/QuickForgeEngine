@@ -11,6 +11,10 @@ using namespace QFE;
 
 QFE::EntityManager::EntityManager(std::weak_ptr<const StaticComponentRegistry> registry) :
 	nextEntityId_(0), registry_(std::move(registry)) {
+	CreateComponentStorages();
+}
+
+void QFE::EntityManager::CreateComponentStorages() {
 	const std::shared_ptr<const StaticComponentRegistry> lockedRegistry = LockRegistry();
 	if (!lockedRegistry->IsFrozen()) {
 		throw std::runtime_error("Component registry must be frozen before EntityManager construction");
@@ -27,6 +31,25 @@ QFE::EntityManager::EntityManager(std::weak_ptr<const StaticComponentRegistry> r
 		}
 		componentStorages.push_back(std::move(storage));
 	}
+}
+
+void QFE::EntityManager::ReleaseComponentRegistryForReload() {
+	// Storageの仮想関数とデストラクタはGameModule DLL内に存在し得るため、
+	// DLLをアンロードする前に必ず破棄する。
+	componentStorages.clear();
+	registry_.reset();
+	activeEntityIds_.clear();
+	entitiesToRemove_.clear();
+	nextEntityId_ = 0;
+}
+
+void QFE::EntityManager::BindComponentRegistryAfterReload(
+	std::weak_ptr<const StaticComponentRegistry> registry) {
+	if (!componentStorages.empty()) {
+		throw std::runtime_error("Component storages must be released before rebinding the registry");
+	}
+	registry_ = std::move(registry);
+	CreateComponentStorages();
 }
 
 std::shared_ptr<const QFE::StaticComponentRegistry> QFE::EntityManager::LockRegistry() const {

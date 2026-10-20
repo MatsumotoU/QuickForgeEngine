@@ -19,9 +19,10 @@ namespace QFE {
 		std::unordered_set<uint32_t> activeEntityIds_;
 		std::vector<uint32_t> entitiesToRemove_;
 
-		const std::weak_ptr<const QFE::StaticComponentRegistry> registry_;
+		std::weak_ptr<const QFE::StaticComponentRegistry> registry_;
 
 		std::shared_ptr<const QFE::StaticComponentRegistry> LockRegistry() const;
+		void CreateComponentStorages();
 
 		template <typename T>
 		uint32_t GetStorageIndex() const {
@@ -36,6 +37,11 @@ namespace QFE {
 
 		/// @brief 凍結済みレジストリを参照し、登録済みコンポーネントのストレージを構築する。
 		explicit EntityManager(std::weak_ptr<const QFE::StaticComponentRegistry> registry);
+		/// @brief DLLのアンロード前に、登録された型に依存するStorageを全て破棄する。
+		void ReleaseComponentRegistryForReload();
+		/// @brief 新しいRegistryへ接続し、空のStorageを再構築する。
+		void BindComponentRegistryAfterReload(
+			std::weak_ptr<const QFE::StaticComponentRegistry> registry);
 		/// @brief フレームの終了時に、削除予定のエンティティを削除する。
 		void EndFrame();
 

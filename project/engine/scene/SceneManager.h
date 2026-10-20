@@ -6,6 +6,11 @@
 
 
 namespace QFE::SCENE {
+	struct SceneSnapshot {
+		nlohmann::json sceneJson;
+		std::string scenePath;
+	};
+
 	/// @brief シーンの管理クラスです.
 	class SceneManager final {
 	public:
@@ -29,6 +34,16 @@ namespace QFE::SCENE {
 		void SaveCurrentSceneToJson(const std::string& filePath);
 		/// @brief JSONファイルから現在のシーンをロードします.
 		void LoadCurrentSceneFromJson(const std::string& filePath);
+		/// @brief メモリ上のJSONから現在のシーンをロードします.
+		bool LoadCurrentSceneFromJson(const nlohmann::json& sceneJson);
+		/// @brief 現在のシーンを、ファイルを書き換えずにメモリへ退避します.
+		SceneSnapshot CreateSnapshot() const;
+		/// @brief DLLアンロード前に、DLL内コードを参照するComponentStorageを破棄します.
+		void ReleaseComponentRegistryForReload();
+		/// @brief 新しいRegistryへ接続し、退避したシーンを復元します.
+		bool RestoreAfterComponentReload(
+			std::shared_ptr<const QFE::StaticComponentRegistry> registry,
+			const SceneSnapshot& snapshot);
 		/// @brief 現在のシーンが読み書きされているファイルパスを取得します.
 		const std::string& GetCurrentScenePath() const;
 		uint64_t GetSceneRevision() const { return sceneRevision_; }
