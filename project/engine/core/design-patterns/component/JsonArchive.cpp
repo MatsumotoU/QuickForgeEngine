@@ -7,8 +7,18 @@
 namespace {
 	template <typename T>
 	void SetField(nlohmann::json& json, const std::string& name, T&& value) {
-		json.erase(name);
-		json.emplace(name, std::forward<T>(value));
+		// jsonがnullの場合はオブジェクトとして初期化する
+		if (json.is_null()) {
+			json = nlohmann::json::object();
+		}
+
+		// emplace()は既存キーを置き換えないため、既存フィールドは代入する。
+		auto field = json.find(name);
+		if (field == json.end()) {
+			json.emplace(name, std::forward<T>(value));
+		} else {
+			field.value() = std::forward<T>(value);
+		}
 	}
 
 	nlohmann::json& GetOrCreateObject(nlohmann::json& json, const std::string& name) {
