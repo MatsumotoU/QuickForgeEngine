@@ -13,6 +13,7 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <unordered_map>
 
 namespace QFE::GRAPHIC {
 	/// @brief コンピュートパイプラインマネージャーの初期化情報をまとめた構造体
@@ -21,6 +22,11 @@ namespace QFE::GRAPHIC {
 		std::function<bool(IDxcBlob* shaderBlob, UINT& sizeX, UINT& sizeY, UINT& sizeZ)> getThreadGroupSizeFunc;
 		std::function<IDxcBlob* (const std::wstring&, const wchar_t*)> compileFunc;
 		ID3D12Device* device;
+	};
+
+	/// @brief ビルトインのコンピュートパイプラインステートオブジェクトの種類を表す列挙型
+	enum class BuiltInComputePSOType {
+		LinearToSRGB,
 	};
 
 	/// @brief コンピュートパイプラインを管理するクラス
@@ -44,9 +50,15 @@ namespace QFE::GRAPHIC {
 		/// @brief コンピュートパイプラインステートオブジェクトのスレッドグループサイズを取得します
 		bool GetThreadGroupSize(const ComputePSOHandle& handle, UINT& sizeX, UINT& sizeY, UINT& sizeZ) const;
 
+		/// @brief ビルトインのコンピュートパイプラインステートオブジェクトを生成します
+		void CreateBuildInComputePSOs();
+		/// @brief ビルトインのコンピュートパイプラインステートオブジェクトのハンドルを取得します
+		ComputePSOHandle GetBuiltInComputePSOHandle(BuiltInComputePSOType type) const;
+
 	private:
 		ComputePipelineManagerInitializeInfo initializeInfo_;// 初期化情報を保持
 		SparseSet<std::unique_ptr<ComputePSO>> computePSOs_;// コンピュートパイプラインステートオブジェクトの管理
 		std::map<std::string, IDxcBlob*> csBlobMap_;// コンピュートシェーダーのバイナリを管理するマップ
+		std::unordered_map<BuiltInComputePSOType, ComputePSOHandle> builtInComputePSOHandles_;// ビルトインのコンピュートパイプラインステートオブジェクトのハンドルを管理するマップ
 	};
 }

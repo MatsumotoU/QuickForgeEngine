@@ -7,6 +7,7 @@ namespace QFE::FRAMEWORK {
 		ComputePipeline,
 		RayTracingPipeline,
 		BuiltInPipelineStateObjects,
+		BuiltInComputePipelineStateObjects,
 		LineRendering
 	};
 
@@ -17,5 +18,6 @@ namespace QFE::FRAMEWORK {
 		bool isTextureLoaderEnabled = false; ///< テクスチャローダー機能が有効かどうか
 		bool isLineRenderingEnabled = false; ///< 線描画機能が有効かどうか
 		bool isBuildInPipelineStateObjectsEnabled = false; ///< ビルトインパイプラインステートオブジェクトが有効かどうか
+		bool isBuildInComputePipelineStateObjectsEnabled = false; ///< ビルトインコンピュートパイプラインステートオブジェクトが有効かどうか
 	};
 }

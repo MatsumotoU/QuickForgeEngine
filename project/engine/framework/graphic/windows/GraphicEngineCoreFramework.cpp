@@ -33,6 +33,10 @@ std::unique_ptr<QFE::GRAPHIC::IGraphicEngine> QFE::FRAMEWORK::CreateGraphicEngin
 	if (featureState.isComputeEnabled && !graphicEngine->SetUpComputePipeline()) {
 		QFE_LOG("Warning: The compute pipeline is unavailable.");
 	}
+	if (featureState.isBuildInComputePipelineStateObjectsEnabled &&
+		!graphicEngine->SetUpBuildInComputePipelineStateObjects()) {
+		QFE_LOG("Warning: The built-in compute pipeline state objects are unavailable.");
+	}
 	if (featureState.isRaytracingEnabled && !graphicEngine->SetUpRayTracingPipeline()) {
 		QFE_LOG("Warning: The ray tracing pipeline is unavailable.");
 	}
@@ -65,6 +69,8 @@ bool QFE::FRAMEWORK::IsGraphicEngineFeatureAvailable(
 		return graphicEngine->IsRayTracingPipelineAvailable();
 	case GraphicEngineFeature::BuiltInPipelineStateObjects:
 		return graphicEngine->AreBuiltInPipelineStateObjectsAvailable();
+	case GraphicEngineFeature::BuiltInComputePipelineStateObjects:
+		return graphicEngine->IsBuildInComputePipelineStateObjectsAvailable();
 	case GraphicEngineFeature::LineRendering:
 		return graphicEngine->IsLineRenderingAvailable();
 	default:

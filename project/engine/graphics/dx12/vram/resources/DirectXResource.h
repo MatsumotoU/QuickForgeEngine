@@ -70,7 +70,7 @@ namespace QFE::GRAPHIC {
 
 		D3D12_RESOURCE_DESC resourceDesc_;// リソースの説明
 
-		ViewTypeFlags viewTypes_;// リソースに関連付けられたビューのタイプを管理するフラグ
+		ViewTypeFlags viewTypes_ = ViewTypeFlags::None;// リソースに関連付けられたビューのタイプを管理するフラグ
 		std::unordered_map<ViewTypeFlags, DescriptorHandles> descriptorHandles_;// リソースに関連付けられたデスクリプタのハンドルを管理するマップ
 	};
 }

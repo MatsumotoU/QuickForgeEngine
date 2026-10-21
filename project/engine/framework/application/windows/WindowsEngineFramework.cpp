@@ -109,6 +109,7 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	graphicFeatures.isComputeEnabled = true;
 	graphicFeatures.isRaytracingEnabled = true;
 	graphicFeatures.isBuildInPipelineStateObjectsEnabled = true;
+	graphicFeatures.isBuildInComputePipelineStateObjectsEnabled = true;
 	graphicFeatures.isLineRenderingEnabled = true;
 	outSystems.graphicEngine =
 		QFE::FRAMEWORK::CreateGraphicEngine(*outSystems.windowManager, graphicFeatures);

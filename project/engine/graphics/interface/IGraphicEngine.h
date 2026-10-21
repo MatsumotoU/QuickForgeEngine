@@ -24,5 +24,7 @@ namespace QFE::GRAPHIC {
 		[[nodiscard]] virtual bool AreBuiltInPipelineStateObjectsAvailable() const noexcept = 0;
 		/// @brief 線描画機能が初期化済みで利用可能かを取得します。
 		[[nodiscard]] virtual bool IsLineRenderingAvailable() const noexcept = 0;
+		/// @brief ビルトインのコンピュートパイプラインステートオブジェクトが生成済みで利用可能かを取得します。
+		[[nodiscard]] virtual bool IsBuildInComputePipelineStateObjectsAvailable() const noexcept = 0;
 	};
 }

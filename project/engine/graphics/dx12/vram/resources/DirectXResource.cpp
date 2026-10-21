@@ -224,8 +224,8 @@ bool DirectXResource::HasTypeOfView(ViewTypeFlags viewType) const {
 		QFE_REPORT_SYSTEM_ERROR("View type is None in DirectXResource::HasTypeOfView", SystemError::Abort);
 		return false;
 	}
-	// ビューフラグを確認
-	if (viewTypes_ == viewType) {
+	// 複数のビューを持つリソースでも、指定されたビューフラグが含まれていれば使用可能。
+	if ((viewTypes_ & viewType) == viewType) {
 		return true;
 	}
 	QFE_LOG("Resource does not have the specified view type in DirectXResource::HasTypeOfView");
