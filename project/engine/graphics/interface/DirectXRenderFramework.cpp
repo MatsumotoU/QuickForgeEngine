@@ -31,6 +31,23 @@ namespace {
 		}
 		return d3d12GraphicEngine;
 	}
+
+	[[nodiscard]] bool DispatchBuiltInLinearToSrgb(
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+		QFE::GRAPHIC::DirectXResourceHandle uavHandle) {
+		auto* d3d12GraphicEngine = ResolveD3D12GraphicEngine(graphicEngine);
+		if (d3d12GraphicEngine == nullptr ||
+			!d3d12GraphicEngine->IsBuildInComputePipelineStateObjectsAvailable()) {
+			QFE_LOG("The built-in compute pipeline state objects are not available.");
+			return false;
+		}
+
+		const QFE::GRAPHIC::ComputePSOHandle linearToSrgbPsoHandle =
+			d3d12GraphicEngine->GetComputePipelineManager()->GetBuiltInComputePSOHandle(
+				QFE::GRAPHIC::BuiltInComputePSOType::LinearToSRGB);
+		return QFE::GRAPHIC::DispatchComputePSO(
+			graphicEngine, linearToSrgbPsoHandle, uavHandle);
+	}
 }
 
 bool QFE::GRAPHIC::CreateShaderPair(
@@ -101,6 +118,134 @@ bool QFE::GRAPHIC::GetGraphicPSORootParameterTypeList(
 		QFE_LOG("Failed to get root parameter type list.");
 		return false;
 	}
+	return true;
+}
+
+bool QFE::GRAPHIC::CreateComputePSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+	const std::string& csDirPath,
+	const std::string& csFileName,
+	QFE::GRAPHIC::ComputePSOHandle& outPSOHandle) {
+
+	outPSOHandle = QFE::GRAPHIC::ComputePSOHandle::Invalid;
+	auto* d3d12GraphicEngine = ResolveD3D12GraphicEngine(graphicEngine);
+	if (d3d12GraphicEngine == nullptr || !d3d12GraphicEngine->IsComputePipelineAvailable()) {
+		QFE_LOG("The compute pipeline is not available.");
+		return false;
+	}
+
+	QFE::GRAPHIC::ComputePipelineManager* computePipelineManager =
+		d3d12GraphicEngine->GetComputePipelineManager();
+	if (computePipelineManager == nullptr) {
+		QFE_LOG("Failed to get the compute pipeline manager.");
+		return false;
+	}
+
+	outPSOHandle = computePipelineManager->GenerateComputePipelineStateObject(
+		csDirPath, csFileName);
+	if (outPSOHandle == QFE::GRAPHIC::ComputePSOHandle::Invalid) {
+		QFE_LOG("Failed to create compute PSO.");
+		return false;
+	}
+	return true;
+}
+
+bool QFE::GRAPHIC::DispatchComputePSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+	const QFE::GRAPHIC::ComputePSOHandle& psoHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& uavHandle) {
+
+	auto* d3d12GraphicEngine = ResolveD3D12GraphicEngine(graphicEngine);
+	if (d3d12GraphicEngine == nullptr || !d3d12GraphicEngine->IsComputePipelineAvailable()) {
+		QFE_LOG("The compute pipeline is not available.");
+		return false;
+	}
+	if (psoHandle == QFE::GRAPHIC::ComputePSOHandle::Invalid ||
+		uavHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		QFE_LOG("A valid compute PSO and UAV resource are required.");
+		return false;
+	}
+
+	QFE::GRAPHIC::ComputePipelineManager* computePipelineManager =
+		d3d12GraphicEngine->GetComputePipelineManager();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer =
+		d3d12GraphicEngine->GetDirectXResourceContainer();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager =
+		d3d12GraphicEngine->GetDirectXCommandManager();
+	if (computePipelineManager == nullptr || resourceContainer == nullptr || commandManager == nullptr) {
+		QFE_LOG("Required compute pipeline systems are not available.");
+		return false;
+	}
+	if (!resourceContainer->HasResourceType(
+		uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView)) {
+		QFE_LOG("The compute target does not have an unordered access view.");
+		return false;
+	}
+
+	const std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes =
+		computePipelineManager->GetRootParameterTypes(psoHandle);
+	if (rootParameterTypes.size() != 1 ||
+		rootParameterTypes[0] != D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) {
+		QFE_LOG("DispatchComputePSO requires a compute shader with exactly one UAV descriptor table.");
+		return false;
+	}
+
+	UINT threadGroupSizeX = 0;
+	UINT threadGroupSizeY = 0;
+	UINT threadGroupSizeZ = 0;
+	if (!computePipelineManager->GetThreadGroupSize(
+		psoHandle, threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ) ||
+		threadGroupSizeX == 0 || threadGroupSizeY == 0 || threadGroupSizeZ == 0) {
+		QFE_LOG("Failed to get a valid compute shader thread group size.");
+		return false;
+	}
+
+	const UINT resourceWidth = resourceContainer->GetResourceWidth(uavHandle);
+	const UINT resourceHeight = resourceContainer->GetResourceHeight(uavHandle);
+	if (resourceWidth == 0 || resourceHeight == 0) {
+		QFE_LOG("The compute target has an invalid size.");
+		return false;
+	}
+
+	ID3D12PipelineState* pipelineState = computePipelineManager->GetPipelineState(psoHandle);
+	ID3D12RootSignature* rootSignature = computePipelineManager->GetRootSignature(psoHandle);
+	if (pipelineState == nullptr || rootSignature == nullptr) {
+		QFE_LOG("Failed to resolve the compute pipeline state.");
+		return false;
+	}
+
+	ID3D12GraphicsCommandList* commandList =
+		commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	if (commandList == nullptr) {
+		QFE_LOG("Failed to get the direct command list for compute dispatch.");
+		return false;
+	}
+
+	resourceContainer->TransitionResource(
+		uavHandle, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	// 直前のレイトレーシングやコンピュートによるUAV書き込みを、このdispatchより前に完了させる。
+	D3D12_RESOURCE_BARRIER uavBarrier{};
+	uavBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+	uavBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	uavBarrier.UAV.pResource = resourceContainer->GetResource(uavHandle);
+	commandList->ResourceBarrier(1, &uavBarrier);
+
+	commandList->SetPipelineState(pipelineState);
+	commandList->SetComputeRootSignature(rootSignature);
+	commandList->SetComputeRootDescriptorTable(
+		0,
+		resourceContainer->GetDescriptorHandleGPU(
+			uavHandle, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView));
+
+	const UINT dispatchX =
+		resourceWidth / threadGroupSizeX + static_cast<UINT>(resourceWidth % threadGroupSizeX != 0);
+	const UINT dispatchY =
+		resourceHeight / threadGroupSizeY + static_cast<UINT>(resourceHeight % threadGroupSizeY != 0);
+	commandList->Dispatch(dispatchX, dispatchY, 1);
+
+	// このdispatchによるUAV書き込みを、後続のCopyResourceや別パイプラインから確実に参照できるようにする。
+	commandList->ResourceBarrier(1, &uavBarrier);
 	return true;
 }
 
@@ -574,6 +719,9 @@ bool QFE::GRAPHIC::DrawRayTracingPSO(
 
 	// 5. コマンド発行
 	commandList4->DispatchRays(&dispatchDesc);
+	if (!DispatchBuiltInLinearToSrgb(graphicEngine, renderUavBuffer)) {
+		return false;
+	}
 
 	// 6. スワップチェーンのバックバッファにコピー
 	resourceContainer->TransitionResource(renderUavBuffer, commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
@@ -792,6 +940,12 @@ bool QFE::GRAPHIC::ShadowSpecularRayTracingPSO(
 	// 6. 出力先へコピー
 	if (finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::Invalid) {
 		return false;
+	}
+	// SRGB変換
+	if (finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain) {
+		if (!DispatchBuiltInLinearToSrgb(graphicEngine, renderUavBuffer)) {
+			return false;
+		}
 	}
 
 	resourceContainer->TransitionResource(

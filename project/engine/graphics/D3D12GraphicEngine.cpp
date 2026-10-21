@@ -299,6 +299,21 @@ bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpBuildInPipelineStateObjects() {
 	return false;
 }
 
+bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpBuildInComputePipelineStateObjects() {
+	if(IsBuildInComputePipelineStateObjectsAvailable()) {
+		return true;
+	}
+
+	// BuiltInのComputePSOを生成する
+	if(IsComputePipelineAvailable()) {
+		computePipelineManager_->CreateBuildInComputePSOs();
+		isBuildInComputePipelineStateObjectsAvailable_ = true;
+		return true;
+	}
+	QFE_LOG("D3D12GraphicEngine: Set up the compute pipeline before its built-in PSOs.");
+	return false;
+}
+
 bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpLineRenderingPipeline() {
 	if (IsLineRenderingAvailable()) {
 		return true;
@@ -555,6 +570,10 @@ bool QFE::GRAPHIC::D3D12GraphicEngine::AreBuiltInPipelineStateObjectsAvailable()
 
 bool QFE::GRAPHIC::D3D12GraphicEngine::IsLineRenderingAvailable() const noexcept {
 	return isLineRenderingAvailable_;
+}
+
+bool QFE::GRAPHIC::D3D12GraphicEngine::IsBuildInComputePipelineStateObjectsAvailable() const noexcept {
+	return isBuildInComputePipelineStateObjectsAvailable_;
 }
 
 DirectXDevice* QFE::GRAPHIC::D3D12GraphicEngine::GetDirectXDevice() const {

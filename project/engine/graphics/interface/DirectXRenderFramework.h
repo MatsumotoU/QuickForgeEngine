@@ -53,6 +53,21 @@ namespace QFE::GRAPHIC {
 		const QFE::GRAPHIC::PSOHandle& psoHandle,
 		std::vector<D3D12_ROOT_PARAMETER_TYPE>& outRootParameterTypeList);
 
+	/// @brief コンピュートシェーダーをコンパイルし、パイプラインステートオブジェクトを作成する関数
+	bool CreateComputePSO(
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+		const std::string& csDirPath,
+		const std::string& csFileName,
+		QFE::GRAPHIC::ComputePSOHandle& outPSOHandle);
+
+	/// @brief 1つのUAVを対象にコンピュートパイプラインを実行する関数
+	/// @details Dispatch数はUAVの大きさとシェーダーのnumthreadsから算出する。
+	///          この関数は結果のコピーやリソースの最終状態への遷移を行わない。
+	bool DispatchComputePSO(
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::ComputePSOHandle& psoHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& uavHandle);
+
 	/// @brief レイトレーシングパイプラインステートオブジェクトを作成する関数
 	bool CreateRayTracingPSO(
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,

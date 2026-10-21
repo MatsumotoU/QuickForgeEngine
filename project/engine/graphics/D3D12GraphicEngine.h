@@ -70,6 +70,8 @@ namespace QFE::GRAPHIC {
 		bool SetUpRayTracingPipeline();
 		/// @brief ビルトインのパイプラインステートオブジェクトを生成します
 		bool SetUpBuildInPipelineStateObjects();
+		/// @brief ビルトインのコンピュートパイプラインステートオブジェクトを生成します
+		bool SetUpBuildInComputePipelineStateObjects();
 		/// @brief 線描画用のパイプラインをたちあげます.
 		bool SetUpLineRenderingPipeline();
 
@@ -88,6 +90,7 @@ namespace QFE::GRAPHIC {
 		[[nodiscard]] bool IsRayTracingPipelineAvailable() const noexcept override;
 		[[nodiscard]] bool AreBuiltInPipelineStateObjectsAvailable() const noexcept override;
 		[[nodiscard]] bool IsLineRenderingAvailable() const noexcept override;
+		[[nodiscard]] bool IsBuildInComputePipelineStateObjectsAvailable() const noexcept override;
 
 		/// @brief 次のフレームに描画するワールド空間の線を追加します。
 		void DrawLine(
@@ -184,6 +187,7 @@ namespace QFE::GRAPHIC {
 		bool isComputePipelineAvailable_ = false;
 		bool isRayTracingPipelineAvailable_ = false;
 		bool areBuiltInPipelineStateObjectsAvailable_ = false;
+		bool isBuildInComputePipelineStateObjectsAvailable_ = false;
 		bool isLineRenderingAvailable_ = false;
 
 		struct LineVertex {
