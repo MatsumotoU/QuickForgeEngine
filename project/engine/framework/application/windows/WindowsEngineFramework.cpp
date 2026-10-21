@@ -8,7 +8,6 @@
 #include "graphics/interface/DirectXRenderFramework.h"
 #include "gui/interface/IGuiManager.h"
 #include "framework/window/WindowCoreFrameWork.h"
-#include "framework/window/WindowDialogFramework.h"
 #include "framework/graphic/GraphicEngineCoreFramework.h"
 #include "framework/gui/GuiCoreFramework.h"
 #include "input/interface/InputInterface.h"
@@ -271,16 +270,6 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 	std::string psDirName = resources.psDirName;
 	std::string vsDirName = resources.vsDirName;
 	std::string rtDirName = resources.rtDirName;
-
-	// JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
-	std::wstring selectedFilePath;
-	if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-		*systems.windowManager,
-		L"JSON Files", L"*.json",
-		selectedFilePath)) {
-		// Entityの生成
-		systems.sceneManager->LoadCurrentSceneFromJson(QFE::ConvertString(selectedFilePath));
-	}
 
 	//====================
 	// ここから描画の準備

@@ -176,8 +176,9 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                     L"Scene Files", L"*.json",
                     selectedFilePath)) {
 
-                    // Entityの保存や、別プロセスの起動
-                    QFE::ProcessUtil::LaunchExe("Runtime.exe", "");
+					// 選択したシーンを起動引数としてランタイムへ渡す。
+					const std::string scenePath = QFE::ConvertString(selectedFilePath);
+					QFE::ProcessUtil::LaunchExe("Runtime.exe", "\"" + scenePath + "\"");
                 }
             }
 
