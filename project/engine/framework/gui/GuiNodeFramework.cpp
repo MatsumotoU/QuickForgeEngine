@@ -98,6 +98,10 @@ void QFE::FRAMEWORK::NodeEditorFramework::Draw(
 	ax::NodeEditor::Begin(editorId, canvasSize);
 
 	for (Node& node : nodes) {
+		if (node.isGroup && node.groupSize.x > 0.0f &&
+			node.groupSize.y > 0.0f) {
+			ax::NodeEditor::SetGroupSize(node.id, node.groupSize);
+		}
 		if (!node.positionInitialized) {
 			ax::NodeEditor::SetNodePosition(node.id, node.position);
 			node.positionInitialized = true;
@@ -278,6 +282,120 @@ ImVec2 QFE::FRAMEWORK::NodeEditorFramework::GetNodePosition(NodeId nodeId) const
 	const ImVec2 position = ax::NodeEditor::GetNodePosition(nodeId);
 	ax::NodeEditor::SetCurrentEditor(previousEditor);
 	return position;
+}
+
+ImVec2 QFE::FRAMEWORK::NodeEditorFramework::GetNodeSize(NodeId nodeId) const
+{
+	if (editorContext_ == nullptr) {
+		return ImVec2(0.0f, 0.0f);
+	}
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(editorContext_);
+	const ImVec2 size = ax::NodeEditor::GetNodeSize(nodeId);
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
+	return size;
+}
+
+void QFE::FRAMEWORK::NodeEditorFramework::SetGroupSize(
+	NodeId nodeId, const ImVec2& size)
+{
+	if (editorContext_ == nullptr) {
+		return;
+	}
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(editorContext_);
+	ax::NodeEditor::SetGroupSize(nodeId, size);
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
+}
+
+void QFE::FRAMEWORK::NodeEditorFramework::Group(const ImVec2& size)
+{
+	ax::NodeEditor::Group(size);
+}
+
+void QFE::FRAMEWORK::NodeEditorFramework::ClearSelection()
+{
+	if (editorContext_ == nullptr) {
+		return;
+	}
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(editorContext_);
+	ax::NodeEditor::ClearSelection();
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
+}
+
+void QFE::FRAMEWORK::NodeEditorFramework::SelectNode(NodeId nodeId)
+{
+	if (editorContext_ == nullptr) {
+		return;
+	}
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(editorContext_);
+	ax::NodeEditor::SelectNode(nodeId);
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
+}
+
+ImVec2 QFE::FRAMEWORK::NodeEditorFramework::ScreenToCanvas(
+	const ImVec2& screenPosition) const
+{
+	if (editorContext_ == nullptr) {
+		return screenPosition;
+	}
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(editorContext_);
+	const ImVec2 canvasPosition = ax::NodeEditor::ScreenToCanvas(screenPosition);
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
+	return canvasPosition;
+}
+
+ImVec4 QFE::FRAMEWORK::NodeEditorFramework::GetNodePadding() const
+{
+	if (editorContext_ == nullptr) {
+		return ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(editorContext_);
+	const ImVec4 padding = ax::NodeEditor::GetStyle().NodePadding;
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
+	return padding;
+}
+
+void QFE::FRAMEWORK::NodeEditorFramework::PushStyleColor(
+	ax::NodeEditor::StyleColor index, const ImVec4& color)
+{
+	ax::NodeEditor::PushStyleColor(index, color);
+}
+
+void QFE::FRAMEWORK::NodeEditorFramework::PopStyleColor(int count)
+{
+	ax::NodeEditor::PopStyleColor(count);
+}
+
+ax::NodeEditor::Style& QFE::FRAMEWORK::NodeEditorFramework::GetStyle()
+{
+	static ax::NodeEditor::Style defaultStyle{};
+	if (editorContext_ == nullptr) {
+		return defaultStyle;
+	}
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(editorContext_);
+	ax::NodeEditor::Style& style = ax::NodeEditor::GetStyle();
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
+	return style;
+}
+
+const ax::NodeEditor::Style&
+QFE::FRAMEWORK::NodeEditorFramework::GetStyle() const
+{
+	static const ax::NodeEditor::Style defaultStyle{};
+	if (editorContext_ == nullptr) {
+		return defaultStyle;
+	}
+	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
+	ax::NodeEditor::SetCurrentEditor(editorContext_);
+	const ax::NodeEditor::Style& style = ax::NodeEditor::GetStyle();
+	ax::NodeEditor::SetCurrentEditor(previousEditor);
+	return style;
 }
 
 ax::NodeEditor::EditorContext*

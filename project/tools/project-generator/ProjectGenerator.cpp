@@ -313,17 +313,19 @@ namespace
 		return ed::NodeId(EncodeNodeEditorId(kNodeEditorGroupIdTag, id));
 	}
 
-	bool GetGroupContentBounds(const ProjectGroup& group,
+	bool GetGroupContentBounds(
+		const QFE::FRAMEWORK::NodeEditorFramework& editor,
+		const ProjectGroup& group,
 		ImVec2& minimum, ImVec2& maximum)
 	{
 		const ed::NodeId groupId = ToEditorGroupId(group.id);
-		const ImVec2 position = ed::GetNodePosition(groupId);
-		const ImVec2 size = ed::GetNodeSize(groupId);
+		const ImVec2 position = editor.GetNodePosition(groupId);
+		const ImVec2 size = editor.GetNodeSize(groupId);
 		if (position.x == FLT_MAX || position.y == FLT_MAX ||
 			size.x <= 0.0f || size.y <= 0.0f) {
 			return false;
 		}
-		const ImVec4 padding = ed::GetStyle().NodePadding;
+		const ImVec4 padding = editor.GetNodePadding();
 		minimum = ImVec2(position.x + padding.x, position.y + padding.y);
 		maximum = ImVec2(position.x + size.x - padding.z,
 			position.y + size.y - padding.w);
@@ -1469,28 +1471,82 @@ void QFE::APPLICATION::ProjectGenerator::Initialize() {
 	directoryManager_.Initialize();
 	EnsureConfigurationData();
 
-	ax::NodeEditor::Config config;
-
-	config.SettingsFile = nullptr;
-	nodeEditorContext_ = ax::NodeEditor::CreateEditor(&config);
-	if (nodeEditorContext_ != nullptr) {
-		ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
-		auto& style = ax::NodeEditor::GetStyle();
+	nodeEditorFramework_.Initialize();
+	if (nodeEditorFramework_.IsInitialized()) {
+		auto& style = nodeEditorFramework_.GetStyle();
 		style.SourceDirection = ImVec2(1.0f, 0.0f);
 		style.TargetDirection = ImVec2(-1.0f, 0.0f);
-		ax::NodeEditor::SetCurrentEditor(nullptr);
 	}
+
+	QFE::FRAMEWORK::NodeEditorFramework::Callbacks callbacks;
+	callbacks.canCreateLink = [this](
+		QFE::FRAMEWORK::NodeEditorFramework::PinId firstPinId,
+		QFE::FRAMEWORK::NodeEditorFramework::PinId secondPinId) {
+		std::uint64_t firstNodeId = 0;
+		std::uint64_t secondNodeId = 0;
+		bool firstIsOutput = false;
+		bool secondIsOutput = false;
+		const bool valid =
+			TryGetNodeForPin(firstPinId, firstNodeId, firstIsOutput) &&
+			TryGetNodeForPin(secondPinId, secondNodeId, secondIsOutput) &&
+			firstIsOutput != secondIsOutput;
+		const std::uint64_t sourceNodeId = firstIsOutput
+			? firstNodeId
+			: secondNodeId;
+		const std::uint64_t targetNodeId = firstIsOutput
+			? secondNodeId
+			: firstNodeId;
+		return valid && sourceNodeId != targetNodeId &&
+			!LinkExists(sourceNodeId, targetNodeId) &&
+			!WouldCreateCycle(sourceNodeId, targetNodeId);
+	};
+	callbacks.onLinkCreated = [this](
+		QFE::FRAMEWORK::NodeEditorFramework::PinId firstPinId,
+		QFE::FRAMEWORK::NodeEditorFramework::PinId secondPinId) {
+		std::uint64_t firstNodeId = 0;
+		std::uint64_t secondNodeId = 0;
+		bool firstIsOutput = false;
+		bool secondIsOutput = false;
+		if (!TryGetNodeForPin(firstPinId, firstNodeId, firstIsOutput) ||
+			!TryGetNodeForPin(secondPinId, secondNodeId, secondIsOutput) ||
+			firstIsOutput == secondIsOutput) {
+			return;
+		}
+		const std::uint64_t sourceNodeId = firstIsOutput
+			? firstNodeId
+			: secondNodeId;
+		const std::uint64_t targetNodeId = firstIsOutput
+			? secondNodeId
+			: firstNodeId;
+		links_.push_back({ nextLinkId_++, sourceNodeId, targetNodeId });
+		SimplifyDependencyLinks();
+	};
+	callbacks.onLinkDeleted = [this](
+		QFE::FRAMEWORK::NodeEditorFramework::LinkId editorLinkId) {
+		const std::uint64_t linkId = DecodeNodeEditorLinkId(editorLinkId);
+		links_.erase(
+			std::remove_if(
+				links_.begin(), links_.end(),
+				[linkId](const ProjectLink& link) { return link.id == linkId; }),
+			links_.end());
+	};
+	callbacks.onNodeDeleted = [this](
+		QFE::FRAMEWORK::NodeEditorFramework::NodeId editorNodeId) {
+		pendingNodeRemovalId_ = DecodeNodeEditorNodeId(editorNodeId);
+	};
+	callbacks.onSelectionChanged = [this](
+		const std::vector<QFE::FRAMEWORK::NodeEditorFramework::NodeId>&
+			selectedEditorNodes,
+		const std::vector<QFE::FRAMEWORK::NodeEditorFramework::LinkId>&
+			selectedEditorLinks) {
+		HandleSelectionChanged(selectedEditorNodes, selectedEditorLinks);
+	};
+	nodeEditorFramework_.SetCallbacks(std::move(callbacks));
 }
 
 void ProjectGenerator::Shutdown()
 {
-	if (nodeEditorContext_ != nullptr) {
-		if (ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
-			ax::NodeEditor::SetCurrentEditor(nullptr);
-		}
-		ax::NodeEditor::DestroyEditor(nodeEditorContext_);
-		nodeEditorContext_ = nullptr;
-	}
+	nodeEditorFramework_.Shutdown();
 }
 
 void ProjectGenerator::Update() {
@@ -1959,7 +2015,7 @@ const ProjectGroup* QFE::APPLICATION::ProjectGenerator::FindGroupForNode(
 
 void QFE::APPLICATION::ProjectGenerator::SynchronizeGroupMembership()
 {
-	if (nodeEditorContext_ == nullptr || groups_.empty() ||
+	if (!nodeEditorFramework_.IsInitialized() || groups_.empty() ||
 		std::any_of(nodes_.begin(), nodes_.end(),
 			[](const ProjectNode& node) { return !node.positionInitialized; }) ||
 		std::any_of(groups_.begin(), groups_.end(),
@@ -1967,8 +2023,6 @@ void QFE::APPLICATION::ProjectGenerator::SynchronizeGroupMembership()
 		return;
 	}
 
-	const auto previousEditor = ax::NodeEditor::GetCurrentEditor();
-	ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
 	struct GroupBounds {
 		ImVec2 minimum;
 		ImVec2 maximum;
@@ -1978,23 +2032,24 @@ void QFE::APPLICATION::ProjectGenerator::SynchronizeGroupMembership()
 	bounds.reserve(groups_.size());
 	for (const ProjectGroup& group : groups_) {
 		ImVec2 minimum, maximum;
-		if (!GetGroupContentBounds(group, minimum, maximum)) {
-			ax::NodeEditor::SetCurrentEditor(previousEditor);
+		if (!GetGroupContentBounds(nodeEditorFramework_, group,
+			minimum, maximum)) {
 			return;
 		}
 		bounds.push_back({ minimum, maximum,
-			ax::NodeEditor::GetNodePosition(ToEditorGroupId(group.id)) });
+			nodeEditorFramework_.GetNodePosition(ToEditorGroupId(group.id)) });
 	}
 
 	std::vector<std::vector<std::uint64_t>> memberships(groups_.size());
 	std::vector<ImVec2> nodePositions;
 	nodePositions.reserve(nodes_.size());
 	for (const ProjectNode& node : nodes_) {
-		const ImVec2 position = ax::NodeEditor::GetNodePosition(ToEditorNodeId(node.id));
-		const ImVec2 size = ax::NodeEditor::GetNodeSize(ToEditorNodeId(node.id));
+		const ImVec2 position =
+			nodeEditorFramework_.GetNodePosition(ToEditorNodeId(node.id));
+		const ImVec2 size =
+			nodeEditorFramework_.GetNodeSize(ToEditorNodeId(node.id));
 		if (position.x == FLT_MAX || position.y == FLT_MAX ||
 			size.x <= 0.0f || size.y <= 0.0f) {
-			ax::NodeEditor::SetCurrentEditor(previousEditor);
 			return;
 		}
 		nodePositions.push_back(position);
@@ -2031,7 +2086,6 @@ void QFE::APPLICATION::ProjectGenerator::SynchronizeGroupMembership()
 	for (std::size_t index = 0; index < nodes_.size(); ++index) {
 		nodes_[index].initialPosition = nodePositions[index];
 	}
-	ax::NodeEditor::SetCurrentEditor(previousEditor);
 }
 
 void QFE::APPLICATION::ProjectGenerator::RemoveGroup(std::uint64_t groupId)
@@ -2055,8 +2109,7 @@ void QFE::APPLICATION::ProjectGenerator::UpdateGroupBounds(ProjectGroup& group)
 
 	ImVec2 minimum(FLT_MAX, FLT_MAX);
 	ImVec2 maximum(-FLT_MAX, -FLT_MAX);
-	const bool editorIsCurrent = nodeEditorContext_ != nullptr &&
-		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_;
+	const bool editorIsCurrent = nodeEditorFramework_.IsInitialized();
 	for (const std::uint64_t nodeId : group.nodeIds) {
 		const ProjectNode* node = FindNode(nodeId);
 		if (node == nullptr) {
@@ -2067,9 +2120,9 @@ void QFE::APPLICATION::ProjectGenerator::UpdateGroupBounds(ProjectGroup& group)
 		ImVec2 nodeSize(180.0f, 100.0f);
 		if (editorIsCurrent) {
 			const ImVec2 editorPosition =
-				ax::NodeEditor::GetNodePosition(ToEditorNodeId(nodeId));
+				nodeEditorFramework_.GetNodePosition(ToEditorNodeId(nodeId));
 			const ImVec2 editorSize =
-				ax::NodeEditor::GetNodeSize(ToEditorNodeId(nodeId));
+				nodeEditorFramework_.GetNodeSize(ToEditorNodeId(nodeId));
 			if (editorPosition.x != FLT_MAX && editorPosition.y != FLT_MAX) {
 				position = editorPosition;
 			}
@@ -2099,25 +2152,14 @@ void QFE::APPLICATION::ProjectGenerator::UpdateGroupBounds(ProjectGroup& group)
 	group.positionInitialized = false;
 }
 
-void QFE::APPLICATION::ProjectGenerator::DrawProjectGroup(ProjectGroup& group)
+void QFE::APPLICATION::ProjectGenerator::DrawProjectGroup(
+	QFE::FRAMEWORK::NodeEditorFramework& editor, ProjectGroup& group)
 {
-	const ax::NodeEditor::NodeId editorGroupId = ToEditorGroupId(group.id);
-	if (!group.positionInitialized) {
-		ax::NodeEditor::SetNodePosition(editorGroupId, group.initialPosition);
-		ax::NodeEditor::SetGroupSize(editorGroupId, group.size);
-		group.positionInitialized = true;
-	}
-
-	ax::NodeEditor::BeginNode(editorGroupId);
-	ImGui::PushID(reinterpret_cast<void*>(
-		static_cast<std::uintptr_t>(group.id)));
 	const ImVec2 labelPosition = ImGui::GetCursorScreenPos();
 	ImGui::GetWindowDrawList()->AddText(
 		labelPosition, IM_COL32(235, 235, 235, 255),
 		group.name.empty() ? "Group" : group.name.c_str());
-	ax::NodeEditor::Group(group.size);
-	ax::NodeEditor::EndNode();
-	ImGui::PopID();
+	editor.Group(group.size);
 }
 
 void QFE::APPLICATION::ProjectGenerator::GroupSelectedNodes(
@@ -2166,16 +2208,15 @@ void QFE::APPLICATION::ProjectGenerator::GroupSelectedNodes(
 	selectedNodeId_ = 0;
 	nodeSettingsOpen_ = false;
 
-	if (nodeEditorContext_ != nullptr &&
-		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
+	if (nodeEditorFramework_.IsInitialized()) {
 		const ProjectGroup& createdGroup = groups_.back();
-		const ax::NodeEditor::NodeId editorGroupId =
+		const QFE::FRAMEWORK::NodeEditorFramework::NodeId editorGroupId =
 			ToEditorGroupId(createdGroup.id);
-		ax::NodeEditor::SetNodePosition(
+		nodeEditorFramework_.SetNodePosition(
 			editorGroupId, createdGroup.initialPosition);
-		ax::NodeEditor::SetGroupSize(editorGroupId, createdGroup.size);
-		ax::NodeEditor::ClearSelection();
-		ax::NodeEditor::SelectNode(editorGroupId);
+		nodeEditorFramework_.SetGroupSize(editorGroupId, createdGroup.size);
+		nodeEditorFramework_.ClearSelection();
+		nodeEditorFramework_.SelectNode(editorGroupId);
 	}
 	premakeStatus_ = "Grouped " + std::to_string(validNodeIds.size()) +
 		" node(s). Set the Premake group name in Group Settings.";
@@ -2195,9 +2236,8 @@ void QFE::APPLICATION::ProjectGenerator::DeleteSelectedNodes(
 	for (const std::uint64_t nodeId : validNodeIds) {
 		RemoveNode(nodeId);
 	}
-	if (nodeEditorContext_ != nullptr &&
-		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
-		ax::NodeEditor::ClearSelection();
+	if (nodeEditorFramework_.IsInitialized()) {
+		nodeEditorFramework_.ClearSelection();
 	}
 	selectedNodeId_ = 0;
 	selectedGroupId_ = 0;
@@ -2425,24 +2465,24 @@ bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
 	}
 
 	ImVec2 groupMinimum, groupMaximum;
-	if (nodeEditorContext_ == nullptr ||
-		ax::NodeEditor::GetCurrentEditor() != nodeEditorContext_ ||
-		!GetGroupContentBounds(*group, groupMinimum, groupMaximum)) {
+	if (!nodeEditorFramework_.IsInitialized() ||
+		!GetGroupContentBounds(nodeEditorFramework_, *group,
+			groupMinimum, groupMaximum)) {
 		createProjectError_ = "The group is not available in the node editor.";
 		return false;
 	}
-	const auto& editorStyle = ax::NodeEditor::GetStyle();
+	const ImVec4 editorPadding = nodeEditorFramework_.GetNodePadding();
 	const float contentWidth = std::max(150.0f,
 		std::max(ImGui::CalcTextSize(directoryName.c_str()).x,
 			std::max(ImGui::CalcTextSize(resolvedProjectName.c_str()).x,
 				ImGui::CalcTextSize("in").x + ImGui::CalcTextSize("out").x + 64.0f)));
 	const bool hasSecondLabel = resolvedProjectName != directoryName;
 	const ImVec2 nodeSize(
-		contentWidth + editorStyle.NodePadding.x + editorStyle.NodePadding.z + 8.0f,
+		contentWidth + editorPadding.x + editorPadding.z + 8.0f,
 		ImGui::GetTextLineHeight() * (hasSecondLabel ? 3.0f : 2.0f) +
 		ImGui::GetFrameHeight() +
 		ImGui::GetStyle().ItemSpacing.y * (hasSecondLabel ? 3.0f : 2.0f) +
-		editorStyle.NodePadding.y + editorStyle.NodePadding.w + 8.0f);
+		editorPadding.y + editorPadding.w + 8.0f);
 	constexpr float margin = 8.0f;
 	if (groupMaximum.x - groupMinimum.x < nodeSize.x + margin * 2.0f ||
 		groupMaximum.y - groupMinimum.y < nodeSize.y + margin * 2.0f) {
@@ -2459,9 +2499,9 @@ bool QFE::APPLICATION::ProjectGenerator::CreateDirectoryProjectInGroup(
 			x += 24.0f) {
 			bool overlaps = false;
 			for (const std::uint64_t memberNodeId : group->nodeIds) {
-				const ImVec2 memberPosition = ax::NodeEditor::GetNodePosition(
+				const ImVec2 memberPosition = nodeEditorFramework_.GetNodePosition(
 					ToEditorNodeId(memberNodeId));
-				const ImVec2 memberSize = ax::NodeEditor::GetNodeSize(
+				const ImVec2 memberSize = nodeEditorFramework_.GetNodeSize(
 					ToEditorNodeId(memberNodeId));
 				if (memberPosition.x != FLT_MAX && memberPosition.y != FLT_MAX &&
 					memberSize.x > 0.0f && memberSize.y > 0.0f &&
@@ -2530,9 +2570,8 @@ void QFE::APPLICATION::ProjectGenerator::DeleteSelectedLinks(
 		links_.end());
 	const std::size_t deletedLinkCount = previousLinkCount - links_.size();
 
-	if (nodeEditorContext_ != nullptr &&
-		ax::NodeEditor::GetCurrentEditor() == nodeEditorContext_) {
-		ax::NodeEditor::ClearSelection();
+	if (nodeEditorFramework_.IsInitialized()) {
+		nodeEditorFramework_.ClearSelection();
 	}
 	if (selectedLinkId_ != 0 && FindLink(selectedLinkId_) == nullptr) {
 		selectedLinkId_ = 0;
@@ -2613,10 +2652,8 @@ void QFE::APPLICATION::ProjectGenerator::LinkSettingsWindow()
 	} else if (!isOpen) {
 		selectedLinkId_ = 0;
 		linkSettingsOpen_ = false;
-		if (nodeEditorContext_ != nullptr) {
-			ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
-			ax::NodeEditor::ClearSelection();
-			ax::NodeEditor::SetCurrentEditor(nullptr);
+		if (nodeEditorFramework_.IsInitialized()) {
+			nodeEditorFramework_.ClearSelection();
 		}
 	}
 }
@@ -2814,7 +2851,7 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 		ImGui::End();
 		return;
 	}
-	if (nodeEditorContext_ == nullptr) {
+	if (!nodeEditorFramework_.IsInitialized()) {
 		ImGui::TextUnformatted("Node editor is not initialized.");
 		ImGui::End();
 		return;
@@ -2839,27 +2876,77 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 		return;
 	}
 	const ImVec2 canvasScreenTopLeft = ImGui::GetCursorScreenPos();
-
-	ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
-	ax::NodeEditor::Begin("Project Dependency Graph", canvasSize);
-	nodeEditorVisibleCenter_ = ax::NodeEditor::ScreenToCanvas(ImVec2(
+	nodeEditorVisibleCenter_ = nodeEditorFramework_.ScreenToCanvas(ImVec2(
 		canvasScreenTopLeft.x + canvasSize.x * 0.5f,
 		canvasScreenTopLeft.y + canvasSize.y * 0.5f));
 	nodeEditorVisibleCenterInitialized_ = true;
 
+	using FrameworkNode = QFE::FRAMEWORK::NodeEditorFramework::Node;
+	using FrameworkLink = QFE::FRAMEWORK::NodeEditorFramework::Link;
+	std::vector<FrameworkNode> editorNodes;
+	editorNodes.reserve(groups_.size() + nodes_.size());
 	for (ProjectGroup& group : groups_) {
-		DrawProjectGroup(group);
+		FrameworkNode editorNode;
+		editorNode.id = ToEditorGroupId(group.id);
+		editorNode.position = group.initialPosition;
+		editorNode.positionInitialized = group.positionInitialized;
+		editorNode.isGroup = true;
+		editorNode.groupSize = group.size;
+		ProjectGroup* groupPointer = &group;
+		editorNode.draw = [this, groupPointer](
+			QFE::FRAMEWORK::NodeEditorFramework& editor) {
+			DrawProjectGroup(editor, *groupPointer);
+		};
+		editorNodes.push_back(std::move(editorNode));
 	}
-
 	for (ProjectNode& node : nodes_) {
-		const ax::NodeEditor::NodeId editorNodeId = ToEditorNodeId(node.id);
-		if (!node.positionInitialized) {
-			ax::NodeEditor::SetNodePosition(editorNodeId, node.initialPosition);
-			node.positionInitialized = true;
-		}
-
-		DrawProjectNode(node);
+		FrameworkNode editorNode;
+		editorNode.id = ToEditorNodeId(node.id);
+		editorNode.position = node.initialPosition;
+		editorNode.positionInitialized = node.positionInitialized;
+		ProjectNode* nodePointer = &node;
+		editorNode.draw = [this, nodePointer](
+			QFE::FRAMEWORK::NodeEditorFramework& editor) {
+			DrawProjectNode(editor, *nodePointer);
+		};
+		editorNodes.push_back(std::move(editorNode));
 	}
+
+	std::vector<FrameworkLink> editorLinks;
+	editorLinks.reserve(links_.size());
+	for (const ProjectLink& link : links_) {
+		// The framework keeps the input pin first, matching Node Editor's
+		// QueryNewLink() order and the dependency direction used by the model.
+		editorLinks.push_back({
+			ToEditorLinkId(link.id),
+			ToInputPinId(link.targetNodeId),
+			ToOutputPinId(link.sourceNodeId),
+			GetLinkColor(link.dependencyMode),
+			GetLinkThickness(),
+		});
+	}
+
+	nodeEditorFramework_.Draw("Project Dependency Graph", canvasSize,
+		editorNodes, editorLinks);
+
+	for (const FrameworkNode& editorNode : editorNodes) {
+		const std::uint64_t nodeId = DecodeNodeEditorNodeId(editorNode.id);
+		if (nodeId != 0) {
+			if (ProjectNode* node = FindNode(nodeId); node != nullptr) {
+				node->initialPosition = editorNode.position;
+				node->positionInitialized = editorNode.positionInitialized;
+			}
+			continue;
+		}
+		const std::uint64_t groupId = DecodeNodeEditorGroupId(editorNode.id);
+		if (groupId != 0) {
+			if (ProjectGroup* group = FindGroup(groupId); group != nullptr) {
+				group->initialPosition = editorNode.position;
+				group->positionInitialized = editorNode.positionInitialized;
+			}
+		}
+	}
+
 	for (ProjectGroup& group : groups_) {
 		if (!group.needsBoundsUpdate) {
 			continue;
@@ -2867,115 +2954,29 @@ void QFE::APPLICATION::ProjectGenerator::NodeEditorWindow()
 		UpdateGroupBounds(group);
 		group.needsBoundsUpdate = false;
 	}
-
-	for (const ProjectLink& link : links_) {
-		// Link() accepts the input pin first, which keeps the dependency
-		// direction consistent with QueryNewLink().
-		ax::NodeEditor::Link(
-			ToEditorLinkId(link.id),
-			ToInputPinId(link.targetNodeId),
-			ToOutputPinId(link.sourceNodeId),
-			GetLinkColor(link.dependencyMode),
-			GetLinkThickness());
-	}
-
-	HandleNewLinks();
-	HandleDeletedItems();
-
-	ax::NodeEditor::End();
 	SynchronizeGroupMembership();
-
-	// Convert Node Editor selections to model IDs. Groups and ordinary nodes
-	// use distinct ID ranges so menus and settings can handle them separately.
-	const int selectedObjectCount = ax::NodeEditor::GetSelectedNodes(nullptr, 0);
-	std::vector<ax::NodeEditor::NodeId> selectedEditorNodes(
-		static_cast<std::size_t>(std::max(selectedObjectCount, 0)));
-	if (!selectedEditorNodes.empty()) {
-		ax::NodeEditor::GetSelectedNodes(
-			selectedEditorNodes.data(), selectedObjectCount);
-	}
-	std::vector<std::uint64_t> selectedNodeIds;
-	std::vector<std::uint64_t> selectedGroupIds;
-	for (const ax::NodeEditor::NodeId selectedEditorNode : selectedEditorNodes) {
-		const std::uint64_t nodeId =
-			DecodeNodeEditorNodeId(selectedEditorNode);
-		if (nodeId != 0 && FindNode(nodeId) != nullptr) {
-			selectedNodeIds.push_back(nodeId);
-			continue;
-		}
-		const std::uint64_t groupId =
-			DecodeNodeEditorGroupId(selectedEditorNode);
-		if (groupId != 0 && FindGroup(groupId) != nullptr) {
-			selectedGroupIds.push_back(groupId);
-		}
-	}
-	const int selectedLinkCount = ax::NodeEditor::GetSelectedLinks(nullptr, 0);
-	std::vector<ax::NodeEditor::LinkId> selectedEditorLinks(
-		static_cast<std::size_t>(std::max(selectedLinkCount, 0)));
-	if (!selectedEditorLinks.empty()) {
-		ax::NodeEditor::GetSelectedLinks(
-			selectedEditorLinks.data(), selectedLinkCount);
-	}
-	std::vector<std::uint64_t> selectedLinkIds;
-	for (const ax::NodeEditor::LinkId selectedEditorLink : selectedEditorLinks) {
-		const std::uint64_t linkId = DecodeNodeEditorLinkId(selectedEditorLink);
-		if (linkId != 0 && std::any_of(
-			links_.begin(), links_.end(),
-			[linkId](const ProjectLink& link) { return link.id == linkId; })) {
-			selectedLinkIds.push_back(linkId);
-		}
-	}
-
-	if (!selectedGroupIds.empty()) {
-		selectedGroupId_ = selectedGroupIds.front();
-		groupSettingsOpen_ = true;
-		selectedNodeId_ = 0;
-		selectedLinkId_ = 0;
-		nodeSettingsOpen_ = false;
-		linkSettingsOpen_ = false;
-	} else if (!selectedNodeIds.empty()) {
-		selectedGroupId_ = 0;
-		groupSettingsOpen_ = false;
-		selectedLinkId_ = 0;
-		linkSettingsOpen_ = false;
-		if (selectedNodeId_ != selectedNodeIds.front()) {
-			selectedNodeId_ = selectedNodeIds.front();
-		}
-		nodeSettingsOpen_ = true;
-	} else if (!selectedLinkIds.empty()) {
-		selectedGroupId_ = 0;
-		groupSettingsOpen_ = false;
-		selectedNodeId_ = 0;
-		nodeSettingsOpen_ = false;
-		selectedLinkId_ = selectedLinkIds.front();
-		linkSettingsOpen_ = true;
-	} else {
-		selectedNodeId_ = 0;
-		nodeSettingsOpen_ = false;
-		selectedLinkId_ = 0;
-		linkSettingsOpen_ = false;
-		selectedGroupId_ = 0;
-		groupSettingsOpen_ = false;
-	}
-
-	DrawNodeContextMenu(selectedNodeIds, selectedLinkIds, selectedGroupIds);
+	DrawNodeContextMenu(selectedNodeIdsForContextMenu_,
+		selectedLinkIdsForContextMenu_, selectedGroupIdsForContextMenu_);
 	DrawCreateProjectInGroupPopup();
-
-	ax::NodeEditor::SetCurrentEditor(nullptr);
 
 	if (pendingNodeRemovalId_ != 0) {
 		RemoveNode(pendingNodeRemovalId_);
 		pendingNodeRemovalId_ = 0;
+		selectedNodeIdsForContextMenu_.clear();
+		selectedLinkIdsForContextMenu_.clear();
+		selectedGroupIdsForContextMenu_.clear();
 	}
 
 	ImGui::End();
 }
 
-void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
+void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(
+	QFE::FRAMEWORK::NodeEditorFramework& editor, ProjectNode& node)
 {
-	const ax::NodeEditor::NodeId editorNodeId = ToEditorNodeId(node.id);
-	const ax::NodeEditor::PinId inputPinId = ToInputPinId(node.id);
-	const ax::NodeEditor::PinId outputPinId = ToOutputPinId(node.id);
+	const QFE::FRAMEWORK::NodeEditorFramework::PinId inputPinId =
+		ToInputPinId(node.id);
+	const QFE::FRAMEWORK::NodeEditorFramework::PinId outputPinId =
+		ToOutputPinId(node.id);
 	const std::string projectLabel = node.projectName.empty()
 		? node.name
 		: node.projectName;
@@ -2992,21 +2993,17 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 					inputPinWidth + outputPinWidth + 64.0f))));
 
 	if (node.isFrameworkLayer) {
-		ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_NodeBg,
+		editor.PushStyleColor(ax::NodeEditor::StyleColor_NodeBg,
 			ImVec4(0.16f, 0.52f, 0.68f, 0.94f));
-		ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_NodeBorder,
+		editor.PushStyleColor(ax::NodeEditor::StyleColor_NodeBorder,
 			ImVec4(0.55f, 0.88f, 1.0f, 0.95f));
   }
 	if (node.externalLibrary) {
-		ed::PushStyleColor(ed::StyleColor_NodeBg,
+		editor.PushStyleColor(ed::StyleColor_NodeBg,
 			GetExternalNodeBackgroundColor());
-		ed::PushStyleColor(ed::StyleColor_NodeBorder,
+		editor.PushStyleColor(ed::StyleColor_NodeBorder,
 			GetExternalNodeBorderColor());
 	}
-	ax::NodeEditor::BeginNode(editorNodeId);
-	// Node Editor does not create an ImGui ID scope for each node, so isolate
-	// regular ImGui widgets inside each node explicitly.
-	ImGui::PushID(reinterpret_cast<void*>(static_cast<std::uintptr_t>(node.id)));
 	ImGui::TextUnformatted(node.name.c_str());
 	if (projectLabel != node.name) {
 		ImGui::TextDisabled("%s", projectLabel.c_str());
@@ -3022,17 +3019,18 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 	// window-local and would drift under zooming or docking.
 	const ImVec2 pinRowStart = ImGui::GetCursorScreenPos();
 	const float pinCenterY = pinRowStart.y + ImGui::GetTextLineHeight() * 0.5f;
-	const auto& nodeStyle = ax::NodeEditor::GetStyle();
+	const auto& nodeStyle = editor.GetStyle();
 	const ImVec2 inputSocket(
 		pinRowStart.x - nodeStyle.NodePadding.x, pinCenterY);
 	const float outputStartX = pinRowStart.x + contentWidth - outputPinWidth;
 	const ImVec2 outputSocket(
 		pinRowStart.x + contentWidth + nodeStyle.NodePadding.z, pinCenterY);
 
-	ax::NodeEditor::BeginPin(inputPinId, ax::NodeEditor::PinKind::Input);
-	ax::NodeEditor::PinPivotRect(inputSocket, inputSocket);
+	editor.BeginPin(inputPinId,
+		QFE::FRAMEWORK::NodeEditorFramework::PinKind::Input);
+	editor.PinPivotRect(inputSocket, inputSocket);
 	ImGui::TextUnformatted("in");
-	ax::NodeEditor::EndPin();
+	editor.EndPin();
 
 	ImGui::SameLine(0.0f, 0.0f);
 	const float spacerWidth = outputStartX - ImGui::GetCursorScreenPos().x;
@@ -3041,10 +3039,11 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 		ImGui::SameLine(0.0f, 0.0f);
 	}
 
-	ax::NodeEditor::BeginPin(outputPinId, ax::NodeEditor::PinKind::Output);
-	ax::NodeEditor::PinPivotRect(outputSocket, outputSocket);
+	editor.BeginPin(outputPinId,
+		QFE::FRAMEWORK::NodeEditorFramework::PinKind::Output);
+	editor.PinPivotRect(outputSocket, outputSocket);
 	ImGui::TextUnformatted("out");
-	ax::NodeEditor::EndPin();
+	editor.EndPin();
 
 	ImGui::GetWindowDrawList()->AddCircleFilled(
 		inputSocket, 5.0f, IM_COL32(80, 180, 255, 255));
@@ -3054,14 +3053,12 @@ void QFE::APPLICATION::ProjectGenerator::DrawProjectNode(ProjectNode& node)
 	if (ImGui::Button("Delete")) {
 		pendingNodeRemovalId_ = node.id;
 	}
-	ax::NodeEditor::EndNode();
 	if (node.isFrameworkLayer) {
-		ax::NodeEditor::PopStyleColor(2);
+		editor.PopStyleColor(2);
   }
 	if (node.externalLibrary) {
-		ed::PopStyleColor(2);
+		editor.PopStyleColor(2);
 	}
-	ImGui::PopID();
 }
 
 void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
@@ -3210,85 +3207,73 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 	if (!isOpen) {
 		nodeSettingsOpen_ = false;
 		selectedNodeId_ = 0;
-		if (nodeEditorContext_ != nullptr) {
-			ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
-			ax::NodeEditor::ClearSelection();
-			ax::NodeEditor::SetCurrentEditor(nullptr);
+		if (nodeEditorFramework_.IsInitialized()) {
+			nodeEditorFramework_.ClearSelection();
 		}
 	}
 }
 
-void QFE::APPLICATION::ProjectGenerator::HandleNewLinks()
+void QFE::APPLICATION::ProjectGenerator::HandleSelectionChanged(
+	const std::vector<QFE::FRAMEWORK::NodeEditorFramework::NodeId>&
+		selectedEditorNodes,
+	const std::vector<QFE::FRAMEWORK::NodeEditorFramework::LinkId>&
+		selectedEditorLinks)
 {
-	if (ax::NodeEditor::BeginCreate()) {
-		ax::NodeEditor::PinId firstPinId;
-		ax::NodeEditor::PinId secondPinId;
-		if (ax::NodeEditor::QueryNewLink(&firstPinId, &secondPinId)) {
-			std::uint64_t firstNodeId = 0;
-			std::uint64_t secondNodeId = 0;
-			bool firstIsOutput = false;
-			bool secondIsOutput = false;
-			const bool valid =
-				TryGetNodeForPin(firstPinId, firstNodeId, firstIsOutput) &&
-				TryGetNodeForPin(secondPinId, secondNodeId, secondIsOutput) &&
-				firstIsOutput != secondIsOutput;
-			const std::uint64_t sourceNodeId = firstIsOutput
-				? firstNodeId
-				: secondNodeId;
-			const std::uint64_t targetNodeId = firstIsOutput
-				? secondNodeId
-				: firstNodeId;
-			const bool validConnection = valid &&
-				sourceNodeId != targetNodeId &&
-				!LinkExists(sourceNodeId, targetNodeId) &&
-				!WouldCreateCycle(sourceNodeId, targetNodeId);
-
-			if (validConnection) {
-				if (ax::NodeEditor::AcceptNewItem()) {
-					links_.push_back({ nextLinkId_++, sourceNodeId, targetNodeId });
-					SimplifyDependencyLinks();
-				}
-			} else {
-				ax::NodeEditor::RejectNewItem();
-			}
+	selectedNodeIdsForContextMenu_.clear();
+	selectedLinkIdsForContextMenu_.clear();
+	selectedGroupIdsForContextMenu_.clear();
+	for (const auto selectedEditorNode : selectedEditorNodes) {
+		const std::uint64_t nodeId = DecodeNodeEditorNodeId(selectedEditorNode);
+		if (nodeId != 0 && FindNode(nodeId) != nullptr) {
+			selectedNodeIdsForContextMenu_.push_back(nodeId);
+			continue;
+		}
+		const std::uint64_t groupId = DecodeNodeEditorGroupId(selectedEditorNode);
+		if (groupId != 0 && FindGroup(groupId) != nullptr) {
+			selectedGroupIdsForContextMenu_.push_back(groupId);
 		}
 	}
-	ax::NodeEditor::EndCreate();
-}
-
-void QFE::APPLICATION::ProjectGenerator::HandleDeletedItems()
-{
-	if (ax::NodeEditor::BeginDelete()) {
-		ax::NodeEditor::LinkId deletedLinkId;
-		while (ax::NodeEditor::QueryDeletedLink(&deletedLinkId)) {
-			if (ax::NodeEditor::AcceptDeletedItem()) {
-				const std::uintptr_t encodedLinkId =
-					static_cast<std::uintptr_t>(deletedLinkId);
-				const std::uint64_t linkId =
-					(encodedLinkId & ~kNodeEditorIdPayloadMask) == kNodeEditorLinkIdTag
-					? static_cast<std::uint64_t>(
-						encodedLinkId & kNodeEditorIdPayloadMask)
-					: 0;
-				links_.erase(
-					std::remove_if(
-						links_.begin(), links_.end(),
-						[linkId](const ProjectLink& link) { return link.id == linkId; }),
-					links_.end());
-			}
-		}
-
-		ax::NodeEditor::NodeId deletedNodeId;
-		while (ax::NodeEditor::QueryDeletedNode(&deletedNodeId)) {
-			if (ax::NodeEditor::AcceptDeletedItem()) {
-				pendingNodeRemovalId_ = DecodeNodeEditorNodeId(deletedNodeId);
-			}
+	for (const auto selectedEditorLink : selectedEditorLinks) {
+		const std::uint64_t linkId = DecodeNodeEditorLinkId(selectedEditorLink);
+		if (linkId != 0 && FindLink(linkId) != nullptr) {
+			selectedLinkIdsForContextMenu_.push_back(linkId);
 		}
 	}
-	ax::NodeEditor::EndDelete();
+
+	if (!selectedGroupIdsForContextMenu_.empty()) {
+		selectedGroupId_ = selectedGroupIdsForContextMenu_.front();
+		groupSettingsOpen_ = true;
+		selectedNodeId_ = 0;
+		selectedLinkId_ = 0;
+		nodeSettingsOpen_ = false;
+		linkSettingsOpen_ = false;
+	} else if (!selectedNodeIdsForContextMenu_.empty()) {
+		selectedGroupId_ = 0;
+		groupSettingsOpen_ = false;
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
+		selectedNodeId_ = selectedNodeIdsForContextMenu_.front();
+		nodeSettingsOpen_ = true;
+	} else if (!selectedLinkIdsForContextMenu_.empty()) {
+		selectedGroupId_ = 0;
+		groupSettingsOpen_ = false;
+		selectedNodeId_ = 0;
+		nodeSettingsOpen_ = false;
+		selectedLinkId_ = selectedLinkIdsForContextMenu_.front();
+		linkSettingsOpen_ = true;
+	} else {
+		selectedNodeId_ = 0;
+		nodeSettingsOpen_ = false;
+		selectedLinkId_ = 0;
+		linkSettingsOpen_ = false;
+		selectedGroupId_ = 0;
+		groupSettingsOpen_ = false;
+	}
 }
 
 bool QFE::APPLICATION::ProjectGenerator::TryGetNodeForPin(
-	ax::NodeEditor::PinId pinId, std::uint64_t& nodeId, bool& isOutput) const
+	QFE::FRAMEWORK::NodeEditorFramework::PinId pinId,
+	std::uint64_t& nodeId, bool& isOutput) const
 {
 	for (const ProjectNode& node : nodes_) {
 		if (pinId == ToInputPinId(node.id)) {
@@ -4716,13 +4701,12 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration(
 			});
 	}
 	configuration["nodes"] = nlohmann::json::array();
-	if (nodeEditorContext_ != nullptr) {
-		ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
-	}
 	for (const ProjectNode& node : nodes_) {
-		const ImVec2 currentPosition = nodeEditorContext_ != nullptr
-			? ax::NodeEditor::GetNodePosition(ToEditorNodeId(node.id))
-			: node.initialPosition;
+		const ImVec2 editorPosition = nodeEditorFramework_.GetNodePosition(
+			ToEditorNodeId(node.id));
+		const ImVec2 currentPosition =
+			(editorPosition.x == FLT_MAX || editorPosition.y == FLT_MAX)
+			? node.initialPosition : editorPosition;
 		nlohmann::json nodeJson = nlohmann::json::object();
 		nodeJson["id"] = node.id;
 		nodeJson["name"] = node.name;
@@ -4791,10 +4775,6 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration(
 		};
 		configuration["groups"].push_back(std::move(groupJson));
 	}
-	if (nodeEditorContext_ != nullptr) {
-		ax::NodeEditor::SetCurrentEditor(nullptr);
-	}
-
 	configuration["links"] = nlohmann::json::array();
 	for (const ProjectLink& link : links_) {
 		const char* dependencyMode =
@@ -5185,21 +5165,19 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 	}
 	SimplifyDependencyLinks();
 
-	if (nodeEditorContext_ != nullptr) {
-		ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
-		ax::NodeEditor::ClearSelection();
+	if (nodeEditorFramework_.IsInitialized()) {
+		nodeEditorFramework_.ClearSelection();
 		for (const ProjectNode& node : nodes_) {
-			ax::NodeEditor::SetNodePosition(
+			nodeEditorFramework_.SetNodePosition(
 				ToEditorNodeId(node.id), node.initialPosition);
 		}
 		for (const ProjectGroup& group : groups_) {
-			const ax::NodeEditor::NodeId editorGroupId =
+			const QFE::FRAMEWORK::NodeEditorFramework::NodeId editorGroupId =
 				ToEditorGroupId(group.id);
-			ax::NodeEditor::SetNodePosition(
+			nodeEditorFramework_.SetNodePosition(
 				editorGroupId, group.initialPosition);
-			ax::NodeEditor::SetGroupSize(editorGroupId, group.size);
+			nodeEditorFramework_.SetGroupSize(editorGroupId, group.size);
 		}
-		ax::NodeEditor::SetCurrentEditor(nullptr);
 	}
 
 	const std::string configurationPathString =
@@ -5231,7 +5209,7 @@ bool QFE::APPLICATION::ProjectGenerator::GenerateFromConfiguration(
 
 void QFE::APPLICATION::ProjectGenerator::ArrangeNodesLeftToRight()
 {
-	if (nodeEditorContext_ == nullptr) {
+	if (!nodeEditorFramework_.IsInitialized()) {
 		return;
 	}
 
@@ -5278,7 +5256,6 @@ void QFE::APPLICATION::ProjectGenerator::ArrangeNodesLeftToRight()
 	std::unordered_map<std::uint32_t, std::unordered_set<std::uint32_t>>
 		usedRowsByLevel;
 	std::unordered_map<std::uint64_t, std::uint32_t> rowByNodeId;
-	ax::NodeEditor::SetCurrentEditor(nodeEditorContext_);
 	for (ProjectNode* node : orderedNodes) {
 		const std::uint32_t level = levels[node->id];
 		std::uint64_t dependencyRowTotal = 0;
@@ -5307,10 +5284,9 @@ void QFE::APPLICATION::ProjectGenerator::ArrangeNodesLeftToRight()
 			static_cast<float>(level) * 260.0f,
 			static_cast<float>(row) * 180.0f);
 		node->positionInitialized = true;
-		ax::NodeEditor::SetNodePosition(
+		nodeEditorFramework_.SetNodePosition(
 			ToEditorNodeId(node->id), node->initialPosition);
 	}
-	ax::NodeEditor::SetCurrentEditor(nullptr);
 }
 
 const char* QFE::APPLICATION::ProjectGenerator::GetPremakeKindName(

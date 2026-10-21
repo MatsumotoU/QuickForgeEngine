@@ -1,5 +1,6 @@
 #pragma once
 #include "DirectoryManager.h"
+#include "framework/gui/GuiNodeFramework.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -155,8 +156,10 @@ namespace QFE::APPLICATION {
 		ProjectNode* FindNode(std::uint64_t nodeId);
 		ProjectLink* FindLink(std::uint64_t linkId);
 		void RemoveNode(std::uint64_t nodeId);
-		void DrawProjectGroup(ProjectGroup& group);
-		void DrawProjectNode(ProjectNode& node);
+		void DrawProjectGroup(
+			QFE::FRAMEWORK::NodeEditorFramework& editor, ProjectGroup& group);
+		void DrawProjectNode(
+			QFE::FRAMEWORK::NodeEditorFramework& editor, ProjectNode& node);
 		void DrawNodeContextMenu(
 			const std::vector<std::uint64_t>& selectedNodeIds,
 			const std::vector<std::uint64_t>& selectedLinkIds,
@@ -177,9 +180,13 @@ namespace QFE::APPLICATION {
 		ProjectGroup* FindGroup(std::uint64_t groupId);
 		const ProjectGroup* FindGroupForNode(std::uint64_t nodeId) const;
 		void RemoveGroup(std::uint64_t groupId);
-		void HandleNewLinks();
-		void HandleDeletedItems();
-		bool TryGetNodeForPin(ax::NodeEditor::PinId pinId,
+		void HandleSelectionChanged(
+			const std::vector<QFE::FRAMEWORK::NodeEditorFramework::NodeId>&
+				selectedEditorNodes,
+			const std::vector<QFE::FRAMEWORK::NodeEditorFramework::LinkId>&
+				selectedEditorLinks);
+		bool TryGetNodeForPin(
+			QFE::FRAMEWORK::NodeEditorFramework::PinId pinId,
 			std::uint64_t& nodeId, bool& isOutput) const;
 		bool LinkExists(std::uint64_t sourceNodeId, std::uint64_t targetNodeId) const;
 		bool WouldCreateCycle(std::uint64_t sourceNodeId,
@@ -200,7 +207,7 @@ namespace QFE::APPLICATION {
 		static const char* GetPremakeKindName(PremakeProjectKind kind);
 
 		DirectoryManager directoryManager_;
-		ax::NodeEditor::EditorContext* nodeEditorContext_ = nullptr;
+		QFE::FRAMEWORK::NodeEditorFramework nodeEditorFramework_;
 		std::vector<ProjectNode> nodes_;
 		std::vector<ProjectLink> links_;
 		std::vector<ProjectGroup> groups_;
@@ -211,6 +218,9 @@ namespace QFE::APPLICATION {
 		std::uint64_t selectedNodeId_ = 0;
 		std::uint64_t selectedLinkId_ = 0;
 		std::uint64_t selectedGroupId_ = 0;
+		std::vector<std::uint64_t> selectedNodeIdsForContextMenu_;
+		std::vector<std::uint64_t> selectedLinkIdsForContextMenu_;
+		std::vector<std::uint64_t> selectedGroupIdsForContextMenu_;
 		bool nodeSettingsOpen_ = false;
 		bool linkSettingsOpen_ = false;
 		bool groupSettingsOpen_ = false;

@@ -34,6 +34,8 @@ namespace QFE::FRAMEWORK {
 			NodeId id;
 			ImVec2 position = ImVec2(0.0f, 0.0f);
 			bool positionInitialized = false;
+			bool isGroup = false;
+			ImVec2 groupSize = ImVec2(0.0f, 0.0f);
 			NodeDrawCallback draw;
 		};
 
@@ -103,6 +105,18 @@ namespace QFE::FRAMEWORK {
 
 		void SetNodePosition(NodeId nodeId, const ImVec2& position);
 		ImVec2 GetNodePosition(NodeId nodeId) const;
+		ImVec2 GetNodeSize(NodeId nodeId) const;
+		void SetGroupSize(NodeId nodeId, const ImVec2& size);
+		void Group(const ImVec2& size);
+		void ClearSelection();
+		void SelectNode(NodeId nodeId);
+		ImVec2 ScreenToCanvas(const ImVec2& screenPosition) const;
+		ImVec4 GetNodePadding() const;
+		void PushStyleColor(ax::NodeEditor::StyleColor index,
+			const ImVec4& color);
+		void PopStyleColor(int count = 1);
+		ax::NodeEditor::Style& GetStyle();
+		const ax::NodeEditor::Style& GetStyle() const;
 
 		ax::NodeEditor::EditorContext* GetEditorContext() const;
 
