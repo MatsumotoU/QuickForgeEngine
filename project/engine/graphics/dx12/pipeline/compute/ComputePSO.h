@@ -5,7 +5,7 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 
-#include "../pso/RootParameter.h"
+#include "graphics/dx12/pipeline/pso/RootParameter.h"
 
 namespace QFE::GRAPHIC {
 	/// @brief コンピュートパイプラインの管理クラス

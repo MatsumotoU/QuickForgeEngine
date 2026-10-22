@@ -17,5 +17,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(onCollisionEnterScriptFunctionName)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(SphereColliderComponent)
 }

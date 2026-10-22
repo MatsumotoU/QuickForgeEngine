@@ -4,36 +4,55 @@
 #include <unordered_set>
 #include <vector>
 #include <set>
+#include <memory>
+#include <utility>
 #include <nlohmann/json.hpp>
 #include "component/JsonArchive.h"
-#include "component/ComponentAutoRegistry.h"
-#include "IEntityManager.h"
+#include "component/StaticComponentRegistry.h"
+#include "core/interface/IEntityManager.h"
 
 namespace QFE {
 	class EntityManager final: public IEntityManager {
 	private:
-		std::unordered_map<size_t, std::unique_ptr<IComponentStorage>> componentStorages;
+		std::vector<std::unique_ptr<IComponentStorage>> componentStorages;
 		uint32_t nextEntityId_;
 		std::unordered_set<uint32_t> activeEntityIds_;
 		std::vector<uint32_t> entitiesToRemove_;
 
+		std::weak_ptr<const QFE::StaticComponentRegistry> registry_;
+
+		std::shared_ptr<const QFE::StaticComponentRegistry> LockRegistry() const;
+		void CreateComponentStorages();
+
+		template <typename T>
+		uint32_t GetStorageIndex() const {
+			return LockRegistry()->GetComponentStorageIndexForType<T>();
+		}
 	public:
 		~EntityManager() = default;
+		EntityManager(const EntityManager&) = delete;
+		EntityManager& operator=(const EntityManager&) = delete;
+		EntityManager(EntityManager&&) = delete;
+		EntityManager& operator=(EntityManager&&) = delete;
 
-		/// @brief コンストラクタ。コンポーネントの自動登録を行う。
-		EntityManager();
+		/// @brief 凍結済みレジストリを参照し、登録済みコンポーネントのストレージを構築する。
+		explicit EntityManager(std::weak_ptr<const QFE::StaticComponentRegistry> registry);
+		/// @brief DLLのアンロード前に、登録された型に依存するStorageを全て破棄する。
+		void ReleaseComponentRegistryForReload();
+		/// @brief 新しいRegistryへ接続し、空のStorageを再構築する。
+		void BindComponentRegistryAfterReload(
+			std::weak_ptr<const QFE::StaticComponentRegistry> registry);
 		/// @brief フレームの終了時に、削除予定のエンティティを削除する。
 		void EndFrame();
 
 		/// @brief エンティティマネージャをJSONにシリアライズする。
 		nlohmann::json Serialize() const;
-
+		/// @brief エンティティのコンポーネントをJSONにシリアライズする。
+		nlohmann::json SerializeComponent(uint32_t entityId, const std::string& componentTypeName) const;
 		/// @brief エンティティのコンポーネントをJSONにシリアライズする。
 		nlohmann::json SerializeEntityComponents(uint32_t entityId) const;
 		/// @brief エンティティのコンポーネントをJSONから復元する。
 		void DeserializeEntityComponents(uint32_t entityId, const nlohmann::json& componentsJson);
-		/// @brief エンティティのコンポーネントをJSONから復元する。
-		nlohmann::json SerializeComponent(uint32_t entityId, const std::string& componentTypeName) const;
 
 		/// @brief エンティティIDから、コンポーネント型名の一覧を取得する。
 		std::vector<std::string> GetComponentTypeNames(uint32_t entityId) const;
@@ -55,6 +74,10 @@ namespace QFE {
 		bool ForceCreateEntity(uint32_t id);
 		/// @brief エンティティを削除予定リストに追加する。フレーム終了時に削除される。
 		void RemoveEntity(uint32_t id) override;
+		/// @brief エンティティの削除予定を取り消す。
+		void CancelEntityRemoval(uint32_t id);
+		/// @brief 指定したエンティティの子孫エンティティIDを取得する。
+		std::vector<uint32_t> GetDescendantEntityIds(uint32_t id) const;
 		/// @brief エンティティが有効かどうかを判定する。
 		bool IsActiveEntity(uint32_t id) const;
 
@@ -66,27 +89,30 @@ namespace QFE {
 		/// @brief エンティティにデフォルトコンポーネントを追加する。既に存在する場合は上書きする。
 		template <typename T>
 		T& AddDefaultComponent(uint32_t id) {
-			size_t typeId = typeid(T).hash_code();
-			if (componentStorages.find(typeId) == componentStorages.end()) {
-				componentStorages[typeId] = std::make_unique<ComponentStorage<T>>();
+			const uint32_t storageIndex = GetStorageIndex<T>();
+			if (storageIndex == StaticComponentRegistry::InvalidStorageIndex ||
+				storageIndex >= componentStorages.size()) {
+				throw std::runtime_error("Component type is not registered");
 			}
-			auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages.at(typeId));
+			auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages[storageIndex]);
 			storage.AddDefaultComponent(id);
 			return storage.GetComponent(id);
 		}
 		/// @brief エンティティにコンポーネントが存在するかを判定する。
 		template <typename T>
 		bool HasComponentStorage() const {
-			size_t typeId = typeid(T).hash_code();
-			return componentStorages.find(typeId) != componentStorages.end();
+			const uint32_t storageIndex = GetStorageIndex<T>();
+			return storageIndex != StaticComponentRegistry::InvalidStorageIndex &&
+				storageIndex < componentStorages.size() && componentStorages[storageIndex] != nullptr;
 		}
 		/// @brief エンティティにコンポーネントが存在するかを判定する。
 		template <typename T>
 		bool HasComponent(uint32_t id) const {
 			if (id >= nextEntityId_) return false;
-			size_t typeId = typeid(T).hash_code();
-			if (componentStorages.find(typeId) != componentStorages.end()) {
-				const auto& storage = static_cast<const ComponentStorage<T>&>(*componentStorages.at(typeId));
+			const uint32_t storageIndex = GetStorageIndex<T>();
+			if (storageIndex != StaticComponentRegistry::InvalidStorageIndex &&
+				storageIndex < componentStorages.size()) {
+				const auto& storage = static_cast<const ComponentStorage<T>&>(*componentStorages[storageIndex]);
 				return storage.HasComponent(id);
 			}
 			return false;
@@ -94,29 +120,27 @@ namespace QFE {
 		/// @brief エンティティにコンポーネントを追加する。既に存在する場合は上書きする。
 		template <typename T, typename... Args>
 		void EmplaceComponent(uint32_t id, Args&&... args) {
-			size_t typeId = typeid(T).hash_code();
-			// 初期化時点で必ず生成されているため、ここの if 文すら本来は通過しません（より安全・高速化）
-			if (componentStorages.find(typeId) == componentStorages.end()) {
-				componentStorages[typeId] = std::make_unique<ComponentStorage<T>>();
+			const uint32_t storageIndex = GetStorageIndex<T>();
+			if (storageIndex == StaticComponentRegistry::InvalidStorageIndex ||
+				storageIndex >= componentStorages.size()) {
+				throw std::runtime_error("Component type is not registered");
 			}
-			auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages[typeId]);
+			auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages[storageIndex]);
 			storage.AddComponent(id, T(std::forward<Args>(args)...));
 		}
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントの参照を取得する。
 		template <typename T>
 		T& GetComponent(uint32_t id) {
-			size_t typeId = typeid(T).hash_code();
 			if (HasComponent<T>(id)) {
-				auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages.at(typeId));
+				auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages[GetStorageIndex<T>()]);
 				return storage.GetComponent(id);
 			}
 			throw std::runtime_error("Component not found");
 		}
 		template <typename T>
 		const T& GetComponent(uint32_t id) const {
-			size_t typeId = typeid(T).hash_code();
 			if (HasComponent<T>(id)) {
-				const auto& storage = static_cast<const ComponentStorage<T>&>(*componentStorages.at(typeId));
+				const auto& storage = static_cast<const ComponentStorage<T>&>(*componentStorages[GetStorageIndex<T>()]);
 				return storage.GetComponent(id);
 			}
 			throw std::runtime_error("Component not found");
@@ -124,18 +148,16 @@ namespace QFE {
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントのポインタを取得する。
 		template <typename T>
 		T* GetComponentPtr(uint32_t id) {
-			size_t typeId = typeid(T).hash_code();
 			if (HasComponent<T>(id)) {
-				auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages.at(typeId));
+				auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages[GetStorageIndex<T>()]);
 				return storage.GetComponentPtr(id);
 			}
 			return nullptr;
 		}
 		template <typename T>
 		const T* GetComponentPtr(uint32_t id) const {
-			size_t typeId = typeid(T).hash_code();
 			if (HasComponent<T>(id)) {
-				const auto& storage = static_cast<const ComponentStorage<T>&>(*componentStorages.at(typeId));
+				const auto& storage = static_cast<const ComponentStorage<T>&>(*componentStorages[GetStorageIndex<T>()]);
 				return storage.GetComponentPtr(id);
 			}
 			return nullptr;
@@ -143,26 +165,29 @@ namespace QFE {
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを削除する。
 		template <typename T>
 		void RemoveComponent(uint32_t id) {
-			size_t typeId = typeid(T).hash_code();
-			if (componentStorages.find(typeId) != componentStorages.end()) {
-				auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages[typeId]);
+			const uint32_t storageIndex = GetStorageIndex<T>();
+			if (storageIndex != StaticComponentRegistry::InvalidStorageIndex &&
+				storageIndex < componentStorages.size()) {
+				auto& storage = static_cast<ComponentStorage<T>&>(*componentStorages[storageIndex]);
 				storage.RemoveComponent(id);
 			}
 		}
 		/// @brief コンポーネントストレージを取得する。
 		template <typename T>
 		ComponentStorage<T>& GetComponentStorage() {
-			size_t typeId = typeid(T).hash_code();
-			if (componentStorages.find(typeId) != componentStorages.end()) {
-				return static_cast<ComponentStorage<T>&>(*componentStorages.at(typeId));
+			const uint32_t storageIndex = GetStorageIndex<T>();
+			if (storageIndex != StaticComponentRegistry::InvalidStorageIndex &&
+				storageIndex < componentStorages.size()) {
+				return static_cast<ComponentStorage<T>&>(*componentStorages[storageIndex]);
 			}
 			throw std::runtime_error("Component storage not found");
 		}
 		template <typename T>
 		const ComponentStorage<T>& GetComponentStorage() const {
-			size_t typeId = typeid(T).hash_code();
-			if (componentStorages.find(typeId) != componentStorages.end()) {
-				return static_cast<const ComponentStorage<T>&>(*componentStorages.at(typeId));
+			const uint32_t storageIndex = GetStorageIndex<T>();
+			if (storageIndex != StaticComponentRegistry::InvalidStorageIndex &&
+				storageIndex < componentStorages.size()) {
+				return static_cast<const ComponentStorage<T>&>(*componentStorages[storageIndex]);
 			}
 			throw std::runtime_error("Component storage not found");
 		}
@@ -174,7 +199,7 @@ namespace QFE {
 				storage.Each(func);
 			}
 		}
-		/// @brief コンポーネントストレージを取得する。
+		/// @brief コンポーネントストレージを取得する。const版。
 		template <typename T>
 		void Each(const std::function<void(uint32_t, const T&)>& func) const {
 			if (HasComponentStorage<T>()) {
@@ -182,6 +207,58 @@ namespace QFE {
 				storage.Each(func);
 			}
 		}
+		
+		/// @brief 2つのコンポーネントストレージを取得し、両方に存在するエンティティIDに対して関数を実行する。
+		template <typename T1, typename T2>
+		void Each(const std::function<void(uint32_t, T1&, T2&)>& func) {
+			if (HasComponentStorage<T1>() && HasComponentStorage<T2>()) {
+				// 2つのコンポーネントストレージを取得する
+				auto& storage1 = GetComponentStorage<T1>();
+				auto& storage2 = GetComponentStorage<T2>();
+				// 少ない方を基点にしてループする
+				if(storage1.size() < storage2.size()) {
+					storage1.Each([&](uint32_t id, T1& comp1) {
+						if (storage2.HasComponent(id)) {
+							T2& comp2 = storage2.GetComponent(id);
+							func(id, comp1, comp2);
+						}
+					});
+				} else {
+					storage2.Each([&](uint32_t id, T2& comp2) {
+						if (storage1.HasComponent(id)) {
+							T1& comp1 = storage1.GetComponent(id);
+							func(id, comp1, comp2);
+						}
+					});
+				}
+			}
+		}
+		/// @brief 2つのコンポーネントストレージを取得し、両方に存在するエンティティIDに対して関数を実行する。const版。
+		template <typename T1, typename T2>
+		void Each(const std::function<void(uint32_t, const T1&, const T2&)>& func) const {
+			if (HasComponentStorage<T1>() && HasComponentStorage<T2>()) {
+				// 2つのコンポーネントストレージを取得する
+				const auto& storage1 = GetComponentStorage<T1>();
+				const auto& storage2 = GetComponentStorage<T2>();
+				// 少ない方を基点にしてループする
+				if(storage1.size() < storage2.size()) {
+					storage1.Each([&](uint32_t id, const T1& comp1) {
+						if (storage2.HasComponent(id)) {
+							const T2& comp2 = storage2.GetComponent(id);
+							func(id, comp1, comp2);
+						}
+					});
+				} else {
+					storage2.Each([&](uint32_t id, const T2& comp2) {
+						if (storage1.HasComponent(id)) {
+							const T1& comp1 = storage1.GetComponent(id);
+							func(id, comp1, comp2);
+						}
+					});
+				}
+			}
+		}
+
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを追加する。既に存在する場合は上書きする。
 		void AddDefaultComponent(uint32_t id, const std::string& componentTypeName);
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントを削除する。

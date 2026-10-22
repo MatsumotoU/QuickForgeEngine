@@ -1,0 +1,1856 @@
+{
+    "commonPremakeSettings": {
+        "architecture": "x64",
+        "buildOptions": "/utf-8",
+        "configurationSettings": {
+            "Debug": {
+                "architecture": "x64",
+                "buildOptions": "/utf-8",
+                "cppDialect": "C++20",
+                "debugDirectory": ".",
+                "defines": "_DEBUG\nQFE_OPTIMIZE_OFF\nQFE_MODE_DEBUG\nUSE_IMGUI",
+                "flags": "MultiProcessorCompile",
+                "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/upstream/include\nexternals/imgui/imgui-node-editor-0.9.3",
+                "optimize": "Off",
+                "runtime": "Debug",
+                "staticRuntime": true,
+                "symbols": "On"
+            },
+            "Development": {
+                "architecture": "x64",
+                "buildOptions": "/utf-8",
+                "cppDialect": "C++20",
+                "debugDirectory": ".",
+                "defines": "NDEBUG\nQFE_OPTIMIZE_OFF\nQFE_MODE_DEVELOPMENT\nUSE_IMGUI",
+                "flags": "MultiProcessorCompile",
+                "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/upstream/include\nexternals/imgui/imgui-node-editor-0.9.3",
+                "optimize": "Off",
+                "runtime": "Release",
+                "staticRuntime": true,
+                "symbols": "On"
+            },
+            "Release": {
+                "architecture": "x64",
+                "buildOptions": "/utf-8",
+                "cppDialect": "C++20",
+                "debugDirectory": ".",
+                "defines": "NDEBUG\nQFE_OPTIMIZE_ON\nQFE_MODE_RELEASE\nNO_IMGUI",
+                "flags": "MultiProcessorCompile",
+                "includePaths": "engine\nengine/core\nexternals\nexternals/imgui\nexternals/assimp\nexternals/assimp/upstream/include\nexternals/imgui/imgui-node-editor-0.9.3",
+                "optimize": "On",
+                "runtime": "Release",
+                "staticRuntime": true,
+                "symbols": "Off"
+            }
+        },
+        "configurations": "Debug\nDevelopment\nRelease",
+        "cppDialect": "C++20",
+        "debugDirectory": ".",
+        "defines": "",
+        "flags": "MultiProcessorCompile",
+        "includePaths": "",
+        "staticRuntime": true,
+        "workspaceName": "QuickForgeEngine"
+    },
+    "groups": [
+        {
+            "id": 1,
+            "name": "External",
+            "nodeIds": [
+                1,
+                2,
+                3,
+                28
+            ],
+            "position": {
+                "x": -160.0,
+                "y": -176.0
+            },
+            "size": {
+                "x": 650.0,
+                "y": 672.0
+            }
+        },
+        {
+            "id": 2,
+            "name": "00_System",
+            "nodeIds": [
+                4,
+                5,
+                29
+            ],
+            "position": {
+                "x": -80.0,
+                "y": 480.0
+            },
+            "size": {
+                "x": 576.0,
+                "y": 528.0
+            }
+        },
+        {
+            "id": 3,
+            "name": "01_SubSystems",
+            "nodeIds": [
+                6,
+                7,
+                8,
+                9,
+                10,
+                30
+            ],
+            "position": {
+                "x": 672.0,
+                "y": -176.0
+            },
+            "size": {
+                "x": 464.0,
+                "y": 1052.0
+            }
+        },
+        {
+            "id": 4,
+            "name": "02_Middleware",
+            "nodeIds": [
+                11,
+                12,
+                13,
+                14
+            ],
+            "position": {
+                "x": 752.0,
+                "y": 1008.0
+            },
+            "size": {
+                "x": 630.0,
+                "y": 992.0
+            }
+        },
+        {
+            "id": 5,
+            "name": "03_Frameworks",
+            "nodeIds": [
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                31
+            ],
+            "position": {
+                "x": 1376.0,
+                "y": -145.0
+            },
+            "size": {
+                "x": 758.0,
+                "y": 908.0
+            }
+        },
+        {
+            "id": 6,
+            "name": "04_Applications",
+            "nodeIds": [
+                23,
+                24,
+                25,
+                26
+            ],
+            "position": {
+                "x": 2240.0,
+                "y": 560.0
+            },
+            "size": {
+                "x": 390.0,
+                "y": 850.0
+            }
+        },
+        {
+            "id": 7,
+            "name": "Tools",
+            "nodeIds": [
+                27
+            ],
+            "position": {
+                "x": 2224.0,
+                "y": -144.0
+            },
+            "size": {
+                "x": 390.0,
+                "y": 310.0
+            }
+        }
+    ],
+    "links": [
+        {
+            "id": 1,
+            "sourceNodeId": 5,
+            "targetNodeId": 6
+        },
+        {
+            "id": 2,
+            "sourceNodeId": 2,
+            "targetNodeId": 6
+        },
+        {
+            "id": 3,
+            "sourceNodeId": 5,
+            "targetNodeId": 7
+        },
+        {
+            "id": 4,
+            "sourceNodeId": 3,
+            "targetNodeId": 7
+        },
+        {
+            "id": 5,
+            "sourceNodeId": 5,
+            "targetNodeId": 8
+        },
+        {
+            "id": 6,
+            "sourceNodeId": 2,
+            "targetNodeId": 8
+        },
+        {
+            "id": 7,
+            "sourceNodeId": 5,
+            "targetNodeId": 9
+        },
+        {
+            "id": 8,
+            "sourceNodeId": 5,
+            "targetNodeId": 10
+        },
+        {
+            "id": 9,
+            "sourceNodeId": 5,
+            "targetNodeId": 11
+        },
+        {
+            "id": 10,
+            "sourceNodeId": 1,
+            "targetNodeId": 11
+        },
+        {
+            "id": 11,
+            "sourceNodeId": 5,
+            "targetNodeId": 12
+        },
+        {
+            "id": 13,
+            "sourceNodeId": 14,
+            "targetNodeId": 13
+        },
+        {
+            "id": 14,
+            "sourceNodeId": 5,
+            "targetNodeId": 14
+        },
+        {
+            "id": 17,
+            "sourceNodeId": 16,
+            "targetNodeId": 15
+        },
+        {
+            "id": 18,
+            "sourceNodeId": 18,
+            "targetNodeId": 15
+        },
+        {
+            "id": 19,
+            "sourceNodeId": 19,
+            "targetNodeId": 15
+        },
+        {
+            "id": 20,
+            "sourceNodeId": 21,
+            "targetNodeId": 15
+        },
+        {
+            "id": 21,
+            "sourceNodeId": 17,
+            "targetNodeId": 15
+        },
+        {
+            "id": 22,
+            "sourceNodeId": 20,
+            "targetNodeId": 15
+        },
+        {
+            "id": 25,
+            "sourceNodeId": 7,
+            "targetNodeId": 16
+        },
+        {
+            "id": 27,
+            "sourceNodeId": 6,
+            "targetNodeId": 17
+        },
+        {
+            "id": 30,
+            "sourceNodeId": 7,
+            "targetNodeId": 18
+        },
+        {
+            "id": 31,
+            "sourceNodeId": 8,
+            "targetNodeId": 18
+        },
+        {
+            "id": 34,
+            "sourceNodeId": 9,
+            "targetNodeId": 19
+        },
+        {
+            "id": 36,
+            "sourceNodeId": 10,
+            "targetNodeId": 20
+        },
+        {
+            "id": 38,
+            "sourceNodeId": 13,
+            "targetNodeId": 21
+        },
+        {
+            "id": 41,
+            "sourceNodeId": 11,
+            "targetNodeId": 22
+        },
+        {
+            "id": 45,
+            "sourceNodeId": 11,
+            "targetNodeId": 23
+        },
+        {
+            "id": 46,
+            "sourceNodeId": 12,
+            "targetNodeId": 23
+        },
+        {
+            "id": 53,
+            "sourceNodeId": 11,
+            "targetNodeId": 25
+        },
+        {
+            "id": 56,
+            "sourceNodeId": 15,
+            "targetNodeId": 25
+        },
+        {
+            "id": 58,
+            "sourceNodeId": 12,
+            "targetNodeId": 25
+        },
+        {
+            "id": 66,
+            "sourceNodeId": 8,
+            "targetNodeId": 26
+        },
+        {
+            "id": 67,
+            "sourceNodeId": 6,
+            "targetNodeId": 26
+        },
+        {
+            "id": 68,
+            "sourceNodeId": 7,
+            "targetNodeId": 26
+        },
+        {
+            "id": 69,
+            "sourceNodeId": 12,
+            "targetNodeId": 26
+        },
+        {
+            "id": 70,
+            "sourceNodeId": 11,
+            "targetNodeId": 26
+        },
+        {
+            "id": 71,
+            "sourceNodeId": 13,
+            "targetNodeId": 26
+        },
+        {
+            "id": 87,
+            "sourceNodeId": 15,
+            "targetNodeId": 23
+        },
+        {
+            "id": 88,
+            "sourceNodeId": 28,
+            "targetNodeId": 11
+        },
+        {
+            "id": 89,
+            "sourceNodeId": 5,
+            "targetNodeId": 29
+        },
+        {
+            "id": 90,
+            "sourceNodeId": 5,
+            "targetNodeId": 30
+        },
+        {
+            "id": 91,
+            "sourceNodeId": 30,
+            "targetNodeId": 31
+        },
+        {
+            "id": 92,
+            "sourceNodeId": 31,
+            "targetNodeId": 15
+        },
+        {
+            "id": 93,
+            "sourceNodeId": 16,
+            "targetNodeId": 27
+        },
+        {
+            "id": 94,
+            "sourceNodeId": 17,
+            "targetNodeId": 27
+        },
+        {
+            "id": 95,
+            "sourceNodeId": 18,
+            "targetNodeId": 27
+        }
+    ],
+    "nextGroupId": 8,
+    "nextLinkId": 96,
+    "nextNodeId": 32,
+    "nodes": [
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "externals",
+            "externalLinks": [],
+            "id": 1,
+            "includePaths": "",
+            "kind": 4,
+            "libraryDirectories": [],
+            "name": "externals",
+            "position": {
+                "x": -112.0,
+                "y": -128.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "ExternalFolders",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/imgui",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/imgui",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/imgui",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "externals/imgui",
+            "externalLinks": [],
+            "id": 2,
+            "includePaths": "externals/imgui",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "imgui",
+            "position": {
+                "x": 144.0,
+                "y": 47.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "ImGui",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd"
+                }
+            },
+            "directoryPath": "externals/DirectXTex",
+            "externalLinks": [],
+            "id": 3,
+            "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "DirectXTex",
+            "position": {
+                "x": 144.0,
+                "y": 192.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "cd /d \"C:/Users/yutam/source/repos/QuickForgeEngine/project/externals/DirectXTex/Shaders\" && CompileShaders.cmd",
+            "projectName": "DirectXTex",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 4,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/resources",
+            "externalLinks": [],
+            "id": 4,
+            "includePaths": "",
+            "kind": 4,
+            "libraryDirectories": [],
+            "name": "resources",
+            "position": {
+                "x": -32.0,
+                "y": 528.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "EngineResources",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/core",
+            "externalLinks": [],
+            "id": 5,
+            "includePaths": "%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "core",
+            "position": {
+                "x": -22.0,
+                "y": 719.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "EngineCore",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/window",
+            "externalLinks": [],
+            "id": 6,
+            "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "window",
+            "position": {
+                "x": 720.0,
+                "y": -128.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "WindowingSystem",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/graphics",
+            "externalLinks": [],
+            "id": 7,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "graphics",
+            "position": {
+                "x": 720.0,
+                "y": 52.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "GraphicEngine",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/gui",
+            "externalLinks": [],
+            "id": 8,
+            "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "gui",
+            "position": {
+                "x": 720.0,
+                "y": 223.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "GUIEngine",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/input",
+            "externalLinks": [],
+            "id": 9,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "input",
+            "position": {
+                "x": 720.0,
+                "y": 412.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Input",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/physics",
+            "externalLinks": [],
+            "id": 10,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "physics",
+            "position": {
+                "x": 720.0,
+                "y": 592.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "PhysicsEngine",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/assetfactory",
+            "externalLinks": [],
+            "id": 11,
+            "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "assetfactory",
+            "position": {
+                "x": 1040.0,
+                "y": 1232.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "EngineAssetsFactory",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/camera",
+            "externalLinks": [],
+            "id": 12,
+            "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "camera",
+            "position": {
+                "x": 1040.0,
+                "y": 1412.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Camera",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/scene",
+            "externalLinks": [],
+            "id": 13,
+            "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "scene",
+            "position": {
+                "x": 1040.0,
+                "y": 1592.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Scene",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/core/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/components",
+            "externalLinks": [],
+            "id": 14,
+            "includePaths": "%{wks.location}/engine/core/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "components",
+            "position": {
+                "x": 778.0,
+                "y": 1791.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Components",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/application",
+            "externalLinks": [],
+            "id": 15,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "application",
+            "position": {
+                "x": 1904.0,
+                "y": 607.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "ApplicationFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/graphic",
+            "externalLinks": [],
+            "id": 16,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "graphic",
+            "position": {
+                "x": 1424.0,
+                "y": -97.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "GraphicFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/window",
+            "externalLinks": [],
+            "id": 17,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "window",
+            "position": {
+                "x": 1424.0,
+                "y": -1.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "WindowFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/gui",
+            "externalLinks": [],
+            "id": 18,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "gui",
+            "position": {
+                "x": 1424.0,
+                "y": 95.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "GuiFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/input",
+            "externalLinks": [],
+            "id": 19,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "input",
+            "position": {
+                "x": 1424.0,
+                "y": 191.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "InputFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/physics",
+            "externalLinks": [],
+            "id": 20,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "physics",
+            "position": {
+                "x": 1424.0,
+                "y": 287.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "PhysicsFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/scene",
+            "externalLinks": [],
+            "id": 21,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "scene",
+            "position": {
+                "x": 1424.0,
+                "y": 383.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "SceneFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/assets",
+            "externalLinks": [],
+            "id": 22,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "assets",
+            "position": {
+                "x": 1424.0,
+                "y": 479.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "AssetsFramework",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "editor",
+            "externalLinks": [],
+            "id": 23,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+            "kind": 3,
+            "libraryDirectories": [],
+            "name": "editor",
+            "position": {
+                "x": 2288.0,
+                "y": 640.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "GameEditor",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "sandbox",
+            "externalLinks": [],
+            "id": 24,
+            "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
+            "kind": 3,
+            "libraryDirectories": [],
+            "name": "sandbox",
+            "position": {
+                "x": 2288.0,
+                "y": 820.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Sandbox",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "runtime",
+            "externalLinks": [],
+            "id": 25,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+            "kind": 3,
+            "libraryDirectories": [],
+            "name": "runtime",
+            "position": {
+                "x": 2288.0,
+                "y": 1000.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Runtime",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "launcher",
+            "externalLinks": [],
+            "id": 26,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
+            "kind": 3,
+            "libraryDirectories": [],
+            "name": "launcher",
+            "position": {
+                "x": 2288.0,
+                "y": 1180.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Launcher",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
+                    "kind": 3,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "tools/project-generator",
+            "externalLinks": [],
+            "id": 27,
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
+            "kind": 3,
+            "libraryDirectories": [],
+            "name": "project-generator",
+            "position": {
+                "x": 2256.0,
+                "y": -97.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "ProjectGenerator",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "WIN32_LEAN_AND_MEAN\nUNICODE\n_UNICODE\nOPENDDL_STATIC_LIBARY\nOPENDDLPARSER_BUILD\nASSIMP_BUILD_NO_M3D_IMPORTER\nASSIMP_BUILD_NO_M3D_EXPORTER\nASSIMP_BUILD_NO_C4D_IMPORTER\nMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0\nASSIMP_IMPORTER_GLTF_USE_OPEN3DGC=1\nRAPIDJSON_HAS_STDSTRING=1\nRAPIDJSON_NOMEMBERITERATORCLASS\nNO_FSEEKO\n_SCL_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_DEPRECATE\n_CRT_NONSTDC_NO_DEPRECATE",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/assimp/upstream/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/assimp/upstream/code/\n%{wks.location}/externals/assimp/upstream/contrib/\n%{wks.location}/externals/assimp/upstream/contrib/zlib/\n%{wks.location}/externals/assimp/upstream/contrib/pugixml/src/\n%{wks.location}/externals/assimp/upstream/contrib/rapidjson/include/\n%{wks.location}/externals/assimp/upstream/contrib/unzip/\n%{wks.location}/externals/assimp/upstream/contrib/openddlparser/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "WIN32_LEAN_AND_MEAN\nUNICODE\n_UNICODE\nOPENDDL_STATIC_LIBARY\nOPENDDLPARSER_BUILD\nASSIMP_BUILD_NO_M3D_IMPORTER\nASSIMP_BUILD_NO_M3D_EXPORTER\nASSIMP_BUILD_NO_C4D_IMPORTER\nMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0\nASSIMP_IMPORTER_GLTF_USE_OPEN3DGC=1\nRAPIDJSON_HAS_STDSTRING=1\nRAPIDJSON_NOMEMBERITERATORCLASS\nNO_FSEEKO\n_SCL_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_DEPRECATE\n_CRT_NONSTDC_NO_DEPRECATE",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/assimp/upstream/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/assimp/upstream/code/\n%{wks.location}/externals/assimp/upstream/contrib/\n%{wks.location}/externals/assimp/upstream/contrib/zlib/\n%{wks.location}/externals/assimp/upstream/contrib/pugixml/src/\n%{wks.location}/externals/assimp/upstream/contrib/rapidjson/include/\n%{wks.location}/externals/assimp/upstream/contrib/unzip/\n%{wks.location}/externals/assimp/upstream/contrib/openddlparser/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "WIN32_LEAN_AND_MEAN\nUNICODE\n_UNICODE\nOPENDDL_STATIC_LIBARY\nOPENDDLPARSER_BUILD\nASSIMP_BUILD_NO_M3D_IMPORTER\nASSIMP_BUILD_NO_M3D_EXPORTER\nASSIMP_BUILD_NO_C4D_IMPORTER\nMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0\nASSIMP_IMPORTER_GLTF_USE_OPEN3DGC=1\nRAPIDJSON_HAS_STDSTRING=1\nRAPIDJSON_NOMEMBERITERATORCLASS\nNO_FSEEKO\n_SCL_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_DEPRECATE\n_CRT_NONSTDC_NO_DEPRECATE",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/assimp/upstream/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/assimp/upstream/code/\n%{wks.location}/externals/assimp/upstream/contrib/\n%{wks.location}/externals/assimp/upstream/contrib/zlib/\n%{wks.location}/externals/assimp/upstream/contrib/pugixml/src/\n%{wks.location}/externals/assimp/upstream/contrib/rapidjson/include/\n%{wks.location}/externals/assimp/upstream/contrib/unzip/\n%{wks.location}/externals/assimp/upstream/contrib/openddlparser/include/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "externals/assimp",
+            "externalLinks": [],
+            "id": 28,
+            "includePaths": "%{wks.location}/externals/assimp/upstream/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/assimp/upstream/code/\n%{wks.location}/externals/assimp/upstream/contrib/\n%{wks.location}/externals/assimp/upstream/contrib/zlib/\n%{wks.location}/externals/assimp/upstream/contrib/pugixml/src/\n%{wks.location}/externals/assimp/upstream/contrib/rapidjson/include/\n%{wks.location}/externals/assimp/upstream/contrib/unzip/\n%{wks.location}/externals/assimp/upstream/contrib/openddlparser/include/",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "assimp",
+            "position": {
+                "x": 144.0,
+                "y": 319.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Assimp",
+            "sourcePatterns": "upstream/include/assimp/**.h\nupstream/code/AssetLib/3DS/3DSConverter.cpp\nupstream/code/AssetLib/3DS/3DSExporter.cpp\nupstream/code/AssetLib/3DS/3DSLoader.cpp\nupstream/code/AssetLib/3MF/D3MFExporter.cpp\nupstream/code/AssetLib/3MF/D3MFImporter.cpp\nupstream/code/AssetLib/3MF/D3MFOpcPackage.cpp\nupstream/code/AssetLib/3MF/XmlSerializer.cpp\nupstream/code/AssetLib/AC/ACLoader.cpp\nupstream/code/AssetLib/AMF/AMFImporter_Geometry.cpp\nupstream/code/AssetLib/AMF/AMFImporter_Material.cpp\nupstream/code/AssetLib/AMF/AMFImporter_Postprocess.cpp\nupstream/code/AssetLib/AMF/AMFImporter.cpp\nupstream/code/AssetLib/ASE/ASELoader.cpp\nupstream/code/AssetLib/ASE/ASEParser.cpp\nupstream/code/AssetLib/Assbin/AssbinExporter.cpp\nupstream/code/AssetLib/Assbin/AssbinFileWriter.cpp\nupstream/code/AssetLib/Assbin/AssbinLoader.cpp\nupstream/code/AssetLib/Assjson/cencode.c\nupstream/code/AssetLib/Assjson/json_exporter.cpp\nupstream/code/AssetLib/Assjson/mesh_splitter.cpp\nupstream/code/AssetLib/Assxml/AssxmlExporter.cpp\nupstream/code/AssetLib/Assxml/AssxmlFileWriter.cpp\nupstream/code/AssetLib/B3D/B3DImporter.cpp\nupstream/code/AssetLib/Blender/BlenderBMesh.cpp\nupstream/code/AssetLib/Blender/BlenderCustomData.cpp\nupstream/code/AssetLib/Blender/BlenderDNA.cpp\nupstream/code/AssetLib/Blender/BlenderLoader.cpp\nupstream/code/AssetLib/Blender/BlenderModifier.cpp\nupstream/code/AssetLib/Blender/BlenderScene.cpp\nupstream/code/AssetLib/Blender/BlenderTessellator.cpp\nupstream/code/AssetLib/BVH/BVHLoader.cpp\nupstream/code/AssetLib/COB/COBLoader.cpp\nupstream/code/AssetLib/Collada/ColladaExporter.cpp\nupstream/code/AssetLib/Collada/ColladaHelper.cpp\nupstream/code/AssetLib/Collada/ColladaLoader.cpp\nupstream/code/AssetLib/Collada/ColladaParser.cpp\nupstream/code/AssetLib/CSM/CSMLoader.cpp\nupstream/code/AssetLib/DXF/DXFLoader.cpp\nupstream/code/AssetLib/FBX/FBXAnimation.cpp\nupstream/code/AssetLib/FBX/FBXBinaryTokenizer.cpp\nupstream/code/AssetLib/FBX/FBXConverter.cpp\nupstream/code/AssetLib/FBX/FBXDeformer.cpp\nupstream/code/AssetLib/FBX/FBXDocument.cpp\nupstream/code/AssetLib/FBX/FBXDocumentUtil.cpp\nupstream/code/AssetLib/FBX/FBXExporter.cpp\nupstream/code/AssetLib/FBX/FBXExportNode.cpp\nupstream/code/AssetLib/FBX/FBXExportProperty.cpp\nupstream/code/AssetLib/FBX/FBXImporter.cpp\nupstream/code/AssetLib/FBX/FBXMaterial.cpp\nupstream/code/AssetLib/FBX/FBXMeshGeometry.cpp\nupstream/code/AssetLib/FBX/FBXModel.cpp\nupstream/code/AssetLib/FBX/FBXNodeAttribute.cpp\nupstream/code/AssetLib/FBX/FBXParser.cpp\nupstream/code/AssetLib/FBX/FBXProperties.cpp\nupstream/code/AssetLib/FBX/FBXTokenizer.cpp\nupstream/code/AssetLib/FBX/FBXUtil.cpp\nupstream/code/AssetLib/glTF/glTFCommon.cpp\nupstream/code/AssetLib/glTF/glTFExporter.cpp\nupstream/code/AssetLib/glTF/glTFImporter.cpp\nupstream/code/AssetLib/glTF2/glTF2Exporter.cpp\nupstream/code/AssetLib/glTF2/glTF2Importer.cpp\nupstream/code/AssetLib/HMP/HMPLoader.cpp\nupstream/code/AssetLib/IFC/IFCBoolean.cpp\nupstream/code/AssetLib/IFC/IFCCurve.cpp\nupstream/code/AssetLib/IFC/IFCGeometry.cpp\nupstream/code/AssetLib/IFC/IFCLoader.cpp\nupstream/code/AssetLib/IFC/IFCMaterial.cpp\nupstream/code/AssetLib/IFC/IFCOpenings.cpp\nupstream/code/AssetLib/IFC/IFCProfile.cpp\nupstream/code/AssetLib/IFC/IFCReaderGen1_2x3.cpp\nupstream/code/AssetLib/IFC/IFCReaderGen2_2x3.cpp\nupstream/code/AssetLib/IFC/IFCUtil.cpp\nupstream/code/AssetLib/IQM/IQMImporter.cpp\nupstream/code/AssetLib/Irr/IRRLoader.cpp\nupstream/code/AssetLib/Irr/IRRMeshLoader.cpp\nupstream/code/AssetLib/Irr/IRRShared.cpp\nupstream/code/AssetLib/LWO/LWOAnimation.cpp\nupstream/code/AssetLib/LWO/LWOBLoader.cpp\nupstream/code/AssetLib/LWO/LWOLoader.cpp\nupstream/code/AssetLib/LWO/LWOMaterial.cpp\nupstream/code/AssetLib/LWS/LWSLoader.cpp\nupstream/code/AssetLib/M3D/M3DExporter.cpp\nupstream/code/AssetLib/M3D/M3DImporter.cpp\nupstream/code/AssetLib/M3D/M3DWrapper.cpp\nupstream/code/AssetLib/MD2/MD2Loader.cpp\nupstream/code/AssetLib/MD3/MD3Loader.cpp\nupstream/code/AssetLib/MD5/MD5Loader.cpp\nupstream/code/AssetLib/MD5/MD5Parser.cpp\nupstream/code/AssetLib/MDC/MDCLoader.cpp\nupstream/code/AssetLib/MDL/HalfLife/HL1MDLLoader.cpp\nupstream/code/AssetLib/MDL/HalfLife/UniqueNameGenerator.cpp\nupstream/code/AssetLib/MDL/MDLLoader.cpp\nupstream/code/AssetLib/MDL/MDLMaterialLoader.cpp\nupstream/code/AssetLib/MMD/MMDImporter.cpp\nupstream/code/AssetLib/MMD/MMDPmxParser.cpp\nupstream/code/AssetLib/MS3D/MS3DLoader.cpp\nupstream/code/AssetLib/NDO/NDOLoader.cpp\nupstream/code/AssetLib/NFF/NFFLoader.cpp\nupstream/code/AssetLib/Obj/ObjExporter.cpp\nupstream/code/AssetLib/Obj/ObjFileImporter.cpp\nupstream/code/AssetLib/Obj/ObjFileMtlImporter.cpp\nupstream/code/AssetLib/Obj/ObjFileParser.cpp\nupstream/code/AssetLib/OFF/OFFLoader.cpp\nupstream/code/AssetLib/Ogre/OgreBinarySerializer.cpp\nupstream/code/AssetLib/Ogre/OgreImporter.cpp\nupstream/code/AssetLib/Ogre/OgreMaterial.cpp\nupstream/code/AssetLib/Ogre/OgreStructs.cpp\nupstream/code/AssetLib/Ogre/OgreXmlSerializer.cpp\nupstream/code/AssetLib/OpenGEX/OpenGEXExporter.cpp\nupstream/code/AssetLib/OpenGEX/OpenGEXImporter.cpp\nupstream/code/AssetLib/Ply/PlyExporter.cpp\nupstream/code/AssetLib/Ply/PlyLoader.cpp\nupstream/code/AssetLib/Ply/PlyParser.cpp\nupstream/code/AssetLib/Q3BSP/Q3BSPFileImporter.cpp\nupstream/code/AssetLib/Q3BSP/Q3BSPFileParser.cpp\nupstream/code/AssetLib/Q3D/Q3DLoader.cpp\nupstream/code/AssetLib/Raw/RawLoader.cpp\nupstream/code/AssetLib/SIB/SIBImporter.cpp\nupstream/code/AssetLib/SMD/SMDLoader.cpp\nupstream/code/AssetLib/Step/StepExporter.cpp\nupstream/code/AssetLib/STEPParser/STEPFileEncoding.cpp\nupstream/code/AssetLib/STEPParser/STEPFileReader.cpp\nupstream/code/AssetLib/STL/STLExporter.cpp\nupstream/code/AssetLib/STL/STLLoader.cpp\nupstream/code/AssetLib/Terragen/TerragenLoader.cpp\nupstream/code/AssetLib/Unreal/UnrealLoader.cpp\nupstream/code/AssetLib/X/XFileExporter.cpp\nupstream/code/AssetLib/X/XFileImporter.cpp\nupstream/code/AssetLib/X/XFileParser.cpp\nupstream/code/AssetLib/X3D/X3DExporter.cpp\nupstream/code/AssetLib/X3D/X3DGeoHelper.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Geometry2D.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Geometry3D.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Group.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Light.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Metadata.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Networking.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Postprocess.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Rendering.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Shape.cpp\nupstream/code/AssetLib/X3D/X3DImporter_Texturing.cpp\nupstream/code/AssetLib/X3D/X3DImporter.cpp\nupstream/code/AssetLib/X3D/X3DXmlHelper.cpp\nupstream/code/AssetLib/XGL/XGLLoader.cpp\nupstream/code/CApi/AssimpCExport.cpp\nupstream/code/CApi/CInterfaceIOWrapper.cpp\nupstream/code/Common/AssertHandler.cpp\nupstream/code/Common/Assimp.cpp\nupstream/code/Common/Base64.cpp\nupstream/code/Common/BaseImporter.cpp\nupstream/code/Common/BaseProcess.cpp\nupstream/code/Common/Bitmap.cpp\nupstream/code/Common/Compression.cpp\nupstream/code/Common/CreateAnimMesh.cpp\nupstream/code/Common/DefaultIOStream.cpp\nupstream/code/Common/DefaultIOSystem.cpp\nupstream/code/Common/DefaultLogger.cpp\nupstream/code/Common/Exceptional.cpp\nupstream/code/Common/Exporter.cpp\nupstream/code/Common/Importer.cpp\nupstream/code/Common/ImporterRegistry.cpp\nupstream/code/Common/IOSystem.cpp\nupstream/code/Common/material.cpp\nupstream/code/Common/PostStepRegistry.cpp\nupstream/code/Common/RemoveComments.cpp\nupstream/code/Common/scene.cpp\nupstream/code/Common/SceneCombiner.cpp\nupstream/code/Common/ScenePreprocessor.cpp\nupstream/code/Common/SGSpatialSort.cpp\nupstream/code/Common/simd.cpp\nupstream/code/Common/SkeletonMeshBuilder.cpp\nupstream/code/Common/SpatialSort.cpp\nupstream/code/Common/StandardShapes.cpp\nupstream/code/Common/Subdivision.cpp\nupstream/code/Common/TargetAnimation.cpp\nupstream/code/Common/Version.cpp\nupstream/code/Common/VertexTriangleAdjacency.cpp\nupstream/code/Common/ZipArchiveIOSystem.cpp\nupstream/code/Geometry/GeometryUtils.cpp\nupstream/code/Material/MaterialSystem.cpp\nupstream/code/Pbrt/PbrtExporter.cpp\nupstream/code/PostProcessing/ArmaturePopulate.cpp\nupstream/code/PostProcessing/CalcTangentsProcess.cpp\nupstream/code/PostProcessing/ComputeUVMappingProcess.cpp\nupstream/code/PostProcessing/ConvertToLHProcess.cpp\nupstream/code/PostProcessing/DeboneProcess.cpp\nupstream/code/PostProcessing/DropFaceNormalsProcess.cpp\nupstream/code/PostProcessing/EmbedTexturesProcess.cpp\nupstream/code/PostProcessing/FindDegenerates.cpp\nupstream/code/PostProcessing/FindInstancesProcess.cpp\nupstream/code/PostProcessing/FindInvalidDataProcess.cpp\nupstream/code/PostProcessing/FixNormalsStep.cpp\nupstream/code/PostProcessing/GenBoundingBoxesProcess.cpp\nupstream/code/PostProcessing/GenFaceNormalsProcess.cpp\nupstream/code/PostProcessing/GenVertexNormalsProcess.cpp\nupstream/code/PostProcessing/ImproveCacheLocality.cpp\nupstream/code/PostProcessing/JoinVerticesProcess.cpp\nupstream/code/PostProcessing/LimitBoneWeightsProcess.cpp\nupstream/code/PostProcessing/MakeVerboseFormat.cpp\nupstream/code/PostProcessing/OptimizeGraph.cpp\nupstream/code/PostProcessing/OptimizeMeshes.cpp\nupstream/code/PostProcessing/PretransformVertices.cpp\nupstream/code/PostProcessing/ProcessHelper.cpp\nupstream/code/PostProcessing/RemoveRedundantMaterials.cpp\nupstream/code/PostProcessing/RemoveVCProcess.cpp\nupstream/code/PostProcessing/ScaleProcess.cpp\nupstream/code/PostProcessing/SortByPTypeProcess.cpp\nupstream/code/PostProcessing/SplitByBoneCountProcess.cpp\nupstream/code/PostProcessing/SplitLargeMeshes.cpp\nupstream/code/PostProcessing/TextureTransform.cpp\nupstream/code/PostProcessing/TriangulateProcess.cpp\nupstream/code/PostProcessing/ValidateDataStructure.cpp\nupstream/contrib/clipper/clipper.cpp\nupstream/contrib/Open3DGC/o3dgcArithmeticCodec.cpp\nupstream/contrib/Open3DGC/o3dgcDynamicVectorDecoder.cpp\nupstream/contrib/Open3DGC/o3dgcDynamicVectorEncoder.cpp\nupstream/contrib/Open3DGC/o3dgcTools.cpp\nupstream/contrib/Open3DGC/o3dgcTriangleFans.cpp\nupstream/contrib/openddlparser/code/DDLNode.cpp\nupstream/contrib/openddlparser/code/OpenDDLCommon.cpp\nupstream/contrib/openddlparser/code/OpenDDLExport.cpp\nupstream/contrib/openddlparser/code/OpenDDLParser.cpp\nupstream/contrib/openddlparser/code/OpenDDLStream.cpp\nupstream/contrib/openddlparser/code/Value.cpp\nupstream/contrib/poly2tri/poly2tri/common/shapes.cc\nupstream/contrib/poly2tri/poly2tri/sweep/advancing_front.cc\nupstream/contrib/poly2tri/poly2tri/sweep/cdt.cc\nupstream/contrib/poly2tri/poly2tri/sweep/sweep_context.cc\nupstream/contrib/poly2tri/poly2tri/sweep/sweep.cc\nupstream/contrib/unzip/ioapi.c\nupstream/contrib/unzip/unzip.c\nupstream/contrib/zip/src/zip.c\nupstream/contrib/zlib/adler32.c\nupstream/contrib/zlib/compress.c\nupstream/contrib/zlib/crc32.c\nupstream/contrib/zlib/deflate.c\nupstream/contrib/zlib/gzclose.c\nupstream/contrib/zlib/gzlib.c\nupstream/contrib/zlib/gzread.c\nupstream/contrib/zlib/gzwrite.c\nupstream/contrib/zlib/infback.c\nupstream/contrib/zlib/inffast.c\nupstream/contrib/zlib/inflate.c\nupstream/contrib/zlib/inftrees.c\nupstream/contrib/zlib/trees.c\nupstream/contrib/zlib/uncompr.c\nupstream/contrib/zlib/zutil.c"
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/ecs",
+            "externalLinks": [],
+            "id": 29,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "ecs",
+            "position": {
+                "x": 272.0,
+                "y": 847.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "EcsCore",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/audio",
+            "externalLinks": [],
+            "id": 30,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "audio",
+            "position": {
+                "x": 720.0,
+                "y": 710.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Audio",
+            "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "engine/framework/audio",
+            "externalLinks": [],
+            "id": 31,
+            "includePaths": "",
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "audio",
+            "position": {
+                "x": 1424.0,
+                "y": 597.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "AudioFramework",
+            "sourcePatterns": ""
+        }
+    ],
+    "rootDirectory": "../../..",
+    "version": 5
+}

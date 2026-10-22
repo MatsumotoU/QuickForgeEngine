@@ -31,7 +31,7 @@ namespace QFE::GRAPHIC {
 		/// @brief ディスクリタヒープを取得する関数
 		[[nodiscard]] ID3D12DescriptorHeap* GetDescriptorHeap() const;
 		/// @brief ディスクリタヒープがシェーダーから参照可能かどうかを取得する関数
-		[[nodiscard]] const bool IsShaderVisible() const;
+		[[nodiscard]] bool IsShaderVisible() const;
 
 	private:
 		/// @brief ディスクリタヒープが生成されているかどうかをチェックする関数

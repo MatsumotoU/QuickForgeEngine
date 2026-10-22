@@ -9,7 +9,7 @@ void DirectInputManager::Initialize(const HWND& hwnd,const HINSTANCE& hInstance)
 	directInput_ = nullptr;
 	HRESULT hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr);
 	assert(SUCCEEDED(hr));
-	hr;
+	static_cast<void>(hr);
 
 	// Device縺ｮ逕滓・
 	keyboard_.Initialize(hwnd,directInput_);

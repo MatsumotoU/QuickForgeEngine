@@ -7,7 +7,9 @@
 #include <vector>
 
 #include "math/MathInclude.h"
-#include "graphics/D3D12GraphicEngine.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/pipeline/pso/PipelineDescTypes.h"
+#include <d3d12.h>
 #include "assetfactory/model/ModelData.h"
 
 namespace QFE::FRAMEWORK {
@@ -27,12 +29,22 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::DirectXResourceHandle globalUVHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		QFE::GRAPHIC::DirectXResourceHandle globalTriHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 		QFE::GRAPHIC::DirectXResourceHandle instanceMetaHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		bool hasRayTracingGeometry = false;
+		QFE::GRAPHIC::DirectXResourceHandle skyBoxTextureHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		bool skyBoxVisible = false;
 
 		QFE::MATH::EulerTransform cameraTransform;
+		QFE::MATH::Vector3 cameraPosition{ 0.0f, 0.0f, 0.0f };
 
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> vertexBufferMap;
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> indexBufferMap;
 		std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
+		struct AnimatedBLAS {
+			std::string modelName;
+			QFE::GRAPHIC::BLASHandle handle = QFE::GRAPHIC::BLASHandle::Invalid;
+		};
+		std::unordered_map<uint32_t, AnimatedBLAS> animatedBlasByEntity;
+		uint64_t animatedBlasSceneRevision = UINT64_MAX;
 		std::unordered_map<std::string, QFE::ASSET::ModelData> modelDataMap;
 
 		std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle> textureHandleMap;

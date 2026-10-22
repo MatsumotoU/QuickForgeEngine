@@ -126,9 +126,25 @@ void RenderPass::SetRenderTarget(
 
 void RenderPass::SetRenderTarget(
 	ID3D12GraphicsCommandList* commandList, DirectXResourceHandle depthStencilHandle,
-	std::vector<RenderTargetHandle> renderTargetHandles) {
+	const std::vector<RenderTargetHandle>& renderTargetHandles) {
+	SetRenderTargets(
+		commandList, renderTargetHandles,
+		initializeInfo_.getResourceDsvFunc(depthStencilHandle));
+}
+
+void RenderPass::SetRenderTarget(
+	ID3D12GraphicsCommandList* commandList,
+	const std::vector<RenderTargetHandle>& renderTargetHandles) {
+	SetRenderTargets(commandList, renderTargetHandles, nullptr);
+}
+
+void RenderPass::SetRenderTargets(
+	ID3D12GraphicsCommandList* commandList,
+	const std::vector<RenderTargetHandle>& renderTargetHandles,
+	const D3D12_CPU_DESCRIPTOR_HANDLE* depthStencilView) {
 	// レンダーターゲットの数を取得
-	uint32_t numRenderTargets = static_cast<uint32_t>(renderTargetHandles.size());
+	const uint32_t numRenderTargets =
+		static_cast<uint32_t>(renderTargetHandles.size());
 	// レンダーターゲットのハンドルを格納する配列の確認
 	if (numRenderTargets == 0) {
 		QFE_REPORT_SYSTEM_ERROR("No render targets provided in RenderPass::SetRenderTarget", SystemError::Abort);
@@ -137,7 +153,7 @@ void RenderPass::SetRenderTarget(
 
 	// RTVハンドルの配列を作成
 	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles;
-	for(RenderTargetHandle& handle : renderTargetHandles) {
+	for(const RenderTargetHandle handle : renderTargetHandles) {
 		if (handle == RenderTargetHandle::SwapChain) {
 			rtvHandles.push_back(*swapChain_->GetCurrentBackBufferViewPtr());
 		} else {
@@ -151,7 +167,8 @@ void RenderPass::SetRenderTarget(
 	}
 
 	// レンダーターゲットを設定
-	commandList->OMSetRenderTargets(numRenderTargets, rtvHandles.data(), FALSE, initializeInfo_.getResourceDsvFunc(depthStencilHandle));
+	commandList->OMSetRenderTargets(
+		numRenderTargets, rtvHandles.data(), FALSE, depthStencilView);
 }
 
 UINT RenderPass::GetSwapChainBufferCount() const {

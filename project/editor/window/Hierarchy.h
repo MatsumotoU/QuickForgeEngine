@@ -8,12 +8,16 @@ namespace QFE {
 	class EntityManager;
 }
 
+namespace QFE::SCENE {
+	class SceneManager;
+}
+
 namespace QFE::EDITOR {
 	/// @brief Entityを階層構造で表示するウィンドウ	
 	class Hierarchy final : public IEditorWindow {
 	public:
 		/// @brief このエンティティマネージャーのEntityを階層構造で表示するウィンドウを作成する
-		Hierarchy(EntityManager* entityManager);
+		Hierarchy(QFE::SCENE::SceneManager* sceneManager);
 		
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -35,9 +39,11 @@ namespace QFE::EDITOR {
 		const std::set<uint32_t>& GetSelectedEntities() const;
 
 	private:
+		QFE::SCENE::SceneManager* sceneManager_;
 		EntityManager* entityManager_;
 		bool isActive_;
 		std::set<uint32_t> hierarchySelectedEntities_;
+		std::string groupNameInput_;
 		bool isFocus_;
 		std::optional<uint32_t> cameraFocusRequest_;
 	};

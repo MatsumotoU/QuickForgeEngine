@@ -1,6 +1,7 @@
 #pragma once
 #include "IEditorCommand.h"
 #include <cstdint>
+#include <utility>
 #include <vector>
 #include <string>
 #include <nlohmann/json.hpp>
@@ -23,6 +24,6 @@ namespace QFE::EDITOR {
 	private:
 		EntityManager* entityManager_;
 		uint32_t entityId_;
-		nlohmann::json removedComponents_; // 削除されたコンポーネントの情報を保存するためのJSON
+		std::vector<std::pair<uint32_t, nlohmann::json>> removedEntities_;
 	};
 }

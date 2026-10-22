@@ -5,6 +5,10 @@ using namespace QFE::GRAPHIC;
 
 ComputePipelineManager::ComputePipelineManager() = default;
 
+namespace {
+	const std::string kCSFilePath = "engine/resources/shaders/cs/";
+}
+
 void ComputePipelineManager::Initialize(ComputePipelineManagerInitializeInfo initializeInfo) {
 	initializeInfo_ = initializeInfo;
 }
@@ -79,4 +83,21 @@ bool ComputePipelineManager::GetThreadGroupSize(const ComputePSOHandle& handle, 
 
 	computePSOs_.at(static_cast<uint32_t>(handle))->GetThreadGroupSize(sizeX, sizeY, sizeZ);
 	return computePSOs_.at(static_cast<uint32_t>(handle))->IsThreadGroupSizeSet();
+}
+
+void QFE::GRAPHIC::ComputePipelineManager::CreateBuildInComputePSOs() {
+	// ビルトインのComputePSOを生成し、ハンドルを保存
+	builtInComputePSOHandles_[BuiltInComputePSOType::LinearToSRGB] =
+		GenerateComputePipelineStateObject(kCSFilePath, "LinearToSRGB.CS.hlsl");
+}
+
+ComputePSOHandle QFE::GRAPHIC::ComputePipelineManager::GetBuiltInComputePSOHandle(BuiltInComputePSOType type) const {
+	// ビルトインのComputePSOTypeが登録されているか確認
+	if(builtInComputePSOHandles_.find(type) == builtInComputePSOHandles_.end()) {
+		QFE_LOG(std::format("Built-in ComputePSOType {} is not registered. Cannot retrieve handle.", static_cast<int>(type)));
+		assert(false && "Invalid BuiltInComputePSOType.");
+		return ComputePSOHandle::Invalid;
+	}
+	// ビルトインのComputePSOTypeに対応するハンドルを返す
+	return builtInComputePSOHandles_.at(type);
 }

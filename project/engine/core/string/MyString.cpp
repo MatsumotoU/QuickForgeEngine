@@ -16,7 +16,7 @@ namespace QFE {
 		if (sizeNeeded == 0) {
 			return std::wstring();
 		}
-		std::wstring result(sizeNeeded, 0);
+		std::wstring result(static_cast<std::size_t>(sizeNeeded), L'\0');
 		MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
 		return result;
 	}
@@ -30,7 +30,7 @@ namespace QFE {
 		if (sizeNeeded == 0) {
 			return std::string();
 		}
-		std::string result(sizeNeeded, 0);
+		std::string result(static_cast<std::size_t>(sizeNeeded), '\0');
 		WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), result.data(), sizeNeeded, NULL, NULL);
 		return result;
 	}
@@ -50,7 +50,7 @@ namespace QFE {
 	std::wstring Utf8ToUtf16(const std::string& utf8) {
 		if (utf8.empty()) return std::wstring();
 		int size_needed = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), (int)utf8.size(), NULL, 0);
-		std::wstring wstrTo(size_needed, 0);
+		std::wstring wstrTo(static_cast<std::size_t>(size_needed), L'\0');
 		MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), (int)utf8.size(), &wstrTo[0], size_needed);
 		return wstrTo;
 	}

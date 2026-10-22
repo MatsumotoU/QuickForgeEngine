@@ -1,4 +1,5 @@
 #include "FileUtility.h"
+#include "EngineDefines.h"
 #include <cassert>
 #include <windows.h>
 
@@ -8,7 +9,17 @@ namespace QFE::FILE {
 		std::vector<std::string> files;
 		namespace fs = std::filesystem;
 
-		for (const auto& entry : fs::directory_iterator(directoryPath)) {
+		std::error_code error;
+		const fs::directory_iterator end;
+		for (fs::directory_iterator iterator(
+			directoryPath, fs::directory_options::skip_permission_denied, error);
+			iterator != end;
+			iterator.increment(error)) {
+			if (error) {
+				error.clear();
+				continue;
+			}
+			const auto& entry = *iterator;
 			if (entry.is_regular_file()) {
 				if (extension.empty() || entry.path().extension() == extension) {
 					files.push_back(entry.path().filename().string());
@@ -21,7 +32,18 @@ namespace QFE::FILE {
 	std::vector<std::string> GetDirectoriesInDirectory(const std::string& directoryPath) {
 		std::vector<std::string> directories;
 		namespace fs = std::filesystem;
-		for (const auto& entry : fs::directory_iterator(directoryPath)) {
+
+		std::error_code error;
+		const fs::directory_iterator end;
+		for (fs::directory_iterator iterator(
+			directoryPath, fs::directory_options::skip_permission_denied, error);
+			iterator != end;
+			iterator.increment(error)) {
+			if (error) {
+				error.clear();
+				continue;
+			}
+			const auto& entry = *iterator;
 			if (entry.is_directory()) {
 				directories.push_back(entry.path().filename().string());
 			}
@@ -52,8 +74,7 @@ namespace QFE::FILE {
 			}
 			catch (const nlohmann::json::parse_error& e) {
 				ifs.close();
-				e;
-				assert(false && e.what());
+				QFE_LOG(std::format("Failed to parse JSON '{}': {}", filePath, e.what()), LogLevel::Error);
 			}
 		}
 		return false;
@@ -99,8 +120,8 @@ namespace QFE::FILE {
 	std::string WideToUTF8(const std::wstring& wstr)
 	{
 		if (wstr.empty()) return {};
-		int size = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
-		std::string result(size, 0);
+		int size = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), static_cast<int>(wstr.size()), nullptr, 0, nullptr, nullptr);
+		std::string result(static_cast<std::size_t>(size), '\0');
 		WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &result[0], size, nullptr, nullptr);
 		return result;
 	}
@@ -118,7 +139,8 @@ namespace QFE::FILE {
 		nlohmann::json::binary_t msgPackData = nlohmann::json::to_msgpack(jsonFile);
 		std::ofstream ofs(msgPackSavePath, std::ios::binary);
 		if (ofs.is_open()) {
-			ofs.write(reinterpret_cast<const char*>(msgPackData.data()), msgPackData.size());
+			ofs.write(reinterpret_cast<const char*>(msgPackData.data()),
+				static_cast<std::streamsize>(msgPackData.size()));
 			ofs.close();
 			return true;
 		}
@@ -135,8 +157,7 @@ namespace QFE::FILE {
 				return true;
 			}
 			catch (const nlohmann::json::parse_error& e) {
-				e;
-				assert(false && e.what());
+				QFE_LOG(std::format("Failed to parse MessagePack '{}': {}", msgPackFilePath, e.what()), LogLevel::Error);
 			}
 		}
 		return false;

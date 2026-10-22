@@ -1,7 +1,7 @@
 #include "EditorWindowManager.h"
 #include "AllEditorWindow.h"
 
-#include "framework/window/WindowsWindowFrameWork.h"
+#include "framework/window/WindowDialogFramework.h"
 
 #include "scene/SceneManager.h"
 #include "design-patterns/EntityManager.h"
@@ -15,14 +15,20 @@
 #include <imgui.h>
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
-void QFE::EDITOR::EditorWindowManager::Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow) {
-	mainWindow_ = mainWindow;
+void QFE::EDITOR::EditorWindowManager::Initialize(
+	QFE::SCENE::SceneManager* sceneManager,
+	ImTextureID sceneTextureId,
+	QFE::WINDOW::IGameWindowManager& windowManager,
+	ComponentInspectorRegistry* componentInspectorRegistry) {
+	windowManager_ = &windowManager;
 	sceneManager_ = sceneManager;
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	editorWindowsMap_.clear();
-	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(&entityManager);
-	editorWindowsMap_[EditorWindowType::Inspector] = std::make_unique<Inspector>(&entityManager);
+	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager);
+	editorWindowsMap_[EditorWindowType::Inspector] =
+		std::make_unique<Inspector>(&entityManager, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId);
     editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager);
@@ -82,7 +88,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                 // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-                    mainWindow_,
+                    *windowManager_,
                     L"JSON Files", L"*.json",
                     selectedFilePath)) {
                     // Entityの生成
@@ -97,35 +103,55 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 				saveSceneAsRequested = true;
             }
             // エンティティの保存
-            if (ImGui::MenuItem("Save Selected Entities", nullptr)) {
-                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
-                std::wstring selectedFilePath;
-                if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-                    mainWindow_,
-                    L"JSON Files", L"*.json",
-					selectedFilePath)) {
-					// 選択されたエンティティの保存
-                    for(uint32_t entityId : selectedEntities_) {
-						nlohmann::json entityJson =
-                            sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
-						QFE::FILE::SaveJSONToFile(QFE::ConvertString(selectedFilePath), entityJson);
+            if (ImGui::MenuItem("Save Selected Entities...", nullptr)) {
+                if (selectedEntities_.empty()) {
+                    QFE_LOG("No entities selected for saving.");
+                } else {
+					// JSONファイルの保存先を選択させる
+					std::wstring selectedFilePath;
+					if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
+						*windowManager_,
+						L"JSON Files", L"*.json",
+						selectedFilePath)) {
+						nlohmann::json savedEntities;
+						savedEntities["entities"] = nlohmann::json::array();
+						// 選択されたエンティティを1つのファイルに保存する
+						for (uint32_t entityId : selectedEntities_) {
+							nlohmann::json entityComponents =
+								sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
+							if (!entityComponents.empty()) {
+								savedEntities["entities"].push_back(std::move(entityComponents));
+							}
+						}
+
+						if (savedEntities["entities"].empty()) {
+							QFE_LOG("No serializable entities selected for saving.");
+						} else if (!QFE::FILE::SaveJSONToFile(
+							QFE::ConvertString(selectedFilePath), savedEntities)) {
+							QFE_LOG("Failed to save selected entities.");
+						}
 					}
-					
-                }
+				}
 			}
 			// エンティティのロード
-            if (ImGui::MenuItem("Load Entities", nullptr)) {
-                // JSONファイルの選択ダイアログを表示して、ユーザーにシーンファイルを選択させる
+            if (ImGui::MenuItem("Add Saved Entities...", nullptr)) {
+                // 保存済みエンティティを現在のシーンへ追加するファイルを選択させる
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-                    mainWindow_,
+                    *windowManager_,
                     L"JSON Files", L"*.json",
                     selectedFilePath)) {
-                    // 選択されたエンティティのロード
-                    uint32_t newEntityId = 
+                    const uint32_t firstEntityId =
                         sceneManager_->LoadEntityOnCurrentSceneFromJsonObject(QFE::ConvertString(selectedFilePath));
+                    if (firstEntityId == UINT32_MAX) {
+                        QFE_LOG("Failed to add saved entities to the current scene.");
+                    }
                 }
             }
+			ImGui::Separator();
+			if (ImGui::MenuItem("Build and Reload DLL", nullptr)) {
+				gameModuleBuildAndReloadRequested_ = true;
+			}
             ImGui::EndMenu();
         }
 		// ウィンドウメニュー
@@ -146,12 +172,13 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                 // クリックされたらファイル選択ダイアログを開く
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-                    mainWindow_,
+                    *windowManager_,
                     L"Scene Files", L"*.json",
                     selectedFilePath)) {
 
-                    // Entityの保存や、別プロセスの起動
-                    QFE::ProcessUtil::LaunchExe("Runtime.exe", "");
+					// 選択したシーンを起動引数としてランタイムへ渡す。
+					const std::string scenePath = QFE::ConvertString(selectedFilePath);
+					QFE::ProcessUtil::LaunchExe("Runtime.exe", "\"" + scenePath + "\"");
                 }
             }
 
@@ -183,13 +210,17 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 	}
 }
 
+bool QFE::EDITOR::EditorWindowManager::ConsumeGameModuleBuildAndReloadRequest() {
+	return std::exchange(gameModuleBuildAndReloadRequested_, false);
+}
+
 void QFE::EDITOR::EditorWindowManager::QueueSceneSave(
 	EditorCommandList& commandList, bool selectSavePath) {
 	std::string savePath = sceneManager_->GetCurrentScenePath();
 	if (selectSavePath || savePath.empty()) {
 		std::wstring selectedFilePath;
 		if (!QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-			mainWindow_,
+			*windowManager_,
 			L"JSON Files", L"*.json",
 			selectedFilePath)) {
 			return;
@@ -220,7 +251,7 @@ bool QFE::EDITOR::EditorWindowManager::ConsumeCameraFocusTarget(
 	const QFE::MATH::EulerTransform& transform =
 		entityManager.GetComponent<QFE::SCENE::TransformComponent>(*entityId).transform;
 	position = transform.translate;
-	radius = std::max({
+	radius = (std::max)({
 		std::abs(transform.scale.x),
 		std::abs(transform.scale.y),
 		std::abs(transform.scale.z),

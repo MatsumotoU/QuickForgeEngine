@@ -6,11 +6,11 @@
 #pragma once
 #include <Windows.h>
 #include <memory>
-#include "IGameWindow.h"
+#include "window/interface/IGameWindow.h"
 #include "WindowGenerator/WindowGenerator.h"
 #include "WindowEventsManager/WindowEventsManager.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	/**
 	 * @class GameWindow
@@ -18,6 +18,13 @@ namespace QFE {
 	 */
 	class GameWindow final : public IGameWindow {
 	public:
+		GameWindow() = default;
+		~GameWindow() override = default;
+		GameWindow(const GameWindow&) = delete;
+		GameWindow& operator=(const GameWindow&) = delete;
+		GameWindow(GameWindow&&) = delete;
+		GameWindow& operator=(GameWindow&&) = delete;
+
 		/**
 		 * @brief ウィンドウの初期化と生成
 		 * @param width ウィンドウの横幅

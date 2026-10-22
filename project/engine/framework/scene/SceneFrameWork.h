@@ -1,6 +1,6 @@
 #pragma once
 #include "math/MathInclude.h"
-#include "framework/graphic/D3D12GraphicFrameWork.h"
+#include "graphics/interface/DirectXRenderFramework.h"
 #include <unordered_map>
 #include <vector>
 
@@ -9,7 +9,7 @@ namespace QFE::SCENE {
 }
 
 namespace QFE::GRAPHIC {
-	class D3D12GraphicEngine;
+	class IGraphicEngine;
 	enum class DirectXResourceHandle : uint32_t;
 	enum class BLASHandle : uint32_t;
 }
@@ -21,12 +21,13 @@ namespace QFE::FRAMEWORK {
 	uint32_t CreateEntityWithMaterial(QFE::SCENE::SceneManager& sceneManager, const std::string& name, const QFE::MATH::Vector4& albedoColor);
 
 	/// @brief メインカメラの行列を更新してview-projection行列を返す。
-	QFE::MATH::Matrix4x4 UpdateMainCamera(QFE::SCENE::SceneManager& sceneManager);
+	QFE::MATH::Matrix4x4 UpdateMainCamera(
+		QFE::SCENE::SceneManager& sceneManager, QFE::MATH::Vector3* outCameraPosition = nullptr);
 
 	/// @brief 描画可能なModelRenderComponentを持つエンティティを描画する。
 	void DrawSceneModels(
 		QFE::SCENE::SceneManager& sceneManager,
-		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::PSOHandle psoHandle,
 		QFE::GRAPHIC::ViewPortHandle viewportHandle,
 		QFE::GRAPHIC::ScissorRectHandle scissorRectHandle,
@@ -36,7 +37,7 @@ namespace QFE::FRAMEWORK {
 	/// @brief 描画可能なSpriteRenderComponentを描画順に最終ターゲットへ描画する。
 	void DrawSceneSprites(
 		QFE::SCENE::SceneManager& sceneManager,
-		QFE::GRAPHIC::D3D12GraphicEngine* graphicEngine,
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::PSOHandle psoHandle,
 		QFE::GRAPHIC::ViewPortHandle viewportHandle,
 		QFE::GRAPHIC::ScissorRectHandle scissorRectHandle,

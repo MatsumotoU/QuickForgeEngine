@@ -9,7 +9,7 @@ void QFE::EDITOR::GameViewer::Initialize() {
 	isActive_ = true;
 }
 
-void QFE::EDITOR::GameViewer::Draw(std::set<uint32_t>& selectedEntities, EditorCommandList& commandList) {
+void QFE::EDITOR::GameViewer::Draw(std::set<uint32_t>&, EditorCommandList&) {
 	ImGui::Begin(GetWindowName().c_str(), &isActive_);
 	const float targetAspectRatio = 16.0f / 9.0f;
 	isFocus_ = ImGui::IsWindowFocused();

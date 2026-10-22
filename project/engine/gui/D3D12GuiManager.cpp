@@ -23,7 +23,7 @@ void D3D12GuiManager::Initialize(const D3D12GuiManagerInitDesc& desc) {
 
 	// ImGuiのバックエンドを初期化
 	bool isInit = ImGui_ImplDX12_Init(desc.device,
-		desc.bufferCount,
+		static_cast<int>(desc.bufferCount),
 		desc.rtvFormat,
 		desc.srvHeap,
 		desc.cpuHandle,

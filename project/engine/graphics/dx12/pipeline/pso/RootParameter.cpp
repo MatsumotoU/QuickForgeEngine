@@ -20,7 +20,7 @@ void RootParameter::CreateRootParameter(const std::string& friendlyName, const D
 	rootParameters_.push_back(rootParameters);
 	rootParameters_[rootParameters_.size() - 1].ParameterType = parameterType;
 	rootParameters_[rootParameters_.size() - 1].ShaderVisibility = shaderVisibility;
-	rootParameters_[rootParameters_.size() - 1].Descriptor.ShaderRegister = shaderRegisterIndex;
+	rootParameters_[rootParameters_.size() - 1].Descriptor.ShaderRegister = static_cast<UINT>(shaderRegisterIndex);
 	descriptionRootSignature_.pParameters = rootParameters_.begin();
 	descriptionRootSignature_.NumParameters = static_cast<UINT>(rootParameters_.size());
 
@@ -79,8 +79,8 @@ void QFE::GRAPHIC::RootParameter::CreateRootParameter(const RootParameterElement
 		SetDescriptorRange(
 			rootParameterElement.friendlyName,
 			rangeType,
-			rootParameterElement.descriptorCount,
-			rootParameterElement.shaderRegisterIndex);
+			static_cast<UINT>(rootParameterElement.descriptorCount),
+			static_cast<UINT>(rootParameterElement.shaderRegisterIndex));
 
 	} else if (rootParameterElement.shaderInputType == D3D_SIT_UAV_RWTYPED ||
 		rootParameterElement.shaderInputType == D3D_SIT_UAV_RWSTRUCTURED ||
@@ -96,8 +96,8 @@ void QFE::GRAPHIC::RootParameter::CreateRootParameter(const RootParameterElement
 		SetDescriptorRange(
 			rootParameterElement.friendlyName,
 			D3D12_DESCRIPTOR_RANGE_TYPE_UAV,
-			rootParameterElement.descriptorCount,
-			rootParameterElement.shaderRegisterIndex);
+			static_cast<UINT>(rootParameterElement.descriptorCount),
+			static_cast<UINT>(rootParameterElement.shaderRegisterIndex));
 
 	}else if (rootParameterElement.shaderInputType == D3D_SIT_SAMPLER) {
 		// サンプラーは静的サンプラーを使用するので、なにもしません
@@ -124,10 +124,10 @@ void QFE::GRAPHIC::RootParameter::AssignStaticSampler(const D3D12_STATIC_SAMPLER
 D3D12_ROOT_PARAMETER* RootParameter::GetRootParameter(const std::string& friendlyName) {
 	D3D12_ROOT_PARAMETER* result = nullptr;
 	// friendlyNames_からfriendlyNameを検索して、対応するRootParameterを返す
-	for (std::string& name : friendlyNames_) {
+	for (size_t index = 0; index < friendlyNames_.size(); ++index) {
+		const std::string& name = friendlyNames_[index];
 		if (name == friendlyName) {
 			// friendlyNameが見つかった場合、そのインデックスを使用してrootParameters_から対応するRootParameterを取得
-			size_t index = &name - &friendlyNames_[0];
 			assert(index < rootParameters_.size() && "Index out of bounds for root parameters.");
 			result = &rootParameters_[index];
 
@@ -176,9 +176,15 @@ void RootParameter::CheckIntegrityData() {
 		const bool hasRange = descriptorRanges_.find(name) != descriptorRanges_.end();
 		if (hasRange) {
 			D3D12_ROOT_PARAMETER* rootParameter = GetRootParameter(name);
-			assert(rootParameter != nullptr);
-			assert(rootParameter->ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE);
-			assert(rootParameter->DescriptorTable.NumDescriptorRanges > 0);
+			if (rootParameter != nullptr) {
+				QFE_REPORT_SYSTEM_ERROR("RootParameter: RootParameter not found for the given friendly name.", SystemError::Abort);
+			}
+			if(rootParameter->ParameterType != D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) {
+				QFE_REPORT_SYSTEM_ERROR("RootParameter: ParameterType is Not TableType!", SystemError::Abort);
+			}
+			if(rootParameter->DescriptorTable.NumDescriptorRanges <= 0) {
+				QFE_REPORT_SYSTEM_ERROR("RootParameter: NumDescriptorRanges is less than or equal to 0!", SystemError::Abort);
+			}
 		}
 	}
 }

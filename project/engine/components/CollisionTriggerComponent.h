@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <unordered_map>
 
-#include "../../externals/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 #include "EngineDefines.h"
 
 namespace QFE::SCENE {
@@ -21,5 +21,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(actions)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(CollisionTriggerComponent)
 }

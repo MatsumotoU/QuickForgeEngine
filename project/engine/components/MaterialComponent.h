@@ -20,6 +20,5 @@ namespace QFE::SCENE {
 			QFE_REFLECT_END()
 	};
 
-	QFE_COMPONENT(MaterialComponent)
 }
 

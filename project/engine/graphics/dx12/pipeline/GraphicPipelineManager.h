@@ -13,7 +13,7 @@
 #include "memory/MultidimensionalArray.h"
 #include "memory/SparseSets.h"
 
-#include "../GraphicEngineHandleTypes.h"
+#include "graphics/dx12/GraphicEngineHandleTypes.h"
 #include "pso/PipelineDescTypes.h"
 #include "pso/InputElement.h"
 #include "pso/RootParameterElement.h"
@@ -42,12 +42,19 @@ namespace QFE::GRAPHIC {
 	public:
 		explicit GraphicPipelineManager();
 		~GraphicPipelineManager();
+		GraphicPipelineManager(const GraphicPipelineManager&) = delete;
+		GraphicPipelineManager& operator=(const GraphicPipelineManager&) = delete;
+		GraphicPipelineManager(GraphicPipelineManager&&) = delete;
+		GraphicPipelineManager& operator=(GraphicPipelineManager&&) = delete;
 
 	public:
 		/// @brief 初期化処理
 		void Initialize(GraphicPipelineManagerInitializeInfo initializeInfo);
 		/// @brief 終了処理
 		void Finalize();
+
+		/// @brief BuiltInのPSOを生成します
+		void CreateBuiltInPipelineStateObjects(ID3D12Device* device);
 
 		/// @brief シェーダーペアを生成します
 		ShaderPairHandle GenerateShaderPair(
@@ -62,7 +69,8 @@ namespace QFE::GRAPHIC {
 		PSOHandle GeneratePipelineStateObject(
 			ID3D12Device* device, const ShaderPairHandle& shaderHandle, BlendMode blendMode,
 			RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType,
-			DXGI_FORMAT renderTargetFormat = DXGI_FORMAT_R16G16B16A16_FLOAT);
+			DXGI_FORMAT renderTargetFormat = DXGI_FORMAT_R16G16B16A16_FLOAT,
+			D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 
 		/// @brief PSOハンドルからパイプラインステートオブジェクトを取得します
 		PipelineStateObject* GetPipelineStateObject(const PSOHandle& psoHandle) const;

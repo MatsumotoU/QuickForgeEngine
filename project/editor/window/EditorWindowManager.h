@@ -9,15 +9,16 @@
 #include <unordered_map>
 #include "math/MathInclude.h"
 
-#define NOMINMAX
-#include <Windows.h>
-
 namespace QFE::SCENE {
 	class SceneManager;
+}
+namespace QFE::WINDOW {
+	class IGameWindowManager;
 }
 
 namespace QFE::EDITOR {
 	class EditorCommandList;
+	class ComponentInspectorRegistry;
 
 	enum class EditorWindowType {
 		Hierarchy,
@@ -34,9 +35,15 @@ namespace QFE::EDITOR {
 	/// @brief エディタのウィンドウ管理クラス
 	class EditorWindowManager final{
 	public:
-		void Initialize(QFE::SCENE::SceneManager* sceneManager, ImTextureID sceneTextureId, HWND mainWindow);
+		void Initialize(
+			QFE::SCENE::SceneManager* sceneManager,
+			ImTextureID sceneTextureId,
+			QFE::WINDOW::IGameWindowManager& windowManager,
+			ComponentInspectorRegistry* componentInspectorRegistry);
 		void Update();
 		void Draw(EditorCommandList& commandList);
+		/// @brief Fileメニューから要求されたGameModule DLLのビルドとリロードを取得する。
+		bool ConsumeGameModuleBuildAndReloadRequest();
 
 		/// @brief 指定されたウィンドウタイプのウィンドウにフォーカスがあるかどうかを返す
 		bool IsWindowFocused(EditorWindowType windowType);
@@ -58,7 +65,8 @@ namespace QFE::EDITOR {
 		// エディタで表示できるウィンドウたち
 		std::unordered_map<EditorWindowType, std::unique_ptr<IEditorWindow>> editorWindowsMap_;
 		std::set<uint32_t> selectedEntities_;
-		HWND mainWindow_;
+		QFE::WINDOW::IGameWindowManager* windowManager_ = nullptr;
 		SCENE::SceneManager* sceneManager_;
+		bool gameModuleBuildAndReloadRequested_ = false;
 	};
 }

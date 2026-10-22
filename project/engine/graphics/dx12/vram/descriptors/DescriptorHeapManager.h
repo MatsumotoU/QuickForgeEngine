@@ -22,6 +22,13 @@ namespace QFE::GRAPHIC {
 	/// @brief 複数のディスクリタヒープを管理するクラス
 	class DescriptorHeapManager final {
 	public:
+		DescriptorHeapManager() = default;
+		~DescriptorHeapManager() = default;
+		DescriptorHeapManager(const DescriptorHeapManager&) = delete;
+		DescriptorHeapManager& operator=(const DescriptorHeapManager&) = delete;
+		DescriptorHeapManager(DescriptorHeapManager&&) = delete;
+		DescriptorHeapManager& operator=(DescriptorHeapManager&&) = delete;
+
 		/// @brief ディスクリタヒープを初期化する関数
 		void Initialize(ID3D12Device* device);
 		/// @brief RTVディスクリタヒープからRTVディスクリタを割り当てる関数

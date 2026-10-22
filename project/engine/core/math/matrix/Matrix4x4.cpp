@@ -4,9 +4,9 @@
  */
 
 #include "Matrix4x4.h"
-#include "../vector/Vector3.h"
-#include "../vector/Vector4.h"
-#include "../transform/Transform.h"
+#include "math/vector/Vector3.h"
+#include "math/vector/Vector4.h"
+#include "math/transform/Transform.h"
 #include <assert.h>
 
 using namespace QFE::MATH;

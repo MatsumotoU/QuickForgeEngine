@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "../../externals/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 #include "EngineDefines.h"
 
@@ -36,5 +36,4 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(tracks)
 		QFE_REFLECT_END()
 	};
-	QFE_COMPONENT(EventComponent)
 }

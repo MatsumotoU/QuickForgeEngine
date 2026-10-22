@@ -6,10 +6,10 @@
 #pragma once
 #include <string>
 #include <Windows.h>
-#include "IGameWindowManager.h"
-#include "IGameWindow.h"
+#include "window/interface/IGameWindowManager.h"
+#include "window/interface/IGameWindow.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 
 	/**
 	 * @class GameWindowManager
@@ -46,6 +46,12 @@ namespace QFE {
 		 * @return HWND ウィンドウハンドル
 		 */
 		HWND GetWindow(const std::string windowName) const;
+
+		/** @brief 最初に追加されたメインウィンドウのハンドルを取得 */
+		HWND GetMainWindow() const;
+
+		/// @brief ゲームウィンドウマネージャのサポートOSを取得します.
+		QFE::INFO::SupportedOs GetSupportedOs() const override;
 	};
 
 }

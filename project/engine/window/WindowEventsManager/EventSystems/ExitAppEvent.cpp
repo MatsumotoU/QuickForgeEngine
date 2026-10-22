@@ -1,12 +1,11 @@
 #include "ExitAppEvent.h"
 #include "EngineDefines.h"
 
-using namespace QFE;
+namespace QFE::WINDOW {
+
 ExitAppEvent::ExitAppEvent(nlohmann::json& data):IEvent(data) {}
 
-void ExitAppEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
-	wparam; // Unused parameter
-	lparam; // Unused parameter
+void ExitAppEvent::OnEvent(WPARAM, LPARAM) {
 	QFE_LOG("Call ExitAppEvent");
 
 	// アプリケーション終了フラグを立てる
@@ -15,4 +14,6 @@ void ExitAppEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 
 UINT ExitAppEvent::GetEventType() {
 	return WM_DESTROY;
+}
+
 }

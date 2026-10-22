@@ -5,14 +5,16 @@
 #include "components/SpriteRenderComponent.h"
 #include "components/ObjectInfoComponent.h"
 #include "components/TransformComponent.h"
+#include "components/ShaderComponent.h"
+#include "components/SkyBoxComponent.h"
 
 #include <utility>
 
 QFE::EDITOR::CreateEntityCommand::CreateEntityCommand(std::string entityName,
-	QFE::MATH::Vector3 position, EntityManager* entityManager, std::string modelName, bool createSprite) :
+	QFE::MATH::Vector3 position, EntityManager* entityManager, std::string modelName, bool createSprite, bool createSkyBox) :
 		entityManager_(entityManager), entityId_(UINT32_MAX),
 		entityName_(std::move(entityName)), modelName_(std::move(modelName)),
-		createSprite_(createSprite), position_(position) {
+		createSprite_(createSprite), createSkyBox_(createSkyBox), position_(position) {
 }
 
 void QFE::EDITOR::CreateEntityCommand::Execute() {
@@ -31,6 +33,7 @@ void QFE::EDITOR::CreateEntityCommand::Execute() {
 		QFE::SCENE::ModelRenderComponent modelRenderComp;
 		modelRenderComp.modelName = modelName_;
 		entityManager_->EmplaceComponent<QFE::SCENE::ModelRenderComponent>(entityId_, modelRenderComp);
+		entityManager_->EmplaceComponent<QFE::SCENE::ShaderComponent>(entityId_);
 
 		QFE::SCENE::MaterialComponent materialComp{};
 		materialComp.albedoColor = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -46,6 +49,9 @@ void QFE::EDITOR::CreateEntityCommand::Execute() {
 			entityId_, QFE::SCENE::SpriteRenderComponent{});
 		entityManager_->EmplaceComponent<QFE::SCENE::MaterialComponent>(
 			entityId_, QFE::SCENE::MaterialComponent{});
+	}
+	if (createSkyBox_) {
+		entityManager_->EmplaceComponent<QFE::SCENE::SkyBoxComponent>(entityId_);
 	}
 }
 

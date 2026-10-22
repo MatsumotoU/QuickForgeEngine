@@ -1,6 +1,6 @@
 #pragma once
 #include <functional>
-#include "../memory/SafeVector.h"
+#include "memory/SafeVector.h"
 
 namespace QFE {
 	/// @brief 優先度付きタスクを管理、並列実行するクラス

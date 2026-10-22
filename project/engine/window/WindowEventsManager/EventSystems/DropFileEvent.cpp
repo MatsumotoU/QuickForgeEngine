@@ -3,11 +3,11 @@
 
 #include "EngineDefines.h"
 
-using namespace QFE;
+namespace QFE::WINDOW {
+
 DropFileEvent::DropFileEvent(nlohmann::json& data):IEvent(data) {}
 
-void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
-	lparam;
+void DropFileEvent::OnEvent(WPARAM wparam, LPARAM) {
 	QFE_LOG("Call DropFileEvent");
 
 	// ドロップされたファイルのパスを取得
@@ -25,4 +25,6 @@ void DropFileEvent::OnEvent(WPARAM wparam, LPARAM lparam) {
 
  UINT DropFileEvent::GetEventType() {
 	return WM_DROPFILES;
+}
+
 }

@@ -15,10 +15,6 @@ namespace QFE::FILE {
 		void AddFileNamesByDirectory(const std::string& directoryPath);
 		/// @brief 指定のディレクトリにある特定の拡張子を持つファイル名を取得します。
 		void AddFileNamesByExtension(const std::string& directoryPath, const std::string& extension);
-		/// @brief 指定のディレクトリからすべての子ディレクトリを含むファイル名を取得します。
-		void AddFileNamesByDirectoryRecursively(const std::string& directoryPath);
-		/// @brief 指定のディレクトリからすべての子ディレクトリを含む特定の拡張子を持つファイル名を取得します。
-		void AddFileNamesByExtensionRecursively(const std::string& directoryPath, const std::string& extension);
 
 	private:
 		std::unordered_map<std::string, std::list<std::string>> fileNamesByExtension_;

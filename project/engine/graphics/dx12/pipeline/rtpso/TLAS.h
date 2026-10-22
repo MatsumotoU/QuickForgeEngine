@@ -14,6 +14,7 @@ namespace QFE::GRAPHIC {
     struct RaytracingInstance {
         BLASHandle blasHandle;          // 形状（どのBLASを使うか）
         QFE::MATH::Matrix4x4 worldMatrix; // 配置（どこに置くか）
+        uint8_t instanceMask = 0x03; // bit 0: reflection, bit 1: shadow
     };
 
 	/// @brief トップレベル加速構造（TLAS）を管理するクラス
@@ -36,5 +37,6 @@ namespace QFE::GRAPHIC {
         Microsoft::WRL::ComPtr<ID3D12Resource> instanceDescBuffer_; // インスタンス情報を載せるバッファ
 
 		UINT maxInstances_ = 0; // TLASに登録するBLAS(インスタンス)の最大数
+		bool scratchReady_ = false;
     };
 }

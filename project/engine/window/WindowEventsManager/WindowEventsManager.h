@@ -2,14 +2,18 @@
 #include <Windows.h>
 #include <array>
 #include <memory>
-#include "EventSystems/IEvent.h"
+#include "window/interface/IEvent.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 	/// @brief ウィンドウに対するアクションを管理するクラス
 	class WindowEventsManager final {
 	public:
 		WindowEventsManager();
 		~WindowEventsManager() = default;
+		WindowEventsManager(const WindowEventsManager&) = delete;
+		WindowEventsManager& operator=(const WindowEventsManager&) = delete;
+		WindowEventsManager(WindowEventsManager&&) = delete;
+		WindowEventsManager& operator=(WindowEventsManager&&) = delete;
 
 		/// @brief ウィンドウプロシージャ(OS呼び出し)
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

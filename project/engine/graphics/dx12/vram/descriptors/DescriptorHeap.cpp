@@ -103,7 +103,7 @@ ID3D12DescriptorHeap* DescriptorHeap::GetDescriptorHeap() const {
 	return descriptorHeap_.Get();
 }
 
-const bool QFE::GRAPHIC::DescriptorHeap::IsShaderVisible() const {
+bool QFE::GRAPHIC::DescriptorHeap::IsShaderVisible() const {
 	CheckCreated();	
 	return isShaderVisible_;
 }

@@ -1,13 +1,17 @@
 #pragma once
-#include "IEvent.h"
+#include "window/interface/IEvent.h"
 
-namespace QFE {
+namespace QFE::WINDOW {
 	/// @brief アプリケーション終了時のイベントシステム
 	class ExitAppEvent final : public IEvent {
 	public:
 		ExitAppEvent() = delete;
 		ExitAppEvent(nlohmann::json& data);
 		~ExitAppEvent() override = default;
+		ExitAppEvent(const ExitAppEvent&) = default;
+		ExitAppEvent(ExitAppEvent&&) noexcept = default;
+		ExitAppEvent& operator=(const ExitAppEvent&) = delete;
+		ExitAppEvent& operator=(ExitAppEvent&&) = delete;
 		/// @brief アプリケーション終了時のイベント処理
 		void OnEvent(WPARAM wparam, LPARAM lparam) override;
 		UINT GetEventType() override;

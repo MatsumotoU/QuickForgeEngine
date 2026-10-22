@@ -1,5 +1,6 @@
 #include "TextureLoader.h"
 #include <cassert>
+#include <filesystem>
 
 #include "string/MyString.h"
 
@@ -19,12 +20,12 @@ void TextureLoader::Initialize(TextureLoaderInitializeInfo info) {
 	// COMの初期化
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
-	hr;
+	static_cast<void>(hr);
 
 	// ダミーの黒いキューブマップを作成して保存する
-	CreateTextureFromScratchImage(std::move(CreateDummyBlackCubeMap()), kDummyBlackCubeMapKey, D3D12_SRV_DIMENSION_TEXTURECUBE);
+	CreateTextureFromScratchImage(CreateDummyBlackCubeMap(), kDummyBlackCubeMapKey, D3D12_SRV_DIMENSION_TEXTURECUBE);
 	// ダミーの白い1x1テクスチャを作成して保存する
-	CreateTextureFromScratchImage(std::move(CreateDummyWhite1x1Texture()), kDummyDummyWhite1x1TextureMapKey, D3D12_SRV_DIMENSION_TEXTURE2D);
+	CreateTextureFromScratchImage(CreateDummyWhite1x1Texture(), kDummyDummyWhite1x1TextureMapKey, D3D12_SRV_DIMENSION_TEXTURE2D);
 }
 /// @brief 終了処理
 void TextureLoader::Finalize() {
@@ -41,7 +42,7 @@ void TextureLoader::Finalize() {
 
 DirectXResourceHandle TextureLoader::LoadTexture(const std::string& filePath) {
 	QFE_LOG(std::format("TextureLoader: LoadPath {}", filePath));
-	std::string fileName = QFE::FILE::GetFileName(filePath);
+	std::string fileName = std::filesystem::path(filePath).lexically_normal().generic_string();
 
 	// 既に読み込み済みのファイルかどうかチェック（キーは一貫して fileName を使う）
 	if (textureDataMap_.contains(fileName)) {
@@ -65,11 +66,42 @@ DirectXResourceHandle TextureLoader::LoadTexture(const std::string& filePath) {
 	return CreateTextureFromScratchImage(std::move(scratchImage), fileName, dimension);
 }
 
-const DirectXResourceHandle TextureLoader::GetDummyBlackCubeMapHandle() const {
+DirectXResourceHandle TextureLoader::LoadTextureFromMemory(
+	const std::string& key, const uint8_t* data, size_t size) {
+	if (const auto existing = textureDataMap_.find(key); existing != textureDataMap_.end()) {
+		return existing->second.resourceHandle;
+	}
+	if (data == nullptr || size == 0) return DirectXResourceHandle::Invalid;
+
+	DirectX::ScratchImage image;
+	HRESULT hr = DirectX::LoadFromWICMemory(
+		data, size, DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	if (FAILED(hr)) {
+		QFE_LOG(std::format("TextureLoader: Failed to decode embedded texture '{}'", key));
+		return DirectXResourceHandle::Invalid;
+	}
+
+	DirectX::ScratchImage finalImage;
+	if (image.GetMetadata().width * image.GetMetadata().height == 1) {
+		hr = finalImage.InitializeFromImage(*image.GetImage(0, 0, 0));
+	} else {
+		hr = DirectX::GenerateMipMaps(
+			image.GetImages(), image.GetImageCount(), image.GetMetadata(),
+			DirectX::TEX_FILTER_SRGB, 0, finalImage);
+	}
+	if (FAILED(hr)) {
+		QFE_LOG(std::format("TextureLoader: Failed to prepare embedded texture '{}'", key));
+		return DirectXResourceHandle::Invalid;
+	}
+	return CreateTextureFromScratchImage(
+		std::move(finalImage), key, D3D12_SRV_DIMENSION_TEXTURE2D);
+}
+
+DirectXResourceHandle TextureLoader::GetDummyBlackCubeMapHandle() const {
 	return textureDataMap_.at(kDummyBlackCubeMapKey).resourceHandle;
 }
 
-const DirectXResourceHandle TextureLoader::GetDummyWhite1x1TextureHandle() const {
+DirectXResourceHandle TextureLoader::GetDummyWhite1x1TextureHandle() const {
 	return textureDataMap_.at(kDummyDummyWhite1x1TextureMapKey).resourceHandle;
 }
 

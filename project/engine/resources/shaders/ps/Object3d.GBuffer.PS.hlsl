@@ -28,6 +28,6 @@ PixelShaderOutput main(VertexShaderOutput input)
     output.position = float32_t4(input.worldPosition, 1.0f);
     output.normal = float32_t4(normalize(input.normal), 1.0f);
     output.color = float32_t4(gMaterial.color.rgb * textureColor.rgb, alpha);
-    output.packedTexture = float32_t4(gMaterial.metallic, gMaterial.smoothness, 0.0f, alpha);
+    output.packedTexture = float32_t4(gMaterial.metallic, gMaterial.smoothness, gMaterial.receiveShadow, alpha);
     return output;
 }

@@ -1,5 +1,5 @@
 #include "ThreadPool.h"
-#include "../EngineDefines.h"
+#include "EngineDefines.h"
 
 QFE::ThreadPool::ThreadPool() {
 	size_t threadCount = std::thread::hardware_concurrency();

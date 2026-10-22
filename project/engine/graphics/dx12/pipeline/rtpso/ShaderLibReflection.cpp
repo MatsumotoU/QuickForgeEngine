@@ -47,7 +47,7 @@ std::vector<RootParameterElement> ShaderLibReflection::GetRootParameterElement(I
 	// 3. ライブラリ内のすべての関数（レイジェネ、ヒットグループなど）をループ
 	for (UINT f = 0; f < libraryDesc.FunctionCount; ++f) {
 		// 各関数のリフレクションを取得
-		ID3D12FunctionReflection* funcReflection = libraryReflection->GetFunctionByIndex(f);
+		ID3D12FunctionReflection* funcReflection = libraryReflection->GetFunctionByIndex(static_cast<INT>(f));
 		if (!funcReflection) continue;
 		// 各関数の情報を取得
 		D3D12_FUNCTION_DESC funcDesc{};

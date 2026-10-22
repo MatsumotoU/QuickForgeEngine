@@ -82,8 +82,8 @@ std::vector<RootParameterElement> QFE::GRAPHIC::ShaderReflection::GetRootParamet
 		assert(SUCCEEDED(hr) && "Failed to get resource binding description.");
 		element.friendlyName = bindDesc.Name;
 		element.shaderInputType = bindDesc.Type;
-		element.shaderRegisterIndex = bindDesc.BindPoint;
-		element.descriptorCount = bindDesc.BindCount;
+		element.shaderRegisterIndex = static_cast<int>(bindDesc.BindPoint);
+		element.descriptorCount = static_cast<int>(bindDesc.BindCount);
 		rootParameterElements.push_back(element);
 	}
 
@@ -114,13 +114,15 @@ UINT QFE::GRAPHIC::ShaderReflection::GetRenderTargetCount(IDxcBlob* shaderBlob) 
 	// シェーダーの基本情報を取得
 	D3D12_SHADER_DESC shaderDesc{};
 	HRESULT hr = shaderReflection->GetDesc(&shaderDesc);
-	assert(SUCCEEDED(hr) && "Failed to get shader description.");
+	if(hr != S_OK) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to get shader description.", SystemError::Abort);
+	}
 
 	QFE_LOG(std::format("Shader has {} render target(s).", shaderDesc.OutputParameters));
 	return shaderDesc.OutputParameters;
 }
 
-Microsoft::WRL::ComPtr<IDxcContainerReflection> QFE::GRAPHIC::ShaderReflection::CreateContainerReflection(IDxcBlob* shaderBlob) {
+Microsoft::WRL::ComPtr<IDxcContainerReflection> QFE::GRAPHIC::ShaderReflection::CreateContainerReflection(IDxcBlob*) {
 	HRESULT hr;
 	Microsoft::WRL::ComPtr<IDxcContainerReflection> containerReflection;
 	// IDxcContainerReflectionのインスタンスを作成

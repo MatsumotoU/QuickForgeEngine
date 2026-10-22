@@ -21,7 +21,6 @@ namespace QFE::MATH {
 		Vector3 operator-(const Vector3& other) const { return { x - other.x, y - other.y, z - other.z }; }
 		Vector3 operator*(const Vector3& other) const { return { x * other.x, y * other.y, z * other.z }; }
 		Vector3 operator/(const Vector3& other) const { return { x / other.x, y / other.y, z / other.z }; }
-		Vector3& operator=(const Vector3& other) = default;
 		Vector3& operator+=(const Vector3& other) { x += other.x; y += other.y; z += other.z; return *this; }
 		Vector3& operator-=(const Vector3& other) { x -= other.x; y -= other.y; z -= other.z; return *this; }
 		Vector3& operator*=(const Vector3& other) { x *= other.x; y *= other.y; z *= other.z; return *this; }

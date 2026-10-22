@@ -1,0 +1,912 @@
+#include "framework/application/WindowsEngineFramework.h"
+#include "framework/application/WindowsGameModule.h"
+#include "EngineDefines.h"
+
+#include "window/GameWindowManager.h"
+#include "graphics/D3D12GraphicEngine.h"
+#include "graphics/interface/DirectXResourceFramework.h"
+#include "graphics/interface/DirectXRenderFramework.h"
+#include "gui/interface/IGuiManager.h"
+#include "framework/window/WindowCoreFrameWork.h"
+#include "framework/graphic/GraphicEngineCoreFramework.h"
+#include "framework/gui/GuiCoreFramework.h"
+#include "input/interface/InputInterface.h"
+#include "scene/SceneManager.h"
+#include "components/EngineComponentRegistration.h"
+#include "core/design-patterns/component/StaticComponentRegistry.h"
+#include "components/TransformHierarchy.h"
+#include "assetfactory/model/PrimitiveFactoryFuncs.h"
+#include "graphics/dx12/TextureLoader.h"
+#include "graphics/dx12/command/DirectXCommandManager.h"
+#include "graphics/dx12/pipeline/rtpso/RaytracingAccelerationStructure.h"
+#include "framework/scene/SplineMovementSystem.h"
+#include "audio/AudioEngine.h"
+#include "string/MyString.h"
+#include <algorithm>
+#include <cctype>
+#include <filesystem>
+#include <cmath>
+#include <cstring>
+#include <unordered_set>
+#include <imgui.h>
+
+namespace {
+	bool EnsureModelData(
+		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+		const std::string& modelDir,
+		const std::string& modelName,
+		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelDataMap) {
+		const auto existing = modelDataMap.find(modelName);
+		if (existing != modelDataMap.end() && !existing->second.meshes.empty()) {
+			return true;
+		}
+
+		// Older scene and prefab files use "box" for the built-in box mesh.
+		// Keep those assets renderable even though the engine now names built-in
+		// primitives with the "Primitive/" prefix.
+		const std::string primitiveName = modelName == "box"
+			? "Primitive/Box"
+			: modelName;
+		if (QFE::ASSET::IsPrimitiveMeshName(primitiveName)) {
+			std::vector<VertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(primitiveName);
+			if (vertices.empty()) {
+				return false;
+			}
+
+			QFE::ASSET::ModelData& modelData = modelDataMap[modelName];
+			modelData.name = modelName;
+			modelData.meshes.clear();
+			QFE::ASSET::MeshData mesh(vertices.size(), vertices.size());
+			mesh.vertices.GetInternalVector() = std::move(vertices);
+			std::vector<uint32_t>& indices = mesh.indices.GetInternalVector();
+			indices.resize(mesh.vertices.size());
+			for (uint32_t index = 0; index < indices.size(); ++index) {
+				indices[index] = index;
+			}
+			modelData.meshes.push_back(std::move(mesh));
+			return true;
+		}
+
+		std::string extension = std::filesystem::path(modelName).extension().string();
+		std::transform(extension.begin(), extension.end(), extension.begin(),
+			[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
+		const std::string filePath = modelDir + modelName +
+			(extension == ".glb" || extension == ".obj" ? "" : ".obj");
+		return systems.modelLoader->LoadModel(filePath, modelDataMap[modelName]);
+	}
+}
+
+bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
+	HINSTANCE hInstance, 
+	const std::string& mainWindowName, uint32_t mainWindowWidth, uint32_t mainWindowHeight,
+	WindowsQuickForgeEngineSystems& outSystems,
+	ComponentRegistrationCallback registerApplicationComponents) {
+
+	// デバッグログの初期化
+	QFE::MyDebugLog::GetInstance()->Initialize();
+
+	// ゲームウィンドウマネージャの初期化とウィンドウの追加
+	outSystems.windowManager = 
+		QFE::FRAMEWORK::CreateWindowManager(mainWindowName, mainWindowWidth, mainWindowHeight);
+	// ウィンドウマネージャの初期化に失敗した場合はエラーを報告して終了
+	if(outSystems.windowManager == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to create GameWindowManager.",QFE::SystemError::Abort);
+		return false;
+	}
+	// メインウィンドウのハンドルを取得
+	const auto* gameWindowManager =
+		dynamic_cast<const QFE::WINDOW::GameWindowManager*>(outSystems.windowManager.get());
+	if (gameWindowManager == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to access the Windows game window manager.", QFE::SystemError::Abort);
+		return false;
+	}
+	const HWND mainWindow = gameWindowManager->GetMainWindow();
+
+	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
+	QFE::FRAMEWORK::GraphicEngineFeatureState graphicFeatures;
+	graphicFeatures.isTextureLoaderEnabled = true;
+	graphicFeatures.isComputeEnabled = true;
+	graphicFeatures.isRaytracingEnabled = true;
+	graphicFeatures.isBuildInPipelineStateObjectsEnabled = true;
+	graphicFeatures.isBuildInComputePipelineStateObjectsEnabled = true;
+	graphicFeatures.isLineRenderingEnabled = true;
+	outSystems.graphicEngine =
+		QFE::FRAMEWORK::CreateGraphicEngine(*outSystems.windowManager, graphicFeatures);
+	// グラフィックエンジンの初期化に失敗した場合はエラーを報告して終了
+	if(outSystems.graphicEngine == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to create D3D12GraphicEngine.",QFE::SystemError::Abort);
+		return false;
+	}
+
+	outSystems.guiManager = QFE::FRAMEWORK::CreateGuiManager(
+		*outSystems.graphicEngine, *outSystems.windowManager);
+	if (outSystems.guiManager == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to create D3D12GuiManager.", QFE::SystemError::Abort);
+		return false;
+	}
+
+	// InputInterfaceの初期化
+	outSystems.inputInterface = QFE::FRAMEWORK::CreateInputInterface(mainWindow, hInstance);
+	// InputInterfaceの初期化に失敗した場合はエラーを報告して終了
+	if (outSystems.inputInterface == nullptr) {
+		QFE_REPORT_SYSTEM_ERROR("Failed to create InputInterface.", QFE::SystemError::Abort);
+		return false;
+	}
+
+	// FPSカウンターの初期化
+	outSystems.fpsCounter = std::make_unique<QFE::FPSCounter>();
+	outSystems.fpsCounter->Reset();
+
+	// エンジン標準とアプリケーション固有のコンポーネントを明示登録してから固定する。
+	outSystems.componentRegistry = std::make_shared<QFE::StaticComponentRegistry>();
+	if (!QFE::RegisterEngineComponents(*outSystems.componentRegistry)) {
+		return false;
+	}
+	if (registerApplicationComponents != nullptr &&
+		!registerApplicationComponents(*outSystems.componentRegistry)) {
+		return false;
+	}
+	outSystems.componentRegistry->Freeze();
+
+	// シーンマネージャの初期化。Registryの所有権はSystemsに残す。
+	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>(outSystems.componentRegistry);
+	outSystems.sceneManager->Initialize();
+	outSystems.audioEngine = std::make_unique<QFE::AUDIO::AudioEngine>();
+	if (!outSystems.audioEngine->Initialize()) {
+		QFE_LOG("Audio initialization failed; sound playback is unavailable.");
+	}
+
+	// モデルローダーの初期化
+	outSystems.modelLoader = std::make_unique<QFE::ASSET::AssimpModelLoader>();
+	outSystems.modelLoader->Initialize();
+
+	return true;
+}
+
+bool QFE::FRAMEWORK::ReloadWindowsGameModule(
+	WindowsGameModule& gameModule,
+	WindowsQuickForgeEngineSystems& systems) {
+	if (!gameModule.IsLoaded() || gameModule.GetSourcePath().empty() ||
+		!systems.sceneManager || !systems.componentRegistry) {
+		return false;
+	}
+
+	// 旧DLLを残したまま、新しいshadow copyのexportとAPIバージョンを先に検証する。
+	WindowsGameModule candidateModule;
+	if (!candidateModule.Load(gameModule.GetSourcePath().wstring())) {
+		return false;
+	}
+
+	auto candidateRegistry = std::make_shared<QFE::StaticComponentRegistry>();
+	if (!QFE::RegisterEngineComponents(*candidateRegistry)) {
+		return false;
+	}
+	const ComponentRegistrationCallback registerComponents =
+		candidateModule.GetComponentRegistrationFunction();
+	if (registerComponents == nullptr || !registerComponents(*candidateRegistry)) {
+		return false;
+	}
+	candidateRegistry->Freeze();
+
+	QFE::SCENE::SceneSnapshot snapshot;
+	try {
+		snapshot = systems.sceneManager->CreateSnapshot();
+	}
+	catch (const std::exception& exception) {
+		QFE_LOG(std::string("Failed to snapshot scene before GameModule reload: ") + exception.what());
+		return false;
+	}
+
+	const std::shared_ptr<QFE::StaticComponentRegistry> oldRegistry = systems.componentRegistry;
+	systems.sceneManager->ReleaseComponentRegistryForReload();
+	systems.componentRegistry = candidateRegistry;
+
+	try {
+		if (!systems.sceneManager->RestoreAfterComponentReload(candidateRegistry, snapshot)) {
+			throw std::runtime_error("Failed to restore scene with the new component registry");
+		}
+	}
+	catch (const std::exception& exception) {
+		QFE_LOG(std::string("GameModule reload was rolled back: ") + exception.what());
+
+		// 新DLL由来のStorageとfactoryを、新DLLをアンロードする前に破棄する。
+		systems.sceneManager->ReleaseComponentRegistryForReload();
+		systems.componentRegistry = oldRegistry;
+		candidateRegistry.reset();
+		try {
+			systems.sceneManager->RestoreAfterComponentReload(oldRegistry, snapshot);
+		}
+		catch (const std::exception& rollbackException) {
+			QFE_LOG(std::string("Failed to restore the previous GameModule state: ") +
+				rollbackException.what());
+		}
+		return false;
+	}
+
+	if (systems.audioEngine) {
+		systems.audioComponents.Reset(*systems.audioEngine);
+	}
+
+	// swap後はcandidateModuleが旧DLLを所有する。旧Registryを先に破棄してから
+	// candidateModuleのデストラクタで旧DLLをアンロードする。
+	gameModule.Swap(candidateModule);
+	return true;
+}
+
+bool QFE::FRAMEWORK::BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems) {
+	if (!systems.fpsCounter || !systems.inputInterface) {
+		return false;
+	}
+	systems.fpsCounter->FrameStart();
+	systems.inputInterface->Update();
+	return true;
+}
+
+void QFE::FRAMEWORK::EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems) {
+	if (systems.sceneManager && systems.audioEngine) {
+		systems.audioComponents.Update(*systems.sceneManager, *systems.audioEngine);
+	}
+	if (systems.guiManager) QFE::FRAMEWORK::PostDrawGui(*systems.guiManager);
+	if (systems.graphicEngine) QFE::FRAMEWORK::PostDrawGraphicEngine(systems.graphicEngine.get());
+	if (systems.sceneManager) systems.sceneManager->EndFrame();
+	if (systems.fpsCounter) systems.fpsCounter->FrameEnd();
+	if (systems.inputInterface) systems.inputInterface->EndFrame();
+}
+
+void QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEngineSystems& systems) {
+	if (systems.audioEngine) {
+		systems.audioComponents.Reset(*systems.audioEngine);
+		systems.audioEngine->Shutdown();
+	}
+	if (systems.sceneManager) systems.sceneManager->Shutdown();
+	if (systems.guiManager) QFE::FRAMEWORK::ShutdownGui(*systems.guiManager);
+	if (systems.graphicEngine) QFE::FRAMEWORK::ShutdownGraphicEngine(systems.graphicEngine.get());
+	if (systems.windowManager) systems.windowManager->Shutdown();
+}
+
+void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
+	auto& graphicEngine = systems.graphicEngine;
+
+	std::string psDirName = resources.psDirName;
+	std::string vsDirName = resources.vsDirName;
+	std::string rtDirName = resources.rtDirName;
+
+	//====================
+	// ここから描画の準備
+	//====================
+
+	// シェーダーペアを生成
+	QFE::GRAPHIC::CreateShaderPair(graphicEngine.get(), vsDirName, psDirName, "Object3d.GBuffer.VS.hlsl", "Object3d.GBuffer.PS.hlsl", resources.shaderPairHandle);
+	// パイプラインステートオブジェクトを生成
+	
+	QFE::GRAPHIC::CreateGraphicPSO(graphicEngine.get(), resources.shaderPairHandle,
+		QFE::GRAPHIC::RasterizerType::Default, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
+		QFE::GRAPHIC::DepthStencilDescType::Default, resources.psoHandle);
+	QFE::GRAPHIC::GetGraphicPSORootParameterTypeList(graphicEngine.get(), resources.psoHandle, resources.rootParameterTypes);
+
+	// 画面合成用スプライトのシェーダーとPSOを準備する。
+	QFE::GRAPHIC::CreateShaderPair(
+		graphicEngine.get(), vsDirName, psDirName,
+		"Object2d.VS.hlsl", "Object2d.PS.hlsl", resources.spriteShaderPairHandle);
+	QFE::GRAPHIC::CreateGraphicPSO(
+		graphicEngine.get(), resources.spriteShaderPairHandle,
+		QFE::GRAPHIC::RasterizerType::CullNone, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
+		QFE::GRAPHIC::DepthStencilDescType::None, DXGI_FORMAT_R8G8B8A8_UNORM,
+		resources.spriteUnormPsoHandle);
+	QFE::GRAPHIC::CreateGraphicPSO(
+		graphicEngine.get(), resources.spriteShaderPairHandle,
+		QFE::GRAPHIC::RasterizerType::CullNone, QFE::GRAPHIC::BlendMode::kBlendModeNormal,
+		QFE::GRAPHIC::DepthStencilDescType::None, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+		resources.spriteSrgbPsoHandle);
+
+	const std::vector<VertexData> spriteVertices = QFE::ASSET::CreatePrimitiveMesh("Primitive/Quad");
+	QFE::GRAPHIC::CreateVertexBuffer(
+		graphicEngine.get(), spriteVertices, "SpriteQuad", resources.spriteVertexBufferHandle);
+
+	QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.textureHandleMap["BlackCubeMap"]);
+	resources.textureGpuIndexMap["BlackCubeMap"] = 0; // GPU側のインデックスを設定
+	QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), resources.textureHandleMap["White1x1"]);
+	resources.textureGpuIndexMap["White1x1"] = 1; // GPU側のインデックスを設定
+
+	// オフスクリーンレンダーターゲットの作成
+	for (int i = 0; i < 4; ++i) {
+		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle;
+		QFE::GRAPHIC::CreateOffScreenRenderTarget(
+			graphicEngine.get(), offScreenRenderTargetHandle, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT);
+		resources.renderTargets.push_back(offScreenRenderTargetHandle);
+	}
+
+	// ビューポートとシザー矩形の作成
+	QFE::GRAPHIC::CreateViewport(graphicEngine.get(), resources.viewportHandle, 1280, 720);
+	QFE::GRAPHIC::CreateScissorRect(graphicEngine.get(), resources.scissorRectHandle, 0, 0, 1280, 720);
+
+	// UAVバッファの作成とルートリソースの設定
+	QFE::GRAPHIC::CreateUAVBuffer(graphicEngine.get(), resources.uavBufferHandle, 1280, 720, L"UAVBuffer");
+
+	// レイトレーシングパイプラインステートオブジェクトの作成
+	QFE::GRAPHIC::CreateRayTracingPSO(graphicEngine.get(), resources.rtpsoHandle, rtDirName, "ShadowRaytracing.hlsl");
+}
+
+void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
+	auto& graphicEngine = systems.graphicEngine;
+	auto& guiManager = systems.guiManager;
+	auto& fpsCounter = systems.fpsCounter;
+	auto* d3d12GraphicEngine =
+		dynamic_cast<QFE::GRAPHIC::D3D12GraphicEngine*>(graphicEngine.get());
+	if (d3d12GraphicEngine == nullptr || guiManager == nullptr) {
+		return;
+	}
+	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
+	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	auto* accelerationStructure = d3d12GraphicEngine->GetRaytracingAccelerationStructure();
+	if (resources.animatedBlasSceneRevision != sceneManager.GetSceneRevision()) {
+		for (const auto& [entityId, blas] : resources.animatedBlasByEntity) {
+			accelerationStructure->RemoveBLAS(blas.handle);
+		}
+		resources.animatedBlasByEntity.clear();
+		resources.animatedBlasSceneRevision = sceneManager.GetSceneRevision();
+	}
+	QFE::FRAMEWORK::DrawSplineMovementPaths(
+		entityManager,
+		[d3d12GraphicEngine](
+			const QFE::MATH::Vector3& start,
+			const QFE::MATH::Vector3& end,
+			const QFE::MATH::Vector4& color) {
+			d3d12GraphicEngine->DrawLine(start, end, color);
+		});
+
+	// 旧スカイボックスと同様、シーン内の最初の可視キューブマップを背景に使う。
+	QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.skyBoxTextureHandle);
+	resources.skyBoxVisible = false;
+	entityManager.Each<QFE::SCENE::SkyBoxComponent>(
+		[&](uint32_t, QFE::SCENE::SkyBoxComponent& skyBox) {
+			if (!skyBox.visible || resources.skyBoxVisible) return;
+			if (skyBox.textureName.empty()) {
+				skyBox.renderErrorMessage = "Select a cubemap DDS texture.";
+				return;
+			}
+			const std::filesystem::path texturePath =
+				std::filesystem::path(resources.assetDir) / skyBox.textureName;
+			if (texturePath.extension() != ".dds" || !std::filesystem::exists(texturePath)) {
+				skyBox.renderErrorMessage = "Cubemap DDS not found: " + texturePath.generic_string();
+				return;
+			}
+			if (!QFE::FRAMEWORK::LoadTexture(systems, resources.assetDir, skyBox.textureName,
+				resources.textureHandleMap, resources.textureGpuIndexMap, resources.nextTextureGpuIndex)) {
+				skyBox.renderErrorMessage = "Failed to load cubemap: " + skyBox.textureName;
+				return;
+			}
+			resources.skyBoxTextureHandle = resources.textureHandleMap.at(skyBox.textureName);
+			resources.skyBoxVisible = true;
+			skyBox.renderErrorMessage.clear();
+		});
+
+	// 各エンティティのModelRenderComponentを更新
+	std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
+	std::vector<RaytracingVertexAttribute> globalVertexAttributes;
+	std::vector<uint32_t> globalTriIndices;
+	std::vector<InstanceMetaCPU> instanceMetaAligned;
+	std::unordered_map<std::string, InstanceMetaCPU> staticModelMeta;
+	std::unordered_set<uint32_t> activeAnimatedEntities;
+
+	entityManager.Each<QFE::SCENE::ModelRenderComponent, QFE::SCENE::TransformComponent>(
+		[&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp, QFE::SCENE::TransformComponent& transformComp) {
+			modelRenderComp.canRender = false;
+			QFE::MATH::EulerTransform objTransform = transformComp.transform;
+
+			if (entityManager.HasComponent < QFE::SCENE::AnimationComponent>(entityId)) {
+				QFE::SCENE::AnimationComponent& animationComp = entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
+				objTransform.translate += animationComp.transform.translate;
+				objTransform.rotate += animationComp.transform.rotate;
+				objTransform.scale *= animationComp.transform.scale;
+			}
+			const QFE::MATH::Matrix4x4 worldMatrix =
+				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &objTransform);
+
+			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
+				d3d12GraphicEngine->GetDirectXResourceAllocator();
+			QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
+				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
+			QFE::GRAPHIC::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, worldMatrix, resources.viewProj);
+			modelRenderComp.transformMatrixBufferHandle =
+				static_cast<uint32_t>(transformMatrixBufferHandle);
+
+			// マテリアルの更新
+			if (entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId) == false) {
+				modelRenderComp.renderErrorMessage = "Missing MaterialComponent for entity: " + std::to_string(entityId);
+				return;
+			}
+			QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
+				resourceAllocator->AllocateConstantBuffer<Material>();
+			Material* materialData =
+				d3d12GraphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
+			QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
+			materialData->color = materialComp.albedoColor;
+			materialData->metallic = materialComp.metallic;
+			materialData->smoothness = materialComp.smoothness;
+			materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(materialComp.uvTransform);
+			const QFE::SCENE::ShaderComponent* shader = entityManager.HasComponent<QFE::SCENE::ShaderComponent>(entityId)
+				? &entityManager.GetComponent<QFE::SCENE::ShaderComponent>(entityId) : nullptr;
+			materialData->receiveShadow = shader == nullptr || shader->receiveShadow ? 1.0f : 0.0f;
+			modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
+
+			// 頂点バッファの更新
+			if (resources.vertexBufferMap.find(modelRenderComp.modelName) != resources.vertexBufferMap.end()) {
+				modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelRenderComp.modelName]);
+			} else {
+				if (QFE::FRAMEWORK::LoadModelVertexData(systems, resources.modelDir, modelRenderComp.modelName, resources.modelDataMap, resources.vertexBufferMap)) {
+					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelRenderComp.modelName]);
+				} else {
+					modelRenderComp.renderErrorMessage = "Failed to load vertex buffer for model: " + modelRenderComp.modelName;
+					return;
+				}
+			}
+			std::string extension = std::filesystem::path(modelRenderComp.modelName).extension().string();
+			std::transform(extension.begin(), extension.end(), extension.begin(),
+				[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
+			bool animatedGlb = false;
+			std::vector<VertexData> sampledVertices;
+			if (extension == ".glb") {
+				const std::string filePath = resources.modelDir + modelRenderComp.modelName;
+				const auto clipNames = systems.modelLoader->GetGlbAnimationNames(filePath);
+				animatedGlb = !clipNames.empty();
+				if (animatedGlb) {
+					const double duration = systems.modelLoader->GetGlbAnimationDuration(filePath, modelRenderComp.glbAnimationName);
+					if (!modelRenderComp.glbAnimationName.empty() &&
+						std::find(clipNames.begin(), clipNames.end(), modelRenderComp.glbAnimationName) == clipNames.end()) {
+						modelRenderComp.renderErrorMessage = "GLB animation not found: " + modelRenderComp.glbAnimationName;
+						return;
+					}
+					if (modelRenderComp.animatedBufferModelName != modelRenderComp.modelName) {
+						modelRenderComp.animatedVertexResourceHandle = UINT32_MAX;
+						modelRenderComp.animatedBufferModelName = modelRenderComp.modelName;
+						modelRenderComp.glbAnimationTime = 0.0;
+					}
+					if (modelRenderComp.activeGlbAnimationName != modelRenderComp.glbAnimationName) {
+						modelRenderComp.glbAnimationTime = 0.0;
+						modelRenderComp.activeGlbAnimationName = modelRenderComp.glbAnimationName;
+					}
+					if (modelRenderComp.playGlbAnimation) {
+						modelRenderComp.glbAnimationTime +=
+							static_cast<double>(fpsCounter->GetDeltaTime()) * (std::max)(0.0f, modelRenderComp.glbAnimationSpeed);
+						if (duration > 0.0) {
+							modelRenderComp.glbAnimationTime = modelRenderComp.loopGlbAnimation
+								? std::fmod(modelRenderComp.glbAnimationTime, duration)
+								: (std::min)(modelRenderComp.glbAnimationTime, duration);
+						}
+					}
+					if (!systems.modelLoader->SampleGlbAnimation(
+						filePath, modelRenderComp.glbAnimationName, modelRenderComp.glbAnimationTime, sampledVertices)) {
+						modelRenderComp.renderErrorMessage = "Failed to sample GLB animation: " + modelRenderComp.glbAnimationName;
+						return;
+					}
+					if (sampledVertices.size() != resources.modelDataMap.at(modelRenderComp.modelName).meshes[0].vertices.size()) {
+						modelRenderComp.renderErrorMessage = "GLB animation vertex count changed";
+						return;
+					}
+					if (modelRenderComp.animatedVertexResourceHandle == UINT32_MAX) {
+						QFE::GRAPHIC::DirectXResourceHandle handle;
+						if (!QFE::GRAPHIC::CreateVertexBuffer(graphicEngine.get(), sampledVertices,
+							modelRenderComp.modelName + "_animated", handle)) {
+							modelRenderComp.renderErrorMessage = "Failed to create animated vertex buffer";
+							return;
+						}
+						modelRenderComp.animatedVertexResourceHandle = static_cast<uint32_t>(handle);
+					} else {
+						VertexData* mapped =
+							d3d12GraphicEngine->GetDirectXResourceContainer()->GetMappedData<VertexData>(
+								static_cast<QFE::GRAPHIC::DirectXResourceHandle>(
+									modelRenderComp.animatedVertexResourceHandle));
+						if (!mapped) {
+							modelRenderComp.renderErrorMessage = "Animated vertex buffer is not mapped";
+							return;
+						}
+						std::memcpy(mapped, sampledVertices.data(), sampledVertices.size() * sizeof(VertexData));
+					}
+					modelRenderComp.vertexResourceHandle = modelRenderComp.animatedVertexResourceHandle;
+				}
+			}
+			if (!animatedGlb) {
+				modelRenderComp.animatedBufferModelName.clear();
+				modelRenderComp.activeGlbAnimationName.clear();
+				modelRenderComp.animatedVertexResourceHandle = UINT32_MAX;
+				modelRenderComp.glbAnimationTime = 0.0;
+			}
+
+			// インデックスバッファの更新
+			if (resources.indexBufferMap.find(modelRenderComp.modelName) != resources.indexBufferMap.end()) {
+				modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelRenderComp.modelName]);
+			} else {
+				if (QFE::FRAMEWORK::LoadModelIndexBuffer(systems, resources.modelDir, modelRenderComp.modelName, resources.modelDataMap, resources.indexBufferMap)) {
+					modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelRenderComp.modelName]);
+				} else {
+					modelRenderComp.renderErrorMessage = "Failed to load index buffer for model: " + modelRenderComp.modelName;
+					return;
+				}
+			}
+
+			// テクスチャの更新: White1x1 < モデル内蔵 < 明示指定
+			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
+			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+			std::string effectiveTextureName;
+			const QFE::ASSET::ModelMaterialData* modelMaterial = nullptr;
+			if (resources.modelDataMap.find(modelRenderComp.modelName) != resources.modelDataMap.end()) {
+				const QFE::ASSET::ModelData& modelData = resources.modelDataMap[modelRenderComp.modelName];
+				if (!modelData.meshes.empty()) {
+					modelMaterial = &modelData.meshes[0].material;
+					effectiveTextureName = modelMaterial->textureName;
+				}
+			}
+			if (!modelRenderComp.textureName.empty()) {
+				effectiveTextureName = modelRenderComp.textureName;
+			}
+			if (modelMaterial) {
+				materialData->color *= modelMaterial->baseColor;
+			}
+			if (!effectiveTextureName.empty()) {
+				if (modelRenderComp.textureName.empty() && modelMaterial &&
+					!modelMaterial->embeddedTextureData.empty()) {
+					if (!resources.textureHandleMap.contains(effectiveTextureName)) {
+						const auto& bytes = modelMaterial->embeddedTextureData;
+						const auto loaded = d3d12GraphicEngine->GetTextureLoader()->LoadTextureFromMemory(
+							effectiveTextureName, bytes.data(), bytes.size());
+						if (loaded == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+							modelRenderComp.renderErrorMessage = "Failed to load embedded texture: " + effectiveTextureName;
+							return;
+						}
+						resources.textureHandleMap[effectiveTextureName] = loaded;
+						resources.textureGpuIndexMap[effectiveTextureName] = resources.nextTextureGpuIndex++;
+					}
+					textureHandle = resources.textureHandleMap[effectiveTextureName];
+				} else {
+					if (QFE::FRAMEWORK::LoadTexture(systems, resources.assetDir, effectiveTextureName, resources.textureHandleMap, resources.textureGpuIndexMap, resources.nextTextureGpuIndex)) {
+						textureHandle = resources.textureHandleMap[effectiveTextureName];
+					} else {
+						modelRenderComp.renderErrorMessage = "Failed to load texture: " + effectiveTextureName;
+						return;
+					}
+				}
+			}
+			modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
+
+			// 頂点変形のあるGLBはエンティティごとに更新可能なBLASを所有する。
+			const auto& mesh = resources.modelDataMap.at(modelRenderComp.modelName).meshes[0];
+			const auto& indices = mesh.indices.GetInternalVector();
+			const auto& vertices = animatedGlb ? sampledVertices : mesh.vertices.GetInternalVector();
+			QFE::GRAPHIC::BLASHandle blasHandle = QFE::GRAPHIC::BLASHandle::Invalid;
+			if (animatedGlb) {
+				auto existing = resources.animatedBlasByEntity.find(entityId);
+				if (existing != resources.animatedBlasByEntity.end() && existing->second.modelName != modelRenderComp.modelName) {
+					accelerationStructure->RemoveBLAS(existing->second.handle);
+					resources.animatedBlasByEntity.erase(existing);
+					existing = resources.animatedBlasByEntity.end();
+				}
+				if (existing == resources.animatedBlasByEntity.end()) {
+					if (!QFE::GRAPHIC::CreateBLAS(graphicEngine.get(), vertices, indices,
+						"animated_entity_" + std::to_string(entityId), blasHandle, true)) {
+						modelRenderComp.renderErrorMessage = "Failed to create animated BLAS";
+						return;
+					}
+					resources.animatedBlasByEntity[entityId] = { modelRenderComp.modelName, blasHandle };
+				} else {
+					blasHandle = existing->second.handle;
+					const auto positions = QFE::GRAPHIC::GetModelVertexPositions(vertices.data(), vertices.size());
+					if (!accelerationStructure->UpdateBLAS(
+						blasHandle,
+						d3d12GraphicEngine->GetDirectXCommandManager()->GetCommandList4(
+							D3D12_COMMAND_LIST_TYPE_DIRECT),
+						positions)) {
+						modelRenderComp.renderErrorMessage = "Failed to update animated BLAS";
+						return;
+					}
+				}
+				activeAnimatedEntities.insert(entityId);
+			} else {
+				if (!resources.blasHandleMap.contains(modelRenderComp.modelName) &&
+					!QFE::FRAMEWORK::LoadModelAndCreateBLAS(systems, resources.modelDir,
+						modelRenderComp.modelName, resources.modelDataMap, resources.blasHandleMap)) {
+					modelRenderComp.renderErrorMessage = "Failed to load BLAS for model: " + modelRenderComp.modelName;
+					return;
+				}
+				blasHandle = resources.blasHandleMap.at(modelRenderComp.modelName);
+			}
+
+			InstanceMetaCPU instanceMeta{};
+			if (!animatedGlb && staticModelMeta.contains(modelRenderComp.modelName)) {
+				instanceMeta = staticModelMeta.at(modelRenderComp.modelName);
+			} else {
+				instanceMeta.vertexBase = static_cast<uint32_t>(globalVertexAttributes.size());
+				instanceMeta.vertexCount = static_cast<uint32_t>(vertices.size());
+				instanceMeta.primitiveBase = static_cast<uint32_t>(globalTriIndices.size() / 3);
+				for (const auto& vertex : vertices) {
+					RaytracingVertexAttribute attribute{};
+					attribute.texcoord = vertex.texcoord;
+					attribute.normal = vertex.normal;
+					globalVertexAttributes.push_back(attribute);
+				}
+				globalTriIndices.insert(globalTriIndices.end(), indices.begin(), indices.end());
+				if (!animatedGlb) staticModelMeta[modelRenderComp.modelName] = instanceMeta;
+			}
+			instanceMeta.baseColor = materialData->color;
+			instanceMeta.uvTransform = materialData->uvTransform;
+			instanceMeta.metallic = materialData->metallic;
+			instanceMeta.smoothness = materialData->smoothness;
+			instanceMeta.padding[0] = shader == nullptr || shader->receiveShadow ? 1.0f : 0.0f;
+			const auto textureIndex = resources.textureGpuIndexMap.find(effectiveTextureName);
+			instanceMeta.materialIndex = textureIndex != resources.textureGpuIndexMap.end() ? textureIndex->second : 1u;
+			instanceMetaAligned.push_back(instanceMeta);
+			raytracingInstances.push_back({ blasHandle, worldMatrix,
+				static_cast<uint8_t>(shader == nullptr || shader->castShadow ? 0x03 : 0x01) });
+
+			// レンダリング可能
+			modelRenderComp.canRender = true;
+			modelRenderComp.renderErrorMessage = "";
+		});
+
+	// スプライトは3Dモデルと異なり、G-bufferやBLASへ登録せず最終映像へ直接重ねる。
+	const QFE::MATH::Matrix4x4 spriteProjection = QFE::MATH::Matrix4x4::MakeOrthographicMatrix(
+		0.0f, 0.0f,
+		static_cast<float>(resources.windowWidth), static_cast<float>(resources.windowHeight),
+		0.0f, 1.0f);
+	entityManager.Each<QFE::SCENE::SpriteRenderComponent>(
+		[&](uint32_t entityId, QFE::SCENE::SpriteRenderComponent& sprite) {
+			sprite.canRender = false;
+			if (!sprite.visible) {
+				sprite.renderErrorMessage.clear();
+				return;
+			}
+			if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+				sprite.renderErrorMessage = "Missing TransformComponent for entity: " + std::to_string(entityId);
+				return;
+			}
+			if (!entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId)) {
+				sprite.renderErrorMessage = "Missing MaterialComponent for entity: " + std::to_string(entityId);
+				return;
+			}
+
+			QFE::MATH::EulerTransform spriteTransform =
+				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+			if (entityManager.HasComponent<QFE::SCENE::AnimationComponent>(entityId)) {
+				const QFE::SCENE::AnimationComponent& animation =
+					entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
+				spriteTransform.translate += animation.transform.translate;
+				spriteTransform.rotate += animation.transform.rotate;
+				spriteTransform.scale *= animation.transform.scale;
+			}
+			const QFE::MATH::Matrix4x4 worldMatrix =
+				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &spriteTransform);
+
+			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
+				d3d12GraphicEngine->GetDirectXResourceAllocator();
+			const QFE::GRAPHIC::DirectXResourceHandle transformHandle =
+				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("SpriteTransform");
+			QFE::GRAPHIC::UpdateObject3dWVPMatrix(
+				graphicEngine.get(), transformHandle, worldMatrix, spriteProjection);
+			sprite.transformMatrixBufferHandle = static_cast<uint32_t>(transformHandle);
+
+			const QFE::GRAPHIC::DirectXResourceHandle materialHandle =
+				resourceAllocator->AllocateConstantBuffer<Material>("SpriteMaterial");
+			Material* materialData =
+				d3d12GraphicEngine->GetConstantBufferData<Material>(materialHandle);
+			if (!materialData) {
+				sprite.renderErrorMessage = "Failed to allocate sprite material for entity: " + std::to_string(entityId);
+				return;
+			}
+			const QFE::SCENE::MaterialComponent& material =
+				entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
+			materialData->color = material.albedoColor;
+			materialData->metallic = material.metallic;
+			materialData->smoothness = material.smoothness;
+			materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(material.uvTransform);
+			sprite.materialResourceHandle = static_cast<uint32_t>(materialHandle);
+
+			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
+			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+			if (!sprite.textureName.empty()) {
+				if (!QFE::FRAMEWORK::LoadTexture(
+					systems, resources.assetDir, sprite.textureName,
+					resources.textureHandleMap, resources.textureGpuIndexMap, resources.nextTextureGpuIndex)) {
+					sprite.renderErrorMessage = "Failed to load texture: " + sprite.textureName;
+					return;
+				}
+				textureHandle = resources.textureHandleMap[sprite.textureName];
+			}
+			sprite.textureResourceHandle = static_cast<uint32_t>(textureHandle);
+			sprite.canRender = true;
+			sprite.renderErrorMessage.clear();
+		});
+
+	// シーンから消えたモデルやアニメーションを外したモデルのBLASを解放する。
+	for (auto it = resources.animatedBlasByEntity.begin(); it != resources.animatedBlasByEntity.end();) {
+		if (!activeAnimatedEntities.contains(it->first)) {
+			accelerationStructure->RemoveBLAS(it->second.handle);
+			it = resources.animatedBlasByEntity.erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	// BLASインスタンスと同じ順序で属性、インデックス、マテリアルをアップロードする。
+	size_t vertexAttributeBytes = globalVertexAttributes.size() * sizeof(RaytracingVertexAttribute);
+	size_t triBytes = globalTriIndices.size() * sizeof(uint32_t);
+	size_t metaBytes = instanceMetaAligned.size() * sizeof(InstanceMetaCPU);
+
+	// 空シーンではSRV用バッファが作られないため、このフレームのDXR描画を省略する。
+	resources.hasRayTracingGeometry = !raytracingInstances.empty() &&
+		!globalVertexAttributes.empty() && !globalTriIndices.empty() &&
+		instanceMetaAligned.size() == raytracingInstances.size();
+	if (resources.hasRayTracingGeometry) {
+		if (!QFE::GRAPHIC::EnsureBufferCapacityAndUpload(
+			graphicEngine.get(), resources.globalUVHandle, globalVertexAttributes.data(),
+			vertexAttributeBytes, sizeof(RaytracingVertexAttribute), "GlobalVertexAttributes")) {
+			assert(false && "Failed to ensure/upload GlobalVertexAttributes");
+			resources.hasRayTracingGeometry = false;
+		}
+		if (!QFE::GRAPHIC::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.globalTriHandle, globalTriIndices.data(), triBytes, sizeof(uint32_t) * 3, "GlobalTriIndices")) {
+			assert(false && "Failed to ensure/upload GlobalTriIndices");
+			resources.hasRayTracingGeometry = false;
+		}
+		if (!QFE::GRAPHIC::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.instanceMetaHandle, instanceMetaAligned.data(), metaBytes, sizeof(InstanceMetaCPU), "InstanceMeta")) {
+			assert(false && "Failed to ensure/upload InstanceMeta");
+			resources.hasRayTracingGeometry = false;
+		}
+
+		if (resources.hasRayTracingGeometry) {
+			QFE::GRAPHIC::UpdateBLASInstanceBuffer(graphicEngine.get(), raytracingInstances);
+		}
+	}
+
+	QFE::FRAMEWORK::PreDrawGraphicEngine(graphicEngine.get());
+	QFE::FRAMEWORK::PreDrawGui(*guiManager);
+}
+
+void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
+	auto& graphicEngine = systems.graphicEngine;
+	auto* d3d12GraphicEngine =
+		dynamic_cast<QFE::GRAPHIC::D3D12GraphicEngine*>(graphicEngine.get());
+	if (d3d12GraphicEngine == nullptr) {
+		return;
+	}
+	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
+
+	QFE::FRAMEWORK::DrawSceneModels(
+		sceneManager, graphicEngine.get(), resources.psoHandle, resources.viewportHandle,
+		resources.scissorRectHandle, resources.renderTargets, resources.rootParameterTypes);
+
+	if (resources.hasRayTracingGeometry) {
+		std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources(4);
+		for (std::size_t i = 0; i < 4; ++i) {
+			QFE::GRAPHIC::GetRenderResourceHandle(graphicEngine.get(), resources.renderTargets[i], rayTracingRootResources[i]);
+		}
+
+		// カメラの位置をGPUに送るための定数バッファを作成
+		QFE::GRAPHIC::DirectXResourceHandle cameraBufferHandle;
+		cameraBufferHandle = d3d12GraphicEngine->GetDirectXResourceAllocator()
+			->AllocateConstantBuffer<CameraForGPU>("CameraBuffer");
+		CameraForGPU* cameraPos =
+			d3d12GraphicEngine->GetConstantBufferData<CameraForGPU>(cameraBufferHandle);
+		if(cameraPos == nullptr) {
+			assert(false && "Failed to get CameraForGPU constant buffer data.");
+			return;
+		}
+		cameraPos->cameraPosition = resources.cameraPosition;
+		cameraPos->inverseViewProjection = resources.viewProj.Inverse();
+		cameraPos->padding = resources.skyBoxVisible ? 1.0f : 0.0f;
+
+		QFE::GRAPHIC::DirectXResourceHandle textureFirstResourceHandle;
+		QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), textureFirstResourceHandle);
+
+		QFE::GRAPHIC::ShadowSpecularRayTracingPSO(
+			graphicEngine.get(), resources.rtpsoHandle, resources.uavBufferHandle,
+			cameraBufferHandle, resources.globalTriHandle, resources.globalUVHandle,
+			resources.instanceMetaHandle, textureFirstResourceHandle, resources.skyBoxTextureHandle,
+			rayTracingRootResources,
+			resources.finalRenderTargetHandle);
+	}
+
+	// 線はレイトレーシングの影計算には含めず、3D深度テスト付きで結果に重ねる。
+	d3d12GraphicEngine->RenderLines(
+		resources.viewProj, resources.viewportHandle, resources.scissorRectHandle,
+		resources.finalRenderTargetHandle);
+
+	const QFE::GRAPHIC::PSOHandle spritePsoHandle =
+		resources.finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain
+		? resources.spriteSrgbPsoHandle
+		: resources.spriteUnormPsoHandle;
+	QFE::FRAMEWORK::DrawSceneSprites(
+		sceneManager, graphicEngine.get(), spritePsoHandle,
+		resources.viewportHandle, resources.scissorRectHandle,
+		resources.spriteVertexBufferHandle, resources.finalRenderTargetHandle);
+
+	const float sceneFadeAlpha = systems.sceneChangeTransition.GetFadeAlpha();
+	if (sceneFadeAlpha > 0.0f) {
+		const ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+		const ImU32 fadeColor = IM_COL32(0, 0, 0, static_cast<int>(sceneFadeAlpha * 255.0f));
+		ImGui::GetForegroundDrawList()->AddRectFilled(
+			ImVec2(0.0f, 0.0f), displaySize, fadeColor);
+	}
+
+	// Editorの最終映像はImGuiからSRVとして読むため、スプライト描画後に読み取り状態へ戻す。
+	if (resources.finalRenderTargetHandle != QFE::GRAPHIC::RenderTargetHandle::SwapChain) {
+		QFE::GRAPHIC::DirectXResourceHandle finalRenderTargetResourceHandle;
+		if (QFE::GRAPHIC::GetRenderResourceHandle(
+			graphicEngine.get(), resources.finalRenderTargetHandle, finalRenderTargetResourceHandle)) {
+			QFE::GRAPHIC::TransitionResourceToState(
+				graphicEngine.get(), finalRenderTargetResourceHandle,
+				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		}
+	}
+
+	QFE::FRAMEWORK::SetSwapChainRenderTarget(*graphicEngine);
+}
+
+bool QFE::FRAMEWORK::LoadModelVertexData(
+	WindowsQuickForgeEngineSystems& systems, 
+	const std::string& modelDir, const std::string& modelName,
+	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
+	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& vertexBuffers) {
+
+	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
+		bool result = QFE::GRAPHIC::CreateVertexBuffer(
+			systems.graphicEngine.get(),
+			modelData[modelName].meshes[0].vertices.GetInternalVector(),
+			modelName, vertexBuffers[modelName]);
+		return result;
+	}
+	return false;
+}
+
+bool QFE::FRAMEWORK::LoadModelIndexBuffer(
+	WindowsQuickForgeEngineSystems& systems, 
+	const std::string& modelDir, const std::string& modelName,
+	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
+	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& indexBuffers) {
+
+	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
+		bool result = QFE::GRAPHIC::CreateIndexBuffer(
+			systems.graphicEngine.get(),
+			modelData[modelName].meshes[0].indices.GetInternalVector(),
+			modelName, indexBuffers[modelName]);
+		return result;
+	}
+	return false;
+}
+
+bool QFE::FRAMEWORK::LoadModelAndCreateBLAS(
+	WindowsQuickForgeEngineSystems& systems, 
+	const std::string& modelDir, const std::string& modelName,
+	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
+	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle>& blasHandles) {
+
+	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
+		bool result = QFE::GRAPHIC::CreateBLAS(
+			systems.graphicEngine.get(), modelData[modelName].meshes[0].vertices.GetInternalVector(),
+			modelData[modelName].meshes[0].indices.GetInternalVector(),
+			modelName, blasHandles[modelName]);
+		return result;
+	}
+	return false;
+}
+
+bool QFE::FRAMEWORK::LoadTexture(
+	WindowsQuickForgeEngineSystems& systems, 
+	const std::string& textureDir, const std::string& textureName, 
+	std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& textureHandles,
+	std::map<std::string, uint32_t>& textureGpuIndexMap, uint32_t& nextTextureGpuIndex) {
+	
+	// すでに読み込まれている場合はスキップ
+	if (textureHandles.find(textureName) != textureHandles.end()) {	
+		return true;
+	}
+
+	std::string texturePath = std::filesystem::exists(textureName)
+		? textureName : textureDir + textureName;
+	QFE::GRAPHIC::DirectXResourceHandle textureHandle;
+	bool result = QFE::GRAPHIC::LoadTextureFromFile(systems.graphicEngine.get(), texturePath, textureHandle);
+	if (result) {
+		textureHandles[textureName] = textureHandle;
+		textureGpuIndexMap[textureName] = nextTextureGpuIndex;
+		++nextTextureGpuIndex;
+	}
+	return result;
+}

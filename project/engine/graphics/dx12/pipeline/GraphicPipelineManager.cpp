@@ -45,18 +45,20 @@ void GraphicPipelineManager::Initialize(GraphicPipelineManagerInitializeInfo ini
 	rasterizerState_->Initialize();
 	blendStates_->Initialize();
 	depthStencilDescTemplate_->Initialize();
+}
 
+void GraphicPipelineManager::Finalize() {
+	
+}
+
+void QFE::GRAPHIC::GraphicPipelineManager::CreateBuiltInPipelineStateObjects(ID3D12Device* device) {
 	// シェーダーを格納しているディレクトリ内のファイル名一覧を取得
 	std::vector<std::string> vsFiles = QFE::FILE::GetFilesInDirectory(kVSFilePath);
 	std::vector<std::string> psFiles = QFE::FILE::GetFilesInDirectory(kPSFilePath);
 
 	GenerateBuiltInShaderPairs();
 	// BuiltInのPSOを生成
-	GenerateBuiltInPSO(initializeInfo.device);
-}
-
-void GraphicPipelineManager::Finalize() {
-	
+	GenerateBuiltInPSO(device);
 }
 
 ShaderPairHandle QFE::GRAPHIC::GraphicPipelineManager::GenerateShaderPair(const ShaderPairElement& element) {
@@ -135,7 +137,7 @@ PSOHandle QFE::GRAPHIC::GraphicPipelineManager::GeneratePipelineStateObject(
 PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
 	ID3D12Device* device, const ShaderPairHandle& shaderHandle, BlendMode blendMode,
 	RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType,
-	DXGI_FORMAT renderTargetFormat) {
+	DXGI_FORMAT renderTargetFormat, D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType) {
 
 	PipelineStateObjectElement element{};
 	element.shaderPairHandle = static_cast<uint32_t>(shaderHandle);
@@ -143,7 +145,7 @@ PSOHandle GraphicPipelineManager::GeneratePipelineStateObject(
 	element.inputLayoutDesc = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetInputLayoutDesc();
 	element.psBlob = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetPSBlob();
 	element.vsBlob = shaderPairs_[static_cast<uint32_t>(shaderHandle)]->GetVSBlob();
-	element.topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	element.topologyType = topologyType;
 	element.rasterizerDesc = rasterizerState_->GetRasterizerDesc(rasterizerType);
 	element.blendDesc = blendStates_->GetBlendDesc(blendMode);
 	element.depthStencilDesc = depthStencilDescTemplate_->GetDesc(depthStencilDescType);
@@ -200,12 +202,12 @@ PSOHandle GraphicPipelineManager::GetBuiltInPSOHandle(
 	RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) const {
 
 	// BuiltInのPSOを管理する多次元配列から、引数で指定された情報をもとにPSOハンドルを取得する
-	std::array<uint32_t, 4> infoArray = {
+	std::array<uint32_t, 4> infoArray{{
 		static_cast<uint32_t>(builtInPairHandles_.at(builtInShaderPair)),
 		static_cast<uint32_t>(blendMode),
 		static_cast<uint32_t>(rasterizerType),
 		static_cast<uint32_t>(depthStencilDescType)
-	};
+	}};
 	return BuiltInPSOs_.At(infoArray);
 }
 
@@ -267,12 +269,12 @@ void GraphicPipelineManager::GenerateBuiltInShaderPairs() {
 void QFE::GRAPHIC::GraphicPipelineManager::GenerateBuiltInPSO(ID3D12Device* device) {
 
 	// BuiltInのPSOを管理する多次元配列のサイズを設定するために、各情報の数を取得して配列に格納する
-	std::array<size_t, 4> sizes = {
+	std::array<size_t, 4> sizes{{
 		static_cast<size_t>(builtInPairHandles_.size()),
 		blendStates_->GetBlendDescMap().size(),
 		rasterizerState_->GetRasterizerDescMap().size(),
 		depthStencilDescTemplate_->GetDescMap().size()
-	};
+	}};
 	BuiltInPSOs_.SetSize(sizes);
 
 	// シェーダーペアからPSOを生成する
@@ -281,12 +283,12 @@ void QFE::GRAPHIC::GraphicPipelineManager::GenerateBuiltInPSO(ID3D12Device* devi
 			for (const auto& [rasterizerType, rasterizerDesc] : rasterizerState_->GetRasterizerDescMap()) {
 				for (const auto& [depthStencilDescType, depthStencilDesc] : depthStencilDescTemplate_->GetDescMap()) {
 					// pairHandle,blend,rasterize,depthの順番で管理する多次元配列に格納するための情報をまとめる
-					std::array<uint32_t, 4> infoArray = {
+					std::array<uint32_t, 4> infoArray{{
 						static_cast<uint32_t>(shaderPairHandle),
 						static_cast<uint32_t>(blendMode),
 						static_cast<uint32_t>(rasterizerType),
 						static_cast<uint32_t>(depthStencilDescType)
-					};
+					}};
 
 					// PSOの生成
 					BuiltInPSOs_.At(infoArray) = GeneratePipelineStateObject(

@@ -5,6 +5,7 @@
 #include <functional>
 #include <utility>
 #include <memory>
+#include <unordered_map>
 
 namespace QFE {
 	/// @brief スパースセットコンテナ
@@ -15,15 +16,10 @@ namespace QFE {
 
 		/// @brief キーと値のペアを追加する。キーは自動的に割り当てられる。
 		uint32_t push_back(const T& value) {
-			// 未使用のキー（UINT32_MAXの場所）を探す
+			// 未使用のキーを探す
 			uint32_t key = 0;
-			while (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
+			while (sparse_.contains(key)) {
 				key++;
-			}
-			
-			// key に到達するまで push_back でサイズを拡大（空きは UINT32_MAX で埋める）
-			while (key >= sparse_.size()) {
-				sparse_.push_back(UINT32_MAX);
 			}
 
 			dense_keys_.push_back(key);
@@ -33,15 +29,10 @@ namespace QFE {
 		}
 		/// @brief キーと値のペアを追加する。キーは自動的に割り当てられる。
 		uint32_t push_back(T&& value) {
-			// 未使用のキー（UINT32_MAXの場所）を探す
+			// 未使用のキーを探す
 			uint32_t key = 0;
-			while (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
+			while (sparse_.contains(key)) {
 				key++;
-			}
-			
-			// key に到達するまで push_back でサイズを拡大（空きは UINT32_MAX で埋める）
-			while (key >= sparse_.size()) {
-				sparse_.push_back(UINT32_MAX);
 			}
 			dense_keys_.push_back(key);
 			dense_.push_back(std::move(value));
@@ -51,40 +42,33 @@ namespace QFE {
 
 		/// @brief キーと値のペアを追加または更新する。キーが存在しない場合は新しいペアを追加し、存在する場合は値を更新する。
 		void Insert(uint32_t key, const T& value) {
-			// 指定された key にアクセスできるようになるまでサイズを広げる
-			while (key >= sparse_.size()) {
-				sparse_.push_back(UINT32_MAX);
-			}
-
-			if (sparse_[key] == UINT32_MAX) {
+			auto sparseIt = sparse_.find(key);
+			if (sparseIt == sparse_.end()) {
 				dense_keys_.push_back(key);
 				dense_.push_back(value);
 				sparse_[key] = static_cast<uint32_t>(dense_.size() - 1);
 			} else {
-				dense_[sparse_[key]] = value;
+				dense_[sparseIt->second] = value;
 			}
 		}
 
 		/// @brief キーと値のペアを追加または更新する。キーが存在しない場合は新しいペアを追加し、存在する場合は値を更新する。
 		void Insert(uint32_t key, T&& value) {
-			// 指定された key にアクセスできるようになるまでサイズを広げる
-			while (key >= sparse_.size()) {
-				sparse_.push_back(UINT32_MAX);
-			}
-
-			if (sparse_[key] == UINT32_MAX) {
+			auto sparseIt = sparse_.find(key);
+			if (sparseIt == sparse_.end()) {
 				dense_keys_.push_back(key);
 				dense_.push_back(std::move(value));
 				sparse_[key] = static_cast<uint32_t>(dense_.size() - 1);
 			} else {
-				dense_[sparse_[key]] = std::move(value);
+				dense_[sparseIt->second] = std::move(value);
 			}
 		}
 
 		/// @brief キーに対応する値を削除する。キーが存在しない場合は何もしない。
 		void Remove(uint32_t key) {
-			if (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
-				uint32_t index = sparse_[key];
+			auto sparseIt = sparse_.find(key);
+			if (sparseIt != sparse_.end()) {
+				uint32_t index = sparseIt->second;
 				
 				// O(1)削除：末尾の要素を削除対象の位置に移動する
 				dense_[index] = dense_.back();
@@ -97,27 +81,29 @@ namespace QFE {
 				// 末尾を削除
 				dense_.pop_back();
 				dense_keys_.pop_back();
-				sparse_[key] = UINT32_MAX;
+				sparse_.erase(sparseIt);
 			}
 		}
 
 		/// @brief キーに対応する値へのポインタを取得する。キーが存在しない場合はnullptrを返す。
 		T* Get(uint32_t key) {
-			if (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
-				return &dense_[sparse_[key]];
+			auto sparseIt = sparse_.find(key);
+			if (sparseIt != sparse_.end()) {
+				return &dense_[sparseIt->second];
 			}
 			return nullptr;
 		}
 		const T* Get(uint32_t key) const {
-			if (key < sparse_.size() && sparse_[key] != UINT32_MAX) {
-				return &dense_[sparse_[key]];
+			auto sparseIt = sparse_.find(key);
+			if (sparseIt != sparse_.end()) {
+				return &dense_[sparseIt->second];
 			}
 			return nullptr;
 		}
 
 		/// @brief キーに対応する要素が存在するかどうかを確認する。
 		bool Contains(uint32_t key) const {
-			return key < sparse_.size() && sparse_[key] != UINT32_MAX;
+			return sparse_.contains(key);
 		}
 
 		/// @brief キーの一覧を取得する。
@@ -165,7 +151,7 @@ namespace QFE {
 			if (!Contains(key)) {
 				Insert(key, T{});
 			}
-			return dense_[sparse_[key]];
+			return dense_[sparse_.at(key)];
 		}
 		T& at(uint32_t key) {
 			return dense_.at(sparse_.at(key));
@@ -174,7 +160,7 @@ namespace QFE {
 			return dense_.at(sparse_.at(key));
 		}
 	private:
-		SafeVector<uint32_t> sparse_;
+		std::unordered_map<uint32_t, uint32_t> sparse_;
 		SafeVector<uint32_t> dense_keys_;
 		SafeVector<T> dense_;
 	};

@@ -1,6 +1,6 @@
 #pragma once
-#include "IComponentStorage.h"
-#include "../../memory/SparseSets.h"
+#include "core/interface/IComponentStorage.h"
+#include "memory/SparseSets.h"
 #include <memory>
 #include <stdexcept>
 
@@ -95,7 +95,7 @@ namespace QFE {
 
 		/// @brief コンポーネントストレージの型名を取得する。
 		std::string GetStorageTypeName() const override {
-			return typeid(T).name();
+			return T::GetTypeName();
 		}
 
 		void Clear() override {

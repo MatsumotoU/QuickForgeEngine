@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <string>
-#include "../memory/SafeVector.h"
+#include "memory/SafeVector.h"
 #include <list>
 #include <unordered_map>
 

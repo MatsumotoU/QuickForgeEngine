@@ -1,5 +1,5 @@
 #pragma once
-#include <queue>
+#include <stack>
 #include <memory>
 #include "IEditorCommand.h"
 
@@ -22,7 +22,7 @@ namespace QFE::EDITOR {
 		void Redo();
 
 	private:
-		std::queue<std::unique_ptr<IEditorCommand>> undoQueue_;
-		std::queue<std::unique_ptr<IEditorCommand>> redoQueue_;
+		std::stack<std::unique_ptr<IEditorCommand>> undoStack_;
+		std::stack<std::unique_ptr<IEditorCommand>> redoStack_;
 	};
 }

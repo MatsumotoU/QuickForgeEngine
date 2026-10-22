@@ -4,7 +4,7 @@
 #include "design-patterns/component/EntityUuid.h"
 
 QFE::EDITOR::CopyEntityCommand::CopyEntityCommand(uint32_t entityId, EntityManager* entityManager) :
-	entityId_(entityId),newEntityId_(UINT32_MAX), entityManager_(entityManager) {
+	entityManager_(entityManager), entityId_(entityId), newEntityId_(UINT32_MAX) {
 }
 
 void QFE::EDITOR::CopyEntityCommand::Execute() {

@@ -1,5 +1,5 @@
 #include "ErrorList.h"
-#include "../EngineDefines.h"
+#include "EngineDefines.h"
 
 void QFE::DebugBreak() {
 	// コンパイラ認識
@@ -10,14 +10,12 @@ void QFE::DebugBreak() {
 #endif
 }
 
-void QFE::ReportUserError(const std::string& message, UserError error)
+void QFE::ReportUserError(const std::string& message, UserError)
 {
-	error; message;
 	QFE_LOG("User Error: " + message, LogLevel::Error);
 }
 
-void QFE::ReportSystemError(const std::string& message, SystemError error){
-	error; message;
+void QFE::ReportSystemError(const std::string& message, SystemError){
 	QFE_LOG("System Error: " + message);
 	QFE_DEBUG_BREAK();
 	throw std::runtime_error(message);

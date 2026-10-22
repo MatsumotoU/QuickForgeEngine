@@ -6,8 +6,8 @@
 #include "Quaternion.h"
 #include <cmath>
 
-#include "../vector/Vector3.h"
-#include "../matrix/Matrix4x4.h"
+#include "math/vector/Vector3.h"
+#include "math/matrix/Matrix4x4.h"
 
 using namespace QFE::MATH;
 

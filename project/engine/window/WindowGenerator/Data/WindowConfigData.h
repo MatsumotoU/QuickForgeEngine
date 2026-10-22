@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-namespace QFE {
+namespace QFE::WINDOW {
 	/// @brief ウィンドウ設定データ
 	struct WindowConfigData {
 		int32_t clientWidth = 800;  // width

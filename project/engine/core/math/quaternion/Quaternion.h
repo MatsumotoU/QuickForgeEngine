@@ -1,5 +1,5 @@
 #pragma once
-#include "../vector/Vector4.h"
+#include "math/vector/Vector4.h"
 
 namespace QFE::MATH {
 

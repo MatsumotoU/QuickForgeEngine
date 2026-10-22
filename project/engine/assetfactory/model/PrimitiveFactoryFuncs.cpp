@@ -30,6 +30,7 @@ const std::vector<std::string>& GetPrimitiveMeshNames() {
 	static const std::vector<std::string> names{
 		"Primitive/Quad",
 		"Primitive/Plane",
+		"Primitive/PlaneHorizontal",
 		"Primitive/Box",
 		"Primitive/Sphere",
 		"Primitive/Cylinder",
@@ -49,6 +50,7 @@ bool IsPrimitiveMeshName(const std::string& name) {
 
 std::vector<VertexData> CreatePrimitiveMesh(const std::string& name) {
 	if (name == "Primitive/Quad" || name == "Primitive/Plane") return CreatePlane();
+	if (name == "Primitive/PlaneHorizontal") return CreateHorizontalPlane();
 	if (name == "Primitive/Box") return CreateBox();
 	if (name == "Primitive/Sphere") return CreateSphere();
 	if (name == "Primitive/Cylinder") return CreateCylinder();
@@ -67,10 +69,10 @@ std::vector<VertexData> CreatePlane(float width, float height, uint32_t segments
 	for (uint32_t y = 0; y < segmentsY; ++y) {
 		for (uint32_t x = 0; x < segmentsX; ++x) {
 			uint32_t index = (y * segmentsX + x) * 6;
-			float x0 = (x / static_cast<float>(segmentsX)) * width - width / 2.0f;
-			float x1 = ((x + 1) / static_cast<float>(segmentsX)) * width - width / 2.0f;
-			float y0 = (y / static_cast<float>(segmentsY)) * height - height / 2.0f;
-			float y1 = ((y + 1) / static_cast<float>(segmentsY)) * height - height / 2.0f;
+		float x0 = (static_cast<float>(x) / static_cast<float>(segmentsX)) * width - width / 2.0f;
+		float x1 = (static_cast<float>(x + 1) / static_cast<float>(segmentsX)) * width - width / 2.0f;
+		float y0 = (static_cast<float>(y) / static_cast<float>(segmentsY)) * height - height / 2.0f;
+		float y1 = (static_cast<float>(y + 1) / static_cast<float>(segmentsY)) * height - height / 2.0f;
 			// First triangle
 			planeMesh[index].position = { x0, y0, 0.0f, 1.0f }; planeMesh[index].texcoord = { 0.0f, 1.0f }; planeMesh[index].normal = { 0.0f, 0.0f, -1.0f };
 			planeMesh[index + 1].position = { x1, y1, 0.0f, 1.0f }; planeMesh[index + 1].texcoord = { 1.0f, 0.0f }; planeMesh[index + 1].normal = { 0.0f, 0.0f, -1.0f };
@@ -83,6 +85,17 @@ std::vector<VertexData> CreatePlane(float width, float height, uint32_t segments
 	}
 
 	ApplyFaceDirection(planeMesh, invertFace);
+	return planeMesh;
+}
+
+std::vector<VertexData> CreateHorizontalPlane(
+	float width, float depth, uint32_t segmentsX, uint32_t segmentsZ, bool invertFace) {
+	std::vector<VertexData> planeMesh = CreatePlane(width, depth, segmentsX, segmentsZ, invertFace);
+	for (VertexData& vertex : planeMesh) {
+		// XY平面をXZ平面へ回転し、法線を上方向へ向ける。
+		vertex.position = { vertex.position.x, 0.0f, vertex.position.y, 1.0f };
+		vertex.normal = { vertex.normal.x, -vertex.normal.z, vertex.normal.y };
+	}
 	return planeMesh;
 }
 
@@ -158,29 +171,29 @@ std::vector<VertexData> CreateRing(float innerRadius, float outerRadius, uint32_
 
 	// 頂点データを設定
 	for (uint32_t i = 0; i < segments; ++i) {
-		float angle = (2.0f * 3.14159265f * i) / segments;
-		float nextAngle = (2.0f * 3.14159265f * (i + 1)) / segments;
+		float angle = (2.0f * 3.14159265f * static_cast<float>(i)) / static_cast<float>(segments);
+		float nextAngle = (2.0f * 3.14159265f * static_cast<float>(i + 1)) / static_cast<float>(segments);
 
 		VertexData iCurr, iNext, oCurr, oNext;
 
 		// 内側の現在の頂点
 		iCurr.position = { innerRadius * cos(angle), innerRadius * sin(angle), 0.0f, 1.0f };
-		iCurr.texcoord = { static_cast<float>(i) / segments, 1.0f };
+		iCurr.texcoord = { static_cast<float>(i) / static_cast<float>(segments), 1.0f };
 		iCurr.normal = { 0.0f, 0.0f, -1.0f };
 
 		// 外側の現在の頂点
 		oCurr.position = { outerRadius * cos(angle), outerRadius * sin(angle), 0.0f, 1.0f };
-		oCurr.texcoord = { static_cast<float>(i) / segments, 0.0f };
+		oCurr.texcoord = { static_cast<float>(i) / static_cast<float>(segments), 0.0f };
 		oCurr.normal = { 0.0f, 0.0f, -1.0f };
 
 		// 内側の次の頂点
 		iNext.position = { innerRadius * cos(nextAngle), innerRadius * sin(nextAngle), 0.0f, 1.0f };
-		iNext.texcoord = { static_cast<float>(i + 1) / segments, 1.0f };
+		iNext.texcoord = { static_cast<float>(i + 1) / static_cast<float>(segments), 1.0f };
 		iNext.normal = { 0.0f, 0.0f, -1.0f };
 
 		// 外側の次の頂点
 		oNext.position = { outerRadius * cos(nextAngle), outerRadius * sin(nextAngle), 0.0f, 1.0f };
-		oNext.texcoord = { static_cast<float>(i + 1) / segments, 0.0f };
+		oNext.texcoord = { static_cast<float>(i + 1) / static_cast<float>(segments), 0.0f };
 		oNext.normal = { 0.0f, 0.0f, -1.0f };
 
 		// 三角形1
@@ -215,8 +228,8 @@ std::vector<VertexData> CreateCylinder(float radius, float height, uint32_t segm
 	float halfHeight = height / 2.0f;
 
 	for (uint32_t i = 0; i < segments; ++i) {
-		float angle = (2.0f * 3.14159265f * i) / segments;
-		float nextAngle = (2.0f * 3.14159265f * (i + 1)) / segments;
+		float angle = (2.0f * 3.14159265f * static_cast<float>(i)) / static_cast<float>(segments);
+		float nextAngle = (2.0f * 3.14159265f * static_cast<float>(i + 1)) / static_cast<float>(segments);
 
 		float cosCurr = cos(angle);
 		float sinCurr = sin(angle);
@@ -229,19 +242,19 @@ std::vector<VertexData> CreateCylinder(float radius, float height, uint32_t segm
 		VertexData sideBotCurr, sideBotNext, sideTopCurr, sideTopNext;
 		sideBotCurr.position = { radius * cosCurr, -halfHeight, radius * sinCurr };
 		sideBotCurr.normal = { cosCurr, 0.0f, sinCurr };
-		sideBotCurr.texcoord = { static_cast<float>(i) / segments, 1.0f };
+		sideBotCurr.texcoord = { static_cast<float>(i) / static_cast<float>(segments), 1.0f };
 
 		sideBotNext.position = { radius * cosNext, -halfHeight, radius * sinNext };
 		sideBotNext.normal = { cosNext, 0.0f, sinNext };
-		sideBotNext.texcoord = { static_cast<float>(i + 1) / segments, 1.0f };
+		sideBotNext.texcoord = { static_cast<float>(i + 1) / static_cast<float>(segments), 1.0f };
 
 		sideTopCurr.position = { radius * cosCurr, halfHeight, radius * sinCurr };
 		sideTopCurr.normal = { cosCurr, 0.0f, sinCurr };
-		sideTopCurr.texcoord = { static_cast<float>(i) / segments, 0.0f };
+		sideTopCurr.texcoord = { static_cast<float>(i) / static_cast<float>(segments), 0.0f };
 
 		sideTopNext.position = { radius * cosNext, halfHeight, radius * sinNext };
 		sideTopNext.normal = { cosNext, 0.0f, sinNext };
-		sideTopNext.texcoord = { static_cast<float>(i + 1) / segments, 0.0f };
+		sideTopNext.texcoord = { static_cast<float>(i + 1) / static_cast<float>(segments), 0.0f };
 
 		// 天面用の頂点（法線は真上、UVは簡易的に0.5中心）
 		VertexData topCenter, topCurr, topNext;
@@ -314,8 +327,8 @@ std::vector<VertexData> CreateSphere(float radius, uint32_t slices, uint32_t sta
 	constexpr float pi = std::numbers::pi_v<float>;
 
 	auto makeSphereVertex = [&](uint32_t slice, uint32_t stack) {
-		const float u = static_cast<float>(slice) / slices;
-		const float v = static_cast<float>(stack) / stacks;
+		const float u = static_cast<float>(slice) / static_cast<float>(slices);
+		const float v = static_cast<float>(stack) / static_cast<float>(stacks);
 		const float longitude = u * 2.0f * pi;
 		const float latitude = (v - 0.5f) * pi;
 		const float cosLatitude = std::cos(latitude);
@@ -347,8 +360,8 @@ std::vector<VertexData> CreateCone(float radius, float height, uint32_t segments
 	constexpr float pi = std::numbers::pi_v<float>;
 
 	for (uint32_t segment = 0; segment < segments; ++segment) {
-		const float u0 = static_cast<float>(segment) / segments;
-		const float u1 = static_cast<float>(segment + 1) / segments;
+		const float u0 = static_cast<float>(segment) / static_cast<float>(segments);
+		const float u1 = static_cast<float>(segment + 1) / static_cast<float>(segments);
 		const float angle0 = u0 * 2.0f * pi;
 		const float angle1 = u1 * 2.0f * pi;
 		const float c0 = std::cos(angle0);
@@ -378,8 +391,8 @@ std::vector<VertexData> CreateDisk(float radius, uint32_t segments, bool invertF
 	constexpr float pi = std::numbers::pi_v<float>;
 
 	for (uint32_t segment = 0; segment < segments; ++segment) {
-		const float angle0 = static_cast<float>(segment) / segments * 2.0f * pi;
-		const float angle1 = static_cast<float>(segment + 1) / segments * 2.0f * pi;
+		const float angle0 = static_cast<float>(segment) / static_cast<float>(segments) * 2.0f * pi;
+		const float angle1 = static_cast<float>(segment + 1) / static_cast<float>(segments) * 2.0f * pi;
 		const float c0 = std::cos(angle0);
 		const float s0 = std::sin(angle0);
 		const float c1 = std::cos(angle1);
@@ -400,8 +413,8 @@ std::vector<VertexData> CreateTorus(float majorRadius, float minorRadius, uint32
 	constexpr float pi = std::numbers::pi_v<float>;
 
 	auto makeTorusVertex = [&](uint32_t majorIndex, uint32_t minorIndex) {
-		const float u = static_cast<float>(majorIndex) / majorSegments;
-		const float v = static_cast<float>(minorIndex) / minorSegments;
+		const float u = static_cast<float>(majorIndex) / static_cast<float>(majorSegments);
+		const float v = static_cast<float>(minorIndex) / static_cast<float>(minorSegments);
 		const float majorAngle = u * 2.0f * pi;
 		const float minorAngle = v * 2.0f * pi;
 		const float cm = std::cos(majorAngle);
@@ -435,8 +448,8 @@ std::vector<VertexData> CreateCapsule(float radius, float cylinderHeight, uint32
 	constexpr float pi = std::numbers::pi_v<float>;
 
 	auto makeCapsuleVertex = [&](uint32_t slice, uint32_t stack) {
-		const float u = static_cast<float>(slice) / slices;
-		const float v = static_cast<float>(stack) / stacks;
+		const float u = static_cast<float>(slice) / static_cast<float>(slices);
+		const float v = static_cast<float>(stack) / static_cast<float>(stacks);
 		const float longitude = u * 2.0f * pi;
 		const float latitude = (v - 0.5f) * pi;
 		const float cosLatitude = std::cos(latitude);

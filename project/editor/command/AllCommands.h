@@ -2,6 +2,7 @@
 #include "DeleteEntityCommand.h"
 #include "CopyEntityCommand.h"
 #include "CreateEntityCommand.h"
+#include "CreateCameraCommand.h"
 #include "LoadSceneCommand.h"
 #include "SaveSceneCommand.h"
 #include "AddComponentCommand.h"
