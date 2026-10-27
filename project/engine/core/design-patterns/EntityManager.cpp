@@ -147,6 +147,28 @@ std::vector<std::string> QFE::EntityManager::GetAllComponentTypeNames() const {
 	return componentNames;
 }
 
+std::vector<std::string> QFE::EntityManager::GetAllComponentCategories() const {
+	std::vector<std::string> categories;
+	const std::shared_ptr<const StaticComponentRegistry> registry = LockRegistry();
+	for (const ComponentDescriptor& descriptor : registry->GetComponentDescriptors()) {
+		if (std::find(categories.begin(), categories.end(), descriptor.category) == categories.end()) {
+			categories.push_back(descriptor.category);
+		}
+	}
+	return categories;
+}
+
+std::vector<std::string> QFE::EntityManager::GetAllComponentTypeNames(const std::string& category) const {
+	std::vector<std::string> componentNames;
+	const std::shared_ptr<const StaticComponentRegistry> registry = LockRegistry();
+	for (const ComponentDescriptor& descriptor : registry->GetComponentDescriptors()) {
+		if (descriptor.category == category) {
+			componentNames.push_back(descriptor.key);
+		}
+	}
+	return componentNames;
+}
+
 void* QFE::EntityManager::GetComponentRaw(uint32_t entityId, const char* componentTypeName) {
 	// 静的レジストリから、コンポーネント型名に対応するストレージインデックスを取得する
 	const uint32_t storageIndex = LockRegistry()->GetComponentStorageIndex(componentTypeName);

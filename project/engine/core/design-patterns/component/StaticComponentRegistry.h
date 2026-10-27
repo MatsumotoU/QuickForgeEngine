@@ -18,7 +18,7 @@ namespace QFE {
 
 		template <typename T>
 		/// @brief コンポーネントを登録する
-		bool RegisterComponent(const std::string& key) {
+		bool RegisterComponent(const std::string& key, const std::string& category = "Other") {
 			// 登録が凍結されている場合は登録できないようにする
 			if (isFrozen_) {
 				assert(false && "Component registration is frozen. Cannot register new components.");
@@ -26,14 +26,15 @@ namespace QFE {
 			}
 			// 登録済みのコンポーネントかどうかを確認する
 			const std::string reflectedTypeName = T::GetTypeName();
-			if (key.empty() || reflectedTypeName.empty() || keyToIndexMap_.contains(key) ||
+			if (key.empty() || category.empty() || reflectedTypeName.empty() || keyToIndexMap_.contains(key) ||
 				reflectedTypeNameToIndexMap_.contains(reflectedTypeName)) {
-				assert(false && "Component key or reflected type name is empty or already registered.");
+				assert(false && "Component key, category, or reflected type name is empty, or the component is already registered.");
 				return false;
 			}
 			// 登録するコンポーネントの情報を作成する
 			ComponentDescriptor descriptor;
 			descriptor.key = key;
+			descriptor.category = category;
 			descriptor.reflectedTypeName = reflectedTypeName;
 			descriptor.storageIndex = static_cast<uint32_t>(componentDescriptors_.size());
 			descriptor.createStorageFunc = []() -> std::unique_ptr<IComponentStorage> {
