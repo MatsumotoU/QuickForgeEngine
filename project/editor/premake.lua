@@ -14,6 +14,11 @@ project "GameEditor"
         path.join(_sourceDirectory, "**.cpp"),
         path.join(_sourceDirectory, "**.cxx"),
     }
+    filter { "system:windows", "kind:ConsoleApp" }
+        files { path.join(_sourceDirectory, "**.rc") }
+    filter { "system:windows", "kind:WindowedApp" }
+        files { path.join(_sourceDirectory, "**.rc") }
+    filter {}
     architecture ("x64")
     cppdialect ("C++20")
     staticruntime "off"
