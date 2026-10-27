@@ -165,6 +165,55 @@ std::vector<D3D12_ROOT_PARAMETER_TYPE> QFE::GRAPHIC::RootParameter::GetRootParam
 	return parameterTypes;
 }
 
+std::vector<ViewTypeFlags> QFE::GRAPHIC::RootParameter::GetRootParameterViewTypes() const {
+	std::vector<ViewTypeFlags> viewTypes;
+	viewTypes.reserve(rootParameters_.size());
+	for (const D3D12_ROOT_PARAMETER& rootParameter : rootParameters_) {
+		switch (rootParameter.ParameterType) {
+		case D3D12_ROOT_PARAMETER_TYPE_CBV:
+			viewTypes.push_back(ViewTypeFlags::ConstantBufferView);
+			break;
+		case D3D12_ROOT_PARAMETER_TYPE_SRV:
+			viewTypes.push_back(ViewTypeFlags::ShaderResourceView);
+			break;
+		case D3D12_ROOT_PARAMETER_TYPE_UAV:
+			viewTypes.push_back(ViewTypeFlags::UnorderedAccessView);
+			break;
+		case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
+			if (rootParameter.DescriptorTable.NumDescriptorRanges == 0 ||
+				rootParameter.DescriptorTable.pDescriptorRanges == nullptr) {
+				viewTypes.push_back(ViewTypeFlags::None);
+				break;
+			}
+			switch (rootParameter.DescriptorTable.pDescriptorRanges[0].RangeType) {
+			case D3D12_DESCRIPTOR_RANGE_TYPE_CBV:
+				viewTypes.push_back(ViewTypeFlags::ConstantBufferView);
+				break;
+			case D3D12_DESCRIPTOR_RANGE_TYPE_SRV:
+				viewTypes.push_back(ViewTypeFlags::ShaderResourceView);
+				break;
+			case D3D12_DESCRIPTOR_RANGE_TYPE_UAV:
+				viewTypes.push_back(ViewTypeFlags::UnorderedAccessView);
+				break;
+			case D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER:
+				viewTypes.push_back(ViewTypeFlags::None);
+				break;
+			default:
+				viewTypes.push_back(ViewTypeFlags::None);
+				break;
+			}
+			break;
+		case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS:
+			viewTypes.push_back(ViewTypeFlags::None);
+			break;
+		default:
+			viewTypes.push_back(ViewTypeFlags::None);
+			break;
+		}
+	}
+	return viewTypes;
+}
+
 #ifdef QFE_OPTIMIZE_OFF
 void RootParameter::CheckIntegrityData() {
 	assert(descriptionRootSignature_.NumParameters == static_cast<UINT>(rootParameters_.size()));

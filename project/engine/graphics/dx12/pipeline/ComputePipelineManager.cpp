@@ -74,6 +74,14 @@ std::vector<D3D12_ROOT_PARAMETER_TYPE> QFE::GRAPHIC::ComputePipelineManager::Get
 	return computePSOs_.at(static_cast<uint32_t>(handle))->GetRootParameter().GetRootParameterTypes();
 }
 
+std::vector<ViewTypeFlags> QFE::GRAPHIC::ComputePipelineManager::GetRootParameterViewTypes(const ComputePSOHandle& handle) const {
+	if (!computePSOs_.Contains(static_cast<uint32_t>(handle))) {
+		QFE_LOG(std::format("ComputePSOHandle {} is invalid. Cannot retrieve root parameter view types.", static_cast<uint32_t>(handle)));
+		return {};
+	}
+	return computePSOs_.at(static_cast<uint32_t>(handle))->GetRootParameter().GetRootParameterViewTypes();
+}
+
 bool ComputePipelineManager::GetThreadGroupSize(const ComputePSOHandle& handle, UINT& sizeX, UINT& sizeY, UINT& sizeZ) const {
 	if(!computePSOs_.Contains(static_cast<uint32_t>(handle))) {
 		QFE_LOG(std::format("ComputePSOHandle {} is invalid. Cannot retrieve thread group size.", static_cast<uint32_t>(handle)));

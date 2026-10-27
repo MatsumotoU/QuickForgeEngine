@@ -24,6 +24,7 @@ namespace QFE::FRAMEWORK {
 		std::string modelDir = "resources/";
 		std::string psDirName = "engine/resources/shaders/ps/";
 		std::string vsDirName = "engine/resources/shaders/vs/";
+		std::string csDirName = "engine/resources/shaders/cs/";
 		std::string rtDirName = "engine/resources/shaders/rt/";
 
 		QFE::GRAPHIC::DirectXResourceHandle globalUVHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
@@ -67,6 +68,26 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::PSOHandle spriteUnormPsoHandle = QFE::GRAPHIC::PSOHandle::Invalid;
 		QFE::GRAPHIC::PSOHandle spriteSrgbPsoHandle = QFE::GRAPHIC::PSOHandle::Invalid;
 		QFE::GRAPHIC::DirectXResourceHandle spriteVertexBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+
+		QFE::GRAPHIC::ShaderPairHandle particleShaderPairHandle = QFE::GRAPHIC::ShaderPairHandle::Invalid;
+		QFE::GRAPHIC::PSOHandle particleUnormPsoHandle = QFE::GRAPHIC::PSOHandle::Invalid;
+		QFE::GRAPHIC::PSOHandle particleSrgbPsoHandle = QFE::GRAPHIC::PSOHandle::Invalid;
+		QFE::GRAPHIC::ComputePSOHandle particleComputePsoHandle = QFE::GRAPHIC::ComputePSOHandle::Invalid;
+		QFE::GRAPHIC::DirectXResourceHandle particleBufferHandle =
+			QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+		uint32_t particleBufferCapacity = 0;
+		struct ParticleEmitterRuntime {
+			uint32_t particleOffset = 0;
+			uint32_t allocatedCapacity = 0;
+			uint32_t particleCount = 0;
+			uint32_t nextSpawnIndex = 0;
+			uint32_t lastRandomSeed = 0;
+			float emissionRemainder = 0.0f;
+			float elapsedTime = 0.0f;
+			bool needsReset = true;
+		};
+		std::unordered_map<uint32_t, ParticleEmitterRuntime> particleEmitters;
+		uint64_t particleEmitterSceneRevision = UINT64_MAX;
 
 		QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle = QFE::GRAPHIC::RenderTargetHandle::SwapChain;
 

@@ -89,6 +89,13 @@ namespace QFE::GRAPHIC {
 		size_t elementCount,
 		size_t elementStride,
 		QFE::GRAPHIC::DirectXResourceHandle& outStructuredBufferHandle);
+	/// @brief CSから書き込み、シェーダーから読み取れる永続構造化バッファを作成する。
+	bool CreateReadWriteStructuredBuffer(
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+		const std::wstring& name,
+		size_t elementCount,
+		size_t elementStride,
+		QFE::GRAPHIC::DirectXResourceHandle& outStructuredBufferHandle);
 
 	/// @brief 頂点バッファを作成する関数
 	bool CreateVertexBuffer(

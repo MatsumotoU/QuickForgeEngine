@@ -197,6 +197,16 @@ std::vector<D3D12_ROOT_PARAMETER_TYPE> GraphicPipelineManager::GetRootParameterT
 	return {};
 }
 
+std::vector<ViewTypeFlags> GraphicPipelineManager::GetRootParameterViewTypes(const PSOHandle& psoHandle) const {
+	PipelineStateObject* pso = GetPipelineStateObject(psoHandle);
+	if (pso) {
+		const uint32_t shaderPairHandle = pso->GetShaderPairHandle();
+		return shaderPairs_.at(shaderPairHandle)->GetRootParameterViewTypes();
+	}
+	QFE_LOG(std::format("RootParameterViewTypes not found. PSOHandle: {}", static_cast<uint32_t>(psoHandle)));
+	return {};
+}
+
 PSOHandle GraphicPipelineManager::GetBuiltInPSOHandle(
 	BuiltInShaderPair builtInShaderPair, BlendMode blendMode, 
 	RasterizerType rasterizerType, DepthStencilDescType depthStencilDescType) const {

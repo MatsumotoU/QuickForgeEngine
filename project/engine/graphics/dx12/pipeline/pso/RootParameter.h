@@ -7,6 +7,7 @@
 #include <dxgidebug.h>
 
 #include "memory/SafeVector.h"
+#include "graphics/dx12/vram/descriptors/ViewTypeFlags.h"
 #include "RootParameterElement.h"
 
 namespace QFE::GRAPHIC {
@@ -45,6 +46,8 @@ namespace QFE::GRAPHIC {
 
 		/// @brief 登録順にRootParameterのタイプを取得します
 		std::vector< D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes() const;
+		/// @brief 登録順にRootParameterが要求するビュータイプを取得します
+		std::vector<ViewTypeFlags> GetRootParameterViewTypes() const;
 
 	private:
 

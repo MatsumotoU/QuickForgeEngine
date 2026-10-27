@@ -14,6 +14,7 @@
 #include "memory/SparseSets.h"
 
 #include "graphics/dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/vram/descriptors/ViewTypeFlags.h"
 #include "pso/PipelineDescTypes.h"
 #include "pso/InputElement.h"
 #include "pso/RootParameterElement.h"
@@ -80,6 +81,8 @@ namespace QFE::GRAPHIC {
 		ID3D12RootSignature* GetRootSignature(const PSOHandle& psoHandle) const;
 		/// @brief PSOハンドルからルートパラメータのタイプを取得します
 		std::vector<D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes(const PSOHandle& psoHandle) const;
+		/// @brief PSOハンドルから各ルートパラメータが要求するビュータイプを取得します
+		std::vector<ViewTypeFlags> GetRootParameterViewTypes(const PSOHandle& psoHandle) const;
 		/// @brief BuiltInのシェーダーペアと各情報からPSOハンドルを取得します
 		PSOHandle GetBuiltInPSOHandle(
 			BuiltInShaderPair builtInShaderPair, BlendMode blendMode,
