@@ -245,7 +245,7 @@ namespace {
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	// QuickForgeエンジンのリソースを初期化
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
-	engineResources.windowName = "ShootingGameRuntime";
+	engineResources.windowName = "ShootingGameEditor";
 	engineResources.windowWidth = 1280;
 	engineResources.windowHeight = 720;
 	QFE::FRAMEWORK::WindowsGameModule gameModule;
