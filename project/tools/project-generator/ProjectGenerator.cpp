@@ -4273,6 +4273,12 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 				<< EscapeLuaString(Trim(pattern)) << "\"),\n";
 		}
 		output << "    }\n";
+		// Executables own their Windows resources, even with custom source patterns.
+		for (const char* kind : { "ConsoleApp", "WindowedApp" }) {
+			output << "    filter { \"system:windows\", \"kind:" << kind << "\" }\n";
+			output << "        files { path.join(_sourceDirectory, \"**.rc\") }\n";
+		}
+		output << "    filter {}\n";
 		if (node.isFrameworkLayer) {
 			const std::vector<FrameworkPlatformSources> platformSources =
 				FindFrameworkPlatformSources(node.directoryPath);
