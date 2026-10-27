@@ -6,6 +6,7 @@
 #include "input/interface/InputInterface.h"
 #include "scene/SceneManager.h"
 #include "audio/AudioEngine.h"
+#include "framework/application/LuaScriptSystem.h"
 
 QFE::FRAMEWORK::WindowsQuickForgeEngineSystems::WindowsQuickForgeEngineSystems() = default;
 QFE::FRAMEWORK::WindowsQuickForgeEngineSystems::~WindowsQuickForgeEngineSystems() = default;

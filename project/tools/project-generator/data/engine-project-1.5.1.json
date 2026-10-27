@@ -60,7 +60,9 @@
                 1,
                 2,
                 3,
-                28
+                28,
+                38,
+                39
             ],
             "position": {
                 "x": -160.0,
@@ -68,7 +70,7 @@
             },
             "size": {
                 "x": 698.0,
-                "y": 720.0
+                "y": 900.0
             }
         },
         {
@@ -500,11 +502,23 @@
             "id": 106,
             "sourceNodeId": 37,
             "targetNodeId": 23
+        },
+        {
+            "dependencyMode": "transitive",
+            "id": 107,
+            "sourceNodeId": 38,
+            "targetNodeId": 15
+        },
+        {
+            "dependencyMode": "direct",
+            "id": 108,
+            "sourceNodeId": 39,
+            "targetNodeId": 15
         }
     ],
     "nextGroupId": 9,
-    "nextLinkId": 107,
-    "nextNodeId": 38,
+    "nextLinkId": 109,
+    "nextNodeId": 40,
     "nodes": [
         {
             "configurationSettings": {
@@ -1135,7 +1149,8 @@
                 "Debug": {
                     "defines": "",
                     "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
+                    "buildOptions": "/bigobj",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
@@ -1144,7 +1159,8 @@
                 "Development": {
                     "defines": "",
                     "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
+                    "buildOptions": "/bigobj",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
@@ -1153,7 +1169,8 @@
                 "Release": {
                     "defines": "",
                     "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
+                    "buildOptions": "/bigobj",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
@@ -1164,7 +1181,7 @@
             "externalLibrary": false,
             "externalLinks": [],
             "id": 15,
-            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
             "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],
@@ -2233,8 +2250,110 @@
             "preBuildEvent": "",
             "projectName": "ShootingGameEditor",
             "sourcePatterns": ""
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "buildOptions": "/Z7",
+                    "defines": "_CRT_SECURE_NO_WARNINGS",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/lua/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "buildOptions": "/Z7",
+                    "defines": "_CRT_SECURE_NO_WARNINGS",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/lua/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "buildOptions": "/Z7",
+                    "defines": "_CRT_SECURE_NO_WARNINGS",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/lua/",
+                    "kind": 0,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "externals/lua",
+            "externalLibrary": true,
+            "externalLinks": [],
+            "id": 38,
+            "includePaths": "%{wks.location}/externals/lua/",
+            "isFrameworkLayer": false,
+            "kind": 0,
+            "libraryDirectories": [],
+            "name": "lua",
+            "position": {
+                "x": 144.0,
+                "y": 447.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Lua",
+            "sourcePatterns": "**.h\nlapi.c\nlauxlib.c\nlbaselib.c\nlcode.c\nlcorolib.c\nlctype.c\nldblib.c\nldebug.c\nldo.c\nldump.c\nlfunc.c\nlgc.c\nlinit.c\nliolib.c\nllex.c\nlmathlib.c\nlmem.c\nloadlib.c\nlobject.c\nlopcodes.c\nloslib.c\nlparser.c\nlstate.c\nlstring.c\nlstrlib.c\nltable.c\nltablib.c\nltm.c\nlundump.c\nlutf8lib.c\nlvm.c\nlzio.c"
+        },
+        {
+            "configurationSettings": {
+                "Debug": {
+                    "buildOptions": "",
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/sol2/",
+                    "kind": 5,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Development": {
+                    "buildOptions": "",
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/sol2/",
+                    "kind": 5,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                },
+                "Release": {
+                    "buildOptions": "",
+                    "defines": "",
+                    "externalLinks": "",
+                    "includePaths": "%{wks.location}/externals/sol2/",
+                    "kind": 5,
+                    "libraryDirectories": "",
+                    "postBuildEvent": "",
+                    "preBuildEvent": ""
+                }
+            },
+            "directoryPath": "externals/sol2",
+            "externalLibrary": true,
+            "externalLinks": [],
+            "id": 39,
+            "includePaths": "%{wks.location}/externals/sol2/",
+            "isFrameworkLayer": false,
+            "kind": 5,
+            "libraryDirectories": [],
+            "name": "sol2",
+            "position": {
+                "x": 144.0,
+                "y": 575.0
+            },
+            "postBuildEvent": "",
+            "preBuildEvent": "",
+            "projectName": "Sol2",
+            "sourcePatterns": "**.h\n**.hpp"
         }
     ],
     "rootDirectory": "../../..",
-    "version": 6
+    "version": 7
 }

@@ -132,6 +132,7 @@ project "Runtime"
         "Network",
         "AnimationFramework",
         "Animation",
+        "Lua",
     }
     qfeAddDxcRuntime()
     qfeAddPortableMsvcRuntime()

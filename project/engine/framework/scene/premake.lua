@@ -15,6 +15,17 @@ project "SceneFramework"
         path.join(_sourceDirectory, "**.cpp"),
         path.join(_sourceDirectory, "**.cxx"),
     }
+    -- Exclude Windows framework sources from other operating systems.
+    filter "system:not windows"
+        removefiles {
+            path.join(_sourceDirectory, "windows/AudioComponentSystem.cpp"),
+            path.join(_sourceDirectory, "windows/CollisionTriggerSystem.cpp"),
+            path.join(_sourceDirectory, "windows/ComponentParameterSystem.cpp"),
+            path.join(_sourceDirectory, "windows/EventSystem.cpp"),
+            path.join(_sourceDirectory, "windows/SceneChangeSystem.cpp"),
+            path.join(_sourceDirectory, "windows/SceneFrameWork.cpp"),
+            path.join(_sourceDirectory, "windows/SplineMovementSystem.cpp"),
+        }
     filter {}
     architecture ("x64")
     cppdialect ("C++20")
