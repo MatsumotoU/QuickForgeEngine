@@ -24,6 +24,7 @@
 #include "audio/AudioEngine.h"
 #include "string/MyString.h"
 #include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
+#include "framework/application/LuaScriptSystem.h"
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
@@ -453,6 +454,8 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	// シーンマネージャの初期化。Registryの所有権はSystemsに残す。
 	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>(outSystems.componentRegistry);
 	outSystems.sceneManager->Initialize();
+	outSystems.luaScriptSystem = std::make_unique<QFE::FRAMEWORK::LuaScriptSystem>();
+	outSystems.luaScriptSystem->Initialize("resources/Scripts");
 	outSystems.audioEngine = std::make_unique<QFE::AUDIO::AudioEngine>();
 	if (!outSystems.audioEngine->Initialize()) {
 		QFE_LOG("Audio initialization failed; sound playback is unavailable.");
@@ -500,6 +503,7 @@ bool QFE::FRAMEWORK::ReloadWindowsGameModule(
 	}
 
 	const std::shared_ptr<QFE::StaticComponentRegistry> oldRegistry = systems.componentRegistry;
+	if (systems.luaScriptSystem) systems.luaScriptSystem->Reset();
 	systems.sceneManager->ReleaseComponentRegistryForReload();
 	systems.componentRegistry = candidateRegistry;
 
@@ -541,6 +545,10 @@ bool QFE::FRAMEWORK::BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& sys
 	}
 	systems.fpsCounter->FrameStart();
 	systems.inputInterface->Update();
+	if (systems.luaScriptSystem && systems.sceneManager) {
+		systems.luaScriptSystem->Update(
+			*systems.sceneManager, *systems.inputInterface, systems.fpsCounter->GetDeltaTime());
+	}
 	return true;
 }
 
@@ -556,6 +564,7 @@ void QFE::FRAMEWORK::EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& syste
 }
 
 void QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEngineSystems& systems) {
+	if (systems.luaScriptSystem) systems.luaScriptSystem->Shutdown();
 	if (systems.audioEngine) {
 		systems.audioComponents.Reset(*systems.audioEngine);
 		systems.audioEngine->Shutdown();

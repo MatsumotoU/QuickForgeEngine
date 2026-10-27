@@ -15,6 +15,12 @@ project "AnimationFramework"
         path.join(_sourceDirectory, "**.cpp"),
         path.join(_sourceDirectory, "**.cxx"),
     }
+    -- Exclude Windows framework sources from other operating systems.
+    filter "system:not windows"
+        removefiles {
+            path.join(_sourceDirectory, "windows/AnimationDataServices.cpp"),
+            path.join(_sourceDirectory, "windows/AnimationSystem.cpp"),
+        }
     filter {}
     architecture ("x64")
     cppdialect ("C++20")

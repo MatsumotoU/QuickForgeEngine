@@ -18,6 +18,8 @@ project "ExternalFolders"
         path.join(_sourceDirectory, "imgui/**"),
         path.join(_sourceDirectory, "DirectXTex/**"),
         path.join(_sourceDirectory, "assimp/**"),
+        path.join(_sourceDirectory, "lua/**"),
+        path.join(_sourceDirectory, "sol2/**"),
     }
     architecture ("x64")
     cppdialect ("C++20")

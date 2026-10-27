@@ -27,6 +27,7 @@ namespace QFE::APPLICATION {
 		PremakeProjectKind kind = PremakeProjectKind::StaticLib;
 		std::string includePaths;
 		std::string defines;
+		std::string buildOptions;
 		std::string preBuildEvent;
 		std::string postBuildEvent;
 		std::string externalLinks;

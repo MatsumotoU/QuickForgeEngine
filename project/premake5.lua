@@ -135,6 +135,8 @@ dofile(path.join(_root, "externals/premake.lua"))
 dofile(path.join(_root, "externals/imgui/premake.lua"))
 dofile(path.join(_root, "externals/DirectXTex/premake.lua"))
 dofile(path.join(_root, "externals/assimp/premake.lua"))
+dofile(path.join(_root, "externals/lua/premake.lua"))
+dofile(path.join(_root, "externals/sol2/premake.lua"))
 group ""
 
 group "00_System"

@@ -18,8 +18,10 @@ project "ApplicationFramework"
     -- Exclude Windows framework sources from other operating systems.
     filter "system:not windows"
         removefiles {
-            path.join(_sourceDirectory, "WindowsEngineFramework.cpp"),
-            path.join(_sourceDirectory, "WindowsQuickForgeEngineSystems.cpp"),
+            path.join(_sourceDirectory, "windows/LuaScriptSystem.cpp"),
+            path.join(_sourceDirectory, "windows/WindowsEngineFramework.cpp"),
+            path.join(_sourceDirectory, "windows/WindowsGameModule.cpp"),
+            path.join(_sourceDirectory, "windows/WindowsQuickForgeEngineSystems.cpp"),
         }
     filter {}
     architecture ("x64")
@@ -112,6 +114,11 @@ project "ApplicationFramework"
         path.join(QFE_PROJECT_ROOT, "engine"),
         path.join(QFE_PROJECT_ROOT, "engine/core"),
         path.join(QFE_PROJECT_ROOT, "externals"),
+        path.join(QFE_PROJECT_ROOT, "externals/sol2"),
+        path.join(QFE_PROJECT_ROOT, "externals/lua"),
+    }
+    buildoptions {
+        "/bigobj",
     }
     links {
         "GraphicFramework",
@@ -134,8 +141,10 @@ project "ApplicationFramework"
         "Network",
         "AnimationFramework",
         "Animation",
+        "Lua",
     }
     dependson {
         "NetworkFramework",
+        "Sol2",
     }
 

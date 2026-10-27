@@ -3172,6 +3172,8 @@ void QFE::APPLICATION::ProjectGenerator::NodeSettingsWindow()
 				&ProjectConfigurationSettings::includePaths, 82.0f);
 			drawText("Defines (one definition per line)", "##Defines",
 				&ProjectConfigurationSettings::defines, 72.0f);
+			drawText("Build options (one compiler option per line)", "##BuildOptions",
+				&ProjectConfigurationSettings::buildOptions, 72.0f);
 			drawText("External links (one library per line)", "##ExternalLinks",
 				&ProjectConfigurationSettings::externalLinks, 72.0f);
 			drawText("Library directories (one path per line)", "##LibraryDirectories",
@@ -4382,6 +4384,7 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 
 		emitStringList("includedirs", &ProjectConfigurationSettings::includePaths, true);
 		emitStringList("defines", &ProjectConfigurationSettings::defines);
+		emitStringList("buildoptions", &ProjectConfigurationSettings::buildOptions);
 
 		std::vector<std::uint64_t> dependencyNodeIds;
 		std::unordered_set<std::uint64_t> visitedDependencyIds;
@@ -4661,7 +4664,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration(
 		rootPath.lexically_relative(configurationPath.parent_path());
 
 	nlohmann::json configuration = nlohmann::json::object();
-	configuration["version"] = 6;
+	configuration["version"] = 7;
 	configuration["rootDirectory"] = QFE::ConvertString(
 		(relativeRoot.empty() ? rootPath : relativeRoot).generic_wstring());
 	configuration["nextNodeId"] = nextNodeId_;
@@ -4747,6 +4750,7 @@ void QFE::APPLICATION::ProjectGenerator::SaveConfiguration(
 				{ "kind", static_cast<int>(settings.kind) },
 				{ "includePaths", settings.includePaths },
 				{ "defines", settings.defines },
+				{ "buildOptions", settings.buildOptions },
 				{ "preBuildEvent", settings.preBuildEvent },
 				{ "postBuildEvent", settings.postBuildEvent },
 				{ "externalLinks", settings.externalLinks },
@@ -5009,6 +5013,7 @@ void QFE::APPLICATION::ProjectGenerator::LoadConfiguration(
 					}
 					settings.includePaths = value.value("includePaths", "");
 					settings.defines = value.value("defines", "");
+					settings.buildOptions = value.value("buildOptions", "");
 					settings.preBuildEvent = value.value("preBuildEvent", "");
 					settings.postBuildEvent = value.value("postBuildEvent", "");
 					settings.externalLinks = value.value("externalLinks", "");
