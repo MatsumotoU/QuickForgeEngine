@@ -28,27 +28,27 @@ namespace QFE {
 	/// @brief エンジンが標準提供するコンポーネントを登録する。
 	inline bool RegisterEngineComponents(StaticComponentRegistry& registry) {
 		return
-			registry.RegisterComponent<SCENE::TransformComponent>("TransformComponent") &&
-			registry.RegisterComponent<SCENE::ParentComponent>("ParentComponent") &&
-			registry.RegisterComponent<SCENE::ObjectInfoComponent>("ObjectInfoComponent") &&
-			registry.RegisterComponent<SCENE::VertexComponent>("VertexComponent") &&
-			registry.RegisterComponent<SCENE::MaterialComponent>("MaterialComponent") &&
-			registry.RegisterComponent<SCENE::ModelRenderComponent>("ModelRenderComponent") &&
-			registry.RegisterComponent<SCENE::ShaderComponent>("ShaderComponent") &&
-			registry.RegisterComponent<SCENE::SkyBoxComponent>("SkyBoxComponent") &&
-			registry.RegisterComponent<SCENE::SpriteRenderComponent>("SpriteRenderComponent") &&
-			registry.RegisterComponent<SCENE::ScriptComponent>("ScriptComponent") &&
-			registry.RegisterComponent<SCENE::CameraComponent>("CameraComponent") &&
-			registry.RegisterComponent<SCENE::SphereColliderComponent>("SphereColliderComponent") &&
-			registry.RegisterComponent<SCENE::AnimationComponent>("AnimationComponent") &&
-			registry.RegisterComponent<COMPONENTS::PhysicsComponent>("PhysicsComponent") &&
-			registry.RegisterComponent<COMPONENTS::InputMovementComponent>("InputMovementComponent") &&
-			registry.RegisterComponent<SCENE::SplineMovementComponent>("SplineMovementComponent") &&
-			registry.RegisterComponent<SCENE::SplineMoveToPointComponent>("SplineMoveToPointComponent") &&
-			registry.RegisterComponent<SCENE::EventComponent>("EventComponent") &&
-			registry.RegisterComponent<SCENE::CollisionTriggerComponent>("CollisionTriggerComponent") &&
-			registry.RegisterComponent<SCENE::BGMComponent>("BGMComponent") &&
-			registry.RegisterComponent<SCENE::SEComponent>("SEComponent") &&
-			registry.RegisterComponent<SCENE::SceneChangeComponent>("SceneChangeComponent");
+			registry.RegisterComponent<SCENE::TransformComponent>("TransformComponent", "Core") &&
+			registry.RegisterComponent<SCENE::ParentComponent>("ParentComponent", "Core") &&
+			registry.RegisterComponent<SCENE::ObjectInfoComponent>("ObjectInfoComponent", "Core") &&
+			registry.RegisterComponent<SCENE::VertexComponent>("VertexComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::MaterialComponent>("MaterialComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::ModelRenderComponent>("ModelRenderComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::ShaderComponent>("ShaderComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::SkyBoxComponent>("SkyBoxComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::SpriteRenderComponent>("SpriteRenderComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::CameraComponent>("CameraComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::AnimationComponent>("AnimationComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::SphereColliderComponent>("SphereColliderComponent", "Physics") &&
+			registry.RegisterComponent<COMPONENTS::PhysicsComponent>("PhysicsComponent", "Physics") &&
+			registry.RegisterComponent<SCENE::CollisionTriggerComponent>("CollisionTriggerComponent", "Physics") &&
+			registry.RegisterComponent<SCENE::BGMComponent>("BGMComponent", "Audio") &&
+			registry.RegisterComponent<SCENE::SEComponent>("SEComponent", "Audio") &&
+			registry.RegisterComponent<SCENE::ScriptComponent>("ScriptComponent", "Behavior") &&
+			registry.RegisterComponent<COMPONENTS::InputMovementComponent>("InputMovementComponent", "Behavior") &&
+			registry.RegisterComponent<SCENE::SplineMovementComponent>("SplineMovementComponent", "Behavior") &&
+			registry.RegisterComponent<SCENE::SplineMoveToPointComponent>("SplineMoveToPointComponent", "Behavior") &&
+			registry.RegisterComponent<SCENE::EventComponent>("EventComponent", "Behavior") &&
+			registry.RegisterComponent<SCENE::SceneChangeComponent>("SceneChangeComponent", "Behavior");
 	}
 }
