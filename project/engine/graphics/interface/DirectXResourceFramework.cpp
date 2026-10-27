@@ -254,6 +254,62 @@ bool QFE::GRAPHIC::AllocateStructuredBuffer(
 	return true;
 }
 
+bool QFE::GRAPHIC::CreateReadWriteStructuredBuffer(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+	const std::wstring& name,
+	size_t elementCount,
+	size_t elementStride,
+	QFE::GRAPHIC::DirectXResourceHandle& outStructuredBufferHandle) {
+	outStructuredBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+	auto* d3d12GraphicEngine = ResolveD3D12GraphicEngine(graphicEngine);
+	if (d3d12GraphicEngine == nullptr || elementCount == 0 || elementStride == 0) {
+		return false;
+	}
+
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer =
+		d3d12GraphicEngine->GetDirectXResourceContainer();
+	QFE::GRAPHIC::DirectXDevice* directXDevice = d3d12GraphicEngine->GetDirectXDevice();
+	if (resourceContainer == nullptr || directXDevice == nullptr) {
+		return false;
+	}
+
+	D3D12_RESOURCE_DESC bufferDesc{};
+	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferDesc.Width = static_cast<UINT64>(elementCount * elementStride);
+	bufferDesc.Height = 1;
+	bufferDesc.DepthOrArraySize = 1;
+	bufferDesc.MipLevels = 1;
+	bufferDesc.SampleDesc.Count = 1;
+	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	bufferDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+	const QFE::GRAPHIC::DirectXResourceHandle handle = resourceContainer->CreateResource(
+		directXDevice->GetDevice(), bufferDesc,
+		D3D12_RESOURCE_STATE_COMMON, D3D12_HEAP_TYPE_DEFAULT);
+	if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		QFE_LOG("Failed to create read-write structured buffer: " + QFE::ConvertString(name));
+		return false;
+	}
+
+	QFE::GRAPHIC::CreateViewInfo viewInfo{};
+	viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView |
+		QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView;
+	viewInfo.srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(elementCount);
+	viewInfo.srvDesc.Buffer.StructureByteStride = static_cast<UINT>(elementStride);
+	viewInfo.uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	viewInfo.uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+	viewInfo.uavDesc.Buffer.NumElements = static_cast<UINT>(elementCount);
+	viewInfo.uavDesc.Buffer.StructureByteStride = static_cast<UINT>(elementStride);
+	resourceContainer->CreateResourceView(handle, viewInfo);
+	resourceContainer->SetResourceStrideInBytes(handle, elementStride);
+	resourceContainer->SetResourceName(handle, name);
+	outStructuredBufferHandle = handle;
+	return true;
+}
+
 void QFE::GRAPHIC::UpdateObject3dWVPMatrix(
 	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 	const QFE::MATH::EulerTransform& transform, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {

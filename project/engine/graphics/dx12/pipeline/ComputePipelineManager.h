@@ -1,6 +1,7 @@
 #pragma once
 #include "memory/SparseSets.h"
 #include "graphics/dx12/GraphicEngineHandleTypes.h"
+#include "graphics/dx12/vram/descriptors/ViewTypeFlags.h"
 #include "pso/RootParameterElement.h"
 #include "compute/ComputePSO.h"
 
@@ -47,6 +48,8 @@ namespace QFE::GRAPHIC {
 		ID3D12PipelineState* GetPipelineState(const ComputePSOHandle& handle) const;
 		/// @brief コンピュートパイプラインステートオブジェクトのルートパラメータタイプを取得します
 		std::vector<D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes(const ComputePSOHandle& handle) const;
+		/// @brief コンピュートパイプラインの各ルートパラメータが要求するビュータイプを取得します
+		std::vector<ViewTypeFlags> GetRootParameterViewTypes(const ComputePSOHandle& handle) const;
 		/// @brief コンピュートパイプラインステートオブジェクトのスレッドグループサイズを取得します
 		bool GetThreadGroupSize(const ComputePSOHandle& handle, UINT& sizeX, UINT& sizeY, UINT& sizeZ) const;
 

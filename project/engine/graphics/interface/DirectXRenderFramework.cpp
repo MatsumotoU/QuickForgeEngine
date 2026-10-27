@@ -32,6 +32,46 @@ namespace {
 		return d3d12GraphicEngine;
 	}
 
+	[[nodiscard]] bool ResourceMatchesViewType(
+		QFE::GRAPHIC::DirectXResourceContainer* resourceContainer,
+		QFE::GRAPHIC::DirectXResourceHandle resource,
+		QFE::GRAPHIC::ViewTypeFlags viewType) {
+		if (viewType == QFE::GRAPHIC::ViewTypeFlags::ConstantBufferView) {
+			// ルートCBVはディスクリプタを持たずGPU仮想アドレスでバインドされる。
+			return !resourceContainer->HasResourceType(
+				resource, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView) &&
+				!resourceContainer->HasResourceType(
+					resource, QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView);
+		}
+		return resourceContainer->HasResourceType(resource, viewType);
+	}
+
+	[[nodiscard]] bool OrderResourcesForRootSignature(
+		QFE::GRAPHIC::DirectXResourceContainer* resourceContainer,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& resources,
+		const std::vector<QFE::GRAPHIC::ViewTypeFlags>& expectedViewTypes,
+		std::vector<QFE::GRAPHIC::DirectXResourceHandle>& orderedResources) {
+		if (resourceContainer == nullptr || resources.size() != expectedViewTypes.size()) {
+			return false;
+		}
+		orderedResources.assign(resources.size(), QFE::GRAPHIC::DirectXResourceHandle::Invalid);
+		std::vector<bool> used(resources.size(), false);
+		for (std::size_t rootIndex = 0; rootIndex < expectedViewTypes.size(); ++rootIndex) {
+			for (std::size_t resourceIndex = 0; resourceIndex < resources.size(); ++resourceIndex) {
+				if (!used[resourceIndex] && ResourceMatchesViewType(
+					resourceContainer, resources[resourceIndex], expectedViewTypes[rootIndex])) {
+					orderedResources[rootIndex] = resources[resourceIndex];
+					used[resourceIndex] = true;
+					break;
+				}
+			}
+			if (orderedResources[rootIndex] == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	[[nodiscard]] bool DispatchBuiltInLinearToSrgb(
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		QFE::GRAPHIC::DirectXResourceHandle uavHandle) {
@@ -249,6 +289,143 @@ bool QFE::GRAPHIC::DispatchComputePSO(
 	return true;
 }
 
+bool QFE::GRAPHIC::DispatchComputePSO(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+	const QFE::GRAPHIC::ComputePSOHandle& psoHandle,
+	const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+	const std::vector<QFE::GRAPHIC::ViewTypeFlags>& resourceViewTypes,
+	uint32_t workItemCountX,
+	uint32_t workItemCountY,
+	uint32_t workItemCountZ) {
+	auto* d3d12GraphicEngine = ResolveD3D12GraphicEngine(graphicEngine);
+	if (d3d12GraphicEngine == nullptr || !d3d12GraphicEngine->IsComputePipelineAvailable() ||
+		psoHandle == QFE::GRAPHIC::ComputePSOHandle::Invalid ||
+		rootResources.size() != resourceViewTypes.size() ||
+		workItemCountX == 0 || workItemCountY == 0 || workItemCountZ == 0) {
+		return false;
+	}
+
+	QFE::GRAPHIC::ComputePipelineManager* computePipelineManager =
+		d3d12GraphicEngine->GetComputePipelineManager();
+	QFE::GRAPHIC::DirectXResourceContainer* resourceContainer =
+		d3d12GraphicEngine->GetDirectXResourceContainer();
+	QFE::GRAPHIC::DirectXCommandManager* commandManager =
+		d3d12GraphicEngine->GetDirectXCommandManager();
+	if (computePipelineManager == nullptr || resourceContainer == nullptr || commandManager == nullptr) {
+		return false;
+	}
+
+	const std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes =
+		computePipelineManager->GetRootParameterTypes(psoHandle);
+	const std::vector<QFE::GRAPHIC::ViewTypeFlags> expectedViewTypes =
+		computePipelineManager->GetRootParameterViewTypes(psoHandle);
+	if (rootParameterTypes.size() != rootResources.size() ||
+		expectedViewTypes.size() != rootResources.size()) {
+		QFE_LOG("Compute root parameter and resource counts do not match.");
+		return false;
+	}
+
+	std::vector<QFE::GRAPHIC::DirectXResourceHandle> orderedResources(
+		rootResources.size(), QFE::GRAPHIC::DirectXResourceHandle::Invalid);
+	std::vector<QFE::GRAPHIC::ViewTypeFlags> orderedViewTypes(rootResources.size());
+	std::vector<bool> usedResources(rootResources.size(), false);
+	for (std::size_t rootIndex = 0; rootIndex < expectedViewTypes.size(); ++rootIndex) {
+		for (std::size_t resourceIndex = 0; resourceIndex < resourceViewTypes.size(); ++resourceIndex) {
+			if (!usedResources[resourceIndex] &&
+				resourceViewTypes[resourceIndex] == expectedViewTypes[rootIndex]) {
+				orderedResources[rootIndex] = rootResources[resourceIndex];
+				orderedViewTypes[rootIndex] = resourceViewTypes[resourceIndex];
+				usedResources[resourceIndex] = true;
+				break;
+			}
+		}
+		if (orderedResources[rootIndex] == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+			QFE_LOG("A compute resource does not match the reflected root parameter view type.");
+			return false;
+		}
+	}
+
+	UINT threadGroupSizeX = 0;
+	UINT threadGroupSizeY = 0;
+	UINT threadGroupSizeZ = 0;
+	if (!computePipelineManager->GetThreadGroupSize(
+		psoHandle, threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ) ||
+		threadGroupSizeX == 0 || threadGroupSizeY == 0 || threadGroupSizeZ == 0) {
+		return false;
+	}
+
+	ID3D12GraphicsCommandList* commandList =
+		commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+	ID3D12PipelineState* pipelineState = computePipelineManager->GetPipelineState(psoHandle);
+	ID3D12RootSignature* rootSignature = computePipelineManager->GetRootSignature(psoHandle);
+	if (commandList == nullptr || pipelineState == nullptr || rootSignature == nullptr) {
+		return false;
+	}
+
+	std::vector<D3D12_RESOURCE_BARRIER> uavBarriers;
+	for (std::size_t index = 0; index < orderedResources.size(); ++index) {
+		const QFE::GRAPHIC::DirectXResourceHandle resource = orderedResources[index];
+		const QFE::GRAPHIC::ViewTypeFlags viewType = orderedViewTypes[index];
+		if (resource == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+			return false;
+		}
+		if (viewType == QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView) {
+			if (!resourceContainer->HasResourceType(resource, viewType)) {
+				return false;
+			}
+			resourceContainer->TransitionResource(
+				resource, commandList, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+			D3D12_RESOURCE_BARRIER barrier{};
+			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+			barrier.UAV.pResource = resourceContainer->GetResource(resource);
+			uavBarriers.push_back(barrier);
+		} else if (viewType == QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView) {
+			if (!resourceContainer->HasResourceType(resource, viewType)) {
+				return false;
+			}
+			resourceContainer->TransitionResource(
+				resource, commandList, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+		}
+	}
+
+	if (!uavBarriers.empty()) {
+		commandList->ResourceBarrier(static_cast<UINT>(uavBarriers.size()), uavBarriers.data());
+	}
+	commandList->SetPipelineState(pipelineState);
+	commandList->SetComputeRootSignature(rootSignature);
+
+	for (std::size_t index = 0; index < orderedResources.size(); ++index) {
+		const UINT rootIndex = static_cast<UINT>(index);
+		const auto rootType = rootParameterTypes[index];
+		if (rootType == D3D12_ROOT_PARAMETER_TYPE_CBV) {
+			commandList->SetComputeRootConstantBufferView(
+				rootIndex, resourceContainer->GetGpuVirtualAddress(orderedResources[index]));
+		} else if (rootType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) {
+			commandList->SetComputeRootDescriptorTable(
+				rootIndex,
+				resourceContainer->GetDescriptorHandleGPU(
+					orderedResources[index], orderedViewTypes[index]));
+		} else if (rootType == D3D12_ROOT_PARAMETER_TYPE_SRV) {
+			commandList->SetComputeRootShaderResourceView(
+				rootIndex, resourceContainer->GetGpuVirtualAddress(orderedResources[index]));
+		} else if (rootType == D3D12_ROOT_PARAMETER_TYPE_UAV) {
+			commandList->SetComputeRootUnorderedAccessView(
+				rootIndex, resourceContainer->GetGpuVirtualAddress(orderedResources[index]));
+		} else {
+			return false;
+		}
+	}
+
+	const UINT dispatchX = (workItemCountX + threadGroupSizeX - 1) / threadGroupSizeX;
+	const UINT dispatchY = (workItemCountY + threadGroupSizeY - 1) / threadGroupSizeY;
+	const UINT dispatchZ = (workItemCountZ + threadGroupSizeZ - 1) / threadGroupSizeZ;
+	commandList->Dispatch(dispatchX, dispatchY, dispatchZ);
+	if (!uavBarriers.empty()) {
+		commandList->ResourceBarrier(static_cast<UINT>(uavBarriers.size()), uavBarriers.data());
+	}
+	return true;
+}
+
 bool QFE::GRAPHIC::CreateRayTracingPSO(
 	QFE::GRAPHIC::IGraphicEngine* graphicEngine, QFE::GRAPHIC::RTPSOHandle& outPSOHandle,
 	const std::string& dirPath, const std::string& rgsFileName) {
@@ -406,7 +583,8 @@ bool QFE::GRAPHIC::DrawGraphicPSO(
 	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::PSOHandle& psoHandle,
 	const QFE::GRAPHIC::ViewPortHandle& viewportHandle, const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle, const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
-	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets) {
+	const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
+	uint32_t instanceCount, uint32_t startInstanceLocation) {
 
 	// 使用機能の取得
 	QFE::GRAPHIC::DirectXCommandManager* commandManager = ResolveD3D12GraphicEngine(graphicEngine)->GetDirectXCommandManager();
@@ -420,6 +598,12 @@ bool QFE::GRAPHIC::DrawGraphicPSO(
 
 	ID3D12GraphicsCommandList* commandList = commandManager->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
+	for (QFE::GRAPHIC::RenderTargetHandle renderTargetHandle : renderTargets) {
+		const QFE::GRAPHIC::DirectXResourceHandle renderTargetResourceHandle =
+			renderPass->GetRenderTargetResourceHandle(renderTargetHandle);
+		resourceContainer->TransitionResource(
+			renderTargetResourceHandle, commandList, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
 	renderPass->SetRenderTarget(
 		commandList, depthStencilBufferHandle, renderTargets);
 
@@ -434,9 +618,18 @@ bool QFE::GRAPHIC::DrawGraphicPSO(
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	std::vector<D3D12_ROOT_PARAMETER_TYPE> rootParameterTypes = graphicPipelineManager->GetRootParameterTypes(psoHandle);
-	if (rootParameterTypes.size() != rootResources.size()) {
+	const std::vector<QFE::GRAPHIC::ViewTypeFlags> rootParameterViewTypes =
+		graphicPipelineManager->GetRootParameterViewTypes(psoHandle);
+	if (rootParameterTypes.size() != rootResources.size() ||
+		rootParameterViewTypes.size() != rootResources.size()) {
 		// PSOのルートパラメータの数と渡されたリソースの数が異なる場合はエラー
 		assert(false);
+		return false;
+	}
+	std::vector<QFE::GRAPHIC::DirectXResourceHandle> orderedResources;
+	if (!OrderResourcesForRootSignature(
+		resourceContainer, rootResources, rootParameterViewTypes, orderedResources)) {
+		QFE_LOG("A graphic resource does not match the reflected root parameter view type.");
 		return false;
 	}
 
@@ -445,19 +638,24 @@ bool QFE::GRAPHIC::DrawGraphicPSO(
 
 		switch (rootParameterType) {
 		case D3D12_ROOT_PARAMETER_TYPE_CBV: {
-			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer->GetGpuVirtualAddress(rootResources[i]);
+			D3D12_GPU_VIRTUAL_ADDRESS gpuHandle = resourceContainer->GetGpuVirtualAddress(orderedResources[i]);
 			commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(i), gpuHandle);
 			break;
 		}
-		case D3D12_ROOT_PARAMETER_TYPE_SRV:
 		case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE: {
-			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(
+				orderedResources[i], rootParameterViewTypes[i]);
 			commandList->SetGraphicsRootDescriptorTable(static_cast<UINT>(i), gpuHandle);
 			break;
 		}
+		case D3D12_ROOT_PARAMETER_TYPE_SRV: {
+			commandList->SetGraphicsRootShaderResourceView(
+				static_cast<UINT>(i), resourceContainer->GetGpuVirtualAddress(orderedResources[i]));
+			break;
+		}
 		case D3D12_ROOT_PARAMETER_TYPE_UAV: {
-			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = resourceContainer->GetDescriptorHandleGPU(rootResources[i], rootParameterType);
-			commandList->SetGraphicsRootUnorderedAccessView(static_cast<UINT>(i), gpuHandle.ptr);
+			commandList->SetGraphicsRootUnorderedAccessView(
+				static_cast<UINT>(i), resourceContainer->GetGpuVirtualAddress(orderedResources[i]));
 			break;
 		}
 		case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS:
@@ -475,7 +673,7 @@ bool QFE::GRAPHIC::DrawGraphicPSO(
 		return false;
 	}
 	UINT vertexCountUINT = static_cast<UINT>(vertexCount);
-	commandList->DrawInstanced(vertexCountUINT, 1, 0, 0);
+	commandList->DrawInstanced(vertexCountUINT, instanceCount, 0, startInstanceLocation);
 	return true;
 }
 

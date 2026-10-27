@@ -51,6 +51,8 @@ namespace QFE::GRAPHIC {
 		/// @brief 外部のリソースをコンテナに追加する
 		DirectXResourceHandle RegisterExternalResource(
 			Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES initialState);
+		/// @brief GPUの完了待ち後に、指定したリソースをコンテナから解放する。
+		bool RemoveResource(DirectXResourceHandle handle);
 
 		/// @brief あるリソースハンドルに対応するリソースの名前を設定する
 		bool SetResourceName(DirectXResourceHandle handle, const std::wstring& name);

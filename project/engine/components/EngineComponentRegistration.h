@@ -10,6 +10,7 @@
 #include "ModelRenderComponent.h"
 #include "ObjectInfoComponent.h"
 #include "ParentComponent.h"
+#include "ParticleEmitterComponent.h"
 #include "PhysicsComponent.h"
 #include "SceneChangeComponent.h"
 #include "ScriptComponent.h"
@@ -39,6 +40,7 @@ namespace QFE {
 			registry.RegisterComponent<SCENE::SpriteRenderComponent>("SpriteRenderComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::CameraComponent>("CameraComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::AnimationComponent>("AnimationComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::ParticleEmitterComponent>("ParticleEmitterComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::SphereColliderComponent>("SphereColliderComponent", "Physics") &&
 			registry.RegisterComponent<COMPONENTS::PhysicsComponent>("PhysicsComponent", "Physics") &&
 			registry.RegisterComponent<SCENE::CollisionTriggerComponent>("CollisionTriggerComponent", "Physics") &&

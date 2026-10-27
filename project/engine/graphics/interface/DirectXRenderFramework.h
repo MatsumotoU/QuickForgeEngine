@@ -67,6 +67,16 @@ namespace QFE::GRAPHIC {
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const QFE::GRAPHIC::ComputePSOHandle& psoHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& uavHandle);
+	/// @brief 複数のCBV/SRV/UAVをバインドしてコンピュートパイプラインを実行する。
+	/// @param workItemCountX シェーダーに処理させるX方向の要素数。
+	bool DispatchComputePSO(
+		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+		const QFE::GRAPHIC::ComputePSOHandle& psoHandle,
+		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
+		const std::vector<QFE::GRAPHIC::ViewTypeFlags>& resourceViewTypes,
+		uint32_t workItemCountX,
+		uint32_t workItemCountY = 1,
+		uint32_t workItemCountZ = 1);
 
 	/// @brief レイトレーシングパイプラインステートオブジェクトを作成する関数
 	bool CreateRayTracingPSO(
@@ -116,7 +126,9 @@ namespace QFE::GRAPHIC {
 		const QFE::GRAPHIC::ScissorRectHandle& scissorRectHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& vertexBufferHandle,
 		const std::vector<QFE::GRAPHIC::DirectXResourceHandle>& rootResources,
-		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets);
+		const std::vector<QFE::GRAPHIC::RenderTargetHandle>& renderTargets,
+		uint32_t instanceCount = 1,
+		uint32_t startInstanceLocation = 0);
 
 	/// @brief グラフィックパイプラインステートオブジェクトを使用して描画する関数.ルートパラメータを直接指定するバージョン
 	bool DrawGraphicPSO(

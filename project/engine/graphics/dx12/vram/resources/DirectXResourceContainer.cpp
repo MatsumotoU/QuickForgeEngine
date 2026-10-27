@@ -73,6 +73,15 @@ DirectXResourceHandle QFE::GRAPHIC::DirectXResourceContainer::RegisterExternalRe
 	return DirectXResourceHandle::Invalid;
 }
 
+bool QFE::GRAPHIC::DirectXResourceContainer::RemoveResource(DirectXResourceHandle handle) {
+	if (handle == DirectXResourceHandle::Invalid ||
+		!resources.Contains(static_cast<uint32_t>(handle))) {
+		return false;
+	}
+	resources.Remove(static_cast<uint32_t>(handle));
+	return true;
+}
+
 bool QFE::GRAPHIC::DirectXResourceContainer::SetResourceName(DirectXResourceHandle handle, const std::wstring& name) {
 	if (handle == DirectXResourceHandle::Invalid) {
 		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::SetResourceName", SystemError::Abort);

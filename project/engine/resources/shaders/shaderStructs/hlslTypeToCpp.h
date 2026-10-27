@@ -205,19 +205,58 @@ struct PixcelOffset {
 };
 
 struct Particle {
-#ifdef __cplusplus
-	Particle()
-		: translate{ 0.0f, 0.0f, 0.0f }
-		, scale{ 1.0f, 1.0f, 1.0f } {
-	}
-#endif 
-	float32_t3 translate;
-	float32_t3 scale;
-	float32_t lifeTime;
+	float32_t3 position;
+	float32_t age;
 	float32_t3 velocity;
-	float32_t currentTime;
-	float32_t4 color;
+	float32_t lifetime;
+	float32_t startSize;
+	float32_t endSize;
+	float32_t rotation;
+	float32_t angularVelocity;
+	float32_t4 startColor;
+	float32_t4 endColor;
+	uint32_t alive;
+	uint32_t padding0;
+	uint32_t padding1;
+	uint32_t padding2;
 };
+
+struct ParticleEmitterForGPU {
+	float32_t3 emitterPosition;
+	float32_t deltaTime;
+	float32_t3 acceleration;
+	uint32_t maxParticles;
+	float32_t3 velocityMin;
+	uint32_t spawnStart;
+	float32_t3 velocityMax;
+	uint32_t spawnCount;
+	float32_t4 startColor;
+	float32_t4 endColor;
+	float32_t lifetimeMin;
+	float32_t lifetimeMax;
+	float32_t startSize;
+	float32_t endSize;
+	float32_t emitterRadius;
+	float32_t time;
+	float32_t angularVelocityMin;
+	float32_t angularVelocityMax;
+	uint32_t randomSeed;
+	uint32_t reset;
+	uint32_t particleOffset;
+	uint32_t padding1;
+};
+
+struct ParticleViewForGPU {
+	float32_t4x4 viewProjection;
+	float32_t3 cameraPosition;
+	float32_t padding;
+};
+
+#ifdef __cplusplus
+static_assert(sizeof(Particle) == 96);
+static_assert(sizeof(ParticleEmitterForGPU) == 144);
+static_assert(sizeof(ParticleViewForGPU) == 80);
+#endif
 
 struct ParView {
 #ifdef __cplusplus
