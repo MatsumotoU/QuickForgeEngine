@@ -1111,7 +1111,7 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 			[&](uint32_t entityId, QFE::SCENE::DirectionalLightComponent& light) {
 				const auto direction = QFE::SCENE::DirectionalLightComponent::NormalizeDirection(light.direction);
 				lights.push_back({ entityId, { { direction.x, direction.y, direction.z,
-					(std::max)(0.0f, light.intensity) }, light.isMainLight ? 1u : 0u } });
+					(std::max)(0.0f, light.intensity) } } });
 			});
 		std::sort(lights.begin(), lights.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
 		const bool lightCapacityExceeded = lights.size() > resources.config.directionalLightMaxNum;

@@ -40,7 +40,6 @@ struct LineVertex {
 // レイトレーシング用平行光の StructuredBuffer と定数バッファ。
 struct DirectionalLightGpu {
 	float32_t4 directionAndIntensity; // xyz: 光の進行方向、w: 強さ
-	uint32_t castsShadow;
 };
 
 struct DirectionalLightConstants {
@@ -95,8 +94,7 @@ struct RaytracingVertexAttribute {
 #ifdef __cplusplus
 static_assert(sizeof(RaytracingVertexAttribute) == 20);
 static_assert(sizeof(LineVertex) == 32);
-static_assert(sizeof(DirectionalLightGpu) == 20);
-static_assert(offsetof(DirectionalLightGpu, castsShadow) == 16);
+static_assert(sizeof(DirectionalLightGpu) == 16);
 static_assert(sizeof(DirectionalLightConstants) == 4);
 static_assert(sizeof(RaytracingInstanceMeta) == 112);
 static_assert(offsetof(RaytracingInstanceMeta, uvTransform) == 32);

@@ -98,7 +98,7 @@ float3 EvaluateDirectLighting(float3 albedo, float3 worldNormal, float3 worldPos
         shadowPayload.color = 0.0f;
         shadowPayload.hit = 0;
         shadowPayload.rayType = kShadowRay;
-        if (receiveShadow && light.castsShadow != 0)
+        if (receiveShadow)
         {
             RayDesc ray;
             ray.Origin = OffsetRayOrigin(worldPosition, worldNormal, lightVector);
@@ -112,6 +112,18 @@ float3 EvaluateDirectLighting(float3 albedo, float3 worldNormal, float3 worldPos
             result += albedo * kLightColor * (nDotL * light.directionAndIntensity.w);
     }
     return result;
+}
+
+// 8-bit 出力で高輝度を切り捨てる前に、色相を保って明るさを緩やかに圧縮する。
+float3 CompressHighlights(float3 color)
+{
+    float peak = max(color.r, max(color.g, color.b));
+    const float shoulder = 0.8f;
+    if (peak <= shoulder)
+        return color;
+    float mappedPeak = shoulder + (1.0f - shoulder) *
+        (1.0f - exp(-(peak - shoulder) / (1.0f - shoulder)));
+    return color * (mappedPeak / peak);
 }
 
 [shader("raygeneration")]
@@ -190,7 +202,7 @@ void MyRayGen()
             + reflectPayload.color * reflectionWeight;
     }
 
-    g_output[launchIndex] = float4(finalColor, albedpAlpha);
+    g_output[launchIndex] = float4(CompressHighlights(finalColor), albedpAlpha);
 }
 
 // 2. ミスシェーダー

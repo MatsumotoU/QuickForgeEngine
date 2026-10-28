@@ -100,7 +100,6 @@ void QFE::EDITOR::Inspector::DrawComponents(uint32_t entityId) {
 						light.direction = QFE::SCENE::DirectionalLightComponent::NormalizeDirection(light.direction);
 					}
 					archive.Process("intensity", light.intensity);
-					archive.Process("isMainLight", light.isMainLight);
 				} else {
 					entityManager_->ReflectionComponentByName(entityId, componentTypeName, archive);
 				}

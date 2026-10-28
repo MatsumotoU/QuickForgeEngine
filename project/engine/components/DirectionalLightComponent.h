@@ -8,7 +8,6 @@ namespace QFE::SCENE {
 	struct DirectionalLightComponent {
 		MATH::Vector3 direction{ 0.0f, -1.0f, 0.0f };
 		float intensity = 1.0f;
-		bool isMainLight = false;
 
 		/// ゼロや非有限値は既定の下向きに戻す。
 		static MATH::Vector3 NormalizeDirection(const MATH::Vector3& value) {
@@ -32,7 +31,6 @@ namespace QFE::SCENE {
 			}
 			if (ar.IsLoading()) direction = NormalizeDirection(direction);
 			QFE_REFLECT_MEMBER(intensity)
-			QFE_REFLECT_MEMBER(isMainLight)
 		QFE_REFLECT_END()
 	};
 }
