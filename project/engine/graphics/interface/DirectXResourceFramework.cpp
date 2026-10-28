@@ -170,16 +170,16 @@ bool QFE::GRAPHIC::CreateObject3dGBufferRootResources(
 	QFE::GRAPHIC::TextureLoader* textureLoader = ResolveD3D12GraphicEngine(graphicEngine)->GetTextureLoader();
 
 	// EulerTransform
-	TransformationMatrix transformMatrix;
+	ObjectTransformGpuData transformMatrix;
 	transformMatrix.World = QFE::MATH::Matrix4x4::MakeIdentity4x4();
 	transformMatrix.WVP = QFE::MATH::Matrix4x4::MakeIdentity4x4();
 	QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
-		resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("TransformMatrixBuffer");
+		resourceAllocator->AllocateConstantBuffer<ObjectTransformGpuData>("TransformMatrixBuffer");
 	// Material
-	Material material;
+	MaterialGpuData material;
 	material.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
-		resourceAllocator->AllocateConstantBuffer<Material>("MaterialBuffer");
+		resourceAllocator->AllocateConstantBuffer<MaterialGpuData>("MaterialBuffer");
 
 	//Texture
 	QFE::GRAPHIC::DirectXResourceHandle textureHandle = textureLoader->GetDummyWhite1x1TextureHandle();
@@ -323,14 +323,14 @@ void QFE::GRAPHIC::UpdateObject3dWVPMatrix(
 void QFE::GRAPHIC::UpdateObject3dWVPMatrix(
 	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const QFE::GRAPHIC::DirectXResourceHandle& transformMatrixBufferHandle,
 	const QFE::MATH::Matrix4x4& worldMatrix, const QFE::MATH::Matrix4x4& viewProjectionMatrix) {
-	TransformationMatrix* transformMatrixData =
-		ResolveD3D12GraphicEngine(graphicEngine)->GetConstantBufferData<TransformationMatrix>(transformMatrixBufferHandle);
+	ObjectTransformGpuData* transformMatrixData =
+		ResolveD3D12GraphicEngine(graphicEngine)->GetConstantBufferData<ObjectTransformGpuData>(transformMatrixBufferHandle);
 	transformMatrixData->World = worldMatrix;
 	transformMatrixData->WVP = QFE::MATH::Matrix4x4::Multiply(worldMatrix, viewProjectionMatrix);
 }
 
 bool QFE::GRAPHIC::CreateVertexBuffer(
-	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const std::vector<VertexData>& vertexPositions,
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const std::vector<MeshVertexData>& vertexPositions,
 	const std::string& meshName, QFE::GRAPHIC::DirectXResourceHandle& outVertexBufferHandle) {
 
 	// 使用機能の取得
@@ -339,18 +339,18 @@ bool QFE::GRAPHIC::CreateVertexBuffer(
 
 	// バッファを作成
 	QFE::GRAPHIC::DirectXResourceHandle handle =
-		resourceContainer->CreateBuffer(directXDevice->GetDevice(), vertexPositions.size() * sizeof(VertexData));
-	QFE_LOG("VertexBuffer created for mesh: " + meshName + ", size: " + std::to_string(vertexPositions.size() * sizeof(VertexData)) + " bytes");
+		resourceContainer->CreateBuffer(directXDevice->GetDevice(), vertexPositions.size() * sizeof(MeshVertexData));
+	QFE_LOG("VertexBuffer created for mesh: " + meshName + ", size: " + std::to_string(vertexPositions.size() * sizeof(MeshVertexData)) + " bytes");
 	// バッファのストライドを設定
-	resourceContainer->SetResourceStrideInBytes(handle, sizeof(VertexData));
+	resourceContainer->SetResourceStrideInBytes(handle, sizeof(MeshVertexData));
 	// バッファにデータをコピー
 	resourceContainer->MapResource(handle);
-	VertexData* mappedData = resourceContainer->GetMappedData<VertexData>(handle);
+	MeshVertexData* mappedData = resourceContainer->GetMappedData<MeshVertexData>(handle);
 	if (mappedData) {
-		memcpy(mappedData, vertexPositions.data(), vertexPositions.size() * sizeof(VertexData));
+		memcpy(mappedData, vertexPositions.data(), vertexPositions.size() * sizeof(MeshVertexData));
 	}
 	resourceContainer->SetResourceName(handle, ConvertString(meshName));
-	resourceContainer->SetResourceStrideInBytes(handle, sizeof(VertexData));
+	resourceContainer->SetResourceStrideInBytes(handle, sizeof(MeshVertexData));
 
 	// 成否の確認
 	outVertexBufferHandle = handle;
@@ -394,7 +394,7 @@ bool QFE::GRAPHIC::CreateIndexBuffer(QFE::GRAPHIC::IGraphicEngine* graphicEngine
 }
 
 bool QFE::GRAPHIC::CreateBLAS(
-	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const std::vector<VertexData>& vertices,
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine, const std::vector<MeshVertexData>& vertices,
 	const std::vector<uint32_t>& indices,
 	const std::string& name, QFE::GRAPHIC::BLASHandle& outBLASHandle, bool allowUpdate) {
 
@@ -426,11 +426,11 @@ bool QFE::GRAPHIC::LoadTextureFromFile(QFE::GRAPHIC::IGraphicEngine* graphicEngi
 	return true;
 }
 
-std::vector<QFE::MATH::Vector3> QFE::GRAPHIC::GetModelVertexPositions(const VertexData* vertices, size_t vertexCount) {
+std::vector<QFE::MATH::Vector3> QFE::GRAPHIC::GetModelVertexPositions(const MeshVertexData* vertices, size_t vertexCount) {
 	std::vector<QFE::MATH::Vector3> vertexPositions;
 	vertexPositions.reserve(vertexCount);
 	for (size_t i = 0; i < vertexCount; ++i) {
-		const VertexData& vertex = vertices[i];
+		const MeshVertexData& vertex = vertices[i];
 		vertexPositions.push_back({ vertex.position.x, vertex.position.y, vertex.position.z });
 	}
 	return vertexPositions;
@@ -507,7 +507,7 @@ bool QFE::GRAPHIC::EnsureBufferCapacityAndUpload(
 bool QFE::GRAPHIC::UploadGlobalMeshBuffers(
 	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 	const std::vector<RaytracingVertexAttribute>& globalVertexAttributes,
-	const std::vector<uint32_t>& globalTriIndices, const std::vector<InstanceMetaCPU>& instanceMeta,
+	const std::vector<uint32_t>& globalTriIndices, const std::vector<RaytracingInstanceMeta>& instanceMeta,
 	QFE::GRAPHIC::DirectXResourceHandle& outUVHandle, QFE::GRAPHIC::DirectXResourceHandle& outTriHandle,
 	QFE::GRAPHIC::DirectXResourceHandle& outInstanceMetaHandle) {
 
@@ -573,17 +573,17 @@ bool QFE::GRAPHIC::UploadGlobalMeshBuffers(
 
 	// 3) InstanceMeta バッファ
 	{
-		size_t byteSize = instanceMeta.size() * sizeof(InstanceMetaCPU);
+		size_t byteSize = instanceMeta.size() * sizeof(RaytracingInstanceMeta);
 		auto handle = rc->CreateBuffer(device->GetDevice(), byteSize);
 		if (handle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return false;
 
 		rc->MapResource(handle);
-		InstanceMetaCPU* mapped = rc->GetMappedData<InstanceMetaCPU>(handle);
+		RaytracingInstanceMeta* mapped = rc->GetMappedData<RaytracingInstanceMeta>(handle);
 		if (mapped && !instanceMeta.empty()) {
 			memcpy(mapped, instanceMeta.data(), byteSize);
 		}
 		rc->SetResourceName(handle, QFE::ConvertString(std::string("InstanceMeta")));
-		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(InstanceMetaCPU)));
+		rc->SetResourceStrideInBytes(handle, static_cast<UINT>(sizeof(RaytracingInstanceMeta)));
 
 		QFE::GRAPHIC::CreateViewInfo viewInfo{};
 		viewInfo.viewType = QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView;
@@ -591,7 +591,7 @@ bool QFE::GRAPHIC::UploadGlobalMeshBuffers(
 		viewInfo.srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		viewInfo.srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		viewInfo.srvDesc.Buffer.NumElements = static_cast<UINT>(instanceMeta.size());
-		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(InstanceMetaCPU);
+		viewInfo.srvDesc.Buffer.StructureByteStride = sizeof(RaytracingInstanceMeta);
 		viewInfo.srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 		rc->CreateResourceView(handle, viewInfo);
 

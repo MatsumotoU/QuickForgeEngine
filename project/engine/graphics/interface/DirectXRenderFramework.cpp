@@ -911,8 +911,8 @@ bool QFE::GRAPHIC::DrawRayTracingPSO(
 	dispatchDesc.CallableShaderTable.StrideInBytes = 0;
 
 	// --- 追跡する画面の解像度を指定（このピクセル数分の光線が一斉に飛びます） ---
-	dispatchDesc.Width = 1280;  // 例: 1920
-	dispatchDesc.Height = 720; // 例: 1080
+	dispatchDesc.Width = resourceContainer->GetResourceWidth(renderUavBuffer);
+	dispatchDesc.Height = resourceContainer->GetResourceHeight(renderUavBuffer);
 	dispatchDesc.Depth = 1;            // 2D画面なので 1
 
 	// 5. コマンド発行
@@ -1000,8 +1000,8 @@ bool QFE::GRAPHIC::DrawRayTracingPSO(QFE::GRAPHIC::IGraphicEngine* graphicEngine
 	dispatchDesc.CallableShaderTable.StrideInBytes = 0;
 
 	// --- 追跡する画面の解像度を指定（このピクセル数分の光線が一斉に飛びます） ---
-	dispatchDesc.Width = 1280;  // 例: 1920
-	dispatchDesc.Height = 720; // 例: 1080
+	dispatchDesc.Width = resourceContainer->GetResourceWidth(renderUavBuffer);
+	dispatchDesc.Height = resourceContainer->GetResourceHeight(renderUavBuffer);
 	dispatchDesc.Depth = 1;            // 2D画面なので 1
 
 	// 5. コマンド発行
@@ -1022,6 +1022,8 @@ bool QFE::GRAPHIC::ShadowSpecularRayTracingPSO(
 	const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 	QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
 	const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& lightBufferHandle,
+	const QFE::GRAPHIC::DirectXResourceHandle& lightDataHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
 	const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,
@@ -1079,6 +1081,12 @@ bool QFE::GRAPHIC::ShadowSpecularRayTracingPSO(
 	D3D12_GPU_VIRTUAL_ADDRESS cameraGpuHandle = resourceContainer->GetGpuVirtualAddress(cameraPositionBufferHandle);
 	commandList4->SetComputeRootConstantBufferView(
 		rootParameters.GetRootParameterIndex("g_camera"), cameraGpuHandle);
+	commandList4->SetComputeRootConstantBufferView(
+		rootParameters.GetRootParameterIndex("g_directionalLight"),
+		resourceContainer->GetGpuVirtualAddress(lightBufferHandle));
+	commandList4->SetComputeRootDescriptorTable(
+		rootParameters.GetRootParameterIndex("g_directionalLights"),
+		resourceContainer->GetDescriptorHandleGPU(lightDataHandle, QFE::GRAPHIC::ViewTypeFlags::ShaderResourceView));
 
 	// レンダーターゲットのバリアをレンダーターゲットに設定する前に、必要に応じてリソースの状態を遷移させる
 	for (QFE::GRAPHIC::DirectXResourceHandle renderTargetHandle : rootResources) {
@@ -1128,8 +1136,8 @@ bool QFE::GRAPHIC::ShadowSpecularRayTracingPSO(
 	dispatchDesc.CallableShaderTable.StrideInBytes = 0;
 
 	// --- 追跡する画面の解像度を指定（このピクセル数分の光線が一斉に飛びます） ---
-	dispatchDesc.Width = 1280;  // 例: 1920
-	dispatchDesc.Height = 720; // 例: 1080
+	dispatchDesc.Width = resourceContainer->GetResourceWidth(renderUavBuffer);
+	dispatchDesc.Height = resourceContainer->GetResourceHeight(renderUavBuffer);
 	dispatchDesc.Depth = 1;            // 2D画面なので 1
 
 	// 5. コマンド発行

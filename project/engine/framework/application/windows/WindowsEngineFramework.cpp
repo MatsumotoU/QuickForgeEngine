@@ -34,7 +34,6 @@
 #include <imgui.h>
 
 namespace {
-	constexpr uint32_t kMaximumParticleCapacity = 1024u * 1024u;
 
 	bool EnsureModelData(
 		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
@@ -53,7 +52,7 @@ namespace {
 			? "Primitive/Box"
 			: modelName;
 		if (QFE::ASSET::IsPrimitiveMeshName(primitiveName)) {
-			std::vector<VertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(primitiveName);
+			std::vector<MeshVertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(primitiveName);
 			if (vertices.empty()) {
 				return false;
 			}
@@ -114,7 +113,6 @@ namespace {
 
 		struct ParticleLayoutRequest {
 			uint32_t entityId;
-			uint32_t particleCount;
 			uint32_t capacity;
 		};
 		std::vector<ParticleLayoutRequest> layoutRequests;
@@ -122,13 +120,8 @@ namespace {
 			[&](uint32_t entityId,
 				QFE::SCENE::ParticleEmitterComponent& emitter,
 				QFE::SCENE::TransformComponent&) {
-				const uint32_t particleCount = std::clamp(
-					emitter.maxParticles, 1u, kMaximumParticleCapacity);
-				uint32_t capacity = 1;
-				while (capacity < particleCount) {
-					capacity *= 2;
-				}
-				layoutRequests.push_back({ entityId, particleCount, capacity });
+				const uint32_t particleCount = (std::max)(emitter.maxParticles, 1u);
+				layoutRequests.push_back({ entityId, particleCount });
 			});
 		std::sort(layoutRequests.begin(), layoutRequests.end(),
 			[](const ParticleLayoutRequest& lhs, const ParticleLayoutRequest& rhs) {
@@ -137,31 +130,31 @@ namespace {
 
 		std::unordered_set<uint32_t> activeEmitterIds;
 		uint64_t requiredCapacity = 0;
+		bool capacityExceeded = false;
 		for (const ParticleLayoutRequest& request : layoutRequests) {
 			activeEmitterIds.insert(request.entityId);
 			auto& runtime = resources.particleEmitters[request.entityId];
 			const uint32_t particleOffset = static_cast<uint32_t>(requiredCapacity);
+			const uint32_t capacity = (std::min)(request.capacity,
+				resources.config.particleMaxNum - particleOffset);
+			capacityExceeded |= capacity < request.capacity;
 			if (runtime.particleOffset != particleOffset ||
-				runtime.allocatedCapacity != request.capacity ||
-				runtime.particleCount != request.particleCount) {
+				runtime.allocatedCapacity != capacity ||
+				runtime.particleCount != capacity) {
 				runtime.particleOffset = particleOffset;
-				runtime.allocatedCapacity = request.capacity;
-				runtime.particleCount = request.particleCount;
+				runtime.allocatedCapacity = capacity;
+				runtime.particleCount = capacity;
 				runtime.nextSpawnIndex = 0;
 				runtime.emissionRemainder = 0.0f;
 				runtime.elapsedTime = 0.0f;
 				runtime.needsReset = true;
 			}
-			requiredCapacity += request.capacity;
-			if (requiredCapacity > UINT32_MAX) {
-				for (const ParticleLayoutRequest& errorRequest : layoutRequests) {
-					entityManager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(
-						errorRequest.entityId).renderErrorMessage =
-						"The shared GPU particle buffer exceeds the supported capacity.";
-				}
-				return;
-			}
+			requiredCapacity += capacity;
 		}
+		if (capacityExceeded && !resources.particleCapacityWarning) {
+			QFE::DebugLog("Particle buffer capacity exceeded; additional particles will not be emitted.", QFE::LogLevel::Warning);
+		}
+		resources.particleCapacityWarning = capacityExceeded;
 		for (auto runtimeIt = resources.particleEmitters.begin();
 			runtimeIt != resources.particleEmitters.end();) {
 			if (!activeEmitterIds.contains(runtimeIt->first)) {
@@ -174,26 +167,14 @@ namespace {
 		if (requiredCapacity == 0) {
 			return;
 		}
-		if (resources.particleBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid ||
-			resources.particleBufferCapacity < requiredCapacity) {
-			uint32_t newCapacity = 1;
-			while (newCapacity < requiredCapacity) {
-				if (newCapacity > UINT32_MAX / 2) {
-					for (const ParticleLayoutRequest& request : layoutRequests) {
-						entityManager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(
-							request.entityId).renderErrorMessage =
-							"The shared GPU particle buffer is too large.";
-					}
-					return;
-				}
-				newCapacity *= 2;
-			}
+		if (resources.particleBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+			const uint32_t newCapacity = resources.config.particleMaxNum;
 
 			QFE::GRAPHIC::DirectXResourceHandle newBufferHandle =
 				QFE::GRAPHIC::DirectXResourceHandle::Invalid;
 			if (!QFE::GRAPHIC::CreateReadWriteStructuredBuffer(
 				systems.graphicEngine.get(), L"SharedParticleBuffer",
-				newCapacity, sizeof(Particle), newBufferHandle)) {
+				newCapacity, sizeof(ParticleSimulationData), newBufferHandle)) {
 				for (const ParticleLayoutRequest& request : layoutRequests) {
 					entityManager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(
 						request.entityId).renderErrorMessage =
@@ -201,8 +182,6 @@ namespace {
 				}
 				return;
 			}
-			const QFE::GRAPHIC::DirectXResourceHandle oldBufferHandle =
-				resources.particleBufferHandle;
 			resources.particleBufferHandle = newBufferHandle;
 			resources.particleBufferCapacity = newCapacity;
 			for (auto& [entityId, runtime] : resources.particleEmitters) {
@@ -212,9 +191,6 @@ namespace {
 				runtime.elapsedTime = 0.0f;
 				runtime.needsReset = true;
 			}
-			if (oldBufferHandle != QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
-				d3d12GraphicEngine->GetDirectXResourceContainer()->RemoveResource(oldBufferHandle);
-			}
 		}
 
 		entityManager.Each<QFE::SCENE::ParticleEmitterComponent, QFE::SCENE::TransformComponent>(
@@ -222,6 +198,10 @@ namespace {
 				QFE::SCENE::ParticleEmitterComponent& emitter,
 				QFE::SCENE::TransformComponent&) {
 				auto& runtime = resources.particleEmitters[entityId];
+				if (runtime.particleCount == 0) {
+					emitter.renderErrorMessage = "The shared GPU particle buffer is full.";
+					return;
+				}
 				if (runtime.lastRandomSeed != emitter.randomSeed) {
 					runtime.lastRandomSeed = emitter.randomSeed;
 					runtime.nextSpawnIndex = 0;
@@ -383,7 +363,8 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	HINSTANCE hInstance, 
 	const std::string& mainWindowName, uint32_t mainWindowWidth, uint32_t mainWindowHeight,
 	WindowsQuickForgeEngineSystems& outSystems,
-	ComponentRegistrationCallback registerApplicationComponents) {
+	ComponentRegistrationCallback registerApplicationComponents,
+	const std::string& scriptDir) {
 
 	// デバッグログの初期化
 	QFE::MyDebugLog::GetInstance()->Initialize();
@@ -455,7 +436,7 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>(outSystems.componentRegistry);
 	outSystems.sceneManager->Initialize();
 	outSystems.luaScriptSystem = std::make_unique<QFE::FRAMEWORK::LuaScriptSystem>();
-	outSystems.luaScriptSystem->Initialize("resources/Scripts");
+	outSystems.luaScriptSystem->Initialize(scriptDir);
 	outSystems.audioEngine = std::make_unique<QFE::AUDIO::AudioEngine>();
 	if (!outSystems.audioEngine->Initialize()) {
 		QFE_LOG("Audio initialization failed; sound playback is unavailable.");
@@ -611,7 +592,7 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 		QFE::GRAPHIC::DepthStencilDescType::None, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 		resources.spriteSrgbPsoHandle);
 
-	const std::vector<VertexData> spriteVertices = QFE::ASSET::CreatePrimitiveMesh("Primitive/Quad");
+	const std::vector<MeshVertexData> spriteVertices = QFE::ASSET::CreatePrimitiveMesh("Primitive/Quad");
 	QFE::GRAPHIC::CreateVertexBuffer(
 		graphicEngine.get(), spriteVertices, "SpriteQuad", resources.spriteVertexBufferHandle);
 
@@ -642,16 +623,17 @@ void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, W
 	for (int i = 0; i < 4; ++i) {
 		QFE::GRAPHIC::RenderTargetHandle offScreenRenderTargetHandle;
 		QFE::GRAPHIC::CreateOffScreenRenderTarget(
-			graphicEngine.get(), offScreenRenderTargetHandle, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT);
+			graphicEngine.get(), offScreenRenderTargetHandle, resources.windowWidth, resources.windowHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		resources.renderTargets.push_back(offScreenRenderTargetHandle);
 	}
 
 	// ビューポートとシザー矩形の作成
-	QFE::GRAPHIC::CreateViewport(graphicEngine.get(), resources.viewportHandle, 1280, 720);
-	QFE::GRAPHIC::CreateScissorRect(graphicEngine.get(), resources.scissorRectHandle, 0, 0, 1280, 720);
+	QFE::GRAPHIC::CreateViewport(graphicEngine.get(), resources.viewportHandle, resources.windowWidth, resources.windowHeight);
+	QFE::GRAPHIC::CreateScissorRect(graphicEngine.get(), resources.scissorRectHandle, 0, 0,
+		static_cast<int32_t>(resources.windowWidth), static_cast<int32_t>(resources.windowHeight));
 
 	// UAVバッファの作成とルートリソースの設定
-	QFE::GRAPHIC::CreateUAVBuffer(graphicEngine.get(), resources.uavBufferHandle, 1280, 720, L"UAVBuffer");
+	QFE::GRAPHIC::CreateUAVBuffer(graphicEngine.get(), resources.uavBufferHandle, resources.windowWidth, resources.windowHeight, L"UAVBuffer");
 
 	// レイトレーシングパイプラインステートオブジェクトの作成
 	QFE::GRAPHIC::CreateRayTracingPSO(graphicEngine.get(), resources.rtpsoHandle, rtDirName, "ShadowRaytracing.hlsl");
@@ -715,8 +697,8 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	std::vector<QFE::GRAPHIC::RaytracingInstance> raytracingInstances;
 	std::vector<RaytracingVertexAttribute> globalVertexAttributes;
 	std::vector<uint32_t> globalTriIndices;
-	std::vector<InstanceMetaCPU> instanceMetaAligned;
-	std::unordered_map<std::string, InstanceMetaCPU> staticModelMeta;
+	std::vector<RaytracingInstanceMeta> instanceMetaAligned;
+	std::unordered_map<std::string, RaytracingInstanceMeta> staticModelMeta;
 	std::unordered_set<uint32_t> activeAnimatedEntities;
 
 	entityManager.Each<QFE::SCENE::ModelRenderComponent, QFE::SCENE::TransformComponent>(
@@ -736,7 +718,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
 				d3d12GraphicEngine->GetDirectXResourceAllocator();
 			QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
-				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>();
+				resourceAllocator->AllocateConstantBuffer<ObjectTransformGpuData>();
 			QFE::GRAPHIC::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, worldMatrix, resources.viewProj);
 			modelRenderComp.transformMatrixBufferHandle =
 				static_cast<uint32_t>(transformMatrixBufferHandle);
@@ -747,9 +729,9 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 				return;
 			}
 			QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
-				resourceAllocator->AllocateConstantBuffer<Material>();
-			Material* materialData =
-				d3d12GraphicEngine->GetConstantBufferData<Material>(materialBufferHandle);
+				resourceAllocator->AllocateConstantBuffer<MaterialGpuData>();
+			MaterialGpuData* materialData =
+				d3d12GraphicEngine->GetConstantBufferData<MaterialGpuData>(materialBufferHandle);
 			QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
 			materialData->color = materialComp.albedoColor;
 			materialData->metallic = materialComp.metallic;
@@ -775,7 +757,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			std::transform(extension.begin(), extension.end(), extension.begin(),
 				[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
 			bool animatedGlb = false;
-			std::vector<VertexData> sampledVertices;
+			std::vector<MeshVertexData> sampledVertices;
 			if (extension == ".glb") {
 				const std::string filePath = resources.modelDir + modelRenderComp.modelName;
 				const auto clipNames = systems.modelLoader->GetGlbAnimationNames(filePath);
@@ -823,15 +805,15 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 						}
 						modelRenderComp.animatedVertexResourceHandle = static_cast<uint32_t>(handle);
 					} else {
-						VertexData* mapped =
-							d3d12GraphicEngine->GetDirectXResourceContainer()->GetMappedData<VertexData>(
+						MeshVertexData* mapped =
+							d3d12GraphicEngine->GetDirectXResourceContainer()->GetMappedData<MeshVertexData>(
 								static_cast<QFE::GRAPHIC::DirectXResourceHandle>(
 									modelRenderComp.animatedVertexResourceHandle));
 						if (!mapped) {
 							modelRenderComp.renderErrorMessage = "Animated vertex buffer is not mapped";
 							return;
 						}
-						std::memcpy(mapped, sampledVertices.data(), sampledVertices.size() * sizeof(VertexData));
+						std::memcpy(mapped, sampledVertices.data(), sampledVertices.size() * sizeof(MeshVertexData));
 					}
 					modelRenderComp.vertexResourceHandle = modelRenderComp.animatedVertexResourceHandle;
 				}
@@ -941,7 +923,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 				blasHandle = resources.blasHandleMap.at(modelRenderComp.modelName);
 			}
 
-			InstanceMetaCPU instanceMeta{};
+			RaytracingInstanceMeta instanceMeta{};
 			if (!animatedGlb && staticModelMeta.contains(modelRenderComp.modelName)) {
 				instanceMeta = staticModelMeta.at(modelRenderComp.modelName);
 			} else {
@@ -1009,15 +991,15 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
 				d3d12GraphicEngine->GetDirectXResourceAllocator();
 			const QFE::GRAPHIC::DirectXResourceHandle transformHandle =
-				resourceAllocator->AllocateConstantBuffer<TransformationMatrix>("SpriteTransform");
+				resourceAllocator->AllocateConstantBuffer<ObjectTransformGpuData>("SpriteTransform");
 			QFE::GRAPHIC::UpdateObject3dWVPMatrix(
 				graphicEngine.get(), transformHandle, worldMatrix, spriteProjection);
 			sprite.transformMatrixBufferHandle = static_cast<uint32_t>(transformHandle);
 
 			const QFE::GRAPHIC::DirectXResourceHandle materialHandle =
-				resourceAllocator->AllocateConstantBuffer<Material>("SpriteMaterial");
-			Material* materialData =
-				d3d12GraphicEngine->GetConstantBufferData<Material>(materialHandle);
+				resourceAllocator->AllocateConstantBuffer<MaterialGpuData>("SpriteMaterial");
+			MaterialGpuData* materialData =
+				d3d12GraphicEngine->GetConstantBufferData<MaterialGpuData>(materialHandle);
 			if (!materialData) {
 				sprite.renderErrorMessage = "Failed to allocate sprite material for entity: " + std::to_string(entityId);
 				return;
@@ -1059,7 +1041,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	// BLASインスタンスと同じ順序で属性、インデックス、マテリアルをアップロードする。
 	size_t vertexAttributeBytes = globalVertexAttributes.size() * sizeof(RaytracingVertexAttribute);
 	size_t triBytes = globalTriIndices.size() * sizeof(uint32_t);
-	size_t metaBytes = instanceMetaAligned.size() * sizeof(InstanceMetaCPU);
+	size_t metaBytes = instanceMetaAligned.size() * sizeof(RaytracingInstanceMeta);
 
 	// 空シーンではSRV用バッファが作られないため、このフレームのDXR描画を省略する。
 	resources.hasRayTracingGeometry = !raytracingInstances.empty() &&
@@ -1076,7 +1058,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			assert(false && "Failed to ensure/upload GlobalTriIndices");
 			resources.hasRayTracingGeometry = false;
 		}
-		if (!QFE::GRAPHIC::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.instanceMetaHandle, instanceMetaAligned.data(), metaBytes, sizeof(InstanceMetaCPU), "InstanceMeta")) {
+		if (!QFE::GRAPHIC::EnsureBufferCapacityAndUpload(graphicEngine.get(), resources.instanceMetaHandle, instanceMetaAligned.data(), metaBytes, sizeof(RaytracingInstanceMeta), "InstanceMeta")) {
 			assert(false && "Failed to ensure/upload InstanceMeta");
 			resources.hasRayTracingGeometry = false;
 		}
@@ -1124,12 +1106,40 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		cameraPos->inverseViewProjection = resources.viewProj.Inverse();
 		cameraPos->padding = resources.skyBoxVisible ? 1.0f : 0.0f;
 
+		std::vector<std::pair<uint32_t, DirectionalLightGpu>> lights;
+		sceneManager.GetCurrentSceneEntityManager().Each<QFE::SCENE::DirectionalLightComponent>(
+			[&](uint32_t entityId, QFE::SCENE::DirectionalLightComponent& light) {
+				const auto direction = QFE::SCENE::DirectionalLightComponent::NormalizeDirection(light.direction);
+				lights.push_back({ entityId, { { direction.x, direction.y, direction.z,
+					(std::max)(0.0f, light.intensity) }, light.isMainLight ? 1u : 0u } });
+			});
+		std::sort(lights.begin(), lights.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
+		const bool lightCapacityExceeded = lights.size() > resources.config.directionalLightMaxNum;
+		if (lightCapacityExceeded && !resources.directionalLightCapacityWarning) {
+			QFE::DebugLog("Directional light capacity exceeded; additional lights are ignored.", QFE::LogLevel::Warning);
+		}
+		resources.directionalLightCapacityWarning = lightCapacityExceeded;
+		const uint32_t lightCount = static_cast<uint32_t>((std::min)(lights.size(),
+			static_cast<size_t>(resources.config.directionalLightMaxNum)));
+		const auto lightBufferHandle = d3d12GraphicEngine->GetDirectXResourceAllocator()
+			->AllocateConstantBuffer<DirectionalLightConstants>("DirectionalLightBuffer");
+		auto* lightBuffer = d3d12GraphicEngine->GetConstantBufferData<DirectionalLightConstants>(lightBufferHandle);
+		const auto lightDataHandle = d3d12GraphicEngine->GetDirectXResourceAllocator()
+			->AllocateStructuredBuffer<DirectionalLightGpu>(resources.config.directionalLightMaxNum, "DirectionalLights");
+		auto* lightData = d3d12GraphicEngine->GetDirectXResourceContainer()->GetMappedData<DirectionalLightGpu>(lightDataHandle);
+		if (lightBuffer == nullptr || lightData == nullptr) {
+			assert(false && "Failed to get directional light constant buffer data.");
+			return;
+		}
+		lightBuffer->count = lightCount;
+		for (uint32_t i = 0; i < lightCount; ++i) lightData[i] = lights[i].second;
+
 		QFE::GRAPHIC::DirectXResourceHandle textureFirstResourceHandle;
 		QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), textureFirstResourceHandle);
 
 		QFE::GRAPHIC::ShadowSpecularRayTracingPSO(
 			graphicEngine.get(), resources.rtpsoHandle, resources.uavBufferHandle,
-			cameraBufferHandle, resources.globalTriHandle, resources.globalUVHandle,
+			cameraBufferHandle, lightBufferHandle, lightDataHandle, resources.globalTriHandle, resources.globalUVHandle,
 			resources.instanceMetaHandle, textureFirstResourceHandle, resources.skyBoxTextureHandle,
 			rayTracingRootResources,
 			resources.finalRenderTargetHandle);

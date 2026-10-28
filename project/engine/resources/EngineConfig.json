@@ -1,3 +1,16 @@
 {
-    "lastProjectName": "XEVIOUS3D"
+    "lastProjectName": "XEVIOUS3D",
+    "DirectionalLightMaxNum": 16,
+    "ParticleMaxNum": 65536,
+    "WindowWidth": 1280,
+    "WindowHeight": 720,
+    "EditorWindowName": "ShootingGameEditor",
+    "RuntimeWindowName": "ShootingGameRuntime",
+    "AssetDir": "resources/",
+    "ModelDir": "resources/",
+    "ScriptDir": "resources/Scripts",
+    "PixelShaderDir": "engine/resources/shaders/ps/",
+    "VertexShaderDir": "engine/resources/shaders/vs/",
+    "ComputeShaderDir": "engine/resources/shaders/cs/",
+    "RayTracingShaderDir": "engine/resources/shaders/rt/"
 }

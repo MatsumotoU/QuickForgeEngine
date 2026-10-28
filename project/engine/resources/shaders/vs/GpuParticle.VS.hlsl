@@ -1,20 +1,13 @@
 #include "../ShaderStructs/GpuParticle.hlsli"
 #include "../ShaderStructs/hlslTypeToCpp.h"
 
-StructuredBuffer<Particle> gParticle : register(t0);
+StructuredBuffer<ParticleSimulationData> gParticle : register(t0);
 ConstantBuffer<ParticleViewForGPU> gParticleView : register(b0);
 
-struct VertexShaderInput
-{
-    float32_t4 position : POSITION0;
-    float32_t2 texcoord : TEXCOORD0;
-    float32_t3 normal : NORMAL0;
-};
-
-VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_InstanceID)
+VertexShaderOutput main(MeshVertexData input, uint32_t instanceId : SV_InstanceID)
 {
     VertexShaderOutput output;
-    Particle particle = gParticle[instanceId];
+    ParticleSimulationData particle = gParticle[instanceId];
     if (particle.alive == 0)
     {
         output.position = float4(2.0f, 2.0f, 2.0f, 1.0f);

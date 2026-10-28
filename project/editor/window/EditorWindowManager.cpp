@@ -16,12 +16,15 @@
 #include <algorithm>
 #include <cmath>
 #include <utility>
+#include <cstdio>
 
 void QFE::EDITOR::EditorWindowManager::Initialize(
 	QFE::SCENE::SceneManager* sceneManager,
 	ImTextureID sceneTextureId,
 	QFE::WINDOW::IGameWindowManager& windowManager,
-	ComponentInspectorRegistry* componentInspectorRegistry) {
+	ComponentInspectorRegistry* componentInspectorRegistry,
+	const QFE::FRAMEWORK::EngineConfig& config) {
+	engineConfig_ = config;
 	windowManager_ = &windowManager;
 	sceneManager_ = sceneManager;
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
@@ -156,6 +159,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
         }
 		// ウィンドウメニュー
         if (ImGui::BeginMenu("Window")) {
+			ImGui::MenuItem("Engine Config", nullptr, &showEngineConfig_);
             for(auto& [type, window] : editorWindowsMap_) {
                 bool isActive = window->GetIsActive();
                 if (ImGui::MenuItem(window->GetWindowName().c_str(), nullptr, isActive)) {
@@ -188,6 +192,51 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
     }
 
     ImGui::End();
+
+	if (showEngineConfig_) {
+		ImGui::Begin("Engine Config", &showEngineConfig_);
+		ImGui::TextUnformatted("Saved settings apply after restarting the application.");
+		ImGui::InputScalar("Directional Light Max Num", ImGuiDataType_U32, &engineConfig_.directionalLightMaxNum);
+		ImGui::InputScalar("Particle Max Num", ImGuiDataType_U32, &engineConfig_.particleMaxNum);
+		ImGui::InputScalar("Window Width", ImGuiDataType_U32, &engineConfig_.windowWidth);
+		ImGui::InputScalar("Window Height", ImGuiDataType_U32, &engineConfig_.windowHeight);
+		auto editString = [](const char* label, std::string& value) {
+			char buffer[1024]{};
+			std::snprintf(buffer, sizeof(buffer), "%s", value.c_str());
+			if (ImGui::InputText(label, buffer, sizeof(buffer))) value = buffer;
+		};
+		editString("Editor Window Name", engineConfig_.editorWindowName);
+		editString("Runtime Window Name", engineConfig_.runtimeWindowName);
+		editString("Asset Directory", engineConfig_.assetDir);
+		editString("Model Directory", engineConfig_.modelDir);
+		editString("Script Directory", engineConfig_.scriptDir);
+		editString("Pixel Shader Directory", engineConfig_.psDirName);
+		editString("Vertex Shader Directory", engineConfig_.vsDirName);
+		editString("Compute Shader Directory", engineConfig_.csDirName);
+		editString("Ray Tracing Shader Directory", engineConfig_.rtDirName);
+		if (ImGui::Button("Save")) {
+			engineConfig_.directionalLightMaxNum = (std::clamp)(engineConfig_.directionalLightMaxNum, 1u, 4096u);
+			engineConfig_.particleMaxNum = (std::clamp)(engineConfig_.particleMaxNum, 1u, 1048576u);
+			engineConfig_.windowWidth = (std::clamp)(engineConfig_.windowWidth, 1u, 8192u);
+			engineConfig_.windowHeight = (std::clamp)(engineConfig_.windowHeight, 1u, 8192u);
+			auto normalizeDir = [](std::string& dir) {
+				if (!dir.empty() && dir.back() != '/' && dir.back() != '\\') dir += '/';
+			};
+			normalizeDir(engineConfig_.assetDir); normalizeDir(engineConfig_.modelDir);
+			normalizeDir(engineConfig_.psDirName); normalizeDir(engineConfig_.vsDirName);
+			normalizeDir(engineConfig_.csDirName); normalizeDir(engineConfig_.rtDirName);
+			if (engineConfig_.assetDir.empty() || engineConfig_.modelDir.empty() || engineConfig_.scriptDir.empty() ||
+				engineConfig_.psDirName.empty() || engineConfig_.vsDirName.empty() ||
+				engineConfig_.csDirName.empty() || engineConfig_.rtDirName.empty() ||
+				engineConfig_.editorWindowName.empty() || engineConfig_.runtimeWindowName.empty()) {
+				engineConfigStatus_ = "Names and directories cannot be empty.";
+			} else {
+				engineConfigStatus_ = engineConfig_.Save() ? "Saved. Restart to apply." : "Failed to save EngineConfig.json.";
+			}
+		}
+		ImGui::TextUnformatted(engineConfigStatus_.c_str());
+		ImGui::End();
+	}
 
 	if (saveSceneAsRequested) {
 		QueueSceneSave(commandList, true);

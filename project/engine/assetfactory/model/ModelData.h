@@ -14,7 +14,7 @@ namespace QFE::ASSET {
 
 	/// @brief モデルのメッシュデータを保持する構造体
 	struct MeshData {
-		SafeVector<VertexData> vertices;// メッシュの頂点データの配列
+		SafeVector<MeshVertexData> vertices;// メッシュの頂点データの配列
 		SafeVector<uint32_t> indices;// メッシュのインデックスデータの配列
 		ModelMaterialData material;// メッシュのマテリアルデータ
 

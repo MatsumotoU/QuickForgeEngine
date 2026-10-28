@@ -1,7 +1,7 @@
 #include "../ShaderStructs/Font.hlsli"
 #include "../ShaderStructs/hlslTypeToCpp.h"
 
-ConstantBuffer<Constants> g_Constants : register(b0);
+ConstantBuffer<MsdfFontParameters> g_Constants : register(b0);
 Texture2D<float4> g_MsdfAtlas : register(t0);
 SamplerState g_Sampler : register(s0);
 

@@ -149,7 +149,7 @@ namespace {
 	}
 
 	void SampleAnimatedVertices(const AnimatedGlbScene& asset, const aiAnimation* clip,
-		double tick, std::vector<VertexData>& output) {
+		double tick, std::vector<MeshVertexData>& output) {
 		std::unordered_map<std::string, const aiNodeAnim*> channels;
 		if (clip) for (unsigned int i = 0; i < clip->mNumChannels; ++i)
 			channels[clip->mChannels[i]->mNodeName.C_Str()] = clip->mChannels[i];
@@ -182,7 +182,7 @@ namespace {
 					normal += TransformNormal(rigid, sourceNormal) * remaining;
 				}
 				if (normal.SquareLength() > 0.0f) normal.Normalize();
-				VertexData vertex{};
+				MeshVertexData vertex{};
 				vertex.position = { position.x, position.y, position.z, 1.0f };
 				vertex.normal = { normal.x, normal.y, normal.z };
 				if (mesh->HasTextureCoords(0)) {
@@ -202,7 +202,7 @@ namespace {
 		}
 		if (!vertexCount || !indexCount || vertexCount > (std::numeric_limits<uint32_t>::max)()) return false;
 		MeshData combined(static_cast<size_t>(vertexCount), static_cast<size_t>(indexCount));
-		std::vector<VertexData> vertices;
+		std::vector<MeshVertexData> vertices;
 		SampleAnimatedVertices(asset, nullptr, 0.0, vertices);
 		combined.vertices.GetInternalVector() = std::move(vertices);
 		uint32_t base = 0;
@@ -242,7 +242,7 @@ namespace {
 			const aiMesh* mesh = scene->mMeshes[meshIndex];
 			const uint32_t baseVertex = static_cast<uint32_t>(combined.vertices.size());
 			for (unsigned int vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
-				VertexData vertex;
+				MeshVertexData vertex;
 				const aiVector3D& position = mesh->mVertices[vertexIndex];
 				vertex.position = { position.x, position.y, position.z, 1.0f };
 				if (mesh->HasTextureCoords(0)) {
@@ -374,7 +374,7 @@ double AssimpModelLoader::GetGlbAnimationDuration(const std::string& filePath, c
 }
 
 bool AssimpModelLoader::SampleGlbAnimation(const std::string& filePath, const std::string& clipName,
-	double timeSeconds, std::vector<VertexData>& outVertices) const {
+	double timeSeconds, std::vector<MeshVertexData>& outVertices) const {
 	const auto found = animatedGlbCache.find(filePath);
 	if (found == animatedGlbCache.end()) return false;
 	const aiScene* scene = found->second->scene;
@@ -455,10 +455,10 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 		QFE_LOG(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
 
 		// 1) 元頂点配列を作る（mesh->mNumVertices 個）
-		std::vector<VertexData> tempVertices;
+		std::vector<MeshVertexData> tempVertices;
 		tempVertices.reserve(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			VertexData vtx;
+			MeshVertexData vtx;
 			vtx.position.x = mesh->mVertices[i].x;
 			vtx.position.y = mesh->mVertices[i].y;
 			vtx.position.z = mesh->mVertices[i].z;
@@ -556,9 +556,9 @@ bool QFE::ASSET::AssimpModelLoader::LoadSkinningModelData(const std::string& fil
 		QFE_LOG(std::format("NumUVComponents for channel 0: {}", mesh->mNumUVComponents[0]));
 
 		// 頂点データの読み込み
-		std::vector<VertexData> tempVertices;
+		std::vector<MeshVertexData> tempVertices;
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			VertexData vtx;
+			MeshVertexData vtx;
 			vtx.position.x = mesh->mVertices[i].x;
 			vtx.position.y = mesh->mVertices[i].y;
 			vtx.position.z = mesh->mVertices[i].z;

@@ -1,9 +1,9 @@
 #include "../ShaderStructs/hlslTypeToCpp.h"
-StructuredBuffer<Well> gMatrixPalette : register(t0);
-StructuredBuffer<Vertex> gVertex : register(t1);
-StructuredBuffer<VertexInfluence> gVertexInfluences : register(t2);
-RWStructuredBuffer<Vertex> gOutputVertex : register(u0);
-ConstantBuffer<SkinningInformation> gSkinningInformation : register(b0);
+StructuredBuffer<SkinningPaletteEntry> gMatrixPalette : register(t0);
+StructuredBuffer<SkinningVertex> gVertex : register(t1);
+StructuredBuffer<SkinningVertexInfluence> gVertexInfluences : register(t2);
+RWStructuredBuffer<SkinningVertex> gOutputVertex : register(u0);
+ConstantBuffer<SkinningDispatchParameters> gSkinningInformation : register(b0);
 
 [numthreads(8, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
@@ -14,9 +14,9 @@ void main(uint3 DTid : SV_DispatchThreadID)
         return;
     }
     
-    Vertex input = gVertex[vertexIndex];
-    VertexInfluence influence = gVertexInfluences[vertexIndex];
-    Vertex skinned;
+    SkinningVertex input = gVertex[vertexIndex];
+    SkinningVertexInfluence influence = gVertexInfluences[vertexIndex];
+    SkinningVertex skinned;
     skinned.texcoord = input.texcoord;
     skinned.position = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
     skinned.normal = float32_t3(0.0f, 0.0f, 0.0f);

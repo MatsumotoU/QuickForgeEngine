@@ -292,6 +292,9 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 				if (ImGui::MenuItem("Camera")) {
 					commandList.AddCommand(std::make_unique<CreateCameraCommand>(sceneManager_));
 				}
+				if (ImGui::MenuItem("Directional Light")) {
+					commandList.AddCommand(std::make_unique<CreateDirectionalLightCommand>(sceneManager_));
+				}
 				if (ImGui::MenuItem("Sky Box")) {
 					commandList.AddCommand(std::make_unique<CreateEntityCommand>(
 						"Sky Box", QFE::MATH::Vector3(0, 0, 0), entityManager_, std::string{}, false, true));

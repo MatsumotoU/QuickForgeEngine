@@ -7,9 +7,9 @@
 namespace QFE::ASSET {
 
 namespace {
-	void ApplyFaceDirection(std::vector<VertexData>& vertices, bool invertFace) {
+	void ApplyFaceDirection(std::vector<MeshVertexData>& vertices, bool invertFace) {
 		if (!invertFace) return;
-		for (VertexData& vertex : vertices) {
+		for (MeshVertexData& vertex : vertices) {
 			vertex.normal = -vertex.normal;
 		}
 		for (size_t index = 0; index + 2 < vertices.size(); index += 3) {
@@ -17,8 +17,8 @@ namespace {
 		}
 	}
 
-	VertexData MakeVertex(float x, float y, float z, float u, float v, float nx, float ny, float nz) {
-		VertexData vertex;
+	MeshVertexData MakeVertex(float x, float y, float z, float u, float v, float nx, float ny, float nz) {
+		MeshVertexData vertex;
 		vertex.position = { x, y, z, 1.0f };
 		vertex.texcoord = { u, v };
 		vertex.normal = { nx, ny, nz };
@@ -48,7 +48,7 @@ bool IsPrimitiveMeshName(const std::string& name) {
 	return std::find(names.begin(), names.end(), name) != names.end();
 }
 
-std::vector<VertexData> CreatePrimitiveMesh(const std::string& name) {
+std::vector<MeshVertexData> CreatePrimitiveMesh(const std::string& name) {
 	if (name == "Primitive/Quad" || name == "Primitive/Plane") return CreatePlane();
 	if (name == "Primitive/PlaneHorizontal") return CreateHorizontalPlane();
 	if (name == "Primitive/Box") return CreateBox();
@@ -62,8 +62,8 @@ std::vector<VertexData> CreatePrimitiveMesh(const std::string& name) {
 	return {};
 }
 
-std::vector<VertexData> CreatePlane(float width, float height, uint32_t segmentsX, uint32_t segmentsY, bool invertFace) {
-	std::vector<VertexData> planeMesh(segmentsX * segmentsY * 6);
+std::vector<MeshVertexData> CreatePlane(float width, float height, uint32_t segmentsX, uint32_t segmentsY, bool invertFace) {
+	std::vector<MeshVertexData> planeMesh(segmentsX * segmentsY * 6);
 
 	// 頂点データを設定
 	for (uint32_t y = 0; y < segmentsY; ++y) {
@@ -88,10 +88,10 @@ std::vector<VertexData> CreatePlane(float width, float height, uint32_t segments
 	return planeMesh;
 }
 
-std::vector<VertexData> CreateHorizontalPlane(
+std::vector<MeshVertexData> CreateHorizontalPlane(
 	float width, float depth, uint32_t segmentsX, uint32_t segmentsZ, bool invertFace) {
-	std::vector<VertexData> planeMesh = CreatePlane(width, depth, segmentsX, segmentsZ, invertFace);
-	for (VertexData& vertex : planeMesh) {
+	std::vector<MeshVertexData> planeMesh = CreatePlane(width, depth, segmentsX, segmentsZ, invertFace);
+	for (MeshVertexData& vertex : planeMesh) {
 		// XY平面をXZ平面へ回転し、法線を上方向へ向ける。
 		vertex.position = { vertex.position.x, 0.0f, vertex.position.y, 1.0f };
 		vertex.normal = { vertex.normal.x, -vertex.normal.z, vertex.normal.y };
@@ -99,8 +99,8 @@ std::vector<VertexData> CreateHorizontalPlane(
 	return planeMesh;
 }
 
-std::vector<VertexData> CreateBox(bool invertFace) {
-	std::vector<VertexData> boxMesh(36);
+std::vector<MeshVertexData> CreateBox(bool invertFace) {
+	std::vector<MeshVertexData> boxMesh(36);
 
 	// 頂点データを設定
 	// Front face (Z = -0.5)
@@ -166,15 +166,15 @@ std::vector<VertexData> CreateBox(bool invertFace) {
 	return boxMesh;
 }
 
-std::vector<VertexData> CreateRing(float innerRadius, float outerRadius, uint32_t segments, bool invertFace) {
-	std::vector<VertexData> ringMesh(segments * 6);
+std::vector<MeshVertexData> CreateRing(float innerRadius, float outerRadius, uint32_t segments, bool invertFace) {
+	std::vector<MeshVertexData> ringMesh(segments * 6);
 
 	// 頂点データを設定
 	for (uint32_t i = 0; i < segments; ++i) {
 		float angle = (2.0f * 3.14159265f * static_cast<float>(i)) / static_cast<float>(segments);
 		float nextAngle = (2.0f * 3.14159265f * static_cast<float>(i + 1)) / static_cast<float>(segments);
 
-		VertexData iCurr, iNext, oCurr, oNext;
+		MeshVertexData iCurr, iNext, oCurr, oNext;
 
 		// 内側の現在の頂点
 		iCurr.position = { innerRadius * cos(angle), innerRadius * sin(angle), 0.0f, 1.0f };
@@ -222,9 +222,9 @@ std::vector<VertexData> CreateRing(float innerRadius, float outerRadius, uint32_
 	return ringMesh;
 }
 
-std::vector<VertexData> CreateCylinder(float radius, float height, uint32_t segments, bool invertFace) {
+std::vector<MeshVertexData> CreateCylinder(float radius, float height, uint32_t segments, bool invertFace) {
 	// 1セグメントあたり: 側面(6頂点) + 天面(3頂点) + 底面(3頂点) = 12頂点
-	std::vector<VertexData> cylinderMesh(segments * 12);
+	std::vector<MeshVertexData> cylinderMesh(segments * 12);
 	float halfHeight = height / 2.0f;
 
 	for (uint32_t i = 0; i < segments; ++i) {
@@ -239,7 +239,7 @@ std::vector<VertexData> CreateCylinder(float radius, float height, uint32_t segm
 		// --- 頂点データの準備 ---
 
 		// 側面用の頂点（法線は外側を向く）
-		VertexData sideBotCurr, sideBotNext, sideTopCurr, sideTopNext;
+		MeshVertexData sideBotCurr, sideBotNext, sideTopCurr, sideTopNext;
 		sideBotCurr.position = { radius * cosCurr, -halfHeight, radius * sinCurr };
 		sideBotCurr.normal = { cosCurr, 0.0f, sinCurr };
 		sideBotCurr.texcoord = { static_cast<float>(i) / static_cast<float>(segments), 1.0f };
@@ -257,7 +257,7 @@ std::vector<VertexData> CreateCylinder(float radius, float height, uint32_t segm
 		sideTopNext.texcoord = { static_cast<float>(i + 1) / static_cast<float>(segments), 0.0f };
 
 		// 天面用の頂点（法線は真上、UVは簡易的に0.5中心）
-		VertexData topCenter, topCurr, topNext;
+		MeshVertexData topCenter, topCurr, topNext;
 		topCenter.position = { 0.0f, halfHeight, 0.0f };
 		topCenter.normal = { 0.0f, 1.0f, 0.0f };
 		topCenter.texcoord = { 0.5f, 0.5f };
@@ -269,7 +269,7 @@ std::vector<VertexData> CreateCylinder(float radius, float height, uint32_t segm
 		topNext.normal = { 0.0f, 1.0f, 0.0f }; // 法線だけ真上に上書き
 
 		// 底面用の頂点（法線は真下）
-		VertexData botCenter, botCurr, botNext;
+		MeshVertexData botCenter, botCurr, botNext;
 		botCenter.position = { 0.0f, -halfHeight, 0.0f };
 		botCenter.normal = { 0.0f, -1.0f, 0.0f };
 		botCenter.texcoord = { 0.5f, 0.5f };
@@ -319,10 +319,10 @@ std::vector<VertexData> CreateCylinder(float radius, float height, uint32_t segm
 	return cylinderMesh;
 }
 
-std::vector<VertexData> CreateSphere(float radius, uint32_t slices, uint32_t stacks, bool invertFace) {
+std::vector<MeshVertexData> CreateSphere(float radius, uint32_t slices, uint32_t stacks, bool invertFace) {
 	slices = std::max(slices, 3u);
 	stacks = std::max(stacks, 2u);
-	std::vector<VertexData> vertices;
+	std::vector<MeshVertexData> vertices;
 	vertices.reserve(static_cast<size_t>(slices) * stacks * 6);
 	constexpr float pi = std::numbers::pi_v<float>;
 
@@ -340,10 +340,10 @@ std::vector<VertexData> CreateSphere(float radius, uint32_t slices, uint32_t sta
 
 	for (uint32_t stack = 0; stack < stacks; ++stack) {
 		for (uint32_t slice = 0; slice < slices; ++slice) {
-			const VertexData v00 = makeSphereVertex(slice, stack);
-			const VertexData v10 = makeSphereVertex(slice + 1, stack);
-			const VertexData v01 = makeSphereVertex(slice, stack + 1);
-			const VertexData v11 = makeSphereVertex(slice + 1, stack + 1);
+			const MeshVertexData v00 = makeSphereVertex(slice, stack);
+			const MeshVertexData v10 = makeSphereVertex(slice + 1, stack);
+			const MeshVertexData v01 = makeSphereVertex(slice, stack + 1);
+			const MeshVertexData v11 = makeSphereVertex(slice + 1, stack + 1);
 			vertices.insert(vertices.end(), { v00, v01, v11, v00, v11, v10 });
 		}
 	}
@@ -351,9 +351,9 @@ std::vector<VertexData> CreateSphere(float radius, uint32_t slices, uint32_t sta
 	return vertices;
 }
 
-std::vector<VertexData> CreateCone(float radius, float height, uint32_t segments, bool invertFace) {
+std::vector<MeshVertexData> CreateCone(float radius, float height, uint32_t segments, bool invertFace) {
 	segments = std::max(segments, 3u);
-	std::vector<VertexData> vertices;
+	std::vector<MeshVertexData> vertices;
 	vertices.reserve(static_cast<size_t>(segments) * 6);
 	const float halfHeight = height * 0.5f;
 	const float slope = radius / std::max(height, 0.0001f);
@@ -370,23 +370,23 @@ std::vector<VertexData> CreateCone(float radius, float height, uint32_t segments
 		const float s1 = std::sin(angle1);
 		const float normalLength = std::sqrt(1.0f + slope * slope);
 
-		const VertexData bottom0 = MakeVertex(radius * c0, -halfHeight, radius * s0, u0, 1.0f, c0 / normalLength, slope / normalLength, s0 / normalLength);
-		const VertexData bottom1 = MakeVertex(radius * c1, -halfHeight, radius * s1, u1, 1.0f, c1 / normalLength, slope / normalLength, s1 / normalLength);
-		const VertexData apex = MakeVertex(0.0f, halfHeight, 0.0f, (u0 + u1) * 0.5f, 0.0f, (c0 + c1) * 0.5f / normalLength, slope / normalLength, (s0 + s1) * 0.5f / normalLength);
+		const MeshVertexData bottom0 = MakeVertex(radius * c0, -halfHeight, radius * s0, u0, 1.0f, c0 / normalLength, slope / normalLength, s0 / normalLength);
+		const MeshVertexData bottom1 = MakeVertex(radius * c1, -halfHeight, radius * s1, u1, 1.0f, c1 / normalLength, slope / normalLength, s1 / normalLength);
+		const MeshVertexData apex = MakeVertex(0.0f, halfHeight, 0.0f, (u0 + u1) * 0.5f, 0.0f, (c0 + c1) * 0.5f / normalLength, slope / normalLength, (s0 + s1) * 0.5f / normalLength);
 		vertices.insert(vertices.end(), { bottom0, apex, bottom1 });
 
-		const VertexData center = MakeVertex(0.0f, -halfHeight, 0.0f, 0.5f, 0.5f, 0.0f, -1.0f, 0.0f);
-		const VertexData cap0 = MakeVertex(radius * c0, -halfHeight, radius * s0, c0 * 0.5f + 0.5f, s0 * 0.5f + 0.5f, 0.0f, -1.0f, 0.0f);
-		const VertexData cap1 = MakeVertex(radius * c1, -halfHeight, radius * s1, c1 * 0.5f + 0.5f, s1 * 0.5f + 0.5f, 0.0f, -1.0f, 0.0f);
+		const MeshVertexData center = MakeVertex(0.0f, -halfHeight, 0.0f, 0.5f, 0.5f, 0.0f, -1.0f, 0.0f);
+		const MeshVertexData cap0 = MakeVertex(radius * c0, -halfHeight, radius * s0, c0 * 0.5f + 0.5f, s0 * 0.5f + 0.5f, 0.0f, -1.0f, 0.0f);
+		const MeshVertexData cap1 = MakeVertex(radius * c1, -halfHeight, radius * s1, c1 * 0.5f + 0.5f, s1 * 0.5f + 0.5f, 0.0f, -1.0f, 0.0f);
 		vertices.insert(vertices.end(), { center, cap0, cap1 });
 	}
 	ApplyFaceDirection(vertices, invertFace);
 	return vertices;
 }
 
-std::vector<VertexData> CreateDisk(float radius, uint32_t segments, bool invertFace) {
+std::vector<MeshVertexData> CreateDisk(float radius, uint32_t segments, bool invertFace) {
 	segments = std::max(segments, 3u);
-	std::vector<VertexData> vertices;
+	std::vector<MeshVertexData> vertices;
 	vertices.reserve(static_cast<size_t>(segments) * 3);
 	constexpr float pi = std::numbers::pi_v<float>;
 
@@ -405,10 +405,10 @@ std::vector<VertexData> CreateDisk(float radius, uint32_t segments, bool invertF
 	return vertices;
 }
 
-std::vector<VertexData> CreateTorus(float majorRadius, float minorRadius, uint32_t majorSegments, uint32_t minorSegments, bool invertFace) {
+std::vector<MeshVertexData> CreateTorus(float majorRadius, float minorRadius, uint32_t majorSegments, uint32_t minorSegments, bool invertFace) {
 	majorSegments = std::max(majorSegments, 3u);
 	minorSegments = std::max(minorSegments, 3u);
-	std::vector<VertexData> vertices;
+	std::vector<MeshVertexData> vertices;
 	vertices.reserve(static_cast<size_t>(majorSegments) * minorSegments * 6);
 	constexpr float pi = std::numbers::pi_v<float>;
 
@@ -427,10 +427,10 @@ std::vector<VertexData> CreateTorus(float majorRadius, float minorRadius, uint32
 
 	for (uint32_t majorIndex = 0; majorIndex < majorSegments; ++majorIndex) {
 		for (uint32_t minorIndex = 0; minorIndex < minorSegments; ++minorIndex) {
-			const VertexData v00 = makeTorusVertex(majorIndex, minorIndex);
-			const VertexData v10 = makeTorusVertex(majorIndex + 1, minorIndex);
-			const VertexData v01 = makeTorusVertex(majorIndex, minorIndex + 1);
-			const VertexData v11 = makeTorusVertex(majorIndex + 1, minorIndex + 1);
+			const MeshVertexData v00 = makeTorusVertex(majorIndex, minorIndex);
+			const MeshVertexData v10 = makeTorusVertex(majorIndex + 1, minorIndex);
+			const MeshVertexData v01 = makeTorusVertex(majorIndex, minorIndex + 1);
+			const MeshVertexData v11 = makeTorusVertex(majorIndex + 1, minorIndex + 1);
 			vertices.insert(vertices.end(), { v00, v01, v11, v00, v11, v10 });
 		}
 	}
@@ -438,12 +438,12 @@ std::vector<VertexData> CreateTorus(float majorRadius, float minorRadius, uint32
 	return vertices;
 }
 
-std::vector<VertexData> CreateCapsule(float radius, float cylinderHeight, uint32_t slices, uint32_t hemisphereStacks, bool invertFace) {
+std::vector<MeshVertexData> CreateCapsule(float radius, float cylinderHeight, uint32_t slices, uint32_t hemisphereStacks, bool invertFace) {
 	slices = std::max(slices, 3u);
 	hemisphereStacks = std::max(hemisphereStacks, 2u);
 	const uint32_t stacks = hemisphereStacks * 2;
 	const float halfCylinder = cylinderHeight * 0.5f;
-	std::vector<VertexData> vertices;
+	std::vector<MeshVertexData> vertices;
 	vertices.reserve(static_cast<size_t>(slices) * stacks * 6);
 	constexpr float pi = std::numbers::pi_v<float>;
 
@@ -462,10 +462,10 @@ std::vector<VertexData> CreateCapsule(float radius, float cylinderHeight, uint32
 
 	for (uint32_t stack = 0; stack < stacks; ++stack) {
 		for (uint32_t slice = 0; slice < slices; ++slice) {
-			const VertexData v00 = makeCapsuleVertex(slice, stack);
-			const VertexData v10 = makeCapsuleVertex(slice + 1, stack);
-			const VertexData v01 = makeCapsuleVertex(slice, stack + 1);
-			const VertexData v11 = makeCapsuleVertex(slice + 1, stack + 1);
+			const MeshVertexData v00 = makeCapsuleVertex(slice, stack);
+			const MeshVertexData v10 = makeCapsuleVertex(slice + 1, stack);
+			const MeshVertexData v01 = makeCapsuleVertex(slice, stack + 1);
+			const MeshVertexData v11 = makeCapsuleVertex(slice + 1, stack + 1);
 			vertices.insert(vertices.end(), { v00, v01, v11, v00, v11, v10 });
 		}
 	}

@@ -27,7 +27,8 @@ namespace QFE::EDITOR {
 		void Initialize(
 			QFE::SCENE::SceneManager* sceneManager,
 			ImTextureID sceneTextureId,
-			QFE::WINDOW::IGameWindowManager& windowManager);
+			QFE::WINDOW::IGameWindowManager& windowManager,
+			const QFE::FRAMEWORK::EngineConfig& config);
 		void Update(QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,QFE::FRAMEWORK::WindowsEngineResources& resources);
 		void Draw();
 		void PostDraw();

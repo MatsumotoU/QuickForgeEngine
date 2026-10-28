@@ -14,8 +14,9 @@
 #include <vector>
 #include <utility>
 
-struct VertexData;
-struct InstanceMetaCPU;
+struct MeshVertexData;
+struct RaytracingInstanceMeta;
+using InstanceMetaCPU = RaytracingInstanceMeta;
 struct RaytracingVertexAttribute;
 
 namespace QFE::GRAPHIC {
@@ -100,7 +101,7 @@ namespace QFE::GRAPHIC {
 	/// @brief 頂点バッファを作成する関数
 	bool CreateVertexBuffer(
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
-		const std::vector<VertexData>& vertexPositions,
+		const std::vector<MeshVertexData>& vertexPositions,
 		const std::string& meshName,
 		QFE::GRAPHIC::DirectXResourceHandle& outVertexBufferHandle);
 	/// @brief インデックスバッファを作成する関数
@@ -112,7 +113,7 @@ namespace QFE::GRAPHIC {
 	/// @brief BLASを作成する関数
 	bool CreateBLAS(
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
-		const std::vector<VertexData>& vertices,
+		const std::vector<MeshVertexData>& vertices,
 		const std::vector<uint32_t>& indices,
 		const std::string& name,
 		QFE::GRAPHIC::BLASHandle& outBLASHandle,
@@ -140,7 +141,7 @@ namespace QFE::GRAPHIC {
 
 	/// @brief 頂点のデータから頂点位置を取得する関数
 	std::vector<QFE::MATH::Vector3> GetModelVertexPositions(
-		const VertexData* vertices, size_t vertexCount);
+		const MeshVertexData* vertices, size_t vertexCount);
 
 	/// @brief バッファの容量を確保し、データをアップロードする関数
 	// モデル群（modelDataMap）からグローバルバッファを平坦化する。
@@ -161,7 +162,7 @@ namespace QFE::GRAPHIC {
 		QFE::GRAPHIC::IGraphicEngine* graphicEngine,
 		const std::vector<RaytracingVertexAttribute>& globalVertexAttributes,
 		const std::vector<uint32_t>& globalTriIndices,
-		const std::vector<InstanceMetaCPU>& instanceMeta,
+		const std::vector<RaytracingInstanceMeta>& instanceMeta,
 		QFE::GRAPHIC::DirectXResourceHandle& outUVHandle,
 		QFE::GRAPHIC::DirectXResourceHandle& outTriHandle,
 		QFE::GRAPHIC::DirectXResourceHandle& outInstanceMetaHandle);
