@@ -190,10 +190,6 @@ namespace QFE::GRAPHIC {
 		bool isBuildInComputePipelineStateObjectsAvailable_ = false;
 		bool isLineRenderingAvailable_ = false;
 
-		struct LineVertex {
-			QFE::MATH::Vector4 position;
-			QFE::MATH::Vector4 color;
-		};
 		static constexpr std::size_t kMaxLineCount_ = 1024;
 		std::vector<LineVertex> lineVertices_;
 		DirectXResourceHandle lineVertexBufferHandle_ = DirectXResourceHandle::Invalid;

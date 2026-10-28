@@ -1,7 +1,7 @@
 #include "../ShaderStructs/Particle.hlsli"
 #include "../ShaderStructs/hlslTypeToCpp.h"
 
-ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
+ConstantBuffer<ObjectTransformGpuData> gTransformationMatrix : register(b0);
 
 struct VertexShaderInput
 {

@@ -8,6 +8,7 @@
 #include <imgui/imgui.h>
 #include <unordered_map>
 #include "math/MathInclude.h"
+#include "framework/application/EngineConfig.h"
 
 namespace QFE::SCENE {
 	class SceneManager;
@@ -39,7 +40,8 @@ namespace QFE::EDITOR {
 			QFE::SCENE::SceneManager* sceneManager,
 			ImTextureID sceneTextureId,
 			QFE::WINDOW::IGameWindowManager& windowManager,
-			ComponentInspectorRegistry* componentInspectorRegistry);
+			ComponentInspectorRegistry* componentInspectorRegistry,
+			const QFE::FRAMEWORK::EngineConfig& config);
 		void Update();
 		void Draw(EditorCommandList& commandList);
 		/// @brief Fileメニューから要求されたGameModule DLLのビルドとリロードを取得する。
@@ -68,5 +70,8 @@ namespace QFE::EDITOR {
 		QFE::WINDOW::IGameWindowManager* windowManager_ = nullptr;
 		SCENE::SceneManager* sceneManager_;
 		bool gameModuleBuildAndReloadRequested_ = false;
+		QFE::FRAMEWORK::EngineConfig engineConfig_;
+		bool showEngineConfig_ = false;
+		std::string engineConfigStatus_;
 	};
 }

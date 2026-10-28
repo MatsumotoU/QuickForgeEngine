@@ -2,6 +2,7 @@
 // コアコンポーネント
 #include "TransformComponent.h"
 #include "ParentComponent.h"
+#include "ParticleEmitterComponent.h"
 #include "ObjectInfoComponent.h"
 #include "VertexComponent.h"
 #include "MaterialComponent.h"
@@ -11,6 +12,7 @@
 #include "SpriteRenderComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
+#include "DirectionalLightComponent.h"
 #include "SphereColliderComponent.h"
 #include "animation/AnimationComponent.h"
 #include "PhysicsComponent.h"

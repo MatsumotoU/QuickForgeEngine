@@ -10,6 +10,8 @@ namespace QFE {
 	struct ComponentDescriptor {
 		/// シーン保存など外部データで使用する安定キー。
 		std::string key;
+		/// エディタのコンポーネント追加メニューで使用するカテゴリ名。
+		std::string category;
 		/// C++の型付きAPIからストレージを解決するリフレクション名。
 		std::string reflectedTypeName;
 		uint32_t storageIndex;

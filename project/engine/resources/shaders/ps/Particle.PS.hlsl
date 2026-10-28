@@ -1,7 +1,7 @@
 #include "../ShaderStructs/Particle.hlsli"
 #include "../ShaderStructs/hlslTypeToCpp.h"
 
-ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<MaterialGpuData> gMaterial : register(b0);
 Texture2D<float32_t4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 

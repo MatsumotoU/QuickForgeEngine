@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 #include "CameraComponent.h"
+#include "DirectionalLightComponent.h"
 #include "ObjectInfoComponent.h"
 #include "TransformComponent.h"
 
@@ -14,6 +15,19 @@ void QFE::SCENE::SceneManager::Initialize() {
 	++sceneRevision_;
 	currentScenePath_.clear();
 	CreateCameraEntity();
+	CreateDirectionalLightEntity("MainDirectionalLight");
+}
+
+uint32_t QFE::SCENE::SceneManager::CreateDirectionalLightEntity(const std::string& name) {
+	QFE::EntityManager& entityManager = currentScene_.GetEntityManager();
+	const uint32_t entityId = entityManager.CreateEntity();
+	QFE::SCENE::ObjectInfoComponent objectInfo;
+	objectInfo.name = name;
+	QFE::SCENE::DirectionalLightComponent light;
+	entityManager.EmplaceComponent<QFE::SCENE::ObjectInfoComponent>(entityId, objectInfo);
+	entityManager.EmplaceComponent<QFE::SCENE::TransformComponent>(entityId);
+	entityManager.EmplaceComponent<QFE::SCENE::DirectionalLightComponent>(entityId, light);
+	return entityId;
 }
 
 uint32_t QFE::SCENE::SceneManager::CreateCameraEntity(const std::string& name) {

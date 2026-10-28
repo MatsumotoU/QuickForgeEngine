@@ -25,6 +25,8 @@ namespace QFE::SCENE {
 		/// @brief 現在のシーンにカメラエンティティを作成します.
 		/// 既存のメインカメラがない場合は、作成したカメラをメインカメラにします.
 		uint32_t CreateCameraEntity(const std::string& name = "Camera");
+		/// 平行光エンティティを作成します。
+		uint32_t CreateDirectionalLightEntity(const std::string& name = "DirectionalLight");
 		/// @brief フレーム終了処理を行います.
 		void EndFrame(); 
 		/// @brief シーンの終了処理を行います.

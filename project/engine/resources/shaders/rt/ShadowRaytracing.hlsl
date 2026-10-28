@@ -2,6 +2,8 @@
 
 RaytracingAccelerationStructure g_scene : register(t0);
 ConstantBuffer<CameraForGPU> g_camera : register(b0);
+ConstantBuffer<DirectionalLightConstants> g_directionalLight : register(b1);
+StructuredBuffer<DirectionalLightGpu> g_directionalLights : register(t6);
 
 Texture2D<float4> g_position : register(t1);
 Texture2D<float4> g_normal : register(t2);
@@ -13,20 +15,7 @@ RWTexture2D<float4> g_output : register(u0);
 
 StructuredBuffer<uint3> g_globalTriIndices : register(t10);
 StructuredBuffer<RaytracingVertexAttribute> g_globalVertexAttributes : register(t11);
-struct InstanceMeta
-{
-    uint materialIndex;
-    uint vertexBase;
-    uint vertexCount;
-    uint primitiveBase;
-    float4 baseColor;
-    row_major float4x4 uvTransform;
-    float metallic;
-    float smoothness;
-    float2 padding;
-};
-
-StructuredBuffer<InstanceMeta> g_instanceMeta : register(t12);
+StructuredBuffer<RaytracingInstanceMeta> g_instanceMeta : register(t12);
 
 Texture2D<float4> g_TextureArray[256] : register(t20);
 SamplerState g_sampler : register(s0);
@@ -42,9 +31,7 @@ static const uint kShadowRay = 0;
 static const uint kReflectionRay = 1;
 static const uint kReflectionMask = 0x01;
 static const uint kShadowMask = 0x02;
-static const float3 kLightDirection = float3(0.0f, -1.0f, 0.0f);
 static const float3 kLightColor = float3(1.0f, 1.0f, 1.0f);
-static const float kLightIntensity = 1.0f;
 static const float kAmbientIntensity = 0.12f;
 
 void ComputeHitAttributes(
@@ -73,14 +60,6 @@ void ComputeHitAttributes(
         vertex2.normal * v);
 }
 
-float3 EvaluateDirectLighting(float3 albedo, float3 worldNormal)
-{
-    float3 lightVector = normalize(-kLightDirection);
-    float nDotL = saturate(dot(normalize(worldNormal), lightVector));
-    float3 directLight = kLightColor * (nDotL * kLightIntensity);
-    return albedo * (kAmbientIntensity + directLight);
-}
-
 float ComputeRayEpsilon(float3 worldPosition)
 {
     float maxPosition = max(abs(worldPosition.x), max(abs(worldPosition.y), abs(worldPosition.z)));
@@ -99,6 +78,52 @@ float3 OffsetRayOrigin(float3 worldPosition, float3 worldNormal, float3 rayDirec
     return worldPosition
         + worldNormal * normalSide * epsilon
         + rayDirection * epsilon * 0.25f;
+}
+
+float3 EvaluateDirectLighting(float3 albedo, float3 worldNormal, float3 worldPosition, bool receiveShadow)
+{
+    float3 result = albedo * kAmbientIntensity;
+    if (g_directionalLight.count == 0)
+    {
+        // Keep the legacy light for scenes without a light component, without shadows.
+        return result + albedo * kLightColor * saturate(dot(worldNormal, float3(0.0f, 1.0f, 0.0f)));
+    }
+    for (uint i = 0; i < g_directionalLight.count; ++i)
+    {
+        DirectionalLightGpu light = g_directionalLights[i];
+        float3 lightVector = normalize(-light.directionAndIntensity.xyz);
+        float nDotL = saturate(dot(worldNormal, lightVector));
+        if (nDotL <= 0.0f || light.directionAndIntensity.w <= 0.0f) continue;
+        RayPayload shadowPayload;
+        shadowPayload.color = 0.0f;
+        shadowPayload.hit = 0;
+        shadowPayload.rayType = kShadowRay;
+        if (receiveShadow)
+        {
+            RayDesc ray;
+            ray.Origin = OffsetRayOrigin(worldPosition, worldNormal, lightVector);
+            ray.Direction = lightVector;
+            ray.TMin = ComputeRayEpsilon(worldPosition) * 0.25f;
+            ray.TMax = 1000.0f;
+            TraceRay(g_scene, RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_FORCE_OPAQUE |
+                RAY_FLAG_CULL_BACK_FACING_TRIANGLES, kShadowMask, 0, 1, 0, ray, shadowPayload);
+        }
+        if (shadowPayload.hit == 0)
+            result += albedo * kLightColor * (nDotL * light.directionAndIntensity.w);
+    }
+    return result;
+}
+
+// 8-bit 出力で高輝度を切り捨てる前に、色相を保って明るさを緩やかに圧縮する。
+float3 CompressHighlights(float3 color)
+{
+    float peak = max(color.r, max(color.g, color.b));
+    const float shoulder = 0.8f;
+    if (peak <= shoulder)
+        return color;
+    float mappedPeak = shoulder + (1.0f - shoulder) *
+        (1.0f - exp(-(peak - shoulder) / (1.0f - shoulder)));
+    return color * (mappedPeak / peak);
 }
 
 [shader("raygeneration")]
@@ -130,39 +155,7 @@ void MyRayGen()
     }
 
     float3 worldPosition = rawPosition.xyz;
-    float3 lightVector = normalize(-kLightDirection);
-    float nDotL = saturate(dot(worldNormal, lightVector));
-
-    // --- ① 直接見えている場所の影計算 ---
-    RayPayload payload;
-    payload.hit = 0;
-    payload.rayType = kShadowRay;
-    payload.color = float3(0.0f, 0.0f, 0.0f);
-
-    // 光が表面側にある場合だけシャドウレイを飛ばす。
-    if (nDotL > 0.0f && g_material[launchIndex].b > 0.5f)
-    {
-        RayDesc shadowRay;
-        shadowRay.Origin = OffsetRayOrigin(worldPosition, worldNormal, lightVector);
-        shadowRay.Direction = lightVector;
-        shadowRay.TMin = ComputeRayEpsilon(worldPosition) * 0.25f;
-        shadowRay.TMax = 1000.0f;
-
-        TraceRay(
-            g_scene,
-            RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH |
-                RAY_FLAG_FORCE_OPAQUE |
-                RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
-            kShadowMask, 0, 1, 0,
-            shadowRay,
-            payload);
-    }
-
-    float3 baseColor = albedo * kAmbientIntensity;
-    if (payload.hit == 0)
-    {
-        baseColor = EvaluateDirectLighting(albedo, worldNormal);
-    }
+    float3 baseColor = EvaluateDirectLighting(albedo, worldNormal, worldPosition, g_material[launchIndex].b > 0.5f);
 
     // --- ② 反射計算 ---
     float4 materialData = g_material[launchIndex];
@@ -209,7 +202,7 @@ void MyRayGen()
             + reflectPayload.color * reflectionWeight;
     }
 
-    g_output[launchIndex] = float4(finalColor, albedpAlpha);
+    g_output[launchIndex] = float4(CompressHighlights(finalColor), albedpAlpha);
 }
 
 // 2. ミスシェーダー
@@ -229,7 +222,7 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
     uint localPrim = PrimitiveIndex();
     uint instId = InstanceID();
 
-    InstanceMeta meta = g_instanceMeta[instId];
+    RaytracingInstanceMeta meta = g_instanceMeta[instId];
 	uint texID = meta.materialIndex;
 	uint vertexBase = meta.vertexBase;
 	uint primitiveBase = meta.primitiveBase;
@@ -266,39 +259,5 @@ void MyClosestHit(inout RayPayload payload : SV_RayPayload, BuiltInTriangleInter
 
     // 反射像の中でも影が維持されるよう、反射ヒット点から光源への可視性を調べる。
     float3 hitPosition = WorldRayOrigin() + WorldRayDirection() * RayTCurrent();
-    float3 lightVector = normalize(-kLightDirection);
-    float nDotL = saturate(dot(worldNormal, lightVector));
-    payload.color = hitAlbedo * kAmbientIntensity;
-
-    if (meta.padding.x <= 0.5f)
-    {
-        payload.color = EvaluateDirectLighting(hitAlbedo, worldNormal);
-    }
-    else if (nDotL > 0.0f)
-    {
-        RayDesc shadowRay;
-        shadowRay.Origin = OffsetRayOrigin(hitPosition, worldNormal, lightVector);
-        shadowRay.Direction = lightVector;
-        shadowRay.TMin = ComputeRayEpsilon(hitPosition) * 0.25f;
-        shadowRay.TMax = 1000.0f;
-
-        RayPayload shadowPayload;
-        shadowPayload.color = float3(0.0f, 0.0f, 0.0f);
-        shadowPayload.hit = 0;
-        shadowPayload.rayType = kShadowRay;
-
-        TraceRay(
-            g_scene,
-            RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH |
-                RAY_FLAG_FORCE_OPAQUE |
-                RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
-            kShadowMask, 0, 1, 0,
-            shadowRay,
-            shadowPayload);
-
-        if (shadowPayload.hit == 0)
-        {
-            payload.color = EvaluateDirectLighting(hitAlbedo, worldNormal);
-        }
-    }
+    payload.color = EvaluateDirectLighting(hitAlbedo, worldNormal, hitPosition, meta.padding.x > 0.5f);
 }

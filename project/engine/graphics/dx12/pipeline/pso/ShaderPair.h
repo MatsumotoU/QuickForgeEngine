@@ -35,6 +35,8 @@ namespace QFE::GRAPHIC {
 		IDxcBlob* GetPSBlob() { return psBlob_; }
 		/// @brief 登録順にRootParameterのタイプを取得します
 		std::vector< D3D12_ROOT_PARAMETER_TYPE> GetRootParameterTypes() const { return rootParameter_.GetRootParameterTypes(); }
+		/// @brief 登録順にRootParameterが要求するビュータイプを取得します
+		std::vector<ViewTypeFlags> GetRootParameterViewTypes() const { return rootParameter_.GetRootParameterViewTypes(); }
 		/// @brief レンダーターゲットの数を取得します
 		UINT GetRenderTargetCount() const { return renderTargetCount_; }
 

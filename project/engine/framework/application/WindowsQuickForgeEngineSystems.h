@@ -23,6 +23,8 @@ namespace QFE {
 }
 
 namespace QFE::FRAMEWORK{
+	class LuaScriptSystem;
+
 	/// @brief Windowsアプリケーション用のQuickForgeエンジンシステムを保持する構造体。
 	class WindowsQuickForgeEngineSystems final {
 	public:
@@ -33,6 +35,7 @@ namespace QFE::FRAMEWORK{
 		std::unique_ptr<QFE::GUI::IGuiManager> guiManager;// GUIマネージャ
 		std::unique_ptr<QFE::INPUT::InputInterface> inputInterface;// 入力インターフェース
 		std::unique_ptr<QFE::SCENE::SceneManager> sceneManager;// シーンマネージャ
+		std::unique_ptr<LuaScriptSystem> luaScriptSystem;// Luaゲームロジック
 		std::unique_ptr<QFE::AUDIO::AudioEngine> audioEngine;
 		AudioComponentSystem audioComponents;
 		SceneChangeTransitionSystem sceneChangeTransition;

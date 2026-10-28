@@ -1,7 +1,7 @@
 #include "../ShaderStructs/hlslTypeToCpp.h"
 #include "../ShaderStructs/Object3d.hlsli"
 
-StructuredBuffer<Well> gMatrixPalette : register(t0);
+StructuredBuffer<SkinningPaletteEntry> gMatrixPalette : register(t0);
 
 struct VertexShaderInput {
     float32_t4 position : POSITION0;

@@ -58,6 +58,10 @@ namespace QFE {
 		std::vector<std::string> GetComponentTypeNames(uint32_t entityId) const;
 		/// @brief 登録されている全てのコンポーネント型名の一覧を取得する。
 		std::vector<std::string> GetAllComponentTypeNames() const;
+		/// @brief 登録されているコンポーネントカテゴリの一覧を取得する。
+		std::vector<std::string> GetAllComponentCategories() const;
+		/// @brief 指定カテゴリに登録されているコンポーネント型名の一覧を取得する。
+		std::vector<std::string> GetAllComponentTypeNames(const std::string& category) const;
 
 		/// @brief エンティティIDとコンポーネント型名から、コンポーネントの生ポインタを取得する。
 		void* GetComponentRaw(uint32_t entityId, const char* componentTypeName) override;

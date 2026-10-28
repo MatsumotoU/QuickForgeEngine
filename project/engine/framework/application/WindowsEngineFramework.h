@@ -35,7 +35,8 @@ namespace QFE::FRAMEWORK {
 		uint32_t mainWindowWidth,
 		uint32_t mainWindowHeight,
 		WindowsQuickForgeEngineSystems& outSystems,
-		ComponentRegistrationCallback registerApplicationComponents = nullptr);
+		ComponentRegistrationCallback registerApplicationComponents = nullptr,
+		const std::string& scriptDir = "resources/Scripts");
 
 	/// @brief 入力とフレーム計測を開始する。
 	bool BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
