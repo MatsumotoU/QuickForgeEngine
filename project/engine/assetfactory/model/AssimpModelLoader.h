@@ -32,7 +32,7 @@ namespace QFE::ASSET {
 		double GetGlbAnimationDuration(const std::string& filePath, const std::string& clipName) const;
 		/// @brief 指定時刻のボーン/ノード変形を頂点へ適用する。空の名前は先頭クリップ。
 		bool SampleGlbAnimation(const std::string& filePath, const std::string& clipName,
-			double timeSeconds, std::vector<VertexData>& outVertices) const;
+			double timeSeconds, std::vector<MeshVertexData>& outVertices) const;
 
 	private:
 		/// @brief 指定されたファイルパスからモデルデータを読み込む関数

@@ -12,6 +12,7 @@
 #include "SpriteRenderComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
+#include "DirectionalLightComponent.h"
 #include "SphereColliderComponent.h"
 #include "animation/AnimationComponent.h"
 #include "PhysicsComponent.h"

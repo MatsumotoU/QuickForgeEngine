@@ -126,9 +126,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 	// QuickForgeエンジンのリソースを初期化
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
-	engineResources.windowName = "ShootingGameRuntime";
-	engineResources.windowWidth = 1280;
-	engineResources.windowHeight = 720;
+	const bool engineConfigLoaded = engineResources.config.Load();
+	engineResources.ApplyConfig(false);
 	QFE::FRAMEWORK::WindowsGameModule gameModule;
 	if (!gameModule.Load(L"ShootingGame.dll")) {
 		return -1;
@@ -140,9 +139,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		engineResources.windowName,
 		engineResources.windowWidth, engineResources.windowHeight,
 		engineSystems,
-		gameModule.GetComponentRegistrationFunction())) {
+		gameModule.GetComponentRegistrationFunction(), engineResources.config.scriptDir)) {
 		return -1;
 	}
+	if (!engineConfigLoaded) QFE::DebugLog("Failed to load EngineConfig.json; using defaults.", QFE::LogLevel::Warning);
 	// QuickForgeエンジンの初期化
 	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
 	const std::optional<std::filesystem::path> startupScene = ResolveStartupScene(

@@ -437,8 +437,8 @@ void D3D12GraphicEngine::RenderLines(
 	std::copy(lineVertices_.begin(), lineVertices_.end(), mappedVertices);
 
 	const DirectXResourceHandle transformBufferHandle =
-		resourceAllocator_->AllocateConstantBuffer<TransformationMatrix>("LineTransform");
-	TransformationMatrix* transform = resourceContainer_->GetMappedData<TransformationMatrix>(transformBufferHandle);
+		resourceAllocator_->AllocateConstantBuffer<ObjectTransformGpuData>("LineTransform");
+	ObjectTransformGpuData* transform = resourceContainer_->GetMappedData<ObjectTransformGpuData>(transformBufferHandle);
 	if (transform == nullptr) {
 		lineVertices_.clear();
 		return;

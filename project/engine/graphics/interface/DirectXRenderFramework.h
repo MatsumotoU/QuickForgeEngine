@@ -14,7 +14,7 @@
 #include <vector>
 #include <utility>
 
-struct VertexData;
+struct MeshVertexData;
 
 namespace QFE::GRAPHIC {
 	class IGraphicEngine;
@@ -174,6 +174,8 @@ namespace QFE::GRAPHIC {
 		const QFE::GRAPHIC::RTPSOHandle& rtpsoHandle,
 		QFE::GRAPHIC::DirectXResourceHandle renderUavBuffer,
 		const QFE::GRAPHIC::DirectXResourceHandle& cameraPositionBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& lightBufferHandle,
+		const QFE::GRAPHIC::DirectXResourceHandle& lightDataHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& indexBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& uvBufferHandle,
 		const QFE::GRAPHIC::DirectXResourceHandle& instanceMetaBufferHandle,

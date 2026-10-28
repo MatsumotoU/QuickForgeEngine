@@ -1,7 +1,7 @@
 #include "../ShaderStructs/hlslTypeToCpp.h"
 
 ConstantBuffer<ParticleEmitterForGPU> gEmitter : register(b0);
-RWStructuredBuffer<Particle> gParticles : register(u0);
+RWStructuredBuffer<ParticleSimulationData> gParticles : register(u0);
 
 uint Hash(uint value)
 {
@@ -57,7 +57,7 @@ void main(uint3 dispatchThreadId : SV_DispatchThreadID)
     }
 
 	uint bufferIndex = gEmitter.particleOffset + index;
-	Particle particle = gParticles[bufferIndex];
+	ParticleSimulationData particle = gParticles[bufferIndex];
     if (gEmitter.reset != 0)
     {
         particle.alive = 0;

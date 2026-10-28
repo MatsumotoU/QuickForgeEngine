@@ -24,7 +24,7 @@ namespace QFE::ASSET {
 	/// @brief モデルのメッシュデータを保持する構造体
 	struct SkinningMeshData {
 		std::map<std::string, JointWeightData> jointWeights; // ジョイント名をキーとしたジョイントのウェイト情報のマップ
-		SafeVector<VertexData> vertices;// メッシュの頂点データの配列
+		SafeVector<MeshVertexData> vertices;// メッシュの頂点データの配列
 		ModelMaterialData material;// メッシュのマテリアルデータ
 		/// @brief SafeVectorが固定長であるため、コンストラクタでサイズを指定する必要がある
 		SkinningMeshData(size_t size) : vertices(size) {}

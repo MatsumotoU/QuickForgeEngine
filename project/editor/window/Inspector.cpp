@@ -2,6 +2,7 @@
 #include "design-patterns/EntityManager.h"
 #include "inspector/ComponentInspectorRegistry.h"
 #include "inspector/ImGuiArchive.h"
+#include "components/DirectionalLightComponent.h"
 
 #include "command/AllCommands.h"
 #include "command/EditorCommandList.h"
@@ -92,7 +93,17 @@ void QFE::EDITOR::Inspector::DrawComponents(uint32_t entityId) {
 				componentInspectorRegistry_ != nullptr &&
 				componentInspectorRegistry_->Draw(componentTypeName, *entityManager_, entityId);
 			if (!wasDrawnByCustomInspector) {
-				entityManager_->ReflectionComponentByName(entityId, componentTypeName, archive);
+				if (componentTypeName == "DirectionalLightComponent") {
+					auto& light = entityManager_->GetComponent<QFE::SCENE::DirectionalLightComponent>(entityId);
+					archive.Process("direction", light.direction);
+					if (ImGui::IsItemDeactivatedAfterEdit()) {
+						light.direction = QFE::SCENE::DirectionalLightComponent::NormalizeDirection(light.direction);
+					}
+					archive.Process("intensity", light.intensity);
+					archive.Process("isMainLight", light.isMainLight);
+				} else {
+					entityManager_->ReflectionComponentByName(entityId, componentTypeName, archive);
+				}
 			}
 		}
 		ImGui::PopID();

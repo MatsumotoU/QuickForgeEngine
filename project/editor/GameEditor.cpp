@@ -15,9 +15,10 @@ using namespace QFE::EDITOR;
 void QFE::EDITOR::GameEditor::Initialize(
 	QFE::SCENE::SceneManager* sceneManager,
 	ImTextureID sceneTextureId,
-	QFE::WINDOW::IGameWindowManager& windowManager) {
+	QFE::WINDOW::IGameWindowManager& windowManager,
+	const QFE::FRAMEWORK::EngineConfig& config) {
 	windowManager_.Initialize(
-		sceneManager, sceneTextureId, windowManager, &componentInspectorRegistry_);
+		sceneManager, sceneTextureId, windowManager, &componentInspectorRegistry_, config);
 	commandExecutor_.Initialize();
 	commandList_.ClearCommands();
 
@@ -98,7 +99,7 @@ void QFE::EDITOR::GameEditor::Update(
 	QFE::MATH::Matrix4x4 viewMatrix =
 		QFE::MATH::Matrix4x4::MakeAffineMatrix(resources.cameraTransform).Inverse();
 	QFE::MATH::Matrix4x4 projectionMatrix = QFE::MATH::Matrix4x4::MakePerspectiveFovMatrix(
-		3.14159f / 4.0f, 1280.0f / 720.0f, 0.1f, 1000.0f);
+		3.14159f / 4.0f, static_cast<float>(resources.windowWidth) / static_cast<float>(resources.windowHeight), 0.1f, 1000.0f);
 	windowManager_.SetSceneViewerCamera(viewMatrix, projectionMatrix);
 
 	if (activeCameraType_ == QFE::EDITOR::EditorCameraType::DebugCamera) {
