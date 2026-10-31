@@ -98,31 +98,11 @@ bool QFE::ProcessUtil::RunExeAndWait(
 	const std::wstring& exePath,
 	const std::wstring& arguments,
 	const std::wstring& workingDirectory,
-	const std::wstring& outputPath,
 	uint32_t& exitCode) {
 	exitCode = UINT32_MAX;
 
-	SECURITY_ATTRIBUTES securityAttributes{};
-	securityAttributes.nLength = sizeof(securityAttributes);
-	securityAttributes.bInheritHandle = TRUE;
-	const HANDLE outputHandle = CreateFileW(
-		outputPath.c_str(),
-		GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-		&securityAttributes,
-		CREATE_ALWAYS,
-		FILE_ATTRIBUTE_NORMAL,
-		nullptr);
-	if (outputHandle == INVALID_HANDLE_VALUE) {
-		return false;
-	}
-
 	STARTUPINFOW startupInfo{};
 	startupInfo.cb = sizeof(startupInfo);
-	startupInfo.dwFlags = STARTF_USESTDHANDLES;
-	startupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-	startupInfo.hStdOutput = outputHandle;
-	startupInfo.hStdError = outputHandle;
 
 	PROCESS_INFORMATION processInformation{};
 	std::wstring commandLine = L"\"" + exePath + L"\" " + arguments;
@@ -131,13 +111,12 @@ bool QFE::ProcessUtil::RunExeAndWait(
 		commandLine.data(),
 		nullptr,
 		nullptr,
-		TRUE,
-		CREATE_NO_WINDOW,
+		FALSE,
+		CREATE_NEW_CONSOLE,
 		nullptr,
 		workingDirectory.empty() ? nullptr : workingDirectory.c_str(),
 		&startupInfo,
 		&processInformation);
-	CloseHandle(outputHandle);
 	if (!created) {
 		return false;
 	}

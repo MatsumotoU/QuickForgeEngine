@@ -7,6 +7,7 @@
 
 #include "framework/graphic/GraphicEngineCoreFramework.h"
 #include "framework/window/WindowCoreFrameWork.h"
+#include "framework/window/WindowDialogFramework.h"
 #include "framework/gui/GuiCoreFramework.h"
 #include "framework/input/InputFrameWork.h"
 
@@ -51,57 +52,6 @@ namespace {
 		return std::filesystem::is_regular_file(path, error) && !error;
 	}
 
-	std::filesystem::path FindMsBuild() {
-		const std::filesystem::path configuredPath = GetEnvironmentPath(L"MSBUILD_EXE_PATH");
-		if (IsRegularFile(configuredPath)) {
-			return configuredPath;
-		}
-
-		const std::filesystem::path visualStudioDirectory = GetEnvironmentPath(L"VSINSTALLDIR");
-		const std::filesystem::path visualStudioMsBuild =
-			visualStudioDirectory / L"MSBuild" / L"Current" / L"Bin" / L"MSBuild.exe";
-		if (!visualStudioDirectory.empty() && IsRegularFile(visualStudioMsBuild)) {
-			return visualStudioMsBuild;
-		}
-
-		const std::array<std::filesystem::path, 2> programDirectories = {{
-			GetEnvironmentPath(L"ProgramFiles"),
-			GetEnvironmentPath(L"ProgramFiles(x86)")
-		}};
-		constexpr std::array<const wchar_t*, 2> versions = {{ L"2022", L"2019" }};
-		constexpr std::array<const wchar_t*, 4> editions = {{
-			L"Enterprise", L"Professional", L"Community", L"BuildTools"
-		}};
-		for (const std::filesystem::path& programDirectory : programDirectories) {
-			if (programDirectory.empty()) {
-				continue;
-			}
-			for (const wchar_t* version : versions) {
-				for (const wchar_t* edition : editions) {
-					const std::filesystem::path candidate =
-						programDirectory / L"Microsoft Visual Studio" / version / edition /
-						L"MSBuild" / L"Current" / L"Bin" / L"MSBuild.exe";
-					if (IsRegularFile(candidate)) {
-						return candidate;
-					}
-				}
-			}
-		}
-
-		std::array<wchar_t, 32768> searchResult{};
-		const DWORD length = SearchPathW(
-			nullptr,
-			L"MSBuild.exe",
-			nullptr,
-			static_cast<DWORD>(searchResult.size()),
-			searchResult.data(),
-			nullptr);
-		if (length == 0 || length >= static_cast<DWORD>(searchResult.size())) {
-			return {};
-		}
-		return std::filesystem::path(searchResult.data(), searchResult.data() + length);
-	}
-
 	std::filesystem::path GetExecutableDirectory() {
 		std::array<wchar_t, 32768> executablePath{};
 		const DWORD length = GetModuleFileNameW(
@@ -133,8 +83,7 @@ namespace {
 
 	std::filesystem::path FindRepositoryRootFrom(std::filesystem::path directory) {
 		while (!directory.empty()) {
-			if (IsRegularFile(
-				directory / L"project" / L"game" / L"shooting" / L"ShootingGame.vcxproj")) {
+			if (IsRegularFile(directory / L"project" / L"tools" / L"BuildProject.bat")) {
 				return directory;
 			}
 			const std::filesystem::path parent = directory.parent_path();
@@ -170,30 +119,21 @@ namespace {
 #endif
 	}
 
-	bool BuildShootingGameModule() {
+	bool BuildGameModule(const std::filesystem::path& projectPath) {
 		const std::filesystem::path repositoryRoot = FindRepositoryRoot();
 		if (repositoryRoot.empty()) {
 			QFE_LOG("Failed to find the QuickForgeEngine repository root.", QFE::LogLevel::Error);
 			return false;
 		}
 
-		const std::filesystem::path msBuildPath = FindMsBuild();
-		if (msBuildPath.empty()) {
-			QFE_LOG("Failed to find MSBuild.exe.", QFE::LogLevel::Error);
-			return false;
-		}
-		const std::filesystem::path visualStudioDirectory =
-			msBuildPath.parent_path().parent_path().parent_path();
-		const std::filesystem::path vcVarsPath =
-			visualStudioDirectory / L"VC" / L"Auxiliary" / L"Build" / L"vcvars64.bat";
+		const std::filesystem::path buildScript =
+			repositoryRoot / L"project" / L"tools" / L"BuildProject.bat";
 		const std::filesystem::path commandProcessor = FindCommandProcessor();
-		if (!IsRegularFile(vcVarsPath) || commandProcessor.empty()) {
-			QFE_LOG("Failed to find vcvars64.bat or cmd.exe.", QFE::LogLevel::Error);
+		if (!IsRegularFile(buildScript) || commandProcessor.empty()) {
+			QFE_LOG("Failed to find BuildProject.bat or cmd.exe.", QFE::LogLevel::Error);
 			return false;
 		}
 
-		const std::filesystem::path projectPath =
-			repositoryRoot / L"project" / L"game" / L"shooting" / L"ShootingGame.vcxproj";
 		const std::filesystem::path buildLogDirectory = repositoryRoot / L"generated" / L"logs";
 		std::error_code error;
 		std::filesystem::create_directories(buildLogDirectory, error);
@@ -202,41 +142,35 @@ namespace {
 			return false;
 		}
 		const std::filesystem::path buildLogPath =
-			buildLogDirectory / L"ShootingGameBuild.log";
+			buildLogDirectory / (L"GameModuleBuild-" + std::to_wstring(GetCurrentProcessId()) + L".log");
 
-		const std::wstring configuration = GetBuildConfiguration();
-		const std::wstring msBuildArguments =
-			L"\"" + projectPath.wstring() + L"\"" +
-			L" /t:Build /p:Configuration=" + configuration +
-			L" /p:Platform=x64 /p:BuildProjectReferences=false" +
-			L" /m:1 /nr:false /nologo /v:minimal";
 		const std::wstring commandArguments =
-			L"/d /c call \"" + vcVarsPath.wstring() + L"\" && \"" +
-			msBuildPath.wstring() + L"\" " + msBuildArguments;
+			L"/d /s /c \"\"" + buildScript.wstring() + L"\" \"" +
+			projectPath.wstring() + L"\" /p:Configuration=" +
+			GetBuildConfiguration() + L" /p:Platform=x64 /p:BuildProjectReferences=false /fl /flp:\"logfile=" +
+			buildLogPath.wstring() + L"\"\"";
 
-		QFE_LOG("Building ShootingGame.dll with external MSBuild...", QFE::LogLevel::EditorInfo);
+		QFE_LOG("Building selected project: " + QFE::ConvertString(projectPath.wstring()), QFE::LogLevel::EditorInfo);
 		uint32_t exitCode = UINT32_MAX;
 		if (!QFE::ProcessUtil::RunExeAndWait(
 			commandProcessor.wstring(),
 			commandArguments,
 			repositoryRoot.wstring(),
-			buildLogPath.wstring(),
 			exitCode)) {
 			QFE_LOG(
-				"Failed to start or wait for external MSBuild. Log: " +
-				QFE::ConvertString(buildLogPath.wstring()),
+				"Failed to start or wait for BuildProject.bat.",
 				QFE::LogLevel::Error);
 			return false;
 		}
 		if (exitCode != 0) {
 			QFE_LOG(
-				"ShootingGame.dll build failed with exit code " + std::to_string(exitCode) +
+				"Project build failed with exit code " + std::to_string(exitCode) +
 				". Log: " + QFE::ConvertString(buildLogPath.wstring()),
 				QFE::LogLevel::Error);
 			return false;
 		}
 
-		QFE_LOG("ShootingGame.dll build succeeded.", QFE::LogLevel::EditorInfo);
+		QFE_LOG("Project build succeeded.", QFE::LogLevel::EditorInfo);
 		return true;
 	}
 }
@@ -315,12 +249,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems);
 
 		// Fileメニューからの要求を、描画処理が完了したフレーム境界で実行する。
-		if (gameEditor.ConsumeGameModuleBuildAndReloadRequest() &&
-			BuildShootingGameModule()) {
-			if (QFE::FRAMEWORK::ReloadWindowsGameModule(gameModule, engineSystems)) {
-				QFE_LOG("ShootingGame.dll reload succeeded.", QFE::LogLevel::EditorInfo);
-			} else {
-				QFE_LOG("ShootingGame.dll reload failed.", QFE::LogLevel::Error);
+		if (gameEditor.ConsumeGameModuleBuildAndReloadRequest()) {
+			std::wstring selectedProject;
+			if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
+				*engineSystems.windowManager, L"Visual C++ project", L"*.vcxproj", selectedProject)) {
+				const std::filesystem::path projectPath(selectedProject);
+				if (IsRegularFile(projectPath) &&
+					_wcsicmp(projectPath.extension().c_str(), L".vcxproj") == 0 &&
+					BuildGameModule(projectPath)) {
+					if (QFE::FRAMEWORK::ReloadWindowsGameModule(gameModule, engineSystems)) {
+						QFE_LOG("ShootingGame.dll reload succeeded.", QFE::LogLevel::EditorInfo);
+					} else {
+						QFE_LOG("ShootingGame.dll reload failed.", QFE::LogLevel::Error);
+					}
+				}
 			}
 		}
 	}
