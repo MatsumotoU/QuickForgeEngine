@@ -97,6 +97,16 @@ void QFE::GRAPHIC::ComputePipelineManager::CreateBuildInComputePSOs() {
 	// ビルトインのComputePSOを生成し、ハンドルを保存
 	builtInComputePSOHandles_[BuiltInComputePSOType::LinearToSRGB] =
 		GenerateComputePipelineStateObject(kCSFilePath, "LinearToSRGB.CS.hlsl");
+	builtInComputePSOHandles_[BuiltInComputePSOType::PostEffect_Grayscale] =
+		GenerateComputePipelineStateObject(kCSFilePath, "Grayscale.CS.hlsl");
+	builtInComputePSOHandles_[BuiltInComputePSOType::PostEffect_Sepia] =
+		GenerateComputePipelineStateObject(kCSFilePath, "Sepia.CS.hlsl");
+	builtInComputePSOHandles_[BuiltInComputePSOType::PostEffect_Invert] =
+		GenerateComputePipelineStateObject(kCSFilePath, "Invert.CS.hlsl");
+	builtInComputePSOHandles_[BuiltInComputePSOType::PostEffect_Vignette] =
+		GenerateComputePipelineStateObject(kCSFilePath, "Vignette.CS.hlsl");
+	builtInComputePSOHandles_[BuiltInComputePSOType::PostEffect_ColorCorrection] =
+		GenerateComputePipelineStateObject(kCSFilePath, "ColorCorrection.CS.hlsl");
 }
 
 ComputePSOHandle QFE::GRAPHIC::ComputePipelineManager::GetBuiltInComputePSOHandle(BuiltInComputePSOType type) const {

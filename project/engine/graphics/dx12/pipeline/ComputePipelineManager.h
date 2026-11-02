@@ -28,6 +28,11 @@ namespace QFE::GRAPHIC {
 	/// @brief ビルトインのコンピュートパイプラインステートオブジェクトの種類を表す列挙型
 	enum class BuiltInComputePSOType {
 		LinearToSRGB,
+		PostEffect_Grayscale,
+		PostEffect_Sepia,
+		PostEffect_Invert,
+		PostEffect_Vignette,
+		PostEffect_ColorCorrection,
 	};
 
 	/// @brief コンピュートパイプラインを管理するクラス
