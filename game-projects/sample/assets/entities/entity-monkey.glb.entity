@@ -1,0 +1,72 @@
+{
+    "entities": [
+        {
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "metallic": 0.0,
+                "smoothness": 0.5,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelAssetId": "499da821-946e-4aa0-a08a-b114de919b7d",
+                "modelName": "models/monkey.glb",
+                "textureName": ""
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "",
+                "name": "monkey.glb",
+                "uuid": "ca9d66f7-0323-4002-99c3-e2b7625e99b7"
+            },
+            "ShaderComponent": {
+                "castShadow": true,
+                "receiveShadow": true
+            },
+            "SkeletonAnimationComponent": {
+                "glbAnimationName": "",
+                "glbAnimationSpeed": 1.0,
+                "loopGlbAnimation": true,
+                "playGlbAnimation": true
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        }
+    ]
+}

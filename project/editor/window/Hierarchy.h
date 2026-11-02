@@ -11,13 +11,14 @@ namespace QFE {
 namespace QFE::SCENE {
 	class SceneManager;
 }
+namespace QFE::ASSET { class AssetManager; }
 
 namespace QFE::EDITOR {
 	/// @brief Entityを階層構造で表示するウィンドウ	
 	class Hierarchy final : public IEditorWindow {
 	public:
 		/// @brief このエンティティマネージャーのEntityを階層構造で表示するウィンドウを作成する
-		Hierarchy(QFE::SCENE::SceneManager* sceneManager);
+		Hierarchy(QFE::SCENE::SceneManager* sceneManager, QFE::ASSET::AssetManager& assets);
 		
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -43,6 +44,7 @@ namespace QFE::EDITOR {
 	private:
 		QFE::SCENE::SceneManager* sceneManager_;
 		EntityManager* entityManager_;
+		QFE::ASSET::AssetManager* assets_;
 		bool isActive_;
 		std::set<uint32_t> hierarchySelectedEntities_;
 		std::string groupNameInput_;

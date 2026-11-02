@@ -18,6 +18,10 @@ int wmain(int argc, wchar_t** argv) {
 	check(!importedId.empty() && manager.Registry().Find(importedId), "GLB import failed");
 	const auto imported = manager.LoadModel(importedId, error);
 	check(imported && imported->data && !imported->data->meshes.empty(), "Imported GLB did not load");
+	check(imported && imported->embeddedImageIds.size() == 1 &&
+		imported->data->meshes[0].material.embeddedTextureIndex == 0, "GLB embedded image was not registered or mapped");
+	const std::string embeddedImageId = imported && !imported->embeddedImageIds.empty() ? imported->embeddedImageIds[0] : "";
+	check(!embeddedImageId.empty() && !manager.ResolveSource(embeddedImageId, "image", error).empty(), "Embedded image ID did not resolve");
 	const auto objId = manager.ImportObj(std::filesystem::path(argv[3]), error);
 	check(!objId.empty() && manager.Registry().Find(objId), "OBJ import failed");
 	const auto obj = manager.LoadModel(objId, error);
@@ -40,6 +44,7 @@ int wmain(int argc, wchar_t** argv) {
 	const auto replaced = manager.LoadModel(importedId, error);
 	check(replaced && imported && replaced->revision == imported->revision + 1 && replaced->sourcePath != imported->sourcePath,
 		"Replacement did not preserve ID and update the model revision");
+	check(replaced && imported && replaced->embeddedImageIds == imported->embeddedImageIds, "GLB replacement changed embedded image IDs");
 	check(imported && imported->data && !imported->data->meshes.empty(), "Replacement invalidated the previous model");
 	const auto legacy = manager.LoadLegacyModel("test.glb", root / "assets/models", error);
 	check(legacy && legacy->data && legacy->loader && !legacy->data->meshes.empty(), "Legacy GLB load failed");
@@ -53,8 +58,13 @@ int wmain(int argc, wchar_t** argv) {
 	{ std::ofstream material(root / "assets/models/test.mtl"); material << "newmtl test"; }
 	{ std::ofstream image(root / "assets/models/icon.png"); image << "image"; }
 	check(manager.RegisterProjectFiles(error), "Legacy project registration failed");
-	check(manager.Registry().List().size() == 4 && manager.Registry().Find("model-1"), "Existing ID changed or MTL was registered");
-	check(manager.RegisterProjectFiles(error) && manager.Registry().List().size() == 4, "Repeated registration created duplicates");
+	const size_t registeredCount = 4 + (imported ? imported->embeddedImageIds.size() : 0);
+	check(manager.Registry().List().size() == registeredCount && manager.Registry().Find("model-1"), "Existing ID changed or MTL was registered");
+	check(manager.RegisterProjectFiles(error) && manager.Registry().List().size() == registeredCount, "Repeated registration created duplicates");
+	check(manager.FindLegacyAssetId("models/test.glb", "model") == "model-1" &&
+		manager.FindLegacyAssetId("resources/models/test.glb", "model") == "model-1" &&
+		manager.FindLegacyAssetId("box", "model").empty() && manager.FindLegacyAssetId("../outside.glb", "model").empty(),
+		"Legacy model path did not resolve safely");
 	std::string imageId;
 	for (const auto& asset : manager.Registry().List()) {
 		if (asset.source == "assets/models/icon.png") {
@@ -64,8 +74,79 @@ int wmain(int argc, wchar_t** argv) {
 		}
 	}
 	QFE::ASSET::AssetManager reopened;
-	check(reopened.Open(root, error) && reopened.Registry().Find("model-1") && reopened.Registry().List().size() == 4, "Registration was not persisted");
+	check(reopened.Open(root, error) && reopened.Registry().Find("model-1") && reopened.Registry().List().size() == registeredCount, "Registration was not persisted");
+	check(reopened.Registry().Register({"duplicate", "model", "duplicate", "assets/models/test.glb", {}, {}}, error) &&
+		reopened.FindLegacyAssetId("models/test.glb", "model").empty(), "Ambiguous legacy path resolved to an arbitrary ID");
 	check(reopened.LoadModel(importedId, error) != nullptr, "Imported GLB did not survive reopening");
+	const auto imagePath = std::filesystem::path(argv[3]).parent_path().parent_path() / "images/ship.png";
+	const auto optionObj = root / "options.obj";
+	{ std::ofstream file(optionObj); file << "mtllib options.mtl\nv 0 0 0\nv 1 0 0\nv 0 1 0\nvt 0 0\nvt 1 0\nvt 0 1\nusemtl m\nf 1/1 2/2 3/3\n"; }
+	std::filesystem::copy_file(imagePath, root / "option texture.png");
+	{ std::ofstream file(root / "options.mtl"); file << "newmtl m\nmap_Kd -clamp on -o -1 0 0 -s 1 1 1 option texture.png\n"; }
+	const auto optionModelId = manager.ImportObj(optionObj, error);
+	check(!optionModelId.empty() && manager.LoadModel(optionModelId, error), "OBJ texture options were not imported");
+	{ std::ofstream file(root / "options.mtl"); file << "newmtl m\nmap_Kd -unknown 1 option texture.png\n"; }
+	check(manager.ImportObj(optionObj, error).empty(), "Unsupported MTL option was accepted");
+	{ std::ofstream file(root / "first material.mtl"); file << "newmtl m\nKd 1 1 1\n"; }
+	{ std::ofstream file(root / "second.mtl"); file << "newmtl m2\nKd 1 0 0\n"; }
+	{ std::ofstream file(optionObj); file << "mtllib \"first material.mtl\" second.mtl\nv 0 0 0\nv 1 0 0\nv 0 1 0\nusemtl m\nf 1 2 3\n"; }
+	const auto multiMaterialId = manager.ImportObj(optionObj, error);
+	check(!multiMaterialId.empty(), "OBJ with multiple material libraries failed to import");
+	if (!multiMaterialId.empty()) {
+		const auto copiedDir = manager.ResolveSource(multiMaterialId, "model", error).parent_path();
+		check(std::filesystem::is_regular_file(copiedDir / "material-0.mtl") &&
+			std::filesystem::is_regular_file(copiedDir / "material-1.mtl"), "OBJ material libraries were not copied");
+	}
+	const auto differentGlb = std::filesystem::path(argv[2]).parent_path() / "monkey.glb";
+	check(!manager.ReplaceModel(importedId, differentGlb, error) &&
+		error == "Embedded images changed; their asset IDs cannot be matched automatically." && manager.LoadModel(importedId, error) == replaced,
+		"Changed GLB embedded images were silently remapped");
+	check(manager.ReplaceImage(embeddedImageId, imagePath, error) &&
+		manager.LoadModel(importedId, error)->embeddedImageIds[0] == embeddedImageId,
+		"Replacing an embedded image lost its model mapping");
+	const auto importedImageId = manager.ImportImage(imagePath, error);
+	check(!importedImageId.empty(), "Image import failed");
+	const auto firstImage = manager.ResolveSource(importedImageId, "image", error);
+	check(!firstImage.empty() && std::filesystem::is_regular_file(firstImage), "Imported image did not resolve");
+	check(manager.ReplaceImage(importedImageId, imagePath, error), "Image replacement failed");
+	const auto replacementImage = manager.ResolveSource(importedImageId, "image", error);
+	check(!replacementImage.empty() && replacementImage != firstImage && std::filesystem::is_regular_file(firstImage),
+		"Image replacement did not preserve ID and old source");
+	const auto badImage = root / "bad.png";
+	{ std::ofstream file(badImage); file << "not an image"; }
+	check(manager.ImportImage(badImage, error).empty(), "Invalid image import succeeded");
+	check(!manager.ReplaceImage(importedImageId, badImage, error) && manager.ResolveSource(importedImageId, "image", error) == replacementImage,
+		"Invalid image replacement changed the source");
+	{ std::ofstream file(root / "asset-registry.json.qfe-writing"); file << "blocked"; }
+	const auto countBeforeFailedImport = manager.Registry().List().size();
+	const auto imageFileCount = std::distance(std::filesystem::directory_iterator(root / "sources/images"), std::filesystem::directory_iterator{});
+	check(manager.ImportGlb(std::filesystem::path(argv[2]), error).empty() && manager.Registry().List().size() == countBeforeFailedImport &&
+		std::distance(std::filesystem::directory_iterator(root / "sources/images"), std::filesystem::directory_iterator{}) == imageFileCount,
+		"Failed GLB import left registered or copied embedded images");
+	check(manager.ImportImage(imagePath, error).empty() && manager.Registry().List().size() == countBeforeFailedImport,
+		"Failed registry save registered an image");
+	check(!manager.ReplaceImage(importedImageId, imagePath, error) && manager.ResolveSource(importedImageId, "image", error) == replacementImage,
+		"Failed registry save changed the image source");
+	std::filesystem::remove(root / "asset-registry.json.qfe-writing");
+	QFE::ASSET::AssetManager imageReopened;
+	check(imageReopened.Open(root, error) && imageReopened.ResolveSource(importedImageId, "image", error) == replacementImage,
+		"Image replacement did not survive reopening");
+	const auto bitmapPath = root / "replacement.bmp";
+	const unsigned char bitmap[] = {
+		'B', 'M', 58, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 0,
+		40, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 0,
+		0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0
+	};
+	{ std::ofstream file(bitmapPath, std::ios::binary); file.write(reinterpret_cast<const char*>(bitmap), sizeof(bitmap)); }
+	check(manager.ReplaceImage(importedImageId, bitmapPath, error) &&
+		manager.ResolveSource(importedImageId, "image", error).extension() == ".bmp" &&
+		manager.Registry().Find(importedImageId)->name.ends_with(".bmp"), "Image replacement across formats failed");
+	const auto countBeforeLegacyImageReplacement = manager.Registry().List().size();
+	check(!imageId.empty() && manager.ReplaceImage(imageId, imagePath, error), "Legacy image replacement failed");
+	check(manager.FindLegacyAssetId("models/icon.png", "image") == imageId, "Old image path did not resolve after replacement");
+	check(manager.RegisterProjectFiles(error) && manager.Registry().List().size() == countBeforeLegacyImageReplacement,
+		"Legacy image replacement registered the old source again");
 	std::filesystem::create_directories(root / "assets/scenes");
 	{ std::ofstream project(root / "project.json"); project << R"({"start_scene":"start.scene"})"; }
 	{ std::ofstream scene(root / "assets/scenes/start.scene"); scene << "{}"; }
@@ -77,6 +158,11 @@ int wmain(int argc, wchar_t** argv) {
 	check(packaged.Open(unpacked, error) && packaged.LoadModel(importedId, error) != nullptr, "Package did not preserve imported model ID and source");
 	check(packaged.LoadModel(objId, error) != nullptr, "Package did not preserve imported OBJ");
 	check(!imageId.empty() && !packaged.ResolveSource(imageId, "image", error).empty(), "Package did not preserve image asset ID");
+	check(!packaged.ResolveSource(importedImageId, "image", error).empty(), "Package did not preserve imported image ID");
+	const auto packagedModel = packaged.LoadModel(importedId, error);
+	check(!packaged.ResolveSource(embeddedImageId, "image", error).empty() && packagedModel &&
+		packagedModel->embeddedImageIds.size() == 1 && packagedModel->embeddedImageIds[0] == embeddedImageId,
+		"Package did not preserve embedded image mapping");
 	const auto first = manager.LoadModel("model-1", error);
 	check(first && first->data && !first->data->meshes.empty() && first->revision == 1, "Model load failed");
 	check(manager.LoadLegacyModel("asset-id/model-1/1/test.glb", root / "assets", error) == first, "Registered model key did not resolve");
@@ -97,7 +183,8 @@ int wmain(int argc, wchar_t** argv) {
 	check(manager.RegisterProjectFiles(error), "Registration before replacement failed");
 	const auto assetCountBeforeReplacement = manager.Registry().List().size();
 	check(manager.ReplaceModel("model-1", std::filesystem::path(argv[2]), error), "Legacy model replacement failed");
-	check(manager.RegisterProjectFiles(error) && manager.Registry().List().size() == assetCountBeforeReplacement,
+	check(manager.FindLegacyAssetId("models/test.glb", "model") == "model-1", "Old model path did not resolve after replacement");
+	check(manager.RegisterProjectFiles(error) && manager.Registry().List().size() == assetCountBeforeReplacement + 1,
 		"Replacement caused the old source to be registered as a duplicate");
 	return ok ? 0 : 1;
 }

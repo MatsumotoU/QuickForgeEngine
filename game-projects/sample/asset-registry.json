@@ -1,0 +1,389 @@
+{
+    "assets": [
+        {
+            "dependencies": [],
+            "id": "849cc813-5c67-491c-aee4-a35b8a709bf0",
+            "name": "game.mp3",
+            "previous_sources": [],
+            "source": "assets/audio/bgm/game.mp3",
+            "type": "audio"
+        },
+        {
+            "dependencies": [],
+            "id": "fdc24486-1c8f-495a-a466-488e6a99009a",
+            "name": "Bomb.entity",
+            "previous_sources": [],
+            "source": "assets/entities/Bomb.entity",
+            "type": "entity"
+        },
+        {
+            "dependencies": [],
+            "id": "22d9e31e-607e-4156-b17e-e0bba749558a",
+            "name": "Bullet.entity",
+            "previous_sources": [],
+            "source": "assets/entities/Bullet.entity",
+            "type": "entity"
+        },
+        {
+            "dependencies": [],
+            "id": "b9d24490-bede-4f65-bf28-c3c2776b226d",
+            "name": "Enemy.entity",
+            "previous_sources": [],
+            "source": "assets/entities/Enemy.entity",
+            "type": "entity"
+        },
+        {
+            "dependencies": [],
+            "id": "f9fd0c45-9607-48ac-a73f-15e9cffa6bae",
+            "name": "EnemyBullet.entity",
+            "previous_sources": [],
+            "source": "assets/entities/EnemyBullet.entity",
+            "type": "entity"
+        },
+        {
+            "dependencies": [],
+            "id": "da7c9713-5861-4ff4-9805-5493e1a26712",
+            "name": "entity-GAme.entity",
+            "previous_sources": [],
+            "source": "assets/entities/entity-GAme.entity",
+            "type": "entity"
+        },
+        {
+            "dependencies": [],
+            "id": "ee125081-2a6b-4ecd-90fb-2d87dd5465a2",
+            "name": "mirror.entity",
+            "previous_sources": [],
+            "source": "assets/entities/mirror.entity",
+            "type": "entity"
+        },
+        {
+            "dependencies": [],
+            "id": "717361c9-b7b0-4347-a639-9b1a766e7fd3",
+            "name": "Player.entity",
+            "previous_sources": [],
+            "source": "assets/entities/Player.entity",
+            "type": "entity"
+        },
+        {
+            "dependencies": [],
+            "id": "2153a861-6ab2-427e-b1fd-c6d67dd208cb",
+            "name": "Sprite.entity",
+            "previous_sources": [],
+            "source": "assets/entities/Sprite.entity",
+            "type": "entity"
+        },
+        {
+            "dependencies": [],
+            "id": "9a4d1c8c-9fe5-4f45-b97b-80451c0d283e",
+            "name": "doc.png",
+            "previous_sources": [],
+            "source": "assets/images/doc.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "749f508f-f07f-48a0-887b-b0052a2067c9",
+            "name": "earth.png",
+            "previous_sources": [],
+            "source": "assets/images/earth.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "0483686f-3b42-4a9c-b96e-e30c5281db34",
+            "name": "expressway_fl.png",
+            "previous_sources": [],
+            "source": "assets/images/expressway_fl.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "678dd3c6-4fa8-4ba7-b40b-d9297f7c2898",
+            "name": "monsterBall.png",
+            "previous_sources": [],
+            "source": "assets/images/monsterBall.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "1493ed69-86ae-45c7-934e-5b87ecd8343d",
+            "name": "ship.png",
+            "previous_sources": [],
+            "source": "assets/images/ship.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "4d59ae17-83f9-46b4-8126-7b6e7ebe1cd1",
+            "name": "static_ground_tokyo.png",
+            "previous_sources": [],
+            "source": "assets/images/static_ground_tokyo.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "8d5fe811-1fb5-4885-a350-4d2b56e36976",
+            "name": "uvChecker.png",
+            "previous_sources": [],
+            "source": "assets/images/uvChecker.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "0b281d93-aa54-49da-be32-f41a9ef9fd91",
+            "name": "white1x1.png",
+            "previous_sources": [],
+            "source": "assets/images/white1x1.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "0cb81f28-e574-4a5d-bc4e-e5212e02dbb7",
+            "name": "bomb.obj",
+            "previous_sources": [],
+            "source": "assets/models/bomb.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "cbf2fc02-e46e-4210-87b1-ade31d505ab3",
+            "name": "doc.obj",
+            "previous_sources": [],
+            "source": "assets/models/doc.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "12d887f6-802a-496e-b8d1-36640db2d60d",
+            "name": "earth.obj",
+            "previous_sources": [],
+            "source": "assets/models/earth.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "e1caa74c-0eb3-4992-bf59-1d4455cd97f2",
+            "name": "expressway_fl.obj",
+            "previous_sources": [],
+            "source": "assets/models/expressway_fl.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "e34089a9-fa97-4bb6-8683-538e87c815eb",
+            "name": "ground.obj",
+            "previous_sources": [],
+            "source": "assets/models/ground.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "6677da71-9ebd-4df9-b676-3ddcf1c61e24",
+            "name": "hangar.obj",
+            "previous_sources": [],
+            "source": "assets/models/hangar.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "4e1b46c8-34c0-4166-8501-bfca632e03c1",
+            "name": "ico.obj",
+            "previous_sources": [],
+            "source": "assets/models/ico.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "499da821-946e-4aa0-a08a-b114de919b7d",
+            "name": "monkey.glb",
+            "previous_sources": [],
+            "source": "assets/models/monkey.glb",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "1f0d7178-5597-4818-a579-4824c3763a10",
+            "name": "player.obj",
+            "previous_sources": [],
+            "source": "assets/models/player.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "18621b41-64ab-435a-ada0-88889477d16b",
+            "name": "qube.obj",
+            "previous_sources": [],
+            "source": "assets/models/qube.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "115869e7-0bd1-42ee-9ad4-589f286791a7",
+            "name": "ring.obj",
+            "previous_sources": [],
+            "source": "assets/models/ring.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "66c7c4a9-bd92-4269-ab44-d03fce2d550b",
+            "name": "ship.obj",
+            "previous_sources": [],
+            "source": "assets/models/ship.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "78e11b65-153a-4a99-a352-0f94a9e65fb5",
+            "name": "static_ground_tokyo.obj",
+            "previous_sources": [],
+            "source": "assets/models/static_ground_tokyo.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "9df6b1b2-3d08-4ac4-9e3a-05b41fc48720",
+            "name": "TwistBoxTwoBones.glb",
+            "previous_sources": [],
+            "source": "assets/models/TwistBoxTwoBones.glb",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "59a64f52-dbfd-4f88-813c-06724abc585d",
+            "name": "whitePlate.obj",
+            "previous_sources": [],
+            "source": "assets/models/whitePlate.obj",
+            "type": "model"
+        },
+        {
+            "dependencies": [],
+            "id": "21821615-4b1a-4853-b020-3098fb3b8780",
+            "name": "GameScene.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/GameScene.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "1a00c753-fb26-41d9-a85b-49c3de8fbada",
+            "name": "Hangar.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/Hangar.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "4c1dbe16-5bb5-4c7d-8893-fd563ce70d5e",
+            "name": "inspector.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/inspector.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "b6e4ca78-7303-44c8-838e-562e8633554f",
+            "name": "ResultScene.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/ResultScene.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "fedcde78-7d42-4cc5-bb54-b89a7fbacccd",
+            "name": "scene.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/scene.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "7f873f85-fd61-4ec2-a351-8e6271ce3915",
+            "name": "stage_japan.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/stage_japan.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "bc3debf2-c668-4724-b4b8-36c3937a439f",
+            "name": "test-legacy.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/test-legacy.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "f8efa24a-6320-4d53-a4af-a3102894ed03",
+            "name": "test.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/test.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "97eb4273-a55b-4b2b-ac48-a1f03fee68a7",
+            "name": "TwistBoxTwoBones.scene",
+            "previous_sources": [],
+            "source": "assets/scenes/TwistBoxTwoBones.scene",
+            "type": "scene"
+        },
+        {
+            "dependencies": [],
+            "id": "bdf4e752-9be4-41ca-924f-548abeab6de3",
+            "name": "LuaApiDefinition.lua",
+            "previous_sources": [],
+            "source": "assets/scripts/LuaApiDefinition.lua",
+            "type": "script"
+        },
+        {
+            "dependencies": [],
+            "id": "5aa7c08a-4012-40e5-bb8a-4deb685dd2cf",
+            "name": "Script_PlayerMove.lua",
+            "previous_sources": [],
+            "source": "assets/scripts/Script_PlayerMove.lua",
+            "type": "script"
+        },
+        {
+            "dependencies": [],
+            "id": "18ddb6c7-ab67-4ba8-aecf-1deaa08e4512",
+            "name": "rostock_laage_airport_4k.dds",
+            "previous_sources": [],
+            "source": "assets/skybox/rostock_laage_airport_4k.dds",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "aa188afa-d1ba-4b40-bf11-a08b8b82f9ad",
+            "name": "sky_06_2k.dds",
+            "previous_sources": [],
+            "source": "assets/skybox/sky_06_2k.dds",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "3459d963-3959-4415-b588-467cc0321ce7",
+            "name": "voxel_day_cubemap.dds",
+            "previous_sources": [],
+            "source": "assets/skybox/voxel_day_cubemap.dds",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "a73d2548-6969-4f32-ab31-6a2757a7a4d0",
+            "name": "voxel_day_panorama.png",
+            "previous_sources": [],
+            "source": "assets/skybox/voxel_day_panorama.png",
+            "type": "image"
+        },
+        {
+            "dependencies": [],
+            "id": "b2e246e4-b6e4-423d-a73a-ab793df808f8",
+            "name": "entity-monkey.glb.entity",
+            "previous_sources": [],
+            "source": "assets/entities/entity-monkey.glb.entity",
+            "type": "entity"
+        }
+    ],
+    "version": 1
+}

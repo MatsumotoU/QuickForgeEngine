@@ -45,7 +45,33 @@ namespace QFE::ASSET {
 	};
 }
 
+std::vector<EmbeddedImageData> AssimpModelLoader::GetGlbEmbeddedImages(const std::string& filePath) const {
+	const auto found = animatedGlbCache.find(filePath);
+	if (found == animatedGlbCache.end() || !found->second->scene) return {};
+	const auto* scene = found->second->scene;
+	std::vector<EmbeddedImageData> images;
+	images.reserve(scene->mNumTextures);
+	for (unsigned int i = 0; i < scene->mNumTextures; ++i) {
+		const auto* texture = scene->mTextures[i];
+		EmbeddedImageData image;
+		if (texture && texture->mHeight == 0 && texture->pcData) {
+			image.format.assign(texture->achFormatHint,
+				std::find(std::begin(texture->achFormatHint), std::end(texture->achFormatHint), '\0'));
+			const auto* data = reinterpret_cast<const uint8_t*>(texture->pcData);
+			image.bytes.assign(data, data + texture->mWidth);
+		}
+		images.push_back(std::move(image));
+	}
+	return images;
+}
+
 namespace {
+	int EmbeddedTextureIndex(const aiScene* scene, const aiTexture* texture) {
+		for (unsigned int i = 0; i < scene->mNumTextures; ++i) {
+			if (scene->mTextures[i] == texture && i <= static_cast<unsigned int>((std::numeric_limits<int>::max)())) return static_cast<int>(i);
+		}
+		return -1;
+	}
 	std::string ClipName(const aiAnimation* animation, unsigned int index) {
 		return animation->mName.length > 0 ? animation->mName.C_Str() : "Animation " + std::to_string(index);
 	}
@@ -67,6 +93,7 @@ namespace {
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) != AI_SUCCESS) return;
 		const aiTexture* embedded = scene->GetEmbeddedTexture(texturePath.C_Str());
 		if (embedded && embedded->mHeight == 0) {
+			output.embeddedTextureIndex = EmbeddedTextureIndex(scene, embedded);
 			output.textureName = filePath + "#" + texturePath.C_Str();
 			const auto* begin = reinterpret_cast<const uint8_t*>(embedded->pcData);
 			output.embeddedTextureData.assign(begin, begin + embedded->mWidth);
@@ -278,6 +305,7 @@ namespace {
 				material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) != AI_SUCCESS) continue;
 			if (const aiTexture* embedded = scene->GetEmbeddedTexture(texturePath.C_Str());
 				embedded != nullptr && embedded->mHeight == 0) {
+				combined.material.embeddedTextureIndex = EmbeddedTextureIndex(scene, embedded);
 				combined.material.textureName = filePath + "#" + texturePath.C_Str();
 				const auto* begin = reinterpret_cast<const uint8_t*>(embedded->pcData);
 				combined.material.embeddedTextureData.assign(begin, begin + embedded->mWidth);
@@ -442,7 +470,12 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 			return true;
 		}
 		scene = importer->ApplyPostProcessing(aiProcess_PreTransformVertices);
-		return scene && LoadStaticGlbScene(scene, filePath, modelData);
+		if (!scene || !LoadStaticGlbScene(scene, filePath, modelData)) return false;
+		auto asset = std::make_shared<AnimatedGlbScene>();
+		asset->scene = scene;
+		asset->importer = std::move(importer);
+		animatedGlbCache[filePath] = std::move(asset);
+		return true;
 	}
 
 	for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; ++meshIdx) {

@@ -12,6 +12,7 @@ namespace QFE::ASSET {
 		std::string source;
 		std::vector<std::string> dependencies;
 		std::vector<std::string> previousSources; ///< 旧ファイルを自動登録し直さないための履歴。
+		std::vector<std::string> embeddedImageIds; ///< GLBの画像番号に対応するアセットID。
 	};
 
 	/// @brief プロジェクト単位のアセット登録情報を管理する。

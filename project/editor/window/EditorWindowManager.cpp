@@ -45,7 +45,7 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 	sceneManager_ = sceneManager;
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	editorWindowsMap_.clear();
-	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager);
+	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager, assetManager);
 	editorWindowsMap_[EditorWindowType::Inspector] =
 		std::make_unique<Inspector>(&entityManager, &assetManager, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);

@@ -58,7 +58,7 @@ void QFE::EDITOR::AcceptAssetDrop(SCENE::SceneManager* sceneManager, EditorComma
 			std::error_code error;
 			if (bytes[payload->DataSize - 1] == '\0' && !path.is_absolute() &&
 				(PROJECT::IsWithin(assetPath, PROJECT::Assets()) ||
-					(GetAssetKind(path) == AssetKind::Model && PROJECT::IsWithin(assetPath, PROJECT::Root() / "sources"))) &&
+					((GetAssetKind(path) == AssetKind::Model || GetAssetKind(path) == AssetKind::Sprite) && PROJECT::IsWithin(assetPath, PROJECT::Root() / "sources"))) &&
 				std::filesystem::is_regular_file(assetPath, error) && !error) {
 				const AssetKind kind = GetAssetKind(path);
 				auto& manager = sceneManager->GetCurrentSceneEntityManager();

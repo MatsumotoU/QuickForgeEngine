@@ -77,11 +77,12 @@ bool CopyBytes(std::istream& in, std::ostream& out, std::uint64_t size) {
 }
 
 // 完成した一時ファイルを最後に移動し、失敗時に既存の出力ファイルを壊さない。
-bool ReplaceFile(const std::filesystem::path& source, const std::filesystem::path& target) {
+bool ReplaceFile(const std::filesystem::path& source, const std::filesystem::path& target, std::error_code& error) {
 #ifdef _WIN32
-    return MoveFileExW(source.c_str(), target.c_str(), MOVEFILE_REPLACE_EXISTING) != 0;
+    if (MoveFileExW(source.c_str(), target.c_str(), MOVEFILE_REPLACE_EXISTING) != 0) { error.clear(); return true; }
+    error = std::error_code(static_cast<int>(GetLastError()), std::system_category());
+    return false;
 #else
-    std::error_code error;
     std::filesystem::rename(source, target, error);
     return !error;
 #endif
@@ -162,9 +163,14 @@ bool Write(const std::filesystem::path& project, const std::filesystem::path& ou
             if (!out || !CopyBytes(in, out, size)) { success = false; break; }
         }
         out.close();
-        if (!success || !out || !ReplaceFile(temporary, output)) {
+        if (!success || !out) {
             std::filesystem::remove(temporary, error);
-            errorText = "Failed to write or replace the package."; return false;
+            errorText = "Failed to write the package contents."; return false;
+        }
+        std::error_code replaceError;
+        if (!ReplaceFile(temporary, output, replaceError)) {
+            std::filesystem::remove(temporary, error);
+            errorText = "Failed to replace the package (" + std::to_string(replaceError.value()) + "): " + replaceError.message(); return false;
         }
         return true;
     } catch (const std::exception&) {

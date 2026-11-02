@@ -655,6 +655,14 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	std::vector<RaytracingInstanceMeta> instanceMetaAligned;
 	std::unordered_map<std::string, RaytracingInstanceMeta> staticModelMeta;
 	std::unordered_set<uint32_t> activeAnimatedEntities;
+	// 旧シーンのパスは、一意に対応する登録がある場合だけIDへ移行する。
+	// 未登録や重複は旧パスのまま残し、保存ファイルを自動で書き換えない。
+	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t, QFE::SCENE::ModelRenderComponent& model) {
+		if (model.modelAssetId.empty()) model.modelAssetId = systems.assetManager->FindLegacyAssetId(model.modelName, "model");
+	});
+	entityManager.Each<QFE::SCENE::SpriteRenderComponent>([&](uint32_t, QFE::SCENE::SpriteRenderComponent& sprite) {
+		if (sprite.textureAssetId.empty()) sprite.textureAssetId = systems.assetManager->FindLegacyAssetId(sprite.textureName, "image");
+	});
 
 	entityManager.Each<QFE::SCENE::ModelRenderComponent, QFE::SCENE::TransformComponent>(
 		[&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp, QFE::SCENE::TransformComponent& transformComp) {
@@ -820,11 +828,25 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			if (!modelRenderComp.textureName.empty()) {
 				effectiveTextureName = modelRenderComp.textureName;
 			}
+			bool registeredEmbedded = false;
+			if (modelRenderComp.textureName.empty() && modelMaterial && modelMaterial->embeddedTextureIndex >= 0 &&
+				!modelAsset->embeddedImageIds.empty()) {
+				const auto index = static_cast<size_t>(modelMaterial->embeddedTextureIndex);
+				if (index >= modelAsset->embeddedImageIds.size()) {
+					modelRenderComp.renderErrorMessage = "Missing embedded image asset mapping."; return;
+				}
+				std::string error;
+				const auto path = systems.assetManager->ResolveSource(modelAsset->embeddedImageIds[index], "image", error);
+				if (path.empty()) { modelRenderComp.renderErrorMessage = "Failed to resolve embedded image: " + error; return; }
+				const auto utf8 = path.generic_u8string();
+				effectiveTextureName.assign(reinterpret_cast<const char*>(utf8.data()), utf8.size());
+				registeredEmbedded = true;
+			}
 			if (modelMaterial) {
 				materialData->color *= modelMaterial->baseColor;
 			}
 			if (!effectiveTextureName.empty()) {
-				if (modelRenderComp.textureName.empty() && modelMaterial &&
+				if (!registeredEmbedded && modelRenderComp.textureName.empty() && modelMaterial &&
 					!modelMaterial->embeddedTextureData.empty()) {
 					if (!resources.textureHandleMap.contains(effectiveTextureName)) {
 						const auto& bytes = modelMaterial->embeddedTextureData;

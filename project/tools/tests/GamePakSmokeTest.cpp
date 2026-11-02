@@ -2,6 +2,11 @@
 #include "../../engine/assetfactory/game-data/AssetRegistry.h"
 #include <fstream>
 #include <iostream>
+#include <iterator>
+#ifdef _WIN32
+#define NOMINMAX
+#include <Windows.h>
+#endif
 
 int wmain(int argc, wchar_t** argv) {
     if (argc != 2) return 2;
@@ -18,14 +23,20 @@ int wmain(int argc, wchar_t** argv) {
     { std::ofstream out(project / "asset-registry.json"); out << R"({"version":1,"assets":[{"id":"model-1","type":"model","name":"ship","source":"sources/models/ship.glb","dependencies":[]}]})"; }
     { std::ofstream out(project / "sources" / "models" / "ship.glb"); out << "source"; }
     { std::ofstream out(assets / "images" / "image.bin", std::ios::binary); out << "image bytes"; }
+    const std::string binaryData("\x00\x01\xff\x7f\x00\x42", 6);
+    { std::ofstream out(assets / "images" / "binary.bin", std::ios::binary); out.write(binaryData.data(), static_cast<std::streamsize>(binaryData.size())); }
     const auto package = root / "game.qfepak";
     const auto extracted = root / "unpacked";
     std::filesystem::create_directory(extracted);
     std::string error;
     const auto check = [](bool ok, const char* message) { if (!ok) std::cerr << message << '\n'; return ok; };
+    const auto checkPak = [&](bool passed, const char* message) {
+        if (!passed) std::cerr << message << ": " << error << '\n';
+        return passed;
+    };
     bool ok = true;
-    ok &= check(QFE::PAK::Write(project, package, error), "Export failed");
-    ok &= check(QFE::PAK::Extract(package, extracted, error), "Extract failed");
+    ok &= checkPak(QFE::PAK::Write(project, package, error), "Export failed");
+    ok &= checkPak(QFE::PAK::Extract(package, extracted, error), "Extract failed");
     ok &= check(std::filesystem::is_regular_file(extracted / "assets" / "scenes" / "start.scene"), "Scene missing");
     ok &= check(std::filesystem::is_regular_file(extracted / "assets" / "entities" / "player.entity"), "Entity missing");
     ok &= check(std::filesystem::is_regular_file(extracted / "asset-registry.json"), "Registry missing");
@@ -35,15 +46,44 @@ int wmain(int argc, wchar_t** argv) {
     std::ifstream image(extracted / "assets" / "images" / "image.bin", std::ios::binary);
     std::string text; std::getline(image, text);
     ok &= check(text == "image bytes", "Extracted data changed");
+    {
+        std::ifstream binary(extracted / "assets" / "images" / "binary.bin", std::ios::binary);
+        const std::string decoded{std::istreambuf_iterator<char>(binary), std::istreambuf_iterator<char>()};
+        ok &= check(binary.is_open() && decoded == binaryData, "Extracted binary data changed");
+    }
+    const auto readBytes = [](const std::filesystem::path& path) {
+        std::ifstream input(path, std::ios::binary);
+        return std::string(std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>());
+    };
+    const auto beforeFailedExport = readBytes(package);
+    auto occupiedTemporary = package;
+    occupiedTemporary += L".qfe-writing";
+    { std::ofstream out(occupiedTemporary, std::ios::binary); out << "existing temporary"; }
+    ok &= check(!QFE::PAK::Write(project, package, error), "Export accepted an existing temporary file");
+    ok &= check(readBytes(package) == beforeFailedExport && readBytes(occupiedTemporary) == "existing temporary",
+        "Failed export modified an existing file");
+    std::filesystem::remove(occupiedTemporary);
+#ifdef _WIN32
+    const HANDLE lockedPackage = CreateFileW(package.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    ok &= check(lockedPackage != INVALID_HANDLE_VALUE, "Could not lock the existing package for testing");
+    if (lockedPackage != INVALID_HANDLE_VALUE) {
+        const bool replacedWhileLocked = QFE::PAK::Write(project, package, error);
+        CloseHandle(lockedPackage);
+        ok &= check(!replacedWhileLocked && error.starts_with("Failed to replace the package ("),
+            "Locked output did not report a replacement error");
+        ok &= check(readBytes(package) == beforeFailedExport && !std::filesystem::exists(occupiedTemporary),
+            "Failed replacement changed the existing package or left a temporary file");
+    }
+#endif
     { std::ofstream out(project / "project.json"); out << R"({"name":"test","version":1,"start_scene":"start"})"; }
-    ok &= check(QFE::PAK::Write(project, package, error), "Extensionless .scene export failed");
+    ok &= checkPak(QFE::PAK::Write(project, package, error), "Extensionless .scene export failed");
     std::filesystem::rename(assets / "scenes" / "start.scene", assets / "scenes" / "start.json");
-    ok &= check(QFE::PAK::Write(project, package, error), "Legacy extensionless .json export failed");
+    ok &= checkPak(QFE::PAK::Write(project, package, error), "Legacy extensionless .json export failed");
     std::filesystem::remove(project / "asset-registry.json");
     std::filesystem::remove(project / "sources" / "models" / "ship.glb");
     std::filesystem::remove(project / "sources" / "models");
     std::filesystem::remove(project / "sources");
-    ok &= check(QFE::PAK::Write(project, package, error), "Legacy project export failed");
+    ok &= checkPak(QFE::PAK::Write(project, package, error), "Legacy project export failed");
     ok &= check(!QFE::PAK::Write(project, assets / "bad.qfepak", error), "Package inside assets accepted");
     ok &= check(!QFE::PAK::Write(project, project / "sources" / "bad.qfepak", error), "Package inside sources accepted");
     ok &= check(!QFE::PAK::Write(project, project / "project.json", error), "Project metadata could be overwritten");
@@ -66,7 +106,7 @@ int wmain(int argc, wchar_t** argv) {
         entry("assets/scenes/start.json", "scene");
     }
     const auto legacyRoot = root / "legacy"; std::filesystem::create_directory(legacyRoot);
-    ok &= check(QFE::PAK::Extract(legacyPackage, legacyRoot, error), "Legacy version 1 package was rejected");
+    ok &= checkPak(QFE::PAK::Extract(legacyPackage, legacyRoot, error), "Legacy version 1 package was rejected");
     ok &= check(std::filesystem::is_regular_file(legacyRoot / "assets/scenes/start.json"), "Legacy scene missing");
     const auto invalidLegacy = root / "invalid-legacy.qfepak";
     {

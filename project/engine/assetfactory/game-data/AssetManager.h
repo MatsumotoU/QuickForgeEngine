@@ -13,6 +13,7 @@ namespace QFE::ASSET {
 		std::shared_ptr<const ModelData> ownedData; ///< 組み込みモデル用データ。
 		std::shared_ptr<const AssimpModelLoader> loader; ///< GLBのボーン・クリップデータの所有元。
 		std::string sourcePath;
+		std::vector<std::string> embeddedImageIds;
 		uint64_t revision = 0;
 	};
 
@@ -33,10 +34,16 @@ namespace QFE::ASSET {
 		std::string ImportGlb(const std::filesystem::path& source, std::string& error);
 		/// @brief OBJと参照するMTL・画像を検証してプロジェクトへ取り込む。
 		std::string ImportObj(const std::filesystem::path& source, std::string& error);
+		/// @brief 画像を検証してプロジェクトへ取り込み、アセットIDを返す。
+		std::string ImportImage(const std::filesystem::path& source, std::string& error);
+		/// @brief 登録済み画像を同じIDのまま置き換える。
+		bool ReplaceImage(const std::string& id, const std::filesystem::path& source, std::string& error);
 		/// @brief 登録済みモデルを同じIDのまま置き換える。失敗時は既存データを保持する。
 		bool ReplaceModel(const std::string& id, const std::filesystem::path& source, std::string& error);
 		/// @brief 登録IDと種類からプロジェクト内の元ファイルを解決する。
 		std::filesystem::path ResolveSource(const std::string& id, const std::string& type, std::string& error) const;
+		/// @brief 旧パスに一意に対応する登録IDを返す。未登録や曖昧な場合は空。
+		std::string FindLegacyAssetId(const std::string& path, const std::string& type) const;
 		/// @brief 登録情報を取得する。
 		AssetRegistry& Registry() { return registry_; }
 		/// @brief 読み取り専用の登録情報を取得する。

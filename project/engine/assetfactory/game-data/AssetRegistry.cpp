@@ -45,7 +45,8 @@ bool QFE::ASSET::AssetRegistry::Open(const std::filesystem::path& projectRoot, s
 			for (const auto& item : json.at("assets")) {
 				AssetMetadata entry{item.at("id").get<std::string>(), item.at("type").get<std::string>(),
 					item.at("name").get<std::string>(), item.at("source").get<std::string>(),
-					item.value("dependencies", std::vector<std::string>{}), item.value("previous_sources", std::vector<std::string>{})};
+					item.value("dependencies", std::vector<std::string>{}), item.value("previous_sources", std::vector<std::string>{}),
+					item.value("embedded_image_ids", std::vector<std::string>{})};
 				if (!ValidAsset(entry, root) || std::any_of(loaded.begin(), loaded.end(),
 					[&](const auto& other) { return other.id == entry.id; })) {
 					error = "Invalid asset entry or duplicate ID."; return false;
@@ -88,7 +89,8 @@ bool QFE::ASSET::AssetRegistry::Save(std::string& error) const {
 	nlohmann::json json = {{"version", 1}, {"assets", nlohmann::json::array()}};
 	for (const auto& entry : assets_) {
 		json["assets"].push_back({{"id", entry.id}, {"type", entry.type}, {"name", entry.name},
-			{"source", entry.source}, {"dependencies", entry.dependencies}, {"previous_sources", entry.previousSources}});
+			{"source", entry.source}, {"dependencies", entry.dependencies}, {"previous_sources", entry.previousSources},
+			{"embedded_image_ids", entry.embeddedImageIds}});
 	}
 	const auto target = root_ / "asset-registry.json";
 	const auto temporary = root_ / "asset-registry.json.qfe-writing";

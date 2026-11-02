@@ -19,6 +19,13 @@ namespace {
 		error = "Select a GLB or OBJ model.";
 		return {};
 	}
+	std::string ImportFile(QFE::ASSET::AssetManager& assets, const std::filesystem::path& path, std::string& error) {
+		std::string extension = path.extension().string();
+		std::transform(extension.begin(), extension.end(), extension.begin(),
+			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+		if (extension == ".glb" || extension == ".obj") return ImportModel(assets, path, error);
+		return assets.ImportImage(path, error);
+	}
 }
 
 QFE::EDITOR::AssetBrowser::AssetBrowser(ASSET::AssetManager& assets, WINDOW::IGameWindowManager& windowManager)
@@ -38,8 +45,8 @@ void QFE::EDITOR::AssetBrowser::Refresh() {
 	for (const auto& asset : assets_->Registry().List()) {
 		if (asset.type == "other") continue;
 		const bool legacy = asset.source.starts_with("assets/");
-		if (!legacy && asset.type != "model") continue;
-		const std::string path = legacy ? asset.source.substr(7) : "models/" + asset.name;
+		if (!legacy && asset.type != "model" && asset.type != "image") continue;
+		const std::string path = legacy ? asset.source.substr(7) : (asset.type == "model" ? "models/" : "images/") + asset.name;
 		std::string lower = path;
 		std::transform(lower.begin(), lower.end(), lower.begin(),
 			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
@@ -73,7 +80,7 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
 			const float y = static_cast<float>(file.y);
 			if (x < position.x || y < position.y || x >= position.x + size.x || y >= position.y + size.y) continue;
 			std::string error;
-			if (!ImportModel(*assets_, std::filesystem::path(QFE::ConvertString(file.path)), error).empty()) imported = true;
+			if (!ImportFile(*assets_, std::filesystem::path(QFE::ConvertString(file.path)), error).empty()) imported = true;
 			else dropError = error;
 		}
 		if (imported) Refresh();
@@ -82,6 +89,13 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
 			std::wstring path;
 			if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Model Files (*.glb;*.obj)", L"*.glb;*.obj", path)) {
 				if (!ImportModel(*assets_, std::filesystem::path(path), status_).empty()) Refresh();
+			}
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Import Image...")) {
+			std::wstring path;
+			if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff)", L"*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff", path)) {
+				if (!assets_->ImportImage(std::filesystem::path(path), status_).empty()) Refresh();
 			}
 		}
 		ImGui::SameLine();
@@ -116,6 +130,14 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
 							std::wstring replacement;
 							if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Model Files (*.glb;*.obj)", L"*.glb;*.obj", replacement) &&
 								assets_->ReplaceModel(item.id, std::filesystem::path(replacement), status_)) refreshRequested = true;
+						}
+						ImGui::EndPopup();
+					}
+					if ((extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tif" || extension == ".tiff") && ImGui::BeginPopupContextItem("ImageContext")) {
+						if (ImGui::MenuItem("Replace Image...")) {
+							std::wstring replacement;
+							if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff)", L"*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff", replacement) &&
+								assets_->ReplaceImage(item.id, std::filesystem::path(replacement), status_)) refreshRequested = true;
 						}
 						ImGui::EndPopup();
 					}

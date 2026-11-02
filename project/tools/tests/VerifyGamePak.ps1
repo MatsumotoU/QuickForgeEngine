@@ -1,3 +1,4 @@
+param([ValidateRange(1, 10000)][int]$Repeat = 1)
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../../..')).Path
 $generated = Join-Path $repo 'generated'
@@ -18,14 +19,16 @@ New-Item -ItemType Directory -Path $generated -Force | Out-Null
 "@ | Set-Content -LiteralPath $testProject -Encoding utf8
 & (Join-Path $repo 'project/tools/BuildProject.bat') $testProject /p:Configuration=Release /p:Platform=x64 /m:1 /v:minimal /nologo
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-$testRoot = Join-Path $generated ('game-pak-check-' + [guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Path $testRoot | Out-Null
-try {
-    & (Join-Path $generated 'game-pak-test/bin/GamePakTest.exe') $testRoot
-    if ($LASTEXITCODE -ne 0) { throw "Package checks failed: $LASTEXITCODE" }
-    Write-Host 'Game package checks passed.'
-} finally {
-    $resolved = (Resolve-Path -LiteralPath $testRoot).Path
-    if ((Split-Path -Parent $resolved) -ne (Resolve-Path -LiteralPath $generated).Path -or -not (Split-Path -Leaf $resolved).StartsWith('game-pak-check-')) { throw 'Unexpected test directory.' }
-    Remove-Item -LiteralPath $resolved -Recurse -Force
+for ($iteration = 1; $iteration -le $Repeat; ++$iteration) {
+    $testRoot = Join-Path $generated ('game-pak-check-' + [guid]::NewGuid().ToString('N'))
+    New-Item -ItemType Directory -Path $testRoot | Out-Null
+    try {
+        & (Join-Path $generated 'game-pak-test/bin/GamePakTest.exe') $testRoot
+        if ($LASTEXITCODE -ne 0) { throw "Package checks failed on iteration ${iteration}: $LASTEXITCODE" }
+    } finally {
+        $resolved = (Resolve-Path -LiteralPath $testRoot).Path
+        if ((Split-Path -Parent $resolved) -ne (Resolve-Path -LiteralPath $generated).Path -or -not (Split-Path -Leaf $resolved).StartsWith('game-pak-check-')) { throw 'Unexpected test directory.' }
+        Remove-Item -LiteralPath $resolved -Recurse -Force
+    }
 }
+Write-Host "Game package checks passed ($Repeat iteration(s))."

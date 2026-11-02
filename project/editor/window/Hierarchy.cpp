@@ -6,14 +6,13 @@
 #include "command/AllCommands.h"
 #include "command/EditorCommandList.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
+#include "assetfactory/game-data/AssetManager.h"
 #include "scene/SceneManager.h"
 
 #include <imgui/imgui.h>
 #include <imgui_stdlib.h>
 
 #include <algorithm>
-#include <cctype>
-#include "assetfactory/game-data/GameProjectPaths.h"
 #include <filesystem>
 #include <map>
 #include <set>
@@ -21,51 +20,6 @@
 #include <vector>
 
 namespace {
-	std::vector<std::string> FindModelAssets() {
-		std::vector<std::string> models;
-		std::error_code error;
-		const std::filesystem::path resourceRoot = QFE::PROJECT::Assets();
-		if (!std::filesystem::exists(resourceRoot, error)) {
-			return models;
-		}
-
-		for (std::filesystem::recursive_directory_iterator iterator(
-			resourceRoot,
-			std::filesystem::directory_options::skip_permission_denied,
-			error), end;
-			iterator != end;
-			iterator.increment(error)) {
-			if (error) {
-				error.clear();
-				continue;
-			}
-			if (!iterator->is_regular_file(error)) {
-				continue;
-			}
-
-			std::string extension = iterator->path().extension().string();
-			std::transform(extension.begin(), extension.end(), extension.begin(),
-				[](unsigned char character) { return static_cast<char>(std::tolower(character)); });
-			if (extension != ".obj" && extension != ".glb") {
-				continue;
-			}
-
-			std::filesystem::path relativePath =
-				std::filesystem::relative(iterator->path(), resourceRoot, error);
-			if (error) {
-				error.clear();
-				continue;
-			}
-			// Keep the extension so an OBJ with the same stem remains selectable.
-			if (extension == ".obj") relativePath.replace_extension();
-			models.push_back(relativePath.generic_string());
-		}
-
-		std::sort(models.begin(), models.end());
-		models.erase(std::unique(models.begin(), models.end()), models.end());
-		return models;
-	}
-
 	std::string MakeEntityName(const std::string& modelName) {
 		if (modelName == "Primitive/PlaneHorizontal") {
 			return "Horizontal Plane";
@@ -88,9 +42,10 @@ namespace {
 	}
 }
 
-QFE::EDITOR::Hierarchy::Hierarchy(QFE::SCENE::SceneManager* sceneManager)
+QFE::EDITOR::Hierarchy::Hierarchy(QFE::SCENE::SceneManager* sceneManager, QFE::ASSET::AssetManager& assets)
 	: sceneManager_(sceneManager),
 	entityManager_(sceneManager != nullptr ? &sceneManager->GetCurrentSceneEntityManager() : nullptr),
+	assets_(&assets),
 	isActive_(true) {}
 
 void QFE::EDITOR::Hierarchy::Initialize() {
@@ -321,13 +276,26 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 					}
 					ImGui::EndMenu();
 				}
-				const std::vector<std::string> modelNames = FindModelAssets();
-				if (ImGui::BeginMenu("Model", !modelNames.empty())) {
-					for (const std::string& modelName : modelNames) {
-						if (ImGui::MenuItem(modelName.c_str())) {
+				std::vector<QFE::ASSET::AssetMetadata> models;
+				for (const auto& asset : assets_->Registry().List()) {
+					if (asset.type == "model") models.push_back(asset);
+				}
+				std::sort(models.begin(), models.end(), [](const auto& a, const auto& b) {
+					return a.name == b.name ? a.id < b.id : a.name < b.name;
+				});
+				if (ImGui::BeginMenu("Model", !models.empty())) {
+					for (const auto& model : models) {
+						const std::string modelName = model.source.starts_with("assets/") ? model.source.substr(7) : "models/" + model.name;
+						std::string error;
+						const bool exists = !assets_->ResolveSource(model.id, "model", error).empty();
+						const std::string label = modelName + (exists ? "" : " (missing)");
+						ImGui::PushID(model.id.c_str());
+						if (ImGui::MenuItem(label.c_str(), nullptr, false, exists)) {
 							commandList.AddCommand(std::make_unique<CreateEntityCommand>(
-								MakeEntityName(modelName), QFE::MATH::Vector3(0, 0, 0), entityManager_, modelName));
+								model.name, QFE::MATH::Vector3(0, 0, 0), entityManager_, modelName,
+								false, false, std::string{}, model.id));
 						}
+						ImGui::PopID();
 					}
 					ImGui::EndMenu();
 				}
