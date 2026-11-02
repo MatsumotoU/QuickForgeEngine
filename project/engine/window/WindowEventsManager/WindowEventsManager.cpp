@@ -58,4 +58,17 @@ namespace QFE::WINDOW {
 		return DefWindowProc(hwnd, msg, wparam, lparam);
 	}
 
+	std::vector<DroppedFile> WindowEventsManager::ConsumeDroppedFiles(HWND hwnd) {
+		std::vector<DroppedFile> result;
+		const auto found = eventData_.find("DroppedFiles");
+		if (found == eventData_.end() || !found->is_array()) return result;
+		for (const auto& entry : *found) {
+			POINT position{entry.value("x", 0L), entry.value("y", 0L)};
+			if (!ClientToScreen(hwnd, &position)) continue;
+			result.push_back({entry.value("path", std::string{}), static_cast<int>(position.x), static_cast<int>(position.y)});
+		}
+		eventData_.erase(found);
+		return result;
+	}
+
 }

@@ -1,6 +1,6 @@
 #include "SaveSceneCommand.h"
 #include "scene/SceneManager.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 
 #include "file/FileUtility.h"
 

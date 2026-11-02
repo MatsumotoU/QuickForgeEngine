@@ -4,6 +4,7 @@
 #include "framework/application/WindowsEngineFramework.h"
 #include "framework/application/WindowsGameModule.h"
 #include "framework/application/WindowsEngineResources.h"
+#include "framework/application/LuaScriptSystem.h"
 
 #include "framework/graphic/GraphicEngineCoreFramework.h"
 #include "framework/window/WindowCoreFrameWork.h"
@@ -26,27 +27,14 @@
 #include <imgui/imgui.h>
 
 #include "GameEditor.h"
+#include "ProjectSelector.h"
+#include "assetfactory/game-data/GameProjectPaths.h"
 
 #include <array>
 #include <filesystem>
 #include <vector>
 
 namespace {
-	std::filesystem::path GetEnvironmentPath(const wchar_t* variableName) {
-		const DWORD requiredSize = GetEnvironmentVariableW(variableName, nullptr, 0);
-		if (requiredSize == 0) {
-			return {};
-		}
-
-		std::vector<wchar_t> value(requiredSize);
-		const DWORD length = GetEnvironmentVariableW(
-			variableName, value.data(), static_cast<DWORD>(value.size()));
-		if (length == 0 || length >= static_cast<DWORD>(value.size())) {
-			return {};
-		}
-		return std::filesystem::path(value.data(), value.data() + length);
-	}
-
 	bool IsRegularFile(const std::filesystem::path& path) {
 		std::error_code error;
 		return std::filesystem::is_regular_file(path, error) && !error;
@@ -64,11 +52,6 @@ namespace {
 	}
 
 	std::filesystem::path FindCommandProcessor() {
-		const std::filesystem::path configuredPath = GetEnvironmentPath(L"ComSpec");
-		if (IsRegularFile(configuredPath)) {
-			return configuredPath;
-		}
-
 		std::array<wchar_t, 32768> systemDirectory{};
 		const UINT length = GetSystemDirectoryW(
 			systemDirectory.data(), static_cast<UINT>(systemDirectory.size()));
@@ -178,8 +161,14 @@ namespace {
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	// QuickForgeエンジンのリソースを初期化
+	const auto repositoryRoot = FindRepositoryRoot();
+	if (repositoryRoot.empty()) { MessageBoxW(nullptr, L"Could not locate the QuickForgeEngine repository.", L"QuickForge", MB_OK | MB_ICONERROR); return -1; }
+	std::error_code workingDirectoryError;
+	std::filesystem::current_path(repositoryRoot / L"project", workingDirectoryError);
+	if (workingDirectoryError) { MessageBoxW(nullptr, L"Could not open the engine working directory.", L"QuickForge", MB_OK | MB_ICONERROR); return -1; }
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
 	const bool engineConfigLoaded = engineResources.config.Load();
+	const auto editorConfig = engineResources.config;
 	engineResources.ApplyConfig(true);
 	QFE::FRAMEWORK::WindowsGameModule gameModule;
 	if (!gameModule.Load(L"ShootingGame.dll")) {
@@ -197,6 +186,41 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		return -1;
 	}
 	if (!engineConfigLoaded) QFE::DebugLog("Failed to load EngineConfig.json; using defaults.", QFE::LogLevel::Warning);
+	const std::filesystem::path editorConfigPath = repositoryRoot / L"project" / L"editor" / L"editor-config.json";
+	QFE::EDITOR::EditorConfig projectConfig;
+	if (!projectConfig.Load(editorConfigPath)) {
+		QFE_LOG("Failed to load editor-config.json; using the default game projects directory.", QFE::LogLevel::Warning);
+	}
+	QFE::EDITOR::ProjectSelector selector(projectConfig, editorConfigPath);
+	while (selector.SelectedProject().empty() && !selector.Cancelled() &&
+		QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {
+		if (!QFE::FRAMEWORK::PreDrawGraphicEngine(engineSystems.graphicEngine.get())) break;
+		QFE::FRAMEWORK::SetSwapChainRenderTarget(*engineSystems.graphicEngine);
+		QFE::FRAMEWORK::PreDrawGui(*engineSystems.guiManager);
+		selector.Draw(*engineSystems.windowManager);
+		QFE::FRAMEWORK::PostDrawGui(*engineSystems.guiManager);
+		QFE::FRAMEWORK::PostDrawGraphicEngine(engineSystems.graphicEngine.get());
+	}
+	const auto projectRoot = selector.SelectedProject();
+	if (projectRoot.empty()) {
+		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
+		return 0;
+	}
+	// 選択したパスはエディタの設定へ保存し、実行中はプロセス内の共有コンテキストに渡す。
+	projectConfig.lastProject = QFE::ConvertString(projectRoot.wstring());
+	if (!projectConfig.Save(editorConfigPath)) QFE_LOG("Failed to save the selected project to editor-config.json.", QFE::LogLevel::Warning);
+	QFE::PROJECT::SetRoot(projectRoot);
+	std::string assetError;
+	if (!engineSystems.assetManager->Open(projectRoot, assetError)) {
+		QFE_LOG("Failed to open asset registry: " + assetError, QFE::LogLevel::Error);
+		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
+		return -1;
+	}
+	engineResources.assetDir = QFE::ConvertString(QFE::PROJECT::Assets().wstring()) + "/";
+	engineResources.modelDir = engineResources.assetDir;
+	engineResources.config.scriptDir = QFE::ConvertString((QFE::PROJECT::Assets() / "scripts").wstring());
+	engineSystems.luaScriptSystem->Reset();
+	engineSystems.luaScriptSystem->Initialize(std::filesystem::path(QFE::ConvertString(engineResources.config.scriptDir)));
 	// QuickForgeエンジンの初期化
 	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
 	auto& graphicEngine = engineSystems.graphicEngine;
@@ -227,7 +251,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 		return -1;
 	}
-	gameEditor.Initialize(&sceneManager, sceneTextureId, *engineSystems.windowManager, engineResources.config);
+	gameEditor.Initialize(&sceneManager, sceneTextureId, *engineSystems.windowManager, *engineSystems.assetManager, editorConfig);
 
 	// メインループ
 	while (QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {

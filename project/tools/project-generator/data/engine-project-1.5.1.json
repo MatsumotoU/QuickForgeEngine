@@ -65,8 +65,8 @@
                 39
             ],
             "position": {
-                "x": -160.0,
-                "y": -176.0
+                "x": 0.0,
+                "y": -144.0
             },
             "size": {
                 "x": 698.0,
@@ -82,8 +82,8 @@
                 29
             ],
             "position": {
-                "x": -80.0,
-                "y": 560.0
+                "x": 0.0,
+                "y": 896.0
             },
             "size": {
                 "x": 624.0,
@@ -107,12 +107,12 @@
                 34
             ],
             "position": {
-                "x": 666.0,
-                "y": -176.0
+                "x": 752.0,
+                "y": -144.0
             },
             "size": {
                 "x": 502.0,
-                "y": 1728.0
+                "y": 1600.0
             }
         },
         {
@@ -148,12 +148,12 @@
                 37
             ],
             "position": {
-                "x": 2180.0,
-                "y": 300.0
+                "x": 2224.0,
+                "y": 240.0
             },
             "size": {
-                "x": 438.0,
-                "y": 220.0
+                "x": 464.0,
+                "y": 272.0
             }
         },
         {
@@ -166,11 +166,11 @@
                 26
             ],
             "position": {
-                "x": 2240.0,
-                "y": 560.0
+                "x": 2224.0,
+                "y": 544.0
             },
             "size": {
-                "x": 438.0,
+                "x": 464.0,
                 "y": 898.0
             }
         },
@@ -185,12 +185,18 @@
                 "y": -144.0
             },
             "size": {
-                "x": 438.0,
+                "x": 464.0,
                 "y": 358.0
             }
         }
     ],
     "links": [
+        {
+            "dependencyMode": "transitive",
+            "id": 109,
+            "sourceNodeId": 29,
+            "targetNodeId": 13
+        },
         {
             "dependencyMode": "transitive",
             "id": 1,
@@ -517,12 +523,13 @@
         }
     ],
     "nextGroupId": 9,
-    "nextLinkId": 109,
+    "nextLinkId": 110,
     "nextNodeId": 40,
     "nodes": [
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -532,6 +539,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -541,6 +549,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -560,8 +569,8 @@
             "libraryDirectories": [],
             "name": "externals",
             "position": {
-                "x": -112.0,
-                "y": -128.0
+                "x": 48.0,
+                "y": -96.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -571,6 +580,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "externals/imgui",
@@ -580,6 +590,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "externals/imgui",
@@ -589,6 +600,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "externals/imgui",
@@ -608,8 +620,8 @@
             "libraryDirectories": [],
             "name": "imgui",
             "position": {
-                "x": 144.0,
-                "y": 47.0
+                "x": 304.0,
+                "y": 79.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -619,6 +631,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
@@ -628,6 +641,7 @@
                     "preBuildEvent": "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd"
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
@@ -637,6 +651,7 @@
                     "preBuildEvent": "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd"
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "externals/DirectXTex\nexternals/DirectXTex/Shaders/Compiled",
@@ -656,8 +671,8 @@
             "libraryDirectories": [],
             "name": "DirectXTex",
             "position": {
-                "x": 144.0,
-                "y": 192.0
+                "x": 304.0,
+                "y": 224.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "cd /d \"%{prj.location}/Shaders\" && CompileShaders.cmd",
@@ -667,6 +682,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -676,6 +692,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -685,6 +702,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -704,8 +722,8 @@
             "libraryDirectories": [],
             "name": "resources",
             "position": {
-                "x": -32.0,
-                "y": 608.0
+                "x": 48.0,
+                "y": 944.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -715,6 +733,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/",
@@ -724,6 +743,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/",
@@ -733,6 +753,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/",
@@ -752,8 +773,8 @@
             "libraryDirectories": [],
             "name": "core",
             "position": {
-                "x": -22.0,
-                "y": 799.0
+                "x": 58.0,
+                "y": 1135.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -763,6 +784,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -772,6 +794,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -781,6 +804,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -800,8 +824,8 @@
             "libraryDirectories": [],
             "name": "window",
             "position": {
-                "x": 720.0,
-                "y": -128.0
+                "x": 806.0,
+                "y": -96.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -811,6 +835,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
@@ -820,6 +845,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
@@ -829,6 +855,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/DirectXTex/\n%{wks.location}/externals/",
@@ -848,8 +875,8 @@
             "libraryDirectories": [],
             "name": "graphics",
             "position": {
-                "x": 720.0,
-                "y": 31.0
+                "x": 806.0,
+                "y": 63.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -859,6 +886,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
@@ -868,6 +896,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
@@ -877,6 +906,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/imgui/",
@@ -896,8 +926,8 @@
             "libraryDirectories": [],
             "name": "gui",
             "position": {
-                "x": 720.0,
-                "y": 175.0
+                "x": 806.0,
+                "y": 207.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -907,6 +937,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
@@ -916,6 +947,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
@@ -925,6 +957,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
@@ -944,8 +977,8 @@
             "libraryDirectories": [],
             "name": "input",
             "position": {
-                "x": 720.0,
-                "y": 303.0
+                "x": 806.0,
+                "y": 335.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -955,6 +988,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
@@ -964,6 +998,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
@@ -973,6 +1008,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/",
@@ -992,8 +1028,8 @@
             "libraryDirectories": [],
             "name": "physics",
             "position": {
-                "x": 720.0,
-                "y": 415.0
+                "x": 806.0,
+                "y": 447.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1003,6 +1039,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
@@ -1012,6 +1049,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
@@ -1021,6 +1059,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
@@ -1040,8 +1079,8 @@
             "libraryDirectories": [],
             "name": "assetfactory",
             "position": {
-                "x": 720.0,
-                "y": 927.0
+                "x": 806.0,
+                "y": 959.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1051,6 +1090,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
@@ -1060,6 +1100,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
@@ -1069,6 +1110,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/\n%{wks.location}/engine/scene/\n%{wks.location}/engine/components/\n%{wks.location}/externals/",
@@ -1088,8 +1130,8 @@
             "libraryDirectories": [],
             "name": "scene",
             "position": {
-                "x": 954.0,
-                "y": 1039.0
+                "x": 1040.0,
+                "y": 1071.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1099,6 +1141,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/",
@@ -1108,6 +1151,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/",
@@ -1117,6 +1161,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/core/",
@@ -1136,8 +1181,8 @@
             "libraryDirectories": [],
             "name": "components",
             "position": {
-                "x": 720.0,
-                "y": 1151.0
+                "x": 806.0,
+                "y": 1183.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1147,30 +1192,30 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "/bigobj",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
-                    "buildOptions": "/bigobj",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "/bigobj",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
-                    "buildOptions": "/bigobj",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "/bigobj",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
-                    "buildOptions": "/bigobj",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
@@ -1198,6 +1243,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1207,6 +1253,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1216,6 +1263,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1246,6 +1294,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1255,6 +1304,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1264,6 +1314,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1294,6 +1345,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1303,6 +1355,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1312,6 +1365,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1342,6 +1396,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1351,6 +1406,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1360,6 +1416,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1390,6 +1447,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1399,6 +1457,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1408,6 +1467,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1438,6 +1498,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1447,6 +1508,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1456,6 +1518,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
@@ -1486,6 +1549,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
@@ -1495,6 +1559,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
@@ -1504,6 +1569,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/engine/assetfactory/\n%{wks.location}/externals/",
@@ -1534,6 +1600,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1543,6 +1610,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1552,6 +1620,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1571,8 +1640,8 @@
             "libraryDirectories": [],
             "name": "editor",
             "position": {
-                "x": 2288.0,
-                "y": 640.0
+                "x": 2272.0,
+                "y": 624.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1582,6 +1651,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
@@ -1591,6 +1661,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
@@ -1600,6 +1671,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/\n%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/",
@@ -1619,8 +1691,8 @@
             "libraryDirectories": [],
             "name": "sandbox",
             "position": {
-                "x": 2288.0,
-                "y": 820.0
+                "x": 2272.0,
+                "y": 804.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1630,6 +1702,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1639,6 +1712,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1648,6 +1722,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1667,8 +1742,8 @@
             "libraryDirectories": [],
             "name": "runtime",
             "position": {
-                "x": 2288.0,
-                "y": 1000.0
+                "x": 2272.0,
+                "y": 984.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1678,6 +1753,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1687,6 +1763,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1696,6 +1773,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/",
@@ -1715,8 +1793,8 @@
             "libraryDirectories": [],
             "name": "launcher",
             "position": {
-                "x": 2288.0,
-                "y": 1180.0
+                "x": 2272.0,
+                "y": 1164.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1726,6 +1804,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
@@ -1735,6 +1814,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
@@ -1744,6 +1824,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/engine/\n%{wks.location}/editor/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/assimp/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/imgui/\n%{wks.location}/externals/imgui/imgui-node-editor-0.9.3",
@@ -1774,6 +1855,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "WIN32_LEAN_AND_MEAN\nUNICODE\n_UNICODE\nOPENDDL_STATIC_LIBARY\nOPENDDLPARSER_BUILD\nASSIMP_BUILD_NO_M3D_IMPORTER\nASSIMP_BUILD_NO_M3D_EXPORTER\nASSIMP_BUILD_NO_C4D_IMPORTER\nMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0\nASSIMP_IMPORTER_GLTF_USE_OPEN3DGC=1\nRAPIDJSON_HAS_STDSTRING=1\nRAPIDJSON_NOMEMBERITERATORCLASS\nNO_FSEEKO\n_SCL_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_DEPRECATE\n_CRT_NONSTDC_NO_DEPRECATE",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/assimp/upstream/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/assimp/upstream/code/\n%{wks.location}/externals/assimp/upstream/contrib/\n%{wks.location}/externals/assimp/upstream/contrib/zlib/\n%{wks.location}/externals/assimp/upstream/contrib/pugixml/src/\n%{wks.location}/externals/assimp/upstream/contrib/rapidjson/include/\n%{wks.location}/externals/assimp/upstream/contrib/unzip/\n%{wks.location}/externals/assimp/upstream/contrib/openddlparser/include/",
@@ -1783,6 +1865,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "WIN32_LEAN_AND_MEAN\nUNICODE\n_UNICODE\nOPENDDL_STATIC_LIBARY\nOPENDDLPARSER_BUILD\nASSIMP_BUILD_NO_M3D_IMPORTER\nASSIMP_BUILD_NO_M3D_EXPORTER\nASSIMP_BUILD_NO_C4D_IMPORTER\nMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0\nASSIMP_IMPORTER_GLTF_USE_OPEN3DGC=1\nRAPIDJSON_HAS_STDSTRING=1\nRAPIDJSON_NOMEMBERITERATORCLASS\nNO_FSEEKO\n_SCL_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_DEPRECATE\n_CRT_NONSTDC_NO_DEPRECATE",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/assimp/upstream/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/assimp/upstream/code/\n%{wks.location}/externals/assimp/upstream/contrib/\n%{wks.location}/externals/assimp/upstream/contrib/zlib/\n%{wks.location}/externals/assimp/upstream/contrib/pugixml/src/\n%{wks.location}/externals/assimp/upstream/contrib/rapidjson/include/\n%{wks.location}/externals/assimp/upstream/contrib/unzip/\n%{wks.location}/externals/assimp/upstream/contrib/openddlparser/include/",
@@ -1792,6 +1875,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "WIN32_LEAN_AND_MEAN\nUNICODE\n_UNICODE\nOPENDDL_STATIC_LIBARY\nOPENDDLPARSER_BUILD\nASSIMP_BUILD_NO_M3D_IMPORTER\nASSIMP_BUILD_NO_M3D_EXPORTER\nASSIMP_BUILD_NO_C4D_IMPORTER\nMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0\nASSIMP_IMPORTER_GLTF_USE_OPEN3DGC=1\nRAPIDJSON_HAS_STDSTRING=1\nRAPIDJSON_NOMEMBERITERATORCLASS\nNO_FSEEKO\n_SCL_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_WARNINGS\n_CRT_SECURE_NO_DEPRECATE\n_CRT_NONSTDC_NO_DEPRECATE",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/externals/assimp/upstream/\n%{wks.location}/externals/assimp/upstream/include/\n%{wks.location}/externals/assimp/upstream/code/\n%{wks.location}/externals/assimp/upstream/contrib/\n%{wks.location}/externals/assimp/upstream/contrib/zlib/\n%{wks.location}/externals/assimp/upstream/contrib/pugixml/src/\n%{wks.location}/externals/assimp/upstream/contrib/rapidjson/include/\n%{wks.location}/externals/assimp/upstream/contrib/unzip/\n%{wks.location}/externals/assimp/upstream/contrib/openddlparser/include/",
@@ -1811,8 +1895,8 @@
             "libraryDirectories": [],
             "name": "assimp",
             "position": {
-                "x": 144.0,
-                "y": 319.0
+                "x": 304.0,
+                "y": 351.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1822,6 +1906,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1831,6 +1916,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1840,6 +1926,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1859,8 +1946,8 @@
             "libraryDirectories": [],
             "name": "ecs",
             "position": {
-                "x": 272.0,
-                "y": 927.0
+                "x": 352.0,
+                "y": 1263.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1870,6 +1957,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1879,6 +1967,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1888,6 +1977,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1907,8 +1997,8 @@
             "libraryDirectories": [],
             "name": "audio",
             "position": {
-                "x": 714.0,
-                "y": 527.0
+                "x": 800.0,
+                "y": 559.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -1918,6 +2008,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1927,6 +2018,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1936,6 +2028,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1966,6 +2059,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1975,6 +2069,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -1984,6 +2079,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2003,8 +2099,8 @@
             "libraryDirectories": [],
             "name": "network",
             "position": {
-                "x": 720.0,
-                "y": 671.0
+                "x": 806.0,
+                "y": 703.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -2014,6 +2110,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2023,6 +2120,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2032,6 +2130,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2051,8 +2150,8 @@
             "libraryDirectories": [],
             "name": "network",
             "position": {
-                "x": 1424.0,
-                "y": 671.0
+                "x": 1420.0,
+                "y": 686.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -2062,6 +2161,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2071,6 +2171,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2080,6 +2181,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2099,8 +2201,8 @@
             "libraryDirectories": [],
             "name": "animation",
             "position": {
-                "x": 720.0,
-                "y": 799.0
+                "x": 806.0,
+                "y": 831.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -2110,6 +2212,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2119,6 +2222,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2128,6 +2232,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2147,8 +2252,8 @@
             "libraryDirectories": [],
             "name": "animation",
             "position": {
-                "x": 1424.0,
-                "y": 789.0
+                "x": 1434.0,
+                "y": 798.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -2158,6 +2263,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2167,6 +2273,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2176,6 +2283,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "",
@@ -2195,8 +2303,8 @@
             "libraryDirectories": [],
             "name": "shooting-game",
             "position": {
-                "x": 2240.0,
-                "y": 340.0
+                "x": 2284.0,
+                "y": 280.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -2206,6 +2314,7 @@
         {
             "configurationSettings": {
                 "Debug": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/editor/",
@@ -2215,6 +2324,7 @@
                     "preBuildEvent": ""
                 },
                 "Development": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/editor/",
@@ -2224,6 +2334,7 @@
                     "preBuildEvent": ""
                 },
                 "Release": {
+                    "buildOptions": "",
                     "defines": "",
                     "externalLinks": "",
                     "includePaths": "%{wks.location}/editor/",
@@ -2243,8 +2354,8 @@
             "libraryDirectories": [],
             "name": "shooting-game-editor",
             "position": {
-                "x": 2240.0,
-                "y": 440.0
+                "x": 2284.0,
+                "y": 380.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -2294,8 +2405,8 @@
             "libraryDirectories": [],
             "name": "lua",
             "position": {
-                "x": 144.0,
-                "y": 447.0
+                "x": 304.0,
+                "y": 479.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",
@@ -2345,8 +2456,8 @@
             "libraryDirectories": [],
             "name": "sol2",
             "position": {
-                "x": 144.0,
-                "y": 575.0
+                "x": 304.0,
+                "y": 590.0
             },
             "postBuildEvent": "",
             "preBuildEvent": "",

@@ -7,6 +7,7 @@
 #include "VertexComponent.h"
 #include "MaterialComponent.h"
 #include "ModelRenderComponent.h"
+#include "SkeletonAnimationComponent.h"
 #include "ShaderComponent.h"
 #include "SkyBoxComponent.h"
 #include "SpriteRenderComponent.h"

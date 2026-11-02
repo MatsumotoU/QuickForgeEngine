@@ -1,7 +1,9 @@
 #include "GameViewer.h"
+#include "AssetDrop.h"
 
-QFE::EDITOR::GameViewer::GameViewer(ImTextureID sceneTextureId) :
+QFE::EDITOR::GameViewer::GameViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, unsigned width, unsigned height) :
 	sceneTextureId_(sceneTextureId),
+	sceneManager_(sceneManager), width_(width), height_(height),
 	isActive_(true) {
 }
 
@@ -9,13 +11,14 @@ void QFE::EDITOR::GameViewer::Initialize() {
 	isActive_ = true;
 }
 
-void QFE::EDITOR::GameViewer::Draw(std::set<uint32_t>&, EditorCommandList&) {
+void QFE::EDITOR::GameViewer::Draw(std::set<uint32_t>&, EditorCommandList& commandList) {
 	ImGui::Begin(GetWindowName().c_str(), &isActive_);
-	const float targetAspectRatio = 16.0f / 9.0f;
+	const float targetAspectRatio = static_cast<float>(width_) / static_cast<float>(height_);
 	isFocus_ = ImGui::IsWindowFocused();
 
 	// 2. ウィンドウ内で「実際に利用可能な最大サイズ」を取得
 	ImVec2 availSize = ImGui::GetContentRegionAvail();
+	if (availSize.x <= 0 || availSize.y <= 0) { ImGui::End(); return; }
 
 	// 3. アスペクト比を維持した最終的な描画サイズを計算
 	ImVec2 renderSize;
@@ -42,9 +45,16 @@ void QFE::EDITOR::GameViewer::Draw(std::set<uint32_t>&, EditorCommandList&) {
 	}
 
 	// 6. ID を使って描画
+	const ImVec2 imagePosition = ImGui::GetCursorScreenPos();
 	ImGui::Image(sceneTextureId_, renderSize);
+	AcceptAssetDrop(sceneManager_, commandList, imagePosition, renderSize, width_, height_,
+		MATH::Matrix4x4::MakeIdentity4x4(), dropViewProjection_);
 
 	ImGui::End();
+}
+
+void QFE::EDITOR::GameViewer::SetAssetDropViewProjection(const MATH::Matrix4x4& viewProjection) {
+	dropViewProjection_ = viewProjection;
 }
 
 std::string QFE::EDITOR::GameViewer::GetWindowName() {

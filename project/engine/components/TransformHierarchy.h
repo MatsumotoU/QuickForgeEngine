@@ -3,7 +3,7 @@
 #include "ParentComponent.h"
 #include "ObjectInfoComponent.h"
 #include "TransformComponent.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 
 #include <unordered_set>
 

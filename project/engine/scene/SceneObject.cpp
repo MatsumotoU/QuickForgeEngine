@@ -1,9 +1,10 @@
 #include "SceneObject.h"
 #include "SceneManager.h"
 #include "file/FileUtility.h"
-#include "design-patterns/component/EntityUuid.h"
+#include "ecs/component/EntityUuid.h"
 
 #include <unordered_map>
+#include <fstream>
 #include <utility>
 #include <vector>
 
@@ -112,9 +113,11 @@ void QFE::SCENE::SceneObject::BindComponentRegistryAfterReload(
 
 uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& filePath) {
 	// ファイルが更新されていた場合はキャッシュを読み直す。
+	const std::filesystem::path osPath(std::u8string(
+		reinterpret_cast<const char8_t*>(filePath.data()), filePath.size()));
 	std::error_code timestampError;
 	const std::filesystem::file_time_type lastWriteTime =
-		std::filesystem::last_write_time(filePath, timestampError);
+		std::filesystem::last_write_time(osPath, timestampError);
 	const auto cachedJson = objectJsonMap_.find(filePath);
 	const auto cachedWriteTime = objectJsonLastWriteTimeMap_.find(filePath);
 	const bool cacheNeedsReload = cachedJson == objectJsonMap_.end() || timestampError ||
@@ -122,7 +125,13 @@ uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& fi
 		cachedWriteTime->second != lastWriteTime;
 	if (cacheNeedsReload) {
 		nlohmann::json loadedJson;
-		if (!QFE::FILE::LoadFileToJson(filePath, loadedJson)) {
+		std::ifstream file(osPath);
+		try {
+			if (file) file >> loadedJson;
+		} catch (const nlohmann::json::exception&) {
+			file.setstate(std::ios::failbit);
+		}
+		if (!file || loadedJson.is_null()) {
 			objectJsonMap_.erase(filePath);
 			objectJsonLastWriteTimeMap_.erase(filePath);
 			QFE_LOG("Failed to load JSON file: " + filePath);

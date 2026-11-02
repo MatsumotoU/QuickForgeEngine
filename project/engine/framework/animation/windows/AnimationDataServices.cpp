@@ -1,4 +1,5 @@
 #include "framework/animation/AnimationDataServices.h"
+#include "assetfactory/game-data/GameProjectPaths.h"
 
 #include <cstdint>
 #include <filesystem>
@@ -90,7 +91,8 @@ std::string QFE::FRAMEWORK::ResolveAnimationClipPath(const std::string& clipName
 	if (clipName.empty()) return {};
 	std::filesystem::path path(clipName);
 	if (path.extension().empty()) path.replace_extension(".anim");
-	if (path.is_absolute() || path.string().starts_with("resources")) return path.generic_string();
-	if (path.has_parent_path()) return (std::filesystem::path("resources") / path).generic_string();
-	return (std::filesystem::path("resources/animations") / path).generic_string();
+	if (path.is_absolute()) return path.generic_string();
+	if (path.string().starts_with("resources")) return QFE::PROJECT::Resolve(path).generic_string();
+	if (path.has_parent_path()) return (QFE::PROJECT::Assets() / path).generic_string();
+	return (QFE::PROJECT::Assets() / "animations" / path).generic_string();
 }

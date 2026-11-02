@@ -1,7 +1,7 @@
 #pragma once
 #include "logger/MyDebugLog.h"
 #include "error/ErrorList.h"
-#include "design-patterns/component/Archive.h"
+#include "ecs/component/Archive.h"
 
 namespace QFE {
 	// デバッグ用マクロ.最適化オフのときのみログを出力するマクロ. 最適化オンのときは何もしない.

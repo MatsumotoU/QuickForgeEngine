@@ -11,6 +11,11 @@
 #include "scene/SceneManager.h"
 #include "core/logger/MyDebugLog.h"
 #include "core/file/FileUtility.h"
+#include "assetfactory/game-data/GameProjectPaths.h"
+#include "assetfactory/game-data/GamePak.h"
+#include <commdlg.h>
+#include <random>
+#include <fstream>
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
 #include "input/interface/InputInterface.h"
@@ -34,61 +39,108 @@
 #include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
 namespace {
+	// 開発環境では実行ファイルが generated/ にあるため、エンジン共通シェーダーの基準を探す。
+	// 配布時に実行ディレクトリに engine/ がある構成もそのまま使用できる。
+	void SetEngineWorkingDirectory() {
+		std::error_code error;
+		if (std::filesystem::is_regular_file("engine/resources/EngineConfig.json", error)) return;
+		std::array<wchar_t, 32768> executable{};
+		const DWORD length = GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size()));
+		if (!length || length >= executable.size()) return;
+		auto directory = std::filesystem::path(executable.data()).parent_path();
+		while (!directory.empty()) {
+			for (const auto& candidate : { directory, directory / L"project" }) {
+				error.clear();
+				if (std::filesystem::is_regular_file(candidate / L"engine/resources/EngineConfig.json", error)) {
+					std::filesystem::current_path(candidate, error);
+					return;
+				}
+			}
+			const auto parent = directory.parent_path();
+			if (parent == directory) break;
+			directory = parent;
+		}
+	}
 	void AddSceneCandidates(
 		std::vector<std::filesystem::path>& candidates,
 		const std::filesystem::path& path) {
 		candidates.push_back(path);
 		if (path.extension().empty()) {
+			std::filesystem::path scenePath = path;
+			scenePath += ".scene";
+			candidates.push_back(std::move(scenePath));
 			std::filesystem::path jsonPath = path;
 			jsonPath += ".json";
 			candidates.push_back(std::move(jsonPath));
 		}
 	}
 
-	std::optional<std::string> GetSceneArgument() {
-		int argumentCount = 0;
-		LPWSTR* arguments = CommandLineToArgvW(GetCommandLineW(), &argumentCount);
-		if (arguments == nullptr) return std::nullopt;
-
-		std::optional<std::string> sceneName;
-		if (argumentCount >= 2) {
-			int sceneArgumentIndex = 1;
-			if (std::wstring_view(arguments[1]) == L"--scene") {
-				sceneArgumentIndex = 2;
-			}
-			if (sceneArgumentIndex < argumentCount && arguments[sceneArgumentIndex][0] != L'\0') {
-				sceneName = QFE::ConvertString(std::wstring(arguments[sceneArgumentIndex]));
+	// pak とシーンを別々に指定できる。従来の単独シーン引数も受け付ける。
+	struct Arguments { std::optional<std::string> scene; std::filesystem::path pak; };
+	Arguments GetArguments() {
+		Arguments result; int count = 0;
+		LPWSTR* args = CommandLineToArgvW(GetCommandLineW(), &count);
+		if (!args) return result;
+		for (int i = 1; i < count; ++i) {
+			const std::wstring_view arg(args[i]);
+			if (arg == L"--pak" && i + 1 < count) result.pak = args[++i];
+			else if (arg == L"--scene" && i + 1 < count) result.scene = QFE::ConvertString(std::wstring(args[++i]));
+			else if (!arg.starts_with(L"--")) {
+				const std::filesystem::path path(args[i]);
+				if (_wcsicmp(path.extension().c_str(), L".qfepak") == 0 && result.pak.empty()) result.pak = path;
+				else if (!result.scene) result.scene = QFE::ConvertString(std::wstring(args[i]));
 			}
 		}
-		LocalFree(arguments);
-		return sceneName;
+		LocalFree(args); return result;
 	}
+
+	std::filesystem::path ChoosePackage() {
+		std::array<wchar_t, 32768> path{};
+		OPENFILENAMEW dialog{};
+		dialog.lStructSize = sizeof(dialog);
+		dialog.lpstrFilter = L"QuickForge package (*.qfepak)\0*.qfepak\0\0";
+		dialog.lpstrFile = path.data(); dialog.nMaxFile = static_cast<DWORD>(path.size());
+		dialog.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+		return GetOpenFileNameW(&dialog) ? std::filesystem::path(path.data()) : std::filesystem::path{};
+	}
+
+	// 既存ローダーはファイルパスを要求するため、pak を専用の一時ディレクトリへ展開する。
+	// 所有するディレクトリだけを、エンジン終了後に削除する。
+	class TemporaryPackage final {
+	public:
+		TemporaryPackage() = default;
+		TemporaryPackage(const TemporaryPackage&) = delete;
+		TemporaryPackage& operator=(const TemporaryPackage&) = delete;
+		~TemporaryPackage() { if (!root_.empty()) { std::error_code error; std::filesystem::remove_all(root_, error); } }
+		bool Open(const std::filesystem::path& pak, std::string& message) {
+			std::error_code error;
+			const auto base = std::filesystem::temp_directory_path(error);
+			if (error) { message = "Could not find a temporary directory."; return false; }
+			std::random_device random;
+			for (unsigned i = 0; i < 32; ++i) {
+				const auto candidate = base / (L"qfe-pak-" + std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(random()));
+				if (std::filesystem::create_directory(candidate, error)) { root_ = candidate; break; }
+				error.clear();
+			}
+			if (root_.empty()) { message = "Could not create a temporary directory."; return false; }
+			return QFE::PAK::Extract(pak, root_, message);
+		}
+		const std::filesystem::path& Root() const { return root_; }
+	private:
+		std::filesystem::path root_;
+	};
 
 	std::optional<std::string> GetConfiguredStartScene(
 		const std::filesystem::path& resourceDirectory) {
-		const std::filesystem::path gameFlowPath = resourceDirectory / "GameFlow.json";
-		nlohmann::json gameFlow;
-		if (!QFE::FILE::LoadFileToJson(gameFlowPath.string(), gameFlow)) {
-			QFE_LOG(
-				"Failed to load game flow: " + gameFlowPath.string(),
-				QFE::LogLevel::Error);
-			return std::nullopt;
-		}
-
-		const auto startScene = gameFlow.find("StartScene");
-		if (startScene == gameFlow.end() || !startScene->is_string()) {
-			QFE_LOG(
-				"GameFlow.json must contain a string named 'StartScene'.",
-				QFE::LogLevel::Error);
-			return std::nullopt;
-		}
-
-		std::string sceneName = startScene->get<std::string>();
-		if (sceneName.empty()) {
-			QFE_LOG("GameFlow.json contains an empty 'StartScene'.", QFE::LogLevel::Error);
-			return std::nullopt;
-		}
-		return sceneName;
+		(void)resourceDirectory;
+		std::ifstream file(QFE::PROJECT::Root() / "project.json");
+		try {
+			const auto json = nlohmann::json::parse(file);
+			const auto scene = json.value("start_scene", std::string{});
+			if (!scene.empty()) return scene;
+		} catch (const nlohmann::json::exception&) {}
+		QFE_LOG("The package does not contain a valid start_scene.", QFE::LogLevel::Error);
+		return std::nullopt;
 	}
 
 	std::optional<std::filesystem::path> ResolveStartupScene(
@@ -101,14 +153,20 @@ namespace {
 
 		const std::filesystem::path requestedPath(*sceneName);
 		std::vector<std::filesystem::path> candidates;
-		AddSceneCandidates(candidates, requestedPath);
+		if (requestedPath.is_absolute() || QFE::PROJECT::Root().empty()) AddSceneCandidates(candidates, requestedPath);
 		if (requestedPath.is_relative()) {
-			AddSceneCandidates(candidates, resourceDirectory / "scene" / requestedPath);
+			// 旧形式の resources/scene/... も pak 内の assets/scenes/... として扱う。
+			if (!requestedPath.empty() && *requestedPath.begin() == "resources") {
+				AddSceneCandidates(candidates, QFE::PROJECT::Resolve(requestedPath));
+			}
+			AddSceneCandidates(candidates, resourceDirectory / "scenes" / requestedPath);
+			if (QFE::PROJECT::Root().empty()) AddSceneCandidates(candidates, resourceDirectory / "scene" / requestedPath);
 			AddSceneCandidates(candidates, resourceDirectory / requestedPath);
 		}
 
 		for (const std::filesystem::path& candidate : candidates) {
 			std::error_code error;
+			if ((!commandLineScene || !requestedPath.is_absolute()) && !QFE::PROJECT::IsWithin(candidate, QFE::PROJECT::Assets() / "scenes")) continue;
 			if (std::filesystem::is_regular_file(candidate, error)) {
 				return candidate;
 			}
@@ -122,12 +180,32 @@ namespace {
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
+	const auto arguments = GetArguments();
+	const auto pak = arguments.pak.empty() ? ChoosePackage() : arguments.pak;
+	if (pak.empty()) return 0;
+	// コマンドラインの相対パスは、エンジンの作業ディレクトリ変更前に解決する。
+	std::error_code packagePathError;
+	const auto absolutePak = std::filesystem::absolute(pak, packagePathError);
+	if (packagePathError) { MessageBoxW(nullptr, L"Invalid package path.", L"QuickForge Runtime", MB_OK | MB_ICONERROR); return -1; }
+	SetEngineWorkingDirectory();
+	TemporaryPackage package;
+	std::string packageError;
+	if (!package.Open(absolutePak, packageError)) {
+		MessageBoxW(nullptr, QFE::ConvertString(packageError).c_str(), L"QuickForge Runtime", MB_OK | MB_ICONERROR);
+		return -1;
+	}
+	QFE::PROJECT::SetRoot(package.Root());
 	std::vector<int> objectNums;
 
 	// QuickForgeエンジンのリソースを初期化
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
 	const bool engineConfigLoaded = engineResources.config.Load();
 	engineResources.ApplyConfig(false);
+	if (!QFE::PROJECT::Root().empty()) {
+		engineResources.assetDir = QFE::ConvertString(QFE::PROJECT::Assets().wstring()) + "/";
+		engineResources.modelDir = engineResources.assetDir;
+		engineResources.config.scriptDir = QFE::ConvertString((QFE::PROJECT::Assets() / "scripts").wstring());
+	}
 	QFE::FRAMEWORK::WindowsGameModule gameModule;
 	if (!gameModule.Load(L"ShootingGame.dll")) {
 		return -1;
@@ -142,12 +220,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		gameModule.GetComponentRegistrationFunction(), engineResources.config.scriptDir)) {
 		return -1;
 	}
+	std::string assetError;
+	if (!engineSystems.assetManager->Open(QFE::PROJECT::Root(), assetError)) {
+		QFE_LOG("Failed to open asset registry: " + assetError, QFE::LogLevel::Error);
+		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
+		return -1;
+	}
 	if (!engineConfigLoaded) QFE::DebugLog("Failed to load EngineConfig.json; using defaults.", QFE::LogLevel::Warning);
 	// QuickForgeエンジンの初期化
 	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
 	const std::optional<std::filesystem::path> startupScene = ResolveStartupScene(
 		engineResources.assetDir,
-		GetSceneArgument());
+		arguments.scene);
 	if (!startupScene.has_value()) {
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 		return -1;

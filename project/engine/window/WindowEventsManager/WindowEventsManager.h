@@ -3,6 +3,7 @@
 #include <array>
 #include <memory>
 #include "window/interface/IEvent.h"
+#include "window/interface/IGameWindowManager.h"
 
 namespace QFE::WINDOW {
 	/// @brief ウィンドウに対するアクションを管理するクラス
@@ -19,6 +20,8 @@ namespace QFE::WINDOW {
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 		/// @brief メッセージを処理して適切なイベントシステムに渡す
 		LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		/// @brief ドロップイベントを取得し、ウィンドウ座標をスクリーン座標に変換する。
+		std::vector<DroppedFile> ConsumeDroppedFiles(HWND hwnd);
 
 	private:
 		static inline constexpr int kEventSystemCount_ = 3;

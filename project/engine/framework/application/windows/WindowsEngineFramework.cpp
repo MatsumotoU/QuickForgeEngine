@@ -14,7 +14,7 @@
 #include "scene/SceneManager.h"
 #include "components/EngineComponentRegistration.h"
 #include "components/ParticleEmitterComponent.h"
-#include "core/design-patterns/component/StaticComponentRegistry.h"
+#include "ecs/component/StaticComponentRegistry.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
 #include "graphics/dx12/TextureLoader.h"
@@ -34,50 +34,6 @@
 #include <imgui.h>
 
 namespace {
-
-	bool EnsureModelData(
-		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
-		const std::string& modelDir,
-		const std::string& modelName,
-		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelDataMap) {
-		const auto existing = modelDataMap.find(modelName);
-		if (existing != modelDataMap.end() && !existing->second.meshes.empty()) {
-			return true;
-		}
-
-		// Older scene and prefab files use "box" for the built-in box mesh.
-		// Keep those assets renderable even though the engine now names built-in
-		// primitives with the "Primitive/" prefix.
-		const std::string primitiveName = modelName == "box"
-			? "Primitive/Box"
-			: modelName;
-		if (QFE::ASSET::IsPrimitiveMeshName(primitiveName)) {
-			std::vector<MeshVertexData> vertices = QFE::ASSET::CreatePrimitiveMesh(primitiveName);
-			if (vertices.empty()) {
-				return false;
-			}
-
-			QFE::ASSET::ModelData& modelData = modelDataMap[modelName];
-			modelData.name = modelName;
-			modelData.meshes.clear();
-			QFE::ASSET::MeshData mesh(vertices.size(), vertices.size());
-			mesh.vertices.GetInternalVector() = std::move(vertices);
-			std::vector<uint32_t>& indices = mesh.indices.GetInternalVector();
-			indices.resize(mesh.vertices.size());
-			for (uint32_t index = 0; index < indices.size(); ++index) {
-				indices[index] = index;
-			}
-			modelData.meshes.push_back(std::move(mesh));
-			return true;
-		}
-
-		std::string extension = std::filesystem::path(modelName).extension().string();
-		std::transform(extension.begin(), extension.end(), extension.begin(),
-			[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
-		const std::string filePath = modelDir + modelName +
-			(extension == ".glb" || extension == ".obj" ? "" : ".obj");
-		return systems.modelLoader->LoadModel(filePath, modelDataMap[modelName]);
-	}
 
 	void UpdateParticleEmitters(
 		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
@@ -443,8 +399,7 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	}
 
 	// モデルローダーの初期化
-	outSystems.modelLoader = std::make_unique<QFE::ASSET::AssimpModelLoader>();
-	outSystems.modelLoader->Initialize();
+	outSystems.assetManager = std::make_unique<QFE::ASSET::AssetManager>();
 
 	return true;
 }
@@ -743,56 +698,68 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
 
 			// 頂点バッファの更新
-			if (resources.vertexBufferMap.find(modelRenderComp.modelName) != resources.vertexBufferMap.end()) {
-				modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelRenderComp.modelName]);
+			std::string modelError;
+			const auto modelAsset = modelRenderComp.modelAssetId.empty()
+				? systems.assetManager->LoadLegacyModel(modelRenderComp.modelName, resources.modelDir, modelError)
+				: systems.assetManager->LoadModel(modelRenderComp.modelAssetId, modelError);
+			if (!modelAsset || !modelAsset->data) {
+				modelRenderComp.renderErrorMessage = "Failed to load model: " + modelError;
+				return;
+			}
+			const auto& modelData = *modelAsset->data;
+			const std::string modelKey = modelRenderComp.modelAssetId.empty() ? modelRenderComp.modelName :
+				"asset-id/" + modelRenderComp.modelAssetId + "/" + std::to_string(modelAsset->revision) + "/" + modelRenderComp.modelName;
+			if (resources.vertexBufferMap.find(modelKey) != resources.vertexBufferMap.end()) {
+				modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelKey]);
 			} else {
-				if (QFE::FRAMEWORK::LoadModelVertexData(systems, resources.modelDir, modelRenderComp.modelName, resources.modelDataMap, resources.vertexBufferMap)) {
-					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelRenderComp.modelName]);
+				if (QFE::FRAMEWORK::LoadModelVertexData(systems, resources.modelDir, modelKey, resources.vertexBufferMap)) {
+					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelKey]);
 				} else {
 					modelRenderComp.renderErrorMessage = "Failed to load vertex buffer for model: " + modelRenderComp.modelName;
 					return;
 				}
 			}
-			std::string extension = std::filesystem::path(modelRenderComp.modelName).extension().string();
+			std::string extension = std::filesystem::path(modelAsset->sourcePath.empty() ? modelRenderComp.modelName : modelAsset->sourcePath).extension().string();
 			std::transform(extension.begin(), extension.end(), extension.begin(),
 				[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
 			bool animatedGlb = false;
 			std::vector<MeshVertexData> sampledVertices;
-			if (extension == ".glb") {
-				const std::string filePath = resources.modelDir + modelRenderComp.modelName;
-				const auto clipNames = systems.modelLoader->GetGlbAnimationNames(filePath);
+			auto* skeleton = entityManager.GetComponentPtr<QFE::SCENE::SkeletonAnimationComponent>(entityId);
+			if (extension == ".glb" && skeleton != nullptr && modelAsset->loader) {
+				const std::string& filePath = modelAsset->sourcePath;
+				const auto clipNames = modelAsset->loader->GetGlbAnimationNames(filePath);
 				animatedGlb = !clipNames.empty();
 				if (animatedGlb) {
-					const double duration = systems.modelLoader->GetGlbAnimationDuration(filePath, modelRenderComp.glbAnimationName);
-					if (!modelRenderComp.glbAnimationName.empty() &&
-						std::find(clipNames.begin(), clipNames.end(), modelRenderComp.glbAnimationName) == clipNames.end()) {
-						modelRenderComp.renderErrorMessage = "GLB animation not found: " + modelRenderComp.glbAnimationName;
+					const double duration = modelAsset->loader->GetGlbAnimationDuration(filePath, skeleton->glbAnimationName);
+					if (!skeleton->glbAnimationName.empty() &&
+						std::find(clipNames.begin(), clipNames.end(), skeleton->glbAnimationName) == clipNames.end()) {
+						modelRenderComp.renderErrorMessage = "GLB animation not found: " + skeleton->glbAnimationName;
 						return;
 					}
-					if (modelRenderComp.animatedBufferModelName != modelRenderComp.modelName) {
+					if (modelRenderComp.animatedBufferModelName != modelKey) {
 						modelRenderComp.animatedVertexResourceHandle = UINT32_MAX;
-						modelRenderComp.animatedBufferModelName = modelRenderComp.modelName;
-						modelRenderComp.glbAnimationTime = 0.0;
+						modelRenderComp.animatedBufferModelName = modelKey;
+						skeleton->glbAnimationTime = 0.0;
 					}
-					if (modelRenderComp.activeGlbAnimationName != modelRenderComp.glbAnimationName) {
-						modelRenderComp.glbAnimationTime = 0.0;
-						modelRenderComp.activeGlbAnimationName = modelRenderComp.glbAnimationName;
+					if (skeleton->activeGlbAnimationName != skeleton->glbAnimationName) {
+						skeleton->glbAnimationTime = 0.0;
+						skeleton->activeGlbAnimationName = skeleton->glbAnimationName;
 					}
-					if (modelRenderComp.playGlbAnimation) {
-						modelRenderComp.glbAnimationTime +=
-							static_cast<double>(fpsCounter->GetDeltaTime()) * (std::max)(0.0f, modelRenderComp.glbAnimationSpeed);
+					if (skeleton->playGlbAnimation) {
+						skeleton->glbAnimationTime +=
+							static_cast<double>(fpsCounter->GetDeltaTime()) * (std::max)(0.0f, skeleton->glbAnimationSpeed);
 						if (duration > 0.0) {
-							modelRenderComp.glbAnimationTime = modelRenderComp.loopGlbAnimation
-								? std::fmod(modelRenderComp.glbAnimationTime, duration)
-								: (std::min)(modelRenderComp.glbAnimationTime, duration);
+							skeleton->glbAnimationTime = skeleton->loopGlbAnimation
+								? std::fmod(skeleton->glbAnimationTime, duration)
+								: (std::min)(skeleton->glbAnimationTime, duration);
 						}
 					}
-					if (!systems.modelLoader->SampleGlbAnimation(
-						filePath, modelRenderComp.glbAnimationName, modelRenderComp.glbAnimationTime, sampledVertices)) {
-						modelRenderComp.renderErrorMessage = "Failed to sample GLB animation: " + modelRenderComp.glbAnimationName;
+					if (!modelAsset->loader->SampleGlbAnimation(
+						filePath, skeleton->glbAnimationName, skeleton->glbAnimationTime, sampledVertices)) {
+						modelRenderComp.renderErrorMessage = "Failed to sample GLB animation: " + skeleton->glbAnimationName;
 						return;
 					}
-					if (sampledVertices.size() != resources.modelDataMap.at(modelRenderComp.modelName).meshes[0].vertices.size()) {
+					if (sampledVertices.size() != modelData.meshes[0].vertices.size()) {
 						modelRenderComp.renderErrorMessage = "GLB animation vertex count changed";
 						return;
 					}
@@ -820,17 +787,19 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			}
 			if (!animatedGlb) {
 				modelRenderComp.animatedBufferModelName.clear();
-				modelRenderComp.activeGlbAnimationName.clear();
 				modelRenderComp.animatedVertexResourceHandle = UINT32_MAX;
-				modelRenderComp.glbAnimationTime = 0.0;
+				if (skeleton) {
+					skeleton->activeGlbAnimationName.clear();
+					skeleton->glbAnimationTime = 0.0;
+				}
 			}
 
 			// インデックスバッファの更新
-			if (resources.indexBufferMap.find(modelRenderComp.modelName) != resources.indexBufferMap.end()) {
-				modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelRenderComp.modelName]);
+			if (resources.indexBufferMap.find(modelKey) != resources.indexBufferMap.end()) {
+				modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelKey]);
 			} else {
-				if (QFE::FRAMEWORK::LoadModelIndexBuffer(systems, resources.modelDir, modelRenderComp.modelName, resources.modelDataMap, resources.indexBufferMap)) {
-					modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelRenderComp.modelName]);
+				if (QFE::FRAMEWORK::LoadModelIndexBuffer(systems, resources.modelDir, modelKey, resources.indexBufferMap)) {
+					modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelKey]);
 				} else {
 					modelRenderComp.renderErrorMessage = "Failed to load index buffer for model: " + modelRenderComp.modelName;
 					return;
@@ -842,8 +811,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
 			std::string effectiveTextureName;
 			const QFE::ASSET::ModelMaterialData* modelMaterial = nullptr;
-			if (resources.modelDataMap.find(modelRenderComp.modelName) != resources.modelDataMap.end()) {
-				const QFE::ASSET::ModelData& modelData = resources.modelDataMap[modelRenderComp.modelName];
+			{
 				if (!modelData.meshes.empty()) {
 					modelMaterial = &modelData.meshes[0].material;
 					effectiveTextureName = modelMaterial->textureName;
@@ -882,13 +850,13 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
 
 			// 頂点変形のあるGLBはエンティティごとに更新可能なBLASを所有する。
-			const auto& mesh = resources.modelDataMap.at(modelRenderComp.modelName).meshes[0];
+			const auto& mesh = modelData.meshes[0];
 			const auto& indices = mesh.indices.GetInternalVector();
 			const auto& vertices = animatedGlb ? sampledVertices : mesh.vertices.GetInternalVector();
 			QFE::GRAPHIC::BLASHandle blasHandle = QFE::GRAPHIC::BLASHandle::Invalid;
 			if (animatedGlb) {
 				auto existing = resources.animatedBlasByEntity.find(entityId);
-				if (existing != resources.animatedBlasByEntity.end() && existing->second.modelName != modelRenderComp.modelName) {
+				if (existing != resources.animatedBlasByEntity.end() && existing->second.modelName != modelKey) {
 					accelerationStructure->RemoveBLAS(existing->second.handle);
 					resources.animatedBlasByEntity.erase(existing);
 					existing = resources.animatedBlasByEntity.end();
@@ -899,7 +867,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 						modelRenderComp.renderErrorMessage = "Failed to create animated BLAS";
 						return;
 					}
-					resources.animatedBlasByEntity[entityId] = { modelRenderComp.modelName, blasHandle };
+					resources.animatedBlasByEntity[entityId] = { modelKey, blasHandle };
 				} else {
 					blasHandle = existing->second.handle;
 					const auto positions = QFE::GRAPHIC::GetModelVertexPositions(vertices.data(), vertices.size());
@@ -914,18 +882,18 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 				}
 				activeAnimatedEntities.insert(entityId);
 			} else {
-				if (!resources.blasHandleMap.contains(modelRenderComp.modelName) &&
+				if (!resources.blasHandleMap.contains(modelKey) &&
 					!QFE::FRAMEWORK::LoadModelAndCreateBLAS(systems, resources.modelDir,
-						modelRenderComp.modelName, resources.modelDataMap, resources.blasHandleMap)) {
+						modelKey, resources.blasHandleMap)) {
 					modelRenderComp.renderErrorMessage = "Failed to load BLAS for model: " + modelRenderComp.modelName;
 					return;
 				}
-				blasHandle = resources.blasHandleMap.at(modelRenderComp.modelName);
+				blasHandle = resources.blasHandleMap.at(modelKey);
 			}
 
 			RaytracingInstanceMeta instanceMeta{};
-			if (!animatedGlb && staticModelMeta.contains(modelRenderComp.modelName)) {
-				instanceMeta = staticModelMeta.at(modelRenderComp.modelName);
+			if (!animatedGlb && staticModelMeta.contains(modelKey)) {
+				instanceMeta = staticModelMeta.at(modelKey);
 			} else {
 				instanceMeta.vertexBase = static_cast<uint32_t>(globalVertexAttributes.size());
 				instanceMeta.vertexCount = static_cast<uint32_t>(vertices.size());
@@ -937,7 +905,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 					globalVertexAttributes.push_back(attribute);
 				}
 				globalTriIndices.insert(globalTriIndices.end(), indices.begin(), indices.end());
-				if (!animatedGlb) staticModelMeta[modelRenderComp.modelName] = instanceMeta;
+				if (!animatedGlb) staticModelMeta[modelKey] = instanceMeta;
 			}
 			instanceMeta.baseColor = materialData->color;
 			instanceMeta.uvTransform = materialData->uvTransform;
@@ -1014,14 +982,22 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 
 			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
 			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
-			if (!sprite.textureName.empty()) {
+			std::string textureName = sprite.textureName;
+			if (!sprite.textureAssetId.empty()) {
+				std::string error;
+				const auto path = systems.assetManager->ResolveSource(sprite.textureAssetId, "image", error);
+				if (path.empty()) { sprite.renderErrorMessage = "Failed to resolve sprite texture: " + error; return; }
+				const auto utf8 = path.generic_u8string();
+				textureName.assign(reinterpret_cast<const char*>(utf8.data()), utf8.size());
+			}
+			if (!textureName.empty()) {
 				if (!QFE::FRAMEWORK::LoadTexture(
-					systems, resources.assetDir, sprite.textureName,
+					systems, resources.assetDir, textureName,
 					resources.textureHandleMap, resources.textureGpuIndexMap, resources.nextTextureGpuIndex)) {
-					sprite.renderErrorMessage = "Failed to load texture: " + sprite.textureName;
+					sprite.renderErrorMessage = "Failed to load texture: " + textureName;
 					return;
 				}
-				textureHandle = resources.textureHandleMap[sprite.textureName];
+				textureHandle = resources.textureHandleMap[textureName];
 			}
 			sprite.textureResourceHandle = static_cast<uint32_t>(textureHandle);
 			sprite.canRender = true;
@@ -1186,13 +1162,14 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 bool QFE::FRAMEWORK::LoadModelVertexData(
 	WindowsQuickForgeEngineSystems& systems, 
 	const std::string& modelDir, const std::string& modelName,
-	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& vertexBuffers) {
 
-	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
+	std::string error;
+	const auto asset = systems.assetManager->LoadLegacyModel(modelName, modelDir, error);
+	if (asset && asset->data) {
 		bool result = QFE::GRAPHIC::CreateVertexBuffer(
 			systems.graphicEngine.get(),
-			modelData[modelName].meshes[0].vertices.GetInternalVector(),
+			asset->data->meshes[0].vertices.GetInternalVector(),
 			modelName, vertexBuffers[modelName]);
 		return result;
 	}
@@ -1202,13 +1179,14 @@ bool QFE::FRAMEWORK::LoadModelVertexData(
 bool QFE::FRAMEWORK::LoadModelIndexBuffer(
 	WindowsQuickForgeEngineSystems& systems, 
 	const std::string& modelDir, const std::string& modelName,
-	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& indexBuffers) {
 
-	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
+	std::string error;
+	const auto asset = systems.assetManager->LoadLegacyModel(modelName, modelDir, error);
+	if (asset && asset->data) {
 		bool result = QFE::GRAPHIC::CreateIndexBuffer(
 			systems.graphicEngine.get(),
-			modelData[modelName].meshes[0].indices.GetInternalVector(),
+			asset->data->meshes[0].indices.GetInternalVector(),
 			modelName, indexBuffers[modelName]);
 		return result;
 	}
@@ -1218,13 +1196,14 @@ bool QFE::FRAMEWORK::LoadModelIndexBuffer(
 bool QFE::FRAMEWORK::LoadModelAndCreateBLAS(
 	WindowsQuickForgeEngineSystems& systems, 
 	const std::string& modelDir, const std::string& modelName,
-	std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle>& blasHandles) {
 
-	if (EnsureModelData(systems, modelDir, modelName, modelData)) {
+	std::string error;
+	const auto asset = systems.assetManager->LoadLegacyModel(modelName, modelDir, error);
+	if (asset && asset->data) {
 		bool result = QFE::GRAPHIC::CreateBLAS(
-			systems.graphicEngine.get(), modelData[modelName].meshes[0].vertices.GetInternalVector(),
-			modelData[modelName].meshes[0].indices.GetInternalVector(),
+			systems.graphicEngine.get(), asset->data->meshes[0].vertices.GetInternalVector(),
+			asset->data->meshes[0].indices.GetInternalVector(),
 			modelName, blasHandles[modelName]);
 		return result;
 	}

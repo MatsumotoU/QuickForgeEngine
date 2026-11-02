@@ -16,6 +16,7 @@ namespace QFE::SCENE {
 namespace QFE::WINDOW {
 	class IGameWindowManager;
 }
+namespace QFE::ASSET { class AssetManager; }
 
 namespace QFE::EDITOR {
 	class EditorCommandList;
@@ -40,6 +41,7 @@ namespace QFE::EDITOR {
 			QFE::SCENE::SceneManager* sceneManager,
 			ImTextureID sceneTextureId,
 			QFE::WINDOW::IGameWindowManager& windowManager,
+			QFE::ASSET::AssetManager& assetManager,
 			ComponentInspectorRegistry* componentInspectorRegistry,
 			const QFE::FRAMEWORK::EngineConfig& config);
 		void Update();
@@ -57,12 +59,16 @@ namespace QFE::EDITOR {
 			const QFE::MATH::Matrix4x4& viewMatrix,
 			const QFE::MATH::Matrix4x4& projectionMatrix,
 			bool isOrthographic = false);
+		/// @brief 表示中のカメラ行列をアセットのドロップ位置計算に使用する。
+		void SetAssetDropViewProjection(const QFE::MATH::Matrix4x4& viewProjection);
 		/// @brief SceneViewerのギズモがマウス入力を使用しているかを返す
 		bool IsSceneGizmoCapturingMouse() const;
 
 	private:
 		/// @brief 現在の保存先、またはユーザーが選択した保存先へシーン保存を追加する
 		void QueueSceneSave(EditorCommandList& commandList, bool selectSavePath);
+		/// @brief Hierarchyで選択されたEntityをプロジェクト内に保存する。
+		void SaveSelectedEntities();
 
 		// エディタで表示できるウィンドウたち
 		std::unordered_map<EditorWindowType, std::unique_ptr<IEditorWindow>> editorWindowsMap_;

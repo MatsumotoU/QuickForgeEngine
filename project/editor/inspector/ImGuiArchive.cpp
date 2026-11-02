@@ -1,14 +1,15 @@
 #include "ImGuiArchive.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/ObjectInfoComponent.h"
 #include "components/SplineControlPoint.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
-#include "assetfactory/model/AssimpModelLoader.h"
+#include "assetfactory/game-data/AssetManager.h"
 #include "components/ModelRenderComponent.h"
+#include "components/SpriteRenderComponent.h"
 
+#include "assetfactory/game-data/GameProjectPaths.h"
 #include <filesystem>
-#include <unordered_map>
 #include <utility>
 
 namespace {
@@ -43,7 +44,7 @@ namespace {
 		std::vector<std::string> results;
 		if (extensions.empty()) return results;
 		std::error_code error;
-		const std::filesystem::path resourceRoot = "resources";
+		const std::filesystem::path resourceRoot = QFE::PROJECT::Assets();
 		if (!std::filesystem::exists(resourceRoot, error)) {
 			return results;
 		}
@@ -600,8 +601,8 @@ namespace {
 	}
 }
 
-QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId) :
-	entityManager_(entityManager), entityId_(entityId) {
+QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::AssetManager* assets) :
+	entityManager_(entityManager), entityId_(entityId), assets_(assets) {
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, bool& value) {
@@ -622,6 +623,7 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, uint32_t& value
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& value) {
 	if (name == "modelName") {
+		const std::string previous = value;
 		std::vector<std::string> options = QFE::ASSET::GetPrimitiveMeshNames();
 		std::vector<std::string> objFiles = FindResourceFiles({ ".obj" }, true);
 		std::vector<std::string> glbFiles = FindResourceFiles({ ".glb" }, false);
@@ -629,37 +631,32 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& va
 		options.insert(options.end(), glbFiles.begin(), glbFiles.end());
 		DrawResourceCombo(
 			MakeLabel(name), value, options, {}, false);
+		if (value != previous && entityManager_ && entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
+			entityManager_->GetComponent<QFE::SCENE::ModelRenderComponent>(entityId_).modelAssetId.clear();
+		}
 		return;
 	}
 	if (name == "textureName") {
+		const std::string previous = value;
 		DrawResourceCombo(
 			MakeLabel(name), value, {},
 			{ ".png", ".jpg", ".jpeg", ".dds", ".tga", ".bmp" },
 			false, "Auto (Embedded / White1x1)");
+		if (value != previous && componentType_ == "SpriteRenderComponent" && entityManager_ &&
+			entityManager_->HasComponent<QFE::SCENE::SpriteRenderComponent>(entityId_)) {
+			entityManager_->GetComponent<QFE::SCENE::SpriteRenderComponent>(entityId_).textureAssetId.clear();
+		}
 		return;
 	}
 	if (name == "glbAnimationName") {
 		std::vector<std::string> options;
-		if (entityManager_ && entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
+		if (assets_ && entityManager_ && entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
 			const auto& model = entityManager_->GetComponent<QFE::SCENE::ModelRenderComponent>(entityId_);
-			const std::filesystem::path path = std::filesystem::path("resources") / model.modelName;
-			std::string extension = path.extension().string();
-			std::transform(extension.begin(), extension.end(), extension.begin(),
-				[](unsigned char character) { return static_cast<char>(std::tolower(character)); });
-			if (extension == ".glb" && std::filesystem::exists(path)) {
-				static QFE::ASSET::AssimpModelLoader clipLoader;
-				static std::unordered_map<std::string, std::vector<std::string>> clipNameCache;
-				const std::string key = path.generic_string();
-				if (const auto found = clipNameCache.find(key); found != clipNameCache.end()) {
-					options = found->second;
-				} else {
-					QFE::ASSET::ModelData unused;
-					if (clipLoader.LoadModel(key, unused)) {
-						options = clipLoader.GetGlbAnimationNames(key);
-						clipNameCache.emplace(key, options);
-					}
-				}
-			}
+			std::string error;
+			const auto asset = model.modelAssetId.empty()
+				? assets_->LoadLegacyModel(model.modelName, QFE::PROJECT::Assets(), error)
+				: assets_->LoadModel(model.modelAssetId, error);
+			if (asset && asset->loader) options = asset->loader->GetGlbAnimationNames(asset->sourcePath);
 		}
 		DrawResourceCombo(MakeLabel(name), value, options, {}, false, "Auto (First Clip)");
 		return;

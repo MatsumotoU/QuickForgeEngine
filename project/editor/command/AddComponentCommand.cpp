@@ -1,5 +1,5 @@
 #include "AddComponentCommand.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 
 QFE::EDITOR::AddComponentCommand::AddComponentCommand(uint32_t entityId, EntityManager* entityManager, const std::string& componentName) :
 	entityManager_(entityManager), entityId_(entityId), addComponentName_(componentName) {

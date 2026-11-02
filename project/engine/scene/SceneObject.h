@@ -1,5 +1,5 @@
 #pragma once
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include <unordered_map>

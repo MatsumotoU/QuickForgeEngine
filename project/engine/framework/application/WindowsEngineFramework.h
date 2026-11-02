@@ -62,19 +62,16 @@ namespace QFE::FRAMEWORK {
 	bool LoadModelVertexData(
 		WindowsQuickForgeEngineSystems& systems,
 		const std::string& modelDir, const std::string& modelName,
-		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& vertexBuffers);
 	/// @brief 指定されたモデルファイルのインデックスデータを読み込み、モデルデータとインデックスバッファを作成する。
 	bool LoadModelIndexBuffer(
 		WindowsQuickForgeEngineSystems& systems,
 		const std::string& modelDir, const std::string& modelName,
-		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& indexBuffers);
 	/// @brief 指定されたモデルファイルの頂点データとインデックスデータを読み込み、モデルデータとBLASを作成する。
 	bool LoadModelAndCreateBLAS(
 		WindowsQuickForgeEngineSystems& systems,
 		const std::string& modelDir, const std::string& modelName,
-		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 		std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle>& blasHandles);
 	/// @brief 指定されたテクスチャファイルを読み込み、テクスチャハンドルを作成する。
 	bool LoadTexture(

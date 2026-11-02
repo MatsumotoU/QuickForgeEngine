@@ -1,5 +1,5 @@
 #include "Inspector.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "inspector/ComponentInspectorRegistry.h"
 #include "inspector/ImGuiArchive.h"
 #include "components/DirectionalLightComponent.h"
@@ -31,8 +31,10 @@ namespace {
 
 QFE::EDITOR::Inspector::Inspector(
 	QFE::EntityManager* entityManager,
+	QFE::ASSET::AssetManager* assets,
 	const ComponentInspectorRegistry* componentInspectorRegistry) :
 	entityManager_(entityManager),
+	assets_(assets),
 	componentInspectorRegistry_(componentInspectorRegistry),
 	isActive_(true),
 	isFocus_(false) {
@@ -83,10 +85,11 @@ bool QFE::EDITOR::Inspector::GetIsFocus() {
 void QFE::EDITOR::Inspector::DrawComponents(uint32_t entityId) {
 	ImGui::Text("Entity ID: %u", entityId);
 
-	ImGuiArchive archive(entityManager_, entityId);
+	ImGuiArchive archive(entityManager_, entityId, assets_);
 	std::vector<std::string> componentTypeNames = entityManager_->GetComponentTypeNames(entityId);
 	std::sort(componentTypeNames.begin(), componentTypeNames.end());
 	for (const std::string& componentTypeName : componentTypeNames) {
+		archive.SetComponentType(componentTypeName);
 		ImGui::PushID(componentTypeName.c_str());
 		if (ImGui::CollapsingHeader(componentTypeName.c_str())) {
 			const bool wasDrawnByCustomInspector =

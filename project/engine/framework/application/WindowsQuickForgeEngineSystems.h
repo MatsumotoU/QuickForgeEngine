@@ -5,7 +5,7 @@
 #include "framework/scene/AudioComponentSystem.h"
 #include "framework/scene/SceneChangeSystem.h"
 
-#include "assetfactory/model/AssimpModelLoader.h"
+#include "assetfactory/game-data/AssetManager.h"
 
 #include "core/timer/FPSCounter.h"
 
@@ -40,7 +40,7 @@ namespace QFE::FRAMEWORK{
 		AudioComponentSystem audioComponents;
 		SceneChangeTransitionSystem sceneChangeTransition;
 		std::unique_ptr<QFE::FPSCounter> fpsCounter;// FPSカウンター
-		std::unique_ptr<QFE::ASSET::AssimpModelLoader> modelLoader;// モデルローダー
+		std::unique_ptr<QFE::ASSET::AssetManager> assetManager; ///< プロジェクトのCPU側アセット管理。
 
 		// 所有権を一意に保つため、コピーを禁止する。
 		WindowsQuickForgeEngineSystems();

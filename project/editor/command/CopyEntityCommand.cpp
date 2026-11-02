@@ -1,7 +1,7 @@
 #include "CopyEntityCommand.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/ObjectInfoComponent.h"
-#include "design-patterns/component/EntityUuid.h"
+#include "ecs/component/EntityUuid.h"
 
 QFE::EDITOR::CopyEntityCommand::CopyEntityCommand(uint32_t entityId, EntityManager* entityManager) :
 	entityManager_(entityManager), entityId_(entityId), newEntityId_(UINT32_MAX) {

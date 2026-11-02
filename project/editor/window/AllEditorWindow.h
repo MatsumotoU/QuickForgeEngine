@@ -4,3 +4,4 @@
 #include "GameViewer.h"
 #include "Inspector.h"
 #include "AnimationEditor.h"
+#include "AssetBrowser.h"

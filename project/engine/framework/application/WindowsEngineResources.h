@@ -10,7 +10,6 @@
 #include "graphics/dx12/GraphicEngineHandleTypes.h"
 #include "graphics/dx12/pipeline/pso/PipelineDescTypes.h"
 #include <d3d12.h>
-#include "assetfactory/model/ModelData.h"
 #include "EngineConfig.h"
 
 namespace QFE::FRAMEWORK {
@@ -55,7 +54,6 @@ namespace QFE::FRAMEWORK {
 		};
 		std::unordered_map<uint32_t, AnimatedBLAS> animatedBlasByEntity;
 		uint64_t animatedBlasSceneRevision = UINT64_MAX;
-		std::unordered_map<std::string, QFE::ASSET::ModelData> modelDataMap;
 
 		std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle> textureHandleMap;
 		std::map<std::string, uint32_t> textureGpuIndexMap; // テクスチャ名 -> GPU側のインデックスマップ

@@ -39,6 +39,8 @@ namespace QFE::WINDOW {
 
 		/** @brief いずれかのウィンドウがアクティブかどうかを判定 */
 		bool IsWindowActive() const override;
+		/// @brief 各ウィンドウのファイルドロップを取得する。
+		std::vector<DroppedFile> ConsumeDroppedFiles() override;
 
 		/**
 		 * @brief ウィンドウ名からウィンドウハンドルを取得

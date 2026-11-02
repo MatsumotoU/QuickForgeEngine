@@ -409,7 +409,6 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 	// ファイルの存在確認
 	if (!QFE::FILE::HasFile(filePath)) {
 		QFE_LOG(std::format("Model file not found: {}", filePath));
-		assert(false && "Model file not found");
 		return false;
 	}
 
@@ -428,7 +427,7 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 				aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder)
 			: (aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals));
 	if (!scene || !scene->HasMeshes()) {
-		assert(false && "Failed to load model");
+		QFE_LOG(std::format("Failed to load model: {}", filePath));
 		return false;
 	}
 
@@ -507,7 +506,12 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			aiString texPath;
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
-				meshData.material.textureName = std::string(texPath.C_Str());
+				// MTLの画像はモデルのディレクトリを基準に解決し、旧形式は従来のアセット基準で扱う。
+				const auto texturePath = (std::filesystem::path(filePath).parent_path() /
+					std::filesystem::path(texPath.C_Str())).lexically_normal();
+				std::error_code error;
+				meshData.material.textureName = std::filesystem::is_regular_file(texturePath, error)
+					? texturePath.generic_string() : std::string(texPath.C_Str());
 				QFE_LOG(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureName));
 			} else {
 				meshData.material.textureName = "";

@@ -1,9 +1,10 @@
 #include "framework/scene/SceneChangeSystem.h"
 
 #include "components/SceneChangeComponent.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "scene/SceneManager.h"
 
+#include "assetfactory/game-data/GameProjectPaths.h"
 #include <filesystem>
 #include <string>
 #include <utility>
@@ -20,22 +21,28 @@ namespace {
 		const auto addCandidates = [&candidates](const std::filesystem::path& path) {
 			candidates.push_back(path);
 			if (path.extension().empty()) {
+				std::filesystem::path scenePath = path;
+				scenePath += ".scene";
+				candidates.push_back(std::move(scenePath));
 				std::filesystem::path jsonPath = path;
 				jsonPath += ".json";
 				candidates.push_back(std::move(jsonPath));
 			}
 		};
 
-		addCandidates(scenePath);
+		if (scenePath.is_absolute() || QFE::PROJECT::Root().empty()) addCandidates(scenePath);
 		if (scenePath.is_relative()) {
+			if (!QFE::PROJECT::Root().empty() && !scenePath.empty() && *scenePath.begin() == "resources") addCandidates(QFE::PROJECT::Resolve(scenePath));
 			if (!currentScenePath.empty()) {
 				addCandidates(std::filesystem::path(currentScenePath).parent_path() / scenePath);
 			}
-			addCandidates(std::filesystem::path("resources/scene") / scenePath);
+			addCandidates(QFE::PROJECT::Assets() / (QFE::PROJECT::Root().empty() ? "scene" : "scenes") / scenePath);
 		}
 
 		for (const std::filesystem::path& candidate : candidates) {
 			std::error_code error;
+			if (!QFE::PROJECT::Root().empty() &&
+				!QFE::PROJECT::IsWithin(candidate, QFE::PROJECT::Assets() / "scenes")) continue;
 			if (std::filesystem::is_regular_file(candidate, error)) return candidate;
 		}
 		return {};

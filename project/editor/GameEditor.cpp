@@ -1,5 +1,5 @@
 #include "GameEditor.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "scene/SceneManager.h"
 #include "framework/input/InputFrameWork.h"
 
@@ -16,9 +16,10 @@ void QFE::EDITOR::GameEditor::Initialize(
 	QFE::SCENE::SceneManager* sceneManager,
 	ImTextureID sceneTextureId,
 	QFE::WINDOW::IGameWindowManager& windowManager,
+	QFE::ASSET::AssetManager& assetManager,
 	const QFE::FRAMEWORK::EngineConfig& config) {
 	windowManager_.Initialize(
-		sceneManager, sceneTextureId, windowManager, &componentInspectorRegistry_, config);
+		sceneManager, sceneTextureId, windowManager, assetManager, &componentInspectorRegistry_, config);
 	commandExecutor_.Initialize();
 	commandList_.ClearCommands();
 
@@ -108,6 +109,7 @@ void QFE::EDITOR::GameEditor::Update(
 	} else {
 		viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager, &resources.cameraPosition);
 	}
+	windowManager_.SetAssetDropViewProjection(viewProj);
 }
 
 void GameEditor::Draw() {

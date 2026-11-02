@@ -1,6 +1,6 @@
 #pragma once
 
-#include "design-patterns/component/Archive.h"
+#include "ecs/component/Archive.h"
 
 #include <algorithm>
 #include <cctype>
@@ -10,6 +10,7 @@
 namespace QFE {
 	class EntityManager;
 }
+namespace QFE::ASSET { class AssetManager; }
 
 namespace QFE::EDITOR {
 	/// @brief Archive のリフレクション情報から ImGui の編集UIを生成する。
@@ -17,7 +18,9 @@ namespace QFE::EDITOR {
 	public:
 		using Archive::Process;
 
-		ImGuiArchive(EntityManager* entityManager, uint32_t entityId);
+		ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::AssetManager* assets);
+		/// @brief 編集中のコンポーネント名を設定する。
+		void SetComponentType(const std::string& name) { componentType_ = name; }
 
 		bool IsLoading() const override {
 			return false;
@@ -56,5 +59,7 @@ namespace QFE::EDITOR {
 
 		EntityManager* entityManager_;
 		uint32_t entityId_;
+		ASSET::AssetManager* assets_;
+		std::string componentType_;
 	};
 }

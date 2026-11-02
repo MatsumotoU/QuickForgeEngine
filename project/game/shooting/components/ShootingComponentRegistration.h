@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AllShootingComponents.h"
-#include "core/design-patterns/component/StaticComponentRegistry.h"
+#include "ecs/component/StaticComponentRegistry.h"
 
 namespace QFE::GAME {
 	/// @brief Shootingゲーム固有のコンポーネントを登録する。

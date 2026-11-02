@@ -121,5 +121,6 @@ project "SceneFramework"
     links {
         "Scene",
         "EngineCore",
+        "EcsCore",
     }
 

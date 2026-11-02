@@ -9,6 +9,7 @@
 #include "InputMovementComponent.h"
 #include "MaterialComponent.h"
 #include "ModelRenderComponent.h"
+#include "SkeletonAnimationComponent.h"
 #include "ObjectInfoComponent.h"
 #include "ParentComponent.h"
 #include "ParticleEmitterComponent.h"
@@ -24,7 +25,7 @@
 #include "SpriteRenderComponent.h"
 #include "TransformComponent.h"
 #include "VertexComponent.h"
-#include "core/design-patterns/component/StaticComponentRegistry.h"
+#include "ecs/component/StaticComponentRegistry.h"
 
 namespace QFE {
 	/// @brief エンジンが標準提供するコンポーネントを登録する。
@@ -42,6 +43,7 @@ namespace QFE {
 			registry.RegisterComponent<SCENE::CameraComponent>("CameraComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::DirectionalLightComponent>("DirectionalLightComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::AnimationComponent>("AnimationComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::SkeletonAnimationComponent>("SkeletonAnimationComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::ParticleEmitterComponent>("ParticleEmitterComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::SphereColliderComponent>("SphereColliderComponent", "Physics") &&
 			registry.RegisterComponent<COMPONENTS::PhysicsComponent>("PhysicsComponent", "Physics") &&

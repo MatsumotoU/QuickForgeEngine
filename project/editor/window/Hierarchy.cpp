@@ -1,5 +1,5 @@
 #include "Hierarchy.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/AllComponent.h"
 #include "EngineDefines.h"
 
@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include "assetfactory/game-data/GameProjectPaths.h"
 #include <filesystem>
 #include <map>
 #include <set>
@@ -23,7 +24,7 @@ namespace {
 	std::vector<std::string> FindModelAssets() {
 		std::vector<std::string> models;
 		std::error_code error;
-		const std::filesystem::path resourceRoot = "resources";
+		const std::filesystem::path resourceRoot = QFE::PROJECT::Assets();
 		if (!std::filesystem::exists(resourceRoot, error)) {
 			return models;
 		}
@@ -205,6 +206,9 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 		const std::string entityContextMenuId =
 			"EntityContextMenu##" + std::to_string(entity.id);
 		if (ImGui::BeginPopupContextItem(entityContextMenuId.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+			if (ImGui::MenuItem("Save Selected Entities...")) {
+				saveSelectedEntitiesRequested_ = true;
+			}
 			if (hierarchySelectedEntities_.size() >= 2 && ImGui::MenuItem("Group Selected...")) {
 				groupNameInput_ = MakeNextGroupName(existingGroups);
 				openGroupDialog = true;
@@ -400,4 +404,8 @@ std::optional<uint32_t> QFE::EDITOR::Hierarchy::ConsumeCameraFocusRequest() {
 
 const std::set<uint32_t>& QFE::EDITOR::Hierarchy::GetSelectedEntities() const {
 	return hierarchySelectedEntities_;
+}
+
+bool QFE::EDITOR::Hierarchy::ConsumeSaveSelectedEntitiesRequest() {
+	return std::exchange(saveSelectedEntitiesRequested_, false);
 }

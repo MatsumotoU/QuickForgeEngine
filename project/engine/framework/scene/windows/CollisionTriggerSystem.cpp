@@ -1,6 +1,6 @@
 #include "framework/scene/CollisionTriggerSystem.h"
 
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/CollisionTriggerComponent.h"
 
 namespace {

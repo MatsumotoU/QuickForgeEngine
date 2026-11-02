@@ -116,6 +116,7 @@ project "Runtime"
     links {
         "EngineAssetsFactory",
         "EngineCore",
+        "EcsCore",
         "Assimp",
         "ApplicationFramework",
         "GraphicFramework",

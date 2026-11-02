@@ -1,6 +1,6 @@
 #pragma once
 #include "EngineDefines.h"
-#include "design-patterns/component/EntityUuid.h"
+#include "ecs/component/EntityUuid.h"
 
 namespace QFE::SCENE {
 	/// @brief オブジェクトの情報を表すコンポーネントです。

@@ -1,5 +1,5 @@
 #include "DeleteEntityCommand.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 
 QFE::EDITOR::DeleteEntityCommand::DeleteEntityCommand(uint32_t entityId, QFE::EntityManager* entityManager) :
 	entityManager_(entityManager), entityId_(entityId) {

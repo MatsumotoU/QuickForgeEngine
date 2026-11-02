@@ -2,15 +2,21 @@
 #include "AllEditorWindow.h"
 
 #include "framework/window/WindowDialogFramework.h"
+#include "window/interface/IGameWindowManager.h"
 
 #include "scene/SceneManager.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/TransformComponent.h"
+#include "components/ObjectInfoComponent.h"
 #include "command/EditorCommandList.h"
 #include "string/MyString.h"
 #include "command/AllCommands.h"
 #include "process/ProcessUtil.h"
-#include "file/FileUtility.h"
+#include "assetfactory/game-data/GameProjectPaths.h"
+#include "assetfactory/game-data/GamePak.h"
+#include <filesystem>
+#include <fstream>
+#include <string_view>
 
 #include <imgui.h>
 #include <algorithm>
@@ -18,10 +24,20 @@
 #include <utility>
 #include <cstdio>
 
+namespace {
+bool IsProjectFile(const std::wstring& path, const std::filesystem::path& directory) {
+    return QFE::PROJECT::IsWithin(std::filesystem::path(path), QFE::PROJECT::Assets() / directory);
+}
+bool IsProjectScene(const std::wstring& path) {
+    return IsProjectFile(path, "scenes");
+}
+}
+
 void QFE::EDITOR::EditorWindowManager::Initialize(
 	QFE::SCENE::SceneManager* sceneManager,
 	ImTextureID sceneTextureId,
 	QFE::WINDOW::IGameWindowManager& windowManager,
+	QFE::ASSET::AssetManager& assetManager,
 	ComponentInspectorRegistry* componentInspectorRegistry,
 	const QFE::FRAMEWORK::EngineConfig& config) {
 	engineConfig_ = config;
@@ -31,10 +47,11 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 	editorWindowsMap_.clear();
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager);
 	editorWindowsMap_[EditorWindowType::Inspector] =
-		std::make_unique<Inspector>(&entityManager, componentInspectorRegistry);
+		std::make_unique<Inspector>(&entityManager, &assetManager, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
-	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId);
-    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager);
+	editorWindowsMap_[EditorWindowType::AssetBrowser] = std::make_unique<AssetBrowser>(assetManager, windowManager);
+	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
+    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
 }
 
 void QFE::EDITOR::EditorWindowManager::Update() {
@@ -92,10 +109,27 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
                     *windowManager_,
-                    L"JSON Files", L"*.json",
-                    selectedFilePath)) {
+                    L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
+                    selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
                     // Entityの生成
 					commandList.AddCommand(std::make_unique<LoadSceneCommand>(QFE::ConvertString(selectedFilePath), sceneManager_));
+                }
+            }
+            if (ImGui::MenuItem("Set Start Scene...")) {
+                std::wstring selectedFilePath;
+                if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
+                    selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
+                    const auto projectFile = QFE::PROJECT::Root() / "project.json";
+                    try {
+                        std::ifstream input(projectFile);
+                        auto json = nlohmann::json::parse(input);
+                        input.close();
+                        json["start_scene"] = QFE::ConvertString(std::filesystem::relative(
+                            std::filesystem::path(selectedFilePath), QFE::PROJECT::Assets() / "scenes").generic_wstring());
+                        std::ofstream output(projectFile, std::ios::trunc);
+                        output << json.dump(4) << '\n';
+                        if (!output) QFE_LOG("Failed to save project.json.");
+                    } catch (const std::exception&) { QFE_LOG("Failed to update project.json."); }
                 }
             }
 			// セーブ
@@ -105,55 +139,41 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 			if (ImGui::MenuItem("Save Scene As...", nullptr)) {
 				saveSceneAsRequested = true;
             }
-            // エンティティの保存
-            if (ImGui::MenuItem("Save Selected Entities...", nullptr)) {
-                if (selectedEntities_.empty()) {
-                    QFE_LOG("No entities selected for saving.");
-                } else {
-					// JSONファイルの保存先を選択させる
-					std::wstring selectedFilePath;
-					if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(
-						*windowManager_,
-						L"JSON Files", L"*.json",
-						selectedFilePath)) {
-						nlohmann::json savedEntities;
-						savedEntities["entities"] = nlohmann::json::array();
-						// 選択されたエンティティを1つのファイルに保存する
-						for (uint32_t entityId : selectedEntities_) {
-							nlohmann::json entityComponents =
-								sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
-							if (!entityComponents.empty()) {
-								savedEntities["entities"].push_back(std::move(entityComponents));
-							}
-						}
-
-						if (savedEntities["entities"].empty()) {
-							QFE_LOG("No serializable entities selected for saving.");
-						} else if (!QFE::FILE::SaveJSONToFile(
-							QFE::ConvertString(selectedFilePath), savedEntities)) {
-							QFE_LOG("Failed to save selected entities.");
-						}
-					}
-				}
-			}
 			// エンティティのロード
             if (ImGui::MenuItem("Add Saved Entities...", nullptr)) {
                 // 保存済みエンティティを現在のシーンへ追加するファイルを選択させる
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
                     *windowManager_,
-                    L"JSON Files", L"*.json",
-                    selectedFilePath)) {
-                    const uint32_t firstEntityId =
-                        sceneManager_->LoadEntityOnCurrentSceneFromJsonObject(QFE::ConvertString(selectedFilePath));
-                    if (firstEntityId == UINT32_MAX) {
-                        QFE_LOG("Failed to add saved entities to the current scene.");
+                    L"Entity Files (*.entity;*.json)", L"*.entity;*.json",
+                    selectedFilePath, (QFE::PROJECT::Assets() / "entities").wstring())) {
+                    if (!IsProjectFile(selectedFilePath, ".")) {
+                        QFE_LOG("Load entities from the current project's assets directory.");
+                    } else {
+                        const uint32_t firstEntityId =
+                            sceneManager_->LoadEntityOnCurrentSceneFromJsonObject(QFE::ConvertString(selectedFilePath));
+                        if (firstEntityId == UINT32_MAX) {
+                            QFE_LOG("Failed to add saved entities to the current scene.");
+                        }
                     }
                 }
             }
 			ImGui::Separator();
 			if (ImGui::MenuItem("Build and Reload DLL", nullptr)) {
 				gameModuleBuildAndReloadRequested_ = true;
+			}
+			if (ImGui::MenuItem("Export Game Package...")) {
+				std::wstring path;
+				if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(*windowManager_,
+					L"QuickForge Package", L"*.qfepak", path,
+					QFE::PROJECT::Root().wstring(), L"qfepak")) {
+					std::string error;
+					if (!QFE::PAK::Write(QFE::PROJECT::Root(), std::filesystem::path(path), error)) {
+						QFE_LOG("Package export failed: " + error, QFE::LogLevel::Error);
+					} else {
+						QFE_LOG("Game package exported: " + QFE::ConvertString(path), QFE::LogLevel::EditorInfo);
+					}
+				}
 			}
             ImGui::EndMenu();
         }
@@ -177,12 +197,23 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
                     *windowManager_,
-                    L"Scene Files", L"*.json",
-                    selectedFilePath)) {
+                    L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
+                    selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
 
-					// 選択したシーンを起動引数としてランタイムへ渡す。
-					const std::string scenePath = QFE::ConvertString(selectedFilePath);
-					QFE::ProcessUtil::LaunchExe("Runtime.exe", "\"" + scenePath + "\"");
+					// プレビュー用にも pak を生成し、編集フォルダではなく出力データで実行する。
+					std::error_code error;
+					const auto scene = std::filesystem::relative(std::filesystem::path(selectedFilePath), QFE::PROJECT::Assets() / "scenes", error);
+					const auto previewDir = std::filesystem::current_path() / ".." / "generated" / "runtime-previews";
+					if (!error) std::filesystem::create_directories(previewDir, error);
+					static unsigned previewNumber = 0;
+					const auto pak = previewDir / (L"preview-" + std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(++previewNumber) + L".qfepak");
+					const std::string sceneName = QFE::ConvertString(scene.generic_wstring());
+					std::string message;
+					if (error || !QFE::PAK::Write(QFE::PROJECT::Root(), pak, message, sceneName)) {
+						QFE_LOG("Preview package creation failed: " + message, QFE::LogLevel::Error);
+					} else if (!QFE::ProcessUtil::LaunchExe("Runtime.exe", "--pak \"" + QFE::ConvertString(pak.wstring()) + "\" --scene \"" + sceneName + "\"")) {
+						QFE_LOG("Failed to launch the runtime.", QFE::LogLevel::Error);
+					}
                 }
             }
 
@@ -207,9 +238,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 		};
 		editString("Editor Window Name", engineConfig_.editorWindowName);
 		editString("Runtime Window Name", engineConfig_.runtimeWindowName);
-		editString("Asset Directory", engineConfig_.assetDir);
-		editString("Model Directory", engineConfig_.modelDir);
-		editString("Script Directory", engineConfig_.scriptDir);
+		ImGui::TextUnformatted("Game assets are loaded from the selected project.");
 		editString("Pixel Shader Directory", engineConfig_.psDirName);
 		editString("Vertex Shader Directory", engineConfig_.vsDirName);
 		editString("Compute Shader Directory", engineConfig_.csDirName);
@@ -251,11 +280,84 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
         hierarchy->Draw(selectedEntities_, commandList);
     }
     selectedEntities_ = hierarchy->GetSelectedEntities();
+	if (hierarchy->ConsumeSaveSelectedEntitiesRequest()) {
+		SaveSelectedEntities();
+	}
+	if (!editorWindowsMap_[EditorWindowType::AssetBrowser]->GetIsActive()) {
+		windowManager_->ConsumeDroppedFiles();
+	}
 	for (auto& [type, window] : editorWindowsMap_) {
         if (type == EditorWindowType::Hierarchy || !window->GetIsActive()) {
             continue;
 		}
 		window->Draw(selectedEntities_, commandList);
+	}
+}
+
+void QFE::EDITOR::EditorWindowManager::SaveSelectedEntities() {
+	if (selectedEntities_.empty()) {
+		QFE_LOG("No entities selected for saving.");
+		return;
+	}
+
+	// 右クリックしたEntityを含む選択範囲を一つのJSONファイルに保存する。
+	nlohmann::json savedEntities;
+	savedEntities["entities"] = nlohmann::json::array();
+	for (uint32_t entityId : selectedEntities_) {
+		nlohmann::json entityComponents =
+			sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
+		if (!entityComponents.empty()) {
+			savedEntities["entities"].push_back(std::move(entityComponents));
+		}
+	}
+	if (savedEntities["entities"].empty()) {
+		QFE_LOG("No serializable entities selected for saving.");
+		return;
+	}
+
+	// 単体はEntity名、複数選択は共通名を使い、ファイル名に使えない文字を置き換える。
+	std::wstring baseName = L"selected-entities";
+	if (selectedEntities_.size() == 1) {
+		const uint32_t entityId = *selectedEntities_.begin();
+		const auto& manager = sceneManager_->GetCurrentSceneEntityManager();
+		baseName = L"entity";
+		if (manager.HasComponent<QFE::SCENE::ObjectInfoComponent>(entityId)) {
+			auto name = QFE::ConvertString(manager.GetComponent<QFE::SCENE::ObjectInfoComponent>(entityId).name);
+			if (name.size() > 80) {
+				name.resize(80);
+				if (name.back() >= 0xD800 && name.back() <= 0xDBFF) name.pop_back();
+			}
+			for (wchar_t& c : name) {
+				if (c < 32 || std::wstring_view(L"<>:\"/\\|?*").find(c) != std::wstring_view::npos) c = L'_';
+			}
+			while (!name.empty() && (name.back() == L'.' || name.back() == L' ')) name.pop_back();
+			if (!name.empty()) baseName += L"-" + name;
+		}
+	}
+
+	const auto directory = QFE::PROJECT::Assets() / "entities";
+	std::error_code error;
+	std::filesystem::create_directories(directory, error);
+	if (error) {
+		QFE_LOG("Failed to create the entities directory.", QFE::LogLevel::Error);
+		return;
+	}
+	// 同名の保存済みファイルを上書きしないよう連番を付ける。
+	auto path = directory / (baseName + L".entity");
+	for (unsigned suffix = 1; std::filesystem::exists(path, error) && !error; ++suffix) {
+		path = directory / (baseName + L"-" + std::to_wstring(suffix) + L".entity");
+	}
+	if (error) {
+		QFE_LOG("Failed to check the entity save path.", QFE::LogLevel::Error);
+		return;
+	}
+	std::ofstream output(path);
+	output << savedEntities.dump(4);
+	output.close();
+	if (!output) {
+		QFE_LOG("Failed to save selected entities.", QFE::LogLevel::Error);
+	} else {
+		QFE_LOG("Entities saved: " + QFE::ConvertString(path.wstring()), QFE::LogLevel::EditorInfo);
 	}
 }
 
@@ -266,12 +368,18 @@ bool QFE::EDITOR::EditorWindowManager::ConsumeGameModuleBuildAndReloadRequest() 
 void QFE::EDITOR::EditorWindowManager::QueueSceneSave(
 	EditorCommandList& commandList, bool selectSavePath) {
 	std::string savePath = sceneManager_->GetCurrentScenePath();
-	if (selectSavePath || savePath.empty()) {
+	// 旧JSONを開いている場合は、新しいシーンファイルとして保存する。
+	if (selectSavePath || savePath.empty() ||
+		_wcsicmp(std::filesystem::path(QFE::ConvertString(savePath)).extension().c_str(), L".scene") != 0) {
 		std::wstring selectedFilePath;
 		if (!QFE::FRAMEWORK::RequestSaveFilePathFromUser(
 			*windowManager_,
-			L"JSON Files", L"*.json",
-			selectedFilePath)) {
+			L"Scene Files", L"*.scene",
+			selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring(), L"scene") || !IsProjectScene(selectedFilePath)) {
+			return;
+		}
+		if (_wcsicmp(std::filesystem::path(selectedFilePath).extension().c_str(), L".scene") != 0) {
+			QFE_LOG("Scene files must use the .scene extension.", QFE::LogLevel::Error);
 			return;
 		}
 		savePath = QFE::ConvertString(selectedFilePath);
@@ -315,6 +423,11 @@ void QFE::EDITOR::EditorWindowManager::SetSceneViewerCamera(
 	bool isOrthographic) {
 	auto* sceneViewer = static_cast<SceneViewer*>(editorWindowsMap_[EditorWindowType::SceneViewer].get());
 	sceneViewer->SetCameraMatrices(viewMatrix, projectionMatrix, isOrthographic);
+}
+
+void QFE::EDITOR::EditorWindowManager::SetAssetDropViewProjection(const QFE::MATH::Matrix4x4& viewProjection) {
+	static_cast<SceneViewer*>(editorWindowsMap_[EditorWindowType::SceneViewer].get())->SetAssetDropViewProjection(viewProjection);
+	static_cast<GameViewer*>(editorWindowsMap_[EditorWindowType::GameViewer].get())->SetAssetDropViewProjection(viewProjection);
 }
 
 bool QFE::EDITOR::EditorWindowManager::IsSceneGizmoCapturingMouse() const {

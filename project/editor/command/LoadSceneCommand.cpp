@@ -1,7 +1,7 @@
 #include "LoadSceneCommand.h"
 #include "scene/SceneManager.h"
 
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 
 QFE::EDITOR::LoadSceneCommand::LoadSceneCommand(const std::string& scenePath, QFE::SCENE::SceneManager* sceneManager):
 	sceneManager_(sceneManager), scenePath_(scenePath) {

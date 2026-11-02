@@ -39,4 +39,8 @@ namespace QFE::WINDOW {
 		return hwnd_;
 	}
 
+	std::vector<DroppedFile> GameWindow::ConsumeDroppedFiles() {
+		return eventManagerPtr_ ? eventManagerPtr_->ConsumeDroppedFiles(hwnd_) : std::vector<DroppedFile>{};
+	}
+
 }

@@ -37,6 +37,8 @@ namespace QFE::EDITOR {
 		std::optional<uint32_t> ConsumeCameraFocusRequest();
 		/// @brief Hierarchyで現在選択されているEntity IDを取得する
 		const std::set<uint32_t>& GetSelectedEntities() const;
+		/// @brief 右クリックメニューからの選択Entity保存要求を取得して解除する。
+		bool ConsumeSaveSelectedEntitiesRequest();
 
 	private:
 		QFE::SCENE::SceneManager* sceneManager_;
@@ -46,5 +48,6 @@ namespace QFE::EDITOR {
 		std::string groupNameInput_;
 		bool isFocus_;
 		std::optional<uint32_t> cameraFocusRequest_;
+		bool saveSelectedEntitiesRequested_ = false;
 	};
 }
