@@ -124,7 +124,6 @@ project "ApplicationFramework"
         "GraphicFramework",
         "GraphicEngine",
         "EngineCore",
-        "EcsCore",
         "DirectXTex",
         "GuiFramework",
         "GUIEngine",

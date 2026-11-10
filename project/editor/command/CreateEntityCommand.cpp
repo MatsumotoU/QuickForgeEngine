@@ -16,10 +16,10 @@
 
 QFE::EDITOR::CreateEntityCommand::CreateEntityCommand(std::string entityName,
 	QFE::MATH::Vector3 position, EntityManager* entityManager, std::string modelName, bool createSprite, bool createSkyBox,
-	std::string spriteTextureName, std::string modelAssetId, std::string spriteTextureAssetId) :
+	std::string spriteTextureName) :
 		entityManager_(entityManager), entityId_(UINT32_MAX),
-		entityName_(std::move(entityName)), modelName_(std::move(modelName)), modelAssetId_(std::move(modelAssetId)),
-		spriteTextureName_(std::move(spriteTextureName)), spriteTextureAssetId_(std::move(spriteTextureAssetId)),
+		entityName_(std::move(entityName)), modelName_(std::move(modelName)),
+		spriteTextureName_(std::move(spriteTextureName)),
 		createSprite_(createSprite), createSkyBox_(createSkyBox), position_(position) {
 }
 
@@ -38,9 +38,9 @@ void QFE::EDITOR::CreateEntityCommand::Execute() {
 	if (!modelName_.empty()) {
 		QFE::SCENE::ModelRenderComponent modelRenderComp;
 		modelRenderComp.modelName = modelName_;
-		modelRenderComp.modelAssetId = modelAssetId_;
 		entityManager_->EmplaceComponent<QFE::SCENE::ModelRenderComponent>(entityId_, modelRenderComp);
-		std::string extension = std::filesystem::path(modelName_).extension().string();
+		const std::filesystem::path modelPath(std::u8string(reinterpret_cast<const char8_t*>(modelName_.data()), modelName_.size()));
+		std::string extension = modelPath.extension().string();
 		std::transform(extension.begin(), extension.end(), extension.begin(),
 			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
 		if (extension == ".glb") {
@@ -61,7 +61,6 @@ void QFE::EDITOR::CreateEntityCommand::Execute() {
 		entityManager_->GetComponent<QFE::SCENE::TransformComponent>(entityId_) = transformComp;
 		QFE::SCENE::SpriteRenderComponent sprite;
 		sprite.textureName = spriteTextureName_;
-		sprite.textureAssetId = spriteTextureAssetId_;
 		entityManager_->EmplaceComponent<QFE::SCENE::SpriteRenderComponent>(entityId_, sprite);
 		entityManager_->EmplaceComponent<QFE::SCENE::MaterialComponent>(
 			entityId_, QFE::SCENE::MaterialComponent{});

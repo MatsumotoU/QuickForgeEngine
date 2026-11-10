@@ -9,7 +9,6 @@ namespace QFE::SCENE {
 	/// @brief 画面座標で描画するスプライトの情報を表すコンポーネントです。
 	struct SpriteRenderComponent {
 		std::string textureName; ///< resources/ から読み込むテクスチャ名
-		std::string textureAssetId; ///< 登録済み画像のID。空なら従来のパスを使用する。
 		int32_t drawOrder = 0; ///< 小さい値から先に描画
 		bool visible = true; ///< スプライトを描画するかどうか
 
@@ -21,7 +20,6 @@ namespace QFE::SCENE {
 
 		QFE_REFLECT_BEGIN(SpriteRenderComponent)
 			QFE_REFLECT_MEMBER(textureName)
-			QFE_REFLECT_MEMBER(textureAssetId)
 			QFE_REFLECT_MEMBER(drawOrder)
 			QFE_REFLECT_MEMBER(visible)
 		QFE_REFLECT_END()

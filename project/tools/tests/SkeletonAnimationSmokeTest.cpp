@@ -39,42 +39,20 @@ int main() {
 	check(restored && restored->glbAnimationName == "Walk" && restored->glbAnimationSpeed == 2.0f, "New settings did not round-trip");
 
 	const auto noAnimationId = manager.CreateEntity();
-	manager.DeserializeEntityComponents(noAnimationId, {{"ModelRenderComponent", {{"modelName", "models/walk.glb"}, {"modelAssetId", "asset-1"}}}});
+	manager.DeserializeEntityComponents(noAnimationId, {{"ModelRenderComponent", {{"modelName", "models/walk.glb"}, {"textureName", "images/icon.png"}}}});
 	check(!manager.HasComponent<QFE::SCENE::SkeletonAnimationComponent>(noAnimationId), "Removed component was recreated");
-	check(manager.SerializeEntityComponents(noAnimationId).at("ModelRenderComponent").value("modelAssetId", "") == "asset-1", "Model asset ID was not serialized");
-	const auto textureModelId = manager.CreateEntity();
-	manager.DeserializeEntityComponents(textureModelId, {{"ModelRenderComponent", {
-		{"modelName", "models/walk.glb"}, {"modelAssetId", "asset-1"},
-		{"textureName", "images/icon.png"}, {"textureAssetId", "image-2"}}}});
-	const auto savedTextureModel = manager.SerializeEntityComponents(textureModelId);
-	const auto restoredTextureModelId = manager.CreateEntity();
-	manager.DeserializeEntityComponents(restoredTextureModelId, savedTextureModel);
-	check(manager.GetComponent<QFE::SCENE::ModelRenderComponent>(restoredTextureModelId).textureAssetId == "image-2",
-		"Model texture asset ID did not round-trip");
-	check(manager.GetComponent<QFE::SCENE::ModelRenderComponent>(legacyId).textureAssetId.empty(),
-		"Legacy model unexpectedly gained a texture asset ID during deserialization");
-	const auto spriteId = manager.CreateEntity();
-	manager.DeserializeEntityComponents(spriteId, {{"SpriteRenderComponent", {{"textureName", "images/icon.png"}, {"textureAssetId", "image-1"}}}});
-	check(manager.SerializeEntityComponents(spriteId).at("SpriteRenderComponent").value("textureAssetId", "") == "image-1", "Sprite asset ID was not serialized");
+	const auto modelSaved = manager.SerializeEntityComponents(noAnimationId);
+	check(modelSaved.at("ModelRenderComponent").value("modelName", "") == "models/walk.glb" &&
+		modelSaved.at("ModelRenderComponent").value("textureName", "") == "images/icon.png", "Model paths did not round-trip");
 	const auto effectsId = manager.CreateEntity();
 	manager.DeserializeEntityComponents(effectsId, {
-		{"ParticleEmitterComponent", {{"textureName", "images/fire.png"}, {"textureAssetId", "particle-image"}}},
-		{"SkyBoxComponent", {{"textureName", "skybox/sky.dds"}, {"textureAssetId", "sky-image"}}}});
+		{"SpriteRenderComponent", {{"textureName", "images/icon.png"}}},
+		{"ParticleEmitterComponent", {{"textureName", "images/fire.png"}}},
+		{"SkyBoxComponent", {{"textureName", "skybox/sky.dds"}}}});
 	const auto savedEffects = manager.SerializeEntityComponents(effectsId);
-	const auto restoredEffectsId = manager.CreateEntity();
-	manager.DeserializeEntityComponents(restoredEffectsId, savedEffects);
-	check(manager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(restoredEffectsId).textureAssetId == "particle-image" &&
-		manager.GetComponent<QFE::SCENE::SkyBoxComponent>(restoredEffectsId).textureAssetId == "sky-image",
-		"Particle or skybox image asset ID did not round-trip");
-	const auto legacyEffectsId = manager.CreateEntity();
-	manager.DeserializeEntityComponents(legacyEffectsId, {
-		{"ParticleEmitterComponent", {{"textureName", "images/old.png"}}},
-		{"SkyBoxComponent", {{"textureName", "skybox/old.dds"}}}});
-	check(manager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(legacyEffectsId).textureAssetId.empty() &&
-		manager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(legacyEffectsId).textureName == "images/old.png" &&
-		manager.GetComponent<QFE::SCENE::SkyBoxComponent>(legacyEffectsId).textureAssetId.empty() &&
-		manager.GetComponent<QFE::SCENE::SkyBoxComponent>(legacyEffectsId).textureName == "skybox/old.dds",
-		"Legacy particle or skybox texture reference was not preserved");
+	check(savedEffects.at("SpriteRenderComponent").value("textureName", "") == "images/icon.png" &&
+		savedEffects.at("ParticleEmitterComponent").value("textureName", "") == "images/fire.png" &&
+		savedEffects.at("SkyBoxComponent").value("textureName", "") == "skybox/sky.dds", "Image paths did not round-trip");
 	const auto explicitId = manager.CreateEntity();
 	nlohmann::json explicitSettings = legacy;
 	explicitSettings["SkeletonAnimationComponent"] = {{"glbAnimationName", "Run"}};

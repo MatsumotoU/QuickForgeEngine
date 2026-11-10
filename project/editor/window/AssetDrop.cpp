@@ -48,17 +48,12 @@ void QFE::EDITOR::AcceptAssetDrop(SCENE::SceneManager* sceneManager, EditorComma
 		if (payload->IsDelivery() && payload->DataSize > 1) {
 			const auto* bytes = static_cast<const char*>(payload->Data);
 			const std::string payloadData(bytes, bytes + payload->DataSize - 1);
-			const auto separator = payloadData.find('\n');
-			const std::string relative = payloadData.substr(0, separator);
-			const auto sourceSeparator = separator == std::string::npos ? std::string::npos : payloadData.find('\n', separator + 1);
-			const std::string assetId = separator == std::string::npos ? std::string{} : payloadData.substr(separator + 1, sourceSeparator - separator - 1);
+			const std::string& relative = payloadData;
 			const auto path = PathFromUtf8(relative);
-			const auto assetPath = sourceSeparator == std::string::npos ? PROJECT::Assets() / path :
-				PROJECT::Root() / PathFromUtf8(payloadData.substr(sourceSeparator + 1));
+			const auto assetPath = PROJECT::Assets() / path;
 			std::error_code error;
 			if (bytes[payload->DataSize - 1] == '\0' && !path.is_absolute() &&
-				(PROJECT::IsWithin(assetPath, PROJECT::Assets()) ||
-					((GetAssetKind(path) == AssetKind::Model || GetAssetKind(path) == AssetKind::Sprite) && PROJECT::IsWithin(assetPath, PROJECT::Root() / "sources"))) &&
+				PROJECT::IsWithin(assetPath, PROJECT::Assets()) &&
 				std::filesystem::is_regular_file(assetPath, error) && !error) {
 				const AssetKind kind = GetAssetKind(path);
 				auto& manager = sceneManager->GetCurrentSceneEntityManager();
@@ -74,11 +69,11 @@ void QFE::EDITOR::AcceptAssetDrop(SCENE::SceneManager* sceneManager, EditorComma
 					const auto farPoint = MATH::Vector3::EulerTransform({ x * 2 - 1, 1 - y * 2, 1 }, inverse);
 					const auto position = nearPoint + (farPoint - nearPoint).Normalize() * 5.0f;
 					commandList.AddCommand(std::make_unique<CreateEntityCommand>(ToUtf8(path.stem()), position,
-						&manager, relative, false, false, std::string{}, assetId));
+						&manager, relative));
 				} else if (kind == AssetKind::Sprite) {
 					const MATH::Vector3 position{ x * static_cast<float>(width), y * static_cast<float>(height), 0 };
 					commandList.AddCommand(std::make_unique<CreateEntityCommand>(ToUtf8(path.stem()), position,
-						&manager, std::string{}, true, false, relative, std::string{}, assetId));
+						&manager, std::string{}, true, false, relative));
 				}
 			}
 		}

@@ -16,7 +16,7 @@ namespace QFE::SCENE {
 namespace QFE::WINDOW {
 	class IGameWindowManager;
 }
-namespace QFE::ASSET { class AssetManager; }
+namespace QFE::ASSET { class AssetManager; class ModelLoader; }
 
 namespace QFE::EDITOR {
 	class EditorCommandList;
@@ -42,6 +42,7 @@ namespace QFE::EDITOR {
 			ImTextureID sceneTextureId,
 			QFE::WINDOW::IGameWindowManager& windowManager,
 			QFE::ASSET::AssetManager& assetManager,
+			QFE::ASSET::ModelLoader& modelLoader,
 			ComponentInspectorRegistry* componentInspectorRegistry,
 			const QFE::FRAMEWORK::EngineConfig& config);
 		void Update();
@@ -79,6 +80,5 @@ namespace QFE::EDITOR {
 		QFE::FRAMEWORK::EngineConfig engineConfig_;
 		bool showEngineConfig_ = false;
 		std::string engineConfigStatus_;
-		std::string packageExportMessage_;
 	};
 }

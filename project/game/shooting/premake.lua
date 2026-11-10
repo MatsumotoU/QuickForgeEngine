@@ -103,7 +103,6 @@ project "ShootingGame"
     links {
         "EngineAssetsFactory",
         "EngineCore",
-        "EcsCore",
         "Assimp",
         "ApplicationFramework",
         "GraphicFramework",

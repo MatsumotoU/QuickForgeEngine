@@ -4,7 +4,7 @@
 #include "components/SplineControlPoint.h"
 #include "components/TransformHierarchy.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
-#include "assetfactory/game-data/AssetManager.h"
+#include "assetfactory/model/ModelLoader.h"
 #include "components/ModelRenderComponent.h"
 #include "components/SpriteRenderComponent.h"
 #include "components/ParticleEmitterComponent.h"
@@ -82,7 +82,8 @@ namespace {
 			if (removeExtension) {
 				relativePath.replace_extension();
 			}
-			results.push_back(relativePath.generic_string());
+			const auto text = relativePath.generic_u8string();
+			results.emplace_back(reinterpret_cast<const char*>(text.data()), text.size());
 		}
 
 		std::sort(results.begin(), results.end());
@@ -115,64 +116,6 @@ namespace {
 			if (selected) {
 				ImGui::SetItemDefaultFocus();
 			}
-		}
-		ImGui::EndCombo();
-	}
-
-	void DrawRegisteredAssetCombo(const std::string& label, std::string& value, std::string& assetId,
-		QFE::ASSET::AssetManager& assets, const std::string& type, const char* emptyLabel,
-		const char* requiredExtension = nullptr, bool excludeDds = false) {
-		std::string preview = value.empty() && emptyLabel ? emptyLabel : value;
-		if (!assetId.empty()) {
-			const auto* asset = assets.Registry().Find(assetId);
-			if (asset && asset->type == type) {
-				std::string error;
-				preview = asset->name + (assets.ResolveSource(assetId, type, error).empty() ? " (missing)" : "");
-			} else {
-				preview = "Missing asset (" + assetId + ")";
-			}
-		}
-		if (!ImGui::BeginCombo(label.c_str(), preview.c_str())) return;
-		if (emptyLabel && ImGui::Selectable(emptyLabel, assetId.empty() && value.empty())) {
-			assetId.clear();
-			value.clear();
-		}
-		if (type == "model") {
-			for (const auto& primitive : QFE::ASSET::GetPrimitiveMeshNames()) {
-				const bool selected = assetId.empty() && value == primitive;
-				if (ImGui::Selectable(primitive.c_str(), selected)) { value = primitive; assetId.clear(); }
-				if (selected) ImGui::SetItemDefaultFocus();
-			}
-		}
-		std::vector<QFE::ASSET::AssetMetadata> choices;
-		for (const auto& asset : assets.Registry().List()) {
-			if (asset.type != type) continue;
-			if (requiredExtension || excludeDds) {
-				const std::filesystem::path source(std::u8string(reinterpret_cast<const char8_t*>(asset.source.data()), asset.source.size()));
-				std::string extension = source.extension().string();
-				std::transform(extension.begin(), extension.end(), extension.begin(),
-					[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-				if ((requiredExtension && extension != requiredExtension) || (excludeDds && QFE::FRAMEWORK::IsDdsTexture(asset.source))) continue;
-			}
-			choices.push_back(asset);
-		}
-		std::sort(choices.begin(), choices.end(), [](const auto& a, const auto& b) {
-			return a.name == b.name ? a.id < b.id : a.name < b.name;
-		});
-		for (const auto& asset : choices) {
-			const bool selected = asset.id == assetId;
-			std::string error;
-			const bool exists = !assets.ResolveSource(asset.id, type, error).empty();
-			const std::string path = asset.source.starts_with("assets/") ? asset.source.substr(7) :
-				(type == "model" ? "models/" : "images/") + asset.name;
-			const std::string item = path + (exists ? "" : " (missing)");
-			ImGui::PushID(asset.id.c_str());
-			if (ImGui::Selectable(item.c_str(), selected, exists ? ImGuiSelectableFlags_None : ImGuiSelectableFlags_Disabled)) {
-				value = path;
-				assetId = asset.id;
-			}
-			if (selected) ImGui::SetItemDefaultFocus();
-			ImGui::PopID();
 		}
 		ImGui::EndCombo();
 	}
@@ -662,8 +605,8 @@ namespace {
 	}
 }
 
-QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::AssetManager* assets) :
-	entityManager_(entityManager), entityId_(entityId), assets_(assets) {
+QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::ModelLoader* modelLoader) :
+	entityManager_(entityManager), entityId_(entityId), modelLoader_(modelLoader) {
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, bool& value) {
@@ -683,73 +626,26 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, uint32_t& value
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& value) {
-	if ((name == "modelAssetId" && componentType_ == "ModelRenderComponent") ||
-		(name == "textureAssetId" && (componentType_ == "ModelRenderComponent" || componentType_ == "SpriteRenderComponent" ||
-			componentType_ == "ParticleEmitterComponent" || componentType_ == "SkyBoxComponent"))) return;
 	if (name == "modelName") {
-		if (assets_ && entityManager_ && componentType_ == "ModelRenderComponent" &&
-			entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
-			auto& model = entityManager_->GetComponent<QFE::SCENE::ModelRenderComponent>(entityId_);
-			DrawRegisteredAssetCombo(MakeLabel(name), value, model.modelAssetId, *assets_, "model", nullptr);
-			return;
-		}
-		const std::string previous = value;
-		std::vector<std::string> options = QFE::ASSET::GetPrimitiveMeshNames();
-		std::vector<std::string> objFiles = FindResourceFiles({ ".obj" }, true);
-		std::vector<std::string> glbFiles = FindResourceFiles({ ".glb" }, false);
-		options.insert(options.end(), objFiles.begin(), objFiles.end());
-		options.insert(options.end(), glbFiles.begin(), glbFiles.end());
-		DrawResourceCombo(
-			MakeLabel(name), value, options, {}, false);
-		if (value != previous && entityManager_ && entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
-			entityManager_->GetComponent<QFE::SCENE::ModelRenderComponent>(entityId_).modelAssetId.clear();
-		}
+		auto options = QFE::ASSET::GetPrimitiveMeshNames();
+		const auto files = FindResourceFiles({ ".obj", ".glb" }, false);
+		options.insert(options.end(), files.begin(), files.end());
+		DrawResourceCombo(MakeLabel(name), value, options, {}, false);
 		return;
 	}
 	if (name == "textureName") {
-		if (assets_ && entityManager_ && componentType_ == "ParticleEmitterComponent" &&
-			entityManager_->HasComponent<QFE::SCENE::ParticleEmitterComponent>(entityId_)) {
-			auto& emitter = entityManager_->GetComponent<QFE::SCENE::ParticleEmitterComponent>(entityId_);
-			DrawRegisteredAssetCombo(MakeLabel(name), value, emitter.textureAssetId, *assets_, "image", "Auto (White1x1)", nullptr, true);
-			return;
-		}
-		if (assets_ && entityManager_ && componentType_ == "SkyBoxComponent" &&
-			entityManager_->HasComponent<QFE::SCENE::SkyBoxComponent>(entityId_)) {
-			auto& skyBox = entityManager_->GetComponent<QFE::SCENE::SkyBoxComponent>(entityId_);
-			DrawRegisteredAssetCombo(MakeLabel(name), value, skyBox.textureAssetId, *assets_, "image", nullptr, ".dds");
-			return;
-		}
-		if (assets_ && entityManager_ && componentType_ == "SpriteRenderComponent" &&
-			entityManager_->HasComponent<QFE::SCENE::SpriteRenderComponent>(entityId_)) {
-			auto& sprite = entityManager_->GetComponent<QFE::SCENE::SpriteRenderComponent>(entityId_);
-			DrawRegisteredAssetCombo(MakeLabel(name), value, sprite.textureAssetId, *assets_, "image", "Auto (White1x1)", nullptr, true);
-			return;
-		}
-		if (assets_ && entityManager_ && componentType_ == "ModelRenderComponent" &&
-			entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
-			auto& model = entityManager_->GetComponent<QFE::SCENE::ModelRenderComponent>(entityId_);
-			DrawRegisteredAssetCombo(MakeLabel(name), value, model.textureAssetId, *assets_, "image", "Auto (Embedded / White1x1)", nullptr, true);
-			return;
-		}
-		const std::string previous = value;
-		DrawResourceCombo(
-			MakeLabel(name), value, {},
-			{ ".png", ".jpg", ".jpeg", ".dds", ".tga", ".bmp" },
-			false, "Auto (Embedded / White1x1)");
-		if (value != previous && componentType_ == "SpriteRenderComponent" && entityManager_ &&
-			entityManager_->HasComponent<QFE::SCENE::SpriteRenderComponent>(entityId_)) {
-			entityManager_->GetComponent<QFE::SCENE::SpriteRenderComponent>(entityId_).textureAssetId.clear();
-		}
+		const bool skyBox = componentType_ == "SkyBoxComponent";
+		DrawResourceCombo(MakeLabel(name), value, {},
+			skyBox ? std::vector<std::string>{ ".dds" } : std::vector<std::string>{ ".png", ".jpg", ".jpeg", ".tga", ".bmp", ".tif", ".tiff" },
+			false, skyBox ? nullptr : "Auto (Embedded / White1x1)");
 		return;
 	}
 	if (name == "glbAnimationName") {
 		std::vector<std::string> options;
-		if (assets_ && entityManager_ && entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
+		if (modelLoader_ && entityManager_ && entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
 			const auto& model = entityManager_->GetComponent<QFE::SCENE::ModelRenderComponent>(entityId_);
 			std::string error;
-			const auto asset = model.modelAssetId.empty()
-				? assets_->LoadLegacyModel(model.modelName, QFE::PROJECT::Assets(), error)
-				: assets_->LoadModel(model.modelAssetId, error);
+			const auto asset = modelLoader_->LoadModel(model.modelName, QFE::PROJECT::Assets(), error);
 			if (asset && asset->loader) options = asset->loader->GetGlbAnimationNames(asset->sourcePath);
 		}
 		DrawResourceCombo(MakeLabel(name), value, options, {}, false, "Auto (First Clip)");

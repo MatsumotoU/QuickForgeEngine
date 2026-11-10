@@ -116,7 +116,6 @@ project "Launcher"
     links {
         "GUIEngine",
         "EngineCore",
-        "EcsCore",
         "ImGui",
         "WindowingSystem",
         "GraphicEngine",

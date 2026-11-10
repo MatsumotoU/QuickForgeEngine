@@ -28,9 +28,7 @@
                     }
                 }
             },
-            "ModelRenderComponent": {
-                "modelAssetId": "499da821-946e-4aa0-a08a-b114de919b7d",
-                "modelName": "models/monkey.glb",
+            "ModelRenderComponent": {                "modelName": "models/monkey.glb",
                 "textureName": ""
             },
             "ObjectInfoComponent": {

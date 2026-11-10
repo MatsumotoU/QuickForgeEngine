@@ -13,7 +13,6 @@
 #include "command/AllCommands.h"
 #include "process/ProcessUtil.h"
 #include "assetfactory/game-data/GameProjectPaths.h"
-#include "assetfactory/game-data/GamePak.h"
 #include <filesystem>
 #include <fstream>
 #include <string_view>
@@ -93,6 +92,7 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 	ImTextureID sceneTextureId,
 	QFE::WINDOW::IGameWindowManager& windowManager,
 	QFE::ASSET::AssetManager& assetManager,
+	QFE::ASSET::ModelLoader& modelLoader,
 	ComponentInspectorRegistry* componentInspectorRegistry,
 	const QFE::FRAMEWORK::EngineConfig& config) {
 	engineConfig_ = config;
@@ -102,7 +102,7 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 	editorWindowsMap_.clear();
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager, assetManager);
 	editorWindowsMap_[EditorWindowType::Inspector] =
-		std::make_unique<Inspector>(&entityManager, &assetManager, componentInspectorRegistry);
+		std::make_unique<Inspector>(&entityManager, &modelLoader, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
 	editorWindowsMap_[EditorWindowType::AssetBrowser] = std::make_unique<AssetBrowser>(assetManager, windowManager);
 	editorWindowsMap_[EditorWindowType::Logger] = std::make_unique<LogWindow>();
@@ -117,7 +117,6 @@ void QFE::EDITOR::EditorWindowManager::Update() {
 void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 	bool saveSceneRequested = false;
 	bool saveSceneAsRequested = false;
-	bool showPackageExportResult = false;
 
     // 1. 画面全体のフラグを設定（タイトルバーやリサイズ、移動などをすべて無効化）
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -219,25 +218,6 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 			if (ImGui::MenuItem("Build and Reload DLL", nullptr)) {
 				gameModuleBuildAndReloadRequested_ = true;
 			}
-			if (ImGui::MenuItem("Export Game Package...")) {
-				std::wstring path;
-				if (QFE::FRAMEWORK::RequestSaveFilePathFromUser(*windowManager_,
-					L"QuickForge Package", L"*.qfepak", path,
-					QFE::PROJECT::Root().wstring(), L"qfepak")) {
-					std::string error;
-					if (!QFE::PAK::Write(QFE::PROJECT::Root(), std::filesystem::path(path), error)) {
-						QFE_LOG("Package export failed: " + error, QFE::LogLevel::Error);
-						packageExportMessage_ = "Package export failed: " + error;
-						if (error == "Set a start scene before exporting.") {
-							packageExportMessage_ += "\nChoose File > Set Start Scene... and select a saved scene, then export again.";
-						}
-					} else {
-						QFE_LOG("Game package exported: " + QFE::ConvertString(path), QFE::LogLevel::EditorInfo);
-						packageExportMessage_ = "Game package exported:\n" + QFE::ConvertString(path);
-					}
-					showPackageExportResult = true;
-				}
-			}
             ImGui::EndMenu();
         }
 		// ウィンドウメニュー
@@ -253,16 +233,6 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
         }
 		// Debugメニュー
         if (ImGui::BeginMenu("Debug")) {
-            if (ImGui::MenuItem("Launch Game Package...")) {
-                std::wstring selectedPackage;
-                if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
-                    *windowManager_, L"QuickForge Package (*.qfepak)", L"*.qfepak",
-                    selectedPackage, QFE::PROJECT::Root().wstring())) {
-                    if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--pak \"" + selectedPackage + L"\"")) {
-                        QFE_LOG("Failed to launch the runtime.", QFE::LogLevel::Error);
-                    }
-                }
-            }
             // シーンを選ばせて開始する
             if (ImGui::MenuItem("Launch Scene from File...")) {
 
@@ -273,18 +243,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                     L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
                     selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
 
-					// プレビュー用にも pak を生成し、編集フォルダではなく出力データで実行する。
-					std::error_code error;
-					const auto scene = std::filesystem::relative(std::filesystem::path(selectedFilePath), QFE::PROJECT::Assets() / "scenes", error);
-					const auto previewDir = std::filesystem::current_path() / ".." / "generated" / "runtime-previews";
-					if (!error) std::filesystem::create_directories(previewDir, error);
-					static unsigned previewNumber = 0;
-					const auto pak = previewDir / (L"preview-" + std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(++previewNumber) + L".qfepak");
-					const std::string sceneName = QFE::ConvertString(scene.generic_wstring());
-					std::string message;
-					if (error || !QFE::PAK::Write(QFE::PROJECT::Root(), pak, message, sceneName)) {
-						QFE_LOG("Preview package creation failed: " + message, QFE::LogLevel::Error);
-					} else if (!QFE::ProcessUtil::LaunchExe("Runtime.exe", "--pak \"" + QFE::ConvertString(pak.wstring()) + "\" --scene \"" + sceneName + "\"")) {
+					if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::PROJECT::Root().wstring() + L"\" --scene \"" + selectedFilePath + L"\"")) {
 						QFE_LOG("Failed to launch the runtime.", QFE::LogLevel::Error);
 					}
                 }
@@ -294,12 +253,6 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 		}
         ImGui::EndMenuBar();
     }
-	if (showPackageExportResult) ImGui::OpenPopup("Game Package Export");
-	if (ImGui::BeginPopupModal("Game Package Export", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::TextWrapped("%s", packageExportMessage_.c_str());
-		if (ImGui::Button("OK")) ImGui::CloseCurrentPopup();
-		ImGui::EndPopup();
-	}
 
     ImGui::End();
 

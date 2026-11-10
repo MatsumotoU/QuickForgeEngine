@@ -10,7 +10,7 @@
 namespace QFE {
 	class EntityManager;
 }
-namespace QFE::ASSET { class AssetManager; }
+namespace QFE::ASSET { class ModelLoader; }
 
 namespace QFE::EDITOR {
 	/// @brief Archive のリフレクション情報から ImGui の編集UIを生成する。
@@ -18,7 +18,7 @@ namespace QFE::EDITOR {
 	public:
 		using Archive::Process;
 
-		ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::AssetManager* assets);
+		ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::ModelLoader* modelLoader);
 		/// @brief 編集中のコンポーネント名を設定する。
 		void SetComponentType(const std::string& name) { componentType_ = name; }
 
@@ -59,7 +59,7 @@ namespace QFE::EDITOR {
 
 		EntityManager* entityManager_;
 		uint32_t entityId_;
-		ASSET::AssetManager* assets_;
+		ASSET::ModelLoader* modelLoader_;
 		std::string componentType_;
 	};
 }

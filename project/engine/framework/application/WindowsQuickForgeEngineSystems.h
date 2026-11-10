@@ -6,6 +6,7 @@
 #include "framework/scene/SceneChangeSystem.h"
 
 #include "assetfactory/game-data/AssetManager.h"
+#include "assetfactory/model/ModelLoader.h"
 
 #include "core/timer/FPSCounter.h"
 
@@ -41,6 +42,7 @@ namespace QFE::FRAMEWORK{
 		SceneChangeTransitionSystem sceneChangeTransition;
 		std::unique_ptr<QFE::FPSCounter> fpsCounter;// FPSカウンター
 		std::unique_ptr<QFE::ASSET::AssetManager> assetManager; ///< プロジェクトのCPU側アセット管理。
+		std::unique_ptr<QFE::ASSET::ModelLoader> modelLoader; ///< 読み込み済みモデルを保持する。
 
 		// 所有権を一意に保つため、コピーを禁止する。
 		WindowsQuickForgeEngineSystems();

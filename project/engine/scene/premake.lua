@@ -108,7 +108,6 @@ project "Scene"
     }
     links {
         "EngineCore",
-        "EcsCore",
     }
     dependson {
         "Components",

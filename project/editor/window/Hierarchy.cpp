@@ -276,29 +276,24 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 					}
 					ImGui::EndMenu();
 				}
-				std::vector<QFE::ASSET::AssetMetadata> models;
-				for (const auto& asset : assets_->Registry().List()) {
-					if (asset.type == "model") models.push_back(asset);
+				std::string listError;
+				std::vector<std::string> models;
+				for (const auto& path : assets_->ListProjectFiles(listError)) {
+					const std::filesystem::path file(std::u8string(reinterpret_cast<const char8_t*>(path.data()), path.size()));
+					std::string extension = file.extension().string();
+					std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+					if (extension == ".obj" || extension == ".glb") models.push_back(path);
 				}
-				std::sort(models.begin(), models.end(), [](const auto& a, const auto& b) {
-					return a.name == b.name ? a.id < b.id : a.name < b.name;
-				});
 				if (ImGui::BeginMenu("Model", !models.empty())) {
-					for (const auto& model : models) {
-						const std::string modelName = model.source.starts_with("assets/") ? model.source.substr(7) : "models/" + model.name;
-						std::string error;
-						const bool exists = !assets_->ResolveSource(model.id, "model", error).empty();
-						const std::string label = modelName + (exists ? "" : " (missing)");
-						ImGui::PushID(model.id.c_str());
-						if (ImGui::MenuItem(label.c_str(), nullptr, false, exists)) {
+					for (const auto& modelName : models) {
+						if (ImGui::MenuItem(modelName.c_str())) {
 							commandList.AddCommand(std::make_unique<CreateEntityCommand>(
-								model.name, QFE::MATH::Vector3(0, 0, 0), entityManager_, modelName,
-								false, false, std::string{}, model.id));
+								MakeEntityName(modelName), QFE::MATH::Vector3(0, 0, 0), entityManager_, modelName));
 						}
-						ImGui::PopID();
 					}
 					ImGui::EndMenu();
 				}
+
 				ImGui::EndMenu();
 			}
 			ImGui::EndPopup();

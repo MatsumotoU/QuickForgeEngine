@@ -216,6 +216,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 		return -1;
 	}
+	engineSystems.modelLoader->Initialize();
 	engineResources.assetDir = QFE::ConvertString(QFE::PROJECT::Assets().wstring()) + "/";
 	engineResources.modelDir = engineResources.assetDir;
 	engineResources.config.scriptDir = QFE::ConvertString((QFE::PROJECT::Assets() / "scripts").wstring());
@@ -254,7 +255,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 		return -1;
 	}
-	gameEditor.Initialize(&sceneManager, sceneTextureId, *engineSystems.windowManager, *engineSystems.assetManager, editorConfig);
+	gameEditor.Initialize(&sceneManager, sceneTextureId, *engineSystems.windowManager, *engineSystems.assetManager, *engineSystems.modelLoader, editorConfig);
 
 	// メインループ
 	while (QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {

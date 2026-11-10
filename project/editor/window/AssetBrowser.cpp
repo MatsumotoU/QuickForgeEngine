@@ -14,17 +14,12 @@ namespace {
 		std::string extension = path.extension().string();
 		std::transform(extension.begin(), extension.end(), extension.begin(),
 			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-		if (extension == ".glb") return assets.ImportGlb(path, error);
-		if (extension == ".obj") return assets.ImportObj(path, error);
+		if (extension == ".glb" || extension == ".obj") return assets.ImportRawFile(path, error) ? "copied" : "";
 		error = "Select a GLB or OBJ model.";
 		return {};
 	}
 	std::string ImportFile(QFE::ASSET::AssetManager& assets, const std::filesystem::path& path, std::string& error) {
-		std::string extension = path.extension().string();
-		std::transform(extension.begin(), extension.end(), extension.begin(),
-			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-		if (extension == ".glb" || extension == ".obj") return ImportModel(assets, path, error);
-		return assets.ImportImage(path, error);
+		return assets.ImportRawFile(path, error) ? "copied" : "";
 	}
 }
 
@@ -40,29 +35,16 @@ void QFE::EDITOR::AssetBrowser::Initialize() {
 void QFE::EDITOR::AssetBrowser::Refresh() {
 	groups_.clear();
 	status_.clear();
-	// 旧プロジェクトのファイルをID付きで登録し、一覧は登録情報から作る。
-	if (!assets_->RegisterProjectFiles(status_)) return;
-	for (const auto& asset : assets_->Registry().List()) {
-		if (asset.type == "other") continue;
-		const bool legacy = asset.source.starts_with("assets/");
-		if (!legacy && asset.type != "model" && asset.type != "image") continue;
-		const std::string path = legacy ? asset.source.substr(7) : (asset.type == "model" ? "models/" : "images/") + asset.name;
+	for (const auto& path : assets_->ListProjectFiles(status_)) {
 		std::string lower = path;
 		std::transform(lower.begin(), lower.end(), lower.begin(),
 			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
 		if (lower.ends_with(".mtl")) continue;
 		const auto separator = path.find('/');
-		const std::string group = separator == std::string::npos ? "(root)" : path.substr(0, separator);
-		groups_[group].push_back({ path, asset.id, asset.source });
+		const auto group = separator == std::string::npos ? std::string("(root)") : path.substr(0, separator);
+		groups_[group].push_back(path);
 	}
-	bool selectionExists = false;
-	for (auto& [name, files] : groups_) {
-		std::sort(files.begin(), files.end(), [](const auto& a, const auto& b) {
-			return a.path == b.path ? a.id < b.id : a.path < b.path;
-		});
-		selectionExists |= std::any_of(files.begin(), files.end(), [&](const auto& item) { return item.id == selectedAssetId_; });
-	}
-	if (!selectionExists) selectedAssetId_.clear();
+
 }
 
 void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
@@ -70,7 +52,6 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
 	isFocus_ = ImGui::IsWindowFocused();
 	const auto droppedFiles = windowManager_->ConsumeDroppedFiles();
 	if (visible) {
-		bool refreshRequested = false;
 		const ImVec2 position = ImGui::GetWindowPos();
 		const ImVec2 size = ImGui::GetWindowSize();
 		bool imported = false;
@@ -95,13 +76,13 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
 		if (ImGui::Button("Import Image...")) {
 			std::wstring path;
 			if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff)", L"*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff", path)) {
-				if (!assets_->ImportImage(std::filesystem::path(path), status_).empty()) Refresh();
+				if (assets_->ImportRawFile(std::filesystem::path(path), status_)) Refresh();
 			}
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Refresh")) Refresh();
 		ImGui::SameLine();
-		ImGui::TextUnformatted("Registered project assets");
+		ImGui::TextUnformatted("Project assets");
 		if (!status_.empty()) ImGui::TextWrapped("%s", status_.c_str());
 		if (groups_.empty() && status_.empty()) ImGui::TextUnformatted("No assets found.");
 		for (const auto& [name, files] : groups_) {
@@ -112,39 +93,20 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
 				ImGui::Indent();
 				if (files.empty()) ImGui::TextDisabled("(empty)");
 				for (const auto& item : files) {
-					ImGui::PushID(item.id.c_str());
+					ImGui::PushID(item.c_str());
 					const std::filesystem::path assetPath(std::u8string(
-						reinterpret_cast<const char8_t*>(item.source.data()), item.source.size()));
+						reinterpret_cast<const char8_t*>(item.data()), item.size()));
 					std::error_code error;
-					const bool exists = std::filesystem::is_regular_file(QFE::PROJECT::Root() / assetPath, error);
-					const std::string itemLabel = item.path + (exists ? "" : " (missing)");
+					const bool exists = std::filesystem::is_regular_file(QFE::PROJECT::Assets() / assetPath, error);
+					const std::string itemLabel = item + (exists ? "" : " (missing)");
 					// 選択可能な項目にすることで、クリック表示とドラッグ開始の両方を有効にする。
-					if (ImGui::Selectable(itemLabel.c_str(), selectedAssetId_ == item.id) || ImGui::IsItemActivated()) {
-						selectedAssetId_ = item.id;
+					if (ImGui::Selectable(itemLabel.c_str(), selectedPath_ == item) || ImGui::IsItemActivated()) {
+						selectedPath_ = item;
 					}
-					std::string extension = assetPath.extension().string();
-					std::transform(extension.begin(), extension.end(), extension.begin(),
-						[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-					if ((extension == ".glb" || extension == ".obj") && ImGui::BeginPopupContextItem("AssetContext")) {
-						if (ImGui::MenuItem("Replace Model...")) {
-							std::wstring replacement;
-							if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Model Files (*.glb;*.obj)", L"*.glb;*.obj", replacement) &&
-								assets_->ReplaceModel(item.id, std::filesystem::path(replacement), status_)) refreshRequested = true;
-						}
-						ImGui::EndPopup();
-					}
-					if ((extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tif" || extension == ".tiff") && ImGui::BeginPopupContextItem("ImageContext")) {
-						if (ImGui::MenuItem("Replace Image...")) {
-							std::wstring replacement;
-							if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff)", L"*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff", replacement) &&
-								assets_->ReplaceImage(item.id, std::filesystem::path(replacement), status_)) refreshRequested = true;
-						}
-						ImGui::EndPopup();
-					}
-					if (exists && IsDraggableAsset(item.path) && ImGui::BeginDragDropSource()) {
-						const std::string payload = item.path + '\n' + item.id + '\n' + item.source;
+					if (exists && IsDraggableAsset(item) && ImGui::BeginDragDropSource()) {
+						const std::string payload = item;
 						ImGui::SetDragDropPayload(AssetPayloadType, payload.c_str(), payload.size() + 1);
-						ImGui::TextUnformatted(item.path.c_str());
+						ImGui::TextUnformatted(item.c_str());
 						ImGui::EndDragDropSource();
 					}
 					ImGui::PopID();
@@ -153,7 +115,6 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
 			}
 			ImGui::PopID();
 		}
-		if (refreshRequested) Refresh();
 	}
 	ImGui::End();
 }

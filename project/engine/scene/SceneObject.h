@@ -35,8 +35,6 @@ namespace QFE::SCENE {
 		/// @brief JSONオブジェクトからエンティティをロードします.
 		uint32_t LoadEntityFromJsonObject(const std::string& filePath);
 
-
-
 		/// @brief エンティティマネージャーの参照を取得します.
 		QFE::EntityManager& GetEntityManager();
 

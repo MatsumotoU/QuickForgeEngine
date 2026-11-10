@@ -29,12 +29,12 @@ namespace QFE::EDITOR {
 		/// @brief プロジェクトの assets ディレクトリを再走査する。
 		void Refresh();
 
-		struct AssetItem { std::string path; std::string id; std::string source; };
-		std::map<std::string, std::vector<AssetItem>> groups_;
+		
+		std::map<std::string, std::vector<std::string>> groups_;
 		ASSET::AssetManager* assets_;
 		WINDOW::IGameWindowManager* windowManager_;
 		std::string status_;
-		std::string selectedAssetId_;
+		std::string selectedPath_;
 		bool isActive_ = true;
 		bool isFocus_ = false;
 	};

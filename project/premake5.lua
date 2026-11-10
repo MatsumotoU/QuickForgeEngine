@@ -142,7 +142,6 @@ group ""
 group "00_System"
 dofile(path.join(_root, "engine/resources/premake.lua"))
 dofile(path.join(_root, "engine/core/premake.lua"))
-dofile(path.join(_root, "engine/ecs/premake.lua"))
 group ""
 
 group "01_Modulars"

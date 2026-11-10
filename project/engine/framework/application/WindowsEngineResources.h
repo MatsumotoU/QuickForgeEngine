@@ -48,7 +48,6 @@ namespace QFE::FRAMEWORK {
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> vertexBufferMap;
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> indexBufferMap;
 		std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
-		std::unordered_map<std::string, uint64_t> renderedModelRevisions; ///< 描画に利用できた登録モデルの最新リビジョン。
 		struct AnimatedBLAS {
 			std::string modelName;
 			QFE::GRAPHIC::BLASHandle handle = QFE::GRAPHIC::BLASHandle::Invalid;

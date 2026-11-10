@@ -17,9 +17,10 @@ void QFE::EDITOR::GameEditor::Initialize(
 	ImTextureID sceneTextureId,
 	QFE::WINDOW::IGameWindowManager& windowManager,
 	QFE::ASSET::AssetManager& assetManager,
+	QFE::ASSET::ModelLoader& modelLoader,
 	const QFE::FRAMEWORK::EngineConfig& config) {
 	windowManager_.Initialize(
-		sceneManager, sceneTextureId, windowManager, assetManager, &componentInspectorRegistry_, config);
+		sceneManager, sceneTextureId, windowManager, assetManager, modelLoader, &componentInspectorRegistry_, config);
 	commandExecutor_.Initialize();
 	commandList_.ClearCommands();
 

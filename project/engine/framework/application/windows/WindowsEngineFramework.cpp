@@ -245,13 +245,6 @@ namespace {
 				QFE::GRAPHIC::DirectXResourceHandle textureHandle;
 				QFE::GRAPHIC::GetWhite1x1TextureHandle(systems.graphicEngine.get(), textureHandle);
 				std::string textureName = emitter.textureName;
-				if (!emitter.textureAssetId.empty()) {
-					std::string error;
-					const auto path = systems.assetManager->ResolveSource(emitter.textureAssetId, "image", error);
-					if (path.empty()) { emitter.renderErrorMessage = "Failed to resolve particle texture: " + error; return; }
-					const auto utf8 = path.generic_u8string();
-					textureName.assign(reinterpret_cast<const char*>(utf8.data()), utf8.size());
-				}
 				if (QFE::FRAMEWORK::IsDdsTexture(textureName)) { emitter.renderErrorMessage = "Particle textures require a 2D image, not a DDS cubemap."; return; }
 				if (!textureName.empty()) {
 					if (!QFE::FRAMEWORK::LoadTexture(
@@ -410,6 +403,7 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 
 	// モデルローダーの初期化
 	outSystems.assetManager = std::make_unique<QFE::ASSET::AssetManager>();
+	outSystems.modelLoader = std::make_unique<QFE::ASSET::ModelLoader>();
 
 	return true;
 }
@@ -513,23 +507,7 @@ void QFE::FRAMEWORK::EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& syste
 				for (const auto handle : resources->retiredAnimatedVertexBuffers) container->RemoveResource(handle);
 				resources->retiredAnimatedVertexBuffers.clear();
 			}
-			const auto retireBuffers = [&](auto& buffers) {
-				for (auto it = buffers.begin(); it != buffers.end();) {
-					if (container && IsRetiredModelResource(it->first, resources->renderedModelRevisions)) {
-						container->RemoveResource(it->second);
-						it = buffers.erase(it);
-					} else ++it;
-				}
-			};
-			retireBuffers(resources->vertexBufferMap);
-			retireBuffers(resources->indexBufferMap);
-			auto* acceleration = graphics->GetRaytracingAccelerationStructure();
-			for (auto it = resources->blasHandleMap.begin(); it != resources->blasHandleMap.end();) {
-				if (acceleration && IsRetiredModelResource(it->first, resources->renderedModelRevisions)) {
-					acceleration->RemoveBLAS(it->second);
-					it = resources->blasHandleMap.erase(it);
-				} else ++it;
-			}
+
 		}
 	}
 	if (systems.sceneManager) systems.sceneManager->EndFrame();
@@ -674,29 +652,14 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		});
 
 	// 旧スカイボックスと同様、シーン内の最初の可視キューブマップを背景に使う。
-	entityManager.Each<QFE::SCENE::ParticleEmitterComponent>([&](uint32_t, QFE::SCENE::ParticleEmitterComponent& emitter) {
-		if (emitter.textureAssetId.empty()) emitter.textureAssetId = systems.assetManager->FindLegacyAssetId(emitter.textureName, "image");
-	});
-	entityManager.Each<QFE::SCENE::SkyBoxComponent>([&](uint32_t, QFE::SCENE::SkyBoxComponent& skyBox) {
-		if (skyBox.textureAssetId.empty()) skyBox.textureAssetId = systems.assetManager->FindLegacyAssetId(skyBox.textureName, "image");
-	});
 	QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.skyBoxTextureHandle);
 	resources.skyBoxVisible = false;
 	entityManager.Each<QFE::SCENE::SkyBoxComponent>(
 		[&](uint32_t, QFE::SCENE::SkyBoxComponent& skyBox) {
 			if (!skyBox.visible || resources.skyBoxVisible) return;
 			std::string textureName = skyBox.textureName;
-			std::filesystem::path texturePath;
-			if (!skyBox.textureAssetId.empty()) {
-				std::string error;
-				texturePath = systems.assetManager->ResolveSource(skyBox.textureAssetId, "image", error);
-				if (texturePath.empty()) { skyBox.renderErrorMessage = "Failed to resolve cubemap: " + error; return; }
-				const auto utf8 = texturePath.generic_u8string();
-				textureName.assign(reinterpret_cast<const char*>(utf8.data()), utf8.size());
-			} else {
-				const std::string legacyPath = resources.assetDir + textureName;
-				texturePath = std::filesystem::path(std::u8string(reinterpret_cast<const char8_t*>(legacyPath.data()), legacyPath.size()));
-			}
+			const std::string texturePathUtf8 = resources.assetDir + textureName;
+			const std::filesystem::path texturePath(std::u8string(reinterpret_cast<const char8_t*>(texturePathUtf8.data()), texturePathUtf8.size()));
 			if (textureName.empty()) {
 				skyBox.renderErrorMessage = "Select a cubemap DDS texture.";
 				return;
@@ -726,16 +689,9 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	std::unordered_map<std::string, RaytracingInstanceMeta> staticModelMeta;
 	std::unordered_set<uint32_t> activeAnimatedEntities;
 	std::unordered_set<uint32_t> activeAnimatedVertices;
-	// 旧シーンのパスは、一意に対応する登録がある場合だけIDへ移行する。
-	// 未登録や重複は旧パスのまま残し、保存ファイルを自動で書き換えない。
 	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t, QFE::SCENE::ModelRenderComponent& model) {
 		// Transformを失ったEntityにも前フレームの描画ハンドルを残さない。
 		model.canRender = false;
-		if (model.modelAssetId.empty()) model.modelAssetId = systems.assetManager->FindLegacyAssetId(model.modelName, "model");
-		if (model.textureAssetId.empty()) model.textureAssetId = systems.assetManager->FindLegacyAssetId(model.textureName, "image");
-	});
-	entityManager.Each<QFE::SCENE::SpriteRenderComponent>([&](uint32_t, QFE::SCENE::SpriteRenderComponent& sprite) {
-		if (sprite.textureAssetId.empty()) sprite.textureAssetId = systems.assetManager->FindLegacyAssetId(sprite.textureName, "image");
 	});
 
 	entityManager.Each<QFE::SCENE::ModelRenderComponent, QFE::SCENE::TransformComponent>(
@@ -781,16 +737,13 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 
 			// 頂点バッファの更新
 			std::string modelError;
-			const auto modelAsset = modelRenderComp.modelAssetId.empty()
-				? systems.assetManager->LoadLegacyModel(modelRenderComp.modelName, resources.modelDir, modelError)
-				: systems.assetManager->LoadModel(modelRenderComp.modelAssetId, modelError);
+			const auto modelAsset = systems.modelLoader->LoadModel(modelRenderComp.modelName, resources.modelDir, modelError);
 			if (!modelAsset || !modelAsset->data) {
 				modelRenderComp.renderErrorMessage = "Failed to load model: " + modelError;
 				return;
 			}
 			const auto& modelData = *modelAsset->data;
-			const std::string modelKey = modelRenderComp.modelAssetId.empty() ? modelRenderComp.modelName :
-				"asset-id/" + modelRenderComp.modelAssetId + "/" + std::to_string(modelAsset->revision) + "/" + modelRenderComp.modelName;
+			const std::string& modelKey = modelRenderComp.modelName;
 			if (resources.vertexBufferMap.find(modelKey) != resources.vertexBufferMap.end()) {
 				modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelKey]);
 			} else {
@@ -908,36 +861,14 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 					effectiveTextureName = modelMaterial->textureName;
 				}
 			}
-			const bool hasTextureOverride = !modelRenderComp.textureAssetId.empty() || !modelRenderComp.textureName.empty();
-			if (!modelRenderComp.textureAssetId.empty()) {
-				std::string error;
-				const auto path = systems.assetManager->ResolveSource(modelRenderComp.textureAssetId, "image", error);
-				if (path.empty()) { modelRenderComp.renderErrorMessage = "Failed to resolve model texture: " + error; return; }
-				const auto utf8 = path.generic_u8string();
-				effectiveTextureName.assign(reinterpret_cast<const char*>(utf8.data()), utf8.size());
-			} else if (!modelRenderComp.textureName.empty()) {
-				effectiveTextureName = modelRenderComp.textureName;
-			}
-			bool registeredEmbedded = false;
-			if (!hasTextureOverride && modelMaterial && modelMaterial->embeddedTextureIndex >= 0 &&
-				!modelAsset->embeddedImageIds.empty()) {
-				const auto index = static_cast<size_t>(modelMaterial->embeddedTextureIndex);
-				if (index >= modelAsset->embeddedImageIds.size()) {
-					modelRenderComp.renderErrorMessage = "Missing embedded image asset mapping."; return;
-				}
-				std::string error;
-				const auto path = systems.assetManager->ResolveSource(modelAsset->embeddedImageIds[index], "image", error);
-				if (path.empty()) { modelRenderComp.renderErrorMessage = "Failed to resolve embedded image: " + error; return; }
-				const auto utf8 = path.generic_u8string();
-				effectiveTextureName.assign(reinterpret_cast<const char*>(utf8.data()), utf8.size());
-				registeredEmbedded = true;
-			}
+			const bool hasTextureOverride = !modelRenderComp.textureName.empty();
+			if (hasTextureOverride) effectiveTextureName = modelRenderComp.textureName;
 			if (modelMaterial) {
 				materialData->color *= modelMaterial->baseColor;
 			}
 			if (IsDdsTexture(effectiveTextureName)) { modelRenderComp.renderErrorMessage = "Model textures require a 2D image, not a DDS cubemap."; return; }
 			if (!effectiveTextureName.empty()) {
-				if (!registeredEmbedded && !hasTextureOverride && modelMaterial &&
+				if (!hasTextureOverride && modelMaterial &&
 					!modelMaterial->embeddedTextureData.empty()) {
 					if (!resources.textureHandleMap.contains(effectiveTextureName)) {
 						const auto& bytes = modelMaterial->embeddedTextureData;
@@ -1036,10 +967,6 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			// レンダリング可能
 			modelRenderComp.canRender = true;
 			modelRenderComp.renderErrorMessage = "";
-			if (!modelRenderComp.modelAssetId.empty()) {
-				auto& revision = resources.renderedModelRevisions[modelRenderComp.modelAssetId];
-				revision = (std::max)(revision, modelAsset->revision);
-			}
 		});
 	// コンポーネント削除・Entity削除・静的モデルへの切り替えも含めて回収する。
 	for (const auto& [entityId, handle] : CollectUnusedAnimatedBuffers(resources.animatedVertexBuffersByEntity, activeAnimatedVertices)) {
@@ -1112,13 +1039,6 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
 			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
 			std::string textureName = sprite.textureName;
-			if (!sprite.textureAssetId.empty()) {
-				std::string error;
-				const auto path = systems.assetManager->ResolveSource(sprite.textureAssetId, "image", error);
-				if (path.empty()) { sprite.renderErrorMessage = "Failed to resolve sprite texture: " + error; return; }
-				const auto utf8 = path.generic_u8string();
-				textureName.assign(reinterpret_cast<const char*>(utf8.data()), utf8.size());
-			}
 			if (IsDdsTexture(textureName)) { sprite.renderErrorMessage = "Sprite textures require a 2D image, not a DDS cubemap."; return; }
 			if (!textureName.empty()) {
 				if (!QFE::FRAMEWORK::LoadTexture(
@@ -1295,7 +1215,7 @@ bool QFE::FRAMEWORK::LoadModelVertexData(
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& vertexBuffers) {
 
 	std::string error;
-	const auto asset = systems.assetManager->LoadLegacyModel(modelName, modelDir, error);
+	const auto asset = systems.modelLoader->LoadModel(modelName, modelDir, error);
 	if (asset && asset->data) {
 		bool result = QFE::GRAPHIC::CreateVertexBuffer(
 			systems.graphicEngine.get(),
@@ -1312,7 +1232,7 @@ bool QFE::FRAMEWORK::LoadModelIndexBuffer(
 	std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& indexBuffers) {
 
 	std::string error;
-	const auto asset = systems.assetManager->LoadLegacyModel(modelName, modelDir, error);
+	const auto asset = systems.modelLoader->LoadModel(modelName, modelDir, error);
 	if (asset && asset->data) {
 		bool result = QFE::GRAPHIC::CreateIndexBuffer(
 			systems.graphicEngine.get(),
@@ -1329,7 +1249,7 @@ bool QFE::FRAMEWORK::LoadModelAndCreateBLAS(
 	std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle>& blasHandles) {
 
 	std::string error;
-	const auto asset = systems.assetManager->LoadLegacyModel(modelName, modelDir, error);
+	const auto asset = systems.modelLoader->LoadModel(modelName, modelDir, error);
 	if (asset && asset->data) {
 		bool result = QFE::GRAPHIC::CreateBLAS(
 			systems.graphicEngine.get(), asset->data->meshes[0].vertices.GetInternalVector(),
