@@ -1,5 +1,7 @@
 #include "assetfactory/game-data/AssetManager.h"
 #include "assetfactory/game-data/GamePak.h"
+#include "framework/application/RetiredModelResources.h"
+#include "framework/application/TextureReferencePolicy.h"
 #include <fstream>
 #include <iostream>
 
@@ -13,6 +15,28 @@ int wmain(int argc, wchar_t** argv) {
 	std::string error;
 	bool ok = true;
 	const auto check = [&](bool value, const char* message) { if (!value) { std::cerr << message << '\n'; ok = false; } };
+	check(QFE::FRAMEWORK::IsDdsTexture("sky/sky.DdS") && !QFE::FRAMEWORK::IsDdsTexture("images/fire.png") &&
+		!QFE::FRAMEWORK::IsDdsTexture("model.glb#*0"), "DDS texture classification failed");
+	const auto utf8Path = [](const std::string& value) {
+		return std::filesystem::path(std::u8string(reinterpret_cast<const char8_t*>(value.data()), value.size()));
+	};
+	const std::unordered_map<std::string, uint64_t> revisions{{"model-1", 2}, {"model-2", 4}};
+	check(QFE::FRAMEWORK::IsRetiredModelResource("asset-id/model-1/1/models/test.glb", revisions), "Previous model revision was not retired");
+	check(!QFE::FRAMEWORK::IsRetiredModelResource("asset-id/model-1/2/models/test.glb", revisions) &&
+		!QFE::FRAMEWORK::IsRetiredModelResource("asset-id/model-1/3/models/test.glb", revisions) &&
+		!QFE::FRAMEWORK::IsRetiredModelResource("asset-id/unknown/1/models/test.glb", revisions) &&
+		!QFE::FRAMEWORK::IsRetiredModelResource("models/test.glb", revisions), "Current, future, unknown or legacy model was retired");
+	check(!QFE::FRAMEWORK::IsRetiredModelResource("asset-id/model-1/0/x", revisions) &&
+		!QFE::FRAMEWORK::IsRetiredModelResource("asset-id/model-1/1junk/x", revisions) &&
+		!QFE::FRAMEWORK::IsRetiredModelResource("asset-id/model-1/1/", revisions), "Invalid model cache key was retired");
+	std::unordered_map<uint32_t, uint32_t> animatedBuffers{{1, 100}, {2, 200}, {3, 300}};
+	const std::unordered_set<uint32_t> activeBuffers{1, 3};
+	const auto retiredBuffers = QFE::FRAMEWORK::CollectUnusedAnimatedBuffers(animatedBuffers, activeBuffers);
+	check(retiredBuffers.size() == 1 && retiredBuffers[0] == std::pair<uint32_t, uint32_t>{2, 200} &&
+		animatedBuffers.size() == 2 && animatedBuffers.contains(1) && animatedBuffers.contains(3),
+		"Unused animated buffer collection removed an active resource or kept an unused one");
+	check(QFE::FRAMEWORK::CollectUnusedAnimatedBuffers(animatedBuffers, activeBuffers).empty(),
+		"Animated buffer was queued more than once");
 	check(manager.Open(root, error), "Open failed");
 	const auto importedId = manager.ImportGlb(std::filesystem::path(argv[2]), error);
 	check(!importedId.empty() && manager.Registry().Find(importedId), "GLB import failed");
@@ -26,11 +50,11 @@ int wmain(int argc, wchar_t** argv) {
 	check(!objId.empty() && manager.Registry().Find(objId), "OBJ import failed");
 	const auto obj = manager.LoadModel(objId, error);
 	check(obj && obj->data && !obj->data->meshes.empty() &&
-		std::filesystem::is_regular_file(obj->data->meshes[0].material.textureName), "OBJ material texture was not imported");
+		std::filesystem::is_regular_file(utf8Path(obj->data->meshes[0].material.textureName)), "OBJ material texture was not imported");
 	check(manager.ReplaceModel(objId, std::filesystem::path(argv[3]), error), "OBJ replacement failed");
 	const auto replacedObj = manager.LoadModel(objId, error);
 	check(replacedObj && obj && replacedObj->revision == obj->revision + 1 &&
-		std::filesystem::is_regular_file(replacedObj->data->meshes[0].material.textureName), "OBJ replacement lost its material texture");
+		std::filesystem::is_regular_file(utf8Path(replacedObj->data->meshes[0].material.textureName)), "OBJ replacement lost its material texture");
 	const auto brokenObj = root / "broken.obj";
 	{ std::ofstream file(brokenObj); file << "mtllib missing.mtl\n"; }
 	check(manager.ImportObj(brokenObj, error).empty(), "OBJ with missing material was imported");
@@ -87,7 +111,7 @@ int wmain(int argc, wchar_t** argv) {
 	check(!optionModelId.empty() && manager.LoadModel(optionModelId, error), "OBJ texture options were not imported");
 	{ std::ofstream file(root / "options.mtl"); file << "newmtl m\nmap_Kd -unknown 1 option texture.png\n"; }
 	check(manager.ImportObj(optionObj, error).empty(), "Unsupported MTL option was accepted");
-	{ std::ofstream file(root / "first material.mtl"); file << "newmtl m\nKd 1 1 1\n"; }
+	{ std::ofstream file(root / "first material.mtl"); file << "newmtl m\nKd 1 1 1\nmap_Kd option texture.png\n"; }
 	{ std::ofstream file(root / "second.mtl"); file << "newmtl m2\nKd 1 0 0\n"; }
 	{ std::ofstream file(optionObj); file << "mtllib \"first material.mtl\" second.mtl\nv 0 0 0\nv 1 0 0\nv 0 1 0\nusemtl m\nf 1 2 3\n"; }
 	const auto multiMaterialId = manager.ImportObj(optionObj, error);
@@ -96,6 +120,10 @@ int wmain(int argc, wchar_t** argv) {
 		const auto copiedDir = manager.ResolveSource(multiMaterialId, "model", error).parent_path();
 		check(std::filesystem::is_regular_file(copiedDir / "material-0.mtl") &&
 			std::filesystem::is_regular_file(copiedDir / "material-1.mtl"), "OBJ material libraries were not copied");
+		const auto multiModel = manager.LoadModel(multiMaterialId, error);
+		check(multiModel && multiModel->data && !multiModel->data->meshes.empty() &&
+			std::filesystem::is_regular_file(utf8Path(multiModel->data->meshes[0].material.textureName)),
+			"OBJ with multiple material libraries lost its texture");
 	}
 	const auto differentGlb = std::filesystem::path(argv[2]).parent_path() / "monkey.glb";
 	check(!manager.ReplaceModel(importedId, differentGlb, error) &&

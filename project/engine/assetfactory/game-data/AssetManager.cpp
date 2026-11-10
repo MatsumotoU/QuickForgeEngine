@@ -188,7 +188,6 @@ namespace {
 				while (materialList >> std::quoted(name)) materialNames.push_back(name);
 				if (materialNames.empty() || !materialList.eof()) { error = "Invalid OBJ material list."; return false; }
 			}
-			output << "mtllib";
 			for (const auto& materialName : materialNames) {
 			const auto materialPath = Utf8Path(materialName);
 			if (materialName.empty() || materialPath.is_absolute() || materialPath.has_root_name()) {
@@ -228,9 +227,8 @@ namespace {
 			}
 			copied.close();
 			if (!material.eof() || !copied) { error = "Could not copy the material file."; return false; }
-			output << ' ' << newName;
+			output << "mtllib " << newName << '\n';
 			}
-			output << '\n';
 		}
 		output.close();
 		if (!input.eof() || !output) { error = "Could not copy the OBJ file."; return false; }
@@ -371,7 +369,7 @@ bool QFE::ASSET::AssetManager::ReplaceModel(const std::string& id, const std::fi
 	error.clear();
 	const auto* current = registry_.Find(id);
 	if (!current || current->type != "model") { error = "Model asset was not found."; return false; }
-	std::string currentExtension = std::filesystem::path(current->source).extension().string();
+	std::string currentExtension = Utf8Path(current->source).extension().string();
 	std::string extension = source.extension().string();
 	for (auto* text : { &currentExtension, &extension }) {
 		std::transform(text->begin(), text->end(), text->begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
@@ -528,7 +526,8 @@ std::shared_ptr<const QFE::ASSET::ModelAsset> QFE::ASSET::AssetManager::LoadLega
 		return LoadModel(name.substr(9, end - 9), error);
 	}
 	const auto primitive = name == "box" ? std::string("Primitive/Box") : name;
-	const auto key = "legacy:" + modelDirectory.generic_string() + ":" + name;
+	const auto directoryText = modelDirectory.generic_u8string();
+	const auto key = "legacy:" + std::string(reinterpret_cast<const char*>(directoryText.data()), directoryText.size()) + ":" + name;
 	const auto existing = models_.find(key);
 	if (existing != models_.end()) return existing->second;
 	auto result = std::make_shared<ModelAsset>();
@@ -547,10 +546,10 @@ std::shared_ptr<const QFE::ASSET::ModelAsset> QFE::ASSET::AssetManager::LoadLega
 		result->ownedData = data;
 		result->data = data.get();
 	} else {
-		std::string extension = std::filesystem::path(name).extension().string();
+		std::string extension = Utf8Path(name).extension().string();
 		std::transform(extension.begin(), extension.end(), extension.begin(),
 			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-		const auto source = modelDirectory / (name + (extension == ".glb" || extension == ".obj" ? "" : ".obj"));
+		const auto source = modelDirectory / Utf8Path(name + (extension == ".glb" || extension == ".obj" ? "" : ".obj"));
 		std::error_code ec;
 		if (!std::filesystem::is_regular_file(source, ec) || ec) { error = "Model source was not found."; return {}; }
 		const auto utf8 = source.generic_u8string();

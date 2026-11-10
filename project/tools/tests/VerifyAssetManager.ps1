@@ -19,7 +19,8 @@ New-Item -ItemType Directory -Path $generated -Force | Out-Null
 "@ | Set-Content -LiteralPath $testProject -Encoding utf8
 & (Join-Path $repo 'project/tools/BuildProject.bat') $testProject /p:Configuration=Development /p:Platform=x64 /m:1 /v:minimal /nologo
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-$testRoot = Join-Path $generated ('asset-manager-check-' + [guid]::NewGuid().ToString('N'))
+$unicodePart = [string][char]0x65e5 + [char]0x672c + [char]0x8a9e
+$testRoot = Join-Path $generated ('asset-manager-check-' + $unicodePart + '-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $testRoot | Out-Null
 try {
     & (Join-Path $generated 'asset-manager-test/bin/AssetManagerTest.exe') $testRoot (Resolve-Path -LiteralPath (Join-Path $repo $Model)).Path (Resolve-Path -LiteralPath (Join-Path $repo $ObjModel)).Path

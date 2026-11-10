@@ -191,7 +191,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	if (!projectConfig.Load(editorConfigPath)) {
 		QFE_LOG("Failed to load editor-config.json; using the default game projects directory.", QFE::LogLevel::Warning);
 	}
-	QFE::EDITOR::ProjectSelector selector(projectConfig, editorConfigPath);
+	QFE::EDITOR::ProjectSelector selector(projectConfig, editorConfigPath, *engineSystems.sceneManager);
 	while (selector.SelectedProject().empty() && !selector.Cancelled() &&
 		QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {
 		if (!QFE::FRAMEWORK::PreDrawGraphicEngine(engineSystems.graphicEngine.get())) break;
@@ -225,6 +225,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
 	auto& graphicEngine = engineSystems.graphicEngine;
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
+	if (selector.CreatedProject()) {
+		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString((projectRoot / L"assets" / L"scenes" / L"default.scene").wstring()));
+	}
 
 	// エディタ用のシーンテクスチャ（レンダーターゲット）の作成
 	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
@@ -270,7 +273,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 		// エンジンの描画後処理（フレーム終了時の共通処理）
 		QFE::FRAMEWORK::EnginePostDraw(engineSystems, engineResources);
-		QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems);
+		QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems, &engineResources);
 
 		// Fileメニューからの要求を、描画処理が完了したフレーム境界で実行する。
 		if (gameEditor.ConsumeGameModuleBuildAndReloadRequest()) {

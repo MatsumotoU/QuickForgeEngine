@@ -169,12 +169,15 @@ namespace QFE::FILE {
 
 	bool HasFile(const std::string& filePath)
 	{
-		return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath);
+		const std::filesystem::path path(std::u8string(reinterpret_cast<const char8_t*>(filePath.data()), filePath.size()));
+		std::error_code error;
+		return std::filesystem::is_regular_file(path, error) && !error;
 	}
 
 	std::string GetFileName(const std::string& filePath) {
-		std::filesystem::path path(filePath);
-		return path.filename().string();
+		const std::filesystem::path path(std::u8string(reinterpret_cast<const char8_t*>(filePath.data()), filePath.size()));
+		const auto name = path.filename().u8string();
+		return std::string(reinterpret_cast<const char*>(name.data()), name.size());
 	}
 
 	bool HasObjModelFiles(const std::string& directoryPath, const std::string& modelName) {

@@ -267,7 +267,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 		// エンジンの描画後処理（フレーム終了時の共通処理）
 		QFE::FRAMEWORK::EnginePostDraw(engineSystems, engineResources);
-		QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems);
+		QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems, &engineResources);
 
 		// FPSが60fps付近のオブジェクト数をカウント
 		if (fpsCounter->GetAverageFPS() > 59.0f && fpsCounter->GetAverageFPS() < 61.0f) {

@@ -3,6 +3,8 @@
 #include "components/ModelRenderComponent.h"
 #include "components/SkeletonAnimationComponent.h"
 #include "components/SpriteRenderComponent.h"
+#include "components/ParticleEmitterComponent.h"
+#include "components/SkyBoxComponent.h"
 #include <iostream>
 #include <memory>
 
@@ -11,6 +13,8 @@ int main() {
 	registry->RegisterComponent<QFE::SCENE::ModelRenderComponent>("ModelRenderComponent");
 	registry->RegisterComponent<QFE::SCENE::SkeletonAnimationComponent>("SkeletonAnimationComponent");
 	registry->RegisterComponent<QFE::SCENE::SpriteRenderComponent>("SpriteRenderComponent");
+	registry->RegisterComponent<QFE::SCENE::ParticleEmitterComponent>("ParticleEmitterComponent");
+	registry->RegisterComponent<QFE::SCENE::SkyBoxComponent>("SkyBoxComponent");
 	registry->Freeze();
 	QFE::EntityManager manager(registry);
 	bool passed = true;
@@ -38,9 +42,39 @@ int main() {
 	manager.DeserializeEntityComponents(noAnimationId, {{"ModelRenderComponent", {{"modelName", "models/walk.glb"}, {"modelAssetId", "asset-1"}}}});
 	check(!manager.HasComponent<QFE::SCENE::SkeletonAnimationComponent>(noAnimationId), "Removed component was recreated");
 	check(manager.SerializeEntityComponents(noAnimationId).at("ModelRenderComponent").value("modelAssetId", "") == "asset-1", "Model asset ID was not serialized");
+	const auto textureModelId = manager.CreateEntity();
+	manager.DeserializeEntityComponents(textureModelId, {{"ModelRenderComponent", {
+		{"modelName", "models/walk.glb"}, {"modelAssetId", "asset-1"},
+		{"textureName", "images/icon.png"}, {"textureAssetId", "image-2"}}}});
+	const auto savedTextureModel = manager.SerializeEntityComponents(textureModelId);
+	const auto restoredTextureModelId = manager.CreateEntity();
+	manager.DeserializeEntityComponents(restoredTextureModelId, savedTextureModel);
+	check(manager.GetComponent<QFE::SCENE::ModelRenderComponent>(restoredTextureModelId).textureAssetId == "image-2",
+		"Model texture asset ID did not round-trip");
+	check(manager.GetComponent<QFE::SCENE::ModelRenderComponent>(legacyId).textureAssetId.empty(),
+		"Legacy model unexpectedly gained a texture asset ID during deserialization");
 	const auto spriteId = manager.CreateEntity();
 	manager.DeserializeEntityComponents(spriteId, {{"SpriteRenderComponent", {{"textureName", "images/icon.png"}, {"textureAssetId", "image-1"}}}});
 	check(manager.SerializeEntityComponents(spriteId).at("SpriteRenderComponent").value("textureAssetId", "") == "image-1", "Sprite asset ID was not serialized");
+	const auto effectsId = manager.CreateEntity();
+	manager.DeserializeEntityComponents(effectsId, {
+		{"ParticleEmitterComponent", {{"textureName", "images/fire.png"}, {"textureAssetId", "particle-image"}}},
+		{"SkyBoxComponent", {{"textureName", "skybox/sky.dds"}, {"textureAssetId", "sky-image"}}}});
+	const auto savedEffects = manager.SerializeEntityComponents(effectsId);
+	const auto restoredEffectsId = manager.CreateEntity();
+	manager.DeserializeEntityComponents(restoredEffectsId, savedEffects);
+	check(manager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(restoredEffectsId).textureAssetId == "particle-image" &&
+		manager.GetComponent<QFE::SCENE::SkyBoxComponent>(restoredEffectsId).textureAssetId == "sky-image",
+		"Particle or skybox image asset ID did not round-trip");
+	const auto legacyEffectsId = manager.CreateEntity();
+	manager.DeserializeEntityComponents(legacyEffectsId, {
+		{"ParticleEmitterComponent", {{"textureName", "images/old.png"}}},
+		{"SkyBoxComponent", {{"textureName", "skybox/old.dds"}}}});
+	check(manager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(legacyEffectsId).textureAssetId.empty() &&
+		manager.GetComponent<QFE::SCENE::ParticleEmitterComponent>(legacyEffectsId).textureName == "images/old.png" &&
+		manager.GetComponent<QFE::SCENE::SkyBoxComponent>(legacyEffectsId).textureAssetId.empty() &&
+		manager.GetComponent<QFE::SCENE::SkyBoxComponent>(legacyEffectsId).textureName == "skybox/old.dds",
+		"Legacy particle or skybox texture reference was not preserved");
 	const auto explicitId = manager.CreateEntity();
 	nlohmann::json explicitSettings = legacy;
 	explicitSettings["SkeletonAnimationComponent"] = {{"glbAnimationName", "Run"}};

@@ -8,6 +8,7 @@ namespace QFE::SCENE {
 		std::string modelName = "Primitive/Box"; ///< モデルまたは組み込みプリミティブの名前
 		std::string modelAssetId; ///< 登録済みモデルのID。空の場合は従来のモデル名を使用する。
 		std::string textureName; ///< 空ならモデル内蔵、内蔵もなければWhite1x1
+		std::string textureAssetId; ///< 明示指定する画像のID。空の場合は従来のパスを使用する。
 		uint32_t animatedVertexResourceHandle = UINT32_MAX;
 		std::string animatedBufferModelName;
 
@@ -25,6 +26,7 @@ namespace QFE::SCENE {
 			QFE_REFLECT_MEMBER(modelName)
 			QFE_REFLECT_MEMBER(modelAssetId)
 			QFE_REFLECT_MEMBER(textureName)
+			QFE_REFLECT_MEMBER(textureAssetId)
 			QFE_REFLECT_END()
 	};
 }

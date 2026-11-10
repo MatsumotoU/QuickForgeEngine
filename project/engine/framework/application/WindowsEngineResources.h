@@ -48,16 +48,18 @@ namespace QFE::FRAMEWORK {
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> vertexBufferMap;
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle> indexBufferMap;
 		std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle> blasHandleMap;
+		std::unordered_map<std::string, uint64_t> renderedModelRevisions; ///< 描画に利用できた登録モデルの最新リビジョン。
 		struct AnimatedBLAS {
 			std::string modelName;
 			QFE::GRAPHIC::BLASHandle handle = QFE::GRAPHIC::BLASHandle::Invalid;
 		};
 		std::unordered_map<uint32_t, AnimatedBLAS> animatedBlasByEntity;
+		std::unordered_map<uint32_t, QFE::GRAPHIC::DirectXResourceHandle> animatedVertexBuffersByEntity;
+		std::vector<QFE::GRAPHIC::DirectXResourceHandle> retiredAnimatedVertexBuffers;
 		uint64_t animatedBlasSceneRevision = UINT64_MAX;
 
 		std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle> textureHandleMap;
 		std::map<std::string, uint32_t> textureGpuIndexMap; // テクスチャ名 -> GPU側のインデックスマップ
-		uint32_t nextTextureGpuIndex = 2; // 0,1 は BlackCubeMap と White1x1 に予約されているので、次のインデックスは 2 から始める
 
 		QFE::GRAPHIC::ViewPortHandle viewportHandle;
 		QFE::GRAPHIC::ScissorRectHandle scissorRectHandle;

@@ -79,5 +79,6 @@ namespace QFE::EDITOR {
 		QFE::FRAMEWORK::EngineConfig engineConfig_;
 		bool showEngineConfig_ = false;
 		std::string engineConfigStatus_;
+		std::string packageExportMessage_;
 	};
 }

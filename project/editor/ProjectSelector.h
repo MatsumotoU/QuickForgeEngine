@@ -5,6 +5,7 @@
 #include <vector>
 
 namespace QFE::WINDOW { class IGameWindowManager; }
+namespace QFE::SCENE { class SceneManager; }
 namespace QFE::EDITOR {
     /// @brief ゲームプロジェクトの選択と作成を行う ImGui の起動画面。
     /// @details エンジンの初期化と終了は呼び出し元が行う。
@@ -13,7 +14,7 @@ namespace QFE::EDITOR {
         /// @brief エディタ設定を使ってプロジェクトの一覧を準備する。
         /// @param config プロジェクトの格納先を保持する設定。
         /// @param configPath 設定の変更を保存するファイルのパス。
-        ProjectSelector(EditorConfig& config, std::filesystem::path configPath);
+        ProjectSelector(EditorConfig& config, std::filesystem::path configPath, SCENE::SceneManager& sceneManager);
         ProjectSelector(const ProjectSelector&) = delete;
         ProjectSelector& operator=(const ProjectSelector&) = delete;
         ProjectSelector(ProjectSelector&&) = delete;
@@ -24,6 +25,7 @@ namespace QFE::EDITOR {
         void Draw(QFE::WINDOW::IGameWindowManager& windowManager);
         /// @brief 選択されたプロジェクトのルートを取得する。未選択時は空。
         const std::filesystem::path& SelectedProject() const { return selectedProject_; }
+        bool CreatedProject() const { return createdProject_; }
         /// @brief 選択画面がキャンセルされたかを取得する。
         bool Cancelled() const { return cancelled_; }
     private:
@@ -36,6 +38,7 @@ namespace QFE::EDITOR {
         /// @brief 入力された格納先を設定に保存して一覧を更新する。
         void ChangeDirectory();
         EditorConfig& config_;
+        SCENE::SceneManager& sceneManager_;
         std::filesystem::path configPath_;
         std::filesystem::path base_;
         std::filesystem::path selectedProject_;
@@ -45,5 +48,6 @@ namespace QFE::EDITOR {
         std::string status_;
         int selectedIndex_ = -1;
         bool cancelled_ = false;
+        bool createdProject_ = false;
     };
 }

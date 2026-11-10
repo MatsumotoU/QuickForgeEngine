@@ -29,7 +29,8 @@ void QFE::SCENE::SceneObject::EndFrame() {
 
 void QFE::SCENE::SceneObject::SaveSceneToJson(const std::string& filePath) {
 	const nlohmann::json sceneJson = SerializeToJson();
-	std::filesystem::path osPath(filePath);
+	const std::filesystem::path osPath(std::u8string(
+		reinterpret_cast<const char8_t*>(filePath.data()), filePath.size()));
 	std::ofstream file(osPath);
 	if (!file.is_open()) {
 		QFE_REPORT_SYSTEM_ERROR("Failed to open file for saving scene: " + filePath, SystemError::Abort);
@@ -41,7 +42,9 @@ void QFE::SCENE::SceneObject::SaveSceneToJson(const std::string& filePath) {
 
 void QFE::SCENE::SceneObject::LoadSceneFromJson(const std::string& filePath) {
 	// JSONファイルを読み込む
-	std::ifstream file(filePath);
+	const std::filesystem::path osPath(std::u8string(
+		reinterpret_cast<const char8_t*>(filePath.data()), filePath.size()));
+	std::ifstream file(osPath);
 	if (!file.is_open()) {
 		QFE_REPORT_SYSTEM_ERROR("Failed to open file for loading scene: " + filePath, SystemError::Abort);
 		return;

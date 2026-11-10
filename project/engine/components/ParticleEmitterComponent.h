@@ -9,6 +9,7 @@ namespace QFE::SCENE {
 	/// @brief GPU上で更新・生成されるパーティクルのエミッタ設定。
 	struct ParticleEmitterComponent {
 		std::string textureName; ///< 空の場合はWhite1x1を使用する。
+		std::string textureAssetId; ///< 登録済み画像のID。空の場合は従来のパスを使用する。
 		bool emitting = true; ///< 新しいパーティクルを生成するか。
 		bool oneShot = false; ///< trueになったフレームだけmaxParticles個を生成し、自動的にfalseへ戻る。
 		bool visible = true; ///< パーティクルを描画するか。
@@ -34,6 +35,7 @@ namespace QFE::SCENE {
 
 		QFE_REFLECT_BEGIN(ParticleEmitterComponent)
 			QFE_REFLECT_MEMBER(textureName)
+			QFE_REFLECT_MEMBER(textureAssetId)
 			QFE_REFLECT_MEMBER(emitting)
 			QFE_REFLECT_MEMBER(oneShot)
 			QFE_REFLECT_MEMBER(visible)

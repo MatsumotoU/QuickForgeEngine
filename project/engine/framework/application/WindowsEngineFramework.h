@@ -41,7 +41,7 @@ namespace QFE::FRAMEWORK {
 	/// @brief 入力とフレーム計測を開始する。
 	bool BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
 	/// @brief シーン、入力、描画、フレーム計測の終了処理を行う。
-	void EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
+	void EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources* resources = nullptr);
 	/// @brief 各エンジンシステムを依存関係の逆順で終了する。
 	void ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEngineSystems& systems);
 	/// @brief GameModule DLLを差し替え、現在のシーンをメモリ退避から復元する。
@@ -78,6 +78,5 @@ namespace QFE::FRAMEWORK {
 		WindowsQuickForgeEngineSystems& systems,
 		const std::string& textureDir, const std::string& textureName,
 		std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& textureHandles,
-		std::map<std::string, uint32_t>& textureGpuIndexMap,
-		uint32_t& nextTextureGpuIndex);
+		std::map<std::string, uint32_t>& textureGpuIndexMap);
 }

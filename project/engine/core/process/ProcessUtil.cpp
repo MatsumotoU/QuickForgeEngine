@@ -1,4 +1,5 @@
 #include "ProcessUtil.h"
+#include "string/MyString.h"
 
 #define NOMINMAX
 #include <windows.h>
@@ -38,18 +39,22 @@ namespace {
 }
 
 bool QFE::ProcessUtil::LaunchExe(const std::string& exePath, const std::string& arguments) {
-    std::string commandLine = exePath + " " + arguments;
-    std::vector<char> buffer(commandLine.begin(), commandLine.end());
+    return LaunchExe(QFE::ConvertString(exePath), QFE::ConvertString(arguments));
+}
+
+bool QFE::ProcessUtil::LaunchExe(const std::wstring& exePath, const std::wstring& arguments) {
+    std::wstring commandLine = L"\"" + exePath + L"\" " + arguments;
+    std::vector<wchar_t> buffer(commandLine.begin(), commandLine.end());
     buffer.push_back('\0');
 
-    STARTUPINFOA si;
+    STARTUPINFOW si;
     PROCESS_INFORMATION pi;
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
     // 1. ジョブオブジェクトを作成する
-    HANDLE hJob = CreateJobObjectA(nullptr, nullptr);
+    HANDLE hJob = CreateJobObjectW(nullptr, nullptr);
     if (hJob == nullptr) {
         return false;
     }
@@ -64,7 +69,7 @@ bool QFE::ProcessUtil::LaunchExe(const std::string& exePath, const std::string& 
     }
 
     // ジョブへ登録する前に子プロセスが終了しないよう、一時停止状態で起動する。
-    if (!CreateProcessA(nullptr, buffer.data(), nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, nullptr, &si, &pi)) {
+    if (!CreateProcessW(nullptr, buffer.data(), nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, nullptr, &si, &pi)) {
         CloseHandle(hJob);
         return false;
     }

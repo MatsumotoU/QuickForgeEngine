@@ -25,6 +25,61 @@
 #include <cstdio>
 
 namespace {
+class LogWindow final : public QFE::EDITOR::IEditorWindow {
+public:
+    void Initialize() override { isActive_ = true; }
+    void Draw(std::set<uint32_t>&, QFE::EDITOR::EditorCommandList&) override {
+        const bool visible = ImGui::Begin("Log", &isActive_);
+        isFocus_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+        if (visible) {
+            auto* logger = QFE::MyDebugLog::GetInstance();
+            if (ImGui::Button("Clear")) logger->ClearEntries();
+            ImGui::SameLine(); ImGui::Checkbox("Auto-scroll", &autoScroll_);
+            ImGui::SameLine(); ImGui::Checkbox("Engine", &showEngine_);
+            ImGui::SameLine(); ImGui::Checkbox("Editor", &showEditor_);
+            ImGui::SameLine(); ImGui::Checkbox("Warning", &showWarning_);
+            ImGui::SameLine(); ImGui::Checkbox("Error", &showError_);
+            filter_.Draw("Filter", 220.0f);
+            ImGui::Separator();
+            if (ImGui::BeginChild("LogEntries", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar)) {
+                const bool atBottom = ImGui::GetScrollY() >= ImGui::GetScrollMaxY();
+                const auto entries = logger->GetEntries();
+                for (const auto& entry : entries) {
+                    const char* label = "Engine";
+                    ImVec4 color(0.8f, 0.8f, 0.8f, 1.0f);
+                    bool enabled = showEngine_;
+                    if (entry.level == QFE::LogLevel::EditorInfo) { label = "Editor"; enabled = showEditor_; }
+                    else if (entry.level == QFE::LogLevel::Warning) { label = "Warning"; enabled = showWarning_; color = ImVec4(1.0f, 0.8f, 0.25f, 1.0f); }
+                    else if (entry.level == QFE::LogLevel::Error) { label = "Error"; enabled = showError_; color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); }
+                    if (!enabled || !filter_.PassFilter(entry.message.c_str())) continue;
+                    const std::string line = "[" + entry.timestamp + "] [" + label + "] " + entry.message;
+                    ImGui::PushStyleColor(ImGuiCol_Text, color);
+                    ImGui::TextUnformatted(line.c_str());
+                    ImGui::PopStyleColor();
+                }
+                if (autoScroll_ && atBottom && !entries.empty() && entries.back().sequence != lastSequence_) ImGui::SetScrollHereY(1.0f);
+                if (!entries.empty()) lastSequence_ = entries.back().sequence;
+            }
+            ImGui::EndChild();
+        }
+        ImGui::End();
+    }
+    std::string GetWindowName() override { return "Log"; }
+    bool GetIsActive() override { return isActive_; }
+    bool SetIsActive(bool active) override { return isActive_ = active; }
+    bool GetIsFocus() override { return isFocus_; }
+private:
+    ImGuiTextFilter filter_;
+    uint64_t lastSequence_ = 0;
+    bool isActive_ = true;
+    bool isFocus_ = false;
+    bool autoScroll_ = true;
+    bool showEngine_ = false;
+    bool showEditor_ = true;
+    bool showWarning_ = true;
+    bool showError_ = true;
+};
+
 bool IsProjectFile(const std::wstring& path, const std::filesystem::path& directory) {
     return QFE::PROJECT::IsWithin(std::filesystem::path(path), QFE::PROJECT::Assets() / directory);
 }
@@ -50,6 +105,7 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 		std::make_unique<Inspector>(&entityManager, &assetManager, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
 	editorWindowsMap_[EditorWindowType::AssetBrowser] = std::make_unique<AssetBrowser>(assetManager, windowManager);
+	editorWindowsMap_[EditorWindowType::Logger] = std::make_unique<LogWindow>();
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
     editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
 }
@@ -61,6 +117,7 @@ void QFE::EDITOR::EditorWindowManager::Update() {
 void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 	bool saveSceneRequested = false;
 	bool saveSceneAsRequested = false;
+	bool showPackageExportResult = false;
 
     // 1. 画面全体のフラグを設定（タイトルバーやリサイズ、移動などをすべて無効化）
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -170,9 +227,15 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 					std::string error;
 					if (!QFE::PAK::Write(QFE::PROJECT::Root(), std::filesystem::path(path), error)) {
 						QFE_LOG("Package export failed: " + error, QFE::LogLevel::Error);
+						packageExportMessage_ = "Package export failed: " + error;
+						if (error == "Set a start scene before exporting.") {
+							packageExportMessage_ += "\nChoose File > Set Start Scene... and select a saved scene, then export again.";
+						}
 					} else {
 						QFE_LOG("Game package exported: " + QFE::ConvertString(path), QFE::LogLevel::EditorInfo);
+						packageExportMessage_ = "Game package exported:\n" + QFE::ConvertString(path);
 					}
+					showPackageExportResult = true;
 				}
 			}
             ImGui::EndMenu();
@@ -190,6 +253,16 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
         }
 		// Debugメニュー
         if (ImGui::BeginMenu("Debug")) {
+            if (ImGui::MenuItem("Launch Game Package...")) {
+                std::wstring selectedPackage;
+                if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
+                    *windowManager_, L"QuickForge Package (*.qfepak)", L"*.qfepak",
+                    selectedPackage, QFE::PROJECT::Root().wstring())) {
+                    if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--pak \"" + selectedPackage + L"\"")) {
+                        QFE_LOG("Failed to launch the runtime.", QFE::LogLevel::Error);
+                    }
+                }
+            }
             // シーンを選ばせて開始する
             if (ImGui::MenuItem("Launch Scene from File...")) {
 
@@ -221,6 +294,12 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 		}
         ImGui::EndMenuBar();
     }
+	if (showPackageExportResult) ImGui::OpenPopup("Game Package Export");
+	if (ImGui::BeginPopupModal("Game Package Export", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::TextWrapped("%s", packageExportMessage_.c_str());
+		if (ImGui::Button("OK")) ImGui::CloseCurrentPopup();
+		ImGui::EndPopup();
+	}
 
     ImGui::End();
 

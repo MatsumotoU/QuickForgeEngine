@@ -1,6 +1,7 @@
 #include "ProjectSelector.h"
 #include "framework/window/WindowDialogFramework.h"
 #include "string/MyString.h"
+#include "scene/SceneManager.h"
 #include <imgui.h>
 #include <imgui_stdlib.h>
 #include <algorithm>
@@ -8,8 +9,8 @@
 #include <nlohmann/json.hpp>
 #include <utility>
 
-QFE::EDITOR::ProjectSelector::ProjectSelector(EditorConfig& config, std::filesystem::path configPath)
-    : config_(config), configPath_(std::move(configPath)), directoryInput_(config.gameProjectDirectory) {
+QFE::EDITOR::ProjectSelector::ProjectSelector(EditorConfig& config, std::filesystem::path configPath, SCENE::SceneManager& sceneManager)
+    : config_(config), sceneManager_(sceneManager), configPath_(std::move(configPath)), directoryInput_(config.gameProjectDirectory) {
     RefreshProjects();
 }
 
@@ -53,10 +54,18 @@ void QFE::EDITOR::ProjectSelector::CreateProject() {
         std::filesystem::create_directories(root / L"assets" / dir, error);
         if (error) break;
     }
-    std::ofstream file(root / L"project.json");
-    file << nlohmann::json({ {"name", projectName_}, {"version", 1}, {"start_scene", ""} }).dump(4) << '\n';
+    if (error) { status_ = "Could not finish creating the project. Check the project directory."; return; }
+    // 初期カメラとライトを含むシーンを通常のシリアライズ処理で保存する。
+    sceneManager_.Initialize();
+    std::ofstream scene(root / L"assets" / L"scenes" / L"default.scene", std::ios::binary);
+    scene << sceneManager_.CreateSnapshot().sceneJson.dump(4) << '\n';
+    scene.close();
+    if (!scene) { status_ = "Could not create the default scene."; return; }
+    std::ofstream file(root / L"project.json", std::ios::binary);
+    file << nlohmann::json({ {"name", projectName_}, {"version", 1}, {"start_scene", "default.scene"} }).dump(4) << '\n';
     file.close();
-    if (error || !file) { status_ = "Could not finish creating the project. Check the project directory."; return; }
+    if (!file) { status_ = "Could not finish creating the project. Check the project directory."; return; }
+    createdProject_ = true;
     selectedProject_ = root;
 }
 

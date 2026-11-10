@@ -66,6 +66,13 @@ std::vector<EmbeddedImageData> AssimpModelLoader::GetGlbEmbeddedImages(const std
 }
 
 namespace {
+	std::filesystem::path Utf8Path(const std::string& text) {
+		return std::filesystem::path(std::u8string(reinterpret_cast<const char8_t*>(text.data()), text.size()));
+	}
+	std::string Utf8Name(const std::filesystem::path& path) {
+		const auto text = path.generic_u8string();
+		return std::string(reinterpret_cast<const char*>(text.data()), text.size());
+	}
 	int EmbeddedTextureIndex(const aiScene* scene, const aiTexture* texture) {
 		for (unsigned int i = 0; i < scene->mNumTextures; ++i) {
 			if (scene->mTextures[i] == texture && i <= static_cast<unsigned int>((std::numeric_limits<int>::max)())) return static_cast<int>(i);
@@ -98,8 +105,7 @@ namespace {
 			const auto* begin = reinterpret_cast<const uint8_t*>(embedded->pcData);
 			output.embeddedTextureData.assign(begin, begin + embedded->mWidth);
 		} else if (!embedded) {
-			output.textureName = (std::filesystem::path(filePath).parent_path() /
-				std::filesystem::path(texturePath.C_Str())).lexically_normal().generic_string();
+			output.textureName = Utf8Name((Utf8Path(filePath).parent_path() / Utf8Path(texturePath.C_Str())).lexically_normal());
 		}
 	}
 
@@ -310,9 +316,8 @@ namespace {
 				const auto* begin = reinterpret_cast<const uint8_t*>(embedded->pcData);
 				combined.material.embeddedTextureData.assign(begin, begin + embedded->mWidth);
 			} else if (embedded == nullptr) {
-				combined.material.textureName =
-					(std::filesystem::path(filePath).parent_path() /
-						std::filesystem::path(texturePath.C_Str())).lexically_normal().generic_string();
+				combined.material.textureName = Utf8Name(
+					(Utf8Path(filePath).parent_path() / Utf8Path(texturePath.C_Str())).lexically_normal());
 			}
 		}
 		if (scene->mNumMaterials > 1) {
@@ -444,7 +449,7 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 	modelData.name = QFE::FILE::GetFileName(filePath);
 
 	// モデルの読み込み
-	std::string extension = std::filesystem::path(filePath).extension().string();
+	std::string extension = Utf8Path(filePath).extension().string();
 	std::transform(extension.begin(), extension.end(), extension.begin(),
 		[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
 	const bool isGlb = extension == ".glb";
@@ -540,11 +545,10 @@ bool AssimpModelLoader::LoadModelData(const std::string& filePath, ModelData& mo
 			aiString texPath;
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
 				// MTLの画像はモデルのディレクトリを基準に解決し、旧形式は従来のアセット基準で扱う。
-				const auto texturePath = (std::filesystem::path(filePath).parent_path() /
-					std::filesystem::path(texPath.C_Str())).lexically_normal();
+				const auto texturePath = (Utf8Path(filePath).parent_path() / Utf8Path(texPath.C_Str())).lexically_normal();
 				std::error_code error;
 				meshData.material.textureName = std::filesystem::is_regular_file(texturePath, error)
-					? texturePath.generic_string() : std::string(texPath.C_Str());
+					? Utf8Name(texturePath) : std::string(texPath.C_Str());
 				QFE_LOG(std::format("Loaded diffuse texture for mesh {}: {}", meshIdx, meshData.material.textureName));
 			} else {
 				meshData.material.textureName = "";

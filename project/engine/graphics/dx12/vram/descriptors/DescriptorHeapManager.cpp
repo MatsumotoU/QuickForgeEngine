@@ -116,8 +116,14 @@ DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::AssignUavHeap(
 }
 
 DescriptorHandles QFE::GRAPHIC::DescriptorHeapManager::AssignTexture(ID3D12Device* device, ID3D12Resource* resource, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
-	uint32_t index = descriptorBlocks_.at(DescriptorBlockType::Texture2D).nextFreeIndex++;
-	DescriptorHandles& handles = descriptorBlocks_.at(DescriptorBlockType::Texture2D).handles_[index];
+	auto& block = descriptorBlocks_.at(DescriptorBlockType::Texture2D);
+	if (block.nextFreeIndex >= block.handles_.size()) {
+		QFE_LOG("Texture descriptor block is full.");
+		return {};
+	}
+	uint32_t index = block.nextFreeIndex++;
+	DescriptorHandles& handles = block.handles_[index];
+	handles.textureIndex = index;
 	// ディスクリタを作成
 	device->CreateShaderResourceView(resource, &desc, handles.cpuHandle_);
 	return handles;
