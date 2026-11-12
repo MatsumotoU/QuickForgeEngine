@@ -16,29 +16,38 @@
 #include "game/shooting-editor/ShootingInspectorRegistration.h"
 #include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
-#include "core/timer/FPSCounter.h"
-
-#include "assetfactory/model/AssimpModelLoader.h"
-
-#include "core/math/transform/Transform.h"
 
 #include <imgui/imgui.h>
 
 #include "GameEditor.h"
-#include "ProjectSelector.h"
+#include "EditorConfig.h"
 #include "assetfactory/game-data/GameProjectPaths.h"
 
 #include <filesystem>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 /// /// @brief Windowsアプリケーションのテスト
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
-	// 作業ディレクトリは project/、エディタ設定は editor/ 直下を使う。
-	const std::filesystem::path editorConfigPath = L"editor/editor-config.json";
+	// 相対パスは起動時の作業ディレクトリを基準にする。
 	QFE::EDITOR::EditorConfig projectConfig;
-	if (!projectConfig.Load(editorConfigPath)) {
-		MessageBoxW(nullptr, L"Could not load editor/editor-config.json. Start the editor from the project directory and check the configuration file.", L"QuickForge", MB_OK | MB_ICONERROR);
+	if (!projectConfig.Load(L"EditorConfig.json")) {
+		MessageBoxW(nullptr, L"Could not load EditorConfig.json. Select a project using editor/SelectProject.bat.", L"QuickForge", MB_OK | MB_ICONERROR);
 		return -1;
 	}
+	std::error_code pathError;
+	const auto projectRoot = std::filesystem::absolute(std::filesystem::path(QFE::ConvertString(projectConfig.projectRoot)), pathError).lexically_normal();
+	if (!pathError) {
+		for (const auto* dir : { L"scenes", L"entities", L"models", L"images", L"audio", L"scripts", L"shaders", L"animations" }) {
+			std::filesystem::create_directories(projectRoot / L"assets" / dir, pathError);
+			if (pathError) break;
+		}
+	}
+	if (pathError) {
+		MessageBoxW(nullptr, L"Could not create project directories. Check EditorConfig.json.", L"QuickForge", MB_OK | MB_ICONERROR);
+		return -1;
+	}
+	QFE::PROJECT::SetRoot(projectRoot);
 	// QuickForgeエンジンのリソースを初期化
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
 	const bool engineConfigLoaded = engineResources.config.Load();
@@ -60,25 +69,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		return -1;
 	}
 	if (!engineConfigLoaded) QFE::DebugLog("Failed to load EngineConfig.json; using defaults.", QFE::LogLevel::Warning);
-	QFE::EDITOR::ProjectSelector selector(projectConfig, editorConfigPath, *engineSystems.sceneManager);
-	while (selector.SelectedProject().empty() && !selector.Cancelled() &&
-		QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {
-		if (!QFE::FRAMEWORK::PreDrawGraphicEngine(engineSystems.graphicEngine.get())) break;
-		QFE::FRAMEWORK::SetSwapChainRenderTarget(*engineSystems.graphicEngine);
-		QFE::FRAMEWORK::PreDrawGui(*engineSystems.guiManager);
-		selector.Draw(*engineSystems.windowManager);
-		QFE::FRAMEWORK::PostDrawGui(*engineSystems.guiManager);
-		QFE::FRAMEWORK::PostDrawGraphicEngine(engineSystems.graphicEngine.get());
+	// 既存ファイルは上書きせず、必要な初期ファイルを作る。
+	const auto projectFile = projectRoot / L"project.json";
+	bool createdProject = false;
+	if (!std::filesystem::exists(projectFile, pathError) && !pathError) {
+		const auto scenePath = QFE::PROJECT::Assets() / L"scenes" / L"default.scene";
+		if (!std::filesystem::exists(scenePath, pathError) && !pathError) {
+			std::ofstream scene(scenePath, std::ios::binary);
+			scene << engineSystems.sceneManager->CreateSnapshot().sceneJson.dump(4) << '\n';
+			scene.close();
+			if (!scene) pathError = std::make_error_code(std::errc::io_error);
+		}
+		if (!pathError) {
+			std::ofstream file(projectFile, std::ios::binary);
+			file << nlohmann::json({ {"name", QFE::ConvertString(projectRoot.filename().wstring())}, {"version", 1}, {"start_scene", "default.scene"} }).dump(4) << '\n';
+			file.close();
+			if (!file) pathError = std::make_error_code(std::errc::io_error);
+			else createdProject = true;
+		}
 	}
-	const auto projectRoot = selector.SelectedProject();
-	if (projectRoot.empty()) {
+	if (pathError) {
+		MessageBoxW(nullptr, L"Could not initialize the project files.", L"QuickForge", MB_OK | MB_ICONERROR);
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
-		return 0;
+		return -1;
 	}
-	// 選択したパスはエディタの設定へ保存し、実行中はプロセス内の共有コンテキストに渡す。
-	projectConfig.lastProject = QFE::ConvertString(projectRoot.wstring());
-	if (!projectConfig.Save(editorConfigPath)) QFE_LOG("Failed to save the selected project to editor-config.json.", QFE::LogLevel::Warning);
-	QFE::PROJECT::SetRoot(projectRoot);
 	std::string assetError;
 	if (!engineSystems.assetManager->Open(projectRoot, assetError)) {
 		QFE_LOG("Failed to open asset registry: " + assetError, QFE::LogLevel::Error);
@@ -95,8 +109,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	QFE::FRAMEWORK::EngineInitialize(engineSystems, engineResources);
 	auto& graphicEngine = engineSystems.graphicEngine;
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
-	if (selector.CreatedProject()) {
-		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString((projectRoot / L"assets" / L"scenes" / L"default.scene").wstring()));
+	if (createdProject) {
+		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString((QFE::PROJECT::Assets() / L"scenes" / L"default.scene").wstring()));
 	}
 
 	// エディタ用のシーンテクスチャ（レンダーターゲット）の作成
