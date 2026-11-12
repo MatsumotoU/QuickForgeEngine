@@ -87,6 +87,12 @@ QFE::SCENE::SceneSnapshot QFE::SCENE::SceneManager::CreateSnapshot() const {
 	};
 }
 
+bool QFE::SCENE::SceneManager::RestoreSnapshot(const SceneSnapshot& snapshot) {
+	if (!LoadCurrentSceneFromJson(snapshot.sceneJson)) return false;
+	currentScenePath_ = snapshot.scenePath;
+	return true;
+}
+
 void QFE::SCENE::SceneManager::ReleaseComponentRegistryForReload() {
 	currentScene_.ReleaseComponentRegistryForReload();
 	registry_.reset();

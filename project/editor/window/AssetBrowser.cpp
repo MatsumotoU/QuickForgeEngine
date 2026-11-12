@@ -2,6 +2,8 @@
 #include "AssetDrop.h"
 #include "assetfactory/game-data/AssetManager.h"
 #include "assetfactory/game-data/GameProjectPaths.h"
+#include "command/EditorCommandList.h"
+#include "command/LoadSceneCommand.h"
 #include "framework/window/WindowDialogFramework.h"
 #include "window/interface/IGameWindowManager.h"
 #include "string/MyString.h"
@@ -23,8 +25,8 @@ namespace {
 	}
 }
 
-QFE::EDITOR::AssetBrowser::AssetBrowser(ASSET::AssetManager& assets, WINDOW::IGameWindowManager& windowManager)
-	: assets_(&assets), windowManager_(&windowManager) { Initialize(); }
+QFE::EDITOR::AssetBrowser::AssetBrowser(ASSET::AssetManager& assets, WINDOW::IGameWindowManager& windowManager, SCENE::SceneManager& sceneManager)
+	: assets_(&assets), windowManager_(&windowManager), sceneManager_(&sceneManager) { Initialize(); }
 
 void QFE::EDITOR::AssetBrowser::Initialize() {
 	isActive_ = true;
@@ -47,7 +49,7 @@ void QFE::EDITOR::AssetBrowser::Refresh() {
 
 }
 
-void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
+void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList& commandList) {
 	const bool visible = ImGui::Begin(GetWindowName().c_str(), &isActive_);
 	isFocus_ = ImGui::IsWindowFocused();
 	const auto droppedFiles = windowManager_->ConsumeDroppedFiles();
@@ -102,6 +104,15 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList&) {
 					// 選択可能な項目にすることで、クリック表示とドラッグ開始の両方を有効にする。
 					if (ImGui::Selectable(itemLabel.c_str(), selectedPath_ == item) || ImGui::IsItemActivated()) {
 						selectedPath_ = item;
+					}
+					std::string extension = assetPath.extension().string();
+					std::transform(extension.begin(), extension.end(), extension.begin(),
+						[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+					const auto fullPath = QFE::PROJECT::Assets() / assetPath;
+					if (exists && (extension == ".scene" || extension == ".json") &&
+						QFE::PROJECT::IsWithin(fullPath, QFE::PROJECT::Assets() / "scenes") &&
+						ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+						commandList.AddCommand(std::make_unique<LoadSceneCommand>(QFE::ConvertString(fullPath.wstring()), sceneManager_));
 					}
 					if (exists && IsDraggableAsset(item) && ImGui::BeginDragDropSource()) {
 						const std::string payload = item;

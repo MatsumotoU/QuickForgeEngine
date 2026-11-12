@@ -76,6 +76,7 @@ namespace QFE::EDITOR {
 		std::set<uint32_t> selectedEntities_;
 		QFE::WINDOW::IGameWindowManager* windowManager_ = nullptr;
 		SCENE::SceneManager* sceneManager_;
+		std::string projectName_;
 		bool gameModuleBuildAndReloadRequested_ = false;
 		QFE::FRAMEWORK::EngineConfig engineConfig_;
 		bool showEngineConfig_ = false;

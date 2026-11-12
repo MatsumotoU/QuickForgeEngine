@@ -8,12 +8,10 @@ QFE::EDITOR::LoadSceneCommand::LoadSceneCommand(const std::string& scenePath, QF
 }
 
 void QFE::EDITOR::LoadSceneCommand::Execute() {
-	previousSceneData_ = sceneManager_->GetCurrentSceneEntityManager().Serialize();
-	sceneManager_->GetCurrentSceneEntityManager().ResetEntity();
+	previousScene_ = sceneManager_->CreateSnapshot();
 	sceneManager_->LoadCurrentSceneFromJson(scenePath_);
 }
 
 void QFE::EDITOR::LoadSceneCommand::Undo() {
-	sceneManager_->GetCurrentSceneEntityManager().ResetEntity();
-	sceneManager_->GetCurrentSceneEntityManager().DeserializeEntityComponents(0, previousSceneData_);
+	sceneManager_->RestoreSnapshot(previousScene_);
 }

@@ -5,6 +5,7 @@
 #include <vector>
 
 namespace QFE::ASSET { class AssetManager; }
+namespace QFE::SCENE { class SceneManager; }
 namespace QFE::WINDOW { class IGameWindowManager; }
 
 namespace QFE::EDITOR {
@@ -12,7 +13,7 @@ namespace QFE::EDITOR {
 	class AssetBrowser final : public IEditorWindow {
 	public:
 		/// @brief アセット一覧を初期化する。
-		AssetBrowser(ASSET::AssetManager& assets, WINDOW::IGameWindowManager& windowManager);
+		AssetBrowser(ASSET::AssetManager& assets, WINDOW::IGameWindowManager& windowManager, SCENE::SceneManager& sceneManager);
 		/// @brief ウィンドウとアセット一覧を初期化する。
 		void Initialize() override;
 		/// @brief アセットの相対パスをディレクトリ別に描画する。
@@ -33,6 +34,7 @@ namespace QFE::EDITOR {
 		std::map<std::string, std::vector<std::string>> groups_;
 		ASSET::AssetManager* assets_;
 		WINDOW::IGameWindowManager* windowManager_;
+		SCENE::SceneManager* sceneManager_;
 		std::string status_;
 		std::string selectedPath_;
 		bool isActive_ = true;

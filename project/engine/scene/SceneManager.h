@@ -40,6 +40,8 @@ namespace QFE::SCENE {
 		bool LoadCurrentSceneFromJson(const nlohmann::json& sceneJson);
 		/// @brief 現在のシーンを、ファイルを書き換えずにメモリへ退避します.
 		SceneSnapshot CreateSnapshot() const;
+		/// @brief 退避したシーンと保存先を復元します。
+		bool RestoreSnapshot(const SceneSnapshot& snapshot);
 		/// @brief DLLアンロード前に、DLL内コードを参照するComponentStorageを破棄します.
 		void ReleaseComponentRegistryForReload();
 		/// @brief 新しいRegistryへ接続し、退避したシーンを復元します.

@@ -98,13 +98,22 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 	engineConfig_ = config;
 	windowManager_ = &windowManager;
 	sceneManager_ = sceneManager;
+	projectName_ = QFE::ConvertString(QFE::PROJECT::Root().filename().wstring());
+	try {
+		std::ifstream projectFile(QFE::PROJECT::Root() / "project.json");
+		const auto project = nlohmann::json::parse(projectFile);
+		const auto name = project.find("name");
+		if (name != project.end() && name->is_string() && !name->get<std::string>().empty()) {
+			projectName_ = name->get<std::string>();
+		}
+	} catch (const nlohmann::json::exception&) { }
     EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	editorWindowsMap_.clear();
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager, assetManager);
 	editorWindowsMap_[EditorWindowType::Inspector] =
 		std::make_unique<Inspector>(&entityManager, &modelLoader, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
-	editorWindowsMap_[EditorWindowType::AssetBrowser] = std::make_unique<AssetBrowser>(assetManager, windowManager);
+	editorWindowsMap_[EditorWindowType::AssetBrowser] = std::make_unique<AssetBrowser>(assetManager, windowManager, *sceneManager);
 	editorWindowsMap_[EditorWindowType::Logger] = std::make_unique<LogWindow>();
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
     editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
@@ -251,7 +260,12 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
 
             ImGui::EndMenu();
 		}
-        ImGui::EndMenuBar();
+		const auto& scenePath = sceneManager_->GetCurrentScenePath();
+		const std::string sceneName = scenePath.empty() ? "Untitled" :
+			QFE::ConvertString(std::filesystem::path(QFE::ConvertString(scenePath)).filename().wstring());
+		ImGui::Separator();
+		ImGui::Text("Project: %s | Scene: %s", projectName_.c_str(), sceneName.c_str());
+		ImGui::EndMenuBar();
     }
 
     ImGui::End();
