@@ -1,0 +1,98 @@
+{
+    "entities": [
+        {
+            "components": {
+                "CameraComponent": {
+                    "aspectRatio_": 1.7777777910232544,
+                    "bottom_": 0.0,
+                    "farZ_": 1000.0,
+                    "fovY_": 0.44999998807907104,
+                    "isMainCamera": true,
+                    "left_": 0.0,
+                    "nearZ_": 0.10000000149011612,
+                    "right_": 1280.0,
+                    "top_": 720.0,
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "",
+                    "name": "Camera",
+                    "uuid": "a51db149-13fd-4071-bdb0-02e1cbb35c3e"
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": -5.0
+                        }
+                    }
+                }
+            },
+            "id": 0
+        },
+        {
+            "components": {
+                "DirectionalLightComponent": {
+                    "direction": {
+                        "x": 0.0,
+                        "y": -1.0,
+                        "z": 0.0
+                    },
+                    "intensity": 1.0
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "",
+                    "name": "MainDirectionalLight",
+                    "uuid": "6be3029e-b7ba-4141-a6a0-70ab95f7aa54"
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 1
+        }
+    ]
+}
