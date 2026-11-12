@@ -1,8 +1,9 @@
 #include "framework/application/WindowsEngineFramework.h"
 #include "framework/application/WindowsGameModule.h"
 #include "framework/application/RetiredModelResources.h"
-#include "framework/application/TextureReferencePolicy.h"
 #include "EngineDefines.h"
+
+#include "core/file/FileUtility.h"
 
 #include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
@@ -245,7 +246,8 @@ namespace {
 				QFE::GRAPHIC::DirectXResourceHandle textureHandle;
 				QFE::GRAPHIC::GetWhite1x1TextureHandle(systems.graphicEngine.get(), textureHandle);
 				std::string textureName = emitter.textureName;
-				if (QFE::FRAMEWORK::IsDdsTexture(textureName)) { emitter.renderErrorMessage = "Particle textures require a 2D image, not a DDS cubemap."; return; }
+				if (QFE::FILE::HasExtension(textureName,"dds")) { emitter.renderErrorMessage = "Particle textures require a 2D image, not a DDS cubemap."; return; }
+				
 				if (!textureName.empty()) {
 					if (!QFE::FRAMEWORK::LoadTexture(
 						systems, resources.assetDir, textureName,
@@ -866,7 +868,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			if (modelMaterial) {
 				materialData->color *= modelMaterial->baseColor;
 			}
-			if (IsDdsTexture(effectiveTextureName)) { modelRenderComp.renderErrorMessage = "Model textures require a 2D image, not a DDS cubemap."; return; }
+			if (QFE::FILE::HasExtension(effectiveTextureName, "dds")) { modelRenderComp.renderErrorMessage = "Model textures require a 2D image, not a DDS cubemap."; return; }
 			if (!effectiveTextureName.empty()) {
 				if (!hasTextureOverride && modelMaterial &&
 					!modelMaterial->embeddedTextureData.empty()) {
@@ -968,6 +970,8 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			modelRenderComp.canRender = true;
 			modelRenderComp.renderErrorMessage = "";
 		});
+
+
 	// コンポーネント削除・Entity削除・静的モデルへの切り替えも含めて回収する。
 	for (const auto& [entityId, handle] : CollectUnusedAnimatedBuffers(resources.animatedVertexBuffersByEntity, activeAnimatedVertices)) {
 		if (auto* model = entityManager.GetComponentPtr<QFE::SCENE::ModelRenderComponent>(entityId)) {
@@ -1039,7 +1043,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
 			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
 			std::string textureName = sprite.textureName;
-			if (IsDdsTexture(textureName)) { sprite.renderErrorMessage = "Sprite textures require a 2D image, not a DDS cubemap."; return; }
+			if (QFE::FILE::HasExtension(textureName, "dds")) { sprite.renderErrorMessage = "Sprite textures require a 2D image, not a DDS cubemap."; return; }
 			if (!textureName.empty()) {
 				if (!QFE::FRAMEWORK::LoadTexture(
 					systems, resources.assetDir, textureName,

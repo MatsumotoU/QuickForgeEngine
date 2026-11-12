@@ -25,6 +25,8 @@ int wmain(int argc, wchar_t** argv) {
 	const std::string modelName = "models/" + std::string(reinterpret_cast<const char*>(filename.data()), filename.size());
 	const auto loaded = models.LoadModel(modelName, root / "assets", error);
 	check(loaded && loaded->data && loaded->loader && !loaded->data->meshes.empty(), "Raw GLB did not load without a registry");
+	check(loaded && loaded->data && !loaded->data->meshes.empty() && !loaded->data->meshes[0].material.embeddedTextureData.empty(),
+		"GLB embedded image was not retained");
 	check(loaded && !loaded->loader->GetGlbAnimationNames(loaded->sourcePath).empty(), "Raw GLB animation was not retained");
 	check(loaded && models.LoadModel(modelName, root / "assets", error) == loaded && models.GetModels().size() == 1,
 		"Model loader did not retain and reuse the model");

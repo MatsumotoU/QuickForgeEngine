@@ -9,7 +9,6 @@
 #include "components/SpriteRenderComponent.h"
 #include "components/ParticleEmitterComponent.h"
 #include "components/SkyBoxComponent.h"
-#include "framework/application/TextureReferencePolicy.h"
 
 #include "assetfactory/game-data/GameProjectPaths.h"
 #include <filesystem>
