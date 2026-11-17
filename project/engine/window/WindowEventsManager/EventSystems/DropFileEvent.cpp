@@ -12,12 +12,17 @@ void DropFileEvent::OnEvent(WPARAM wparam, LPARAM) {
 
 	// ドロップされたファイルのパスを取得
 	HDROP hDrop = (HDROP)wparam;
+	POINT position{};
+	DragQueryPoint(hDrop, &position);
 	UINT fileCount = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
 	for (UINT i = 0; i < fileCount; ++i) {
-		wchar_t filePath[MAX_PATH];
-		DragQueryFile(hDrop, i, filePath, MAX_PATH);
+		const UINT length = DragQueryFileW(hDrop, i, nullptr, 0);
+		std::wstring filePath(static_cast<size_t>(length) + 1, L'\0');
+		DragQueryFileW(hDrop, i, filePath.data(), length + 1);
+		filePath.resize(length);
 		// ファイルパスをイベントデータに格納
-		eventData_["DropFilePath"] = ConvertString(filePath);
+		if (!eventData_.contains("DroppedFiles")) eventData_["DroppedFiles"] = nlohmann::json::array();
+		eventData_["DroppedFiles"].push_back({{"path", ConvertString(filePath)}, {"x", position.x}, {"y", position.y}});
 		QFE_LOG("Drop File: " + ConvertString(filePath));
 	}
 	DragFinish(hDrop);

@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
+#include <cstdint>
 
 #include "design-patterns/Singleton.h"
 
@@ -19,6 +20,12 @@ namespace QFE {
 		EditorInfo,
 		Warning,
 		Error
+	};
+	struct LogEntry {
+		uint64_t sequence;
+		LogLevel level;
+		std::string timestamp;
+		std::string message;
 	};
 
 	/**
@@ -33,7 +40,9 @@ namespace QFE {
 		void Finalize();
 
 		/// @brief ログを出力します.
-		void Log(const std::string& message, const std::source_location& location = std::source_location::current());
+		void Log(const std::string& message, const std::source_location& location = std::source_location::current(), LogLevel level = LogLevel::EngineInfo);
+		std::vector<LogEntry> GetEntries();
+		void ClearEntries();
 		/// @brief 今までのログを取得します.
 		const std::vector<std::string>* GetLog();
 		/// @brief 一時的な分類わけされたログを放棄します

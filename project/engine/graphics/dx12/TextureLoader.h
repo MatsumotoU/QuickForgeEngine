@@ -25,7 +25,8 @@ namespace QFE::GRAPHIC {
 	struct TextureLoaderInitializeInfo {
 		ID3D12Device* device;
 		std::function<DirectXResourceHandle(const D3D12_RESOURCE_DESC&)> createResourceFunc;// テクスチャリソースを作成する関数
-		std::function<void(DirectXResourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC&)> createShaderResourceViewFunc;// シェーダーリソースビューを作成する関数
+		std::function<bool(DirectXResourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC&)> createShaderResourceViewFunc;// シェーダーリソースビューを作成する関数
+		std::function<void(DirectXResourceHandle)> removeResourceFunc; // 作成に失敗したリソースを解放する。
 		std::function<void(DirectXResourceHandle,const std::vector<D3D12_SUBRESOURCE_DATA>&)> uploadTextureDataFunc;// テクスチャデータをGPUにアップロードする関数
 	};
 
@@ -67,7 +68,7 @@ namespace QFE::GRAPHIC {
 		/// @brief テクスチャデータをGPUにアップロードする関数
 		void UploadTextureData(DirectXResourceHandle resourceHandle,const DirectX::ScratchImage& mipImages);
 		/// @brief metadataを元にSRVを作成する関数
-		void CreateShaderResourceView(
+		bool CreateShaderResourceView(
 			const DirectX::TexMetadata& metadata, D3D12_SRV_DIMENSION texture, DirectXResourceHandle resourceHandle);
 		/// @brief ScratchImageと名前からテクスチャとして使えるようにする関数。SRVにも登録する
 		DirectXResourceHandle CreateTextureFromScratchImage(

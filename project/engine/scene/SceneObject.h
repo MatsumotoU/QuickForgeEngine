@@ -1,5 +1,5 @@
 #pragma once
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
@@ -34,8 +34,6 @@ namespace QFE::SCENE {
 			std::shared_ptr<const QFE::StaticComponentRegistry> registry);
 		/// @brief JSONオブジェクトからエンティティをロードします.
 		uint32_t LoadEntityFromJsonObject(const std::string& filePath);
-
-
 
 		/// @brief エンティティマネージャーの参照を取得します.
 		QFE::EntityManager& GetEntityManager();

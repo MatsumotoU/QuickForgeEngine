@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="QuickForgeEngineのフレームワークを中心にした概要と基本的な使い方">
+  <title>エンジンの使い方 | QuickForgeEngine</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="brand" href="../">QuickForgeEngine</a>
+      <nav aria-label="メインナビゲーション">
+        <a href="../#engine">エンジン</a>
+        <a href="../#tools">ツール</a>
+        <a href="../notes/">技術備忘録</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap docs-main">
+    <aside aria-label="ページ内目次">
+      <strong>エンジンの使い方</strong>
+      <a href="#overview">概要</a>
+      <a href="#framework">フレームワークの役割</a>
+      <a href="#systems">主な機能</a>
+      <a href="#workflow">ゲームを動かす流れ</a>
+      <a href="#project">ゲームプロジェクト</a>
+    </aside>
+    <article>
+      <p class="eyebrow">ゲームエンジン / Windows</p>
+      <h1>エンジンの使い方</h1>
+      <p class="lead">QuickForgeEngineは、ゲームで使う機能を提供するエンジンと、それらを組み合わせてアプリケーションの起動・更新・終了を進めるフレームワークで構成されています。</p>
+
+      <section id="overview">
+        <h2>概要</h2>
+        <p>現在の実行環境はWindows向けです。アプリケーションの起動時にフレームワークが必要なシステムを用意し、ゲームプロジェクトのシーンとゲーム固有の処理を動かします。描画にはDirect3D 12を使用します。</p>
+        <div class="callout">フレームワークは、各機能を毎回アプリケーション側で個別に初期化・呼び出しする手間をまとめる土台です。ゲーム固有のルールや操作はゲーム側で実装します。</div>
+      </section>
+
+      <section id="framework">
+        <h2>フレームワークの役割</h2>
+        <p><code>WindowsEngineFramework</code> と <code>WindowsQuickForgeEngineSystems</code> が、Windows版エンジンの共通システムを組み立てて管理します。ウィンドウや描画機能などの依存関係を考慮して初期化し、フレーム開始・終了の処理や終了時の後片付けも提供します。</p>
+        <p>その上で、アプリケーションはゲームモジュールを呼び出してゲーム固有の更新を行います。つまり、フレームワークがゲーム内容を自動で作るのではなく、共通部分の起動と進行を受け持ちます。</p>
+      </section>
+
+      <section id="systems">
+        <h2>主な機能</h2>
+        <div class="panel">
+          <ul>
+            <li><strong>ウィンドウ・描画:</strong> WindowsのゲームウィンドウとDirect3D 12による描画</li>
+            <li><strong>入力・GUI:</strong> キーボードやゲームパッドなどの入力、開発用GUI</li>
+            <li><strong>シーン・エンティティ:</strong> シーンの読み込みと、エンティティ／コンポーネントの管理</li>
+            <li><strong>スクリプト・音声:</strong> Luaスクリプトの実行と音声再生</li>
+            <li><strong>アセット・アニメーション等:</strong> ゲームデータやモデルの読み込み、各種コンポーネントの処理</li>
+          </ul>
+        </div>
+        <p>これらは別々のエンジン機能ですが、フレームワークが共通のシステムとしてまとめて扱います。</p>
+      </section>
+
+      <section id="workflow">
+        <h2>ゲームを動かす流れ</h2>
+        <ol class="steps">
+          <li>フレームワークがウィンドウ、描画、入力、シーン管理などのシステムを初期化します。</li>
+          <li>ゲームモジュールを読み込み、ゲーム独自のコンポーネントを登録します。</li>
+          <li>ゲームプロジェクトのアセットを開き、開始シーンを読み込みます。</li>
+          <li>毎フレーム、入力や経過時間を受け取り、ゲームモジュールがゲーム固有の更新処理を行います。</li>
+          <li>フレームワークが描画などの共通処理を進め、アプリケーション終了時にシステムを片付けます。</li>
+        </ol>
+        <p>実装上は、起動時に <code>CreateWindowsQuickForgeEngineSystems</code> でシステムを作り、ループ中に <code>BeginWindowsEngineFrame</code>、ゲームモジュールの更新、描画処理、<code>EndWindowsEngineFrame</code> を呼びます。終了時は <code>ShutdownWindowsQuickForgeEngineSystems</code> を呼びます。</p>
+      </section>
+
+      <section id="project">
+        <h2>ゲームプロジェクト</h2>
+        <p>ランタイムはゲームプロジェクトの <code>project.json</code> を選択して実行します。設定の <code>start_scene</code> が最初に読み込むシーンを指定し、ゲームデータはプロジェクトの <code>assets</code> 以下に配置します。</p>
+        <p>ゲーム固有のC++処理はゲームモジュールに、シーン・モデル・画像・音声・Luaスクリプトなどのデータはプロジェクトのアセットに置く構成です。Luaスクリプトの入口と主なAPIは、リポジトリ内の <code>game-projects/sample/assets/scripts/README.md</code> にまとめています。</p>
+        <div class="callout">このページは構成の概要です。個別機能のAPIやプロジェクト生成の詳細は、今後の説明ページで補足します。</div>
+      </section>
+    </article>
+  </main>
+  <footer><div class="wrap"><a href="../">QuickForgeEngine ドキュメント</a></div></footer>
+</body>
+</html>

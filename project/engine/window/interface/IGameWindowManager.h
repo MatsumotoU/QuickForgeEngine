@@ -6,6 +6,8 @@
 #include "info/SupportedOs.h"
 
 namespace QFE::WINDOW {
+	/// @brief ウィンドウへドロップされたファイルとスクリーン座標。
+	struct DroppedFile { std::string path; int x = 0; int y = 0; };
 
 	class IGameWindow;
 
@@ -18,6 +20,8 @@ namespace QFE::WINDOW {
 		virtual void Shutdown() = 0;
 		virtual void AddWindow(const uint32_t& width, const uint32_t& height, const std::string& windowName) = 0;
 		virtual bool IsWindowActive() const = 0;
+		/// @brief 未処理のファイルドロップを取得し、キューから取り除く。
+		virtual std::vector<DroppedFile> ConsumeDroppedFiles() { return {}; }
 
 		/// @brief ゲームウィンドウマネージャのサポートOSを取得します.
 		virtual QFE::INFO::SupportedOs GetSupportedOs() const = 0;

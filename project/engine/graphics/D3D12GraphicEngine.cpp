@@ -205,12 +205,13 @@ bool QFE::GRAPHIC::D3D12GraphicEngine::SetUpTextureLoader() {
 	// テクスチャのリソース作成に必要な関数をDirectXResourceContainerのCreateResource関数を呼び出すラムダ式で初期化
 	textureLoaderInfo.createResourceFunc =
 		[&](const D3D12_RESOURCE_DESC& desc) { return resourceContainer_->CreateResource(directXDevice_->GetDevice(), desc, D3D12_RESOURCE_STATE_GENERIC_READ); };
+	textureLoaderInfo.removeResourceFunc = [&](DirectXResourceHandle handle) { resourceContainer_->RemoveResource(handle); };
 	// テクスチャのSRV作成に必要な関数をDirectXResourceContainerのCreateResourceView関数を呼び出すラムダ式で初期化
 	textureLoaderInfo.createShaderResourceViewFunc =
 		[&](DirectXResourceHandle resourceHandle, const D3D12_SHADER_RESOURCE_VIEW_DESC& desc) {
 		// Texture2D 配列からインデックス参照できるよう、全テクスチャを
 		// DescriptorHeapManager の連続したTextureブロックへ登録する。
-		resourceContainer_->CreateTextureResourceView(resourceHandle, desc); };
+		return resourceContainer_->CreateTextureResourceView(resourceHandle, desc); };
 	// テクスチャのアップロードに必要な関数をDirectXResourceContainerのUploadResource関数を呼び出すラムダ式で初期化
 	textureLoaderInfo.uploadTextureDataFunc =
 		[&](DirectXResourceHandle resourceHandle, const std::vector<D3D12_SUBRESOURCE_DATA>& subresources) {

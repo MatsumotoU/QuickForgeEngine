@@ -1,18 +1,18 @@
 #include "Hierarchy.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/AllComponent.h"
 #include "EngineDefines.h"
 
 #include "command/AllCommands.h"
 #include "command/EditorCommandList.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
+#include "assetfactory/game-data/AssetManager.h"
 #include "scene/SceneManager.h"
 
 #include <imgui/imgui.h>
 #include <imgui_stdlib.h>
 
 #include <algorithm>
-#include <cctype>
 #include <filesystem>
 #include <map>
 #include <set>
@@ -20,51 +20,6 @@
 #include <vector>
 
 namespace {
-	std::vector<std::string> FindModelAssets() {
-		std::vector<std::string> models;
-		std::error_code error;
-		const std::filesystem::path resourceRoot = "resources";
-		if (!std::filesystem::exists(resourceRoot, error)) {
-			return models;
-		}
-
-		for (std::filesystem::recursive_directory_iterator iterator(
-			resourceRoot,
-			std::filesystem::directory_options::skip_permission_denied,
-			error), end;
-			iterator != end;
-			iterator.increment(error)) {
-			if (error) {
-				error.clear();
-				continue;
-			}
-			if (!iterator->is_regular_file(error)) {
-				continue;
-			}
-
-			std::string extension = iterator->path().extension().string();
-			std::transform(extension.begin(), extension.end(), extension.begin(),
-				[](unsigned char character) { return static_cast<char>(std::tolower(character)); });
-			if (extension != ".obj" && extension != ".glb") {
-				continue;
-			}
-
-			std::filesystem::path relativePath =
-				std::filesystem::relative(iterator->path(), resourceRoot, error);
-			if (error) {
-				error.clear();
-				continue;
-			}
-			// Keep the extension so an OBJ with the same stem remains selectable.
-			if (extension == ".obj") relativePath.replace_extension();
-			models.push_back(relativePath.generic_string());
-		}
-
-		std::sort(models.begin(), models.end());
-		models.erase(std::unique(models.begin(), models.end()), models.end());
-		return models;
-	}
-
 	std::string MakeEntityName(const std::string& modelName) {
 		if (modelName == "Primitive/PlaneHorizontal") {
 			return "Horizontal Plane";
@@ -87,9 +42,10 @@ namespace {
 	}
 }
 
-QFE::EDITOR::Hierarchy::Hierarchy(QFE::SCENE::SceneManager* sceneManager)
+QFE::EDITOR::Hierarchy::Hierarchy(QFE::SCENE::SceneManager* sceneManager, QFE::ASSET::AssetManager& assets)
 	: sceneManager_(sceneManager),
 	entityManager_(sceneManager != nullptr ? &sceneManager->GetCurrentSceneEntityManager() : nullptr),
+	assets_(&assets),
 	isActive_(true) {}
 
 void QFE::EDITOR::Hierarchy::Initialize() {
@@ -205,6 +161,9 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 		const std::string entityContextMenuId =
 			"EntityContextMenu##" + std::to_string(entity.id);
 		if (ImGui::BeginPopupContextItem(entityContextMenuId.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+			if (ImGui::MenuItem("Save Selected Entities...")) {
+				saveSelectedEntitiesRequested_ = true;
+			}
 			if (hierarchySelectedEntities_.size() >= 2 && ImGui::MenuItem("Group Selected...")) {
 				groupNameInput_ = MakeNextGroupName(existingGroups);
 				openGroupDialog = true;
@@ -317,9 +276,16 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 					}
 					ImGui::EndMenu();
 				}
-				const std::vector<std::string> modelNames = FindModelAssets();
-				if (ImGui::BeginMenu("Model", !modelNames.empty())) {
-					for (const std::string& modelName : modelNames) {
+				std::string listError;
+				std::vector<std::string> models;
+				for (const auto& path : assets_->ListProjectFiles(listError)) {
+					const std::filesystem::path file(std::u8string(reinterpret_cast<const char8_t*>(path.data()), path.size()));
+					std::string extension = file.extension().string();
+					std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+					if (extension == ".obj" || extension == ".glb") models.push_back(path);
+				}
+				if (ImGui::BeginMenu("Model", !models.empty())) {
+					for (const auto& modelName : models) {
 						if (ImGui::MenuItem(modelName.c_str())) {
 							commandList.AddCommand(std::make_unique<CreateEntityCommand>(
 								MakeEntityName(modelName), QFE::MATH::Vector3(0, 0, 0), entityManager_, modelName));
@@ -327,6 +293,7 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 					}
 					ImGui::EndMenu();
 				}
+
 				ImGui::EndMenu();
 			}
 			ImGui::EndPopup();
@@ -400,4 +367,8 @@ std::optional<uint32_t> QFE::EDITOR::Hierarchy::ConsumeCameraFocusRequest() {
 
 const std::set<uint32_t>& QFE::EDITOR::Hierarchy::GetSelectedEntities() const {
 	return hierarchySelectedEntities_;
+}
+
+bool QFE::EDITOR::Hierarchy::ConsumeSaveSelectedEntitiesRequest() {
+	return std::exchange(saveSelectedEntitiesRequested_, false);
 }

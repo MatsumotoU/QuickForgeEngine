@@ -11,13 +11,14 @@ namespace QFE {
 namespace QFE::SCENE {
 	class SceneManager;
 }
+namespace QFE::ASSET { class AssetManager; }
 
 namespace QFE::EDITOR {
 	/// @brief Entityを階層構造で表示するウィンドウ	
 	class Hierarchy final : public IEditorWindow {
 	public:
 		/// @brief このエンティティマネージャーのEntityを階層構造で表示するウィンドウを作成する
-		Hierarchy(QFE::SCENE::SceneManager* sceneManager);
+		Hierarchy(QFE::SCENE::SceneManager* sceneManager, QFE::ASSET::AssetManager& assets);
 		
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -37,14 +38,18 @@ namespace QFE::EDITOR {
 		std::optional<uint32_t> ConsumeCameraFocusRequest();
 		/// @brief Hierarchyで現在選択されているEntity IDを取得する
 		const std::set<uint32_t>& GetSelectedEntities() const;
+		/// @brief 右クリックメニューからの選択Entity保存要求を取得して解除する。
+		bool ConsumeSaveSelectedEntitiesRequest();
 
 	private:
 		QFE::SCENE::SceneManager* sceneManager_;
 		EntityManager* entityManager_;
+		QFE::ASSET::AssetManager* assets_;
 		bool isActive_;
 		std::set<uint32_t> hierarchySelectedEntities_;
 		std::string groupNameInput_;
 		bool isFocus_;
 		std::optional<uint32_t> cameraFocusRequest_;
+		bool saveSelectedEntitiesRequested_ = false;
 	};
 }

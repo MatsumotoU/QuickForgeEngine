@@ -5,6 +5,7 @@
 namespace QFE {
 	class EntityManager;
 }
+namespace QFE::ASSET { class ModelLoader; }
 
 namespace QFE::EDITOR {
 	class ComponentInspectorRegistry;
@@ -15,6 +16,7 @@ namespace QFE::EDITOR {
 		/// @brief Inspectorのコンストラクタ
 		Inspector(
 			QFE::EntityManager* entityManager,
+			QFE::ASSET::ModelLoader* modelLoader,
 			const ComponentInspectorRegistry* componentInspectorRegistry);
 
 		/// @brief ウィンドウの初期化処理
@@ -38,6 +40,7 @@ namespace QFE::EDITOR {
 		void AddComponentUI(uint32_t entityId, EditorCommandList& commandList);
 
 		QFE::EntityManager* entityManager_;
+		QFE::ASSET::ModelLoader* modelLoader_;
 		const ComponentInspectorRegistry* componentInspectorRegistry_;
 		bool isActive_;
 		bool isFocus_;

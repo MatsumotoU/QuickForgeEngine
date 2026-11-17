@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }} | QuickForgeEngine</title>
+  <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="brand" href="{{ '/' | relative_url }}">QuickForgeEngine</a>
+      <nav aria-label="メインナビゲーション">
+        <a href="{{ '/' | relative_url }}">ドキュメント</a>
+        <a href="{{ '/notes/' | relative_url }}">技術備忘録</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap notes-main">
+    <p class="eyebrow">Notes</p>
+    <h1>{{ page.title }}</h1>
+    <p class="lead">調べたことや制作中に気づいたことを、あとから見返せる形で残します。</p>
+    <div class="callout">
+      <strong>備忘録の追加方法</strong>
+      <p><code>_templates/technical-note-template.md</code> を複製し、<code>_posts/YYYY-MM-DD-title.md</code> という名前で保存してください。タイトルと本文を書いてGitHubへpushすると、Jekyllが記事ページとこの一覧を生成します。</p>
+    </div>
+
+    {% if site.posts.size > 0 %}
+      <ul class="notes-list">
+        {% for post in site.posts %}
+          <li>
+            <a href="{{ post.url | relative_url }}">
+              <span class="note-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+              <span class="note-title">{{ post.title | escape }}</span>
+              {% if post.tags and post.tags.size > 0 %}
+                <span class="note-tags">{{ post.tags | join: " · " | escape }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty-state">まだ備忘録はありません。テンプレートを使って最初のメモを追加できます。</p>
+    {% endif %}
+  </main>
+  <footer><div class="wrap"><a href="{{ '/' | relative_url }}">QuickForgeEngine ドキュメント</a></div></footer>
+</body>
+</html>

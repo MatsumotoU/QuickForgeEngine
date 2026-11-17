@@ -53,6 +53,8 @@ namespace QFE::GRAPHIC {
 			Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES initialState);
 		/// @brief GPUの完了待ち後に、指定したリソースをコンテナから解放する。
 		bool RemoveResource(DirectXResourceHandle handle);
+		/// @brief テクスチャ配列内の実際の位置を返す。テクスチャ以外はUINT32_MAX。
+		uint32_t GetTextureDescriptorIndex(DirectXResourceHandle handle);
 
 		/// @brief あるリソースハンドルに対応するリソースの名前を設定する
 		bool SetResourceName(DirectXResourceHandle handle, const std::wstring& name);
@@ -66,7 +68,7 @@ namespace QFE::GRAPHIC {
 		void CreateResourceView(DirectXResourceHandle handle, CreateViewInfo createViewInfo);
 
 		/// @brief テクスチャ用のビューを生成します。連続的な配置をするための関数
-		void CreateTextureResourceView(DirectXResourceHandle handle, const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc);
+		bool CreateTextureResourceView(DirectXResourceHandle handle, const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc);
 
 		/// @brief リソースをGPUにアップロードします
 		void UploadResource(

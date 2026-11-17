@@ -10,6 +10,10 @@
 
 namespace QFE::ASSET {
 	struct AnimatedGlbScene;
+	struct EmbeddedImageData {
+		std::string format;
+		std::vector<uint8_t> bytes;
+	};
 	/// @brief Assimpを使用してモデルデータを読み込むクラス,基本はモデルをキャッシュする
 	class AssimpModelLoader {
 	public:
@@ -29,6 +33,8 @@ namespace QFE::ASSET {
 		bool IsModelCached(const std::string& filePath) const;
 		/// @brief GLB に含まれるクリップ名をファイル順で返す。名前が空なら生成名を返す。
 		std::vector<std::string> GetGlbAnimationNames(const std::string& filePath) const;
+		/// @brief GLB内の画像をファイル内の順序で返す。非圧縮画像は空データとして返す。
+		std::vector<EmbeddedImageData> GetGlbEmbeddedImages(const std::string& filePath) const;
 		double GetGlbAnimationDuration(const std::string& filePath, const std::string& clipName) const;
 		/// @brief 指定時刻のボーン/ノード変形を頂点へ適用する。空の名前は先頭クリップ。
 		bool SampleGlbAnimation(const std::string& filePath, const std::string& clipName,

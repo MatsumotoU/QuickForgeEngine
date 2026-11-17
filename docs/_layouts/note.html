@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title | escape }} | QuickForgeEngine 技術備忘録</title>
+  <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="brand" href="{{ '/' | relative_url }}">QuickForgeEngine</a>
+      <nav aria-label="メインナビゲーション">
+        <a href="{{ '/' | relative_url }}">ドキュメント</a>
+        <a href="{{ '/notes/' | relative_url }}">技術備忘録</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap note-main">
+    <article class="note-article">
+      <p class="eyebrow">技術備忘録</p>
+      <h1>{{ page.title | escape }}</h1>
+      <p class="note-meta">
+        {{ page.date | date: "%Y-%m-%d" }}
+        {% if page.tags and page.tags.size > 0 %}
+          <span> / {{ page.tags | join: " · " | escape }}</span>
+        {% endif %}
+      </p>
+      <div class="note-content">{{ content }}</div>
+      <p class="back-link"><a href="{{ '/notes/' | relative_url }}">← 備忘録一覧へ戻る</a></p>
+    </article>
+  </main>
+  <footer><div class="wrap"><a href="{{ '/' | relative_url }}">QuickForgeEngine ドキュメント</a></div></footer>
+</body>
+</html>

@@ -41,7 +41,7 @@ namespace QFE::FRAMEWORK {
 	/// @brief 入力とフレーム計測を開始する。
 	bool BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
 	/// @brief シーン、入力、描画、フレーム計測の終了処理を行う。
-	void EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
+	void EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources* resources = nullptr);
 	/// @brief 各エンジンシステムを依存関係の逆順で終了する。
 	void ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEngineSystems& systems);
 	/// @brief GameModule DLLを差し替え、現在のシーンをメモリ退避から復元する。
@@ -62,25 +62,21 @@ namespace QFE::FRAMEWORK {
 	bool LoadModelVertexData(
 		WindowsQuickForgeEngineSystems& systems,
 		const std::string& modelDir, const std::string& modelName,
-		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& vertexBuffers);
 	/// @brief 指定されたモデルファイルのインデックスデータを読み込み、モデルデータとインデックスバッファを作成する。
 	bool LoadModelIndexBuffer(
 		WindowsQuickForgeEngineSystems& systems,
 		const std::string& modelDir, const std::string& modelName,
-		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 		std::unordered_map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& indexBuffers);
 	/// @brief 指定されたモデルファイルの頂点データとインデックスデータを読み込み、モデルデータとBLASを作成する。
 	bool LoadModelAndCreateBLAS(
 		WindowsQuickForgeEngineSystems& systems,
 		const std::string& modelDir, const std::string& modelName,
-		std::unordered_map<std::string, QFE::ASSET::ModelData>& modelData,
 		std::unordered_map<std::string, QFE::GRAPHIC::BLASHandle>& blasHandles);
 	/// @brief 指定されたテクスチャファイルを読み込み、テクスチャハンドルを作成する。
 	bool LoadTexture(
 		WindowsQuickForgeEngineSystems& systems,
 		const std::string& textureDir, const std::string& textureName,
 		std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle>& textureHandles,
-		std::map<std::string, uint32_t>& textureGpuIndexMap,
-		uint32_t& nextTextureGpuIndex);
+		std::map<std::string, uint32_t>& textureGpuIndexMap);
 }

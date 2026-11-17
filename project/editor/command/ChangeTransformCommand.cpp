@@ -1,5 +1,5 @@
 #include "ChangeTransformCommand.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/TransformComponent.h"
 
 QFE::EDITOR::ChangeTransformCommand::ChangeTransformCommand(

@@ -1,13 +1,18 @@
 #pragma once
 #include "IEditorWindow.h"
 #include <imgui/imgui.h>
+#include "math/MathInclude.h"
+
+namespace QFE::SCENE { class SceneManager; }
 
 namespace QFE::EDITOR {
 	/// @brief GameViewerはシーンを表示します
 	class GameViewer final : public IEditorWindow {
 	public:
 		/// @brief GameViewerのコンストラクタ
-		GameViewer(ImTextureID sceneTextureId);
+		GameViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, unsigned width, unsigned height);
+		/// @brief ドロップ位置の算出に使用するカメラ行列を設定する。
+		void SetAssetDropViewProjection(const MATH::Matrix4x4& viewProjection);
 
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -25,7 +30,11 @@ namespace QFE::EDITOR {
 
 	private:
 		ImTextureID sceneTextureId_;
+		SCENE::SceneManager* sceneManager_;
+		unsigned width_;
+		unsigned height_;
+		MATH::Matrix4x4 dropViewProjection_ = MATH::Matrix4x4::MakeIdentity4x4();
 		bool isActive_;
-		bool isFocus_;
+		bool isFocus_ = false;
 	};
 }

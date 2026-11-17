@@ -1,7 +1,7 @@
 #include "ShootingInspectorRegistration.h"
 
 #include "editor/inspector/ComponentInspectorRegistry.h"
-#include "core/design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "game/shooting/components/BulletEmitterComponent.h"
 #include "game/shooting/components/InputBulletEmitterTriggerComponent.h"
 #include "game/shooting/components/PeriodicBulletEmitterTriggerComponent.h"

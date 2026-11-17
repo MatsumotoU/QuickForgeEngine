@@ -14,8 +14,8 @@ namespace QFE::STG {
 		QFE::MATH::Vector3 bulletSpawnOffset;
 		QFE::MATH::Vector3 bombSpawnOffset;
 		QFE::MATH::Vector3 velocity;
-		std::string bulletPrefabName = "Bullet.json";
-		std::string bombPrefabName = "Bomb.json";
+		std::string bulletPrefabName = "entities/Bullet.entity";
+		std::string bombPrefabName = "entities/Bomb.entity";
 		bool inputEnabled = true;
 		// 止まりやすさ
 		float damping = 0.85f;

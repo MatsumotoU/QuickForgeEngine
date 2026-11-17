@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="QuickForgeEngine ProjectGeneratorの使い方">
+  <title>ProjectGeneratorの使い方 | QuickForgeEngine</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="brand" href="../">QuickForgeEngine</a>
+      <nav aria-label="メインナビゲーション">
+        <a href="../#engine">エンジン</a>
+        <a href="../#tools">ツール</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap docs-main">
+    <aside aria-label="ページ内目次">
+      <strong>ProjectGenerator</strong>
+      <a href="#about">このツールについて</a>
+      <a href="#workflow">基本的な使い方</a>
+      <a href="#nodes">ノードと依存関係</a>
+      <a href="#settings">設定の調整</a>
+      <a href="#generate">Premakeファイルの生成</a>
+      <a href="#save">設定の保存と読み込み</a>
+    </aside>
+    <article>
+      <p class="eyebrow">開発ツール / Windows</p>
+      <h1>ProjectGeneratorの使い方</h1>
+      <p class="lead">フォルダをプロジェクトのノードとして配置し、プロジェクト間の依存関係をつないで、Premakeの設定ファイルを生成するツールです。</p>
+
+      <section id="about">
+        <h2>このツールについて</h2>
+        <p>ProjectGeneratorは、ソースフォルダの構成とプロジェクト同士の依存関係を画面上で整理し、ルートと各フォルダに <code>premake5.lua</code> を生成します。生成した設定をPremakeで処理すると、Visual Studioなどの開発用プロジェクトを作成できます。</p>
+        <div class="callout">このツールはVisual Studioのプロジェクトファイルを直接作るのではなく、Premake用の設定ファイルを生成します。</div>
+      </section>
+
+      <section id="workflow">
+        <h2>基本的な使い方</h2>
+        <ol class="steps">
+          <li>ProjectGeneratorを起動します。</li>
+          <li>メニューの <span class="label">File</span> → <span class="label">Open Root Directory</span> を選び、プロジェクト群のルートフォルダを指定します。メイン画面の <span class="label">Change Root Directory</span> からも選べます。</li>
+          <li>フォルダの読み込みが終わると、メイン画面にディレクトリツリーが表示されます。</li>
+          <li><span class="label">Add All Directories as Nodes</span> を押してフォルダをまとめてノードにするか、必要なフォルダの <span class="label">Add Node</span> を押して個別に追加します。</li>
+          <li>ノードを並べ、必要なプロジェクト間の依存関係をつなぎます。</li>
+          <li>必要に応じて各ノードやワークスペースの設定を調整します。</li>
+          <li><span class="label">File</span> → <span class="label">Generate Premake Hierarchy</span> を選び、Premakeファイルを生成します。</li>
+        </ol>
+      </section>
+
+      <section id="nodes">
+        <h2>ノードと依存関係</h2>
+        <div class="panel">
+          <h3>ノードを追加する</h3>
+          <p>ノードはプロジェクトとして扱うフォルダを表します。まずは必要なフォルダだけ追加し、画面が込み入る場合は <span class="label">Arrange Left to Right</span> で配置を整理できます。</p>
+        </div>
+        <div class="panel">
+          <h3>依存関係をつなぐ</h3>
+          <p>依存関係図では、<strong>左側に下位のプロジェクト（他のプロジェクトから利用される側）</strong>、右側に上位のプロジェクト（下位を利用する側）を配置します。ノード左側ほど下位、右側ほど上位です。</p>
+          <p>接続は、左側の下位ノードの右端にある <span class="label">out</span> から、右側の上位ノードの左端にある <span class="label">in</span> へドラッグします。たとえばゲームがエンジンを使う場合は「エンジン（左・下位）→ ゲーム（右・上位）」です。</p>
+          <p>接続の設定では、下位の依存関係も含めるか、接続先のプロジェクトだけを含めるかを選べます。画面上では赤が下位依存も含む設定、緑が接続先だけを含む設定です。</p>
+        </div>
+        <div class="panel">
+          <h3>グループを使う</h3>
+          <p>関連するノードをまとめて選択し、グループにすると、生成されるPremake上のグループ名を設定できます。</p>
+        </div>
+      </section>
+
+      <section id="settings">
+        <h2>設定の調整</h2>
+        <p>ノードを選択して <span class="label">Open Selected Node Settings</span> を押すと、プロジェクト名、プロジェクト種別、インクルードパス、定義、リンク先などを設定できます。設定は構成（Debug、Development、Releaseなど）ごとに調整できます。</p>
+        <p><span class="label">Edit</span> → <span class="label">Common Premake Settings...</span> では、ワークスペース名、アーキテクチャ、C++規格、構成名、共通の定義やビルドオプションを設定できます。</p>
+        <p>既存のPremake設定を取り込む場合は <span class="label">File</span> → <span class="label">Load Root Premake</span>、Visual Studioソリューションを取り込む場合は <span class="label">File</span> → <span class="label">Load Visual Studio Solution...</span> を使います。</p>
+      </section>
+
+      <section id="generate">
+        <h2>Premakeファイルを生成する</h2>
+        <p><span class="label">File</span> → <span class="label">Generate Premake Hierarchy</span> を実行すると、選択したルートフォルダと各プロジェクトフォルダに <code>premake5.lua</code> が生成されます。生成後はステータス欄で結果を確認してください。</p>
+        <p>生成されたファイルをPremakeで実行し、Visual Studioなどで使うプロジェクトファイルを作成します。Premakeの実行方法や生成アクションは、利用する環境の設定に合わせてください。</p>
+      </section>
+
+      <section id="save">
+        <h2>設定の保存と読み込み</h2>
+        <p>ノードの配置や依存関係、各種設定を再利用するには、<span class="label">File</span> → <span class="label">Save Configuration As...</span> でJSON形式の設定を保存します。次回は <span class="label">File</span> → <span class="label">Load Configuration...</span> から読み込めます。</p>
+        <p>設定ファイルにはルートフォルダへのパスも保存されます。別の場所に移動した場合は、読み込み後にルートフォルダを確認してください。</p>
+      </section>
+    </article>
+  </main>
+  <footer><div class="wrap"><a href="../">QuickForgeEngine ドキュメント</a></div></footer>
+</body>
+</html>

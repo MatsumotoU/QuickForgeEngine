@@ -1,14 +1,16 @@
 #include "SceneViewer.h"
+#include "AssetDrop.h"
 #include "command/ChangeTransformCommand.h"
 #include "command/EditorCommandList.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/TransformComponent.h"
 #include "components/TransformHierarchy.h"
 #include "scene/SceneManager.h"
 
-QFE::EDITOR::SceneViewer::SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager) :
+QFE::EDITOR::SceneViewer::SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, unsigned width, unsigned height) :
 	sceneManager_(sceneManager),
 	sceneTextureId_(sceneTextureId),
+	width_(width), height_(height),
 	isActive_(true),
 	isFocus_(false),
 	isImageHovered_(false),
@@ -27,7 +29,7 @@ void QFE::EDITOR::SceneViewer::Initialize() {
 
 void QFE::EDITOR::SceneViewer::Draw(std::set<uint32_t>& selectedEntities, EditorCommandList& commandList) {
 	ImGui::Begin(GetWindowName().c_str(), &isActive_);
-	const float targetAspectRatio = 16.0f / 9.0f;
+	const float targetAspectRatio = static_cast<float>(width_) / static_cast<float>(height_);
 	isFocus_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
 	ImVec2 availSize = ImGui::GetContentRegionAvail();
@@ -53,6 +55,8 @@ void QFE::EDITOR::SceneViewer::Draw(std::set<uint32_t>& selectedEntities, Editor
 	ImGui::SetCursorScreenPos(imagePosition);
 	ImGui::Image(sceneTextureId_, renderSize);
 	isImageHovered_ = ImGui::IsItemHovered();
+	AcceptAssetDrop(sceneManager_, commandList, imagePosition, renderSize, width_, height_,
+		MATH::Matrix4x4::MakeIdentity4x4(), dropViewProjection_);
 
 	ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
 	ImGuizmo::SetRect(imagePosition.x, imagePosition.y, renderSize.x, renderSize.y);
@@ -92,6 +96,10 @@ void QFE::EDITOR::SceneViewer::SetCameraMatrices(
 
 bool QFE::EDITOR::SceneViewer::IsGizmoCapturingMouse() const {
 	return isImageHovered_ && (ImGuizmo::IsUsing() || ImGuizmo::IsOver());
+}
+
+void QFE::EDITOR::SceneViewer::SetAssetDropViewProjection(const MATH::Matrix4x4& viewProjection) {
+	dropViewProjection_ = viewProjection;
 }
 
 void QFE::EDITOR::SceneViewer::DrawGizmoToolbar(bool imageHovered) {
