@@ -11,7 +11,7 @@ namespace QFE::STG {
 	/// @brief 1種類の弾幕パターン。
 	struct BulletEmitterPattern {
 		std::string name = "Pattern 1";
-		std::string emitBulletName = "Bullet.json"; ///< 発射する弾丸Prefab
+		std::string emitBulletName = "entities/Bullet.entity"; ///< 発射する弾丸Prefab
 		QFE::MATH::Vector3 emitPos = { 0.0f, 0.0f, 0.0f }; ///< エミッターから見た球の中心位置
 		QFE::MATH::Vector3 emitDir = { 0.0f, 0.0f, 1.0f }; ///< 0番目の弾丸が向く基準方向
 		float emitRadius = 0.0f; ///< 球の中心から弾丸を配置する距離

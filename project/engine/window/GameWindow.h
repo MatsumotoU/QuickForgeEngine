@@ -46,6 +46,8 @@ namespace QFE::WINDOW {
 
 		/** @brief ウィンドウハンドル(HWND)を取得 */
 		HWND GetHwnd() const;
+		/// @brief このウィンドウで受け取ったファイルドロップを取得する。
+		std::vector<DroppedFile> ConsumeDroppedFiles();
 
 	private:
 		HWND hwnd_ = nullptr;

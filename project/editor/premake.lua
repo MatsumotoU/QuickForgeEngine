@@ -141,6 +141,13 @@ project "GameEditor"
         "Lua",
         "ShootingGameEditor",
     }
+    filter "system:windows"
+        postbuildcommands {
+            'set "QFE_SELECT_PROJECT_BAT=$(ProjectDir)SelectProject.bat"',
+            'powershell.exe -NoProfile -WindowStyle Hidden -Command "$p = Start-Process -FilePath $env:ComSpec -ArgumentList (\'/d /c {0}{0}{1}{0} --hidden{0}\' -f [char]34,$env:QFE_SELECT_PROJECT_BAT) -WindowStyle Hidden -Wait -PassThru; exit $p.ExitCode"',
+            'if errorlevel 1 exit /b 1',
+        }
+    filter {}
     qfeAddDxcRuntime()
     qfeAddPortableMsvcRuntime()
 

@@ -1,6 +1,6 @@
 #include "framework/scene/SplineMovementSystem.h"
 
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/SplineMovementComponent.h"
 #include "components/SplineMoveToPointComponent.h"
 #include "components/TransformHierarchy.h"

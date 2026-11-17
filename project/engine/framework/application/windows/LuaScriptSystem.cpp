@@ -10,12 +10,13 @@
 #include <sol2/sol/sol.hpp>
 
 #include "EngineDefines.h"
+#include "assetfactory/game-data/GameProjectPaths.h"
 #include "components/MaterialComponent.h"
 #include "components/ObjectInfoComponent.h"
 #include "components/PhysicsComponent.h"
 #include "components/ScriptComponent.h"
 #include "components/TransformComponent.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "input/interface/InputInterface.h"
 #include "math/MathInclude.h"
 #include "scene/SceneManager.h"
@@ -53,8 +54,9 @@ namespace {
 
 		const std::filesystem::path normalized = relative.lexically_normal();
 		if (!normalized.empty() && *normalized.begin() == "resources") {
-			return normalized;
+			return QFE::PROJECT::Resolve(normalized);
 		}
+		if (!QFE::PROJECT::Root().empty() && !normalized.empty() && *normalized.begin() == "scripts") return (QFE::PROJECT::Assets() / normalized).lexically_normal();
 		return (root / normalized).lexically_normal();
 	}
 
@@ -379,10 +381,17 @@ private:
 			if (context->owner == nullptr) return;
 			std::filesystem::path path(sceneName);
 			if (path.extension().empty()) path += ".json";
-			if (!path.is_absolute() && !path.string().starts_with("resources")) {
-				path = std::filesystem::path("resources/scene") / path;
+			if (!path.is_absolute()) {
+				if (path.string().starts_with("resources")) path = QFE::PROJECT::Resolve(path);
+				else path = QFE::PROJECT::Assets() / (QFE::PROJECT::Root().empty() ? "scene" : "scenes") / path;
 			}
-			context->owner->requestedScene_ = path.lexically_normal();
+			path = path.lexically_normal();
+			if (!QFE::PROJECT::Root().empty() &&
+				!QFE::PROJECT::IsWithin(path, QFE::PROJECT::Assets() / "scenes")) {
+				QFE_LOG("Script requested a scene outside the current project.", QFE::LogLevel::Warning);
+				return;
+			}
+			context->owner->requestedScene_ = path;
 		});
 
 		sol::table qfe = lua.create_named_table("QFE");

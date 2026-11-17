@@ -10,7 +10,6 @@
 #include "graphics/dx12/GraphicEngineHandleTypes.h"
 #include "graphics/dx12/pipeline/pso/PipelineDescTypes.h"
 #include <d3d12.h>
-#include "assetfactory/model/ModelData.h"
 #include "EngineConfig.h"
 
 namespace QFE::FRAMEWORK {
@@ -54,12 +53,12 @@ namespace QFE::FRAMEWORK {
 			QFE::GRAPHIC::BLASHandle handle = QFE::GRAPHIC::BLASHandle::Invalid;
 		};
 		std::unordered_map<uint32_t, AnimatedBLAS> animatedBlasByEntity;
+		std::unordered_map<uint32_t, QFE::GRAPHIC::DirectXResourceHandle> animatedVertexBuffersByEntity;
+		std::vector<QFE::GRAPHIC::DirectXResourceHandle> retiredAnimatedVertexBuffers;
 		uint64_t animatedBlasSceneRevision = UINT64_MAX;
-		std::unordered_map<std::string, QFE::ASSET::ModelData> modelDataMap;
 
 		std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle> textureHandleMap;
 		std::map<std::string, uint32_t> textureGpuIndexMap; // テクスチャ名 -> GPU側のインデックスマップ
-		uint32_t nextTextureGpuIndex = 2; // 0,1 は BlackCubeMap と White1x1 に予約されているので、次のインデックスは 2 から始める
 
 		QFE::GRAPHIC::ViewPortHandle viewportHandle;
 		QFE::GRAPHIC::ScissorRectHandle scissorRectHandle;

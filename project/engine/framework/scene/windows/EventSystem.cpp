@@ -1,7 +1,7 @@
 #include "framework/scene/EventSystem.h"
 #include "framework/scene/ComponentParameterSystem.h"
 
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "components/EventComponent.h"
 #include "components/TransformHierarchy.h"
 

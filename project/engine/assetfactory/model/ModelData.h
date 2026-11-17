@@ -9,6 +9,7 @@ namespace QFE::ASSET {
 	struct ModelMaterialData {
 		std::string textureName;
 		std::vector<uint8_t> embeddedTextureData; // GLB に格納された画像ファイルのバイト列
+		int embeddedTextureIndex = -1; // GLB内の画像番号。外部画像の場合は-1。
 		QFE::MATH::Vector4 baseColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 	};
 

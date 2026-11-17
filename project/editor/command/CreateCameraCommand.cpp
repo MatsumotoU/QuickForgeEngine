@@ -1,6 +1,6 @@
 #include "CreateCameraCommand.h"
 
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "scene/SceneManager.h"
 
 QFE::EDITOR::CreateCameraCommand::CreateCameraCommand(QFE::SCENE::SceneManager* sceneManager) :

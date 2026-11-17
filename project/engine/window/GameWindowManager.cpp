@@ -46,6 +46,17 @@ namespace QFE::WINDOW {
 		return false;
 	}
 
+	std::vector<DroppedFile> GameWindowManager::ConsumeDroppedFiles() {
+		std::vector<DroppedFile> result;
+		for (const auto& window : windows) {
+			if (auto* gameWindow = dynamic_cast<GameWindow*>(window.get())) {
+				auto files = gameWindow->ConsumeDroppedFiles();
+				result.insert(result.end(), files.begin(), files.end());
+			}
+		}
+		return result;
+	}
+
 	HWND GameWindowManager::GetWindow(const std::string windowName) const {
 		for (const auto& window : windows) {
 			if (window->GetWindowName() == windowName) {

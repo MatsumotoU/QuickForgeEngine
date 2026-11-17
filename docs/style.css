@@ -1,0 +1,448 @@
+/*
+  Shared stylesheet for the QuickForgeEngine documentation pages.
+  HTML describes the content; these rules describe how that content looks.
+*/
+
+/* :root selects the document's root element. Custom properties declared here
+   (the names starting with --) can be reused throughout this stylesheet. */
+:root {
+  color-scheme: dark;
+  --bg: #10151d;
+  --panel: #192330;
+  --line: #2b3a4c;
+  --text: #e8eef6;
+  --muted: #aab8c8;
+  --accent: #7dd3fc;
+  --code: #0c1118;
+}
+
+/* * is the universal selector: apply this sizing rule to every element. */
+* {
+  box-sizing: border-box;
+}
+
+/* The html element is the outermost page element. This smooths jumps to #id links. */
+html {
+  scroll-behavior: smooth;
+}
+
+/* body is the visible page area; these are the shared background and text defaults. */
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at 12% 0%, #1e3448 0, transparent 40%), var(--bg);
+  color: var(--text);
+  font: 16px/1.75 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* .wrap is a reusable class that centers content and limits its maximum width. */
+.wrap {
+  width: min(100% - 40px, 1100px);
+  margin: auto;
+}
+
+/* .brand styles the site name link in the header. */
+.brand {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* header is a semantic HTML element for the page's introductory/top area. */
+header {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* This descendant selector styles .wrap only when it appears inside header. */
+header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* a selects all links; this sets their default text color. */
+a {
+  color: var(--accent);
+}
+
+/* nav is a semantic HTML element grouping navigation links. */
+nav {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* nav a selects links inside nav, leaving other links with the default style. */
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+/* :hover is a pseudo-class; these styles apply while the pointer is over a nav link. */
+nav a:hover {
+  color: var(--text);
+}
+
+/* .home-main is the landing page's main content area. */
+.home-main {
+  padding: 72px 0 90px;
+}
+
+/* .docs-main is the usage guide layout: a sticky contents column beside the article. */
+.docs-main {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 52px;
+  padding: 50px 0 90px;
+}
+
+/* aside is the page's side contents list; sticky keeps it nearby while scrolling. */
+aside {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #141d28;
+}
+
+/* strong selects emphasized text inside the contents list. */
+aside strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Links inside the side contents list are stacked and visually quieter. */
+aside a {
+  display: block;
+  padding: 5px 0;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .94em;
+}
+
+/* Hover feedback for the side contents links. */
+aside a:hover {
+  color: var(--text);
+}
+
+/* .eyebrow is a small category label above a page heading. */
+.eyebrow {
+  color: var(--accent);
+  font-size: .85em;
+  letter-spacing: .1em;
+}
+
+/* h1 selects the main heading; page-specific classes set its size and spacing. */
+h1 {
+  line-height: 1.15;
+  letter-spacing: -.04em;
+}
+
+/* .home-main h1 means an h1 inside the landing page's main area. */
+.home-main h1 {
+  margin: .25em 0;
+  font-size: clamp(2.4rem, 7vw, 4.6rem);
+}
+
+/* .docs-main h1 means an h1 inside the usage guide's main area. */
+.docs-main h1 {
+  margin: .1em 0 .25em;
+  font-size: clamp(2.2rem, 5vw, 3.7rem);
+}
+
+/* h2 styles section headings throughout the guide. */
+h2 {
+  margin: 2.2em 0 .6em;
+  padding-bottom: .35em;
+  border-bottom: 1px solid var(--line);
+  font-size: 1.65rem;
+}
+
+/* h3 styles smaller headings inside guide panels. */
+h3 {
+  margin: 1.6em 0 .35em;
+  font-size: 1.15rem;
+}
+
+/* p is the HTML paragraph element; this sets the shared paragraph text color. */
+p {
+  color: #c8d2de;
+}
+
+/* .lead marks the short introductory paragraph beneath each page title. */
+.lead {
+  color: var(--muted);
+}
+
+/* The landing page intro gets a wider text measure and slightly larger type. */
+.home-main .lead {
+  max-width: 680px;
+  font-size: 1.15rem;
+}
+
+/* The guide intro uses a modest size so it fits beside the contents list. */
+.docs-main .lead {
+  font-size: 1.1rem;
+}
+
+/* .notes-main is the page area containing the technical-note index. */
+.notes-main {
+  padding: 50px 0 90px;
+}
+
+/* .notes-list is the list of Markdown posts created by Jekyll. */
+.notes-list {
+  margin: 36px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* li selects each individual note row inside .notes-list. */
+.notes-list li {
+  border-top: 1px solid var(--line);
+}
+
+/* The full row is a link to the rendered note page. */
+.notes-list a {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 16px 10px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Hover feedback for a note link. */
+.notes-list a:hover {
+  background: #172330;
+}
+
+/* .note-date styles the publication date shown beside a note title. */
+.note-date {
+  color: var(--muted);
+  font-size: .9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* .note-title gives the note title the accent color. */
+.note-title {
+  color: var(--accent);
+}
+
+/* .note-tags styles optional tags from the Markdown front matter. */
+.note-tags {
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+/* .empty-state appears when there are no posts yet. */
+.empty-state {
+  margin-top: 32px;
+  padding: 20px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+}
+
+/* .note-main is the page area for a single rendered Markdown note. */
+.note-main {
+  padding: 50px 0 90px;
+}
+
+/* .note-article narrows the reading column for long-form text. */
+.note-article {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* .note-meta shows the date and tags beneath the note title. */
+.note-meta {
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+/* .note-content contains the HTML generated from the Markdown body. */
+.note-content {
+  margin-top: 36px;
+}
+
+/* h2 inside a note is a subsection heading with a moderate top gap. */
+.note-content h2 {
+  margin-top: 1.8em;
+}
+
+/* pre is the HTML element for fenced code blocks generated from Markdown. */
+.note-content pre {
+  overflow-x: auto;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--code);
+}
+
+/* blockquote is the HTML element used for quoted passages in Markdown. */
+.note-content blockquote {
+  margin: 20px 0;
+  padding: 4px 18px;
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
+}
+
+/* .back-link is the return link at the end of each note. */
+.back-link {
+  margin-top: 44px;
+}
+
+/* .grid arranges the landing page cards in responsive columns. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 42px;
+}
+
+/* .card is shared by the engine info card and the clickable tool card. */
+.card {
+  display: block;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #1b2938, #151d28);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform .15s, border-color .15s;
+}
+
+/* :hover gives a card a small lift and brighter border when pointed at. */
+.card:hover {
+  transform: translateY(-3px);
+  border-color: #5686a4;
+}
+
+/* h2 inside .card gets a compact card-title style instead of the section-heading style. */
+.card h2 {
+  margin: 0 0 8px;
+  padding-bottom: 0;
+  border-bottom: 0;
+  font-size: 1.3rem;
+}
+
+/* Paragraphs inside cards have no extra margin and use muted text. */
+.card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* .arrow styles the short call-to-action line at the bottom of each card. */
+.arrow {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--accent);
+}
+
+/* .callout highlights an important note in the guide. */
+.callout {
+  margin: 24px 0;
+  padding: 16px 18px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  background: #162433;
+  color: #d5e5f1;
+}
+
+/* .steps styles the numbered basic-workflow list. */
+.steps {
+  padding-left: 1.5em;
+}
+
+/* li is a list-item element; here it selects each step inside .steps. */
+.steps li {
+  margin: 12px 0;
+  padding-left: .25em;
+}
+
+/* .label makes application menu names look like small inline labels. */
+.label {
+  display: inline-block;
+  padding: 1px 7px;
+  border: 1px solid #405166;
+  border-radius: 6px;
+  background: #1c2937;
+  color: #eaf2fa;
+  font: .9em ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: nowrap;
+}
+
+/* .panel groups related explanations inside the guide. */
+.panel {
+  margin: 16px 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #1a2633, #151d27);
+}
+
+/* h3 inside a panel starts at the top edge without an extra top margin. */
+.panel h3 {
+  margin-top: 0;
+}
+
+/* :last-child is a pseudo-class selecting the final paragraph in each panel. */
+.panel p:last-child {
+  margin-bottom: 0;
+}
+
+/* code is the inline HTML element used for filenames and code fragments. */
+code {
+  padding: .1em .35em;
+  border-radius: 5px;
+  background: var(--code);
+  color: #d5e9ff;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+/* footer is the semantic HTML element for the bottom/footer area. */
+footer {
+  padding: 20px 0 34px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+/* @media applies these layout changes only when the viewport is narrow. */
+@media (max-width: 760px) {
+  .docs-main {
+    display: block;
+    padding-top: 30px;
+  }
+
+  aside {
+    position: static;
+    margin-bottom: 32px;
+  }
+
+  .notes-list a {
+    grid-template-columns: 110px minmax(0, 1fr);
+  }
+
+  .notes-list .note-tags {
+    grid-column: 2;
+  }
+}
+
+/* On phone-sized screens, stack the header items and reduce landing-page spacing. */
+@media (max-width: 560px) {
+  header .wrap {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .home-main {
+    padding-top: 48px;
+  }
+}

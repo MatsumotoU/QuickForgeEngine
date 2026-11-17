@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EngineDefines.h"
-#include "design-patterns/component/EntityReference.h"
+#include "ecs/component/EntityReference.h"
 
 namespace QFE::SCENE {
 	/// @brief エンティティ間の親子関係を保持するコンポーネント。

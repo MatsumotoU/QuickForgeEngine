@@ -1,6 +1,8 @@
 #include "TextureLoader.h"
 #include <cassert>
 #include <filesystem>
+#include <algorithm>
+#include <cctype>
 
 #include "string/MyString.h"
 
@@ -12,6 +14,15 @@ using namespace QFE::GRAPHIC;
 namespace {
 	const std::string kDummyBlackCubeMapKey = "DummyBlackCubeMap";
 	const std::string kDummyDummyWhite1x1TextureMapKey = "DummyWhite1x1Texture";
+	std::filesystem::path Utf8Path(const std::string& text) {
+		return std::filesystem::path(std::u8string(reinterpret_cast<const char8_t*>(text.data()), text.size()));
+	}
+	bool IsDds(const std::string& path) {
+		std::string extension = Utf8Path(path).extension().string();
+		std::transform(extension.begin(), extension.end(), extension.begin(),
+			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+		return extension == ".dds";
+	}
 }
 
 void TextureLoader::Initialize(TextureLoaderInitializeInfo info) {
@@ -42,7 +53,8 @@ void TextureLoader::Finalize() {
 
 DirectXResourceHandle TextureLoader::LoadTexture(const std::string& filePath) {
 	QFE_LOG(std::format("TextureLoader: LoadPath {}", filePath));
-	std::string fileName = std::filesystem::path(filePath).lexically_normal().generic_string();
+	const auto normalized = Utf8Path(filePath).lexically_normal().generic_u8string();
+	std::string fileName(reinterpret_cast<const char*>(normalized.data()), normalized.size());
 
 	// 既に読み込み済みのファイルかどうかチェック（キーは一貫して fileName を使う）
 	if (textureDataMap_.contains(fileName)) {
@@ -58,7 +70,7 @@ DirectXResourceHandle TextureLoader::LoadTexture(const std::string& filePath) {
 
 	// DDSかそれ以外かでSRVの形を判定
 	D3D12_SRV_DIMENSION dimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	if (filePath.ends_with(".dds") || filePath.ends_with(".DDS")) {
+	if (IsDds(filePath)) {
 		dimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
 	}
 
@@ -117,7 +129,7 @@ DirectX::ScratchImage QFE::GRAPHIC::TextureLoader::LoadScratchImageFromFile(cons
 	HRESULT hr;
 
 	// ファイルの拡張子を確認して、DDSファイルならLoadFromDDSFile、そうでなければLoadFromWICFileを呼び出す
-	if (filePathW.ends_with(L".dds") || filePathW.ends_with(L".DDS")) {
+	if (IsDds(filePath)) {
 		QFE_LOG(std::format("TextureLoader: Loading DDS file '{}'", filePath));
 		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
 	} else {
@@ -184,7 +196,7 @@ void TextureLoader::UploadTextureData(DirectXResourceHandle resourceHandle, cons
 	initializeInfo_.uploadTextureDataFunc(resourceHandle, subresources);
 }
 
-void QFE::GRAPHIC::TextureLoader::CreateShaderResourceView(
+bool QFE::GRAPHIC::TextureLoader::CreateShaderResourceView(
 	const DirectX::TexMetadata& metadata, D3D12_SRV_DIMENSION texture, DirectXResourceHandle resourceHandle) {
 
 	// メタデータを元にSRVの記述子を設定
@@ -194,7 +206,7 @@ void QFE::GRAPHIC::TextureLoader::CreateShaderResourceView(
 	srvDesc.ViewDimension = texture;// 2Dテクスチャとして設定
 	srvDesc.Texture2D.MipLevels = static_cast<UINT>(metadata.mipLevels);
 	// SRVの作成
-	initializeInfo_.createShaderResourceViewFunc(resourceHandle, srvDesc);
+	return initializeInfo_.createShaderResourceViewFunc(resourceHandle, srvDesc);
 }
 
 DirectXResourceHandle QFE::GRAPHIC::TextureLoader::CreateTextureFromScratchImage(
@@ -203,8 +215,12 @@ DirectXResourceHandle QFE::GRAPHIC::TextureLoader::CreateTextureFromScratchImage
 	const DirectX::TexMetadata& metadata = scratchImage.GetMetadata();
 	// リソースの作成
 	DirectXResourceHandle resourceHandle = CreateResourceFromMetadata(metadata);
+	if (resourceHandle == DirectXResourceHandle::Invalid) return resourceHandle;
 	// SRVの作成
-	CreateShaderResourceView(metadata, texture, resourceHandle);
+	if (!CreateShaderResourceView(metadata, texture, resourceHandle)) {
+		initializeInfo_.removeResourceFunc(resourceHandle);
+		return DirectXResourceHandle::Invalid;
+	}
 	// データのアップロード
 	UploadTextureData(resourceHandle, scratchImage);
 

@@ -82,6 +82,13 @@ bool QFE::GRAPHIC::DirectXResourceContainer::RemoveResource(DirectXResourceHandl
 	return true;
 }
 
+uint32_t QFE::GRAPHIC::DirectXResourceContainer::GetTextureDescriptorIndex(DirectXResourceHandle handle) {
+	if (handle == DirectXResourceHandle::Invalid || !resources.Contains(static_cast<uint32_t>(handle))) return UINT32_MAX;
+	const auto& resource = resources.at(static_cast<uint32_t>(handle));
+	const auto* descriptor = resource.GetDescriptorHandle(ViewTypeFlags::ShaderResourceView);
+	return descriptor ? descriptor->textureIndex : UINT32_MAX;
+}
+
 bool QFE::GRAPHIC::DirectXResourceContainer::SetResourceName(DirectXResourceHandle handle, const std::wstring& name) {
 	if (handle == DirectXResourceHandle::Invalid) {
 		QFE_REPORT_SYSTEM_ERROR("Invalid resource handle in DirectXResourceContainer::SetResourceName", SystemError::Abort);
@@ -165,7 +172,7 @@ void DirectXResourceContainer::CreateResourceView(DirectXResourceHandle handle, 
 	QFE_LOG("Resource view created successfully in DirectXResourceContainer::CreateResourceView");
 }
 
-void QFE::GRAPHIC::DirectXResourceContainer::CreateTextureResourceView(
+bool QFE::GRAPHIC::DirectXResourceContainer::CreateTextureResourceView(
 	DirectXResourceHandle handle, const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc) {
 
 	// リソースが存在するかの確認
@@ -175,14 +182,16 @@ void QFE::GRAPHIC::DirectXResourceContainer::CreateTextureResourceView(
 		ID3D12Resource* d3dResource = resource.GetResource();
 		if (!d3dResource) {
 			QFE_REPORT_SYSTEM_ERROR("Failed to get D3D resource in DirectXResourceContainer::CreateTextureResourceView", SystemError::Abort);
-			return;
+			return false;
 		}
 
 		handles = info_.assignTextureFunc(d3dResource, &srvDesc);
+		if (handles.textureIndex == UINT32_MAX) return false;
 		resource.AddDescriptorHandle(ViewTypeFlags::ShaderResourceView, handles);
 		QFE_LOG("SRV view created successfully in DirectXResourceContainer::CreateTextureResourceView");
+		return true;
 	}
-	return;
+	return false;
 }
 
 void QFE::GRAPHIC::DirectXResourceContainer::UploadResource(

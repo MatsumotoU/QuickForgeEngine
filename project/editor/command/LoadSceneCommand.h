@@ -1,5 +1,6 @@
 #pragma once
 #include "IEditorCommand.h"
+#include "scene/SceneManager.h"
 #include <cstdint>
 #include <vector>
 #include <string>
@@ -23,6 +24,6 @@ namespace QFE::EDITOR {
 	private:
 		QFE::SCENE::SceneManager* sceneManager_;
 		std::string scenePath_;
-		nlohmann::json previousSceneData_;
+		QFE::SCENE::SceneSnapshot previousScene_;
 	};
 }

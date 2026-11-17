@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "string/MyString.h"
+#include "assetfactory/game-data/GameProjectPaths.h"
 #include "EngineDefines.h"
 
 #pragma comment(lib, "xaudio2.lib")
@@ -140,7 +141,8 @@ uint32_t QFE::AUDIO::AudioEngine::LoadSoundData(const std::string& audioPath) {
 	if (!impl_->mediaFoundationInitialized || audioPath.empty()) return 0;
 	std::filesystem::path path(QFE::ConvertString(audioPath));
 	std::error_code error;
-	if (!std::filesystem::exists(path, error) && path.is_relative()) path = std::filesystem::path(L"resources") / path;
+	if (!QFE::PROJECT::Root().empty() && path.is_relative()) path = QFE::PROJECT::Resolve(path);
+	else if (!std::filesystem::exists(path, error) && path.is_relative()) path = std::filesystem::path(L"resources") / path;
 	path = std::filesystem::absolute(path, error);
 	if (error || !std::filesystem::exists(path, error)) {
 		QFE_LOG("Audio file not found: " + audioPath);

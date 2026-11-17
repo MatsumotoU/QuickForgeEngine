@@ -1,5 +1,5 @@
 #include "CreateDirectionalLightCommand.h"
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "scene/SceneManager.h"
 
 QFE::EDITOR::CreateDirectionalLightCommand::CreateDirectionalLightCommand(

@@ -13,7 +13,7 @@ namespace QFE::EDITOR {
 	class SceneViewer final : public IEditorWindow {
 	public:
 		/// @brief SceneViewerのコンストラクタ
-		SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager);
+		SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, unsigned width, unsigned height);
 
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -36,6 +36,8 @@ namespace QFE::EDITOR {
 			bool isOrthographic = false);
 		/// @brief ギズモを操作中、またはギズモ上にマウスがあるかを返す
 		bool IsGizmoCapturingMouse() const;
+		/// @brief 表示中のカメラのビュー投影行列をドロップ位置計算に使用する。
+		void SetAssetDropViewProjection(const MATH::Matrix4x4& viewProjection);
 
 	private:
 		void DrawGizmo(std::set<uint32_t>& selectedEntities, EditorCommandList& commandList);
@@ -43,6 +45,8 @@ namespace QFE::EDITOR {
 
 		SCENE::SceneManager* sceneManager_;
 		ImTextureID sceneTextureId_;
+		unsigned width_;
+		unsigned height_;
 		bool isActive_;
 		bool isFocus_;
 		bool isImageHovered_;
@@ -53,6 +57,7 @@ namespace QFE::EDITOR {
 		ImGuizmo::MODE gizmoMode_;
 		QFE::MATH::Matrix4x4 viewMatrix_;
 		QFE::MATH::Matrix4x4 projectionMatrix_;
+		QFE::MATH::Matrix4x4 dropViewProjection_ = MATH::Matrix4x4::MakeIdentity4x4();
 		QFE::MATH::EulerTransform transformBeforeEdit_;
 	};
 }

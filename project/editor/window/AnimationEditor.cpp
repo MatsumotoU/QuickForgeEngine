@@ -1,6 +1,6 @@
 #include "AnimationEditor.h"
 
-#include "design-patterns/EntityManager.h"
+#include "ecs/entity/EntityManager.h"
 #include "animation/AnimationComponent.h"
 #include "framework/animation/AnimationDataServices.h"
 

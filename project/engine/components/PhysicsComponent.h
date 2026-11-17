@@ -1,6 +1,6 @@
 #pragma once
 #include "EngineDefines.h"
-#include "design-patterns/component/EntityReference.h"
+#include "ecs/component/EntityReference.h"
 
 namespace QFE::COMPONENTS {
 	/// @brief 物理演算用のコンポーネント

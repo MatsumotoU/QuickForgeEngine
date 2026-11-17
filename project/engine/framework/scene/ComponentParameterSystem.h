@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "design-patterns/component/EntityReference.h"
+#include "ecs/component/EntityReference.h"
 #include <nlohmann/json.hpp>
 
 namespace QFE {

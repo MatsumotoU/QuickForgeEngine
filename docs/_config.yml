@@ -1,0 +1,4 @@
+title: QuickForgeEngine Documentation
+baseurl: /QuickForgeEngine
+markdown: kramdown
+permalink: /notes/:title/
