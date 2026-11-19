@@ -115,6 +115,7 @@ project "GameEditor"
         path.join(QFE_PROJECT_ROOT, "externals/imgui"),
     }
     links {
+        "AssetsFramework",
         "EngineAssetsFactory",
         "EngineCore",
         "Assimp",
