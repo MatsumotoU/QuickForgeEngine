@@ -1,12 +1,6 @@
 #define SOL_ALL_SAFETIES_ON 1
 #include "framework/application/LuaScriptSystem.h"
 
-#ifdef _MSC_VER
-// sol2's member-pointer dispatch triggers this legacy ABI notice in current
-// MSVC. The warning is not actionable for code built with one toolset.
-#pragma warning(disable : 4371)
-#endif
-
 #include <sol2/sol/sol.hpp>
 
 #include "EngineDefines.h"

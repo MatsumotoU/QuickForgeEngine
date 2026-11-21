@@ -4210,7 +4210,7 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		// Keep generated projects strict and consistent. These are emitted at
 		// project scope as well as workspace scope so every generated target
 		// keeps the policy when Premake creates the Visual Studio projects.
-		destination << "    warnings \"Everything\"\n";
+		destination << "    warnings \"Extra\"\n";
 		destination << "    externalwarnings \"Off\"\n";
 		destination << "    fatalwarnings \"All\"\n";
 		emitFlags();
@@ -4220,11 +4220,6 @@ void QFE::APPLICATION::ProjectGenerator::GenerateCentralPremake()
 		// versions. Add the compiler options explicitly so bundled headers are
 		// actually classified as external during compilation.
 		destination << "    buildoptions {\n";
-		destination << "        \"/wd4514\",\n";
-		destination << "        \"/wd4820\",\n";
-		destination << "        \"/wd4710\",\n";
-		destination << "        \"/wd4711\",\n";
-		destination << "        \"/wd5045\",\n";
 		destination << "        \"/external:I\" .. path.join(QFE_PROJECT_ROOT, \"externals\"),\n";
 		destination << "        \"/external:I\" .. path.join(QFE_PROJECT_ROOT, \"externals/imgui\"),\n";
 		destination << "        \"/external:I\" .. path.join(QFE_PROJECT_ROOT, \"externals/assimp\"),\n";
