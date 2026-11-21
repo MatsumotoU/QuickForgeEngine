@@ -29,10 +29,19 @@ jobs:
         working-directory: project
         run: doxygen Doxyfile
 
+      - name: Build documentation site
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs
+          destination: ./_site
+
+      - name: Add API reference to site
+        run: cp -a project/docs/html _site/api
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'project/docs/html' # Doxyfileで指定した出力先
+          path: ./_site
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4

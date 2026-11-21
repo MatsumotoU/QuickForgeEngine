@@ -101,7 +101,7 @@ project "AssetsFramework"
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
-    kind "Utility"
+    kind "StaticLib"
     includedirs {
         path.join(QFE_PROJECT_ROOT, "engine"),
         path.join(QFE_PROJECT_ROOT, "engine/core"),
@@ -109,6 +109,7 @@ project "AssetsFramework"
         path.join(QFE_PROJECT_ROOT, "externals"),
     }
     links {
+        "Scene",
         "EngineAssetsFactory",
         "EngineCore",
         "Assimp",
