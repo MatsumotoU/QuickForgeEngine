@@ -6,8 +6,21 @@ on:
       - master
 
 jobs:
+  debug:
+    name: Debug build
+    uses: ./.github/workflows/DebugBuild.yml
+
+  development:
+    name: Development build
+    uses: ./.github/workflows/DevelopmentBuild.yml
+
+  release_build:
+    name: Release build
+    uses: ./.github/workflows/ReleaseBuild.yml
+
   release:
     name: Generate Release Notes
+    needs: [debug, development, release_build]
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -35,13 +35,16 @@ jobs:
           source: ./docs
           destination: ./_site
 
-      - name: Add API reference to site
-        run: cp -a project/docs/html _site/api
+      - name: Assemble site and API reference
+        run: |
+          mkdir -p "$RUNNER_TEMP/pages"
+          cp -R _site/. "$RUNNER_TEMP/pages/"
+          cp -R project/docs/html "$RUNNER_TEMP/pages/api"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          path: ${{ runner.temp }}/pages
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4

@@ -1,8 +1,6 @@
 name: ReleaseBuild
 on:
-  push:
-    branches:
-      - master
+  workflow_call:
 env:
   SOLUTION_FILE_PATH: project/QuickForgeEngine.sln
   CONFIGURATION: Release
