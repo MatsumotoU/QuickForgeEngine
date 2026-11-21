@@ -22,7 +22,7 @@
     <p class="lead">調べたことや制作中に気づいたことを、あとから見返せる形で残します。</p>
     <div class="callout">
       <strong>備忘録の追加方法</strong>
-      <p><code>_templates/technical-note-template.md</code> を複製し、<code>_posts/YYYY-MM-DD-title.md</code> という名前で保存してください。タイトルと本文を書いてGitHubへpushすると、Jekyllが記事ページとこの一覧を生成します。</p>
+      <p>リポジトリの <code>CreateNote.bat</code> を起動し、タイトルや本文を入力すると、日付付きの Markdown ファイルが作成されます。作成したファイルをGitHubへpushすると、Jekyllが記事ページとこの一覧を生成します。</p>
     </div>
 
     {% if site.posts.size > 0 %}

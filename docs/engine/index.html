@@ -26,6 +26,7 @@
       <a href="#systems">主な機能</a>
       <a href="#workflow">ゲームを動かす流れ</a>
       <a href="#project">ゲームプロジェクト</a>
+      <a href="#implementation">実装詳細</a>
     </aside>
     <article>
       <p class="eyebrow">ゲームエンジン / Windows</p>
@@ -74,7 +75,12 @@
         <h2>ゲームプロジェクト</h2>
         <p>ランタイムはゲームプロジェクトの <code>project.json</code> を選択して実行します。設定の <code>start_scene</code> が最初に読み込むシーンを指定し、ゲームデータはプロジェクトの <code>assets</code> 以下に配置します。</p>
         <p>ゲーム固有のC++処理はゲームモジュールに、シーン・モデル・画像・音声・Luaスクリプトなどのデータはプロジェクトのアセットに置く構成です。Luaスクリプトの入口と主なAPIは、リポジトリ内の <code>game-projects/sample/assets/scripts/README.md</code> にまとめています。</p>
-        <div class="callout">このページは構成の概要です。個別機能のAPIやプロジェクト生成の詳細は、今後の説明ページで補足します。</div>
+      </section>
+
+      <section id="implementation">
+        <h2>実装詳細</h2>
+        <p>クラスや関数の詳細、クラス間の関係は、Doxygenで生成したAPIリファレンスで確認できます。</p>
+        <p><a href="../api/">APIリファレンスを見る →</a></p>
       </section>
     </article>
   </main>
