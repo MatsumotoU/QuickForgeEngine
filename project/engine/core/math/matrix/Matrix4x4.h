@@ -1,7 +1,6 @@
 #pragma once
 #ifndef Matrix4x4_H
 #define Matrix4x4_H
-#define _USE_MATH_DEFINES
 
 #include <cmath>
 #include <stdint.h>
