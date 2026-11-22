@@ -4570,6 +4570,20 @@ end
 	output << "    path.join(QFE_PROJECT_ROOT, \"externals/assimp/upstream/include\"),\n";
 	output << "    path.join(QFE_PROJECT_ROOT, \"externals/imgui/imgui-node-editor-0.9.3\"),\n";
 	output << "}\n";
+	output << R"lua(function qfeAddStandardLibraryPch()
+    filter { "kind:StaticLib or SharedLib or ConsoleApp or WindowedApp" }
+        pchheader "StandardLibrary.h"
+        pchsource (path.join(QFE_PROJECT_ROOT, "pch/StandardLibrary.cpp"))
+        includedirs { path.join(QFE_PROJECT_ROOT, "pch") }
+        files { path.join(QFE_PROJECT_ROOT, "pch/StandardLibrary.h"), path.join(QFE_PROJECT_ROOT, "pch/StandardLibrary.cpp") }
+        forceincludes { "StandardLibrary.h" }
+    filter { "files:**.c" }
+        enablepch "Off"
+        removeforceincludes { "StandardLibrary.h" }
+    filter {}
+end
+
+)lua";
 	output << R"lua(function qfeAddDxcRuntime()
     postbuildcommands {
         'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "$(TargetDir)." "dxcompiler.dll" "dxil.dll" /R:0 /W:0 /NJH /NJS /NFL /NDL /NP',
@@ -4603,6 +4617,10 @@ end
 			output << EscapeLuaString(relativeDirectory) << "/";
 		}
 		output << "premake.lua\"))\n";
+		if (relativeDirectory != "externals" &&
+			relativeDirectory.rfind("externals/", 0) != 0) {
+			output << "qfeAddStandardLibraryPch()\n";
+		}
 	};
 	for (const ProjectGroup& group : groups_) {
 		if (Trim(group.name).empty() || group.nodeIds.empty()) {

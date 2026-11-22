@@ -103,6 +103,19 @@ externalincludedirs {
     path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
     path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
 }
+function qfeAddStandardLibraryPch()
+    filter { "kind:StaticLib or SharedLib or ConsoleApp or WindowedApp" }
+        pchheader "StandardLibrary.h"
+        pchsource (path.join(QFE_PROJECT_ROOT, "pch/StandardLibrary.cpp"))
+        includedirs { path.join(QFE_PROJECT_ROOT, "pch") }
+        files { path.join(QFE_PROJECT_ROOT, "pch/StandardLibrary.h"), path.join(QFE_PROJECT_ROOT, "pch/StandardLibrary.cpp") }
+        forceincludes { "StandardLibrary.h" }
+    filter { "files:**.c" }
+        enablepch "Off"
+        removeforceincludes { "StandardLibrary.h" }
+    filter {}
+end
+
 function qfeAddDxcRuntime()
     postbuildcommands {
         'robocopy "$(WindowsSdkDir)bin\\$(TargetPlatformVersion)\\x64" "$(TargetDir)." "dxcompiler.dll" "dxil.dll" /R:0 /W:0 /NJH /NJS /NFL /NDL /NP',
@@ -136,50 +149,81 @@ group ""
 
 group "00_System"
 dofile(path.join(_root, "engine/resources/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/core/premake.lua"))
+qfeAddStandardLibraryPch()
 group ""
 
 group "01_Modulars"
 dofile(path.join(_root, "engine/window/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/graphics/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/gui/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/input/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/physics/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/assetfactory/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/scene/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/components/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/audio/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/network/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/animation/premake.lua"))
+qfeAddStandardLibraryPch()
 group ""
 
 group "02_Frameworks"
 dofile(path.join(_root, "engine/framework/application/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/graphic/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/window/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/gui/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/input/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/physics/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/scene/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/assets/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/audio/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/network/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "engine/framework/animation/premake.lua"))
+qfeAddStandardLibraryPch()
 group ""
 
 group "03_Game"
 dofile(path.join(_root, "game/shooting/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "game/shooting-editor/premake.lua"))
+qfeAddStandardLibraryPch()
 group ""
 
 group "04_Applications"
 dofile(path.join(_root, "editor/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "sandbox/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "runtime/premake.lua"))
+qfeAddStandardLibraryPch()
 dofile(path.join(_root, "launcher/premake.lua"))
+qfeAddStandardLibraryPch()
 group ""
 
 group "Tools"
 dofile(path.join(_root, "tools/project-generator/premake.lua"))
+qfeAddStandardLibraryPch()
 group ""
 
