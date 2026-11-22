@@ -47,7 +47,7 @@ project "WindowFramework"
         symbols ("Off")
     filter {}
     debugdir (path.join(QFE_PROJECT_ROOT, "."))
-    warnings "Everything"
+    warnings "Extra"
     externalwarnings "Off"
     fatalwarnings "All"
     multiprocessorcompile "On"
@@ -55,11 +55,6 @@ project "WindowFramework"
         "/utf-8",
     }
     buildoptions {
-        "/wd4514",
-        "/wd4820",
-        "/wd4710",
-        "/wd4711",
-        "/wd5045",
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals"),
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/imgui"),
         "/external:I" .. path.join(QFE_PROJECT_ROOT, "externals/assimp"),

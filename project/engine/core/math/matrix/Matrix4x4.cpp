@@ -8,6 +8,7 @@
 #include "math/vector/Vector4.h"
 #include "math/transform/Transform.h"
 #include <assert.h>
+#include <numbers>
 
 using namespace QFE::MATH;
 
@@ -617,7 +618,7 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 	if (std::abs(dot + 1.0f) < 1e-6f) {
 		// uに垂直な任意軸を選ぶ
 		Vector3 axis = Vector3::Perpendicular(u).Normalize();
-		return Matrix4x4::MakeRotateAxisAngle(axis, static_cast<float>(M_PI));
+		return Matrix4x4::MakeRotateAxisAngle(axis, std::numbers::pi_v<float>);
 	}
 
 	// 通常ケース
