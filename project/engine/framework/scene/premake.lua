@@ -23,6 +23,7 @@ project "SceneFramework"
             path.join(_sourceDirectory, "windows/ComponentParameterSystem.cpp"),
             path.join(_sourceDirectory, "windows/EventSystem.cpp"),
             path.join(_sourceDirectory, "windows/SceneChangeSystem.cpp"),
+            path.join(_sourceDirectory, "windows/SceneState.cpp"),
             path.join(_sourceDirectory, "windows/SceneFrameWork.cpp"),
             path.join(_sourceDirectory, "windows/SplineMovementSystem.cpp"),
         }
