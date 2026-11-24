@@ -20,6 +20,8 @@
 #include "ShaderComponent.h"
 #include "SkyBoxComponent.h"
 #include "SphereColliderComponent.h"
+#include "AABBColliderComponent.h"
+#include "OBBColliderComponent.h"
 #include "SplineMoveToPointComponent.h"
 #include "SplineMovementComponent.h"
 #include "SpriteRenderComponent.h"
@@ -46,6 +48,8 @@ namespace QFE {
 			registry.RegisterComponent<SCENE::SkeletonAnimationComponent>("SkeletonAnimationComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::ParticleEmitterComponent>("ParticleEmitterComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::SphereColliderComponent>("SphereColliderComponent", "Physics") &&
+			registry.RegisterComponent<SCENE::AABBColliderComponent>("AABBColliderComponent", "Physics") &&
+			registry.RegisterComponent<SCENE::OBBColliderComponent>("OBBColliderComponent", "Physics") &&
 			registry.RegisterComponent<COMPONENTS::PhysicsComponent>("PhysicsComponent", "Physics") &&
 			registry.RegisterComponent<SCENE::CollisionTriggerComponent>("CollisionTriggerComponent", "Physics") &&
 			registry.RegisterComponent<SCENE::BGMComponent>("BGMComponent", "Audio") &&

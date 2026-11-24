@@ -123,7 +123,7 @@ void QFE::EDITOR::EditorWindowManager::Update() {
 	selectedEntities_.clear();
 }
 
-void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
+void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool& showColliders) {
 	bool saveSceneRequested = false;
 	bool saveSceneAsRequested = false;
 
@@ -242,6 +242,9 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
         }
 		// Debugメニュー
         if (ImGui::BeginMenu("Debug")) {
+			#if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
+			ImGui::MenuItem("Show Colliders", nullptr, &showColliders);
+			#endif
             // シーンを選ばせて開始する
             if (ImGui::MenuItem("Launch Scene from File...")) {
 
@@ -252,7 +255,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList) {
                     L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
                     selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
 
-					if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::PROJECT::Root().wstring() + L"\" --scene \"" + selectedFilePath + L"\"")) {
+					if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::PROJECT::Root().wstring() + L"\" --scene \"" + selectedFilePath + L"\"" + (showColliders ? L" --colliders=on" : L" --colliders=off"))) {
 						QFE_LOG("Failed to launch the runtime.", QFE::LogLevel::Error);
 					}
                 }

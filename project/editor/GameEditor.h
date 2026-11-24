@@ -32,7 +32,7 @@ namespace QFE::EDITOR {
 			QFE::ASSET::ModelLoader& modelLoader,
 			const QFE::FRAMEWORK::EngineConfig& config);
 		void Update(QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,QFE::FRAMEWORK::WindowsEngineResources& resources);
-		void Draw();
+		void Draw(bool& showColliders);
 		void PostDraw();
 		bool ConsumeGameModuleBuildAndReloadRequest();
 

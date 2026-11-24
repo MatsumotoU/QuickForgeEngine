@@ -73,7 +73,7 @@ namespace {
 		}
 	}
 
-	struct Arguments { std::optional<std::string> scene; std::filesystem::path project; };
+	struct Arguments { std::optional<std::string> scene; std::filesystem::path project; std::optional<bool> showColliders; };
 	Arguments GetArguments() {
 		Arguments result; int count = 0;
 		LPWSTR* args = CommandLineToArgvW(GetCommandLineW(), &count);
@@ -82,6 +82,8 @@ namespace {
 			const std::wstring_view arg(args[i]);
 			if (arg == L"--project" && i + 1 < count) result.project = args[++i];
 			else if (arg == L"--scene" && i + 1 < count) result.scene = QFE::ConvertString(std::wstring(args[++i]));
+			else if (arg == L"--colliders=on") result.showColliders = true;
+			else if (arg == L"--colliders=off") result.showColliders = false;
 			else if (!arg.starts_with(L"--") && !result.scene) result.scene = QFE::ConvertString(std::wstring(args[i]));
 		}
 		LocalFree(args); return result;
@@ -162,6 +164,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
 	const bool engineConfigLoaded = engineResources.config.Load();
 	engineResources.ApplyConfig(false);
+	if (arguments.showColliders.has_value()) engineResources.showColliders = *arguments.showColliders;
 	if (!QFE::PROJECT::Root().empty()) {
 		engineResources.assetDir = QFE::ConvertString(QFE::PROJECT::Assets().wstring()) + "/";
 		engineResources.modelDir = engineResources.assetDir;

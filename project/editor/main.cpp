@@ -143,7 +143,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		QFE::FRAMEWORK::EnginePreDraw(engineSystems, engineResources);
 
 		// エディタの描画処理
-		gameEditor.Draw();
+		gameEditor.Draw(engineResources.showColliders);
 
 		// エンジンの描画後処理（フレーム終了時の共通処理）
 		QFE::FRAMEWORK::EnginePostDraw(engineSystems, engineResources);

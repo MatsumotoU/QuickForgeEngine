@@ -28,6 +28,9 @@
 #include "string/MyString.h"
 #include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 #include "framework/application/LuaScriptSystem.h"
+#if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
+#include "framework/application/ColliderDebugDraw.h"
+#endif
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
@@ -652,6 +655,31 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 			const QFE::MATH::Vector4& color) {
 			d3d12GraphicEngine->DrawLine(start, end, color);
 		});
+
+#if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
+	if (resources.showColliders) {
+	// Use the same local Transform and unscaled dimensions as CollisionSystem.
+	const auto drawColliderLine = [d3d12GraphicEngine](const QFE::MATH::Vector3& start,
+		const QFE::MATH::Vector3& end) {
+		d3d12GraphicEngine->DrawLine(start, end, { 0.2f, 1.0f, 0.3f, 1.0f });
+	};
+	entityManager.Each<QFE::SCENE::SphereColliderComponent, QFE::SCENE::TransformComponent>(
+		[&](uint32_t, const QFE::SCENE::SphereColliderComponent& collider,
+			const QFE::SCENE::TransformComponent& transform) {
+			QFE::FRAMEWORK::ColliderDebugDraw::Sphere(transform.transform.translate, collider.radius, drawColliderLine);
+		});
+	entityManager.Each<QFE::SCENE::AABBColliderComponent, QFE::SCENE::TransformComponent>(
+		[&](uint32_t, const QFE::SCENE::AABBColliderComponent& collider,
+			const QFE::SCENE::TransformComponent& transform) {
+			QFE::FRAMEWORK::ColliderDebugDraw::Box(transform.transform, collider.halfExtents, false, drawColliderLine);
+		});
+	entityManager.Each<QFE::SCENE::OBBColliderComponent, QFE::SCENE::TransformComponent>(
+		[&](uint32_t, const QFE::SCENE::OBBColliderComponent& collider,
+			const QFE::SCENE::TransformComponent& transform) {
+			QFE::FRAMEWORK::ColliderDebugDraw::Box(transform.transform, collider.halfExtents, true, drawColliderLine);
+		});
+	}
+#endif
 
 	// 旧スカイボックスと同様、シーン内の最初の可視キューブマップを背景に使う。
 	QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.skyBoxTextureHandle);

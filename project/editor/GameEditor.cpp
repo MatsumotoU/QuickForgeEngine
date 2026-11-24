@@ -113,8 +113,8 @@ void QFE::EDITOR::GameEditor::Update(
 	windowManager_.SetAssetDropViewProjection(viewProj);
 }
 
-void GameEditor::Draw() {
-	windowManager_.Draw(commandList_);
+void GameEditor::Draw(bool& showColliders) {
+	windowManager_.Draw(commandList_, showColliders);
 
 	if(ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_Z)) {
 		commandExecutor_.Undo();

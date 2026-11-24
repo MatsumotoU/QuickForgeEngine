@@ -9,6 +9,7 @@
 #include "components/SpriteRenderComponent.h"
 #include "components/ParticleEmitterComponent.h"
 #include "components/SkyBoxComponent.h"
+#include "components/EventComponent.h"
 
 #include "assetfactory/game-data/GameProjectPaths.h"
 #include <filesystem>
@@ -530,10 +531,8 @@ namespace {
 			{ "timing", "Enter" },
 			{ "target", "Self" },
 			{ "targetUuid", "" },
-			{ "component", "EventComponent" },
-			{ "property", "requestFlags" },
-			{ "operation", "SetBits" },
-			{ "value", 1u }
+			{ "type", "PlayTrack" },
+			{ "trackIndex", 0 }
 		};
 	}
 
@@ -568,7 +567,7 @@ namespace {
 		ImGui::EndCombo();
 	}
 
-	void DrawCollisionActions(QFE::EntityManager* entityManager, nlohmann::json& actions) {
+	void DrawCollisionActions(QFE::EntityManager* entityManager, uint32_t entityId, nlohmann::json& actions) {
 		if (!actions.is_array()) actions = nlohmann::json::array();
 		ImGui::TextUnformatted("Collision Actions");
 		int actionToRemove = -1;
@@ -579,20 +578,59 @@ namespace {
 			const std::string header = "Action " + std::to_string(actionIndex);
 			if (ImGui::TreeNode(header.c_str())) {
 				DrawStringCombo("Timing", action, "timing", { "Enter", "Stay", "Exit" }, "Enter");
+				DrawStringCombo("Action Type", action, "type",
+					{ "PlayTrack", "ToggleTrack", "Destroy", "Spawn", "Parameter" }, "Parameter");
+				const std::string type = action.value("type", std::string("Parameter"));
 				DrawStringCombo("Target", action, "target",
 					{ "Self", "Other", "EntityReference" }, "Self");
 				if (action.value("target", std::string("Self")) == "EntityReference") {
 					std::string targetUuid = action.value("targetUuid", std::string{});
-					if (ImGui::InputText("Target UUID", &targetUuid)) action["targetUuid"] = targetUuid;
+					DrawEventTargetUuidCombo(targetUuid, entityManager);
+					action["targetUuid"] = targetUuid;
 				}
 
-				std::string property = action.value("property", std::string{});
-				DrawComponentTypeCombo(entityManager, action);
-				if (ImGui::InputText("Property Path", &property)) action["property"] = property;
-				DrawStringCombo("Operation", action, "operation",
-					{ "Set", "Add", "Multiply", "Toggle", "SetBits", "ClearBits" }, "Set");
-				if (!action.contains("value")) action["value"] = 0.0f;
-				DrawJsonValue("Value", action["value"]);
+				if (type == "Parameter") {
+					std::string property = action.value("property", std::string{});
+					DrawComponentTypeCombo(entityManager, action);
+					if (ImGui::InputText("Property Path", &property)) action["property"] = property;
+					DrawStringCombo("Operation", action, "operation",
+						{ "Set", "Add", "Multiply", "Toggle", "SetBits", "ClearBits" }, "Set");
+					if (!action.contains("value")) action["value"] = 0.0f;
+					DrawJsonValue("Value", action["value"]);
+				} else if (type == "PlayTrack" || type == "ToggleTrack") {
+					if (!action.contains("trackIndex") || !action["trackIndex"].is_number_integer()) action["trackIndex"] = 0;
+					int index = action.value("trackIndex", 0);
+					uint32_t targetId = entityId;
+					const std::string target = action.value("target", std::string("Self"));
+					bool resolved = entityManager && target != "Other";
+					if (resolved && target == "EntityReference")
+						resolved = QFE::SCENE::TryGetEntityIdByUuid(*entityManager, action.value("targetUuid", std::string{}), targetId);
+					auto* event = resolved ? entityManager->GetComponentPtr<QFE::SCENE::EventComponent>(targetId) : nullptr;
+					if (event && event->tracks.is_array()) {
+						const std::string preview = "Track " + std::to_string(index);
+						if (ImGui::BeginCombo("Event Track", preview.c_str())) {
+							for (size_t i = 0; i < event->tracks.size(); ++i) {
+								const auto& track = event->tracks[i];
+								const std::string label = "Track " + std::to_string(i) + " - " +
+									(track.is_object() ? track.value("property", std::string{}) : std::string{});
+								if (ImGui::Selectable(label.c_str(), index == static_cast<int>(i))) action["trackIndex"] = i;
+							}
+							ImGui::EndCombo();
+						}
+					} else {
+						if (ImGui::InputInt("Track Index", &index)) action["trackIndex"] = (std::max)(0, index);
+						ImGui::TextDisabled(target == "Other" ? "Index on the other object's EventComponent" : "Target has no EventComponent");
+					}
+				} else if (type == "Spawn") {
+					std::string path = action.value("entityPath", std::string{});
+					if (ImGui::BeginCombo("Entity Prefab", path.empty() ? "Select Entity" : path.c_str())) {
+						for (const auto& candidate : FindResourceFiles({ ".entity" }, false)) {
+							if (ImGui::Selectable(candidate.c_str(), path == candidate)) action["entityPath"] = candidate;
+						}
+						ImGui::EndCombo();
+					}
+					ImGui::TextDisabled("Spawn at target position");
+				}
 
 				if (ImGui::Button("Remove Action")) actionToRemove = static_cast<int>(actionIndex);
 				ImGui::TreePop();
@@ -934,7 +972,7 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, nlohmann::json&
 		return;
 	}
 	if (name == "actions") {
-		DrawCollisionActions(entityManager_, value);
+		DrawCollisionActions(entityManager_, entityId_, value);
 		return;
 	}
 	DrawJsonValue(MakeLabel(name).c_str(), value);

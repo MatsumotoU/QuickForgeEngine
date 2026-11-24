@@ -1,10 +1,12 @@
 #include "ShootingSystem.h"
+#include "CollisionShapes.h"
 
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
 #include "game/shooting/components/AllShootingComponents.h"
 #include "components/TransformHierarchy.h"
 #include "framework/scene/CollisionTriggerSystem.h"
+#include "assetfactory/game-data/GameProjectPaths.h"
 
 #include <algorithm>
 #include <vector>
@@ -337,53 +339,70 @@ bool QFE::GAMESYSTEM::BulletUpdateSystem(
 bool QFE::GAMESYSTEM::CollisionSystem(
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
-	(void)resources;
 	(void)deltaTime;
 
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
 	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	QFE::FRAMEWORK::BeginCollisionTriggerFrame(entityManager);
-	std::vector<QFE::FRAMEWORK::ComponentParameterCommand> parameterCommands;
+	std::vector<QFE::FRAMEWORK::CollisionTriggerCommand> parameterCommands;
 
-	// コライダーの処理
-	std::vector<uint32_t>colliderEntityIds;
-	std::map<uint32_t, QFE::SCENE::SphereColliderComponent> colliderComponents;
-	std::map<uint32_t, QFE::SCENE::TransformComponent> transformComponents;
-	entityManager.Each<QFE::SCENE::SphereColliderComponent>([&](uint32_t entityId, QFE::SCENE::SphereColliderComponent& colliderComp) {
-		if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-			return;
+	using namespace CollisionShapes;
+	std::vector<Shape> colliders;
+	entityManager.Each<QFE::SCENE::SphereColliderComponent>([&](uint32_t id, QFE::SCENE::SphereColliderComponent& collider) {
+		if (auto* transform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(id)) {
+			colliders.push_back({ id, collider.mask, true, transform->transform.translate, collider.radius, {}, {} });
 		}
-		colliderEntityIds.push_back(entityId);
-		colliderComponents[entityId] = colliderComp;
-		transformComponents[entityId] = entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId);
-		});
-	// 球のコライダー同士の衝突判定	
-	for (size_t i = 0; i < colliderEntityIds.size(); ++i) {
-		uint32_t entityIdA = colliderEntityIds[i];
-		QFE::SCENE::SphereColliderComponent& colliderA = colliderComponents[entityIdA];
-		QFE::MATH::EulerTransform& transformA = transformComponents[entityIdA].transform;
-		for (size_t j = i + 1; j < colliderEntityIds.size(); ++j) {
-			uint32_t entityIdB = colliderEntityIds[j];
-			QFE::SCENE::SphereColliderComponent& colliderB = colliderComponents[entityIdB];
-			QFE::MATH::EulerTransform& transformB = transformComponents[entityIdB].transform;
+	});
+	entityManager.Each<QFE::SCENE::AABBColliderComponent>([&](uint32_t id, QFE::SCENE::AABBColliderComponent& collider) {
+		if (auto* transform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(id)) {
+			colliders.push_back(MakeBox(id, collider.mask, transform->transform, collider.halfExtents, false));
+		}
+	});
+	entityManager.Each<QFE::SCENE::OBBColliderComponent>([&](uint32_t id, QFE::SCENE::OBBColliderComponent& collider) {
+		if (auto* transform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(id)) {
+			colliders.push_back(MakeBox(id, collider.mask, transform->transform, collider.halfExtents, true));
+		}
+	});
 
-			// タグマスクの判定
-			if ((colliderA.mask & colliderB.mask) != 0) {
-				continue; // 衝突判定をスキップ
-			}
-
-			// 衝突判定
-			float distance = (transformA.translate - transformB.translate).Length();
-			if (distance < (colliderA.radius + colliderB.radius)) {
-				QFE::FRAMEWORK::NotifyCollisionTrigger(
-					entityManager, entityIdA, entityIdB, colliderB.mask, parameterCommands);
-				QFE::FRAMEWORK::NotifyCollisionTrigger(
-					entityManager, entityIdB, entityIdA, colliderA.mask, parameterCommands);
-			}
+	// Collect contacts per entity pair so multiple shapes do not emit duplicate Stay actions.
+	std::map<std::pair<uint32_t, uint32_t>, std::pair<uint32_t, uint32_t>> contacts;
+	for (size_t i = 0; i < colliders.size(); ++i) {
+		for (size_t j = i + 1; j < colliders.size(); ++j) {
+			const Shape& a = colliders[i];
+			const Shape& b = colliders[j];
+			if (a.entityId == b.entityId || (a.mask & b.mask) != 0 || !Intersects(a, b)) continue;
+			const bool ordered = a.entityId < b.entityId;
+			auto& masks = contacts[ordered ? std::make_pair(a.entityId, b.entityId) : std::make_pair(b.entityId, a.entityId)];
+			masks.first |= ordered ? a.mask : b.mask;
+			masks.second |= ordered ? b.mask : a.mask;
 		}
 	}
+	for (const auto& [ids, masks] : contacts) {
+		QFE::FRAMEWORK::NotifyCollisionTrigger(entityManager, ids.first, ids.second, masks.second, parameterCommands);
+		QFE::FRAMEWORK::NotifyCollisionTrigger(entityManager, ids.second, ids.first, masks.first, parameterCommands);
+	}
 	QFE::FRAMEWORK::EndCollisionTriggerFrame(entityManager, parameterCommands);
-	QFE::FRAMEWORK::ApplyComponentParameterCommands(entityManager, parameterCommands);
+	QFE::FRAMEWORK::ApplyCollisionTriggerCommands(entityManager, parameterCommands,
+		[&](const std::string& entityPath, uint32_t target) {
+			const auto toPath = [](const std::string& value) {
+				return std::filesystem::path(std::u8string(reinterpret_cast<const char8_t*>(value.data()), value.size()));
+			};
+			const auto base = toPath(resources.assetDir);
+			const auto relative = toPath(entityPath);
+			const auto path = base / relative;
+			if (relative.is_absolute() || !QFE::PROJECT::IsWithin(path, base)) return;
+			QFE::MATH::Vector3 position{};
+			const auto* transform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(target);
+			const bool hasPosition = transform != nullptr;
+			if (hasPosition) position = transform->transform.translate;
+			const auto utf8 = path.generic_u8string();
+			const uint32_t spawned = sceneManager->LoadEntityOnCurrentSceneFromJsonObject(
+				std::string(reinterpret_cast<const char*>(utf8.data()), utf8.size()));
+			if (hasPosition) {
+				if (auto* spawnedTransform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(spawned))
+					spawnedTransform->transform.translate = position;
+			}
+		});
 	return true;
 }
 

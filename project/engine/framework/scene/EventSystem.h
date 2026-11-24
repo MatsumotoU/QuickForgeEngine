@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstddef>
 
 namespace QFE {
 	class EntityManager;
@@ -15,6 +16,9 @@ namespace QFE::FRAMEWORK {
 	bool PlayEvent(EntityManager& entityManager, uint32_t eventEntityId, bool restart = true);
 	bool StopEvent(EntityManager& entityManager, uint32_t eventEntityId, bool resetTime = false);
 	bool IsEventPlaying(const EntityManager& entityManager, uint32_t eventEntityId);
+	/// A track started independently owns its playback until the whole event is played again.
+	bool PlayEventTrack(EntityManager& entityManager, uint32_t eventEntityId, size_t trackIndex);
+	bool ToggleEventTrack(EntityManager& entityManager, uint32_t eventEntityId, size_t trackIndex);
 
 	/// 全EventComponentのタイムラインを進め、対象パラメータへ反映する。
 	void UpdateEventComponents(EntityManager& entityManager, float deltaTime);

@@ -46,7 +46,7 @@ namespace QFE::EDITOR {
 			ComponentInspectorRegistry* componentInspectorRegistry,
 			const QFE::FRAMEWORK::EngineConfig& config);
 		void Update();
-		void Draw(EditorCommandList& commandList);
+		void Draw(EditorCommandList& commandList, bool& showColliders);
 		/// @brief Fileメニューから要求されたGameModule DLLのビルドとリロードを取得する。
 		bool ConsumeGameModuleBuildAndReloadRequest();
 

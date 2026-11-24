@@ -190,7 +190,11 @@ namespace QFE::GRAPHIC {
 		bool isBuildInComputePipelineStateObjectsAvailable_ = false;
 		bool isLineRenderingAvailable_ = false;
 
+#if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
+		static constexpr std::size_t kMaxLineCount_ = 32768;
+#else
 		static constexpr std::size_t kMaxLineCount_ = 1024;
+#endif
 		std::vector<LineVertex> lineVertices_;
 		DirectXResourceHandle lineVertexBufferHandle_ = DirectXResourceHandle::Invalid;
 		PSOHandle linePsoHdrHandle_ = PSOHandle::Invalid;
