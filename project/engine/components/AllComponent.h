@@ -15,6 +15,8 @@
 #include "CameraComponent.h"
 #include "DirectionalLightComponent.h"
 #include "SphereColliderComponent.h"
+#include "AABBColliderComponent.h"
+#include "OBBColliderComponent.h"
 #include "animation/AnimationComponent.h"
 #include "PhysicsComponent.h"
 #include "InputMovementComponent.h"
