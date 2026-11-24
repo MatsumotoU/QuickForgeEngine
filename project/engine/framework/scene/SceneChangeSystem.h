@@ -1,29 +1,25 @@
 #pragma once
 
-#include <string>
+
+#include <memory>
 
 namespace QFE::SCENE {
 	class SceneManager;
 }
 
 namespace QFE::FRAMEWORK {
+	/// @brief シーンの状態を表す。前方宣言
+	class ISceneState;
+
 	/// @brief SceneChangeComponent のリクエストをフェード付きで処理する。
 	class SceneChangeTransitionSystem final {
 	public:
+		SceneChangeTransitionSystem();
+		~SceneChangeTransitionSystem();
 		void Update(SCENE::SceneManager& sceneManager, float deltaTime);
-		float GetFadeAlpha() const { return fadeAlpha_; }
+		float GetFadeAlpha() const;
 
 	private:
-		enum class State {
-			Idle,
-			FadeOut,
-			FadeIn
-		};
-
-		State state_ = State::Idle;
-		std::string targetScenePath_;
-		float elapsedSeconds_ = 0.0f;
-		float fadeAlpha_ = 0.0f;
-		float fadeDurationSeconds_ = 0.5f;
+		std::unique_ptr<ISceneState> state_;
 	};
 }
