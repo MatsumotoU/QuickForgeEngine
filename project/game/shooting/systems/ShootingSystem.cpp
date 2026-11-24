@@ -6,6 +6,7 @@
 #include "game/shooting/components/AllShootingComponents.h"
 #include "components/TransformHierarchy.h"
 #include "framework/scene/CollisionTriggerSystem.h"
+#include "assetfactory/game-data/GameProjectPaths.h"
 
 #include <algorithm>
 #include <vector>
@@ -338,13 +339,12 @@ bool QFE::GAMESYSTEM::BulletUpdateSystem(
 bool QFE::GAMESYSTEM::CollisionSystem(
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
-	(void)resources;
 	(void)deltaTime;
 
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
 	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
 	QFE::FRAMEWORK::BeginCollisionTriggerFrame(entityManager);
-	std::vector<QFE::FRAMEWORK::ComponentParameterCommand> parameterCommands;
+	std::vector<QFE::FRAMEWORK::CollisionTriggerCommand> parameterCommands;
 
 	using namespace CollisionShapes;
 	std::vector<Shape> colliders;
@@ -382,7 +382,27 @@ bool QFE::GAMESYSTEM::CollisionSystem(
 		QFE::FRAMEWORK::NotifyCollisionTrigger(entityManager, ids.second, ids.first, masks.first, parameterCommands);
 	}
 	QFE::FRAMEWORK::EndCollisionTriggerFrame(entityManager, parameterCommands);
-	QFE::FRAMEWORK::ApplyComponentParameterCommands(entityManager, parameterCommands);
+	QFE::FRAMEWORK::ApplyCollisionTriggerCommands(entityManager, parameterCommands,
+		[&](const std::string& entityPath, uint32_t target) {
+			const auto toPath = [](const std::string& value) {
+				return std::filesystem::path(std::u8string(reinterpret_cast<const char8_t*>(value.data()), value.size()));
+			};
+			const auto base = toPath(resources.assetDir);
+			const auto relative = toPath(entityPath);
+			const auto path = base / relative;
+			if (relative.is_absolute() || !QFE::PROJECT::IsWithin(path, base)) return;
+			QFE::MATH::Vector3 position{};
+			const auto* transform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(target);
+			const bool hasPosition = transform != nullptr;
+			if (hasPosition) position = transform->transform.translate;
+			const auto utf8 = path.generic_u8string();
+			const uint32_t spawned = sceneManager->LoadEntityOnCurrentSceneFromJsonObject(
+				std::string(reinterpret_cast<const char*>(utf8.data()), utf8.size()));
+			if (hasPosition) {
+				if (auto* spawnedTransform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(spawned))
+					spawnedTransform->transform.translate = position;
+			}
+		});
 	return true;
 }
 

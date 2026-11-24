@@ -102,5 +102,6 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle = QFE::GRAPHIC::RenderTargetHandle::SwapChain;
 
 		QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIdentity4x4();
+		bool showColliders = true;
 	};
 }

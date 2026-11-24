@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <unordered_map>
 #include <nlohmann/json.hpp>
 
 #include "EngineDefines.h"
@@ -17,6 +18,10 @@ namespace QFE::SCENE {
 	/// @brief 他のコンポーネントの値をタイムラインで操作するコンポーネント。
 	/// tracks の形式は EventSystem.h のドキュメントを参照。
 	struct EventComponent {
+		struct TrackPlaybackState {
+			float currentTime = 0.0f;
+			bool playing = false;
+		};
 		bool playOnStart = false;
 		bool loop = false;
 		float playbackSpeed = 1.0f;
@@ -27,6 +32,7 @@ namespace QFE::SCENE {
 		bool playing = false;
 		bool initialized = false;
 		float currentTime = 0.0f;
+		std::unordered_map<size_t, TrackPlaybackState> trackPlayback;
 
 		QFE_REFLECT_BEGIN(EventComponent)
 			QFE_REFLECT_MEMBER(playOnStart)

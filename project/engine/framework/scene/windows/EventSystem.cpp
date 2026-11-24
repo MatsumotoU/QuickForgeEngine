@@ -76,44 +76,53 @@ namespace {
 		return true;
 	}
 
-	float GetDuration(const QFE::SCENE::EventComponent& eventComponent) {
+	float GetTrackDuration(const Json& track) {
 		float duration = 0.0f;
-		if (!eventComponent.tracks.is_array()) return duration;
-		for (const Json& track : eventComponent.tracks) {
-			if (!track.is_object() || !track.contains("keyframes") || !track["keyframes"].is_array()) continue;
-			for (const Json& keyframe : track["keyframes"]) {
-				if (keyframe.is_object() && keyframe.contains("time") && keyframe["time"].is_number()) {
-					duration = (std::max)(duration, keyframe["time"].get<float>());
-				}
+		if (!track.is_object() || !track.contains("keyframes") || !track["keyframes"].is_array()) return duration;
+		for (const Json& keyframe : track["keyframes"]) {
+			if (keyframe.is_object() && keyframe.contains("time") && keyframe["time"].is_number()) {
+				duration = (std::max)(duration, keyframe["time"].get<float>());
 			}
 		}
 		return duration;
 	}
 
+	float GetDuration(const QFE::SCENE::EventComponent& eventComponent) {
+		float duration = 0.0f;
+		if (!eventComponent.tracks.is_array()) return duration;
+		for (const Json& track : eventComponent.tracks) duration = (std::max)(duration, GetTrackDuration(track));
+		return duration;
+	}
+
+	void ApplyTrack(QFE::EntityManager& entityManager, uint32_t eventEntityId,
+		const Json& track, float time) {
+		if (!track.is_object()) return;
+		const std::string componentName = track.value("component", std::string{});
+		const std::string propertyPath = track.value("property", std::string{});
+		if (componentName.empty() || propertyPath.empty()) return;
+
+		Json value;
+		if (!EvaluateTrack(track, time, value)) return;
+
+		QFE::FRAMEWORK::ComponentParameterRequest request;
+		request.componentName = componentName;
+		request.propertyPath = propertyPath;
+		request.operation = QFE::FRAMEWORK::ParameterOperation::Set;
+		request.value = std::move(value);
+		const std::string targetUuid = track.value("targetUuid", std::string{});
+		if (!targetUuid.empty()) {
+			request.target = QFE::FRAMEWORK::ParameterTarget::EntityReference;
+			request.entity.uuid = targetUuid;
+		}
+		QFE::FRAMEWORK::ApplyComponentParameter(entityManager, eventEntityId, UINT32_MAX, request);
+	}
+
 	void ApplyEvent(QFE::EntityManager& entityManager, uint32_t eventEntityId,
 		const QFE::SCENE::EventComponent& eventComponent) {
 		if (!eventComponent.tracks.is_array()) return;
-		for (const Json& track : eventComponent.tracks) {
-			if (!track.is_object()) continue;
-			const std::string componentName = track.value("component", std::string{});
-			const std::string propertyPath = track.value("property", std::string{});
-			if (componentName.empty() || propertyPath.empty()) continue;
-
-			Json value;
-			if (!EvaluateTrack(track, eventComponent.currentTime, value)) continue;
-
-			QFE::FRAMEWORK::ComponentParameterRequest request;
-			request.componentName = componentName;
-			request.propertyPath = propertyPath;
-			request.operation = QFE::FRAMEWORK::ParameterOperation::Set;
-			request.value = std::move(value);
-			const std::string targetUuid = track.value("targetUuid", std::string{});
-			if (!targetUuid.empty()) {
-				request.target = QFE::FRAMEWORK::ParameterTarget::EntityReference;
-				request.entity.uuid = targetUuid;
-			}
-			QFE::FRAMEWORK::ApplyComponentParameter(
-				entityManager, eventEntityId, UINT32_MAX, request);
+		for (size_t i = 0; i < eventComponent.tracks.size(); ++i) {
+			if (!eventComponent.trackPlayback.contains(i))
+				ApplyTrack(entityManager, eventEntityId, eventComponent.tracks[i], eventComponent.currentTime);
 		}
 	}
 }
@@ -140,6 +149,27 @@ bool QFE::FRAMEWORK::IsEventPlaying(const EntityManager& entityManager, uint32_t
 	return eventComponent != nullptr && eventComponent->playing;
 }
 
+bool QFE::FRAMEWORK::PlayEventTrack(EntityManager& entityManager, uint32_t entityId, size_t trackIndex) {
+	auto* event = entityManager.GetComponentPtr<SCENE::EventComponent>(entityId);
+	if (!event || !event->tracks.is_array() || trackIndex >= event->tracks.size()) return false;
+	event->trackPlayback[trackIndex] = { 0.0f, true };
+	return true;
+}
+
+bool QFE::FRAMEWORK::ToggleEventTrack(EntityManager& entityManager, uint32_t entityId, size_t trackIndex) {
+	auto* event = entityManager.GetComponentPtr<SCENE::EventComponent>(entityId);
+	if (!event || !event->tracks.is_array() || trackIndex >= event->tracks.size()) return false;
+	auto [it, inserted] = event->trackPlayback.try_emplace(trackIndex);
+	if (inserted && (event->playing || (!event->initialized && event->playOnStart))) {
+		it->second.currentTime = event->currentTime;
+		it->second.playing = true;
+	}
+	if (!it->second.playing && GetTrackDuration(event->tracks[trackIndex]) > 0.0f &&
+		it->second.currentTime >= GetTrackDuration(event->tracks[trackIndex])) it->second.currentTime = 0.0f;
+	it->second.playing = !it->second.playing;
+	return true;
+}
+
 void QFE::FRAMEWORK::UpdateEventComponents(EntityManager& entityManager, float deltaTime) {
 	entityManager.Each<SCENE::EventComponent>(
 		[&](uint32_t entityId, SCENE::EventComponent& eventComponent) {
@@ -154,6 +184,7 @@ void QFE::FRAMEWORK::UpdateEventComponents(EntityManager& entityManager, float d
 			const uint32_t requests = eventComponent.requestFlags;
 			eventComponent.requestFlags = SCENE::EventRequestNone;
 			if ((requests & SCENE::EventRequestRestart) != 0) {
+				eventComponent.trackPlayback.clear();
 				eventComponent.currentTime = 0.0f;
 				eventComponent.playing = true;
 			} else {
@@ -161,25 +192,38 @@ void QFE::FRAMEWORK::UpdateEventComponents(EntityManager& entityManager, float d
 					eventComponent.playing = !eventComponent.playing;
 				}
 				if ((requests & SCENE::EventRequestPlay) != 0) {
+					eventComponent.trackPlayback.clear();
 					eventComponent.playing = true;
 				}
 				if ((requests & SCENE::EventRequestStop) != 0) {
 					eventComponent.playing = false;
+					for (auto& [index, state] : eventComponent.trackPlayback) {
+						(void)index;
+						state.playing = false;
+					}
 				}
 			}
-			if (!eventComponent.playing) return;
-
-			const float duration = GetDuration(eventComponent);
-			eventComponent.currentTime += (std::max)(0.0f, deltaTime) *
-				(std::max)(0.0f, eventComponent.playbackSpeed);
-			if (duration > 0.0f && eventComponent.currentTime > duration) {
-				if (eventComponent.loop) {
-					eventComponent.currentTime = std::fmod(eventComponent.currentTime, duration);
-				} else {
-					eventComponent.currentTime = duration;
-					eventComponent.playing = false;
+			const float elapsed = (std::max)(0.0f, deltaTime) * (std::max)(0.0f, eventComponent.playbackSpeed);
+			if (eventComponent.playing) {
+				const float duration = GetDuration(eventComponent);
+				eventComponent.currentTime += elapsed;
+				if (duration > 0.0f && eventComponent.currentTime > duration) {
+					if (eventComponent.loop) eventComponent.currentTime = std::fmod(eventComponent.currentTime, duration);
+					else { eventComponent.currentTime = duration; eventComponent.playing = false; }
 				}
+				ApplyEvent(entityManager, entityId, eventComponent);
 			}
-			ApplyEvent(entityManager, entityId, eventComponent);
+			for (auto& [index, state] : eventComponent.trackPlayback) {
+				if (!state.playing || !eventComponent.tracks.is_array() || index >= eventComponent.tracks.size()) continue;
+				const auto& track = eventComponent.tracks[index];
+				const float duration = GetTrackDuration(track);
+				state.currentTime += elapsed;
+				if (duration <= 0.0f) { state.currentTime = 0.0f; state.playing = false; }
+				else if (state.currentTime > duration) {
+					if (eventComponent.loop) state.currentTime = std::fmod(state.currentTime, duration);
+					else { state.currentTime = duration; state.playing = false; }
+				}
+				ApplyTrack(entityManager, entityId, track, state.currentTime);
+			}
 		});
 }
