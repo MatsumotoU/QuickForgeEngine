@@ -5,12 +5,13 @@
 
 #include "core/file/FileUtility.h"
 
-#include "window/GameWindowManager.h"
 #include "graphics/D3D12GraphicEngine.h"
 #include "graphics/interface/DirectXResourceFramework.h"
 #include "graphics/interface/DirectXRenderFramework.h"
 #include "gui/interface/IGuiManager.h"
 #include "framework/window/WindowCoreFrameWork.h"
+// Shutdown を呼ぶため、前方宣言だけでなくインターフェースの定義が必要。
+#include "window/interface/IGameWindowManager.h"
 #include "framework/graphic/GraphicEngineCoreFramework.h"
 #include "framework/gui/GuiCoreFramework.h"
 #include "input/interface/InputInterface.h"
@@ -341,15 +342,6 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 		QFE_REPORT_SYSTEM_ERROR("Failed to create GameWindowManager.",QFE::SystemError::Abort);
 		return false;
 	}
-	// メインウィンドウのハンドルを取得
-	const auto* gameWindowManager =
-		dynamic_cast<const QFE::WINDOW::GameWindowManager*>(outSystems.windowManager.get());
-	if (gameWindowManager == nullptr) {
-		QFE_REPORT_SYSTEM_ERROR("Failed to access the Windows game window manager.", QFE::SystemError::Abort);
-		return false;
-	}
-	const HWND mainWindow = gameWindowManager->GetMainWindow();
-
 	// ウィンドウのハンドルを取得してグラフィックエンジンを初期化
 	QFE::FRAMEWORK::GraphicEngineFeatureState graphicFeatures;
 	graphicFeatures.isTextureLoaderEnabled = true;
@@ -374,7 +366,9 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	}
 
 	// InputInterfaceの初期化
-	outSystems.inputInterface = QFE::FRAMEWORK::CreateInputInterface(mainWindow, hInstance);
+	// 入力の初期化に必要な Windows ハンドルは入力フレームワーク側で取得する。
+	(void)hInstance; // 既存の呼び出し元との互換性のため引数は維持する。
+	outSystems.inputInterface = QFE::FRAMEWORK::CreateInputInterface(*outSystems.windowManager);
 	// InputInterfaceの初期化に失敗した場合はエラーを報告して終了
 	if (outSystems.inputInterface == nullptr) {
 		QFE_REPORT_SYSTEM_ERROR("Failed to create InputInterface.", QFE::SystemError::Abort);

@@ -17,7 +17,7 @@
 #include <fstream>
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
-#include "input/interface/InputInterface.h"
+
 
 #include "assetfactory/model/AssimpModelLoader.h"
 

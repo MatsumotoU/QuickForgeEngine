@@ -41,7 +41,8 @@ namespace QFE::INPUT {
 	/** @brief 最初に押されたキーコードを取得 */
 	uint32_t WindowsInput::GetKeyCodeTrigger() {
 		for (uint32_t keyCode = 0; keyCode < 256; keyCode++) {
-			if (directInputManager_.keyboard_.GetPress(keyCode)) {
+			// 押し続けている間は返さず、押されたフレームだけを対象にする。
+			if (directInputManager_.keyboard_.GetTrigger(keyCode)) {
 				return keyCode;
 			}
 		}

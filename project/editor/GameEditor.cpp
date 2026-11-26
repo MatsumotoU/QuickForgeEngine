@@ -1,3 +1,7 @@
+// 間接的に Windows.h が先に読み込まれても std::min / std::max を妨げない。
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include "GameEditor.h"
 #include "ecs/entity/EntityManager.h"
 #include "framework/scene/SceneCoreFramework.h"
@@ -5,10 +9,6 @@
 
 #include <algorithm>
 
-#ifndef DIRECTINPUT_VERSION
-#define DIRECTINPUT_VERSION 0x0800
-#endif
-#include <dinput.h>
 
 using namespace QFE::EDITOR;
 
@@ -64,35 +64,35 @@ void QFE::EDITOR::GameEditor::Update(
 		!windowManager_.IsSceneGizmoCapturingMouse()) {
 		float moveSpeed = 0.3f;
 
-		if (inputInterface->GetMousePress(1)) {
+		if (QFE::FRAMEWORK::GetMousePress(inputInterface, 1)) {
 			// 移動処理
-			if (inputInterface->GetKeyPress("Up")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Up")) {
 				QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
 				resources.cameraTransform.translate += rotatedForward * moveSpeed;
 			}
-			if (inputInterface->GetKeyPress("Down")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Down")) {
 				QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
 				resources.cameraTransform.translate -= rotatedForward * moveSpeed;
 			}
-			if (inputInterface->GetKeyPress("Left")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Left")) {
 				QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
 				resources.cameraTransform.translate -= right * moveSpeed;
 			}
-			if (inputInterface->GetKeyPress("Right")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Right")) {
 				QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
 				resources.cameraTransform.translate += right * moveSpeed;
 			}
-			if (inputInterface->GetKeyPress(DIK_LCONTROL)) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, QFE::FRAMEWORK::InputKey::LeftControl)) {
 				resources.cameraTransform.translate.y -= moveSpeed;
 			}
-			if (inputInterface->GetKeyPress(DIK_SPACE)) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, QFE::FRAMEWORK::InputKey::Space)) {
 				resources.cameraTransform.translate.y += moveSpeed;
 			}
 		}
 
 		// 回転処理
-		if(inputInterface->GetMousePress(1)) {
-			QFE::MATH::Vector2 mouseMove = inputInterface->GetMouseMove();
+		if(QFE::FRAMEWORK::GetMousePress(inputInterface, 1)) {
+			QFE::MATH::Vector2 mouseMove = QFE::FRAMEWORK::GetMouseMove(inputInterface);
 			resources.cameraTransform.rotate.y += mouseMove.x * 0.02f;
 			resources.cameraTransform.rotate.x += mouseMove.y * 0.02f;
 		}

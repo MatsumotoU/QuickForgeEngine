@@ -2,6 +2,7 @@
 #include "CollisionShapes.h"
 
 #include "framework/scene/SceneCoreFramework.h"
+#include "framework/input/InputFrameWork.h"
 #include "components/AllComponent.h"
 #include "game/shooting/components/AllShootingComponents.h"
 #include "components/TransformHierarchy.h"
@@ -58,20 +59,20 @@ bool QFE::GAMESYSTEM::InputMovementSystem(
 
 			float horizontalInput = 0.0f;
 			float verticalInput = 0.0f;
-			if (!movement.rightActionName.empty() && inputInterface->GetKeyPress(movement.rightActionName)) {
+			if (!movement.rightActionName.empty() && QFE::FRAMEWORK::GetKeyPress(inputInterface, movement.rightActionName)) {
 				horizontalInput += 1.0f;
 			}
-			if (!movement.leftActionName.empty() && inputInterface->GetKeyPress(movement.leftActionName)) {
+			if (!movement.leftActionName.empty() && QFE::FRAMEWORK::GetKeyPress(inputInterface, movement.leftActionName)) {
 				horizontalInput -= 1.0f;
 			}
-			if (!movement.forwardActionName.empty() && inputInterface->GetKeyPress(movement.forwardActionName)) {
+			if (!movement.forwardActionName.empty() && QFE::FRAMEWORK::GetKeyPress(inputInterface, movement.forwardActionName)) {
 				verticalInput += 1.0f;
 			}
-			if (!movement.backwardActionName.empty() && inputInterface->GetKeyPress(movement.backwardActionName)) {
+			if (!movement.backwardActionName.empty() && QFE::FRAMEWORK::GetKeyPress(inputInterface, movement.backwardActionName)) {
 				verticalInput -= 1.0f;
 			}
 			if (movement.useGamePadLeftStick) {
-				const QFE::MATH::Vector2 stickInput = inputInterface->GetGamePadLeftStickDir();
+				const QFE::MATH::Vector2 stickInput = QFE::FRAMEWORK::GetGamePadLeftStickDir(inputInterface);
 				horizontalInput += stickInput.x;
 				verticalInput += stickInput.y;
 			}
@@ -179,34 +180,34 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 			float targetRotateZ = 0.0f;
 			float rotatePower = 1.0f;
 
-			if (inputInterface->GetKeyPress("Slow")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Slow")) {
 				speed *= 0.5f;
 				rotatePower *= 0.5f;
 			}
 
 			// プレイヤーの移動処理
-			if (inputInterface->GetKeyPress("Up")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Up")) {
 				shootingPlayerComp.velocity.z = speed * deltaTime;
 			}
-			if (inputInterface->GetKeyPress("Down")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Down")) {
 				shootingPlayerComp.velocity.z = -speed * deltaTime;
 			}
-			if (inputInterface->GetKeyPress("Left")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Left")) {
 
 				targetRotateZ = 0.7f;
 				shootingPlayerComp.velocity.x = -speed * deltaTime;
 			}
-			if (inputInterface->GetKeyPress("Right")) {
+			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Right")) {
 				targetRotateZ = -0.7f;
 				shootingPlayerComp.velocity.x = speed * deltaTime;
 			}
 
-			if (inputInterface->GetKeyTrigger("Left")) {
+			if (QFE::FRAMEWORK::GetKeyTrigger(inputInterface, "Left")) {
 				if (playerTransform.rotate.z < -0.6f) {
 					playerTransform.rotate.z = -3.0f;
 				}
 			}
-			if (inputInterface->GetKeyTrigger("Right")) {
+			if (QFE::FRAMEWORK::GetKeyTrigger(inputInterface, "Right")) {
 				if (playerTransform.rotate.z > 0.6f) {
 					playerTransform.rotate.z = 3.0f;
 				}
@@ -648,13 +649,13 @@ bool QFE::GAMESYSTEM::BulletEmitterTriggerSystem(
 					if (!trigger.inputActionName.empty()) {
 						switch (triggerMode) {
 						case QFE::STG::BulletEmitterInputTrigger:
-							active |= inputInterface->GetKeyTrigger(trigger.inputActionName);
+							active |= QFE::FRAMEWORK::GetKeyTrigger(inputInterface, trigger.inputActionName);
 							break;
 						case QFE::STG::BulletEmitterInputRelease:
-							active |= inputInterface->GetKeyRelease(trigger.inputActionName);
+							active |= QFE::FRAMEWORK::GetKeyRelease(inputInterface, trigger.inputActionName);
 							break;
 						default:
-							active |= inputInterface->GetKeyPress(trigger.inputActionName);
+							active |= QFE::FRAMEWORK::GetKeyPress(inputInterface, trigger.inputActionName);
 							break;
 						}
 					}
@@ -662,13 +663,13 @@ bool QFE::GAMESYSTEM::BulletEmitterTriggerSystem(
 						const int8_t mouseButton = static_cast<int8_t>(trigger.mouseButton);
 						switch (triggerMode) {
 						case QFE::STG::BulletEmitterInputTrigger:
-							active |= inputInterface->GetMouseTrigger(mouseButton);
+							active |= QFE::FRAMEWORK::GetMouseTrigger(inputInterface, mouseButton);
 							break;
 						case QFE::STG::BulletEmitterInputRelease:
-							active |= inputInterface->GetMouseRelease(mouseButton);
+							active |= QFE::FRAMEWORK::GetMouseRelease(inputInterface, mouseButton);
 							break;
 						default:
-							active |= inputInterface->GetMousePress(mouseButton);
+							active |= QFE::FRAMEWORK::GetMousePress(inputInterface, mouseButton);
 							break;
 						}
 					}
@@ -676,13 +677,13 @@ bool QFE::GAMESYSTEM::BulletEmitterTriggerSystem(
 						const uint16_t gamePadButton = static_cast<uint16_t>(trigger.gamePadButton);
 						switch (triggerMode) {
 						case QFE::STG::BulletEmitterInputTrigger:
-							active |= inputInterface->GetGamePadTrigger(gamePadButton);
+							active |= QFE::FRAMEWORK::GetGamePadTrigger(inputInterface, gamePadButton);
 							break;
 						case QFE::STG::BulletEmitterInputRelease:
-							active |= inputInterface->GetGamePadRelease(gamePadButton);
+							active |= QFE::FRAMEWORK::GetGamePadRelease(inputInterface, gamePadButton);
 							break;
 						default:
-							active |= inputInterface->GetGamePadPress(gamePadButton);
+							active |= QFE::FRAMEWORK::GetGamePadPress(inputInterface, gamePadButton);
 							break;
 						}
 					}
