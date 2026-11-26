@@ -3,12 +3,6 @@
 #include "game/shooting/components/ShootingComponentRegistration.h"
 #include "game/shooting/systems/ShootingSystem.h"
 
-#include "framework/animation/AnimationSystem.h"
-#include "framework/scene/EventSystem.h"
-#include "framework/scene/SceneChangeSystem.h"
-#include "framework/scene/SplineMovementSystem.h"
-#include "framework/scene/SceneCoreFramework.h"
-
 #define QFE_GAME_EXPORT extern "C" __declspec(dllexport)
 
 QFE_GAME_EXPORT uint32_t QFE_GetGameModuleApiVersion() {
@@ -23,9 +17,7 @@ QFE_GAME_EXPORT void QFE_UpdateGame(
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 	QFE::FRAMEWORK::WindowsEngineResources& resources,
 	float deltaTime) {
-	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
-	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(sceneManager);
-
+	// ゲーム固有の処理だけを更新し、シーン共通処理はフレームワーク側に任せる。
 	QFE::GAMESYSTEM::AutoScrollSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::InputMovementSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::PhysicsComponentSystem(systems, resources, deltaTime);
@@ -35,11 +27,7 @@ QFE_GAME_EXPORT void QFE_UpdateGame(
 	QFE::GAMESYSTEM::BulletEmitterSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::BulletUpdateSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::CollisionSystem(systems, resources, deltaTime);
-	QFE::FRAMEWORK::UpdateEventComponents(entityManager, deltaTime);
-	QFE::FRAMEWORK::UpdateAnimationComponents(entityManager, deltaTime);
 	QFE::GAMESYSTEM::MoveLimitSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::PlayerTrackingSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::EnemySpawnerSystem(systems, resources, deltaTime);
-	QFE::FRAMEWORK::UpdateSplineMovement(entityManager, deltaTime);
-	systems.sceneChangeTransition.Update(sceneManager, deltaTime);
 }

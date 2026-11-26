@@ -69,7 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		engineResources.windowName,
 		engineResources.windowWidth, engineResources.windowHeight,
 		engineSystems,
-		gameModule.GetComponentRegistrationFunction(), engineResources.config.scriptDir)) {
+		gameModule.GetComponentRegistrationFunction())) {
 		return -1;
 	}
 	if (!engineConfigLoaded) QFE::DebugLog("Failed to load EngineConfig.json; using defaults.", QFE::LogLevel::Warning);
@@ -86,8 +86,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	// プロジェクトのアセット管理を開いてからモデルローダーを初期化する。
 	std::string assetError;
 	if (!QFE::FRAMEWORK::InitializeProjectAssets(projectRoot, *engineSystems.assetManager,
-		*engineSystems.modelLoader, *engineSystems.luaScriptSystem, engineResources.assetDir,
-		engineResources.modelDir, engineResources.config.scriptDir, assetError)) {
+		*engineSystems.modelLoader, engineResources.assetDir,
+		engineResources.modelDir, assetError)) {
 		QFE_LOG("Failed to open asset registry: " + assetError, QFE::LogLevel::Error);
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 		return -1;

@@ -2,9 +2,11 @@
 #include "SceneManager.h"
 #include "file/FileUtility.h"
 #include "ecs/component/EntityUuid.h"
+#include "components/TransformComponent.h"
 
 #include <unordered_map>
 #include <fstream>
+#include <functional>
 #include <utility>
 #include <vector>
 
@@ -115,6 +117,11 @@ void QFE::SCENE::SceneObject::BindComponentRegistryAfterReload(
 }
 
 uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& filePath) {
+	return AppendSceneFromJson(filePath, { 0.0f, 0.0f, 0.0f });
+}
+
+uint32_t QFE::SCENE::SceneObject::AppendSceneFromJson(
+	const std::string& filePath, const QFE::MATH::Vector3& origin) {
 	// ファイルが更新されていた場合はキャッシュを読み直す。
 	const std::filesystem::path osPath(std::u8string(
 		reinterpret_cast<const char8_t*>(filePath.data()), filePath.size()));
@@ -202,8 +209,19 @@ uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& fi
 		*uuidIt = newUuid;
 	}
 
+	// EventComponent の targetUuid など、親以外の内部参照も複製先へ付け替える。
+	const std::function<void(nlohmann::json&)> remapReferences = [&](nlohmann::json& value) {
+		if (value.is_string()) {
+			const auto found = uuidRemapping.find(value.get<std::string>());
+			if (found != uuidRemapping.end()) value = found->second;
+		} else if (value.is_array() || value.is_object()) {
+			for (auto& child : value) remapReferences(child);
+		}
+	};
+
 	uint32_t firstEntityId = UINT32_MAX;
 	for (nlohmann::json& components : componentSets) {
+		bool hasInternalParent = false;
 		auto parentComponentIt = components.find("ParentComponent");
 		if (parentComponentIt != components.end() && parentComponentIt->is_object()) {
 			auto parentIt = parentComponentIt->find("parent");
@@ -211,6 +229,7 @@ uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& fi
 				if (parentIt->is_string()) {
 					auto remapped = uuidRemapping.find(parentIt->get<std::string>());
 					if (remapped != uuidRemapping.end()) {
+						hasInternalParent = true;
 						*parentIt = remapped->second;
 					}
 				} else if (parentIt->is_object()) {
@@ -218,6 +237,7 @@ uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& fi
 					if (parentUuidIt != parentIt->end() && parentUuidIt->is_string()) {
 						auto remapped = uuidRemapping.find(parentUuidIt->get<std::string>());
 						if (remapped != uuidRemapping.end()) {
+							hasInternalParent = true;
 							*parentUuidIt = remapped->second;
 						}
 					}
@@ -225,9 +245,19 @@ uint32_t QFE::SCENE::SceneObject::LoadEntityFromJsonObject(const std::string& fi
 			}
 		}
 
+		remapReferences(components);
+
 		// 追加なので保存時のEntity IDは再利用せず、現在のシーンで新規作成する。
 		const uint32_t entityId = entityManager_.CreateEntity();
 		entityManager_.DeserializeEntityComponents(entityId, components);
+		// 内部の親が移動する子には加算せず、元の相対位置を保つ。
+		if (!hasInternalParent && (origin.x != 0.0f || origin.y != 0.0f || origin.z != 0.0f)) {
+			auto* transform = entityManager_.GetComponentPtr<QFE::SCENE::TransformComponent>(entityId);
+			if (transform == nullptr) {
+				transform = &entityManager_.AddDefaultComponent<QFE::SCENE::TransformComponent>(entityId);
+			}
+			transform->transform.translate += origin;
+		}
 		if (firstEntityId == UINT32_MAX) {
 			firstEntityId = entityId;
 		}

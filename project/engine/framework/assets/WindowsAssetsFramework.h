@@ -6,7 +6,6 @@ namespace QFE::ASSET { class AssetManager; class ModelLoader; }
 namespace QFE::SCENE { class SceneManager; }
 
 namespace QFE::FRAMEWORK {
-	class LuaScriptSystem;
 	/// @brief 指定のパスにプロジェクトのアセットディレクトリを作成する。
 	/// @param projectPath プロジェクトのルート。
 	/// @param assetsPath アセットのルート。相対パスの場合は projectPath を基準にする。
@@ -17,8 +16,8 @@ namespace QFE::FRAMEWORK {
 	std::filesystem::path InitializeProjectStartupScene(const std::filesystem::path& projectPath,
 		const SCENE::SceneManager& sceneManager);
 
-	/// @brief プロジェクトのアセットとスクリプトの参照先を初期化する。
+	/// @brief プロジェクトのアセットの参照先を初期化する。
 	bool InitializeProjectAssets(const std::filesystem::path& projectPath,
-		ASSET::AssetManager& assets, ASSET::ModelLoader& models, LuaScriptSystem& scripts,
-		std::string& assetDir, std::string& modelDir, std::string& scriptDir, std::string& error);
+		ASSET::AssetManager& assets, ASSET::ModelLoader& models,
+		std::string& assetDir, std::string& modelDir, std::string& error);
 }

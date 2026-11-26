@@ -27,3 +27,5 @@
 #include "BGMComponent.h"
 #include "SEComponent.h"
 #include "SceneChangeComponent.h"
+#include "SceneSpawnComponent.h"
+#include "SceneControlComponent.h"

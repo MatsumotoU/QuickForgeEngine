@@ -13,6 +13,7 @@ nlohmann::json QFE::FRAMEWORK::ReadSceneJson(SCENE::SceneManager& scene, const s
 QFE::SCENE::SceneSnapshot QFE::FRAMEWORK::CaptureScene(SCENE::SceneManager& scene) { return scene.CreateSnapshot(); }
 bool QFE::FRAMEWORK::RestoreScene(SCENE::SceneManager& scene, const SCENE::SceneSnapshot& snapshot) { return scene.RestoreSnapshot(snapshot); }
 uint32_t QFE::FRAMEWORK::LoadSceneEntity(SCENE::SceneManager& scene, const std::string& path) { return scene.LoadEntityOnCurrentSceneFromJsonObject(path); }
+uint32_t QFE::FRAMEWORK::AppendScene(SCENE::SceneManager& scene, const std::string& path, const QFE::MATH::Vector3& origin) { return scene.AppendScene(path, origin); }
 #include "framework/scene/SceneCoreFramework.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"

@@ -369,7 +369,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
 			normalizeDir(engineConfig_.assetDir); normalizeDir(engineConfig_.modelDir);
 			normalizeDir(engineConfig_.psDirName); normalizeDir(engineConfig_.vsDirName);
 			normalizeDir(engineConfig_.csDirName); normalizeDir(engineConfig_.rtDirName);
-			if (engineConfig_.assetDir.empty() || engineConfig_.modelDir.empty() || engineConfig_.scriptDir.empty() ||
+			if (engineConfig_.assetDir.empty() || engineConfig_.modelDir.empty() ||
 				engineConfig_.psDirName.empty() || engineConfig_.vsDirName.empty() ||
 				engineConfig_.csDirName.empty() || engineConfig_.rtDirName.empty() ||
 				engineConfig_.editorWindowName.empty() || engineConfig_.runtimeWindowName.empty()) {

@@ -16,7 +16,6 @@ namespace QFE::FRAMEWORK {
 		std::string runtimeWindowName = "ShootingGameRuntime";
 		std::string assetDir = "resources/";
 		std::string modelDir = "resources/";
-		std::string scriptDir = "resources/Scripts";
 		std::string psDirName = "engine/resources/shaders/ps/";
 		std::string vsDirName = "engine/resources/shaders/vs/";
 		std::string csDirName = "engine/resources/shaders/cs/";
@@ -45,7 +44,6 @@ namespace QFE::FRAMEWORK {
 				number("WindowHeight", windowHeight, 8192);
 				str("EditorWindowName", editorWindowName); str("RuntimeWindowName", runtimeWindowName);
 				str("AssetDir", assetDir); str("ModelDir", modelDir);
-				str("ScriptDir", scriptDir);
 				str("PixelShaderDir", psDirName); str("VertexShaderDir", vsDirName);
 				str("ComputeShaderDir", csDirName); str("RayTracingShaderDir", rtDirName);
 				auto normalizeDir = [](std::string& dir) {
@@ -68,7 +66,6 @@ namespace QFE::FRAMEWORK {
 			json["WindowWidth"] = windowWidth; json["WindowHeight"] = windowHeight;
 			json["EditorWindowName"] = editorWindowName; json["RuntimeWindowName"] = runtimeWindowName;
 			json["AssetDir"] = assetDir; json["ModelDir"] = modelDir;
-			json["ScriptDir"] = scriptDir;
 			json["PixelShaderDir"] = psDirName; json["VertexShaderDir"] = vsDirName;
 			json["ComputeShaderDir"] = csDirName; json["RayTracingShaderDir"] = rtDirName;
 			std::ofstream file(path, std::ios::trunc);

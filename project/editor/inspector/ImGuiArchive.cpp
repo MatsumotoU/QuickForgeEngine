@@ -4,13 +4,16 @@
 #include "components/SplineControlPoint.h"
 #include "components/TransformHierarchy.h"
 #include "framework/assets/AssetsCoreFramework.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "components/ModelRenderComponent.h"
 #include "components/SpriteRenderComponent.h"
 #include "components/ParticleEmitterComponent.h"
 #include "components/SkyBoxComponent.h"
 #include "components/EventComponent.h"
+#include "components/SceneSpawnComponent.h"
 
 #include <filesystem>
+#include <string_view>
 #include <utility>
 
 namespace {
@@ -114,6 +117,24 @@ namespace {
 			if (selected) {
 				ImGui::SetItemDefaultFocus();
 			}
+		}
+		ImGui::EndCombo();
+	}
+
+	void DrawSceneAssetCombo(const std::string& label, std::string& value) {
+		const bool valid = !QFE::FRAMEWORK::ResolveSceneSpawnAsset(value).empty();
+		const std::string preview = valid ? value : "Unfilled";
+		if (!ImGui::BeginCombo(label.c_str(), preview.c_str())) return;
+		if (ImGui::Selectable("Unfilled", value.empty())) value.clear();
+		// 実在する scenes 内のアセットに限定し、失われた参照は勝手に置き換えない。
+		for (const auto& asset : FindResourceFiles({ ".scene", ".json" }, false)) {
+			constexpr std::string_view prefix = "scenes/";
+			if (!asset.starts_with(prefix)) continue;
+			const std::string relativePath = asset.substr(prefix.size());
+			if (QFE::FRAMEWORK::ResolveSceneSpawnAsset(relativePath).empty()) continue;
+			const bool selected = valid && value == relativePath;
+			if (ImGui::Selectable(relativePath.c_str(), selected)) value = relativePath;
+			if (selected) ImGui::SetItemDefaultFocus();
 		}
 		ImGui::EndCombo();
 	}
@@ -462,6 +483,12 @@ namespace {
 				track["component"] = component;
 				DrawEventPropertyPathCombo(property, targetUuid, component, entityManager, entityId);
 				track["property"] = property;
+				// 生成対象の選択と生成要求は別なので、イベント設定時に違いを示す。
+				if (component == "SceneSpawnComponent" && property == "spawnAll") {
+					ImGui::TextWrapped("Spawn All selects every scene. To spawn, set Request to true in a track.");
+				} else if (component == "SceneSpawnComponent" && property == "request") {
+					ImGui::TextWrapped("Set Request to true to spawn. Set it to false before triggering again.");
+				}
 
 				nlohmann::json memberValue;
 				const bool hasMemberType = TryGetEventPropertyValue(
@@ -577,7 +604,7 @@ namespace {
 			if (ImGui::TreeNode(header.c_str())) {
 				DrawStringCombo("Timing", action, "timing", { "Enter", "Stay", "Exit" }, "Enter");
 				DrawStringCombo("Action Type", action, "type",
-					{ "PlayTrack", "ToggleTrack", "Destroy", "Spawn", "Parameter" }, "Parameter");
+					{ "PlayTrack", "ToggleTrack", "Destroy", "Spawn", "SceneSpawn", "Parameter" }, "Parameter");
 				const std::string type = action.value("type", std::string("Parameter"));
 				DrawStringCombo("Target", action, "target",
 					{ "Self", "Other", "EntityReference" }, "Self");
@@ -619,6 +646,32 @@ namespace {
 						if (ImGui::InputInt("Track Index", &index)) action["trackIndex"] = (std::max)(0, index);
 						ImGui::TextDisabled(target == "Other" ? "Index on the other object's EventComponent" : "Target has no EventComponent");
 					}
+				} else if (type == "SceneSpawn") {
+					bool all = action.value("spawnAll", false);
+					if (ImGui::Checkbox("Spawn All Scenes", &all)) action["spawnAll"] = all;
+					if (!all) {
+						int index = action.value("sceneIndex", 0);
+						uint32_t targetId = entityId;
+						const auto target = action.value("target", std::string("Self"));
+						bool resolved = entityManager && target != "Other";
+						if (resolved && target == "EntityReference")
+							resolved = QFE::SCENE::TryGetEntityIdByUuid(*entityManager, action.value("targetUuid", std::string{}), targetId);
+						const auto* spawner = resolved ? entityManager->GetComponentPtr<QFE::SCENE::SceneSpawnComponent>(targetId) : nullptr;
+						if (spawner) {
+							const std::string preview = index >= 0 && static_cast<size_t>(index) < spawner->scenePaths.size()
+								? std::to_string(index) + ": " + spawner->scenePaths[index] : "Unfilled";
+							if (ImGui::BeginCombo("Scene", preview.c_str())) {
+								for (size_t i = 0; i < spawner->scenePaths.size(); ++i) {
+									const std::string label = std::to_string(i) + ": " + spawner->scenePaths[i];
+									if (ImGui::Selectable(label.c_str(), index == static_cast<int>(i))) action["sceneIndex"] = i;
+								}
+								ImGui::EndCombo();
+							}
+						} else {
+							if (ImGui::InputInt("Scene Index", &index)) action["sceneIndex"] = (std::max)(0, index);
+							ImGui::TextDisabled(target == "Other" ? "Index on the other object's SceneSpawnComponent" : "Target has no SceneSpawnComponent");
+						}
+					}
 				} else if (type == "Spawn") {
 					std::string path = action.value("entityPath", std::string{});
 					if (ImGui::BeginCombo("Entity Prefab", path.empty() ? "Select Entity" : path.c_str())) {
@@ -646,6 +699,10 @@ QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t e
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, bool& value) {
 	ImGui::Checkbox(MakeLabel(name).c_str(), &value);
+	if (componentType_ == "SceneSpawnComponent" && ImGui::IsItemHovered()) {
+		if (name == "spawnAll") ImGui::SetTooltip("Selects all scenes; does not trigger spawning.");
+		else if (name == "request") ImGui::SetTooltip("Set true to spawn. Set false before triggering again.");
+	}
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, float& value) {
@@ -657,10 +714,29 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, int32_t& value)
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, uint32_t& value) {
+	if (componentType_ == "SceneSpawnComponent" && name == "selectedSceneIndex" && entityManager_) {
+		const auto* spawner = entityManager_->GetComponentPtr<QFE::SCENE::SceneSpawnComponent>(entityId_);
+		if (spawner) {
+			const std::string preview = value < spawner->scenePaths.size()
+				? std::to_string(value) + ": " + spawner->scenePaths[value] : "Unfilled";
+			if (ImGui::BeginCombo("Selected Scene", preview.c_str())) {
+				for (size_t index = 0; index < spawner->scenePaths.size(); ++index) {
+					const std::string label = std::to_string(index) + ": " + spawner->scenePaths[index];
+					if (ImGui::Selectable(label.c_str(), value == index)) value = static_cast<uint32_t>(index);
+				}
+				ImGui::EndCombo();
+			}
+			return;
+		}
+	}
 	ImGui::DragScalar(MakeLabel(name).c_str(), ImGuiDataType_U32, &value, 1.0f);
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& value) {
+	if (componentType_ == "SceneControlComponent" && name == "scenePath") {
+		DrawSceneAssetCombo(MakeLabel(name), value);
+		return;
+	}
 	if (name == "modelName") {
 		auto options = QFE::FRAMEWORK::ASSETS::GetPrimitiveMeshNames();
 		const auto files = FindResourceFiles({ ".obj", ".glb" }, false);
@@ -698,6 +774,22 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& va
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::vector<std::string>& value) {
+	if (componentType_ == "SceneSpawnComponent" && name == "scenePaths") {
+		ImGui::PushID(name.c_str());
+		ImGui::TextUnformatted("Scenes");
+		size_t removeIndex = value.size();
+		for (size_t index = 0; index < value.size(); ++index) {
+			ImGui::PushID(static_cast<int>(index));
+			DrawSceneAssetCombo("Scene " + std::to_string(index), value[index]);
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Remove")) removeIndex = index;
+			ImGui::PopID();
+		}
+		if (removeIndex < value.size()) value.erase(value.begin() + static_cast<std::ptrdiff_t>(removeIndex));
+		if (ImGui::Button("Add Scene")) value.emplace_back();
+		ImGui::PopID();
+		return;
+	}
 	ImGui::PushID(name.c_str());
 	ImGui::TextUnformatted(MakeLabel(name).c_str());
 	int sceneToRemove = -1;

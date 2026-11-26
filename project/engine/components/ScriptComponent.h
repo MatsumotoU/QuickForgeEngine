@@ -4,9 +4,9 @@
 #include "EngineDefines.h"
 
 namespace QFE::SCENE {
-	/// @brief スクリプトコンポーネントの情報を保持する構造体
+	/// @brief 旧シーンのデータ保持用。Lua 実行機能は削除済み。
 	struct ScriptComponent {
-		/// @brief resources/Scriptsからの相対Luaファイル名。
+		/// @brief 以前設定されたスクリプト名。現在は実行されない。
 		/// @note 旧DLLスクリプトとのシーン互換性を維持するためメンバー名はそのままにしている。
 		std::string scriptFunctionName;
 		bool enabled = true;

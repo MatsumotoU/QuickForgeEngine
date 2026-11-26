@@ -3,7 +3,6 @@
 #include "assetfactory/game-data/GameProjectPaths.h"
 #include "assetfactory/model/ModelLoader.h"
 #include "core/string/MyString.h"
-#include "framework/application/LuaScriptSystem.h"
 #include "scene/SceneManager.h"
 #include <fstream>
 #include <stdexcept>
@@ -17,17 +16,14 @@ void QFE::FRAMEWORK::CreateProjectAssets(const std::filesystem::path& projectPat
 }
 
 bool QFE::FRAMEWORK::InitializeProjectAssets(const std::filesystem::path& projectPath,
-	ASSET::AssetManager& assets, ASSET::ModelLoader& models, LuaScriptSystem& scripts,
-	std::string& assetDir, std::string& modelDir, std::string& scriptDir, std::string& error)
+	ASSET::AssetManager& assets, ASSET::ModelLoader& models,
+	std::string& assetDir, std::string& modelDir, std::string& error)
 {
 	if (!assets.Open(projectPath, error)) return false;
 	models.Initialize();
 	const auto projectAssets = projectPath / "assets";
 	assetDir = QFE::ConvertString(projectAssets.wstring()) + "/";
 	modelDir = assetDir;
-	scriptDir = QFE::ConvertString((projectAssets / "scripts").wstring());
-	scripts.Reset();
-	scripts.Initialize(std::filesystem::path(QFE::ConvertString(scriptDir)));
 	return true;
 }
 

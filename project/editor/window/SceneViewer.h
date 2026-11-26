@@ -1,5 +1,6 @@
 #pragma once
 #include "IEditorWindow.h"
+#include "GridPlacement.h"
 #include "math/MathInclude.h"
 #include <imgui/imgui.h>
 #include <ImGuizmo-1.83/ImGuizmo.h>
@@ -42,6 +43,8 @@ namespace QFE::EDITOR {
 	private:
 		void DrawGizmo(std::set<uint32_t>& selectedEntities, EditorCommandList& commandList);
 		void DrawGizmoToolbar(bool imageHovered);
+		void DrawGridControls();
+		void DrawPlacementGrid(const ImVec2& imagePosition, const ImVec2& imageSize);
 
 		SCENE::SceneManager* sceneManager_;
 		ImTextureID sceneTextureId_;
@@ -59,5 +62,6 @@ namespace QFE::EDITOR {
 		QFE::MATH::Matrix4x4 projectionMatrix_;
 		QFE::MATH::Matrix4x4 dropViewProjection_ = MATH::Matrix4x4::MakeIdentity4x4();
 		QFE::MATH::EulerTransform transformBeforeEdit_;
+		GridPlacement grid_;
 	};
 }

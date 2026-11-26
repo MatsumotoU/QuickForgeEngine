@@ -17,6 +17,8 @@ namespace {
 		QFE::EntityManager* entityManager,
 		QFE::EDITOR::EditorCommandList& commandList) {
 		for (const std::string& componentTypeName : componentTypeNames) {
+			// 旧シーンの保存互換用であり、新しいエンティティには追加しない。
+			if (componentTypeName == "ScriptComponent") continue;
 			if (existingComponentTypeNames.contains(componentTypeName)) {
 				continue;
 			}

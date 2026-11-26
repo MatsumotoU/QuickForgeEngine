@@ -42,11 +42,12 @@ namespace QFE::FRAMEWORK {
 		uint32_t mainWindowWidth,
 		uint32_t mainWindowHeight,
 		WindowsQuickForgeEngineSystems& outSystems,
-		ComponentRegistrationCallback registerApplicationComponents = nullptr,
-		const std::string& scriptDir = "resources/Scripts");
+		ComponentRegistrationCallback registerApplicationComponents = nullptr);
 
 	/// @brief 入力とフレーム計測を開始する。
 	bool BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems);
+	/// @brief 現在のシーンのエンジン共通イベント・生成・アニメーション・遷移を更新する。
+	void UpdateWindowsSceneSystems(WindowsQuickForgeEngineSystems& systems, float deltaTime);
 	/// @brief シーン、入力、描画、フレーム計測の終了処理を行う。
 	void EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources* resources = nullptr);
 	/// @brief 各エンジンシステムを依存関係の逆順で終了する。
