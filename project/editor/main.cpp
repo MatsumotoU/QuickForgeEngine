@@ -12,7 +12,7 @@
 #include "framework/input/InputFrameWork.h"
 
 
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "game/shooting-editor/ShootingInspectorRegistration.h"
 #include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
@@ -95,7 +95,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	auto& graphicEngine = engineSystems.graphicEngine;
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
 	try {
-		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString(startupScene.wstring()));
+		QFE::FRAMEWORK::LoadScene(sceneManager, QFE::ConvertString(startupScene.wstring()));
 	} catch (const std::exception& error) {
 		QFE_LOG(std::string("Failed to load startup scene: ") + error.what(), QFE::LogLevel::Error);
 		MessageBoxW(nullptr, L"Could not load the project's startup scene.", L"QuickForge", MB_OK | MB_ICONERROR);

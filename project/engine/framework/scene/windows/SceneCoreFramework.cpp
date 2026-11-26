@@ -1,4 +1,19 @@
-#include "framework/scene/SceneFrameWork.h"
+#include "framework/scene/SceneCoreFramework.h"
+
+// アプリケーションからの操作をここで受け、モジュールへの依存を吸収する。
+void QFE::FRAMEWORK::InitializeScene(SCENE::SceneManager& scene) { scene.Initialize(); }
+uint32_t QFE::FRAMEWORK::CreateSceneCamera(SCENE::SceneManager& scene) { return scene.CreateCameraEntity(); }
+uint32_t QFE::FRAMEWORK::CreateSceneDirectionalLight(SCENE::SceneManager& scene) { return scene.CreateDirectionalLightEntity(); }
+QFE::EntityManager& QFE::FRAMEWORK::GetSceneEntities(SCENE::SceneManager& scene) { return scene.GetCurrentSceneEntityManager(); }
+const std::string& QFE::FRAMEWORK::GetScenePath(const SCENE::SceneManager& scene) { return scene.GetCurrentScenePath(); }
+void QFE::FRAMEWORK::LoadScene(SCENE::SceneManager& scene, const std::string& path) { scene.LoadCurrentSceneFromJson(path); }
+bool QFE::FRAMEWORK::LoadScene(SCENE::SceneManager& scene, const nlohmann::json& data) { return scene.LoadCurrentSceneFromJson(data); }
+void QFE::FRAMEWORK::SaveScene(SCENE::SceneManager& scene, const std::string& path) { scene.SaveCurrentSceneToJson(path); }
+nlohmann::json QFE::FRAMEWORK::ReadSceneJson(SCENE::SceneManager& scene, const std::string& path) { return scene.LoadCurrentSceneToJson(path); }
+QFE::SCENE::SceneSnapshot QFE::FRAMEWORK::CaptureScene(SCENE::SceneManager& scene) { return scene.CreateSnapshot(); }
+bool QFE::FRAMEWORK::RestoreScene(SCENE::SceneManager& scene, const SCENE::SceneSnapshot& snapshot) { return scene.RestoreSnapshot(snapshot); }
+uint32_t QFE::FRAMEWORK::LoadSceneEntity(SCENE::SceneManager& scene, const std::string& path) { return scene.LoadEntityOnCurrentSceneFromJsonObject(path); }
+#include "framework/scene/SceneCoreFramework.h"
 #include "scene/SceneManager.h"
 #include "components/AllComponent.h"
 #include "components/TransformHierarchy.h"
@@ -117,3 +132,4 @@ void QFE::FRAMEWORK::DrawSceneSprites(
 			vertexBufferHandle, rootResources, { renderTarget });
 	}
 }
+

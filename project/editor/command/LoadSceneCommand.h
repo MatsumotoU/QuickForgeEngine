@@ -1,6 +1,6 @@
 #pragma once
 #include "IEditorCommand.h"
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include <cstdint>
 #include <vector>
 #include <string>

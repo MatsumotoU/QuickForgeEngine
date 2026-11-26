@@ -4,7 +4,7 @@
 #include "framework/window/WindowDialogFramework.h"
 #include "window/interface/IGameWindowManager.h"
 
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "ecs/entity/EntityManager.h"
 #include "components/TransformComponent.h"
 #include "components/ObjectInfoComponent.h"
@@ -122,7 +122,7 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 			projectName_ = name->get<std::string>();
 		}
 	} catch (const nlohmann::json::exception&) { }
-    EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+    EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 	editorWindowsMap_.clear();
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager, assetManager);
 	editorWindowsMap_[EditorWindowType::Inspector] =
@@ -216,7 +216,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
         if (ImGui::BeginMenu("File")) {
             // 新規シーン
             if (ImGui::MenuItem("New Scene", nullptr)) {
-                sceneManager_->Initialize();
+                QFE::FRAMEWORK::InitializeScene(*sceneManager_);
             }
 
             // ロード
@@ -267,7 +267,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
                         QFE_LOG("Load entities from the current project's assets directory.");
                     } else {
                         const uint32_t firstEntityId =
-                            sceneManager_->LoadEntityOnCurrentSceneFromJsonObject(QFE::ConvertString(selectedFilePath));
+                            QFE::FRAMEWORK::LoadSceneEntity(*sceneManager_, QFE::ConvertString(selectedFilePath));
                         if (firstEntityId == UINT32_MAX) {
                             QFE_LOG("Failed to add saved entities to the current scene.");
                         }
@@ -329,7 +329,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
 
             ImGui::EndMenu();
 		}
-		const auto& scenePath = sceneManager_->GetCurrentScenePath();
+		const auto& scenePath = QFE::FRAMEWORK::GetScenePath(*sceneManager_);
 		const std::string sceneName = scenePath.empty() ? "Untitled" :
 			QFE::ConvertString(std::filesystem::path(QFE::ConvertString(scenePath)).filename().wstring());
 		ImGui::Separator();
@@ -420,7 +420,7 @@ void QFE::EDITOR::EditorWindowManager::SaveSelectedEntities() {
 	savedEntities["entities"] = nlohmann::json::array();
 	for (uint32_t entityId : selectedEntities_) {
 		nlohmann::json entityComponents =
-			sceneManager_->GetCurrentSceneEntityManager().SerializeEntityComponents(entityId);
+			QFE::FRAMEWORK::GetSceneEntities(*sceneManager_).SerializeEntityComponents(entityId);
 		if (!entityComponents.empty()) {
 			savedEntities["entities"].push_back(std::move(entityComponents));
 		}
@@ -434,7 +434,7 @@ void QFE::EDITOR::EditorWindowManager::SaveSelectedEntities() {
 	std::wstring baseName = L"selected-entities";
 	if (selectedEntities_.size() == 1) {
 		const uint32_t entityId = *selectedEntities_.begin();
-		const auto& manager = sceneManager_->GetCurrentSceneEntityManager();
+		const auto& manager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager_);
 		baseName = L"entity";
 		if (manager.HasComponent<QFE::SCENE::ObjectInfoComponent>(entityId)) {
 			auto name = QFE::ConvertString(manager.GetComponent<QFE::SCENE::ObjectInfoComponent>(entityId).name);
@@ -482,7 +482,7 @@ bool QFE::EDITOR::EditorWindowManager::ConsumeGameModuleBuildAndReloadRequest() 
 
 void QFE::EDITOR::EditorWindowManager::QueueSceneSave(
 	EditorCommandList& commandList, bool selectSavePath) {
-	std::string savePath = sceneManager_->GetCurrentScenePath();
+	std::string savePath = QFE::FRAMEWORK::GetScenePath(*sceneManager_);
 	// 旧JSONを開いている場合は、新しいシーンファイルとして保存する。
 	if (selectSavePath || savePath.empty() ||
 		_wcsicmp(std::filesystem::path(QFE::ConvertString(savePath)).extension().c_str(), L".scene") != 0) {
@@ -515,7 +515,7 @@ bool QFE::EDITOR::EditorWindowManager::ConsumeCameraFocusTarget(
 		return false;
 	}
 
-	EntityManager& entityManager = sceneManager_->GetCurrentSceneEntityManager();
+	EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager_);
 	if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(*entityId)) {
 		return false;
 	}

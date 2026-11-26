@@ -1,6 +1,6 @@
 #include "GameEditor.h"
 #include "ecs/entity/EntityManager.h"
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "framework/input/InputFrameWork.h"
 
 #include <algorithm>

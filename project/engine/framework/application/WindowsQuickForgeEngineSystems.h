@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "framework/input/InputFrameWork.h"
-#include "framework/scene/SceneFrameWork.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "framework/scene/AudioComponentSystem.h"
 #include "framework/scene/SceneChangeSystem.h"
 

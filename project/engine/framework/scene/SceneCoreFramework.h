@@ -1,4 +1,28 @@
 #pragma once
+#include "scene/SceneManager.h"
+
+namespace QFE::FRAMEWORK {
+	// NetworkFramework と同様、データ型を共有し、操作をフレームワークに集約する。
+	// 実装側の変更がアプリケーションに広がらないようにするための窓口。
+	void InitializeScene(SCENE::SceneManager& scene);
+	uint32_t CreateSceneCamera(SCENE::SceneManager& scene);
+	uint32_t CreateSceneDirectionalLight(SCENE::SceneManager& scene);
+	// ECS の所有権はシーンに残る。参照はシーンマネージャーの寿命内で使用する。
+	EntityManager& GetSceneEntities(SCENE::SceneManager& scene);
+	// 未保存時は空文字列。参照はシーンの変更をまたいで保持しない。
+	const std::string& GetScenePath(const SCENE::SceneManager& scene);
+	void LoadScene(SCENE::SceneManager& scene, const std::string& path);
+	bool LoadScene(SCENE::SceneManager& scene, const nlohmann::json& data);
+	void SaveScene(SCENE::SceneManager& scene, const std::string& path);
+	// 保存前のファイル内容を退避し、保存操作を取り消せるようにする。
+	nlohmann::json ReadSceneJson(SCENE::SceneManager& scene, const std::string& path);
+	// シーン内容と保存先を合わせて退避し、読み込み操作を取り消せるようにする。
+	SCENE::SceneSnapshot CaptureScene(SCENE::SceneManager& scene);
+	bool RestoreScene(SCENE::SceneManager& scene, const SCENE::SceneSnapshot& snapshot);
+	uint32_t LoadSceneEntity(SCENE::SceneManager& scene, const std::string& path);
+}
+
+
 #include "math/MathInclude.h"
 #include "graphics/interface/DirectXRenderFramework.h"
 #include <unordered_map>

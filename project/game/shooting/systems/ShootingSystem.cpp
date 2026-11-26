@@ -1,7 +1,7 @@
 #include "ShootingSystem.h"
 #include "CollisionShapes.h"
 
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "components/AllComponent.h"
 #include "game/shooting/components/AllShootingComponents.h"
 #include "components/TransformHierarchy.h"
@@ -42,7 +42,7 @@ bool QFE::GAMESYSTEM::InputMovementSystem(
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
 	(void)resources;
 
-	QFE::EntityManager& entityManager = systems.sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*systems.sceneManager);
 	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
 	if (inputInterface == nullptr || deltaTime <= 0.0f) {
 		return false;
@@ -113,7 +113,7 @@ bool QFE::GAMESYSTEM::PhysicsComponentSystem(
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
 	(void)resources;
 
-	QFE::EntityManager& entityManager = systems.sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*systems.sceneManager);
 	if (deltaTime <= 0.0f) {
 		return false;
 	}
@@ -142,7 +142,7 @@ bool QFE::GAMESYSTEM::AutoScrollSystem(
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
 	(void)resources;
 
-	QFE::EntityManager& entityManager = systems.sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*systems.sceneManager);
 	// AutoScrollComponentを持つエンティティに対して処理を行う
 	entityManager.Each<QFE::STG::AutoScrollComponent>([&](uint32_t entityId, QFE::STG::AutoScrollComponent& autoScrollComp) {
 		if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
@@ -164,7 +164,7 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 
 	// マネージャの取得
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
-	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
 
 	// シューティングプレイヤーの実行
@@ -234,7 +234,7 @@ bool QFE::GAMESYSTEM::EnemySpawnerSystem(
 
 	// マネージャの取得
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
-	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 
 	entityManager.Each<QFE::STG::EntitySpawnerComponent>([&](uint32_t entityId, QFE::STG::EntitySpawnerComponent& enemySpawnerComp) {
 		
@@ -255,7 +255,7 @@ bool QFE::GAMESYSTEM::EnemySpawnerSystem(
 					if (triggerDistance <= enemySpawnerComp.spawnTriggerDistance) {
 						// エンティティをスポーン
 						uint32_t spawnedEntityId =
-							sceneManager->LoadEntityOnCurrentSceneFromJsonObject(resources.assetDir + enemySpawnerComp.entityPrefabName);
+							QFE::FRAMEWORK::LoadSceneEntity(*sceneManager, resources.assetDir + enemySpawnerComp.entityPrefabName);
 						// スポーンしたエンティティの位置をスポナーの位置に設定
 						if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(spawnedEntityId)) {
 							QFE::MATH::EulerTransform& spawnedTransform = entityManager.GetComponent<QFE::SCENE::TransformComponent>(spawnedEntityId).transform;
@@ -278,7 +278,7 @@ bool QFE::GAMESYSTEM::ShootingEnemySystem(
 
 	// マネージャの取得
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
-	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 
 	// 敵の処理
 	std::vector<QFE::MATH::Vector3> playerPositionsE;
@@ -292,7 +292,7 @@ bool QFE::GAMESYSTEM::ShootingEnemySystem(
 		if (enemyAIComp.shotTimer <= 0.0f) {
 			enemyAIComp.shotTimer = enemyAIComp.shotInterval;
 			uint32_t bulletEntityId =
-				sceneManager->LoadEntityOnCurrentSceneFromJsonObject(resources.assetDir + enemyAIComp.bulletName);
+				QFE::FRAMEWORK::LoadSceneEntity(*sceneManager, resources.assetDir + enemyAIComp.bulletName);
 			const QFE::MATH::Vector3 enemyWorldPosition = GetWorldPosition(entityManager, entityId);
 			if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(bulletEntityId) &&
 				entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
@@ -320,7 +320,7 @@ bool QFE::GAMESYSTEM::BulletUpdateSystem(
 
 	// マネージャの取得
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
-	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 
 	// 弾丸の処理
 	entityManager.Each<QFE::STG::BulletComponent>([&](uint32_t entityId, QFE::STG::BulletComponent& bulletComp) {
@@ -342,7 +342,7 @@ bool QFE::GAMESYSTEM::CollisionSystem(
 	(void)deltaTime;
 
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
-	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 	QFE::FRAMEWORK::BeginCollisionTriggerFrame(entityManager);
 	std::vector<QFE::FRAMEWORK::CollisionTriggerCommand> parameterCommands;
 
@@ -396,7 +396,7 @@ bool QFE::GAMESYSTEM::CollisionSystem(
 			const bool hasPosition = transform != nullptr;
 			if (hasPosition) position = transform->transform.translate;
 			const auto utf8 = path.generic_u8string();
-			const uint32_t spawned = sceneManager->LoadEntityOnCurrentSceneFromJsonObject(
+			const uint32_t spawned = QFE::FRAMEWORK::LoadSceneEntity(*sceneManager,
 				std::string(reinterpret_cast<const char*>(utf8.data()), utf8.size()));
 			if (hasPosition) {
 				if (auto* spawnedTransform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(spawned))
@@ -413,7 +413,7 @@ bool QFE::GAMESYSTEM::PlayerTrackingSystem(
 	(void)deltaTime;
 
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
-	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 
 	// プレイヤー自動トラッキング処理
 	std::vector<uint32_t> playerEntityIds;
@@ -481,7 +481,7 @@ bool QFE::GAMESYSTEM::MoveLimitSystem(
 	(void)resources;
 
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
-	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 
 	// 移動制限コンポーネントの処理
 	entityManager.Each<QFE::STG::MoveLimitComponent>([&](uint32_t entityId, QFE::STG::MoveLimitComponent& moveLimitComp) {
@@ -510,7 +510,7 @@ bool QFE::GAMESYSTEM::BulletEmitterSystem(
 	(void)deltaTime;
 
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
-	QFE::EntityManager& entityManager = sceneManager->GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 
 	entityManager.Each<QFE::STG::BulletEmitterComponent>(
 		[&](uint32_t entityId, QFE::STG::BulletEmitterComponent& bulletEmitterComp) {
@@ -588,7 +588,7 @@ bool QFE::GAMESYSTEM::BulletEmitterSystem(
 						QFE::MATH::Vector3::SphericalToCartesian(bulletSpherical).Normalize();
 					const QFE::MATH::Vector3 bulletPosition = sphereCenter + bulletDirection * radius;
 
-					const uint32_t bulletEntityId = sceneManager->LoadEntityOnCurrentSceneFromJsonObject(
+					const uint32_t bulletEntityId = QFE::FRAMEWORK::LoadSceneEntity(*sceneManager,
 						resources.assetDir + pattern.emitBulletName);
 					if (bulletEntityId == UINT32_MAX) {
 						continue;
@@ -617,7 +617,7 @@ bool QFE::GAMESYSTEM::BulletEmitterTriggerSystem(
 	(void)resources;
 
 	QFE::EntityManager& entityManager =
-		systems.sceneManager->GetCurrentSceneEntityManager();
+		QFE::FRAMEWORK::GetSceneEntities(*systems.sceneManager);
 	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
 
 	entityManager.Each<QFE::STG::InputBulletEmitterTriggerComponent>(

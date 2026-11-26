@@ -1,6 +1,6 @@
 #pragma once
 #include <imgui/imgui.h>
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #define NOMINMAX
 #include <Windows.h>
 

@@ -7,7 +7,7 @@
 #include "command/EditorCommandList.h"
 #include "assetfactory/model/PrimitiveFactoryFuncs.h"
 #include "assetfactory/game-data/AssetManager.h"
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 
 #include <imgui/imgui.h>
 #include <imgui_stdlib.h>
@@ -44,7 +44,7 @@ namespace {
 
 QFE::EDITOR::Hierarchy::Hierarchy(QFE::SCENE::SceneManager* sceneManager, QFE::ASSET::AssetManager& assets)
 	: sceneManager_(sceneManager),
-	entityManager_(sceneManager != nullptr ? &sceneManager->GetCurrentSceneEntityManager() : nullptr),
+	entityManager_(sceneManager != nullptr ? &QFE::FRAMEWORK::GetSceneEntities(*sceneManager) : nullptr),
 	assets_(&assets),
 	isActive_(true) {}
 

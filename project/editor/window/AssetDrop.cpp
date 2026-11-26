@@ -4,7 +4,7 @@
 #include "command/CreateEntityCommand.h"
 #include "command/EditorCommandList.h"
 #include "ecs/entity/EntityManager.h"
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "string/MyString.h"
 #include <algorithm>
 #include <cctype>
@@ -56,7 +56,7 @@ void QFE::EDITOR::AcceptAssetDrop(SCENE::SceneManager* sceneManager, EditorComma
 				PROJECT::IsWithin(assetPath, PROJECT::Assets()) &&
 				std::filesystem::is_regular_file(assetPath, error) && !error) {
 				const AssetKind kind = GetAssetKind(path);
-				auto& manager = sceneManager->GetCurrentSceneEntityManager();
+				auto& manager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 				const ImVec2 mouse = ImGui::GetMousePos();
 				const float x = (mouse.x - imagePosition.x) / imageSize.x;
 				const float y = (mouse.y - imagePosition.y) / imageSize.y;

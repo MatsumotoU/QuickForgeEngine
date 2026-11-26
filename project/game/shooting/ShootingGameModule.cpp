@@ -7,7 +7,7 @@
 #include "framework/scene/EventSystem.h"
 #include "framework/scene/SceneChangeSystem.h"
 #include "framework/scene/SplineMovementSystem.h"
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 
 #define QFE_GAME_EXPORT extern "C" __declspec(dllexport)
 
@@ -24,7 +24,7 @@ QFE_GAME_EXPORT void QFE_UpdateGame(
 	QFE::FRAMEWORK::WindowsEngineResources& resources,
 	float deltaTime) {
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
-	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(sceneManager);
 
 	QFE::GAMESYSTEM::AutoScrollSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::InputMovementSystem(systems, resources, deltaTime);
