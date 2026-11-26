@@ -6,6 +6,7 @@
 #include "framework/application/WindowsGameModule.h"
 #include "framework/window/WindowCoreFrameWork.h"
 #include "framework/application/WindowsEngineResources.h"
+#include "framework/network/NetworkCoreFrame.h"
 
 
 #include "scene/SceneManager.h"
@@ -73,7 +74,13 @@ namespace {
 		}
 	}
 
-	struct Arguments { std::optional<std::string> scene; std::filesystem::path project; std::optional<bool> showColliders; };
+	struct Arguments {
+		std::optional<std::string> scene;
+		std::filesystem::path project;
+		std::optional<bool> showColliders;
+		std::string logHost;
+		std::string logPort;
+	};
 	Arguments GetArguments() {
 		Arguments result; int count = 0;
 		LPWSTR* args = CommandLineToArgvW(GetCommandLineW(), &count);
@@ -84,6 +91,8 @@ namespace {
 			else if (arg == L"--scene" && i + 1 < count) result.scene = QFE::ConvertString(std::wstring(args[++i]));
 			else if (arg == L"--colliders=on") result.showColliders = true;
 			else if (arg == L"--colliders=off") result.showColliders = false;
+			else if (arg == L"--log-host" && i + 1 < count) result.logHost = QFE::ConvertString(std::wstring(args[++i]));
+			else if (arg == L"--log-port" && i + 1 < count) result.logPort = QFE::ConvertString(std::wstring(args[++i]));
 			else if (!arg.starts_with(L"--") && !result.scene) result.scene = QFE::ConvertString(std::wstring(args[i]));
 		}
 		LocalFree(args); return result;
@@ -184,10 +193,41 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		gameModule.GetComponentRegistrationFunction(), engineResources.config.scriptDir)) {
 		return -1;
 	}
+	// エディタから接続先を渡された場合だけ通信し、単独起動時は従来通り動作する。
+	namespace Net = QFE::FRAMEWORK::NETWORK;
+	std::unique_ptr<QFE::NETWORK::INetworkCore> logNetwork;
+	QFE::NETWORK::ConnectHandle logConnection{};
+	if (!arguments.logHost.empty() || !arguments.logPort.empty()) {
+		logNetwork = Net::CreateNetworkCore();
+		if (logNetwork && !arguments.logHost.empty() && !arguments.logPort.empty()) {
+			logConnection = Net::Connect(logNetwork.get(), arguments.logHost, arguments.logPort);
+		}
+		if (logConnection.id == UINT32_MAX) {
+			QFE::DebugLog("Failed to connect to the editor log receiver.", QFE::LogLevel::Error);
+			logNetwork.reset();
+		}
+	}
+	uint64_t lastLogSequence = 0;
+	auto sendRuntimeLogs = [&]() {
+		if (!logNetwork) return;
+		for (const auto& entry : QFE::MyDebugLog::GetInstance()->GetEntries()) {
+			if (entry.sequence <= lastLogSequence) continue;
+			const char* level = entry.level == QFE::LogLevel::Error ? "Error" :
+				(entry.level == QFE::LogLevel::Warning ? "Warning" : "Info");
+			const std::string line = "[" + entry.timestamp + "] [" + level + "] " + entry.message;
+			if (!Net::SendString(logNetwork.get(), logConnection, line)) {
+				QFE::DebugLog("Failed to send runtime logs to the editor.", QFE::LogLevel::Error);
+				logNetwork.reset();
+				return;
+			}
+			lastLogSequence = entry.sequence;
+		}
+	};
 	std::string assetError;
 	if (!engineSystems.assetManager->Open(QFE::PROJECT::Root(), assetError)) {
 		QFE_LOG("Failed to open asset registry: " + assetError, QFE::LogLevel::Error);
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
+		sendRuntimeLogs();
 		return -1;
 	}
 	engineSystems.modelLoader->Initialize();
@@ -199,6 +239,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		arguments.scene);
 	if (!startupScene.has_value()) {
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
+		sendRuntimeLogs();
 		return -1;
 	}
 	engineSystems.sceneManager->LoadCurrentSceneFromJson(QFE::ConvertString(startupScene->wstring()));
@@ -225,14 +266,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		// エンジンの描画前処理（フレーム開始時の共通処理）
 		QFE::FRAMEWORK::EnginePreDraw(engineSystems, engineResources);
 
-		ImGui::Begin("Debug Info");
-		ImGui::Text("FPS: %.2f", fpsCounter->GetAverageFPS());
-		ImGui::Text("Object Count: %zu", entityManager.GetActiveEntityIds().size());
-		ImGui::End();
-
 		// エンジンの描画後処理（フレーム終了時の共通処理）
 		QFE::FRAMEWORK::EnginePostDraw(engineSystems, engineResources);
 		QFE::FRAMEWORK::EndWindowsEngineFrame(engineSystems, &engineResources);
+		sendRuntimeLogs();
 
 		// FPSが60fps付近のオブジェクト数をカウント
 		if (fpsCounter->GetAverageFPS() > 59.0f && fpsCounter->GetAverageFPS() < 61.0f) {
@@ -241,5 +278,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	}
 
 	QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
+	sendRuntimeLogs();
 	return 0;
 }

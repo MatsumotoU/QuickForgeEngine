@@ -26,16 +26,18 @@
 namespace {
 class LogWindow final : public QFE::EDITOR::IEditorWindow {
 public:
+	 explicit LogWindow(std::vector<std::string>& runtimeLogs) : runtimeLogs_(runtimeLogs) {}
     void Initialize() override { isActive_ = true; }
     void Draw(std::set<uint32_t>&, QFE::EDITOR::EditorCommandList&) override {
         const bool visible = ImGui::Begin("Log", &isActive_);
         isFocus_ = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
         if (visible) {
             auto* logger = QFE::MyDebugLog::GetInstance();
-            if (ImGui::Button("Clear")) logger->ClearEntries();
+            if (ImGui::Button("Clear")) { logger->ClearEntries(); runtimeLogs_.clear(); }
             ImGui::SameLine(); ImGui::Checkbox("Auto-scroll", &autoScroll_);
             ImGui::SameLine(); ImGui::Checkbox("Engine", &showEngine_);
             ImGui::SameLine(); ImGui::Checkbox("Editor", &showEditor_);
+			ImGui::SameLine(); ImGui::Checkbox("Runtime", &showRuntime_);
             ImGui::SameLine(); ImGui::Checkbox("Warning", &showWarning_);
             ImGui::SameLine(); ImGui::Checkbox("Error", &showError_);
             filter_.Draw("Filter", 220.0f);
@@ -56,6 +58,16 @@ public:
                     ImGui::TextUnformatted(line.c_str());
                     ImGui::PopStyleColor();
                 }
+				if (showRuntime_) {
+					for (const auto& message : runtimeLogs_) {
+						if (filter_.PassFilter(message.c_str())) {
+							const std::string line = "[Runtime] " + message;
+							ImGui::TextUnformatted(line.c_str());
+						}
+					}
+				}
+				if (autoScroll_ && atBottom && runtimeLogs_.size() != lastRuntimeCount_) ImGui::SetScrollHereY(1.0f);
+				lastRuntimeCount_ = runtimeLogs_.size();
                 if (autoScroll_ && atBottom && !entries.empty() && entries.back().sequence != lastSequence_) ImGui::SetScrollHereY(1.0f);
                 if (!entries.empty()) lastSequence_ = entries.back().sequence;
             }
@@ -68,6 +80,9 @@ public:
     bool SetIsActive(bool active) override { return isActive_ = active; }
     bool GetIsFocus() override { return isFocus_; }
 private:
+	std::vector<std::string>& runtimeLogs_;
+	std::size_t lastRuntimeCount_ = 0;
+	bool showRuntime_ = true;
     ImGuiTextFilter filter_;
     uint64_t lastSequence_ = 0;
     bool isActive_ = true;
@@ -114,13 +129,49 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 		std::make_unique<Inspector>(&entityManager, &modelLoader, componentInspectorRegistry);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
 	editorWindowsMap_[EditorWindowType::AssetBrowser] = std::make_unique<AssetBrowser>(assetManager, windowManager, *sceneManager);
-	editorWindowsMap_[EditorWindowType::Logger] = std::make_unique<LogWindow>();
+	editorWindowsMap_[EditorWindowType::Logger] = std::make_unique<LogWindow>(runtimeLogs_);
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
     editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
 }
 
 void QFE::EDITOR::EditorWindowManager::Update() {
 	selectedEntities_.clear();
+	if (!runtimeNetwork_) return;
+	namespace Net = QFE::FRAMEWORK::NETWORK;
+	if (waitingForRuntime_) {
+		const auto status = Net::Accept(runtimeNetwork_.get(), runtimeConnection_);
+		if (status == Net::AcceptStatus::Accepted) {
+			waitingForRuntime_ = false;
+			Net::StopListening(runtimeNetwork_.get());
+			// ランタイムとの通信確立後に通知し、起動失敗と区別する。
+			runtimeLogs_.push_back("Runtime log streaming started.");
+		} else if (status == Net::AcceptStatus::Error || std::chrono::steady_clock::now() >= runtimeDeadline_) {
+			QFE_LOG("Failed to accept the runtime connection.", QFE::LogLevel::Error);
+			Net::ShutdownNetworkCore(runtimeNetwork_.get());
+			runtimeNetwork_.reset();
+			waitingForRuntime_ = false;
+		}
+	}
+	if (!runtimeNetwork_ || waitingForRuntime_ || runtimeConnection_.id == UINT32_MAX) return;
+	// フレームごとに受信済みのメッセージだけを取り出し、画面の更新を止めない。
+	for (int count = 0; count < 256; ++count) {
+		Net::MessageType type{};
+		std::string body;
+		const auto status = Net::PollMessage(runtimeNetwork_.get(), runtimeConnection_, runtimeReader_, type, body);
+		if (status == Net::PollStatus::Pending) break;
+		if (status == Net::PollStatus::Closed || status == Net::PollStatus::Error) {
+			if (status == Net::PollStatus::Error) QFE_LOG("Failed to receive runtime messages.", QFE::LogLevel::Error);
+			// 切断はプロセスの正常終了とは限らないため、ログ受信の終了として表示する。
+			runtimeLogs_.push_back(status == Net::PollStatus::Closed
+				? "Runtime log streaming stopped."
+				: "Runtime log streaming stopped due to a connection error.");
+			Net::ShutdownNetworkCore(runtimeNetwork_.get());
+			runtimeNetwork_.reset();
+			runtimeConnection_ = {};
+			break;
+		}
+		if (type == Net::MessageType::Message) runtimeLogs_.push_back(std::move(body));
+	}
 }
 
 void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool& showColliders) {
@@ -255,8 +306,23 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
                     L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
                     selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
 
-					if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::PROJECT::Root().wstring() + L"\" --scene \"" + selectedFilePath + L"\"" + (showColliders ? L" --colliders=on" : L" --colliders=off"))) {
+					// 起動ごとに前回の接続とログを初期化し、OSが選んだポートを渡す。
+					runtimeNetwork_.reset();
+					runtimeConnection_ = {};
+					runtimeReader_.pending.clear();
+					runtimeLogs_.clear();
+					waitingForRuntime_ = false;
+					runtimeNetwork_ = QFE::FRAMEWORK::NETWORK::CreateNetworkCore();
+					uint16_t port = 0;
+					if (!runtimeNetwork_ || !QFE::FRAMEWORK::NETWORK::ListenLocal(runtimeNetwork_.get(), port)) {
+						QFE_LOG("Failed to listen for the runtime connection.", QFE::LogLevel::Error);
+						runtimeNetwork_.reset();
+					} else if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::PROJECT::Root().wstring() + L"\" --scene \"" + selectedFilePath + L"\"" + (showColliders ? L" --colliders=on" : L" --colliders=off") + L" --log-host 127.0.0.1 --log-port " + std::to_wstring(port))) {
 						QFE_LOG("Failed to launch the runtime.", QFE::LogLevel::Error);
+						runtimeNetwork_.reset();
+					} else {
+						waitingForRuntime_ = true;
+						runtimeDeadline_ = std::chrono::steady_clock::now() + std::chrono::seconds(15);
 					}
                 }
             }
