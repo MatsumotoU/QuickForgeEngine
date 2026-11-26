@@ -3,6 +3,8 @@
 #include "components/AnimationComponent.h"
 #include "BGMComponent.h"
 #include "CameraComponent.h"
+#include "CameraRoomComponent.h"
+#include "RoomCameraComponent.h"
 #include "DirectionalLightComponent.h"
 #include "CollisionTriggerComponent.h"
 #include "EventComponent.h"
@@ -45,6 +47,8 @@ namespace QFE {
 			registry.RegisterComponent<SCENE::SkyBoxComponent>("SkyBoxComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::SpriteRenderComponent>("SpriteRenderComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::CameraComponent>("CameraComponent", "Rendering") &&
+			registry.RegisterComponent<SCENE::CameraRoomComponent>("CameraRoomComponent", "Behavior") &&
+			registry.RegisterComponent<SCENE::RoomCameraComponent>("RoomCameraComponent", "Behavior") &&
 			registry.RegisterComponent<SCENE::DirectionalLightComponent>("DirectionalLightComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::AnimationComponent>("AnimationComponent", "Rendering") &&
 			registry.RegisterComponent<SCENE::SkeletonAnimationComponent>("SkeletonAnimationComponent", "Rendering") &&

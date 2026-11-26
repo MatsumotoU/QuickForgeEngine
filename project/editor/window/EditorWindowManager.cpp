@@ -5,6 +5,7 @@
 #include "framework/window/WindowCoreFrameWork.h"
 
 #include "framework/scene/SceneCoreFramework.h"
+#include "framework/application/WindowsEngineResources.h"
 #include "ecs/entity/EntityManager.h"
 #include "components/TransformComponent.h"
 #include "components/ObjectInfoComponent.h"
@@ -174,7 +175,7 @@ void QFE::EDITOR::EditorWindowManager::Update() {
 	}
 }
 
-void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool& showColliders) {
+void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, QFE::FRAMEWORK::WindowsEngineResources& resources) {
 	bool saveSceneRequested = false;
 	bool saveSceneAsRequested = false;
 
@@ -291,11 +292,17 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
 			}
             ImGui::EndMenu();
         }
+		// 表示補助を一か所で切り替え、シーン作成中に必要な情報だけを表示する。
+		if (ImGui::BeginMenu("View")) {
+			#if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
+			ImGui::MenuItem("Show Colliders", nullptr, &resources.showColliders);
+			ImGui::MenuItem("Show Camera Rooms", nullptr, &resources.showCameraRooms);
+			#endif
+			ImGui::MenuItem("Show Spline Paths", nullptr, &resources.showSplinePaths);
+			ImGui::EndMenu();
+		}
 		// Debugメニュー
         if (ImGui::BeginMenu("Debug")) {
-			#if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
-			ImGui::MenuItem("Show Colliders", nullptr, &showColliders);
-			#endif
             // シーンを選ばせて開始する
             if (ImGui::MenuItem("Launch Scene from File...")) {
 
@@ -317,7 +324,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
 					if (!runtimeNetwork_ || !QFE::FRAMEWORK::NETWORK::ListenLocal(runtimeNetwork_.get(), port)) {
 						QFE_LOG("Failed to listen for the runtime connection.", QFE::LogLevel::Error);
 						runtimeNetwork_.reset();
-					} else if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::FRAMEWORK::ASSETS::GetProjectRoot().wstring() + L"\" --scene \"" + selectedFilePath + L"\"" + (showColliders ? L" --colliders=on" : L" --colliders=off") + L" --log-host 127.0.0.1 --log-port " + std::to_wstring(port))) {
+					} else if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::FRAMEWORK::ASSETS::GetProjectRoot().wstring() + L"\" --scene \"" + selectedFilePath + L"\"" + (resources.showColliders ? L" --colliders=on" : L" --colliders=off") + (resources.showCameraRooms ? L" --camera-rooms=on" : L" --camera-rooms=off") + (resources.showSplinePaths ? L" --spline-paths=on" : L" --spline-paths=off") + L" --log-host 127.0.0.1 --log-port " + std::to_wstring(port))) {
 						QFE_LOG("Failed to launch the runtime.", QFE::LogLevel::Error);
 						runtimeNetwork_.reset();
 					} else {

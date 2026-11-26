@@ -23,6 +23,7 @@
 #include "graphics/dx12/command/DirectXCommandManager.h"
 #include "graphics/dx12/pipeline/rtpso/RaytracingAccelerationStructure.h"
 #include "framework/scene/SplineMovementSystem.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "framework/scene/EventSystem.h"
 #include "framework/animation/AnimationSystem.h"
 #include "audio/AudioEngine.h"
@@ -609,6 +610,7 @@ void QFE::FRAMEWORK::UpdateWindowsSceneSystems(WindowsQuickForgeEngineSystems& s
 	UpdateSceneSpawnRequests(scene);
 	UpdateAnimationComponents(entities, deltaTime);
 	UpdateSplineMovement(entities, deltaTime);
+	UpdateRoomCameras(entities, deltaTime);
 	// 置き換えによって EntityManager が無効になり得るため、遷移は最後に行う。
 	systems.sceneChangeTransition.Update(scene, deltaTime, scene.GetCurrentSceneId());
 }
@@ -760,7 +762,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 	auto* accelerationStructure = d3d12GraphicEngine->GetRaytracingAccelerationStructure();
 
-	if (sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) QFE::FRAMEWORK::DrawSplineMovementPaths(
+	if (resources.showSplinePaths && sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) QFE::FRAMEWORK::DrawSplineMovementPaths(
 		entityManager,
 		[d3d12GraphicEngine](
 			const QFE::MATH::Vector3& start,
@@ -770,6 +772,20 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		});
 
 #if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
+	if (resources.showCameraRooms && sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) {
+		// 部屋判定と同じワールド座標の中心と軸に合わせ、親子関係も反映する。
+		entityManager.Each<QFE::SCENE::CameraRoomComponent, QFE::SCENE::TransformComponent>(
+			[&](uint32_t id, const QFE::SCENE::CameraRoomComponent& room,
+				const QFE::SCENE::TransformComponent& transform) {
+				auto boxTransform = transform.transform;
+				const auto world = QFE::SCENE::GetWorldMatrix(entityManager, id);
+				boxTransform.translate = { world.m[3][0], world.m[3][1], world.m[3][2] };
+				QFE::FRAMEWORK::ColliderDebugDraw::Box(boxTransform, room.halfExtents, false,
+					[d3d12GraphicEngine](const QFE::MATH::Vector3& start, const QFE::MATH::Vector3& end) {
+						d3d12GraphicEngine->DrawLine(start, end, { 1.0f, 0.75f, 0.1f, 1.0f });
+					});
+			});
+	}
 	if (resources.showColliders && sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) {
 	// Use the same local Transform and unscaled dimensions as CollisionSystem.
 	const auto drawColliderLine = [d3d12GraphicEngine](const QFE::MATH::Vector3& start,

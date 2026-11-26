@@ -71,6 +71,8 @@ namespace {
 		std::optional<std::string> scene;
 		std::filesystem::path project;
 		std::optional<bool> showColliders;
+		std::optional<bool> showCameraRooms;
+		std::optional<bool> showSplinePaths;
 		std::string logHost;
 		std::string logPort;
 	};
@@ -83,6 +85,10 @@ namespace {
 			else if (arg == L"--scene" && i + 1 < args.size()) result.scene = QFE::ConvertString(args[++i]);
 			else if (arg == L"--colliders=on") result.showColliders = true;
 			else if (arg == L"--colliders=off") result.showColliders = false;
+			else if (arg == L"--camera-rooms=on") result.showCameraRooms = true;
+			else if (arg == L"--camera-rooms=off") result.showCameraRooms = false;
+			else if (arg == L"--spline-paths=on") result.showSplinePaths = true;
+			else if (arg == L"--spline-paths=off") result.showSplinePaths = false;
 			else if (arg == L"--log-host" && i + 1 < args.size()) result.logHost = QFE::ConvertString(args[++i]);
 			else if (arg == L"--log-port" && i + 1 < args.size()) result.logPort = QFE::ConvertString(args[++i]);
 			else if (!arg.starts_with(L"--") && !result.scene) result.scene = QFE::ConvertString(args[i]);
@@ -163,6 +169,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	const bool engineConfigLoaded = engineResources.config.Load();
 	engineResources.ApplyConfig(false);
 	if (arguments.showColliders.has_value()) engineResources.showColliders = *arguments.showColliders;
+	// エディターから起動した実行画面にも表示設定を引き継ぐ。
+	if (arguments.showCameraRooms.has_value()) engineResources.showCameraRooms = *arguments.showCameraRooms;
+	if (arguments.showSplinePaths.has_value()) engineResources.showSplinePaths = *arguments.showSplinePaths;
 	if (!QFE::FRAMEWORK::ASSETS::GetProjectRoot().empty()) {
 		engineResources.assetDir = QFE::ConvertString(QFE::FRAMEWORK::ASSETS::GetProjectAssets().wstring()) + "/";
 		engineResources.modelDir = engineResources.assetDir;

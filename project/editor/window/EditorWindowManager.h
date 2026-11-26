@@ -18,6 +18,7 @@ namespace QFE::SCENE {
 namespace QFE::WINDOW {
 	class IGameWindowManager;
 }
+namespace QFE::FRAMEWORK { class WindowsEngineResources; }
 namespace QFE::ASSET { class AssetManager; class ModelLoader; }
 
 namespace QFE::EDITOR {
@@ -48,7 +49,7 @@ namespace QFE::EDITOR {
 			ComponentInspectorRegistry* componentInspectorRegistry,
 			const QFE::FRAMEWORK::EngineConfig& config);
 		void Update();
-		void Draw(EditorCommandList& commandList, bool& showColliders);
+		void Draw(EditorCommandList& commandList, QFE::FRAMEWORK::WindowsEngineResources& resources);
 		/// @brief Fileメニューから要求されたGameModule DLLのビルドとリロードを取得する。
 		bool ConsumeGameModuleBuildAndReloadRequest();
 

@@ -13,6 +13,8 @@
 #include "SpriteRenderComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
+#include "CameraRoomComponent.h"
+#include "RoomCameraComponent.h"
 #include "DirectionalLightComponent.h"
 #include "SphereColliderComponent.h"
 #include "AABBColliderComponent.h"

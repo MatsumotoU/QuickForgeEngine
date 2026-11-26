@@ -110,5 +110,8 @@ namespace QFE::FRAMEWORK {
 
 		QFE::MATH::Matrix4x4 viewProj = QFE::MATH::Matrix4x4::MakeIdentity4x4();
 		bool showColliders = true;
+		// 編集時に表示する補助線は種類ごとに切り替える。
+		bool showCameraRooms = true;
+		bool showSplinePaths = true;
 	};
 }

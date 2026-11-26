@@ -35,6 +35,11 @@
                     "name": "Camera",
                     "uuid": "130ffdf4-04ec-4935-bc54-15d93cfd2d66"
                 },
+                "RoomCameraComponent": {
+                    "enabled": true,
+                    "moveSpeed": 4.0,
+                    "target": "4774e2ca-1417-4d87-acf8-62acc7ea65b7"
+                },
                 "TransformComponent": {
                     "transform": {
                         "rotate": {
@@ -97,7 +102,7 @@
         {
             "components": {
                 "InputMovementComponent": {
-                    "amount": 4.0,
+                    "amount": 7.0,
                     "backwardActionName": "Down",
                     "enabled": true,
                     "forwardActionName": "Up",
@@ -2138,150 +2143,6 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
-                    "uuid": "835404ed-ccaf-49f1-9758-a491518854f1"
-                },
-                "ShaderComponent": {
-                    "castShadow": true,
-                    "receiveShadow": true
-                },
-                "TransformComponent": {
-                    "transform": {
-                        "rotate": {
-                            "x": 0.0,
-                            "y": -0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "translate": {
-                            "x": 4.0,
-                            "y": 0.0,
-                            "z": 1.0
-                        }
-                    }
-                }
-            },
-            "id": 42
-        },
-        {
-            "components": {
-                "AABBColliderComponent": {
-                    "halfExtents": {
-                        "x": 0.5,
-                        "y": 0.5,
-                        "z": 0.5
-                    },
-                    "mask": 0
-                },
-                "MaterialComponent": {
-                    "albedoColor": {
-                        "w": 1.0,
-                        "x": 0.19369947910308838,
-                        "y": 0.07598039507865906,
-                        "z": 0.25
-                    },
-                    "metallic": 0.0,
-                    "smoothness": 0.0,
-                    "uvTransform": {
-                        "rotate": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "translate": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        }
-                    }
-                },
-                "ModelRenderComponent": {
-                    "modelName": "Primitive/Box",
-                    "textureName": ""
-                },
-                "ObjectInfoComponent": {
-                    "hierarchyGroup": "GameMap",
-                    "name": "StaticWall",
-                    "uuid": "21f0a970-9eef-45d2-90d7-08aa358bb25f"
-                },
-                "ShaderComponent": {
-                    "castShadow": true,
-                    "receiveShadow": true
-                },
-                "TransformComponent": {
-                    "transform": {
-                        "rotate": {
-                            "x": 0.0,
-                            "y": -0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "translate": {
-                            "x": 4.0,
-                            "y": 0.0,
-                            "z": 2.0
-                        }
-                    }
-                }
-            },
-            "id": 43
-        },
-        {
-            "components": {
-                "AABBColliderComponent": {
-                    "halfExtents": {
-                        "x": 0.5,
-                        "y": 0.5,
-                        "z": 0.5
-                    },
-                    "mask": 0
-                },
-                "MaterialComponent": {
-                    "albedoColor": {
-                        "w": 1.0,
-                        "x": 0.19369947910308838,
-                        "y": 0.07598039507865906,
-                        "z": 0.25
-                    },
-                    "metallic": 0.0,
-                    "smoothness": 0.0,
-                    "uvTransform": {
-                        "rotate": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "translate": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        }
-                    }
-                },
-                "ModelRenderComponent": {
-                    "modelName": "Primitive/Box",
-                    "textureName": ""
-                },
-                "ObjectInfoComponent": {
-                    "hierarchyGroup": "GameMap",
-                    "name": "StaticWall",
                     "uuid": "e4421fe6-8013-4780-bbb2-c5acff05a60a"
                 },
                 "ShaderComponent": {
@@ -2309,6 +2170,88 @@
                 }
             },
             "id": 44
+        },
+        {
+            "components": {
+                "CameraRoomComponent": {
+                    "cameraOffset": {
+                        "x": 0.0,
+                        "y": 16.799999237060547,
+                        "z": -11.699999809265137
+                    },
+                    "halfExtents": {
+                        "x": 4.099999904632568,
+                        "y": 6.900000095367432,
+                        "z": 4.5
+                    }
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "",
+                    "name": "CameraRoomSystem",
+                    "uuid": "cb70a214-1151-4324-85d6-a210678c6e9a"
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 45
+        },
+        {
+            "components": {
+                "CameraRoomComponent": {
+                    "cameraOffset": {
+                        "x": 0.0,
+                        "y": 16.799999237060547,
+                        "z": -11.699999809265137
+                    },
+                    "halfExtents": {
+                        "x": 4.099999904632568,
+                        "y": 6.900000095367432,
+                        "z": 4.5
+                    }
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "",
+                    "name": "CameraRoomSystem",
+                    "uuid": "f55bf11a-3634-4635-9ac9-9d9faeaac056"
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 9.167736053466797,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 47
         }
     ]
 }

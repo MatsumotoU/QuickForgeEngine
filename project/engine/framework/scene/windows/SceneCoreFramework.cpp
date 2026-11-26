@@ -1,4 +1,46 @@
 #include "framework/scene/SceneCoreFramework.h"
+#include "components/CameraRoomComponent.h"
+#include "components/RoomCameraComponent.h"
+#include "components/ParentComponent.h"
+#include "components/TransformHierarchy.h"
+#include <algorithm>
+#include <cmath>
+
+void QFE::FRAMEWORK::UpdateRoomCameras(EntityManager& entities, float deltaTime) {
+	if (deltaTime <= 0.0f) return;
+	entities.Each<SCENE::RoomCameraComponent, SCENE::TransformComponent>(
+		[&](uint32_t cameraId, SCENE::RoomCameraComponent& camera, SCENE::TransformComponent& transform) {
+			if (!camera.enabled || camera.moveSpeed <= 0.0f || camera.target.IsEmpty()) return;
+			// 目的位置はワールド座標なので、親付きカメラを誤った座標へ移動しない。
+			const auto* parent = entities.GetComponentPtr<SCENE::ParentComponent>(cameraId);
+			if (parent && parent->HasParent()) return;
+			uint32_t targetId;
+			if (!SCENE::TryGetEntityIdByUuid(entities, camera.target.uuid, targetId) ||
+				!entities.HasComponent<SCENE::TransformComponent>(targetId)) return;
+			const auto targetWorld = SCENE::GetWorldMatrix(entities, targetId);
+			const MATH::Vector3 target{ targetWorld.m[3][0], targetWorld.m[3][1], targetWorld.m[3][2] };
+			uint32_t selected = UINT32_MAX;
+			entities.Each<SCENE::CameraRoomComponent, SCENE::TransformComponent>(
+				[&](uint32_t id, SCENE::CameraRoomComponent& room, SCENE::TransformComponent&) {
+					const auto world = SCENE::GetWorldMatrix(entities, id);
+					if (std::abs(target.x - world.m[3][0]) > std::abs(room.halfExtents.x) ||
+						std::abs(target.y - world.m[3][1]) > std::abs(room.halfExtents.y) ||
+						std::abs(target.z - world.m[3][2]) > std::abs(room.halfExtents.z)) return;
+					// 重なった範囲では現在の部屋を優先し、境界上で揺れないようにする。
+					if (id == camera.currentRoom || selected == UINT32_MAX ||
+						(selected != camera.currentRoom && id < selected)) selected = id;
+				});
+			if (selected != UINT32_MAX) camera.currentRoom = selected;
+			if (camera.currentRoom == UINT32_MAX || !entities.IsActiveEntity(camera.currentRoom)) return;
+			const auto* room = entities.GetComponentPtr<SCENE::CameraRoomComponent>(camera.currentRoom);
+			if (!room || !entities.HasComponent<SCENE::TransformComponent>(camera.currentRoom)) return;
+			const auto world = SCENE::GetWorldMatrix(entities, camera.currentRoom);
+			const MATH::Vector3 destination = MATH::Vector3{ world.m[3][0], world.m[3][1], world.m[3][2] } + room->cameraOffset;
+			// フレーム時間によらず滑らかに近づき、目的位置を行き過ぎない。
+			const float blend = 1.0f - std::exp(-camera.moveSpeed * deltaTime);
+			transform.transform.translate += (destination - transform.transform.translate) * blend;
+		});
+}
 
 // アプリケーションからの操作をここで受け、モジュールへの依存を吸収する。
 void QFE::FRAMEWORK::InitializeScene(SCENE::SceneManager& scene) { scene.Initialize(); }

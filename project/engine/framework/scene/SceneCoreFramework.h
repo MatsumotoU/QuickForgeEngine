@@ -28,6 +28,8 @@ namespace QFE::FRAMEWORK {
 	void UpdateSceneSpawnRequests(SCENE::SceneManager& scene);
 	// 現在更新中のシーンから、独立シーンの読み込みと状態変更を要求する。
 	void UpdateSceneControlRequests(SCENE::SceneManager& scene);
+	// プレイヤーの部屋を判定し、ゲーム側の移動処理後にカメラを移動する。
+	void UpdateRoomCameras(EntityManager& entities, float deltaTime);
 }
 
 
