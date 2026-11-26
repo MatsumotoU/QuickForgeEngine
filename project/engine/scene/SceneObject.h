@@ -1,6 +1,7 @@
 #pragma once
 #include "ecs/entity/EntityManager.h"
 #include <filesystem>
+#include "math/vector/Vector3.h"
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 
@@ -34,6 +35,8 @@ namespace QFE::SCENE {
 			std::shared_ptr<const QFE::StaticComponentRegistry> registry);
 		/// @brief JSONオブジェクトからエンティティをロードします.
 		uint32_t LoadEntityFromJsonObject(const std::string& filePath);
+		/// シーンの原点を指定位置へ移して既存のシーンに追加します。
+		uint32_t AppendSceneFromJson(const std::string& filePath, const QFE::MATH::Vector3& origin);
 
 		/// @brief エンティティマネージャーの参照を取得します.
 		QFE::EntityManager& GetEntityManager();

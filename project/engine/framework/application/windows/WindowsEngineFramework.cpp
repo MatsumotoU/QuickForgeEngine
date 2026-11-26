@@ -23,10 +23,11 @@
 #include "graphics/dx12/command/DirectXCommandManager.h"
 #include "graphics/dx12/pipeline/rtpso/RaytracingAccelerationStructure.h"
 #include "framework/scene/SplineMovementSystem.h"
+#include "framework/scene/EventSystem.h"
+#include "framework/animation/AnimationSystem.h"
 #include "audio/AudioEngine.h"
 #include "string/MyString.h"
 #include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
-#include "framework/application/LuaScriptSystem.h"
 #if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
 #include "framework/application/ColliderDebugDraw.h"
 #endif
@@ -66,6 +67,90 @@ std::vector<std::wstring> QFE::FRAMEWORK::GetApplicationArguments() {
 
 namespace {
 
+	// スプライトは各シーンの ECS から準備し、メニュー等を順番に重ねる。
+	void PrepareSceneSprites(
+		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+		QFE::FRAMEWORK::WindowsEngineResources& resources,
+		QFE::EntityManager& entityManager,
+		QFE::GRAPHIC::D3D12GraphicEngine* d3d12GraphicEngine) {
+		auto& graphicEngine = systems.graphicEngine;
+	// スプライトは3Dモデルと異なり、G-bufferやBLASへ登録せず最終映像へ直接重ねる。
+	const QFE::MATH::Matrix4x4 spriteProjection = QFE::MATH::Matrix4x4::MakeOrthographicMatrix(
+		0.0f, 0.0f,
+		static_cast<float>(resources.windowWidth), static_cast<float>(resources.windowHeight),
+		0.0f, 1.0f);
+	entityManager.Each<QFE::SCENE::SpriteRenderComponent>(
+		[&](uint32_t entityId, QFE::SCENE::SpriteRenderComponent& sprite) {
+			sprite.canRender = false;
+			if (!sprite.visible) {
+				sprite.renderErrorMessage.clear();
+				return;
+			}
+			if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+				sprite.renderErrorMessage = "Missing TransformComponent for entity: " + std::to_string(entityId);
+				return;
+			}
+			if (!entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId)) {
+				sprite.renderErrorMessage = "Missing MaterialComponent for entity: " + std::to_string(entityId);
+				return;
+			}
+
+			QFE::MATH::EulerTransform spriteTransform =
+				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
+			if (entityManager.HasComponent<QFE::SCENE::AnimationComponent>(entityId)) {
+				const QFE::SCENE::AnimationComponent& animation =
+					entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
+				spriteTransform.translate += animation.transform.translate;
+				spriteTransform.rotate += animation.transform.rotate;
+				spriteTransform.scale *= animation.transform.scale;
+			}
+			const QFE::MATH::Matrix4x4 worldMatrix =
+				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &spriteTransform);
+
+			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
+				d3d12GraphicEngine->GetDirectXResourceAllocator();
+			const QFE::GRAPHIC::DirectXResourceHandle transformHandle =
+				resourceAllocator->AllocateConstantBuffer<ObjectTransformGpuData>("SpriteTransform");
+			QFE::GRAPHIC::UpdateObject3dWVPMatrix(
+				graphicEngine.get(), transformHandle, worldMatrix, spriteProjection);
+			sprite.transformMatrixBufferHandle = static_cast<uint32_t>(transformHandle);
+
+			const QFE::GRAPHIC::DirectXResourceHandle materialHandle =
+				resourceAllocator->AllocateConstantBuffer<MaterialGpuData>("SpriteMaterial");
+			MaterialGpuData* materialData =
+				d3d12GraphicEngine->GetConstantBufferData<MaterialGpuData>(materialHandle);
+			if (!materialData) {
+				sprite.renderErrorMessage = "Failed to allocate sprite material for entity: " + std::to_string(entityId);
+				return;
+			}
+			const QFE::SCENE::MaterialComponent& material =
+				entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
+			materialData->color = material.albedoColor;
+			materialData->metallic = material.metallic;
+			materialData->smoothness = material.smoothness;
+			materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(material.uvTransform);
+			sprite.materialResourceHandle = static_cast<uint32_t>(materialHandle);
+
+			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
+			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+			std::string textureName = sprite.textureName;
+			if (QFE::FILE::HasExtension(textureName, "dds")) { sprite.renderErrorMessage = "Sprite textures require a 2D image, not a DDS cubemap."; return; }
+			if (!textureName.empty()) {
+				if (!QFE::FRAMEWORK::LoadTexture(
+					systems, resources.assetDir, textureName,
+					resources.textureHandleMap, resources.textureGpuIndexMap)) {
+					sprite.renderErrorMessage = "Failed to load texture: " + textureName;
+					return;
+				}
+				textureHandle = resources.textureHandleMap[textureName];
+			}
+			sprite.textureResourceHandle = static_cast<uint32_t>(textureHandle);
+			sprite.canRender = true;
+			sprite.renderErrorMessage.clear();
+		});
+
+	}
+
 	void UpdateParticleEmitters(
 		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 		QFE::FRAMEWORK::WindowsEngineResources& resources) {
@@ -81,16 +166,18 @@ namespace {
 		}
 
 		QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
+		// Entity ID と GPU バッファはシーンごとに独立させる。
+		auto& particles = resources.particleScenes[sceneManager.GetCurrentSceneId()];
 		QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
-		if (resources.particleEmitterSceneRevision != sceneManager.GetSceneRevision()) {
-			for (auto& [entityId, runtime] : resources.particleEmitters) {
+		if (particles.particleEmitterSceneRevision != sceneManager.GetSceneRevision()) {
+			for (auto& [entityId, runtime] : particles.particleEmitters) {
 				(void)entityId;
 				runtime.nextSpawnIndex = 0;
 				runtime.emissionRemainder = 0.0f;
 				runtime.elapsedTime = 0.0f;
 				runtime.needsReset = true;
 			}
-			resources.particleEmitterSceneRevision = sceneManager.GetSceneRevision();
+			particles.particleEmitterSceneRevision = sceneManager.GetSceneRevision();
 		}
 		const float deltaTime = std::clamp(systems.fpsCounter->GetDeltaTime(), 0.0f, 0.1f);
 		entityManager.Each<QFE::SCENE::ParticleEmitterComponent>(
@@ -120,7 +207,7 @@ namespace {
 		bool capacityExceeded = false;
 		for (const ParticleLayoutRequest& request : layoutRequests) {
 			activeEmitterIds.insert(request.entityId);
-			auto& runtime = resources.particleEmitters[request.entityId];
+			auto& runtime = particles.particleEmitters[request.entityId];
 			const uint32_t particleOffset = static_cast<uint32_t>(requiredCapacity);
 			const uint32_t capacity = (std::min)(request.capacity,
 				resources.config.particleMaxNum - particleOffset);
@@ -138,14 +225,14 @@ namespace {
 			}
 			requiredCapacity += capacity;
 		}
-		if (capacityExceeded && !resources.particleCapacityWarning) {
+		if (capacityExceeded && !particles.particleCapacityWarning) {
 			QFE::DebugLog("Particle buffer capacity exceeded; additional particles will not be emitted.", QFE::LogLevel::Warning);
 		}
-		resources.particleCapacityWarning = capacityExceeded;
-		for (auto runtimeIt = resources.particleEmitters.begin();
-			runtimeIt != resources.particleEmitters.end();) {
+		particles.particleCapacityWarning = capacityExceeded;
+		for (auto runtimeIt = particles.particleEmitters.begin();
+			runtimeIt != particles.particleEmitters.end();) {
 			if (!activeEmitterIds.contains(runtimeIt->first)) {
-				runtimeIt = resources.particleEmitters.erase(runtimeIt);
+				runtimeIt = particles.particleEmitters.erase(runtimeIt);
 			} else {
 				++runtimeIt;
 			}
@@ -154,7 +241,7 @@ namespace {
 		if (requiredCapacity == 0) {
 			return;
 		}
-		if (resources.particleBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+		if (particles.particleBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
 			const uint32_t newCapacity = resources.config.particleMaxNum;
 
 			QFE::GRAPHIC::DirectXResourceHandle newBufferHandle =
@@ -169,9 +256,9 @@ namespace {
 				}
 				return;
 			}
-			resources.particleBufferHandle = newBufferHandle;
-			resources.particleBufferCapacity = newCapacity;
-			for (auto& [entityId, runtime] : resources.particleEmitters) {
+			particles.particleBufferHandle = newBufferHandle;
+			particles.particleBufferCapacity = newCapacity;
+			for (auto& [entityId, runtime] : particles.particleEmitters) {
 				(void)entityId;
 				runtime.nextSpawnIndex = 0;
 				runtime.emissionRemainder = 0.0f;
@@ -184,7 +271,7 @@ namespace {
 			[&](uint32_t entityId,
 				QFE::SCENE::ParticleEmitterComponent& emitter,
 				QFE::SCENE::TransformComponent&) {
-				auto& runtime = resources.particleEmitters[entityId];
+				auto& runtime = particles.particleEmitters[entityId];
 				if (runtime.particleCount == 0) {
 					emitter.renderErrorMessage = "The shared GPU particle buffer is full.";
 					return;
@@ -260,7 +347,7 @@ namespace {
 
 				if (!QFE::GRAPHIC::DispatchComputePSO(
 					systems.graphicEngine.get(), resources.particleComputePsoHandle,
-					{ constantBufferHandle, resources.particleBufferHandle },
+					{ constantBufferHandle, particles.particleBufferHandle },
 					{ QFE::GRAPHIC::ViewTypeFlags::ConstantBufferView,
 						QFE::GRAPHIC::ViewTypeFlags::UnorderedAccessView },
 					runtime.particleCount)) {
@@ -295,10 +382,11 @@ namespace {
 		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 		QFE::FRAMEWORK::WindowsEngineResources& resources) {
 		if (!systems.sceneManager || !systems.graphicEngine ||
-			resources.spriteVertexBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid ||
-			resources.particleBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
-			return;
-		}
+			resources.spriteVertexBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return;
+		const auto found = resources.particleScenes.find(systems.sceneManager->GetCurrentSceneId());
+		if (found == resources.particleScenes.end()) return;
+		auto& particles = found->second;
+		if (particles.particleBufferHandle == QFE::GRAPHIC::DirectXResourceHandle::Invalid) return;
 		const QFE::GRAPHIC::PSOHandle particlePso =
 			resources.finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain
 			? resources.particleSrgbPsoHandle
@@ -326,13 +414,13 @@ namespace {
 		QFE::EntityManager& entityManager =
 			systems.sceneManager->GetCurrentSceneEntityManager();
 		QFE::GRAPHIC::TransitionResourceToState(
-			systems.graphicEngine.get(), resources.particleBufferHandle,
+			systems.graphicEngine.get(), particles.particleBufferHandle,
 			D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 		entityManager.Each<QFE::SCENE::ParticleEmitterComponent>(
 			[&](uint32_t entityId, QFE::SCENE::ParticleEmitterComponent& emitter) {
-				const auto runtimeIt = resources.particleEmitters.find(entityId);
+				const auto runtimeIt = particles.particleEmitters.find(entityId);
 				if (!emitter.visible || !emitter.canRender ||
-					runtimeIt == resources.particleEmitters.end()) {
+					runtimeIt == particles.particleEmitters.end()) {
 					return;
 				}
 				const auto& runtime = runtimeIt->second;
@@ -340,7 +428,7 @@ namespace {
 					systems.graphicEngine.get(), particlePso,
 					resources.viewportHandle, resources.scissorRectHandle,
 					resources.spriteVertexBufferHandle,
-					{ resources.particleBufferHandle, viewBufferHandle,
+					{ particles.particleBufferHandle, viewBufferHandle,
 						static_cast<QFE::GRAPHIC::DirectXResourceHandle>(emitter.textureResourceHandle) },
 					{ resources.finalRenderTargetHandle },
 					runtime.particleCount, runtime.particleOffset);
@@ -352,8 +440,7 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	HINSTANCE hInstance, 
 	const std::string& mainWindowName, uint32_t mainWindowWidth, uint32_t mainWindowHeight,
 	WindowsQuickForgeEngineSystems& outSystems,
-	ComponentRegistrationCallback registerApplicationComponents,
-	const std::string& scriptDir) {
+	ComponentRegistrationCallback registerApplicationComponents) {
 
 	// デバッグログの初期化
 	QFE::MyDebugLog::GetInstance()->Initialize();
@@ -417,8 +504,6 @@ bool QFE::FRAMEWORK::CreateWindowsQuickForgeEngineSystems(
 	// シーンマネージャの初期化。Registryの所有権はSystemsに残す。
 	outSystems.sceneManager = std::make_unique<QFE::SCENE::SceneManager>(outSystems.componentRegistry);
 	outSystems.sceneManager->Initialize();
-	outSystems.luaScriptSystem = std::make_unique<QFE::FRAMEWORK::LuaScriptSystem>();
-	outSystems.luaScriptSystem->Initialize(scriptDir);
 	outSystems.audioEngine = std::make_unique<QFE::AUDIO::AudioEngine>();
 	if (!outSystems.audioEngine->Initialize()) {
 		QFE_LOG("Audio initialization failed; sound playback is unavailable.");
@@ -466,7 +551,8 @@ bool QFE::FRAMEWORK::ReloadWindowsGameModule(
 	}
 
 	const std::shared_ptr<QFE::StaticComponentRegistry> oldRegistry = systems.componentRegistry;
-	if (systems.luaScriptSystem) systems.luaScriptSystem->Reset();
+	// 復元後のシーンに、旧 DLL で進行中だったフェード要求を適用しない。
+	systems.sceneChangeTransition.Reset();
 	systems.sceneManager->ReleaseComponentRegistryForReload();
 	systems.componentRegistry = candidateRegistry;
 
@@ -494,6 +580,8 @@ bool QFE::FRAMEWORK::ReloadWindowsGameModule(
 
 	if (systems.audioEngine) {
 		systems.audioComponents.Reset(*systems.audioEngine);
+		for (auto& [id, audio] : systems.subSceneAudio) { (void)id; audio->Reset(*systems.audioEngine); }
+		systems.subSceneAudio.clear();
 	}
 
 	// swap後はcandidateModuleが旧DLLを所有する。旧Registryを先に破棄してから
@@ -508,16 +596,38 @@ bool QFE::FRAMEWORK::BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& sys
 	}
 	systems.fpsCounter->FrameStart();
 	systems.inputInterface->Update();
-	if (systems.luaScriptSystem && systems.sceneManager) {
-		systems.luaScriptSystem->Update(
-			*systems.sceneManager, *systems.inputInterface, systems.fpsCounter->GetDeltaTime());
-	}
 	return true;
+}
+
+void QFE::FRAMEWORK::UpdateWindowsSceneSystems(WindowsQuickForgeEngineSystems& systems, float deltaTime) {
+	if (!systems.sceneManager) return;
+	auto& scene = *systems.sceneManager;
+	auto& entities = scene.GetCurrentSceneEntityManager();
+	// ゲーム固有の更新で出たイベント要求を受け、エンジン共通処理を本体側で実行する。
+	UpdateEventComponents(entities, deltaTime);
+	UpdateSceneControlRequests(scene);
+	UpdateSceneSpawnRequests(scene);
+	UpdateAnimationComponents(entities, deltaTime);
+	UpdateSplineMovement(entities, deltaTime);
+	// 置き換えによって EntityManager が無効になり得るため、遷移は最後に行う。
+	systems.sceneChangeTransition.Update(scene, deltaTime, scene.GetCurrentSceneId());
 }
 
 void QFE::FRAMEWORK::EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources* resources) {
 	if (systems.sceneManager && systems.audioEngine) {
-		systems.audioComponents.Update(*systems.sceneManager, *systems.audioEngine);
+		for (const auto id : systems.sceneManager->GetSceneIds()) {
+			AudioComponentSystem* audio = &systems.audioComponents;
+			if (id != QFE::SCENE::MainSceneId) {
+				auto& sub = systems.subSceneAudio[id];
+				if (!sub) sub = std::make_unique<AudioComponentSystem>();
+				audio = sub.get();
+			}
+			const bool updating = systems.sceneManager->IsSceneUpdating(id);
+			audio->SetPaused(*systems.audioEngine, !updating);
+			if (updating) audio->Update(*systems.sceneManager->GetSceneEntityManager(id),
+				systems.sceneManager->GetSceneRevision(id), *systems.audioEngine);
+		}
+		systems.audioEngine->Update();
 	}
 	if (systems.guiManager) QFE::FRAMEWORK::PostDrawGui(*systems.guiManager);
 	const bool gpuComplete = systems.graphicEngine && QFE::FRAMEWORK::PostDrawGraphicEngine(systems.graphicEngine.get());
@@ -539,9 +649,10 @@ void QFE::FRAMEWORK::EndWindowsEngineFrame(WindowsQuickForgeEngineSystems& syste
 }
 
 void QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEngineSystems& systems) {
-	if (systems.luaScriptSystem) systems.luaScriptSystem->Shutdown();
 	if (systems.audioEngine) {
 		systems.audioComponents.Reset(*systems.audioEngine);
+		for (auto& [id, audio] : systems.subSceneAudio) { (void)id; audio->Reset(*systems.audioEngine); }
+		systems.subSceneAudio.clear();
 		systems.audioEngine->Shutdown();
 	}
 	if (systems.sceneManager) systems.sceneManager->Shutdown();
@@ -648,24 +759,8 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 	auto* accelerationStructure = d3d12GraphicEngine->GetRaytracingAccelerationStructure();
-	if (resources.animatedBlasSceneRevision != sceneManager.GetSceneRevision()) {
-		for (const auto& [entityId, handle] : resources.animatedVertexBuffersByEntity) {
-			if (auto* model = entityManager.GetComponentPtr<QFE::SCENE::ModelRenderComponent>(entityId)) {
-				if (model->animatedVertexResourceHandle == static_cast<uint32_t>(handle)) {
-					model->animatedVertexResourceHandle = UINT32_MAX;
-					model->animatedBufferModelName.clear();
-				}
-			}
-			resources.retiredAnimatedVertexBuffers.push_back(handle);
-		}
-		resources.animatedVertexBuffersByEntity.clear();
-		for (const auto& [entityId, blas] : resources.animatedBlasByEntity) {
-			accelerationStructure->RemoveBLAS(blas.handle);
-		}
-		resources.animatedBlasByEntity.clear();
-		resources.animatedBlasSceneRevision = sceneManager.GetSceneRevision();
-	}
-	QFE::FRAMEWORK::DrawSplineMovementPaths(
+
+	if (sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) QFE::FRAMEWORK::DrawSplineMovementPaths(
 		entityManager,
 		[d3d12GraphicEngine](
 			const QFE::MATH::Vector3& start,
@@ -675,7 +770,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 		});
 
 #if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
-	if (resources.showColliders) {
+	if (resources.showColliders && sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) {
 	// Use the same local Transform and unscaled dimensions as CollisionSystem.
 	const auto drawColliderLine = [d3d12GraphicEngine](const QFE::MATH::Vector3& start,
 		const QFE::MATH::Vector3& end) {
@@ -702,7 +797,7 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	// 旧スカイボックスと同様、シーン内の最初の可視キューブマップを背景に使う。
 	QFE::GRAPHIC::GetBlackCubeMapTextureHandle(graphicEngine.get(), resources.skyBoxTextureHandle);
 	resources.skyBoxVisible = false;
-	entityManager.Each<QFE::SCENE::SkyBoxComponent>(
+	if (sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) entityManager.Each<QFE::SCENE::SkyBoxComponent>(
 		[&](uint32_t, QFE::SCENE::SkyBoxComponent& skyBox) {
 			if (!skyBox.visible || resources.skyBoxVisible) return;
 			std::string textureName = skyBox.textureName;
@@ -735,383 +830,340 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	std::vector<uint32_t> globalTriIndices;
 	std::vector<RaytracingInstanceMeta> instanceMetaAligned;
 	std::unordered_map<std::string, RaytracingInstanceMeta> staticModelMeta;
-	std::unordered_set<uint32_t> activeAnimatedEntities;
-	std::unordered_set<uint32_t> activeAnimatedVertices;
-	entityManager.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t, QFE::SCENE::ModelRenderComponent& model) {
-		// Transformを失ったEntityにも前フレームの描画ハンドルを残さない。
-		model.canRender = false;
-	});
-
-	entityManager.Each<QFE::SCENE::ModelRenderComponent, QFE::SCENE::TransformComponent>(
-		[&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp, QFE::SCENE::TransformComponent& transformComp) {
-			modelRenderComp.canRender = false;
-			QFE::MATH::EulerTransform objTransform = transformComp.transform;
-
-			if (entityManager.HasComponent < QFE::SCENE::AnimationComponent>(entityId)) {
-				QFE::SCENE::AnimationComponent& animationComp = entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
-				objTransform.translate += animationComp.transform.translate;
-				objTransform.rotate += animationComp.transform.rotate;
-				objTransform.scale *= animationComp.transform.scale;
+	// モデルの処理とアニメーション用 GPU リソースはシーンごとに分離する。
+	for (const auto sceneId : sceneManager.GetSceneIds()) {
+		if (!sceneManager.IsSceneVisible(sceneId) || !sceneManager.SetCurrentScene(sceneId)) continue;
+		auto& sceneEntities = sceneManager.GetCurrentSceneEntityManager();
+		auto& modelState = resources.modelScenes[sceneId];
+		if (modelState.animatedBlasSceneRevision != sceneManager.GetSceneRevision()) {
+			for (const auto& [entityId, handle] : modelState.animatedVertexBuffersByEntity) {
+				if (auto* model = sceneEntities.GetComponentPtr<QFE::SCENE::ModelRenderComponent>(entityId)) {
+					if (model->animatedVertexResourceHandle == static_cast<uint32_t>(handle)) {
+						model->animatedVertexResourceHandle = UINT32_MAX;
+						model->animatedBufferModelName.clear();
+					}
+				}
+				resources.retiredAnimatedVertexBuffers.push_back(handle);
 			}
-			const QFE::MATH::Matrix4x4 worldMatrix =
-				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &objTransform);
-
-			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
-				d3d12GraphicEngine->GetDirectXResourceAllocator();
-			QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
-				resourceAllocator->AllocateConstantBuffer<ObjectTransformGpuData>();
-			QFE::GRAPHIC::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, worldMatrix, resources.viewProj);
-			modelRenderComp.transformMatrixBufferHandle =
-				static_cast<uint32_t>(transformMatrixBufferHandle);
-
-			// マテリアルの更新
-			if (entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId) == false) {
-				modelRenderComp.renderErrorMessage = "Missing MaterialComponent for entity: " + std::to_string(entityId);
-				return;
+			modelState.animatedVertexBuffersByEntity.clear();
+			for (const auto& [entityId, blas] : modelState.animatedBlasByEntity) {
+				accelerationStructure->RemoveBLAS(blas.handle);
 			}
-			QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
-				resourceAllocator->AllocateConstantBuffer<MaterialGpuData>();
-			MaterialGpuData* materialData =
-				d3d12GraphicEngine->GetConstantBufferData<MaterialGpuData>(materialBufferHandle);
-			QFE::SCENE::MaterialComponent& materialComp = entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
-			materialData->color = materialComp.albedoColor;
-			materialData->metallic = materialComp.metallic;
-			materialData->smoothness = materialComp.smoothness;
-			materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(materialComp.uvTransform);
-			const QFE::SCENE::ShaderComponent* shader = entityManager.HasComponent<QFE::SCENE::ShaderComponent>(entityId)
-				? &entityManager.GetComponent<QFE::SCENE::ShaderComponent>(entityId) : nullptr;
-			materialData->receiveShadow = shader == nullptr || shader->receiveShadow ? 1.0f : 0.0f;
-			modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
+			modelState.animatedBlasByEntity.clear();
+			modelState.animatedBlasSceneRevision = sceneManager.GetSceneRevision();
+		}
+		std::unordered_set<uint32_t> activeAnimatedEntities;
+		std::unordered_set<uint32_t> activeAnimatedVertices;
+		sceneEntities.Each<QFE::SCENE::ModelRenderComponent>([&](uint32_t, QFE::SCENE::ModelRenderComponent& model) {
+			// Transformを失ったEntityにも前フレームの描画ハンドルを残さない。
+			model.canRender = false;
+		});
 
-			// 頂点バッファの更新
-			std::string modelError;
-			const auto modelAsset = systems.modelLoader->LoadModel(modelRenderComp.modelName, resources.modelDir, modelError);
-			if (!modelAsset || !modelAsset->data) {
-				modelRenderComp.renderErrorMessage = "Failed to load model: " + modelError;
-				return;
-			}
-			const auto& modelData = *modelAsset->data;
-			const std::string& modelKey = modelRenderComp.modelName;
-			if (resources.vertexBufferMap.find(modelKey) != resources.vertexBufferMap.end()) {
-				modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelKey]);
-			} else {
-				if (QFE::FRAMEWORK::LoadModelVertexData(systems, resources.modelDir, modelKey, resources.vertexBufferMap)) {
+		sceneEntities.Each<QFE::SCENE::ModelRenderComponent, QFE::SCENE::TransformComponent>(
+			[&](uint32_t entityId, QFE::SCENE::ModelRenderComponent& modelRenderComp, QFE::SCENE::TransformComponent& transformComp) {
+				modelRenderComp.canRender = false;
+				QFE::MATH::EulerTransform objTransform = transformComp.transform;
+
+				if (sceneEntities.HasComponent < QFE::SCENE::AnimationComponent>(entityId)) {
+					QFE::SCENE::AnimationComponent& animationComp = sceneEntities.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
+					objTransform.translate += animationComp.transform.translate;
+					objTransform.rotate += animationComp.transform.rotate;
+					objTransform.scale *= animationComp.transform.scale;
+				}
+				const QFE::MATH::Matrix4x4 worldMatrix =
+					QFE::SCENE::GetWorldMatrix(sceneEntities, entityId, &objTransform);
+
+				QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
+					d3d12GraphicEngine->GetDirectXResourceAllocator();
+				QFE::GRAPHIC::DirectXResourceHandle transformMatrixBufferHandle =
+					resourceAllocator->AllocateConstantBuffer<ObjectTransformGpuData>();
+				QFE::GRAPHIC::UpdateObject3dWVPMatrix(graphicEngine.get(), transformMatrixBufferHandle, worldMatrix, resources.viewProj);
+				modelRenderComp.transformMatrixBufferHandle =
+					static_cast<uint32_t>(transformMatrixBufferHandle);
+
+				// マテリアルの更新
+				if (sceneEntities.HasComponent<QFE::SCENE::MaterialComponent>(entityId) == false) {
+					modelRenderComp.renderErrorMessage = "Missing MaterialComponent for entity: " + std::to_string(entityId);
+					return;
+				}
+				QFE::GRAPHIC::DirectXResourceHandle materialBufferHandle =
+					resourceAllocator->AllocateConstantBuffer<MaterialGpuData>();
+				MaterialGpuData* materialData =
+					d3d12GraphicEngine->GetConstantBufferData<MaterialGpuData>(materialBufferHandle);
+				QFE::SCENE::MaterialComponent& materialComp = sceneEntities.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
+				materialData->color = materialComp.albedoColor;
+				materialData->metallic = materialComp.metallic;
+				materialData->smoothness = materialComp.smoothness;
+				materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(materialComp.uvTransform);
+				const QFE::SCENE::ShaderComponent* shader = sceneEntities.HasComponent<QFE::SCENE::ShaderComponent>(entityId)
+					? &sceneEntities.GetComponent<QFE::SCENE::ShaderComponent>(entityId) : nullptr;
+				materialData->receiveShadow = shader == nullptr || shader->receiveShadow ? 1.0f : 0.0f;
+				modelRenderComp.materialResourceHandle = static_cast<uint32_t>(materialBufferHandle);
+
+				// 頂点バッファの更新
+				std::string modelError;
+				const auto modelAsset = systems.modelLoader->LoadModel(modelRenderComp.modelName, resources.modelDir, modelError);
+				if (!modelAsset || !modelAsset->data) {
+					modelRenderComp.renderErrorMessage = "Failed to load model: " + modelError;
+					return;
+				}
+				const auto& modelData = *modelAsset->data;
+				const std::string& modelKey = modelRenderComp.modelName;
+				if (resources.vertexBufferMap.find(modelKey) != resources.vertexBufferMap.end()) {
 					modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelKey]);
 				} else {
-					modelRenderComp.renderErrorMessage = "Failed to load vertex buffer for model: " + modelRenderComp.modelName;
-					return;
-				}
-			}
-			const std::string& pathText = modelAsset->sourcePath.empty() ? modelRenderComp.modelName : modelAsset->sourcePath;
-			const std::filesystem::path modelPath(std::u8string(reinterpret_cast<const char8_t*>(pathText.data()), pathText.size()));
-			std::string extension = modelPath.extension().string();
-			std::transform(extension.begin(), extension.end(), extension.begin(),
-				[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
-			bool animatedGlb = false;
-			std::vector<MeshVertexData> sampledVertices;
-			auto* skeleton = entityManager.GetComponentPtr<QFE::SCENE::SkeletonAnimationComponent>(entityId);
-			if (extension == ".glb" && skeleton != nullptr && modelAsset->loader) {
-				const std::string& filePath = modelAsset->sourcePath;
-				const auto clipNames = modelAsset->loader->GetGlbAnimationNames(filePath);
-				animatedGlb = !clipNames.empty();
-				if (animatedGlb) {
-					const double duration = modelAsset->loader->GetGlbAnimationDuration(filePath, skeleton->glbAnimationName);
-					if (!skeleton->glbAnimationName.empty() &&
-						std::find(clipNames.begin(), clipNames.end(), skeleton->glbAnimationName) == clipNames.end()) {
-						modelRenderComp.renderErrorMessage = "GLB animation not found: " + skeleton->glbAnimationName;
-						return;
-					}
-					if (modelRenderComp.animatedBufferModelName != modelKey) {
-						const auto previous = resources.animatedVertexBuffersByEntity.find(entityId);
-						if (previous != resources.animatedVertexBuffersByEntity.end()) {
-							resources.retiredAnimatedVertexBuffers.push_back(previous->second);
-							resources.animatedVertexBuffersByEntity.erase(previous);
-						}
-						modelRenderComp.animatedVertexResourceHandle = UINT32_MAX;
-						modelRenderComp.animatedBufferModelName = modelKey;
-						skeleton->glbAnimationTime = 0.0;
-					}
-					if (skeleton->activeGlbAnimationName != skeleton->glbAnimationName) {
-						skeleton->glbAnimationTime = 0.0;
-						skeleton->activeGlbAnimationName = skeleton->glbAnimationName;
-					}
-					if (skeleton->playGlbAnimation) {
-						skeleton->glbAnimationTime +=
-							static_cast<double>(fpsCounter->GetDeltaTime()) * (std::max)(0.0f, skeleton->glbAnimationSpeed);
-						if (duration > 0.0) {
-							skeleton->glbAnimationTime = skeleton->loopGlbAnimation
-								? std::fmod(skeleton->glbAnimationTime, duration)
-								: (std::min)(skeleton->glbAnimationTime, duration);
-						}
-					}
-					if (!modelAsset->loader->SampleGlbAnimation(
-						filePath, skeleton->glbAnimationName, skeleton->glbAnimationTime, sampledVertices)) {
-						modelRenderComp.renderErrorMessage = "Failed to sample GLB animation: " + skeleton->glbAnimationName;
-						return;
-					}
-					if (sampledVertices.size() != modelData.meshes[0].vertices.size()) {
-						modelRenderComp.renderErrorMessage = "GLB animation vertex count changed";
-						return;
-					}
-					if (modelRenderComp.animatedVertexResourceHandle == UINT32_MAX) {
-						QFE::GRAPHIC::DirectXResourceHandle handle;
-						if (!QFE::GRAPHIC::CreateVertexBuffer(graphicEngine.get(), sampledVertices,
-							modelRenderComp.modelName + "_animated", handle)) {
-							modelRenderComp.renderErrorMessage = "Failed to create animated vertex buffer";
-							return;
-						}
-						modelRenderComp.animatedVertexResourceHandle = static_cast<uint32_t>(handle);
+					if (QFE::FRAMEWORK::LoadModelVertexData(systems, resources.modelDir, modelKey, resources.vertexBufferMap)) {
+						modelRenderComp.vertexResourceHandle = static_cast<uint32_t>(resources.vertexBufferMap[modelKey]);
 					} else {
-						MeshVertexData* mapped =
-							d3d12GraphicEngine->GetDirectXResourceContainer()->GetMappedData<MeshVertexData>(
-								static_cast<QFE::GRAPHIC::DirectXResourceHandle>(
-									modelRenderComp.animatedVertexResourceHandle));
-						if (!mapped) {
-							modelRenderComp.renderErrorMessage = "Animated vertex buffer is not mapped";
+						modelRenderComp.renderErrorMessage = "Failed to load vertex buffer for model: " + modelRenderComp.modelName;
+						return;
+					}
+				}
+				const std::string& pathText = modelAsset->sourcePath.empty() ? modelRenderComp.modelName : modelAsset->sourcePath;
+				const std::filesystem::path modelPath(std::u8string(reinterpret_cast<const char8_t*>(pathText.data()), pathText.size()));
+				std::string extension = modelPath.extension().string();
+				std::transform(extension.begin(), extension.end(), extension.begin(),
+					[](unsigned char value) { return static_cast<char>(std::tolower(value)); });
+				bool animatedGlb = false;
+				std::vector<MeshVertexData> sampledVertices;
+				auto* skeleton = sceneEntities.GetComponentPtr<QFE::SCENE::SkeletonAnimationComponent>(entityId);
+				if (extension == ".glb" && skeleton != nullptr && modelAsset->loader) {
+					const std::string& filePath = modelAsset->sourcePath;
+					const auto clipNames = modelAsset->loader->GetGlbAnimationNames(filePath);
+					animatedGlb = !clipNames.empty();
+					if (animatedGlb) {
+						const double duration = modelAsset->loader->GetGlbAnimationDuration(filePath, skeleton->glbAnimationName);
+						if (!skeleton->glbAnimationName.empty() &&
+							std::find(clipNames.begin(), clipNames.end(), skeleton->glbAnimationName) == clipNames.end()) {
+							modelRenderComp.renderErrorMessage = "GLB animation not found: " + skeleton->glbAnimationName;
 							return;
 						}
-						std::memcpy(mapped, sampledVertices.data(), sampledVertices.size() * sizeof(MeshVertexData));
+						if (modelRenderComp.animatedBufferModelName != modelKey) {
+							const auto previous = modelState.animatedVertexBuffersByEntity.find(entityId);
+							if (previous != modelState.animatedVertexBuffersByEntity.end()) {
+								resources.retiredAnimatedVertexBuffers.push_back(previous->second);
+								modelState.animatedVertexBuffersByEntity.erase(previous);
+							}
+							modelRenderComp.animatedVertexResourceHandle = UINT32_MAX;
+							modelRenderComp.animatedBufferModelName = modelKey;
+							skeleton->glbAnimationTime = 0.0;
+						}
+						if (skeleton->activeGlbAnimationName != skeleton->glbAnimationName) {
+							skeleton->glbAnimationTime = 0.0;
+							skeleton->activeGlbAnimationName = skeleton->glbAnimationName;
+						}
+						if (skeleton->playGlbAnimation && sceneManager.IsSceneUpdating(sceneId)) {
+							skeleton->glbAnimationTime +=
+								static_cast<double>(fpsCounter->GetDeltaTime()) * (std::max)(0.0f, skeleton->glbAnimationSpeed);
+							if (duration > 0.0) {
+								skeleton->glbAnimationTime = skeleton->loopGlbAnimation
+									? std::fmod(skeleton->glbAnimationTime, duration)
+									: (std::min)(skeleton->glbAnimationTime, duration);
+							}
+						}
+						if (!modelAsset->loader->SampleGlbAnimation(
+							filePath, skeleton->glbAnimationName, skeleton->glbAnimationTime, sampledVertices)) {
+							modelRenderComp.renderErrorMessage = "Failed to sample GLB animation: " + skeleton->glbAnimationName;
+							return;
+						}
+						if (sampledVertices.size() != modelData.meshes[0].vertices.size()) {
+							modelRenderComp.renderErrorMessage = "GLB animation vertex count changed";
+							return;
+						}
+						if (modelRenderComp.animatedVertexResourceHandle == UINT32_MAX) {
+							QFE::GRAPHIC::DirectXResourceHandle handle;
+							if (!QFE::GRAPHIC::CreateVertexBuffer(graphicEngine.get(), sampledVertices,
+								modelRenderComp.modelName + "_animated", handle)) {
+								modelRenderComp.renderErrorMessage = "Failed to create animated vertex buffer";
+								return;
+							}
+							modelRenderComp.animatedVertexResourceHandle = static_cast<uint32_t>(handle);
+						} else {
+							MeshVertexData* mapped =
+								d3d12GraphicEngine->GetDirectXResourceContainer()->GetMappedData<MeshVertexData>(
+									static_cast<QFE::GRAPHIC::DirectXResourceHandle>(
+										modelRenderComp.animatedVertexResourceHandle));
+							if (!mapped) {
+								modelRenderComp.renderErrorMessage = "Animated vertex buffer is not mapped";
+								return;
+							}
+							std::memcpy(mapped, sampledVertices.data(), sampledVertices.size() * sizeof(MeshVertexData));
+						}
+						modelRenderComp.vertexResourceHandle = modelRenderComp.animatedVertexResourceHandle;
+						modelState.animatedVertexBuffersByEntity[entityId] = static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.animatedVertexResourceHandle);
+						activeAnimatedVertices.insert(entityId);
 					}
-					modelRenderComp.vertexResourceHandle = modelRenderComp.animatedVertexResourceHandle;
-					resources.animatedVertexBuffersByEntity[entityId] = static_cast<QFE::GRAPHIC::DirectXResourceHandle>(modelRenderComp.animatedVertexResourceHandle);
-					activeAnimatedVertices.insert(entityId);
 				}
-			}
-			if (!animatedGlb) {
-				modelRenderComp.animatedBufferModelName.clear();
-				modelRenderComp.animatedVertexResourceHandle = UINT32_MAX;
-				if (skeleton) {
-					skeleton->activeGlbAnimationName.clear();
-					skeleton->glbAnimationTime = 0.0;
+				if (!animatedGlb) {
+					modelRenderComp.animatedBufferModelName.clear();
+					modelRenderComp.animatedVertexResourceHandle = UINT32_MAX;
+					if (skeleton) {
+						skeleton->activeGlbAnimationName.clear();
+						skeleton->glbAnimationTime = 0.0;
+					}
 				}
-			}
 
-			// インデックスバッファの更新
-			if (resources.indexBufferMap.find(modelKey) != resources.indexBufferMap.end()) {
-				modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelKey]);
-			} else {
-				if (QFE::FRAMEWORK::LoadModelIndexBuffer(systems, resources.modelDir, modelKey, resources.indexBufferMap)) {
+				// インデックスバッファの更新
+				if (resources.indexBufferMap.find(modelKey) != resources.indexBufferMap.end()) {
 					modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelKey]);
 				} else {
-					modelRenderComp.renderErrorMessage = "Failed to load index buffer for model: " + modelRenderComp.modelName;
-					return;
-				}
-			}
-
-			// テクスチャの更新: White1x1 < モデル内蔵 < 明示指定
-			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
-			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
-			std::string effectiveTextureName;
-			const QFE::ASSET::ModelMaterialData* modelMaterial = nullptr;
-			{
-				if (!modelData.meshes.empty()) {
-					modelMaterial = &modelData.meshes[0].material;
-					effectiveTextureName = modelMaterial->textureName;
-				}
-			}
-			const bool hasTextureOverride = !modelRenderComp.textureName.empty();
-			if (hasTextureOverride) effectiveTextureName = modelRenderComp.textureName;
-			if (modelMaterial) {
-				materialData->color *= modelMaterial->baseColor;
-			}
-			if (QFE::FILE::HasExtension(effectiveTextureName, "dds")) { modelRenderComp.renderErrorMessage = "Model textures require a 2D image, not a DDS cubemap."; return; }
-			if (!effectiveTextureName.empty()) {
-				if (!hasTextureOverride && modelMaterial &&
-					!modelMaterial->embeddedTextureData.empty()) {
-					if (!resources.textureHandleMap.contains(effectiveTextureName)) {
-						const auto& bytes = modelMaterial->embeddedTextureData;
-						const auto loaded = d3d12GraphicEngine->GetTextureLoader()->LoadTextureFromMemory(
-							effectiveTextureName, bytes.data(), bytes.size());
-						if (loaded == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
-							modelRenderComp.renderErrorMessage = "Failed to load embedded texture: " + effectiveTextureName;
-							return;
-						}
-						const auto index = d3d12GraphicEngine->GetDirectXResourceContainer()->GetTextureDescriptorIndex(loaded);
-						if (index == UINT32_MAX) { modelRenderComp.renderErrorMessage = "Missing embedded texture descriptor."; return; }
-						resources.textureHandleMap[effectiveTextureName] = loaded;
-						resources.textureGpuIndexMap[effectiveTextureName] = index;
+					if (QFE::FRAMEWORK::LoadModelIndexBuffer(systems, resources.modelDir, modelKey, resources.indexBufferMap)) {
+						modelRenderComp.indexResourceHandle = static_cast<uint32_t>(resources.indexBufferMap[modelKey]);
+					} else {
+						modelRenderComp.renderErrorMessage = "Failed to load index buffer for model: " + modelRenderComp.modelName;
+						return;
 					}
-					textureHandle = resources.textureHandleMap[effectiveTextureName];
-				} else {
-					if (QFE::FRAMEWORK::LoadTexture(systems, resources.assetDir, effectiveTextureName, resources.textureHandleMap, resources.textureGpuIndexMap)) {
+				}
+
+				// テクスチャの更新: White1x1 < モデル内蔵 < 明示指定
+				QFE::GRAPHIC::DirectXResourceHandle textureHandle;
+				QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
+				std::string effectiveTextureName;
+				const QFE::ASSET::ModelMaterialData* modelMaterial = nullptr;
+				{
+					if (!modelData.meshes.empty()) {
+						modelMaterial = &modelData.meshes[0].material;
+						effectiveTextureName = modelMaterial->textureName;
+					}
+				}
+				const bool hasTextureOverride = !modelRenderComp.textureName.empty();
+				if (hasTextureOverride) effectiveTextureName = modelRenderComp.textureName;
+				if (modelMaterial) {
+					materialData->color *= modelMaterial->baseColor;
+				}
+				if (QFE::FILE::HasExtension(effectiveTextureName, "dds")) { modelRenderComp.renderErrorMessage = "Model textures require a 2D image, not a DDS cubemap."; return; }
+				if (!effectiveTextureName.empty()) {
+					if (!hasTextureOverride && modelMaterial &&
+						!modelMaterial->embeddedTextureData.empty()) {
+						if (!resources.textureHandleMap.contains(effectiveTextureName)) {
+							const auto& bytes = modelMaterial->embeddedTextureData;
+							const auto loaded = d3d12GraphicEngine->GetTextureLoader()->LoadTextureFromMemory(
+								effectiveTextureName, bytes.data(), bytes.size());
+							if (loaded == QFE::GRAPHIC::DirectXResourceHandle::Invalid) {
+								modelRenderComp.renderErrorMessage = "Failed to load embedded texture: " + effectiveTextureName;
+								return;
+							}
+							const auto index = d3d12GraphicEngine->GetDirectXResourceContainer()->GetTextureDescriptorIndex(loaded);
+							if (index == UINT32_MAX) { modelRenderComp.renderErrorMessage = "Missing embedded texture descriptor."; return; }
+							resources.textureHandleMap[effectiveTextureName] = loaded;
+							resources.textureGpuIndexMap[effectiveTextureName] = index;
+						}
 						textureHandle = resources.textureHandleMap[effectiveTextureName];
 					} else {
-						modelRenderComp.renderErrorMessage = "Failed to load texture: " + effectiveTextureName;
-						return;
+						if (QFE::FRAMEWORK::LoadTexture(systems, resources.assetDir, effectiveTextureName, resources.textureHandleMap, resources.textureGpuIndexMap)) {
+							textureHandle = resources.textureHandleMap[effectiveTextureName];
+						} else {
+							modelRenderComp.renderErrorMessage = "Failed to load texture: " + effectiveTextureName;
+							return;
+						}
 					}
 				}
-			}
-			modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
+				modelRenderComp.textureResourceHandle = static_cast<uint32_t>(textureHandle);
 
-			// 頂点変形のあるGLBはエンティティごとに更新可能なBLASを所有する。
-			const auto& mesh = modelData.meshes[0];
-			const auto& indices = mesh.indices.GetInternalVector();
-			const auto& vertices = animatedGlb ? sampledVertices : mesh.vertices.GetInternalVector();
-			QFE::GRAPHIC::BLASHandle blasHandle = QFE::GRAPHIC::BLASHandle::Invalid;
-			if (animatedGlb) {
-				auto existing = resources.animatedBlasByEntity.find(entityId);
-				if (existing != resources.animatedBlasByEntity.end() && existing->second.modelName != modelKey) {
-					accelerationStructure->RemoveBLAS(existing->second.handle);
-					resources.animatedBlasByEntity.erase(existing);
-					existing = resources.animatedBlasByEntity.end();
-				}
-				if (existing == resources.animatedBlasByEntity.end()) {
-					if (!QFE::GRAPHIC::CreateBLAS(graphicEngine.get(), vertices, indices,
-						"animated_entity_" + std::to_string(entityId), blasHandle, true)) {
-						modelRenderComp.renderErrorMessage = "Failed to create animated BLAS";
-						return;
+				// 頂点変形のあるGLBはエンティティごとに更新可能なBLASを所有する。
+				const auto& mesh = modelData.meshes[0];
+				const auto& indices = mesh.indices.GetInternalVector();
+				const auto& vertices = animatedGlb ? sampledVertices : mesh.vertices.GetInternalVector();
+				QFE::GRAPHIC::BLASHandle blasHandle = QFE::GRAPHIC::BLASHandle::Invalid;
+				if (animatedGlb) {
+					auto existing = modelState.animatedBlasByEntity.find(entityId);
+					if (existing != modelState.animatedBlasByEntity.end() && existing->second.modelName != modelKey) {
+						accelerationStructure->RemoveBLAS(existing->second.handle);
+						modelState.animatedBlasByEntity.erase(existing);
+						existing = modelState.animatedBlasByEntity.end();
 					}
-					resources.animatedBlasByEntity[entityId] = { modelKey, blasHandle };
+					if (existing == modelState.animatedBlasByEntity.end()) {
+						if (!QFE::GRAPHIC::CreateBLAS(graphicEngine.get(), vertices, indices,
+							"animated_entity_" + std::to_string(entityId), blasHandle, true)) {
+							modelRenderComp.renderErrorMessage = "Failed to create animated BLAS";
+							return;
+						}
+						modelState.animatedBlasByEntity[entityId] = { modelKey, blasHandle };
+					} else {
+						blasHandle = existing->second.handle;
+						const auto positions = QFE::GRAPHIC::GetModelVertexPositions(vertices.data(), vertices.size());
+						if (!accelerationStructure->UpdateBLAS(
+							blasHandle,
+							d3d12GraphicEngine->GetDirectXCommandManager()->GetCommandList4(
+								D3D12_COMMAND_LIST_TYPE_DIRECT),
+							positions)) {
+							modelRenderComp.renderErrorMessage = "Failed to update animated BLAS";
+							return;
+						}
+					}
+					activeAnimatedEntities.insert(entityId);
 				} else {
-					blasHandle = existing->second.handle;
-					const auto positions = QFE::GRAPHIC::GetModelVertexPositions(vertices.data(), vertices.size());
-					if (!accelerationStructure->UpdateBLAS(
-						blasHandle,
-						d3d12GraphicEngine->GetDirectXCommandManager()->GetCommandList4(
-							D3D12_COMMAND_LIST_TYPE_DIRECT),
-						positions)) {
-						modelRenderComp.renderErrorMessage = "Failed to update animated BLAS";
+					if (!resources.blasHandleMap.contains(modelKey) &&
+						!QFE::FRAMEWORK::LoadModelAndCreateBLAS(systems, resources.modelDir,
+							modelKey, resources.blasHandleMap)) {
+						modelRenderComp.renderErrorMessage = "Failed to load BLAS for model: " + modelRenderComp.modelName;
 						return;
 					}
+					blasHandle = resources.blasHandleMap.at(modelKey);
 				}
-				activeAnimatedEntities.insert(entityId);
-			} else {
-				if (!resources.blasHandleMap.contains(modelKey) &&
-					!QFE::FRAMEWORK::LoadModelAndCreateBLAS(systems, resources.modelDir,
-						modelKey, resources.blasHandleMap)) {
-					modelRenderComp.renderErrorMessage = "Failed to load BLAS for model: " + modelRenderComp.modelName;
-					return;
+
+				RaytracingInstanceMeta instanceMeta{};
+				if (!animatedGlb && staticModelMeta.contains(modelKey)) {
+					instanceMeta = staticModelMeta.at(modelKey);
+				} else {
+					instanceMeta.vertexBase = static_cast<uint32_t>(globalVertexAttributes.size());
+					instanceMeta.vertexCount = static_cast<uint32_t>(vertices.size());
+					instanceMeta.primitiveBase = static_cast<uint32_t>(globalTriIndices.size() / 3);
+					for (const auto& vertex : vertices) {
+						RaytracingVertexAttribute attribute{};
+						attribute.texcoord = vertex.texcoord;
+						attribute.normal = vertex.normal;
+						globalVertexAttributes.push_back(attribute);
+					}
+					globalTriIndices.insert(globalTriIndices.end(), indices.begin(), indices.end());
+					if (!animatedGlb) staticModelMeta[modelKey] = instanceMeta;
 				}
-				blasHandle = resources.blasHandleMap.at(modelKey);
+				instanceMeta.baseColor = materialData->color;
+				instanceMeta.uvTransform = materialData->uvTransform;
+				instanceMeta.metallic = materialData->metallic;
+				instanceMeta.smoothness = materialData->smoothness;
+				instanceMeta.padding[0] = shader == nullptr || shader->receiveShadow ? 1.0f : 0.0f;
+				const auto textureIndex = resources.textureGpuIndexMap.find(effectiveTextureName);
+				instanceMeta.materialIndex = textureIndex != resources.textureGpuIndexMap.end() ? textureIndex->second : resources.textureGpuIndexMap.at("White1x1");
+				instanceMetaAligned.push_back(instanceMeta);
+				raytracingInstances.push_back({ blasHandle, worldMatrix,
+					static_cast<uint8_t>(shader == nullptr || shader->castShadow ? 0x03 : 0x01) });
+
+				// レンダリング可能
+				modelRenderComp.canRender = true;
+				modelRenderComp.renderErrorMessage = "";
+			});
+
+
+		// コンポーネント削除・Entity削除・静的モデルへの切り替えも含めて回収する。
+		for (const auto& [entityId, handle] : CollectUnusedAnimatedBuffers(modelState.animatedVertexBuffersByEntity, activeAnimatedVertices)) {
+			if (auto* model = sceneEntities.GetComponentPtr<QFE::SCENE::ModelRenderComponent>(entityId)) {
+				if (model->animatedVertexResourceHandle == static_cast<uint32_t>(handle)) {
+					model->animatedVertexResourceHandle = UINT32_MAX;
+					model->animatedBufferModelName.clear();
+				}
 			}
+			resources.retiredAnimatedVertexBuffers.push_back(handle);
+		}
 
-			RaytracingInstanceMeta instanceMeta{};
-			if (!animatedGlb && staticModelMeta.contains(modelKey)) {
-				instanceMeta = staticModelMeta.at(modelKey);
+
+		// シーンから消えたモデルやアニメーションを外したモデルのBLASを解放する。
+		for (auto it = modelState.animatedBlasByEntity.begin(); it != modelState.animatedBlasByEntity.end();) {
+			if (!activeAnimatedEntities.contains(it->first)) {
+				accelerationStructure->RemoveBLAS(it->second.handle);
+				it = modelState.animatedBlasByEntity.erase(it);
 			} else {
-				instanceMeta.vertexBase = static_cast<uint32_t>(globalVertexAttributes.size());
-				instanceMeta.vertexCount = static_cast<uint32_t>(vertices.size());
-				instanceMeta.primitiveBase = static_cast<uint32_t>(globalTriIndices.size() / 3);
-				for (const auto& vertex : vertices) {
-					RaytracingVertexAttribute attribute{};
-					attribute.texcoord = vertex.texcoord;
-					attribute.normal = vertex.normal;
-					globalVertexAttributes.push_back(attribute);
-				}
-				globalTriIndices.insert(globalTriIndices.end(), indices.begin(), indices.end());
-				if (!animatedGlb) staticModelMeta[modelKey] = instanceMeta;
-			}
-			instanceMeta.baseColor = materialData->color;
-			instanceMeta.uvTransform = materialData->uvTransform;
-			instanceMeta.metallic = materialData->metallic;
-			instanceMeta.smoothness = materialData->smoothness;
-			instanceMeta.padding[0] = shader == nullptr || shader->receiveShadow ? 1.0f : 0.0f;
-			const auto textureIndex = resources.textureGpuIndexMap.find(effectiveTextureName);
-			instanceMeta.materialIndex = textureIndex != resources.textureGpuIndexMap.end() ? textureIndex->second : resources.textureGpuIndexMap.at("White1x1");
-			instanceMetaAligned.push_back(instanceMeta);
-			raytracingInstances.push_back({ blasHandle, worldMatrix,
-				static_cast<uint8_t>(shader == nullptr || shader->castShadow ? 0x03 : 0x01) });
-
-			// レンダリング可能
-			modelRenderComp.canRender = true;
-			modelRenderComp.renderErrorMessage = "";
-		});
-
-
-	// コンポーネント削除・Entity削除・静的モデルへの切り替えも含めて回収する。
-	for (const auto& [entityId, handle] : CollectUnusedAnimatedBuffers(resources.animatedVertexBuffersByEntity, activeAnimatedVertices)) {
-		if (auto* model = entityManager.GetComponentPtr<QFE::SCENE::ModelRenderComponent>(entityId)) {
-			if (model->animatedVertexResourceHandle == static_cast<uint32_t>(handle)) {
-				model->animatedVertexResourceHandle = UINT32_MAX;
-				model->animatedBufferModelName.clear();
+				++it;
 			}
 		}
-		resources.retiredAnimatedVertexBuffers.push_back(handle);
+
 	}
+	sceneManager.SetCurrentScene(QFE::SCENE::MainSceneId);
 
-	// スプライトは3Dモデルと異なり、G-bufferやBLASへ登録せず最終映像へ直接重ねる。
-	const QFE::MATH::Matrix4x4 spriteProjection = QFE::MATH::Matrix4x4::MakeOrthographicMatrix(
-		0.0f, 0.0f,
-		static_cast<float>(resources.windowWidth), static_cast<float>(resources.windowHeight),
-		0.0f, 1.0f);
-	entityManager.Each<QFE::SCENE::SpriteRenderComponent>(
-		[&](uint32_t entityId, QFE::SCENE::SpriteRenderComponent& sprite) {
-			sprite.canRender = false;
-			if (!sprite.visible) {
-				sprite.renderErrorMessage.clear();
-				return;
-			}
-			if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
-				sprite.renderErrorMessage = "Missing TransformComponent for entity: " + std::to_string(entityId);
-				return;
-			}
-			if (!entityManager.HasComponent<QFE::SCENE::MaterialComponent>(entityId)) {
-				sprite.renderErrorMessage = "Missing MaterialComponent for entity: " + std::to_string(entityId);
-				return;
-			}
-
-			QFE::MATH::EulerTransform spriteTransform =
-				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform;
-			if (entityManager.HasComponent<QFE::SCENE::AnimationComponent>(entityId)) {
-				const QFE::SCENE::AnimationComponent& animation =
-					entityManager.GetComponent<QFE::SCENE::AnimationComponent>(entityId);
-				spriteTransform.translate += animation.transform.translate;
-				spriteTransform.rotate += animation.transform.rotate;
-				spriteTransform.scale *= animation.transform.scale;
-			}
-			const QFE::MATH::Matrix4x4 worldMatrix =
-				QFE::SCENE::GetWorldMatrix(entityManager, entityId, &spriteTransform);
-
-			QFE::GRAPHIC::DirectXResourceAllocator* resourceAllocator =
-				d3d12GraphicEngine->GetDirectXResourceAllocator();
-			const QFE::GRAPHIC::DirectXResourceHandle transformHandle =
-				resourceAllocator->AllocateConstantBuffer<ObjectTransformGpuData>("SpriteTransform");
-			QFE::GRAPHIC::UpdateObject3dWVPMatrix(
-				graphicEngine.get(), transformHandle, worldMatrix, spriteProjection);
-			sprite.transformMatrixBufferHandle = static_cast<uint32_t>(transformHandle);
-
-			const QFE::GRAPHIC::DirectXResourceHandle materialHandle =
-				resourceAllocator->AllocateConstantBuffer<MaterialGpuData>("SpriteMaterial");
-			MaterialGpuData* materialData =
-				d3d12GraphicEngine->GetConstantBufferData<MaterialGpuData>(materialHandle);
-			if (!materialData) {
-				sprite.renderErrorMessage = "Failed to allocate sprite material for entity: " + std::to_string(entityId);
-				return;
-			}
-			const QFE::SCENE::MaterialComponent& material =
-				entityManager.GetComponent<QFE::SCENE::MaterialComponent>(entityId);
-			materialData->color = material.albedoColor;
-			materialData->metallic = material.metallic;
-			materialData->smoothness = material.smoothness;
-			materialData->uvTransform = QFE::MATH::Matrix4x4::MakeAffineMatrix(material.uvTransform);
-			sprite.materialResourceHandle = static_cast<uint32_t>(materialHandle);
-
-			QFE::GRAPHIC::DirectXResourceHandle textureHandle;
-			QFE::GRAPHIC::GetWhite1x1TextureHandle(graphicEngine.get(), textureHandle);
-			std::string textureName = sprite.textureName;
-			if (QFE::FILE::HasExtension(textureName, "dds")) { sprite.renderErrorMessage = "Sprite textures require a 2D image, not a DDS cubemap."; return; }
-			if (!textureName.empty()) {
-				if (!QFE::FRAMEWORK::LoadTexture(
-					systems, resources.assetDir, textureName,
-					resources.textureHandleMap, resources.textureGpuIndexMap)) {
-					sprite.renderErrorMessage = "Failed to load texture: " + textureName;
-					return;
-				}
-				textureHandle = resources.textureHandleMap[textureName];
-			}
-			sprite.textureResourceHandle = static_cast<uint32_t>(textureHandle);
-			sprite.canRender = true;
-			sprite.renderErrorMessage.clear();
-		});
-
-	// シーンから消えたモデルやアニメーションを外したモデルのBLASを解放する。
-	for (auto it = resources.animatedBlasByEntity.begin(); it != resources.animatedBlasByEntity.end();) {
-		if (!activeAnimatedEntities.contains(it->first)) {
-			accelerationStructure->RemoveBLAS(it->second.handle);
-			it = resources.animatedBlasByEntity.erase(it);
-		} else {
-			++it;
-		}
+	// 表示対象ごとに独立した EntityManager からスプライトを準備する。
+	for (const auto sceneId : sceneManager.GetSceneIds()) {
+		if (!sceneManager.IsSceneVisible(sceneId)) continue;
+		PrepareSceneSprites(systems, resources, *sceneManager.GetSceneEntityManager(sceneId), d3d12GraphicEngine);
 	}
 
 	// BLASインスタンスと同じ順序で属性、インデックス、マテリアルをアップロードする。
@@ -1156,11 +1208,19 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		return;
 	}
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
-	UpdateParticleEmitters(systems, resources);
+	// 更新を止めたシーンは GPU 上の粒子状態も進めない。
+	for (const auto sceneId : sceneManager.GetSceneIds()) {
+		if (sceneManager.IsSceneUpdating(sceneId) && sceneManager.SetCurrentScene(sceneId)) UpdateParticleEmitters(systems, resources);
+	}
+	sceneManager.SetCurrentScene(QFE::SCENE::MainSceneId);
 
-	QFE::FRAMEWORK::DrawSceneModels(
-		sceneManager, graphicEngine.get(), resources.psoHandle, resources.viewportHandle,
-		resources.scissorRectHandle, resources.renderTargets, resources.rootParameterTypes);
+	for (const auto sceneId : sceneManager.GetSceneIds()) {
+		if (!sceneManager.IsSceneVisible(sceneId) || !sceneManager.SetCurrentScene(sceneId)) continue;
+		QFE::FRAMEWORK::DrawSceneModels(
+			sceneManager, graphicEngine.get(), resources.psoHandle, resources.viewportHandle,
+			resources.scissorRectHandle, resources.renderTargets, resources.rootParameterTypes);
+	}
+	sceneManager.SetCurrentScene(QFE::SCENE::MainSceneId);
 
 	if (resources.hasRayTracingGeometry) {
 		std::vector<QFE::GRAPHIC::DirectXResourceHandle> rayTracingRootResources(4);
@@ -1182,13 +1242,17 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		cameraPos->inverseViewProjection = resources.viewProj.Inverse();
 		cameraPos->padding = resources.skyBoxVisible ? 1.0f : 0.0f;
 
-		std::vector<std::pair<uint32_t, DirectionalLightGpu>> lights;
-		sceneManager.GetCurrentSceneEntityManager().Each<QFE::SCENE::DirectionalLightComponent>(
-			[&](uint32_t entityId, QFE::SCENE::DirectionalLightComponent& light) {
-				const auto direction = QFE::SCENE::DirectionalLightComponent::NormalizeDirection(light.direction);
-				lights.push_back({ entityId, { { direction.x, direction.y, direction.z,
-					(std::max)(0.0f, light.intensity) } } });
-			});
+		std::vector<std::pair<std::pair<uint64_t, uint32_t>, DirectionalLightGpu>> lights;
+		// 同じ ID のライトもシーン別に並べ、表示中のシーンから集める。
+		for (const auto sceneId : sceneManager.GetSceneIds()) {
+			if (!sceneManager.IsSceneVisible(sceneId)) continue;
+			sceneManager.GetSceneEntityManager(sceneId)->Each<QFE::SCENE::DirectionalLightComponent>(
+				[&](uint32_t entityId, QFE::SCENE::DirectionalLightComponent& light) {
+					const auto direction = QFE::SCENE::DirectionalLightComponent::NormalizeDirection(light.direction);
+					lights.push_back({ { sceneId, entityId }, { { direction.x, direction.y, direction.z,
+						(std::max)(0.0f, light.intensity) } } });
+				});
+		}
 		std::sort(lights.begin(), lights.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
 		const bool lightCapacityExceeded = lights.size() > resources.config.directionalLightMaxNum;
 		if (lightCapacityExceeded && !resources.directionalLightCapacityWarning) {
@@ -1221,7 +1285,11 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 			resources.finalRenderTargetHandle);
 	}
 
-	DrawParticleEmitters(systems, resources);
+	// 表示を止めたシーンはその粒子を描かない。
+	for (const auto sceneId : sceneManager.GetSceneIds()) {
+		if (sceneManager.IsSceneVisible(sceneId) && sceneManager.SetCurrentScene(sceneId)) DrawParticleEmitters(systems, resources);
+	}
+	sceneManager.SetCurrentScene(QFE::SCENE::MainSceneId);
 
 	// 線はレイトレーシングの影計算には含めず、3D深度テスト付きで結果に重ねる。
 	d3d12GraphicEngine->RenderLines(
@@ -1232,12 +1300,23 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 		resources.finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain
 		? resources.spriteSrgbPsoHandle
 		: resources.spriteUnormPsoHandle;
-	QFE::FRAMEWORK::DrawSceneSprites(
-		sceneManager, graphicEngine.get(), spritePsoHandle,
-		resources.viewportHandle, resources.scissorRectHandle,
-		resources.spriteVertexBufferHandle, resources.finalRenderTargetHandle);
+	// メインを先に描き、読み込み順にサブシーンを重ねる。
+	for (const auto sceneId : sceneManager.GetSceneIds()) {
+		if (!sceneManager.IsSceneVisible(sceneId) || !sceneManager.SetCurrentScene(sceneId)) continue;
+		QFE::FRAMEWORK::DrawSceneSprites(
+			sceneManager, graphicEngine.get(), spritePsoHandle,
+			resources.viewportHandle, resources.scissorRectHandle,
+			resources.spriteVertexBufferHandle, resources.finalRenderTargetHandle);
+	}
+	sceneManager.SetCurrentScene(QFE::SCENE::MainSceneId);
 
-	const float sceneFadeAlpha = systems.sceneChangeTransition.GetFadeAlpha();
+	// 全画面フェードをメニューの上に重ねると別シーンまで暗くなる。
+	// 個別レンダーターゲットがない間は、サブシーン表示中の全画面フェードを省く。
+	bool hasVisibleSubScene = false;
+	for (const auto sceneId : sceneManager.GetSceneIds()) {
+		if (sceneId != QFE::SCENE::MainSceneId && sceneManager.IsSceneVisible(sceneId)) hasVisibleSubScene = true;
+	}
+	const float sceneFadeAlpha = hasVisibleSubScene ? 0.0f : systems.sceneChangeTransition.GetFadeAlpha();
 	if (sceneFadeAlpha > 0.0f) {
 		const ImVec2 displaySize = ImGui::GetIO().DisplaySize;
 		const ImU32 fadeColor = IM_COL32(0, 0, 0, static_cast<int>(sceneFadeAlpha * 255.0f));

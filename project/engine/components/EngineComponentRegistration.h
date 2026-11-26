@@ -15,6 +15,8 @@
 #include "ParticleEmitterComponent.h"
 #include "PhysicsComponent.h"
 #include "SceneChangeComponent.h"
+#include "SceneSpawnComponent.h"
+#include "SceneControlComponent.h"
 #include "ScriptComponent.h"
 #include "SEComponent.h"
 #include "ShaderComponent.h"
@@ -54,11 +56,13 @@ namespace QFE {
 			registry.RegisterComponent<SCENE::CollisionTriggerComponent>("CollisionTriggerComponent", "Physics") &&
 			registry.RegisterComponent<SCENE::BGMComponent>("BGMComponent", "Audio") &&
 			registry.RegisterComponent<SCENE::SEComponent>("SEComponent", "Audio") &&
-			registry.RegisterComponent<SCENE::ScriptComponent>("ScriptComponent", "Behavior") &&
+			registry.RegisterComponent<SCENE::ScriptComponent>("ScriptComponent", "Legacy") &&
 			registry.RegisterComponent<COMPONENTS::InputMovementComponent>("InputMovementComponent", "Behavior") &&
 			registry.RegisterComponent<SCENE::SplineMovementComponent>("SplineMovementComponent", "Behavior") &&
 			registry.RegisterComponent<SCENE::SplineMoveToPointComponent>("SplineMoveToPointComponent", "Behavior") &&
 			registry.RegisterComponent<SCENE::EventComponent>("EventComponent", "Behavior") &&
-			registry.RegisterComponent<SCENE::SceneChangeComponent>("SceneChangeComponent", "Behavior");
+			registry.RegisterComponent<SCENE::SceneChangeComponent>("SceneChangeComponent", "Behavior") &&
+			registry.RegisterComponent<SCENE::SceneSpawnComponent>("SceneSpawnComponent", "Behavior") &&
+			registry.RegisterComponent<SCENE::SceneControlComponent>("SceneControlComponent", "Behavior");
 	}
 }

@@ -513,18 +513,6 @@
             "id": 106,
             "sourceNodeId": 37,
             "targetNodeId": 23
-        },
-        {
-            "dependencyMode": "transitive",
-            "id": 107,
-            "sourceNodeId": 38,
-            "targetNodeId": 15
-        },
-        {
-            "dependencyMode": "direct",
-            "id": 108,
-            "sourceNodeId": 39,
-            "targetNodeId": 15
         }
     ],
     "nextGroupId": 9,
@@ -1200,7 +1188,7 @@
                     "buildOptions": "/bigobj",
                     "defines": "",
                     "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
@@ -1210,7 +1198,7 @@
                     "buildOptions": "/bigobj",
                     "defines": "",
                     "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
@@ -1220,7 +1208,7 @@
                     "buildOptions": "/bigobj",
                     "defines": "",
                     "externalLinks": "",
-                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
+                    "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
                     "kind": 0,
                     "libraryDirectories": "",
                     "postBuildEvent": "",
@@ -1231,7 +1219,7 @@
             "externalLibrary": false,
             "externalLinks": [],
             "id": 15,
-            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/\n%{wks.location}/externals/sol2/\n%{wks.location}/externals/lua/",
+            "includePaths": "%{wks.location}/engine/\n%{wks.location}/engine/core/\n%{wks.location}/externals/",
             "isFrameworkLayer": true,
             "kind": 0,
             "libraryDirectories": [],

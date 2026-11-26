@@ -1,3 +1,5 @@
+> 現在のエンジンでは Lua の実行機能は削除されています。この資料とスクリプトは旧シーンの記録として残しています。
+
 # QuickForgeEngine Lua scripts
 
 `ScriptComponent.scriptFunctionName` に、このフォルダーからの相対パスを指定します。

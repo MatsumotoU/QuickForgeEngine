@@ -52,10 +52,14 @@ namespace QFE::FRAMEWORK {
 			std::string modelName;
 			QFE::GRAPHIC::BLASHandle handle = QFE::GRAPHIC::BLASHandle::Invalid;
 		};
-		std::unordered_map<uint32_t, AnimatedBLAS> animatedBlasByEntity;
-		std::unordered_map<uint32_t, QFE::GRAPHIC::DirectXResourceHandle> animatedVertexBuffersByEntity;
+		struct ModelSceneRuntime {
+			std::unordered_map<uint32_t, AnimatedBLAS> animatedBlasByEntity;
+			std::unordered_map<uint32_t, QFE::GRAPHIC::DirectXResourceHandle> animatedVertexBuffersByEntity;
+			uint64_t animatedBlasSceneRevision = UINT64_MAX;
+		};
+		// アニメーション用 GPU リソースの所有者をシーン別に保つ。
+		std::unordered_map<uint64_t, ModelSceneRuntime> modelScenes;
 		std::vector<QFE::GRAPHIC::DirectXResourceHandle> retiredAnimatedVertexBuffers;
-		uint64_t animatedBlasSceneRevision = UINT64_MAX;
 
 		std::map<std::string, QFE::GRAPHIC::DirectXResourceHandle> textureHandleMap;
 		std::map<std::string, uint32_t> textureGpuIndexMap; // テクスチャ名 -> GPU側のインデックスマップ
@@ -81,10 +85,6 @@ namespace QFE::FRAMEWORK {
 		QFE::GRAPHIC::PSOHandle particleUnormPsoHandle = QFE::GRAPHIC::PSOHandle::Invalid;
 		QFE::GRAPHIC::PSOHandle particleSrgbPsoHandle = QFE::GRAPHIC::PSOHandle::Invalid;
 		QFE::GRAPHIC::ComputePSOHandle particleComputePsoHandle = QFE::GRAPHIC::ComputePSOHandle::Invalid;
-		QFE::GRAPHIC::DirectXResourceHandle particleBufferHandle =
-			QFE::GRAPHIC::DirectXResourceHandle::Invalid;
-		uint32_t particleBufferCapacity = 0;
-		bool particleCapacityWarning = false;
 		bool directionalLightCapacityWarning = false;
 		struct ParticleEmitterRuntime {
 			uint32_t particleOffset = 0;
@@ -96,8 +96,15 @@ namespace QFE::FRAMEWORK {
 			float elapsedTime = 0.0f;
 			bool needsReset = true;
 		};
-		std::unordered_map<uint32_t, ParticleEmitterRuntime> particleEmitters;
-		uint64_t particleEmitterSceneRevision = UINT64_MAX;
+		// 同じ Entity ID が別シーンに存在しても、GPU バッファと再生状態を共有しない。
+		struct ParticleSceneRuntime {
+			QFE::GRAPHIC::DirectXResourceHandle particleBufferHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+			uint32_t particleBufferCapacity = 0;
+			bool particleCapacityWarning = false;
+			std::unordered_map<uint32_t, ParticleEmitterRuntime> particleEmitters;
+			uint64_t particleEmitterSceneRevision = UINT64_MAX;
+		};
+		std::unordered_map<uint64_t, ParticleSceneRuntime> particleScenes;
 
 		QFE::GRAPHIC::RenderTargetHandle finalRenderTargetHandle = QFE::GRAPHIC::RenderTargetHandle::SwapChain;
 

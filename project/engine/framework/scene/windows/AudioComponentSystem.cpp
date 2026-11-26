@@ -6,24 +6,43 @@
 #include "scene/SceneManager.h"
 
 #include <unordered_set>
+#include <algorithm>
 
 void QFE::FRAMEWORK::AudioComponentSystem::Reset(AUDIO::AudioEngine& audio) {
-	audio.StopAll();
+	// 他のシーンが所有する音声には触れない。
+	for (const auto& [id, handle] : bgmVoices_) { (void)id; audio.Stop(handle); }
+	for (const auto& [id, handle] : loopingSeVoices_) { (void)id; audio.Stop(handle); }
+	for (const auto handle : oneShotVoices_) audio.Stop(handle);
 	bgmVoices_.clear();
 	loopingSeVoices_.clear();
+	oneShotVoices_.clear();
 	sceneRevision_ = 0;
+	paused_ = false;
+}
+
+void QFE::FRAMEWORK::AudioComponentSystem::SetPaused(AUDIO::AudioEngine& audio, bool paused) {
+	if (paused_ == paused) return;
+	const auto setVoice = [&](uint32_t handle) {
+		if (paused) audio.Pause(handle); else audio.Resume(handle);
+	};
+	for (const auto& [id, handle] : bgmVoices_) { (void)id; setVoice(handle); }
+	for (const auto& [id, handle] : loopingSeVoices_) { (void)id; setVoice(handle); }
+	for (const auto handle : oneShotVoices_) setVoice(handle);
+	paused_ = paused;
 }
 
 void QFE::FRAMEWORK::AudioComponentSystem::Update(SCENE::SceneManager& scene, AUDIO::AudioEngine& audio) {
-	const bool sceneStarted = sceneRevision_ != scene.GetSceneRevision();
+	Update(scene.GetCurrentSceneEntityManager(), scene.GetSceneRevision(), audio);
+}
+
+void QFE::FRAMEWORK::AudioComponentSystem::Update(
+	EntityManager& entities, uint64_t sceneRevision, AUDIO::AudioEngine& audio) {
+	const bool sceneStarted = sceneRevision_ != sceneRevision;
 	if (sceneStarted) {
-		audio.StopAll();
-		bgmVoices_.clear();
-		loopingSeVoices_.clear();
-		sceneRevision_ = scene.GetSceneRevision();
+		Reset(audio);
+		sceneRevision_ = sceneRevision;
 	}
 
-	auto& entities = scene.GetCurrentSceneEntityManager();
 	std::unordered_set<uint32_t> activeBgm;
 	entities.Each<SCENE::BGMComponent>([&](uint32_t id, SCENE::BGMComponent& bgm) {
 		activeBgm.insert(id);
@@ -56,6 +75,7 @@ void QFE::FRAMEWORK::AudioComponentSystem::Update(SCENE::SceneManager& scene, AU
 		}
 		const uint32_t handle = audio.Play(se.audioPath, se.isLoop, se.volume, AUDIO::AudioCategory::SE);
 		if (handle && se.isLoop) loopingSeVoices_[id] = handle;
+		else if (handle) oneShotVoices_.push_back(handle);
 	});
 	for (auto it = loopingSeVoices_.begin(); it != loopingSeVoices_.end();) {
 		if (activeSe.contains(it->first)) { ++it; continue; }
@@ -63,4 +83,6 @@ void QFE::FRAMEWORK::AudioComponentSystem::Update(SCENE::SceneManager& scene, AU
 		it = loopingSeVoices_.erase(it);
 	}
 	audio.Update();
+	// 再生終了した SE のハンドルを残し続けない。
+	std::erase_if(oneShotVoices_, [&](uint32_t handle) { return !audio.IsActive(handle); });
 }

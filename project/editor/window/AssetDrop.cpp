@@ -12,7 +12,7 @@
 #include <memory>
 
 namespace {
-enum class AssetKind { Unsupported, Entity, Model, Sprite };
+enum class AssetKind { Unsupported, Entity, Scene, Model, Sprite };
 
 std::filesystem::path PathFromUtf8(const std::string& text) {
 	return std::filesystem::path(std::u8string(reinterpret_cast<const char8_t*>(text.data()), text.size()));
@@ -28,6 +28,7 @@ AssetKind GetAssetKind(const std::filesystem::path& path) {
 	std::transform(extension.begin(), extension.end(), extension.begin(),
 		[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
 	if ((extension == ".entity" || extension == ".json") && path.begin() != path.end() && *path.begin() == "entities") return AssetKind::Entity;
+	if ((extension == ".scene" || extension == ".json") && path.begin() != path.end() && *path.begin() == "scenes") return AssetKind::Scene;
 	if (extension == ".obj" || extension == ".glb") return AssetKind::Model;
 	if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" ||
 		extension == ".bmp" || extension == ".tif" || extension == ".tiff") return AssetKind::Sprite;
@@ -62,6 +63,13 @@ void QFE::EDITOR::AcceptAssetDrop(SCENE::SceneManager* sceneManager, EditorComma
 				const float y = (mouse.y - imagePosition.y) / imageSize.y;
 				if (kind == AssetKind::Entity) {
 					commandList.AddCommand(std::make_unique<AddSavedEntitiesCommand>(sceneManager, QFE::ConvertString(assetPath.wstring())));
+				} else if (kind == AssetKind::Scene) {
+					// モデルと同じレイ上の位置を、追加シーンの原点とする。
+					const auto inverse = MATH::Matrix4x4::Multiply(view, projection).Inverse();
+					const auto nearPoint = MATH::Vector3::EulerTransform({ x * 2 - 1, 1 - y * 2, 0 }, inverse);
+					const auto farPoint = MATH::Vector3::EulerTransform({ x * 2 - 1, 1 - y * 2, 1 }, inverse);
+					const auto position = nearPoint + (farPoint - nearPoint).Normalize() * 5.0f;
+					commandList.AddCommand(std::make_unique<AddSavedEntitiesCommand>(sceneManager, QFE::ConvertString(assetPath.wstring()), position));
 				} else if (kind == AssetKind::Model) {
 					// カメラからドロップ位置を通るレイ上、近平面から5単位の位置に配置する。
 					const auto inverse = MATH::Matrix4x4::Multiply(view, projection).Inverse();

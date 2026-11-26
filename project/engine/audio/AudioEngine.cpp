@@ -192,6 +192,7 @@ uint32_t QFE::AUDIO::AudioEngine::Play(
 }
 
 void QFE::AUDIO::AudioEngine::Stop(uint32_t handle) { impl_->voices.erase(handle); }
+bool QFE::AUDIO::AudioEngine::IsActive(uint32_t handle) const { return impl_->voices.contains(handle); }
 void QFE::AUDIO::AudioEngine::Pause(uint32_t handle) {
 	const auto voice = impl_->voices.find(handle);
 	if (voice != impl_->voices.end() && !voice->second->paused && SUCCEEDED(voice->second->source->Stop())) {

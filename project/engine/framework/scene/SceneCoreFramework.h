@@ -20,6 +20,14 @@ namespace QFE::FRAMEWORK {
 	SCENE::SceneSnapshot CaptureScene(SCENE::SceneManager& scene);
 	bool RestoreScene(SCENE::SceneManager& scene, const SCENE::SceneSnapshot& snapshot);
 	uint32_t LoadSceneEntity(SCENE::SceneManager& scene, const std::string& path);
+	// シーンの原点が origin になるよう、エンティティを追加する。
+	uint32_t AppendScene(SCENE::SceneManager& scene, const std::string& path, const QFE::MATH::Vector3& origin);
+	// scenes フォルダーからの相対パスを、存在するシーンアセットに解決する。
+	std::filesystem::path ResolveSceneSpawnAsset(const std::string& relativePath);
+	// イベント等からの追加要求をまとめて処理する。
+	void UpdateSceneSpawnRequests(SCENE::SceneManager& scene);
+	// 現在更新中のシーンから、独立シーンの読み込みと状態変更を要求する。
+	void UpdateSceneControlRequests(SCENE::SceneManager& scene);
 }
 
 

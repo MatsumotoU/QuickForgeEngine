@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <cstdint>
 
 namespace QFE::SCENE {
 	class SceneManager;
@@ -12,7 +13,7 @@ namespace QFE::FRAMEWORK {
 	public:
 		virtual ~ISceneState() = default;
 		virtual std::unique_ptr<ISceneState> Update(
-			SCENE::SceneManager& sceneManager, float deltaTime) = 0;
+			SCENE::SceneManager& sceneManager, uint64_t sceneId, float deltaTime) = 0;
 		virtual float GetFadeAlpha() const = 0;
 	};
 
@@ -20,7 +21,7 @@ namespace QFE::FRAMEWORK {
 	class IdleSceneState final : public ISceneState {
 	public:
 		std::unique_ptr<ISceneState> Update(
-			SCENE::SceneManager& sceneManager, float deltaTime) override;
+			SCENE::SceneManager& sceneManager, uint64_t sceneId, float deltaTime) override;
 		float GetFadeAlpha() const override { return 0.0f; }
 	};
 
@@ -29,7 +30,7 @@ namespace QFE::FRAMEWORK {
 	public:
 		explicit FadeOutSceneState(std::string targetScenePath);
 		std::unique_ptr<ISceneState> Update(
-			SCENE::SceneManager& sceneManager, float deltaTime) override;
+			SCENE::SceneManager& sceneManager, uint64_t sceneId, float deltaTime) override;
 		float GetFadeAlpha() const override { return fadeAlpha_; }
 
 	private:
@@ -43,7 +44,7 @@ namespace QFE::FRAMEWORK {
 	class FadeInSceneState final : public ISceneState {
 	public:
 		std::unique_ptr<ISceneState> Update(
-			SCENE::SceneManager& sceneManager, float deltaTime) override;
+			SCENE::SceneManager& sceneManager, uint64_t sceneId, float deltaTime) override;
 		float GetFadeAlpha() const override { return fadeAlpha_; }
 
 	private:

@@ -135,7 +135,6 @@ project "GameEditor"
         "NetworkFramework",
         "AnimationFramework",
         "Animation",
-        "Lua",
         "ShootingGameEditor",
     }
     filter "system:windows"

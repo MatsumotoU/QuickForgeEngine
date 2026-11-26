@@ -23,6 +23,8 @@ namespace QFE::AUDIO {
 		uint32_t Play(const std::string& audioPath, bool loop, float volume = 1.0f,
 			AudioCategory category = AudioCategory::SE);
 		void Stop(uint32_t handle);
+		/// 再生終了済みのハンドルは false。シーンごとの再生状態を回収するために使う。
+		bool IsActive(uint32_t handle) const;
 		void Pause(uint32_t handle);
 		void Resume(uint32_t handle);
 		void StopAll();

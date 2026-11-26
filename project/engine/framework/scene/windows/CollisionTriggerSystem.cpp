@@ -3,6 +3,7 @@
 #include "ecs/entity/EntityManager.h"
 #include "components/CollisionTriggerComponent.h"
 #include "components/TransformHierarchy.h"
+#include "components/SceneSpawnComponent.h"
 #include "framework/scene/EventSystem.h"
 
 namespace {
@@ -87,6 +88,14 @@ void QFE::FRAMEWORK::ApplyCollisionTriggerCommands(EntityManager& entityManager,
 			!SCENE::TryGetEntityIdByUuid(entityManager, action.value("targetUuid", std::string{}), target)) continue;
 		if (!entityManager.IsActiveEntity(target)) continue;
 		if (type == "Destroy") entityManager.RemoveEntity(target);
+		else if (type == "SceneSpawn") {
+			auto* spawner = entityManager.GetComponentPtr<SCENE::SceneSpawnComponent>(target);
+			if (!spawner) continue;
+			const int64_t index = action.value("sceneIndex", int64_t{ 0 });
+			if (index < 0 || static_cast<uint64_t>(index) > UINT32_MAX) continue;
+			// 真偽値の連続書き込みではなくキューに積み、複数接触を失わない。
+			spawner->pendingRequests.push_back({ static_cast<uint32_t>(index), action.value("spawnAll", false) });
+		}
 		else if (type == "Spawn") {
 			const std::string path = action.value("entityPath", std::string{});
 			if (spawn && !path.empty()) spawn(path, target);

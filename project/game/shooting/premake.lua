@@ -120,5 +120,4 @@ project "ShootingGame"
         "Network",
         "AnimationFramework",
         "Animation",
-        "Lua",
     }

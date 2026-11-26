@@ -166,7 +166,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	if (!QFE::FRAMEWORK::ASSETS::GetProjectRoot().empty()) {
 		engineResources.assetDir = QFE::ConvertString(QFE::FRAMEWORK::ASSETS::GetProjectAssets().wstring()) + "/";
 		engineResources.modelDir = engineResources.assetDir;
-		engineResources.config.scriptDir = QFE::ConvertString((QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "scripts").wstring());
 	}
 	QFE::FRAMEWORK::WindowsGameModule gameModule;
 	if (!gameModule.Load(L"ShootingGame.dll")) {
@@ -179,7 +178,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		engineResources.windowName,
 		engineResources.windowWidth, engineResources.windowHeight,
 		engineSystems,
-		gameModule.GetComponentRegistrationFunction(), engineResources.config.scriptDir)) {
+		gameModule.GetComponentRegistrationFunction())) {
 		return -1;
 	}
 	// エディタから接続先を渡された場合だけ通信し、単独起動時は従来通り動作する。
@@ -247,9 +246,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 		float deltaTime = fpsCounter->GetDeltaTime();
 
-		if (!gameModule.Update(engineSystems, engineResources, deltaTime)) {
-			break;
+		// フレーム開始時の一覧を使い、新しく読み込んだシーンは次フレームから更新する。
+		bool updateSucceeded = true;
+		for (const auto sceneId : sceneManager.GetSceneIds()) {
+			if (!sceneManager.IsSceneUpdating(sceneId) || !sceneManager.SetCurrentScene(sceneId)) continue;
+			if (!gameModule.Update(engineSystems, engineResources, deltaTime)) {
+				updateSucceeded = false;
+				break;
+			}
+			// シーンの生成やイベントはゲーム DLL に依存せずフレームワークが処理する。
+			QFE::FRAMEWORK::UpdateWindowsSceneSystems(engineSystems, deltaTime);
 		}
+		sceneManager.SetCurrentScene(QFE::SCENE::MainSceneId);
+		if (!updateSucceeded) break;
 
 		// カメラの更新
 		engineResources.viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager, &engineResources.cameraPosition);
