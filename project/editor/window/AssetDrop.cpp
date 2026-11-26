@@ -1,4 +1,5 @@
 #include "AssetDrop.h"
+#include "GridPlacement.h"
 #include "framework/assets/AssetsCoreFramework.h"
 #include "command/AddSavedEntitiesCommand.h"
 #include "command/CreateEntityCommand.h"
@@ -43,7 +44,7 @@ bool QFE::EDITOR::IsDraggableAsset(const std::string& relativePath) {
 
 void QFE::EDITOR::AcceptAssetDrop(SCENE::SceneManager* sceneManager, EditorCommandList& commandList,
 	const ImVec2& imagePosition, const ImVec2& imageSize, unsigned width, unsigned height,
-	const MATH::Matrix4x4& view, const MATH::Matrix4x4& projection) {
+	const MATH::Matrix4x4& view, const MATH::Matrix4x4& projection, const GridPlacement* grid) {
 	if (!sceneManager || imageSize.x <= 0 || imageSize.y <= 0 || !ImGui::BeginDragDropTarget()) return;
 	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayloadType)) {
 		if (payload->IsDelivery() && payload->DataSize > 1) {
@@ -61,25 +62,42 @@ void QFE::EDITOR::AcceptAssetDrop(SCENE::SceneManager* sceneManager, EditorComma
 				const ImVec2 mouse = ImGui::GetMousePos();
 				const float x = (mouse.x - imagePosition.x) / imageSize.x;
 				const float y = (mouse.y - imagePosition.y) / imageSize.y;
+				MATH::Vector3 gridPosition{};
+				const bool gridEnabled = grid && grid->enabled;
+				if (gridEnabled && !IntersectGrid(*grid, MATH::Matrix4x4::Multiply(view, projection), x, y, gridPosition)) {
+					// 面が見えない方向では推測した位置に配置しない。
+					QFE_LOG("Cannot place asset: the selected grid plane is not under the cursor.", QFE::LogLevel::Warning);
+					ImGui::EndDragDropTarget();
+					return;
+				}
 				if (kind == AssetKind::Entity) {
-					commandList.AddCommand(std::make_unique<AddSavedEntitiesCommand>(sceneManager, QFE::ConvertString(assetPath.wstring())));
+					commandList.AddCommand(std::make_unique<AddSavedEntitiesCommand>(sceneManager, QFE::ConvertString(assetPath.wstring()), gridPosition));
 				} else if (kind == AssetKind::Scene) {
 					// モデルと同じレイ上の位置を、追加シーンの原点とする。
 					const auto inverse = MATH::Matrix4x4::Multiply(view, projection).Inverse();
 					const auto nearPoint = MATH::Vector3::EulerTransform({ x * 2 - 1, 1 - y * 2, 0 }, inverse);
 					const auto farPoint = MATH::Vector3::EulerTransform({ x * 2 - 1, 1 - y * 2, 1 }, inverse);
-					const auto position = nearPoint + (farPoint - nearPoint).Normalize() * 5.0f;
+					const auto position = gridEnabled ? gridPosition : nearPoint + (farPoint - nearPoint).Normalize() * 5.0f;
 					commandList.AddCommand(std::make_unique<AddSavedEntitiesCommand>(sceneManager, QFE::ConvertString(assetPath.wstring()), position));
 				} else if (kind == AssetKind::Model) {
 					// カメラからドロップ位置を通るレイ上、近平面から5単位の位置に配置する。
 					const auto inverse = MATH::Matrix4x4::Multiply(view, projection).Inverse();
 					const auto nearPoint = MATH::Vector3::EulerTransform({ x * 2 - 1, 1 - y * 2, 0 }, inverse);
 					const auto farPoint = MATH::Vector3::EulerTransform({ x * 2 - 1, 1 - y * 2, 1 }, inverse);
-					const auto position = nearPoint + (farPoint - nearPoint).Normalize() * 5.0f;
+					const auto position = gridEnabled ? gridPosition : nearPoint + (farPoint - nearPoint).Normalize() * 5.0f;
 					commandList.AddCommand(std::make_unique<CreateEntityCommand>(ToUtf8(path.stem()), position,
 						&manager, relative));
 				} else if (kind == AssetKind::Sprite) {
-					const MATH::Vector3 position{ x * static_cast<float>(width), y * static_cast<float>(height), 0 };
+					MATH::Vector3 position{ x * static_cast<float>(width), y * static_cast<float>(height), 0 };
+					if (gridEnabled) {
+						// Sprite は画面ピクセル座標で描画されるため、格子点を画面へ再投影する。
+						const auto clip = MATH::Vector4::EulerTransform(
+							{ gridPosition.x, gridPosition.y, gridPosition.z, 1.0f }, MATH::Matrix4x4::Multiply(view, projection));
+						if (clip.w > 1.0e-6f) {
+							position.x = (clip.x / clip.w + 1.0f) * 0.5f * static_cast<float>(width);
+							position.y = (1.0f - clip.y / clip.w) * 0.5f * static_cast<float>(height);
+						}
+					}
 					commandList.AddCommand(std::make_unique<CreateEntityCommand>(ToUtf8(path.stem()), position,
 						&manager, std::string{}, true, false, relative));
 				}
