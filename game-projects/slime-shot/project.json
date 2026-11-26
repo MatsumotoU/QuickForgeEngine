@@ -1,5 +1,5 @@
 {
     "name": "slime-shot",
-    "start_scene": "DefaultScene.scene",
+    "start_scene": "MainGameScene.scene",
     "version": 1
 }

@@ -1,0 +1,2314 @@
+{
+    "entities": [
+        {
+            "components": {
+                "CameraComponent": {
+                    "aspectRatio_": 1.7777777910232544,
+                    "bottom_": 0.0,
+                    "farZ_": 1000.0,
+                    "fovY_": 0.44999998807907104,
+                    "isMainCamera": true,
+                    "left_": 0.0,
+                    "nearZ_": 0.10000000149011612,
+                    "right_": 1280.0,
+                    "top_": 720.0,
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "Gamesystems",
+                    "name": "Camera",
+                    "uuid": "130ffdf4-04ec-4935-bc54-15d93cfd2d66"
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.8999999761581421,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 16.799999237060547,
+                            "z": -11.699999809265137
+                        }
+                    }
+                }
+            },
+            "id": 0
+        },
+        {
+            "components": {
+                "DirectionalLightComponent": {
+                    "direction": {
+                        "x": 0.0,
+                        "y": -1.0,
+                        "z": 0.0
+                    },
+                    "intensity": 1.0
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "Gamesystems",
+                    "name": "MainDirectionalLight",
+                    "uuid": "b8ac30d3-3d65-46e7-9aac-435d08f21fd3"
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 1
+        },
+        {
+            "components": {
+                "InputMovementComponent": {
+                    "amount": 4.0,
+                    "backwardActionName": "Down",
+                    "enabled": true,
+                    "forwardActionName": "Up",
+                    "horizontalAxis": {
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "leftActionName": "Left",
+                    "normalizeInput": true,
+                    "rightActionName": "Right",
+                    "useGamePadLeftStick": true,
+                    "verticalAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    }
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.44908905029296875,
+                        "y": 0.8382352590560913,
+                        "z": 0.1766868531703949
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.5,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "",
+                    "name": "Player",
+                    "uuid": "4774e2ca-1417-4d87-acf8-62acc7ea65b7"
+                },
+                "PhysicsComponent": {
+                    "acceleration": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "friction": 10.0,
+                    "mass": 0.10000000149011612,
+                    "velocity": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "SphereColliderComponent": {
+                    "mask": 0,
+                    "onCollisionEnterScriptFunctionName": "",
+                    "radius": 0.5
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 10
+        },
+        {
+            "components": {
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "WorldDecoration",
+                    "name": "Sky Box",
+                    "uuid": "4e4d2730-c0f0-4aa0-aaba-54a742e8e83a"
+                },
+                "SkyBoxComponent": {
+                    "textureName": "images/sky_06_2k.dds",
+                    "visible": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 11
+        },
+        {
+            "components": {
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.05567573383450508,
+                        "y": 0.028594782575964928,
+                        "z": 0.06862747669219971
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/PlaneHorizontal",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "WorldDecoration",
+                    "name": "Ground",
+                    "uuid": "2e437370-a507-45c9-9f87-2a9083573591"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 100.0,
+                            "y": 1.0,
+                            "z": 100.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": -0.5,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 14
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "d4e24af4-86de-4573-90e6-f98708f056dd"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 4.0
+                        }
+                    }
+                }
+            },
+            "id": 17
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "17e2216e-2828-4766-abac-731eb820a2b2"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 1.0,
+                            "y": 0.0,
+                            "z": 4.0
+                        }
+                    }
+                }
+            },
+            "id": 18
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "5045df95-863f-4fa8-853f-53eb9e099d27"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -1.0,
+                            "y": 0.0,
+                            "z": 4.0
+                        }
+                    }
+                }
+            },
+            "id": 19
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "1c7fddc8-8ea5-460e-b035-bca595db927c"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 2.0,
+                            "y": 0.0,
+                            "z": 4.0
+                        }
+                    }
+                }
+            },
+            "id": 20
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "b4c3389e-dfb3-45f8-ae51-87260557c498"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -2.0,
+                            "y": 0.0,
+                            "z": 4.0
+                        }
+                    }
+                }
+            },
+            "id": 21
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "d9137b34-e410-4caa-8f96-074541a0c648"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -3.0,
+                            "y": 0.0,
+                            "z": 4.0
+                        }
+                    }
+                }
+            },
+            "id": 22
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "05f2fe20-c436-4642-a654-2a276eb1edfd"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 3.0,
+                            "y": 0.0,
+                            "z": 4.0
+                        }
+                    }
+                }
+            },
+            "id": 23
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "e7fc290a-6c3b-48ad-97d5-f18340f67170"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -4.0,
+                            "y": 0.0,
+                            "z": 3.0
+                        }
+                    }
+                }
+            },
+            "id": 24
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "a17aef86-cbaa-4683-aade-1934bd298652"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -4.0,
+                            "y": 0.0,
+                            "z": 2.0
+                        }
+                    }
+                }
+            },
+            "id": 25
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "a63a0e93-300f-4e1e-9088-b3adeed5b83b"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -4.0,
+                            "y": 0.0,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "id": 26
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "bc688813-a8cc-4c8f-99fa-c5bec1fa3d6d"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -4.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 27
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "9999cfb1-861a-463a-be9f-d20fa5745fd2"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -4.0,
+                            "y": 0.0,
+                            "z": -1.0
+                        }
+                    }
+                }
+            },
+            "id": 28
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "7e0fb759-8180-4cdb-8d1d-f4788135663a"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -4.0,
+                            "y": 0.0,
+                            "z": -2.0
+                        }
+                    }
+                }
+            },
+            "id": 29
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "bc96dac0-9a04-44cd-8136-6962c548954e"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -4.0,
+                            "y": 0.0,
+                            "z": -3.0
+                        }
+                    }
+                }
+            },
+            "id": 30
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "5f06a752-2922-4896-bada-9698bcc55ba4"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -3.0,
+                            "y": 0.0,
+                            "z": -4.0
+                        }
+                    }
+                }
+            },
+            "id": 31
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "d72beb68-328e-4ec8-be80-9396756c5d15"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -2.0,
+                            "y": 0.0,
+                            "z": -4.0
+                        }
+                    }
+                }
+            },
+            "id": 32
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "8e0913ef-397d-462a-b6c8-d20378fde70b"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -1.0,
+                            "y": 0.0,
+                            "z": -4.0
+                        }
+                    }
+                }
+            },
+            "id": 33
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "cd8d3206-2bbc-442f-b737-f0a344807cf6"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": -4.0
+                        }
+                    }
+                }
+            },
+            "id": 34
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "ce6d8c62-0b63-40d9-bf39-db42271498bb"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 1.0,
+                            "y": 0.0,
+                            "z": -4.0
+                        }
+                    }
+                }
+            },
+            "id": 35
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "5991f0d6-91e6-4d94-9742-278749c4c495"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 2.0,
+                            "y": 0.0,
+                            "z": -4.0
+                        }
+                    }
+                }
+            },
+            "id": 36
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "f4d2fcbe-12dc-4aef-a401-316802f5443a"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 3.0,
+                            "y": 0.0,
+                            "z": -4.0
+                        }
+                    }
+                }
+            },
+            "id": 37
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "afe5f3e9-652c-4b95-828a-249d0cb1f932"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 4.0,
+                            "y": 0.0,
+                            "z": -3.0
+                        }
+                    }
+                }
+            },
+            "id": 38
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "c2dfda4e-e3fb-49f7-81c5-049d5ad45b97"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 4.0,
+                            "y": 0.0,
+                            "z": -2.0
+                        }
+                    }
+                }
+            },
+            "id": 39
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "ce71c988-693a-4dc6-88cc-da0d81d66f89"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 4.0,
+                            "y": 0.0,
+                            "z": -1.0
+                        }
+                    }
+                }
+            },
+            "id": 40
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "125bc63d-a711-4865-bb37-4c3710ca7239"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 4.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 41
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "835404ed-ccaf-49f1-9758-a491518854f1"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 4.0,
+                            "y": 0.0,
+                            "z": 1.0
+                        }
+                    }
+                }
+            },
+            "id": 42
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "21f0a970-9eef-45d2-90d7-08aa358bb25f"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 4.0,
+                            "y": 0.0,
+                            "z": 2.0
+                        }
+                    }
+                }
+            },
+            "id": 43
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.19369947910308838,
+                        "y": 0.07598039507865906,
+                        "z": 0.25
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "StaticWall",
+                    "uuid": "e4421fe6-8013-4780-bbb2-c5acff05a60a"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 4.0,
+                            "y": 0.0,
+                            "z": 3.0
+                        }
+                    }
+                }
+            },
+            "id": 44
+        }
+    ]
+}

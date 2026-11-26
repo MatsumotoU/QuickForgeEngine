@@ -69,4 +69,40 @@ namespace QFE::GAMESYSTEM::CollisionShapes {
 		}
 		return true;
 	}
+
+	// 球の中心を半径分広げた箱に対して掃引し、高速移動でも壁を飛び越えないようにする。
+	// 角では実際の球より保守的に止まるが、壁へのめり込みを防げる。
+	inline bool SweepSphereBox(const Vector3& center, float radius, const Vector3& movement,
+		const Shape& box, float& time, Vector3& normal) {
+		const Vector3 offset = center - box.center;
+		float enter = 0.0f, exit = 1.0f;
+		Vector3 hitNormal{};
+		bool inside = true;
+		for (int i = 0; i < 3; ++i) {
+			const float position = Dot(offset, box.axes[i]);
+			const float speed = Dot(movement, box.axes[i]);
+			// Windows の min/max マクロに展開されないよう関数名を括る。
+			const float extent = box.extents[i] + (std::max)(radius, 0.0f);
+			if (std::abs(position) >= extent - 1.0e-5f) inside = false;
+			if (std::abs(speed) < 1.0e-8f) {
+				if (position <= -extent || position >= extent) return false;
+				continue;
+			}
+			float nearTime = (-extent - position) / speed;
+			float farTime = (extent - position) / speed;
+			Vector3 nearNormal = box.axes[i] * -1.0f;
+			if (nearTime > farTime) {
+				std::swap(nearTime, farTime);
+				nearNormal = box.axes[i];
+			}
+			if (nearTime >= enter) { enter = nearTime; hitNormal = nearNormal; }
+			exit = (std::min)(exit, farTime);
+			if (enter > exit) return false;
+		}
+		// 初期配置ですでに重なっている場合は脱出を妨げない。
+		if (inside || enter < 0.0f || enter > 1.0f || Dot(movement, hitNormal) >= 0.0f) return false;
+		time = enter;
+		normal = hitNormal;
+		return true;
+	}
 }

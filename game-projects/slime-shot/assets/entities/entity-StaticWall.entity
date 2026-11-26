@@ -1,25 +1,20 @@
 {
     "entities": [
         {
-            "BulletComponent": {
-                "damage": 10,
-                "dir": {
-                    "x": 0.0,
-                    "y": -0.4000000059604645,
-                    "z": 0.6000000238418579
+            "AABBColliderComponent": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
                 },
-                "isGravity": true,
-                "lifeTime": 0.0,
-                "lifeTimeMax": 3.0,
-                "mask": 1,
-                "speed": 50.099998474121094
+                "mask": 0
             },
             "MaterialComponent": {
                 "albedoColor": {
                     "w": 1.0,
-                    "x": 1.0,
-                    "y": 0.29411762952804565,
-                    "z": 0.0
+                    "x": 0.19369947910308838,
+                    "y": 0.07598039507865906,
+                    "z": 0.25
                 },
                 "metallic": 0.0,
                 "smoothness": 0.0,
@@ -42,30 +37,29 @@
                 }
             },
             "ModelRenderComponent": {
-                "modelName": "box",
+                "modelName": "Primitive/Box",
                 "textureName": ""
             },
             "ObjectInfoComponent": {
                 "hierarchyGroup": "",
-                "name": "Bomb",
-                "uuid": "27fb49b3-70c9-4708-a9cd-a98a057946c7"
+                "name": "StaticWall",
+                "uuid": "e3411b1e-306e-4da0-81a4-34901f967c90"
             },
-            "SphereColliderComponent": {
-                "mask": 1,
-                "onCollisionEnterScriptFunctionName": "",
-                "radius": 1.0
+            "ShaderComponent": {
+                "castShadow": true,
+                "receiveShadow": true
             },
             "TransformComponent": {
                 "transform": {
                     "rotate": {
                         "x": 0.0,
-                        "y": 0.0,
+                        "y": -0.0,
                         "z": 0.0
                     },
                     "scale": {
-                        "x": 0.30000001192092896,
-                        "y": 0.30000001192092896,
-                        "z": 0.5
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
                     },
                     "translate": {
                         "x": 0.0,

@@ -13,6 +13,52 @@
 #include <vector>
 
 namespace {
+	// 入力移動する球だけを静止した箱に対して止める。イベント専用のトリガーは移動を妨げない。
+	QFE::MATH::Vector3 MoveInputSphere(QFE::EntityManager& entities, uint32_t id,
+		const QFE::MATH::Vector3& movement, QFE::MATH::Vector3* velocity = nullptr) {
+		using namespace QFE::GAMESYSTEM::CollisionShapes;
+		auto* transform = entities.GetComponentPtr<QFE::SCENE::TransformComponent>(id);
+		auto* sphere = entities.GetComponentPtr<QFE::SCENE::SphereColliderComponent>(id);
+		if (!transform || !sphere || sphere->radius <= 0.0f) return movement;
+		std::vector<Shape> walls;
+		const auto addWall = [&](uint32_t wallId, uint32_t mask, const QFE::MATH::Vector3& extents, bool oriented) {
+			if (wallId == id || (sphere->mask & mask) != 0 ||
+				entities.HasComponent<QFE::SCENE::CollisionTriggerComponent>(wallId) ||
+				entities.HasComponent<QFE::COMPONENTS::InputMovementComponent>(wallId)) return;
+			const auto* physics = entities.GetComponentPtr<QFE::COMPONENTS::PhysicsComponent>(wallId);
+			if (physics && physics->mass > 0.0f) return;
+			const auto* wallTransform = entities.GetComponentPtr<QFE::SCENE::TransformComponent>(wallId);
+			if (wallTransform) walls.push_back(MakeBox(wallId, mask, wallTransform->transform, extents, oriented));
+		};
+		entities.Each<QFE::SCENE::AABBColliderComponent>([&](uint32_t wallId, QFE::SCENE::AABBColliderComponent& wall) {
+			addWall(wallId, wall.mask, wall.halfExtents, false);
+		});
+		entities.Each<QFE::SCENE::OBBColliderComponent>([&](uint32_t wallId, QFE::SCENE::OBBColliderComponent& wall) {
+			addWall(wallId, wall.mask, wall.halfExtents, true);
+		});
+		QFE::MATH::Vector3 position = transform->transform.translate;
+		QFE::MATH::Vector3 remaining = movement;
+		// 複数の壁が交わる場所でも、それぞれの壁に向かう成分を取り除く。
+		for (int iteration = 0; iteration < 4; ++iteration) {
+			float firstTime = 1.0f;
+			QFE::MATH::Vector3 normal{};
+			bool hit = false;
+			for (const auto& wall : walls) {
+				float time;
+				QFE::MATH::Vector3 candidateNormal{};
+				if (SweepSphereBox(position, sphere->radius, remaining, wall, time, candidateNormal) && time <= firstTime) {
+					firstTime = time; normal = candidateNormal; hit = true;
+				}
+			}
+			position += remaining * firstTime;
+			if (!hit) break;
+			remaining = remaining * (1.0f - firstTime);
+			remaining = remaining - normal * Dot(remaining, normal);
+			if (velocity && Dot(*velocity, normal) < 0.0f) *velocity = *velocity - normal * Dot(*velocity, normal);
+		}
+		return position - transform->transform.translate;
+	}
+
 	QFE::MATH::Vector3 GetWorldPositionFromMatrix(const QFE::MATH::Matrix4x4& worldMatrix) {
 		return {
 			worldMatrix.m[3][0],
@@ -88,21 +134,18 @@ bool QFE::GAMESYSTEM::InputMovementSystem(
 				direction = direction.Normalize();
 			}
 
-			if (movement.applyMode == QFE::COMPONENTS::InputMovementForce) {
-				if (!entityManager.HasComponent<QFE::COMPONENTS::PhysicsComponent>(entityId)) {
-					return;
-				}
-				QFE::COMPONENTS::PhysicsComponent& physics =
-					entityManager.GetComponent<QFE::COMPONENTS::PhysicsComponent>(entityId);
-				if (physics.mass > 0.0f) {
-					physics.acceleration += direction * (movement.amount / physics.mass);
+			// 物理がある場合は直接位置を変更せず、速度に慣性を残す。
+			if (auto* physics = entityManager.GetComponentPtr<QFE::COMPONENTS::PhysicsComponent>(entityId)) {
+				if (physics->mass > 0.0f) {
+					physics->acceleration += direction * (movement.amount / physics->mass);
 				}
 				return;
 			}
 
 			if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
+				const auto displacement = direction * movement.amount * deltaTime;
 				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform.translate +=
-					direction * movement.amount * deltaTime;
+					MoveInputSphere(entityManager, entityId, displacement);
 			}
 		});
 
@@ -130,8 +173,11 @@ bool QFE::GAMESYSTEM::PhysicsComponentSystem(
 			physics.velocity += physics.acceleration * deltaTime;
 			const float damping = std::clamp(1.0f - physics.friction * deltaTime, 0.0f, 1.0f);
 			physics.velocity = physics.velocity * damping;
+			const auto displacement = physics.velocity * deltaTime;
+			// 力による入力移動も同じ壁判定を通し、壁に向かう速度を残さない。
 			entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform.translate +=
-				physics.velocity * deltaTime;
+				entityManager.HasComponent<QFE::COMPONENTS::InputMovementComponent>(entityId)
+					? MoveInputSphere(entityManager, entityId, displacement, &physics.velocity) : displacement;
 			physics.acceleration = QFE::MATH::Vector3::Zero();
 		});
 
