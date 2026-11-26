@@ -11,10 +11,27 @@ using namespace QFE::FRAMEWORK;
 #include <Windows.h>
 #include <shlobj.h>
 #include <string>
+#include <array>
 
 void QFE::FRAMEWORK::ShowWindowError(const std::wstring& message, const std::wstring& title) {
 	// 起動失敗時は親ウィンドウが存在しないため、所有者なしでエラーを表示する。
 	MessageBoxW(nullptr, message.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
+}
+
+bool QFE::FRAMEWORK::RequestStartupFilePath(
+	const std::wstring& filterName, const std::wstring& filterSpec, std::wstring& outFilePath) {
+	// 起動前は親ウィンドウがない。長いパスも従来どおり受け取れるようにする。
+	std::array<wchar_t, 32768> path{};
+	const std::wstring filter = filterName + L'\0' + filterSpec + L'\0';
+	OPENFILENAMEW dialog{};
+	dialog.lStructSize = sizeof(dialog);
+	dialog.lpstrFilter = filter.c_str();
+	dialog.lpstrFile = path.data();
+	dialog.nMaxFile = static_cast<DWORD>(path.size());
+	dialog.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+	if (!GetOpenFileNameW(&dialog)) return false;
+	outFilePath = path.data();
+	return true;
 }
 
 bool QFE::FRAMEWORK::RequestGetFilePathFromUser(

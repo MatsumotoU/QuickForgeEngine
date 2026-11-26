@@ -37,6 +37,32 @@
 #include <cstring>
 #include <unordered_set>
 #include <imgui.h>
+#include <shellapi.h>
+#include <array>
+
+std::filesystem::path QFE::FRAMEWORK::GetApplicationExecutablePath() {
+	// 長いパスにも対応する既存のバッファサイズと、切り詰め時の失敗扱いを維持する。
+	std::array<wchar_t, 32768> executable{};
+	const DWORD length = GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size()));
+	if (!length || length >= executable.size()) return {};
+	return std::filesystem::path(executable.data());
+}
+
+std::vector<std::wstring> QFE::FRAMEWORK::GetApplicationArguments() {
+	int count = 0;
+	LPWSTR* arguments = CommandLineToArgvW(GetCommandLineW(), &count);
+	if (!arguments) return {};
+	std::vector<std::wstring> result;
+	// Windows が確保した領域から文字列をコピーしてから解放する。
+	try {
+		for (int i = 0; i < count; ++i) result.emplace_back(arguments[i]);
+	} catch (...) {
+		LocalFree(arguments);
+		throw;
+	}
+	LocalFree(arguments);
+	return result;
+}
 
 namespace {
 

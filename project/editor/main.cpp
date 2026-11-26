@@ -11,9 +11,10 @@
 #include "framework/window/WindowDialogFramework.h"
 #include "framework/gui/GuiCoreFramework.h"
 #include "framework/input/InputFrameWork.h"
-
-
+#include "framework/assets/AssetsCoreFramework.h"
 #include "framework/scene/SceneCoreFramework.h"
+
+
 #include "game/shooting-editor/ShootingInspectorRegistration.h"
 #include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
@@ -22,7 +23,7 @@
 
 #include "GameEditor.h"
 #include "EditorConfig.h"
-#include "framework/assets/AssetsCoreFramework.h"
+
 
 #include <filesystem>
 #include <stdexcept>

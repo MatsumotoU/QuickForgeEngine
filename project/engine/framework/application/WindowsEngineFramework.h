@@ -5,8 +5,10 @@
 
 
 #include <string>
+#include <filesystem>
 #include <unordered_map>
 #include <map>
+#include <vector>
 
 namespace QFE::ASSET {
 	struct ModelData;
@@ -25,6 +27,11 @@ namespace QFE {
 /// @brief Windowsアプリケーション用のQuickForgeエンジンフレームワークを提供するヘッダーファイル。
 namespace QFE::FRAMEWORK {
 	class WindowsGameModule;
+
+	/// @brief 実行ファイルのパスを返す。取得できない場合は空パス。
+	std::filesystem::path GetApplicationExecutablePath();
+	/// @brief プログラム名を含むコマンドライン引数を順番に返す。取得失敗時は空。
+	std::vector<std::wstring> GetApplicationArguments();
 
 	using ComponentRegistrationCallback = bool (*)(QFE::StaticComponentRegistry& registry);
 

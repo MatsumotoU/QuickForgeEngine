@@ -1,6 +1,5 @@
 #define NOMINMAX
 #include <Windows.h>
-#include <shellapi.h>
 
 #include "framework/application/WindowsEngineFramework.h"
 #include "framework/application/WindowsGameModule.h"
@@ -10,11 +9,10 @@
 #include "framework/network/NetworkCoreFrame.h"
 
 
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "core/logger/MyDebugLog.h"
 #include "core/file/FileUtility.h"
 #include "framework/assets/AssetsCoreFramework.h"
-#include <commdlg.h>
 #include <fstream>
 #include "core/string/MyString.h"
 #include "core/timer/FPSCounter.h"
@@ -23,7 +21,6 @@
 
 #include <imgui.h>
 
-#include <array>
 #include <filesystem>
 #include <optional>
 #include <string>
@@ -41,10 +38,8 @@ namespace {
 	void SetEngineWorkingDirectory() {
 		std::error_code error;
 		if (std::filesystem::is_regular_file("engine/resources/EngineConfig.json", error)) return;
-		std::array<wchar_t, 32768> executable{};
-		const DWORD length = GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size()));
-		if (!length || length >= executable.size()) return;
-		auto directory = std::filesystem::path(executable.data()).parent_path();
+		// 実行ファイルの OS 固有の取得方法は ApplicationFramework に任せる。
+		auto directory = QFE::FRAMEWORK::GetApplicationExecutablePath().parent_path();
 		while (!directory.empty()) {
 			for (const auto& candidate : { directory, directory / L"project" }) {
 				error.clear();
@@ -80,30 +75,26 @@ namespace {
 		std::string logPort;
 	};
 	Arguments GetArguments() {
-		Arguments result; int count = 0;
-		LPWSTR* args = CommandLineToArgvW(GetCommandLineW(), &count);
-		if (!args) return result;
-		for (int i = 1; i < count; ++i) {
+		Arguments result;
+		const auto args = QFE::FRAMEWORK::GetApplicationArguments();
+		for (size_t i = 1; i < args.size(); ++i) {
 			const std::wstring_view arg(args[i]);
-			if (arg == L"--project" && i + 1 < count) result.project = args[++i];
-			else if (arg == L"--scene" && i + 1 < count) result.scene = QFE::ConvertString(std::wstring(args[++i]));
+			if (arg == L"--project" && i + 1 < args.size()) result.project = args[++i];
+			else if (arg == L"--scene" && i + 1 < args.size()) result.scene = QFE::ConvertString(args[++i]);
 			else if (arg == L"--colliders=on") result.showColliders = true;
 			else if (arg == L"--colliders=off") result.showColliders = false;
-			else if (arg == L"--log-host" && i + 1 < count) result.logHost = QFE::ConvertString(std::wstring(args[++i]));
-			else if (arg == L"--log-port" && i + 1 < count) result.logPort = QFE::ConvertString(std::wstring(args[++i]));
-			else if (!arg.starts_with(L"--") && !result.scene) result.scene = QFE::ConvertString(std::wstring(args[i]));
+			else if (arg == L"--log-host" && i + 1 < args.size()) result.logHost = QFE::ConvertString(args[++i]);
+			else if (arg == L"--log-port" && i + 1 < args.size()) result.logPort = QFE::ConvertString(args[++i]);
+			else if (!arg.starts_with(L"--") && !result.scene) result.scene = QFE::ConvertString(args[i]);
 		}
-		LocalFree(args); return result;
+		return result;
 	}
 
 	std::filesystem::path ChooseProject() {
-		std::array<wchar_t, 32768> path{};
-		OPENFILENAMEW dialog{};
-		dialog.lStructSize = sizeof(dialog);
-		dialog.lpstrFilter = L"Project settings (project.json)\0project.json\0\0";
-		dialog.lpstrFile = path.data(); dialog.nMaxFile = static_cast<DWORD>(path.size());
-		dialog.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-		return GetOpenFileNameW(&dialog) ? std::filesystem::path(path.data()).parent_path() : std::filesystem::path{};
+		// メインウィンドウ作成前に設定ファイルを選ぶ。
+		std::wstring path;
+		return QFE::FRAMEWORK::RequestStartupFilePath(L"Project settings (project.json)", L"project.json", path)
+			? std::filesystem::path(path).parent_path() : std::filesystem::path{};
 	}
 	std::optional<std::string> GetConfiguredStartScene(
 		const std::filesystem::path& resourceDirectory) {
@@ -240,11 +231,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		sendRuntimeLogs();
 		return -1;
 	}
-	engineSystems.sceneManager->LoadCurrentSceneFromJson(QFE::ConvertString(startupScene->wstring()));
+	// シーンの読み込みはフレームワークに任せ、Runtime がモジュールの操作に依存しないようにする。
+	QFE::FRAMEWORK::LoadScene(*engineSystems.sceneManager, QFE::ConvertString(startupScene->wstring()));
 
 	auto& fpsCounter = engineSystems.fpsCounter;
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
-	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
+	// EntityManager は Core の型なので、フレームワーク経由で取得した後は直接利用できる。
+	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(sceneManager);
 
 	// メインループ
 	while (QFE::FRAMEWORK::CanLoopWindowManager(*engineSystems.windowManager)) {
