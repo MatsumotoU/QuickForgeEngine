@@ -98,7 +98,7 @@ void MyDebugLog::Log(const std::string& message, const std::source_location& loc
 	}
 	catch (const std::exception&)
 	{
-		assert(false && "faild to write logFile.");
+		assert(false && "failed to write logFile.");
 	}
 }
 

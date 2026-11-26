@@ -34,6 +34,8 @@ void QFE::EDITOR::GameEditor::Update(
 	SCENE::SceneManager& sceneManager = *systems.sceneManager;
 
 	commandList_.ClearCommands();
+	// 接続の受け入れとランタイムログの受信を毎フレーム進める。
+	windowManager_.Update();
 
 	// シーンビューがアクティブになった場合デバッグカメラに切り替える
 	if (windowManager_.IsWindowFocused(EditorWindowType::SceneViewer)) {

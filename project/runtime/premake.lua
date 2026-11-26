@@ -130,6 +130,7 @@ project "Runtime"
         "AudioFramework",
         "Audio",
         "Network",
+        "NetworkFramework",
         "AnimationFramework",
         "Animation",
         "Lua",

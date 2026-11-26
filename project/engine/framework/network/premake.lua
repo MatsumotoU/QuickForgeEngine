@@ -96,7 +96,7 @@ project "NetworkFramework"
         path.join(QFE_PROJECT_ROOT, "externals/assimp/upstream/include"),
         path.join(QFE_PROJECT_ROOT, "externals/imgui/imgui-node-editor-0.9.3"),
     }
-    kind "Utility"
+    kind "StaticLib"
     links {
         "Network",
         "EngineCore",

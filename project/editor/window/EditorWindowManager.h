@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include "math/MathInclude.h"
 #include "framework/application/EngineConfig.h"
+#include "framework/network/NetworkCoreFrame.h"
+#include <chrono>
 
 namespace QFE::SCENE {
 	class SceneManager;
@@ -81,5 +83,12 @@ namespace QFE::EDITOR {
 		QFE::FRAMEWORK::EngineConfig engineConfig_;
 		bool showEngineConfig_ = false;
 		std::string engineConfigStatus_;
+		// ランタイムごとに接続と未完成メッセージを破棄し、前回のログが混ざるのを防ぐ。
+		std::unique_ptr<QFE::NETWORK::INetworkCore> runtimeNetwork_;
+		QFE::NETWORK::ConnectHandle runtimeConnection_{};
+		QFE::FRAMEWORK::NETWORK::MessageReader runtimeReader_;
+		std::vector<std::string> runtimeLogs_;
+		bool waitingForRuntime_ = false;
+		std::chrono::steady_clock::time_point runtimeDeadline_{};
 	};
 }
