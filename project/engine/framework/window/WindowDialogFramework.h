@@ -6,6 +6,10 @@ namespace QFE::WINDOW {
 }
 
 namespace QFE::FRAMEWORK {
+	/// @brief 親ウィンドウの生成前にも表示できるエラーダイアログ。
+	/// @details 閉じられるまで待機する。タイトルと本文は呼び出し元の文字列をそのまま使う。
+	void ShowWindowError(const std::wstring& message, const std::wstring& title);
+
 	/// @brief ユーザーにファイルパスを選択させるダイアログを表示し、選択されたファイルパスを取得する関数,スレッドをブロックするので注意してください
 	/// @param windowManager ダイアログを表示する親ウィンドウを管理するウィンドウマネージャ
 	/// @param filterName ダイアログで表示するファイルタイプの名前（例: "Text Files"）ここはfilterSpecの説明文のようなもの

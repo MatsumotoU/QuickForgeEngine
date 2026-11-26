@@ -15,6 +15,9 @@ project "AssetsFramework"
         path.join(_sourceDirectory, "**.cpp"),
         path.join(_sourceDirectory, "**.cxx"),
     }
+    -- OS ごとの実装は対応する環境でのみビルドする。
+    filter "system:not windows"
+        removefiles { path.join(_sourceDirectory, "windows/AssetsCoreFramework.cpp") }
     filter {}
     architecture ("x64")
     cppdialect ("C++20")

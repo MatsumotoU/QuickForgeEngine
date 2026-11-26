@@ -1,6 +1,6 @@
 #pragma once
 
-#include "animation/AnimationComponent.h"
+#include "components/AnimationComponent.h"
 #include "BGMComponent.h"
 #include "CameraComponent.h"
 #include "DirectionalLightComponent.h"

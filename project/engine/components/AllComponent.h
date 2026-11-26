@@ -17,7 +17,7 @@
 #include "SphereColliderComponent.h"
 #include "AABBColliderComponent.h"
 #include "OBBColliderComponent.h"
-#include "animation/AnimationComponent.h"
+#include "components/AnimationComponent.h"
 #include "PhysicsComponent.h"
 #include "InputMovementComponent.h"
 #include "SplineMovementComponent.h"

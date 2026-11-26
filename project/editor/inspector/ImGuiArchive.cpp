@@ -3,15 +3,13 @@
 #include "components/ObjectInfoComponent.h"
 #include "components/SplineControlPoint.h"
 #include "components/TransformHierarchy.h"
-#include "assetfactory/model/PrimitiveFactoryFuncs.h"
-#include "assetfactory/model/ModelLoader.h"
+#include "framework/assets/AssetsCoreFramework.h"
 #include "components/ModelRenderComponent.h"
 #include "components/SpriteRenderComponent.h"
 #include "components/ParticleEmitterComponent.h"
 #include "components/SkyBoxComponent.h"
 #include "components/EventComponent.h"
 
-#include "assetfactory/game-data/GameProjectPaths.h"
 #include <filesystem>
 #include <utility>
 
@@ -47,7 +45,7 @@ namespace {
 		std::vector<std::string> results;
 		if (extensions.empty()) return results;
 		std::error_code error;
-		const std::filesystem::path resourceRoot = QFE::PROJECT::Assets();
+		const std::filesystem::path resourceRoot = QFE::FRAMEWORK::ASSETS::GetProjectAssets();
 		if (!std::filesystem::exists(resourceRoot, error)) {
 			return results;
 		}
@@ -664,7 +662,7 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, uint32_t& value
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& value) {
 	if (name == "modelName") {
-		auto options = QFE::ASSET::GetPrimitiveMeshNames();
+		auto options = QFE::FRAMEWORK::ASSETS::GetPrimitiveMeshNames();
 		const auto files = FindResourceFiles({ ".obj", ".glb" }, false);
 		options.insert(options.end(), files.begin(), files.end());
 		DrawResourceCombo(MakeLabel(name), value, options, {}, false);
@@ -682,8 +680,8 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& va
 		if (modelLoader_ && entityManager_ && entityManager_->HasComponent<QFE::SCENE::ModelRenderComponent>(entityId_)) {
 			const auto& model = entityManager_->GetComponent<QFE::SCENE::ModelRenderComponent>(entityId_);
 			std::string error;
-			const auto asset = modelLoader_->LoadModel(model.modelName, QFE::PROJECT::Assets(), error);
-			if (asset && asset->loader) options = asset->loader->GetGlbAnimationNames(asset->sourcePath);
+			options = QFE::FRAMEWORK::ASSETS::GetModelAnimationNames(
+				*modelLoader_, model.modelName, QFE::FRAMEWORK::ASSETS::GetProjectAssets(), error);
 		}
 		DrawResourceCombo(MakeLabel(name), value, options, {}, false, "Auto (First Clip)");
 		return;

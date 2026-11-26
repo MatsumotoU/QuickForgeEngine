@@ -1,10 +1,13 @@
 /// @file WindowCoreFrameWork.cpp
 /// @brief Windows向けのウィンドウフレームワークの実装
 
+// GameWindowManager から間接的に Windows.h が入る前にマクロを抑止する。
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include "framework/window/WindowCoreFrameWork.h"
 #include "window/GameWindowManager.h"
 #include "EngineDefines.h"
-#define NOMINMAX
 #include <Windows.h>
 using namespace QFE::FRAMEWORK;
 
@@ -14,6 +17,17 @@ std::unique_ptr<QFE::WINDOW::IGameWindowManager> QFE::FRAMEWORK::CreateWindowMan
 	windowManager->Initialize();
 	windowManager->AddWindow(width, height, mainWindowName);
 	return windowManager;
+}
+
+void QFE::FRAMEWORK::ShutdownWindowManager(QFE::WINDOW::IGameWindowManager& windowManager) {
+	// オブジェクトの破棄より先に OS のウィンドウを終了する。
+	windowManager.Shutdown();
+}
+
+std::vector<QFE::WINDOW::DroppedFile> QFE::FRAMEWORK::ConsumeDroppedFiles(
+	QFE::WINDOW::IGameWindowManager& windowManager) {
+	// 一度取得したドロップはキューから消えるため、複数箇所で重複処理されない。
+	return windowManager.ConsumeDroppedFiles();
 }
 
 bool QFE::FRAMEWORK::IsMainWindowActive(const QFE::WINDOW::IGameWindowManager& windowManager) {

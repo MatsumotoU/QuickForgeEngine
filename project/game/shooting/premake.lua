@@ -96,6 +96,7 @@ project "ShootingGame"
     }
     kind "SharedLib"
     links {
+        "AssetsFramework",
         "EngineAssetsFactory",
         "EngineCore",
         "Assimp",

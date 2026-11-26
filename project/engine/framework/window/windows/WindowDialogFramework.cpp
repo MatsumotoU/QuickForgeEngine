@@ -1,13 +1,21 @@
+// ウィンドウ関連ヘッダーが Windows.h を先に読み込む場合にも備える。
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include "framework/window/WindowDialogFramework.h"
 
 #include "window/GameWindowManager.h"
 #include "EngineDefines.h"
 using namespace QFE::FRAMEWORK;
 
-#define NOMINMAX
 #include <Windows.h>
 #include <shlobj.h>
 #include <string>
+
+void QFE::FRAMEWORK::ShowWindowError(const std::wstring& message, const std::wstring& title) {
+	// 起動失敗時は親ウィンドウが存在しないため、所有者なしでエラーを表示する。
+	MessageBoxW(nullptr, message.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
+}
 
 bool QFE::FRAMEWORK::RequestGetFilePathFromUser(
 	const QFE::WINDOW::IGameWindowManager& windowManager, const std::wstring& filterName, const std::wstring& filterSpec,

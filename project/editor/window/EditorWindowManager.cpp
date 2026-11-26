@@ -2,7 +2,7 @@
 #include "AllEditorWindow.h"
 
 #include "framework/window/WindowDialogFramework.h"
-#include "window/interface/IGameWindowManager.h"
+#include "framework/window/WindowCoreFrameWork.h"
 
 #include "framework/scene/SceneCoreFramework.h"
 #include "ecs/entity/EntityManager.h"
@@ -12,7 +12,7 @@
 #include "string/MyString.h"
 #include "command/AllCommands.h"
 #include "process/ProcessUtil.h"
-#include "assetfactory/game-data/GameProjectPaths.h"
+#include "framework/assets/AssetsCoreFramework.h"
 #include <filesystem>
 #include <fstream>
 #include <string_view>
@@ -95,7 +95,7 @@ private:
 };
 
 bool IsProjectFile(const std::wstring& path, const std::filesystem::path& directory) {
-    return QFE::PROJECT::IsWithin(std::filesystem::path(path), QFE::PROJECT::Assets() / directory);
+    return QFE::FRAMEWORK::ASSETS::IsPathWithin(std::filesystem::path(path), QFE::FRAMEWORK::ASSETS::GetProjectAssets() / directory);
 }
 bool IsProjectScene(const std::wstring& path) {
     return IsProjectFile(path, "scenes");
@@ -113,9 +113,9 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 	engineConfig_ = config;
 	windowManager_ = &windowManager;
 	sceneManager_ = sceneManager;
-	projectName_ = QFE::ConvertString(QFE::PROJECT::Root().filename().wstring());
+	projectName_ = QFE::ConvertString(QFE::FRAMEWORK::ASSETS::GetProjectRoot().filename().wstring());
 	try {
-		std::ifstream projectFile(QFE::PROJECT::Root() / "project.json");
+		std::ifstream projectFile(QFE::FRAMEWORK::ASSETS::GetProjectRoot() / "project.json");
 		const auto project = nlohmann::json::parse(projectFile);
 		const auto name = project.find("name");
 		if (name != project.end() && name->is_string() && !name->get<std::string>().empty()) {
@@ -226,7 +226,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
                     *windowManager_,
                     L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
-                    selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
+                    selectedFilePath, (QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
                     // Entityの生成
 					commandList.AddCommand(std::make_unique<LoadSceneCommand>(QFE::ConvertString(selectedFilePath), sceneManager_));
                 }
@@ -234,14 +234,14 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
             if (ImGui::MenuItem("Set Start Scene...")) {
                 std::wstring selectedFilePath;
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
-                    selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
-                    const auto projectFile = QFE::PROJECT::Root() / "project.json";
+                    selectedFilePath, (QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
+                    const auto projectFile = QFE::FRAMEWORK::ASSETS::GetProjectRoot() / "project.json";
                     try {
                         std::ifstream input(projectFile);
                         auto json = nlohmann::json::parse(input);
                         input.close();
                         json["start_scene"] = QFE::ConvertString(std::filesystem::relative(
-                            std::filesystem::path(selectedFilePath), QFE::PROJECT::Assets() / "scenes").generic_wstring());
+                            std::filesystem::path(selectedFilePath), QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "scenes").generic_wstring());
                         std::ofstream output(projectFile, std::ios::trunc);
                         output << json.dump(4) << '\n';
                         if (!output) QFE_LOG("Failed to save project.json.");
@@ -262,7 +262,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
                     *windowManager_,
                     L"Entity Files (*.entity;*.json)", L"*.entity;*.json",
-                    selectedFilePath, (QFE::PROJECT::Assets() / "entities").wstring())) {
+                    selectedFilePath, (QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "entities").wstring())) {
                     if (!IsProjectFile(selectedFilePath, ".")) {
                         QFE_LOG("Load entities from the current project's assets directory.");
                     } else {
@@ -304,7 +304,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
                 if (QFE::FRAMEWORK::RequestGetFilePathFromUser(
                     *windowManager_,
                     L"Scene Files (*.scene;*.json)", L"*.scene;*.json",
-                    selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
+                    selectedFilePath, (QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "scenes").wstring()) && IsProjectScene(selectedFilePath)) {
 
 					// 起動ごとに前回の接続とログを初期化し、OSが選んだポートを渡す。
 					runtimeNetwork_.reset();
@@ -317,7 +317,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
 					if (!runtimeNetwork_ || !QFE::FRAMEWORK::NETWORK::ListenLocal(runtimeNetwork_.get(), port)) {
 						QFE_LOG("Failed to listen for the runtime connection.", QFE::LogLevel::Error);
 						runtimeNetwork_.reset();
-					} else if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::PROJECT::Root().wstring() + L"\" --scene \"" + selectedFilePath + L"\"" + (showColliders ? L" --colliders=on" : L" --colliders=off") + L" --log-host 127.0.0.1 --log-port " + std::to_wstring(port))) {
+					} else if (!QFE::ProcessUtil::LaunchExe(L"Runtime.exe", L"--project \"" + QFE::FRAMEWORK::ASSETS::GetProjectRoot().wstring() + L"\" --scene \"" + selectedFilePath + L"\"" + (showColliders ? L" --colliders=on" : L" --colliders=off") + L" --log-host 127.0.0.1 --log-port " + std::to_wstring(port))) {
 						QFE_LOG("Failed to launch the runtime.", QFE::LogLevel::Error);
 						runtimeNetwork_.reset();
 					} else {
@@ -399,7 +399,8 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, bool
 		SaveSelectedEntities();
 	}
 	if (!editorWindowsMap_[EditorWindowType::AssetBrowser]->GetIsActive()) {
-		windowManager_->ConsumeDroppedFiles();
+		// 非表示の間のドロップを破棄し、再表示後に古いファイルを処理しない。
+		QFE::FRAMEWORK::ConsumeDroppedFiles(*windowManager_);
 	}
 	for (auto& [type, window] : editorWindowsMap_) {
         if (type == EditorWindowType::Hierarchy || !window->GetIsActive()) {
@@ -450,7 +451,7 @@ void QFE::EDITOR::EditorWindowManager::SaveSelectedEntities() {
 		}
 	}
 
-	const auto directory = QFE::PROJECT::Assets() / "entities";
+	const auto directory = QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "entities";
 	std::error_code error;
 	std::filesystem::create_directories(directory, error);
 	if (error) {
@@ -490,7 +491,7 @@ void QFE::EDITOR::EditorWindowManager::QueueSceneSave(
 		if (!QFE::FRAMEWORK::RequestSaveFilePathFromUser(
 			*windowManager_,
 			L"Scene Files", L"*.scene",
-			selectedFilePath, (QFE::PROJECT::Assets() / "scenes").wstring(), L"scene") || !IsProjectScene(selectedFilePath)) {
+			selectedFilePath, (QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "scenes").wstring(), L"scene") || !IsProjectScene(selectedFilePath)) {
 			return;
 		}
 		if (_wcsicmp(std::filesystem::path(selectedFilePath).extension().c_str(), L".scene") != 0) {

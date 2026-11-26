@@ -10,8 +10,6 @@
 #include "graphics/interface/DirectXRenderFramework.h"
 #include "gui/interface/IGuiManager.h"
 #include "framework/window/WindowCoreFrameWork.h"
-// Shutdown を呼ぶため、前方宣言だけでなくインターフェースの定義が必要。
-#include "window/interface/IGameWindowManager.h"
 #include "framework/graphic/GraphicEngineCoreFramework.h"
 #include "framework/gui/GuiCoreFramework.h"
 #include "input/interface/InputInterface.h"
@@ -523,7 +521,7 @@ void QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEng
 	if (systems.sceneManager) systems.sceneManager->Shutdown();
 	if (systems.guiManager) QFE::FRAMEWORK::ShutdownGui(*systems.guiManager);
 	if (systems.graphicEngine) QFE::FRAMEWORK::ShutdownGraphicEngine(systems.graphicEngine.get());
-	if (systems.windowManager) systems.windowManager->Shutdown();
+	if (systems.windowManager) QFE::FRAMEWORK::ShutdownWindowManager(*systems.windowManager);
 }
 
 void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {

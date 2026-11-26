@@ -1,7 +1,6 @@
 #include "AnimationEditor.h"
 
 #include "ecs/entity/EntityManager.h"
-#include "animation/AnimationComponent.h"
 #include "framework/animation/AnimationDataServices.h"
 
 #include <imgui/imgui.h>
@@ -29,9 +28,7 @@ void QFE::EDITOR::AnimationEditor::Initialize() {
 }
 
 QFE::ANIMATION::AnimationClip QFE::EDITOR::AnimationEditor::BuildClip() const {
-	ANIMATION::AnimationClip clip;
-	clip.SetName(clipName_);
-	clip.SetLoop(isLoop_);
+	ANIMATION::AnimationClip clip = FRAMEWORK::CreateAnimationClip(clipName_, isLoop_);
 	const float safeFps = (std::max)(1.0f, fps_);
 	std::vector<EditorAnimationKeyFrame> sorted = keyFrames_;
 	std::stable_sort(sorted.begin(), sorted.end(),
@@ -42,7 +39,7 @@ QFE::ANIMATION::AnimationClip QFE::EDITOR::AnimationEditor::BuildClip() const {
 		ANIMATION::AnimationKeyFrame key;
 		key.time = static_cast<float>((std::max)(0, editorKey.frame)) / safeFps;
 		key.transform = editorKey.transform;
-		clip.AddKeyFrame(key);
+		FRAMEWORK::AddAnimationKeyFrame(clip, key);
 	}
 	return clip;
 }
@@ -53,16 +50,16 @@ bool QFE::EDITOR::AnimationEditor::LoadClip(const std::string& clipName) {
 		statusMessage_ = "Failed to load animation clip.";
 		return false;
 	}
-	clipName_ = clipName.empty() ? clip.GetName() : clipName;
-	isLoop_ = clip.IsLoop();
+	clipName_ = clipName.empty() ? FRAMEWORK::GetAnimationClipName(clip) : clipName;
+	isLoop_ = FRAMEWORK::IsAnimationClipLooping(clip);
 	keyFrames_.clear();
-	for (const ANIMATION::AnimationKeyFrame& key : clip.GetKeyFrames()) {
+	for (const ANIMATION::AnimationKeyFrame& key : FRAMEWORK::GetAnimationKeyFrames(clip)) {
 		EditorAnimationKeyFrame editorKey;
 		editorKey.frame = static_cast<int32_t>(std::lround(key.time * (std::max)(1.0f, fps_)));
 		editorKey.transform = key.transform;
 		keyFrames_.push_back(editorKey);
 	}
-	frameEnd_ = (std::max)(60, static_cast<int32_t>(std::ceil(clip.GetDuration() * fps_)));
+	frameEnd_ = (std::max)(60, static_cast<int32_t>(std::ceil(FRAMEWORK::GetAnimationClipDuration(clip) * fps_)));
 	currentFrame_ = 0;
 	previewTime_ = 0.0f;
 	selectedKeyIndex_ = -1;
@@ -94,9 +91,9 @@ bool QFE::EDITOR::AnimationEditor::SaveClip(uint32_t selectedEntityId) {
 void QFE::EDITOR::AnimationEditor::ApplyPreview(uint32_t entityId) {
 	if (entityManager_ == nullptr || !entityManager_->HasComponent<SCENE::AnimationComponent>(entityId)) return;
 	const ANIMATION::AnimationClip clip = BuildClip();
-	if (clip.GetKeyFrames().empty()) return;
+	if (FRAMEWORK::GetAnimationKeyFrames(clip).empty()) return;
 	const float time = static_cast<float>(currentFrame_) / (std::max)(1.0f, fps_);
-	entityManager_->GetComponent<SCENE::AnimationComponent>(entityId).transform = clip.Sample(time);
+	entityManager_->GetComponent<SCENE::AnimationComponent>(entityId).transform = FRAMEWORK::SampleAnimationClip(clip, time);
 	previewEntityId_ = entityId;
 }
 
@@ -231,7 +228,7 @@ void QFE::EDITOR::AnimationEditor::Draw(
 	if (isPreviewPlaying_ && !keyFrames_.empty()) {
 		const ANIMATION::AnimationClip clip = BuildClip();
 		previewTime_ += ImGui::GetIO().DeltaTime;
-		const float duration = clip.GetDuration();
+		const float duration = FRAMEWORK::GetAnimationClipDuration(clip);
 		if (duration > 0.0f && previewTime_ >= duration) {
 			if (isLoop_) previewTime_ = std::fmod(previewTime_, duration);
 			else {

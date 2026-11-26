@@ -7,7 +7,7 @@
 #include "game/shooting/components/AllShootingComponents.h"
 #include "components/TransformHierarchy.h"
 #include "framework/scene/CollisionTriggerSystem.h"
-#include "assetfactory/game-data/GameProjectPaths.h"
+#include "framework/assets/AssetsCoreFramework.h"
 
 #include <algorithm>
 #include <vector>
@@ -391,7 +391,7 @@ bool QFE::GAMESYSTEM::CollisionSystem(
 			const auto base = toPath(resources.assetDir);
 			const auto relative = toPath(entityPath);
 			const auto path = base / relative;
-			if (relative.is_absolute() || !QFE::PROJECT::IsWithin(path, base)) return;
+			if (relative.is_absolute() || !QFE::FRAMEWORK::ASSETS::IsPathWithin(path, base)) return;
 			QFE::MATH::Vector3 position{};
 			const auto* transform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(target);
 			const bool hasPosition = transform != nullptr;
