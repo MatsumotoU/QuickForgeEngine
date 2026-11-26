@@ -105,13 +105,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	}
 
 	// エディタ用のシーンテクスチャ（レンダーターゲット）の作成
-	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
-	QFE::GRAPHIC::DirectXResourceHandle sceneTextureHandle;
 	uintptr_t sceneTextureGuiId = 0;
-	if (!QFE::GRAPHIC::CreateEditorSceneTexture(
+	if (!QFE::FRAMEWORK::CreateEditorSceneTexture(
 		graphicEngine.get(),
-		sceneRenderTargetHandle,
-		sceneTextureHandle,
+		engineResources.finalRenderTargetHandle,
 		sceneTextureGuiId,
 		engineResources.windowWidth,
 		engineResources.windowHeight)) {
@@ -119,8 +116,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		return -1;
 	}
 
-	// レイトレーシング結果をEditorのシーンテクスチャへ出力する。
-	engineResources.finalRenderTargetHandle = sceneRenderTargetHandle;
+	// 作成した描画先にエンジンの描画結果を出力し、GUI から同じテクスチャを参照する。
 	ImTextureID sceneTextureId = static_cast<ImTextureID>(sceneTextureGuiId);
 
 	QFE::EDITOR::GameEditor gameEditor;

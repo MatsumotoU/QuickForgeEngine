@@ -78,6 +78,16 @@ bool QFE::FRAMEWORK::IsGraphicEngineFeatureAvailable(
 	}
 }
 
+bool QFE::FRAMEWORK::CreateEditorSceneTexture(
+	QFE::GRAPHIC::IGraphicEngine* graphicEngine,
+	QFE::GRAPHIC::RenderTargetHandle& outRenderTargetHandle,
+	uintptr_t& outGuiTextureId, uint32_t width, uint32_t height) {
+	// リソースのハンドルは内部処理にのみ必要で、エディターに公開する必要はない。
+	QFE::GRAPHIC::DirectXResourceHandle resourceHandle = QFE::GRAPHIC::DirectXResourceHandle::Invalid;
+	return QFE::GRAPHIC::CreateEditorSceneTexture(
+		graphicEngine, outRenderTargetHandle, resourceHandle, outGuiTextureId, width, height);
+}
+
 bool QFE::FRAMEWORK::PreDrawGraphicEngine(QFE::GRAPHIC::IGraphicEngine* graphicEngine) {
 	// グラフィックエンジンがnullptrの場合は利用不可とする
 	auto* d3d12GraphicEngine = dynamic_cast<QFE::GRAPHIC::D3D12GraphicEngine*>(graphicEngine);
