@@ -48,6 +48,7 @@ namespace QFE::EDITOR {
 		bool isActive_;
 		std::set<uint32_t> hierarchySelectedEntities_;
 		std::string groupNameInput_;
+		std::string replacementAsset_;
 		bool isFocus_;
 		std::optional<uint32_t> cameraFocusRequest_;
 		bool saveSelectedEntitiesRequested_ = false;

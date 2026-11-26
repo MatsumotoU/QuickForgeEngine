@@ -9,6 +9,7 @@
 #include <imgui.h>
 #include <algorithm>
 #include <cctype>
+#include <utility>
 
 namespace {
 	std::string ImportModel(QFE::ASSET::AssetManager& assets, const std::filesystem::path& path, std::string& error) {
@@ -104,6 +105,7 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList& com
 					if (ImGui::Selectable(itemLabel.c_str(), selectedPath_ == item) || ImGui::IsItemActivated()) {
 						selectedPath_ = item;
 					}
+					if (exists && ImGui::IsItemClicked(ImGuiMouseButton_Left)) clickedPath_ = item;
 					std::string extension = assetPath.extension().string();
 					std::transform(extension.begin(), extension.end(), extension.begin(),
 						[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
@@ -133,3 +135,14 @@ std::string QFE::EDITOR::AssetBrowser::GetWindowName() { return "Asset Browser";
 bool QFE::EDITOR::AssetBrowser::GetIsActive() { return isActive_; }
 bool QFE::EDITOR::AssetBrowser::SetIsActive(bool isActive) { return isActive_ = isActive; }
 bool QFE::EDITOR::AssetBrowser::GetIsFocus() { return isFocus_; }
+std::string QFE::EDITOR::AssetBrowser::ConsumeClickedAsset() {
+	return std::exchange(clickedPath_, {});
+}
+void QFE::EDITOR::AssetBrowser::SetPaintSelection(const std::string& path) {
+	// 組み込みプリミティブはブラウザに存在しないため、対象がある場合だけ選択表示する。
+	for (const auto& [group, files] : groups_) {
+		(void)group;
+		if (std::find(files.begin(), files.end(), path) != files.end()) { selectedPath_ = path; return; }
+	}
+	selectedPath_.clear();
+}

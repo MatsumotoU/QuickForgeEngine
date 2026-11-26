@@ -132,7 +132,7 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 	editorWindowsMap_[EditorWindowType::AssetBrowser] = std::make_unique<AssetBrowser>(assetManager, windowManager, *sceneManager);
 	editorWindowsMap_[EditorWindowType::Logger] = std::make_unique<LogWindow>(runtimeLogs_);
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
-    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
+    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager, modelLoader, config.windowWidth, config.windowHeight);
 }
 
 void QFE::EDITOR::EditorWindowManager::Update() {
@@ -415,6 +415,13 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, QFE:
 		}
 		window->Draw(selectedEntities_, commandList);
 	}
+	// 描画順は未定なので、両ウィンドウの入力を読み終えた後に選択を同期する。
+	auto* browser = static_cast<AssetBrowser*>(editorWindowsMap_[EditorWindowType::AssetBrowser].get());
+	auto* viewer = static_cast<SceneViewer*>(editorWindowsMap_[EditorWindowType::SceneViewer].get());
+	const auto clickedAsset = browser->ConsumeClickedAsset();
+	const auto wheelSelection = viewer->ConsumePaintSelection();
+	if (!clickedAsset.empty()) viewer->SelectPaintAsset(clickedAsset);
+	else if (!wheelSelection.empty()) browser->SetPaintSelection(wheelSelection);
 }
 
 void QFE::EDITOR::EditorWindowManager::SaveSelectedEntities() {
@@ -551,6 +558,13 @@ void QFE::EDITOR::EditorWindowManager::SetSceneViewerCamera(
 void QFE::EDITOR::EditorWindowManager::SetAssetDropViewProjection(const QFE::MATH::Matrix4x4& viewProjection) {
 	static_cast<SceneViewer*>(editorWindowsMap_[EditorWindowType::SceneViewer].get())->SetAssetDropViewProjection(viewProjection);
 	static_cast<GameViewer*>(editorWindowsMap_[EditorWindowType::GameViewer].get())->SetAssetDropViewProjection(viewProjection);
+}
+
+bool QFE::EDITOR::EditorWindowManager::TryGetGameViewerRoomPreview(
+	QFE::MATH::Matrix4x4& viewProjection, QFE::MATH::Vector3& cameraPosition) const {
+	const auto it = editorWindowsMap_.find(EditorWindowType::GameViewer);
+	if (it == editorWindowsMap_.end()) return false;
+	return static_cast<const GameViewer*>(it->second.get())->TryGetRoomPreview(viewProjection, cameraPosition);
 }
 
 bool QFE::EDITOR::EditorWindowManager::IsSceneGizmoCapturingMouse() const {

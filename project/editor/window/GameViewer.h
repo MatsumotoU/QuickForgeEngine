@@ -13,6 +13,8 @@ namespace QFE::EDITOR {
 		GameViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, unsigned width, unsigned height);
 		/// @brief ドロップ位置の算出に使用するカメラ行列を設定する。
 		void SetAssetDropViewProjection(const MATH::Matrix4x4& viewProjection);
+		// 実際のカメラを動かさず、選択した部屋から見た行列を作る。
+		bool TryGetRoomPreview(MATH::Matrix4x4& viewProjection, MATH::Vector3& cameraPosition) const;
 
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -34,6 +36,7 @@ namespace QFE::EDITOR {
 		unsigned width_;
 		unsigned height_;
 		MATH::Matrix4x4 dropViewProjection_ = MATH::Matrix4x4::MakeIdentity4x4();
+		std::string previewRoomUuid_;
 		bool isActive_;
 		bool isFocus_ = false;
 	};

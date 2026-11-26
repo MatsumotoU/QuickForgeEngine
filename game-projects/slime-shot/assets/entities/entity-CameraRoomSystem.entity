@@ -1,0 +1,42 @@
+{
+    "entities": [
+        {
+            "CameraRoomComponent": {
+                "cameraOffset": {
+                    "x": 0.0,
+                    "y": 16.799999237060547,
+                    "z": -11.699999809265137
+                },
+                "halfExtents": {
+                    "x": 4.099999904632568,
+                    "y": 6.900000095367432,
+                    "z": 4.5
+                }
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "",
+                "name": "CameraRoomSystem",
+                "uuid": "cb70a214-1151-4324-85d6-a210678c6e9a"
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            }
+        }
+    ]
+}

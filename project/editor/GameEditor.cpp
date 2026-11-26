@@ -64,7 +64,8 @@ void QFE::EDITOR::GameEditor::Update(
 		!windowManager_.IsSceneGizmoCapturingMouse()) {
 		float moveSpeed = 0.3f;
 
-		if (QFE::FRAMEWORK::GetMousePress(inputInterface, 1)) {
+		// 右クリックは配置に使うため、カメラ操作は中央ボタンにまとめる。
+		if (QFE::FRAMEWORK::GetMousePress(inputInterface, 2)) {
 			// 移動処理
 			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Up")) {
 				QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
@@ -91,7 +92,7 @@ void QFE::EDITOR::GameEditor::Update(
 		}
 
 		// 回転処理
-		if(QFE::FRAMEWORK::GetMousePress(inputInterface, 1)) {
+		if(QFE::FRAMEWORK::GetMousePress(inputInterface, 2)) {
 			QFE::MATH::Vector2 mouseMove = QFE::FRAMEWORK::GetMouseMove(inputInterface);
 			resources.cameraTransform.rotate.y += mouseMove.x * 0.02f;
 			resources.cameraTransform.rotate.x += mouseMove.y * 0.02f;
@@ -111,6 +112,8 @@ void QFE::EDITOR::GameEditor::Update(
 		resources.cameraPosition = resources.cameraTransform.translate;
 	} else {
 		viewProj = QFE::FRAMEWORK::UpdateMainCamera(sceneManager, &resources.cameraPosition);
+		// ゲームビューの部屋プレビューは描画行列だけを変更する。
+		windowManager_.TryGetGameViewerRoomPreview(viewProj, resources.cameraPosition);
 	}
 	windowManager_.SetAssetDropViewProjection(viewProj);
 }

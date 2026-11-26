@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include "math/vector/Vector3.h"
 
 namespace QFE::ASSET { class AssetManager; class ModelLoader; }
 
@@ -12,6 +13,9 @@ namespace QFE::FRAMEWORK::ASSETS {
 	bool ImportFile(QFE::ASSET::AssetManager& assets, const std::filesystem::path& source, std::string& error);
 	std::vector<std::string> ListProjectFiles(const QFE::ASSET::AssetManager& assets, std::string& error);
 	void InitializeModelLoader(QFE::ASSET::ModelLoader& models);
+	// エディターはモデルローダーに直接依存せず、描画専用の三角形を取得する。
+	bool GetModelPreviewTriangles(QFE::ASSET::ModelLoader& models, const std::string& name,
+		std::vector<QFE::MATH::Vector3>& triangles, std::string& error);
 
 	/// 組み込みモデルの名前と、モデル内の GLB アニメーション名を取得する。
 	std::vector<std::string> GetPrimitiveMeshNames();

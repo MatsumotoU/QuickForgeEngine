@@ -4,6 +4,7 @@
 #include "EngineDefines.h"
 
 #include "command/AllCommands.h"
+#include "command/ReplaceEntityAssetCommand.h"
 #include "command/EditorCommandList.h"
 #include "framework/assets/AssetsCoreFramework.h"
 #include "framework/scene/SceneCoreFramework.h"
@@ -96,6 +97,7 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 	}
 
 	bool openGroupDialog = false;
+	bool openReplaceDialog = false;
 	constexpr const char* kEntityPayloadType = "QFE_HIERARCHY_ENTITY";
 	const auto acceptEntityDrop = [&](const std::string& targetGroup) {
 		if (!ImGui::BeginDragDropTarget()) {
@@ -162,6 +164,10 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 		if (ImGui::BeginPopupContextItem(entityContextMenuId.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
 			if (ImGui::MenuItem("Save Selected Entities...")) {
 				saveSelectedEntitiesRequested_ = true;
+			}
+			if (ImGui::MenuItem("Replace with Entity Asset...")) {
+				replacementAsset_.clear();
+				openReplaceDialog = true;
 			}
 			if (hierarchySelectedEntities_.size() >= 2 && ImGui::MenuItem("Group Selected...")) {
 				groupNameInput_ = MakeNextGroupName(existingGroups);
@@ -300,6 +306,42 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 
 		if (openGroupDialog) {
 			ImGui::OpenPopup("CreateHierarchyGroupPopup");
+		}
+		if (openReplaceDialog) ImGui::OpenPopup("ReplaceEntityAssetPopup");
+		if (ImGui::BeginPopupModal("ReplaceEntityAssetPopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text("Replace %zu selected entities. Position, rotation, scale and group are retained.", hierarchySelectedEntities_.size());
+			std::string error;
+			std::vector<std::string> assets;
+			const auto root = QFE::FRAMEWORK::ASSETS::GetProjectAssets();
+			for (const auto& path : QFE::FRAMEWORK::ASSETS::ListProjectFiles(*assets_, error)) {
+				const std::filesystem::path relative(std::u8string(reinterpret_cast<const char8_t*>(path.data()), path.size()));
+				std::string ext = relative.extension().string();
+				std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+				if ((ext == ".entity" || ext == ".json") &&
+					QFE::FRAMEWORK::ASSETS::IsPathWithin(root / relative, root / "entities")) assets.push_back(path);
+			}
+			std::sort(assets.begin(), assets.end());
+			ImGui::SetNextItemWidth(360.0f);
+			if (ImGui::BeginCombo("Entity asset", replacementAsset_.empty() ? "Select asset" : replacementAsset_.c_str())) {
+				for (const auto& path : assets) if (ImGui::Selectable(path.c_str(), replacementAsset_ == path)) replacementAsset_ = path;
+				ImGui::EndCombo();
+			}
+			if (!error.empty()) ImGui::TextWrapped("%s", error.c_str());
+			const bool canReplace = !hierarchySelectedEntities_.empty() &&
+				std::find(assets.begin(), assets.end(), replacementAsset_) != assets.end();
+			if (!canReplace) ImGui::BeginDisabled();
+			if (ImGui::Button("Replace")) {
+				const std::filesystem::path path(std::u8string(reinterpret_cast<const char8_t*>(replacementAsset_.data()), replacementAsset_.size()));
+				const auto full = root / path;
+				const auto utf8 = full.generic_u8string();
+				commandList.AddCommand(std::make_unique<ReplaceEntityAssetCommand>(sceneManager_,
+					std::string(reinterpret_cast<const char*>(utf8.data()), utf8.size()), hierarchySelectedEntities_));
+				ImGui::CloseCurrentPopup();
+			}
+			if (!canReplace) ImGui::EndDisabled();
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel")) ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
 		}
 		if (ImGui::BeginPopupModal("CreateHierarchyGroupPopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::Text("Group selected entities under:");

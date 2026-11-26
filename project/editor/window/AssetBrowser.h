@@ -26,6 +26,9 @@ namespace QFE::EDITOR {
 		bool SetIsActive(bool isActive) override;
 		/// @brief ウィンドウにフォーカスがあるか取得する。
 		bool GetIsFocus() override;
+		// クリックは同じ項目の再選択も通知し、ホイール変更後に再指定できるようにする。
+		std::string ConsumeClickedAsset();
+		void SetPaintSelection(const std::string& path);
 	private:
 		/// @brief プロジェクトの assets ディレクトリを再走査する。
 		void Refresh();
@@ -37,6 +40,7 @@ namespace QFE::EDITOR {
 		SCENE::SceneManager* sceneManager_;
 		std::string status_;
 		std::string selectedPath_;
+		std::string clickedPath_;
 		bool isActive_ = true;
 		bool isFocus_ = false;
 	};

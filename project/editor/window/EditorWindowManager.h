@@ -65,6 +65,7 @@ namespace QFE::EDITOR {
 			bool isOrthographic = false);
 		/// @brief 表示中のカメラ行列をアセットのドロップ位置計算に使用する。
 		void SetAssetDropViewProjection(const QFE::MATH::Matrix4x4& viewProjection);
+		bool TryGetGameViewerRoomPreview(QFE::MATH::Matrix4x4& viewProjection, QFE::MATH::Vector3& cameraPosition) const;
 		/// @brief SceneViewerのギズモがマウス入力を使用しているかを返す
 		bool IsSceneGizmoCapturingMouse() const;
 

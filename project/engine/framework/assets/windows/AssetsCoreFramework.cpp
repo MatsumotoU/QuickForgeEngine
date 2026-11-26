@@ -16,6 +16,20 @@ namespace QFE::FRAMEWORK::ASSETS {
 		return assets.ListProjectFiles(error);
 	}
 	void InitializeModelLoader(QFE::ASSET::ModelLoader& models) { models.Initialize(); }
+	bool GetModelPreviewTriangles(QFE::ASSET::ModelLoader& models, const std::string& name,
+		std::vector<QFE::MATH::Vector3>& triangles, std::string& error) {
+		triangles.clear();
+		const auto asset = models.LoadModel(name, GetProjectAssets(), error);
+		if (!asset || !asset->data) return false;
+		for (const auto& mesh : asset->data->meshes) {
+			for (const auto index : mesh.indices) {
+				if (index >= mesh.vertices.size()) { error = "Invalid model index"; triangles.clear(); return false; }
+				const auto& vertex = mesh.vertices[index].position;
+				triangles.push_back({ vertex.x, vertex.y, vertex.z });
+			}
+		}
+		return !triangles.empty();
+	}
 	std::vector<std::string> GetPrimitiveMeshNames() { return QFE::ASSET::GetPrimitiveMeshNames(); }
 	std::vector<std::string> GetModelAnimationNames(QFE::ASSET::ModelLoader& models,
 		const std::string& name, const std::filesystem::path& directory, std::string& error) {
